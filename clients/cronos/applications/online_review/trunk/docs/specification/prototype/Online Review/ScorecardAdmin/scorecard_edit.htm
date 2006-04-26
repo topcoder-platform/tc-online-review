@@ -1,0 +1,1256 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" >
+<head>
+    <title>Scorecard Administration</title>
+    <link rel="stylesheet" type="text/css" href="https://software.topcoder.com/includes/tcs_style.css" />  
+    <link rel="stylesheet" type="text/css" href="includes/new_styles.css" />
+    <script language="JavaScript" type="text/javascript" src="scripts/javascriptAdmin.js"></script>
+    <script language="JavaScript" type="text/javascript" src="scripts/highlightrow.js"></script>
+</head>
+<body leftmargin="0" rightmargin="0" topmargin="0" height="100%">
+<div id="holder">
+<!--Header begins-->
+    <table width="100%" border="0" cellpadding="0" cellspacing="0" class="head">
+    	<tr valign="top">
+		    <td height="57" align="left" rowspan="2" style="width: 219px"><img src="images/logoTCSHome.gif" alt="TopCoder Software" width="216" height="57" border="0" /></td>
+		    <td width="155" height="57" align="left" rowspan="2"><img src="images/homeBannerAdmin.gif" alt="Administration" width="155" height="57" border="0" /></td>
+		    <td class="headRight">
+			    <table border="0" cellpadding="0" cellspacing="0" class="adminSearch" align="right">
+				    <tr valign="middle">
+					    <td width="24" height="25" valign="bottom"><img src="images/searchHeaderLeft.gif" alt="" width="24" height="25" border="0"></td>
+					    <td><img src="images/clear.gif" alt="" width="6" border="0" /></td>
+    				    <td class="login">kimba is logged in.</td>
+					    <td><img src="images/clear.gif" alt="" width="10" border="0" /></td>
+   					    <td class="login"><a href="#" class="loginLinks">:: Logout</a></td>
+    				    <td><img src="images/clear.gif" alt="" width="10" border="0" /></td>
+				    </tr>
+			    </table>
+		    </td>
+        </tr>
+	    <tr valign="bottom">
+		    <td class="headRight"><img src="images/homeBannerHead.gif" alt="The Future of Software Development" width="510" height="13" border="0" /></td>
+	</tr>
+	<tr>
+	    <td height="4" class="headStripe" colspan="3"><img src="images/clear.gif" alt="" height="4" border="0" /></td>
+	</tr>
+</table>
+<!-- Nav Bar begins -->
+<table width="100%" border="0" cellpadding="0" cellspacing="0" >
+	<tr>
+		<td width="20" class="adminTopNav"><img src="images/clear.gif" alt="" width="20" height="21" border="0"></td>
+		<td>
+			<table width="3%" border="0" cellpadding="0" cellspacing="0" class="adminTopNav">
+				<tr valign="middle">
+					<td width="46" align="center" class="adminTopNav"><a onmouseover="document.images['siteAdmin'].src = siteAdminon.src; window.status='Return to Regular Site'; return true;" onmouseout="document.images['siteAdmin'].src = siteAdminoff.src" class="topNavLinks" href="http://software.topcoder.com"><img src="images/siteAdmin_off.gif" alt="RETURN TO SITE" name="siteAdmin" width="84" height="21" border="0" /></a></td>
+					<td width="66" align="center" class="adminTopNav"><a onmouseover="document.images['catalogAdmin'].src = catalogAdminon.src; window.status='Catalog Administration'; return true;" onmouseout="document.images['catalogAdmin'].src = catalogAdminoff.src" class="topNavLinks" href="#"><img src="images/catalogAdmin_off.gif" alt="CATALOG ADMIN" name="catalogAdmin" width="97" height="21" border="0" /></a></td>
+					<td width="106" align="center" class="adminTopNav"><a onmouseover="document.images['categoryAdmin'].src = categoryAdminon.src; window.status='Category Administration'; return true;" onmouseout="document.images['categoryAdmin'].src = categoryAdminoff.src" class="topNavLinks" href="#"><img src="images/categoryAdmin_off.gif" alt="CATEGORY ADMIN" name="categoryAdmin" width="104" height="21" border="0" /></a></td>
+					<td width="156" align="center" class="adminTopNav"><a onmouseover="document.images['userAdmin'].src = userAdminon.src; window.status='User Administration'; return true;" onmouseout="document.images['userAdmin'].src = userAdminoff.src" class="topNavLinks" href="#"><img src="images/userAdmin_off.gif" alt="USER ADMIN" name="userAdmin" width="79" height="21" border="0" /></a></td>
+					<td width="106" align="center" class="adminTopNav"><a onmouseover="document.images['listsAdmin'].src = listsAdminon.src; window.status='Lists Administration'; return true;" onmouseout="document.images['listsAdmin'].src = listsAdminoff.src" class="topNavLinks" href="#"><img src="images/listAdmin_off.gif" alt="LISTS ADMIN" name="listsAdmin" width="79" height="21" border="0" /></a></td>
+					<td width="106" align="center" class="adminTopNav"><a onmouseover="document.images['scorecardAdmin'].src = scorecardAdminon.src; window.status='Scorecard Administration'; return true;" onmouseout="document.images['scorecardAdmin'].src = scorecardAdminoff.src" class="topNavLinks" href="#"><img src="images/scorecardAdmin_off.gif" alt="SCORECARD ADMIN" name="scorecardAdmin" height="21" border="0" /></a></td>
+				</tr>
+			</table>
+		</td>
+		<td width="97%" class="adminTopNav"><img src="images/clear.gif" alt="" border="0"></td>
+	</tr>
+</table>
+<!-- Nav Bar ends -->
+<!--Header ends -->
+<div id="contentarea">
+<!-- Tabs -->
+<table width="100%" border="0" cellpadding="0" cellspacing="0">
+    <tr valign="top">
+        <td width="1%" class="normal"><a href="index.htm"><img src="images/tabComponent_on.gif" alt="Component" border="0"></a></td>
+        <td width="1%" class="normal"><img src="images/tabApplication_off.gif" alt="Application" border="0"></td>
+        <td width="1%" class="normal">&nbsp;</td>
+        <td width="1%" class="normal">&nbsp;</td>
+        <td width="98%" align="right">&nbsp;</td>
+    </tr>
+    <tr valign="top">
+        <td colspan="5" class="forumHeadFoot"><img src="images/clear.gif" alt="" width="10" height="7" border="0"></td>
+    </tr>
+</table>
+<!-- Tabs end -->
+
+<!-- Content begins -->
+<table width="100%" border="0" cellpadding="0" cellspacing="1" class="forumBkgd">
+    <tr>
+        <td class="whiteBkgnd" style="height: 100%">
+            <table border="0" cellpadding="0" cellspacing="0" width="100%">
+                <tr>
+                    <td width="100%" nowrap class="tableHeader"><strong>Component Scorecards</strong> </td>
+                    <td align="right" style="height:35px"></td>
+                </tr>
+                <tr>
+                    <td class="whiteBkgnd" colspan="3"><img src="images/clear.gif" alt="" width="1" height="1" border="0"></td>
+                </tr>
+            </table>
+
+<!-- Scorecards -->
+            <table width="100%" border="0" cellpadding="0" cellspacing="1" class="forumBkgd">
+                <tr>
+                    <td class="forumTextEven" colspan="8">
+					<strong>Scorecard Details:</strong></td>
+                </tr>
+                <tr>
+                    <td class="forumTitle" width="6%">ID</td>
+                    <td class="forumTitle" style="width: 40%">Scorecard Name</td>
+                    <td class="forumTitle" style="width: 17%">Project Type</td>
+                    <td class="forumTitle" style="width: 17%">Category</td>
+                    <td class="forumTitle" width="7%">
+                        Type</td>
+                    <td class="forumTitle" width="6%">
+                        Min. Score</td>
+                    <td class="forumTitle" width="6%">
+                        Max. Score</td>
+                    <td class="forumTitle" width="14%">
+                        Status</td>
+                </tr>
+<!--Begin lists -->
+                <tr>
+                    <td class="forumTextOdd" nowrap width="6%">15371498</td>
+                    <td class="forumTextOdd" style="width: 40%" nowrap>
+					<input type="text" style="width:300px" name="T1"  class="inputBox" value="Component Design Review Scorecard" size="1" disabled>
+					<input type="text" style="width:50; height:16" name="T114"  class="inputBox" value="v1.1" size="1" disabled></td>
+                    <td class="forumTextOdd" style="width: 17%">
+                        <select id="Select1" class="inputBox" style="margin-right:3px;margin-left:5px;" name="status" size="1">
+                            <option>Component</option>
+							<option>Application</option>
+                        </select></td>
+                    <td class="forumTextOdd" style="width: 17%">
+                        <select id="Select1" class="inputBox" style="margin-right:3px;margin-left:5px;" name="status87" size="1">
+                            <option>Design</option>
+							<option>Development</option>
+                        	<option>Security</option>
+							<option>Process</option>
+							<option>Testing Competition</option>
+                        </select></td>
+                    <td class="forumTextOdd"  width="7%">
+                        <select id="Select1" class="inputBox" style="margin-right:3px;margin-left:5px;" name="status1" size="1">
+                            <option selected>Screening</option>
+							<option>Review</option>
+							<option>Approval</option>
+                        </select></td>
+                    <td class="forumTextOdd"  width="6%">
+                        <input type="text" style="width:30px; height:16px" name="T129"  class="inputBox" value="90" size="20"></td>
+                    <td class="forumTextOdd"  width="6%">
+                        <input type="text" style="width:30px; height:16px" name="T130"  class="inputBox" value="100" size="20"></td>
+                    <td class="forumTextOdd"  width="14%">
+                        <select id="Select1" class="inputBox" style="margin-right:3px;margin-left:5px;" name="status86" size="1">
+                            <option>Select</option>
+							<option selected>Active</option>
+							<option>Inactive</option>
+                        </select></td>
+                </tr>
+                <tr>
+                    <td class="forumHeadFoot" colspan="8" height="5"><img src="images/clear.gif" alt="" width="10" height="5" border="0"/></td>
+                </tr>
+            </table>
+<!-- End lists -->
+<!-- Spacer -->
+            <table border="0" cellpadding="0" cellspacing="1" class="whiteBkgd" width="100%">
+                <tr>
+                    <td class="forumTextOdd"><img src="images/clear.gif" alt="" width="1" height="5" border="0"></td>
+                </tr>
+            </table>
+            <table width="100%" border="0" cellpadding="0" cellspacing="1" class="forumBkgd" id="table1" onMouseOut="javascript:highlightTableRow(0);">
+                <tr>
+                    <td class="forumTitle" colspan="3">Group:&nbsp;
+					<input type="text" style="width:300px;margin-left:8px;" name="T56"  class="inputBox" value="Minimum Requirements Checklist" size="20"></td>
+                    <td class="forumTitle">
+					
+					<input type="button" onClick='document.location="#"'  value="Add New" class="Buttons" style="float:right"></td>
+                    <td class="forumTitle" >
+					<input type="button" onClick='document.location="#"'  value="Remove" class="Buttons2"></td>
+                </tr>
+				<tr>
+                    <td class="forumTextEven" colspan="3">
+					<strong>Section:&nbsp;
+					<input type="text" style="width:300px" name="T57"  class="inputBox" value="Minimum Requirements Checklist" size="20">&nbsp;Weight:  </strong> 
+					<input type="text" style="width:50px" name="T128"  class="inputBox" value="100" size="20" disabled></td>
+                    <td class="forumTextEven">
+					
+					<input type="button" onClick='document.location="#"'  value="Add New" class="Buttons" style="float:right"></td>
+                    <td class="forumTextEven" >
+					<input type="button" onClick='document.location="#"'  value="Remove" class="Buttons2"></td>
+                </tr>
+				<tr>
+                    <td class="SectionHeaderQ" width="66%">
+					Question</td>
+                    <td class="SectionHeader" width="11%">
+					Type</td>
+                    <td class="SectionHeader" width="3%">
+					Weight</td>
+                    <td class="SectionHeader" nowrap width="12%" >
+                        Document Upload</td>
+                    <td class="SectionHeader" width="4%" >
+					<input type="button" onClick='document.location="#"'  value="Add New" class="Buttons"></td>
+                </tr>
+				<tr onMouseOver="javascript:highlightTableRow(this);" style="background-color:#ffffff">
+                    <td class="ForumQuestion" width="66%">
+					Question Text:<br>
+					<textarea rows="2" name="S29" cols="20" class="inputBoxQuestion">Diagrams exist in a .zuml (Poseidon 3.x) file.</textarea><br>
+					Question Guideline:<br>
+					<textarea rows="3" name="S57" cols="20" class="inputBoxGuideline"></textarea></td>
+                    <td class="forumTextOdd" width="11%">
+                        <select id="Select1" class="inputBox" style="margin-right:3px;margin-left:5px;" name="status30" size="1">
+                            <option>Select</option>
+                            <option>Scale (1-4)</option>
+							<option>Scale (1-10)</option>
+							<option>Test Case</option>
+							<option>Yes/No</option>
+                        	<option>Dynamic</option>
+                        </select></td>
+                    <td class="forumTextOdd" width="3%">
+                        <input type="text" style="width:30px; height:16px" name="T59"  class="inputBox" value="25" size="20"></td>
+                    <td class="forumTextOdd" nowrap width="12%" >
+                        <select id="Select1" class="inputBox" style="margin-right:3px;margin-left:5px;" name="status58" size="1">
+                            <option>N/A</option>
+							<option>Required</option>
+							<option>Optional</option>
+                        </select></td>
+                    <td class="forumTextOdd" width="4%" >
+					<input type="button" onClick='document.location="#"'  value="Remove" class="Buttons2"></td>
+                </tr>
+				<tr onMouseOver="javascript:highlightTableRow(this);" style="background-color:#ffffff">
+                    <td class="ForumQuestion" width="66%">
+					Question Text:<br>
+					<textarea rows="2" name="S30" cols="20" class="inputBoxQuestion">Class Diagram(s) exist(s) in the .zuml file.</textarea><br>
+					Question Guideline:<br>
+					<textarea rows="3" name="S58" cols="20" class="inputBoxGuideline"></textarea></td>
+                    <td class="forumTextOdd" width="11%">
+                        <select id="Select1" class="inputBox" style="margin-right:3px;margin-left:5px;" name="status88" size="1">
+                            <option>Select</option>
+                            <option>Scale (1-4)</option>
+							<option>Scale (1-10)</option>
+							<option>Test Case</option>
+							<option>Yes/No</option>
+                        	<option>Dynamic</option>
+                        </select></td>
+                    <td class="forumTextOdd" width="3%">
+                        <input type="text" style="width:30px" name="T60"  class="inputBox" value="25" size="20"></td>
+                    <td class="forumTextOdd" nowrap width="12%" >
+                        <select id="Select1" class="inputBox" style="margin-right:3px;margin-left:5px;" name="status59" size="1">
+                            <option>N/A</option>
+							<option>Required</option>
+							<option>Optional</option>
+                        </select></td>
+                    <td class="forumTextOdd" width="4%" >
+					<input type="button" onClick='document.location="#"'  value="Remove" class="Buttons2"></td>
+                </tr>
+				<tr onMouseOver="javascript:highlightTableRow(this);" style="background-color:#ffffff">
+                    <td class="ForumQuestion" width="66%">
+					Question Text:<br>
+					<textarea rows="2" name="S31" cols="20" class="inputBoxQuestion">Use-Case Diagram(s) exist(s) in the .zuml file.</textarea><br>
+					Question Guideline:<br>
+					<textarea rows="3" name="S59" cols="20" class="inputBoxGuideline"></textarea></td>
+                    <td class="forumTextOdd" width="11%">
+                        <select id="Select1" class="inputBox" style="margin-right:3px;margin-left:5px;" name="status89" size="1">
+                            <option>Select</option>
+                            <option>Scale (1-4)</option>
+							<option>Scale (1-10)</option>
+							<option>Test Case</option>
+							<option>Yes/No</option>
+                        	<option>Dynamic</option>
+                        </select></td>
+                    <td class="forumTextOdd" width="3%">
+                        <input type="text" style="width:30px" name="T61"  class="inputBox" value="20" size="20"></td>
+                    <td class="forumTextOdd" nowrap width="12%" >
+                        <select id="Select1" class="inputBox" style="margin-right:3px;margin-left:5px;" name="status60" size="1">
+                            <option>N/A</option>
+							<option>Required</option>
+							<option>Optional</option>
+                        </select></td>
+                    <td class="forumTextOdd" width="4%" >
+					<input type="button" onClick='document.location="#"'  value="Remove" class="Buttons2"></td>
+                </tr>
+				<tr onMouseOver="javascript:highlightTableRow(this);" style="background-color:#ffffff">
+                    <td class="ForumQuestion" width="66%">
+					<textarea rows="2" name="S32" cols="20" class="inputBoxQuestion">Sequence Diagram(s) exist(s) in the .zuml file. If there are no non-trivial use cases (involving interaction between 5 or more classes), sequence diagrams may be omitted. In that case, answer "Yes" here.</textarea><br>
+					Question Guideline:<br>
+					<textarea rows="3" name="S60" cols="20" class="inputBoxGuideline"></textarea></td>
+                    <td class="forumTextOdd" width="11%">
+                        <select id="Select1" class="inputBox" style="margin-right:3px;margin-left:5px;" name="status90" size="1">
+                            <option>Select</option>
+                            <option>Scale (1-4)</option>
+							<option>Scale (1-10)</option>
+							<option>Test Case</option>
+							<option>Yes/No</option>
+                        	<option>Dynamic</option>
+                        </select></td>
+                    <td class="forumTextOdd" width="3%">
+                        <input type="text" style="width:30px" name="T62"  class="inputBox" value="10" size="20"></td>
+                    <td class="forumTextOdd" nowrap width="12%" >
+                        <select id="Select1" class="inputBox" style="margin-right:3px;margin-left:5px;" name="status61" size="1">
+                            <option>N/A</option>
+							<option>Required</option>
+							<option>Optional</option>
+                        </select></td>
+                    <td class="forumTextOdd" width="4%" >
+                        <input type="button" onClick='document.location="#"'  value="Remove" class="Buttons2"></td>
+                </tr>
+				<tr onMouseOver="javascript:highlightTableRow(this);" style="background-color:#ffffff">
+                    <td class="ForumQuestion" width="66%">
+					Question Text:<br>
+					<textarea rows="2" name="S33" cols="20" class="inputBoxQuestion">A Component Specification document exists.</textarea><br>
+					Question Guideline:<br>
+					<textarea rows="3" name="S61" cols="20" class="inputBoxGuideline"></textarea></td>
+                    <td class="forumTextOdd" width="11%">
+                        <select id="Select1" class="inputBox" style="margin-right:3px;margin-left:5px;" name="status91" size="1">
+                            <option>Select</option>
+                            <option>Scale (1-4)</option>
+							<option>Scale (1-10)</option>
+							<option>Test Case</option>
+							<option>Yes/No</option>
+                        	<option>Dynamic</option>
+                        </select></td>
+                    <td class="forumTextOdd" width="3%">
+                        <input type="text" style="width:30px" name="T115"  class="inputBox" value="10" size="20"></td>
+                    <td class="forumTextOdd" nowrap width="12%" >
+                        <select id="Select1" class="inputBox" style="margin-right:3px;margin-left:5px;" name="status62" size="1">
+                            <option>N/A</option>
+							<option>Required</option>
+							<option>Optional</option>
+                        </select></td>
+                    <td class="forumTextOdd" width="4%" >
+                        <input type="button" onClick='document.location="#"'  value="Remove" class="Buttons2"></td>
+                </tr>
+				<tr onMouseOver="javascript:highlightTableRow(this);" style="background-color:#ffffff">
+                    <td class="ForumQuestion" width="66%">
+					Question Text:<br>
+					<textarea rows="2" name="S34" cols="20" class="inputBoxQuestion">All of the above diagrams and documents contain meaningful information related to the component, and give the appearance that at least a reasonable attempt was made to submit a complete design.</textarea><br>
+					Question Guideline:<br>
+					<textarea rows="3" name="S62" cols="20" class="inputBoxGuideline"></textarea></td>
+                    <td class="forumTextOdd" width="11%">
+                        <select id="Select1" class="inputBox" style="margin-right:3px;margin-left:5px;" name="status92" size="1">
+                            <option>Select</option>
+                            <option>Scale (1-4)</option>
+							<option>Scale (1-10)</option>
+							<option>Test Case</option>
+							<option>Yes/No</option>
+                        	<option>Dynamic</option>
+                        </select></td>
+                    <td class="forumTextOdd" width="3%">
+                        <input type="text" style="width:30px" name="T116"  class="inputBox" value="10" size="20"></td>
+                    <td class="forumTextOdd" nowrap width="12%" >
+                        <select id="Select1" class="inputBox" style="margin-right:3px;margin-left:5px;" name="status63" size="1">
+                            <option>N/A</option>
+							<option>Required</option>
+							<option>Optional</option>
+                        </select></td>
+                    <td class="forumTextOdd" width="4%" >
+                        <input type="button" onClick='document.location="#"'  value="Remove" class="Buttons2"></td>
+                </tr>
+				<tr onMouseOver="javascript:highlightTableRow(this);" style="background-color:#ffffff">
+                    <td class="ForumQuestion" width="66%">
+					Question Text:<br>
+					<textarea rows="2" name="S35" cols="20" class="inputBoxQuestion">If algorithms are required in section 1.3 of the Requirements Specification, are algorithms defined in section 1.3 of the Component Specification?
+If algorithms are not required, answer "Yes"</textarea><br>
+					Question Guideline:<br>
+					<textarea rows="3" name="S63" cols="20" class="inputBoxGuideline"></textarea></td>
+                    <td class="forumTextOdd" width="11%">
+                        <select id="Select1" class="inputBox" style="margin-right:3px;margin-left:5px;" name="status93" size="1">
+                            <option>Select</option>
+                            <option>Scale (1-4)</option>
+							<option>Scale (1-10)</option>
+							<option>Test Case</option>
+							<option>Yes/No</option>
+                        	<option>Dynamic</option>
+                        </select></td>
+                    <td class="forumTextOdd" width="3%">
+                        <input type="text" style="width:30px" name="T117"  class="inputBox" value="10" size="20"></td>
+                    <td class="forumTextOdd" nowrap width="12%" >
+                        <select id="Select1" class="inputBox" style="margin-right:3px;margin-left:5px;" name="status64" size="1">
+                            <option>N/A</option>
+							<option>Required</option>
+							<option>Optional</option>
+                        </select></td>
+                    <td class="forumTextOdd" width="4%" >
+                        <input type="button" onClick='document.location="#"'  value="Remove" class="Buttons2"></td>
+                </tr>
+                <tr>
+                    <td class="ForumQuestion" width="66%">
+					&nbsp;</td>
+                    <td class="forumTextOdd" width="11%">
+                        <p style="text-align: right"><strong>Subtotal:</strong></td>
+                    <td class="forumTextOdd" width="19%" colspan="3">
+                        <input type="text" style="width:30px; height:16px" name="T139"  class="inputBox" size="20" disabled value="100">&nbsp; 
+						Section
+                        Questions must total 100.</td>
+                    </tr>
+                <tr>
+                    <td class="forumTextEven" width="66%">
+					&nbsp;</td>
+                    <td class="forumTextEven" width="11%">
+                        <p style="text-align: right"><strong>Section Subtotal:</strong></td>
+                    <td class="forumTextEven" width="19%" colspan="3">
+                        <input type="text" style="width:30px; height:16px" name="T140"  class="inputBox" size="20" disabled value="100">&nbsp; 
+						Group Sections must total 100.</td>
+                </tr>
+                <tr>
+                    <td class="forumTitle" colspan="3">Group:&nbsp;
+					<input type="text" style="width:300px;margin-left:8px;" name="T2"  class="inputBox" value="Design Review" size="20"></td>
+                    <td class="forumTitle">
+					<input type="button" onClick='document.location="#"'  value="Add New" class="Buttons" style="float:right"></td>
+                    <td class="forumTitle" >
+					<input type="button" onClick='document.location="#"'  value="Remove" class="Buttons2"></td>
+                </tr>
+<!--Begin lists -->
+                <tr>
+                    <td class="forumTextEven" colspan="3">
+					<strong>Section:&nbsp; </strong>
+					<input type="text" style="width:300px" name="T3"  class="inputBox" value="Class Definition" size="20">&nbsp;
+					<b>Weight:</b> 
+					<input type="text" style="width:50px" name="T127"  class="inputBox" value="25" size="20" disabled></td>
+                    <td class="forumTextEven">
+					<input type="button" onClick='document.location="#"'  value="Add New" class="Buttons" style="float:right"></td>
+                    <td class="forumTextEven" >
+					<input type="button" onClick='document.location="#"'  value="Remove" class="Buttons2"></td>
+                </tr>
+                <tr>
+                    <td class="SectionHeaderQ" width="66%">
+					Question</td>
+                    <td class="SectionHeader" width="11%">
+					Type</td>
+                    <td class="SectionHeader" width="3%">
+					Weight</td>
+                    <td class="SectionHeader" nowrap width="12%">
+                        Document Upload</td>
+                    <td class="SectionHeader" width="4%" >
+					<input type="button" onClick='document.location="#"'  value="Add New" class="Buttons"></td>
+                </tr>
+                <tr onMouseOver="javascript:highlightTableRow(this);" style="background-color:#ffffff">
+                    <td class="ForumQuestion" width="66%">
+					Question Text:<br>
+					<textarea rows="2" name="S36" cols="20" class="inputBoxQuestion">Provides a descriptive overview of class usage in the Documentation tab of Poseidon</textarea><br>
+					Question Guideline:<br>
+					<textarea rows="3" name="S64" cols="20" class="inputBoxGuideline"></textarea></td>
+                    <td class="forumTextOdd" width="11%">
+                        <select id="Select1" class="inputBox" style="margin-right:3px;margin-left:5px;" name="status94" size="1">
+                            <option>Select</option>
+                            <option>Scale (1-4)</option>
+							<option>Scale (1-10)</option>
+							<option>Test Case</option>
+							<option>Yes/No</option>
+                        	<option>Dynamic</option>
+                        </select></td>
+                    <td class="forumTextOdd" width="3%">
+                        <input type="text" style="width:30px" name="T66"  class="inputBox" value="10" size="20"></td>
+                    <td class="forumTextOdd" nowrap  width="12%">
+                        <select id="Select1" class="inputBox" style="margin-right:3px;margin-left:5px;" name="status65" size="1">
+                            <option>N/A</option>
+							<option>Required</option>
+							<option>Optional</option>
+                        </select></td>
+                    <td class="forumTextOdd" width="4%" >
+					<input type="button" onClick='document.location="#"'  value="Remove" class="Buttons2"></td>
+                </tr>
+                <tr onMouseOver="javascript:highlightTableRow(this);" style="background-color:#ffffff">
+                    <td class="ForumQuestion" width="66%">
+					<textarea rows="2" name="S37" cols="20" class="inputBoxQuestion">Where applicable sub-packages have been created to separate functionality.</textarea><br>
+					Question Guideline:<br>
+					<textarea rows="3" name="S65" cols="20" class="inputBoxGuideline"></textarea></td>
+                    <td class="forumTextOdd" width="11%">
+                        <select id="Select1" class="inputBox" style="margin-right:3px;margin-left:5px;" name="status95" size="1">
+                            <option>Select</option>
+                            <option>Scale (1-4)</option>
+							<option>Scale (1-10)</option>
+							<option>Test Case</option>
+							<option>Yes/No</option>
+                        	<option>Dynamic</option>
+                        </select></td>
+                    <td class="forumTextOdd" width="3%">
+                        <input type="text" style="width:30px" name="T67"  class="inputBox" value="10" size="20"></td>
+                    <td class="forumTextOdd" nowrap  width="12%">
+                        <select id="Select1" class="inputBox" style="margin-right:3px;margin-left:5px;" name="status66" size="1">
+                            <option>N/A</option>
+							<option>Required</option>
+							<option>Optional</option>
+                        </select></td>
+                    <td class="forumTextOdd" width="4%" >
+					<input type="button" onClick='document.location="#"'  value="Remove" class="Buttons2"></td>
+                </tr>
+                <tr onMouseOver="javascript:highlightTableRow(this);" style="background-color:#ffffff">
+                    <td class="ForumQuestion" width="66%">
+					Question Text:<br>
+					<textarea rows="2" name="S38" cols="20" class="inputBoxQuestion">Class scope properly matches class usage. (i.e. objects defined as public packages)</textarea><br>
+					Question Guideline:<br>
+					<textarea rows="3" name="S66" cols="20" class="inputBoxGuideline"></textarea></td>
+                    <td class="forumTextOdd" width="11%">
+                        <select id="Select1" class="inputBox" style="margin-right:3px;margin-left:5px;" name="status96" size="1">
+                            <option>Select</option>
+                            <option>Scale (1-4)</option>
+							<option>Scale (1-10)</option>
+							<option>Test Case</option>
+							<option>Yes/No</option>
+                        	<option>Dynamic</option>
+                        </select></td>
+                    <td class="forumTextOdd" width="3%">
+                        <input type="text" style="width:30px" name="T68"  class="inputBox" value="20" size="20"></td>
+                    <td class="forumTextOdd" nowrap  width="12%">
+                        <select id="Select1" class="inputBox" style="margin-right:3px;margin-left:5px;" name="status67" size="1">
+                            <option>N/A</option>
+							<option>Required</option>
+							<option>Optional</option>
+                        </select></td>
+                    <td class="forumTextOdd" width="4%" >
+					<input type="button" onClick='document.location="#"'  value="Remove" class="Buttons2"></td>
+                </tr>
+                <tr onMouseOver="javascript:highlightTableRow(this);" style="background-color:#ffffff">
+                    <td class="ForumQuestion" width="66%">
+					<textarea rows="2" name="S39" cols="20" class="inputBoxQuestion">Proper and effective use of inheritance and abstraction. The Component is designed to be extended</textarea><br>
+					Question Guideline:<br>
+					<textarea rows="3" name="S67" cols="20" class="inputBoxGuideline"></textarea></td>
+                    <td class="forumTextOdd" width="11%">
+                        <select id="Select1" class="inputBox" style="margin-right:3px;margin-left:5px;" name="status97" size="1">
+                            <option>Select</option>
+                            <option>Scale (1-4)</option>
+							<option>Scale (1-10)</option>
+							<option>Test Case</option>
+							<option>Yes/No</option>
+                        	<option>Dynamic</option>
+                        </select></td>
+                    <td class="forumTextOdd" width="3%">
+                        <input type="text" style="width:30px" name="T69"  class="inputBox" value="20" size="20"></td>
+                    <td class="forumTextOdd" nowrap  width="12%">
+                        <select id="Select1" class="inputBox" style="margin-right:3px;margin-left:5px;" name="status68" size="1">
+                            <option>N/A</option>
+							<option>Required</option>
+							<option>Optional</option>
+                        </select></td>
+                    <td class="forumTextOdd" width="4%" >
+                        <input type="button" onClick='document.location="#"'  value="Remove" class="Buttons2"></td>
+                </tr>
+                <tr onMouseOver="javascript:highlightTableRow(this);" style="background-color:#ffffff">
+                    <td class="ForumQuestion" width="66%">
+					Question Text:<br>
+					<textarea rows="2" name="S40" cols="20" class="inputBoxQuestion">Interfaces are used appropriately.</textarea><br>
+					Question Guideline:<br>
+					<textarea rows="3" name="S68" cols="20" class="inputBoxGuideline"></textarea></td>
+                    <td class="forumTextOdd" width="11%">
+                        <select id="Select1" class="inputBox" style="margin-right:3px;margin-left:5px;" name="status98" size="1">
+                            <option>Select</option>
+                            <option>Scale (1-4)</option>
+							<option>Scale (1-10)</option>
+							<option>Test Case</option>
+							<option>Yes/No</option>
+                        	<option>Dynamic</option>
+                        </select></td>
+                    <td class="forumTextOdd" width="3%">
+                        <input type="text" style="width:30px" name="T70"  class="inputBox" value="20" size="20"></td>
+                    <td class="forumTextOdd" nowrap  width="12%">
+                        <select id="Select1" class="inputBox" style="margin-right:3px;margin-left:5px;" name="status69" size="1">
+                            <option>N/A</option>
+							<option>Required</option>
+							<option>Optional</option>
+                        </select></td>
+                    <td class="forumTextOdd" width="4%" >
+                        <input type="button" onClick='document.location="#"'  value="Remove" class="Buttons2"></td>
+                </tr>
+                <tr onMouseOver="javascript:highlightTableRow(this);" style="background-color:#ffffff">
+                    <td class="ForumQuestion" width="66%">
+					Question Text:<br>
+					<textarea rows="2" name="S41" cols="20" class="inputBoxQuestion">Suitable constructors are defined for the component.</textarea><br>
+					Question Guideline:<br>
+					<textarea rows="3" name="S69" cols="20" class="inputBoxGuideline"></textarea></td>
+                    <td class="forumTextOdd" width="11%">
+                        <select id="Select1" class="inputBox" style="margin-right:3px;margin-left:5px;" name="status99" size="1">
+                            <option>Select</option>
+                            <option>Scale (1-4)</option>
+							<option>Scale (1-10)</option>
+							<option>Test Case</option>
+							<option>Yes/No</option>
+                        	<option>Dynamic</option>
+                        </select></td>
+                    <td class="forumTextOdd" width="3%">
+                        <input type="text" style="width:30px" name="T71"  class="inputBox" value="10" size="20"></td>
+                    <td class="forumTextOdd" nowrap  width="12%">
+                        <select id="Select1" class="inputBox" style="margin-right:3px;margin-left:5px;" name="status70" size="1">
+                            <option>N/A</option>
+							<option>Required</option>
+							<option>Optional</option>
+                        </select></td>
+                    <td class="forumTextOdd" width="4%" >
+                        <input type="button" onClick='document.location="#"'  value="Remove" class="Buttons2"></td>
+                </tr>
+                <tr onMouseOver="javascript:highlightTableRow(this);" style="background-color:#ffffff">
+                    <td class="ForumQuestion" width="66%">
+					Question Text:<br>
+					<textarea rows="2" name="S42" cols="20" class="inputBoxQuestion">Class modifiers such as final, static, abstract are appropriately used where applicable.</textarea><br>
+					Question Guideline:<br>
+					<textarea rows="3" name="S70" cols="20" class="inputBoxGuideline"></textarea></td>
+                    <td class="forumTextOdd" width="11%">
+                        <select id="Select1" class="inputBox" style="margin-right:3px;margin-left:5px;" name="status100" size="1">
+                            <option>Select</option>
+                            <option>Scale (1-4)</option>
+							<option>Scale (1-10)</option>
+							<option>Test Case</option>
+							<option>Yes/No</option>
+                        	<option>Dynamic</option>
+                        </select></td>
+                    <td class="forumTextOdd" width="3%">
+                        <input type="text" style="width:30px" name="T72"  class="inputBox" value="10" size="20"></td>
+                    <td class="forumTextOdd" nowrap  width="12%">
+                        <select id="Select1" class="inputBox" style="margin-right:3px;margin-left:5px;" name="status71" size="1">
+                            <option>N/A</option>
+							<option>Required</option>
+							<option>Optional</option>
+                        </select></td>
+                    <td class="forumTextOdd" width="4%" >
+                        <input type="button" onClick='document.location="#"'  value="Remove" class="Buttons2"></td>
+                </tr>
+                
+<!--Begin lists -->
+				<tr>
+                    <td class="ForumQuestion" width="66%">
+					&nbsp;</td>
+                    <td class="forumTextOdd" width="11%">
+                        <p style="text-align: right"><strong>Subtotal:</strong></td>
+                    <td class="forumTextOdd" width="19%" colspan="3">
+                        <input type="text" style="width:30px; height:16px" name="T138"  class="inputBox" size="20" disabled value="100">&nbsp; 
+						Section
+                        Questions must total 100.</td>
+                    </tr>
+				<tr>
+                    <td class="forumHeadFoot" colspan="5" height="5"><img src="images/clear.gif" alt="" width="10" height="5" border="0"/></td>
+                </tr>
+				<tr>
+                    <td class="forumTextEven" colspan="3">
+					<strong>Section:&nbsp; </strong>
+					<input type="text" style="width:300px" name="T78"  class="inputBox" value="Variable Definition" size="20">&nbsp;
+					<b>Weight:</b> 
+					<input type="text" style="width:50px" name="T126"  class="inputBox" value="25" size="20" disabled></td>
+                    <td class="forumTextEven">
+					<input type="button" onClick='document.location="#"'  value="Add New" class="Buttons" style="float:right"></td>
+                    <td class="forumTextEven" >
+					<input type="button" onClick='document.location="#"'  value="Remove" class="Buttons2"></td>
+                </tr>
+				<tr>
+                    <td class="SectionHeaderQ" width="66%">
+					Question</td>
+                    <td class="SectionHeader" width="11%">
+					Type</td>
+                    <td class="SectionHeader" width="3%">
+					Weight</td>
+                    <td class="SectionHeader" nowrap width="12%">
+                        Document Upload</td>
+                    <td class="SectionHeader" width="4%" >
+					<input type="button" onClick='document.location="#"'  value="Add New" class="Buttons"></td>
+                </tr>
+				<tr onMouseOver="javascript:highlightTableRow(this);" style="background-color:#ffffff">
+                    <td class="ForumQuestion" width="66%">
+					Question Text:<br>
+					<textarea rows="2" name="S46" cols="20" class="inputBoxQuestion">Variable scope is correctly defined (i.e. the variables are well encapsulated.)</textarea><br>
+					Question Guideline:<br>
+					<textarea rows="3" name="S71" cols="20" class="inputBoxGuideline"></textarea></td>
+                    <td class="forumTextOdd" width="11%">
+                        <select id="Select1" class="inputBox" style="margin-right:3px;margin-left:5px;" name="status101" size="1">
+                            <option>Select</option>
+                            <option>Scale (1-4)</option>
+							<option>Scale (1-10)</option>
+							<option>Test Case</option>
+							<option>Yes/No</option>
+                        	<option>Dynamic</option>
+                        </select></td>
+                    <td class="forumTextOdd" width="3%">
+                        <input type="text" style="width:30px" name="T80"  class="inputBox" value="33" size="20"></td>
+                    <td class="forumTextOdd" nowrap  width="12%">
+                        <select id="Select1" class="inputBox" style="margin-right:3px;margin-left:5px;" name="status72" size="1">
+                            <option>N/A</option>
+							<option>Required</option>
+							<option>Optional</option>
+                        </select></td>
+                    <td class="forumTextOdd" width="4%" >
+					<input type="button" onClick='document.location="#"'  value="Remove" class="Buttons2"></td>
+                </tr>
+				<tr onMouseOver="javascript:highlightTableRow(this);" style="background-color:#ffffff">
+                    <td class="ForumQuestion" width="66%">
+					Question Text:<br>
+					<textarea rows="2" name="S47" cols="20" class="inputBoxQuestion">Type assignments are defined with respect to both efficiency and flexibility as pertains to this component.
+(i.e. generic objects may be used to increase component flexibility at the cost of efficiency.)</textarea><br>
+					Question Guideline:<br>
+					<textarea rows="3" name="S72" cols="20" class="inputBoxGuideline"></textarea></td>
+                    <td class="forumTextOdd" width="11%">
+                        <select id="Select1" class="inputBox" style="margin-right:3px;margin-left:5px;" name="status102" size="1">
+                            <option>Select</option>
+                            <option>Scale (1-4)</option>
+							<option>Scale (1-10)</option>
+							<option>Test Case</option>
+							<option>Yes/No</option>
+                        	<option>Dynamic</option>
+                        </select></td>
+                    <td class="forumTextOdd" width="3%">
+                        <input type="text" style="width:30px" name="T81"  class="inputBox" value="34" size="20"></td>
+                    <td class="forumTextOdd" nowrap  width="12%">
+                        <select id="Select1" class="inputBox" style="margin-right:3px;margin-left:5px;" name="status73" size="1">
+                            <option>N/A</option>
+							<option>Required</option>
+							<option>Optional</option>
+                        </select></td>
+                    <td class="forumTextOdd" width="4%" >
+					<input type="button" onClick='document.location="#"'  value="Remove" class="Buttons2"></td>
+                </tr>
+				<tr onMouseOver="javascript:highlightTableRow(this);" style="background-color:#ffffff">
+                    <td class="ForumQuestion" width="66%">
+					Question Text:<br>
+					<textarea rows="2" name="S48" cols="20" class="inputBoxQuestion">Variable details (scope, type, name, description) are defined in the 'Documentation' tab of Poseidon.</textarea><br>
+					Question Guideline:<br>
+					<textarea rows="3" name="S73" cols="20" class="inputBoxGuideline"></textarea></td>
+                    <td class="forumTextOdd" width="11%">
+                        <select id="Select1" class="inputBox" style="margin-right:3px;margin-left:5px;" name="status103" size="1">
+                            <option>Select</option>
+                            <option>Scale (1-4)</option>
+							<option>Scale (1-10)</option>
+							<option>Test Case</option>
+							<option>Yes/No</option>
+                        	<option>Dynamic</option>
+                        </select></td>
+                    <td class="forumTextOdd" width="3%">
+                        <input type="text" style="width:30px" name="T82"  class="inputBox" value="33" size="20"></td>
+                    <td class="forumTextOdd" nowrap  width="12%">
+                        <select id="Select1" class="inputBox" style="margin-right:3px;margin-left:5px;" name="status74" size="1">
+                            <option>N/A</option>
+							<option>Required</option>
+							<option>Optional</option>
+                        </select></td>
+                    <td class="forumTextOdd" width="4%" >
+					<input type="button" onClick='document.location="#"'  value="Remove" class="Buttons2"></td>
+                </tr>
+				<tr>
+                    <td class="ForumQuestion" width="66%">
+					&nbsp;</td>
+                    <td class="forumTextOdd" width="11%">
+                        <p style="text-align: right"><strong>Subtotal:</strong></td>
+                    <td class="forumTextOdd" width="19%" colspan="3">
+                        <input type="text" style="width:30px; height:16px" name="T137"  class="inputBox" size="20" disabled value="100">&nbsp; 
+						Section
+                        Questions must total 100.</td>
+                    </tr>
+				<tr>
+                    <td class="forumHeadFoot" colspan="5" height="5"><img src="images/clear.gif" alt="" width="10" height="5" border="0"/></td>
+                </tr>
+				<tr>
+                    <td class="forumTextEven" colspan="3">
+					<strong>Section:&nbsp; </strong>
+					<input type="text" style="width:300px" name="T88"  class="inputBox" value="Method Definition" size="20">&nbsp;
+					<b>Weight:</b> 
+					<input type="text" style="width:50px" name="T125"  class="inputBox" value="10" size="20" disabled></td>
+                    <td class="forumTextEven">
+					<input type="button" onClick='document.location="#"'  value="Add New" class="Buttons" style="float:right"></td>
+                    <td class="forumTextEven" >
+					<input type="button" onClick='document.location="#"'  value="Remove" class="Buttons2"></td>
+                </tr>
+				<tr>
+                    <td class="SectionHeaderQ" width="66%">
+					Question</td>
+                    <td class="SectionHeader" width="11%">
+					Type</td>
+                    <td class="SectionHeader" width="3%">
+					Weight</td>
+                    <td class="SectionHeader" nowrap width="12%">
+                        Document Upload</td>
+                    <td class="SectionHeader" width="4%" >
+					<input type="button" onClick='document.location="#"'  value="Add New" class="Buttons"></td>
+                </tr>
+				<tr onMouseOver="javascript:highlightTableRow(this);" style="background-color:#ffffff">
+                    <td class="ForumQuestion" width="66%">
+					Question Text:<br>
+					<textarea rows="2" name="S53" cols="20" class="inputBoxQuestion">Method scope is correctly defined (i.e. Not everything is public.)</textarea><br>
+					Question Guideline:<br>
+					<textarea rows="3" name="S74" cols="20" class="inputBoxGuideline"></textarea></td>
+                    <td class="forumTextOdd" width="11%">
+                        <select id="Select1" class="inputBox" style="margin-right:3px;margin-left:5px;" name="status104" size="1">
+                            <option>Select</option>
+                            <option>Scale (1-4)</option>
+							<option>Scale (1-10)</option>
+							<option>Test Case</option>
+							<option>Yes/No</option>
+                        	<option>Dynamic</option>
+                        </select></td>
+                    <td class="forumTextOdd" width="3%">
+                        <input type="text" style="width:30px" name="T22"  class="inputBox" value="15" size="20"></td>
+                    <td class="forumTextOdd" nowrap  width="12%">
+                        <select id="Select1" class="inputBox" style="margin-right:3px;margin-left:5px;" name="status75" size="1">
+                            <option>N/A</option>
+							<option>Required</option>
+							<option>Optional</option>
+                        </select></td>
+                    <td class="forumTextOdd" width="4%" >
+					<input type="button" onClick='document.location="#"'  value="Remove" class="Buttons2"></td>
+                </tr>
+				<tr onMouseOver="javascript:highlightTableRow(this);" style="background-color:#ffffff">
+                    <td class="ForumQuestion" width="66%">
+					Question Text:<br>
+					<textarea rows="2" name="S54" cols="20" class="inputBoxQuestion">All exceptions are properly handled and thrown. Custom exceptions must be displayed in the diagram.
+(If exceptions are not detailed in the Class Diagram, they must be detailed in the Component Specification.)</textarea><br>
+					Question Guideline:<br>
+					<textarea rows="3" name="S75" cols="20" class="inputBoxGuideline"></textarea></td>
+                    <td class="forumTextOdd" width="11%">
+                        <select id="Select1" class="inputBox" style="margin-right:3px;margin-left:5px;" name="status105" size="1">
+                            <option>Select</option>
+                            <option>Scale (1-4)</option>
+							<option>Scale (1-10)</option>
+							<option>Test Case</option>
+							<option>Yes/No</option>
+                        	<option>Dynamic</option>
+                        </select></td>
+                    <td class="forumTextOdd" width="3%">
+                        <input type="text" style="width:30px" name="T23"  class="inputBox" value="15" size="20"></td>
+                    <td class="forumTextOdd" nowrap  width="12%">
+                        <select id="Select1" class="inputBox" style="margin-right:3px;margin-left:5px;" name="status76" size="1">
+                            <option>N/A</option>
+							<option>Required</option>
+							<option>Optional</option>
+                        </select></td>
+                    <td class="forumTextOdd" width="4%" >
+					<input type="button" onClick='document.location="#"'  value="Remove" class="Buttons2"></td>
+                </tr>
+				<tr onMouseOver="javascript:highlightTableRow(this);" style="background-color:#ffffff">
+                    <td class="ForumQuestion" width="66%">
+					Question Text:<br>
+					<textarea rows="2" name="S55" cols="20" class="inputBoxQuestion">Modifiers are properly used where applicable.</textarea><br>
+					Question Guideline:<br>
+					<textarea rows="3" name="S76" cols="20" class="inputBoxGuideline"></textarea></td>
+                    <td class="forumTextOdd" width="11%">
+                        <select id="Select1" class="inputBox" style="margin-right:3px;margin-left:5px;" name="status106" size="1">
+                            <option>Select</option>
+                            <option>Scale (1-4)</option>
+							<option>Scale (1-10)</option>
+							<option>Test Case</option>
+							<option>Yes/No</option>
+                        	<option>Dynamic</option>
+                        </select></td>
+                    <td class="forumTextOdd" width="3%">
+                        <input type="text" style="width:30px" name="T24"  class="inputBox" value="14" size="20"></td>
+                    <td class="forumTextOdd" nowrap  width="12%">
+                        <select id="Select1" class="inputBox" style="margin-right:3px;margin-left:5px;" name="status77" size="1">
+                            <option>N/A</option>
+							<option>Required</option>
+							<option>Optional</option>
+                        </select></td>
+                    <td class="forumTextOdd" width="4%" >
+					<input type="button" onClick='document.location="#"'  value="Remove" class="Buttons2"></td>
+                </tr>
+				<tr onMouseOver="javascript:highlightTableRow(this);" style="background-color:#ffffff">
+                    <td class="ForumQuestion" width="66%">
+					Question Text:<br>
+					<textarea rows="2" name="S21" cols="20" class="inputBoxQuestion">Return types are appropriately defined.
+(i.e. instead of returning a Boolean for success/failure, an Exception is thrown).</textarea><br>
+					Question Guideline:<br>
+					<textarea rows="3" name="S77" cols="20" class="inputBoxGuideline"></textarea></td>
+                    <td class="forumTextOdd" width="11%">
+                        <select id="Select1" class="inputBox" style="margin-right:3px;margin-left:5px;" name="status107" size="1">
+                            <option>Select</option>
+                            <option>Scale (1-4)</option>
+							<option>Scale (1-10)</option>
+							<option>Test Case</option>
+							<option>Yes/No</option>
+                        	<option>Dynamic</option>
+                        </select></td>
+                    <td class="forumTextOdd" width="3%">
+                        <input type="text" style="width:30px" name="T94"  class="inputBox" value="14" size="20"></td>
+                    <td class="forumTextOdd" nowrap  width="12%">
+                        <select id="Select1" class="inputBox" style="margin-right:3px;margin-left:5px;" name="status78" size="1">
+                            <option>N/A</option>
+							<option>Required</option>
+							<option>Optional</option>
+                        </select></td>
+                    <td class="forumTextOdd" width="4%" >
+					<input type="button" onClick='document.location="#"'  value="Remove" class="Buttons2"></td>
+                </tr>
+				<tr onMouseOver="javascript:highlightTableRow(this);" style="background-color:#ffffff">
+                    <td class="ForumQuestion" width="66%">
+					Question Text:<br>
+					<textarea rows="2" name="S22" cols="20" class="inputBoxQuestion">Method arguments are appropriately defined (i.e. instead of passing in 10+ arguments an object is passed in).</textarea><br>
+					Question Guideline:<br>
+					<textarea rows="3" name="S78" cols="20" class="inputBoxGuideline"></textarea></td>
+                    <td class="forumTextOdd" width="11%">
+                        <select id="Select1" class="inputBox" style="margin-right:3px;margin-left:5px;" name="status108" size="1">
+                            <option>Select</option>
+                            <option>Scale (1-4)</option>
+							<option>Scale (1-10)</option>
+							<option>Test Case</option>
+							<option>Yes/No</option>
+                        	<option>Dynamic</option>
+                        </select></td>
+                    <td class="forumTextOdd" width="3%">
+                        <input type="text" style="width:30px" name="T95"  class="inputBox" value="14" size="20"></td>
+                    <td class="forumTextOdd" nowrap  width="12%">
+                        <select id="Select1" class="inputBox" style="margin-right:3px;margin-left:5px;" name="status79" size="1">
+                            <option>N/A</option>
+							<option>Required</option>
+							<option>Optional</option>
+                        </select></td>
+                    <td class="forumTextOdd" width="4%" >
+					<input type="button" onClick='document.location="#"'  value="Remove" class="Buttons2"></td>
+                </tr>
+				<tr onMouseOver="javascript:highlightTableRow(this);" style="background-color:#ffffff">
+                    <td class="ForumQuestion" width="66%">
+					Question Text:<br>
+					<textarea rows="2" name="S56" cols="20" class="inputBoxQuestion">The required API as stated in the requirements specification is available.</textarea><br>
+					Question Guideline:<br>
+					<textarea rows="3" name="S79" cols="20" class="inputBoxGuideline"></textarea></td>
+                    <td class="forumTextOdd" width="11%">
+                        <select id="Select1" class="inputBox" style="margin-right:3px;margin-left:5px;" name="status109" size="1">
+                            <option>Select</option>
+                            <option>Scale (1-4)</option>
+							<option>Scale (1-10)</option>
+							<option>Test Case</option>
+							<option>Yes/No</option>
+                        	<option>Dynamic</option>
+                        </select></td>
+                    <td class="forumTextOdd" width="3%">
+                        <input type="text" style="width:30px" name="T96"  class="inputBox" value="14" size="20"></td>
+                    <td class="forumTextOdd" nowrap  width="12%">
+                        <select id="Select1" class="inputBox" style="margin-right:3px;margin-left:5px;" name="status80" size="1">
+                            <option>N/A</option>
+							<option>Required</option>
+							<option>Optional</option>
+                        </select></td>
+                    <td class="forumTextOdd" width="4%" >
+					<input type="button" onClick='document.location="#"'  value="Remove" class="Buttons2"></td>
+                </tr>
+				<tr onMouseOver="javascript:highlightTableRow(this);" style="background-color:#ffffff">
+                    <td class="ForumQuestion" width="66%">
+					Question Text:<br>
+					<textarea rows="2" name="S24" cols="20" class="inputBoxQuestion">Method details (scope, type, name, description) are defined in the 'Documentation' tab of Poseidon.</textarea><br>
+					Question Guideline:<br>
+					<textarea rows="3" name="S80" cols="20" class="inputBoxGuideline"></textarea></td>
+                    <td class="forumTextOdd" width="11%">
+                        <select id="Select1" class="inputBox" style="margin-right:3px;margin-left:5px;" name="status110" size="1">
+                            <option>Select</option>
+                            <option>Scale (1-4)</option>
+							<option>Scale (1-10)</option>
+							<option>Test Case</option>
+							<option>Yes/No</option>
+                        	<option>Dynamic</option>
+                        </select></td>
+                    <td class="forumTextOdd" width="3%">
+                        <input type="text" style="width:30px" name="T97"  class="inputBox" value="14" size="20"></td>
+                    <td class="forumTextOdd" nowrap  width="12%">
+                        <select id="Select1" class="inputBox" style="margin-right:3px;margin-left:5px;" name="status81" size="1">
+                            <option>N/A</option>
+							<option>Required</option>
+							<option>Optional</option>
+                        </select></td>
+                    <td class="forumTextOdd" width="4%" >
+					<input type="button" onClick='document.location="#"'  value="Remove" class="Buttons2"></td>
+                </tr>
+				<tr>
+                    <td class="ForumQuestion" width="66%">
+					&nbsp;</td>
+                    <td class="forumTextOdd" width="11%">
+                        <p style="text-align: right"><strong>Subtotal:</strong></td>
+                    <td class="forumTextOdd" width="19%" colspan="3">
+                        <input type="text" style="width:30px; height:16px" name="T136"  class="inputBox" size="20" disabled value="100">&nbsp; 
+						Section
+                        Questions must total 100.</td>
+                    </tr>
+				<tr>
+                    <td class="forumHeadFoot" colspan="5" height="5"><img src="images/clear.gif" alt="" width="10" height="5" border="0"/></td>
+                </tr>
+				<tr onMouseOver="javascript:highlightTableRow(this);" style="background-color:#ffffff">
+                    <td class="forumTextEven" colspan="3">
+					<strong>Section:&nbsp; </strong>
+					<input type="text" style="width:300px" name="T110"  class="inputBox" value="Use Case Diagrams" size="20">&nbsp;
+					<b>Weight:</b> 
+					<input type="text" style="width:50px" name="T124"  class="inputBox" value="10" size="20" disabled></td>
+                    <td class="forumTextEven">
+					<input type="button" onClick='document.location="#"'  value="Add New" class="Buttons" style="float:right"></td>
+                    <td class="forumTextEven" >
+					<input type="button" onClick='document.location="#"'  value="Remove" class="Buttons2"></td>
+                </tr>
+				<tr>
+                    <td class="SectionHeaderQ" width="66%">
+					Question</td>
+                    <td class="SectionHeader" width="11%">
+					Type</td>
+                    <td class="SectionHeader" width="3%">
+					Weight</td>
+                    <td class="SectionHeader" nowrap width="12%">
+                        Document Upload</td>
+                    <td class="SectionHeader" width="4%" >
+					<input type="button" onClick='document.location="#"'  value="Add New" class="Buttons"></td>
+                </tr>
+				<tr onMouseOver="javascript:highlightTableRow(this);" style="background-color:#ffffff">
+                    <td class="ForumQuestion" width="66%">
+					<br>
+					Question Text:<br>
+					<textarea rows="2" name="S25" cols="20" class="inputBoxQuestion">The Use Case Diagrams reflect the functionality as outlined in the Requirements Specification.</textarea><br>
+					Question Guideline:<br>
+					<textarea rows="3" name="S81" cols="20" class="inputBoxGuideline"></textarea></td>
+                    <td class="forumTextOdd" width="11%">
+                        <select id="Select1" class="inputBox" style="margin-right:3px;margin-left:5px;" name="status111" size="1">
+                            <option>Select</option>
+                            <option>Scale (1-4)</option>
+							<option>Scale (1-10)</option>
+							<option>Test Case</option>
+							<option>Yes/No</option>
+                        	<option>Dynamic</option>
+                        </select></td>
+                    <td class="forumTextOdd" width="3%">
+                        <input type="text" style="width:30px" name="T29"  class="inputBox" value="100" size="20"></td>
+                    <td class="forumTextOdd" nowrap  width="12%">
+                        <select id="Select1" class="inputBox" style="margin-right:3px;margin-left:5px;" name="status82" size="1">
+                            <option>N/A</option>
+							<option>Required</option>
+							<option>Optional</option>
+                        </select></td>
+                    <td class="forumTextOdd" width="4%" >
+					<input type="button" onClick='document.location="#"'  value="Remove" class="Buttons2"></td>
+                </tr>
+				<tr>
+                    <td class="ForumQuestion" width="66%">
+					&nbsp;</td>
+                    <td class="forumTextOdd" width="11%">
+                        <p style="text-align: right"><strong>Subtotal:</strong></td>
+                    <td class="forumTextOdd" width="19%" colspan="3">
+                        <input type="text" style="width:30px; height:16px" name="T135"  class="inputBox" size="20" disabled value="100">&nbsp; 
+						Section
+                        Questions must total 100.</td>
+                    </tr>
+				<tr>
+                    <td class="forumHeadFoot" colspan="5" height="5"><img src="images/clear.gif" alt="" width="10" height="5" border="0"/></td>
+                </tr>
+				<tr>
+                    <td class="forumTextEven" colspan="3">
+					<strong>Section:&nbsp; </strong>
+					<input type="text" style="width:300px" name="T49"  class="inputBox" value="Sequence Diagrams" size="20">&nbsp;
+					<b>Weight:</b> 
+					<input type="text" style="width:50; height:16" name="T123"  class="inputBox" value="10" size="20" disabled></td>
+                    <td class="forumTextEven">
+					<input type="button" onClick='document.location="#"'  value="Add New" class="Buttons" style="float:right"></td>
+                    <td class="forumTextEven" >
+					<input type="button" onClick='document.location="#"'  value="Remove" class="Buttons2"></td>
+                </tr>
+				<tr>
+                    <td class="SectionHeaderQ" width="66%">
+					Question</td>
+                    <td class="SectionHeader" width="11%">
+					Type</td>
+                    <td class="SectionHeader" width="3%">
+					Weight</td>
+                    <td class="SectionHeader" nowrap width="12%">
+                        Document Upload</td>
+                    <td class="SectionHeader" width="4%" >
+					<input type="button" onClick='document.location="#"'  value="Add New" class="Buttons"></td>
+                </tr>
+				<tr onMouseOver="javascript:highlightTableRow(this);" style="background-color:#ffffff">
+                    <td class="ForumQuestion" width="66%">
+					Question Text:<br>
+					<textarea rows="2" name="S26" cols="20" class="inputBoxQuestion">At least one Sequence Diagram exists for each non-trivial concrete Use Case in the Use Case Diagrams. If there are no non-trivial use cases (involving interaction between 5 or more classes), the submission may have no sequence diagrams. In that case, give this item a score of 4.</textarea><br>
+					Question Guideline:<br>
+					<textarea rows="3" name="S82" cols="20" class="inputBoxGuideline"></textarea></td>
+                    <td class="forumTextOdd" width="11%">
+                        <select id="Select1" class="inputBox" style="margin-right:3px;margin-left:5px;" name="status112" size="1">
+                            <option>Select</option>
+                            <option>Scale (1-4)</option>
+							<option>Scale (1-10)</option>
+							<option>Test Case</option>
+							<option>Yes/No</option>
+                        	<option>Dynamic</option>
+                        </select></td>
+                    <td class="forumTextOdd" width="3%">
+                        <input type="text" style="width:30px" name="T113"  class="inputBox" value="100" size="20"></td>
+                    <td class="forumTextOdd" nowrap  width="12%">
+                        <select id="Select1" class="inputBox" style="margin-right:3px;margin-left:5px;" name="status84" size="1">
+                            <option>N/A</option>
+							<option>Required</option>
+							<option>Optional</option>
+                        </select></td>
+                    <td class="forumTextOdd" width="4%" >
+					<input type="button" onClick='document.location="#"'  value="Remove" class="Buttons2"></td>
+                </tr>
+				<tr>
+                    <td class="ForumQuestion" width="66%">
+					&nbsp;</td>
+                    <td class="forumTextOdd" width="11%">
+                        <p style="text-align: right"><strong>Subtotal:</strong></td>
+                    <td class="forumTextOdd" width="19%" colspan="3">
+                        <input type="text" style="width:30px; height:16px" name="T134"  class="inputBox" size="20" disabled value="100">&nbsp; 
+						Section
+                        Questions must total 100.</td>
+                    </tr>
+				<tr>
+                    <td class="forumHeadFoot" colspan="5" height="5"><img src="images/clear.gif" alt="" width="10" height="5" border="0"/></td>
+                </tr>
+				<tr>
+                    <td class="forumTextEven" colspan="3">
+					<strong>Section:&nbsp; </strong>
+					<input type="text" style="width:300px" name="T51"  class="inputBox" value="Anonymity" size="20">&nbsp;
+					<b>Weight:</b> 
+					<input type="text" style="width:50px" name="T122"  class="inputBox" value="10" size="20" disabled></td>
+                    <td class="forumTextEven">
+					<input type="button" onClick='document.location="#"'  value="Add New" class="Buttons" style="float:right"></td>
+                    <td class="forumTextEven" >
+					<input type="button" onClick='document.location="#"'  value="Remove" class="Buttons2"></td>
+                </tr>
+				<tr>
+                    <td class="SectionHeaderQ" width="66%">
+					Question</td>
+                    <td class="SectionHeader" width="11%">
+					Type</td>
+                    <td class="SectionHeader" width="3%">
+					Weight</td>
+                    <td class="SectionHeader" nowrap width="12%">
+                        &nbsp;</td>
+                    <td class="SectionHeader" width="4%" >
+					<input type="button" onClick='document.location="#"'  value="Add New" class="Buttons"></td>
+                </tr>
+				<tr onMouseOver="javascript:highlightTableRow(this);" style="background-color:#ffffff">
+                    <td class="ForumQuestion" width="66%">
+					Question Text:<br>
+					<textarea rows="2" name="S27" cols="20" class="inputBoxQuestion">The submission does not contain any information identifying the designer.</textarea><br>
+					Question Guideline:<br>
+					<textarea rows="3" name="S83" cols="20" class="inputBoxGuideline"></textarea></td>
+                    <td class="forumTextOdd" width="11%">
+                        <select id="Select1" class="inputBox" style="margin-right:3px;margin-left:5px;" name="status113" size="1">
+                            <option>Select</option>
+                            <option>Scale (1-4)</option>
+							<option>Scale (1-10)</option>
+							<option>Test Case</option>
+							<option>Yes/No</option>
+                        	<option>Dynamic</option>
+                        </select></td>
+                    <td class="forumTextOdd" width="3%">
+                        <input type="text" style="width:30px" name="T111"  class="inputBox" value="100" size="20"></td>
+                    <td class="forumTextOdd" nowrap  width="12%">
+                        <select id="Select1" class="inputBox" style="margin-right:3px;margin-left:5px;" name="status83" size="1">
+                            <option>N/A</option>
+							<option>Required</option>
+							<option>Optional</option>
+                        </select></td>
+                    <td class="forumTextOdd" width="4%" >
+					<input type="button" onClick='document.location="#"'  value="Remove" class="Buttons2"></td>
+                </tr>
+				<tr>
+                    <td class="ForumQuestion" width="66%">
+					&nbsp;</td>
+                    <td class="forumTextOdd" width="11%">
+                        <p style="text-align: right"><strong>Subtotal:</strong></td>
+                    <td class="forumTextOdd" width="19%" colspan="3">
+                        <input type="text" style="width:30px; height:16px" name="T133"  class="inputBox" size="20" disabled value="100">&nbsp; 
+						Section
+                        Questions must total 100.</td>
+                    </tr>
+				<tr>
+                    <td class="forumHeadFoot" colspan="5" height="5"><img src="images/clear.gif" alt="" width="10" height="5" border="0"/></td>
+                </tr>
+				<tr>
+                    <td class="forumTextEven" colspan="3">
+					<strong>Section:&nbsp; </strong>
+					<input type="text" style="width:300px" name="T53"  class="inputBox" value="Overall" size="20">&nbsp;
+					<b>Weight:</b> 
+					<input type="text" style="width:50px" name="T120"  class="inputBox" value="10" size="20" disabled></td>
+                    <td class="forumTextEven">
+					<input type="button" onClick='document.location="#"'  value="Add New" class="Buttons" style="float:right"></td>
+                    <td class="forumTextEven" >
+					<input type="button" onClick='document.location="#"'  value="Remove" class="Buttons2"></td>
+                </tr>
+				<tr>
+                    <td class="SectionHeaderQ" width="66%">
+					Question</td>
+                    <td class="SectionHeader" width="11%">
+					Type</td>
+                    <td class="SectionHeader" width="3%">
+					Weight</td>
+                    <td class="SectionHeader" nowrap width="12%">
+                        &nbsp;</td>
+                    <td class="SectionHeader" width="4%" >
+					<input type="button" onClick='document.location="#"'  value="Add New" class="Buttons"></td>
+                </tr>
+				<tr onMouseOver="javascript:highlightTableRow(this);" style="background-color:#ffffff">
+                    <td class="ForumQuestion" width="66%">
+					Question Text:<br>
+					<textarea rows="2" name="S28" cols="20" class="inputBoxQuestion">This submission is worthy of being reviewed.</textarea><br>
+					Question Guideline:<br>
+					<textarea rows="3" name="S84" cols="20" class="inputBoxGuideline"></textarea></td>
+                    <td class="forumTextOdd" width="11%">
+                        <select id="Select1" class="inputBox" style="margin-right:3px;margin-left:5px;" name="status114" size="1">
+                            <option>Select</option>
+                            <option>Scale (1-4)</option>
+							<option>Scale (1-10)</option>
+							<option>Test Case</option>
+							<option>Yes/No</option>
+                        	<option>Dynamic</option>
+                        </select></td>
+                    <td class="forumTextOdd" width="3%">
+                        <input type="text" style="width:30px" name="T121"  class="inputBox" value="100" size="20"></td>
+                    <td class="forumTextOdd" nowrap  width="12%">
+                        <select id="Select1" class="inputBox" style="margin-right:3px;margin-left:5px;" name="status85" size="1">
+                            <option>N/A</option>
+							<option>Required</option>
+							<option>Optional</option>
+                        </select></td>
+                    <td class="forumTextOdd" width="4%" >
+					<input type="button" onClick='document.location="#"'  value="Remove" class="Buttons2"></td>
+                </tr>
+				<tr>
+                    <td class="ForumQuestion" width="66%">
+					&nbsp;</td>
+                    <td class="forumTextOdd" width="11%">
+                        <p style="text-align: right"><strong>Subtotal:</strong></td>
+                    <td class="forumTextOdd" width="19%" colspan="3">
+                        <input type="text" style="width:30px; height:16px" name="T132"  class="inputBox" size="20" disabled value="100">&nbsp; 
+						Section
+                        Questions must total 100.</td>
+                    </tr>
+				<tr>
+                    <td class="forumTextEven" width="66%">
+					&nbsp;</td>
+                    <td class="forumTextEven" width="11%">
+                        <p style="text-align: right"><strong>Section Subtotal:</strong></td>
+                    <td class="forumTextEven" width="19%" colspan="3">
+                        <input type="text" style="width:30px; height:16px" name="T141"  class="inputBox" size="20" disabled value="100">&nbsp; 
+						Group Sections must total 100.</td>
+                </tr>
+				<tr>
+                    <td class="forumHeadFoot" colspan="5" height="5"><img src="images/clear.gif" alt="" width="10" height="5" border="0"/></td>
+                </tr>
+				</table>
+        	<p align="center">
+			<input type="button" onClick='document.location="index.htm"' style="width:125px; float:center;" value="Save Changes" class="Buttons2"><br>
+		</td>
+    </tr>
+</table>
+</div><!-- End Contentarea Div -->
+
+<!-- Footer begins -->
+<!-- Footer Include Begins -->
+<div id="footer">
+<table width="100%" border="0" cellpadding="0" cellspacing="0" bgcolor="#666666">
+    <tr>
+        <td height="15" background="images/footer_graphic_tile.gif" align="left"><img src="images/footer_graphic.gif" width="710" height="16" border="0"/></td>
+    </tr>
+
+    <tr valign="top">
+        <td width="100%" align="center" bgcolor="#43515E"><img src="images/clear.gif" width="1" height="5" border="0"/><br/>
+            <div class="smallFoot">
+            <A href="http://www.topcoder.com" class="smallFoot">Homee</A>&#160;&#160;|&#160;&#160;
+            <A href="http://www.topcoder.com/tc?module=Static&d1=about&d2=index" class="smallFoot">About TopCoder</A>&#160;&#160;|&#160;&#160;
+            <a href="http://www.topcoder.com/tc/?d1=review_board&d2=competition" class="smallFoot">Review Boards</A>&#160;&#160;|&#160;&#160;
+            <A href="http://www.topcoder.com/?t=news_events&c=index" class="smallFoot">Press Room</A>&#160;&#160;|&#160;&#160;
+            <A href="/http://www.topcoder.com?t=contacts&c=index" class="smallFoot">Contact Us</A>&#160;&#160;|&#160;&#160;
+            <A href="http://www.topcoder.com/tc?module=Static&d1=about&d2=privacy" class="smallFoot">Privacy</A>&#160;&#160;|&#160;&#160;
+            <A href="http://www.topcoder.com/tc?module=Static&d1=about&d2=terms" class="smallFoot">Terms</A><br /><br />
+
+            <A href="http://www.topcoder.com" class="smallFoot">Competition</A>&#160;&#160;|&#160;&#160;
+            <A href="http://www.topcoder.com/?t=development&c=index" class="smallFoot">Development</A>&#160;&#160;|&#160;&#160;
+            <A href="http://software.topcoder.com" class="smallFoot">Software</A>&#160;&#160;|&#160;&#160;
+            <A href="http://corporate.topcoder.com/?module=Static&d1=corpd2=tces_home" class="smallFoot">Employment Services</A>&#160;&#160;|&#160;&#160;
+            <A href="http://corporate.topcoder.com/?module=Static&d1=corp&d2=spon_prog&d3=index" class="smallFoot">Sponsorship</A><br /><br />
+
+            Copyright &#169; 2001-2006, TopCoder, Inc. All rights reserved.
+            </div>
+            <br/><br/>
+        </td>
+    </tr>
+</table>
+</div><!-- End Footer Div -->
+</div><!-- End Holder Div -->
+<!-- Footer Include Ends -->
+
+<!-- Footer ends -->
+
+
+</body>
+</html>

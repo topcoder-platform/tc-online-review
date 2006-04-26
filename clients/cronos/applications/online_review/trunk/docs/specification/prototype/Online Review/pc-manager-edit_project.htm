@@ -1,0 +1,1558 @@
+
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+
+<head>
+<!-- TopCoder CSS -->
+        <link type="text/css" rel="stylesheet" href="http://www.topcoder.com/css/style.css">
+        <link type="text/css" rel="stylesheet" href="http://www.topcoder.com/css/coders.css">
+        <link type="text/css" rel="stylesheet" href="http://www.topcoder.com/css/stats.css">
+        <link type="text/css" rel="stylesheet" href="http://www.topcoder.com/css/tcStyles.css">
+		
+<!-- JS from wireframes -->
+		<script language="javascript" src="scripts/expand_collapse2.js"></script>
+		<script language="javascript" src="scripts/donav.js"></script>
+		
+<!-- CSS and JS by Petar -->		
+		<link type="text/css" rel="stylesheet" href="css/new_styles.css">   
+		<script language="JavaScript" type="text/javascript" src="rollovers.js"></script>
+        
+</head>
+
+<body>
+
+
+<!--webbot bot="Include" U-Include="inc_header.htm" TAG="BODY" startspan -->
+<script language="javascript" type="text/javascript">
+<!--
+var objPopUp = null;
+function popUpUnder(event,objectID){
+   objPopTrig = document.getElementById(event);
+   alert(objPopTrig);
+   objPopUp = document.getElementById(objectID);
+   xPos = objPopTrig.offsetLeft;
+   if(xPos + objPopUp.offsetWidth > document.body.clientWidth) xPos = xPos - objPopUp.offsetWidth;
+   objPopUp.style.left = xPos + 'px';
+   objPopUp.style.display = 'block';
+}
+function popDescription(objectID){
+   objPopUp = document.getElementById(objectID);
+   objPopUp.style.visibility = 'visible';
+//   objPopUp.style.display = 'block';
+}
+function hideDescription(){
+   objPopUp.style.visibility = 'hidden';
+//   objPopUp.style.display = 'none';
+   objPopUp = null;
+}
+
+// -->
+</script>
+<STYLE TYPE="text/css">
+div.topBar, div.topBar div, div.memberCountBox
+{
+color: #FFFFFF;
+font-size: 11px;
+}
+div.memberCountBox
+{
+position:absolute;
+top:5;
+left:3;
+z-index:1;
+}
+div.topBar
+{
+background: #FFFFFF url(http://www.topcoder.com/i/interface/top_bg.gif) top center repeat-x;
+vertical-align: top;
+padding: 5px 10px 80px 3px;
+white-space: nowrap;
+}
+div.launchPopUp
+{
+font-size: 11px;
+background-color: #FFFFCC;
+visibility: hidden;
+position: absolute;
+padding: 3px 5px 3px 5px;
+border: solid 1px black;
+font-weight:bold;
+z-index: 3;
+}
+#outerLogo
+{
+width: 360px;
+position: relative;
+z-index: 2;
+}
+#innerLogo
+{
+position: absolute;
+left: 0px;
+}
+</STYLE>
+
+
+<div id="launch0" class="launchPopUp" style="left:73;top:65;">Competitions Home</div>
+<div id="launch1" class="launchPopUp" style="left:115;top:65;">Launch Algorithm Competitions Arena</div>
+<div id="launch2" class="launchPopUp" style="left:140;top:65;">Component Design Active Contests</div>
+<div id="launch3" class="launchPopUp" style="left:170;top:65;">Component Development Active Contests</div>
+<div id="launch4" class="launchPopUp" style="left:210;top:65;">Marathon Match Active Contests</div>
+<map name="launchBar">
+<area shape="rect" alt="" coords="0,0,68,30" href="http://www.topcoder.com/tc" onmouseover="popDescription('launch0')" onmouseout="hideDescription()" />
+<area shape="rect" alt="" coords="70,0,110,30" href="javascript:arena();" onmouseover="popDescription('launch1')" onmouseout="hideDescription()" />
+<area shape="rect" alt="" coords="111,0,140,30" href="http://www.topcoder.com/tc?module=ViewActiveContests&ph=112" onmouseover="popDescription('launch2')" onmouseout="hideDescription()" />
+<area shape="rect" alt="" coords="141,0,165,30" href="http://www.topcoder.com/tc?module=ViewActiveContests&ph=113" onmouseover="popDescription('launch3')" onmouseout="hideDescription()" />
+<area shape="rect" alt="" coords="166,0,228,30" href="http://www.topcoder.com/longcontest/?module=ViewActiveContests" onmouseover="popDescription('launch4')" onmouseout="hideDescription()" />
+</map>
+<div style="position:absolute; left:0px; top:31px;">
+<img src="i/interface/launchBar.gif" alt="" usemap="#launchBar"/>
+</div>
+
+
+<div align="center" style="margin: 0px 290px 0px 280px;">
+   <div id="outerLogo">
+      <div id="innerLogo">
+      <A href="http://www.topcoder.com/">
+		<img src="http://www.topcoder.com/i/interface/topcoder.gif" alt="TopCoder" /></A>
+      </div>
+   </div>
+</div>
+
+<div class="memberCountBox">
+Member Count: 76,412 - 
+March 16, 2006
+
+&#160;<a class="gMetal" href="Javascript:tcTime()">[Get Time]</a>
+</div>
+
+<div class="topBar">
+   <div style="float: right; margin-left: 650px;">
+   
+               <a class="gMetal" href="http://www.topcoder.com/tc?&module=Login">Login</a>
+      
+               &#160;&#160;|&#160;&#160;<a class="gMetal" href="http://www.topcoder.com/Registration">Register</a>
+   
+               &#160;&#160;|&#160;&#160;<a class="gMetal" href="http://www.topcoder.com/">Home</a>
+   </div>
+</div>
+<!--webbot bot="Include" i-checksum="12674" endspan --><table width="100%" border="0" cellpadding="0" cellspacing="0">
+<tr valign="top">
+<!-- Left Column Begins-->
+<td width="180">
+
+<!--webbot bot="Include" U-Include="inc_leftnav.htm" TAG="BODY" startspan -->
+
+
+<script language="JavaScript" type="text/javascript" src="http://www.topcoder.com/js/arena.js"></script>
+
+<script language="javascript" type="text/javascript">
+<!--
+function toggleMenu(menuTitle,menuID){
+   var menu = document.getElementById(menuID);
+   if(menu.style.display == 'block') menu.className = 'CLOSED';
+   else if(menu.className == 'OPEN' && menu.style.display != 'none') menu.className = 'CLOSED';
+   else {
+      menu.className = 'OPEN';
+   }
+   if(menuTitle.blur)menuTitle.blur();
+   if(menuTitle.className == 'exp') menuTitle.className = 'exp_ed';
+   else menuTitle.className = 'exp';
+   return;
+}
+function flipMenu(myMenuName){
+   var menuName = document.getElementById(myMenuName);
+   menuName.className = 'exp_ed';
+}
+
+// -->
+</script>
+
+<!--node is des_contest_status -->
+<div style="float: left; padding: 0px 0px 0px 0px;">
+	<img src="http://www.topcoder.com/i/interface/leftnav_top.gif" alt="" /></div>
+<div id="navbar">
+
+<ul>
+<li><a href="javascript:void(0)" class="exp_ed" onClick="Javascript:toggleMenu(this,'m_competitions')">Competitions</a>
+<ul id="m_competitions" class="OPEN">
+<li><a href="http://www.topcoder.com/tc">Home</a></li>
+<li><a href="http://www.topcoder.com/Registration">Register to Compete</a></li>
+<li><a href="javascript:void(0)" class="exp" onClick="Javascript:toggleMenu(this,'m_competitor_stats')">Competitor Statistics</a>
+<ul id="m_competitor_stats">
+<li><a href="http://www.topcoder.com/tc?module=ViewAdvanced">Find a Competitor</a></li>
+<li><a href="javascript:void(0)" class="exp" onClick="Javascript:toggleMenu(this,'m_top_rated_competitors')">Top Ranked</a>
+<ul id="m_top_rated_competitors">
+<li><a href="http://www.topcoder.com/tc?module=AlgoRank">Algorithm</a></li>
+<li><a href="http://www.topcoder.com/stat?c=top_designers">Design</a></li>
+<li><a href="http://www.topcoder.com/stat?c=top_developers">Development</a></li>
+</ul></li>
+<li><a href="javascript:void(0)" class="exp" onClick="Javascript:toggleMenu(this,'m_recordbook')">Record Book</a>
+<ul id="m_recordbook">
+<li><a href="http://www.topcoder.com/tc?module=Static&amp;d1=statistics&amp;d2=recordbook_home">Algorithm</a></li>
+<li><a href="http://www.topcoder.com/tc?module=Static&amp;d1=compstats&amp;d2=comp_recordbook_home">Component</a></li>
+</ul></li>
+<li><a href="http://www.topcoder.com/tc?module=SimpleStats&amp;trans=true&amp;c=com_history&amp;d1=statistics&amp;d2=coderOfMonth">Coder of the Month</a></li>
+</ul></li>
+<li><a href="javascript:void(0)" class="exp" onClick="Javascript:toggleMenu(this,'m_algo_competitions')">Algorithm</a>
+<ul id="m_algo_competitions">
+<li><a href="javascript:arena();">Compete<br>(Launch Arena)</a></li>
+<li><a href="javascript:void(0)" class="exp" onClick="Javascript:toggleMenu(this,'m_algo_stats')">Statistics</a>
+<ul id="m_algo_stats">
+<li><a href="http://www.topcoder.com/tc?module=MatchList">Match Archive</a></li>
+<li><a href="http://www.topcoder.com/stat?c=round_overview">Match Overviews</a></li>
+<li><a href="http://www.topcoder.com/tc?module=SrmDivisionWins">Match Winners</a></li>
+<li><a href="http://www.topcoder.com/stat?c=last_match">Match Results</a></li>
+<li><a href="http://www.topcoder.com/tc?module=Static&amp;d1=match_editorials&amp;d2=archive">Match Editorials</a></li>
+<li><a href="http://www.topcoder.com/tc?module=ProblemArchive">Problem Archive</a></li>
+</ul></li>
+</ul></li>
+<li><a href="javascript:void(0)" class="exp" onClick="Javascript:toggleMenu(this,'m_des_competitions')">Software Design</a>
+<ul id="m_des_competitions" class="exp">
+<li><a href="http://www.topcoder.com/tc?module=ViewActiveContests&amp;ph=112">Active Contests</a></li>
+<li><a href="http://www.topcoder.com/tc?module=ContestStatus&amp;ph=112">Contest Status</a></li>
+<li><a href="http://www.topcoder.com/tc?module=ViewReviewProjects&amp;ph=112">Review Opportunities</a></li>
+<li><a href="http://software.topcoder.com/forum/c_active_collab.jsp?ft=2">TCS Developer Forums</a></li>
+<li><a href="http://software.topcoder.com/review">Submit Deliverables &amp; Reviews</a></li>
+<li><a href="http://www.topcoder.com/tc?module=CompList&amp;ph=112">Statistics</a></li>
+<li><a href="http://www.topcoder.com/tc?module=ReviewBoard&amp;ph=112">Meet the Review Board</a></li>
+</ul></li>
+<li><a href="javascript:void(0)" class="exp" onClick="Javascript:toggleMenu(this,'m_dev_competitions')">Software Development</a>
+<ul id="m_dev_competitions">
+<li><a href="http://www.topcoder.com/tc?module=ViewActiveContests&amp;ph=113">Active Contests</a></li>
+<li><a href="http://www.topcoder.com/tc?module=ContestStatus&amp;ph=113">Contest Status</a></li>
+<li><a href="http://www.topcoder.com/tc?module=ViewReviewProjects&amp;ph=113">Review Opportunities</a></li>
+<li><a href="http://software.topcoder.com/forum/c_active_collab.jsp?ft=2">TCS Developer Forums</a></li>
+<li><a href="http://software.topcoder.com/review">Submit Deliverables &amp; Reviews</a></li>
+<li><a href="http://www.topcoder.com/tc?module=CompList&amp;ph=113">Statistics</a></li>
+<li><a href="http://www.topcoder.com/tc?module=ReviewBoard&amp;ph=113">Meet the Review Board</a></li>
+</ul></li>
+<li><a href="javascript:void(0)" class="exp" onClick="Javascript:toggleMenu(this,'m_assembly_competitions')">Software Assembly</a>
+<ul id="m_assembly_competitions">
+<li><a href="http://www.topcoder.com/tc?module=Static&d1=dev&d2=assembly&d3=overview">Overview</a></li>
+<li><a href="http://www.topcoder.com/tc?module=Static&d1=dev&d2=assembly&d3=activeContests">Active Contests</a></li>
+</ul></li>
+<li><a href="javascript:void(0)" class="exp" onClick="Javascript:toggleMenu(this,'m_testing_competitions')">Software Testing</a>
+<ul id="m_testing_competitions">
+<li><a href="http://www.topcoder.com/tc?module=Static&d1=dev&d2=testing&d3=overview">Overview</a></li>
+</ul></li>
+<li><a href="javascript:void(0)" class="exp" onClick="Javascript:toggleMenu(this,'m_long_contests')">Marathon Matches</a>
+<ul id="m_long_contests">
+<li><a href="http://www.topcoder.com/longcontest/?module=ViewActiveContests">Compete</a></li>
+<li><a href="http://www.topcoder.com/longcontest/?module=ViewPractice&amp;rt=14">Practice</a></li>
+<li><a href="http://www.topcoder.com/longcontest/?module=Static&amp;d1=intel_overview">Intel Multi-Threading Competition Series</a></li>
+<li><a href="http://www.topcoder.com/longcontest/?module=ViewActiveContests&amp;rt=15">Intel Active Contests</a></li>
+<li><a href="http://www.topcoder.com/longcontest/?module=ViewPractice&amp;rt=16">Intel Practice</a></li>
+<li><a href="http://www.topcoder.com/longcontest/?module=ViewQueue">Queue Status</a></li>
+<li><a href="http://www.topcoder.com/longcontest/?module=Static&amp;d1=match_editorials&amp;d2=archive">Match Editorials</a></li>
+</ul></li>
+<li><a href="javascript:void(0)" class="exp" onClick="Javascript:toggleMenu(this,'m_tournaments')">Tournaments</a>
+<ul id="m_tournaments">
+<li><a href="http://www.topcoder.com/tc?module=Static&amp;d1=tournaments&amp;d2=home">TopCoder</a></li>
+<li><a href="http://www.topcoder.com/pl/">Powered by TopCoder</a></li>
+<li><a href="http://www.topcoder.com/tc?module=CRPFStatic&amp;d1=crpf&amp;d2=crpf_overview">Charity</a></li>
+</ul></li>
+<li><a href="javascript:void(0)" class="exp" onClick="Javascript:toggleMenu(this,'m_edu_content')">Educational Content</a>
+<ul id="m_edu_content">
+<li><a href="http://www.topcoder.com/tc?module=Static&amp;d1=tutorials&amp;d2=alg_index">Algorithm Tutorials</a></li>
+<li><a href="http://www.topcoder.com/tc?module=Static&amp;d1=tutorials&amp;d2=comp_index">Component Tutorials</a></li>
+<li><a href="http://www.topcoder.com/tc?module=Static&amp;d1=features&amp;d2=archive">Features</a></li>
+<li><a href="http://www.topcoder.com/tc?module=Static&amp;d1=tutor_transcripts&amp;d2=index">Tutor Transcripts</a></li>
+</ul></li>
+<li><a href="http://www.topcoder.com/tc?&module=SurveyList">Surveys</a></li>
+<li><a href="javascript:void(0)" class="exp" onClick="Javascript:toggleMenu(this,'m_my_tc')">My TopCoder</a>
+<ul id="m_my_tc">
+<li><a href="http://www.topcoder.com/Registration?update=true">Update My Profile</a></li>
+<li><a href="http://www.topcoder.com/tc?module=ViewReferrals">Members I've Referred</a></li>
+<li><a href="http://www.topcoder.com/PactsMemberServlet?t=affidavit&amp;c=affidavit_history">Affidavits</a></li>
+<li><a href="http://www.topcoder.com/tc?module=Static&amp;d1=card&amp;d2=description">Cards / Badges</a></li>
+</ul></li>
+<li><a href="http://www.topcoder.com/tc?module=Static&amp;d1=calendar&amp;d2=thisMonth">Event Calendar</a></li>
+<li><a href="javascript:void(0)" class="exp" onClick="Javascript:toggleMenu(this,'m_support')">Support / FAQs / Docs</a>
+<ul id="m_support">
+<li><a href="javascript:void(0)" class="exp" onClick="Javascript:toggleMenu(this,'m_algo_support')">Algorithm</a>
+<ul id="m_algo_support">
+<li><a href="http://www.topcoder.com/tc?module=Static&amp;d1=help&amp;d2=index">How to Compete</a></li>
+<li><a href="http://www.topcoder.com/tc?module=Static&amp;d1=help&amp;d2=faqIndex">FAQs</a></li>
+<li><a href="http://www.topcoder.com/tc?module=Static&amp;d1=help&amp;d2=sampleProblems">Sample Problems</a></li>
+<li><a href="http://www.topcoder.com/tc?module=Static&amp;d1=help&amp;d2=ratings">Rating System</a></li>
+<li><a href="http://www.topcoder.com/tc?module=Static&amp;d1=help&amp;d2=algPayment">How to Get Paid</a></li>
+<li><a href="http://www.topcoder.com/tc?module=Static&amp;d1=help&amp;d2=charity">Charity Donations</a></li>
+</ul></li>
+<li><a href="javascript:void(0)" class="exp" onClick="Javascript:toggleMenu(this,'m_des_support')">Design</a>
+<ul id="m_des_support">
+<li><a href="http://www.topcoder.com/tc?module=Static&amp;d1=dev&amp;d2=support&amp;d3=desGettingStarted">How to Compete</a></li>
+<li><a href="http://www.topcoder.com/tc?module=Static&amp;d1=dev&amp;d2=support&amp;d3=desGettingPaid">How to Get Paid</a></li>
+<li><a href="http://www.topcoder.com/tc?module=Static&amp;d1=dev&amp;d2=support&amp;d3=desDocumentation">Documentation</a></li>
+<li><a href="http://www.topcoder.com/tc?module=Static&amp;d1=dev&amp;d2=support&amp;d3=desRatings">Ratings</a></li>
+<li><a href="http://www.topcoder.com/tc?module=Static&amp;d1=dev&amp;d2=support&amp;d3=desReliability">Reliability Ratings</a></li>
+</ul></li>
+<li><a href="javascript:void(0)" class="exp" onClick="Javascript:toggleMenu(this,'m_dev_support')">Development</a>
+<ul id="m_dev_support">
+<li><a href="http://www.topcoder.com/tc?module=Static&amp;d1=dev&amp;d2=support&amp;d3=devGettingStarted">How to Compete</a></li>
+<li><a href="http://www.topcoder.com/tc?module=Static&amp;d1=dev&amp;d2=support&amp;d3=devGettingPaid">How to Get Paid</a></li>
+<li><a href="http://www.topcoder.com/tc?module=Static&amp;d1=dev&amp;d2=support&amp;d3=devDocumentation">Documentation</a></li>
+<li><a href="http://www.topcoder.com/tc?module=Static&amp;d1=dev&amp;d2=support&amp;d3=devRatings">Ratings</a></li>
+<li><a href="http://www.topcoder.com/tc?module=Static&amp;d1=dev&amp;d2=support&amp;d3=devReliability">Reliability Ratings</a></li>
+</ul></li>
+<li><a href="javascript:void(0)" class="exp" onClick="Javascript:toggleMenu(this,'m_assembly_support')">Assembly</a>
+<ul id="m_assembly_support">
+<li><a href="http://www.topcoder.com/tc?module=Static&d1=dev&d2=assembly&d3=instructions">How to Compete</a></li>
+<li><a href="http://www.topcoder.com/tc?module=Static&d1=dev&d2=assembly&d3=tutorial">Tutorial</a></li>
+<li><a href="http://www.topcoder.com/tc?module=Static&d1=dev&d2=assembly&d3=documentation">Documentation</a></li>
+</ul></li>
+<li><a href="javascript:void(0)" class="exp" onClick="Javascript:toggleMenu(this,'m_testing_support')">Testing</a>
+<ul id="m_testing_support">
+<li><a href="http://www.topcoder.com/tc?module=Static&d1=dev&d2=testing&d3=instructions">How to Compete</a></li>
+<li><a href="http://www.topcoder.com/tc?module=Static&d1=dev&d2=testing&d3=documentation">Documentation</a></li>
+</ul></li>
+<li><a href="javascript:void(0)" class="exp" onClick="Javascript:toggleMenu(this,'m_long_support')">Marathon Match</a>
+<ul id="m_long_support">
+<li><a href="http://www.topcoder.com/longcontest/?module=Static&d1=instructions">How to Compete</a></li>
+</ul></li>
+</ul></li>
+</ul></li>
+<li><a href="http://forums.topcoder.com/">Forums</a></li>
+<li><a href="http://www.topcoder.com/tc?module=Static&amp;d1=pressroom&amp;d2=index">Press Room</a></li>
+<li><a href="javascript:void(0)" class="exp" onClick="Javascript:toggleMenu(this,'m_about_tc')">About TopCoder</a>
+<ul id="m_about_tc">
+<li><a href="http://www.topcoder.com/tc?module=Static&amp;d1=about&amp;d2=index">Overview</a></li>
+<li><a href="http://www.topcoder.com/tc?module=Static&amp;d1=about&amp;d2=contactus">Contact Us</a></li>
+<li><a href="http://www.topcoder.com/tc?module=Static&amp;d1=about&amp;d2=whyjoin">Why Join TopCoder?</a></li>
+<li><a href="http://www.topcoder.com/tc?module=Static&amp;d1=about&amp;d2=jobs">Working at TopCoder</a></li>
+<li><a href="http://www.topcoder.com/tc?module=Static&amp;d1=about&amp;d2=management">Management Team</a></li>
+<li><a href="http://www.topcoder.com/tc?module=Static&amp;d1=about&amp;d2=terms">Terms, Revisions</a></li>
+<li><a href="http://www.topcoder.com/tc?module=Static&amp;d1=about&amp;d2=privacy">Privacy Policy</a></li>
+</ul></li></ul>
+
+
+
+<div id="navbarSearch">
+<b>Member Search:</b>
+<form name="simpleSearchForm" method="get" action="http://www.topcoder.com/tc" class="noSpace">
+   <input class="noSpace" type="hidden" name="module" value="SimpleSearch" />
+   <input class="noSpace" type="text" name="ha" value="Handle:" size="12" maxlength="15"
+      onFocus="javascript:
+         if (document.simpleSearchForm.ha.value=='Handle:')
+            document.simpleSearchForm.ha.value = '';"
+      onBlur="javascript:
+         if (document.simpleSearchForm.ha.value == '')
+            document.simpleSearchForm.ha.value = 'Handle:';" />
+   <A class="gMetal" href="javascript:void document.simpleSearchForm.submit();">Go</A><br>
+   <A class="gMetal" href="http://www.topcoder.com/tc?module=ViewAdvanced">Advanced Search</A>
+</form>
+</div>
+</div>
+<div style="float: left; clear:left; padding: 0px 0px 23px 0px;">
+	<img src="http://www.topcoder.com/i/interface/leftnav_bottom.gif" alt="" /></div>
+
+
+
+
+
+
+<!--webbot bot="Include" i-checksum="23413" endspan --></td>
+<!-- Left Column Ends -->
+
+<!-- Gutter Begins -->
+<td width="15"><img src="/i/clear.gif" width="15" height="1" border="0"/></td>
+<!-- Gutter Ends -->
+
+<!-- Center Column Begins -->
+<td class="bodyText">
+
+<div id="mainTabs">
+	<a href="pc-manager-index.htm" onMouseOver="img_act('tab1')" onMouseOut="img_inact('tab1')"><img src="images/tab_my_open_projects.gif" width="119" height="36" border="0" name="tab1"></a><a href="pc-manager-index_all.htm" onMouseOver="img_act('tab2')" onMouseOut="img_inact('tab2')"><img src="images/tab_all_open_projects.gif" width="119" height="36" border="0" name="tab2"></a><a href="pc-manager-index_inactive.htm" onMouseOver="img_act('tab4')" onMouseOut="img_inact('tab4')"><img src="images/tab_inactive_projects.gif" width="119" height="36" border="0" name="tab4"></a><a href="pc-manager-create_project.htm" onMouseOver="img_act('tab3')" onMouseOut="img_inact('tab3')"><img src="images/tab_create_project.gif" width="119" height="36" border="0" name="tab3"></a><br>
+</div>
+
+<div id="mainMiddleContent">
+<br>
+	<table border="0" width="100%" id="table12" cellspacing="0" cellpadding="0">
+		<tr>
+			<td valign="top" rowspan="2">
+					<img src="images/iconStatusSpecSm.gif" alt="" width="25" height="17" border="0" ><img src="images/javaSm.gif" alt="" border="0" align="absmiddle">&nbsp;</td>
+			<td width="40%">
+				<span class="bodyTitle">Ajax Timed Survey&nbsp; </span><font size="4">version 1.0</font>
+			</td>
+			<td width="50%" valign="top">
+				<p align="right">
+				<a class="breadcrumbLinks" href="https://software.topcoder.com/catalog/c_component.jsp?comp=21204267">Full Description</a> | <a class="breadcrumbLinks" href="https://software.topcoder.com/forum/c_forum.jsp?f=21210141"> Development Forum</a></td>
+		</tr>
+
+		</tr>
+	</table>
+
+<!-- TIMELINE STARTS HERE --><br>
+	<table class="scorecard" cellpadding="0" cellspacing="0" width="100%">
+		<tr>
+        	<td class="title" colspan="3">Edit<b> Timeline</b></td>
+			<td class="title" colspan="3">
+			<p style="text-align: right"><a href="#">Refresh Timeline</a></td>
+		</tr>
+		<tr>
+			<td class="header" width="1%" nowrap><b>Current Phase</b></td>
+			<td class="header" width="1%" nowrap><b>Phase Name</b></td>
+            <td class="header"><b>Phase Start</b></td>
+            <td class="header"><b>Phase End</b></td>
+            <td class="header" nowrap><b>Duration (hrs)</b></td>
+            <td class="header"><b>Delete</b></td>
+		</tr>
+		<tr class="light">
+			<td class="valueC">&nbsp;</td>
+			<td class="value" nowrap>
+				<b>Registration </b></td>
+            <td class="value">
+				03.30.2006 9:00 AM EST
+			</td>
+            <td class="value" nowrap>
+				04.02.2006 9:00 AM EST&nbsp;[ <a style="cursor:pointer; text-decoration:underline" ID="Out1" class="Outline" >View Criteria</a> ]
+			</td>
+            <td class="value">72:00</td>
+            <td class="valueC">&nbsp;</td>
+		</tr>
+		<tbody ID="Out1r" STYLE="display:none">
+		<tr class="highlighted">
+            <td class="value">&nbsp;</td>
+            <td class="value">&nbsp;</td>
+                        <td class="value">&nbsp;</td>
+            <td class="value">
+				Require 3 registrations before ending.</td>
+            <td class="value">&nbsp;</td>
+            <td class="value">&nbsp;</td>
+		</tr>
+		</tbody>
+		<tr class="dark">
+			<td class="valueC"><input type="radio" value="V1" name="R54" checked></td>
+			<td class="value" nowrap>
+				<b>Submission</b></td>
+            <td class="value" nowrap>
+				<input type="radio" value="V1" name="R42">
+				<input name="T160" size="20" class="inputBox" style="width: 65px;" value="04.02.2006" > 
+				<input name="T219" size="20" class="inputBox" style="width: 35px; text-align:right; height:20px" value="9:00" > 
+				<select size="1" name="D72" style="height:17px" class="inputBox" >
+					<option>AM</option>
+					<option>PM</option>
+				</select> EST
+			<br>
+				<input type="radio" value="V1" name="R42" checked>When <select size="1" name="D47" style="height:17px;width:120px" class="inputBox" >
+					<option selected>Select Phase</option>
+					<option>Registration</option>
+					<option>Submission</option>
+					<option>Screening</option>
+					<option>Review</option>
+					<option>Appeals</option>
+					<option>Appeals Response</option>
+					<option>Aggregation</option>
+					<option>Aggregation Review</option>
+					<option>Final Fix</option>
+					<option>Final Review</option>
+					<option>Approval</option>
+				</select>
+				<select size="1" name="D48" style="height:17" class="inputBox" >
+					<option>Starts</option>
+					<option>Ends</option>
+				</select>
+				<select size="1" name="D61" style="height:17" class="inputBox" >
+					<option>+</option>
+					<option>-</option>
+				</select> <input name="T2301" size="20" class="inputBox" style="width: 30px;">
+				<select size="1" name="D71" style="height:17" class="inputBox" >
+					<option>Days</option>
+					<option>Hrs</option>
+				</select></td>
+            <td class="value" nowrap>
+				<input name="T180" size="20" class="inputBox" style="width: 65px;" value="04.07.2006" > 
+				<input name="T2305" size="20" class="inputBox" style="width: 35px; text-align:right; height:20px" value="10:00" > 
+				<select size="1" name="D90" style="height:17px" class="inputBox" >
+					<option>AM</option>
+					<option>PM</option>
+				</select> EST
+			&nbsp;[ <a style="cursor:pointer; text-decoration:underline" ID="Out3" class="Outline" >Set Criteria</a> ]</td>
+            <td class="value">
+				<input name="T145" size="20" class="inputBox" style="width: 50;text-align:right;" value="121:00"></td>
+            <td class="value">
+				&nbsp;</td>
+		</tr>
+		<tbody  ID="Out3r" STYLE="display:none">
+		<tr class="highlighted">
+            <td class="value">&nbsp;</td>
+            <td class="value">&nbsp;</td>
+            <td class="value">&nbsp;</td>
+            <td class="value" nowrap>
+				Require<input name="T221" size="20" class="inputBox" style="width: 30px;" value="3"> passing submissions. <br>
+				<input type="checkbox" name="C3" value="ON" checked> Manual Screening</td>
+            <td class="value">&nbsp;</td>
+			<td class="value">&nbsp;</td>
+		</tr>
+		</tbody>
+		<tbody ID="Out13r" STYLE="display:hide">
+		<tr class="light">
+			<td class="valueC"><input type="radio" value="V1" name="R54"></td>
+            <td class="value"  nowrap>
+			<b>Review</b></td>
+            <td class="value" >
+            <input type="radio" value="V1" name="R42">
+				<input name="T164" size="20" class="inputBox" style="width: 65px;" value="04.08.2006" > 
+				<input name="T2302" size="20" class="inputBox" style="width: 35px; text-align:right; height:20px" value="1:00" > 
+				<select size="1" name="D87" style="height:17px" class="inputBox" >
+					<option>AM</option>
+					<option>PM</option>
+				</select> EST
+			<br>
+				<input type="radio" value="V1" name="R29" checked>When 
+			<select size="1" name="D78" style="height:17;width:120" class="inputBox" >
+					<option selected>Select Phase</option>
+					<option>Registration</option>
+					<option>Submission</option>
+					<option>Screening</option>
+					<option>Review</option>
+					<option>Appeals</option>
+					<option>Appeals Response</option>
+					<option>Aggregation</option>
+					<option>Aggregation Review</option>
+					<option>Final Fix</option>
+					<option>Final Review</option>
+					<option>Approval</option>
+				</select>
+				<select size="1" name="D48" style="height:17" class="inputBox" >
+					<option>Starts</option>
+					<option>Ends</option>
+				</select>
+				<select size="1" name="D61" style="height:17" class="inputBox" >
+					<option>+</option>
+					<option>-</option>
+				</select> <input name="T2301" size="20" class="inputBox" style="width: 30px;">
+				<select size="1" name="D71" style="height:17" class="inputBox" >
+					<option>Days</option>
+					<option>Hrs</option>
+				</select></td>
+            <td class="value" nowrap>
+				<input name="T184" size="20" class="inputBox" style="width: 65px;" value="04.09.2006" > 
+				<input name="T2304" size="20" class="inputBox" style="width: 35px; text-align:right; height:20px" value="1:00" > 
+				<select size="1" name="D89" style="height:17px" class="inputBox" >
+					<option>AM</option>
+					<option>PM</option>
+				</select> EST
+			</td>
+            <td class="value" >
+				<input name="T149" size="20" class="inputBox" style="width: 50;text-align:right;" value="24:00"></td>
+            <td class="value">&nbsp;</td>
+		</tr>
+
+		
+		<tr class="dark">
+			<td class="valueC"><input type="radio" value="V1" name="R54"></td>
+            <td class="value"nowrap>
+			<b>Appeals</b></td>
+            <td class="value" >
+			<input type="radio" value="V1" name="R41">
+			<input name="T166" size="20" class="inputBox" style="width: 65px;" value="04.09.2006" > 
+				<input name="T2303" size="20" class="inputBox" style="width: 35px; text-align:right; height:20px" value="1:00" > 
+				<select size="1" name="D88" style="height:17px" class="inputBox" >
+					<option>AM</option>
+					<option>PM</option>
+				</select> EST
+			<br>
+			<input type="radio" value="V1" name="R41" checked>When 
+			<select size="1" name="D79" style="height:17;width:120" class="inputBox" >
+					<option selected>Select Phase</option>
+					<option>Registration</option>
+					<option>Submission</option>
+					<option>Screening</option>
+					<option>Review</option>
+					<option>Appeals</option>
+					<option>Appeals Response</option>
+					<option>Aggregation</option>
+					<option>Aggregation Review</option>
+					<option>Final Fix</option>
+					<option>Final Review</option>
+					<option>Approval</option>
+				</select>
+				<select size="1" name="D48" style="height:17" class="inputBox" >
+					<option>Starts</option>
+					<option>Ends</option>
+				</select>
+				<select size="1" name="D61" style="height:17" class="inputBox" >
+					<option>+</option>
+					<option>-</option>
+				</select> <input name="T2301" size="20" class="inputBox" style="width: 30px;">
+				<select size="1" name="D71" style="height:17" class="inputBox" >
+					<option>Days</option>
+					<option>Hrs</option>
+				</select></td>
+            <td class="value" nowrap>
+				<input name="T186" size="20" class="inputBox" style="width: 65px;" value="04.10.2006" > 
+				<input name="T2306" size="20" class="inputBox" style="width: 35px; text-align:right; height:20px" value="12:00" > 
+				<select size="1" name="D91" style="height:17px" class="inputBox" >
+					<option>AM</option>
+					<option selected>PM</option>
+				</select> EST
+			</td>
+            <td class="value" >
+				<input name="T150" size="20" class="inputBox" style="width: 50;text-align:right;" value="24:00"></td>
+            <td class="valueC" >
+				<img border="0" src="images/bttn_delete.gif" width="58" height="18"></td>
+		</tr>
+		
+
+		<tr class="light">
+			<td class="valueC"><input type="radio" value="V1" name="R54"></td>
+            <td class="value" nowrap>
+				<b>Appeals Response</b></td>
+            <td class="value" nowrap>
+				<input type="radio" value="V1" name="R43">
+				<input name="T168" size="20" class="inputBox" style="width: 65px;" value="04.10.2006" > 
+				<input name="T2308" size="20" class="inputBox" style="width: 35px; text-align:right; height:20px" value="12:00" > 
+				<select size="1" name="D93" style="height:17px" class="inputBox" >
+					<option>AM</option>
+					<option selected>PM</option>
+				</select> EST
+			<br>
+				<input type="radio" value="V1" name="R43" checked>When 
+				<select size="1" name="D80" style="height:17;width:120" class="inputBox" >
+					<option selected>Select Phase</option>
+					<option>Registration</option>
+					<option>Submission</option>
+					<option>Screening</option>
+					<option>Review</option>
+					<option>Appeals</option>
+					<option>Appeals Response</option>
+					<option>Aggregation</option>
+					<option>Aggregation Review</option>
+					<option>Final Fix</option>
+					<option>Final Review</option>
+					<option>Approval</option>
+				</select>
+				<select size="1" name="D48" style="height:17" class="inputBox" >
+					<option>Starts</option>
+					<option>Ends</option>
+				</select>
+				<select size="1" name="D61" style="height:17" class="inputBox" >
+					<option>+</option>
+					<option>-</option>
+				</select> <input name="T2301" size="20" class="inputBox" style="width: 30px;">
+				<select size="1" name="D71" style="height:17" class="inputBox" >
+					<option>Days</option>
+					<option>Hrs</option>
+				</select></td>
+            <td class="value" >
+				<input name="T188" size="20" class="inputBox" style="width: 65px;" value="04.11.2006" > 
+				<input name="T2307" size="20" class="inputBox" style="width: 35px; text-align:right; height:20px" value="12:00" > 
+				<select size="1" name="D92" style="height:17px" class="inputBox" >
+					<option>AM</option>
+					<option selected>PM</option>
+				</select> EST
+			</td>
+            <td class="value" nowrap>
+				<input name="T151" size="20" class="inputBox" style="width: 50;text-align:right;" value="12:00"></td>
+            <td class="value" >
+				&nbsp;</td>
+		</tr>
+		
+		<tr class="dark">
+			<td class="valueC"><input type="radio" value="V1" name="R54"></td>
+            <td class="value"nowrap>
+				<b>Aggregation</b></td>
+            <td class="value" >
+				<input type="radio" value="V1" name="R39">
+				<input name="T170" size="20" class="inputBox" style="width: 65px;" value="04.11.2006" > 
+				<input name="T2309" size="20" class="inputBox" style="width: 35px; text-align:right; height:20px" value="2:00" > 
+				<select size="1" name="D94" style="height:17px" class="inputBox" >
+					<option selected>AM</option>
+					<option>PM</option>
+				</select> EST
+			<br>
+				<input type="radio" value="V1" name="R39" checked>When 
+				<select size="1" name="D81" style="height:17;width:120" class="inputBox" >
+					<option selected>Select Phase</option>
+					<option>Registration</option>
+					<option>Submission</option>
+					<option>Screening</option>
+					<option>Review</option>
+					<option>Appeals</option>
+					<option>Appeals Response</option>
+					<option>Aggregation</option>
+					<option>Aggregation Review</option>
+					<option>Final Fix</option>
+					<option>Final Review</option>
+					<option>Approval</option>
+				</select>
+				<select size="1" name="D48" style="height:17" class="inputBox" >
+					<option>Starts</option>
+					<option>Ends</option>
+				</select>
+				<select size="1" name="D61" style="height:17" class="inputBox" >
+					<option>+</option>
+					<option>-</option>
+				</select> <input name="T2301" size="20" class="inputBox" style="width: 30px;">
+				<select size="1" name="D71" style="height:17" class="inputBox" >
+					<option>Days</option>
+					<option>Hrs</option>
+				</select></td>
+            <td class="value" nowrap>
+				<input name="T190" size="20" class="inputBox" style="width: 65px;" value="04.11.2006" > 
+				<input name="T2318" size="20" class="inputBox" style="width: 35px; text-align:right; height:20px" value="2:00" > 
+				<select size="1" name="D103" style="height:17px" class="inputBox" >
+					<option>AM</option>
+					<option>PM</option>
+				</select> EST
+			</td>
+            <td class="value" >
+				<input name="T157" size="20" class="inputBox" style="width: 50;text-align:right;" value="12:00"></td>
+            <td class="valueC" >
+				<img border="0" src="images/bttn_delete.gif" width="58" height="18"></td>
+		</tr>
+	
+	
+		<tr class="light">
+			<td class="valueC"><input type="radio" value="V1" name="R54"></td>
+            <td class="value" nowrap>
+			<b>Aggregation Review</b></td>
+            <td class="value" >
+				<input type="radio" value="V1" name="R38">
+				<input name="T172" size="20" class="inputBox" style="width: 65px;" value="04.11.2006" > 
+				<input name="T2310" size="20" class="inputBox" style="width: 35px; text-align:right; height:20px" value="12:00" > 
+				<select size="1" name="D95" style="height:17px" class="inputBox" >
+					<option>AM</option>
+					<option selected>PM</option>
+				</select> EST
+			<br>
+				<input type="radio" value="V1" name="R38" checked>When 
+				<select size="1" name="D82" style="height:17;width:120" class="inputBox" >
+					<option selected>Select Phase</option>
+					<option>Registration</option>
+					<option>Submission</option>
+					<option>Screening</option>
+					<option>Review</option>
+					<option>Appeals</option>
+					<option>Appeals Response</option>
+					<option>Aggregation</option>
+					<option>Aggregation Review</option>
+					<option>Final Fix</option>
+					<option>Final Review</option>
+					<option>Approval</option>
+				</select>
+				<select size="1" name="D48" style="height:17" class="inputBox" >
+					<option>Starts</option>
+					<option>Ends</option>
+				</select>
+				<select size="1" name="D61" style="height:17" class="inputBox" >
+					<option>+</option>
+					<option>-</option>
+				</select> <input name="T2301" size="20" class="inputBox" style="width: 30px;">
+				<select size="1" name="D71" style="height:17" class="inputBox" >
+					<option>Days</option>
+					<option>Hrs</option>
+				</select></td>
+            <td class="value" nowrap>
+				<input name="T192" size="20" class="inputBox" style="width: 65px;" value="04.12.2006" > 
+				<input name="T2317" size="20" class="inputBox" style="width: 35px; text-align:right; height:20px" value="12:00" > 
+				<select size="1" name="D102" style="height:17px" class="inputBox" >
+					<option>AM</option>
+					<option selected>PM</option>
+				</select> EST
+			</td>
+            <td class="value" >
+				<input name="T153" size="20" class="inputBox" style="width: 50;text-align:right;" value="24:00"></td>
+            <td class="valueC" >
+				<img border="0" src="images/bttn_delete.gif" width="58" height="18"></td>
+		</tr>
+	
+		<tr class="dark">
+			<td class="valueC"><input type="radio" value="V1" name="R54"></td>
+            <td class="value" nowrap>
+				<b>Final Fix</b></td>
+            <td class="value" >
+				<input type="radio" value="V1" name="R37">
+				<input name="T174" size="20" class="inputBox" style="width: 65px;" value="04.12.2006" > 
+				<input name="T2311" size="20" class="inputBox" style="width: 35px; text-align:right; height:20px" value="12:00" > 
+				<select size="1" name="D96" style="height:17px" class="inputBox" >
+					<option>AM</option>
+					<option selected>PM</option>
+				</select> EST
+			<br>
+				<input type="radio" value="V1" name="R37" checked>When <select size="1" name="D83" style="height:17;width:120" class="inputBox" >
+					<option selected>Select Phase</option>
+					<option>Registration</option>
+					<option>Submission</option>
+					<option>Screening</option>
+					<option>Review</option>
+					<option>Appeals</option>
+					<option>Appeals Response</option>
+					<option>Aggregation</option>
+					<option>Aggregation Review</option>
+					<option>Final Fix</option>
+					<option>Final Review</option>
+					<option>Approval</option>
+				</select>
+				<select size="1" name="D48" style="height:17" class="inputBox" >
+					<option>Starts</option>
+					<option>Ends</option>
+				</select>
+				<select size="1" name="D61" style="height:17" class="inputBox" >
+					<option>+</option>
+					<option>-</option>
+				</select> <input name="T2301" size="20" class="inputBox" style="width: 30px;">
+				<select size="1" name="D71" style="height:17" class="inputBox" >
+					<option>Days</option>
+					<option>Hrs</option>
+				</select></td>
+            <td class="value" nowrap>
+				<input name="T194" size="20" class="inputBox" style="width: 65px;" value="04.13.2006" > 
+				<input name="T2316" size="20" class="inputBox" style="width: 35px; text-align:right; height:20px" value="12:00" > 
+				<select size="1" name="D101" style="height:17px" class="inputBox" >
+					<option>AM</option>
+					<option selected>PM</option>
+				</select> EST
+			</td>
+            <td class="value" >
+				<input name="T158" size="20" class="inputBox" style="width: 50;text-align:right;" value="24:00"></td>
+            <td class="value" >
+				&nbsp;</td>
+		</tr>
+		<tr class="light">
+			<td class="valueC"><input type="radio" value="V1" name="R54"></td>
+            <td class="value"  nowrap>
+			<b>Final Review</b></td>
+            <td class="value" >
+				<input type="radio" value="V1" name="R36">
+				<input name="T176" size="20" class="inputBox" style="width: 65px;" value="04.13.2006" > 
+				<input name="T2312" size="20" class="inputBox" style="width: 35px; text-align:right; height:20px" value="12:00" > 
+				<select size="1" name="D97" style="height:17px" class="inputBox" >
+					<option>AM</option>
+					<option selected>PM</option>
+				</select> EST
+			<br>
+				<input type="radio" value="V1" name="R36" checked>When <select size="1" name="D84" style="height:17;width:120" class="inputBox" >
+					<option selected>Select Phase</option>
+					<option>Registration</option>
+					<option>Submission</option>
+					<option>Screening</option>
+					<option>Review</option>
+					<option>Appeals</option>
+					<option>Appeals Response</option>
+					<option>Aggregation</option>
+					<option>Aggregation Review</option>
+					<option>Final Fix</option>
+					<option>Final Review</option>
+					<option>Approval</option>
+				</select>
+				<select size="1" name="D48" style="height:17" class="inputBox" >
+					<option>Starts</option>
+					<option>Ends</option>
+				</select>
+				<select size="1" name="D61" style="height:17" class="inputBox" >
+					<option>+</option>
+					<option>-</option>
+				</select> <input name="T2301" size="20" class="inputBox" style="width: 30px;">
+				<select size="1" name="D71" style="height:17" class="inputBox" >
+					<option>Days</option>
+					<option>Hrs</option>
+				</select></td>
+            <td class="value" nowrap>
+				<input name="T196" size="20" class="inputBox" style="width: 65px;" value="04.14.2006" > 
+				<input name="T2315" size="20" class="inputBox" style="width: 35px; text-align:right; height:20px" value="12:00" > 
+				<select size="1" name="D100" style="height:17px" class="inputBox" >
+					<option>AM</option>
+					<option selected>PM</option>
+				</select> EST
+			</td>
+            <td class="value" >
+				<input name="T159" size="20" class="inputBox" style="width: 50;text-align:right;" value="24:00"></td>
+            <td class="value" >
+				&nbsp;</td>
+		</tr>
+		<tr class="dark">
+			<td class="valueC"><input type="radio" value="V1" name="R54"></td>
+            <td class="value"  nowrap>
+			<b>Approval</b></td>
+            <td class="value" >
+				<input type="radio" value="V1" name="R371">
+				<input name="T176" size="20" class="inputBox" style="width: 65px;" value="04.13.2006" > 
+				<input name="T2313" size="20" class="inputBox" style="width: 35px; text-align:right; height:20px" value="12:00" > 
+				<select size="1" name="D98" style="height:17px" class="inputBox" >
+					<option>AM</option>
+					<option selected>PM</option>
+				</select> EST
+			<br>
+				<input type="radio" value="V1" name="R371" checked>When
+				<select size="1" name="D85" style="height:17;width:120" class="inputBox" >
+					<option selected>Select Phase</option>
+					<option>Registration</option>
+					<option>Submission</option>
+					<option>Screening</option>
+					<option>Review</option>
+					<option>Appeals</option>
+					<option>Appeals Response</option>
+					<option>Aggregation</option>
+					<option>Aggregation Review</option>
+					<option>Final Fix</option>
+					<option>Final Review</option>
+					<option>Approval</option>
+				</select>
+				<select size="1" name="D48" style="height:17" class="inputBox" >
+					<option>Starts</option>
+					<option>Ends</option>
+				</select>
+				<select size="1" name="D61" style="height:17" class="inputBox" >
+					<option>+</option>
+					<option>-</option>
+				</select> <input name="T2301" size="20" class="inputBox" style="width: 30px;">
+				<select size="1" name="D71" style="height:17" class="inputBox" >
+					<option>Days</option>
+					<option>Hrs</option>
+				</select></td>
+            <td class="value" nowrap>
+				<input name="T196" size="20" class="inputBox" style="width: 65px;" value="04.14.2006" > 
+				<input name="T2314" size="20" class="inputBox" style="width: 35px; text-align:right; height:20px" value="12:00" > 
+				<select size="1" name="D99" style="height:17px" class="inputBox" >
+					<option>AM</option>
+					<option selected>PM</option>
+				</select> EST
+			</td>
+            <td class="value" >
+				<input name="T159" size="20" class="inputBox" style="width: 50;text-align:right;" value="24:00"></td>
+            <td class="value" >
+				&nbsp;</td>
+		</tr>
+		<tr class="highlighted">
+            <td class="value" nowrap colspan="6">
+				<b>Add a New Phase</b></td>
+		</tr>
+		<tr class="light">
+            <td class="value" align="center" nowrap colspan="2">
+				<table border="0" width="100%" cellspacing="0" cellpadding="0" id="table24">
+					<tr>
+						<td class="value" nowrap><b>New Phase:</b> </td>
+						<td class="value" nowrap>
+	                    <select size="1" name="D17" style="height:17;width:185px;" class="inputBox" >
+							<option>Select</option>
+							<option>Registration</option>
+							<option>Submission</option>
+							<option>Screening</option>
+							<option>Review</option>
+							<option>Appeals</option>
+							<option>Appeals Response</option>
+							<option>Aggregation</option>
+							<option>Aggregation Review</option>
+							<option>Final Fix</option>
+							<option>Final Review</option>
+							<option>Approval</option>
+						</select></td>
+					</tr>
+					<tr>
+						<td class="value" nowrap><b>Placement:</b></td>
+						<td class="value" nowrap>
+						<select size="1" name="D49" style="height:17" class="inputBox" >
+							<option>Before</option>
+							<option>After</option>
+						</select>
+	                    <select size="1" name="D50" style="height:17" class="inputBox" >
+							<option>Select</option>
+							<option>Registration</option>
+							<option>Submission</option>
+							<option>Screening</option>
+							<option>Review</option>
+							<option>Appeals</option>
+							<option>Appeals Response</option>
+							<option>Aggregation</option>
+							<option>Aggregation Review</option>
+							<option>Final Fix</option>
+							<option>Final Review</option>
+							<option>Approval</option>
+						</select></td>
+					</tr>
+				</table>
+			</td>
+            <td class="value" nowrap>
+				<input type="radio" value="V1" name="R44">
+				<input name="T205" size="20" class="inputBox" style="width: 65;" > 
+				<input name="T2319" size="20" class="inputBox" style="width: 35px; text-align:right; height:20px" > 
+				<select size="1" name="D104" style="height:17px" class="inputBox" >
+					<option selected>AM</option>
+					<option>PM</option>
+				</select> EST
+			<br>
+				<input type="radio" value="V1" name="R44">When
+				<select size="1" name="D86" style="height:17;width:120" class="inputBox" >
+					<option selected>Select Phase</option>
+					<option>Registration</option>
+					<option>Submission</option>
+					<option>Screening</option>
+					<option>Review</option>
+					<option>Appeals</option>
+					<option>Appeals Response</option>
+					<option>Aggregation</option>
+					<option>Aggregation Review</option>
+					<option>Final Fix</option>
+					<option>Final Review</option>
+					<option>Approval</option>
+				</select>
+				<select size="1" name="D48" style="height:17" class="inputBox" >
+					<option>Starts</option>
+					<option>Ends</option>
+				</select>
+				<select size="1" name="D61" style="height:17" class="inputBox" >
+					<option>+</option>
+					<option>-</option>
+				</select> <input name="T2301" size="20" class="inputBox" style="width: 30px;">
+				<select size="1" name="D71" style="height:17" class="inputBox" >
+					<option>Days</option>
+					<option>Hrs</option>
+				</select>
+				</td>
+            <td class="value" nowrap>
+				<input name="T202" size="20" class="inputBox" style="width: 65;" > 
+				<input name="T2320" size="20" class="inputBox" style="width: 35px; text-align:right; height:20px" > 
+				<select size="1" name="D105" style="height:17px" class="inputBox" >
+					<option selected>AM</option>
+					<option>PM</option>
+				</select> EST
+			</td>
+            <td class="value" nowrap>
+				<input name="T204" size="20" class="inputBox" style="width: 50;text-align:right;"></td>
+            <td class="value">
+			<img border="0" src="images/bttn_add.gif" width="53" height="18"></td>
+		</tr>
+		<tr>
+			<td class="lastRowTD" colspan="6"></td>
+		</tr>
+</table>
+<!-- TIMELINE ENDS HERE -->
+
+	<br>
+	<table class="scorecard" cellpadding="0" width="100%" style="border-collapse: collapse;">
+		<tr>
+        	<td class="title"><b>Notes</b></td>
+		</tr>
+		<tr class="light">
+        	<td class="Value">
+				<p align="left">Add any important notes for this project below:<br>
+				<textarea rows="2" name="S2" cols="20" class="inputTextBox"></textarea></td>
+		</tr>
+		<tr>
+			<td class="lastRowTD"></td>
+		</tr>
+	</table>
+	<br>
+	<table class="scorecard" cellpadding="0" width="100%" style="border-collapse: collapse;">
+		<tr>
+        	<td class="title" colspan="2"><b>Project Details</b></td>
+		</tr>
+		<tr class="light">
+			<td class="value" width="9%" nowrap><b>Name:</b></td>
+			<td class="value" width="91%" nowrap>
+			<input name="T2321" size="20" class="inputBox" style="width: 350" value="Ajax Timed Survey v1.0"></td>
+		</tr>
+		<tr class="dark">
+            <td class="value" align="left" nowrap><p align="left"><b>Forum:</b></td>
+            <td class="value" align="left">
+				<input name="T2322" size="20" class="inputBox" style="width: 350" value="Ajax Timed Survey ">
+			</td>
+		</tr>
+		<tr class="light">
+			<td class="value" width="9%" nowrap><b>SVN Module:</b></td>
+			<td class="value" width="91%" nowrap><input name="T55" size="20" class="inputBox" style="width: 350" value="https://coder.topcoder.com/tcs/catalog/dotnet/xmi_parser/trunk"></td>
+		</tr>
+		<tr class="dark">
+            <td class="value" align="left" nowrap><p align="left"><b>Screening Scorecard:</b></td>
+            <td class="value" align="left">
+				<select size="1" style="width:350px" name="D4" class="inputBox" >
+					<option>Component Design Screening Scorecard v1.0</option>
+				</select>
+			</td>
+		</tr>
+		<tr  class="light">
+            <td class="value" align="left" nowrap><b>Review Scorecard:</b></td>
+             <td class="value" align="left">
+				<select size="1" style="width:350px" name="D5" class="inputBox" >
+					<option>Component Design Review Scorecard v1.4.2</option>
+				</select>
+			</td>
+		</tr>
+		<tr class="dark">
+            <td class="value" align="left" nowrap><p align="left"><b>Approval Scorecard:</b></td>
+            <td class="value" align="left">
+				<select size="1" style="width:350px" name="D12" class="inputBox" >
+					<option selected>N/A</option>
+					<option>Component Design Review Scorecard v1.4.2</option>
+				</select>
+			</td>
+		</tr>
+		<tr>
+			<td class="lastRowTD" colspan="2"></td>
+		</tr>
+	</table>
+	<br>
+	<table class="scorecard" cellpadding="0" width="100%" style="border-collapse: collapse;">
+		<tr>
+        	<td class="title" colspan="5">Resources</td>
+		</tr>
+		<tr>
+            <td class="header" width="20%">Role</td>
+            <td class="header" width="20%">Name</td>
+            <td class="header" width="20%">Payment</td>
+            <td class="header" width="20%">Paid?</td>
+            <td class="headerC" width="20%">&nbsp;</td>
+		</tr>
+		<tr class="light">
+			<td class="value" nowrap>
+				<select size="1" style="width:120px" name="D76" class="inputBox" >
+					<option selected>Select Role</option>
+					<option>Submitter</option>
+					<option>Primary Screener</option>
+					<option>Screener</option>
+					<option>Reviewer - Stress</option>
+					<option>Reviewer - Accuracy</option>
+					<option>Reviewer - Failure</option>
+					<option>Aggregator</option>
+					<option>Final Reviewer</option>
+					<option>Project Manager</option>
+					<option>Observer</option>
+    				<option>Approver</option>
+				</select></td>
+            <td class="value">
+				<input name="T52" size="20" class="inputBox" style="width: 100"></td>
+            <td class="value" nowrap>
+				<input type="radio" value="V1" name="R51" >$<input name="T244" size="20" class="inputBox" style="width: 50;text-align:right;"> <input type="radio" value="V1" checked name="R51">N/A</td>
+            <td class="value" nowrap>
+				<select size="1" style="width:120px" name="D115" class="inputBox" >
+					<option selected>Select</option>
+					<option>N/A</option>
+					<option>Not Paid</option>
+					<option>Paid</option>
+				</select></td>
+            <td class="valueC" nowrap>
+			<img border="0" src="images/bttn_add.gif" width="53" height="18"></td>
+		</tr>
+		<tr class="dark">
+            <td class="value" nowrap>
+				<select size="1" style="width:120px" name="D107" class="inputBox" >
+					<option>Select Role</option>
+					<option>Submitter</option>
+					<option>Primary Screener</option>
+					<option selected>Screener</option>
+					<option>Reviewer - Stress</option>
+					<option>Reviewer - Accuracy</option>
+					<option>Reviewer - Failure</option>
+					<option>Aggregator</option>
+					<option>Final Reviewer</option>
+					<option>Project Manager</option>
+					<option>Observer</option>
+					<option>Approver</option>
+				</select> (11889718)</td>
+            <td class="value"><input name="T2324" size="20" class="inputBox" style="width: 100" value="WishingBone"></td>
+            <td class="value" nowrap> 
+				<input type="radio" value="V1" name="R372" checked >$<input name="T2332" size="20" class="inputBox" style="width: 50;text-align:right;" value="500"> 
+			<input type="radio" value="V1" name="R372">N/A</td>
+            <td class="value" nowrap> 
+				<select size="1" style="width:120px" name="D118" class="inputBox" >
+					<option>N/A</option>
+					<option selected>Not Paid</option>
+					<option>Paid</option>
+				</select></td>
+            <td class="valueC" nowrap>
+			<img border="0" src="images/bttn_delete.gif" width="58" height="18"></td>
+		</tr>
+		<tr class="light">
+            <td class="value" nowrap>
+				<select size="1" style="width:120px" name="D106" class="inputBox" >
+					<option>Select Role</option>
+					<option>Submitter</option>
+					<option>Primary Screener</option>
+					<option selected>Screener</option>
+					<option>Reviewer - Stress</option>
+					<option>Reviewer - Accuracy</option>
+					<option>Reviewer - Failure</option>
+					<option>Aggregator</option>
+					<option>Final Reviewer</option>
+					<option>Project Manager</option>
+					<option>Observer</option>
+					<option>Approver</option>
+				</select> (14818660)</td>
+            <td class="value">
+	                    		<input name="T2323" size="20" class="inputBox" style="width: 100" value="WishingBone"></td>
+            <td class="value" nowrap> 
+				<input type="radio" value="V1" name="R373" checked >$<input name="T2333" size="20" class="inputBox" style="width: 50;text-align:right;" value="500"> 
+			<input type="radio" value="V1" name="R373" >N/A</td>
+            <td class="value" nowrap>
+				<select size="1" style="width:120px" name="D119" class="inputBox" >
+					<option>N/A</option>
+					<option selected>Not Paid</option>
+					<option>Paid</option>
+				</select></td>
+            <td class="valueC" nowrap>
+			<img border="0" src="images/bttn_delete.gif" width="58" height="18"></td>
+		</tr>
+		<tr class="dark">
+            <td class="value" nowrap>
+				<select size="1" style="width:120px" name="D77" class="inputBox" >
+					<option>Select Role</option>
+					<option>Submitter</option>
+					<option>Primary Screener</option>
+					<option selected>Screener</option>
+					<option>Reviewer - Stress</option>
+					<option>Reviewer - Accuracy</option>
+					<option>Reviewer - Failure</option>
+					<option>Aggregator</option>
+					<option>Final Reviewer</option>
+					<option>Project Manager</option>
+					<option>Observer</option>
+					<option>Approver</option>
+				</select> (15655112)</td>
+            <td class="value">
+	                    		<input name="T242" size="20" class="inputBox" style="width: 100" value="oldbig"></td>
+            <td class="value" nowrap>
+	            <input type="radio" value="V1" checked name="R50">$<input name="T243" size="20" class="inputBox" style="width: 50;text-align:right;" value="500">
+				<input type="radio" value="V1" name="R50">N/A</td>
+            <td class="value" nowrap>
+				<select size="1" style="width:120px" name="D120" class="inputBox" >
+					<option>N/A</option>
+					<option selected>Not Paid</option>
+					<option>Paid</option>
+				</select></td>
+            <td class="valueC" nowrap>
+			<img border="0" src="images/bttn_delete.gif" width="58" height="18"></td>
+		</tr>
+		<tr class="light">
+            <td class="value" nowrap>
+				<select size="1" style="width:120px" name="D108" class="inputBox" >
+					<option>Select Role</option>
+					<option>Submitter</option>
+					<option>Primary Screener</option>
+					<option>Screener</option>
+					<option selected>Reviewer - Stress</option>
+					<option>Reviewer - Accuracy</option>
+					<option>Reviewer - Failure</option>
+					<option>Aggregator</option>
+					<option>Final Reviewer</option>
+					<option>Project Manager</option>
+					<option>Observer</option>
+					<option>Approver</option>
+				</select></td>
+            <td class="value">
+	                    		<input name="T2325" size="20" class="inputBox" style="width: 100" value="qiucx0161"></td>
+            <td class="value" nowrap>
+	            <input type="radio" value="V1" checked name="R375">$<input name="T2334" size="20" class="inputBox" style="width: 50;text-align:right;" value="500">
+				<input type="radio" value="V1" name="R375" >N/A</td>
+            <td class="value" nowrap> 
+				<select size="1" style="width:120px" name="D121" class="inputBox" >
+					<option>N/A</option>
+					<option selected>Not Paid</option>
+					<option>Paid</option>
+				</select></td>
+            <td class="valueC" nowrap>
+			<img border="0" src="images/bttn_delete.gif" width="58" height="18"></td>
+		</tr>
+		<tr class="dark">
+            <td class="value" nowrap>
+				<select size="1" style="width:120px" name="D109" class="inputBox" >
+					<option>Select Role</option>
+					<option>Submitter</option>
+					<option>Primary Screener</option>
+					<option>Screener</option>
+					<option>Reviewer - Stress</option>
+					<option>Reviewer - Accuracy</option>
+					<option selected>Reviewer - Failure</option>
+					<option>Aggregator</option>
+					<option>Final Reviewer</option>
+					<option>Project Manager</option>
+					<option>Observer</option>
+					<option>Approver</option>
+				</select></td>
+            <td class="value">
+			<input name="T2326" size="20" class="inputBox" style="width: 100" value="mgmg"></td>
+            <td class="value" nowrap>
+	            <input type="radio" value="V1" checked name="R377">$<input name="T2335" size="20" class="inputBox" style="width: 50;text-align:right;" value="500">
+				<input type="radio" value="V1" name="R377" >N/A</td>
+            <td class="value" nowrap>
+				<select size="1" style="width:120px" name="D122" class="inputBox" >
+					<option>N/A</option>
+					<option selected>Not Paid</option>
+					<option>Paid</option>
+				</select></td>
+            <td class="valueC" nowrap>
+			<img border="0" src="images/bttn_delete.gif" width="58" height="18"></td>
+		</tr>
+		<tr class="light">
+            <td class="value" nowrap>
+				<select size="1" style="width:120px" name="D110" class="inputBox" >
+					<option>Select Role</option>
+					<option>Submitter</option>
+					<option>Primary Screener</option>
+					<option>Screener</option>
+					<option>Reviewer - Stress</option>
+					<option selected>Reviewer - Accuracy</option>
+					<option>Reviewer - Failure</option>
+					<option>Aggregator</option>
+					<option>Final Reviewer</option>
+					<option>Project Manager</option>
+					<option>Observer</option>
+					<option>Approver</option>
+				</select></td>
+            <td class="value">
+			<input name="T2327" size="20" class="inputBox" style="width: 100" value="slion"></td>
+            <td class="value" nowrap> 
+	            <input type="radio" value="V1" checked name="R378">$<input name="T2336" size="20" class="inputBox" style="width: 50;text-align:right;" value="500">
+				<input type="radio" value="V1" name="R378" >N/A</td>
+            <td class="value" nowrap> 
+				<select size="1" style="width:120px" name="D123" class="inputBox" >
+					<option>N/A</option>
+					<option selected>Not Paid</option>
+					<option>Paid</option>
+				</select></td>
+            <td class="valueC" nowrap>
+			<img border="0" src="images/bttn_delete.gif" width="58" height="18"></td>
+		</tr>
+		<tr class="dark">
+            <td class="value" nowrap>
+				<select size="1" style="width:120px" name="D111" class="inputBox" >
+					<option>Select Role</option>
+					<option>Submitter</option>
+					<option>Primary Screener</option>
+					<option>Screener</option>
+					<option>Reviewer - Stress</option>
+					<option>Reviewer - Accuracy</option>
+					<option>Reviewer - Failure</option>
+					<option selected>Aggregator</option>
+					<option>Final Reviewer</option>
+					<option>Project Manager</option>
+					<option>Observer</option>
+					<option>Approver</option>
+				</select></td>
+            <td class="value">
+			<input name="T2328" size="20" class="inputBox" style="width: 100" value="brain_cn"></td>
+            <td class="value" nowrap>
+	            <input type="radio" value="V1" checked name="R380">$<input name="T2337" size="20" class="inputBox" style="width: 50;text-align:right;" value="500">
+				<input type="radio" value="V1" name="R380" >N/A</td>
+            <td class="value" nowrap>
+				<select size="1" style="width:120px" name="D124" class="inputBox" >
+					<option>N/A</option>
+					<option selected>Not Paid</option>
+					<option>Paid</option>
+				</select></td>
+            <td class="valueC" nowrap> 
+			<img border="0" src="images/bttn_delete.gif" width="58" height="18"></td>
+		</tr>
+		<tr class="light">
+            <td class="value" nowrap>
+				<select size="1" style="width:120px" name="D112" class="inputBox" >
+					<option>Select Role</option>
+					<option>Submitter</option>
+					<option>Primary Screener</option>
+					<option>Screener</option>
+					<option>Reviewer - Stress</option>
+					<option>Reviewer - Accuracy</option>
+					<option>Reviewer - Failure</option>
+					<option>Aggregator</option>
+					<option selected>Final Reviewer</option>
+					<option>Project Manager</option>
+					<option>Observer</option>
+					<option>Approver</option>
+				</select></td>
+            <td class="value">
+			<input name="T2329" size="20" class="inputBox" style="width: 100" value="isv"></td>
+            <td class="value" nowrap>
+	            <input type="radio" value="V1" checked name="R382">$<input name="T2338" size="20" class="inputBox" style="width: 50;text-align:right;" value="500">
+				<input type="radio" value="V1" name="R382" >N/A</td>
+            <td class="value" nowrap>
+				<select size="1" style="width:120px" name="D125" class="inputBox" >
+					<option>N/A</option>
+					<option selected>Not Paid</option>
+					<option>Paid</option>
+				</select></td>
+            <td class="valueC" nowrap>
+			<img border="0" src="images/bttn_delete.gif" width="58" height="18"></td>
+		</tr>
+		<tr class="dark">
+            <td class="value" nowrap valign="top">
+				<select size="1" style="width:120px" name="D113" class="inputBox" >
+					<option>Select Role</option>
+					<option>Submitter</option>
+					<option>Primary Screener</option>
+					<option>Screener</option>
+					<option>Reviewer - Stress</option>
+					<option>Reviewer - Accuracy</option>
+					<option>Reviewer - Failure</option>
+					<option>Aggregator</option>
+					<option>Final Reviewer</option>
+					<option selected>Project Manager</option>
+					<option>Observer</option>
+					<option>Approver</option>
+				</select></td>
+            <td class="value">
+			<input name="T2330" size="20" class="inputBox" style="width: 100" value="ivern"></td>
+            <td class="value" nowrap>
+	            <input type="radio" value="V1" name="R384">$<input name="T2339" size="20" class="inputBox" style="width: 50;text-align:right;">
+				<input type="radio" value="V1" name="R384" checked>N/A</td>
+            <td class="value" nowrap>
+				<select size="1" style="width:120px" name="D116" class="inputBox" >
+					<option selected>N/A</option>
+					<option>Not Paid</option>
+					<option>Paid</option>
+				</select></td>
+            <td class="valueC" nowrap>
+			<img border="0" src="images/bttn_delete.gif" width="58" height="18"></td>
+		</tr>
+		<tr class="light">
+            <td class="value" nowrap>
+				<select size="1" style="width:120px" name="D114" class="inputBox" >
+					<option>Select Role</option>
+					<option>Submitter</option>
+					<option>Primary Screener</option>
+					<option>Screener</option>
+					<option>Reviewer - Stress</option>
+					<option>Reviewer - Accuracy</option>
+					<option>Reviewer - Failure</option>
+					<option>Aggregator</option>
+					<option>Final Reviewer</option>
+					<option>Project Manager</option>
+					<option>Observer</option>
+					<option selected>Approver</option>
+				</select></td>
+            <td class="value">
+			<input name="T2341" size="20" class="inputBox" style="width: 100" value="ivern"></td>
+            <td class="value" nowrap>
+	            <input type="radio" value="V1" name="R386">$<input name="T2340" size="20" class="inputBox" style="width: 50;text-align:right;">
+				<input type="radio" value="V1" name="R386" checked>N/A</td>
+            <td class="value" nowrap>
+				<select size="1" style="width:120px" name="D117" class="inputBox" >
+					<option selected>N/A</option>
+					<option>Not Paid</option>
+					<option>Paid</option>
+				</select></td>
+            <td class="valueC" nowrap>
+			<img border="0" src="images/bttn_delete.gif" width="58" height="18"></td>
+		</tr>
+		<tr>
+			<td class="lastRowTD" colspan="5"></td>
+		</tr>
+	</table>
+	<br>
+	<table class="scorecard" cellpadding="0" cellspacing="0" width="100%" style="border-collapse: collapse;">
+		<tr>
+        	<td class="title"><b>Status</b></td>
+		</tr>
+		<tr class="light">
+        	<td class="Value">
+				<p align="left"><b>&nbsp;Current Status:&nbsp; </b>
+				<select size="1" name="D10" class="inputBox" >
+					<option>Select</option>
+					<option selected>Active</option>
+					<option>Inactive</option>
+					<option>Cancelled - Failed Review</option>
+					<option>Cancelled - Failed Screening</option>
+					<option>Cancelled - Zero Submissions</option>
+					<option>Completed</option>
+				</select><br>
+				<br>
+				You must provide an explanation below if making changes to project status:<br>
+				<textarea rows="2" name="S4" cols="20" class="inputTextBox"></textarea></td>
+		</tr>
+		<tr>
+			<td class="lastRowTD"></td>
+		</tr>
+	</table>
+	<br>
+	<table class="scorecard" cellpadding="0" cellspacing="0" width="100%" style="border-collapse: collapse;">
+		<tr>
+			<td class="title" colspan="2">Preferences</td>
+		</tr>
+		<tr class="light">
+			<td class="value" width="1%">
+				<b>Autopilot:</b><br>
+			</td>
+			<td class="value">
+			 	<input type="radio" value="V1"  name="R13"><b> Completion: </b>Phases will advance automatically based on completion of the previous phase.<br>
+				<input type="radio" value="V1" name="R13" checked><b> Turn Off</b>
+			</td>
+        </tr>
+		<tr class="dark">
+			<td class="value" colspan="2">
+			 	<input type="checkbox" value="V1"  name="RR1" checked><b>Send Email Notifications: </b>
+				Receive email notifications when project status changes.<br>
+				 <input type="checkbox" value="V2"  name="RR1"><b>Do Not Rate this Project<br>
+				 <input type="checkbox" value="V3"  name="RR1"><b>Receive Timeline Notifications
+			</td>
+        </tr>
+		<tr>
+			<td class="lastRowTD" colspan="2"></td>
+		</tr>
+	</table><br><table class="scorecard" cellpadding="0" cellspacing="0" width="100%" id="table25" style="border-collapse: collapse;">
+		<tr>
+        	<td class="title"><b>Explanation</b></td>
+		</tr>
+		<tr class="light">
+        	<td class="Value">
+				<p align="left">You must provide an explanation below if making changes to this project:<br>
+				<textarea rows="2" name="S3" cols="20" class="inputTextBox"></textarea></td>
+		</tr>
+		<tr>
+			<td class="lastRowTD"></td>
+		</tr>
+	</table>
+	<p>
+	<a href="#"><img src="images/bttn_save_changes.gif" width="101" height="18" border="0" align="right" vspace="11"></a></p>
+	<p><a href="#"><img src="images/bttn_cancel.gif" width="60" height="18" border="0" align="right" hspace="6" vspace="11"></a></p>
+	<p><br>
+	<br>
+</div>
+
+    <p><br/></p>
+
+
+</td>
+<!-- Center Column Ends -->
+
+<!-- Gutter -->
+<td width="15"><img src="/i/clear.gif" width="25" height="1" border="0"></td>
+<!-- Gutter Ends -->
+
+<!-- Gutter -->
+<td width="2"><img src="/i/clear.gif" width="2" height="1" border="0"></td>
+<!-- Gutter Ends -->
+
+</tr>
+</table>
+
+
+
+
+
+<!--webbot bot="Include" U-Include="inc_footer.htm" TAG="BODY" startspan -->
+<!-- Footer Include Begins -->
+<table width="100%" border="0" cellpadding="0" cellspacing="0">
+<!-- TopCoder Links Begins -->
+    <tr><td width="100%" class="footer">
+            <A href="http://www.topcoder.com/" class="footerLinks">Home</A>&#160;&#160;|&#160;&#160;
+            <A href="http://www.topcoder.com/tc?module=Static&d1=about&d2=index" class="footerLinks">About TopCoder</A>&#160;&#160;|&#160;&#160;
+            <A href="http://www.topcoder.com/tc?module=Static&d1=pressroom&d2=index" class="footerLinks">Press Room</A>&#160;&#160;|&#160;&#160;
+            <A href="http://www.topcoder.com/tc?module=Static&d1=about&d2=contactus" class="footerLinks">Contact Us</A>&#160;&#160;|&#160;&#160;
+            <A href="http://www.topcoder.com/tc?module=Static&d1=about&d2=privacy" class="footerLinks">Privacy</A>&#160;&#160;|&#160;&#160;
+            <A href="http://www.topcoder.com/tc?module=Static&d1=about&d2=terms" class="footerLinks">Terms</A></td></tr>
+<!-- TopCoder Links Ends -->
+
+<!-- Member Sites Begins -->
+    <tr><td width="100%" class="footer">
+            <A href="http://www.topcoder.com/tc" class="footerLinks">Developer Center</A>&#160;&#160;|&#160;&#160;
+            <A href="http://www.topcoder.com/corp/?module=Static&d1=corp&d2=index" class="footerLinks">Corporate Services</A>
+<!-- Member Sites Ends -->
+
+    <tr><td height="4" class="footerStripe"><img src="http://www.topcoder.com/i/corp/clear.gif" width="10" height="4" border="0"/></td></tr>
+
+    <tr><td width="100%" class="copyright">Copyright &#169; 2001-2005, TopCoder, Inc. All rights reserved.</td></tr>
+</table>
+<!-- Footer Include Ends -->
+
+
+
+<!--webbot bot="Include" i-checksum="34924" endspan -->
+
+
+
+
+
+</body>
+
+</html>

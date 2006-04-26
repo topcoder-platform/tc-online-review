@@ -1,0 +1,193 @@
+#mainTabs
+{
+	z-index:+1;
+	display:block;
+	margin-bottom:-1px;
+	position:relative;
+	width:auto;
+}
+
+#mainMiddleContent
+{
+	padding:7px;
+	border:solid;
+	border-color:#666;
+	background:#FFF;
+	border-width:1px;
+}
+
+.inputBox
+{
+font-family:Arial, Helvetica, sans-serif;
+font-size:11px;
+}
+
+/* scorecard TABLE -- Changes:	modified bottom-border + New "table.scorecard td.lastRowTD" class to look like bottom border when ON  
+							few new TD and TR classes
+*/
+
+table.scorecard {
+border: 1px solid #999;
+
+/* MODIFIED LINE HERE */
+border-bottom: none;
+
+vertical-align: top;
+padding: 0px;
+}
+table.scorecard td.title {
+text-align: left;
+background-color: #999999;
+background-image: url(../i/stats/headerBG.gif);
+border-bottom: 1px solid #999999; 
+font-size: 12px;
+font-weight: bold;
+text-decoration: none;
+padding: 3px 5px 3px 5px;
+white-space: nowrap;
+}
+
+/* NEW CLASS */
+table.scorecard td.titleRlink {
+text-align: right;
+background-color: #999999;
+background-image: url(../i/scorecards/headerBG.gif);
+border-bottom: 1px solid #999999; 
+font-size: 11px;
+text-decoration: none;
+padding: 3px 5px 3px 5px;
+white-space: nowrap;
+}
+
+table.stat tr.light { background-color: #FFFFFF; }
+table.stat tr.dark { background-color: #f7f7f7; }
+table.stat td.valueC { text-align: center }
+table.stat td.valueR { text-align: right }
+table.stat td.header { }
+
+
+table.scorecard td.header,table.scorecard td.headerC,table.scorecard td.headerCN,table.scorecard td.headerR {
+color: #333;
+font-size: 11px;
+line-height: 14px;
+padding: 2px 5px 2px 5px;
+background-color: #eee;
+border-bottom: 1px solid #999;
+vertical-align: top;
+}
+table.scorecard td.headerC { text-align: center; font-weight: bold; }
+table.scorecard td.headerCN { text-align: center; }
+table.scorecard td.headerR { text-align: right; font-weight: bold; }
+table.scorecard td.headerB { vertical-align: absmiddle; font-weight: bold; }
+table.scorecard tr.light { background-color: #FFFFFF; }
+table.scorecard tr.dark { background-color: #f7f7f7; }
+
+/* NEW CLASS */
+table.scorecard tr.highlighted { background-color: #FFFFCC; }
+
+/* NEW CLASS HERE */
+table.stat td.darkInvert, table.scorecard td.darkInvertC { 
+color: #FFFFFF;
+font-size: 11px;
+line-height: 14px;
+padding: 2px 5px 2px 5px;
+background-color: #666;
+vertical-align: top;
+}
+
+table.scorecard td.darkInvertC { text-align: center; }
+
+table.scorecard td.field {
+color: #000000;
+font-weight: bold;
+font-size: 11px;
+padding: 1px 5px 1px 5px;
+vertical-align: top;
+}
+table.scorecard td.value, table.scorecard td.valueC, table.scorecard td.valueR {
+font-size: 11px;
+padding: 5px;
+vertical-align: top;
+border-bottom:1px solid #999;
+}
+table.scorecard td.valueC { text-align: center }
+table.scorecard td.valueR { text-align: right }
+
+/* NEW CLASS HERE */
+table.scorecard td.lastRowTD { background-color: #DDDDDD; height: 7px;border-bottom:1px solid #666; }
+table.scorecard td a:link { text-decoration: none; }
+table.scorecard td a:visited { text-decoration: none; }
+table.scorecard td a:hover { text-decoration: none; }
+table.scorecard td a:active { text-decoration: none; }
+
+
+
+.showText{ display: block }
+.hideText{ display: none }
+
+.inputTextBox {font-size: 10px; font-family: sans-serif;width:100%;height:38px;border:1px solid #ccc; }
+
+/* Phase Tabs ---------------------------------------- */
+
+#phasenav
+{
+	float: left;
+	width: 700px;
+	background-color: #FFF;
+	padding: 0;
+	margin: 0;
+	font-size: 11px;
+}
+
+
+#phasetabs
+{
+	float: left;
+	font-size: 11px;
+	line-height: normal;
+	background-color: #FFF;
+	list-style: none;
+	padding: 0;
+	margin: 0 0 0 0;
+	display: inline;
+}
+
+#phasetabs ul
+{
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+#phasetabs li
+{
+	float: left;
+	margin: 0;
+	padding: 0 0 0 6px;
+	background-image: url(../i/tab_left_off.gif);
+	background-repeat: no-repeat;
+	background-position: left top;
+}
+
+#phasetabs a
+{
+	float: left;
+	display: block;
+	padding: 3px 8px 5px 8px;
+	text-decoration: none;
+	font-weight: bold;
+	color: #333;
+	background-image: url(../i/tab_right_off.gif);
+	background-repeat: no-repeat;
+	background-position: right top;
+}
+
+#phasetabs a:hover { color: #000; }
+#phasetabs #active { background-image: url(../i/tab_left_on.gif); }
+
+#phasetabs #active a
+{
+	background-image: url(../i/tab_right_on.gif);
+	color: #000;
+	padding-bottom: 5px;
+}

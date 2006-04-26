@@ -1,0 +1,250 @@
+
+.coderTextRed, .coderTextYellow, .coderTextBlue, .coderTextGreen, .coderTextGray, .coderTextOrange, .coderTextBlack { font-weight: bold; }
+
+/* Coder Text Blue ----------  */
+.coderTextBlue
+{
+    color: #6666FF;
+    text-decoration: none;
+}
+
+.coderTextBlue:link
+{
+    color: #6666FF;
+    text-decoration: none;
+}
+
+.coderTextBlue:visited
+{
+    color: #6666FF;
+    text-decoration: none;
+}
+
+.coderTextBlue:hover
+{
+    color: #6666FF;
+    text-decoration: underline;
+}
+
+.coderTextBlue:active
+{
+    color: #6666FF;
+    text-decoration: underline;
+}
+
+/* Coder Text Gray ----------  */
+.coderTextGray
+{
+    color: #999999;
+    text-decoration: none;
+}
+
+.coderTextGray:link
+{
+    color: #999999;
+    text-decoration: none;
+}
+
+.coderTextGray:visited
+{
+    color: #999999;
+    text-decoration: none;
+}
+
+.coderTextGray:hover
+{
+    color: #999999;
+    text-decoration: underline;
+}
+
+.coderTextGray:active
+{
+    color: #999999;
+    text-decoration: underline;
+}
+
+/* Coder Text Green ----------  */
+.coderTextGreen
+{
+    color: #00A900;
+    text-decoration: none;
+}
+
+.coderTextGreen:link
+{
+    color: #00A900;
+    text-decoration: none;
+}
+
+.coderTextGreen:visited
+{
+    color: #00A900;
+    text-decoration: none;
+}
+
+.coderTextGreen:hover
+{
+    color: #00A900;
+    text-decoration: underline;
+}
+
+.coderTextGreen:active
+{
+    color: #00A900;
+    text-decoration: underline;
+}
+
+/* Coder Text Orange ----------  */
+.coderTextOrange
+{
+    color: #FF9900;
+}
+
+.coderTextOrange:link
+{
+	color: #FF9900;
+	text-decoration: none;
+}
+
+.coderTextOrange:visited
+{
+	color: #FF9900;
+	text-decoration: none;
+}
+
+.coderTextOrange:hover
+{
+	color: #FF9900;
+	text-decoration: underline;
+}
+
+.coderTextOrange:active
+{
+	color: #FF9900;
+	text-decoration: underline;
+}
+
+/* Coder Text Red ----------  */
+.coderTextRed
+{
+    color: #EE0000;
+    text-decoration: none;
+}
+
+.coderTextRed:link
+{
+    color: #EE0000;
+    text-decoration: none;
+}
+
+.coderTextRed:visited
+{
+    color: #EE0000;
+    text-decoration: none;
+}
+
+.coderTextRed:hover
+{
+    color: #EE0000;
+    text-decoration: underline;
+}
+
+.coderTextRed:active
+{
+    color: #EE0000;
+    text-decoration: underline;
+}
+
+/* Coder Text Yellow ----------  */
+.coderTextYellow
+{
+    color: #DDCC00;
+    text-decoration: none;
+}
+
+.coderTextYellow:link
+{
+    color: #DDCC00;
+    text-decoration: none;
+}
+
+.coderTextYellow:visited
+{
+    color: #DDCC00;
+    text-decoration: none;
+}
+
+.coderTextYellow:hover
+{
+    color: #DDCC00;
+    text-decoration: underline;
+}
+
+.coderTextYellow:active
+{
+    color: #DDCC00;
+    text-decoration: underline;
+}
+
+
+/* Coder Text White ----------  */
+.coderTextWhite
+{
+    color: #FFFFFF;
+    text-decoration: none;
+}
+
+.coderTextWhite:link
+{
+    color: #FFFFFF;
+    text-decoration: none;
+}
+
+.coderTextWhite:visited
+{
+    color: #FFFFFF;
+    text-decoration: none;
+}
+
+.coderTextWhite:hover
+{
+    color: #FFFFFF;
+    text-decoration: underline;
+}
+
+.coderTextWhite:active
+{
+    color: #FFFFFF;
+    text-decoration: underline;
+}
+
+/* Coder Text Black ----------  */
+.coderTextBlack
+{
+    color: #000000;
+    text-decoration: none;
+}
+
+.coderTextBlack:link
+{
+    color: #000000;
+    text-decoration: none;
+}
+
+.coderTextBlack:visited
+{
+    color: #000000;
+    text-decoration: none;
+}
+
+.coderTextBlack:hover
+{
+    color: #000000;
+    text-decoration: underline;
+}
+
+.coderTextBlack:active
+{
+    color: #000000;
+    text-decoration: underline;
+}
