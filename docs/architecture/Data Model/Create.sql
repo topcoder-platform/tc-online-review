@@ -166,7 +166,7 @@ CREATE TABLE project_info_type_lu (
 CREATE TABLE project_info (
   project_id                    INTEGER                     NOT NULL,
   project_info_type_id          INTEGER                     NOT NULL,
-  value                         VARCHAR(255)                NOT NULL,
+  value                         LVARCHAR(4096)              NOT NULL,
   creation_user                 VARCHAR(64)                 NOT NULL,
   creation_date                 DATETIME YEAR TO SECOND     NOT NULL,
   modification_user             VARCHAR(64)                 NOT NULL,
@@ -192,6 +192,17 @@ CREATE TABLE project_scorecard (
     REFERENCES scorecard(scorecard_id)
 );
 
+CREATE TABLE phase_status_lu (
+  phase_status_id               INTEGER                     NOT NULL,
+  name                          VARCHAR(64)                 NOT NULL,
+  description                   VARCHAR(255)                NOT NULL,
+  creation_user                 VARCHAR(64)                 NOT NULL,
+  creation_date                 DATETIME YEAR TO SECOND     NOT NULL,
+  modification_user             VARCHAR(64)                 NOT NULL,
+  modification_date             DATETIME YEAR TO SECOND     NOT NULL,
+  PRIMARY KEY(phase_status_id)
+);
+
 CREATE TABLE phase_type_lu (
   phase_type_id                 INTEGER                     NOT NULL,
   name                          VARCHAR(64)                 NOT NULL,
@@ -207,10 +218,10 @@ CREATE TABLE phase (
   phase_id                      INTEGER                     NOT NULL,
   project_id                    INTEGER                     NOT NULL,
   phase_type_id                 INTEGER                     NOT NULL,
-  absolute_start_time           DATETIME YEAR TO SECOND,
-  previous_phase_id             INTEGER,
-  previous_phase_end            BOOLEAN,
-  lag_time                      INTERVAL DAY TO SECOND,
+  phase_status_id               INTEGER                     NOT NULL,
+  fixed_start_time              DATETIME YEAR TO SECOND,
+  actual_start_time             DATETIME YEAR TO SECOND,
+  actual_start_time             DATETIME YEAR TO SECOND,
   duration                      INTERVAL DAY TO SECOND      NOT NULL,
   creation_user                 VARCHAR(64)                 NOT NULL,
   creation_date                 DATETIME YEAR TO SECOND     NOT NULL,
@@ -218,7 +229,22 @@ CREATE TABLE phase (
   modification_date             DATETIME YEAR TO SECOND     NOT NULL,
   PRIMARY KEY(phase_id),
   FOREIGN KEY(phase_type_id)
-    REFERENCES phase_type_lu(phase_type_id)
+    REFERENCES phase_type_lu(phase_type_id),
+  FOREIGN KEY(phase_status_id)
+    REFERENCES phase_status_lu(phase_status_id)
+);
+
+CREATE TABLE phase_dependency (
+  dependency_phase_id           INTEGER                     NOT NULL,
+  dependent_phase_id            INTEGER                     NOT NULL,
+  start_or_end                  BOOLEAN                     NOT NULL,
+  before_or_after               BOOLEAN                     NOT NULL,
+  lag_time                      INTERVAL DAY TO SECOND      NOT NULL,
+  PRIMARY KEY(dependency_phase_id, dependent_phase_id),
+  FOREIGN KEY(dependency_phase_id)
+    REFERENCES phase(phase_id),
+  FOREIGN KEY(dependent_phase_id)
+    REFERENCES phase(phase_id)
 );
 
 CREATE TABLE phase_criteria (
@@ -251,7 +277,7 @@ CREATE TABLE resource_role_lu (
 CREATE TABLE resource (
   resource_id                   INTEGER                     NOT NULL,
   resource_role_id              INTEGER                     NOT NULL,
-  project_id                    INTEGER                     NOT NULL,
+  project_id                    INTEGER,
   phase_id                      INTEGER,
   creation_user                 VARCHAR(64)                 NOT NULL,
   creation_date                 DATETIME YEAR TO SECOND     NOT NULL,
@@ -280,7 +306,7 @@ CREATE TABLE resource_info_type_lu (
 CREATE TABLE resource_info (
   resource_id                   INTEGER                     NOT NULL,
   resource_info_type_id         INTEGER                     NOT NULL,
-  value                         VARCHAR(255)                NOT NULL,
+  value                         LVARCHAR(4096)              NOT NULL,
   creation_user                 VARCHAR(64)                 NOT NULL,
   creation_date                 DATETIME YEAR TO SECOND     NOT NULL,
   modification_user             VARCHAR(64)                 NOT NULL,
@@ -362,34 +388,6 @@ CREATE TABLE resource_submission (
     REFERENCES resource(resource_id)
 );
 
-CREATE TABLE project_phase (
-  project_id                    INTEGER                     NOT NULL,
-  phase_id                      INTEGER                     NOT NULL,
-  creation_user                 VARCHAR(64)                 NOT NULL,
-  creation_date                 DATETIME YEAR TO SECOND     NOT NULL,
-  modification_user             VARCHAR(64)                 NOT NULL,
-  modification_date             DATETIME YEAR TO SECOND     NOT NULL,
-  PRIMARY KEY(project_id, phase_id),
-  FOREIGN KEY(project_id)
-    REFERENCES project(project_id),
-  FOREIGN KEY(phase_id)
-    REFERENCES phase(phase_id)
-);
-
-CREATE TABLE submission_phase (
-  submission_id                 INTEGER                     NOT NULL,
-  phase_id                      INTEGER                     NOT NULL,
-  creation_user                 VARCHAR(64)                 NOT NULL,
-  creation_date                 DATETIME YEAR TO SECOND     NOT NULL,
-  modification_user             VARCHAR(64)                 NOT NULL,
-  modification_date             DATETIME YEAR TO SECOND     NOT NULL,
-  PRIMARY KEY(submission_id, phase_id),
-  FOREIGN KEY(submission_id)
-    REFERENCES submission(submission_id),
-  FOREIGN KEY(phase_id)
-    REFERENCES phase(phase_id)
-);
-
 CREATE TABLE comment_type_lu (
   comment_type_id               INTEGER                     NOT NULL,
   name                          VARCHAR(64)                 NOT NULL,
@@ -424,7 +422,7 @@ CREATE TABLE review (
 CREATE TABLE review_item (
   review_item_id                INTEGER                     NOT NULL,
   scorecard_question_id         INTEGER                     NOT NULL,
-  score                         VARCHAR(255)                NOT NULL,
+  answer                        VARCHAR(255)                NOT NULL,
   creation_user                 VARCHAR(64)                 NOT NULL,
   creation_date                 DATETIME YEAR TO SECOND     NOT NULL,
   modification_user             VARCHAR(64)                 NOT NULL,
@@ -480,6 +478,8 @@ CREATE TABLE deliverable_lu (
   resource_role_id              INTEGER                     NOT NULL,
   name                          VARCHAR(64)                 NOT NULL,
   description                   VARCHAR(64)                 NOT NULL,
+  per_submission                BOOLEAN                     NOT NULL,
+  required                      BOOLEAN                     NOT NULL,
   creation_user                 VARCHAR(64)                 NOT NULL,
   creation_date                 DATETIME YEAR TO SECOND     NOT NULL,
   modification_user             VARCHAR(64)                 NOT NULL,
@@ -504,14 +504,28 @@ CREATE TABLE project_audit (
     REFERENCES project(project_id)
 );
 
-CREATE TABLE timeline_notification (
-  project_id                    INTEGER                     NOT NULL,
-  handle                        VARCHAR(64)                 NOT NULL,
+CREATE TABLE notification_type_lu (
+  notification_type_id          INTEGER                     NOT NULL,
+  name                          VARCHAR(64)                 NOT NULL,
+  description                   VARCHAR(255)                NOT NULL,
   creation_user                 VARCHAR(64)                 NOT NULL,
   creation_date                 DATETIME YEAR TO SECOND     NOT NULL,
   modification_user             VARCHAR(64)                 NOT NULL,
   modification_date             DATETIME YEAR TO SECOND     NOT NULL,
-  PRIMARY KEY(project_id, handle),
+  PRIMARY KEY(notification_type_id)
+);
+
+CREATE TABLE notification (
+  project_id                    INTEGER                     NOT NULL,
+  external_ref_id               INTEGER                     NOT NULL,
+  notification_type_id          INTEGER                     NOT NULL,
+  creation_user                 VARCHAR(64)                 NOT NULL,
+  creation_date                 DATETIME YEAR TO SECOND     NOT NULL,
+  modification_user             VARCHAR(64)                 NOT NULL,
+  modification_date             DATETIME YEAR TO SECOND     NOT NULL,
+  PRIMARY KEY(project_id, handle, notification_type_id),
   FOREIGN KEY(project_id)
-    REFERENCES project(project_id)
+    REFERENCES project(project_id),
+  FOREIGN KEY(notification_type_id)
+    REFERENCES notification_type_lu(notification_type_id)
 );
