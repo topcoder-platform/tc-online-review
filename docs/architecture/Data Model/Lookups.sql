@@ -98,6 +98,12 @@ INSERT INTO project_info_type_lu(project_info_type_id, name, description, creati
   VALUES(12, 'Payments Required', 'Payments Required', 'System', CURRENT, 'System', CURRENT);
 INSERT INTO project_info_type_lu(project_info_type_id, name, description, creation_user, creation_date, modification_user, modification_date)
   VALUES(13, 'Notes', 'Notes', 'System', CURRENT, 'System', CURRENT);
+INSERT INTO project_info_type_lu(project_info_type_id, name, description, creation_user, creation_date, modification_user, modification_date)
+  VALUES(14, 'Deactivated Timestamp', 'Deactivated Timestamp', 'System', CURRENT, 'System', CURRENT);
+INSERT INTO project_info_type_lu(project_info_type_id, name, description, creation_user, creation_date, modification_user, modification_date)
+  VALUES(15, 'Deactivated Phase', 'Deactivated Phase', 'System', CURRENT, 'System', CURRENT);
+INSERT INTO project_info_type_lu(project_info_type_id, name, description, creation_user, creation_date, modification_user, modification_date)
+  VALUES(16, 'Deactivated Reason', 'Deactivated Reason', 'System', CURRENT, 'System', CURRENT);
 
 INSERT INTO phase_type_lu(phase_type_id, name, description, creation_user, creation_date, modification_user, modification_date)
   VALUES(1, 'Registration', 'Registration', 'System', CURRENT, 'System', CURRENT);
