@@ -8,7 +8,6 @@ CREATE TABLE project_type_lu (
   modification_date             DATETIME YEAR TO SECOND     NOT NULL,
   PRIMARY KEY(project_type_id)
 );
-
 CREATE TABLE project_category_lu (
   project_category_id           INTEGER                     NOT NULL,
   project_type_id               INTEGER                     NOT NULL,
@@ -22,7 +21,6 @@ CREATE TABLE project_category_lu (
   FOREIGN KEY(project_type_id)
     REFERENCES project_type_lu(project_type_id)
 );
-
 CREATE TABLE scorecard_type_lu (
   scorecard_type_id             INTEGER                     NOT NULL,
   name                          VARCHAR(64)                 NOT NULL,
@@ -33,7 +31,6 @@ CREATE TABLE scorecard_type_lu (
   modification_date             DATETIME YEAR TO SECOND     NOT NULL,
   PRIMARY KEY(scorecard_type_id)
 );
-
 CREATE TABLE scorecard_status_lu (
   scorecard_status_id           INTEGER                     NOT NULL,
   name                          VARCHAR(64)                 NOT NULL,
@@ -44,7 +41,6 @@ CREATE TABLE scorecard_status_lu (
   modification_date             DATETIME YEAR TO SECOND     NOT NULL,
   PRIMARY KEY(scorecard_status_id)
 );
-
 CREATE TABLE scorecard (
   scorecard_id                  INTEGER                     NOT NULL,
   scorecard_status_id           INTEGER                     NOT NULL,
@@ -66,7 +62,6 @@ CREATE TABLE scorecard (
   FOREIGN KEY(scorecard_status_id)
     REFERENCES scorecard_status_lu(scorecard_status_id)
 );
-
 CREATE TABLE scorecard_group (
   scorecard_group_id            INTEGER                     NOT NULL,
   scorecard_id                  INTEGER                     NOT NULL,
@@ -80,7 +75,6 @@ CREATE TABLE scorecard_group (
   FOREIGN KEY(scorecard_id)
     REFERENCES scorecard(scorecard_id)
 );
-
 CREATE TABLE scorecard_section (
   scorecard_section_id          INTEGER                     NOT NULL,
   scorecard_group_id            INTEGER                     NOT NULL,
@@ -94,7 +88,6 @@ CREATE TABLE scorecard_section (
   FOREIGN KEY(scorecard_group_id)
     REFERENCES scorecard_group(scorecard_group_id)
 );
-
 CREATE TABLE scorecard_question_type_lu (
   scorecard_question_type_id    INTEGER                     NOT NULL,
   name                          VARCHAR(64)                 NOT NULL,
@@ -105,7 +98,6 @@ CREATE TABLE scorecard_question_type_lu (
   modification_date             DATETIME YEAR TO SECOND     NOT NULL,
   PRIMARY KEY(scorecard_question_type_id)
 );
-
 CREATE TABLE scorecard_question (
   scorecard_question_id         INTEGER                     NOT NULL,
   scorecard_question_type_id    INTEGER                     NOT NULL,
@@ -125,7 +117,6 @@ CREATE TABLE scorecard_question (
   FOREIGN KEY(scorecard_question_type_id)
     REFERENCES scorecard_question_type_lu(scorecard_question_type_id)
 );
-
 CREATE TABLE project_status_lu (
   project_status_id             INTEGER                     NOT NULL,
   name                          VARCHAR(64)                 NOT NULL,
@@ -136,7 +127,6 @@ CREATE TABLE project_status_lu (
   modification_date             DATETIME YEAR TO SECOND     NOT NULL,
   PRIMARY KEY(project_status_id)
 );
-
 CREATE TABLE project (
   project_id                    INTEGER                     NOT NULL,
   project_status_id             INTEGER                     NOT NULL,
@@ -151,7 +141,6 @@ CREATE TABLE project (
   FOREIGN KEY(project_status_id)
     REFERENCES project_status_lu(project_status_id)
 );
-
 CREATE TABLE project_info_type_lu (
   project_info_type_id          INTEGER                     NOT NULL,
   name                          VARCHAR(64)                 NOT NULL,
@@ -162,7 +151,6 @@ CREATE TABLE project_info_type_lu (
   modification_date             DATETIME YEAR TO SECOND     NOT NULL,
   PRIMARY KEY(project_info_type_id)
 );
-
 CREATE TABLE project_info (
   project_id                    INTEGER                     NOT NULL,
   project_info_type_id          INTEGER                     NOT NULL,
@@ -177,7 +165,6 @@ CREATE TABLE project_info (
   FOREIGN KEY(project_id)
     REFERENCES project(project_id)
 );
-
 CREATE TABLE project_scorecard (
   project_id                    INTEGER                     NOT NULL,
   scorecard_id                  INTEGER                     NOT NULL,
@@ -191,7 +178,6 @@ CREATE TABLE project_scorecard (
   FOREIGN KEY(scorecard_id)
     REFERENCES scorecard(scorecard_id)
 );
-
 CREATE TABLE phase_status_lu (
   phase_status_id               INTEGER                     NOT NULL,
   name                          VARCHAR(64)                 NOT NULL,
@@ -202,7 +188,6 @@ CREATE TABLE phase_status_lu (
   modification_date             DATETIME YEAR TO SECOND     NOT NULL,
   PRIMARY KEY(phase_status_id)
 );
-
 CREATE TABLE phase_type_lu (
   phase_type_id                 INTEGER                     NOT NULL,
   name                          VARCHAR(64)                 NOT NULL,
@@ -213,7 +198,6 @@ CREATE TABLE phase_type_lu (
   modification_date             DATETIME YEAR TO SECOND     NOT NULL,
   PRIMARY KEY(phase_type_id)
 );
-
 CREATE TABLE phase (
   phase_id                      INTEGER                     NOT NULL,
   project_id                    INTEGER                     NOT NULL,
@@ -221,7 +205,7 @@ CREATE TABLE phase (
   phase_status_id               INTEGER                     NOT NULL,
   fixed_start_time              DATETIME YEAR TO SECOND,
   actual_start_time             DATETIME YEAR TO SECOND,
-  actual_start_time             DATETIME YEAR TO SECOND,
+  actual_end_time               DATETIME YEAR TO SECOND,
   duration                      INTERVAL DAY TO SECOND      NOT NULL,
   creation_user                 VARCHAR(64)                 NOT NULL,
   creation_date                 DATETIME YEAR TO SECOND     NOT NULL,
@@ -233,7 +217,6 @@ CREATE TABLE phase (
   FOREIGN KEY(phase_status_id)
     REFERENCES phase_status_lu(phase_status_id)
 );
-
 CREATE TABLE phase_dependency (
   dependency_phase_id           INTEGER                     NOT NULL,
   dependent_phase_id            INTEGER                     NOT NULL,
@@ -246,20 +229,30 @@ CREATE TABLE phase_dependency (
   FOREIGN KEY(dependent_phase_id)
     REFERENCES phase(phase_id)
 );
-
+CREATE TABLE phase_criteria_type_lu (
+  phase_criteria_type_id        INTEGER                     NOT NULL,
+  name                          VARCHAR(64)                 NOT NULL,
+  description                   VARCHAR(255)                NOT NULL,
+  creation_user                 VARCHAR(64)                 NOT NULL,
+  creation_date                 DATETIME YEAR TO SECOND     NOT NULL,
+  modification_user             VARCHAR(64)                 NOT NULL,
+  modification_date             DATETIME YEAR TO SECOND     NOT NULL,
+  PRIMARY KEY(phase_criteria_type_id)
+);
 CREATE TABLE phase_criteria (
-  phase_criteria_id             INTEGER                     NOT NULL,
   phase_id                      INTEGER                     NOT NULL,
+  phase_criteria_type_id       INTEGER                     NOT NULL,
   parameter                     VARCHAR(255)                NOT NULL,
   creation_user                 VARCHAR(64)                 NOT NULL,
   creation_date                 DATETIME YEAR TO SECOND     NOT NULL,
   modification_user             VARCHAR(64)                 NOT NULL,
   modification_date             DATETIME YEAR TO SECOND     NOT NULL,
-  PRIMARY KEY(phase_criteria_id),
+  PRIMARY KEY(phase_id, phase_criteria_type_id),
   FOREIGN KEY(phase_id)
-    REFERENCES phase(phase_id)
+    REFERENCES phase(phase_id),
+  FOREIGN KEY(phase_criteria_type_id)
+    REFERENCES phase_criteria_type_lu(phase_criteria_type_id)
 );
-
 CREATE TABLE resource_role_lu (
   resource_role_id              INTEGER                     NOT NULL,
   phase_type_id                 INTEGER,
@@ -273,7 +266,6 @@ CREATE TABLE resource_role_lu (
   FOREIGN KEY(phase_type_id)
     REFERENCES phase_type_lu(phase_type_id)
 );
-
 CREATE TABLE resource (
   resource_id                   INTEGER                     NOT NULL,
   resource_role_id              INTEGER                     NOT NULL,
@@ -291,7 +283,6 @@ CREATE TABLE resource (
   FOREIGN KEY(phase_id)
     REFERENCES phase(phase_id)
 );
-
 CREATE TABLE resource_info_type_lu (
   resource_info_type_id         INTEGER                     NOT NULL,
   name                          VARCHAR(64)                 NOT NULL,
@@ -302,7 +293,6 @@ CREATE TABLE resource_info_type_lu (
   modification_date             DATETIME YEAR TO SECOND     NOT NULL,
   PRIMARY KEY(resource_info_type_id)
 );
-
 CREATE TABLE resource_info (
   resource_id                   INTEGER                     NOT NULL,
   resource_info_type_id         INTEGER                     NOT NULL,
@@ -317,7 +307,6 @@ CREATE TABLE resource_info (
   FOREIGN KEY(resource_id)
     REFERENCES resource(resource_id)
 );
-
 CREATE TABLE upload_type_lu (
   upload_type_id                INTEGER                     NOT NULL,
   name                          VARCHAR(64)                 NOT NULL,
@@ -328,7 +317,6 @@ CREATE TABLE upload_type_lu (
   modification_date             DATETIME YEAR TO SECOND     NOT NULL,
   PRIMARY KEY(upload_type_id)
 );
-
 CREATE TABLE upload (
   upload_id                     INTEGER                     NOT NULL,
   project_id                    INTEGER                     NOT NULL,
@@ -347,7 +335,6 @@ CREATE TABLE upload (
   FOREIGN KEY(project_id)
     REFERENCES project(project_id)
 );
-
 CREATE TABLE submission_status_lu (
   submission_status_id          INTEGER                     NOT NULL,
   name                          VARCHAR(64)                 NOT NULL,
@@ -358,7 +345,6 @@ CREATE TABLE submission_status_lu (
   modification_date             DATETIME YEAR TO SECOND     NOT NULL,
   PRIMARY KEY(submission_status_id)
 );
-
 CREATE TABLE submission (
   submission_id                 INTEGER                     NOT NULL,
   upload_id                     INTEGER                     NOT NULL,
@@ -373,7 +359,6 @@ CREATE TABLE submission (
   FOREIGN KEY(upload_id)
     REFERENCES upload(upload_id)
 );
-
 CREATE TABLE resource_submission (
   resource_id                   INTEGER                     NOT NULL,
   submission_id                 INTEGER                     NOT NULL,
@@ -387,7 +372,6 @@ CREATE TABLE resource_submission (
   FOREIGN KEY(resource_id)
     REFERENCES resource(resource_id)
 );
-
 CREATE TABLE comment_type_lu (
   comment_type_id               INTEGER                     NOT NULL,
   name                          VARCHAR(64)                 NOT NULL,
@@ -398,7 +382,6 @@ CREATE TABLE comment_type_lu (
   modification_date             DATETIME YEAR TO SECOND     NOT NULL,
   PRIMARY KEY(comment_type_id)
 );
-
 CREATE TABLE review (
   review_id                     INTEGER                     NOT NULL,
   resource_id                   INTEGER                     NOT NULL,
@@ -418,7 +401,6 @@ CREATE TABLE review (
   FOREIGN KEY(resource_id)
     REFERENCES resource(resource_id)
 );
-
 CREATE TABLE review_item (
   review_item_id                INTEGER                     NOT NULL,
   scorecard_question_id         INTEGER                     NOT NULL,
@@ -431,7 +413,6 @@ CREATE TABLE review_item (
   FOREIGN KEY(scorecard_question_id)
     REFERENCES scorecard_question(scorecard_question_id)
 );
-
 CREATE TABLE review_comment (
   review_comment_id             INTEGER                     NOT NULL,
   resource_id                   INTEGER                     NOT NULL,
@@ -451,7 +432,6 @@ CREATE TABLE review_comment (
   FOREIGN KEY(resource_id)
     REFERENCES resource(resource_id)
 );
-
 CREATE TABLE review_item_comment (
   review_item_comment_id        INTEGER                     NOT NULL,
   resource_id                   INTEGER                     NOT NULL,
@@ -471,7 +451,6 @@ CREATE TABLE review_item_comment (
   FOREIGN KEY(resource_id)
     REFERENCES resource(resource_id)
 );
-
 CREATE TABLE deliverable_lu (
   deliverable_id                INTEGER                     NOT NULL,
   phase_type_id                 INTEGER                     NOT NULL,
@@ -490,7 +469,6 @@ CREATE TABLE deliverable_lu (
   FOREIGN KEY(resource_role_id)
     REFERENCES resource_role_lu(resource_role_id)
 );
-
 CREATE TABLE project_audit (
   project_audit_id              INTEGER                     NOT NULL,
   project_id                    INTEGER                     NOT NULL,
@@ -503,7 +481,6 @@ CREATE TABLE project_audit (
   FOREIGN KEY(project_id)
     REFERENCES project(project_id)
 );
-
 CREATE TABLE notification_type_lu (
   notification_type_id          INTEGER                     NOT NULL,
   name                          VARCHAR(64)                 NOT NULL,
@@ -514,7 +491,6 @@ CREATE TABLE notification_type_lu (
   modification_date             DATETIME YEAR TO SECOND     NOT NULL,
   PRIMARY KEY(notification_type_id)
 );
-
 CREATE TABLE notification (
   project_id                    INTEGER                     NOT NULL,
   external_ref_id               INTEGER                     NOT NULL,
@@ -523,7 +499,7 @@ CREATE TABLE notification (
   creation_date                 DATETIME YEAR TO SECOND     NOT NULL,
   modification_user             VARCHAR(64)                 NOT NULL,
   modification_date             DATETIME YEAR TO SECOND     NOT NULL,
-  PRIMARY KEY(project_id, handle, notification_type_id),
+  PRIMARY KEY(project_id, external_ref_id, notification_type_id),
   FOREIGN KEY(project_id)
     REFERENCES project(project_id),
   FOREIGN KEY(notification_type_id)
