@@ -203,7 +203,7 @@ CREATE TABLE phase (
   project_id                    INTEGER                     NOT NULL,
   phase_type_id                 INTEGER                     NOT NULL,
   phase_status_id               INTEGER                     NOT NULL,
-  fixed_start_time              DATETIME YEAR TO SECOND,
+  fixed_start_time              DATETIME YEAR TO SECOND     NOT NULL,
   actual_start_time             DATETIME YEAR TO SECOND,
   actual_end_time               DATETIME YEAR TO SECOND,
   duration                      INTERVAL DAY TO SECOND      NOT NULL,
@@ -214,6 +214,8 @@ CREATE TABLE phase (
   PRIMARY KEY(phase_id),
   FOREIGN KEY(phase_type_id)
     REFERENCES phase_type_lu(phase_type_id),
+  FOREIGN KEY(project_id)
+    REFERENCES project(project_id),
   FOREIGN KEY(phase_status_id)
     REFERENCES phase_status_lu(phase_status_id)
 );
