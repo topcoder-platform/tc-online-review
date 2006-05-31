@@ -1,4 +1,5 @@
-DROP TABLE timeline_notification;
+DROP TABLE notification;
+DROP TABLE notification_type_lu;
 DROP TABLE project_audit;
 DROP TABLE deliverable_lu;
 DROP TABLE review_item_comment;
@@ -16,6 +17,7 @@ DROP TABLE resource_info_type_lu;
 DROP TABLE resource;
 DROP TABLE resource_role_lu;
 DROP TABLE phase_criteria;
+DROP TABLE phase_criteria_type_lu;
 DROP TABLE phase_dependency;
 DROP TABLE phase;
 DROP TABLE phase_type_lu;
