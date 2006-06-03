@@ -507,3 +507,69 @@ CREATE TABLE notification (
   FOREIGN KEY(notification_type_id)
     REFERENCES notification_type_lu(notification_type_id)
 );
+
+
+CREATE TABLE screening_status_lu (
+  screening_status_id           INTEGER                     NOT NULL,
+  name                          VARCHAR(64)                 NOT NULL,
+  description                   VARCHAR(255)                NOT NULL,
+  creation_user                 VARCHAR(64)                 NOT NULL,
+  creation_date                 DATETIME YEAR TO SECOND     NOT NULL,
+  modification_user             VARCHAR(64)                 NOT NULL,
+  modification_date             DATETIME YEAR TO SECOND     NOT NULL,
+  PRIMARY KEY(screening_status_id)
+);
+CREATE TABLE screening_task (
+  screening_task_id             INTEGER                     NOT NULL,
+  upload_id                     INTEGER                     NOT NULL,
+  screening_status_id           INTEGER                     NOT NULL,
+  screener_id                   INTEGER,
+  start_timestamp               DATETIME YEAR TO SECOND,
+  creation_user                 VARCHAR(64)                 NOT NULL,
+  creation_date                 DATETIME YEAR TO SECOND     NOT NULL,
+  modification_user             VARCHAR(64)                 NOT NULL,
+  modification_date             DATETIME YEAR TO SECOND     NOT NULL,
+  PRIMARY KEY(screening_task_id),
+  FOREIGN KEY(upload_id)
+    REFERENCES upload(upload_id),
+  FOREIGN KEY(screening_status_id)
+    REFERENCES screening_status_lu(screening_status_id)
+);
+CREATE TABLE response_severity_lu (
+  response_severity_id          INTEGER                     NOT NULL,
+  name                          VARCHAR(64)                 NOT NULL,
+  description                   VARCHAR(255)                NOT NULL,
+  creation_user                 VARCHAR(64)                 NOT NULL,
+  creation_date                 DATETIME YEAR TO SECOND     NOT NULL,
+  modification_user             VARCHAR(64)                 NOT NULL,
+  modification_date             DATETIME YEAR TO SECOND     NOT NULL,
+  PRIMARY KEY(response_severity_id)
+);
+CREATE TABLE screening_response_lu (
+  screening_response_id         INTEGER                     NOT NULL,
+  response_severity_id          INTEGER                     NOT NULL,
+  response_code                 VARCHAR(16)                 NOT NULL,
+  response_text                 VARCHAR(255)                NOT NULL,
+  creation_user                 VARCHAR(64)                 NOT NULL,
+  creation_date                 DATETIME YEAR TO SECOND     NOT NULL,
+  modification_user             VARCHAR(64)                 NOT NULL,
+  modification_date             DATETIME YEAR TO SECOND     NOT NULL,
+  PRIMARY KEY(screening_response_id),
+  FOREIGN KEY(response_severity_id)
+    REFERENCES response_severity_lu(response_severity_id)
+);
+CREATE TABLE screening_result (
+  screening_result_id           INTEGER                     NOT NULL,
+  screening_task_id             INTEGER                     NOT NULL,
+  screening_response_id         INTEGER                     NOT NULL,
+  dynamic_response_text         LVARCHAR(4096)              NOT NULL,
+  creation_user                 VARCHAR(64)                 NOT NULL,
+  creation_date                 DATETIME YEAR TO SECOND     NOT NULL,
+  modification_user             VARCHAR(64)                 NOT NULL,
+  modification_date             DATETIME YEAR TO SECOND     NOT NULL,
+  PRIMARY KEY(screening_result_id),
+  FOREIGN KEY(screening_task_id)
+    REFERENCES screening_task(screening_task_id),
+  FOREIGN KEY(screening_response_id)
+    REFERENCES screening_response_lu(screening_response_id)
+);

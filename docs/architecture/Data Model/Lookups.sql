@@ -87,31 +87,29 @@ INSERT INTO project_info_type_lu(project_info_type_id, name, description, creati
 INSERT INTO project_info_type_lu(project_info_type_id, name, description, creation_user, creation_date, modification_user, modification_date)
   VALUES(7, 'Project Version', 'Project Version', 'System', CURRENT, 'System', CURRENT);
 INSERT INTO project_info_type_lu(project_info_type_id, name, description, creation_user, creation_date, modification_user, modification_date)
-  VALUES(8, 'Forum Link', 'Forum Link', 'System', CURRENT, 'System', CURRENT);
+  VALUES(8, 'SVN Module', 'SVN Module', 'System', CURRENT, 'System', CURRENT);
 INSERT INTO project_info_type_lu(project_info_type_id, name, description, creation_user, creation_date, modification_user, modification_date)
-  VALUES(9, 'SVN Module', 'SVN Module', 'System', CURRENT, 'System', CURRENT);
+  VALUES(9, 'Autopilot Option', 'Autopilot Option', 'System', CURRENT, 'System', CURRENT);
 INSERT INTO project_info_type_lu(project_info_type_id, name, description, creation_user, creation_date, modification_user, modification_date)
-  VALUES(10, 'Autopilot Option', 'Autopilot Option', 'System', CURRENT, 'System', CURRENT);
+  VALUES(10, 'Status Notification', 'Status Notification', 'System', CURRENT, 'System', CURRENT);
 INSERT INTO project_info_type_lu(project_info_type_id, name, description, creation_user, creation_date, modification_user, modification_date)
-  VALUES(11, 'Status Notification', 'Status Notification', 'System', CURRENT, 'System', CURRENT);
+  VALUES(11, 'Timeline Notification', 'Timeline Notification', 'System', CURRENT, 'System', CURRENT);
 INSERT INTO project_info_type_lu(project_info_type_id, name, description, creation_user, creation_date, modification_user, modification_date)
-  VALUES(12, 'Timeline Notification', 'Timeline Notification', 'System', CURRENT, 'System', CURRENT);
+  VALUES(12, 'Public', 'Public', 'System', CURRENT, 'System', CURRENT);
 INSERT INTO project_info_type_lu(project_info_type_id, name, description, creation_user, creation_date, modification_user, modification_date)
-  VALUES(13, 'Public', 'Public', 'System', CURRENT, 'System', CURRENT);
+  VALUES(13, 'Rated', 'Rated', 'System', CURRENT, 'System', CURRENT);
 INSERT INTO project_info_type_lu(project_info_type_id, name, description, creation_user, creation_date, modification_user, modification_date)
-  VALUES(14, 'Rated', 'Rated', 'System', CURRENT, 'System', CURRENT);
+  VALUES(14, 'Eligibility', 'Eligibility', 'System', CURRENT, 'System', CURRENT);
 INSERT INTO project_info_type_lu(project_info_type_id, name, description, creation_user, creation_date, modification_user, modification_date)
-  VALUES(15, 'Eligibility', 'Eligibility', 'System', CURRENT, 'System', CURRENT);
+  VALUES(15, 'Payments Required', 'Payments Required', 'System', CURRENT, 'System', CURRENT);
 INSERT INTO project_info_type_lu(project_info_type_id, name, description, creation_user, creation_date, modification_user, modification_date)
-  VALUES(16, 'Payments Required', 'Payments Required', 'System', CURRENT, 'System', CURRENT);
+  VALUES(16, 'Notes', 'Notes', 'System', CURRENT, 'System', CURRENT);
 INSERT INTO project_info_type_lu(project_info_type_id, name, description, creation_user, creation_date, modification_user, modification_date)
-  VALUES(17, 'Notes', 'Notes', 'System', CURRENT, 'System', CURRENT);
+  VALUES(17, 'Deactivated Timestamp', 'Deactivated Timestamp', 'System', CURRENT, 'System', CURRENT);
 INSERT INTO project_info_type_lu(project_info_type_id, name, description, creation_user, creation_date, modification_user, modification_date)
-  VALUES(18, 'Deactivated Timestamp', 'Deactivated Timestamp', 'System', CURRENT, 'System', CURRENT);
+  VALUES(18, 'Deactivated Phase', 'Deactivated Phase', 'System', CURRENT, 'System', CURRENT);
 INSERT INTO project_info_type_lu(project_info_type_id, name, description, creation_user, creation_date, modification_user, modification_date)
-  VALUES(19, 'Deactivated Phase', 'Deactivated Phase', 'System', CURRENT, 'System', CURRENT);
-INSERT INTO project_info_type_lu(project_info_type_id, name, description, creation_user, creation_date, modification_user, modification_date)
-  VALUES(20, 'Deactivated Reason', 'Deactivated Reason', 'System', CURRENT, 'System', CURRENT);
+  VALUES(19, 'Deactivated Reason', 'Deactivated Reason', 'System', CURRENT, 'System', CURRENT);
 
 INSERT INTO phase_type_lu(phase_type_id, name, description, creation_user, creation_date, modification_user, modification_date)
   VALUES(1, 'Registration', 'Registration', 'System', CURRENT, 'System', CURRENT);
@@ -196,9 +194,11 @@ INSERT INTO resource_info_type_lu(resource_info_type_id, name, description, crea
 INSERT INTO resource_info_type_lu(resource_info_type_id, name, description, creation_user, creation_date, modification_user, modification_date)
   VALUES(9, 'Screening Score', 'Screening Score', 'System', CURRENT, 'System', CURRENT);
 INSERT INTO resource_info_type_lu(resource_info_type_id, name, description, creation_user, creation_date, modification_user, modification_date)
-  VALUES(10, 'Review Score', 'Review Score', 'System', CURRENT, 'System', CURRENT);
+  VALUES(10, 'Initial Score', 'Initial Score', 'System', CURRENT, 'System', CURRENT);
 INSERT INTO resource_info_type_lu(resource_info_type_id, name, description, creation_user, creation_date, modification_user, modification_date)
-  VALUES(11, 'Placement', 'Placement', 'System', CURRENT, 'System', CURRENT);
+  VALUES(11, 'Final Score', 'Final Score', 'System', CURRENT, 'System', CURRENT);
+INSERT INTO resource_info_type_lu(resource_info_type_id, name, description, creation_user, creation_date, modification_user, modification_date)
+  VALUES(12, 'Placement', 'Placement', 'System', CURRENT, 'System', CURRENT);
 
 INSERT INTO upload_type_lu(upload_type_id, name, description, creation_user, creation_date, modification_user, modification_date)
   VALUES(1, 'Submission', 'Submission', 'System', CURRENT, 'System', CURRENT);
@@ -216,11 +216,11 @@ INSERT INTO submission_status_lu(submission_status_id, name, description, creati
 INSERT INTO submission_status_lu(submission_status_id, name, description, creation_user, creation_date, modification_user, modification_date)
   VALUES(2, 'Failed Automated Screening', 'Failed Automated Screening', 'System', CURRENT, 'System', CURRENT);
 INSERT INTO submission_status_lu(submission_status_id, name, description, creation_user, creation_date, modification_user, modification_date)
-  VALUES(3, 'Failed Screening', 'Failed Screening', 'System', CURRENT, 'System', CURRENT);
+  VALUES(3, 'Failed Manual Screening', 'Failed Manual Screening', 'System', CURRENT, 'System', CURRENT);
 INSERT INTO submission_status_lu(submission_status_id, name, description, creation_user, creation_date, modification_user, modification_date)
   VALUES(4, 'Failed Review', 'Failed Review', 'System', CURRENT, 'System', CURRENT);
 INSERT INTO submission_status_lu(submission_status_id, name, description, creation_user, creation_date, modification_user, modification_date)
-  VALUES(5, 'Completed Without Winning', 'Completed Without Winning', 'System', CURRENT, 'System', CURRENT);
+  VALUES(5, 'Completed Without Win', 'Completed Without Win', 'System', CURRENT, 'System', CURRENT);
 INSERT INTO submission_status_lu(submission_status_id, name, description, creation_user, creation_date, modification_user, modification_date)
   VALUES(6, 'Deleted', 'Deleted', 'System', CURRENT, 'System', CURRENT);
 
@@ -296,3 +296,14 @@ INSERT INTO deliverable_lu(deliverable_id, phase_type_id, resource_role_id, name
 
 INSERT INTO notification_type_lu(notification_type_id, name, description, creation_user, creation_date, modification_user, modification_date)
   VALUES(1, 'Timeline Notification', 'Timeline Notification', 'System', CURRENT, 'System', CURRENT);
+
+INSERT INTO screening_status_lu(screening_status_id, name, description, creation_user, creation_date, modification_user, modification_date)
+  VALUES(1, 'Pending', 'Pending', 'System', CURRENT, 'System', CURRENT);
+INSERT INTO screening_status_lu(screening_status_id, name, description, creation_user, creation_date, modification_user, modification_date)
+  VALUES(2, 'Screening', 'Screening', 'System', CURRENT, 'System', CURRENT);
+INSERT INTO screening_status_lu(screening_status_id, name, description, creation_user, creation_date, modification_user, modification_date)
+  VALUES(3, 'Failed', 'Failed', 'System', CURRENT, 'System', CURRENT);
+INSERT INTO screening_status_lu(screening_status_id, name, description, creation_user, creation_date, modification_user, modification_date)
+  VALUES(4, 'Passed', 'Passed', 'System', CURRENT, 'System', CURRENT);
+INSERT INTO screening_status_lu(screening_status_id, name, description, creation_user, creation_date, modification_user, modification_date)
+  VALUES(5, 'Passed with Warning', 'Passed with Warning', 'System', CURRENT, 'System', CURRENT);
