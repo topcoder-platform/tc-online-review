@@ -1,3 +1,10 @@
+DROP TABLE screening_result;
+DROP TABLE screening_response_lu;
+DROP TABLE response_severity_lu;
+DROP TABLE screening_task;
+DROP TABLE screening_status_lu;
+
+
 DROP TABLE notification;
 DROP TABLE notification_type_lu;
 DROP TABLE project_audit;
