@@ -145,8 +145,6 @@ INSERT INTO phase_criteria_type_lu(phase_criteria_type_id, name, description, cr
   VALUES(1, 'Registration Number', 'Registration Number', 'System', CURRENT, 'System', CURRENT);
 INSERT INTO phase_criteria_type_lu(phase_criteria_type_id, name, description, creation_user, creation_date, modification_user, modification_date)
   VALUES(2, 'Submission Number', 'Submission Number', 'System', CURRENT, 'System', CURRENT);
-INSERT INTO phase_criteria_type_lu(phase_criteria_type_id, name, description, creation_user, creation_date, modification_user, modification_date)
-  VALUES(3, 'Manual Screening', 'Manual Screening', 'System', CURRENT, 'System', CURRENT);
 
 INSERT INTO resource_role_lu(resource_role_id, phase_type_id, name, description, creation_user, creation_date, modification_user, modification_date)
   VALUES(1, NULL, 'Submitter', 'Submitter', 'System', CURRENT, 'System', CURRENT);
@@ -214,15 +212,13 @@ INSERT INTO upload_type_lu(upload_type_id, name, description, creation_user, cre
 INSERT INTO submission_status_lu(submission_status_id, name, description, creation_user, creation_date, modification_user, modification_date)
   VALUES(1, 'Active', 'Active', 'System', CURRENT, 'System', CURRENT);
 INSERT INTO submission_status_lu(submission_status_id, name, description, creation_user, creation_date, modification_user, modification_date)
-  VALUES(2, 'Failed Automated Screening', 'Failed Automated Screening', 'System', CURRENT, 'System', CURRENT);
+  VALUES(2, 'Failed Screening', 'Failed Manual Screening', 'System', CURRENT, 'System', CURRENT);
 INSERT INTO submission_status_lu(submission_status_id, name, description, creation_user, creation_date, modification_user, modification_date)
-  VALUES(3, 'Failed Manual Screening', 'Failed Manual Screening', 'System', CURRENT, 'System', CURRENT);
+  VALUES(3, 'Failed Review', 'Failed Review', 'System', CURRENT, 'System', CURRENT);
 INSERT INTO submission_status_lu(submission_status_id, name, description, creation_user, creation_date, modification_user, modification_date)
-  VALUES(4, 'Failed Review', 'Failed Review', 'System', CURRENT, 'System', CURRENT);
+  VALUES(4, 'Completed Without Win', 'Completed Without Win', 'System', CURRENT, 'System', CURRENT);
 INSERT INTO submission_status_lu(submission_status_id, name, description, creation_user, creation_date, modification_user, modification_date)
-  VALUES(5, 'Completed Without Win', 'Completed Without Win', 'System', CURRENT, 'System', CURRENT);
-INSERT INTO submission_status_lu(submission_status_id, name, description, creation_user, creation_date, modification_user, modification_date)
-  VALUES(6, 'Deleted', 'Deleted', 'System', CURRENT, 'System', CURRENT);
+  VALUES(5, 'Deleted', 'Deleted', 'System', CURRENT, 'System', CURRENT);
 
 INSERT INTO comment_type_lu(comment_type_id, name, description, creation_user, creation_date, modification_user, modification_date)
   VALUES(1, 'Comment', 'Comment', 'System', CURRENT, 'System', CURRENT);

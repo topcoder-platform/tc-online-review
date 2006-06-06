@@ -405,6 +405,7 @@ CREATE TABLE review (
 );
 CREATE TABLE review_item (
   review_item_id                INTEGER                     NOT NULL,
+  review_id                     INTEGER                     NOT NULL,
   scorecard_question_id         INTEGER                     NOT NULL,
   answer                        VARCHAR(255)                NOT NULL,
   creation_user                 VARCHAR(64)                 NOT NULL,
@@ -412,6 +413,8 @@ CREATE TABLE review_item (
   modification_user             VARCHAR(64)                 NOT NULL,
   modification_date             DATETIME YEAR TO SECOND     NOT NULL,
   PRIMARY KEY(review_item_id),
+  FOREIGN KEY(review_id)
+    REFERENCES review(review_id),
   FOREIGN KEY(scorecard_question_id)
     REFERENCES scorecard_question(scorecard_question_id)
 );
