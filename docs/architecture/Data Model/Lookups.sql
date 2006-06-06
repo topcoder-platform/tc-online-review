@@ -111,6 +111,13 @@ INSERT INTO project_info_type_lu(project_info_type_id, name, description, creati
 INSERT INTO project_info_type_lu(project_info_type_id, name, description, creation_user, creation_date, modification_user, modification_date)
   VALUES(19, 'Deactivated Reason', 'Deactivated Reason', 'System', CURRENT, 'System', CURRENT);
 
+INSERT INTO scorecard_assignment_lu(scorecard_assignment_id, name, description, creation_user, creation_date, modification_user, modification_date)
+  VALUES(1, 'Screening Scorecard', 'Screening Scorecard', 'System', CURRENT, 'System', CURRENT);
+INSERT INTO scorecard_assignment_lu(scorecard_assignment_id, name, description, creation_user, creation_date, modification_user, modification_date)
+  VALUES(2, 'Review Scorecard', 'Review Scorecard', 'System', CURRENT, 'System', CURRENT);
+INSERT INTO scorecard_assignment_lu(scorecard_assignment_id, name, description, creation_user, creation_date, modification_user, modification_date)
+  VALUES(3, 'Approval Scorecard', 'Approval Scorecard', 'System', CURRENT, 'System', CURRENT);
+
 INSERT INTO phase_type_lu(phase_type_id, name, description, creation_user, creation_date, modification_user, modification_date)
   VALUES(1, 'Registration', 'Registration', 'System', CURRENT, 'System', CURRENT);
 INSERT INTO phase_type_lu(phase_type_id, name, description, creation_user, creation_date, modification_user, modification_date)

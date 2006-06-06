@@ -30,6 +30,7 @@ DROP TABLE phase;
 DROP TABLE phase_type_lu;
 DROP TABLE phase_status_lu;
 DROP TABLE project_scorecard;
+DROP TABLE scorecard_assignment_lu;
 DROP TABLE project_info;
 DROP TABLE project_info_type_lu;
 DROP TABLE project;
