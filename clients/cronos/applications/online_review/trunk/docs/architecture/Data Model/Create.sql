@@ -165,18 +165,34 @@ CREATE TABLE project_info (
   FOREIGN KEY(project_id)
     REFERENCES project(project_id)
 );
-CREATE TABLE project_scorecard (
-  project_id                    INTEGER                     NOT NULL,
-  scorecard_id                  INTEGER                     NOT NULL,
+CREATE TABLE scorecard_assignment_lu (
+  scorecard_assignment_id       INTEGER                     NOT NULL,
+  name                          VARCHAR(64)                 NOT NULL,
+  description                   VARCHAR(25)                 NOT NULL,
+  scorecard_type_id             INTEGER                     NOT NULL,
   creation_user                 VARCHAR(64)                 NOT NULL,
   creation_date                 DATETIME YEAR TO SECOND     NOT NULL,
   modification_user             VARCHAR(64)                 NOT NULL,
   modification_date             DATETIME YEAR TO SECOND     NOT NULL,
-  PRIMARY KEY(project_id, scorecard_id),
+  PRIMARY KEY(scorecard_assignment_id),
+  FOREIGN KEY(scorecard_type_id)
+    REFERENCES scorecard_type_lu(scorecard_type_id)
+);
+CREATE TABLE project_scorecard (
+  project_id                    INTEGER                     NOT NULL,
+  scorecard_id                  INTEGER                     NOT NULL,
+  scorecard_assignment_id       INTEGER                     NOT NULL,
+  creation_user                 VARCHAR(64)                 NOT NULL,
+  creation_date                 DATETIME YEAR TO SECOND     NOT NULL,
+  modification_user             VARCHAR(64)                 NOT NULL,
+  modification_date             DATETIME YEAR TO SECOND     NOT NULL,
+  PRIMARY KEY(project_id, scorecard_id, scorecard_assignment_id),
   FOREIGN KEY(project_id)
     REFERENCES project(project_id),
   FOREIGN KEY(scorecard_id)
-    REFERENCES scorecard(scorecard_id)
+    REFERENCES scorecard(scorecard_id),
+  FOREIGN KEY(scorecard_assignment_id)
+    REFERENCES scorecard_assignment_lu(scorecard_assignment_id)
 );
 CREATE TABLE phase_status_lu (
   phase_status_id               INTEGER                     NOT NULL,
@@ -203,7 +219,9 @@ CREATE TABLE phase (
   project_id                    INTEGER                     NOT NULL,
   phase_type_id                 INTEGER                     NOT NULL,
   phase_status_id               INTEGER                     NOT NULL,
-  fixed_start_time              DATETIME YEAR TO SECOND     NOT NULL,
+  fixed_start_time              DATETIME YEAR TO SECOND,
+  scheduled_start_time          DATETIME YEAR TO SECOND     NOT NULL,
+  scheduled_end_time            DATETIME YEAR TO SECOND     NOT NULL,
   actual_start_time             DATETIME YEAR TO SECOND,
   actual_end_time               DATETIME YEAR TO SECOND,
   duration                      INTERVAL DAY TO SECOND      NOT NULL,
@@ -222,8 +240,8 @@ CREATE TABLE phase (
 CREATE TABLE phase_dependency (
   dependency_phase_id           INTEGER                     NOT NULL,
   dependent_phase_id            INTEGER                     NOT NULL,
-  start_or_end                  BOOLEAN                     NOT NULL,
-  before_or_after               BOOLEAN                     NOT NULL,
+  dependency_start              BOOLEAN                     NOT NULL,
+  dependent_start               BOOLEAN                     NOT NULL,
   lag_time                      INTERVAL DAY TO SECOND      NOT NULL,
   PRIMARY KEY(dependency_phase_id, dependent_phase_id),
   FOREIGN KEY(dependency_phase_id)
