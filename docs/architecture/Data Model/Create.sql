@@ -337,11 +337,22 @@ CREATE TABLE upload_type_lu (
   modification_date             DATETIME YEAR TO SECOND     NOT NULL,
   PRIMARY KEY(upload_type_id)
 );
+CREATE TABLE upload_status_lu (
+  upload_status_id              INTEGER                     NOT NULL,
+  name                          VARCHAR(64)                 NOT NULL,
+  description                   VARCHAR(255)                NOT NULL,
+  creation_user                 VARCHAR(64)                 NOT NULL,
+  creation_date                 DATETIME YEAR TO SECOND     NOT NULL,
+  modification_user             VARCHAR(64)                 NOT NULL,
+  modification_date             DATETIME YEAR TO SECOND     NOT NULL,
+  PRIMARY KEY(upload_status_id)
+);
 CREATE TABLE upload (
   upload_id                     INTEGER                     NOT NULL,
   project_id                    INTEGER                     NOT NULL,
   resource_id                   INTEGER                     NOT NULL,
   upload_type_id                INTEGER                     NOT NULL,
+  upload_status_id              INTEGER                     NOT NULL,
   parameter                     VARCHAR(255)                NOT NULL,
   creation_user                 VARCHAR(64)                 NOT NULL,
   creation_date                 DATETIME YEAR TO SECOND     NOT NULL,
@@ -350,6 +361,8 @@ CREATE TABLE upload (
   PRIMARY KEY(upload_id),
   FOREIGN KEY(upload_type_id)
     REFERENCES upload_type_lu(upload_type_id),
+  FOREIGN KEY(upload_status_id)
+    REFERENCES upload_status_lu(upload_status_id),
   FOREIGN KEY(resource_id)
     REFERENCES resource(resource_id),
   FOREIGN KEY(project_id)
