@@ -213,8 +213,11 @@ INSERT INTO upload_type_lu(upload_type_id, name, description, creation_user, cre
   VALUES(3, 'Final Fix', 'Final Fix', 'System', CURRENT, 'System', CURRENT);
 INSERT INTO upload_type_lu(upload_type_id, name, description, creation_user, creation_date, modification_user, modification_date)
   VALUES(4, 'Review Document', 'Review Document', 'System', CURRENT, 'System', CURRENT);
-INSERT INTO upload_type_lu(upload_type_id, name, description, creation_user, creation_date, modification_user, modification_date)
-  VALUES(5, 'Deleted', 'Deleted', 'System', CURRENT, 'System', CURRENT);
+
+INSERT INTO upload_status_lu(upload_status_id, name, description, creation_user, creation_date, modification_user, modification_date)
+  VALUES(1, 'Active', 'Active', 'System', CURRENT, 'System', CURRENT);
+INSERT INTO upload_status_lu(upload_status_id, name, description, creation_user, creation_date, modification_user, modification_date)
+  VALUES(2, 'Deleted', 'Deleted', 'System', CURRENT, 'System', CURRENT);
 
 INSERT INTO submission_status_lu(submission_status_id, name, description, creation_user, creation_date, modification_user, modification_date)
   VALUES(1, 'Active', 'Active', 'System', CURRENT, 'System', CURRENT);

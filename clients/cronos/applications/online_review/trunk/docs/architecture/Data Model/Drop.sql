@@ -18,6 +18,7 @@ DROP TABLE resource_submission;
 DROP TABLE submission;
 DROP TABLE submission_status_lu;
 DROP TABLE upload;
+DROP TABLE upload_status_lu;
 DROP TABLE upload_type_lu;
 DROP TABLE resource_info;
 DROP TABLE resource_info_type_lu;
