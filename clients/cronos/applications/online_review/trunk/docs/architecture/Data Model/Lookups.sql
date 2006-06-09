@@ -116,6 +116,8 @@ INSERT INTO project_info_type_lu(project_info_type_id, name, description, create
   VALUES(21, 'Rated Timestamp', 'Rated Timestamp', 'System', CURRENT, 'System', CURRENT);
 INSERT INTO project_info_type_lu(project_info_type_id, name, description, create_user, create_date, modify_user, modify_date)
   VALUES(22, 'Winner External Reference ID', 'Winner External Reference ID', 'System', CURRENT, 'System', CURRENT);
+INSERT INTO project_info_type_lu(project_info_type_id, name, description, create_user, create_date, modify_user, modify_date)
+  VALUES(23, 'Runner-up External Reference ID', 'Runner-up External Reference ID', 'System', CURRENT, 'System', CURRENT);
 
 INSERT INTO scorecard_assignment_lu(scorecard_assignment_id, name, description, create_user, create_date, modify_user, modify_date)
   VALUES(1, 'Screening Scorecard', 'Screening Scorecard', 'System', CURRENT, 'System', CURRENT);
