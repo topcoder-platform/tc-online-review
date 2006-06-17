@@ -165,35 +165,6 @@ CREATE TABLE project_info (
   FOREIGN KEY(project_id)
     REFERENCES project(project_id)
 );
-CREATE TABLE scorecard_assignment_lu (
-  scorecard_assignment_id       INTEGER                         NOT NULL,
-  name                          VARCHAR(64)                     NOT NULL,
-  description                   VARCHAR(25)                     NOT NULL,
-  scorecard_type_id             INTEGER                         NOT NULL,
-  create_user                   VARCHAR(64)                     NOT NULL,
-  create_date                   DATETIME YEAR TO FRACTION(3)    NOT NULL,
-  modify_user                   VARCHAR(64)                     NOT NULL,
-  modify_date                   DATETIME YEAR TO FRACTION(3)    NOT NULL,
-  PRIMARY KEY(scorecard_assignment_id),
-  FOREIGN KEY(scorecard_type_id)
-    REFERENCES scorecard_type_lu(scorecard_type_id)
-);
-CREATE TABLE project_scorecard (
-  project_id                    INTEGER                         NOT NULL,
-  scorecard_id                  INTEGER                         NOT NULL,
-  scorecard_assignment_id       INTEGER                         NOT NULL,
-  create_user                   VARCHAR(64)                     NOT NULL,
-  create_date                   DATETIME YEAR TO FRACTION(3)    NOT NULL,
-  modify_user                   VARCHAR(64)                     NOT NULL,
-  modify_date                   DATETIME YEAR TO FRACTION(3)    NOT NULL,
-  PRIMARY KEY(project_id, scorecard_id, scorecard_assignment_id),
-  FOREIGN KEY(project_id)
-    REFERENCES project(project_id),
-  FOREIGN KEY(scorecard_id)
-    REFERENCES scorecard(scorecard_id),
-  FOREIGN KEY(scorecard_assignment_id)
-    REFERENCES scorecard_assignment_lu(scorecard_assignment_id)
-);
 CREATE TABLE phase_status_lu (
   phase_status_id               INTEGER                         NOT NULL,
   name                          VARCHAR(64)                     NOT NULL,

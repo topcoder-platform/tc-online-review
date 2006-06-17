@@ -157,9 +157,13 @@ INSERT INTO phase_status_lu(phase_status_id, name, description, create_user, cre
   VALUES(3, 'Closed', 'Closed', 'System', CURRENT, 'System', CURRENT);
 
 INSERT INTO phase_criteria_type_lu(phase_criteria_type_id, name, description, create_user, create_date, modify_user, modify_date)
-  VALUES(1, 'Registration Number', 'Registration Number', 'System', CURRENT, 'System', CURRENT);
+  VALUES(1, 'Scorecard ID', 'Scorecard ID', 'System', CURRENT, 'System', CURRENT);
 INSERT INTO phase_criteria_type_lu(phase_criteria_type_id, name, description, create_user, create_date, modify_user, modify_date)
-  VALUES(2, 'Submission Number', 'Submission Number', 'System', CURRENT, 'System', CURRENT);
+  VALUES(2, 'Registration Number', 'Registration Number', 'System', CURRENT, 'System', CURRENT);
+INSERT INTO phase_criteria_type_lu(phase_criteria_type_id, name, description, create_user, create_date, modify_user, modify_date)
+  VALUES(3, 'Submission Number', 'Submission Number', 'System', CURRENT, 'System', CURRENT);
+INSERT INTO phase_criteria_type_lu(phase_criteria_type_id, name, description, create_user, create_date, modify_user, modify_date)
+  VALUES(4, 'View Response During Appeals', 'View Response During Appeals', 'System', CURRENT, 'System', CURRENT);
 
 INSERT INTO resource_role_lu(resource_role_id, phase_type_id, name, description, create_user, create_date, modify_user, modify_date)
   VALUES(1, NULL, 'Submitter', 'Submitter', 'System', CURRENT, 'System', CURRENT);
