@@ -103,21 +103,23 @@ INSERT INTO project_info_type_lu(project_info_type_id, name, description, create
 INSERT INTO project_info_type_lu(project_info_type_id, name, description, create_user, create_date, modify_user, modify_date)
   VALUES(15, 'Payments Required', 'Payments Required', 'System', CURRENT, 'System', CURRENT);
 INSERT INTO project_info_type_lu(project_info_type_id, name, description, create_user, create_date, modify_user, modify_date)
-  VALUES(16, 'Notes', 'Notes', 'System', CURRENT, 'System', CURRENT);
+  VALUES(16, 'Payments', 'Payments', 'System', CURRENT, 'System', CURRENT);
 INSERT INTO project_info_type_lu(project_info_type_id, name, description, create_user, create_date, modify_user, modify_date)
-  VALUES(17, 'Deactivated Timestamp', 'Deactivated Timestamp', 'System', CURRENT, 'System', CURRENT);
+  VALUES(17, 'Notes', 'Notes', 'System', CURRENT, 'System', CURRENT);
 INSERT INTO project_info_type_lu(project_info_type_id, name, description, create_user, create_date, modify_user, modify_date)
-  VALUES(18, 'Deactivated Phase', 'Deactivated Phase', 'System', CURRENT, 'System', CURRENT);
+  VALUES(18, 'Deactivated Timestamp', 'Deactivated Timestamp', 'System', CURRENT, 'System', CURRENT);
 INSERT INTO project_info_type_lu(project_info_type_id, name, description, create_user, create_date, modify_user, modify_date)
-  VALUES(19, 'Deactivated Reason', 'Deactivated Reason', 'System', CURRENT, 'System', CURRENT);
+  VALUES(19, 'Deactivated Phase', 'Deactivated Phase', 'System', CURRENT, 'System', CURRENT);
 INSERT INTO project_info_type_lu(project_info_type_id, name, description, create_user, create_date, modify_user, modify_date)
-  VALUES(20, 'Completion Timestamp', 'Completion Timestamp', 'System', CURRENT, 'System', CURRENT);
+  VALUES(20, 'Deactivated Reason', 'Deactivated Reason', 'System', CURRENT, 'System', CURRENT);
 INSERT INTO project_info_type_lu(project_info_type_id, name, description, create_user, create_date, modify_user, modify_date)
-  VALUES(21, 'Rated Timestamp', 'Rated Timestamp', 'System', CURRENT, 'System', CURRENT);
+  VALUES(21, 'Completion Timestamp', 'Completion Timestamp', 'System', CURRENT, 'System', CURRENT);
 INSERT INTO project_info_type_lu(project_info_type_id, name, description, create_user, create_date, modify_user, modify_date)
-  VALUES(22, 'Winner External Reference ID', 'Winner External Reference ID', 'System', CURRENT, 'System', CURRENT);
+  VALUES(22, 'Rated Timestamp', 'Rated Timestamp', 'System', CURRENT, 'System', CURRENT);
 INSERT INTO project_info_type_lu(project_info_type_id, name, description, create_user, create_date, modify_user, modify_date)
-  VALUES(23, 'Runner-up External Reference ID', 'Runner-up External Reference ID', 'System', CURRENT, 'System', CURRENT);
+  VALUES(23, 'Winner External Reference ID', 'Winner External Reference ID', 'System', CURRENT, 'System', CURRENT);
+INSERT INTO project_info_type_lu(project_info_type_id, name, description, create_user, create_date, modify_user, modify_date)
+  VALUES(24, 'Runner-up External Reference ID', 'Runner-up External Reference ID', 'System', CURRENT, 'System', CURRENT);
 
 INSERT INTO scorecard_assignment_lu(scorecard_assignment_id, name, description, create_user, create_date, modify_user, modify_date)
   VALUES(1, 'Screening Scorecard', 'Screening Scorecard', 'System', CURRENT, 'System', CURRENT);
@@ -164,6 +166,8 @@ INSERT INTO phase_criteria_type_lu(phase_criteria_type_id, name, description, cr
   VALUES(3, 'Submission Number', 'Submission Number', 'System', CURRENT, 'System', CURRENT);
 INSERT INTO phase_criteria_type_lu(phase_criteria_type_id, name, description, create_user, create_date, modify_user, modify_date)
   VALUES(4, 'View Response During Appeals', 'View Response During Appeals', 'System', CURRENT, 'System', CURRENT);
+INSERT INTO phase_criteria_type_lu(phase_criteria_type_id, name, description, create_user, create_date, modify_user, modify_date)
+  VALUES(5, 'Manual Screening', 'Manual Screening', 'System', CURRENT, 'System', CURRENT);
 
 INSERT INTO resource_role_lu(resource_role_id, phase_type_id, name, description, create_user, create_date, modify_user, modify_date)
   VALUES(1, NULL, 'Submitter', 'Submitter', 'System', CURRENT, 'System', CURRENT);
@@ -270,7 +274,7 @@ INSERT INTO deliverable_lu(deliverable_id, phase_type_id, resource_role_id, name
 INSERT INTO deliverable_lu(deliverable_id, phase_type_id, resource_role_id, name, description, per_submission, required, create_user, create_date, modify_user, modify_date)
   VALUES(2, 3, 2, 'Screening Scorecard', 'Screening Scorecard', 'T', 'T', 'System', CURRENT, 'System', CURRENT);
 INSERT INTO deliverable_lu(deliverable_id, phase_type_id, resource_role_id, name, description, per_submission, required, create_user, create_date, modify_user, modify_date)
-  VALUES(3, 3, 3, 'Screening Scorecard', 'Screening Scorecard', 'T', 'T', 'System', CURRENT, 'System', CURRENT);
+  VALUES(3, 3, 3, 'Screening Scorecard', 'Screening Scorecard', 'F', 'T', 'System', CURRENT, 'System', CURRENT);
 INSERT INTO deliverable_lu(deliverable_id, phase_type_id, resource_role_id, name, description, per_submission, required, create_user, create_date, modify_user, modify_date)
   VALUES(4, 4, 4, 'Review Scorecard', 'Review Scorecard', 'T', 'T', 'System', CURRENT, 'System', CURRENT);
 INSERT INTO deliverable_lu(deliverable_id, phase_type_id, resource_role_id, name, description, per_submission, required, create_user, create_date, modify_user, modify_date)
@@ -325,3 +329,41 @@ INSERT INTO screening_status_lu(screening_status_id, name, description, create_u
   VALUES(4, 'Passed', 'Passed', 'System', CURRENT, 'System', CURRENT);
 INSERT INTO screening_status_lu(screening_status_id, name, description, create_user, create_date, modify_user, modify_date)
   VALUES(5, 'Passed with Warning', 'Passed with Warning', 'System', CURRENT, 'System', CURRENT);
+
+INSERT INTO response_severity_lu(response_severity_id, name, description, create_user, create_date, modify_user, modify_date)
+  VALUES(1, 'Fatal Error', 'Fatal Error', 'System', CURRENT, 'System', CURRENT);
+INSERT INTO response_severity_lu(response_severity_id, name, description, create_user, create_date, modify_user, modify_date)
+  VALUES(2, 'Warning', 'Warning', 'System', CURRENT, 'System', CURRENT);
+INSERT INTO response_severity_lu(response_severity_id, name, description, create_user, create_date, modify_user, modify_date)
+  VALUES(3, 'Success', 'Success', 'System', CURRENT, 'System', CURRENT);
+
+INSERT INTO screening_response_lu(screening_response_id, response_severity_id, response_code, response_text, create_user, create_date, modify_user, modify_date)
+  VALUES(1, 1, 'TCS-001', 'Your submission distribution is not a jar file.', 'System', CURRENT, 'System', CURRENT);
+INSERT INTO screening_response_lu(screening_response_id, response_severity_id, response_code, response_text, create_user, create_date, modify_user, modify_date)
+  VALUES(2, 1, 'TCS-002', 'Your submission distribution is not a zip file.', 'System', CURRENT, 'System', CURRENT);
+INSERT INTO screening_response_lu(screening_response_id, response_severity_id, response_code, response_text, create_user, create_date, modify_user, modify_date)
+  VALUES(3, 1, 'TCS-003', 'Your submission does not conform to the directory standard.', 'System', CURRENT, 'System', CURRENT);
+INSERT INTO screening_response_lu(screening_response_id, response_severity_id, response_code, response_text, create_user, create_date, modify_user, modify_date)
+  VALUES(4, 1, 'TCS-004', 'Your submission does not contain a component specification document in rich text format (rtf).', 'System', CURRENT, 'System', CURRENT);
+INSERT INTO screening_response_lu(screening_response_id, response_severity_id, response_code, response_text, create_user, create_date, modify_user, modify_date)
+  VALUES(5, 1, 'TCS-005', 'Your submission does not contain a /log directory from the successful execution of the unit tests.', 'System', CURRENT, 'System', CURRENT);
+INSERT INTO screening_response_lu(screening_response_id, response_severity_id, response_code, response_text, create_user, create_date, modify_user, modify_date)
+  VALUES(6, 1, 'TCS-006', 'Your submission is missing the appropriate unit test log files.', 'System', CURRENT, 'System', CURRENT);
+INSERT INTO screening_response_lu(screening_response_id, response_severity_id, response_code, response_text, create_user, create_date, modify_user, modify_date)
+  VALUES(7, 1, 'TCS-007', 'Your submission does not contain a zargo or zuml file.', 'System', CURRENT, 'System', CURRENT);
+INSERT INTO screening_response_lu(screening_response_id, response_severity_id, response_code, response_text, create_user, create_date, modify_user, modify_date)
+  VALUES(8, 1, 'TCS-008', 'Your submission does not contain one or more use cases.', 'System', CURRENT, 'System', CURRENT);
+INSERT INTO screening_response_lu(screening_response_id, response_severity_id, response_code, response_text, create_user, create_date, modify_user, modify_date)
+  VALUES(9, 1, 'TCS-009', 'Your submission does not contain one or more class diagrams.', 'System', CURRENT, 'System', CURRENT);
+INSERT INTO screening_response_lu(screening_response_id, response_severity_id, response_code, response_text, create_user, create_date, modify_user, modify_date)
+  VALUES(10, 1, 'TCS-010', 'Your submission does not contain one or more sequence diagrams.', 'System', CURRENT, 'System', CURRENT);
+INSERT INTO screening_response_lu(screening_response_id, response_severity_id, response_code, response_text, create_user, create_date, modify_user, modify_date)
+  VALUES(11, 1, 'TCS-011', 'Your submission does not contain source code under /src.', 'System', CURRENT, 'System', CURRENT);
+INSERT INTO screening_response_lu(screening_response_id, response_severity_id, response_code, response_text, create_user, create_date, modify_user, modify_date)
+  VALUES(12, 1, 'TCS-012', 'Your submission does not contain test source code under /src.', 'System', CURRENT, 'System', CURRENT);
+INSERT INTO screening_response_lu(screening_response_id, response_severity_id, response_code, response_text, create_user, create_date, modify_user, modify_date)
+  VALUES(13, 2, 'TCS-013', 'Checkstyle has produced the following warnings.', 'System', CURRENT, 'System', CURRENT);
+INSERT INTO screening_response_lu(screening_response_id, response_severity_id, response_code, response_text, create_user, create_date, modify_user, modify_date)
+  VALUES(14, 2, 'TCS-014', 'Your submission contains personal information.', 'System', CURRENT, 'System', CURRENT);
+INSERT INTO screening_response_lu(screening_response_id, response_severity_id, response_code, response_text, create_user, create_date, modify_user, modify_date)
+  VALUES(15, 3, 'TCS-015', 'Your submission has passed the auto screening process.', 'System', CURRENT, 'System', CURRENT);

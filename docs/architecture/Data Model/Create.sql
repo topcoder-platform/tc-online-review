@@ -105,8 +105,8 @@ CREATE TABLE scorecard_question (
   description                   LVARCHAR(4096)                  NOT NULL,
   guideline                     LVARCHAR(4096),
   weight                        FLOAT                           NOT NULL,
-  upload_document               BOOLEAN                         NOT NULL,
-  upload_document_required      BOOLEAN                         NOT NULL,
+  upload_document               DECIMAL(1, 0)                   NOT NULL,
+  upload_document_required      DECIMAL(1, 0)                   NOT NULL,
   create_user                   VARCHAR(64)                     NOT NULL,
   create_date                   DATETIME YEAR TO FRACTION(3)    NOT NULL,
   modify_user                   VARCHAR(64)                     NOT NULL,
@@ -211,9 +211,13 @@ CREATE TABLE phase (
 CREATE TABLE phase_dependency (
   dependency_phase_id           INTEGER                         NOT NULL,
   dependent_phase_id            INTEGER                         NOT NULL,
-  dependency_start              BOOLEAN                         NOT NULL,
-  dependent_start               BOOLEAN                         NOT NULL,
+  dependency_start              DECIMAL(1, 0)                   NOT NULL,
+  dependent_start               DECIMAL(1, 0)                   NOT NULL,
   lag_time                      INTERVAL DAY TO FRACTION(3)     NOT NULL,
+  create_user                   VARCHAR(64)                     NOT NULL,
+  create_date                   DATETIME YEAR TO FRACTION(3)    NOT NULL,
+  modify_user                   VARCHAR(64)                     NOT NULL,
+  modify_date                   DATETIME YEAR TO FRACTION(3)    NOT NULL,
   PRIMARY KEY(dependency_phase_id, dependent_phase_id),
   FOREIGN KEY(dependency_phase_id)
     REFERENCES phase(phase_id),
@@ -391,7 +395,7 @@ CREATE TABLE review (
   resource_id                   INTEGER                         NOT NULL,
   submission_id                 INTEGER                         NOT NULL,
   scorecard_id                  INTEGER                         NOT NULL,
-  committed                     BOOLEAN                         NOT NULL,
+  committed                     DECIMAL(1, 0)                   NOT NULL,
   score                         FLOAT,
   create_user                   VARCHAR(64)                     NOT NULL,
   create_date                   DATETIME YEAR TO FRACTION(3)    NOT NULL,
@@ -409,6 +413,7 @@ CREATE TABLE review_item (
   review_item_id                INTEGER                         NOT NULL,
   review_id                     INTEGER                         NOT NULL,
   scorecard_question_id         INTEGER                         NOT NULL,
+  upload_id                     INTEGER,
   answer                        VARCHAR(254)                    NOT NULL,
   create_user                   VARCHAR(64)                     NOT NULL,
   create_date                   DATETIME YEAR TO FRACTION(3)    NOT NULL,
@@ -418,7 +423,9 @@ CREATE TABLE review_item (
   FOREIGN KEY(review_id)
     REFERENCES review(review_id),
   FOREIGN KEY(scorecard_question_id)
-    REFERENCES scorecard_question(scorecard_question_id)
+    REFERENCES scorecard_question(scorecard_question_id),
+  FOREIGN KEY(upload_id)
+    REFERENCES upload(upload_id)
 );
 CREATE TABLE review_comment (
   review_comment_id             INTEGER                         NOT NULL,
@@ -464,8 +471,8 @@ CREATE TABLE deliverable_lu (
   resource_role_id              INTEGER                         NOT NULL,
   name                          VARCHAR(64)                     NOT NULL,
   description                   VARCHAR(64)                     NOT NULL,
-  per_submission                BOOLEAN                         NOT NULL,
-  required                      BOOLEAN                         NOT NULL,
+  per_submission                DECIMAL(1, 0)                   NOT NULL,
+  required                      DECIMAL(1, 0)                   NOT NULL,
   create_user                   VARCHAR(64)                     NOT NULL,
   create_date                   DATETIME YEAR TO FRACTION(3)    NOT NULL,
   modify_user                   VARCHAR(64)                     NOT NULL,
