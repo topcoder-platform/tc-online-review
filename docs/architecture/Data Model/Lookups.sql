@@ -121,13 +121,6 @@ INSERT INTO project_info_type_lu(project_info_type_id, name, description, create
 INSERT INTO project_info_type_lu(project_info_type_id, name, description, create_user, create_date, modify_user, modify_date)
   VALUES(24, 'Runner-up External Reference ID', 'Runner-up External Reference ID', 'System', CURRENT, 'System', CURRENT);
 
-INSERT INTO scorecard_assignment_lu(scorecard_assignment_id, name, description, create_user, create_date, modify_user, modify_date)
-  VALUES(1, 'Screening Scorecard', 'Screening Scorecard', 'System', CURRENT, 'System', CURRENT);
-INSERT INTO scorecard_assignment_lu(scorecard_assignment_id, name, description, create_user, create_date, modify_user, modify_date)
-  VALUES(2, 'Review Scorecard', 'Review Scorecard', 'System', CURRENT, 'System', CURRENT);
-INSERT INTO scorecard_assignment_lu(scorecard_assignment_id, name, description, create_user, create_date, modify_user, modify_date)
-  VALUES(3, 'Approval Scorecard', 'Approval Scorecard', 'System', CURRENT, 'System', CURRENT);
-
 INSERT INTO phase_type_lu(phase_type_id, name, description, create_user, create_date, modify_user, modify_date)
   VALUES(1, 'Registration', 'Registration', 'System', CURRENT, 'System', CURRENT);
 INSERT INTO phase_type_lu(phase_type_id, name, description, create_user, create_date, modify_user, modify_date)
@@ -270,51 +263,51 @@ INSERT INTO comment_type_lu(comment_type_id, name, description, create_user, cre
   VALUES(11, 'Manager Comment', 'Manager Comment', 'System', CURRENT, 'System', CURRENT);
 
 INSERT INTO deliverable_lu(deliverable_id, phase_type_id, resource_role_id, name, description, per_submission, required, create_user, create_date, modify_user, modify_date)
-  VALUES(1, 2, 1, 'Submission', 'Submission', 'F', 'F', 'System', CURRENT, 'System', CURRENT);
+  VALUES(1, 2, 1, 'Submission', 'Submission', 0, 0, 'System', CURRENT, 'System', CURRENT);
 INSERT INTO deliverable_lu(deliverable_id, phase_type_id, resource_role_id, name, description, per_submission, required, create_user, create_date, modify_user, modify_date)
-  VALUES(2, 3, 2, 'Screening Scorecard', 'Screening Scorecard', 'T', 'T', 'System', CURRENT, 'System', CURRENT);
+  VALUES(2, 3, 2, 'Screening Scorecard', 'Screening Scorecard', 1, 1, 'System', CURRENT, 'System', CURRENT);
 INSERT INTO deliverable_lu(deliverable_id, phase_type_id, resource_role_id, name, description, per_submission, required, create_user, create_date, modify_user, modify_date)
-  VALUES(3, 3, 3, 'Screening Scorecard', 'Screening Scorecard', 'F', 'T', 'System', CURRENT, 'System', CURRENT);
+  VALUES(3, 3, 3, 'Screening Scorecard', 'Screening Scorecard', 0, 1, 'System', CURRENT, 'System', CURRENT);
 INSERT INTO deliverable_lu(deliverable_id, phase_type_id, resource_role_id, name, description, per_submission, required, create_user, create_date, modify_user, modify_date)
-  VALUES(4, 4, 4, 'Review Scorecard', 'Review Scorecard', 'T', 'T', 'System', CURRENT, 'System', CURRENT);
+  VALUES(4, 4, 4, 'Review Scorecard', 'Review Scorecard', 1, 1, 'System', CURRENT, 'System', CURRENT);
 INSERT INTO deliverable_lu(deliverable_id, phase_type_id, resource_role_id, name, description, per_submission, required, create_user, create_date, modify_user, modify_date)
-  VALUES(5, 4, 5, 'Review Scorecard', 'Review Scorecard', 'T', 'T', 'System', CURRENT, 'System', CURRENT);
+  VALUES(5, 4, 5, 'Review Scorecard', 'Review Scorecard', 1, 1, 'System', CURRENT, 'System', CURRENT);
 INSERT INTO deliverable_lu(deliverable_id, phase_type_id, resource_role_id, name, description, per_submission, required, create_user, create_date, modify_user, modify_date)
-  VALUES(6, 4, 6, 'Review Scorecard', 'Review Scorecard', 'T', 'T', 'System', CURRENT, 'System', CURRENT);
+  VALUES(6, 4, 6, 'Review Scorecard', 'Review Scorecard', 1, 1, 'System', CURRENT, 'System', CURRENT);
 INSERT INTO deliverable_lu(deliverable_id, phase_type_id, resource_role_id, name, description, per_submission, required, create_user, create_date, modify_user, modify_date)
-  VALUES(7, 4, 7, 'Review Scorecard', 'Review Scorecard', 'T', 'T', 'System', CURRENT, 'System', CURRENT);
+  VALUES(7, 4, 7, 'Review Scorecard', 'Review Scorecard', 1, 1, 'System', CURRENT, 'System', CURRENT);
 INSERT INTO deliverable_lu(deliverable_id, phase_type_id, resource_role_id, name, description, per_submission, required, create_user, create_date, modify_user, modify_date)
-  VALUES(8, 4, 5, 'Accuracy Test Cases', 'Accuracy Test Cases', 'F', 'T', 'System', CURRENT, 'System', CURRENT);
+  VALUES(8, 4, 5, 'Accuracy Test Cases', 'Accuracy Test Cases', 0, 1, 'System', CURRENT, 'System', CURRENT);
 INSERT INTO deliverable_lu(deliverable_id, phase_type_id, resource_role_id, name, description, per_submission, required, create_user, create_date, modify_user, modify_date)
-  VALUES(9, 4, 6, 'Failure Test Cases', 'Failure Test Cases', 'F', 'T', 'System', CURRENT, 'System', CURRENT);
+  VALUES(9, 4, 6, 'Failure Test Cases', 'Failure Test Cases', 0, 1, 'System', CURRENT, 'System', CURRENT);
 INSERT INTO deliverable_lu(deliverable_id, phase_type_id, resource_role_id, name, description, per_submission, required, create_user, create_date, modify_user, modify_date)
-  VALUES(10, 4, 7, 'Stress Test Cases', 'Stress Test Cases', 'F', 'T', 'System', CURRENT, 'System', CURRENT);
+  VALUES(10, 4, 7, 'Stress Test Cases', 'Stress Test Cases', 0, 1, 'System', CURRENT, 'System', CURRENT);
 INSERT INTO deliverable_lu(deliverable_id, phase_type_id, resource_role_id, name, description, per_submission, required, create_user, create_date, modify_user, modify_date)
-  VALUES(11, 6, 4, 'Appeal Responses', 'Appeal Responses', 'F', 'T', 'System', CURRENT, 'System', CURRENT);
+  VALUES(11, 6, 4, 'Appeal Responses', 'Appeal Responses', 0, 1, 'System', CURRENT, 'System', CURRENT);
 INSERT INTO deliverable_lu(deliverable_id, phase_type_id, resource_role_id, name, description, per_submission, required, create_user, create_date, modify_user, modify_date)
-  VALUES(12, 6, 5, 'Appeal Responses', 'Appeal Responses', 'F', 'T', 'System', CURRENT, 'System', CURRENT);
+  VALUES(12, 6, 5, 'Appeal Responses', 'Appeal Responses', 0, 1, 'System', CURRENT, 'System', CURRENT);
 INSERT INTO deliverable_lu(deliverable_id, phase_type_id, resource_role_id, name, description, per_submission, required, create_user, create_date, modify_user, modify_date)
-  VALUES(13, 6, 6, 'Appeal Responses', 'Appeal Responses', 'F', 'T', 'System', CURRENT, 'System', CURRENT);
+  VALUES(13, 6, 6, 'Appeal Responses', 'Appeal Responses', 0, 1, 'System', CURRENT, 'System', CURRENT);
 INSERT INTO deliverable_lu(deliverable_id, phase_type_id, resource_role_id, name, description, per_submission, required, create_user, create_date, modify_user, modify_date)
-  VALUES(14, 6, 7, 'Appeal Responses', 'Appeal Responses', 'F', 'T', 'System', CURRENT, 'System', CURRENT);
+  VALUES(14, 6, 7, 'Appeal Responses', 'Appeal Responses', 0, 1, 'System', CURRENT, 'System', CURRENT);
 INSERT INTO deliverable_lu(deliverable_id, phase_type_id, resource_role_id, name, description, per_submission, required, create_user, create_date, modify_user, modify_date)
-  VALUES(15, 7, 8, 'Aggregation', 'Aggregation', 'F', 'T', 'System', CURRENT, 'System', CURRENT);
+  VALUES(15, 7, 8, 'Aggregation', 'Aggregation', 0, 1, 'System', CURRENT, 'System', CURRENT);
 INSERT INTO deliverable_lu(deliverable_id, phase_type_id, resource_role_id, name, description, per_submission, required, create_user, create_date, modify_user, modify_date)
-  VALUES(16, 8, 4, 'Aggregation Review', 'Aggregation Review', 'F', 'T', 'System', CURRENT, 'System', CURRENT);
+  VALUES(16, 8, 4, 'Aggregation Review', 'Aggregation Review', 0, 1, 'System', CURRENT, 'System', CURRENT);
 INSERT INTO deliverable_lu(deliverable_id, phase_type_id, resource_role_id, name, description, per_submission, required, create_user, create_date, modify_user, modify_date)
-  VALUES(17, 8, 5, 'Aggregation Review', 'Aggregation Review', 'F', 'T', 'System', CURRENT, 'System', CURRENT);
+  VALUES(17, 8, 5, 'Aggregation Review', 'Aggregation Review', 0, 1, 'System', CURRENT, 'System', CURRENT);
 INSERT INTO deliverable_lu(deliverable_id, phase_type_id, resource_role_id, name, description, per_submission, required, create_user, create_date, modify_user, modify_date)
-  VALUES(18, 8, 6, 'Aggregation Review', 'Aggregation Review', 'F', 'T', 'System', CURRENT, 'System', CURRENT);
+  VALUES(18, 8, 6, 'Aggregation Review', 'Aggregation Review', 0, 1, 'System', CURRENT, 'System', CURRENT);
 INSERT INTO deliverable_lu(deliverable_id, phase_type_id, resource_role_id, name, description, per_submission, required, create_user, create_date, modify_user, modify_date)
-  VALUES(19, 8, 7, 'Aggregation Review', 'Aggregation Review', 'F', 'T', 'System', CURRENT, 'System', CURRENT);
+  VALUES(19, 8, 7, 'Aggregation Review', 'Aggregation Review', 0, 1, 'System', CURRENT, 'System', CURRENT);
 INSERT INTO deliverable_lu(deliverable_id, phase_type_id, resource_role_id, name, description, per_submission, required, create_user, create_date, modify_user, modify_date)
-  VALUES(20, 9, 1, 'Final Fix', 'Final Fix', 'F', 'T', 'System', CURRENT, 'System', CURRENT);
+  VALUES(20, 9, 1, 'Final Fix', 'Final Fix', 0, 1, 'System', CURRENT, 'System', CURRENT);
 INSERT INTO deliverable_lu(deliverable_id, phase_type_id, resource_role_id, name, description, per_submission, required, create_user, create_date, modify_user, modify_date)
-  VALUES(21, 9, 1, 'Scorecard Comment', 'F', 'T', 'Scorecard Comment', 'System', CURRENT, 'System', CURRENT);
+  VALUES(21, 9, 1, 'Scorecard Comment', 0, 1, 'Scorecard Comment', 'System', CURRENT, 'System', CURRENT);
 INSERT INTO deliverable_lu(deliverable_id, phase_type_id, resource_role_id, name, description, per_submission, required, create_user, create_date, modify_user, modify_date)
-  VALUES(22, 10, 9, 'Final Review', 'F', 'T', 'Final Review', 'System', CURRENT, 'System', CURRENT);
+  VALUES(22, 10, 9, 'Final Review', 0, 1, 'Final Review', 'System', CURRENT, 'System', CURRENT);
 INSERT INTO deliverable_lu(deliverable_id, phase_type_id, resource_role_id, name, description, per_submission, required, create_user, create_date, modify_user, modify_date)
-  VALUES(23, 11, 10, 'Approval', 'Approval', 'T', 'T', 'System', CURRENT, 'System', CURRENT);
+  VALUES(23, 11, 10, 'Approval', 'Approval', 1, 1, 'System', CURRENT, 'System', CURRENT);
 
 INSERT INTO notification_type_lu(notification_type_id, name, description, create_user, create_date, modify_user, modify_date)
   VALUES(1, 'Timeline Notification', 'Timeline Notification', 'System', CURRENT, 'System', CURRENT);
