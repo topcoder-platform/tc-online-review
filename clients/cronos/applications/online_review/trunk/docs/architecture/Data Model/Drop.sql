@@ -27,7 +27,7 @@ DROP TABLE resource_role_lu;
 DROP TABLE phase_criteria;
 DROP TABLE phase_criteria_type_lu;
 DROP TABLE phase_dependency;
-DROP TABLE phase;
+DROP TABLE project_phase;
 DROP TABLE phase_type_lu;
 DROP TABLE phase_status_lu;
 DROP TABLE project_info;
