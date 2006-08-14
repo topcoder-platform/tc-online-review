@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE struts-config PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 1.2//EN" "http://struts.apache.org/dtds/struts-config_1_2.dtd">
+
+<struts-config>
+  <data-sources />
+  <form-beans >
+    <form-bean name="scorecardForm" type="com.cronos.onlinereview.actions.ScorecardForm" />
+    <form-bean name="loginForm" type="com.cronos.onlinereview.actions.MockLoginForm" />
+  </form-beans>
+
+  <global-exceptions />
+  
+  <!-- Global Forward Definitions -->
+  <global-forwards >
+    <forward name="failure" path="/error.jsp" />
+	<forward name="listScorecards" path="/listScorecards.jsp" />
+	<forward name="viewScorecard" path="/viewScorecard.jsp" />
+	<forward name="editScorecard" path="/editScorecard.jsp" />
+	<forward name="welcome" path="/welcome.jsp" />
+	<forward name="login" path="/login.jsp" />
+  </global-forwards>
+
+  <!-- Action Mapping Definitions -->
+  <action-mappings >
+    <action
+      parameter="actionName"
+      path="/scorecardAdmin"
+      type="com.cronos.onlinereview.actions.ScorecardActions"
+      name="scorecardForm"
+      input="/editScorecard.jsp"
+      validate="true"
+      scope="session" />
+    <action
+      path="/login"
+      type="com.cronos.onlinereview.actions.MockLoginAction"
+      name="loginForm"
+      input="/login.jsp"
+      validate="true"
+      />
+    <action
+      path="/logout"
+      type="com.cronos.onlinereview.actions.MockLogoutAction"
+      />
+  </action-mappings>
+
+  <message-resources parameter="com.cronos.onlinereview.ScorecardAdminResources"/>
+</struts-config>
+

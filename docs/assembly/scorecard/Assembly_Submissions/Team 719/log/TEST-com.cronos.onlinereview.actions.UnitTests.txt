@@ -1,0 +1,234 @@
+Testsuite: com.cronos.onlinereview.actions.UnitTests
+Tests run: 61, Failures: 0, Errors: 0, Time elapsed: 151.558 sec
+------------- Standard Error -----------------
+2006-8-8 22:01:56 com.topcoder.util.log.jdk14.Jdk14Log log
+信息: User with ID 1234 is requesting to list the scorecards with project type id 1.
+2006-8-8 22:02:08 com.topcoder.util.log.jdk14.Jdk14Log log
+信息: User with ID 1234 is requesting to list the scorecards with project type id 1.
+2006-8-8 22:02:24 com.topcoder.util.log.jdk14.Jdk14Log log
+信息: User with ID 1234 is requesting to list the scorecards with project type id 2.
+2006-8-8 22:02:29 com.topcoder.util.log.jdk14.Jdk14Log log
+信息: User with ID 1234 is requesting to list the scorecards with project type id 3.
+2006-8-8 22:02:29 com.topcoder.util.log.jdk14.Jdk14Log log
+严重: Exception caught while listing the scorecard: null
+2006-8-8 22:02:38 com.topcoder.util.log.jdk14.Jdk14Log log
+信息: User with ID 1234 is requesting to list the scorecards with project type id 1.
+2006-8-8 22:02:41 com.topcoder.util.log.jdk14.Jdk14Log log
+严重: User is not logged on.
+2006-8-8 22:02:41 com.topcoder.util.log.jdk14.Jdk14Log log
+信息: User with ID null is not authorized to perform the listScorecards actions.
+2006-8-8 22:02:43 com.topcoder.util.log.jdk14.Jdk14Log log
+信息: User with ID 1234 is requesting to view the scorecard with id 2493.
+2006-8-8 22:02:45 com.topcoder.util.log.jdk14.Jdk14Log log
+严重: User with ID 1234 is issuing an invalid view scorecard request with scorecard id -1.
+2006-8-8 22:02:46 com.topcoder.util.log.jdk14.Jdk14Log log
+严重: User with ID 1234 is issuing an invalid view scorecard request with scorecard id -1.
+2006-8-8 22:02:49 com.topcoder.util.log.jdk14.Jdk14Log log
+严重: User with ID 1234 is requesting to view a nonexist scorecard with id 2497.
+2006-8-8 22:02:51 com.topcoder.util.log.jdk14.Jdk14Log log
+严重: User is not logged on.
+2006-8-8 22:02:51 com.topcoder.util.log.jdk14.Jdk14Log log
+信息: User with ID null is not authorized to perform the viewScorecard actions.
+2006-8-8 22:02:52 com.topcoder.util.log.jdk14.Jdk14Log log
+信息: User with ID 1234 is requesting to perform the newScorecard actions.
+2006-8-8 22:02:52 com.topcoder.util.log.jdk14.Jdk14Log log
+信息: User with ID 1234 is requesting to perform the newScorecard actions.
+2006-8-8 22:02:52 com.topcoder.util.log.jdk14.Jdk14Log log
+信息: User with ID 1234 is requesting to perform the newScorecard actions.
+2006-8-8 22:02:52 com.topcoder.util.log.jdk14.Jdk14Log log
+信息: User with ID 1234 is requesting to perform the newScorecard actions.
+2006-8-8 22:02:52 com.topcoder.util.log.jdk14.Jdk14Log log
+严重: User is not logged on.
+2006-8-8 22:02:52 com.topcoder.util.log.jdk14.Jdk14Log log
+信息: User with ID null is not authorized to perform the newScorecard actions.
+2006-8-8 22:02:53 com.topcoder.util.log.jdk14.Jdk14Log log
+信息: User with ID 1234 is requesting to edit the scorecard with id 2498.
+2006-8-8 22:02:55 com.topcoder.util.log.jdk14.Jdk14Log log
+严重: Scorecard with id 2499 is active and cannot be edited.
+2006-8-8 22:02:56 com.topcoder.util.log.jdk14.Jdk14Log log
+严重: User with ID 1234 is issuing an invalid edit scorecard request with scorecard id -1.
+2006-8-8 22:02:59 com.topcoder.util.log.jdk14.Jdk14Log log
+严重: User with ID 1234 is issuing an invalid edit scorecard request with scorecard id -1.
+2006-8-8 22:03:01 com.topcoder.util.log.jdk14.Jdk14Log log
+严重: User with ID 1234 is requesting to edit a nonexist scorecard with id 2503.
+2006-8-8 22:03:03 com.topcoder.util.log.jdk14.Jdk14Log log
+严重: User is not logged on.
+2006-8-8 22:03:03 com.topcoder.util.log.jdk14.Jdk14Log log
+信息: User with ID null is not authorized to perform the editScorecard actions.
+2006-8-8 22:03:06 com.topcoder.util.log.jdk14.Jdk14Log log
+严重: User with ID 1234 is issuing an invalid copy scorecard request with scorecard id -1.
+2006-8-8 22:03:09 com.topcoder.util.log.jdk14.Jdk14Log log
+严重: User with ID 1234 is issuing an invalid copy scorecard request with scorecard id -1.
+2006-8-8 22:03:11 com.topcoder.util.log.jdk14.Jdk14Log log
+严重: User with ID 1234 is requesting to copy a nonexist scorecard with id 2508.
+2006-8-8 22:03:14 com.topcoder.util.log.jdk14.Jdk14Log log
+严重: User is not logged on.
+2006-8-8 22:03:14 com.topcoder.util.log.jdk14.Jdk14Log log
+信息: User with ID null is not authorized to perform the copyScorecard actions.
+2006-8-8 22:03:19 com.topcoder.util.log.jdk14.Jdk14Log log
+信息: User with ID 1234 is requesting to edit the scorecard with id 2509.
+2006-8-8 22:03:19 com.topcoder.util.log.jdk14.Jdk14Log log
+信息: User with ID 1234 is requesting to add a group at the position (0) to scorecard with id 2509.
+2006-8-8 22:03:23 com.topcoder.util.log.jdk14.Jdk14Log log
+信息: User with ID 1234 is requesting to edit the scorecard with id 2510.
+2006-8-8 22:03:23 com.topcoder.util.log.jdk14.Jdk14Log log
+信息: User with ID 1234 is requesting to remove a group at the position (0) from scorecard with id 2510.
+2006-8-8 22:03:26 com.topcoder.util.log.jdk14.Jdk14Log log
+信息: User with ID 1234 is requesting to edit the scorecard with id 2511.
+2006-8-8 22:03:26 com.topcoder.util.log.jdk14.Jdk14Log log
+信息: User with ID 1234 is requesting to add a section at the position (0, 1) to scorecard with id 2511.
+2006-8-8 22:03:29 com.topcoder.util.log.jdk14.Jdk14Log log
+信息: User with ID 1234 is requesting to edit the scorecard with id 2512.
+2006-8-8 22:03:29 com.topcoder.util.log.jdk14.Jdk14Log log
+信息: User with ID 1234 is requesting to remove a section at the position (0, 0) from scorecard with id 2512.
+2006-8-8 22:03:31 com.topcoder.util.log.jdk14.Jdk14Log log
+信息: User with ID 1234 is requesting to edit the scorecard with id 2513.
+2006-8-8 22:03:31 com.topcoder.util.log.jdk14.Jdk14Log log
+信息: User with ID 1234 is requesting to add a question at the position (0, 0) to scorecard with id 2513.
+2006-8-8 22:03:33 com.topcoder.util.log.jdk14.Jdk14Log log
+信息: User with ID 1234 is requesting to edit the scorecard with id 2514.
+2006-8-8 22:03:33 com.topcoder.util.log.jdk14.Jdk14Log log
+信息: User with ID 1234 is requesting to remove a question at the position (0, 0, 0) from scorecard with id 2514.
+2006-8-8 22:03:36 com.topcoder.util.log.jdk14.Jdk14Log log
+信息: User with ID 1234 is requesting to edit the scorecard with id 2515.
+2006-8-8 22:03:36 com.topcoder.util.log.jdk14.Jdk14Log log
+信息: User with ID 1234 is requesting to save scorecard with id 2515.
+2006-8-8 22:03:38 com.topcoder.util.log.jdk14.Jdk14Log log
+信息: User with ID 1234 is requesting to list the scorecards with project type id 1.
+2006-8-8 22:03:42 com.topcoder.util.log.jdk14.Jdk14Log log
+信息: User with ID 1234 is requesting to edit the scorecard with id 2516.
+2006-8-8 22:03:44 com.topcoder.util.log.jdk14.Jdk14Log log
+信息: User with ID 1234 is requesting to edit the scorecard with id 2517.
+2006-8-8 22:03:45 com.topcoder.util.log.jdk14.Jdk14Log log
+信息: User with ID 1234 is requesting to perform the newScorecard actions.
+2006-8-8 22:03:46 com.topcoder.util.log.jdk14.Jdk14Log log
+信息: User with ID 1234 is requesting to perform the newScorecard actions.
+2006-8-8 22:03:47 com.topcoder.util.log.jdk14.Jdk14Log log
+信息: User with ID 1234 is requesting to perform the newScorecard actions.
+2006-8-8 22:03:49 com.topcoder.util.log.jdk14.Jdk14Log log
+信息: User with ID 1234 is requesting to perform the newScorecard actions.
+2006-8-8 22:03:51 com.topcoder.util.log.jdk14.Jdk14Log log
+信息: User with ID 1234 is requesting to perform the newScorecard actions.
+2006-8-8 22:03:52 com.topcoder.util.log.jdk14.Jdk14Log log
+信息: User with ID 1234 is requesting to perform the newScorecard actions.
+2006-8-8 22:03:53 com.topcoder.util.log.jdk14.Jdk14Log log
+信息: User with ID 1234 is requesting to perform the newScorecard actions.
+2006-8-8 22:03:54 com.topcoder.util.log.jdk14.Jdk14Log log
+信息: User with ID 1234 is requesting to perform the newScorecard actions.
+2006-8-8 22:03:55 com.topcoder.util.log.jdk14.Jdk14Log log
+信息: User with ID 1234 is requesting to perform the newScorecard actions.
+2006-8-8 22:03:56 com.topcoder.util.log.jdk14.Jdk14Log log
+信息: User with ID 1234 is requesting to perform the newScorecard actions.
+2006-8-8 22:03:57 com.topcoder.util.log.jdk14.Jdk14Log log
+信息: User with ID 1234 is requesting to perform the newScorecard actions.
+2006-8-8 22:03:57 com.topcoder.util.log.jdk14.Jdk14Log log
+信息: User with ID 1234 is requesting to add a group at the position (0) to scorecard with id -1.
+2006-8-8 22:03:58 com.topcoder.util.log.jdk14.Jdk14Log log
+信息: User with ID 1234 is requesting to perform the newScorecard actions.
+2006-8-8 22:03:58 com.topcoder.util.log.jdk14.Jdk14Log log
+信息: User with ID 1234 is requesting to add a group at the position (0) to scorecard with id -1.
+2006-8-8 22:03:59 com.topcoder.util.log.jdk14.Jdk14Log log
+信息: User with ID 1234 is requesting to perform the newScorecard actions.
+2006-8-8 22:04:01 com.topcoder.util.log.jdk14.Jdk14Log log
+信息: User with ID 1234 is requesting to perform the newScorecard actions.
+2006-8-8 22:04:02 com.topcoder.util.log.jdk14.Jdk14Log log
+信息: User with ID 1234 is requesting to perform the newScorecard actions.
+2006-8-8 22:04:02 com.topcoder.util.log.jdk14.Jdk14Log log
+信息: User with ID 1234 is requesting to add a section at the position (0, 1) to scorecard with id -1.
+2006-8-8 22:04:03 com.topcoder.util.log.jdk14.Jdk14Log log
+信息: User with ID 1234 is requesting to perform the newScorecard actions.
+2006-8-8 22:04:03 com.topcoder.util.log.jdk14.Jdk14Log log
+信息: User with ID 1234 is requesting to add a section at the position (0, 1) to scorecard with id -1.
+2006-8-8 22:04:04 com.topcoder.util.log.jdk14.Jdk14Log log
+信息: User with ID 1234 is requesting to perform the newScorecard actions.
+2006-8-8 22:04:05 com.topcoder.util.log.jdk14.Jdk14Log log
+信息: User with ID 1234 is requesting to perform the newScorecard actions.
+2006-8-8 22:04:06 com.topcoder.util.log.jdk14.Jdk14Log log
+信息: User with ID 1234 is requesting to perform the newScorecard actions.
+2006-8-8 22:04:06 com.topcoder.util.log.jdk14.Jdk14Log log
+信息: User with ID 1234 is requesting to add a question at the position (0, 0) to scorecard with id -1.
+2006-8-8 22:04:07 com.topcoder.util.log.jdk14.Jdk14Log log
+信息: User with ID 1234 is requesting to perform the newScorecard actions.
+2006-8-8 22:04:07 com.topcoder.util.log.jdk14.Jdk14Log log
+信息: User with ID 1234 is requesting to add a question at the position (0, 0) to scorecard with id -1.
+2006-8-8 22:04:08 com.topcoder.util.log.jdk14.Jdk14Log log
+信息: User with ID 1234 is requesting to perform the newScorecard actions.
+2006-8-8 22:04:09 com.topcoder.util.log.jdk14.Jdk14Log log
+信息: User with ID 1234 is requesting to perform the newScorecard actions.
+2006-8-8 22:04:11 com.topcoder.util.log.jdk14.Jdk14Log log
+信息: User with ID 1234 is requesting to perform the newScorecard actions.
+2006-8-8 22:04:13 com.topcoder.util.log.jdk14.Jdk14Log log
+信息: User with ID 1234 is requesting to edit the scorecard with id 2519.
+2006-8-8 22:04:14 com.topcoder.util.log.jdk14.Jdk14Log log
+信息: User with ID 1234 is requesting to save scorecard with id 2519.
+2006-8-8 22:04:14 com.topcoder.util.log.jdk14.Jdk14Log log
+严重: Scorecard with id 2519 is active and cannot be updated.
+2006-8-8 22:04:15 com.topcoder.util.log.jdk14.Jdk14Log log
+信息: User with ID 1234 is requesting to perform the newScorecard actions.
+2006-8-8 22:04:16 com.topcoder.util.log.jdk14.Jdk14Log log
+严重: User is not logged on.
+2006-8-8 22:04:16 com.topcoder.util.log.jdk14.Jdk14Log log
+信息: User with ID null is not authorized to perform the saveScorecard actions.
+------------- ---------------- ---------------
+
+Testcase: testListScorecards_ComponentProjects took 14.811 sec
+Testcase: testListScorecards_DefaultProjects took 11.056 sec
+Testcase: testListScorecards_ApplicationProjects took 18.367 sec
+Testcase: testListScorecards_UnknownProjectTypeId took 0.831 sec
+Testcase: testListScorecards_InvalidProjectTypeId took 10.946 sec
+Testcase: testListScorecards_NotLoggedIn took 0.791 sec
+Testcase: testViewScorecard_ValidSid took 2.684 sec
+Testcase: testViewScorecard_InvalidSid took 1.322 sec
+Testcase: testViewScorecard_NoSid took 1.101 sec
+Testcase: testViewScorecard_NonExistSid took 3.195 sec
+Testcase: testViewScorecard_NotLoggedIn took 1.782 sec
+Testcase: testNewScorecard_NoProjectTypeId took 0.241 sec
+Testcase: testNewScorecard_ComponetProject took 0.05 sec
+Testcase: testNewScorecard_ApplicationProject took 0.05 sec
+Testcase: testNewScorecard_UnknownProjectTypeId took 0.05 sec
+Testcase: testNewScorecard_NotLoggedIn took 0.06 sec
+Testcase: testEditScorecard_ValidSidCanEdit took 1.953 sec
+Testcase: testEditScorecard_ValidSidActive took 1.792 sec
+Testcase: testEditScorecard_InvalidSid took 1.302 sec
+Testcase: testEditScorecard_NoSid took 2.464 sec
+Testcase: testEditScorecard_NonExistSid took 2.033 sec
+Testcase: testEditScorecard_NotLoggedIn took 1.692 sec
+Testcase: testCopyScorecard_ValidSid took 1.923 sec
+Testcase: testCopyScorecard_InvalidSid took 1.412 sec
+Testcase: testCopyScorecard_NoSid took 3.114 sec
+Testcase: testCopyScorecard_NonExistSid took 2.193 sec
+Testcase: testCopyScorecard_NotLoggedIn took 2.875 sec
+Testcase: testDoAddGroup took 5.558 sec
+Testcase: testDoRemoveGroup took 3.394 sec
+Testcase: testDoAddSection took 2.744 sec
+Testcase: testDoRemoveSection took 2.824 sec
+Testcase: testDoAddQuestion took 2.234 sec
+Testcase: testDoRemoveQuestion took 2.173 sec
+Testcase: testDoFinish took 6.489 sec
+Testcase: testDoFinish_EmptyScorecardName took 2.253 sec
+Testcase: testDoFinish_ScorecardNameTooLong took 2.865 sec
+Testcase: testDoFinish_EmptyVersion took 0.701 sec
+Testcase: testDoFinish_MalformedVersion took 0.931 sec
+Testcase: testDoFinish_NameVersionNotUnique took 2.283 sec
+Testcase: testDoFinish_InvalidProjectTypeCategory took 1.272 sec
+Testcase: testDoFinish_InvalidScorecardStatus took 1.182 sec
+Testcase: testDoFinish_InvalidScorecardType took 1.021 sec
+Testcase: testDoFinish_NegativeMinScore took 0.952 sec
+Testcase: testDoFinish_MalformedMinScore took 1.071 sec
+Testcase: testDoFinish_MalformedMaxScore took 1.152 sec
+Testcase: testDoFinish_MinScoreLargerThanMaxScore took 1.041 sec
+Testcase: testDoFinish_GroupWeightsMoreThan100 took 1.162 sec
+Testcase: testDoFinish_GroupWeightsLessThan100 took 1.212 sec
+Testcase: testDoFinish_EmptyGroupName took 1.091 sec
+Testcase: testDoFinish_GroupNameTooLong took 1.242 sec
+Testcase: testDoFinish_SectionWeightsMoreThan100 took 1.072 sec
+Testcase: testDoFinish_SectionWeightsLessThan100 took 1.011 sec
+Testcase: testDoFinish_EmptySectionName took 1.172 sec
+Testcase: testDoFinish_SectionNameTooLong took 1.231 sec
+Testcase: testDoFinish_QuestionWeightsMoreThan100 took 1.092 sec
+Testcase: testDoFinish_QuestionWeightsLessThan100 took 0.961 sec
+Testcase: testDoFinish_EmptyQuestionDescription took 1.132 sec
+Testcase: testDoFinish_EmptyQuestionGuideline took 1.652 sec
+Testcase: testDoFinish_InvalidQuestionType took 0.942 sec
+Testcase: testDoFinish_ScorecardActive took 3.345 sec
+Testcase: testSaveScorecard_NotLoggedIn took 1.011 sec
