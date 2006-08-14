@@ -24,11 +24,12 @@
   </head>
   
   <body>
-    <html:form action="/login" method="post" focus="login">
+    <html:form action="/login" method="post">
       <table border="0">
         <tr>
           <td>Login:</td>
-          <td><html:text property="userIdText" /></td>
+          <td>User Name : <html:text property="userName" /></td>
+          <td>Password : <html:password property="password" /></td>
         </tr>
         <tr>
           <td colspan="2" align="center"><html:submit /></td>

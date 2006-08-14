@@ -42,7 +42,7 @@
                 </tr>
             </table>
             <!-- Scorecard details -->
-            <table width="100%" border="0" cellpadding="0" cellspacing="1" class="forumBkgd">
+            <table width="100%" border="0" cellpadding="0" cellspacing="1" class="forumBkgd" id="tblScorecardSummary">
                 <tr>
                     <td class="forumTextEven" colspan="8">
                         <logic:notEqual value="true" property="scorecard.inUse" name="scorecardForm">
