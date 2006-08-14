@@ -111,7 +111,7 @@
                             </html:submit>
                         </html:form>
                         <strong><bean:message key="listScorecards.filterSelect.title" /></strong>
-                        <select id="filterSelect" class="inputBox" style="margin-right:5px;margin-left:5px;" name="status" size="1" onchange="refreshFilter()">
+                        <select id="filterSelect" value="Active Only" class="inputBox" style="margin-right:5px;margin-left:5px;" name="status" size="1" onchange="refreshFilter()">
                             <option value="0"><bean:message key="listScorecards.filterSelect.options.any"/></option>
                             <option value="1"><bean:message key="listScorecards.filterSelect.options.active"/></option>
                             <option value="2"><bean:message key="listScorecards.filterSelect.options.inactive"/></option>
@@ -202,7 +202,7 @@
                                     <strong>
                                         <html:link action="scorecardAdmin?actionName=viewScorecard" paramId="sid" paramName="curScorecard" paramProperty="id">
                                             <bean:write name="curScorecard" property="name" />
-                                          <bean:message key="global.label.v" />
+                                            <bean:message key="global.label.v" />
                                             <bean:write name="curScorecard" property="version" />
                                         </html:link>
                                     </strong>

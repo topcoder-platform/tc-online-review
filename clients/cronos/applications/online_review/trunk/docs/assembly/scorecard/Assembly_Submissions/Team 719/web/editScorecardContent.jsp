@@ -176,7 +176,7 @@
                         </td>
                         <td class="forumTitle">
                             <% String doAddGroup = "'doAddGroup'"; %>
-                            <html:submit onclick='<%= "set(this.form," + doAddGroup + "," + gIdx + ", -1, -1)" %>' styleClass="Buttons" style="float:right">
+                            <html:submit title='<%= "btnAddGroup[" + gIdx + "]"%>' onclick='<%= "set(this.form," + doAddGroup + "," + gIdx + ", -1, -1)" %>' styleClass="Buttons" style="float:right">
                                 <bean:message key="editScorecard.button.add" />
                             </html:submit>
                         </td>
@@ -205,7 +205,7 @@
                             </td>  
                             <td class="forumTitle">
                                 <% String doAddSection = "'doAddSection'"; %>
-                                <html:submit onclick='<%= "set(this.form," + doAddSection + "," + gIdx + "," + sIdx + ", -1)" %>' styleClass="Buttons" style="float:right">
+                                <html:submit title='<%= "btnAddSection[" + gIdx + "][" + sIdx + "]"%>' onclick='<%= "set(this.form," + doAddSection + "," + gIdx + "," + sIdx + ", -1)" %>' styleClass="Buttons" style="float:right">
                                     <bean:message key="editScorecard.button.add" />
                                 </html:submit>
                             </td>
@@ -231,7 +231,7 @@
                             </td>
                             <td class="SectionHeader" width="4%" >
                                 <% String doAddQuestion = "'doAddQuestion'"; %>
-                                <html:submit onclick='<%= "set(this.form," + doAddQuestion + "," + gIdx + "," + sIdx + ", -1)" %>' styleClass="Buttons">
+                                <html:submit title='<%= "btnAddGroup[" + gIdx + "][" + sIdx + "]"%>' onclick='<%= "set(this.form," + doAddQuestion + "," + gIdx + "," + sIdx + ", -1)" %>' styleClass="Buttons">
                                     <bean:message key="editScorecard.button.add" />
                                 </html:submit>
                             </td>

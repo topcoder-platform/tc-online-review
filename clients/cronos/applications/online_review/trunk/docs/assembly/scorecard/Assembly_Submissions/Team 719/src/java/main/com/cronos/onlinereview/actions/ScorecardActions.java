@@ -241,10 +241,10 @@ public class ScorecardActions extends DispatchAction {
                                                 + scorecardId + ".");
                         // attach scorecard to the scorecard form
                         scorecardForm.setScorecard(scorecard);
-                        // the scorecard is not newly created one, name is
+                        // the scorecard is not newly created one, name is not
                         // editable, version is not editable
                         scorecardForm.setNewlyCreated(false);
-                        scorecardForm.setScorecardNameEditable(true);
+                        scorecardForm.setScorecardNameEditable(false);
                         scorecardForm.setScorecardVersionEditable(false);
                         scorecardForm.setCopy(false);
                     }

@@ -93,7 +93,7 @@ public class UnitTestEditScorecardAction extends BaseTestCase {
         this.verifyNoActionErrors();
         // verify the scorecardForm
         ScorecardForm scorecardForm = (ScorecardForm) this.getActionForm();
-        assertTrue("The scorecard name is not editable.", scorecardForm
+        assertFalse("The scorecard name is editable.", scorecardForm
                 .isScorecardNameEditable());
         assertFalse("The scorecard version is editable.", scorecardForm
                 .isScorecardVersionEditable());

@@ -36,7 +36,8 @@ public abstract class BaseTestCase extends MockStrutsTestCase {
      * </p>
      */
     protected void login() {
-        this.addRequestParameter("userIdText", "1234");
+        this.addRequestParameter("userName", "manager");
+        this.addRequestParameter("password", "password");
         this.setRequestPathInfo("/login");
         this.actionPerform();
     }
