@@ -98,7 +98,7 @@
             <sql driver="@{driver}" url="@{url}" userid="@{userid}" password="@{password}" print="@{print}" classpathref="@{classpathref}" src="@{scriptfile}" delimiter="@{delimiter}" onerror="@{onerror}" autocommit="true" output="@{output}"/>
         </sequential>
     </macrodef>
-    
+
     <property name="sql.home" value="${testfiles}/scripts" />
 
     <property name="Drop_old.file" value="${sql.home}/Drop_old.sql" />
@@ -232,7 +232,7 @@
 	</target>
 
 	<target name="db.init_scorecard">
-		<orm-execute-sql-script scriptfile="${init_scorecard.file}" />
+		<orm-execute-sql-script scriptfile="${init_scorecards.file}" />
 	</target>
 	
     <target name="migrate_scorecard">
