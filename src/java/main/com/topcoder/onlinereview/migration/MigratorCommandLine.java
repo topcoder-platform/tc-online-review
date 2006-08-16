@@ -76,7 +76,9 @@ public class MigratorCommandLine {
             for (int i = 0; i < configSwitchValues.size(); i++) {
                 String configFilename = (String) configSwitchValues.get(i);
                 try {
-                    ConfigManager.getInstance().add(configFilename);
+                	if (!ConfigManager.getInstance().existsNamespace("com.topcoder.onlinereview.migration.DataMigrator")) {
+                    	ConfigManager.getInstance().add(configFilename);
+                    }
                 } catch (ConfigManagerException e) {
                 	e.printStackTrace();
                 }
