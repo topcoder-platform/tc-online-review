@@ -20,20 +20,25 @@
             and (a.modify_date>? OR s.modify_date>? OR sq.modify_date>?)
 
             
-	select ri.review_item_id  as scorecard_question_id,  
+	select ric.review_item_comment_id as appeal_id,
+		ri.review_item_id  as scorecard_question_id,  
         ri.review_id as scorecard_id,  
         (select value from resource_info where resource_id = s.resource_id and resource_info_type_id = 1) as user_id,
         (select value from resource_info where resource_id = r.resource_id and resource_info_type_id = 1) as reviewer_id,
         s.project_id,  
-        ric.content as response_text,
-        ric.comment_type_id as response_type_id,
-        (select name from comment_type_lu where comment_type_id = ric.comment_type_id) as response_type_desc,
-        ric.review_item_comment_id 
-        from review_item_comment ric, review_item  ri, review r, submission s 
+        ri.answer as final_evaluation_id,
+        ric.content as appeal_text,
+        (select content from review_item_comment ric_resp 
+        	where ric_resp.review_item_id = ri.review_item_id and comment_type_id = 5) as appeal_response,
+        (select extra_info from review_item_comment ric_resp 
+        	where ric_resp.review_item_id = ri.review_item_id and comment_type_id = 5) as raw_evaluation_id
+        from review_item_comment ric, review_item  ri, submission s , 
+        	review r 
+        	inner join resource res
+        	on r.resource_id = res.resource_id
+        	and res.resource_role_id >= 2 and res.resource_role_id <= 7
         where ric.review_item_id = ri.review_item_id 
         and ri.review_id = r.review_id  
         and r.submission_id = s.submission_id
-        and (ric.comment_type_id >= 1 and ric.comment_type_id <= 3) 
+        and ric.comment_type_id = 4
         and (ric.modify_date > ? OR ri.modify_date > ? OR r.modify_date > ? OR s.modify_date > ?)
-    	and r.resource_id in (select resource_id from resource where resource_role_id >= 2 && resource_role_id <= 7) 
-    	order by scorecard_question_id, scorecard_id, review_item_comment_id 

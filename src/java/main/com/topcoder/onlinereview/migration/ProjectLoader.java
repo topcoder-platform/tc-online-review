@@ -56,40 +56,22 @@ public class ProjectLoader {
     }
 
     /**
-     * Load Project data to transform.
-     *
-     * @return the loaded Project data
-     *
-     * @throws SQLException if error occurs while execute sql statement
-     */
-    public List loadProject() throws SQLException {
-    	List list = new ArrayList();
-    	int[] projectIds = new int[] {20186915}; // 21816206
-
-    	for (int i = 0; i < projectIds.length; i++) {
-    		Util.info("load project, id: " + projectIds[i]);
-    		long start = System.currentTimeMillis();
-    		list.add(loadProject(projectIds[i]));
-    		Util.info("loaded in " + (System.currentTimeMillis() - start) / 1000 + " seconds");
-    	}
-        return list;
-    }
-
-    /**
      * Load project one by one.
      * 
      * @param projectId
      * @return
      * @throws SQLException
      */
-    public ProjectOld loadProject(int projectId) throws SQLException {
-        PreparedStatement stmt = conn.prepareStatement("SELECT * FROM " + ProjectOld.TABLE_NAME + " WHERE cur_version = 1 and " +
-        		ProjectOld.PROJECT_ID_NAME + " = ?");
-        stmt.setInt(1, projectId);
+    public List loadProject() throws SQLException {
+    	List list = new ArrayList();
+        //PreparedStatement stmt = conn.prepareStatement("SELECT * FROM " + ProjectOld.TABLE_NAME + " WHERE cur_version = 1 and " +
+        //		ProjectOld.PROJECT_ID_NAME + " = ?");
+    	PreparedStatement stmt = conn.prepareStatement("SELECT * FROM " + ProjectOld.TABLE_NAME + " WHERE cur_version = 1 order by project_id");
+        //stmt.setInt(1, projectId);
 
         ResultSet rs = stmt.executeQuery();
 
-        if (rs.next()) {
+        while (rs.next()) {
 	        ProjectOld table = new ProjectOld();
 	        table.setProjectId(rs.getInt(ProjectOld.PROJECT_ID_NAME));
 	        table.setProjectStatId(rs.getInt(ProjectOld.PROJECT_STAT_ID_NAME));
@@ -120,14 +102,14 @@ public class ProjectLoader {
 	        prepareAggWorksheet(table);    
 	        // Used for project_audit
 	        prepareModifyReasons(table);
-	        return table;
+	        list.add(table);
         }
 
         DatabaseUtils.closeResultSetSilently(rs);
         DatabaseUtils.closeStatementSilently(stmt);
-        return null;
+        return list;
     }
-    
+
     /**
      * Prepare modify reason for this project.
      * 

@@ -9,6 +9,7 @@ import java.util.Date;
 import java.util.Iterator;
 
 import com.topcoder.onlinereview.migration.dto.oldschema.ScorecardOld;
+import com.topcoder.onlinereview.migration.dto.oldschema.resource.RboardApplication;
 import com.topcoder.onlinereview.migration.dto.oldschema.review.ScorecardQuestion;
 import com.topcoder.onlinereview.migration.dto.oldschema.screening.ScreeningResults;
 
@@ -339,5 +340,15 @@ public class SubmissionOld {
 			}
 		}
 		return false;
+    }
+
+    public ScorecardOld getScreeningScorecard() {
+    	for (Iterator iter = this.scorecards.iterator(); iter.hasNext();) {
+    		ScorecardOld pr = (ScorecardOld) iter.next();
+    		if (pr.getScorecardType() == 1) {
+    			return pr;
+    		}
+    	}
+    	return null;
     }
 }

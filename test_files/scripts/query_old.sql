@@ -42,7 +42,7 @@
 --select * from submission where project_id = 12034917 and cur_version = 1;
 --select *  from scorecard where cur_version = 1 and project_id = 12034917;
 
-select count(scorecard_id) tt, max(project_id)  from scorecard where cur_version = 1 and scorecard_type = 2 group by project_id having count(scorecard_id) > 1 order by tt;
+--select count(scorecard_id) tt, max(project_id)  from scorecard where cur_version = 1 and scorecard_type = 2 group by project_id having count(scorecard_id) > 1 order by tt;
 --select * from project_result where project_id = 21816206;
 --select * from scorecard where cur_version = 1 and project_id = 21816206;
 --select * from submission where cur_version = 1 and project_id = 21816206;
@@ -56,3 +56,7 @@ select count(scorecard_id) tt, max(project_id)  from scorecard where cur_version
 -- select distinct q.question_type, evaluation_id, q.question_text from scorecard_question s, question_template q where s.cur_version = 1 and s.q_template_v_id = q.q_template_v_id order by q.question_type;
 --select count(*) tt from scorecard_question where cur_version = 1 group by question_id order by tt;
 --select count(appeal_id) from appeal a, scorecard_question sq where sq.question_id = a.question_id and sq.cur_version = 1 and a.cur_version = 1 group by a.question_id;
+--select * from scorecard_template order by template_id > 2;
+
+--select distinct old_reliability from project_result;
+select distinct handle_lower from user;
