@@ -127,7 +127,7 @@ public class ScorecardTransformer {
             output.setGroups(transformScSectionGroup(output.getScorecardId(), input.getGroups(), totalWeight));
             list.add(output);
         }
-        Util.logAction(inputs.size(), "transform ScorecardTemplate");
+        Util.logAction(inputs.size(), "transformScorecardTemplate");
         OutputStream out = new FileOutputStream(MapUtil.propertieFile);
         templateIdProperties.store(out, "template_id scorecard_id");
         out.close();
@@ -158,6 +158,7 @@ public class ScorecardTransformer {
      */
     private Collection transformScSectionGroup(int scorecardId, Collection inputs, float totalWeight)
         throws IDGenerationException {
+        Util.start("transformScSectionGroup");
         List list = new ArrayList(inputs.size());
 
         for (Iterator iter = inputs.iterator(); iter.hasNext();) {
@@ -185,6 +186,7 @@ public class ScorecardTransformer {
             list.add(output);
         }
 
+        Util.logAction(inputs.size(), "transformScSectionGroup");
         return list;
     }
 
@@ -214,6 +216,7 @@ public class ScorecardTransformer {
      */
     private Collection transformScorecardSection(int scorecardGroupId, Collection inputs, float groupWeight)
         throws IDGenerationException {
+        Util.start("transformScorecardSection");
         List list = new ArrayList(inputs.size());
 
         for (Iterator iter = inputs.iterator(); iter.hasNext();) {
@@ -239,6 +242,7 @@ public class ScorecardTransformer {
             list.add(output);
         }
 
+        Util.logAction(inputs.size(), "transformScorecardSection");
         return list;
     }
 
@@ -254,6 +258,7 @@ public class ScorecardTransformer {
      */
     private Collection transformScorecardQuestion(int scorecardSectionId, Collection inputs) throws IDGenerationException {
         List list = new ArrayList(inputs.size());
+        Util.start("transformScorecardQuestion");
 
         for (Iterator iter = inputs.iterator(); iter.hasNext();) {
             QuestionTemplate input = (QuestionTemplate) iter.next();
@@ -298,6 +303,7 @@ public class ScorecardTransformer {
             list.add(output);
         }
 
+        Util.logAction(inputs.size(), "transformScorecardQuestion");
         return list;
     }
 

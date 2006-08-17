@@ -125,8 +125,7 @@ public class ProjectTransformer extends MapUtil{
      * @throws IDGenerationException
      */
     public List transformProject(List inputs) throws Exception {
-		Util.info("Transform Project");
-		long start = System.currentTimeMillis();
+		Util.start("transformProject");
         List list = new ArrayList(inputs.size());
 
         for (Iterator iter = inputs.iterator(); iter.hasNext();) {
@@ -160,7 +159,7 @@ public class ProjectTransformer extends MapUtil{
             // it will be done in upload prepare review
         }
 
-		Util.info("transform " + list.size() + " records in " + (System.currentTimeMillis() - start) / 1000 + " seconds");
+        Util.logAction(list.size(), "transformProject");
         return list;
     }
 
@@ -301,7 +300,7 @@ public class ProjectTransformer extends MapUtil{
     		output.addUpload(upload);
     		
     		if (upload.getUploadTypeId() == Upload.UPLOAD_TYPE_SUBMISSION && submission.isCurVersion()) {
-    			Submission newSubmission = prepareSubmission(submission, upload.getUploadId());
+    			Submission newSubmission = prepareSubmission(input, submission, upload.getUploadId());
     			
     			// add submission
     			output.addSubmission(newSubmission);
@@ -365,7 +364,7 @@ public class ProjectTransformer extends MapUtil{
      * @param output the new project
      * @throws IDGenerationException error occurs while generate new id
      */
-    private Submission prepareSubmission(SubmissionOld old, int uploadId) throws IDGenerationException {    		
+    private Submission prepareSubmission(ProjectOld input, SubmissionOld old, int uploadId) throws IDGenerationException {    		
 		Submission submission = new Submission();
 
 		submission.setUploadId(uploadId);
@@ -378,8 +377,8 @@ public class ProjectTransformer extends MapUtil{
 				submission.setSubmissionStatusId(Submission.SUBMISSION_STATUS_FAILED_SCREENING);
 			} else {
 	    		// otherwise if submission failed review, set to 'Failed Review', 
-				// TODO
-				if (!old.isAdvancedToReview()) {
+				ProjectResult pr = input.getProjectResultByUserId(old.getSubmitterId());				
+				if (pr != null && !pr.isPassedReviewInd()) {
     				submission.setSubmissionStatusId(Submission.SUBMISSION_STATUS_FAILED_REVIEW);
 				} else {
 		    		// otherwise if submission ends up with placement other than 1, set to 'Completed Without Win', 
@@ -638,8 +637,7 @@ public class ProjectTransformer extends MapUtil{
             phase.setActualEndTime(pi.getEndDate());
 
             // the difference between the start time and end time
-            // TODO not sure is seconds, millseconds or hours or days 
-            phase.setDuration((int) (pi.getStartDate().getTime() - pi.getEndDate().getTime()) / 1000);
+            phase.setDuration((int) (pi.getEndDate().getTime() - pi.getStartDate().getTime()));
         	setBaseDTO(phase);
             preparePhaseCriterias(phase, pi.getTemplateId());
             output.addPhase(phase);    		
