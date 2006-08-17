@@ -87,7 +87,7 @@ public class ScorecardLoader {
         	// For test purpose, just fetch 10
             stmt.setFetchSize(10);
         }
-        ResultSet rs = stmt.executeQuery("SELECT * FROM " + ScorecardTemplate.TABLE_NAME + " where template_id > 2 order by template_id");
+        ResultSet rs = stmt.executeQuery("SELECT * FROM " + ScorecardTemplate.TABLE_NAME + " where order by template_id");
         List list = new ArrayList();
 
         int size = 0;
@@ -124,6 +124,7 @@ public class ScorecardLoader {
      * @throws SQLException if error occurs while execute sql statement
      */
     private List loadScSectionGroup(int templateId) throws SQLException {
+		Util.start("loadScSectionGroup");
         // load ScSectionGroup table from old online review
         PreparedStatement stmt = conn.prepareStatement("SELECT * FROM " + ScSectionGroup.TABLE_NAME +
 					" WHERE template_id = ?");
@@ -142,6 +143,7 @@ public class ScorecardLoader {
             list.add(table);
         }
 
+        Util.logAction(list.size(), "Load loadScSectionGroup");
         DatabaseUtils.closeResultSetSilently(rs);
         DatabaseUtils.closeStatementSilently(stmt);
 
@@ -158,6 +160,7 @@ public class ScorecardLoader {
      * @throws SQLException if error occurs while execute sql statement
      */
     private List loadQuestionTemplate(int templateId, int sectionId) throws SQLException {
+		Util.start("loadQuestionTemplate");
         // load QuestionTemplate table from old online review
         PreparedStatement stmt = conn.prepareStatement("SELECT * FROM " + QuestionTemplate.TABLE_NAME +
 				" WHERE cur_version = 1 and template_id = ? AND section_id = ?");
@@ -183,6 +186,7 @@ public class ScorecardLoader {
             list.add(table);
         }
 
+        Util.logAction(list.size(), "Load loadQuestionTemplate");
         DatabaseUtils.closeResultSetSilently(rs);
         DatabaseUtils.closeStatementSilently(stmt);
 

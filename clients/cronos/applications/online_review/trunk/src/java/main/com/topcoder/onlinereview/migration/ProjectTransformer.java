@@ -18,9 +18,11 @@ import com.topcoder.onlinereview.migration.dto.newschema.resource.ResourceSubmis
 import com.topcoder.onlinereview.migration.dto.newschema.screening.ScreeningResult;
 import com.topcoder.onlinereview.migration.dto.newschema.screening.ScreeningTask;
 import com.topcoder.onlinereview.migration.dto.oldschema.ProjectOld;
+import com.topcoder.onlinereview.migration.dto.oldschema.ScorecardOld;
 import com.topcoder.onlinereview.migration.dto.oldschema.deliverable.SubmissionOld;
 import com.topcoder.onlinereview.migration.dto.oldschema.deliverable.Testcase;
 import com.topcoder.onlinereview.migration.dto.oldschema.phase.PhaseInstance;
+import com.topcoder.onlinereview.migration.dto.oldschema.resource.PaymentInfo;
 import com.topcoder.onlinereview.migration.dto.oldschema.resource.ProjectResult;
 import com.topcoder.onlinereview.migration.dto.oldschema.resource.RUserRole;
 import com.topcoder.onlinereview.migration.dto.oldschema.resource.RboardApplication;
@@ -698,119 +700,132 @@ public class ProjectTransformer extends MapUtil{
 
     	if (MapUtil.isSubmitter(role.getRRoleId())) {
 	    	// Rating project_result			old_rating
-	    	info = new ResourceInfo();
-	    	info.setResourceId(resource.getResourceId());
-	    	info.setResourceInfoTypeId(ResourceInfo.RATING);
-	    	info.setValue(String.valueOf(role.getLoginId()));
-	    	setBaseDTO(info);
-	    	project.addResourceInfo(info);
-	
-	    	// Reliability project_result			old_reliability
-	    	info = new ResourceInfo();
-	    	info.setResourceId(resource.getResourceId());
-	    	info.setResourceInfoTypeId(ResourceInfo.RELIABILITY);
-	    	info.setValue(String.valueOf(role.getLoginId()));
-	    	setBaseDTO(info);
-	    	project.addResourceInfo(info);
+    		ProjectResult pr = old.getProjectResultByUserId(role.getLoginId());
+    		if (pr == null) {
+    			Util.warn("Failed to find project result for Submitter: " + role.getRUserRoleId());
+    		} else {
+		    	// Registration Date project_result			create_date
+		    	// or  rboard_application			create_date
+		    	info = new ResourceInfo();
+		    	info.setResourceId(resource.getResourceId());
+		    	info.setResourceInfoTypeId(ResourceInfo.REGISTRATION_DATE);
+		    	// if it's submitter use project_result, if it's reviewer, use rboard_application
+		    	info.setValue(convert(pr.getCreateDate()));
+		    	setBaseDTO(info);
+		    	project.addResourceInfo(info);
+		    	
+		    	info = new ResourceInfo();
+		    	info.setResourceId(resource.getResourceId());
+		    	info.setResourceInfoTypeId(ResourceInfo.RATING);
+		    	if (pr.getOldRating() == 0) {
+		    		info.setValue("Not Rated");
+		    	} else {
+		    		info.setValue(String.valueOf(pr.getOldRating()));
+		    	}
+		    	setBaseDTO(info);
+		    	project.addResourceInfo(info);
+		    	
+		    	// Reliability project_result			old_reliability
+		    	info = new ResourceInfo();
+		    	info.setResourceId(resource.getResourceId());
+		    	info.setResourceInfoTypeId(ResourceInfo.RELIABILITY);
+		    	if (pr.getOldReliability() == 0) {
+		    		info.setValue("'N/A");
+		    	} else {
+		    		// convert to percentage, if not present, use 'N/A'
+		    		info.setValue(String.valueOf(pr.getOldReliability() * 100));
+		    	}
+		    	setBaseDTO(info);
+		    	project.addResourceInfo(info);
 
-	    	// Screening Score scorecard			score
-	    	info = new ResourceInfo();
-	    	info.setResourceId(resource.getResourceId());
-	    	info.setResourceInfoTypeId(ResourceInfo.SCREENING_SCORE);
-	    	info.setValue(String.valueOf(role.getLoginId()));
-	    	setBaseDTO(info);
-	    	project.addResourceInfo(info);
+		    	// Placement project_result			placed
+		    	info = new ResourceInfo();
+		    	info.setResourceId(resource.getResourceId());
+		    	info.setResourceInfoTypeId(ResourceInfo.PLACEMENT);
+		    	info.setValue(String.valueOf(pr.getPlaced()));
+		    	setBaseDTO(info);
+		    	project.addResourceInfo(info);
 
-	    	// Initial Score project_result			raw_score
-	    	info = new ResourceInfo();
-	    	info.setResourceId(resource.getResourceId());
-	    	info.setResourceInfoTypeId(ResourceInfo.INITIAL_SCORE);
-	    	info.setValue(String.valueOf(role.getLoginId()));
-	    	setBaseDTO(info);
-	    	project.addResourceInfo(info);
+		    	// Initial Score project_result			raw_score
+		    	info = new ResourceInfo();
+		    	info.setResourceId(resource.getResourceId());
+		    	info.setResourceInfoTypeId(ResourceInfo.INITIAL_SCORE);
+		    	info.setValue(String.valueOf(pr.getRawScore()));
+		    	setBaseDTO(info);
+		    	project.addResourceInfo(info);
 
-	    	// Final Score project_result			final_score
-	    	info = new ResourceInfo();
-	    	info.setResourceId(resource.getResourceId());
-	    	info.setResourceInfoTypeId(ResourceInfo.FINAL_SCORE);
-	    	info.setValue(String.valueOf(role.getLoginId()));
-	    	setBaseDTO(info);
-	    	project.addResourceInfo(info);
+		    	// Final Score project_result			final_score
+		    	info = new ResourceInfo();
+		    	info.setResourceId(resource.getResourceId());
+		    	info.setResourceInfoTypeId(ResourceInfo.FINAL_SCORE);
+		    	info.setValue(String.valueOf(pr.getFinalScore()));
+		    	setBaseDTO(info);
+		    	project.addResourceInfo(info);
+    		}
 
-	    	// Placement project_result			placed
-	    	info = new ResourceInfo();
-	    	info.setResourceId(resource.getResourceId());
-	    	info.setResourceInfoTypeId(ResourceInfo.PLACEMENT);
-	    	info.setValue(String.valueOf(role.getLoginId()));
-	    	setBaseDTO(info);
-	    	project.addResourceInfo(info);
-    	}
-
-    	if (MapUtil.isSubmitter(role.getRRoleId()) || MapUtil.isReviewer(role.getRRoleId())) {
-	    	// Registration Date project_result			create_date
-	    	// or  rboard_application			create_date
-	    	info = new ResourceInfo();
-	    	info.setResourceId(resource.getResourceId());
-	    	info.setResourceInfoTypeId(ResourceInfo.REGISTRATION_DATE);
-	    	// if it's submitter use project_result, if it's reviewer, use rboard_application
-	    	info.setValue(getRegistrationDate(old, role.getLoginId(), MapUtil.isSubmitter(role.getRRoleId())));
-	    	setBaseDTO(info);
-	    	project.addResourceInfo(info);
+    		ScorecardOld scorecard = old.getScreeningScorecardBySubmitter(role.getLoginId());
+    		if (scorecard == null) {
+    			Util.warn("Failed to find screening scorecard for submitter: " + role.getLoginId() + " rUserId: " + role.getRUserRoleId());
+    		} else {
+		    	// Screening Score scorecard			score    		
+		    	info = new ResourceInfo();
+		    	info.setResourceId(resource.getResourceId());
+		    	info.setResourceInfoTypeId(ResourceInfo.SCREENING_SCORE);
+		    	info.setValue(String.valueOf(scorecard.getScore()));
+		    	setBaseDTO(info);
+		    	project.addResourceInfo(info);
+	    	}
     	}
 
     	if (MapUtil.isReviewer(role.getRRoleId())) {
 	    	// Payment payment_info			payment
-	    	// for reviewer
-	    	info = new ResourceInfo();
-	    	info.setResourceId(resource.getResourceId());
-	    	info.setResourceInfoTypeId(ResourceInfo.PAYMENT);
-	    	info.setValue(String.valueOf(role.getLoginId()));
-	    	setBaseDTO(info);
-	    	project.addResourceInfo(info);
-	    	
-	    	// Payment Status payment_info			payment_stat_id
-	    	// for reviewer
-	    	info = new ResourceInfo();
-	    	info.setResourceId(resource.getResourceId());
-	    	info.setResourceInfoTypeId(ResourceInfo.PAYMENT_STATUS);
-	    	info.setValue(String.valueOf(role.getLoginId()));
-	    	setBaseDTO(info);
-	    	project.addResourceInfo(info);
-    	}
-    }
+    		PaymentInfo pi = role.getPaymentInfo();
+    		if (pi == null) {
+    			Util.warn("Failed to find PaymentInfo for reviewer: " + role.getRUserRoleId());
+    		} else {
+		    	// for reviewer
+		    	info = new ResourceInfo();
+		    	info.setResourceId(resource.getResourceId());
+		    	info.setResourceInfoTypeId(ResourceInfo.PAYMENT);
+		    	info.setValue(String.valueOf(pi.getPayment()));
+		    	setBaseDTO(info);
+		    	project.addResourceInfo(info);
+	
+		    	// Payment Status payment_info			payment_stat_id
+		    	// for reviewer
+		    	info = new ResourceInfo();
+		    	info.setResourceId(resource.getResourceId());
+		    	info.setResourceInfoTypeId(ResourceInfo.PAYMENT_STATUS);
+		    	// 1 maps to 'No', 2 maps to 'Yes'
+		    	switch (pi.getPaymentStatId()) {
+		    	case 1:
+			    	info.setValue("No");
+		    		break;
+		    	case 2:
+			    	info.setValue("Yes");
+		    		break;
+		    	default:
+	    			Util.warn("Invalid PaymentStatId: " + pi.getPaymentStatId());
+		    		break;
+		    	}
+		    	setBaseDTO(info);
+		    	project.addResourceInfo(info);
+    		}
 
-    private static final DateFormat DEFAULT_DATE_FORMAT = new SimpleDateFormat("MM/dd/yyyy hh:mm a");
-    /**
-     * Return registration date from the given project and user id.
-     * 
-     * @param old the old project
-     * @param userId the user id
-     * @param isSubmitter it's a submitter or reviewer
-     * @return
-     */
-    private static String getRegistrationDate(ProjectOld old, int userId, boolean isSubmitter) {
-    	Date date = null;
-    	if (isSubmitter) {
-    		for (Iterator iter = old.getProjectResults().iterator(); iter.hasNext();) {
-    			ProjectResult result = (ProjectResult) iter.next();
-    			if (result.getUserId() == userId) {
-    				date = result.getCreateDate();
-    				break;
-    			}
+    		RboardApplication ra = old.getRboardApplicationByUserId(role.getLoginId());
+    		if (pi == null) {
+    			Util.warn("Failed to find RboardApplication for reviewer: " + role.getRUserRoleId());
+    		} else {
+		    	// Registration Date project_result			create_date
+		    	// or  rboard_application			create_date
+		    	info = new ResourceInfo();
+		    	info.setResourceId(resource.getResourceId());
+		    	info.setResourceInfoTypeId(ResourceInfo.REGISTRATION_DATE);
+		    	// if it's submitter use project_result, if it's reviewer, use rboard_application
+		    	info.setValue(convert(ra.getCreateDate()));
+		    	setBaseDTO(info);
+		    	project.addResourceInfo(info);
     		}
-    	} else {
-    		for (Iterator iter = old.getRboardApplications().iterator(); iter.hasNext();) {
-    			RboardApplication result = (RboardApplication) iter.next();
-    			if (result.getUserId() == userId) {
-    				date = result.getCreateDate();
-    				break;
-    			}
-    		}
-    	}
-    	if (date != null) {
-			return DEFAULT_DATE_FORMAT.format(date);
-    	} else {
-    		return "";
     	}
     }
 

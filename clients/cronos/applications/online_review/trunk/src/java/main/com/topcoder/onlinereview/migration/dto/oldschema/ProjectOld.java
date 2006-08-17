@@ -17,6 +17,7 @@ import com.topcoder.onlinereview.migration.dto.oldschema.review.AggWorksheet;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import java.util.Iterator;
 
 
 /**
@@ -598,5 +599,35 @@ public class ProjectOld {
         }
 
         modifiyReasons.add(modifiyReason);
+    }
+    
+    public ProjectResult getProjectResultByUserId(int userId) {
+    	for (Iterator iter = this.projectResults.iterator(); iter.hasNext();) {
+    		ProjectResult pr = (ProjectResult) iter.next();
+    		if (pr.getUserId() == userId) {
+    			return pr;
+    		}
+    	}
+    	return null;
+    }
+    
+    public RboardApplication getRboardApplicationByUserId(int userId) {
+    	for (Iterator iter = this.rboardApplications.iterator(); iter.hasNext();) {
+    		RboardApplication pr = (RboardApplication) iter.next();
+    		if (pr.getUserId() == userId) {
+    			return pr;
+    		}
+    	}
+    	return null;
+    }
+
+    public ScorecardOld getScreeningScorecardBySubmitter(int userId) {
+    	for (Iterator iter = this.submissions.iterator(); iter.hasNext();) {
+    		SubmissionOld pr = (SubmissionOld) iter.next();
+    		if (pr.getSubmissionId() == userId) {
+    			return pr.getScreeningScorecard();
+    		}
+    	}
+    	return null;
     }
 }
