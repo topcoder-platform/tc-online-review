@@ -63,6 +63,7 @@ public class ProjectLoader {
      * @throws SQLException
      */
     public List loadProject() throws SQLException {
+		Util.start("loadProject");
     	List list = new ArrayList();
         //PreparedStatement stmt = conn.prepareStatement("SELECT * FROM " + ProjectOld.TABLE_NAME + " WHERE cur_version = 1 and " +
         //		ProjectOld.PROJECT_ID_NAME + " = ?");
@@ -105,6 +106,7 @@ public class ProjectLoader {
 	        list.add(table);
         }
 
+        Util.logAction(list.size(), "loadProject");
         DatabaseUtils.closeResultSetSilently(rs);
         DatabaseUtils.closeStatementSilently(stmt);
         return list;
@@ -270,6 +272,7 @@ public class ProjectLoader {
      */
     private Collection getPhaseInstances(int projectId, int currentPhaseId)
         throws SQLException {
+		Util.start("getPhaseInstances");
         List list = new ArrayList();
         PreparedStatement stmt = conn.prepareStatement("SELECT * FROM " + PhaseInstance.TABLE_NAME + " WHERE " +
                 PhaseInstance.PROJECT_ID_NAME + " = ? and cur_version = 1");
@@ -303,6 +306,7 @@ public class ProjectLoader {
             list.add(table);
         }
 
+        Util.logAction(list.size(), "getPhaseInstances");
         DatabaseUtils.closeResultSetSilently(rs);
         DatabaseUtils.closeStatementSilently(stmt);
 
