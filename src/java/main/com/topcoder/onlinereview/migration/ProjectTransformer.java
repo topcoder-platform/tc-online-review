@@ -605,12 +605,14 @@ public class ProjectTransformer extends MapUtil{
         }
 
         // Rated Timestamp project			rating_date MM/dd/yyyy hh:mm a 
-        info = new ProjectInfo();
-        info.setProjectId(output.getProjectId());
-        info.setProjectInfoTypeId(ProjectInfo.RATED_TIMESTAP);
-        info.setValue(convert(input.getRatingDate()));
-    	setBaseDTO(info);
-        output.addProjectInfo(info);
+        if (input.getRatingDate() != null) {
+	        info = new ProjectInfo();
+	        info.setProjectId(output.getProjectId());
+	        info.setProjectInfoTypeId(ProjectInfo.RATED_TIMESTAP);
+	        info.setValue(convert(input.getRatingDate()));
+	    	setBaseDTO(info);
+	        output.addProjectInfo(info);
+        }
 
         // Winner External Reference ID project
         info = new ProjectInfo();
@@ -659,6 +661,9 @@ public class ProjectTransformer extends MapUtil{
             // and the phases beyond is 'Scheduled'
             phase.setPhaseStatusId(pi.getPhaseStatusId());
 
+            if (pi.getStartDate() == null || pi.getEndDate() == null) {
+            	continue;
+            }
             phase.setFixedStartTime(pi.getStartDate());
             phase.setScheduledStartTime(pi.getStartDate());
             phase.setScheduledEndTime(pi.getEndDate());
