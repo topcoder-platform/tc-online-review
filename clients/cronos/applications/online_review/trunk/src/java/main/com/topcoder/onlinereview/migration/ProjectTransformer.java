@@ -581,20 +581,24 @@ public class ProjectTransformer extends MapUtil{
         }
 
         // Notes project			notes
-        info = new ProjectInfo();
-        info.setProjectId(output.getProjectId());
-        info.setProjectInfoTypeId(ProjectInfo.NOTES);
-        info.setValue(convert(input.getNotes()));
-    	setBaseDTO(info);
-        output.addProjectInfo(info);
+        if (input.getNotes() != null) {
+	        info = new ProjectInfo();
+	        info.setProjectId(output.getProjectId());
+	        info.setProjectInfoTypeId(ProjectInfo.NOTES);
+	        info.setValue(convert(input.getNotes()));
+	    	setBaseDTO(info);
+	        output.addProjectInfo(info);
+        }
 
         // Completion Timestamp MM/dd/yyyy hh:mm a  project			completion_date
-        info = new ProjectInfo();
-        info.setProjectId(output.getProjectId());
-        info.setProjectInfoTypeId(ProjectInfo.COMPLETION_TIMESTAP);
-        info.setValue(convert(input.getCompleteDate()));
-    	setBaseDTO(info);
-        output.addProjectInfo(info);
+        if (input.getCompleteDate() != null) {
+	        info = new ProjectInfo();
+	        info.setProjectId(output.getProjectId());
+	        info.setProjectInfoTypeId(ProjectInfo.COMPLETION_TIMESTAP);
+	        info.setValue(convert(input.getCompleteDate()));
+	    	setBaseDTO(info);
+	        output.addProjectInfo(info);
+        }
 
         // Rated Timestamp project			rating_date MM/dd/yyyy hh:mm a 
         info = new ProjectInfo();
@@ -725,7 +729,7 @@ public class ProjectTransformer extends MapUtil{
 	    	// Rating project_result			old_rating
     		ProjectResult pr = old.getProjectResultByUserId(role.getLoginId());
     		if (pr == null) {
-    			Util.warn("Failed to find project result for Submitter: " + role.getRUserRoleId());
+    			Util.debug("Failed to find project result for Submitter: " + role.getRUserRoleId());
     		} else {
 		    	// Registration Date project_result			create_date
 		    	// or  rboard_application			create_date
@@ -788,7 +792,7 @@ public class ProjectTransformer extends MapUtil{
 
     		ScorecardOld scorecard = old.getScreeningScorecardBySubmitter(role.getLoginId());
     		if (scorecard == null) {
-    			Util.warn("Failed to find screening scorecard for submitter: " + role.getLoginId() + " rUserId: " + role.getRUserRoleId());
+    			Util.debug("Failed to find screening scorecard for submitter: " + role.getLoginId() + " rUserId: " + role.getRUserRoleId());
     		} else {
 		    	// Screening Score scorecard			score    		
 		    	info = new ResourceInfo();
@@ -804,7 +808,7 @@ public class ProjectTransformer extends MapUtil{
 	    	// Payment payment_info			payment
     		PaymentInfo pi = role.getPaymentInfo();
     		if (pi == null) {
-    			Util.warn("Failed to find PaymentInfo for reviewer: " + role.getRUserRoleId());
+    			Util.debug("Failed to find PaymentInfo for reviewer: " + role.getRUserRoleId());
     		} else {
 		    	// for reviewer
 		    	info = new ResourceInfo();
@@ -828,7 +832,7 @@ public class ProjectTransformer extends MapUtil{
 			    	info.setValue("Yes");
 		    		break;
 		    	default:
-	    			Util.warn("Invalid PaymentStatId: " + pi.getPaymentStatId());
+	    			Util.debug("Invalid PaymentStatId: " + pi.getPaymentStatId());
 		    		break;
 		    	}
 		    	setBaseDTO(info);
@@ -837,7 +841,7 @@ public class ProjectTransformer extends MapUtil{
 
     		RboardApplication ra = old.getRboardApplicationByUserId(role.getLoginId());
     		if (ra == null) {
-    			Util.warn("Failed to find RboardApplication for reviewer: " + role.getRUserRoleId());
+    			Util.debug("Failed to find RboardApplication for reviewer: " + role.getRUserRoleId());
     		} else {
 		    	// Registration Date project_result			create_date
 		    	// or  rboard_application			create_date
