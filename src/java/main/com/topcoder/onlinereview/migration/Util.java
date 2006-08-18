@@ -27,19 +27,32 @@ public class Util {
 		}
 		logger.log(Level.WARN, warn);
 	}
-	
-	private static long startTime = System.currentTimeMillis();
 
-	public static void start(String name) {
-		startTime = System.currentTimeMillis();
+	public static long start(String name) {
+		long startTime = System.currentTimeMillis();
+		Util.debug("start " + name);
+		return startTime;
+	}
+
+	public static long startMain(String name) {
+		long startTime = System.currentTimeMillis();
 		Util.info("start " + name);
+		return startTime;
 	}
 
-	public static void logAction(int count, String action) {
-		Util.warn(action + " " + count + " records in " + (System.currentTimeMillis() - startTime) / 1000 + " seconds");
+	public static void logAction(int count, String action, long startTime) {
+		Util.debug(action + " " + count + " records in " + (System.currentTimeMillis() - startTime) / 1000 + " seconds");
 	}
 
-	public static void logAction(String action) {
+	public static void logMainAction(int count, String action, long startTime) {
+		Util.info(action + " " + count + " records in " + (System.currentTimeMillis() - startTime) / 1000 + " seconds");
+	}
+
+	public static void logAction(String action, long startTime) {
+		Util.debug(action + " in " + (System.currentTimeMillis() - startTime) / 1000 + " seconds");
+	}
+
+	public static void logMainAction(String action, long startTime) {
 		Util.info(action + " in " + (System.currentTimeMillis() - startTime) / 1000 + " seconds");
 	}
 }

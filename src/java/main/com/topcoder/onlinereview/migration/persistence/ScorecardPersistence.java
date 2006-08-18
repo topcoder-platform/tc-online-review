@@ -45,7 +45,7 @@ public class ScorecardPersistence extends DatabaseUtils {
      * @throws SQLException if error occurs while execute sql statement
      */
     public void storeScorecard(List input) throws SQLException {
-		Util.start("storeScorecard");
+    	long startTime = Util.startMain("storeScorecard");
         String[] fieldnames = {
                 "scorecard_id", "scorecard_status_id", "scorecard_type_id", "project_category_id", "name", "version",
                 "min_score", "max_score", "create_user", "create_date", "modify_user", "modify_date"
@@ -73,7 +73,7 @@ public class ScorecardPersistence extends DatabaseUtils {
             storeScorecardGroup(table.getGroups());
         }
 
-        Util.logAction(input.size(), "storeScorecard");
+        Util.logMainAction(input.size(), "storeScorecard", startTime);
         DatabaseUtils.closeStatementSilently(stmt);
     }
 
@@ -85,7 +85,7 @@ public class ScorecardPersistence extends DatabaseUtils {
      * @throws SQLException if error occurs while execute sql statement
      */
     void storeScorecardGroup(Collection input) throws SQLException {
-		Util.start("storeScorecardGroup");
+    	long startTime = Util.start("storeScorecardGroup");
         String[] fieldnames = {
                 "scorecard_group_id", "scorecard_id", "name", "weight", "sort", "create_user", "create_date",
                 "modify_user", "modify_date"
@@ -110,7 +110,7 @@ public class ScorecardPersistence extends DatabaseUtils {
             storeScorecardSection(table.getSections());
         }
 
-        Util.logAction(input.size(), "storeScorecardGroup");
+        Util.logAction(input.size(), "storeScorecardGroup", startTime);
         DatabaseUtils.closeStatementSilently(stmt);
     }
 
@@ -122,7 +122,7 @@ public class ScorecardPersistence extends DatabaseUtils {
      * @throws SQLException if error occurs while execute sql statement
      */
     void storeScorecardSection(Collection input) throws SQLException {
-		Util.start("storeScorecardSection");
+    	long startTime = Util.start("storeScorecardSection");
         String[] fieldnames = {
                 "scorecard_section_id", "scorecard_group_id", "name", "weight", "sort", "create_user", "create_date",
                 "modify_user", "modify_date"
@@ -147,7 +147,7 @@ public class ScorecardPersistence extends DatabaseUtils {
             storeScorecardQuestion(table.getQuestions());
         }
 
-        Util.logAction(input.size(), "storeScorecardSection");
+        Util.logAction(input.size(), "storeScorecardSection", startTime);
         DatabaseUtils.closeStatementSilently(stmt);
     }
 
@@ -159,7 +159,7 @@ public class ScorecardPersistence extends DatabaseUtils {
      * @throws SQLException if error occurs while execute sql statement
      */
     void storeScorecardQuestion(Collection input) throws SQLException {
-		Util.start("storeScorecardQuestion");
+    	long startTime = Util.start("storeScorecardQuestion");
         String[] fieldnames = {
                 "scorecard_question_id", "scorecard_question_type_id", "scorecard_section_id", "description",
                 "guideline", "weight", "sort", "upload_document", "upload_document_required", "create_user",
@@ -188,7 +188,7 @@ public class ScorecardPersistence extends DatabaseUtils {
             stmt.execute();
         }
 
-        Util.logAction(input.size(), "storeScorecardQuestion");
+        Util.logAction(input.size(), "storeScorecardQuestion", startTime);
         DatabaseUtils.closeStatementSilently(stmt);
     }
 }
