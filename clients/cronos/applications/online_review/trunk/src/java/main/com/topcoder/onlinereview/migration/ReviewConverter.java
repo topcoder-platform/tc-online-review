@@ -62,7 +62,12 @@ public class ReviewConverter extends MapUtil {
 
 		for (Iterator iter = oldSubmission.getScorecards().iterator(); iter.hasNext();) {
 			ScorecardOld old = (ScorecardOld) iter.next();
-			list.add(prepareReview(old));
+			Review review = prepareReview(old);
+			if (review.getScorecardId() == 0) {
+				Util.warn("Failed to find scorecard id for template id: " + old.getTemplateId());
+				continue;
+			}
+			list.add(review);
 		}
 
 		if (this.worksheetReview != null) {
