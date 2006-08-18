@@ -212,7 +212,7 @@ public class ReviewConverter extends MapUtil {
     	ReviewItem item = new ReviewItem();    	
     	item.setReviewId(review.getReviewId());    	
     	item.setReviewItemId((int) reviewItemIdGenerator.getNextID());
-    	item.setScorecardQuestionId(getScorecardQuestionId(question.getQTemplateVId()));    	
+    	item.setScorecardQuestionId(getScorecardQuestionId(question.getQTemplateVId()));   
     	item.setAnswer(getAnswer(question));
     	setBaseDTO(item);
     	review.addReviewItem(item);
