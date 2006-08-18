@@ -278,6 +278,10 @@ public class ProjectTransformer extends MapUtil{
     		// submission.submitter_id
     		upload.setResourceId(MapUtil.getResourceId(output, submission.getSubmitterId()));
 
+    		if (upload.getResourceId() == 0) {
+    			Util.info("Not found resource id, submitter: " + submission.getSubmitterId());
+    			continue;
+    		}
     		// all submissions made in the submission phase map to 'Submission', otherwise map to 'Final Fix'
     		if (isSubmissionPhase(input, submission.getSubmissionDate())) {
     			upload.setUploadTypeId(Upload.UPLOAD_TYPE_SUBMISSION);
