@@ -666,7 +666,9 @@ public class ProjectTransformer extends MapUtil{
             phase.setActualEndTime(pi.getEndDate());
 
             // the difference between the start time and end time
-            phase.setDuration((int) (pi.getEndDate().getTime() - pi.getStartDate().getTime()));
+            if (pi.getEndDate() != null && pi.getStartDate() != null) {
+            	phase.setDuration((int) (pi.getEndDate().getTime() - pi.getStartDate().getTime()));
+            }
         	setBaseDTO(phase);
             preparePhaseCriterias(phase, pi.getTemplateId());
             output.addPhase(phase);    		
