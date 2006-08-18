@@ -29,6 +29,7 @@ public class MapUtil {
     static final String CREATE_USER = "Converter";
     static final String MODIFY_USER = "Converter";
 	static final File propertieFile = new File("test_files", "template_id.properties");
+	static final File projectPropertieFile = new File("test_files", "project_id.properties");
 
     private static Properties templateIdProperties = null;
     protected static Log log = LogFactory.getLog();
