@@ -85,8 +85,6 @@ public class ProjectTransformer extends MapUtil{
     private IDGenerator reviewItemCommentIdGenerator = null;
     private static Map roleToPhaseTypes = new HashMap();
     
-    private Properties templateIdProperties = null;
-    
     static {
     	// Later it will retrieve from resource_role_lu
     	// resource_role_id to phase_type_id
@@ -120,12 +118,6 @@ public class ProjectTransformer extends MapUtil{
         reviewItemIdGenerator = IDGeneratorFactory.getIDGenerator(REVIEW_ITEM_ID_SEQ_NAME);
         reviewCommentIdGenerator = IDGeneratorFactory.getIDGenerator(REVIEW_COMMENT_ID_SEQ_NAME);
         reviewItemCommentIdGenerator = IDGeneratorFactory.getIDGenerator(REVIEW_ITEM_COMMENT_ID_SEQ_NAME);
-        templateIdProperties = new Properties();
-        if (MapUtil.projectPropertieFile.exists()) {
-        	InputStream input = new FileInputStream(MapUtil.projectPropertieFile);
-        	templateIdProperties.load(input);
-        	input.close();
-        }
     }
 
     /**
@@ -144,8 +136,6 @@ public class ProjectTransformer extends MapUtil{
         for (Iterator iter = inputs.iterator(); iter.hasNext();) {
             list.add(transformProject((ProjectOld) iter.next()));
         }
-        OutputStream out = new FileOutputStream(MapUtil.projectPropertieFile);
-        templateIdProperties.store(out, "project_id(old) project_id(new)");
         Util.logAction(list.size(), "transformProjects");
         return list;
     }
@@ -441,7 +431,6 @@ public class ProjectTransformer extends MapUtil{
         output.setProjectCategoryId(MapUtil.getProjectCategoryId(input.getProjectTypeId()));
     	setBaseDTO(output);
         output.setProjectId((int) projectIdGenerator.getNextID());    	
-        templateIdProperties.put(String.valueOf(input.getProjectId()), String.valueOf(output.getProjectId()));
 		Util.logAction("prepareProject");
     }
 
