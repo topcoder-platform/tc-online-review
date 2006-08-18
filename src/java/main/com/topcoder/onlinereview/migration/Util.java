@@ -36,7 +36,7 @@ public class Util {
 	}
 
 	public static void logAction(int count, String action) {
-		Util.info(action + " " + count + " records in " + (System.currentTimeMillis() - startTime) / 1000 + " seconds");
+		Util.warn(action + " " + count + " records in " + (System.currentTimeMillis() - startTime) / 1000 + " seconds");
 	}
 
 	public static void logAction(String action) {

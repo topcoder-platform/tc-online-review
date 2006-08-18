@@ -788,6 +788,7 @@ public class ProjectPersistence extends DatabaseUtils {
             	stmt.execute();
             } catch(Exception e) {
 	        	Util.warn(e);
+	        	Util.info("The failed projectInfo, typeId: " + table.getProjectInfoTypeId());
             	continue;
             }
         }

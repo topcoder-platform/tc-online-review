@@ -841,7 +841,7 @@ public class ProjectTransformer extends MapUtil{
     		}
 
     		RboardApplication ra = old.getRboardApplicationByUserId(role.getLoginId());
-    		if (pi == null) {
+    		if (ra == null) {
     			Util.warn("Failed to find RboardApplication for reviewer: " + role.getRUserRoleId());
     		} else {
 		    	// Registration Date project_result			create_date
