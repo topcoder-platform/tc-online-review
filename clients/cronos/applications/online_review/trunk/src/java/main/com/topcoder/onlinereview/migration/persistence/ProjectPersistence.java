@@ -474,6 +474,7 @@ public class ProjectPersistence extends DatabaseUtils {
 	        	Util.warn(e);
 	        	Util.warn("failed to store upload, " +
 	        			"projectId:" + table.getProjectId() + 
+	        			"getResourceId:" + table.getResourceId() + 
 	        			"getUploadTypeId:" + table.getUploadTypeId() + 
 	        			"getUploadStatusId:" + table.getUploadStatusId());
             	continue;

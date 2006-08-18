@@ -22,29 +22,29 @@
 --delete from phase;
 --delete from project;
 
---select count(*) from project;
---select count(*) from project_info;
---select count(*) from project_audit;
+select count(*) project from project;
+select count(*) project_info from project_info;
+select count(*) project_audit from project_audit;
 
---select count(*) from phase;
---select count(*) from phase_dependency;
---select count(*) from phase_criteria;
+select count(*) phase from phase;
+select count(*) phase_dependency from phase_dependency;
+select count(*) phase_criteria from phase_criteria;
 
---select count(*) from submission;
---select count(*) from upload;
+select count(*) submission from submission;
+select count(*) upload from upload;
 
---select count(*) from resource;
---select count(*) from resource_info;
---select count(*) from resource_submission;
---select count(*) from notification;
+select count(*) resource from resource;
+select count(*) resource_info from resource_info;
+select count(*) resource_submission from resource_submission;
+select count(*) notification from notification;
 
---select count(*) from screening_task;
---select count(*) from screening_result;
+select count(*) screening_task from screening_task;
+select count(*) screening_result from screening_result;
 
---select count(*) from review;
---select count(*) from review_item;
---select count(*) from review_comment;
---select count(*) from review_item_comment;
+select count(*) review from review;
+select count(*) review_item from review_item;
+select count(*) review_comment from review_comment;
+select count(*) review_item_comment from review_item_comment;
 --select max(scorecard_id) from scorecard;
 --select max(scorecard_question_id) from scorecard_question;
 --select * from scorecard_question;
@@ -55,11 +55,3 @@
 -- --delete from scorecard;
 -- --select count(*) from scorecard;
 -- --select count(*) from scorecard_question;
-select pt.name, pt.phase_type_id
-from project p
-INNER JOIN phase ph
-ON p.project_id = ph.project_id
-AND ph.phase_status_id = 2
-AND ph.scheduled_start_time = (select min(scheduled_start_time) from phase where project_id = p.project_id and phase_status_id = 2)	
-INNER JOIN phase_type_lu pt
-ON ph.phase_type_id = pt.phase_type_id
