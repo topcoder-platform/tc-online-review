@@ -32,6 +32,10 @@ import com.topcoder.util.idgenerator.IDGenerationException;
 import com.topcoder.util.idgenerator.IDGenerator;
 import com.topcoder.util.idgenerator.IDGeneratorFactory;
 
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 
@@ -44,6 +48,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Properties;
 
 
 /**
@@ -80,6 +85,8 @@ public class ProjectTransformer extends MapUtil{
     private IDGenerator reviewItemCommentIdGenerator = null;
     private static Map roleToPhaseTypes = new HashMap();
     
+    private Properties templateIdProperties = null;
+    
     static {
     	// Later it will retrieve from resource_role_lu
     	// resource_role_id to phase_type_id
@@ -100,7 +107,7 @@ public class ProjectTransformer extends MapUtil{
      *
      * @throws IDGenerationException if error occurs while get idgenerator
      */
-    public ProjectTransformer() throws IDGenerationException {
+    public ProjectTransformer() throws Exception {
         projectIdGenerator = IDGeneratorFactory.getIDGenerator(PROJECT_ID_SEQ_NAME);
         projectAuditIdGenerator = IDGeneratorFactory.getIDGenerator(PROJECT_AUDIT_ID_SEQ_NAME);
         phaseIdGenerator = IDGeneratorFactory.getIDGenerator(PHASE_ID_SEQ_NAME);
@@ -113,6 +120,12 @@ public class ProjectTransformer extends MapUtil{
         reviewItemIdGenerator = IDGeneratorFactory.getIDGenerator(REVIEW_ITEM_ID_SEQ_NAME);
         reviewCommentIdGenerator = IDGeneratorFactory.getIDGenerator(REVIEW_COMMENT_ID_SEQ_NAME);
         reviewItemCommentIdGenerator = IDGeneratorFactory.getIDGenerator(REVIEW_ITEM_COMMENT_ID_SEQ_NAME);
+        templateIdProperties = new Properties();
+        if (MapUtil.projectPropertieFile.exists()) {
+        	InputStream input = new FileInputStream(MapUtil.projectPropertieFile);
+        	templateIdProperties.load(input);
+        	input.close();
+        }
     }
 
     /**
@@ -158,7 +171,8 @@ public class ProjectTransformer extends MapUtil{
 
             // it will be done in upload prepare review
         }
-
+        OutputStream out = new FileOutputStream(MapUtil.projectPropertieFile);
+        templateIdProperties.store(out, "project_id(old) project_id(new)");
         Util.logAction(list.size(), "transformProject");
         return list;
     }
@@ -422,6 +436,7 @@ public class ProjectTransformer extends MapUtil{
         output.setProjectCategoryId(MapUtil.getProjectCategoryId(input.getProjectTypeId()));
     	setBaseDTO(output);
         output.setProjectId((int) projectIdGenerator.getNextID());    	
+        templateIdProperties.put(String.valueOf(input.getProjectId()), String.valueOf(output.getProjectId()));
 		Util.logAction("prepareProject");
     }
 

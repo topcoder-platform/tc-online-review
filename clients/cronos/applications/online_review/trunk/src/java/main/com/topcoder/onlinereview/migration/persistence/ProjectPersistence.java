@@ -70,29 +70,36 @@ public class ProjectPersistence extends DatabaseUtils {
         // store Project data to new online review schema
         PreparedStatement stmt = conn.prepareStatement(makeInsertSql(ProjectNew.TABLE_NAME, fieldnames));
 
+        conn.setAutoCommit(false);
         for (Iterator iter = input.iterator(); iter.hasNext();) {
             ProjectNew table = (ProjectNew) iter.next();
-            int i = 1;
-            stmt.setInt(i++, table.getProjectId());
-            stmt.setInt(i++, table.getProjectStatusId());
-            stmt.setInt(i++, table.getProjectCategoryId());
-            stmt.setString(i++, table.getCreateUser());
-            stmt.setDate(i++, new Date(table.getCreateDate().getTime()));
-            stmt.setString(i++, table.getModifyUser());
-            stmt.setDate(i++, new Date(table.getModifyDate().getTime()));
-            stmt.execute();
-            storeProjectInfo(table.getProjectInfos());
-            storeProjectAudit(table.getProjectAudits());
-            storePhase(table.getPhases());
-            storePhaseDependency(table.getPhaseDependencys());
-            storeResource(table.getResources());
-            storeResourceInfo(table.getResourceInfos());
-            storeUpload(table.getUploads());
-            storeSubmission(table.getSubmissions());
-            storeNotification(table.getNotifications());
-            storeResourceSubmission(table.getResourceSubmissions());
-            storeScreeningTask(table.getScreeningTasks());
-            storeReview(table.getReviews());
+            try {
+	            int i = 1;
+	            stmt.setInt(i++, table.getProjectId());
+	            stmt.setInt(i++, table.getProjectStatusId());
+	            stmt.setInt(i++, table.getProjectCategoryId());
+	            stmt.setString(i++, table.getCreateUser());
+	            stmt.setDate(i++, new Date(table.getCreateDate().getTime()));
+	            stmt.setString(i++, table.getModifyUser());
+	            stmt.setDate(i++, new Date(table.getModifyDate().getTime()));
+	            stmt.execute();
+	            storeProjectInfo(table.getProjectInfos());
+	            storeProjectAudit(table.getProjectAudits());
+	            storePhase(table.getPhases());
+	            storePhaseDependency(table.getPhaseDependencys());
+	            storeResource(table.getResources());
+	            storeResourceInfo(table.getResourceInfos());
+	            storeUpload(table.getUploads());
+	            storeSubmission(table.getSubmissions());
+	            storeNotification(table.getNotifications());
+	            storeResourceSubmission(table.getResourceSubmissions());
+	            storeScreeningTask(table.getScreeningTasks());
+	            storeReview(table.getReviews());
+	            conn.commit();
+            } catch(Exception e) {
+            	conn.rollback();
+            	Util.warn("Failed to store project, project_id:" + table.getProjectId());
+            }
         }
 
         Util.logAction(input.size(), "storeProject");
