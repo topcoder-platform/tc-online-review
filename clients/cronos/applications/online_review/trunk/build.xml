@@ -251,7 +251,7 @@
 	
     <target name="migrate" depends="compile_tests">
     	<java classname="${package}.MigratorCommandLine" fork="true" output="${testlogdir}/migrate.log">
-    		<arg line="-config test_files/data_migration.xml -process scorecard,projects" />
+    		<arg line="-config test_files/data_migration.xml -process scorecard,project" />
             <classpath refid="test.build.classpath"/>
     	</java>
     </target>

@@ -119,6 +119,7 @@ public class ProjectLoader {
      * @throws SQLException if error occurs 
      */
     private void prepareModifyReasons(ProjectOld project) throws SQLException {
+		Util.start("prepareModifyReasons");
         PreparedStatement stmt = conn.prepareStatement("SELECT modify_reason FROM " + ProjectOld.TABLE_NAME + " WHERE " +
         		ProjectOld.PROJECT_ID_NAME + " = ?");
         stmt.setInt(1, project.getProjectId());
@@ -129,6 +130,7 @@ public class ProjectLoader {
         	project.addModifiyReason(rs.getString(ProjectOld.MODIFY_REASON_NAME));
         }
 
+		Util.logAction("prepareModifyReasons");
         DatabaseUtils.closeResultSetSilently(rs);
         DatabaseUtils.closeStatementSilently(stmt);    	
     }
@@ -144,6 +146,7 @@ public class ProjectLoader {
      */
     private CompVersions getCompVersions(int compVersId)
         throws SQLException {
+		Util.start("getCompVersions");
         PreparedStatement stmt = conn.prepareStatement("SELECT * FROM " + CompVersions.TABLE_NAME + " WHERE " +
                 CompVersions.COMP_VERS_ID_NAME + " = ?");
         stmt.setInt(1, compVersId);
@@ -161,6 +164,7 @@ public class ProjectLoader {
             return table;
         }
 
+		Util.logAction("getCompVersions");
         DatabaseUtils.closeResultSetSilently(rs);
         DatabaseUtils.closeStatementSilently(stmt);
 
@@ -178,6 +182,7 @@ public class ProjectLoader {
      */
     private CompForumXref getCompForumXref(int compVersId)
         throws SQLException {
+		Util.start("getCompForumXref");
         PreparedStatement stmt = conn.prepareStatement("SELECT * FROM " + CompForumXref.TABLE_NAME + " WHERE " +
                 CompForumXref.COMP_VERS_ID_NAME + " = ? and forum_type = 2");
         stmt.setInt(1, compVersId);
@@ -191,6 +196,7 @@ public class ProjectLoader {
             return table;
         }
 
+		Util.logAction("getCompForumXref");
         DatabaseUtils.closeResultSetSilently(rs);
         DatabaseUtils.closeStatementSilently(stmt);
 
@@ -208,6 +214,7 @@ public class ProjectLoader {
      */
     private CompCatalog getCompCatalog(int componentId)
         throws SQLException {
+		Util.start("getCompCatalog");
         PreparedStatement stmt = conn.prepareStatement("SELECT * FROM " + CompCatalog.TABLE_NAME + " WHERE " +
                 CompCatalog.COMPONENT_ID_NAME + " = ?");
         stmt.setInt(1, componentId);
@@ -222,6 +229,7 @@ public class ProjectLoader {
             return table;
         }
 
+		Util.logAction("getCompCatalog");
         DatabaseUtils.closeResultSetSilently(rs);
         DatabaseUtils.closeStatementSilently(stmt);
 
@@ -239,6 +247,7 @@ public class ProjectLoader {
      */
     private CompVersionDates getCompVersionDates(int compVersId, int phaseId)
         throws SQLException {
+		Util.start("getCompVersionDates");
         // comp_vers_id and phase_id used to locate comp_version_dates
         PreparedStatement stmt = conn.prepareStatement("SELECT * FROM " + CompVersionDates.TABLE_NAME + " WHERE " +
                 CompVersionDates.COMP_VERS_ID_NAME + " = ? and phase_id = ?" );
@@ -254,6 +263,7 @@ public class ProjectLoader {
             return table;
         }
 
+		Util.logAction("getCompVersionDates");
         DatabaseUtils.closeResultSetSilently(rs);
         DatabaseUtils.closeStatementSilently(stmt);
 
@@ -353,6 +363,7 @@ public class ProjectLoader {
      */
     private void prepareRUserRoles(ProjectOld project)
         throws SQLException {
+		Util.start("prepareRUserRoles");
         PreparedStatement stmt = conn.prepareStatement("SELECT * FROM " + RUserRole.TABLE_NAME + " WHERE " +
                 RUserRole.PROJECT_ID_NAME + " = ? and cur_version = 1");
         stmt.setInt(1, project.getProjectId());
@@ -370,6 +381,7 @@ public class ProjectLoader {
             project.addRUserRole(table);
         }
 
+		Util.logAction("prepareRUserRoles");
         DatabaseUtils.closeResultSetSilently(rs);
         DatabaseUtils.closeStatementSilently(stmt);
     }
@@ -383,6 +395,7 @@ public class ProjectLoader {
      */
     private void prepareSubmissions(ProjectOld project)
         throws SQLException {
+		Util.start("prepareSubmissions");
         PreparedStatement stmt = conn.prepareStatement("SELECT * FROM " + SubmissionOld.TABLE_NAME + " WHERE " +
                 SubmissionOld.PROJECT_ID_NAME + " = ?");
         stmt.setInt(1, project.getProjectId());
@@ -408,6 +421,7 @@ public class ProjectLoader {
             }
         }
 
+		Util.logAction("prepareSubmissions");
         DatabaseUtils.closeResultSetSilently(rs);
         DatabaseUtils.closeStatementSilently(stmt);
     }
@@ -420,6 +434,7 @@ public class ProjectLoader {
      * @throws SQLException if error occurs while execute sql statement
      */
     private void prepareTestcases(ProjectOld project) throws SQLException {
+		Util.start("prepareTestcases");
         PreparedStatement stmt = conn.prepareStatement("SELECT * FROM " + Testcase.TABLE_NAME + " WHERE " +
                 Testcase.PROJECT_ID_NAME + " = ?");
         stmt.setInt(1, project.getProjectId());
@@ -436,6 +451,7 @@ public class ProjectLoader {
             project.addTestcase(table);
         }
 
+		Util.logAction("prepareTestcases");
         DatabaseUtils.closeResultSetSilently(rs);
         DatabaseUtils.closeStatementSilently(stmt);
     }
@@ -449,6 +465,7 @@ public class ProjectLoader {
      */
     private void prepareScreeningResults(SubmissionOld submission)
         throws SQLException {
+		Util.start("prepareScreeningResults");
         PreparedStatement stmt = conn.prepareStatement(
                 "SELECT * from screening_results where submission_v_id = ?");
         stmt.setInt(1, submission.getSubmissionVId());
@@ -464,6 +481,7 @@ public class ProjectLoader {
             submission.addScreeningResults(table);
         }
 
+		Util.logAction("prepareScreeningResults");
         DatabaseUtils.closeResultSetSilently(rs);
         DatabaseUtils.closeStatementSilently(stmt);
     }
@@ -477,6 +495,7 @@ public class ProjectLoader {
      */
     private void prepareProjectResults(ProjectOld project)
         throws SQLException {
+		Util.start("prepareProjectResults");
         PreparedStatement stmt = conn.prepareStatement("SELECT * FROM " + ProjectResult.TABLE_NAME + " WHERE " +
                 Testcase.PROJECT_ID_NAME + " = ?");
         stmt.setInt(1, project.getProjectId());
@@ -496,6 +515,7 @@ public class ProjectLoader {
             project.addProjectResult(table);
         }
 
+		Util.logAction("prepareProjectResults");
         DatabaseUtils.closeResultSetSilently(rs);
         DatabaseUtils.closeStatementSilently(stmt);
     }
@@ -509,6 +529,7 @@ public class ProjectLoader {
      */
     private PaymentInfo preparePaymentInfo(int paymentInfoId)
         throws SQLException {
+		Util.start("preparePaymentInfo");
         PreparedStatement stmt = conn.prepareStatement(
                 "select * from payment_info where payment_info_id = ? and cur_version = 1");
         stmt.setInt(1, paymentInfoId);
@@ -522,6 +543,7 @@ public class ProjectLoader {
             table.setPaymentStatId(rs.getInt(PaymentInfo.PAYMENT_STAT_ID_NAME));
         }
 
+		Util.logAction("preparePaymentInfo");
         DatabaseUtils.closeResultSetSilently(rs);
         DatabaseUtils.closeStatementSilently(stmt);
         return table;
@@ -536,6 +558,7 @@ public class ProjectLoader {
      */
     private void prepareRboardApplications(ProjectOld project)
         throws SQLException {
+		Util.start("prepareRboardApplications");
         PreparedStatement stmt = conn.prepareStatement("SELECT * FROM " + RboardApplication.TABLE_NAME + " WHERE " +
         		ProjectOld.PROJECT_ID_NAME + " = ?");
         stmt.setInt(1, project.getProjectId());
@@ -550,6 +573,7 @@ public class ProjectLoader {
             project.addRboardApplication(table);
         }
 
+		Util.logAction("prepareRboardApplications");
         DatabaseUtils.closeResultSetSilently(rs);
         DatabaseUtils.closeStatementSilently(stmt);
     }
@@ -563,6 +587,7 @@ public class ProjectLoader {
      */
     private void prepareScorecards(SubmissionOld parent)
         throws SQLException {
+		Util.start("prepareScorecards");
         PreparedStatement stmt = conn.prepareStatement("SELECT * FROM " + ScorecardOld.TABLE_NAME + " WHERE " +
         		ScorecardOld.PROJECT_ID_NAME + " = ? and submission_id = ? and cur_version = 1");
         stmt.setInt(1, parent.getProjectId());
@@ -588,6 +613,7 @@ public class ProjectLoader {
             parent.addScorecard(table);
         }
 
+		Util.logAction("prepareScorecards");
         DatabaseUtils.closeResultSetSilently(rs);
         DatabaseUtils.closeStatementSilently(stmt);
     }
@@ -601,6 +627,7 @@ public class ProjectLoader {
      */
     private void prepareScorecardQuestions(ScorecardOld scorecard)
         throws SQLException {
+		Util.start("prepareScorecardQuestions");
         PreparedStatement stmt = conn.prepareStatement("SELECT * FROM " + ScorecardQuestion.TABLE_NAME + " WHERE " +
         		ScorecardQuestion.SCORECARD_ID_NAME + " = ? and cur_version = 1");
         stmt.setInt(1, scorecard.getScorecardId());
@@ -627,6 +654,7 @@ public class ProjectLoader {
             prepareAppeal(table);
         }
 
+		Util.logAction("prepareScorecardQuestions");
         DatabaseUtils.closeResultSetSilently(rs);
         DatabaseUtils.closeStatementSilently(stmt);
     }
@@ -640,6 +668,7 @@ public class ProjectLoader {
      */
     private void prepareTestcaseQuestion(ScorecardQuestion question)
         throws SQLException {
+		Util.start("prepareTestcaseQuestion");
         PreparedStatement stmt = conn.prepareStatement("SELECT * FROM " + TestcaseQuestion.TABLE_NAME + " WHERE " +
         		TestcaseQuestion.QUESTION_ID_NAME + " = ? and cur_version = 1");
         stmt.setInt(1, question.getQuestionId());
@@ -654,6 +683,7 @@ public class ProjectLoader {
             question.addTestcaseQuestion(table);
         }
 
+		Util.logAction("prepareTestcaseQuestion");
         DatabaseUtils.closeResultSetSilently(rs);
         DatabaseUtils.closeStatementSilently(stmt);
     }
@@ -667,6 +697,7 @@ public class ProjectLoader {
      */
     private void prepareSubjectiveResp(ScorecardQuestion question, int scorecardType)
         throws SQLException {
+		Util.start("prepareSubjectiveResp");
         PreparedStatement stmt = conn.prepareStatement("SELECT * FROM " + SubjectiveResp.TABLE_NAME + " WHERE " +
         		SubjectiveResp.QUESTION_ID_NAME + " = ? and cur_version = 1");
         stmt.setInt(1, question.getQuestionId());
@@ -688,6 +719,7 @@ public class ProjectLoader {
             }
         }
 
+		Util.logAction("prepareSubjectiveResp");
         DatabaseUtils.closeResultSetSilently(rs);
         DatabaseUtils.closeStatementSilently(stmt);
     }
@@ -701,6 +733,7 @@ public class ProjectLoader {
      */
     private void prepareAppeal(ScorecardQuestion question)
         throws SQLException {
+		Util.start("prepareAppeal");
         PreparedStatement stmt = conn.prepareStatement("SELECT * FROM " + Appeal.TABLE_NAME + " WHERE " +
         		Appeal.QUESTION_ID_NAME + " = ? and cur_version = 1");
         stmt.setInt(1, question.getQuestionId());
@@ -722,6 +755,7 @@ public class ProjectLoader {
             question.addAppeal(table);
         }
 
+		Util.logAction("prepareAppeal");
         DatabaseUtils.closeResultSetSilently(rs);
         DatabaseUtils.closeStatementSilently(stmt);
     }
@@ -735,6 +769,7 @@ public class ProjectLoader {
      */
     private void prepareAggWorksheet(ProjectOld project)
         throws SQLException {
+		Util.start("prepareAggWorksheet");
         PreparedStatement stmt = conn.prepareStatement("SELECT * FROM " + AggWorksheet.TABLE_NAME + " WHERE " +
         		AggWorksheet.PROJECT_ID_NAME + " = ? and cur_version = 1");
         stmt.setInt(1, project.getProjectId());
@@ -755,6 +790,7 @@ public class ProjectLoader {
             project.setAggWorksheet(table);
         }
 
+		Util.logAction("prepareAggWorksheet");
         DatabaseUtils.closeResultSetSilently(rs);
         DatabaseUtils.closeStatementSilently(stmt);
     }
@@ -768,6 +804,7 @@ public class ProjectLoader {
      */
     private void prepareAggResponse(SubjectiveResp parent)
         throws SQLException {
+		Util.start("prepareAggResponse");
         PreparedStatement stmt = conn.prepareStatement("SELECT * FROM " + AggResponse.TABLE_NAME + " WHERE " +
         		AggResponse.SUBJECTIVE_RESP_ID_NAME + " = ? and cur_version = 1");
         stmt.setInt(1, parent.getSubjectiveRespId());
@@ -786,6 +823,7 @@ public class ProjectLoader {
             prepareFixItem(table);
         }
 
+		Util.logAction("prepareAggResponse");
         DatabaseUtils.closeResultSetSilently(rs);
         DatabaseUtils.closeStatementSilently(stmt);
     }
@@ -799,6 +837,7 @@ public class ProjectLoader {
      */
     private void prepareAggReview(AggWorksheet aggWorksheet)
         throws SQLException {
+		Util.start("prepareAggReview");
         PreparedStatement stmt = conn.prepareStatement("SELECT * FROM " + AggReview.TABLE_NAME + " WHERE " +
         		AggReview.AGG_WORKSHEET_ID_NAME + " = ? and cur_version = 1");
         stmt.setInt(1, aggWorksheet.getAggWorksheetId());
@@ -816,6 +855,7 @@ public class ProjectLoader {
             aggWorksheet.addAggReview(table);
         }
 
+		Util.logAction("prepareAggReview");
         DatabaseUtils.closeResultSetSilently(rs);
         DatabaseUtils.closeStatementSilently(stmt);
     }
@@ -829,6 +869,7 @@ public class ProjectLoader {
      */
     private void prepareFinalReview(AggWorksheet aggWorksheet)
         throws SQLException {
+		Util.start("prepareFinalReview");
         PreparedStatement stmt = conn.prepareStatement("SELECT * FROM " + FinalReview.TABLE_NAME + " WHERE " +
         		FinalReview.AGG_WORKSHEET_ID_NAME + " = ? and cur_version = 1");
         stmt.setInt(1, aggWorksheet.getAggWorksheetId());
@@ -846,6 +887,7 @@ public class ProjectLoader {
             aggWorksheet.setFinalReview(table);
         }
 
+		Util.logAction("prepareFinalReview");
         DatabaseUtils.closeResultSetSilently(rs);
         DatabaseUtils.closeStatementSilently(stmt);
     }
@@ -859,6 +901,7 @@ public class ProjectLoader {
      */
     private void prepareFixItem(AggResponse parent)
         throws SQLException {
+		Util.start("prepareFixItem");
     	if (parent.getAggRespStatId() != 1) {
     		// this response does not accept the subjective resp
     		return;
@@ -877,6 +920,7 @@ public class ProjectLoader {
             parent.setFixItem(table);
         }
 
+		Util.logAction("prepareFixItem");
         DatabaseUtils.closeResultSetSilently(rs);
         DatabaseUtils.closeStatementSilently(stmt);
     }
