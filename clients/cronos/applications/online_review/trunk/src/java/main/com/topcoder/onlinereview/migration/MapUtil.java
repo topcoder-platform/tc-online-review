@@ -268,6 +268,15 @@ public class MapUtil {
 	}
 
 	public static int getScorecardQuestionId(int templateVId) {
+		if (templateVId == 16) {
+			return 19;
+		}
+		if (templateVId == 49) {
+			return 50;
+		}
+		if (templateVId == 51) {
+			return 52;
+		}
 		return templateVId;
 	}
 

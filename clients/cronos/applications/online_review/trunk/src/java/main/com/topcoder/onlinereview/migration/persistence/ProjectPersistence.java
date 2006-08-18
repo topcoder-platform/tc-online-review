@@ -195,6 +195,9 @@ public class ProjectPersistence extends DatabaseUtils {
         for (Iterator iter = input.iterator(); iter.hasNext();) {
             Review table = (Review) iter.next();
             int i = 1;
+            if (table.getScorecardId() == 0) {
+            	continue;
+            }
             stmt.setInt(i++, table.getReviewId());
             stmt.setInt(i++, table.getResourceId());
             stmt.setInt(i++, table.getSubmissionId());
