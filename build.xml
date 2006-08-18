@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 
-<project name="Event Engine" default="dist" basedir=".">
+<project name="OR_Migration" default="dist" basedir=".">
 
     <property file="../topcoder_global.properties"/>
     <condition property="orm-properties-present">
@@ -238,14 +238,14 @@
     <target name="migrate_scorecard">
     	<java classname="${package}.MigratorCommandLine" fork="true" output="${testlogdir}/migrate_scorecards.log">
     		<arg line="-config test_files/data_migration.xml -process scorecard" />
-    		<classpath refid="buildlibs" />
+            <classpath refid="test.build.classpath"/>
     	</java>
     </target>
 	
     <target name="migrate_project">
     	<java classname="${package}.MigratorCommandLine" fork="true" output="${testlogdir}/migrate_projects.log">
     		<arg line="-config test_files/data_migration.xml -process project" />
-    		<classpath refid="buildlibs" />
+            <classpath refid="test.build.classpath"/>
     	</java>
     </target>
 	
@@ -494,29 +494,6 @@
                        ${jar_tcs_libdir}/**,
                        ${testfiles}/**"
         />
-    </target>
-
-    <!-- ************************************************************************** -->
-    <!-- ************************ END REMOVE EVERYTHING ***************************** -->
-    <!-- ************************************************************************** -->
-    <taskdef resource="checkstyletask.properties"
-     classpath="${checkstyle-all-3.5.jar}"/>
-
-    <target name="checkstyle" depends="compile">
-    <mkdir dir="${testlogdir}"/>
-    <checkstyle config="../tc_checks.xml" classpath="${build_classdir}" classpathref="test.build.classpath">
-        <fileset dir="src/java/main" includes="**/*.java" />
-        <formatter type="plain" toFile="${testlogdir}/checkstyle.txt" />
-    </checkstyle>
-    </target>
-
-    <target name="checkstyle_tests" depends="compile_tests">
-    <mkdir dir="${testlogdir}"/>
-    <checkstyle config="../tc_test_checks.xml" classpath="${build_classdir}" classpathref="test.build.classpath">
-        <fileset dir="${javatests}/${packagedir}/" includes="**/*.java"
-                 excludes="UnitTests.java, AllTests.java, stresstests/*, failuretests/*, accuracytests/*" />
-        <formatter type="plain" toFile="${testlogdir}/checkstyletest.txt" />
-    </checkstyle>
     </target>
 
 </project>
