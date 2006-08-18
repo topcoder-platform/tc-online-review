@@ -115,9 +115,9 @@ public class ProjectLoader {
     	stmt.setInt(1, projectId);
 
         ResultSet rs = stmt.executeQuery();
-
+        ProjectOld table = null;
         if (rs.next()) {
-	        ProjectOld table = new ProjectOld();
+	        table = new ProjectOld();
 	        table.setProjectId(rs.getInt(ProjectOld.PROJECT_ID_NAME));
 	        table.setProjectStatId(rs.getInt(ProjectOld.PROJECT_STAT_ID_NAME));
 	        table.setProjectTypeId(rs.getInt(ProjectOld.PROJECT_TYPE_ID_NAME));
@@ -147,7 +147,6 @@ public class ProjectLoader {
 	        prepareAggWorksheet(table);    
 	        // Used for project_audit
 	        prepareModifyReasons(table);
-	        return table;
         } else {
         	Util.warn("project does not exist in original database, project_id: " + projectId);
         }
@@ -155,7 +154,7 @@ public class ProjectLoader {
         Util.logMainAction("loadProject", startTime);
         DatabaseUtils.closeResultSetSilently(rs);
         DatabaseUtils.closeStatementSilently(stmt);
-        return null;
+        return table;
     }
 
     /**

@@ -235,14 +235,14 @@
 		<orm-execute-sql-script scriptfile="${init_scorecards.file}" />
 	</target>
 	
-    <target name="migrate_scorecard">
+    <target name="migrate_scorecard" depends="compile_tests">
     	<java classname="${package}.MigratorCommandLine" fork="true" output="${testlogdir}/migrate_scorecards.log">
     		<arg line="-config test_files/data_migration.xml -process scorecard" />
             <classpath refid="test.build.classpath"/>
     	</java>
     </target>
 	
-    <target name="migrate_project">
+    <target name="migrate_project" depends="compile_tests">
     	<java classname="${package}.MigratorCommandLine" fork="true" output="${testlogdir}/migrate_projects.log">
     		<arg line="-config test_files/data_migration.xml -process project" />
             <classpath refid="test.build.classpath"/>
