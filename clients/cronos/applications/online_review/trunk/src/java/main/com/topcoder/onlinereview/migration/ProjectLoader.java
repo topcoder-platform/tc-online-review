@@ -34,6 +34,7 @@ import java.sql.SQLException;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 
 
@@ -62,17 +63,60 @@ public class ProjectLoader {
      * @return
      * @throws SQLException
      */
-    public List loadProject() throws SQLException {
-		Util.start("loadProject");
+    public List loadProjects() throws Exception {
+		Util.start("loadProjects");
     	List list = new ArrayList();
-        //PreparedStatement stmt = conn.prepareStatement("SELECT * FROM " + ProjectOld.TABLE_NAME + " WHERE cur_version = 1 and " +
-        //		ProjectOld.PROJECT_ID_NAME + " = ?");
-    	PreparedStatement stmt = conn.prepareStatement("SELECT * FROM " + ProjectOld.TABLE_NAME + " WHERE cur_version = 1 order by project_id");
-        //stmt.setInt(1, projectId);
+    	List ids = loadProjectIds();
+        for (Iterator iter = ids.iterator(); iter.hasNext();) {
+	        int projectId = Integer.parseInt(iter.next().toString());
+	        try {
+	        	ProjectOld table = loadProject(projectId);
+	        	if (table != null) {
+	        		list.add(table);
+	        	}
+	        } catch(Exception e) {
+	        	Util.warn("Failed to load project, projectId: " + projectId);
+	        }
+        }
+
+        Util.logAction(list.size(), "loadProjects");
+        return list;
+    }
+
+    public List loadProjectIds() throws Exception {
+		Util.start("loadProjectIds");
+    	List list = new ArrayList();
+    	PreparedStatement stmt = conn.prepareStatement("SELECT project_id FROM " + ProjectOld.TABLE_NAME + " WHERE cur_version = 1 order by project_id");
 
         ResultSet rs = stmt.executeQuery();
 
         while (rs.next()) {
+	        int projectId = rs.getInt(ProjectOld.PROJECT_ID_NAME);
+	        list.add(String.valueOf(projectId));
+        }
+
+        Util.logAction(list.size(), "loadProjectIds");
+        DatabaseUtils.closeResultSetSilently(rs);
+        DatabaseUtils.closeStatementSilently(stmt);
+        return list;
+    }
+    
+    /**
+     * Load project one by one.
+     * 
+     * @param projectId
+     * @return
+     * @throws SQLException
+     */
+    public ProjectOld loadProject(int projectId) throws SQLException {
+		Util.start("loadProject, projectId: " + projectId);
+        PreparedStatement stmt = conn.prepareStatement("SELECT * FROM " + ProjectOld.TABLE_NAME + " WHERE cur_version = 1 and " +
+        		ProjectOld.PROJECT_ID_NAME + " = ?");
+    	stmt.setInt(1, projectId);
+
+        ResultSet rs = stmt.executeQuery();
+
+        if (rs.next()) {
 	        ProjectOld table = new ProjectOld();
 	        table.setProjectId(rs.getInt(ProjectOld.PROJECT_ID_NAME));
 	        table.setProjectStatId(rs.getInt(ProjectOld.PROJECT_STAT_ID_NAME));
@@ -103,13 +147,15 @@ public class ProjectLoader {
 	        prepareAggWorksheet(table);    
 	        // Used for project_audit
 	        prepareModifyReasons(table);
-	        list.add(table);
+	        return table;
+        } else {
+        	Util.warn("project does not exist in original database, project_id: " + projectId);
         }
 
-        Util.logAction(list.size(), "loadProject");
+        Util.logAction("loadProject");
         DatabaseUtils.closeResultSetSilently(rs);
         DatabaseUtils.closeStatementSilently(stmt);
-        return list;
+        return null;
     }
 
     /**

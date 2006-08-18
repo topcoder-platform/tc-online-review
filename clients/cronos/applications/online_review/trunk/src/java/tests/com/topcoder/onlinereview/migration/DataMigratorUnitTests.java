@@ -99,7 +99,7 @@ public class DataMigratorUnitTests extends TestCase {
      * @throws Exception to JUnit
      */
     public void testProjectLoader() throws Exception {
-        List list = migrator.getProjectLoader().loadProject();
+        List list = migrator.getProjectLoader().loadProjects();
 
         for (Iterator iter = list.iterator(); iter.hasNext();) {
             ProjectOld project = (ProjectOld) iter.next();
@@ -107,13 +107,13 @@ public class DataMigratorUnitTests extends TestCase {
         }
 
         logger.log(Level.DEBUG, " ================= ");
-        List results = migrator.getProjectTransformer().transformProject(list);
+        List results = migrator.getProjectTransformer().transformProjects(list);
 
         for (Iterator iter = results.iterator(); iter.hasNext();) {
             ProjectNew project = (ProjectNew) iter.next();
             LogDebug.log(project);
         }
-        migrator.getProjectPersistence().storeProject(results);
+        migrator.getProjectPersistence().storeProjects(results);
     }
 
     /**

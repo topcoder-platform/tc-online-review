@@ -7,6 +7,8 @@ import com.topcoder.db.connectionfactory.ConfigurationException;
 import com.topcoder.db.connectionfactory.DBConnectionFactory;
 import com.topcoder.db.connectionfactory.DBConnectionFactoryImpl;
 import com.topcoder.db.connectionfactory.UnknownConnectionException;
+import com.topcoder.onlinereview.migration.dto.newschema.project.ProjectNew;
+import com.topcoder.onlinereview.migration.dto.oldschema.ProjectOld;
 import com.topcoder.onlinereview.migration.persistence.ProjectPersistence;
 import com.topcoder.onlinereview.migration.persistence.ScorecardPersistence;
 import com.topcoder.util.config.ConfigManager;
@@ -15,6 +17,7 @@ import com.topcoder.util.idgenerator.IDGenerationException;
 import java.sql.Connection;
 import java.sql.SQLException;
 
+import java.util.Iterator;
 import java.util.List;
 
 
@@ -128,7 +131,7 @@ public class DataMigrator {
      * @throws Exception if error occurs while load or store data
      */
     public void migrateScorecard() throws Exception {
-		Util.info("start migrate Scorecard");
+		Util.start("migrateScorecard");
         // Load data
         List input = scorecardLoader.loadScorecardTemplate();
 
@@ -137,7 +140,7 @@ public class DataMigrator {
 
         // store data
         scorecardPersistence.storeScorecard(output);
-		Util.info("end migrate Scorecard");
+		Util.logAction(input.size(), "migrateScorecard");
     }
 
     /**
@@ -147,16 +150,26 @@ public class DataMigrator {
      * @throws SQLException if error occurs while load or store data
      */
     public void migrateProject() throws Exception {
-		Util.info("start migrate Project");
-        // Load data
-        List input = projectLoader.loadProject();
+		Util.start("migrateProject");
+        // Load all project ids
+        List input = projectLoader.loadProjectIds();
+        
+        // Remove migrated project
+        input.removeAll(MapUtil.getMigratedProjectIds());
+        
+        for (Iterator iter = input.iterator(); iter.hasNext();) {
+        	int projectId = Integer.parseInt(iter.next().toString());
+        	try {
+	        	ProjectOld oldProject = projectLoader.loadProject(projectId);
+	        	ProjectNew newProject = projectTransformer.transformProject(oldProject);
+	        	projectPersistence.storeProject(newProject);
+	        	MapUtil.storeMigratedProjectId(oldProject.getProjectId(), newProject.getProjectId());
+        	} catch(Exception e) {
+        		Util.warn("Failed to migrate project, projectId: " + projectId);
+        	}
+        }
 
-        // transform data
-        List output = projectTransformer.transformProject(input);
-
-        // store project data
-        projectPersistence.storeProject(output);
-		Util.info("end migrate Project");
+		Util.logAction(input.size(), "migrateProject");
     }
 
     /**

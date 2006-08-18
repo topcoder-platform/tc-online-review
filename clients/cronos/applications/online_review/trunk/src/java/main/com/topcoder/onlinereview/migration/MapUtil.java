@@ -5,9 +5,13 @@ package com.topcoder.onlinereview.migration;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Properties;
 
 import com.topcoder.onlinereview.migration.dto.BaseDTO;
@@ -30,9 +34,35 @@ public class MapUtil {
     static final String MODIFY_USER = "Converter";
 	static final File propertieFile = new File("test_files", "template_id.properties");
 	static final File projectPropertieFile = new File("test_files", "project_id.properties");
+	private static Properties templateIdProperties = null;
 
-    private static Properties templateIdProperties = null;
     protected static Log log = LogFactory.getLog();
+
+    static List getMigratedProjectIds() throws Exception {
+    	List list = new ArrayList();
+    	Properties properties = new Properties();
+        if (MapUtil.projectPropertieFile.exists()) {
+        	InputStream input = new FileInputStream(MapUtil.projectPropertieFile);
+        	properties.load(input);
+        	input.close();
+        }
+        list.addAll(properties.keySet());
+    	return list;
+    }
+
+    static void storeMigratedProjectId(int oldId, int newId) throws Exception {
+    	Properties properties = new Properties();
+        if (MapUtil.projectPropertieFile.exists()) {
+        	InputStream input = new FileInputStream(MapUtil.projectPropertieFile);
+        	properties.load(input);
+        	input.close();
+        }
+        properties.setProperty(String.valueOf(oldId), String.valueOf(newId));
+
+        OutputStream out = new FileOutputStream(MapUtil.projectPropertieFile);
+        properties.store(out, "project_id(old) project_id(new)");
+        out.close();
+    }
 
     /**
      * Set base dto info.
