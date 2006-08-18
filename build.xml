@@ -175,7 +175,7 @@
     <property name="id_generator.jar" value="${tcs_libdir}/${id_generator.path}/${id_generator.jar.name}"/>
 
     <!-- 3rd Party Dependencies  -->
-    <property name="junit.jar" value="${ext_libdir}/junit/3.8.2/junit.jar"/>
+    <property name="junit.jar" value="${ext_libdir}/junit.jar"/>
     <property name="mysql.jar" value="${ext_libdir}/mysql-connector-java-3.1.12-bin.jar" />
     <property name="ifxjdbc.jar" value="${ext_libdir}/ifxjdbc.jar"/>
     <property name="log4j.jar" value="${ext_libdir}/log4j.jar"/>
