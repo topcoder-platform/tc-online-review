@@ -85,7 +85,7 @@ public class ScorecardTransformer {
         throws Exception {
         List list = new ArrayList(inputs.size());
 
-        Util.start("transformScorecardTemplate");
+        long startTime = Util.startMain("transformScorecardTemplate");
         for (Iterator iter = inputs.iterator(); iter.hasNext();) {
             ScorecardTemplate input = (ScorecardTemplate) iter.next();
             logger.log(Level.DEBUG, "transformScorecardTemplate, template_id:" + input.getTemplateId() + " name:" + input.getTemplateName());
@@ -127,7 +127,7 @@ public class ScorecardTransformer {
             output.setGroups(transformScSectionGroup(output.getScorecardId(), input.getGroups(), totalWeight));
             list.add(output);
         }
-        Util.logAction(inputs.size(), "transformScorecardTemplate");
+        Util.logMainAction(inputs.size(), "transformScorecardTemplate", startTime);
         OutputStream out = new FileOutputStream(MapUtil.propertieFile);
         templateIdProperties.store(out, "template_id scorecard_id");
         out.close();
@@ -158,7 +158,7 @@ public class ScorecardTransformer {
      */
     private Collection transformScSectionGroup(int scorecardId, Collection inputs, float totalWeight)
         throws IDGenerationException {
-        Util.start("transformScSectionGroup");
+    	long startTime = Util.start("transformScSectionGroup");
         List list = new ArrayList(inputs.size());
 
         for (Iterator iter = inputs.iterator(); iter.hasNext();) {
@@ -186,7 +186,7 @@ public class ScorecardTransformer {
             list.add(output);
         }
 
-        Util.logAction(inputs.size(), "transformScSectionGroup");
+        Util.logAction(inputs.size(), "transformScSectionGroup", startTime);
         return list;
     }
 
@@ -216,7 +216,7 @@ public class ScorecardTransformer {
      */
     private Collection transformScorecardSection(int scorecardGroupId, Collection inputs, float groupWeight)
         throws IDGenerationException {
-        Util.start("transformScorecardSection");
+    	long startTime = Util.start("transformScorecardSection");
         List list = new ArrayList(inputs.size());
 
         for (Iterator iter = inputs.iterator(); iter.hasNext();) {
@@ -242,7 +242,7 @@ public class ScorecardTransformer {
             list.add(output);
         }
 
-        Util.logAction(inputs.size(), "transformScorecardSection");
+        Util.logAction(inputs.size(), "transformScorecardSection", startTime);
         return list;
     }
 
@@ -258,7 +258,7 @@ public class ScorecardTransformer {
      */
     private Collection transformScorecardQuestion(int scorecardSectionId, Collection inputs) throws IDGenerationException {
         List list = new ArrayList(inputs.size());
-        Util.start("transformScorecardQuestion");
+        long startTime = Util.start("transformScorecardQuestion");
 
         for (Iterator iter = inputs.iterator(); iter.hasNext();) {
             QuestionTemplate input = (QuestionTemplate) iter.next();
@@ -303,7 +303,7 @@ public class ScorecardTransformer {
             list.add(output);
         }
 
-        Util.logAction(inputs.size(), "transformScorecardQuestion");
+        Util.logAction(inputs.size(), "transformScorecardQuestion", startTime);
         return list;
     }
 

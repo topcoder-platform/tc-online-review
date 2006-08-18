@@ -131,7 +131,7 @@ public class DataMigrator {
      * @throws Exception if error occurs while load or store data
      */
     public void migrateScorecard() throws Exception {
-		Util.start("migrateScorecard");
+    	long startTime = Util.startMain("migrateScorecard");
         // Load data
         List input = scorecardLoader.loadScorecardTemplate();
 
@@ -140,7 +140,7 @@ public class DataMigrator {
 
         // store data
         scorecardPersistence.storeScorecard(output);
-		Util.logAction(input.size(), "migrateScorecard");
+		Util.logMainAction(input.size(), "migrateScorecard", startTime);
     }
 
     /**
@@ -150,7 +150,7 @@ public class DataMigrator {
      * @throws SQLException if error occurs while load or store data
      */
     public void migrateProject() throws Exception {
-		Util.start("migrateProject");
+    	long startTime = Util.startMain("migrateProject");
         // Load all project ids
         List input = projectLoader.loadProjectIds();
         
@@ -173,7 +173,7 @@ public class DataMigrator {
         	}
         }
 
-		Util.logAction(input.size(), "migrateProject");
+		Util.logMainAction(input.size(), "migrateProject", startTime);
     }
 
     /**

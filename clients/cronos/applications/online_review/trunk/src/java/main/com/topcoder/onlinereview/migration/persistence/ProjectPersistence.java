@@ -61,12 +61,12 @@ public class ProjectPersistence extends DatabaseUtils {
      * @throws SQLException if error occurs while execute sql statement
      */
     public void storeProjects(List input) throws SQLException {
-		Util.start("storeProjects");
+    	long startTime = Util.start("storeProjects");
         for (Iterator iter = input.iterator(); iter.hasNext();) {
         	storeProject((ProjectNew) iter.next());
         }
 
-        Util.logAction(input.size(), "storeProjects");
+        Util.logAction(input.size(), "storeProjects", startTime);
     }
 
     /**
@@ -77,7 +77,7 @@ public class ProjectPersistence extends DatabaseUtils {
      * @throws SQLException if error occurs while execute sql statement
      */
     public boolean storeProject(ProjectNew table) throws SQLException {
-		Util.start("storeProject");
+    	long startTime = Util.startMain("storeProject");
         String[] fieldnames = {
                 "project_id", "project_status_id", "project_category_id", "create_user", "create_date", "modify_user",
                 "modify_date"
@@ -118,7 +118,7 @@ public class ProjectPersistence extends DatabaseUtils {
         	Util.warn("Failed to store project, project_id:" + table.getProjectId());
         }
 
-        Util.logAction("storeProject");
+        Util.logMainAction("storeProject", startTime);
         DatabaseUtils.closeStatementSilently(stmt);
         return successful;
     }
@@ -131,7 +131,7 @@ public class ProjectPersistence extends DatabaseUtils {
      * @throws SQLException if error occurs while execute sql statement
      */
     void storeReviewItem(Collection input) throws SQLException {
-		Util.start("storeReviewItem");
+    	long startTime = Util.start("storeReviewItem");
         String[] fieldnames = {
                 "review_item_id", "review_id", "scorecard_question_id", "upload_id", "answer", "sort", 
                 "create_user", "create_date", "modify_user", "modify_date"
@@ -171,7 +171,7 @@ public class ProjectPersistence extends DatabaseUtils {
             storeReviewItemComment(table.getReviewItemComments());
         }
 
-        Util.logAction(input.size(), "storeReviewItem");
+        Util.logAction(input.size(), "storeReviewItem", startTime);
         DatabaseUtils.closeStatementSilently(stmt);
     }
 
@@ -183,7 +183,7 @@ public class ProjectPersistence extends DatabaseUtils {
      * @throws SQLException if error occurs while execute sql statement
      */
     void storeReview(List input) throws SQLException {
-		Util.start("storeReview");
+    	long startTime = Util.start("storeReview");
         String[] fieldnames = {
                 "review_id", "resource_id", "submission_id", "scorecard_id", "committed", "score",
                 "create_user", "create_date", "modify_user", "modify_date"
@@ -220,7 +220,7 @@ public class ProjectPersistence extends DatabaseUtils {
             storeReviewItem(table.getReviewItems());
         }
 
-        Util.logAction(input.size(), "storeReview");
+        Util.logAction(input.size(), "storeReview", startTime);
         DatabaseUtils.closeStatementSilently(stmt);
     }
 
@@ -232,7 +232,7 @@ public class ProjectPersistence extends DatabaseUtils {
      * @throws SQLException if error occurs while execute sql statement
      */
     void storeReviewItemComment(Collection input) throws SQLException {
-		Util.start("storeReviewItemComment");
+    	long startTime = Util.start("storeReviewItemComment");
         String[] fieldnames = {
                 "review_item_comment_id", "resource_id", "review_item_id", "comment_type_id", "content", "extra_info", 
                 "sort", "create_user", "create_date", "modify_user", "modify_date"
@@ -263,7 +263,7 @@ public class ProjectPersistence extends DatabaseUtils {
             }
         }
 
-        Util.logAction(input.size(), "storeReviewItemComment");
+        Util.logAction(input.size(), "storeReviewItemComment", startTime);
         DatabaseUtils.closeStatementSilently(stmt);
     }
 
@@ -275,7 +275,7 @@ public class ProjectPersistence extends DatabaseUtils {
      * @throws SQLException if error occurs while execute sql statement
      */
     void storeReviewComment(List input) throws SQLException {
-		Util.start("storeReviewComment");
+    	long startTime = Util.start("storeReviewComment");
         String[] fieldnames = {
                 "review_comment_id", "resource_id", "review_id", "comment_type_id", "content", "extra_info", 
                 "sort", "create_user", "create_date", "modify_user", "modify_date"
@@ -306,7 +306,7 @@ public class ProjectPersistence extends DatabaseUtils {
             }
         }
 
-        Util.logAction(input.size(), "storeReviewComment");
+        Util.logAction(input.size(), "storeReviewComment", startTime);
         DatabaseUtils.closeStatementSilently(stmt);
     }
 
@@ -318,7 +318,7 @@ public class ProjectPersistence extends DatabaseUtils {
      * @throws SQLException if error occurs while execute sql statement
      */
     private void storePhase(List input) throws SQLException {
-		Util.start("storePhase");
+    	long startTime = Util.start("storePhase");
         String[] fieldnames = {
                 "phase_id", "project_id", "phase_type_id", "phase_status_id", "fixed_start_time", "scheduled_start_time",
                 "scheduled_end_time", "actual_start_time", "actual_end_time", "duration", "create_user", "create_date", "modify_user",
@@ -354,7 +354,7 @@ public class ProjectPersistence extends DatabaseUtils {
             storePhaseCriteria(table.getCriterias());
         }
 
-        Util.logAction(input.size(), "storePhase");
+        Util.logAction(input.size(), "storePhase", startTime);
         DatabaseUtils.closeStatementSilently(stmt);
     }
 
@@ -366,7 +366,7 @@ public class ProjectPersistence extends DatabaseUtils {
      * @throws SQLException if error occurs while execute sql statement
      */
     private void storePhaseDependency(List input) throws SQLException {
-		Util.start("storePhaseDependency");
+    	long startTime = Util.start("storePhaseDependency");
         String[] fieldnames = {
                 "dependency_phase_id", "dependent_phase_id", "dependency_start", "dependent_start", "lag_time",
                 "create_user", "create_date", "modify_user", "modify_date"
@@ -395,7 +395,7 @@ public class ProjectPersistence extends DatabaseUtils {
             }
         }
 
-        Util.logAction(input.size(), "storePhaseDependency");
+        Util.logAction(input.size(), "storePhaseDependency", startTime);
         DatabaseUtils.closeStatementSilently(stmt);
     }
 
@@ -407,7 +407,7 @@ public class ProjectPersistence extends DatabaseUtils {
      * @throws SQLException if error occurs while execute sql statement
      */
     private void storePhaseCriteria(List input) throws SQLException {
-		Util.start("storePhaseCriteria");
+    	long startTime = Util.start("storePhaseCriteria");
         String[] fieldnames = {
                 "phase_id", "phase_criteria_type_id", "parameter", "create_user", "create_date", "modify_user", "modify_date"
             };
@@ -433,7 +433,7 @@ public class ProjectPersistence extends DatabaseUtils {
             }
         }
 
-        Util.logAction(input.size(), "storePhaseCriteria");
+        Util.logAction(input.size(), "storePhaseCriteria", startTime);
         DatabaseUtils.closeStatementSilently(stmt);
     }
 
@@ -445,7 +445,7 @@ public class ProjectPersistence extends DatabaseUtils {
      * @throws SQLException if error occurs while execute sql statement
      */
     private void storeUpload(List input) throws SQLException {
-		Util.start("storeUpload");
+    	long startTime = Util.start("storeUpload");
         String[] fieldnames = {
                 "upload_id", "project_id", "resource_id", "upload_type_id", "upload_status_id", "parameter",
                 "create_user", "create_date", "modify_user",
@@ -476,7 +476,7 @@ public class ProjectPersistence extends DatabaseUtils {
             }
         }
 
-        Util.logAction(input.size(), "storeUpload");
+        Util.logAction(input.size(), "storeUpload", startTime);
         DatabaseUtils.closeStatementSilently(stmt);
     }
 
@@ -488,7 +488,7 @@ public class ProjectPersistence extends DatabaseUtils {
      * @throws SQLException if error occurs while execute sql statement
      */
     private void storeSubmission(List input) throws SQLException {
-		Util.start("storeSubmission");
+    	long startTime = Util.start("storeSubmission");
         String[] fieldnames = {
                 "submission_id", "upload_id", "submission_status_id",
                 "create_user", "create_date", "modify_user", "modify_date"
@@ -515,7 +515,7 @@ public class ProjectPersistence extends DatabaseUtils {
             }
         }
 
-        Util.logAction(input.size(), "storeSubmission");
+        Util.logAction(input.size(), "storeSubmission", startTime);
         DatabaseUtils.closeStatementSilently(stmt);
     }
 
@@ -527,7 +527,7 @@ public class ProjectPersistence extends DatabaseUtils {
      * @throws SQLException if error occurs while execute sql statement
      */
     private void storeScreeningTask(List input) throws SQLException {
-		Util.start("storeScreeningTask");
+    	long startTime = Util.start("storeScreeningTask");
         String[] fieldnames = {
                 "screening_task_id", "upload_id", "screening_status_id", "screener_id", "start_timestamp", "create_user",
                 "create_date", "modify_user", "modify_date"
@@ -557,7 +557,7 @@ public class ProjectPersistence extends DatabaseUtils {
             storeScreeningResult(table.getScreeningResults());
         }
 
-        Util.logAction(input.size(), "storeScreeningTask");
+        Util.logAction(input.size(), "storeScreeningTask", startTime);
         DatabaseUtils.closeStatementSilently(stmt);
     }
 
@@ -569,7 +569,7 @@ public class ProjectPersistence extends DatabaseUtils {
      * @throws SQLException if error occurs while execute sql statement
      */
     private void storeScreeningResult(List input) throws SQLException {
-		Util.start("storeScreeningResult");
+    	long startTime = Util.start("storeScreeningResult");
         String[] fieldnames = {
                 "screening_result_id", "screening_task_id", "screening_response_id", "dynamic_response_text",
                 "create_user", "create_date", "modify_user", "modify_date"
@@ -597,7 +597,7 @@ public class ProjectPersistence extends DatabaseUtils {
             }
         }
 
-        Util.logAction(input.size(), "storeScreeningResult");
+        Util.logAction(input.size(), "storeScreeningResult", startTime);
         DatabaseUtils.closeStatementSilently(stmt);
     }
 
@@ -609,7 +609,7 @@ public class ProjectPersistence extends DatabaseUtils {
      * @throws SQLException if error occurs while execute sql statement
      */
     void storeResourceSubmission(List input) throws SQLException {
-		Util.start("storeResourceSubmission");
+    	long startTime = Util.start("storeResourceSubmission");
         String[] fieldnames = {
                 "resource_id", "submission_id", "create_user", "create_date", "modify_user", "modify_date"
             };
@@ -634,7 +634,7 @@ public class ProjectPersistence extends DatabaseUtils {
             }
         }
 
-        Util.logAction(input.size(), "storeResourceSubmission");
+        Util.logAction(input.size(), "storeResourceSubmission", startTime);
         DatabaseUtils.closeStatementSilently(stmt);
     }
 
@@ -646,7 +646,7 @@ public class ProjectPersistence extends DatabaseUtils {
      * @throws SQLException if error occurs while execute sql statement
      */
     void storeNotification(List input) throws SQLException {
-		Util.start("storeNotification");
+    	long startTime = Util.start("storeNotification");
         String[] fieldnames = {
                 "project_id", "external_ref_id", "notification_type_id", "create_user", "create_date", "modify_user", "modify_date"
             };
@@ -667,12 +667,13 @@ public class ProjectPersistence extends DatabaseUtils {
             try {
             	stmt.execute();
             } catch(Exception e) {
-	        	Util.warn(e);
+            	// It's ok since some user will take more than one role
+	        	// Util.warn(e);
             	continue;
             }
         }
 
-        Util.logAction(input.size(), "storeNotification");
+        Util.logAction(input.size(), "storeNotification", startTime);
         DatabaseUtils.closeStatementSilently(stmt);
     }
 
@@ -684,7 +685,7 @@ public class ProjectPersistence extends DatabaseUtils {
      * @throws SQLException if error occurs while execute sql statement
      */
     private void storeResourceInfo(List input) throws SQLException {
-		Util.start("storeResourceInfo");
+    	long startTime = Util.start("storeResourceInfo");
         String[] fieldnames = {
                 "resource_id", "resource_info_type_id", "value", "create_user", "create_date", "modify_user", "modify_date"
             };
@@ -710,7 +711,7 @@ public class ProjectPersistence extends DatabaseUtils {
             }
         }
 
-        Util.logAction(input.size(), "storeResourceInfo");
+        Util.logAction(input.size(), "storeResourceInfo", startTime);
         DatabaseUtils.closeStatementSilently(stmt);
     }
 
@@ -722,7 +723,7 @@ public class ProjectPersistence extends DatabaseUtils {
      * @throws SQLException if error occurs while execute sql statement
      */
     private void storeResource(List input) throws SQLException {
-		Util.start("storeResource");
+    	long startTime = Util.start("storeResource");
         String[] fieldnames = {
                 "resource_id", "resource_role_id", "project_id", "phase_id", "create_user", "create_date", "modify_user", "modify_date"
             };
@@ -753,7 +754,7 @@ public class ProjectPersistence extends DatabaseUtils {
             }
         }
 
-        Util.logAction(input.size(), "storeResource");
+        Util.logAction(input.size(), "storeResource", startTime);
         DatabaseUtils.closeStatementSilently(stmt);
     }
 
@@ -765,7 +766,7 @@ public class ProjectPersistence extends DatabaseUtils {
      * @throws SQLException if error occurs while execute sql statement
      */
     private void storeProjectInfo(List input) throws SQLException {
-		Util.start("storeProjectInfo");
+    	long startTime = Util.start("storeProjectInfo");
         String[] fieldnames = {
                 "project_id", "project_info_type_id", "value", "create_user", "create_date", "modify_user",
                 "modify_date"
@@ -788,11 +789,11 @@ public class ProjectPersistence extends DatabaseUtils {
             	stmt.execute();
             } catch(Exception e) {
 	        	Util.warn(e);
-	        	Util.info("The failed projectInfo, typeId: " + table.getProjectInfoTypeId());
+	        	Util.warn("The failed projectInfo, typeId: " + table.getProjectInfoTypeId());
             	continue;
             }
         }
-        Util.logAction(input.size(), "storeProjectInfo");
+        Util.logAction(input.size(), "storeProjectInfo", startTime);
 
         DatabaseUtils.closeStatementSilently(stmt);
     }
@@ -805,7 +806,7 @@ public class ProjectPersistence extends DatabaseUtils {
      * @throws SQLException if error occurs while execute sql statement
      */
     private void storeProjectAudit(List input) throws SQLException {
-		Util.start("storeProjectAudit");
+    	long startTime = Util.start("storeProjectAudit");
         String[] fieldnames = {
                 "project_audit_id", "project_id", "update_reason", "create_user", "create_date", "modify_user",
                 "modify_date"
@@ -832,7 +833,7 @@ public class ProjectPersistence extends DatabaseUtils {
             }
         }
 
-        Util.logAction(input.size(), "storeProjectAudit");
+        Util.logAction(input.size(), "storeProjectAudit", startTime);
         DatabaseUtils.closeStatementSilently(stmt);
     }
 }

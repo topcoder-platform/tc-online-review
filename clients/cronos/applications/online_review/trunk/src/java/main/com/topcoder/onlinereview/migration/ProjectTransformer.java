@@ -32,10 +32,6 @@ import com.topcoder.util.idgenerator.IDGenerationException;
 import com.topcoder.util.idgenerator.IDGenerator;
 import com.topcoder.util.idgenerator.IDGeneratorFactory;
 
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 
@@ -48,7 +44,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Properties;
 
 
 /**
@@ -130,18 +125,18 @@ public class ProjectTransformer extends MapUtil{
      * @throws IDGenerationException
      */
     public List transformProjects(List inputs) throws Exception {
-		Util.start("transformProjects");
+    	long startTime = Util.start("transformProjects");
         List list = new ArrayList(inputs.size());
 
         for (Iterator iter = inputs.iterator(); iter.hasNext();) {
             list.add(transformProject((ProjectOld) iter.next()));
         }
-        Util.logAction(list.size(), "transformProjects");
+        Util.logAction(list.size(), "transformProjects", startTime);
         return list;
     }
 
     public ProjectNew transformProject(ProjectOld input) throws Exception {
-		Util.start("transformProject");
+    	long startTime = Util.startMain("transformProject");
         ProjectNew output = new ProjectNew();
 
         // Prepare project
@@ -168,7 +163,7 @@ public class ProjectTransformer extends MapUtil{
         // Notes: is done in upload->submission
 
         // it will be done in upload prepare review
-        Util.logAction("transformProject");
+        Util.logMainAction("transformProject", startTime);
         return output;    	
     }
 
@@ -180,7 +175,7 @@ public class ProjectTransformer extends MapUtil{
      * @throws IDGenerationException error occurs while generate new id
      */
     private void prepareReview(ProjectOld oldProject, ProjectNew project, SubmissionOld oldSubmission, Submission submission) throws Exception {
-		Util.start("prepareReview");    	
+    	long startTime = Util.start("prepareReview");    	
 		ReviewConverter converter = new ReviewConverter(
 				oldProject,
 				project,
@@ -191,7 +186,7 @@ public class ProjectTransformer extends MapUtil{
 		converter.setReviewCommentIdGenerator(reviewCommentIdGenerator);
 		converter.setReviewItemCommentIdGenerator(reviewItemCommentIdGenerator);
 		project.addReviews(converter.convert());
-		Util.logAction("prepareReview");
+		Util.logAction("prepareReview", startTime);
     }
 
     /**
@@ -200,7 +195,7 @@ public class ProjectTransformer extends MapUtil{
      * @throws IDGenerationException error occurs while generate new id
      */
     private ScreeningTask prepareScreening(SubmissionOld oldSubmission, int uploadId) throws IDGenerationException {
-		Util.start("prepareScreening");   
+    	long startTime = Util.start("prepareScreening");   
     	Collection results = oldSubmission.getScreeningResults();
     	ScreeningTask task = new ScreeningTask();
     	task.setScreeningTaskId((int) screeningTaskIdGenerator.getNextID());
@@ -213,7 +208,7 @@ public class ProjectTransformer extends MapUtil{
     	for (Iterator iter = results.iterator(); iter.hasNext();) {
     		task.addScreeningResult(prepareScreeningResult((ScreeningResults) iter.next(), task.getScreeningTaskId()));
     	}
-		Util.logAction("prepareScreening");
+		Util.logAction("prepareScreening", startTime);
     	return task;
     }
 
@@ -225,14 +220,14 @@ public class ProjectTransformer extends MapUtil{
      */
     private ScreeningResult prepareScreeningResult(ScreeningResults old, int taskId) throws IDGenerationException {
     	// Prepare all new screening results
-    	Util.start("prepareScreeningResult");   
+    	long startTime = Util.start("prepareScreeningResult");   
     	ScreeningResult result = new ScreeningResult();
     	result.setScreeningResultId((int) screeningResultsIdGenerator.getNextID());
     	result.setScreeningTaskId(taskId);
     	result.setScreeningResponseId(old.getScreeningResponse());
     	result.setDynamicResponseText(old.getDynamicResponseText());
     	setBaseDTO(result);
-		Util.logAction("prepareScreeningResult");
+		Util.logAction("prepareScreeningResult", startTime);
     	return result;
     }
 
@@ -270,7 +265,7 @@ public class ProjectTransformer extends MapUtil{
      * @throws IDGenerationException error occurs while generate new id
      */
     private void prepareUpload(ProjectOld input, ProjectNew output) throws Exception {
-    	Util.start("prepareUpload");   
+    	long startTime = Util.start("prepareUpload");   
     	Collection submissions = input.getSubmissions();
     	for (Iterator iter = submissions.iterator(); iter.hasNext();) {
     		SubmissionOld submission = (SubmissionOld) iter.next();
@@ -353,7 +348,7 @@ public class ProjectTransformer extends MapUtil{
     		upload.setUploadId((int) uploadIdGenerator.getNextID());
     		output.addUpload(upload);
     	}
-		Util.logAction("prepareUpload");
+		Util.logAction("prepareUpload", startTime);
     }
     
     /**
@@ -382,7 +377,7 @@ public class ProjectTransformer extends MapUtil{
      * @throws IDGenerationException error occurs while generate new id
      */
     private Submission prepareSubmission(ProjectOld input, SubmissionOld old, int uploadId) throws IDGenerationException {    		
-    	Util.start("prepareSubmission");   
+    	long startTime = Util.start("prepareSubmission");   
     	Submission submission = new Submission();
 
 		submission.setUploadId(uploadId);
@@ -415,7 +410,7 @@ public class ProjectTransformer extends MapUtil{
 		// submission.submission_v_id
 		submission.setSubmissionId((int) submissionIdGenerator.getNextID());	
 
-		Util.logAction("prepareSubmission");
+		Util.logAction("prepareSubmission", startTime);
 		return submission;
     }
 
@@ -426,12 +421,12 @@ public class ProjectTransformer extends MapUtil{
      * @param output ProjectNew
      */
     private void prepareProject(ProjectOld input, ProjectNew output) throws IDGenerationException {
-    	Util.start("prepareProject");   
+    	long startTime = Util.start("prepareProject");   
     	output.setProjectStatusId(MapUtil.getProjectStatusId(input.getProjectStatId()));
         output.setProjectCategoryId(MapUtil.getProjectCategoryId(input.getProjectTypeId()));
     	setBaseDTO(output);
         output.setProjectId((int) projectIdGenerator.getNextID());    	
-		Util.logAction("prepareProject");
+		Util.logAction("prepareProject", startTime);
     }
 
     /**
@@ -441,7 +436,7 @@ public class ProjectTransformer extends MapUtil{
      * @param output ProjectNew
      */
     private void prepareProjectAudit(ProjectOld input, ProjectNew output) throws IDGenerationException {
-    	Util.start("prepareProjectAudit");   
+    	long startTime = Util.start("prepareProjectAudit");   
     	// Prepare audit data
     	for (Iterator iter = input.getModifiyReasons().iterator(); iter.hasNext();) {
             ProjectAudit audit = new ProjectAudit();
@@ -451,7 +446,7 @@ public class ProjectTransformer extends MapUtil{
             audit.setProjectid(output.getProjectId());
             output.addProjectAudit(audit);    
     	}	
-		Util.logAction("prepareProjectAudit");
+		Util.logAction("prepareProjectAudit", startTime);
     }
 
     /**
@@ -463,7 +458,7 @@ public class ProjectTransformer extends MapUtil{
     private void prepareProjectInfos(ProjectOld input, ProjectNew output) {
         // Prepare project infos
         // External Reference ID project.comp_vers_id
-    	Util.start("prepareProjectInfos");   
+    	long startTime = Util.start("prepareProjectInfos");   
     	 ProjectInfo erid = new ProjectInfo();
         erid.setProjectId(output.getProjectId());
         erid.setProjectInfoTypeId(ProjectInfo.EXTERNAL_REFERENCE_ID);
@@ -623,7 +618,7 @@ public class ProjectTransformer extends MapUtil{
         // Deactivation Phase not evaluated TODO 
         // Deactivation Reason not evaluated TODO 
         // Runner-up External Reference ID not evaluated TODO 
-		Util.logAction("prepareProjectInfos");
+		Util.logAction("prepareProjectInfos", startTime);
     }
 
     /**
@@ -634,7 +629,7 @@ public class ProjectTransformer extends MapUtil{
      * @throws IDGenerationException error occurs while generate new id
      */
     private void preparePhases(ProjectOld input, ProjectNew output) throws IDGenerationException {
-    	Util.start("preparePhases");   
+    	long startTime = Util.start("preparePhases");   
     	// Prepare project phase
     	for (Iterator iter = input.getPhaseInstances().iterator(); iter.hasNext();) {
             PhaseInstance pi = (PhaseInstance) iter.next();
@@ -668,7 +663,7 @@ public class ProjectTransformer extends MapUtil{
             preparePhaseCriterias(phase, pi.getTemplateId());
             output.addPhase(phase);    		
     	}
-		Util.logAction("preparePhases");
+		Util.logAction("preparePhases", startTime);
     }
     
     /**
@@ -679,7 +674,7 @@ public class ProjectTransformer extends MapUtil{
      * @throws IDGenerationException error occurs while generate new id
      */
     private void prepareResources(ProjectOld input, ProjectNew output) throws IDGenerationException {
-    	Util.start("prepareResources");   
+    	long startTime = Util.start("prepareResources");   
     	Collection rUserRoles = input.getRUserRoles();
     	Collection phases = output.getPhases();
     	for (Iterator iter = rUserRoles.iterator(); iter.hasNext();) {
@@ -701,7 +696,7 @@ public class ProjectTransformer extends MapUtil{
     		// Prepare resource info
     		prepareResourceInfosNotification(input, output, resource, role);
     	}
-		Util.logAction("prepareResources");
+		Util.logAction("prepareResources", startTime);
     }
 
     /**
@@ -710,7 +705,7 @@ public class ProjectTransformer extends MapUtil{
      * @param resource the resource
      */
     private void prepareResourceInfosNotification(ProjectOld old, ProjectNew project, Resource resource, RUserRole role) {
-    	Util.start("prepareResourceInfosNotification");   
+    	long startTime = Util.start("prepareResourceInfosNotification");   
     	// External Reference ID r_user_role			login_id
     	ResourceInfo info = new ResourceInfo();
     	info.setResourceId(resource.getResourceId());
@@ -855,7 +850,7 @@ public class ProjectTransformer extends MapUtil{
 		    	project.addResourceInfo(info);
     		}
     	}
-		Util.logAction("prepareResourceInfosNotification");
+		Util.logAction("prepareResourceInfosNotification", startTime);
     }
 
     /**
@@ -887,7 +882,7 @@ public class ProjectTransformer extends MapUtil{
      * @param templateId the template id used for Scorecard ID
      */
     private void preparePhaseCriterias(Phase phase, int templateId) {
-    	Util.start("preparePhaseCriterias");   
+    	long startTime = Util.start("preparePhaseCriterias");   
     	// Scorecard ID
     	PhaseCriteria criteria = new PhaseCriteria();
     	criteria.setPhaseId(phase.getPhaseId());
@@ -908,7 +903,7 @@ public class ProjectTransformer extends MapUtil{
     	criteria.setParameter(phase.getPhaseStatusId() == 2 ? "Yes" : "No");
     	setBaseDTO(criteria);
     	phase.addCriteria(criteria);
-		Util.logAction("preparePhaseCriterias");
+		Util.logAction("preparePhaseCriterias", startTime);
     }
 
     /**
@@ -917,7 +912,7 @@ public class ProjectTransformer extends MapUtil{
      * @param project ProjectNew
      */
     private void preparePhaseDependencys(ProjectNew project) {
-    	Util.start("preparePhaseDependencys");   
+    	long startTime = Util.start("preparePhaseDependencys");   
     	// Prepare project phase
     	List phases = project.getPhases();
     	if (phases.size() < 2) {
@@ -945,7 +940,7 @@ public class ProjectTransformer extends MapUtil{
             // Change to next dependency
             previousPhase = nextPhase;
     	}
-		Util.logAction("preparePhaseDependencys");
+		Util.logAction("preparePhaseDependencys", startTime);
     }
 
     /**

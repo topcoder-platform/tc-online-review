@@ -46,7 +46,7 @@ public class ScorecardLoader {
      * @throws SQLException if error occurs while execute sql statement
      */
     private List loadScorecardSection(int templateId, int groupId) throws SQLException {
-		Util.start("loadScorecardSection");
+    	long startTime = Util.start("loadScorecardSection");
         // load ScorecardSection table from old online review
         PreparedStatement stmt = conn.prepareStatement("SELECT * FROM " + ScorecardSectionOld.TABLE_NAME +
         		" WHERE template_id = ? AND group_id = ?");
@@ -66,7 +66,7 @@ public class ScorecardLoader {
             list.add(table);
         }
 
-        Util.logAction(list.size(), "loadScorecardSection");
+        Util.logAction(list.size(), "loadScorecardSection", startTime);
         DatabaseUtils.closeResultSetSilently(rs);
         DatabaseUtils.closeStatementSilently(stmt);
 
@@ -81,7 +81,7 @@ public class ScorecardLoader {
      * @throws SQLException if error occurs while execute sql statement
      */
     public List loadScorecardTemplate() throws SQLException {
-		Util.start("loadScorecardTemplate");
+    	long startTime = Util.startMain("loadScorecardTemplate");
 
         // load scorecard template table from old online review
         Statement stmt = conn.createStatement();
@@ -110,7 +110,7 @@ public class ScorecardLoader {
             table.setGroups(this.loadScSectionGroup(table.getTemplateId()));
         }
 
-        Util.logAction(list.size(), "ScorecardTemplate");
+        Util.logMainAction(list.size(), "ScorecardTemplate", startTime);
         DatabaseUtils.closeResultSetSilently(rs);
         DatabaseUtils.closeStatementSilently(stmt);
 
@@ -126,7 +126,7 @@ public class ScorecardLoader {
      * @throws SQLException if error occurs while execute sql statement
      */
     private List loadScSectionGroup(int templateId) throws SQLException {
-		Util.start("loadScSectionGroup");
+    	long startTime = Util.start("loadScSectionGroup");
         // load ScSectionGroup table from old online review
         PreparedStatement stmt = conn.prepareStatement("SELECT * FROM " + ScSectionGroup.TABLE_NAME +
 					" WHERE template_id = ?");
@@ -145,7 +145,7 @@ public class ScorecardLoader {
             list.add(table);
         }
 
-        Util.logAction(list.size(), "loadScSectionGroup");
+        Util.logAction(list.size(), "loadScSectionGroup", startTime);
         DatabaseUtils.closeResultSetSilently(rs);
         DatabaseUtils.closeStatementSilently(stmt);
 
@@ -162,7 +162,7 @@ public class ScorecardLoader {
      * @throws SQLException if error occurs while execute sql statement
      */
     private List loadQuestionTemplate(int templateId, int sectionId) throws SQLException {
-		Util.start("loadQuestionTemplate");
+    	long startTime = Util.start("loadQuestionTemplate");
         // load QuestionTemplate table from old online review
         PreparedStatement stmt = conn.prepareStatement("SELECT * FROM " + QuestionTemplate.TABLE_NAME +
 				" WHERE cur_version = 1 and template_id = ? AND section_id = ?");
@@ -188,7 +188,7 @@ public class ScorecardLoader {
             list.add(table);
         }
 
-        Util.logAction(list.size(), "loadQuestionTemplate");
+        Util.logAction(list.size(), "loadQuestionTemplate", startTime);
         DatabaseUtils.closeResultSetSilently(rs);
         DatabaseUtils.closeStatementSilently(stmt);
 
