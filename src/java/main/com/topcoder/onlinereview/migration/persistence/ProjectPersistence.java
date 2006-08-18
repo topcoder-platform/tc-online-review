@@ -60,7 +60,23 @@ public class ProjectPersistence extends DatabaseUtils {
      *
      * @throws SQLException if error occurs while execute sql statement
      */
-    public void storeProject(List input) throws SQLException {
+    public void storeProjects(List input) throws SQLException {
+		Util.start("storeProjects");
+        for (Iterator iter = input.iterator(); iter.hasNext();) {
+        	storeProject((ProjectNew) iter.next());
+        }
+
+        Util.logAction(input.size(), "storeProjects");
+    }
+
+    /**
+     * Store Project and project audit data to new online review schema
+     *
+     * @param input the Project data
+     *
+     * @throws SQLException if error occurs while execute sql statement
+     */
+    public void storeProject(ProjectNew table) throws SQLException {
 		Util.start("storeProject");
         String[] fieldnames = {
                 "project_id", "project_status_id", "project_category_id", "create_user", "create_date", "modify_user",
@@ -71,38 +87,35 @@ public class ProjectPersistence extends DatabaseUtils {
         PreparedStatement stmt = conn.prepareStatement(makeInsertSql(ProjectNew.TABLE_NAME, fieldnames));
 
         conn.setAutoCommit(false);
-        for (Iterator iter = input.iterator(); iter.hasNext();) {
-            ProjectNew table = (ProjectNew) iter.next();
-            try {
-	            int i = 1;
-	            stmt.setInt(i++, table.getProjectId());
-	            stmt.setInt(i++, table.getProjectStatusId());
-	            stmt.setInt(i++, table.getProjectCategoryId());
-	            stmt.setString(i++, table.getCreateUser());
-	            stmt.setDate(i++, new Date(table.getCreateDate().getTime()));
-	            stmt.setString(i++, table.getModifyUser());
-	            stmt.setDate(i++, new Date(table.getModifyDate().getTime()));
-	            stmt.execute();
-	            storeProjectInfo(table.getProjectInfos());
-	            storeProjectAudit(table.getProjectAudits());
-	            storePhase(table.getPhases());
-	            storePhaseDependency(table.getPhaseDependencys());
-	            storeResource(table.getResources());
-	            storeResourceInfo(table.getResourceInfos());
-	            storeUpload(table.getUploads());
-	            storeSubmission(table.getSubmissions());
-	            storeNotification(table.getNotifications());
-	            storeResourceSubmission(table.getResourceSubmissions());
-	            storeScreeningTask(table.getScreeningTasks());
-	            storeReview(table.getReviews());
-	            conn.commit();
-            } catch(Exception e) {
-            	conn.rollback();
-            	Util.warn("Failed to store project, project_id:" + table.getProjectId());
-            }
+        try {
+            int i = 1;
+            stmt.setInt(i++, table.getProjectId());
+            stmt.setInt(i++, table.getProjectStatusId());
+            stmt.setInt(i++, table.getProjectCategoryId());
+            stmt.setString(i++, table.getCreateUser());
+            stmt.setDate(i++, new Date(table.getCreateDate().getTime()));
+            stmt.setString(i++, table.getModifyUser());
+            stmt.setDate(i++, new Date(table.getModifyDate().getTime()));
+            stmt.execute();
+            storeProjectInfo(table.getProjectInfos());
+            storeProjectAudit(table.getProjectAudits());
+            storePhase(table.getPhases());
+            storePhaseDependency(table.getPhaseDependencys());
+            storeResource(table.getResources());
+            storeResourceInfo(table.getResourceInfos());
+            storeUpload(table.getUploads());
+            storeSubmission(table.getSubmissions());
+            storeNotification(table.getNotifications());
+            storeResourceSubmission(table.getResourceSubmissions());
+            storeScreeningTask(table.getScreeningTasks());
+            storeReview(table.getReviews());
+            conn.commit();
+        } catch(Exception e) {
+        	conn.rollback();
+        	Util.warn("Failed to store project, project_id:" + table.getProjectId());
         }
 
-        Util.logAction(input.size(), "storeProject");
+        Util.logAction("storeProject");
         DatabaseUtils.closeStatementSilently(stmt);
     }
 

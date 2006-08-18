@@ -137,44 +137,49 @@ public class ProjectTransformer extends MapUtil{
      *
      * @throws IDGenerationException
      */
-    public List transformProject(List inputs) throws Exception {
-		Util.start("transformProject");
+    public List transformProjects(List inputs) throws Exception {
+		Util.start("transformProjects");
         List list = new ArrayList(inputs.size());
 
         for (Iterator iter = inputs.iterator(); iter.hasNext();) {
-            ProjectOld input = (ProjectOld) iter.next();
-            ProjectNew output = new ProjectNew();
-            list.add(output);
-
-            // Prepare project
-            prepareProject(input, output);
-            prepareProjectAudit(input, output);
-            prepareProjectInfos(input, output);
-            
-            // Prepare phase:
-            preparePhases(input, output);
-            preparePhaseDependencys(output);
-
-        	// Prepare Resources, dependent on transformed phase information
-        	prepareResources(input, output);
-
-            // Prepare deliverable: 
-        	// dependent on resource 
-            // submission/testcase to upload
-            // submission to submission
-            prepareUpload(input, output);
-
-            // Prepare screening
-            // screening_results to screening_task
-            // screening_results to screening_result
-            // Notes: is done in upload->submission
-
-            // it will be done in upload prepare review
+            list.add(transformProject((ProjectOld) iter.next()));
         }
         OutputStream out = new FileOutputStream(MapUtil.projectPropertieFile);
         templateIdProperties.store(out, "project_id(old) project_id(new)");
-        Util.logAction(list.size(), "transformProject");
+        Util.logAction(list.size(), "transformProjects");
         return list;
+    }
+
+    public ProjectNew transformProject(ProjectOld input) throws Exception {
+		Util.start("transformProject");
+        ProjectNew output = new ProjectNew();
+
+        // Prepare project
+        prepareProject(input, output);
+        prepareProjectAudit(input, output);
+        prepareProjectInfos(input, output);
+        
+        // Prepare phase:
+        preparePhases(input, output);
+        preparePhaseDependencys(output);
+
+    	// Prepare Resources, dependent on transformed phase information
+    	prepareResources(input, output);
+
+        // Prepare deliverable: 
+    	// dependent on resource 
+        // submission/testcase to upload
+        // submission to submission
+        prepareUpload(input, output);
+
+        // Prepare screening
+        // screening_results to screening_task
+        // screening_results to screening_result
+        // Notes: is done in upload->submission
+
+        // it will be done in upload prepare review
+        Util.logAction("transformProject");
+        return output;    	
     }
 
     /**
