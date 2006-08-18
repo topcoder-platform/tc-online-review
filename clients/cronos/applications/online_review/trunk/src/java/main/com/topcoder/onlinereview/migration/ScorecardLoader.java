@@ -89,7 +89,7 @@ public class ScorecardLoader {
         	// For test purpose, just fetch 10
             stmt.setFetchSize(10);
         }
-        ResultSet rs = stmt.executeQuery("SELECT * FROM " + ScorecardTemplate.TABLE_NAME + " where order by template_id");
+        ResultSet rs = stmt.executeQuery("SELECT * FROM " + ScorecardTemplate.TABLE_NAME + " order by template_id");
         List list = new ArrayList();
 
         int size = 0;
