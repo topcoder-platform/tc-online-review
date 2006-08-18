@@ -162,9 +162,13 @@ public class DataMigrator {
         	try {
 	        	ProjectOld oldProject = projectLoader.loadProject(projectId);
 	        	ProjectNew newProject = projectTransformer.transformProject(oldProject);
-	        	projectPersistence.storeProject(newProject);
-	        	MapUtil.storeMigratedProjectId(oldProject.getProjectId(), newProject.getProjectId());
+	        	if (projectPersistence.storeProject(newProject)) {
+	        		MapUtil.storeMigratedProjectId(oldProject.getProjectId(), newProject.getProjectId());
+	        	} else {
+	        		Util.warn("Failed to store project, project_id: " + oldProject.getProjectId());
+	        	}
         	} catch(Exception e) {
+        		Util.warn(e);
         		Util.warn("Failed to migrate project, projectId: " + projectId);
         	}
         }

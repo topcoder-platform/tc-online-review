@@ -22,6 +22,9 @@ public class Util {
 		logger.log(Level.DEBUG, debug);
 	}
 	public static void warn(Object warn) {
+		if (warn instanceof Exception) {
+			((Exception) warn).printStackTrace();
+		}
 		logger.log(Level.WARN, warn);
 	}
 	

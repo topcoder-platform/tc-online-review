@@ -76,7 +76,7 @@ public class ProjectPersistence extends DatabaseUtils {
      *
      * @throws SQLException if error occurs while execute sql statement
      */
-    public void storeProject(ProjectNew table) throws SQLException {
+    public boolean storeProject(ProjectNew table) throws SQLException {
 		Util.start("storeProject");
         String[] fieldnames = {
                 "project_id", "project_status_id", "project_category_id", "create_user", "create_date", "modify_user",
@@ -86,6 +86,7 @@ public class ProjectPersistence extends DatabaseUtils {
         // store Project data to new online review schema
         PreparedStatement stmt = conn.prepareStatement(makeInsertSql(ProjectNew.TABLE_NAME, fieldnames));
 
+        boolean successful = true;
         conn.setAutoCommit(false);
         try {
             int i = 1;
@@ -111,12 +112,15 @@ public class ProjectPersistence extends DatabaseUtils {
             storeReview(table.getReviews());
             conn.commit();
         } catch(Exception e) {
+        	successful = false;
         	conn.rollback();
+        	Util.warn(e);
         	Util.warn("Failed to store project, project_id:" + table.getProjectId());
         }
 
         Util.logAction("storeProject");
         DatabaseUtils.closeStatementSilently(stmt);
+        return successful;
     }
 
     /**
@@ -156,7 +160,7 @@ public class ProjectPersistence extends DatabaseUtils {
             try {
             	stmt.execute();
 	        } catch(Exception e) {
-	        	e.printStackTrace();
+	        	Util.warn(e);
 	        	Util.warn("storeReviewItem, " +
 	        			"reviewId: " + table.getReviewId() + 
 	        			"getReviewItemId: " + table.getReviewItemId() + 
@@ -204,7 +208,7 @@ public class ProjectPersistence extends DatabaseUtils {
             try {
             	stmt.execute();
             } catch(Exception e) {
-            	e.printStackTrace();
+	        	Util.warn(e);
             	Util.warn("Review, " +
             			"reviewId: " + table.getReviewId() + 
             			"getResourceId: " + table.getResourceId() + 
@@ -251,7 +255,12 @@ public class ProjectPersistence extends DatabaseUtils {
             stmt.setDate(i++, new Date(table.getCreateDate().getTime()));
             stmt.setString(i++, table.getModifyUser());
             stmt.setDate(i++, new Date(table.getModifyDate().getTime()));
-            stmt.execute();
+            try {
+            	stmt.execute();
+            } catch(Exception e) {
+	        	Util.warn(e);
+            	continue;
+            }
         }
 
         Util.logAction(input.size(), "storeReviewItemComment");
@@ -289,7 +298,12 @@ public class ProjectPersistence extends DatabaseUtils {
             stmt.setDate(i++, new Date(table.getCreateDate().getTime()));
             stmt.setString(i++, table.getModifyUser());
             stmt.setDate(i++, new Date(table.getModifyDate().getTime()));
-            stmt.execute();
+            try {
+            	stmt.execute();
+            } catch(Exception e) {
+	        	Util.warn(e);
+            	continue;
+            }
         }
 
         Util.logAction(input.size(), "storeReviewComment");
@@ -331,7 +345,12 @@ public class ProjectPersistence extends DatabaseUtils {
             stmt.setDate(i++, new Date(table.getCreateDate().getTime()));
             stmt.setString(i++, table.getModifyUser());
             stmt.setDate(i++, new Date(table.getModifyDate().getTime()));
-            stmt.execute();
+            try {
+            	stmt.execute();
+            } catch(Exception e) {
+	        	Util.warn(e);
+            	continue;
+            }
             storePhaseCriteria(table.getCriterias());
         }
 
@@ -368,7 +387,12 @@ public class ProjectPersistence extends DatabaseUtils {
             stmt.setDate(i++, new Date(table.getCreateDate().getTime()));
             stmt.setString(i++, table.getModifyUser());
             stmt.setDate(i++, new Date(table.getModifyDate().getTime()));
-            stmt.execute();
+            try {
+            	stmt.execute();
+            } catch(Exception e) {
+	        	Util.warn(e);
+            	continue;
+            }
         }
 
         Util.logAction(input.size(), "storePhaseDependency");
@@ -401,7 +425,12 @@ public class ProjectPersistence extends DatabaseUtils {
             stmt.setDate(i++, new Date(table.getCreateDate().getTime()));
             stmt.setString(i++, table.getModifyUser());
             stmt.setDate(i++, new Date(table.getModifyDate().getTime()));
-            stmt.execute();
+            try {
+            	stmt.execute();
+            } catch(Exception e) {
+	        	Util.warn(e);
+            	continue;
+            }
         }
 
         Util.logAction(input.size(), "storePhaseCriteria");
@@ -439,7 +468,12 @@ public class ProjectPersistence extends DatabaseUtils {
             stmt.setDate(i++, new Date(table.getCreateDate().getTime()));
             stmt.setString(i++, table.getModifyUser());
             stmt.setDate(i++, new Date(table.getModifyDate().getTime()));
-            stmt.execute();
+            try {
+            	stmt.execute();
+            } catch(Exception e) {
+	        	Util.warn(e);
+            	continue;
+            }
         }
 
         Util.logAction(input.size(), "storeUpload");
@@ -473,7 +507,12 @@ public class ProjectPersistence extends DatabaseUtils {
             stmt.setDate(i++, new Date(table.getCreateDate().getTime()));
             stmt.setString(i++, table.getModifyUser());
             stmt.setDate(i++, new Date(table.getModifyDate().getTime()));
-            stmt.execute();
+            try {
+            	stmt.execute();
+            } catch(Exception e) {
+	        	Util.warn(e);
+            	continue;
+            }
         }
 
         Util.logAction(input.size(), "storeSubmission");
@@ -509,7 +548,12 @@ public class ProjectPersistence extends DatabaseUtils {
             stmt.setDate(i++, new Date(table.getCreateDate().getTime()));
             stmt.setString(i++, table.getModifyUser());
             stmt.setDate(i++, new Date(table.getModifyDate().getTime()));
-            stmt.execute();
+            try {
+            	stmt.execute();
+            } catch(Exception e) {
+	        	Util.warn(e);
+            	continue;
+            }
             storeScreeningResult(table.getScreeningResults());
         }
 
@@ -545,7 +589,12 @@ public class ProjectPersistence extends DatabaseUtils {
             stmt.setDate(i++, new Date(table.getCreateDate().getTime()));
             stmt.setString(i++, table.getModifyUser());
             stmt.setDate(i++, new Date(table.getModifyDate().getTime()));
-            stmt.execute();
+            try {
+            	stmt.execute();
+            } catch(Exception e) {
+	        	Util.warn(e);
+            	continue;
+            }
         }
 
         Util.logAction(input.size(), "storeScreeningResult");
@@ -577,7 +626,12 @@ public class ProjectPersistence extends DatabaseUtils {
             stmt.setDate(i++, new Date(table.getCreateDate().getTime()));
             stmt.setString(i++, table.getModifyUser());
             stmt.setDate(i++, new Date(table.getModifyDate().getTime()));
-            stmt.execute();
+            try {
+            	stmt.execute();
+            } catch(Exception e) {
+	        	Util.warn(e);
+            	continue;
+            }
         }
 
         Util.logAction(input.size(), "storeResourceSubmission");
@@ -613,7 +667,8 @@ public class ProjectPersistence extends DatabaseUtils {
             try {
             	stmt.execute();
             } catch(Exception e) {
-            	// Just ignore since one resource will occupy several role
+	        	Util.warn(e);
+            	continue;
             }
         }
 
@@ -647,7 +702,12 @@ public class ProjectPersistence extends DatabaseUtils {
             stmt.setDate(i++, new Date(table.getCreateDate().getTime()));
             stmt.setString(i++, table.getModifyUser());
             stmt.setDate(i++, new Date(table.getModifyDate().getTime()));
-            stmt.execute();
+            try {
+            	stmt.execute();
+            } catch(Exception e) {
+	        	Util.warn(e);
+            	continue;
+            }
         }
 
         Util.logAction(input.size(), "storeResourceInfo");
@@ -685,7 +745,12 @@ public class ProjectPersistence extends DatabaseUtils {
             stmt.setDate(i++, new Date(table.getCreateDate().getTime()));
             stmt.setString(i++, table.getModifyUser());
             stmt.setDate(i++, new Date(table.getModifyDate().getTime()));
-            stmt.execute();            
+            try {
+            	stmt.execute();
+            } catch(Exception e) {
+	        	Util.warn(e);
+            	continue;
+            }
         }
 
         Util.logAction(input.size(), "storeResource");
@@ -719,7 +784,12 @@ public class ProjectPersistence extends DatabaseUtils {
             stmt.setDate(i++, new Date(table.getCreateDate().getTime()));
             stmt.setString(i++, table.getModifyUser());
             stmt.setDate(i++, new Date(table.getModifyDate().getTime()));
-            stmt.execute();
+            try {
+            	stmt.execute();
+            } catch(Exception e) {
+	        	Util.warn(e);
+            	continue;
+            }
         }
         Util.logAction(input.size(), "storeProjectInfo");
 
@@ -753,7 +823,12 @@ public class ProjectPersistence extends DatabaseUtils {
             stmt.setDate(i++, new Date(table.getCreateDate().getTime()));
             stmt.setString(i++, table.getModifyUser());
             stmt.setDate(i++, new Date(table.getModifyDate().getTime()));
-            stmt.execute();
+            try {
+            	stmt.execute();
+            } catch(Exception e) {
+	        	Util.warn(e);
+            	continue;
+            }
         }
 
         Util.logAction(input.size(), "storeProjectAudit");
