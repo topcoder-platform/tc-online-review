@@ -166,7 +166,7 @@ public class ProjectLoader {
     private void prepareModifyReasons(ProjectOld project) throws SQLException {
     	long startTime = Util.start("prepareModifyReasons");
         PreparedStatement stmt = conn.prepareStatement("SELECT modify_reason FROM " + ProjectOld.TABLE_NAME + " WHERE " +
-        		ProjectOld.PROJECT_ID_NAME + " = ?");
+        		ProjectOld.PROJECT_ID_NAME + " = ? and modify_reason is not null");
         stmt.setInt(1, project.getProjectId());
 
         ResultSet rs = stmt.executeQuery();
@@ -175,7 +175,7 @@ public class ProjectLoader {
         	project.addModifiyReason(rs.getString(ProjectOld.MODIFY_REASON_NAME));
         }
 
-		Util.logAction("prepareModifyReasons", startTime);
+		Util.logAction(project.getModifiyReasons().size(), "prepareModifyReasons", startTime);
         DatabaseUtils.closeResultSetSilently(rs);
         DatabaseUtils.closeStatementSilently(stmt);    	
     }
@@ -426,7 +426,7 @@ public class ProjectLoader {
             project.addRUserRole(table);
         }
 
-		Util.logAction("prepareRUserRoles", startTime);
+		Util.logAction(project.getRUserRoles().size(), "prepareRUserRoles", startTime);
         DatabaseUtils.closeResultSetSilently(rs);
         DatabaseUtils.closeStatementSilently(stmt);
     }
@@ -462,11 +462,11 @@ public class ProjectLoader {
             // Prepare screening results for every submission
             prepareScreeningResults(table);
             if (table.isCurVersion()) {
-            	prepareScorecards(table);
+            	prepareScorecards(project, table);
             }
         }
 
-		Util.logAction("prepareSubmissions", startTime);
+		Util.logAction(project.getSubmissions().size(), "prepareSubmissions", startTime);
         DatabaseUtils.closeResultSetSilently(rs);
         DatabaseUtils.closeStatementSilently(stmt);
     }
@@ -496,7 +496,7 @@ public class ProjectLoader {
             project.addTestcase(table);
         }
 
-		Util.logAction("prepareTestcases", startTime);
+		Util.logAction(project.getTestcases().size(), "prepareTestcases", startTime);
         DatabaseUtils.closeResultSetSilently(rs);
         DatabaseUtils.closeStatementSilently(stmt);
     }
@@ -526,7 +526,7 @@ public class ProjectLoader {
             submission.addScreeningResults(table);
         }
 
-		Util.logAction("prepareScreeningResults", startTime);
+		Util.logAction(submission.getScreeningResults().size(), "prepareScreeningResults", startTime);
         DatabaseUtils.closeResultSetSilently(rs);
         DatabaseUtils.closeStatementSilently(stmt);
     }
@@ -560,7 +560,7 @@ public class ProjectLoader {
             project.addProjectResult(table);
         }
 
-		Util.logAction("prepareProjectResults", startTime);
+		Util.logAction(project.getProjectResults().size(), "prepareProjectResults", startTime);
         DatabaseUtils.closeResultSetSilently(rs);
         DatabaseUtils.closeStatementSilently(stmt);
     }
@@ -618,7 +618,7 @@ public class ProjectLoader {
             project.addRboardApplication(table);
         }
 
-		Util.logAction("prepareRboardApplications", startTime);
+		Util.logAction(project.getRboardApplications().size(), "prepareRboardApplications", startTime);
         DatabaseUtils.closeResultSetSilently(rs);
         DatabaseUtils.closeStatementSilently(stmt);
     }
@@ -630,7 +630,7 @@ public class ProjectLoader {
      *
      * @throws SQLException if error occurs while execute sql statement
      */
-    private void prepareScorecards(SubmissionOld parent)
+    private void prepareScorecards(ProjectOld project, SubmissionOld parent)
         throws SQLException {
     	long startTime = Util.start("prepareScorecards");
         PreparedStatement stmt = conn.prepareStatement("SELECT * FROM " + ScorecardOld.TABLE_NAME + " WHERE " +
@@ -653,12 +653,12 @@ public class ProjectLoader {
             table.setScorecardType(scorecardType);
             
             // prepare scorecard question
-            prepareScorecardQuestions(table);
+            prepareScorecardQuestions(project, table);
             
             parent.addScorecard(table);
         }
 
-		Util.logAction("prepareScorecards", startTime);
+		Util.logAction(parent.getScorecards().size(), "prepareScorecards", startTime);
         DatabaseUtils.closeResultSetSilently(rs);
         DatabaseUtils.closeStatementSilently(stmt);
     }
@@ -670,7 +670,7 @@ public class ProjectLoader {
      *
      * @throws SQLException if error occurs while execute sql statement
      */
-    private void prepareScorecardQuestions(ScorecardOld scorecard)
+    private void prepareScorecardQuestions(ProjectOld project, ScorecardOld scorecard)
         throws SQLException {
     	long startTime = Util.start("prepareScorecardQuestions");
         PreparedStatement stmt = conn.prepareStatement("SELECT * FROM " + ScorecardQuestion.TABLE_NAME + " WHERE " +
@@ -695,11 +695,11 @@ public class ProjectLoader {
                 	continue;
                 }
             }
-            prepareSubjectiveResp(table, scorecard.getScorecardType());
+            prepareSubjectiveResp(project, table, scorecard.getScorecardType());
             prepareAppeal(table);
         }
 
-		Util.logAction("prepareScorecardQuestions", startTime);
+		Util.logAction(scorecard.getScorecardQuestions().size(), "prepareScorecardQuestions", startTime);
         DatabaseUtils.closeResultSetSilently(rs);
         DatabaseUtils.closeStatementSilently(stmt);
     }
@@ -728,7 +728,7 @@ public class ProjectLoader {
             question.addTestcaseQuestion(table);
         }
 
-		Util.logAction("prepareTestcaseQuestion", startTime);
+		Util.logAction(question.getTestcaseQuestions().size(), "prepareTestcaseQuestion", startTime);
         DatabaseUtils.closeResultSetSilently(rs);
         DatabaseUtils.closeStatementSilently(stmt);
     }
@@ -740,7 +740,7 @@ public class ProjectLoader {
      *
      * @throws SQLException if error occurs while execute sql statement
      */
-    private void prepareSubjectiveResp(ScorecardQuestion question, int scorecardType)
+    private void prepareSubjectiveResp(ProjectOld project, ScorecardQuestion question, int scorecardType)
         throws SQLException {
     	long startTime = Util.start("prepareSubjectiveResp");
         PreparedStatement stmt = conn.prepareStatement("SELECT * FROM " + SubjectiveResp.TABLE_NAME + " WHERE " +
@@ -760,11 +760,11 @@ public class ProjectLoader {
             // prepare agg_response
             if (scorecardType == 2) {
             	// Only care for agg response while it's review scorecard
-            	prepareAggResponse(table);
+            	prepareAggResponse(project, table);
             }
         }
 
-		Util.logAction("prepareSubjectiveResp", startTime);
+		Util.logAction(question.getSubjectiveResps().size(), "prepareSubjectiveResp", startTime);
         DatabaseUtils.closeResultSetSilently(rs);
         DatabaseUtils.closeStatementSilently(stmt);
     }
@@ -800,7 +800,7 @@ public class ProjectLoader {
             question.addAppeal(table);
         }
 
-		Util.logAction("prepareAppeal", startTime);
+		Util.logAction(question.getAppeals().size(), "prepareAppeal", startTime);
         DatabaseUtils.closeResultSetSilently(rs);
         DatabaseUtils.closeStatementSilently(stmt);
     }
@@ -831,6 +831,7 @@ public class ProjectLoader {
             prepareAggReview(table);
             // prepare final_review
             prepareFinalReview(table);
+            prepareAggResponse(table);
 
             project.setAggWorksheet(table);
         }
@@ -847,28 +848,45 @@ public class ProjectLoader {
      *
      * @throws SQLException if error occurs while execute sql statement
      */
-    private void prepareAggResponse(SubjectiveResp parent)
+    private void prepareAggResponse(ProjectOld old, SubjectiveResp parent)
+        throws SQLException {
+    	try {
+    		parent.setAggResponse(old.getAggWorksheet().getAggResponse(parent.getSubjectiveRespId()));
+    	} catch(Exception e) {
+    		Util.warn(e);
+    	}
+    }
+
+    /**
+     * Prepare AggResponse for given scorecard.
+     *
+     * @param parent the project
+     *
+     * @throws SQLException if error occurs while execute sql statement
+     */
+    private void prepareAggResponse(AggWorksheet parent)
         throws SQLException {
     	long startTime = Util.start("prepareAggResponse");
         PreparedStatement stmt = conn.prepareStatement("SELECT * FROM " + AggResponse.TABLE_NAME + " WHERE " +
-        		AggResponse.SUBJECTIVE_RESP_ID_NAME + " = ? and cur_version = 1");
-        stmt.setInt(1, parent.getSubjectiveRespId());
+        		AggResponse.AGG_WORKSHEET_ID_NAME + " = ? and cur_version = 1");
+        stmt.setInt(1, parent.getAggWorksheetId());
 
         ResultSet rs = stmt.executeQuery();
 
-        if(rs.next()) {
+        while(rs.next()) {
             AggResponse table = new AggResponse();
             table.setResponseText(rs.getString(AggResponse.RESPONSE_TEXT_NAME));
             table.setAggRespStatId(rs.getInt(AggResponse.AGG_RESP_STAT_ID_NAME));
             table.setAggResponseId(rs.getInt(AggResponse.AGG_RESPONSE_ID_NAME));
+            table.setSubjectiveRespId(rs.getInt(AggResponse.SUBJECTIVE_RESP_ID_NAME));
             // add AggResponse to aggWorksheet
-            parent.setAggResponse(table);
-            
+            parent.addAggResponse(table);
+
             // Prepare prepareFixItem
             prepareFixItem(table);
         }
 
-		Util.logAction("prepareAggResponse", startTime);
+		Util.logAction(parent.getAggResponses().size(), "prepareAggResponse", startTime);
         DatabaseUtils.closeResultSetSilently(rs);
         DatabaseUtils.closeStatementSilently(stmt);
     }
@@ -951,7 +969,7 @@ public class ProjectLoader {
     		// this response does not accept the subjective resp
     		return;
     	}
-        PreparedStatement stmt = conn.prepareStatement("SELECT * FROM " + FixItem.TABLE_NAME + " WHERE " +
+        PreparedStatement stmt = conn.prepareStatement("SELECT final_fix_s_id FROM " + FixItem.TABLE_NAME + " WHERE " +
         		AggResponse.AGG_RESPONSE_ID_NAME + " = ? and cur_version = 1");
         stmt.setInt(1, parent.getAggResponseId());
 

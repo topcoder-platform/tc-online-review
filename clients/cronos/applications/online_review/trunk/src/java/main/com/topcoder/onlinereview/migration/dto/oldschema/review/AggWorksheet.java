@@ -5,6 +5,8 @@ package com.topcoder.onlinereview.migration.dto.oldschema.review;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * The AggWorksheet dto.
@@ -31,6 +33,7 @@ public class AggWorksheet {
     private int aggregatorId;
     private boolean isCompleted;
     private Collection aggReviews = new ArrayList();
+    private Map aggResponses = new HashMap(); 
     private FinalReview finalReview;
 
     /**
@@ -111,10 +114,6 @@ public class AggWorksheet {
      * @param aggReview The aggReview to add.
      */
     public void addAggReview(AggReview aggReview) {
-        if (this.aggReviews == null) {
-            this.aggReviews = new ArrayList();
-        }
-
         aggReviews.add(aggReview);
     }
 
@@ -134,5 +133,27 @@ public class AggWorksheet {
      */
     public void setFinalReview(FinalReview finalReview) {
         this.finalReview = finalReview;
+    }
+
+    /**
+     * Returns the aggResponses.
+     *
+     * @return Returns the aggResponses.
+     */
+    public Collection getAggResponses() {
+        return aggResponses.keySet();
+    }
+
+    /**
+     * add the aggResponse.
+     *
+     * @param aggResponse The aggResponse to add.
+     */
+    public void addAggResponse(AggResponse aggResponse) {
+    	this.aggResponses.put(String.valueOf(aggResponse.getSubjectiveRespId()), aggResponse);
+    }
+    
+    public AggResponse getAggResponse(int subjectiveRespId) {
+    	return (AggResponse) this.aggResponses.get(String.valueOf(subjectiveRespId));
     }
 }

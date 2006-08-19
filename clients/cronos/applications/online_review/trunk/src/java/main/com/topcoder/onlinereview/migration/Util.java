@@ -41,18 +41,18 @@ public class Util {
 	}
 
 	public static void logAction(int count, String action, long startTime) {
-		Util.debug(action + " " + count + " records in " + (System.currentTimeMillis() - startTime) / 1000 + " seconds");
+		Util.debug(action + " " + count + " records in " + (System.currentTimeMillis() - startTime)  + " mill seconds");
 	}
 
 	public static void logMainAction(int count, String action, long startTime) {
-		Util.info(action + " " + count + " records in " + (System.currentTimeMillis() - startTime) / 1000 + " seconds");
+		Util.info(action + " " + count + " records in " + (System.currentTimeMillis() - startTime)  + " mill seconds");
 	}
 
 	public static void logAction(String action, long startTime) {
-		Util.debug(action + " in " + (System.currentTimeMillis() - startTime) / 1000 + " seconds");
+		Util.debug(action + " in " + (System.currentTimeMillis() - startTime)  + " mill seconds");
 	}
 
 	public static void logMainAction(String action, long startTime) {
-		Util.info(action + " in " + (System.currentTimeMillis() - startTime) / 1000 + " seconds");
+		Util.info(action + " in " + (System.currentTimeMillis() - startTime)  + " mill seconds");
 	}
 }
