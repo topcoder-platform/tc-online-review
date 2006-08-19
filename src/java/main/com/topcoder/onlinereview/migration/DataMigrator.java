@@ -150,12 +150,23 @@ public class DataMigrator {
      * @throws SQLException if error occurs while load or store data
      */
     public void migrateProject() throws Exception {
-    	long startTime = Util.startMain("migrateProject");
         // Load all project ids
         List input = projectLoader.loadProjectIds();
         
         // Remove migrated project
         input.removeAll(MapUtil.getMigratedProjectIds());
+        
+        migrateProject(input);
+    }
+
+    /**
+     * Migrate Project/ProjectAudit data.
+     *
+     * @throws IDGenerationException if error occurs while generate id
+     * @throws SQLException if error occurs while load or store data
+     */
+    public void migrateProject(List input) throws Exception {
+    	long startTime = Util.startMain("migrateProject");
         
         for (Iterator iter = input.iterator(); iter.hasNext();) {
         	int projectId = Integer.parseInt(iter.next().toString());
@@ -172,8 +183,7 @@ public class DataMigrator {
         		Util.warn("Failed to migrate project, projectId: " + projectId);
         	}
         }
-
-		Util.logMainAction(input.size(), "migrateProject", startTime);
+		Util.logMainAction("migrateProject", startTime);
     }
 
     /**

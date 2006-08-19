@@ -1,36 +1,36 @@
-select count(*) project from project where cur_version = 1;
-select count(*) project_template from project_template;
-select count(*) scorecard from scorecard where cur_version = 1;
+--select count(*) project from project where cur_version = 1;
+--select count(*) project_template from project_template;
+--select count(*) scorecard from scorecard where cur_version = 1;
 
-select count(*) submission from submission where cur_version = 1;
-select count(*) testcases from testcases where cur_version = 1;
+--select count(*) submission from submission where cur_version = 1;
+--select count(*) testcases from testcases where cur_version = 1;
 
-select count(*) phase_instance from phase_instance where cur_version = 1;
+--select count(*) phase_instance from phase_instance where cur_version = 1;
 
-select count(*) comp_catalog from comp_catalog;
-select count(*) comp_forum_xref from comp_forum_xref;
-select count(*) comp_version_dates from comp_version_dates;
-select count(*) comp_versions from comp_versions;
+--select count(*) comp_catalog from comp_catalog;
+--select count(*) comp_forum_xref from comp_forum_xref;
+--select count(*) comp_version_dates from comp_version_dates;
+--select count(*) comp_versions from comp_versions;
 
-select count(*) project_result from project_result;
-select count(*) payment_info from payment_info where cur_version = 1;
-select count(*) rboard_application from rboard_application;
-select count(*) r_user_role from r_user_role where cur_version = 1;
+--select count(*) project_result from project_result;
+--select count(*) payment_info from payment_info where cur_version = 1;
+--select count(*) rboard_application from rboard_application;
+--select count(*) r_user_role from r_user_role where cur_version = 1;
 
-select count(*) agg_response from agg_response where cur_version = 1;
-select count(*) agg_review from agg_review where cur_version = 1;
-select count(*) agg_worksheet from agg_worksheet where cur_version = 1;
-select count(*) appeal from appeal where cur_version = 1;
-select count(*) final_review from final_review where cur_version = 1;
-select count(*) fix_item from fix_item where cur_version = 1;
-select count(*) scorecard_question from scorecard_question where cur_version = 1;
-select count(*) subjective_resp from subjective_resp where cur_version = 1;
-select count(*) testcase_question from testcase_question where cur_version = 1;
+--select count(*) agg_response from agg_response where cur_version = 1;
+--select count(*) agg_review from agg_review where cur_version = 1;
+--select count(*) agg_worksheet from agg_worksheet where cur_version = 1;
+--select count(*) appeal from appeal where cur_version = 1;
+--select count(*) final_review from final_review where cur_version = 1;
+--select count(*) fix_item from fix_item where cur_version = 1;
+--select count(*) scorecard_question from scorecard_question where cur_version = 1;
+--select count(*) subjective_resp from subjective_resp where cur_version = 1;
+--select count(*) testcase_question from testcase_question where cur_version = 1;
 
-select count(*) screening_results from screening_results;
+--select count(*) screening_results from screening_results;
 
 --select *  from scorecard where cur_version = 1 and project_id = 12034917;
---select *  from agg_worksheet where cur_version = 1 and project_id = 12034917;
+select *  from agg_worksheet where cur_version = 1 and project_id = 20186915;
 --select *  from agg_review where cur_version = 1 and agg_worksheet_id = 13359224 ;
 --select *  from final_review where cur_version = 1 and agg_worksheet_id = 13359224 ;
 --select agg_response_id,subjective_resp_id,agg_resp_stat_id,agg_worksheet_id  from agg_response where cur_version = 1 and agg_worksheet_id = 13359224 ;
@@ -60,3 +60,5 @@ select count(*) screening_results from screening_results;
 
 --select distinct old_reliability from project_result;
 --select distinct handle_lower from user;
+
+--select * from categories

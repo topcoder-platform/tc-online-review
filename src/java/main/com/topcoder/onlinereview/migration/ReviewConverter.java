@@ -253,12 +253,12 @@ public class ReviewConverter extends MapUtil {
     			ReviewItemComment copy = copyReviewItemComment(worksheetItem, ric);
     			ric = prepareAggResponseReviewItemComment(worksheetItem, ar, resp);
 
-	    		FixItem ff = resp.getAggResponse().getFixItem();
+	    		FixItem ff = ar.getFixItem();
 	    		if (finalReviewItem != null && ff != null) {
 	    			// copy subjective and agg_resp
 	    			copyReviewItemComment(finalReviewItem, copy);
 	    			copyReviewItemComment(finalReviewItem, ric);
-	    			prepareFixItemReviewItemComment(finalReviewItem, ff, getContent(resp.getAggResponse(), resp), getCommentTypeIdByRespId(resp.getResponseTypeId()));
+	    			prepareFixItemReviewItemComment(finalReviewItem, ff, getContent(ar, resp), getCommentTypeIdByRespId(resp.getResponseTypeId()));
 	    		}
     		}
     	}

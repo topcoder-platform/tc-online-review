@@ -106,6 +106,7 @@
     <property name="Create.file" value="${sql.home}/Create.sql" />
     <property name="Lookups.file" value="${sql.home}/Lookups.sql" />
     <property name="Sequences.file" value="${sql.home}/Sequences.sql" />
+    <property name="query_new_test.file" value="${sql.home}/query_new_test.sql" />
     <property name="query.file" value="${sql.home}/query.sql" />
     <property name="query_old.file" value="${sql.home}/query_old.sql" />
     <property name="init_projects.file" value="${sql.home}/init_projects.sql" />
@@ -223,6 +224,10 @@
 		<orm-execute-old-sql-script scriptfile="${query_old.file}" />
 	</target>
 
+	<target name="db.query_test">
+		<orm-execute-sql-script scriptfile="${query_new_test.file}" />
+	</target>
+
 	<target name="db.new_query">
 		<orm-execute-sql-script scriptfile="${query.file}" />
 	</target>
@@ -252,6 +257,13 @@
     <target name="migrate" depends="compile_tests">
     	<java classname="${package}.MigratorCommandLine" fork="true" output="${testlogdir}/migrate.log">
     		<arg line="-config test_files/data_migration.xml -process scorecard,project" />
+            <classpath refid="test.build.classpath"/>
+    	</java>
+    </target>
+	
+    <target name="migrate_ids" depends="compile_tests">
+    	<java classname="${package}.MigratorCommandLine" fork="true" output="${testlogdir}/migrate.log">
+    		<arg line="-config test_files/data_migration.xml -process specificed -ids 20186915" />
             <classpath refid="test.build.classpath"/>
     	</java>
     </target>

@@ -60,6 +60,10 @@ public class MigratorCommandLine {
         cmdLineUtil.addSwitch(new Switch("process", false, 1, -1, null,
                 "The configuration process to indicates which migration processes should executed"));
 
+        // Add the "namespace" switch to the command-line utility.
+        cmdLineUtil.addSwitch(new Switch("ids", false, 1, -1, null,
+                "The configuration process to indicates which migration processes should executed"));
+
         // Parse the command-line arguments.
         try {
             cmdLineUtil.parse(args);
@@ -99,6 +103,10 @@ public class MigratorCommandLine {
                     	migrator.migrateProject();
                     } else if ("scorecard".equals(process)) {
                     	migrator.migrateScorecard();
+                    } else if ("specificed".equals(process)) {
+                        Switch idsSwitch = cmdLineUtil.getSwitch("ids");
+                        List ids = idsSwitch.getValues();
+                        migrator.migrateProject(ids);
                     }
                 }
             } else {

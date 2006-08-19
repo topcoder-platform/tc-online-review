@@ -3,9 +3,6 @@
  */
 package com.topcoder.onlinereview.migration.dto.oldschema.review;
 
-import java.util.ArrayList;
-import java.util.Collection;
-
 /**
  * The AggResponse dto.
  *
@@ -27,10 +24,14 @@ public class AggResponse {
 
     /** Represents agg_resp_stat_id field name. */
     public static final String AGG_RESP_STAT_ID_NAME = "agg_resp_stat_id";
+    
+    public static final String AGG_WORKSHEET_ID_NAME = "agg_worksheet_id";
+    
     private String responseText;
     private int aggRespStatId;
     private int aggResponseId;
     private FixItem fixItem = null;
+    private int subjectiveRespId;
 
     /**
      * Returns the aggRespStatId.
@@ -99,4 +100,22 @@ public class AggResponse {
 	public void setAggResponseId(int aggResponseId) {
 		this.aggResponseId = aggResponseId;
 	}
+
+    /**
+     * Returns the subjectiveRespId.
+     *
+     * @return Returns the subjectiveRespId.
+     */
+    public int getSubjectiveRespId() {
+        return subjectiveRespId;
+    }
+
+    /**
+     * Set the subjectiveRespId.
+     *
+     * @param subjectiveRespId The subjectiveRespId to set.
+     */
+    public void setSubjectiveRespId(int subjectiveRespId) {
+        this.subjectiveRespId = subjectiveRespId;
+    }
 }

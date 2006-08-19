@@ -594,8 +594,8 @@ public class ProjectOld {
      * @param modifiyReason The modifiyReason to add.
      */
     public void addModifiyReason(String modifiyReason) {
-        if (this.modifiyReasons == null) {
-            this.modifiyReasons = new ArrayList();
+        if (modifiyReason == null) {
+            return;
         }
 
         modifiyReasons.add(modifiyReason);
