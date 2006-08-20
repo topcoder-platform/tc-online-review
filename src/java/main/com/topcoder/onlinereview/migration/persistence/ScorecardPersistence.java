@@ -3,6 +3,7 @@
  */
 package com.topcoder.onlinereview.migration.persistence;
 
+import com.topcoder.onlinereview.migration.DataMigrator;
 import com.topcoder.onlinereview.migration.DatabaseUtils;
 import com.topcoder.onlinereview.migration.Util;
 import com.topcoder.onlinereview.migration.dto.newschema.scorecard.Scorecard;
@@ -10,7 +11,6 @@ import com.topcoder.onlinereview.migration.dto.newschema.scorecard.ScorecardGrou
 import com.topcoder.onlinereview.migration.dto.newschema.scorecard.ScorecardQuestionNew;
 import com.topcoder.onlinereview.migration.dto.newschema.scorecard.ScorecardSectionNew;
 
-import java.sql.Connection;
 import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -26,15 +26,15 @@ import java.util.List;
  * @version 1.0
  */
 public class ScorecardPersistence extends DatabaseUtils {
-    private Connection conn = null;
+	private DataMigrator migrator = null;
 
     /**
      * Creates a new Persistence object.
      *
      * @param conn the connection to persist data
      */
-    public ScorecardPersistence(Connection conn) {
-        this.conn = conn;
+    public ScorecardPersistence(DataMigrator migrator) {
+        this.migrator = migrator;
     }
 
     /**
@@ -44,7 +44,7 @@ public class ScorecardPersistence extends DatabaseUtils {
      *
      * @throws SQLException if error occurs while execute sql statement
      */
-    public void storeScorecard(List input) throws SQLException {
+    public void storeScorecard(List input) throws Exception {
     	long startTime = Util.startMain("storeScorecard");
         String[] fieldnames = {
                 "scorecard_id", "scorecard_status_id", "scorecard_type_id", "project_category_id", "name", "version",
@@ -52,7 +52,7 @@ public class ScorecardPersistence extends DatabaseUtils {
             };
 
         // store scorecard data to new online review schema
-        PreparedStatement stmt = conn.prepareStatement(makeInsertSql(Scorecard.TABLE_NAME, fieldnames));
+        PreparedStatement stmt = migrator.getPersistenceConnection().prepareStatement(makeInsertSql(Scorecard.TABLE_NAME, fieldnames));
 
         for (Iterator iter = input.iterator(); iter.hasNext();) {
             Scorecard table = (Scorecard) iter.next();
@@ -82,9 +82,9 @@ public class ScorecardPersistence extends DatabaseUtils {
      *
      * @param input the scorecard data
      *
-     * @throws SQLException if error occurs while execute sql statement
+     * @throws Exception if error occurs while execute sql statement
      */
-    void storeScorecardGroup(Collection input) throws SQLException {
+    void storeScorecardGroup(Collection input) throws Exception {
     	long startTime = Util.start("storeScorecardGroup");
         String[] fieldnames = {
                 "scorecard_group_id", "scorecard_id", "name", "weight", "sort", "create_user", "create_date",
@@ -92,7 +92,7 @@ public class ScorecardPersistence extends DatabaseUtils {
             };
 
         // store scorecard data to new online review schema
-        PreparedStatement stmt = conn.prepareStatement(makeInsertSql(ScorecardGroup.TABLE_NAME, fieldnames));
+        PreparedStatement stmt = migrator.getPersistenceConnection().prepareStatement(makeInsertSql(ScorecardGroup.TABLE_NAME, fieldnames));
 
         for (Iterator iter = input.iterator(); iter.hasNext();) {
             ScorecardGroup table = (ScorecardGroup) iter.next();
@@ -119,9 +119,9 @@ public class ScorecardPersistence extends DatabaseUtils {
      *
      * @param input the ScorecardSection data
      *
-     * @throws SQLException if error occurs while execute sql statement
+     * @throws Exception if error occurs while execute sql statement
      */
-    void storeScorecardSection(Collection input) throws SQLException {
+    void storeScorecardSection(Collection input) throws Exception {
     	long startTime = Util.start("storeScorecardSection");
         String[] fieldnames = {
                 "scorecard_section_id", "scorecard_group_id", "name", "weight", "sort", "create_user", "create_date",
@@ -129,7 +129,7 @@ public class ScorecardPersistence extends DatabaseUtils {
             };
 
         // store ScorecardSection data to new online review schema
-        PreparedStatement stmt = conn.prepareStatement(makeInsertSql(ScorecardSectionNew.TABLE_NAME, fieldnames));
+        PreparedStatement stmt = migrator.getPersistenceConnection().prepareStatement(makeInsertSql(ScorecardSectionNew.TABLE_NAME, fieldnames));
 
         for (Iterator iter = input.iterator(); iter.hasNext();) {
             ScorecardSectionNew table = (ScorecardSectionNew) iter.next();
@@ -156,9 +156,9 @@ public class ScorecardPersistence extends DatabaseUtils {
      *
      * @param input the ScorecardQuestion data
      *
-     * @throws SQLException if error occurs while execute sql statement
+     * @throws Exception if error occurs while execute sql statement
      */
-    void storeScorecardQuestion(Collection input) throws SQLException {
+    void storeScorecardQuestion(Collection input) throws Exception {
     	long startTime = Util.start("storeScorecardQuestion");
         String[] fieldnames = {
                 "scorecard_question_id", "scorecard_question_type_id", "scorecard_section_id", "description",
@@ -167,7 +167,7 @@ public class ScorecardPersistence extends DatabaseUtils {
             };
 
         // store ScorecardQuestion data to new online review schema
-        PreparedStatement stmt = conn.prepareStatement(makeInsertSql(ScorecardQuestionNew.TABLE_NAME, fieldnames));
+        PreparedStatement stmt = migrator.getPersistenceConnection().prepareStatement(makeInsertSql(ScorecardQuestionNew.TABLE_NAME, fieldnames));
 
         for (Iterator iter = input.iterator(); iter.hasNext();) {
             ScorecardQuestionNew table = (ScorecardQuestionNew) iter.next();

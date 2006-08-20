@@ -3,7 +3,6 @@
  */
 package com.topcoder.onlinereview.migration;
 
-import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -25,15 +24,15 @@ import com.topcoder.util.log.LogFactory;
  * @version 1.0
  */
 public class ScorecardLoader {
-	private Connection conn = null;
+	private DataMigrator migrator = null;
 
     /**
      * Creates a new Loader object.
      *
      * @param conn the connection to persist data
      */
-	public ScorecardLoader(Connection conn) {
-		this.conn = conn;
+	public ScorecardLoader(DataMigrator migrator) {
+        this.migrator = migrator;
 	}
 
     /**
@@ -45,10 +44,10 @@ public class ScorecardLoader {
      *
      * @throws SQLException if error occurs while execute sql statement
      */
-    private List loadScorecardSection(int templateId, int groupId) throws SQLException {
+    private List loadScorecardSection(int templateId, int groupId) throws Exception {
     	long startTime = Util.start("loadScorecardSection");
         // load ScorecardSection table from old online review
-        PreparedStatement stmt = conn.prepareStatement("SELECT * FROM " + ScorecardSectionOld.TABLE_NAME +
+        PreparedStatement stmt = migrator.getLoaderConnection().prepareStatement("SELECT * FROM " + ScorecardSectionOld.TABLE_NAME +
         		" WHERE template_id = ? AND group_id = ?");
         stmt.setInt(1, templateId);
         stmt.setInt(2, groupId);
@@ -78,13 +77,13 @@ public class ScorecardLoader {
      *
      * @return the loaded scorecard data
      *
-     * @throws SQLException if error occurs while execute sql statement
+     * @throws Exception if error occurs while execute sql statement
      */
-    public List loadScorecardTemplate() throws SQLException {
+    public List loadScorecardTemplate() throws Exception {
     	long startTime = Util.startMain("loadScorecardTemplate");
 
         // load scorecard template table from old online review
-        Statement stmt = conn.createStatement();
+        Statement stmt = migrator.getLoaderConnection().createStatement();
         if (DatabaseUtils.IS_TEST) {
         	// For test purpose, just fetch 10
             stmt.setFetchSize(10);
@@ -123,12 +122,12 @@ public class ScorecardLoader {
      * @param templateId the scorecard template id
      * @return the loaded ScSectionGroup data
      *
-     * @throws SQLException if error occurs while execute sql statement
+     * @throws Exception if error occurs while execute sql statement
      */
-    private List loadScSectionGroup(int templateId) throws SQLException {
+    private List loadScSectionGroup(int templateId) throws Exception {
     	long startTime = Util.start("loadScSectionGroup");
         // load ScSectionGroup table from old online review
-        PreparedStatement stmt = conn.prepareStatement("SELECT * FROM " + ScSectionGroup.TABLE_NAME +
+        PreparedStatement stmt = migrator.getLoaderConnection().prepareStatement("SELECT * FROM " + ScSectionGroup.TABLE_NAME +
 					" WHERE template_id = ?");
         stmt.setInt(1, templateId);
 
@@ -159,12 +158,12 @@ public class ScorecardLoader {
      * @param sectionId the scorecard section id
      * @return the loaded ScSectionGroup data
      *
-     * @throws SQLException if error occurs while execute sql statement
+     * @throws Exception if error occurs while execute sql statement
      */
-    private List loadQuestionTemplate(int templateId, int sectionId) throws SQLException {
+    private List loadQuestionTemplate(int templateId, int sectionId) throws Exception {
     	long startTime = Util.start("loadQuestionTemplate");
         // load QuestionTemplate table from old online review
-        PreparedStatement stmt = conn.prepareStatement("SELECT * FROM " + QuestionTemplate.TABLE_NAME +
+        PreparedStatement stmt = migrator.getLoaderConnection().prepareStatement("SELECT * FROM " + QuestionTemplate.TABLE_NAME +
 				" WHERE cur_version = 1 and template_id = ? AND section_id = ?");
 		stmt.setInt(1, templateId);
 		stmt.setInt(2, sectionId);

@@ -85,6 +85,10 @@ public class ReviewConverter extends MapUtil {
     	review.setReviewId((int) reviewIdGenerator.getNextID());
     	review.setCommitted(scorecard.isCompleted());
     	review.setResourceId(getResourceId(project, scorecard.getAuthorId()));
+    	if (review.getResourceId() == 0) {
+    		// Not found
+    		log.log(Level.WARN, "AuthorId not found, AuthorId:" + scorecard.getAuthorId());
+    	}
     	review.setScore(scorecard.getScore());
     	review.setScorecardId(getScorecardId(scorecard.getTemplateId()));
     	review.setSubmissionId(submission.getSubmissionId());
@@ -110,6 +114,10 @@ public class ReviewConverter extends MapUtil {
     	worksheetReview.setReviewId((int) reviewIdGenerator.getNextID());
     	worksheetReview.setCommitted(aggWorksheet.isCompleted());
     	worksheetReview.setResourceId(MapUtil.getResourceId(project, aggWorksheet.getAggregatorId()));
+    	if (worksheetReview.getResourceId() == 0) {
+    		// Not found
+    		log.log(Level.WARN, "AggregatorId not found, AggregatorId:" + aggWorksheet.getAggregatorId());
+    	}
 
     	worksheetReview.setScore(getAggregatorScores(this.oldSubmission));
 
@@ -131,6 +139,9 @@ public class ReviewConverter extends MapUtil {
     		return;
     	}
     	prepareWorksheetReview();
+    	if (this.aggWorksheet.getFinalReview() == null) {
+    		return;
+    	}
     	prepareFinalReviewAndComent();
     }
 
@@ -218,7 +229,7 @@ public class ReviewConverter extends MapUtil {
     	review.addReviewItem(item);
     	
     	ReviewItem worksheetItem = null;
-    	if (!screening && question.hasAggResponse()) {
+    	if (!screening && question.hasAggResponse() && this.worksheetReview != null) {
     		this.worksheetReview.setScorecardId(review.getScorecardId());
     		worksheetItem = new ReviewItem();
     		worksheetItem.setReviewId(this.worksheetReview.getReviewId());    	
@@ -230,7 +241,7 @@ public class ReviewConverter extends MapUtil {
     	}
 
     	ReviewItem finalReviewItem = null;
-    	if (worksheetItem != null && question.hasFinalFix()) {    		
+    	if (worksheetItem != null && question.hasFinalFix() && this.finalReview != null) {    		
     		// copy to final review
     		this.finalReview.setScorecardId(worksheetReview.getScorecardId());
     		finalReviewItem = new ReviewItem();

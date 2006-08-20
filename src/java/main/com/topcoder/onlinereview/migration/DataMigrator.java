@@ -7,12 +7,13 @@ import com.topcoder.db.connectionfactory.ConfigurationException;
 import com.topcoder.db.connectionfactory.DBConnectionFactory;
 import com.topcoder.db.connectionfactory.DBConnectionFactoryImpl;
 import com.topcoder.db.connectionfactory.UnknownConnectionException;
+
 import com.topcoder.onlinereview.migration.dto.newschema.project.ProjectNew;
 import com.topcoder.onlinereview.migration.dto.oldschema.ProjectOld;
 import com.topcoder.onlinereview.migration.persistence.ProjectPersistence;
 import com.topcoder.onlinereview.migration.persistence.ScorecardPersistence;
+
 import com.topcoder.util.config.ConfigManager;
-import com.topcoder.util.idgenerator.IDGenerationException;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -28,7 +29,10 @@ import java.util.List;
  * @version 1.0
  */
 public class DataMigrator {
-	public static final String NAMESPACE = DataMigrator.class.getName();
+    /**
+     * The namespace for migration.
+     */
+    public static final String NAMESPACE = DataMigrator.class.getName();
     private Connection loaderConn = null;
     private Connection persistConn = null;
     private ScorecardLoader scorecardLoader = null;
@@ -37,6 +41,8 @@ public class DataMigrator {
     private ProjectPersistence projectPersistence = null;
     private ScorecardTransformer scorecardTransformer = null;
     private ProjectTransformer projectTransformer = null;
+    private String loaderConnName = "tcs_catalog_old";
+    private String persistConnName = "tcs_catalog_new";
 
     /**
      * Creates a new DataMigrator object.
@@ -48,12 +54,26 @@ public class DataMigrator {
      */
     public DataMigrator(Connection loaderConn, Connection persistConn)
         throws Exception {
-		Util.info("Create DataMigrator with two connection");
-    	init(loaderConn, persistConn);
+        Util.info("Create DataMigrator with two connection");
+        init(loaderConn, persistConn);
+    }
+
+    /**
+     * Creates a new DataMigrator object.
+     *
+     * @throws Exception if error occurs
+     */
+    public DataMigrator() throws Exception {
+        Util.info("Create DataMigrator that load connection from config file");
+        loaderConnName = getString("loader_conn_name", loaderConnName);
+        persistConnName = getString("persist_conn_name", persistConnName);
+
+        DBConnectionFactory dbf = getDBConnectionFactory();
+        init(dbf.createConnection(loaderConnName), dbf.createConnection(persistConnName));
     }
 
     private void init(Connection loaderConn, Connection persistConn)
-    throws Exception {
+        throws Exception {
         this.loaderConn = loaderConn;
         this.persistConn = persistConn;
 
@@ -62,33 +82,66 @@ public class DataMigrator {
         this.projectTransformer = new ProjectTransformer();
 
         // Prepare loaders
-        this.projectLoader = new ProjectLoader(loaderConn);
-        this.scorecardLoader = new ScorecardLoader(loaderConn);
+        this.projectLoader = new ProjectLoader(this);
+        this.scorecardLoader = new ScorecardLoader(this);
 
         // Prepare persistences
-        this.scorecardPersistence = new ScorecardPersistence(persistConn);
-        this.projectPersistence = new ProjectPersistence(persistConn);    	
+        this.scorecardPersistence = new ScorecardPersistence(this);
+        this.projectPersistence = new ProjectPersistence(this);
     }
 
-    public DataMigrator() throws Exception {
-		Util.info("Create DataMigrator that load connection from config file");
-    	String loaderConnName = getString("loader_conn_name", "tcs_catalog_old");
-    	String persistConnName = getString("persist_conn_name", "tcs_catalog_new");
-    	DBConnectionFactory dbf = getDBConnectionFactory();
-    	init(dbf.createConnection(loaderConnName), dbf.createConnection(persistConnName));
+    /**
+     * Return loader connection.
+     *
+     * @return loader connection.
+     *
+     * @throws Exception if error occurs while create connection
+     */
+    public Connection getLoaderConnection() throws Exception {
+    	if (isIdle(this.loaderConn)) {
+            this.loaderConn = getDBConnectionFactory().createConnection(loaderConnName);
+        }
+
+        return loaderConn;
     }
 
-    private String getString(String propertyName, String defaultValue) throws Exception {
-    	ConfigManager cm = ConfigManager.getInstance();
-    	String value = cm.getString(NAMESPACE, propertyName);
-    	
-    	if (value == null || value.trim().length() == 0) {
-    		Util.info(propertyName + " not set, use default " + defaultValue);
-    		return defaultValue;
-    	} else {
-    		Util.info(propertyName + " is set, the value is " + value);
-    		return value;
-    	}
+    private static boolean isIdle(Connection conn) {
+    	try {
+			return conn == null || conn.isClosed();
+		} catch (SQLException e) {
+			return true;
+		}
+    }
+
+    /**
+     * Return persistence connection.
+     *
+     * @return persistence connection.
+     *
+     * @throws Exception if error occurs while create connection
+     */
+    public Connection getPersistenceConnection() throws Exception {
+    	if (isIdle(this.persistConn)) {
+            this.persistConn = getDBConnectionFactory().createConnection(persistConnName);
+        }
+
+        return persistConn;
+    }
+
+    private String getString(String propertyName, String defaultValue)
+        throws Exception {
+        ConfigManager cm = ConfigManager.getInstance();
+        String value = cm.getString(NAMESPACE, propertyName);
+
+        if ((value == null) || (value.trim().length() == 0)) {
+            Util.info(propertyName + " not set, use default " + defaultValue);
+
+            return defaultValue;
+        } else {
+            Util.info(propertyName + " is set, the value is " + value);
+
+            return value;
+        }
     }
 
     /**
@@ -103,24 +156,24 @@ public class DataMigrator {
         throws UnknownConnectionException, ConfigurationException {
         return new DBConnectionFactoryImpl(DBConnectionFactoryImpl.class.getName());
     }
-    
+
     /**
      * Migrate old online review data to new schema.
      *
      * @throws Exception if error occurs while load or store data
      */
     public void migrate() throws Exception {
-		Util.info("start migrate");
+        Util.info("start migrate");
         migrateScorecard();
         migrateProject();
-		Util.info("end migrate");
+        Util.info("end migrate");
     }
 
     /**
      * Release all resource.
      */
     public void close() {
-		Util.info("close connections");
+        Util.info("close connections");
         DatabaseUtils.closeSilently(loaderConn);
         DatabaseUtils.closeSilently(persistConn);
     }
@@ -131,7 +184,8 @@ public class DataMigrator {
      * @throws Exception if error occurs while load or store data
      */
     public void migrateScorecard() throws Exception {
-    	long startTime = Util.startMain("migrateScorecard");
+        long startTime = Util.startMain("migrateScorecard");
+
         // Load data
         List input = scorecardLoader.loadScorecardTemplate();
 
@@ -140,50 +194,53 @@ public class DataMigrator {
 
         // store data
         scorecardPersistence.storeScorecard(output);
-		Util.logMainAction(input.size(), "migrateScorecard", startTime);
+        Util.logMainAction(input.size(), "migrateScorecard", startTime);
     }
 
     /**
      * Migrate Project/ProjectAudit data.
      *
-     * @throws IDGenerationException if error occurs while generate id
-     * @throws SQLException if error occurs while load or store data
+     * @throws Exception if error occurs while generate id
      */
     public void migrateProject() throws Exception {
         // Load all project ids
         List input = projectLoader.loadProjectIds();
-        
+
         // Remove migrated project
         input.removeAll(MapUtil.getMigratedProjectIds());
-        
+
         migrateProject(input);
     }
 
     /**
      * Migrate Project/ProjectAudit data.
      *
-     * @throws IDGenerationException if error occurs while generate id
-     * @throws SQLException if error occurs while load or store data
+     * @param input project ids
+     *
+     * @throws Exception if error occurs while generate id
      */
     public void migrateProject(List input) throws Exception {
-    	long startTime = Util.startMain("migrateProject");
-        
+        long startTime = Util.startMain("migrateProject");
+
         for (Iterator iter = input.iterator(); iter.hasNext();) {
-        	int projectId = Integer.parseInt(iter.next().toString());
-        	try {
-	        	ProjectOld oldProject = projectLoader.loadProject(projectId);
-	        	ProjectNew newProject = projectTransformer.transformProject(oldProject);
-	        	if (projectPersistence.storeProject(newProject)) {
-	        		MapUtil.storeMigratedProjectId(oldProject.getProjectId(), newProject.getProjectId());
-	        	} else {
-	        		Util.warn("Failed to store project, project_id: " + oldProject.getProjectId());
-	        	}
-        	} catch(Exception e) {
-        		Util.warn(e);
-        		Util.warn("Failed to migrate project, projectId: " + projectId);
-        	}
+            int projectId = Integer.parseInt(iter.next().toString());
+
+            try {
+                ProjectOld oldProject = projectLoader.loadProject(projectId);
+                ProjectNew newProject = projectTransformer.transformProject(oldProject);
+
+                if (projectPersistence.storeProject(newProject)) {
+                    MapUtil.storeMigratedProjectId(oldProject.getProjectId(), newProject.getProjectId());
+                } else {
+                    Util.warn("Failed to store project, project_id: " + oldProject.getProjectId());
+                }
+            } catch (Exception e) {
+                Util.warn(e);
+                Util.warn("Failed to migrate project, projectId: " + projectId);
+            }
         }
-		Util.logMainAction("migrateProject", startTime);
+
+        Util.logMainAction("migrateProject", startTime);
     }
 
     /**

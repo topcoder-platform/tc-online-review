@@ -30,7 +30,7 @@
 --select count(*) screening_results from screening_results;
 
 --select *  from scorecard where cur_version = 1 and project_id = 12034917;
-select *  from agg_worksheet where cur_version = 1 and project_id = 20186915;
+--select *  from agg_worksheet where cur_version = 1 and project_id = 20186915;
 --select *  from agg_review where cur_version = 1 and agg_worksheet_id = 13359224 ;
 --select *  from final_review where cur_version = 1 and agg_worksheet_id = 13359224 ;
 --select agg_response_id,subjective_resp_id,agg_resp_stat_id,agg_worksheet_id  from agg_response where cur_version = 1 and agg_worksheet_id = 13359224 ;
@@ -39,10 +39,10 @@ select *  from agg_worksheet where cur_version = 1 and project_id = 20186915;
 
 -- select distinct question_id from subjective_resp where subjective_resp_id = 13273629;
 -- select distinct scorecard_id from scorecard_question where question_id=13273628;
---select * from submission where project_id = 12034917 and cur_version = 1;
---select *  from scorecard where cur_version = 1 and project_id = 12034917;
-
---select count(scorecard_id) tt, max(project_id)  from scorecard where cur_version = 1 and scorecard_type = 2 group by project_id having count(scorecard_id) > 1 order by tt;
+select submission_id, submission_date, project_id from submission where project_id = 7437797 and cur_version = 1;
+select scorecard_id, modify_date, project_id  from scorecard where cur_version = 1 and project_id = 7437797;
+select phase_instance_id,start_date,end_date,phase_id,project_id from phase_instance where cur_version = 1 and project_id = 7437797;
+--select count(scorecard_id) from scorecard where cur_version = 1 and scorecard_type = 2 ;
 --select * from project_result where project_id = 21816206;
 --select * from scorecard where cur_version = 1 and project_id = 21816206;
 --select * from submission where cur_version = 1 and project_id = 21816206;
