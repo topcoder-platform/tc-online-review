@@ -27,7 +27,6 @@ import com.topcoder.onlinereview.migration.dto.oldschema.review.SubjectiveResp;
 import com.topcoder.onlinereview.migration.dto.oldschema.review.TestcaseQuestion;
 import com.topcoder.onlinereview.migration.dto.oldschema.screening.ScreeningResults;
 
-import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -45,15 +44,14 @@ import java.util.List;
  * @version 1.0
  */
 public class ProjectLoader {
-    private Connection conn = null;
-
+	private DataMigrator migrator = null;
     /**
      * Creates a new Loader object.
      *
      * @param conn the connection to persist data
      */
-    public ProjectLoader(Connection conn) {
-        this.conn = conn;
+    public ProjectLoader(DataMigrator migrator) {
+        this.migrator = migrator;
     }
 
     /**
@@ -86,7 +84,7 @@ public class ProjectLoader {
     public List loadProjectIds() throws Exception {
     	long startTime = Util.start("loadProjectIds");
     	List list = new ArrayList();
-    	PreparedStatement stmt = conn.prepareStatement("SELECT project_id FROM " + ProjectOld.TABLE_NAME + " WHERE cur_version = 1 order by project_id");
+    	PreparedStatement stmt = migrator.getLoaderConnection().prepareStatement("SELECT project_id FROM " + ProjectOld.TABLE_NAME + " WHERE cur_version = 1 order by project_id");
 
         ResultSet rs = stmt.executeQuery();
 
@@ -108,9 +106,9 @@ public class ProjectLoader {
      * @return
      * @throws SQLException
      */
-    public ProjectOld loadProject(int projectId) throws SQLException {
+    public ProjectOld loadProject(int projectId) throws Exception {
     	long startTime = Util.startMain("loadProject, projectId: " + projectId);
-        PreparedStatement stmt = conn.prepareStatement("SELECT * FROM " + ProjectOld.TABLE_NAME + " WHERE cur_version = 1 and " +
+        PreparedStatement stmt = migrator.getLoaderConnection().prepareStatement("SELECT * FROM " + ProjectOld.TABLE_NAME + " WHERE cur_version = 1 and " +
         		ProjectOld.PROJECT_ID_NAME + " = ?");
     	stmt.setInt(1, projectId);
 
@@ -139,14 +137,14 @@ public class ProjectLoader {
 	
 	        table.setPhaseInstanceId(rs.getInt(ProjectOld.PHASE_INSTANCE_ID_NAME));
 	        table.setPhaseInstances(getPhaseInstances(table.getProjectId(), table.getPhaseInstanceId()));
-	        prepareRUserRoles(table);
-	        prepareSubmissions(table);
-	        prepareTestcases(table);
-	        prepareProjectResults(table);
-	        prepareRboardApplications(table);
-	        prepareAggWorksheet(table);    
+	        prepareLoadRUserRoles(table);
+	        prepareLoadAggWorksheet(table);    
+	        prepareLoadSubmissions(table);
+	        prepareLoadTestcases(table);
+	        prepareLoadProjectResults(table);
+	        prepareLoadRboardApplications(table);
 	        // Used for project_audit
-	        prepareModifyReasons(table);
+	        prepareLoadModifyReasons(table);
         } else {
         	Util.warn("project does not exist in original database, project_id: " + projectId);
         }
@@ -161,11 +159,11 @@ public class ProjectLoader {
      * Prepare modify reason for this project.
      * 
      * @param project the project
-     * @throws SQLException if error occurs 
+     * @throws Exception if error occurs 
      */
-    private void prepareModifyReasons(ProjectOld project) throws SQLException {
-    	long startTime = Util.start("prepareModifyReasons");
-        PreparedStatement stmt = conn.prepareStatement("SELECT modify_reason FROM " + ProjectOld.TABLE_NAME + " WHERE " +
+    private void prepareLoadModifyReasons(ProjectOld project) throws Exception {
+    	long startTime = Util.start("prepareLoadModifyReasons");
+        PreparedStatement stmt = migrator.getLoaderConnection().prepareStatement("SELECT modify_reason FROM " + ProjectOld.TABLE_NAME + " WHERE " +
         		ProjectOld.PROJECT_ID_NAME + " = ? and modify_reason is not null");
         stmt.setInt(1, project.getProjectId());
 
@@ -175,7 +173,7 @@ public class ProjectLoader {
         	project.addModifiyReason(rs.getString(ProjectOld.MODIFY_REASON_NAME));
         }
 
-		Util.logAction(project.getModifiyReasons().size(), "prepareModifyReasons", startTime);
+		Util.logAction(project.getModifiyReasons().size(), "prepareLoadModifyReasons", startTime);
         DatabaseUtils.closeResultSetSilently(rs);
         DatabaseUtils.closeStatementSilently(stmt);    	
     }
@@ -187,12 +185,12 @@ public class ProjectLoader {
      *
      * @return the loaded Project data
      *
-     * @throws SQLException if error occurs while execute sql statement
+     * @throws Exception if error occurs while execute sql statement
      */
     private CompVersions getCompVersions(int compVersId)
-        throws SQLException {
+        throws Exception {
     	long startTime = Util.start("getCompVersions");
-        PreparedStatement stmt = conn.prepareStatement("SELECT * FROM " + CompVersions.TABLE_NAME + " WHERE " +
+        PreparedStatement stmt = migrator.getLoaderConnection().prepareStatement("SELECT * FROM " + CompVersions.TABLE_NAME + " WHERE " +
                 CompVersions.COMP_VERS_ID_NAME + " = ?");
         stmt.setInt(1, compVersId);
 
@@ -223,12 +221,12 @@ public class ProjectLoader {
      *
      * @return the loaded Project data
      *
-     * @throws SQLException if error occurs while execute sql statement
+     * @throws Exception if error occurs while execute sql statement
      */
     private CompForumXref getCompForumXref(int compVersId)
-        throws SQLException {
+        throws Exception {
     	long startTime = Util.start("getCompForumXref");
-        PreparedStatement stmt = conn.prepareStatement("SELECT * FROM " + CompForumXref.TABLE_NAME + " WHERE " +
+        PreparedStatement stmt = migrator.getLoaderConnection().prepareStatement("SELECT * FROM " + CompForumXref.TABLE_NAME + " WHERE " +
                 CompForumXref.COMP_VERS_ID_NAME + " = ? and forum_type = 2");
         stmt.setInt(1, compVersId);
 
@@ -255,12 +253,12 @@ public class ProjectLoader {
      *
      * @return the loaded Project data
      *
-     * @throws SQLException if error occurs while execute sql statement
+     * @throws Exception if error occurs while execute sql statement
      */
     private CompCatalog getCompCatalog(int componentId)
-        throws SQLException {
+        throws Exception {
     	long startTime = Util.start("getCompCatalog");
-        PreparedStatement stmt = conn.prepareStatement("SELECT * FROM " + CompCatalog.TABLE_NAME + " WHERE " +
+        PreparedStatement stmt = migrator.getLoaderConnection().prepareStatement("SELECT * FROM " + CompCatalog.TABLE_NAME + " WHERE " +
                 CompCatalog.COMPONENT_ID_NAME + " = ?");
         stmt.setInt(1, componentId);
 
@@ -288,13 +286,13 @@ public class ProjectLoader {
      *
      * @return the loaded Project data
      *
-     * @throws SQLException if error occurs while execute sql statement
+     * @throws Exception if error occurs while execute sql statement
      */
     private CompVersionDates getCompVersionDates(int compVersId, int phaseId)
-        throws SQLException {
+        throws Exception {
     	long startTime = Util.start("getCompVersionDates");
         // comp_vers_id and phase_id used to locate comp_version_dates
-        PreparedStatement stmt = conn.prepareStatement("SELECT * FROM " + CompVersionDates.TABLE_NAME + " WHERE " +
+        PreparedStatement stmt = migrator.getLoaderConnection().prepareStatement("SELECT * FROM " + CompVersionDates.TABLE_NAME + " WHERE " +
                 CompVersionDates.COMP_VERS_ID_NAME + " = ? and phase_id = ?" );
         stmt.setInt(1, compVersId);
         stmt.setInt(2, phaseId);
@@ -323,13 +321,13 @@ public class ProjectLoader {
      *
      * @return the loaded PhaseInstances data
      *
-     * @throws SQLException if error occurs while execute sql statement
+     * @throws Exception if error occurs while execute sql statement
      */
     private Collection getPhaseInstances(int projectId, int currentPhaseId)
-        throws SQLException {
+        throws Exception {
     	long startTime = Util.start("getPhaseInstances");
         List list = new ArrayList();
-        PreparedStatement stmt = conn.prepareStatement("SELECT * FROM " + PhaseInstance.TABLE_NAME + " WHERE " +
+        PreparedStatement stmt = migrator.getLoaderConnection().prepareStatement("SELECT * FROM " + PhaseInstance.TABLE_NAME + " WHERE " +
                 PhaseInstance.PROJECT_ID_NAME + " = ? and cur_version = 1");
         stmt.setInt(1, projectId);
 
@@ -376,11 +374,11 @@ public class ProjectLoader {
      *
      * @return template id, 0 if does not exist
      *
-     * @throws SQLException if error occurs while execute sql statement
+     * @throws Exception if error occurs while execute sql statement
      */
     private int getTemplateId(int projectId, int scorecardType)
-        throws SQLException {
-        PreparedStatement stmt = conn.prepareStatement("SELECT * FROM project_template " + " WHERE " +
+        throws Exception {
+        PreparedStatement stmt = migrator.getLoaderConnection().prepareStatement("SELECT * FROM project_template " + " WHERE " +
                 PhaseInstance.PROJECT_ID_NAME + " = ? AND scorecard_type = ?");
         stmt.setInt(1, projectId);
         stmt.setInt(2, scorecardType);
@@ -404,12 +402,12 @@ public class ProjectLoader {
      *
      * @param project the project
      *
-     * @throws SQLException if error occurs while execute sql statement
+     * @throws Exception if error occurs while execute sql statement
      */
-    private void prepareRUserRoles(ProjectOld project)
-        throws SQLException {
-    	long startTime = Util.start("prepareRUserRoles");
-        PreparedStatement stmt = conn.prepareStatement("SELECT * FROM " + RUserRole.TABLE_NAME + " WHERE " +
+    private void prepareLoadRUserRoles(ProjectOld project)
+        throws Exception {
+    	long startTime = Util.start("prepareLoadRUserRoles");
+        PreparedStatement stmt = migrator.getLoaderConnection().prepareStatement("SELECT * FROM " + RUserRole.TABLE_NAME + " WHERE " +
                 RUserRole.PROJECT_ID_NAME + " = ? and cur_version = 1");
         stmt.setInt(1, project.getProjectId());
 
@@ -422,11 +420,11 @@ public class ProjectLoader {
             table.setRRoleId(rs.getInt(RUserRole.R_ROLE_ID_NAME));
             table.setRRespId(rs.getInt(RUserRole.R_RESP_ID_NAME));
             table.setLoginId(rs.getInt(RUserRole.LOGIN_ID_NAME));
-            table.setPaymentInfo(preparePaymentInfo(rs.getInt("payment_info_id")));
+            table.setPaymentInfo(prepareLoadPaymentInfo(rs.getInt("payment_info_id")));
             project.addRUserRole(table);
         }
 
-		Util.logAction(project.getRUserRoles().size(), "prepareRUserRoles", startTime);
+		Util.logAction(project.getRUserRoles().size(), "prepareLoadRUserRoles", startTime);
         DatabaseUtils.closeResultSetSilently(rs);
         DatabaseUtils.closeStatementSilently(stmt);
     }
@@ -436,12 +434,12 @@ public class ProjectLoader {
      *
      * @param project the project
      *
-     * @throws SQLException if error occurs while execute sql statement
+     * @throws Exception if error occurs while execute sql statement
      */
-    private void prepareSubmissions(ProjectOld project)
-        throws SQLException {
-    	long startTime = Util.start("prepareSubmissions");
-        PreparedStatement stmt = conn.prepareStatement("SELECT * FROM " + SubmissionOld.TABLE_NAME + " WHERE " +
+    private void prepareLoadSubmissions(ProjectOld project)
+        throws Exception {
+    	long startTime = Util.start("prepareLoadSubmissions");
+        PreparedStatement stmt = migrator.getLoaderConnection().prepareStatement("SELECT * FROM " + SubmissionOld.TABLE_NAME + " WHERE " +
                 SubmissionOld.PROJECT_ID_NAME + " = ?");
         stmt.setInt(1, project.getProjectId());
 
@@ -460,13 +458,13 @@ public class ProjectLoader {
             table.setSubmissionDate(rs.getDate(SubmissionOld.SUBMISSION_DATE_NAME));
             project.addSubmission(table);
             // Prepare screening results for every submission
-            prepareScreeningResults(table);
+            prepareLoadScreeningResults(table);
             if (table.isCurVersion()) {
-            	prepareScorecards(project, table);
+            	prepareLoadScorecards(project, table);
             }
         }
 
-		Util.logAction(project.getSubmissions().size(), "prepareSubmissions", startTime);
+		Util.logAction(project.getSubmissions().size(), "prepareLoadSubmissions", startTime);
         DatabaseUtils.closeResultSetSilently(rs);
         DatabaseUtils.closeStatementSilently(stmt);
     }
@@ -476,11 +474,11 @@ public class ProjectLoader {
      *
      * @param project the project
      *
-     * @throws SQLException if error occurs while execute sql statement
+     * @throws Exception if error occurs while execute sql statement
      */
-    private void prepareTestcases(ProjectOld project) throws SQLException {
-    	long startTime = Util.start("prepareTestcases");
-        PreparedStatement stmt = conn.prepareStatement("SELECT * FROM " + Testcase.TABLE_NAME + " WHERE " +
+    private void prepareLoadTestcases(ProjectOld project) throws Exception {
+    	long startTime = Util.start("prepareLoadTestcases");
+        PreparedStatement stmt = migrator.getLoaderConnection().prepareStatement("SELECT * FROM " + Testcase.TABLE_NAME + " WHERE " +
                 Testcase.PROJECT_ID_NAME + " = ?");
         stmt.setInt(1, project.getProjectId());
 
@@ -496,7 +494,7 @@ public class ProjectLoader {
             project.addTestcase(table);
         }
 
-		Util.logAction(project.getTestcases().size(), "prepareTestcases", startTime);
+		Util.logAction(project.getTestcases().size(), "prepareLoadTestcases", startTime);
         DatabaseUtils.closeResultSetSilently(rs);
         DatabaseUtils.closeStatementSilently(stmt);
     }
@@ -506,12 +504,12 @@ public class ProjectLoader {
      *
      * @param project the project
      *
-     * @throws SQLException if error occurs while execute sql statement
+     * @throws Exception if error occurs while execute sql statement
      */
-    private void prepareScreeningResults(SubmissionOld submission)
-        throws SQLException {
-    	long startTime = Util.start("prepareScreeningResults");
-        PreparedStatement stmt = conn.prepareStatement(
+    private void prepareLoadScreeningResults(SubmissionOld submission)
+        throws Exception {
+    	long startTime = Util.start("prepareLoadScreeningResults");
+        PreparedStatement stmt = migrator.getLoaderConnection().prepareStatement(
                 "SELECT * from screening_results where submission_v_id = ?");
         stmt.setInt(1, submission.getSubmissionVId());
 
@@ -526,7 +524,7 @@ public class ProjectLoader {
             submission.addScreeningResults(table);
         }
 
-		Util.logAction(submission.getScreeningResults().size(), "prepareScreeningResults", startTime);
+		Util.logAction(submission.getScreeningResults().size(), "prepareLoadScreeningResults", startTime);
         DatabaseUtils.closeResultSetSilently(rs);
         DatabaseUtils.closeStatementSilently(stmt);
     }
@@ -536,12 +534,12 @@ public class ProjectLoader {
      *
      * @param project the project
      *
-     * @throws SQLException if error occurs while execute sql statement
+     * @throws Exception if error occurs while execute sql statement
      */
-    private void prepareProjectResults(ProjectOld project)
-        throws SQLException {
-    	long startTime = Util.start("prepareProjectResults");
-        PreparedStatement stmt = conn.prepareStatement("SELECT * FROM " + ProjectResult.TABLE_NAME + " WHERE " +
+    private void prepareLoadProjectResults(ProjectOld project)
+        throws Exception {
+    	long startTime = Util.start("prepareLoadProjectResults");
+        PreparedStatement stmt = migrator.getLoaderConnection().prepareStatement("SELECT * FROM " + ProjectResult.TABLE_NAME + " WHERE " +
                 Testcase.PROJECT_ID_NAME + " = ?");
         stmt.setInt(1, project.getProjectId());
 
@@ -560,7 +558,7 @@ public class ProjectLoader {
             project.addProjectResult(table);
         }
 
-		Util.logAction(project.getProjectResults().size(), "prepareProjectResults", startTime);
+		Util.logAction(project.getProjectResults().size(), "prepareLoadProjectResults", startTime);
         DatabaseUtils.closeResultSetSilently(rs);
         DatabaseUtils.closeStatementSilently(stmt);
     }
@@ -570,12 +568,12 @@ public class ProjectLoader {
      *
      * @param project the project
      *
-     * @throws SQLException if error occurs while execute sql statement
+     * @throws Exception if error occurs while execute sql statement
      */
-    private PaymentInfo preparePaymentInfo(int paymentInfoId)
-        throws SQLException {
-    	long startTime = Util.start("preparePaymentInfo");
-        PreparedStatement stmt = conn.prepareStatement(
+    private PaymentInfo prepareLoadPaymentInfo(int paymentInfoId)
+        throws Exception {
+    	long startTime = Util.start("prepareLoadPaymentInfo");
+        PreparedStatement stmt = migrator.getLoaderConnection().prepareStatement(
                 "select * from payment_info where payment_info_id = ? and cur_version = 1");
         stmt.setInt(1, paymentInfoId);
 
@@ -588,7 +586,7 @@ public class ProjectLoader {
             table.setPaymentStatId(rs.getInt(PaymentInfo.PAYMENT_STAT_ID_NAME));
         }
 
-		Util.logAction("preparePaymentInfo", startTime);
+		Util.logAction("prepareLoadPaymentInfo", startTime);
         DatabaseUtils.closeResultSetSilently(rs);
         DatabaseUtils.closeStatementSilently(stmt);
         return table;
@@ -599,12 +597,12 @@ public class ProjectLoader {
      *
      * @param project the project
      *
-     * @throws SQLException if error occurs while execute sql statement
+     * @throws Exception if error occurs while execute sql statement
      */
-    private void prepareRboardApplications(ProjectOld project)
-        throws SQLException {
-    	long startTime = Util.start("prepareRboardApplications");
-        PreparedStatement stmt = conn.prepareStatement("SELECT * FROM " + RboardApplication.TABLE_NAME + " WHERE " +
+    private void prepareLoadRboardApplications(ProjectOld project)
+        throws Exception {
+    	long startTime = Util.start("prepareLoadRboardApplications");
+        PreparedStatement stmt = migrator.getLoaderConnection().prepareStatement("SELECT * FROM " + RboardApplication.TABLE_NAME + " WHERE " +
         		ProjectOld.PROJECT_ID_NAME + " = ?");
         stmt.setInt(1, project.getProjectId());
 
@@ -618,7 +616,7 @@ public class ProjectLoader {
             project.addRboardApplication(table);
         }
 
-		Util.logAction(project.getRboardApplications().size(), "prepareRboardApplications", startTime);
+		Util.logAction(project.getRboardApplications().size(), "prepareLoadRboardApplications", startTime);
         DatabaseUtils.closeResultSetSilently(rs);
         DatabaseUtils.closeStatementSilently(stmt);
     }
@@ -628,12 +626,12 @@ public class ProjectLoader {
      *
      * @param parent the project
      *
-     * @throws SQLException if error occurs while execute sql statement
+     * @throws Exception if error occurs while execute sql statement
      */
-    private void prepareScorecards(ProjectOld project, SubmissionOld parent)
-        throws SQLException {
-    	long startTime = Util.start("prepareScorecards");
-        PreparedStatement stmt = conn.prepareStatement("SELECT * FROM " + ScorecardOld.TABLE_NAME + " WHERE " +
+    private void prepareLoadScorecards(ProjectOld project, SubmissionOld parent)
+        throws Exception {
+    	long startTime = Util.start("prepareLoadScorecards");
+        PreparedStatement stmt = migrator.getLoaderConnection().prepareStatement("SELECT * FROM " + ScorecardOld.TABLE_NAME + " WHERE " +
         		ScorecardOld.PROJECT_ID_NAME + " = ? and submission_id = ? and cur_version = 1");
         stmt.setInt(1, parent.getProjectId());
         stmt.setInt(2, parent.getSubmissionId());
@@ -652,13 +650,13 @@ public class ProjectLoader {
             table.setTemplateId(getTemplateId(parent.getProjectId(), scorecardType));
             table.setScorecardType(scorecardType);
             
-            // prepare scorecard question
-            prepareScorecardQuestions(project, table);
+            // prepareLoad scorecard question
+            prepareLoadScorecardQuestions(project, table);
             
             parent.addScorecard(table);
         }
 
-		Util.logAction(parent.getScorecards().size(), "prepareScorecards", startTime);
+		Util.logAction(parent.getScorecards().size(), "prepareLoadScorecards", startTime);
         DatabaseUtils.closeResultSetSilently(rs);
         DatabaseUtils.closeStatementSilently(stmt);
     }
@@ -668,12 +666,12 @@ public class ProjectLoader {
      *
      * @param scorecard the project
      *
-     * @throws SQLException if error occurs while execute sql statement
+     * @throws Exception if error occurs while execute sql statement
      */
-    private void prepareScorecardQuestions(ProjectOld project, ScorecardOld scorecard)
-        throws SQLException {
-    	long startTime = Util.start("prepareScorecardQuestions");
-        PreparedStatement stmt = conn.prepareStatement("SELECT * FROM " + ScorecardQuestion.TABLE_NAME + " WHERE " +
+    private void prepareLoadScorecardQuestions(ProjectOld project, ScorecardOld scorecard)
+        throws Exception {
+    	long startTime = Util.start("prepareLoadScorecardQuestions");
+        PreparedStatement stmt = migrator.getLoaderConnection().prepareStatement("SELECT * FROM " + ScorecardQuestion.TABLE_NAME + " WHERE " +
         		ScorecardQuestion.SCORECARD_ID_NAME + " = ? and cur_version = 1");
         stmt.setInt(1, scorecard.getScorecardId());
 
@@ -689,17 +687,17 @@ public class ProjectLoader {
 
             if (table.getEvaluationId() == 0) {
             	// it maybe test case
-            	prepareTestcaseQuestion(table);
+            	prepareLoadTestcaseQuestion(table);
                 if (table.getTestcaseQuestions().size() == 0) {
                 	// it should be bad data
                 	continue;
                 }
             }
-            prepareSubjectiveResp(project, table, scorecard.getScorecardType());
-            prepareAppeal(table);
+            prepareLoadSubjectiveResp(project, table, scorecard.getScorecardType());
+            prepareLoadAppeal(table);
         }
 
-		Util.logAction(scorecard.getScorecardQuestions().size(), "prepareScorecardQuestions", startTime);
+		Util.logAction(scorecard.getScorecardQuestions().size(), "prepareLoadScorecardQuestions", startTime);
         DatabaseUtils.closeResultSetSilently(rs);
         DatabaseUtils.closeStatementSilently(stmt);
     }
@@ -709,12 +707,12 @@ public class ProjectLoader {
      *
      * @param question the project
      *
-     * @throws SQLException if error occurs while execute sql statement
+     * @throws Exception if error occurs while execute sql statement
      */
-    private void prepareTestcaseQuestion(ScorecardQuestion question)
-        throws SQLException {
-    	long startTime = Util.start("prepareTestcaseQuestion");
-        PreparedStatement stmt = conn.prepareStatement("SELECT * FROM " + TestcaseQuestion.TABLE_NAME + " WHERE " +
+    private void prepareLoadTestcaseQuestion(ScorecardQuestion question)
+        throws Exception {
+    	long startTime = Util.start("prepareLoadTestcaseQuestion");
+        PreparedStatement stmt = migrator.getLoaderConnection().prepareStatement("SELECT * FROM " + TestcaseQuestion.TABLE_NAME + " WHERE " +
         		TestcaseQuestion.QUESTION_ID_NAME + " = ? and cur_version = 1");
         stmt.setInt(1, question.getQuestionId());
 
@@ -728,7 +726,7 @@ public class ProjectLoader {
             question.addTestcaseQuestion(table);
         }
 
-		Util.logAction(question.getTestcaseQuestions().size(), "prepareTestcaseQuestion", startTime);
+		Util.logAction(question.getTestcaseQuestions().size(), "prepareLoadTestcaseQuestion", startTime);
         DatabaseUtils.closeResultSetSilently(rs);
         DatabaseUtils.closeStatementSilently(stmt);
     }
@@ -738,12 +736,12 @@ public class ProjectLoader {
      *
      * @param question the project
      *
-     * @throws SQLException if error occurs while execute sql statement
+     * @throws Exception if error occurs while execute sql statement
      */
-    private void prepareSubjectiveResp(ProjectOld project, ScorecardQuestion question, int scorecardType)
-        throws SQLException {
-    	long startTime = Util.start("prepareSubjectiveResp");
-        PreparedStatement stmt = conn.prepareStatement("SELECT * FROM " + SubjectiveResp.TABLE_NAME + " WHERE " +
+    private void prepareLoadSubjectiveResp(ProjectOld project, ScorecardQuestion question, int scorecardType)
+        throws Exception {
+    	long startTime = Util.start("prepareLoadSubjectiveResp");
+        PreparedStatement stmt = migrator.getLoaderConnection().prepareStatement("SELECT * FROM " + SubjectiveResp.TABLE_NAME + " WHERE " +
         		SubjectiveResp.QUESTION_ID_NAME + " = ? and cur_version = 1");
         stmt.setInt(1, question.getQuestionId());
 
@@ -757,14 +755,14 @@ public class ProjectLoader {
             table.setResponseText(rs.getString(SubjectiveResp.RESPONSE_TEXT_NAME));
             // add SubjectiveResp to question
             question.addSubjectiveResp(table);
-            // prepare agg_response
-            if (scorecardType == 2) {
+            // prepareLoad agg_response
+            if (scorecardType == 2 && project.getAggWorksheet() != null) {
             	// Only care for agg response while it's review scorecard
-            	prepareAggResponse(project, table);
+            	prepareLoadAggResponse(project, table);
             }
         }
 
-		Util.logAction(question.getSubjectiveResps().size(), "prepareSubjectiveResp", startTime);
+		Util.logAction(question.getSubjectiveResps().size(), "prepareLoadSubjectiveResp", startTime);
         DatabaseUtils.closeResultSetSilently(rs);
         DatabaseUtils.closeStatementSilently(stmt);
     }
@@ -774,12 +772,12 @@ public class ProjectLoader {
      *
      * @param question the project
      *
-     * @throws SQLException if error occurs while execute sql statement
+     * @throws Exception if error occurs while execute sql statement
      */
-    private void prepareAppeal(ScorecardQuestion question)
-        throws SQLException {
-    	long startTime = Util.start("prepareAppeal");
-        PreparedStatement stmt = conn.prepareStatement("SELECT * FROM " + Appeal.TABLE_NAME + " WHERE " +
+    private void prepareLoadAppeal(ScorecardQuestion question)
+        throws Exception {
+    	long startTime = Util.start("prepareLoadAppeal");
+        PreparedStatement stmt = migrator.getLoaderConnection().prepareStatement("SELECT * FROM " + Appeal.TABLE_NAME + " WHERE " +
         		Appeal.QUESTION_ID_NAME + " = ? and cur_version = 1");
         stmt.setInt(1, question.getQuestionId());
 
@@ -800,7 +798,7 @@ public class ProjectLoader {
             question.addAppeal(table);
         }
 
-		Util.logAction(question.getAppeals().size(), "prepareAppeal", startTime);
+		Util.logAction(question.getAppeals().size(), "prepareLoadAppeal", startTime);
         DatabaseUtils.closeResultSetSilently(rs);
         DatabaseUtils.closeStatementSilently(stmt);
     }
@@ -810,12 +808,12 @@ public class ProjectLoader {
      *
      * @param project the project
      *
-     * @throws SQLException if error occurs while execute sql statement
+     * @throws Exception if error occurs while execute sql statement
      */
-    private void prepareAggWorksheet(ProjectOld project)
-        throws SQLException {
-    	long startTime = Util.start("prepareAggWorksheet");
-        PreparedStatement stmt = conn.prepareStatement("SELECT * FROM " + AggWorksheet.TABLE_NAME + " WHERE " +
+    private void prepareLoadAggWorksheet(ProjectOld project)
+        throws Exception {
+    	long startTime = Util.start("prepareLoadAggWorksheet");
+        PreparedStatement stmt = migrator.getLoaderConnection().prepareStatement("SELECT * FROM " + AggWorksheet.TABLE_NAME + " WHERE " +
         		AggWorksheet.PROJECT_ID_NAME + " = ? and cur_version = 1");
         stmt.setInt(1, project.getProjectId());
 
@@ -827,16 +825,16 @@ public class ProjectLoader {
             table.setAggregatorId(rs.getInt(AggWorksheet.AGGREGATOR_ID_NAME));
             table.setCompleted(rs.getBoolean(AggWorksheet.IS_COMPLETED_NAME));
             
-            // prepare agg_review
-            prepareAggReview(table);
-            // prepare final_review
-            prepareFinalReview(table);
-            prepareAggResponse(table);
+            // prepareLoad agg_review
+            prepareLoadAggReview(table);
+            // prepareLoad final_review
+            prepareLoadFinalReview(table);
+            prepareLoadAggResponse(table);
 
             project.setAggWorksheet(table);
         }
 
-		Util.logAction("prepareAggWorksheet", startTime);
+		Util.logAction("prepareLoadAggWorksheet", startTime);
         DatabaseUtils.closeResultSetSilently(rs);
         DatabaseUtils.closeStatementSilently(stmt);
     }
@@ -846,10 +844,10 @@ public class ProjectLoader {
      *
      * @param parent the project
      *
-     * @throws SQLException if error occurs while execute sql statement
+     * @throws Exception if error occurs while execute sql statement
      */
-    private void prepareAggResponse(ProjectOld old, SubjectiveResp parent)
-        throws SQLException {
+    private void prepareLoadAggResponse(ProjectOld old, SubjectiveResp parent)
+        throws Exception {
     	try {
     		parent.setAggResponse(old.getAggWorksheet().getAggResponse(parent.getSubjectiveRespId()));
     	} catch(Exception e) {
@@ -862,12 +860,12 @@ public class ProjectLoader {
      *
      * @param parent the project
      *
-     * @throws SQLException if error occurs while execute sql statement
+     * @throws Exception if error occurs while execute sql statement
      */
-    private void prepareAggResponse(AggWorksheet parent)
-        throws SQLException {
-    	long startTime = Util.start("prepareAggResponse");
-        PreparedStatement stmt = conn.prepareStatement("SELECT * FROM " + AggResponse.TABLE_NAME + " WHERE " +
+    private void prepareLoadAggResponse(AggWorksheet parent)
+        throws Exception {
+    	long startTime = Util.start("prepareLoadAggResponse");
+        PreparedStatement stmt = migrator.getLoaderConnection().prepareStatement("SELECT * FROM " + AggResponse.TABLE_NAME + " WHERE " +
         		AggResponse.AGG_WORKSHEET_ID_NAME + " = ? and cur_version = 1");
         stmt.setInt(1, parent.getAggWorksheetId());
 
@@ -882,11 +880,11 @@ public class ProjectLoader {
             // add AggResponse to aggWorksheet
             parent.addAggResponse(table);
 
-            // Prepare prepareFixItem
-            prepareFixItem(table);
+            // Prepare prepareLoadFixItem
+            prepareLoadFixItem(table);
         }
 
-		Util.logAction(parent.getAggResponses().size(), "prepareAggResponse", startTime);
+		Util.logAction(parent.getAggResponses().size(), "prepareLoadAggResponse", startTime);
         DatabaseUtils.closeResultSetSilently(rs);
         DatabaseUtils.closeStatementSilently(stmt);
     }
@@ -896,12 +894,12 @@ public class ProjectLoader {
      *
      * @param aggWorksheet the project
      *
-     * @throws SQLException if error occurs while execute sql statement
+     * @throws Exception if error occurs while execute sql statement
      */
-    private void prepareAggReview(AggWorksheet aggWorksheet)
-        throws SQLException {
-    	long startTime = Util.start("prepareAggReview");
-        PreparedStatement stmt = conn.prepareStatement("SELECT * FROM " + AggReview.TABLE_NAME + " WHERE " +
+    private void prepareLoadAggReview(AggWorksheet aggWorksheet)
+        throws Exception {
+    	long startTime = Util.start("prepareLoadAggReview");
+        PreparedStatement stmt = migrator.getLoaderConnection().prepareStatement("SELECT * FROM " + AggReview.TABLE_NAME + " WHERE " +
         		AggReview.AGG_WORKSHEET_ID_NAME + " = ? and cur_version = 1");
         stmt.setInt(1, aggWorksheet.getAggWorksheetId());
 
@@ -918,7 +916,7 @@ public class ProjectLoader {
             aggWorksheet.addAggReview(table);
         }
 
-		Util.logAction("prepareAggReview", startTime);
+		Util.logAction("prepareLoadAggReview", startTime);
         DatabaseUtils.closeResultSetSilently(rs);
         DatabaseUtils.closeStatementSilently(stmt);
     }
@@ -928,12 +926,12 @@ public class ProjectLoader {
      *
      * @param aggWorksheet the project
      *
-     * @throws SQLException if error occurs while execute sql statement
+     * @throws Exception if error occurs while execute sql statement
      */
-    private void prepareFinalReview(AggWorksheet aggWorksheet)
-        throws SQLException {
-    	long startTime = Util.start("prepareFinalReview");
-        PreparedStatement stmt = conn.prepareStatement("SELECT * FROM " + FinalReview.TABLE_NAME + " WHERE " +
+    private void prepareLoadFinalReview(AggWorksheet aggWorksheet)
+        throws Exception {
+    	long startTime = Util.start("prepareLoadFinalReview");
+        PreparedStatement stmt = migrator.getLoaderConnection().prepareStatement("SELECT * FROM " + FinalReview.TABLE_NAME + " WHERE " +
         		FinalReview.AGG_WORKSHEET_ID_NAME + " = ? and cur_version = 1");
         stmt.setInt(1, aggWorksheet.getAggWorksheetId());
 
@@ -950,7 +948,7 @@ public class ProjectLoader {
             aggWorksheet.setFinalReview(table);
         }
 
-		Util.logAction("prepareFinalReview", startTime);
+		Util.logAction("prepareLoadFinalReview", startTime);
         DatabaseUtils.closeResultSetSilently(rs);
         DatabaseUtils.closeStatementSilently(stmt);
     }
@@ -960,16 +958,16 @@ public class ProjectLoader {
      *
      * @param aggWorksheet the project
      *
-     * @throws SQLException if error occurs while execute sql statement
+     * @throws Exception if error occurs while execute sql statement
      */
-    private void prepareFixItem(AggResponse parent)
-        throws SQLException {
-    	long startTime = Util.start("prepareFixItem");
+    private void prepareLoadFixItem(AggResponse parent)
+        throws Exception {
+    	long startTime = Util.start("prepareLoadFixItem");
     	if (parent.getAggRespStatId() != 1) {
     		// this response does not accept the subjective resp
     		return;
     	}
-        PreparedStatement stmt = conn.prepareStatement("SELECT final_fix_s_id FROM " + FixItem.TABLE_NAME + " WHERE " +
+        PreparedStatement stmt = migrator.getLoaderConnection().prepareStatement("SELECT final_fix_s_id FROM " + FixItem.TABLE_NAME + " WHERE " +
         		AggResponse.AGG_RESPONSE_ID_NAME + " = ? and cur_version = 1");
         stmt.setInt(1, parent.getAggResponseId());
 
@@ -983,7 +981,7 @@ public class ProjectLoader {
             parent.setFixItem(table);
         }
 
-		Util.logAction("prepareFixItem", startTime);
+		Util.logAction("prepareLoadFixItem", startTime);
         DatabaseUtils.closeResultSetSilently(rs);
         DatabaseUtils.closeStatementSilently(stmt);
     }

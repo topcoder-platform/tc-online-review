@@ -3,6 +3,7 @@
  */
 package com.topcoder.onlinereview.migration.persistence;
 
+import com.topcoder.onlinereview.migration.DataMigrator;
 import com.topcoder.onlinereview.migration.DatabaseUtils;
 import com.topcoder.onlinereview.migration.Util;
 import com.topcoder.onlinereview.migration.dto.newschema.deliverable.Submission;
@@ -24,7 +25,6 @@ import com.topcoder.onlinereview.migration.dto.newschema.review.ReviewItemCommen
 import com.topcoder.onlinereview.migration.dto.newschema.screening.ScreeningResult;
 import com.topcoder.onlinereview.migration.dto.newschema.screening.ScreeningTask;
 
-import java.sql.Connection;
 import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -42,15 +42,15 @@ import java.util.List;
  * @version 1.0
  */
 public class ProjectPersistence extends DatabaseUtils {
-    private Connection conn = null;
+	private DataMigrator migrator = null;
 
     /**
      * Creates a new Persistence object.
      *
      * @param conn the connection to persist data
      */
-    public ProjectPersistence(Connection conn) {
-        this.conn = conn;
+    public ProjectPersistence(DataMigrator migrator) {
+        this.migrator = migrator;
     }
 
     /**
@@ -60,7 +60,7 @@ public class ProjectPersistence extends DatabaseUtils {
      *
      * @throws SQLException if error occurs while execute sql statement
      */
-    public void storeProjects(List input) throws SQLException {
+    public void storeProjects(List input) throws Exception {
     	long startTime = Util.start("storeProjects");
         for (Iterator iter = input.iterator(); iter.hasNext();) {
         	storeProject((ProjectNew) iter.next());
@@ -74,9 +74,9 @@ public class ProjectPersistence extends DatabaseUtils {
      *
      * @param input the Project data
      *
-     * @throws SQLException if error occurs while execute sql statement
+     * @throws Exception if error occurs while execute sql statement
      */
-    public boolean storeProject(ProjectNew table) throws SQLException {
+    public boolean storeProject(ProjectNew table) throws Exception {
     	long startTime = Util.startMain("storeProject");
         String[] fieldnames = {
                 "project_id", "project_status_id", "project_category_id", "create_user", "create_date", "modify_user",
@@ -84,10 +84,10 @@ public class ProjectPersistence extends DatabaseUtils {
             };
 
         // store Project data to new online review schema
-        PreparedStatement stmt = conn.prepareStatement(makeInsertSql(ProjectNew.TABLE_NAME, fieldnames));
+        PreparedStatement stmt = migrator.getPersistenceConnection().prepareStatement(makeInsertSql(ProjectNew.TABLE_NAME, fieldnames));
 
         boolean successful = true;
-        conn.setAutoCommit(false);
+        migrator.getPersistenceConnection().setAutoCommit(false);
         try {
             int i = 1;
             stmt.setInt(i++, table.getProjectId());
@@ -110,10 +110,10 @@ public class ProjectPersistence extends DatabaseUtils {
             storeResourceSubmission(table.getResourceSubmissions());
             storeScreeningTask(table.getScreeningTasks());
             storeReview(table.getReviews());
-            conn.commit();
+            migrator.getPersistenceConnection().commit();
         } catch(Exception e) {
         	successful = false;
-        	conn.rollback();
+        	migrator.getPersistenceConnection().rollback();
         	Util.warn(e);
         	Util.warn("Failed to store project, project_id:" + table.getProjectId());
         }
@@ -128,9 +128,9 @@ public class ProjectPersistence extends DatabaseUtils {
      *
      * @param input the ReviewItem data
      *
-     * @throws SQLException if error occurs while execute sql statement
+     * @throws Exception if error occurs while execute sql statement
      */
-    void storeReviewItem(Collection input) throws SQLException {
+    void storeReviewItem(Collection input) throws Exception {
     	long startTime = Util.start("storeReviewItem");
         String[] fieldnames = {
                 "review_item_id", "review_id", "scorecard_question_id", "upload_id", "answer", "sort", 
@@ -138,7 +138,7 @@ public class ProjectPersistence extends DatabaseUtils {
             };
 
         // store ReviewItem data to new online review schema
-        PreparedStatement stmt = conn.prepareStatement(makeInsertSql(ReviewItem.TABLE_NAME, fieldnames));
+        PreparedStatement stmt = migrator.getPersistenceConnection().prepareStatement(makeInsertSql(ReviewItem.TABLE_NAME, fieldnames));
 
         for (Iterator iter = input.iterator(); iter.hasNext();) {
             ReviewItem table = (ReviewItem) iter.next();
@@ -180,9 +180,9 @@ public class ProjectPersistence extends DatabaseUtils {
      *
      * @param input the Review data
      *
-     * @throws SQLException if error occurs while execute sql statement
+     * @throws Exception if error occurs while execute sql statement
      */
-    void storeReview(List input) throws SQLException {
+    void storeReview(List input) throws Exception {
     	long startTime = Util.start("storeReview");
         String[] fieldnames = {
                 "review_id", "resource_id", "submission_id", "scorecard_id", "committed", "score",
@@ -190,7 +190,7 @@ public class ProjectPersistence extends DatabaseUtils {
             };
 
         // store Review data to new online review schema
-        PreparedStatement stmt = conn.prepareStatement(makeInsertSql(Review.TABLE_NAME, fieldnames));
+        PreparedStatement stmt = migrator.getPersistenceConnection().prepareStatement(makeInsertSql(Review.TABLE_NAME, fieldnames));
 
         for (Iterator iter = input.iterator(); iter.hasNext();) {
             Review table = (Review) iter.next();
@@ -232,9 +232,9 @@ public class ProjectPersistence extends DatabaseUtils {
      *
      * @param input the ReviewItemComment data
      *
-     * @throws SQLException if error occurs while execute sql statement
+     * @throws Exception if error occurs while execute sql statement
      */
-    void storeReviewItemComment(Collection input) throws SQLException {
+    void storeReviewItemComment(Collection input) throws Exception {
     	long startTime = Util.start("storeReviewItemComment");
         String[] fieldnames = {
                 "review_item_comment_id", "resource_id", "review_item_id", "comment_type_id", "content", "extra_info", 
@@ -242,7 +242,7 @@ public class ProjectPersistence extends DatabaseUtils {
             };
 
         // store ReviewItemComment data to new online review schema
-        PreparedStatement stmt = conn.prepareStatement(makeInsertSql(ReviewItemComment.TABLE_NAME, fieldnames));
+        PreparedStatement stmt = migrator.getPersistenceConnection().prepareStatement(makeInsertSql(ReviewItemComment.TABLE_NAME, fieldnames));
 
         for (Iterator iter = input.iterator(); iter.hasNext();) {
             ReviewItemComment table = (ReviewItemComment) iter.next();
@@ -262,6 +262,7 @@ public class ProjectPersistence extends DatabaseUtils {
             	stmt.execute();
             } catch(Exception e) {
 	        	Util.warn(e);
+	        	Util.warn("failed to store reviewitemcomment, commentTypeId: " + table.getCommentTypeId());
             	continue;
             }
         }
@@ -275,9 +276,9 @@ public class ProjectPersistence extends DatabaseUtils {
      *
      * @param input the ReviewComment data
      *
-     * @throws SQLException if error occurs while execute sql statement
+     * @throws Exception if error occurs while execute sql statement
      */
-    void storeReviewComment(List input) throws SQLException {
+    void storeReviewComment(List input) throws Exception {
     	long startTime = Util.start("storeReviewComment");
         String[] fieldnames = {
                 "review_comment_id", "resource_id", "review_id", "comment_type_id", "content", "extra_info", 
@@ -285,7 +286,7 @@ public class ProjectPersistence extends DatabaseUtils {
             };
 
         // store ReviewComment data to new online review schema
-        PreparedStatement stmt = conn.prepareStatement(makeInsertSql(ReviewComment.TABLE_NAME, fieldnames));
+        PreparedStatement stmt = migrator.getPersistenceConnection().prepareStatement(makeInsertSql(ReviewComment.TABLE_NAME, fieldnames));
 
         for (Iterator iter = input.iterator(); iter.hasNext();) {
             ReviewComment table = (ReviewComment) iter.next();
@@ -318,9 +319,9 @@ public class ProjectPersistence extends DatabaseUtils {
      *
      * @param input the Phase data
      *
-     * @throws SQLException if error occurs while execute sql statement
+     * @throws Exception if error occurs while execute sql statement
      */
-    private void storePhase(List input) throws SQLException {
+    private void storePhase(List input) throws Exception {
     	long startTime = Util.start("storePhase");
         String[] fieldnames = {
                 "phase_id", "project_id", "phase_type_id", "phase_status_id", "fixed_start_time", "scheduled_start_time",
@@ -329,7 +330,7 @@ public class ProjectPersistence extends DatabaseUtils {
             };
 
         // store Phase data to new online review schema
-        PreparedStatement stmt = conn.prepareStatement(makeInsertSql(Phase.TABLE_NAME, fieldnames));
+        PreparedStatement stmt = migrator.getPersistenceConnection().prepareStatement(makeInsertSql(Phase.TABLE_NAME, fieldnames));
 
         for (Iterator iter = input.iterator(); iter.hasNext();) {
             Phase table = (Phase) iter.next();
@@ -366,9 +367,9 @@ public class ProjectPersistence extends DatabaseUtils {
      *
      * @param input the PhaseDependency data
      *
-     * @throws SQLException if error occurs while execute sql statement
+     * @throws Exception if error occurs while execute sql statement
      */
-    private void storePhaseDependency(List input) throws SQLException {
+    private void storePhaseDependency(List input) throws Exception {
     	long startTime = Util.start("storePhaseDependency");
         String[] fieldnames = {
                 "dependency_phase_id", "dependent_phase_id", "dependency_start", "dependent_start", "lag_time",
@@ -376,7 +377,7 @@ public class ProjectPersistence extends DatabaseUtils {
             };
 
         // store PhaseDependency data to new online review schema
-        PreparedStatement stmt = conn.prepareStatement(makeInsertSql(PhaseDependency.TABLE_NAME, fieldnames));
+        PreparedStatement stmt = migrator.getPersistenceConnection().prepareStatement(makeInsertSql(PhaseDependency.TABLE_NAME, fieldnames));
 
         for (Iterator iter = input.iterator(); iter.hasNext();) {
             PhaseDependency table = (PhaseDependency) iter.next();
@@ -407,16 +408,16 @@ public class ProjectPersistence extends DatabaseUtils {
      *
      * @param input the PhaseCriteria data
      *
-     * @throws SQLException if error occurs while execute sql statement
+     * @throws Exception if error occurs while execute sql statement
      */
-    private void storePhaseCriteria(List input) throws SQLException {
+    private void storePhaseCriteria(List input) throws Exception {
     	long startTime = Util.start("storePhaseCriteria");
         String[] fieldnames = {
                 "phase_id", "phase_criteria_type_id", "parameter", "create_user", "create_date", "modify_user", "modify_date"
             };
 
         // store PhaseCriteria data to new online review schema
-        PreparedStatement stmt = conn.prepareStatement(makeInsertSql(PhaseCriteria.TABLE_NAME, fieldnames));
+        PreparedStatement stmt = migrator.getPersistenceConnection().prepareStatement(makeInsertSql(PhaseCriteria.TABLE_NAME, fieldnames));
 
         for (Iterator iter = input.iterator(); iter.hasNext();) {
             PhaseCriteria table = (PhaseCriteria) iter.next();
@@ -445,9 +446,9 @@ public class ProjectPersistence extends DatabaseUtils {
      *
      * @param input the Upload data
      *
-     * @throws SQLException if error occurs while execute sql statement
+     * @throws Exception if error occurs while execute sql statement
      */
-    private void storeUpload(List input) throws SQLException {
+    private void storeUpload(List input) throws Exception {
     	long startTime = Util.start("storeUpload");
         String[] fieldnames = {
                 "upload_id", "project_id", "resource_id", "upload_type_id", "upload_status_id", "parameter",
@@ -456,7 +457,7 @@ public class ProjectPersistence extends DatabaseUtils {
             };
 
         // store Upload data to new online review schema
-        PreparedStatement stmt = conn.prepareStatement(makeInsertSql(Upload.TABLE_NAME, fieldnames));
+        PreparedStatement stmt = migrator.getPersistenceConnection().prepareStatement(makeInsertSql(Upload.TABLE_NAME, fieldnames));
 
         for (Iterator iter = input.iterator(); iter.hasNext();) {
             Upload table = (Upload) iter.next();
@@ -493,9 +494,9 @@ public class ProjectPersistence extends DatabaseUtils {
      *
      * @param input the Submission data
      *
-     * @throws SQLException if error occurs while execute sql statement
+     * @throws Exception if error occurs while execute sql statement
      */
-    private void storeSubmission(List input) throws SQLException {
+    private void storeSubmission(List input) throws Exception {
     	long startTime = Util.start("storeSubmission");
         String[] fieldnames = {
                 "submission_id", "upload_id", "submission_status_id",
@@ -503,7 +504,7 @@ public class ProjectPersistence extends DatabaseUtils {
             };
 
         // store Submission data to new online review schema
-        PreparedStatement stmt = conn.prepareStatement(makeInsertSql(Submission.TABLE_NAME, fieldnames));
+        PreparedStatement stmt = migrator.getPersistenceConnection().prepareStatement(makeInsertSql(Submission.TABLE_NAME, fieldnames));
 
         for (Iterator iter = input.iterator(); iter.hasNext();) {
             Submission table = (Submission) iter.next();
@@ -532,9 +533,12 @@ public class ProjectPersistence extends DatabaseUtils {
      *
      * @param input the ScreeningTask data
      *
-     * @throws SQLException if error occurs while execute sql statement
+     * @throws Exception if error occurs while execute sql statement
      */
-    private void storeScreeningTask(List input) throws SQLException {
+    private void storeScreeningTask(List input) throws Exception {
+    	if (input.size() == 0) {
+    		return;
+    	}
     	long startTime = Util.start("storeScreeningTask");
         String[] fieldnames = {
                 "screening_task_id", "upload_id", "screening_status_id", "screener_id", "start_timestamp", "create_user",
@@ -542,7 +546,7 @@ public class ProjectPersistence extends DatabaseUtils {
             };
 
         // store ScreeningTask data to new online review schema
-        PreparedStatement stmt = conn.prepareStatement(makeInsertSql(ScreeningTask.TABLE_NAME, fieldnames));
+        PreparedStatement stmt = migrator.getPersistenceConnection().prepareStatement(makeInsertSql(ScreeningTask.TABLE_NAME, fieldnames));
 
         for (Iterator iter = input.iterator(); iter.hasNext();) {
             ScreeningTask table = (ScreeningTask) iter.next();
@@ -562,7 +566,9 @@ public class ProjectPersistence extends DatabaseUtils {
 	        	Util.warn(e);
             	continue;
             }
-            storeScreeningResult(table.getScreeningResults());
+            if (table.getScreeningResults().size() > 0) {
+            	storeScreeningResult(table.getScreeningResults());
+            }
         }
 
         Util.logAction(input.size(), "storeScreeningTask", startTime);
@@ -574,9 +580,9 @@ public class ProjectPersistence extends DatabaseUtils {
      *
      * @param input the ScreeningResult data
      *
-     * @throws SQLException if error occurs while execute sql statement
+     * @throws Exception if error occurs while execute sql statement
      */
-    private void storeScreeningResult(List input) throws SQLException {
+    private void storeScreeningResult(List input) throws Exception {
     	long startTime = Util.start("storeScreeningResult");
         String[] fieldnames = {
                 "screening_result_id", "screening_task_id", "screening_response_id", "dynamic_response_text",
@@ -584,7 +590,7 @@ public class ProjectPersistence extends DatabaseUtils {
             };
 
         // store ScreeningResult data to new online review schema
-        PreparedStatement stmt = conn.prepareStatement(makeInsertSql(ScreeningResult.TABLE_NAME, fieldnames));
+        PreparedStatement stmt = migrator.getPersistenceConnection().prepareStatement(makeInsertSql(ScreeningResult.TABLE_NAME, fieldnames));
 
         for (Iterator iter = input.iterator(); iter.hasNext();) {
             ScreeningResult table = (ScreeningResult) iter.next();
@@ -614,16 +620,16 @@ public class ProjectPersistence extends DatabaseUtils {
      *
      * @param input the ResourceSubmission data
      *
-     * @throws SQLException if error occurs while execute sql statement
+     * @throws Exception if error occurs while execute sql statement
      */
-    void storeResourceSubmission(List input) throws SQLException {
+    void storeResourceSubmission(List input) throws Exception {
     	long startTime = Util.start("storeResourceSubmission");
         String[] fieldnames = {
                 "resource_id", "submission_id", "create_user", "create_date", "modify_user", "modify_date"
             };
 
         // store ResourceSubmission data to new online review schema
-        PreparedStatement stmt = conn.prepareStatement(makeInsertSql(ResourceSubmission.TABLE_NAME, fieldnames));
+        PreparedStatement stmt = migrator.getPersistenceConnection().prepareStatement(makeInsertSql(ResourceSubmission.TABLE_NAME, fieldnames));
 
         for (Iterator iter = input.iterator(); iter.hasNext();) {
             ResourceSubmission table = (ResourceSubmission) iter.next();
@@ -651,16 +657,16 @@ public class ProjectPersistence extends DatabaseUtils {
      *
      * @param input the Notification data
      *
-     * @throws SQLException if error occurs while execute sql statement
+     * @throws Exception if error occurs while execute sql statement
      */
-    void storeNotification(List input) throws SQLException {
+    void storeNotification(List input) throws Exception {
     	long startTime = Util.start("storeNotification");
         String[] fieldnames = {
                 "project_id", "external_ref_id", "notification_type_id", "create_user", "create_date", "modify_user", "modify_date"
             };
 
         // store Notification data to new online review schema
-        PreparedStatement stmt = conn.prepareStatement(makeInsertSql(Notification.TABLE_NAME, fieldnames));
+        PreparedStatement stmt = migrator.getPersistenceConnection().prepareStatement(makeInsertSql(Notification.TABLE_NAME, fieldnames));
 
         for (Iterator iter = input.iterator(); iter.hasNext();) {
             Notification table = (Notification) iter.next();
@@ -690,16 +696,16 @@ public class ProjectPersistence extends DatabaseUtils {
      *
      * @param input the ResourceInfo data
      *
-     * @throws SQLException if error occurs while execute sql statement
+     * @throws Exception if error occurs while execute sql statement
      */
-    private void storeResourceInfo(List input) throws SQLException {
+    private void storeResourceInfo(List input) throws Exception {
     	long startTime = Util.start("storeResourceInfo");
         String[] fieldnames = {
                 "resource_id", "resource_info_type_id", "value", "create_user", "create_date", "modify_user", "modify_date"
             };
 
         // store ResourceInfo data to new online review schema
-        PreparedStatement stmt = conn.prepareStatement(makeInsertSql(ResourceInfo.TABLE_NAME, fieldnames));
+        PreparedStatement stmt = migrator.getPersistenceConnection().prepareStatement(makeInsertSql(ResourceInfo.TABLE_NAME, fieldnames));
 
         for (Iterator iter = input.iterator(); iter.hasNext();) {
             ResourceInfo table = (ResourceInfo) iter.next();
@@ -728,16 +734,16 @@ public class ProjectPersistence extends DatabaseUtils {
      *
      * @param input the Resource data
      *
-     * @throws SQLException if error occurs while execute sql statement
+     * @throws Exception if error occurs while execute sql statement
      */
-    private void storeResource(List input) throws SQLException {
+    private void storeResource(List input) throws Exception {
     	long startTime = Util.start("storeResource");
         String[] fieldnames = {
                 "resource_id", "resource_role_id", "project_id", "phase_id", "create_user", "create_date", "modify_user", "modify_date"
             };
 
         // store Resource data to new online review schema
-        PreparedStatement stmt = conn.prepareStatement(makeInsertSql(Resource.TABLE_NAME, fieldnames));
+        PreparedStatement stmt = migrator.getPersistenceConnection().prepareStatement(makeInsertSql(Resource.TABLE_NAME, fieldnames));
 
         for (Iterator iter = input.iterator(); iter.hasNext();) {
             Resource table = (Resource) iter.next();
@@ -771,9 +777,9 @@ public class ProjectPersistence extends DatabaseUtils {
      *
      * @param input the ProjectInfo data
      *
-     * @throws SQLException if error occurs while execute sql statement
+     * @throws Exception if error occurs while execute sql statement
      */
-    private void storeProjectInfo(List input) throws SQLException {
+    private void storeProjectInfo(List input) throws Exception {
     	long startTime = Util.start("storeProjectInfo");
         String[] fieldnames = {
                 "project_id", "project_info_type_id", "value", "create_user", "create_date", "modify_user",
@@ -781,7 +787,7 @@ public class ProjectPersistence extends DatabaseUtils {
             };
 
         // store ProjectInfo data to new online review schema
-        PreparedStatement stmt = conn.prepareStatement(makeInsertSql(ProjectInfo.TABLE_NAME, fieldnames));
+        PreparedStatement stmt = migrator.getPersistenceConnection().prepareStatement(makeInsertSql(ProjectInfo.TABLE_NAME, fieldnames));
 
         for (Iterator iter = input.iterator(); iter.hasNext();) {
             ProjectInfo table = (ProjectInfo) iter.next();
@@ -811,9 +817,9 @@ public class ProjectPersistence extends DatabaseUtils {
      *
      * @param input the ProjectAudit data
      *
-     * @throws SQLException if error occurs while execute sql statement
+     * @throws Exception if error occurs while execute sql statement
      */
-    private void storeProjectAudit(List input) throws SQLException {
+    private void storeProjectAudit(List input) throws Exception {
     	long startTime = Util.start("storeProjectAudit");
         String[] fieldnames = {
                 "project_audit_id", "project_id", "update_reason", "create_user", "create_date", "modify_user",
@@ -821,7 +827,7 @@ public class ProjectPersistence extends DatabaseUtils {
             };
 
         // store ProjectAudit data to new online review schema
-        PreparedStatement stmt = conn.prepareStatement(makeInsertSql(ProjectAudit.TABLE_NAME, fieldnames));
+        PreparedStatement stmt = migrator.getPersistenceConnection().prepareStatement(makeInsertSql(ProjectAudit.TABLE_NAME, fieldnames));
 
         for (Iterator iter = input.iterator(); iter.hasNext();) {
             ProjectAudit table = (ProjectAudit) iter.next();

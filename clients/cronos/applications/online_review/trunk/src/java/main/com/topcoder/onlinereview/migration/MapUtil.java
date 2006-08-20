@@ -231,6 +231,51 @@ public class MapUtil {
 		}
 		throw new IllegalArgumentException("invalid project status id, id: " + statusId);
 	}
+	
+	/**
+	 * Map project status id.
+	 * 
+	 * @param statusId the old status id
+	 * @return the new status id
+	 */
+	public static int getPhaseTypeId(int phaseId) {
+		/*
+		phase_inst_v_id,phase_instance_id,start_date,end_date,phase_id,project_id,modify_date,modify_user,cur_version
+		54952,22527754,2006-06-22 09:00:00.0,2006-06-29 09:00:00.0,1,22527753,2006-06-19 15:35:34.0,156859,1
+		54953,22527755,2006-06-29 09:00:00.0,2006-06-30 09:00:00.0,2,22527753,2006-06-19 15:35:34.0,156859,1
+		54954,22527756,2006-06-30 09:00:00.0,2006-07-04 09:00:00.0,3,22527753,2006-06-19 15:35:34.0,156859,1
+		56239,22527759,2006-07-07 09:00:00.0,2006-07-07 21:00:00.0,4,22527753,2006-07-07 13:23:53.0,305384,1
+		56240,22527760,2006-07-07 21:00:00.0,2006-07-10 09:00:00.0,5,22527753,2006-07-07 13:23:53.0,305384,1
+		56241,22527761,2006-07-10 09:00:00.0,2006-07-11 09:00:00.0,6,22527753,2006-07-07 13:23:53.0,305384,1
+		56242,22527762,2006-07-11 09:00:00.0,2006-07-12 09:00:00.0,7,22527753,2006-07-07 13:23:53.0,305384,1
+		56243,22527763,2006-07-12 09:00:00.0,2006-07-13 09:00:00.0,8,22527753,2006-07-07 13:23:53.0,305384,1
+		54955,22527757,2006-07-04 09:00:00.0,2006-07-05 09:00:00.0,9,22527753,2006-06-19 15:35:34.0,156859,1
+		54956,22527758,2006-07-05 09:00:00.0,2006-07-06 09:00:00.0,10,22527753,2006-06-19 15:35:34.0,156859,1
+		 */
+		switch (phaseId) {
+		case 1: 
+			return 2; // submission
+		case 2: 
+			return 3; // screening
+		case 3:  
+			return 4; // review
+		case 9: 
+			return 5; // appeal
+		case 10: 
+			return 6; // appeal response
+		case 4: 
+			return 7; // aggregate
+		case 5: 
+			return 8; // aggregate review
+		case 6: 
+			return 9; // final fix
+		case 7: 
+			return 10; // final review
+		case 8:
+			return 0; // component preparation ignore
+		}
+		return 0;
+	}
 
 	/**
 	 * Map project category id.
