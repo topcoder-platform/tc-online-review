@@ -18,21 +18,23 @@
         and (qt.modify_date > ?) 
         order by scorecard_template_id, sg.group_seq_loc, ss.section_seq_loc, qt.question_seq_loc 
         
-	select  qt.scorecard_question_id as scorecard_question_id, 
-        sg.scorecard_id as scorecard_template_id, 
-        qt.description || qt.guideline as question_text, 
-        round(qt.weight) as question_weight,
-        qt.scorecard_section_id as section_id, 
-        ss.name as section_desc, 
-        round(ss.weight*sg.weight/100) as section_weight, 
-        ss.scorecard_group_id as section_group_id, 
-        sg.name as section_group_desc,  
-        sg.sort || \.\ || ss.sort || \.\ || qt.sort  as question_desc,  
-        sg.sort as group_seq_loc, 
-        ss.sort as section_seq_loc, 
-        qt.sort as question_seq_loc
-        from scorecard_question qt, scorecard_section ss, scorecard_group sg  
-        where qt.scorecard_section_id = ss.scorecard_section_id  
-	        and ss.scorecard_group_id = sg.scorecard_group_id  
-	        and (qt.modify_date > ?) 
+	select qt.scorecard_question_id as scorecard_question_id
+        ,sg.scorecard_id as scorecard_template_id
+        ,qt.description || qt.guideline as question_text
+        ,round(qt.weight) as question_weight
+        ,qt.scorecard_section_id as section_id
+        ,ss.name as section_desc
+        ,round(ss.weight*sg.weight/100) as section_weight
+        ,ss.scorecard_group_id as section_group_id
+        ,sg.name as section_group_desc
+        ,sg.sort || '.' || ss.sort || '.' || qt.sort  as question_desc
+        ,sg.sort as group_seq_loc
+        ,ss.sort as section_seq_loc 
+        ,qt.sort as question_seq_loc
+        from scorecard_question qt
+        	inner join scorecard_section ss
+        	on qt.scorecard_section_id = ss.scorecard_section_id  
+        	inner join scorecard_group sg  
+        	on ss.scorecard_group_id = sg.scorecard_group_id  
+        where (qt.modify_date > ?) 
 	        order by scorecard_template_id, group_seq_loc, section_seq_loc, question_seq_loc      

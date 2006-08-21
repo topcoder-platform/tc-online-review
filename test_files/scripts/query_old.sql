@@ -39,9 +39,9 @@
 
 -- select distinct question_id from subjective_resp where subjective_resp_id = 13273629;
 -- select distinct scorecard_id from scorecard_question where question_id=13273628;
-select submission_id, submission_date, project_id from submission where project_id = 7437797 and cur_version = 1;
-select scorecard_id, modify_date, project_id  from scorecard where cur_version = 1 and project_id = 7437797;
-select phase_instance_id,start_date,end_date,phase_id,project_id from phase_instance where cur_version = 1 and project_id = 7437797;
+--select submission_id, submission_date, project_id from submission where project_id = 22527753 and cur_version = 1;
+--select scorecard_id, modify_date, project_id  from scorecard where cur_version = 1 and project_id = 22527753;
+--select phase_instance_id,start_date,end_date,phase_id,project_id from phase_instance where cur_version = 1 and project_id = 22527753;
 --select count(scorecard_id) from scorecard where cur_version = 1 and scorecard_type = 2 ;
 --select * from project_result where project_id = 21816206;
 --select * from scorecard where cur_version = 1 and project_id = 21816206;
@@ -62,3 +62,6 @@ select phase_instance_id,start_date,end_date,phase_id,project_id from phase_inst
 --select distinct handle_lower from user;
 
 --select * from categories
+--select first 5 * from project_result;
+select first 5 * from user_reliability;
+select distinct tabname from systables order by tabname;
