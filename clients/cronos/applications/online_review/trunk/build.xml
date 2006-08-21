@@ -221,23 +221,23 @@
 	</target>
 
 	<target name="db.query">
-		<orm-execute-old-sql-script scriptfile="${query_old.file}" />
+		<orm-execute-old-sql-script output="${testlogdir}/db.query.log" scriptfile="${query_old.file}" />
 	</target>
 
 	<target name="db.query_test">
-		<orm-execute-sql-script scriptfile="${query_new_test.file}" />
+		<orm-execute-sql-script output="${testlogdir}/db.query_test.log" scriptfile="${query_new_test.file}" />
 	</target>
 
 	<target name="db.new_query">
-		<orm-execute-sql-script scriptfile="${query.file}" />
+		<orm-execute-sql-script output="${testlogdir}/db.new_query.log" scriptfile="${query.file}" />
 	</target>
 
 	<target name="db.init_projects">
-		<orm-execute-sql-script scriptfile="${init_projects.file}" />
+		<orm-execute-sql-script output="${testlogdir}/db.init_projects.log" scriptfile="${init_projects.file}" />
 	</target>
 
 	<target name="db.init_scorecard">
-		<orm-execute-sql-script scriptfile="${init_scorecards.file}" />
+		<orm-execute-sql-script output="${testlogdir}/db.init_scorecard.log" scriptfile="${init_scorecards.file}" />
 	</target>
 	
     <target name="migrate_scorecard" depends="compile_tests">
@@ -256,7 +256,7 @@
 	
     <target name="migrate" depends="compile_tests">
     	<java classname="${package}.MigratorCommandLine" fork="true" output="${testlogdir}/migrate.log">
-    		<arg line="-config test_files/data_migration.xml -process scorecard,project" />
+    		<arg line="-config test_files/data_migration.xml" />
             <classpath refid="test.build.classpath"/>
     	</java>
     </target>

@@ -25,6 +25,7 @@ import com.topcoder.onlinereview.migration.dto.newschema.review.ReviewItemCommen
 import com.topcoder.onlinereview.migration.dto.newschema.screening.ScreeningResult;
 import com.topcoder.onlinereview.migration.dto.newschema.screening.ScreeningTask;
 
+import java.sql.Connection;
 import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -43,6 +44,7 @@ import java.util.List;
  */
 public class ProjectPersistence extends DatabaseUtils {
 	private DataMigrator migrator = null;
+	private Connection conn = null;
 
     /**
      * Creates a new Persistence object.
@@ -84,10 +86,11 @@ public class ProjectPersistence extends DatabaseUtils {
             };
 
         // store Project data to new online review schema
-        PreparedStatement stmt = migrator.getPersistenceConnection().prepareStatement(makeInsertSql(ProjectNew.TABLE_NAME, fieldnames));
+        conn = migrator.getPersistenceConnection();
+        PreparedStatement stmt = conn.prepareStatement(makeInsertSql(ProjectNew.TABLE_NAME, fieldnames));
 
         boolean successful = true;
-        migrator.getPersistenceConnection().setAutoCommit(false);
+        conn.setAutoCommit(false);
         try {
             int i = 1;
             stmt.setInt(i++, table.getProjectId());
@@ -110,10 +113,10 @@ public class ProjectPersistence extends DatabaseUtils {
             storeResourceSubmission(table.getResourceSubmissions());
             storeScreeningTask(table.getScreeningTasks());
             storeReview(table.getReviews());
-            migrator.getPersistenceConnection().commit();
+            conn.commit();
         } catch(Exception e) {
         	successful = false;
-        	migrator.getPersistenceConnection().rollback();
+        	conn.rollback();
         	Util.warn(e);
         	Util.warn("Failed to store project, project_id:" + table.getProjectId());
         }
@@ -138,7 +141,7 @@ public class ProjectPersistence extends DatabaseUtils {
             };
 
         // store ReviewItem data to new online review schema
-        PreparedStatement stmt = migrator.getPersistenceConnection().prepareStatement(makeInsertSql(ReviewItem.TABLE_NAME, fieldnames));
+        PreparedStatement stmt = conn.prepareStatement(makeInsertSql(ReviewItem.TABLE_NAME, fieldnames));
 
         for (Iterator iter = input.iterator(); iter.hasNext();) {
             ReviewItem table = (ReviewItem) iter.next();
@@ -190,7 +193,7 @@ public class ProjectPersistence extends DatabaseUtils {
             };
 
         // store Review data to new online review schema
-        PreparedStatement stmt = migrator.getPersistenceConnection().prepareStatement(makeInsertSql(Review.TABLE_NAME, fieldnames));
+        PreparedStatement stmt = conn.prepareStatement(makeInsertSql(Review.TABLE_NAME, fieldnames));
 
         for (Iterator iter = input.iterator(); iter.hasNext();) {
             Review table = (Review) iter.next();
@@ -242,7 +245,7 @@ public class ProjectPersistence extends DatabaseUtils {
             };
 
         // store ReviewItemComment data to new online review schema
-        PreparedStatement stmt = migrator.getPersistenceConnection().prepareStatement(makeInsertSql(ReviewItemComment.TABLE_NAME, fieldnames));
+        PreparedStatement stmt = conn.prepareStatement(makeInsertSql(ReviewItemComment.TABLE_NAME, fieldnames));
 
         for (Iterator iter = input.iterator(); iter.hasNext();) {
             ReviewItemComment table = (ReviewItemComment) iter.next();
@@ -286,7 +289,7 @@ public class ProjectPersistence extends DatabaseUtils {
             };
 
         // store ReviewComment data to new online review schema
-        PreparedStatement stmt = migrator.getPersistenceConnection().prepareStatement(makeInsertSql(ReviewComment.TABLE_NAME, fieldnames));
+        PreparedStatement stmt = conn.prepareStatement(makeInsertSql(ReviewComment.TABLE_NAME, fieldnames));
 
         for (Iterator iter = input.iterator(); iter.hasNext();) {
             ReviewComment table = (ReviewComment) iter.next();
@@ -330,7 +333,7 @@ public class ProjectPersistence extends DatabaseUtils {
             };
 
         // store Phase data to new online review schema
-        PreparedStatement stmt = migrator.getPersistenceConnection().prepareStatement(makeInsertSql(Phase.TABLE_NAME, fieldnames));
+        PreparedStatement stmt = conn.prepareStatement(makeInsertSql(Phase.TABLE_NAME, fieldnames));
 
         for (Iterator iter = input.iterator(); iter.hasNext();) {
             Phase table = (Phase) iter.next();
@@ -377,7 +380,7 @@ public class ProjectPersistence extends DatabaseUtils {
             };
 
         // store PhaseDependency data to new online review schema
-        PreparedStatement stmt = migrator.getPersistenceConnection().prepareStatement(makeInsertSql(PhaseDependency.TABLE_NAME, fieldnames));
+        PreparedStatement stmt = conn.prepareStatement(makeInsertSql(PhaseDependency.TABLE_NAME, fieldnames));
 
         for (Iterator iter = input.iterator(); iter.hasNext();) {
             PhaseDependency table = (PhaseDependency) iter.next();
@@ -417,7 +420,7 @@ public class ProjectPersistence extends DatabaseUtils {
             };
 
         // store PhaseCriteria data to new online review schema
-        PreparedStatement stmt = migrator.getPersistenceConnection().prepareStatement(makeInsertSql(PhaseCriteria.TABLE_NAME, fieldnames));
+        PreparedStatement stmt = conn.prepareStatement(makeInsertSql(PhaseCriteria.TABLE_NAME, fieldnames));
 
         for (Iterator iter = input.iterator(); iter.hasNext();) {
             PhaseCriteria table = (PhaseCriteria) iter.next();
@@ -457,7 +460,7 @@ public class ProjectPersistence extends DatabaseUtils {
             };
 
         // store Upload data to new online review schema
-        PreparedStatement stmt = migrator.getPersistenceConnection().prepareStatement(makeInsertSql(Upload.TABLE_NAME, fieldnames));
+        PreparedStatement stmt = conn.prepareStatement(makeInsertSql(Upload.TABLE_NAME, fieldnames));
 
         for (Iterator iter = input.iterator(); iter.hasNext();) {
             Upload table = (Upload) iter.next();
@@ -504,7 +507,7 @@ public class ProjectPersistence extends DatabaseUtils {
             };
 
         // store Submission data to new online review schema
-        PreparedStatement stmt = migrator.getPersistenceConnection().prepareStatement(makeInsertSql(Submission.TABLE_NAME, fieldnames));
+        PreparedStatement stmt = conn.prepareStatement(makeInsertSql(Submission.TABLE_NAME, fieldnames));
 
         for (Iterator iter = input.iterator(); iter.hasNext();) {
             Submission table = (Submission) iter.next();
@@ -546,7 +549,7 @@ public class ProjectPersistence extends DatabaseUtils {
             };
 
         // store ScreeningTask data to new online review schema
-        PreparedStatement stmt = migrator.getPersistenceConnection().prepareStatement(makeInsertSql(ScreeningTask.TABLE_NAME, fieldnames));
+        PreparedStatement stmt = conn.prepareStatement(makeInsertSql(ScreeningTask.TABLE_NAME, fieldnames));
 
         for (Iterator iter = input.iterator(); iter.hasNext();) {
             ScreeningTask table = (ScreeningTask) iter.next();
@@ -590,7 +593,7 @@ public class ProjectPersistence extends DatabaseUtils {
             };
 
         // store ScreeningResult data to new online review schema
-        PreparedStatement stmt = migrator.getPersistenceConnection().prepareStatement(makeInsertSql(ScreeningResult.TABLE_NAME, fieldnames));
+        PreparedStatement stmt = conn.prepareStatement(makeInsertSql(ScreeningResult.TABLE_NAME, fieldnames));
 
         for (Iterator iter = input.iterator(); iter.hasNext();) {
             ScreeningResult table = (ScreeningResult) iter.next();
@@ -629,7 +632,7 @@ public class ProjectPersistence extends DatabaseUtils {
             };
 
         // store ResourceSubmission data to new online review schema
-        PreparedStatement stmt = migrator.getPersistenceConnection().prepareStatement(makeInsertSql(ResourceSubmission.TABLE_NAME, fieldnames));
+        PreparedStatement stmt = conn.prepareStatement(makeInsertSql(ResourceSubmission.TABLE_NAME, fieldnames));
 
         for (Iterator iter = input.iterator(); iter.hasNext();) {
             ResourceSubmission table = (ResourceSubmission) iter.next();
@@ -666,7 +669,7 @@ public class ProjectPersistence extends DatabaseUtils {
             };
 
         // store Notification data to new online review schema
-        PreparedStatement stmt = migrator.getPersistenceConnection().prepareStatement(makeInsertSql(Notification.TABLE_NAME, fieldnames));
+        PreparedStatement stmt = conn.prepareStatement(makeInsertSql(Notification.TABLE_NAME, fieldnames));
 
         for (Iterator iter = input.iterator(); iter.hasNext();) {
             Notification table = (Notification) iter.next();
@@ -705,7 +708,7 @@ public class ProjectPersistence extends DatabaseUtils {
             };
 
         // store ResourceInfo data to new online review schema
-        PreparedStatement stmt = migrator.getPersistenceConnection().prepareStatement(makeInsertSql(ResourceInfo.TABLE_NAME, fieldnames));
+        PreparedStatement stmt = conn.prepareStatement(makeInsertSql(ResourceInfo.TABLE_NAME, fieldnames));
 
         for (Iterator iter = input.iterator(); iter.hasNext();) {
             ResourceInfo table = (ResourceInfo) iter.next();
@@ -743,7 +746,7 @@ public class ProjectPersistence extends DatabaseUtils {
             };
 
         // store Resource data to new online review schema
-        PreparedStatement stmt = migrator.getPersistenceConnection().prepareStatement(makeInsertSql(Resource.TABLE_NAME, fieldnames));
+        PreparedStatement stmt = conn.prepareStatement(makeInsertSql(Resource.TABLE_NAME, fieldnames));
 
         for (Iterator iter = input.iterator(); iter.hasNext();) {
             Resource table = (Resource) iter.next();
@@ -787,7 +790,7 @@ public class ProjectPersistence extends DatabaseUtils {
             };
 
         // store ProjectInfo data to new online review schema
-        PreparedStatement stmt = migrator.getPersistenceConnection().prepareStatement(makeInsertSql(ProjectInfo.TABLE_NAME, fieldnames));
+        PreparedStatement stmt = conn.prepareStatement(makeInsertSql(ProjectInfo.TABLE_NAME, fieldnames));
 
         for (Iterator iter = input.iterator(); iter.hasNext();) {
             ProjectInfo table = (ProjectInfo) iter.next();
@@ -827,7 +830,7 @@ public class ProjectPersistence extends DatabaseUtils {
             };
 
         // store ProjectAudit data to new online review schema
-        PreparedStatement stmt = migrator.getPersistenceConnection().prepareStatement(makeInsertSql(ProjectAudit.TABLE_NAME, fieldnames));
+        PreparedStatement stmt = conn.prepareStatement(makeInsertSql(ProjectAudit.TABLE_NAME, fieldnames));
 
         for (Iterator iter = input.iterator(); iter.hasNext();) {
             ProjectAudit table = (ProjectAudit) iter.next();

@@ -47,116 +47,88 @@ select p.project_id, cc.component_id, cc.component_name,
         and ps.project_stat_id = p.project_stat_id
         and (p.modify_date > ? OR cv.modify_date > ? OR cc.modify_date > ? OR pi.modify_date > ?
         
-        
-select p.project_id,
-	(select value from project_info where project_id = p.project_id and project_info_type_id = 2) as component_id,
-	(select value from project_info where project_id = p.project_id and project_info_type_id = 6) as component_name,
-	(selec count(*) from resource where project_id = p.project_id and resource_role_id = 1) as num_registrations, 
-	(selec count(*) from submission where project_id = p.project_id) as num_submissions,
-	case when exist (select 1 from phase where project_id = p.project_id and phase_type_id = 3 and phase_status_id = 3)    
-		then (select count(*) from submission where project_id = p.project_id and (submission_status_id = 1 or submission_status_id = 3 or submission_status_id = 4))
-	 	else 0 end as num_valid_submissions, 
-	case when exist (select 1 from phase where project_id = p.project_id and phase_type_id = 4 and phase_status_id = 3)    
-		then (select count(*) from submission where project_id = p.project_id and (submission_status_id = 1 or submission_status_id = 3 or submission_status_id = 4))
-	 	else 0 end as num_submissions_passed_review,  	
-	(select avg(value) from resource_info where resource_info_type_id = 10 and resource_id in (select resource_id from resource where project_id = p.project_id)) as avg_raw_score,
-	(select avg(value) from resource_info where resource_info_type_id = 11 and resource_id in (select resource_id from resource where project_id = p.project_id)) as avg_final_score,
-	p.project_category_id,
-	case when p.project_category_id = 1 then 112 else 113 end as phase_id,
-	case when p.project_category_id = 1 then 'Design' else 'Development' end as phase_desc,
-	p.project_category_id as category_id,
-	(select name from project_category_lu where project_category_id = p.project_category_id) as category_desc,
-	(select actual_start_date from phase where project_id = p.project_id and phase_type_id = 1) as posting_date,
-	(select actual_end_date from phase where project_id = p.project_id and phase_type_id = 2) as submitby_date,
-	1 as level_id,
-	(select value from project_info where project_id = p.project_id and project_info_type_id = 21) as complete_date,
-	(select min(phase_id) from phase where project_id = p.project_id and phase_status_id = 2) as review_phase_id,
-	(select name from phase_type_lu where phase_type_id = (select phase_type_id from phase where phase_id =
-		(select min(phase_id) from phase where project_id = p.project_id and phase_status_id = 2)))	as review_phase_name,
-	p.project_status_id as project_stat_id,
-	(select name from project_status_lu where project_status_id = p.project_status_id) as project_stat_name,
-	(select viewable from categories where category_id = 
-			(select value from project_info where project_id = p.project_id and project_info_type_id = 5))
-	 as viewable, 
-	(select value from project_info where project_id = p.project_id and project_info_type_id = 3) as version_id, 
-	(select value from project_info where project_id = p.project_id and project_info_type_id = 7) as version_text, 
-	(select value from project_info where project_id = p.project_id and project_info_type_id = 22) as rating_date, 
-	(select value from project_info where project_id = p.project_id and project_info_type_id = 23) as winner_id 
-    from project p
-    where p.modify_date > ?
-    
-    
-    
-    select p.project_id,
-	(select value from project_info where project_id = p.project_id and project_info_type_id = 2) as component_id,
-	(select value from project_info where project_id = p.project_id and project_info_type_id = 6) as component_name,
-	(selec count(*) from resource where project_id = p.project_id and resource_role_id = 1) 
-		as num_registrations, 
-	(selec count(*) from submission where project_id = p.project_id where submission_status_id <> 5) 
-		as num_submissions,
-	case when exist 
-		(select 1 from phase where project_id = p.project_id and phase_type_id = 3 and phase_status_id = 3)    
-		then (select count(*) from submission where project_id = p.project_id and (submission_status_id = 1 or submission_status_id = 3 or submission_status_id = 4))
-	 	else 0 end as num_valid_submissions, 
-	case when exist (select 1 from phase where project_id = p.project_id and phase_type_id = 4 and phase_status_id = 3)    
-		then (select count(*) from submission where project_id = p.project_id and (submission_status_id = 1 or submission_status_id = 4))
-	 	else 0 end as num_submissions_passed_review, 	
-	(select avg(value) from resource_info where resource_info_type_id = 10 and resource_id = r.resource_id) 
-		as avg_raw_score,
-	(select avg(value) from resource_info where resource_info_type_id = 11 and resource_id = r.resource_id) 
-		as avg_final_score,
-	p.project_category_id,
-	case when p.project_category_id = 1 then 112 else 113 end 
-		as phase_id,
-	case when p.project_category_id = 1 then 'Design' else 'Development' end 
-		as phase_desc,
-	cat.category_id,
-	cat.category_name as category_desc,
-	ppd.actual_start_date as posting_date,
-	psd.actual_end_date as submitby_date,
-	1 as level_id,
-	pict.value as complete_date,
-	(select min(phase_id) from phase where project_id = p.project_id and phase_status_id = 2) 
-		as review_phase_id,
-	(select name from phase_type_lu where phase_type_id = (select phase_type_id from phase where phase_id =
+select FIRST 5 p.project_id
+	,(select value from project_info where project_id = p.project_id and project_info_type_id = 2) as component_id
+	,(select value from project_info where project_id = p.project_id and project_info_type_id = 6) as component_name
+	,(select count(*) from resource where project_id = p.project_id and resource_role_id = 1) 
+		as num_registrations
+	,(select count(*) from submission sub 
+		inner join upload 
+		on sub.upload_id = upload.upload_id 
+		and upload.project_id = p.project_id
+		where submission_status_id <> 5) 
+		as num_submissions
+	,(select count(*) from submission s
+			inner join upload
+			on upload.upload_id = s.upload_id
+			where upload.project_id = p.project_id and submission_status_id in (1, 3, 4))
+	 	as num_valid_submissions
+	,(select count(*) from submission s
+			inner join upload u
+			on u.upload_id = s.upload_id
+			where u.project_id = p.project_id and submission_status_id in (1, 4))
+	 	as num_submissions_passed_review
+	,p.project_category_id
+	,case when p.project_category_id = 1 then 112 else 113 end 
+			as phase_id
+	,case when p.project_category_id = 1 then 'Design' else 'Development' end 
+			as phase_desc
+	,cat.category_id
+	,cat.category_name as category_desc
+	,case when ppd.actual_start_time is not null then ppd.actual_start_time
+		else psd.actual_start_time
+	end 
+	 as posting_date
+	,psd.actual_end_time as submitby_date
+	,1 as level_id
+	,pict.value as complete_date
+	,(select phase_type_id from phase where phase_id =
+		(select min(phase_id) from phase where project_id = p.project_id and phase_status_id = 2))
+			as review_phase_id
+	,(select name from phase_type_lu where phase_type_id = (select phase_type_id from phase where phase_id =
 		(select min(phase_id) from phase where project_id = p.project_id and phase_status_id = 2)))	
-			as review_phase_name,
-	p.project_status_id 
-		as project_stat_id,
-	psl.name as project_stat_name,
-	cat.viewable as viewable, 
-	pivi.value as version_id, 
-	pivt.value as version_text, 
-	pirt.value as rating_date, 
-	piwi.value as winner_id 
+			as review_phase_name
+	,p.project_status_id 
+		as project_stat_id
+	,psl.name as project_stat_name
+	,cat.viewable as viewable
+	,pivi.value as version_id 
+	,pivt.value as version_text
+	,pirt.value as rating_date 
+	,piwi.value as winner_id 
+
     from project p
-    INNER JOIN resource r
-    ON r.project_id = p.project_id
-    INNER JOIN project_info pir
+    LEFT JOIN project_info pir
     ON pir.project_id = p.project_id 
     and pir.project_info_type_id = 5
-    INNER JOIN project_info pivi 
+    LEFT JOIN project_info pivi 
     ON pivi.project_id = p.project_id 
     and pivi.project_info_type_id = 3
-    INNER JOIN project_info pivt 
+    LEFT JOIN project_info pivt 
     ON pivt.project_id = p.project_id 
     and pivt.project_info_type_id = 7
-    INNER JOIN project_info pict 
+    LEFT JOIN project_info pict 
     ON pict.project_id = p.project_id 
     and pict.project_info_type_id = 21
-    INNER JOIN project_info pirt 
+    LEFT JOIN project_info pirt 
     ON pirt.project_id = p.project_id 
     and pirt.project_info_type_id = 22
-    INNER JOIN project_info piwi 
+    LEFT JOIN project_info piwi 
     ON piwi.project_id = p.project_id 
     and piwi.project_info_type_id = 23
-    INNER JOIN categories cat
+    LEFT JOIN categories cat
     ON cat.category_id = pir.value
-    INNER JOIN project_status_lu psl
+    LEFT JOIN project_status_lu psl
     ON psl.project_status_id = p.project_status_id
-    INNER JOIN phase psd
+    LEFT JOIN phase psd
     ON psd.project_id = p.project_id 
     and psd.phase_type_id = 2
-    INNER JOIN phase ppd
+    LEFT JOIN phase ppd
     ON ppd.project_id = p.project_id 
     and ppd.phase_type_id = 1
+    
+    
+convert MM/dd/yyyy hh:mm a     
+for rating_date/complete_date
+
+version_id/winner_id long

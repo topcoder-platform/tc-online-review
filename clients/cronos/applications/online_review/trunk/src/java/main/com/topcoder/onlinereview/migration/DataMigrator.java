@@ -29,9 +29,7 @@ import java.util.List;
  * @version 1.0
  */
 public class DataMigrator {
-    /**
-     * The namespace for migration.
-     */
+    /** The namespace for migration. */
     public static final String NAMESPACE = DataMigrator.class.getName();
     private Connection loaderConn = null;
     private Connection persistConn = null;
@@ -98,7 +96,7 @@ public class DataMigrator {
      * @throws Exception if error occurs while create connection
      */
     public Connection getLoaderConnection() throws Exception {
-    	if (isIdle(this.loaderConn)) {
+        if (isIdle(this.loaderConn)) {
             this.loaderConn = getDBConnectionFactory().createConnection(loaderConnName);
         }
 
@@ -106,11 +104,11 @@ public class DataMigrator {
     }
 
     private static boolean isIdle(Connection conn) {
-    	try {
-			return conn == null || conn.isClosed();
-		} catch (SQLException e) {
-			return true;
-		}
+        try {
+            return (conn == null) || conn.isClosed();
+        } catch (SQLException e) {
+            return true;
+        }
     }
 
     /**
@@ -121,7 +119,7 @@ public class DataMigrator {
      * @throws Exception if error occurs while create connection
      */
     public Connection getPersistenceConnection() throws Exception {
-    	if (isIdle(this.persistConn)) {
+        if (isIdle(this.persistConn)) {
             this.persistConn = getDBConnectionFactory().createConnection(persistConnName);
         }
 

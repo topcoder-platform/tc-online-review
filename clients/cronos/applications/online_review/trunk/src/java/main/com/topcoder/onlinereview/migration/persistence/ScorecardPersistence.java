@@ -6,11 +6,13 @@ package com.topcoder.onlinereview.migration.persistence;
 import com.topcoder.onlinereview.migration.DataMigrator;
 import com.topcoder.onlinereview.migration.DatabaseUtils;
 import com.topcoder.onlinereview.migration.Util;
+import com.topcoder.onlinereview.migration.dto.newschema.project.ProjectNew;
 import com.topcoder.onlinereview.migration.dto.newschema.scorecard.Scorecard;
 import com.topcoder.onlinereview.migration.dto.newschema.scorecard.ScorecardGroup;
 import com.topcoder.onlinereview.migration.dto.newschema.scorecard.ScorecardQuestionNew;
 import com.topcoder.onlinereview.migration.dto.newschema.scorecard.ScorecardSectionNew;
 
+import java.sql.Connection;
 import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -27,6 +29,7 @@ import java.util.List;
  */
 public class ScorecardPersistence extends DatabaseUtils {
 	private DataMigrator migrator = null;
+	private Connection conn = null;
 
     /**
      * Creates a new Persistence object.
@@ -44,7 +47,7 @@ public class ScorecardPersistence extends DatabaseUtils {
      *
      * @throws SQLException if error occurs while execute sql statement
      */
-    public void storeScorecard(List input) throws Exception {
+    public boolean storeScorecard(List input) throws Exception {
     	long startTime = Util.startMain("storeScorecard");
         String[] fieldnames = {
                 "scorecard_id", "scorecard_status_id", "scorecard_type_id", "project_category_id", "name", "version",
@@ -52,29 +55,39 @@ public class ScorecardPersistence extends DatabaseUtils {
             };
 
         // store scorecard data to new online review schema
-        PreparedStatement stmt = migrator.getPersistenceConnection().prepareStatement(makeInsertSql(Scorecard.TABLE_NAME, fieldnames));
+        conn = migrator.getPersistenceConnection();
+        PreparedStatement stmt = conn.prepareStatement(makeInsertSql(ProjectNew.TABLE_NAME, fieldnames));
 
-        for (Iterator iter = input.iterator(); iter.hasNext();) {
-            Scorecard table = (Scorecard) iter.next();
-            int i = 1;
-            stmt.setInt(i++, table.getScorecardId());
-            stmt.setInt(i++, table.getScorecardStatusId());
-            stmt.setInt(i++, table.getScorecardTypeId());
-            stmt.setInt(i++, table.getProjectCategoryId());
-            stmt.setString(i++, table.getName());
-            stmt.setString(i++, table.getVersion());
-            stmt.setFloat(i++, table.getMinScore());
-            stmt.setFloat(i++, table.getMaxScore());
-            stmt.setString(i++, table.getCreateUser());
-            stmt.setDate(i++, new Date(table.getCreateDate().getTime()));
-            stmt.setString(i++, table.getModifyUser());
-            stmt.setDate(i++, new Date(table.getModifyDate().getTime()));
-            stmt.execute();
-            storeScorecardGroup(table.getGroups());
+        boolean successful = true;
+        conn.setAutoCommit(false);
+        try {
+	        for (Iterator iter = input.iterator(); iter.hasNext();) {
+	            Scorecard table = (Scorecard) iter.next();
+	            int i = 1;
+	            stmt.setInt(i++, table.getScorecardId());
+	            stmt.setInt(i++, table.getScorecardStatusId());
+	            stmt.setInt(i++, table.getScorecardTypeId());
+	            stmt.setInt(i++, table.getProjectCategoryId());
+	            stmt.setString(i++, table.getName());
+	            stmt.setString(i++, table.getVersion());
+	            stmt.setFloat(i++, table.getMinScore());
+	            stmt.setFloat(i++, table.getMaxScore());
+	            stmt.setString(i++, table.getCreateUser());
+	            stmt.setDate(i++, new Date(table.getCreateDate().getTime()));
+	            stmt.setString(i++, table.getModifyUser());
+	            stmt.setDate(i++, new Date(table.getModifyDate().getTime()));
+	            stmt.execute();
+	            storeScorecardGroup(table.getGroups());
+	        }
+        } catch(Exception e) {
+        	successful = false;
+        	conn.rollback();
+        	Util.warn(e);
         }
 
         Util.logMainAction(input.size(), "storeScorecard", startTime);
         DatabaseUtils.closeStatementSilently(stmt);
+        return successful;
     }
 
     /**
@@ -84,7 +97,7 @@ public class ScorecardPersistence extends DatabaseUtils {
      *
      * @throws Exception if error occurs while execute sql statement
      */
-    void storeScorecardGroup(Collection input) throws Exception {
+    private void storeScorecardGroup(Collection input) throws Exception {
     	long startTime = Util.start("storeScorecardGroup");
         String[] fieldnames = {
                 "scorecard_group_id", "scorecard_id", "name", "weight", "sort", "create_user", "create_date",
@@ -92,7 +105,7 @@ public class ScorecardPersistence extends DatabaseUtils {
             };
 
         // store scorecard data to new online review schema
-        PreparedStatement stmt = migrator.getPersistenceConnection().prepareStatement(makeInsertSql(ScorecardGroup.TABLE_NAME, fieldnames));
+        PreparedStatement stmt = conn.prepareStatement(makeInsertSql(ScorecardGroup.TABLE_NAME, fieldnames));
 
         for (Iterator iter = input.iterator(); iter.hasNext();) {
             ScorecardGroup table = (ScorecardGroup) iter.next();
@@ -121,7 +134,7 @@ public class ScorecardPersistence extends DatabaseUtils {
      *
      * @throws Exception if error occurs while execute sql statement
      */
-    void storeScorecardSection(Collection input) throws Exception {
+    private void storeScorecardSection(Collection input) throws Exception {
     	long startTime = Util.start("storeScorecardSection");
         String[] fieldnames = {
                 "scorecard_section_id", "scorecard_group_id", "name", "weight", "sort", "create_user", "create_date",
@@ -129,7 +142,7 @@ public class ScorecardPersistence extends DatabaseUtils {
             };
 
         // store ScorecardSection data to new online review schema
-        PreparedStatement stmt = migrator.getPersistenceConnection().prepareStatement(makeInsertSql(ScorecardSectionNew.TABLE_NAME, fieldnames));
+        PreparedStatement stmt = conn.prepareStatement(makeInsertSql(ScorecardSectionNew.TABLE_NAME, fieldnames));
 
         for (Iterator iter = input.iterator(); iter.hasNext();) {
             ScorecardSectionNew table = (ScorecardSectionNew) iter.next();
@@ -158,7 +171,7 @@ public class ScorecardPersistence extends DatabaseUtils {
      *
      * @throws Exception if error occurs while execute sql statement
      */
-    void storeScorecardQuestion(Collection input) throws Exception {
+    private void storeScorecardQuestion(Collection input) throws Exception {
     	long startTime = Util.start("storeScorecardQuestion");
         String[] fieldnames = {
                 "scorecard_question_id", "scorecard_question_type_id", "scorecard_section_id", "description",
@@ -167,7 +180,7 @@ public class ScorecardPersistence extends DatabaseUtils {
             };
 
         // store ScorecardQuestion data to new online review schema
-        PreparedStatement stmt = migrator.getPersistenceConnection().prepareStatement(makeInsertSql(ScorecardQuestionNew.TABLE_NAME, fieldnames));
+        PreparedStatement stmt = conn.prepareStatement(makeInsertSql(ScorecardQuestionNew.TABLE_NAME, fieldnames));
 
         for (Iterator iter = input.iterator(); iter.hasNext();) {
             ScorecardQuestionNew table = (ScorecardQuestionNew) iter.next();

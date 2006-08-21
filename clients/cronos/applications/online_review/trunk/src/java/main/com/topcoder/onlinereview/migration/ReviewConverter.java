@@ -227,7 +227,7 @@ public class ReviewConverter extends MapUtil {
     	item.setAnswer(getAnswer(question));
     	setBaseDTO(item);
     	review.addReviewItem(item);
-    	
+
     	ReviewItem worksheetItem = null;
     	if (!screening && question.hasAggResponse() && this.worksheetReview != null) {
     		this.worksheetReview.setScorecardId(review.getScorecardId());
@@ -330,7 +330,7 @@ public class ReviewConverter extends MapUtil {
     		if (id < 5 || id > 8) {
     			return String.valueOf(id);
     		} else {
-    			return id == 7 ? "Yes" : "No";
+    			return id == 7 || id == 5 ? "Yes" : "No";
     		}
     	}
     }

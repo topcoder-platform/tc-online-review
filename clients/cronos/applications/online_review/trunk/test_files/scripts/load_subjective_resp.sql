@@ -19,20 +19,29 @@
             
 
             
-	select ri.review_item_id  as scorecard_question_id,  
-        ri.review_id as scorecard_id,  
-        (select value from resource_info where resource_id = s.resource_id and resource_info_type_id = 1) as user_id,
-        (select value from resource_info where resource_id = r.resource_id and resource_info_type_id = 1) as reviewer_id,
-        s.project_id,  
-        ric.content as response_text,
-        ric.comment_type_id as response_type_id,
-        (select name from comment_type_lu where comment_type_id = ric.comment_type_id) as response_type_desc,
-        ric.review_item_comment_id 
-        from review_item_comment ric, review_item  ri, review r, submission s 
-        where ric.review_item_id = ri.review_item_id 
-        and ri.review_id = r.review_id  
-        and r.submission_id = s.submission_id
-        and (ric.comment_type_id >= 1 and ric.comment_type_id <= 3) 
-        and (ric.modify_date > ? OR ri.modify_date > ? OR r.modify_date > ? OR s.modify_date > ?)
-    	and r.resource_id in (select resource_id from resource where resource_role_id >= 2 && resource_role_id <= 7) 
-    	order by scorecard_question_id, scorecard_id, review_item_comment_id 
+	select ri.review_item_id  as scorecard_question_id
+        ,ri.review_id as scorecard_id
+        ,(select value from resource_info where resource_id = u.resource_id and resource_info_type_id = 1) as user_id
+        ,(select value from resource_info where resource_id = r.resource_id and resource_info_type_id = 1) as reviewer_id
+        ,u.project_id
+        ,ric.content as response_text
+        ,ric.comment_type_id as response_type_id
+        ,ctl.name as response_type_desc
+        ,ric.review_item_comment_id subjective_resp_id
+        from review_item_comment ric
+        	inner join comment_type_lu ctl
+        	on ric.comment_type_id = ctl.comment_type_id
+        	inner join review_item  ri
+        	on ric.review_item_id = ri.review_item_id 
+        	inner join review r
+        	on ri.review_id = r.review_id  
+        	inner join submission s 
+        	on r.submission_id = s.submission_id
+        	inner join upload u
+        	on u.upload_id = s.upload_id
+        	inner join resource res
+        	on r.resource_id = res.resource_id
+        	and res.resource_role_id in (2, 3, 4, 5, 6, 7)
+        where ric.comment_type_id in (1, 2, 3) and (ric.modify_date > ? OR ri.modify_date > ? OR r.modify_date > ? OR s.modify_date > ?)
+        	and project_id = ?  
+    	order by scorecard_question_id, scorecard_id, subjective_resp_id 
