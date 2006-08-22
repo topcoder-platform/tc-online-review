@@ -56,7 +56,7 @@ public class ScorecardPersistence extends DatabaseUtils {
 
         // store scorecard data to new online review schema
         conn = migrator.getPersistenceConnection();
-        PreparedStatement stmt = conn.prepareStatement(makeInsertSql(ProjectNew.TABLE_NAME, fieldnames));
+        PreparedStatement stmt = conn.prepareStatement(makeInsertSql(Scorecard.TABLE_NAME, fieldnames));
 
         boolean successful = true;
         conn.setAutoCommit(false);
