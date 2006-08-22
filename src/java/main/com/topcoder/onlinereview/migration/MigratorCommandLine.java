@@ -96,7 +96,7 @@ public class MigratorCommandLine {
         	migrator = new DataMigrator();
             Switch processSwitch = cmdLineUtil.getSwitch("process");
             List processes = processSwitch.getValues();
-            if (processes != null || processes.size() > 0) {
+            if (processes != null && processes.size() > 0) {
                 for (int i = 0; i < processes.size(); i++) {
                     String process = (String) processes.get(i);
                     if ("project".equals(process)) {
