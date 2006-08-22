@@ -107,6 +107,7 @@ public class DataMigrator {
         try {
             return (conn == null) || conn.isClosed();
         } catch (SQLException e) {
+        	Util.warn("the connection is idel, message: " + e.getMessage());
             return true;
         }
     }
