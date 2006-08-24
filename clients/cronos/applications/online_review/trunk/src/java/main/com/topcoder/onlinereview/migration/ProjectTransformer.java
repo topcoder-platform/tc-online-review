@@ -429,7 +429,7 @@ public class ProjectTransformer extends MapUtil{
     	output.setProjectStatusId(MapUtil.getProjectStatusId(input.getProjectStatId()));
         output.setProjectCategoryId(MapUtil.getProjectCategoryId(input.getProjectTypeId()));
     	setBaseDTO(output);
-        output.setProjectId((int) projectIdGenerator.getNextID());    	
+        output.setProjectId(input.getProjectId()); // (int) projectIdGenerator.getNextID());    	
 		Util.logAction("prepareTransProject", startTime);
     }
 

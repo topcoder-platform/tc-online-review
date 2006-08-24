@@ -113,6 +113,11 @@ public class ProjectPersistence extends DatabaseUtils {
             storeResourceSubmission(table.getResourceSubmissions());
             storeScreeningTask(table.getScreeningTasks());
             storeReview(table.getReviews());
+
+	        // Update project id with id_sequences
+	        conn.createStatement().execute("update id_sequences set next_block_start = " +
+	        		"(select max(project_id) + 1 from project) " +
+	        		"where name = 'project_id_seq'");
             conn.commit();
         } catch(Exception e) {
         	successful = false;
