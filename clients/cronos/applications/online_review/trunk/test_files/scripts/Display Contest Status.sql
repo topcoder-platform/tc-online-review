@@ -59,37 +59,39 @@ select cc.component_name
  
  	SELECT 
 	(select value from project_info where project_id = p.project_id and project_info_type_id = 6) 
-		as component_name,
-	(select value from project_info where project_id = p.project_id and project_info_type_id = 7) 
-		as version_text,
-	(select category_name from categories where category_id = pci.value)
-		as catalog_name	,
-	pt.name 
-		as current_phase,
-    ph.scheduled_end_time as reg_end_date
-    (SELECT MAX(scheduled_end_time)
+		as component_name
+	,(select value from project_info where project_id = p.project_id and project_info_type_id = 7) 
+		as version_text
+	,(select category_name from categories where category_id = pci.value)
+		as catalog_name	
+	,pt.name 
+		as current_phase
+    ,ph.scheduled_end_time as reg_end_date
+    ,(SELECT MAX(scheduled_end_time)
 		FROM phase
 		WHERE project_id = p.project_id
-		AND phase_type_id = (SELECT phase_type_id FROM phase_type_lu WHERE name = 'Final Review')
-		as final_review_end_date,
-	(select value from project_info where project_id = p.project_id and project_info_type_id = 23) 
-		as winner,
-	(select value from project_info where project_id = p.project_id and project_info_type_id = 24) 
-		as second,		
-     p.project_category_id + 111 
-     	as phase_id,
-     p.project_id,
-     ph.name 
-     	as phase,
-     u1.handle_lower as winner_sort
-     , u2.handle_lower as second_sort
-	(select value from project_info where project_id = p.project_id and project_info_type_id = 2) 
-      as component_id,     
-	(select value from project_info where project_id = p.project_id and project_info_type_id = 3) 
+		AND phase_type_id = (SELECT phase_type_id FROM phase_type_lu WHERE name = 'Final Review'))
+		as final_review_end_date
+	,(select value from project_info where project_id = p.project_id and project_info_type_id = 23) 
+		as winner
+	,(select value from project_info where project_id = p.project_id and project_info_type_id = 24) 
+		as second	
+     ,p.project_category_id + 111 
+     	as phase_id
+     ,p.project_id
+     ,(select name from project_category_lu where project_category_id = p.project_category_id)
+     	as phase
+     ,(select handle_lower from user where user_id = 
+     	(select value from project_info where project_id = p.project_id and project_info_type_id = 23)) as winner_sort
+     ,(select handle_lower from user where user_id = 
+     	(select value from project_info where project_id = p.project_id and project_info_type_id = 24)) as second_sort
+	,(select value from project_info where project_id = p.project_id and project_info_type_id = 2) 
+      as component_id
+	,(select value from project_info where project_id = p.project_id and project_info_type_id = 3) 
       as version
-     (select viewable from categories where category_id = pci.value) 
-     	as viewable,     		
-	(SELECT COUNT(*)
+     ,(select viewable from categories where category_id = pci.value) 
+     	as viewable   		
+	,(SELECT COUNT(*)
 		FROM resource r
 		INNER JOIN resource_info ri
 		ON ri.resource_id = r.resource_id
@@ -97,8 +99,8 @@ select cc.component_name
 		WHERE r.project_id = p.project_id
 		AND r.resource_role_id = (SELECT resource_role_id FROM resource_role_lu WHERE name = 'Submitter')
 		AND ri.value <> 'Not Rated')
-		as rated_count,		
-	(SELECT COUNT(*)
+		as rated_count	
+	,(SELECT COUNT(*)
 		FROM resource r
 		INNER JOIN resource_info ri
 		ON ri.resource_id = r.resource_id
@@ -106,8 +108,8 @@ select cc.component_name
 		WHERE r.project_id = p.project_id
 		AND r.resource_role_id = (SELECT resource_role_id FROM resource_role_lu WHERE name = 'Submitter')
 		AND ri.value = 'Not Rated')
-		as unrated_count,
-  	(select 1 from categories where pci.value = 22774808) 
+		as unrated_count
+  	,(select 1 from categories where pci.value = 22774808) 
   		as aol_brand	
 	FROM project p
 	INNER JOIN phase ph
@@ -124,10 +126,83 @@ select cc.component_name
 	ON pci.project_id = p.project_id
 	AND pci.project_info_type_id = (SELECT project_info_type_id FROM project_info_type_lu WHERE name = 'Root Catalog ID')
 	WHERE p.project_status_id = (SELECT project_status_id FROM project_status_lu WHERE name = 'Active')
-	AND p.project_category_id = 2
+	AND p.project_category_id + 111 = @ph@
 	AND pr.phase_status_id = (SELECT phase_status_id FROM phase_status_lu WHERE name = 'Open')
+	and ph.scheduled_start_time < current
 	
 	
 reg_end_date maybe should be modify to cur_due_date	
      , u1.handle_lower as winner_sort
      , u2.handle_lower as second_sort
+     
+     
+ 	SELECT 
+	(select value from project_info where project_id = p.project_id and project_info_type_id = 6) 
+		as component_name
+	,(select value from project_info where project_id = p.project_id and project_info_type_id = 7) 
+		as version_text
+	,(select category_name from categories where category_id = pci.value)
+		as catalog_name	
+	,pt.name 
+		as current_phase
+    ,ph.scheduled_end_time as reg_end_date
+    ,(SELECT MAX(scheduled_end_time)
+		FROM phase
+		WHERE project_id = p.project_id
+		AND phase_type_id = (SELECT phase_type_id FROM phase_type_lu WHERE name = 'Final Review')
+		as final_review_end_date
+	,(select value from project_info where project_id = p.project_id and project_info_type_id = 23) 
+		as winner
+	,(select value from project_info where project_id = p.project_id and project_info_type_id = 24) 
+		as second	
+     ,p.project_category_id + 111 
+     	as phase_id
+     ,p.project_id
+     ,(select name from project_category_lu where project_category_id = p.project_category_id)
+     	as phase
+     ,(select handle_lower from user where user_id = 
+     	(select value from project_info where project_id = p.project_id and project_info_type_id = 23)) as winner_sort
+     ,(select handle_lower from user where user_id = 
+     	(select value from project_info where project_id = p.project_id and project_info_type_id = 24)) as second_sort
+	,(select value from project_info where project_id = p.project_id and project_info_type_id = 2) 
+      as component_id
+	,(select value from project_info where project_id = p.project_id and project_info_type_id = 3) 
+      as version
+     ,(select viewable from categories where category_id = pci.value) 
+     	as viewable   		
+	,(SELECT COUNT(*)
+		FROM resource r
+		INNER JOIN resource_info ri
+		ON ri.resource_id = r.resource_id
+		AND ri.resource_info_type_id = (SELECT resource_info_type_id FROM resource_info_type_lu WHERE name = 'Rating')
+		WHERE r.project_id = p.project_id
+		AND r.resource_role_id = (SELECT resource_role_id FROM resource_role_lu WHERE name = 'Submitter')
+		AND ri.value <> 'Not Rated')
+		as rated_count	
+	,(SELECT COUNT(*)
+		FROM resource r
+		INNER JOIN resource_info ri
+		ON ri.resource_id = r.resource_id
+		AND ri.resource_info_type_id = (SELECT resource_info_type_id FROM resource_info_type_lu WHERE name = 'Rating')
+		WHERE r.project_id = p.project_id
+		AND r.resource_role_id = (SELECT resource_role_id FROM resource_role_lu WHERE name = 'Submitter')
+		AND ri.value = 'Not Rated')
+		as unrated_count
+  	,(select 1 from categories where pci.value = 22774808) 
+  		as aol_brand	
+	FROM project p
+	INNER JOIN phase ph
+	ON p.project_id = ph.project_id
+	AND ph.phase_status_id = 2 and ph.scheduled_start_time < current
+	AND ph.scheduled_start_time = (select min(scheduled_start_time) from phase where project_id = p.project_id and phase_status_id = 2)		
+	INNER JOIN phase_type_lu pt
+	ON ph.phase_type_id = pt.phase_type_id
+	INNER JOIN project_info pi
+	ON pi.project_id = p.project_id
+	AND pi.project_info_type_id = (SELECT project_info_type_id FROM project_info_type_lu WHERE name = 'Public')
+	AND pi.value = 'Yes'
+	INNER JOIN project_info pci
+	ON pci.project_id = p.project_id
+	AND pci.project_info_type_id = (SELECT project_info_type_id FROM project_info_type_lu WHERE name = 'Root Catalog ID')
+	WHERE p.project_status_id = (SELECT project_status_id FROM project_status_lu WHERE name = 'Active')
+	AND p.project_category_id + 111 = 112     

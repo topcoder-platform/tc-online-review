@@ -171,7 +171,9 @@ public class ProjectPersistence extends DatabaseUtils {
 	        			"getUploadId: " + table.getUploadId());
 	        	continue;
 	        }
-            storeReviewItemComment(table.getReviewItemComments());
+	        if (table.getReviewItemComments().size() > 0) {
+	        	storeReviewItemComment(table.getReviewItemComments());
+	        }
         }
 
         Util.logAction(input.size(), "storeReviewItem", startTime);
@@ -198,7 +200,7 @@ public class ProjectPersistence extends DatabaseUtils {
         for (Iterator iter = input.iterator(); iter.hasNext();) {
             Review table = (Review) iter.next();
             int i = 1;
-            if (table.getScorecardId() == 0) {
+            if (table.getScorecardId() == 0 || table.getResourceId() == 0) {
             	continue;
             }
             stmt.setInt(i++, table.getReviewId());
@@ -237,7 +239,7 @@ public class ProjectPersistence extends DatabaseUtils {
      *
      * @throws Exception if error occurs while execute sql statement
      */
-    void storeReviewItemComment(Collection input) throws Exception {
+    void storeReviewItemComment(Collection input) throws Exception {    	
     	long startTime = Util.start("storeReviewItemComment");
         String[] fieldnames = {
                 "review_item_comment_id", "resource_id", "review_item_id", "comment_type_id", "content", "extra_info", 
@@ -254,7 +256,11 @@ public class ProjectPersistence extends DatabaseUtils {
             stmt.setInt(i++, table.getResourceId());
             stmt.setInt(i++, table.getReviewItemId());
             stmt.setInt(i++, table.getCommentTypeId());
-            stmt.setString(i++, table.getContent());
+            if (table.getContent() != null && table.getContent().length() > 4096) {
+            	stmt.setString(i++, table.getContent().substring(0, 4096));
+            } else {
+            	stmt.setString(i++, table.getContent() == null ? "N/A" : table.getContent());
+            }
             stmt.setString(i++, table.getExtraInfo());
             stmt.setInt(i++, table.getSort());
             stmt.setString(i++, table.getCreateUser());

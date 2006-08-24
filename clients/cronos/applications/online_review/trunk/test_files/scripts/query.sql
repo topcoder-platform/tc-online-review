@@ -56,4 +56,11 @@
 -- --select count(*) from scorecard;
 -- --select count(*) from scorecard_question;
 
+--select si.idxname, st.tabname from sysindexes si, systables st where si.tabid = st.tabid
+
+--select first 5 * from project_result;
+
 select count(*) from scorecard;
+
+
+	

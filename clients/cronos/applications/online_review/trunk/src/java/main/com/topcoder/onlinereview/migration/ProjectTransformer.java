@@ -65,7 +65,7 @@ public class ProjectTransformer extends MapUtil{
     private static final String REVIEW_ITEM_ID_SEQ_NAME = "review_item_id_seq";
     private static final String REVIEW_COMMENT_ID_SEQ_NAME = "review_comment_id_seq";
     private static final String REVIEW_ITEM_COMMENT_ID_SEQ_NAME = "review_item_comment_id_seq";
-    private static final DateFormat DATE_FORMAT = new SimpleDateFormat("MM/dd/yyyy hh:mm a", Locale.US);
+    private static final DateFormat DATE_FORMAT = new SimpleDateFormat("MM/dd/yyyy hh:mm", Locale.US);
     private IDGenerator projectIdGenerator = null;
     private IDGenerator projectAuditIdGenerator = null;
     private IDGenerator phaseIdGenerator = null;

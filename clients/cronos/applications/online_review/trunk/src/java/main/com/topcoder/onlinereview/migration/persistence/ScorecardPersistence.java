@@ -79,6 +79,7 @@ public class ScorecardPersistence extends DatabaseUtils {
 	            stmt.execute();
 	            storeScorecardGroup(table.getGroups());
 	        }
+            conn.commit();
         } catch(Exception e) {
         	successful = false;
         	conn.rollback();
