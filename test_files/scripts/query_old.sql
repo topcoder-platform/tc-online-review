@@ -63,5 +63,8 @@
 
 --select * from categories
 --select first 5 * from project_result;
-select first 5 * from user_reliability;
-select distinct tabname from systables order by tabname;
+--select first 5 * from user_reliability;
+--select first 5 * from contract_payment_xref;
+--select distincat phase_id from phase_instance
+--select * from phase;
+select * from user;

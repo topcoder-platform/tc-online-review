@@ -45,7 +45,7 @@
         	inner join review_item_comment ric_resp
         	on ric_resp.review_item_id = ri.review_item_id 
         	and ric_resp.comment_type_id = 5
-        where ric.comment_type_id = 4
+        where ric.comment_type_id = 4 and u.project_id = ?
         and (ric.modify_date > ? OR ri.modify_date > ? OR r.modify_date > ? OR s.modify_date > ?)
         
 final_evaluation_id should be parsed     

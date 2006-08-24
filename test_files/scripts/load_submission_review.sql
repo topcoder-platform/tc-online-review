@@ -30,36 +30,25 @@ select  u.project_id
         ,(select value from resource_info where resource_id = r.resource_id and resource_info_type_id = 1) as reviewer_id
         ,(select value from resource_info where resource_id = u.resource_id and resource_info_type_id = 10) as raw_score
         ,r.score as final_score
-        ,(select count(*) from review_item_comment ric
-        		inner join review_item ri
-        		on ric.review_item_id = ri.review_item_id
-        		and ri.review_id = r.review_id
-        		where ric.comment_type_id = 4) 
-        	as num_appeals
-        ,(select count(*) from review_item_comment ric
-        		inner join review_item ri
-        		on ric.review_item_id = ri.review_item_id
-        		and ri.review_id = r.review_id
-        		where ric.comment_type_id = 4 and ric.extra_info = 'Succeeded') 
-        	as num_successful_appeals
-		,case 
-			when exists (select 1 from resource where resource_id = r.resource_id and resource_role_id = 7) 
-			then 1 
-			when exists (select 1 from resource where resource_id = r.resource_id and resource_role_id = 6) 
-			then 2
-			when exists (select 1 from resource where resource_id = r.resource_id and resource_role_id = 5) 
-			then 3
-			else null end 
-			as review_resp_id
-        ,r.review_id as scorecard_id
-        ,r.scorecard_id as scorecard_template_id
-        from review r
-        	inner join submission s
-        	on r.submission_id = s.submission_id
-	        inner join upload u
-	        on u.upload_id = s.upload_id           
-	        inner join resource res
-	        on res.resource_id = r.resource_id 
-	        and resource_role_id in (4, 5, 6, 7)  
-        where (r.modify_date > ? or s.modify_date > ?)
+        ",(select count(*) from review_item_comment ric
+        "		inner join review_item ri on ric.review_item_id = ri.review_item_id and ri.review_id = r.review_id
+        "		where ric.comment_type_id = 4) as num_appeals
+        ",(select count(*) from review_item_comment ric " +
+        "		inner join review_item ri " +
+        "		on ric.review_item_id = ri.review_item_id " +
+        "		and ri.review_id = r.review_id " +
+        "		where ric.comment_type_id = 4 and ric.extra_info = 'Succeeded')  " +
+        "	as num_successful_appeals " +
+		",case  " +
+		"	when exists (select 1 from resource where resource_id = r.resource_id and resource_role_id = 7) then 1 " +
+		"	when exists (select 1 from resource where resource_id = r.resource_id and resource_role_id = 6) then 2 " +
+		"	when exists (select 1 from resource where resource_id = r.resource_id and resource_role_id = 5) then 3 " +
+		"	else null end as review_resp_id " +
+        ",r.review_id as scorecard_id " +
+        ",r.scorecard_id as scorecard_template_id " +
+        "from review r " +
+        "	inner join submission s on r.submission_id = s.submission_id " +
+	    "    inner join upload u on u.upload_id = s.upload_id            " +
+	    "    inner join resource res on res.resource_id = r.resource_id and resource_role_id in (4, 5, 6, 7)   " +
+        "where u.project_id = ? and (r.modify_date > ? or s.modify_date > ?) " +
         	
