@@ -195,19 +195,6 @@ public class DataMigratorUnitTests extends TestCase {
     		}
     	}
     }
-    
-    /**
-     * Loads the namespaces under the default configuration file.
-     *
-     * @throws Exception to JUnit
-     */
-    private static void loadNamespaces() throws Exception {
-        releaseNamespaces();
-
-        ConfigManager config = ConfigManager.getInstance();
-
-        config.add(CONFIG_FILE);
-    }
 
     /**
      * Return DBConnectionFactory to create connection.

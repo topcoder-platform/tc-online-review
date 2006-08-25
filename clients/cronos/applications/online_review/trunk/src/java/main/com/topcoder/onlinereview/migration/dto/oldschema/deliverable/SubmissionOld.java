@@ -9,8 +9,6 @@ import java.util.Date;
 import java.util.Iterator;
 
 import com.topcoder.onlinereview.migration.dto.oldschema.ScorecardOld;
-import com.topcoder.onlinereview.migration.dto.oldschema.resource.RboardApplication;
-import com.topcoder.onlinereview.migration.dto.oldschema.review.ScorecardQuestion;
 import com.topcoder.onlinereview.migration.dto.oldschema.screening.ScreeningResults;
 
 
