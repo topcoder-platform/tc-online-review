@@ -6,7 +6,6 @@ package com.topcoder.onlinereview.migration.persistence;
 import com.topcoder.onlinereview.migration.DataMigrator;
 import com.topcoder.onlinereview.migration.DatabaseUtils;
 import com.topcoder.onlinereview.migration.Util;
-import com.topcoder.onlinereview.migration.dto.newschema.project.ProjectNew;
 import com.topcoder.onlinereview.migration.dto.newschema.scorecard.Scorecard;
 import com.topcoder.onlinereview.migration.dto.newschema.scorecard.ScorecardGroup;
 import com.topcoder.onlinereview.migration.dto.newschema.scorecard.ScorecardQuestionNew;
