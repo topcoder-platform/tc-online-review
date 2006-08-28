@@ -9,6 +9,7 @@ import java.util.List;
 
 import com.topcoder.onlinereview.migration.dto.newschema.deliverable.Submission;
 import com.topcoder.onlinereview.migration.dto.newschema.project.ProjectNew;
+import com.topcoder.onlinereview.migration.dto.newschema.resource.Resource;
 import com.topcoder.onlinereview.migration.dto.newschema.review.Review;
 import com.topcoder.onlinereview.migration.dto.newschema.review.ReviewComment;
 import com.topcoder.onlinereview.migration.dto.newschema.review.ReviewItem;
@@ -67,6 +68,10 @@ public class ReviewConverter extends MapUtil {
 				Util.warn("Failed to find scorecard id for template id: " + old.getTemplateId());
 				continue;
 			}
+			if (review.getResourceId() == 0) {
+				// Reviewer not found
+				continue;
+			}
 			list.add(review);
 		}
 
@@ -84,10 +89,9 @@ public class ReviewConverter extends MapUtil {
     	Review review = new Review();
     	review.setReviewId((int) reviewIdGenerator.getNextID());
     	review.setCommitted(scorecard.isCompleted());
-    	review.setResourceId(getResourceId(project, scorecard.getAuthorId()));
+    	review.setResourceId(project.getResourceIdByLoginIdScorecardType(scorecard.getAuthorId(), scorecard.getScorecardType()));
     	if (review.getResourceId() == 0) {
-    		// Not found
-    		log.log(Level.WARN, "AuthorId not found, AuthorId:" + scorecard.getAuthorId());
+    		log.log(Level.WARN, "AuthorId not found, AuthorId:" + scorecard.getAuthorId() + " scorecardType:" + scorecard.getScorecardType());
     	}
     	review.setScore(scorecard.getScore());
     	review.setScorecardId(getScorecardId(scorecard.getTemplateId()));
@@ -113,7 +117,7 @@ public class ReviewConverter extends MapUtil {
     	worksheetReview = new Review(); 
     	worksheetReview.setReviewId((int) reviewIdGenerator.getNextID());
     	worksheetReview.setCommitted(aggWorksheet.isCompleted());
-    	worksheetReview.setResourceId(MapUtil.getResourceId(project, aggWorksheet.getAggregatorId()));
+    	worksheetReview.setResourceId(project.getResourceIdByLoginIdRoleType(aggWorksheet.getAggregatorId(), Resource.AGGREGATOR_RESOURCE_ROLE));
     	if (worksheetReview.getResourceId() == 0) {
     		// Not found
     		log.log(Level.WARN, "AggregatorId not found, AggregatorId:" + aggWorksheet.getAggregatorId());
@@ -200,7 +204,7 @@ public class ReviewConverter extends MapUtil {
      */
     private void prepareWorksheetReviewComment(AggReview aggReview) throws Exception {
     	ReviewComment comment = new ReviewComment();
-    	comment.setResourceId(getResourceId(project, aggReview.getReviewerId()));
+    	comment.setResourceId(project.getResourceIdByLoginIdAggReviewer(aggReview.getReviewerId()));
     	comment.setReviewId(worksheetReview.getReviewId());
     	comment.setReviewCommentId((int) reviewCommentIdGenerator.getNextID());
     	comment.setContent(aggReview.getAggReviewText());

@@ -28,8 +28,11 @@ import junit.framework.TestCase;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileReader;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -90,15 +93,7 @@ public class DataMigratorUnitTests extends TestCase {
      *
      * @throws Exception to JUnit
      */
-    public void atestMigrate() throws Exception {
-    }
-
-    /**
-     * Test method for 'migrate()'
-     *
-     * @throws Exception to JUnit
-     */
-    public void testProjectLoader() throws Exception {
+    public void atestProjectLoader() throws Exception {
         List list = migrator.getProjectLoader().loadProjects();
 
         for (Iterator iter = list.iterator(); iter.hasNext();) {
@@ -151,7 +146,7 @@ public class DataMigratorUnitTests extends TestCase {
         }
 
         logger.log(Level.DEBUG, " ================= ");
-        List results = migrator.getScorecardTransformer().transformScorecardTemplate(list);
+        List results = migrator.getScorecardTransformer().transformScorecardTemplates(list);
 
         for (Iterator iter = results.iterator(); iter.hasNext();) {
         	Scorecard scorecard = (Scorecard) iter.next();
@@ -194,6 +189,49 @@ public class DataMigratorUnitTests extends TestCase {
     			ids.add(line);
     		}
     	}
+    }
+
+    /**
+     * 
+     * @throws Exception
+     */
+    public void testUpdateSQL() throws Exception {
+    	File dir = new File("src/update pages");
+    	
+    	// Set query text
+        String[] files = new String[] {"design_contests.sql", "dev_contests.sql", "contest_status.sql"};
+    	long[] queryIds = {26405, 26404, 26503};
+    	PreparedStatement pstmt = this.persistConn.prepareStatement("update query set text = ? where query_id = ?");
+        for (int i = 0; i < files.length; i++) {
+        	pstmt.setString(1, loadContent(new File(dir, files[i])));
+        	pstmt.setLong(2, queryIds[i]);
+        	pstmt.execute();
+        }
+    	pstmt.close();
+    	
+    	// Retrieve the result
+    	pstmt = this.persistConn.prepareStatement("select text from query where query_id = ?");
+        for (int i = 0; i < files.length; i++) {
+	    	pstmt.setLong(1, queryIds[0]);
+	    	ResultSet rs = pstmt.executeQuery();
+	    	if (rs.next()) {
+	    		System.out.println("Set sql is : " + rs.getString(1));
+	    	}
+	    	rs.close();
+        }
+    	pstmt.close();
+    }
+
+    private static String loadContent(File file) throws Exception {
+    	StringBuffer sb = new StringBuffer();
+    	FileInputStream input = new FileInputStream(file);
+
+    	int i;
+    	while ((i = input.read()) != -1) {
+    		sb.append((char) i);
+    	}
+    	input.close();
+    	return sb.toString();
     }
 
     /**

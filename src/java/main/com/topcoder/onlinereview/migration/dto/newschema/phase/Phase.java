@@ -19,6 +19,10 @@ import java.util.List;
 public class Phase extends BaseDTO {
     /** Represents the phase table name. */
     public static final String TABLE_NAME = "phase";
+    public static final int REGISTRATION_TYPE = 1;
+    public static final int SUBMISSION_TYPE = 2;
+    public static final int SCREENING_TYPE = 3;
+    public static final int REVIEW_TYPE = 4;
     private int phaseId;
     private int projectId;
     private int phaseTypeId;

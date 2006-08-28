@@ -60,10 +60,6 @@ public class ScorecardTransformer {
      * @throws Exception if error occurs while get idgenerator
      */
     public ScorecardTransformer() throws Exception {
-        scorecardIdGenerator = IDGeneratorFactory.getIDGenerator(SCORECARD_ID_SEQ_NAME);
-        scorecardGroupIdGenerator = IDGeneratorFactory.getIDGenerator(SCORECARD_GROUP_ID_SEQ_NAME);
-        scorecardSectionIdGenerator = IDGeneratorFactory.getIDGenerator(SCORECARD_SECTION_ID_SEQ_NAME);
-        scorecardQuestionIdGenerator = IDGeneratorFactory.getIDGenerator(SCORECARD_QUESTION_ID_SEQ_NAME);
         templateIdProperties = new Properties();
         if (MapUtil.propertieFile.exists()) {
         	InputStream input = new FileInputStream(MapUtil.propertieFile);
@@ -81,57 +77,68 @@ public class ScorecardTransformer {
      *
      * @throws Exception
      */
-    public List transformScorecardTemplate(List inputs)
+    public List transformScorecardTemplates(List inputs)
         throws Exception {
         List list = new ArrayList(inputs.size());
 
         long startTime = Util.startMain("transformScorecardTemplate");
         for (Iterator iter = inputs.iterator(); iter.hasNext();) {
-            ScorecardTemplate input = (ScorecardTemplate) iter.next();
-            logger.log(Level.DEBUG, "transformScorecardTemplate, template_id:" + input.getTemplateId() + " name:" + input.getTemplateName());
-            
-            Scorecard output = new Scorecard();
-            // active 1, inactive 2 default_ind should used to indicate if it's active or not
-            output.setScorecardStatusId(input.getStatusId());
-            // 1 maps to 'Screening' and 2 maps to 'Review' same
-            output.setScorecardTypeId(input.getScorecardType());
-            
-            // 1 maps to 'Component Design' and 2 maps to 'Component Development' same
-            output.setProjectCategoryId(input.getProjectType());
-
-            // Example Original Design Screening Scorecard v.6
-            // Component Design Review Scorecard v1.1
-            // Application Development Screening Scorecard
-            String[] parsed = parseName(input.getTemplateName());
-            output.setName(parsed[0]);
-            output.setVersion(parsed[1]);
-            output.setMinScore(MIN_SCORE);
-            output.setMaxScore(MAX_SCORE);
-            output.setCreateUser(CREATE_USER);
-            output.setCreateDate(new Date());
-            output.setModifyUser(MODIFY_USER);
-            output.setModifyDate(new Date());
-
-            int scorecardId = 0;
-            int templateId = input.getTemplateId();
-            String temp = templateIdProperties.getProperty(String.valueOf(templateId));
-            if (temp != null && temp.trim().length() > 0) {
-            	scorecardId = Integer.parseInt(temp);
-            } else {
-            	scorecardId = (int) scorecardIdGenerator.getNextID();
-            	templateIdProperties.setProperty(String.valueOf(templateId), String.valueOf(scorecardId));
-            }
-        	output.setScorecardId(scorecardId);
-        	logger.log(Level.DEBUG, "transformScorecardTemplate, template_id:" + templateId + " scorecard_id:" + scorecardId);
-        	float totalWeight = getTotalWeight(input.getGroups());
-            output.setGroups(transformScSectionGroup(output.getScorecardId(), input.getGroups(), totalWeight));
-            list.add(output);
+            list.add(transformScorecardTemplate((ScorecardTemplate) iter.next()));
         }
         Util.logMainAction(inputs.size(), "transformScorecardTemplate", startTime);
         OutputStream out = new FileOutputStream(MapUtil.propertieFile);
         templateIdProperties.store(out, "template_id scorecard_id");
         out.close();
         return list;
+    }
+
+    /**
+     * Transform ScorecardTemplate to Scorecard
+     *
+     * @param inputs the ScorecardTemplate data
+     *
+     * @return Scorecard data
+     *
+     * @throws Exception
+     */
+    public Scorecard transformScorecardTemplate(ScorecardTemplate input) throws Exception {
+        logger.log(Level.DEBUG, "transformScorecardTemplate, template_id:" + input.getTemplateId() + " name:" + input.getTemplateName());
+
+        Scorecard output = new Scorecard();
+        // active 1, inactive 2 default_ind should used to indicate if it's active or not
+        output.setScorecardStatusId(input.getStatusId());
+        // 1 maps to 'Screening' and 2 maps to 'Review' same
+        output.setScorecardTypeId(input.getScorecardType());
+        
+        // 1 maps to 'Component Design' and 2 maps to 'Component Development' same
+        output.setProjectCategoryId(input.getProjectType());
+
+        // Example Original Design Screening Scorecard v.6
+        // Component Design Review Scorecard v1.1
+        // Application Development Screening Scorecard
+        String[] parsed = parseName(input.getTemplateName());
+        output.setName(parsed[0]);
+        output.setVersion(parsed[1]);
+        output.setMinScore(MIN_SCORE);
+        output.setMaxScore(MAX_SCORE);
+        output.setCreateUser(CREATE_USER);
+        output.setCreateDate(new Date());
+        output.setModifyUser(MODIFY_USER);
+        output.setModifyDate(new Date());
+
+        int scorecardId = 0;
+        int templateId = input.getTemplateId();
+        String temp = templateIdProperties.getProperty(String.valueOf(templateId));
+        if (temp != null && temp.trim().length() > 0) {
+        	scorecardId = Integer.parseInt(temp);
+        } else {
+        	scorecardId = (int) getScorecardIdGenerator().getNextID();
+        	templateIdProperties.setProperty(String.valueOf(templateId), String.valueOf(scorecardId));
+        }
+    	output.setScorecardId(scorecardId);
+    	float totalWeight = getTotalWeight(input.getGroups());
+        output.setGroups(transformScSectionGroup(output.getScorecardId(), input.getGroups(), totalWeight));
+    	return output;
     }
 
     private static float getTotalWeight(Collection groups) {
@@ -157,7 +164,7 @@ public class ScorecardTransformer {
      * @throws IDGenerationException
      */
     private Collection transformScSectionGroup(int scorecardId, Collection inputs, float totalWeight)
-        throws IDGenerationException {
+        throws Exception {
     	long startTime = Util.start("transformScSectionGroup");
         List list = new ArrayList(inputs.size());
 
@@ -181,7 +188,7 @@ public class ScorecardTransformer {
             output.setCreateDate(new Date());
             output.setModifyUser(MODIFY_USER);
             output.setModifyDate(new Date());
-            output.setScorecardGroupId((int) scorecardGroupIdGenerator.getNextID());
+            output.setScorecardGroupId((int) getScorecardGroupIdGenerator().getNextID());
             output.setSections(transformScorecardSection(output.getScorecardGroupId(), input.getSections(), output.getWeight()));
             list.add(output);
         }
@@ -214,8 +221,8 @@ public class ScorecardTransformer {
      *
      * @throws IDGenerationException
      */
-    private Collection transformScorecardSection(int scorecardGroupId, Collection inputs, float groupWeight)
-        throws IDGenerationException {
+    public Collection transformScorecardSection(int scorecardGroupId, Collection inputs, float groupWeight)
+        throws Exception {
     	long startTime = Util.start("transformScorecardSection");
         List list = new ArrayList(inputs.size());
 
@@ -237,7 +244,7 @@ public class ScorecardTransformer {
             output.setCreateDate(new Date());
             output.setModifyUser(MODIFY_USER);
             output.setModifyDate(new Date());
-            output.setScorecardSectionId((int) scorecardSectionIdGenerator.getNextID());
+            output.setScorecardSectionId((int) getScorecardSectionIdGenerator().getNextID());
             output.setQuestions(transformScorecardQuestion(output.getScorecardSectionId(), input.getQuestions()));
             list.add(output);
         }
@@ -256,7 +263,7 @@ public class ScorecardTransformer {
      *
      * @throws IDGenerationException
      */
-    private Collection transformScorecardQuestion(int scorecardSectionId, Collection inputs) throws IDGenerationException {
+    public List transformScorecardQuestion(int scorecardSectionId, Collection inputs) throws IDGenerationException {
         List list = new ArrayList(inputs.size());
         long startTime = Util.start("transformScorecardQuestion");
 
@@ -390,4 +397,44 @@ public class ScorecardTransformer {
 
         return true;
     }
+
+	/**
+	 * @return Returns the scorecardGroupIdGenerator.
+	 */
+	public IDGenerator getScorecardGroupIdGenerator()  throws Exception {
+		if (scorecardGroupIdGenerator == null) {
+			scorecardGroupIdGenerator = IDGeneratorFactory.getIDGenerator(SCORECARD_GROUP_ID_SEQ_NAME);
+		}
+		return scorecardGroupIdGenerator;
+	}
+
+	/**
+	 * @return Returns the scorecardIdGenerator.
+	 */
+	public IDGenerator getScorecardIdGenerator() throws Exception {
+		if (scorecardIdGenerator == null) {
+			scorecardIdGenerator = IDGeneratorFactory.getIDGenerator(SCORECARD_ID_SEQ_NAME);
+		}
+		return scorecardIdGenerator;
+	}
+
+	/**
+	 * @return Returns the scorecardQuestionIdGenerator.
+	 */
+	public IDGenerator getScorecardQuestionIdGenerator() throws Exception {
+		if (scorecardQuestionIdGenerator == null) {
+			scorecardQuestionIdGenerator = IDGeneratorFactory.getIDGenerator(SCORECARD_QUESTION_ID_SEQ_NAME);
+		}
+		return scorecardQuestionIdGenerator;
+	}
+
+	/**
+	 * @return Returns the scorecardSectionIdGenerator.
+	 */
+	public IDGenerator getScorecardSectionIdGenerator() throws Exception {
+		if (scorecardSectionIdGenerator == null) {
+			scorecardSectionIdGenerator = IDGeneratorFactory.getIDGenerator(SCORECARD_SECTION_ID_SEQ_NAME);
+		}
+		return scorecardSectionIdGenerator;
+	}
 }

@@ -68,5 +68,4 @@
 	and pci.value in (8459260,5801776,5801777,5801778,5801779)
 	WHERE p.project_status_id = 1
 	AND p.project_category_id = 2
-	and p.project_id not in (21298488, 21298522, 21306079, 21306123, 21505040, 21505247, 21542912, 21542960, 21657411, 21657449)
 	order by initial_submission_date, catalog_name, component_name

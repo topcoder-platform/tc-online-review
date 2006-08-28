@@ -70,7 +70,7 @@ select cc.component_name
     ,(SELECT MAX(scheduled_end_time)
 		FROM phase
 		WHERE project_id = p.project_id
-		AND phase_type_id = (SELECT phase_type_id FROM phase_type_lu WHERE name = 'Final Review'))
+		AND phase_type_id = 10)
 		as final_review_end_date
 	,(select value from project_info where project_id = p.project_id and project_info_type_id = 23) 
 		as winner
@@ -95,44 +95,46 @@ select cc.component_name
 		FROM resource r
 		INNER JOIN resource_info ri
 		ON ri.resource_id = r.resource_id
-		AND ri.resource_info_type_id = (SELECT resource_info_type_id FROM resource_info_type_lu WHERE name = 'Rating')
+		AND ri.resource_info_type_id = 4
 		WHERE r.project_id = p.project_id
-		AND r.resource_role_id = (SELECT resource_role_id FROM resource_role_lu WHERE name = 'Submitter')
+		AND r.resource_role_id = 1
 		AND ri.value <> 'Not Rated')
 		as rated_count	
 	,(SELECT COUNT(*)
 		FROM resource r
 		INNER JOIN resource_info ri
 		ON ri.resource_id = r.resource_id
-		AND ri.resource_info_type_id = (SELECT resource_info_type_id FROM resource_info_type_lu WHERE name = 'Rating')
+		AND ri.resource_info_type_id = 4
 		WHERE r.project_id = p.project_id
-		AND r.resource_role_id = (SELECT resource_role_id FROM resource_role_lu WHERE name = 'Submitter')
+		AND r.resource_role_id = 1
 		AND ri.value = 'Not Rated')
 		as unrated_count
-  	,(select 1 from categories where pci.value = 22774808) 
+  	(select category_id from comp_categories where component_id = pi_ci.value and category_id = 22774808)
   		as aol_brand	
 	FROM project p
 	INNER JOIN phase ph
 	ON p.project_id = ph.project_id
 	AND ph.phase_status_id = 2
-	AND ph.scheduled_start_time = (select min(scheduled_start_time) from phase where project_id = p.project_id and phase_status_id = 2)		
+	AND ph.scheduled_start_time = (select min(scheduled_start_time) from phase where project_id = p.project_id and phase_status_id = 2)	
+	and ph.scheduled_start_time < current	
+	AND ph.phase_type_id = 2
 	INNER JOIN phase_type_lu pt
 	ON ph.phase_type_id = pt.phase_type_id
 	INNER JOIN project_info pi
 	ON pi.project_id = p.project_id
-	AND pi.project_info_type_id = (SELECT project_info_type_id FROM project_info_type_lu WHERE name = 'Public')
+	AND pi.project_info_type_id = 12
 	AND pi.value = 'Yes'
+	INNER JOIN project_info pi_ci
+	ON pi_ci.project_id = p.project_id
+	AND pi_ci.project_info_type_id = 2
 	INNER JOIN project_info pci
 	ON pci.project_id = p.project_id
-	AND pci.project_info_type_id = (SELECT project_info_type_id FROM project_info_type_lu WHERE name = 'Root Catalog ID')
-	WHERE p.project_status_id = (SELECT project_status_id FROM project_status_lu WHERE name = 'Active')
+	AND pci.project_info_type_id = 5
+	and pci.value in (8459260,5801776,5801777,5801778,5801779)
+	WHERE p.project_status_id = 1
 	AND p.project_category_id + 111 = @ph@
-	AND pr.phase_status_id = (SELECT phase_status_id FROM phase_status_lu WHERE name = 'Open')
-	and ph.scheduled_start_time < current
+	and p.project_id not in (21298488, 21298522, 21306079, 21306123, 21505040, 21505247, 21542912, 21542960, 21657411, 21657449)
+ 	order by final_review_end_date asc
 	
 	
-reg_end_date maybe should be modify to cur_due_date	
-     , u1.handle_lower as winner_sort
-     , u2.handle_lower as second_sort
-     
      

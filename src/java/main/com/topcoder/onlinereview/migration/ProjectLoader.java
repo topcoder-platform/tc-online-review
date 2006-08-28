@@ -32,9 +32,10 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -63,6 +64,7 @@ public class ProjectLoader {
      */
     public List loadProjects() throws Exception {
     	long startTime = Util.start("loadProjects");
+    	prepareSpecialRUserRoles();
     	List list = new ArrayList();
     	List ids = loadProjectIds();
         for (Iterator iter = ids.iterator(); iter.hasNext();) {
@@ -128,20 +130,20 @@ public class ProjectLoader {
 	        table.setModifyReason(rs.getString(ProjectOld.MODIFY_REASON_NAME));
 	        table.setCompVersions(getCompVersions(table.getCompVersId()));
 	        table.setCompForumXref(getCompForumXref(table.getCompVersId()));
-	
+
 	        if (table.getCompVersions() != null) {
 	            table.setCompCatalog(getCompCatalog(table.getCompVersions().getComponentId()));
 	        }
 	
 	        table.setCompVersionDates(getCompVersionDates(table.getCompVersId(), table.getCompVersions().getPhaseId()));
-	
+
+	        prepareLoadProjectResults(table);
 	        table.setPhaseInstanceId(rs.getInt(ProjectOld.PHASE_INSTANCE_ID_NAME));
 	        table.setPhaseInstances(getPhaseInstances(table.getProjectId(), table.getPhaseInstanceId()));
-	        prepareLoadRUserRoles(table);
+	        prepareLoadRUserRoles(table);	        
 	        prepareLoadAggWorksheet(table);    
 	        prepareLoadSubmissions(table);
 	        prepareLoadTestcases(table);
-	        prepareLoadProjectResults(table);
 	        prepareLoadRboardApplications(table);
 	        // Used for project_audit
 	        prepareLoadModifyReasons(table);
@@ -323,7 +325,7 @@ public class ProjectLoader {
      *
      * @throws Exception if error occurs while execute sql statement
      */
-    private Collection getPhaseInstances(int projectId, int currentPhaseId)
+    private List getPhaseInstances(int projectId, int currentPhaseId)
         throws Exception {
     	long startTime = Util.start("getPhaseInstances");
         List list = new ArrayList();
@@ -350,10 +352,11 @@ public class ProjectLoader {
             }
 
             // scorecard_type 1 = screening, 2 = review
-            // phase id Screening: 3 Review: 4
-            if ((table.getPhaseId() == 3) || (table.getPhaseId() == 4)) {
-                int scorecardType = ((table.getPhaseId() == 3) ? 1 : 2);
+            // phase id Screening: 2 Review: 3
+            if ((table.getPhaseId() == 2) || (table.getPhaseId() == 3)) {
+                int scorecardType = ((table.getPhaseId() == 2) ? 1 : 2);
                 table.setTemplateId(getTemplateId(projectId, scorecardType));
+                Util.warn("Cannot find template for scorecardtype: " + scorecardType);
             }
 
             list.add(table);
@@ -397,6 +400,51 @@ public class ProjectLoader {
         }
     }
 
+    private Map specialRUserRoles = new HashMap();
+    private static final String RETRIEVE_SPECIAL_STATEMENT =
+    	"SELECT distinct r_role_id,project_id,login_id,payment_info_id,r_resp_id FROM r_user_role " + 
+    	"where ((project_id = 7438682 and login_id = 265522) " +
+    	"or (project_id = 7438682 and login_id = 273206) " + 
+    	"or (project_id = 7438682 and login_id = 288429) " + 
+    	"or (project_id = 7444765 and login_id = 150498) " + 
+    	"or (project_id = 7444765 and login_id = 158333) " + 
+    	"or (project_id = 7444765 and login_id = 291974) " + 
+    	"or (project_id = 7470335 and login_id = 288429) " + 
+    	"or (project_id = 7476981 and login_id = 150498) " + 
+    	"or (project_id = 7476981 and login_id = 151360) " + 
+    	"or (project_id = 7476981 and login_id = 278595) " + 
+    	"or (project_id = 7488100 and login_id = 150498) " + 
+    	"or (project_id = 7507277 and login_id = 269515) " + 
+    	"or (project_id = 7507277 and login_id = 291974) " + 
+    	"or (project_id = 7507277 and login_id = 299180) " + 
+    	"or (project_id = 8346976 and login_id = 272250) " + 
+    	"or (project_id = 8403777 and login_id = 272069) " + 
+    	"or (project_id = 8551481 and login_id = 297731) " + 
+    	"or (project_id = 10054085 and login_id = 153089) " + 
+    	"or (project_id = 10566757 and login_id = 281876)) and cur_version = 0 ";
+
+    private void prepareSpecialRUserRoles() throws Exception {
+        PreparedStatement stmt = migrator.getLoaderConnection().prepareStatement(RETRIEVE_SPECIAL_STATEMENT);
+        ResultSet rs = stmt.executeQuery();
+
+        while(rs.next()) {
+            RUserRole table = new RUserRole();
+            table.setProjectId(rs.getInt(RUserRole.PROJECT_ID_NAME));
+            table.setRRoleId(rs.getInt(RUserRole.R_ROLE_ID_NAME));
+            table.setRRespId(rs.getInt(RUserRole.R_RESP_ID_NAME));
+            table.setLoginId(rs.getInt(RUserRole.LOGIN_ID_NAME));
+            table.setPaymentInfo(prepareLoadPaymentInfo(rs.getInt("payment_info_id")));
+            String projectId = String.valueOf(table.getProjectId());
+            List list = (List) specialRUserRoles.get(projectId);
+            if (list == null) {
+            	list = new ArrayList();
+            }
+            list.add(table);
+        }
+        DatabaseUtils.closeResultSetSilently(rs);
+        DatabaseUtils.closeStatementSilently(stmt);
+    }
+
     /**
      * Prepare rUserRoles for given project.
      *
@@ -407,7 +455,7 @@ public class ProjectLoader {
     private void prepareLoadRUserRoles(ProjectOld project)
         throws Exception {
     	long startTime = Util.start("prepareLoadRUserRoles");
-        PreparedStatement stmt = migrator.getLoaderConnection().prepareStatement("SELECT * FROM " + RUserRole.TABLE_NAME + " WHERE " +
+        PreparedStatement stmt = migrator.getLoaderConnection().prepareStatement("SELECT distinct r_role_id, r_resp_id, login_id, payment_info_id FROM " + RUserRole.TABLE_NAME + " WHERE " +
                 RUserRole.PROJECT_ID_NAME + " = ? and cur_version = 1");
         stmt.setInt(1, project.getProjectId());
 
@@ -416,12 +464,18 @@ public class ProjectLoader {
         while(rs.next()) {
             RUserRole table = new RUserRole();
             table.setProjectId(project.getProjectId());
-            table.setRUserRoleId(rs.getInt(RUserRole.R_USER_ROLE_ID_NAME));
             table.setRRoleId(rs.getInt(RUserRole.R_ROLE_ID_NAME));
             table.setRRespId(rs.getInt(RUserRole.R_RESP_ID_NAME));
             table.setLoginId(rs.getInt(RUserRole.LOGIN_ID_NAME));
             table.setPaymentInfo(prepareLoadPaymentInfo(rs.getInt("payment_info_id")));
             project.addRUserRole(table);
+        }
+
+        // Prepare special ruserRoles cases
+        String projectId = String.valueOf(project.getProjectId());
+        List list = (List) specialRUserRoles.get(projectId);
+        if (list != null) {
+        	project.getRUserRoles().addAll(list);
         }
 
 		Util.logAction(project.getRUserRoles().size(), "prepareLoadRUserRoles", startTime);
@@ -451,6 +505,7 @@ public class ProjectLoader {
             table.setSubmissionVId(rs.getInt(SubmissionOld.SUBMISSION_V_ID_NAME));
             table.setSubmissionId(rs.getInt(SubmissionOld.SUBMISSION_ID_NAME));
             table.setSubmitterId(rs.getInt(SubmissionOld.SUBMITTER_ID_NAME));
+            table.setSubmissionType(rs.getInt(SubmissionOld.SUBMISSION_TYPE));
             table.setCurVersion(rs.getBoolean(SubmissionOld.CUR_VERSION_NAME));
             table.setRemoved(rs.getBoolean(SubmissionOld.IS_REMOVED_NAME));
             table.setSubmissionUrl(rs.getString(SubmissionOld.SUBMISSION_URL_NAME));
@@ -486,8 +541,6 @@ public class ProjectLoader {
 
         while(rs.next()) {
             Testcase table = new Testcase();
-            table.setProjectId(project.getProjectId());
-            table.setTestcaseVId(rs.getInt(Testcase.TESTCASES_V_ID_NAME));
             table.setReviewerId(rs.getInt(Testcase.REVIEWER_ID_NAME));
             table.setCurVersion(rs.getBoolean(Testcase.CUR_VERSION_NAME));
             table.setTestcaseUrl(rs.getString(Testcase.TESTCASES_URL_NAME));
@@ -517,8 +570,6 @@ public class ProjectLoader {
 
         while(rs.next()) {
             ScreeningResults table = new ScreeningResults();
-            table.setSubmissionVId(rs.getInt(ScreeningResults.SUBMISSION_V_ID_NAME));
-            table.setScreeningResultsId(rs.getInt(ScreeningResults.SCREENING_RESULTS_ID_NAME));
             table.setScreeningResponse(rs.getInt(ScreeningResults.SCREENING_RESPONSE_ID_NAME));
             table.setDynamicResponseText(rs.getString(ScreeningResults.DYNAMIC_RESPONSE_NAME));
             submission.addScreeningResults(table);
@@ -785,7 +836,6 @@ public class ProjectLoader {
 
         while(rs.next()) {
             Appeal table = new Appeal();
-            table.setAppealId(rs.getInt(Appeal.APPEAL_ID_NAME));
             table.setAppealerId(rs.getInt(Appeal.APPEALER_ID_NAME));
             table.setQuestionId(question.getQuestionId());
             table.setAppealText(rs.getString(Appeal.APPEAL_TEXT_NAME));
@@ -907,9 +957,7 @@ public class ProjectLoader {
 
         while(rs.next()) {
             AggReview table = new AggReview();
-            table.setAggReviewId(rs.getInt(AggReview.AGG_REVIEW_ID_NAME));
             table.setReviewerId(rs.getInt(AggReview.REVIEWER_ID_NAME));
-            table.setAggWorksheetId(rs.getInt(AggReview.AGG_WORKSHEET_ID_NAME));
             table.setAggReviewText(rs.getString(AggReview.AGG_REVIEW_TEXT_NAME));
             table.setAggApprovalId(rs.getInt(AggReview.AGG_APPROVAL_ID_NAME));
             // add AggReview to aggWorksheet
@@ -939,7 +987,6 @@ public class ProjectLoader {
 
         if(rs.next()) {
             FinalReview table = new FinalReview();
-            table.setFinalReviewId(rs.getInt(FinalReview.FINAL_REVIEW_ID_NAME));
             table.setCompleted(rs.getBoolean(FinalReview.IS_COMPLETED_NAME));
             table.setComments(rs.getString(FinalReview.COMMENTS_NAME));
             table.setApproved(rs.getBoolean(FinalReview.IS_APPROVED_NAME));

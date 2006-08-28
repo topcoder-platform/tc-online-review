@@ -54,6 +54,8 @@ public class SubmissionOld {
 
     /** Represents passed_screening field name. */
     public static final String PASSED_SCREENING_NAME = "passed_screening";
+    
+    public static final String SUBMISSION_TYPE = "submission_type";
     private int submissionVId;
     private int projectId;
     private int submitterId;
@@ -64,6 +66,7 @@ public class SubmissionOld {
     private int placement;
     private int submissionId;
     private boolean passedScreening;
+    private int submissionType;
     private Date submissionDate;
 
     private Collection screeningResults = new ArrayList();
@@ -349,4 +352,18 @@ public class SubmissionOld {
     	}
     	return null;
     }
+
+	/**
+	 * @return Returns the submissionType.
+	 */
+	public int getSubmissionType() {
+		return submissionType;
+	}
+
+	/**
+	 * @param submissionType The submissionType to set.
+	 */
+	public void setSubmissionType(int submissionType) {
+		this.submissionType = submissionType;
+	}
 }

@@ -15,9 +15,9 @@ import com.topcoder.onlinereview.migration.dto.oldschema.resource.RboardApplicat
 import com.topcoder.onlinereview.migration.dto.oldschema.review.AggWorksheet;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
+import java.util.List;
 
 
 /**
@@ -83,14 +83,14 @@ public class ProjectOld {
     private CompForumXref compForumXref;
     private CompCatalog compCatalog;
     private CompVersionDates compVersionDates;
-    private Collection phaseInstances = new ArrayList();
-    private Collection rUserRoles = new ArrayList();
-    private Collection submissions = new ArrayList();
-    private Collection testcases = new ArrayList();
-    private Collection projectResults = new ArrayList();
-    private Collection rboardApplications = new ArrayList();
+    private List phaseInstances = new ArrayList();
+    private List rUserRoles = new ArrayList();
+    private List submissions = new ArrayList();
+    private List testcases = new ArrayList();
+    private List projectResults = new ArrayList();
+    private List rboardApplications = new ArrayList();
     private AggWorksheet aggWorksheet = null;
-    private Collection modifiyReasons = new ArrayList();
+    private List modifiyReasons = new ArrayList();
 
     /**
      * Returns the autoPilotInd.
@@ -385,7 +385,7 @@ public class ProjectOld {
      *
      * @return Returns the phaseInstances.
      */
-    public Collection getPhaseInstances() {
+    public List getPhaseInstances() {
         return phaseInstances;
     }
 
@@ -394,7 +394,7 @@ public class ProjectOld {
      *
      * @param phaseInstances The phaseInstances to set.
      */
-    public void setPhaseInstances(Collection phaseInstances) {
+    public void setPhaseInstances(List phaseInstances) {
         this.phaseInstances = phaseInstances;
     }
 
@@ -403,7 +403,7 @@ public class ProjectOld {
      *
      * @return Returns the rUserRoles.
      */
-    public Collection getRUserRoles() {
+    public List getRUserRoles() {
         return rUserRoles;
     }
 
@@ -412,7 +412,7 @@ public class ProjectOld {
      *
      * @param userRoles The rUserRoles to set.
      */
-    public void setRUserRoles(Collection userRoles) {
+    public void setRUserRoles(List userRoles) {
         rUserRoles = userRoles;
     }
 
@@ -434,7 +434,7 @@ public class ProjectOld {
      *
      * @return Returns the submissions.
      */
-    public Collection getSubmissions() {
+    public List getSubmissions() {
         return submissions;
     }
 
@@ -443,7 +443,7 @@ public class ProjectOld {
      *
      * @param submissions The submissions to set.
      */
-    public void setSubmissions(Collection submissions) {
+    public void setSubmissions(List submissions) {
         this.submissions = submissions;
     }
 
@@ -465,7 +465,7 @@ public class ProjectOld {
      *
      * @return Returns the testcases.
      */
-    public Collection getTestcases() {
+    public List getTestcases() {
         return testcases;
     }
 
@@ -474,7 +474,7 @@ public class ProjectOld {
      *
      * @param testcases The testcases to set.
      */
-    public void setTestcases(Collection testcases) {
+    public void setTestcases(List testcases) {
         this.testcases = testcases;
     }
 
@@ -496,7 +496,7 @@ public class ProjectOld {
      *
      * @return Returns the projectResults.
      */
-    public Collection getProjectResults() {
+    public List getProjectResults() {
         return projectResults;
     }
 
@@ -505,7 +505,7 @@ public class ProjectOld {
      *
      * @param projectResults The projectResults to set.
      */
-    public void setProjectResults(Collection projectResults) {
+    public void setProjectResults(List projectResults) {
         this.projectResults = projectResults;
     }
 
@@ -527,7 +527,7 @@ public class ProjectOld {
      *
      * @return Returns the rboardApplications.
      */
-    public Collection getRboardApplications() {
+    public List getRboardApplications() {
         return rboardApplications;
     }
 
@@ -536,7 +536,7 @@ public class ProjectOld {
      *
      * @param rboardApplications The rboardApplications to set.
      */
-    public void setRboardApplications(Collection rboardApplications) {
+    public void setRboardApplications(List rboardApplications) {
         this.rboardApplications = rboardApplications;
     }
 
@@ -575,7 +575,7 @@ public class ProjectOld {
      *
      * @return Returns the modifiyReasons.
      */
-    public Collection getModifiyReasons() {
+    public List getModifiyReasons() {
         return modifiyReasons;
     }
 
@@ -584,7 +584,7 @@ public class ProjectOld {
      *
      * @param modifiyReasons The modifiyReasons to set.
      */
-    public void setModifiyReasons(Collection modifiyReasons) {
+    public void setModifiyReasons(List modifiyReasons) {
         this.modifiyReasons = modifiyReasons;
     }
 

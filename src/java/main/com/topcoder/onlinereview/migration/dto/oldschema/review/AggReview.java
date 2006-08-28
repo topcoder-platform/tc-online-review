@@ -52,24 +52,6 @@ public class AggReview {
     }
 
     /**
-     * Returns the aggReviewId.
-     *
-     * @return Returns the aggReviewId.
-     */
-    public int getAggReviewId() {
-        return aggReviewId;
-    }
-
-    /**
-     * Set the aggReviewId.
-     *
-     * @param aggReviewId The aggReviewId to set.
-     */
-    public void setAggReviewId(int aggReviewId) {
-        this.aggReviewId = aggReviewId;
-    }
-
-    /**
      * Returns the aggReviewText.
      *
      * @return Returns the aggReviewText.
@@ -85,24 +67,6 @@ public class AggReview {
      */
     public void setAggReviewText(String aggReviewText) {
         this.aggReviewText = aggReviewText;
-    }
-
-    /**
-     * Returns the aggWorksheetId.
-     *
-     * @return Returns the aggWorksheetId.
-     */
-    public int getAggWorksheetId() {
-        return aggWorksheetId;
-    }
-
-    /**
-     * Set the aggWorksheetId.
-     *
-     * @param aggWorksheetId The aggWorksheetId to set.
-     */
-    public void setAggWorksheetId(int aggWorksheetId) {
-        this.aggWorksheetId = aggWorksheetId;
     }
 
     /**

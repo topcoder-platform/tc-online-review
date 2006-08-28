@@ -68,24 +68,6 @@ public class Appeal {
     }
 
     /**
-     * Returns the appealId.
-     *
-     * @return Returns the appealId.
-     */
-    public int getAppealId() {
-        return appealId;
-    }
-
-    /**
-     * Set the appealId.
-     *
-     * @param appealId The appealId to set.
-     */
-    public void setAppealId(int appealId) {
-        this.appealId = appealId;
-    }
-
-    /**
      * Returns the appealResponse.
      *
      * @return Returns the appealResponse.
