@@ -51,8 +51,9 @@ public class ProjectLoader {
      *
      * @param conn the connection to persist data
      */
-    public ProjectLoader(DataMigrator migrator) {
+    public ProjectLoader(DataMigrator migrator) throws Exception {
         this.migrator = migrator;
+    	prepareSpecialRUserRoles();
     }
 
     /**
@@ -64,7 +65,6 @@ public class ProjectLoader {
      */
     public List loadProjects() throws Exception {
     	long startTime = Util.start("loadProjects");
-    	prepareSpecialRUserRoles();
     	List list = new ArrayList();
     	List ids = loadProjectIds();
         for (Iterator iter = ids.iterator(); iter.hasNext();) {
@@ -356,7 +356,9 @@ public class ProjectLoader {
             if ((table.getPhaseId() == 2) || (table.getPhaseId() == 3)) {
                 int scorecardType = ((table.getPhaseId() == 2) ? 1 : 2);
                 table.setTemplateId(getTemplateId(projectId, scorecardType));
-                Util.warn("Cannot find template for scorecardtype: " + scorecardType);
+                if (table.getTemplateId() == 0) {
+                	Util.warn("Cannot find template for scorecardtype: " + scorecardType);
+                }
             }
 
             list.add(table);
@@ -438,6 +440,7 @@ public class ProjectLoader {
             List list = (List) specialRUserRoles.get(projectId);
             if (list == null) {
             	list = new ArrayList();
+            	specialRUserRoles.put(projectId, list);
             }
             list.add(table);
         }
