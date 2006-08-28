@@ -263,10 +263,10 @@
     	</java>
     	<orm-execute-sql-script output="${testlogdir}/update_private_project.log" scriptfile="${update_private_project.file}" />
     </target>
-	
+
     <target name="migrate_ids" depends="compile_tests">
-    	<java classname="${package}.MigratorCommandLine" fork="true" output="${testlogdir}/migrate.log">
-    		<arg line="-config test_files/data_migration.xml -process specificed -ids 20186915" />
+    	<java classname="${package}.MigratorCommandLine" fork="true" output="${testlogdir}/migrate_ids.log">
+    		<arg line="-config test_files/data_migration.xml -process specificed -ids 10566757" />
             <classpath refid="test.build.classpath"/>
     	</java>
     </target>
