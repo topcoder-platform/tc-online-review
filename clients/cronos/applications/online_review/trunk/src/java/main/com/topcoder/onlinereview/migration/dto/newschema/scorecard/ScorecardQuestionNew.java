@@ -14,7 +14,7 @@ import com.topcoder.onlinereview.migration.dto.BaseDTO;
  */
 public class ScorecardQuestionNew extends BaseDTO {
     /** Represents the scorecard_question table name. */
-    public static final String TABLE_NAME = "scorecard_question";
+    public static String TABLE_NAME = "scorecard_question";
     private int scorecardQuestionId;
     private int scorecardQuestionTypeId;
     private int scorecardSectionId;

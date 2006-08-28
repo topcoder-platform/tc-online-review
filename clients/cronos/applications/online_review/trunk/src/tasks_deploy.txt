@@ -20,7 +20,7 @@ For contest_status
 		where query_id = 26503
 
 
-Notes: replace ? with content in contest_status.sql.sql file	
+Notes: replace ? with content in contest_status.sql file	
 		
 1.1.6	Send Component Project Information
 	src/update pages		
@@ -39,7 +39,7 @@ Notes: replace ? with content in contest_status.sql.sql file
 		ProjectTrackerV2Local
 		ProjectTrackerV2LocalHome
 		ProjectTrackerV2Home
-		
+
 1.1.8	Send Reviewer Registration
 	src/update pages
 		RBoardApplicationBean.java

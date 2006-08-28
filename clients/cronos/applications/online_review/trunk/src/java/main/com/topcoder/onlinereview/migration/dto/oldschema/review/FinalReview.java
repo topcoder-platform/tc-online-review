@@ -51,24 +51,6 @@ public class FinalReview {
     }
 
     /**
-     * Returns the finalReviewId.
-     *
-     * @return Returns the finalReviewId.
-     */
-    public int getFinalReviewId() {
-        return finalReviewId;
-    }
-
-    /**
-     * Set the finalReviewId.
-     *
-     * @param finalReviewId The finalReviewId to set.
-     */
-    public void setFinalReviewId(int finalReviewId) {
-        this.finalReviewId = finalReviewId;
-    }
-
-    /**
      * Returns the isApproved.
      *
      * @return Returns the isApproved.

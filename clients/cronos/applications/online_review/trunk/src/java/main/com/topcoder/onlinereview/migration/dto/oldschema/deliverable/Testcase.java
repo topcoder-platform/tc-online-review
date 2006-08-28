@@ -52,24 +52,6 @@ public class Testcase {
     }
 
     /**
-     * Returns the projectId.
-     *
-     * @return Returns the projectId.
-     */
-    public int getProjectId() {
-        return projectId;
-    }
-
-    /**
-     * Set the projectId.
-     *
-     * @param projectId The projectId to set.
-     */
-    public void setProjectId(int projectId) {
-        this.projectId = projectId;
-    }
-
-    /**
      * Returns the reviewerId.
      *
      * @return Returns the reviewerId.
@@ -103,23 +85,5 @@ public class Testcase {
      */
     public void setTestcaseUrl(String testcaseUrl) {
         this.testcaseUrl = testcaseUrl;
-    }
-
-    /**
-     * Returns the testcaseVId.
-     *
-     * @return Returns the testcaseVId.
-     */
-    public int getTestcaseVId() {
-        return testcaseVId;
-    }
-
-    /**
-     * Set the testcaseVId.
-     *
-     * @param testcaseVId The testcaseVId to set.
-     */
-    public void setTestcaseVId(int testcaseVId) {
-        this.testcaseVId = testcaseVId;
     }
 }

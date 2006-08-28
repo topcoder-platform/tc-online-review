@@ -18,8 +18,11 @@ public class UnitTests extends TestCase {
 
     public static Test suite() {
         final TestSuite suite = new TestSuite();
-        suite.addTestSuite(DataMigratorUnitTests.class);
+        //suite.addTestSuite(DataMigratorUnitTests.class);
+//        suite.addTestSuite(ScenarioSelectDataToTransform.class);
+//        suite.addTestSuite(ScenarioTransform.class);
+//        suite.addTestSuite(ScenarioDataMapping.class);
+        suite.addTestSuite(ScenarioStoreTransformData.class);
         return suite;
     }
-
 }

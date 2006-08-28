@@ -64,40 +64,4 @@ public class ScreeningResults {
     public void setScreeningResponse(int screeningResponse) {
         this.screeningResponse = screeningResponse;
     }
-
-    /**
-     * Returns the screeningResultsId.
-     *
-     * @return Returns the screeningResultsId.
-     */
-    public int getScreeningResultsId() {
-        return screeningResultsId;
-    }
-
-    /**
-     * Set the screeningResultsId.
-     *
-     * @param screeningResultsId The screeningResultsId to set.
-     */
-    public void setScreeningResultsId(int screeningResultsId) {
-        this.screeningResultsId = screeningResultsId;
-    }
-
-    /**
-     * Returns the submissionVId.
-     *
-     * @return Returns the submissionVId.
-     */
-    public int getSubmissionVId() {
-        return submissionVId;
-    }
-
-    /**
-     * Set the submissionVId.
-     *
-     * @param submissionVId The submissionVId to set.
-     */
-    public void setSubmissionVId(int submissionVId) {
-        this.submissionVId = submissionVId;
-    }
 }

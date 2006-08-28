@@ -106,7 +106,7 @@ public class MigratorCommandLine {
                     } else if ("specificed".equals(process)) {
                         Switch idsSwitch = cmdLineUtil.getSwitch("ids");
                         List ids = idsSwitch.getValues();
-                        migrator.migrateProject(ids);
+                        migrator.migrateProjects(ids);
                     }
                 }
             } else {

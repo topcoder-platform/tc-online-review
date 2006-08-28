@@ -101,18 +101,6 @@ public class ProjectTransformer extends MapUtil{
      * @throws IDGenerationException if error occurs while get idgenerator
      */
     public ProjectTransformer() throws Exception {
-        projectIdGenerator = IDGeneratorFactory.getIDGenerator(PROJECT_ID_SEQ_NAME);
-        projectAuditIdGenerator = IDGeneratorFactory.getIDGenerator(PROJECT_AUDIT_ID_SEQ_NAME);
-        phaseIdGenerator = IDGeneratorFactory.getIDGenerator(PHASE_ID_SEQ_NAME);
-        resourceIdGenerator = IDGeneratorFactory.getIDGenerator(RESOURCE_ID_SEQ_NAME);
-        screeningTaskIdGenerator = IDGeneratorFactory.getIDGenerator(SCREENING_TASK_ID_SEQ_NAME);
-        screeningResultsIdGenerator = IDGeneratorFactory.getIDGenerator(SCREENING_RESULTS_ID_SEQ_NAME);
-        submissionIdGenerator = IDGeneratorFactory.getIDGenerator(SUBMISSION_ID_SEQ_NAME);
-        uploadIdGenerator = IDGeneratorFactory.getIDGenerator(UPLOAD_ID_SEQ_NAME);
-        reviewIdGenerator = IDGeneratorFactory.getIDGenerator(REVIEW_ID_SEQ_NAME);
-        reviewItemIdGenerator = IDGeneratorFactory.getIDGenerator(REVIEW_ITEM_ID_SEQ_NAME);
-        reviewCommentIdGenerator = IDGeneratorFactory.getIDGenerator(REVIEW_COMMENT_ID_SEQ_NAME);
-        reviewItemCommentIdGenerator = IDGeneratorFactory.getIDGenerator(REVIEW_ITEM_COMMENT_ID_SEQ_NAME);
     }
 
     /**
@@ -175,16 +163,19 @@ public class ProjectTransformer extends MapUtil{
      * @throws IDGenerationException error occurs while generate new id
      */
     private void prepareTransReview(ProjectOld oldProject, ProjectNew project, SubmissionOld oldSubmission, Submission submission) throws Exception {
+    	if (oldSubmission.getScorecards().size() == 0) {
+    		return;
+    	}
     	long startTime = Util.start("prepareTransReview");    	
 		ReviewConverter converter = new ReviewConverter(
 				oldProject,
 				project,
 				oldSubmission,
 				submission);
-		converter.setReviewIdGenerator(reviewIdGenerator);
-		converter.setReviewItemIdGenerator(reviewItemIdGenerator);
-		converter.setReviewCommentIdGenerator(reviewCommentIdGenerator);
-		converter.setReviewItemCommentIdGenerator(reviewItemCommentIdGenerator);
+		converter.setReviewIdGenerator(getReviewIdGenerator());
+		converter.setReviewItemIdGenerator(getReviewItemIdGenerator());
+		converter.setReviewCommentIdGenerator(getReviewCommentIdGenerator());
+		converter.setReviewItemCommentIdGenerator(getReviewItemCommentIdGenerator());
 		project.addReviews(converter.convert());
 		Util.logAction(project.getReviews().size(), "prepareTransReview", startTime);
     }
@@ -194,11 +185,11 @@ public class ProjectTransformer extends MapUtil{
      * 
      * @throws IDGenerationException error occurs while generate new id
      */
-    private ScreeningTask prepareTransScreening(SubmissionOld oldSubmission, int uploadId) throws IDGenerationException {
+    private ScreeningTask prepareTransScreening(SubmissionOld oldSubmission, int uploadId) throws Exception {
     	long startTime = Util.start("prepareTransScreening");   
     	Collection results = oldSubmission.getScreeningResults();
     	ScreeningTask task = new ScreeningTask();
-    	task.setScreeningTaskId((int) screeningTaskIdGenerator.getNextID());
+    	task.setScreeningTaskId((int) getScreeningTaskIdGenerator().getNextID());
     	// from submission_v_id
     	task.setUploadId(uploadId);
     	task.setScreeningStatusId(getScreeningStatus(results));
@@ -218,11 +209,11 @@ public class ProjectTransformer extends MapUtil{
      * @return results
      * @throws IDGenerationException error occurs while generate new id
      */
-    private ScreeningResult prepareTransScreeningResult(ScreeningResults old, int taskId) throws IDGenerationException {
+    private ScreeningResult prepareTransScreeningResult(ScreeningResults old, int taskId) throws Exception {
     	// Prepare all new screening results
     	long startTime = Util.start("prepareTransScreeningResult");   
     	ScreeningResult result = new ScreeningResult();
-    	result.setScreeningResultId((int) screeningResultsIdGenerator.getNextID());
+    	result.setScreeningResultId((int) getScreeningResultsIdGenerator().getNextID());
     	result.setScreeningTaskId(taskId);
     	result.setScreeningResponseId(old.getScreeningResponse());
     	result.setDynamicResponseText(old.getDynamicResponseText());
@@ -269,21 +260,21 @@ public class ProjectTransformer extends MapUtil{
     	Collection submissions = input.getSubmissions();
     	for (Iterator iter = submissions.iterator(); iter.hasNext();) {
     		SubmissionOld submission = (SubmissionOld) iter.next();
-    		
+
     		Upload upload = new Upload();
 
     		// submission.project_id
     		upload.setProjectId(output.getProjectId());
 
     		// submission.submitter_id
-    		upload.setResourceId(MapUtil.getResourceId(output, submission.getSubmitterId()));
+    		upload.setResourceId(output.getResourceIdByLoginIdRoleType(submission.getSubmitterId(), Resource.SUBMITTER_RESOURCE_ROLE));
 
     		if (upload.getResourceId() == 0) {
     			Util.info("Not found resource id, submitter: " + submission.getSubmitterId());
     			continue;
     		}
     		// all submissions made in the submission phase map to 'Submission', otherwise map to 'Final Fix'
-    		if (isSubmissionPhase(input, submission.getSubmissionDate())) {
+    		if (submission.getSubmissionType() == 1) {
     			upload.setUploadTypeId(Upload.UPLOAD_TYPE_SUBMISSION);
     		} else {
     			upload.setUploadTypeId(Upload.UPLOAD_TYPE_FINAL_FIX);
@@ -311,15 +302,16 @@ public class ProjectTransformer extends MapUtil{
     		upload.setParameter(submission.getSubmissionUrl());
         	setBaseDTO(upload);
     		// submission.submission_v_id
-    		upload.setUploadId((int) uploadIdGenerator.getNextID());
+    		upload.setUploadId((int) getUploadIdGenerator().getNextID());
     		output.addUpload(upload);
 
-    		if (upload.getUploadTypeId() == Upload.UPLOAD_TYPE_SUBMISSION && submission.isCurVersion()) {
+    		if ((upload.getUploadTypeId() == Upload.UPLOAD_TYPE_SUBMISSION || upload.getUploadTypeId() == Upload.UPLOAD_TYPE_FINAL_FIX) 
+    				&& submission.isCurVersion()) {
     			Submission newSubmission = prepareTransSubmission(input, submission, upload.getUploadId());
 
     			// add submission
     			output.addSubmission(newSubmission);
-    			
+
     			// Prepare resource submission
     			ResourceSubmission rs = new ResourceSubmission();
     			rs.setSubmissionId(newSubmission.getSubmissionId());
@@ -331,7 +323,9 @@ public class ProjectTransformer extends MapUtil{
     		}
 
 			// add screeningTask
-			output.addScreeningTask(prepareTransScreening(submission, upload.getUploadId()));
+    		if (submission.getScreeningResults().size() > 0) {
+    			output.addScreeningTask(prepareTransScreening(submission, upload.getUploadId()));
+    		}
     	}
 
     	for (Iterator iter = input.getTestcases().iterator(); iter.hasNext();) {
@@ -341,15 +335,15 @@ public class ProjectTransformer extends MapUtil{
 
     		// test_case
     		upload.setProjectId(output.getProjectId());
-    		
+
     		// test_case.reviewer_id
-    		upload.setResourceId(MapUtil.getResourceId(output, testcase.getReviewerId()));
+    		upload.setResourceId(output.getResourceIdByLoginIdTestcaseReviewer(testcase.getReviewerId()));
 
     		upload.setUploadTypeId(Upload.UPLOAD_TYPE_TEST_CASE);
     		upload.setUploadStatusId(testcase.isCurVersion() ? Upload.UPLOAD_STATUS_ACTIVE : Upload.UPLOAD_STATUS_DELETED);
     		upload.setParameter(testcase.getTestcaseUrl());
         	setBaseDTO(upload);
-    		upload.setUploadId((int) uploadIdGenerator.getNextID());
+    		upload.setUploadId((int) getUploadIdGenerator().getNextID());
     		output.addUpload(upload);
     	}
 		Util.logAction("prepareTransUpload", startTime);
@@ -380,7 +374,7 @@ public class ProjectTransformer extends MapUtil{
      * @param output the new project
      * @throws IDGenerationException error occurs while generate new id
      */
-    private Submission prepareTransSubmission(ProjectOld input, SubmissionOld old, int uploadId) throws IDGenerationException {    		
+    private Submission prepareTransSubmission(ProjectOld input, SubmissionOld old, int uploadId) throws Exception {    		
     	long startTime = Util.start("prepareTransSubmission");   
     	Submission submission = new Submission();
 
@@ -409,10 +403,10 @@ public class ProjectTransformer extends MapUtil{
 				}
 			}
 		}
-		
+
     	setBaseDTO(submission);
 		// submission.submission_v_id
-		submission.setSubmissionId((int) submissionIdGenerator.getNextID());	
+		submission.setSubmissionId((int) getSubmissionIdGenerator().getNextID());	
 
 		Util.logAction("prepareTransSubmission", startTime);
 		return submission;
@@ -439,14 +433,14 @@ public class ProjectTransformer extends MapUtil{
      * @param input the ProjectOld
      * @param output ProjectNew
      */
-    private void prepareTransProjectAudit(ProjectOld input, ProjectNew output) throws IDGenerationException {
+    private void prepareTransProjectAudit(ProjectOld input, ProjectNew output) throws Exception {
     	long startTime = Util.start("prepareTransProjectAudit");   
     	// Prepare audit data
     	for (Iterator iter = input.getModifiyReasons().iterator(); iter.hasNext();) {
             ProjectAudit audit = new ProjectAudit();
             audit.setUpdateReason((String) iter.next());
         	setBaseDTO(audit);
-            audit.setProjectAuditId((int) projectAuditIdGenerator.getNextID());
+            audit.setProjectAuditId((int) getProjectAuditIdGenerator().getNextID());
             audit.setProjectid(output.getProjectId());
             output.addProjectAudit(audit);    
     	}	
@@ -638,7 +632,7 @@ public class ProjectTransformer extends MapUtil{
      * @param output ProjectNew
      * @throws IDGenerationException error occurs while generate new id
      */
-    private void prepareTransPhases(ProjectOld input, ProjectNew output) throws IDGenerationException {
+    private void prepareTransPhases(ProjectOld input, ProjectNew output) throws Exception {
     	long startTime = Util.start("prepareTransPhases");   
     	// Prepare project phase
     	for (Iterator iter = input.getPhaseInstances().iterator(); iter.hasNext();) {
@@ -653,7 +647,7 @@ public class ProjectTransformer extends MapUtil{
             }
 
             Phase phase = new Phase();
-            phase.setPhaseId((int) phaseIdGenerator.getNextID());
+            phase.setPhaseId((int) getPhaseIdGenerator().getNextID());
             phase.setProjectId(output.getProjectId());
             phase.setPhaseTypeId(phaseTypeId);            
 
@@ -677,7 +671,7 @@ public class ProjectTransformer extends MapUtil{
             }
         	setBaseDTO(phase);
             prepareTransPhaseCriterias(phase, pi.getTemplateId());
-            output.addPhase(phase);    		
+            output.addPhase(phase);
     	}
 		Util.logAction("prepareTransPhases", startTime);
     }
@@ -689,7 +683,7 @@ public class ProjectTransformer extends MapUtil{
      * @param output the new project
      * @throws IDGenerationException error occurs while generate new id
      */
-    private void prepareTransResources(ProjectOld input, ProjectNew output) throws IDGenerationException {
+    private void prepareTransResources(ProjectOld input, ProjectNew output) throws Exception {
     	long startTime = Util.start("prepareTransResources");   
     	Collection rUserRoles = input.getRUserRoles();
     	Collection phases = output.getPhases();
@@ -706,9 +700,9 @@ public class ProjectTransformer extends MapUtil{
     		// resources should be associated with corresponding phases in the project
     		resource.setPhaseId(phaseId);
         	setBaseDTO(resource);
-    		resource.setResourceId((int) resourceIdGenerator.getNextID());
+    		resource.setResourceId((int) getResourceIdGenerator().getNextID());
     		output.addResource(resource);
-    		
+
     		// Prepare resource info
     		prepareTransResourceInfosNotification(input, output, resource, role);
     	}
@@ -741,7 +735,7 @@ public class ProjectTransformer extends MapUtil{
 	    	// Rating project_result			old_rating
     		ProjectResult pr = old.getProjectResultByUserId(role.getLoginId());
     		if (pr == null) {
-    			Util.debug("Failed to find project result for Submitter: " + role.getRUserRoleId());
+    			Util.debug("Failed to find project result for Submitter: " + role.getLoginId());
     		} else {
 		    	// Registration Date project_result			create_date
 		    	// or  rboard_application			create_date
@@ -804,7 +798,7 @@ public class ProjectTransformer extends MapUtil{
 
     		ScorecardOld scorecard = old.getScreeningScorecardBySubmitter(role.getLoginId());
     		if (scorecard == null) {
-    			Util.debug("Failed to find screening scorecard for submitter: " + role.getLoginId() + " rUserId: " + role.getRUserRoleId());
+    			Util.debug("Failed to find screening scorecard for submitter: " + role.getLoginId() + " rUserId: " + role.getLoginId());
     		} else {
 		    	// Screening Score scorecard			score    		
 		    	info = new ResourceInfo();
@@ -820,7 +814,7 @@ public class ProjectTransformer extends MapUtil{
 	    	// Payment payment_info			payment
     		PaymentInfo pi = role.getPaymentInfo();
     		if (pi == null) {
-    			Util.debug("Failed to find PaymentInfo for reviewer: " + role.getRUserRoleId());
+    			Util.debug("Failed to find PaymentInfo for reviewer: " + role.getLoginId());
     		} else {
 		    	// for reviewer
 		    	info = new ResourceInfo();
@@ -853,7 +847,7 @@ public class ProjectTransformer extends MapUtil{
 
     		RboardApplication ra = old.getRboardApplicationByUserId(role.getLoginId());
     		if (ra == null) {
-    			Util.debug("Failed to find RboardApplication for reviewer: " + role.getRUserRoleId());
+    			Util.debug("Failed to find RboardApplication for reviewer: " + role.getLoginId());
     		} else {
 		    	// Registration Date project_result			create_date
 		    	// or  rboard_application			create_date
@@ -897,26 +891,25 @@ public class ProjectTransformer extends MapUtil{
      * @param phase the phase
      * @param templateId the template id used for Scorecard ID
      */
-    private void prepareTransPhaseCriterias(Phase phase, int templateId) {
+    private void prepareTransPhaseCriterias(Phase phase, int templateId) throws Exception {
     	long startTime = Util.start("prepareTransPhaseCriterias");   
     	// Scorecard ID
-    	PhaseCriteria criteria = new PhaseCriteria();
-    	criteria.setPhaseId(phase.getPhaseId());
-    	criteria.setPhaseCriteriaTypeId(PhaseCriteria.SCORECARD_ID);
-    	criteria.setParameter(String.valueOf(templateId));
-    	setBaseDTO(criteria);
-    	phase.addCriteria(criteria);
-
-    	// Registration Number not evaluated TODO
-    	// Submission Number not evaluated TODO
-    	// View Response During Appeals not evaluated 'Yes', 'No' TODO
+    	if (phase.getPhaseTypeId() == Phase.SCREENING_TYPE ||
+    			phase.getPhaseTypeId() == Phase.REVIEW_TYPE) {
+	    	PhaseCriteria criteria = new PhaseCriteria();
+	    	criteria.setPhaseId(phase.getPhaseId());
+	    	criteria.setPhaseCriteriaTypeId(PhaseCriteria.SCORECARD_ID);
+	    	criteria.setParameter(String.valueOf(MapUtil.getScorecardId(templateId)));
+	    	setBaseDTO(criteria);
+	    	phase.addCriteria(criteria);
+    	}
 
     	// Manual Screening 'Yes' for each submission phase 'Yes', 'No'
-    	criteria = new PhaseCriteria();
+    	PhaseCriteria criteria = new PhaseCriteria();
     	criteria.setPhaseId(phase.getPhaseId());
     	criteria.setPhaseCriteriaTypeId(PhaseCriteria.MANUAL_SCREENING);
     	// Submission: 2
-    	criteria.setParameter(phase.getPhaseStatusId() == 2 ? "Yes" : "No");
+    	criteria.setParameter(phase.getPhaseTypeId() == Phase.SUBMISSION_TYPE ? "Yes" : "No");
     	setBaseDTO(criteria);
     	phase.addCriteria(criteria);
 		Util.logAction("prepareTransPhaseCriterias", startTime);
@@ -977,4 +970,124 @@ public class ProjectTransformer extends MapUtil{
             return String.valueOf(obj);
         }
     }
+
+	/**
+	 * @return Returns the phaseIdGenerator.
+	 */
+	public IDGenerator getPhaseIdGenerator() throws Exception {
+		if (phaseIdGenerator == null) {
+			phaseIdGenerator = IDGeneratorFactory.getIDGenerator(PHASE_ID_SEQ_NAME);
+		}
+		return phaseIdGenerator;
+	}
+
+	/**
+	 * @return Returns the projectAuditIdGenerator.
+	 */
+	public IDGenerator getProjectAuditIdGenerator() throws Exception {
+		if (projectAuditIdGenerator == null) {
+			projectAuditIdGenerator = IDGeneratorFactory.getIDGenerator(PROJECT_AUDIT_ID_SEQ_NAME);
+		}
+		return projectAuditIdGenerator;
+	}
+
+	/**
+	 * @return Returns the projectIdGenerator.
+	 */
+	public IDGenerator getProjectIdGenerator() throws Exception {
+		if (projectIdGenerator == null) {
+			projectIdGenerator = IDGeneratorFactory.getIDGenerator(PROJECT_ID_SEQ_NAME);
+		}
+		return projectIdGenerator;
+	}
+
+	/**
+	 * @return Returns the resourceIdGenerator.
+	 */
+	public IDGenerator getResourceIdGenerator() throws Exception {
+		if (resourceIdGenerator == null) {
+			resourceIdGenerator = IDGeneratorFactory.getIDGenerator(RESOURCE_ID_SEQ_NAME);
+		}
+		return resourceIdGenerator;
+	}
+
+	/**
+	 * @return Returns the reviewCommentIdGenerator.
+	 */
+	public IDGenerator getReviewCommentIdGenerator() throws Exception {
+		if (reviewCommentIdGenerator == null) {
+			reviewCommentIdGenerator = IDGeneratorFactory.getIDGenerator(REVIEW_COMMENT_ID_SEQ_NAME);
+		}
+		return reviewCommentIdGenerator;
+	}
+
+	/**
+	 * @return Returns the reviewIdGenerator.
+	 */
+	public IDGenerator getReviewIdGenerator() throws Exception {
+		if (reviewIdGenerator == null) {
+			reviewIdGenerator = IDGeneratorFactory.getIDGenerator(REVIEW_ID_SEQ_NAME);
+		}
+		return reviewIdGenerator;
+	}
+
+	/**
+	 * @return Returns the reviewItemCommentIdGenerator.
+	 */
+	public IDGenerator getReviewItemCommentIdGenerator() throws Exception {
+		if (reviewItemCommentIdGenerator == null) {
+			reviewItemCommentIdGenerator = IDGeneratorFactory.getIDGenerator(REVIEW_ITEM_COMMENT_ID_SEQ_NAME);
+		}
+		return reviewItemCommentIdGenerator;
+	}
+
+	/**
+	 * @return Returns the reviewItemIdGenerator.
+	 */
+	public IDGenerator getReviewItemIdGenerator() throws Exception {
+		if (reviewItemIdGenerator == null) {
+			reviewItemIdGenerator = IDGeneratorFactory.getIDGenerator(REVIEW_ITEM_ID_SEQ_NAME);
+		}
+		return reviewItemIdGenerator;
+	}
+
+	/**
+	 * @return Returns the screeningResultsIdGenerator.
+	 */
+	public IDGenerator getScreeningResultsIdGenerator() throws Exception {
+		if (screeningResultsIdGenerator == null) {
+			screeningResultsIdGenerator = IDGeneratorFactory.getIDGenerator(SCREENING_RESULTS_ID_SEQ_NAME);
+		}
+		return screeningResultsIdGenerator;
+	}
+
+	/**
+	 * @return Returns the screeningTaskIdGenerator.
+	 */
+	public IDGenerator getScreeningTaskIdGenerator() throws Exception {
+		if (screeningTaskIdGenerator == null) {
+			screeningTaskIdGenerator = IDGeneratorFactory.getIDGenerator(SCREENING_TASK_ID_SEQ_NAME);
+		}
+		return screeningTaskIdGenerator;
+	}
+
+	/**
+	 * @return Returns the submissionIdGenerator.
+	 */
+	public IDGenerator getSubmissionIdGenerator() throws Exception {
+		if (submissionIdGenerator == null) {
+			submissionIdGenerator = IDGeneratorFactory.getIDGenerator(SUBMISSION_ID_SEQ_NAME);
+		}
+		return submissionIdGenerator;
+	}
+
+	/**
+	 * @return Returns the uploadIdGenerator.
+	 */
+	public IDGenerator getUploadIdGenerator() throws Exception {
+		if (uploadIdGenerator == null) {
+			uploadIdGenerator = IDGeneratorFactory.getIDGenerator(UPLOAD_ID_SEQ_NAME);
+		}
+		return uploadIdGenerator;
+	}
 }

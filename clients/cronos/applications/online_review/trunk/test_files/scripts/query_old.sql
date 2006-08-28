@@ -67,4 +67,39 @@
 --select first 5 * from contract_payment_xref;
 --select distincat phase_id from phase_instance
 --select * from phase;
-select * from user;
+--select name from query  ;
+
+--select distinct s.project_id, author_id from scorecard s 
+--where s.cur_version = 1 and author_id not in (select login_id from r_user_role r where r.cur_version = 1 and r.project_id = s.project_id)
+--SELECT distinct r_role_id from r_user_role;
+--select first 5 distinct aggregator_id from agg_worksheet;
+--select first 5 * from project_result where payment is not null and placed is not null and rating_ind is not null order by project_id desc; 
+--select distinct phase_id from rboard_application;
+--select submission_v_id,submission_id, placement, submission_type,project_id from submission where cur_version = 1 and placement is not null and project_id = 8566974;
+--user_id,project_id,old_rating,new_rating,old_reliability,new_reliability,raw_score,final_score,payment,placed,rating_ind,valid_submission_ind,reliability_ind,create_date,modify_date,reliable_submission_ind,passed_review_ind,point_adjustment
+--select distinct template_id, phase_id from phase_instance where phase_id in (2,3) and cur_version = 1
+--select count(*) tt, max(project_id) from scorecard where cur_version = 1 group by project_id order by tt;
+
+--select * from project where project_id = 22764150 and cur_version =1;
+
+SELECT distinct r_role_id,project_id,login_id,payment_info_id,r_resp_id FROM r_user_role
+where 
+((project_id = 7438682 and login_id = 265522)
+or (project_id = 7438682 and login_id = 273206)
+or (project_id = 7438682 and login_id = 288429)
+or (project_id = 7444765 and login_id = 150498)
+or (project_id = 7444765 and login_id = 158333)
+or (project_id = 7444765 and login_id = 291974)
+or (project_id = 7470335 and login_id = 288429)
+or (project_id = 7476981 and login_id = 150498)
+or (project_id = 7476981 and login_id = 151360)
+or (project_id = 7476981 and login_id = 278595)
+or (project_id = 7488100 and login_id = 150498)
+or (project_id = 7507277 and login_id = 269515)
+or (project_id = 7507277 and login_id = 291974)
+or (project_id = 7507277 and login_id = 299180)
+or (project_id = 8346976 and login_id = 272250)
+or (project_id = 8403777 and login_id = 272069)
+or (project_id = 8551481 and login_id = 297731)
+or (project_id = 10054085 and login_id = 153089)
+or (project_id = 10566757 and login_id = 281876)) and cur_version = 0;

@@ -53,7 +53,8 @@ public class DataMigrator {
     public DataMigrator(Connection loaderConn, Connection persistConn)
         throws Exception {
         Util.info("Create DataMigrator with two connection");
-        init(loaderConn, persistConn);
+        this.loaderConn = loaderConn;
+        this.persistConn = persistConn;
     }
 
     /**
@@ -65,27 +66,6 @@ public class DataMigrator {
         Util.info("Create DataMigrator that load connection from config file");
         loaderConnName = getString("loader_conn_name", loaderConnName);
         persistConnName = getString("persist_conn_name", persistConnName);
-
-        DBConnectionFactory dbf = getDBConnectionFactory();
-        init(dbf.createConnection(loaderConnName), dbf.createConnection(persistConnName));
-    }
-
-    private void init(Connection loaderConn, Connection persistConn)
-        throws Exception {
-        this.loaderConn = loaderConn;
-        this.persistConn = persistConn;
-
-        // Prepare transformers
-        this.scorecardTransformer = new ScorecardTransformer();
-        this.projectTransformer = new ProjectTransformer();
-
-        // Prepare loaders
-        this.projectLoader = new ProjectLoader(this);
-        this.scorecardLoader = new ScorecardLoader(this);
-
-        // Prepare persistences
-        this.scorecardPersistence = new ScorecardPersistence(this);
-        this.projectPersistence = new ProjectPersistence(this);
     }
 
     /**
@@ -186,13 +166,13 @@ public class DataMigrator {
         long startTime = Util.startMain("migrateScorecard");
 
         // Load data
-        List input = scorecardLoader.loadScorecardTemplate();
+        List input = getScorecardLoader().loadScorecardTemplate();
 
         // transform data
-        List output = scorecardTransformer.transformScorecardTemplate(input);
+        List output = getScorecardTransformer().transformScorecardTemplates(input);
 
         // store data
-        scorecardPersistence.storeScorecard(output);
+        getScorecardPersistence().storeScorecard(output);
         Util.logMainAction(input.size(), "migrateScorecard", startTime);
     }
 
@@ -203,12 +183,16 @@ public class DataMigrator {
      */
     public void migrateProject() throws Exception {
         // Load all project ids
-        List input = projectLoader.loadProjectIds();
+        List input = getProjectLoader().loadProjectIds();
 
         // Remove migrated project
         input.removeAll(MapUtil.getMigratedProjectIds());
 
-        migrateProject(input);
+        migrateProjects(input);
+    }
+
+    public void updateSQLS() throws Exception {
+    	
     }
 
     /**
@@ -218,28 +202,35 @@ public class DataMigrator {
      *
      * @throws Exception if error occurs while generate id
      */
-    public void migrateProject(List input) throws Exception {
-        long startTime = Util.startMain("migrateProject");
+    public void migrateProjects(List input) throws Exception {
+        long startTime = Util.startMain("migrateProjects");
 
         for (Iterator iter = input.iterator(); iter.hasNext();) {
-            int projectId = Integer.parseInt(iter.next().toString());
-
-            try {
-                ProjectOld oldProject = projectLoader.loadProject(projectId);
-                ProjectNew newProject = projectTransformer.transformProject(oldProject);
-
-                if (projectPersistence.storeProject(newProject)) {
-                    MapUtil.storeMigratedProjectId(oldProject.getProjectId(), newProject.getProjectId());
-                } else {
-                    Util.warn("Failed to store project, project_id: " + oldProject.getProjectId());
-                }
-            } catch (Exception e) {
-                Util.warn(e);
-                Util.warn("Failed to migrate project, projectId: " + projectId);
-            }
+            migrateProject(Integer.parseInt(iter.next().toString()));
         }
 
-        Util.logMainAction("migrateProject", startTime);
+        Util.logMainAction("migrateProjects", startTime);
+    }
+
+    public void migrateProject(int projectId) throws Exception {
+        try {
+            long startTime = Util.startMain("migrateProject");
+
+            ProjectOld oldProject = getProjectLoader().loadProject(projectId);
+            ProjectNew newProject = getProjectTransformer().transformProject(oldProject);
+
+            if (getProjectPersistence().storeProject(newProject)) {
+                MapUtil.storeMigratedProjectId(oldProject.getProjectId(), newProject.getProjectId());
+            } else {
+                Util.warn("Failed to store project, project_id: " + oldProject.getProjectId());
+            }
+
+            Util.logMainAction("migrateProject", startTime);
+        } catch (Exception e) {
+            Util.warn(e);
+            Util.warn("Failed to migrate project, projectId: " + projectId);
+        }
+    	
     }
 
     /**
@@ -247,7 +238,10 @@ public class DataMigrator {
      *
      * @return Returns the projectLoader.
      */
-    public ProjectLoader getProjectLoader() {
+    public ProjectLoader getProjectLoader() throws Exception {
+    	if (this.projectLoader == null) {
+            this.projectLoader = new ProjectLoader(this);
+    	}
         return projectLoader;
     }
 
@@ -265,7 +259,10 @@ public class DataMigrator {
      *
      * @return Returns the projectPersistence.
      */
-    public ProjectPersistence getProjectPersistence() {
+    public ProjectPersistence getProjectPersistence() throws Exception {
+    	if (this.projectPersistence == null) {
+            this.projectPersistence = new ProjectPersistence(this);
+    	}
         return projectPersistence;
     }
 
@@ -283,7 +280,10 @@ public class DataMigrator {
      *
      * @return Returns the scorecardLoader.
      */
-    public ScorecardLoader getScorecardLoader() {
+    public ScorecardLoader getScorecardLoader() throws Exception {
+    	if (this.scorecardLoader == null) {
+            this.scorecardLoader = new ScorecardLoader(this);
+    	}
         return scorecardLoader;
     }
 
@@ -301,7 +301,10 @@ public class DataMigrator {
      *
      * @return Returns the scorecardPersistence.
      */
-    public ScorecardPersistence getScorecardPersistence() {
+    public ScorecardPersistence getScorecardPersistence()throws Exception {
+    	if (this.scorecardPersistence == null) {
+            this.scorecardPersistence = new ScorecardPersistence(this);
+    	}
         return scorecardPersistence;
     }
 
@@ -319,7 +322,10 @@ public class DataMigrator {
      *
      * @return Returns the projectTransformer.
      */
-    public ProjectTransformer getProjectTransformer() {
+    public ProjectTransformer getProjectTransformer() throws Exception {
+    	if (this.projectTransformer == null) {
+            this.projectTransformer = new ProjectTransformer();
+    	}
         return projectTransformer;
     }
 
@@ -337,7 +343,10 @@ public class DataMigrator {
      *
      * @return Returns the scorecardTransformer.
      */
-    public ScorecardTransformer getScorecardTransformer() {
+    public ScorecardTransformer getScorecardTransformer() throws Exception {
+    	if (this.scorecardTransformer == null) {
+            this.scorecardTransformer = new ScorecardTransformer();
+    	}
         return scorecardTransformer;
     }
 

@@ -16,6 +16,7 @@ import com.topcoder.onlinereview.migration.dto.newschema.review.Review;
 import com.topcoder.onlinereview.migration.dto.newschema.screening.ScreeningTask;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 
@@ -48,7 +49,7 @@ public class ProjectNew extends BaseDTO {
     private List reviews = new ArrayList();
     private List notifications = new ArrayList();
     private List resourceSubmissions = new ArrayList();
-    
+
     /**
      * Returns the projectCategoryId.
      *
@@ -199,6 +200,104 @@ public class ProjectNew extends BaseDTO {
         if (resource != null) {
             this.resources.add(resource);
         }
+    }
+
+    public Resource getResourceById(int resourceId) {
+    	for (Iterator iter = this.resources.iterator(); iter.hasNext();) {
+    		Resource res = (Resource) iter.next();
+    		if (res.getResourceId() == resourceId) {
+    			return res;
+    		}
+    	}
+    	return null;
+    }
+
+    public List getResourceInfosByResourceId(int resourceId) {
+    	List list = new ArrayList();
+    	for (Iterator iter = resourceInfos.iterator(); iter.hasNext();) {
+    		ResourceInfo resourceInfo = (ResourceInfo) iter.next();
+    		if (resourceInfo.getResourceId() == resourceId) {
+    			list.add(resourceInfo);
+    		}
+    	}
+    	return list;
+    }
+
+    public int getResourceIdByLoginIdRoleType(int loginId, int roleType) {
+    	for (Iterator iter = getResourceInfos().iterator(); iter.hasNext();) {
+    		ResourceInfo resourceInfo = (ResourceInfo) iter.next();
+    		if (resourceInfo.getResourceInfoTypeId() == ResourceInfo.EXTERNAL_REFERENCE_ID) {
+    			if (resourceInfo.getValue().equals(String.valueOf(loginId))) {
+    				Resource res = getResourceById(resourceInfo.getResourceId());
+    				if (res.getResourceRoleId() == roleType) {
+    					return res.getResourceId();
+    				}
+    			}
+    		}
+    	}
+    	return 0;
+    }
+
+    public int getResourceIdByLoginIdScorecardType(int loginId, int scorecardType) {
+    	for (Iterator iter = getResourceInfos().iterator(); iter.hasNext();) {
+    		ResourceInfo resourceInfo = (ResourceInfo) iter.next();
+    		if (resourceInfo.getResourceInfoTypeId() == ResourceInfo.EXTERNAL_REFERENCE_ID) {
+    			if (resourceInfo.getValue().equals(String.valueOf(loginId))) {
+    				Resource res = getResourceById(resourceInfo.getResourceId());
+    				if (scorecardType == 1) {
+    					// screening
+	    				if (res.getResourceRoleId() == Resource.PRIMARY_SCREENER_RESOURCE_ROLE 
+	    						|| res.getResourceRoleId() == Resource.SCREENER_RESOURCE_ROLE) {
+	    					return res.getResourceId();
+	    				}
+    				} else {
+    					// review
+	    				if (res.getResourceRoleId() == Resource.ACCURACY_REVIEWER_RESOURCE_ROLE 
+	    						|| res.getResourceRoleId() == Resource.FAILURE_REVIEWER_RESOURCE_ROLE
+	    						|| res.getResourceRoleId() == Resource.STRESS_REVIEWER_RESOURCE_ROLE
+	    						|| res.getResourceRoleId() == Resource.REVIEWER_RESOURCE_ROLE) {
+	    					return res.getResourceId();
+	    				}
+    				}
+    			}
+    		}
+    	}
+    	return 0;
+    }
+
+    public int getResourceIdByLoginIdTestcaseReviewer(int loginId) {
+    	for (Iterator iter = getResourceInfos().iterator(); iter.hasNext();) {
+    		ResourceInfo resourceInfo = (ResourceInfo) iter.next();
+    		if (resourceInfo.getResourceInfoTypeId() == ResourceInfo.EXTERNAL_REFERENCE_ID) {
+    			if (resourceInfo.getValue().equals(String.valueOf(loginId))) {
+    				Resource res = getResourceById(resourceInfo.getResourceId());
+    				if (res.getResourceRoleId() == Resource.ACCURACY_REVIEWER_RESOURCE_ROLE 
+    						|| res.getResourceRoleId() == Resource.FAILURE_REVIEWER_RESOURCE_ROLE
+    						|| res.getResourceRoleId() == Resource.STRESS_REVIEWER_RESOURCE_ROLE) {
+    					return res.getResourceId();
+    				}
+    			}
+    		}
+    	}
+    	return 0;
+    }
+
+    public int getResourceIdByLoginIdAggReviewer(int loginId) {
+    	for (Iterator iter = getResourceInfos().iterator(); iter.hasNext();) {
+    		ResourceInfo resourceInfo = (ResourceInfo) iter.next();
+    		if (resourceInfo.getResourceInfoTypeId() == ResourceInfo.EXTERNAL_REFERENCE_ID) {
+    			if (resourceInfo.getValue().equals(String.valueOf(loginId))) {
+    				Resource res = getResourceById(resourceInfo.getResourceId());
+    				if (res.getResourceRoleId() == Resource.ACCURACY_REVIEWER_RESOURCE_ROLE 
+    						|| res.getResourceRoleId() == Resource.FAILURE_REVIEWER_RESOURCE_ROLE
+    						|| res.getResourceRoleId() == Resource.STRESS_REVIEWER_RESOURCE_ROLE
+    						|| res.getResourceRoleId() == Resource.REVIEWER_RESOURCE_ROLE) {
+    					return res.getResourceId();
+    				}
+    			}
+    		}
+    	}
+    	return 0;
     }
 
     /**

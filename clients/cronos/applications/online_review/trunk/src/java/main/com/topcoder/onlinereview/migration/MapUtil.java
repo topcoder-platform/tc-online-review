@@ -17,7 +17,6 @@ import java.util.Properties;
 import com.topcoder.onlinereview.migration.dto.BaseDTO;
 import com.topcoder.onlinereview.migration.dto.newschema.project.ProjectNew;
 import com.topcoder.onlinereview.migration.dto.newschema.resource.Resource;
-import com.topcoder.onlinereview.migration.dto.newschema.resource.ResourceInfo;
 import com.topcoder.onlinereview.migration.dto.oldschema.ScorecardOld;
 import com.topcoder.onlinereview.migration.dto.oldschema.deliverable.SubmissionOld;
 import com.topcoder.util.log.Log;
@@ -83,29 +82,10 @@ public class MapUtil {
      * @param loginId the login id
      * @return the resource id if found, 0 otherwise
      */
-    static int getResourceId(ProjectNew project, int loginId) {
-    	for (Iterator iter = project.getResourceInfos().iterator(); iter.hasNext();) {
-    		ResourceInfo resourceInfo = (ResourceInfo) iter.next();
-    		if (resourceInfo.getResourceInfoTypeId() == ResourceInfo.EXTERNAL_REFERENCE_ID) {
-    			if (resourceInfo.getValue().equals(String.valueOf(loginId))) {
-    				return resourceInfo.getResourceId();
-    			}
-    		}
-    	}
-    	return 0;
-    }
-
-    /**
-     * Return the resource id with given external reference id.
-     * 
-     * @param project the project
-     * @param loginId the login id
-     * @return the resource id if found, 0 otherwise
-     */
     static int getFinalReviewerId(ProjectNew project) {
     	for (Iterator iter = project.getResources().iterator(); iter.hasNext();) {
     		Resource instance = (Resource) iter.next();
-    		if (instance.getResourceRoleId() == 9) {
+    		if (instance.getResourceRoleId() == Resource.FINA_REVIEWER_RESOURCE_ROLE) {
     			// Final Reviewer is 9
     			return instance.getResourceId();
     		}
@@ -147,33 +127,31 @@ public class MapUtil {
 	public static int getResourceRole(int roleId, int respId) {
 		switch (roleId) {
 		case 1: // Designer/Developer
-			return 1; // Submitter
+			return Resource.SUBMITTER_RESOURCE_ROLE; // Submitter
 		case 2: // Primary Screener
-			return 2; // Primary Screener
+			return Resource.PRIMARY_SCREENER_RESOURCE_ROLE; // Primary Screener
 		case 3: // Reviewer
 			if (respId == 1) {
 				// stress
-				return 7; // Stress Reviewer
+				return Resource.STRESS_REVIEWER_RESOURCE_ROLE; // Stress Reviewer
 			} else if (respId == 2) {
 				// Failure
-				return 6; // Failure reviewer
+				return Resource.FAILURE_REVIEWER_RESOURCE_ROLE; // Failure reviewer
 			} else if (respId == 3){
 				// Accuracy
-				return 5; // Accuracy Reviewer
+				return Resource.ACCURACY_REVIEWER_RESOURCE_ROLE; // Accuracy Reviewer
 			} else {
 				// Others are design reviewer
-				return 4; // Reviewer
+				return Resource.REVIEWER_RESOURCE_ROLE; // Reviewer
 			}
 		case 4: // Aggregator
-			return 8; // Aggregator
+			return Resource.AGGREGATOR_RESOURCE_ROLE; // Aggregator
 		case 5: // Final Reviewer
-			return 9; // Final Reviewer
+			return Resource.FINA_REVIEWER_RESOURCE_ROLE; // Final Reviewer
 		case 6: // Product Manager
-			return 13; // Manager
-		case 7: // Removed
-			// TODO 
+			return Resource.MANAGER_RESOURCE_ROLE; // Manager
 		}
-		return 1; // Submitter
+		return 0; // deos not exist
 	}
 
 	/**
@@ -341,6 +319,7 @@ public class MapUtil {
 		if (scorecardId != null) {
 			return Integer.parseInt(scorecardId);
 		}
+		Util.warn("Cannot find corresponding scorecardId for templateId: " + templateId);
 		return 1;
 	}
 }

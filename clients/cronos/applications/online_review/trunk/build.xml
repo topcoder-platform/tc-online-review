@@ -111,6 +111,7 @@
     <property name="query_old.file" value="${sql.home}/query_old.sql" />
     <property name="init_projects.file" value="${sql.home}/init_projects.sql" />
     <property name="init_scorecards.file" value="${sql.home}/init_scorecards.sql" />
+    <property name="update_private_project.file" value="${sql.home}/update_private_project.sql" />
 
     <!-- EXECUTION TAGS -->
     <property name="debug" value="off" />
@@ -253,13 +254,14 @@
             <classpath refid="test.build.classpath"/>
     	</java>
     </target>
-	
+
     <target name="migrate" depends="compile_tests, db.init_projects, db.init_scorecard">
     	<delete file="test_files/project_id.properties"/>
     	<java maxmemory="512m" classname="${package}.MigratorCommandLine" fork="true" output="${testlogdir}/migrate.log">
     		<arg line="-config test_files/data_migration.xml" />
             <classpath refid="test.build.classpath"/>
     	</java>
+    	<orm-execute-sql-script output="${testlogdir}/update_private_project.log" scriptfile="${update_private_project.file}" />
     </target>
 	
     <target name="migrate_ids" depends="compile_tests">
@@ -314,7 +316,7 @@
         </javac>
     </target>
 
-    <target name="test" depends="compile_tests">
+    <target name="test" depends="compile_tests, db.init_projects, db.init_scorecard">
         <mkdir dir="${testlogdir}"/>
         <junit fork="true" haltonerror="false">
             <classpath refid="test.build.classpath"/>

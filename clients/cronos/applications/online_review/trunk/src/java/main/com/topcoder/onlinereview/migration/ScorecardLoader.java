@@ -14,8 +14,6 @@ import com.topcoder.onlinereview.migration.dto.oldschema.scorecard.QuestionTempl
 import com.topcoder.onlinereview.migration.dto.oldschema.scorecard.ScSectionGroup;
 import com.topcoder.onlinereview.migration.dto.oldschema.scorecard.ScorecardSectionOld;
 import com.topcoder.onlinereview.migration.dto.oldschema.scorecard.ScorecardTemplate;
-import com.topcoder.util.log.Level;
-import com.topcoder.util.log.LogFactory;
 
 /**
  * The test of Loader.
@@ -84,21 +82,10 @@ public class ScorecardLoader {
 
         // load scorecard template table from old online review
         Statement stmt = migrator.getLoaderConnection().createStatement();
-        if (DatabaseUtils.IS_TEST) {
-        	// For test purpose, just fetch 10
-            stmt.setFetchSize(10);
-        }
-        ResultSet rs = stmt.executeQuery("SELECT * FROM " + ScorecardTemplate.TABLE_NAME + " order by template_id");
+        ResultSet rs = stmt.executeQuery("SELECT first 1 * FROM " + ScorecardTemplate.TABLE_NAME + " order by template_id");
         List list = new ArrayList();
 
-        int size = 0;
         while (rs.next()) {
-            if (DatabaseUtils.IS_TEST) {
-	        	if (size++ > 1) {
-	        		LogFactory.getLog().log(Level.DEBUG, "break since it's debug");
-	        		break;
-	        	}
-            }
             ScorecardTemplate table = new ScorecardTemplate();
             table.setTemplateId(rs.getInt(ScorecardTemplate.TEMPLATE_ID_NAME));
             table.setProjectType(rs.getInt(ScorecardTemplate.PROJECT_TYPE_NAME));

@@ -87,7 +87,8 @@ public class ScorecardPersistence extends DatabaseUtils {
         } catch(Exception e) {
         	successful = false;
         	conn.rollback();
-        	Util.warn(e);
+        	// Util.warn(e);
+        	throw e;
         }
 
         Util.logMainAction(input.size(), "storeScorecard", startTime);

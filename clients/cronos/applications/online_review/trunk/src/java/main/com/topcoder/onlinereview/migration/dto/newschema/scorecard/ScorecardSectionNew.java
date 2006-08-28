@@ -17,7 +17,7 @@ import java.util.Collection;
  */
 public class ScorecardSectionNew extends BaseDTO {
     /** Represents the scorecard_section table name. */
-    public static final String TABLE_NAME = "scorecard_section";
+    public static String TABLE_NAME = "scorecard_section";
     private Collection questions = new ArrayList();
     private int scorecardSectionId;
     private int scorecardGroupId;

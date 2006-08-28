@@ -58,9 +58,10 @@
 
 --select si.idxname, st.tabname from sysindexes si, systables st where si.tabid = st.tabid
 
---select first 5 * from project_result;
 
-select count(*) from scorecard;
+--select first 5 * from project_result; and cd.comp_vers_id = pi_vi.value , comp_version_dates cd
+--
+--user_id,first_name,last_name,create_date,modify_date,handle,last_login,status,password,activation_code,middle_name,handle_lower,timezone_id
+--1800075,first foo,last foo,2003-01-17 00:00:00.0,2006-07-13 16:00:36.0,mylar,2003-01-20 
 
-
-	
+					drop TABLE Score_card_group_id

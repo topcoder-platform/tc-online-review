@@ -6,7 +6,6 @@ package com.topcoder.onlinereview.migration;
 import java.sql.Connection;
 import java.sql.Statement;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 
 /**
  * This class contains utility methods used only by the database package of this component. This class is
@@ -27,7 +26,7 @@ public class DatabaseUtils {
 	public static void closeResultSetSilently(final ResultSet resultSet) {
         try {
             resultSet.close();
-        } catch (SQLException e) {
+        } catch (Exception e) {
         }
     }
     /**
@@ -38,7 +37,7 @@ public class DatabaseUtils {
     public static void closeStatementSilently(final Statement statement) {
         try {
         	statement.close();
-        } catch (SQLException e) {
+        } catch (Exception e) {
         }
     }
 
@@ -51,7 +50,7 @@ public class DatabaseUtils {
     public static void closeSilently(final Connection connection) {
         try {
             connection.close();
-        } catch (SQLException e) {
+        } catch (Exception e) {
         }
     }
 
@@ -64,7 +63,7 @@ public class DatabaseUtils {
     public static void rollbackSilently(final Connection connection) {
         try {
             connection.rollback();
-        } catch (SQLException e) {
+        } catch (Exception e) {
         }
     }
 

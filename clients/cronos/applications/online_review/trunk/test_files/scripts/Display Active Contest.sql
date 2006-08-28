@@ -145,6 +145,7 @@ order by initial_submission_date, pcat.category_name, cc.component_name,dev_cont
      and cv.phase_id = 112
      and p.project_id not in (21298488, 21298522, 21306079, 21306123, 21505040, 21505247, 21542912, 21542960, 21632776, 21663385, 21663427, 21771067, 21771121)
 order by initial_submission_date, pcat.category_name, cc.component_name,design_contests,0,null,null
+
 26503,select cc.component_name
      , cv.version_text
      , c.category_name as catalog_name
