@@ -82,7 +82,7 @@ public class ScorecardLoader {
 
         // load scorecard template table from old online review
         Statement stmt = migrator.getLoaderConnection().createStatement();
-        ResultSet rs = stmt.executeQuery("SELECT first 1 * FROM " + ScorecardTemplate.TABLE_NAME + " order by template_id");
+        ResultSet rs = stmt.executeQuery("SELECT * FROM " + ScorecardTemplate.TABLE_NAME + " order by template_id");
         List list = new ArrayList();
 
         while (rs.next()) {

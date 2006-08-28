@@ -486,6 +486,9 @@ public class Utility {
         throws Exception {
         PreparedStatement pstmt = persistConn.prepareStatement(statement);
         pstmt.setLong(1, projectId);
+        if (statement.equals(DELETE_PHASE_DEPENDENCY)) {
+        	pstmt.setLong(2, projectId);
+        }
         pstmt.execute();
         close(pstmt);
     }
