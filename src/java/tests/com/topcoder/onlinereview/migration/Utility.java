@@ -67,8 +67,8 @@ public class Utility {
         "		and res.project_id = ?)";
     private static final String DELETE_REVIEW = 
     	"DELETE FROM review WHERE resource_id in " +
-        "	(select resource_id from resource res" + 
-        "		res.project_id = ?)";
+        "	(select resource_id from resource " + 
+        "		where project_id = ?)";
     private static final String DELETE_SCREENING_RESULT = 
     	"DELETE FROM screening_result WHERE screening_task_id in " +
         "	(select screening_task_id from screening_task st" + 
@@ -77,33 +77,33 @@ public class Utility {
     private static final String DELETE_SCREENING_TASK = 
     	"DELETE FROM screening_task WHERE upload_id in " +
         "	(select upload_id from upload u" + 
-        "		u.project_id = ?)";
+        "		where  u.project_id = ?)";
     private static final String DELETE_NOTIFICATION = 
     	"DELETE FROM notification WHERE project_id = ?";
     private static final String DELETE_RESOURCE_SUBMISSION = 
     	"DELETE FROM resource_submission WHERE resource_id in " +
         "	(select resource_id from resource " + 
-        "		project_id = ?)";
+        "		where project_id = ?)";
     private static final String DELETE_RESOURCE_INFO = 
     	"DELETE FROM resource_info WHERE resource_id in " +
         "	(select resource_id from resource " + 
-        "		project_id = ?)";
+        "		where  project_id = ?)";
     private static final String DELETE_SUBMISSION = 
     	"DELETE FROM submission WHERE upload_id in " +
         "	(select upload_id from upload " + 
-        "		project_id = ?)";
+        "		where  project_id = ?)";
     private static final String DELETE_UPLOAD = "DELETE FROM upload WHERE project_id = ?";
     private static final String DELETE_PHASE_CRITERIA = 
     	"DELETE FROM phase_criteria WHERE phase_id in " +
         "	(select phase_id from phase " + 
-        "		project_id = ?)";
+        "		where  project_id = ?)";
     private static final String DELETE_PHASE_DEPENDENCY = 
     	"DELETE FROM phase_dependency WHERE dependency_phase_id in " +
         "	(select phase_id from phase " + 
-        "		project_id = ?)" + 
+        "		where  project_id = ?)" + 
         "	OR dependent_phase_id in " +
         "	(select phase_id from phase " + 
-        "		project_id = ?)";
+        "		where  project_id = ?)";
     private static final String DELETE_PROJECT_AUDIT = "DELETE FROM project_audit WHERE project_id = ?";
     private static final String DELETE_PROJECT_INFO = "DELETE FROM project_info WHERE project_id = ?";
     private static final String DELETE_RESOURCE = "DELETE FROM resource WHERE project_id = ?";
@@ -132,7 +132,7 @@ public class Utility {
     private static final String EXISTS_REVIEW = 
     	"SELECT count(*) FROM review WHERE resource_id in " +
         "	(select resource_id from resource res" + 
-        "		res.project_id = ?)";
+        "		where  res.project_id = ?)";
 
     private static final String EXISTS_SCREENING_RESULT =
         "SELECT count(*) FROM screening_result WHERE screening_task_id in " +
@@ -143,24 +143,24 @@ public class Utility {
     private static final String EXISTS_SCREENING_TASK = 
     	"SELECT count(*) FROM screening_task WHERE upload_id in " +
         "	(select upload_id from upload u" + 
-        "		u.project_id = ?)";
+        "		where  u.project_id = ?)";
 
     private static final String EXISTS_NOTIFICATION = "SELECT count(*) FROM notification WHERE project_id = ?";
 
     private static final String EXISTS_RESOURCE_SUBMISSION =
         "SELECT count(*) FROM resource_submission WHERE resource_id in " + 
         "	(select resource_id from resource " +
-        "		project_id = ?)";
+        "	where 	project_id = ?)";
 
     private static final String EXISTS_RESOURCE_INFO = 
     	"SELECT count(*) FROM resource_info WHERE resource_id in " +
         "	(select resource_id from resource " + 
-        "		project_id = ?)";
+        "	where 	project_id = ?)";
 
     private static final String EXISTS_SUBMISSION = 
     	"SELECT count(*) FROM submission WHERE upload_id in " +
         "	(select upload_id from upload " + 
-        "		project_id = ?)";
+        "	where 	project_id = ?)";
 
     private static final String EXISTS_UPLOAD = 
     	"SELECT count(*) FROM upload WHERE project_id = ?";
@@ -168,11 +168,15 @@ public class Utility {
     private static final String EXISTS_PHASE_CRITERIA = 
     	"SELECT count(*) FROM phase_criteria WHERE phase_id in " +
         "	(select phase_id from phase " + 
-        "		project_id = ?)";
+        "	where 	project_id = ?)";
 
     private static final String EXISTS_PHASE_DEPENDENCY =
-        "SELECT count(*) FROM phase_dependency WHERE dependency_phase_id in " + "	(select phase_id from phase " +
-        "		project_id = ?)" + "	OR dependent_phase_id in " + "	(select phase_id from phase " + "		project_id = ?)";
+        "SELECT count(*) FROM phase_dependency WHERE dependency_phase_id in " + 
+        "	(select phase_id from phase " +
+        "	where 	project_id = ?)" + 
+        "	OR dependent_phase_id in " + 
+        "	(select phase_id from phase " + 
+        "	where 	project_id = ?)";
 
     private static final String EXISTS_PROJECT_AUDIT = "SELECT count(*) FROM project_audit WHERE project_id = ?";
     private static final String EXISTS_PROJECT_INFO = "SELECT count(*) FROM project_info WHERE project_id = ?";

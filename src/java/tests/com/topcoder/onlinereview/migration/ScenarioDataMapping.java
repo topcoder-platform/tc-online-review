@@ -52,18 +52,18 @@ import junit.framework.TestCase;
  * <li>Scenario #44 (FTC 3) The Resources mapping is done as defined in the following table.</li>
  * <li>Scenario #45 (FTC 3) The resource is not mapped to the project_id.</li>
  * <li>Scenario #46 (FTC 3) User Role is not mapped to the resource id.</li>
- * <li>Scenario #47 (FTC 3) Payment status ¡°No¡± is not mapped to 1.</li>
- * <li>Scenario #48 (FTC 3) Payment status ¡°Yes¡± is not mapped to 2.</li>
+ * <li>Scenario #47 (FTC 3) Payment status is not mapped to 1.</li>
+ * <li>Scenario #48 (FTC 3) Payment status s is not mapped to 2.</li>
  * <li>Scenario #49 (FTC 3) All Deliverable fields are mapped as defined in the following table.</li>
  * <li>Scenario #50 (FTC 3) The uploaded file is not mapped to the project id.</li>
- * <li>Scenario #51 (FTC 3) An uploaded submission in the submission phase is not mapped to ¡®Submission¡¯.</li>
+ * <li>Scenario #51 (FTC 3) An uploaded submission in the submission phase is not mapped to Submission.</li>
  * <li>Scenario #52 (FTC 3) Files are not stored in the file system server.</li>
  * <li>Scenario #54 (FTC 3) The mapping in the Review is as defined in the following table.</li>
- * <li>Scenario #55 (FTC 3) Response type ¡®required¡¯ is not mapped to 1.</li>
- * <li>Scenario #56 (FTC 3) Response type ¡®Recommended is not mapped to 2.</li>
- * <li>Scenario #57 (FTC 3) Response type ¡®Comment is not mapped to 3.</li>
- * <li>Scenario #58 (FTC 3) Response type ¡®Approved¡¯ is not mapped to 1.</li>
- * <li>Scenario #59 (FTC 3) Response type ¡®Rejected is not mapped to 2.</li>
+ * <li>Scenario #55 (FTC 3) Response type required is not mapped to 1.</li>
+ * <li>Scenario #56 (FTC 3) Response type Recommended is not mapped to 2.</li>
+ * <li>Scenario #57 (FTC 3) Response type Comment is not mapped to 3.</li>
+ * <li>Scenario #58 (FTC 3) Response type Approved is not mapped to 1.</li>
+ * <li>Scenario #59 (FTC 3) Response type Rejected is not mapped to 2.</li>
  * <li>Scenario #60 (FTC 3) The mapping is as defined in the table below.</li>
  * <li>Scenario #61 (FTC 3) The submission_v_id is not mapped to the auto screening.</li>
  * <li>Scenario #62 (FTC 3) The submission_id is not mapped to the upload_id.</li>
@@ -468,7 +468,7 @@ public class ScenarioDataMapping extends TestCase {
      * 3. Store tranformed data
      * Expected Outcome:
      * project_category_id 1 maps to 'Component Design' and 2 maps to 'Component Development'
-     * The project is not assigned to ¡®Component Design¡¯.
+     * The project is not assigned to Component Design.
      * </p>
      * @throws Exception to JUnit
      */
@@ -487,7 +487,7 @@ public class ScenarioDataMapping extends TestCase {
      * 2. Transform
      * 3. Store tranformed data
      * Expected Outcome:
-     * The project is not assigned to ¡®Component Development.
+     * The project is not assigned to Component Development.
      * </p>
      * @throws Exception to JUnit
      */
@@ -622,7 +622,7 @@ public class ScenarioDataMapping extends TestCase {
 
     /**
      * <p>
-     * Scenario #47 (FTC 3) Payment status ¡°No¡± is not mapped to 1.
+     * Scenario #47 (FTC 3) Payment status is not mapped to 1.
      * 1. Load scorecard data
      * 2. Transform
      * 3. Store tranformed data
@@ -668,7 +668,7 @@ public class ScenarioDataMapping extends TestCase {
 
     /**
      * <p>
-     * Scenario #48 (FTC 3) Payment status ¡°Yes¡± is not mapped to 2.
+     * Scenario #48 (FTC 3) Payment status s is not mapped to 2.
      * 1. Load scorecard data
      * 2. Transform
      * 3. Store tranformed data
@@ -792,7 +792,7 @@ public class ScenarioDataMapping extends TestCase {
 
     /**
      * <p>
-     * Scenario #51 (FTC 3) An uploaded submission in the submission phase is not mapped to ¡®Submission¡¯.
+     * Scenario #51 (FTC 3) An uploaded submission in the submission phase is not mapped to Submission.
      * 1. Load scorecard data
      * 2. Transform
      * 3. Store tranformed data
@@ -892,7 +892,7 @@ public class ScenarioDataMapping extends TestCase {
 
     /**
      * <p>
-     * Scenario #55 (FTC 3) Response type ¡®required¡¯ is not mapped to 1.
+     * Scenario #55 (FTC 3) Response type required is not mapped to 1.
      * 1. Load project data
      * 2. Transform
      * Expected Outcome:
@@ -921,7 +921,7 @@ public class ScenarioDataMapping extends TestCase {
 
     /**
      * <p>
-     * Scenario #56 (FTC 3) Response type ¡®Recommended is not mapped to 2.
+     * Scenario #56 (FTC 3) Response type Recommended is not mapped to 2.
      * 1. Load project data
      * 2. Transform
      * Expected Outcome:
@@ -950,7 +950,7 @@ public class ScenarioDataMapping extends TestCase {
 
     /**
      * <p>
-     * Scenario #57 (FTC 3) Response type ¡®Comment is not mapped to 3.
+     * Scenario #57 (FTC 3) Response type Comment is not mapped to 3.
      * 1. Load project data
      * 2. Transform
      * Expected Outcome:
@@ -979,7 +979,7 @@ public class ScenarioDataMapping extends TestCase {
 
     /**
      * <p>
-     * Scenario #58 (FTC 3) Response type ¡®Approved¡¯ is not mapped to 1.
+     * Scenario #58 (FTC 3) Response type Approved is not mapped to 1.
      * 1. Load project data
      * 2. Transform
      * Expected Outcome:
@@ -1008,7 +1008,7 @@ public class ScenarioDataMapping extends TestCase {
 
     /**
      * <p>
-     * Scenario #59 (FTC 3) Response type ¡®Rejected is not mapped to 2.
+     * Scenario #59 (FTC 3) Response type Rejected is not mapped to 2.
      * 1. Load project data
      * 2. Transform
      * Expected Outcome:
