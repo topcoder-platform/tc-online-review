@@ -10,6 +10,9 @@
 			<Value>scorecard</Value>
 			<Value>project</Value>
 		</Property>
+		<Property name="update_sql_dir">
+			<Value>src/update pages</Value>
+		</Property>
 	</Config>
 	<Config name="com.topcoder.db.connectionfactory.DBConnectionFactoryImpl">
 		<Property name="connections">

@@ -97,17 +97,19 @@ public class MigratorCommandLine {
             Switch processSwitch = cmdLineUtil.getSwitch("process");
             List processes = processSwitch.getValues();
             if (processes != null && processes.size() > 0) {
-                for (int i = 0; i < processes.size(); i++) {
-                    String process = (String) processes.get(i);
-                    if ("project".equals(process)) {
-                    	migrator.migrateProject();
-                    } else if ("scorecard".equals(process)) {
-                    	migrator.migrateScorecard();
-                    } else if ("specificed".equals(process)) {
-                        Switch idsSwitch = cmdLineUtil.getSwitch("ids");
-                        List ids = idsSwitch.getValues();
-                        migrator.migrateProjects(ids);
-                    }
+                if (processes.contains("scorecard")) {
+                	migrator.migrateScorecard();
+                }
+                if (processes.contains("project")) {
+                	migrator.migrateProject();
+                }
+                if (processes.contains("specificed")) {
+                    Switch idsSwitch = cmdLineUtil.getSwitch("ids");
+                    List ids = idsSwitch.getValues();
+                    migrator.migrateProjects(ids);
+                }
+                if (processes.contains("update_sql")) {
+                    migrator.updateSQLs();
                 }
             } else {
             	migrator.migrate();

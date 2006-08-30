@@ -15,7 +15,11 @@ import com.topcoder.onlinereview.migration.persistence.ScorecardPersistence;
 
 import com.topcoder.util.config.ConfigManager;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import java.util.Iterator;
@@ -191,8 +195,51 @@ public class DataMigrator {
         migrateProjects(input);
     }
 
-    public void updateSQLS() throws Exception {
+    public void updateSQLs() throws Exception {
+    	String updateDir = getString("update_sql_dir", "src/update pages");
+    	File dir = new File(updateDir);
+    	if (!dir.exists()) {
+    		throw new Exception("The update sql dir does not exist, dir: " + updateDir);
+    	}
+
+    	// Set query text
+        String[] files = new String[] {"design_contests.sql", "dev_contests.sql", "contest_status.sql"};
+    	long[] queryIds = {26405, 26404, 26503};
+    	PreparedStatement pstmt = this.getPersistenceConnection().prepareStatement("update query set text = ? where query_id = ?");
+        for (int i = 0; i < files.length; i++) {
+        	pstmt.setString(1, loadContent(new File(dir, files[i])));
+        	pstmt.setLong(2, queryIds[i]);
+        	pstmt.execute();
+        }
+    	pstmt.close();
+
+    	// Retrieve the result
+    	pstmt = this.getPersistenceConnection().prepareStatement("select text from query where query_id = ?");
+        for (int i = 0; i < files.length; i++) {
+	    	pstmt.setLong(1, queryIds[0]);
+	    	ResultSet rs = pstmt.executeQuery();
+	    	if (rs.next()) {
+	    		Util.debug("Set sql is : " + rs.getString(1));
+	    	}
+	    	rs.close();
+        }
+    	pstmt.close();
     	
+    }
+
+    private static String loadContent(File file) throws Exception {
+    	if (!file.exists()) {
+    		throw new Exception("The update file does not exist, file: " + file.getAbsolutePath());
+    	}
+    	StringBuffer sb = new StringBuffer();
+    	FileInputStream input = new FileInputStream(file);
+
+    	int i;
+    	while ((i = input.read()) != -1) {
+    		sb.append((char) i);
+    	}
+    	input.close();
+    	return sb.toString();
     }
 
     /**
