@@ -184,7 +184,7 @@ public class ScenarioDataMapping extends TestCase {
     	qt.setQuestionType(4);
     	list.add(qt);
     	
-    	List results = dataMigrator.getScorecardTransformer().transformScorecardQuestion(1, list);
+    	List results = dataMigrator.getScorecardTransformer().transformScorecardQuestion(1, list, 200);
     	assertEquals("Result size is incorrect", results.size(), 3);
 
     	ScorecardQuestionNew result = (ScorecardQuestionNew) results.get(0);
@@ -354,7 +354,7 @@ public class ScenarioDataMapping extends TestCase {
     	qt.setQuestionType(2);
     	list.add(qt);
 
-    	List results = dataMigrator.getScorecardTransformer().transformScorecardQuestion(1, list);
+    	List results = dataMigrator.getScorecardTransformer().transformScorecardQuestion(1, list, 200);
     	assertEquals("Result size is incorrect", results.size(), 1);
 
     	ScorecardQuestionNew result = (ScorecardQuestionNew) results.get(0);

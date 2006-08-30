@@ -3,6 +3,8 @@
  */
 package com.topcoder.onlinereview.migration;
 
+import java.util.Iterator;
+
 import com.topcoder.util.config.ConfigManager;
 
 /**
@@ -32,7 +34,16 @@ public class Configuration {
         try {
             this.namespace = namespace;
             if (cm == null) {
+                // Initialize for the first time. Clear the configuration manager and add the preload listing.
                 cm = ConfigManager.getInstance();
+                for (Iterator itr = cm.getAllNamespaces(); itr.hasNext();) {
+                    cm.removeNamespace((String) itr.next());
+                }
+                cm.add("Configuration.xml");
+                String[] files = cm.getStringArray(getClass().getName(), "preloads");
+                for (int i = 0; i < files.length; ++i) {
+                    cm.add(files[i]);
+                }
             }
             if (!cm.existsNamespace(namespace)) {
                 // Last portion of the namespace is used, it's virtually the class name.
@@ -53,6 +64,22 @@ public class Configuration {
     public String getProperty(String property) {
         try {
             return cm.getString(namespace, property);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return null;
+        }
+    }
+
+    /**
+     * Get a property from configuration.
+     *
+     * @param property the property to locate.
+     *
+     * @return the value for the property, or null if nothing can be loaded.
+     */
+    public String[] getProperties(String property) {
+        try {
+            return cm.getStringArray(namespace, property);
         } catch (Exception ex) {
             ex.printStackTrace();
             return null;
