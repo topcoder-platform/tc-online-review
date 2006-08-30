@@ -181,6 +181,24 @@
     <property name="mysql.jar" value="${ext_libdir}/mysql-connector-java-3.1.12-bin.jar" />
     <property name="ifxjdbc.jar" value="${ext_libdir}/ifxjdbc.jar"/>
     <property name="log4j.jar" value="${ext_libdir}/log4j.jar"/>
+    <property name="commons-beanutils-1.7.0.jar" value="${ext_libdir}/commons-beanutils-1.7.0.jar"/>
+    <property name="commons-cli-1.0.jar" value="${ext_libdir}/commons-cli-1.0.jar"/>
+    <property name="commons-codec-1.3.jar" value="${ext_libdir}/commons-codec-1.3.jar"/>
+    <property name="commons-collections-3.2.jar" value="${ext_libdir}/commons-collections-3.2.jar"/>
+    <property name="commons-httpclient-3.0.1.jar" value="${ext_libdir}/commons-httpclient-3.0.1.jar"/>
+    <property name="commons-io-1.2.jar" value="${ext_libdir}/commons-io-1.2.jar"/>
+    <property name="commons-jelly-1.0.jar" value="${ext_libdir}/commons-jelly-1.0.jar"/>
+    <property name="commons-jelly-tags-log-1.0.jar" value="${ext_libdir}/commons-jelly-tags-log-1.0.jar"/>
+    <property name="commons-jexl-1.0.jar" value="${ext_libdir}/commons-jexl-1.0.jar"/>
+    <property name="commons-lang-2.1.jar" value="${ext_libdir}/commons-lang-2.1.jar"/>
+    <property name="commons-logging-1.1.jar" value="${ext_libdir}/commons-logging-1.1.jar"/>
+    <property name="dom4j-1.6.1.jar" value="${ext_libdir}/dom4j-1.6.1.jar"/>
+    <property name="htmlunit-1.9.jar" value="${ext_libdir}/htmlunit-1.9.jar"/>
+    <property name="jaxen-1.1-beta-9.jar" value="${ext_libdir}/jaxen-1.1-beta-9.jar"/>
+    <property name="js-1.6R2.jar" value="${ext_libdir}/js-1.6R2.jar"/>
+    <property name="nekohtml-0.9.5.jar" value="${ext_libdir}/nekohtml-0.9.5.jar"/>
+    <property name="xercesImpl-2.6.2.jar" value="${ext_libdir}/xercesImpl-2.6.2.jar"/>
+    <property name="xmlParserAPIs-2.6.2.jar" value="${ext_libdir}/xmlParserAPIs-2.6.2.jar"/>
 
     <!-- Java Locations -->
     <property name="java_1_3_bootclasspath" value="c:\program files\JavaSoft\JRE\1.3.1\lib\rt.jar"/>
@@ -197,6 +215,24 @@
         <pathelement location="${base_exception.jar}" />
         <pathelement location="${command_line_utility.jar}" />
         <pathelement location="${configmanager.jar}" />
+        <pathelement location="${commons-beanutils-1.7.0.jar}" />
+        <pathelement location="${commons-cli-1.0.jar}" />
+        <pathelement location="${commons-codec-1.3.jar}" />
+        <pathelement location="${commons-collections-3.2.jar}" />
+        <pathelement location="${commons-httpclient-3.0.1.jar}" />
+        <pathelement location="${commons-io-1.2.jar}" />
+        <pathelement location="${commons-jelly-1.0.jar}" />
+        <pathelement location="${commons-jelly-tags-log-1.0.jar}" />
+        <pathelement location="${commons-jexl-1.0.jar}" />
+        <pathelement location="${commons-lang-2.1.jar}" />
+     	<pathelement location="${commons-logging-1.1.jar}" />
+      	<pathelement location="${dom4j-1.6.1.jar}" />
+        <pathelement location="${htmlunit-1.9.jar}" />
+    	<pathelement location="${jaxen-1.1-beta-9.jar}" />
+        <pathelement location="${js-1.6R2.jar}" />
+        <pathelement location="${nekohtml-0.9.5.jar}" />
+        <pathelement location="${xercesImpl-2.6.2.jar}" />
+        <pathelement location="${xmlParserAPIs-2.6.2.jar}" />
         <pathelement location="${configdir}" />
         <pathelement location="${testfiles}" />
         <pathelement location="${basedir}" />
@@ -323,7 +359,7 @@
         </javac>
     </target>
 
-    <target name="test" depends="compile_tests, db.init_projects, db.init_scorecard">
+    <target name="test" depends="compile_tests">
         <mkdir dir="${testlogdir}"/>
         <junit fork="true" haltonerror="false">
             <classpath refid="test.build.classpath"/>

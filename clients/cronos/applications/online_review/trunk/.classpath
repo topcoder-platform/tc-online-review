@@ -3,8 +3,8 @@
 	<classpathentry kind="src" path="src/java/main"/>
 	<classpathentry kind="src" path="src/java/tests"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/OR_migration"/>
 	<classpathentry kind="lib" path="conf"/>
 	<classpathentry kind="lib" path="test_files"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/OR_migration"/>
 	<classpathentry kind="output" path="build/testClasses"/>
 </classpath>
