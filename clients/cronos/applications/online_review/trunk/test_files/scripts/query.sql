@@ -65,4 +65,10 @@
 --1800075,first foo,last foo,2003-01-17 00:00:00.0,2006-07-13 16:00:36.0,mylar,2003-01-20 
 
 --DELETE FROM review WHERE resource_id in (select resource_id from resource where project_id = 123213)
-select * from scorecard;
+--select * from scorecard;
+--select count(*) from scorecard;
+--select * from scorecard_section where weight > 100;
+--select sum(weight) yy, section_id from question_template where cur_version = 1 group by section_id order by yy;
+--select count(*) from project;
+select scorecard_group_id from scorecard_group where scorecard_group_id in 
+	(select scorecard_group_id, sum(weight) zz from scorecard_section where zz <> 100 group by scorecard_group_id )
