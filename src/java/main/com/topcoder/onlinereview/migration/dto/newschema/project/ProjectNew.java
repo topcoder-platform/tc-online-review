@@ -224,10 +224,12 @@ public class ProjectNew extends BaseDTO {
     }
 
     public int getResourceIdByLoginIdRoleType(int loginId, int roleType) {
+    	int reviewerId = 0;
     	for (Iterator iter = getResourceInfos().iterator(); iter.hasNext();) {
     		ResourceInfo resourceInfo = (ResourceInfo) iter.next();
     		if (resourceInfo.getResourceInfoTypeId() == ResourceInfo.EXTERNAL_REFERENCE_ID) {
     			if (resourceInfo.getValue().equals(String.valueOf(loginId))) {
+    				reviewerId = resourceInfo.getResourceId();
     				Resource res = getResourceById(resourceInfo.getResourceId());
     				if (res.getResourceRoleId() == roleType) {
     					return res.getResourceId();
@@ -235,14 +237,16 @@ public class ProjectNew extends BaseDTO {
     			}
     		}
     	}
-    	return 0;
+    	return reviewerId;
     }
 
     public int getResourceIdByLoginIdScorecardType(int loginId, int scorecardType) {
+    	int reviewerId = 0;
     	for (Iterator iter = getResourceInfos().iterator(); iter.hasNext();) {
     		ResourceInfo resourceInfo = (ResourceInfo) iter.next();
     		if (resourceInfo.getResourceInfoTypeId() == ResourceInfo.EXTERNAL_REFERENCE_ID) {
     			if (resourceInfo.getValue().equals(String.valueOf(loginId))) {
+    				reviewerId = resourceInfo.getResourceId();
     				Resource res = getResourceById(resourceInfo.getResourceId());
     				if (scorecardType == 1) {
     					// screening
@@ -262,14 +266,16 @@ public class ProjectNew extends BaseDTO {
     			}
     		}
     	}
-    	return 0;
+    	return reviewerId;
     }
 
     public int getResourceIdByLoginIdTestcaseReviewer(int loginId) {
+    	int reviewerId = 0;
     	for (Iterator iter = getResourceInfos().iterator(); iter.hasNext();) {
     		ResourceInfo resourceInfo = (ResourceInfo) iter.next();
     		if (resourceInfo.getResourceInfoTypeId() == ResourceInfo.EXTERNAL_REFERENCE_ID) {
     			if (resourceInfo.getValue().equals(String.valueOf(loginId))) {
+    				reviewerId = resourceInfo.getResourceId();
     				Resource res = getResourceById(resourceInfo.getResourceId());
     				if (res.getResourceRoleId() == Resource.ACCURACY_REVIEWER_RESOURCE_ROLE 
     						|| res.getResourceRoleId() == Resource.FAILURE_REVIEWER_RESOURCE_ROLE
@@ -279,14 +285,16 @@ public class ProjectNew extends BaseDTO {
     			}
     		}
     	}
-    	return 0;
+    	return reviewerId;
     }
 
     public int getResourceIdByLoginIdAggReviewer(int loginId) {
+    	int reviewerId = 0;
     	for (Iterator iter = getResourceInfos().iterator(); iter.hasNext();) {
     		ResourceInfo resourceInfo = (ResourceInfo) iter.next();
     		if (resourceInfo.getResourceInfoTypeId() == ResourceInfo.EXTERNAL_REFERENCE_ID) {
     			if (resourceInfo.getValue().equals(String.valueOf(loginId))) {
+    				reviewerId = resourceInfo.getResourceId();
     				Resource res = getResourceById(resourceInfo.getResourceId());
     				if (res.getResourceRoleId() == Resource.ACCURACY_REVIEWER_RESOURCE_ROLE 
     						|| res.getResourceRoleId() == Resource.FAILURE_REVIEWER_RESOURCE_ROLE
@@ -297,7 +305,7 @@ public class ProjectNew extends BaseDTO {
     			}
     		}
     	}
-    	return 0;
+    	return reviewerId;
     }
 
     /**
