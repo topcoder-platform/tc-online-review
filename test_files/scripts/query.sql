@@ -64,4 +64,5 @@
 --user_id,first_name,last_name,create_date,modify_date,handle,last_login,status,password,activation_code,middle_name,handle_lower,timezone_id
 --1800075,first foo,last foo,2003-01-17 00:00:00.0,2006-07-13 16:00:36.0,mylar,2003-01-20 
 
-DELETE FROM review WHERE resource_id in (select resource_id from resource where project_id = 123213)
+--DELETE FROM review WHERE resource_id in (select resource_id from resource where project_id = 123213)
+select * from scorecard;
