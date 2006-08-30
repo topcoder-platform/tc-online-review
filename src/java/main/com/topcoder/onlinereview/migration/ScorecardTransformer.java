@@ -176,9 +176,10 @@ public class ScorecardTransformer {
             output.setScorecardId(scorecardId);
 
             // calculated by distributing the section weights within a scorecard
+            float groupWeight = 0;
             if ((int) totalWeight > 0) {
-            	float weight = getGroupWeight(input.getSections()) * 100 / totalWeight;
-            	output.setWeight(weight);
+            	groupWeight = getGroupWeight(input.getSections());
+            	output.setWeight(groupWeight * 100 / totalWeight);
             } else {
             	output.setWeight(0);
             }
@@ -189,7 +190,7 @@ public class ScorecardTransformer {
             output.setModifyUser(MODIFY_USER);
             output.setModifyDate(new Date());
             output.setScorecardGroupId((int) getScorecardGroupIdGenerator().getNextID());
-            output.setSections(transformScorecardSection(output.getScorecardGroupId(), input.getSections(), output.getWeight()));
+            output.setSections(transformScorecardSection(output.getScorecardGroupId(), input.getSections(), groupWeight));
             list.add(output);
         }
 
@@ -210,7 +211,7 @@ public class ScorecardTransformer {
     	}
     	return weight;
     }
-    
+
     /**
      * Transform ScorecardSectionOld to ScorecardSectionNew
      *
@@ -245,12 +246,27 @@ public class ScorecardTransformer {
             output.setModifyUser(MODIFY_USER);
             output.setModifyDate(new Date());
             output.setScorecardSectionId((int) getScorecardSectionIdGenerator().getNextID());
-            output.setQuestions(transformScorecardQuestion(output.getScorecardSectionId(), input.getQuestions()));
+            float sectionWeight = getSectionWeight(input.getQuestions());
+            output.setQuestions(transformScorecardQuestion(output.getScorecardSectionId(), input.getQuestions(), sectionWeight));
             list.add(output);
         }
 
         Util.logAction(inputs.size(), "transformScorecardSection", startTime);
         return list;
+    }
+
+    /**
+     * Return total weigth in a group.
+     * 
+     * @param sections the sections
+     * @return group weight
+     */
+    private static float getSectionWeight(Collection questions) {
+    	float weight = 0;
+    	for (Iterator iter = questions.iterator(); iter.hasNext();) {
+    		weight += ((QuestionTemplate) iter.next()).getQuestionWeight();
+    	}
+    	return weight;
     }
 
     /**
@@ -263,7 +279,7 @@ public class ScorecardTransformer {
      *
      * @throws IDGenerationException
      */
-    public List transformScorecardQuestion(int scorecardSectionId, Collection inputs) throws IDGenerationException {
+    public List transformScorecardQuestion(int scorecardSectionId, Collection inputs, float sectionWeight) throws IDGenerationException {
         List list = new ArrayList(inputs.size());
         long startTime = Util.start("transformScorecardQuestion");
 
@@ -296,7 +312,11 @@ public class ScorecardTransformer {
             	break;
             }
             output.setScorecardQuestionTypeId(scorecardQuestionTypeId);
-            output.setWeight(input.getQuestionWeight());
+            if (sectionWeight > 0) {
+            	output.setWeight((float) input.getQuestionWeight() * 100 / sectionWeight);
+            } else {
+            	output.setWeight(input.getQuestionWeight());
+            }
             output.setSort(input.getQuestionSecLoc());
             output.setUploadDocument(false);
             output.setUploadDocumentRequired(false);
