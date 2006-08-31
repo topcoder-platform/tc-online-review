@@ -29,7 +29,7 @@ public class PRScreeningPhaseHandler extends ScreeningPhaseHandler {
 				"	inner join resource_info ri on ri.resource_id = r.resource_id " +
 				"	and ri.value = project_result.user_id and ri.resource_info_type_id = " + RESOURCE_INFO_EXTERNAL_ID +
 				"	where submission_status_id = " + SUBMISSION_STATUS_FAILED_SCREENING_ID + " ) and " +
-				" project_id = (select project_id from phase where phase_id = ?)";
+				" project_id = (select project_id from project_phase where project_phase_id = ?)";
 	
 	private static final String PASS_SCREENING_STMT = 
 		"update project_result set valid_submission_ind = 1, reliability_ind = 1, rating_ind = 1 " +
@@ -40,7 +40,7 @@ public class PRScreeningPhaseHandler extends ScreeningPhaseHandler {
 		"	inner join resource_info ri on ri.resource_id = r.resource_id " +
 		"	and ri.value = project_result.user_id and ri.resource_info_type_id = " + RESOURCE_INFO_EXTERNAL_ID +
 		"	where submission_status_id not in (" + SUBMISSION_STATUS_FAILED_SCREENING_ID + "," + SUBMISSION_STATUS_DELETE_ID  + ") ) and " +
-		" project_id = (select project_id from phase where phase_id = ?)";
+		" project_id = (select project_id from project_phase where project_phase_id = ?)";
 
     /**
      * Create a new instance of ScreeningPhaseHandler using the default namespace for loading configuration settings.

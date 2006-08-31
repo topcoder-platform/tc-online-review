@@ -728,7 +728,7 @@ public class ProjectTrackerV2Bean implements SessionBean {
      */
     private void createPhase(Connection conn, long projectId, long phaseId, Phase phase, long userId)
         throws SQLException {
-        PreparedStatement ps = conn.prepareStatement("INSERT INTO phase " + "(phase_id, project_id, " +
+        PreparedStatement ps = conn.prepareStatement("INSERT INTO project_phase " + "(project_phase_id, project_id, " +
                 "phase_type_id, phase_status_id, duration, fixed_start_time, scheduled_start_time, scheduled_end_time, " +
                 "actual_start_time, actual_end_time, create_user, create_date, " + "modify_user, modify_date) VALUES " +
                 "(?, ?, ?, ?, ?, ?, ?, ?, ?, ? , ?, CURRENT, ?, CURRENT)"); // 1: Scheduled
@@ -762,7 +762,7 @@ public class ProjectTrackerV2Bean implements SessionBean {
     private void createPhaseCriteria(Connection conn, long phaseId, int type, String parameter, long userId)
         throws SQLException {
         PreparedStatement ps = conn.prepareStatement("INSERT INTO phase_criteria " +
-                "(phase_id, phase_criteria_type_id, parameter, " + "create_user, create_date, " +
+                "(project_phase_id, phase_criteria_type_id, parameter, " + "create_user, create_date, " +
                 "modify_user, modify_date) VALUES " + "(?, ?, ?, ?, CURRENT, ?, CURRENT)"); // 1: Scheduled
         int index = 1;
         ps.setLong(index++, phaseId);

@@ -232,7 +232,7 @@ public class ReliabilityRating {
                     " , case when pi.scheduled_start_time >= ? then 1 else 0 end as after_start_flag" +
                     " from project_result pr" +
                     " , component_inquiry ci" +
-                    " , phase pi" +
+                    " , project_phase pi" +
                     " , project p" +
                     " where ci.project_id = pr.project_id" +
                     " and pr.user_id = ci.user_id" +
@@ -449,7 +449,7 @@ public class ReliabilityRating {
                     " , pr.project_id" +
                     " from project_result pr" +
                     " , component_inquiry ci" +
-                    " , phase pi" +
+                    " , project_phase pi" +
                     " where ci.project_id = pr.project_id" +
                     " and pr.user_id = ci.user_id" +
                     " and pr.user_id = ?" +
@@ -464,7 +464,7 @@ public class ReliabilityRating {
     private static final String oldReliabilityUsers =
             " select distinct pr.user_id" +
                     " from project_result pr" +
-                    " , phase pi" +
+                    " , project_phase pi" +
                     " where pi.phase_type_id = 2" +
                     " and pi.scheduled_start_time < ?" +
                     " and pi.project_id = pr.project_id" +
@@ -556,7 +556,7 @@ public class ReliabilityRating {
     private static final String includedUsers =
             " select pr.user_id" +
                     " from project_result pr" +
-                    " , phase pi" +
+                    " , project_phase pi" +
                     " , project p" +
                     " where pr.project_id = pi.project_id" +
                     " and pi.phase_type_id = 2" +
@@ -567,7 +567,7 @@ public class ReliabilityRating {
                     " union" +
                     " select pr.user_id" +
                     " from project_result pr" +
-                    " , phase pi" +
+                    " , project_phase pi" +
                     " , project p" +
                     " where pr.project_id = pi.project_id" +
                     " and pi.phase_type_id = 2" +
@@ -609,7 +609,7 @@ public class ReliabilityRating {
                     " , pr.project_id" +
                     " , pr.final_score" +
                     " from project_result pr" +
-                    " , phase pi" +
+                    " , project_phase pi" +
                     " where pr.project_id = pi.project_id" +
                     " and pi.phase_type_id = 2" +
                     " and pi.scheduled_start_time >= ?" +
@@ -675,7 +675,7 @@ public class ReliabilityRating {
                     " , pr.project_id" +
                     " , pr.valid_submission_ind" +
                     " from project_result pr" +
-                    " , phase pi" +
+                    " , project_phase pi" +
                     " where pr.project_id = pi.project_id" +
                     " and pi.phase_type_id = 2" +
                     " and pi.scheduled_start_time < ?" +

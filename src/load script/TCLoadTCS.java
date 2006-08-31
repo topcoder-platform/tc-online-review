@@ -146,7 +146,7 @@ public class TCLoadTCS extends TCLoad {
             getLastUpdateTime();
 
 
-            doLoadReviewResp();
+            //doLoadReviewResp();
             doLoadEvent();
             doLoadUserEvent();
 
@@ -703,9 +703,9 @@ public class TCLoadTCS extends TCLoad {
                     " (select avg(case when final_score is null then 0 else final_score end) from project_result where project_id = p.project_id and final_score is not null) as avg_final_score, " +
                     " ,1 as level_id " +
                     " ,pict.value as complete_date " + // TODO format
-                    " ,(select phase_type_id from phase where phase_id = (select min(phase_id) from phase where project_id = p.project_id and phase_status_id = 2)) as review_phase_id " +
-                    " ,(select name from phase_type_lu where phase_type_id = (select phase_type_id from phase where phase_id = " +
-                    " 		(select min(phase_id) from phase where project_id = p.project_id and phase_status_id = 2)))	as review_phase_name " +
+                    " ,(select phase_type_id from project_phase where project_phase_id = (select min(project_phase_id) from project_phase where project_id = p.project_id and phase_status_id = 2)) as review_phase_id " +
+                    " ,(select name from phase_type_lu where phase_type_id = (select phase_type_id from project_phase where project_phase_id = " +
+                    " 		(select min(project_phase_id) from project_phase where project_id = p.project_id and phase_status_id = 2)))	as review_phase_name " +
                     " ,p.project_status_id as project_stat_id " +
                     " ,psl.name as project_stat_name " +
                     " ,cat.viewable as viewable " +
@@ -722,8 +722,8 @@ public class TCLoadTCS extends TCLoad {
                     " LEFT JOIN project_info piwi ON piwi.project_id = p.project_id and piwi.project_info_type_id = 23 " +
                     " INNER JOIN categories cat ON cat.category_id = pir.value " +
                     " INNER JOIN project_status_lu psl ON psl.project_status_id = p.project_status_id " +
-                    " LEFT JOIN phase psd ON psd.project_id = p.project_id and psd.phase_type_id = 2 " +
-                    " LEFT JOIN phase ppd ON ppd.project_id = p.project_id and ppd.phase_type_id = 1 " +
+                    " LEFT JOIN project_phase psd ON psd.project_id = p.project_id and psd.phase_type_id = 2 " +
+                    " LEFT JOIN project_phase ppd ON ppd.project_id = p.project_id and ppd.phase_type_id = 1 " +
                     " and (p.modify_date > ? OR pir.modify_date > ? OR pivi.modify_date > ? OR pivt.modify_date > ? OR pict.modify_date > ?)";
 
             final String UPDATE = "update project set component_name = ?,  num_registrations = ?, " +

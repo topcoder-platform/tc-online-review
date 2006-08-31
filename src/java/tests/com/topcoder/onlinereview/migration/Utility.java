@@ -94,20 +94,20 @@ public class Utility {
         "		where  project_id = ?)";
     private static final String DELETE_UPLOAD = "DELETE FROM upload WHERE project_id = ?";
     private static final String DELETE_PHASE_CRITERIA = 
-    	"DELETE FROM phase_criteria WHERE phase_id in " +
-        "	(select phase_id from phase " + 
+    	"DELETE FROM phase_criteria WHERE project_phase_id in " +
+        "	(select project_phase_id from project_phase " + 
         "		where  project_id = ?)";
     private static final String DELETE_PHASE_DEPENDENCY = 
     	"DELETE FROM phase_dependency WHERE dependency_phase_id in " +
-        "	(select phase_id from phase " + 
+        "	(select project_phase_id from project_phase " + 
         "		where  project_id = ?)" + 
         "	OR dependent_phase_id in " +
-        "	(select phase_id from phase " + 
+        "	(select project_phase_id from project_phase " + 
         "		where  project_id = ?)";
     private static final String DELETE_PROJECT_AUDIT = "DELETE FROM project_audit WHERE project_id = ?";
     private static final String DELETE_PROJECT_INFO = "DELETE FROM project_info WHERE project_id = ?";
     private static final String DELETE_RESOURCE = "DELETE FROM resource WHERE project_id = ?";
-    private static final String DELETE_PHASE = "DELETE FROM phase WHERE project_id = ?";
+    private static final String DELETE_PHASE = "DELETE FROM project_phase WHERE project_id = ?";
     private static final String DELETE_PROJECT = "DELETE FROM project WHERE project_id = ?";
 
     private static final String EXISTS_REVIEW_ITEM_COMMENT =
@@ -166,22 +166,22 @@ public class Utility {
     	"SELECT count(*) FROM upload WHERE project_id = ?";
 
     private static final String EXISTS_PHASE_CRITERIA = 
-    	"SELECT count(*) FROM phase_criteria WHERE phase_id in " +
-        "	(select phase_id from phase " + 
+    	"SELECT count(*) FROM phase_criteria WHERE project_phase_id in " +
+        "	(select project_phase_id from project_phase " + 
         "	where 	project_id = ?)";
 
     private static final String EXISTS_PHASE_DEPENDENCY =
         "SELECT count(*) FROM phase_dependency WHERE dependency_phase_id in " + 
-        "	(select phase_id from phase " +
+        "	(select project_phase_id from project_phase " +
         "	where 	project_id = ?)" + 
         "	OR dependent_phase_id in " + 
-        "	(select phase_id from phase " + 
+        "	(select project_phase_id from project_phase " + 
         "	where 	project_id = ?)";
 
     private static final String EXISTS_PROJECT_AUDIT = "SELECT count(*) FROM project_audit WHERE project_id = ?";
     private static final String EXISTS_PROJECT_INFO = "SELECT count(*) FROM project_info WHERE project_id = ?";
     private static final String EXISTS_RESOURCE = "SELECT count(*) FROM resource WHERE project_id = ?";
-    private static final String EXISTS_PHASE = "SELECT count(*) FROM phase WHERE project_id = ?";
+    private static final String EXISTS_PHASE = "SELECT count(*) FROM project_phase WHERE project_id = ?";
     private static final String EXISTS_PROJECT = "SELECT count(*) FROM project WHERE project_id = ?";
     private static final String EXISTS_SCORECARD = "SELECT count(*) FROM scorecard";
     private static final String EXISTS_SCORECARD_GROUP = "SELECT count(*) FROM scorecard_group";
@@ -316,7 +316,7 @@ public class Utility {
                 "delete from notification;", "delete from resource_submission;", "delete from resource_info;",
                 "delete from submission;", "delete from upload;", "delete from phase_criteria;",
                 "delete from phase_dependency;", "delete from project_audit;", "delete from project_info;",
-                "delete from resource;", "delete from phase;", "delete from project;"
+                "delete from resource;", "delete from project_phase;", "delete from project;"
             };
         Statement pstmt = persistConn.createStatement();
 

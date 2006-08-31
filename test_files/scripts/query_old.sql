@@ -82,24 +82,13 @@
 
 --select * from project where project_id = 22764150 and cur_version =1;
 
-SELECT distinct r_role_id,project_id,login_id,payment_info_id,r_resp_id FROM r_user_role
-where 
-((project_id = 7438682 and login_id = 265522)
-or (project_id = 7438682 and login_id = 273206)
-or (project_id = 7438682 and login_id = 288429)
-or (project_id = 7444765 and login_id = 150498)
-or (project_id = 7444765 and login_id = 158333)
-or (project_id = 7444765 and login_id = 291974)
-or (project_id = 7470335 and login_id = 288429)
-or (project_id = 7476981 and login_id = 150498)
-or (project_id = 7476981 and login_id = 151360)
-or (project_id = 7476981 and login_id = 278595)
-or (project_id = 7488100 and login_id = 150498)
-or (project_id = 7507277 and login_id = 269515)
-or (project_id = 7507277 and login_id = 291974)
-or (project_id = 7507277 and login_id = 299180)
-or (project_id = 8346976 and login_id = 272250)
-or (project_id = 8403777 and login_id = 272069)
-or (project_id = 8551481 and login_id = 297731)
-or (project_id = 10054085 and login_id = 153089)
-or (project_id = 10566757 and login_id = 281876)) and cur_version = 0;
+--select sum(question_weight) yy, section_id from question_template where cur_version = 1 group by section_id order by yy;
+
+--select * from project_template where project_id = 7437871;
+--select * from scorecard where project_id = 7437871;
+--select distinct project_id from project p where cur_version = 1 and not exists (select * from project_template pt where pt.project_id = p.project_id)
+--select * from r_user_role where project_id = 7439266;
+--select * from agg_worksheet where project_id = 7439266;
+--select review_resp_id, review_resp_name, phase_id from review_resp
+--select * from rboard_user;
+select distinct phase_id from project;

@@ -254,14 +254,14 @@ public class RBoardApplicationBean extends BaseEJB {
         PreparedStatement ps = null;
         ResultSet rs = null;
         try {
-            ps = conn.prepareStatement("select phase_id, phase_type_id "
-                + " from phase "
+            ps = conn.prepareStatement("select project_phase_id, phase_type_id "
+                + " from project_phase "
                 + "where project_id = ?");
             ps.setLong(1, projectId);
 
             rs = ps.executeQuery();
             while (rs.next()) {
-                returnMap.put(rs.getString("phase_type_id"), rs.getString("phase_id"));  
+                returnMap.put(rs.getString("phase_type_id"), rs.getString("project_phase_id"));  
             }
         } catch (SQLException sqle) {
             DBMS.printSqlException(true, sqle);
@@ -304,7 +304,7 @@ public class RBoardApplicationBean extends BaseEJB {
     private void insertUserRole(Connection conn, long resourceId, long resourceRoleId,
         long projectId, String phaseId, long userId) {
         insert(conn, "resource",
-            new String[]{"resource_id", "resource_role_id", "project_id", "phase_id",
+            new String[]{"resource_id", "resource_role_id", "project_id", "project_phase_id",
             "create_user", "create_date", "modify_user", "modify_date"},
             new String[]{String.valueOf(resourceId), String.valueOf(resourceRoleId),
             String.valueOf(projectId), phaseId, String.valueOf(INTERNAL_ADMIN_USER),

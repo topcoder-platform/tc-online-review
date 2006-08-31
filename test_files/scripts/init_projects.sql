@@ -19,5 +19,5 @@ delete from phase_dependency;
 delete from project_audit;
 delete from project_info;
 delete from resource;
-delete from phase;
+delete from project_phase;
 delete from project;

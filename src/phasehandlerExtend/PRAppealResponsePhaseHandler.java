@@ -36,7 +36,7 @@ public class PRAppealResponsePhaseHandler extends AppealsResponsePhaseHandler {
 				"and ri_p.resource_info_type_id =  " + RESOURCE_INFO_PLACED_ID + " " +
 				"inner join upload u on u.project_id = r.project_id " +
 				"inner join submission s on u.upload_id = s.upload_id " +
-				"where r.project_id = (select project_id from phase where phase_id = ?) ";
+				"where r.project_id = (select project_id from project_phase where project_phase_id = ?) ";
 
 	private static final String UPDATE_PROJECT_RESULT_STMT = 
 				"update project_result set final_score = ?, placed = ?, passed_review_ind = ?  " +

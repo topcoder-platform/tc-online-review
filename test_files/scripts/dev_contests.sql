@@ -1,4 +1,4 @@
-	SELECT (SELECT MAX(scheduled_end_time) FROM phase WHERE project_id = p.project_id AND phase_type_id = 2) 
+	SELECT (SELECT MAX(scheduled_end_time) FROM project_phase WHERE project_id = p.project_id AND phase_type_id = 2) 
 		as initial_submission_date,	
 	(select value from project_info where project_id = p.project_id and project_info_type_id = 16) 
 		as price,
@@ -41,7 +41,7 @@
 	p.project_id,
 	(select value from project_info where project_id = p.project_id and project_info_type_id = 7) 
 		as version_text,
-	(SELECT MAX(scheduled_end_time) FROM phase WHERE project_id = p.project_id AND phase_type_id = 1)
+	(SELECT MAX(scheduled_end_time) FROM project_phase WHERE project_id = p.project_id AND phase_type_id = 1)
   		as reg_end_date,
   	0 as max_unrated_registrants,
   	(select count(*) from contest_project_xref where project_id = p.project_id) 
@@ -49,7 +49,7 @@
   	(select category_id from comp_categories where component_id = pi_ci.value and category_id = 22774808)
   		as aol_brand	
 	FROM project p
-	INNER JOIN phase ps
+	INNER JOIN project_phase ps
 	ON ps.project_id = p.project_id
 	AND ps.phase_type_id = 2
     and ps.scheduled_start_time <= CURRENT
