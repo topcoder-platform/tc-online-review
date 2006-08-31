@@ -188,8 +188,8 @@ CREATE TABLE phase_type_lu (
   modify_date                   DATETIME YEAR TO FRACTION(3)    NOT NULL,
   PRIMARY KEY(phase_type_id)
 );
-CREATE TABLE phase (
-  phase_id                      INTEGER                         NOT NULL,
+CREATE TABLE project_phase (
+  project_phase_id                      INTEGER                         NOT NULL,
   project_id                    INTEGER                         NOT NULL,
   phase_type_id                 INTEGER                         NOT NULL,
   phase_status_id               INTEGER                         NOT NULL,
@@ -203,7 +203,7 @@ CREATE TABLE phase (
   create_date                   DATETIME YEAR TO FRACTION(3)    NOT NULL,
   modify_user                   VARCHAR(64)                     NOT NULL,
   modify_date                   DATETIME YEAR TO FRACTION(3)    NOT NULL,
-  PRIMARY KEY(phase_id),
+  PRIMARY KEY(project_phase_id),
   FOREIGN KEY(phase_type_id)
     REFERENCES phase_type_lu(phase_type_id),
   FOREIGN KEY(project_id)
@@ -223,9 +223,9 @@ CREATE TABLE phase_dependency (
   modify_date                   DATETIME YEAR TO FRACTION(3)    NOT NULL,
   PRIMARY KEY(dependency_phase_id, dependent_phase_id),
   FOREIGN KEY(dependency_phase_id)
-    REFERENCES phase(phase_id),
+    REFERENCES phase(project_phase_id),
   FOREIGN KEY(dependent_phase_id)
-    REFERENCES phase(phase_id)
+    REFERENCES phase(project_phase_id)
 );
 CREATE TABLE phase_criteria_type_lu (
   phase_criteria_type_id        INTEGER                         NOT NULL,
@@ -238,16 +238,16 @@ CREATE TABLE phase_criteria_type_lu (
   PRIMARY KEY(phase_criteria_type_id)
 );
 CREATE TABLE phase_criteria (
-  phase_id                      INTEGER                         NOT NULL,
+  project_phase_id                      INTEGER                         NOT NULL,
   phase_criteria_type_id        INTEGER                         NOT NULL,
   parameter                     VARCHAR(254)                    NOT NULL,
   create_user                   VARCHAR(64)                     NOT NULL,
   create_date                   DATETIME YEAR TO FRACTION(3)    NOT NULL,
   modify_user                   VARCHAR(64)                     NOT NULL,
   modify_date                   DATETIME YEAR TO FRACTION(3)    NOT NULL,
-  PRIMARY KEY(phase_id, phase_criteria_type_id),
-  FOREIGN KEY(phase_id)
-    REFERENCES phase(phase_id),
+  PRIMARY KEY(project_phase_id, phase_criteria_type_id),
+  FOREIGN KEY(project_phase_id)
+    REFERENCES phase(project_phase_id),
   FOREIGN KEY(phase_criteria_type_id)
     REFERENCES phase_criteria_type_lu(phase_criteria_type_id)
 );
@@ -268,7 +268,7 @@ CREATE TABLE resource (
   resource_id                   INTEGER                         NOT NULL,
   resource_role_id              INTEGER                         NOT NULL,
   project_id                    INTEGER,
-  phase_id                      INTEGER,
+  project_phase_id                      INTEGER,
   create_user                   VARCHAR(64)                     NOT NULL,
   create_date                   DATETIME YEAR TO FRACTION(3)    NOT NULL,
   modify_user                   VARCHAR(64)                     NOT NULL,
@@ -278,8 +278,8 @@ CREATE TABLE resource (
     REFERENCES project(project_id),
   FOREIGN KEY(resource_role_id)
     REFERENCES resource_role_lu(resource_role_id),
-  FOREIGN KEY(phase_id)
-    REFERENCES phase(phase_id)
+  FOREIGN KEY(project_phase_id)
+    REFERENCES phase(project_phase_id)
 );
 CREATE TABLE resource_info_type_lu (
   resource_info_type_id         INTEGER                         NOT NULL,

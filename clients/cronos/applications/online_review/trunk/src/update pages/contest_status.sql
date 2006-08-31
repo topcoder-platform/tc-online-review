@@ -9,7 +9,7 @@
 		as current_phase
     ,ph.scheduled_end_time as reg_end_date
     ,(SELECT MAX(scheduled_end_time)
-		FROM phase
+		FROM project_phase
 		WHERE project_id = p.project_id
 		AND phase_type_id = 10)
 		as final_review_end_date
@@ -53,10 +53,10 @@
   	,(select category_id from comp_categories where component_id = pi_ci.value and category_id = 22774808)
   		as aol_brand	
 	FROM project p
-	INNER JOIN phase ph
+	INNER JOIN project_phase ph
 	ON p.project_id = ph.project_id
 	AND ph.phase_status_id = 2
-	AND ph.scheduled_start_time = (select min(scheduled_start_time) from phase where project_id = p.project_id and phase_status_id = 2)	
+	AND ph.scheduled_start_time = (select min(scheduled_start_time) from project_phase where project_id = p.project_id and phase_status_id = 2)	
 	and ph.scheduled_start_time < current	
 	AND ph.phase_type_id = 2
 	INNER JOIN phase_type_lu pt

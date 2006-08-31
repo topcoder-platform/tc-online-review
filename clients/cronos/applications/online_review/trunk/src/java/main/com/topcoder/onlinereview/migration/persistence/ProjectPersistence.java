@@ -341,7 +341,7 @@ public class ProjectPersistence extends DatabaseUtils {
     private void storePhase(List input) throws Exception {
     	long startTime = Util.start("storePhase");
         String[] fieldnames = {
-                "phase_id", "project_id", "phase_type_id", "phase_status_id", "fixed_start_time", "scheduled_start_time",
+                "project_phase_id", "project_id", "phase_type_id", "phase_status_id", "fixed_start_time", "scheduled_start_time",
                 "scheduled_end_time", "actual_start_time", "actual_end_time", "duration", "create_user", "create_date", "modify_user",
                 "modify_date"
             };
@@ -430,7 +430,7 @@ public class ProjectPersistence extends DatabaseUtils {
     private void storePhaseCriteria(List input) throws Exception {
     	long startTime = Util.start("storePhaseCriteria");
         String[] fieldnames = {
-                "phase_id", "phase_criteria_type_id", "parameter", "create_user", "create_date", "modify_user", "modify_date"
+                "project_phase_id", "phase_criteria_type_id", "parameter", "create_user", "create_date", "modify_user", "modify_date"
             };
 
         // store PhaseCriteria data to new online review schema
@@ -756,7 +756,7 @@ public class ProjectPersistence extends DatabaseUtils {
     private void storeResource(List input) throws Exception {
     	long startTime = Util.start("storeResource");
         String[] fieldnames = {
-                "resource_id", "resource_role_id", "project_id", "phase_id", "create_user", "create_date", "modify_user", "modify_date"
+                "resource_id", "resource_role_id", "project_id", "project_phase_id", "create_user", "create_date", "modify_user", "modify_date"
             };
 
         // store Resource data to new online review schema

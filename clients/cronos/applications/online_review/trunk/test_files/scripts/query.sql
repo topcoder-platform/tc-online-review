@@ -70,5 +70,11 @@
 --select * from scorecard_section where weight > 100;
 --select sum(weight) yy, section_id from question_template where cur_version = 1 group by section_id order by yy;
 --select count(*) from project;
-select scorecard_group_id from scorecard_group where scorecard_group_id in 
-	(select scorecard_group_id, sum(weight) zz from scorecard_section where zz <> 100 group by scorecard_group_id )
+select count(*) from project;
+select cv.component_id, cv.phase_id, cv.version from project p
+        		 inner join project_info pi_vi  
+        		 on p.project_id = pi_vi.project_id  
+        		 and pi_vi.project_info_type_id = 1  
+        		 inner join comp_versions cv
+        		 on cv.comp_vers_id = pi_vi.value
+        		 where p.project_id = 10566757;

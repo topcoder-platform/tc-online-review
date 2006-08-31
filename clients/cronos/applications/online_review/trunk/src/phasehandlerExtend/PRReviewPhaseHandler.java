@@ -30,7 +30,7 @@ public class PRReviewPhaseHandler extends ReviewPhaseHandler {
 				"inner join resource_info ri_s " +
 				"on r.resource_id = ri_s.resource_id " +
 				"and ri_s.resource_info_type_id =  " + RESOURCE_INFO_INITIAL_SCORE_ID + " " +
-				"where r.project_id = (select project_id from phase where phase_id = ?) ";
+				"where r.project_id = (select project_id from project_phase where project_phase_id = ?) ";
 
 	private static final String UPDATE_PROJECT_RESULT_STMT = 
 				"update project_result set raw_score = ?  " +
