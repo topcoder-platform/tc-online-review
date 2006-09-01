@@ -17,7 +17,7 @@ import java.util.Collection;
  */
 public class Scorecard extends BaseDTO {
     /** Represents the Scorecard table name. */
-    public static String TABLE_NAME = "Scorecard";
+    public static String TABLE_NAME = "scorecard";
 
     /** Represents scorecard_id field name. */
     public static final String SCORECARD_ID_NAME = "scorecard_id";

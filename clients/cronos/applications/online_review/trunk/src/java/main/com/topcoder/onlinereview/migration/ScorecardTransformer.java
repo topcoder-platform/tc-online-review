@@ -86,9 +86,10 @@ public class ScorecardTransformer {
             list.add(transformScorecardTemplate((ScorecardTemplate) iter.next()));
         }
         Util.logMainAction(inputs.size(), "transformScorecardTemplate", startTime);
+        /*
         OutputStream out = new FileOutputStream(MapUtil.propertieFile);
         templateIdProperties.store(out, "template_id scorecard_id");
-        out.close();
+        out.close();*/
         return list;
     }
 
@@ -126,16 +127,18 @@ public class ScorecardTransformer {
         output.setModifyUser(MODIFY_USER);
         output.setModifyDate(new Date());
 
+        /*
         int scorecardId = 0;
-        int templateId = input.getTemplateId();
+        int templateId = ;
         String temp = templateIdProperties.getProperty(String.valueOf(templateId));
         if (temp != null && temp.trim().length() > 0) {
         	scorecardId = Integer.parseInt(temp);
         } else {
         	scorecardId = (int) getScorecardIdGenerator().getNextID();
         	templateIdProperties.setProperty(String.valueOf(templateId), String.valueOf(scorecardId));
-        }
-    	output.setScorecardId(scorecardId);
+        }*/
+        // Use the same id as before for back-compatiable
+    	output.setScorecardId(input.getTemplateId());
     	float totalWeight = getTotalWeight(input.getGroups());
         output.setGroups(transformScSectionGroup(output.getScorecardId(), input.getGroups(), totalWeight));
     	return output;

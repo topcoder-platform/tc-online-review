@@ -304,7 +304,8 @@ public class MapUtil {
 	}
 
 	public static int getScorecardId(int templateId) throws Exception {
-		if (templateIdProperties == null) {
+		return templateId;
+		/*if (templateIdProperties == null) {
 			templateIdProperties = new Properties();
 	        if (propertieFile.exists()) {
 	        	InputStream input = new FileInputStream(MapUtil.propertieFile);
@@ -320,6 +321,6 @@ public class MapUtil {
 			return Integer.parseInt(scorecardId);
 		}
 		Util.warn("Cannot find corresponding scorecardId for templateId: " + templateId);
-		return 1;
+		return 1;*/
 	}
 }

@@ -1,6 +1,18 @@
 <?xml version="1.0" ?>
 <CMConfig>
 	<Config name="com.topcoder.onlinereview.migration.OnlineReviewUser">
+		<Property name="login_url">
+			<Value>http://www.topcoder.com/tc?&module=Login</Value>
+		</Property>
+		
+		<Property name="admin_login_url">
+			<Value>TODO</Value>
+		</Property>
+
+		<Property name="create_component_url">
+			<Value>url</Value>
+		</Property>
+
 		<Property name="contest_status_url">
 			<Value>http://www.topcoder.com/tc?module=ContestStatus&amp;ph=113</Value>
 		</Property>
@@ -15,6 +27,14 @@
 		
 		<Property name="contest_detail_url">
 			<Value>http://www.topcoder.com/tc?module=CompContestDetails&amp;pj=23139012</Value>
+		</Property>
+		
+		<Property name="reviewer_registration_url">
+			<Value>http://www.topcoder.com/tc?module=ReviewProjectDetail&amp;pj=23494463&amp;ph=113</Value>
+		</Property>
+		
+		<Property name="competitor_registration_url">
+			<Value>http://www.topcoder.com/tc?module=ProjectDetail&amp;pj=23581571</Value>
 		</Property>
 
     	<Property name="contest_title">
@@ -43,7 +63,7 @@
     	<!-- login  information -->
 		<Property name="login">
 			<Property name="username_input">
-				<Value>input:name:userName</Value>
+				<Value>input:name:username</Value>
 			</Property>
 			<Property name="password_input">
 				<Value>input:name:password</Value>
@@ -57,6 +77,30 @@
 				</Property>
 				<Property name="password">
 					<Value>common</Value>
+				</Property>
+			</Property>
+			<Property name="user_reviewer">
+				<Property name="username">
+					<Value>reviewer</Value>
+				</Property>
+				<Property name="password">
+					<Value>reviewer</Value>
+				</Property>
+			</Property>
+			<Property name="user_registrant">
+				<Property name="username">
+					<Value>registrant</Value>
+				</Property>
+				<Property name="password">
+					<Value>registrant</Value>
+				</Property>
+			</Property>
+			<Property name="user_admin">
+				<Property name="username">
+					<Value>admin</Value>
+				</Property>
+				<Property name="password">
+					<Value>admin</Value>
 				</Property>
 			</Property>
 		</Property>

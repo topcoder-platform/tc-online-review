@@ -61,29 +61,29 @@ select pr.project_id
    		inner join resource_info ri on ri.resource_id = r.resource_id and ri.resource_info_type_id = 1
    		where u.project_id = pr.project_id and ri.value = pr.user_id and submission_status_id <> 5) as submit_timestamp 
    ,(select max(r.modify_date) from review r
-   		inner join scorecard s on r.scorecard_id = s.scorecard_id and s.scorecard_type_id = 2 " +
-   "		inner join submission sub on sub.submission_id = r.submission_id " +
-   "		inner join upload u on u.upload_id = sub.upload_id " +
-   "		inner join resource res on res.resource_id = u.resource_id " +
-   "		inner join resource_info ri on ri.resource_id = res.resource_id and ri.resource_info_type_id = 1 " +
-   "		where r.committed = 1 and u.project_id = pr.project_id and ri.value = pr.user_id and sub.submission_status_id <> 5) as review_completed_timestamp " +
-   ",(select count(*) from project_result pr where project_id = p.project_id and pr.passed_review_ind = 1) as num_submissions_passed_review " +
-   ",pr.payment " +
-   ", pr.old_rating " +
-   ", pr.new_rating " +
-   ",pr.old_reliability " +
-   ", pr.new_reliability " +
-   ", pr.placed " +
-   ", pr.rating_ind " +
-   ", pr.reliability_ind " +
-   ", pr.passed_review_ind " +
-   ", p.project_status_id " +
-   ", pr.point_adjustment " +
-   "from project_result pr, " +
-   "project p " +
-   "inner join project_info pi on p.project_id = pi.project_id and pi.project_info_type_id = 2 " +
-   "inner join comp_catalog cc on cc.component_id = pi.value " +
-   "where p.project_id = pr.project_id " +
-   "and (p.modify_date > ? OR pr.modify_date > ?) 
+   		inner join scorecard s on r.scorecard_id = s.scorecard_id and s.scorecard_type_id = 2
+   		inner join submission sub on sub.submission_id = r.submission_id
+   		inner join upload u on u.upload_id = sub.upload_id
+   		inner join resource res on res.resource_id = u.resource_id
+   		inner join resource_info ri on ri.resource_id = res.resource_id and ri.resource_info_type_id = 1
+   		where r.committed = 1 and u.project_id = pr.project_id and ri.value = pr.user_id and sub.submission_status_id <> 5) as review_completed_timestamp
+   ,(select count(*) from project_result pr where project_id = p.project_id and pr.passed_review_ind = 1) as num_submissions_passed_review
+   ,pr.payment
+   , pr.old_rating
+   , pr.new_rating
+   ,pr.old_reliability
+   , pr.new_reliability
+   , pr.placed
+   , pr.rating_ind
+   , pr.reliability_ind
+   , pr.passed_review_ind
+   , p.project_status_id
+   , pr.point_adjustment
+   from project_result pr,
+   project p
+   inner join project_info pi on p.project_id = pi.project_id and pi.project_info_type_id = 2
+   inner join comp_catalog cc on cc.component_id = pi.value
+   where p.project_id = pr.project_id
+   and (p.modify_date > ? OR pr.modify_date > ?) 
    
    remove two fields

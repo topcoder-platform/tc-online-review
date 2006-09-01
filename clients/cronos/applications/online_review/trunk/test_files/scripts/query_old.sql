@@ -91,4 +91,5 @@
 --select * from agg_worksheet where project_id = 7439266;
 --select review_resp_id, review_resp_name, phase_id from review_resp
 --select * from rboard_user;
-select distinct phase_id from project;
+--select distinct autopilot_ind from project;
+select count(*), autopilot_ind from project group by autopilot_ind;

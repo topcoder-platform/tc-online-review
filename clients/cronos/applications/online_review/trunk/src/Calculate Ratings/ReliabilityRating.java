@@ -28,7 +28,7 @@ public class ReliabilityRating {
 
     public static void main(String[] args) {
         long start = System.currentTimeMillis();
-        ReliabilityRating tmp = new ReliabilityRating();
+        ReliabilityRating reliabilityRating = new ReliabilityRating();
 
         //Load our configuration
         String namespace = ReliabilityRating.class.getName();
@@ -74,31 +74,7 @@ public class ReliabilityRating {
         try {
             Class.forName(jdbcDriver);
             c = DriverManager.getConnection(connectionURL);
-
-            int incExMarked = tmp.markForInclusionAndExclusion(c);
-            log.info(incExMarked + " records marked for inclusion/exclusion");
-
-            Set developers = tmp.getIncludedUsers(c, 113);
-            log.info("there are " + developers.size() + " developers included");
-
-            Set designers = tmp.getIncludedUsers(c, 112);
-            log.info("there are " + designers.size() + " designers included");
-
-            int newMarked = tmp.markNewReliableResults(c);
-            log.info(newMarked + " new records marked");
-
-            int oldMarked = tmp.markOldReliableResults(c);
-            log.info(oldMarked + " old records marked");
-
-            int oldUpdated = tmp.updateOldProjectResult(c);
-            log.info(oldUpdated + " old records updated");
-
-            int designersUpdated = tmp.updateReliability(c, designers, Integer.parseInt(historyLength), 112);
-            log.info(designersUpdated + " new project result designer records updated");
-
-            int developersUpdated = tmp.updateReliability(c, developers, Integer.parseInt(historyLength), 113);
-            log.info(developersUpdated + " new project result developer records updated");
-
+            reliabilityRating.caculateRilability(c, Integer.parseInt(historyLength));
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
@@ -127,6 +103,37 @@ public class ReliabilityRating {
     private static final String clearCurrentReliability = "update project_result set current_reliability_ind = 0 where project_id in " +
             "(select project_id from project where project_category_id+111 = ?)";
 
+    /**
+     * @param c
+     * @param historyLength
+     * @throws Exception
+     */
+    public void caculateRilability(Connection c, int historyLength) throws Exception {
+        int incExMarked = markForInclusionAndExclusion(c);
+        log.info(incExMarked + " records marked for inclusion/exclusion");
+
+        Set developers = getIncludedUsers(c, 113);
+        log.info("there are " + developers.size() + " developers included");
+
+        Set designers = getIncludedUsers(c, 112);
+        log.info("there are " + designers.size() + " designers included");
+
+        int newMarked = markNewReliableResults(c);
+        log.info(newMarked + " new records marked");
+
+        int oldMarked = markOldReliableResults(c);
+        log.info(oldMarked + " old records marked");
+
+        int oldUpdated = updateOldProjectResult(c);
+        log.info(oldUpdated + " old records updated");
+
+        int designersUpdated = updateReliability(c, designers, historyLength, 112);
+        log.info(designersUpdated + " new project result designer records updated");
+
+        int developersUpdated = updateReliability(c, developers, historyLength, 113);
+        log.info(developersUpdated + " new project result developer records updated");    	
+    }
+    
     /**
      * go through the list of users and do two things.
      * 1.  update project result with reliability information
@@ -232,7 +239,7 @@ public class ReliabilityRating {
                     " , case when pi.scheduled_start_time >= ? then 1 else 0 end as after_start_flag" +
                     " from project_result pr" +
                     " , component_inquiry ci" +
-                    " , project_phase pi" +
+                    " , phase pi" +
                     " , project p" +
                     " where ci.project_id = pr.project_id" +
                     " and pr.user_id = ci.user_id" +
@@ -449,7 +456,7 @@ public class ReliabilityRating {
                     " , pr.project_id" +
                     " from project_result pr" +
                     " , component_inquiry ci" +
-                    " , project_phase pi" +
+                    " , phase pi" +
                     " where ci.project_id = pr.project_id" +
                     " and pr.user_id = ci.user_id" +
                     " and pr.user_id = ?" +
@@ -464,7 +471,7 @@ public class ReliabilityRating {
     private static final String oldReliabilityUsers =
             " select distinct pr.user_id" +
                     " from project_result pr" +
-                    " , project_phase pi" +
+                    " , phase pi" +
                     " where pi.phase_type_id = 2" +
                     " and pi.scheduled_start_time < ?" +
                     " and pi.project_id = pr.project_id" +
@@ -556,7 +563,7 @@ public class ReliabilityRating {
     private static final String includedUsers =
             " select pr.user_id" +
                     " from project_result pr" +
-                    " , project_phase pi" +
+                    " , phase pi" +
                     " , project p" +
                     " where pr.project_id = pi.project_id" +
                     " and pi.phase_type_id = 2" +
@@ -567,7 +574,7 @@ public class ReliabilityRating {
                     " union" +
                     " select pr.user_id" +
                     " from project_result pr" +
-                    " , project_phase pi" +
+                    " , phase pi" +
                     " , project p" +
                     " where pr.project_id = pi.project_id" +
                     " and pi.phase_type_id = 2" +
@@ -609,7 +616,7 @@ public class ReliabilityRating {
                     " , pr.project_id" +
                     " , pr.final_score" +
                     " from project_result pr" +
-                    " , project_phase pi" +
+                    " , phase pi" +
                     " where pr.project_id = pi.project_id" +
                     " and pi.phase_type_id = 2" +
                     " and pi.scheduled_start_time >= ?" +
@@ -675,7 +682,7 @@ public class ReliabilityRating {
                     " , pr.project_id" +
                     " , pr.valid_submission_ind" +
                     " from project_result pr" +
-                    " , project_phase pi" +
+                    " , phase pi" +
                     " where pr.project_id = pi.project_id" +
                     " and pi.phase_type_id = 2" +
                     " and pi.scheduled_start_time < ?" +

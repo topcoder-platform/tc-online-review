@@ -65,7 +65,7 @@
         </sequential>
     </macrodef>
     
-    <macrodef name="orm-execute-old-sql-script">
+    <macrodef name="source-ds-execute-old-sql-script">
         <attribute name="driver" default="${orm.jdbc.driver}"/>
         <attribute name="url" default="${orm.jdbc.old_url}"/>
         <attribute name="userid" default="${orm.db.userid}"/>
@@ -81,8 +81,8 @@
             <sql driver="@{driver}" url="@{url}" userid="@{userid}" password="@{password}" print="@{print}" classpathref="@{classpathref}" src="@{scriptfile}" delimiter="@{delimiter}" onerror="@{onerror}" autocommit="true" output="@{output}"/>
         </sequential>
     </macrodef>
-    
-    <macrodef name="orm-execute-sql-script">
+
+    <macrodef name="target-ds-execute-sql-script">
         <attribute name="driver" default="${orm.jdbc.driver}"/>
         <attribute name="url" default="${orm.jdbc.url}"/>
         <attribute name="userid" default="${orm.db.userid}"/>
@@ -98,9 +98,25 @@
             <sql driver="@{driver}" url="@{url}" userid="@{userid}" password="@{password}" print="@{print}" classpathref="@{classpathref}" src="@{scriptfile}" delimiter="@{delimiter}" onerror="@{onerror}" autocommit="true" output="@{output}"/>
         </sequential>
     </macrodef>
+    
+    <macrodef name="dw-execute-sql-script">
+        <attribute name="driver" default="${orm.jdbc.driver}"/>
+        <attribute name="url" default="${orm.jdbc.dw_url}"/>
+        <attribute name="userid" default="${orm.db.userid}"/>
+        <attribute name="password" default="${orm.db.password}"/>
+        <attribute name="print" default="yes"/>
+        <attribute name="classpathref" default="orm.classpathref"/>
+        <attribute name="scriptfile"/>
+        <attribute name="delimiter" default=";"/>
+        <attribute name="onerror" default="continue"/>
+        <attribute name="output" default="${testlogdir}/db.init.log"/>
+        <sequential>
+            <orm-trace message=" running sql script @{scriptfile}" />
+            <sql driver="@{driver}" url="@{url}" userid="@{userid}" password="@{password}" print="@{print}" classpathref="@{classpathref}" src="@{scriptfile}" delimiter="@{delimiter}" onerror="@{onerror}" autocommit="true" output="@{output}"/>
+        </sequential>
+    </macrodef>
 
     <property name="sql.home" value="${testfiles}/scripts" />
-
     <property name="Drop_old.file" value="${sql.home}/Drop_old.sql" />
     <property name="Drop_new.file" value="${sql.home}/Drop_new.sql" />
     <property name="Create.file" value="${sql.home}/Create.sql" />
@@ -109,6 +125,7 @@
     <property name="query_new_test.file" value="${sql.home}/query_new_test.sql" />
     <property name="query.file" value="${sql.home}/query.sql" />
     <property name="query_old.file" value="${sql.home}/query_old.sql" />
+    <property name="dw_query.file" value="${sql.home}/dw_query.sql" />
     <property name="init_projects.file" value="${sql.home}/init_projects.sql" />
     <property name="init_scorecards.file" value="${sql.home}/init_scorecards.sql" />
     <property name="update_private_project.file" value="${sql.home}/update_private_project.sql" />
@@ -199,6 +216,7 @@
     <property name="nekohtml-0.9.5.jar" value="${ext_libdir}/nekohtml-0.9.5.jar"/>
     <property name="xercesImpl-2.6.2.jar" value="${ext_libdir}/xercesImpl-2.6.2.jar"/>
     <property name="xmlParserAPIs-2.6.2.jar" value="${ext_libdir}/xmlParserAPIs-2.6.2.jar"/>
+    <property name="dbunit.jar" value="${ext_libdir}/dbunit-2.1.jar"/>
 
     <!-- Java Locations -->
     <property name="java_1_3_bootclasspath" value="c:\program files\JavaSoft\JRE\1.3.1\lib\rt.jar"/>
@@ -206,6 +224,7 @@
     <path id="buildlibs">
         <pathelement location="${junit.jar}" />
         <pathelement location="${log4j.jar}" />
+        <pathelement location="${dbunit.jar}" />
         <pathelement location="${ifxjdbc.jar}" />
         <pathelement location="${mysql.jar}" />
         <pathelement location="${id_generator.jar}" />
@@ -244,37 +263,49 @@
         <path refid="buildlibs"/>
     </path>
 
+    <path id="test_tcs_load.build.classpath">
+        <pathelement location="${build_testclassdir}"/>
+        <pathelement location="E:/workspace/tcs/output"/>
+        <pathelement location="${build_classdir}"/>
+        <path refid="buildlibs"/>
+    </path>
+
     <path id="runtime.classpath">
         <pathelement location="${build_classdir}"/>
         <path refid="buildlibs"/>
     </path>
 
 	<target name="db.init">
-		<orm-execute-sql-script scriptfile="${Drop_old.file}" />
-		<orm-execute-sql-script scriptfile="${Drop_new.file}" />
-		<orm-execute-sql-script scriptfile="${Create.file}" />
-		<orm-execute-sql-script scriptfile="${Lookups.file}" />
-		<orm-execute-sql-script scriptfile="${Sequences.file}" />
+		<target-ds-execute-sql-script scriptfile="${Drop_old.file}" />
+		<target-ds-execute-sql-script scriptfile="${Drop_new.file}" />
+		<target-ds-execute-sql-script scriptfile="${Create.file}" />
+		<target-ds-execute-sql-script scriptfile="${Lookups.file}" />
+		<target-ds-execute-sql-script scriptfile="${Sequences.file}" />
 	</target>
 
-	<target name="db.query">
-		<orm-execute-old-sql-script output="${testlogdir}/db.query.log" scriptfile="${query_old.file}" />
+
+	<target name="db.source_query">
+		<source-ds-execute-old-sql-script output="${testlogdir}/source_query.log" scriptfile="${query_old.file}" />
+	</target>
+
+	<target name="db.dw_query">
+		<dw-execute-sql-script output="${testlogdir}/dw_query.log" scriptfile="${dw_query.file}" />
 	</target>
 
 	<target name="db.query_test">
-		<orm-execute-sql-script output="${testlogdir}/db.query_test.log" scriptfile="${query_new_test.file}" />
+		<target-ds-execute-sql-script output="${testlogdir}/db.query_test.log" scriptfile="${query_new_test.file}" />
 	</target>
 
-	<target name="db.new_query">
-		<orm-execute-sql-script output="${testlogdir}/db.new_query.log" scriptfile="${query.file}" />
+	<target name="db.target_query">
+		<target-ds-execute-sql-script output="${testlogdir}/target_query.log" scriptfile="${query.file}" />
 	</target>
 
 	<target name="db.init_projects">
-		<orm-execute-sql-script output="${testlogdir}/db.init_projects.log" scriptfile="${init_projects.file}" />
+		<target-ds-execute-sql-script output="${testlogdir}/db.init_projects.log" scriptfile="${init_projects.file}" />
 	</target>
 
 	<target name="db.init_scorecard">
-		<orm-execute-sql-script output="${testlogdir}/db.init_scorecard.log" scriptfile="${init_scorecards.file}" />
+		<target-ds-execute-sql-script output="${testlogdir}/db.init_scorecard.log" scriptfile="${init_scorecards.file}" />
 	</target>
 	
     <target name="migrate_scorecard" depends="compile_tests">
@@ -304,7 +335,7 @@
     		<arg line="-config test_files/data_migration.xml" />
             <classpath refid="test.build.classpath"/>
     	</java>
-    	<orm-execute-sql-script output="${testlogdir}/update_private_project.log" scriptfile="${update_private_project.file}" />
+    	<target-ds-execute-sql-script output="${testlogdir}/update_private_project.log" scriptfile="${update_private_project.file}" />
     </target>
 
     <target name="migrate_ids" depends="compile_tests">
@@ -312,6 +343,52 @@
     		<arg line="-config test_files/data_migration.xml -process specificed -ids 10566757" />
             <classpath refid="test.build.classpath"/>
     	</java>
+    </target>
+    
+    <property name="tcs_web_dir" value="E:/tcs/app/web" />
+    <property name="tcs_share_dir" value="E:/tcs/app/shared" />
+
+	<property name="load_script" value="${tcs_share_dir}/src/main/com/topcoder/shared/util/dwload"/>
+	
+    <property name="user" value="${tcs_web_dir}/src/main/com/topcoder/dde/user" />
+    <property name="DWLoad" value="${tcs_web_dir}/src/main/com/topcoder/dde/util/DWLoad" />
+    <property name="catalog" value="${tcs_web_dir}/src/main/com/topcoder/dde/catalog" />
+    <property name="rboard" value="${tcs_web_dir}/src/main/com/topcoder/apps/review/rboard" />
+    <property name="projecttracker" value="${tcs_web_dir}/src/main/com/topcoder/apps/review/projecttracker" />
+    
+    <property name="phasehandlerExtend_src" value="D:/Work_Folders/Assemble Projects/Online_Review_Phases_1.0_dev_submission/src/java/main/com/cronos/onlinereview/phases"/>
+
+    <property name="task_target_dir" value="src"/>
+    
+    <property name="phasehandlerExtend" value="${task_target_dir}/phasehandlerExtend"/>
+    <property name="update_pages_dir" value="${task_target_dir}/update pages"/>
+    <property name="caculate_rating_dir" value="${task_target_dir}/Calculate Ratings"/>
+    <property name="load_script_dir" value="${task_target_dir}/load script"/>
+
+    <target name="copy_task_files">
+    	<!-- update_pages -->
+    	<copy preservelastmodified="true" file="${catalog}/CatalogBean.java" tofile="${update_pages_dir}/CatalogBean.java"/>
+    	<copy preservelastmodified="true" file="${catalog}/ComponentManagerBean.java" tofile="${update_pages_dir}/ComponentManagerBean.java"/>
+    	<copy preservelastmodified="true" file="${user}/UserManagerBean.java" tofile="${update_pages_dir}/UserManagerBean.java"/>
+    	<copy preservelastmodified="true" file="${rboard}/RBoardApplicationBean.java" tofile="${update_pages_dir}/RBoardApplicationBean.java"/>
+    	<copy preservelastmodified="true" file="${projecttracker}/ProjectTrackerV2.java" tofile="${update_pages_dir}/ProjectTrackerV2.java"/>
+    	<copy preservelastmodified="true" file="${projecttracker}/ProjectTrackerV2Bean.java" tofile="${update_pages_dir}/ProjectTrackerV2Bean.java"/>
+    	<copy preservelastmodified="true" file="${projecttracker}/ProjectTrackerV2Home.java" tofile="${update_pages_dir}/ProjectTrackerV2Home.java"/>
+    	<copy preservelastmodified="true" file="${projecttracker}/ProjectTrackerV2Local.java" tofile="${update_pages_dir}/ProjectTrackerV2Local.java"/>
+    	<copy preservelastmodified="true" file="${projecttracker}/ProjectTrackerV2LocalHome.java" tofile="${update_pages_dir}/ProjectTrackerV2LocalHome.java"/>
+    	
+    	<!-- Calculate Ratings -->
+    	<copy preservelastmodified="true" file="${DWLoad}/RatingQubits.java" tofile="${caculate_rating_dir}/RatingQubits.java"/>
+    	<copy preservelastmodified="true" file="${DWLoad}/ReliabilityRating.java" tofile="${caculate_rating_dir}/ReliabilityRating.java"/>
+    	
+    	<!-- load script -->
+    	<copy preservelastmodified="true" file="${load_script}/TCLoadTCS.java" tofile="${load_script_dir}/TCLoadTCS.java"/>
+
+    	<!-- phasehandlerExtend -->
+    	<copy preservelastmodified="true" file="${phasehandlerExtend_src}/PRReviewPhaseHandler.java" tofile="${phasehandlerExtend}/PRReviewPhaseHandler.java"/>    	
+    	<copy preservelastmodified="true" file="${phasehandlerExtend_src}/PRAppealResponsePhaseHandler.java" tofile="${phasehandlerExtend}/PRAppealResponsePhaseHandler.java"/>
+    	<copy preservelastmodified="true" file="${phasehandlerExtend_src}/PRScreeningPhaseHandler.java" tofile="${phasehandlerExtend}/PRScreeningPhaseHandler.java"/>
+    	<copy preservelastmodified="true" file="${phasehandlerExtend_src}/PRSubmissionPhaseHandler.java" tofile="${phasehandlerExtend}/PRSubmissionPhaseHandler.java"/>
     </target>
 
     <target name="compile">
@@ -357,6 +434,17 @@
         <javac srcdir="${javatests}" destdir="${build_testclassdir}" includes="${packagedir}/**" debug="true" verbose="${verbose}">
             <classpath refid="test.build.classpath" />
         </javac>
+    </target>
+
+    <target name="tcs_load_test" depends="compile_tests">
+        <mkdir dir="${testlogdir}"/>
+        <junit fork="true" haltonerror="false">
+            <classpath refid="test_tcs_load.build.classpath"/>
+            <test name="com.topcoder.shared.util.dwload.TCLoadTCSTests" todir="${testlogdir}">
+                <formatter type="plain" usefile="true"/>
+                <formatter type="xml" usefile="true"/>
+            </test>
+        </junit>
     </target>
 
     <target name="test" depends="compile_tests">

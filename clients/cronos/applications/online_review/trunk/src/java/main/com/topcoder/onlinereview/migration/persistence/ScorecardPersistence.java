@@ -83,6 +83,10 @@ public class ScorecardPersistence extends DatabaseUtils {
 	        conn.createStatement().execute("update id_sequences set next_block_start = " +
 	        		"(select max(scorecard_question_id) + 1 from scorecard_question) " +
 	        		"where name = 'scorecard_question_id_seq'");
+	        
+	        conn.createStatement().execute("update id_sequences set next_block_start = " +
+	        		"(select max(scorecard_id) + 1 from scorecard) " +
+	        		"where name = 'scorecard_id_seq'");
             conn.commit();
         } catch(Exception e) {
         	successful = false;

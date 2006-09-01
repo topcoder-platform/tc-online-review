@@ -47,6 +47,7 @@ select p.project_id, cc.component_id, cc.component_name,
         and ps.project_stat_id = p.project_stat_id
         and (p.modify_date > ? OR cv.modify_date > ? OR cc.modify_date > ? OR pi.modify_date > ?
         
+
 select FIRST 5 p.project_id
 	,(select value from project_info where project_id = p.project_id and project_info_type_id = 2) as component_id
 	,(select value from project_info where project_id = p.project_id and project_info_type_id = 6) as component_name
@@ -64,18 +65,17 @@ select FIRST 5 p.project_id
 	,case when ppd.actual_start_time is not null then ppd.actual_start_time else psd.actual_start_time end as posting_date
 	,psd.actual_end_time as submitby_date
 	,1 as level_id
-	,pict.value as complete_date
-	,(select phase_type_id from phase where phase_id = (select min(phase_id) from phase where project_id = p.project_id and phase_status_id = 2)) as review_phase_id
-	,(select name from phase_type_lu where phase_type_id = (select phase_type_id from phase where phase_id =
-		(select min(phase_id) from phase where project_id = p.project_id and phase_status_id = 2)))	as review_phase_name
+	,to_date(pict.value, '%M/%d/%Y %H:%M') as complete_date
+	,(select phase_type_id from project_phase where project_phase_id = (select min(project_phase_id) from project_phase where project_id = p.project_id and phase_status_id = 2)) as review_phase_id
+	,(select name from phase_type_lu where phase_type_id = (select phase_type_id from project_phase where project_phase_id =
+		(select min(project_phase_id) from project_phase where project_id = p.project_id and phase_status_id = 2)))	as review_phase_name
 	,p.project_status_id as project_stat_id
 	,psl.name as project_stat_name
 	,cat.viewable as viewable
-	,pivi.value as version_id 
+	,round(pivi.value) as version_id 
 	,pivt.value as version_text
-	,pirt.value as rating_date 
-	,piwi.value as winner_id 
-
+	,to_date(pirt.value, '%M/%d/%Y %H:%M')  as rating_date 
+	,round(piwi.value) as winner_id 
     from project p
     INNER JOIN project_info pir ON pir.project_id = p.project_id and pir.project_info_type_id = 5
     INNER JOIN project_info pivi ON pivi.project_id = p.project_id and pivi.project_info_type_id = 3
@@ -85,8 +85,9 @@ select FIRST 5 p.project_id
     LEFT JOIN project_info piwi ON piwi.project_id = p.project_id and piwi.project_info_type_id = 23
     INNER JOIN categories cat ON cat.category_id = pir.value
     INNER JOIN project_status_lu psl ON psl.project_status_id = p.project_status_id
-    LEFT JOIN phase psd ON psd.project_id = p.project_id and psd.phase_type_id = 2
-    LEFT JOIN phase ppd ON ppd.project_id = p.project_id and ppd.phase_type_id = 1
+    LEFT JOIN project_phase psd ON psd.project_id = p.project_id and psd.phase_type_id = 2
+    LEFT JOIN project_phase ppd ON ppd.project_id = p.project_id and ppd.phase_type_id = 1
+	where (p.modify_date > current OR pir.modify_date > current OR pivi.modify_date > current OR pivt.modify_date > current OR pict.modify_date > current)
     
     
 convert MM/dd/yyyy hh:mm a     

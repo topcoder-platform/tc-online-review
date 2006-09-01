@@ -1,0 +1,21 @@
+<?xml version="1.0" ?>
+<CMConfig>
+  <Config name="com.topcoder.onlinereview.migration.ScenarioReviewerRegistrationPage">
+      <Property name="conn_name">
+        <Value>tcs_catalog_new</Value>
+      </Property>
+      <Property name="project_id">
+        <Value>23494463</Value>
+      </Property>
+      <!-- 112: design	113:development -->
+      <Property name="phase_id">
+        <Value>113</Value>
+      </Property>
+      <Property name="user_id">
+        <Value>23494463</Value>
+      </Property>
+      <Property name="test_file">
+        <Value>data/expected/reviewer.xml</Value>
+      </Property>
+</Config>
+</CMConfig>   
