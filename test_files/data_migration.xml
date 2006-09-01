@@ -38,27 +38,6 @@
 		            </Property>
 		        </Property>
 		    </Property>
-		    <!-- brain_cn: I use this connection in local computer since it's hard to build too many connection with informix db from remote computer 
-		    	you should modify com.topcoder.util.idgenerator.IDGeneratorImpl db_connection_factory.connection_name as well
-		    <Property name="id_generator">
-		        <Property name="producer">
-		            <Value>com.topcoder.db.connectionfactory.producers.JDBCConnectionProducer</Value>
-		        </Property>
-		        <Property name="parameters">
-	                <Property name="jdbc_driver">
-	                    <Value>com.mysql.jdbc.Driver</Value>
-	                </Property>
-	                <Property name="jdbc_url">
-	                    <Value>jdbc:mysql://localhost:3306/tcs</Value>
-	                </Property>
-	                <Property name="user">
-	                    <Value>root</Value>
-	                </Property>
-	                <Property name="password">
-	                    <Value>topcoder</Value>
-	                </Property>
-		        </Property>
-		    </Property> -->
 		    <Property name="tcs_catalog_old">
 		        <Property name="producer">
 		            <Value>com.topcoder.db.connectionfactory.producers.JDBCConnectionProducer</Value>
@@ -78,6 +57,26 @@
 		            </Property>
 		        </Property>
 		    </Property>
+            <Property name="tcs_dw">
+                <Property name="producer">
+                    <Value>com.topcoder.db.connectionfactory.producers.JDBCConnectionProducer</Value>
+                </Property>
+                <Property name="parameters">
+                    <Property name="jdbc_driver">
+                        <Value>com.informix.jdbc.IfxDriver</Value>
+                    </Property>
+                    <Property name="jdbc_url">
+                        <Value>jdbc:informix-sqli://63.118.154.218:1526/tcs_dw:INFORMIXSERVER=devinformix10_shm;</Value>
+                    </Property>
+                    <Property name="user">
+                        <Value>informix</Value>
+                    </Property>
+                    <Property name="password">
+                        <Value>lansing</Value>
+                    </Property>
+                </Property>
+            </Property>
+        </Property>
 		</Property>
 	</Config>
 	<Config name="com.topcoder.util.log">

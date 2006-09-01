@@ -27,6 +27,15 @@ public class UnitTests extends TestCase {
         suite.addTestSuite(ScenarioDisplayCatalogPage.class);
         suite.addTestSuite(ScenarioDisplayScorecardPage.class);
         suite.addTestSuite(ScenarioDisplayContestStatusPage.class);
+        
+        // dw_load unit test
+        // Notes need contains share module class path
+        // suite.addTestSuite(TCLoadTCSTests.class);
+
+        // caculate rating unit test
+        // Notes need contains web module class path
+        // suite.addTestSuite(RatingQubitsUnitTests.class);
+        // suite.addTestSuite(ReliabilityRatingUnitTests.class);
         return suite;
     }
 }

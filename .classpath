@@ -5,6 +5,9 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="conf"/>
 	<classpathentry kind="lib" path="test_files"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/base"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/OR_migration"/>
+	<classpathentry kind="lib" path="/tcs/web"/>
+	<classpathentry kind="src" path="/tcs"/>
 	<classpathentry kind="output" path="build/testClasses"/>
 </classpath>

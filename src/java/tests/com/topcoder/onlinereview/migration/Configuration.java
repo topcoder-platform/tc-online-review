@@ -77,6 +77,22 @@ public class Configuration {
      *
      * @return the value for the property, or null if nothing can be loaded.
      */
+    public String getProperty(String property, String value) {
+    	String temp = getProperty(property);
+    	if (temp == null) {
+    		return value;
+    	} else {
+    		return temp;
+    	}
+    }
+
+    /**
+     * Get a property from configuration.
+     *
+     * @param property the property to locate.
+     *
+     * @return the value for the property, or null if nothing can be loaded.
+     */
     public String[] getProperties(String property) {
         try {
             return cm.getStringArray(namespace, property);

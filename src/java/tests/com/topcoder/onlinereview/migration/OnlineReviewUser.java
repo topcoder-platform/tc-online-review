@@ -26,7 +26,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-
 /**
  * <p>
  * Utility class to imitate a web user of the online review application. It takes advantage of HtmlUnit to interact
@@ -89,6 +88,37 @@ public class OnlineReviewUser implements AlertHandler, ConfirmHandler {
         client.setThrowExceptionOnScriptError(false);
         client.setAlertHandler(this);
         client.setConfirmHandler(this);
+    }
+    /**
+     * Perform a login.
+     *
+     * @throws Exception if login can not be performed.
+     */
+    public void login() throws Exception {
+        // Go to the base URL of the application.
+        page = (HtmlPage) client.getPage(new URL(config.getProperty("login_url")));
+
+        setInput("login.username_input", username, true);
+        setInput("login.password_input", password, true);
+        
+        HtmlAnchor link = page.getFirstAnchorByText("Login");
+        page = (HtmlPage) link.click();
+    }
+
+    /**
+     * Perform a login.
+     *
+     * @throws Exception if login can not be performed.
+     */
+    public void loginAdmin() throws Exception {
+        // Go to the base URL of the application.
+        page = (HtmlPage) client.getPage(new URL(config.getProperty("admin_login_url")));
+
+        setInput("login.username_input", username, true);
+        setInput("login.password_input", password, true);
+        
+        HtmlAnchor link = page.getFirstAnchorByText("Login");
+        page = (HtmlPage) link.click();
     }
 
     /**
@@ -513,6 +543,79 @@ public class OnlineReviewUser implements AlertHandler, ConfirmHandler {
      */
     public void navigateToContestDetail() throws Exception {
         page = (HtmlPage) client.getPage(new URL(config.getProperty("contest_detail_url")));
+    }
+    
+    /**
+     * Navigate to reviewer_registration_url page.
+     *
+     * @throws Exception if error occurs
+     */
+    public void navigateToReviewerRegistration() throws Exception {
+        page = (HtmlPage) client.getPage(new URL(config.getProperty("reviewer_registration_url")));
+    }
+    
+    /**
+     * Navigate to reviewer_registration_url page.
+     *
+     * @throws Exception if error occurs
+     */
+    public void applyReviewer() throws Exception {
+    	HtmlAnchor link = this.page.getFirstAnchorByText("Apply Now");
+
+    	Assert.assertNotNull("Miss Apply Now link", link);
+    	
+    	// Click Apply Now link
+    	this.page = (HtmlPage) link.click();
+    	
+    	// Click Continue submit button
+    	this.page = (HtmlPage) ((ClickableElement) this.findElement("input:name:submit", false)).click();
+    }
+    
+    /**
+     * Navigate to reviewer_registration_url page.
+     *
+     * @throws Exception if error occurs
+     */
+    public void registratorAsCompetitor() throws Exception {
+    	HtmlAnchor link = this.page.getFirstAnchorByText("Register");
+    	
+    	Assert.assertNotNull("Miss Register link", link);
+
+    	// Click Register link
+    	this.page = (HtmlPage) link.click();
+    	
+    	// Confirm page
+    	// this.setInput()
+    	
+    	// Click Continue submit button
+    	this.page = (HtmlPage) ((ClickableElement) this.findElement("input:name:submit", false)).click();
+    }
+    
+    /**
+     * Navigate to reviewer_registration_url page.
+     *
+     * @throws Exception if error occurs
+     */
+    public void createComponent() throws Exception {
+    	// TODO Not sure how to create component in new online review app until now
+    }
+
+    /**
+     * Navigate to competitor_registration_url page.
+     *
+     * @throws Exception if error occurs
+     */
+    public void navigateToCompetitorRegistration() throws Exception {
+        page = (HtmlPage) client.getPage(new URL(config.getProperty("competitor_registration_url")));
+    }
+
+    /**
+     * Navigate to competitor_registration_url page.
+     *
+     * @throws Exception if error occurs
+     */
+    public void navigateToCreateComponent() throws Exception {
+        page = (HtmlPage) client.getPage(new URL(config.getProperty("create_component_url")));
     }
 
     /**

@@ -1,0 +1,21 @@
+<?xml version="1.0" ?>
+<CMConfig>
+  <Config name="com.topcoder.onlinereview.migration.ScenarioSendComponentPage">
+      <Property name="conn_name">
+        <Value>tcs_catalog_new</Value>
+      </Property>
+      <Property name="comp_vers_id">
+        <Value>TODO</Value>
+      </Property>
+      <!-- 112: design	113:development -->
+      <Property name="project_type_id">
+        <Value>TODO</Value>
+      </Property>
+      <Property name="project_version">
+        <Value>TODO</Value>
+      </Property>
+      <Property name="no_correct_right_message">
+        <Value>TODO no correct rights</Value>
+      </Property>
+</Config>
+</CMConfig>   

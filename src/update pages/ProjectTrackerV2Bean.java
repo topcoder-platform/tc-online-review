@@ -9,6 +9,8 @@ import com.topcoder.apps.review.security.*;
 
 import com.topcoder.project.phases.Dependency;
 import com.topcoder.project.phases.Phase;
+import com.topcoder.project.phases.template.ConfigurationException;
+import com.topcoder.project.phases.template.DefaultPhaseTemplate;
 import com.topcoder.project.phases.template.PhaseTemplate;
 
 import com.topcoder.security.NoSuchUserException;
@@ -350,6 +352,18 @@ public class ProjectTrackerV2Bean implements SessionBean {
         return null;
     }
 
+    private static final String PROJECT_ID_SEQ = "project_id_seq";
+    private static final String PROJECT_AUDIT_ID_SEQ = "project_audit_id_seq";
+    private static final String PROJECT_PBASE_ID_SEQ = "project_phase_id_seq";
+
+    private PhaseTemplate getPhaseTemplate() {
+    	try {
+			return new DefaultPhaseTemplate(DefaultPhaseTemplate.class.getName());
+		} catch (ConfigurationException e) {
+			throw new RuntimeException("Failed to get phase template", e);
+		}
+    }
+
     /**
      * Creates a new Online Review Project.
      *
@@ -381,11 +395,15 @@ public class ProjectTrackerV2Bean implements SessionBean {
         try {
             conn = dataSource.getConnection();
 
-            ps = conn.prepareStatement("SELECT p.project_id " + "FROM project p " + "inner join project_info pi_vi " +
-                    "on p.project_id = pi_vi.project_id " + "and pi_vi.project_info_type_id = 1 " + // 1 is external id
-                    "inner join project_info pi_vt " + "on p.project_id = pi_vt.project_id " +
-                    "and pi_vt.project_info_type_id = 7 " + // 7 is project_version
-                    "where pi_vi.value = ? " + "	and pi_vt.value = ? " + "	and p.project_status_id in (1, 7) " + // 1 is active, 7 is complete
+            ps = conn.prepareStatement("SELECT p.project_id " + 
+            		"FROM project p " + 
+            		"inner join project_info pi_vi " +
+                    "on p.project_id = pi_vi.project_id " +
+                    "and pi_vi.project_info_type_id = 1 and pi_vi.value = ? " + // 1 is external id
+                    "inner join project_info pi_vt " + 
+                    "on p.project_id = pi_vt.project_id " +
+                    "and pi_vt.project_info_type_id = 7 and pi_vt.value = ? " + // 7 is project_version
+                    "where p.project_status_id in (1, 7) " + // 1 is active, 7 is complete
                     "	and p.project_category_id = ?");
             ps.setString(1, String.valueOf(compVersId)); // In project_info, value field is string type
             ps.setString(2, projectVersion);
@@ -400,16 +418,16 @@ public class ProjectTrackerV2Bean implements SessionBean {
             Common.close(ps);
 
             log.debug("About to create new projectId!");
-            projectId = idGen.nextId();
+            projectId = idGen.nextId(PROJECT_ID_SEQ);
 
             long modUserId = requestor.getUserId();
-            long firstPhaseInstanceId = idGen.nextId();
+            long firstPhaseInstanceId = idGen.nextId(PROJECT_PBASE_ID_SEQ);
             log.debug("projectId: " + firstPhaseInstanceId);
 
             // Create project
-            ps = conn.prepareStatement("INSERT INTO project " + "(project_id, " +
-                    "project_status_id, project_category_id, " + "create_user, create_date, " +
-                    "modify_user, modify_date) VALUES " + "(?, ?, ?, ?, CURRENT, ?, CURRENT)");
+            ps = conn.prepareStatement("INSERT INTO project " + 
+            		"(project_id, project_status_id, project_category_id, create_user, create_date, modify_user, modify_date) " +
+            		" VALUES (?, ?, ?, ?, CURRENT, ?, CURRENT)");
 
             long projectStatId = 1; // Active
 
@@ -426,33 +444,29 @@ public class ProjectTrackerV2Bean implements SessionBean {
             // Prepare version_id
             ps = conn.prepareStatement("INSERT INTO project_info " +
                     "(project_id, project_info_type_id, value, create_user, create_date, modify_user, modify_date) " +
-                    " values (?, 1, ?, ?, CURRENT, ?, CURRENT)");
+                    " values (?, ?, ?, ?, CURRENT, ?, CURRENT)");
             index = 1;
             ps.setLong(index++, projectId);
+            ps.setLong(index++, 1); // 1 version_id
             ps.setString(index++, String.valueOf(compVersId));
             ps.setString(index++, String.valueOf(modUserId));
             ps.setString(index++, String.valueOf(modUserId));
             ps.executeUpdate();
-            Common.close(ps);
 
             // Prepare project_version
-            ps = conn.prepareStatement("INSERT INTO project_info " +
-                    "(project_id, project_info_type_id, value, create_user, create_date, modify_user, modify_date) " +
-                    " values (?, 7, ?, ?, CURRENT, ?, CURRENT)");
             index = 1;
             ps.setLong(index++, projectId);
+            ps.setLong(index++, 7); // 7 project_version
             ps.setString(index++, projectVersion);
             ps.setString(index++, String.valueOf(modUserId));
             ps.setString(index++, String.valueOf(modUserId));
             ps.executeUpdate();
-            Common.close(ps);
 
             // Prepare auto_pilot_ind
-            ps = conn.prepareStatement("INSERT INTO project_info " +
-                    "(project_id, project_info_type_id, value, create_user, create_date, modify_user, modify_date) " +
-                    " values (?, 9, 1, ?, CURRENT, ?, CURRENT)");
             index = 1;
             ps.setLong(index++, projectId);
+            ps.setLong(index++, 9); // 9 auto_pilot_ind
+            ps.setLong(index++, 1); 
             ps.setString(index++, String.valueOf(modUserId));
             ps.setString(index++, String.valueOf(modUserId));
             ps.executeUpdate();
@@ -464,7 +478,7 @@ public class ProjectTrackerV2Bean implements SessionBean {
                     " values (?, ?, 'Created', ?, CURRENT, ?, CURRENT)");
             index = 1;
 
-            long auditId = idGen.nextId();
+            long auditId = idGen.nextId(PROJECT_AUDIT_ID_SEQ);
             ps.setLong(index++, projectId);
             ps.setLong(index++, auditId);
             ps.setString(index++, String.valueOf(modUserId));
@@ -475,7 +489,7 @@ public class ProjectTrackerV2Bean implements SessionBean {
             // Create phase instances for project
             log.debug("Creating phases ");
 
-            PhaseTemplate template = Common.getPhaseTemplate();
+            PhaseTemplate template = getPhaseTemplate();
             String templateName = (projectTypeId == 1) ? "Design" : "Development";
             com.topcoder.project.phases.Project project = template.applyTemplate(templateName);
             com.topcoder.project.phases.Phase[] phases = project.getAllPhases();
@@ -489,7 +503,7 @@ public class ProjectTrackerV2Bean implements SessionBean {
                     ReviewScorecard.SCORECARD_TYPE).getId();
 
             for (int i = 0; i < phases.length; i++) {
-                long phaseId = idGen.nextId();
+                long phaseId = idGen.nextId(PROJECT_PBASE_ID_SEQ);
                 createPhase(conn, projectId, phaseId, phases[i], modUserId);
 
                 if (phases[i].getPhaseType().getId() == PHASE_TYPE_SCREEN) {
@@ -521,24 +535,23 @@ public class ProjectTrackerV2Bean implements SessionBean {
             }
 
             // Prepare resource for pm
-            ps = conn.prepareStatement("INSERT INTO resource " + "(resource_id, resource_role_id, " + "project_id, " +
-                    "create_user, create_date, " + "modify_user, modify_date) VALUES " +
-                    "(?, 13, ?, ?, CURRENT, ?, CURRENT)"); // 13 is manager
+            ps = conn.prepareStatement("INSERT INTO resource " + 
+            		"(resource_id, resource_role_id, project_id, create_user, create_date, modify_user, modify_date) " +
+            		"VALUES (?, 13, ?, ?, CURRENT, ?, CURRENT)"); // 13 is manager
 
-            long resourceId = idGen.nextId();
+            long resourceId = idGen.nextId(RESOURCE_ID_SEQ);
             index = 1;
             ps.setLong(index++, resourceId);
             ps.setLong(index++, projectId);
             ps.setString(index++, String.valueOf(requestor.getUserId()));
             ps.setString(index++, String.valueOf(requestor.getUserId()));
             ps.executeUpdate();
-            Common.close(rs);
             Common.close(ps);
 
             // External Reference ID
-            ps = conn.prepareStatement("INSERT INTO resource_info " + "(resource_id, resource_info_type_id, " +
-                    "value, create_user, create_date, " + "modify_user, modify_date) VALUES " +
-                    "(?, ?, ?, ?, CURRENT, ?, CURRENT)");
+            ps = conn.prepareStatement("INSERT INTO resource_info " + 
+            		"(resource_id, resource_info_type_id, value, create_user, create_date, modify_user, modify_date) " +
+            		" VALUES (?, ?, ?, ?, CURRENT, ?, CURRENT)");
             index = 1;
             ps.setLong(index++, resourceId);
             ps.setLong(index++, 1); // External Reference ID 1
@@ -728,10 +741,11 @@ public class ProjectTrackerV2Bean implements SessionBean {
      */
     private void createPhase(Connection conn, long projectId, long phaseId, Phase phase, long userId)
         throws SQLException {
-        PreparedStatement ps = conn.prepareStatement("INSERT INTO project_phase " + "(project_phase_id, project_id, " +
+        PreparedStatement ps = conn.prepareStatement("INSERT INTO project_phase " + 
+        		"(project_phase_id, project_id, " +
                 "phase_type_id, phase_status_id, duration, fixed_start_time, scheduled_start_time, scheduled_end_time, " +
-                "actual_start_time, actual_end_time, create_user, create_date, " + "modify_user, modify_date) VALUES " +
-                "(?, ?, ?, ?, ?, ?, ?, ?, ?, ? , ?, CURRENT, ?, CURRENT)"); // 1: Scheduled
+                "actual_start_time, actual_end_time, create_user, create_date, modify_user, modify_date) " +
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ? , ?, CURRENT, ?, CURRENT)"); // 1: Scheduled
         int index = 1;
         ps.setLong(index++, phaseId);
         ps.setLong(index++, projectId);
@@ -762,8 +776,8 @@ public class ProjectTrackerV2Bean implements SessionBean {
     private void createPhaseCriteria(Connection conn, long phaseId, int type, String parameter, long userId)
         throws SQLException {
         PreparedStatement ps = conn.prepareStatement("INSERT INTO phase_criteria " +
-                "(project_phase_id, phase_criteria_type_id, parameter, " + "create_user, create_date, " +
-                "modify_user, modify_date) VALUES " + "(?, ?, ?, ?, CURRENT, ?, CURRENT)"); // 1: Scheduled
+                "(project_phase_id, phase_criteria_type_id, parameter, create_user, create_date, modify_user, modify_date) " +
+                "VALUES (?, ?, ?, ?, CURRENT, ?, CURRENT)"); // 1: Scheduled
         int index = 1;
         ps.setLong(index++, phaseId);
         ps.setLong(index++, type);
@@ -787,8 +801,8 @@ public class ProjectTrackerV2Bean implements SessionBean {
         throws SQLException {
         PreparedStatement ps = conn.prepareStatement("INSERT INTO phase_dependency " +
                 "(dependency_phase_id, dependent_phase_id, dependency_start, " +
-                "dependent_start, lag_time, create_user, create_date, " + "modify_user, modify_date) VALUES " +
-                "(?, ?, ?, ?, ?, ?, CURRENT, ?, CURRENT)"); // 1: Scheduled
+                "dependent_start, lag_time, create_user, create_date, modify_user, modify_date) " +
+                "VALUES (?, ?, ?, ?, ?, ?, CURRENT, ?, CURRENT)"); // 1: Scheduled
 
         Phase denpendency = d.getDependency();
         Phase denpendent = d.getDependent();
@@ -798,14 +812,15 @@ public class ProjectTrackerV2Bean implements SessionBean {
         int index = 1;
         ps.setLong(index++, Long.parseLong(denpendencyId));
         ps.setLong(index++, Long.parseLong(denpendentId));
-        ps.setDate(index++, new Date(denpendency.getActualEndDate().getTime()));
-        ps.setDate(index++, new Date(denpendent.getActualEndDate().getTime()));
+        ps.setDate(index++, new Date(denpendency.getScheduledStartDate().getTime()));
+        ps.setDate(index++, new Date(denpendent.getScheduledStartDate().getTime()));
         ps.setLong(index++, d.getLagTime());
         ps.setString(index++, String.valueOf(userId));
         ps.setString(index++, String.valueOf(userId));
         Common.close(ps);
     }
 
+    private static final String RESOURCE_ID_SEQ = "resource_id_seq";
     /**
      * DOCUMENT ME!
      *
@@ -830,11 +845,11 @@ public class ProjectTrackerV2Bean implements SessionBean {
             Common.close(ps);
 
             // Prepare resource
-            ps = conn.prepareStatement("INSERT INTO resource " + "(resource_id, resource_role_id, " + "project_id, " +
-                    "create_user, create_date, " + "modify_user, modify_date) VALUES " +
-                    "(?, 1, ?, ?, CURRENT, ?, CURRENT)");
+            ps = conn.prepareStatement("INSERT INTO resource " + 
+            		"(resource_id, resource_role_id, project_id, create_user, create_date, modify_user, modify_date) " +
+            		" VALUES (?, 1, ?, ?, CURRENT, ?, CURRENT)");
 
-            long resourceId = idGen.nextId();
+            long resourceId = idGen.nextId(RESOURCE_ID_SEQ);
             int index = 1;
             ps.setLong(index++, resourceId);
             ps.setLong(index++, projectId);
@@ -895,7 +910,7 @@ public class ProjectTrackerV2Bean implements SessionBean {
             if (old_rating == 0) {
                 ps.setNull(6, Types.DOUBLE);
             } else {
-                ps.setDouble(7, old_rating);
+                ps.setDouble(6, old_rating);
             }
 
             if (old_rating == 0) {
@@ -905,13 +920,12 @@ public class ProjectTrackerV2Bean implements SessionBean {
             }
 
             ps.execute();
-
             Common.close(ps);
 
             // External Reference ID
-            ps = conn.prepareStatement("INSERT INTO resource_info " + "(resource_id, resource_info_type_id, " +
-                    "value, create_user, create_date, " + "modify_user, modify_date) VALUES " +
-                    "(?, ?, ?, ?, CURRENT, ?, CURRENT)");
+            ps = conn.prepareStatement("INSERT INTO resource_info " +
+            		"(resource_id, resource_info_type_id, value, create_user, create_date, modify_user, modify_date) " +
+                    " VALUES (?, ?, ?, ?, CURRENT, ?, CURRENT)");
             index = 1;
             ps.setLong(index++, resourceId);
             ps.setLong(index++, 1); // External Reference ID 1
@@ -924,13 +938,7 @@ public class ProjectTrackerV2Bean implements SessionBean {
                 throw new RuntimeException("Could not create External Reference ID resourceinfo !");
             }
 
-            Common.close(rs);
-            Common.close(ps);
-
             // Rating 4, 
-            ps = conn.prepareStatement("INSERT INTO resource_info " + "(resource_id, resource_info_type_id, " +
-                    "value, create_user, create_date, " + "modify_user, modify_date) VALUES " +
-                    "(?, ?, ?, ?, CURRENT, ?, CURRENT)");
             index = 1;
             ps.setLong(index++, resourceId);
             ps.setLong(index++, 4);
@@ -943,13 +951,7 @@ public class ProjectTrackerV2Bean implements SessionBean {
                 throw new RuntimeException("Could not create Rating resourceinfo !");
             }
 
-            Common.close(rs);
-            Common.close(ps);
-
             // Reliability 5 
-            ps = conn.prepareStatement("INSERT INTO resource_info " + "(resource_id, resource_info_type_id, " +
-                    "value, create_user, create_date, " + "modify_user, modify_date) VALUES " +
-                    "(?, ?, ?, ?, CURRENT, ?, CURRENT)");
             index = 1;
             ps.setLong(index++, resourceId);
             ps.setLong(index++, 5);
@@ -959,16 +961,10 @@ public class ProjectTrackerV2Bean implements SessionBean {
             nr = ps.executeUpdate();
 
             if (nr != 1) {
-                throw new RuntimeException("Could not create External Reference ID resourceinfo !");
+                throw new RuntimeException("Could not create Reliability resourceinfo !");
             }
 
-            Common.close(rs);
-            Common.close(ps);
-
             // Registration Date 6
-            ps = conn.prepareStatement("INSERT INTO resource_info " + "(resource_id, resource_info_type_id, " +
-                    "value, create_user, create_date, " + "modify_user, modify_date) VALUES " +
-                    "(?, ?, ?, ?, CURRENT, ?, CURRENT)");
             index = 1;
             ps.setLong(index++, resourceId);
             ps.setLong(index++, 5);
@@ -978,10 +974,9 @@ public class ProjectTrackerV2Bean implements SessionBean {
             nr = ps.executeUpdate();
 
             if (nr != 1) {
-                throw new RuntimeException("Could not create External Reference ID resourceinfo !");
+                throw new RuntimeException("Could not create Registration Date resourceinfo !");
             }
 
-            Common.close(rs);
             Common.close(ps);
 
             PrincipalMgrRemote principalMgr;
@@ -1007,11 +1002,13 @@ public class ProjectTrackerV2Bean implements SessionBean {
 
             // Prepare component_name Project Name , version_text Project Version, project_type project_category_id
             ps = conn.prepareStatement(
-                    "SELECT pi_n.value component_name, pi_v.value version_text, p.project_category_id project_type_id" +
-                    "FROM project p " + "inner join project_info pi_n " + "on pi_n.project_id = p.project_id " +
-                    "and pi_n.project_info_type_id = 6 " + "inner join project_info pi_v " +
-                    "on pi_v.project_id = p.project_id " + "and pi_v.project_info_type_id = 7 " +
-                    "where p.project_id = ? and " + "p.project_status_id = 1");
+                    "SELECT pi_n.value as component_name, pi_v.value as version_text, p.project_category_id as project_type_id " +
+                    "FROM project p " + 
+                    "inner join project_info pi_n on pi_n.project_id = p.project_id " +
+                    "and pi_n.project_info_type_id = 6 " + 
+                    "inner join project_info pi_v " +
+                    "on pi_v.project_id = p.project_id and pi_v.project_info_type_id = 7 " +
+                    "where p.project_id = ? and p.project_status_id = 1");
             ps.setLong(1, projectId);
             rs = ps.executeQuery();
 
@@ -1157,7 +1154,8 @@ public class ProjectTrackerV2Bean implements SessionBean {
                 // given componentId
                 ps = conn.prepareStatement(
                         "SELECT pi_vi.value as comp_vers_id, pi_vt.value as version_text, p.project_category_id as project_type_id " +
-                        "FROM project p " + "inner join project_info pi_vi " +
+                        "FROM project p " + 
+                        "inner join project_info pi_vi " +
                         "on p.project_id = pi_vi.project_id and pi_vi.project_info_type_id = 1 " + // external id
                         "inner join project_info pi_vt " +
                         "on p.project_id = pi_vt.project_id and pi_vt.project_info_type_id = 7 " + // project_version
@@ -1185,7 +1183,8 @@ public class ProjectTrackerV2Bean implements SessionBean {
             } else {
                 ps = conn.prepareStatement(
                         "SELECT pi_vi.value as comp_vers_id, pi_cn.value as component_name, p.project_category_id as project_type_id " +
-                        "FROM project p " + "inner join project_info pi_vi " +
+                        "FROM project p " + 
+                        "inner join project_info pi_vi " +
                         "on p.project_id = pi_vi.project_id and pi_vi.project_info_type_id = 1 " + // external id
                         "inner join project_info pi_cn " +
                         "on p.project_id = pi_cn.project_id and pi_cn.project_info_type_id = 6 " + // component_name
@@ -1202,9 +1201,13 @@ public class ProjectTrackerV2Bean implements SessionBean {
                     newName = oldName;
                 } else {
                     ps = conn.prepareStatement("SELECT 1, cc.component_name " +
-                            "FROM comp_catalog cc, comp_versions cv " + "WHERE cc.component_id = cv.component_id " +
-                            "AND cv.component_id in ( " + "    select component_id " + "    from comp_versions cv " +
-                            "    where cv.comp_vers_id = ? " + "    ) ");
+                            "FROM comp_catalog cc, comp_versions cv " + 
+                            "WHERE cc.component_id = cv.component_id " +
+                            "AND cv.component_id in ( " + 
+                            "    select component_id " + 
+                            "    from comp_versions cv " +
+                            "    where cv.comp_vers_id = ? " + 
+                            "    ) ");
 
                     ps.setLong(1, compVersId);
                     rs = ps.executeQuery();

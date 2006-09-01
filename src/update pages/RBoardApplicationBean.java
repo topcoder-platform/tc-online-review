@@ -81,6 +81,8 @@ public class RBoardApplicationBean extends BaseEJB {
     private static final int RESOURCE_INFO_TYPE_EXTERNAL_ID = 1;
     private static final int RESOURCE_INFO_TYPE_REGISTRATION_DATE = 6;
     
+    private static final String RESOURCE_ID_SEQ = "resource_id_seq";
+    
     private static Logger log = Logger.getLogger(RBoardApplicationBean.class);
 
     /**
@@ -399,8 +401,6 @@ public class RBoardApplicationBean extends BaseEJB {
                         String.valueOf(phaseId), String.valueOf(reviewRespId),
                         String.valueOf(primary ? 1 : 0)});
 
-            boolean reviewerInserted = false;
-
             // insert common review role
             int roleId = REVIEWER_ROLE;
             switch (reviewRespId) {
@@ -420,23 +420,23 @@ public class RBoardApplicationBean extends BaseEJB {
             Map phaseInfos = getPhaseInfo(projectId, conn);
             String pid = (String) phaseInfos.get(String.valueOf(REVIEW_PHASE));
             // Prepre resource for review phase
-            insertUserRole(conn, idGen.nextId(), roleId, projectId, pid, userId);
+            insertUserRole(conn, idGen.nextId(RESOURCE_ID_SEQ), roleId, projectId, pid, userId);
 
             if (primary) {
             	// Prepare for primary screener
             	roleId = PRIMARY_SCREEN_ROLE;
             	pid = (String) phaseInfos.get(String.valueOf(SCREEN_PHASE));
-                insertUserRole(conn, idGen.nextId(), roleId, projectId, pid, userId);
+                insertUserRole(conn, idGen.nextId(RESOURCE_ID_SEQ), roleId, projectId, pid, userId);
 
             	// Prepare for aggregator
             	roleId = AGGREGATOR_REVIEWER_ROLE;
             	pid = (String) phaseInfos.get(String.valueOf(AGGREGATION_PHASE));
-                insertUserRole(conn, idGen.nextId(), roleId, projectId, pid, userId);
+                insertUserRole(conn, idGen.nextId(RESOURCE_ID_SEQ), roleId, projectId, pid, userId);
 
             	// Prepare for final review
             	roleId = FINAL_REVIEWER_ROLE;
             	pid = (String) phaseInfos.get(String.valueOf(FINAL_REVIEW_PHASE));
-                insertUserRole(conn, idGen.nextId(), roleId, projectId, pid, userId);
+                insertUserRole(conn, idGen.nextId(RESOURCE_ID_SEQ), roleId, projectId, pid, userId);
             }
 
             // create permissions.
@@ -451,9 +451,6 @@ public class RBoardApplicationBean extends BaseEJB {
                 createPermission(dataSource, idGen, "Final Review " + projectId, prefix, userId);
             }
 
-            if (!reviewerInserted) {
-                throw (new EJBException("Couldn't find UserRole rows for pid:" + projectId));
-            }
             conn.commit();
             log.debug("Registration for project " + projectId + " completed in " + (System.currentTimeMillis() - start) + " milliseconds");
         } catch (SQLException sqle) {
@@ -589,7 +586,7 @@ public class RBoardApplicationBean extends BaseEJB {
             conn = DBMS.getConnection(dataSource);
 
             Map reviewRespMap = null;
-            reviewRespMap = getReviewRespInfo(conn);
+            reviewRespMap = getReviewRespInfo();
 
             long catalogId = 0;
             try {
@@ -755,30 +752,17 @@ public class RBoardApplicationBean extends BaseEJB {
      * @param conn the connection being used
      * @return a map with the reviewers responsibility information
      */
-    private Map getReviewRespInfo(Connection conn) {
-        PreparedStatement ps = null;
-        ResultSet rs = null;
+    private Map getReviewRespInfo() {
+        // review_resp table is removed
         Map returnMap = new HashMap();
-
-        try {
-            ps = conn.prepareStatement("select review_resp_id, review_resp_name, phase_id " +
-                    "from review_resp");
-            rs = ps.executeQuery();
-
-            while (rs.next()) {
-                returnMap.put(new Integer(rs.getInt("review_resp_id")),
-                    new Integer(rs.getInt("phase_id")));
-            }
-        } catch (SQLException sqle) {
-            throw (new EJBException("Getting review responsibilities failed", sqle));
-        } finally {
-            close(rs);
-            close(ps);
+        int[] respIds = {1, 2, 3, 4, 5, 6};
+        int[] phaseIds = {113, 113, 113 ,112, 112, 112};
+        
+        for (int i = 0; i < respIds.length; i++) {
+                returnMap.put(new Integer(respIds[i]), new Integer(phaseIds[i]));
         }
-
         return returnMap;
     }
-
 
     /**
      * Retrieves a particular category's catalog id.

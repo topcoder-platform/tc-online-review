@@ -145,7 +145,6 @@ public class TCLoadTCS extends TCLoad {
             fStartTime = new java.sql.Timestamp(System.currentTimeMillis());
             getLastUpdateTime();
 
-
             //doLoadReviewResp();
             doLoadEvent();
             doLoadUserEvent();
@@ -549,13 +548,13 @@ public class TCLoadTCS extends TCLoad {
                     " where pr.user_id = ur.user_id " +
                     " and pr.project_id = p.project_id " +
                     " and pr.rating_ind = 1 " +
-                    " and p.project_type_id+111 = ur.phase_id) as highest_rating " +
+                    " and p.project_category_id+111 = ur.phase_id) as highest_rating " +
                     " , (select min(pr.new_rating) " +
                     " from project_result pr, project p " +
                     " where pr.user_id = ur.user_id " +
                     " and pr.project_id = p.project_id " +
                     " and pr.rating_ind = 1 " +
-                    " and p.project_type_id+111 = ur.phase_id) as lowest_rating " +
+                    " and p.project_category_id+111 = ur.phase_id) as lowest_rating " +
                     " from user_rating ur " +
                     " where ur.mod_date_time > ?";
 
@@ -687,44 +686,42 @@ public class TCLoadTCS extends TCLoad {
 
             //get data from source DB
             final String SELECT = "select p.project_id " +
-                    " ,(select value from project_info where project_id = p.project_id and project_info_type_id = 2) as component_id " +
-                    " ,(select value from project_info where project_id = p.project_id and project_info_type_id = 6) as component_name" +
-                    " ,(select count(*) from resource where project_id = p.project_id and resource_role_id = 1) as num_registrations " +
-                    " ,(select count(*) from submission sub inner join upload on sub.upload_id = upload.upload_id and upload.project_id = p.project_id where submission_status_id <> 5) as num_submissions" +
-                    " ,(select count(*) from submission s inner join upload on upload.upload_id = s.upload_id where upload.project_id = p.project_id and submission_status_id in (1, 3, 4)) as num_valid_submissions " +
-                    " ,(select count(*) from submission s inner join upload u on u.upload_id = s.upload_id where u.project_id = p.project_id and submission_status_id in (1, 4)) as num_submissions_passed_review " +
-                    " ,p.project_category_id " +
-                    " ,case when p.project_category_id = 1 then 112 else 113 end  as phase_id " +
-                    " ,case when p.project_category_id = 1 then 'Design' else 'Development' end as phase_desc " +
-                    " ,cat.category_id " +
-                    " ,cat.category_name as category_desc " +
-                    " ,case when ppd.actual_start_time is not null then ppd.actual_start_time else psd.actual_start_time end as posting_date " +
-                    " ,psd.actual_end_time as submitby_date " +
-                    " (select avg(case when final_score is null then 0 else final_score end) from project_result where project_id = p.project_id and final_score is not null) as avg_final_score, " +
-                    " ,1 as level_id " +
-                    " ,pict.value as complete_date " + // TODO format
-                    " ,(select phase_type_id from project_phase where project_phase_id = (select min(project_phase_id) from project_phase where project_id = p.project_id and phase_status_id = 2)) as review_phase_id " +
-                    " ,(select name from phase_type_lu where phase_type_id = (select phase_type_id from project_phase where project_phase_id = " +
-                    " 		(select min(project_phase_id) from project_phase where project_id = p.project_id and phase_status_id = 2)))	as review_phase_name " +
-                    " ,p.project_status_id as project_stat_id " +
-                    " ,psl.name as project_stat_name " +
-                    " ,cat.viewable as viewable " +
-                    " ,round(pivi.value) as version_id  " +
-                    " ,pivt.value as version_text " +
-                    " ,pirt.value as rating_date " +	// TODO
-                    " ,round(piwi.value) as winner_id " +
-                    " from project p " +
-                    " INNER JOIN project_info pir ON pir.project_id = p.project_id and pir.project_info_type_id = 5 " +
-                    " INNER JOIN project_info pivi ON pivi.project_id = p.project_id and pivi.project_info_type_id = 3 " +
-                    " INNER JOIN project_info pivt ON pivt.project_id = p.project_id and pivt.project_info_type_id = 7 " +
-                    " INNER JOIN project_info pict ON pict.project_id = p.project_id and pict.project_info_type_id = 21 " +
-                    " LEFT JOIN project_info pirt ON pirt.project_id = p.project_id and pirt.project_info_type_id = 22 " +
-                    " LEFT JOIN project_info piwi ON piwi.project_id = p.project_id and piwi.project_info_type_id = 23 " +
-                    " INNER JOIN categories cat ON cat.category_id = pir.value " +
-                    " INNER JOIN project_status_lu psl ON psl.project_status_id = p.project_status_id " +
-                    " LEFT JOIN project_phase psd ON psd.project_id = p.project_id and psd.phase_type_id = 2 " +
-                    " LEFT JOIN project_phase ppd ON ppd.project_id = p.project_id and ppd.phase_type_id = 1 " +
-                    " and (p.modify_date > ? OR pir.modify_date > ? OR pivi.modify_date > ? OR pivt.modify_date > ? OR pict.modify_date > ?)";
+            "	,(select value from project_info where project_id = p.project_id and project_info_type_id = 2) as component_id " +
+            "	,(select value from project_info where project_id = p.project_id and project_info_type_id = 6) as component_name " +
+            "	,(select count(*) from resource where project_id = p.project_id and resource_role_id = 1) as num_registrations " +
+            "	,(select count(*) from submission sub inner join upload on sub.upload_id = upload.upload_id and upload.project_id = p.project_id where submission_status_id <> 5) as num_submissions " +
+            "	,(select count(*) from submission s inner join upload on upload.upload_id = s.upload_id where upload.project_id = p.project_id and submission_status_id in (1, 3, 4)) as num_valid_submissions " +
+            "	,(select count(*) from submission s inner join upload u on u.upload_id = s.upload_id where u.project_id = p.project_id and submission_status_id in (1, 4)) as num_submissions_passed_review " +
+            "	,p.project_category_id " +
+            "	,case when p.project_category_id = 1 then 112 else 113 end  as phase_id " +
+            "	,case when p.project_category_id = 1 then 'Design' else 'Development' end as phase_desc " +
+            "	,cat.category_id " +
+            "	,cat.category_name as category_desc " +
+            "	,case when ppd.actual_start_time is not null then ppd.actual_start_time else psd.actual_start_time end as posting_date " +
+            "	,psd.actual_end_time as submitby_date " +
+            "	,1 as level_id " +
+            "	,to_date(pict.value, '%M/%d/%Y %H:%M') as complete_date " +
+            "	,(select phase_type_id from project_phase where project_phase_id = (select min(project_phase_id) from project_phase where project_id = p.project_id and phase_status_id = 2)) as review_phase_id " +
+            "	,(select name from phase_type_lu where phase_type_id = (select phase_type_id from project_phase where project_phase_id = (select min(project_phase_id) from project_phase where project_id = p.project_id and phase_status_id = 2))) as review_phase_name " +
+            "	,p.project_status_id as project_stat_id " +
+            "	,psl.name as project_stat_name " +
+            "	,cat.viewable as viewable " +
+            "	,round(pivi.value) as version_id  " +
+            "	,pivt.value as version_text " +
+            "	,to_date(pirt.value, '%M/%d/%Y %H:%M')  as rating_date  " +
+            "	,round(piwi.value) as winner_id  " +
+            "   from project p " +
+            "    INNER JOIN project_info pir ON pir.project_id = p.project_id and pir.project_info_type_id = 5 " +
+            "    INNER JOIN project_info pivi ON pivi.project_id = p.project_id and pivi.project_info_type_id = 3 " +
+            "    INNER JOIN project_info pivt ON pivt.project_id = p.project_id and pivt.project_info_type_id = 7 " +
+            "    INNER JOIN project_info pict ON pict.project_id = p.project_id and pict.project_info_type_id = 21 " +
+            "    LEFT JOIN project_info pirt ON pirt.project_id = p.project_id and pirt.project_info_type_id = 22 " +
+            "    LEFT JOIN project_info piwi ON piwi.project_id = p.project_id and piwi.project_info_type_id = 23 " +
+            "    INNER JOIN categories cat ON cat.category_id = pir.value " +
+            "    INNER JOIN project_status_lu psl ON psl.project_status_id = p.project_status_id " +
+            "    LEFT JOIN project_phase psd ON psd.project_id = p.project_id and psd.phase_type_id = 2 " +
+            "    LEFT JOIN project_phase ppd ON ppd.project_id = p.project_id and ppd.phase_type_id = 1 " +
+            " where (p.modify_date > ? OR pir.modify_date > ? OR pivi.modify_date > ? OR pivt.modify_date > ? OR pict.modify_date > ?)";
 
             final String UPDATE = "update project set component_name = ?,  num_registrations = ?, " +
                     "num_submissions = ?, num_valid_submissions = ?, avg_raw_score = ?, avg_final_score = ?, " +
@@ -751,6 +748,7 @@ public class TCLoadTCS extends TCLoad {
             select.setTimestamp(2, fLastLogTime);
             select.setTimestamp(3, fLastLogTime);
             select.setTimestamp(4, fLastLogTime);
+            select.setTimestamp(5, fLastLogTime);
             update = prepareStatement(UPDATE, TARGET_DB);
             insert = prepareStatement(INSERT, TARGET_DB);
 
@@ -947,58 +945,62 @@ public class TCLoadTCS extends TCLoad {
 
 
         final String RESULT_SELECT =
-                "select pr.project_id, pr.user_id, " +
-                        ",case when exists(select '1' from submission s  " +
-                        "		inner join upload u on u.upload_id = s.upload_id " +
-                        "		inner join resource r on u.resource_id = r.resource_id " +
-                        "		inner join resource_info ri on r.resource_id = ri.resource_id and ri.resource_info_type_id = 1 " +
-                        "		where u.project_id = pr.project_id and ri.value = pr.user_id and s.submission_status_id <> 5) then 1  " +
-                        "	when exists(select '1' from submission s  " +
-                        "		inner join upload u on u.upload_id = s.upload_id  " +
-                        "		inner join resource r on u.resource_id = r.resource_id " +
-                        "		inner join resource_info ri on r.resource_id = ri.resource_id and ri.resource_info_type_id = 1 " +
-                        "		where u.project_id = pr.project_id and ri.value = pr.user_id and submission_status_id = 5) then 0 " +
-                        "	else pr.valid_submission_ind end as submit_ind " +
-                        ",case when exists(select '1' from submission s  " +
-                        "		inner join upload u on u.upload_id = s.upload_id " +
-                        "		inner join resource r on u.resource_id = r.resource_id " +
-                        "		inner join resource_info ri on r.resource_id = ri.resource_id and ri.resource_info_type_id = 1 " +
-                        "		where u.project_id = pr.project_id and ri.value = pr.user_id and submission_status_id = 5) then 0  " +
-                        " 	else pr.valid_submission_ind end as valid_submission_ind " +
-                        ",pr.raw_score, pr.final_score " +
-                        ",case when exists (select create_time from component_inquiry where project_id = p.project_id and user_id = pr.user_id)  " +
-                        "	then (select min(create_time) from component_inquiry where project_id = p.project_id and user_id = pr.user_id)  " +
-                        "	else (select min(create_time) from component_inquiry where component_id = cc.component_id and user_id = pr.user_id) end as inquire_timestamp " +
-                        ",(select u.create_date from submission s " +
-                        "		inner join upload u on u.upload_id = s.upload_id  " +
-                        "		inner join resource r on r.resource_id = u.resource_id " +
-                        "		inner join resource_info ri on ri.resource_id = r.resource_id and ri.resource_info_type_id = 1 " +
-                        "		where u.project_id = pr.project_id and ri.value = pr.user_id and submission_status_id <> 5) as submit_timestamp  " +
-                        " ,(select max(r.modify_date) from review r " +
-                        "		inner join scorecard s on r.scorecard_id = s.scorecard_id and s.scorecard_type_id = 2 " +
-                        "		inner join submission sub on sub.submission_id = r.submission_id " +
-                        "		inner join upload u on u.upload_id = sub.upload_id " +
-                        "		inner join resource res on res.resource_id = u.resource_id " +
-                        "		inner join resource_info ri on ri.resource_id = res.resource_id and ri.resource_info_type_id = 1 " +
-                        "		where r.committed = 1 and u.project_id = pr.project_id and ri.value = pr.user_id and sub.submission_status_id <> 5) as review_completed_timestamp " +
-                        ",(select count(*) from project_result pr where project_id = p.project_id and pr.passed_review_ind = 1) as num_submissions_passed_review " +
-                        ",pr.payment " +
-                        ",pr.old_rating " +
-                        ",pr.new_rating " +
-                        ",pr.old_reliability " +
-                        ",pr.new_reliability " +
-                        ",pr.placed " +
-                        ",pr.rating_ind " +
-                        ",pr.reliability_ind " +
-                        ",pr.passed_review_ind " +
-                        ",p.project_status_id " +
-                        ",pr.point_adjustment, pr.current_reliability_ind, pr.reliable_submission_ind " +
-                        "from project_result pr, " +
-                        "project p " +
-                        "inner join project_info pi on p.project_id = pi.project_id and pi.project_info_type_id = 2 " +
-                        "inner join comp_catalog cc on cc.component_id = pi.value " +
-                        "where p.project_id = pr.project_id " +
-                        "and (p.modify_date > ? OR pr.modify_date > ? OR pi.modify_date > ? OR cc.modify_date > ?)";
+        	" select pr.project_id " +
+        	"    , pr.user_id " +
+        	"    ,case when exists(select '1' from submission s  " +
+        	"    		inner join upload u on u.upload_id = s.upload_id " +
+        	"    		inner join resource r on u.resource_id = r.resource_id " +
+        	"    		inner join resource_info ri on r.resource_id = ri.resource_id and ri.resource_info_type_id = 1 " +
+        	"    		where u.project_id = pr.project_id and ri.value = pr.user_id and s.submission_status_id <> 5)  " +
+        	"    then 1  " +
+        	"    when exists(select '1' from submission s  " +
+        	"    		inner join upload u on u.upload_id = s.upload_id  " +
+        	"    		inner join resource r on u.resource_id = r.resource_id " +
+        	"    		inner join resource_info ri on r.resource_id = ri.resource_id and ri.resource_info_type_id = 1 " +
+        	"    		where u.project_id = pr.project_id and ri.value = pr.user_id and submission_status_id = 5)  " +
+        	"    then 0  " +
+        	"    else pr.valid_submission_ind end as submit_ind " +
+        	"    ,case when exists(select '1' from submission s  " +
+        	"    		inner join upload u on u.upload_id = s.upload_id " +
+        	"    		inner join resource r on u.resource_id = r.resource_id " +
+        	"    		inner join resource_info ri on r.resource_id = ri.resource_id and ri.resource_info_type_id = 1 " +
+        	"    		where u.project_id = pr.project_id and ri.value = pr.user_id and submission_status_id = 5) then 0  " +
+        	"    else pr.valid_submission_ind end as valid_submission_ind " +
+        	"    ,pr.raw_score " +
+        	"    ,pr.final_score " +
+        	"    ,case when exists (select create_time from component_inquiry where project_id = p.project_id and user_id = pr.user_id)  " +
+        	"    then (select min(create_time) from component_inquiry where project_id = p.project_id and user_id = pr.user_id)  " +
+        	"    else (select min(create_time) from component_inquiry where component_id = cc.component_id and user_id = pr.user_id) end as inquire_timestamp " +
+        	"    ,(select u.create_date from submission s  " +
+        	"    		inner join upload u on u.upload_id = s.upload_id  " +
+        	"    		inner join resource r on r.resource_id = u.resource_id " +
+        	"    		inner join resource_info ri on ri.resource_id = r.resource_id and ri.resource_info_type_id = 1 " +
+        	"    		where u.project_id = pr.project_id and ri.value = pr.user_id and submission_status_id <> 5) as submit_timestamp  " +
+        	"    ,(select max(r.modify_date) from review r " +
+        	"    		inner join scorecard s on r.scorecard_id = s.scorecard_id and s.scorecard_type_id = 2 " +
+        	"    		inner join submission sub on sub.submission_id = r.submission_id " +
+        	"    		inner join upload u on u.upload_id = sub.upload_id " +
+        	"    		inner join resource res on res.resource_id = u.resource_id " +
+        	"    		inner join resource_info ri on ri.resource_id = res.resource_id and ri.resource_info_type_id = 1 " +
+        	"    		where r.committed = 1 and u.project_id = pr.project_id and ri.value = pr.user_id and sub.submission_status_id <> 5) as review_completed_timestamp " +
+        	"    ,(select count(*) from project_result pr where project_id = p.project_id and pr.passed_review_ind = 1) as num_submissions_passed_review " +
+        	"    ,pr.payment " +
+        	"    , pr.old_rating " +
+        	"    , pr.new_rating " +
+        	"    ,pr.old_reliability " +
+        	"    , pr.new_reliability " +
+        	"    , pr.placed " +
+        	"    , pr.rating_ind " +
+        	"    , pr.reliability_ind " +
+        	"    , pr.passed_review_ind " +
+        	"    , p.project_status_id " +
+        	"    , pr.point_adjustment " +
+        	"    from project_result pr, " +
+        	"    project p " +
+        	"    inner join project_info pi on p.project_id = pi.project_id and pi.project_info_type_id = 2 " +
+        	"    inner join comp_catalog cc on cc.component_id = pi.value " +
+        	"    where p.project_id = pr.project_id " +
+            "and (p.modify_date > ? OR pr.modify_date > ? OR pi.modify_date > ? OR cc.modify_date > ?)";
 
         final String RESULT_UPDATE =
                 "update project_result set submit_ind = ?, valid_submission_ind = ?, raw_score = ?, final_score = ?, inquire_timestamp = ?, " +
@@ -1140,7 +1142,7 @@ public class TCLoadTCS extends TCLoad {
 
 
         } catch (SQLException sqle) {
-            DBMS.printSqlException(true, sqle);
+           // DBMS.printSqlException(true, sqle);
             throw new Exception("Load of 'project_result / project' table failed.\n" +
                     sqle.getMessage());
         } finally {
@@ -1505,9 +1507,9 @@ public class TCLoadTCS extends TCLoad {
 	            ",r.review_id as scorecard_id " +
 	            ",r.scorecard_id as scorecard_template_id " +
 	            "from review r  " +
-	            ",	inner join submission s	on r.submission_id = s.submission_id " +
-	            ",  inner join upload u on u.upload_id = s.upload_id            " +
-	            ",  inner join resource res on res.resource_id = r.resource_id and resource_role_id in (2, 3)  " +
+	            "	inner join submission s	on r.submission_id = s.submission_id " +
+	            "  inner join upload u on u.upload_id = s.upload_id            " +
+	            "  inner join resource res on res.resource_id = r.resource_id and resource_role_id in (2, 3)  " +
 	            "where (r.modify_date > ? OR s.modify_date > ?)	";
 
         final String SCREENING_UPDATE =
@@ -1586,7 +1588,7 @@ public class TCLoadTCS extends TCLoad {
         final String SELECT = "select x.contest_id, x.project_id  " +
                 "from contest_project_xref x, project p " +
                 "where x.project_id = ? and p.project_id = x.project_id " +
-                " and p.cur_version = 1 and (p.modify_date > ? or x.create_date > ?)";
+                " and (p.modify_date > ? or x.create_date > ?)";
 
         final String INSERT = "insert into contest_project_xref (contest_id, project_id) " +
                 "values (?, ?)";
@@ -2698,7 +2700,7 @@ public class TCLoadTCS extends TCLoad {
 				        "    	inner join resource res on r.resource_id = res.resource_id and res.resource_role_id in (2,3,4,5,6,7)  " +
 				        "    	inner join submission s on r.submission_id = s.submission_id " +
 				        "    	inner join upload u on u.upload_id = s.upload_id " +
-				        "    where project_id = ?  " +
+				        "    where u.project_id = ?  " +
 				        "    and (ri.modify_date > ? OR r.modify_date > ? OR s.modify_date > ?)";
 
         final String UPDATE =
@@ -2914,7 +2916,7 @@ public class TCLoadTCS extends TCLoad {
 		            "    	inner join submission s on r.submission_id = s.submission_id " +
 		            "    	inner join upload u on u.upload_id = s.upload_id " +
 		            "    	inner join resource res on r.resource_id = res.resource_id and res.resource_role_id in (2, 3, 4, 5, 6, 7) " +
-		            "    where ric.comment_type_id in (1, 2, 3) and project_id = ? " +
+		            "    where ric.comment_type_id in (1, 2, 3) and u.project_id = ? " +
 		            "       and (ric.modify_date > ? OR ri.modify_date > ? OR r.modify_date > ? OR s.modify_date > ?) " +
 		            "	order by scorecard_question_id, scorecard_id, subjective_resp_id  ";
         final String UPDATE =
