@@ -25,6 +25,8 @@ import com.topcoder.management.project.ProjectManager;
 import com.topcoder.management.project.ProjectManagerImpl;
 import com.topcoder.management.project.ProjectStatus;
 import com.topcoder.management.project.ProjectType;
+import com.topcoder.management.resource.ResourceManager;
+import com.topcoder.management.resource.ResourceRole;
 
 /**
  * This class contains Struts Actions that are meant to deal with Projects. There are following
@@ -98,9 +100,13 @@ public class ProjectActions extends DispatchAction {
         // Store the retrieved types and categories in request
         request.setAttribute("projectTypes", projectTypes);
         request.setAttribute("projectCategories", projectCategories);
-
-        // Put the flag to request that specifies that we are creating new project
-        request.setAttribute("newProject", Boolean.TRUE);
+        
+        // Obtain an instance of Resource Manager
+        ResourceManager resMgr = ActionsHelper.createResourceManager();
+        // Get all types of resource roles
+        ResourceRole[] resourceRoles = resMgr.getAllResourceRoles();
+        // Place resource roles into the request as attribute
+        request.setAttribute("resourceRoles", resourceRoles);
 
         return mapping.findForward(Constants.SUCCESS_FORWARD_NAME);
     }
@@ -245,9 +251,6 @@ public class ProjectActions extends DispatchAction {
         // Store the retieved project in the request
         request.setAttribute("project", project);
 
-        // Put the flag to request, that specifies that we aren't creating new project
-        request.setAttribute("newProject", Boolean.FALSE);
-
         // Populate the form with project properties
         populateProjectForm(project, (DynaActionForm) form);
 
@@ -309,15 +312,13 @@ public class ProjectActions extends DispatchAction {
         project.setProperty("Public", dynaActionForm.get("public"));
         // Populate project forum name
         // project.setProperty("Forum Name", dynaActionForm.get("forum_name"));
-        // FIXME: There is no Forum Name, but is Developer
+        // FIXME: There is no Forum Name, but there is a Developer Forum ID
 
         // Populate project SVN module
         project.setProperty("SVN Module", dynaActionForm.get("SVN_module"));
 
         // Create project in persistence level
-        // TODO: Use real user name here
-        manager.createProject(project, "admin");
-
+//        manager.createProject(project, AuthorizationHelper.getLoggenInUserHandle(request));
 
         return mapping.findForward(Constants.SUCCESS_FORWARD_NAME);
     }
