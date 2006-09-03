@@ -305,7 +305,7 @@ INSERT INTO deliverable_lu(deliverable_id, phase_type_id, resource_role_id, name
 INSERT INTO deliverable_lu(deliverable_id, phase_type_id, resource_role_id, name, description, per_submission, required, create_user, create_date, modify_user, modify_date)
   VALUES(21, 9, 1, 'Scorecard Comment', 'Scorecard Comment', 0, 1, 'System', CURRENT, 'System', CURRENT);
 INSERT INTO deliverable_lu(deliverable_id, phase_type_id, resource_role_id, name, description, per_submission, required, create_user, create_date, modify_user, modify_date)
-  VALUES(22, 10, 9, 'Final Review', 0, 1, 'Final Review', 'System', CURRENT, 'System', CURRENT);
+  VALUES(22, 10, 9, 'Final Review', 'Final Review', 0, 1, 'System', CURRENT, 'System', CURRENT);
 INSERT INTO deliverable_lu(deliverable_id, phase_type_id, resource_role_id, name, description, per_submission, required, create_user, create_date, modify_user, modify_date)
   VALUES(23, 11, 10, 'Approval', 'Approval', 1, 1, 'System', CURRENT, 'System', CURRENT);
 
