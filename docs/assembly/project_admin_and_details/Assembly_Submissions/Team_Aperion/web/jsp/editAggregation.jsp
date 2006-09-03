@@ -124,7 +124,7 @@
 														<br>
 														<div class="showText" id="response_${globalCommentIdx}_off">
 															<html:link href="javascript:toggleDisplay('response_${globalCommentIdx}_off');toggleDisplay('response_${globalCommentIdx}_on');">
-																<html:image srcKey="editReview.EditAggregation.AddResponse.img" altKey="editReview.EditAggregation.AddResponse.img.alt" border="0" />
+																<html:img srcKey="editReview.EditAggregation.AddResponse.img" altKey="editReview.EditAggregation.AddResponse.img.alt" border="0" />
 															</html:link>
 															<br>
 														</div>
@@ -166,8 +166,8 @@
 						<html:image onclick="javascript:this.form.save.value='save';" srcKey="editReview.Button.SaveForLater.img" altKey="editReview.Button.SaveForLater.alt" border="0" />&#160;
 						<html:image onclick="javascript:this.form.save.value='preview';" srcKey="editReview.Button.Preview.img" altKey="editReview.Button.Preview.alt" border="0" />
 						<br />
-						<br />					
-					</html:form>
+						<br />				
+					</html:form>											
 				</div>
 				<p><br/><br/><br/></p>
 			</td>
@@ -181,8 +181,7 @@
 			<td width="2"><img src="../i/clear.gif" width="2" height="1" border="0"></td>
 			<!-- Gutter Ends -->
 		</tr>
-	</table>
-	
+	</table>	
 	<jsp:include page="../includes/inc_footer.jsp" />
 </body>
 </html>
