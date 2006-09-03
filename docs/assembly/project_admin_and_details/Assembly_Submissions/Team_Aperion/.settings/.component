@@ -7,151 +7,151 @@
     <wb-resource deploy-path="/WEB-INF/classes/MessageResources.properties" source-path="/conf/MessageResources.properties"/>
     <wb-resource deploy-path="/WEB-INF/classes/OnlineReview.xml" source-path="/conf/OnlineReview.xml"/>
     <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/java/main"/>
-    <dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/review_svn/lib/tcs/authentication_factory/2.0/authentication_factory.jar">
+    <dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/review/lib/tcs/authentication_factory/2.0/authentication_factory.jar">
       <dependency-type>uses</dependency-type>
     </dependent-module>
-    <dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/review_svn/lib/tcs/base_exception/1.0/base_exception.jar">
+    <dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/review/lib/tcs/base_exception/1.0/base_exception.jar">
       <dependency-type>uses</dependency-type>
     </dependent-module>
-    <dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/review_svn/lib/tcs/class_associations/1.0/class_associations.jar">
+    <dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/review/lib/tcs/class_associations/1.0/class_associations.jar">
       <dependency-type>uses</dependency-type>
     </dependent-module>
-    <dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/review_svn/lib/tcs/configuration_manager/2.1.4/configuration_manager.jar">
+    <dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/review/lib/tcs/configuration_manager/2.1.4/configuration_manager.jar">
       <dependency-type>uses</dependency-type>
     </dependent-module>
-    <dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/review_svn/lib/tcs/database_abstraction/1.1/database_abstraction.jar">
+    <dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/review/lib/tcs/database_abstraction/1.1/database_abstraction.jar">
       <dependency-type>uses</dependency-type>
     </dependent-module>
-    <dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/review_svn/lib/tcs/data_validation/1.0/data_validation.jar">
+    <dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/review/lib/tcs/data_validation/1.0/data_validation.jar">
       <dependency-type>uses</dependency-type>
     </dependent-module>
-    <dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/review_svn/lib/tcs/db_connection_factory/1.0/db_connection_factory.jar">
+    <dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/review/lib/tcs/db_connection_factory/1.0/db_connection_factory.jar">
       <dependency-type>uses</dependency-type>
     </dependent-module>
-    <dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/review_svn/lib/tcs/deliverable_management/1.0/deliverable_management.jar">
+    <dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/review/lib/tcs/deliverable_management/1.0/deliverable_management.jar">
       <dependency-type>uses</dependency-type>
     </dependent-module>
-    <dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/review_svn/lib/tcs/deliverable_management_persistence/1.0/deliverable_management_persistence.jar">
+    <dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/review/lib/tcs/deliverable_management_persistence/1.0/deliverable_management_persistence.jar">
       <dependency-type>uses</dependency-type>
     </dependent-module>
-    <dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/review_svn/lib/tcs/id_generator/3.0/id_generator.jar">
+    <dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/review/lib/tcs/id_generator/3.0/id_generator.jar">
       <dependency-type>uses</dependency-type>
     </dependent-module>
-    <dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/review_svn/lib/tcs/JNDI_Utility/1.0/JNDI_Utility.jar">
+    <dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/review/lib/tcs/JNDI_Utility/1.0/JNDI_Utility.jar">
       <dependency-type>uses</dependency-type>
     </dependent-module>
-    <dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/review_svn/lib/tcs/logging_wrapper/1.2/logging_wrapper.jar">
+    <dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/review/lib/tcs/logging_wrapper/1.2/logging_wrapper.jar">
       <dependency-type>uses</dependency-type>
     </dependent-module>
-    <dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/review_svn/lib/tcs/object_factory/2.0/object_factory.jar">
+    <dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/review/lib/tcs/object_factory/2.0/object_factory.jar">
       <dependency-type>uses</dependency-type>
     </dependent-module>
-    <dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/review_svn/lib/tcs/online_review_login/1.0/online_review_login.jar">
+    <dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/review/lib/tcs/online_review_login/1.0/online_review_login.jar">
       <dependency-type>uses</dependency-type>
     </dependent-module>
-    <dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/review_svn/lib/tcs/phase_management/1.0/phase_management.jar">
+    <dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/review/lib/tcs/phase_management/1.0/phase_management.jar">
       <dependency-type>uses</dependency-type>
     </dependent-module>
-    <dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/review_svn/lib/tcs/phase_management_persistence/1.0/phase_management_persistence.jar">
+    <dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/review/lib/tcs/phase_management_persistence/1.0/phase_management_persistence.jar">
       <dependency-type>uses</dependency-type>
     </dependent-module>
-    <dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/review_svn/lib/tcs/project_management/1.0/project_management.jar">
+    <dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/review/lib/tcs/project_management/1.0/project_management.jar">
       <dependency-type>uses</dependency-type>
     </dependent-module>
-    <dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/review_svn/lib/tcs/project_management_persistence/1.0/project_management_persistence.jar">
+    <dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/review/lib/tcs/project_management_persistence/1.0/project_management_persistence.jar">
       <dependency-type>uses</dependency-type>
     </dependent-module>
-    <dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/review_svn/lib/tcs/project_phases/2.0/project_phases.jar">
+    <dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/review/lib/tcs/project_phases/2.0/project_phases.jar">
       <dependency-type>uses</dependency-type>
     </dependent-module>
-    <dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/review_svn/lib/tcs/resource_management/1.0/resource_management.jar">
+    <dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/review/lib/tcs/resource_management/1.0/resource_management.jar">
       <dependency-type>uses</dependency-type>
     </dependent-module>
-    <dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/review_svn/lib/tcs/resource_management_persistence/1.0/resource_management_persistence.jar">
+    <dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/review/lib/tcs/resource_management_persistence/1.0/resource_management_persistence.jar">
       <dependency-type>uses</dependency-type>
     </dependent-module>
-    <dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/review_svn/lib/tcs/review_data_structure/1.0/review_data_structure.jar">
+    <dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/review/lib/tcs/review_data_structure/1.0/review_data_structure.jar">
       <dependency-type>uses</dependency-type>
     </dependent-module>
-    <dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/review_svn/lib/tcs/review_management/1.0/review_management.jar">
+    <dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/review/lib/tcs/review_management/1.0/review_management.jar">
       <dependency-type>uses</dependency-type>
     </dependent-module>
-    <dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/review_svn/lib/tcs/review_management_persistence/1.0/review_management_persistence.jar">
+    <dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/review/lib/tcs/review_management_persistence/1.0/review_management_persistence.jar">
       <dependency-type>uses</dependency-type>
     </dependent-module>
-    <dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/review_svn/lib/tcs/review_score_calculator/1.0/review_score_calculator.jar">
+    <dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/review/lib/tcs/review_score_calculator/1.0/review_score_calculator.jar">
       <dependency-type>uses</dependency-type>
     </dependent-module>
-    <dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/review_svn/lib/tcs/scorecard_data_structure/1.0/scorecard_data_structure.jar">
+    <dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/review/lib/tcs/scorecard_data_structure/1.0/scorecard_data_structure.jar">
       <dependency-type>uses</dependency-type>
     </dependent-module>
-    <dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/review_svn/lib/tcs/scorecard_management/1.0/scorecard_management.jar">
+    <dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/review/lib/tcs/scorecard_management/1.0/scorecard_management.jar">
       <dependency-type>uses</dependency-type>
     </dependent-module>
-    <dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/review_svn/lib/tcs/scorecard_management_persistence/1.0/scorecard_management_persistence.jar">
+    <dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/review/lib/tcs/scorecard_management_persistence/1.0/scorecard_management_persistence.jar">
       <dependency-type>uses</dependency-type>
     </dependent-module>
-    <dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/review_svn/lib/tcs/search_builder/1.3/search_builder.jar">
+    <dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/review/lib/tcs/search_builder/1.3/search_builder.jar">
       <dependency-type>uses</dependency-type>
     </dependent-module>
-    <dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/review_svn/lib/tcs/security_manager/1.1/security_manager.jar">
+    <dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/review/lib/tcs/security_manager/1.1/security_manager.jar">
       <dependency-type>uses</dependency-type>
     </dependent-module>
-    <dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/review_svn/lib/tcs/simple_cache/2.0/simple_cache.jar">
+    <dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/review/lib/tcs/simple_cache/2.0/simple_cache.jar">
       <dependency-type>uses</dependency-type>
     </dependent-module>
-    <dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/review_svn/lib/tcs/typesafe_enum/1.0/typesafe_enum.jar">
+    <dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/review/lib/tcs/typesafe_enum/1.0/typesafe_enum.jar">
       <dependency-type>uses</dependency-type>
     </dependent-module>
-    <dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/review_svn/lib/tcs/user_project_data_store/1.0/user_project_data_store.jar">
+    <dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/review/lib/tcs/user_project_data_store/1.0/user_project_data_store.jar">
       <dependency-type>uses</dependency-type>
     </dependent-module>
-    <dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/review_svn/lib/tcs/weighted_calculator/1.0/weighted_calculator.jar">
+    <dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/review/lib/tcs/weighted_calculator/1.0/weighted_calculator.jar">
       <dependency-type>uses</dependency-type>
     </dependent-module>
-    <dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/review_svn/lib/tcs/workdays/1.0/workdays.jar">
+    <dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/review/lib/tcs/workdays/1.0/workdays.jar">
       <dependency-type>uses</dependency-type>
     </dependent-module>
-    <dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/review_svn/lib/tcs/tcsUtil.jar">
+    <dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/review/lib/tcs/tcsUtil.jar">
       <dependency-type>uses</dependency-type>
     </dependent-module>
-    <dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/review_svn/lib/third_party/antlr.jar">
+    <dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/review/lib/third_party/antlr.jar">
       <dependency-type>uses</dependency-type>
     </dependent-module>
-    <dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/review_svn/lib/third_party/commons-beanutils.jar">
+    <dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/review/lib/third_party/commons-beanutils.jar">
       <dependency-type>uses</dependency-type>
     </dependent-module>
-    <dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/review_svn/lib/third_party/commons-digester.jar">
+    <dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/review/lib/third_party/commons-digester.jar">
       <dependency-type>uses</dependency-type>
     </dependent-module>
-    <dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/review_svn/lib/third_party/commons-fileupload.jar">
+    <dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/review/lib/third_party/commons-fileupload.jar">
       <dependency-type>uses</dependency-type>
     </dependent-module>
-    <dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/review_svn/lib/third_party/commons-logging.jar">
+    <dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/review/lib/third_party/commons-logging.jar">
       <dependency-type>uses</dependency-type>
     </dependent-module>
-    <dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/review_svn/lib/third_party/commons-validator.jar">
+    <dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/review/lib/third_party/commons-validator.jar">
       <dependency-type>uses</dependency-type>
     </dependent-module>
-    <dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/review_svn/lib/third_party/ifx-jdbc.jar">
+    <dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/review/lib/third_party/ifx-jdbc.jar">
       <dependency-type>uses</dependency-type>
     </dependent-module>
-    <dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/review_svn/lib/third_party/jakarta-oro.jar">
+    <dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/review/lib/third_party/jakarta-oro.jar">
       <dependency-type>uses</dependency-type>
     </dependent-module>
-    <dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/review_svn/lib/third_party/jstl.jar">
+    <dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/review/lib/third_party/jstl.jar">
       <dependency-type>uses</dependency-type>
     </dependent-module>
-    <dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/review_svn/lib/third_party/standard.jar">
+    <dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/review/lib/third_party/standard.jar">
       <dependency-type>uses</dependency-type>
     </dependent-module>
-    <dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/review_svn/lib/third_party/struts-1.2.9.jar">
+    <dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/review/lib/third_party/struts-1.2.9.jar">
       <dependency-type>uses</dependency-type>
     </dependent-module>
-    <dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/review_svn/lib/third_party/struts-el.jar">
+    <dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/review/lib/third_party/struts-el.jar">
       <dependency-type>uses</dependency-type>
     </dependent-module>
     <property name="java-output-path" value="/build/classes/"/>
-<property name="context-root" value="review_svn"/>
+<property name="context-root" value="review"/>
   </wb-module>
 </project-modules>
