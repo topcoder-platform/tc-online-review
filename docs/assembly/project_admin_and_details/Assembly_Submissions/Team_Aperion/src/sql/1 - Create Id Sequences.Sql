@@ -27,7 +27,13 @@ INSERT INTO id_sequences(name, next_block_start, block_size, exhausted)
 INSERT INTO id_sequences(name, next_block_start, block_size, exhausted)
   VALUES('upload_id_seq', 100001, 20, 0);
 INSERT INTO id_sequences(name, next_block_start, block_size, exhausted)
+  VALUES('upload_type_id_seq', 100001, 20, 0);
+INSERT INTO id_sequences(name, next_block_start, block_size, exhausted)
+  VALUES('upload_status_id_seq', 100001, 20, 0);
+INSERT INTO id_sequences(name, next_block_start, block_size, exhausted)
   VALUES('submission_id_seq', 100001, 20, 0);
+INSERT INTO id_sequences(name, next_block_start, block_size, exhausted)
+  VALUES('submission_status_id_seq', 100001, 20, 0);
 INSERT INTO id_sequences(name, next_block_start, block_size, exhausted)
   VALUES('review_id_seq', 100001, 20, 0);
 INSERT INTO id_sequences(name, next_block_start, block_size, exhausted)

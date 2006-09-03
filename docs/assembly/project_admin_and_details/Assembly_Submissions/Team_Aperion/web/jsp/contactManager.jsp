@@ -48,8 +48,8 @@
 								<td><img src="../i/${rootCatalogIcon}" alt="${rootCatalogName}" border="0" /></td>
 								<td>
 									<span class="bodyTitle">${project.allProperties["Project Name"]}</span>
-									<c:if test='${!(empty project.allProperties["Project Name"])}'>
-										<font size="4"><bean:message key="viewProjectDetails.version" />
+									<c:if test='${!(empty project.allProperties["Project Version"])}'>
+										<font size="4"><bean:message key="global.version" />
 											${project.allProperties["Project Version"]}</font>
 									</c:if>
 								</td>

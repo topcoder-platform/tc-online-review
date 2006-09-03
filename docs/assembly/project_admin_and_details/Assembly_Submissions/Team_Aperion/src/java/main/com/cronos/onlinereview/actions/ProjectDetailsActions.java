@@ -68,9 +68,9 @@ public class ProjectDetailsActions extends DispatchAction {
     }
 
     /**
-     * This method is an implementation of "View project Details" Struts Action defined for this
-     * assembly, which is supposed to gather all possible information about the project and display
-     * it to user.
+     * This method is an implementation of &quot;View project Details&quot; Struts Action defined
+     * for this assembly, which is supposed to gather all possible information about the project and
+     * display it to user.
      *
      * @return an action forward to the appropriate page. If no error has occured, the forward will
      *         be to viewProjectDetails.jsp page.
@@ -98,8 +98,9 @@ public class ProjectDetailsActions extends DispatchAction {
         Project project = (Project)verification.get(3);
 
         // Retrieve some basic project info (such as icons' names) and place it into request
-        retrieveAndStoreBaseProjectInfo(request, project, messages);
+        ActionsHelper.retrieveAndStoreBasicProjectInfo(request, project, messages);
 
+        // Obtain an instance of Phase Manager
         PhaseManager phaseMgr = new DefaultPhaseManager("com.topcoder.management.phase");
 
         com.topcoder.project.phases.Project phProj = phaseMgr.getPhases(project.getId());
@@ -141,12 +142,25 @@ public class ProjectDetailsActions extends DispatchAction {
             Filter filterProject = ResourceFilterBuilder.createProjectIdFilter(project.getId());
             Resource[] resources = resMgr.searchResources(filterProject);
 
-            UserRetrieval usrMgr = new DBUserRetrieval("com.topcoder.db.connectionfactory.DBConnectionFactoryImpl");
-            ExternalUser[] users = new ExternalUser[resources.length];
+            long[] extUserIds = new long[resources.length];
 
             for (int i = 0; i < resources.length; ++i) {
-                String userID = (String)resources[i].getProperty("External Reference ID");
-                users[i] = usrMgr.retrieveUser(Long.valueOf(userID).longValue());
+                String userID = (String) resources[i].getProperty("External Reference ID");
+                extUserIds[i] = Long.valueOf(userID).longValue();
+            }
+
+            UserRetrieval usrMgr = new DBUserRetrieval("com.topcoder.db.connectionfactory.DBConnectionFactoryImpl");
+            ExternalUser[] extUsers = usrMgr.retrieveUsers(extUserIds);
+
+            ExternalUser[] users = new ExternalUser[resources.length];
+
+            for (int i = 0; i < extUserIds.length; ++i) {
+                for (int j = 0; j < extUsers.length; ++j) {
+                    if (extUsers[j].getId() == extUserIds[i]) {
+                        users[i] = extUsers[j];
+                        break;
+                    }
+                }
             }
 
             request.setAttribute("resources", resources);
@@ -172,10 +186,10 @@ public class ProjectDetailsActions extends DispatchAction {
     }
 
     /**
-     * This method is an implementation of "Contact Manager" Struts Action defined for this
-     * assembly, which is supposed to send a message entered by user to the manager of some project.
-     * This action gets executed twice -- once to display the page with the form, and once to
-     * process the message entered by user on that form.
+     * This method is an implementation of &quot;Contact Manager&quot; Struts Action defined for
+     * this assembly, which is supposed to send a message entered by user to the manager of some
+     * project. This action gets executed twice &#x96; once to display the page with the form, and
+     * once to process the message entered by user on that form.
      *
      * @return an action forward to the appropriate page. If no error has occured and this action
      *         was called the the first time, the forward will be to contactManager.jsp page, which
@@ -211,7 +225,7 @@ public class ProjectDetailsActions extends DispatchAction {
 
         if (!postBack) {
             // Retrieve some basic project info (such as icons' names) and place it into request
-            retrieveAndStoreBaseProjectInfo(request, project, messages);
+            ActionsHelper.retrieveAndStoreBasicProjectInfo(request, project, messages);
         }
 
         return mapping.findForward((postBack) ? "success" : "displayPage");
@@ -418,10 +432,6 @@ public class ProjectDetailsActions extends DispatchAction {
         // It will always contain at least one element
         result.add(null);
 
-        // Place index of the active tab into request.
-        // For Action defined in this class this index always equals to zero, so no tab is active
-        request.setAttribute("projectTabIndex", new Integer(0));
-
         // Message Resources to be used for this request
         MessageResources messages = getResources(request);
         // Add MessageResources object as the second returned value
@@ -440,7 +450,8 @@ public class ProjectDetailsActions extends DispatchAction {
             if (permission == null) {
                 request.setAttribute("errorTitle", messages.getMessage("Error.Title.General"));
             } else {
-                request.setAttribute("errorTitle", messages.getMessage("Error.Title." + permission.replaceAll(" ", "")));
+                request.setAttribute("errorTitle",
+                        messages.getMessage("Error.Title." + permission.replaceAll(" ", "")));
             }
             // Place error message (reason) into request
             request.setAttribute("errorMessage", messages.getMessage("Error.ProjectIdNotSpecified"));
@@ -464,7 +475,7 @@ public class ProjectDetailsActions extends DispatchAction {
                 request.setAttribute("errorTitle", messages.getMessage("Error.Title." + permission.replaceAll(" ", "")));
             }
             // Place error message (reason) into request
-            request.setAttribute("errorMessage", messages.getMessage("Error.ProjectIdNotSpecified"));
+            request.setAttribute("errorMessage", messages.getMessage("Error.ProjectNotFound"));
             // Find appropriate forward
             result.set(0, mapping.findForward("userError"));
             return result;
@@ -476,7 +487,7 @@ public class ProjectDetailsActions extends DispatchAction {
         result.add(projMgr);
         // Get Project by its id
         Project project = projMgr.getProject(pid);
-        // Verify that project with given id exists
+        // Verify that project with given ID exists
         if (project == null) {
             // Gather roles, so tabs will be displayed
             AuthorizationHelper.gatherUserRoles(request);
@@ -487,7 +498,7 @@ public class ProjectDetailsActions extends DispatchAction {
                 request.setAttribute("errorTitle", messages.getMessage("Error.Title." + permission.replaceAll(" ", "")));
             }
             // Place error message (reason) into request
-            request.setAttribute("errorMessage", messages.getMessage("Error.ProjectIdNotSpecified"));
+            request.setAttribute("errorMessage", messages.getMessage("Error.ProjectNotFound"));
             // Find appropriate forward
             result.set(0, mapping.findForward("userError"));
             return result;
@@ -499,14 +510,14 @@ public class ProjectDetailsActions extends DispatchAction {
         // Gather the roles the user has for current request
         AuthorizationHelper.gatherUserRoles(request, pid);
 
-        // If permission parameter was not null or empty string
+        // If permission parameter was not null or empty string ...
         if (permission != null) {
-            // Verify that this permission is granted for currently logged in user
+            // ... verify that this permission is granted for currently logged in user
             if (!AuthorizationHelper.hasUserPermission(request, permission)) {
                 // Place error title into request
                 request.setAttribute("errorTitle", messages.getMessage("Error.Title." + permission.replaceAll(" ", "")));
                 // Place error message (reason) into request
-                request.setAttribute("errorMessage", messages.getMessage("Error.ProjectIdNotSpecified"));
+                request.setAttribute("errorMessage", messages.getMessage("Error.NoPermission"));
                 // Find appropriate forward
                 result.set(0, mapping.findForward("userError"));
                 return result;
@@ -517,35 +528,5 @@ public class ProjectDetailsActions extends DispatchAction {
         request.setAttribute("project", project);
 
         return result;
-    }
-
-    /**
-     * This method helps gather some commonly used information about the project. When the
-     * information has been gathered, this method places it into the request as attributes.
-     *
-     * @param request
-     *            the http request.
-     * @param project
-     *            a project to get the info for.
-     * @param messages
-     *            message resources.
-     */
-    private static void retrieveAndStoreBaseProjectInfo(
-            HttpServletRequest request, Project project, MessageResources messages) {
-        // Retrieve the name of the Project Category icon
-        String categoryIconName = ConfigHelper.getProjectCategoryIconName(project.getProjectCategory().getName());
-        // And place it into request
-        request.setAttribute("categoryIconName", categoryIconName);
-
-        String rootCatalogID = (String) project.getProperty("Root Catalog ID");
-        // Retrieve Root Catalog icon's filename
-        String rootCatalogIcon = ConfigHelper.getRootCatalogIconNameSm(rootCatalogID);
-        // Retrieve the name of Root Catalog for this project
-        String rootCatalogName = messages.getMessage(ConfigHelper.getRootCatalogAltTextKey(rootCatalogID));
-
-        // Place the filename of the icon for Root Catalog into request
-        request.setAttribute("rootCatalogIcon", rootCatalogIcon);
-        // Place the name of the Root Catalog for the current project into request
-        request.setAttribute("rootCatalogName", rootCatalogName);
     }
 }

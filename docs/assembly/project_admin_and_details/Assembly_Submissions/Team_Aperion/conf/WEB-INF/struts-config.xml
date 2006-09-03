@@ -41,7 +41,7 @@
             <form-property name="resources_paid" type="java.lang.String[]" />
             <form-property name="resources_action" type="java.lang.String[]" />
             <form-property name="resources_id" type="java.lang.String[]" />
-            
+
             <form-property name="phase_start_by_phase" type="java.lang.Boolean[]" />
             <form-property name="phase_start_date" type="java.lang.String[]" />
             <form-property name="phase_start_time" type="java.lang.String[]" />
@@ -55,12 +55,12 @@
             <form-property name="phase_end_time" type="java.lang.String[]" />
             <form-property name="phase_end_AMPM" type="java.lang.String[]" />
             <form-property name="phase_duration" type="java.lang.Integer[]" />
-            
+
             <form-property name="phase_required_registrations" type="java.lang.Integer[]" />
             <form-property name="phase_required_submissions" type="java.lang.Integer[]" />
             <form-property name="phase_manual_screening" type="java.lang.Boolean[]" />
-            
-            
+
+
             <!-- The addphase_xxx properties are the dummy ones, they aren't processed  -->
             <form-property name="addphase" type="java.lang.String" />
             <form-property name="addphase_when" type="java.lang.String" />
@@ -78,14 +78,24 @@
             <form-property name="addphase_end_time" type="java.lang.String" />
             <form-property name="addphase_end_AMPM" type="java.lang.String" />
             <form-property name="addphase_duration" type="java.lang.String" />
-            
-            
+
+
         </form-bean>
 
         <form-bean name="contactManagerForm" dynamic="true"
             type="org.apache.struts.validator.DynaValidatorForm">
             <form-property name="cat" type="java.lang.String" />
             <form-property name="msg" type="java.lang.String" />
+        </form-bean>
+
+        <form-bean name="reviewForm" dynamic="true"
+            type="org.apache.struts.validator.LazyValidatorForm">
+            <form-property name="rid" type="java.lang.Long" />
+            <form-property name="sid" type="java.lang.Long" />
+            <form-property name="save" type="java.lang.String" />
+            <form-property name="answer" type="java.lang.String[]" />
+            <form-property name="commentType" type="java.lang.Long[]" />
+            <form-property name="comment" type="java.lang.String[]" />
         </form-bean>
     </form-beans>
 
@@ -98,10 +108,14 @@
 <!-- =========================================== Global Forward Definitions -->
 
     <global-forwards>
-        <!-- Default forward to "Login" action -->
+        <!-- Default forward to login page action -->
         <forward
             name="Login"
             path="/jsp/login.jsp"/>
+        <forward
+            name="userError"
+            path="/jsp/userError.jsp"
+            redirect="false"/>
     </global-forwards>
 
 
@@ -116,7 +130,7 @@
         <!-- "Login" action -->
         <action path="/actions/Login" unknown="false"
             type="com.cronos.onlinereview.login.LoginActions"
-            name="loginForm" scope="session"
+            name="loginForm" scope="request"
             parameter="method"
             input="/jsp/login.jsp" >
             <exception
@@ -188,7 +202,7 @@
             parameter="method" scope="request"
             name="projectForm"
             input="editProject.jsp">
-            <forward name="success" path="/actions/ViewProjectDetails" redirect="false" />
+            <forward name="success" path="/actions/ListProjects.do?method=listProjects&amp;scope=my" redirect="true" />
             <forward name="notAuthorized" path="/jsp/login.jsp" redirect="true" />
         </action>
 
@@ -212,7 +226,6 @@
             parameter="method" scope="request"
             input="/jsp/viewProjectDetails.jsp">
             <forward name="success" path="/jsp/viewProjectDetails.jsp" redirect="false" />
-            <forward name="userError" path="/jsp/userError.jsp" redirect="false" />
         </action>
 
         <!-- "Contact Manager" action -->
@@ -223,7 +236,6 @@
             input="/jsp/contactManager.jsp">
             <forward name="displayPage" path="/jsp/contactManager.jsp" redirect="false" />
             <forward name="success" path="/actions/ViewProjectDetails?method=viewProjectDetails" redirect="true" />
-            <forward name="userError" path="/jsp/userError.jsp" redirect="false" />
         </action>
 
         <!-- "Upload Submission" action -->
@@ -302,6 +314,7 @@
         <action path="/actions/CreateScreening" unknown="false"
             type="com.cronos.onlinereview.actions.ProjectReviewActions"
             parameter="method" scope="request"
+            name="reviewForm"
             input="/jsp/viewProjectDetails.jsp">
             <forward name="success" path="/jsp/editReview.jsp" redirect="false"/>
         </action>
@@ -310,6 +323,7 @@
         <action path="/actions/EditScreening" unknown="false"
             type="com.cronos.onlinereview.actions.ProjectReviewActions"
             parameter="method" scope="request"
+            name="reviewForm"
             input="/jsp/viewProjectDetails.jsp">
             <forward name="success" path="/jsp/editReview.jsp" redirect="false"/>
         </action>
@@ -318,16 +332,17 @@
         <action path="/actions/SaveScreening" unknown="false"
             type="com.cronos.onlinereview.actions.ProjectReviewActions"
             parameter="method" scope="request"
+            name="reviewForm"
             input="/jsp/editReview.jsp">
-            <forward name="preview" path="/jsp/previewReview.jsp" redirect="false"/>
-            <forward name="success" path="/actions/ViewProjectDetails?method=viewProjectDetails" redirect="false"/>
+            <forward name="preview" path="/jsp/viewReview.jsp" redirect="false"/>
+            <forward name="success" path="/actions/ViewProjectDetails.do?method=viewProjectDetails" redirect="true"/>
         </action>
 
         <!-- "View Screening" action -->
         <action path="/actions/ViewScreening" unknown="false"
             type="com.cronos.onlinereview.actions.ProjectReviewActions"
             parameter="method" scope="request"
-            input="/jsp/viewProjectDetails.jsp">
+            input="/jsp/viewReview.jsp">
             <forward name="success" path="/jsp/viewReview.jsp" redirect="false"/>
         </action>
 
@@ -335,6 +350,7 @@
         <action path="/actions/CreateReview" unknown="false"
             type="com.cronos.onlinereview.actions.ProjectReviewActions"
             parameter="method" scope="request"
+            name="reviewForm"
             input="/jsp/viewProjectDetails.jsp">
             <forward name="success" path="/jsp/editReview.jsp" redirect="false"/>
         </action>
@@ -343,6 +359,7 @@
         <action path="/actions/EditReview" unknown="false"
             type="com.cronos.onlinereview.actions.ProjectReviewActions"
             parameter="method" scope="request"
+            name="reviewForm"
             input="/jsp/viewProjectDetails.jsp">
             <forward name="success" path="/jsp/editReview.jsp" redirect="false"/>
         </action>
@@ -351,9 +368,10 @@
         <action path="/actions/SaveReview" unknown="false"
             type="com.cronos.onlinereview.actions.ProjectReviewActions"
             parameter="method" scope="request"
+            name="reviewForm"
             input="/jsp/editReview.jsp">
             <forward name="preview" path="/jsp/viewReview.jsp" redirect="false"/>
-            <forward name="success" path="/actions/ViewProjectDetails?method=viewProjectDetails" redirect="false"/>
+            <forward name="success" path="/actions/ViewProjectDetails.do?method=viewProjectDetails" redirect="true"/>
         </action>
 
         <!-- "View Review" action -->
@@ -459,6 +477,7 @@
         <action path="/actions/CreateApproval" unknown="false"
             type="com.cronos.onlinereview.actions.ProjectReviewActions"
             parameter="method" scope="request"
+            name="reviewForm"
             input="/jsp/viewProjectDetails.jsp">
             <forward name="success" path="/jsp/editReview.jsp" redirect="false"/>
         </action>
@@ -467,6 +486,7 @@
         <action path="/actions/EditApproval" unknown="false"
             type="com.cronos.onlinereview.actions.ProjectReviewActions"
             parameter="method" scope="request"
+            name="reviewForm"
             input="/jsp/viewProjectDetails.jsp">
             <forward name="success" path="/jsp/editReview.jsp" redirect="false"/>
         </action>
@@ -475,9 +495,10 @@
         <action path="/actions/SaveApproval" unknown="false"
             type="com.cronos.onlinereview.actions.ProjectReviewActions"
             parameter="method" scope="request"
+            name="reviewForm"
             input="/jsp/editReview.jsp">
-            <forward name="preview" path="/jsp/previewReview.jsp" redirect="false"/>
-            <forward name="success" path="/actions/ViewProjectDetails?method=viewProjectDetails" redirect="false"/>
+            <forward name="preview" path="/jsp/viewReview.jsp" redirect="false"/>
+            <forward name="success" path="/actions/ViewProjectDetails.do?method=viewProjectDetails" redirect="true"/>
         </action>
 
         <!-- "View Approval" action -->

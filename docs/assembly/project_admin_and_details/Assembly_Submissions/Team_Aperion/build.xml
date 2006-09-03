@@ -29,6 +29,7 @@
     <property name="javasrc" value="${srcdir}/java" />
     <property name="javamain" value="${javasrc}/main" />
     <property name="javatests" value="${javasrc}/tests" />
+    <property name="sqlsrc" value="${srcdir}/sql" />
 
     <property name="builddir" value="build/ant" />
     <property name="build_classdir" value="${builddir}/classes" />
@@ -105,6 +106,16 @@
     <property name="db_connection_factory.path" value="db_connection_factory/${db_connection_factory.version}" />
     <property name="db_connection_factory.jar" value="${tcs_libdir}/${db_connection_factory.path}/${db_connection_factory.jar.name}" />
 
+    <property name="deliverable_management.version" value="1.0" />
+    <property name="deliverable_management.jar.name" value="deliverable_management.jar" />
+    <property name="deliverable_management.path" value="deliverable_management/${deliverable_management.version}" />
+    <property name="deliverable_management.jar" value="${tcs_libdir}/${deliverable_management.path}/${deliverable_management.jar.name}" />
+
+    <property name="deliverable_management_persistence.version" value="1.0" />
+    <property name="deliverable_management_persistence.jar.name" value="deliverable_management_persistence.jar" />
+    <property name="deliverable_management_persistence.path" value="deliverable_management_persistence/${deliverable_management_persistence.version}" />
+    <property name="deliverable_management_persistence.jar" value="${tcs_libdir}/${deliverable_management_persistence.path}/${deliverable_management_persistence.jar.name}" />
+
     <property name="id_generator.version" value="3.0" />
     <property name="id_generator.jar.name" value="id_generator.jar" />
     <property name="id_generator.path" value="id_generator/${id_generator.version}" />
@@ -165,6 +176,41 @@
     <property name="resource_management_persistence.path" value="resource_management_persistence/${resource_management_persistence.version}" />
     <property name="resource_management_persistence.jar" value="${tcs_libdir}/${resource_management_persistence.path}/${resource_management_persistence.jar.name}" />
 
+    <property name="review_data_structure.version" value="1.0" />
+    <property name="review_data_structure.jar.name" value="review_data_structure.jar" />
+    <property name="review_data_structure.path" value="review_data_structure/${review_data_structure.version}" />
+    <property name="review_data_structure.jar" value="${tcs_libdir}/${review_data_structure.path}/${review_data_structure.jar.name}" />
+
+    <property name="review_management.version" value="1.0" />
+    <property name="review_management.jar.name" value="review_management.jar" />
+    <property name="review_management.path" value="review_management/${review_management.version}" />
+    <property name="review_management.jar" value="${tcs_libdir}/${review_management.path}/${review_management.jar.name}" />
+
+    <property name="review_management_persistence.version" value="1.0" />
+    <property name="review_management_persistence.jar.name" value="review_management_persistence.jar" />
+    <property name="review_management_persistence.path" value="review_management_persistence/${review_management_persistence.version}" />
+    <property name="review_management_persistence.jar" value="${tcs_libdir}/${review_management_persistence.path}/${review_management_persistence.jar.name}" />
+
+    <property name="review_score_calculator.version" value="1.0" />
+    <property name="review_score_calculator.jar.name" value="review_score_calculator.jar" />
+    <property name="review_score_calculator.path" value="review_score_calculator/${review_score_calculator.version}" />
+    <property name="review_score_calculator.jar" value="${tcs_libdir}/${review_score_calculator.path}/${review_score_calculator.jar.name}" />
+
+    <property name="scorecard_data_structure.version" value="1.0" />
+    <property name="scorecard_data_structure.jar.name" value="scorecard_data_structure.jar" />
+    <property name="scorecard_data_structure.path" value="scorecard_data_structure/${scorecard_data_structure.version}" />
+    <property name="scorecard_data_structure.jar" value="${tcs_libdir}/${scorecard_data_structure.path}/${scorecard_data_structure.jar.name}" />
+
+    <property name="scorecard_management.version" value="1.0" />
+    <property name="scorecard_management.jar.name" value="scorecard_management.jar" />
+    <property name="scorecard_management.path" value="scorecard_management/${scorecard_management.version}" />
+    <property name="scorecard_management.jar" value="${tcs_libdir}/${scorecard_management.path}/${scorecard_management.jar.name}" />
+
+    <property name="scorecard_management_persistence.version" value="1.0" />
+    <property name="scorecard_management_persistence.jar.name" value="scorecard_management_persistence.jar" />
+    <property name="scorecard_management_persistence.path" value="scorecard_management_persistence/${scorecard_management_persistence.version}" />
+    <property name="scorecard_management_persistence.jar" value="${tcs_libdir}/${scorecard_management_persistence.path}/${scorecard_management_persistence.jar.name}" />
+
     <property name="search_builder.version" value="1.3" />
     <property name="search_builder.jar.name" value="search_builder.jar" />
     <property name="search_builder.path" value="search_builder/${search_builder.version}" />
@@ -174,6 +220,11 @@
     <property name="security_manager.jar.name" value="security_manager.jar" />
     <property name="security_manager.path" value="security_manager/${security_manager.version}" />
     <property name="security_manager.jar" value="${tcs_libdir}/${security_manager.path}/${security_manager.jar.name}" />
+
+    <property name="simple_cache.version" value="2.0" />
+    <property name="simple_cache.jar.name" value="simple_cache.jar" />
+    <property name="simple_cache.path" value="simple_cache/${simple_cache.version}" />
+    <property name="simple_cache.jar" value="${tcs_libdir}/${simple_cache.path}/${simple_cache.jar.name}" />
 
     <property name="typesafe_enum.version" value="1.0" />
     <property name="typesafe_enum.jar.name" value="typesafe_enum.jar" />
@@ -185,6 +236,11 @@
     <property name="user_project_data_store.path" value="user_project_data_store/${user_project_data_store.version}" />
     <property name="user_project_data_store.jar" value="${tcs_libdir}/${user_project_data_store.path}/${user_project_data_store.jar.name}" />
 
+    <property name="weighted_calculator.version" value="1.0" />
+    <property name="weighted_calculator.jar.name" value="weighted_calculator.jar" />
+    <property name="weighted_calculator.path" value="weighted_calculator/${weighted_calculator.version}" />
+    <property name="weighted_calculator.jar" value="${tcs_libdir}/${weighted_calculator.path}/${weighted_calculator.jar.name}" />
+
     <property name="workdays.version" value="1.0" />
     <property name="workdays.jar.name" value="workdays.jar" />
     <property name="workdays.path" value="workdays/${workdays.version}" />
@@ -194,7 +250,7 @@
     <property name="tcsUtil.jar" value="${tcs_libdir}/${tcsUtil.jar.name}" />
 
     <!-- 3rd Party Dependencies  -->
-    <property name="ifx-jdbc.jar" value="${ext_libdir}/ifx-jdbc-9.4.jar.jar" />
+    <property name="ifx-jdbc.jar" value="${ext_libdir}/ifx-jdbc.jar.jar" />
     <property name="jstl.jar" value="${ext_libdir}/jstl.jar" />
     <property name="servlet.jar" value="${cactus.home.tomcat5x}/common/lib/servlet-api.jar" />
     <property name="servlet.jsp.jar" value="${cactus.home.tomcat5x}/common/lib/jsp-api.jar" />
@@ -229,6 +285,8 @@
         <pathelement location="${data_validation.jar}" />
         <pathelement location="${database_abstraction.jar}" />
         <pathelement location="${db_connection_factory.jar}" />
+        <pathelement location="${deliverable_management.jar}" />
+        <pathelement location="${deliverable_management_persistence.jar}" />
         <pathelement location="${id_generator.jar}" />
         <pathelement location="${JNDI_Utility.jar}" />
         <pathelement location="${logging_wrapper.jar}" />
@@ -241,10 +299,19 @@
         <pathelement location="${project_phases.jar}" />
         <pathelement location="${resource_management.jar}" />
         <pathelement location="${resource_management_persistence.jar}" />
+        <pathelement location="${review_data_structure.jar}" />
+        <pathelement location="${review_management.jar}" />
+        <pathelement location="${review_management_persistence.jar}" />
+        <pathelement location="${review_score_calculator.jar}" />
+        <pathelement location="${scorecard_data_structure.jar}" />
+        <pathelement location="${scorecard_management.jar}" />
+        <pathelement location="${scorecard_management_persistence.jar}" />
         <pathelement location="${search_builder.jar}" />
         <pathelement location="${security_manager.jar}" />
+        <pathelement location="${simple_cache.jar}" />
         <pathelement location="${typesafe_enum.jar}" />
         <pathelement location="${user_project_data_store.jar}" />
+        <pathelement location="${weighted_calculator.jar}" />
         <pathelement location="${workdays.jar}" />
         <pathelement location="${tcsUtil.jar}" />
     </path>
@@ -368,6 +435,8 @@
             <lib dir="${jar_tcs_libdir}/${data_validation.path}" includes="*.jar" />
             <lib dir="${jar_tcs_libdir}/${database_abstraction.path}" includes="*.jar" />
             <lib dir="${jar_tcs_libdir}/${db_connection_factory.path}" includes="*.jar" />
+            <lib dir="${jar_tcs_libdir}/${deliverable_management.path}" includes="*.jar" />
+            <lib dir="${jar_tcs_libdir}/${deliverable_management_persistence.path}" includes="*.jar" />
             <lib dir="${jar_tcs_libdir}/${id_generator.path}" includes="*.jar" />
             <lib dir="${jar_tcs_libdir}/${JNDI_Utility.path}" includes="*.jar" />
             <lib dir="${jar_tcs_libdir}/${logging_wrapper.path}" includes="*.jar" />
@@ -380,10 +449,19 @@
             <lib dir="${jar_tcs_libdir}/${project_phases.path}" includes="*.jar" />
             <lib dir="${jar_tcs_libdir}/${resource_management.path}" includes="*.jar" />
             <lib dir="${jar_tcs_libdir}/${resource_management_persistence.path}" includes="*.jar" />
+            <lib dir="${jar_tcs_libdir}/${review_data_structure.path}" includes="*.jar" />
+            <lib dir="${jar_tcs_libdir}/${review_management.path}" includes="*.jar" />
+            <lib dir="${jar_tcs_libdir}/${review_management_persistence.path}" includes="*.jar" />
+            <lib dir="${jar_tcs_libdir}/${review_score_calculator.path}" includes="*.jar" />
+            <lib dir="${jar_tcs_libdir}/${scorecard_data_structure.path}" includes="*.jar" />
+            <lib dir="${jar_tcs_libdir}/${scorecard_management.path}" includes="*.jar" />
+            <lib dir="${jar_tcs_libdir}/${scorecard_management_persistence.path}" includes="*.jar" />
             <lib dir="${jar_tcs_libdir}/${search_builder.path}" includes="*.jar" />
             <lib dir="${jar_tcs_libdir}/${security_manager.path}" includes="*.jar" />
+            <lib dir="${jar_tcs_libdir}/${simple_cache.path}" includes="*.jar" />
             <lib dir="${jar_tcs_libdir}/${typesafe_enum.path}" includes="*.jar" />
             <lib dir="${jar_tcs_libdir}/${user_project_data_store.path}" includes="*.jar" />
+            <lib dir="${jar_tcs_libdir}/${weighted_calculator.path}" includes="*.jar" />
             <lib dir="${jar_tcs_libdir}/${workdays.path}" includes="*.jar" />
 
             <lib dir="${jar_tcs_libdir}" includes="*.jar" />
@@ -495,6 +573,7 @@
                       ${tcs_libdir}/**/*.*,
                       ${ext_libdir}/**/*.*,
                       ${srcdir}/**/*.java,
+                      ${sqlsrc}/**/*.*,
                       ${javatests}/${packagedir}/**,
                       ${testlogdir}/**,
                       ${testfiles}/**,
@@ -503,6 +582,8 @@
                       ${webdir}/jsp2/**/*.*,
                       ${webdir}/images/**/*.*,
                       ${webdir}/styles/**/*.*,
+                      ${webdir}/includes/review/*.*,
+                      ${webdir}/includes/screen/*.*,
                       ${webdir}/**/pc-*.*,
                       ${webdir}/**/pc_*.*,
                       ${webdir}/**/new_pc-*.*,

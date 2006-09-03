@@ -5,6 +5,9 @@ package com.cronos.onlinereview.actions;
 
 /**
  * This class contains various constants used throughout the application.
+ * <p>
+ * This class is thread safe as it contains only immutable data.
+ * </p>
  *
  * @author TCSAssemblyTeam
  * @version 1.0
@@ -134,6 +137,14 @@ public class Constants {
      * Managers have permission to view and edit anything, including creating new projects.
      */
     public static final String MANAGER_ROLE_NAME = "Manager";
+
+    /**
+     * This member variable is a string constant that defines the name of the Global Manager
+     * role.  This role is a logical one, i.e. there is no such role defined in the database.
+     * This role will be assigned to users that have their own resources with role Manager and
+     * no project assigned to that resource.
+     */
+    public static final String GLOBAL_MANAGER_ROLE_NAME = "Global Manager";
 
 
     // --------------------------------------------------------------------- Permission names -----
@@ -265,6 +276,24 @@ public class Constants {
     public static final String REMOVE_SUBM_PERM_NAME = "Remove Submission";
 
     /**
+     * This member variable is a string constant that defines the name of the Perform Screening
+     * permission.
+     */
+    public static final String PERFORM_SCREENING_PERM_NAME = "Perform Screening";
+
+    /**
+     * This member variable is a string constant that defines the name of the View Screening
+     * permission.
+     */
+    public static final String VIEW_SCREENING_PERM_NAME = "View Screening";
+
+    /**
+     * This member variable is a string constant that defines the name of the Perform Review
+     * permission.
+     */
+    public static final String PERFORM_REVIEW_PERM_NAME = "Perform Review";
+
+    /**
      * This member variable is a string constant that defines the name of the Upload Test Cases
      * permission.
      */
@@ -277,16 +306,212 @@ public class Constants {
     public static final String DOWNLOAD_TEST_CASES_PERM_NAME = "Download Test Cases";
 
     /**
+     * This member variable is a string constant that defines the name of the View All Reviews
+     * permission.
+     */
+    public static final String VIEW_ALL_REVIEWS_PERM_NAME = "View All Reviews";
+
+    /**
+     * This member variable is a string constant that defines the name of the View Reviewer Reviews
+     * permission.
+     */
+    public static final String VIEW_REVIEWER_REVIEWS_PERM_NAME = "View Reviewer Reviews";
+
+    /**
+     * This member variable is a string constant that defines the name of the
+     * View Composite Scorecard permission.
+     */
+    public static final String VIEW_COMPOS_SCORECARD_PERM_NAME = "View Composite Scorecard";
+
+    /**
+     * This member variable is a string constant that defines the name of the
+     * Edit My Review during Review permission.
+     */
+    public static final String EDIT_MY_REVIEW_PERM_NAME = "Edit My Review during Review";
+
+    /**
+     * This member variable is a string constant that defines the name of the View Appeals
+     * permission.
+     */
+    public static final String VIEW_APPEALS_PERM_NAME = "View Appeals";
+
+    /**
+     * This member variable is a string constant that defines the name of the
+     * Perform Appeals Response permission.
+     */
+    public static final String PERFORM_APPEAL_RESP_PERM_NAME = "Perform Appeals Response";
+
+    /**
+     * This member variable is a string constant that defines the name of the View Appeal Responses
+     * permission.
+     */
+    public static final String VIEW_APPEAL_RESP_PERM_NAME = "View Appeal Responses";
+
+    /**
+     * This member variable is a string constant that defines the name of the
+     * Edit My Appeal Response during Appeals Response permission.
+     */
+    public static final String EDIT_MY_APPEAL_RESP_PERM_NAME =
+            "Edit My Appeal Response during Appeals Response";
+
+    /**
+     * This member variable is a string constant that defines the name of the Perform Aggregation
+     * permission.
+     */
+    public static final String PERFORM_AGGREGATION_PERM_NAME = "Perform Aggregation";
+
+    /**
+     * This member variable is a string constant that defines the name of the View Aggregation
+     * permission.
+     */
+    public static final String VIEW_AGGREGATION_PERM_NAME = "View Aggregation";
+
+    /**
+     * This member variable is a string constant that defines the name of the
+     * Perform Aggregation Review permission.
+     */
+    public static final String PERFORM_AGGREG_REVIEW_PERM_NAME = "Perform Aggregation Review";
+
+    /**
+     * This member variable is a string constant that defines the name of the
+     * View Aggregation Review permission.
+     */
+    public static final String VIEW_AGGREG_REVIEW_PERM_NAME = "View Aggregation Review";
+
+    /**
      * This member variable is a string constant that defines the name of the Perform Final Fix
      * permission.
      */
-    public static final String PERFORM_FINAL_FIX = "Perform Final Fix";
+    public static final String PERFORM_FINAL_FIX_PERM_NAME = "Perform Final Fix";
 
     /**
      * This member variable is a string constant that defines the name of the Download Final Fix
      * permission.
      */
-    public static final String DOWNLOAD_FINAL_FIX = "Download Final Fix";
+    public static final String DOWNLOAD_FINAL_FIX_PERM_NAME = "Download Final Fix";
+
+    /**
+     * This member variable is a string constant that defines the name of the Perform Final Review
+     * permission.
+     */
+    public static final String PERFORM_FINAL_REVIEW_PERM_NAME = "Perform Final Review";
+
+    /**
+     * This member variable is a string constant that defines the name of the View Final Review
+     * permission.
+     */
+    public static final String VIEW_FINAL_REVIEW_PERM_NAME = "View Final Review";
+
+    /**
+     * This member variable is a string constant that defines the name of the
+     * Submit Scorecard Comment permission.
+     */
+    public static final String SUBMIT_SCORECARD_COMM_PERM_NAME = "Submit Scorecard Comment";
+
+    /**
+     * This member variable is a string constant that defines the name of the Perform Approval
+     * permission.
+     */
+    public static final String PERFORM_APPROVAL_PERM_NAME = "Perform Approval";
+
+    /**
+     * This member variable is a string constant that defines the name of the View Approval
+     * permission.
+     */
+    public static final String VIEW_APPROVAL_PERM_NAME = "View Approval";
+
+    /**
+     * This member variable is a string constant that defines the name of the Edit Any Scorecard
+     * permission.
+     */
+    public static final String EDIT_ANY_SCORECARD_PERM_NAME = "Edit Any Scorecard";
+
+
+    // -------------------------------------------------------------------------- Phase names -----
+
+    /**
+     * This member variable is a string constant that defines the name of the Registration phase.
+     */
+    public static final String REGISTRATION_PHASE_NAME = "Registration";
+
+    /**
+     * This member variable is a string constant that defines the name of the Submission phase.
+     */
+    public static final String SUBMISSION_PHASE_NAME = "Submission";
+
+    /**
+     * This member variable is a string constant that defines the name of the Screening phase.
+     */
+    public static final String SCREENING_PHASE_NAME = "Screening";
+
+    /**
+     * This member variable is a string constant that defines the name of the Review phase.
+     */
+    public static final String REVIEW_PHASE_NAME = "Review";
+
+    /**
+     * This member variable is a string constant that defines the name of the Appeals phase.
+     */
+    public static final String APPEALS_PHASE_NAME = "Appeals";
+
+    /**
+     * This member variable is a string constant that defines the name of the Appeals Response
+     * phase.
+     */
+    public static final String APPEALS_RESPONE_PHASE_NAME = "Appeals Response";
+
+    /**
+     * This member variable is a string constant that defines the name of the Aggregation phase.
+     */
+    public static final String AGGREGATION_PHASE_NAME = "Aggregation";
+
+    /**
+     * This member variable is a string constant that defines the name of the Aggregation Review
+     * phase.
+     */
+    public static final String AGGREGATION_REVIEW_PHASE_NAME = "Aggregation Review";
+
+    /**
+     * This member variable is a string constant that defines the name of the Final Fix phase.
+     */
+    public static final String FINAL_FIX_PHASE_NAME = "Final Fix";
+
+    /**
+     * This member variable is a string constant that defines the name of the Final Review phase.
+     */
+    public static final String FINAL_REVIEW_PHASE_NAME = "Final Review";
+
+    /**
+     * This member variable is a string constant that defines the name of the Approval phase.
+     */
+    public static final String APPROVAL_PHASE_NAME = "Approval";
+
+
+    // ----------------------------------------------------------------- Action Forward names -----
+
+    /**
+     * This member variable is a string constant that defines the name of the User Error global
+     * action forward.
+     */
+    public static final String USER_ERRROR_FORWARD_NAME = "userError";
+
+    /**
+     * This member variable is a string constant that defines the name of the Success commonly used
+     * action forward.
+     */
+    public static final String SUCCESS_FORWARD_NAME = "success";
+
+    /**
+     * This member variable is a string constant that defines the name of the Not Authorized
+     * commonly used action forward.
+     */
+    public static final String NOT_AUTHORIZED_FORWARD_NAME = "notAuthorized";
+
+    /**
+     * This member variable is a string constant that defines the name of the Preview commonly used
+     * action forward.
+     */
+    public static final String PREVIEW_FORWARD_NAME = "preview";
 
 
     // Hidden constructor
