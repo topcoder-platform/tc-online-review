@@ -8,17 +8,17 @@
 
 <head>
 	<!-- TopCoder CSS -->
-	<link type="text/css" rel="stylesheet" href="http://www.topcoder.com/css/style.css">
-	<link type="text/css" rel="stylesheet" href="http://www.topcoder.com/css/coders.css">
-	<link type="text/css" rel="stylesheet" href="http://www.topcoder.com/css/stats.css">
-	<link type="text/css" rel="stylesheet" href="http://www.topcoder.com/css/tcStyles.css">
+	<link type="text/css" rel="stylesheet" href="../css/style.css" />
+	<link type="text/css" rel="stylesheet" href="../css/coders.css" />
+	<link type="text/css" rel="stylesheet" href="../css/stats.css" />
+	<link type="text/css" rel="stylesheet" href="../css/tcStyles.css" />
 	
 	<!-- CSS and JS by Petar -->
 	<link type="text/css" rel="stylesheet" href="../css/new_styles.css">
 	<script language="JavaScript" type="text/javascript" src="../scripts/rollovers.js"></script>
 </head>
 
-<body>
+<body>`
 	<jsp:include page="../includes/inc_header.jsp" />
 	<table width="100%" border="0" cellpadding="0" cellspacing="0">
 		<tr valign="top">
@@ -66,9 +66,11 @@
 					<h3><bean:message key="editReview.EditAggregation.title" /></h3>
 					
 					<html:form action="/actions/SaveAggregation">
-						<c:set var="itemIdx" value="0" />
 						<html:hidden property="method" value="saveAggregation" />
 
+						<c:set var="itemIdx" value="0" />
+						<c:set var="globalCommentIdx" value="0" />
+						
 						<c:forEach items="${scorecardTemplate.allGroups}" var="group" varStatus="groupStatus">
 							<table cellpadding="0" border="0" width="100%" class="scorecard" style="border-collapse: collapse; border-bottom-style: solid" >
 								<tr>
@@ -97,130 +99,74 @@
 											</td>
 										</tr>
 										<tr>
-											<td class="header"><bean:message key="editReview.EditAggragation.Reviewer" /></td>
-											<td class="headerC"><bean:message key="editReview.EditAggragation.CommentNumber" /></td>
-											<td class="header"><bean:message key="editReview.EditAggragation.Response" /></td>
-											<td class="header"><bean:message key="editReview.EditAggragation.Type" /></td>
-											<td class="header"><bean:message key="editReview.EditAggragation.Rejected" /></td>
-											<td class="header"><bean:message key="editReview.EditAggragation.Accepted" /></td>
-											<td class="header"><bean:message key="editReview.EditAggragation.Duplicate" /></td>
+											<td class="header"><bean:message key="editReview.EditAggregation.Reviewer" /></td>
+											<td class="headerC"><bean:message key="editReview.EditAggregation.CommentNumber" /></td>
+											<td class="header"><bean:message key="editReview.EditAggregation.Response" /></td>
+											<td class="header"><bean:message key="editReview.EditAggregation.Type" /></td>
+											<td class="header"><bean:message key="editReview.EditAggregation.Rejected" /></td>
+											<td class="header"><bean:message key="editReview.EditAggregation.Accepted" /></td>
+											<td class="header"><bean:message key="editReview.EditAggregation.Duplicate" /></td>
 										</tr>
 										
-										<%-- TODO: Continue work on the page --%>
-					    <tr class="dark">
-				            <td class="value">
-							   <a href="#" class="coderTextGreen">qiucx0161</a><br>
-							   <a href="pc_review_individual.jsp?role=public&projectTabIndex=0&resolved=true">View Review</a>
-							</td>
-							<td class="valueC">1</td>
-							<td class="value" width="85%">
-								<b>Reviewer Response:</b> Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. Ut wisi enim ad minim veniam, quis nostrud exerci.<br>
-								<div style="padding-top:4px;"><b>Response text:</b> Lorem adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. Ut wisi enim ad minim veniam, quis nostrud exerci.
-							</td>
-							<td class="value">Recommended</td>
-							<td class="valueC"><input type="radio" value="V1" name="R1af" checked disabled></td>
-							<td class="valueC"><input type="radio" value="V1" name="R1af" disabled></td>
-							<td class="valueC"><input type="radio" value="V1" name="R1af" disabled></td>
-						</tr>
-						<tr class="dark">
-							<td class="value"></td>
-							<td class="valueC"></td>
-							<td class="value" width="85%">
-								<b>Manager Comment:</b><br>
-								<textarea rows="2" name="S4" cols="20" style="font-size: 10px; font-family: sans-serif;width:100%;height:38px;border:1px solid #ccc;margin:0px 3px 3px 3px;"></textarea>
-							</td>
-							<td class="value"><br>
-								<select size="1" name="D14" class="inputBox" >
-									<option selected>Select</option>
-									<option>Recommended</option>
-									<option>Required</option>
-									<option>Comment</option>
-								</select>
-							</td>
-							<td class="valueC">Rejected<br><input type="radio" value="V1" name="R1a"></td>
-							<td class="valueC">Accepted<br><input type="radio" value="V1" name="R1a"></td>
-							<td class="valueC">Duplicate<br><input type="radio" value="V1" name="R1a"></td>
-						</tr>
-						<tr class="dark">
-							<td class="value">
-								<a href="#" class="coderTextYellow">mgmg</a><br>
-								<a href="pc_review_individual.jsp?role=public&projectTabIndex=0&resolved=true">View Review</a>
-							</td>
-							<td class="valueC">1</td>
-							<td class="value" width="85%">
-								<b>Reviewer Response:</b> Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam 	nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. Ut wisi enim ad minim veniam, quis nostrud exerci.<br>
-								<div style="padding-top:4px;"><b>Response text:</b> Lorem adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. Ut wisi enim ad minim veniam, quis nostrud exerci.
-							</td>
-							<td class="value">Recommended</td>
-							<td class="valueC"><input type="radio" value="V1" name="R1bf" disabled></td>
-							<td class="valueC"><input type="radio" value="V1" name="R1bf" checked disabled></td>
-							<td class="valueC"><input type="radio" value="V1" name="R1bf" disabled></td>
-						</tr>
-						<tr class="dark">
-							<td class="value"></td>
-							<td class="valueC"></td>
-							<td class="value" width="85%">
-								<b>Manager Comment:</b><br>
-								<textarea rows="2" name="S4" cols="20" style="font-size: 10px; font-family: sans-serif;width:100%;height:38px;border:1px solid #ccc;margin:0px 3px 3px 3px;"></textarea>
-							</td>
-							<td class="value"><br>
-								<select size="1" name="D14" class="inputBox" >
-									<option selected>Select</option>
-									<option>Recommended</option>
-									<option>Required</option>
-									<option>Comment</option>
-								</select>
-							</td>
-							<td class="valueC">Rejected<br><input type="radio" value="V1" name="R1b"></td>
-							<td class="valueC">Accepted<br><input type="radio" value="V1" name="R1b"></td>
-							<td class="valueC">Duplicate<br><input type="radio" value="V1" name="R1b"></td>
-						</tr>
-						<tr class="dark">
-							<td class="value" nowrap>
-								<a href="#" class="coderTextGreen">slion</a><br>
-								<a href="pc_review_individual.jsp?role=public&projectTabIndex=0&resolved=true">View Review</a>
-							</td>
-							<td class="valueC">1</td>
-							<td class="value" width="85%">
-								<b>Reviewer Response:</b> Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. Ut wisi enim ad minim veniam, quis nostrud exerci.<br>
-								<div style="padding-top:4px;"><b>Response text:</b> Lorem adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. Ut wisi enim ad minim veniam, quis nostrud exerci.
-							</td>
-							<td class="value">Required</td>
-							<td class="valueC"><input type="radio" value="V1" name="R1cf" checked disabled></td>
-							<td class="valueC"><input type="radio" value="V1" name="R1cf" disabled></td>
-							<td class="valueC"><input type="radio" value="V1" name="R1cf" disabled></td>
-						</tr>
-						<tr class="dark">
-							<td class="value"></td>
-							<td class="valueC"></td>
-							<td class="value" width="85%">
-								<b>Manager Comment:</b><br>
-								<textarea rows="2" name="S4" cols="20" style="font-size: 10px; font-family: sans-serif;width:100%;height:38px;border:1px solid #ccc;margin:0px 3px 3px 3px;"></textarea>
-							</td>
-							<td class="value">
-								<br>
-								<select size="1" name="D14" class="inputBox" >
-									<option selected>Select</option>
-									<option>Recommended</option>
-									<option>Required</option>
-									<option>Comment</option>
-								</select></td>
-							<td class="valueC">Rejected<br><input type="radio" value="V1" name="R1c"></td>
-							<td class="valueC">Accepted<br><input type="radio" value="V1" name="R1c"></td>
-							<td class="valueC">Duplicate<br><input type="radio" value="V1" name="R1c"></td>
-						</tr>
-						
-						<tr>
-							<td class="lastRowTD" colspan="7"></td>
-						</tr>
+										<c:set var="commentNum" value="1" />
+										<c:forEach items="${review.allItems[itemIdx].allComments}" var="comment"> 
+											<c:if test="${(comment.commentType.name eq 'Required') or (comment.commentType.name eq 'Recommended') or (comment.commentType.name eq 'Comment')}">
+												<tr class="dark">
+											           	<td class="value">
+														<a href="#" class="coderTextGreen">qiucx0161</a><br>
+														<a href="pc_review_individual.jsp?role=public&projectTabIndex=0&resolved=true"><bean:message key="editReview.EditAggregation.ViewReview" /></a>
+													</td>
+													<%-- TODO: Localize the following lines--%>
+													<td class="valueC">${commentNum}</td>
+													<td class="value" width="85%">
+														<b><bean:message key="editReview.EditAggregation.ReviewerResponse" /></b>
+														${comment.comment}
+														<br>
+														<div class="showText" id="response_${globalCommentIdx}_off">
+															<html:link href="javascript:toggleDisplay('response_${globalCommentIdx}_off');toggleDisplay('response_${globalCommentIdx}_on');">
+																<html:image srcKey="editReview.EditAggregation.AddResponse.img" altKey="editReview.EditAggregation.AddResponse.img.alt" border="0" />
+															</html:link>
+															<br>
+														</div>
+														<div style="padding-top:4px;" class="hideText" id="response_comment_type${globalCommentIdx}">
+															<b><bean:message key="editReview.EditAggregation.ResponseText" /></b>
+															<br>
+															<html:textarea rows="2" property="response_comment[${globalCommentIdx}]" cols="20" styleClass="inputTextBox" />
+														</div>
+													</td>
+													<td class="value">
+														<html:select size="1" property="response_comment_type[${globalCommentIdx}]" styleClass="inputBox" >
+															<c:forEach items="${allCommentTypes}" var="commentType" >
+																<html:option value="${commentType.id}">${commentType.name}</html:option>
+															</c:forEach>
+														</html:select>
+													</td>
+													<td class="valueC"><html:radio value="Rejected" property="response_accept[${globalCommentIdx}]" /></td>
+													<td class="valueC"><html:radio value="Accepted" property="response_accept[${globalCommentIdx}]" /></td>
+													<td class="valueC"><html:radio value="Duplicate" property="response_accept[${globalCommentIdx}]" /></td>
+												</tr>
+												
+												<c:set var="commentNum" value="${commentNum + 1}" />
+												<c:set var="globalCommentIdx" value="${globalCommentIdx + 1}" />
+											</c:if>
+										</c:forEach>
+										
+										<tr>
+											<td class="lastRowTD" colspan="7"></td>
+										</tr>
+									</c:forEach>
+									
+									<c:set var="itemIdx" value="${itemIdx + 1}" />
 								</c:forEach>
-							</c:forEach>
-						</table>
-					</c:forEach>
+							</table>
+						</c:forEach>
 					
-					<a href="#" onClick="parent.location='javascript:history.go(-1)'">
-					<img src="../images/bttn_save_and_mark_complete.gif" height="18" border="0" align="right" vspace="11"></a><a href="#" onClick="parent.location='javascript:history.go(-1)'"><img src="../images/bttn_save_and_finish_later.gif" height="18" border="0" align="right" vspace="11" hspace="9"></a><a href="#" onClick="parent.location='javascript:history.go(-1)'"><img src="../images/bttn_preview.gif" height="18" border="0" align="right" vspace="11"></a><br><br>
-					
+						<html:hidden property="save" value="" />
+						<html:image onclick="javascript:this.form.save.value='submit';" srcKey="editReview.Button.SaveAndCommit.img" altKey="editReview.Button.SaveAndCommit.alt" border="0" />&#160;
+						<html:image onclick="javascript:this.form.save.value='save';" srcKey="editReview.Button.SaveForLater.img" altKey="editReview.Button.SaveForLater.alt" border="0" />&#160;
+						<html:image onclick="javascript:this.form.save.value='preview';" srcKey="editReview.Button.Preview.img" altKey="editReview.Button.Preview.alt" border="0" />
+						<br />
+						<br />					
 					</html:form>
 				</div>
 				<p><br/><br/><br/></p>
