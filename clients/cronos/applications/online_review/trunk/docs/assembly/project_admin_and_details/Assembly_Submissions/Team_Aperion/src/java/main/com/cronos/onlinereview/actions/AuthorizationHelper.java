@@ -3,11 +3,16 @@
  */
 package com.cronos.onlinereview.actions;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.cronos.onlinereview.external.ExternalUser;
+import com.cronos.onlinereview.external.UserRetrieval;
+import com.cronos.onlinereview.external.impl.DBUserRetrieval;
 import com.topcoder.management.project.Project;
 import com.topcoder.management.project.ProjectManager;
 import com.topcoder.management.project.ProjectManagerImpl;
@@ -36,7 +41,7 @@ public class AuthorizationHelper {
      * This member variable is an integer constant that specifies the value which is used to denote
      * that no user is logged into application.
      */
-    public static final long NO_USER_LOGGED_IN_ID = 0;
+    public static final long NO_USER_LOGGED_IN_ID = -1;
 
     /**
      * Private construcor, just to prevent instantiation of the class.
@@ -89,15 +94,23 @@ public class AuthorizationHelper {
     }
 
     /**
-     * Logs out the user from the application.  If there has been no user logged in, this function
-     * has no effect.
+     * This static method returns the handle of the currently logged in user. This handle is
+     * sometimes needed to audit certain operations.
      *
+     * @return a handle of the user currently logged in, or empty string if such handle has not been
+     *         found, or the user is not logged in. This method never returns <code>null</code>
+     *         value.
      * @param request
-     *            an <code>HttpServletRequest</code> object which the information about the logged
-     *            in user will be stored to.
+     *            the request.
      */
-    public static void logoutTheUser(HttpServletRequest request) {
-        setLoggedInUserId(request, NO_USER_LOGGED_IN_ID);
+    public static String getLoggenInUserHandle(HttpServletRequest request) {
+        // If the user is not logged in, return empty string
+        if (!isUserLoggedIn(request)) {
+            return "";
+        }
+        // Get the value of "userHandle" session attribute
+        String userHandle = (String)request.getSession().getAttribute("userHandle");
+        return (userHandle != null) ? userHandle : "";
     }
 
     /**
@@ -116,30 +129,74 @@ public class AuthorizationHelper {
         // Prepare the set which will contain all the roles the user has
         Set roles = new HashSet();
 
-        // Add "Public" role
+        // Place the set into the request.
+        // It will be populated with the roles a little bit later in this method
+        request.setAttribute("roles", roles);
+
+        // Add "Public" role, as all users will have one out of project's context
         roles.add(Constants.PUBLIC_ROLE_NAME);
+
+        // If the user is not logged in, he cannot have any other roles
+        if (!isUserLoggedIn(request)) {
+            return;
+        }
+
+        // If this function is called the first time after the user has logged in,
+        // obtain and store in the session the handle of the user
+        if (request.getSession().getAttribute("userHandle") == null) {
+            // Obtain an instance of the User Retrieveal object
+            UserRetrieval usrMgr = new DBUserRetrieval("com.topcoder.db.connectionfactory.DBConnectionFactoryImpl");
+            // Get External User object for the currently logged in user
+            ExternalUser extUser = usrMgr.retrieveUser(getLoggedInUserId(request));
+            // Place handle of the user into session as attribute
+            request.getSession().setAttribute("userHandle", extUser.getHandle());
+        }
 
         // Prepare filter to select resources by the External ID of currently logged in user
         Filter filterExtIDname = ResourceFilterBuilder.createExtensionPropertyNameFilter("External Reference ID");
         Filter filterExtIDvalue = ResourceFilterBuilder.createExtensionPropertyValueFilter(
                 String.valueOf(getLoggedInUserId(request)));
         Filter filterExtID = new AndFilter(filterExtIDname, filterExtIDvalue);
+        // Prepare filter to select resources that do not have any project assigned
+        Filter filterNoProject = ResourceFilterBuilder.createNoProjectFilter();
+        // Prepare filterr to select resources that do not have any phase assigned
+        Filter filterNoPhase = ResourceFilterBuilder.createNoPhaseFilter();
 
+        // The list that will contain all the individual
+        // filters that will later be combined by the AndFilter
+        List filters = new ArrayList();
+
+        // Add individual filters to list
+        filters.add(filterExtID);
+/* Awaiting fixes in Resource Management component
+        filters.add(filterNoProject);
+        filters.add(filterNoPhase);*/
+
+        // Create the main filter for this role-gathering operaion
+        Filter filter = new AndFilter(filters);
         // Obtain an instance of Resource Manager
         ResourceManager resMgr = ActionsHelper.createResourceManager();
         // Perform search for resources
-        Resource[] resources = resMgr.searchResources(filterExtID);
+        Resource[] resources = resMgr.searchResources(filter);
 
-        // Iterate over all resources and retrieve their roles
+        // Iterate over all resources retrieved and take into
+        // consideration only those ones that have Manager role
         for (int i = 0; i < resources.length; ++i) {
+            // Temporary workaround until Resource Management component is fixed
+            if (resources[i].getProject() != null || resources[i].getPhase() != null) {
+                continue;
+            }
+
             // Get the role this resource has
             ResourceRole role = resources[i].getResourceRole();
-            // Add the name of the role to the roles set (gather the role)
-            roles.add(role.getName());
+            // If this resource has the Manager role and no projects associated with it
+            if (role.getName().equalsIgnoreCase(Constants.MANAGER_ROLE_NAME)) {
+                // Add Global Manager role to the roles set
+                roles.add(Constants.GLOBAL_MANAGER_ROLE_NAME);
+                // No need to iterate any further
+                break;
+            }
         }
-
-        // Place the set with gathered roles into request
-        request.setAttribute("roles", roles);
     }
 
     /**
@@ -158,24 +215,25 @@ public class AuthorizationHelper {
      *             if any error occurs.
      */
     public static void gatherUserRoles(HttpServletRequest request, long projectId) throws BaseException {
-        // Prepare the set which will contain all the roles the user has
-        Set roles = new HashSet();
+        // Call shorter version of this function first
+        gatherUserRoles(request);
+
+        // At this moment the request shuold have "roles" attribute
+        Set roles = (Set)request.getAttribute("roles");
 
         // Create an instance of Project Manager as some properties for the project should be checked
         ProjectManager projMgr = new ProjectManagerImpl();
-        // Retrieve the project by the specified project ID
+        // Retrieve the project with specified project ID
         Project project = projMgr.getProject(projectId);
 
-        // If project with the specified id does not exist,
-        // simply gather the roles as if shoter version of this funtion has been called
+        // If the project with specified ID does not exist, return
         if (project == null) {
-            gatherUserRoles(request);
             return;
         }
 
-        // If this project is public, add "Public" role to the set
-        if ("Yes".equalsIgnoreCase((String)project.getProperty("Public"))) {
-            roles.add(Constants.PUBLIC_ROLE_NAME);
+        // If this project is not public, remove "Public" role from the set
+        if (!("Yes".equalsIgnoreCase((String)project.getProperty("Public")))) {
+            roles.remove(Constants.PUBLIC_ROLE_NAME);
         }
 
         // Prepare filter to select resources by the External ID of currently logged in user
@@ -186,13 +244,13 @@ public class AuthorizationHelper {
 
         // Create filter to filter only the resources for the project in question
         Filter filterProject = ResourceFilterBuilder.createProjectIdFilter(projectId);
-        // Create combined filter
-        Filter filterCombined = new AndFilter(filterExtID, filterProject);
+        // Create final filter
+        Filter filter = new AndFilter(filterExtID, filterProject);
 
         // Obtain an instance of Resource Manager
         ResourceManager resMgr = ActionsHelper.createResourceManager();
         // Perform search for resources
-        Resource[] resources = resMgr.searchResources(filterCombined);
+        Resource[] resources = resMgr.searchResources(filter);
 
         // Iterate over all resources and retrieve their roles
         for (int i = 0; i < resources.length; ++i) {
@@ -201,9 +259,6 @@ public class AuthorizationHelper {
             // Add the name of the role to the roles set (gather the role)
             roles.add(role.getName());
         }
-
-        // Place the set with gathered roles into request
-        request.setAttribute("roles", roles);
     }
 
     /**

@@ -18,8 +18,6 @@ import org.apache.struts.util.MessageResources;
 import com.topcoder.search.builder.filter.Filter;
 import com.topcoder.util.errorhandling.BaseException;
 
-import com.topcoder.management.project.ConfigurationException;
-import com.topcoder.management.project.PersistenceException;
 import com.topcoder.management.project.Project;
 import com.topcoder.management.project.ProjectCategory;
 import com.topcoder.management.project.ProjectFilterUtility;
@@ -29,7 +27,14 @@ import com.topcoder.management.project.ProjectStatus;
 import com.topcoder.management.project.ProjectType;
 
 /**
- * TODO: Write sensible description for the ProjectActions class here
+ * This class contains Struts Actions that are meant to deal with Projects. There are following
+ * Actions defined in this class:
+ * <ul>
+ * <li>New Project</li>
+ * <li>Edit Project</li>
+ * <li>Save Project</li>
+ * <li>List Projects</li>
+ * </ul>
  * <p>
  * This class is thread-safe as it does not contain any mutable inner state.
  * </p>
@@ -46,13 +51,14 @@ public class ProjectActions extends DispatchAction {
     }
 
     /**
-     * This method is an implementation of "New Project" Struts Action defined for this assembly,
-     * which is supposed to fetch lists of project types and categories from the database and 
-     * pass it to the JSP page to use it for populating approprate drop down lists.
+     * This method is an implementation of &quot;New Project&quot; Struts Action defined for this
+     * assembly, which is supposed to fetch lists of project types and categories from the database
+     * and pass it to the JSP page to use it for populating approprate drop down lists.
      *
-     * @return "success" forward that forwards to the /jsp/editProject.jsp page (as defined in
-     *         struts-config.xml file) in the case of successfull processing,
-     *         "notAuthorized" forward in the case of user not being authorized to perform the action.
+     * @return &quot;success&quot; forward that forwards to the /jsp/editProject.jsp page (as
+     *         defined in struts-config.xml file) in the case of successfull processing,
+     *         &quot;notAuthorized&quot; forward in the case of user not being authorized to perform
+     *         the action.
      * @param mapping
      *            action mapping.
      * @param form
@@ -61,7 +67,8 @@ public class ProjectActions extends DispatchAction {
      *            the http request.
      * @param response
      *            the http response.
-     * @throws BaseException when any error happens while processing in TCS components
+     * @throws BaseException
+     *             when any error happens while processing in TCS components
      */
     public ActionForward newProject(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response)
@@ -71,39 +78,41 @@ public class ProjectActions extends DispatchAction {
 
         // Check if the user has the permission to perform this action
         if(!AuthorizationHelper.hasUserPermission(request, Constants.CREATE_PROJECT_PERM_NAME)) {
-            // If he doesn't have, forward to login page
-            return mapping.findForward("notAuthorized");
+            // If he doesn't, redirect the request to login page
+            return mapping.findForward(Constants.NOT_AUTHORIZED_FORWARD_NAME);
         }
-        
-        // Pass the index of the active tab into request
+
+        // Place the index of the active tab into the request
         request.setAttribute("projectTabIndex", new Integer(3));
-        
+
         // TODO: Complete this method
         // It probably should also retrieve the lists of available scorecards, etc.
 
-        // Create ProjectManager instance
+        // Obtain an instance of Project Manager
         ProjectManager manager = new ProjectManagerImpl();
-        
+
         // Retrieve project types and categories
         ProjectType[] projectTypes = manager.getAllProjectTypes();
         ProjectCategory[] projectCategories = manager.getAllProjectCategories();
-        
+
         // Store the retrieved types and categories in request
         request.setAttribute("projectTypes", projectTypes);
         request.setAttribute("projectCategories", projectCategories);
 
-        // Put the flag to request, that specifies that we are creating new project
+        // Put the flag to request that specifies that we are creating new project
         request.setAttribute("newProject", Boolean.TRUE);
 
-        return mapping.findForward("success");
+        return mapping.findForward(Constants.SUCCESS_FORWARD_NAME);
     }
 
     /**
-     * This method populates the specified DynaActionForm with the values
-     * taken from specified Project.
+     * This method populates the specified DynaActionForm with the values taken from specified
+     * Project.
      *
-     * @param project the project to take the data from
-     * @param form the form to be populated with data
+     * @param project
+     *            the project to take the data from
+     * @param form
+     *            the form to be populated with data
      */
     private void populateProjectForm(Project project, DynaActionForm form) {
         // TODO: Possibly use string constants instead of hardcoded strings
@@ -142,7 +151,7 @@ public class ProjectActions extends DispatchAction {
         // Populate project status notification option
         populateProjectFormProperty(form, Boolean.class, "timeline_notifications", project, "Timeline Notification");
 
-        // TODO : Populate resources and phases
+        // TODO: Populate resources and phases
 
         // Populate project forum name
         populateProjectFormProperty(form, String.class, "forum_name", project, "Forum Name");
@@ -151,20 +160,24 @@ public class ProjectActions extends DispatchAction {
         populateProjectFormProperty(form, String.class, "SVN_module", project, "SVN Module");
     }
 
-
     /**
-     * This method populates as single property of the project form 
-     * by the value taken from the specified Project instance.
+     * This method populates as single property of the project form by the value taken from the
+     * specified Project instance.
      *
-     * @param form the form to populate property of
-     * @param type the type of form property to be populated
-     * @param formProperty the name of form property to be populated
-     * @param project the project to take the value of property of
-     * @param projectProperty the name of project property to take the value of
+     * @param form
+     *            the form to populate property of
+     * @param type
+     *            the type of form property to be populated
+     * @param formProperty
+     *            the name of form property to be populated
+     * @param project
+     *            the project to take the value of property of
+     * @param projectProperty
+     *            the name of project property to take the value of
      */
     private void populateProjectFormProperty(DynaActionForm form, Class type, String formProperty,
             Project project, String projectProperty) {
-  
+
         String value = (String) project.getProperty(projectProperty);
         if (value != null) {
             if (type == String.class) {
@@ -180,15 +193,16 @@ public class ProjectActions extends DispatchAction {
     }
 
     /**
-     * This method is an implementation of "Edit Project" Struts Action defined for this assembly,
-     * which is supposed to fetch lists of project types and categories from the database and 
-     * pass it to the JSP page to use it for populating approprate drop down lists.
-     * It is also supposed to retrieve the project to be deited and to populate the
-     * form with appropriate values.
+     * This method is an implementation of &quot;Edit Project&quot; Struts Action defined for this
+     * assembly, which is supposed to fetch lists of project types and categories from the database
+     * and pass it to the JSP page to use it for populating approprate drop down lists. It is also
+     * supposed to retrieve the project to be edited and to populate the form with appropriate
+     * values.
      *
-     * @return "success" forward that forwards to the /jsp/editProject.jsp page (as defined in
-     *         struts-config.xml file) in the case of successfull processing,
-     *         "notAuthorized" forward in the case of user not being authorized to perform the action.
+     * @return &quot;success&quot; forward that forwards to the /jsp/editProject.jsp page (as
+     *         defined in struts-config.xml file) in the case of successfull processing,
+     *         &quot;notAuthorized&quot; forward in the case of user not being authorized to perform
+     *         the action.
      * @param mapping
      *            action mapping.
      * @param form
@@ -197,26 +211,25 @@ public class ProjectActions extends DispatchAction {
      *            the http request.
      * @param response
      *            the http response.
-     * @throws BaseException when any error happens while processing in TCS components
+     * @throws BaseException
+     *             when any error happens while processing in TCS components.
      */
     public ActionForward editProject(ActionMapping mapping, ActionForm form,
-            HttpServletRequest request, HttpServletResponse response) throws BaseException {
-        
-        // TODO: Complete this method
-
+            HttpServletRequest request, HttpServletResponse response)
+        throws BaseException {
         // Retrieve the id of project to be edited
         long projectId = Long.parseLong(request.getParameter("pid"));
-        
+
         // Gather the roles the user has for current request
         AuthorizationHelper.gatherUserRoles(request, projectId);
-        
+
         // Check if the user has the permission to perform this action
         if(!AuthorizationHelper.hasUserPermission(request, Constants.EDIT_PROJECT_DETAILS_PERM_NAME)) {
             // If he doesn't have, forward to login page
-            return mapping.findForward("notAuthorized");
+            return mapping.findForward(Constants.NOT_AUTHORIZED_FORWARD_NAME);
         }
-        
-        // Create ProjectManager instance
+
+        // Obtain an instance of Project Manager
         ProjectManager manager = new ProjectManagerImpl();
 
         // Retrieve project types and categories
@@ -238,7 +251,7 @@ public class ProjectActions extends DispatchAction {
         // Populate the form with project properties
         populateProjectForm(project, (DynaActionForm) form);
 
-        return mapping.findForward("success");
+        return mapping.findForward(Constants.SUCCESS_FORWARD_NAME);
     }
 
     /**
@@ -253,58 +266,60 @@ public class ProjectActions extends DispatchAction {
      *            the http request.
      * @param response
      *            the http response.
-     * @throws BaseException 
+     * @throws BaseException
      */
     public ActionForward saveProject(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response) throws BaseException {
         // TODO: Complete this method
         // It is actually very-very incomplete just partially demonstrates the functionality
-        // We assume that the project is laways created, edit is not supported yet
-        
+        // We assume that the project is always being created; edit is not supported yet
+
         // Gather the roles the user has for current request
         AuthorizationHelper.gatherUserRoles(request);
-        
+
         // Check if the user has the permission to perform this action
         if(!AuthorizationHelper.hasUserPermission(request, Constants.EDIT_PROJECT_DETAILS_PERM_NAME)) {
-            // If he doesn't have, forward to login page
-            return mapping.findForward("notAuthorized");
+            // If he doesn't, redirect the request to login page
+            return mapping.findForward(Constants.NOT_AUTHORIZED_FORWARD_NAME);
         }
-        
+
         // Obtain an instance of Project Manager
         ProjectManager manager = new ProjectManagerImpl();
-        
+
         // Retrieve project types, categories and statuses
         ProjectType[] projectTypes = manager.getAllProjectTypes();
         ProjectCategory[] projectCategories = manager.getAllProjectCategories();
         ProjectStatus[] projectStatuses = manager.getAllProjectStatuses();
-        
+
         // Create a Project instance
         // TODO: The status should be "Active", not the first met
         // TODO: The category actually should also be different
         Project project = new Project(projectCategories[0], projectStatuses[0]);
 
         DynaActionForm dynaActionForm = (DynaActionForm) form;
-        
+
         // Populate some of the properties of the project
-        
+
         // Populate project name
         project.setProperty("Project Name", dynaActionForm.get("project_name"));
-        
+
         // Populate project eligibility
         project.setProperty("Eligibility", dynaActionForm.get("eligibility"));
         // Populate project public flag
         project.setProperty("Public", dynaActionForm.get("public"));
         // Populate project forum name
-        project.setProperty("Forum Name", dynaActionForm.get("forum_name"));
+        // project.setProperty("Forum Name", dynaActionForm.get("forum_name"));
+        // FIXME: There is no Forum Name, but is Developer
+
         // Populate project SVN module
         project.setProperty("SVN Module", dynaActionForm.get("SVN_module"));
-        
+
         // Create project in persistence level
         // TODO: Use real user name here
         manager.createProject(project, "admin");
-        
-        
-        return mapping.findForward("success");        
+
+
+        return mapping.findForward(Constants.SUCCESS_FORWARD_NAME);
     }
 
     /**
@@ -337,12 +352,12 @@ public class ProjectActions extends DispatchAction {
     }
 
     /**
-     * This method is an implementation of "List Projects" Struts Action defined for this assembly,
-     * which is supposed to fetch list of projects from the database and pass it to the JSP page for
-     * subsequent presentation to the end user.
+     * This method is an implementation of &quot;List Projects&quot; Struts Action defined for this
+     * assembly, which is supposed to fetch list of projects from the database and pass it to the
+     * JSP page for subsequent presentation to the end user.
      *
-     * @return "success" forward that forwards to the /jsp/listProjects.jsp page (as defined in
-     *         struts-config.xml file).
+     * @return &quot;success&quot; forward, which forwards to the /jsp/listProjects.jsp page (as
+     *         defined in struts-config.xml file).
      * @param mapping
      *            action mapping.
      * @param form
@@ -382,7 +397,7 @@ public class ProjectActions extends DispatchAction {
         // This variable will specify the indeex of active tab on the JSP page
         int activeTab;
         Filter projectsFilter = null;
-        
+
         // Determine projects displayed and index of the active tab
         // based on the value of the "scope" parameter
         if (scope.equalsIgnoreCase("my")) {
@@ -472,7 +487,7 @@ public class ProjectActions extends DispatchAction {
         }
 
         int totalProjectsCount = 0;
-        
+
         // Count projects in every type group now
         for (int i = 0; i < projectTypes.length; ++i) {
             for (int j = 0; j < projectCategories.length; ++j) {
