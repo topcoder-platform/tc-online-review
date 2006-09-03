@@ -97,6 +97,16 @@
             <form-property name="commentType" type="java.lang.Long[]" />
             <form-property name="comment" type="java.lang.String[]" />
         </form-bean>
+        
+        
+        <form-bean name="aggregationForm" dynamic="true"
+            type="org.apache.struts.validator.LazyValidatorForm">
+            <form-property name="rid" type="java.lang.Long" />
+            <form-property name="save" type="java.lang.String" />
+            <form-property name="response_comment" type="java.lang.String[]" />
+            <form-property name="response_comment_type" type="java.lang.Long[]" />
+            <form-property name="response_comment_accept" type="java.lang.String[]" />
+        </form-bean>
     </form-beans>
 
 
