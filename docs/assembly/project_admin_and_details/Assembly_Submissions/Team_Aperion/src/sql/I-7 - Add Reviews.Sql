@@ -1,5 +1,5 @@
 INSERT INTO review (review_id, resource_id, submission_id, scorecard_id, committed, create_user, create_date, modify_user, modify_date)
-  VALUES (4000, 209, 3000, 201, 1, 'System', CURRENT, 'System', CURRENT);
+  VALUES (4000, 209, 3000, 201, 0, 'System', CURRENT, 'System', CURRENT);
 
 
 INSERT INTO review_item (review_item_id, review_id, scorecard_question_id, answer, sort, create_user, create_date, modify_user, modify_date)
