@@ -66,6 +66,17 @@ final class CorrectnessCheckResult {
      * </p>
      */
     private Project project = null;
+    
+    /**
+     * This member variable contains a reference to an array of phases assigned to this bean, or
+     * <code>null</code> if no phases has been assigned. This array will contain all phases
+     * defined for the project contained in {@link #project} member variable.
+     * <p>
+     * This member variable is initialized in the constructor and can be accessed or changed via
+     * approptiate get/set methods. The default value for this variable is <code>null</code>.
+     * </p>
+     */
+    private Phase[] phases = null;
 
     /**
      * This member variable contains a reference to a phase assigned to this bean, or
@@ -75,7 +86,7 @@ final class CorrectnessCheckResult {
      * approptiate get/set methods. The default value for this variable is <code>null</code>.
      * </p>
      */
-    private Phase phase = null;
+    private Phase phaseActive = null;
 
     /**
      * This member variable contains a reference to a submission assigned to this bean, or
@@ -202,25 +213,49 @@ final class CorrectnessCheckResult {
     public void setProject(Project project) {
         this.project = project;
     }
+    
+    /**
+     * This method retrieves an array object with phases that could have been assigned to this bean
+     * earlier.
+     * 
+     * @return an instance of the array of <code>Phase</code> objects, or <code>null</code> if
+     *         no phases have been assigned to this bean.
+     */
+    public Phase[] getPhases() {
+        return this.phases;
+    }
+    
+    /**
+     * This method assigns an array of phases objects to this bean. This method always assigns
+     * passed value by reference, i.e. it does not duplicate (clone) the contents of the passed
+     * array.
+     * 
+     * @param phases
+     *            an instance of the array of <code>Phase</code> objects to assign.
+     */
+    public void setPhases(Phase[] phases) {
+        this.phases = phases;
+    }
 
     /**
-     * This method retrieves phase object that could have been assigned to this bean earlier.
-     *
+     * This method retrieves phase object that could have been assigned to this bean earlier. This
+     * phase object denotes an active phase for the project.
+     * 
      * @return an instance of the <code>Phase</code> class, or <code>null</code> if no phase has
      *         been assigned to this bean.
      */
-    public Phase getPhase() {
-        return this.phase;
+    public Phase getActivePhase() {
+        return this.phaseActive;
     }
 
     /**
      * This method assigns a phase object to this bean.
      *
-     * @param project
+     * @param phase
      *            an instance of the <code>Phase</code> class to assign.
      */
-    public void setPhase(Phase phase) {
-        this.phase = phase;
+    public void setActivePhase(Phase phase) {
+        this.phaseActive = phase;
     }
 
     /**
