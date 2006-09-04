@@ -43,6 +43,7 @@ import com.topcoder.management.scorecard.data.Question;
 import com.topcoder.management.scorecard.data.Scorecard;
 import com.topcoder.management.scorecard.data.Section;
 import com.topcoder.project.phases.Phase;
+import com.topcoder.project.phases.PhaseDateComparator;
 import com.topcoder.search.builder.filter.AndFilter;
 import com.topcoder.search.builder.filter.EqualToFilter;
 import com.topcoder.search.builder.filter.Filter;
@@ -339,6 +340,8 @@ public class ProjectReviewActions extends DispatchAction {
 
         // Retrieve a scorecard template for the Screening phase
         Scorecard scorecardTemplate = getScorecardTemplateForPhase(verification, Constants.SCREENING_PHASE_NAME);
+        // Get an active phase for the project
+        getActivePhase(verification, Constants.SCREENING_PHASE_NAME);
         // Retrieve a resource for the Screening phase
         Resource resource = getResourceForPhase(verification, AuthorizationHelper.getLoggedInUserId(request));
         // Get the form defined for this action
@@ -749,6 +752,8 @@ public class ProjectReviewActions extends DispatchAction {
 
         // Retrieve a scorecard template for the Review phase
         Scorecard scorecardTemplate = getScorecardTemplateForPhase(verification, Constants.REVIEW_PHASE_NAME);
+        // Get an active phase for the project
+        getActivePhase(verification, Constants.REVIEW_PHASE_NAME);
         // Retrieve a resource for the Screening phase
         Resource resource = getResourceForPhase(verification, AuthorizationHelper.getLoggedInUserId(request));
         // Get the form defined for this action
@@ -945,9 +950,18 @@ public class ProjectReviewActions extends DispatchAction {
     }
 
     /**
-     * TODO: Write sensible description for method editAggregation here
+     * This method is an implementation of &quot;Edit Aggregation&quot; Struts Action defined for
+     * this assembly, which is supposed to gather needed information (agrregation and review
+     * scorecard template) and present it to editAggregation.jsp page, which will fill the required
+     * fields and post them to the &quot;Save Aggrgation&quot; action. The action implemented by
+     * this method is executed to edit aggregation that has already been created (by the system),
+     * but has not been submitted yet, and hence is supposed to be edited.
      *
-     * @return TODO: Write sensible description of return value for method editAggregation
+     * @return &quot;success&quot; forward, which forwards to the /jsp/editAggregation.jsp page (as
+     *         defined in struts-config.xml file), or &quot;userError&quot; forward, which forwards
+     *         to the /jsp/userError.jsp page, which displays information about an error that is
+     *         usually caused by incorrect user input (such as absent review id, or the lack of
+     *         permissions, etc.).
      * @param mapping
      *            action mapping.
      * @param form
@@ -956,11 +970,34 @@ public class ProjectReviewActions extends DispatchAction {
      *            the http request.
      * @param response
      *            the http response.
+     * @throws BaseException
+     *             if any error occurs.
      */
     public ActionForward editAggregation(ActionMapping mapping, ActionForm form,
-            HttpServletRequest request, HttpServletResponse response) {
-        // TODO: Add implementation of method editAggregation here
-        return null;
+            HttpServletRequest request, HttpServletResponse response)
+        throws BaseException {
+        // Verify that certain requirements are met before processing with the Action
+        CorrectnessCheckResult verification =
+                checkForCorrectReviewId(mapping, request, Constants.PERFORM_AGGREGATION_PERM_NAME);
+        // If any error has occured, return action forward contained in the result bean
+        if (!verification.isSuccessful()) {
+            return verification.getForward();
+        }
+
+        // Retrieve some basic project info (such as icons' names) and place it into request
+        ActionsHelper.retrieveAndStoreBasicProjectInfo(request, verification.getProject(), getResources(request));
+
+        // Retrieve a scorecard template for the Review phase
+        Scorecard scorecardTemplate = getScorecardTemplateForPhase(verification, Constants.REVIEW_PHASE_NAME);
+        // Place Scorecard template in the request
+        request.setAttribute("scorecardTemplate", scorecardTemplate);
+
+        // Get the word "of" for Test Case type of question
+        String wordOf = getResources(request).getMessage("editReview.Question.Response.TestCase.of");
+        // Plase the string into the request as attribute
+        request.setAttribute("wordOf", " "  + wordOf + " ");
+
+        return mapping.findForward(Constants.SUCCESS_FORWARD_NAME);
     }
 
     /**
@@ -1379,6 +1416,8 @@ public class ProjectReviewActions extends DispatchAction {
 
         // Retrieve a scorecard template for the Approval phase
         Scorecard scorecardTemplate = getScorecardTemplateForPhase(verification, Constants.APPROVAL_PHASE_NAME);
+        // Get an active phase for the project
+        getActivePhase(verification, Constants.APPROVAL_PHASE_NAME);
         // Retrieve a resource for the Screening phase
         Resource resource = getResourceForPhase(verification, AuthorizationHelper.getLoggedInUserId(request));
         // Get the form defined for this action
@@ -1878,16 +1917,22 @@ public class ProjectReviewActions extends DispatchAction {
      */
     private static Scorecard getScorecardTemplateForPhase(CorrectnessCheckResult verification, String phaseName)
         throws BaseException {
-        // Obtain an instance of Phase Manager
-        PhaseManager phaseMgr = new DefaultPhaseManager("com.topcoder.management.phase");
+        // Retrieve an array of all phases from the bean
+        Phase[] phases = verification.getPhases();
+        if (phases == null) {
+            // Obtain an instance of Phase Manager
+            PhaseManager phaseMgr = new DefaultPhaseManager("com.topcoder.management.phase");
 
-        // Get all phases for the current project
-        com.topcoder.project.phases.Project phProj = phaseMgr.getPhases(verification.getProject().getId());
-        Phase[] phases = phProj.getAllPhases();
+            // Get all phases for the current project
+            com.topcoder.project.phases.Project phProj = phaseMgr.getPhases(verification.getProject().getId());
+            phases = phProj.getAllPhases(new PhaseDateComparator());
+            // Store array of phases inside the bean
+            verification.setPhases(phases);
+        }
 
         // Iterate over the array of phases
         for (int i = 0; i < phases.length; ++i) {
-            // Get the current phase
+            // Get a phase for the current iteration
             Phase phase = phases[i];
             // If the name of the current phase doesn't equal the value
             // provided in phaseName parameter, continue the search
@@ -1903,9 +1948,6 @@ public class ProjectReviewActions extends DispatchAction {
                 continue;
             }
 
-            // Store the phase into the bean
-            verification.setPhase(phase);
-
             // Convert the ID from text to its numeric representation
             long scorecardId = Long.parseLong(strScorecardId, 10);
             // Obtain an instance of Scorecard Manager
@@ -1919,6 +1961,63 @@ public class ProjectReviewActions extends DispatchAction {
         return null;
     }
 
+    /**
+     * This static method returns the active phase for a project. If there is more than one active
+     * phase for the project at some stage, the <code>phaseName</code> parameter can be used to
+     * specify the name of the phase that is expected to be active
+     *
+     * @return the active phase, or <code>null</code> if there is no active phase with specified
+     *         name or there is some error in the database.
+     * @param verification
+     *            a bean containing additional information such as the project which an active phase
+     *            should be retrieved for. On return this bean will contain the list of all phases
+     *            for the project, as well as the active phase if such phase has been found.
+     * @param phaseName
+     *            Optional name of the phase to search for if there is a possiblity that more than
+     *            one phase is active.
+     * @throws BaseException
+     *             if any error occurs.
+     */
+    private static Phase getActivePhase(CorrectnessCheckResult verification, String phaseName)
+        throws BaseException {
+        // Retrieve an array of all phases from the bean
+        Phase[] phases = verification.getPhases();
+        if (phases == null) {
+            // Obtain an instance of Phase Manager
+            PhaseManager phaseMgr = new DefaultPhaseManager("com.topcoder.management.phase");
+
+            // Get all phases for the current project
+            com.topcoder.project.phases.Project phProj = phaseMgr.getPhases(verification.getProject().getId());
+            phases = phProj.getAllPhases(new PhaseDateComparator());
+            // Store array of phases inside the bean
+            verification.setPhases(phases);
+        }
+
+        for (int i = 0; i < phases.length; ++i) {
+            Phase phase = phases[i];
+            String strPhaseStatus = phase.getPhaseStatus().getName();
+            // Skip already closed phase
+            if (strPhaseStatus.equalsIgnoreCase("Closed")) {
+                continue;
+            }
+            // There is no active phase with specified name, or there is an error in database
+/* TODO: Uncomment this when phases have correct status
+            if (strPhaseStatus.equalsIgnoreCase("Sheduled")) {
+                return null;
+            }
+*/
+            // If the name of the phase was not specified,
+            // or the name of the current phase equals desired name, return this phase
+            if (phaseName == null || phaseName.equalsIgnoreCase(phase.getPhaseType().getName())) {
+                // Store the phase found into the bean
+                verification.setActivePhase(phase);
+                // Return it
+                return phase;
+            }
+        }
+        return null;
+    }
+
     private static Resource getResourceForPhase(CorrectnessCheckResult verification, long extUserId)
         throws BaseException {
         // Prepare filter to select resource by the External ID of the user
@@ -1929,7 +2028,7 @@ public class ProjectReviewActions extends DispatchAction {
         // Prepare filter to select resource by project ID
         Filter filterProject = ResourceFilterBuilder.createProjectIdFilter(verification.getProject().getId());
         // Prepare filterr to select resource by phase ID
-        Filter filterPhase = ResourceFilterBuilder.createPhaseIdFilter(verification.getPhase().getId());
+        Filter filterPhase = ResourceFilterBuilder.createPhaseIdFilter(verification.getActivePhase().getId());
 
         // The list that will contain all the individual
         // filters that will later be combined by the AndFilter
