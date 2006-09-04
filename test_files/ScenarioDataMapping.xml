@@ -1,8 +1,0 @@
-<?xml version="1.0" ?>
-<CMConfig>
-  <Config name="com.topcoder.onlinereview.migration.ScenarioDataMapping">
-      <Property name="project_id">
-        <Value>Screening</Value>
-      </Property>
-</Config>
-</CMConfig>   
