@@ -128,7 +128,6 @@ window.onload=do_onload
 				<div id="mainMiddleContent">
 					<jsp:include page="../includes/project/project_info.jsp" /><br />
 
-					<div style="color:red;font-weight:bold;font-size:12pt;padding-bottom:16px;">Note: some content that follows after this line is static.</div>
 					<% request.setAttribute("role", "Manager"); %>
 					<% request.setAttribute("phaseIndex", new Integer(1)); %>
 					<% request.setAttribute("time", "during"); %>
