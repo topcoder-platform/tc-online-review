@@ -1,8 +1,0 @@
-<?xml version="1.0" ?>
-<CMConfig>
-    <Config name="com.topcoder.onlinereview.migration.Configuration">
-        <Property name="preloads">
-            <Value>data_migration.xml</Value>
-        </Property>
-    </Config>
-</CMConfig>
