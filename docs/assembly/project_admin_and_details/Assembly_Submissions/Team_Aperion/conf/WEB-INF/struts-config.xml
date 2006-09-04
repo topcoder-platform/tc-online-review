@@ -97,8 +97,7 @@
             <form-property name="commentType" type="java.lang.Long[]" />
             <form-property name="comment" type="java.lang.String[]" />
         </form-bean>
-        
-        
+
         <form-bean name="aggregationForm" dynamic="true"
             type="org.apache.struts.validator.LazyValidatorForm">
             <form-property name="rid" type="java.lang.Long" />
@@ -396,6 +395,7 @@
         <action path="/actions/CreateAggregation" unknown="false"
             type="com.cronos.onlinereview.actions.ProjectReviewActions"
             parameter="method" scope="request"
+            name="aggregationForm"
             input="/jsp/viewProjectDetails.jsp">
             <forward name="success" path="/jsp/editAggregation.jsp" redirect="false"/>
         </action>
@@ -404,6 +404,7 @@
         <action path="/actions/EditAggregation" unknown="false"
             type="com.cronos.onlinereview.actions.ProjectReviewActions"
             parameter="method" scope="request"
+            name="aggregationForm"
             input="/jsp/viewProjectDetails.jsp">
             <forward name="success" path="/jsp/editAggregation.jsp" redirect="false"/>
         </action>
@@ -412,6 +413,7 @@
         <action path="/actions/SaveAggregation" unknown="false"
             type="com.cronos.onlinereview.actions.ProjectReviewActions"
             parameter="method" scope="request"
+            name="aggregationForm"
             input="/jsp/editAggregation.jsp">
             <forward name="preview" path="/jsp/viewAggregation.jsp" redirect="false"/>
             <forward name="success" path="/actions/ViewProjectDetails?method=viewProjectDetails" redirect="false"/>
