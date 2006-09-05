@@ -1680,17 +1680,17 @@
                     <Property name="scorecardType">
                         <Value>scorecard.scorecard_type_id</Value>
                     </Property>
-                    <Property name="submission">
-                        <Value>review.submission_id</Value>
-                    </Property>
                     <Property name="reviewer">
                         <Value>review.resource_id</Value>
                     </Property>
+                    <Property name="submission">
+                        <Value>review.submission_id</Value>
+                    </Property>
+                    <Property name="committed">
+                        <Value>review.committed</Value>
+                    </Property>
                     <Property name="project">
                         <Value>resource.project_id</Value>
-                    </Property>
-                    <Property name="commited">
-                        <Value>review.committed</Value>
                     </Property>
                 </Property>
             </Property>
