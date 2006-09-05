@@ -12,10 +12,8 @@ import javax.servlet.http.HttpServletRequest;
 
 import com.cronos.onlinereview.external.ExternalUser;
 import com.cronos.onlinereview.external.UserRetrieval;
-import com.cronos.onlinereview.external.impl.DBUserRetrieval;
 import com.topcoder.management.project.Project;
 import com.topcoder.management.project.ProjectManager;
-import com.topcoder.management.project.ProjectManagerImpl;
 import com.topcoder.management.resource.Resource;
 import com.topcoder.management.resource.ResourceManager;
 import com.topcoder.management.resource.ResourceRole;
@@ -145,7 +143,7 @@ public class AuthorizationHelper {
         // obtain and store in the session the handle of the user
         if (request.getSession().getAttribute("userHandle") == null) {
             // Obtain an instance of the User Retrieveal object
-            UserRetrieval usrMgr = new DBUserRetrieval("com.topcoder.db.connectionfactory.DBConnectionFactoryImpl");
+            UserRetrieval usrMgr = ActionsHelper.createUserRetrieval(request);
             // Get External User object for the currently logged in user
             ExternalUser extUser = usrMgr.retrieveUser(getLoggedInUserId(request));
             // Place handle of the user into session as attribute
@@ -175,7 +173,7 @@ public class AuthorizationHelper {
         // Create the main filter for this role-gathering operaion
         Filter filter = new AndFilter(filters);
         // Obtain an instance of Resource Manager
-        ResourceManager resMgr = ActionsHelper.createResourceManager();
+        ResourceManager resMgr = ActionsHelper.createResourceManager(request);
         // Perform search for resources
         Resource[] resources = resMgr.searchResources(filter);
 
@@ -218,11 +216,11 @@ public class AuthorizationHelper {
         // Call shorter version of this function first
         gatherUserRoles(request);
 
-        // At this moment the request shuold have "roles" attribute
+        // At this moment the request should have "roles" attribute
         Set roles = (Set)request.getAttribute("roles");
 
-        // Create an instance of Project Manager as some properties for the project should be checked
-        ProjectManager projMgr = new ProjectManagerImpl();
+        // Create an instance of Project Manager
+        ProjectManager projMgr = ActionsHelper.createProjectManager(request);
         // Retrieve the project with specified project ID
         Project project = projMgr.getProject(projectId);
 
@@ -244,13 +242,15 @@ public class AuthorizationHelper {
 
         // Create filter to filter only the resources for the project in question
         Filter filterProject = ResourceFilterBuilder.createProjectIdFilter(projectId);
-        // Create final filter
+        // Create combined final filter
         Filter filter = new AndFilter(filterExtID, filterProject);
 
         // Obtain an instance of Resource Manager
-        ResourceManager resMgr = ActionsHelper.createResourceManager();
+        ResourceManager resMgr = ActionsHelper.createResourceManager(request);
         // Perform search for resources
         Resource[] resources = resMgr.searchResources(filter);
+        // Plase resources for currently logged in user into the request
+        request.setAttribute("myResources", resources);
 
         // Iterate over all resources and retrieve their roles
         for (int i = 0; i < resources.length; ++i) {
