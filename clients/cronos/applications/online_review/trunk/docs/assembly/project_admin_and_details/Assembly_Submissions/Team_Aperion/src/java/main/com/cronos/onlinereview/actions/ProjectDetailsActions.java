@@ -19,12 +19,9 @@ import org.apache.struts.util.MessageResources;
 
 import com.cronos.onlinereview.external.ExternalUser;
 import com.cronos.onlinereview.external.UserRetrieval;
-import com.cronos.onlinereview.external.impl.DBUserRetrieval;
-import com.topcoder.management.phase.DefaultPhaseManager;
 import com.topcoder.management.phase.PhaseManager;
 import com.topcoder.management.project.Project;
 import com.topcoder.management.project.ProjectManager;
-import com.topcoder.management.project.ProjectManagerImpl;
 import com.topcoder.management.resource.Notification;
 import com.topcoder.management.resource.Resource;
 import com.topcoder.management.resource.ResourceManager;
@@ -101,7 +98,7 @@ public class ProjectDetailsActions extends DispatchAction {
         ActionsHelper.retrieveAndStoreBasicProjectInfo(request, project, messages);
 
         // Obtain an instance of Phase Manager
-        PhaseManager phaseMgr = new DefaultPhaseManager("com.topcoder.management.phase");
+        PhaseManager phaseMgr = ActionsHelper.createPhaseManager(request);
 
         com.topcoder.project.phases.Project phProj = phaseMgr.getPhases(project.getId());
         Phase[] phases = phProj.getAllPhases(new PhaseDateComparator());
@@ -136,7 +133,7 @@ public class ProjectDetailsActions extends DispatchAction {
         request.setAttribute("originalStart", originalStart);
         request.setAttribute("originalEnd", originalEnd);
 
-        ResourceManager resMgr = ActionsHelper.createResourceManager();
+        ResourceManager resMgr = ActionsHelper.createResourceManager(request);
 
         if (AuthorizationHelper.hasUserPermission(request, Constants.VIEW_PROJECT_RESOURCES_PERM_NAME)) {
             Filter filterProject = ResourceFilterBuilder.createProjectIdFilter(project.getId());
@@ -149,7 +146,7 @@ public class ProjectDetailsActions extends DispatchAction {
                 extUserIds[i] = Long.valueOf(userID).longValue();
             }
 
-            UserRetrieval usrMgr = new DBUserRetrieval("com.topcoder.db.connectionfactory.DBConnectionFactoryImpl");
+            UserRetrieval usrMgr = ActionsHelper.createUserRetrieval(request);
             ExternalUser[] extUsers = usrMgr.retrieveUsers(extUserIds);
 
             ExternalUser[] users = new ExternalUser[resources.length];
@@ -482,7 +479,7 @@ public class ProjectDetailsActions extends DispatchAction {
         }
 
         // Obtain an instance of Project Manager
-        ProjectManager projMgr = new ProjectManagerImpl();
+        ProjectManager projMgr = ActionsHelper.createProjectManager(request);
         // Store ProjectManager object as the third returned value
         result.add(projMgr);
         // Get Project by its id
