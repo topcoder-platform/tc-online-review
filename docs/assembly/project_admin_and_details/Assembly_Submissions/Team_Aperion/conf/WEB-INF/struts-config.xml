@@ -326,6 +326,7 @@
             name="reviewForm"
             input="/jsp/viewProjectDetails.jsp">
             <forward name="success" path="/jsp/editReview.jsp" redirect="false"/>
+            <forward name="edit" path="/actions/EditScreening.do?method=editScreening" redirect="true"/>
         </action>
 
         <!-- "Edit Screening" action -->
@@ -362,6 +363,7 @@
             name="reviewForm"
             input="/jsp/viewProjectDetails.jsp">
             <forward name="success" path="/jsp/editReview.jsp" redirect="false"/>
+            <forward name="edit" path="/actions/EditReview.do?method=editReview" redirect="true"/>
         </action>
 
         <!-- "Edit Review" action -->
@@ -492,6 +494,7 @@
             name="reviewForm"
             input="/jsp/viewProjectDetails.jsp">
             <forward name="success" path="/jsp/editReview.jsp" redirect="false"/>
+            <forward name="edit" path="/actions/EditApproval.do?method=editApproval" redirect="true"/>
         </action>
 
         <!-- "Edit Approval" action -->
