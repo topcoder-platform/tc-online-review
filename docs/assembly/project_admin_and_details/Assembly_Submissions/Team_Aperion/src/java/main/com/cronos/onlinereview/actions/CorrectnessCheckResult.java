@@ -6,12 +6,8 @@ package com.cronos.onlinereview.actions;
 import org.apache.struts.action.ActionForward;
 
 import com.topcoder.management.deliverable.Submission;
-import com.topcoder.management.deliverable.UploadManager;
 import com.topcoder.management.project.Project;
-import com.topcoder.management.project.ProjectManager;
 import com.topcoder.management.review.data.Review;
-import com.topcoder.management.scorecard.data.Scorecard;
-import com.topcoder.project.phases.Phase;
 
 /**
  * This class is bean that provides a convenient way to return several values from some checkForXXX
@@ -38,26 +34,6 @@ final class CorrectnessCheckResult {
     private ActionForward forward = null;
 
     /**
-     * This member variable contains a reference to Project Manager assigned to this bean, or
-     * <code>null</code> if no Project Manager has been assigned.
-     * <p>
-     * This member variable is initialized in the constructor and can be accessed or changed via
-     * approptiate get/set methods. The default value for this variable is <code>null</code>.
-     * </p>
-     */
-    private ProjectManager projectManager = null;
-
-    /**
-     * This member variable contains a reference to Upload Manager assigned to this bean, or
-     * <code>null</code> if no Upload Manager has been assigned.
-     * <p>
-     * This member variable is initialized in the constructor and can be accessed or changed via
-     * approptiate get/set methods. The default value for this variable is <code>null</code>.
-     * </p>
-     */
-    private UploadManager uploadManager = null;
-
-    /**
      * This member variable contains a reference to a project assigned to this bean, or
      * <code>null</code> if no project has been assigned.
      * <p>
@@ -66,27 +42,6 @@ final class CorrectnessCheckResult {
      * </p>
      */
     private Project project = null;
-    
-    /**
-     * This member variable contains a reference to an array of phases assigned to this bean, or
-     * <code>null</code> if no phases has been assigned. This array will contain all phases
-     * defined for the project contained in {@link #project} member variable.
-     * <p>
-     * This member variable is initialized in the constructor and can be accessed or changed via
-     * approptiate get/set methods. The default value for this variable is <code>null</code>.
-     * </p>
-     */
-    private Phase[] phases = null;
-
-    /**
-     * This member variable contains a reference to a phase assigned to this bean, or
-     * <code>null</code> if no phase has been assigned.
-     * <p>
-     * This member variable is initialized in the constructor and can be accessed or changed via
-     * approptiate get/set methods. The default value for this variable is <code>null</code>.
-     * </p>
-     */
-    private Phase phaseActive = null;
 
     /**
      * This member variable contains a reference to a submission assigned to this bean, or
@@ -107,16 +62,6 @@ final class CorrectnessCheckResult {
      * </p>
      */
     private Review review = null;
-
-    /**
-     * This member variable contains a reference to a scorecard template assigned to this bean, or
-     * <code>null</code> if no scorecard template has been assigned.
-     * <p>
-     * This member variable is initialized in the constructor and can be accessed or changed via
-     * approptiate get/set methods. The default value for this variable is <code>null</code>.
-     * </p>
-     */
-    private Scorecard scorecardTemplate = null;
 
 
     // -------------------------------------------------------------------------- Constructor -----
@@ -153,48 +98,6 @@ final class CorrectnessCheckResult {
     }
 
     /**
-     * This method retrieves project manager object that could have been assigned to this bean
-     * earlier.
-     *
-     * @return an instance of the <code>ProjectManager</code> class, or <code>null</code> if no
-     *         project manager has been assigned to this bean.
-     */
-    public ProjectManager getProjectManager() {
-        return this.projectManager;
-    }
-
-    /**
-     * This method assigns a project manager object to this bean.
-     *
-     * @param projectManager
-     *            an instance of the <code>ProjectManager</code> class to assign.
-     */
-    public void setProjectManager(ProjectManager projectManager) {
-        this.projectManager = projectManager;
-    }
-
-    /**
-     * This method retrieves upload manager object that could have been assigned to this bean
-     * earlier.
-     *
-     * @return an instance of the <code>UploadManager</code> class, or <code>null</code> if no
-     *         upload manager has been assigned to this bean.
-     */
-    public UploadManager getUploadManager() {
-        return this.uploadManager;
-    }
-
-    /**
-     * This method assigns an upload manager object to this bean.
-     *
-     * @param uploadManager
-     *            an instance of the <code>UploadManager</code> class to assign.
-     */
-    public void setUploadManager(UploadManager uploadManager) {
-        this.uploadManager = uploadManager;
-    }
-
-    /**
      * This method retrieves project object that could have been assigned to this bean earlier.
      *
      * @return an instance of the <code>Project</code> class, or <code>null</code> if no project
@@ -212,50 +115,6 @@ final class CorrectnessCheckResult {
      */
     public void setProject(Project project) {
         this.project = project;
-    }
-    
-    /**
-     * This method retrieves an array object with phases that could have been assigned to this bean
-     * earlier.
-     * 
-     * @return an instance of the array of <code>Phase</code> objects, or <code>null</code> if
-     *         no phases have been assigned to this bean.
-     */
-    public Phase[] getPhases() {
-        return this.phases;
-    }
-    
-    /**
-     * This method assigns an array of phases objects to this bean. This method always assigns
-     * passed value by reference, i.e. it does not duplicate (clone) the contents of the passed
-     * array.
-     * 
-     * @param phases
-     *            an instance of the array of <code>Phase</code> objects to assign.
-     */
-    public void setPhases(Phase[] phases) {
-        this.phases = phases;
-    }
-
-    /**
-     * This method retrieves phase object that could have been assigned to this bean earlier. This
-     * phase object denotes an active phase for the project.
-     * 
-     * @return an instance of the <code>Phase</code> class, or <code>null</code> if no phase has
-     *         been assigned to this bean.
-     */
-    public Phase getActivePhase() {
-        return this.phaseActive;
-    }
-
-    /**
-     * This method assigns a phase object to this bean.
-     *
-     * @param phase
-     *            an instance of the <code>Phase</code> class to assign.
-     */
-    public void setActivePhase(Phase phase) {
-        this.phaseActive = phase;
     }
 
     /**
@@ -296,27 +155,6 @@ final class CorrectnessCheckResult {
      */
     public void setReview(Review review) {
         this.review = review;
-    }
-
-    /**
-     * This method retrieves scorecard template object that could have been assigned to this bean
-     * earlier.
-     *
-     * @return an instance of the <code>Scorecard</code> class, or <code>null</code> if no
-     *         scorecard template has been assigned to this bean.
-     */
-    public Scorecard getScorecard() {
-        return this.scorecardTemplate;
-    }
-
-    /**
-     * This method assigns a scorecard template object to this bean.
-     *
-     * @param review
-     *            an instance of the <code>Scorecard</code> class to assign.
-     */
-    public void setScorecard(Scorecard scorecardTemplate) {
-        this.scorecardTemplate = scorecardTemplate;
     }
 
 
