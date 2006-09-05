@@ -3,6 +3,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="html" uri="/tags/struts-html" %>
 <%@ taglib prefix="bean" uri="/tags/struts-bean" %>
+<%@ taglib prefix="tc-webtag" uri="/tags/tc-webtags" %>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
 
@@ -112,12 +113,14 @@
 										<c:forEach items="${review.allItems}" var="item">
 											<c:set var="commentNum" value="1" />
 											<c:if test="${item.question == question.id}">
-												<c:forEach items="${item.allComments}" var="comment">
+												<c:forEach items="${item.allComments}" var="comment" varStatus="commentStatus">
 													<c:if test="${(comment.commentType.name eq 'Required') or (comment.commentType.name eq 'Recommended') or (comment.commentType.name eq 'Comment')}">
 														<tr class="dark">
 															<td class="value">
-																<a href="#" class="coderTextGreen">qiucx0161</a><br />
-																<a href="pc_review_individual.jsp?role=public&projectTabIndex=0&resolved=true"><bean:message key="editReview.EditAggregation.ViewReview" /></a>
+																<c:if test="${commentStatus.index == 0}">
+																	<a href="#" class="coderTextGreen">qiucx0161</a><br />
+																	<a href="pc_review_individual.jsp?role=public&projectTabIndex=0&resolved=true"><bean:message key="editReview.EditAggregation.ViewReview" /></a>
+																</c:if>
 															</td>
 															<td class="valueC">${commentNum}</td>
 															<td class="value" width="85%">
