@@ -22,7 +22,6 @@ import com.topcoder.management.project.Project;
 import com.topcoder.management.project.ProjectCategory;
 import com.topcoder.management.project.ProjectFilterUtility;
 import com.topcoder.management.project.ProjectManager;
-import com.topcoder.management.project.ProjectManagerImpl;
 import com.topcoder.management.project.ProjectStatus;
 import com.topcoder.management.project.ProjectType;
 import com.topcoder.management.resource.ResourceManager;
@@ -91,7 +90,7 @@ public class ProjectActions extends DispatchAction {
         // It probably should also retrieve the lists of available scorecards, etc.
 
         // Obtain an instance of Project Manager
-        ProjectManager manager = new ProjectManagerImpl();
+        ProjectManager manager = ActionsHelper.createProjectManager(request);
 
         // Retrieve project types and categories
         ProjectType[] projectTypes = manager.getAllProjectTypes();
@@ -100,9 +99,9 @@ public class ProjectActions extends DispatchAction {
         // Store the retrieved types and categories in request
         request.setAttribute("projectTypes", projectTypes);
         request.setAttribute("projectCategories", projectCategories);
-        
+
         // Obtain an instance of Resource Manager
-        ResourceManager resMgr = ActionsHelper.createResourceManager();
+        ResourceManager resMgr = ActionsHelper.createResourceManager(request);
         // Get all types of resource roles
         ResourceRole[] resourceRoles = resMgr.getAllResourceRoles();
         // Place resource roles into the request as attribute
@@ -236,7 +235,7 @@ public class ProjectActions extends DispatchAction {
         }
 
         // Obtain an instance of Project Manager
-        ProjectManager manager = new ProjectManagerImpl();
+        ProjectManager manager = ActionsHelper.createProjectManager(request);
 
         // Retrieve project types and categories
         ProjectType[] projectTypes = manager.getAllProjectTypes();
@@ -287,7 +286,7 @@ public class ProjectActions extends DispatchAction {
         }
 
         // Obtain an instance of Project Manager
-        ProjectManager manager = new ProjectManagerImpl();
+        ProjectManager manager = ActionsHelper.createProjectManager(request);
 
         // Retrieve project types, categories and statuses
         ProjectType[] projectTypes = manager.getAllProjectTypes();
@@ -394,7 +393,7 @@ public class ProjectActions extends DispatchAction {
         }
 
         // Obtain an instance of Project Manager
-        ProjectManager manager = new ProjectManagerImpl();
+        ProjectManager manager = ActionsHelper.createProjectManager(request);
         // This variable will specify the indeex of active tab on the JSP page
         int activeTab;
         Filter projectsFilter = null;
