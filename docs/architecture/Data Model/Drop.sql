@@ -1,3 +1,6 @@
+DROP TABLE default_scorecard;
+
+
 DROP TABLE screening_result;
 DROP TABLE screening_response_lu;
 DROP TABLE response_severity_lu;

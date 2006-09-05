@@ -198,7 +198,7 @@ CREATE TABLE project_phase (
   scheduled_end_time            DATETIME YEAR TO FRACTION(3)    NOT NULL,
   actual_start_time             DATETIME YEAR TO FRACTION(3),
   actual_end_time               DATETIME YEAR TO FRACTION(3),
-  duration                      DECIMAL(16, 0)     							NOT NULL,
+  duration                      DECIMAL(16, 0)                  NOT NULL,
   create_user                   VARCHAR(64)                     NOT NULL,
   create_date                   DATETIME YEAR TO FRACTION(3)    NOT NULL,
   modify_user                   VARCHAR(64)                     NOT NULL,
@@ -590,4 +590,22 @@ CREATE TABLE screening_result (
     REFERENCES screening_task(screening_task_id),
   FOREIGN KEY(screening_response_id)
     REFERENCES screening_response_lu(screening_response_id)
+);
+
+
+CREATE TABLE default_scorecard (
+  project_category_id           INTEGER                         NOT NULL,
+  scorecard_type_id             INTEGER                         NOT NULL,
+  scorecard_id                  INTEGER                         NOT NULL,
+  create_user                   VARCHAR(64)                     NOT NULL,
+  create_date                   DATETIME YEAR TO FRACTION(3)    NOT NULL,
+  modify_user                   VARCHAR(64)                     NOT NULL,
+  modify_date                   DATETIME YEAR TO FRACTION(3)    NOT NULL,
+  PRIMARY KEY(project_category_id, scorecard_type_id),
+  FOREIGN KEY(project_category_id)
+    REFERENCES project_category_lu(project_category_id),
+  FOREIGN KEY(scorecard_type_id)
+    REFERENCES scorecard_type_lu(scorecard_type_id),
+  FOREIGN KEY(scorecard_id)
+    REFERENCES scorecard(scorecard_id)
 );
