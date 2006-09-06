@@ -1,17 +1,43 @@
-<html>
-
-<head>
-	<meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
-	<link type="text/css" rel="stylesheet" href="http://www.topcoder.com/css/style.css">
-	<link type="text/css" rel="stylesheet" href="css/coders.css">
-	<link type="text/css" rel="stylesheet" href="http://www.topcoder.com/css/stats.css">
-	<link type="text/css" rel="stylesheet" href="http://www.topcoder.com/css/tcStyles.css"><title>Timeline</title>
-	<title>Timeline</title>
-</head>
-
-<body topmargin="0" leftmargin="0" rightmargin="0" bottommargin="0" marginwidth="0" marginheight="0">
-	<table class="stat" style="border:none;" cellpadding="0" cellspacing="0" width="100%" id="table1">
-		<tr><td class="header" nowrap colspan="19">&nbsp;</td></tr>
+	<table class="stat" cellpadding="0" cellspacing="0" style="border:none;" width="100%">
+		<tr class="header">
+			<td class="header">&#160;</td>
+		</tr>
+		<tr class="light">
+			<td class="ganttRow">
+				<table>
+					<tr>
+						<td width="0"><img width="0" src="../i/clear.gif" height="0" /></td>
+						<td class="phase"><div style="width:100px;">Registration</div></td>
+						<td class="length">100 hrs</td>
+					</tr>
+				</table>
+			</td>
+		</tr>
+		<tr class="dark">
+			<td class="ganttRow">
+				<table>
+					<tr>
+						<td width="90"><img width="90" src="../i/clear.gif" height="1" /></td>
+						<td class="phase"><div style="width:120px;">Screening</div></td>
+						<td class="length">120 hrs</td>
+					</tr>
+				</table>
+			</td>
+		</tr>
+		<tr class="light">
+			<td class="ganttRow">
+				<table>
+					<tr>
+						<td width="210"><img width="210" src="../i/clear.gif" height="1" /></td>
+						<td class="phase"><div style="width:240px;">ttt</div></td>
+						<td class="length">240 hrs</td>
+					</tr>
+				</table>
+			</td>
+		</tr>
+	</table>
+<%--
+	<table class="stat" style="border:none;" cellpadding="0" cellspacing="0">
 		<tr class="dark">
 			<td class="valueC" nowrap colspan="2" bgcolor="#818181">
 				<a href="javascript:flipLayer('layer1')" target="_top"><font color="#FFFFFF"><b>Registration</b></font></a>
@@ -88,5 +114,4 @@
 			<td class="valueC" nowrap> <p style="text-align: left">24 hrs</td>
 		</tr>
 	</table>	
-</body>
-</html>
+--%>
