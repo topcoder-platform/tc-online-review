@@ -4,9 +4,9 @@
 <%@ taglib prefix="bean" uri="/tags/struts-bean" %>
 <%@ page import="com.cronos.onlinereview.actions.AuthorizationHelper" %>
 <%@ page import="com.cronos.onlinereview.actions.Constants" %>
-	<table class="stat" cellpadding="0" cellspacing="0" width="100%" style="border-bottom: 1px solid #999999;">
+	<table class="stat" cellpadding="0" cellspacing="0" width="100%" style="table-layout: fixed; border-bottom: 1px solid #999999;">
 		<tr>
-			<td class="title"><bean:message key="viewProjectDetails.box.Timeline" /></td>
+			<td class="title" width="392"><bean:message key="viewProjectDetails.box.Timeline" /></td>
 			<%
 				if (AuthorizationHelper.hasUserPermission(request, Constants.SET_TL_NOTIFY_PERM_NAME)) {
 			%>
@@ -23,8 +23,8 @@
 			%>
 		</tr>
 		<tr>
-			<td width="392" valign="top" style="border-bottom: 1px solid #999999;">
-				<table class="stat" cellpadding="0" cellspacing="0" border="0" style="border:none;width:392px;">
+			<td valign="top" style="overflow:visible;border-bottom: 1px solid #999999;">
+				<table class="stat" cellpadding="0" cellspacing="0" border="0" style="width:100%;table-layout:auto;border:none;">
 					<tr>
 						<td class="header"><bean:message key="viewProjectDetails.Timeline.Phase" /></td>
 						<td class="headerC"><bean:message key="viewProjectDetails.Timeline.Status" /></td>
@@ -66,10 +66,10 @@
 					</c:forEach>
 				</table>
 			</td>
-			<td valign="top" width="100%" bgcolor="#F7F7F7" style="border-bottom: 1px solid #999999;">
-				<iframe name="I1" src="../includes/Timelines/ganttChart.jsp" width="100%" height="189" marginwidth="1" marginheight="1" border="0" frameborder="0">
-					<bean:message key="error.InlineFrameNotSupported" />
-				</iframe>
+			<td valign="top" bgcolor="#F7F7F7" style="border-bottom: 1px solid #999999;">
+				<div style="width:100%; overflow:scroll; overflow-y:visible;">
+					<jsp:include page="../Timelines/ganttChart.jsp" />
+				</div>
 			</td>
 		</tr>
 		<tr>
