@@ -3,6 +3,8 @@
  */
 package com.cronos.onlinereview.actions;
 
+import java.util.regex.Pattern;
+
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.struts.action.ActionErrors;
@@ -36,14 +38,11 @@ import com.topcoder.search.builder.filter.Filter;
  * </p>
  * 
  * @version 1.0
- * @author TCSDEVELOPER
+ * @author albertwang, flying2hk
  */
 public class ScorecardForm extends ActionForm {
-    /** Maximum length allowed for scorecard version. */
-    private static final int VERSION_MAXLENGTH = 16;
-
-    /** Maximum length allowed for name. */
-    private static final int NAME_MAXLENGTH = 64;
+    /** Regular expression for scorecard version. */
+    private static final String VERSION_REGEX = "^\\d+.\\d+$";
 
     /** Epsilon used in float number comparison. */
     private static final float EPS = 1e-9f;
@@ -74,6 +73,11 @@ public class ScorecardForm extends ActionForm {
     private String maxScoreText;
 
     /**
+     * Old version before editing.
+     */
+    private String oldVersion;
+
+    /**
      * If the scorecard name editable.
      */
     private boolean scorecardNameEditable;
@@ -94,29 +98,6 @@ public class ScorecardForm extends ActionForm {
     private boolean copy;
 
     /**
-     * The group index at which the "addXXX"/"removeXXX" operation will be
-     * committed.
-     */
-    private int groupIndex = -1;
-
-    /**
-     * The section index at which the "addXXX"/"removeXXX" operation will be
-     * committed.
-     */
-    private int sectionIndex = -1;
-
-    /**
-     * The question index at which the "addXXX"/"removeXXX" operation will be
-     * committed.
-     */
-    private int questionIndex = -1;
-
-    /**
-     * The operation "addXXX"/"removeXXX"/"doFinish".
-     */
-    private String operation;
-
-    /**
      * <p>
      * Validate the action form.
      * </p>
@@ -127,50 +108,37 @@ public class ScorecardForm extends ActionForm {
      *            the request
      * @return the form validation errors
      */
-    public ActionErrors validate(ActionMapping mapping,
-            HttpServletRequest request) {
+    public ActionErrors validate(ActionMapping mapping, HttpServletRequest request) {
         // retrieve the value of parameter(type of action)
         String parameterValue = request.getParameter(mapping.getParameter());
         // we only perform validation when the action is "saveScorecard" and the
         // operation is "doFinish"
-        if (Constants.ACTION_SAVE_SCORECARD.equals(parameterValue)
-                && Constants.DO_FINISH.equals(this.getOperation())) {
+        if (Constants.ACTION_SAVE_SCORECARD.equals(parameterValue)) {
             ActionErrors errors = new ActionErrors();
-            ScorecardActionsHelper helper = ScorecardActionsHelper
-                    .getInstance();
+            ScorecardActionsHelper helper = ScorecardActionsHelper.getInstance();
             // 1. scorecard name is not empty and the length is less than 255
             if (!this.checkRequiredText(this.scorecard.getName())) {
-                errors.add("scorecard", new ActionMessage(
-                        "editScorecard.error.scorecard_name.required"));
-            } else if (!this.checkTextLength(this.scorecard.getName(),
-                    NAME_MAXLENGTH)) {
-                errors.add("scorecard", new ActionMessage(
-                        "editScorecard.error.scorecard_name.length"));
+                errors.add("scorecard", new ActionMessage("editScorecard.error.scorecard_name.required"));
+            } else if (!this.checkTextLength(this.scorecard.getName(), Constants.NAME_MAXLENGTH)) {
+                errors.add("scorecard", new ActionMessage("editScorecard.error.scorecard_name.length",
+                        new Object[] { new Integer(Constants.NAME_MAXLENGTH) }));
             }
             // 2. scorecard version is valid
-            boolean versionValid = this.checkVersion(this.scorecard
-                    .getVersion(), errors);
+            boolean versionValid = this.checkVersion(this.scorecard.getVersion(), errors);
+
             // check if the (name, version) combination is unqiue if we're
             // creating a new scorecard
             if (versionValid && this.isNewlyCreated()) {
                 try {
                     ScorecardManager mgr = new ScorecardManagerImpl();
-                    Filter filter = ScorecardSearchBundle.buildAndFilter(
-                            ScorecardSearchBundle
-                                    .buildNameEqualFilter(scorecard.getName()),
-                            ScorecardSearchBundle
-                                    .buildVersionEqualFilter(scorecard
-                                            .getVersion()));
+                    Filter filter = ScorecardSearchBundle.buildAndFilter(ScorecardSearchBundle
+                            .buildNameEqualFilter(scorecard.getName()), ScorecardSearchBundle
+                            .buildVersionEqualFilter(scorecard.getVersion()));
                     Scorecard[] result = mgr.searchScorecards(filter, false);
                     if (result.length > 0) {
-                        errors
-                                .add(
-                                        "scorecard",
-                                        new ActionMessage(
-                                                "editScorecard.error.scorecard_name_version.not_unique",
-                                                new Object[] {
-                                                        scorecard.getName(),
-                                                        scorecard.getVersion() }));
+                        errors.add("scorecard", new ActionMessage(
+                                "editScorecard.error.scorecard_name_version.not_unique", new Object[] {
+                                        scorecard.getName(), scorecard.getVersion() }));
                     }
                 } catch (ConfigurationException e) {
                     // ignore
@@ -178,32 +146,34 @@ public class ScorecardForm extends ActionForm {
                     // ignore
                 }
             }
+            if (versionValid && this.isCopy()) {
+                // minor version cannot be modified for copy
+                if (!this.getMinorVersion(this.scorecard.getVersion()).equals(this.getMinorVersion(this.oldVersion))) {
+                    errors.add("scorecard", new ActionMessage(
+                            "editScorecard.error.scorecard_version.cannot_modify_minor", new Object[] { this
+                                    .getMinorVersion(this.oldVersion) }));
+                }
+            }
             // 3. project category/project type combination is valid
-            ProjectCategory category = helper.getProjectCategory(
-                    this.projectCategoryName, this.projectTypeName);
+            ProjectCategory category = helper.getProjectCategory(this.projectCategoryName, this.projectTypeName);
             if (category == null) {
-                errors.add("scorecard", new ActionMessage(
-                        "editScorecard.error.project_category.invalid"));
+                errors.add("scorecard", new ActionMessage("editScorecard.error.project_category.invalid"));
             } else {
                 // set the category id
                 this.scorecard.setCategory(category.getId());
             }
             // 4. scorecard status is valid
-            ScorecardStatus status = helper.getScorecardStatus(this.scorecard
-                    .getScorecardStatus().getName());
+            ScorecardStatus status = helper.getScorecardStatus(this.scorecard.getScorecardStatus().getName());
             if (status == null) {
-                errors.add("scorecard", new ActionMessage(
-                        "editScorecard.error.scorecard_status.invalid"));
+                errors.add("scorecard", new ActionMessage("editScorecard.error.scorecard_status.invalid"));
             } else {
                 // set the scorecard status
                 this.scorecard.setScorecardStatus(status);
             }
             // 5. scorecard type is valid
-            ScorecardType type = helper.getScorecardType(this.scorecard
-                    .getScorecardType().getName());
+            ScorecardType type = helper.getScorecardType(this.scorecard.getScorecardType().getName());
             if (type == null) {
-                errors.add("scorecard", new ActionMessage(
-                        "editScorecard.error.scorecard_type.invalid"));
+                errors.add("scorecard", new ActionMessage("editScorecard.error.scorecard_type.invalid"));
             } else {
                 // set the scorecard type
                 this.scorecard.setScorecardType(type);
@@ -216,26 +186,19 @@ public class ScorecardForm extends ActionForm {
                 minScore = Float.parseFloat(this.minScoreText);
             } catch (NumberFormatException nfe) {
                 counter++;
-                errors.add("scorecard", new ActionMessage(
-                        "editScorecard.error.min_score.malformed"));
+                errors.add("scorecard", new ActionMessage("editScorecard.error.min_score.malformed"));
             }
             try {
                 maxScore = Float.parseFloat(this.maxScoreText);
             } catch (NumberFormatException nfe) {
                 counter++;
-                errors.add("scorecard", new ActionMessage(
-                        "editScorecard.error.max_score.malformed"));
+                errors.add("scorecard", new ActionMessage("editScorecard.error.max_score.malformed"));
             }
             if (counter == 0) {
                 if (minScore < -EPS) {
-                    errors.add("scorecard", new ActionMessage(
-                            "editScorecard.error.min_score.negative"));
+                    errors.add("scorecard", new ActionMessage("editScorecard.error.min_score.negative"));
                 } else if (maxScore < minScore + EPS) {
-                    errors
-                            .add(
-                                    "scorecard",
-                                    new ActionMessage(
-                                            "editScorecard.error.min_score.larger_than_max_score"));
+                    errors.add("scorecard", new ActionMessage("editScorecard.error.min_score.larger_than_max_score"));
                 } else {
                     try {
                         this.scorecard.setMinScore(minScore);
@@ -252,77 +215,71 @@ public class ScorecardForm extends ActionForm {
                     }
                 }
             }
+            // clear dirty groups
+            int gCount = ((ScorecardAdapter) this.scorecard).getCount();
+            while (this.scorecard.getNumberOfGroups() > gCount) {
+                this.scorecard.removeGroup(gCount);
+            }
             // 7. weights of groups sum to 100
             if (!this.checkWeights(this.scorecard.getAllGroups())) {
-                errors.add("scorecard", new ActionMessage(
-                        "editScorecard.error.scorecard.weight"));
+                errors.add("scorecard", new ActionMessage("editScorecard.error.scorecard.weight"));
             }
             // 8. Check groups
             Group[] groups = this.scorecard.getAllGroups();
             for (int i = 0; i < groups.length; i++) {
                 Group group = groups[i];
+                // clear dirty sections
+                int sCount = ((GroupAdapter) group).getCount();
+                while (group.getNumberOfSections() > sCount) {
+                    group.removeSection(sCount);
+                }
                 // 8.1 group name is not empty
                 if (!this.checkRequiredText(group.getName())) {
-                    errors.add("scorecard.allGroups[" + i + "]",
-                            new ActionMessage(
-                                    "editScorecard.error.group_name.required"));
+                    errors.add("scorecard.allGroups[" + i + "]", new ActionMessage(
+                            "editScorecard.error.group_name.required"));
                 }
-                if (!this.checkTextLength(group.getName(), NAME_MAXLENGTH)) {
-                    errors.add("scorecard.allGroups[" + i + "]",
-                            new ActionMessage(
-                                    "editScorecard.error.group_name.length"));
+                if (!this.checkTextLength(group.getName(), Constants.NAME_MAXLENGTH)) {
+                    errors.add("scorecard.allGroups[" + i + "]", new ActionMessage(
+                            "editScorecard.error.group_name.length", new Object[] { new Integer(
+                                    Constants.NAME_MAXLENGTH) }));
                 }
                 // 8.2 0 < weight <= 100
                 if (!this.checkWeight(group.getWeight())) {
-                    errors
-                            .add(
-                                    "scorecard.allGroups[" + i + "]",
-                                    new ActionMessage(
-                                            "editScorecard.error.group_weight.out_of_range"));
+                    errors.add("scorecard.allGroups[" + i + "]", new ActionMessage(
+                            "editScorecard.error.group_weight.out_of_range"));
                 }
                 // 8.3 weights of sections sum to 100
                 if (!this.checkWeights(group.getAllSections())) {
-                    errors.add("scorecard.allGroups[" + i + "]",
-                            new ActionMessage(
-                                    "editScorecard.error.group.weight"));
+                    errors.add("scorecard.allGroups[" + i + "]", new ActionMessage("editScorecard.error.group.weight"));
                 }
                 // 8.4 Check sections
                 Section[] sections = group.getAllSections();
                 for (int j = 0; j < sections.length; j++) {
                     Section section = sections[j];
+                    // clear dirty questions
+                    int qCount = ((SectionAdapter) section).getCount();
+                    while (section.getNumberOfQuestions() > qCount) {
+                        section.removeQuestion(qCount);
+                    }
                     // 8.4.1 section name is not empty
                     if (!this.checkRequiredText(section.getName())) {
-                        errors
-                                .add(
-                                        "scorecard.allGroups[" + i
-                                                + "].allSections[" + j + "]",
-                                        new ActionMessage(
-                                                "editScorecard.error.section_name.required"));
+                        errors.add("scorecard.allGroups[" + i + "].allSections[" + j + "]", new ActionMessage(
+                                "editScorecard.error.section_name.required"));
                     }
-                    if (!this
-                            .checkTextLength(section.getName(), NAME_MAXLENGTH)) {
-                        errors
-                                .add(
-                                        "scorecard.allGroups[" + i
-                                                + "].allSections[" + j + "]",
-                                        new ActionMessage(
-                                                "editScorecard.error.section_name.length"));
+                    if (!this.checkTextLength(section.getName(), Constants.NAME_MAXLENGTH)) {
+                        errors.add("scorecard.allGroups[" + i + "].allSections[" + j + "]", new ActionMessage(
+                                "editScorecard.error.section_name.length", new Object[] { new Integer(
+                                        Constants.NAME_MAXLENGTH) }));
                     }
                     // 8.4.2 0 < weight <= 100
                     if (!this.checkWeight(section.getWeight())) {
-                        errors
-                                .add(
-                                        "scorecard.allGroups[" + i
-                                                + "].allSections[" + j + "]",
-                                        new ActionMessage(
-                                                "editScorecard.error.section_weight.out_of_range"));
+                        errors.add("scorecard.allGroups[" + i + "].allSections[" + j + "]", new ActionMessage(
+                                "editScorecard.error.section_weight.out_of_range"));
                     }
                     // 8.4.3 weights of questions sum to 100
                     if (!this.checkWeights(section.getAllQuestions())) {
-                        errors.add("scorecard.allGroups[" + i
-                                + "].allSections[" + j + "]",
-                                new ActionMessage(
-                                        "editScorecard.error.section.weight"));
+                        errors.add("scorecard.allGroups[" + i + "].allSections[" + j + "]", new ActionMessage(
+                                "editScorecard.error.section.weight"));
                     }
                     // 8.4.4 Check questions
                     Question[] questions = section.getAllQuestions();
@@ -330,50 +287,38 @@ public class ScorecardForm extends ActionForm {
                         QuestionAdapter question = (QuestionAdapter) questions[k];
                         // 8.4.4.1 question description is not empty
                         if (!this.checkRequiredText(question.getDescription())) {
-                            errors
-                                    .add(
-                                            "scorecard.allGroups[" + i
-                                                    + "].allSections[" + j
-                                                    + "].allQuestions[" + k
-                                                    + "]",
-                                            new ActionMessage(
-                                                    "editScorecard.error.question_description.required"));
+                            errors.add("scorecard.allGroups[" + i + "].allSections[" + j + "].allQuestions[" + k + "]",
+                                    new ActionMessage("editScorecard.error.question_description.required"));
                         }
+                        if (!this.checkTextLength(question.getDescription(), Constants.DESCRIPTION_MAXLENGTH)) {
+                            errors.add("scorecard.allGroups[" + i + "].allSections[" + j + "].allQuestions[" + k + "]",
+                                    new ActionMessage("editScorecard.error.question_description.length",
+                                            new Object[] { new Integer(Constants.DESCRIPTION_MAXLENGTH) }));
+                        }
+                        // FIXED by flying2hk : question guideline is OPTIONAL
                         // 8.4.4.2 question guideline is not empty
-                        if (!this.checkRequiredText(question.getGuideline())) {
-                            errors
-                                    .add(
-                                            "scorecard.allGroups[" + i
-                                                    + "].allSections[" + j
-                                                    + "].allQuestions[" + k
-                                                    + "]",
-                                            new ActionMessage(
-                                                    "editScorecard.error.question_guideline.required"));
+                        // if (!this.checkRequiredText(question.getGuideline()))
+                        // {
+                        // errors.add("scorecard.allGroups[" + i +
+                        // "].allSections[" + j + "].allQuestions[" + k + "]",
+                        // new
+                        // ActionMessage("editScorecard.error.question_guideline.required"));
+                        // }
+                        if (!this.checkTextLength(question.getGuideline(), Constants.GUIDELINE_MAXLENGTH)) {
+                            errors.add("scorecard.allGroups[" + i + "].allSections[" + j + "].allQuestions[" + k + "]",
+                                    new ActionMessage("editScorecard.error.question_guideline.length",
+                                            new Object[] { new Integer(Constants.GUIDELINE_MAXLENGTH) }));
                         }
                         // 8.4.4.3 0 < weight <= 100
                         if (!this.checkWeight(question.getWeight())) {
-                            errors
-                                    .add(
-                                            "scorecard.allGroups[" + i
-                                                    + "].allSections[" + j
-                                                    + "].allQuestions[" + k
-                                                    + "]",
-                                            new ActionMessage(
-                                                    "editScorecard.error.question_weight.out_of_range"));
+                            errors.add("scorecard.allGroups[" + i + "].allSections[" + j + "].allQuestions[" + k + "]",
+                                    new ActionMessage("editScorecard.error.question_weight.out_of_range"));
                         }
                         // 8.4.4.4 question type
-                        QuestionType questionType = helper
-                                .getQuestionType(question.getQuestionType()
-                                        .getName());
+                        QuestionType questionType = helper.getQuestionType(question.getQuestionType().getName());
                         if (questionType == null) {
-                            errors
-                                    .add(
-                                            "scorecard.allGroups[" + i
-                                                    + "].allSections[" + j
-                                                    + "].allQuestions[" + k
-                                                    + "]",
-                                            new ActionMessage(
-                                                    "editScorecard.error.question_type.invalid"));
+                            errors.add("scorecard.allGroups[" + i + "].allSections[" + j + "].allQuestions[" + k + "]",
+                                    new ActionMessage("editScorecard.error.question_type.invalid"));
                         } else {
                             question.setQuestionType(questionType);
                         }
@@ -438,8 +383,7 @@ public class ScorecardForm extends ActionForm {
                 for (int k = 0; k < questions.length; k++) {
                     if (!(questions[k] instanceof QuestionAdapter)) {
                         sections[j].removeQuestion(k);
-                        sections[j].insertQuestion(ScorecardActionsHelper
-                                .buildQuestion(questions[k]), k);
+                        sections[j].insertQuestion(ScorecardActionsHelper.buildQuestion(questions[k]), k);
                     }
                 }
             }
@@ -516,98 +460,6 @@ public class ScorecardForm extends ActionForm {
     }
 
     /**
-     * <p>
-     * Return the question index.
-     * </p>
-     * 
-     * @return the question index
-     */
-    public int getQuestionIndex() {
-        return questionIndex;
-    }
-
-    /**
-     * <p>
-     * Set the question index.
-     * </p>
-     * 
-     * @param questionIndex
-     *            the question index
-     */
-    public void setQuestionIndex(int questionIndex) {
-        this.questionIndex = questionIndex;
-    }
-
-    /**
-     * <p>
-     * Return the section index.
-     * </p>
-     * 
-     * @return the section index
-     */
-    public int getSectionIndex() {
-        return sectionIndex;
-    }
-
-    /**
-     * <p>
-     * Set the section index.
-     * </p>
-     * 
-     * @param sectionIndex
-     *            the section index
-     */
-    public void setSectionIndex(int sectionIndex) {
-        this.sectionIndex = sectionIndex;
-    }
-
-    /**
-     * <p>
-     * Return the operation.
-     * </p>
-     * 
-     * @return the operation
-     */
-    public String getOperation() {
-        return operation;
-    }
-
-    /**
-     * <p>
-     * Set the operation.
-     * </p>
-     * 
-     * @param operation
-     *            the operation
-     */
-    public void setOperation(String operation) {
-        this.operation = operation;
-    }
-
-    /**
-     * <p>
-     * Return the group index.
-     * </p>
-     * 
-     * @return the group index
-     */
-    public int getGroupIndex() {
-        return groupIndex;
-    }
-
-    /**
-     * <p>
-     * Set the group index.
-     * </p>
-     * 
-     * @param groupIndex
-     *            the group index
-     */
-    public void setGroupIndex(int groupIndex) {
-        this.groupIndex = groupIndex;
-    }
-
-    /**
      * Check if the version string is illegal.
      * 
      * @param version
@@ -615,39 +467,32 @@ public class ScorecardForm extends ActionForm {
      */
     private boolean checkVersion(String version, ActionErrors errors) {
         if (version == null || version.trim().length() == 0) {
-            errors.add("scorecard", new ActionMessage(
-                    "editScorecard.error.scorecard_version.required"));
+            errors.add("scorecard", new ActionMessage("editScorecard.error.scorecard_version.required"));
             return false;
-        } else if (version.trim().length() > VERSION_MAXLENGTH) {
-            errors.add("scorecard", new ActionMessage(
-                    "editScorecard.error.scorecard_version.exceed_max_length"));
+        } else if (version.trim().length() > Constants.VERSION_MAXLENGTH) {
+            errors.add("scorecard", new ActionMessage("editScorecard.error.scorecard_version.exceed_max_length"));
             return false;
         } else {
-            version = version.trim();
-            for (int i = 0; i < version.length(); i++) {
-                if (i == 0 || i == version.length() - 1) {
-                    if (!Character.isDigit(version.charAt(i))) {
-                        errors
-                                .add(
-                                        "scorecard",
-                                        new ActionMessage(
-                                                "editScorecard.error.scorecard_version.malformed"));
-                        return false;
-                    }
-                } else {
-                    if (!Character.isDigit(version.charAt(i))
-                            && version.charAt(i) != '.') {
-                        errors
-                                .add(
-                                        "scorecard",
-                                        new ActionMessage(
-                                                "editScorecard.error.scorecard_version.malformed"));
-                        return false;
-                    }
-                }
+            if (!Pattern.matches(VERSION_REGEX, version)) {
+                errors.add("scorecard", new ActionMessage("editScorecard.error.scorecard_version.malformed"));
+                return false;
             }
         }
         return true;
+    }
+
+    /**
+     * <p>
+     * Return the minor component of a given version.
+     * </p>
+     * 
+     * @param version
+     *            the version
+     * @return the minor component
+     */
+    private String getMinorVersion(String version) {
+        int idx = version.lastIndexOf('.');
+        return version.substring(idx + 1);
     }
 
     /**
@@ -678,7 +523,7 @@ public class ScorecardForm extends ActionForm {
 
     /**
      * <p>
-     * Check if the length of the text is less than given value.
+     * Check if the length of the text is less than or equal to given value.
      * </p>
      * 
      * @param text
@@ -688,7 +533,7 @@ public class ScorecardForm extends ActionForm {
      * @return if the length of the text is less than given value
      */
     private boolean checkTextLength(String text, int length) {
-        return (text != null && text.trim().length() < length);
+        return (text != null && text.trim().length() <= length);
     }
 
     /**
@@ -838,5 +683,23 @@ public class ScorecardForm extends ActionForm {
      */
     public void setProjectTypeName(String projectTypeName) {
         this.projectTypeName = projectTypeName;
+    }
+    /**
+     * <p>
+     * Return the old version before editing.
+     * </p>
+     * @return the old version
+     */
+    public String getOldVersion() {
+        return oldVersion;
+    }
+    /**
+     * <p>
+     * Set the old version before editing.
+     * </p>
+     * @param oldVersion the old version
+     */
+    public void setOldVersion(String oldVersion) {
+        this.oldVersion = oldVersion;
     }
 }

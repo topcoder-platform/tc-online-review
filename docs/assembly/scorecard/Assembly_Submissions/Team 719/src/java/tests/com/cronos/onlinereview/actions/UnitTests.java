@@ -13,7 +13,7 @@ import junit.framework.TestSuite;
  * </p>
  * 
  * @version 1.0
- * @author TCSDEVELOPER
+ * @author flying2hk
  */
 public class UnitTests extends TestCase {
     /**

@@ -11,7 +11,7 @@ import com.topcoder.management.scorecard.data.Scorecard;
  * </p>
  * 
  * @version 1.0
- * @author TCSDEVELOPER
+ * @author flying2hk
  */
 public class UnitTestNewScorecardAction extends BaseTestCase {
     /**
@@ -58,7 +58,6 @@ public class UnitTestNewScorecardAction extends BaseTestCase {
         this.actionPerform();
         // verify the forward
         this.verifyForward("editScorecard");
-        this.verifyForwardPath("/editScorecard.jsp");
         this.verifyNoActionErrors();
         // verify the scorecardForm
         ScorecardForm scorecardForm = (ScorecardForm) this.getActionForm();
@@ -89,7 +88,6 @@ public class UnitTestNewScorecardAction extends BaseTestCase {
         this.actionPerform();
         // verify the forward
         this.verifyForward("editScorecard");
-        this.verifyForwardPath("/editScorecard.jsp");
         this.verifyNoActionErrors();
         // verify the scorecardForm
         ScorecardForm scorecardForm = (ScorecardForm) this.getActionForm();
@@ -120,7 +118,6 @@ public class UnitTestNewScorecardAction extends BaseTestCase {
         this.actionPerform();
         // verify the forward
         this.verifyForward("editScorecard");
-        this.verifyForwardPath("/editScorecard.jsp");
         this.verifyNoActionErrors();
         // verify the scorecardForm
         ScorecardForm scorecardForm = (ScorecardForm) this.getActionForm();
@@ -153,7 +150,6 @@ public class UnitTestNewScorecardAction extends BaseTestCase {
         this.actionPerform();
         // verify the forward
         this.verifyForward("editScorecard");
-        this.verifyForwardPath("/editScorecard.jsp");
         this.verifyNoActionErrors();
         // verify the scorecardForm
         ScorecardForm scorecardForm = (ScorecardForm) this.getActionForm();
@@ -182,7 +178,6 @@ public class UnitTestNewScorecardAction extends BaseTestCase {
         this.actionPerform();
         // verify the "scorecardList" request attribute
         this.verifyForward("failure");
-        this.verifyForwardPath("/error.jsp");
         this.verifyActionErrors(new String[] { "global.error.authorization" });
     }
 }

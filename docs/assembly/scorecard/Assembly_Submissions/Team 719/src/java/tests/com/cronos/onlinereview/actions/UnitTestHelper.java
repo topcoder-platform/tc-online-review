@@ -21,7 +21,7 @@ import com.topcoder.search.builder.filter.Filter;
  * </p>
  * 
  * @version 1.0
- * @author TCSDEVELOPER
+ * @author flying2hk
  */
 public final class UnitTestHelper {
     /** DB connection factory configuration namespace. */
@@ -201,6 +201,7 @@ public final class UnitTestHelper {
             }
         } finally {
             ps.close();
+            conn.close();
         }
     }
 }

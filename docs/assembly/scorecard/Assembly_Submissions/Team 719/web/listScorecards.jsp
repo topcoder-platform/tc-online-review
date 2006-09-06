@@ -16,7 +16,6 @@
 --%>
 <%@ page language="java" %>
 <%@ taglib uri="http://struts.apache.org/tags-tiles" prefix="tiles" %>
-
 <tiles:insert page="pageLayout.jsp" flush="true">
     <tiles:put name="content" value="listScorecardsContent.jsp" />
 </tiles:insert>

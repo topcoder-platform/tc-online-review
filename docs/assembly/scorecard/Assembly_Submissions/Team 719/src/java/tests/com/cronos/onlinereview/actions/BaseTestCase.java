@@ -17,7 +17,7 @@ import servletunit.struts.MockStrutsTestCase;
  * </p>
  * 
  * @version 1.0
- * @author TCSDEVELOPER
+ * @author flying2hk
  */
 public abstract class BaseTestCase extends MockStrutsTestCase {
     /**

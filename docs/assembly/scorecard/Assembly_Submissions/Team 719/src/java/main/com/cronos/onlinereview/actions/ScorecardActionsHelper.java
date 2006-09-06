@@ -9,7 +9,11 @@ import java.util.List;
 import java.util.Set;
 
 import com.topcoder.management.project.ProjectCategory;
+import com.topcoder.management.project.ProjectManager;
+import com.topcoder.management.project.ProjectManagerImpl;
 import com.topcoder.management.project.ProjectType;
+import com.topcoder.management.scorecard.ScorecardManager;
+import com.topcoder.management.scorecard.ScorecardManagerImpl;
 import com.topcoder.management.scorecard.data.Group;
 import com.topcoder.management.scorecard.data.Question;
 import com.topcoder.management.scorecard.data.QuestionType;
@@ -18,12 +22,6 @@ import com.topcoder.management.scorecard.data.ScorecardStatus;
 import com.topcoder.management.scorecard.data.ScorecardType;
 import com.topcoder.management.scorecard.data.Section;
 import com.topcoder.util.config.ConfigManager;
-import com.topcoder.util.config.UnknownNamespaceException;
-import com.topcoder.util.objectfactory.InvalidClassSpecificationException;
-import com.topcoder.util.objectfactory.ObjectFactory;
-import com.topcoder.util.objectfactory.impl.ConfigManagerSpecificationFactory;
-import com.topcoder.util.objectfactory.impl.IllegalReferenceException;
-import com.topcoder.util.objectfactory.impl.SpecificationConfigurationException;
 
 /**
  * <p>
@@ -36,7 +34,7 @@ import com.topcoder.util.objectfactory.impl.SpecificationConfigurationException;
  * </p>
  * 
  * @version 1.0
- * @author TCSDEVELOPER
+ * @author albertwang, flying2hk
  */
 public final class ScorecardActionsHelper {
     /**
@@ -48,46 +46,6 @@ public final class ScorecardActionsHelper {
      * Configuration property key for user id session attribute key.
      */
     private static final String KEY_USER_ID_SESSION_ATTRIBUTE = "userIdSessionAttributeKey";
-
-    /**
-     * Configuration property key for project types.
-     */
-    private static final String KEY_PROJECT_TYPES = "projectTypes";
-
-    /**
-     * Configuration property key for project categories.
-     */
-    private static final String KEY_PROJECT_CATEGORIES = "projectCategories";
-
-    /**
-     * Configuration property key for scorecard statuses.
-     */
-    private static final String KEY_SCORECARD_STATUSES = "scorecardStatuses";
-
-    /**
-     * Configuration property key for scorecard types.
-     */
-    private static final String KEY_SCORECARD_TYPES = "scorecardTypes";
-
-    /**
-     * Configuration property key for question types.
-     */
-    private static final String KEY_QUESTION_TYPES = "questionTypes";
-
-    /**
-     * Configuration property key for object Key.
-     */
-    private static final String KEY_OBJECT_KEY = "objectKey";
-
-    /**
-     * Configuration property key for object identifiers.
-     */
-    private static final String KEY_OBJECT_IDENTIFIERS = "objectIdentifiers";
-
-    /**
-     * Configuration property key for object specification namespace.
-     */
-    private static final String KEY_OBJECT_SPECS_NAMESPACE = "objectSpecsNamespace";
 
     /**
      * Singleton instance.
@@ -164,46 +122,24 @@ public final class ScorecardActionsHelper {
         String namespace = getClass().getName();
         try {
             // ajax support app url
-            this.ajaxSupportAppUrl = cm.getString(namespace,
-                    KEY_AJAX_SUPPORT_APP_URL);
+            this.ajaxSupportAppUrl = cm.getString(namespace, KEY_AJAX_SUPPORT_APP_URL);
 
             // User Id session attribute key
-            this.userIdSessionAttributeKey = cm.getString(namespace,
-                    KEY_USER_ID_SESSION_ATTRIBUTE);
+            this.userIdSessionAttributeKey = cm.getString(namespace, KEY_USER_ID_SESSION_ATTRIBUTE);
 
-            String objectSpecsNamespace = cm.getString(namespace,
-                    KEY_OBJECT_SPECS_NAMESPACE);
-            Object[] objects;
-            String objectKey;
-            String[] objectIdentifiers;
-            ObjectFactory objFactory = new ObjectFactory(
-                    new ConfigManagerSpecificationFactory(objectSpecsNamespace),
-                    ObjectFactory.SPECIFICATION_ONLY);
+            // FIXED by flying2hk : 
+            // fetch the data from corresponding management components instead of configuration
+            ProjectManager projectManager = new ProjectManagerImpl();
 
             // project types
-            objectKey = cm.getString(namespace, KEY_PROJECT_TYPES + "."
-                    + KEY_OBJECT_KEY);
-            objectIdentifiers = cm.getStringArray(namespace, KEY_PROJECT_TYPES
-                    + "." + KEY_OBJECT_IDENTIFIERS);
-            objects = this.createObjects(objFactory, objectKey,
-                    objectIdentifiers);
-            this.projectTypes = new ProjectType[objects.length];
-            System.arraycopy(objects, 0, this.projectTypes, 0, objects.length);
+            this.projectTypes = projectManager.getAllProjectTypes();
             this.projectTypeNames = new String[this.projectTypes.length];
             for (int i = 0; i < this.projectTypes.length; i++) {
                 this.projectTypeNames[i] = this.projectTypes[i].getName();
             }
 
             // project categories
-            objectKey = cm.getString(namespace, KEY_PROJECT_CATEGORIES + "."
-                    + KEY_OBJECT_KEY);
-            objectIdentifiers = cm.getStringArray(namespace,
-                    KEY_PROJECT_CATEGORIES + "." + KEY_OBJECT_IDENTIFIERS);
-            objects = this.createObjects(objFactory, objectKey,
-                    objectIdentifiers);
-            this.projectCategories = new ProjectCategory[objects.length];
-            System.arraycopy(objects, 0, this.projectCategories, 0,
-                    objects.length);
+            this.projectCategories = projectManager.getAllProjectCategories();
             this.projectCategoryNames = new String[this.projectCategories.length];
             Set set = new HashSet();
             for (int i = 0; i < this.projectCategories.length; i++) {
@@ -214,47 +150,33 @@ public final class ScorecardActionsHelper {
             this.projectCategoryNames = new String[set.size()];
             set.toArray(this.projectCategoryNames);
 
+            ScorecardManager scorecardManager = new ScorecardManagerImpl();
+
             // scorecard types
-            objectKey = cm.getString(namespace, KEY_SCORECARD_TYPES + "."
-                    + KEY_OBJECT_KEY);
-            objectIdentifiers = cm.getStringArray(namespace,
-                    KEY_SCORECARD_TYPES + "." + KEY_OBJECT_IDENTIFIERS);
-            objects = this.createObjects(objFactory, objectKey,
-                    objectIdentifiers);
-            this.scorecardTypes = new ScorecardType[objects.length];
-            System
-                    .arraycopy(objects, 0, this.scorecardTypes, 0,
-                            objects.length);
+            this.scorecardTypes = scorecardManager.getAllScorecardTypes();
             this.scorecardTypeNames = new String[this.scorecardTypes.length];
             for (int i = 0; i < this.scorecardTypes.length; i++) {
                 this.scorecardTypeNames[i] = this.scorecardTypes[i].getName();
             }
 
             // scorecard statuses
-            objectKey = cm.getString(namespace, KEY_SCORECARD_STATUSES + "."
-                    + KEY_OBJECT_KEY);
-            objectIdentifiers = cm.getStringArray(namespace,
-                    KEY_SCORECARD_STATUSES + "." + KEY_OBJECT_IDENTIFIERS);
-            objects = this.createObjects(objFactory, objectKey,
-                    objectIdentifiers);
-            this.scorecardStatuses = new ScorecardStatus[objects.length];
-            System.arraycopy(objects, 0, this.scorecardStatuses, 0,
-                    objects.length);
+            List list = new ArrayList();
+            ScorecardStatus[] statuses = scorecardManager.getAllScorecardStatuses();
+            // we don't need "Deleted" status
+            for (int i = 0; i < statuses.length; i++) {
+                if (!statuses[i].getName().equals("Deleted")) {
+                    list.add(statuses[i]);
+                }
+            }
+            this.scorecardStatuses = new ScorecardStatus[list.size()];
+            list.toArray(this.scorecardStatuses);
             this.scorecardStatusNames = new String[this.scorecardStatuses.length];
             for (int i = 0; i < this.scorecardStatuses.length; i++) {
-                this.scorecardStatusNames[i] = this.scorecardStatuses[i]
-                        .getName();
+                this.scorecardStatusNames[i] = this.scorecardStatuses[i].getName();
             }
 
             // question types
-            objectKey = cm.getString(namespace, KEY_QUESTION_TYPES + "."
-                    + KEY_OBJECT_KEY);
-            objectIdentifiers = cm.getStringArray(namespace, KEY_QUESTION_TYPES
-                    + "." + KEY_OBJECT_IDENTIFIERS);
-            objects = this.createObjects(objFactory, objectKey,
-                    objectIdentifiers);
-            this.questionTypes = new QuestionType[objects.length];
-            System.arraycopy(objects, 0, this.questionTypes, 0, objects.length);
+            this.questionTypes = scorecardManager.getAllQuestionTypes();
             this.questionTypeNames = new String[this.questionTypes.length];
             for (int i = 0; i < this.questionTypes.length; i++) {
                 this.questionTypeNames[i] = this.questionTypes[i].getName();
@@ -262,39 +184,6 @@ public final class ScorecardActionsHelper {
         } catch (Exception ex) {
             ex.printStackTrace();
         }
-    }
-
-    /**
-     * <p>
-     * Create the objects from the object factory.
-     * </p>
-     * 
-     * @param objFactory
-     *            object factory
-     * @param objectKey
-     *            object key
-     * @param objectIdentifiers
-     *            object identifiers
-     * @return the created objects
-     * @throws UnknownNamespaceException
-     *             from ConfigManager
-     * @throws InvalidClassSpecificationException
-     *             from ObjectFactory
-     * @throws SpecificationConfigurationException
-     *             from ObjectFactory
-     * @throws IllegalReferenceException
-     *             from ObjectFactory
-     */
-    private Object[] createObjects(ObjectFactory objFactory, String objectKey,
-            String[] objectIdentifiers) throws UnknownNamespaceException,
-            InvalidClassSpecificationException,
-            SpecificationConfigurationException, IllegalReferenceException {
-        Object[] objects = new Object[objectIdentifiers.length];
-        for (int i = 0; i < objects.length; i++) {
-            objects[i] = objFactory.createObject(objectKey,
-                    objectIdentifiers[i]);
-        }
-        return objects;
     }
 
     /**
@@ -334,8 +223,7 @@ public final class ScorecardActionsHelper {
     public ProjectType getProjectType(long projectTypeId) {
         for (int i = 0; i < this.projectTypes.length; i++) {
             if (this.projectTypes[i].getId() == projectTypeId) {
-                return new ProjectType(this.projectTypes[i].getId(),
-                        this.projectTypes[i].getName());
+                return new ProjectType(this.projectTypes[i].getId(), this.projectTypes[i].getName());
             }
         }
         return null;
@@ -353,8 +241,7 @@ public final class ScorecardActionsHelper {
     public ProjectType getProjectType(String projectTypeName) {
         for (int i = 0; i < this.projectTypes.length; i++) {
             if (this.projectTypes[i].getName().equals(projectTypeName)) {
-                return new ProjectType(this.projectTypes[i].getId(),
-                        this.projectTypes[i].getName());
+                return new ProjectType(this.projectTypes[i].getId(), this.projectTypes[i].getName());
             }
         }
         return null;
@@ -372,11 +259,9 @@ public final class ScorecardActionsHelper {
     public ProjectCategory getProjectCategory(long projectCategoryId) {
         for (int i = 0; i < this.projectCategories.length; i++) {
             if (this.projectCategories[i].getId() == projectCategoryId) {
-                ProjectCategory category = new ProjectCategory(
-                        this.projectCategories[i].getId(),
-                        this.projectCategories[i].getName(),
-                        getProjectType(this.projectCategories[i]
-                                .getProjectType().getId()));
+                ProjectCategory category = new ProjectCategory(this.projectCategories[i].getId(),
+                        this.projectCategories[i].getName(), getProjectType(this.projectCategories[i].getProjectType()
+                                .getId()));
                 return category;
             }
         }
@@ -394,16 +279,13 @@ public final class ScorecardActionsHelper {
      *            project type id
      * @return the project category
      */
-    public ProjectCategory getProjectCategory(String projectCategoryName,
-            long projectTypeId) {
+    public ProjectCategory getProjectCategory(String projectCategoryName, long projectTypeId) {
         for (int i = 0; i < this.projectCategories.length; i++) {
             if (this.projectCategories[i].getName().equals(projectCategoryName)
                     && this.projectCategories[i].getProjectType().getId() == projectTypeId) {
-                ProjectCategory category = new ProjectCategory(
-                        this.projectCategories[i].getId(),
-                        this.projectCategories[i].getName(),
-                        getProjectType(this.projectCategories[i]
-                                .getProjectType().getId()));
+                ProjectCategory category = new ProjectCategory(this.projectCategories[i].getId(),
+                        this.projectCategories[i].getName(), getProjectType(this.projectCategories[i].getProjectType()
+                                .getId()));
                 return category;
             }
         }
@@ -421,17 +303,13 @@ public final class ScorecardActionsHelper {
      *            project type name
      * @return the project category
      */
-    public ProjectCategory getProjectCategory(String projectCategoryName,
-            String projectTypeName) {
+    public ProjectCategory getProjectCategory(String projectCategoryName, String projectTypeName) {
         for (int i = 0; i < this.projectCategories.length; i++) {
             if (this.projectCategories[i].getName().equals(projectCategoryName)
-                    && this.projectCategories[i].getProjectType().getName()
-                            .equals(projectTypeName)) {
-                ProjectCategory category = new ProjectCategory(
-                        this.projectCategories[i].getId(),
-                        this.projectCategories[i].getName(),
-                        getProjectType(this.projectCategories[i]
-                                .getProjectType().getId()));
+                    && this.projectCategories[i].getProjectType().getName().equals(projectTypeName)) {
+                ProjectCategory category = new ProjectCategory(this.projectCategories[i].getId(),
+                        this.projectCategories[i].getName(), getProjectType(this.projectCategories[i].getProjectType()
+                                .getId()));
                 return category;
             }
         }
@@ -450,8 +328,7 @@ public final class ScorecardActionsHelper {
     public ScorecardType getScorecardType(long scorecardTypeId) {
         for (int i = 0; i < this.scorecardTypes.length; i++) {
             if (this.scorecardTypes[i].getId() == scorecardTypeId) {
-                return new ScorecardType(this.scorecardTypes[i].getId(),
-                        this.scorecardTypes[i].getName());
+                return new ScorecardType(this.scorecardTypes[i].getId(), this.scorecardTypes[i].getName());
             }
         }
         return null;
@@ -469,8 +346,7 @@ public final class ScorecardActionsHelper {
     public ScorecardType getScorecardType(String scorecardTypeName) {
         for (int i = 0; i < this.scorecardTypes.length; i++) {
             if (this.scorecardTypes[i].getName().equals(scorecardTypeName)) {
-                return new ScorecardType(this.scorecardTypes[i].getId(),
-                        this.scorecardTypes[i].getName());
+                return new ScorecardType(this.scorecardTypes[i].getId(), this.scorecardTypes[i].getName());
             }
         }
         return null;
@@ -488,8 +364,7 @@ public final class ScorecardActionsHelper {
     public ScorecardStatus getScorecardStatus(long scorecardStatusId) {
         for (int i = 0; i < this.scorecardStatuses.length; i++) {
             if (this.scorecardStatuses[i].getId() == scorecardStatusId) {
-                return new ScorecardStatus(this.scorecardStatuses[i].getId(),
-                        this.scorecardStatuses[i].getName());
+                return new ScorecardStatus(this.scorecardStatuses[i].getId(), this.scorecardStatuses[i].getName());
             }
         }
         return null;
@@ -507,8 +382,7 @@ public final class ScorecardActionsHelper {
     public ScorecardStatus getScorecardStatus(String scorecardStatusName) {
         for (int i = 0; i < this.scorecardStatuses.length; i++) {
             if (this.scorecardStatuses[i].getName().equals(scorecardStatusName)) {
-                return new ScorecardStatus(this.scorecardStatuses[i].getId(),
-                        this.scorecardStatuses[i].getName());
+                return new ScorecardStatus(this.scorecardStatuses[i].getId(), this.scorecardStatuses[i].getName());
 
             }
         }
@@ -527,8 +401,7 @@ public final class ScorecardActionsHelper {
     public QuestionType getQuestionType(long questionTypeId) {
         for (int i = 0; i < this.questionTypes.length; i++) {
             if (this.questionTypes[i].getId() == questionTypeId) {
-                return new QuestionType(this.questionTypes[i].getId(),
-                        this.questionTypes[i].getName());
+                return new QuestionType(this.questionTypes[i].getId(), this.questionTypes[i].getName());
             }
         }
         return null;
@@ -546,8 +419,7 @@ public final class ScorecardActionsHelper {
     public QuestionType getQuestionType(String questionTypeName) {
         for (int i = 0; i < this.questionTypes.length; i++) {
             if (this.questionTypes[i].getName().equals(questionTypeName)) {
-                return new QuestionType(this.questionTypes[i].getId(),
-                        this.questionTypes[i].getName());
+                return new QuestionType(this.questionTypes[i].getId(), this.questionTypes[i].getName());
             }
         }
         return null;
@@ -566,11 +438,9 @@ public final class ScorecardActionsHelper {
         List list = new ArrayList();
         for (int i = 0; i < this.projectCategories.length; i++) {
             if (this.projectCategories[i].getProjectType().getId() == projectTypeId) {
-                ProjectCategory category = new ProjectCategory(
-                        this.projectCategories[i].getId(),
-                        this.projectCategories[i].getName(),
-                        getProjectType(this.projectCategories[i]
-                                .getProjectType().getId()));
+                ProjectCategory category = new ProjectCategory(this.projectCategories[i].getId(),
+                        this.projectCategories[i].getName(), getProjectType(this.projectCategories[i].getProjectType()
+                                .getId()));
                 list.add(category);
             }
         }
@@ -591,13 +461,10 @@ public final class ScorecardActionsHelper {
     public ProjectCategory[] getProjectCategories(String projectTypeName) {
         List list = new ArrayList();
         for (int i = 0; i < this.projectCategories.length; i++) {
-            if (this.projectCategories[i].getProjectType().getName().equals(
-                    projectTypeName)) {
-                ProjectCategory category = new ProjectCategory(
-                        this.projectCategories[i].getId(),
-                        this.projectCategories[i].getName(),
-                        getProjectType(this.projectCategories[i]
-                                .getProjectType().getId()));
+            if (this.projectCategories[i].getProjectType().getName().equals(projectTypeName)) {
+                ProjectCategory category = new ProjectCategory(this.projectCategories[i].getId(),
+                        this.projectCategories[i].getName(), getProjectType(this.projectCategories[i].getProjectType()
+                                .getId()));
                 list.add(category);
             }
         }
@@ -616,10 +483,8 @@ public final class ScorecardActionsHelper {
     public ProjectCategory[] getProjectCategories() {
         ProjectCategory[] categories = new ProjectCategory[this.projectCategories.length];
         for (int i = 0; i < this.projectCategories.length; i++) {
-            categories[i] = new ProjectCategory(this.projectCategories[i]
-                    .getId(), this.projectCategories[i].getName(),
-                    new ProjectType(this.projectCategories[i].getProjectType()
-                            .getId(), this.projectCategories[i]
+            categories[i] = new ProjectCategory(this.projectCategories[i].getId(), this.projectCategories[i].getName(),
+                    new ProjectType(this.projectCategories[i].getProjectType().getId(), this.projectCategories[i]
                             .getProjectType().getName()));
         }
         return categories;
@@ -635,8 +500,7 @@ public final class ScorecardActionsHelper {
     public ProjectType[] getProjectTypes() {
         ProjectType[] types = new ProjectType[this.projectTypes.length];
         for (int i = 0; i < types.length; i++) {
-            types[i] = new ProjectType(this.projectTypes[i].getId(),
-                    this.projectTypes[i].getName());
+            types[i] = new ProjectType(this.projectTypes[i].getId(), this.projectTypes[i].getName());
         }
         return types;
     }
@@ -651,8 +515,7 @@ public final class ScorecardActionsHelper {
     public ScorecardType[] getScorecardTypes() {
         ScorecardType[] types = new ScorecardType[this.scorecardTypes.length];
         for (int i = 0; i < types.length; i++) {
-            types[i] = new ScorecardType(this.scorecardTypes[i].getId(),
-                    this.scorecardTypes[i].getName());
+            types[i] = new ScorecardType(this.scorecardTypes[i].getId(), this.scorecardTypes[i].getName());
         }
         return types;
     }
@@ -667,9 +530,7 @@ public final class ScorecardActionsHelper {
     public ScorecardStatus[] getScorecardStatuses() {
         ScorecardStatus[] statuses = new ScorecardStatus[this.scorecardStatuses.length];
         for (int i = 0; i < statuses.length; i++) {
-            statuses[i] = new ScorecardStatus(
-                    this.scorecardStatuses[i].getId(),
-                    this.scorecardStatuses[i].getName());
+            statuses[i] = new ScorecardStatus(this.scorecardStatuses[i].getId(), this.scorecardStatuses[i].getName());
         }
         return statuses;
     }
@@ -684,8 +545,7 @@ public final class ScorecardActionsHelper {
     public QuestionType[] getQuestionTypes() {
         QuestionType[] types = new QuestionType[this.questionTypes.length];
         for (int i = 0; i < types.length; i++) {
-            types[i] = new QuestionType(this.questionTypes[i].getId(),
-                    this.questionTypes[i].getName());
+            types[i] = new QuestionType(this.questionTypes[i].getId(), this.questionTypes[i].getName());
         }
         return types;
     }
@@ -778,10 +638,11 @@ public final class ScorecardActionsHelper {
      * @return the new section
      */
     public static Section buildNewSection() {
-        Section section = new Section();
+        SectionAdapter section = new SectionAdapter();
         section.setName("Section name goes here.");
         section.setWeight(100);
         section.addQuestion(buildNewQuestion());
+        section.setCount(section.getNumberOfQuestions());
         return section;
     }
 
@@ -793,10 +654,11 @@ public final class ScorecardActionsHelper {
      * @return the new group
      */
     public static Group buildNewGroup() {
-        Group group = new Group();
+        GroupAdapter group = new GroupAdapter();
         group.setName("Group name goes here.");
         group.setWeight(100);
         group.addSection(buildNewSection());
+        group.setCount(group.getNumberOfSections());
         return group;
     }
 
@@ -808,18 +670,17 @@ public final class ScorecardActionsHelper {
      * @return the new scorecard
      */
     public static Scorecard buildNewScorecard() {
-        Scorecard scorecard = new Scorecard();
+        ScorecardAdapter scorecard = new ScorecardAdapter();
         scorecard.setInUse(false);
         scorecard.setMaxScore(100);
         scorecard.setMinScore(0);
         scorecard.setName("Scorecard name goes here.");
         scorecard.setCategory(1);
-        scorecard.setScorecardStatus(ScorecardActionsHelper.getInstance()
-                .getScorecardStatus("Inactive"));
-        scorecard.setScorecardType(ScorecardActionsHelper.getInstance()
-                .getScorecardType(1));
+        scorecard.setScorecardStatus(ScorecardActionsHelper.getInstance().getScorecardStatus("Inactive"));
+        scorecard.setScorecardType(ScorecardActionsHelper.getInstance().getScorecardType(1));
         scorecard.setVersion("1.0");
         scorecard.addGroup(buildNewGroup());
+        scorecard.setCount(scorecard.getNumberOfGroups());
         return scorecard;
     }
 
@@ -835,10 +696,11 @@ public final class ScorecardActionsHelper {
      * @return the newly created scorecard copied from the given scorecard
      */
     public static Scorecard copyScorecard(Scorecard scorecard) {
+        ScorecardAdapter sa = new ScorecardAdapter(scorecard);
         // reset id and inUse
-        scorecard.resetId();
-        scorecard.setInUse(false);
-        Group[] groups = scorecard.getAllGroups();
+        sa.resetId();
+        sa.setInUse(false);
+        Group[] groups = sa.getAllGroups();
         for (int i = 0; i < groups.length; i++) {
             // reset group id
             groups[i].resetId();
@@ -854,17 +716,103 @@ public final class ScorecardActionsHelper {
             }
         }
         // increase the major version
-        String version = scorecard.getVersion();
+        String version = sa.getVersion();
         int dotIdx = version.indexOf(".");
         long major;
         if (dotIdx == -1) {
             major = Long.parseLong(version) + 1;
-            scorecard.setVersion(major + "");
+            sa.setVersion(major + "");
         } else {
             major = Long.parseLong(version.substring(0, dotIdx)) + 1;
-            scorecard.setVersion(major + version.substring(dotIdx));
+            sa.setVersion(major + version.substring(dotIdx));
         }
-        return scorecard;
+        return sa;
+    }
+
+    /**
+     * <p>
+     * Generate the project categories JavaScript array. 
+     * </p>
+     * @return the project categories JavaScript array. 
+     */
+    public String generateProjectCategoriesJSArray() {
+        StringBuffer sb = new StringBuffer("[");
+        for (int i = 0; i < this.projectTypes.length; i++) {
+            sb.append("[");
+            ProjectCategory[] categories = this.getProjectCategories(projectTypes[i].getId());
+            for (int j = 0; j < categories.length; j++) {
+                sb.append("\"" + categories[j].getName() + "\"");
+                if (j < categories.length - 1) {
+                    sb.append(",");
+                }
+            }
+            sb.append("]");
+            if (i < this.projectTypes.length - 1) {
+                sb.append(",");
+            }
+        }
+        sb.append("]");
+        return sb.toString();
+    }
+
+    /**
+     * <p>
+     * Convert the given string to HTML string.
+     * </p>
+     * @param string the string
+     * @return the HTML representation
+     */
+    public static String escapeToHTMLString(String string) {
+        StringBuffer sb = new StringBuffer(string.length());
+        // true if last char was blank
+        boolean lastWasBlankChar = false;
+        int len = string.length();
+        char c;
+
+        for (int i = 0; i < len; i++) {
+            c = string.charAt(i);
+            if (c == ' ') {
+                // blank gets extra work,
+                // this solves the problem you get if you replace all
+                // blanks with &nbsp;, if you do that you loss 
+                // word breaking
+                if (lastWasBlankChar) {
+                    lastWasBlankChar = false;
+                    sb.append("&nbsp;");
+                } else {
+                    lastWasBlankChar = true;
+                    sb.append(' ');
+                }
+            } else {
+                lastWasBlankChar = false;
+                //
+                // HTML Special Chars
+                if (c == '"')
+                    sb.append("&quot;");
+                else if (c == '&')
+                    sb.append("&amp;");
+                else if (c == '<')
+                    sb.append("&lt;");
+                else if (c == '>')
+                    sb.append("&gt;");
+                else if (c == '\n')
+                    // Handle Newline
+                    sb.append("<br/>");
+                else {
+                    int ci = 0xffff & c;
+                    if (ci < 160)
+                        // nothing special only 7 Bit
+                        sb.append(c);
+                    else {
+                        // Not 7 Bit use the unicode system
+                        sb.append("&#");
+                        sb.append(new Integer(ci).toString());
+                        sb.append(';');
+                    }
+                }
+            }
+        }
+        return sb.toString();
     }
 
     /**

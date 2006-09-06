@@ -9,9 +9,17 @@ package com.cronos.onlinereview.actions;
  * </p>
  * 
  * @version 1.0
- * @author TCSDEVELOPER
+ * @author albertwang, flying2hk
  */
 public interface Constants {
+    /** Maximum length allowed for scorecard version. */
+    public static final int VERSION_MAXLENGTH = 16;
+    /** Maximum length allowed for name. */
+    public static final int NAME_MAXLENGTH = 64;
+    /** Maximum length allowed for question guideline. */
+    public static final int GUIDELINE_MAXLENGTH = 4096;
+    /** Maximum length allowed for question description. */
+    public static final int DESCRIPTION_MAXLENGTH = 4096;
     /**
      * Constant for action "viewScorecard".
      */
@@ -86,40 +94,4 @@ public interface Constants {
      * Request attribute key "scorecardList", used in "listScorecards" action.
      */
     public static final String ATTR_KEY_SCORECARD_LIST = "scorecardList";
-
-    /**
-     * Constant for operation "doAddGroup" in action "saveScorecard".
-     */
-    public static final String DO_ADD_GROUP = "doAddGroup";
-
-    /**
-     * Constant for operation "doAddSection" in action "saveScorecard".
-     */
-    public static final String DO_ADD_SECTION = "doAddSection";
-
-    /**
-     * Constant for operation "doAddQuestion" in action "saveScorecard".
-     */
-    public static final String DO_ADD_QUESTION = "doAddQuestion";
-
-    /**
-     * Constant for operation "doRemoveGroup" in action "saveScorecard".
-     */
-    public static final String DO_REMOVE_GROUP = "doRemoveGroup";
-
-    /**
-     * Constant for operation "doRemoveSection" in action "saveScorecard".
-     */
-    public static final String DO_REMOVE_SECTION = "doRemoveSection";
-
-    /**
-     * Constant for operation "doRemoveQuestion" in action "saveScorecard".
-     */
-    public static final String DO_REMOVE_QUESTION = "doRemoveQuestion";
-
-    /**
-     * Constant for operation "doFinish" in action "saveScorecard".
-     */
-    public static final String DO_FINISH = "doFinish";
-
 }
