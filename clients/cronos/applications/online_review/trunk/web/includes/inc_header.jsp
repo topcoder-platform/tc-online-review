@@ -88,7 +88,7 @@ div.launchPopUp {
 	<div id="outerLogo">
 		<div id="innerLogo">
 			<A href="http://www.topcoder.com/">
-				<img src="http://www.topcoder.com/i/interface/topcoder.gif" alt="TopCoder" /></A>
+				<img src="../i/interface/topcoder.gif" alt="TopCoder" /></A>
 		</div>
 	</div>
 </div>
