@@ -2,6 +2,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="bean" uri="/tags/struts-bean" %>
+	<img src="../i/minus.gif" style="display:none;" /><%-- This image is used to precache "minus" image in Internet Explorer --%>
 	<c:if test="${totalProjectsCount != 0}">
 	<c:forEach items="${projectTypes}" var="type" varStatus="idxrType">
 		<c:if test="${typeCounts[idxrType.index] != 0}">
