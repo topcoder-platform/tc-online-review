@@ -1,4 +1,4 @@
-	<script language="JavaScript" type="text/javascript" src="http://www.topcoder.com/js/arena.js"></script>
+	<script language="JavaScript" type="text/javascript" src="../js/arena.js"></script>
 	<script language="javascript" type="text/javascript">
 	<!--
 		function toggleMenu(menuTitle,menuID) {
