@@ -9,9 +9,8 @@ import com.topcoder.management.scorecard.data.Scorecard;
  * <p>
  * Unit tests on "copyScorecard" action.
  * </p>
- * 
  * @version 1.0
- * @author TCSDEVELOPER
+ * @author flying2hk
  */
 public class UnitTestCopyScorecardAction extends BaseTestCase {
     /** Scorecard used in this test. */
@@ -65,7 +64,7 @@ public class UnitTestCopyScorecardAction extends BaseTestCase {
      * </p>
      * <p>
      * Expected Result: 1. There should be no action errors. 2. The result
-     * forward should be "editScorecard"("/editScorecard.jsp").
+     * forward should be "editScorecard"("/").
      * </p>
      * 
      * @throws Exception
@@ -82,7 +81,6 @@ public class UnitTestCopyScorecardAction extends BaseTestCase {
         this.actionPerform();
         // verify the forward
         this.verifyForward("editScorecard");
-        this.verifyForwardPath("/editScorecard.jsp");
         this.verifyNoActionErrors();
         // verify the scorecardForm
         ScorecardForm scorecardForm = (ScorecardForm) this.getActionForm();
@@ -116,7 +114,7 @@ public class UnitTestCopyScorecardAction extends BaseTestCase {
      * <p>
      * Expected Result: 1. There should be action error
      * "global.error.no_such_scorecard". 2. The result forward should be
-     * "failure"("/error.jsp").
+     * "failure"("/pageLayout.jsp").
      * </p>
      * 
      * @throws Exception
@@ -130,7 +128,6 @@ public class UnitTestCopyScorecardAction extends BaseTestCase {
         this.actionPerform();
         // verify the forward
         this.verifyForward("failure");
-        this.verifyForwardPath("/error.jsp");
         this
                 .verifyActionErrors(new String[] { "global.error.no_such_scorecard" });
         // verify the scorecardForm
@@ -147,7 +144,7 @@ public class UnitTestCopyScorecardAction extends BaseTestCase {
      * <p>
      * Expected Result: 1. There should be action error
      * "global.error.no_such_scorecard". 2. The result forward should be
-     * "failure"("/error.jsp").
+     * "failure"("/pageLayout.jsp").
      * </p>
      * 
      * @throws Exception
@@ -160,7 +157,6 @@ public class UnitTestCopyScorecardAction extends BaseTestCase {
         this.actionPerform();
         // verify the forward
         this.verifyForward("failure");
-        this.verifyForwardPath("/error.jsp");
         this
                 .verifyActionErrors(new String[] { "global.error.no_such_scorecard" });
         // verify the scorecardForm
@@ -177,7 +173,7 @@ public class UnitTestCopyScorecardAction extends BaseTestCase {
      * <p>
      * Expected Result: 1. There should be action error
      * "global.error.no_such_scorecard". 2. The result forward should be
-     * "failure"("/error.jsp").
+     * "failure"("/pageLayout.jsp").
      * </p>
      * 
      * @throws Exception
@@ -194,7 +190,6 @@ public class UnitTestCopyScorecardAction extends BaseTestCase {
         this.actionPerform();
         // verify the forward
         this.verifyForward("failure");
-        this.verifyForwardPath("/error.jsp");
         this
                 .verifyActionErrors(new String[] { "global.error.no_such_scorecard" });
         // verify the scorecardForm
@@ -210,7 +205,7 @@ public class UnitTestCopyScorecardAction extends BaseTestCase {
      * <p>
      * Expected Result: 1. There should be action error
      * "global.error.authorization". 2. The result forward should be
-     * "failure"("/error.jsp").
+     * "failure"("/pageLayout.jsp").
      * </p>
      * 
      * @throws Exception
@@ -229,7 +224,6 @@ public class UnitTestCopyScorecardAction extends BaseTestCase {
         this.actionPerform();
         // verify the forward
         this.verifyForward("failure");
-        this.verifyForwardPath("/error.jsp");
         this.verifyActionErrors(new String[] { "global.error.authorization" });
         // verify the scorecardForm
         ScorecardForm scorecardForm = (ScorecardForm) this.getActionForm();

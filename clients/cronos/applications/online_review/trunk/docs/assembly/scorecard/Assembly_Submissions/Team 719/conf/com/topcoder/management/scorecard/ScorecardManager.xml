@@ -3,7 +3,7 @@
     <!-- Configuration for ScorecardManagerImpl-->
     <Config name="com.topcoder.management.scorecard">
         <Property name="SearchBuilderNamespace">
-            <Value>com.topcoder.searchbuilder</Value>
+            <Value>com.topcoder.management.scorecard.searchbuilder</Value>
         </Property>
         <Property name="PersistenceClass">
             <Value>com.topcoder.management.scorecard.persistence.InformixScorecardPersistence</Value>
@@ -59,7 +59,7 @@
   <!-- Namespace for SearchBuilder component
     The setting in this section decide the logic of secorecard searching.
    -->
-  <Config name="com.topcoder.searchbuilder">
+  <Config name="com.topcoder.management.scorecard.searchbuilder">
         <Property name="searchBundles">
             <Property name="ScorecardSearchBundle">
                         <Property name="type">

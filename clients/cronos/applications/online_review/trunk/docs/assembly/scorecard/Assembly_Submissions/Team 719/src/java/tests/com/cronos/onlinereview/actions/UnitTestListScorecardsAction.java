@@ -13,7 +13,7 @@ import com.topcoder.management.scorecard.data.ScorecardType;
  * </p>
  * 
  * @version 1.0
- * @author TCSDEVELOPER
+ * @author flying2hk
  */
 public class UnitTestListScorecardsAction extends BaseTestCase {
     /** Scorecards array used in this test. */
@@ -125,7 +125,6 @@ public class UnitTestListScorecardsAction extends BaseTestCase {
         this.actionPerform();
         // verify the forward
         this.verifyForward("listScorecards");
-        this.verifyForwardPath("/listScorecards.jsp");
         this.verifyNoActionErrors();
         // verify the "scorecardList" request attribute
         this.verifyScorecardList();
@@ -153,7 +152,6 @@ public class UnitTestListScorecardsAction extends BaseTestCase {
         this.actionPerform();
         // verify the forward
         this.verifyForward("listScorecards");
-        this.verifyForwardPath("/listScorecards.jsp");
         this.verifyNoActionErrors();
         // verify the "scorecardList" request attribute
         this.verifyScorecardList();
@@ -182,7 +180,6 @@ public class UnitTestListScorecardsAction extends BaseTestCase {
         this.actionPerform();
         // verify the forward
         this.verifyForward("listScorecards");
-        this.verifyForwardPath("/listScorecards.jsp");
         this.verifyNoActionErrors();
         // verify the "scorecardList" request attribute
         this.verifyScorecardList();
@@ -207,7 +204,6 @@ public class UnitTestListScorecardsAction extends BaseTestCase {
         this.actionPerform();
         // verify the forward
         this.verifyForward("failure");
-        this.verifyForwardPath("/error.jsp");
         this.verifyActionErrors(new String[] { "global.error.general" });
     }
 
@@ -234,7 +230,6 @@ public class UnitTestListScorecardsAction extends BaseTestCase {
         this.actionPerform();
         // verify the forward
         this.verifyForward("listScorecards");
-        this.verifyForwardPath("/listScorecards.jsp");
         this.verifyNoActionErrors();
         // verify the "scorecardList" request attribute
         this.verifyScorecardList();
@@ -260,7 +255,6 @@ public class UnitTestListScorecardsAction extends BaseTestCase {
         this.actionPerform();
         // verify the "scorecardList" request attribute
         this.verifyForward("failure");
-        this.verifyForwardPath("/error.jsp");
         this.verifyActionErrors(new String[] { "global.error.authorization" });
     }
 }

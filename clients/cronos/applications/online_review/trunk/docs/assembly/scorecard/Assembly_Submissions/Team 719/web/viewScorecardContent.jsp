@@ -2,7 +2,7 @@
    (#) viewScorecardContent.jsp
    ------------------------------------------------------------------
    @copyright Copyright (C) 2006, TopCoder Inc. All Rights Reserved.
-   @author TCSDEVELOPER
+   @author albertwang, flying2hk
    @version 1.0
    ------------------------------------------------------------------
    This is the content page of "viewScorecard", it displays the details
@@ -13,7 +13,7 @@
         filled by action "viewScorecard"
 --%>
 <%@ page language="java" %>
-<%@ page import="com.cronos.onlinereview.actions.Constants" %>
+<%@ page import="com.cronos.onlinereview.actions.Constants, com.cronos.onlinereview.actions.ScorecardActionsHelper" %>
 <%@ taglib uri="http://struts.apache.org/tags-bean" prefix="bean" %>
 <%@ taglib uri="http://struts.apache.org/tags-html" prefix="html" %>
 <%@ taglib uri="http://struts.apache.org/tags-logic" prefix="logic" %>
@@ -173,7 +173,7 @@
                             String longQ = "";
                             String jslnkQ = "";
                         %>
-                        <logic:iterate id="curQuestion" indexId="qIdx" name="curSection" property="allQuestions">
+                        <logic:iterate id="curQuestion" indexId="qIdx" name="curSection" property="allQuestions" type="com.topcoder.management.scorecard.data.Question">
                             <%
                                 shortQ = "shortQ" + gIdx + "_" + sIdx + "_" + qIdx;
                                 longQ = "longQ" + gIdx + "_" + sIdx + "_" + qIdx;
@@ -185,16 +185,17 @@
                                         <a href="<%= jslnkQ %>" >
                                             <img src="images/plus.gif" alt="open" border="0" />
                                         </a>
-                                        <b>Question <bean:write name="gIdx"/>.<bean:write name="sIdx"/>.<bean:write name="qIdx"/></b>
-                                        <bean:write name="curQuestion" property="description" />
+                                        <b>Question <%= gIdx.intValue() + 1 %>.<%= sIdx.intValue() + 1 %>.<%= qIdx.intValue() + 1 %></b><br/>
+                                        <%= ScorecardActionsHelper.escapeToHTMLString(curQuestion.getDescription()) %>
                                     </div>
                                     <div class="hideText" id="<%= longQ %>">
                                         <a href="<%= jslnkQ %>" >
                                             <img src="images/minus.gif" alt="close" border="0" />
                                         </a>
-                                        <b>Question <bean:write name="gIdx"/>.<bean:write name="sIdx"/>.<bean:write name="qIdx"/></b>
-                                        <bean:write name="curQuestion" property="description" /><p/>
-                                        <bean:write name="curQuestion" property="guideline" />
+                                        <b>Question <%= gIdx.intValue() + 1 %>.<%= sIdx.intValue() + 1 %>.<%= qIdx.intValue() + 1 %></b><br/>
+                                        <%= ScorecardActionsHelper.escapeToHTMLString(curQuestion.getDescription()) %>
+                                        <p/>
+                                        <%= ScorecardActionsHelper.escapeToHTMLString(curQuestion.getGuideline()) %>
                                     </div>
                                 </td>
                                 <td class="forumTextOdd" style="width: 8%" nowrap>

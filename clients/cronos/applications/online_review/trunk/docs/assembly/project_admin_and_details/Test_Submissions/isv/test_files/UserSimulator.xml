@@ -3,7 +3,7 @@
 	<Config name="com.cronos.onlinereview.project.UserSimulator">
 		<!-- application URL -->
 		<Property name="application_url">
-			<Value>http://127.0.0.1:9090/online_review/jsp/pc-manager-index.jsp</Value>
+			<Value>http://63.118.154.175/project_review_and_details/jsp/login.jsp</Value>
 		</Property>
 		
         <!-- login  information -->

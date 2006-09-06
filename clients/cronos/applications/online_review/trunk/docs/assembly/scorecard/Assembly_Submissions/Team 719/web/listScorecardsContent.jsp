@@ -2,7 +2,7 @@
    (#)listScorecardsContent.jsp
    ------------------------------------------------------------------
    @copyright Copyright (C) 2006, TopCoder Inc. All Rights Reserved.
-   @author TCSDEVELOPER
+   @author albertwang, flying2hk
    @version 1.0
    ------------------------------------------------------------------
    This is the content page of "listScorecards.jsp", it displays a
@@ -106,6 +106,7 @@
                 <tr valign="top">
                     <td class="forumTextEven" colspan="4">
                         <html:form action="/scorecardAdmin?actionName=newScorecard">
+                            <html:hidden property="projectTypeId" name="<%= Constants.ATTR_KEY_SCORECARD_LIST %>"/>
                             <html:submit style="width:125px; float:right;" styleClass="Buttons2" >
                                 <bean:message key="listScorecards.button.create"/>
                             </html:submit>
@@ -214,7 +215,12 @@
                                     <bean:define id="scorecardId" name="curScorecard" property="id" />
                                     <bean:define id="ajaxURL" value="<%= ScorecardActionsHelper.getInstance().getAjaxSupportAppUrl() %>"/> 
                                     <logic:equal value="1" name="curScorecard" property="scorecardStatus.id">
-                                        <input id="<%= "scorecardStatus" + scorecardId %>" type="checkbox" onclick="<%="sendRequest('" + ajaxURL +  "', '" + scorecardId + "', this); return false;" %>" checked/>
+                                        <logic:equal value="true" name="curScorecard" property="inUse">
+                                            <input id="<%= "scorecardStatus" + scorecardId %>" type="checkbox" onclick="<%="sendRequest('" + ajaxURL +  "', '" + scorecardId + "', this); return false;" %>" checked disabled/>
+                                        </logic:equal>
+                                        <logic:equal value="false" name="curScorecard" property="inUse">
+                                            <input id="<%= "scorecardStatus" + scorecardId %>" type="checkbox" onclick="<%="sendRequest('" + ajaxURL +  "', '" + scorecardId + "', this); return false;" %>" checked/>
+                                        </logic:equal>
                                     </logic:equal>
                                     <logic:equal value="2" name="curScorecard" property="scorecardStatus.id">
                                         <!-- <input id="Checkbox13" type="checkbox" onclick="refreshFilter()"/> -->
@@ -223,6 +229,11 @@
                                 </td>
                             </tr>
                         </logic:iterate>
+                        <tr style="display:none;">
+                            <td class="forumTextOdd" nowrap colspan="3">
+                                <bean:message key="listScorecards.message.noscorecards" arg0="<%=curGroup.getProjectCategory().getName() %>"/>
+                            </td>
+                        </tr>
                     </logic:notEmpty>
                 </logic:iterate>
                 <tr>

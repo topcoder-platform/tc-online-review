@@ -2,7 +2,7 @@
    (#) errorContent.jsp
    ------------------------------------------------------------------
    @copyright Copyright (C) 2006, TopCoder Inc. All Rights Reserved.
-   @author TCSDEVELOPER
+   @author albertwang, flying2hk
    @version 1.0
    ------------------------------------------------------------------
    This is the content page of "error.jsp".

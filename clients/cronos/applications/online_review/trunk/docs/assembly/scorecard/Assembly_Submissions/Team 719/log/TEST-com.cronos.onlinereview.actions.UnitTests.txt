@@ -1,234 +1,465 @@
 Testsuite: com.cronos.onlinereview.actions.UnitTests
-Tests run: 61, Failures: 0, Errors: 0, Time elapsed: 131.709 sec
+Tests run: 54, Failures: 0, Errors: 0, Time elapsed: 134.874 sec
+------------- Standard Output ---------------
+/pageLayout.jsp
+/pageLayout.jsp
+/pageLayout.jsp
+/pageLayout.jsp
+/pageLayout.jsp
+/pageLayout.jsp
+/pageLayout.jsp
+/pageLayout.jsp
+/pageLayout.jsp
+/pageLayout.jsp
+/pageLayout.jsp
+/pageLayout.jsp
+/pageLayout.jsp
+/pageLayout.jsp
+/pageLayout.jsp
+/pageLayout.jsp
+/pageLayout.jsp
+/pageLayout.jsp
+/pageLayout.jsp
+/pageLayout.jsp
+/pageLayout.jsp
+/pageLayout.jsp
+/pageLayout.jsp
+/pageLayout.jsp
+/pageLayout.jsp
+/pageLayout.jsp
+/pageLayout.jsp
+------------- ---------------- ---------------
 ------------- Standard Error -----------------
-2006-8-12 14:40:28 com.topcoder.util.log.jdk14.Jdk14Log log
+2006-9-2 2:35:19 org.apache.struts.tiles.TilesPlugin initDefinitionsFactory
+信息: Tiles definition factory loaded for module ''.
+2006-9-2 2:35:19 org.apache.struts.tiles.TilesRequestProcessor initDefinitionsMapping
+信息: Tiles definition factory found for request processor ''.
+2006-9-2 2:35:30 com.topcoder.util.log.jdk14.Jdk14Log log
 信息: User with ID 10 is requesting to list the scorecards with project type id 1.
-2006-8-12 14:40:39 com.topcoder.util.log.jdk14.Jdk14Log log
+2006-9-2 2:35:32 org.apache.struts.tiles.TilesPlugin initDefinitionsFactory
+信息: Tiles definition factory loaded for module ''.
+2006-9-2 2:35:32 org.apache.struts.tiles.TilesRequestProcessor initDefinitionsMapping
+信息: Tiles definition factory found for request processor ''.
+2006-9-2 2:35:40 com.topcoder.util.log.jdk14.Jdk14Log log
 信息: User with ID 10 is requesting to list the scorecards with project type id 1.
-2006-8-12 14:40:53 com.topcoder.util.log.jdk14.Jdk14Log log
+2006-9-2 2:35:42 org.apache.struts.tiles.TilesPlugin initDefinitionsFactory
+信息: Tiles definition factory loaded for module ''.
+2006-9-2 2:35:42 org.apache.struts.tiles.TilesRequestProcessor initDefinitionsMapping
+信息: Tiles definition factory found for request processor ''.
+2006-9-2 2:36:01 com.topcoder.util.log.jdk14.Jdk14Log log
 信息: User with ID 10 is requesting to list the scorecards with project type id 2.
-2006-8-12 14:40:57 com.topcoder.util.log.jdk14.Jdk14Log log
+2006-9-2 2:36:06 org.apache.struts.tiles.TilesPlugin initDefinitionsFactory
+信息: Tiles definition factory loaded for module ''.
+2006-9-2 2:36:06 org.apache.struts.tiles.TilesRequestProcessor initDefinitionsMapping
+信息: Tiles definition factory found for request processor ''.
+2006-9-2 2:36:06 com.topcoder.util.log.jdk14.Jdk14Log log
 信息: User with ID 10 is requesting to list the scorecards with project type id 3.
-2006-8-12 14:40:57 com.topcoder.util.log.jdk14.Jdk14Log log
-严重: Exception caught while listing the scorecard: null
-2006-8-12 14:41:04 com.topcoder.util.log.jdk14.Jdk14Log log
+2006-9-2 2:36:06 com.topcoder.util.log.jdk14.Jdk14Log log
+严重: Exception caught while listing the scorecard: java.lang.NullPointerException
+	at com.cronos.onlinereview.actions.ScorecardActions.listScorecards(ScorecardActions.java:496)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+	at java.lang.reflect.Method.invoke(Method.java:324)
+	at org.apache.struts.actions.DispatchAction.dispatchMethod(DispatchAction.java:270)
+	at org.apache.struts.actions.DispatchAction.execute(DispatchAction.java:187)
+	at org.apache.struts.action.RequestProcessor.processActionPerform(RequestProcessor.java:431)
+	at org.apache.struts.action.RequestProcessor.process(RequestProcessor.java:236)
+	at org.apache.struts.action.ActionServlet.process(ActionServlet.java:1196)
+	at org.apache.struts.action.ActionServlet.doPost(ActionServlet.java:432)
+	at servletunit.struts.MockStrutsTestCase.actionPerform(MockStrutsTestCase.java:394)
+	at com.cronos.onlinereview.actions.UnitTestListScorecardsAction.testListScorecards_UnknownProjectTypeId(UnitTestListScorecardsAction.java:204)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+	at java.lang.reflect.Method.invoke(Method.java:324)
+	at junit.framework.TestCase.runTest(TestCase.java:154)
+	at junit.framework.TestCase.runBare(TestCase.java:127)
+	at junit.framework.TestResult$1.protect(TestResult.java:106)
+	at junit.framework.TestResult.runProtected(TestResult.java:124)
+	at junit.framework.TestResult.run(TestResult.java:109)
+	at junit.framework.TestCase.run(TestCase.java:118)
+	at junit.framework.TestSuite.runTest(TestSuite.java:208)
+	at junit.framework.TestSuite.run(TestSuite.java:203)
+	at junit.framework.TestSuite.runTest(TestSuite.java:208)
+	at junit.framework.TestSuite.run(TestSuite.java:203)
+	at org.apache.tools.ant.taskdefs.optional.junit.JUnitTestRunner.run(JUnitTestRunner.java:297)
+	at org.apache.tools.ant.taskdefs.optional.junit.JUnitTestRunner.launch(JUnitTestRunner.java:672)
+	at org.apache.tools.ant.taskdefs.optional.junit.JUnitTestRunner.main(JUnitTestRunner.java:567)
+
+2006-9-2 2:36:07 org.apache.struts.tiles.TilesPlugin initDefinitionsFactory
+信息: Tiles definition factory loaded for module ''.
+2006-9-2 2:36:07 org.apache.struts.tiles.TilesRequestProcessor initDefinitionsMapping
+信息: Tiles definition factory found for request processor ''.
+2006-9-2 2:36:15 com.topcoder.util.log.jdk14.Jdk14Log log
 信息: User with ID 10 is requesting to list the scorecards with project type id 1.
-2006-8-12 14:41:07 com.topcoder.util.log.jdk14.Jdk14Log log
+2006-9-2 2:36:17 org.apache.struts.tiles.TilesPlugin initDefinitionsFactory
+信息: Tiles definition factory loaded for module ''.
+2006-9-2 2:36:17 org.apache.struts.tiles.TilesRequestProcessor initDefinitionsMapping
+信息: Tiles definition factory found for request processor ''.
+2006-9-2 2:36:18 com.topcoder.util.log.jdk14.Jdk14Log log
 严重: User is not logged on.
-2006-8-12 14:41:07 com.topcoder.util.log.jdk14.Jdk14Log log
+2006-9-2 2:36:18 com.topcoder.util.log.jdk14.Jdk14Log log
 信息: User with ID null is not authorized to perform the listScorecards actions.
-2006-8-12 14:41:10 com.topcoder.util.log.jdk14.Jdk14Log log
-信息: User with ID 10 is requesting to view the scorecard with id 5573.
-2006-8-12 14:41:11 com.topcoder.util.log.jdk14.Jdk14Log log
+2006-9-2 2:36:18 org.apache.struts.tiles.TilesPlugin initDefinitionsFactory
+信息: Tiles definition factory loaded for module ''.
+2006-9-2 2:36:18 org.apache.struts.tiles.TilesRequestProcessor initDefinitionsMapping
+信息: Tiles definition factory found for request processor ''.
+2006-9-2 2:36:20 com.topcoder.util.log.jdk14.Jdk14Log log
+信息: User with ID 10 is requesting to view the scorecard with id 7293.
+2006-9-2 2:36:20 org.apache.struts.tiles.TilesPlugin initDefinitionsFactory
+信息: Tiles definition factory loaded for module ''.
+2006-9-2 2:36:20 org.apache.struts.tiles.TilesRequestProcessor initDefinitionsMapping
+信息: Tiles definition factory found for request processor ''.
+2006-9-2 2:36:21 com.topcoder.util.log.jdk14.Jdk14Log log
 严重: User with ID 10 is issuing an invalid view scorecard request with scorecard id -1.
-2006-8-12 14:41:12 com.topcoder.util.log.jdk14.Jdk14Log log
+2006-9-2 2:36:21 org.apache.struts.tiles.TilesPlugin initDefinitionsFactory
+信息: Tiles definition factory loaded for module ''.
+2006-9-2 2:36:21 org.apache.struts.tiles.TilesRequestProcessor initDefinitionsMapping
+信息: Tiles definition factory found for request processor ''.
+2006-9-2 2:36:22 com.topcoder.util.log.jdk14.Jdk14Log log
 严重: User with ID 10 is issuing an invalid view scorecard request with scorecard id -1.
-2006-8-12 14:41:14 com.topcoder.util.log.jdk14.Jdk14Log log
-严重: User with ID 10 is requesting to view a nonexist scorecard with id 5577.
-2006-8-12 14:41:16 com.topcoder.util.log.jdk14.Jdk14Log log
+2006-9-2 2:36:23 org.apache.struts.tiles.TilesPlugin initDefinitionsFactory
+信息: Tiles definition factory loaded for module ''.
+2006-9-2 2:36:23 org.apache.struts.tiles.TilesRequestProcessor initDefinitionsMapping
+信息: Tiles definition factory found for request processor ''.
+2006-9-2 2:36:24 com.topcoder.util.log.jdk14.Jdk14Log log
+严重: User with ID 10 is requesting to view a nonexist scorecard with id 7297.
+2006-9-2 2:36:25 org.apache.struts.tiles.TilesPlugin initDefinitionsFactory
+信息: Tiles definition factory loaded for module ''.
+2006-9-2 2:36:25 org.apache.struts.tiles.TilesRequestProcessor initDefinitionsMapping
+信息: Tiles definition factory found for request processor ''.
+2006-9-2 2:36:25 com.topcoder.util.log.jdk14.Jdk14Log log
 严重: User is not logged on.
-2006-8-12 14:41:16 com.topcoder.util.log.jdk14.Jdk14Log log
+2006-9-2 2:36:25 com.topcoder.util.log.jdk14.Jdk14Log log
 信息: User with ID null is not authorized to perform the viewScorecard actions.
-2006-8-12 14:41:16 com.topcoder.util.log.jdk14.Jdk14Log log
+2006-9-2 2:36:26 org.apache.struts.tiles.TilesPlugin initDefinitionsFactory
+信息: Tiles definition factory loaded for module ''.
+2006-9-2 2:36:26 org.apache.struts.tiles.TilesRequestProcessor initDefinitionsMapping
+信息: Tiles definition factory found for request processor ''.
+2006-9-2 2:36:26 com.topcoder.util.log.jdk14.Jdk14Log log
 信息: User with ID 10 is requesting to perform the newScorecard actions.
-2006-8-12 14:41:17 com.topcoder.util.log.jdk14.Jdk14Log log
+2006-9-2 2:36:26 org.apache.struts.tiles.TilesPlugin initDefinitionsFactory
+信息: Tiles definition factory loaded for module ''.
+2006-9-2 2:36:26 org.apache.struts.tiles.TilesRequestProcessor initDefinitionsMapping
+信息: Tiles definition factory found for request processor ''.
+2006-9-2 2:36:26 com.topcoder.util.log.jdk14.Jdk14Log log
 信息: User with ID 10 is requesting to perform the newScorecard actions.
-2006-8-12 14:41:17 com.topcoder.util.log.jdk14.Jdk14Log log
+2006-9-2 2:36:26 org.apache.struts.tiles.TilesPlugin initDefinitionsFactory
+信息: Tiles definition factory loaded for module ''.
+2006-9-2 2:36:26 org.apache.struts.tiles.TilesRequestProcessor initDefinitionsMapping
+信息: Tiles definition factory found for request processor ''.
+2006-9-2 2:36:26 com.topcoder.util.log.jdk14.Jdk14Log log
 信息: User with ID 10 is requesting to perform the newScorecard actions.
-2006-8-12 14:41:17 com.topcoder.util.log.jdk14.Jdk14Log log
+2006-9-2 2:36:26 org.apache.struts.tiles.TilesPlugin initDefinitionsFactory
+信息: Tiles definition factory loaded for module ''.
+2006-9-2 2:36:26 org.apache.struts.tiles.TilesRequestProcessor initDefinitionsMapping
+信息: Tiles definition factory found for request processor ''.
+2006-9-2 2:36:26 com.topcoder.util.log.jdk14.Jdk14Log log
 信息: User with ID 10 is requesting to perform the newScorecard actions.
-2006-8-12 14:41:17 com.topcoder.util.log.jdk14.Jdk14Log log
+2006-9-2 2:36:26 org.apache.struts.tiles.TilesPlugin initDefinitionsFactory
+信息: Tiles definition factory loaded for module ''.
+2006-9-2 2:36:26 org.apache.struts.tiles.TilesRequestProcessor initDefinitionsMapping
+信息: Tiles definition factory found for request processor ''.
+2006-9-2 2:36:26 com.topcoder.util.log.jdk14.Jdk14Log log
 严重: User is not logged on.
-2006-8-12 14:41:17 com.topcoder.util.log.jdk14.Jdk14Log log
+2006-9-2 2:36:26 com.topcoder.util.log.jdk14.Jdk14Log log
 信息: User with ID null is not authorized to perform the newScorecard actions.
-2006-8-12 14:41:19 com.topcoder.util.log.jdk14.Jdk14Log log
-信息: User with ID 10 is requesting to edit the scorecard with id 5578.
-2006-8-12 14:41:20 com.topcoder.util.log.jdk14.Jdk14Log log
-严重: Scorecard with id 5579 is active and cannot be edited.
-2006-8-12 14:41:21 com.topcoder.util.log.jdk14.Jdk14Log log
+2006-9-2 2:36:26 org.apache.struts.tiles.TilesPlugin initDefinitionsFactory
+信息: Tiles definition factory loaded for module ''.
+2006-9-2 2:36:26 org.apache.struts.tiles.TilesRequestProcessor initDefinitionsMapping
+信息: Tiles definition factory found for request processor ''.
+2006-9-2 2:36:28 com.topcoder.util.log.jdk14.Jdk14Log log
+信息: User with ID 10 is requesting to edit the scorecard with id 7298.
+2006-9-2 2:36:28 org.apache.struts.tiles.TilesPlugin initDefinitionsFactory
+信息: Tiles definition factory loaded for module ''.
+2006-9-2 2:36:28 org.apache.struts.tiles.TilesRequestProcessor initDefinitionsMapping
+信息: Tiles definition factory found for request processor ''.
+2006-9-2 2:36:30 com.topcoder.util.log.jdk14.Jdk14Log log
+严重: Scorecard with id 7299 is active and cannot be edited.
+2006-9-2 2:36:30 org.apache.struts.tiles.TilesPlugin initDefinitionsFactory
+信息: Tiles definition factory loaded for module ''.
+2006-9-2 2:36:30 org.apache.struts.tiles.TilesRequestProcessor initDefinitionsMapping
+信息: Tiles definition factory found for request processor ''.
+2006-9-2 2:36:31 com.topcoder.util.log.jdk14.Jdk14Log log
 严重: User with ID 10 is issuing an invalid edit scorecard request with scorecard id -1.
-2006-8-12 14:41:24 com.topcoder.util.log.jdk14.Jdk14Log log
+2006-9-2 2:36:31 org.apache.struts.tiles.TilesPlugin initDefinitionsFactory
+信息: Tiles definition factory loaded for module ''.
+2006-9-2 2:36:31 org.apache.struts.tiles.TilesRequestProcessor initDefinitionsMapping
+信息: Tiles definition factory found for request processor ''.
+2006-9-2 2:36:33 com.topcoder.util.log.jdk14.Jdk14Log log
 严重: User with ID 10 is issuing an invalid edit scorecard request with scorecard id -1.
-2006-8-12 14:41:26 com.topcoder.util.log.jdk14.Jdk14Log log
-严重: User with ID 10 is requesting to edit a nonexist scorecard with id 5583.
-2006-8-12 14:41:28 com.topcoder.util.log.jdk14.Jdk14Log log
+2006-9-2 2:36:34 org.apache.struts.tiles.TilesPlugin initDefinitionsFactory
+信息: Tiles definition factory loaded for module ''.
+2006-9-2 2:36:34 org.apache.struts.tiles.TilesRequestProcessor initDefinitionsMapping
+信息: Tiles definition factory found for request processor ''.
+2006-9-2 2:36:39 com.topcoder.util.log.jdk14.Jdk14Log log
+严重: User with ID 10 is requesting to edit a nonexist scorecard with id 7303.
+2006-9-2 2:36:40 org.apache.struts.tiles.TilesPlugin initDefinitionsFactory
+信息: Tiles definition factory loaded for module ''.
+2006-9-2 2:36:40 org.apache.struts.tiles.TilesRequestProcessor initDefinitionsMapping
+信息: Tiles definition factory found for request processor ''.
+2006-9-2 2:36:46 com.topcoder.util.log.jdk14.Jdk14Log log
 严重: User is not logged on.
-2006-8-12 14:41:28 com.topcoder.util.log.jdk14.Jdk14Log log
+2006-9-2 2:36:46 com.topcoder.util.log.jdk14.Jdk14Log log
 信息: User with ID null is not authorized to perform the editScorecard actions.
-2006-8-12 14:41:31 com.topcoder.util.log.jdk14.Jdk14Log log
+2006-9-2 2:36:50 org.apache.struts.tiles.TilesPlugin initDefinitionsFactory
+信息: Tiles definition factory loaded for module ''.
+2006-9-2 2:36:50 org.apache.struts.tiles.TilesRequestProcessor initDefinitionsMapping
+信息: Tiles definition factory found for request processor ''.
+2006-9-2 2:36:52 org.apache.struts.tiles.TilesPlugin initDefinitionsFactory
+信息: Tiles definition factory loaded for module ''.
+2006-9-2 2:36:52 org.apache.struts.tiles.TilesRequestProcessor initDefinitionsMapping
+信息: Tiles definition factory found for request processor ''.
+2006-9-2 2:36:52 com.topcoder.util.log.jdk14.Jdk14Log log
 严重: User with ID 10 is issuing an invalid copy scorecard request with scorecard id -1.
-2006-8-12 14:41:33 com.topcoder.util.log.jdk14.Jdk14Log log
+2006-9-2 2:36:53 org.apache.struts.tiles.TilesPlugin initDefinitionsFactory
+信息: Tiles definition factory loaded for module ''.
+2006-9-2 2:36:53 org.apache.struts.tiles.TilesRequestProcessor initDefinitionsMapping
+信息: Tiles definition factory found for request processor ''.
+2006-9-2 2:36:53 com.topcoder.util.log.jdk14.Jdk14Log log
 严重: User with ID 10 is issuing an invalid copy scorecard request with scorecard id -1.
-2006-8-12 14:41:35 com.topcoder.util.log.jdk14.Jdk14Log log
-严重: User with ID 10 is requesting to copy a nonexist scorecard with id 5588.
-2006-8-12 14:41:36 com.topcoder.util.log.jdk14.Jdk14Log log
+2006-9-2 2:36:54 org.apache.struts.tiles.TilesPlugin initDefinitionsFactory
+信息: Tiles definition factory loaded for module ''.
+2006-9-2 2:36:54 org.apache.struts.tiles.TilesRequestProcessor initDefinitionsMapping
+信息: Tiles definition factory found for request processor ''.
+2006-9-2 2:36:55 com.topcoder.util.log.jdk14.Jdk14Log log
+严重: User with ID 10 is requesting to copy a nonexist scorecard with id 7308.
+2006-9-2 2:36:55 org.apache.struts.tiles.TilesPlugin initDefinitionsFactory
+信息: Tiles definition factory loaded for module ''.
+2006-9-2 2:36:55 org.apache.struts.tiles.TilesRequestProcessor initDefinitionsMapping
+信息: Tiles definition factory found for request processor ''.
+2006-9-2 2:36:56 com.topcoder.util.log.jdk14.Jdk14Log log
 严重: User is not logged on.
-2006-8-12 14:41:36 com.topcoder.util.log.jdk14.Jdk14Log log
+2006-9-2 2:36:56 com.topcoder.util.log.jdk14.Jdk14Log log
 信息: User with ID null is not authorized to perform the copyScorecard actions.
-2006-8-12 14:41:38 com.topcoder.util.log.jdk14.Jdk14Log log
-信息: User with ID 10 is requesting to edit the scorecard with id 5589.
-2006-8-12 14:41:38 com.topcoder.util.log.jdk14.Jdk14Log log
-信息: User with ID 10 is requesting to add a group at the position (0) to scorecard with id 5589.
-2006-8-12 14:41:40 com.topcoder.util.log.jdk14.Jdk14Log log
-信息: User with ID 10 is requesting to edit the scorecard with id 5590.
-2006-8-12 14:41:40 com.topcoder.util.log.jdk14.Jdk14Log log
-信息: User with ID 10 is requesting to remove a group at the position (0) from scorecard with id 5590.
-2006-8-12 14:41:43 com.topcoder.util.log.jdk14.Jdk14Log log
-信息: User with ID 10 is requesting to edit the scorecard with id 5591.
-2006-8-12 14:41:43 com.topcoder.util.log.jdk14.Jdk14Log log
-信息: User with ID 10 is requesting to add a section at the position (0, 1) to scorecard with id 5591.
-2006-8-12 14:41:45 com.topcoder.util.log.jdk14.Jdk14Log log
-信息: User with ID 10 is requesting to edit the scorecard with id 5592.
-2006-8-12 14:41:45 com.topcoder.util.log.jdk14.Jdk14Log log
-信息: User with ID 10 is requesting to remove a section at the position (0, 0) from scorecard with id 5592.
-2006-8-12 14:41:47 com.topcoder.util.log.jdk14.Jdk14Log log
-信息: User with ID 10 is requesting to edit the scorecard with id 5593.
-2006-8-12 14:41:47 com.topcoder.util.log.jdk14.Jdk14Log log
-信息: User with ID 10 is requesting to add a question at the position (0, 0) to scorecard with id 5593.
-2006-8-12 14:41:49 com.topcoder.util.log.jdk14.Jdk14Log log
-信息: User with ID 10 is requesting to edit the scorecard with id 5594.
-2006-8-12 14:41:49 com.topcoder.util.log.jdk14.Jdk14Log log
-信息: User with ID 10 is requesting to remove a question at the position (0, 0, 0) from scorecard with id 5594.
-2006-8-12 14:41:51 com.topcoder.util.log.jdk14.Jdk14Log log
-信息: User with ID 10 is requesting to edit the scorecard with id 5595.
-2006-8-12 14:41:51 com.topcoder.util.log.jdk14.Jdk14Log log
-信息: User with ID 10 is requesting to save scorecard with id 5595.
-2006-8-12 14:41:52 com.topcoder.util.log.jdk14.Jdk14Log log
+2006-9-2 2:36:57 org.apache.struts.tiles.TilesPlugin initDefinitionsFactory
+信息: Tiles definition factory loaded for module ''.
+2006-9-2 2:36:57 org.apache.struts.tiles.TilesRequestProcessor initDefinitionsMapping
+信息: Tiles definition factory found for request processor ''.
+2006-9-2 2:36:59 com.topcoder.util.log.jdk14.Jdk14Log log
+信息: User with ID 10 is requesting to edit the scorecard with id 7309.
+2006-9-2 2:36:59 com.topcoder.util.log.jdk14.Jdk14Log log
+信息: User with ID 10 is requesting to save scorecard with id 7309.
+2006-9-2 2:37:00 com.topcoder.util.log.jdk14.Jdk14Log log
 信息: User with ID 10 is requesting to list the scorecards with project type id 1.
-2006-8-12 14:41:55 com.topcoder.util.log.jdk14.Jdk14Log log
-信息: User with ID 10 is requesting to edit the scorecard with id 5596.
-2006-8-12 14:41:57 com.topcoder.util.log.jdk14.Jdk14Log log
-信息: User with ID 10 is requesting to edit the scorecard with id 5597.
-2006-8-12 14:41:59 com.topcoder.util.log.jdk14.Jdk14Log log
+2006-9-2 2:37:01 org.apache.struts.tiles.TilesPlugin initDefinitionsFactory
+信息: Tiles definition factory loaded for module ''.
+2006-9-2 2:37:01 org.apache.struts.tiles.TilesRequestProcessor initDefinitionsMapping
+信息: Tiles definition factory found for request processor ''.
+2006-9-2 2:37:03 com.topcoder.util.log.jdk14.Jdk14Log log
+信息: User with ID 10 is requesting to edit the scorecard with id 7310.
+2006-9-2 2:37:03 org.apache.struts.tiles.TilesPlugin initDefinitionsFactory
+信息: Tiles definition factory loaded for module ''.
+2006-9-2 2:37:03 org.apache.struts.tiles.TilesRequestProcessor initDefinitionsMapping
+信息: Tiles definition factory found for request processor ''.
+2006-9-2 2:37:05 com.topcoder.util.log.jdk14.Jdk14Log log
+信息: User with ID 10 is requesting to edit the scorecard with id 7311.
+2006-9-2 2:37:05 org.apache.struts.tiles.TilesPlugin initDefinitionsFactory
+信息: Tiles definition factory loaded for module ''.
+2006-9-2 2:37:05 org.apache.struts.tiles.TilesRequestProcessor initDefinitionsMapping
+信息: Tiles definition factory found for request processor ''.
+2006-9-2 2:37:06 com.topcoder.util.log.jdk14.Jdk14Log log
 信息: User with ID 10 is requesting to perform the newScorecard actions.
-2006-8-12 14:41:59 com.topcoder.util.log.jdk14.Jdk14Log log
+2006-9-2 2:37:06 org.apache.struts.tiles.TilesPlugin initDefinitionsFactory
+信息: Tiles definition factory loaded for module ''.
+2006-9-2 2:37:06 org.apache.struts.tiles.TilesRequestProcessor initDefinitionsMapping
+信息: Tiles definition factory found for request processor ''.
+2006-9-2 2:37:07 com.topcoder.util.log.jdk14.Jdk14Log log
 信息: User with ID 10 is requesting to perform the newScorecard actions.
-2006-8-12 14:42:00 com.topcoder.util.log.jdk14.Jdk14Log log
+2006-9-2 2:37:07 org.apache.struts.tiles.TilesPlugin initDefinitionsFactory
+信息: Tiles definition factory loaded for module ''.
+2006-9-2 2:37:07 org.apache.struts.tiles.TilesRequestProcessor initDefinitionsMapping
+信息: Tiles definition factory found for request processor ''.
+2006-9-2 2:37:08 com.topcoder.util.log.jdk14.Jdk14Log log
 信息: User with ID 10 is requesting to perform the newScorecard actions.
-2006-8-12 14:42:02 com.topcoder.util.log.jdk14.Jdk14Log log
+2006-9-2 2:37:09 org.apache.struts.tiles.TilesPlugin initDefinitionsFactory
+信息: Tiles definition factory loaded for module ''.
+2006-9-2 2:37:09 org.apache.struts.tiles.TilesRequestProcessor initDefinitionsMapping
+信息: Tiles definition factory found for request processor ''.
+2006-9-2 2:37:10 com.topcoder.util.log.jdk14.Jdk14Log log
 信息: User with ID 10 is requesting to perform the newScorecard actions.
-2006-8-12 14:42:03 com.topcoder.util.log.jdk14.Jdk14Log log
+2006-9-2 2:37:11 org.apache.struts.tiles.TilesPlugin initDefinitionsFactory
+信息: Tiles definition factory loaded for module ''.
+2006-9-2 2:37:11 org.apache.struts.tiles.TilesRequestProcessor initDefinitionsMapping
+信息: Tiles definition factory found for request processor ''.
+2006-9-2 2:37:11 com.topcoder.util.log.jdk14.Jdk14Log log
 信息: User with ID 10 is requesting to perform the newScorecard actions.
-2006-8-12 14:42:04 com.topcoder.util.log.jdk14.Jdk14Log log
+2006-9-2 2:37:12 org.apache.struts.tiles.TilesPlugin initDefinitionsFactory
+信息: Tiles definition factory loaded for module ''.
+2006-9-2 2:37:12 org.apache.struts.tiles.TilesRequestProcessor initDefinitionsMapping
+信息: Tiles definition factory found for request processor ''.
+2006-9-2 2:37:12 com.topcoder.util.log.jdk14.Jdk14Log log
 信息: User with ID 10 is requesting to perform the newScorecard actions.
-2006-8-12 14:42:05 com.topcoder.util.log.jdk14.Jdk14Log log
+2006-9-2 2:37:13 org.apache.struts.tiles.TilesPlugin initDefinitionsFactory
+信息: Tiles definition factory loaded for module ''.
+2006-9-2 2:37:13 org.apache.struts.tiles.TilesRequestProcessor initDefinitionsMapping
+信息: Tiles definition factory found for request processor ''.
+2006-9-2 2:37:13 com.topcoder.util.log.jdk14.Jdk14Log log
 信息: User with ID 10 is requesting to perform the newScorecard actions.
-2006-8-12 14:42:06 com.topcoder.util.log.jdk14.Jdk14Log log
+2006-9-2 2:37:14 org.apache.struts.tiles.TilesPlugin initDefinitionsFactory
+信息: Tiles definition factory loaded for module ''.
+2006-9-2 2:37:14 org.apache.struts.tiles.TilesRequestProcessor initDefinitionsMapping
+信息: Tiles definition factory found for request processor ''.
+2006-9-2 2:37:14 com.topcoder.util.log.jdk14.Jdk14Log log
 信息: User with ID 10 is requesting to perform the newScorecard actions.
-2006-8-12 14:42:07 com.topcoder.util.log.jdk14.Jdk14Log log
+2006-9-2 2:37:15 org.apache.struts.tiles.TilesPlugin initDefinitionsFactory
+信息: Tiles definition factory loaded for module ''.
+2006-9-2 2:37:15 org.apache.struts.tiles.TilesRequestProcessor initDefinitionsMapping
+信息: Tiles definition factory found for request processor ''.
+2006-9-2 2:37:15 com.topcoder.util.log.jdk14.Jdk14Log log
 信息: User with ID 10 is requesting to perform the newScorecard actions.
-2006-8-12 14:42:09 com.topcoder.util.log.jdk14.Jdk14Log log
+2006-9-2 2:37:16 org.apache.struts.tiles.TilesPlugin initDefinitionsFactory
+信息: Tiles definition factory loaded for module ''.
+2006-9-2 2:37:16 org.apache.struts.tiles.TilesRequestProcessor initDefinitionsMapping
+信息: Tiles definition factory found for request processor ''.
+2006-9-2 2:37:16 com.topcoder.util.log.jdk14.Jdk14Log log
 信息: User with ID 10 is requesting to perform the newScorecard actions.
-2006-8-12 14:42:10 com.topcoder.util.log.jdk14.Jdk14Log log
+2006-9-2 2:37:17 org.apache.struts.tiles.TilesPlugin initDefinitionsFactory
+信息: Tiles definition factory loaded for module ''.
+2006-9-2 2:37:17 org.apache.struts.tiles.TilesRequestProcessor initDefinitionsMapping
+信息: Tiles definition factory found for request processor ''.
+2006-9-2 2:37:17 com.topcoder.util.log.jdk14.Jdk14Log log
 信息: User with ID 10 is requesting to perform the newScorecard actions.
-2006-8-12 14:42:10 com.topcoder.util.log.jdk14.Jdk14Log log
-信息: User with ID 10 is requesting to add a group at the position (0) to scorecard with id -1.
-2006-8-12 14:42:11 com.topcoder.util.log.jdk14.Jdk14Log log
+2006-9-2 2:37:18 org.apache.struts.tiles.TilesPlugin initDefinitionsFactory
+信息: Tiles definition factory loaded for module ''.
+2006-9-2 2:37:18 org.apache.struts.tiles.TilesRequestProcessor initDefinitionsMapping
+信息: Tiles definition factory found for request processor ''.
+2006-9-2 2:37:18 com.topcoder.util.log.jdk14.Jdk14Log log
 信息: User with ID 10 is requesting to perform the newScorecard actions.
-2006-8-12 14:42:11 com.topcoder.util.log.jdk14.Jdk14Log log
-信息: User with ID 10 is requesting to add a group at the position (0) to scorecard with id -1.
-2006-8-12 14:42:12 com.topcoder.util.log.jdk14.Jdk14Log log
+2006-9-2 2:37:19 org.apache.struts.tiles.TilesPlugin initDefinitionsFactory
+信息: Tiles definition factory loaded for module ''.
+2006-9-2 2:37:19 org.apache.struts.tiles.TilesRequestProcessor initDefinitionsMapping
+信息: Tiles definition factory found for request processor ''.
+2006-9-2 2:37:19 com.topcoder.util.log.jdk14.Jdk14Log log
 信息: User with ID 10 is requesting to perform the newScorecard actions.
-2006-8-12 14:42:13 com.topcoder.util.log.jdk14.Jdk14Log log
+2006-9-2 2:37:20 org.apache.struts.tiles.TilesPlugin initDefinitionsFactory
+信息: Tiles definition factory loaded for module ''.
+2006-9-2 2:37:20 org.apache.struts.tiles.TilesRequestProcessor initDefinitionsMapping
+信息: Tiles definition factory found for request processor ''.
+2006-9-2 2:37:20 com.topcoder.util.log.jdk14.Jdk14Log log
 信息: User with ID 10 is requesting to perform the newScorecard actions.
-2006-8-12 14:42:14 com.topcoder.util.log.jdk14.Jdk14Log log
+2006-9-2 2:37:21 org.apache.struts.tiles.TilesPlugin initDefinitionsFactory
+信息: Tiles definition factory loaded for module ''.
+2006-9-2 2:37:21 org.apache.struts.tiles.TilesRequestProcessor initDefinitionsMapping
+信息: Tiles definition factory found for request processor ''.
+2006-9-2 2:37:21 com.topcoder.util.log.jdk14.Jdk14Log log
 信息: User with ID 10 is requesting to perform the newScorecard actions.
-2006-8-12 14:42:14 com.topcoder.util.log.jdk14.Jdk14Log log
-信息: User with ID 10 is requesting to add a section at the position (0, 1) to scorecard with id -1.
-2006-8-12 14:42:15 com.topcoder.util.log.jdk14.Jdk14Log log
+2006-9-2 2:37:22 org.apache.struts.tiles.TilesPlugin initDefinitionsFactory
+信息: Tiles definition factory loaded for module ''.
+2006-9-2 2:37:22 org.apache.struts.tiles.TilesRequestProcessor initDefinitionsMapping
+信息: Tiles definition factory found for request processor ''.
+2006-9-2 2:37:23 com.topcoder.util.log.jdk14.Jdk14Log log
 信息: User with ID 10 is requesting to perform the newScorecard actions.
-2006-8-12 14:42:15 com.topcoder.util.log.jdk14.Jdk14Log log
-信息: User with ID 10 is requesting to add a section at the position (0, 1) to scorecard with id -1.
-2006-8-12 14:42:16 com.topcoder.util.log.jdk14.Jdk14Log log
+2006-9-2 2:37:24 org.apache.struts.tiles.TilesPlugin initDefinitionsFactory
+信息: Tiles definition factory loaded for module ''.
+2006-9-2 2:37:24 org.apache.struts.tiles.TilesRequestProcessor initDefinitionsMapping
+信息: Tiles definition factory found for request processor ''.
+2006-9-2 2:37:24 com.topcoder.util.log.jdk14.Jdk14Log log
 信息: User with ID 10 is requesting to perform the newScorecard actions.
-2006-8-12 14:42:17 com.topcoder.util.log.jdk14.Jdk14Log log
+2006-9-2 2:37:25 org.apache.struts.tiles.TilesPlugin initDefinitionsFactory
+信息: Tiles definition factory loaded for module ''.
+2006-9-2 2:37:25 org.apache.struts.tiles.TilesRequestProcessor initDefinitionsMapping
+信息: Tiles definition factory found for request processor ''.
+2006-9-2 2:37:25 com.topcoder.util.log.jdk14.Jdk14Log log
 信息: User with ID 10 is requesting to perform the newScorecard actions.
-2006-8-12 14:42:18 com.topcoder.util.log.jdk14.Jdk14Log log
+2006-9-2 2:37:26 org.apache.struts.tiles.TilesPlugin initDefinitionsFactory
+信息: Tiles definition factory loaded for module ''.
+2006-9-2 2:37:26 org.apache.struts.tiles.TilesRequestProcessor initDefinitionsMapping
+信息: Tiles definition factory found for request processor ''.
+2006-9-2 2:37:26 com.topcoder.util.log.jdk14.Jdk14Log log
 信息: User with ID 10 is requesting to perform the newScorecard actions.
-2006-8-12 14:42:18 com.topcoder.util.log.jdk14.Jdk14Log log
-信息: User with ID 10 is requesting to add a question at the position (0, 0) to scorecard with id -1.
-2006-8-12 14:42:19 com.topcoder.util.log.jdk14.Jdk14Log log
+2006-9-2 2:37:27 org.apache.struts.tiles.TilesPlugin initDefinitionsFactory
+信息: Tiles definition factory loaded for module ''.
+2006-9-2 2:37:27 org.apache.struts.tiles.TilesRequestProcessor initDefinitionsMapping
+信息: Tiles definition factory found for request processor ''.
+2006-9-2 2:37:27 com.topcoder.util.log.jdk14.Jdk14Log log
 信息: User with ID 10 is requesting to perform the newScorecard actions.
-2006-8-12 14:42:19 com.topcoder.util.log.jdk14.Jdk14Log log
-信息: User with ID 10 is requesting to add a question at the position (0, 0) to scorecard with id -1.
-2006-8-12 14:42:20 com.topcoder.util.log.jdk14.Jdk14Log log
+2006-9-2 2:37:28 org.apache.struts.tiles.TilesPlugin initDefinitionsFactory
+信息: Tiles definition factory loaded for module ''.
+2006-9-2 2:37:28 org.apache.struts.tiles.TilesRequestProcessor initDefinitionsMapping
+信息: Tiles definition factory found for request processor ''.
+2006-9-2 2:37:28 com.topcoder.util.log.jdk14.Jdk14Log log
 信息: User with ID 10 is requesting to perform the newScorecard actions.
-2006-8-12 14:42:21 com.topcoder.util.log.jdk14.Jdk14Log log
+2006-9-2 2:37:29 org.apache.struts.tiles.TilesPlugin initDefinitionsFactory
+信息: Tiles definition factory loaded for module ''.
+2006-9-2 2:37:29 org.apache.struts.tiles.TilesRequestProcessor initDefinitionsMapping
+信息: Tiles definition factory found for request processor ''.
+2006-9-2 2:37:29 com.topcoder.util.log.jdk14.Jdk14Log log
 信息: User with ID 10 is requesting to perform the newScorecard actions.
-2006-8-12 14:42:23 com.topcoder.util.log.jdk14.Jdk14Log log
+2006-9-2 2:37:30 org.apache.struts.tiles.TilesPlugin initDefinitionsFactory
+信息: Tiles definition factory loaded for module ''.
+2006-9-2 2:37:30 org.apache.struts.tiles.TilesRequestProcessor initDefinitionsMapping
+信息: Tiles definition factory found for request processor ''.
+2006-9-2 2:37:31 com.topcoder.util.log.jdk14.Jdk14Log log
+信息: User with ID 10 is requesting to edit the scorecard with id 7313.
+2006-9-2 2:37:31 com.topcoder.util.log.jdk14.Jdk14Log log
+信息: User with ID 10 is requesting to save scorecard with id 7313.
+2006-9-2 2:37:32 com.topcoder.util.log.jdk14.Jdk14Log log
+严重: Scorecard with id 7313 is active and cannot be updated.
+2006-9-2 2:37:33 org.apache.struts.tiles.TilesPlugin initDefinitionsFactory
+信息: Tiles definition factory loaded for module ''.
+2006-9-2 2:37:33 org.apache.struts.tiles.TilesRequestProcessor initDefinitionsMapping
+信息: Tiles definition factory found for request processor ''.
+2006-9-2 2:37:33 com.topcoder.util.log.jdk14.Jdk14Log log
 信息: User with ID 10 is requesting to perform the newScorecard actions.
-2006-8-12 14:42:25 com.topcoder.util.log.jdk14.Jdk14Log log
-信息: User with ID 10 is requesting to edit the scorecard with id 5599.
-2006-8-12 14:42:25 com.topcoder.util.log.jdk14.Jdk14Log log
-信息: User with ID 10 is requesting to save scorecard with id 5599.
-2006-8-12 14:42:26 com.topcoder.util.log.jdk14.Jdk14Log log
-严重: Scorecard with id 5599 is active and cannot be updated.
-2006-8-12 14:42:27 com.topcoder.util.log.jdk14.Jdk14Log log
-信息: User with ID 10 is requesting to perform the newScorecard actions.
-2006-8-12 14:42:28 com.topcoder.util.log.jdk14.Jdk14Log log
+2006-9-2 2:37:33 com.topcoder.util.log.jdk14.Jdk14Log log
 严重: User is not logged on.
-2006-8-12 14:42:28 com.topcoder.util.log.jdk14.Jdk14Log log
+2006-9-2 2:37:33 com.topcoder.util.log.jdk14.Jdk14Log log
 信息: User with ID null is not authorized to perform the saveScorecard actions.
 ------------- ---------------- ---------------
 
-Testcase: testListScorecards_ComponentProjects took 14.41 sec
-Testcase: testListScorecards_DefaultProjects took 10.065 sec
-Testcase: testListScorecards_ApplicationProjects took 15.692 sec
-Testcase: testListScorecards_UnknownProjectTypeId took 0.701 sec
-Testcase: testListScorecards_InvalidProjectTypeId took 9.474 sec
-Testcase: testListScorecards_NotLoggedIn took 0.992 sec
-Testcase: testViewScorecard_ValidSid took 2.443 sec
-Testcase: testViewScorecard_InvalidSid took 1.162 sec
-Testcase: testViewScorecard_NoSid took 1.151 sec
-Testcase: testViewScorecard_NonExistSid took 2.194 sec
-Testcase: testViewScorecard_NotLoggedIn took 1.742 sec
-Testcase: testNewScorecard_NoProjectTypeId took 0.23 sec
-Testcase: testNewScorecard_ComponetProject took 0.05 sec
-Testcase: testNewScorecard_ApplicationProject took 0.05 sec
-Testcase: testNewScorecard_UnknownProjectTypeId took 0.041 sec
-Testcase: testNewScorecard_NotLoggedIn took 0.09 sec
-Testcase: testEditScorecard_ValidSidCanEdit took 2.173 sec
-Testcase: testEditScorecard_ValidSidActive took 1.903 sec
-Testcase: testEditScorecard_InvalidSid took 1.071 sec
-Testcase: testEditScorecard_NoSid took 2.524 sec
-Testcase: testEditScorecard_NonExistSid took 1.862 sec
-Testcase: testEditScorecard_NotLoggedIn took 1.763 sec
-Testcase: testCopyScorecard_ValidSid took 2.473 sec
-Testcase: testCopyScorecard_InvalidSid took 1.202 sec
-Testcase: testCopyScorecard_NoSid took 1.222 sec
-Testcase: testCopyScorecard_NonExistSid took 2.403 sec
-Testcase: testCopyScorecard_NotLoggedIn took 1.432 sec
-Testcase: testDoAddGroup took 2.094 sec
-Testcase: testDoRemoveGroup took 1.812 sec
-Testcase: testDoAddSection took 2.914 sec
-Testcase: testDoRemoveSection took 1.843 sec
-Testcase: testDoAddQuestion took 1.602 sec
-Testcase: testDoRemoveQuestion took 1.803 sec
-Testcase: testDoFinish took 4.396 sec
-Testcase: testDoFinish_EmptyScorecardName took 2.404 sec
-Testcase: testDoFinish_ScorecardNameTooLong took 2.563 sec
-Testcase: testDoFinish_EmptyVersion took 0.882 sec
-Testcase: testDoFinish_MalformedVersion took 0.59 sec
-Testcase: testDoFinish_NameVersionNotUnique took 1.913 sec
-Testcase: testDoFinish_InvalidProjectTypeCategory took 1.032 sec
-Testcase: testDoFinish_InvalidScorecardStatus took 1.051 sec
-Testcase: testDoFinish_InvalidScorecardType took 0.952 sec
-Testcase: testDoFinish_NegativeMinScore took 1.111 sec
-Testcase: testDoFinish_MalformedMinScore took 0.942 sec
-Testcase: testDoFinish_MalformedMaxScore took 1.912 sec
-Testcase: testDoFinish_MinScoreLargerThanMaxScore took 1.022 sec
-Testcase: testDoFinish_GroupWeightsMoreThan100 took 1.081 sec
-Testcase: testDoFinish_GroupWeightsLessThan100 took 0.982 sec
-Testcase: testDoFinish_EmptyGroupName took 1.011 sec
-Testcase: testDoFinish_GroupNameTooLong took 1.032 sec
-Testcase: testDoFinish_SectionWeightsMoreThan100 took 0.971 sec
-Testcase: testDoFinish_SectionWeightsLessThan100 took 0.981 sec
-Testcase: testDoFinish_EmptySectionName took 0.872 sec
-Testcase: testDoFinish_SectionNameTooLong took 0.921 sec
-Testcase: testDoFinish_QuestionWeightsMoreThan100 took 0.961 sec
-Testcase: testDoFinish_QuestionWeightsLessThan100 took 0.952 sec
-Testcase: testDoFinish_EmptyQuestionDescription took 1.071 sec
-Testcase: testDoFinish_EmptyQuestionGuideline took 1.583 sec
-Testcase: testDoFinish_InvalidQuestionType took 1.301 sec
-Testcase: testDoFinish_ScorecardActive took 3.606 sec
-Testcase: testSaveScorecard_NotLoggedIn took 0.971 sec
+Testcase: testListScorecards_ComponentProjects took 13.5 sec
+Testcase: testListScorecards_DefaultProjects took 10.064 sec
+Testcase: testListScorecards_ApplicationProjects took 23.714 sec
+Testcase: testListScorecards_UnknownProjectTypeId took 0.691 sec
+Testcase: testListScorecards_InvalidProjectTypeId took 10.746 sec
+Testcase: testListScorecards_NotLoggedIn took 0.781 sec
+Testcase: testViewScorecard_ValidSid took 2.183 sec
+Testcase: testViewScorecard_InvalidSid took 0.992 sec
+Testcase: testViewScorecard_NoSid took 1.432 sec
+Testcase: testViewScorecard_NonExistSid took 1.902 sec
+Testcase: testViewScorecard_NotLoggedIn took 1.372 sec
+Testcase: testNewScorecard_NoProjectTypeId took 0.191 sec
+Testcase: testNewScorecard_ComponetProject took 0.07 sec
+Testcase: testNewScorecard_ApplicationProject took 0.06 sec
+Testcase: testNewScorecard_UnknownProjectTypeId took 0.05 sec
+Testcase: testNewScorecard_NotLoggedIn took 0.11 sec
+Testcase: testEditScorecard_ValidSidCanEdit took 1.582 sec
+Testcase: testEditScorecard_ValidSidActive took 1.933 sec
+Testcase: testEditScorecard_InvalidSid took 1.182 sec
+Testcase: testEditScorecard_NoSid took 2.563 sec
+Testcase: testEditScorecard_NonExistSid took 6.32 sec
+Testcase: testEditScorecard_NotLoggedIn took 9.503 sec
+Testcase: testCopyScorecard_ValidSid took 2.093 sec
+Testcase: testCopyScorecard_InvalidSid took 1.082 sec
+Testcase: testCopyScorecard_NoSid took 1.151 sec
+Testcase: testCopyScorecard_NonExistSid took 1.623 sec
+Testcase: testCopyScorecard_NotLoggedIn took 1.332 sec
+Testcase: testDoFinish took 4.386 sec
+Testcase: testDoFinish_EmptyScorecardName took 2.213 sec
+Testcase: testDoFinish_ScorecardNameTooLong took 2.003 sec
+Testcase: testDoFinish_EmptyVersion took 0.971 sec
+Testcase: testDoFinish_MalformedVersion took 1.002 sec
+Testcase: testDoFinish_NameVersionNotUnique took 2.053 sec
+Testcase: testDoFinish_InvalidProjectTypeCategory took 1.081 sec
+Testcase: testDoFinish_InvalidScorecardStatus took 0.962 sec
+Testcase: testDoFinish_InvalidScorecardType took 1.282 sec
+Testcase: testDoFinish_NegativeMinScore took 1.101 sec
+Testcase: testDoFinish_MalformedMinScore took 1.012 sec
+Testcase: testDoFinish_MalformedMaxScore took 1.251 sec
+Testcase: testDoFinish_MinScoreLargerThanMaxScore took 0.832 sec
+Testcase: testDoFinish_GroupWeightsMoreThan100 took 1.001 sec
+Testcase: testDoFinish_GroupWeightsLessThan100 took 0.931 sec
+Testcase: testDoFinish_EmptyGroupName took 1.182 sec
+Testcase: testDoFinish_GroupNameTooLong took 1.112 sec
+Testcase: testDoFinish_SectionWeightsMoreThan100 took 1.121 sec
+Testcase: testDoFinish_SectionWeightsLessThan100 took 1.402 sec
+Testcase: testDoFinish_EmptySectionName took 0.862 sec
+Testcase: testDoFinish_SectionNameTooLong took 1.131 sec
+Testcase: testDoFinish_QuestionWeightsMoreThan100 took 0.942 sec
+Testcase: testDoFinish_QuestionWeightsLessThan100 took 0.971 sec
+Testcase: testDoFinish_EmptyQuestionDescription took 0.951 sec
+Testcase: testDoFinish_InvalidQuestionType took 1.042 sec
+Testcase: testDoFinish_ScorecardActive took 2.894 sec
+Testcase: testSaveScorecard_NotLoggedIn took 0.961 sec

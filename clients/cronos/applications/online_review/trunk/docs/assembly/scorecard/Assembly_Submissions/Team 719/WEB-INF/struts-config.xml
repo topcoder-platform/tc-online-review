@@ -12,10 +12,10 @@
   
   <!-- Global Forward Definitions -->
   <global-forwards >
-    <forward name="failure" path="/error.jsp" />
-	<forward name="listScorecards" path="/listScorecards.jsp" />
-	<forward name="viewScorecard" path="/viewScorecard.jsp" />
-	<forward name="editScorecard" path="/editScorecard.jsp" />
+    <forward name="failure" path="page.error" />
+	<forward name="listScorecards" path="page.listScorecards" />
+	<forward name="viewScorecard" path="page.viewScorecard" />
+	<forward name="editScorecard" path="page.editScorecard" />
 	<forward name="welcome" path="/welcome.jsp" />
 	<forward name="login" path="/login.jsp" />
   </global-forwards>
@@ -27,7 +27,7 @@
       path="/scorecardAdmin"
       type="com.cronos.onlinereview.actions.ScorecardActions"
       name="scorecardForm"
-      input="/editScorecard.jsp"
+      input="page.editScorecard"
       validate="true"
       scope="session" />
     <action
@@ -44,5 +44,10 @@
   </action-mappings>
 
   <message-resources parameter="com.cronos.onlinereview.ScorecardAdminResources"/>
+  
+  <plug-in className="org.apache.struts.tiles.TilesPlugin">
+  	<set-property property="definitions-config" value="/WEB-INF/tiles-defs.xml"/>
+  </plug-in>
+  
 </struts-config>
 

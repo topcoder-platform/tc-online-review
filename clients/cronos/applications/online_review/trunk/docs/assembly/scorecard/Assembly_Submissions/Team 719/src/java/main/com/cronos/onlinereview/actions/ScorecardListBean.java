@@ -13,7 +13,7 @@ package com.cronos.onlinereview.actions;
  * </p>
  * 
  * @version 1.0
- * @author TCSDEVELOPER
+ * @author albertwang, flying2hk
  */
 public class ScorecardListBean {
     /**
@@ -25,6 +25,10 @@ public class ScorecardListBean {
      * The name of project type of the list of scorecards.
      */
     private String projectTypeName;
+    /**
+     * The ID of project type of the list of scorecards.
+     */
+    private long projectTypeId;
 
     /**
      * <p>
@@ -78,5 +82,24 @@ public class ScorecardListBean {
      */
     public void setScorecardGroups(ScorecardGroupBean[] scorecardGroups) {
         this.scorecardGroups = scorecardGroups;
+    }
+    
+    /**
+     * <p>
+     * Return the project type id.
+     * </p>
+     * @return the project type id
+     */
+    public long getProjectTypeId() {
+        return projectTypeId;
+    }
+    /**
+     * <p>
+     * Set the project type id.
+     * </p>
+     * @param projectTypeId the project type id
+     */
+    public void setProjectTypeId(long projectTypeId) {
+        this.projectTypeId = projectTypeId;
     }
 }

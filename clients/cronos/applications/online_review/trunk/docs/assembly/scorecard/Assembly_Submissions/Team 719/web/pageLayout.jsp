@@ -2,7 +2,7 @@
    (#) pageLayout.jsp
    ------------------------------------------------------------------
    @copyright Copyright (C) 2006, TopCoder Inc. All Rights Reserved.
-   @author TCSDEVELOPER
+   @author albertwang, flying2hk
    @version 1.0
    ------------------------------------------------------------------
    This is the page layout tile, which defines the default page
@@ -26,15 +26,13 @@
     <script language="JavaScript" type="text/javascript" src="scripts/highlightrow.js"></script>
 </head>
 <body leftmargin="0" rightmargin="0" topmargin="0">
-    <div id="holder">
-        <tiles:insert page="includes/header.jsp" flush="true"/>
-        <!-- Content begins -->
-        <div id="contentarea">
-            <tiles:insert page="includes/tabs.jsp" flush="true" />
-            <tiles:insert attribute="content" />
-        </div>
-        <!-- End Contentarea Div -->    
-        <tiles:insert page="includes/footer.jsp" />
+    <tiles:insert page="includes/header.jsp" flush="true"/>
+    <!-- Content begins -->
+    <div id="contentarea">
+        <tiles:insert page="includes/tabs.jsp" flush="true" />
+        <tiles:insert attribute="content" />
     </div>
+    <!-- End Contentarea Div -->    
+    <tiles:insert page="includes/footer.jsp" />
 </body>
 </html:html>

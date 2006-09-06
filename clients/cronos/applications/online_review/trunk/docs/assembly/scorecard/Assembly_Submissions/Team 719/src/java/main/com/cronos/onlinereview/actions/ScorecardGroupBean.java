@@ -16,7 +16,7 @@ import com.topcoder.management.scorecard.data.Scorecard;
  * </p>
  * 
  * @version 1.0
- * @author TCSDEVELOPER
+ * @author albertwang, flying2hk
  */
 public class ScorecardGroupBean {
     /**

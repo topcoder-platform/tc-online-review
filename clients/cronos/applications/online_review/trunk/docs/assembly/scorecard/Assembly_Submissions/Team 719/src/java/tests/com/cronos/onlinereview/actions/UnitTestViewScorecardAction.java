@@ -11,7 +11,7 @@ import com.topcoder.management.scorecard.data.Scorecard;
  * </p>
  * 
  * @version 1.0
- * @author TCSDEVELOPER
+ * @author flying2hk
  */
 public class UnitTestViewScorecardAction extends BaseTestCase {
     /** Scorecard used in this test. */
@@ -82,7 +82,6 @@ public class UnitTestViewScorecardAction extends BaseTestCase {
         this.actionPerform();
         // verify the forward
         this.verifyForward("viewScorecard");
-        this.verifyForwardPath("/viewScorecard.jsp");
         this.verifyNoActionErrors();
         // verify the scorecardForm
         ScorecardForm scorecardForm = (ScorecardForm) this.getActionForm();
@@ -114,7 +113,6 @@ public class UnitTestViewScorecardAction extends BaseTestCase {
         this.actionPerform();
         // verify the forward
         this.verifyForward("failure");
-        this.verifyForwardPath("/error.jsp");
         this
                 .verifyActionErrors(new String[] { "global.error.no_such_scorecard" });
         // verify the scorecardForm
@@ -144,7 +142,6 @@ public class UnitTestViewScorecardAction extends BaseTestCase {
         this.actionPerform();
         // verify the forward
         this.verifyForward("failure");
-        this.verifyForwardPath("/error.jsp");
         this
                 .verifyActionErrors(new String[] { "global.error.no_such_scorecard" });
         // verify the scorecardForm
@@ -178,7 +175,6 @@ public class UnitTestViewScorecardAction extends BaseTestCase {
         this.actionPerform();
         // verify the forward
         this.verifyForward("failure");
-        this.verifyForwardPath("/error.jsp");
         this
                 .verifyActionErrors(new String[] { "global.error.no_such_scorecard" });
         // verify the scorecardForm
@@ -213,7 +209,6 @@ public class UnitTestViewScorecardAction extends BaseTestCase {
         this.actionPerform();
         // verify the forward
         this.verifyForward("failure");
-        this.verifyForwardPath("/error.jsp");
         this.verifyActionErrors(new String[] { "global.error.authorization" });
         // verify the scorecardForm
         ScorecardForm scorecardForm = (ScorecardForm) this.getActionForm();

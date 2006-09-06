@@ -15,7 +15,7 @@ import com.topcoder.management.scorecard.data.Scorecard;
  * </p>
  * 
  * @version 1.0
- * @author TCSDEVELOPER
+ * @author flying2hk
  */
 public class UnitTestSaveScorecardAction extends BaseTestCase {
     /** Scorecard used in this test. */
@@ -61,307 +61,310 @@ public class UnitTestSaveScorecardAction extends BaseTestCase {
         UnitTestHelper.getInstance().createScorecard(this.scorecard);
     }
 
-    /**
-     * <p>
-     * Unit test on "doAddGroup" operation.
-     * </p>
-     * <p>
-     * Expected Result: 1. There should be no action errors. 2. The result
-     * forward should be "editScorecard"("/editScorecard.jsp"). 3. A new group
-     * with one section and one question will be added to the right position.
-     * </p>
-     * 
-     * @throws Exception
-     *             to JUnit
-     */
-    public void testDoAddGroup() throws Exception {
-        this.initializeScorecard();
-        // retrieve the sid
-        long sid = UnitTestHelper.getInstance().getScorecardByNameAndVersion(
-                this.scorecard.getName(), this.scorecard.getVersion()).getId();
-        // edit the scorecard
-        this.addRequestParameter("actionName", "editScorecard");
-        this.addRequestParameter("sid", sid + "");
-        this.setRequestPathInfo("/scorecardAdmin");
-        this.actionPerform();
-        // verify the forward
-        this.verifyForward("editScorecard");
-        this.verifyForwardPath("/editScorecard.jsp");
-        this.verifyNoActionErrors();
-        // get the scorecardForm
-        ScorecardForm scorecardForm = (ScorecardForm) this.getActionForm();
-        // set operation to "doAddGroup"
-        scorecardForm.setOperation("doAddGroup");
-        // set position
-        int gIdx = 0;
-        scorecardForm.setGroupIndex(gIdx);
-        // perform save scorecard action
-        this.addRequestParameter("actionName", "saveScorecard");
-        this.setRequestPathInfo("/scorecardAdmin");
-        this.actionPerform();
-        // verify the forward
-        this.verifyForward("editScorecard");
-        this.verifyForwardPath("/editScorecard.jsp");
-        this.verifyNoActionErrors();
-        // verify the scorecardForm
-        scorecardForm = (ScorecardForm) this.getActionForm();
-        Scorecard sc = scorecardForm.getScorecard();
-        this.scorecard.insertGroup(ScorecardActionsHelper.buildNewGroup(),
-                gIdx + 1);
-        assertScorecardsEqual(this.scorecard, sc, true);
-    }
+    // by flying2hk
+    // Many tests are commented because they're not needed any longer, since the
+    // adding/removing operations now move to client-side.
+//    /**
+//     * <p>
+//     * Unit test on "doAddGroup" operation.
+//     * </p>
+//     * <p>
+//     * Expected Result: 1. There should be no action errors. 2. The result
+//     * forward should be "editScorecard"("/editScorecard.jsp"). 3. A new group
+//     * with one section and one question will be added to the right position.
+//     * </p>
+//     * 
+//     * @throws Exception
+//     *             to JUnit
+//     */
+//    public void testDoAddGroup() throws Exception {
+//        this.initializeScorecard();
+//        // retrieve the sid
+//        long sid = UnitTestHelper.getInstance().getScorecardByNameAndVersion(
+//                this.scorecard.getName(), this.scorecard.getVersion()).getId();
+//        // edit the scorecard
+//        this.addRequestParameter("actionName", "editScorecard");
+//        this.addRequestParameter("sid", sid + "");
+//        this.setRequestPathInfo("/scorecardAdmin");
+//        this.actionPerform();
+//        // verify the forward
+//        this.verifyForward("editScorecard");
+//        this.verifyForwardPath("/editScorecard.jsp");
+//        this.verifyNoActionErrors();
+//        // get the scorecardForm
+//        ScorecardForm scorecardForm = (ScorecardForm) this.getActionForm();
+//        // set operation to "doAddGroup"
+//        scorecardForm.setOperation("doAddGroup");
+//        // set position
+//        int gIdx = 0;
+//        scorecardForm.setGroupIndex(gIdx);
+//        // perform save scorecard action
+//        this.addRequestParameter("actionName", "saveScorecard");
+//        this.setRequestPathInfo("/scorecardAdmin");
+//        this.actionPerform();
+//        // verify the forward
+//        this.verifyForward("editScorecard");
+//        this.verifyForwardPath("/editScorecard.jsp");
+//        this.verifyNoActionErrors();
+//        // verify the scorecardForm
+//        scorecardForm = (ScorecardForm) this.getActionForm();
+//        Scorecard sc = scorecardForm.getScorecard();
+//        this.scorecard.insertGroup(ScorecardActionsHelper.buildNewGroup(),
+//                gIdx + 1);
+//        assertScorecardsEqual(this.scorecard, sc, true);
+//    }
+//
+//    /**
+//     * <p>
+//     * Unit test on "doRemoveGroup" operation.
+//     * </p>
+//     * <p>
+//     * Expected Result: 1. There should be no action errors. 2. The result
+//     * forward should be "editScorecard"("/editScorecard.jsp"). 3. The group at
+//     * the given position should be removed.
+//     * </p>
+//     * 
+//     * @throws Exception
+//     *             to JUnit
+//     */
+//    public void testDoRemoveGroup() throws Exception {
+//        this.initializeScorecard();
+//        // retrieve the sid
+//        long sid = UnitTestHelper.getInstance().getScorecardByNameAndVersion(
+//                this.scorecard.getName(), this.scorecard.getVersion()).getId();
+//        // edit the scorecard
+//        this.addRequestParameter("actionName", "editScorecard");
+//        this.addRequestParameter("sid", sid + "");
+//        this.setRequestPathInfo("/scorecardAdmin");
+//        this.actionPerform();
+//        // verify the forward
+//        this.verifyForward("editScorecard");
+//        this.verifyForwardPath("/editScorecard.jsp");
+//        this.verifyNoActionErrors();
+//        // get the scorecardForm
+//        ScorecardForm scorecardForm = (ScorecardForm) this.getActionForm();
+//        // set operation to "doRemoveGroup"
+//        scorecardForm.setOperation("doRemoveGroup");
+//        // set position
+//        int gIdx = 0;
+//        scorecardForm.setGroupIndex(gIdx);
+//        // perform save scorecard action
+//        this.addRequestParameter("actionName", "saveScorecard");
+//        this.setRequestPathInfo("/scorecardAdmin");
+//        this.actionPerform();
+//        // verify the forward
+//        this.verifyForward("editScorecard");
+//        this.verifyForwardPath("/editScorecard.jsp");
+//        this.verifyNoActionErrors();
+//        // verify the scorecardForm
+//        scorecardForm = (ScorecardForm) this.getActionForm();
+//        Scorecard sc = scorecardForm.getScorecard();
+//        this.scorecard.removeGroup(gIdx);
+//        assertScorecardsEqual(this.scorecard, sc, true);
+//    }
+//
+//    /**
+//     * <p>
+//     * Unit test on "doAddSection" operation.
+//     * </p>
+//     * <p>
+//     * Expected Result: 1. There should be no action errors. 2. The result
+//     * forward should be "editScorecard"("/editScorecard.jsp"). 3. A new section
+//     * with one question will be added to the right position.
+//     * </p>
+//     * 
+//     * @throws Exception
+//     *             to JUnit
+//     */
+//    public void testDoAddSection() throws Exception {
+//        this.initializeScorecard();
+//        // retrieve the sid
+//        long sid = UnitTestHelper.getInstance().getScorecardByNameAndVersion(
+//                this.scorecard.getName(), this.scorecard.getVersion()).getId();
+//        // edit the scorecard
+//        this.addRequestParameter("actionName", "editScorecard");
+//        this.addRequestParameter("sid", sid + "");
+//        this.setRequestPathInfo("/scorecardAdmin");
+//        this.actionPerform();
+//        // verify the forward
+//        this.verifyForward("editScorecard");
+//        this.verifyForwardPath("/editScorecard.jsp");
+//        this.verifyNoActionErrors();
+//        // get the scorecardForm
+//        ScorecardForm scorecardForm = (ScorecardForm) this.getActionForm();
+//        // set operation to "doAddSection"
+//        scorecardForm.setOperation("doAddSection");
+//        // set position
+//        int gIdx = 0, sIdx = 0;
+//        scorecardForm.setGroupIndex(gIdx);
+//        scorecardForm.setSectionIndex(sIdx);
+//        // perform save scorecard action
+//        this.addRequestParameter("actionName", "saveScorecard");
+//        this.setRequestPathInfo("/scorecardAdmin");
+//        this.actionPerform();
+//        // verify the forward
+//        this.verifyForward("editScorecard");
+//        this.verifyForwardPath("/editScorecard.jsp");
+//        this.verifyNoActionErrors();
+//        // verify the scorecardForm
+//        scorecardForm = (ScorecardForm) this.getActionForm();
+//        Scorecard sc = scorecardForm.getScorecard();
+//        this.scorecard.getGroup(gIdx).insertSection(
+//                ScorecardActionsHelper.buildNewSection(), sIdx + 1);
+//        assertScorecardsEqual(this.scorecard, sc, true);
+//    }
 
-    /**
-     * <p>
-     * Unit test on "doRemoveGroup" operation.
-     * </p>
-     * <p>
-     * Expected Result: 1. There should be no action errors. 2. The result
-     * forward should be "editScorecard"("/editScorecard.jsp"). 3. The group at
-     * the given position should be removed.
-     * </p>
-     * 
-     * @throws Exception
-     *             to JUnit
-     */
-    public void testDoRemoveGroup() throws Exception {
-        this.initializeScorecard();
-        // retrieve the sid
-        long sid = UnitTestHelper.getInstance().getScorecardByNameAndVersion(
-                this.scorecard.getName(), this.scorecard.getVersion()).getId();
-        // edit the scorecard
-        this.addRequestParameter("actionName", "editScorecard");
-        this.addRequestParameter("sid", sid + "");
-        this.setRequestPathInfo("/scorecardAdmin");
-        this.actionPerform();
-        // verify the forward
-        this.verifyForward("editScorecard");
-        this.verifyForwardPath("/editScorecard.jsp");
-        this.verifyNoActionErrors();
-        // get the scorecardForm
-        ScorecardForm scorecardForm = (ScorecardForm) this.getActionForm();
-        // set operation to "doRemoveGroup"
-        scorecardForm.setOperation("doRemoveGroup");
-        // set position
-        int gIdx = 0;
-        scorecardForm.setGroupIndex(gIdx);
-        // perform save scorecard action
-        this.addRequestParameter("actionName", "saveScorecard");
-        this.setRequestPathInfo("/scorecardAdmin");
-        this.actionPerform();
-        // verify the forward
-        this.verifyForward("editScorecard");
-        this.verifyForwardPath("/editScorecard.jsp");
-        this.verifyNoActionErrors();
-        // verify the scorecardForm
-        scorecardForm = (ScorecardForm) this.getActionForm();
-        Scorecard sc = scorecardForm.getScorecard();
-        this.scorecard.removeGroup(gIdx);
-        assertScorecardsEqual(this.scorecard, sc, true);
-    }
-
-    /**
-     * <p>
-     * Unit test on "doAddSection" operation.
-     * </p>
-     * <p>
-     * Expected Result: 1. There should be no action errors. 2. The result
-     * forward should be "editScorecard"("/editScorecard.jsp"). 3. A new section
-     * with one question will be added to the right position.
-     * </p>
-     * 
-     * @throws Exception
-     *             to JUnit
-     */
-    public void testDoAddSection() throws Exception {
-        this.initializeScorecard();
-        // retrieve the sid
-        long sid = UnitTestHelper.getInstance().getScorecardByNameAndVersion(
-                this.scorecard.getName(), this.scorecard.getVersion()).getId();
-        // edit the scorecard
-        this.addRequestParameter("actionName", "editScorecard");
-        this.addRequestParameter("sid", sid + "");
-        this.setRequestPathInfo("/scorecardAdmin");
-        this.actionPerform();
-        // verify the forward
-        this.verifyForward("editScorecard");
-        this.verifyForwardPath("/editScorecard.jsp");
-        this.verifyNoActionErrors();
-        // get the scorecardForm
-        ScorecardForm scorecardForm = (ScorecardForm) this.getActionForm();
-        // set operation to "doAddSection"
-        scorecardForm.setOperation("doAddSection");
-        // set position
-        int gIdx = 0, sIdx = 0;
-        scorecardForm.setGroupIndex(gIdx);
-        scorecardForm.setSectionIndex(sIdx);
-        // perform save scorecard action
-        this.addRequestParameter("actionName", "saveScorecard");
-        this.setRequestPathInfo("/scorecardAdmin");
-        this.actionPerform();
-        // verify the forward
-        this.verifyForward("editScorecard");
-        this.verifyForwardPath("/editScorecard.jsp");
-        this.verifyNoActionErrors();
-        // verify the scorecardForm
-        scorecardForm = (ScorecardForm) this.getActionForm();
-        Scorecard sc = scorecardForm.getScorecard();
-        this.scorecard.getGroup(gIdx).insertSection(
-                ScorecardActionsHelper.buildNewSection(), sIdx + 1);
-        assertScorecardsEqual(this.scorecard, sc, true);
-    }
-
-    /**
-     * <p>
-     * Unit test on "doRemoveSection" operation.
-     * </p>
-     * <p>
-     * Expected Result: 1. There should be no action errors. 2. The result
-     * forward should be "editScorecard"("/editScorecard.jsp"). 3. The section
-     * at the given position should be removed.
-     * </p>
-     * 
-     * @throws Exception
-     *             to JUnit
-     */
-    public void testDoRemoveSection() throws Exception {
-        this.initializeScorecard();
-        // retrieve the sid
-        long sid = UnitTestHelper.getInstance().getScorecardByNameAndVersion(
-                this.scorecard.getName(), this.scorecard.getVersion()).getId();
-        // edit the scorecard
-        this.addRequestParameter("actionName", "editScorecard");
-        this.addRequestParameter("sid", sid + "");
-        this.setRequestPathInfo("/scorecardAdmin");
-        this.actionPerform();
-        // verify the forward
-        this.verifyForward("editScorecard");
-        this.verifyForwardPath("/editScorecard.jsp");
-        this.verifyNoActionErrors();
-        // get the scorecardForm
-        ScorecardForm scorecardForm = (ScorecardForm) this.getActionForm();
-        // set operation to "doRemoveSection"
-        scorecardForm.setOperation("doRemoveSection");
-        // set position
-        int gIdx = 0, sIdx = 0;
-        scorecardForm.setGroupIndex(gIdx);
-        scorecardForm.setSectionIndex(sIdx);
-        // perform save scorecard action
-        this.addRequestParameter("actionName", "saveScorecard");
-        this.setRequestPathInfo("/scorecardAdmin");
-        this.actionPerform();
-        // verify the forward
-        this.verifyForward("editScorecard");
-        this.verifyForwardPath("/editScorecard.jsp");
-        this.verifyNoActionErrors();
-        // verify the scorecardForm
-        scorecardForm = (ScorecardForm) this.getActionForm();
-        Scorecard sc = scorecardForm.getScorecard();
-        this.scorecard.getGroup(gIdx).removeSection(sIdx);
-        assertScorecardsEqual(this.scorecard, sc, true);
-    }
-
-    /**
-     * <p>
-     * Unit test on "doAddQuestion" operation.
-     * </p>
-     * <p>
-     * Expected Result: 1. There should be no action errors. 2. The result
-     * forward should be "editScorecard"("/editScorecard.jsp"). 3. A new
-     * question will be added to the right position.
-     * </p>
-     * 
-     * @throws Exception
-     *             to JUnit
-     */
-    public void testDoAddQuestion() throws Exception {
-        this.initializeScorecard();
-        // retrieve the sid
-        long sid = UnitTestHelper.getInstance().getScorecardByNameAndVersion(
-                this.scorecard.getName(), this.scorecard.getVersion()).getId();
-        // edit the scorecard
-        this.addRequestParameter("actionName", "editScorecard");
-        this.addRequestParameter("sid", sid + "");
-        this.setRequestPathInfo("/scorecardAdmin");
-        this.actionPerform();
-        // verify the forward
-        this.verifyForward("editScorecard");
-        this.verifyForwardPath("/editScorecard.jsp");
-        this.verifyNoActionErrors();
-        // get the scorecardForm
-        ScorecardForm scorecardForm = (ScorecardForm) this.getActionForm();
-        // set operation to "doAddQuestion"
-        scorecardForm.setOperation("doAddQuestion");
-        // set position
-        int gIdx = 0, sIdx = 0;
-        scorecardForm.setGroupIndex(gIdx);
-        scorecardForm.setSectionIndex(sIdx);
-        // perform save scorecard action
-        this.addRequestParameter("actionName", "saveScorecard");
-        this.setRequestPathInfo("/scorecardAdmin");
-        this.actionPerform();
-        // verify the forward
-        this.verifyForward("editScorecard");
-        this.verifyForwardPath("/editScorecard.jsp");
-        this.verifyNoActionErrors();
-        // verify the scorecardForm
-        scorecardForm = (ScorecardForm) this.getActionForm();
-        Scorecard sc = scorecardForm.getScorecard();
-        this.scorecard.getGroup(gIdx).getSection(sIdx).addQuestion(
-                ScorecardActionsHelper.buildNewQuestion());
-        assertScorecardsEqual(this.scorecard, sc, true);
-    }
-
-    /**
-     * <p>
-     * Unit test on "doRemoveQuestion" operation.
-     * </p>
-     * <p>
-     * Expected Result: 1. There should be no action errors. 2. The result
-     * forward should be "editScorecard"("/editScorecard.jsp"). 3. The section
-     * at the given position should be removed.
-     * </p>
-     * 
-     * @throws Exception
-     *             to JUnit
-     */
-    public void testDoRemoveQuestion() throws Exception {
-        this.initializeScorecard();
-        // retrieve the sid
-        long sid = UnitTestHelper.getInstance().getScorecardByNameAndVersion(
-                this.scorecard.getName(), this.scorecard.getVersion()).getId();
-        // edit the scorecard
-        this.addRequestParameter("actionName", "editScorecard");
-        this.addRequestParameter("sid", sid + "");
-        this.setRequestPathInfo("/scorecardAdmin");
-        this.actionPerform();
-        // verify the forward
-        this.verifyForward("editScorecard");
-        this.verifyForwardPath("/editScorecard.jsp");
-        this.verifyNoActionErrors();
-        // get the scorecardForm
-        ScorecardForm scorecardForm = (ScorecardForm) this.getActionForm();
-        // set operation to "doRemoveQuestion"
-        scorecardForm.setOperation("doRemoveQuestion");
-        // set position
-        int gIdx = 0, sIdx = 0, qIdx = 0;
-        scorecardForm.setGroupIndex(gIdx);
-        scorecardForm.setSectionIndex(sIdx);
-        scorecardForm.setQuestionIndex(qIdx);
-        // perform save scorecard action
-        this.addRequestParameter("actionName", "saveScorecard");
-        this.setRequestPathInfo("/scorecardAdmin");
-        this.actionPerform();
-        // verify the forward
-        this.verifyForward("editScorecard");
-        this.verifyForwardPath("/editScorecard.jsp");
-        this.verifyNoActionErrors();
-        // verify the scorecardForm
-        scorecardForm = (ScorecardForm) this.getActionForm();
-        Scorecard sc = scorecardForm.getScorecard();
-        this.scorecard.getGroup(gIdx).getSection(sIdx).removeQuestion(qIdx);
-        assertScorecardsEqual(this.scorecard, sc, true);
-    }
+//    /**
+//     * <p>
+//     * Unit test on "doRemoveSection" operation.
+//     * </p>
+//     * <p>
+//     * Expected Result: 1. There should be no action errors. 2. The result
+//     * forward should be "editScorecard"("/editScorecard.jsp"). 3. The section
+//     * at the given position should be removed.
+//     * </p>
+//     * 
+//     * @throws Exception
+//     *             to JUnit
+//     */
+//    public void testDoRemoveSection() throws Exception {
+//        this.initializeScorecard();
+//        // retrieve the sid
+//        long sid = UnitTestHelper.getInstance().getScorecardByNameAndVersion(
+//                this.scorecard.getName(), this.scorecard.getVersion()).getId();
+//        // edit the scorecard
+//        this.addRequestParameter("actionName", "editScorecard");
+//        this.addRequestParameter("sid", sid + "");
+//        this.setRequestPathInfo("/scorecardAdmin");
+//        this.actionPerform();
+//        // verify the forward
+//        this.verifyForward("editScorecard");
+//        this.verifyForwardPath("/editScorecard.jsp");
+//        this.verifyNoActionErrors();
+//        // get the scorecardForm
+//        ScorecardForm scorecardForm = (ScorecardForm) this.getActionForm();
+//        // set operation to "doRemoveSection"
+//        scorecardForm.setOperation("doRemoveSection");
+//        // set position
+//        int gIdx = 0, sIdx = 0;
+//        scorecardForm.setGroupIndex(gIdx);
+//        scorecardForm.setSectionIndex(sIdx);
+//        // perform save scorecard action
+//        this.addRequestParameter("actionName", "saveScorecard");
+//        this.setRequestPathInfo("/scorecardAdmin");
+//        this.actionPerform();
+//        // verify the forward
+//        this.verifyForward("editScorecard");
+//        this.verifyForwardPath("/editScorecard.jsp");
+//        this.verifyNoActionErrors();
+//        // verify the scorecardForm
+//        scorecardForm = (ScorecardForm) this.getActionForm();
+//        Scorecard sc = scorecardForm.getScorecard();
+//        this.scorecard.getGroup(gIdx).removeSection(sIdx);
+//        assertScorecardsEqual(this.scorecard, sc, true);
+//    }
+//
+//    /**
+//     * <p>
+//     * Unit test on "doAddQuestion" operation.
+//     * </p>
+//     * <p>
+//     * Expected Result: 1. There should be no action errors. 2. The result
+//     * forward should be "editScorecard"("/editScorecard.jsp"). 3. A new
+//     * question will be added to the right position.
+//     * </p>
+//     * 
+//     * @throws Exception
+//     *             to JUnit
+//     */
+//    public void testDoAddQuestion() throws Exception {
+//        this.initializeScorecard();
+//        // retrieve the sid
+//        long sid = UnitTestHelper.getInstance().getScorecardByNameAndVersion(
+//                this.scorecard.getName(), this.scorecard.getVersion()).getId();
+//        // edit the scorecard
+//        this.addRequestParameter("actionName", "editScorecard");
+//        this.addRequestParameter("sid", sid + "");
+//        this.setRequestPathInfo("/scorecardAdmin");
+//        this.actionPerform();
+//        // verify the forward
+//        this.verifyForward("editScorecard");
+//        this.verifyForwardPath("/editScorecard.jsp");
+//        this.verifyNoActionErrors();
+//        // get the scorecardForm
+//        ScorecardForm scorecardForm = (ScorecardForm) this.getActionForm();
+//        // set operation to "doAddQuestion"
+//        scorecardForm.setOperation("doAddQuestion");
+//        // set position
+//        int gIdx = 0, sIdx = 0;
+//        scorecardForm.setGroupIndex(gIdx);
+//        scorecardForm.setSectionIndex(sIdx);
+//        // perform save scorecard action
+//        this.addRequestParameter("actionName", "saveScorecard");
+//        this.setRequestPathInfo("/scorecardAdmin");
+//        this.actionPerform();
+//        // verify the forward
+//        this.verifyForward("editScorecard");
+//        this.verifyForwardPath("/editScorecard.jsp");
+//        this.verifyNoActionErrors();
+//        // verify the scorecardForm
+//        scorecardForm = (ScorecardForm) this.getActionForm();
+//        Scorecard sc = scorecardForm.getScorecard();
+//        this.scorecard.getGroup(gIdx).getSection(sIdx).addQuestion(
+//                ScorecardActionsHelper.buildNewQuestion());
+//        assertScorecardsEqual(this.scorecard, sc, true);
+//    }
+//
+//    /**
+//     * <p>
+//     * Unit test on "doRemoveQuestion" operation.
+//     * </p>
+//     * <p>
+//     * Expected Result: 1. There should be no action errors. 2. The result
+//     * forward should be "editScorecard"("/editScorecard.jsp"). 3. The section
+//     * at the given position should be removed.
+//     * </p>
+//     * 
+//     * @throws Exception
+//     *             to JUnit
+//     */
+//    public void testDoRemoveQuestion() throws Exception {
+//        this.initializeScorecard();
+//        // retrieve the sid
+//        long sid = UnitTestHelper.getInstance().getScorecardByNameAndVersion(
+//                this.scorecard.getName(), this.scorecard.getVersion()).getId();
+//        // edit the scorecard
+//        this.addRequestParameter("actionName", "editScorecard");
+//        this.addRequestParameter("sid", sid + "");
+//        this.setRequestPathInfo("/scorecardAdmin");
+//        this.actionPerform();
+//        // verify the forward
+//        this.verifyForward("editScorecard");
+//        this.verifyForwardPath("/editScorecard.jsp");
+//        this.verifyNoActionErrors();
+//        // get the scorecardForm
+//        ScorecardForm scorecardForm = (ScorecardForm) this.getActionForm();
+//        // set operation to "doRemoveQuestion"
+//        scorecardForm.setOperation("doRemoveQuestion");
+//        // set position
+//        int gIdx = 0, sIdx = 0, qIdx = 0;
+//        scorecardForm.setGroupIndex(gIdx);
+//        scorecardForm.setSectionIndex(sIdx);
+//        scorecardForm.setQuestionIndex(qIdx);
+//        // perform save scorecard action
+//        this.addRequestParameter("actionName", "saveScorecard");
+//        this.setRequestPathInfo("/scorecardAdmin");
+//        this.actionPerform();
+//        // verify the forward
+//        this.verifyForward("editScorecard");
+//        this.verifyForwardPath("/editScorecard.jsp");
+//        this.verifyNoActionErrors();
+//        // verify the scorecardForm
+//        scorecardForm = (ScorecardForm) this.getActionForm();
+//        Scorecard sc = scorecardForm.getScorecard();
+//        this.scorecard.getGroup(gIdx).getSection(sIdx).removeQuestion(qIdx);
+//        assertScorecardsEqual(this.scorecard, sc, true);
+//    }
 
     /**
      * <p>
@@ -388,22 +391,18 @@ public class UnitTestSaveScorecardAction extends BaseTestCase {
         this.actionPerform();
         // verify the forward
         this.verifyForward("editScorecard");
-        this.verifyForwardPath("/editScorecard.jsp");
         this.verifyNoActionErrors();
         // get the scorecardForm
         ScorecardForm scorecardForm = (ScorecardForm) this.getActionForm();
         // modify the scorecard name
         String name = "new name";
         scorecardForm.getScorecard().setName(name);
-        // set operation to "doFinish"
-        scorecardForm.setOperation("doFinish");
         // perform save scorecard action
         this.addRequestParameter("actionName", "saveScorecard");
         this.setRequestPathInfo("/scorecardAdmin");
         this.actionPerform();
         // verify the forward
         this.verifyForward("listScorecards");
-        this.verifyForwardPath("/listScorecards.jsp");
         this.verifyNoActionErrors();
         // verify the saved scorecard
         this.scorecard.setName(name);
@@ -439,24 +438,18 @@ public class UnitTestSaveScorecardAction extends BaseTestCase {
         this.actionPerform();
         // verify the forward
         this.verifyForward("editScorecard");
-        this.verifyForwardPath("/editScorecard.jsp");
         this.verifyNoActionErrors();
         // get the scorecardForm
         ScorecardForm scorecardForm = (ScorecardForm) this.getActionForm();
         // modify the scorecard name
         String name = "";
         scorecardForm.getScorecard().setName(name);
-        // set operation to "doFinish"
-        scorecardForm.setOperation("doFinish");
         // perform save scorecard action
         this.addRequestParameter("actionName", "saveScorecard");
         this.setRequestPathInfo("/scorecardAdmin");
         this.actionPerform();
         // verify the forward
-        this
-                .verifyActionErrors(new String[] { "editScorecard.error.scorecard_name.required" });
-        this.verifyForward("editScorecard");
-        this.verifyForwardPath("/editScorecard.jsp");
+        this.verifyActionErrors(new String[] { "editScorecard.error.scorecard_name.required" });
         // verify the scorecard is not updated
         Scorecard sc = UnitTestHelper.getInstance().getScorecard(sid);
         assertScorecardsEqual(this.scorecard, sc, true);
@@ -489,7 +482,6 @@ public class UnitTestSaveScorecardAction extends BaseTestCase {
         this.actionPerform();
         // verify the forward
         this.verifyForward("editScorecard");
-        this.verifyForwardPath("/editScorecard.jsp");
         this.verifyNoActionErrors();
         // get the scorecardForm
         ScorecardForm scorecardForm = (ScorecardForm) this.getActionForm();
@@ -499,8 +491,6 @@ public class UnitTestSaveScorecardAction extends BaseTestCase {
             name += "a";
         }
         scorecardForm.getScorecard().setName(name);
-        // set operation to "doFinish"
-        scorecardForm.setOperation("doFinish");
         // perform save scorecard action
         this.addRequestParameter("actionName", "saveScorecard");
         this.setRequestPathInfo("/scorecardAdmin");
@@ -508,8 +498,6 @@ public class UnitTestSaveScorecardAction extends BaseTestCase {
         // verify the forward
         this
                 .verifyActionErrors(new String[] { "editScorecard.error.scorecard_name.length" });
-        this.verifyForward("editScorecard");
-        this.verifyForwardPath("/editScorecard.jsp");
         // verify the scorecard is not updated
         Scorecard sc = UnitTestHelper.getInstance().getScorecard(sid);
         assertScorecardsEqual(this.scorecard, sc, true);
@@ -537,15 +525,12 @@ public class UnitTestSaveScorecardAction extends BaseTestCase {
         this.actionPerform();
         // verify the forward
         this.verifyForward("editScorecard");
-        this.verifyForwardPath("/editScorecard.jsp");
         this.verifyNoActionErrors();
         // get the scorecardForm
         ScorecardForm scorecardForm = (ScorecardForm) this.getActionForm();
         // modify the scorecard version
         String version = "";
         scorecardForm.getScorecard().setVersion(version);
-        // set operation to "doFinish"
-        scorecardForm.setOperation("doFinish");
         // perform save scorecard action
         this.addRequestParameter("actionName", "saveScorecard");
         this.setRequestPathInfo("/scorecardAdmin");
@@ -553,8 +538,6 @@ public class UnitTestSaveScorecardAction extends BaseTestCase {
         // verify the forward
         this
                 .verifyActionErrors(new String[] { "editScorecard.error.scorecard_version.required" });
-        this.verifyForward("editScorecard");
-        this.verifyForwardPath("/editScorecard.jsp");
         // verify the scorecard is not created
         Scorecard[] scs = UnitTestHelper.getInstance().getScorecardsByName(
                 scorecardForm.getScorecard().getName());
@@ -584,15 +567,12 @@ public class UnitTestSaveScorecardAction extends BaseTestCase {
         this.actionPerform();
         // verify the forward
         this.verifyForward("editScorecard");
-        this.verifyForwardPath("/editScorecard.jsp");
         this.verifyNoActionErrors();
         // get the scorecardForm
         ScorecardForm scorecardForm = (ScorecardForm) this.getActionForm();
         // modify the scorecard version
         String version = "1.x";
         scorecardForm.getScorecard().setVersion(version);
-        // set operation to "doFinish"
-        scorecardForm.setOperation("doFinish");
         // perform save scorecard action
         this.addRequestParameter("actionName", "saveScorecard");
         this.setRequestPathInfo("/scorecardAdmin");
@@ -600,8 +580,6 @@ public class UnitTestSaveScorecardAction extends BaseTestCase {
         // verify the forward
         this
                 .verifyActionErrors(new String[] { "editScorecard.error.scorecard_version.malformed" });
-        this.verifyForward("editScorecard");
-        this.verifyForwardPath("/editScorecard.jsp");
         // verify the scorecard is not created
         Scorecard[] scs = UnitTestHelper.getInstance().getScorecardsByName(
                 scorecardForm.getScorecard().getName());
@@ -632,19 +610,14 @@ public class UnitTestSaveScorecardAction extends BaseTestCase {
         this.actionPerform();
         // verify the forward
         this.verifyForward("editScorecard");
-        this.verifyForwardPath("/editScorecard.jsp");
         this.verifyNoActionErrors();
         // get the scorecardForm
         ScorecardForm scorecardForm = (ScorecardForm) this.getActionForm();
-        // set operation to "doFinish"
-        scorecardForm.setOperation("doFinish");
         // perform save scorecard action
         this.addRequestParameter("actionName", "saveScorecard");
         this.setRequestPathInfo("/scorecardAdmin");
         this.actionPerform();
         // verify the forward
-        this.verifyForward("editScorecard");
-        this.verifyForwardPath("/editScorecard.jsp");
         this
                 .verifyActionErrors(new String[] { "editScorecard.error.scorecard_name_version.not_unique" });
         // verify the scorecard is not created
@@ -675,15 +648,12 @@ public class UnitTestSaveScorecardAction extends BaseTestCase {
         this.actionPerform();
         // verify the forward
         this.verifyForward("editScorecard");
-        this.verifyForwardPath("/editScorecard.jsp");
         this.verifyNoActionErrors();
         // get the scorecardForm
         ScorecardForm scorecardForm = (ScorecardForm) this.getActionForm();
         // there's no category Application Design
         scorecardForm.setProjectCategoryName("Design");
         scorecardForm.setProjectTypeName("Application");
-        // set operation to "doFinish"
-        scorecardForm.setOperation("doFinish");
         // perform save scorecard action
         this.addRequestParameter("actionName", "saveScorecard");
         this.setRequestPathInfo("/scorecardAdmin");
@@ -691,8 +661,6 @@ public class UnitTestSaveScorecardAction extends BaseTestCase {
         // verify the forward
         this
                 .verifyActionErrors(new String[] { "editScorecard.error.project_category.invalid" });
-        this.verifyForward("editScorecard");
-        this.verifyForwardPath("/editScorecard.jsp");
         // verify the scorecard is not created
         Scorecard[] scs = UnitTestHelper.getInstance().getScorecardsByName(
                 scorecardForm.getScorecard().getName());
@@ -722,14 +690,11 @@ public class UnitTestSaveScorecardAction extends BaseTestCase {
         this.actionPerform();
         // verify the forward
         this.verifyForward("editScorecard");
-        this.verifyForwardPath("/editScorecard.jsp");
         this.verifyNoActionErrors();
         // get the scorecardForm
         ScorecardForm scorecardForm = (ScorecardForm) this.getActionForm();
         // unknown scorecard status
         scorecardForm.getScorecard().getScorecardStatus().setName("Unknown");
-        // set operation to "doFinish"
-        scorecardForm.setOperation("doFinish");
         // perform save scorecard action
         this.addRequestParameter("actionName", "saveScorecard");
         this.setRequestPathInfo("/scorecardAdmin");
@@ -737,8 +702,6 @@ public class UnitTestSaveScorecardAction extends BaseTestCase {
         // verify the forward
         this
                 .verifyActionErrors(new String[] { "editScorecard.error.scorecard_status.invalid" });
-        this.verifyForward("editScorecard");
-        this.verifyForwardPath("/editScorecard.jsp");
         // verify the scorecard is not created
         Scorecard[] scs = UnitTestHelper.getInstance().getScorecardsByName(
                 scorecardForm.getScorecard().getName());
@@ -768,14 +731,11 @@ public class UnitTestSaveScorecardAction extends BaseTestCase {
         this.actionPerform();
         // verify the forward
         this.verifyForward("editScorecard");
-        this.verifyForwardPath("/editScorecard.jsp");
         this.verifyNoActionErrors();
         // get the scorecardForm
         ScorecardForm scorecardForm = (ScorecardForm) this.getActionForm();
         // unknown scorecard type
         scorecardForm.getScorecard().getScorecardType().setName("Unknown");
-        // set operation to "doFinish"
-        scorecardForm.setOperation("doFinish");
         // perform save scorecard action
         this.addRequestParameter("actionName", "saveScorecard");
         this.setRequestPathInfo("/scorecardAdmin");
@@ -783,8 +743,6 @@ public class UnitTestSaveScorecardAction extends BaseTestCase {
         // verify the forward
         this
                 .verifyActionErrors(new String[] { "editScorecard.error.scorecard_type.invalid" });
-        this.verifyForward("editScorecard");
-        this.verifyForwardPath("/editScorecard.jsp");
         // verify the scorecard is not created
         Scorecard[] scs = UnitTestHelper.getInstance().getScorecardsByName(
                 scorecardForm.getScorecard().getName());
@@ -814,14 +772,11 @@ public class UnitTestSaveScorecardAction extends BaseTestCase {
         this.actionPerform();
         // verify the forward
         this.verifyForward("editScorecard");
-        this.verifyForwardPath("/editScorecard.jsp");
         this.verifyNoActionErrors();
         // get the scorecardForm
         ScorecardForm scorecardForm = (ScorecardForm) this.getActionForm();
         // negative min score
         scorecardForm.setMinScoreText("-1");
-        // set operation to "doFinish"
-        scorecardForm.setOperation("doFinish");
         // perform save scorecard action
         this.addRequestParameter("actionName", "saveScorecard");
         this.setRequestPathInfo("/scorecardAdmin");
@@ -829,8 +784,6 @@ public class UnitTestSaveScorecardAction extends BaseTestCase {
         // verify the forward
         this
                 .verifyActionErrors(new String[] { "editScorecard.error.min_score.negative" });
-        this.verifyForward("editScorecard");
-        this.verifyForwardPath("/editScorecard.jsp");
         // verify the scorecard is not created
         Scorecard[] scs = UnitTestHelper.getInstance().getScorecardsByName(
                 scorecardForm.getScorecard().getName());
@@ -860,14 +813,11 @@ public class UnitTestSaveScorecardAction extends BaseTestCase {
         this.actionPerform();
         // verify the forward
         this.verifyForward("editScorecard");
-        this.verifyForwardPath("/editScorecard.jsp");
         this.verifyNoActionErrors();
         // get the scorecardForm
         ScorecardForm scorecardForm = (ScorecardForm) this.getActionForm();
         // malformed min score
         scorecardForm.setMinScoreText("xx");
-        // set operation to "doFinish"
-        scorecardForm.setOperation("doFinish");
         // perform save scorecard action
         this.addRequestParameter("actionName", "saveScorecard");
         this.setRequestPathInfo("/scorecardAdmin");
@@ -875,8 +825,6 @@ public class UnitTestSaveScorecardAction extends BaseTestCase {
         // verify the forward
         this
                 .verifyActionErrors(new String[] { "editScorecard.error.min_score.malformed" });
-        this.verifyForward("editScorecard");
-        this.verifyForwardPath("/editScorecard.jsp");
         // verify the scorecard is not created
         Scorecard[] scs = UnitTestHelper.getInstance().getScorecardsByName(
                 scorecardForm.getScorecard().getName());
@@ -906,14 +854,11 @@ public class UnitTestSaveScorecardAction extends BaseTestCase {
         this.actionPerform();
         // verify the forward
         this.verifyForward("editScorecard");
-        this.verifyForwardPath("/editScorecard.jsp");
         this.verifyNoActionErrors();
         // get the scorecardForm
         ScorecardForm scorecardForm = (ScorecardForm) this.getActionForm();
         // malformed max score
         scorecardForm.setMaxScoreText("xx");
-        // set operation to "doFinish"
-        scorecardForm.setOperation("doFinish");
         // perform save scorecard action
         this.addRequestParameter("actionName", "saveScorecard");
         this.setRequestPathInfo("/scorecardAdmin");
@@ -921,8 +866,6 @@ public class UnitTestSaveScorecardAction extends BaseTestCase {
         // verify the forward
         this
                 .verifyActionErrors(new String[] { "editScorecard.error.max_score.malformed" });
-        this.verifyForward("editScorecard");
-        this.verifyForwardPath("/editScorecard.jsp");
         // verify the scorecard is not created
         Scorecard[] scs = UnitTestHelper.getInstance().getScorecardsByName(
                 scorecardForm.getScorecard().getName());
@@ -952,15 +895,12 @@ public class UnitTestSaveScorecardAction extends BaseTestCase {
         this.actionPerform();
         // verify the forward
         this.verifyForward("editScorecard");
-        this.verifyForwardPath("/editScorecard.jsp");
         this.verifyNoActionErrors();
         // get the scorecardForm
         ScorecardForm scorecardForm = (ScorecardForm) this.getActionForm();
         // set max & min score
         scorecardForm.setMaxScoreText("10");
         scorecardForm.setMinScoreText("11");
-        // set operation to "doFinish"
-        scorecardForm.setOperation("doFinish");
         // perform save scorecard action
         this.addRequestParameter("actionName", "saveScorecard");
         this.setRequestPathInfo("/scorecardAdmin");
@@ -968,8 +908,6 @@ public class UnitTestSaveScorecardAction extends BaseTestCase {
         // verify the forward
         this
                 .verifyActionErrors(new String[] { "editScorecard.error.min_score.larger_than_max_score" });
-        this.verifyForward("editScorecard");
-        this.verifyForwardPath("/editScorecard.jsp");
         // verify the scorecard is not created
         Scorecard[] scs = UnitTestHelper.getInstance().getScorecardsByName(
                 scorecardForm.getScorecard().getName());
@@ -999,22 +937,12 @@ public class UnitTestSaveScorecardAction extends BaseTestCase {
         this.actionPerform();
         // verify the forward
         this.verifyForward("editScorecard");
-        this.verifyForwardPath("/editScorecard.jsp");
         this.verifyNoActionErrors();
         // get the scorecardForm
         ScorecardForm scorecardForm = (ScorecardForm) this.getActionForm();
         // add a new group
-        scorecardForm.setOperation("doAddGroup");
-        scorecardForm.setGroupIndex(0);
-        this.addRequestParameter("actionName", "saveScorecard");
-        this.setRequestPathInfo("/scorecardAdmin");
-        this.actionPerform();
-        this.verifyForward("editScorecard");
-        this.verifyForwardPath("/editScorecard.jsp");
-        this.verifyNoActionErrors();
-
-        // set operation to "doFinish"
-        scorecardForm.setOperation("doFinish");
+        scorecardForm.getScorecard().addGroup(ScorecardActionsHelper.buildNewGroup());
+        ((ScorecardAdapter) scorecardForm.getScorecard()).setCount(2);
         // perform save scorecard action
         this.addRequestParameter("actionName", "saveScorecard");
         this.setRequestPathInfo("/scorecardAdmin");
@@ -1022,8 +950,6 @@ public class UnitTestSaveScorecardAction extends BaseTestCase {
         // verify the forward
         this
                 .verifyActionErrors(new String[] { "editScorecard.error.scorecard.weight" });
-        this.verifyForward("editScorecard");
-        this.verifyForwardPath("/editScorecard.jsp");
         // verify the scorecard is not created
         Scorecard[] scs = UnitTestHelper.getInstance().getScorecardsByName(
                 scorecardForm.getScorecard().getName());
@@ -1053,25 +979,16 @@ public class UnitTestSaveScorecardAction extends BaseTestCase {
         this.actionPerform();
         // verify the forward
         this.verifyForward("editScorecard");
-        this.verifyForwardPath("/editScorecard.jsp");
         this.verifyNoActionErrors();
         // get the scorecardForm
         ScorecardForm scorecardForm = (ScorecardForm) this.getActionForm();
+        
         // add a new group
-        scorecardForm.setOperation("doAddGroup");
-        scorecardForm.setGroupIndex(0);
-        this.addRequestParameter("actionName", "saveScorecard");
-        this.setRequestPathInfo("/scorecardAdmin");
-        this.actionPerform();
-        this.verifyForward("editScorecard");
-        this.verifyForwardPath("/editScorecard.jsp");
-        this.verifyNoActionErrors();
-
+        scorecardForm.getScorecard().addGroup(ScorecardActionsHelper.buildNewGroup());
+        ((ScorecardAdapter) scorecardForm.getScorecard()).setCount(2);
         // adjust group weights
         scorecardForm.getScorecard().getGroup(0).setWeight(10);
         scorecardForm.getScorecard().getGroup(1).setWeight(89);
-        // set operation to "doFinish"
-        scorecardForm.setOperation("doFinish");
         // perform save scorecard action
         this.addRequestParameter("actionName", "saveScorecard");
         this.setRequestPathInfo("/scorecardAdmin");
@@ -1079,8 +996,6 @@ public class UnitTestSaveScorecardAction extends BaseTestCase {
         // verify the forward
         this
                 .verifyActionErrors(new String[] { "editScorecard.error.scorecard.weight" });
-        this.verifyForward("editScorecard");
-        this.verifyForwardPath("/editScorecard.jsp");
         // verify the scorecard is not created
         Scorecard[] scs = UnitTestHelper.getInstance().getScorecardsByName(
                 scorecardForm.getScorecard().getName());
@@ -1110,14 +1025,11 @@ public class UnitTestSaveScorecardAction extends BaseTestCase {
         this.actionPerform();
         // verify the forward
         this.verifyForward("editScorecard");
-        this.verifyForwardPath("/editScorecard.jsp");
         this.verifyNoActionErrors();
         // get the scorecardForm
         ScorecardForm scorecardForm = (ScorecardForm) this.getActionForm();
         // set group name
         scorecardForm.getScorecard().getGroup(0).setName("   ");
-        // set operation to "doFinish"
-        scorecardForm.setOperation("doFinish");
         // perform save scorecard action
         this.addRequestParameter("actionName", "saveScorecard");
         this.setRequestPathInfo("/scorecardAdmin");
@@ -1125,8 +1037,6 @@ public class UnitTestSaveScorecardAction extends BaseTestCase {
         // verify the forward
         this
                 .verifyActionErrors(new String[] { "editScorecard.error.group_name.required" });
-        this.verifyForward("editScorecard");
-        this.verifyForwardPath("/editScorecard.jsp");
         // verify the scorecard is not created
         Scorecard[] scs = UnitTestHelper.getInstance().getScorecardsByName(
                 scorecardForm.getScorecard().getName());
@@ -1156,7 +1066,6 @@ public class UnitTestSaveScorecardAction extends BaseTestCase {
         this.actionPerform();
         // verify the forward
         this.verifyForward("editScorecard");
-        this.verifyForwardPath("/editScorecard.jsp");
         this.verifyNoActionErrors();
         // get the scorecardForm
         ScorecardForm scorecardForm = (ScorecardForm) this.getActionForm();
@@ -1166,8 +1075,6 @@ public class UnitTestSaveScorecardAction extends BaseTestCase {
             name += "a";
         }
         scorecardForm.getScorecard().getGroup(0).setName(name);
-        // set operation to "doFinish"
-        scorecardForm.setOperation("doFinish");
         // perform save scorecard action
         this.addRequestParameter("actionName", "saveScorecard");
         this.setRequestPathInfo("/scorecardAdmin");
@@ -1175,8 +1082,6 @@ public class UnitTestSaveScorecardAction extends BaseTestCase {
         // verify the forward
         this
                 .verifyActionErrors(new String[] { "editScorecard.error.group_name.length" });
-        this.verifyForward("editScorecard");
-        this.verifyForwardPath("/editScorecard.jsp");
         // verify the scorecard is not created
         Scorecard[] scs = UnitTestHelper.getInstance().getScorecardsByName(
                 scorecardForm.getScorecard().getName());
@@ -1206,24 +1111,12 @@ public class UnitTestSaveScorecardAction extends BaseTestCase {
         this.actionPerform();
         // verify the forward
         this.verifyForward("editScorecard");
-        this.verifyForwardPath("/editScorecard.jsp");
         this.verifyNoActionErrors();
         // get the scorecardForm
         ScorecardForm scorecardForm = (ScorecardForm) this.getActionForm();
         // add a section
-        scorecardForm.setOperation("doAddSection");
-        scorecardForm.setGroupIndex(0);
-        scorecardForm.setSectionIndex(0);
-        this.addRequestParameter("actionName", "saveScorecard");
-        this.setRequestPathInfo("/scorecardAdmin");
-        this.actionPerform();
-        // verify the forward
-        this.verifyForward("editScorecard");
-        this.verifyForwardPath("/editScorecard.jsp");
-        this.verifyNoActionErrors();
-
-        // set operation to "doFinish"
-        scorecardForm.setOperation("doFinish");
+        scorecardForm.getScorecard().getGroup(0).addSection(ScorecardActionsHelper.buildNewSection());
+        ((GroupAdapter) scorecardForm.getScorecard().getGroup(0)).setCount(2);
         // perform save scorecard action
         this.addRequestParameter("actionName", "saveScorecard");
         this.setRequestPathInfo("/scorecardAdmin");
@@ -1231,8 +1124,6 @@ public class UnitTestSaveScorecardAction extends BaseTestCase {
         // verify the forward
         this
                 .verifyActionErrors(new String[] { "editScorecard.error.group.weight" });
-        this.verifyForward("editScorecard");
-        this.verifyForwardPath("/editScorecard.jsp");
         // verify the scorecard is not created
         Scorecard[] scs = UnitTestHelper.getInstance().getScorecardsByName(
                 scorecardForm.getScorecard().getName());
@@ -1262,27 +1153,15 @@ public class UnitTestSaveScorecardAction extends BaseTestCase {
         this.actionPerform();
         // verify the forward
         this.verifyForward("editScorecard");
-        this.verifyForwardPath("/editScorecard.jsp");
         this.verifyNoActionErrors();
         // get the scorecardForm
         ScorecardForm scorecardForm = (ScorecardForm) this.getActionForm();
         // add a section
-        scorecardForm.setOperation("doAddSection");
-        scorecardForm.setGroupIndex(0);
-        scorecardForm.setSectionIndex(0);
-        this.addRequestParameter("actionName", "saveScorecard");
-        this.setRequestPathInfo("/scorecardAdmin");
-        this.actionPerform();
-        // verify the forward
-        this.verifyForward("editScorecard");
-        this.verifyForwardPath("/editScorecard.jsp");
-        this.verifyNoActionErrors();
-
+        scorecardForm.getScorecard().getGroup(0).addSection(ScorecardActionsHelper.buildNewSection());
+        ((GroupAdapter) scorecardForm.getScorecard().getGroup(0)).setCount(2);
         // adjust the section weights
         scorecardForm.getScorecard().getGroup(0).getSection(0).setWeight(10);
         scorecardForm.getScorecard().getGroup(0).getSection(1).setWeight(89);
-        // set operation to "doFinish"
-        scorecardForm.setOperation("doFinish");
         // perform save scorecard action
         this.addRequestParameter("actionName", "saveScorecard");
         this.setRequestPathInfo("/scorecardAdmin");
@@ -1290,8 +1169,6 @@ public class UnitTestSaveScorecardAction extends BaseTestCase {
         // verify the forward
         this
                 .verifyActionErrors(new String[] { "editScorecard.error.group.weight" });
-        this.verifyForward("editScorecard");
-        this.verifyForwardPath("/editScorecard.jsp");
         // verify the scorecard is not created
         Scorecard[] scs = UnitTestHelper.getInstance().getScorecardsByName(
                 scorecardForm.getScorecard().getName());
@@ -1321,14 +1198,11 @@ public class UnitTestSaveScorecardAction extends BaseTestCase {
         this.actionPerform();
         // verify the forward
         this.verifyForward("editScorecard");
-        this.verifyForwardPath("/editScorecard.jsp");
         this.verifyNoActionErrors();
         // get the scorecardForm
         ScorecardForm scorecardForm = (ScorecardForm) this.getActionForm();
         // set name
         scorecardForm.getScorecard().getGroup(0).getSection(0).setName("  ");
-        // set operation to "doFinish"
-        scorecardForm.setOperation("doFinish");
         // perform save scorecard action
         this.addRequestParameter("actionName", "saveScorecard");
         this.setRequestPathInfo("/scorecardAdmin");
@@ -1336,8 +1210,6 @@ public class UnitTestSaveScorecardAction extends BaseTestCase {
         // verify the forward
         this
                 .verifyActionErrors(new String[] { "editScorecard.error.section_name.required" });
-        this.verifyForward("editScorecard");
-        this.verifyForwardPath("/editScorecard.jsp");
         // verify the scorecard is not created
         Scorecard[] scs = UnitTestHelper.getInstance().getScorecardsByName(
                 scorecardForm.getScorecard().getName());
@@ -1367,7 +1239,6 @@ public class UnitTestSaveScorecardAction extends BaseTestCase {
         this.actionPerform();
         // verify the forward
         this.verifyForward("editScorecard");
-        this.verifyForwardPath("/editScorecard.jsp");
         this.verifyNoActionErrors();
         // get the scorecardForm
         ScorecardForm scorecardForm = (ScorecardForm) this.getActionForm();
@@ -1377,8 +1248,6 @@ public class UnitTestSaveScorecardAction extends BaseTestCase {
             name += ".";
         }
         scorecardForm.getScorecard().getGroup(0).getSection(0).setName(name);
-        // set operation to "doFinish"
-        scorecardForm.setOperation("doFinish");
         // perform save scorecard action
         this.addRequestParameter("actionName", "saveScorecard");
         this.setRequestPathInfo("/scorecardAdmin");
@@ -1386,8 +1255,6 @@ public class UnitTestSaveScorecardAction extends BaseTestCase {
         // verify the forward
         this
                 .verifyActionErrors(new String[] { "editScorecard.error.section_name.length" });
-        this.verifyForward("editScorecard");
-        this.verifyForwardPath("/editScorecard.jsp");
         // verify the scorecard is not created
         Scorecard[] scs = UnitTestHelper.getInstance().getScorecardsByName(
                 scorecardForm.getScorecard().getName());
@@ -1417,33 +1284,18 @@ public class UnitTestSaveScorecardAction extends BaseTestCase {
         this.actionPerform();
         // verify the forward
         this.verifyForward("editScorecard");
-        this.verifyForwardPath("/editScorecard.jsp");
         this.verifyNoActionErrors();
         // get the scorecardForm
         ScorecardForm scorecardForm = (ScorecardForm) this.getActionForm();
         // add a question
-        scorecardForm.setOperation("doAddQuestion");
-        scorecardForm.setGroupIndex(0);
-        scorecardForm.setSectionIndex(0);
-        this.addRequestParameter("actionName", "saveScorecard");
-        this.setRequestPathInfo("/scorecardAdmin");
-        this.actionPerform();
-        // verify the forward
-        this.verifyForward("editScorecard");
-        this.verifyForwardPath("/editScorecard.jsp");
-        this.verifyNoActionErrors();
-
-        // set operation to "doFinish"
-        scorecardForm.setOperation("doFinish");
+        scorecardForm.getScorecard().getGroup(0).getSection(0).addQuestion(ScorecardActionsHelper.buildNewQuestion());
+        ((SectionAdapter) scorecardForm.getScorecard().getGroup(0).getSection(0)).setCount(2);
         // perform save scorecard action
         this.addRequestParameter("actionName", "saveScorecard");
         this.setRequestPathInfo("/scorecardAdmin");
         this.actionPerform();
         // verify the forward
-        this
-                .verifyActionErrors(new String[] { "editScorecard.error.section.weight" });
-        this.verifyForward("editScorecard");
-        this.verifyForwardPath("/editScorecard.jsp");
+        this.verifyActionErrors(new String[] { "editScorecard.error.section.weight" });
         // verify the scorecard is not created
         Scorecard[] scs = UnitTestHelper.getInstance().getScorecardsByName(
                 scorecardForm.getScorecard().getName());
@@ -1473,28 +1325,17 @@ public class UnitTestSaveScorecardAction extends BaseTestCase {
         this.actionPerform();
         // verify the forward
         this.verifyForward("editScorecard");
-        this.verifyForwardPath("/editScorecard.jsp");
         this.verifyNoActionErrors();
         // get the scorecardForm
         ScorecardForm scorecardForm = (ScorecardForm) this.getActionForm();
         // add a question
-        scorecardForm.setOperation("doAddQuestion");
-        scorecardForm.setGroupIndex(0);
-        scorecardForm.setSectionIndex(0);
-        this.addRequestParameter("actionName", "saveScorecard");
-        this.setRequestPathInfo("/scorecardAdmin");
-        this.actionPerform();
-        // verify the forward
-        this.verifyForward("editScorecard");
-        this.verifyForwardPath("/editScorecard.jsp");
-        this.verifyNoActionErrors();
+        scorecardForm.getScorecard().getGroup(0).getSection(0).addQuestion(ScorecardActionsHelper.buildNewQuestion());
+        ((SectionAdapter) scorecardForm.getScorecard().getGroup(0).getSection(0)).setCount(2);
         // adjust question weights
         scorecardForm.getScorecard().getGroup(0).getSection(0).getQuestion(0)
                 .setWeight(10);
         scorecardForm.getScorecard().getGroup(0).getSection(0).getQuestion(1)
                 .setWeight(89);
-        // set operation to "doFinish"
-        scorecardForm.setOperation("doFinish");
         // perform save scorecard action
         this.addRequestParameter("actionName", "saveScorecard");
         this.setRequestPathInfo("/scorecardAdmin");
@@ -1502,8 +1343,6 @@ public class UnitTestSaveScorecardAction extends BaseTestCase {
         // verify the forward
         this
                 .verifyActionErrors(new String[] { "editScorecard.error.section.weight" });
-        this.verifyForward("editScorecard");
-        this.verifyForwardPath("/editScorecard.jsp");
         // verify the scorecard is not created
         Scorecard[] scs = UnitTestHelper.getInstance().getScorecardsByName(
                 scorecardForm.getScorecard().getName());
@@ -1533,15 +1372,12 @@ public class UnitTestSaveScorecardAction extends BaseTestCase {
         this.actionPerform();
         // verify the forward
         this.verifyForward("editScorecard");
-        this.verifyForwardPath("/editScorecard.jsp");
         this.verifyNoActionErrors();
         // get the scorecardForm
         ScorecardForm scorecardForm = (ScorecardForm) this.getActionForm();
         // set description
         scorecardForm.getScorecard().getGroup(0).getSection(0).getQuestion(0)
                 .setDescription("  ");
-        // set operation to "doFinish"
-        scorecardForm.setOperation("doFinish");
         // perform save scorecard action
         this.addRequestParameter("actionName", "saveScorecard");
         this.setRequestPathInfo("/scorecardAdmin");
@@ -1549,8 +1385,6 @@ public class UnitTestSaveScorecardAction extends BaseTestCase {
         // verify the forward
         this
                 .verifyActionErrors(new String[] { "editScorecard.error.question_description.required" });
-        this.verifyForward("editScorecard");
-        this.verifyForwardPath("/editScorecard.jsp");
         // verify the scorecard is not created
         Scorecard[] scs = UnitTestHelper.getInstance().getScorecardsByName(
                 scorecardForm.getScorecard().getName());
@@ -1558,52 +1392,53 @@ public class UnitTestSaveScorecardAction extends BaseTestCase {
                 (scs == null || scs.length == 0));
     }
 
-    /**
-     * <p>
-     * Unit test on "doFinish" operation. The question guideline is empty in the
-     * action form is malformed.
-     * </p>
-     * <p>
-     * Expected Result: 1. There should be action
-     * error("editScorecard.error.question_guideline.required"). 2. The result
-     * forward should be "editScorecard"("/editScorecard.jsp"). 3. The scorecard
-     * should not be created.
-     * </p>
-     * 
-     * @throws Exception
-     *             to JUnit
-     */
-    public void testDoFinish_EmptyQuestionGuideline() throws Exception {
-        // new the scorecard
-        this.addRequestParameter("actionName", "newScorecard");
-        this.setRequestPathInfo("/scorecardAdmin");
-        this.actionPerform();
-        // verify the forward
-        this.verifyForward("editScorecard");
-        this.verifyForwardPath("/editScorecard.jsp");
-        this.verifyNoActionErrors();
-        // get the scorecardForm
-        ScorecardForm scorecardForm = (ScorecardForm) this.getActionForm();
-        // set guideline
-        scorecardForm.getScorecard().getGroup(0).getSection(0).getQuestion(0)
-                .setGuideline("  ");
-        // set operation to "doFinish"
-        scorecardForm.setOperation("doFinish");
-        // perform save scorecard action
-        this.addRequestParameter("actionName", "saveScorecard");
-        this.setRequestPathInfo("/scorecardAdmin");
-        this.actionPerform();
-        // verify the forward
-        this
-                .verifyActionErrors(new String[] { "editScorecard.error.question_guideline.required" });
-        this.verifyForward("editScorecard");
-        this.verifyForwardPath("/editScorecard.jsp");
-        // verify the scorecard is not created
-        Scorecard[] scs = UnitTestHelper.getInstance().getScorecardsByName(
-                scorecardForm.getScorecard().getName());
-        assertTrue("The scorecard is created.",
-                (scs == null || scs.length == 0));
-    }
+// REMOVED (by flying2hk), guideline is optional
+//    /**
+//     * <p>
+//     * Unit test on "doFinish" operation. The question guideline is empty in the
+//     * action form is malformed.
+//     * </p>
+//     * <p>
+//     * Expected Result: 1. There should be action
+//     * error("editScorecard.error.question_guideline.required"). 2. The result
+//     * forward should be "editScorecard"("/editScorecard.jsp"). 3. The scorecard
+//     * should not be created.
+//     * </p>
+//     * 
+//     * @throws Exception
+//     *             to JUnit
+//     */
+//    public void testDoFinish_EmptyQuestionGuideline() throws Exception {
+//        // new the scorecard
+//        this.addRequestParameter("actionName", "newScorecard");
+//        this.setRequestPathInfo("/scorecardAdmin");
+//        this.actionPerform();
+//        // verify the forward
+//        this.verifyForward("editScorecard");
+//        this.verifyForwardPath("/editScorecard.jsp");
+//        this.verifyNoActionErrors();
+//        // get the scorecardForm
+//        ScorecardForm scorecardForm = (ScorecardForm) this.getActionForm();
+//        // set guideline
+//        scorecardForm.getScorecard().getGroup(0).getSection(0).getQuestion(0)
+//                .setGuideline("  ");
+//        // set operation to "doFinish"
+//        scorecardForm.setOperation("doFinish");
+//        // perform save scorecard action
+//        this.addRequestParameter("actionName", "saveScorecard");
+//        this.setRequestPathInfo("/scorecardAdmin");
+//        this.actionPerform();
+//        // verify the forward
+//        this
+//                .verifyActionErrors(new String[] { "editScorecard.error.question_guideline.required" });
+//        this.verifyForward("editScorecard");
+//        this.verifyForwardPath("/editScorecard.jsp");
+//        // verify the scorecard is not created
+//        Scorecard[] scs = UnitTestHelper.getInstance().getScorecardsByName(
+//                scorecardForm.getScorecard().getName());
+//        assertTrue("The scorecard is created.",
+//                (scs == null || scs.length == 0));
+//    }
 
     /**
      * <p>
@@ -1627,24 +1462,18 @@ public class UnitTestSaveScorecardAction extends BaseTestCase {
         this.actionPerform();
         // verify the forward
         this.verifyForward("editScorecard");
-        this.verifyForwardPath("/editScorecard.jsp");
         this.verifyNoActionErrors();
         // get the scorecardForm
         ScorecardForm scorecardForm = (ScorecardForm) this.getActionForm();
         // set question type
         scorecardForm.getScorecard().getGroup(0).getSection(0).getQuestion(0)
                 .getQuestionType().setName("Unknown");
-        // set operation to "doFinish"
-        scorecardForm.setOperation("doFinish");
         // perform save scorecard action
         this.addRequestParameter("actionName", "saveScorecard");
         this.setRequestPathInfo("/scorecardAdmin");
         this.actionPerform();
         // verify the forward
-        this
-                .verifyActionErrors(new String[] { "editScorecard.error.question_type.invalid" });
-        this.verifyForward("editScorecard");
-        this.verifyForwardPath("/editScorecard.jsp");
+        this.verifyActionErrors(new String[] { "editScorecard.error.question_type.invalid" });
         // verify the scorecard is not created
         Scorecard[] scs = UnitTestHelper.getInstance().getScorecardsByName(
                 scorecardForm.getScorecard().getName());
@@ -1681,26 +1510,19 @@ public class UnitTestSaveScorecardAction extends BaseTestCase {
         this.actionPerform();
         // verify the forward
         this.verifyForward("editScorecard");
-        this.verifyForwardPath("/editScorecard.jsp");
         this.verifyNoActionErrors();
         // change the scorecard status to "Active"
         sc.setScorecardStatus(ScorecardActionsHelper.getInstance()
                 .getScorecardStatus("Active"));
         UnitTestHelper.getInstance().updateScorecard(sc);
 
-        // get the scorecardForm
-        ScorecardForm scorecardForm = (ScorecardForm) this.getActionForm();
-        // set operation to "doFinish"
-        scorecardForm.setOperation("doFinish");
         // perform save scorecard action
         this.addRequestParameter("actionName", "saveScorecard");
         this.setRequestPathInfo("/scorecardAdmin");
         this.actionPerform();
         // verify the forward
         this.verifyForward("failure");
-        this.verifyForwardPath("/error.jsp");
-        this
-                .verifyActionErrors(new String[] { "editScorecard.error.scorecard_is_active" });
+        this.verifyActionErrors(new String[] { "editScorecard.error.scorecard_is_active" });
         // verify the scorecard is not updated
         sc = UnitTestHelper.getInstance().getScorecard(sid);
         this.increaseMinorVersion(this.scorecard);
@@ -1726,12 +1548,9 @@ public class UnitTestSaveScorecardAction extends BaseTestCase {
         this.actionPerform();
         // verify the forward
         this.verifyForward("editScorecard");
-        this.verifyForwardPath("/editScorecard.jsp");
         this.verifyNoActionErrors();
         // get the scorecardForm
         ScorecardForm scorecardForm = (ScorecardForm) this.getActionForm();
-        // set operation to "doFinish"
-        scorecardForm.setOperation("doFinish");
         // logout
         this.logout();
         // perform save scorecard action
@@ -1741,7 +1560,6 @@ public class UnitTestSaveScorecardAction extends BaseTestCase {
         // verify the forward
         this.verifyActionErrors(new String[] { "global.error.authorization" });
         this.verifyForward("failure");
-        this.verifyForwardPath("/error.jsp");
         // verify the scorecard is not created
         Scorecard[] scs = UnitTestHelper.getInstance().getScorecardsByName(
                 scorecardForm.getScorecard().getName());

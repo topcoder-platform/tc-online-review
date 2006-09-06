@@ -7,7 +7,7 @@ import com.topcoder.management.scorecard.data.Question;
 
 /**
  * <p>
- * <code>QuestionBean</code> extends
+ * <code>QuestionAdapter</code> extends
  * <code>com.topcoder.management.scorecard.data.Question</code>, holds both
  * "question" model data and facility data which bridge the gap between
  * <code>Scorecard Data Structure</code> and the struts front-end mechanism.
@@ -19,7 +19,7 @@ import com.topcoder.management.scorecard.data.Question;
  * </p>
  * 
  * @version 1.0
- * @author TCSDEVELOPER
+ * @author albertwang, flying2hk
  * 
  */
 public class QuestionAdapter extends Question {

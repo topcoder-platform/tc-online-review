@@ -11,7 +11,7 @@ import com.topcoder.management.scorecard.data.Scorecard;
  * </p>
  * 
  * @version 1.0
- * @author TCSDEVELOPER
+ * @author flying2hk
  */
 public class UnitTestEditScorecardAction extends BaseTestCase {
     /** Scorecard used in this test. */
@@ -89,7 +89,6 @@ public class UnitTestEditScorecardAction extends BaseTestCase {
         this.actionPerform();
         // verify the forward
         this.verifyForward("editScorecard");
-        this.verifyForwardPath("/editScorecard.jsp");
         this.verifyNoActionErrors();
         // verify the scorecardForm
         ScorecardForm scorecardForm = (ScorecardForm) this.getActionForm();
@@ -134,7 +133,6 @@ public class UnitTestEditScorecardAction extends BaseTestCase {
         this.actionPerform();
         // verify the forward
         this.verifyForward("failure");
-        this.verifyForwardPath("/error.jsp");
         this
                 .verifyActionErrors(new String[] { "editScorecard.error.scorecard_is_active" });
         // verify the scorecardForm
@@ -167,7 +165,6 @@ public class UnitTestEditScorecardAction extends BaseTestCase {
         this.actionPerform();
         // verify the forward
         this.verifyForward("failure");
-        this.verifyForwardPath("/error.jsp");
         this
                 .verifyActionErrors(new String[] { "global.error.no_such_scorecard" });
         // verify the scorecardForm
@@ -199,7 +196,6 @@ public class UnitTestEditScorecardAction extends BaseTestCase {
         this.actionPerform();
         // verify the forward
         this.verifyForward("failure");
-        this.verifyForwardPath("/error.jsp");
         this
                 .verifyActionErrors(new String[] { "global.error.no_such_scorecard" });
         // verify the scorecardForm
@@ -235,7 +231,6 @@ public class UnitTestEditScorecardAction extends BaseTestCase {
         this.actionPerform();
         // verify the forward
         this.verifyForward("failure");
-        this.verifyForwardPath("/error.jsp");
         this
                 .verifyActionErrors(new String[] { "global.error.no_such_scorecard" });
         // verify the scorecardForm
@@ -272,7 +267,6 @@ public class UnitTestEditScorecardAction extends BaseTestCase {
         this.actionPerform();
         // verify the forward
         this.verifyForward("failure");
-        this.verifyForwardPath("/error.jsp");
         this.verifyActionErrors(new String[] { "global.error.authorization" });
         // verify the scorecardForm
         ScorecardForm scorecardForm = (ScorecardForm) this.getActionForm();

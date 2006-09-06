@@ -3,6 +3,9 @@
  */
 package com.cronos.onlinereview.actions;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -40,9 +43,8 @@ import com.topcoder.util.log.LogFactory;
  * </ul>
  * </p>
  * 
- * @struts.action validate="true"
  * @version 1.0
- * @author TCSDEVELOPER
+ * @author albertwang, flying2hk
  */
 public class ScorecardActions extends DispatchAction {
     /**
@@ -57,8 +59,7 @@ public class ScorecardActions extends DispatchAction {
      * <code>ScorecardActionsHelper</code> instance used in this class.
      * </p>
      */
-    private ScorecardActionsHelper helper = ScorecardActionsHelper
-            .getInstance();
+    private ScorecardActionsHelper helper = ScorecardActionsHelper.getInstance();
 
     /**
      * <p>
@@ -74,8 +75,8 @@ public class ScorecardActions extends DispatchAction {
      * @param response
      *            The servlet response we are creating
      */
-    public ActionForward newScorecard(ActionMapping mapping, ActionForm form,
-            HttpServletRequest request, HttpServletResponse response) {
+    public ActionForward newScorecard(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+            HttpServletResponse response) {
         // extract the user id
         Long userId = getUserId(request);
         // potential error messages
@@ -85,35 +86,28 @@ public class ScorecardActions extends DispatchAction {
         // verify if the user is authorized to edit the scorecards
         if (!this.isAuthorized(userId)) {
             // no authorized
-            errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage(
-                    Constants.ERROR_KEY_AUTHORIZATION));
-            this.logger
-                    .log(
-                            Level.INFO,
-                            "User with ID "
-                                    + userId
-                                    + " is not authorized to perform the newScorecard actions.");
+            errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage(Constants.ERROR_KEY_AUTHORIZATION));
+            this.logger.log(Level.INFO, "User with ID " + userId
+                    + " is not authorized to perform the newScorecard actions.");
         } else {
             this.logger.log(Level.INFO, "User with ID " + userId
                     + " is requesting to perform the newScorecard actions.");
             // ScorecardForm
             ScorecardForm scorecardForm = (ScorecardForm) form;
             // create a new scorecard bean and attach it to the ActionForm
-            scorecardForm.setScorecard(ScorecardActionsHelper
-                    .buildNewScorecard());
+            scorecardForm.setScorecard(ScorecardActionsHelper.buildNewScorecard());
             ProjectCategory projectCategory = null;
             try {
-                projectCategory = helper
-                        .getProjectCategories(Long
-                                .parseLong(request
-                                        .getParameter(Constants.PARAM_KEY_PROJECT_TYPE_ID)))[0];
+                projectCategory = helper.getProjectCategories(Long.parseLong(request
+                        .getParameter(Constants.PARAM_KEY_PROJECT_TYPE_ID)))[0];
             } catch (Exception e) {
                 // ignore
             }
             // set scorecard category if available
             if (projectCategory != null) {
-                scorecardForm.getScorecard().setCategory(
-                        projectCategory.getId());
+                scorecardForm.getScorecard().setCategory(projectCategory.getId());
+                scorecardForm.setProjectCategoryName(projectCategory.getName());
+                scorecardForm.setProjectTypeName(projectCategory.getProjectType().getName());
             }
             // the scorecard is newly created one, name and version are both
             // editable
@@ -149,8 +143,8 @@ public class ScorecardActions extends DispatchAction {
      * @param response
      *            The servlet response we are creating
      */
-    public ActionForward editScorecard(ActionMapping mapping, ActionForm form,
-            HttpServletRequest request, HttpServletResponse response) {
+    public ActionForward editScorecard(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+            HttpServletResponse response) {
         // extract the user id
         Long userId = getUserId(request);
         // potential error messages
@@ -160,14 +154,9 @@ public class ScorecardActions extends DispatchAction {
         // verify if the user is authorized to edit the scorecards
         if (!this.isAuthorized(userId)) {
             // no authorized
-            errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage(
-                    Constants.ERROR_KEY_AUTHORIZATION));
-            this.logger
-                    .log(
-                            Level.INFO,
-                            "User with ID "
-                                    + userId
-                                    + " is not authorized to perform the editScorecard actions.");
+            errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage(Constants.ERROR_KEY_AUTHORIZATION));
+            this.logger.log(Level.INFO, "User with ID " + userId
+                    + " is not authorized to perform the editScorecard actions.");
         } else {
             // ScorecardForm
             ScorecardForm scorecardForm = (ScorecardForm) form;
@@ -176,71 +165,41 @@ public class ScorecardActions extends DispatchAction {
             // authorized, perform the view operation
             long scorecardId = Scorecard.SENTINEL_ID;
             try {
-                scorecardId = Long.parseLong(request
-                        .getParameter(Constants.PARAM_KEY_SCORECARD_ID));
+                scorecardId = Long.parseLong(request.getParameter(Constants.PARAM_KEY_SCORECARD_ID));
             } catch (Exception e) {
                 // ignore
             }
             try {
                 if (scorecardId <= 0) {
-                    this.logger
-                            .log(
-                                    Level.ERROR,
-                                    "User with ID "
-                                            + userId
-                                            + " is issuing an invalid edit scorecard request with scorecard id "
-                                            + scorecardId + ".");
-                    errors
-                            .add(ActionMessages.GLOBAL_MESSAGE,
-                                    new ActionMessage(
-                                            "global.error.no_such_scorecard"));
+                    this.logger.log(Level.ERROR, "User with ID " + userId
+                            + " is issuing an invalid edit scorecard request with scorecard id " + scorecardId + ".");
+                    errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage("global.error.no_such_scorecard"));
                 } else {
                     // get the scorecard
                     ScorecardManager mgr = new ScorecardManagerImpl();
                     scorecard = mgr.getScorecard(scorecardId);
                     // check if the scorecard can be edited
                     if (scorecard == null) {
-                        this.logger
-                                .log(
-                                        Level.ERROR,
-                                        "User with ID "
-                                                + userId
-                                                + " is requesting to edit a nonexist scorecard with id "
-                                                + scorecardId + ".");
-                        errors.add(ActionMessages.GLOBAL_MESSAGE,
-                                new ActionMessage(
-                                        "global.error.no_such_scorecard"));
+                        this.logger.log(Level.ERROR, "User with ID " + userId
+                                + " is requesting to edit a nonexist scorecard with id " + scorecardId + ".");
+                        errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage("global.error.no_such_scorecard"));
                     } else if (scorecard.isInUse()) {
                         // scorecard is in use
-                        errors
-                                .add(
-                                        ActionMessages.GLOBAL_MESSAGE,
-                                        new ActionMessage(
-                                                "editScorecard.error.scorecard_in_use"));
-                        this.logger.log(Level.ERROR, "Scorecard with id "
-                                + scorecardId
+                        errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage(
+                                "editScorecard.error.scorecard_in_use"));
+                        this.logger.log(Level.ERROR, "Scorecard with id " + scorecardId
                                 + " is in use and cannot be edited.");
-                    } else if ("Active".equalsIgnoreCase(scorecard
-                            .getScorecardStatus().getName())) {
+                    } else if ("Active".equalsIgnoreCase(scorecard.getScorecardStatus().getName())) {
                         // scorecard is active
-                        errors
-                                .add(
-                                        ActionMessages.GLOBAL_MESSAGE,
-                                        new ActionMessage(
-                                                "editScorecard.error.scorecard_is_active"));
-                        this.logger.log(Level.ERROR, "Scorecard with id "
-                                + scorecardId
+                        errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage(
+                                "editScorecard.error.scorecard_is_active"));
+                        this.logger.log(Level.ERROR, "Scorecard with id " + scorecardId
                                 + " is active and cannot be edited.");
                     } else {
-                        this.logger
-                                .log(
-                                        Level.INFO,
-                                        "User with ID "
-                                                + userId
-                                                + " is requesting to edit the scorecard with id "
-                                                + scorecardId + ".");
+                        this.logger.log(Level.INFO, "User with ID " + userId
+                                + " is requesting to edit the scorecard with id " + scorecardId + ".");
                         // attach scorecard to the scorecard form
-                        scorecardForm.setScorecard(scorecard);
+                        scorecardForm.setScorecard(new ScorecardAdapter(scorecard));
                         // the scorecard is not newly created one, name is not
                         // editable, version is not editable
                         scorecardForm.setNewlyCreated(false);
@@ -250,17 +209,21 @@ public class ScorecardActions extends DispatchAction {
                     }
                 }
             } catch (ConfigurationException e) {
-                errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage(
-                        Constants.ERROR_KEY_GENERAL));
-                this.logger.log(Level.ERROR,
-                        "Exception caught while editing the scorecard: "
-                                + e.getMessage());
+                errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage(Constants.ERROR_KEY_GENERAL));
+                this.logger.log(Level.ERROR, "Exception caught while editing the scorecard: "
+                        + this.getExceptionStackTrace(e));
             } catch (PersistenceException e) {
-                errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage(
-                        Constants.ERROR_KEY_GENERAL));
-                this.logger.log(Level.ERROR,
-                        "Exception caught while editing the scorecard: "
-                                + e.getMessage());
+                errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage(Constants.ERROR_KEY_GENERAL));
+                this.logger.log(Level.ERROR, "Exception caught while editing the scorecard: "
+                        + this.getExceptionStackTrace(e));
+            } catch (IllegalArgumentException e) {
+                errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage(Constants.ERROR_KEY_GENERAL));
+                this.logger.log(Level.ERROR, "Exception caught while editing the scorecard: "
+                        + this.getExceptionStackTrace(e));
+            } catch (NullPointerException e) {
+                errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage(Constants.ERROR_KEY_GENERAL));
+                this.logger.log(Level.ERROR, "Exception caught while editing the scorecard: "
+                        + this.getExceptionStackTrace(e));
             }
         }
 
@@ -290,8 +253,8 @@ public class ScorecardActions extends DispatchAction {
      * @param response
      *            The servlet response we are creating
      */
-    public ActionForward copyScorecard(ActionMapping mapping, ActionForm form,
-            HttpServletRequest request, HttpServletResponse response) {
+    public ActionForward copyScorecard(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+            HttpServletResponse response) {
         // extract the user id
         Long userId = getUserId(request);
         // potential error messages
@@ -301,14 +264,9 @@ public class ScorecardActions extends DispatchAction {
         // verify if the user is authorized to copy the scorecards
         if (!this.isAuthorized(userId)) {
             // no authorized
-            errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage(
-                    Constants.ERROR_KEY_AUTHORIZATION));
-            this.logger
-                    .log(
-                            Level.INFO,
-                            "User with ID "
-                                    + userId
-                                    + " is not authorized to perform the copyScorecard actions.");
+            errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage(Constants.ERROR_KEY_AUTHORIZATION));
+            this.logger.log(Level.INFO, "User with ID " + userId
+                    + " is not authorized to perform the copyScorecard actions.");
         } else {
             // ScorecardForm
             ScorecardForm scorecardForm = (ScorecardForm) form;
@@ -316,43 +274,27 @@ public class ScorecardActions extends DispatchAction {
             Scorecard scorecard = null;
             long scorecardId = Scorecard.SENTINEL_ID;
             try {
-                scorecardId = Long.parseLong(request
-                        .getParameter(Constants.PARAM_KEY_SCORECARD_ID));
+                scorecardId = Long.parseLong(request.getParameter(Constants.PARAM_KEY_SCORECARD_ID));
             } catch (Exception e) {
                 // ignore
             }
             try {
                 if (scorecardId <= 0) {
-                    this.logger
-                            .log(
-                                    Level.ERROR,
-                                    "User with ID "
-                                            + userId
-                                            + " is issuing an invalid copy scorecard request with scorecard id "
-                                            + scorecardId + ".");
-                    errors
-                            .add(ActionMessages.GLOBAL_MESSAGE,
-                                    new ActionMessage(
-                                            "global.error.no_such_scorecard"));
+                    this.logger.log(Level.ERROR, "User with ID " + userId
+                            + " is issuing an invalid copy scorecard request with scorecard id " + scorecardId + ".");
+                    errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage("global.error.no_such_scorecard"));
                 } else {
                     // retrieve the scorecard
                     ScorecardManager mgr = new ScorecardManagerImpl();
                     scorecard = mgr.getScorecard(scorecardId);
                     if (scorecard == null) {
-                        this.logger
-                                .log(
-                                        Level.ERROR,
-                                        "User with ID "
-                                                + userId
-                                                + " is requesting to copy a nonexist scorecard with id "
-                                                + scorecardId + ".");
-                        errors.add(ActionMessages.GLOBAL_MESSAGE,
-                                new ActionMessage(
-                                        "global.error.no_such_scorecard"));
+                        this.logger.log(Level.ERROR, "User with ID " + userId
+                                + " is requesting to copy a nonexist scorecard with id " + scorecardId + ".");
+                        errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage("global.error.no_such_scorecard"));
                     } else {
                         // attach the scorecard to the ActionForm
-                        scorecardForm.setScorecard(ScorecardActionsHelper
-                                .copyScorecard(scorecard));
+                        scorecardForm.setScorecard(ScorecardActionsHelper.copyScorecard(scorecard));
+                        scorecardForm.setOldVersion(scorecard.getVersion());
                         // the scorecard is newly created one, name and version
                         // are both editable
                         scorecardForm.setNewlyCreated(true);
@@ -362,23 +304,25 @@ public class ScorecardActions extends DispatchAction {
                     }
                 }
             } catch (NumberFormatException e) {
-                this.logger.log(Level.ERROR,
-                        "Exception caught while copying the scorecard: "
-                                + e.getMessage());
-                errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage(
-                        Constants.ERROR_KEY_GENERAL));
+                this.logger.log(Level.ERROR, "Exception caught while copying the scorecard: "
+                        + this.getExceptionStackTrace(e));
+                errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage(Constants.ERROR_KEY_GENERAL));
             } catch (ConfigurationException e) {
-                this.logger.log(Level.ERROR,
-                        "Exception caught while copying the scorecard: "
-                                + e.getMessage());
-                errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage(
-                        Constants.ERROR_KEY_GENERAL));
+                this.logger.log(Level.ERROR, "Exception caught while copying the scorecard: "
+                        + this.getExceptionStackTrace(e));
+                errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage(Constants.ERROR_KEY_GENERAL));
             } catch (PersistenceException e) {
-                this.logger.log(Level.ERROR,
-                        "Exception caught while copying the scorecard: "
-                                + e.getMessage());
-                errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage(
-                        Constants.ERROR_KEY_GENERAL));
+                this.logger.log(Level.ERROR, "Exception caught while copying the scorecard: "
+                        + this.getExceptionStackTrace(e));
+                errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage(Constants.ERROR_KEY_GENERAL));
+            } catch (IllegalArgumentException e) {
+                this.logger.log(Level.ERROR, "Exception caught while copying the scorecard: "
+                        + this.getExceptionStackTrace(e));
+                errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage(Constants.ERROR_KEY_GENERAL));
+            } catch (NullPointerException e) {
+                this.logger.log(Level.ERROR, "Exception caught while copying the scorecard: "
+                        + this.getExceptionStackTrace(e));
+                errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage(Constants.ERROR_KEY_GENERAL));
             }
         }
         if (errors.isEmpty()) {
@@ -407,8 +351,8 @@ public class ScorecardActions extends DispatchAction {
      * @param response
      *            The servlet response we are creating
      */
-    public ActionForward saveScorecard(ActionMapping mapping, ActionForm form,
-            HttpServletRequest request, HttpServletResponse response) {
+    public ActionForward saveScorecard(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+            HttpServletResponse response) {
         // extract the user id
         Long userId = getUserId(request);
         // potential error messages
@@ -418,154 +362,71 @@ public class ScorecardActions extends DispatchAction {
         // verify if the user is authorized to list the scorecards
         if (!this.isAuthorized(userId)) {
             // no authorized
-            errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage(
-                    Constants.ERROR_KEY_AUTHORIZATION));
-            this.logger
-                    .log(
-                            Level.INFO,
-                            "User with ID "
-                                    + userId
-                                    + " is not authorized to perform the saveScorecard actions.");
+            errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage(Constants.ERROR_KEY_AUTHORIZATION));
+            this.logger.log(Level.INFO, "User with ID " + userId
+                    + " is not authorized to perform the saveScorecard actions.");
         } else {
             // ScorecardForm
             ScorecardForm scorecardForm = (ScorecardForm) form;
             Scorecard scorecard = scorecardForm.getScorecard();
-            // Operation name
-            String operation = scorecardForm.getOperation();
-            // group index, section index and question index
-            int gIdx = scorecardForm.getGroupIndex();
-            int sIdx = scorecardForm.getSectionIndex();
-            int qIdx = scorecardForm.getQuestionIndex();
-
-            if (operation.equals(Constants.DO_ADD_GROUP)) {
-                // create a new group bean with one new section with one new
-                // question, and
-                // insert it into given position
-                scorecard.insertGroup(ScorecardActionsHelper.buildNewGroup(),
-                        gIdx + 1);
-                this.logger.log(Level.INFO, "User with ID " + userId
-                        + " is requesting to add a group at the position ("
-                        + gIdx + ") to scorecard with id " + scorecard.getId()
-                        + ".");
-            } else if (operation.equals(Constants.DO_ADD_SECTION)) {
-                // create a new section bean with one new question, and insert
-                // it into given position
-                scorecard.getGroup(gIdx).insertSection(
-                        ScorecardActionsHelper.buildNewSection(), sIdx + 1);
-                this.logger.log(Level.INFO, "User with ID " + userId
-                        + " is requesting to add a section at the position ("
-                        + gIdx + ", " + (sIdx + 1) + ") to scorecard with id "
+            try {
+                this.logger.log(Level.INFO, "User with ID " + userId + " is requesting to save scorecard with id "
                         + scorecard.getId() + ".");
-            } else if (operation.equals(Constants.DO_ADD_QUESTION)) {
-                // create a new question bean, and insert it into given position
-                scorecard.getGroup(gIdx).getSection(sIdx).addQuestion(
-                        ScorecardActionsHelper.buildNewQuestion());
-                this.logger.log(Level.INFO, "User with ID " + userId
-                        + " is requesting to add a question at the position ("
-                        + gIdx + ", " + sIdx + ") to scorecard with id "
-                        + scorecard.getId() + ".");
-            } else if (operation.equals(Constants.DO_REMOVE_GROUP)) {
-                // remove the given group
-                scorecard.removeGroup(gIdx);
-                this.logger.log(Level.INFO, "User with ID " + userId
-                        + " is requesting to remove a group at the position ("
-                        + gIdx + ") from scorecard with id "
-                        + scorecard.getId() + ".");
-            } else if (operation.equals(Constants.DO_REMOVE_SECTION)) {
-                // remove the given section
-                scorecard.getGroup(gIdx).removeSection(sIdx);
-                this.logger
-                        .log(
-                                Level.INFO,
-                                "User with ID "
-                                        + userId
-                                        + " is requesting to remove a section at the position ("
-                                        + gIdx + ", " + sIdx
-                                        + ") from scorecard with id "
-                                        + scorecard.getId() + ".");
-            } else if (operation.equals(Constants.DO_REMOVE_QUESTION)) {
-                // remove the given question
-                scorecard.getGroup(gIdx).getSection(sIdx).removeQuestion(qIdx);
-                this.logger
-                        .log(
-                                Level.INFO,
-                                "User with ID "
-                                        + userId
-                                        + " is requesting to remove a question at the position ("
-                                        + gIdx + ", " + sIdx + ", " + qIdx
-                                        + ") from scorecard with id "
-                                        + scorecard.getId() + ".");
-            } else if (operation.equals(Constants.DO_FINISH)) {
-                try {
-                    this.logger.log(Level.INFO, "User with ID " + userId
-                            + " is requesting to save scorecard with id "
-                            + scorecard.getId() + ".");
-                    // search the scorecards
-                    ScorecardManager mgr = new ScorecardManagerImpl();
-                    // create or update the scorecard
-                    if (scorecardForm.isNewlyCreated()) {
-                        mgr.createScorecard(scorecard, userId.toString());
-                        // forward to the "listScorecards"
-                        forward = listScorecards(mapping, form, request,
-                                response);
+                // search the scorecards
+                ScorecardManager mgr = new ScorecardManagerImpl();
+                // create or update the scorecard
+                if (scorecardForm.isNewlyCreated()) {
+                    mgr.createScorecard(scorecard, userId.toString());
+                    // forward to the "listScorecards"
+                    forward = listScorecards(mapping, form, request, response);
+                } else {
+                    // retrieve the scorecard from persistence to check if
+                    // we can update it
+                    Scorecard sc = mgr.getScorecard(scorecard.getId());
+                    if (sc.isInUse()) {
+                        // scorecard is in use
+                        errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage(
+                                "editScorecard.error.scorecard_in_use"));
+                        this.logger.log(Level.ERROR, "Scorecard with id " + scorecard.getId()
+                                + " is in use and cannot be updated.");
+                    } else if ("Active".equalsIgnoreCase(sc.getScorecardStatus().getName())) {
+                        // scorecard is active
+                        errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage(
+                                "editScorecard.error.scorecard_is_active"));
+                        this.logger.log(Level.ERROR, "Scorecard with id " + scorecard.getId()
+                                + " is active and cannot be updated.");
                     } else {
-                        // retrieve the scorecard from persistence to check if
-                        // we can update it
-                        Scorecard sc = mgr.getScorecard(scorecard.getId());
-                        if (sc.isInUse()) {
-                            // scorecard is in use
-                            errors
-                                    .add(
-                                            ActionMessages.GLOBAL_MESSAGE,
-                                            new ActionMessage(
-                                                    "editScorecard.error.scorecard_in_use"));
-                            this.logger.log(Level.ERROR, "Scorecard with id "
-                                    + scorecard.getId()
-                                    + " is in use and cannot be updated.");
-                        } else if ("Active".equalsIgnoreCase(sc
-                                .getScorecardStatus().getName())) {
-                            // scorecard is active
-                            errors
-                                    .add(
-                                            ActionMessages.GLOBAL_MESSAGE,
-                                            new ActionMessage(
-                                                    "editScorecard.error.scorecard_is_active"));
-                            this.logger.log(Level.ERROR, "Scorecard with id "
-                                    + scorecard.getId()
-                                    + " is active and cannot be updated.");
-                        } else {
-                            mgr.updateScorecard(scorecard, userId.toString());
-                            // forward to the "listScorecards"
-                            forward = listScorecards(mapping, form, request,
-                                    response);
-                        }
+                        mgr.updateScorecard(scorecard, userId.toString());
+                        // forward to the "listScorecards"
+                        forward = listScorecards(mapping, form, request, response);
                     }
-                } catch (ConfigurationException e) {
-                    this.logger.log(Level.ERROR,
-                            "Exception caught while saving the scorecard: "
-                                    + e.getMessage());
-                    errors.add(ActionMessages.GLOBAL_MESSAGE,
-                            new ActionMessage(Constants.ERROR_KEY_GENERAL));
-                } catch (PersistenceException e) {
-                    this.logger.log(Level.ERROR,
-                            "Exception caught while saving the scorecard: "
-                                    + e.getMessage());
-                    errors.add(ActionMessages.GLOBAL_MESSAGE,
-                            new ActionMessage(Constants.ERROR_KEY_GENERAL));
-                } catch (ValidationException e) {
-                    this.logger.log(Level.ERROR,
-                            "Exception caught while saving the scorecard: "
-                                    + e.getMessage());
-                    errors.add(ActionMessages.GLOBAL_MESSAGE,
-                            new ActionMessage(Constants.ERROR_KEY_GENERAL));
                 }
+            } catch (ConfigurationException e) {
+                this.logger.log(Level.ERROR, "Exception caught while saving the scorecard: "
+                        + this.getExceptionStackTrace(e));
+                errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage(Constants.ERROR_KEY_GENERAL));
+            } catch (PersistenceException e) {
+                this.logger.log(Level.ERROR, "Exception caught while saving the scorecard: "
+                        + this.getExceptionStackTrace(e));
+                errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage(Constants.ERROR_KEY_GENERAL));
+            } catch (ValidationException e) {
+                this.logger.log(Level.ERROR, "Exception caught while saving the scorecard: "
+                        + this.getExceptionStackTrace(e));
+                errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage(Constants.ERROR_KEY_GENERAL));
+            } catch (IllegalArgumentException e) {
+                this.logger.log(Level.ERROR, "Exception caught while saving the scorecard: "
+                        + this.getExceptionStackTrace(e));
+                errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage(Constants.ERROR_KEY_GENERAL));
+            } catch (NullPointerException e) {
+                this.logger.log(Level.ERROR, "Exception caught while saving the scorecard: "
+                        + this.getExceptionStackTrace(e));
+                errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage(Constants.ERROR_KEY_GENERAL));
             }
         }
         if (forward == null) {
             if (errors.isEmpty()) {
                 // no errors, forward to "editScorecard"
-                forward = mapping
-                        .findForward(Constants.FORWARD_KEY_EDIT_SCORECARD);
+                forward = mapping.findForward(Constants.FORWARD_KEY_EDIT_SCORECARD);
             } else {
                 // save the errors and forward to "failure"
                 this.saveErrors(request, errors);
@@ -590,8 +451,8 @@ public class ScorecardActions extends DispatchAction {
      * @param response
      *            The servlet response we are creating
      */
-    public ActionForward listScorecards(ActionMapping mapping, ActionForm form,
-            HttpServletRequest request, HttpServletResponse response) {
+    public ActionForward listScorecards(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+            HttpServletResponse response) {
         // extract the user id
         Long userId = getUserId(request);
         // forward
@@ -601,80 +462,63 @@ public class ScorecardActions extends DispatchAction {
         // verify if the user is authorized to list the scorecards
         if (!isAuthorized(userId)) {
             // not authorized
-            errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage(
-                    Constants.ERROR_KEY_AUTHORIZATION));
-            this.logger
-                    .log(
-                            Level.INFO,
-                            "User with ID "
-                                    + userId
-                                    + " is not authorized to perform the listScorecards actions.");
+            errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage(Constants.ERROR_KEY_AUTHORIZATION));
+            this.logger.log(Level.INFO, "User with ID " + userId
+                    + " is not authorized to perform the listScorecards actions.");
         } else {
             // authorized, perform the listing operation
             long projectTypeId = 1;
             try {
-                projectTypeId = Long.parseLong(request
-                        .getParameter(Constants.PARAM_KEY_PROJECT_TYPE_ID));
+                projectTypeId = Long.parseLong(request.getParameter(Constants.PARAM_KEY_PROJECT_TYPE_ID));
             } catch (Exception e) {
                 // ignore
             }
 
-            this.logger
-                    .log(
-                            Level.INFO,
-                            "User with ID "
-                                    + userId
-                                    + " is requesting to list the scorecards with project type id "
-                                    + projectTypeId + ".");
+            this.logger.log(Level.INFO, "User with ID " + userId
+                    + " is requesting to list the scorecards with project type id " + projectTypeId + ".");
             // look up categories
-            ProjectCategory[] projectCategories = helper
-                    .getProjectCategories(projectTypeId);
+            ProjectCategory[] projectCategories = helper.getProjectCategories(projectTypeId);
 
             ScorecardGroupBean[] scorecardGroups = new ScorecardGroupBean[projectCategories.length];
             try {
                 // search the scorecards
                 ScorecardManager mgr = new ScorecardManagerImpl();
                 for (int i = 0; i < projectCategories.length; i++) {
-                    Filter filter = ScorecardSearchBundle
-                            .buildProjectCategoryIdEqualFilter(projectCategories[i]
-                                    .getId());
+                    Filter filter = ScorecardSearchBundle.buildProjectCategoryIdEqualFilter(projectCategories[i]
+                            .getId());
                     scorecardGroups[i] = new ScorecardGroupBean();
                     scorecardGroups[i].setProjectCategory(projectCategories[i]);
-                    scorecardGroups[i].setScorecards(mgr.searchScorecards(
-                            filter, false));
+                    scorecardGroups[i].setScorecards(mgr.searchScorecards(filter, false));
                 }
                 // assemble a ScorecardList bean
                 ScorecardListBean scorecardList = new ScorecardListBean();
                 scorecardList.setScorecardGroups(scorecardGroups);
-                scorecardList.setProjectTypeName(helper.getProjectType(
-                        projectTypeId).getName());
+                scorecardList.setProjectTypeName(helper.getProjectType(projectTypeId).getName());
+                scorecardList.setProjectTypeId(helper.getProjectType(projectTypeId).getId());
                 // save the scorecards to request as an attribute
-                request.setAttribute(Constants.ATTR_KEY_SCORECARD_LIST,
-                        scorecardList);
+                request.setAttribute(Constants.ATTR_KEY_SCORECARD_LIST, scorecardList);
+                ((ScorecardForm) form).setProjectTypeName(scorecardList.getProjectTypeName());
             } catch (ConfigurationException e) {
-                this.logger.log(Level.ERROR,
-                        "Exception caught while listing the scorecard: "
-                                + e.getMessage());
-                errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage(
-                        Constants.ERROR_KEY_GENERAL));
+                this.logger.log(Level.ERROR, "Exception caught while listing the scorecard: "
+                        + this.getExceptionStackTrace(e));
+                errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage(Constants.ERROR_KEY_GENERAL));
             } catch (PersistenceException e) {
-                this.logger.log(Level.ERROR,
-                        "Exception caught while listing the scorecard: "
-                                + e.getMessage());
-                errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage(
-                        Constants.ERROR_KEY_GENERAL));
+                this.logger.log(Level.ERROR, "Exception caught while listing the scorecard: "
+                        + this.getExceptionStackTrace(e));
+                errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage(Constants.ERROR_KEY_GENERAL));
             } catch (NullPointerException e) {
-                this.logger.log(Level.ERROR,
-                        "Exception caught while listing the scorecard: "
-                                + e.getMessage());
-                errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage(
-                        Constants.ERROR_KEY_GENERAL));
+                this.logger.log(Level.ERROR, "Exception caught while listing the scorecard: "
+                        + this.getExceptionStackTrace(e));
+                errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage(Constants.ERROR_KEY_GENERAL));
+            } catch (IllegalArgumentException e) {
+                this.logger.log(Level.ERROR, "Exception caught while listing the scorecard: "
+                        + this.getExceptionStackTrace(e));
+                errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage(Constants.ERROR_KEY_GENERAL));
             }
         }
         if (errors.isEmpty()) {
             // no errors, forward to "listScorecards"
-            forward = mapping
-                    .findForward(Constants.FORWARD_KEY_LIST_SCORECARDS);
+            forward = mapping.findForward(Constants.FORWARD_KEY_LIST_SCORECARDS);
         } else {
             // save the errors and forward to "failure"
             this.saveErrors(request, errors);
@@ -698,8 +542,8 @@ public class ScorecardActions extends DispatchAction {
      * @param response
      *            The servlet response we are creating
      */
-    public ActionForward viewScorecard(ActionMapping mapping, ActionForm form,
-            HttpServletRequest request, HttpServletResponse response) {
+    public ActionForward viewScorecard(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+            HttpServletResponse response) {
         // extract the user id
         Long userId = getUserId(request);
         // forward
@@ -711,77 +555,55 @@ public class ScorecardActions extends DispatchAction {
         // verify if the user is authorized to view the scorecard
         if (!isAuthorized(userId)) {
             // not authorized
-            errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage(
-                    Constants.ERROR_KEY_AUTHORIZATION));
-            this.logger
-                    .log(
-                            Level.INFO,
-                            "User with ID "
-                                    + userId
-                                    + " is not authorized to perform the viewScorecard actions.");
+            errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage(Constants.ERROR_KEY_AUTHORIZATION));
+            this.logger.log(Level.INFO, "User with ID " + userId
+                    + " is not authorized to perform the viewScorecard actions.");
         } else {
             // authorized, perform the view operation
             long scorecardId = Scorecard.SENTINEL_ID;
             try {
-                scorecardId = Long.parseLong(request
-                        .getParameter(Constants.PARAM_KEY_SCORECARD_ID));
+                scorecardId = Long.parseLong(request.getParameter(Constants.PARAM_KEY_SCORECARD_ID));
             } catch (Exception e) {
                 // ignore
             }
 
             try {
                 if (scorecardId <= 0) {
-                    this.logger
-                            .log(
-                                    Level.ERROR,
-                                    "User with ID "
-                                            + userId
-                                            + " is issuing an invalid view scorecard request with scorecard id "
-                                            + scorecardId + ".");
-                    errors
-                            .add(ActionMessages.GLOBAL_MESSAGE,
-                                    new ActionMessage(
-                                            "global.error.no_such_scorecard"));
+                    this.logger.log(Level.ERROR, "User with ID " + userId
+                            + " is issuing an invalid view scorecard request with scorecard id " + scorecardId + ".");
+                    errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage("global.error.no_such_scorecard"));
                 } else {
                     // retrieve the scorecard with given scorecard id
                     ScorecardManager mgr = new ScorecardManagerImpl();
                     Scorecard scorecard = mgr.getScorecard(scorecardId);
                     if (scorecard == null) {
-                        this.logger
-                                .log(
-                                        Level.ERROR,
-                                        "User with ID "
-                                                + userId
-                                                + " is requesting to view a nonexist scorecard with id "
-                                                + scorecardId + ".");
-                        errors.add(ActionMessages.GLOBAL_MESSAGE,
-                                new ActionMessage(
-                                        "global.error.no_such_scorecard"));
+                        this.logger.log(Level.ERROR, "User with ID " + userId
+                                + " is requesting to view a nonexist scorecard with id " + scorecardId + ".");
+                        errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage("global.error.no_such_scorecard"));
                     } else {
-                        this.logger
-                                .log(
-                                        Level.INFO,
-                                        "User with ID "
-                                                + userId
-                                                + " is requesting to view the scorecard with id "
-                                                + scorecardId + ".");
+                        this.logger.log(Level.INFO, "User with ID " + userId
+                                + " is requesting to view the scorecard with id " + scorecardId + ".");
                         // attach the scorecard to the ActionForm
                         scorecardForm.setScorecard(scorecard);
                     }
                 }
 
             } catch (ConfigurationException e) {
-                this.logger.log(Level.ERROR,
-                        "Exception caught while viewing the scorecard: "
-                                + e.getMessage());
-                errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage(
-                        Constants.ERROR_KEY_GENERAL));
+                this.logger.log(Level.ERROR, "Exception caught while viewing the scorecard: "
+                        + this.getExceptionStackTrace(e));
+                errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage(Constants.ERROR_KEY_GENERAL));
             } catch (PersistenceException e) {
-                this.logger.log(Level.ERROR,
-                        "Exception caught while viewing the scorecard: "
-                                + e.getMessage());
-                errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage(
-                        Constants.ERROR_KEY_GENERAL));
+                this.logger.log(Level.ERROR, "Exception caught while viewing the scorecard: "
+                        + this.getExceptionStackTrace(e));
+                errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage(Constants.ERROR_KEY_GENERAL));
+            } catch (IllegalArgumentException e) {
+                this.logger.log(Level.ERROR, "Exception caught while viewing the scorecard: "
+                        + this.getExceptionStackTrace(e));
+                errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage(Constants.ERROR_KEY_GENERAL));
+            } catch (NullPointerException e) {
+                this.logger.log(Level.ERROR, "Exception caught while viewing the scorecard: "
+                        + this.getExceptionStackTrace(e));
+                errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage(Constants.ERROR_KEY_GENERAL));
             }
         }
         if (errors.isEmpty()) {
@@ -807,7 +629,7 @@ public class ScorecardActions extends DispatchAction {
      * @return if the user is authorized to perform the scorecard administration
      *         actions
      */
-    public boolean isAuthorized(Long userId) {
+    private boolean isAuthorized(Long userId) {
         // TODO Wishingbone said it's not necessary to perform authorization, so
         // here we leave a placeholder
         return userId != null;
@@ -822,14 +644,28 @@ public class ScorecardActions extends DispatchAction {
      *            the request
      * @return the user id of the user who issued the request
      */
-    public Long getUserId(HttpServletRequest request) {
-        Object userId = request.getSession().getAttribute(
-                helper.getUserIdSessionAttributeKey());
+    private Long getUserId(HttpServletRequest request) {
+        Object userId = request.getSession().getAttribute(helper.getUserIdSessionAttributeKey());
         if (userId == null || !(userId instanceof Long)) {
             this.logger.log(Level.ERROR, "User is not logged on.");
             return null;
         } else {
             return (Long) userId;
         }
+    }
+
+    /**
+     * <p>
+     * Return the exception's stack trace information as a string.
+     * </p>
+     * 
+     * @param throwable
+     *            the exception
+     * @return the exception's stack trace information
+     */
+    private String getExceptionStackTrace(Throwable throwable) {
+        StringWriter sw = new StringWriter();
+        throwable.printStackTrace(new PrintWriter(sw));
+        return sw.toString();
     }
 }
