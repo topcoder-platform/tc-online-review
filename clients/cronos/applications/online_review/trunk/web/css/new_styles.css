@@ -142,6 +142,55 @@ table.stat tr.dark
 	background-color: #f7f7f7;
 }
 
+table.stat td.value
+{
+	font-size: 11px;
+	padding: 1px 5px 1px 5px;
+	vertical-align: top;
+}
+
+table.stat td.ganttRow
+{
+	font-size: 11px;
+	margin: 0px;
+	padding: 0px;
+	vertical-align: middle;
+	white-space: nowrap;
+}
+
+td.ganttRow table
+{
+	border: 0px none;
+	border-collapse: collapse;
+}
+
+td.ganttRow table tr td
+{
+	font-size: 11px;
+	margin: 0px;
+	padding: 0px;
+	vertical-align: middle;
+	white-space: nowrap;
+}
+
+td.ganttRow table tr td.phase
+{
+	background-color: #818181;
+	color: white;
+	font-weight: bold;
+	text-align: center;
+}
+
+td.ganttRow table tr td.phase div
+{
+	height: 100%;
+}
+
+td.ganttRow table tr td.length
+{
+	padding: 1px 5px 1px 5px;
+}
+
 table.stat td.valueC
 {
 	text-align: center;
