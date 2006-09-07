@@ -1937,6 +1937,17 @@
                     <Value>RootCatalog.AOL</Value>
                 </Property>
             </Property>
+            <Property name="Application">
+                <Property name="id">
+                    <Value>9926572</Value>
+                </Property>
+                <Property name="IconSmall">
+                    <Value>appSm.gif</Value>
+                </Property>
+                <Property name="AltTextKey">
+                    <Value>RootCatalog.Application</Value>
+                </Property>
+            </Property>
         </Property>
 
         <Property name="ProjectCategoryIcons">
