@@ -25,31 +25,31 @@ INSERT INTO resource_info (resource_id, resource_info_type_id, value, create_use
 
 -- Project resources
 
-INSERT INTO resource (resource_id, resource_role_id, project_id, phase_id, create_user, create_date, modify_user, modify_date)
+INSERT INTO resource (resource_id, resource_role_id, project_id, project_phase_id, create_user, create_date, modify_user, modify_date)
   VALUES (200, 1, 1002, 501, 'System', CURRENT, 'System', CURRENT);
-INSERT INTO resource (resource_id, resource_role_id, project_id, phase_id, create_user, create_date, modify_user, modify_date)
+INSERT INTO resource (resource_id, resource_role_id, project_id, project_phase_id, create_user, create_date, modify_user, modify_date)
   VALUES (201, 1, 1002, 501, 'System', CURRENT, 'System', CURRENT);
-INSERT INTO resource (resource_id, resource_role_id, project_id, phase_id, create_user, create_date, modify_user, modify_date)
+INSERT INTO resource (resource_id, resource_role_id, project_id, project_phase_id, create_user, create_date, modify_user, modify_date)
   VALUES (202, 1, 1002, 501, 'System', CURRENT, 'System', CURRENT);
-INSERT INTO resource (resource_id, resource_role_id, project_id, phase_id, create_user, create_date, modify_user, modify_date)
+INSERT INTO resource (resource_id, resource_role_id, project_id, project_phase_id, create_user, create_date, modify_user, modify_date)
   VALUES (203, 3, 1002, 503, 'System', CURRENT, 'System', CURRENT);
-INSERT INTO resource (resource_id, resource_role_id, project_id, phase_id, create_user, create_date, modify_user, modify_date)
+INSERT INTO resource (resource_id, resource_role_id, project_id, project_phase_id, create_user, create_date, modify_user, modify_date)
   VALUES (204, 3, 1002, 503, 'System', CURRENT, 'System', CURRENT);
-INSERT INTO resource (resource_id, resource_role_id, project_id, phase_id, create_user, create_date, modify_user, modify_date)
+INSERT INTO resource (resource_id, resource_role_id, project_id, project_phase_id, create_user, create_date, modify_user, modify_date)
   VALUES (205, 3, 1002, 503, 'System', CURRENT, 'System', CURRENT);
-INSERT INTO resource (resource_id, resource_role_id, project_id, phase_id, create_user, create_date, modify_user, modify_date)
+INSERT INTO resource (resource_id, resource_role_id, project_id, project_phase_id, create_user, create_date, modify_user, modify_date)
   VALUES (206, 7, 1002, 505, 'System', CURRENT, 'System', CURRENT);
-INSERT INTO resource (resource_id, resource_role_id, project_id, phase_id, create_user, create_date, modify_user, modify_date)
+INSERT INTO resource (resource_id, resource_role_id, project_id, project_phase_id, create_user, create_date, modify_user, modify_date)
   VALUES (207, 6, 1002, 505, 'System', CURRENT, 'System', CURRENT);
-INSERT INTO resource (resource_id, resource_role_id, project_id, phase_id, create_user, create_date, modify_user, modify_date)
+INSERT INTO resource (resource_id, resource_role_id, project_id, project_phase_id, create_user, create_date, modify_user, modify_date)
   VALUES (208, 5, 1002, 505, 'System', CURRENT, 'System', CURRENT);
-INSERT INTO resource (resource_id, resource_role_id, project_id, phase_id, create_user, create_date, modify_user, modify_date)
+INSERT INTO resource (resource_id, resource_role_id, project_id, project_phase_id, create_user, create_date, modify_user, modify_date)
   VALUES (209, 8, 1002, 508, 'System', CURRENT, 'System', CURRENT);
-INSERT INTO resource (resource_id, resource_role_id, project_id, phase_id, create_user, create_date, modify_user, modify_date)
+INSERT INTO resource (resource_id, resource_role_id, project_id, project_phase_id, create_user, create_date, modify_user, modify_date)
   VALUES (210, 9, 1002, 511, 'System', CURRENT, 'System', CURRENT);
 INSERT INTO resource (resource_id, resource_role_id, project_id, create_user, create_date, modify_user, modify_date)
   VALUES (212, 13, 1002, 'System', CURRENT, 'System', CURRENT);
-INSERT INTO resource (resource_id, resource_role_id, project_id, phase_id, create_user, create_date, modify_user, modify_date)
+INSERT INTO resource (resource_id, resource_role_id, project_id, project_phase_id, create_user, create_date, modify_user, modify_date)
   VALUES (211, 10, 1002, 512, 'System', CURRENT, 'System', CURRENT);
 
 INSERT INTO resource_info (resource_id, resource_info_type_id, value, create_user, create_date, modify_user, modify_date)

@@ -268,7 +268,7 @@ CREATE TABLE resource (
   resource_id                   INTEGER                         NOT NULL,
   resource_role_id              INTEGER                         NOT NULL,
   project_id                    INTEGER,
-  phase_id                      INTEGER,
+  project_phase_id              INTEGER,
   create_user                   VARCHAR(64)                     NOT NULL,
   create_date                   DATETIME YEAR TO FRACTION(3)    NOT NULL,
   modify_user                   VARCHAR(64)                     NOT NULL,
@@ -278,7 +278,7 @@ CREATE TABLE resource (
     REFERENCES project(project_id),
   FOREIGN KEY(resource_role_id)
     REFERENCES resource_role_lu(resource_role_id),
-  FOREIGN KEY(phase_id)
+  FOREIGN KEY(project_phase_id)
     REFERENCES project_phase(project_phase_id)
 );
 CREATE TABLE resource_info_type_lu (
