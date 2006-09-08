@@ -2053,6 +2053,12 @@
                 </Property>
             </Property>
         </Property>
+        
+        <Property name="Defaults">
+            <Property name="PixelsPerHour">
+                <Value>5</Value>
+            </Property>
+        </Property>
 
         <!-- Definition of the Permissions Matrix.  Each property inside the main one denotes one
             certain permission, while the name attribute for that property specifies the name of
@@ -2171,7 +2177,6 @@
                 <Value>Final Reviewer</Value>
                 <Value>Approver</Value>
                 <Value>Public</Value>
-                <!-- uncertain about this one <Value>Designer</Value> -->
             </Property>
             <Property name="Contact Project Managers">
                 <Value>Global Manager</Value>

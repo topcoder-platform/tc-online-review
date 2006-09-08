@@ -109,6 +109,23 @@ class ConfigHelper {
 
     /**
      * This member variable is a string constant that specifies the name of the property which
+     * contains default values used in the application, such as default phase length, default note
+     * length, etc.
+     *
+     * @see #PIXELS_PER_HOUR_PROP
+     */
+    private static final String DEFAULT_VALUES_PROP = "Defaults";
+
+    /**
+     * This member variable is a string constant that specifies the name of the property which
+     * defines the amount of pixels displayed in the Gantt chart for every hour.
+     *
+     * @see #DEFAULT_VALUES_PROP
+     */
+    private static final String PIXELS_PER_HOUR_PROP = "PixelsPerHour";
+
+    /**
+     * This member variable is a string constant that specifies the name of the property which
      * contains definition of the whole Permissions Matrix.  The Matrix is defined on
      * per-permission basis, i.e. for every permission name there is a list of values, each value
      * defines the name of single Resource Role which this permission is granted to.
@@ -144,6 +161,12 @@ class ConfigHelper {
      * on the JSP pages for different Project Categories.
      */
     private static final Map projectCategoryIcons = new HashMap();
+
+    /**
+     * This member variable holds the amount of pixels displayed in the Gantt Chart per every hour.
+     * The default value of this varibale is 5.
+     */
+    private static int pixelsPerHour = 5;
 
     /**
      * This member variable holds the names of all permissions for the application (as keys), and
@@ -220,6 +243,17 @@ class ConfigHelper {
                 if (strFilename != null && strFilename.trim().length() != 0) {
                     // ... store the Project Category name/icon's filename for later use
                     projectCategoryIcons.put(strPropName, strFilename);
+                }
+            }
+
+            // Retrieve property that contains definitions of some default values
+            Property propDefaults = cfgMgr.getPropertyObject(ONLINE_REVIEW_CFG_NS, DEFAULT_VALUES_PROP);
+            // Get the amount of pixels to display for every hour
+            String pixelsStr = propDefaults.getValue(PIXELS_PER_HOUR_PROP);
+            if (pixelsStr != null && pixelsStr.trim().length() != 0) {
+                int pixels = Integer.parseInt(pixelsStr);
+                if (pixels > 0) {
+                    pixelsPerHour = pixels;
                 }
             }
 
@@ -307,6 +341,16 @@ class ConfigHelper {
      */
     public static String getProjectCategoryIconName(String projectCategoryName) {
         return (String)projectCategoryIcons.get(projectCategoryName);
+    }
+
+    /**
+     * This static methods returns the amount of pixels that should be displayed for each hour in
+     * the propject's Gantt chart.
+     *
+     * @return a value that reporesent the amount of pixels per each hour.
+     */
+    public static Integer getPixelsPerHour() {
+        return new Integer(pixelsPerHour);
     }
 
     /**
