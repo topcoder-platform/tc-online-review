@@ -184,6 +184,7 @@ td.ganttRow table tr td.phase
 td.ganttRow table tr td.phase div
 {
 	height: 100%;
+	overflow: hidden;
 }
 
 td.ganttRow table tr td.length
