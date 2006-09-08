@@ -20,12 +20,10 @@ import org.apache.struts.validator.LazyValidatorForm;
 import com.topcoder.management.deliverable.Submission;
 import com.topcoder.management.deliverable.Upload;
 import com.topcoder.management.deliverable.UploadManager;
-import com.topcoder.management.phase.PhaseManager;
 import com.topcoder.management.project.Project;
 import com.topcoder.management.project.ProjectManager;
 import com.topcoder.management.resource.Resource;
-import com.topcoder.management.resource.ResourceManager;
-import com.topcoder.management.resource.search.ResourceFilterBuilder;
+import com.topcoder.management.review.ReviewEntityNotFoundException;
 import com.topcoder.management.review.ReviewManager;
 import com.topcoder.management.review.data.Comment;
 import com.topcoder.management.review.data.CommentType;
@@ -33,14 +31,12 @@ import com.topcoder.management.review.data.Item;
 import com.topcoder.management.review.data.Review;
 import com.topcoder.management.review.data.ReviewEditor;
 import com.topcoder.management.review.scorecalculator.CalculationManager;
-import com.topcoder.management.scorecard.PersistenceException;
 import com.topcoder.management.scorecard.ScorecardManager;
 import com.topcoder.management.scorecard.data.Group;
 import com.topcoder.management.scorecard.data.Question;
 import com.topcoder.management.scorecard.data.Scorecard;
 import com.topcoder.management.scorecard.data.Section;
 import com.topcoder.project.phases.Phase;
-import com.topcoder.project.phases.PhaseDateComparator;
 import com.topcoder.search.builder.filter.AndFilter;
 import com.topcoder.search.builder.filter.EqualToFilter;
 import com.topcoder.search.builder.filter.Filter;
@@ -2167,8 +2163,20 @@ public class ProjectReviewActions extends DispatchAction {
         // Obtain an instance of Review Manager
         ReviewManager revMgr = ActionsHelper.createReviewManager(request);
 
-        // Get Review by its id
-        Review review = revMgr.getReview(rid);
+        /*
+         * Review Management Persistence component throws an exception
+         * if the review with specified ID does not exist in the database,
+         * so this exception should be handled correctly
+         */
+
+        Review review = null;
+        try {
+            // Get Review by its id
+            review = revMgr.getReview(rid);
+        } catch (ReviewEntityNotFoundException e) {
+            // Eat the exception
+        }
+
         // Verify that review with specified ID exists
         if (review == null) {
             result.setForward(produceErrorReport(mapping, request, permission, "Error.ReviewNotFound"));
