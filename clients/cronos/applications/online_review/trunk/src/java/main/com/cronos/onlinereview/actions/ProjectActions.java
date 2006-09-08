@@ -5,6 +5,8 @@ package com.cronos.onlinereview.actions;
 
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.Date;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -14,16 +16,23 @@ import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.DynaActionForm;
 import org.apache.struts.actions.DispatchAction;
 import org.apache.struts.util.MessageResources;
+import org.apache.struts.validator.LazyValidatorForm;
 
+import com.cronos.onlinereview.external.ExternalUser;
+import com.cronos.onlinereview.external.UserRetrieval;
+import com.cronos.onlinereview.external.impl.DBUserRetrieval;
+import com.topcoder.project.phases.PhaseType;
 import com.topcoder.search.builder.filter.Filter;
 import com.topcoder.util.errorhandling.BaseException;
 
+import com.topcoder.management.phase.PhaseManager;
 import com.topcoder.management.project.Project;
 import com.topcoder.management.project.ProjectCategory;
 import com.topcoder.management.project.ProjectFilterUtility;
 import com.topcoder.management.project.ProjectManager;
 import com.topcoder.management.project.ProjectStatus;
 import com.topcoder.management.project.ProjectType;
+import com.topcoder.management.resource.Resource;
 import com.topcoder.management.resource.ResourceManager;
 import com.topcoder.management.resource.ResourceRole;
 
@@ -90,23 +99,30 @@ public class ProjectActions extends DispatchAction {
         // It probably should also retrieve the lists of available scorecards, etc.
 
         // Obtain an instance of Project Manager
-        ProjectManager manager = ActionsHelper.createProjectManager(request);
+        ProjectManager projectManager = ActionsHelper.createProjectManager(request);
 
         // Retrieve project types and categories
-        ProjectType[] projectTypes = manager.getAllProjectTypes();
-        ProjectCategory[] projectCategories = manager.getAllProjectCategories();
+        ProjectType[] projectTypes = projectManager.getAllProjectTypes();
+        ProjectCategory[] projectCategories = projectManager.getAllProjectCategories();
 
         // Store the retrieved types and categories in request
         request.setAttribute("projectTypes", projectTypes);
         request.setAttribute("projectCategories", projectCategories);
 
         // Obtain an instance of Resource Manager
-        ResourceManager resMgr = ActionsHelper.createResourceManager(request);
+        ResourceManager resourceManager = ActionsHelper.createResourceManager(request);
         // Get all types of resource roles
-        ResourceRole[] resourceRoles = resMgr.getAllResourceRoles();
+        ResourceRole[] resourceRoles = resourceManager.getAllResourceRoles();
         // Place resource roles into the request as attribute
         request.setAttribute("resourceRoles", resourceRoles);
 
+        // Obtain an instance of Phase Manager
+        PhaseManager phaseManager = ActionsHelper.createPhaseManager(request);
+        // Get all phase types
+        PhaseType[] phaseTypes = phaseManager.getAllPhaseTypes();
+        // Place them into request as an attribute
+        request.setAttribute("phaseTypes", phaseTypes);
+        
         return mapping.findForward(Constants.SUCCESS_FORWARD_NAME);
     }
 
@@ -298,13 +314,16 @@ public class ProjectActions extends DispatchAction {
         // TODO: The category actually should also be different
         Project project = new Project(projectCategories[0], projectStatuses[0]);
 
-        DynaActionForm dynaActionForm = (DynaActionForm) form;
+        LazyValidatorForm dynaActionForm = (LazyValidatorForm) form;
 
         // Populate some of the properties of the project
 
         // Populate project name
         project.setProperty("Project Name", dynaActionForm.get("project_name"));
 
+        // Populate project version (always set to 1.0)
+        project.setProperty("Project Version", "1.0");
+        
         // Populate project eligibility
         project.setProperty("Eligibility", dynaActionForm.get("eligibility"));
         // Populate project public flag
@@ -317,8 +336,62 @@ public class ProjectActions extends DispatchAction {
         project.setProperty("SVN Module", dynaActionForm.get("SVN_module"));
 
         // Create project in persistence level
-//        manager.createProject(project, AuthorizationHelper.getLoggenInUserHandle(request));
+        manager.createProject(project, AuthorizationHelper.getLoggedInUserId(request) + "");
 
+        // Obtain the instance of the User Retrieval
+        UserRetrieval userRetrieval = ActionsHelper.createUserRetrieval(request);
+        
+        // Obtain the instance of the Resource Manager
+        ResourceManager resourceManager = ActionsHelper.createResourceManager(request);
+       
+        // Get all types of resource roles
+        ResourceRole[] resourceRoles = resourceManager.getAllResourceRoles();
+        
+        // Add the resources to project
+        String[] resourceNames = (String[]) dynaActionForm.get("resources_name");
+        // 0-index resource is skipped as it is a "dummy" one
+        for (int i = 1; i < resourceNames.length; i++) {
+            // Create new resource
+            Resource resource = new Resource();
+            // Set resource properties
+            resource.setProject(new Long(project.getId()));
+            for (int j = 0; j < resourceRoles.length; j++) {
+                if (resourceRoles[j].getId() == ((Long) dynaActionForm.get("resources_role", i)).longValue()) {
+                    resource.setResourceRole(resourceRoles[j]);
+                    break;
+                }
+            }
+            resource.setProperty("Handle", resourceNames[i]);  
+            
+            // Get info about user with the specified handle
+            // TODO: Check if user exists
+            ExternalUser user = userRetrieval.retrieveUser(resourceNames[i]);
+            
+            // Set resource properties copied from external user
+            resource.setProperty("External Reference ID", new Long(user.getId()));
+            resource.setProperty("Email", user.getEmail());
+            
+            String resourceRole = resource.getResourceRole().getName();
+            // If resource is a submitter, we need to store appropriate rating and reliability
+            if (resourceRole.equals("Submitter")) {
+                if (project.getProjectCategory().getName().equals("Design")) {
+                    resource.setProperty("Rating", user.getDesignRating());
+                    resource.setProperty("Reliability", user.getDesignReliability());                    
+                } else if (project.getProjectCategory().getName().equals("Development")) {
+                    resource.setProperty("Rating", user.getDevRating());
+                    resource.setProperty("Reliability", user.getDevReliability());                    
+                }
+            }
+            // If resource is a submitter, screener or reviewer, store registration date
+            if (resourceRole.equals("Submitter") || resourceRole.equals("Screener") || 
+                    resourceRole.equals("Reviewer")) {
+                resource.setProperty("Registration Date", new Date());
+            }
+            
+            // Save the resource in the persistence level
+            resourceManager.updateResource(resource, AuthorizationHelper.getLoggedInUserId(request) + "");
+        }
+        
         return mapping.findForward(Constants.SUCCESS_FORWARD_NAME);
     }
 
@@ -326,7 +399,7 @@ public class ProjectActions extends DispatchAction {
      * This class implements <code>Comparator</code> interface and is used to sort ProjectTypes
      * in array.  It sorts Project Types by their name, in ascending order.
      */
-    class ProjectTypeComparer implements Comparator {
+    static class ProjectTypeComparer implements Comparator {
 
         /**
          * This method compares its two arguments for order. This method expects that type of

@@ -21,6 +21,20 @@
 	<script language="JavaScript" type="text/javascript" src="../scripts/util.js"><!-- @ --></script>
 
 	<script language="JavaScript" type="text/javascript">
+				
+		// TODO: Write docs for following vars
+		// TODO: Note, that for Project Edit action the next lines will be different
+		var lastResourceIndex = 0;
+		var lastPhaseIndex = 0;	
+		
+		/*
+		 * TODO: Write docs for this function
+		 */
+		function patchParamIndex(paramNode, newIndex) {
+			paramNode.name = paramNode.name.replace(/\[([0-9])+\]/, "[" + newIndex + "]");
+		}
+		
+	
 		/*
 		 * This function adds a new row to resources table.
 		 */
@@ -48,6 +62,21 @@
 			// Set hidden resources_action parameter to "add"
 			var actionInput = inputs[0];
 			actionInput.value = "add";
+			
+			// Increase resource index
+			lastResourceIndex++;
+			
+			// Rename all the inputs to have a new index
+			var allInputs = newRow.getElementsByTagName("input");
+			for (var i = 0; i < allInputs.length; i++) {
+				patchParamIndex(allInputs[i], lastResourceIndex);
+			}
+			var allSelects = newRow.getElementsByTagName("select");
+			for (var i = 0; i < allSelects.length; i++) {
+				patchParamIndex(allSelects[i], lastResourceIndex);
+			}
+			
+			
 
 		}
 
@@ -59,20 +88,15 @@
 			var inputs = resourceRowNode.cells[4].getElementsByTagName("input");
 			// Check if the resource to be deleted has been persisted
 			var id = inputs[1].value;
-			if (id != "-1") {
-				// Delete the resources table row,
-				// as the appropriate resource has not been persisted in DB.
-				resourceRowNode.parentNode.removeChild(resourceRowNode);
+			
+			// Hide the row, don't delete it as the resource
+			// should be deleted from DB on submit
+			resourceRowNode.style["display"] = "none";
 
-			} else {
-				// Hide the row, don't delete it as the resource
-				// should be deleted from DB on submit
-				resourceRowNode.style["display"] = "none";
-
-				// Set hidden resources_action parameter to "delete"
-				var actionInput = inputs[0];
-				actionInput.value = "delete";
-			}
+			// Set hidden resources_action parameter to "delete"
+			var actionInput = inputs[0];
+			actionInput.value = "delete";
+		
 
 			// TODO: Complete it, doesn't work for some reason
 			// Make rows vary color
@@ -375,50 +399,50 @@
 							<tr class="dark" style="display: none;">
 								<td class="valueB" nowrap="nowrap"><!-- @ --></td>
 								<td class="value" nowrap>
-									<html:text styleClass="inputBoxDate" property="phase_start_date" value="" />
-									<html:text styleClass="inputBoxTime" property="phase_start_time" value="" />
-									<html:select styleClass="inputBox" property="phase_start_AMPM">
+									<html:text styleClass="inputBoxDate" property="phase_start_date[0]" value="" />
+									<html:text styleClass="inputBoxTime" property="phase_start_time[0]" value="" />
+									<html:select styleClass="inputBox" property="phase_start_AMPM[0]">
 										<html:option key="editProject.Phases.AM" value="am" />
 										<html:option key="editProject.Phases.PM" value="pm" />
 									</html:select>
 									<bean:message key="global.Timezone.EST" /><br />
-									<html:checkbox property="phase_start_by_phase" />
+									<html:checkbox property="phase_start_by_phase[0]" />
 									<bean:message key="editProject.Phases.When" />
-									<html:select styleClass="inputBox" property="phase_start_phase" style="width:120px;">
+									<html:select styleClass="inputBox" property="phase_start_phase[0]" style="width:120px;">
 										<html:option key="editProject.Phases.SelectPhase" value="" />
 									</html:select>
-									<html:select styleClass="inputBox" property="phase_start_when">
+									<html:select styleClass="inputBox" property="phase_start_when[0]">
 										<html:option key="editProject.Phases.Starts" value="starts" />
 										<html:option key="editProject.Phases.Ends" value="ends" />
 									</html:select>
-									<html:select styleClass="inputBox" property="phase_start_plusminus">
+									<html:select styleClass="inputBox" property="phase_start_plusminus[0]">
 										<html:option value="plus">+</html:option>
 										<html:option value="minus">-</html:option>
 									</html:select>
-									<html:text styleClass="inputBox" property="phase_start_amount" value="" style="width:30px;" />
-									<html:select styleClass="inputBox" property="phase_start_dayshrs">
+									<html:text styleClass="inputBox" property="phase_start_amount[0]" value="" style="width:30px;" />
+									<html:select styleClass="inputBox" property="phase_start_dayshrs[0]">
 										<html:option key="editProject.Phases.Days" value="days" />
 										<html:option key="editProject.Phases.Hrs" value="hrs" />
 									</html:select>
 								</td>
 								<td class="value" nowrap="nowrap">
-									<html:text styleClass="inputBoxDate" property="phase_end_date" value="" />
-									<html:text styleClass="inputBoxTime" property="phase_end_time" value="" />
-									<html:select styleClass="inputBox" property="phase_end_AMPM">
+									<html:text styleClass="inputBoxDate" property="phase_end_date[0]" value="" />
+									<html:text styleClass="inputBoxTime" property="phase_end_time[0]" value="" />
+									<html:select styleClass="inputBox" property="phase_end_AMPM[0]">
 										<html:option key="editProject.Phases.AM" value="am" />
 										<html:option key="editProject.Phases.PM" value="pm" />
 									</html:select>
 									<bean:message key="global.Timezone.EST" />
 								</td>
 								<td class="value">
-									<html:text styleClass="inputBoxDuration" property="phase_duration" value="" />
+									<html:text styleClass="inputBoxDuration" property="phase_duration[0]" value="" />
 								</td>
 								<td class="value"><!-- @ --></td>
 							</tr>
 							<tr class="highlighted" style="display: none;">
 								<td class="value" colspan="2"><!-- @ --></td>
 								<td class="value">Require
-									<html:text styleClass="inputBox" property="phase_required_registrations" value="" style="width: 30px;" />
+									<html:text styleClass="inputBox" property="phase_required_registrations[0]" value="" style="width: 30px;" />
 									registrations before ending.
 								</td>
 								<td class="value" colspan="2"><!-- @ --></td>
@@ -426,7 +450,7 @@
 							<tr class="highlighted" style="display: none;">
 								<td class="value" colspan="2"><!-- @ --></td>
 								<td class="value" nowrap="nowrap">Require
-									<html:text styleClass="inputBox" property="phase_required_submissions" value="" style="width: 30px;" />
+									<html:text styleClass="inputBox" property="phase_required_submissions[0]" value="" style="width: 30px;" />
 									passing submissions.<br />
 									<html:checkbox property="phase_manual_screening" />
 									Manual Screening
@@ -450,17 +474,9 @@
 									<bean:message key="editProject.Phases.NewPhase" />
 									<html:select styleClass="inputBox" property="addphase" style="width:197px;margin-bottom:2px;">
 										<html:option key="editProject.Phases.Select" value="" />
-										<html:option key="ProjectPhase.Registration" value="registration" />
-										<html:option key="ProjectPhase.Submission" value="submission" />
-										<html:option key="ProjectPhase.Screening" value="screening" />
-										<html:option key="ProjectPhase.Review" value="review" />
-										<html:option key="ProjectPhase.Appeals" value="appeals" />
-										<html:option key="ProjectPhase.AppealsResponse" value="appeals_response" />
-										<html:option key="ProjectPhase.Approval" value="approval" />
-										<html:option key="ProjectPhase.Aggregation" value="aggregation" />
-										<html:option key="ProjectPhase.AggregationReview" value="aggregation_review" />
-										<html:option key="ProjectPhase.FinalFix" value="final_fix" />
-										<html:option key="ProjectPhase.FinalReview" value="final_review" />
+										<c:forEach items="${requestScope.phaseTypes}" var="phaseType">
+											<html:option key="ProjectPhase.${fn:replace(phaseType.name, ' ', '')}" value="${phaseType.id}" />
+										</c:forEach>
 									</html:select><br />
 									<bean:message key="editProject.Phases.Placement" />
 									<html:select styleClass="inputBox" property="addphase_when" style="margin-left:7px;">
@@ -498,7 +514,7 @@
 										<html:option key="editProject.Phases.Hrs" value="hrs" />
 									</html:select>
 								</td>
-            		<td class="value" width="18%" nowrap="nowrap">
+            							<td class="value" width="18%" nowrap="nowrap">
 									<html:text styleClass="inputBoxDate" property="addphase_end_date" />
 									<html:text styleClass="inputBoxTime" property="addphase_end_time" />
 									<html:select styleClass="inputBox" property="addphase_end_AMPM">
@@ -534,22 +550,23 @@
 							</tr>
 							<tr class="light">
 								<td class="value" nowrap="nowrap">
-									<html:select styleClass="inputBox" property="resources_role" value="-1" style="width:150px;">
+									<html:select styleClass="inputBox" property="resources_role[0]" value="-1" style="width:150px;">
 										<html:option key="editProject.Resources.SelectRole" value="-1" />
 										<c:forEach items="${requestScope.resourceRoles}" var="role">
-											<html:option key='ResourceRole.${fn:replace(type.name, " ", "")}' value="${role.id}" />
+											<html:option key="ResourceRole.${fn:replace(role.name, ' ', '')}" value="${role.id}" />
 										</c:forEach>
 									</html:select>
 								</td>
 								<td class="value">
-									<html:text styleClass="inputBoxName" property="resources_name" value="" />
+									<html:text styleClass="inputBoxName" property="resources_name[0]" value="" />
 								</td>
 								<td class="value" nowrap="nowrap">
-									<html:checkbox property="resources_payment" />${"$"}
-									<html:text styleClass="inputBoxDuration" property="resources_payment_amount" value="" />
+									<html:radio property="resources_payment[0]" value="true" />${"$"}
+									<html:text styleClass="inputBoxDuration" property="resources_payment_amount[0]" value="" />
+									<html:radio property="resources_payment[0]" value="false" /><bean:message key="NotAvailable" />									
 								</td>
 								<td class="value" nowrap="nowrap">
-									<html:select styleClass="inputBox" property="resources_paid" style="width:120px;">
+									<html:select styleClass="inputBox" property="resources_paid[0]" style="width:120px;">
 										<%-- TODO: How to decide wheather Select or N/A is displayed (probably by NewProject attr.) --%>
 										<html:option key="Answer.Select" value="" />
 										<html:option key="NotApplicable" value="N/A" />
@@ -560,8 +577,8 @@
 								<td class="valueC" nowrap="nowrap">
 									<html:img srcKey="editProject.Resources.AddResource.img" altKey="editProject.Resources.AddResource.alt" onclick="addNewResource();" />
 									<html:img style="display: none;" srcKey="editProject.Resources.DeleteResource.img" altKey="editProject.Resources.DeleteResource.alt" onclick="deleteResource(this.parentNode.parentNode);" />
-									<html:hidden property="resources_action" value="none" />
-									<html:hidden property="resources_id" value="-1" />
+									<html:hidden property="resources_action[0]" value="none" />
+									<html:hidden property="resources_id[0]" value="-1" />
 								</td>
 
 								<%-- TODO: Iterate through exisitng resources here (for edit page only) --%>
