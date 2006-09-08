@@ -214,7 +214,7 @@
 					<html:form action="/actions/SaveProject">
 						<input type="hidden" name="method" value="saveProject" />
 						<table class="scorecard" cellpadding="0" width="100%" style="border-collapse: collapse;">
-    					<tr>
+    							<tr>
 								<td class="title" colspan="2"><bean:message key="editProject.ProjectDetails.title" /></td>
 							</tr>
 							<tr>
@@ -399,14 +399,15 @@
 							<tr class="dark" style="display: none;">
 								<td class="valueB" nowrap="nowrap"><!-- @ --></td>
 								<td class="value" nowrap>
-									<html:text styleClass="inputBoxDate" property="phase_start_date[0]" value="" />
-									<html:text styleClass="inputBoxTime" property="phase_start_time[0]" value="" />
+									<html:radio property="phase_start_by_phase[0]" value="false" /> 
+									<html:text styleClass="inputBoxDate" property="phase_start_date[0]" />
+									<html:text styleClass="inputBoxTime" property="phase_start_time[0]" />
 									<html:select styleClass="inputBox" property="phase_start_AMPM[0]">
 										<html:option key="editProject.Phases.AM" value="am" />
 										<html:option key="editProject.Phases.PM" value="pm" />
 									</html:select>
 									<bean:message key="global.Timezone.EST" /><br />
-									<html:checkbox property="phase_start_by_phase[0]" />
+									<html:radio property="phase_start_by_phase[0]" value="true" /> 
 									<bean:message key="editProject.Phases.When" />
 									<html:select styleClass="inputBox" property="phase_start_phase[0]" style="width:120px;">
 										<html:option key="editProject.Phases.SelectPhase" value="" />
@@ -419,15 +420,15 @@
 										<html:option value="plus">+</html:option>
 										<html:option value="minus">-</html:option>
 									</html:select>
-									<html:text styleClass="inputBox" property="phase_start_amount[0]" value="" style="width:30px;" />
+									<html:text styleClass="inputBox" property="phase_start_amount[0]" style="width:30px;" />
 									<html:select styleClass="inputBox" property="phase_start_dayshrs[0]">
 										<html:option key="editProject.Phases.Days" value="days" />
 										<html:option key="editProject.Phases.Hrs" value="hrs" />
 									</html:select>
 								</td>
 								<td class="value" nowrap="nowrap">
-									<html:text styleClass="inputBoxDate" property="phase_end_date[0]" value="" />
-									<html:text styleClass="inputBoxTime" property="phase_end_time[0]" value="" />
+									<html:text styleClass="inputBoxDate" property="phase_end_date[0]" />
+									<html:text styleClass="inputBoxTime" property="phase_end_time[0]" />
 									<html:select styleClass="inputBox" property="phase_end_AMPM[0]">
 										<html:option key="editProject.Phases.AM" value="am" />
 										<html:option key="editProject.Phases.PM" value="pm" />
@@ -435,7 +436,7 @@
 									<bean:message key="global.Timezone.EST" />
 								</td>
 								<td class="value">
-									<html:text styleClass="inputBoxDuration" property="phase_duration[0]" value="" />
+									<html:text styleClass="inputBoxDuration" property="phase_duration[0]" />
 								</td>
 								<td class="value"><!-- @ --></td>
 							</tr>
@@ -488,6 +489,7 @@
 									</html:select>
 								</td>
 								<td class="value" width="37%" nowrap="nowrap">
+									<html:radio property="addphase_start_by_phase" value="false" />
 									<html:text styleClass="inputBoxDate" property="addphase_start_date" />
 									<html:text styleClass="inputBoxTime" property="addphase_start_time" />
 									<html:select styleClass="inputBox" property="addphase_start_AMPM">
@@ -495,7 +497,7 @@
 										<html:option key="editProject.Phases.PM" value="pm" />
 									</html:select>
 									<bean:message key="global.Timezone.EST" /><br />
-									<html:checkbox property="addphase_start_by_phase" />
+									<html:radio property="addphase_start_by_phase" value="true" />
 									<bean:message key="editProject.Phases.When" />
 									<html:select styleClass="inputBox" property="addphase_start_phase" style="width:120px;">
 										<html:option key="editProject.Phases.SelectPhase" value="" />
@@ -550,7 +552,7 @@
 							</tr>
 							<tr class="light">
 								<td class="value" nowrap="nowrap">
-									<html:select styleClass="inputBox" property="resources_role[0]" value="-1" style="width:150px;">
+									<html:select styleClass="inputBox" property="resources_role[0]" style="width:150px;">
 										<html:option key="editProject.Resources.SelectRole" value="-1" />
 										<c:forEach items="${requestScope.resourceRoles}" var="role">
 											<html:option key="ResourceRole.${fn:replace(role.name, ' ', '')}" value="${role.id}" />
@@ -558,11 +560,11 @@
 									</html:select>
 								</td>
 								<td class="value">
-									<html:text styleClass="inputBoxName" property="resources_name[0]" value="" />
+									<html:text styleClass="inputBoxName" property="resources_name[0]" />
 								</td>
 								<td class="value" nowrap="nowrap">
 									<html:radio property="resources_payment[0]" value="true" />${"$"}
-									<html:text styleClass="inputBoxDuration" property="resources_payment_amount[0]" value="" />
+									<html:text styleClass="inputBoxDuration" property="resources_payment_amount[0]" />
 									<html:radio property="resources_payment[0]" value="false" /><bean:message key="NotAvailable" />									
 								</td>
 								<td class="value" nowrap="nowrap">
@@ -570,7 +572,7 @@
 										<%-- TODO: How to decide wheather Select or N/A is displayed (probably by NewProject attr.) --%>
 										<html:option key="Answer.Select" value="" />
 										<html:option key="NotApplicable" value="N/A" />
-										<html:option key="editProject.Resources.Paid.Not Paid" value="No" />
+										<html:option key="editProject.Resources.Paid.NotPaid" value="No" />
 										<html:option key="editProject.Resources.Paid.Paid" value="Yes" />
 									</html:select>
 								</td>

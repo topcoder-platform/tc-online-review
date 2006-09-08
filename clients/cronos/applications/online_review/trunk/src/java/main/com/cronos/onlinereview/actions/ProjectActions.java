@@ -35,6 +35,7 @@ import com.topcoder.management.project.ProjectType;
 import com.topcoder.management.resource.Resource;
 import com.topcoder.management.resource.ResourceManager;
 import com.topcoder.management.resource.ResourceRole;
+import com.topcoder.management.resource.persistence.ResourcePersistenceException;
 
 /**
  * This class contains Struts Actions that are meant to deal with Projects. There are following
@@ -309,34 +310,66 @@ public class ProjectActions extends DispatchAction {
         ProjectCategory[] projectCategories = manager.getAllProjectCategories();
         ProjectStatus[] projectStatuses = manager.getAllProjectStatuses();
 
-        // Create a Project instance
-        // TODO: The status should be "Active", not the first met
-        // TODO: The category actually should also be different
-        Project project = new Project(projectCategories[0], projectStatuses[0]);
-
-        LazyValidatorForm dynaActionForm = (LazyValidatorForm) form;
-
-        // Populate some of the properties of the project
-
+        // Cast the form to its actual type
+        LazyValidatorForm lazyForm = (LazyValidatorForm) form;
+        
+        // Find "Active" project status
+        ProjectStatus activeStatus = ActionsHelper.findProjectStatusByName(projectStatuses, "Active");
+        // Find the project category by the specified id
+        ProjectCategory category = ActionsHelper.findProjectCategoryById(projectCategories, (Long) lazyForm.get("project_category"));
+        // Create Project instance
+        Project project = new Project(category, activeStatus);
+        // TODO: What to do with project type???
+        /*
+         * Populate the properties of the project
+         */
         // Populate project name
-        project.setProperty("Project Name", dynaActionForm.get("project_name"));
-
+        project.setProperty("Project Name", lazyForm.get("project_name"));
         // Populate project version (always set to 1.0)
         project.setProperty("Project Version", "1.0");
-        
+        // Populate project root catalog id (always set to Application)
+        // TODO: There should be an ability to specify different Root Catalog
+        project.setProperty("Root Catalog ID", "9926572");
         // Populate project eligibility
-        project.setProperty("Eligibility", dynaActionForm.get("eligibility"));
+        project.setProperty("Eligibility", lazyForm.get("eligibility"));
         // Populate project public flag
-        project.setProperty("Public", dynaActionForm.get("public"));
+        project.setProperty("Public", lazyForm.get("public"));
         // Populate project forum name
         // project.setProperty("Forum Name", dynaActionForm.get("forum_name"));
         // FIXME: There is no Forum Name, but there is a Developer Forum ID
-
         // Populate project SVN module
-        project.setProperty("SVN Module", dynaActionForm.get("SVN_module"));
-
+        project.setProperty("SVN Module", lazyForm.get("SVN_module"));
+        // Populate project autopilot option
+        project.setProperty("Autopilot Option", Boolean.TRUE.equals(lazyForm.get("autopilot")) ? "On" : "Off");
+        // Populate project status notifications option
+        project.setProperty("Status Notification", Boolean.TRUE.equals(lazyForm.get("email_notifications")) ? "On" : "Off");
+        // Populate project timeline notifications option
+        project.setProperty("Timeline Notification", Boolean.TRUE.equals(lazyForm.get("timeline_notifications")) ? "On" : "Off");
+        // Populate project rated option, note that it is inveresed
+        project.setProperty("Rated", Boolean.TRUE.equals(lazyForm.get("no_rate_project")) ? "Off" : "On");
+        
+        // Populate project notes
+        project.setProperty("Notes", lazyForm.get("notes"));  
+        
+        
         // Create project in persistence level
         manager.createProject(project, AuthorizationHelper.getLoggedInUserId(request) + "");
+        
+        // Save the project resources
+        saveResources(request, lazyForm, project);
+        
+        return mapping.findForward(Constants.SUCCESS_FORWARD_NAME);
+    }
+
+    /**
+     * TODO: Document it
+     * 
+     * @param request
+     * @param lazyForm
+     * @param project
+     * @throws BaseException
+     */
+    private void saveResources(HttpServletRequest request, LazyValidatorForm lazyForm, Project project) throws BaseException {
 
         // Obtain the instance of the User Retrieval
         UserRetrieval userRetrieval = ActionsHelper.createUserRetrieval(request);
@@ -347,21 +380,52 @@ public class ProjectActions extends DispatchAction {
         // Get all types of resource roles
         ResourceRole[] resourceRoles = resourceManager.getAllResourceRoles();
         
-        // Add the resources to project
-        String[] resourceNames = (String[]) dynaActionForm.get("resources_name");
+        // Get the array of resource names
+        String[] resourceNames = (String[]) lazyForm.get("resources_name");
         // 0-index resource is skipped as it is a "dummy" one
         for (int i = 1; i < resourceNames.length; i++) {
-            // Create new resource
-            Resource resource = new Resource();
+            Resource resource = null;
+                       
+            // Check what is the action to be performed with the resource
+            // and obtain Resource instance in appropriate way
+            String resourceAction = (String) lazyForm.get("resources_action", i);
+            if ("add".equals(resourceAction)) {
+                // Create new resource
+                resource = new Resource();
+            }  else {
+                Long resourceId = (Long) lazyForm.get("resources_id", i);
+                if (resourceId.longValue() != -1) {
+                    // Retrieve the resource with the specified id
+                    resource = resourceManager.getResource(resourceId.longValue());
+                } else {
+                    // -1 value as id marks the resources that were't persisted in DB yet
+                    // and so should be skipped for actions other then "add"
+                    continue;
+                }
+            }
+            
+            // If action is "delete", delete the resource and proceed to the next one
+            if ("delete".equals(resourceAction)) {
+                resourceManager.removeResource(resource,  AuthorizationHelper.getLoggedInUserId(request) + "");
+                continue;
+            }
+            
             // Set resource properties
             resource.setProject(new Long(project.getId()));
             for (int j = 0; j < resourceRoles.length; j++) {
-                if (resourceRoles[j].getId() == ((Long) dynaActionForm.get("resources_role", i)).longValue()) {
+                if (resourceRoles[j].getId() == ((Long) lazyForm.get("resources_role", i)).longValue()) {
                     resource.setResourceRole(resourceRoles[j]);
                     break;
                 }
             }
             resource.setProperty("Handle", resourceNames[i]);  
+            if (Boolean.TRUE.equals(lazyForm.get("resources_payment", i))) {
+                resource.setProperty("Payment", lazyForm.get("resources_payment_amount", i));
+            }
+            String paid = (String) lazyForm.get("resources_paid", i);
+            if ("Yes".equals(paid) || "No".equals(paid)) {
+                resource.setProperty("Payment Status", paid);
+            }
             
             // Get info about user with the specified handle
             // TODO: Check if user exists
@@ -391,8 +455,6 @@ public class ProjectActions extends DispatchAction {
             // Save the resource in the persistence level
             resourceManager.updateResource(resource, AuthorizationHelper.getLoggedInUserId(request) + "");
         }
-        
-        return mapping.findForward(Constants.SUCCESS_FORWARD_NAME);
     }
 
     /**
