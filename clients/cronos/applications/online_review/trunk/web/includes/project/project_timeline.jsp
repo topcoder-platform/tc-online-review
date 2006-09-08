@@ -68,7 +68,26 @@
 			</td>
 			<td valign="top" bgcolor="#F7F7F7" style="border-bottom: 1px solid #999999;">
 				<div style="width:100%; overflow:scroll; overflow-y:visible;">
-					<jsp:include page="../Timelines/ganttChart.jsp" />
+					<table class="stat" cellpadding="0" cellspacing="0" style="border:none;" width="100%">
+						<tr class="header">
+							<td class="header">&#160;</td>
+						</tr>
+						<c:forEach items="${phases}" var="phase" varStatus="phaseStatus">
+							<tr class='${(phaseStatus.index % 2) == 0 ? "light" : "dark"}'>
+								<td class="ganttRow">
+									<table>
+										<tr>
+											<c:if test="${ganttOffsets[phaseStatus.index] != 0}">
+												<td><img width="${ganttOffsets[phaseStatus.index] * pixelsPerHour}" src="../i/clear.gif" height="0" /></td>
+											</c:if>
+											<td class="phase"><div style="width:${ganttLengths[phaseStatus.index] * pixelsPerHour}px;"><bean:message key='ProjectPhase.${fn:replace(phase.phaseType.name, " ", "")}' /></div></td>
+											<td class="length">${ganttLengths[phaseStatus.index]} hrs</td>
+										</tr>
+									</table>
+								</td>
+							</tr>
+						</c:forEach>
+					</table>
 				</div>
 			</td>
 		</tr>
