@@ -84,11 +84,11 @@ class ActionsHelper {
             throw new IllegalArgumentException("Paramter '" + paramName + "' must not be null.");
         }
     }
-    
+
     /**
      * This static method validates that parameter specified by <code>str</code> parameter is not
      * <code>null</code> and not an empty string, and throws an exception if validation fails.
-     * 
+     *
      * @param str
      *            a string parameter to validate.
      * @param paramName
@@ -409,14 +409,14 @@ class ActionsHelper {
         // Indicate that the resource with specified external user assigned does not exist
         return null;
     }
-    
+
     /**
      * This static method retrieves the resource for the currently logged in user associated with
      * the specified phase. The list of all resources for the currently logged in user is retrieved
      * from the <code>HttpServletRequest</code> object specified by <code>request</code>
      * parameter. Method <code>gatherUserRoles(HttpServletRequest, long)</code> should be called
      * prior making a call to this method.
-     * 
+     *
      * @return found resource, or <code>null</code> if no resource for currently logged in user
      *         found such that that resource would be associated with the specified phase.
      * @param request
@@ -430,7 +430,7 @@ class ActionsHelper {
         // Validate parameters
         validateParameterNotNull(request, "request");
         validateParameterNotNull(phase, "phase");
-        
+
         // Retrieve the list of "My" resources from the request's attribute
         Resource[] resources = (Resource[]) request.getAttribute("myResources");
         if (resources == null) {
@@ -438,7 +438,7 @@ class ActionsHelper {
             // Method gatherUserRoles(HttpServletRequest, long) should have been called first
             return null;
         }
-        
+
         for (int i = 0; i < resources.length; ++i) {
             // Get a resource for current iteration
             Resource resource = resources[i];
@@ -448,7 +448,7 @@ class ActionsHelper {
                 return resource;
             }
         }
-        
+
         // No "My" resource has been found for the specified phase
         return null;
     }
