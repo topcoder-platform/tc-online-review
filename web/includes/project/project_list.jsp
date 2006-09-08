@@ -15,10 +15,10 @@
 						<tr>
     					<td class="title" colspan="7"><img
     						src="../i/${categoryIconNames[idxrCategory.index]}" alt="" width="25" height="17" border="0"
-    						align="right"><b><a onclick="expcollHandler(this)" href="javascript:void(0)" ID="Out${idxrCategory.index}" class="Outline" style="cursor: pointer"><img
-    						ID="Out${idxrCategory.index}i" class="Outline" border="0" src="../i/plus.gif" width="9" height="9"
+    						align="right"><a onclick="return expcollHandler(this)" href="javascript:void(0)" id="Out${idxrCategory.index}" class="Outline"><img
+    						id="Out${idxrCategory.index}i" class="Outline" border="0" src="../i/plus.gif" width="9" height="9"
     						style="margin-right:5px;"><bean:message key='ProjectCategory.${fn:replace(category.name, " ", "")}' /></a>
-    						(${fn:length(projects[idxrCategory.index])})</b></td>
+    						(${fn:length(projects[idxrCategory.index])})</td>
 						</tr>
 						<tbody ID="Out${idxrCategory.index}r" style="display:none">
 						<tr>
