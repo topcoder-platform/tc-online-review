@@ -17,7 +17,7 @@
         </form-bean>
 
         <form-bean name="projectForm" dynamic="true"
-            type="org.apache.struts.validator.DynaValidatorForm">
+            type="org.apache.struts.validator.LazyValidatorForm">
             <form-property name="project_name" type="java.lang.String" />
             <form-property name="project_type" type="java.lang.Long" />
             <form-property name="project_category" type="java.lang.Long" />
@@ -59,27 +59,6 @@
             <form-property name="phase_required_registrations" type="java.lang.Integer[]" />
             <form-property name="phase_required_submissions" type="java.lang.Integer[]" />
             <form-property name="phase_manual_screening" type="java.lang.Boolean[]" />
-
-
-            <!-- The addphase_xxx properties are the dummy ones, they aren't processed  -->
-            <form-property name="addphase" type="java.lang.String" />
-            <form-property name="addphase_when" type="java.lang.String" />
-            <form-property name="addphase_where" type="java.lang.String" />
-            <form-property name="addphase_start_by_phase" type="java.lang.String" />
-            <form-property name="addphase_start_date" type="java.lang.String" />
-            <form-property name="addphase_start_time" type="java.lang.String" />
-            <form-property name="addphase_start_AMPM" type="java.lang.String" />
-            <form-property name="addphase_start_phase" type="java.lang.String" />
-            <form-property name="addphase_start_when" type="java.lang.String" />
-            <form-property name="addphase_start_plusminus" type="java.lang.String" />
-            <form-property name="addphase_start_amount" type="java.lang.String" />
-            <form-property name="addphase_start_dayshrs" type="java.lang.String" />
-            <form-property name="addphase_end_date" type="java.lang.String" />
-            <form-property name="addphase_end_time" type="java.lang.String" />
-            <form-property name="addphase_end_AMPM" type="java.lang.String" />
-            <form-property name="addphase_duration" type="java.lang.String" />
-
-
         </form-bean>
 
         <form-bean name="contactManagerForm" dynamic="true"
