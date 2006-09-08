@@ -6,6 +6,7 @@ package com.cronos.onlinereview.actions;
 import java.text.Format;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -28,7 +29,6 @@ import com.topcoder.management.resource.ResourceManager;
 import com.topcoder.management.resource.search.NotificationFilterBuilder;
 import com.topcoder.management.resource.search.ResourceFilterBuilder;
 import com.topcoder.project.phases.Phase;
-import com.topcoder.project.phases.PhaseDateComparator;
 import com.topcoder.search.builder.filter.AndFilter;
 import com.topcoder.search.builder.filter.Filter;
 import com.topcoder.util.errorhandling.BaseException;
@@ -100,9 +100,13 @@ public class ProjectDetailsActions extends DispatchAction {
         // Obtain an instance of Phase Manager
         PhaseManager phaseMgr = ActionsHelper.createPhaseManager(request);
 
+        // Calculate the date when this project is supposed to end
         com.topcoder.project.phases.Project phProj = phaseMgr.getPhases(project.getId());
-        Phase[] phases = phProj.getAllPhases(new PhaseDateComparator());
+        phProj.calcEndDate();
+        // Get all phases for the current project
+        Phase[] phases = phProj.getAllPhases();
 
+        // Place all phases of the project into the request
         request.setAttribute("phases", phases);
 
         String[] displayedStart = new String[phases.length];
@@ -112,43 +116,66 @@ public class ProjectDetailsActions extends DispatchAction {
         Format format = new SimpleDateFormat("MM.dd.yyyy hh:mm a");
         String strOrigStartTime = messages.getMessage("viewProjectDetails.Timeline.OriginalStartTime") + " ";
         String strOrigEndTime = messages.getMessage("viewProjectDetails.Timeline.OriginalEndTime") + " ";
+        long projectStartTime = phProj.getStartDate().getTime();
+        // The following two arrays are used to display Gantt chart
+        long[] ganttOffsets = new long[phases.length];
+        long[] ganttLengths = new long[phases.length];
 
+        // Iterate over all phases determining dates and durations
         for (int i = 0; i < phases.length; ++i) {
-            if (phases[i].getActualStartDate() != null) {
-                displayedStart[i] = format.format(phases[i].getActualStartDate());
-                originalStart[i] = strOrigStartTime + format.format(phases[i].getScheduledStartDate());
-            } else {
-                displayedStart[i] = format.format(phases[i].getScheduledStartDate());
-            }
-            if (phases[i].getActualEndDate() != null) {
-                displayedEnd[i] = format.format(phases[i].getActualEndDate());
-                originalEnd[i] = strOrigEndTime + format.format(phases[i].getScheduledEndDate());
-            } else {
-                displayedEnd[i] = format.format(phases[i].getScheduledEndDate());
-            }
+            // Get a phase for this iteration
+            Phase phase = phases[i];
+
+            Date startDate = phase.calcStartDate();
+            Date endDate = phase.calcEndDate();
+
+            // Determine the strings to display for start/end dates
+            displayedStart[i] = format.format(startDate);
+            originalStart[i] = strOrigStartTime + format.format(phase.getScheduledStartDate());
+            displayedEnd[i] = format.format(endDate);
+            originalEnd[i] = strOrigEndTime + format.format(phase.getScheduledEndDate());
+
+            // Determine offsets and lengths of the bars in Gantt chart
+            ganttOffsets[i] = (startDate.getTime() - projectStartTime) / (60 * 60 * 1000);
+            ganttLengths[i] = (endDate.getTime() - startDate.getTime()) / (60 * 60 * 1000);
         }
 
+        // Place all gathered information into the request as attribute
         request.setAttribute("displayedStart", displayedStart);
         request.setAttribute("displayedEnd", displayedEnd);
         request.setAttribute("originalStart", originalStart);
         request.setAttribute("originalEnd", originalEnd);
+        request.setAttribute("ganttOffsets", ganttOffsets);
+        request.setAttribute("ganttLengths", ganttLengths);
+        // Determine the amount of pixels to display in Gantt chart for every hour
+        request.setAttribute("pixelsPerHour", ConfigHelper.getPixelsPerHour());
 
+        // Obtain an instance of Resource Manager
         ResourceManager resMgr = ActionsHelper.createResourceManager(request);
 
+        // Determine if the user has permission to view a list of resources for the project
         if (AuthorizationHelper.hasUserPermission(request, Constants.VIEW_PROJECT_RESOURCES_PERM_NAME)) {
+            // Build a filter to fetch all resources for the current project
             Filter filterProject = ResourceFilterBuilder.createProjectIdFilter(project.getId());
+            // Get an array ofresource for the project
             Resource[] resources = resMgr.searchResources(filterProject);
 
+            // Prepare an array to store External User IDs
             long[] extUserIds = new long[resources.length];
-
+            // Fill the array with user IDs retrieved from resource properties
             for (int i = 0; i < resources.length; ++i) {
                 String userID = (String) resources[i].getProperty("External Reference ID");
                 extUserIds[i] = Long.valueOf(userID).longValue();
             }
 
+            // Obtain an instance of User Retrieval
             UserRetrieval usrMgr = ActionsHelper.createUserRetrieval(request);
+            // Retrieve external users for the list of resources using batch retrieval
             ExternalUser[] extUsers = usrMgr.retrieveUsers(extUserIds);
 
+            // This is final array for External User objects. It is needed because the previous
+            // operation may return shorter array than there are resources for the project
+            // (sometimes several resources can be associated with one external user)
             ExternalUser[] users = new ExternalUser[resources.length];
 
             for (int i = 0; i < extUserIds.length; ++i) {
@@ -160,6 +187,7 @@ public class ProjectDetailsActions extends DispatchAction {
                 }
             }
 
+            // Place resources and external users into the request
             request.setAttribute("resources", resources);
             request.setAttribute("users", users);
         }
@@ -179,7 +207,7 @@ public class ProjectDetailsActions extends DispatchAction {
 
         request.setAttribute("sendTLNotifications", (sendTLNotifications) ? "On" : "Off");
 
-        return mapping.findForward("success");
+        return mapping.findForward(Constants.SUCCESS_FORWARD_NAME);
     }
 
     /**
@@ -225,7 +253,7 @@ public class ProjectDetailsActions extends DispatchAction {
             ActionsHelper.retrieveAndStoreBasicProjectInfo(request, project, messages);
         }
 
-        return mapping.findForward((postBack) ? "success" : "displayPage");
+        return mapping.findForward((postBack) ? Constants.SUCCESS_FORWARD_NAME : "displayPage");
     }
 
     /**
