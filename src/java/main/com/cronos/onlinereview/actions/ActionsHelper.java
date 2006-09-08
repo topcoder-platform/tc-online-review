@@ -22,8 +22,10 @@ import com.topcoder.management.phase.DefaultPhaseManager;
 import com.topcoder.management.phase.PhaseManagementException;
 import com.topcoder.management.phase.PhaseManager;
 import com.topcoder.management.project.Project;
+import com.topcoder.management.project.ProjectCategory;
 import com.topcoder.management.project.ProjectManager;
 import com.topcoder.management.project.ProjectManagerImpl;
+import com.topcoder.management.project.ProjectStatus;
 import com.topcoder.management.resource.Resource;
 import com.topcoder.management.resource.ResourceManager;
 import com.topcoder.management.resource.persistence.PersistenceResourceManager;
@@ -784,5 +786,39 @@ class ActionsHelper {
         fields.put(NotificationTypeFilterBuilder.NAME_FIELD_NAME, StringValidator.startsWith(""));
 
         searchBundle.setSearchableFields(fields);
+    }
+
+    /**
+     * TODO: Write docs
+     * 
+     * @param projectCategories
+     * @param id
+     * @return
+     */
+    public static ProjectCategory findProjectCategoryById(ProjectCategory[] projectCategories, Long id) {
+        for (int i = 0; i < projectCategories.length; i++) {
+            if (projectCategories[i].getId() == id.longValue()) {
+                return projectCategories[i];
+            }
+        }
+        
+        return null;
+    }
+
+    /**
+     * TODO: Write docs
+     * 
+     * @param projectStatuses
+     * @param name
+     * @return
+     */
+    public static ProjectStatus findProjectStatusByName(ProjectStatus[] projectStatuses, String name) {
+        for (int i = 0; i < projectStatuses.length; i++) {
+            if (projectStatuses[i].getName().equals(name)) {
+                return projectStatuses[i];
+            }
+        }
+        
+        return null;
     }
 }

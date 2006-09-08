@@ -23,7 +23,7 @@
             <form-property name="project_category" type="java.lang.Long" />
             <form-property name="eligibility" type="java.lang.String" />
             <form-property name="public" type="java.lang.Boolean" />
-            <form-property name="autopilot" type="java.lang.Boolean" />
+            <form-property name="autopilot" type="java.lang.Boolean" initial="true" />
             <form-property name="email_notifications" type="java.lang.Boolean" />
             <form-property name="no_rate_project" type="java.lang.Boolean" />
             <form-property name="timeline_notifications" type="java.lang.Boolean" />
