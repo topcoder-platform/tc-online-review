@@ -36,7 +36,7 @@
 		<br />
 		<table class="scorecard" style="border-collapse: collapse;" cellpadding="0" cellspacing="0" width="100%">
 			<tr>
-				<td class="title"><b><bean:message key="viewProjectDetails.box.Notes" /></b></td>
+				<td class="title"><bean:message key="viewProjectDetails.box.Notes" /></td>
 			</tr>
 			<tr class="light">
 				<td class="value" align="left">${fn:escapeXml(project.allProperties["Notes"])}</td>
