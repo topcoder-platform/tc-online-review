@@ -15,7 +15,6 @@
 
 	<!-- CSS and JS from wireframes -->
 	<script language="javascript" type="text/javascript" src="../scripts/expand_collapse.js"><!-- @ --></script>
-	<link rel="stylesheet" type="text/css" href="../css/Stylesheet.css" />
 
 	<!-- CSS and JS by Petar -->
 	<link type="text/css" rel="stylesheet" href="../css/new_styles.css" />
