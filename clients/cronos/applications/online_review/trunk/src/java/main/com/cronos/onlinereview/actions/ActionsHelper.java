@@ -77,11 +77,29 @@ class ActionsHelper {
      * @param paramName
      *            a name of the parameter that is being validated.
      * @throws IllegalArgumentException
-     *             if parameter <code>param</code> if <code>null</code>.
+     *             if parameter <code>param</code> is <code>null</code>.
      */
     public static void validateParameterNotNull(Object param, String paramName) throws IllegalArgumentException {
         if (param == null) {
             throw new IllegalArgumentException("Paramter '" + paramName + "' must not be null.");
+        }
+    }
+    
+    /**
+     * This static method validates that parameter specified by <code>str</code> parameter is not
+     * <code>null</code> and not an empty string, and throws an exception if validation fails.
+     * 
+     * @param str
+     *            a string parameter to validate.
+     * @param paramName
+     *            a name of the parameter that is being validated.
+     * @throws IllegalArgumentException
+     *             if parameter <code>str</code> is <code>null</code> or empty string.
+     */
+    public static void validateParameterStringNotEmpty(String str, String paramName) throws IllegalArgumentException {
+        validateParameterNotNull(str, paramName);
+        if (str.trim().length() == 0) {
+            throw new IllegalArgumentException("Paramter '" + paramName + "' must not be empty string.");
         }
     }
 
@@ -95,7 +113,7 @@ class ActionsHelper {
      * @param paramName
      *            a name of the parameter that is being validated.
      * @throws IllegalArgumentException
-     *             if parameter <code>value</code> is zero or neative.
+     *             if parameter <code>value</code> is zero or negative.
      */
     public static void validateParameterPositive(long value, String paramName) throws IllegalArgumentException {
         if (value <= 0) {
@@ -656,7 +674,7 @@ class ActionsHelper {
         // Validate parameter
         validateParameterNotNull(request, "request");
 
-        // Try retrieving Scorecard Manager from the request's attribute first
+        // Try retrieving Upload Manager from the request's attribute first
         UploadManager manager = (UploadManager) request.getAttribute("uploadManager");
         // If this is the first time this method is called for the request,
         // create a new instance of the object
