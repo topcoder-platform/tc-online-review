@@ -3,9 +3,13 @@
  */
 package com.cronos.onlinereview.actions;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -13,18 +17,18 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-import org.apache.struts.action.DynaActionForm;
 import org.apache.struts.actions.DispatchAction;
 import org.apache.struts.util.MessageResources;
 import org.apache.struts.validator.LazyValidatorForm;
 
 import com.cronos.onlinereview.external.ExternalUser;
 import com.cronos.onlinereview.external.UserRetrieval;
-import com.cronos.onlinereview.external.impl.DBUserRetrieval;
+import com.topcoder.project.phases.Phase;
 import com.topcoder.project.phases.PhaseType;
 import com.topcoder.search.builder.filter.Filter;
 import com.topcoder.util.errorhandling.BaseException;
 
+import com.topcoder.date.workdays.DefaultWorkdays;
 import com.topcoder.management.phase.PhaseManager;
 import com.topcoder.management.project.Project;
 import com.topcoder.management.project.ProjectCategory;
@@ -35,7 +39,6 @@ import com.topcoder.management.project.ProjectType;
 import com.topcoder.management.resource.Resource;
 import com.topcoder.management.resource.ResourceManager;
 import com.topcoder.management.resource.ResourceRole;
-import com.topcoder.management.resource.persistence.ResourcePersistenceException;
 
 /**
  * This class contains Struts Actions that are meant to deal with Projects. There are following
@@ -128,15 +131,15 @@ public class ProjectActions extends DispatchAction {
     }
 
     /**
-     * This method populates the specified DynaActionForm with the values taken from specified
-     * Project.
+     * This method populates the specified LazyValidatorForm with the values 
+     * taken from the specified Project.
      *
      * @param project
      *            the project to take the data from
      * @param form
      *            the form to be populated with data
      */
-    private void populateProjectForm(Project project, DynaActionForm form) {
+    private void populateProjectForm(Project project, LazyValidatorForm form) {
         // TODO: Possibly use string constants instead of hardcoded strings
 
         // Populate project name
@@ -197,7 +200,7 @@ public class ProjectActions extends DispatchAction {
      * @param projectProperty
      *            the name of project property to take the value of
      */
-    private void populateProjectFormProperty(DynaActionForm form, Class type, String formProperty,
+    private void populateProjectFormProperty(LazyValidatorForm form, Class type, String formProperty,
             Project project, String projectProperty) {
 
         String value = (String) project.getProperty(projectProperty);
@@ -268,7 +271,7 @@ public class ProjectActions extends DispatchAction {
         request.setAttribute("project", project);
 
         // Populate the form with project properties
-        populateProjectForm(project, (DynaActionForm) form);
+        populateProjectForm(project, (LazyValidatorForm) form);
 
         return mapping.findForward(Constants.SUCCESS_FORWARD_NAME);
     }
@@ -355,6 +358,9 @@ public class ProjectActions extends DispatchAction {
         // Create project in persistence level
         manager.createProject(project, AuthorizationHelper.getLoggedInUserId(request) + "");
         
+        // Save the project phases
+        Phase[] savedPhases = saveProjectPhases(request, lazyForm, project);
+        
         // Save the project resources
         saveResources(request, lazyForm, project);
         
@@ -367,9 +373,136 @@ public class ProjectActions extends DispatchAction {
      * @param request
      * @param lazyForm
      * @param project
+     * @return
+     * @throws BaseException 
+     */
+    private Phase[] saveProjectPhases(HttpServletRequest request, LazyValidatorForm lazyForm, Project project)
+            throws BaseException {
+        // TODO Auto-generated method stub
+
+        // Obtain the instance of Phase Manager
+        PhaseManager phaseManager = ActionsHelper.createPhaseManager(request);
+        
+        // Create new Phases Project
+        // TODO: Use real values for date and workdays, not the test ones
+        // TODO: Handle the situation of project being edited
+        com.topcoder.project.phases.Project phProject = 
+                new com.topcoder.project.phases.Project(new Date(), new DefaultWorkdays());
+       
+        // Get the list of all existing phases 
+        Phase[] phases = phProject.getAllPhases();
+        
+        // Get the list of all exisitng phase types
+        PhaseType[] allPhaseTypes = phaseManager.getAllPhaseTypes();
+        
+        // Get the array of phase types specified for each phase
+        Long[] phaseTypes = (Long[]) lazyForm.get("phase_type");
+        // 0-index phase is skipped as it is a "dummy" one
+        for (int i = 0; i < phaseTypes.length; i++) {
+            Phase phase = null;
+            
+            // Check what is the action to be performed with the phase
+            // and obtain Phase instance in appropriate way
+            String phaseAction = (String) lazyForm.get("phase_action", i);
+            if ("add".equals(phaseAction)) {
+                // Create new phase
+                // TODO: Check if the phase duration is specified as 
+                // just number of hours or as "hrs:min"
+                phase = new Phase(phProject, ((Long) lazyForm.get("phase_duration", i)).longValue());
+                // Add it to Phases Project
+                phProject.addPhase(phase);
+            }  else {
+                Long phaseId = (Long) lazyForm.get("phase_id", i);
+                if (phaseId.longValue() != -1) {
+                    // Retrieve the phase with the specified id
+                    phase = ActionsHelper.findPhaseById(phases, phaseId);
+                } else {
+                    // -1 value as id marks the phases that were't persisted in DB yet
+                    // and so should be skipped for actions other then "add"
+                    continue;
+                }
+            }
+            
+            // If action is "delete", delete the phase and proceed to the next one
+            if ("delete".equals(phaseAction)) {
+                phProject.removePhase(phase);
+                continue;
+            }
+            
+            /* 
+             * Set phase properties
+             */
+            
+            // Set phase type
+            phase.setPhaseType(ActionsHelper.findPhaseTypeById(allPhaseTypes, phaseTypes[i]));
+            
+            try {
+                // If phase is not started by other phase end
+                if (Boolean.FALSE.equals(lazyForm.get("phase_start_by_phase"))) {
+                    // Get phase start date from form
+                    Date phaseStartDate = parseDatetimeFormProperties(lazyForm, i, "phase_start_date",
+                            "phase_start_time", "phase_start_AMPM");
+                    // Set sheduled phase start date
+                    phase.setScheduledStartDate(phaseStartDate);
+                } else {
+                    // Create phase Dependency
+                    // TODO: Complete it
+                }
+                
+                // Get phase end date from form
+                Date phaseEndDate = parseDatetimeFormProperties(lazyForm, i, "phase_end_date", "phase_end_time",
+                        "phase_end_AMPM");
+                // Set sheduled phase end date
+                phase.setScheduledEndDate(phaseEndDate);
+            } catch (ParseException e) {
+                // TODO: handle exception
+                // Actually will be an unreal situation when form validation is
+                // configured properly
+            }
+            
+        }
+        
+        // Save the phases at the persistence level
+        phaseManager.updatePhases(phProject, AuthorizationHelper.getLoggedInUserId(request) + "");
+
+        // TODO : Fix it
+        return null;
+    }
+
+    /**
+     * TODO: Document it
+     * 
+     * @param lazyForm
+     * @param dateProperty
+     * @param timeProperty
+     * @param ampmProperty
+     * @return
+     * @throws ParseException 
+     */
+    private Date parseDatetimeFormProperties(LazyValidatorForm lazyForm, int propertyIndex, String dateProperty,
+            String timeProperty, String ampmProperty) throws ParseException {
+        // Retrieve the values of form properties
+        String dateString = (String) lazyForm.get(dateProperty, propertyIndex);
+        String timeString = (String) lazyForm.get(timeProperty, propertyIndex);
+        String ampmString = (String) lazyForm.get(ampmProperty, propertyIndex);
+        // Construct the full date/time string
+        String fullDate = dateString + " " + timeString + " " + ampmString;
+        // Parse the date
+        // TODO: Reuse the DateFormat instance instead of creating new ones
+        DateFormat dateFormat = new SimpleDateFormat("MM.dd.yy hh.mm a");
+        return dateFormat.parse(fullDate);
+    }
+
+    /**
+     * TODO: Document it
+     * 
+     * @param request
+     * @param lazyForm
+     * @param project
      * @throws BaseException
      */
-    private void saveResources(HttpServletRequest request, LazyValidatorForm lazyForm, Project project) throws BaseException {
+    private void saveResources(HttpServletRequest request, LazyValidatorForm lazyForm, Project project)
+            throws BaseException {
 
         // Obtain the instance of the User Retrieval
         UserRetrieval userRetrieval = ActionsHelper.createUserRetrieval(request);
@@ -384,7 +517,7 @@ public class ProjectActions extends DispatchAction {
         String[] resourceNames = (String[]) lazyForm.get("resources_name");
         // 0-index resource is skipped as it is a "dummy" one
         for (int i = 1; i < resourceNames.length; i++) {
-            Resource resource = null;
+            Resource resource;
                        
             // Check what is the action to be performed with the resource
             // and obtain Resource instance in appropriate way

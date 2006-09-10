@@ -20,7 +20,7 @@
 	<script language="JavaScript" type="text/javascript" src="../scripts/dojo.js"><!-- @ --></script>
 	<script language="JavaScript" type="text/javascript" src="../scripts/util.js"><!-- @ --></script>
 
-	<script language="JavaScript" type="text/javascript">
+	<script language="JavaScript" type="text/javascript"><!--
 				
 		// TODO: Write docs for following vars
 		// TODO: Note, that for Project Edit action the next lines will be different
@@ -34,11 +34,27 @@
 			paramNode.name = paramNode.name.replace(/\[([0-9])+\]/, "[" + newIndex + "]");
 		}
 		
+		/*
+		 * TODO: Write docs for this function
+		 */
+		function patchAllChildParamIndexes(node, newIndex) {
+			var allInputs = node.getElementsByTagName("input");
+			for (var i = 0; i < allInputs.length; i++) {
+				patchParamIndex(allInputs[i], newIndex);
+			}
+			var allSelects = node.getElementsByTagName("select");
+			for (var i = 0; i < allSelects.length; i++) {
+				patchParamIndex(allSelects[i], newIndex);
+			}
+		}
+		
 	
 		/*
 		 * This function adds a new row to resources table.
 		 */
 		function addNewResource() {
+			// TODO: Make the combos and possibly radio buttons copy their state correctly
+		
 			// Get resources table node
 			var resourcesTable = document.getElementById("resources_tbl");
 			// Get the number of rows in table
@@ -67,17 +83,8 @@
 			lastResourceIndex++;
 			
 			// Rename all the inputs to have a new index
-			var allInputs = newRow.getElementsByTagName("input");
-			for (var i = 0; i < allInputs.length; i++) {
-				patchParamIndex(allInputs[i], lastResourceIndex);
-			}
-			var allSelects = newRow.getElementsByTagName("select");
-			for (var i = 0; i < allSelects.length; i++) {
-				patchParamIndex(allSelects[i], lastResourceIndex);
-			}
+			patchAllChildParamIndexes(newRow, lastResourceIndex);
 			
-			
-
 		}
 
 		/*
@@ -99,6 +106,7 @@
 		
 
 			// TODO: Complete it, doesn't work for some reason
+			// TODO: Probably the fix is to skip hidden rows, etc.
 			// Make rows vary color
 			var rows = resourceRowNode.parentNode.getElementsByTagName("tr");
 			for (var i = 0; i < rows.length; i++) {
@@ -115,9 +123,9 @@
 		/*
 		 * This function populates the specified parameter of the newly added phase row.
 		 */
-		function populatePhaseParam(destRowNode, srcTableNode, paramName) {
+		function populatePhaseParam(destRowNode, srcTableNode, paramName, paramIndex) {
 			var srcInput = getChildByName(srcTableNode, "addphase_" + paramName);
-			var destInput = getChildByName(destRowNode, "phase_" + paramName);
+			var destInput = getChildByName(destRowNode, "phase_" + paramName + "[" + paramIndex + "]");
 			if (destInput.tagName != "SELECT" && destInput.type == "checkbox") {
 				destInput.checked = srcInput.checked;
 			} else {
@@ -129,12 +137,14 @@
 		 * This function adds new phase to phases table, it includes addition of several rows.
 		 */
 		function addNewPhase() {
+			// TODO: Fix it to support parameter indexing
+		
 			// Retrieve timeline and add phase tables
 			var timelineTable = document.getElementById("timeline_tbl");
 			var addPhaseTable = document.getElementById("addphase_tbl");
 
 			// Retrieve phase name
-			var phaseNameInput = getChildByName(addPhaseTable, "addphase");
+			var phaseNameInput = getChildByName(addPhaseTable, "addphase_type");
 			var selectedOption = phaseNameInput.options[phaseNameInput.selectedIndex];
 			var phaseName = dojo.dom.textContent(selectedOption);
 
@@ -173,22 +183,30 @@
 					dojo.dom.insertAfter(newRow, wherePhaseNode);
 				}
 			}
+			
+			// Increase phase index
+			lastPhaseIndex++;
+			
+			// Rename all the inputs to have a new index
+			patchAllChildParamIndexes(newRow, lastPhaseIndex);
 
-
+			// TODO: Don't forget that we have also radio buttons for now!!!
 			// Populate newly created phase inputs from the add phase form
-			var inputNames = ["start_date", "start_time", "start_AMPM",
+			var inputNames = ["type", 
+				"start_date", "start_time", "start_AMPM",
 				"start_by_phase", "start_phase", "start_when",
 				"start_plusminus", "start_amount", "start_dayshrs",
 				"end_date", "end_time", "end_AMPM", "duration"];
 			for (var i = 0; i < inputNames.length; i++) {
-				populatePhaseParam(newRow, addPhaseTable, inputNames[i]);
+				populatePhaseParam(newRow, addPhaseTable, inputNames[i], lastPhaseIndex);
 			}
 
 			// Populate phase name
+			// TODO: Implement numbering of same-typed phases
 			var phaseNameCell =  newRow.cells[0];
 			dojo.dom.textContent(phaseNameCell, phaseName);
 		}
-	</script>
+	--></script>
 </head>
 
 <body>
@@ -399,6 +417,10 @@
 							<tr class="dark" style="display: none;">
 								<td class="valueB" nowrap="nowrap"><!-- @ --></td>
 								<td class="value" nowrap>
+									<html:hidden property="phase_type[0]" />
+									<%-- TODO: Populate form fields values in action, instead of here --%>
+									<html:hidden property="phase_id[0]" value="-1" />
+									<html:hidden property="phase_action[0]" value="add" />									
 									<html:radio property="phase_start_by_phase[0]" value="false" /> 
 									<html:text styleClass="inputBoxDate" property="phase_start_date[0]" />
 									<html:text styleClass="inputBoxTime" property="phase_start_time[0]" />
@@ -473,7 +495,7 @@
 							<tr class="light">
 								<td class="value" colspan="2" nowrap="nowrap">
 									<bean:message key="editProject.Phases.NewPhase" />
-									<html:select styleClass="inputBox" property="addphase" style="width:197px;margin-bottom:2px;">
+									<html:select styleClass="inputBox" property="addphase_type" style="width:197px;margin-bottom:2px;">
 										<html:option key="editProject.Phases.Select" value="" />
 										<c:forEach items="${requestScope.phaseTypes}" var="phaseType">
 											<html:option key="ProjectPhase.${fn:replace(phaseType.name, ' ', '')}" value="${phaseType.id}" />
