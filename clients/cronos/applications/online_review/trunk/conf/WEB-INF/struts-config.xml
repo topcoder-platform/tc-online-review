@@ -42,6 +42,9 @@
             <form-property name="resources_action" type="java.lang.String[]" />
             <form-property name="resources_id" type="java.lang.String[]" />
 
+            <form-property name="phase_type" type="java.lang.String[]" />
+            <form-property name="phase_id" type="java.lang.Long[]" />
+            <form-property name="phase_action" type="java.lang.String[]" />
             <form-property name="phase_start_by_phase" type="java.lang.Boolean[]" />
             <form-property name="phase_start_date" type="java.lang.String[]" />
             <form-property name="phase_start_time" type="java.lang.String[]" />

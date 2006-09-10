@@ -45,6 +45,7 @@ import com.topcoder.management.scorecard.data.Scorecard;
 import com.topcoder.management.scorecard.data.Section;
 import com.topcoder.project.phases.Phase;
 import com.topcoder.project.phases.PhaseDateComparator;
+import com.topcoder.project.phases.PhaseType;
 import com.topcoder.search.builder.SearchBundle;
 import com.topcoder.search.builder.SearchBundleManager;
 import com.topcoder.search.builder.filter.AndFilter;
@@ -819,6 +820,39 @@ class ActionsHelper {
             }
         }
         
+        return null;
+    }
+
+    /**
+     * TODO: Write docs
+     * 
+     * @param phases
+     * @param phaseId
+     * @return
+     */
+    public static Phase findPhaseById(Phase[] phases, Long phaseId) {
+        for (int i = 0; i < phases.length; i++) {
+            if (phases[i].getId() == phaseId.longValue()) {
+                return phases[i];
+            }
+        }
+        
+        return null;
+    }
+
+    /**
+     * TODO: Document it
+     * 
+     * @param phaseTypes
+     * @param phaseTypeId
+     * @return
+     */
+    public static PhaseType findPhaseTypeById(PhaseType[] phaseTypes, Long phaseTypeId) {
+        for (int i = 0; i < phaseTypes.length; i++) {
+            if (phaseTypes[i].getId() == phaseTypeId.longValue()) {
+                return phaseTypes[i];
+            }
+        }
         return null;
     }
 }
