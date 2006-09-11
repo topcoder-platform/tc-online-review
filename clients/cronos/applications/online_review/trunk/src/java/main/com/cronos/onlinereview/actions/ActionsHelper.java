@@ -46,6 +46,7 @@ import com.topcoder.management.scorecard.data.Scorecard;
 import com.topcoder.management.scorecard.data.Section;
 import com.topcoder.project.phases.Phase;
 import com.topcoder.project.phases.PhaseDateComparator;
+import com.topcoder.project.phases.PhaseStatus;
 import com.topcoder.project.phases.PhaseType;
 import com.topcoder.search.builder.SearchBundle;
 import com.topcoder.search.builder.SearchBundleManager;
@@ -348,9 +349,9 @@ class ActionsHelper {
      *
      * @return found phase type, or <code>null</code> if a type with the specified ID has not been
      *         found in the provided array of phase types.
-     * @param phases
+     * @param phaseTypes
      *            an array of phase types to search for wanted phase type among.
-     * @param phaseId
+     * @param phaseTypeId
      *            the ID of the needed phase type.
      * @throws IllegalArgumentException
      *             if <code>phaseTypes</code> parameter is <code>null</code>, or
@@ -375,9 +376,9 @@ class ActionsHelper {
      *
      * @return found phase type, or <code>null</code> if a type with the specified name has not been
      *         found in the provided array of phase types.
-     * @param phases
+     * @param phaseTypes
      *            an array of phase types to search for wanted phase type among.
-     * @param phaseId
+     * @param phaseTypeName
      *            the name of the needed phase type.
      * @throws IllegalArgumentException
      *             if any of the parameters are <code>null</code>, or <code>phaseTypeName</code>
@@ -391,6 +392,33 @@ class ActionsHelper {
         for (int i = 0; i < phaseTypes.length; ++i) {
             if (phaseTypes[i].getName().equalsIgnoreCase(phaseTypeName)) {
                 return phaseTypes[i];
+            }
+        }
+        return null;
+    }
+
+    /**
+     * This static method searches for the phase status with the specified name in a provided array of
+     * phase statuses. The search is case-insensitive.
+     *
+     * @return found phase status, or <code>null</code> if a status with the specified name has not been
+     *         found in the provided array of phase statuses.
+     * @param phaseStatuses
+     *            an array of phase statuses to search for wanted phase status among.
+     * @param phaseStatusName
+     *            the name of the needed phase status.
+     * @throws IllegalArgumentException
+     *             if any of the parameters are <code>null</code>, or <code>phaseStatusName</code>
+     *             parameter is empty string.
+     */
+    public static PhaseStatus findPhaseStatusByName(PhaseStatus[] phaseStatuses, String phaseStatusName) {
+        // Validate parameters
+        validateParameterNotNull(phaseStatuses, "phasestatuses");
+        validateParameterStringNotEmpty(phaseStatusName, "phaseStatusName");
+
+        for (int i = 0; i < phaseStatuses.length; ++i) {
+            if (phaseStatuses[i].getName().equalsIgnoreCase(phaseStatusName)) {
+                return phaseStatuses[i];
             }
         }
         return null;
@@ -1045,4 +1073,5 @@ class ActionsHelper {
 
         searchBundle.setSearchableFields(fields);
     }
+
 }

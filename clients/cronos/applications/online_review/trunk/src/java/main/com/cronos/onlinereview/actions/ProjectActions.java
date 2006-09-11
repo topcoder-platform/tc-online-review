@@ -24,12 +24,14 @@ import org.apache.struts.validator.LazyValidatorForm;
 import com.cronos.onlinereview.external.ExternalUser;
 import com.cronos.onlinereview.external.UserRetrieval;
 import com.topcoder.project.phases.Phase;
+import com.topcoder.project.phases.PhaseStatus;
 import com.topcoder.project.phases.PhaseType;
 import com.topcoder.search.builder.filter.Filter;
 import com.topcoder.util.errorhandling.BaseException;
 
 import com.topcoder.date.workdays.DefaultWorkdays;
 import com.topcoder.management.phase.PhaseManager;
+import com.topcoder.management.phase.PhaseStatusEnum;
 import com.topcoder.management.project.Project;
 import com.topcoder.management.project.ProjectCategory;
 import com.topcoder.management.project.ProjectFilterUtility;
@@ -319,7 +321,8 @@ public class ProjectActions extends DispatchAction {
         // Find "Active" project status
         ProjectStatus activeStatus = ActionsHelper.findProjectStatusByName(projectStatuses, "Active");
         // Find the project category by the specified id
-        ProjectCategory category = ActionsHelper.findProjectCategoryById(projectCategories, (Long) lazyForm.get("project_category"));
+        ProjectCategory category = ActionsHelper.findProjectCategoryById(projectCategories, 
+                ((Long) lazyForm.get("project_category")).longValue());
         // Create Project instance
         Project project = new Project(category, activeStatus);
         // TODO: What to do with project type???
@@ -389,16 +392,22 @@ public class ProjectActions extends DispatchAction {
         com.topcoder.project.phases.Project phProject = 
                 new com.topcoder.project.phases.Project(new Date(), new DefaultWorkdays());
        
-        // Get the list of all existing phases 
-        Phase[] phases = phProject.getAllPhases();
+        // Get the list of all previously existing phases 
+        Phase[] oldPhases = phProject.getAllPhases();
         
-        // Get the list of all exisitng phase types
+        // Get the list of all existing phase types
         PhaseType[] allPhaseTypes = phaseManager.getAllPhaseTypes();
+       
+        // Get the list of all existing phase statuses
+        PhaseStatus[] allPhaseStatuses = phaseManager.getAllPhaseStatuses();
+        
+        // Get the "Scheduled" phase status
+        PhaseStatus scheduledStatus = ActionsHelper.findPhaseStatusByName(allPhaseStatuses, "Scheduled");
         
         // Get the array of phase types specified for each phase
         Long[] phaseTypes = (Long[]) lazyForm.get("phase_type");
         // 0-index phase is skipped as it is a "dummy" one
-        for (int i = 0; i < phaseTypes.length; i++) {
+        for (int i = 1; i < phaseTypes.length; i++) {
             Phase phase = null;
             
             // Check what is the action to be performed with the phase
@@ -407,15 +416,15 @@ public class ProjectActions extends DispatchAction {
             if ("add".equals(phaseAction)) {
                 // Create new phase
                 // TODO: Check if the phase duration is specified as 
-                // just number of hours or as "hrs:min"
-                phase = new Phase(phProject, ((Long) lazyForm.get("phase_duration", i)).longValue());
+                // just number of hours or as "hrs:min", also check the untis of measure
+                phase = new Phase(phProject, ((Integer) lazyForm.get("phase_duration", i)).longValue());
                 // Add it to Phases Project
                 phProject.addPhase(phase);
             }  else {
-                Long phaseId = (Long) lazyForm.get("phase_id", i);
-                if (phaseId.longValue() != -1) {
+                long phaseId = ((Long) lazyForm.get("phase_id", i)).longValue();
+                if (phaseId != -1) {
                     // Retrieve the phase with the specified id
-                    phase = ActionsHelper.findPhaseById(phases, phaseId);
+                    phase = ActionsHelper.findPhaseById(oldPhases, phaseId);
                 } else {
                     // -1 value as id marks the phases that were't persisted in DB yet
                     // and so should be skipped for actions other then "add"
@@ -434,11 +443,14 @@ public class ProjectActions extends DispatchAction {
              */
             
             // Set phase type
-            phase.setPhaseType(ActionsHelper.findPhaseTypeById(allPhaseTypes, phaseTypes[i]));
+            phase.setPhaseType(ActionsHelper.findPhaseTypeById(allPhaseTypes, phaseTypes[i].longValue()));
+            // Set phase status to "Scheduled"
+            // TODO: For Edit Project will differ probably
+            phase.setPhaseStatus(scheduledStatus);
             
             try {
                 // If phase is not started by other phase end
-                if (Boolean.FALSE.equals(lazyForm.get("phase_start_by_phase"))) {
+                if (Boolean.FALSE.equals(lazyForm.get("phase_start_by_phase", i))) {
                     // Get phase start date from form
                     Date phaseStartDate = parseDatetimeFormProperties(lazyForm, i, "phase_start_date",
                             "phase_start_time", "phase_start_AMPM");
@@ -455,6 +467,7 @@ public class ProjectActions extends DispatchAction {
                 // Set sheduled phase end date
                 phase.setScheduledEndDate(phaseEndDate);
             } catch (ParseException e) {
+                e.printStackTrace();
                 // TODO: handle exception
                 // Actually will be an unreal situation when form validation is
                 // configured properly
@@ -489,7 +502,7 @@ public class ProjectActions extends DispatchAction {
         String fullDate = dateString + " " + timeString + " " + ampmString;
         // Parse the date
         // TODO: Reuse the DateFormat instance instead of creating new ones
-        DateFormat dateFormat = new SimpleDateFormat("MM.dd.yy hh.mm a");
+        DateFormat dateFormat = new SimpleDateFormat("MM.dd.yy hh:mm aa");
         return dateFormat.parse(fullDate);
     }
 
