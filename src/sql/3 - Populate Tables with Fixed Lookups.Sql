@@ -31,6 +31,8 @@ INSERT INTO project_category_lu(project_category_id, project_type_id, name, desc
   VALUES(13, 2, 'Testing Competition', 'Testing Competition', 'System', CURRENT, 'System', CURRENT);
 INSERT INTO project_category_lu(project_category_id, project_type_id, name, description, create_user, create_date, modify_user, modify_date)
   VALUES(14, 2, 'Assembly Competition', 'Assembly Competition', 'System', CURRENT, 'System', CURRENT);
+INSERT INTO project_category_lu(project_category_id, project_type_id, name, description, create_user, create_date, modify_user, modify_date)
+  VALUES(15, 2, 'Legacy', 'Legacy', 'System', CURRENT, 'System', CURRENT);
 
 INSERT INTO scorecard_type_lu(scorecard_type_id, name, description, create_user, create_date, modify_user, modify_date)
   VALUES(1, 'Screening', 'Screening', 'System', CURRENT, 'System', CURRENT);
