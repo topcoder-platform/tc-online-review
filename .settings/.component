@@ -13,9 +13,6 @@
     <dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/review/lib/tcs/base_exception/1.0/base_exception.jar">
       <dependency-type>uses</dependency-type>
     </dependent-module>
-    <dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/review/lib/tcs/chart_data_structure/1.1/chart_data_structure.jar">
-      <dependency-type>uses</dependency-type>
-    </dependent-module>
     <dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/review/lib/tcs/class_associations/1.0/class_associations.jar">
       <dependency-type>uses</dependency-type>
     </dependent-module>
@@ -37,9 +34,6 @@
     <dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/review/lib/tcs/deliverable_management_persistence/1.0/deliverable_management_persistence.jar">
       <dependency-type>uses</dependency-type>
     </dependent-module>
-    <dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/review/lib/tcs/gantt_chart/1.0/gantt_chart.jar">
-      <dependency-type>uses</dependency-type>
-    </dependent-module>
     <dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/review/lib/tcs/id_generator/3.0/id_generator.jar">
       <dependency-type>uses</dependency-type>
     </dependent-module>
@@ -55,7 +49,7 @@
     <dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/review/lib/tcs/online_review_login/1.0/online_review_login.jar">
       <dependency-type>uses</dependency-type>
     </dependent-module>
-    <dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/review/lib/tcs/phase_management/1.0/phase_management.jar">
+    <dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/review/lib/tcs/phase_management/1.0.1/phase_management.jar">
       <dependency-type>uses</dependency-type>
     </dependent-module>
     <dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/review/lib/tcs/phase_management_persistence/1.0/phase_management_persistence.jar">
