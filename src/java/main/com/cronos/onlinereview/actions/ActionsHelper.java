@@ -3,7 +3,9 @@
  */
 package com.cronos.onlinereview.actions;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -398,22 +400,49 @@ class ActionsHelper {
     }
 
     /**
-     * This static method searches for the phase status with the specified name in a provided array of
-     * phase statuses. The search is case-insensitive.
+     * This static method searches for the phase status with the specified ID in a provided array of
+     * phase statuses.
      *
-     * @return found phase status, or <code>null</code> if a status with the specified name has not been
-     *         found in the provided array of phase statuses.
+     * @return found phase status, or <code>null</code> if a status with the specified ID has not
+     *         been found in the provided array of phase statuses.
+     * @param phaseStatuses
+     *            an array of phase statuses to search for wanted phase status among.
+     * @param phaseStatusId
+     *            the ID of the needed phase status.
+     * @throws IllegalArgumentException
+     *             if <code>phaseStatuses</code> parameter is <code>null</code>, or
+     *             <code>phaseStatusId</code> parameter is zero or negative.
+     */
+    public static PhaseStatus findPhaseStatusById(PhaseStatus[] phaseStatuses, long phaseStatusId) {
+        // Validate parameters
+        validateParameterNotNull(phaseStatuses, "phaseStatuses");
+        validateParameterPositive(phaseStatusId, "phaseStatusId");
+
+        for (int i = 0; i < phaseStatuses.length; ++i) {
+            if (phaseStatuses[i].getId() == phaseStatusId) {
+                return phaseStatuses[i];
+            }
+        }
+        return null;
+    }
+
+    /**
+     * This static method searches for the phase status with the specified name in a provided array
+     * of phase statuses. The search is case-insensitive.
+     *
+     * @return found phase status, or <code>null</code> if a status with the specified name has
+     *         not been found in the provided array of phase statuses.
      * @param phaseStatuses
      *            an array of phase statuses to search for wanted phase status among.
      * @param phaseStatusName
      *            the name of the needed phase status.
      * @throws IllegalArgumentException
-     *             if any of the parameters are <code>null</code>, or <code>phaseStatusName</code>
-     *             parameter is empty string.
+     *             if any of the parameters are <code>null</code>, or
+     *             <code>phaseStatusName</code> parameter is empty string.
      */
     public static PhaseStatus findPhaseStatusByName(PhaseStatus[] phaseStatuses, String phaseStatusName) {
         // Validate parameters
-        validateParameterNotNull(phaseStatuses, "phasestatuses");
+        validateParameterNotNull(phaseStatuses, "phaseStatuses");
         validateParameterStringNotEmpty(phaseStatusName, "phaseStatusName");
 
         for (int i = 0; i < phaseStatuses.length; ++i) {
@@ -516,6 +545,60 @@ class ActionsHelper {
         request.setAttribute("rootCatalogIcon", rootCatalogIcon);
         // Place the name of the Root Catalog for the current project into request
         request.setAttribute("rootCatalogName", rootCatalogName);
+    }
+
+    /**
+     * This static member function examines an array of supplied resources and forms a string that
+     * specifies the roles based on the roles the resources in the array have. All roles in the
+     * array are supposed to be assigned to the same external user, although the check of meeting
+     * that condition is not perforemd by this method.
+     *
+     * @return a string with the role(s) the resource from the specified array have. If there are
+     *         more than one role, the roles will be separated by forward slash(<code>/</code>)
+     *         character.
+     * @param messages
+     *            a message resources used to retrieve localized names of roles.
+     * @param resources
+     *            an array specifying the resources to examine.
+     * @throws IllegalArgumentException
+     *             if any of the parameters are <code>null</code>.
+     */
+    public static String determineMyRoles(MessageResources messages, Resource[] resources) {
+        // Validate parameter
+        validateParameterNotNull(messages, "messages");
+        validateParameterNotNull(resources, "resources");
+
+        List roleNames = new ArrayList();
+        // Add induvidual roles to the list
+        for (int i = 0; i < resources.length; ++i) {
+            String roleName = resources[i].getResourceRole().getName();
+            // Do not add the same role twice
+            if (!roleNames.contains(roleName)) {
+                roleNames.add(roleName);
+            }
+        }
+
+        // If a list is empty, than the user either
+        // is not logged in or belongs to the Public group
+        if (roleNames.isEmpty()) {
+            roleNames.add(Constants.PUBLIC_ROLE_NAME);
+        }
+        // Avoid unneeded object creation of the list contains single item
+        if (roleNames.size() == 1) {
+            return messages.getMessage("ResourceRole." + ((String) roleNames.get(0)).replaceAll(" ", ""));
+        }
+
+        StringBuffer roles = new StringBuffer(32);
+
+        // Form a string with roles separated by forward slash character
+        for (int i = 0; i < roleNames.size(); ++i) {
+            if (roles.length() != 0) {
+                roles.append('/');
+            }
+            roles.append(messages.getMessage("ResourceRole." + ((String) roleNames.get(i)).replaceAll(" ", "")));
+        }
+        // Return the resulting string
+        return roles.toString();
     }
 
     /**
@@ -1073,5 +1156,4 @@ class ActionsHelper {
 
         searchBundle.setSearchableFields(fields);
     }
-
 }
