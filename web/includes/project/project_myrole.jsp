@@ -1,4 +1,25 @@
 <%@ page language="java" isELIgnored="false" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<%@ taglib prefix="bean" uri="/tags/struts-bean" %>
+	<table class="scorecard" style="border-collapse:collapse;" cellpadding="0" cellspacing="0" width="100%">
+		<tr>
+			<td class="title"><bean:message key="viewProjectDetails.box.MyRole" /></td>
+			<td class="title"><bean:message key="viewProjectDetails.box.MyDeliverabes" /></td>
+			<td class="title"><bean:message key="viewProjectDetails.box.OutstandingDeliverabes" /></td>
+		</tr>
+		<tr class="light">
+			<td class="value" width="15%" align="left">
+				<b>${myRole}</b><br />
+				<b>Payment: </b>N/A</td>
+			<td class="value" width="45%" align="left" nowrap="nowrap">00.00.0000 00:00 AM <b>Approval</b></td>
+			<td class="value" width="40%" align="left" nowrap="nowrap">There are no outstanding deliverables.</td>
+		</tr>
+		<tr>
+			<td class="lastRowTD" colspan="3"><!-- @ --></td>
+		</tr>
+	</table><br />
+<%--
 <%
 	int phaseIndex = ((Integer)request.getAttribute("phaseIndex")).intValue();
 	String role = (String)request.getAttribute("role");
@@ -6,16 +27,16 @@
 	if (phaseIndex == 1) {
 		if (role.equalsIgnoreCase("manager")) {
 %>
-				<table class="scorecard" style="border-collapse: collapse;"cellpadding="0" cellspacing="0" width="100%">
+				<table class="scorecard" style="border-collapse:collapse;" cellpadding="0" cellspacing="0" width="100%">
 					<tr>
 						<td class="title">
 							<b>My Role</b></td><td class="title"><b>My Deliverables</b></td><td class="title"><b>Outstanding Deliverables:</b>
 						</td>
 					</tr>
 					<tr class="light">
-						<td class="value" width="15%" align="left"><b>Manager/Approver<br>Payment: </b>N/A</td>
-						<td class="value" width="45%" align="left" nowrap>00.00.0000 00:00 AM <b>Approval</b></td>
-						<td class="value" width="40%" align="left" nowrap>There are no outstanding deliverables.</td>
+						<td class="value" width="15%" align="left"><b>${myRole}<br />Payment: </b>N/A</td>
+						<td class="value" width="45%" align="left" nowrap="nowrap">00.00.0000 00:00 AM <b>Approval</b></td>
+						<td class="value" width="40%" align="left" nowrap="nowrap">There are no outstanding deliverables.</td>
 					</tr>
 					<tr>
 						<td class="lastRowTD" colspan="3"></td>
@@ -590,4 +611,5 @@
 <%
 		}
 	}
-%><br />
+%>
+--%>
