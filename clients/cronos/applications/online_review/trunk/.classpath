@@ -8,7 +8,6 @@
 	<classpathentry kind="con" path="org.eclipse.jst.j2ee.internal.web.container" />
 	<classpathentry exported="true" kind="lib" path="lib/tcs/authentication_factory/2.0/authentication_factory.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/tcs/base_exception/1.0/base_exception.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/tcs/chart_data_structure/1.1/chart_data_structure.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/tcs/class_associations/1.0/class_associations.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/tcs/configuration_manager/2.1.4/configuration_manager.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/tcs/database_abstraction/1.1/database_abstraction.jar"/>
@@ -16,13 +15,12 @@
 	<classpathentry exported="true" kind="lib" path="lib/tcs/db_connection_factory/1.0/db_connection_factory.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/tcs/deliverable_management/1.0/deliverable_management.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/tcs/deliverable_management_persistence/1.0/deliverable_management_persistence.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/tcs/gantt_chart/1.0/gantt_chart.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/tcs/id_generator/3.0/id_generator.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/tcs/JNDI_Utility/1.0/JNDI_Utility.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/tcs/logging_wrapper/1.2/logging_wrapper.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/tcs/object_factory/2.0/object_factory.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/tcs/online_review_login/1.0/online_review_login.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/tcs/phase_management/1.0/phase_management.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/tcs/phase_management/1.0.1/phase_management.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/tcs/phase_management_persistence/1.0/phase_management_persistence.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/tcs/project_management/1.0/project_management.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/tcs/project_management_persistence/1.0/project_management_persistence.jar"/>
