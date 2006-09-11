@@ -182,9 +182,9 @@ public class ProjectReviewActions extends DispatchAction {
         CommentType reviewCommentTypesAll[] = revMgr.getAllCommentTypes();
         // Select only those needed for this scorecard
         CommentType reviewCommentTypes[] = new CommentType[] {
-                findCommentTypeByName(reviewCommentTypesAll, "Comment"),
-                findCommentTypeByName(reviewCommentTypesAll, "Required"),
-                findCommentTypeByName(reviewCommentTypesAll, "Recommended") };
+                ActionsHelper.findCommentTypeByName(reviewCommentTypesAll, "Comment"),
+                ActionsHelper.findCommentTypeByName(reviewCommentTypesAll, "Required"),
+                ActionsHelper.findCommentTypeByName(reviewCommentTypesAll, "Recommended") };
 
         // Place comment types in the request
         request.setAttribute("allCommentTypes", reviewCommentTypes);
@@ -206,7 +206,7 @@ public class ProjectReviewActions extends DispatchAction {
         reviewForm.set("comment", emptyStrings.clone());
 
         Long[] commentTypes = new Long[questionsCount];
-        CommentType typeComment = findCommentTypeByName(reviewCommentTypesAll, "Comment");
+        CommentType typeComment = ActionsHelper.findCommentTypeByName(reviewCommentTypesAll, "Comment");
 
         Arrays.fill(commentTypes, new Long(typeComment.getId()));
         reviewForm.set("commentType", commentTypes);
@@ -283,9 +283,9 @@ public class ProjectReviewActions extends DispatchAction {
         CommentType reviewCommentTypesAll[] = revMgr.getAllCommentTypes();
         // Select only those needed for this scorecard
         CommentType reviewCommentTypes[] = new CommentType[] {
-                findCommentTypeByName(reviewCommentTypesAll, "Comment"),
-                findCommentTypeByName(reviewCommentTypesAll, "Required"),
-                findCommentTypeByName(reviewCommentTypesAll, "Recommended") };
+                ActionsHelper.findCommentTypeByName(reviewCommentTypesAll, "Comment"),
+                ActionsHelper.findCommentTypeByName(reviewCommentTypesAll, "Required"),
+                ActionsHelper.findCommentTypeByName(reviewCommentTypesAll, "Recommended") };
 
         // Place comment types in the request
         request.setAttribute("allCommentTypes", reviewCommentTypes);
@@ -477,7 +477,8 @@ public class ProjectReviewActions extends DispatchAction {
                         // Set required fields of the comment
                         comment.setAuthor(resource.getId());
                         comment.setComment(replies[index]);
-                        comment.setCommentType(findCommentTypeById(commentTypes, commentTypeIds[i].longValue()));
+                        comment.setCommentType(
+                                ActionsHelper.findCommentTypeById(commentTypes, commentTypeIds[i].longValue()));
                         // Add comment to the item
                         item.addComment(comment);
 
@@ -509,7 +510,8 @@ public class ProjectReviewActions extends DispatchAction {
                 if (comment.getCommentType().getId() != commentTypeIds[i].longValue() ||
                         !comment.getComment().equals(replies[i])) {
                     comment.setComment(replies[i]);
-                    comment.setCommentType(findCommentTypeById(commentTypes, commentTypeIds[i].longValue()));
+                    comment.setCommentType(
+                            ActionsHelper.findCommentTypeById(commentTypes, commentTypeIds[i].longValue()));
                     // Update the author of the comment
                     comment.setAuthor(resource.getId());
                 }
@@ -706,9 +708,9 @@ public class ProjectReviewActions extends DispatchAction {
         CommentType reviewCommentTypesAll[] = revMgr.getAllCommentTypes();
         // Select only those needed for this scorecard
         CommentType reviewCommentTypes[] = new CommentType[] {
-                findCommentTypeByName(reviewCommentTypesAll, "Comment"),
-                findCommentTypeByName(reviewCommentTypesAll, "Required"),
-                findCommentTypeByName(reviewCommentTypesAll, "Recommended") };
+                ActionsHelper.findCommentTypeByName(reviewCommentTypesAll, "Comment"),
+                ActionsHelper.findCommentTypeByName(reviewCommentTypesAll, "Required"),
+                ActionsHelper.findCommentTypeByName(reviewCommentTypesAll, "Recommended") };
 
         // Place comment types in the request
         request.setAttribute("allCommentTypes", reviewCommentTypes);
@@ -730,7 +732,7 @@ public class ProjectReviewActions extends DispatchAction {
         reviewForm.set("comment", emptyStrings.clone());
 
         Long[] commentTypes = new Long[questionsCount];
-        CommentType typeComment = findCommentTypeByName(reviewCommentTypesAll, "Comment");
+        CommentType typeComment = ActionsHelper.findCommentTypeByName(reviewCommentTypesAll, "Comment");
 
         Arrays.fill(commentTypes, new Long(typeComment.getId()));
         reviewForm.set("commentType", commentTypes);
@@ -807,9 +809,9 @@ public class ProjectReviewActions extends DispatchAction {
         CommentType reviewCommentTypesAll[] = revMgr.getAllCommentTypes();
         // Select only those needed for this scorecard
         CommentType reviewCommentTypes[] = new CommentType[] {
-                findCommentTypeByName(reviewCommentTypesAll, "Comment"),
-                findCommentTypeByName(reviewCommentTypesAll, "Required"),
-                findCommentTypeByName(reviewCommentTypesAll, "Recommended") };
+                ActionsHelper.findCommentTypeByName(reviewCommentTypesAll, "Comment"),
+                ActionsHelper.findCommentTypeByName(reviewCommentTypesAll, "Required"),
+                ActionsHelper.findCommentTypeByName(reviewCommentTypesAll, "Recommended") };
 
         // Place comment types in the request
         request.setAttribute("allCommentTypes", reviewCommentTypes);
@@ -1001,7 +1003,8 @@ public class ProjectReviewActions extends DispatchAction {
                         // Set required fields of the comment
                         comment.setAuthor(resource.getId());
                         comment.setComment(replies[index]);
-                        comment.setCommentType(findCommentTypeById(commentTypes, commentTypeIds[i].longValue()));
+                        comment.setCommentType(
+                                ActionsHelper.findCommentTypeById(commentTypes, commentTypeIds[i].longValue()));
                         // Add comment to the item
                         item.addComment(comment);
 
@@ -1033,7 +1036,8 @@ public class ProjectReviewActions extends DispatchAction {
                 if (comment.getCommentType().getId() != commentTypeIds[i].longValue() ||
                         !comment.getComment().equals(replies[i])) {
                     comment.setComment(replies[i]);
-                    comment.setCommentType(findCommentTypeById(commentTypes, commentTypeIds[i].longValue()));
+                    comment.setCommentType(
+                            ActionsHelper.findCommentTypeById(commentTypes, commentTypeIds[i].longValue()));
                     // Update the author of the comment
                     comment.setAuthor(resource.getId());
                 }
@@ -1507,9 +1511,9 @@ public class ProjectReviewActions extends DispatchAction {
         CommentType reviewCommentTypesAll[] = revMgr.getAllCommentTypes();
         // Select only those needed for this scorecard
         CommentType reviewCommentTypes[] = new CommentType[] {
-                findCommentTypeByName(reviewCommentTypesAll, "Comment"),
-                findCommentTypeByName(reviewCommentTypesAll, "Required"),
-                findCommentTypeByName(reviewCommentTypesAll, "Recommended") };
+                ActionsHelper.findCommentTypeByName(reviewCommentTypesAll, "Comment"),
+                ActionsHelper.findCommentTypeByName(reviewCommentTypesAll, "Required"),
+                ActionsHelper.findCommentTypeByName(reviewCommentTypesAll, "Recommended") };
 
         // Place comment types in the request
         request.setAttribute("allCommentTypes", reviewCommentTypes);
@@ -1531,7 +1535,7 @@ public class ProjectReviewActions extends DispatchAction {
         reviewForm.set("comment", emptyStrings.clone());
 
         Long[] commentTypes = new Long[questionsCount];
-        CommentType typeComment = findCommentTypeByName(reviewCommentTypesAll, "Comment");
+        CommentType typeComment = ActionsHelper.findCommentTypeByName(reviewCommentTypesAll, "Comment");
 
         Arrays.fill(commentTypes, new Long(typeComment.getId()));
         reviewForm.set("commentType", commentTypes);
@@ -1608,9 +1612,9 @@ public class ProjectReviewActions extends DispatchAction {
         CommentType reviewCommentTypesAll[] = revMgr.getAllCommentTypes();
         // Select only those needed for this scorecard
         CommentType reviewCommentTypes[] = new CommentType[] {
-                findCommentTypeByName(reviewCommentTypesAll, "Comment"),
-                findCommentTypeByName(reviewCommentTypesAll, "Required"),
-                findCommentTypeByName(reviewCommentTypesAll, "Recommended") };
+                ActionsHelper.findCommentTypeByName(reviewCommentTypesAll, "Comment"),
+                ActionsHelper.findCommentTypeByName(reviewCommentTypesAll, "Required"),
+                ActionsHelper.findCommentTypeByName(reviewCommentTypesAll, "Recommended") };
 
         // Place comment types in the request
         request.setAttribute("allCommentTypes", reviewCommentTypes);
@@ -1802,7 +1806,8 @@ public class ProjectReviewActions extends DispatchAction {
                         // Set required fields of the comment
                         comment.setAuthor(resource.getId());
                         comment.setComment(replies[index]);
-                        comment.setCommentType(findCommentTypeById(commentTypes, commentTypeIds[i].longValue()));
+                        comment.setCommentType(
+                                ActionsHelper.findCommentTypeById(commentTypes, commentTypeIds[i].longValue()));
                         // Add comment to the item
                         item.addComment(comment);
 
@@ -1834,7 +1839,8 @@ public class ProjectReviewActions extends DispatchAction {
                 if (comment.getCommentType().getId() != commentTypeIds[i].longValue() ||
                         !comment.getComment().equals(replies[i])) {
                     comment.setComment(replies[i]);
-                    comment.setCommentType(findCommentTypeById(commentTypes, commentTypeIds[i].longValue()));
+                    comment.setCommentType(
+                            ActionsHelper.findCommentTypeById(commentTypes, commentTypeIds[i].longValue()));
                     // Update the author of the comment
                     comment.setAuthor(resource.getId());
                 }
@@ -2291,45 +2297,5 @@ public class ProjectReviewActions extends DispatchAction {
         request.setAttribute("errorMessage", messages.getMessage(reasonKey));
         // Find appropriate forward and return it
         return mapping.findForward(Constants.USER_ERRROR_FORWARD_NAME);
-    }
-
-    /**
-     * This static method helps to find certain comment type in the provided array of comment types
-     * by its name.
-     *
-     * @return found comment type, or <code>null</code> if the comment type with specified name
-     *         was not found.
-     * @param commentTypes
-     *            the array of comment types.
-     * @param name
-     *            the name of the needed comment type.
-     */
-    private static CommentType findCommentTypeByName(CommentType[] commentTypes, String name) {
-        for (int i = 0; i < commentTypes.length; ++i) {
-            if (commentTypes[i].getName().equalsIgnoreCase(name)) {
-                return commentTypes[i];
-            }
-        }
-        return null;
-    }
-
-    /**
-     * This static method helps to find certain comment type in the provided array of comment types
-     * by its id.
-     *
-     * @return found comment type, or <code>null</code> if the comment type with specified id was
-     *         not found.
-     * @param commentTypes
-     *            the array of comment types.
-     * @param id
-     *            the id of the needed comment type.
-     */
-    private static CommentType findCommentTypeById(CommentType[] commentTypes, long id) {
-        for (int i = 0; i < commentTypes.length; ++i) {
-            if (commentTypes[i].getId() == id) {
-                return commentTypes[i];
-            }
-        }
-        return null;
     }
 }
