@@ -98,6 +98,10 @@ public class ProjectDetailsActions extends DispatchAction {
         // Retrieve some basic project info (such as icons' names) and place it into request
         ActionsHelper.retrieveAndStoreBasicProjectInfo(request, project, messages);
 
+        Resource[] myResources = (Resource[]) request.getAttribute("myResources");
+
+        request.setAttribute("myRole",ActionsHelper.determineMyRoles(getResources(request), myResources));
+
         // Obtain an instance of Phase Manager
         PhaseManager phaseMgr = ActionsHelper.createPhaseManager(request);
 
