@@ -37,6 +37,7 @@ import com.topcoder.management.resource.search.ResourceFilterBuilder;
 import com.topcoder.management.resource.search.ResourceRoleFilterBuilder;
 import com.topcoder.management.review.DefaultReviewManager;
 import com.topcoder.management.review.ReviewManager;
+import com.topcoder.management.review.data.CommentType;
 import com.topcoder.management.scorecard.PersistenceException;
 import com.topcoder.management.scorecard.ScorecardManager;
 import com.topcoder.management.scorecard.ScorecardManagerImpl;
@@ -70,6 +71,9 @@ class ActionsHelper {
      */
     private ActionsHelper() {
     }
+
+
+    // ------------------------------------------------------------ Validator type of methods -----
 
     /**
      * This static method validates that parameter specified by <code>param</code> parameter is
@@ -128,7 +132,7 @@ class ActionsHelper {
     /**
      * This static method converts all line terminators found in the provided text into
      * <code>&lt;br /&gt;</code> tag, so the resulting converted text can be displayed on a JSP
-     * page.  The line terminators are the ones specified in the description of the class
+     * page. The line terminators are the ones specified in the description of the class
      * <code>java.util.regex.Pattern</code>.
      * <p>
      * This class is thread safe as it contains only static methods and no inner state.
@@ -140,6 +144,256 @@ class ActionsHelper {
      */
     public static String addLineBreaks(String text) {
         return text.replaceAll("(\r\n)|[\n\r\u0085\u2029]", "<br />");
+    }
+
+
+    // --------------------------------------------------------------- Finder type of methods -----
+
+    /**
+     * This static method searches for the comment type with the specified ID in a provided array of
+     * comment types.
+     *
+     * @return found comment type, or <code>null</code> if a type with the specified ID has not
+     *         been found in the provided array of comment types.
+     * @param projectCategories
+     *            an array of comment types to search for wanted comment type among.
+     * @param typeId
+     *            the ID of the needed comment type.
+     * @throws IllegalArgumentException
+     *             if <code>commentTypes</code> parameter is <code>null</code>, or
+     *             <code>typeId</code> parameter is zero or negative.
+     */
+    public static CommentType findCommentTypeById(CommentType[] commentTypes, long typeId) {
+        // Validate parameters
+        validateParameterNotNull(commentTypes, "commentTypes");
+        validateParameterPositive(typeId, "typeId");
+
+        for (int i = 0; i < commentTypes.length; ++i) {
+            if (commentTypes[i].getId() == typeId) {
+                return commentTypes[i];
+            }
+        }
+        return null;
+    }
+
+    /**
+     * This static method searches for the comment type with the specified name in a provided array
+     * of comment types. The search is case-insensitive.
+     *
+     * @return found comment type, or <code>null</code> if a type with the specified name has not
+     *         been found in the provided array of comment types.
+     * @param projectCategories
+     *            an array of comment types to search for wanted comment type among.
+     * @param typeId
+     *            the name of the needed comment type.
+     * @throws IllegalArgumentException
+     *             if any of the parameters are <code>null</code>, or <code>typeName</code>
+     *             parameter is empty string.
+     */
+    public static CommentType findCommentTypeByName(CommentType[] commentTypes, String typeName) {
+        // Validate parameters
+        validateParameterNotNull(commentTypes, "commentTypes");
+        validateParameterStringNotEmpty(typeName, "typeName");
+
+        for (int i = 0; i < commentTypes.length; ++i) {
+            if (commentTypes[i].getName().equalsIgnoreCase(typeName)) {
+                return commentTypes[i];
+            }
+        }
+        return null;
+    }
+
+    /**
+     * This static method searches for the project category with the specified ID in a provided
+     * array of project categories.
+     *
+     * @return found project category, or <code>null</code> if a category with the specified ID
+     *         has not been found in the provided array of project categories.
+     * @param projectCategories
+     *            an array of project categories to search for wanted project category among.
+     * @param categoryId
+     *            the ID of the needed project category.
+     * @throws IllegalArgumentException
+     *             if <code>projectCategories</code> parameter is <code>null</code>, or
+     *             <code>categoryId</code> parameter is zero or negative.
+     * @see #findProjectCategoryByName(ProjectCategory[], String)
+     */
+    public static ProjectCategory findProjectCategoryById(ProjectCategory[] projectCategories, long categoryId) {
+        // Validate parameters
+        validateParameterNotNull(projectCategories, "projectCategories");
+        validateParameterPositive(categoryId, "categoryId");
+
+        for (int i = 0; i < projectCategories.length; ++i) {
+            if (projectCategories[i].getId() == categoryId) {
+                return projectCategories[i];
+            }
+        }
+        return null;
+    }
+
+    /**
+     * This static method searches for the project category with the specified name in a provided
+     * array of project categories. The search is case-insensitive.
+     *
+     * @return found project category, or <code>null</code> if a category with the specified name
+     *         has not been found in the provided array of project categories.
+     * @param projectCategories
+     *            an array of project categories to search for wanted project category among.
+     * @param categoryName
+     *            the name of the needed project category.
+     * @throws IllegalArgumentException
+     *             if any of the parameters are <code>null</code>, or <code>categoryName</code>
+     *             parameter is empty string.
+     * @see #findProjectCategoryById(ProjectCategory[], long)
+     */
+    public static ProjectCategory findProjectCategoryByName(ProjectCategory[] projectCategories, String categoryName) {
+        // Validate parameters
+        validateParameterNotNull(projectCategories, "projectCategories");
+        validateParameterStringNotEmpty(categoryName, "categoryName");
+
+        for (int i = 0; i < projectCategories.length; ++i) {
+            if (projectCategories[i].getName().equalsIgnoreCase(categoryName)) {
+                return projectCategories[i];
+            }
+        }
+        return null;
+    }
+
+    /**
+     * This static method searches for the project status with the specified ID in a provided array
+     * of project statuses.
+     *
+     * @return found project status, or <code>null</code> if a status with the specified ID has
+     *         not been found in the provided array of project statuses.
+     * @param projectStatuses
+     *            an array of project statuses to search for wanted project status among.
+     * @param statusId
+     *            the ID of the needed project status.
+     * @throws IllegalArgumentException
+     *             if <code>projectStatuses</code> parameter is <code>null</code>, or
+     *             <code>statusId</code> parameter is zero or negative.
+     * @see #findProjectStatusByName(ProjectStatus[], String)
+     */
+    public static ProjectStatus findProjectStatusById(ProjectStatus[] projectStatuses, long statusId) {
+        // Validate parameters
+        validateParameterNotNull(projectStatuses, "projectStatuses");
+        validateParameterPositive(statusId, "statusId");
+
+        for (int i = 0; i < projectStatuses.length; ++i) {
+            if (projectStatuses[i].getId() == statusId) {
+                return projectStatuses[i];
+            }
+        }
+        return null;
+    }
+
+    /**
+     * This static method searches for the project status with the specified name in a provided
+     * array of project statuses. The search is case-insensitive.
+     *
+     * @return found project status, or <code>null</code> if a status with the specified name has
+     *         not been found in the provided array of project statuses.
+     * @param projectStatuses
+     *            an array of project statuses to search for wanted project status among.
+     * @param statusName
+     *            the name of the needed project status.
+     * @throws IllegalArgumentException
+     *             if any of the parameters are <code>null</code>, or <code>statusName</code>
+     *             parameter is empty string.
+     * @see #findProjectStatusById(ProjectStatus[], long)
+     */
+    public static ProjectStatus findProjectStatusByName(ProjectStatus[] projectStatuses, String statusName) {
+        // Validate parameters
+        validateParameterNotNull(projectStatuses, "projectStatuses");
+        validateParameterStringNotEmpty(statusName, "statusName");
+
+        for (int i = 0; i < projectStatuses.length; ++i) {
+            if (projectStatuses[i].getName().equalsIgnoreCase(statusName)) {
+                return projectStatuses[i];
+            }
+        }
+        return null;
+    }
+
+    /**
+     * This static method searches for the project phase with the specified ID in a provided array
+     * of project phases.
+     *
+     * @return found project phase, or <code>null</code> if a phase with the specified ID has not
+     *         been found in the provided array of project phases.
+     * @param phases
+     *            an array of project phases to search for wanted project phase among.
+     * @param phaseId
+     *            the ID of the needed project phase.
+     * @throws IllegalArgumentException
+     *             if <code>phases</code> parameter is <code>null</code>, or
+     *             <code>phaseId</code> parameter is zero or negative.
+     */
+    public static Phase findPhaseById(Phase[] phases, long phaseId) {
+        // Validate parameters
+        validateParameterNotNull(phases, "phases");
+        validateParameterPositive(phaseId, "phaseId");
+
+        for (int i = 0; i < phases.length; ++i) {
+            if (phases[i].getId() == phaseId) {
+                return phases[i];
+            }
+        }
+        return null;
+    }
+
+    /**
+     * This static method searches for the phase type with the specified ID in a provided array of
+     * phase types.
+     *
+     * @return found phase type, or <code>null</code> if a type with the specified ID has not been
+     *         found in the provided array of phase types.
+     * @param phases
+     *            an array of phase types to search for wanted phase type among.
+     * @param phaseId
+     *            the ID of the needed phase type.
+     * @throws IllegalArgumentException
+     *             if <code>phaseTypes</code> parameter is <code>null</code>, or
+     *             <code>phaseTypeId</code> parameter is zero or negative.
+     */
+    public static PhaseType findPhaseTypeById(PhaseType[] phaseTypes, long phaseTypeId) {
+        // Validate parameters
+        validateParameterNotNull(phaseTypes, "phaseTypes");
+        validateParameterPositive(phaseTypeId, "phaseTypeId");
+
+        for (int i = 0; i < phaseTypes.length; ++i) {
+            if (phaseTypes[i].getId() == phaseTypeId) {
+                return phaseTypes[i];
+            }
+        }
+        return null;
+    }
+
+    /**
+     * This static method searches for the phase type with the specified name in a provided array of
+     * phase types. The search is case-insensitive.
+     *
+     * @return found phase type, or <code>null</code> if a type with the specified name has not been
+     *         found in the provided array of phase types.
+     * @param phases
+     *            an array of phase types to search for wanted phase type among.
+     * @param phaseId
+     *            the name of the needed phase type.
+     * @throws IllegalArgumentException
+     *             if any of the parameters are <code>null</code>, or <code>phaseTypeName</code>
+     *             parameter is empty string.
+     */
+    public static PhaseType findPhaseTypeByName(PhaseType[] phaseTypes, String phaseTypeName) {
+        // Validate parameters
+        validateParameterNotNull(phaseTypes, "phaseTypes");
+        validateParameterStringNotEmpty(phaseTypeName, "phaseTypeName");
+
+        for (int i = 0; i < phaseTypes.length; ++i) {
+            if (phaseTypes[i].getName().equalsIgnoreCase(phaseTypeName)) {
+                return phaseTypes[i];
+            }
+        }
+        return null;
     }
 
     /**
@@ -455,6 +709,9 @@ class ActionsHelper {
         // No "My" resource has been found for the specified phase
         return null;
     }
+
+
+    // -------------------------------------------------------------- Creator type of methods -----
 
     /**
      * This static method helps to create an object of the <code>PhaseManager</code> class.
@@ -787,72 +1044,5 @@ class ActionsHelper {
         fields.put(NotificationTypeFilterBuilder.NAME_FIELD_NAME, StringValidator.startsWith(""));
 
         searchBundle.setSearchableFields(fields);
-    }
-
-    /**
-     * TODO: Write docs
-     * 
-     * @param projectCategories
-     * @param id
-     * @return
-     */
-    public static ProjectCategory findProjectCategoryById(ProjectCategory[] projectCategories, Long id) {
-        for (int i = 0; i < projectCategories.length; i++) {
-            if (projectCategories[i].getId() == id.longValue()) {
-                return projectCategories[i];
-            }
-        }
-        
-        return null;
-    }
-
-    /**
-     * TODO: Write docs
-     * 
-     * @param projectStatuses
-     * @param name
-     * @return
-     */
-    public static ProjectStatus findProjectStatusByName(ProjectStatus[] projectStatuses, String name) {
-        for (int i = 0; i < projectStatuses.length; i++) {
-            if (projectStatuses[i].getName().equals(name)) {
-                return projectStatuses[i];
-            }
-        }
-        
-        return null;
-    }
-
-    /**
-     * TODO: Write docs
-     * 
-     * @param phases
-     * @param phaseId
-     * @return
-     */
-    public static Phase findPhaseById(Phase[] phases, Long phaseId) {
-        for (int i = 0; i < phases.length; i++) {
-            if (phases[i].getId() == phaseId.longValue()) {
-                return phases[i];
-            }
-        }
-        
-        return null;
-    }
-
-    /**
-     * TODO: Document it
-     * 
-     * @param phaseTypes
-     * @param phaseTypeId
-     * @return
-     */
-    public static PhaseType findPhaseTypeById(PhaseType[] phaseTypes, Long phaseTypeId) {
-        for (int i = 0; i < phaseTypes.length; i++) {
-            if (phaseTypes[i].getId() == phaseTypeId.longValue()) {
-                return phaseTypes[i];
-            }
-        }
-        return null;
     }
 }
