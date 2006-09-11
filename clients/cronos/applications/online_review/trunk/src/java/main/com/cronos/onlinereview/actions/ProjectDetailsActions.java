@@ -28,6 +28,7 @@ import com.topcoder.management.resource.Resource;
 import com.topcoder.management.resource.ResourceManager;
 import com.topcoder.management.resource.search.NotificationFilterBuilder;
 import com.topcoder.management.resource.search.ResourceFilterBuilder;
+import com.topcoder.management.scorecard.data.Scorecard;
 import com.topcoder.project.phases.Phase;
 import com.topcoder.search.builder.filter.AndFilter;
 import com.topcoder.search.builder.filter.Filter;
@@ -120,8 +121,10 @@ public class ProjectDetailsActions extends DispatchAction {
         // The following two arrays are used to display Gantt chart
         long[] ganttOffsets = new long[phases.length];
         long[] ganttLengths = new long[phases.length];
+        // List of scorecard templates used for this project
+        List scorecardTemplates = new ArrayList();
 
-        // Iterate over all phases determining dates and durations
+        // Iterate over all phases determining dates, durations and assigned scorecards
         for (int i = 0; i < phases.length; ++i) {
             // Get a phase for this iteration
             Phase phase = phases[i];
@@ -135,20 +138,35 @@ public class ProjectDetailsActions extends DispatchAction {
             displayedEnd[i] = format.format(endDate);
             originalEnd[i] = strOrigEndTime + format.format(phase.getScheduledEndDate());
 
-            // Determine offsets and lengths of the bars in Gantt chart
+            // Determine offsets and lengths of the bars in Gantt chart, in hours
             ganttOffsets[i] = (startDate.getTime() - projectStartTime) / (60 * 60 * 1000);
             ganttLengths[i] = (endDate.getTime() - startDate.getTime()) / (60 * 60 * 1000);
+
+            // Get a scorecard template associated with this phase if any
+            Scorecard scorecardTemplate = ActionsHelper.getScorecardTemplateForPhase(
+                    ActionsHelper.createScorecardManager(request), phase);
+            // If there is a scorecard template for the phase, store it in the list
+            if (scorecardTemplate != null) {
+                scorecardTemplates.add(scorecardTemplate);
+            }
         }
 
-        // Place all gathered information into the request as attribute
+        /*
+         * Place all gathered information about phases into the request as attributes
+         */
+
+        // Place phases' start/end dates
         request.setAttribute("displayedStart", displayedStart);
         request.setAttribute("displayedEnd", displayedEnd);
         request.setAttribute("originalStart", originalStart);
         request.setAttribute("originalEnd", originalEnd);
+        // Place phases durations for Gantt chart
         request.setAttribute("ganttOffsets", ganttOffsets);
         request.setAttribute("ganttLengths", ganttLengths);
         // Determine the amount of pixels to display in Gantt chart for every hour
         request.setAttribute("pixelsPerHour", ConfigHelper.getPixelsPerHour());
+        // Place information about used scorecard templates
+        request.setAttribute("scorecardTemplates", scorecardTemplates);
 
         // Obtain an instance of Resource Manager
         ResourceManager resMgr = ActionsHelper.createResourceManager(request);
@@ -206,6 +224,10 @@ public class ProjectDetailsActions extends DispatchAction {
         }
 
         request.setAttribute("sendTLNotifications", (sendTLNotifications) ? "On" : "Off");
+
+        // Check permissions
+        request.setAttribute("isAllowedToViewSVNLink",
+                new Boolean(AuthorizationHelper.hasUserPermission(request, Constants.VIEW_SVN_LINK_PERM_NAME)));
 
         return mapping.findForward(Constants.SUCCESS_FORWARD_NAME);
     }
