@@ -20,6 +20,7 @@ import org.apache.struts.util.MessageResources;
 
 import com.cronos.onlinereview.external.ExternalUser;
 import com.cronos.onlinereview.external.UserRetrieval;
+import com.topcoder.management.deliverable.Deliverable;
 import com.topcoder.management.phase.PhaseManager;
 import com.topcoder.management.project.Project;
 import com.topcoder.management.project.ProjectManager;
@@ -98,9 +99,14 @@ public class ProjectDetailsActions extends DispatchAction {
         // Retrieve some basic project info (such as icons' names) and place it into request
         ActionsHelper.retrieveAndStoreBasicProjectInfo(request, project, messages);
 
+        // Obtain an array of "my" resources
         Resource[] myResources = (Resource[]) request.getAttribute("myResources");
-
-        request.setAttribute("myRole",ActionsHelper.determineMyRoles(getResources(request), myResources));
+        // Place a string that represents "my" current role(s) into the request
+        request.setAttribute("myRole", ActionsHelper.determineMyRoles(getResources(request), myResources));
+        // Place an information about the amount of "my" payment into the request
+        request.setAttribute("myPayment", ActionsHelper.determineMyPayment(myResources));
+        // Place an information about my payment status into the request
+        request.setAttribute("wasPaid", ActionsHelper.determineMyPaymentPaid(myResources));
 
         // Obtain an instance of Phase Manager
         PhaseManager phaseMgr = ActionsHelper.createPhaseManager(request);
@@ -114,11 +120,72 @@ public class ProjectDetailsActions extends DispatchAction {
         // Place all phases of the project into the request
         request.setAttribute("phases", phases);
 
+        Deliverable[] deliverables = ActionsHelper.getAllDeliverablesForActivePhases(
+                request, ActionsHelper.createDeliverableManager(request));
+        Deliverable[] myDeliverables = ActionsHelper.getMyDeliverables(deliverables, myResources);
+        Deliverable[] outstandingDeliverables = ActionsHelper.getOutstandingDeliverables(deliverables);
+
+        request.setAttribute("myDeliverables", myDeliverables);
+        request.setAttribute("outstandingDeliverables", outstandingDeliverables);
+
+        Format format = new SimpleDateFormat("MM.dd.yyyy hh:mm a");
+        String[] myDeliverableDates = new String[myDeliverables.length];
+        String[] outstandingDeliverableDates = new String[outstandingDeliverables.length];
+        int[] myDeliverableStatuses = new int[myDeliverables.length];
+        int[] outstandingDeliverableStatuses = new int[outstandingDeliverables.length];
+
+        // Obtain an array of all active phases of the project
+        Phase[] activePhases = ActionsHelper.getActivePhases(phases);
+        long currentTime = (new Date()).getTime();
+
+        for (int i = 0; i < myDeliverables.length; ++i) {
+            Deliverable deliverable = myDeliverables[i];
+            if (deliverable.isComplete()) {
+                myDeliverableDates[i] = format.format(deliverable.getCompletionDate());
+                myDeliverableStatuses[i] = 0;
+            } else {
+                Phase phase = ActionsHelper.getPhaseForDeliverable(activePhases, deliverable);
+                myDeliverableDates[i] = format.format(phase.calcEndDate());
+
+                long deliverableTime = phase.calcEndDate().getTime();
+                if (currentTime > deliverableTime) {
+                    myDeliverableStatuses[i] = 2; // Late
+                } else if (currentTime + (2 * 60 * 60 * 1000) > deliverableTime) {
+                    myDeliverableStatuses[i] = 1; // Deadline near
+                } else {
+                    myDeliverableStatuses[i] = 0;
+                }
+            }
+        }
+        for (int i = 0; i < outstandingDeliverables.length; ++i) {
+            Deliverable deliverable = outstandingDeliverables[i];
+            if (deliverable.isComplete()) {
+                outstandingDeliverableDates[i] = format.format(deliverable.getCompletionDate());
+                outstandingDeliverableStatuses[i] = 0;
+            } else {
+                Phase phase = ActionsHelper.getPhaseForDeliverable(activePhases, deliverable);
+                outstandingDeliverableDates[i] = format.format(phase.calcEndDate());
+
+                long deliverableTime = phase.calcEndDate().getTime();
+                if (currentTime > deliverableTime) {
+                    outstandingDeliverableStatuses[i] = 2; // Late
+                } else if (currentTime + (2 * 60 * 60 * 1000) > deliverableTime) {
+                    outstandingDeliverableStatuses[i] = 1; // Deadline near
+                } else {
+                    outstandingDeliverableStatuses[i] = 0;
+                }
+            }
+        }
+
+        request.setAttribute("myDeliverableDates", myDeliverableDates);
+        request.setAttribute("outstandingDeliverableDates", outstandingDeliverableDates);
+        request.setAttribute("myDeliverableStatuses", myDeliverableStatuses);
+        request.setAttribute("outstandingDeliverableStatuses", outstandingDeliverableStatuses);
+
         String[] displayedStart = new String[phases.length];
         String[] displayedEnd = new String[phases.length];
         String[] originalStart = new String[phases.length];
         String[] originalEnd = new String[phases.length];
-        Format format = new SimpleDateFormat("MM.dd.yyyy hh:mm a");
         String strOrigStartTime = messages.getMessage("viewProjectDetails.Timeline.OriginalStartTime") + " ";
         String strOrigEndTime = messages.getMessage("viewProjectDetails.Timeline.OriginalEndTime") + " ";
         long projectStartTime = phProj.getStartDate().getTime();
@@ -190,10 +257,17 @@ public class ProjectDetailsActions extends DispatchAction {
                 extUserIds[i] = Long.valueOf(userID).longValue();
             }
 
-            // Obtain an instance of User Retrieval
-            UserRetrieval usrMgr = ActionsHelper.createUserRetrieval(request);
-            // Retrieve external users for the list of resources using batch retrieval
-            ExternalUser[] extUsers = usrMgr.retrieveUsers(extUserIds);
+            ExternalUser[] extUsers = null;
+            // If there are no resource for this project defined,
+            // there will be no external users
+            if (extUserIds.length != 0) {
+                // Obtain an instance of User Retrieval
+                UserRetrieval usrMgr = ActionsHelper.createUserRetrieval(request);
+                // Retrieve external users for the list of resources using batch retrieval
+                extUsers = usrMgr.retrieveUsers(extUserIds);
+            } else {
+                extUsers = new ExternalUser[0];
+            }
 
             // This is final array for External User objects. It is needed because the previous
             // operation may return shorter array than there are resources for the project
@@ -232,6 +306,8 @@ public class ProjectDetailsActions extends DispatchAction {
         // Check permissions
         request.setAttribute("isAllowedToViewSVNLink",
                 new Boolean(AuthorizationHelper.hasUserPermission(request, Constants.VIEW_SVN_LINK_PERM_NAME)));
+        request.setAttribute("isAllowedToViewPayment",
+                new Boolean(AuthorizationHelper.hasUserPermission(request, Constants.VIEW_MY_PAY_INFO_PERM_NAME)));
 
         return mapping.findForward(Constants.SUCCESS_FORWARD_NAME);
     }
