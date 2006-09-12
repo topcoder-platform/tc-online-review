@@ -487,6 +487,79 @@ public class Constants {
     public static final String APPROVAL_PHASE_NAME = "Approval";
 
 
+    // -------------------------------------------------------------------- Deliverable names -----
+
+    /**
+     * This member variable is a string constant that defines the name of the Submission
+     * deliverable.
+     */
+    public static final String SUBMISSION_DELIVERABLE_NAME = "Submission";
+
+    /**
+     * This member variable is a string constant that defines the name of the Screening Scorecard
+     * deliverable.
+     */
+    public static final String SCREENING_DELIVERABLE_NAME = "Screening Scorecard";
+
+    /**
+     * This member variable is a string constant that defines the name of the Review Scorecard
+     * deliverable.
+     */
+    public static final String REVIEW_DELIVERABLE_NAME = "Review Scorecard";
+
+    /**
+     * This member variable is a string constant that defines the name of the Accuracy Test Cases
+     * deliverable.
+     */
+    public static final String ACC_TEST_CASES_DELIVERABLE_NAME = "Accuracy Test Cases";
+
+    /**
+     * This member variable is a string constant that defines the name of the Failure Test Cases
+     * deliverable.
+     */
+    public static final String FAIL_TEST_CASES_DELIVERABLE_NAME = "Failure Test Cases";
+
+    /**
+     * This member variable is a string constant that defines the name of the Stress Test Cases
+     * deliverable.
+     */
+    public static final String STRS_TEST_CASES_DELIVERABLE_NAME = "Stress Test Cases";
+
+    /**
+     * This member variable is a string constant that defines the name of the Appeal Responses
+     * deliverable.
+     */
+    public static final String APPEAL_RESP_DELIVERABLE_NAME = "Appeal Responses";
+
+    /**
+     * This member variable is a string constant that defines the name of the Aggregation
+     * deliverable.
+     */
+    public static final String AGGREGATION_DELIVERABLE_NAME = "Aggregation";
+
+    /**
+     * This member variable is a string constant that defines the name of the Aggregation Review
+     * deliverable.
+     */
+    public static final String AGGREGATION_REV_DELIVERABLE_NAME = "Aggregation Review";
+
+    /**
+     * This member variable is a string constant that defines the name of the Final Fix deliverable.
+     */
+    public static final String FINAL_FIX_DELIVERABLE_NAME = "Final Fix";
+
+    /**
+     * This member variable is a string constant that defines the name of the Scorecard Comment
+     * deliverable.
+     */
+    public static final String SCORECARD_COMM_DELIVERABLE_NAME = "Scorecard Comment";
+
+    /**
+     * This member variable is a string constant that defines the name of the Approval deliverable.
+     */
+    public static final String APPROVAL_DELIVERABLE_NAME = "Approval";
+
+
     // ----------------------------------------------------------------- Action Forward names -----
 
     /**
@@ -512,7 +585,7 @@ public class Constants {
      * action forward.
      */
     public static final String PREVIEW_FORWARD_NAME = "preview";
-    
+
     /**
      * This member variable is a string constant that defines the name of the Edit commonly used
      * action forward. Such an action foward is often used to redirect to Edit Screening or Edit
