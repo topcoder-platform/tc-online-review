@@ -23,10 +23,22 @@
     <load-on-startup>1</load-on-startup>
   </servlet>
 
+  <!-- Online Review Ajax Support Servlet Configuration -->
+  <servlet>
+    <servlet-name>AjaxServlet</servlet-name>
+    <servlet-class>com.cronos.onlinereview.ajax.AjaxSupportServlet</servlet-class>
+  </servlet>
+
   <!-- Standard Action Servlet Mapping -->
   <servlet-mapping>
     <servlet-name>action</servlet-name>
     <url-pattern>*.do</url-pattern>
+  </servlet-mapping>
+
+  <!-- Online Review Ajax Support Servlet Mapping -->
+  <servlet-mapping>
+    <servlet-name>AjaxServlet</servlet-name>
+    <url-pattern>/ajaxSupport</url-pattern>
   </servlet-mapping>
 
   <!-- Struts Tag Library Descriptors -->
