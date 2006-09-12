@@ -46,6 +46,9 @@
     <dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/review/lib/tcs/object_factory/2.0/object_factory.jar">
       <dependency-type>uses</dependency-type>
     </dependent-module>
+    <dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/review/lib/tcs/online_review_deliverables/1.0/online_review_deliverables.jar">
+      <dependency-type>uses</dependency-type>
+    </dependent-module>
     <dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/review/lib/tcs/online_review_login/1.0/online_review_login.jar">
       <dependency-type>uses</dependency-type>
     </dependent-module>

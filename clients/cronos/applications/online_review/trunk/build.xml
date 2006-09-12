@@ -136,6 +136,11 @@
     <property name="object_factory.path" value="object_factory/${object_factory.version}" />
     <property name="object_factory.jar" value="${tcs_libdir}/${object_factory.path}/${object_factory.jar.name}" />
 
+    <property name="online_review_deliverables.version" value="1.0" />
+    <property name="online_review_deliverables.jar.name" value="online_review_deliverables.jar" />
+    <property name="online_review_deliverables.path" value="online_review_deliverables/${online_review_deliverables.version}" />
+    <property name="online_review_deliverables.jar" value="${tcs_libdir}/${online_review_deliverables.path}/${online_review_deliverables.jar.name}" />
+
     <property name="online_review_login.version" value="1.0" />
     <property name="online_review_login.jar.name" value="online_review_login.jar" />
     <property name="online_review_login.path" value="online_review_login/${online_review_login.version}" />
@@ -291,6 +296,7 @@
         <pathelement location="${JNDI_Utility.jar}" />
         <pathelement location="${logging_wrapper.jar}" />
         <pathelement location="${object_factory.jar}" />
+        <pathelement location="${online_review_deliverables.jar}" />
         <pathelement location="${online_review_login.jar}" />
         <pathelement location="${phase_management.jar}" />
         <pathelement location="${phase_management_persistence.jar}" />
@@ -441,6 +447,7 @@
             <lib dir="${jar_tcs_libdir}/${JNDI_Utility.path}" includes="*.jar" />
             <lib dir="${jar_tcs_libdir}/${logging_wrapper.path}" includes="*.jar" />
             <lib dir="${jar_tcs_libdir}/${object_factory.path}" includes="*.jar" />
+            <lib dir="${jar_tcs_libdir}/${online_review_deliverables.path}" includes="*.jar" />
             <lib dir="${jar_tcs_libdir}/${online_review_login.path}" includes="*.jar" />
             <lib dir="${jar_tcs_libdir}/${phase_management.path}" includes="*.jar" />
             <lib dir="${jar_tcs_libdir}/${phase_management_persistence.path}" includes="*.jar" />
