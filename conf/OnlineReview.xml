@@ -97,6 +97,131 @@
 
 
     <!--
+        ==========  Configuration for Online Review Ajax Support component  ==========
+    -->
+    <Config name="com.cronos.onlinereview.ajax">
+        <!-- User ID attribute name -->
+        <Property name="UserIdAttributeName">
+            <Value>userId</Value>
+        </Property>
+
+        <!-- The names of the Ajax request handlers -->
+        <Property name="Handlers">
+            <Value>SetScorecardStatus</Value>
+            <Value>LoadTimelineTemplate</Value>
+            <Value>SetTimelineNotification</Value>
+            <Value>PlaceAppeal</Value>
+            <Value>ResolveAppeal</Value>
+        </Property>
+    </Config>
+
+    <Config name="com.cronos.onlinereview.ajax.factory">
+        <!-- Defining the "SetScorecardStatus" handler concrete implementation -->
+        <Property name="SetScorecardStatus">
+            <Property name="type">
+                <Value>com.cronos.onlinereview.ajax.handlers.SetScorecardStatusHandler</Value>
+            </Property>
+        </Property>
+
+        <!-- Defining the "LoadTimelineTemplate" handler concrete implementation -->
+        <Property name="LoadTimelineTemplate">
+            <Property name="type">
+                <Value>com.cronos.onlinereview.ajax.handlers.LoadTimelineTemplateHandler</Value>
+            </Property>
+        </Property>
+
+        <!-- Defining the "SetTimelineNotification" handler concrete implementation -->
+        <Property name="SetTimelineNotification">
+            <Property name="type">
+                <Value>com.cronos.onlinereview.ajax.handlers.SetTimelineNotificationHandler</Value>
+            </Property>
+        </Property>
+
+        <!-- Defining the "PlaceAppeal" handler concrete implementation -->
+        <Property name="PlaceAppeal">
+            <Property name="type">
+                <Value>com.cronos.onlinereview.ajax.handlers.PlaceAppealHandler</Value>
+            </Property>
+        </Property>
+
+        <!-- Defining the "ResolveAppeal" handler concrete implementation -->
+        <Property name="ResolveAppeal">
+            <Property name="type">
+                <Value>com.cronos.onlinereview.ajax.handlers.ResolveAppealHandler</Value>
+            </Property>
+        </Property>
+
+        <!-- defining the resource manager concrete implementation -->
+        <Property name="com/topcoder/management/resource/ResourceManager">
+            <Property name="type">
+                <Value>com.topcoder.management.resource.persistence.PersistenceResourceManager</Value>
+            </Property>
+        </Property>
+
+        <!-- defining the review manager concrete implementation -->
+<!-- 
+        <Property name="com/topcoder/management/review/ReviewManager">
+            <Property name="type">
+                <Value></Value>
+            </Property>
+        </Property>
+ -->
+
+        <!-- defining the phase templae concrete implementation -->
+<!-- 
+        <Property name="com/topcoder/project/phases/template/PhaseTemplate">
+            <Property name="type">
+                <Value>com.topcoder.project.phases.template.MockPhaseTemplate</Value>
+            </Property>
+        </Property>
+ -->
+
+        <!-- defining the phase templae concrete implementation -->
+<!-- 
+        <Property name="com/topcoder/management/deliverable/UploadManager">
+            <Property name="type">
+                <Value>com.topcoder.management.deliverable.MockUploadManager</Value>
+            </Property>
+        </Property>
+ -->
+
+        <!-- defining the phase templae concrete implementation -->
+<!-- 
+        <Property name="com/topcoder/management/phase/PhaseManager">
+            <Property name="type">
+                <Value>com.topcoder.management.phase.MockPhaseManager</Value>
+            </Property>
+        </Property>
+ -->
+
+        <!-- defining the phase templae concrete implementation -->
+<!-- 
+        <Property name="com/topcoder/management/review/scorecalculator/CalculationManager">
+            <Property name="type">
+                <Value>com.topcoder.management.review.scorecalculator.CalculationManager</Value>
+            </Property>
+        </Property>
+ -->
+
+        <!-- defining the phase templae concrete implementation -->
+        <Property name="com/topcoder/management/scorecard/ScorecardManager">
+            <Property name="type">
+                <Value>com.topcoder.management.scorecard.ScorecardManagerImpl</Value>
+            </Property>
+        </Property>
+
+        <!-- defining the phase templae concrete implementation -->
+<!-- 
+        <Property name="com/topcoder/management/project/ProjectManager">
+            <Property name="type">
+                <Value>com.topcoder.management.project.MockProjectManager</Value>
+            </Property>
+        </Property>
+ -->
+    </Config>
+
+
+    <!--
         ========== Configuration for Document Generator component ==========
     -->
     <Config name="com.topcoder.util.file">
@@ -1384,11 +1509,7 @@
                 </Property>
 
                 <Property name="context">
-                    <Value>SELECT UNIQUE(deliverable_id)
-                        FROM deliverable_lu
-                        CROSS JOIN project
-                        WHERE
-                    </Value>
+                    <Value>SELECT UNIQUE(deliverable_id) FROM deliverable_lu CROSS JOIN project WHERE</Value>
                 </Property>
 
                 <Property name="alias">
@@ -1441,18 +1562,12 @@
                 </Property>
 
                 <Property name="context">
-                    <Value>SELECT deliverable_id, submission_id
-                        FROM deliverable_lu
-                        CROSS JOIN project
-                        CROSS JOIN submission
-                        INNER JOIN submission_status_lu
-                            ON submission.submission_status_id = submission_status_lu.submission_status_id
-                        INNER JOIN upload
-                            ON submission.upload_id = upload.upload_id
-                        WHERE submission_status_lu.name = 'Active'
-                            AND deliverable_lu.per_submission = 1
-                            AND upload.project_id = project.project_id
-                            AND
+                    <Value>
+                        SELECT deliverable_id, submission_id FROM deliverable_lu CROSS JOIN project CROSS JOIN
+                        submission INNER JOIN submission_status_lu ON submission.submission_status_id =
+                        submission_status_lu.submission_status_id INNER JOIN upload ON submission.upload_id =
+                        upload.upload_id WHERE submission_status_lu.name = 'Active' AND deliverable_lu.per_submission =
+                        1 AND upload.project_id = project.project_id AND
                     </Value>
                 </Property>
 
@@ -1509,11 +1624,9 @@
                 </Property>
 
                 <Property name="context">
-                    <Value>SELECT submission_id
-                        FROM submission
-                        INNER JOIN upload
-                            ON submission.upload_id = upload.upload_id
-                        WHERE
+                    <Value>
+                        SELECT submission_id FROM submission INNER JOIN upload ON submission.upload_id =
+                        upload.upload_id WHERE
                     </Value>
                 </Property>
 
@@ -1564,10 +1677,7 @@
                 </Property>
 
                 <Property name="context">
-                    <Value>SELECT upload_id
-                        FROM upload
-                        WHERE
-                    </Value>
+                    <Value>SELECT upload_id FROM upload WHERE</Value>
                 </Property>
 
                 <Property name="alias">
@@ -1787,101 +1897,6 @@
                     </Property>
                 </Property>
             </Property>
-
-<!--
-            <Property name="Upload Search Bundle">
-                <Property name="searchStrategy">
-                    <Property name="class">
-                        <Value>dbStrategy</Value>
-                    </Property>
-                </Property>
-
-                <Property name="searchableFields">
-                    <Property name="dummy">
-                        <Property name="validator">
-                            <Property name="class">
-                                <Value>validator</Value>
-                            </Property>
-                            <Property name="identifier">
-                                <Value>default</Value>
-                            </Property>
-                        </Property>
-                    </Property>
-                </Property>
-
-                <Property name="type">
-                    <Value>Database</Value>
-                </Property>
-                <Property name="name">
-                    <Value>Upload Search Bundle</Value>
-                </Property>
-
-                <Property name="context">
-                    <Value>SELECT DISTINCT upload_id FROM upload WHERE</Value>
-                </Property>
-
-                <Property name="DBNamcespace">
-                    <Value>com.topcoder.db.connectionfactory.DBConnectionFactoryImpl</Value>
-                </Property>
-                <Property name="connectionProducerName">
-                    <Value>informix_connection</Value>
-                </Property>
-
-                <Property name="alias">
-                    <Property name="The ID">
-                        <Value>peopleID</Value>
-                    </Property>
-                </Property>
-            </Property>
-
-            <Property name="Submission Search Bundle">
-                <Property name="searchStrategy">
-                    <Property name="class">
-                        <Value>dbStrategy</Value>
-                    </Property>
-                </Property>
-
-                <Property name="searchableFields">
-                    <Property name="dummy">
-                        <Property name="validator">
-                            <Property name="class">
-                                <Value>validator</Value>
-                            </Property>
-                            <Property name="identifier">
-                                <Value>default</Value>
-                            </Property>
-                        </Property>
-                    </Property>
-                </Property>
-
-                <Property name="type">
-                    <Value>Database</Value>
-                </Property>
-                <Property name="name">
-                    <Value>Submission Search Bundle</Value>
-                </Property>
-
-                <Property name="context">
-                    <Value>
-                        SELECT DISTINCT submission_id FROM submission INNER JOIN upload ON submission.upload_id =
-                        upload.upload_id WHERE
-                    </Value>
-                </Property>
-
-                <Property name="DBNamcespace">
-                    <Value>com.topcoder.db.connectionfactory.DBConnectionFactoryImpl</Value>
-                </Property>
-                <Property name="connectionProducerName">
-                    <Value>informix_connection</Value>
-                </Property>
-
-                <Property name="alias">
-                    <Property name="The ID">
-                        <Value>peopleID</Value>
-                    </Property>
-                </Property>
-            </Property>
--->
         </Property>
     </Config>
 
