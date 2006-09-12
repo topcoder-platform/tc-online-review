@@ -13,13 +13,32 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.util.MessageResources;
 
+import com.cronos.onlinereview.deliverables.AggregationDeliverableChecker;
+import com.cronos.onlinereview.deliverables.AggregationReviewDeliverableChecker;
+import com.cronos.onlinereview.deliverables.AppealResponsesDeliverableChecker;
+import com.cronos.onlinereview.deliverables.CommittedReviewDeliverableChecker;
+import com.cronos.onlinereview.deliverables.FinalFixesDeliverableChecker;
+import com.cronos.onlinereview.deliverables.SubmissionDeliverableChecker;
+import com.cronos.onlinereview.deliverables.SubmitterCommentDeliverableChecker;
+import com.cronos.onlinereview.deliverables.TestCasesDeliverableChecker;
 import com.cronos.onlinereview.external.UserRetrieval;
 import com.cronos.onlinereview.external.impl.DBUserRetrieval;
+import com.topcoder.db.connectionfactory.ConfigurationException;
 import com.topcoder.db.connectionfactory.DBConnectionFactory;
 import com.topcoder.db.connectionfactory.DBConnectionFactoryImpl;
+import com.topcoder.db.connectionfactory.UnknownConnectionException;
+import com.topcoder.management.deliverable.Deliverable;
+import com.topcoder.management.deliverable.DeliverableManager;
+import com.topcoder.management.deliverable.PersistenceDeliverableManager;
 import com.topcoder.management.deliverable.PersistenceUploadManager;
 import com.topcoder.management.deliverable.UploadManager;
+import com.topcoder.management.deliverable.persistence.DeliverableCheckingException;
+import com.topcoder.management.deliverable.persistence.DeliverablePersistence;
+import com.topcoder.management.deliverable.persistence.DeliverablePersistenceException;
+import com.topcoder.management.deliverable.persistence.UploadPersistence;
+import com.topcoder.management.deliverable.persistence.sql.SqlDeliverablePersistence;
 import com.topcoder.management.deliverable.persistence.sql.SqlUploadPersistence;
+import com.topcoder.management.deliverable.search.DeliverableFilterBuilder;
 import com.topcoder.management.phase.DefaultPhaseManager;
 import com.topcoder.management.phase.PhaseManagementException;
 import com.topcoder.management.phase.PhaseManager;
@@ -50,10 +69,13 @@ import com.topcoder.project.phases.Phase;
 import com.topcoder.project.phases.PhaseDateComparator;
 import com.topcoder.project.phases.PhaseStatus;
 import com.topcoder.project.phases.PhaseType;
+import com.topcoder.search.builder.SearchBuilderConfigurationException;
+import com.topcoder.search.builder.SearchBuilderException;
 import com.topcoder.search.builder.SearchBundle;
 import com.topcoder.search.builder.SearchBundleManager;
 import com.topcoder.search.builder.filter.AndFilter;
 import com.topcoder.search.builder.filter.Filter;
+import com.topcoder.search.builder.filter.OrFilter;
 import com.topcoder.util.datavalidator.LongValidator;
 import com.topcoder.util.datavalidator.StringValidator;
 import com.topcoder.util.errorhandling.BaseException;
@@ -67,6 +89,13 @@ import com.topcoder.util.idgenerator.IDGeneratorFactory;
  * @version 1.0
  */
 class ActionsHelper {
+
+    /**
+     * This member variable is a string constant that defines the name of the configurtaion
+     * namespace which the parameters for database connection factory is stored under.
+     */
+    private static final String DB_CONNECTION_NAMESPACE = "com.topcoder.db.connectionfactory.DBConnectionFactoryImpl";
+
 
     /**
      * This constructor is declared private to prohibit instantiation of the
@@ -131,6 +160,36 @@ class ActionsHelper {
                     " Current value of the parameters is " + value + ".");
         }
     }
+
+    /**
+     * This static method verifies that the request specified by <code>request</code> parameter
+     * contains non-<code>null</code> attribute and returns the object stored under that
+     * attribute. This method throws an exception is validation fails.
+     *
+     * @return a reference to object retrieved from the request's scope.
+     * @param request
+     *            an <code>HttpServletRequest</code> object which attribute should be retrieved
+     *            and validated from.
+     * @param attributeName
+     *            a name of the attribute to retrieve from the request's scope.
+     * @throws IllegalArgumentException
+     *             if any of the parameters are <code>null</code>, or <code>attributeName</code>
+     *             parameter is empty string, or if the request does not contain attribute with the
+     *             specified name or attribute's value is <code>null</code>
+     */
+    public static Object validateAttributeNotNull(HttpServletRequest request, String attributeName) {
+        // Validate parameters
+        validateParameterNotNull(request, "request");
+        validateParameterStringNotEmpty(attributeName, "attributeName");
+
+        Object obj = request.getAttribute(attributeName);
+        if (obj == null) {
+            throw new IllegalArgumentException("There is no attribute '" + attributeName +
+                    "' stored in the request scope, or the attrubute stored is null.");
+        }
+        return obj;
+    }
+
 
     /**
      * This static method converts all line terminators found in the provided text into
@@ -601,6 +660,39 @@ class ActionsHelper {
         return roles.toString();
     }
 
+    public static Integer determineMyPayment(Resource[] myResources) {
+        int totalPayment = -1; // -1 will mean N/A
+
+        for (int i = 0; i < myResources.length; ++i) {
+            // Get a resource for the current iteration
+            Resource resource = myResources[i];
+            String paymentStr = (String) resource.getProperty("Payment");
+            if (paymentStr != null && paymentStr.trim().length() != 0) {
+                int payment = Integer.parseInt(paymentStr);
+                if (totalPayment == -1) {
+                    totalPayment = payment;
+                } else {
+                    totalPayment += payment;
+                }
+            }
+        }
+
+        return (totalPayment != -1) ? new Integer(totalPayment) : null;
+    }
+
+    public static Boolean determineMyPaymentPaid(Resource[] myResources) {
+        for (int i = 0; i < myResources.length; ++i) {
+            // Get a resource for the current iteration
+            Resource resource = myResources[i];
+            String paid = (String) resource.getProperty("Payment Status");
+            if (!("Yes".equalsIgnoreCase(paid))) {
+                return new Boolean(false);
+            }
+        }
+
+        return new Boolean(true);
+    }
+
     /**
      * This static method retrieves an array of phases for the project specified by
      * <code>project</code> parameter, using <code>PhaseManager</code> object specified by
@@ -626,6 +718,34 @@ class ActionsHelper {
         com.topcoder.project.phases.Project phProj = manager.getPhases(project.getId());
         Phase[] phases = phProj.getAllPhases(new PhaseDateComparator());
         return phases;
+    }
+
+    /**
+     * This static method returns an array of all currently active phases.
+     *
+     * @return an array of active phases. This return value will never be <code>null</code>, but
+     *         can be an empty array (for completed or cancelled projects, etc.)
+     * @param phases
+     *            an array of phases to retrieve all active phases from.
+     * @throws IllegalArgumentException
+     *             if <code>phases</code> parameter is <code>null</code>.
+     */
+    public static Phase[] getActivePhases(Phase[] phases) {
+        // Validate parameter
+        validateParameterNotNull(phases, "phases");
+
+        List activePhases = new ArrayList();
+
+        for (int i = 0; i < phases.length; ++i) {
+            // Get a phase for the current iteration
+            Phase phase = phases[i];
+            // If the search is being performed for active phase only, skip already closed phase
+            if (phase.getPhaseStatus().getName().equalsIgnoreCase("Open")) {
+                activePhases.add(phase);
+            }
+        }
+
+        return (Phase[]) activePhases.toArray(new Phase[activePhases.size()]);
     }
 
     /**
@@ -672,6 +792,20 @@ class ActionsHelper {
             }
         }
         // No phase has been found
+        return null;
+    }
+
+    public static Phase getPhaseForDeliverable(Phase[] phases, Deliverable deliverable) {
+        // Validate parameters
+        validateParameterNotNull(phases, "phases");
+        validateParameterNotNull(deliverable, "deliverable");
+
+        for (int i = 0; i < phases.length; ++i) {
+            if (phases[i].getPhaseType().getId() == deliverable.getId()) {
+                return phases[i];
+            }
+        }
+
         return null;
     }
 
@@ -821,6 +955,154 @@ class ActionsHelper {
         return null;
     }
 
+    /**
+     * This static method retrieves all deliverables for all active phases for a specific project.
+     * This method returns either completed or incomplete deliverables.
+     *
+     * @return an array of deliverables.
+     * @param request
+     *            an <code>HttpServeltRequest</code> object that contains additional information
+     *            such as current project and a list of all phases for that project.
+     * @param manager
+     *            an instance of the <code>DeliverableManager</code> class.
+     * @throws IllegalArgumentException
+     *             if any of the parameters are <code>null</code>, or if request specified by
+     *             <code>request</code> parameter does not contain needed prerequisites, such as
+     *             an object representing current project and a list of all phases for that project.
+     * @throws DeliverablePersistenceException
+     *             if an error occurs while reading from the persistence store.
+     * @throws SearchBuilderException
+     *             if an error occurs executing the filter.
+     * @throws DeliverableCheckingException
+     *             if an error occurs when determining whether a Deliverable has been completed or
+     *             not.
+     */
+    public static Deliverable[] getAllDeliverablesForActivePhases(
+            HttpServletRequest request, DeliverableManager manager)
+        throws DeliverablePersistenceException, SearchBuilderException, DeliverableCheckingException {
+        // Validate parameters
+        validateParameterNotNull(manager, "manager");
+        Project project = (Project) validateAttributeNotNull(request, "project");
+        Phase[] phases = (Phase[]) validateAttributeNotNull(request, "phases");
+
+        // Prepare filter to search for deliverables for specific project
+        Filter filterProject = DeliverableFilterBuilder.createProjectIdFilter(project.getId());
+        // filter to search for deliverables for specific phase(s) of the project
+        Filter filterPhase = null;
+
+        // Obtain an array of all active phases of the project
+        Phase[] activePhases = getActivePhases(phases);
+
+        switch (activePhases.length) {
+        case 0:
+            // No active phases -- no deliverables
+            return new Deliverable[0];
+
+        case 1:
+            // If there is currently only one active phase,
+            // create filter for it directly (no OR filters needed)
+            filterPhase = DeliverableFilterBuilder.createPhaseIdFilter(activePhases[0].getPhaseType().getId());
+            break;
+
+        default:
+            List phaseFilters = new ArrayList();
+            // Prepare a list of filters for each phase in the array of active phases
+            for (int i = 0; i < activePhases.length; ++i) {
+                phaseFilters.add(DeliverableFilterBuilder.createPhaseIdFilter(activePhases[i].getPhaseType().getId()));
+            }
+            // Combine all filters using OR operator
+            filterPhase = new OrFilter(phaseFilters);
+        }
+
+        // Build final combined filter
+        Filter filter = (filterPhase != null) ? new AndFilter(filterProject, filterPhase) : filterProject;
+        // Perform a search for the deliverables
+        Deliverable[] allDeliverables = manager.searchDeliverables(filter, null);
+
+        /*
+         * Note, it seems that search performed by searchDeliverables method always return the
+         * deliverables for all project, regardless of the fact that project filter was specified.
+         * The following section is a temporary workaround for the problem.
+         * TODO: Correct this code when the possible bug in Deliverable Management component is fixed
+         */
+
+        List deliverables = new ArrayList();
+
+        for (int i = 0; i < allDeliverables.length; ++i) {
+            if (allDeliverables[i].getProject() == project.getId()) {
+                deliverables.add(allDeliverables[i]);
+            }
+        }
+
+        // Return found deliverables
+        return (Deliverable[]) deliverables.toArray(new Deliverable[deliverables.size()]);
+    }
+
+    /**
+     * This static method retrieves outstanding deliverables from the list of deliverables. A
+     * deliverable is considered to be outstaning if it is not completed.
+     *
+     * @return an array of outstanding deliverables.
+     * @param allDeliverables
+     *            an array of all deliverables to search for outstanding ones.
+     * @throws IllegalArgumentException
+     *             if <code>allDeliverables</code> parameter is <code>null</code>.
+     */
+    public static Deliverable[] getOutstandingDeliverables(Deliverable[] allDeliverables) {
+        // Validate parameter
+        validateParameterNotNull(allDeliverables, "allDeliverables");
+
+        List deliverables = new ArrayList();
+        // Perform a search for outstanding deliverables
+        for (int i = 0; i < allDeliverables.length; ++i) {
+            if (!allDeliverables[i].isComplete()) {
+                deliverables.add(allDeliverables[i]);
+            }
+        }
+        // Return a list of outstanding deliverables converted to array
+        return (Deliverable[]) deliverables.toArray(new Deliverable[deliverables.size()]);
+    }
+
+    /**
+     * This static method retrieves deliverables for resource roles the logged in user has.
+     *
+     * @return an array of deliverables assigned to the currently logged in user.
+     * @param allDeliverables
+     *            an array of all deliverables to search for outstanding ones.
+     * @param myResources
+     *            an array of all resources assigned to the currently logged in user for a
+     *            particular project.
+     * @throws IllegalArgumentException
+     *             if any of the parameters are <code>null</code>.
+     */
+    public static Deliverable[] getMyDeliverables(Deliverable[] allDeliverables, Resource[] myResources) {
+        // Validate parameters
+        validateParameterNotNull(allDeliverables, "allDeliverables");
+        validateParameterNotNull(myResources, "myResources");
+
+        List deliverables = new ArrayList();
+        // Perform a search for "my" deliverables
+        for (int i = 0; i < allDeliverables.length; ++i) {
+            // Get a deliverable for current iteration
+            Deliverable deliverable = allDeliverables[i];
+            boolean found = false;
+            // Determine if this deliverable is assigned to currently logged in user
+            for (int j = 0; j < myResources.length; ++j) {
+                if (deliverable.getResource() == myResources[j].getResourceRole().getId()) {
+                    found = true;
+                    break;
+                }
+            }
+            // If found is true, it means that current
+            // deliverable is assigned to currently logged in user
+            if (found == true) {
+                deliverables.add(deliverable);
+            }
+        }
+        // Return a list of "my" deliverables converted to array
+        return (Deliverable[]) deliverables.toArray(new Deliverable[deliverables.size()]);
+    }
+
 
     // -------------------------------------------------------------- Creator type of methods -----
 
@@ -913,7 +1195,7 @@ class ActionsHelper {
         // create a new instance of the object
         if (manager == null) {
             // get connection factory
-            DBConnectionFactory dbconn = new DBConnectionFactoryImpl("com.topcoder.db.connectionfactory.DBConnectionFactoryImpl");
+            DBConnectionFactory dbconn = new DBConnectionFactoryImpl(DB_CONNECTION_NAMESPACE);
             // get the persistence
             ResourcePersistence persistence = new SqlResourcePersistence(dbconn);
 
@@ -1029,6 +1311,74 @@ class ActionsHelper {
     }
 
     /**
+     * This static method helps to create an object of the <code>DeliverableManager</code> class.
+     *
+     * @return a newly created instance of the class.
+     * @param request
+     *            an <code>HttpServletRequest</code> obejct, where created
+     *            <code>DeliverableManager</code> object can be stored to let reusing it later for
+     *            the same request.
+     * @throws ConfigurationException
+     *             if any error occurs while reading the configuration properties and initializing
+     *             the state of the database connection factory.
+     * @throws UnknownConnectionException
+     *             if the connectionProducers does not contain the defaultProducer name.
+     * @throws SearchBuilderConfigurationException
+     *             if any error occurs during creation of the search bundles.
+     */
+    public static DeliverableManager createDeliverableManager(HttpServletRequest request)
+        throws ConfigurationException, UnknownConnectionException, SearchBuilderConfigurationException {
+        // Validate parameter
+        validateParameterNotNull(request, "request");
+
+        // Try retrieving Upload Manager from the request's attribute first
+        DeliverableManager manager = (DeliverableManager) request.getAttribute("deliverableManager");
+        // If this is the first time this method is called for the request,
+        // create a new instance of the object
+        if (manager == null) {
+            // Get connection factory
+            DBConnectionFactory dbconn = new DBConnectionFactoryImpl(DB_CONNECTION_NAMESPACE);
+            // Get the persistence
+            DeliverablePersistence deliverablePersistence = new SqlDeliverablePersistence(dbconn);
+
+            // Get the search bundles
+            SearchBundleManager searchBundleManager =
+                    new SearchBundleManager("com.topcoder.searchbuilder.DeliverableManagement");
+
+            SearchBundle deliverableSearchBundle = searchBundleManager.getSearchBundle(
+                    PersistenceDeliverableManager.DELIVERABLE_SEARCH_BUNDLE_NAME);
+            SearchBundle deliverableWithSubmissionsSearchBundle = searchBundleManager.getSearchBundle(
+                    PersistenceDeliverableManager.DELIVERABLE_WITH_SUBMISSIONS_SEARCH_BUNDLE_NAME);
+
+            // The checkers are used when deliverable instances are retrieved
+            Map checkers = new HashMap();
+            checkers.put(Constants.SUBMISSION_DELIVERABLE_NAME, new SubmissionDeliverableChecker(dbconn));
+            checkers.put(Constants.SCREENING_DELIVERABLE_NAME, new CommittedReviewDeliverableChecker(dbconn));
+            checkers.put(Constants.REVIEW_DELIVERABLE_NAME, new CommittedReviewDeliverableChecker(dbconn));
+            checkers.put(Constants.ACC_TEST_CASES_DELIVERABLE_NAME, new TestCasesDeliverableChecker(dbconn));
+            checkers.put(Constants.FAIL_TEST_CASES_DELIVERABLE_NAME, new TestCasesDeliverableChecker(dbconn));
+            checkers.put(Constants.STRS_TEST_CASES_DELIVERABLE_NAME, new TestCasesDeliverableChecker(dbconn));
+            checkers.put(Constants.APPEAL_RESP_DELIVERABLE_NAME, new AppealResponsesDeliverableChecker(dbconn));
+            checkers.put(Constants.AGGREGATION_DELIVERABLE_NAME, new AggregationDeliverableChecker(dbconn));
+            checkers.put(Constants.AGGREGATION_REV_DELIVERABLE_NAME, new AggregationReviewDeliverableChecker(dbconn));
+            checkers.put(Constants.FINAL_FIX_DELIVERABLE_NAME, new FinalFixesDeliverableChecker(dbconn));
+            checkers.put(Constants.SCORECARD_COMM_DELIVERABLE_NAME, new SubmitterCommentDeliverableChecker(dbconn));
+/* Not sure about the following one.  TODO: Verify it
+            checkers.put(Constants.APPROVAL_DELIVERABLE_NAME, new FinalReviewDeliverableChecker(dbconn));
+ */
+
+            // Initialize the PersistenceDeliverableManager
+            manager = new PersistenceDeliverableManager(deliverablePersistence, checkers,
+                    deliverableSearchBundle, deliverableWithSubmissionsSearchBundle);
+            // Place newly-created object into the request as attribute
+            request.setAttribute("deliverableManager", manager);
+        }
+
+        // Return the Deliverable Manager object
+        return manager;
+    }
+
+    /**
      * This static method helps to create an object of the <code>UploadManager</code> class.
      *
      * @return a newly created instance of the class.
@@ -1050,12 +1400,12 @@ class ActionsHelper {
         // If this is the first time this method is called for the request,
         // create a new instance of the object
         if (manager == null) {
-            // get connection factory
-            DBConnectionFactory dbconn = new DBConnectionFactoryImpl("com.topcoder.db.connectionfactory.DBConnectionFactoryImpl");
-            // get the persistence
-            SqlUploadPersistence persistence = new SqlUploadPersistence(dbconn);
+            // Get connection factory
+            DBConnectionFactory dbconn = new DBConnectionFactoryImpl(DB_CONNECTION_NAMESPACE);
+            // Get the persistence
+            UploadPersistence persistence = new SqlUploadPersistence(dbconn);
 
-            // get the id generators
+            // Get the ID generators
             IDGenerator uploadIdGenerator =
                     IDGeneratorFactory.getIDGenerator(PersistenceUploadManager.UPLOAD_ID_GENERATOR_NAME);
             IDGenerator uploadTypeIdGenerator =
@@ -1067,16 +1417,16 @@ class ActionsHelper {
             IDGenerator submissionStatusIdGenerator =
                     IDGeneratorFactory.getIDGenerator(PersistenceUploadManager.SUBMISSION_STATUS_ID_GENERATOR_NAME);
 
-            // get the search bundles
+            // Get the search bundles
             SearchBundleManager searchBundleManager =
-                    new SearchBundleManager("com.topcoder.searchbuilder.ResourceManagement");
+                    new SearchBundleManager("com.topcoder.searchbuilder.DeliverableManagement");
 
             SearchBundle uploadSearchBundle = searchBundleManager.getSearchBundle(
                     PersistenceUploadManager.UPLOAD_SEARCH_BUNDLE_NAME);
             SearchBundle submissionSearchBundle = searchBundleManager.getSearchBundle(
                     PersistenceUploadManager.SUBMISSION_SEARCH_BUNDLE_NAME);
 
-            // initialize the PersistenceUploadManager
+            // Initialize the PersistenceUploadManager
             manager = new PersistenceUploadManager(persistence,
                     uploadSearchBundle, submissionSearchBundle,
                     uploadIdGenerator, uploadTypeIdGenerator, uploadStatusIdGenerator,
@@ -1113,7 +1463,7 @@ class ActionsHelper {
         // If this is the first time this method is called for the request,
         // create a new instance of the object
         if (manager == null) {
-            manager = new DBUserRetrieval("com.topcoder.db.connectionfactory.DBConnectionFactoryImpl");
+            manager = new DBUserRetrieval(DB_CONNECTION_NAMESPACE);
             // Place newly-created object into the request as attribute
             request.setAttribute("userRetrieval", manager);
         }
