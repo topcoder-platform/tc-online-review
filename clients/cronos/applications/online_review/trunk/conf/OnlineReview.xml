@@ -1346,7 +1346,252 @@
         </Property>
     </Config>
 
-    <!-- Deliverable and Resource-searching logic -->
+    <!-- Deliverable-searching logic -->
+    <Config name="com.topcoder.searchbuilder.DeliverableManagement">
+        <Property name="searchStrategyFactoryNamespace">
+            <Value>com.topcoder.search.builder.strategy.factory</Value>
+        </Property>
+        <Property name="fieldValidatorFactoryNamespace">
+            <Value>com.topcoder.search.builder.validator.factory</Value>
+        </Property>
+
+        <Property name="searchBundles">
+            <Property name="Deliverable Search Bundle">
+                <Property name="type">
+                    <Value>Database</Value>
+                </Property>
+                <Property name="name">
+                    <Value>Deliverable Search Bundle</Value>
+                </Property>
+
+                <Property name="searchStrategy">
+                    <Property name="class">
+                        <Value>dbStrategy</Value>
+                    </Property>
+                </Property>
+
+                <Property name="searchableFields">
+                    <Property name="dummy">
+                        <Property name="validator">
+                            <Property name="class">
+                                <Value>validator</Value>
+                            </Property>
+                            <Property name="identifier">
+                                <Value>default</Value>
+                            </Property>
+                        </Property>
+                    </Property>
+                </Property>
+
+                <Property name="context">
+                    <Value>SELECT UNIQUE(deliverable_id)
+                        FROM deliverable_lu
+                        CROSS JOIN project
+                        WHERE
+                    </Value>
+                </Property>
+
+                <Property name="alias">
+                    <Property name="deliverable_id">
+                        <Value>deliverable_lu.deliverable_id</Value>
+                    </Property>
+                    <Property name="name">
+                        <Value>deliverable_lu.name</Value>
+                    </Property>
+                    <Property name="project_id">
+                        <Value>project.project_id</Value>
+                    </Property>
+                    <Property name="phase_id">
+                        <Value>deliverable_lu.phase_type_id</Value>
+                    </Property>
+                    <Property name="resource_id">
+                        <Value>deliverable_lu.resource_role_id</Value>
+                    </Property>
+                    <Property name="required">
+                        <Value>deliverable_lu.required</Value>
+                    </Property>
+                </Property>
+            </Property>
+
+            <Property name="Deliverable With Submission Search Bundle">
+                <Property name="type">
+                    <Value>Database</Value>
+                </Property>
+                <Property name="name">
+                    <Value>Deliverable With Submission Search Bundle</Value>
+                </Property>
+
+                <Property name="searchStrategy">
+                    <Property name="class">
+                        <Value>dbStrategy</Value>
+                    </Property>
+                </Property>
+
+                <Property name="searchableFields">
+                    <Property name="dummy">
+                        <Property name="validator">
+                            <Property name="class">
+                                <Value>validator</Value>
+                            </Property>
+                            <Property name="identifier">
+                                <Value>default</Value>
+                            </Property>
+                        </Property>
+                    </Property>
+                </Property>
+
+                <Property name="context">
+                    <Value>SELECT deliverable_id, submission_id
+                        FROM deliverable_lu
+                        CROSS JOIN project
+                        CROSS JOIN submission
+                        INNER JOIN submission_status_lu
+                            ON submission.submission_status_id = submission_status_lu.submission_status_id
+                        INNER JOIN upload
+                            ON submission.upload_id = upload.upload_id
+                        WHERE submission_status_lu.name = 'Active'
+                            AND deliverable_lu.per_submission = 1
+                            AND upload.project_id = project.project_id
+                            AND
+                    </Value>
+                </Property>
+
+                <Property name="alias">
+                    <Property name="deliverable_id">
+                        <Value>deliverable_lu.deliverable_id</Value>
+                    </Property>
+                    <Property name="name">
+                        <Value>deliverable_lu.name</Value>
+                    </Property>
+                    <Property name="project_id">
+                        <Value>project.project_id</Value>
+                    </Property>
+                    <Property name="phase_id">
+                        <Value>deliverable_lu.phase_type_id</Value>
+                    </Property>
+                    <Property name="resource_id">
+                        <Value>deliverable_lu.resource_role_id</Value>
+                    </Property>
+                    <Property name="required">
+                        <Value>deliverable_lu.required</Value>
+                    </Property>
+                    <Property name="submission_id">
+                        <Value>submission.submission_id</Value>
+                    </Property>
+                </Property>
+            </Property>
+
+            <Property name="Submission Search Bundle">
+                <Property name="type">
+                    <Value>Database</Value>
+                </Property>
+                <Property name="name">
+                    <Value>Submission Search Bundle</Value>
+                </Property>
+
+                <Property name="searchStrategy">
+                    <Property name="class">
+                        <Value>dbStrategy</Value>
+                    </Property>
+                </Property>
+
+                <Property name="searchableFields">
+                    <Property name="dummy">
+                        <Property name="validator">
+                            <Property name="class">
+                                <Value>validator</Value>
+                            </Property>
+                            <Property name="identifier">
+                                <Value>default</Value>
+                            </Property>
+                        </Property>
+                    </Property>
+                </Property>
+
+                <Property name="context">
+                    <Value>SELECT submission_id
+                        FROM submission
+                        INNER JOIN upload
+                            ON submission.upload_id = upload.upload_id
+                        WHERE
+                    </Value>
+                </Property>
+
+                <Property name="alias">
+                    <Property name="submission_id">
+                        <Value>submission.submission_id</Value>
+                    </Property>
+                    <Property name="upload_id">
+                        <Value>submission.upload_id</Value>
+                    </Property>
+                    <Property name="submission_status_id">
+                        <Value>submission.submission_status_id</Value>
+                    </Property>
+                    <Property name="project_id">
+                        <Value>upload.project_id</Value>
+                    </Property>
+                    <Property name="resource_id">
+                        <Value>upload.resource_id</Value>
+                    </Property>
+                </Property>
+            </Property>
+
+            <Property name="Upload Search Bundle">
+                <Property name="type">
+                    <Value>Database</Value>
+                </Property>
+                <Property name="name">
+                    <Value>Upload Search Bundle</Value>
+                </Property>
+
+                <Property name="searchStrategy">
+                    <Property name="class">
+                        <Value>dbStrategy</Value>
+                    </Property>
+                </Property>
+
+                <Property name="searchableFields">
+                    <Property name="dummy">
+                        <Property name="validator">
+                            <Property name="class">
+                                <Value>validator</Value>
+                            </Property>
+                            <Property name="identifier">
+                                <Value>default</Value>
+                            </Property>
+                        </Property>
+                    </Property>
+                </Property>
+
+                <Property name="context">
+                    <Value>SELECT upload_id
+                        FROM upload
+                        WHERE
+                    </Value>
+                </Property>
+
+                <Property name="alias">
+                    <Property name="upload_id">
+                        <Value>upload.upload_id</Value>
+                    </Property>
+                    <Property name="upload_type_id">
+                        <Value>upload.upload_type_id</Value>
+                    </Property>
+                    <Property name="upload_status_id">
+                        <Value>upload.upload_status_id</Value>
+                    </Property>
+                    <Property name="project_id">
+                        <Value>upload.project_id</Value>
+                    </Property>
+                    <Property name="resource_id">
+                        <Value>upload.resource_id</Value>
+                    </Property>
+                </Property>
+            </Property>
+        </Property>
+    </Config>
+
+    <!-- Resource-searching logic -->
     <Config name="com.topcoder.searchbuilder.ResourceManagement">
         <Property name="searchStrategyFactoryNamespace">
             <Value>com.topcoder.search.builder.strategy.factory</Value>
@@ -1543,6 +1788,7 @@
                 </Property>
             </Property>
 
+<!--
             <Property name="Upload Search Bundle">
                 <Property name="searchStrategy">
                     <Property name="class">
@@ -1635,6 +1881,7 @@
                     </Property>
                 </Property>
             </Property>
+-->
         </Property>
     </Config>
 
@@ -2053,7 +2300,7 @@
                 </Property>
             </Property>
         </Property>
-        
+
         <Property name="Defaults">
             <Property name="PixelsPerHour">
                 <Value>5</Value>
