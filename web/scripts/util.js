@@ -45,7 +45,7 @@ function getChildrenByName(node, name) {
 		}
 	}
 	// Return the compound result, empty array is returned if no elements found
-	return null;
+	return compoundResult;
 }
 
 
@@ -95,5 +95,5 @@ function getChildrenByNamePrefix(node, namePrefix) {
 		}
 	}
 	// Return the compound result, empty array is returned if no elements found
-	return null;
+	return compoundResult;
 }
