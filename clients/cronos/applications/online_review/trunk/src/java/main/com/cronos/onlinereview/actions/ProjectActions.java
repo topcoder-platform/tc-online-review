@@ -181,7 +181,7 @@ public class ProjectActions extends DispatchAction {
         // TODO: Populate resources and phases
 
         // Populate project forum name
-        populateProjectFormProperty(form, String.class, "forum_name", project, "Forum Name");
+        populateProjectFormProperty(form, String.class, "forum_id", project, "Forum Id");
 
         // Populate project SVN module
         populateProjectFormProperty(form, String.class, "SVN_module", project, "SVN Module");
@@ -340,9 +340,8 @@ public class ProjectActions extends DispatchAction {
         project.setProperty("Eligibility", lazyForm.get("eligibility"));
         // Populate project public flag
         project.setProperty("Public", lazyForm.get("public"));
-        // Populate project forum name
-        // project.setProperty("Forum Name", dynaActionForm.get("forum_name"));
-        // FIXME: There is no Forum Name, but there is a Developer Forum ID
+        // Populate project forum id
+        project.setProperty("Developer Forum ID", lazyForm.get("forum_id"));
         // Populate project SVN module
         project.setProperty("SVN Module", lazyForm.get("SVN_module"));
         // Populate project autopilot option
@@ -362,7 +361,7 @@ public class ProjectActions extends DispatchAction {
         manager.createProject(project, AuthorizationHelper.getLoggedInUserId(request) + "");
         
         // Save the project phases
-        Phase[] savedPhases = saveProjectPhases(request, lazyForm, project);
+        Phase[] projectPhases = saveProjectPhases(request, lazyForm, project);
         
         // Save the project resources
         saveResources(request, lazyForm, project);
@@ -391,6 +390,9 @@ public class ProjectActions extends DispatchAction {
         // TODO: Handle the situation of project being edited
         com.topcoder.project.phases.Project phProject = 
                 new com.topcoder.project.phases.Project(new Date(), new DefaultWorkdays());
+        
+        // Set the id of Phases Project to be equal to the id of appropriate Project
+        phProject.setId(project.getId());
        
         // Get the list of all previously existing phases 
         Phase[] oldPhases = phProject.getAllPhases();
@@ -417,7 +419,7 @@ public class ProjectActions extends DispatchAction {
                 // Create new phase
                 // TODO: Check if the phase duration is specified as 
                 // just number of hours or as "hrs:min", also check the untis of measure
-                phase = new Phase(phProject, ((Integer) lazyForm.get("phase_duration", i)).longValue());
+                phase = new Phase(phProject, ((Integer) lazyForm.get("phase_duration", i)).longValue() * 3600 * 1000);
                 // Add it to Phases Project
                 phProject.addPhase(phase);
             }  else {
@@ -478,8 +480,7 @@ public class ProjectActions extends DispatchAction {
         // Save the phases at the persistence level
         phaseManager.updatePhases(phProject, AuthorizationHelper.getLoggedInUserId(request) + "");
 
-        // TODO : Fix it
-        return null;
+        return phProject.getAllPhases();
     }
 
     /**

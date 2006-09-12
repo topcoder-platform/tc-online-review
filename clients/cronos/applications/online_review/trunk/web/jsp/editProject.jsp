@@ -47,7 +47,22 @@
 				patchParamIndex(allSelects[i], newIndex);
 			}
 		}
+
+		/*
+		 * TODO: Write docs for this function
+		 */
+		function cloneInputRow(rowNode) {
+			var clonedNode = rowNode.cloneNode(true);
+			var oldSelectNodes = rowNode.getElementsByTagName("select");
+			var newSelectNodes = clonedNode.getElementsByTagName("select");
+			for (var i = 0; i < oldSelectNodes.length; i++) {
+				newSelectNodes[i].value = oldSelectNodes[i].value;
+			}
+			return clonedNode;
+		}		
+	
 		
+	
 	
 		/*
 		 * This function adds a new row to resources table.
@@ -60,15 +75,14 @@
 			// Get the number of rows in table
 			var rowCount = resourcesTable.rows.length;
 			// Create a new row into resources table
-			var newRow = resourcesTable.rows[2].cloneNode(true);
+			var newRow = cloneInputRow(resourcesTable.rows[2]);
 			// Rows should vary colors
 			if (rowCount % 2 == 0) {
 				newRow.className = "dark";
 			} else {
 				newRow.className = "light";
 			}
-			// Insert new row into resources table
-			resourcesTable.tBodies[0].insertBefore(newRow, resourcesTable.rows[rowCount - 1]);
+
 			// Make delete button visible and hide add button
 			var images = newRow.cells[4].getElementsByTagName("img");
 			images[0].style["display"] = "none";
@@ -84,7 +98,9 @@
 			
 			// Rename all the inputs to have a new index
 			patchAllChildParamIndexes(newRow, lastResourceIndex);
-			
+
+			// Insert new row into resources table
+			resourcesTable.tBodies[0].insertBefore(newRow, resourcesTable.rows[rowCount - 1]);			
 		}
 
 		/*
@@ -124,14 +140,33 @@
 		 * This function populates the specified parameter of the newly added phase row.
 		 */
 		function populatePhaseParam(destRowNode, srcTableNode, paramName, paramIndex) {
-			var srcInput = getChildByName(srcTableNode, "addphase_" + paramName);
-			var destInput = getChildByName(destRowNode, "phase_" + paramName + "[" + paramIndex + "]");
-			if (destInput.tagName != "SELECT" && destInput.type == "checkbox") {
-				destInput.checked = srcInput.checked;
+			var srcInputs = getChildrenByName(srcTableNode, "addphase_" + paramName);
+			var destInputs = getChildrenByName(destRowNode, "phase_" + paramName + "[" + paramIndex + "]");
+			if (destInputs[0].tagName != "SELECT") {
+				if (destInputs[0].type == "checkbox") {
+					destInputs[0].checked = srcInputs[0].checked;
+				} else if (destInputs[0].type == "radio") {
+					var selectedValue = null;
+					for (var i = 0; i < srcInputs.length; i++) {
+						if (srcInputs[i].checked) {
+							selectedValue = srcInputs[i].value;
+							break;
+						}
+					}
+					for (var i = 0; i < destInputs.length; i++) {
+						if (destInputs[i].value == selectedValue) {
+							destInputs[i].checked = true;
+							break;
+						}
+					}
+				} else {
+					destInputs[0].value = srcInputs[0].value;
+				}
 			} else {
-				destInput.value = srcInput.value;
+				destInputs[0].value = srcInputs[0].value;
 			}
 		}
+
 
 		/*
 		 * This function adds new phase to phases table, it includes addition of several rows.
@@ -163,27 +198,12 @@
 			}
 
 			// Create a new row to reprsent the phase
-			var newRow = timelineTable.rows[1].cloneNode(true);
+			var newRow = cloneInputRow(timelineTable.rows[1]);
 			// Assign the id
 			newRow.id = phaseId;
 			// Remove "display: none;"
 			newRow.style["display"] = "";
-			// Add the row to the appropriate position
-			var wherePhaseId = whereCombo.value;
-			if (wherePhaseId == "") {
-				// No phase selected, append to the end of the list
-				timelineTable.tBodies[0].appendChild(newRow);
-			} else {
-				// Find the reference phase row
-				var wherePhaseNode = document.getElementById(wherePhaseId);
-
-				if (getChildByName(addPhaseTable, "addphase_when").value == "before") {
-					dojo.dom.insertBefore(newRow, wherePhaseNode);
-				} else {
-					dojo.dom.insertAfter(newRow, wherePhaseNode);
-				}
-			}
-			
+						
 			// Increase phase index
 			lastPhaseIndex++;
 			
@@ -205,7 +225,24 @@
 			// TODO: Implement numbering of same-typed phases
 			var phaseNameCell =  newRow.cells[0];
 			dojo.dom.textContent(phaseNameCell, phaseName);
-		}
+			
+			// Add the row to the appropriate position
+			var wherePhaseId = whereCombo.value;
+			if (wherePhaseId == "") {
+				// No phase selected, append to the end of the list
+				timelineTable.tBodies[0].appendChild(newRow);
+			} else {
+				// Find the reference phase row
+				var wherePhaseNode = document.getElementById(wherePhaseId);
+
+				if (getChildByName(addPhaseTable, "addphase_when").value == "before") {
+					dojo.dom.insertBefore(newRow, wherePhaseNode);
+				} else {
+					dojo.dom.insertAfter(newRow, wherePhaseNode);
+				}
+			}
+			
+		}		
 	--></script>
 </head>
 
@@ -351,10 +388,10 @@
 							</tr>
 							<tr class="light">
 								<td class="value" nowrap="nowrap">
-									<b><bean:message key="editProject.References.ForumName" /></b><br />
+									<b><bean:message key="editProject.References.ForumId" /></b><br />
 								</td>
 								<td class="value" nowrap="nowrap">
-									<html:text styleClass="inputBox" property="forum_name" style="width: 350px;" />
+									<html:text styleClass="inputBox" property="forum_id" style="width: 350px;" />
 								</td>
 							</tr>
 							<tr class="dark">
@@ -548,7 +585,8 @@
 									<bean:message key="global.Timezone.EST" />
 								</td>
 								<td class="value" width="6%" colspan="2" nowrap="nowrap">
-									<html:text styleClass="inputBoxDuration" property="addphase_duration" />
+									<%-- TODO: The default value for duration is set to 7 days just for testing --%>
+									<html:text styleClass="inputBoxDuration" property="addphase_duration" value="168" />
 								</td>
 								<td class="value" width="7%">
 									<html:img srcKey="editProject.Phases.AddPhase.img" altKey="editProject.Phases.AddPhase.alt" onclick="addNewPhase();" />
