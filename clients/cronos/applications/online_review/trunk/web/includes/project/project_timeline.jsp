@@ -11,7 +11,8 @@
 				if (AuthorizationHelper.hasUserPermission(request, Constants.SET_TL_NOTIFY_PERM_NAME)) {
 			%>
 				<td class="title" style="text-align: right;">
-					<input type="checkbox" name="C1" value="On" ${(sendTLNotifications == 'On') ? 'checked="checked"' : '' } />
+					<input type="checkbox" onclick="sendRequest(${project.id}, this); return false;"
+						${(sendTLNotifications == 'On') ? 'value="On" checked="checked"' : 'value="Off"' } />
 					<bean:message key="viewProjectDetails.ReceiveTLNotifications" />
 				</td>
 			<%
