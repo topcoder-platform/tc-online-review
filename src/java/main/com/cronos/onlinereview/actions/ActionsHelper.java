@@ -11,6 +11,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.struts.action.ActionForward;
+import org.apache.struts.action.ActionMapping;
 import org.apache.struts.util.MessageResources;
 
 import com.cronos.onlinereview.deliverables.AggregationDeliverableChecker;
@@ -567,6 +568,45 @@ class ActionsHelper {
 
         // Return the newly-created action forward
         return clonedForward;
+    }
+
+    /**
+     * This static method places certain attributes into the request and returns a forward to the
+     * error page.
+     *
+     * @return an action forward to the appropriate error page.
+     * @param mapping
+     *            action mapping.
+     * @param messages
+     *            a <code>MessageResources</code> object to load error messages from.
+     * @param request
+     *            the http request.
+     * @param permission
+     *            permission to check against, or <code>null</code> if no check is required.
+     * @param reasonKey
+     *            a key in Message resources which the reason of the error is stored under.
+     * @throws BaseException
+     *             if any error occurs.
+     */
+    public static ActionForward produceErrorReport(ActionMapping mapping, MessageResources messages,
+            HttpServletRequest request, String permission, String reasonKey)
+        throws BaseException{
+        // Gather roles, so tabs will be displayed,
+        // but only do this if roles haven't been gathered yet
+        if (request.getAttribute("roles") == null) {
+            AuthorizationHelper.gatherUserRoles(request);
+        }
+
+        // Place error title into request
+        if (permission == null) {
+            request.setAttribute("errorTitle", messages.getMessage("Error.Title.General"));
+        } else {
+            request.setAttribute("errorTitle", messages.getMessage("Error.Title." + permission.replaceAll(" ", "")));
+        }
+        // Place error message (reason) into request
+        request.setAttribute("errorMessage", messages.getMessage(reasonKey));
+        // Find appropriate forward and return it
+        return mapping.findForward(Constants.USER_ERRROR_FORWARD_NAME);
     }
 
     /**
