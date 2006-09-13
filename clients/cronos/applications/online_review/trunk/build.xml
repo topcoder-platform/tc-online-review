@@ -477,6 +477,7 @@
             <lib dir="${jar_tcs_libdir}/${file_upload.path}" includes="*.jar" />
             <lib dir="${jar_tcs_libdir}/${guid_generator.path}" includes="*.jar" />
             <lib dir="${jar_tcs_libdir}/${id_generator.path}" includes="*.jar" />
+            <lib dir="${jar_tcs_libdir}/${ip_server.path}" includes="*.jar" />
             <lib dir="${jar_tcs_libdir}/${JNDI_Utility.path}" includes="*.jar" />
             <lib dir="${jar_tcs_libdir}/${logging_wrapper.path}" includes="*.jar" />
             <lib dir="${jar_tcs_libdir}/${object_factory.path}" includes="*.jar" />
