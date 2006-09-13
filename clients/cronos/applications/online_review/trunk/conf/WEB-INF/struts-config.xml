@@ -71,6 +71,11 @@
             <form-property name="msg" type="java.lang.String" />
         </form-bean>
 
+        <form-bean name="uploadSubmissionForm" dynamic="true"
+            type="org.apache.struts.validator.DynaValidatorForm">
+            <form-property name="file" type="org.apache.struts.upload.FormFile" />
+        </form-bean>
+
         <form-bean name="reviewForm" dynamic="true"
             type="org.apache.struts.validator.LazyValidatorForm">
             <form-property name="rid" type="java.lang.Long" />
@@ -234,8 +239,10 @@
         <action path="/actions/UploadSubmission" unknown="false"
             type="com.cronos.onlinereview.actions.ProjectDetailsActions"
             parameter="method" scope="request"
+            name="uploadSubmissionForm"
             input="/jsp/uploadSubmission.jsp">
-            <forward name="success" path="/actions/ViewProjectDetails?method=viewProjectDetails" redirect="false" />
+            <forward name="displayPage" path="/jsp/uploadSubmission.jsp" redirect="false" />
+            <forward name="success" path="/actions/ViewProjectDetails?method=viewProjectDetails" redirect="true" />
         </action>
 
         <!-- "Download Submission" action -->
