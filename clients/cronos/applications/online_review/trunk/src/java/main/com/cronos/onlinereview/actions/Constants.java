@@ -587,6 +587,13 @@ public class Constants {
     public static final String PREVIEW_FORWARD_NAME = "preview";
 
     /**
+     * This member variable is a string constant that defines the name of the Display Page commonly
+     * used action forward. This action forward is often used to initially display a page with a
+     * form that a user should fill out.
+     */
+    public static final String DISPLAY_PAGE_FORWARD_NAME = "displayPage";
+
+    /**
      * This member variable is a string constant that defines the name of the Edit commonly used
      * action forward. Such an action foward is often used to redirect to Edit Screening or Edit
      * Review, etc. page from the corresponding &quot;Create&quot; type of page.
