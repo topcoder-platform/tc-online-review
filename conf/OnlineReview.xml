@@ -1512,8 +1512,7 @@
                         SELECT DISTINCT scorecard.scorecard_id FROM scorecard JOIN scorecard_status_lu ON
                         scorecard.scorecard_status_id = scorecard_status_lu.scorecard_status_id JOIN scorecard_type_lu
                         ON scorecard.scorecard_type_id = scorecard_type_lu.scorecard_type_id JOIN project_category_lu ON
-                        scorecard.project_category_id = project_category_lu.project_category_id LEFT JOIN
-                        project_scorecard ON scorecard.scorecard_id = project_scorecard.scorecard_id WHERE
+                        scorecard.project_category_id = project_category_lu.project_category_id WHERE
                     </Value>
                 </Property>
 
@@ -1539,9 +1538,6 @@
                     </Property>
                     <Property name="ProjectCategoryID">
                         <Value>project_category_lu.project_category_id</Value>
-                    </Property>
-                    <Property name="ProjectID">
-                        <Value>project_scorecard.project_id</Value>
                     </Property>
                     <Property name="ScorecardName">
                         <Value>scorecard.name</Value>

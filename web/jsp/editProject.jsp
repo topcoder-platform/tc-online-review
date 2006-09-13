@@ -190,15 +190,14 @@
 			var startPhaseCombo = getChildByName(addPhaseTable, "addphase_start_phase");
 			startPhaseCombo.add(new Option(phaseName, phaseId), null);
 			// Also add it to the phase rows
-			var startPhaseCombos = getChildrenByNamePrefix(document.documentElement, "phase_start_phase");
-			
-			alert(startPhaseCombos);
+			var startPhaseCombos = getChildrenByNamePrefix(document.documentElement, "phase_start_phase");			
 			for (var i = 0; i < startPhaseCombos.length; i++) {
 				startPhaseCombos[i].add(new Option(phaseName, phaseId), null);
 			}
 
 			// Create a new row to reprsent the phase
-			var newRow = cloneInputRow(timelineTable.rows[1]);
+			// TODO: Check why retreive by id doesn't work
+			var newRow = cloneInputRow(timelineTable.rows[1]);  //document.getElementById("phase_row_template"));			
 			// Assign the id
 			newRow.id = phaseId;
 			// Remove "display: none;"
@@ -245,7 +244,33 @@
 					dojo.dom.insertAfter(newRow, wherePhaseNode);
 				}
 			}
-			
+					
+			// Add phase criterion row if needed
+			var criterionRow = null;
+			// TODO: Should be done in locale-independent way
+			// If phase is Screening, Review or Approval, the scorecard edit row should be also added
+			if (phaseName == "Screening" || phaseName == "Review" || phaseName == "Approval" ) {
+				var templateRow;
+				if (phaseName == "Screening") {
+				  	templateRow = document.getElementById("screening_scorecard_row_template");
+				} else if (phaseName == "Review") {
+				  	templateRow = document.getElementById("review_scorecard_row_template");
+				} else if (phaseName == "Approval") {
+				  	templateRow = document.getElementById("approval_scorecard_row_template");
+				}
+				 
+ 				criterionRow = cloneInputRow(templateRow);
+ 				
+ 				// Assign the id
+				criterionRow.id = dojo.dom.getUniqueId();
+				// Remove "display: none;"
+				criterionRow.style["display"] = "";
+	
+				// Rename all the inputs to have a new index
+				patchAllChildParamIndexes(criterionRow, lastPhaseIndex);
+				// Insert criterion row into proper position - after new phase row
+				dojo.dom.insertAfter(criterionRow, newRow);
+			}
 		}		
 	--></script>
 </head>
@@ -349,44 +374,6 @@
 
 						<table class="scorecard" cellpadding="0" cellspacing="0" width="100%" style="border-collapse: collapse;">
 							<tr>
-								<td class="title" width="1%"><bean:message key="editProject.Scorecards.title" /></td>
-								<td class="title" width="99%"><!-- @ --></td>
-							</tr>
-							<tr class="light">
-								<td class="valueB" nowrap="nowrap"><bean:message key="editProject.Scorecards.Screening" /></td>
-								<td class="value" nowrap="nowrap">
-									<html:select styleClass="inputBox" property="scorecard_screening" style="width:350px;">
-										<html:option key="Answer.Select" value="" />
-										<html:option value="">Component Design Screening Scorecard v1.0</html:option>
-									</html:select>
-								</td>
-							</tr>
-							<tr class="dark">
-								<td class="valueB" nowrap="nowrap"><bean:message key="editProject.Scorecards.Review" /></td>
-								<td class="value" nowrap="nowrap">
-									<html:select styleClass="inputBox" property="scorecard_review" style="width:350px;">
-										<html:option key="Answer.Select" value="" />
-										<html:option value="">Component Design Review Scorecard v1.4.2</html:option>
-									</html:select>
-								</td>
-							</tr>
-							<tr class="light">
-								<td class="valueB" nowrap="nowrap"><bean:message key="editProject.Scorecards.Approval" /></td>
-								<td class="value" nowrap="nowrap">
-									<html:select styleClass="inputBox" property="scorecard_approval" style="width:350px;">
-										<html:option key="Answer.Select" value="" />
-										<html:option key="NotAvailable" value="N/A" />
-										<html:option value="">Component Design Review Scorecard v1.4.2</html:option>
-									</html:select>
-								</td>
-							</tr>
-							<tr>
-								<td class="lastRowTD" colspan="2"><!-- @ --></td>
-							</tr>
-						</table><br />
-
-						<table class="scorecard" cellpadding="0" cellspacing="0" width="100%" style="border-collapse: collapse;">
-							<tr>
 								<td class="title" width="1%"><bean:message key="editProject.References.title" /></td>
 								<td class="title" width="99%"><!-- @ --></td>
 							</tr>
@@ -425,185 +412,9 @@
 							</tr>
 						</table><br />
 
-						<table class="scorecard" cellpadding="0" cellspacing="0" width="100%" style="border-collapse: collapse;">
-							<tr>
-								<td class="title" width="1%" nowrap="nowrap"><bean:message key="editProject.CreateTimeline.title" /></td>
-								<td class="title" width="99%"><!-- @ --></td>
-							</tr>
-							<tr class="light">
-								<td class="value" width="2%" nowrap="nowrap"><b><bean:message key="editProject.CreateTimeline.UseTemplate" /></b></td>
-								<td class="value">
-									<select class="inputBox" name="template" id="template" style="width:100px;">
-										<option>Select</option>
-										<option>Design</option>
-										<option>Development</option>
-										<option>Security</option>
-										<option>Process</option>
-									</select>
-									<a href="pc-manager-create_project.jsp?L=1"><img src="../i/bttn_load_template.gif" name="load_template" id="load_template" /></a>
-								</td>
-							</tr>
-						</table><br />
-
-						<table class="scorecard" id="timeline_tbl" cellpadding="0" width="100%" style="border-collapse: collapse;">
-							<tr>
-								<td class="header"><bean:message key="editProject.Phases.PhaseName" /></td>
-								<td class="header"><bean:message key="editProject.Phases.PhaseStart" /></td>
-								<td class="header"><bean:message key="editProject.Phases.PhaseEnd" /></td>
-								<td class="header" nowrap="nowrap"><bean:message key="editProject.Phases.Duration" /></td>
-								<td class="header"><bean:message key="editProject.Phases.Delete" /></td>
-							</tr>
-
-							<%-- The following three rows are used as a "template" for the newly added project phases --%>
-							<tr class="dark" style="display: none;">
-								<td class="valueB" nowrap="nowrap"><!-- @ --></td>
-								<td class="value" nowrap>
-									<html:hidden property="phase_type[0]" />
-									<%-- TODO: Populate form fields values in action, instead of here --%>
-									<html:hidden property="phase_id[0]" value="-1" />
-									<html:hidden property="phase_js_id[0]" value="" />
-									<html:hidden property="phase_action[0]" value="add" />									
-									<html:radio property="phase_start_by_phase[0]" value="false" /> 
-									<html:text styleClass="inputBoxDate" property="phase_start_date[0]" />
-									<html:text styleClass="inputBoxTime" property="phase_start_time[0]" />
-									<html:select styleClass="inputBox" property="phase_start_AMPM[0]">
-										<html:option key="editProject.Phases.AM" value="am" />
-										<html:option key="editProject.Phases.PM" value="pm" />
-									</html:select>
-									<bean:message key="global.Timezone.EST" /><br />
-									<html:radio property="phase_start_by_phase[0]" value="true" /> 
-									<bean:message key="editProject.Phases.When" />
-									<html:select styleClass="inputBox" property="phase_start_phase[0]" style="width:120px;">
-										<html:option key="editProject.Phases.SelectPhase" value="" />
-									</html:select>
-									<html:select styleClass="inputBox" property="phase_start_when[0]">
-										<html:option key="editProject.Phases.Starts" value="starts" />
-										<html:option key="editProject.Phases.Ends" value="ends" />
-									</html:select>
-									<html:select styleClass="inputBox" property="phase_start_plusminus[0]">
-										<html:option value="plus">+</html:option>
-										<html:option value="minus">-</html:option>
-									</html:select>
-									<html:text styleClass="inputBox" property="phase_start_amount[0]" style="width:30px;" />
-									<html:select styleClass="inputBox" property="phase_start_dayshrs[0]">
-										<html:option key="editProject.Phases.Days" value="days" />
-										<html:option key="editProject.Phases.Hrs" value="hrs" />
-									</html:select>
-								</td>
-								<td class="value" nowrap="nowrap">
-									<html:text styleClass="inputBoxDate" property="phase_end_date[0]" />
-									<html:text styleClass="inputBoxTime" property="phase_end_time[0]" />
-									<html:select styleClass="inputBox" property="phase_end_AMPM[0]">
-										<html:option key="editProject.Phases.AM" value="am" />
-										<html:option key="editProject.Phases.PM" value="pm" />
-									</html:select>
-									<bean:message key="global.Timezone.EST" />
-								</td>
-								<td class="value">
-									<html:text styleClass="inputBoxDuration" property="phase_duration[0]" />
-								</td>
-								<td class="value"><!-- @ --></td>
-							</tr>
-							<tr class="highlighted" style="display: none;">
-								<td class="value" colspan="2"><!-- @ --></td>
-								<td class="value">Require
-									<html:text styleClass="inputBox" property="phase_required_registrations[0]" value="" style="width: 30px;" />
-									registrations before ending.
-								</td>
-								<td class="value" colspan="2"><!-- @ --></td>
-							</tr>
-							<tr class="highlighted" style="display: none;">
-								<td class="value" colspan="2"><!-- @ --></td>
-								<td class="value" nowrap="nowrap">Require
-									<html:text styleClass="inputBox" property="phase_required_submissions[0]" value="" style="width: 30px;" />
-									passing submissions.<br />
-									<html:checkbox property="phase_manual_screening" />
-									Manual Screening
-								</td>
-								<td class="value" colspan="2"><!-- @ --></td>
-							</tr>
-						</table><br />
-
-						<table class="scorecard" id="addphase_tbl">
-							<tr class="highlighted">
-								<td class="valueB"><bean:message key="editProject.Phases.AddNewPhase" /></td>
-								<td class="valueB" colspan="2"><bean:message key="editProject.Phases.PhaseStart" /></td>
-								<td class="valueB"><bean:message key="editProject.Phases.PhaseEnd" /></td>
-								<td class="valueB"><bean:message key="editProject.Phases.Duration" /></td>
-								<td class="valueB" colspan="2"><!-- @ --></td>
-							</tr>
-
-							<!-- ADD PHASE FORM BEGINS -->
-							<tr class="light">
-								<td class="value" colspan="2" nowrap="nowrap">
-									<bean:message key="editProject.Phases.NewPhase" />
-									<html:select styleClass="inputBox" property="addphase_type" style="width:197px;margin-bottom:2px;">
-										<html:option key="editProject.Phases.Select" value="" />
-										<c:forEach items="${requestScope.phaseTypes}" var="phaseType">
-											<html:option key="ProjectPhase.${fn:replace(phaseType.name, ' ', '')}" value="${phaseType.id}" />
-										</c:forEach>
-									</html:select><br />
-									<bean:message key="editProject.Phases.Placement" />
-									<html:select styleClass="inputBox" property="addphase_when" style="margin-left:7px;">
-										<html:option key="editProject.Phases.Before" value="before" />
-										<html:option key="editProject.Phases.After" value="after" />
-									</html:select>
-									<html:select styleClass="inputBox" property="addphase_where">
-										<html:option key="editProject.Phases.SelectPhase" value="" />
-									</html:select>
-								</td>
-								<td class="value" width="37%" nowrap="nowrap">
-									<html:radio property="addphase_start_by_phase" value="false" />
-									<html:text styleClass="inputBoxDate" property="addphase_start_date" />
-									<html:text styleClass="inputBoxTime" property="addphase_start_time" />
-									<html:select styleClass="inputBox" property="addphase_start_AMPM">
-										<html:option key="editProject.Phases.AM" value="am" />
-										<html:option key="editProject.Phases.PM" value="pm" />
-									</html:select>
-									<bean:message key="global.Timezone.EST" /><br />
-									<html:radio property="addphase_start_by_phase" value="true" />
-									<bean:message key="editProject.Phases.When" />
-									<html:select styleClass="inputBox" property="addphase_start_phase" style="width:120px;">
-										<html:option key="editProject.Phases.SelectPhase" value="" />
-									</html:select>
-									<html:select styleClass="inputBox" property="addphase_start_when">
-										<html:option key="editProject.Phases.Starts" value="starts" />
-										<html:option key="editProject.Phases.Ends" value="ends" />
-									</html:select>
-									<html:select styleClass="inputBox" property="addphase_start_plusminus">
-										<html:option value="plus">+</html:option>
-										<html:option value="minus">-</html:option>
-									</html:select>
-									<html:text styleClass="inputBox" property="addphase_start_amount" style="width:30px;" />
-									<html:select styleClass="inputBox" property="addphase_start_dayshrs">
-										<html:option key="editProject.Phases.Days" value="days" />
-										<html:option key="editProject.Phases.Hrs" value="hrs" />
-									</html:select>
-								</td>
-            							<td class="value" width="18%" nowrap="nowrap">
-									<html:text styleClass="inputBoxDate" property="addphase_end_date" />
-									<html:text styleClass="inputBoxTime" property="addphase_end_time" />
-									<html:select styleClass="inputBox" property="addphase_end_AMPM">
-										<html:option key="editProject.Phases.AM" value="am" />
-										<html:option key="editProject.Phases.PM" value="pm" />
-									</html:select>
-									<bean:message key="global.Timezone.EST" />
-								</td>
-								<td class="value" width="6%" colspan="2" nowrap="nowrap">
-									<%-- TODO: The default value for duration is set to 7 days just for testing --%>
-									<html:text styleClass="inputBoxDuration" property="addphase_duration" value="168" />
-								</td>
-								<td class="value" width="7%">
-									<html:img srcKey="editProject.Phases.AddPhase.img" altKey="editProject.Phases.AddPhase.alt" onclick="addNewPhase();" />
-								</td>
-							</tr>
-							<!-- ADD PHASE FORM ENDS -->
-
-							<tr>
-								<td class="lastRowTD" colspan="7"><!-- @ --></td>
-							</tr>
-						</table><br />
-
+						<%-- Include timeline editor --%>
+						<jsp:include page="../includes/project/project_edit_timeline.jsp" />
+						
 						<table class="scorecard" id="resources_tbl" cellpadding="0" width="100%" style="border-collapse: collapse;">
 							<tr>
 								<td class="title" colspan="5"><bean:message key="editProject.Resources.title" /></td>
