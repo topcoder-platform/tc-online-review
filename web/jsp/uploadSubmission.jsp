@@ -56,6 +56,7 @@
 					<html:form action="/actions/UploadSubmission" method="POST" enctype="multipart/form-data">
 						<html:hidden property="method" value="uploadSubmission" />
 						<html:hidden property="postBack" value="y" />
+						<html:hidden property="pid" value="${project.id}" />
 						<table class="scorecard" cellpadding="0" cellspacing="0" width="100%" style="border-collapse:collapse;">
 							<tr>
 								<td class="title"><bean:message key="uploadSubmission.box.UploadSubmission" /></td>
