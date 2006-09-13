@@ -16,7 +16,9 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.actions.DispatchAction;
+import org.apache.struts.upload.FormFile;
 import org.apache.struts.util.MessageResources;
+import org.apache.struts.validator.DynaValidatorForm;
 
 import com.cronos.onlinereview.external.ExternalUser;
 import com.cronos.onlinereview.external.UserRetrieval;
@@ -33,6 +35,9 @@ import com.topcoder.management.scorecard.data.Scorecard;
 import com.topcoder.project.phases.Phase;
 import com.topcoder.search.builder.filter.AndFilter;
 import com.topcoder.search.builder.filter.Filter;
+import com.topcoder.servlet.request.FileUpload;
+import com.topcoder.servlet.request.FileUploadResult;
+import com.topcoder.servlet.request.RemoteFileUpload;
 import com.topcoder.util.errorhandling.BaseException;
 
 /**
@@ -86,15 +91,17 @@ public class ProjectDetailsActions extends DispatchAction {
             HttpServletRequest request, HttpServletResponse response)
         throws BaseException {
         // Verify that certain requirements are met before processing with the Action
-        List verification = checkForCorrectProjectId(mapping, request, Constants.VIEW_PROJECT_DETAIL_PERM_NAME);
-        // The first object in the list denotes whether any error has occured
-        if (verification.get(0) != null) {
-            return (ActionForward)verification.get(0);
+        CorrectnessCheckResult verification =
+            checkForCorrectProjectId(mapping, request, Constants.VIEW_PROJECT_DETAIL_PERM_NAME);
+        // If any error has occured, return action forward contained in the result bean
+        if (!verification.isSuccessful()) {
+            return verification.getForward();
         }
 
-        // Otherwise, retrieve all other objects from the list
-        MessageResources messages = (MessageResources)verification.get(1);
-        Project project = (Project)verification.get(3);
+        // Retrieve a review to view
+        Project project = verification.getProject();
+        // Get Message Resources used for this request
+        MessageResources messages = getResources(request);
 
         // Retrieve some basic project info (such as icons' names) and place it into request
         ActionsHelper.retrieveAndStoreBasicProjectInfo(request, project, messages);
@@ -319,11 +326,11 @@ public class ProjectDetailsActions extends DispatchAction {
      * once to process the message entered by user on that form.
      *
      * @return an action forward to the appropriate page. If no error has occured and this action
-     *         was called the the first time, the forward will be to contactManager.jsp page, which
+     *         was called the first time, the forward will be to contactManager.jsp page, which
      *         displays the form where user can enter his message. If this action was called during
      *         the post back (the second time), then the request should contain the message to send
      *         entered by user. In this case, this method verifies if everything is correct, sends
-     *         the message to manager and returns the forward to the View Project Details page.
+     *         the message to manager and returns a forward to the View Project Details page.
      * @param mapping
      *            action mapping.
      * @param form
@@ -332,36 +339,43 @@ public class ProjectDetailsActions extends DispatchAction {
      *            the http request.
      * @param response
      *            the http response.
+     * @throws BaseException
+     *             if any error occurs.
      */
     public ActionForward contactManager(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response)
         throws BaseException {
         // Verify that certain requirements are met before processing with the Action
-        List verification = checkForCorrectProjectId(mapping, request, Constants.VIEW_PROJECT_DETAIL_PERM_NAME);
-        // The first object in the list denotes whether any error has occured
-        if (verification.get(0) != null) {
-            return (ActionForward)verification.get(0);
+        CorrectnessCheckResult verification = checkForCorrectProjectId(mapping, request, Constants.CONTACT_PM_PERM_NAME);
+        // If any error has occured, return action forward contained in the result bean
+        if (!verification.isSuccessful()) {
+            return verification.getForward();
         }
-
-        // Otherwise, retrieve all other objects from the list
-        MessageResources messages = (MessageResources)verification.get(1);
-        Project project = (Project)verification.get(3);
 
         // Determine if this request is a post back
         boolean postBack = (request.getParameter("postBack") != null);
 
         if (!postBack) {
             // Retrieve some basic project info (such as icons' names) and place it into request
-            ActionsHelper.retrieveAndStoreBasicProjectInfo(request, project, messages);
+            ActionsHelper.retrieveAndStoreBasicProjectInfo(request, verification.getProject(), getResources(request));
         }
 
-        return mapping.findForward((postBack) ? Constants.SUCCESS_FORWARD_NAME : "displayPage");
+        return mapping.findForward((postBack) ? Constants.SUCCESS_FORWARD_NAME : Constants.DISPLAY_PAGE_FORWARD_NAME);
     }
 
     /**
-     * TODO: Write sensible description for method uploadSubmission here
+     * This method is an implementation of &quot;Upload Submission&quot; Struts Action defined for
+     * this assembly, which is supposed to let the user upload his submission to the server. This
+     * action gets executed twice &#x96; once to display the page with the form, and once to process
+     * the uploaded file.
      *
-     * @return TODO: Write sensible description of return value for method uploadSubmission
+     * @return an action forward to the appropriate page. If no error has occured and this action
+     *         was called the first time, the forward will be to uploadSubmission.jsp page, which
+     *         displays the form where user can specify the file he/she wants to upload. If this
+     *         action was called during the post back (the second time), then the request should
+     *         contain the file uploaded by user. In this case, this method verifies if everything
+     *         is correct, stores the file on file server and returns a forward to the View Project
+     *         Details page.
      * @param mapping
      *            action mapping.
      * @param form
@@ -370,11 +384,38 @@ public class ProjectDetailsActions extends DispatchAction {
      *            the http request.
      * @param response
      *            the http response.
+     * @throws BaseException
+     *             if any error occurs.
      */
     public ActionForward uploadSubmission(ActionMapping mapping, ActionForm form,
-            HttpServletRequest request, HttpServletResponse response) {
-        // TODO: Add implementation of method newMethod here
-        return null;
+            HttpServletRequest request, HttpServletResponse response)
+        throws BaseException {
+        // Verify that certain requirements are met before processing with the Action
+        CorrectnessCheckResult verification =
+            checkForCorrectProjectId(mapping, request, Constants.PERFORM_SUBM_PERM_NAME);
+        // If any error has occured, return action forward contained in the result bean
+        if (!verification.isSuccessful()) {
+            return verification.getForward();
+        }
+
+        // Determine if this request is a post back
+        boolean postBack = (request.getParameter("postBack") != null);
+
+        if (postBack != true) {
+            // Retrieve some basic project info (such as icons' names) and place it into request
+            ActionsHelper.retrieveAndStoreBasicProjectInfo(request, verification.getProject(), getResources(request));
+            return mapping.findForward(Constants.DISPLAY_PAGE_FORWARD_NAME);
+        }
+
+        DynaValidatorForm uploadSubmissionForm = (DynaValidatorForm) form;
+        FormFile file = (FormFile) uploadSubmissionForm.get("file");
+
+        FileUpload upload = new RemoteFileUpload("com.topcoder.servlet.request.RemoteFileUpload");
+
+        FileUploadResult uploadResult = upload.uploadFiles(request);
+
+        return ActionsHelper.cloneForwardAndAppendToPath(
+                mapping.findForward(Constants.SUCCESS_FORWARD_NAME), "&pid=" + verification.getProject().getId());
     }
 
     /**
@@ -535,14 +576,10 @@ public class ProjectDetailsActions extends DispatchAction {
      * of the project specified by user denotes existing project, and whether the user has rights to
      * perform the operation specified by <code>permission</code> parameter.
      *
-     * @return the list of items. The first item in the list denotes action mapping the request
-     *         should be immediately forwarded to if this item is not <code>null</code>. All
-     *         subsequent items will exist only in the case the first item is <code>null</code>.
-     *         The second item denotes <code>MessageResources</code> onject. The third item in the
-     *         list denotes <code>ProjectManager</code> object. And the fourth item in the list
-     *         denotes <code>Project</code> object. This <code>Project</code> object will be the
-     *         project retrieved by project Id retrieved from the request as parameter. This list
-     *         will always contain at least one (the first) object.
+     * @return an instance of the {@link CorrectnessCheckResult} class, which specifies whether the
+     *         check was successful and, in the case the check was successful, contains additional
+     *         information retrieved during the check operation, which might be of some use for the
+     *         calling method.
      * @param mapping
      *            action mapping.
      * @param request
@@ -552,17 +589,11 @@ public class ProjectDetailsActions extends DispatchAction {
      * @throws BaseException
      *             if any error occurs.
      */
-    private List checkForCorrectProjectId(ActionMapping mapping, HttpServletRequest request, String permission)
+    private CorrectnessCheckResult checkForCorrectProjectId(ActionMapping mapping,
+            HttpServletRequest request, String permission)
         throws BaseException {
-        // Prepare list that will be returned as the result
-        List result = new ArrayList();
-        // It will always contain at least one element
-        result.add(null);
-
-        // Message Resources to be used for this request
-        MessageResources messages = getResources(request);
-        // Add MessageResources object as the second returned value
-        result.add(messages);
+        // Prepare bean that will be returned as the result
+        CorrectnessCheckResult result = new CorrectnessCheckResult();
 
         if (permission == null || permission.trim().length() == 0) {
             permission = null;
@@ -571,19 +602,9 @@ public class ProjectDetailsActions extends DispatchAction {
         // Verify that Project ID was specified and denotes correct project
         String pidParam = request.getParameter("pid");
         if (pidParam == null || pidParam.trim().length() == 0) {
-            // Gather roles, so tabs will be displayed
-            AuthorizationHelper.gatherUserRoles(request);
-            // Place error title into request
-            if (permission == null) {
-                request.setAttribute("errorTitle", messages.getMessage("Error.Title.General"));
-            } else {
-                request.setAttribute("errorTitle",
-                        messages.getMessage("Error.Title." + permission.replaceAll(" ", "")));
-            }
-            // Place error message (reason) into request
-            request.setAttribute("errorMessage", messages.getMessage("Error.ProjectIdNotSpecified"));
-            // Find appropriate forward
-            result.set(0, mapping.findForward("userError"));
+            result.setForward(ActionsHelper.produceErrorReport(
+                    mapping, getResources(request), request, permission, "Error.ProjectIdNotSpecified"));
+            // Return the result of the check
             return result;
         }
 
@@ -593,46 +614,28 @@ public class ProjectDetailsActions extends DispatchAction {
             // Try to convert specified pid parameter to its integer representation
             pid = Long.parseLong(pidParam, 10);
         } catch (NumberFormatException nfe) {
-            // Gather roles, so tabs will be displayed
-            AuthorizationHelper.gatherUserRoles(request);
-            // Place error title into request
-            if (permission == null) {
-                request.setAttribute("errorTitle", messages.getMessage("Error.Title.General"));
-            } else {
-                request.setAttribute("errorTitle", messages.getMessage("Error.Title." + permission.replaceAll(" ", "")));
-            }
-            // Place error message (reason) into request
-            request.setAttribute("errorMessage", messages.getMessage("Error.ProjectNotFound"));
-            // Find appropriate forward
-            result.set(0, mapping.findForward("userError"));
+            result.setForward(ActionsHelper.produceErrorReport(
+                    mapping, getResources(request), request, permission, "Error.ProjectNotFound"));
+            // Return the result of the check
             return result;
         }
 
         // Obtain an instance of Project Manager
         ProjectManager projMgr = ActionsHelper.createProjectManager(request);
-        // Store ProjectManager object as the third returned value
-        result.add(projMgr);
         // Get Project by its id
         Project project = projMgr.getProject(pid);
         // Verify that project with given ID exists
         if (project == null) {
-            // Gather roles, so tabs will be displayed
-            AuthorizationHelper.gatherUserRoles(request);
-            // Place error title into request
-            if (permission == null) {
-                request.setAttribute("errorTitle", messages.getMessage("Error.Title.General"));
-            } else {
-                request.setAttribute("errorTitle", messages.getMessage("Error.Title." + permission.replaceAll(" ", "")));
-            }
-            // Place error message (reason) into request
-            request.setAttribute("errorMessage", messages.getMessage("Error.ProjectNotFound"));
-            // Find appropriate forward
-            result.set(0, mapping.findForward("userError"));
+            result.setForward(ActionsHelper.produceErrorReport(
+                    mapping, getResources(request), request, permission, "Error.ProjectNotFound"));
+            // Return the result of the check
             return result;
         }
 
-        // Store Project object as the fourth returned value
-        result.add(project);
+        // Store Project object in the result bean
+        result.setProject(project);
+        // Place project as attribute in the request
+        request.setAttribute("project", project);
 
         // Gather the roles the user has for current request
         AuthorizationHelper.gatherUserRoles(request, pid);
@@ -641,18 +644,12 @@ public class ProjectDetailsActions extends DispatchAction {
         if (permission != null) {
             // ... verify that this permission is granted for currently logged in user
             if (!AuthorizationHelper.hasUserPermission(request, permission)) {
-                // Place error title into request
-                request.setAttribute("errorTitle", messages.getMessage("Error.Title." + permission.replaceAll(" ", "")));
-                // Place error message (reason) into request
-                request.setAttribute("errorMessage", messages.getMessage("Error.NoPermission"));
-                // Find appropriate forward
-                result.set(0, mapping.findForward("userError"));
+                result.setForward(ActionsHelper.produceErrorReport(
+                        mapping, getResources(request), request, permission, "Error.NoPermission"));
+                // Return the result of the check
                 return result;
             }
         }
-
-        // Place Project object into the request
-        request.setAttribute("project", project);
 
         return result;
     }
