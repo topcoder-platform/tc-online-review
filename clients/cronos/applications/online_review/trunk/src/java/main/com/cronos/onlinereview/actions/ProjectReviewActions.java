@@ -14,7 +14,6 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.actions.DispatchAction;
-import org.apache.struts.util.MessageResources;
 import org.apache.struts.validator.LazyValidatorForm;
 
 import com.topcoder.management.deliverable.Submission;
@@ -259,13 +258,13 @@ public class ProjectReviewActions extends DispatchAction {
 
         // Verify that the scorecard template for this review is of correct type
         if (!scorecardTemplate.getScorecardType().getName().equalsIgnoreCase("Screening")) {
-            return produceErrorReport(mapping, request,
+            return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
                     Constants.PERFORM_SCREENING_PERM_NAME, "Error.ReviewTypeIncorrect");
         }
 
         // Verify that review has not been committed yet
         if (review.isCommitted()) {
-            return produceErrorReport(mapping, request,
+            return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
                     Constants.PERFORM_SCREENING_PERM_NAME, "Error.ReviewCommitted");
         }
 
@@ -354,7 +353,7 @@ public class ProjectReviewActions extends DispatchAction {
 
         // If neither "sid" nor "rid" was specified, return an action forward to the error page
         if (verification == null) {
-            return produceErrorReport(mapping, request,
+            return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
                     Constants.PERFORM_SCREENING_PERM_NAME, "Error.SubmissionAndReviewIdNotSpecified");
         }
 
@@ -419,13 +418,13 @@ public class ProjectReviewActions extends DispatchAction {
 
         // Verify that the scorecard template for this review is of correct type
         if (!scorecardTemplate.getScorecardType().getName().equalsIgnoreCase("Screening")) {
-            return produceErrorReport(mapping, request,
+            return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
                     Constants.PERFORM_SCREENING_PERM_NAME, "Error.ReviewTypeIncorrect");
         }
 
         // Verify that review has not been committed yet
         if (review != null && review.isCommitted()) {
-            return produceErrorReport(mapping, request,
+            return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
                     Constants.PERFORM_SCREENING_PERM_NAME, "Error.ReviewCommitted");
         }
 
@@ -597,13 +596,14 @@ public class ProjectReviewActions extends DispatchAction {
 
         // Verify that the scorecard template for this review is of correct type
         if (!scorecardTemplate.getScorecardType().getName().equalsIgnoreCase("Screening")) {
-            return produceErrorReport(mapping, request,
+            return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
                     Constants.VIEW_SCREENING_PERM_NAME, "Error.ReviewTypeIncorrect");
         }
 
         // Make sure that the user is not trying to view unfinished review
         if (!verification.getReview().isCommitted()) {
-            return produceErrorReport(mapping, request, Constants.VIEW_SCREENING_PERM_NAME, "Error.ReviewNotCommitted");
+            return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
+                    Constants.VIEW_SCREENING_PERM_NAME, "Error.ReviewNotCommitted");
         }
 
         // Retrieve some basic project info (such as icons' names) and place it into request
@@ -785,13 +785,13 @@ public class ProjectReviewActions extends DispatchAction {
 
         // Verify that the scorecard template for this review is of correct type
         if (!scorecardTemplate.getScorecardType().getName().equalsIgnoreCase("Review")) {
-            return produceErrorReport(mapping, request,
+            return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
                     Constants.PERFORM_REVIEW_PERM_NAME, "Error.ReviewTypeIncorrect");
         }
 
         // Verify that review has not been committed yet
         if (review.isCommitted()) {
-            return produceErrorReport(mapping, request,
+            return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
                     Constants.PERFORM_REVIEW_PERM_NAME, "Error.ReviewCommitted");
         }
 
@@ -880,7 +880,7 @@ public class ProjectReviewActions extends DispatchAction {
 
         // If neither "sid" nor "rid" was specified, return an action forward to the error page
         if (verification == null) {
-            return produceErrorReport(mapping, request,
+            return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
                     Constants.PERFORM_REVIEW_PERM_NAME, "Error.SubmissionAndReviewIdNotSpecified");
         }
 
@@ -945,13 +945,13 @@ public class ProjectReviewActions extends DispatchAction {
 
         // Verify that the scorecard template for this review is of correct type
         if (!scorecardTemplate.getScorecardType().getName().equalsIgnoreCase("Review")) {
-            return produceErrorReport(mapping, request,
+            return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
                     Constants.PERFORM_REVIEW_PERM_NAME, "Error.ReviewTypeIncorrect");
         }
 
         // Verify that review has not been committed yet
         if (review != null && review.isCommitted()) {
-            return produceErrorReport(mapping, request,
+            return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
                     Constants.PERFORM_REVIEW_PERM_NAME, "Error.ReviewCommitted");
         }
 
@@ -1123,13 +1123,13 @@ public class ProjectReviewActions extends DispatchAction {
 
         // Verify that the scorecard template for this review is of correct type
         if (!scorecardTemplate.getScorecardType().getName().equalsIgnoreCase("Review")) {
-            return produceErrorReport(mapping, request,
+            return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
                     Constants.VIEW_ALL_REVIEWS_PERM_NAME, "Error.ReviewTypeIncorrect");
         }
 
         // Make sure that the user is not trying to view unfinished review
         if (!verification.getReview().isCommitted()) {
-            return produceErrorReport(mapping, request,
+            return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
                     Constants.VIEW_ALL_REVIEWS_PERM_NAME, "Error.ReviewNotCommitted");
         }
 
@@ -1215,13 +1215,13 @@ public class ProjectReviewActions extends DispatchAction {
 
         // Verify that the scorecard template for this review is of correct type
         if (!scorecardTemplate.getScorecardType().getName().equalsIgnoreCase("Review")) {
-            return produceErrorReport(mapping, request,
+            return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
                     Constants.PERFORM_AGGREGATION_PERM_NAME, "Error.ReviewTypeIncorrect");
         }
 
         // Verify that review has not been committed yet
         if (review.isCommitted()) {
-            return produceErrorReport(mapping, request,
+            return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
                     Constants.PERFORM_AGGREGATION_PERM_NAME, "Error.ReviewCommitted");
         }
 
@@ -1588,13 +1588,13 @@ public class ProjectReviewActions extends DispatchAction {
 
         // Verify that the scorecard template for this review is of correct type
         if (!scorecardTemplate.getScorecardType().getName().equalsIgnoreCase("Client Review")) {
-            return produceErrorReport(mapping, request,
+            return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
                     Constants.PERFORM_APPROVAL_PERM_NAME, "Error.ReviewTypeIncorrect");
         }
 
         // Verify that review has not been committed yet
         if (review.isCommitted()) {
-            return produceErrorReport(mapping, request,
+            return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
                     Constants.PERFORM_APPROVAL_PERM_NAME, "Error.ReviewCommitted");
         }
 
@@ -1683,7 +1683,7 @@ public class ProjectReviewActions extends DispatchAction {
 
         // If neither "sid" nor "rid" was specified, return an action forward to the error page
         if (verification == null) {
-            return produceErrorReport(mapping, request,
+            return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
                     Constants.PERFORM_APPROVAL_PERM_NAME, "Error.SubmissionAndReviewIdNotSpecified");
         }
 
@@ -1748,13 +1748,13 @@ public class ProjectReviewActions extends DispatchAction {
 
         // Verify that the scorecard template for this review is of correct type
         if (!scorecardTemplate.getScorecardType().getName().equalsIgnoreCase("Client Review")) {
-            return produceErrorReport(mapping, request,
+            return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
                     Constants.PERFORM_APPROVAL_PERM_NAME, "Error.ReviewTypeIncorrect");
         }
 
         // Verify that review has not been committed yet
         if (review != null && review.isCommitted()) {
-            return produceErrorReport(mapping, request,
+            return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
                     Constants.PERFORM_APPROVAL_PERM_NAME, "Error.ReviewCommitted");
         }
 
@@ -1926,13 +1926,14 @@ public class ProjectReviewActions extends DispatchAction {
 
         // Verify that the scorecard template for this review is of correct type
         if (!scorecardTemplate.getScorecardType().getName().equalsIgnoreCase("Client Review")) {
-            return produceErrorReport(mapping, request,
+            return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
                     Constants.VIEW_APPROVAL_PERM_NAME, "Error.ReviewTypeIncorrect");
         }
 
         // Make sure that the user is not trying to view unfinished review
         if (!verification.getReview().isCommitted()) {
-            return produceErrorReport(mapping, request, Constants.VIEW_APPROVAL_PERM_NAME, "Error.ReviewNotCommitted");
+            return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
+                    Constants.VIEW_APPROVAL_PERM_NAME, "Error.ReviewNotCommitted");
         }
 
         // Retrieve some basic project info (such as icons' names) and place it into request
@@ -2062,7 +2063,8 @@ public class ProjectReviewActions extends DispatchAction {
         // Verify that Submission ID was specified and denotes correct submission
         String sidParam = request.getParameter("sid");
         if (sidParam == null || sidParam.trim().length() == 0) {
-            result.setForward(produceErrorReport(mapping, request, permission, "Error.SubmissionIdNotSpecified"));
+            result.setForward(ActionsHelper.produceErrorReport(
+                    mapping, getResources(request), request, permission, "Error.SubmissionIdNotSpecified"));
             // Return the result of the check
             return result;
         }
@@ -2073,7 +2075,8 @@ public class ProjectReviewActions extends DispatchAction {
             // Try to convert specified sid parameter to its integer representation
             sid = Long.parseLong(sidParam, 10);
         } catch (NumberFormatException e) {
-            result.setForward(produceErrorReport(mapping, request, permission, "Error.SubmissionNotFound"));
+            result.setForward(ActionsHelper.produceErrorReport(
+                    mapping, getResources(request), request, permission, "Error.SubmissionNotFound"));
             // Return the result of the check
             return result;
         }
@@ -2084,7 +2087,8 @@ public class ProjectReviewActions extends DispatchAction {
         Submission submission = upMgr.getSubmission(sid);
         // Verify that submission with specified ID exists
         if (submission == null) {
-            result.setForward(produceErrorReport(mapping, request, permission, "Error.SubmissionNotFound"));
+            result.setForward(ActionsHelper.produceErrorReport(
+                    mapping, getResources(request), request, permission, "Error.SubmissionNotFound"));
             // Return the result of the check
             return result;
         }
@@ -2108,7 +2112,8 @@ public class ProjectReviewActions extends DispatchAction {
         if (permission != null) {
             // ... verify that this permission is granted for currently logged in user
             if (!AuthorizationHelper.hasUserPermission(request, permission)) {
-                result.setForward(produceErrorReport(mapping, request, permission, "Error.NoPermission"));
+                result.setForward(ActionsHelper.produceErrorReport(
+                        mapping, getResources(request), request, permission, "Error.NoPermission"));
                 // Return the result of the check
                 return result;
             }
@@ -2150,7 +2155,8 @@ public class ProjectReviewActions extends DispatchAction {
         // Verify that Review ID was specified and denotes correct review
         String ridParam = request.getParameter("rid");
         if (ridParam == null || ridParam.trim().length() == 0) {
-            result.setForward(produceErrorReport(mapping, request, permission, "Error.ReviewIdNotSpecified"));
+            result.setForward(ActionsHelper.produceErrorReport(
+                    mapping, getResources(request), request, permission, "Error.ReviewIdNotSpecified"));
             // Return the result of the check
             return result;
         }
@@ -2161,7 +2167,8 @@ public class ProjectReviewActions extends DispatchAction {
             // Try to convert specified rid parameter to its integer representation
             rid = Long.parseLong(ridParam, 10);
         } catch (NumberFormatException e) {
-            result.setForward(produceErrorReport(mapping, request, permission, "Error.ReviewNotFound"));
+            result.setForward(ActionsHelper.produceErrorReport(
+                    mapping, getResources(request), request, permission, "Error.ReviewNotFound"));
             // Return the result of the check
             return result;
         }
@@ -2185,7 +2192,8 @@ public class ProjectReviewActions extends DispatchAction {
 
         // Verify that review with specified ID exists
         if (review == null) {
-            result.setForward(produceErrorReport(mapping, request, permission, "Error.ReviewNotFound"));
+            result.setForward(ActionsHelper.produceErrorReport(
+                    mapping, getResources(request), request, permission, "Error.ReviewNotFound"));
             // Return the result of the check
             return result;
         }
@@ -2219,7 +2227,8 @@ public class ProjectReviewActions extends DispatchAction {
         if (permission != null) {
             // ... verify that this permission is granted for currently logged in user
             if (!AuthorizationHelper.hasUserPermission(request, permission)) {
-                result.setForward(produceErrorReport(mapping, request, permission, "Error.NoPermission"));
+                result.setForward(ActionsHelper.produceErrorReport(
+                        mapping, getResources(request), request, permission, "Error.NoPermission"));
                 // Return the result of the check
                 return result;
             }
@@ -2257,45 +2266,5 @@ public class ProjectReviewActions extends DispatchAction {
         Project project = manager.getProject(upload.getProject());
 
         return project;
-    }
-
-    /**
-     * This method places certain attributes into the request and returns a forard to the error
-     * page.
-     *
-     * @return an action forward to the appropriate error page.
-     * @param mapping
-     *            action mapping.
-     * @param request
-     *            the http request.
-     * @param permission
-     *            permission to check against, or <code>null</code> if no check is required.
-     * @param reasonKey
-     *            a key in Message resources which the reason of the error is stored under.
-     * @throws BaseException
-     *             if any error occurs.
-     */
-    private ActionForward produceErrorReport(ActionMapping mapping,
-            HttpServletRequest request, String permission, String reasonKey)
-        throws BaseException{
-        // Gather roles, so tabs will be displayed,
-        // but only do this if roles haven't been gathered yet
-        if (request.getAttribute("roles") == null) {
-            AuthorizationHelper.gatherUserRoles(request);
-        }
-
-        // Message Resources to be used for loading error messages from
-        MessageResources messages = getResources(request);
-
-        // Place error title into request
-        if (permission == null) {
-            request.setAttribute("errorTitle", messages.getMessage("Error.Title.General"));
-        } else {
-            request.setAttribute("errorTitle", messages.getMessage("Error.Title." + permission.replaceAll(" ", "")));
-        }
-        // Place error message (reason) into request
-        request.setAttribute("errorMessage", messages.getMessage(reasonKey));
-        // Find appropriate forward and return it
-        return mapping.findForward(Constants.USER_ERRROR_FORWARD_NAME);
     }
 }
