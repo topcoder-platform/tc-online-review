@@ -275,6 +275,10 @@ class ConfigHelper {
                     permissionsMatrix.put(permissionName, roles);
                 }
             }
+
+            // Create and run an instance of File System Server
+            // TODO: Remove this from the final code
+            FileSystemServerHelper.getInstance();
         } catch (UnknownNamespaceException une) {
             // TODO: Add proper logging here
             System.out.println(une.getMessage());
