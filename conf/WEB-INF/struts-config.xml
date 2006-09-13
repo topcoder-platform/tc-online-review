@@ -232,7 +232,7 @@
             name="contactManagerForm"
             input="/jsp/contactManager.jsp">
             <forward name="displayPage" path="/jsp/contactManager.jsp" redirect="false" />
-            <forward name="success" path="/actions/ViewProjectDetails?method=viewProjectDetails" redirect="true" />
+            <forward name="success" path="/actions/ViewProjectDetails.do?method=viewProjectDetails" redirect="true" />
         </action>
 
         <!-- "Upload Submission" action -->
@@ -242,7 +242,7 @@
             name="uploadSubmissionForm"
             input="/jsp/uploadSubmission.jsp">
             <forward name="displayPage" path="/jsp/uploadSubmission.jsp" redirect="false" />
-            <forward name="success" path="/actions/ViewProjectDetails?method=viewProjectDetails" redirect="true" />
+            <forward name="success" path="/actions/ViewProjectDetails.do?method=viewProjectDetails" redirect="true" />
         </action>
 
         <!-- "Download Submission" action -->
@@ -257,7 +257,7 @@
             type="com.cronos.onlinereview.actions.ProjectDetailsActions"
             parameter="method" scope="request"
             input="/jsp/uploadFinalFix.jsp">
-            <forward name="success" path="/actions/ViewProjectDetails?method=viewProjectDetails" redirect="false" />
+            <forward name="success" path="/actions/ViewProjectDetails.do?method=viewProjectDetails" redirect="false" />
         </action>
 
         <!-- "Download Final Fix" action -->
@@ -272,7 +272,7 @@
             type="com.cronos.onlinereview.actions.ProjectDetailsActions"
             parameter="method" scope="request"
             input="/jsp/uploadTestCase.jsp">
-            <forward name="success" path="/actions/ViewProjectDetails?method=viewProjectDetails" redirect="false" />
+            <forward name="success" path="/actions/ViewProjectDetails.do?method=viewProjectDetails" redirect="false" />
         </action>
 
         <!-- "Download Test Case" action -->
@@ -293,7 +293,7 @@
             type="com.cronos.onlinereview.actions.ProjectDetailsActions"
             parameter="method" scope="request"
             input="/jsp/confirmDeleteSubmission.jsp">
-            <forward name="success" path="/actions/ViewProjectDetails?method=viewProjectDetails" redirect="false"/>
+            <forward name="success" path="/actions/ViewProjectDetails.do?method=viewProjectDetails" redirect="false"/>
         </action>
 
         <!-- "View Auto Screening" action -->
@@ -301,7 +301,7 @@
             type="com.cronos.onlinereview.actions.ProjectDetailsActions"
             parameter="method" scope="request"
             input="/jsp/viewProjectDetails.jsp">
-            <forward name="success" path="/jsp/eiewAutoScreening.jsp" redirect="false"/>
+            <forward name="success" path="/jsp/viewAutoScreening.jsp" redirect="false"/>
         </action>
 
 
@@ -408,7 +408,7 @@
             name="aggregationForm"
             input="/jsp/editAggregation.jsp">
             <forward name="preview" path="/jsp/viewAggregation.jsp" redirect="false"/>
-            <forward name="success" path="/actions/ViewProjectDetails?method=viewProjectDetails" redirect="false"/>
+            <forward name="success" path="/actions/ViewProjectDetails.do?method=viewProjectDetails" redirect="false"/>
         </action>
 
         <!-- "View Aggregation" action -->
@@ -433,7 +433,7 @@
             parameter="method" scope="request"
             input="/jsp/editAggregationReview.jsp">
             <forward name="preview" path="/jsp/viewAggregationReview.jsp" redirect="false"/>
-            <forward name="success" path="/actions/ViewProjectDetails?method=viewProjectDetails" redirect="false"/>
+            <forward name="success" path="/actions/ViewProjectDetails.do?method=viewProjectDetails" redirect="false"/>
         </action>
 
         <!-- "View Aggregation Review" action -->
@@ -466,7 +466,7 @@
             parameter="method" scope="request"
             input="/jsp/editFinalReview.jsp">
             <forward name="preview" path="/jsp/viewFinalReview.jsp" redirect="false"/>
-            <forward name="success" path="/actions/ViewProjectDetails?method=viewProjectDetails" redirect="false"/>
+            <forward name="success" path="/actions/ViewProjectDetails.do?method=viewProjectDetails" redirect="false"/>
         </action>
 
         <!-- "View Final Review" action -->
