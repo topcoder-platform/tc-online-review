@@ -405,6 +405,36 @@ class ActionsHelper {
         return null;
     }
 
+
+
+    /**
+     * This static method searches for the project phase with 
+     * the specified phase type ID in a provided array of project phases.
+     *
+     * @return found project phase, or <code>null</code> if a phase with the specified 
+     *         phase type ID has not been found in the provided array of project phases.
+     * @param phases
+     *            an array of project phases to search for wanted project phase among.
+     * @param phaseTypeId
+     *            the phase type ID of the needed project phase.
+     * @throws IllegalArgumentException
+     *             if <code>phases</code> parameter is <code>null</code>, or
+     *             <code>phaseTypeId</code> parameter is zero or negative.
+     */
+    public static Phase findPhaseByPhaseTypeId(Phase[] phases, long phaseTypeId) {
+        // Validate parameters
+        validateParameterNotNull(phases, "phases");
+        validateParameterPositive(phaseTypeId, "phaseTypeId");
+
+        for (int i = 0; i < phases.length; ++i) {
+            if (phases[i].getPhaseType().getId() == phaseTypeId) {
+                return phases[i];
+            }
+        }
+        return null;    
+    }
+
+    
     /**
      * This static method searches for the phase type with the specified ID in a provided array of
      * phase types.

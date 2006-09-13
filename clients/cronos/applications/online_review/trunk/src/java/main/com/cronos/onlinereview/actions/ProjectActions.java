@@ -44,6 +44,9 @@ import com.topcoder.management.project.ProjectType;
 import com.topcoder.management.resource.Resource;
 import com.topcoder.management.resource.ResourceManager;
 import com.topcoder.management.resource.ResourceRole;
+import com.topcoder.management.scorecard.ScorecardManager;
+import com.topcoder.management.scorecard.ScorecardSearchBundle;
+import com.topcoder.management.scorecard.data.Scorecard;
 
 /**
  * This class contains Struts Actions that are meant to deal with Projects. There are following
@@ -132,6 +135,23 @@ public class ProjectActions extends DispatchAction {
         // Place them into request as an attribute
         request.setAttribute("phaseTypes", phaseTypes);
         
+        // Obtain an instance of Scorecard Manager
+        ScorecardManager scorecardManager = ActionsHelper.createScorecardManager(request);
+        
+        // TODO: Check if we need to filter by the project category
+        // Retrieve the scorecard lists
+        Scorecard[] screeningScorecards = scorecardManager.searchScorecards(
+                ScorecardSearchBundle.buildTypeNameEqualFilter("Screening"), true);
+        Scorecard[] reviewScorecards = scorecardManager.searchScorecards(
+                ScorecardSearchBundle.buildTypeNameEqualFilter("Review"), true);
+        Scorecard[] approvalScorecards = scorecardManager.searchScorecards(
+                ScorecardSearchBundle.buildTypeNameEqualFilter("Client Review"), true);
+        // Store them in the request
+        request.setAttribute("screeningScorecards", screeningScorecards);
+        request.setAttribute("reviewScorecards", reviewScorecards);
+        request.setAttribute("approvalScorecards", approvalScorecards);
+      
+        // Return the success forward
         return mapping.findForward(Constants.SUCCESS_FORWARD_NAME);
     }
 
@@ -367,7 +387,7 @@ public class ProjectActions extends DispatchAction {
         Phase[] projectPhases = saveProjectPhases(request, lazyForm, project);
         
         // Save the project resources
-        saveResources(request, lazyForm, project);
+        saveResources(request, lazyForm, project, projectPhases);
         
         return mapping.findForward(Constants.SUCCESS_FORWARD_NAME);
     }
@@ -430,7 +450,6 @@ public class ProjectActions extends DispatchAction {
                 phProject.addPhase(phase);
                 // Put it to the map
                 newPhasesMap.put(lazyForm.get("phase_js_id", i), phase);
-                System.out.println("phase_js_id:" + lazyForm.get("phase_js_id", i) + ";");
                 
             }  else {
                 long phaseId = ((Long) lazyForm.get("phase_id", i)).longValue();
@@ -489,13 +508,14 @@ public class ProjectActions extends DispatchAction {
                     }
                     
                     long unitMutiplier = 1000 * 3600 * ("days".equals(lazyForm.get("phase_start_dayshrs", i)) ? 24 : 1);
+                    
+                    // TODO: minus should probably be handled by swapping the dependency and dependant phases
                     if ("minus".equals(lazyForm.get("phase_start_plusminus", i))) {
                         unitMutiplier = -unitMutiplier;
                     }
                     long lagTime = unitMutiplier * ((Integer) lazyForm.get("phase_start_amount", i)).longValue();
                     
                     // Create phase Dependency
-                    System.out.println("phase_start-phase:" + lazyForm.get("phase_start_phase", i) + ";");
                     Dependency dependency = new Dependency((Phase) newPhasesMap.get(lazyForm.get("phase_start_phase", i)),
                             phase, dependencyStart, dependantStart, lagTime);
                     
@@ -503,8 +523,8 @@ public class ProjectActions extends DispatchAction {
                     phase.addDependency(dependency);
                     
                     // TODO: Check how to deal with it
-                    // Set dummy scheduled start date due to weirdness of Project Phases
-                    phase.setScheduledStartDate(new Date());
+                    // Set scheduled start date to calculate start date
+                    phase.setScheduledStartDate(phase.calcStartDate());
                 }
                 
                 // Get phase end date from form
@@ -559,7 +579,7 @@ public class ProjectActions extends DispatchAction {
      * @param project
      * @throws BaseException
      */
-    private void saveResources(HttpServletRequest request, LazyValidatorForm lazyForm, Project project)
+    private void saveResources(HttpServletRequest request, LazyValidatorForm lazyForm, Project project, Phase[] projectPhases)
             throws BaseException {
 
         // Obtain the instance of the User Retrieval
@@ -616,6 +636,13 @@ public class ProjectActions extends DispatchAction {
             String paid = (String) lazyForm.get("resources_paid", i);
             if ("Yes".equals(paid) || "No".equals(paid)) {
                 resource.setProperty("Payment Status", paid);
+            }
+            // Set resource phase id, if needed
+            Long phaseTypeId = resource.getResourceRole().getPhaseType();
+            if (phaseTypeId != null) {
+                // TODO: Need to support several same typed phases
+                Phase phase = ActionsHelper.findPhaseByPhaseTypeId(projectPhases, phaseTypeId.longValue());
+                resource.setPhase(new Long(phase.getId()));
             }
             
             // Get info about user with the specified handle
