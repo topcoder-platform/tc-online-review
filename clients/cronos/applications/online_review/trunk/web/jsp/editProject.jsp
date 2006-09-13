@@ -172,8 +172,6 @@
 		 * This function adds new phase to phases table, it includes addition of several rows.
 		 */
 		function addNewPhase() {
-			// TODO: Fix it to support parameter indexing
-		
 			// Retrieve timeline and add phase tables
 			var timelineTable = document.getElementById("timeline_tbl");
 			var addPhaseTable = document.getElementById("addphase_tbl");
@@ -192,7 +190,9 @@
 			var startPhaseCombo = getChildByName(addPhaseTable, "addphase_start_phase");
 			startPhaseCombo.add(new Option(phaseName, phaseId), null);
 			// Also add it to the phase rows
-			var startPhaseCombos = document.getElementsByName("phase_start_phase");
+			var startPhaseCombos = getChildrenByNamePrefix(document.documentElement, "phase_start_phase");
+			
+			alert(startPhaseCombos);
 			for (var i = 0; i < startPhaseCombos.length; i++) {
 				startPhaseCombos[i].add(new Option(phaseName, phaseId), null);
 			}
@@ -203,6 +203,10 @@
 			newRow.id = phaseId;
 			// Remove "display: none;"
 			newRow.style["display"] = "";
+			
+			// Set the phase id hidden control
+			var jsIdNode = getChildByNamePrefix(newRow, "phase_js_id");			
+			jsIdNode.value = phaseId;		
 						
 			// Increase phase index
 			lastPhaseIndex++;
@@ -210,7 +214,7 @@
 			// Rename all the inputs to have a new index
 			patchAllChildParamIndexes(newRow, lastPhaseIndex);
 
-			// TODO: Don't forget that we have also radio buttons for now!!!
+			
 			// Populate newly created phase inputs from the add phase form
 			var inputNames = ["type", 
 				"start_date", "start_time", "start_AMPM",
@@ -457,6 +461,7 @@
 									<html:hidden property="phase_type[0]" />
 									<%-- TODO: Populate form fields values in action, instead of here --%>
 									<html:hidden property="phase_id[0]" value="-1" />
+									<html:hidden property="phase_js_id[0]" value="" />
 									<html:hidden property="phase_action[0]" value="add" />									
 									<html:radio property="phase_start_by_phase[0]" value="false" /> 
 									<html:text styleClass="inputBoxDate" property="phase_start_date[0]" />

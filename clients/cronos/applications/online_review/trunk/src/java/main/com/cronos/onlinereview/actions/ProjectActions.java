@@ -9,7 +9,9 @@ import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -23,6 +25,7 @@ import org.apache.struts.validator.LazyValidatorForm;
 
 import com.cronos.onlinereview.external.ExternalUser;
 import com.cronos.onlinereview.external.UserRetrieval;
+import com.topcoder.project.phases.Dependency;
 import com.topcoder.project.phases.Phase;
 import com.topcoder.project.phases.PhaseStatus;
 import com.topcoder.project.phases.PhaseType;
@@ -406,6 +409,9 @@ public class ProjectActions extends DispatchAction {
         // Get the "Scheduled" phase status
         PhaseStatus scheduledStatus = ActionsHelper.findPhaseStatusByName(allPhaseStatuses, "Scheduled");
         
+        // Create the map to store the mapping from phase JS ids to phases
+        Map newPhasesMap = new HashMap();
+        
         // Get the array of phase types specified for each phase
         Long[] phaseTypes = (Long[]) lazyForm.get("phase_type");
         // 0-index phase is skipped as it is a "dummy" one
@@ -422,6 +428,10 @@ public class ProjectActions extends DispatchAction {
                 phase = new Phase(phProject, ((Integer) lazyForm.get("phase_duration", i)).longValue() * 3600 * 1000);
                 // Add it to Phases Project
                 phProject.addPhase(phase);
+                // Put it to the map
+                newPhasesMap.put(lazyForm.get("phase_js_id", i), phase);
+                System.out.println("phase_js_id:" + lazyForm.get("phase_js_id", i) + ";");
+                
             }  else {
                 long phaseId = ((Long) lazyForm.get("phase_id", i)).longValue();
                 if (phaseId != -1) {
@@ -432,6 +442,11 @@ public class ProjectActions extends DispatchAction {
                     // and so should be skipped for actions other then "add"
                     continue;
                 }
+            }
+            
+            // If action is "update", update phase duration
+            if ("update".equals(phaseAction)) {
+                phase.setLength(((Integer) lazyForm.get("phase_duration", i)).longValue() * 3600 * 1000);
             }
             
             // If action is "delete", delete the phase and proceed to the next one
@@ -456,11 +471,40 @@ public class ProjectActions extends DispatchAction {
                     // Get phase start date from form
                     Date phaseStartDate = parseDatetimeFormProperties(lazyForm, i, "phase_start_date",
                             "phase_start_time", "phase_start_AMPM");
+                    // TODO: Determine which of the dates should actually be set
                     // Set sheduled phase start date
                     phase.setScheduledStartDate(phaseStartDate);
+                    // Set sheduled phase start date
+                    phase.setFixedStartDate(phaseStartDate);
                 } else {
+                    // TODO: These parameters should probably be populated in some other way
+                    boolean dependencyStart;
+                    boolean dependantStart;
+                    if ("starts".equals(lazyForm.get("phase_start_when", i))) {
+                        dependencyStart = false;
+                        dependantStart = true;
+                    } else {
+                        dependencyStart = true;
+                        dependantStart = false;
+                    }
+                    
+                    long unitMutiplier = 1000 * 3600 * ("days".equals(lazyForm.get("phase_start_dayshrs", i)) ? 24 : 1);
+                    if ("minus".equals(lazyForm.get("phase_start_plusminus", i))) {
+                        unitMutiplier = -unitMutiplier;
+                    }
+                    long lagTime = unitMutiplier * ((Integer) lazyForm.get("phase_start_amount", i)).longValue();
+                    
                     // Create phase Dependency
-                    // TODO: Complete it
+                    System.out.println("phase_start-phase:" + lazyForm.get("phase_start_phase", i) + ";");
+                    Dependency dependency = new Dependency((Phase) newPhasesMap.get(lazyForm.get("phase_start_phase", i)),
+                            phase, dependencyStart, dependantStart, lagTime);
+                    
+                    // Add dependency to phase
+                    phase.addDependency(dependency);
+                    
+                    // TODO: Check how to deal with it
+                    // Set dummy scheduled start date due to weirdness of Project Phases
+                    phase.setScheduledStartDate(new Date());
                 }
                 
                 // Get phase end date from form

@@ -57,7 +57,7 @@ function getChildByNamePrefix(node, namePrefix) {
 	for (var element = dojo.dom.firstElement(node); element != null; 
 		element = dojo.dom.nextElement(element)) {
 		// Check if current child has the specified name prefix
-		if (element.name.indexOf(namePrefix) == 0) {
+		if (element.name && element.name.indexOf(namePrefix) == 0) {
 			// If yes, return it
 			return element;
 		} else {
@@ -83,12 +83,12 @@ function getChildrenByNamePrefix(node, namePrefix) {
 	for (var element = dojo.dom.firstElement(node); element != null; 
 		element = dojo.dom.nextElement(element)) {
 		// Check if current child has the specified name prefix
-		if (element.name.indexOf(namePrefix) == 0) {
+		if (element.name && element.name.indexOf(namePrefix) == 0) {
 			// If yes, append it to compound result
 			compoundResult.push(element);
 		} else {
 			// Process the element recursively
-			var result = getChildrenByNamePrefix(element, name);
+			var result = getChildrenByNamePrefix(element, namePrefix);
 			// Append the found elements to compound result 
 			// TODO: Note that this is not the most efficient way to do it
 			compoundResult = compoundResult.concat(result);
