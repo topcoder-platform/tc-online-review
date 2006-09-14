@@ -64,19 +64,20 @@
 						</table>
 					</div>
 
-					&nbsp;<b><bean:message key="editReview.Aggregator" /></b> <a href="#" class="coderTextYellow">AggregatorHandle</a><br>
-					&nbsp;<b><bean:message key="editReview.Submission" /></b> ${sid}<br />
+					&nbsp;<b><bean:message key="editReview.Submission" /></b> ${sid} (<tc-webtag:handle coderId="${submitterId}" context="component" />)<br />
 					&nbsp;<b><bean:message key="editReview.MyRole" /></b> ${myRole}<br />
 					<h3><bean:message key="editReview.EditAggregation.title" /></h3>
 
 					<html:form action="/actions/SaveAggregation">
 						<html:hidden property="method" value="saveAggregation" />
+						<html:hidden property="rid" value="${review.id}" />
 
 						<c:set var="itemIdx" value="0" />
 						<c:set var="globalCommentIdx" value="0" />
+						<c:set var="globalResponseIdx" value="0" />
 
 						<c:forEach items="${scorecardTemplate.allGroups}" var="group" varStatus="groupStatus">
-							<table cellpadding="0" border="0" width="100%" class="scorecard" style="border-collapse: collapse;">
+							<table cellpadding="0" border="0" width="100%" class="scorecard" style="border-collapse:collapse;">
 								<tr>
 									<td class="title" colspan="7">${group.name}</td>
 								</tr>
@@ -105,47 +106,54 @@
 											<td class="headerC"><bean:message key="editReview.EditAggregation.CommentNumber" /></td>
 											<td class="header"><bean:message key="editReview.EditAggregation.Response" /></td>
 											<td class="header"><bean:message key="editReview.EditAggregation.Type" /></td>
-											<td class="header"><bean:message key="editReview.EditAggregation.Rejected" /></td>
-											<td class="header"><bean:message key="editReview.EditAggregation.Accepted" /></td>
-											<td class="header"><bean:message key="editReview.EditAggregation.Duplicate" /></td>
+											<td class="header"><bean:message key="AggregationItemStatus.Rejected" /></td>
+											<td class="header"><bean:message key="AggregationItemStatus.Accepted" /></td>
+											<td class="header"><bean:message key="AggregationItemStatus.Duplicate" /></td>
 										</tr>
 
-										<c:forEach items="${review.allItems}" var="item">
+										<c:forEach items="${review.allItems}" var="item" varStatus="itemStatus">
 											<c:set var="commentNum" value="1" />
 											<c:if test="${item.question == question.id}">
 												<c:forEach items="${item.allComments}" var="comment" varStatus="commentStatus">
-													<c:if test="${(comment.commentType.name eq 'Required') or (comment.commentType.name eq 'Recommended') or (comment.commentType.name eq 'Comment')}">
+													<c:set var="commentType" value="${comment.commentType.name}" />
+													<c:if test='${(commentType == "Required") || (commentType == "Recommended") || (commentType == "Comment")}'>
 														<tr class="dark">
 															<td class="value">
 																<c:if test="${commentStatus.index == 0}">
-																	<a href="#" class="coderTextGreen">qiucx0161</a><br />
-																	<a href="pc_review_individual.jsp?role=public&projectTabIndex=0&resolved=true"><bean:message key="editReview.EditAggregation.ViewReview" /></a>
+																	<c:forEach items="${reviewResources}" var="resource">
+																		<c:if test="${resource.id == comment.author}">
+																			<tc-webtag:handle coderId='${resource.allProperties["External Reference ID"]}' context="component" /><br />
+																		</c:if>
+																	</c:forEach>
+																	<c:forEach items="${reviews}" var="subReview">
+																		<c:if test="${subReview.author == comment.author}">
+																			<html:link page="/actions/ViewReview.do?method=viewReview&rid=${subReview.id}"><bean:message key="editReview.EditAggregation.ViewReview" /></html:link>
+																		</c:if>
+																	</c:forEach>
 																</c:if>
 															</td>
 															<td class="valueC">${commentNum}</td>
 															<td class="value" width="85%">
 																<b><bean:message key="editReview.EditAggregation.ReviewerResponse" /></b>
 																${comment.comment}<br />
-																<div class="showText" id="response_${globalCommentIdx}_off" style="margin-top:4px;">
-																	<html:link href="javascript:toggleDisplay('response_${globalCommentIdx}_off');toggleDisplay('response_${globalCommentIdx}_on');">
-																		<html:img srcKey="editReview.EditAggregation.AddResponse.img" altKey="editReview.EditAggregation.AddResponse.img.alt" border="0" />
-																	</html:link><br />
-																</div>
-																<div style="padding-top:4px;" class="hideText" id="response_comment_type${globalCommentIdx}">
-																	<b><bean:message key="editReview.EditAggregation.ResponseText" /></b><br />
-																	<html:textarea rows="2" property="response_comment[${globalCommentIdx}]" cols="20" styleClass="inputTextBox" />
-																</div>
+																<c:if test="${commentStatus.index == lastCommentIdxs[itemStatus.index]}">
+																	<div style="padding-top:4px;">
+																		<b><bean:message key="editReview.EditAggregation.ResponseText" /></b><br />
+																		<html:textarea rows="2" property="aggregator_response[${globalResponseIdx}]" cols="20" styleClass="inputTextBox" />
+																	</div>
+																	<c:set var="globalResponseIdx" value="${globalResponseIdx + 1}" />
+																</c:if>
 															</td>
 															<td class="value">
-																<html:select size="1" property="response_comment_type[${globalCommentIdx}]" styleClass="inputBox">
+																<html:select size="1" property="aggregator_response_type[${globalCommentIdx}]" styleClass="inputBox">
 																	<c:forEach items="${allCommentTypes}" var="commentType">
 																		<html:option value="${commentType.id}">${commentType.name}</html:option>
 																	</c:forEach>
 																</html:select>
 															</td>
-															<td class="valueC"><html:radio value="Rejected" property="response_accept[${globalCommentIdx}]" /></td>
-															<td class="valueC"><html:radio value="Accepted" property="response_accept[${globalCommentIdx}]" /></td>
-															<td class="valueC"><html:radio value="Duplicate" property="response_accept[${globalCommentIdx}]" /></td>
+															<td class="valueC"><html:radio value="Rejected" property="aggregate_function[${globalCommentIdx}]" /></td>
+															<td class="valueC"><html:radio value="Accepted" property="aggregate_function[${globalCommentIdx}]" /></td>
+															<td class="valueC"><html:radio value="Duplicate" property="aggregate_function[${globalCommentIdx}]" /></td>
 														</tr>
 
 														<c:set var="commentNum" value="${commentNum + 1}" />
@@ -174,7 +182,7 @@
 						</div>
 					</html:form>
 				</div>
-				<p><br /></p>
+				<br /><br />
 			</td>
 			<!-- Center Column Ends -->
 
