@@ -408,10 +408,10 @@ class ActionsHelper {
 
 
     /**
-     * This static method searches for the project phase with 
+     * This static method searches for the project phase with
      * the specified phase type ID in a provided array of project phases.
      *
-     * @return found project phase, or <code>null</code> if a phase with the specified 
+     * @return found project phase, or <code>null</code> if a phase with the specified
      *         phase type ID has not been found in the provided array of project phases.
      * @param phases
      *            an array of project phases to search for wanted project phase among.
@@ -431,10 +431,9 @@ class ActionsHelper {
                 return phases[i];
             }
         }
-        return null;    
+        return null;
     }
 
-    
     /**
      * This static method searches for the phase type with the specified ID in a provided array of
      * phase types.
@@ -680,7 +679,7 @@ class ActionsHelper {
      * This static member function examines an array of supplied resources and forms a string that
      * specifies the roles based on the roles the resources in the array have. All roles in the
      * array are supposed to be assigned to the same external user, although the check of meeting
-     * that condition is not perforemd by this method.
+     * this condition is not perforemd by this method.
      *
      * @return a string with the role(s) the resource from the specified array have. If there are
      *         more than one role, the roles will be separated by forward slash(<code>/</code>)
@@ -692,7 +691,7 @@ class ActionsHelper {
      * @throws IllegalArgumentException
      *             if any of the parameters are <code>null</code>.
      */
-    public static String determineMyRoles(MessageResources messages, Resource[] resources) {
+    public static String determineRolesForResources(MessageResources messages, Resource[] resources) {
         // Validate parameter
         validateParameterNotNull(messages, "messages");
         validateParameterNotNull(resources, "resources");
