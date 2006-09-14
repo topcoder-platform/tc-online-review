@@ -76,3 +76,5 @@ INSERT INTO review_item_comment (review_item_comment_id, resource_id, review_ite
   VALUES (4217, 206, 4117, 3, 'fff', 0, 'qiucx0161', CURRENT, 'qiucx0161', CURRENT);
 INSERT INTO review_item_comment (review_item_comment_id, resource_id, review_item_id, comment_type_id, content, sort, create_user, create_date, modify_user, modify_date)
   VALUES (4218, 207, 4118, 1, 'half-score comment 5.', 0, 'ivern', CURRENT, 'ivern', CURRENT);
+INSERT INTO review_item_comment (review_item_comment_id, resource_id, review_item_id, comment_type_id, content, sort, create_user, create_date, modify_user, modify_date)
+  VALUES (4219, 207, 4118, 2, 'second comment from the same reviewer for the same item.', 1, 'ivern', CURRENT, 'ivern', CURRENT);
