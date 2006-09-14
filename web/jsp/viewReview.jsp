@@ -166,11 +166,9 @@
 
 					<div align="right">
 						<a href="javascript:history.go(-1)"><html:img srcKey="btnBack.img" altKey="btnBack.alt" border="0" /></a><br />
-					</div>
-					<br />
-
+					</div><br />
 				</div>
-				<p><br /></p>
+				<br /><br />
 			</td>
 			<!-- Center Column Ends -->
 
