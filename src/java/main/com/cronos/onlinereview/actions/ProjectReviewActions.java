@@ -22,6 +22,7 @@ import com.topcoder.management.deliverable.UploadManager;
 import com.topcoder.management.project.Project;
 import com.topcoder.management.project.ProjectManager;
 import com.topcoder.management.resource.Resource;
+import com.topcoder.management.resource.ResourceManager;
 import com.topcoder.management.review.ReviewEntityNotFoundException;
 import com.topcoder.management.review.ReviewManager;
 import com.topcoder.management.review.data.Comment;
@@ -39,6 +40,7 @@ import com.topcoder.project.phases.Phase;
 import com.topcoder.search.builder.filter.AndFilter;
 import com.topcoder.search.builder.filter.EqualToFilter;
 import com.topcoder.search.builder.filter.Filter;
+import com.topcoder.search.builder.filter.InFilter;
 import com.topcoder.util.errorhandling.BaseException;
 
 /**
@@ -118,7 +120,7 @@ public class ProjectReviewActions extends DispatchAction {
     public ActionForward createScreening(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response)
         throws BaseException {
-        // Verify that certain requirements are met before processing with the Action
+        // Verify that certain requirements are met before proceeding with the Action
         CorrectnessCheckResult verification =
                 checkForCorrectSubmissionId(mapping, request, Constants.PERFORM_SCREENING_PERM_NAME);
         // If any error has occured, return action forward contained in the result bean
@@ -240,7 +242,7 @@ public class ProjectReviewActions extends DispatchAction {
     public ActionForward editScreening(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response)
         throws BaseException {
-        // Verify that certain requirements are met before processing with the Action
+        // Verify that certain requirements are met before proceeding with the Action
         CorrectnessCheckResult verification =
                 checkForCorrectReviewId(mapping, request, Constants.PERFORM_SCREENING_PERM_NAME);
         // If any error has occured, return action forward contained in the result bean
@@ -342,7 +344,7 @@ public class ProjectReviewActions extends DispatchAction {
     public ActionForward saveScreening(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response)
         throws BaseException {
-        // Verify that certain requirements are met before processing with the Action
+        // Verify that certain requirements are met before proceeding with the Action
         CorrectnessCheckResult verification = null;
         if (request.getParameter("rid") != null) {
             verification = checkForCorrectReviewId(mapping, request, Constants.PERFORM_SCREENING_PERM_NAME);
@@ -581,7 +583,7 @@ public class ProjectReviewActions extends DispatchAction {
     public ActionForward viewScreening(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response)
         throws BaseException {
-        // Verify that certain requirements are met before processing with the Action
+        // Verify that certain requirements are met before proceeding with the Action
         CorrectnessCheckResult verification =
                 checkForCorrectReviewId(mapping, request, Constants.VIEW_SCREENING_PERM_NAME);
         // If any error has occured, return action forward contained in the result bean
@@ -645,7 +647,7 @@ public class ProjectReviewActions extends DispatchAction {
     public ActionForward createReview(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response)
         throws BaseException {
-        // Verify that certain requirements are met before processing with the Action
+        // Verify that certain requirements are met before proceeding with the Action
         CorrectnessCheckResult verification =
                 checkForCorrectSubmissionId(mapping, request, Constants.PERFORM_REVIEW_PERM_NAME);
         // If any error has occured, return action forward contained in the result bean
@@ -767,7 +769,7 @@ public class ProjectReviewActions extends DispatchAction {
     public ActionForward editReview(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response)
         throws BaseException {
-        // Verify that certain requirements are met before processing with the Action
+        // Verify that certain requirements are met before proceeding with the Action
         CorrectnessCheckResult verification =
                 checkForCorrectReviewId(mapping, request, Constants.PERFORM_REVIEW_PERM_NAME);
         // If any error has occured, return action forward contained in the result bean
@@ -869,7 +871,7 @@ public class ProjectReviewActions extends DispatchAction {
     public ActionForward saveReview(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response)
         throws BaseException {
-        // Verify that certain requirements are met before processing with the Action
+        // Verify that certain requirements are met before proceeding with the Action
         CorrectnessCheckResult verification = null;
         if (request.getParameter("rid") != null) {
             verification = checkForCorrectReviewId(mapping, request, Constants.PERFORM_REVIEW_PERM_NAME);
@@ -889,7 +891,7 @@ public class ProjectReviewActions extends DispatchAction {
             return verification.getForward();
         }
 
-        // Retrieve the review to edit (if any)
+        // Retrieve the review to save (if any)
         Review review = verification.getReview();
         Scorecard scorecardTemplate = null;
 
@@ -917,14 +919,9 @@ public class ProjectReviewActions extends DispatchAction {
             Filter filterScorecard = new EqualToFilter("scorecardType",
                     new Long(scorecardTemplate.getScorecardType().getId()));
 
-            // Build the list of all filters that should be joined using AND operator
-            List filters = new ArrayList();
-            filters.add(filterResource);
-            filters.add(filterSubmission);
-            filters.add(filterScorecard);
-
             // Prepare final combined filter
-            Filter filter = new AndFilter(filters);
+            Filter filter = new AndFilter(Arrays.asList(new Filter[]
+                    {filterResource, filterSubmission, filterScorecard}));
             // Obtain an instance of Review Manager
             ReviewManager revMgr = ActionsHelper.createReviewManager(request);
             // Retrieve an array of reviews
@@ -965,7 +962,7 @@ public class ProjectReviewActions extends DispatchAction {
                 ActionsHelper.createPhaseManager(request), verification.getProject());
         // Get an active phase for the project
         Phase phase = ActionsHelper.getPhase(phases, true, Constants.REVIEW_PHASE_NAME);
-        // Retrieve a resource for the Screening phase
+        // Retrieve a resource for the Review phase
         Resource resource = ActionsHelper.getMyResourceForPhase(request, phase);
         // Get the form defined for this action
         LazyValidatorForm reviewForm = (LazyValidatorForm) form;
@@ -1108,7 +1105,7 @@ public class ProjectReviewActions extends DispatchAction {
     public ActionForward viewReview(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response)
         throws BaseException {
-        // Verify that certain requirements are met before processing with the Action
+        // Verify that certain requirements are met before proceeding with the Action
         CorrectnessCheckResult verification =
                 checkForCorrectReviewId(mapping, request, Constants.VIEW_ALL_REVIEWS_PERM_NAME);
         // If any error has occured, return action forward contained in the result bean
@@ -1197,7 +1194,7 @@ public class ProjectReviewActions extends DispatchAction {
     public ActionForward editAggregation(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response)
         throws BaseException {
-        // Verify that certain requirements are met before processing with the Action
+        // Verify that certain requirements are met before proceeding with the Action
         CorrectnessCheckResult verification =
                 checkForCorrectReviewId(mapping, request, Constants.PERFORM_AGGREGATION_PERM_NAME);
         // If any error has occured, return action forward contained in the result bean
@@ -1225,15 +1222,85 @@ public class ProjectReviewActions extends DispatchAction {
                     Constants.PERFORM_AGGREGATION_PERM_NAME, "Error.ReviewCommitted");
         }
 
+        // Retrieve current project
+        Project project = verification.getProject();
+
         // Retrieve some basic project info (such as icons' names) and place it into request
-        ActionsHelper.retrieveAndStoreBasicProjectInfo(request, verification.getProject(), getResources(request));
+        ActionsHelper.retrieveAndStoreBasicProjectInfo(request, project, getResources(request));
+        // Retrieve some basic aggregation info and place it into request
+        retrieveAndStoreBasicAggregationInfo(request, verification, scorecardTemplate);
         // Place Scorecard template in the request
         request.setAttribute("scorecardTemplate", scorecardTemplate);
 
-//        Filter filterResources = ResourceFilterBuilder.createPhaseIdFilter()
-        // Obtain an instance of Resource Manager
-/*        ResourceManager resMgr = ActionsHelper.createResourceManager(request);
-        Resource[] resourcesReviews = resMgr.searchResources(filterResources);*/
+        // Obtain an array of "my" resources
+        Resource[] myResources = (Resource[]) request.getAttribute("myResources");
+        // Place a string that represents "my" current role(s) into the request
+        request.setAttribute("myRole", ActionsHelper.determineRolesForResources(getResources(request), myResources));
+
+        // Obtain an instance of Review Manager
+        ReviewManager revMgr = ActionsHelper.createReviewManager(request);
+
+        // Retrieve all comment types first
+        CommentType allCommentTypes[] = revMgr.getAllCommentTypes();
+        // Select only those needed for this scorecard
+        CommentType reviewCommentTypes[] = new CommentType[] {
+                ActionsHelper.findCommentTypeByName(allCommentTypes, "Comment"),
+                ActionsHelper.findCommentTypeByName(allCommentTypes, "Required"),
+                ActionsHelper.findCommentTypeByName(allCommentTypes, "Recommended") };
+
+        // Place comment types in the request
+        request.setAttribute("allCommentTypes", reviewCommentTypes);
+
+        int allCommentsNum = 0;
+
+        for (int i = 0; i < review.getNumberOfItems(); ++i) {
+            Item item = review.getItem(i);
+            for (int j = 0; j < item.getNumberOfComments(); ++j) {
+                String commentType = item.getComment(j).getCommentType().getName();
+                if (!commentType.equalsIgnoreCase("Aggregation Comment")) {
+                    ++allCommentsNum;
+                }
+            }
+        }
+
+        LazyValidatorForm aggregationForm = (LazyValidatorForm) form;
+
+        String[] aggregatorResponses = new String[review.getNumberOfItems()];
+        String[] aggregateFunctions = new String[allCommentsNum];
+        Long[] responseTypeIds = new Long[allCommentsNum];
+        int commentIndex = 0;
+        int itemIndex = 0;
+
+        for (int i = 0; i < aggregatorResponses.length; ++i) {
+            Item item = review.getItem(i);
+            for (int j = 0; j < item.getNumberOfComments(); ++j) {
+                Comment comment = item.getComment(j);
+                String commentType = comment.getCommentType().getName();
+
+                if (commentType.equalsIgnoreCase("Comment") || commentType.equalsIgnoreCase("Required") ||
+                        commentType.equalsIgnoreCase("Recommended")) {
+                    String aggregFunction = (String) comment.getExtraInfo();
+                    if ("Rejected".equalsIgnoreCase(aggregFunction)) {
+                        aggregateFunctions[commentIndex] = "Rejected";
+                    } else if ("Accepted".equalsIgnoreCase(aggregFunction)) {
+                        aggregateFunctions[commentIndex] = "Accepted";
+                    } else if ("Duplicate".equalsIgnoreCase(aggregFunction)) {
+                        aggregateFunctions[commentIndex] = "Duplicate";
+                    } else {
+                        aggregateFunctions[commentIndex] = "";
+                    }
+                    responseTypeIds[commentIndex] = new Long(comment.getCommentType().getId());
+                    ++commentIndex;
+                }
+                if (commentType.equalsIgnoreCase("Aggregation Comment")) {
+                    aggregatorResponses[itemIndex++] = comment.getComment();
+                }
+            }
+        }
+
+        aggregationForm.set("aggregator_response", aggregatorResponses);
+        aggregationForm.set("aggregate_function", aggregateFunctions);
+        aggregationForm.set("aggregator_response_type", responseTypeIds);
 
         return mapping.findForward(Constants.SUCCESS_FORWARD_NAME);
     }
@@ -1261,14 +1328,132 @@ public class ProjectReviewActions extends DispatchAction {
     public ActionForward saveAggregation(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response)
         throws BaseException {
-        // TODO: Add implementation of method saveAggregation here
-        return null;
+        // Verify that certain requirements are met before proceeding with the Action
+        CorrectnessCheckResult verification =
+            checkForCorrectReviewId(mapping, request, Constants.PERFORM_AGGREGATION_PERM_NAME);
+        // If any error has occured, return action forward contained in the result bean
+        if (!verification.isSuccessful()) {
+            return verification.getForward();
+        }
+
+        // Retrieve a review to save
+        Review review = verification.getReview();
+
+        // Obtain an instance of Scorecad Manager
+        ScorecardManager scrMgr = ActionsHelper.createScorecardManager(request);
+        // Retrieve a scorecard template for the review
+        Scorecard scorecardTemplate = scrMgr.getScorecard(review.getScorecard());
+
+        // Verify that the scorecard template for this review is of correct type
+        if (!scorecardTemplate.getScorecardType().getName().equalsIgnoreCase("Review")) {
+            return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
+                    Constants.PERFORM_AGGREGATION_PERM_NAME, "Error.ReviewTypeIncorrect");
+        }
+
+        // Verify that review has not been committed yet
+        if (review.isCommitted()) {
+            return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
+                    Constants.PERFORM_AGGREGATION_PERM_NAME, "Error.ReviewCommitted");
+        }
+
+        // Get an array of all phases for current project
+        Phase[] phases = ActionsHelper.getPhasesForProject(
+                ActionsHelper.createPhaseManager(request), verification.getProject());
+        // Get an active phase for the project
+        Phase phase = ActionsHelper.getPhase(phases, true, Constants.AGGREGATION_PHASE_NAME);
+        // Retrieve a resource for the Aggregation phase
+        Resource resource = ActionsHelper.getMyResourceForPhase(request, phase);
+        // Get the form defined for this action
+        LazyValidatorForm aggregationForm = (LazyValidatorForm) form;
+
+        // Get form's fields
+        String[] responses = (String[]) aggregationForm.get("aggregator_response");
+        String[] aggregateFunctions = (String[]) aggregationForm.get("aggregate_function");
+        Long[] responseTypeIds = (Long[]) aggregationForm.get("aggregator_response_type");
+        int commentIndex = 0;
+        int itemIndex = 0;
+
+        // Obtain an instance of review manager
+        ReviewManager revMgr = ActionsHelper.createReviewManager(request);
+
+        // Retrieve all comment types
+        CommentType[] commentTypes = revMgr.getAllCommentTypes();
+
+        // Iterate over the items of existing review that needs updating
+        for (int i = 0; i < review.getNumberOfItems(); ++i) {
+            // Get an item
+            Item item = review.getItem(i);
+            Comment aggregatorComment = null;
+
+            for (int j = 0; j < item.getNumberOfComments(); ++j) {
+                Comment comment = item.getComment(j);
+                String typeName = comment.getCommentType().getName();
+
+                if (typeName.equalsIgnoreCase("Comment") || typeName.equalsIgnoreCase("Required") ||
+                        typeName.equalsIgnoreCase("Recommended")) {
+                    comment.setExtraInfo(aggregateFunctions[commentIndex]);
+                    comment.setCommentType(
+                            ActionsHelper.findCommentTypeById(commentTypes, responseTypeIds[commentIndex].longValue()));
+                    ++commentIndex;
+                }
+                if (typeName.equalsIgnoreCase("Aggregation Comment")) {
+                    aggregatorComment = comment;
+                }
+            }
+
+            if (aggregatorComment == null) {
+                aggregatorComment = new Comment();
+                aggregatorComment.setCommentType(
+                        ActionsHelper.findCommentTypeByName(commentTypes, "Aggregation Comment"));
+                item.addComment(aggregatorComment);
+            }
+
+            aggregatorComment.setComment(responses[itemIndex++]);
+            aggregatorComment.setAuthor(resource.getId());
+        }
+
+        // If the user has requested to complete the review
+        if ("submit".equalsIgnoreCase(request.getParameter("save"))) {
+            // TODO: Validate review here
+
+            // Set the completed status of the review
+            review.setCommitted(true);
+        } else if ("preview".equalsIgnoreCase(request.getParameter("save"))) {
+            // Retrieve some basic project info (such as icons' names) and place it into request
+            ActionsHelper.retrieveAndStoreBasicProjectInfo(request, verification.getProject(), getResources(request));
+            // Retrieve some basic aggregation info and place it into request
+            retrieveAndStoreBasicAggregationInfo(request, verification, scorecardTemplate);
+            // Place scorecard template object into request as attribute
+            request.setAttribute("scorecardTemplate", scorecardTemplate);
+            // Update review object stored in the request
+            request.setAttribute("review", review);
+
+            // Get the word "of" for Test Case type of question
+            String wordOf = getResources(request).getMessage("editReview.Question.Response.TestCase.of");
+            // Plase the string into the request as attribute
+            request.setAttribute("wordOf", " "  + wordOf + " ");
+
+            // Forward to preview page
+            return mapping.findForward(Constants.PREVIEW_FORWARD_NAME);
+        }
+
+        // Update (save) edited Aggregation
+        revMgr.updateReview(review, Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
+
+        // Forward to project details page
+        return ActionsHelper.cloneForwardAndAppendToPath(
+                mapping.findForward(Constants.SUCCESS_FORWARD_NAME), "&pid=" + verification.getProject().getId());
     }
 
     /**
-     * TODO: Write sensible description for method viewAggregation here
+     * This method is an implementation of &quot;View Aggregation&quot; Struts Action defined for
+     * this assembly, which is supposed to view completed aggregation.
      *
-     * @return TODO: Write sensible description of return value for method viewAggregation
+     * @return &quot;success&quot; forward, which forwards to the /jsp/viewAggregation.jsp page (as
+     *         defined in struts-config.xml file), or &quot;userError&quot; forward, which forwards
+     *         to the /jsp/userError.jsp page, which displays information about an error that is
+     *         usually caused by incorrect user input (such as absent review id, or the lack of
+     *         permissions, etc.).
      * @param mapping
      *            action mapping.
      * @param form
@@ -1277,11 +1462,58 @@ public class ProjectReviewActions extends DispatchAction {
      *            the http request.
      * @param response
      *            the http response.
+     * @throws BaseException
+     *             if any error occurs.
      */
     public ActionForward viewAggregation(ActionMapping mapping, ActionForm form,
-            HttpServletRequest request, HttpServletResponse response) {
-        // TODO: Add implementation of method viewAggregation here
-        return null;
+            HttpServletRequest request, HttpServletResponse response)
+        throws BaseException{
+        // Verify that certain requirements are met before proceeding with the Action
+        CorrectnessCheckResult verification =
+            checkForCorrectReviewId(mapping, request, Constants.VIEW_AGGREGATION_PERM_NAME);
+        // If any error has occured, return action forward contained in the result bean
+        if (!verification.isSuccessful()) {
+            return verification.getForward();
+        }
+
+        // Retrieve a review (aggregation) to view
+        Review review = verification.getReview();
+
+        // Obtain an instance of Scorecad Manager
+        ScorecardManager scrMgr = ActionsHelper.createScorecardManager(request);
+        // Retrieve a scorecard template for the review
+        Scorecard scorecardTemplate = scrMgr.getScorecard(review.getScorecard());
+
+        // Verify that the scorecard template for this review is of correct type
+        if (!scorecardTemplate.getScorecardType().getName().equalsIgnoreCase("Review")) {
+            return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
+                    Constants.VIEW_AGGREGATION_PERM_NAME, "Error.ReviewTypeIncorrect");
+        }
+
+        // Make sure that the user is not trying to view unfinished review
+        if (!review.isCommitted()) {
+            return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
+                    Constants.VIEW_AGGREGATION_PERM_NAME, "Error.ReviewNotCommitted");
+        }
+
+        // Retrieve some basic project info (such as icons' names) and place it into request
+        ActionsHelper.retrieveAndStoreBasicProjectInfo(request, verification.getProject(), getResources(request));
+        // Retrieve some basic aggregation info and place it into request
+        retrieveAndStoreBasicAggregationInfo(request, verification, scorecardTemplate);
+        // Place Scorecard template in the request
+        request.setAttribute("scorecardTemplate", scorecardTemplate);
+
+        // Obtain an array of "my" resources
+        Resource[] myResources = (Resource[]) request.getAttribute("myResources");
+        // Place a string that represents "my" current role(s) into the request
+        request.setAttribute("myRole", ActionsHelper.determineRolesForResources(getResources(request), myResources));
+
+        // Get the word "of" for Test Case type of question
+        String wordOf = getResources(request).getMessage("editReview.Question.Response.TestCase.of");
+        // Place the string into the request as attribute
+        request.setAttribute("wordOf", " "  + wordOf + " ");
+
+        return mapping.findForward(Constants.SUCCESS_FORWARD_NAME);
     }
 
     /**
@@ -1448,7 +1680,7 @@ public class ProjectReviewActions extends DispatchAction {
     public ActionForward createApproval(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response)
         throws BaseException{
-        // Verify that certain requirements are met before processing with the Action
+        // Verify that certain requirements are met before proceeding with the Action
         CorrectnessCheckResult verification =
                 checkForCorrectSubmissionId(mapping, request, Constants.PERFORM_APPROVAL_PERM_NAME);
         // If any error has occured, return action forward contained in the result bean
@@ -1570,7 +1802,7 @@ public class ProjectReviewActions extends DispatchAction {
     public ActionForward editApproval(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response)
         throws BaseException{
-        // Verify that certain requirements are met before processing with the Action
+        // Verify that certain requirements are met before proceeding with the Action
         CorrectnessCheckResult verification =
                 checkForCorrectReviewId(mapping, request, Constants.PERFORM_APPROVAL_PERM_NAME);
         // If any error has occured, return action forward contained in the result bean
@@ -1672,7 +1904,7 @@ public class ProjectReviewActions extends DispatchAction {
     public ActionForward saveApproval(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response)
         throws BaseException {
-        // Verify that certain requirements are met before processing with the Action
+        // Verify that certain requirements are met before proceeding with the Action
         CorrectnessCheckResult verification = null;
         if (request.getParameter("rid") != null) {
             verification = checkForCorrectReviewId(mapping, request, Constants.PERFORM_APPROVAL_PERM_NAME);
@@ -1911,7 +2143,7 @@ public class ProjectReviewActions extends DispatchAction {
     public ActionForward viewApproval(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response)
         throws BaseException {
-        // Verify that certain requirements are met before processing with the Action
+        // Verify that certain requirements are met before proceeding with the Action
         CorrectnessCheckResult verification =
                 checkForCorrectReviewId(mapping, request, Constants.VIEW_APPROVAL_PERM_NAME);
         // If any error has occured, return action forward contained in the result bean
@@ -1974,7 +2206,7 @@ public class ProjectReviewActions extends DispatchAction {
     public ActionForward viewCompositeScorecard(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response)
         throws BaseException {
-        // Verify that certain requirements are met before processing with the Action
+        // Verify that certain requirements are met before proceeding with the Action
         CorrectnessCheckResult verification =
                 checkForCorrectSubmissionId(mapping, request, Constants.VIEW_COMPOS_SCORECARD_PERM_NAME);
         // If any error has occured, return action forward contained in the result bean
@@ -2266,5 +2498,93 @@ public class ProjectReviewActions extends DispatchAction {
         Project project = manager.getProject(upload.getProject());
 
         return project;
+    }
+
+    /**
+     * This static method gathers some vluable information for aggregation scorecard. This
+     * information includes: the user ID of submitter, the user ID of aggregator, the reviewer
+     * resources (who initially did the reviews which was later combined into one single
+     * aggregation), individual reviews made by those reviewers, etc.
+     *
+     * @param request
+     *            an <code>HttpServletRequest</code> object.
+     * @param verification
+     *            an instance of <code>CorrectnessCheckResult</code> class that must specify valid
+     *            current project and aggregation for this method to succeed.
+     * @param scorecardTemplate
+     *            a scorecard template that describes questions (items) of the aggregation.
+     * @throws BaseException
+     *             if any error occurs.
+     */
+    private static void retrieveAndStoreBasicAggregationInfo(
+            HttpServletRequest request, CorrectnessCheckResult verification, Scorecard scorecardTemplate)
+        throws BaseException {
+        // Retrieve a project from verification-result bean
+        Project project = verification.getProject();
+        // Retrieve a review from verification-result bean
+        Review review = verification.getReview();
+
+        // Obtain an instance of Resource Manager
+        ResourceManager resMgr = ActionsHelper.createResourceManager(request);
+        // Retrieve a submission to edit an aggregation scorecard for
+        Submission submission = verification.getSubmission();
+        // Get submitter's resource
+        Resource submitter = resMgr.getResource(submission.getUpload().getOwner());
+        // Get Aggregator's resource
+        Resource aggregator = resMgr.getResource(review.getAuthor());
+
+        // Place submitter's and aggregator's user IDs into the request
+        request.setAttribute("submitterId", submitter.getProperty("External Reference ID"));
+        request.setAttribute("aggregatorId", aggregator.getProperty("External Reference ID"));
+
+        // Get an array of all phases for current project
+        Phase[] phases = ActionsHelper.getPhasesForProject(
+                ActionsHelper.createPhaseManager(request), project);
+
+        // Get a Review phase
+        Phase reviewPhase = ActionsHelper.getPhase(phases, false, Constants.REVIEW_PHASE_NAME);
+        // Retrieve all resources (reviewers) for that phase
+        Resource[] reviewResources = ActionsHelper.getAllResourcesForPhase(
+                ActionsHelper.createResourceManager(request), reviewPhase);
+        // Place information about reviews into the request
+        request.setAttribute("reviewResources", reviewResources);
+
+        // Prepare a list of reviewer IDs. This list will later be used to build filter
+        List reviewerIds = new ArrayList();
+        for (int i = 0; i < reviewResources.length; ++i) {
+            reviewerIds.add(new Long(reviewResources[i].getId()));
+        }
+
+        // Build filters to fetch the reviews that were used to form current Aggregation
+        Filter filterResources = new InFilter("reviewer", reviewerIds);
+        Filter filterCommitted = new EqualToFilter("committed", new Integer(1));
+        Filter filterSubmission = new EqualToFilter("submission", new Long(submission.getId()));
+        Filter filterProject = new EqualToFilter("project", new Long(project.getId()));
+        Filter filterScorecard = new EqualToFilter(
+                "scorecardType", new Long(scorecardTemplate.getScorecardType().getId()));
+
+        // Prepare final filter that combines all the above filters
+        Filter filter = new AndFilter(Arrays.asList(new Filter[]
+                {filterResources, filterCommitted, filterSubmission, filterProject, filterScorecard}));
+
+        // Obtain an instance of Review Manager
+        ReviewManager revMgr = ActionsHelper.createReviewManager(request);
+        // Fetch reviews (only basic review info is fetched, no items/comments)
+        Review[] reviews = revMgr.searchReviews(filter, false);
+        // Place reviews into the request. This will be used to provide links to individual reviews
+        request.setAttribute("reviews", reviews);
+
+        int[] lastCommentIdxs = new int[review.getNumberOfItems()];
+
+        for (int i = 0; i < lastCommentIdxs.length; ++i) {
+            Item item = review.getItem(i);
+            for (int j = 0; j < item.getNumberOfComments(); ++j) {
+                String commentType = item.getComment(j).getCommentType().getName();
+                if (!commentType.equalsIgnoreCase("Aggregation Comment")) {
+                    lastCommentIdxs[i] = j;
+                }
+            }
+        }
+        request.setAttribute("lastCommentIdxs", lastCommentIdxs);
     }
 }
