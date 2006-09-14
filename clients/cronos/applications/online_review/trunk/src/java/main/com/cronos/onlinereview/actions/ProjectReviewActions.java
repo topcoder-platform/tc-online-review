@@ -1169,9 +1169,9 @@ public class ProjectReviewActions extends DispatchAction {
 
     /**
      * This method is an implementation of &quot;Edit Aggregation&quot; Struts Action defined for
-     * this assembly, which is supposed to gather needed information (agrregation and review
+     * this assembly, which is supposed to gather needed information (aggregation and review
      * scorecard template) and present it to editAggregation.jsp page, which will fill the required
-     * fields and post them to the &quot;Save Aggrgation&quot; action. The action implemented by
+     * fields and post them to the &quot;Save Aggregation&quot; action. The action implemented by
      * this method is executed to edit aggregation that has already been created (by the system),
      * but has not been submitted yet, and hence is supposed to be edited.
      *
@@ -1377,7 +1377,7 @@ public class ProjectReviewActions extends DispatchAction {
         ReviewManager revMgr = ActionsHelper.createReviewManager(request);
 
         // Retrieve all comment types
-        CommentType[] commentTypes = revMgr.getAllCommentTypes();
+        CommentType[] allCommentTypes = revMgr.getAllCommentTypes();
 
         // Iterate over the items of existing review that needs updating
         for (int i = 0; i < review.getNumberOfItems(); ++i) {
@@ -1392,8 +1392,8 @@ public class ProjectReviewActions extends DispatchAction {
                 if (typeName.equalsIgnoreCase("Comment") || typeName.equalsIgnoreCase("Required") ||
                         typeName.equalsIgnoreCase("Recommended")) {
                     comment.setExtraInfo(aggregateFunctions[commentIndex]);
-                    comment.setCommentType(
-                            ActionsHelper.findCommentTypeById(commentTypes, responseTypeIds[commentIndex].longValue()));
+                    comment.setCommentType(ActionsHelper.findCommentTypeById(
+                            allCommentTypes, responseTypeIds[commentIndex].longValue()));
                     ++commentIndex;
                 }
                 if (typeName.equalsIgnoreCase("Aggregation Comment")) {
@@ -1404,7 +1404,7 @@ public class ProjectReviewActions extends DispatchAction {
             if (aggregatorComment == null) {
                 aggregatorComment = new Comment();
                 aggregatorComment.setCommentType(
-                        ActionsHelper.findCommentTypeByName(commentTypes, "Aggregation Comment"));
+                        ActionsHelper.findCommentTypeByName(allCommentTypes, "Aggregation Comment"));
                 item.addComment(aggregatorComment);
             }
 
@@ -1418,6 +1418,36 @@ public class ProjectReviewActions extends DispatchAction {
 
             // Set the completed status of the review
             review.setCommitted(true);
+
+            // Obtain an instance of Resource Manager
+            ResourceManager resMgr = ActionsHelper.createResourceManager(request);
+            Phase reviewPhase = ActionsHelper.getPhase(phases, false, Constants.REVIEW_PHASE_NAME);
+            Resource[] reviewers = ActionsHelper.getAllResourcesForPhase(resMgr, reviewPhase);
+            Resource submitter = resMgr.getResource(verification.getSubmission().getUpload().getOwner());
+
+            for (int i = 0; i < reviewers.length; ++i) {
+                Resource reviewer = reviewers[i];
+                long currentId = Long.parseLong((String) reviewer.getProperty("External Reference ID"));
+                if (currentId == AuthorizationHelper.getLoggedInUserId(request)) {
+                    continue;
+                }
+                // A new review-level comment from Reviewer
+                Comment comment = new Comment();
+                comment.setCommentType(
+                        ActionsHelper.findCommentTypeByName(allCommentTypes, "Aggregation Review Comment"));
+                comment.setAuthor(reviewer.getId());
+                comment.setExtraInfo("Approving");
+                comment.setComment("");
+                review.addComment(comment);
+            }
+            // A new review-level comment from Submitter
+            Comment comment = new Comment();
+            comment.setCommentType(
+                    ActionsHelper.findCommentTypeByName(allCommentTypes, "Submitter Comment"));
+            comment.setAuthor(submitter.getId());
+            comment.setExtraInfo("Approving");
+            comment.setComment("");
+            review.addComment(comment);
         } else if ("preview".equalsIgnoreCase(request.getParameter("save"))) {
             // Retrieve some basic project info (such as icons' names) and place it into request
             ActionsHelper.retrieveAndStoreBasicProjectInfo(request, verification.getProject(), getResources(request));
@@ -1517,9 +1547,19 @@ public class ProjectReviewActions extends DispatchAction {
     }
 
     /**
-     * TODO: Write sensible description for method editAggregationReview here
+     * This method is an implementation of &quot;Edit Aggregation Review&quot; Struts Action defined
+     * for this assembly, which is supposed to gather needed information (completed aggregation and
+     * review scorecard template) and present it to editAggregationReview.jsp page, which will fill
+     * the required fields and post them to the &quot;Save Aggregation Review&quot; action. The
+     * action implemented by this method is executed to edit aggregation review that has already
+     * been created (by &quot;Save Aggregation&quot; action), but has not been submitted yet, and
+     * hence is supposed to be edited.
      *
-     * @return TODO: Write sensible description of return value for method editAggregationReview
+     * @return &quot;success&quot; forward, which forwards to the /jsp/editAggregationReview.jsp
+     *         page (as defined in struts-config.xml file), or &quot;userError&quot; forward, which
+     *         forwards to the /jsp/userError.jsp page, which displays information about an error
+     *         that is usually caused by incorrect user input (such as absent review id, or the lack
+     *         of permissions, etc.).
      * @param mapping
      *            action mapping.
      * @param form
@@ -1528,11 +1568,132 @@ public class ProjectReviewActions extends DispatchAction {
      *            the http request.
      * @param response
      *            the http response.
+     * @throws BaseException
+     *             if any error occurs.
      */
     public ActionForward editAggregationReview(ActionMapping mapping, ActionForm form,
-            HttpServletRequest request, HttpServletResponse response) {
-        // TODO: Add implementation of method editAggregationReview here
-        return null;
+            HttpServletRequest request, HttpServletResponse response)
+        throws BaseException {
+        // Verify that certain requirements are met before proceeding with the Action
+        CorrectnessCheckResult verification =
+                checkForCorrectReviewId(mapping, request, Constants.PERFORM_AGGREG_REVIEW_PERM_NAME);
+        // If any error has occured, return action forward contained in the result bean
+        if (!verification.isSuccessful()) {
+            return verification.getForward();
+        }
+
+        // Retrieve a review to edit
+        Review review = verification.getReview();
+
+        // Obtain an instance of Scorecad Manager
+        ScorecardManager scrMgr = ActionsHelper.createScorecardManager(request);
+        // Retrieve a scorecard template for the review
+        Scorecard scorecardTemplate = scrMgr.getScorecard(review.getScorecard());
+
+        // Verify that the scorecard template for this review is of correct type
+        if (!scorecardTemplate.getScorecardType().getName().equalsIgnoreCase("Review")) {
+            return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
+                    Constants.PERFORM_AGGREG_REVIEW_PERM_NAME, "Error.ReviewTypeIncorrect");
+        }
+        // Verify that Aggregation has been committed
+        if (!review.isCommitted()) {
+            return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
+                    Constants.PERFORM_AGGREG_REVIEW_PERM_NAME, "Error.AggregationNotCommitted");
+        }
+
+        /*
+         * Verify that Aggregation Review has not been committed by this user
+         */
+
+        // Obtain an array of "my" resources
+        Resource[] myResources = (Resource[]) request.getAttribute("myResources");
+
+        Comment myReviewComment = null;
+        // Find "my" comment in the review scope
+        for (int i = 0; i < review.getNumberOfComments(); ++i) {
+            // Get a comment for the current iteration
+            Comment comment = review.getComment(i);
+            for (int j = 0; j < myResources.length; ++j) {
+                if (comment.getAuthor() == myResources[j].getId()) {
+                    myReviewComment = comment;
+                    break;
+                }
+            }
+            if (myReviewComment != null) {
+                break;
+            }
+        }
+
+        // If "my" comment has not been found, then the user is probably an Aggregator
+        if (myReviewComment == null) {
+            if (AuthorizationHelper.hasUserRole(request, Constants.APPROVER_ROLE_NAME)) {
+                return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
+                        Constants.PERFORM_AGGREG_REVIEW_PERM_NAME, "Error.CannotReviewOwnAggregation");
+            } else {
+                return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
+                        Constants.PERFORM_AGGREG_REVIEW_PERM_NAME, "Error.NoPermission");
+            }
+        }
+
+        // Do actual verificartion. Values "Approved" and "Rejected" denote committed Aggregation Review
+        String myExtaInfo = (String) myReviewComment.getExtraInfo();
+        if ("Approved".equalsIgnoreCase(myExtaInfo) || "Rejected".equalsIgnoreCase(myExtaInfo)) {
+            return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
+                    Constants.PERFORM_AGGREG_REVIEW_PERM_NAME, "Error.ReviewCommitted");
+        }
+
+        boolean isSubmitter = false;
+
+        // If the user is a Submitter, let underlying JSP page know about this fact
+        if (AuthorizationHelper.hasUserRole(request, Constants.SUBMITTER_ROLE_NAME)) {
+            isSubmitter = true;
+            request.setAttribute("isSubmitter", new Boolean(isSubmitter));
+        }
+
+        // Retrieve current project
+        Project project = verification.getProject();
+
+        // Retrieve some basic project info (such as icons' names) and place it into request
+        ActionsHelper.retrieveAndStoreBasicProjectInfo(request, project, getResources(request));
+        // Retrieve some basic aggregation info and place it into request
+        retrieveAndStoreBasicAggregationInfo(request, verification, scorecardTemplate);
+        // Place Scorecard template in the request
+        request.setAttribute("scorecardTemplate", scorecardTemplate);
+        // Place a string that represents "my" current role(s) into the request
+        request.setAttribute("myRole", ActionsHelper.determineRolesForResources(getResources(request), myResources));
+
+        LazyValidatorForm aggregationReviewForm = (LazyValidatorForm) form;
+
+        String[] reviewFunctions = new String[review.getNumberOfItems()];
+        String[] rejectReasons = new String[review.getNumberOfItems()];
+
+        Arrays.fill(reviewFunctions, "Accept");
+        Arrays.fill(rejectReasons, "");
+
+        for (int i = 0; i < reviewFunctions.length; ++i) {
+            Item item = review.getItem(i);
+            for (int j = 0; j < item.getNumberOfComments(); ++j) {
+                Comment comment = item.getComment(j);
+                String commentType = comment.getCommentType().getName();
+
+                if ((isSubmitter && commentType.equalsIgnoreCase("Submitter Comment")) ||
+                        (!isSubmitter && commentType.equalsIgnoreCase("Aggregation Review Comment"))) {
+                    String reviewFunction = (String) comment.getExtraInfo();
+                    if ("Reject".equalsIgnoreCase(reviewFunction)) {
+                        reviewFunctions[i] = "Reject";
+                    }
+                    if (comment.getComment() != null && comment.getComment().trim().length() != 0) {
+                        rejectReasons[i] = comment.getComment();
+                    }
+                    break;
+                }
+            }
+        }
+
+        aggregationReviewForm.set("review_function", reviewFunctions);
+        aggregationReviewForm.set("reject_reason", rejectReasons);
+
+        return mapping.findForward(Constants.SUCCESS_FORWARD_NAME);
     }
 
     /**
