@@ -109,7 +109,7 @@ public class ProjectDetailsActions extends DispatchAction {
         // Obtain an array of "my" resources
         Resource[] myResources = (Resource[]) request.getAttribute("myResources");
         // Place a string that represents "my" current role(s) into the request
-        request.setAttribute("myRole", ActionsHelper.determineMyRoles(getResources(request), myResources));
+        request.setAttribute("myRole", ActionsHelper.determineRolesForResources(getResources(request), myResources));
         // Place an information about the amount of "my" payment into the request
         request.setAttribute("myPayment", ActionsHelper.determineMyPayment(myResources));
         // Place an information about my payment status into the request
