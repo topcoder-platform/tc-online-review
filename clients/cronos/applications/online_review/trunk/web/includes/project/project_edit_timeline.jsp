@@ -33,6 +33,7 @@
 		<td class="header"><bean:message key="editProject.Phases.Delete" /></td>
 	</tr>
 
+	<%-- PHASE TEMPLATE ROW GOES HERE --%>
 	<%-- The following six rows are used as a "template" for the newly added project phases --%>
 	<tr class="dark" style="display: none;">
 		<td class="valueB" nowrap="nowrap"><!-- @ --></td>
@@ -83,28 +84,29 @@
 		</td>
 		<td class="value"><!-- @ --></td>
 	</tr>
-	<tr class="highlighted" style="display: none;">
-		<td class="value" colspan="2"><!-- @ --></td>
-		<td class="value">Require
-			<html:text styleClass="inputBox" property="phase_required_registrations[0]" value="" style="width: 30px;" />
-			registrations before ending.
-		</td>
-		<td class="value" colspan="2"><!-- @ --></td>
-	</tr>
-	<tr class="highlighted" style="display: none;">
-		<td class="value" colspan="2"><!-- @ --></td>
-		<td class="value" nowrap="nowrap">Require
-			<html:text styleClass="inputBox" property="phase_required_submissions[0]" value="" style="width: 30px;" />
-			passing submissions.<br />
-			<html:checkbox property="phase_manual_screening" />
-			Manual Screening
-		</td>
-		<td class="value" colspan="2"><!-- @ --></td>
-	</tr>
 	
+	<%-- PHASE CRITERIA TEMPLATE ROWS GO HERE --%>
+	<tr class="highlighted" id="required_registrations_row_template" style="display: none;">
+		<td class="value">&nbsp;</td>
+		<td class="value" colspan="4"><bean:message key="editProject.Phases.Criteria.RequiredRegistrations.beforeInput" /> 
+			<%-- TODO: Set default value in Action --%>
+			<html:text style="width:30px;text-align:right;" styleClass="inputBox" 
+					size="30" property="phase_required_registrations[0]" value="3" />
+			&nbsp;<bean:message key="editProject.Phases.Criteria.RequiredRegistrations.afterInput" />
+			<br /><bean:message key="editProject.Phases.Criteria.RequiredRegistrations.note" /></td>
+	</tr>
+	<tr class="highlighted" id="required_submissions_row_template" style="display: none;">
+		<td class="value"><!-- @ --></td>
+		<td class="value" colspan="4"><bean:message key="editProject.Phases.Criteria.RequiredSubmissions.beforeInput" />
+			<html:text styleClass="inputBox" property="phase_required_submissions[0]" style="width: 30px;" />
+			<bean:message key="editProject.Phases.Criteria.RequiredSubmissions.afterInput" /><br />
+			<html:checkbox property="phase_manual_screening[0]" />
+			<bean:message key="editProject.Phases.Criteria.RequiredSubmissions.ManualScreening" />
+		</td>
+	</tr>	
 	<tr class="highlighted" id="screening_scorecard_row_template" style="display: none;">
 		<td class="value">&nbsp;</td>
-		<td class="value" colspan="4"><bean:message key="editProject.Scorecards.title" />
+		<td class="value" colspan="4"><bean:message key="editProject.Phases.Criteria.Scorecard" />
 			<html:select style="width:350px;" styleClass="inputBox" property="phase_scorecard[0]" >
 				<c:forEach items="${screeningScorecards}" var="scorecard">
 					<html:option value="${scorecard.id}">${scorecard.name}</html:option>					
@@ -114,7 +116,7 @@
 	</tr>
 	<tr class="highlighted" id="review_scorecard_row_template" style="display: none;">
 		<td class="value">&nbsp;</td>
-		<td class="value" colspan="4"><bean:message key="editProject.Scorecards.title" />
+		<td class="value" colspan="4"><bean:message key="editProject.Phases.Criteria.Scorecard" />
 			<html:select style="width:350px;" styleClass="inputBox" property="phase_scorecard[0]" >
 				<c:forEach items="${reviewScorecards}" var="scorecard">
 					<html:option value="${scorecard.id}">${scorecard.name}</html:option>					
@@ -124,7 +126,7 @@
 	</tr>
 	<tr class="highlighted" id="approval_scorecard_row_template" style="display: none;">
 		<td class="value">&nbsp;</td>
-		<td class="value" colspan="4"><bean:message key="editProject.Scorecards.title" />
+		<td class="value" colspan="4"><bean:message key="editProject.Phases.Criteria.Scorecard" />
 			<html:select style="width:350px;" styleClass="inputBox" property="phase_scorecard[0]" >
 				<c:forEach items="${approvalScorecards}" var="scorecard">
 					<html:option value="${scorecard.id}">${scorecard.name}</html:option>					
@@ -132,7 +134,15 @@
 			</html:select>
 		</td>
 	</tr>
-	
+	<tr class="highlighted" id="view_appeal_responses_row_template" style="display: none;">
+		<td class="value">&nbsp;</td>
+		<td class="value" colspan="4">
+			<html:radio value="true" property="phase_view_appeal_responses[0]" />
+			<bean:message key="editProject.Phases.Criteria.ViewAppealResponses.Immediately" /> <br />
+			<html:radio value="false" property="phase_view_appeal_responses[0]" />
+			<bean:message key="editProject.Phases.Criteria.ViewAppealResponses.AfterEnd" />
+		</td>
+	</tr>
 </table><br />
 
 <table class="scorecard" id="addphase_tbl">

@@ -527,11 +527,13 @@ public class ProjectActions extends DispatchAction {
                     phase.setScheduledStartDate(phase.calcStartDate());
                 }
                 
-                // Get phase end date from form
+                /*// Get phase end date from form
                 Date phaseEndDate = parseDatetimeFormProperties(lazyForm, i, "phase_end_date", "phase_end_time",
                         "phase_end_AMPM");
+                */
+                // TODO: Set duration based on specified phase end date if needed
                 // Set sheduled phase end date
-                phase.setScheduledEndDate(phaseEndDate);
+                phase.setScheduledEndDate(new Date(phase.getScheduledStartDate().getTime() + phase.getLength())); //(phaseEndDate);
             } catch (ParseException e) {
                 e.printStackTrace();
                 // TODO: handle exception
@@ -539,6 +541,32 @@ public class ProjectActions extends DispatchAction {
                 // configured properly
             }
             
+            // Set phase criteria
+            Long scorecardId = (Long) lazyForm.get("phase_scorecard", i);
+            // If the scorecard id is specified, set it
+            if (scorecardId != null) {
+                phase.setAttribute("Scorecard ID", scorecardId.toString());
+            }
+            Integer requiredRegistrations = (Integer) lazyForm.get("phase_required_registrations", i);
+            // If the number of required registrations is specified, set it
+            if (requiredRegistrations != null) {
+                phase.setAttribute("Registration Number", requiredRegistrations.toString());
+            }
+            Integer requiredSubmissions = (Integer) lazyForm.get("phase_required_submissions", i);
+            // If the number of required submissions is specified, set it
+            if (requiredSubmissions != null) {
+                phase.setAttribute("Submission Number", requiredSubmissions.toString());
+            }
+            Boolean manualScreening = (Boolean) lazyForm.get("phase_manual_screening", i);
+            // If the manual screening flag is specified, set it
+            if (manualScreening != null) {
+                phase.setAttribute("Manual Screening", manualScreening.booleanValue() ? "Yes" : "No");                
+            }
+            Boolean viewAppealResponses = (Boolean) lazyForm.get("phase_view_appeal_responses", i);
+            // If the view appeal response during appeals flag is specified, set it
+            if (viewAppealResponses != null) {
+                phase.setAttribute("View Response During Appeals", viewAppealResponses.booleanValue() ? "Yes" : "No");
+            }
         }
         
         // Save the phases at the persistence level

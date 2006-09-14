@@ -167,7 +167,45 @@
 			}
 		}
 
-
+		/*
+		 * TODO: Write docs.
+		 */
+		function addPhaseCriterion(phaseName, phaseRow) {
+			var criterionRow = null;
+			// TODO: Should be done in locale-independent way
+			// Check if the phase should have a criterion row and at it if it is needed
+			if (phaseName == "Screening" || phaseName == "Review" || phaseName == "Approval" || 
+					phaseName == "Registration" || phaseName == "Submission" || phaseName == "Appeals") {
+				var templateRow;
+				if (phaseName == "Screening") {
+				  	templateRow = document.getElementById("screening_scorecard_row_template");
+				} else if (phaseName == "Review") {
+				  	templateRow = document.getElementById("review_scorecard_row_template");
+				} else if (phaseName == "Approval") {
+				  	templateRow = document.getElementById("approval_scorecard_row_template");
+				} else if (phaseName == "Registration") {
+				  	templateRow = document.getElementById("required_registrations_row_template");
+				} else if (phaseName == "Submission") {
+				  	templateRow = document.getElementById("required_submissions_row_template");
+				} else if (phaseName == "Appeals") {
+				  	templateRow = document.getElementById("view_appeal_responses_row_template");
+				}
+				 
+ 				criterionRow = cloneInputRow(templateRow);
+ 				
+ 				// Assign the id
+				criterionRow.id = dojo.dom.getUniqueId();
+				// Remove "display: none;"
+				criterionRow.style["display"] = "";
+	
+				// Rename all the inputs to have a new index
+				patchAllChildParamIndexes(criterionRow, lastPhaseIndex);
+				// Insert criterion row into proper position - after new phase row
+				dojo.dom.insertAfter(criterionRow, phaseRow);
+			}
+		
+		}
+		
 		/*
 		 * This function adds new phase to phases table, it includes addition of several rows.
 		 */
@@ -246,31 +284,7 @@
 			}
 					
 			// Add phase criterion row if needed
-			var criterionRow = null;
-			// TODO: Should be done in locale-independent way
-			// If phase is Screening, Review or Approval, the scorecard edit row should be also added
-			if (phaseName == "Screening" || phaseName == "Review" || phaseName == "Approval" ) {
-				var templateRow;
-				if (phaseName == "Screening") {
-				  	templateRow = document.getElementById("screening_scorecard_row_template");
-				} else if (phaseName == "Review") {
-				  	templateRow = document.getElementById("review_scorecard_row_template");
-				} else if (phaseName == "Approval") {
-				  	templateRow = document.getElementById("approval_scorecard_row_template");
-				}
-				 
- 				criterionRow = cloneInputRow(templateRow);
- 				
- 				// Assign the id
-				criterionRow.id = dojo.dom.getUniqueId();
-				// Remove "display: none;"
-				criterionRow.style["display"] = "";
-	
-				// Rename all the inputs to have a new index
-				patchAllChildParamIndexes(criterionRow, lastPhaseIndex);
-				// Insert criterion row into proper position - after new phase row
-				dojo.dom.insertAfter(criterionRow, newRow);
-			}
+			addPhaseCriterion(phaseName, newRow);
 		}		
 	--></script>
 </head>
