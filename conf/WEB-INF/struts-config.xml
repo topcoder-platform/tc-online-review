@@ -95,6 +95,14 @@
             <form-property name="aggregator_response_type" type="java.lang.Long[]" />
             <form-property name="aggregate_function" type="java.lang.String[]" />
         </form-bean>
+
+        <form-bean name="aggregationReviewForm" dynamic="true"
+            type="org.apache.struts.validator.LazyValidatorForm">
+            <form-property name="rid" type="java.lang.Long" />
+            <form-property name="save" type="java.lang.String" />
+            <form-property name="review_function" type="java.lang.String[]" />
+            <form-property name="reject_reason" type="java.lang.String[]" />
+        </form-bean>
     </form-beans>
 
 
@@ -424,6 +432,7 @@
         <action path="/actions/EditAggregationReview" unknown="false"
             type="com.cronos.onlinereview.actions.ProjectReviewActions"
             parameter="method" scope="request"
+            name="aggregationReviewForm"
             input="/jsp/viewProjectDetails.jsp">
             <forward name="success" path="/jsp/editAggregationReview.jsp" redirect="false"/>
         </action>
@@ -432,9 +441,10 @@
         <action path="/actions/SaveAggregationReview" unknown="false"
             type="com.cronos.onlinereview.actions.ProjectReviewActions"
             parameter="method" scope="request"
+            name="aggregationReviewForm"
             input="/jsp/editAggregationReview.jsp">
             <forward name="preview" path="/jsp/viewAggregationReview.jsp" redirect="false"/>
-            <forward name="success" path="/actions/ViewProjectDetails.do?method=viewProjectDetails" redirect="false"/>
+            <forward name="success" path="/actions/ViewProjectDetails.do?method=viewProjectDetails" redirect="true"/>
         </action>
 
         <!-- "View Aggregation Review" action -->
