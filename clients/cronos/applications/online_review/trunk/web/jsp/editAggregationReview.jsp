@@ -117,7 +117,7 @@
 												<c:forEach items="${item.allComments}" var="comment" varStatus="commentStatus">
 													<c:set var="commentType" value="${comment.commentType.name}" />
 													<c:choose>
-														<c:when test='${(commentType == "Required") || (commentType == "Recommended") || (commentType == "Comment")'>
+														<c:when test='${(commentType == "Required") || (commentType == "Recommended") || (commentType == "Comment")}'>
 															<c:set var="isReviewerComment" value="${true}" />
 														</c:when>
 														<c:otherwise>
