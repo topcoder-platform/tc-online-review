@@ -64,7 +64,8 @@
 						</table>
 					</div>
 
-					&nbsp;<b><bean:message key="editReview.Submission" /></b> ${sid} (<tc-webtag:handle coderId="${submitterId}" context="component" />)<br />
+					&nbsp;<b><bean:message key="editReview.Submission" /></b> ${sid}
+					(<tc-webtag:handle coderId="${submitterId}" context="component" />)<br />
 					&nbsp;<b><bean:message key="editReview.MyRole" /></b> ${myRole}<br />
 					<h3><bean:message key="editReview.EditAggregation.title" /></h3>
 
@@ -166,13 +167,11 @@
 
 									<c:set var="itemIdx" value="${itemIdx + 1}" />
 								</c:forEach>
-								<c:if test="${groupStatus.index == scorecardTemplate.numberOfGroups - 1}">
-									<tr>
-										<td class="lastRowTD" colspan="7"><!-- @ --></td>
-									</tr>
-								</c:if>
-							</table>
-						</c:forEach><br />
+								<tr>
+									<td class="lastRowTD" colspan="7"><!-- @ --></td>
+								</tr>
+							</table><br />
+						</c:forEach>
 
 						<div align="right">
 							<html:hidden property="save" value="" />
