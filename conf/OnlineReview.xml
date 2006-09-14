@@ -159,7 +159,7 @@
         </Property>
 
         <!-- defining the review manager concrete implementation -->
-        <!-- 
+        <!--
             <Property name="com/topcoder/management/review/ReviewManager">
             <Property name="type">
             <Value></Value>
@@ -168,7 +168,7 @@
         -->
 
         <!-- defining the phase template concrete implementation -->
-        <!-- 
+        <!--
             <Property name="com/topcoder/project/phases/template/PhaseTemplate">
             <Property name="type">
             <Value>com.topcoder.project.phases.template.MockPhaseTemplate</Value>
@@ -177,7 +177,7 @@
         -->
 
         <!-- defining the upload manager concrete implementation -->
-        <!-- 
+        <!--
             <Property name="com/topcoder/management/deliverable/UploadManager">
             <Property name="type">
             <Value>com.topcoder.management.deliverable.MockUploadManager</Value>
@@ -186,7 +186,7 @@
         -->
 
         <!-- defining the phase manager concrete implementation -->
-        <!-- 
+        <!--
             <Property name="com/topcoder/management/phase/PhaseManager">
             <Property name="type">
             <Value>com.topcoder.management.phase.MockPhaseManager</Value>
@@ -195,7 +195,7 @@
         -->
 
         <!-- defining the calculation manager concrete implementation -->
-        <!-- 
+        <!--
             <Property name="com/topcoder/management/review/scorecalculator/CalculationManager">
             <Property name="type">
             <Value>com.topcoder.management.review.scorecalculator.CalculationManager</Value>
@@ -211,7 +211,7 @@
         </Property>
 
         <!-- defining the project manager concrete implementation -->
-        <!-- 
+        <!--
             <Property name="com/topcoder/management/project/ProjectManager">
             <Property name="type">
             <Value>com.topcoder.management.project.MockProjectManager</Value>
@@ -2723,7 +2723,13 @@
                 <Value>Designer</Value>
             </Property>
             <Property name="Perform Aggregation Review">
-                <Value>Aggregator</Value>
+                <!-- Note: originally this permission had been granted to Aggregator, but it
+                    was changed later to match the logic of the application -->
+                <Value>Submitter</Value>
+                <Value>Reviewer</Value>
+                <Value>Accuracy Reviewer</Value>
+                <Value>Failure Reviewer</Value>
+                <Value>Stress Reviewer</Value>
             </Property>
             <Property name="View Aggregation Review">
                 <Value>Global Manager</Value>
