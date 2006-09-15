@@ -112,8 +112,8 @@
 										</tr>
 
 										<c:forEach items="${review.allItems}" var="item" varStatus="itemStatus">
-											<c:set var="commentNum" value="1" />
 											<c:if test="${item.question == question.id}">
+												<c:set var="commentNum" value="1" />
 												<c:forEach items="${item.allComments}" var="comment" varStatus="commentStatus">
 													<c:set var="commentType" value="${comment.commentType.name}" />
 													<c:choose>
@@ -208,8 +208,7 @@
 						<div align="right">
 							<html:hidden property="save" value="" />
 							<html:image onclick="javascript:this.form.save.value='submit';" srcKey="editReview.Button.SaveAndCommit.img" altKey="editReview.Button.SaveAndCommit.alt" border="0" />&#160;
-							<html:image onclick="javascript:this.form.save.value='save';" srcKey="editReview.Button.SaveForLater.img" altKey="editReview.Button.SaveForLater.alt" border="0" />&#160;
-							<html:image onclick="javascript:this.form.save.value='preview';" srcKey="editReview.Button.Preview.img" altKey="editReview.Button.Preview.alt" border="0" />
+							<html:image onclick="javascript:this.form.save.value='save';" srcKey="editReview.Button.SaveForLater.img" altKey="editReview.Button.SaveForLater.alt" border="0" />
 						</div>
 					</html:form>
 				</div>
