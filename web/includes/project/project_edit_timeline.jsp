@@ -81,8 +81,11 @@
 		</td>
 		<td class="value">
 			<html:text styleClass="inputBoxDuration" property="phase_duration[0]" />
+		</td> 
+		<td class="value">
+			<html:img style="display: none;" srcKey="editProject.Phases.DeletePhase.img" 
+				altKey="editProject.Phases.DeletePhase.alt" onclick="deletePhase(this.parentNode.parentNode);" />
 		</td>
-		<td class="value"><!-- @ --></td>
 	</tr>
 	
 	<%-- PHASE CRITERIA TEMPLATE ROWS GO HERE --%>

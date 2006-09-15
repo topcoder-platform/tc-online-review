@@ -233,7 +233,7 @@
 				startPhaseCombos[i].add(new Option(phaseName, phaseId), null);
 			}
 
-			// Create a new row to reprsent the phase
+			// Create a new row to represent the phase
 			// TODO: Check why retreive by id doesn't work
 			var newRow = cloneInputRow(timelineTable.rows[1]);  //document.getElementById("phase_row_template"));			
 			// Assign the id
@@ -267,6 +267,9 @@
 			var phaseNameCell =  newRow.cells[0];
 			dojo.dom.textContent(phaseNameCell, phaseName);
 			
+			// Show the delete button - remove "display: none;"
+			newRow.getElementsByTagName("img")[0].style["display"] = "";			
+			
 			// Add the row to the appropriate position
 			var wherePhaseId = whereCombo.value;
 			if (wherePhaseId == "") {
@@ -286,6 +289,57 @@
 			// Add phase criterion row if needed
 			addPhaseCriterion(phaseName, newRow);
 		}		
+		
+		
+		/*
+		 * This function deletes the option from select input which has the specified value.
+		 */
+		function deleteOptionWithValue(selectNode, optionValue) {
+			for (var i = 0; i < selectNode.options.length; i++) {
+				if (selectNode.options[i].value == optionValue) {
+					selectNode.remove(i);
+					break;
+				}
+			}
+		}
+		
+		/*
+		 * This function deletes the exisiting phase from the phases table.
+		 * It also deletes the corresponding phase criterion if needed.
+		 */
+		function deletePhase(phaseRowNode) {
+			// Hide the row, don't delete it as the phase
+			// should be deleted from DB on submit
+			phaseRowNode.style["display"] = "none";
+
+			// Set hidden phase_action parameter to "delete"
+			var actionInput = getChildByNamePrefix(phaseRowNode, "phase_action");
+			actionInput.value = "delete";
+			
+			// Get phase id
+			var phaseId = getChildByNamePrefix(phaseRowNode, "phase_id").value;
+						
+			// Delete phase from addphase form select options
+			var addPhaseTable = document.getElementById("addphase_tbl");
+			var whereCombo = getChildByName(addPhaseTable, "addphase_where");
+			deleteOptionWithValue(whereCombo, phaseId);			
+			var startPhaseCombo = getChildByName(addPhaseTable, "addphase_start_phase");
+			deleteOptionWithValue(startPhaseCombo, phaseId);
+			
+			// Also delete it from the phase rows
+			var startPhaseCombos = getChildrenByNamePrefix(document.documentElement, "phase_start_phase");			
+			for (var i = 0; i < startPhaseCombos.length; i++) {
+				deleteOptionWithValue(startPhaseCombos[i], phaseId)
+			}
+			
+			// Remove phase criterion row if needed 
+			nextRowNode = dojo.dom.nextElement(phaseRowNode);
+			if (nextRowNode.className == "highlighted") {
+				nextRowNode.parentNode.removeChild(nextRowNode);
+			}
+		}
+
+		
 	--></script>
 </head>
 
@@ -294,7 +348,7 @@
 
 	<table width="100%" border="0" cellpadding="0" cellspacing="0">
 		<tr valign="top">
-			<!-- Left Column Begins-->
+			<!-- Left Column Begins-->	
 			<td width="180">
 				<jsp:include page="../includes/inc_leftnav.jsp" />
 			</td>
