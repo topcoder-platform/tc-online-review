@@ -152,8 +152,8 @@
 																	</c:forEach>
 																</html:select>
 															</td>
-															<td class="valueC"><html:radio value="Rejected" property="aggregate_function[${globalCommentIdx}]" /></td>
-															<td class="valueC"><html:radio value="Accepted" property="aggregate_function[${globalCommentIdx}]" /></td>
+															<td class="valueC"><html:radio value="Reject" property="aggregate_function[${globalCommentIdx}]" /></td>
+															<td class="valueC"><html:radio value="Accept" property="aggregate_function[${globalCommentIdx}]" /></td>
 															<td class="valueC"><html:radio value="Duplicate" property="aggregate_function[${globalCommentIdx}]" /></td>
 														</tr>
 
