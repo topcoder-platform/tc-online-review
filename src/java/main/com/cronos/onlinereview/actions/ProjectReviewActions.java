@@ -174,6 +174,8 @@ public class ProjectReviewActions extends DispatchAction {
 
         // Retrieve some basic project info (such as icons' names) and place it into request
         ActionsHelper.retrieveAndStoreBasicProjectInfo(request, project, getResources(request));
+        // Retrieve an information about my role(s) and place it into the request
+        ActionsHelper.retrieveAndStoreMyRole(request, getResources(request));
         // Place the type of the review into the request
         request.setAttribute("reviewType", "Screening");
         // Place Scorecard template in the request
@@ -272,6 +274,8 @@ public class ProjectReviewActions extends DispatchAction {
 
         // Retrieve some basic project info (such as icons' names) and place it into request
         ActionsHelper.retrieveAndStoreBasicProjectInfo(request, verification.getProject(), getResources(request));
+        // Retrieve an information about my role(s) and place it into the request
+        ActionsHelper.retrieveAndStoreMyRole(request, getResources(request));
         // Place the type of the review into the request
         request.setAttribute("reviewType", "Screening");
         // Place Scorecard template in the request
@@ -460,7 +464,8 @@ public class ProjectReviewActions extends DispatchAction {
         // If the review hasn't been created yet
         if (review == null) {
             // Create a convenient review editor
-            ReviewEditor reviewEditor = new ReviewEditor(AuthorizationHelper.getLoggenInUserHandle(request));
+            ReviewEditor reviewEditor =
+                new ReviewEditor(Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
 
             // Iterate over the scorecard template's questions,
             // so items will be created for every question
@@ -479,7 +484,7 @@ public class ProjectReviewActions extends DispatchAction {
                         comment.setAuthor(resource.getId());
                         comment.setComment(replies[index]);
                         comment.setCommentType(
-                                ActionsHelper.findCommentTypeById(commentTypes, commentTypeIds[i].longValue()));
+                                ActionsHelper.findCommentTypeById(commentTypes, commentTypeIds[index].longValue()));
                         // Add comment to the item
                         item.addComment(comment);
 
@@ -534,6 +539,8 @@ public class ProjectReviewActions extends DispatchAction {
             // Set the completed status of the review
             review.setCommitted(true);
         } else if ("preview".equalsIgnoreCase(request.getParameter("save"))) {
+            // Retrieve an information about my role(s) and place it into the request
+            ActionsHelper.retrieveAndStoreMyRole(request, getResources(request));
             // Place scorecard template object into request as attribute
             request.setAttribute("scorecardTemplate", scorecardTemplate);
             // Place review object into request as attribute
@@ -550,9 +557,9 @@ public class ProjectReviewActions extends DispatchAction {
 
         // Determine which action should be performed -- creation or updating
         if (verification.getReview() == null) {
-            revMgr.createReview(review, AuthorizationHelper.getLoggenInUserHandle(request));
+            revMgr.createReview(review, Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
         } else {
-            revMgr.updateReview(review, AuthorizationHelper.getLoggenInUserHandle(request));
+            revMgr.updateReview(review, Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
         }
 
         // Forward to project details page
@@ -601,7 +608,6 @@ public class ProjectReviewActions extends DispatchAction {
             return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
                     Constants.VIEW_SCREENING_PERM_NAME, "Error.ReviewTypeIncorrect");
         }
-
         // Make sure that the user is not trying to view unfinished review
         if (!verification.getReview().isCommitted()) {
             return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
@@ -610,6 +616,8 @@ public class ProjectReviewActions extends DispatchAction {
 
         // Retrieve some basic project info (such as icons' names) and place it into request
         ActionsHelper.retrieveAndStoreBasicProjectInfo(request, verification.getProject(), getResources(request));
+        // Retrieve an information about my role(s) and place it into the request
+        ActionsHelper.retrieveAndStoreMyRole(request, getResources(request));
         // Place Scorecard template in the request
         request.setAttribute("scorecardTemplate", scorecardTemplate);
 
@@ -701,6 +709,8 @@ public class ProjectReviewActions extends DispatchAction {
 
         // Retrieve some basic project info (such as icons' names) and place it into request
         ActionsHelper.retrieveAndStoreBasicProjectInfo(request, verification.getProject(), getResources(request));
+        // Retrieve an information about my role(s) and place it into the request
+        ActionsHelper.retrieveAndStoreMyRole(request, getResources(request));
         // Place the type of the review into the request
         request.setAttribute("reviewType", "Review");
         // Place Scorecard template in the request
@@ -790,7 +800,6 @@ public class ProjectReviewActions extends DispatchAction {
             return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
                     Constants.PERFORM_REVIEW_PERM_NAME, "Error.ReviewTypeIncorrect");
         }
-
         // Verify that review has not been committed yet
         if (review.isCommitted()) {
             return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
@@ -799,6 +808,8 @@ public class ProjectReviewActions extends DispatchAction {
 
         // Retrieve some basic project info (such as icons' names) and place it into request
         ActionsHelper.retrieveAndStoreBasicProjectInfo(request, verification.getProject(), getResources(request));
+        // Retrieve an information about my role(s) and place it into the request
+        ActionsHelper.retrieveAndStoreMyRole(request, getResources(request));
         // Place the type of the review into the request
         request.setAttribute("reviewType", "Review");
         // Place Scorecard template in the request
@@ -885,7 +896,6 @@ public class ProjectReviewActions extends DispatchAction {
             return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
                     Constants.PERFORM_REVIEW_PERM_NAME, "Error.SubmissionAndReviewIdNotSpecified");
         }
-
         // If check was not successful, return an appropriate action forward
         if (!verification.isSuccessful()) {
             return verification.getForward();
@@ -982,7 +992,8 @@ public class ProjectReviewActions extends DispatchAction {
         // If the review hasn't been created yet
         if (review == null) {
             // Create a convenient review editor
-            ReviewEditor reviewEditor = new ReviewEditor(AuthorizationHelper.getLoggenInUserHandle(request));
+            ReviewEditor reviewEditor =
+                new ReviewEditor(Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
 
             // Iterate over the scorecard template's questions,
             // so items will be created for every question
@@ -1001,7 +1012,7 @@ public class ProjectReviewActions extends DispatchAction {
                         comment.setAuthor(resource.getId());
                         comment.setComment(replies[index]);
                         comment.setCommentType(
-                                ActionsHelper.findCommentTypeById(commentTypes, commentTypeIds[i].longValue()));
+                                ActionsHelper.findCommentTypeById(commentTypes, commentTypeIds[index].longValue()));
                         // Add comment to the item
                         item.addComment(comment);
 
@@ -1056,6 +1067,8 @@ public class ProjectReviewActions extends DispatchAction {
             // Set the completed status of the review
             review.setCommitted(true);
         } else if ("preview".equalsIgnoreCase(request.getParameter("save"))) {
+            // Retrieve an information about my role(s) and place it into the request
+            ActionsHelper.retrieveAndStoreMyRole(request, getResources(request));
             // Place scorecard template object into request as attribute
             request.setAttribute("scorecardTemplate", scorecardTemplate);
             // Place review object into request as attribute
@@ -1072,9 +1085,9 @@ public class ProjectReviewActions extends DispatchAction {
 
         // Determine which action should be performed -- creation or updating
         if (verification.getReview() == null) {
-            revMgr.createReview(review, AuthorizationHelper.getLoggenInUserHandle(request));
+            revMgr.createReview(review, Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
         } else {
-            revMgr.updateReview(review, AuthorizationHelper.getLoggenInUserHandle(request));
+            revMgr.updateReview(review, Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
         }
 
         // Forward to project details page
@@ -1123,7 +1136,6 @@ public class ProjectReviewActions extends DispatchAction {
             return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
                     Constants.VIEW_ALL_REVIEWS_PERM_NAME, "Error.ReviewTypeIncorrect");
         }
-
         // Make sure that the user is not trying to view unfinished review
         if (!verification.getReview().isCommitted()) {
             return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
@@ -1132,6 +1144,8 @@ public class ProjectReviewActions extends DispatchAction {
 
         // Retrieve some basic project info (such as icons' names) and place it into request
         ActionsHelper.retrieveAndStoreBasicProjectInfo(request, verification.getProject(), getResources(request));
+        // Retrieve an information about my role(s) and place it into the request
+        ActionsHelper.retrieveAndStoreMyRole(request, getResources(request));
         // Place Scorecard template in the request
         request.setAttribute("scorecardTemplate", scorecardTemplate);
 
@@ -1215,7 +1229,6 @@ public class ProjectReviewActions extends DispatchAction {
             return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
                     Constants.PERFORM_AGGREGATION_PERM_NAME, "Error.ReviewTypeIncorrect");
         }
-
         // Verify that review has not been committed yet
         if (review.isCommitted()) {
             return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
@@ -1227,15 +1240,12 @@ public class ProjectReviewActions extends DispatchAction {
 
         // Retrieve some basic project info (such as icons' names) and place it into request
         ActionsHelper.retrieveAndStoreBasicProjectInfo(request, project, getResources(request));
+        // Retrieve an information about my role(s) and place it into the request
+        ActionsHelper.retrieveAndStoreMyRole(request, getResources(request));
         // Retrieve some basic aggregation info and place it into request
         retrieveAndStoreBasicAggregationInfo(request, verification, scorecardTemplate);
         // Place Scorecard template in the request
         request.setAttribute("scorecardTemplate", scorecardTemplate);
-
-        // Obtain an array of "my" resources
-        Resource[] myResources = (Resource[]) request.getAttribute("myResources");
-        // Place a string that represents "my" current role(s) into the request
-        request.setAttribute("myRole", ActionsHelper.determineRolesForResources(getResources(request), myResources));
 
         // Obtain an instance of Review Manager
         ReviewManager revMgr = ActionsHelper.createReviewManager(request);
@@ -1280,10 +1290,10 @@ public class ProjectReviewActions extends DispatchAction {
                 if (commentType.equalsIgnoreCase("Comment") || commentType.equalsIgnoreCase("Required") ||
                         commentType.equalsIgnoreCase("Recommended")) {
                     String aggregFunction = (String) comment.getExtraInfo();
-                    if ("Rejected".equalsIgnoreCase(aggregFunction)) {
-                        aggregateFunctions[commentIndex] = "Rejected";
-                    } else if ("Accepted".equalsIgnoreCase(aggregFunction)) {
-                        aggregateFunctions[commentIndex] = "Accepted";
+                    if ("Reject".equalsIgnoreCase(aggregFunction)) {
+                        aggregateFunctions[commentIndex] = "Reject";
+                    } else if ("Accept".equalsIgnoreCase(aggregFunction)) {
+                        aggregateFunctions[commentIndex] = "Accept";
                     } else if ("Duplicate".equalsIgnoreCase(aggregFunction)) {
                         aggregateFunctions[commentIndex] = "Duplicate";
                     } else {
@@ -1517,8 +1527,7 @@ public class ProjectReviewActions extends DispatchAction {
             return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
                     Constants.VIEW_AGGREGATION_PERM_NAME, "Error.ReviewTypeIncorrect");
         }
-
-        // Make sure that the user is not trying to view unfinished review
+        // Make sure that the user is trying to view Aggregation Review, not Aggregation
         if (!review.isCommitted()) {
             return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
                     Constants.VIEW_AGGREGATION_PERM_NAME, "Error.ReviewNotCommitted");
@@ -1526,15 +1535,12 @@ public class ProjectReviewActions extends DispatchAction {
 
         // Retrieve some basic project info (such as icons' names) and place it into request
         ActionsHelper.retrieveAndStoreBasicProjectInfo(request, verification.getProject(), getResources(request));
+        // Retrieve an information about my role(s) and place it into the request
+        ActionsHelper.retrieveAndStoreMyRole(request, getResources(request));
         // Retrieve some basic aggregation info and place it into request
         retrieveAndStoreBasicAggregationInfo(request, verification, scorecardTemplate);
         // Place Scorecard template in the request
         request.setAttribute("scorecardTemplate", scorecardTemplate);
-
-        // Obtain an array of "my" resources
-        Resource[] myResources = (Resource[]) request.getAttribute("myResources");
-        // Place a string that represents "my" current role(s) into the request
-        request.setAttribute("myRole", ActionsHelper.determineRolesForResources(getResources(request), myResources));
 
         // Get the word "of" for Test Case type of question
         String wordOf = getResources(request).getMessage("editReview.Question.Response.TestCase.of");
@@ -1673,12 +1679,12 @@ public class ProjectReviewActions extends DispatchAction {
 
         // Retrieve some basic project info (such as icons' names) and place it into request
         ActionsHelper.retrieveAndStoreBasicProjectInfo(request, project, getResources(request));
+        // Retrieve an information about my role(s) and place it into the request
+        ActionsHelper.retrieveAndStoreMyRole(request, getResources(request));
         // Retrieve some basic aggregation info and place it into request
         retrieveAndStoreBasicAggregationInfo(request, verification, scorecardTemplate);
         // Place Scorecard template in the request
         request.setAttribute("scorecardTemplate", scorecardTemplate);
-        // Place a string that represents "my" current role(s) into the request
-        request.setAttribute("myRole", ActionsHelper.determineRolesForResources(getResources(request), myResources));
 
         LazyValidatorForm aggregationReviewForm = (LazyValidatorForm) form;
 
@@ -1872,10 +1878,6 @@ public class ProjectReviewActions extends DispatchAction {
 
             // Values "Approved" or "Rejected" will denote committed review
             myReviewComment.setExtraInfo((rejected == true) ? "Rejected" : "Approved");
-        } else if ("preview".equalsIgnoreCase(request.getParameter("save"))) {
-            // TODO: Complete preview function for Save Aggregation Review action
-            // Forward to preview page
-            return mapping.findForward(Constants.PREVIEW_FORWARD_NAME);
         }
 
         // Update (save) edited Aggregation Review
@@ -1887,9 +1889,16 @@ public class ProjectReviewActions extends DispatchAction {
     }
 
     /**
-     * TODO: Write sensible description for method viewAggregationReview here
+     * This method is an implementation of &quot;View Aggregation Review&quot; Struts Action defined
+     * for this assembly, which is supposed to view completed aggregation review. The Aggregation
+     * review must be completed by submitter and all reviewers (except the reviewer that is also an
+     * aggregator).
      *
-     * @return TODO: Write sensible description of return value for method viewAggregationReview
+     * @return &quot;success&quot; forward, which forwards to the /jsp/viewAggregationReview.jsp
+     *         page (as defined in struts-config.xml file), or &quot;userError&quot; forward, which
+     *         forwards to the /jsp/userError.jsp page, which displays information about an error
+     *         that is usually caused by incorrect user input (such as absent review id, or the lack
+     *         of permissions, etc.).
      * @param mapping
      *            action mapping.
      * @param form
@@ -1898,11 +1907,64 @@ public class ProjectReviewActions extends DispatchAction {
      *            the http request.
      * @param response
      *            the http response.
+     * @throws BaseException
+     *             if any error occurs.
      */
     public ActionForward viewAggregationReview(ActionMapping mapping, ActionForm form,
-            HttpServletRequest request, HttpServletResponse response) {
-        // TODO: Add implementation of method viewAggregationReview here
-        return null;
+            HttpServletRequest request, HttpServletResponse response)
+        throws BaseException {
+        // Verify that certain requirements are met before proceeding with the Action
+        CorrectnessCheckResult verification =
+            checkForCorrectReviewId(mapping, request, Constants.VIEW_AGGREG_REVIEW_PERM_NAME);
+        // If any error has occured, return action forward contained in the result bean
+        if (!verification.isSuccessful()) {
+            return verification.getForward();
+        }
+
+        // Retrieve a review (aggregation) to view
+        Review review = verification.getReview();
+
+        // Obtain an instance of Scorecad Manager
+        ScorecardManager scrMgr = ActionsHelper.createScorecardManager(request);
+        // Retrieve a scorecard template for the review
+        Scorecard scorecardTemplate = scrMgr.getScorecard(review.getScorecard());
+
+        // Verify that the scorecard template for this review is of correct type
+        if (!scorecardTemplate.getScorecardType().getName().equalsIgnoreCase("Review")) {
+            return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
+                    Constants.VIEW_AGGREG_REVIEW_PERM_NAME, "Error.ReviewTypeIncorrect");
+        }
+        // Make sure that the user is not trying to view unfinished review
+        if (!review.isCommitted()) {
+            return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
+                    Constants.VIEW_AGGREG_REVIEW_PERM_NAME, "Error.AggregationNotCommitted");
+        }
+
+        // Verify that Aggregation Review has been committed by all users who should have done that
+        for (int i = 0; i < review.getNumberOfComments(); ++i) {
+            Comment comment = review.getComment(i);
+            String status = (String) comment.getExtraInfo();
+            if (!("Approved".equalsIgnoreCase(status) || "Rejected".equalsIgnoreCase(status))) {
+                return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
+                        Constants.VIEW_AGGREG_REVIEW_PERM_NAME, "Error.AggregationReviewNotCommitted");
+            }
+        }
+
+        // Retrieve some basic project info (such as icons' names) and place it into request
+        ActionsHelper.retrieveAndStoreBasicProjectInfo(request, verification.getProject(), getResources(request));
+        // Retrieve an information about my role(s) and place it into the request
+        ActionsHelper.retrieveAndStoreMyRole(request, getResources(request));
+        // Retrieve some basic aggregation info and place it into request
+        retrieveAndStoreBasicAggregationInfo(request, verification, scorecardTemplate);
+        // Place Scorecard template in the request
+        request.setAttribute("scorecardTemplate", scorecardTemplate);
+
+        // Get the word "of" for Test Case type of question
+        String wordOf = getResources(request).getMessage("editReview.Question.Response.TestCase.of");
+        // Place the string into the request as attribute
+        request.setAttribute("wordOf", " "  + wordOf + " ");
+
+        return mapping.findForward(Constants.SUCCESS_FORWARD_NAME);
     }
 
     /**
@@ -2066,6 +2128,8 @@ public class ProjectReviewActions extends DispatchAction {
 
         // Retrieve some basic project info (such as icons' names) and place it into request
         ActionsHelper.retrieveAndStoreBasicProjectInfo(request, verification.getProject(), getResources(request));
+        // Retrieve an information about my role(s) and place it into the request
+        ActionsHelper.retrieveAndStoreMyRole(request, getResources(request));
         // Place the type of the review into the request
         request.setAttribute("reviewType", "Approval");
         // Place Scorecard template in the request
@@ -2155,7 +2219,6 @@ public class ProjectReviewActions extends DispatchAction {
             return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
                     Constants.PERFORM_APPROVAL_PERM_NAME, "Error.ReviewTypeIncorrect");
         }
-
         // Verify that review has not been committed yet
         if (review.isCommitted()) {
             return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
@@ -2164,6 +2227,8 @@ public class ProjectReviewActions extends DispatchAction {
 
         // Retrieve some basic project info (such as icons' names) and place it into request
         ActionsHelper.retrieveAndStoreBasicProjectInfo(request, verification.getProject(), getResources(request));
+        // Retrieve an information about my role(s) and place it into the request
+        ActionsHelper.retrieveAndStoreMyRole(request, getResources(request));
         // Place the type of the review into the request
         request.setAttribute("reviewType", "Approval");
         // Place Scorecard template in the request
@@ -2250,7 +2315,6 @@ public class ProjectReviewActions extends DispatchAction {
             return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
                     Constants.PERFORM_APPROVAL_PERM_NAME, "Error.SubmissionAndReviewIdNotSpecified");
         }
-
         // If check was not successful, return an appropriate action forward
         if (!verification.isSuccessful()) {
             return verification.getForward();
@@ -2352,7 +2416,8 @@ public class ProjectReviewActions extends DispatchAction {
         // If the review hasn't been created yet
         if (review == null) {
             // Create a convenient review editor
-            ReviewEditor reviewEditor = new ReviewEditor(AuthorizationHelper.getLoggenInUserHandle(request));
+            ReviewEditor reviewEditor =
+                new ReviewEditor(Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
 
             // Iterate over the scorecard template's questions,
             // so items will be created for every question
@@ -2371,7 +2436,7 @@ public class ProjectReviewActions extends DispatchAction {
                         comment.setAuthor(resource.getId());
                         comment.setComment(replies[index]);
                         comment.setCommentType(
-                                ActionsHelper.findCommentTypeById(commentTypes, commentTypeIds[i].longValue()));
+                                ActionsHelper.findCommentTypeById(commentTypes, commentTypeIds[index].longValue()));
                         // Add comment to the item
                         item.addComment(comment);
 
@@ -2426,6 +2491,8 @@ public class ProjectReviewActions extends DispatchAction {
             // Set the completed status of the review
             review.setCommitted(true);
         } else if ("preview".equalsIgnoreCase(request.getParameter("save"))) {
+            // Retrieve an information about my role(s) and place it into the request
+            ActionsHelper.retrieveAndStoreMyRole(request, getResources(request));
             // Place scorecard template object into request as attribute
             request.setAttribute("scorecardTemplate", scorecardTemplate);
             // Place review object into request as attribute
@@ -2442,9 +2509,9 @@ public class ProjectReviewActions extends DispatchAction {
 
         // Determine which action should be performed -- creation or updating
         if (verification.getReview() == null) {
-            revMgr.createReview(review, AuthorizationHelper.getLoggenInUserHandle(request));
+            revMgr.createReview(review, Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
         } else {
-            revMgr.updateReview(review, AuthorizationHelper.getLoggenInUserHandle(request));
+            revMgr.updateReview(review, Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
         }
 
         // Forward to project details page
@@ -2493,7 +2560,6 @@ public class ProjectReviewActions extends DispatchAction {
             return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
                     Constants.VIEW_APPROVAL_PERM_NAME, "Error.ReviewTypeIncorrect");
         }
-
         // Make sure that the user is not trying to view unfinished review
         if (!verification.getReview().isCommitted()) {
             return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
@@ -2502,6 +2568,8 @@ public class ProjectReviewActions extends DispatchAction {
 
         // Retrieve some basic project info (such as icons' names) and place it into request
         ActionsHelper.retrieveAndStoreBasicProjectInfo(request, verification.getProject(), getResources(request));
+        // Retrieve an information about my role(s) and place it into the request
+        ActionsHelper.retrieveAndStoreMyRole(request, getResources(request));
         // Place Scorecard template in the request
         request.setAttribute("scorecardTemplate", scorecardTemplate);
 
@@ -2582,6 +2650,8 @@ public class ProjectReviewActions extends DispatchAction {
 
         // Retrieve some basic project info (such as icons' names) and place it into request
         ActionsHelper.retrieveAndStoreBasicProjectInfo(request, verification.getProject(), getResources(request));
+        // Retrieve an information about my role(s) and place it into the request
+        ActionsHelper.retrieveAndStoreMyRole(request, getResources(request));
         // Place Scorecard template in the request
         request.setAttribute("scorecardTemplate", scorecardTemplate);
         // Store reviews in the request
@@ -2868,6 +2938,8 @@ public class ProjectReviewActions extends DispatchAction {
         // Place submitter's and aggregator's user IDs into the request
         request.setAttribute("submitterId", submitter.getProperty("External Reference ID"));
         request.setAttribute("aggregatorId", aggregator.getProperty("External Reference ID"));
+        // Place submitter's resource into the request
+        request.setAttribute("submitterResource", submitter);
 
         // Get an array of all phases for current project
         Phase[] phases = ActionsHelper.getPhasesForProject(
