@@ -1349,7 +1349,6 @@ public class ProjectReviewActions extends DispatchAction {
             return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
                     Constants.PERFORM_AGGREGATION_PERM_NAME, "Error.ReviewTypeIncorrect");
         }
-
         // Verify that review has not been committed yet
         if (review.isCommitted()) {
             return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
@@ -1375,7 +1374,6 @@ public class ProjectReviewActions extends DispatchAction {
 
         // Obtain an instance of review manager
         ReviewManager revMgr = ActionsHelper.createReviewManager(request);
-
         // Retrieve all comment types
         CommentType[] allCommentTypes = revMgr.getAllCommentTypes();
 
@@ -1609,24 +1607,33 @@ public class ProjectReviewActions extends DispatchAction {
         Resource[] myResources = (Resource[]) request.getAttribute("myResources");
 
         Comment myReviewComment = null;
+        Comment submitterComment = null;
         // Find "my" comment in the review scope
         for (int i = 0; i < review.getNumberOfComments(); ++i) {
             // Get a comment for the current iteration
             Comment comment = review.getComment(i);
+
+            // If submitter's comment has been found, store it in the corresponding variable
+            if (comment.getCommentType().getName().equalsIgnoreCase("Submitter Comment")) {
+                submitterComment = comment;
+            }
+
+            // If "my" review comment has been found, move on to the next comment
+            if (myReviewComment != null) {
+                continue;
+            }
+            // Attempt to find "my" review comment
             for (int j = 0; j < myResources.length; ++j) {
                 if (comment.getAuthor() == myResources[j].getId()) {
                     myReviewComment = comment;
                     break;
                 }
             }
-            if (myReviewComment != null) {
-                break;
-            }
         }
 
         // If "my" comment has not been found, then the user is probably an Aggregator
         if (myReviewComment == null) {
-            if (AuthorizationHelper.hasUserRole(request, Constants.APPROVER_ROLE_NAME)) {
+            if (AuthorizationHelper.hasUserRole(request, Constants.AGGREGATOR_ROLE_NAME)) {
                 return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
                         Constants.PERFORM_AGGREG_REVIEW_PERM_NAME, "Error.CannotReviewOwnAggregation");
             } else {
@@ -1648,6 +1655,17 @@ public class ProjectReviewActions extends DispatchAction {
         if (AuthorizationHelper.hasUserRole(request, Constants.SUBMITTER_ROLE_NAME)) {
             isSubmitter = true;
             request.setAttribute("isSubmitter", new Boolean(isSubmitter));
+        } else {
+            // Otherwise examine the submitter's comment
+            if (submitterComment != null) {
+                String submitterExtraInfo = (String) submitterComment.getExtraInfo();
+                if ("Approved".equalsIgnoreCase(submitterExtraInfo) ||
+                        "Rejected".equalsIgnoreCase(submitterExtraInfo)) {
+                    // Indicate to the underlying JSP page that submitter has committed its
+                    // Aggregation Review, so submitter's comments can be displayed to the reviewers
+                    request.setAttribute("submitterCommitted", new Boolean(true));
+                }
+            }
         }
 
         // Retrieve current project
@@ -1677,7 +1695,8 @@ public class ProjectReviewActions extends DispatchAction {
                 String commentType = comment.getCommentType().getName();
 
                 if ((isSubmitter && commentType.equalsIgnoreCase("Submitter Comment")) ||
-                        (!isSubmitter && commentType.equalsIgnoreCase("Aggregation Review Comment"))) {
+                        (!isSubmitter && myReviewComment.getAuthor() == comment.getAuthor() &&
+                                commentType.equalsIgnoreCase("Aggregation Review Comment"))) {
                     String reviewFunction = (String) comment.getExtraInfo();
                     if ("Reject".equalsIgnoreCase(reviewFunction)) {
                         reviewFunctions[i] = "Reject";
@@ -1697,9 +1716,14 @@ public class ProjectReviewActions extends DispatchAction {
     }
 
     /**
-     * TODO: Write sensible description for method saveAggregationReview here
+     * This method is an implementation of &quot;Save Aggregation Review&quot; Struts Action defined
+     * for this assembly, which is supposed to save information posted from
+     * /jsp/editAggregationReview.jsp page. This method will update (edit) aggregation review.
      *
-     * @return TODO: Write sensible description of return value for method saveAggregationReview
+     * @return &quot;success&quot; forward, which forwards to the &quot;View Project Details&quot;
+     *         action, or &quot;userError&quot; forward, which forwards to the /jsp/userError.jsp
+     *         page, which displays information about an error that is usually caused by incorrect
+     *         user input (such as absent review id, or the lack of permissions, etc.).
      * @param mapping
      *            action mapping.
      * @param form
@@ -1708,11 +1732,158 @@ public class ProjectReviewActions extends DispatchAction {
      *            the http request.
      * @param response
      *            the http response.
+     * @throws BaseException
+     *             if any error occurs.
      */
     public ActionForward saveAggregationReview(ActionMapping mapping, ActionForm form,
-            HttpServletRequest request, HttpServletResponse response) {
-        // TODO: Add implementation of method saveAggregationReview here
-        return null;
+            HttpServletRequest request, HttpServletResponse response)
+        throws BaseException {
+        // Verify that certain requirements are met before proceeding with the Action
+        CorrectnessCheckResult verification =
+            checkForCorrectReviewId(mapping, request, Constants.PERFORM_AGGREG_REVIEW_PERM_NAME);
+        // If any error has occured, return action forward contained in the result bean
+        if (!verification.isSuccessful()) {
+            return verification.getForward();
+        }
+
+        // Retrieve a review to save
+        Review review = verification.getReview();
+
+        // Obtain an instance of Scorecad Manager
+        ScorecardManager scrMgr = ActionsHelper.createScorecardManager(request);
+        // Retrieve a scorecard template for the review
+        Scorecard scorecardTemplate = scrMgr.getScorecard(review.getScorecard());
+
+        // Verify that the scorecard template for this review is of correct type
+        if (!scorecardTemplate.getScorecardType().getName().equalsIgnoreCase("Review")) {
+            return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
+                    Constants.PERFORM_AGGREG_REVIEW_PERM_NAME, "Error.ReviewTypeIncorrect");
+        }
+        // Verify that the user is attempting to save Aggregation Review, not Aggregation
+        if (!review.isCommitted()) {
+            return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
+                    Constants.PERFORM_AGGREG_REVIEW_PERM_NAME, "Error.AggregationNotCommitted");
+        }
+
+        /*
+         * Verify that Aggregation Review has not been committed by this user
+         */
+
+        // Obtain an array of "my" resources
+        Resource[] myResources = (Resource[]) request.getAttribute("myResources");
+
+        Comment myReviewComment = null;
+        // Find "my" comment in the review scope
+        for (int i = 0; i < review.getNumberOfComments(); ++i) {
+            // Get a comment for the current iteration
+            Comment comment = review.getComment(i);
+            for (int j = 0; j < myResources.length; ++j) {
+                if (comment.getAuthor() == myResources[j].getId()) {
+                    myReviewComment = comment;
+                    break;
+                }
+            }
+            if (myReviewComment != null) {
+                break;
+            }
+        }
+
+        // If "my" comment has not been found, then the user is probably an Aggregator
+        if (myReviewComment == null) {
+            if (AuthorizationHelper.hasUserRole(request, Constants.AGGREGATOR_ROLE_NAME)) {
+                return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
+                        Constants.PERFORM_AGGREG_REVIEW_PERM_NAME, "Error.CannotReviewOwnAggregation");
+            } else {
+                return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
+                        Constants.PERFORM_AGGREG_REVIEW_PERM_NAME, "Error.NoPermission");
+            }
+        }
+
+        // Do actual verificartion. Values "Approved" and "Rejected" denote committed Aggregation Review
+        String myExtaInfo = (String) myReviewComment.getExtraInfo();
+        if ("Approved".equalsIgnoreCase(myExtaInfo) || "Rejected".equalsIgnoreCase(myExtaInfo)) {
+            return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
+                    Constants.PERFORM_AGGREG_REVIEW_PERM_NAME, "Error.ReviewCommitted");
+        }
+
+        // Determine if the user is Submitter
+        boolean isSubmitter = AuthorizationHelper.hasUserRole(request, Constants.SUBMITTER_ROLE_NAME);
+
+        // Get the form defined for this action
+        LazyValidatorForm aggregationReviewForm = (LazyValidatorForm) form;
+
+        // Get form's fields
+        String[] reviewFunctions = (String[]) aggregationReviewForm.get("review_function");
+        String[] rejectReasons = (String[]) aggregationReviewForm.get("reject_reason");
+
+        // Obtain an instance of review manager
+        ReviewManager revMgr = ActionsHelper.createReviewManager(request);
+        // Retrieve all comment types
+        CommentType[] allCommentTypes = revMgr.getAllCommentTypes();
+        // Determine the type of comment to search for
+        CommentType commentType = ActionsHelper.findCommentTypeByName(allCommentTypes,
+                (isSubmitter == true) ? "Submitter Comment" : "Aggregation Review Comment");
+
+        // Denotes the rejected status of the Aggregation Review.
+        // This variable will be updated during the next loop over all items of the review
+        boolean rejected = false;
+
+        // Iterate over the items of existing review that needs updating
+        for (int i = 0; i < review.getNumberOfItems(); ++i) {
+            // Get an item for the current iteration
+            Item item = review.getItem(i);
+
+            // Find a comment from this user
+            Comment userComment = null;
+            for (int j = 0; j < item.getNumberOfComments(); ++j) {
+                Comment comment = item.getComment(j);
+
+                if (comment.getAuthor() == myReviewComment.getAuthor() &&
+                        comment.getCommentType().getId() == commentType.getId()) {
+                    userComment = comment;
+                    break;
+                }
+            }
+
+            // If comment has not been found, it means that this user has not had
+            // chance to enter his comments yet, so create the Comment object first
+            if (userComment == null) {
+                userComment = new Comment();
+                // Prefill needed fields
+                userComment.setCommentType(commentType);
+                userComment.setAuthor(myReviewComment.getAuthor());
+                // Add this newly-created comment to review's item
+                item.addComment(userComment);
+            }
+
+            userComment.setComment(rejectReasons[i]);
+            // If review function equals to anythning but "Accept", then regard the item as rejected
+            if ("Accept".equalsIgnoreCase(reviewFunctions[i])) {
+                userComment.setExtraInfo("Accept");
+            } else {
+                userComment.setExtraInfo("Reject");
+                rejected = true;
+            }
+        }
+
+        // If the user has requested to complete the review
+        if ("submit".equalsIgnoreCase(request.getParameter("save"))) {
+            // TODO: Validate review here
+
+            // Values "Approved" or "Rejected" will denote committed review
+            myReviewComment.setExtraInfo((rejected == true) ? "Rejected" : "Approved");
+        } else if ("preview".equalsIgnoreCase(request.getParameter("save"))) {
+            // TODO: Complete preview function for Save Aggregation Review action
+            // Forward to preview page
+            return mapping.findForward(Constants.PREVIEW_FORWARD_NAME);
+        }
+
+        // Update (save) edited Aggregation Review
+        revMgr.updateReview(review, Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
+
+        // Forward to project details page
+        return ActionsHelper.cloneForwardAndAppendToPath(
+                mapping.findForward(Constants.SUCCESS_FORWARD_NAME), "&pid=" + verification.getProject().getId());
     }
 
     /**
