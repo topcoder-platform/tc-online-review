@@ -676,6 +676,28 @@ class ActionsHelper {
     }
 
     /**
+     * This method helps to retrieve the roles currently logged in user has. This method then places
+     * the retrieved info into the request as attrobute named &quot;myRole&quot;.
+     *
+     * @param request
+     *            the http request.
+     * @param messages
+     *            message resources.
+     * @throws IllegalArgumentException
+     *             if any of the parameters are <code>null</code>.
+     */
+    public static void retrieveAndStoreMyRole(HttpServletRequest request, MessageResources messages) {
+        // Validate parameters
+        validateParameterNotNull(request, "request");
+        validateParameterNotNull(messages, "messages");
+
+        // Obtain an array of "my" resources
+        Resource[] myResources = (Resource[]) request.getAttribute("myResources");
+        // Place a string that represents "my" current role(s) into the request
+        request.setAttribute("myRole", ActionsHelper.determineRolesForResources(messages, myResources));
+    }
+
+    /**
      * This static member function examines an array of supplied resources and forms a string that
      * specifies the roles based on the roles the resources in the array have. All roles in the
      * array are supposed to be assigned to the same external user, although the check of meeting
