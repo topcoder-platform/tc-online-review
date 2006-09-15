@@ -16,7 +16,7 @@
 	<link type="text/css" rel="stylesheet" href="../css/tcStyles.css" />
 
 	<!-- CSS and JS by Petar -->
-	<link type="text/css" rel="stylesheet" href="../css/new_styles.css">
+	<link type="text/css" rel="stylesheet" href="../css/new_styles.css" />
 	<script language="JavaScript" type="text/javascript" src="../scripts/rollovers.js"><!-- @ --></script>
 	<script language="JavaScript" type="text/javascript" src="../scripts/dojo.js"><!-- @ --></script>
 	<script language="JavaScript" type="text/javascript" src="../scripts/util.js"><!-- @ --></script>
@@ -99,20 +99,20 @@
 						</table>
 					</div>
 
-					&nbsp;<b><bean:message key="editReview.Submission" /></b> ${sid}<br />
-					&nbsp;<b><bean:message key="editReview.MyRole" /></b> ${myRole}<br />
-					<h3>${scorecardTemplate.name}<br /></h3>
+					&#160;<b><bean:message key="editReview.Submission" /></b> ${sid}<br />
+					&#160;<b><bean:message key="editReview.MyRole" /></b> ${myRole}<br />
+					<h3>${scorecardTemplate.name}</h3>
 
 					<html:form action="/actions/Save${reviewType}">
-
-						<c:set var="itemIdx" value="0" />
+						<html:hidden property="method" value="save${reviewType}" />
 						<c:if test="${!(empty review)}">
 							<html:hidden property="rid" value="${review.id}" />
 						</c:if>
 						<c:if test="${empty review}">
 							<html:hidden property="sid" value="${sid}" />
 						</c:if>
-						<html:hidden property="method" value="save${reviewType}" />
+
+						<c:set var="itemIdx" value="0" />
 
 						<c:forEach items="${scorecardTemplate.allGroups}" var="group" varStatus="groupStatus">
 							<table class="scorecard" cellpadding="0" width="100%" style="border-collapse: collapse;">
@@ -122,8 +122,8 @@
 								<c:forEach items="${group.allSections}" var="section" varStatus="sectionStatus">
 									<tr>
 										<td class="subheader" width="100%">${section.name}</td>
-										<td class="subheader" width="49%" align="center"><bean:message key="editReview.SectionHeader.Weight"/></td>
-										<td class="subheader" width="1%" align="center"><bean:message key="editReview.SectionHeader.Response"/></td>
+										<td class="subheader" width="49%" align="center"><bean:message key="editReview.SectionHeader.Weight" /></td>
+										<td class="subheader" width="1%" align="center"><bean:message key="editReview.SectionHeader.Response" /></td>
 									</tr>
 									<c:forEach items="${section.allQuestions}" var="question" varStatus="questionStatus">
 										<tr class="light">
