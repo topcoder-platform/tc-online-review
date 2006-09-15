@@ -66,14 +66,16 @@
 						</table><br />
 					</div>
 
-					&#160;<b><bean:message key="editReview.Aggregator" /></b> <tc-webtag:handle coderId="${aggregatorId}" context="component" /><br />
-					&#160;<b><bean:message key="editReview.Submission" /></b> ${sid} (<tc-webtag:handle coderId="${submitterId}" context="component" />)<br />
+					&#160;<b><bean:message key="editReview.Aggregator" /></b>
+					<tc-webtag:handle coderId="${aggregatorId}" context="component" /><br />
+					&#160;<b><bean:message key="editReview.Submission" /></b> ${sid}
+					(<tc-webtag:handle coderId="${submitterId}" context="component" />)<br />
 					&#160;<b><bean:message key="editReview.MyRole" /></b> ${myRole}<br />
 					<h3><bean:message key="viewAggregation.AggregationWorksheet" /></h3>
 
 					<c:set var="itemIdx" value="0" />
 
-					<table cellpadding="0" border="0" width="100%" class="scorecard" style="border-collapse:collapse">
+					<table cellpadding="0" border="0" width="100%" class="scorecard" style="border-collapse:collapse;">
 						<c:forEach items="${scorecardTemplate.allGroups}" var="group" varStatus="groupStatus">
 							<tr>
 								<td class="title" colspan="5">${group.name}</td>
@@ -108,13 +110,13 @@
 									</tr>
 
 									<c:forEach items="${review.allItems}" var="item" varStatus="itemStatus">
-										<c:set var="commentNum" value="1" />
 										<c:if test="${item.question == question.id}">
 											<c:forEach items="${item.allComments}" var="comment">
 												<c:if test='${comment.commentType.name == "Aggregation Comment"}'>
 													<c:set var="aggregatorResponse" value="${comment.comment}" />
 												</c:if>
 											</c:forEach>
+											<c:set var="commentNum" value="1" />
 											<c:forEach items="${item.allComments}" var="comment" varStatus="commentStatus">
 												<c:set var="commentType" value="${comment.commentType.name}" />
 												<c:if test='${(commentType == "Required") || (commentType == "Recommended") || (commentType == "Comment")}'>
