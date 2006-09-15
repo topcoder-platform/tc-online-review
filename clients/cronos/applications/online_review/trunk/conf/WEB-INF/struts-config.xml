@@ -40,7 +40,7 @@
             <form-property name="resources_payment_amount" type="java.lang.Long[]" />
             <form-property name="resources_paid" type="java.lang.String[]" />
             <form-property name="resources_action" type="java.lang.String[]" />
-            <form-property name="resources_id" type="java.lang.String[]" />
+            <form-property name="resources_id" type="java.lang.Long[]" />
 
             <form-property name="phase_type" type="java.lang.Long[]" />
             <form-property name="phase_id" type="java.lang.Long[]" />
