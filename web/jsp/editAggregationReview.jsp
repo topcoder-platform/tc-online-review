@@ -125,7 +125,8 @@
 														</c:otherwise>
 													</c:choose>
 													<c:if test='${(isReviewerComment == true) || (commentType == "Manager Comment") ||
-															(commentType == "Aggregation Comment")}'>
+															(commentType == "Aggregation Comment") ||
+															((empty isSubmitter) && !(empty submitterCommitted) && (commentType == "Submitter Comment"))}'>
 														<tr class="dark">
 															<td class="value">
 																<c:if test="${commentStatus.index == 0}">
@@ -159,7 +160,7 @@
 																	<c:when test='${commentType == "Aggregation Comment"}'>
 																		<b><bean:message key="editReview.EditAggregation.AggregatorResponse" /></b>
 																	</c:when>
-																	<c:when test='${(commentType == "Submitter Comment") && (empty isSubmitter)}'>
+																	<c:when test='${commentType == "Submitter Comment"}'>
 																		<b><bean:message key="editReview.EditAggregation.SubmitterComment" /></b>
 																	</c:when>
 																</c:choose>
@@ -171,12 +172,14 @@
 															<c:if test="${isReviewerComment != true}">
 																<td class="value" ><!-- @ --></td>
 															</c:if>
-															<c:if test="${empty comment.extraInfo}">
-																<td class="value"><!-- @ --></td>
-															</c:if>
-															<c:if test="${!(empty comment.extraInfo)}">
-																<td class="value"><bean:message key="AggregationItemStatus.${comment.extraInfo}" /></td>
-															</c:if>
+															<c:choose>
+																<c:when test='${empty comment.extraInfo || commentType == "Submitter Comment"}'>
+																	<td class="value"><!-- @ --></td>
+																</c:when>
+																<c:otherwise>
+																	<td class="value"><bean:message key="AggregationItemStatus.${comment.extraInfo}" /></td>
+																</c:otherwise>
+															</c:choose>
 														</tr>
 													</c:if>
 												</c:forEach>
