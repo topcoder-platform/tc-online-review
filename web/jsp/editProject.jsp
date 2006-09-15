@@ -316,8 +316,8 @@
 			var actionInput = getChildByNamePrefix(phaseRowNode, "phase_action");
 			actionInput.value = "delete";
 			
-			// Get phase id
-			var phaseId = getChildByNamePrefix(phaseRowNode, "phase_id").value;
+			// Get phase JS id
+			var phaseId = phaseRowNode.id;
 						
 			// Delete phase from addphase form select options
 			var addPhaseTable = document.getElementById("addphase_tbl");
@@ -365,53 +365,62 @@
 				<div id="mainMiddleContent">
 					<html:form action="/actions/SaveProject">
 						<input type="hidden" name="method" value="saveProject" />
-						<table class="scorecard" cellpadding="0" width="100%" style="border-collapse: collapse;">
-    							<tr>
-								<td class="title" colspan="2"><bean:message key="editProject.ProjectDetails.title" /></td>
-							</tr>
-							<tr>
-								<td class="valueB"><bean:message key="editProject.ProjectDetails.Name" /></td>
-								<td class="value" nowrap="nowrap"><html:text styleClass="inputBox" property="project_name" style="width: 350px;" /></td>
-							</tr>
-							<tr class="dark">
-								<td width="9%" class="valueB"><bean:message key="editProject.ProjectDetails.Type" /></td>
-								<td width="91%" class="value" nowrap="nowrap">
-									<html:select styleClass="inputBox" property="project_type" style="width:150px">
-										<c:forEach items="${projectTypes}" var="type">
-											<html:option key='ProjectType.${fn:replace(type.name, " ", "")}.plural' value="${type.id}" />
-										</c:forEach>
-									</html:select>
-								</td>
-							</tr>
-							<tr class="light">
-								<td class="valueB"><bean:message key="editProject.ProjectDetails.Category" /></td>
-								<td class="value" nowrap="nowrap">
-									<html:select styleClass="inputBox" property="project_category" style="width:150px;">
-										<c:forEach items="${projectCategories}" var="category">
-											<html:option key='ProjectCategory.${fn:replace(category.name, " ", "")}' value="${category.id}" />
-										</c:forEach>
-									</html:select>
-								</td>
-							</tr>
-							<tr class="dark">
-								<td class="valueB"><bean:message key="editProject.ProjectDetails.Eligibility" /></td>
-								<td class="value" nowrap="nowrap">
-									<html:select styleClass="inputBox" property="eligibility" style="width:150px;">
-										<html:option key="ProjectEligibility.Open" value="Open" />
-										<html:option key="ProjectEligibility.TopCoderPrivate" value="TopCoder Private" />
-									</html:select>
-								</td>
-							</tr>
-							<tr>
-								<td class="valueB"><bean:message key="editProject.ProjectDetails.Public" /></td>
-								<td class="value" nowrap="nowrap">
-									<html:checkbox property="public" />
-								</td>
-							</tr>
-							<tr>
-								<td class="lastRowTD" colspan="2"><!-- @ --></td>
-							</tr>
-						</table><br />
+						
+						<%-- If creating new project, show project details table --%>
+						<c:if test="${newProject}">
+							<table class="scorecard" cellpadding="0" width="100%" style="border-collapse: collapse;">
+	    							<tr>
+									<td class="title" colspan="2"><bean:message key="editProject.ProjectDetails.title" /></td>
+								</tr>
+								<tr>
+									<td class="valueB"><bean:message key="editProject.ProjectDetails.Name" /></td>
+									<td class="value" nowrap="nowrap"><html:text styleClass="inputBox" property="project_name" style="width: 350px;" /></td>
+								</tr>
+								<tr class="dark">
+									<td width="9%" class="valueB"><bean:message key="editProject.ProjectDetails.Type" /></td>
+									<td width="91%" class="value" nowrap="nowrap">
+										<html:select styleClass="inputBox" property="project_type" style="width:150px">
+											<c:forEach items="${projectTypes}" var="type">
+												<html:option key='ProjectType.${fn:replace(type.name, " ", "")}.plural' value="${type.id}" />
+											</c:forEach>
+										</html:select>
+									</td>
+								</tr>
+								<tr class="light">
+									<td class="valueB"><bean:message key="editProject.ProjectDetails.Category" /></td>
+									<td class="value" nowrap="nowrap">
+										<html:select styleClass="inputBox" property="project_category" style="width:150px;">
+											<c:forEach items="${projectCategories}" var="category">
+												<html:option key='ProjectCategory.${fn:replace(category.name, " ", "")}' value="${category.id}" />
+											</c:forEach>
+										</html:select>
+									</td>
+								</tr>
+								<tr class="dark">
+									<td class="valueB"><bean:message key="editProject.ProjectDetails.Eligibility" /></td>
+									<td class="value" nowrap="nowrap">
+										<html:select styleClass="inputBox" property="eligibility" style="width:150px;">
+											<html:option key="ProjectEligibility.Open" value="Open" />
+											<html:option key="ProjectEligibility.TopCoderPrivate" value="TopCoder Private" />
+										</html:select>
+									</td>
+								</tr>
+								<tr>
+									<td class="valueB"><bean:message key="editProject.ProjectDetails.Public" /></td>
+									<td class="value" nowrap="nowrap">
+										<html:checkbox property="public" />
+									</td>
+								</tr>
+								<tr>
+									<td class="lastRowTD" colspan="2"><!-- @ --></td>
+								</tr>
+							</table><br />
+						</c:if>
+						
+						<%-- If editing the exsiting project, include timeline editor here --%>
+						<c:if test="${not newProject}">
+							<jsp:include page="../includes/project/project_edit_timeline.jsp" />
+						</c:if>
 
 						<table class="scorecard" id="preferences">
 							<tr>
@@ -442,9 +451,23 @@
 
 						<table class="scorecard" cellpadding="0" cellspacing="0" width="100%" style="border-collapse: collapse;">
 							<tr>
-								<td class="title" width="1%"><bean:message key="editProject.References.title" /></td>
-								<td class="title" width="99%"><!-- @ --></td>
+								<%-- If creating a new project, name this table as "References" --%>
+								<c:if test="${newProject}">								
+									<td class="title" colspan="2"><bean:message key="editProject.References.title" /></td>
+								</c:if>								
+								<%-- If editing the existing project, name this table as "Project Details" --%>
+								<c:if test="${not newProject}">								
+									<td class="title" colspan="2"><bean:message key="editProject.ProjectDetails.title" /></td>
+								</c:if>
 							</tr>
+							<%-- If editing the existing project, should have project name edited here --%>
+							<c:if test="${not newProject}">		
+								<tr>
+									<td class="valueB"><bean:message key="editProject.ProjectDetails.Name" /></td>
+									<td class="value" nowrap="nowrap"><html:text styleClass="inputBox" property="project_name" style="width: 350px;" /></td>
+								</tr>
+							</c:if>						
+								
 							<tr class="light">
 								<td class="value" nowrap="nowrap">
 									<b><bean:message key="editProject.References.ForumId" /></b><br />
@@ -479,61 +502,15 @@
 								<td class="lastRowTD"><!-- @ --></td>
 							</tr>
 						</table><br />
-
-						<%-- Include timeline editor --%>
-						<jsp:include page="../includes/project/project_edit_timeline.jsp" />
 						
-						<table class="scorecard" id="resources_tbl" cellpadding="0" width="100%" style="border-collapse: collapse;">
-							<tr>
-								<td class="title" colspan="5"><bean:message key="editProject.Resources.title" /></td>
-							</tr>
-							<tr>
-								<td class="header"><bean:message key="editProject.Resources.Role"/></td>
-								<td class="header"><bean:message key="editProject.Resources.Name"/></td>
-								<td class="header"><bean:message key="editProject.Resources.Payment"/></td>
-								<td class="header"><bean:message key="editProject.Resources.Paid"/></td>
-								<td class="headerC"><!-- @ --></td>
-							</tr>
-							<tr class="light">
-								<td class="value" nowrap="nowrap">
-									<html:select styleClass="inputBox" property="resources_role[0]" style="width:150px;">
-										<html:option key="editProject.Resources.SelectRole" value="-1" />
-										<c:forEach items="${requestScope.resourceRoles}" var="role">
-											<html:option key="ResourceRole.${fn:replace(role.name, ' ', '')}" value="${role.id}" />
-										</c:forEach>
-									</html:select>
-								</td>
-								<td class="value">
-									<html:text styleClass="inputBoxName" property="resources_name[0]" />
-								</td>
-								<td class="value" nowrap="nowrap">
-									<html:radio property="resources_payment[0]" value="true" />${"$"}
-									<html:text styleClass="inputBoxDuration" property="resources_payment_amount[0]" />
-									<html:radio property="resources_payment[0]" value="false" /><bean:message key="NotAvailable" />									
-								</td>
-								<td class="value" nowrap="nowrap">
-									<html:select styleClass="inputBox" property="resources_paid[0]" style="width:120px;">
-										<%-- TODO: How to decide wheather Select or N/A is displayed (probably by NewProject attr.) --%>
-										<html:option key="Answer.Select" value="" />
-										<html:option key="NotApplicable" value="N/A" />
-										<html:option key="editProject.Resources.Paid.NotPaid" value="No" />
-										<html:option key="editProject.Resources.Paid.Paid" value="Yes" />
-									</html:select>
-								</td>
-								<td class="valueC" nowrap="nowrap">
-									<html:img srcKey="editProject.Resources.AddResource.img" altKey="editProject.Resources.AddResource.alt" onclick="addNewResource();" />
-									<html:img style="display: none;" srcKey="editProject.Resources.DeleteResource.img" altKey="editProject.Resources.DeleteResource.alt" onclick="deleteResource(this.parentNode.parentNode);" />
-									<html:hidden property="resources_action[0]" value="none" />
-									<html:hidden property="resources_id[0]" value="-1" />
-								</td>
+						<%-- If creating a new project, include timeline editor here --%>
+						<c:if test="${newProject}">
+							<jsp:include page="../includes/project/project_edit_timeline.jsp" />
+						</c:if>
 
-								<%-- TODO: Iterate through exisitng resources here (for edit page only) --%>
-							</tr>
-							<tr>
-								<td class="lastRowTD" colspan="5"><!-- @ --></td>
-							</tr>
-						</table><br />
-
+						<%-- Include resources editor --%>
+						<jsp:include page="../includes/project/project_edit_resources.jsp" />
+												
 						<div align="right">
 							<html:image srcKey="btnSave.img" altKey="btnSave.alt" border="0" />&#160;
 							<a href="javascript:history.go(-1)"><html:img srcKey="btnCancel.img" altKey="btnCancel.alt" border="0" /></a>

@@ -44,6 +44,7 @@ import com.topcoder.management.project.ProjectType;
 import com.topcoder.management.resource.Resource;
 import com.topcoder.management.resource.ResourceManager;
 import com.topcoder.management.resource.ResourceRole;
+import com.topcoder.management.scorecard.PersistenceException;
 import com.topcoder.management.scorecard.ScorecardManager;
 import com.topcoder.management.scorecard.ScorecardSearchBundle;
 import com.topcoder.management.scorecard.data.Scorecard;
@@ -107,9 +108,37 @@ public class ProjectActions extends DispatchAction {
         // Place the index of the active tab into the request
         request.setAttribute("projectTabIndex", new Integer(3));
 
-        // TODO: Complete this method
-        // It probably should also retrieve the lists of available scorecards, etc.
+        // Place the flag, indicating that we are creating a new project, into request
+        request.setAttribute("newProject", Boolean.TRUE);
+        
+        // Load the look up data
+        loadProjectEditLookups(request);
+       
+        LazyValidatorForm lazyForm = (LazyValidatorForm) form;
+        // Populate form with some data so that resources row template 
+        // is rendered properly by the appropriate JSP
+        lazyForm.set("resources_role", 0, new Long(-1));
+        lazyForm.set("resources_id", 0, new Long(-1));
+        lazyForm.set("resources_action", 0, "add");
 
+        // Populate form with some data so that resources row template 
+        // is rendered properly by the appropriate JSP
+        lazyForm.set("phase_id", 0, new Long(-1));
+        lazyForm.set("phase_action", 0, "add");
+        
+        // Return the success forward
+        return mapping.findForward(Constants.SUCCESS_FORWARD_NAME);
+    }
+
+    
+    /**
+     * This method loads the lookup data needed for rendering the Create Project/New Project pages.
+     * The loaded data is stored in the request attributes.
+     * 
+     * @param request the request to load the lookup data into
+     * @throws BaseException if any error occurs while loading the lookup data
+     */
+    private void loadProjectEditLookups(HttpServletRequest request) throws BaseException {
         // Obtain an instance of Project Manager
         ProjectManager projectManager = ActionsHelper.createProjectManager(request);
 
@@ -150,9 +179,6 @@ public class ProjectActions extends DispatchAction {
         request.setAttribute("screeningScorecards", screeningScorecards);
         request.setAttribute("reviewScorecards", reviewScorecards);
         request.setAttribute("approvalScorecards", approvalScorecards);
-      
-        // Return the success forward
-        return mapping.findForward(Constants.SUCCESS_FORWARD_NAME);
     }
 
     /**
@@ -201,13 +227,15 @@ public class ProjectActions extends DispatchAction {
         // Populate project status notification option
         populateProjectFormProperty(form, Boolean.class, "timeline_notifications", project, "Timeline Notification");
 
-        // TODO: Populate resources and phases
-
+        
         // Populate project forum name
         populateProjectFormProperty(form, String.class, "forum_id", project, "Forum Id");
 
         // Populate project SVN module
         populateProjectFormProperty(form, String.class, "SVN_module", project, "SVN Module");
+        
+        // TODO: Populate resources and phases
+
     }
 
     /**
@@ -278,18 +306,21 @@ public class ProjectActions extends DispatchAction {
             // If he doesn't have, forward to login page
             return mapping.findForward(Constants.NOT_AUTHORIZED_FORWARD_NAME);
         }
+        
+        // Place the flag, indicating that we are editing the existing project, into request
+        request.setAttribute("newProject", Boolean.FALSE);
 
+        // Load the lookup data
+        loadProjectEditLookups(request);
+        
         // Obtain an instance of Project Manager
         ProjectManager manager = ActionsHelper.createProjectManager(request);
 
-        // Retrieve project types and categories
-        ProjectType[] projectTypes = manager.getAllProjectTypes();
-        ProjectCategory[] projectCategories = manager.getAllProjectCategories();
-
-        // Store the retrieved types and categories in request
-        request.setAttribute("projectTypes", projectTypes);
-        request.setAttribute("projectCategories", projectCategories);
-
+        // Retrieve the list of all project statuses
+        ProjectStatus[] projectStatuses = manager.getAllProjectStatuses();
+        // Store it in the request
+        request.setAttribute("projectStatuses", projectStatuses);
+        
         // Retrieve the project to be edited
         Project project = manager.getProject(projectId);
         // Store the retieved project in the request
