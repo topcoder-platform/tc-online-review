@@ -92,26 +92,6 @@ public class AuthorizationHelper {
     }
 
     /**
-     * This static method returns the handle of the currently logged in user. This handle is
-     * sometimes needed to audit certain operations.
-     *
-     * @return a handle of the user currently logged in, or empty string if such handle has not been
-     *         found, or the user is not logged in. This method never returns <code>null</code>
-     *         value.
-     * @param request
-     *            the request.
-     */
-    public static String getLoggenInUserHandle(HttpServletRequest request) {
-        // If the user is not logged in, return empty string
-        if (!isUserLoggedIn(request)) {
-            return "";
-        }
-        // Get the value of "userHandle" session attribute
-        String userHandle = (String)request.getSession().getAttribute("userHandle");
-        return (userHandle != null) ? userHandle : "";
-    }
-
-    /**
      * This static method gathers the Resource Roles that the currently logged in user has.  It then
      * places the gathered roles into the object specified by the <code>request</code> parameter.
      *
