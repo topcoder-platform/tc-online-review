@@ -26,11 +26,11 @@ INSERT INTO resource_info (resource_id, resource_info_type_id, value, create_use
 -- Project resources
 
 INSERT INTO resource (resource_id, resource_role_id, project_id, project_phase_id, create_user, create_date, modify_user, modify_date)
-  VALUES (200, 1, 1002, 501, 'System', CURRENT, 'System', CURRENT);
+  VALUES (200, 1, 1002, NULL, 'System', CURRENT, 'System', CURRENT);
 INSERT INTO resource (resource_id, resource_role_id, project_id, project_phase_id, create_user, create_date, modify_user, modify_date)
-  VALUES (201, 1, 1002, 501, 'System', CURRENT, 'System', CURRENT);
+  VALUES (201, 1, 1002, NULL, 'System', CURRENT, 'System', CURRENT);
 INSERT INTO resource (resource_id, resource_role_id, project_id, project_phase_id, create_user, create_date, modify_user, modify_date)
-  VALUES (202, 1, 1002, 501, 'System', CURRENT, 'System', CURRENT);
+  VALUES (202, 1, 1002, NULL, 'System', CURRENT, 'System', CURRENT);
 INSERT INTO resource (resource_id, resource_role_id, project_id, project_phase_id, create_user, create_date, modify_user, modify_date)
   VALUES (203, 3, 1002, 503, 'System', CURRENT, 'System', CURRENT);
 INSERT INTO resource (resource_id, resource_role_id, project_id, project_phase_id, create_user, create_date, modify_user, modify_date)
