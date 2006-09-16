@@ -264,11 +264,9 @@
 
 			// Populate phase name
 			// TODO: Implement numbering of same-typed phases
-			var phaseNameCell =  newRow.cells[0];
+			var phaseNameCell = newRow.cells[0];
 			dojo.dom.textContent(phaseNameCell, phaseName);
-			
-			// Show the delete button - remove "display: none;"
-			newRow.getElementsByTagName("img")[0].style["display"] = "";			
+			getChildByNamePrefix(newRow, "phase_name").value = phaseName;				
 			
 			// Add the row to the appropriate position
 			var wherePhaseId = whereCombo.value;
@@ -510,6 +508,22 @@
 
 						<%-- Include resources editor --%>
 						<jsp:include page="../includes/project/project_edit_resources.jsp" />
+						
+						<c:if test="${not newProject}">
+							<table class="scorecard" id="Explanation">
+								<tr>
+									<td class="title"><bean:message key="editProject.Explanation.title" /></td>
+								</tr>
+								<tr class="light">		
+									<td class="Value"><bean:message key="editProject.Explanation.description" /><br />
+										<html:textarea styleClass="inputTextBox" property="explanation" />
+									</td>
+								</tr>
+								<tr>
+									<td class="lastRowTD"></td>
+								</tr>
+							</table>
+						</c:if>
 												
 						<div align="right">
 							<html:image srcKey="btnSave.img" altKey="btnSave.alt" border="0" />&#160;

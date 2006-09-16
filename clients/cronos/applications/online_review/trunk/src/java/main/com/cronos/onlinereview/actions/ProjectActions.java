@@ -44,6 +44,7 @@ import com.topcoder.management.project.ProjectType;
 import com.topcoder.management.resource.Resource;
 import com.topcoder.management.resource.ResourceManager;
 import com.topcoder.management.resource.ResourceRole;
+import com.topcoder.management.resource.search.ResourceFilterBuilder;
 import com.topcoder.management.scorecard.PersistenceException;
 import com.topcoder.management.scorecard.ScorecardManager;
 import com.topcoder.management.scorecard.ScorecardSearchBundle;
@@ -184,13 +185,15 @@ public class ProjectActions extends DispatchAction {
     /**
      * This method populates the specified LazyValidatorForm with the values 
      * taken from the specified Project.
-     *
-     * @param project
-     *            the project to take the data from
+     * @param request 
+     *            the request to be processed
      * @param form
      *            the form to be populated with data
+     * @param project
+     *            the project to take the data from
+     * @throws BaseException 
      */
-    private void populateProjectForm(Project project, LazyValidatorForm form) {
+    private void populateProjectForm(HttpServletRequest request, LazyValidatorForm form, Project project) throws BaseException {
         // TODO: Possibly use string constants instead of hardcoded strings
 
         // Populate project name
@@ -234,8 +237,97 @@ public class ProjectActions extends DispatchAction {
         // Populate project SVN module
         populateProjectFormProperty(form, String.class, "SVN_module", project, "SVN Module");
         
-        // TODO: Populate resources and phases
 
+        // Populate form with some data so that resources row template 
+        // is rendered properly by the appropriate JSP
+        form.set("resources_role", 0, new Long(-1));
+        form.set("resources_id", 0, new Long(-1));
+        form.set("resources_action", 0, "add");
+
+        // Populate form with some data so that resources row template 
+        // is rendered properly by the appropriate JSP
+        form.set("phase_id", 0, new Long(-1));
+        form.set("phase_action", 0, "add");
+        
+        // Obtain Resource Manager instance
+        ResourceManager resourceManager = ActionsHelper.createResourceManager(request);
+        
+        // Retreive the list of the resources associated with the project
+        Resource[] resources = 
+            resourceManager.searchResources(ResourceFilterBuilder.createProjectIdFilter(project.getId()));
+        
+        // Populate form with resources data
+        for (int i = 0; i < resources.length; ++i) {
+            form.set("resources_id", i + 1, new Long(resources[i].getId()));
+            form.set("resources_action", i + 1, "update");
+            form.set("resources_role", i + 1, new Long(resources[i].getResourceRole().getId()));
+            
+            form.set("resources_name", i + 1, resources[i].getProperty("Handle"));
+            if (resources[i].getProperty("Payment") != null) {
+                form.set("resources_payment", i + 1, Boolean.TRUE);
+                form.set("resources_payment_amount", i + 1, Long.valueOf((String) resources[i].getProperty("Payment")));                      
+            } else {
+                form.set("resources_payment", i + 1, Boolean.FALSE);                
+            }            
+            if (resources[i].getProperty("Payment Status") != null) {
+                form.set("resources_paid", i + 1, resources[i].getProperty("Payment Status"));
+            } else {
+                form.set("resources_paid", i + 1, "N/A");                    
+            }
+        }
+        
+        // Obtain Phase Manager instance
+        PhaseManager phaseManager = ActionsHelper.createPhaseManager(request);
+        
+        // Retrive project phases
+        Phase[] phases = ActionsHelper.getPhasesForProject(phaseManager, project);
+        
+        // Populate form with phases data
+        System.out.println("phases.length: " + phases.length);
+        for (int i = 0; i < phases.length; ++i) {
+            System.out.println("phases[i].id: " + phases[i].getId());
+            form.set("phase_id", i + 1, new Long(phases[i].getId()));
+            form.set("phase_name", i + 1, phases[i].getPhaseType().getName());
+            form.set("phase_action", i + 1, "update");
+            form.set("phase_js_id", i + 1, "loaded_" + phases[i].getId());
+            if (phases[i].getAllDependencies().length > 0) {
+                form.set("phase_start_by_phase", i + 1, Boolean.TRUE);
+                // TODO: Probably will need to rewrite all those dependency stuff
+                // TODO: It is very incomplete actually
+                Dependency dependency = phases[i].getAllDependencies()[0];
+                form.set("phase_start_phase", i + 1, "loaded_" + dependency.getDependency().getId());                
+            } else {
+                form.set("phase_start_by_phase", i + 1, Boolean.FALSE);
+            }
+            
+            populateDatetimeFormProperties(form, "phase_start_date", "phase_start_time", "phase_start_AMPM", i + 1,
+                    phases[i].getScheduledStartDate());
+            
+            populateDatetimeFormProperties(form, "phase_end_date", "phase_end_time", "phase_end_AMPM", i + 1,
+                    phases[i].getScheduledEndDate());
+            
+            form.set("phase_duration", i + 1, new Integer((int) (phases[i].getLength() / 3600 / 1000)));
+        }
+    }
+
+    /**
+     * TODO: Document it
+     * 
+     * @param form
+     * @param dateProperty
+     * @param timeProperty
+     * @param ampmProperty
+     * @param index
+     * @param date
+     */
+    private void populateDatetimeFormProperties(LazyValidatorForm form, String dateProperty, String timeProperty,
+            String ampmProperty, int index, Date date) {
+        // TODO: Reuse the DateFormat instance
+        DateFormat dateFormat = new SimpleDateFormat(("MM.dd.yy hh:mm aa"));
+        String[] parts = dateFormat.format(date).split("[ ]");
+        form.set(dateProperty, index, parts[0]);
+        form.set(timeProperty, index, parts[1]);
+        form.set(ampmProperty, index, parts[2]);  
     }
 
     /**
@@ -270,6 +362,8 @@ public class ProjectActions extends DispatchAction {
         }
     }
 
+    
+    
     /**
      * This method is an implementation of &quot;Edit Project&quot; Struts Action defined for this
      * assembly, which is supposed to fetch lists of project types and categories from the database
@@ -327,7 +421,7 @@ public class ProjectActions extends DispatchAction {
         request.setAttribute("project", project);
 
         // Populate the form with project properties
-        populateProjectForm(project, (LazyValidatorForm) form);
+        populateProjectForm(request, (LazyValidatorForm) form, project);
 
         return mapping.findForward(Constants.SUCCESS_FORWARD_NAME);
     }
@@ -691,6 +785,8 @@ public class ProjectActions extends DispatchAction {
             resource.setProperty("Handle", resourceNames[i]);  
             if (Boolean.TRUE.equals(lazyForm.get("resources_payment", i))) {
                 resource.setProperty("Payment", lazyForm.get("resources_payment_amount", i));
+            } else {
+                resource.setProperty("Payment", null);
             }
             String paid = (String) lazyForm.get("resources_paid", i);
             if ("Yes".equals(paid) || "No".equals(paid)) {

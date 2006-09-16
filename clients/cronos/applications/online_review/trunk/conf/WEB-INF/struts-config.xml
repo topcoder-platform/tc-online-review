@@ -32,7 +32,9 @@
             <form-property name="scorecard_approval" type="java.lang.Long" />
             <form-property name="forum_id" type="java.lang.Long" />
             <form-property name="SVN_module" type="java.lang.String" />
-            <form-property name="notes" type="java.lang.String" />
+            <form-property name="notes" type="java.lang.String" />     
+            <form-property name="explanation" type="java.lang.String" />            
+            
             <form-property name="resources_role" type="java.lang.Long[]" />
             <form-property name="resources_name" type="java.lang.String[]" />
             <form-property name="resources_payment" type="java.lang.Boolean[]" />
