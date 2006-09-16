@@ -42,15 +42,15 @@
 			<tr class="dark" style="display: none;" id="phase_row_template">
 		</c:if>
 		<c:if test="${phaseIdx ne 0}">
-			<tr class="dark" style="display: none;" id="${projectForm.map['phase_js_id'][phaseIdx]}">
+			<tr class="dark" id="${projectForm.map['phase_js_id'][phaseIdx]}">
 		</c:if>
-			<td class="valueB" nowrap="nowrap"><!-- @ --></td>
+			<td class="valueB" nowrap="nowrap">${projectForm.map['phase_name'][phaseIdx]}</td>
 			<td class="value" nowrap="nowrap">								
 				<html:hidden property="phase_type[${phaseIdx}]" />
-				<%-- TODO: Populate form fields values in action, instead of here --%>
 				<html:hidden property="phase_id[${phaseIdx}]" />
 				<html:hidden property="phase_js_id[${phaseIdx}]" />
-				<html:hidden property="phase_action[${phaseIdx}]" />									
+				<html:hidden property="phase_action[${phaseIdx}]" />
+				<html:hidden property="phase_name[${phaseIdx}]" />										
 				<html:radio property="phase_start_by_phase[${phaseIdx}]" value="false" /> 
 				<html:text styleClass="inputBoxDate" property="phase_start_date[${phaseIdx}]" />
 				<html:text styleClass="inputBoxTime" property="phase_start_time[${phaseIdx}]" />
@@ -91,8 +91,9 @@
 				<html:text styleClass="inputBoxDuration" property="phase_duration[${phaseIdx}]" />
 			</td> 
 			<td class="value">
-				<html:img style="display: none;" srcKey="editProject.Phases.DeletePhase.img" 
-					altKey="editProject.Phases.DeletePhase.alt" onclick="deletePhase(this.parentNode.parentNode);" />
+				<html:img srcKey="editProject.Phases.DeletePhase.img" 
+					altKey="editProject.Phases.DeletePhase.alt" 
+					onclick="deletePhase(this.parentNode.parentNode);" />
 			</td>
 		</tr>
 		
@@ -103,7 +104,7 @@
 				<tr class="highlighted" id="required_registrations_row_template" style="display: none;">
 			</c:if>
 			<c:if test="${phaseIdx ne 0}">
-				<tr class="highlighted" style="display: none;">
+				<tr class="highlighted">
 			</c:if>	
 				<td class="value">&nbsp;</td>
 				<td class="value" colspan="4"><bean:message key="editProject.Phases.Criteria.RequiredRegistrations.beforeInput" /> 
@@ -119,7 +120,7 @@
 				<tr class="highlighted" id="required_submissions_row_template" style="display: none;">
 			</c:if>
 			<c:if test="${phaseIdx ne 0}">
-				<tr class="highlighted" style="display: none;">
+				<tr class="highlighted">
 			</c:if>	
 				<td class="value"><!-- @ --></td>
 				<td class="value" colspan="4"><bean:message key="editProject.Phases.Criteria.RequiredSubmissions.beforeInput" />
@@ -135,7 +136,7 @@
 				<tr class="highlighted" id="screening_scorecard_row_template" style="display: none;">
 			</c:if>
 			<c:if test="${phaseIdx ne 0}">
-				<tr class="highlighted" style="display: none;">
+				<tr class="highlighted">
 			</c:if>
 				<td class="value">&nbsp;</td>
 				<td class="value" colspan="4"><bean:message key="editProject.Phases.Criteria.Scorecard" />
@@ -152,7 +153,7 @@
 				<tr class="highlighted" id="review_scorecard_row_template" style="display: none;">
 			</c:if>
 			<c:if test="${phaseIdx ne 0}">
-				<tr class="highlighted" style="display: none;">
+				<tr class="highlighted">
 			</c:if>
 			<tr class="highlighted" id="review_scorecard_row_template" style="display: none;">
 				<td class="value">&nbsp;</td>
@@ -170,7 +171,7 @@
 				<tr class="highlighted" id="approval_scorecard_row_template" style="display: none;">
 			</c:if>
 			<c:if test="${phaseIdx ne 0}">
-				<tr class="highlighted" style="display: none;">
+				<tr class="highlighted">
 			</c:if>
 				<td class="value">&nbsp;</td>
 				<td class="value" colspan="4"><bean:message key="editProject.Phases.Criteria.Scorecard" />
@@ -187,7 +188,7 @@
 				<tr class="highlighted" id=view_appeal_responses_row_template style="display: none;">
 			</c:if>
 			<c:if test="${phaseIdx ne 0}">
-				<tr class="highlighted" style="display: none;">
+				<tr class="highlighted">
 			</c:if>
 			 	<td class="value">&nbsp;</td>
 				<td class="value" colspan="4">
