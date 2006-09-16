@@ -86,7 +86,7 @@
     <property name="class_associations.path" value="class_associations/${class_associations.version}" />
     <property name="class_associations.jar" value="${tcs_libdir}/${class_associations.path}/${class_associations.jar.name}" />
 
-    <property name="configuration_manager.version" value="2.1.4" />
+    <property name="configuration_manager.version" value="2.1.5" />
     <property name="configuration_manager.jar.name" value="configuration_manager.jar" />
     <property name="configuration_manager.path" value="configuration_manager/${configuration_manager.version}" />
     <property name="configuration_manager.jar" value="${tcs_libdir}/${configuration_manager.path}/${configuration_manager.jar.name}" />
