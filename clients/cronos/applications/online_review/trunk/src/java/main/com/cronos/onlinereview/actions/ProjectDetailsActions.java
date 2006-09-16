@@ -23,6 +23,13 @@ import org.apache.struts.validator.DynaValidatorForm;
 import com.cronos.onlinereview.external.ExternalUser;
 import com.cronos.onlinereview.external.UserRetrieval;
 import com.topcoder.management.deliverable.Deliverable;
+import com.topcoder.management.deliverable.Submission;
+import com.topcoder.management.deliverable.SubmissionStatus;
+import com.topcoder.management.deliverable.Upload;
+import com.topcoder.management.deliverable.UploadManager;
+import com.topcoder.management.deliverable.UploadStatus;
+import com.topcoder.management.deliverable.UploadType;
+import com.topcoder.management.deliverable.search.SubmissionFilterBuilder;
 import com.topcoder.management.phase.PhaseManager;
 import com.topcoder.management.project.Project;
 import com.topcoder.management.project.ProjectManager;
@@ -38,6 +45,7 @@ import com.topcoder.search.builder.filter.Filter;
 import com.topcoder.servlet.request.FileUpload;
 import com.topcoder.servlet.request.FileUploadResult;
 import com.topcoder.servlet.request.RemoteFileUpload;
+import com.topcoder.servlet.request.UploadedFile;
 import com.topcoder.util.errorhandling.BaseException;
 
 /**
@@ -253,7 +261,7 @@ public class ProjectDetailsActions extends DispatchAction {
         if (AuthorizationHelper.hasUserPermission(request, Constants.VIEW_PROJECT_RESOURCES_PERM_NAME)) {
             // Build a filter to fetch all resources for the current project
             Filter filterProject = ResourceFilterBuilder.createProjectIdFilter(project.getId());
-            // Get an array ofresource for the project
+            // Get an array of resources for the project
             Resource[] resources = resMgr.searchResources(filterProject);
 
             // Prepare an array to store External User IDs
@@ -407,15 +415,81 @@ public class ProjectDetailsActions extends DispatchAction {
             return mapping.findForward(Constants.DISPLAY_PAGE_FORWARD_NAME);
         }
 
+        // Retrieve current project
+        Project project = verification.getProject();
+
         DynaValidatorForm uploadSubmissionForm = (DynaValidatorForm) form;
         FormFile file = (FormFile) uploadSubmissionForm.get("file");
 
-        FileUpload upload = new RemoteFileUpload("com.topcoder.servlet.request.RemoteFileUpload");
+        StrutsRequestParser parser = new StrutsRequestParser();
+        parser.AddFile(file);
 
-        FileUploadResult uploadResult = upload.uploadFiles(request);
+        FileUpload fileUpload = new RemoteFileUpload("com.topcoder.servlet.request.RemoteFileUpload");
+
+        FileUploadResult uploadResult = fileUpload.uploadFiles(request, parser);
+        UploadedFile uploadedFile = uploadResult.getUploadedFile("file");
+
+        // Get my resource
+        Resource resource = ActionsHelper.getMyResourceForPhase(request, null);
+
+        Filter filterProject = SubmissionFilterBuilder.createProjectIdFilter(project.getId());
+        Filter filterResource = SubmissionFilterBuilder.createResourceIdFilter(resource.getId());
+
+        Filter filterForSubmission = new AndFilter(filterProject, filterResource);
+
+        // Obtain an instance of Upload Manager
+        UploadManager upMgr = ActionsHelper.createUploadManager(request);
+        Submission[] submissions = upMgr.searchSubmissions(filterForSubmission);
+        Submission submission = (submissions.length != 0) ? submissions[0] : null;
+        Upload upload = (submission != null) ? submission.getUpload() : null;
+        Upload deletedUpload = null;
+
+        UploadStatus[] uploadStatuses = upMgr.getAllUploadStatuses();
+
+        if (upload == null) {
+            upload = new Upload();
+
+            UploadType[] uploadTypes = upMgr.getAllUploadTypes();
+
+            upload.setProject(project.getId());
+            upload.setOwner(resource.getId());
+            upload.setUploadStatus(ActionsHelper.findUploadStatusByName(uploadStatuses, "Active"));
+            upload.setUploadType(ActionsHelper.findUploadTypeByName(uploadTypes, "Submission"));
+            upload.setParameter(uploadedFile.getFileId());
+
+            SubmissionStatus[] submissionStatuses = upMgr.getAllSubmissionStatuses();
+
+            submission = new Submission();
+            submission.setUpload(upload);
+            submission.setSubmissionStatus(ActionsHelper.findSubmissionStatusByName(submissionStatuses, "Active"));
+        } else {
+            deletedUpload = upload;
+
+            upload = new Upload();
+            upload.setProject(deletedUpload.getProject());
+            upload.setOwner(deletedUpload.getOwner());
+            upload.setUploadStatus(deletedUpload.getUploadStatus());
+            upload.setUploadType(deletedUpload.getUploadType());
+            upload.setParameter(uploadedFile.getFileId());
+
+            submission.setUpload(upload);
+
+            deletedUpload.setUploadStatus(ActionsHelper.findUploadStatusByName(uploadStatuses, "Deleted"));
+        }
+
+        if (deletedUpload != null) {
+            upMgr.updateUpload(deletedUpload, Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
+        }
+        upMgr.createUpload(upload, Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
+
+        if (submissions.length == 0) {
+            upMgr.createSubmission(submission, Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
+        } else {
+            upMgr.updateSubmission(submission, Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
+        }
 
         return ActionsHelper.cloneForwardAndAppendToPath(
-                mapping.findForward(Constants.SUCCESS_FORWARD_NAME), "&pid=" + verification.getProject().getId());
+                mapping.findForward(Constants.SUCCESS_FORWARD_NAME), "&pid=" + project.getId());
     }
 
     /**
