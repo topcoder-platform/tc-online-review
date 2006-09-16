@@ -287,7 +287,7 @@
             <Value>-1</Value>
         </Property>
         <Property name="temp_dir">
-            <Value>E:\Temp\System\</Value>
+            <Value>E:\\Temp\\System\\</Value>
         </Property>
         <Property name="ip_address">
             <Value>127.0.0.1</Value>
@@ -2792,7 +2792,7 @@
         <!-- This is a temporary solution.
             TODO: Remove this property from the final version of the app. -->
         <Property name="FileStorePath">
-            <Value>E:\Temp\file_store\</Value>
+            <Value>E:\\Temp\\file_store\\</Value>
         </Property>
     </Config>
 </CMConfig>
