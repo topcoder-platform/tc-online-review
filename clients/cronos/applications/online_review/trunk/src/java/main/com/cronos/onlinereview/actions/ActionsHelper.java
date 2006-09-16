@@ -32,7 +32,10 @@ import com.topcoder.management.deliverable.Deliverable;
 import com.topcoder.management.deliverable.DeliverableManager;
 import com.topcoder.management.deliverable.PersistenceDeliverableManager;
 import com.topcoder.management.deliverable.PersistenceUploadManager;
+import com.topcoder.management.deliverable.SubmissionStatus;
 import com.topcoder.management.deliverable.UploadManager;
+import com.topcoder.management.deliverable.UploadStatus;
+import com.topcoder.management.deliverable.UploadType;
 import com.topcoder.management.deliverable.persistence.DeliverableCheckingException;
 import com.topcoder.management.deliverable.persistence.DeliverablePersistence;
 import com.topcoder.management.deliverable.persistence.DeliverablePersistenceException;
@@ -543,6 +546,88 @@ class ActionsHelper {
     }
 
     /**
+     * This static method searches for the submission status with the specified name in a provided
+     * array of submission statuses. The search is case-insensitive.
+     *
+     * @return found submission status, or <code>null</code> if a status with the specified name
+     *         has not been found in the provided array of submission statuses.
+     * @param submissionStatuses
+     *            an array of submission statuses to search for wanted submission status among.
+     * @param submissionStatusName
+     *            the name of the needed submission status.
+     * @throws IllegalArgumentException
+     *             if any of the parameters are <code>null</code>, or
+     *             <code>submissionStatusName</code> parameter is empty string.
+     */
+    public static SubmissionStatus findSubmissionStatusByName(
+            SubmissionStatus[] submissionStatuses, String submissionStatusName) {
+        // Validate parameters
+        validateParameterNotNull(submissionStatuses, "submissionStatuses");
+        validateParameterStringNotEmpty(submissionStatusName, "submissionStatusName");
+
+        for (int i = 0; i < submissionStatuses.length; ++i) {
+            if (submissionStatuses[i].getName().equalsIgnoreCase(submissionStatusName)) {
+                return submissionStatuses[i];
+            }
+        }
+        return null;
+    }
+
+    /**
+     * This static method searches for the upload status with the specified name in a provided array
+     * of upload statuses. The search is case-insensitive.
+     *
+     * @return found upload status, or <code>null</code> if a status with the specified name has
+     *         not been found in the provided array of upload statuses.
+     * @param uploadStatuses
+     *            an array of upload statuses to search for wanted upload status among.
+     * @param uploadStatusName
+     *            the name of the needed upload status.
+     * @throws IllegalArgumentException
+     *             if any of the parameters are <code>null</code>, or
+     *             <code>uploadStatusName</code> parameter is empty string.
+     */
+    public static UploadStatus findUploadStatusByName(UploadStatus[] uploadStatuses, String uploadStatusName) {
+        // Validate parameters
+        validateParameterNotNull(uploadStatuses, "uploadStatuses");
+        validateParameterStringNotEmpty(uploadStatusName, "uploadStatusName");
+
+        for (int i = 0; i < uploadStatuses.length; ++i) {
+            if (uploadStatuses[i].getName().equalsIgnoreCase(uploadStatusName)) {
+                return uploadStatuses[i];
+            }
+        }
+        return null;
+    }
+
+    /**
+     * This static method searches for the upload type with the specified name in a provided array
+     * of upload types. The search is case-insensitive.
+     *
+     * @return found upload type, or <code>null</code> if a type with the specified name has not
+     *         been found in the provided array of upload types.
+     * @param uploadTypes
+     *            an array of upload types to search for wanted upload type among.
+     * @param uploadTypeName
+     *            the name of the needed upload type.
+     * @throws IllegalArgumentException
+     *             if any of the parameters are <code>null</code>, or <code>uploadTypeName</code>
+     *             parameter is empty string.
+     */
+    public static UploadType findUploadTypeByName(UploadType[] uploadTypes, String uploadTypeName) {
+        // Validate parameters
+        validateParameterNotNull(uploadTypes, "uploadTypes");
+        validateParameterStringNotEmpty(uploadTypeName, "uploadTypeName");
+
+        for (int i = 0; i < uploadTypes.length; ++i) {
+            if (uploadTypes[i].getName().equalsIgnoreCase(uploadTypeName)) {
+                return uploadTypes[i];
+            }
+        }
+        return null;
+    }
+
+    /**
      * This static method counts the number of questions in a specified scorecard template.
      *
      * @return a number of questions in the scorecard.
@@ -1015,28 +1100,23 @@ class ActionsHelper {
      * @param request
      *            an <code>HtppServletRequest</code> object containing additional information.
      * @param phase
-     *            a phase to search the resouce for.
+     *            a phase to search the resouce for. This parameter can be <code>null</code>, in
+     *            which case the search is made for resources with no phase assigned.
      * @throws IllegalArgumentException
-     *             if any of the parameters are <code>null</code>.
+     *             if <code>request</code> parameter is <code>null</code>.
      */
     public static Resource getMyResourceForPhase(HttpServletRequest request, Phase phase) {
         // Validate parameters
         validateParameterNotNull(request, "request");
-        validateParameterNotNull(phase, "phase");
-
-        // Retrieve the list of "My" resources from the request's attribute
-        Resource[] resources = (Resource[]) request.getAttribute("myResources");
-        if (resources == null) {
-            // Incorrect usage of method detected.
-            // Method gatherUserRoles(HttpServletRequest, long) should have been called first
-            return null;
-        }
+        // Retrieve the list of "my" resources from the request's attribute
+        Resource[] resources = (Resource[]) validateAttributeNotNull(request, "myResources");
 
         for (int i = 0; i < resources.length; ++i) {
             // Get a resource for current iteration
             Resource resource = resources[i];
             // Find the resource for phase in question
-            if (resource.getPhase() != null && resource.getPhase().longValue() == phase.getId()) {
+            if ((phase == null && resource.getPhase() == null) ||
+                    (resource.getPhase() != null && resource.getPhase().longValue() == phase.getId())) {
                 // Return it
                 return resource;
             }
