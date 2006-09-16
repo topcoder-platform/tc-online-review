@@ -9,7 +9,7 @@
     <classpathentry exported="true" kind="lib" path="lib/tcs/authentication_factory/2.0/authentication_factory.jar"/>
     <classpathentry exported="true" kind="lib" path="lib/tcs/base_exception/1.0/base_exception.jar"/>
     <classpathentry exported="true" kind="lib" path="lib/tcs/class_associations/1.0/class_associations.jar"/>
-    <classpathentry exported="true" kind="lib" path="lib/tcs/configuration_manager/2.1.4/configuration_manager.jar"/>
+    <classpathentry exported="true" kind="lib" path="lib/tcs/configuration_manager/2.1.5/configuration_manager.jar"/>
     <classpathentry exported="true" kind="lib" path="lib/tcs/database_abstraction/1.1/database_abstraction.jar"/>
     <classpathentry exported="true" kind="lib" path="lib/tcs/data_validation/1.0/data_validation.jar"/>
     <classpathentry exported="true" kind="lib" path="lib/tcs/db_connection_factory/1.0/db_connection_factory.jar"/>
