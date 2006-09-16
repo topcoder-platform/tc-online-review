@@ -1,22 +1,9 @@
 
-ATTENTION! Some sections of this file have changed since the last submission.
-           Please reread changed sections attentively. The changed sections
-           are marked, so you can't miss them.
-
-
-
-Note to reviewers.  (THIS SECTION HAS CHANGED)
-  This assembly includes all the code from the Project Admin and Details one.
-  That code has almost no changes, except those one that contained bugs and
-  these bugs might cause some impact on the code from the Project Review assembly.
-  Due to the absense of changes to the Admin part of the assembly, you'll find
-  no links to the Actions from this assembly. We humbly ask you to type the links
-  to those actions by hand after logging into the application. Below is some notes
-  what you should enter.
+Notes on testing some actions from Project Review assembly.
 
   1. Create Screening
 
-     To create screening you should enter the following into the Address filed of
+     To create screening you should enter the following into the Address field of
      your browser:
 
        http://localhost:8080/online_review/actions/CreateScreening.do?method=createScreening&sid=<id-of-submission>
@@ -64,17 +51,17 @@ Note to reviewers.  (THIS SECTION HAS CHANGED)
    5. Save Screening, Save Review & Save Approval
 
      You don't have to undertake special actions to access these Struts Actions.
-     They may easily be accessed from appropriate Create/Save pages.
+     They may easily be accessed from appropriate Create/Edit pages.
 
    6. View Screening
 
-     To view screening you must finish (or complete) some screening review.
+     To view screening you must finish (commit) some screening review.
      The link for this Struts Action is:
 
        http://localhost:8080/online_review/actions/ViewScreening.do?method=viewScreening&rid=<id-of-review>
 
      Refer to section 3 for information on <id-of-review>.
-     Note, that you may view only finished (completed) screenings.
+     Note, that you may view only finished (committed) screenings.
 
    7. View Review & View Approval
      
@@ -85,15 +72,10 @@ Note to reviewers.  (THIS SECTION HAS CHANGED)
        http://localhost:8080/online_review/actions/ViewApproval.do?method=viewApproval&rid=<id-of-review>
 
      Refer to section 3 for information on <id-of-review>.
-     Note, that you may view only finished (completed) reviews or approvals.
+     Note, that you may view only finished (committed) reviews and approvals.
 
    8. Note also, that you must log in under an appropriate user to be able to
       perform the aforementioned actions.
-
-   9. We were permitted not to send implementations of Edit/Save/View Aggregation,
-      Edit/Save/View Aggregation Review, and Edit/Save/View Final Review Struts
-      Actions due to lack of some information, so they are not implemented by now.
-      There hopefully will be a draft implementation of them by Monday.
 
 
 Notes about logging in into application.
