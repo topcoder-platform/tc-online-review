@@ -143,17 +143,12 @@ class StrutsRequestParser implements RequestParser {
     }
 
     /**
-     * This method gets the form file name of the current file. Can be <code>null</code> if it is
-     * not available.
+     * This method gets the form file name of the current file.
      *
-     * @return the form file name of the current file, or <code>null</code> if the name is not
-     *         available.
+     * @return the form file name, which always equals to &quot;file&quot; string.
      */
     public String getFormFileName() {
-        if (this.currentFile == null) {
-            return null;
-        }
-        return null;
+        return "file";
     }
 
     /**
