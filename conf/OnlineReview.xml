@@ -2789,6 +2789,80 @@
             </Property>
         </Property>
 
+        <Property name="PhaseGrouping">
+            <Property name="Registration">
+                <Property name="NameKey">
+                    <Value>ProjectPhaseGroup.Registration</Value>
+                </Property>
+                <Property name="Phases">
+                    <Value>Registration</Value>
+                </Property>
+                <Property name="AppFunction">
+                    <Value>VIEW_REGISTRANTS</Value>
+                </Property>
+            </Property>
+            <Property name="Submission_Screening">
+                <Property name="NameKey">
+                    <Value>ProjectPhaseGroup.Submission_Screening</Value>
+                </Property>
+                <Property name="Phases">
+                    <Value>Submission</Value>
+                    <Value>Screening</Value>
+                </Property>
+                <Property name="AppFunction">
+                    <Value></Value>
+                </Property>
+            </Property>
+            <Property name="Review_Appeals">
+                <Property name="NameKey">
+                    <Value>ProjectPhaseGroup.Review_Appeals</Value>
+                </Property>
+                <Property name="Phases">
+                    <Value>Review</Value>
+                    <Value>Appeals</Value>
+                    <Value>Appeals Response</Value>
+                </Property>
+                <Property name="AppFunction">
+                    <Value></Value>
+                </Property>
+            </Property>
+            <Property name="Aggregation_Review">
+                <Property name="NameKey">
+                    <Value>ProjectPhaseGroup.Aggregation_Review</Value>
+                </Property>
+                <Property name="Phases">
+                    <Value>Aggregation</Value>
+                    <Value>Aggregation Review</Value>
+                </Property>
+                <Property name="AppFunction">
+                    <Value></Value>
+                </Property>
+            </Property>
+            <Property name="FinalFix_Review">
+                <Property name="NameKey">
+                    <Value>ProjectPhaseGroup.FinalFix_Review</Value>
+                </Property>
+                <Property name="Phases">
+                    <Value>Final Fix</Value>
+                    <Value>Final Review</Value>
+                </Property>
+                <Property name="AppFunction">
+                    <Value></Value>
+                </Property>
+            </Property>
+            <Property name="Approval">
+                <Property name="NameKey">
+                    <Value>ProjectPhaseGroup.Approval</Value>
+                </Property>
+                <Property name="Phases">
+                    <Value>Approval</Value>
+                </Property>
+                <Property name="AppFunction">
+                    <Value></Value>
+                </Property>
+            </Property>
+        </Property>
+
         <!-- This is a temporary solution.
             TODO: Remove this property from the final version of the app. -->
         <Property name="FileStorePath">
