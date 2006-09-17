@@ -96,7 +96,7 @@
 
 //Set tab to intially be selected when page loads:
 //[which tab (1=first tab), ID of tab content to display]:
-var initialtab=[2, "sc2"]
+var initialtab=[1, "sc1"]
 
 function cascadedstyle(el, cssproperty, csspropertyNS){
 if (el.currentStyle)
@@ -195,20 +195,10 @@ window.onload=do_onload
 
 				<div id="mainMiddleContent">
 					<jsp:include page="../includes/project/project_info.jsp" /><br />
-
-					<% request.setAttribute("role", "Manager"); %>
-					<% request.setAttribute("phaseIndex", new Integer(1)); %>
-					<% request.setAttribute("time", "during"); %>
 					<jsp:include page="../includes/project/project_myrole.jsp" />
-
-					<!-- Timeline -->
 					<jsp:include page="../includes/project/project_timeline.jsp" />
-
-					<% request.setAttribute("phase", "Submission/Screening"); %>
-					<jsp:include page="../includes/project/project_phase.jsp" /><br />
-
+					<jsp:include page="../includes/project/project_phase.jsp" />
 					<jsp:include page="../includes/project/project_detail.jsp" />
-
 					<jsp:include page="../includes/project/project_resource.jsp" />
 					<p><!-- @ --></p>
 					<%
