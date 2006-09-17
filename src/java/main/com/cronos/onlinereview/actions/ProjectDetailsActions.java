@@ -256,19 +256,22 @@ public class ProjectDetailsActions extends DispatchAction {
 
         // Obtain an instance of Resource Manager
         ResourceManager resMgr = ActionsHelper.createResourceManager(request);
+        Resource[] allProjectResources = null;
+        ExternalUser[] allProjectExtUsers = null;
 
         // Determine if the user has permission to view a list of resources for the project
-        if (AuthorizationHelper.hasUserPermission(request, Constants.VIEW_PROJECT_RESOURCES_PERM_NAME)) {
+        if (AuthorizationHelper.hasUserPermission(request, Constants.VIEW_PROJECT_RESOURCES_PERM_NAME) ||
+                AuthorizationHelper.hasUserPermission(request, Constants.VIEW_REGISTRATIONS_PERM_NAME)) {
             // Build a filter to fetch all resources for the current project
             Filter filterProject = ResourceFilterBuilder.createProjectIdFilter(project.getId());
             // Get an array of resources for the project
-            Resource[] resources = resMgr.searchResources(filterProject);
+            allProjectResources = resMgr.searchResources(filterProject);
 
             // Prepare an array to store External User IDs
-            long[] extUserIds = new long[resources.length];
+            long[] extUserIds = new long[allProjectResources.length];
             // Fill the array with user IDs retrieved from resource properties
-            for (int i = 0; i < resources.length; ++i) {
-                String userID = (String) resources[i].getProperty("External Reference ID");
+            for (int i = 0; i < allProjectResources.length; ++i) {
+                String userID = (String) allProjectResources[i].getProperty("External Reference ID");
                 extUserIds[i] = Long.valueOf(userID).longValue();
             }
 
@@ -287,21 +290,80 @@ public class ProjectDetailsActions extends DispatchAction {
             // This is final array for External User objects. It is needed because the previous
             // operation may return shorter array than there are resources for the project
             // (sometimes several resources can be associated with one external user)
-            ExternalUser[] users = new ExternalUser[resources.length];
+            allProjectExtUsers = new ExternalUser[allProjectResources.length];
 
             for (int i = 0; i < extUserIds.length; ++i) {
                 for (int j = 0; j < extUsers.length; ++j) {
                     if (extUsers[j].getId() == extUserIds[i]) {
-                        users[i] = extUsers[j];
+                        allProjectExtUsers[i] = extUsers[j];
                         break;
                     }
                 }
             }
-
-            // Place resources and external users into the request
-            request.setAttribute("resources", resources);
-            request.setAttribute("users", users);
         }
+
+        if (AuthorizationHelper.hasUserPermission(request, Constants.VIEW_PROJECT_RESOURCES_PERM_NAME)) {
+            // Place resources and external users into the request
+            request.setAttribute("resources", allProjectResources);
+            request.setAttribute("users", allProjectExtUsers);
+        }
+
+        int[] phaseGroupIndexes = new int[phases.length];
+        List phaseGroups = new ArrayList();
+        int phaseGroupIdx = -1;
+        PhaseGroup phaseGroup = null;
+
+        for (int i = 0; i < phases.length; ++i) {
+            // Get a phase for the current iteration
+            Phase phase = phases[i];
+            String phaseName = phase.getPhaseType().getName();
+
+            if (phaseGroupIdx == -1 ||
+                    !ConfigHelper.isPhaseGroupContainsPhase(phaseGroupIdx, phaseName)) {
+                phaseGroupIdx = ConfigHelper.findPhaseGroupForPhaseName(phaseName);
+
+                if (phaseGroupIdx == -1) {
+                    System.out.println(phaseName);
+                }
+
+                String appFuncName = ConfigHelper.getPhaseGroupAppFunction(phaseGroupIdx);
+
+                if (!appFuncName.equals(Constants.VIEW_REGISTRANTS_APP_FUNC) ||
+                        AuthorizationHelper.hasUserPermission(request, Constants.VIEW_REGISTRATIONS_PERM_NAME)) {
+                    phaseGroup = new PhaseGroup();
+                    phaseGroups.add(phaseGroup);
+
+                    phaseGroup.setName(messages.getMessage(ConfigHelper.getPhaseGroupNameKey(phaseGroupIdx)));
+                    phaseGroup.setAppFunc(appFuncName);
+                } else {
+                    phaseGroup = null;
+                }
+            }
+
+            if (phaseGroup == null) {
+                phaseGroupIndexes[i] = -1;
+                continue;
+            }
+
+            if (phaseGroup.getAppFunc().equals(Constants.VIEW_REGISTRANTS_APP_FUNC)) {
+                List registrants = new ArrayList();
+
+                for (int j = 0; j < allProjectResources.length; ++j) {
+                    Resource resource = allProjectResources[j];
+
+                    if (resource.getResourceRole().getName().equalsIgnoreCase("Submitter")) {
+                        registrants.add(resource);
+                    }
+                }
+
+                phaseGroup.setAdditionalInfo(registrants);
+            }
+
+            phaseGroupIndexes[i] = phaseGroups.size() - 1;
+        }
+
+        request.setAttribute("phaseGroupIndexes", phaseGroupIndexes);
+        request.setAttribute("phaseGroups", phaseGroups);
 
         boolean sendTLNotifications = false;
 

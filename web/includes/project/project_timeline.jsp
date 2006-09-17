@@ -34,30 +34,16 @@
 					</tr>
 					<c:forEach items="${phases}" var="phase" varStatus="idxrPhase">
 						<tr class='${(idxrPhase.index % 2 == 0) ? "light" : "dark"}'>
-							<td class="value" nowrap="nowrap">
-								<c:choose>
-								<c:when test='${phase.phaseType.name == "Registration"}'>
-									<%
-										if (AuthorizationHelper.hasUserPermission(request, Constants.VIEW_REGISTRATIONS_PERM_NAME)) {
-									%>
-											<a onClick='return expandcontent("sc${idxrPhase.index + 1}", this)'
-												href="javascript:void(0)"><b><bean:message
-													key='ProjectPhase.${fn:replace(phase.phaseType.name, " ", "")}' /></b></a>
-									<%
-										} else {
-									%>
-											<b><bean:message key='ProjectPhase.${fn:replace(phase.phaseType.name, " ", "")}' /></b>
-									<%
-										}
-									%>
-								</c:when>
-								<c:otherwise>
-									<a onClick='return expandcontent("sc${idxrPhase.index + 1}", this)'
+							<c:if test="${phaseGroupIndexes[idxrPhase.index] == -1}">
+								<td class="value" nowrap="nowrap">
+									<b><bean:message key='ProjectPhase.${fn:replace(phase.phaseType.name, " ", "")}' /></b></td>
+							</c:if>
+							<c:if test="${phaseGroupIndexes[idxrPhase.index] != -1}">
+								<td class="value" nowrap="nowrap">
+									<a onClick='return expandcontent("sc${phaseGroupIndexes[idxrPhase.index] + 1}", this)'
 										href="javascript:void(0)"><b><bean:message
-											key='ProjectPhase.${fn:replace(phase.phaseType.name, " ", "")}' /></b></a>
-								</c:otherwise>
-								</c:choose>
-							</td>
+											key='ProjectPhase.${fn:replace(phase.phaseType.name, " ", "")}' /></b></a></td>
+							</c:if>
 							<td class="valueC" nowrap="nowrap">
 								<bean:message key='ProjectPhase.Status.${fn:replace(phase.phaseStatus.name, " ", "")}' />
 							</td>

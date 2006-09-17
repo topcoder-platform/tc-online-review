@@ -1,3 +1,140 @@
+<%@ page language="java" isELIgnored="false" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="bean" uri="/tags/struts-bean" %>
+<%@ taglib prefix="tc-webtag" uri="/tags/tc-webtags" %>
+	<a name="tabs"></a>
+	<div id="tabcontentcontainer">
+		<c:forEach items="${phaseGroups}" var="group" varStatus="groupStatus">
+			<div id="sc${groupStatus.index + 1}" class="tabcontent">
+				<ul id="tablist">
+					<c:forEach items="${phaseGroups}" var="innerGroup" varStatus="innerGroupStatus">
+						<li ${(groupStatus.index == innerGroupStatus.index) ? "id='current'" : ""}><a href="javascript:void(0)"
+							onClick="return expandcontent('sc${innerGroupStatus.index + 1}', this)">${innerGroup.name}</a></li>
+					</c:forEach>
+				</ul>
+				<div style="clear:both;"></div>
+				<c:choose>
+					<c:when test='${group.appFunc == "VIEW_REGISTRANTS"}'>
+						<table class="scorecard" style="border-collapse:collapse;" cellpadding="0" cellspacing="0" width="100%">
+							<tr>
+								<td class="title" colspan="5">${group.name}</td>
+							</tr>
+							<tr>
+								<td class="header"><bean:message key="viewProjectDetails.box.Registration.Handle" /></td>
+								<td class="header"><bean:message key="viewProjectDetails.box.Registration.Email" /></td>
+								<td class="header"><bean:message key="viewProjectDetails.box.Registration.Reliability" /></td>
+								<td class="header"><bean:message key="viewProjectDetails.box.Registration.Rating" /></td>
+								<td class="headerC"><bean:message key="viewProjectDetails.box.Registration.RegistrationDate" /></td>
+							</tr>
+							<c:forEach items="${group.additionalInfo}" var="resource" varStatus="resourceStatus">
+								<tr class='${(resourceStatus.index % 2 == 0) ? "light" : "dark"}'>
+									<td class="value" nowrap="nowrap"><tc-webtag:handle coderId='${resource.allProperties["External Reference ID"]}' context="component" /></td>
+									<td class="value">e-mail will go here</td>
+									<c:set var="reliability" value='${resource.allProperties["Reliability"]}' />
+									<c:if test="${empty reliability}">
+										<td class="value" nowrap="nowrap"><bean:message key="NotAvailable" /></td>
+									</c:if>
+									<c:if test="${!(empty reliability)}">
+										<td class="value" nowrap="nowrap">${reliability}%</td>
+									</c:if>
+									<c:set var="rating" value='${resource.allProperties["Rating"]}' />
+									<c:choose>
+										<c:when test="${empty rating}">
+											<c:set var="ratingColor" value="coderTextBlack" />
+										</c:when>
+										<c:when test="${rating == 0}">
+											<c:set var="ratingColor" value="coderTextBlack" />
+										</c:when>
+										<c:when test="${(rating > 0) && (rating < 900)}">
+											<c:set var="ratingColor" value="coderTextGray" />
+										</c:when>
+										<c:when test="${(rating >= 900) && (rating < 1200)}">
+											<c:set var="ratingColor" value="coderTextGreen" />
+										</c:when>
+										<c:when test="${(rating >= 1200) && (rating < 1500)}">
+											<c:set var="ratingColor" value="coderTextBlue" />
+										</c:when>
+										<c:when test="${(rating >= 1500) && (rating < 2200)}">
+											<c:set var="ratingColor" value="coderTextYellow" />
+										</c:when>
+										<c:when test="${rating >= 2200}">
+											<c:set var="ratingColor" value="coderTextRed" />
+										</c:when>
+									</c:choose>
+									<c:if test="${empty rating}">
+										<td class="value" nowrap="nowrap"><bean:message key="NotRated" /></td>
+									</c:if>
+									<c:if test="${!(empty rating)}">
+										<td class="value" nowrap="nowrap"><span class="${ratingColor}">${rating}</span></td>
+									</c:if>
+									<td class="valueC" nowrap="nowrap">${resource.allProperties["Registration Date"]}</td>
+								</tr>
+							</c:forEach>
+							<tr>
+								<td class="lastRowTD" colspan="5"><!-- @ --></td>
+							</tr>
+						</table>
+					</c:when>
+					<c:otherwise>
+						<table class="scorecard" style="border-collapse:collapse;" cellpadding="0" cellspacing="0" width="100%">
+							<tr>
+								<td class="title">${group.name}</td>
+							</tr>
+							<tr class="light">
+								<td class="valueC" nowrap="nowrap">The contents for this tab is not generated yet.<br />This functionality is to be implemented.</td>
+							</tr>
+							<tr>
+								<td class="lastRowTD"><!-- @ --></td>
+							</tr>
+						</table>
+					</c:otherwise>
+				</c:choose>
+			</div>
+		</c:forEach>
+	</div><br />
+
+
+
+<%--
+							<table class="scorecard" style="border-collapse: collapse;"cellpadding="0" cellspacing="0" width="100%">
+								<tr>
+									<td class="title" colspan="5">Registrants</td>
+								</tr>
+								<tr>
+									<td class="header">Handle</td>
+									<td class="header">Email</td>
+									<td class="header">Reliability</td>
+									<td class="header">Rating</td>
+									<td class="headerC">Registration Date</td>
+								</tr>
+								<tr class="light">
+									<td class="value" nowrap><a href="#" class="coderTextYellow">henryouly</a></td>
+									<td class="value"><a href="mailto:henryouly@email.com">henryouly@email.com</a></td>
+									<td class="value" nowrap>83%</td>
+									<td class="value" nowrap><span class="coderTextYellow">1532</span></td>
+									<td class="valueC" nowrap>00.00.00 00:00 AM</td>
+								</tr>
+								<tr class="dark">
+									<td class="value"><a href="#" class="coderTextBlack">Tavo</a></td>
+									<td class="value"><a href="mailto:Tavo@email.com">Tavo@email.com</a></td>
+									<td class="value" nowrap>N/A</td>
+									<td class="value" nowrap><span class="coderTextBlack">Not Rated</td>
+									<td class="valueC" nowrap>00.00.00 00:00 AM</td>
+								</tr>
+								<tr class="light">
+									<td class="value" nowrap><a href="#" class="coderTextYellow">mayi</a></td>
+									<td class="value" nowrap><a href="mailto:mayi@yahoo.com">mayi@yahoo.com</a></td>
+									<td class="value" nowrap>80%</td>
+									<td class="value" nowrap><span class="coderTextYellow">1599</span></td>
+									<td class="valueC" nowrap>00.00.00 00:00 AM</td>
+								</tr>
+								<tr>
+									<td class="lastRowTD" colspan="5"></td>
+								</tr>
+							</table>
+			</div>
+		</c:forEach>
+	</div>
 <%
     //                        0  1  2  3  4  5  6  7  8  9  10
 	int[] phases = new int[] {0, 1, 2, 3, 3, 4, 5, 5, 6, 7, 7};
@@ -664,4 +801,4 @@
 								</tr>
 							</table>
 						</div>
-<%}%>
+<%}%> --%>
