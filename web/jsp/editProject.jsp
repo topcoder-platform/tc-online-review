@@ -362,9 +362,14 @@
 
 				<div id="mainMiddleContent">
 					<html:form action="/actions/SaveProject">
-						<input type="hidden" name="method" value="saveProject" />
+						<html:hidden property="method" value="saveProject" />
 						
-						<%-- If creating new project, show project details table --%>
+						<%-- If editing the existing project, render its pid --%>
+						<c:if test="${not newProject}">
+							<html:hidden property="pid" />
+						</c:if>
+						
+						<%-- If creating a new project, show project details table --%>
 						<c:if test="${newProject}">
 							<table class="scorecard" cellpadding="0" width="100%" style="border-collapse: collapse;">
 	    							<tr>

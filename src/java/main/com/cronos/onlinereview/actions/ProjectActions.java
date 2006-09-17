@@ -195,7 +195,10 @@ public class ProjectActions extends DispatchAction {
      */
     private void populateProjectForm(HttpServletRequest request, LazyValidatorForm form, Project project) throws BaseException {
         // TODO: Possibly use string constants instead of hardcoded strings
-
+        
+        // Populate project id
+        form.set("pid", new Long(project.getId()));
+        
         // Populate project name
         populateProjectFormProperty(form, String.class, "project_name", project, "Project Name");
 
@@ -224,19 +227,25 @@ public class ProjectActions extends DispatchAction {
         populateProjectFormProperty(form, Boolean.class, "email_notifications", project, "Status Notification");
 
         // Populate project status notification option
-        // FIXME: This property is inverse in project and form (currently)
-        populateProjectFormProperty(form, Boolean.class, "no_rate_project", project, "Rated");
-
+        // Note, this property is inverse by its meaning in project and form
+        if ("Yes".equals(project.getProperty("Rated"))) {
+            form.set("no_rate_project", Boolean.FALSE);
+        } else {
+            form.set("no_rate_project", Boolean.TRUE);
+        }
+        
         // Populate project status notification option
         populateProjectFormProperty(form, Boolean.class, "timeline_notifications", project, "Timeline Notification");
-
         
         // Populate project forum name
-        populateProjectFormProperty(form, String.class, "forum_id", project, "Forum Id");
+        populateProjectFormProperty(form, Long.class, "forum_id", project, "Forum Id");
 
         // Populate project SVN module
         populateProjectFormProperty(form, String.class, "SVN_module", project, "SVN Module");
         
+        // TODO: Check whether edit or add notes?
+        // Populate project notes
+        populateProjectFormProperty(form, String.class, "notes", project, "Notes");
 
         // Populate form with some data so that resources row template 
         // is rendered properly by the appropriate JSP
@@ -283,9 +292,7 @@ public class ProjectActions extends DispatchAction {
         Phase[] phases = ActionsHelper.getPhasesForProject(phaseManager, project);
         
         // Populate form with phases data
-        System.out.println("phases.length: " + phases.length);
         for (int i = 0; i < phases.length; ++i) {
-            System.out.println("phases[i].id: " + phases[i].getId());
             form.set("phase_id", i + 1, new Long(phases[i].getId()));
             form.set("phase_name", i + 1, phases[i].getPhaseType().getName());
             form.set("phase_action", i + 1, "update");
@@ -446,13 +453,26 @@ public class ProjectActions extends DispatchAction {
         // It is actually very-very incomplete just partially demonstrates the functionality
         // We assume that the project is always being created; edit is not supported yet
 
+        // Cast the form to its actual type
+        LazyValidatorForm lazyForm = (LazyValidatorForm) form;        
+        
+        // Check whether user is creating new project or editing existing one
+        boolean newProject = (lazyForm.get("pid") == null);
+        
         // Gather the roles the user has for current request
         AuthorizationHelper.gatherUserRoles(request);
 
         // Check if the user has the permission to perform this action
-        if(!AuthorizationHelper.hasUserPermission(request, Constants.EDIT_PROJECT_DETAILS_PERM_NAME)) {
-            // If he doesn't, redirect the request to login page
-            return mapping.findForward(Constants.NOT_AUTHORIZED_FORWARD_NAME);
+        if (newProject) {
+            if(!AuthorizationHelper.hasUserPermission(request, Constants.CREATE_PROJECT_PERM_NAME)) {
+                // If he doesn't, redirect the request to login page
+                return mapping.findForward(Constants.NOT_AUTHORIZED_FORWARD_NAME);
+            }
+        } else {
+            if(!AuthorizationHelper.hasUserPermission(request, Constants.EDIT_PROJECT_DETAILS_PERM_NAME)) {
+                // If he doesn't, redirect the request to login page
+                return mapping.findForward(Constants.NOT_AUTHORIZED_FORWARD_NAME);
+            }
         }
 
         // Obtain an instance of Project Manager
@@ -463,31 +483,37 @@ public class ProjectActions extends DispatchAction {
         ProjectCategory[] projectCategories = manager.getAllProjectCategories();
         ProjectStatus[] projectStatuses = manager.getAllProjectStatuses();
 
-        // Cast the form to its actual type
-        LazyValidatorForm lazyForm = (LazyValidatorForm) form;
+        Project project;      
+        if (newProject) {
+            // Find "Active" project status
+            ProjectStatus activeStatus = ActionsHelper.findProjectStatusByName(projectStatuses, "Active");
+            // Find the project category by the specified id
+            ProjectCategory category = ActionsHelper.findProjectCategoryById(projectCategories, 
+                    ((Long) lazyForm.get("project_category")).longValue());
+            // Create Project instance
+            project = new Project(category, activeStatus);
+        } else {
+            // Retrieve Project instance to be edited
+            // TODO: Probably check it for null, and issue the error, etc.
+            project = manager.getProject(((Long) lazyForm.get("pid")).longValue());
+        }
         
-        // Find "Active" project status
-        ProjectStatus activeStatus = ActionsHelper.findProjectStatusByName(projectStatuses, "Active");
-        // Find the project category by the specified id
-        ProjectCategory category = ActionsHelper.findProjectCategoryById(projectCategories, 
-                ((Long) lazyForm.get("project_category")).longValue());
-        // Create Project instance
-        Project project = new Project(category, activeStatus);
-        // TODO: What to do with project type???
         /*
          * Populate the properties of the project
          */
         // Populate project name
         project.setProperty("Project Name", lazyForm.get("project_name"));
-        // Populate project version (always set to 1.0)
-        project.setProperty("Project Version", "1.0");
-        // Populate project root catalog id (always set to Application)
-        // TODO: There should be an ability to specify different Root Catalog
-        project.setProperty("Root Catalog ID", "9926572");
-        // Populate project eligibility
-        project.setProperty("Eligibility", lazyForm.get("eligibility"));
-        // Populate project public flag
-        project.setProperty("Public", lazyForm.get("public"));
+        if (newProject) {
+            // Populate project version (always set to 1.0)
+            project.setProperty("Project Version", "1.0");
+            // Populate project root catalog id (always set to Application)
+            // TODO: There should be an ability to specify different Root Catalog
+            project.setProperty("Root Catalog ID", "9926572");
+            // Populate project eligibility
+            project.setProperty("Eligibility", lazyForm.get("eligibility"));
+            // Populate project public flag
+            project.setProperty("Public", lazyForm.get("public"));
+        }
         // Populate project forum id
         project.setProperty("Developer Forum ID", lazyForm.get("forum_id"));
         // Populate project SVN module
@@ -504,9 +530,14 @@ public class ProjectActions extends DispatchAction {
         // Populate project notes
         project.setProperty("Notes", lazyForm.get("notes"));  
         
+        // TODO: Project status change, includes additional explanation to be concatenated 
         
-        // Create project in persistence level
-        manager.createProject(project, AuthorizationHelper.getLoggedInUserId(request) + "");
+        if (newProject) {
+            // Create project in persistence level
+            manager.createProject(project, AuthorizationHelper.getLoggedInUserId(request) + "");
+        } else {
+            manager.updateProject(project, (String) lazyForm.get("explanation"), AuthorizationHelper.getLoggedInUserId(request) + "");
+        }
         
         // Save the project phases
         Phase[] projectPhases = saveProjectPhases(request, lazyForm, project);
