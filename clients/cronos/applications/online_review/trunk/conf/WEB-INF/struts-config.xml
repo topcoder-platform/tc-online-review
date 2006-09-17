@@ -18,6 +18,7 @@
 
         <form-bean name="projectForm" dynamic="true"
             type="org.apache.struts.validator.LazyValidatorForm">
+            <form-property name="pid" type="java.lang.Long" />
             <form-property name="project_name" type="java.lang.String" />
             <form-property name="project_type" type="java.lang.Long" />
             <form-property name="project_category" type="java.lang.Long" />
