@@ -3,9 +3,13 @@
  */
 package com.cronos.onlinereview.actions;
 
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import com.topcoder.util.config.ConfigManager;
 import com.topcoder.util.config.Property;
@@ -133,6 +137,49 @@ class ConfigHelper {
     private static final String PERMISSIONS_MATRIX_PROP = "Permissions Matrix";
 
     /**
+     * This member variable is a string constant that specifies the name of the property which
+     * contains definitions of the phase groups. The phases that belong to the same group will be
+     * displayed under the same tab on View Project Details page.
+     *
+     * @see #PHASE_GROUP_RM_KEY_PROP
+     * @see #PHASES_DEFINITIONS_PROP
+     * @see #PHASE_GROUP_APP_FUNCTION
+     */
+    private static final String PHASE_GROUPING_PROP = "PhaseGrouping";
+
+    /**
+     * This member variable is a string constant that specifies the name of the property which
+     * contains the name of the key in message resources file. This key denotes message that should
+     * be displayed for grouped phases.
+     *
+     * @see #PHASE_GROUPING_PROP
+     * @see #PHASES_DEFINITIONS_PROP
+     * @see #PHASE_GROUP_APP_FUNCTION
+     */
+    private static final String PHASE_GROUP_RM_KEY_PROP = "NameKey";
+
+    /**
+     * This member variable is a string constant that specifies the name of the property which
+     * contains the names of phases that will be considered as belonging to the same.
+     *
+     * @see #PHASE_GROUPING_PROP
+     * @see #PHASE_GROUP_RM_KEY_PROP
+     * @see #PHASE_GROUP_APP_FUNCTION
+     */
+    private static final String PHASES_DEFINITIONS_PROP = "Phases";
+
+    /**
+     * This member variable is a string constant that specifies the name of the property which
+     * contains the name of the application's functionality that should be excuted for the phase
+     * group.
+     *
+     * @see #PHASE_GROUPING_PROP
+     * @see #PHASE_GROUP_RM_KEY_PROP
+     * @see #PHASES_DEFINITIONS_PROP
+     */
+    private static final String PHASE_GROUP_APP_FUNCTION = "AppFunction";
+
+    /**
      * This member variable holds the name of the session attribute which ID of the currently logged
      * in user will be stored in.
      */
@@ -173,6 +220,27 @@ class ConfigHelper {
      * lists of roles that have every of the permissions (as values for the corresponding keys).
      */
     private static final Map permissionsMatrix = new HashMap();
+
+    /**
+     * This member variable holds the list of names of the phase groups. The names are represented
+     * as keys which should be used to retrieve localized group name from the message resources
+     * file. Every item in this list should be of type <code>String</code> and cannot be
+     * <code>null</code>.
+     */
+    private static final List phaseGroupNames = new ArrayList();
+
+    /**
+     * This member variable holds the list of sets. Every set in this list denotes a single phase
+     * group and defines the phases included in that group.
+     */
+    private static final List phaseGroupPhases = new ArrayList();
+
+    /**
+     * This member variable holds the list of names of application's functionalities that should be
+     * executed for the corresponding phase group. Every item in this list
+     * should be of type <code>String</code> and cannot be <code>null</code>.
+     */
+    private static final List phaseGroupFunctions = new ArrayList();
 
     static {
         // Obtaining the instance of Configurtaion Manager
@@ -265,7 +333,7 @@ class ConfigHelper {
             while (permissionNames.hasMoreElements()) {
                 // Get the name of the next property in the list.
                 // This will be the name of the Permission at the same time.
-                String permissionName = (String)permissionNames.nextElement();
+                String permissionName = (String) permissionNames.nextElement();
                 // Retrive the names of roles which that permission is granted to
                 String[] roles = propPermissionsMatrix.getValues(permissionName);
 
@@ -273,6 +341,38 @@ class ConfigHelper {
                 if (roles != null && roles.length != 0) {
                     // ... store the Permission name/list of names of Resource Roles for later use
                     permissionsMatrix.put(permissionName, roles);
+                }
+            }
+
+            // Retrieve property that cantains definitions of phase groups
+            Property propPhaseGrouping = cfgMgr.getPropertyObject(ONLINE_REVIEW_CFG_NS, PHASE_GROUPING_PROP);
+            // Prepare to enumerate all group definition properties
+            Enumeration phaseGroups = propPhaseGrouping.propertyNames();
+
+            while (phaseGroups.hasMoreElements()) {
+                // Get the name of the next property in the list.
+                String propertyName = ((String) phaseGroups.nextElement()) + ".";
+                // Retrieve a name of key that will point to a message containing the name of group
+                String strGroupNameKey = propPhaseGrouping.getValue(propertyName + PHASE_GROUP_RM_KEY_PROP);
+                // Retrieve an array of phase names included in this group
+                String[] strPhases = propPhaseGrouping.getValues(propertyName + PHASES_DEFINITIONS_PROP);
+                // Retrieve a name of application's functionality
+                String strAppFunction = propPhaseGrouping.getValue(propertyName + PHASE_GROUP_APP_FUNCTION);
+
+                // If everything has been read fine ...
+                if (strGroupNameKey != null && strGroupNameKey.trim().length() != 0 &&
+                        strAppFunction != null && /*strAppFunction.trim().length() != 0 &&*/
+                        strPhases != null && strPhases.length != 0) {
+                    // ... store phase group definition for later use
+                    phaseGroupNames.add(strGroupNameKey);
+                    phaseGroupFunctions.add(strAppFunction);
+
+                    Set phasesSet = new HashSet();
+                    phaseGroupPhases.add(phasesSet);
+
+                    for (int i = 0; i < strPhases.length; ++i) {
+                        phasesSet.add(strPhases[i]);
+                    }
                 }
             }
 
@@ -371,5 +471,70 @@ class ConfigHelper {
     public static String[] getRolesForPermission(String permissionName) {
         String[] roles = (String[])permissionsMatrix.get(permissionName);
         return (roles != null) ? roles : new String[0];
+    }
+
+    /**
+     * This static method returns the number of phase groups defined in the configuration.
+     *
+     * @return the number of phase groups.
+     */
+    public static int getNumberOfPhaseGroups() {
+        return phaseGroupPhases.size();
+    }
+
+    /**
+     * This static method finds the first phase group that contains a phase specified by its name,
+     * and returns an index of that phase group.
+     *
+     * @return an index of the phase group containing specified phase.
+     * @param phaseName
+     *            a name of the phase.
+     */
+    public static int findPhaseGroupForPhaseName(String phaseName) {
+        for (int i = 0; i < phaseGroupPhases.size(); ++i) {
+            if (((Set) phaseGroupPhases.get(i)).contains(phaseName)) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    /**
+     * This static method returns the name of a key for a phase group referenced by its index.
+     *
+     * @return the name of a key. This key can later be used to retrieve the loclized name of phase
+     *         group from message resources.
+     * @param index
+     *            an index of a phase group to retrieve the name of a key for.
+     */
+    public static String getPhaseGroupNameKey(int index) {
+        return (String) phaseGroupNames.get(index);
+    }
+
+    /**
+     * This static method determines if a phase group referenced by its index contains specified
+     * phase. The phase is specified by its name.
+     *
+     * @return <code>true</code> if specified phase group contains the phase, <code>false</code>
+     *         if it doesn't.
+     * @param index
+     *            an index of a phase group.
+     * @param phaseName
+     *            a name of the phase which presense in the phase group is to be tested.
+     */
+    public static boolean isPhaseGroupContainsPhase(int index, String phaseName) {
+        return ((Set) phaseGroupPhases.get(index)).contains(phaseName);
+    }
+
+    /**
+     * This static method returns the name of application's functionality that should be executed
+     * for the phase group specified by its index.
+     *
+     * @return the name of application's functionality for a particular phase group.
+     * @param index
+     *            an index of a phase group.
+     */
+    public static String getPhaseGroupAppFunction(int index) {
+        return (String) phaseGroupFunctions.get(index);
     }
 }
