@@ -15,7 +15,7 @@ INSERT INTO review_item (review_item_id, review_id, scorecard_question_id, answe
 INSERT INTO review_item (review_item_id, review_id, scorecard_question_id, answer, sort, create_user, create_date, modify_user, modify_date)
   VALUES (4106, 4000, 202, '2/4', 5, 'ivern', CURRENT, 'ivern', CURRENT);
 INSERT INTO review_item (review_item_id, review_id, scorecard_question_id, answer, sort, create_user, create_date, modify_user, modify_date)
-  VALUES (4107, 4000, 203, 10/10, 6, 'slion', CURRENT, 'slion', CURRENT);
+  VALUES (4107, 4000, 203, '10/10', 6, 'slion', CURRENT, 'slion', CURRENT);
 INSERT INTO review_item (review_item_id, review_id, scorecard_question_id, answer, sort, create_user, create_date, modify_user, modify_date)
   VALUES (4108, 4000, 203, '8/10', 7, 'qiucx0161', CURRENT, 'qiucx0161', CURRENT);
 INSERT INTO review_item (review_item_id, review_id, scorecard_question_id, answer, sort, create_user, create_date, modify_user, modify_date)
