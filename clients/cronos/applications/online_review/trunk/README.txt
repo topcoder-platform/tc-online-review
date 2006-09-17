@@ -1,4 +1,28 @@
 
+Notes on testing some actions from Project Admin & Review
+
+  1. Upload Submission
+
+     To go to the upload submission page you should enter the following into
+     the Address field of your browser:
+
+       http://localhost:8080/online_review/actions/UploadSubmission.do?method=uploadSubmission&pid=<id-of-project>
+
+		 where <id-of-project> part is the ID of any of the existing projects. The
+		 user you are logged under must have a Submitter role for that project to
+		 be able to upload submission.
+		 After uploading a file to the server you may inspect a folder the path to
+		 which is specified by the "FileStorePath" property in the configuration
+		 file. You may also excute the following SQL commands to verify the state
+		 of the database after uploading the file:
+
+		   SELECT * FROM upload;
+		   SELECT * FROM submission;
+
+		 Also, it is possible to use an ID of the newly-created submission in
+		 subsequent testing of actions from Project Review assembly.
+
+
 Notes on testing some actions from Project Review assembly.
 
   1. Create Screening
@@ -25,7 +49,7 @@ Notes on testing some actions from Project Review assembly.
 
      for Create Approval actions.
 
-   3. Edit Screening
+  3. Edit Screening
 
      To edit screening you should create its draft version first (by using
      Create Screening action). After that, you can use the following link to
@@ -37,8 +61,8 @@ Notes on testing some actions from Project Review assembly.
      action. You may find out the actual value for this ID by inspecting the contents
      of your database (table "review" in particular).
 
-   4. Edit Review & Edit Approval
-     
+  4. Edit Review & Edit Approval
+
      The links for these two actions are:
 
        http://localhost:8080/online_review/actions/EditReview.do?method=editReview&rid=<id-of-review>
@@ -48,12 +72,12 @@ Notes on testing some actions from Project Review assembly.
      respectively. Refer to the previous section to find out where to ged a value
      for <id-of-review> part of the above two links.
 
-   5. Save Screening, Save Review & Save Approval
+  5. Save Screening, Save Review & Save Approval
 
      You don't have to undertake special actions to access these Struts Actions.
      They may easily be accessed from appropriate Create/Edit pages.
 
-   6. View Screening
+  6. View Screening
 
      To view screening you must finish (commit) some screening review.
      The link for this Struts Action is:
@@ -63,8 +87,8 @@ Notes on testing some actions from Project Review assembly.
      Refer to section 3 for information on <id-of-review>.
      Note, that you may view only finished (committed) screenings.
 
-   7. View Review & View Approval
-     
+  7. View Review & View Approval
+
      The links for these two actions are:
 
        http://localhost:8080/online_review/actions/ViewReview.do?method=viewReview&rid=<id-of-review>
@@ -74,11 +98,11 @@ Notes on testing some actions from Project Review assembly.
      Refer to section 3 for information on <id-of-review>.
      Note, that you may view only finished (committed) reviews and approvals.
 
-   8. Note also, that you must log in under an appropriate user to be able to
-      perform the aforementioned actions.
+  8. Note also, that you must log in under an appropriate user to be able to
+     perform the aforementioned actions.
 
 
-Notes about logging in into application.
+Notes about logging in into the application.
 
   1. If you used the data from the sample SQL scripts supplied with this
      submission to insert some data to the database (seek for notes about
@@ -94,7 +118,7 @@ Notes about logging in into application.
 
 
 
-Notes about Informix version  (THIS SECTION HAS BEEN UPDATED)
+Notes about Informix version
 
   Although we used Informix v9.4 JDBC driver during the development of Admin
   part of assembly, we had to switch to the Informix v10.0 one, because of
@@ -106,7 +130,7 @@ Notes about Informix version  (THIS SECTION HAS BEEN UPDATED)
 
 
 Notes about building / preparing distributive packages / deploying / testing.
-  
+
   1. This submission includes sample topcoder_global.properties file. We recommend
      you to use it to get an idea which properties should be overridden.
 
@@ -122,9 +146,7 @@ Notes about building / preparing distributive packages / deploying / testing.
 
 
 
-Notes about database tables creation / population / cleaning / deletion.  (This section has not beed updated,
-                                                                           but the files (SQL scripts) described
-                                                                           in this section have)
+Notes about database tables creation / population / cleaning / deletion.
 
   1. All the needed SQL scripts can be found in /src/sql folder of this package.
 
