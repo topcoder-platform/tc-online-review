@@ -107,7 +107,7 @@
         <dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/review/lib/tcs/scorecard_management/1.0/scorecard_management.jar">
             <dependency-type>uses</dependency-type>
         </dependent-module>
-        <dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/review/lib/tcs/scorecard_management_persistence/1.0/scorecard_management_persistence.jar">
+        <dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/review/lib/tcs/scorecard_management_persistence/1.0.1/scorecard_management_persistence.jar">
             <dependency-type>uses</dependency-type>
         </dependent-module>
         <dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/review/lib/tcs/search_builder/1.3/search_builder.jar">
