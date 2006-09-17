@@ -487,6 +487,14 @@ public class Constants {
     public static final String APPROVAL_PHASE_NAME = "Approval";
 
 
+    // ---------------------------------------------------- Application's Functionality names -----
+
+    /**
+     * TODO: Add reasonable description here
+     */
+    public static final String VIEW_REGISTRANTS_APP_FUNC = "VIEW_REGISTRANTS";
+
+
     // -------------------------------------------------------------------- Deliverable names -----
 
     /**
