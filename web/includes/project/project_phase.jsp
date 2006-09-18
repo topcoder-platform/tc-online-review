@@ -42,7 +42,7 @@
 										<c:when test="${empty rating}">
 											<c:set var="ratingColor" value="coderTextBlack" />
 										</c:when>
-										<c:when test="${rating == 0}">
+<%--										<c:when test="${rating == 0}">
 											<c:set var="ratingColor" value="coderTextBlack" />
 										</c:when>
 										<c:when test="${(rating > 0) && (rating < 900)}">
@@ -59,7 +59,7 @@
 										</c:when>
 										<c:when test="${rating >= 2200}">
 											<c:set var="ratingColor" value="coderTextRed" />
-										</c:when>
+										</c:when> --%>
 									</c:choose>
 									<c:if test="${empty rating}">
 										<td class="value" nowrap="nowrap"><bean:message key="NotRated" /></td>
