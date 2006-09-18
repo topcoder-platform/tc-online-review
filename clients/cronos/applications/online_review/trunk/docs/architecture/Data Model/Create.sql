@@ -379,7 +379,7 @@ CREATE TABLE resource_submission (
   modify_date                   DATETIME YEAR TO FRACTION(3)    NOT NULL,
   PRIMARY KEY(resource_id, submission_id) CONSTRAINT PK_RESOURCE_SUBMISSION,
   FOREIGN KEY(submission_id)
-    REFERENCES submission(submission_id) CONSTRAINT FK_ RESOURCESUBMISSION_SUBMISSION_SUBMISSIONID,
+    REFERENCES submission(submission_id) CONSTRAINT FK_RESOURCESUBMISSION_SUBMISSION_SUBMISSIONID,
   FOREIGN KEY(resource_id)
     REFERENCES resource(resource_id) CONSTRAINT FK_RESOURCESUBMISSION_RESOURCE_RESOURCEID
 );
@@ -591,8 +591,6 @@ CREATE TABLE screening_result (
   FOREIGN KEY(screening_response_id)
     REFERENCES screening_response_lu(screening_response_id) CONSTRAINT FK_SCREENINGRESULT_SCREEINGRESPONSELU_SCREENINGRESPONSEID
 );
-
-
 CREATE TABLE default_scorecard (
   project_category_id           INTEGER                         NOT NULL,
   scorecard_type_id             INTEGER                         NOT NULL,
