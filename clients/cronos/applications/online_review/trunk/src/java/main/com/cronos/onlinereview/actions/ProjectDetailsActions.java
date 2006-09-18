@@ -118,10 +118,10 @@ public class ProjectDetailsActions extends DispatchAction {
         // Retrieve some basic project info (such as icons' names) and place it into request
         ActionsHelper.retrieveAndStoreBasicProjectInfo(request, project, messages);
 
+        // Place a string that represents "my" current role(s) into the request
+        ActionsHelper.retrieveAndStoreMyRole(request, getResources(request));
         // Obtain an array of "my" resources
         Resource[] myResources = (Resource[]) request.getAttribute("myResources");
-        // Place a string that represents "my" current role(s) into the request
-        request.setAttribute("myRole", ActionsHelper.determineRolesForResources(getResources(request), myResources));
         // Place an information about the amount of "my" payment into the request
         request.setAttribute("myPayment", ActionsHelper.determineMyPayment(myResources));
         // Place an information about my payment status into the request
@@ -325,10 +325,6 @@ public class ProjectDetailsActions extends DispatchAction {
             if (phaseGroupIdx == -1 ||
                     !ConfigHelper.isPhaseGroupContainsPhase(phaseGroupIdx, phaseName)) {
                 phaseGroupIdx = ConfigHelper.findPhaseGroupForPhaseName(phaseName);
-
-                if (phaseGroupIdx == -1) {
-                    System.out.println(phaseName);
-                }
 
                 String appFuncName = ConfigHelper.getPhaseGroupAppFunction(phaseGroupIdx);
 
