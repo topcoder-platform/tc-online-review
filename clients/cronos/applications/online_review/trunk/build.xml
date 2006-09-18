@@ -111,7 +111,7 @@
     <property name="deliverable_management.path" value="deliverable_management/${deliverable_management.version}" />
     <property name="deliverable_management.jar" value="${tcs_libdir}/${deliverable_management.path}/${deliverable_management.jar.name}" />
 
-    <property name="deliverable_management_persistence.version" value="1.0.1" />
+    <property name="deliverable_management_persistence.version" value="1.0" />
     <property name="deliverable_management_persistence.jar.name" value="deliverable_management_persistence.jar" />
     <property name="deliverable_management_persistence.path" value="deliverable_management_persistence/${deliverable_management_persistence.version}" />
     <property name="deliverable_management_persistence.jar" value="${tcs_libdir}/${deliverable_management_persistence.path}/${deliverable_management_persistence.jar.name}" />
@@ -236,7 +236,7 @@
     <property name="scorecard_management.path" value="scorecard_management/${scorecard_management.version}" />
     <property name="scorecard_management.jar" value="${tcs_libdir}/${scorecard_management.path}/${scorecard_management.jar.name}" />
 
-    <property name="scorecard_management_persistence.version" value="1.0" />
+    <property name="scorecard_management_persistence.version" value="1.0.1" />
     <property name="scorecard_management_persistence.jar.name" value="scorecard_management_persistence.jar" />
     <property name="scorecard_management_persistence.path" value="scorecard_management_persistence/${scorecard_management_persistence.version}" />
     <property name="scorecard_management_persistence.jar" value="${tcs_libdir}/${scorecard_management_persistence.path}/${scorecard_management_persistence.jar.name}" />
