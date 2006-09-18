@@ -35,6 +35,8 @@ INSERT INTO id_sequences(name, next_block_start, block_size, exhausted)
 INSERT INTO id_sequences(name, next_block_start, block_size, exhausted)
   VALUES('project_audit_id_seq', 1, 20, 0);
 
+INSERT INTO id_sequences(name, next_block_start, block_size, exhausted) 
+  VALUES ('ip_server_id_seq', 100001, 20, 0);
 
 INSERT INTO id_sequences(name, next_block_start, block_size, exhausted)
   VALUES('screening_task_id_seq', 1, 20, 0);
