@@ -3,9 +3,13 @@
  */
 package com.cronos.onlinereview.actions;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.text.Format;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -555,9 +559,11 @@ public class ProjectDetailsActions extends DispatchAction {
     }
 
     /**
-     * TODO: Write sensible description for method downloadSubmission here
+     * This method is an implementation of &quot;Download Submission&quot; Struts Action defined for
+     * this assembly, which is supposed to let the user download a submission from the server.
      *
-     * @return TODO: Write sensible description of return value for method downloadSubmission
+     * @return a <code>null</code> code if everything went fine, or an action forward to
+     *         /jsp/userError.jsp page which will display the information about the cause of error.
      * @param mapping
      *            action mapping.
      * @param form
@@ -566,10 +572,128 @@ public class ProjectDetailsActions extends DispatchAction {
      *            the http request.
      * @param response
      *            the http response.
+     * @throws BaseException
+     *             if any error occurs.
+     * @throws IOException
      */
     public ActionForward downloadSubmission(ActionMapping mapping, ActionForm form,
-            HttpServletRequest request, HttpServletResponse response) {
-        // TODO: Add implementation of method downloadSubmission here
+            HttpServletRequest request, HttpServletResponse response)
+        throws BaseException, IOException {
+        // Verify that certain requirements are met before processing with the Action
+        CorrectnessCheckResult verification =
+            checkForCorrectUploadId(mapping, request, "ViewSubmission");
+        // If any error has occured, return action forward contained in the result bean
+        if (!verification.isSuccessful()) {
+            return verification.getForward();
+        }
+
+        // Get an upload the user wants to download
+        Upload upload = verification.getUpload();
+
+        // Verify that upload is a submission
+        if (!upload.getUploadType().getName().equalsIgnoreCase("Submission")) {
+            return ActionsHelper.produceErrorReport(
+                    mapping, getResources(request), request, "ViewSubmission", "Error.NotASubmission");
+        }
+
+        // Verify the status of upload and check whether the user has permission to download old uploads
+        if (upload.getUploadStatus().getName().equalsIgnoreCase("Deleted") &&
+                !AuthorizationHelper.hasUserPermission(request, Constants.VIEW_ALL_SUBM_PERM_NAME)) {
+            return ActionsHelper.produceErrorReport(
+                    mapping, getResources(request), request, "ViewSubmission", "Error.UploadDeleted");
+        }
+
+        boolean noRights = true;
+
+        if (AuthorizationHelper.hasUserPermission(request, Constants.VIEW_MY_SUBM_PERM_NAME)) {
+            long owningResourceId = upload.getOwner();
+            Resource[] myResources = (Resource[]) request.getAttribute("myResources");
+            for (int i = 0; i < myResources.length; ++i) {
+                if (myResources[i].getId() == owningResourceId) {
+                    noRights = false;
+                    break;
+                }
+            }
+        }
+
+        if (noRights && AuthorizationHelper.hasUserPermission(request, Constants.VIEW_RECENT_SUBM_PERM_NAME)) {
+            noRights = false;
+        }
+
+        if (noRights && AuthorizationHelper.hasUserPermission(request, Constants.VIEW_SCREENER_SUBM_PERM_NAME)) {
+            // TODO: Check if screener can download this submission
+        }
+
+        if (noRights && AuthorizationHelper.hasUserPermission(request, Constants.VIEW_WINNING_SUBM_PERM_NAME)) {
+            // Obtain an instance of Resource Manager
+            ResourceManager resMgr = ActionsHelper.createResourceManager(request);
+            Resource submitter = resMgr.getResource(upload.getOwner());
+
+            if ("1".equals(submitter.getProperty("Placement"))) {
+                noRights = false;
+            }
+        }
+
+        if (noRights && AuthorizationHelper.hasUserPermission(request, Constants.VIEW_RECENT_SUBM_AAR_PERM_NAME)) {
+            // Obtain an instance of Resource Manager
+            ResourceManager resMgr = ActionsHelper.createResourceManager(request);
+            Resource submitter = resMgr.getResource(upload.getOwner());
+            String placement = (String) submitter.getProperty("Placement");
+
+            if (placement != null && placement.trim().length() != 0) {
+                noRights = false;
+            }
+        }
+
+        if (noRights) {
+            return ActionsHelper.produceErrorReport(
+                    mapping, getResources(request), request, "ViewSubmission", "Error.NoPermission");
+        }
+
+        Filter filterProject = SubmissionFilterBuilder.createProjectIdFilter(upload.getProject());
+        Filter filterResource = SubmissionFilterBuilder.createResourceIdFilter(upload.getOwner());
+        Filter filterUpload = SubmissionFilterBuilder.createUploadIdFilter(upload.getId());
+
+        Filter filter = new AndFilter(Arrays.asList(new Filter[] {filterProject, filterResource, filterUpload}));
+
+        // Obtain an instance of Upload Manager
+        UploadManager upMgr = ActionsHelper.createUploadManager(request);
+        Submission[] submissions = upMgr.searchSubmissions(filter);
+        Submission submission = (submissions.length != 0) ? submissions[0] : null;
+
+        FileUpload fileUpload = new RemoteFileUpload("com.topcoder.servlet.request.RemoteFileUpload");
+        UploadedFile uploadedFile = fileUpload.getUploadedFile(upload.getParameter());
+
+        InputStream in = uploadedFile.getInputStream();
+
+        response.setHeader("Content-Type", "application/octet-stream");
+        response.setStatus(HttpServletResponse.SC_OK);
+        response.setIntHeader("Content-Length", (int) uploadedFile.getSize());
+        response.setHeader("Content-Location",
+                "submission-" + ((submission != null) ? Long.toString(submission.getId()) : "") + ".zip");
+
+        response.flushBuffer();
+
+        OutputStream out = null;
+
+        try {
+            out = response.getOutputStream();
+            byte[] buffer = new byte[65536];
+
+            for (;;) {
+                int numOfBytesRead = in.read(buffer);
+                if (numOfBytesRead == -1) {
+                    break;
+                }
+                out.write(buffer, 0, numOfBytesRead);
+            }
+        } finally {
+            in.close();
+            if (out != null) {
+                out.close();
+            }
+        }
+
         return null;
     }
 
@@ -707,15 +831,15 @@ public class ProjectDetailsActions extends DispatchAction {
     }
 
     /**
-     * This method verifies the request for ceratins conditions to be met. This includes verifying
-     * if the user has specified an ID of the project he wants to perform an operation on, if the ID
-     * of the project specified by user denotes existing project, and whether the user has rights to
+     * This method verifies the request for ceratin conditions to be met. This includes verifying if
+     * the user has specified an ID of the project he wants to perform an operation on, if the ID of
+     * the project specified by user denotes existing project, and whether the user has rights to
      * perform the operation specified by <code>permission</code> parameter.
      *
      * @return an instance of the {@link CorrectnessCheckResult} class, which specifies whether the
-     *         check was successful and, in the case the check was successful, contains additional
-     *         information retrieved during the check operation, which might be of some use for the
-     *         calling method.
+     *         check was successful and, in the case it was, contains additional information
+     *         retrieved during the check operation, which might be of some use for the calling
+     *         method.
      * @param mapping
      *            action mapping.
      * @param request
@@ -786,6 +910,91 @@ public class ProjectDetailsActions extends DispatchAction {
                 return result;
             }
         }
+
+        return result;
+    }
+
+    /**
+     * This method verifies the request for ceratin conditions to be met. This includes verifying if
+     * the user has specified an ID of the upload he wants to perform an operation on (most often
+     * &#x96; to download), and whether the ID of the upload specified by user denotes existing
+     * upload.
+     *
+     * @return an instance of the {@link CorrectnessCheckResult} class, which specifies whether the
+     *         check was successful and, in the case it was, contains additional information
+     *         retrieved during the check operation, which might be of some use for the calling
+     *         method.
+     * @param mapping
+     *            action mapping.
+     * @param request
+     *            the http request.
+     * @param permission
+     *            permission to check against, or <code>null</code> if no check is requeired.
+     * @throws IllegalArgumentException
+     *             if any of the parameters are <code>null</code>, or if
+     *             <code>errorMessageKey</code> parameter is an empty string.
+     * @throws BaseException
+     *             if any error occurs.
+     */
+    private CorrectnessCheckResult checkForCorrectUploadId(ActionMapping mapping,
+            HttpServletRequest request, String errorMessageKey)
+        throws BaseException {
+        // Validate parameters
+        ActionsHelper.validateParameterNotNull(mapping, "mapping");
+        ActionsHelper.validateParameterNotNull(request, "request");
+        ActionsHelper.validateParameterStringNotEmpty(errorMessageKey, "errorMessageKey");
+
+        // Prepare bean that will be returned as the result
+        CorrectnessCheckResult result = new CorrectnessCheckResult();
+
+        // Verify that Upload ID was specified and denotes correct upload
+        String uidParam = request.getParameter("uid");
+        if (uidParam == null || uidParam.trim().length() == 0) {
+            result.setForward(ActionsHelper.produceErrorReport(
+                    mapping, getResources(request), request, errorMessageKey, "Error.UploadIdNotSpecified"));
+            // Return the result of the check
+            return result;
+        }
+
+        long uid;
+
+        try {
+            // Try to convert specified uid parameter to its integer representation
+            uid = Long.parseLong(uidParam, 10);
+        } catch (NumberFormatException nfe) {
+            result.setForward(ActionsHelper.produceErrorReport(
+                    mapping, getResources(request), request, errorMessageKey, "Error.UploadNotFound"));
+            // Return the result of the check
+            return result;
+        }
+
+        // Obtain an instance of Upload Manager
+        UploadManager upMgr = ActionsHelper.createUploadManager(request);
+        // Get Upload by its ID
+        Upload upload = upMgr.getUpload(uid);
+        // Verify that upload with given ID exists
+        if (upload == null) {
+            result.setForward(ActionsHelper.produceErrorReport(
+                    mapping, getResources(request), request, errorMessageKey, "Error.UploadNotFound"));
+            // Return the result of the check
+            return result;
+        }
+
+        // Store Upload object in the result bean
+        result.setUpload(upload);
+
+        // Obtain an instance of Project Manager
+        ProjectManager projMgr = ActionsHelper.createProjectManager(request);
+        // Get a Project for this upload
+        Project project = projMgr.getProject(upload.getProject());
+
+        // Store Project object in the result bean
+        result.setProject(project);
+        // Place project as attribute in the request
+        request.setAttribute("project", project);
+
+        // Gather the roles the user has for current request
+        AuthorizationHelper.gatherUserRoles(request, project.getId());
 
         return result;
     }
