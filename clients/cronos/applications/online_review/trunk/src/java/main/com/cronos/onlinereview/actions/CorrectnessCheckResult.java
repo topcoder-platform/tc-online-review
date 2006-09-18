@@ -6,17 +6,20 @@ package com.cronos.onlinereview.actions;
 import org.apache.struts.action.ActionForward;
 
 import com.topcoder.management.deliverable.Submission;
+import com.topcoder.management.deliverable.Upload;
 import com.topcoder.management.project.Project;
 import com.topcoder.management.review.data.Review;
 
 /**
- * This class is bean that provides a convenient way to return several values from some checkForXXX
- * methods and indicate success/failure of the check performed by those methods.
+ * This class is bean that provides a convenient way to return several values from some
+ * <code>checkForXXX</code> methods and indicate success/failure of the check performed by those
+ * methods.
  * <p>
  * This class is not thread safe.
  * </p>
- *
- * @author TCSAssemblyTeam
+ * 
+ * @author George1
+ * @author real_vg
  * @version 1.0
  */
 final class CorrectnessCheckResult {
@@ -44,6 +47,16 @@ final class CorrectnessCheckResult {
     private Project project = null;
 
     /**
+     * This member variable contains a reference to an upload assigned to this bean, or
+     * <code>null</code> if no upload has been assigned.
+     * <p>
+     * This member variable is initialized in the constructor and can be accessed or changed via
+     * approptiate get/set methods. The default value for this variable is <code>null</code>.
+     * </p>
+     */
+    private Upload upload = null;
+
+    /**
      * This member variable contains a reference to a submission assigned to this bean, or
      * <code>null</code> if no submission has been assigned.
      * <p>
@@ -67,8 +80,8 @@ final class CorrectnessCheckResult {
     // -------------------------------------------------------------------------- Constructor -----
 
     /**
-     * Creates a new instance of the <code>CorrectnessCheckResult</code> class setting all its
-     * members to default values.
+     * Creates a new instance of the <code>CorrectnessCheckResult</code> class and sets all its
+     * member variables to their respective default values.
      */
     public CorrectnessCheckResult() {
     }
@@ -118,6 +131,26 @@ final class CorrectnessCheckResult {
     }
 
     /**
+     * This method retrieves upload object that could have been assigned to this bean earlier.
+     *
+     * @return an instance of the <code>Upload</code> class, or <code>null</code> if no upload
+     *         has been assigned to this bean.
+     */
+    public Upload getUpload() {
+        return this.upload;
+    }
+
+    /**
+     * This method assigns an upload object to this bean.
+     *
+     * @param upload
+     *            an instance of the <code>Upload</code> class to assign.
+     */
+    public void setUpload(Upload upload) {
+        this.upload = upload;
+    }
+
+    /**
      * This method retrieves submission object that could have been assigned to this bean earlier.
      *
      * @return an instance of the <code>Submission</code> class, or <code>null</code> if no
@@ -161,12 +194,13 @@ final class CorrectnessCheckResult {
     // ------------------------------------------------------------------ Verification method -----
 
     /**
-     * This method gets a value indicating whether the check performed by one of the checkForXXX
-     * methods was successfull. If this method returns <code>false</code>, action forward should
-     * be retrieved from this bean and used to forward the request. Usually this action forward
-     * will contain a forward to the error page, but actual contents of the forward is determined
-     * by the checker method and forward-mappings configuration in Struts configuration file.
-     *
+     * This method gets a value indicating whether the check performed by one of the
+     * <code>checkForXXX</code> methods was successfull. If this method returns <code>false</code>,
+     * action forward should be retrieved from this bean and used to forward the request. Usually
+     * this action forward will contain a forward to the error page, but actual contents of the
+     * forward is determined by the checker method and forward-mappings configuration in Struts
+     * configuration file.
+     * 
      * @return <code>true</code> if the check was successfull, <code>false</code> if it wasn't.
      */
     public boolean isSuccessful() {
