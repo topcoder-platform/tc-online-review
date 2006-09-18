@@ -2,6 +2,7 @@
 -- deletes the databse itself.  You'll need to recreate all the tables, and
 -- repopulate them with the lookup data at least to be able to use the application.
 
+DROP TABLE default_scorecard;
 DROP TABLE screening_result;
 DROP TABLE screening_response_lu;
 DROP TABLE response_severity_lu;
