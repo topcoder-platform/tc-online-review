@@ -24,6 +24,11 @@ import com.topcoder.util.errorhandling.BaseException;
 public final class MockHandleTag extends TagSupport {
 
     /**
+     * This member variable is added here to eliminate annoying warning.
+     */
+    private static final long serialVersionUID = -2976400093393053817L;
+
+    /**
      * This member variable holds the value assigned to <code>coderId</code> attribute.
      */
     private String coderId = null;
@@ -114,13 +119,13 @@ public final class MockHandleTag extends TagSupport {
         try {
             UserRetrieval ur = new DBUserRetrieval("com.topcoder.db.connectionfactory.DBConnectionFactoryImpl");
             ExternalUser user = ur.retrieveUser(Long.parseLong(coderId));
-            
+
             if (user == null) {
                 throw new BaseException("no such user");
             }
 
             coderName = user.getHandle();
-            
+
             String ratingDesStr = user.getDesignRating();
             String ratingDevStr = user.getDevRating();
             int ratingDes = (ratingDesStr != null && ratingDesStr.trim().length() != 0 &&
@@ -128,7 +133,7 @@ public final class MockHandleTag extends TagSupport {
             int ratingDev = (ratingDevStr != null && ratingDevStr.trim().length() != 0 &&
                     !ratingDevStr.equalsIgnoreCase("N/A")) ? Integer.parseInt(ratingDevStr) : 0;
             int rating = 0;
-            
+
             if (context.equalsIgnoreCase("design")) {
                 rating = ratingDes;
                 tab = "des";
@@ -138,7 +143,7 @@ public final class MockHandleTag extends TagSupport {
             } else {
                 rating = (ratingDes > ratingDev) ? ratingDes : ratingDev;
             }
-            
+
             if (rating > 0 && rating < 900) {
                 textColor = "coderTextGray";
             } else if (rating >= 900 && rating < 1200) {
@@ -147,7 +152,7 @@ public final class MockHandleTag extends TagSupport {
                 textColor = "coderTextBlue";
             } else if (rating >= 1500 && rating < 2200) {
                 textColor = "coderTextYellow";
-            } else {
+            } else if (rating >= 2200) {
                 textColor = "coderTextRed";
             }
         } catch (BaseException e) {
@@ -155,11 +160,12 @@ public final class MockHandleTag extends TagSupport {
         }
 
         // Handle some special situations
-        if (coderId.equals("1000") ||
-            coderId.equals("156859")) {
+        if (coderId.equals("1") || // "1" equals to admin2 in TopCoder's database
+            coderId.equals("1000") || // Coder "admin"
+            coderId.equals("156859")) { // Coder "ivern"
             textColor = "coderTextOrange";
         }
-    
+
         // Start preparing resulting output
         StringBuffer results = new StringBuffer("<a href=\"http://www.topcoder.com/tc?module=MemberProfile&cr=");
         // appending coder's id to the generated link
