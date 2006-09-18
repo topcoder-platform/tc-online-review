@@ -779,7 +779,7 @@ class ActionsHelper {
         // Obtain an array of "my" resources
         Resource[] myResources = (Resource[]) request.getAttribute("myResources");
         // Place a string that represents "my" current role(s) into the request
-        request.setAttribute("myRole", ActionsHelper.determineRolesForResources(messages, myResources));
+        request.setAttribute("myRole", ActionsHelper.determineRolesForResources(request, messages, myResources));
     }
 
     /**
@@ -791,6 +791,8 @@ class ActionsHelper {
      * @return a string with the role(s) the resource from the specified array have. If there are
      *         more than one role, the roles will be separated by forward slash(<code>/</code>)
      *         character.
+     * @param request
+     *            an <code>HttpServletRequest</code> object.
      * @param messages
      *            a message resources used to retrieve localized names of roles.
      * @param resources
@@ -798,10 +800,15 @@ class ActionsHelper {
      * @throws IllegalArgumentException
      *             if any of the parameters are <code>null</code>.
      */
-    public static String determineRolesForResources(MessageResources messages, Resource[] resources) {
+    public static String determineRolesForResources(
+            HttpServletRequest request, MessageResources messages, Resource[] resources) {
         // Validate parameter
         validateParameterNotNull(messages, "messages");
         validateParameterNotNull(resources, "resources");
+
+        if (AuthorizationHelper.hasUserRole(request, Constants.GLOBAL_MANAGER_ROLE_NAME)) {
+            return messages.getMessage("ResourceRole." + Constants.MANAGER_ROLE_NAME.replaceAll(" ", ""));
+        }
 
         List roleNames = new ArrayList();
         // Add induvidual roles to the list
