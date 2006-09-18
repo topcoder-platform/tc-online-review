@@ -22,6 +22,17 @@ Notes on testing some actions from Project Admin & Review
 		 Also, it is possible to use an ID of the newly-created submission in
 		 subsequent testing of actions from Project Review assembly.
 
+  2. Download Submission
+
+     To download a submission you need to know an ID of its corresponding active
+     upload (Managers can download even uploads that have "Deleted" status
+     though). Here is the link to start download:
+
+       http://localhost:8080/online_review/actions/DownloadSubmission.do?method=downloadSubmission&pid=<id-of-upload>
+
+     It is advisable to first use Upload Submission action to create some
+     uploads in the file store.
+
 
 Notes on testing some actions from Project Review assembly.
 
