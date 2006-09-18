@@ -204,16 +204,16 @@ public class ProjectActions extends DispatchAction {
 
         // Populate project type
         Long projectTypeId = new Long(project.getProjectCategory().getProjectType().getId());
-        if (projectTypeId != null) {
-            form.set("project_type", projectTypeId);
-        }
+        form.set("project_type", projectTypeId);        
 
         // Populate project category
         Long projectCategoryId = new Long(project.getProjectCategory().getId());
-        if (projectCategoryId != null) {
-            form.set("project_category", projectCategoryId);
-        }
-
+        form.set("project_category", projectCategoryId);
+        
+        // Populate project category        
+        Long projectStatusId = new Long(project.getProjectStatus().getId());
+        form.set("status", projectStatusId);
+        
         // Populate project eligibility
         populateProjectFormProperty(form, String.class, "eligibility", project, "Eligibility");
 
@@ -238,7 +238,7 @@ public class ProjectActions extends DispatchAction {
         populateProjectFormProperty(form, Boolean.class, "timeline_notifications", project, "Timeline Notification");
         
         // Populate project forum name
-        populateProjectFormProperty(form, Long.class, "forum_id", project, "Forum Id");
+        populateProjectFormProperty(form, Long.class, "forum_id", project, "Developer Forum ID");
 
         // Populate project SVN module
         populateProjectFormProperty(form, String.class, "SVN_module", project, "SVN Module");
@@ -294,6 +294,7 @@ public class ProjectActions extends DispatchAction {
         // Populate form with phases data
         for (int i = 0; i < phases.length; ++i) {
             form.set("phase_id", i + 1, new Long(phases[i].getId()));
+            form.set("phase_type", i + 1, new Long(phases[i].getPhaseType().getId()));
             form.set("phase_name", i + 1, phases[i].getPhaseType().getName());
             form.set("phase_action", i + 1, "update");
             form.set("phase_js_id", i + 1, "loaded_" + phases[i].getId());
@@ -302,7 +303,9 @@ public class ProjectActions extends DispatchAction {
                 // TODO: Probably will need to rewrite all those dependency stuff
                 // TODO: It is very incomplete actually
                 Dependency dependency = phases[i].getAllDependencies()[0];
-                form.set("phase_start_phase", i + 1, "loaded_" + dependency.getDependency().getId());                
+                form.set("phase_start_phase", i + 1, "loaded_" + dependency.getDependency().getId());   
+                form.set("phase_start_amount", i + 1, new Integer((int) (dependency.getLagTime() / 3600 / 1000)));
+                form.set("phase_start_dayshrs", i + 1, "hrs");
             } else {
                 form.set("phase_start_by_phase", i + 1, Boolean.FALSE);
             }
@@ -314,6 +317,25 @@ public class ProjectActions extends DispatchAction {
                     phases[i].getScheduledEndDate());
             
             form.set("phase_duration", i + 1, new Integer((int) (phases[i].getLength() / 3600 / 1000)));
+            
+            // Populate phase criteria
+            if (phases[i].getAttribute("Scorecard ID") != null) {
+                form.set("phase_scorecard_id", i + 1, Long.valueOf((String) phases[i].getAttribute("Scorecard ID")));
+            }
+            if (phases[i].getAttribute("Registration Number") != null) {
+                form.set("phase_required_registrations", i + 1, 
+                        Integer.valueOf((String) phases[i].getAttribute("Registration Number")));
+            }
+            if (phases[i].getAttribute("Submission Number") != null) {
+                form.set("phase_required_submissions", i + 1, 
+                        Integer.valueOf((String) phases[i].getAttribute("Submission Number")));
+                form.set("manual_screening", i + 1, 
+                        Boolean.valueOf("Yes".equals(phases[i].getAttribute("Manual Screening"))));                
+            }
+            if (phases[i].getAttribute("View Response During Appeals") != null) {
+                form.set("phase_view_appeal_responses", i + 1, 
+                        Boolean.valueOf("Yes".equals(phases[i].getAttribute("Submission Number"))));
+            }
         }
     }
 
@@ -513,6 +535,10 @@ public class ProjectActions extends DispatchAction {
             project.setProperty("Eligibility", lazyForm.get("eligibility"));
             // Populate project public flag
             project.setProperty("Public", lazyForm.get("public"));
+        } else {
+            // Populate project status
+            project.setProjectStatus(
+                    ActionsHelper.findProjectStatusById(projectStatuses, ((Long) lazyForm.get("status")).intValue()));
         }
         // Populate project forum id
         project.setProperty("Developer Forum ID", lazyForm.get("forum_id"));
@@ -540,16 +566,17 @@ public class ProjectActions extends DispatchAction {
         }
         
         // Save the project phases
-        Phase[] projectPhases = saveProjectPhases(request, lazyForm, project);
+        Phase[] projectPhases = saveProjectPhases(newProject, request, lazyForm, project);
         
         // Save the project resources
-        saveResources(request, lazyForm, project, projectPhases);
+        saveResources(newProject, request, lazyForm, project, projectPhases);
         
         return mapping.findForward(Constants.SUCCESS_FORWARD_NAME);
     }
 
     /**
      * TODO: Document it
+     * @param newProject 
      * 
      * @param request
      * @param lazyForm
@@ -557,22 +584,27 @@ public class ProjectActions extends DispatchAction {
      * @return
      * @throws BaseException 
      */
-    private Phase[] saveProjectPhases(HttpServletRequest request, LazyValidatorForm lazyForm, Project project)
+    private Phase[] saveProjectPhases(boolean newProject, HttpServletRequest request, LazyValidatorForm lazyForm, Project project)
             throws BaseException {
         // TODO Auto-generated method stub
 
         // Obtain the instance of Phase Manager
         PhaseManager phaseManager = ActionsHelper.createPhaseManager(request);
         
-        // Create new Phases Project
-        // TODO: Use real values for date and workdays, not the test ones
-        // TODO: Handle the situation of project being edited
-        com.topcoder.project.phases.Project phProject = 
-                new com.topcoder.project.phases.Project(new Date(), new DefaultWorkdays());
+        com.topcoder.project.phases.Project phProject;
+        if (newProject) {
+            // Create new Phases Project
+            // TODO: Use real values for date and workdays, not the test ones
+            // TODO: Handle the situation of project being edited
+            phProject = new com.topcoder.project.phases.Project(new Date(), new DefaultWorkdays());
+            
+            // Set the id of Phases Project to be equal to the id of appropriate Project
+            phProject.setId(project.getId());
+        } else {
+            // Retrive the Phases Project with the id equal to the id of specified Project
+            phProject = phaseManager.getPhases(project.getId());
+        }
         
-        // Set the id of Phases Project to be equal to the id of appropriate Project
-        phProject.setId(project.getId());
-       
         // Get the list of all previously existing phases 
         Phase[] oldPhases = phProject.getAllPhases();
         
@@ -586,7 +618,7 @@ public class ProjectActions extends DispatchAction {
         PhaseStatus scheduledStatus = ActionsHelper.findPhaseStatusByName(allPhaseStatuses, "Scheduled");
         
         // Create the map to store the mapping from phase JS ids to phases
-        Map newPhasesMap = new HashMap();
+        Map phasesJsMap = new HashMap();
         
         // Get the array of phase types specified for each phase
         Long[] phaseTypes = (Long[]) lazyForm.get("phase_type");
@@ -605,7 +637,7 @@ public class ProjectActions extends DispatchAction {
                 // Add it to Phases Project
                 phProject.addPhase(phase);
                 // Put it to the map
-                newPhasesMap.put(lazyForm.get("phase_js_id", i), phase);
+                phasesJsMap.put(lazyForm.get("phase_js_id", i), phase);
                 
             }  else {
                 long phaseId = ((Long) lazyForm.get("phase_id", i)).longValue();
@@ -619,9 +651,12 @@ public class ProjectActions extends DispatchAction {
                 }
             }
             
-            // If action is "update", update phase duration
+            // If action is "update", update phase duration, put the phase to the map
             if ("update".equals(phaseAction)) {
                 phase.setLength(((Integer) lazyForm.get("phase_duration", i)).longValue() * 3600 * 1000);
+
+                // Put the phase to the map
+                phasesJsMap.put(lazyForm.get("phase_js_id", i), phase);                
             }
             
             // If action is "delete", delete the phase and proceed to the next one
@@ -633,13 +668,14 @@ public class ProjectActions extends DispatchAction {
             /* 
              * Set phase properties
              */
-            
-            // Set phase type
-            phase.setPhaseType(ActionsHelper.findPhaseTypeById(allPhaseTypes, phaseTypes[i].longValue()));
-            // Set phase status to "Scheduled"
-            // TODO: For Edit Project will differ probably
-            phase.setPhaseStatus(scheduledStatus);
-            
+           
+            if (newProject) {
+                // Set phase type
+                phase.setPhaseType(ActionsHelper.findPhaseTypeById(allPhaseTypes, phaseTypes[i].longValue()));
+                // Set phase status to "Scheduled"
+                phase.setPhaseStatus(scheduledStatus);
+            }
+        
             try {
                 // If phase is not started by other phase end
                 if (Boolean.FALSE.equals(lazyForm.get("phase_start_by_phase", i))) {
@@ -670,10 +706,16 @@ public class ProjectActions extends DispatchAction {
                         unitMutiplier = -unitMutiplier;
                     }
                     long lagTime = unitMutiplier * ((Integer) lazyForm.get("phase_start_amount", i)).longValue();
-                    
-                    // Create phase Dependency
-                    Dependency dependency = new Dependency((Phase) newPhasesMap.get(lazyForm.get("phase_start_phase", i)),
+                                              
+                    System.out.println("phase_start_phase: " + lazyForm.get("phase_start_phase", i));
+                    // Create phase Dependency                    
+                    Dependency dependency = new Dependency((Phase) phasesJsMap.get(lazyForm.get("phase_start_phase", i)),
                             phase, dependencyStart, dependantStart, lagTime);
+                    
+                    if ("update".equals(phaseAction)) {
+                        // Clear all the pre-existing dependencies
+                        phase.clearDependencies();
+                    }
                     
                     // Add dependency to phase
                     phase.addDependency(dependency);
@@ -696,6 +738,7 @@ public class ProjectActions extends DispatchAction {
                 // Actually will be an unreal situation when form validation is
                 // configured properly
             }
+            
             
             // Set phase criteria
             Long scorecardId = (Long) lazyForm.get("phase_scorecard", i);
@@ -722,7 +765,7 @@ public class ProjectActions extends DispatchAction {
             // If the view appeal response during appeals flag is specified, set it
             if (viewAppealResponses != null) {
                 phase.setAttribute("View Response During Appeals", viewAppealResponses.booleanValue() ? "Yes" : "No");
-            }
+            } 
         }
         
         // Save the phases at the persistence level
@@ -757,13 +800,14 @@ public class ProjectActions extends DispatchAction {
 
     /**
      * TODO: Document it
+     * @param newProject 
      * 
      * @param request
      * @param lazyForm
      * @param project
      * @throws BaseException
      */
-    private void saveResources(HttpServletRequest request, LazyValidatorForm lazyForm, Project project, Phase[] projectPhases)
+    private void saveResources(boolean newProject, HttpServletRequest request, LazyValidatorForm lazyForm, Project project, Phase[] projectPhases)
             throws BaseException {
 
         // Obtain the instance of the User Retrieval

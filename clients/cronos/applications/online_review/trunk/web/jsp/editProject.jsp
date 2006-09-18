@@ -515,6 +515,27 @@
 						<jsp:include page="../includes/project/project_edit_resources.jsp" />
 						
 						<c:if test="${not newProject}">
+							<table class="scorecard" id="status">
+								<tr>
+									<td class="title"><b><bean:message key="editProject.Status.title" /></b></td>
+								</tr>
+								<tr class="light">
+									<td class="value"><p align="left"><b>&nbsp;<bean:message key="editProject.Status.CurrentStatus" />&nbsp; </b>		
+										<html:select styleClass="inputBox" property="status">
+											<c:forEach var="status" items="${projectStatuses}">
+												<html:option key='ProjectStatus.${fn:replace(status.name, " ", "")}' value="${status.id}" />
+											</c:forEach>
+										</html:select><br>
+										<br><bean:message key="editProject.Status.Explanation.description" /><br>
+										<html:textarea styleClass="inputTextBox" property="status_explanation" />
+									</td>
+								</tr>
+								<tr>
+		
+									<td class="lastRowTD"></td>
+								</tr>
+							</table><br />
+						
 							<table class="scorecard" id="Explanation">
 								<tr>
 									<td class="title"><bean:message key="editProject.Explanation.title" /></td>

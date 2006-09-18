@@ -43,8 +43,10 @@
 				</html:select>
 			</td>
 			<td class="valueC" nowrap="nowrap">
-				<html:img srcKey="editProject.Resources.AddResource.img" altKey="editProject.Resources.AddResource.alt" onclick="addNewResource();" />
-				<html:img style="display: none;" srcKey="editProject.Resources.DeleteResource.img" altKey="editProject.Resources.DeleteResource.alt" onclick="deleteResource(this.parentNode.parentNode);" />
+				<c:if test="${resourceIdx eq 0}">
+					<html:img srcKey="editProject.Resources.AddResource.img" altKey="editProject.Resources.AddResource.alt" onclick="addNewResource();" />
+				</c:if>
+				<html:img style="${(resourceIdx eq 0) ? 'display: none;' : ''}" srcKey="editProject.Resources.DeleteResource.img" altKey="editProject.Resources.DeleteResource.alt" onclick="deleteResource(this.parentNode.parentNode);" />
 				<html:hidden property="resources_action[${resourceIdx}]" />
 				<html:hidden property="resources_id[${resourceIdx}]" />
 			</td>
