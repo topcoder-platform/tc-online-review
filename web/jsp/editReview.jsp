@@ -115,7 +115,7 @@
 						<c:set var="itemIdx" value="0" />
 
 						<c:forEach items="${scorecardTemplate.allGroups}" var="group" varStatus="groupStatus">
-							<table class="scorecard" cellpadding="0" width="100%" style="border-collapse: collapse;">
+							<table cellpadding="0" cellspacing="0" width="100%" class="scorecard" style="border-collapse:collapse;">
 								<tr>
 									<td class="title" colspan="3">${group.name}</td>
 								</tr>
