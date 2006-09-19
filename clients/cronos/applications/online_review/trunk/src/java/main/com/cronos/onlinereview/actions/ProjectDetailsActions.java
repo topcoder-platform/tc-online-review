@@ -11,7 +11,10 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -24,8 +27,15 @@ import org.apache.struts.upload.FormFile;
 import org.apache.struts.util.MessageResources;
 import org.apache.struts.validator.DynaValidatorForm;
 
+import com.cronos.onlinereview.autoscreening.management.ResponseSeverity;
+import com.cronos.onlinereview.autoscreening.management.ScreeningManager;
+import com.cronos.onlinereview.autoscreening.management.ScreeningManagerFactory;
+import com.cronos.onlinereview.autoscreening.management.ScreeningResponse;
+import com.cronos.onlinereview.autoscreening.management.ScreeningResult;
+import com.cronos.onlinereview.autoscreening.management.ScreeningTask;
 import com.cronos.onlinereview.external.ExternalUser;
 import com.cronos.onlinereview.external.UserRetrieval;
+import com.meterware.httpunit.javascript.JavaScript.Screen;
 import com.topcoder.management.deliverable.Deliverable;
 import com.topcoder.management.deliverable.Submission;
 import com.topcoder.management.deliverable.SubmissionStatus;
@@ -821,11 +831,109 @@ public class ProjectDetailsActions extends DispatchAction {
      *            the http request.
      * @param response
      *            the http response.
+     * @throws BaseException 
      */
     public ActionForward viewAutoScreening(ActionMapping mapping, ActionForm form,
-            HttpServletRequest request, HttpServletResponse response) {
+            HttpServletRequest request, HttpServletResponse response) throws BaseException {
+        
         // TODO: Add implementation of method viewAutoScreening here
-        return null;
+        // Verify that certain requirements are met before processing with the Action
+        CorrectnessCheckResult verification =
+            checkForCorrectUploadId(mapping, request, "ViewSubmission");
+        // If any error has occured, return action forward contained in the result bean
+        if (!verification.isSuccessful()) {
+            return verification.getForward();
+        }
+        
+        // TODO: Refactor permission check
+        
+        // Get an upload to display autoscreening results of
+        Upload upload = verification.getUpload();
+
+        // Verify that upload is a submission
+        if (!upload.getUploadType().getName().equalsIgnoreCase("Submission")) {
+            return ActionsHelper.produceErrorReport(
+                    mapping, getResources(request), request, "ViewSubmission", "Error.NotASubmission");
+        }
+        
+        // Verify the status of upload and check whether the user has permission to download old uploads
+        if (upload.getUploadStatus().getName().equalsIgnoreCase("Deleted") &&
+                !AuthorizationHelper.hasUserPermission(request, Constants.VIEW_ALL_SUBM_PERM_NAME)) {
+            return ActionsHelper.produceErrorReport(
+                    mapping, getResources(request), request, "ViewSubmission", "Error.UploadDeleted");
+        }
+
+
+        boolean noRights = true;
+
+        if (AuthorizationHelper.hasUserPermission(request, Constants.VIEW_ALL_SUBM_PERM_NAME)) {
+            noRights = false;
+        }
+        
+        // Obtain an array of "my" resources
+        Resource[] myResources = (Resource[]) request.getAttribute("myResources");        
+        
+        if (noRights && AuthorizationHelper.hasUserPermission(request, Constants.VIEW_MY_SUBM_PERM_NAME)) {
+            long owningResourceId = upload.getOwner();
+            for (int i = 0; i < myResources.length; ++i) {
+                if (myResources[i].getId() == owningResourceId) {
+                    noRights = false;
+                    break;
+                }
+            }
+        }
+
+        if (noRights) {
+            return ActionsHelper.produceErrorReport(
+                    mapping, getResources(request), request, "ViewSubmission", "Error.NoPermission");
+        }
+        
+        // Retrieve some basic project info (such as icons' names) and place it into request
+        ActionsHelper.retrieveAndStoreBasicProjectInfo(request,verification.getProject(), messages);
+
+        // Place a string that represents "my" current role(s) into the request
+        request.setAttribute("myRole", ActionsHelper.determineRolesForResources(request, getResources(request), myResources));
+        
+        // Retrieve the submitter id and place it into request
+        // TODO : Check it, probably messed up resource id and user id
+        request.setAttribute("submitterId", new Long(upload.getOwner()));
+        
+        // Obtain Screening Manager instance 
+        ScreeningManager screeningManager = ActionsHelper.createScreeningManager(request);  
+        
+        // Retrieve the automated screening results
+        ScreeningTask screeningTask = screeningManager.getScreeningDetails(upload.getId());
+        ScreeningResult[] screeningResults = screeningTask.getAllScreeningResults();
+
+        // Group the results according to severity statuses and screening responses
+        // Finally the results are grouped into the map where 
+        // the keys are the ids of severity statuses and the values are another maps, 
+        // in which keys are ids of screening responses and the values are screening results.
+        Map screeningResultsMap = new TreeMap();        
+        for (int i = 0; i < screeningResults.length; i++) {
+            ResponseSeverity responseSeverity = screeningResults[i].getScreeningResponse().getResponseSeverity();
+            Long responseSeverityId = new Long(responseSeverity.getId());
+            Long screeningResponseId = new Long(screeningResults[i].getScreeningResponse().getId());
+            Map innerMap;
+            if (screeningResultsMap.containsKey(responseSeverityId)) {
+                innerMap = (Map) screeningResultsMap.get(responseSeverityId);                
+            } else {
+                innerMap = new TreeMap();
+                screeningResultsMap.put(responseSeverityId, innerMap);
+            }            
+            if (innerMap.containsKey(screeningResponseId)) {
+                ((List) innerMap.get(screeningResponseId)).add(screeningResults[i]);
+            } else {
+                List list = new ArrayList();
+                innerMap.put(screeningResponseId, list);
+                list.add(screeningResults[i]);
+            }
+        }
+        // Store grouped results in the request
+        request.setAttribute("screeningResultsMap", screeningResultsMap);
+        
+        // Return success forward
+        return mapping.findForward(Constants.SUCCESS_FORWARD_NAME);
     }
 
     /**

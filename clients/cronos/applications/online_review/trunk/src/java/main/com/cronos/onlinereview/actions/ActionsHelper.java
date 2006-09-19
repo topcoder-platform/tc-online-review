@@ -14,6 +14,8 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.util.MessageResources;
 
+import com.cronos.onlinereview.autoscreening.management.ScreeningManager;
+import com.cronos.onlinereview.autoscreening.management.ScreeningManagerFactory;
 import com.cronos.onlinereview.deliverables.AggregationDeliverableChecker;
 import com.cronos.onlinereview.deliverables.AggregationReviewDeliverableChecker;
 import com.cronos.onlinereview.deliverables.AppealResponsesDeliverableChecker;
@@ -1617,6 +1619,39 @@ class ActionsHelper {
         return manager;
     }
 
+    /**
+     * This static method helps to create an object of the <code>ScreeningManager</code> class.
+     *
+     * @return a newly created instance of the class.
+     * @param request
+     *            an <code>HttpServletRequest</code> obejct, where created
+     *            <code>ScreeningManager</code> object can be stored to let reusing it later for the
+     *            same request.
+     * @throws IllegalArgumentException
+     *             if <code>request</code> parameter is <code>null</code>.
+     * @throws BaseException
+     *             if any error occurs.
+     */
+    public static ScreeningManager createScreeningManager(HttpServletRequest request) throws BaseException {
+        // Validate parameter
+        validateParameterNotNull(request, "request");
+        
+        // Try retrieving Upload Manager from the request's attribute first
+        ScreeningManager manager = (ScreeningManager) request.getAttribute("screeningManager");
+        // If this is the first time this method is called for the request,
+        // create a new instance of the object
+        if (manager == null) {           
+            // Create the ScreeningManager instance
+            manager = ScreeningManagerFactory.createScreeningManager();
+            // Place newly-created object into the request as attribute
+            request.setAttribute("screeningManager", manager);
+        }
+        
+        // Return the Screening Manager object
+        return manager;
+    }
+
+    
     /**
      * This static method helps to create an object of the <code>UserRetrieval</code> class.
      *
