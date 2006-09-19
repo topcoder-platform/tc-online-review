@@ -243,7 +243,7 @@ public class Constants {
      * This member variable is a string constant that defines the name of the View My Submissions
      * permission.
      */
-    public static final String VIEW_MY_SUBM_PERM_NAME = "View MY Submissions";
+    public static final String VIEW_MY_SUBM_PERM_NAME = "View My Submissions";
 
     /**
      * This member variable is a string constant that defines the name of the
