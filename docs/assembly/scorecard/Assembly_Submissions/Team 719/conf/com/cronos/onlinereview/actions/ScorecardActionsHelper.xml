@@ -5,10 +5,6 @@
     	<Property name="objectSpecsNamespace">
     		<Value>com.cronos.onlinereview.actions.ScorecardActionsHelper.ObjectFactory</Value>
     	</Property>
-    	<!-- URL of AJAX Support application -->
-    	<Property name="ajaxSupportAppUrl">
-    		<Value>http://localhost:8080/Scorecard_Admin/ajaxSupport</Value>
-    	</Property>
     	<!-- Key of the session attribute in which the User ID is stored -->
     	<Property name="userIdSessionAttributeKey">
     		<Value>UserID</Value>

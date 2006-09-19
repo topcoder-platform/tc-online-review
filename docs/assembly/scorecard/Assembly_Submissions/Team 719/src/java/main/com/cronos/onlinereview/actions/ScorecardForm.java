@@ -153,6 +153,12 @@ public class ScorecardForm extends ActionForm {
                             "editScorecard.error.scorecard_version.cannot_modify_minor", new Object[] { this
                                     .getMinorVersion(this.oldVersion) }));
                 }
+                // increase minor version
+                String newVersion = this.getMajorVersion(this.scorecard.getVersion()) + ".";
+                long minor = Long.parseLong(this.getMinorVersion(this.scorecard.getVersion()));
+                minor++;
+                newVersion = newVersion + minor;
+                this.scorecard.setVersion(newVersion);
             }
             // 3. project category/project type combination is valid
             ProjectCategory category = helper.getProjectCategory(this.projectCategoryName, this.projectTypeName);
@@ -493,6 +499,20 @@ public class ScorecardForm extends ActionForm {
     private String getMinorVersion(String version) {
         int idx = version.lastIndexOf('.');
         return version.substring(idx + 1);
+    }
+    
+    /**
+     * <p>
+     * Return the major component of a given version.
+     * </p>
+     * 
+     * @param version
+     *            the version
+     * @return the major component
+     */
+    private String getMajorVersion(String version) {
+    	int idx = version.lastIndexOf('.');
+    	return version.substring(0, idx);
     }
 
     /**

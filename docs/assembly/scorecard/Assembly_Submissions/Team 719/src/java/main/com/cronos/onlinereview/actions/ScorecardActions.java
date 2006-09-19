@@ -378,6 +378,9 @@ public class ScorecardActions extends DispatchAction {
                 if (scorecardForm.isNewlyCreated()) {
                     mgr.createScorecard(scorecard, userId.toString());
                     // forward to the "listScorecards"
+                    request.setAttribute(Constants.PARAM_KEY_PROJECT_TYPE_ID,
+                            String.valueOf(ScorecardActionsHelper.getInstance().getProjectType(
+                                    scorecardForm.getProjectTypeName()).getId()));
                     forward = listScorecards(mapping, form, request, response);
                 } else {
                     // retrieve the scorecard from persistence to check if
@@ -398,6 +401,9 @@ public class ScorecardActions extends DispatchAction {
                     } else {
                         mgr.updateScorecard(scorecard, userId.toString());
                         // forward to the "listScorecards"
+                        request.setAttribute(Constants.PARAM_KEY_PROJECT_TYPE_ID,
+                                String.valueOf(ScorecardActionsHelper.getInstance().getProjectType(
+                                        scorecardForm.getProjectTypeName()).getId()));
                         forward = listScorecards(mapping, form, request, response);
                     }
                 }
@@ -471,7 +477,11 @@ public class ScorecardActions extends DispatchAction {
             try {
                 projectTypeId = Long.parseLong(request.getParameter(Constants.PARAM_KEY_PROJECT_TYPE_ID));
             } catch (Exception e) {
-                // ignore
+                try {
+                    projectTypeId = Long.parseLong(request.getAttribute(Constants.PARAM_KEY_PROJECT_TYPE_ID).toString());   
+                } catch (Exception e1) {
+                    // ignore         
+                }
             }
 
             this.logger.log(Level.INFO, "User with ID " + userId

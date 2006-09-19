@@ -220,9 +220,11 @@
         </td>
     </tr>
 </table>
-<p align="center">
 <form action="javascript:history.back()"> 
-    <html:submit style="width:125px; float:center;" styleClass="Buttons">
-        <bean:message key="global.button.back"/>
-    </html:submit>
-</form>
+    <p align="center">
+        <html:submit style="width:125px; float:center;" styleClass="Buttons">
+            <bean:message key="global.button.back"/>
+        </html:submit>
+   
+    </p>
+ </form>

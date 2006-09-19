@@ -2,7 +2,7 @@
 	<Config name="com.cronos.onlinereview.ajax">
 		<!-- defining the user id attribute name -->
 		<Property name="UserIdAttributeName">
-			<Value>UserId</Value>
+			<Value>UserID</Value>
 		</Property>
 	
 		<!-- defining the Ajax request handlers names -->
