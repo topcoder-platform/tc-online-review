@@ -279,6 +279,24 @@
     <!--
         =============== Configuration for File Upload component ===============
     -->
+    <Config name="com.topcoder.servlet.request.LocalFileUpload">
+        <Property name="single_file_limit">
+            <Value>-1</Value>
+        </Property>
+        <Property name="total_file_limit">
+            <Value>-1</Value>
+        </Property>
+        <Property name="allowed_dirs">
+            <Value>E:\\Temp\\file_store</Value>
+        </Property>
+        <Property name="default_dir">
+            <Value>E:\\Temp\\file_store</Value>
+        </Property>
+        <Property name="overwrite">
+            <Value>false</Value>
+        </Property>
+    </Config>
+
     <Config name="com.topcoder.servlet.request.RemoteFileUpload">
         <Property name="single_file_limit">
             <Value>-1</Value>
@@ -2861,12 +2879,6 @@
                     <Value></Value>
                 </Property>
             </Property>
-        </Property>
-
-        <!-- This is a temporary solution.
-            TODO: Remove this property from the final version of the app. -->
-        <Property name="FileStorePath">
-            <Value>E:\\Temp\\file_store\\</Value>
         </Property>
     </Config>
 </CMConfig>
