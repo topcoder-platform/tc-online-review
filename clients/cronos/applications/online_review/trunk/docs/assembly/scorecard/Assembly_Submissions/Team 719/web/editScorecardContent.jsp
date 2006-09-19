@@ -18,48 +18,63 @@
 <%@ taglib uri="http://struts.apache.org/tags-bean" prefix="bean" %>
 <%@ taglib uri="http://struts.apache.org/tags-html" prefix="html" %>
 <%@ taglib uri="http://struts.apache.org/tags-logic" prefix="logic" %>
-<script>
-var projectCategoryNames = <%=ScorecardActionsHelper.getInstance().generateProjectCategoriesJSArray()%>;
-var EPS = 1e-9;
-addEvent(window, "load", refreshProjectCategories);
-addEvent(window, "load", locateGroupCountInput);
-/*
- * Add event.
- */
-function addEvent(elm, evType, fn, useCapture)
-{
-    if (elm.addEventListener)
-    {
-        elm.addEventListener(evType, fn, useCapture);
-        return true;
-    }
-    else if (elm.attachEvent)
-    {
-        var r = elm.attachEvent("on" + evType, fn);
-        return r;
-    }
-}
-
-/*
- * Input holds the count of groups.
- */
-var groupCountInput;
-/*
- * Locate the group count input.
- */
-function locateGroupCountInput()
-{
-    var elements = document.getElementsByTagName("input");
-    for (var i = 0; i < elements.length; i++)
-    {
-        if (elements[i].name == "scorecard.count")
-        {
-            groupCountInput = elements[i];
-            break;
-        }
-    }
-}
-    /*
+<script type="text/javascript">
+	var djConfig = { isDebug: true };
+</script>
+<script language="JavaScript" type="text/javascript" src="scripts/dojo/dojo.js"></script>
+<script type="text/javascript">
+	//////////////////////////////////////////////////////////////////
+	// Dojo Setup
+	//////////////////////////////////////////////////////////////////
+	dojo.require("dojo.dnd.*");
+	dojo.require("dojo.event.*");
+	//////////////////////////////////////////////////////////////////
+	// Global Variables
+	//////////////////////////////////////////////////////////////////
+	// Project category names
+	var projectCategoryNames = <%=ScorecardActionsHelper.getInstance().generateProjectCategoriesJSArray()%>;
+	// DnD list ID sequence
+	var listIDSequence = 0;
+	// epsilon
+	var EPS = 1e-9;
+ 	// Input holds the count of groups.
+	var groupCountInput;
+	//////////////////////////////////////////////////////////////////
+	// Misc Routines
+	//////////////////////////////////////////////////////////////////
+	/*
+	 * Check if the value of the input is a number, reset to 0 if not.
+	 */
+	function checkNumber(input)
+	{
+    	var value = input.value;
+    	if (isNaN(value))
+    	{
+        	input.value = "0.0";
+    	}
+    	else if (value < EPS || value > 100+EPS)
+    	{
+        	input.value = "0.0";
+    	}
+	}
+	
+	/*
+ 	 * Locate the group count input.
+ 	 */
+	function locateGroupCountInput()
+	{
+    	var elements = document.getElementsByTagName("input");
+    	for (var i = 0; i < elements.length; i++)
+    	{
+        	if (elements[i].name == "scorecard.count")
+        	{
+            	groupCountInput = elements[i];
+            	break;
+        	}
+    	}
+	}
+	
+	/*
  * Refresh project categories.
  */
 function refreshProjectCategories()
@@ -98,648 +113,638 @@ function refreshProjectCategories()
         }
     }
 }
+	///////////////////////////////////////////////////////////
+	// Drag And Drop Support Functions
+	///////////////////////////////////////////////////////////
+	/*
+	 * Initialize the DnD functionality.
+	 */
+	function initDnD(){
+		// get all UL elements
+		var uls = document.getElementsByTagName('ul');
+		for (var i = 0; i < uls.length; i++) {
+			var dl = uls[i]; 
+			makeULReorderable(dl);
+		}
+		listIDSequence = uls.length;
+	}
+	
+	/*
+	 * Reorder the questions.
+	 */
+	function reorderQuestions(evt) {
+			// locate the UL element
+			var ul = document.getElementById(evt.dragObject.type);
+			// refresh question numbers
+			refreshQuestionNumbers(ul);
+	}
+	
+	/*
+	 * Make UL reorderable
+	 */
+	function makeULReorderable(ul) {
+			if (ul.id.indexOf('list') != 0) {
+				return;
+			}
+			// create a DropTarget with name dl.id
+			var target = new dojo.dnd.HtmlDropTarget(ul, [ul.id]);
+			// connect DropTarget.onDrop to function reorderQuestions
+			dojo.event.connect(target, 'onDrop', 'reorderQuestions');
+			
+			// get all LI's under the UL
+			var lis = ul.getElementsByTagName('li');
+			for(var x = 0; x< lis.length; x++){
+				// create a DragSource and assign the target
+				new dojo.dnd.HtmlDragSource(lis[x], ul.id);
+			}
+	}
+	
+	
+	///////////////////////////////////////////////////////
+	// Group / Section / Question Management Functions
+	///////////////////////////////////////////////////////
+	/*
+	 * Add a group.
+	 */
+	function addGroup(btn) {
+			var btnRow = btn.parentNode.parentNode;
+			var mainTable = btnRow.parentNode;
+			var groupNumber = getGroupNumber(btnRow);
+			//alert("Groupnumber" + groupNumber);
+			// find the sections total row for current group
+    	var sectionsTotalRow = document.getElementById("allGroups[" +
+        groupNumber + "].sectionTotal").parentNode.parentNode;
+      //alert('sectionsTotalRow' + sectionsTotalRow.rowIndex);
+      // append a sections total row
+    	var sectionsTotalRowClone = sectionsTotalRow.cloneNode(true);
+    	sectionsTotalRowClone.getElementsByTagName('input')[0].value = '100.0';
+    	mainTable.insertBefore(sectionsTotalRowClone, sectionsTotalRow);
+    	mainTable.insertBefore(sectionsTotalRow, sectionsTotalRowClone);
+    	// append a new subtotal row
+			var subtotalRow = mainTable.rows[btnRow.rowIndex + 4];
+			var subtotalRowClone = subtotalRow.cloneNode(true);
+			subtotalRowClone.getElementsByTagName('input')[0].value = '100.0';
+			mainTable.insertBefore(subtotalRowClone, sectionsTotalRowClone);
+			// append an UL row
+    	var ulRow = mainTable.rows[btnRow.rowIndex + 3];
+    	var ulRowClone = ulRow.cloneNode(true);
+    	var ul = ulRowClone.getElementsByTagName('ul')[0];
+    	ul.id = 'list' + (listIDSequence++);
+    	var lis = ul.getElementsByTagName('li');
+    	var lisLength = lis.length;
+    	// leave only ONE <LI>
+    	while (lisLength > 1) {
+    			ul.removeChild(lis[--lisLength]);
+    	}
+    	makeULReorderable(ul);
+    	var li = ul.getElementsByTagName('li')[0];
+    	li.getElementsByTagName('textarea')[0].value = 'Description goes here.';
+    	li.getElementsByTagName('textarea')[1].value = 'Guideline goes here.';
+    	li.getElementsByTagName("select")[0].selectedIndex = 0;
+    	li.getElementsByTagName("select")[1].selectedIndex = 0;
+    	li.getElementsByTagName("input")[0].value = '100.00';
+    	mainTable.insertBefore(ulRowClone, subtotalRowClone);
+			
+    	// append a questions header row
+    	var questionsHeaderRow = mainTable.rows[btnRow.rowIndex + 2];
+    	var questionsHeaderRowClone = questionsHeaderRow.cloneNode(true);
+    	mainTable.insertBefore(questionsHeaderRowClone, ulRowClone);
+    	
+    	// append a section header row
+    	var sectionHeaderRow = mainTable.rows[btnRow.rowIndex + 1];;
+    	var sectionHeaderRowClone = sectionHeaderRow.cloneNode(true);
+    	sectionHeaderRowClone.getElementsByTagName('input')[0].value = 'Section name goes here';
+    	sectionHeaderRowClone.getElementsByTagName('input')[1].value = '100.0';
+    	mainTable.insertBefore(sectionHeaderRowClone, questionsHeaderRowClone);
+    	
+    	// append a group header row
+    	var groupHeaderRowClone = btnRow.cloneNode(true);
+    	groupHeaderRowClone.getElementsByTagName('input')[0].value = 'Group name goes here';
+    	groupHeaderRowClone.getElementsByTagName('input')[1].value = '100.0';
+    	mainTable.insertBefore(groupHeaderRowClone, sectionHeaderRowClone);
 
-function checkNumber(input)
-{
-    var value = input.value;
-    if (isNaN(value))
-    {
-        input.value = "0.0";
-    }
-    else if (value < EPS || value > 100+EPS)
-    {
-        input.value = "0.0";
-    }
-}
-    /*
- * Add a group.
- */
-function addGroup(btn)
-{
-    var btnRow = btn.parentNode.parentNode;
-    var table = btnRow.parentNode;
-    var curGroupNumber = getGroupNumber(btnRow);
-    // find the sections total row for current group
-    var sectionsTotalRow = document.getElementById("allGroups[" +
-        curGroupNumber + "].sectionTotal").parentNode.parentNode;
-    // append a sections total row
-    var newSectionsTotalRow = sectionsTotalRow.cloneNode(true);
-    table.insertBefore(newSectionsTotalRow, sectionsTotalRow);
-    table.insertBefore(sectionsTotalRow, newSectionsTotalRow);
-    // append a questions total row
-    var newQuestionsTotalRow = table.rows[sectionsTotalRow.rowIndex -
-        1].cloneNode(true);
-    table.insertBefore(newQuestionsTotalRow, newSectionsTotalRow);
-    // append a question row
-    var newQuestionRow = table.rows[btnRow.rowIndex + 3].cloneNode(true);
-    table.insertBefore(newQuestionRow, newQuestionsTotalRow);
-    newQuestionRow.getElementsByTagName("textarea")[0].value =
-        "Description goes here.";
-    newQuestionRow.getElementsByTagName("textarea")[1].value =
-        "Guideline goes here.";
-    newQuestionRow.getElementsByTagName("select")[0].selectedIndex = 0;
-    newQuestionRow.getElementsByTagName("select")[1].selectedIndex = 0;
-    newQuestionRow.getElementsByTagName("input")[0].value = "100.00";
-    // append a question header row
-    var newQuestionHeaderRow = table.rows[btnRow.rowIndex + 2].cloneNode(true);
-    table.insertBefore(newQuestionHeaderRow, newQuestionRow);
-    // append a section header row
-    var newSectionHeaderRow = table.rows[btnRow.rowIndex + 1].cloneNode(true);
-    table.insertBefore(newSectionHeaderRow, newQuestionHeaderRow);
-    newSectionHeaderRow.getElementsByTagName("input")[0].value =
-        "Section name goes here.";
-    newSectionHeaderRow.getElementsByTagName("input")[1].value = "100.00";
-    // append a group header row
-    var newGroupHeaderRow = btnRow.cloneNode(true);
-    table.insertBefore(newGroupHeaderRow, newSectionHeaderRow);
-    newGroupHeaderRow.getElementsByTagName("input")[0].value =
-        "Group name goes here.";
-    newGroupHeaderRow.getElementsByTagName("input")[1].value = "100.00";
-    // update new group's section count
-    newGroupHeaderRow.cells[1].getElementsByTagName("input")[1].value = "1";
-    // update new section's question count
-    newSectionHeaderRow.cells[1].getElementsByTagName("input")[1].value = "1";
-    // update group numbers
-    curGroupNumber++;
-    setGroupNumber(newGroupHeaderRow, curGroupNumber);
-    curGroupNumber++;
-    var cur = findNextGroupRow(newGroupHeaderRow);
-    while (cur != null)
-    {
-        setGroupNumber(cur, curGroupNumber);
-        curGroupNumber++;
-        cur = findNextGroupRow(cur);
-    }
-    // update group count
-    var groupCount = parseInt(groupCountInput.value);
-    groupCount++;
-    groupCountInput.value = groupCount;
-}
+    	// Reset question count
+    	setQuestionCount(sectionHeaderRowClone, 1);
+    	
+    	// Reset section count
+    	setSectionCount(groupHeaderRowClone, 1);
+    	
+    	// Reset group numbers
+    	var current = groupHeaderRowClone;
+    	while (current != null) {
+    			// alert(current.rowIndex);
+    			//alert(getGroupNumber(current));
+    			setGroupNumber(current, ++groupNumber);
+    			current = findNextGroupRow(current);
+    			
+    	}
+    	// Increase group count
+    	setGroupCount(getGroupCount() + 1);
+	}
+	
+	/*
+	 * Remove a group.
+	 */
+	function removeGroup(btn) {
+			var btnRow = btn.parentNode.parentNode;
+			var mainTable = btnRow.parentNode;
+			var groupNumber = getGroupNumber(btnRow);
+			//alert(groupNumber);
+			var count = getGroupCount();
+			if (count == 1) {
+					// only ONE group left, cannot remove
+					return;
+			} else {
+					// Reset group numbers
+					var currentGroupNumber = groupNumber;
+					var current = findNextGroupRow(btnRow);
+					while (current != null) {
+							setGroupNumber(current, currentGroupNumber++);
+							current = findNextGroupRow(current);
+					}
+					
+					// Remove group
+					var sectionsTotalRow = document.getElementById("allGroups[" +
+        		groupNumber + "].sectionTotal").parentNode.parentNode;
+        	var startIndex = btnRow.rowIndex + 1;
+        	var endIndex = sectionsTotalRow.rowIndex;
+        	for (var i = startIndex; i <= endIndex; i++) {
+        			mainTable.removeChild(mainTable.rows[btnRow.rowIndex + 1]);
+        	}
+        	mainTable.removeChild(btnRow);
+        	// Decrease the group count
+        	setGroupCount(count - 1);
+        	//alert(getGroupCount());
+			}
+	}
+	
+	function getGroupCount() {
+			return parseInt(groupCountInput.value);
+	}
+	
+	function setGroupCount(count) {
+			groupCountInput.value = count;
+	}
+	/*
+ 	 * Locate the next Group row from current group row.
+   */
+	function findNextGroupRow(curGroupRow)
+	{
+    	var table = curGroupRow.parentNode;
+    	var curRow = table.rows[curGroupRow.rowIndex + 1];
 
-/*
- * Remove a group.
- */
-function removeGroup(btn)
-{
-    var btnRow = btn.parentNode.parentNode;
-    var table = btnRow.parentNode;
-    var btnRowGroupNumber = getGroupNumber(btnRow);
-    var curGroupNumber = btnRowGroupNumber;
-    curRow = findNextGroupRow(btnRow);
-    while (curRow != null)
-    {
-        setGroupNumber(curRow, curGroupNumber);
-        curGroupNumber++;
-        curRow = findNextGroupRow(curRow);
-    }
-    if (curGroupNumber == btnRowGroupNumber && curGroupNumber == 0)
-    {
-        // the last group, cannot remove
-        // NOP
-    }
-    else
-    {
-        // update group count
-        var groupCount = parseInt(groupCountInput.value);
-        groupCount--;
-        groupCountInput.value = groupCount;
-        // remove sections/questions under this group
-        curRow = table.rows[btnRow.rowIndex + 1];
-        while (curRow != null && curRow.cells[0].className != "forumTitle")
-        {
-            table.removeChild(curRow);
-            curRow = table.rows[btnRow.rowIndex + 1];
-        }
-        // remove group row
-        table.removeChild(btnRow);
-    }
-}
+    	while (curRow != null && curRow.cells[0].className != "forumTitle")
+    	{
+        	curRow = table.rows[curRow.rowIndex + 1];
+    	}
+    	if (curRow != null && curRow.cells[0].className == "forumTitle" &&
+        	curRow.cells.length == 3)
+    	{
+        	return curRow;
+    	}
+    	else
+    	{
+        	return null;
+    	}
+	}
+	/*
+ 	 * Get the group number.
+ 	 */
+	function getGroupNumber(row)
+	{
+    	var temp;
+    	var elements = row.cells[0].getElementsByTagName("input");
+    	if (elements.length > 0)
+    	{
+        	temp = elements[0].name;
+    	}
+    	else
+    	{
+        	temp = row.cells[0].getElementsByTagName("textarea")[0].name;
+    	}
+    	temp = temp.substring(temp.indexOf("allGroups["));
+    	temp = temp.substring(temp.indexOf("[") + 1, temp.indexOf("]"));
+    	return parseInt(temp);
+	}
+	
+	function setGroupNumber(row, number) {
+			var curGNumber = getGroupNumber(row);
+    	var mainTable = row.parentNode;
+    	// group-level inputs
+    	var elements = row.getElementsByTagName('input');
+    	for (var i = 0; i < elements.length; i++) {
+    			elements[i].name = elements[i].name.replace('allGroups[' + curGNumber + ']', 'allGroups[' + number + ']');
+    	}
+    	
+      var startIndex;
+      var endIndex;
+    	// section & question level inputs/textareas/selects
+    	var curSectionRow = mainTable.rows[row.rowIndex + 1];
+    	while (curSectionRow != null) {
+    			startIndex = curSectionRow.rowIndex;
+					endIndex = startIndex + 3;
+					for (var i = startIndex; i <= endIndex; i++) {
+							var current = mainTable.rows[i];
+							// TEXTAREA's
+							elements = current.getElementsByTagName('textarea');
+							for (var j = 0; j < elements.length; j++) {
+									elements[j].name = elements[j].name.replace('allGroups[' + curGNumber + ']', 'allGroups[' + number + ']');
+									// TODO: FOR DEBUG ONLY
+									// elements[j].value = elements[j].name.replace('allGroups[' + curGNumber + ']', 'allGroups[' + number + ']');
+							}
+							// INPUT's
+							elements = current.getElementsByTagName('input');
+							for (var j = 0; j < elements.length; j++) {
+									if (elements[j].name != null) {
+											elements[j].name = elements[j].name.replace('allGroups[' + curGNumber + ']', 'allGroups[' + number + ']');
+									}
+									if (elements[j].id != null) {
+											elements[j].id = elements[j].id.replace('allGroups[' + curGNumber + ']', 'allGroups[' + number + ']');
+									}
+							}
+							// SELECT's
+							elements = current.getElementsByTagName('select');
+							for (var j = 0; j < elements.length; j++) {
+									elements[j].name = elements[j].name.replace('allGroups[' + curGNumber + ']', 'allGroups[' + number + ']');
+							}
+					}
+					curSectionRow = findNextSectionRow(curSectionRow);
+    	}
+    	var sectionsSubtotalInput = mainTable.rows[endIndex + 1].cells[2].getElementsByTagName('input')[0];
+      sectionsSubtotalInput.id = sectionsSubtotalInput.id.replace('allGroups[' + curGNumber + ']', 'allGroups[' + number + ']');
+      //alert(curGNumber + '->' + number);
+      //sectionsSubtotalInput.value = sectionsSubtotalInput.id.replace('allGroups[' + curGNumber + ']', 'allGroups[' + number + ']');
+	}
+	/*
+	 * Add a section.
+	 */
+	function addSection(btn) {
+			var btnRow = btn.parentNode.parentNode;
+			var mainTable = btnRow.parentNode;
+			var sectionNumber = getSectionNumber(btnRow);
+			var groupHeaderRow = btnRow;
+			while (groupHeaderRow.cells[0].className != "forumTitle") {
+					groupHeaderRow = mainTable.rows[groupHeaderRow.rowIndex - 1];
+			}
+			var count = getSectionCount(groupHeaderRow);
+			// append a new subtotal row
+			var subtotalRow = mainTable.rows[btnRow.rowIndex + 3];
+			var subtotalRowClone = subtotalRow.cloneNode(true);
+			mainTable.insertBefore(subtotalRowClone, subtotalRow);
+    	mainTable.insertBefore(subtotalRow, subtotalRowClone);
+    	
+    	// append an UL row
+    	var ulRow = mainTable.rows[btnRow.rowIndex + 2];
+    	var ulRowClone = ulRow.cloneNode(true);
+    	var ul = ulRowClone.getElementsByTagName('ul')[0];
+    	ul.id = 'list' + (listIDSequence++);
+    	var lis = ul.getElementsByTagName('li');
+    	var lisLength = lis.length;
+    	// leave only ONE <LI>
+    	while (lisLength > 1) {
+    			ul.removeChild(lis[--lisLength]);
+    	}
+    	makeULReorderable(ul);
+    	var li = ul.getElementsByTagName('li')[0];
+    	li.getElementsByTagName('textarea')[0].value = 'Description goes here.';
+    	li.getElementsByTagName('textarea')[1].value = 'Guideline goes here.';
+    	li.getElementsByTagName("select")[0].selectedIndex = 0;
+    	li.getElementsByTagName("select")[1].selectedIndex = 0;
+    	li.getElementsByTagName("input")[0].value = '100.00';
+    	mainTable.insertBefore(ulRowClone, subtotalRowClone);
+    	
+    	// append a questions header row
+    	var questionsHeaderRow = mainTable.rows[btnRow.rowIndex + 1];
+    	var questionsHeaderRowClone = questionsHeaderRow.cloneNode(true);
+    	mainTable.insertBefore(questionsHeaderRowClone, ulRowClone);
+    	
+    	// append a section header row
+    	var sectionHeaderRow = btnRow;
+    	var sectionHeaderRowClone = sectionHeaderRow.cloneNode(true);
+    	sectionHeaderRowClone.getElementsByTagName('input')[0].value = 'Section name goes here';
+    	sectionHeaderRowClone.getElementsByTagName('input')[1].value = '100.0';
+    	mainTable.insertBefore(sectionHeaderRowClone, questionsHeaderRowClone);
 
-/*
- * Get the group number.
- */
-function getGroupNumber(row)
-{
-    var temp;
-    var elements = row.cells[0].getElementsByTagName("input");
-    if (elements.length > 0)
-    {
-        temp = elements[0].name;
-    }
-    else
-    {
-        temp = row.cells[0].getElementsByTagName("textarea")[0].name;
-    }
-    temp = temp.substring(temp.indexOf("allGroups["));
-    temp = temp.substring(temp.indexOf("[") + 1, temp.indexOf("]"));
-    return parseInt(temp);
-}
-    /*
- * Set the group number.
- */
-function setGroupNumber(row, number)
-{
-    var curGNumber = getGroupNumber(row);
-    var afterRowIndex = row.rowIndex;
-    var elements = document.getElementsByTagName("input");
-    for (var i = 0; i < elements.length; i++)
-    {
-        if (elements[i].parentNode.parentNode.rowIndex >= afterRowIndex)
-        {
-            var name = elements[i].name;
-            if (name != null && name.indexOf('allGroups[' + curGNumber + ']') >= 0)
-            {
-                name = name.replace('allGroups[' + curGNumber + ']', 'allGroups[' + number + ']');
-                elements[i].name = name;
-            }
-            else
-            {
-                var id = elements[i].id;
-                if (id.indexOf('allGroups[' + curGNumber + ']') >= 0)
-                {
-                    id = id.replace('allGroups[' + curGNumber + ']', 'allGroups[' + number + ']');
-                    elements[i].id = id;
-                }
-            }
-        }
-    }
-    elements = document.getElementsByTagName("textarea");
-    for (var i = 0; i < elements.length; i++)
-    {
-        if (elements[i].parentNode.parentNode.rowIndex >= afterRowIndex)
-        {
-            var name = elements[i].name;
-            if (name.indexOf('allGroups[' + curGNumber + ']') >= 0)
-            {
-                name = name.replace('allGroups[' + curGNumber + ']', 'allGroups[' + number + ']');
-                elements[i].name = name;
-            }
-        }
-    }
-    elements = document.getElementsByTagName("select");
-    for (var i = 0; i < elements.length; i++)
-    {
-        if (elements[i].parentNode.parentNode.rowIndex >= afterRowIndex)
-        {
-            var name = elements[i].name;
-            if (name.indexOf('allGroups[' + curGNumber + ']') >= 0)
-            {
-                name = name.replace('allGroups[' + curGNumber + ']',  'allGroups[' + number + ']');
-                elements[i].name = name;
-            }
-        }
-    }
-}
+			// Reset section numbers
+    	var current = sectionHeaderRowClone;
+    	while (current != null) {
+    			setSectionNumber(current, ++sectionNumber);
+    			current = findNextSectionRow(current);
+    	}
+    	
+    	// Reset question count
+    	setQuestionCount(sectionHeaderRowClone, 1);
+    	
+    	// Increase section count
+    	setSectionCount(groupHeaderRow, count + 1);
+    	// re-calculate section subtotal
+			var groupNumber = getGroupNumber(groupHeaderRow);
+			calculateSectionSubtotal(groupNumber);
+	}
+	
+	/*
+	 * Remove a section.
+	 */
+	function removeSection(btn) {
+			var sectionHeaderRow = btn.parentNode.parentNode;
+			var mainTable = sectionHeaderRow.parentNode;
+			var groupHeaderRow = sectionHeaderRow;
+			while (groupHeaderRow.cells[0].className != "forumTitle") {
+					groupHeaderRow = mainTable.rows[groupHeaderRow.rowIndex - 1];
+			}
+			var count = getSectionCount(groupHeaderRow);
+			if (count == 1) {
+					// only ONE section left, cannot remove
+					return;	
+			} else {
+					var sectionNumber = getSectionNumber(sectionHeaderRow);
+					// Reset section numbers for next sections
+					var current = findNextSectionRow(sectionHeaderRow);
+					while (current != null) {
+							setSectionNumber(current, sectionNumber++);
+							current = findNextSectionRow(current);
+					}
+					// remove the section
+					mainTable.removeChild(mainTable.rows[sectionHeaderRow.rowIndex + 3]);
+					mainTable.removeChild(mainTable.rows[sectionHeaderRow.rowIndex + 2]);
+					mainTable.removeChild(mainTable.rows[sectionHeaderRow.rowIndex + 1]);
+					mainTable.removeChild(sectionHeaderRow);
+					// decrease the section count
+					setSectionCount(groupHeaderRow, count - 1);
+					// re-calculate section subtotal
+					var groupNumber = getGroupNumber(groupHeaderRow);
+					calculateSectionSubtotal(groupNumber);
+			}
+	}
+	
+	/*
+	 * Get the section count for a given group.
+	 */
+	function getSectionCount(groupHeaderRow) {
+			var input = groupHeaderRow.cells[1].getElementsByTagName('input')[1];
+			return parseInt(input.value);
+	}
+	
+	/*
+	 * Set the section count for a given group.
+	 */
+	function setSectionCount(groupHeaderRow, count) {
+			var input = groupHeaderRow.cells[1].getElementsByTagName('input')[1];
+			input.value = count;
+	}
+	/*
+	 * Locate the next section row.
+	 */
+	function findNextSectionRow(current) {
+			var mainTable = current.parentNode;
+			var next = mainTable.rows[current.rowIndex + 4];
+			if (next != null && next.cells.length == 3 && next.cells[0].getElementsByTagName('input').length > 0) {
+					return next;
+			} else {
+					return null;
+			}
+	}
+	
+	/*
+ 	 * Get the section number.
+ 	 */
+	function getSectionNumber(row)
+	{
+    	var temp;
+    	var elements = row.cells[0].getElementsByTagName('input');
+    	if (elements.length > 0)
+    	{
+        	temp = elements[0].name;
+    	}
+    	else
+    	{
+        	temp = row.cells[0].getElementsByTagName('textarea')[0].name;
+    	}
+    	temp = temp.substring(temp.indexOf('allSections['));
+    	temp = temp.substring(temp.indexOf('[') + 1, temp.indexOf(']'));
+    	return parseInt(temp);
+	}
+	
+	/*
+	 * Set the section number
+	 */
+	function setSectionNumber(row, number) {
+			var startIndex = row.rowIndex;
+			var endIndex = startIndex + 3;
+			var mainTable = row.parentNode;
+			for (var i = startIndex; i <= endIndex; i++) {
+					var current = mainTable.rows[i];
+					// TEXTAREA's
+					var elements = current.getElementsByTagName('textarea');
+					for (var j = 0; j < elements.length; j++) {
+							elements[j].name = elements[j].name.replace(/allSections(\[\d+\])/ , 'allSections[' + number + ']');
+							// TODO: FOR DEBUG ONLY
+							//elements[j].value = elements[j].name.replace(/allSections(\[\d+\])/ , 'allSections[' + number + ']');
+					}
+					// INPUT's
+					elements = current.getElementsByTagName('input');
+					for (var j = 0; j < elements.length; j++) {
+							if (elements[j].name != null) {
+								elements[j].name = elements[j].name.replace(/allSections(\[\d+\])/ , 'allSections[' + number + ']');
+							}
+							if (elements[j].id != null) {
+									elements[j].id = elements[j].id.replace(/allSections(\[\d+\])/ , 'allSections[' + number + ']');
+							}
+					}
+					// SELECT's
+					elements = current.getElementsByTagName('select');
+					for (var j = 0; j < elements.length; j++) {
+							elements[j].name = elements[j].name.replace(/allSections(\[\d+\])/ , 'allSections[' + number + ']');
+					}
+					/*
+					// UL's
+					elements = current.getElementsByTagName('ul');
+					for (var j = 0; j < elements.length; j++) {
+							elements[j].id = elements[j].id.replace(/allSections(\[\d+\])/ , 'allSections[' + number + ']');
+							alert(elements[j].id);
+							makeULReorderable(elements[j]);
+					}
+					*/
+			}
+	}
+	/*
+	 * Add a question.
+	 */
+	function addQuestion(btn) {
+			var btnRow = btn.parentNode.parentNode;
+			var mainTable = btnRow.parentNode;
+			// locate the UL element
+			var ul = mainTable.rows[btnRow.rowIndex + 1].cells[0].getElementsByTagName('ul')[0];
+			// clone a question <LI> element
+			var lis = ul.getElementsByTagName('li');
+			var questionClone = lis[lis.length - 1].cloneNode(true);
+			questionClone.getElementsByTagName('textarea')[0].value = 'Description goes here.';
+    		questionClone.getElementsByTagName('textarea')[1].value = 'Guideline goes here.';
+    		questionClone.getElementsByTagName("select")[0].selectedIndex = 0;
+    		questionClone.getElementsByTagName("select")[1].selectedIndex = 0;
+    		questionClone.getElementsByTagName("input")[0].value = '100.00';
+			// set question number
+			setQuestionNumber(questionClone, lis.length);
+			// create a DragSource and assign the target
+			new dojo.dnd.HtmlDragSource(questionClone, ul.id);
+			// append to UL
+			ul.appendChild(questionClone);
+			// increase the question count
+			var sectionHeaderRow = mainTable.rows[btnRow.rowIndex - 1];
+			setQuestionCount(sectionHeaderRow, getQuestionCount(sectionHeaderRow) + 1);
+			// re-calculate the subtotal
+			var groupNumber = getGroupNumber(sectionHeaderRow);
+			var sectionNumber = getSectionNumber(sectionHeaderRow);
+			calculateSubtotal(groupNumber, sectionNumber);
+	}
+	
+	/*
+	 * Remove a question.
+	 */
+	function removeQuestion(btn) {
+			var li = btn.parentNode.parentNode.parentNode.parentNode.parentNode;
+			var ul = li.parentNode;
+			var ulRow = ul.parentNode.parentNode;
+			var mainTable = ulRow.parentNode;
+			var sectionHeaderRow = mainTable.rows[ulRow.rowIndex - 2];
+			var count = getQuestionCount(sectionHeaderRow);
+			if (count == 1) {
+					// only ONE question left, cannot remove
+					return;
+			} else {
+					// remove the LI element
+					ul.removeChild(li);
+					// refresh question numbers
+					refreshQuestionNumbers(ul);
+					// decrease the question count
+					setQuestionCount(sectionHeaderRow, count - 1);
+					// re-calculate the subtotal
+					var groupNumber = getGroupNumber(sectionHeaderRow);
+					var sectionNumber = getSectionNumber(sectionHeaderRow);
+					calculateSubtotal(groupNumber, sectionNumber);
+			}
+	}
+	
+	/*
+	 * Refresh question numbers
+	 */
+	function refreshQuestionNumbers(ul) {
+			// reset the question numbers for each LI element
+			var lis = ul.getElementsByTagName('li');
+			for (var i = 0; i < lis.length; i++) {
+					setQuestionNumber(lis[i], i);
+			}
+	}
+	/*
+	 * Return the question count for given section.
+	 */
+	function getQuestionCount(sectionHeaderRow) {
+			var input = sectionHeaderRow.cells[1].getElementsByTagName('input')[1];
+			return parseInt(input.value);
+	}
+	
+	/*
+	 * Set the question count for given section.
+	 */
+	function setQuestionCount(sectionHeaderRow, count) {
+			var input = sectionHeaderRow.cells[1].getElementsByTagName('input')[1];
+			input.value = count;
+	}
+	
+	/*
+	 * Set the question number.
+	 */
+	function setQuestionNumber(li, number) {
+			// INPUT's
+			var elements = li.getElementsByTagName('input');
+			for (var i = 0; i < elements.length; i++) {
+					elements[i].name = elements[i].name.replace(/allQuestions(\[\d+\])/ , 'allQuestions[' + number + ']');
+			}
+			// TEXTAREA's
+			elements = li.getElementsByTagName('textarea');
+			for (var i = 0; i < elements.length; i++) {
+					elements[i].name = elements[i].name.replace(/allQuestions(\[\d+\])/ , 'allQuestions[' + number + ']');
+					// TODO: FOR DEBUG ONLY
+					// elements[i].value = elements[i].name.replace(/allQuestions(\[\d+\])/ , 'allQuestions[' + number + ']');
+			}
+			// SELECT's
+			elements = li.getElementsByTagName('select');
+			for (var i = 0; i < elements.length; i++) {
+					elements[i].name = elements[i].name.replace(/allQuestions(\[\d+\])/ , 'allQuestions[' + number + ']');
+			}
+	}
+	
+	/*
+ 	 * This will be fired when a question weight is changed, it updates the subtotal of
+   * the section to which the question belongs.
+   */
+	function updateQuestionsTotal(input)
+	{
+    	var sectionNumber = getSectionNumber(input.parentNode.parentNode);
+    	var groupNumber = getGroupNumber(input.parentNode.parentNode);
+    	calculateSubtotal(groupNumber, sectionNumber);
+	}
 
-/*
- * Find the next Group row from current group row.
- */
-function findNextGroupRow(curGroupRow)
-{
-    var table = curGroupRow.parentNode;
-    var curRow = table.rows[curGroupRow.rowIndex + 1];
+	/*
+   * Calculate and update the subtotal of given section.
+   */
+	function calculateSubtotal(groupNumber, sectionNumber)
+	{
+    	var elements = document.getElementsByTagName("input");
+    	var total = 0;
+    	for (var i = 0; i < elements.length; i++)
+    	{
+        	var name = elements[i].name;
+        	if (name != null && name.indexOf("scorecard.allGroups[" + groupNumber +
+            	"].allSections[" + sectionNumber + "].allQuestions[") >= 0 &&
+            	name.indexOf("weight") >= 0)
+        	{
+            	total = total + parseInt(elements[i].value);
+        	}
+    	}
+    	var questionSubtotalInput = document.getElementById("allGroups[" +
+        	groupNumber + "].allSections[" + sectionNumber + "].questionTotal");
+    	questionSubtotalInput.value = total;
+	}
 
-    while (curRow != null && curRow.cells[0].className != "forumTitle")
-    {
-        curRow = table.rows[curRow.rowIndex + 1];
-    }
-    if (curRow != null && curRow.cells[0].className == "forumTitle" &&
-        curRow.cells.length == 3)
-    {
-        return curRow;
-    }
-    else
-    {
-        return null;
-    }
-}
+	/*
+ 	 * This will be fired when a section weight is changed, it updates the subtotal of
+ 	 * the group to which the section belongs.
+ 	 */
+	function updateSectionsTotal(input)
+	{
+    	var groupNumber = getGroupNumber(input.parentNode.parentNode);
+    	calculateSectionSubtotal(groupNumber);
+	}
 
-/*
- * Add a section.
- */
-function addSection(btn)
-{
-    var btnRow = btn.parentNode.parentNode;
-    var table = btnRow.parentNode;
-    var curRow = btnRow;
-    var qCountText = btnRow.cells[1].getElementsByTagName("input")[1];
-    var qCount = parseInt(qCountText.value);
-    for (var i = 0; i < qCount + 2; i++)
-    {
-        curRow = table.rows[curRow.rowIndex + 1];
-    }
-    // append question weight subtotal row
-    var newSubtotalRow = curRow.cloneNode(true);
-    table.insertBefore(newSubtotalRow, curRow);
-    table.insertBefore(curRow, newSubtotalRow);
-    curRow = newSubtotalRow;
-    // append one question
-    var newQuestionRow = table.rows[btnRow.rowIndex + 2].cloneNode(true);
-    newQuestionRow.getElementsByTagName("textarea")[0].value =
-        "Description goes here.";
-    newQuestionRow.getElementsByTagName("textarea")[1].value =
-        "Guideline goes here.";
-    newQuestionRow.getElementsByTagName("select")[0].selectedIndex = 0;
-    newQuestionRow.getElementsByTagName("select")[1].selectedIndex = 0;
-    newQuestionRow.getElementsByTagName("input")[0].value = "100.00";
-    table.insertBefore(newQuestionRow, curRow);
-    curRow = newQuestionRow;
-    // append question header row
-    var newQuestionHeaderRow = table.rows[btnRow.rowIndex + 1].cloneNode(true);
-    table.insertBefore(newQuestionHeaderRow, curRow);
-    curRow = newQuestionHeaderRow;
-    // append section header row
-    var newSectionRow = btnRow.cloneNode(true);
-    newSectionRow.getElementsByTagName("input")[0].value =
-        "Section name goes here.";
-    newSectionRow.getElementsByTagName("input")[1].value = "100.00";
-    table.insertBefore(newSectionRow, curRow);
-    // update question count for the new section
-    qCountText = newSectionRow.cells[1].getElementsByTagName("input")[1];
-    qCountText.value = "1";
-    // update section numbers
-    var sectionNumber = getSectionNumber(btnRow);
-    sectionNumber++;
-    setSectionNumber(newSectionRow, sectionNumber);
-
-    var groupNumber = getGroupNumber(newSectionRow);
-    // calculate section's question subtotal
-    calculateSubtotal(groupNumber, sectionNumber);
-    calculateSectionSubtotal(groupNumber);
-
-    sectionNumber++;
-    var nextSectionRow = findNextSectionRow(newSectionRow);
-    while (nextSectionRow != null)
-    {
-        setSectionNumber(nextSectionRow, sectionNumber);
-        sectionNumber++;
-        nextSectionRow = findNextSectionRow(nextSectionRow);
-    }
-
-    // update section count
-    // find the group row
-    curRow = btnRow;
-    while (curRow.cells[0].className != "forumTitle")
-    {
-        curRow = table.rows[curRow.rowIndex - 1];
-    }
-    var sCountText = curRow.cells[1].getElementsByTagName("input")[1];
-    var sCount = sCountText.value;
-    sCount++;
-    sCountText.value = sCount;
-}
-    
-    /*
- * Find the next Section row from current section row.
- */
-function findNextSectionRow(curSectionRow)
-{
-    var table = curSectionRow.parentNode;
-    var qCountText = curSectionRow.cells[1].getElementsByTagName("input")[1];
-    var qCount = parseInt(qCountText.value);
-    var curRow = curSectionRow;
-    for (var i = 0; i < qCount + 2; i++)
-    {
-        curRow = table.rows[curRow.rowIndex + 1];
-    }
-    curRow = table.rows[curRow.rowIndex + 1];
-    if (curRow.cells.length == 3 && curRow.cells[0].className ==
-        "forumTextEven" && curRow.cells[1].getElementsByTagName("input").length
-        > 0)
-    {
-        return curRow;
-    }
-    else
-    {
-        return null;
-    }
-}
-
-/*
- * Remove a section.
- */
-function removeSection(btn)
-{
-    var btnRow = btn.parentNode.parentNode;
-    var table = btnRow.parentNode;
-    var btnRowSectionNumber = getSectionNumber(btnRow);
-    var curSectionNumber = btnRowSectionNumber;
-    curRow = findNextSectionRow(btnRow);
-    while (curRow != null)
-    {
-        setSectionNumber(curRow, curSectionNumber);
-        curSectionNumber++;
-        curRow = findNextSectionRow(curRow);
-    }
-    if (curSectionNumber == btnRowSectionNumber && curSectionNumber == 0)
-    {
-        // the last section, cannot remove
-        // NOP
-    }
-    else
-    {
-        // find the group row
-        curRow = btnRow;
-        while (curRow.cells[0].className != "forumTitle")
-        {
-            curRow = table.rows[curRow.rowIndex - 1];
-        }
-        var sCountText = curRow.cells[1].getElementsByTagName("input")[1];
-        var sCount = sCountText.value;
-        sCount--;
-        sCountText.value = sCount;
-
-        // remove questions under this section
-        curRow = table.rows[btnRow.rowIndex + 1];
-        while (curRow.cells.length == 5)
-        {
-            table.removeChild(curRow);
-            curRow = table.rows[btnRow.rowIndex + 1];
-        }
-        // remove subtotal row
-        table.removeChild(table.rows[btnRow.rowIndex + 1]);
-
-        var groupNumber = getGroupNumber(btnRow);
-        // remove section row
-        table.removeChild(btnRow);
-
-        // calculate section subtotal
-        calculateSectionSubtotal(groupNumber);
-    }
-}
-
-/*
- * Get the section number.
- */
-function getSectionNumber(row)
-{
-    var temp;
-    var elements = row.cells[0].getElementsByTagName("input");
-    if (elements.length > 0)
-    {
-        temp = elements[0].name;
-    }
-    else
-    {
-        temp = row.cells[0].getElementsByTagName("textarea")[0].name;
-    }
-    temp = temp.substring(temp.indexOf("allSections["));
-    temp = temp.substring(temp.indexOf("[") + 1, temp.indexOf("]"));
-    return parseInt(temp);
-}
-
-/*
- * Set the section number in the given row and its questions.
- */
-function setSectionNumber(row, number)
-{
-    var curNumber = getSectionNumber(row);
-    var curGNumber = getGroupNumber(row);
-    var afterRowIndex = row.rowIndex;
-    var elements = document.getElementsByTagName("input");
-    for (var i = 0; i < elements.length; i++)
-    {
-        if (elements[i].parentNode.parentNode.rowIndex >= afterRowIndex)
-        {
-            var name = elements[i].name;
-
-            if (name != null && name.indexOf('allGroups[' + curGNumber + '].allSections[' + curNumber + ']') >= 0)
-            {
-                name = name.replace('allSections[' + curNumber + ']', 'allSections[' + number + ']');
-                elements[i].name = name;
-            }
-            else
-            {
-                var id = elements[i].id;
-                if (id.indexOf('allGroups[' + curGNumber + '].allSections[' +
-                    curNumber + ']') >= 0)
-                {
-                    id = id.replace('allGroups[' + curGNumber + '].allSections[' + curNumber + ']', 'allGroups[' + curGNumber + '].allSections[' + number + ']');
-                    elements[i].id = id;
-                }
-            }
-        }
-    }
-    elements = document.getElementsByTagName("textarea");
-    for (var i = 0; i < elements.length; i++)
-    {
-        if (elements[i].parentNode.parentNode.rowIndex >= afterRowIndex)
-        {
-            var name = elements[i].name;
-            if (name.indexOf('allGroups[' + curGNumber + '].allSections[' +
-                curNumber + ']') >= 0)
-            {
-                name = name.replace('allSections[' + curNumber + ']', 'allSections[' + number + ']');
-                elements[i].name = name;
-            }
-        }
-    }
-    elements = document.getElementsByTagName("select");
-    for (var i = 0; i < elements.length; i++)
-    {
-        if (elements[i].parentNode.parentNode.rowIndex >= afterRowIndex)
-        {
-            var name = elements[i].name;
-            if (name.indexOf('allGroups[' + curGNumber + '].allSections[' +
-                curNumber + ']') >= 0)
-            {
-                name = name.replace('allSections[' + curNumber + ']', 'allSections[' + number + ']');
-                elements[i].name = name;
-            }
-        }
-    }
-}
-    /*
- * Add a question.
- */
-function addQuestion(btn)
-{
-    var btnRow = btn.parentNode.parentNode;
-    var table = btnRow.parentNode;
-    var curRow = btnRow;
-    var qCountText = table.rows[btnRow.rowIndex -
-        1].cells[1].getElementsByTagName("input")[1];
-    var qCount = qCountText.value;
-
-    while (curRow != null && curRow.cells.length == 5)
-    {
-        curRow = table.rows[curRow.rowIndex + 1];
-    }
-    var lastQuestionRow = table.rows[curRow.rowIndex - 1];
-    // copy a new question row
-    var newRow = lastQuestionRow.cloneNode(true);
-
-    newRow.getElementsByTagName("textarea")[0].value = "Description goes here.";
-    newRow.getElementsByTagName("textarea")[1].value = "Guideline goes here.";
-    newRow.getElementsByTagName("select")[0].selectedIndex = 0;
-    newRow.getElementsByTagName("select")[1].selectedIndex = 0;
-    newRow.getElementsByTagName("input")[0].value = "100.00";
-    // insert the new row
-    table.insertBefore(newRow, lastQuestionRow);
-    table.insertBefore(lastQuestionRow, newRow);
-    // increase the question number
-    var curNumber = getQuestionNumber(lastQuestionRow);
-    curNumber++;
-    setQuestionNumber(newRow, curNumber);
-    calculateSubtotal(getGroupNumber(newRow), getSectionNumber(newRow));
-    qCount++;
-    qCountText.value = qCount;
-}
-
-/*
- * Remove a question
- */
-function removeQuestion(btn)
-{
-    var btnRow = btn.parentNode.parentNode;
-    var table = btnRow.parentNode;
-    var curRow = table.rows[btnRow.rowIndex + 1];
-    var btnRowQuestionNumber = getQuestionNumber(btnRow);
-    var curQuestionNumber = btnRowQuestionNumber;
-    while (curRow.cells.length == 5)
-    {
-        setQuestionNumber(curRow, curQuestionNumber);
-        curQuestionNumber++;
-        curRow = table.rows[curRow.rowIndex + 1];
-    }
-    if (curQuestionNumber == btnRowQuestionNumber && curQuestionNumber == 0)
-    {
-        // the last question, cannot remove
-        // NOP
-    }
-    else
-    {
-        // find the section row
-        curRow = btnRow;
-        while (curRow.cells.length == 5)
-        {
-            curRow = table.rows[curRow.rowIndex - 1];
-        }
-        var qCountText = curRow.cells[1].getElementsByTagName("input")[1];
-        var qCount = qCountText.value;
-        qCount--;
-        var groupNumber = getGroupNumber(btnRow);
-        var sectionNumber = getSectionNumber(btnRow);
-        qCountText.value = qCount;
-        table.removeChild(btnRow);
-        calculateSubtotal(groupNumber, sectionNumber);
-    }
-}
-
-/*
- * Get the question number in the given row.
- */
-function getQuestionNumber(row)
-{
-    var qTypeSel = row.cells[1].getElementsByTagName("select")[0];
-    var temp = qTypeSel.name;
-    temp = temp.replace( /[^\d^\[]/g, ''); // [0[1[1
-    return temp.substr(temp.lastIndexOf('[') + 1);
-}
-    /*
- * Set the question number in the given row.
- */
-function setQuestionNumber(row, number)
-{
-    // Cell for Question Text & Guideline
-    var cell = row.cells[0];
-    // Question text
-    var cur = cell.getElementsByTagName("textarea")[0];
-    var name = cur.name;
-    name = name.replace(/allQuestions(\[\d+\])/ , 'allQuestions[' + number + ']');
-    cur.name = name;
-    // Question Guideline
-    cur = cell.getElementsByTagName("textarea")[1];
-    name = cur.name;
-    name = name.replace(/allQuestions(\[\d+\])/ , 'allQuestions[' + number + ']');
-    cur.name = name;
-    // Cell for Question Type
-    cell = row.cells[1];
-    // Question type
-    cur = cell.getElementsByTagName("select")[0];
-    name = cur.name;
-    name = name.replace(/allQuestions(\[\d+\])/ , 'allQuestions[' + number + ']');
-    cur.name = name;
-    // Cell for Weight
-    cell = row.cells[2];
-    // Weight
-    cur = cell.getElementsByTagName("input")[0];
-    name = cur.name;
-    name = name.replace(/allQuestions(\[\d+\])/ , 'allQuestions[' + number + ']');
-    cur.name = name;
-    // Cell for Document Upload
-    cell = row.cells[3];
-    // Document Upload
-    cur = cell.getElementsByTagName("select")[0];
-    name = cur.name;
-    name = name.replace(/allQuestions(\[\d+\])/ , 'allQuestions[' + number + ']');
-    cur.name = name;
-}
-
-/*
- * This will be fired when a question weight is changed, it updates the subtotal of
- * the section to which the question belongs.
- */
-function updateQuestionsTotal(input)
-{
-    var sectionNumber = getSectionNumber(input.parentNode.parentNode);
-    var groupNumber = getGroupNumber(input.parentNode.parentNode);
-    calculateSubtotal(groupNumber, sectionNumber);
-}
-
-/*
- * Calculate and update the subtotal of given section.
- */
-function calculateSubtotal(groupNumber, sectionNumber)
-{
-    var elements = document.getElementsByTagName("input");
-    var total = 0;
-    for (var i = 0; i < elements.length; i++)
-    {
-        var name = elements[i].name;
-        if (name != null && name.indexOf("scorecard.allGroups[" + groupNumber +
-            "].allSections[" + sectionNumber + "].allQuestions[") >= 0 &&
-            name.indexOf("weight") >= 0)
-        {
-            total = total + parseInt(elements[i].value);
-        }
-    }
-    var questionSubtotalInput = document.getElementById("allGroups[" +
-        groupNumber + "].allSections[" + sectionNumber + "].questionTotal");
-    questionSubtotalInput.value = total;
-}
-
-/*
- * This will be fired when a section weight is changed, it updates the subtotal of
- * the group to which the section belongs.
- */
-function updateSectionsTotal(input)
-{
-    var groupNumber = getGroupNumber(input.parentNode.parentNode);
-    calculateSectionSubtotal(groupNumber);
-}
-
-/*
- * Calculate and update the subtotal of given group
- */
-function calculateSectionSubtotal(groupNumber)
-{
-    var elements = document.getElementsByTagName("input");
-    var total = 0;
-    for (var i = 0; i < elements.length; i++)
-    {
-        var name = elements[i].name;
-        if (name != null && name.indexOf("scorecard.allGroups[" + groupNumber +
-            "].allSections[") >= 0 && name.indexOf("weight") >= 0 &&
-            name.indexOf("allQuestions[") < 0)
-        {
-            total = total + parseInt(elements[i].value);
-        }
-    }
-    var sectionSubtotalInput = document.getElementById("allGroups[" +
-        groupNumber + "].sectionTotal");
-    sectionSubtotalInput.value = total;
-}
+	/*
+   * Calculate and update the subtotal of given group
+   */
+	function calculateSectionSubtotal(groupNumber)
+	{
+    	var elements = document.getElementsByTagName("input");
+    	var total = 0;
+    	for (var i = 0; i < elements.length; i++)
+    	{
+        	var name = elements[i].name;
+        	if (name != null && name.indexOf("scorecard.allGroups[" + groupNumber +
+            	"].allSections[") >= 0 && name.indexOf("weight") >= 0 &&
+            	name.indexOf("allQuestions[") < 0)
+        	{
+            	total = total + parseInt(elements[i].value);
+        	}
+    	}
+    	var sectionSubtotalInput = document.getElementById("allGroups[" +
+        	groupNumber + "].sectionTotal");
+    	sectionSubtotalInput.value = total;
+	}
+	
+	// call initDnD while loading the page
+	dojo.event.connect(dojo, 'loaded', 'initDnD');
+	// call locateGroupCountInput to locate the input element while loading the page
+	dojo.event.connect(dojo, 'loaded', 'locateGroupCountInput');
+	// call refreshProjectCategories while loading the page
+	dojo.event.connect(dojo, 'loaded', 'refreshProjectCategories');
 </script>
 <%
     // cache some lookups
@@ -752,7 +757,7 @@ function calculateSectionSubtotal(groupNumber)
 %>
 <html:form action="/scorecardAdmin.do?actionName=saveScorecard">
 <table width="100%" border="0" cellpadding="0" cellspacing="1" class="forumBkgd">
-    
+	
     <tr>
         <td class="whiteBkgnd" style="height: 100%">
             <table border="0" cellpadding="0" cellspacing="0" width="100%">
@@ -871,7 +876,7 @@ function calculateSectionSubtotal(groupNumber)
                 </tr>
             </table>
             <table width="100%" border="0" cellpadding="0" cellspacing="1" class="forumBkgd" id="table1" onMouseOut="javascript:highlightTableRow(0);">
-                
+               	<% int listIdSequence = 0; %>
                 <logic:iterate id="curGroup" indexId="gIdx" name="scorecardForm" property="scorecard.allGroups">
                     <% float sectionSubtotal = 0; %>
                     <logic:messagesPresent property='<%= "scorecard.allGroups[" + gIdx + "]" %>'>
@@ -951,49 +956,58 @@ function calculateSectionSubtotal(groupNumber)
                                 </html:submit>
                             </td>
                         </tr>
-                        <logic:iterate id="curQuestion" indexId="qIdx" name="curSection" property="allQuestions" type="com.topcoder.management.scorecard.data.Question">
-                            <% subtotal += curQuestion.getWeight(); %>
-                            <logic:messagesPresent property='<%= "scorecard.allGroups[" + gIdx + "].allSections[" + sIdx + "].allQuestions[" + qIdx + "]" %>'>
-                                <tr>
-                                    <td class="errorText" style="height: 100%" colspan="5">
-                                        <html:errors property='<%= "scorecard.allGroups[" + gIdx + "].allSections[" + sIdx + "].allQuestions[" + qIdx + "]" %>'  />
-                                    </td>
-                                </tr>
-                            </logic:messagesPresent>
-                            
-                            <tr onMouseOver="javascript:highlightTableRow(this);" style="background-color:#ffffff">
-                                <td class="ForumQuestion" width="66%">
-                                    <bean:message key="global.label.question_text"/>
-                                    <br/>
-                                    <html:textarea property='<%= "scorecard.allGroups[" + gIdx + "].allSections[" + sIdx + "].allQuestions[" + qIdx + "].description" %>' rows="20" cols="20" styleClass="inputBoxQuestion"  />
-                                    <br/>
-                                    <bean:message key="global.label.question_guideline"/>
-                                    <br/>
-                                    <html:textarea property='<%= "scorecard.allGroups[" + gIdx + "].allSections[" + sIdx + "].allQuestions[" + qIdx + "].guideline" %>' rows="20" cols="20" styleClass="inputBoxGuideline" />
-                                    <br/>
-                                </td>
-                                <td class="forumTextOdd" width="11%">
-                                    <html:select property='<%= "scorecard.allGroups[" + gIdx + "].allSections[" + sIdx + "].allQuestions[" + qIdx + "].questionType.name" %>' style="margin-right:3px;margin-left:5px;" styleClass="inputBox" size="1">
-                                        <html:options name="questionTypeNames" labelName="questionTypeNames" />
-                                    </html:select>
-                                </td>
-                                <td class="forumTextOdd" width="3%">
-                                    <html:text property='<%= "scorecard.allGroups[" + gIdx + "].allSections[" + sIdx + "].allQuestions[" + qIdx + "].weight" %>' onchange="checkNumber(this);updateQuestionsTotal(this);" style="width:30px; height:16px" styleClass="inputBox" size="20" />
-                                </td>
-                                <td class="forumTextOdd" nowrap width="12%" >
-                                    <html:select property='<%= "scorecard.allGroups[" + gIdx + "].allSections[" + sIdx + "].allQuestions[" + qIdx + "].documentUploadValue" %>' styleClass="inputBox" style="margin-right:3px;margin-left:5px;" size="1">
-                                        <html:option value="N/A">N/A</html:option>
-                                        <html:option value="Required">Required</html:option>
-                                        <html:option value="Optional">Optional</html:option>
-                                    </html:select>
-                                </td>
-                                <td class="forumTextOdd" width="4%" >
-                                    <html:submit onclick="removeQuestion(this);return false;" styleClass="Buttons2">
-                                        <bean:message key="editScorecard.button.remove" />
-                                    </html:submit>
-                                </td>
-                            </tr>
-                        </logic:iterate>
+                        <tr style="background-color:#ffffff" cellpadding="0">
+                        	<td colspan="5">
+                        		<ul style="margin:0px" id='<%= "list" +  (listIdSequence++)%>'>
+                        			<logic:iterate id="curQuestion" indexId="qIdx" name="curSection" property="allQuestions" type="com.topcoder.management.scorecard.data.Question">
+                            			<% subtotal += curQuestion.getWeight(); %>
+                            			<li style="list-style-type:none;">
+                            				<table class="forumBkgd" border="0" cellpadding="0" cellspacing="1">
+                            					<logic:messagesPresent property='<%= "scorecard.allGroups[" + gIdx + "].allSections[" + sIdx + "].allQuestions[" + qIdx + "]" %>'>
+                                					<tr>
+                                    					<td class="errorText" style="height: 100%" colspan="5">
+                                        					<html:errors property='<%= "scorecard.allGroups[" + gIdx + "].allSections[" + sIdx + "].allQuestions[" + qIdx + "]" %>'  />
+                                    					</td>
+                                					</tr>
+                            					</logic:messagesPresent>
+                            					<tr onMouseOver="javascript:highlightTableRow(this);" style="background-color:#ffffff">
+                            						<td class="ForumQuestion" width="62%">
+                            							<bean:message key="global.label.question_text"/>
+                                    					<br/>
+                                    					<html:textarea property='<%= "scorecard.allGroups[" + gIdx + "].allSections[" + sIdx + "].allQuestions[" + qIdx + "].description" %>' rows="20" cols="20" styleClass="inputBoxQuestion"  />
+                                    					<br/>
+                                    					<bean:message key="global.label.question_guideline"/>
+                                    					<br/>
+                                    					<html:textarea property='<%= "scorecard.allGroups[" + gIdx + "].allSections[" + sIdx + "].allQuestions[" + qIdx + "].guideline" %>' rows="20" cols="20" styleClass="inputBoxGuideline" />
+                                    					<br/>
+                                					</td>
+                                					<td class="forumTextOdd" width="11%">
+                                						<html:select property='<%= "scorecard.allGroups[" + gIdx + "].allSections[" + sIdx + "].allQuestions[" + qIdx + "].questionType.name" %>' style="margin-right:3px;margin-left:5px;" styleClass="inputBox" size="1">
+                                        					<html:options name="questionTypeNames" labelName="questionTypeNames" />
+                                    					</html:select>
+                                					</td>
+                                					<td class="forumTextOdd" width="5%">
+                                    					<html:text property='<%= "scorecard.allGroups[" + gIdx + "].allSections[" + sIdx + "].allQuestions[" + qIdx + "].weight" %>' onchange="checkNumber(this);updateQuestionsTotal(this);" style="width:30px; height:16px" styleClass="inputBox" size="20" />
+                                					</td>
+                                					<td class="forumTextOdd" nowrap width="12%" >
+                                    					<html:select property='<%= "scorecard.allGroups[" + gIdx + "].allSections[" + sIdx + "].allQuestions[" + qIdx + "].documentUploadValue" %>' styleClass="inputBox" style="margin-right:3px;margin-left:5px;" size="1">
+                                        					<html:option value="N/A">N/A</html:option>
+                                        					<html:option value="Required">Required</html:option>
+                                        					<html:option value="Optional">Optional</html:option>
+                                    					</html:select>
+                                					</td>
+                                					<td class="forumTextOdd" width="6%" >
+                                    					<html:submit onclick="removeQuestion(this);return false;" styleClass="Buttons2">
+                                        					<bean:message key="editScorecard.button.remove" />
+                                    					</html:submit>
+                                					</td>
+                                				</tr>
+                                			</table>
+                                		</li>
+                        			</logic:iterate>
+                        		</ul>
+                        	</td>
+                        </tr>
                         <tr>
                             <td class="ForumQuestion" width="66%">&nbsp;</td>
                             <td class="forumTextOdd" width="11%">
@@ -1042,5 +1056,5 @@ function calculateSectionSubtotal(groupNumber)
         </td>
     </tr>
     
-</table>           
-</html:form>                  
+</table>
+</html:form>   

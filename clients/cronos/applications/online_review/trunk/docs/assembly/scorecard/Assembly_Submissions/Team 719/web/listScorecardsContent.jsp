@@ -18,11 +18,14 @@
    
 --%>
 <%@ page language="java" %>
-<%@ page import="com.cronos.onlinereview.actions.Constants,com.cronos.onlinereview.actions.ScorecardGroupBean, com.cronos.onlinereview.actions.ScorecardActionsHelper" %>
+<%@ page import="com.cronos.onlinereview.actions.Constants, com.cronos.onlinereview.actions.ScorecardActionsHelper" %>
 <%@ taglib uri="http://struts.apache.org/tags-bean" prefix="bean" %>
 <%@ taglib uri="http://struts.apache.org/tags-html" prefix="html" %>
 <%@ taglib uri="http://struts.apache.org/tags-logic" prefix="logic" %>
 
+<script type='text/javascript' src='scripts/common.js'></script>
+<script type='text/javascript' src='scripts/css.js'></script>
+<script type='text/javascript' src='scripts/standardista-table-sorting.js'></script>
 <script>
     // create the request object
     function createXMLHttpRequest() {
@@ -61,7 +64,7 @@
                       '</request>';
         // set the callback function
         myRequest.onreadystatechange = function() {
-            if( myRequest.readyState == 4 && myRequest.status == 200){
+            if(myRequest.readyState == 4 && myRequest.status == 200){
                 // the response is ready
                 var respXML = myRequest.responseXML;
                 // retrieve the result
@@ -70,8 +73,12 @@
                     // operation succeeded, change the status of corresponding checkbox
                     if (chbox.checked) {
                         chbox.checked = false;
+                        chbox.defaultChecked = false;
+                        chbox.parentNode.setAttribute('standardistaTableSortingInnerText', 'Inactive');
                     } else if (!chbox.checked){
                         chbox.checked = true;
+                        chbox.defaultChecked = true;
+                        chbox.parentNode.setAttribute('standardistaTableSortingInnerText', 'Active');
                     }
                     // refresh the filter
                     refreshFilter();
@@ -102,7 +109,7 @@
                 </tr>
             </table>
             <!-- Scorecards -->
-            <table id="scorecardTable" width="100%" border="0" cellpadding="0" cellspacing="1" class="forumBkgd">
+            <table id="scorecardTable" width="100%" border="0" cellpadding="0" cellspacing="1" class="forumBkgd" >
                 <tr valign="top">
                     <td class="forumTextEven" colspan="4">
                         <html:form action="/scorecardAdmin?actionName=newScorecard">
@@ -119,31 +126,45 @@
                         </select>&nbsp;
                     </td>
                 </tr>
-                <logic:iterate id="curGroup" name="<%= Constants.ATTR_KEY_SCORECARD_LIST %>" property="scorecardGroups" type="com.cronos.onlinereview.actions.ScorecardGroupBean">
-                    <tr valign="top">
-                        <td class="forumTitle">
-                            <span style="text-decoration: underline"><bean:write name="curGroup" property="projectCategory.name"/></span>
-                        </td>
-                        <td width="50%" class="forumTitle" >
-                            <span style="text-decoration: underline"><bean:message key="global.label.type" /></span>
-                        </td>
-                        <td class="forumTitle" style="text-align: center" width="30">
-                            <span style="text-decoration: underline"><bean:message key="global.label.active" /></span>
-                        </td>
-                    </tr>
-                    <logic:empty name="curGroup" property="scorecards">
-                        <tr>
-                            <td class="forumTextOdd" nowrap colspan="3">
-                                <bean:message key="listScorecards.message.noscorecards" arg0="<%=curGroup.getProjectCategory().getName() %>"/>
+            </table>
+            <logic:iterate id="curGroup" name="<%= Constants.ATTR_KEY_SCORECARD_LIST %>" property="scorecardGroups" type="com.cronos.onlinereview.actions.ScorecardGroupBean">
+                <table id='<%= "sortable_" + curGroup.getProjectCategory().getName()  %>' width="100%" border="0" cellpadding="0" cellspacing="1" class="forumBkgd">
+                    <thead>
+                        <tr valign="top">
+                            <td class="forumTitle">
+                                <span style="text-decoration: underline"><bean:write name="curGroup" property="projectCategory.name"/></span>
+                            </td>                           
+                            <td width="50%" class="forumTitle" >
+                                <span style="text-decoration: underline"><bean:message key="global.label.type" /></span>
+                            </td>
+                            <td class="forumTitle" style="text-align: center" width="60">
+                                <span style="text-decoration: underline"><bean:message key="global.label.active" /></span>
                             </td>
                         </tr>
-                    </logic:empty>
-                    <logic:notEmpty name="curGroup" property="scorecards">
+                    </thead>
+                    <tfoot>
+                        <logic:notEmpty name="curGroup" property="scorecards">
+                            <tr style="display:none;">
+                                <td class="forumTextOdd" nowrap colspan="3">
+                                    <bean:message key="listScorecards.message.noscorecards" arg0="<%=curGroup.getProjectCategory().getName() %>"/>
+                                </td>
+                            </tr>
+                        </logic:notEmpty>
+                        <logic:empty name="curGroup" property="scorecards">
+                            <tr>
+                                <td class="forumTextOdd" nowrap colspan="3">
+                                    <bean:message key="listScorecards.message.noscorecards" arg0="<%=curGroup.getProjectCategory().getName() %>"/>
+                                </td>
+                            </tr>
+                        </logic:empty>
+                    </tfoot>
+                    <tbody>
                         <!--Begin lists -->
-                        <logic:iterate id="curScorecard" indexId="sIdx" name="curGroup" property="scorecards">
+                        <logic:iterate id="curScorecard" indexId="sIdx" name="curGroup" property="scorecards" type="com.topcoder.management.scorecard.data.Scorecard">
                             <% String rowClass = (sIdx.intValue() % 2 == 0) ? "forumTextOdd" : "forumTextEven"; %>
                             <tr valign="top">
-                                <td class="<%=rowClass%>" nowrap>
+                                <!-- element.innerText is not supported by Firefox as IE, so here just add extended attribute to cache the name -->
+                                <td class="<%=rowClass%>" standardistaTableSortingInnerText='<%= curScorecard.getName() + " v " + curScorecard.getVersion() %>'>
                                     <logic:equal value="1" name="curScorecard" property="category">
                                         <!-- "Design" icon, iconStatusSpecSm.gif -->
                                         <img src="images/iconStatusSpecSm.gif" />
@@ -211,9 +232,9 @@
                                 <td class="<%=rowClass%>" >
                                     <bean:write name="curScorecard" property="scorecardType.name"/>
                                 </td>
-                                <td class="<%=rowClass%>" style="text-align: center">
+                                <td class="<%=rowClass%>" style="text-align: center" standardistaTableSortingInnerText="<%= curScorecard.getScorecardStatus().getName() %>">
                                     <bean:define id="scorecardId" name="curScorecard" property="id" />
-                                    <bean:define id="ajaxURL" value="<%= ScorecardActionsHelper.getInstance().getAjaxSupportAppUrl() %>"/> 
+                                    <bean:define id="ajaxURL" value="<%= response.encodeURL("ajaxSupport") %>"/> 
                                     <logic:equal value="1" name="curScorecard" property="scorecardStatus.id">
                                         <logic:equal value="true" name="curScorecard" property="inUse">
                                             <input id="<%= "scorecardStatus" + scorecardId %>" type="checkbox" onclick="<%="sendRequest('" + ajaxURL +  "', '" + scorecardId + "', this); return false;" %>" checked disabled/>
@@ -224,18 +245,15 @@
                                     </logic:equal>
                                     <logic:equal value="2" name="curScorecard" property="scorecardStatus.id">
                                         <!-- <input id="Checkbox13" type="checkbox" onclick="refreshFilter()"/> -->
-                                        <input id="<%= "scorecardStatus" + scorecardId %>" type="checkbox" onclick="<%="sendRequest('" + ajaxURL +  "', '" + scorecardId + "', this); return false;" %>"/>
+                                        <input id="<%= "scorecardStatus" + scorecardId %>" type="checkbox" onclick="<%="sendRequest('" + ajaxURL +  "', '" + scorecardId + "', this); return false;" %>" />
                                     </logic:equal>
                                 </td>
                             </tr>
                         </logic:iterate>
-                        <tr style="display:none;">
-                            <td class="forumTextOdd" nowrap colspan="3">
-                                <bean:message key="listScorecards.message.noscorecards" arg0="<%=curGroup.getProjectCategory().getName() %>"/>
-                            </td>
-                        </tr>
-                    </logic:notEmpty>
-                </logic:iterate>
+                    </tbody>
+                </table>
+            </logic:iterate>
+            <table width="100%" border="0" cellpadding="0" cellspacing="1" class="forumBkgd">    
                 <tr>
                     <td class="forumHeadFoot" colspan="3" height="5">
                         <img src="images/clear.gif" alt="" width="10" height="5" border="0"/>

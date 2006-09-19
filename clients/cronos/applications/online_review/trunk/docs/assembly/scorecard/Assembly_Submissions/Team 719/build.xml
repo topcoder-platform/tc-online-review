@@ -8,7 +8,7 @@
     <property name="component" value="Online_Review_Scorecard_Admin" />
     <property name="package" value="com.cronos.onlinereview.actions" />
     <property name="packagedir" value="com/cronos/onlinereview/actions" />
-    <property name="distfilename" value="Online_Review" />
+    <property name="distfilename" value="scorecard_admin" />
     <property name="component_version" value="1.0" />
     <property name="component_path" value="${distfilename}/${component_version}" />
 	<property name="dev_submission.jar" value="${component}_${component_version}_dev_submission.jar"/>
@@ -71,7 +71,6 @@
     <property name="online_review_ajax_support.jar.name" value="online_review_ajax_support.jar" />
     <property name="online_review_ajax_support.path" value="online_review_ajax_support/${online_review_ajax_support.version}" />
     <property name="online_review_ajax_support.jar" value="${tcs_libdir}/${online_review_ajax_support.path}/${online_review_ajax_support.jar.name}" />
-    <property name="ajax_support_dependencies.jar" value="${tcs_libdir}/${online_review_ajax_support.path}/ajax_support_dependencies.jar" /> 
     
     <property name="base_exception.version" value="1.0" />
     <property name="base_exception.jar.name" value="base_exception.jar" />
@@ -107,7 +106,11 @@
     <property name="db_connection_factory.jar.name" value="db_connection_factory.jar" />
     <property name="db_connection_factory.path" value="db_connection_factory/${db_connection_factory.version}" />
     <property name="db_connection_factory.jar" value="${tcs_libdir}/${db_connection_factory.path}/${db_connection_factory.jar.name}" />
-    
+	
+	<property name="object_factory.version" value="2.0.1" />
+	    <property name="object_factory.jar.name" value="object_factory.jar" />
+	    <property name="object_factory.path" value="object_factory/${object_factory.version}" />
+	    <property name="object_factory.jar" value="${tcs_libdir}/${object_factory.path}/${object_factory.jar.name}" />
     
     <property name="typesafe_enum.version" value="1.0" />
     <property name="typesafe_enum.jar.name" value="typesafe_enum.jar" />
@@ -134,7 +137,17 @@
     <property name="scorecard_management.path" value="scorecard_management/${scorecard_management.version}" />
     <property name="scorecard_management.jar" value="${tcs_libdir}/${scorecard_management.path}/${scorecard_management.jar.name}" />
     
-    <property name="scorecard_management_persistence.version" value="1.0" />
+	<property name="resource_management.version" value="1.0" />
+	<property name="resource_management.jar.name" value="resource_management.jar" />
+	<property name="resource_management.path" value="resource_management/${resource_management.version}" />
+	<property name="resource_management.jar" value="${tcs_libdir}/${resource_management.path}/${resource_management.jar.name}" />
+	
+	<property name="resource_management_persistence.version" value="1.0" />
+	<property name="resource_management_persistence.jar.name" value="resource_management_persistence.jar" />
+	<property name="resource_management_persistence.path" value="resource_management_persistence/${resource_management_persistence.version}" />
+	<property name="resource_management_persistence.jar" value="${tcs_libdir}/${resource_management_persistence.path}/${resource_management_persistence.jar.name}" />
+	
+    <property name="scorecard_management_persistence.version" value="1.0.1" />
     <property name="scorecard_management_persistence.jar.name" value="scorecard_management_persistence.jar" />
     <property name="scorecard_management_persistence.path" value="scorecard_management_persistence/${scorecard_management_persistence.version}" />
     <property name="scorecard_management_persistence.jar" value="${tcs_libdir}/${scorecard_management_persistence.path}/${scorecard_management_persistence.jar.name}" />
@@ -144,6 +157,10 @@
     <property name="search_builder.path" value="search_builder/${search_builder.version}" />
     <property name="search_builder.jar" value="${tcs_libdir}/${search_builder.path}/${search_builder.jar.name}" />
 
+	<property name="class_associations.version" value="1.0" />
+	<property name="class_associations.jar.name" value="class_associations.jar" />
+	<property name="class_associations.path" value="class_associations/${class_associations.version}" />
+	<property name="class_associations.jar" value="${tcs_libdir}/${class_associations.path}/${class_associations.jar.name}" />
     <!-- 3rd Party Dependencies  -->
 	<property name="junit.jar" value="${ext_libdir}/junit.jar"/>
     <property name="ifxjdbc.jar" value="${ext_libdir}/ifxjdbc.jar"/>
@@ -163,7 +180,6 @@
     <path id="buildlibs">
     	<pathelement location="${online_review_ajax_support.jar}" />
     	<pathelement location="${base_exception.jar}" />
-        <pathelement location="${ajax_support_dependencies.jar}" />
         <pathelement location="${configuration_manager.jar}" />
         <pathelement location="${data_validation.jar}" />
         <pathelement location="${database_abstraction.jar}" />
@@ -178,6 +194,9 @@
         <pathelement location="${scorecard_management.jar}" />
         <pathelement location="${scorecard_management_persistence.jar}" />
     	<pathelement location="${search_builder.jar}" />
+    	<pathelement location="${resource_management.jar}" />
+    	<pathelement location="${resource_management_persistence.jar}" />	
+    	<pathelement location="${class_associations.jar}" />
     	
     	<pathelement location="${junit.jar}" />
         <pathelement location="${ifxjdbc.jar}" />
@@ -272,7 +291,29 @@
             <classes dir="${configdir}" includes="com/cronos/onlinereview/actions/ScorecardActionsHelper.xml" />
         	<classes dir="${configdir}" includes="com/cronos/onlinereview/ajax/default.xml" />
         	<classes dir="${configdir}" includes="com/cronos/onlinereview/ajax/objectfactory.xml" />
-            <lib dir="${tcs_libdir}" includes="*.jar" />
+        	<classes dir="${configdir}" includes="com/cronos/onlinereview/ajax/AjaxRequestSchema.xsd" />
+        	<classes dir="${configdir}" includes="com/topcoder/management/resource/ResourceManager.xml" />
+        	<classes dir="${configdir}" includes="com/topcoder/search/builder/SearchBuilder.xml" />
+        	
+            <lib file="${online_review_ajax_support.jar}" />
+            <lib file="${base_exception.jar}" />
+            <lib file="${configuration_manager.jar}" />
+            <lib file="${data_validation.jar}" />
+            <lib file="${database_abstraction.jar}" />
+            <lib file="${id_generator.jar}" />
+            <lib file="${logging_wrapper.jar}" />
+            <lib file="${db_connection_factory.jar}" />
+            <lib file="${object_factory.jar}" />
+            <lib file="${typesafe_enum.jar}" />
+            <lib file="${project_management.jar}" />
+            <lib file="${project_management_persistence.jar}" />
+            <lib file="${scorecard_data_structure.jar}" />
+            <lib file="${scorecard_management.jar}" />
+            <lib file="${scorecard_management_persistence.jar}" />
+            <lib file="${search_builder.jar}" />
+        	<lib file="${class_associations.jar}" />
+        	<lib file="${resource_management.jar}" />
+        	<lib file="${resource_management_persistence.jar}" />
             <lib dir="${ext_libdir}" includes="*.jar" excludes="servlet-api.jar" />
             <fileset dir="${webdir}" excludes="WEB-INF/lib/**" />
         </war>
@@ -281,7 +322,7 @@
     <target name="deploy" depends="dist">
         <copy file="${component.war}" todir="${deploy-dir}" overwrite="true" />
     </target>
-	<target name="dev_submission" depends="test" >
+	<target name="dev_submission">
 	        <jar jarfile="${dev_submission.jar}"
 	             basedir="."
 	             includes="${webinf_dir}/**, ${configdir}/**,${srcdir}/**/**, ${testlogdir}/**, ${webdir}/**/**, DeploymentGuide.doc, build.xml, changelog.txt, ${ext_libdir}/**/**"

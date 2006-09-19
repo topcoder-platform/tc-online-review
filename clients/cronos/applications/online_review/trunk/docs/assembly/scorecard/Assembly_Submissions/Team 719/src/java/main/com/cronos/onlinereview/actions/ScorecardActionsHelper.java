@@ -38,11 +38,6 @@ import com.topcoder.util.config.ConfigManager;
  */
 public final class ScorecardActionsHelper {
     /**
-     * Configuration property key for Ajax Support service URL.
-     */
-    private static final String KEY_AJAX_SUPPORT_APP_URL = "ajaxSupportAppUrl";
-
-    /**
      * Configuration property key for user id session attribute key.
      */
     private static final String KEY_USER_ID_SESSION_ATTRIBUTE = "userIdSessionAttributeKey";
@@ -52,10 +47,6 @@ public final class ScorecardActionsHelper {
      */
     private static ScorecardActionsHelper instance = null;
 
-    /**
-     * Ajax Support Service application URL.
-     */
-    private String ajaxSupportAppUrl;
 
     /**
      * User ID session attribute key.
@@ -121,8 +112,6 @@ public final class ScorecardActionsHelper {
         ConfigManager cm = ConfigManager.getInstance();
         String namespace = getClass().getName();
         try {
-            // ajax support app url
-            this.ajaxSupportAppUrl = cm.getString(namespace, KEY_AJAX_SUPPORT_APP_URL);
 
             // User Id session attribute key
             this.userIdSessionAttributeKey = cm.getString(namespace, KEY_USER_ID_SESSION_ATTRIBUTE);
@@ -200,16 +189,6 @@ public final class ScorecardActionsHelper {
         return instance;
     }
 
-    /**
-     * <p>
-     * Return the Ajax Support Application URL.
-     * </p>
-     * 
-     * @return the Ajax Support Application URL
-     */
-    public String getAjaxSupportAppUrl() {
-        return this.ajaxSupportAppUrl;
-    }
 
     /**
      * <p>
@@ -825,4 +804,5 @@ public final class ScorecardActionsHelper {
     public String getUserIdSessionAttributeKey() {
         return userIdSessionAttributeKey;
     }
+   
 }
