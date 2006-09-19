@@ -25,14 +25,14 @@
 	<jsp:include page="../includes/inc_header.jsp" />
 	<table width="100%" border="0" cellpadding="0" cellspacing="0">
 		<tr valign="top">
-			<!-- Left Column Begins-->
+			<!-- Left Column Begins -->
 			<td width="180">
 				<jsp:include page="../includes/inc_leftnav.jsp" />
 			</td>
 			<!-- Left Column Ends -->
 
 			<!-- Gutter Begins -->
-			<td width="15"><img src="../i/clear.gif" width="15" height="1" border="0"/></td>
+			<td width="15"><img src="../i/clear.gif" width="15" height="1" border="0" /></td>
 			<!-- Gutter Ends -->
 
 			<!-- Center Column Begins -->
@@ -42,11 +42,12 @@
 				<div id="mainMiddleContent">
 					<jsp:include page="../includes/project/project_list.jsp" />
 				</div>
+				<br /><br />
 			</td>
 			<!-- Center Column Ends -->
 
 			<!-- Gutter -->
-			<td width="15"><img src="../i/clear.gif" width="25" height="1" border="0"></td>
+			<td width="15"><img src="../i/clear.gif" width="25" height="1" border="0" /></td>
 			<!-- Gutter Ends -->
 
 			<!-- Right Column Begins -->
@@ -54,7 +55,7 @@
 			<!-- Right Column Ends -->
 
 			<!-- Gutter -->
-			<td width="2"><img src="../i/clear.gif" width="2" height="1" border="0"></td>
+			<td width="2"><img src="../i/clear.gif" width="2" height="1" border="0" /></td>
 			<!-- Gutter Ends -->
 		</tr>
 	</table>

@@ -200,20 +200,21 @@ window.onload=do_onload
 					<jsp:include page="../includes/project/project_phase.jsp" />
 					<jsp:include page="../includes/project/project_detail.jsp" />
 					<jsp:include page="../includes/project/project_resource.jsp" />
-					<p><!-- @ --></p>
-					<%
-						if (AuthorizationHelper.hasUserPermission(request, Constants.EDIT_PROJECT_DETAILS_PERM_NAME)) {
-					%>
-							<a href="EditProject.do?method=editProject&pid=${project.id}"><html:img
-								srcKey="viewProjectDetails.btnEdit.img" styleClass="bttnBottom"
-								altKey="viewProjectDetails.btnEdit.alt" /></a>
-					<%
-						}
-					%>
-					<a href="javascript:history.go(-1)"><html:img
-						srcKey="btnBack.img" styleClass="bttnBottom" altKey="btnBack.alt" /></a>
-					<br /><br />
+
+					<div align="right">
+						<a href="javascript:history.go(-1)"><html:img srcKey="btnBack.img" altKey="btnBack.alt" border="0" /></a><br />
+						<%
+							if (AuthorizationHelper.hasUserPermission(request, Constants.EDIT_PROJECT_DETAILS_PERM_NAME)) {
+						%>
+								<a href="EditProject.do?method=editProject&pid=${project.id}"><html:img
+									srcKey="viewProjectDetails.btnEdit.img" border="0"
+									altKey="viewProjectDetails.btnEdit.alt" /></a>&#160;
+						<%
+							}
+						%>
+					</div><br />
 				</div>
+				<br /><br />
 			</td>
 			<!-- Center Column Ends -->
 
