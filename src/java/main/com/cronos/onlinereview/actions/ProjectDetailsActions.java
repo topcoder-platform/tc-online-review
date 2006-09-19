@@ -48,7 +48,7 @@ import com.topcoder.search.builder.filter.AndFilter;
 import com.topcoder.search.builder.filter.Filter;
 import com.topcoder.servlet.request.FileUpload;
 import com.topcoder.servlet.request.FileUploadResult;
-import com.topcoder.servlet.request.RemoteFileUpload;
+import com.topcoder.servlet.request.LocalFileUpload;
 import com.topcoder.servlet.request.UploadedFile;
 import com.topcoder.util.errorhandling.BaseException;
 
@@ -486,7 +486,8 @@ public class ProjectDetailsActions extends DispatchAction {
         StrutsRequestParser parser = new StrutsRequestParser();
         parser.AddFile(file);
 
-        FileUpload fileUpload = new RemoteFileUpload("com.topcoder.servlet.request.RemoteFileUpload");
+//        FileUpload fileUpload = new RemoteFileUpload("com.topcoder.servlet.request.RemoteFileUpload");
+        FileUpload fileUpload = new LocalFileUpload("com.topcoder.servlet.request.LocalFileUpload");
 
         FileUploadResult uploadResult = fileUpload.uploadFiles(request, parser);
         UploadedFile uploadedFile = uploadResult.getUploadedFile("file");
@@ -657,7 +658,8 @@ public class ProjectDetailsActions extends DispatchAction {
         Submission[] submissions = upMgr.searchSubmissions(filter);
         Submission submission = (submissions.length != 0) ? submissions[0] : null;
 
-        FileUpload fileUpload = new RemoteFileUpload("com.topcoder.servlet.request.RemoteFileUpload");
+//        FileUpload fileUpload = new RemoteFileUpload("com.topcoder.servlet.request.RemoteFileUpload");
+        FileUpload fileUpload = new LocalFileUpload("com.topcoder.servlet.request.LocalFileUpload");
         UploadedFile uploadedFile = fileUpload.getUploadedFile(upload.getParameter());
 
         InputStream in = uploadedFile.getInputStream();
