@@ -33,12 +33,12 @@
             <form-property name="scorecard_approval" type="java.lang.Long" />
             <form-property name="forum_id" type="java.lang.Long" />
             <form-property name="SVN_module" type="java.lang.String" />
-            <form-property name="notes" type="java.lang.String" />     
-            <form-property name="explanation" type="java.lang.String" />    
-            <form-property name="status" type="java.lang.Long" />                
-            <form-property name="status_explanation" type="java.lang.String" />   
+            <form-property name="notes" type="java.lang.String" />
+            <form-property name="explanation" type="java.lang.String" />
+            <form-property name="status" type="java.lang.Long" />
+            <form-property name="status_explanation" type="java.lang.String" />
             <form-property name="current_phase" type="java.lang.String" />
-            
+
             <form-property name="resources_role" type="java.lang.Long[]" />
             <form-property name="resources_name" type="java.lang.String[]" />
             <form-property name="resources_payment" type="java.lang.Boolean[]" />
@@ -109,6 +109,15 @@
             <form-property name="save" type="java.lang.String" />
             <form-property name="review_function" type="java.lang.String[]" />
             <form-property name="reject_reason" type="java.lang.String[]" />
+        </form-bean>
+
+        <form-bean name="finalReviewForm" dynamic="true"
+            type="org.apache.struts.validator.LazyValidatorForm">
+            <form-property name="rid" type="java.lang.Long" />
+            <form-property name="save" type="java.lang.String" />
+            <form-property name="fix_status" type="java.lang.String[]" />
+            <form-property name="final_comment" type="java.lang.String[]" />
+            <form-property name="approve_fixes" type="java.lang.Boolean" />
         </form-bean>
     </form-beans>
 
@@ -474,6 +483,7 @@
         <action path="/actions/EditFinalReview" unknown="false"
             type="com.cronos.onlinereview.actions.ProjectReviewActions"
             parameter="method" scope="request"
+            name="finalReviewForm"
             input="/jsp/viewProjectDetails.jsp">
             <forward name="success" path="/jsp/editFinalReview.jsp" redirect="false"/>
         </action>
@@ -482,9 +492,10 @@
         <action path="/actions/SaveFinalReview" unknown="false"
             type="com.cronos.onlinereview.actions.ProjectReviewActions"
             parameter="method" scope="request"
+            name="finalReviewForm"
             input="/jsp/editFinalReview.jsp">
             <forward name="preview" path="/jsp/viewFinalReview.jsp" redirect="false"/>
-            <forward name="success" path="/actions/ViewProjectDetails.do?method=viewProjectDetails" redirect="false"/>
+            <forward name="success" path="/actions/ViewProjectDetails.do?method=viewProjectDetails" redirect="true"/>
         </action>
 
         <!-- "View Final Review" action -->
