@@ -73,15 +73,17 @@
 				
 					<table class="scorecard" cellpadding="0" width="100%" style="border-collapse: collapse;">
 						<tr>
-				        		<td class="title">Screening Responses</td>			
+				        		<td class="title"><bean:message key="viewAutoScreening.ScreeningResponses" /></td>			
 						</tr>
-						<c:forEach var="severityEntry" items="${screeningResponsesMap}">						
+						<c:forEach var="severityEntry" items="${screeningResultsMap}">	
 							<c:forEach var="responseEntry" varStatus="responseStatus" items="${severityEntry.value}">
 								<c:forEach var="result" varStatus="resultStatus" items="${responseEntry.value}">
 									<c:if test="${resultStatus.first}">
 										<c:if test="${responseStatus.first}"> 
 											<tr>
-												<td class="header"><b>${result.screeningResponse.responseSeverity.name}</b></td>  
+												<td class="header">
+													<b><bean:message key="ScreeningResponseSeverity.${fn:replace(result.screeningResponse.responseSeverity.name, ' ', '')}" /></b>
+												</td>  
 											</tr>
 											<tr class="light">    
 								            			<td class="value">

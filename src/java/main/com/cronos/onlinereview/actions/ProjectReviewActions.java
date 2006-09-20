@@ -2930,17 +2930,15 @@ public class ProjectReviewActions extends DispatchAction {
         ResourceManager resMgr = ActionsHelper.createResourceManager(request);
         // Retrieve a submission to edit an aggregation scorecard for
         Submission submission = verification.getSubmission();
-        // Get submitter's resource
-        Resource submitter = resMgr.getResource(submission.getUpload().getOwner());
         // Get Aggregator's resource
         Resource aggregator = resMgr.getResource(review.getAuthor());
 
-        // Place submitter's and aggregator's user IDs into the request
-        request.setAttribute("submitterId", submitter.getProperty("External Reference ID"));
+        // Place aggregator's user ID into the request
         request.setAttribute("aggregatorId", aggregator.getProperty("External Reference ID"));
-        // Place submitter's resource into the request
-        request.setAttribute("submitterResource", submitter);
 
+        // Retrieve and place info about submitter into request
+        ActionsHelper.retrieveAndStoreSubmitterInfo(request, submission.getUpload());
+        
         // Get an array of all phases for current project
         Phase[] phases = ActionsHelper.getPhasesForProject(
                 ActionsHelper.createPhaseManager(request), project);

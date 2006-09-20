@@ -34,7 +34,9 @@ import com.topcoder.management.deliverable.Deliverable;
 import com.topcoder.management.deliverable.DeliverableManager;
 import com.topcoder.management.deliverable.PersistenceDeliverableManager;
 import com.topcoder.management.deliverable.PersistenceUploadManager;
+import com.topcoder.management.deliverable.Submission;
 import com.topcoder.management.deliverable.SubmissionStatus;
+import com.topcoder.management.deliverable.Upload;
 import com.topcoder.management.deliverable.UploadManager;
 import com.topcoder.management.deliverable.UploadStatus;
 import com.topcoder.management.deliverable.UploadType;
@@ -784,6 +786,32 @@ class ActionsHelper {
         request.setAttribute("myRole", ActionsHelper.determineRolesForResources(request, messages, myResources));
     }
 
+
+
+    /**
+     * TODO: Document it
+     * 
+     * @param request
+     * @param upload
+     * @throws BaseException 
+     */
+    public static void retrieveAndStoreSubmitterInfo(HttpServletRequest request, Upload upload) throws BaseException {
+        // Validate parameters
+        validateParameterNotNull(request, "request");
+        validateParameterNotNull(upload, "upload");
+        
+        // Obtain an instance of Resource Manager
+        ResourceManager resMgr = ActionsHelper.createResourceManager(request);
+        // Get submitter's resource
+        Resource submitter = resMgr.getResource(upload.getOwner());
+        
+        // Place submitter's user ID into the request
+        request.setAttribute("submitterId", submitter.getProperty("External Reference ID"));
+        // Place submitter's resource into the request
+        request.setAttribute("submitterResource", submitter);
+ 
+    }
+    
     /**
      * This static member function examines an array of supplied resources and forms a string that
      * specifies the roles based on the roles the resources in the array have. All roles in the
@@ -1719,4 +1747,5 @@ class ActionsHelper {
 
         searchBundle.setSearchableFields(fields);
     }
+
 }
