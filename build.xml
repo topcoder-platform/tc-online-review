@@ -41,7 +41,7 @@
     <property name="build_webdir" value="${builddir}/${webdir}" />
     <property name="build_lib" value="${builddir}/lib" />
     <property name="build_tcsdistdir" value="${build_distdir}/${distfilename}-${component_version}" />
-    
+
     <!-- Server installation directories -->
     <property name="cactus.home.tomcat5x" value="C:\tools\tomcat5" />
     <property name="deploy-dir" value="C:\Program Files\jboss-4.0.2\server\default\deploy" />
@@ -75,6 +75,11 @@
     <property name="authentication_factory.jar.name" value="authentication_factory.jar" />
     <property name="authentication_factory.path" value="authentication_factory/${authentication_factory.version}" />
     <property name="authentication_factory.jar" value="${tcs_libdir}/${authentication_factory.path}/${authentication_factory.jar.name}" />
+
+    <property name="auto_screening_management.version" value="1.0" />
+    <property name="auto_screening_management.jar.name" value="auto_screening_management.jar" />
+    <property name="auto_screening_management.path" value="auto_screening_management/${auto_screening_management.version}" />
+    <property name="auto_screening_management.jar" value="${tcs_libdir}/${auto_screening_management.path}/${auto_screening_management.jar.name}" />
 
     <property name="base_exception.version" value="1.0" />
     <property name="base_exception.jar.name" value="base_exception.jar" />
@@ -280,7 +285,7 @@
     <property name="tcsUtil.jar" value="${tcs_libdir}/${tcsUtil.jar.name}" />
 
     <!-- 3rd Party Dependencies  -->
-    <property name="ifx-jdbc.jar" value="${ext_libdir}/ifx-jdbc.jar.jar" />
+    <property name="ifx-jdbc.jar" value="${ext_libdir}/ifx-jdbc.jar" />
     <property name="jstl.jar" value="${ext_libdir}/jstl.jar" />
     <property name="servlet.jar" value="${cactus.home.tomcat5x}/common/lib/servlet-api.jar" />
     <property name="servlet.jsp.jar" value="${cactus.home.tomcat5x}/common/lib/jsp-api.jar" />
@@ -309,6 +314,7 @@
         <pathelement location="${struts.jar}" />
 
         <pathelement location="${authentication_factory.jar}" />
+        <pathelement location="${auto_screening_management.jar}" />
         <pathelement location="${base_exception.jar}" />
         <pathelement location="${class_associations.jar}" />
         <pathelement location="${configuration_manager.jar}" />
@@ -465,6 +471,7 @@
             <classes dir="${build_classdir}" includes="**" />
             <classes dir="${configdir}" includes="**" excludes="WEB-INF/**" />
             <lib dir="${jar_tcs_libdir}/${authentication_factory.path}" includes="*.jar" />
+            <lib dir="${jar_tcs_libdir}/${auto_screening_management.path}" includes="*.jar" />
             <lib dir="${jar_tcs_libdir}/${base_exception.path}" includes="*.jar" />
             <lib dir="${jar_tcs_libdir}/${class_associations.path}" includes="*.jar" />
             <lib dir="${jar_tcs_libdir}/${configuration_manager.path}" includes="*.jar" />
