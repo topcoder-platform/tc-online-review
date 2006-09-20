@@ -78,3 +78,106 @@ INSERT INTO review_item_comment (review_item_comment_id, resource_id, review_ite
   VALUES (4218, 207, 4118, 1, 'half-score comment 5.', 0, 'ivern', CURRENT, 'ivern', CURRENT);
 INSERT INTO review_item_comment (review_item_comment_id, resource_id, review_item_id, comment_type_id, content, sort, create_user, create_date, modify_user, modify_date)
   VALUES (4219, 207, 4118, 2, 'second comment from the same reviewer for the same item.', 1, 'ivern', CURRENT, 'ivern', CURRENT);
+
+
+
+INSERT INTO review (review_id, resource_id, submission_id, scorecard_id, committed, create_user, create_date, modify_user, modify_date)
+  VALUES (5000, 210, 3000, 201, 0, 'System', CURRENT, 'System', CURRENT);
+
+
+INSERT INTO review_item (review_item_id, review_id, scorecard_question_id, answer, sort, create_user, create_date, modify_user, modify_date)
+  VALUES (5101, 5000, 201, '4/4', 0, 'slion', CURRENT, 'slion', CURRENT);
+INSERT INTO review_item (review_item_id, review_id, scorecard_question_id, answer, sort, create_user, create_date, modify_user, modify_date)
+  VALUES (5102, 5000, 201, '2/4', 1, 'ivern', CURRENT, 'ivern', CURRENT);
+INSERT INTO review_item (review_item_id, review_id, scorecard_question_id, answer, sort, create_user, create_date, modify_user, modify_date)
+  VALUES (5103, 5000, 202, '4/4', 2, 'slion', CURRENT, 'slion', CURRENT);
+INSERT INTO review_item (review_item_id, review_id, scorecard_question_id, answer, sort, create_user, create_date, modify_user, modify_date)
+  VALUES (5104, 5000, 202, '2/4', 3, 'ivern', CURRENT, 'ivern', CURRENT);
+INSERT INTO review_item (review_item_id, review_id, scorecard_question_id, answer, sort, create_user, create_date, modify_user, modify_date)
+  VALUES (5105, 5000, 203, '10/10', 4, 'slion', CURRENT, 'slion', CURRENT);
+INSERT INTO review_item (review_item_id, review_id, scorecard_question_id, answer, sort, create_user, create_date, modify_user, modify_date)
+  VALUES (5106, 5000, 203, '8/10', 5, 'qiucx0161', CURRENT, 'qiucx0161', CURRENT);
+INSERT INTO review_item (review_item_id, review_id, scorecard_question_id, answer, sort, create_user, create_date, modify_user, modify_date)
+  VALUES (5107, 5000, 203, '5/10', 6, 'ivern', CURRENT, 'ivern', CURRENT);
+INSERT INTO review_item (review_item_id, review_id, scorecard_question_id, answer, sort, create_user, create_date, modify_user, modify_date)
+  VALUES (5108, 5000, 205, '1', 7, 'slion', CURRENT, 'slion', CURRENT);
+INSERT INTO review_item (review_item_id, review_id, scorecard_question_id, answer, sort, create_user, create_date, modify_user, modify_date)
+  VALUES (5109, 5000, 206, '23/46', 8, 'ivern', CURRENT, 'ivern', CURRENT);
+
+
+INSERT INTO review_item_comment (review_item_comment_id, resource_id, review_item_id, comment_type_id, content, sort, create_user, create_date, modify_user, modify_date)
+  VALUES (5201, 208, 5101, 1, 'fine.', 0, 'slion', CURRENT, 'slion', CURRENT);
+INSERT INTO review_item_comment (review_item_comment_id, resource_id, review_item_id, comment_type_id, content, sort, create_user, create_date, modify_user, modify_date)
+  VALUES (5202, 207, 5102, 3, 'half-score comment 1.', 0, 'ivern', CURRENT, 'ivern', CURRENT);
+INSERT INTO review_item_comment (review_item_comment_id, resource_id, review_item_id, comment_type_id, content, sort, create_user, create_date, modify_user, modify_date)
+  VALUES (5203, 208, 5103, 1, 'seems ok.', 0, 'slion', CURRENT, 'slion', CURRENT);
+INSERT INTO review_item_comment (review_item_comment_id, resource_id, review_item_id, comment_type_id, content, sort, create_user, create_date, modify_user, modify_date)
+  VALUES (5204, 207, 5104, 3, 'half-score comment 2.', 0, 'ivern', CURRENT, 'ivern', CURRENT);
+INSERT INTO review_item_comment (review_item_comment_id, resource_id, review_item_id, comment_type_id, content, sort, create_user, create_date, modify_user, modify_date)
+  VALUES (5205, 208, 5105, 1, 'ok.', 0, 'slion', CURRENT, 'slion', CURRENT);
+INSERT INTO review_item_comment (review_item_comment_id, resource_id, review_item_id, comment_type_id, content, sort, create_user, create_date, modify_user, modify_date)
+  VALUES (5206, 206, 5106, 3, 'ccc', 0, 'qiucx0161', CURRENT, 'qiucx0161', CURRENT);
+INSERT INTO review_item_comment (review_item_comment_id, resource_id, review_item_id, comment_type_id, content, sort, create_user, create_date, modify_user, modify_date)
+  VALUES (5207, 207, 5107, 3, 'half-score comment 3.', 0, 'ivern', CURRENT, 'ivern', CURRENT);
+INSERT INTO review_item_comment (review_item_comment_id, resource_id, review_item_id, comment_type_id, content, sort, create_user, create_date, modify_user, modify_date)
+  VALUES (5208, 208, 5108, 1, 'works.', 0, 'slion', CURRENT, 'slion', CURRENT);
+INSERT INTO review_item_comment (review_item_comment_id, resource_id, review_item_id, comment_type_id, content, sort, create_user, create_date, modify_user, modify_date)
+  VALUES (5209, 207, 5109, 2, 'second comment from the same reviewer for the same item.', 1, 'ivern', CURRENT, 'ivern', CURRENT);
+
+INSERT INTO review_item_comment (review_item_comment_id, resource_id, review_item_id, comment_type_id, content, sort, create_user, create_date, modify_user, modify_date)
+  VALUES (5231, 209, 5101, 6, 'fine. from Aggregator', 3, 'slion', CURRENT, 'slion', CURRENT);
+INSERT INTO review_item_comment (review_item_comment_id, resource_id, review_item_id, comment_type_id, content, sort, create_user, create_date, modify_user, modify_date)
+  VALUES (5232, 209, 5102, 6, 'half-score comment 1. from Aggregator', 3, 'ivern', CURRENT, 'ivern', CURRENT);
+INSERT INTO review_item_comment (review_item_comment_id, resource_id, review_item_id, comment_type_id, content, sort, create_user, create_date, modify_user, modify_date)
+  VALUES (5233, 209, 5103, 6, 'seems ok. from Aggregator', 3, 'slion', CURRENT, 'slion', CURRENT);
+INSERT INTO review_item_comment (review_item_comment_id, resource_id, review_item_id, comment_type_id, content, sort, create_user, create_date, modify_user, modify_date)
+  VALUES (5234, 209, 5104, 6, 'half-score comment 2. from Aggregator', 3, 'ivern', CURRENT, 'ivern', CURRENT);
+INSERT INTO review_item_comment (review_item_comment_id, resource_id, review_item_id, comment_type_id, content, sort, create_user, create_date, modify_user, modify_date)
+  VALUES (5235, 209, 5105, 6, 'ok. from Aggregator', 3, 'slion', CURRENT, 'slion', CURRENT);
+INSERT INTO review_item_comment (review_item_comment_id, resource_id, review_item_id, comment_type_id, content, sort, create_user, create_date, modify_user, modify_date)
+  VALUES (5236, 209, 5106, 6, 'ccc from Aggregator', 3, 'qiucx0161', CURRENT, 'qiucx0161', CURRENT);
+INSERT INTO review_item_comment (review_item_comment_id, resource_id, review_item_id, comment_type_id, content, sort, create_user, create_date, modify_user, modify_date)
+  VALUES (5237, 209, 5107, 6, 'half-score comment 3. from Aggregator', 3, 'ivern', CURRENT, 'ivern', CURRENT);
+INSERT INTO review_item_comment (review_item_comment_id, resource_id, review_item_id, comment_type_id, content, sort, create_user, create_date, modify_user, modify_date)
+  VALUES (5238, 209, 5108, 6, 'works. from Aggregator', 3, 'slion', CURRENT, 'slion', CURRENT);
+INSERT INTO review_item_comment (review_item_comment_id, resource_id, review_item_id, comment_type_id, content, sort, create_user, create_date, modify_user, modify_date)
+  VALUES (5239, 209, 5109, 6, 'second comment from the same reviewer for the same item. from Aggregator', 3, 'ivern', CURRENT, 'ivern', CURRENT);
+
+INSERT INTO review_item_comment (review_item_comment_id, resource_id, review_item_id, comment_type_id, content, sort, create_user, create_date, modify_user, modify_date)
+  VALUES (5241, 208, 5101, 7, 'fine. from Aggregation Reviewer', 5, 'slion', CURRENT, 'slion', CURRENT);
+INSERT INTO review_item_comment (review_item_comment_id, resource_id, review_item_id, comment_type_id, content, sort, create_user, create_date, modify_user, modify_date)
+  VALUES (5242, 207, 5102, 7, 'half-score comment 1. from Aggregation Reviewer', 4, 'ivern', CURRENT, 'ivern', CURRENT);
+INSERT INTO review_item_comment (review_item_comment_id, resource_id, review_item_id, comment_type_id, content, sort, create_user, create_date, modify_user, modify_date)
+  VALUES (5243, 208, 5103, 7, 'seems ok. from Aggregation Reviewer', 5, 'slion', CURRENT, 'slion', CURRENT);
+INSERT INTO review_item_comment (review_item_comment_id, resource_id, review_item_id, comment_type_id, content, sort, create_user, create_date, modify_user, modify_date)
+  VALUES (5244, 207, 5104, 7, 'half-score comment 2. from Aggregation Reviewer', 4, 'ivern', CURRENT, 'ivern', CURRENT);
+INSERT INTO review_item_comment (review_item_comment_id, resource_id, review_item_id, comment_type_id, content, sort, create_user, create_date, modify_user, modify_date)
+  VALUES (5245, 208, 5105, 7, 'ok. from Aggregation Reviewer', 5, 'slion', CURRENT, 'slion', CURRENT);
+INSERT INTO review_item_comment (review_item_comment_id, resource_id, review_item_id, comment_type_id, content, sort, create_user, create_date, modify_user, modify_date)
+  VALUES (5246, 206, 5106, 7, 'ccc from Aggregation Reviewer', 4, 'qiucx0161', CURRENT, 'qiucx0161', CURRENT);
+INSERT INTO review_item_comment (review_item_comment_id, resource_id, review_item_id, comment_type_id, content, sort, create_user, create_date, modify_user, modify_date)
+  VALUES (5247, 207, 5107, 7, 'half-score comment 3. from Aggregation Reviewer', 5, 'ivern', CURRENT, 'ivern', CURRENT);
+INSERT INTO review_item_comment (review_item_comment_id, resource_id, review_item_id, comment_type_id, content, sort, create_user, create_date, modify_user, modify_date)
+  VALUES (5248, 208, 5108, 7, 'works. from Aggregation Reviewer', 4, 'slion', CURRENT, 'slion', CURRENT);
+INSERT INTO review_item_comment (review_item_comment_id, resource_id, review_item_id, comment_type_id, content, sort, create_user, create_date, modify_user, modify_date)
+  VALUES (5249, 207, 5109, 7, 'second comment from the same reviewer for the same item. from Aggregation Reviewer', 5, 'ivern', CURRENT, 'ivern', CURRENT);
+
+INSERT INTO review_item_comment (review_item_comment_id, resource_id, review_item_id, comment_type_id, content, sort, create_user, create_date, modify_user, modify_date)
+  VALUES (5251, 200, 5101, 8, 'fine. from Submitter', 4, 'slion', CURRENT, 'slion', CURRENT);
+INSERT INTO review_item_comment (review_item_comment_id, resource_id, review_item_id, comment_type_id, content, sort, create_user, create_date, modify_user, modify_date)
+  VALUES (5252, 200, 5102, 8, 'half-score comment 1. from Submitter', 5, 'ivern', CURRENT, 'ivern', CURRENT);
+INSERT INTO review_item_comment (review_item_comment_id, resource_id, review_item_id, comment_type_id, content, sort, create_user, create_date, modify_user, modify_date)
+  VALUES (5253, 200, 5103, 8, 'seems ok. from Submitter', 4, 'slion', CURRENT, 'slion', CURRENT);
+INSERT INTO review_item_comment (review_item_comment_id, resource_id, review_item_id, comment_type_id, content, sort, create_user, create_date, modify_user, modify_date)
+  VALUES (5254, 200, 5104, 8, 'half-score comment 2. from Submitter', 5, 'ivern', CURRENT, 'ivern', CURRENT);
+INSERT INTO review_item_comment (review_item_comment_id, resource_id, review_item_id, comment_type_id, content, sort, create_user, create_date, modify_user, modify_date)
+  VALUES (5255, 200, 5105, 8, 'ok. from Submitter', 4, 'slion', CURRENT, 'slion', CURRENT);
+INSERT INTO review_item_comment (review_item_comment_id, resource_id, review_item_id, comment_type_id, content, sort, create_user, create_date, modify_user, modify_date)
+  VALUES (5256, 200, 5106, 8, 'ccc from Submitter', 5, 'qiucx0161', CURRENT, 'qiucx0161', CURRENT);
+INSERT INTO review_item_comment (review_item_comment_id, resource_id, review_item_id, comment_type_id, content, sort, create_user, create_date, modify_user, modify_date)
+  VALUES (5257, 200, 5107, 8, 'half-score comment 3. from Submitter', 4, 'ivern', CURRENT, 'ivern', CURRENT);
+INSERT INTO review_item_comment (review_item_comment_id, resource_id, review_item_id, comment_type_id, content, sort, create_user, create_date, modify_user, modify_date)
+  VALUES (5258, 200, 5108, 8, 'works. from Submitter', 5, 'slion', CURRENT, 'slion', CURRENT);
+INSERT INTO review_item_comment (review_item_comment_id, resource_id, review_item_id, comment_type_id, content, sort, create_user, create_date, modify_user, modify_date)
+  VALUES (5259, 200, 5109, 8, 'second comment from the same reviewer for the same item. from Submitter', 4, 'ivern', CURRENT, 'ivern', CURRENT);
+
