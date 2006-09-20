@@ -669,7 +669,7 @@ public class ProjectActions extends DispatchAction {
              * Set phase properties
              */
            
-            if (newProject) {
+            if ("add".equals(phaseAction)) {
                 // Set phase type
                 phase.setPhaseType(ActionsHelper.findPhaseTypeById(allPhaseTypes, phaseTypes[i].longValue()));
                 // Set phase status to "Scheduled"

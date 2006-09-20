@@ -23,9 +23,8 @@
 	<script language="JavaScript" type="text/javascript"><!--
 				
 		// TODO: Write docs for following vars
-		// TODO: Note, that for Project Edit action the next lines will be different
-		var lastResourceIndex = 0;
-		var lastPhaseIndex = 0;	
+		var lastResourceIndex = ${fn:length(projectForm.map['resources_id']) - 1};
+		var lastPhaseIndex = ${fn:length(projectForm.map['phase_id']) - 1};	
 		
 		/*
 		 * TODO: Write docs for this function
