@@ -885,14 +885,13 @@ public class ProjectDetailsActions extends DispatchAction {
         }
         
         // Retrieve some basic project info (such as icons' names) and place it into request
-        ActionsHelper.retrieveAndStoreBasicProjectInfo(request,verification.getProject(), messages);
+        ActionsHelper.retrieveAndStoreBasicProjectInfo(request, verification.getProject(), messages);
 
         // Place a string that represents "my" current role(s) into the request
-        request.setAttribute("myRole", ActionsHelper.determineRolesForResources(request, getResources(request), myResources));
+        ActionsHelper.retrieveAndStoreMyRole(request, getResources(request));
         
         // Retrieve the submitter id and place it into request
-        // TODO : Check it, probably messed up resource id and user id
-        request.setAttribute("submitterId", new Long(upload.getOwner()));
+        ActionsHelper.retrieveAndStoreSubmitterInfo(request, upload);
         
         // Obtain Screening Manager instance 
         ScreeningManager screeningManager = ActionsHelper.createScreeningManager(request);  
