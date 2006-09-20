@@ -8,7 +8,7 @@
     <property name="component" value="online_review" />
     <property name="package" value="com.topcoder.onlinereview" />
     <property name="packagedir" value="com/topcoder/onlinereview" />
-    <property name="distfilename" value="online_review" />
+    <property name="distfilename" value="project_admin_and_details" />
     <property name="component_version" value="1.0" />
     <property name="component_path" value="${distfilename}/${component_version}" />
 
@@ -44,7 +44,7 @@
 
     <!-- Server installation directories -->
     <property name="cactus.home.tomcat5x" value="C:\tools\tomcat5" />
-    <property name="deploy-dir" value="C:\Program Files\jboss-4.0.2\server\default\deploy" />
+    <property name="deploy-dir" value="C:\Program Files\jboss-4.0.2\server\default\deploy\${distfilename}.war" />
 
     <!-- EXECUTION TAGS -->
     <property name="debug" value="off" />
@@ -543,7 +543,8 @@
     </target>
 
     <target name="deploy" depends="dist">
-        <copy file="${component.war}" todir="${deploy-dir}" overwrite="true" />
+        <mkdir dir="${deploy-dir}" />
+        <unwar src="${component.war}" dest="${deploy-dir}" />
     </target>
 
     <target name="main" depends="deploy,test">
