@@ -7,24 +7,15 @@
     <Config name="com.topcoder.db.connectionfactory.DBConnectionFactoryImpl">
         <Property name="connections">
             <Property name="default">
-                <Value>informix_connection</Value>
+                <Value>tcs</Value>
             </Property>
-            <Property name="informix_connection">
+            <Property name="tcs">
                 <Property name="producer">
-                    <Value>com.topcoder.db.connectionfactory.producers.JDBCConnectionProducer</Value>
+                    <Value>com.topcoder.db.connectionfactory.producers.JNDIConnectionProducer</Value>
                 </Property>
                 <Property name="parameters">
-                    <Property name="jdbc_driver">
-                        <Value>com.informix.jdbc.IfxDriver</Value>
-                    </Property>
-                    <Property name="jdbc_url">
-                        <Value>jdbc:informix-sqli://localhost:1526/review:informixserver=top_coder</Value>
-                    </Property>
-                    <Property name="user">
-                        <Value>informix</Value>
-                    </Property>
-                    <Property name="password">
-                        <Value>informix</Value>
+                    <Property name="jndi_name">
+                        <Value>java:JTS_TCS_CATALOG</Value>
                     </Property>
                 </Property>
             </Property>
@@ -489,7 +480,7 @@
         </Property>
 
         <Property name="ConnectionName">
-            <Value>informix_connection</Value>
+            <Value>tcs</Value>
         </Property>
 
         <Property name="SearchBundleManagerNS">
@@ -1124,7 +1115,7 @@
     -->
     <Config name="com.cronos.onlinereview.external">
         <Property name="connName">
-            <Value>informix_connection</Value>
+            <Value>tcs</Value>
         </Property>
 
         <!-- the forum type to match in the comp_forum_xref table -->
@@ -1181,7 +1172,7 @@
         </Property>
         <!-- the connection name to retrieve connection in DB Connection Factory, required -->
         <Property name="ConnectionName">
-            <Value>informix_connection</Value>
+            <Value>tcs</Value>
         </Property>
         <Property name="ProjectIdSequenceName">
             <Value>project_id_seq</Value>
@@ -1210,7 +1201,7 @@
             </Property>
         </Property>
         <Property name="connectionName">
-            <Value>informix_connection</Value>
+            <Value>tcs</Value>
         </Property>
         <Property name="ConnectionFactory">
             <Property name="className">
@@ -1253,7 +1244,7 @@
             <Value>com.topcoder.db.connectionfactory.DBConnectionFactoryImpl</Value>
         </Property>
         <Property name="ConnectionName">
-            <Value>informix_connection</Value>
+            <Value>tcs</Value>
         </Property>
     </Config>
 
@@ -1280,7 +1271,7 @@
         <Property name="connection">
             <!-- the connection name to retrieve connection in DB Connection Factory, required -->
             <Property name="name">
-                <Value>informix_connection</Value>
+                <Value>tcs</Value>
             </Property>
             <!-- The DBConnectionFactory class name used to create DB Connection Factory, required -->
             <Property name="factory_namespace">
@@ -1449,7 +1440,7 @@
                     <Value>com.topcoder.db.connectionfactory.DBConnectionFactoryImpl</Value>
                 </Property>
                 <Property name="connectionProducerName">
-                    <Value>informix_connection</Value>
+                    <Value>tcs</Value>
                 </Property>
 
                 <Property name="alias">
@@ -1538,7 +1529,7 @@
                     <Value>com.topcoder.db.connectionfactory.DBConnectionFactoryImpl</Value>
                 </Property>
                 <Property name="connectionProducerName">
-                    <Value>informix_connection</Value>
+                    <Value>tcs</Value>
                 </Property>
 
                 <Property name="alias">
@@ -1848,7 +1839,7 @@
                     <Value>com.topcoder.db.connectionfactory.DBConnectionFactoryImpl</Value>
                 </Property>
                 <Property name="connectionProducerName">
-                    <Value>informix_connection</Value>
+                    <Value>tcs</Value>
                 </Property>
 
                 <Property name="alias">
@@ -1893,7 +1884,7 @@
                     <Value>com.topcoder.db.connectionfactory.DBConnectionFactoryImpl</Value>
                 </Property>
                 <Property name="connectionProducerName">
-                    <Value>informix_connection</Value>
+                    <Value>tcs</Value>
                 </Property>
 
                 <Property name="alias">
@@ -1940,7 +1931,7 @@
                     <Value>com.topcoder.db.connectionfactory.DBConnectionFactoryImpl</Value>
                 </Property>
                 <Property name="connectionProducerName">
-                    <Value>informix_connection</Value>
+                    <Value>tcs</Value>
                 </Property>
 
                 <Property name="alias">
@@ -1985,7 +1976,7 @@
                     <Value>com.topcoder.db.connectionfactory.DBConnectionFactoryImpl</Value>
                 </Property>
                 <Property name="connectionProducerName">
-                    <Value>informix_connection</Value>
+                    <Value>tcs</Value>
                 </Property>
 
                 <Property name="alias">
@@ -2045,7 +2036,7 @@
                     <Value>com.topcoder.db.connectionfactory.DBConnectionFactoryImpl</Value>
                 </Property>
                 <Property name="connectionProducerName">
-                    <Value>informix_connection</Value>
+                    <Value>tcs</Value>
                 </Property>
 
                 <Property name="alias">
@@ -2113,7 +2104,7 @@
             If not present, then the default connection is used.
         -->
         <Property name="connectionName">
-            <Value>informix_connection</Value>
+            <Value>tcs</Value>
         </Property>
 
         <Property name="searchFragmentFactoryNamespace">
