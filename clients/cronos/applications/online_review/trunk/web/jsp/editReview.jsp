@@ -3,6 +3,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="html" uri="/tags/struts-html" %>
 <%@ taglib prefix="bean" uri="/tags/struts-bean" %>
+<%@ taglib prefix="tc-webtag" uri="/tags/tc-webtags" %>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html:html xhtml="true">
 
@@ -99,7 +100,11 @@
 						</table>
 					</div>
 
-					&#160;<b><bean:message key="editReview.Submission" /></b> ${sid}<br />
+					&#160;<b><bean:message key="editReview.Submission" /></b> ${sid}
+					<c:if test="${reviewType eq 'Approval'}">
+						(<tc-webtag:handle coderId="${submitterId}" context="component" />)
+					</c:if>	
+					<br />
 					&#160;<b><bean:message key="editReview.MyRole" /></b> ${myRole}<br />
 					<h3>${scorecardTemplate.name}</h3>
 
