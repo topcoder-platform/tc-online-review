@@ -2458,6 +2458,8 @@ public class ProjectReviewActions extends DispatchAction {
         ActionsHelper.retrieveAndStoreBasicProjectInfo(request, verification.getProject(), getResources(request));
         // Retrieve an information about my role(s) and place it into the request
         ActionsHelper.retrieveAndStoreMyRole(request, getResources(request));
+        // Retrieve the information about the submitter and place it into the request
+        ActionsHelper.retrieveAndStoreSubmitterInfo(request, verification.getSubmission().getUpload());        
         // Place the type of the review into the request
         request.setAttribute("reviewType", "Approval");
         // Place Scorecard template in the request
@@ -2557,6 +2559,8 @@ public class ProjectReviewActions extends DispatchAction {
         ActionsHelper.retrieveAndStoreBasicProjectInfo(request, verification.getProject(), getResources(request));
         // Retrieve an information about my role(s) and place it into the request
         ActionsHelper.retrieveAndStoreMyRole(request, getResources(request));
+        // Retrieve the information about the submitter and place it into the request
+        ActionsHelper.retrieveAndStoreSubmitterInfo(request, verification.getSubmission().getUpload());        
         // Place the type of the review into the request
         request.setAttribute("reviewType", "Approval");
         // Place Scorecard template in the request
@@ -2716,6 +2720,8 @@ public class ProjectReviewActions extends DispatchAction {
 
         // Retrieve some basic project info (such as icons' names) and place it into request
         ActionsHelper.retrieveAndStoreBasicProjectInfo(request, verification.getProject(), getResources(request));
+        // Retrieve the information about the submitter and place it into the request
+        ActionsHelper.retrieveAndStoreSubmitterInfo(request, verification.getSubmission().getUpload());        
         // Place the type of the review into the request
         request.setAttribute("reviewType", "Approval");
 
@@ -2898,6 +2904,10 @@ public class ProjectReviewActions extends DispatchAction {
         ActionsHelper.retrieveAndStoreBasicProjectInfo(request, verification.getProject(), getResources(request));
         // Retrieve an information about my role(s) and place it into the request
         ActionsHelper.retrieveAndStoreMyRole(request, getResources(request));
+        // Retrieve the information about the submitter and place it into the request
+        ActionsHelper.retrieveAndStoreSubmitterInfo(request, verification.getSubmission().getUpload());        
+        // Place the type of the review into the request
+        request.setAttribute("reviewType", "Approval");
         // Place Scorecard template in the request
         request.setAttribute("scorecardTemplate", scorecardTemplate);
 
