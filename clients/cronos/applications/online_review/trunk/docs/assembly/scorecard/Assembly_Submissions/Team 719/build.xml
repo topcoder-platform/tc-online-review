@@ -8,7 +8,7 @@
     <property name="component" value="Online_Review_Scorecard_Admin" />
     <property name="package" value="com.cronos.onlinereview.actions" />
     <property name="packagedir" value="com/cronos/onlinereview/actions" />
-    <property name="distfilename" value="scorecard_admin" />
+    <property name="distfilename" value="Online_Review" />
     <property name="component_version" value="1.0" />
     <property name="component_path" value="${distfilename}/${component_version}" />
 	<property name="dev_submission.jar" value="${component}_${component_version}_dev_submission.jar"/>
@@ -41,8 +41,8 @@
     <property name="build_lib" value="${builddir}/lib" />
     <property name="build_tcsdistdir" value="${build_distdir}/${distfilename}-${component_version}" />
     
-    <property name="deploy-dir" value="E:/jboss-4.0.2/server/default/deploy"/>
-
+    <property name="deploy-dir" value="E:/jboss-4.0.2/server/default/deploy/${distfilename}.war" />
+	
     <!-- EXECUTION TAGS -->
     <property name="debug" value="off" />
     <property name="verbose" value="no" />
@@ -147,7 +147,7 @@
 	<property name="resource_management_persistence.path" value="resource_management_persistence/${resource_management_persistence.version}" />
 	<property name="resource_management_persistence.jar" value="${tcs_libdir}/${resource_management_persistence.path}/${resource_management_persistence.jar.name}" />
 	
-    <property name="scorecard_management_persistence.version" value="1.0.1" />
+    <property name="scorecard_management_persistence.version" value="1.0" />
     <property name="scorecard_management_persistence.jar.name" value="scorecard_management_persistence.jar" />
     <property name="scorecard_management_persistence.path" value="scorecard_management_persistence/${scorecard_management_persistence.version}" />
     <property name="scorecard_management_persistence.jar" value="${tcs_libdir}/${scorecard_management_persistence.path}/${scorecard_management_persistence.jar.name}" />
@@ -320,7 +320,8 @@
     </target>
     
     <target name="deploy" depends="dist">
-        <copy file="${component.war}" todir="${deploy-dir}" overwrite="true" />
+    	<mkdir dir="${deploy-dir}" />
+    	<unwar src="${component.war}" dest="${deploy-dir}" />
     </target>
 	<target name="dev_submission">
 	        <jar jarfile="${dev_submission.jar}"
