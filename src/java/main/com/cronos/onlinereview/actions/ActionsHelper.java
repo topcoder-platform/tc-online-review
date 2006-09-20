@@ -786,32 +786,29 @@ class ActionsHelper {
         request.setAttribute("myRole", ActionsHelper.determineRolesForResources(request, messages, myResources));
     }
 
-
-
     /**
      * TODO: Document it
-     * 
+     *
      * @param request
      * @param upload
-     * @throws BaseException 
+     * @throws BaseException
      */
     public static void retrieveAndStoreSubmitterInfo(HttpServletRequest request, Upload upload) throws BaseException {
         // Validate parameters
         validateParameterNotNull(request, "request");
         validateParameterNotNull(upload, "upload");
-        
+
         // Obtain an instance of Resource Manager
         ResourceManager resMgr = ActionsHelper.createResourceManager(request);
         // Get submitter's resource
         Resource submitter = resMgr.getResource(upload.getOwner());
-        
+
         // Place submitter's user ID into the request
         request.setAttribute("submitterId", submitter.getProperty("External Reference ID"));
         // Place submitter's resource into the request
         request.setAttribute("submitterResource", submitter);
- 
     }
-    
+
     /**
      * This static member function examines an array of supplied resources and forms a string that
      * specifies the roles based on the roles the resources in the array have. All roles in the
@@ -1311,6 +1308,35 @@ class ActionsHelper {
         return (Deliverable[]) deliverables.toArray(new Deliverable[deliverables.size()]);
     }
 
+    /**
+     * This static method retrieves the project that the submission specified by the
+     * <code>submission</code> parameter was made for.
+     *
+     * @return a retrieved project.
+     * @param manager
+     *            an instance of <code>ProjectManager</code> object used to retrieve project from
+     *            the submission.
+     * @param submission
+     *            a submission to retrieve the project for.
+     * @throws IllegalArgumentException
+     *             if any of the parameters are <code>null</code>.
+     * @throws com.topcoder.management.project.PersistenceException
+     *             if an error occurred while accessing the database.
+     */
+    public static Project getProjectForSubmission(ProjectManager manager, Submission submission)
+        throws com.topcoder.management.project.PersistenceException {
+        // Validate parameters
+        ActionsHelper.validateParameterNotNull(manager, "manager");
+        ActionsHelper.validateParameterNotNull(submission, "submission");
+
+        // Get an upload for this submission
+        Upload upload = submission.getUpload();
+        // Get Project by its id
+        Project project = manager.getProject(upload.getProject());
+        // Return the project
+        return project;
+    }
+
 
     // -------------------------------------------------------------- Creator type of methods -----
 
@@ -1653,8 +1679,8 @@ class ActionsHelper {
      * @return a newly created instance of the class.
      * @param request
      *            an <code>HttpServletRequest</code> obejct, where created
-     *            <code>ScreeningManager</code> object can be stored to let reusing it later for the
-     *            same request.
+     *            <code>ScreeningManager</code> object can be stored to let reusing it later for
+     *            the same request.
      * @throws IllegalArgumentException
      *             if <code>request</code> parameter is <code>null</code>.
      * @throws BaseException
@@ -1663,23 +1689,21 @@ class ActionsHelper {
     public static ScreeningManager createScreeningManager(HttpServletRequest request) throws BaseException {
         // Validate parameter
         validateParameterNotNull(request, "request");
-        
-        // Try retrieving Upload Manager from the request's attribute first
+
+        // Try retrieving Auto Screening Manager from the request's attribute first
         ScreeningManager manager = (ScreeningManager) request.getAttribute("screeningManager");
         // If this is the first time this method is called for the request,
         // create a new instance of the object
-        if (manager == null) {           
-            // Create the ScreeningManager instance
+        if (manager == null) {
             manager = ScreeningManagerFactory.createScreeningManager();
             // Place newly-created object into the request as attribute
             request.setAttribute("screeningManager", manager);
         }
-        
+
         // Return the Screening Manager object
         return manager;
     }
 
-    
     /**
      * This static method helps to create an object of the <code>UserRetrieval</code> class.
      *
@@ -1747,5 +1771,4 @@ class ActionsHelper {
 
         searchBundle.setSearchableFields(fields);
     }
-
 }
