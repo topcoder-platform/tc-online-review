@@ -3,6 +3,8 @@
 -- repopulate them with the lookup data at least to be able to use the application.
 
 DROP TABLE default_scorecard;
+
+
 DROP TABLE screening_result;
 DROP TABLE screening_response_lu;
 DROP TABLE response_severity_lu;
@@ -49,9 +51,11 @@ DROP TABLE scorecard_type_lu;
 DROP TABLE project_category_lu;
 DROP TABLE project_type_lu;
 
+
 DROP TABLE user_reliability;
 DROP TABLE user_rating;
 DROP TABLE email;
 DROP TABLE user;
+
 
 DROP TABLE id_sequences;
