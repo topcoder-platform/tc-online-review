@@ -17,10 +17,8 @@ import org.apache.struts.actions.DispatchAction;
 import org.apache.struts.validator.LazyValidatorForm;
 
 import com.topcoder.management.deliverable.Submission;
-import com.topcoder.management.deliverable.Upload;
 import com.topcoder.management.deliverable.UploadManager;
 import com.topcoder.management.project.Project;
-import com.topcoder.management.project.ProjectManager;
 import com.topcoder.management.resource.Resource;
 import com.topcoder.management.resource.ResourceManager;
 import com.topcoder.management.review.ReviewEntityNotFoundException;
@@ -1219,7 +1217,7 @@ public class ProjectReviewActions extends DispatchAction {
         // Retrieve a review to edit
         Review review = verification.getReview();
 
-        // Obtain an instance of Scorecad Manager
+        // Obtain an instance of Scorecard Manager
         ScorecardManager scrMgr = ActionsHelper.createScorecardManager(request);
         // Retrieve a scorecard template for the review
         Scorecard scorecardTemplate = scrMgr.getScorecard(review.getScorecard());
@@ -1349,7 +1347,7 @@ public class ProjectReviewActions extends DispatchAction {
         // Retrieve a review to save
         Review review = verification.getReview();
 
-        // Obtain an instance of Scorecad Manager
+        // Obtain an instance of Scorecard Manager
         ScorecardManager scrMgr = ActionsHelper.createScorecardManager(request);
         // Retrieve a scorecard template for the review
         Scorecard scorecardTemplate = scrMgr.getScorecard(review.getScorecard());
@@ -1517,7 +1515,7 @@ public class ProjectReviewActions extends DispatchAction {
         // Retrieve a review (aggregation) to view
         Review review = verification.getReview();
 
-        // Obtain an instance of Scorecad Manager
+        // Obtain an instance of Scorecard Manager
         ScorecardManager scrMgr = ActionsHelper.createScorecardManager(request);
         // Retrieve a scorecard template for the review
         Scorecard scorecardTemplate = scrMgr.getScorecard(review.getScorecard());
@@ -1589,7 +1587,7 @@ public class ProjectReviewActions extends DispatchAction {
         // Retrieve a review to edit
         Review review = verification.getReview();
 
-        // Obtain an instance of Scorecad Manager
+        // Obtain an instance of Scorecard Manager
         ScorecardManager scrMgr = ActionsHelper.createScorecardManager(request);
         // Retrieve a scorecard template for the review
         Scorecard scorecardTemplate = scrMgr.getScorecard(review.getScorecard());
@@ -1924,7 +1922,7 @@ public class ProjectReviewActions extends DispatchAction {
         // Retrieve a review (aggregation) to view
         Review review = verification.getReview();
 
-        // Obtain an instance of Scorecad Manager
+        // Obtain an instance of Scorecard Manager
         ScorecardManager scrMgr = ActionsHelper.createScorecardManager(request);
         // Retrieve a scorecard template for the review
         Scorecard scorecardTemplate = scrMgr.getScorecard(review.getScorecard());
@@ -1992,9 +1990,18 @@ public class ProjectReviewActions extends DispatchAction {
     }
 
     /**
-     * TODO: Write sensible description for method editFinalReview here
+     * This method is an implementation of &quot;Edit Final Review&quot; Struts Action defined for
+     * this assembly, which is supposed to gather needed information (final fix review and review
+     * scorecard template) and present it to editFinalReview.jsp page, which will fill the required
+     * fields and post them to the &quot;Save Final Review&quot; action. The action implemented by
+     * this method is executed to edit final fix review that has already been created (by the
+     * system), but has not been submitted yet, and hence is supposed to be edited.
      *
-     * @return TODO: Write sensible description of return value for method editFinalReview
+     * @return &quot;success&quot; forward, which forwards to the /jsp/editFinalReview.jsp page (as
+     *         defined in struts-config.xml file), or &quot;userError&quot; forward, which forwards
+     *         to the /jsp/userError.jsp page, which displays information about an error that is
+     *         usually caused by incorrect user input (such as absent review id, or the lack of
+     *         permissions, etc.).
      * @param mapping
      *            action mapping.
      * @param form
@@ -2003,17 +2010,132 @@ public class ProjectReviewActions extends DispatchAction {
      *            the http request.
      * @param response
      *            the http response.
+     * @throws BaseException
+     *             if any error occurs.
      */
     public ActionForward editFinalReview(ActionMapping mapping, ActionForm form,
-            HttpServletRequest request, HttpServletResponse response) {
-        // TODO: Add implementation of method editFinalReview here
-        return null;
+            HttpServletRequest request, HttpServletResponse response)
+        throws BaseException {
+        // Verify that certain requirements are met before proceeding with the Action
+        CorrectnessCheckResult verification =
+                checkForCorrectReviewId(mapping, request, Constants.PERFORM_FINAL_REVIEW_PERM_NAME);
+        // If any error has occured, return action forward contained in the result bean
+        if (!verification.isSuccessful()) {
+            return verification.getForward();
+        }
+
+        // Retrieve a review to edit
+        Review review = verification.getReview();
+
+        // Obtain an instance of Scorecard Manager
+        ScorecardManager scrMgr = ActionsHelper.createScorecardManager(request);
+        // Retrieve a scorecard template for the review
+        Scorecard scorecardTemplate = scrMgr.getScorecard(review.getScorecard());
+
+        // Verify that the scorecard template for this review is of correct type
+        if (!scorecardTemplate.getScorecardType().getName().equalsIgnoreCase("Review")) {
+            return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
+                    Constants.PERFORM_FINAL_REVIEW_PERM_NAME, "Error.ReviewTypeIncorrect");
+        }
+        // Verify that review has not been committed yet
+        if (review.isCommitted()) {
+            return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
+                    Constants.PERFORM_FINAL_REVIEW_PERM_NAME, "Error.ReviewCommitted");
+        }
+
+        // Retrieve some basic project info (such as icons' names) and place it into request
+        ActionsHelper.retrieveAndStoreBasicProjectInfo(request, verification.getProject(), getResources(request));
+        // Retrieve an information about my role(s) and place it into the request
+        ActionsHelper.retrieveAndStoreMyRole(request, getResources(request));
+        // Retrieve some basic aggregation info and place it into request
+        retrieveAndStoreBasicAggregationInfo(request, verification, scorecardTemplate);
+        // Place Scorecard template in the request
+        request.setAttribute("scorecardTemplate", scorecardTemplate);
+
+        int reviewerCommentsNum = 0;
+        int[] lastCommentIdxs = new int[review.getNumberOfItems()];
+
+        Arrays.fill(lastCommentIdxs, 0);
+
+        for (int i = 0; i < review.getNumberOfItems(); ++i) {
+            Item item = review.getItem(i);
+            for (int j = 0; j < item.getNumberOfComments(); ++j) {
+                String commentType = item.getComment(j).getCommentType().getName();
+                if (commentType.equalsIgnoreCase("Comment") || commentType.equalsIgnoreCase("Required") ||
+                        commentType.equalsIgnoreCase("Recommended")) {
+                    ++reviewerCommentsNum;
+                    ++lastCommentIdxs[i];
+                } else if (commentType.equalsIgnoreCase("Appeal") || commentType.equalsIgnoreCase("Appeal Response") ||
+                        commentType.equalsIgnoreCase("Aggregation Comment") ||
+                        commentType.equalsIgnoreCase("Aggregation Review Comment") ||
+                        commentType.equalsIgnoreCase("Submitter Comment")) {
+                    ++lastCommentIdxs[i];
+                }
+            }
+        }
+
+        request.setAttribute("lastCommentIdxs", lastCommentIdxs);
+
+        boolean fixesApproved = false;
+
+        for (int i = 0; i < review.getNumberOfComments(); ++i) {
+            Comment comment = review.getComment(i);
+            if (comment.getCommentType().getName().equalsIgnoreCase("Final Review Comment")) {
+                fixesApproved = ("Approved".equalsIgnoreCase((String) comment.getExtraInfo()));
+                break;
+            }
+        }
+
+        LazyValidatorForm finalReviewForm = (LazyValidatorForm) form;
+
+        String[] fixStatuses = new String[reviewerCommentsNum];
+        String[] finalComments = new String[review.getNumberOfItems()];
+        Boolean approveFixes = new Boolean(fixesApproved);
+        int commentIndex = 0;
+
+        for (int i = 0; i < finalComments.length; ++i) {
+            Item item = review.getItem(i);
+            boolean finalReviewCommentNotFound = true;
+
+            for (int j = 0; j < item.getNumberOfComments(); ++j) {
+                Comment comment = item.getComment(j);
+                String commentType = comment.getCommentType().getName();
+
+                if (commentType.equalsIgnoreCase("Comment") || commentType.equalsIgnoreCase("Required") ||
+                        commentType.equalsIgnoreCase("Recommended")) {
+                    String fixStatus = (String) comment.getExtraInfo();
+                    if ("Fixed".equalsIgnoreCase(fixStatus)) {
+                        fixStatuses[commentIndex] = "Fixed";
+                    } else if ("Not Fixed".equalsIgnoreCase(fixStatus)) {
+                        fixStatuses[commentIndex] = "Not Fixed";
+                    } else {
+                        fixStatuses[commentIndex] = "";
+                    }
+                    ++commentIndex;
+                }
+                if (finalReviewCommentNotFound && commentType.equalsIgnoreCase("Final Review Comment")) {
+                    finalComments[i] = comment.getComment();
+                    finalReviewCommentNotFound = false;
+                }
+            }
+        }
+
+        finalReviewForm.set("fix_status", fixStatuses);
+        finalReviewForm.set("final_comment", finalComments);
+        finalReviewForm.set("approve_fixes", approveFixes);
+
+        return mapping.findForward(Constants.SUCCESS_FORWARD_NAME);
     }
 
     /**
-     * TODO: Write sensible description for method saveFinalReview here
+     * This method is an implementation of &quot;Save Final Review&quot; Struts Action defined for
+     * this assembly, which is supposed to save information posted from /jsp/editFinalReview.jsp
+     * page. This method will update (edit) final review.
      *
-     * @return TODO: Write sensible description of return value for method saveFinalReview
+     * @return &quot;success&quot; forward, which forwards to the &quot;View Project Details&quot;
+     *         action, or &quot;userError&quot; forward, which forwards to the /jsp/userError.jsp
+     *         page, which displays information about an error that is usually caused by incorrect
+     *         user input (such as absent review id, or the lack of permissions, etc.).
      * @param mapping
      *            action mapping.
      * @param form
@@ -2022,17 +2144,157 @@ public class ProjectReviewActions extends DispatchAction {
      *            the http request.
      * @param response
      *            the http response.
+     * @throws BaseException
+     *             if any error occurs.
      */
     public ActionForward saveFinalReview(ActionMapping mapping, ActionForm form,
-            HttpServletRequest request, HttpServletResponse response) {
-        // TODO: Add implementation of method saveFinalReview here
-        return null;
+            HttpServletRequest request, HttpServletResponse response)
+        throws BaseException {
+        // Verify that certain requirements are met before proceeding with the Action
+        CorrectnessCheckResult verification =
+            checkForCorrectReviewId(mapping, request, Constants.PERFORM_FINAL_REVIEW_PERM_NAME);
+        // If any error has occured, return action forward contained in the result bean
+        if (!verification.isSuccessful()) {
+            return verification.getForward();
+        }
+
+        // Retrieve a review to save
+        Review review = verification.getReview();
+
+        // Obtain an instance of Scorecard Manager
+        ScorecardManager scrMgr = ActionsHelper.createScorecardManager(request);
+        // Retrieve a scorecard template for the review
+        Scorecard scorecardTemplate = scrMgr.getScorecard(review.getScorecard());
+
+        // Verify that the scorecard template for this review is of correct type
+        if (!scorecardTemplate.getScorecardType().getName().equalsIgnoreCase("Review")) {
+            return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
+                    Constants.PERFORM_FINAL_REVIEW_PERM_NAME, "Error.ReviewTypeIncorrect");
+        }
+        // Verify that review has not been committed yet
+        if (review.isCommitted()) {
+            return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
+                    Constants.PERFORM_FINAL_REVIEW_PERM_NAME, "Error.ReviewCommitted");
+        }
+
+        // Get an array of all phases for current project
+        Phase[] phases = ActionsHelper.getPhasesForProject(
+                ActionsHelper.createPhaseManager(request), verification.getProject());
+        // Get an active phase for the project
+        Phase phase = ActionsHelper.getPhase(phases, true, Constants.FINAL_REVIEW_PHASE_NAME);
+        // Retrieve a resource for the Final Review phase
+        Resource resource = ActionsHelper.getMyResourceForPhase(request, phase);
+        // Get the form defined for this action
+        LazyValidatorForm finalReviewForm = (LazyValidatorForm) form;
+
+        // Get form's fields
+        String[] fixStatuses = (String[]) finalReviewForm.get("fix_status");
+        String[] finalComments = (String[]) finalReviewForm.get("final_comment");
+        Boolean approveFixesObj = (Boolean) finalReviewForm.get("approve_fixes");
+        boolean approveFixes = (approveFixesObj != null && approveFixesObj.booleanValue() == true);
+        int commentIndex = 0;
+
+        // Obtain an instance of review manager
+        ReviewManager revMgr = ActionsHelper.createReviewManager(request);
+        // Retrieve all comment types
+        CommentType[] allCommentTypes = revMgr.getAllCommentTypes();
+
+        // Iterate over the items of existing review that needs updating
+        for (int i = 0; i < review.getNumberOfItems(); ++i) {
+            // Get an item
+            Item item = review.getItem(i);
+            Comment finalReviewComment = null;
+
+            for (int j = 0; j < item.getNumberOfComments(); ++j) {
+                Comment comment = item.getComment(j);
+                String typeName = comment.getCommentType().getName();
+
+                if (typeName.equalsIgnoreCase("Comment") || typeName.equalsIgnoreCase("Required") ||
+                        typeName.equalsIgnoreCase("Recommended")) {
+                    comment.setExtraInfo(fixStatuses[commentIndex]);
+                    ++commentIndex;
+                }
+                if (typeName.equalsIgnoreCase("Final Review Comment")) {
+                    finalReviewComment = comment;
+                }
+            }
+
+            if (finalReviewComment == null) {
+                finalReviewComment = new Comment();
+                finalReviewComment.setCommentType(
+                        ActionsHelper.findCommentTypeByName(allCommentTypes, "Final Review Comment"));
+                item.addComment(finalReviewComment);
+            }
+
+            finalReviewComment.setComment(finalComments[i]);
+            finalReviewComment.setAuthor(resource.getId());
+        }
+
+        Comment reviewLevelComment = null;
+
+        for (int i = 0; i < review.getNumberOfComments(); ++i) {
+            Comment comment = review.getComment(i);
+            if (comment.getCommentType().getName().equalsIgnoreCase("Final Review Comment")) {
+                reviewLevelComment = comment;
+                break;
+            }
+        }
+
+        if (reviewLevelComment == null) {
+            reviewLevelComment = new Comment();
+            reviewLevelComment.setAuthor(resource.getId());
+            reviewLevelComment.setComment("");
+            reviewLevelComment.setCommentType(
+                    ActionsHelper.findCommentTypeByName(allCommentTypes, "Final Review Comment"));
+            review.addComment(reviewLevelComment);
+        }
+
+        reviewLevelComment.setExtraInfo((approveFixes == true) ? "Approved" : "Approving");
+
+        // If the user has requested to complete the review
+        if ("submit".equalsIgnoreCase(request.getParameter("save"))) {
+            // TODO: Validate review here
+
+            reviewLevelComment.setExtraInfo((approveFixes == true) ? "Approved" : "Rejected");
+
+            // Set the completed status of the review
+            review.setCommitted(true);
+        } else if ("preview".equalsIgnoreCase(request.getParameter("save"))) {
+            // Retrieve some basic project info (such as icons' names) and place it into request
+            ActionsHelper.retrieveAndStoreBasicProjectInfo(request, verification.getProject(), getResources(request));
+            // Retrieve some basic aggregation info and place it into request
+            retrieveAndStoreBasicAggregationInfo(request, verification, scorecardTemplate);
+            // Place scorecard template object into request as attribute
+            request.setAttribute("scorecardTemplate", scorecardTemplate);
+            // Update review object stored in the request
+            request.setAttribute("review", review);
+
+            // Get the word "of" for Test Case type of question
+            String wordOf = getResources(request).getMessage("editReview.Question.Response.TestCase.of");
+            // Plase the string into the request as attribute
+            request.setAttribute("wordOf", " "  + wordOf + " ");
+
+            // Forward to preview page
+            return mapping.findForward(Constants.PREVIEW_FORWARD_NAME);
+        }
+
+        // Update (save) edited Aggregation
+        revMgr.updateReview(review, Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
+
+        // Forward to project details page
+        return ActionsHelper.cloneForwardAndAppendToPath(
+                mapping.findForward(Constants.SUCCESS_FORWARD_NAME), "&pid=" + verification.getProject().getId());
     }
 
     /**
-     * TODO: Write sensible description for method viewFinalReview here
+     * This method is an implementation of &quot;View Final Review&quot; Struts Action defined for
+     * this assembly, which is supposed to view completed final review.
      *
-     * @return TODO: Write sensible description of return value for method viewFinalReview
+     * @return &quot;success&quot; forward, which forwards to the /jsp/viewFinalReview.jsp page (as
+     *         defined in struts-config.xml file), or &quot;userError&quot; forward, which forwards
+     *         to the /jsp/userError.jsp page, which displays information about an error that is
+     *         usually caused by incorrect user input (such as absent review id, or the lack of
+     *         permissions, etc.).
      * @param mapping
      *            action mapping.
      * @param form
@@ -2041,11 +2303,77 @@ public class ProjectReviewActions extends DispatchAction {
      *            the http request.
      * @param response
      *            the http response.
+     * @throws BaseException
+     *             if any error occurs.
      */
     public ActionForward viewFinalReview(ActionMapping mapping, ActionForm form,
-            HttpServletRequest request, HttpServletResponse response) {
-        // TODO: Add implementation of method viewFinalReview here
-        return null;
+            HttpServletRequest request, HttpServletResponse response)
+        throws BaseException {
+        // Verify that certain requirements are met before proceeding with the Action
+        CorrectnessCheckResult verification =
+            checkForCorrectReviewId(mapping, request, Constants.VIEW_FINAL_REVIEW_PERM_NAME);
+        // If any error has occured, return action forward contained in the result bean
+        if (!verification.isSuccessful()) {
+            return verification.getForward();
+        }
+
+        // Retrieve a review to view
+        Review review = verification.getReview();
+
+        // Obtain an instance of Scorecard Manager
+        ScorecardManager scrMgr = ActionsHelper.createScorecardManager(request);
+        // Retrieve a scorecard template for the review
+        Scorecard scorecardTemplate = scrMgr.getScorecard(review.getScorecard());
+
+        // Verify that the scorecard template for this review is of correct type
+        if (!scorecardTemplate.getScorecardType().getName().equalsIgnoreCase("Review")) {
+            return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
+                    Constants.VIEW_FINAL_REVIEW_PERM_NAME, "Error.ReviewTypeIncorrect");
+        }
+        // Make sure that the user is not trying to view unfinished review
+        if (!review.isCommitted()) {
+            return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
+                    Constants.VIEW_FINAL_REVIEW_PERM_NAME, "Error.ReviewNotCommitted");
+        }
+
+        // Retrieve some basic project info (such as icons' names) and place it into request
+        ActionsHelper.retrieveAndStoreBasicProjectInfo(request, verification.getProject(), getResources(request));
+        // Retrieve an information about my role(s) and place it into the request
+        ActionsHelper.retrieveAndStoreMyRole(request, getResources(request));
+        // Retrieve some basic aggregation info and place it into request
+        retrieveAndStoreBasicAggregationInfo(request, verification, scorecardTemplate);
+        // Place Scorecard template in the request
+        request.setAttribute("scorecardTemplate", scorecardTemplate);
+        
+        int[] lastCommentIdxs = new int[review.getNumberOfItems()];
+        
+        Arrays.fill(lastCommentIdxs, 0);
+
+        for (int i = 0; i < review.getNumberOfItems(); ++i) {
+            Item item = review.getItem(i);
+            for (int j = 0; j < item.getNumberOfComments(); ++j) {
+                String commentType = item.getComment(j).getCommentType().getName();
+                if (commentType.equalsIgnoreCase("Comment") || commentType.equalsIgnoreCase("Required") ||
+                        commentType.equalsIgnoreCase("Recommended") ||
+                        commentType.equalsIgnoreCase("Appeal") || commentType.equalsIgnoreCase("Appeal Response") ||
+                        commentType.equalsIgnoreCase("Manager Comment") ||
+                        commentType.equalsIgnoreCase("Aggregation Comment") ||
+                        commentType.equalsIgnoreCase("Aggregation Review Comment") ||
+                        commentType.equalsIgnoreCase("Submitter Comment") ||
+                        commentType.equalsIgnoreCase("Final Review Comment")) {
+                    ++lastCommentIdxs[i];
+                }
+            }
+        }
+
+        request.setAttribute("lastCommentIdxs", lastCommentIdxs);
+
+        // Get the word "of" for Test Case type of question
+        String wordOf = getResources(request).getMessage("editReview.Question.Response.TestCase.of");
+        // Place the string into the request as attribute
+        request.setAttribute("wordOf", " "  + wordOf + " ");
+
+        return mapping.findForward(Constants.SUCCESS_FORWARD_NAME);
     }
 
     /**
@@ -2733,7 +3061,8 @@ public class ProjectReviewActions extends DispatchAction {
         request.setAttribute("sid", new Long(sid));
 
         // Retrieve the project following submission's infromation chain
-        Project project = getProjectFromSubmission(ActionsHelper.createProjectManager(request), submission);
+        Project project = ActionsHelper.getProjectForSubmission(
+                ActionsHelper.createProjectManager(request), submission);
         // Store Project object in the result bean
         result.setProject(project);
         // Place project as attribute in the request
@@ -2848,7 +3177,8 @@ public class ProjectReviewActions extends DispatchAction {
         request.setAttribute("sid", new Long(submission.getId()));
 
         // Retrieve the project following submission's infromation chain
-        Project project = getProjectFromSubmission(ActionsHelper.createProjectManager(request), submission);
+        Project project = ActionsHelper.getProjectForSubmission(
+                ActionsHelper.createProjectManager(request), submission);
         // Store Project object in the result bean
         result.setProject(project);
         // Place project as attribute in the request
@@ -2870,36 +3200,6 @@ public class ProjectReviewActions extends DispatchAction {
 
         // Return the result of the check
         return result;
-    }
-
-    /**
-     * This static method retrieves the project that the submission specified by the
-     * <code>submission</code> parameter was made for.
-     *
-     * @return a retrieved project.
-     * @param manager
-     *            an instance of <code>ProjectManager</code> object used to retrieve project from
-     *            the submission.
-     * @param submission
-     *            a submission to retrieve the project for.
-     * @throws IllegalArgumentException
-     *             if any of the parameters are <code>null</code>.
-     * @throws com.topcoder.management.project.PersistenceException
-     *             if an error occurred while accessing the database.
-     */
-    private static Project getProjectFromSubmission(ProjectManager manager, Submission submission)
-        throws com.topcoder.management.project.PersistenceException {
-        // Validate parameters
-        ActionsHelper.validateParameterNotNull(manager, "manager");
-        ActionsHelper.validateParameterNotNull(submission, "submission");
-
-        // Get an upload for this submission
-        Upload upload = submission.getUpload();
-
-        // Get Project by its id
-        Project project = manager.getProject(upload.getProject());
-
-        return project;
     }
 
     /**
