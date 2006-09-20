@@ -28,7 +28,7 @@ Notes on testing some actions from Project Admin & Review
      upload (Managers can download even uploads that have "Deleted" status
      though). Here is the link to start download:
 
-       http://localhost:8080/online_review/actions/DownloadSubmission.do?method=downloadSubmission&pid=<id-of-upload>
+       http://localhost:8080/online_review/actions/DownloadSubmission.do?method=downloadSubmission&uid=<id-of-upload>
 
      It is advisable to first use Upload Submission action to create some
      uploads in the file store.
