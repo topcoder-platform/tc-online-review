@@ -311,17 +311,25 @@ table.scorecard td.value, table.scorecard td.valueC, table.scorecard, td.valueR,
 	vertical-align: top;
 }
 
-table.scorecard td.valueC
+table.scorecard td.valueNotLast, table.scorecard td.valueNotLastC, table.scorecard, td.valueNotLastR, td.valueNotLastB
+{
+	border-bottom: 0px none white;
+	font-size: 11px;
+	padding: 5px 5px 0px 5px;
+	vertical-align: top;
+}
+
+table.scorecard td.valueC, table.scorecard td.valueNotLastC
 {
 	text-align: center;
 }
 
-table.scorecard td.valueR
+table.scorecard td.valueR, table.scorecard td.valueNotLastR
 {
 	text-align: right;
 }
 
-table.scorecard td.valueB
+table.scorecard td.valueB, table.scorecard td.valueNotLastB
 {
 	font-weight: bold;
 	white-space: nowrap;
