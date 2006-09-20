@@ -76,7 +76,7 @@
 					<c:set var="itemIdx" value="0" />
 					<c:set var="respIdx" value="0" />
 
-					<table cellpadding="0" border="0" width="100%" class="scorecard" style="border-collapse:collapse;">
+					<table class="scorecard" width="100%" cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;">
 						<c:forEach items="${scorecardTemplate.allGroups}" var="group" varStatus="groupStatus">
 							<tr>
 								<td class="title" colspan="5">${group.name}</td>
