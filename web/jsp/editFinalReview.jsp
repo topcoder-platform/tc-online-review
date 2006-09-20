@@ -41,7 +41,7 @@
 
 				<div id="mainMiddleContent">
 					<div style="padding: 11px 6px 9px 0px;">
-						<table border="0" cellpadding="0" cellspacing="0" width="100%" id="table1">
+						<table border="0" cellpadding="0" cellspacing="0" width="100%">
 							<tr>
 								<td>
 									<table cellspacing="0" cellpadding="0" border="0">
@@ -76,20 +76,21 @@
 						<html:hidden property="rid" value="${review.id}" />
 
 						<c:set var="itemIdx" value="0" />
+						<c:set var="globalStatusIdx" value="0" />
 						<c:set var="globalCommentIdx" value="0" />
 
 						<c:forEach items="${scorecardTemplate.allGroups}" var="group" varStatus="groupStatus">
-							<table cellpadding="0" cellspacing="0" border="0" width="100%" class="scorecard" style="border-collapse:collapse;">
+							<table class="scorecard" width="100%" cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;">
 								<tr>
-									<td class="title" colspan="7">${group.name}</td>
+									<td class="title" colspan="6">${group.name}</td>
 								</tr>
 								<c:forEach items="${group.allSections}" var="section" varStatus="sectionStatus">
 									<tr>
-										<td class="subheader" width="100%" colspan="7">${section.name}</td>
+										<td class="subheader" width="100%" colspan="6">${section.name}</td>
 									</tr>
 									<c:forEach items="${section.allQuestions}" var="question" varStatus="questionStatus">
 										<tr class="light">
-											<td class="value" colspan="7">
+											<td class="value" colspan="6">
 												<div class="showText" id="shortQ_${itemIdx}">
 													<a href="javascript:toggleDisplay('shortQ_${itemIdx}');toggleDisplay('longQ_${itemIdx}');" class="statLink"><html:img src="../i/plus.gif" altKey="global.plus.alt" border="0" /></a>
 													<b><bean:message key="editReview.Question.title" /> ${groupStatus.index + 1}.${sectionStatus.index + 1}.${questionStatus.index + 1}</b>
@@ -107,15 +108,15 @@
 											<td class="header"><bean:message key="editReview.EditAggregation.Reviewer" /></td>
 											<td class="headerC"><bean:message key="editReview.EditAggregation.CommentNumber" /></td>
 											<td class="header"><bean:message key="editReview.EditAggregation.Response" /></td>
-											<td class="headerC"><bean:message key="editReview.EditAggregation.Weight" /></td>
 											<td class="header"><bean:message key="editReview.EditAggregation.Type" /></td>
-											<td class="header"><bean:message key="editReview.EditAggregation.Fixed" /></td>
-											<td class="header"><bean:message key="editReview.EditAggregation.NotFixed" /></td>
+											<td class="headerC"><bean:message key="FinalReviewItemStatus.Fixed" /></td>
+											<td class="headerC"><bean:message key="FinalReviewItemStatus.NotFixed" /></td>
 										</tr>
 
 										<c:forEach items="${review.allItems}" var="item" varStatus="itemStatus">
 											<c:set var="commentNum" value="1" />
 											<c:set var="firstTime" value="${true}" />
+											<c:set var="lastCommentIdx" value="${lastCommentIdxs[itemStatus.index]}" />
 											<c:if test="${item.question == question.id}">
 												<c:forEach items="${item.allComments}" var="comment" varStatus="commentStatus">
 													<c:set var="commentType" value="${comment.commentType.name}" />
@@ -131,9 +132,11 @@
 															(commentType == "Appeal") || (commentType == "Appeal Response") ||
 															(commentType == "Aggregation Comment") || (commentType == "Aggregation Review Comment") ||
 															(commentType == "Submitter Comment")}'>
+														<c:set var="isLastCommentForItem" value="${commentStatus.index == lastCommentIdx - 1}" />
+														<c:set var="rowClass" value='${(isLastCommentForItem == true) ? "value" : "valueNotLast"}'/>
 														<tr class="dark">
-															<td class="value" nowrap="nowrap">
-																<c:if test="${commentStatus.index == 0}">
+															<c:if test="${firstTime == true}">
+																<td class="value" rowspan="${lastCommentIdx}">
 																	<c:forEach items="${reviewResources}" var="resource">
 																		<c:if test="${resource.id == comment.author}">
 																			<tc-webtag:handle coderId='${resource.allProperties["External Reference ID"]}' context="component" /><br />
@@ -144,16 +147,16 @@
 																			<html:link page="/actions/ViewReview.do?method=viewReview&rid=${subReview.id}"><bean:message key="editReview.EditAggregation.ViewReview" /></html:link>
 																		</c:if>
 																	</c:forEach>
-																</c:if>
-															</td>
+																</td>
+															</c:if>
 															<c:if test="${isReviewerComment == true}">
-																<td class="valueC">${commentNum}</td>
+																<td class="${rowClass}C">${commentNum}</td>
 																<c:set var="commentNum" value="${commentNum + 1}" />
 															</c:if>
 															<c:if test="${isReviewerComment != true}">
-																<td class="valueC"><!-- @ --></td>
+																<td class="${rowClass}"><!-- @ --></td>
 															</c:if>
-															<td class="value" width="43%">
+															<td class="${rowClass}" width="50%">
 																<c:choose>
 																	<c:when test="${isReviewerComment == true}">
 																		<b><bean:message key="editReview.EditAggregation.ReviewerResponse" /></b>
@@ -178,45 +181,29 @@
 																	</c:when>
 																</c:choose>
 																${comment.comment}
-																<c:if test="${commentStatus.index == lastCommentIdxs[itemStatus.index]}">
+																<c:if test="${isLastCommentForItem == true}">
 																	<div style="padding-top:4px;">
 																		<b><bean:message key="editReview.EditAggregation.ResponseText" /></b><br />
-																		<div id="Response${globalCommentIdx}a" style="display:hide;padding-top:4px;">
-																			<b><bean:message key="editReview.EditAggregation.ResponseText.no_colon" /></b>
-																			<bean:message key="global.optional.paren" /><b>:</b><br />
-																		</div>
-																		<div id="Response${globalCommentIdx}b" style="display:none;padding-top:4px;">
-																			<b><bean:message key="editReview.EditAggregation.ResponseText.no_colon" />
-																			<font color="#CC0000">(required)<bean:message key="global.optional.paren" /></font>:</b><br />
-																		</div>
 																		<html:textarea rows="2" property="final_comment[${globalCommentIdx}]" cols="20" styleClass="inputTextBox" />
+																		<c:set var="globalCommentIdx" value="${globalCommentIdx + 1}" />
 																	</div>
-																	<c:set var="globalResponseIdx" value="${globalResponseIdx + 1}" />
 																</c:if>
 															</td>
-															<c:if test="${firstTime == true}">
-																<td class="valueC" width="42%">${question.weight}</td>
-																<c:set var="firstTime" value="${false}" />
-															</c:if>
-															<c:if test="${firstTime != true}">
-																<td class="valueC" width="42%"><!-- @ --></td>
-															</c:if>
 															<c:if test="${isReviewerComment == true}">
-																<td class="value"><bean:message key='CommentType.${fn:replace(commentType, " ", "")}' /></td>
-																<td class="valueC">
-																	<html:radio property="fix_status[${globalCommentIdx}]" value="Fixed"
-																		onClick='javascript:swapLayer("Response${globalCommentIdx}b", "Response${globalCommentIdx}a");' /></td>
-																<td class="valueC">
-																	<html:radio property="fix_status[${globalCommentIdx}]" value="Not Fixed"
-																		onClick='javascript:swapLayer("Response${globalCommentIdx}a", "Response${globalCommentIdx}b");' /></td>
+																<td class="${rowClass}">
+																	<bean:message key='CommentType.${fn:replace(commentType, " ", "")}' /></td>
+																<td class="${rowClass}C">
+																	<html:radio property="fix_status[${globalStatusIdx}]" value="Fixed" /></td>
+																<td class="${rowClass}C">
+																	<html:radio property="fix_status[${globalStatusIdx}]" value="Not Fixed" /></td>
+																	<c:set var="globalStatusIdx" value="${globalStatusIdx + 1}" />
 															</c:if>
 															<c:if test="${isReviewerComment != true}">
-																<td class="value"><!-- @ --></td>
-																<td class="value"><!-- @ --></td>
-																<td class="value"><!-- @ --></td>
+																<td class="${rowClass}"><!-- @ --></td>
+																<td class="${rowClass}"><!-- @ --></td>
+																<td class="${rowClass}"><!-- @ --></td>
 															</c:if>
 														</tr>
-														<c:set var="globalCommentIdx" value="${globalCommentIdx + 1}" />
 													</c:if>
 												</c:forEach>
 											</c:if>
@@ -224,7 +211,7 @@
 									</c:forEach>
 								</c:forEach>
 								<tr>
-									<td class="lastRowTD" colspan="7"><!-- @ --></td>
+									<td class="lastRowTD" colspan="6"><!-- @ --></td>
 								</tr>
 							</table><br />
 						</c:forEach>
