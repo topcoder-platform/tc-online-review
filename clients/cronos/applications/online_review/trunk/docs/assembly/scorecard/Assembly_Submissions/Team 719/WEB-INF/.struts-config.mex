@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<FlowViewLayout Version="1.2">
+  <StrutsActivity path="/scorecardAdmin.do" location="0,324" dimension="283,88" />
+  <StrutsActivity path="/login.do" location="328,324" dimension="279,88" />
+  <StrutsActivity path="/logout.do" location="449,457" dimension="287,88" />
+  <StrutsActivity path="failure;6" location="319,457" dimension="85,75" />
+  <StrutsActivity path="listScorecards;6" location="0,457" dimension="127,75" />
+  <StrutsActivity path="viewScorecard;6" location="652,0" dimension="131,75" />
+  <StrutsActivity path="editScorecard;6" location="78,0" dimension="127,75" />
+  <StrutsActivity path="welcome;6" location="172,457" dimension="102,75" />
+  <StrutsActivity path="login;6" location="426,0" dimension="83,75" />
+  <StrutsActivity path="/editScorecard.jsp" location="83,175" dimension="117,49" />
+  <StrutsActivity path="/login.jsp" location="431,175" dimension="73,49" />
+  <StrutsActivity path="/error.jsp" location="324,632" dimension="75,49" />
+  <StrutsActivity path="/listScorecards.jsp" location="5,632" dimension="117,49" />
+  <StrutsActivity path="/viewScorecard.jsp" location="657,175" dimension="121,49" />
+  <StrutsActivity path="/welcome.jsp" location="177,632" dimension="92,49" />
+  <StrutsTransition id="login;6,null,/login.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="467,75" />
+      <AbsolutePoint location="467,175" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="failure;6,null,/error.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="361,532" />
+      <AbsolutePoint location="361,632" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/editScorecard.jsp,null,/scorecardAdmin.do,2" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="141,224" />
+      <AbsolutePoint location="141,324" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="viewScorecard;6,null,/viewScorecard.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="717,75" />
+      <AbsolutePoint location="717,175" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="/login.jsp,null,/login.do,2" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="467,224" />
+      <AbsolutePoint location="467,324" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="welcome;6,null,/welcome.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="223,532" />
+      <AbsolutePoint location="223,632" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="editScorecard;6,null,/editScorecard.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="141,75" />
+      <AbsolutePoint location="141,175" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+  <StrutsTransition id="listScorecards;6,null,/listScorecards.jsp,1" routingType="0">
+    <AutomaticBendpoints>
+      <AbsolutePoint location="63,532" />
+      <AbsolutePoint location="63,632" />
+    </AutomaticBendpoints>
+  </StrutsTransition>
+</FlowViewLayout>
+
