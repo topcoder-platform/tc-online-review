@@ -1,7 +1,11 @@
 -- Note: this script will remove all information not only about all phases,
---       but about all submissions, uploads, resources, and notifications as
---       well.  You'll need to repopulate the database with that information
+--       but about all submissions, uploads, resources, notifications,
+--       automatic screening results, reviews, their items and comments as
+--       well. You'll need to repopulate the database with that information
 --       using appropritate scripts.
+
+DELETE screening_result;
+DELETE screening_task;
 
 DELETE review_item_comment;
 DELETE review_item;
