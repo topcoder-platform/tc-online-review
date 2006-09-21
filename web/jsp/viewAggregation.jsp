@@ -3,6 +3,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="html" uri="/tags/struts-html" %>
 <%@ taglib prefix="bean" uri="/tags/struts-bean" %>
+<%@ taglib prefix="orfn" uri="/tags/or-functions" %>
 <%@ taglib prefix="tc-webtag" uri="/tags/tc-webtags" %>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html:html xhtml="true">
@@ -78,11 +79,11 @@
 					<table cellpadding="0" border="0" width="100%" class="scorecard" style="border-collapse:collapse;">
 						<c:forEach items="${scorecardTemplate.allGroups}" var="group" varStatus="groupStatus">
 							<tr>
-								<td class="title" colspan="5">${group.name}</td>
+								<td class="title" colspan="5">${orfn:htmlEncode(group.name)}</td>
 							</tr>
 							<c:forEach items="${group.allSections}" var="section" varStatus="sectionStatus">
 								<tr>
-									<td class="subheader" width="100%" colspan="5">${section.name}</td>
+									<td class="subheader" width="100%" colspan="5">${orfn:htmlEncode(section.name)}</td>
 								</tr>
 								<c:forEach items="${section.allQuestions}" var="question" varStatus="questionStatus">
 									<tr class="light">
@@ -90,13 +91,13 @@
 											<div class="showText" id="shortQ_${itemIdx}">
 												<a href="javascript:toggleDisplay('shortQ_${itemIdx}');toggleDisplay('longQ_${itemIdx}');" class="statLink"><html:img src="../i/plus.gif" altKey="global.plus.alt" border="0" /></a>
 												<b><bean:message key="editReview.Question.title" /> ${groupStatus.index + 1}.${sectionStatus.index + 1}.${questionStatus.index + 1}</b>
-												${question.description}
+												${orfn:htmlEncode(question.description)}
 											</div>
 											<div class="hideText" id="longQ_${itemIdx}">
 												<a href="javascript:toggleDisplay('shortQ_${itemIdx}');toggleDisplay('longQ_${itemIdx}');" class="statLink"><html:img src="../i/minus.gif" altKey="global.minus.alt" border="0" /></a>
 												<b><bean:message key="editReview.Question.title" /> ${groupStatus.index + 1}.${sectionStatus.index + 1}.${questionStatus.index + 1}</b>
-												${question.description}<br />
-												${question.guideline}
+												${orfn:htmlEncode(question.description)}<br />
+												${orfn:htmlEncode(question.guideline)}
 											</div>
 										</td>
 									</tr>
@@ -113,7 +114,7 @@
 										<c:if test="${item.question == question.id}">
 											<c:forEach items="${item.allComments}" var="comment">
 												<c:if test='${comment.commentType.name == "Aggregation Comment"}'>
-													<c:set var="aggregatorResponse" value="${comment.comment}" />
+													<c:set var="aggregatorResponse" value="${orfn:htmlEncode(comment.comment)}" />
 												</c:if>
 											</c:forEach>
 											<c:set var="commentNum" value="1" />
@@ -138,7 +139,7 @@
 														<td class="valueC">${commentNum}</td>
 														<td class="value">
 															<b><bean:message key="editReview.EditAggregation.ReviewerResponse" /></b>
-															${comment.comment}<br />
+															${orfn:htmlEncode(comment.comment)}<br />
 															<c:if test="${commentStatus.index == lastCommentIdxs[itemStatus.index]}">
 																<div style="padding-top:4px;">
 																	<b><bean:message key="viewAggregation.AggregatorResponse" /></b>

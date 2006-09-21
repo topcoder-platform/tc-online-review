@@ -3,6 +3,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="html" uri="/tags/struts-html" %>
 <%@ taglib prefix="bean" uri="/tags/struts-bean" %>
+<%@ taglib prefix="orfn" uri="/tags/or-functions" %>
 <%@ taglib prefix="tc-webtag" uri="/tags/tc-webtags" %>
 <div style="padding: 11px 6px 9px 0px;">
 	<table border="0" cellpadding="0" cellspacing="0" width="100%" id="table1">
@@ -13,10 +14,10 @@
 						<td><img src="../i/${categoryIconName}" border="0" /></td>
 						<td><img src="../i/${rootCatalogIcon}" alt="${rootCatalogName}" border="0" /></td>
 						<td>
-							<span class="bodyTitle">${project.allProperties['Project Name']}</span>
+							<span class="bodyTitle">${orfn:htmlEncode(project.allProperties['Project Name'])}</span>
 							<c:if test="${!(empty project.allProperties['Project Version'])}">
 								<font size="4"><bean:message key="global.version" />
-									${project.allProperties['Project Version']}</font>
+									${orfn:htmlEncode(project.allProperties['Project Version'])}</font>
 							</c:if>
 						</td>
 					</tr>
@@ -29,27 +30,27 @@
 		</tr>
 	</table>
 </div>
-<%--  
+<%--
 <c:if test="${reviewType ne 'AutoScreening'}">
-&#160;	<c:if test="${reviewType eq 'Screening'}">
-		<b><bean:message key="editReview.Screener" /></b>
+	<c:if test="${reviewType eq 'Screening'}">
+		&#160;<b><bean:message key="editReview.Screener" /></b>
 	</c:if>
 	<c:if test="${reviewType eq 'Review'}">
-		<b><bean:message key="editReview.Reviewer" /></b>
+		&#160;<b><bean:message key="editReview.Reviewer" /></b>
 	</c:if>
 	<c:if test="${reviewType eq 'Approval'}">
-		<b><bean:message key="editReview.Approver" /></b>
+		&#160;<b><bean:message key="editReview.Approver" /></b>
 	</c:if>
 	<c:if test="${reviewType eq 'Aggregation'}">
-		<b><bean:message key="editReview.Aggregator" /></b>
+		&#160;<b><bean:message key="editReview.Aggregator" /></b>
 	</c:if>
 	<tc-webtag:handle coderId="${authorId}" context="component" />
 <br />
 </c:if>
---%>	
+--%>
 &#160;<b><bean:message key="editReview.Submission" /></b> ${sid}
 <c:if test="${reviewType ne 'Screening' and reviewType ne 'Review'}">
 	(<tc-webtag:handle coderId="${submitterId}" context="component" />)
-</c:if>	
+</c:if>
 <br />
 &#160;<b><bean:message key="editReview.MyRole" /></b> ${myRole}<br />
