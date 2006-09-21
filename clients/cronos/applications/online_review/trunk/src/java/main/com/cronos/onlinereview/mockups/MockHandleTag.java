@@ -4,7 +4,10 @@
 package com.cronos.onlinereview.mockups;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
+import javax.servlet.http.HttpSession;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.tagext.TagSupport;
@@ -102,7 +105,7 @@ public final class MockHandleTag extends TagSupport {
     public int doEndTag() throws JspException {
         // Verify correctness of the attributes
         if (coderId == null || coderId.trim().length() == 0) {
-            throw new JspException("codeId should be specified and non-empty.");
+            throw new JspException("coderId should be specified and non-empty.");
         }
         if (context == null || context.trim().length() == 0) {
             throw new JspException("context should be specified and non-empty.");
@@ -115,13 +118,22 @@ public final class MockHandleTag extends TagSupport {
         String textColor = "coderTextBlack";
         String coderName = "unknownCoder";
 
+        // Retrieve pseudo-cache
+        Map userCache = createExtUserCache(pageContext.getSession());
+        // Try to retrieve user's object from cache
+        ExternalUser user = (ExternalUser) userCache.get(coderId + "-" + context);
+
         // Determine the actual color based on the coderId and context attributes
         try {
-            UserRetrieval ur = new DBUserRetrieval("com.topcoder.db.connectionfactory.DBConnectionFactoryImpl");
-            ExternalUser user = ur.retrieveUser(Long.parseLong(coderId));
-
+            // If the object for this user has not been cached yet, ...
             if (user == null) {
-                throw new BaseException("no such user");
+                // ... obtain an information from database
+                UserRetrieval ur = new DBUserRetrieval("com.topcoder.db.connectionfactory.DBConnectionFactoryImpl");
+                user = ur.retrieveUser(Long.parseLong(coderId));
+                // If the user does not exist exit from current try block
+                if (user == null) {
+                    throw new BaseException("no such user");
+                }
             }
 
             coderName = user.getHandle();
@@ -204,4 +216,20 @@ public final class MockHandleTag extends TagSupport {
         this.context = null;
     }
 
+    /**
+     * This static method retrieves map object from session (if it was previously stored there).
+     * This retrieved map acts as a cache to store <code>ExternalUser</code> objects.
+     *
+     * @return a map retrieved from session or just-created.
+     * @param session
+     *            an <code>HttpSession</code> object.
+     */
+    private static Map createExtUserCache(HttpSession session) {
+        Map cache = (Map) session.getAttribute("extUserCache");
+        if (cache == null) {
+            cache = new HashMap();
+            session.setAttribute("extUserCache", cache);
+        }
+        return cache;
+    }
 }
