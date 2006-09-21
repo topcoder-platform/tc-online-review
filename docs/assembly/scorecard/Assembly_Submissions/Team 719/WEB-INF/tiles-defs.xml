@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<!DOCTYPE tiles-definitions PUBLIC
+  "-//Apache Software Foundation//DTD Tiles Configuration 1.1//EN"
+  "http://jakarta.apache.org/struts/dtds/tiles-config_1_1.dtd">
+
+<tiles-definitions>
+  <!-- Main Page Layout -->
+  <definition name="layout" path="/pageLayout.jsp">
+  </definition>
+  
+  <!-- The following definitions are for general pages -->
+  
+  <!-- Page listScorecards -->
+  <definition name="page.listScorecards" extends="layout">
+     <put name="content"  value="/listScorecardsContent.jsp"/>
+  </definition>
+  
+  <!-- Page viewScorecard -->
+  <definition name="page.viewScorecard" extends="layout">
+     <put name="content"  value="/viewScorecardContent.jsp"/>
+  </definition>
+  
+  <!-- Page editScorecard -->
+  <definition name="page.editScorecard" extends="layout">
+     <put name="content"  value="/editScorecardContent.jsp"/>
+  </definition>
+  
+  <!-- Page error -->
+  <definition name="page.error" extends="layout">
+     <put name="content"  value="/errorContent.jsp"/>
+  </definition>
+</tiles-definitions>
+
