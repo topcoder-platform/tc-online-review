@@ -67,6 +67,7 @@ import com.topcoder.management.resource.search.ResourceRoleFilterBuilder;
 import com.topcoder.management.review.DefaultReviewManager;
 import com.topcoder.management.review.ReviewManager;
 import com.topcoder.management.review.data.CommentType;
+import com.topcoder.management.review.data.Review;
 import com.topcoder.management.scorecard.PersistenceException;
 import com.topcoder.management.scorecard.ScorecardManager;
 import com.topcoder.management.scorecard.ScorecardManagerImpl;
@@ -807,6 +808,29 @@ class ActionsHelper {
         request.setAttribute("submitterId", submitter.getProperty("External Reference ID"));
         // Place submitter's resource into the request
         request.setAttribute("submitterResource", submitter);
+    }
+
+    /**
+     * TODO: Document it
+     *
+     * @param request
+     * @param upload
+     * @throws BaseException
+     */
+    public static void retrieveAndStoreReviewAuthorInfo(HttpServletRequest request, Review review) throws BaseException {
+        // Validate parameters
+        validateParameterNotNull(request, "request");
+        validateParameterNotNull(review, "review");
+
+        // Obtain an instance of Resource Manager
+        ResourceManager resMgr = ActionsHelper.createResourceManager(request);
+        // Get review author's resource
+        Resource author = resMgr.getResource(review.getAuthor());
+
+        // Place submitter's user ID into the request
+        request.setAttribute("authorId", author.getProperty("External Reference ID"));
+        // Place submitter's resource into the request
+        request.setAttribute("authorResource", author);
     }
 
     /**
