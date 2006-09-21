@@ -29,7 +29,7 @@
 		</tr>
 	</table>
 </div>
-
+<%--  
 <c:if test="${reviewType ne 'AutoScreening'}">
 &#160;	<c:if test="${reviewType eq 'Screening'}">
 		<b><bean:message key="editReview.Screener" /></b>
@@ -45,7 +45,8 @@
 	</c:if>
 	<tc-webtag:handle coderId="${authorId}" context="component" />
 <br />
-</c:if>	
+</c:if>
+--%>	
 &#160;<b><bean:message key="editReview.Submission" /></b> ${sid}
 <c:if test="${reviewType ne 'Screening' and reviewType ne 'Review'}">
 	(<tc-webtag:handle coderId="${submitterId}" context="component" />)
