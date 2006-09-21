@@ -83,7 +83,7 @@ Notes on testing some actions from Project Review assembly.
      respectively. Refer to the previous section to find out where to ged a value
      for <id-of-review> part of the above two links.
 
-  5. Save Screening, Save Review & Save Approval
+  5. Save Screening, Save Review, and Save Approval
 
      You don't have to undertake special actions to access these Struts Actions.
      They may easily be accessed from appropriate Create/Edit pages.
@@ -108,8 +108,91 @@ Notes on testing some actions from Project Review assembly.
 
      Refer to section 3 for information on <id-of-review>.
      Note, that you may view only finished (committed) reviews and approvals.
+     
+  8. Edit Aggregation
+  
+     To edit Aggregation you need to have review of type Aggregation in your
+     database. File "I-7 - Add Reviews.Sql", which can be found in /src/sql
+     directory, contains appropriate SQL scripts that create such sample
+     Aggregation. The review created by these scrips will have ID 4000. When
+     you populated your database with Aggregation (either by executing scripts
+     from sample file, or by any other means), you should be able to open Edit
+     Aggregation page by following this link:
 
-  8. Note also, that you must log in under an appropriate user to be able to
+       http://localhost:8080/online_review/actions/EditAggregation.do?method=editAggregation&rid=<id-of-review>
+       
+  9. View Aggregation
+  
+     To view Aggregation you must commit it first. Use Edit Aggregation action
+     to edit and submit (or commit) Aggregation (detailed descriptions of how it
+     can be done now are contained in item 8). When you have commited
+     Aggregation you should be able to open View Aggregation page by following
+     this link:
+
+       http://localhost:8080/online_review/actions/ViewAggregation.do?method=viewAggregation&rid=<id-of-review>
+       
+     Note, that review ID will be the same as the one you used with Edit
+     Aggregation action.
+     
+ 10. Edit Aggregation Review
+ 
+     User is allowed to review an Aggregation only if that Aggregation was
+     committed first (refer to item 8 for information on how to edit
+     Aggregation). The following link will lead you to Edit Aggregation Review
+     page:
+
+       http://localhost:8080/online_review/actions/EditAggregationReview.do?method=editAggregationReview&rid=<id-of-review>
+
+     As with View Aggregation action, the ID of review is the same as the one
+     used to Edit Aggregation.
+     
+ 11. Committing Aggregation Review
+ 
+     Aggregation Review must be committed by all reviewers and a submitter who
+     this Aggregation was made for. If some reviewer is also an Aggregator (who
+     committed Aggregation), he does not need to commit the Aggregation Review.
+     
+ 12. View Aggregation Review
+ 
+     Users are allowed to view reviewed Aggregation once it has been reviewed
+     and commited by all users who had to do that. Refer to items 10 and 11 to
+     get more information on how an Aggregation can be reviewed and committed.
+     The following link will open View Aggregaton Review with comments from all
+     participants for you:
+
+       http://localhost:8080/online_review/actions/ViewAggregationReview.do?method=viewAggregationReview&rid=<id-of-review>
+     
+ 13. Edit Final Review
+ 
+     To perform Final Review you need to have review of type "Final Review" in
+     your database. File "I-7 - Add Reviews.Sql", which can be found in /src/sql
+     directory, contains appropriate SQL scripts that create such sample
+     Final Review. The review created by these scrips will have ID 5000. When
+     you populated your database with Final Review (either by executing scripts
+     from sample file, or by any other means), you should be able to open Edit
+     Final Review page by following this link:
+
+       http://localhost:8080/online_review/actions/EditFinalReview.do?method=editFinalReview&rid=<id-of-review>
+       
+ 14. View Final Review
+  
+     To view Final Review you must commit it first. Use Edit Final Review action
+     to edit and submit (or commit) Final Review (detailed descriptions of how
+     it can be done now are contained in item 13). When you have commited Final
+     Review you should be able to open View Final Review page by following this
+     link:
+
+       http://localhost:8080/online_review/actions/ViewFinalReview.do?method=viewFinalReview&rid=<id-of-review>
+       
+     Note, that review ID will be the same as the one you used with Edit
+     Final Review action.
+     
+ 15. Save Aggregation, Save Aggregation Review, and Save Final Review
+
+     You don't have to undertake any special actions to access these Struts
+     Actions. They may easily be accessed from appropriate Edit pages.
+
+ 16. Note also, that you must log in under an appropriate user to be able to
      perform the aforementioned actions.
 
 
