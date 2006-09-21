@@ -58,16 +58,12 @@
     <taglib-location>/WEB-INF/struts-logic-el.tld</taglib-location>
   </taglib>
 
-  <!-- taglib>
-    <taglib-uri>/tags/struts-nested</taglib-uri>
-    <taglib-location>/WEB-INF/struts-nested.tld</taglib-location>
-  </taglib -->
+  <!-- Online Review Helper Functions -->
+  <taglib>
+    <taglib-uri>/tags/or-functions</taglib-uri>
+    <taglib-location>/WEB-INF/or-functions.tld</taglib-location>
+  </taglib>
 
-  <!-- taglib>
-    <taglib-uri>/tags/struts-tiles</taglib-uri>
-    <taglib-location>/WEB-INF/struts-tiles.tld</taglib-location>
-  </taglib -->
-  
   <!-- TopCoder Web Tags -->
   <taglib>
     <taglib-uri>/tags/tc-webtags</taglib-uri>
