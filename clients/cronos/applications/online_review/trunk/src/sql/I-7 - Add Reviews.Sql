@@ -180,4 +180,3 @@ INSERT INTO review_item_comment (review_item_comment_id, resource_id, review_ite
   VALUES (5258, 200, 5108, 8, 'works. from Submitter', 5, 'slion', CURRENT, 'slion', CURRENT);
 INSERT INTO review_item_comment (review_item_comment_id, resource_id, review_item_id, comment_type_id, content, sort, create_user, create_date, modify_user, modify_date)
   VALUES (5259, 200, 5109, 8, 'second comment from the same reviewer for the same item. from Submitter', 4, 'ivern', CURRENT, 'ivern', CURRENT);
-
