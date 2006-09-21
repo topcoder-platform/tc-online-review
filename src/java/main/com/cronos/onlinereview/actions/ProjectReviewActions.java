@@ -117,10 +117,38 @@ public class ProjectReviewActions extends DispatchAction {
      */
     public ActionForward createScreening(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response)
-        throws BaseException {
+        throws BaseException {        
+        return createGenericReview(mapping, form, request, "Screening");        
+    }
+
+    /**
+     * TODO: Document it.
+     * 
+     * @param mapping
+     * @param form
+     * @param request
+     * @param reviewType
+     * @return
+     * @throws BaseException
+     */
+    private ActionForward createGenericReview(ActionMapping mapping, ActionForm form, HttpServletRequest request, String reviewType) throws BaseException {
+        String permName;
+        String phaseName;
+        // Determine permission name and phase name from the review type
+        if ("Screening".equals(reviewType)) {
+            permName = Constants.PERFORM_SCREENING_PERM_NAME;
+            phaseName = Constants.SCREENING_PHASE_NAME;
+        } else if ("Review".equals(reviewType)) {
+            permName = Constants.PERFORM_REVIEW_PERM_NAME;
+            phaseName = Constants.REVIEW_PHASE_NAME;
+        } else {
+            permName = Constants.PERFORM_APPROVAL_PERM_NAME;
+            phaseName = Constants.APPROVAL_PHASE_NAME;
+        }  
+        
         // Verify that certain requirements are met before proceeding with the Action
         CorrectnessCheckResult verification =
-                checkForCorrectSubmissionId(mapping, request, Constants.PERFORM_SCREENING_PERM_NAME);
+                checkForCorrectSubmissionId(mapping, request, permName);
         // If any error has occured, return action forward contained in the result bean
         if (!verification.isSuccessful()) {
             return verification.getForward();
@@ -132,15 +160,15 @@ public class ProjectReviewActions extends DispatchAction {
         // Get an array of all phases for the project
         Phase[] phases = ActionsHelper.getPhasesForProject(ActionsHelper.createPhaseManager(request), project);
         // Get active (current) phase
-        Phase phase = ActionsHelper.getPhase(phases, true, Constants.SCREENING_PHASE_NAME);
+        Phase phase = ActionsHelper.getPhase(phases, true, phaseName);
         // Get "My" resource for the Screening phase
         Resource myResource = ActionsHelper.getMyResourceForPhase(request, phase);
-        // Retrieve a scorecard template for the Screening phase
+        // Retrieve a scorecard template for the appropriate phase
         Scorecard scorecardTemplate = ActionsHelper.getScorecardTemplateForPhase(
                 ActionsHelper.createScorecardManager(request), phase);
 
         /*
-         * Verify that the user is not trying to create screening that already exists
+         * Verify that the user is not trying to create review that already exists
          */
 
         // Prepare filters
@@ -174,8 +202,11 @@ public class ProjectReviewActions extends DispatchAction {
         ActionsHelper.retrieveAndStoreBasicProjectInfo(request, project, getResources(request));
         // Retrieve an information about my role(s) and place it into the request
         ActionsHelper.retrieveAndStoreMyRole(request, getResources(request));
+        // Retrieve the information about the submitter and place it into the request
+        ActionsHelper.retrieveAndStoreSubmitterInfo(request, verification.getSubmission().getUpload());     
+        
         // Place the type of the review into the request
-        request.setAttribute("reviewType", "Screening");
+        request.setAttribute("reviewType", reviewType);
         // Place Scorecard template in the request
         request.setAttribute("scorecardTemplate", scorecardTemplate);
 
@@ -242,9 +273,33 @@ public class ProjectReviewActions extends DispatchAction {
     public ActionForward editScreening(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response)
         throws BaseException {
+        return editGenericReview(mapping, form, request, "Screening");
+    }
+
+    /**
+     * TODO: Document it
+     * 
+     * @param mapping
+     * @param form
+     * @param request
+     * @param reviewType
+     * @return
+     * @throws BaseException
+     */
+    private ActionForward editGenericReview(ActionMapping mapping, ActionForm form, HttpServletRequest request, String reviewType) throws BaseException {
+        String permName;
+        // Determine permission name and phase name from the review type
+        if ("Screening".equals(reviewType)) {
+            permName = Constants.PERFORM_SCREENING_PERM_NAME;
+        } else if ("Review".equals(reviewType)) {
+            permName = Constants.PERFORM_REVIEW_PERM_NAME;
+        } else {
+            permName = Constants.PERFORM_APPROVAL_PERM_NAME;
+        }  
+        
         // Verify that certain requirements are met before proceeding with the Action
         CorrectnessCheckResult verification =
-                checkForCorrectReviewId(mapping, request, Constants.PERFORM_SCREENING_PERM_NAME);
+                checkForCorrectReviewId(mapping, request, permName);
         // If any error has occured, return action forward contained in the result bean
         if (!verification.isSuccessful()) {
             return verification.getForward();
@@ -261,21 +316,23 @@ public class ProjectReviewActions extends DispatchAction {
         // Verify that the scorecard template for this review is of correct type
         if (!scorecardTemplate.getScorecardType().getName().equalsIgnoreCase("Screening")) {
             return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
-                    Constants.PERFORM_SCREENING_PERM_NAME, "Error.ReviewTypeIncorrect");
+                    permName, "Error.ReviewTypeIncorrect");
         }
 
         // Verify that review has not been committed yet
         if (review.isCommitted()) {
             return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
-                    Constants.PERFORM_SCREENING_PERM_NAME, "Error.ReviewCommitted");
+                    permName, "Error.ReviewCommitted");
         }
 
         // Retrieve some basic project info (such as icons' names) and place it into request
         ActionsHelper.retrieveAndStoreBasicProjectInfo(request, verification.getProject(), getResources(request));
         // Retrieve an information about my role(s) and place it into the request
         ActionsHelper.retrieveAndStoreMyRole(request, getResources(request));
+        // Retrieve the information about the submitter and place it into the request
+        ActionsHelper.retrieveAndStoreSubmitterInfo(request, verification.getSubmission().getUpload());     
         // Place the type of the review into the request
-        request.setAttribute("reviewType", "Screening");
+        request.setAttribute("reviewType", reviewType);
         // Place Scorecard template in the request
         request.setAttribute("scorecardTemplate", scorecardTemplate);
 
@@ -346,19 +403,51 @@ public class ProjectReviewActions extends DispatchAction {
     public ActionForward saveScreening(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response)
         throws BaseException {
+        return saveGenericReview(mapping, form, request, "Screening");
+    }
+
+    /**
+     * TODO: Document it
+     * 
+     * @param mapping
+     * @param form
+     * @param request
+     * @param reviewType
+     * @return
+     * @throws BaseException
+     */
+    private ActionForward saveGenericReview(ActionMapping mapping, ActionForm form, HttpServletRequest request, String reviewType) throws BaseException {
+        String permName;
+        String phaseName;
+        String scorecardTypeName;
+        // Determine permission name and phase name from the review type
+        if ("Screening".equals(reviewType)) {
+            permName = Constants.PERFORM_SCREENING_PERM_NAME;
+            phaseName = Constants.SCREENING_PHASE_NAME;
+            scorecardTypeName = "Screening";
+        } else if ("Review".equals(reviewType)) {
+            permName = Constants.PERFORM_REVIEW_PERM_NAME;
+            phaseName = Constants.REVIEW_PHASE_NAME;
+            scorecardTypeName = "Review";
+        } else {
+            permName = Constants.PERFORM_APPROVAL_PERM_NAME;
+            phaseName = Constants.APPROVAL_PHASE_NAME;
+            scorecardTypeName = "Client Review";
+        }  
+        
         // Verify that certain requirements are met before proceeding with the Action
         CorrectnessCheckResult verification = null;
         if (request.getParameter("rid") != null) {
-            verification = checkForCorrectReviewId(mapping, request, Constants.PERFORM_SCREENING_PERM_NAME);
+            verification = checkForCorrectReviewId(mapping, request, permName);
         }
         if (verification == null && request.getParameter("sid") != null) {
-            verification = checkForCorrectSubmissionId(mapping, request, Constants.PERFORM_SCREENING_PERM_NAME);
+            verification = checkForCorrectSubmissionId(mapping, request, permName);
         }
 
         // If neither "sid" nor "rid" was specified, return an action forward to the error page
         if (verification == null) {
             return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
-                    Constants.PERFORM_SCREENING_PERM_NAME, "Error.SubmissionAndReviewIdNotSpecified");
+                    permName, "Error.SubmissionAndReviewIdNotSpecified");
         }
 
         // If check was not successful, return an appropriate action forward
@@ -381,7 +470,7 @@ public class ProjectReviewActions extends DispatchAction {
             // Get an array of all phases for the project
             Phase[] phases = ActionsHelper.getPhasesForProject(ActionsHelper.createPhaseManager(request), project);
             // Get active (current) phase
-            Phase phase = ActionsHelper.getPhase(phases, true, Constants.SCREENING_PHASE_NAME);
+            Phase phase = ActionsHelper.getPhase(phases, true, phaseName);
             // Get "My" resource for the Screening phase
             Resource myResource = ActionsHelper.getMyResourceForPhase(request, phase);
             // Retrieve a scorecard template for the Screening phase
@@ -421,7 +510,7 @@ public class ProjectReviewActions extends DispatchAction {
         }
 
         // Verify that the scorecard template for this review is of correct type
-        if (!scorecardTemplate.getScorecardType().getName().equalsIgnoreCase("Screening")) {
+        if (!scorecardTemplate.getScorecardType().getName().equalsIgnoreCase(scorecardTypeName)) {
             return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
                     Constants.PERFORM_SCREENING_PERM_NAME, "Error.ReviewTypeIncorrect");
         }
@@ -435,7 +524,7 @@ public class ProjectReviewActions extends DispatchAction {
         // Retrieve some basic project info (such as icons' names) and place it into request
         ActionsHelper.retrieveAndStoreBasicProjectInfo(request, verification.getProject(), getResources(request));
         // Place the type of the review into the request
-        request.setAttribute("reviewType", "Screening");
+        request.setAttribute("reviewType", reviewType);
 
         // Get an array of phases for the project
         Phase[] phases = ActionsHelper.getPhasesForProject(
@@ -563,6 +652,7 @@ public class ProjectReviewActions extends DispatchAction {
         // Forward to project details page
         return ActionsHelper.cloneForwardAndAppendToPath(
                 mapping.findForward(Constants.SUCCESS_FORWARD_NAME), "&pid=" + verification.getProject().getId());
+
     }
 
     /**
@@ -588,9 +678,37 @@ public class ProjectReviewActions extends DispatchAction {
     public ActionForward viewScreening(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response)
         throws BaseException {
+        return viewGenericReview(mapping, form, request, "Screening");        
+    }
+
+    /**
+     * TODO: Document it.
+     * 
+     * @param mapping
+     * @param form
+     * @param request
+     * @param reviewType
+     * @return
+     * @throws BaseException
+     */
+    private ActionForward viewGenericReview(ActionMapping mapping, ActionForm form, HttpServletRequest request, String reviewType) throws BaseException {
+        String permName;
+        String scorecardTypeName;
+        // Determine permission name and phase name from the review type
+        if ("Screening".equals(reviewType)) {
+            permName = Constants.PERFORM_SCREENING_PERM_NAME;
+            scorecardTypeName = "Screening";
+        } else if ("Review".equals(reviewType)) {
+            permName = Constants.PERFORM_REVIEW_PERM_NAME;
+            scorecardTypeName = "Review";
+        } else {
+            permName = Constants.PERFORM_APPROVAL_PERM_NAME;
+            scorecardTypeName = "Client Review";
+        }  
+        
         // Verify that certain requirements are met before proceeding with the Action
         CorrectnessCheckResult verification =
-                checkForCorrectReviewId(mapping, request, Constants.VIEW_SCREENING_PERM_NAME);
+                checkForCorrectReviewId(mapping, request, permName);
         // If any error has occured, return action forward contained in the result bean
         if (!verification.isSuccessful()) {
             return verification.getForward();
@@ -602,29 +720,33 @@ public class ProjectReviewActions extends DispatchAction {
         Scorecard scorecardTemplate = scrMgr.getScorecard(verification.getReview().getScorecard());
 
         // Verify that the scorecard template for this review is of correct type
-        if (!scorecardTemplate.getScorecardType().getName().equalsIgnoreCase("Screening")) {
+        if (!scorecardTemplate.getScorecardType().getName().equalsIgnoreCase(scorecardTypeName)) {
             return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
-                    Constants.VIEW_SCREENING_PERM_NAME, "Error.ReviewTypeIncorrect");
+                    permName, "Error.ReviewTypeIncorrect");
         }
         // Make sure that the user is not trying to view unfinished review
         if (!verification.getReview().isCommitted()) {
             return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
-                    Constants.VIEW_SCREENING_PERM_NAME, "Error.ReviewNotCommitted");
+                    permName, "Error.ReviewNotCommitted");
         }
 
         // Retrieve some basic project info (such as icons' names) and place it into request
         ActionsHelper.retrieveAndStoreBasicProjectInfo(request, verification.getProject(), getResources(request));
         // Retrieve an information about my role(s) and place it into the request
         ActionsHelper.retrieveAndStoreMyRole(request, getResources(request));
+        // Retrieve the information about the submitter and place it into the request
+        ActionsHelper.retrieveAndStoreSubmitterInfo(request, verification.getSubmission().getUpload());        
+        // Place the type of the review into the request
+        request.setAttribute("reviewType", reviewType);
         // Place Scorecard template in the request
         request.setAttribute("scorecardTemplate", scorecardTemplate);
 
         // Get the word "of" for Test Case type of question
         String wordOf = getResources(request).getMessage("editReview.Question.Response.TestCase.of");
-        // Place the string into the request as attribute
+        // Plase the string into the request as attribute
         request.setAttribute("wordOf", " "  + wordOf + " ");
 
-        return mapping.findForward(Constants.SUCCESS_FORWARD_NAME);
+        return mapping.findForward(Constants.SUCCESS_FORWARD_NAME); 
     }
 
     /**
@@ -653,101 +775,7 @@ public class ProjectReviewActions extends DispatchAction {
     public ActionForward createReview(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response)
         throws BaseException {
-        // Verify that certain requirements are met before proceeding with the Action
-        CorrectnessCheckResult verification =
-                checkForCorrectSubmissionId(mapping, request, Constants.PERFORM_REVIEW_PERM_NAME);
-        // If any error has occured, return action forward contained in the result bean
-        if (!verification.isSuccessful()) {
-            return verification.getForward();
-        }
-
-        // Get current project
-        Project project = verification.getProject();
-
-        // Get an array of all phases for the project
-        Phase[] phases = ActionsHelper.getPhasesForProject(ActionsHelper.createPhaseManager(request), project);
-        // Get active (current) phase
-        Phase phase = ActionsHelper.getPhase(phases, true, Constants.REVIEW_PHASE_NAME);
-        // Get "My" resource for the Review phase
-        Resource myResource = ActionsHelper.getMyResourceForPhase(request, phase);
-        // Retrieve a scorecard template for the Review phase
-        Scorecard scorecardTemplate = ActionsHelper.getScorecardTemplateForPhase(
-                ActionsHelper.createScorecardManager(request), phase);
-
-        /*
-         * Verify that the user is not trying to create review that already exists
-         */
-
-        // Prepare filters
-        Filter filterResource = new EqualToFilter("reviewer", new Long(myResource.getId()));
-        Filter filterSubmission = new EqualToFilter("submission", new Long(verification.getSubmission().getId()));
-        Filter filterScorecard = new EqualToFilter("scorecardType",
-                new Long(scorecardTemplate.getScorecardType().getId()));
-
-        // Build the list of all filters that should be joined using AND operator
-        List filters = new ArrayList();
-        filters.add(filterResource);
-        filters.add(filterSubmission);
-        filters.add(filterScorecard);
-
-        // Prepare final combined filter
-        Filter filter = new AndFilter(filters);
-        // Obtain an instance of Review Manager
-        ReviewManager revMgr = ActionsHelper.createReviewManager(request);
-        // Retrieve an array of reviews
-        Review[] reviews = revMgr.searchReviews(filter, false);
-
-        // Non-empty array of reviews indicates that
-        // user is trying to create review that already exists
-        if (reviews.length != 0) {
-            // Forward to Edit Review page
-            return ActionsHelper.cloneForwardAndAppendToPath(
-                    mapping.findForward(Constants.EDIT_FORWARD_NAME), "&rid=" + reviews[0].getId());
-        }
-
-        // Retrieve some basic project info (such as icons' names) and place it into request
-        ActionsHelper.retrieveAndStoreBasicProjectInfo(request, verification.getProject(), getResources(request));
-        // Retrieve an information about my role(s) and place it into the request
-        ActionsHelper.retrieveAndStoreMyRole(request, getResources(request));
-        // Place the type of the review into the request
-        request.setAttribute("reviewType", "Review");
-        // Place Scorecard template in the request
-        request.setAttribute("scorecardTemplate", scorecardTemplate);
-
-        // Retrieve all comment types first
-        CommentType reviewCommentTypesAll[] = revMgr.getAllCommentTypes();
-        // Select only those needed for this scorecard
-        CommentType reviewCommentTypes[] = new CommentType[] {
-                ActionsHelper.findCommentTypeByName(reviewCommentTypesAll, "Comment"),
-                ActionsHelper.findCommentTypeByName(reviewCommentTypesAll, "Required"),
-                ActionsHelper.findCommentTypeByName(reviewCommentTypesAll, "Recommended") };
-
-        // Place comment types in the request
-        request.setAttribute("allCommentTypes", reviewCommentTypes);
-
-        /*
-         * Populate the form
-         */
-
-        // Determine the number of questions in scorecard template
-        int questionsCount = ActionsHelper.getScorecardQuestionsCount(scorecardTemplate);
-
-        LazyValidatorForm reviewForm = (LazyValidatorForm) form;
-
-        String[] emptyStrings = new String[questionsCount];
-        Arrays.fill(emptyStrings, "");
-
-        // Populate form properties
-        reviewForm.set("answer", emptyStrings);
-        reviewForm.set("comment", emptyStrings.clone());
-
-        Long[] commentTypes = new Long[questionsCount];
-        CommentType typeComment = ActionsHelper.findCommentTypeByName(reviewCommentTypesAll, "Comment");
-
-        Arrays.fill(commentTypes, new Long(typeComment.getId()));
-        reviewForm.set("commentType", commentTypes);
-
-        return mapping.findForward(Constants.SUCCESS_FORWARD_NAME);
+        return createGenericReview(mapping, form, request, "Review");
     }
 
     /**
@@ -777,83 +805,7 @@ public class ProjectReviewActions extends DispatchAction {
     public ActionForward editReview(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response)
         throws BaseException {
-        // Verify that certain requirements are met before proceeding with the Action
-        CorrectnessCheckResult verification =
-                checkForCorrectReviewId(mapping, request, Constants.PERFORM_REVIEW_PERM_NAME);
-        // If any error has occured, return action forward contained in the result bean
-        if (!verification.isSuccessful()) {
-            return verification.getForward();
-        }
-
-        // Retrieve a review to edit
-        Review review = verification.getReview();
-
-        // Obtain an instance of Scorecard Manager
-        ScorecardManager scorMgr = ActionsHelper.createScorecardManager(request);
-        // Retrieve a scorecard template for the review
-        Scorecard scorecardTemplate = scorMgr.getScorecard(review.getScorecard());
-
-        // Verify that the scorecard template for this review is of correct type
-        if (!scorecardTemplate.getScorecardType().getName().equalsIgnoreCase("Review")) {
-            return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
-                    Constants.PERFORM_REVIEW_PERM_NAME, "Error.ReviewTypeIncorrect");
-        }
-        // Verify that review has not been committed yet
-        if (review.isCommitted()) {
-            return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
-                    Constants.PERFORM_REVIEW_PERM_NAME, "Error.ReviewCommitted");
-        }
-
-        // Retrieve some basic project info (such as icons' names) and place it into request
-        ActionsHelper.retrieveAndStoreBasicProjectInfo(request, verification.getProject(), getResources(request));
-        // Retrieve an information about my role(s) and place it into the request
-        ActionsHelper.retrieveAndStoreMyRole(request, getResources(request));
-        // Place the type of the review into the request
-        request.setAttribute("reviewType", "Review");
-        // Place Scorecard template in the request
-        request.setAttribute("scorecardTemplate", scorecardTemplate);
-
-        // Obtain an instance of Review Manager
-        ReviewManager revMgr = ActionsHelper.createReviewManager(request);
-
-        // Retrieve all comment types at first
-        CommentType reviewCommentTypesAll[] = revMgr.getAllCommentTypes();
-        // Select only those needed for this scorecard
-        CommentType reviewCommentTypes[] = new CommentType[] {
-                ActionsHelper.findCommentTypeByName(reviewCommentTypesAll, "Comment"),
-                ActionsHelper.findCommentTypeByName(reviewCommentTypesAll, "Required"),
-                ActionsHelper.findCommentTypeByName(reviewCommentTypesAll, "Recommended") };
-
-        // Place comment types in the request
-        request.setAttribute("allCommentTypes", reviewCommentTypes);
-
-        // Prepare the arrays
-        String[] answers = new String[review.getNumberOfItems()];
-        String[] replies = new String[review.getNumberOfItems()];
-        Long[] commentTypes = new Long[review.getNumberOfItems()];
-
-        // Walk the items in the review setting appropriate values in the arrays
-        for (int i = 0; i < review.getNumberOfItems(); ++i) {
-            Item item = review.getItem(i);
-            Comment comment = item.getComment(0); // TODO: Retrieve all comments
-
-            answers[i] = (String) item.getAnswer();
-            replies[i] = comment.getComment();
-            commentTypes[i] = new Long(comment.getCommentType().getId());
-        }
-
-        /*
-         * Populate the form
-         */
-
-        LazyValidatorForm reviewForm = (LazyValidatorForm) form;
-
-        // Populate form properties
-        reviewForm.set("answer", answers);
-        reviewForm.set("comment", replies);
-        reviewForm.set("commentType", commentTypes);
-
-        return mapping.findForward(Constants.SUCCESS_FORWARD_NAME);
+        return editGenericReview(mapping, form, request, "Review");
     }
 
     /**
@@ -880,217 +832,7 @@ public class ProjectReviewActions extends DispatchAction {
     public ActionForward saveReview(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response)
         throws BaseException {
-        // Verify that certain requirements are met before proceeding with the Action
-        CorrectnessCheckResult verification = null;
-        if (request.getParameter("rid") != null) {
-            verification = checkForCorrectReviewId(mapping, request, Constants.PERFORM_REVIEW_PERM_NAME);
-        }
-        if (verification == null && request.getParameter("sid") != null) {
-            verification = checkForCorrectSubmissionId(mapping, request, Constants.PERFORM_REVIEW_PERM_NAME);
-        }
-
-        // If neither "sid" nor "rid" was specified, return an action forward to the error page
-        if (verification == null) {
-            return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
-                    Constants.PERFORM_REVIEW_PERM_NAME, "Error.SubmissionAndReviewIdNotSpecified");
-        }
-        // If check was not successful, return an appropriate action forward
-        if (!verification.isSuccessful()) {
-            return verification.getForward();
-        }
-
-        // Retrieve the review to save (if any)
-        Review review = verification.getReview();
-        Scorecard scorecardTemplate = null;
-
-        if (review == null) {
-            /*
-             * Verify that the user is not trying to create review that already exists
-             */
-
-            // Get current project
-            Project project = verification.getProject();
-
-            // Get an array of all phases for the project
-            Phase[] phases = ActionsHelper.getPhasesForProject(ActionsHelper.createPhaseManager(request), project);
-            // Get active (current) phase
-            Phase phase = ActionsHelper.getPhase(phases, true, Constants.REVIEW_PHASE_NAME);
-            // Get "My" resource for the Review phase
-            Resource myResource = ActionsHelper.getMyResourceForPhase(request, phase);
-            // Retrieve a scorecard template for the Review phase
-            scorecardTemplate = ActionsHelper.getScorecardTemplateForPhase(
-                    ActionsHelper.createScorecardManager(request), phase);
-
-            // Prepare filters
-            Filter filterResource = new EqualToFilter("reviewer", new Long(myResource.getId()));
-            Filter filterSubmission = new EqualToFilter("submission", new Long(verification.getSubmission().getId()));
-            Filter filterScorecard = new EqualToFilter("scorecardType",
-                    new Long(scorecardTemplate.getScorecardType().getId()));
-
-            // Prepare final combined filter
-            Filter filter = new AndFilter(Arrays.asList(new Filter[]
-                    {filterResource, filterSubmission, filterScorecard}));
-            // Obtain an instance of Review Manager
-            ReviewManager revMgr = ActionsHelper.createReviewManager(request);
-            // Retrieve an array of reviews
-            Review[] reviews = revMgr.searchReviews(filter, false);
-
-            // Non-empty array of reviews indicates that
-            // user is trying to create review that already exists
-            if (reviews.length != 0) {
-                review = reviews[0];
-                verification.setReview(review);
-            }
-        } else {
-            // Obtain an instance of Scorecard Manager
-            ScorecardManager scrMgr = ActionsHelper.createScorecardManager(request);
-            // Retrieve a scorecard template for the review
-            scorecardTemplate = scrMgr.getScorecard(review.getScorecard());
-        }
-
-        // Verify that the scorecard template for this review is of correct type
-        if (!scorecardTemplate.getScorecardType().getName().equalsIgnoreCase("Review")) {
-            return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
-                    Constants.PERFORM_REVIEW_PERM_NAME, "Error.ReviewTypeIncorrect");
-        }
-
-        // Verify that review has not been committed yet
-        if (review != null && review.isCommitted()) {
-            return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
-                    Constants.PERFORM_REVIEW_PERM_NAME, "Error.ReviewCommitted");
-        }
-
-        // Retrieve some basic project info (such as icons' names) and place it into request
-        ActionsHelper.retrieveAndStoreBasicProjectInfo(request, verification.getProject(), getResources(request));
-        // Place the type of the review into the request
-        request.setAttribute("reviewType", "Review");
-
-        // Get an array of phases for the project
-        Phase[] phases = ActionsHelper.getPhasesForProject(
-                ActionsHelper.createPhaseManager(request), verification.getProject());
-        // Get an active phase for the project
-        Phase phase = ActionsHelper.getPhase(phases, true, Constants.REVIEW_PHASE_NAME);
-        // Retrieve a resource for the Review phase
-        Resource resource = ActionsHelper.getMyResourceForPhase(request, phase);
-        // Get the form defined for this action
-        LazyValidatorForm reviewForm = (LazyValidatorForm) form;
-
-        // Get form's fields
-        String[] answers = (String[]) reviewForm.get("answer");
-        String[] replies = (String[]) reviewForm.get("comment");
-        Long[] commentTypeIds = (Long[]) reviewForm.get("commentType");
-        int index = 0;
-
-        // Obtain an instance of review manager
-        ReviewManager revMgr = ActionsHelper.createReviewManager(request);
-
-        // Retrieve all comment types
-        CommentType[] commentTypes = revMgr.getAllCommentTypes();
-
-        // If the review hasn't been created yet
-        if (review == null) {
-            // Create a convenient review editor
-            ReviewEditor reviewEditor =
-                new ReviewEditor(Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
-
-            // Iterate over the scorecard template's questions,
-            // so items will be created for every question
-            for (int i = 0; i < scorecardTemplate.getNumberOfGroups(); ++i) {
-                Group group = scorecardTemplate.getGroup(i);
-                for (int j = 0; j < group.getNumberOfSections(); ++j) {
-                    Section section = group.getSection(j);
-                    for (int k = 0; k < section.getNumberOfQuestions(); ++k) {
-                        Question question = section.getQuestion(k);
-
-                        // Create review item and comment for that item
-                        Item item = new Item();
-                        Comment comment = new Comment();
-
-                        // Set required fields of the comment
-                        comment.setAuthor(resource.getId());
-                        comment.setComment(replies[index]);
-                        comment.setCommentType(
-                                ActionsHelper.findCommentTypeById(commentTypes, commentTypeIds[index].longValue()));
-                        // Add comment to the item
-                        item.addComment(comment);
-
-                        // Set required fields of the item
-                        item.setAnswer(answers[index]);
-                        item.setQuestion(question.getId());
-                        // Add item to the review
-                        reviewEditor.addItem(item);
-
-                        ++index;
-                    }
-                }
-            }
-
-            // Finally, set required fields of the review
-            reviewEditor.setAuthor(resource.getId());
-            reviewEditor.setSubmission(verification.getSubmission().getId());
-            reviewEditor.setScorecard(scorecardTemplate.getId());
-
-            review = reviewEditor.getReview();
-        } else {
-            // Iterate over items of the existing review that needs updating
-            for (int i = 0; i < review.getNumberOfItems(); ++i) {
-                // Get an item and its comment
-                Item item = review.getItem(i);
-                Comment comment = item.getComment(0); // TODO: Retrieve and update all comments
-
-                // Update the comment only if type or text have changed
-                if (comment.getCommentType().getId() != commentTypeIds[i].longValue() ||
-                        !comment.getComment().equals(replies[i])) {
-                    comment.setComment(replies[i]);
-                    comment.setCommentType(
-                            ActionsHelper.findCommentTypeById(commentTypes, commentTypeIds[i].longValue()));
-                    // Update the author of the comment
-                    comment.setAuthor(resource.getId());
-                }
-
-                // Update the answer
-                item.setAnswer(answers[i]);
-            }
-        }
-
-        // If the user has requested to complete the review
-        if ("submit".equalsIgnoreCase(request.getParameter("save"))) {
-            // TODO: Validate review here
-
-            // Obtain an instance of CalculationManager
-            CalculationManager scoreCalculator = new CalculationManager();
-            // Compute scorecard's score
-            review.setScore(new Float(scoreCalculator.getScore(scorecardTemplate, review)));
-
-            // Set the completed status of the review
-            review.setCommitted(true);
-        } else if ("preview".equalsIgnoreCase(request.getParameter("save"))) {
-            // Retrieve an information about my role(s) and place it into the request
-            ActionsHelper.retrieveAndStoreMyRole(request, getResources(request));
-            // Place scorecard template object into request as attribute
-            request.setAttribute("scorecardTemplate", scorecardTemplate);
-            // Place review object into request as attribute
-            request.setAttribute("review", review);
-
-            // Get the word "of" for Test Case type of question
-            String wordOf = getResources(request).getMessage("editReview.Question.Response.TestCase.of");
-            // Plase the string into the request as attribute
-            request.setAttribute("wordOf", " "  + wordOf + " ");
-
-            // Forward to preview page
-            return mapping.findForward(Constants.PREVIEW_FORWARD_NAME);
-        }
-
-        // Determine which action should be performed -- creation or updating
-        if (verification.getReview() == null) {
-            revMgr.createReview(review, Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
-        } else {
-            revMgr.updateReview(review, Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
-        }
-
-        // Forward to project details page
-        return ActionsHelper.cloneForwardAndAppendToPath(
-                mapping.findForward(Constants.SUCCESS_FORWARD_NAME), "&pid=" + verification.getProject().getId());
+        return saveGenericReview(mapping, form, request, "Review");
     }
 
     /**
@@ -1116,43 +858,7 @@ public class ProjectReviewActions extends DispatchAction {
     public ActionForward viewReview(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response)
         throws BaseException {
-        // Verify that certain requirements are met before proceeding with the Action
-        CorrectnessCheckResult verification =
-                checkForCorrectReviewId(mapping, request, Constants.VIEW_ALL_REVIEWS_PERM_NAME);
-        // If any error has occured, return action forward contained in the result bean
-        if (!verification.isSuccessful()) {
-            return verification.getForward();
-        }
-
-        // Obtain an instance of Scorecard Manager
-        ScorecardManager scrMgr = ActionsHelper.createScorecardManager(request);
-        // Retrieve a scorecard template for this review
-        Scorecard scorecardTemplate = scrMgr.getScorecard(verification.getReview().getScorecard());
-
-        // Verify that the scorecard template for this review is of correct type
-        if (!scorecardTemplate.getScorecardType().getName().equalsIgnoreCase("Review")) {
-            return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
-                    Constants.VIEW_ALL_REVIEWS_PERM_NAME, "Error.ReviewTypeIncorrect");
-        }
-        // Make sure that the user is not trying to view unfinished review
-        if (!verification.getReview().isCommitted()) {
-            return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
-                    Constants.VIEW_ALL_REVIEWS_PERM_NAME, "Error.ReviewNotCommitted");
-        }
-
-        // Retrieve some basic project info (such as icons' names) and place it into request
-        ActionsHelper.retrieveAndStoreBasicProjectInfo(request, verification.getProject(), getResources(request));
-        // Retrieve an information about my role(s) and place it into the request
-        ActionsHelper.retrieveAndStoreMyRole(request, getResources(request));
-        // Place Scorecard template in the request
-        request.setAttribute("scorecardTemplate", scorecardTemplate);
-
-        // Get the word "of" for Test Case type of question
-        String wordOf = getResources(request).getMessage("editReview.Question.Response.TestCase.of");
-        // Place the string into the request as attribute
-        request.setAttribute("wordOf", " "  + wordOf + " ");
-
-        return mapping.findForward(Constants.SUCCESS_FORWARD_NAME);
+        return viewGenericReview(mapping, form, request, "Review");
     }
 
     /**
@@ -2402,103 +2108,7 @@ public class ProjectReviewActions extends DispatchAction {
     public ActionForward createApproval(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response)
         throws BaseException{
-        // Verify that certain requirements are met before proceeding with the Action
-        CorrectnessCheckResult verification =
-                checkForCorrectSubmissionId(mapping, request, Constants.PERFORM_APPROVAL_PERM_NAME);
-        // If any error has occured, return action forward contained in the result bean
-        if (!verification.isSuccessful()) {
-            return verification.getForward();
-        }
-
-        // Get current project
-        Project project = verification.getProject();
-
-        // Get an array of all phases for the project
-        Phase[] phases = ActionsHelper.getPhasesForProject(ActionsHelper.createPhaseManager(request), project);
-        // Get active (current) phase
-        Phase phase = ActionsHelper.getPhase(phases, true, Constants.APPROVAL_PHASE_NAME);
-        // Get "My" resource for the Approval phase
-        Resource myResource = ActionsHelper.getMyResourceForPhase(request, phase);
-        // Retrieve a scorecard template for the Approval phase
-        Scorecard scorecardTemplate = ActionsHelper.getScorecardTemplateForPhase(
-                ActionsHelper.createScorecardManager(request), phase);
-
-        /*
-         * Verify that the user is not trying to create approval that already exists
-         */
-
-        // Prepare filters
-        Filter filterResource = new EqualToFilter("reviewer", new Long(myResource.getId()));
-        Filter filterSubmission = new EqualToFilter("submission", new Long(verification.getSubmission().getId()));
-        Filter filterScorecard = new EqualToFilter("scorecardType",
-                new Long(scorecardTemplate.getScorecardType().getId()));
-
-        // Build the list of all filters that should be joined using AND operator
-        List filters = new ArrayList();
-        filters.add(filterResource);
-        filters.add(filterSubmission);
-        filters.add(filterScorecard);
-
-        // Prepare final combined filter
-        Filter filter = new AndFilter(filters);
-        // Obtain an instance of Review Manager
-        ReviewManager revMgr = ActionsHelper.createReviewManager(request);
-        // Retrieve an array of reviews
-        Review[] reviews = revMgr.searchReviews(filter, false);
-
-        // Non-empty array of reviews indicates that
-        // user is trying to create approval that already exists
-        if (reviews.length != 0) {
-            // Forward to Edit Approval page
-            return ActionsHelper.cloneForwardAndAppendToPath(
-                    mapping.findForward(Constants.EDIT_FORWARD_NAME), "&rid=" + reviews[0].getId());
-        }
-
-        // Retrieve some basic project info (such as icons' names) and place it into request
-        ActionsHelper.retrieveAndStoreBasicProjectInfo(request, verification.getProject(), getResources(request));
-        // Retrieve an information about my role(s) and place it into the request
-        ActionsHelper.retrieveAndStoreMyRole(request, getResources(request));
-        // Retrieve the information about the submitter and place it into the request
-        ActionsHelper.retrieveAndStoreSubmitterInfo(request, verification.getSubmission().getUpload());        
-        // Place the type of the review into the request
-        request.setAttribute("reviewType", "Approval");
-        // Place Scorecard template in the request
-        request.setAttribute("scorecardTemplate", scorecardTemplate);
-
-        // Retrieve all comment types first
-        CommentType reviewCommentTypesAll[] = revMgr.getAllCommentTypes();
-        // Select only those needed for this scorecard
-        CommentType reviewCommentTypes[] = new CommentType[] {
-                ActionsHelper.findCommentTypeByName(reviewCommentTypesAll, "Comment"),
-                ActionsHelper.findCommentTypeByName(reviewCommentTypesAll, "Required"),
-                ActionsHelper.findCommentTypeByName(reviewCommentTypesAll, "Recommended") };
-
-        // Place comment types in the request
-        request.setAttribute("allCommentTypes", reviewCommentTypes);
-
-        /*
-         * Populate the form
-         */
-
-        // Determine the number of questions in scorecard template
-        int questionsCount = ActionsHelper.getScorecardQuestionsCount(scorecardTemplate);
-
-        LazyValidatorForm reviewForm = (LazyValidatorForm) form;
-
-        String[] emptyStrings = new String[questionsCount];
-        Arrays.fill(emptyStrings, "");
-
-        // Populate form properties
-        reviewForm.set("answer", emptyStrings);
-        reviewForm.set("comment", emptyStrings.clone());
-
-        Long[] commentTypes = new Long[questionsCount];
-        CommentType typeComment = ActionsHelper.findCommentTypeByName(reviewCommentTypesAll, "Comment");
-
-        Arrays.fill(commentTypes, new Long(typeComment.getId()));
-        reviewForm.set("commentType", commentTypes);
-
-        return mapping.findForward(Constants.SUCCESS_FORWARD_NAME);
+        return createGenericReview(mapping, form, request, "Approval");
     }
 
     /**
@@ -2528,85 +2138,7 @@ public class ProjectReviewActions extends DispatchAction {
     public ActionForward editApproval(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response)
         throws BaseException{
-        // Verify that certain requirements are met before proceeding with the Action
-        CorrectnessCheckResult verification =
-                checkForCorrectReviewId(mapping, request, Constants.PERFORM_APPROVAL_PERM_NAME);
-        // If any error has occured, return action forward contained in the result bean
-        if (!verification.isSuccessful()) {
-            return verification.getForward();
-        }
-
-        // Retrieve a review to edit
-        Review review = verification.getReview();
-
-        // Obtain an instance of Scorecard Manager
-        ScorecardManager scorMgr = ActionsHelper.createScorecardManager(request);
-        // Retrieve a scorecard template for the review
-        Scorecard scorecardTemplate = scorMgr.getScorecard(review.getScorecard());
-
-        // Verify that the scorecard template for this review is of correct type
-        if (!scorecardTemplate.getScorecardType().getName().equalsIgnoreCase("Client Review")) {
-            return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
-                    Constants.PERFORM_APPROVAL_PERM_NAME, "Error.ReviewTypeIncorrect");
-        }
-        // Verify that review has not been committed yet
-        if (review.isCommitted()) {
-            return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
-                    Constants.PERFORM_APPROVAL_PERM_NAME, "Error.ReviewCommitted");
-        }
-
-        // Retrieve some basic project info (such as icons' names) and place it into request
-        ActionsHelper.retrieveAndStoreBasicProjectInfo(request, verification.getProject(), getResources(request));
-        // Retrieve an information about my role(s) and place it into the request
-        ActionsHelper.retrieveAndStoreMyRole(request, getResources(request));
-        // Retrieve the information about the submitter and place it into the request
-        ActionsHelper.retrieveAndStoreSubmitterInfo(request, verification.getSubmission().getUpload());        
-        // Place the type of the review into the request
-        request.setAttribute("reviewType", "Approval");
-        // Place Scorecard template in the request
-        request.setAttribute("scorecardTemplate", scorecardTemplate);
-
-        // Obtain an instance of Review Manager
-        ReviewManager revMgr = ActionsHelper.createReviewManager(request);
-
-        // Retrieve all comment types at first
-        CommentType reviewCommentTypesAll[] = revMgr.getAllCommentTypes();
-        // Select only those needed for this scorecard
-        CommentType reviewCommentTypes[] = new CommentType[] {
-                ActionsHelper.findCommentTypeByName(reviewCommentTypesAll, "Comment"),
-                ActionsHelper.findCommentTypeByName(reviewCommentTypesAll, "Required"),
-                ActionsHelper.findCommentTypeByName(reviewCommentTypesAll, "Recommended") };
-
-        // Place comment types in the request
-        request.setAttribute("allCommentTypes", reviewCommentTypes);
-
-        // Prepare the arrays
-        String[] answers = new String[review.getNumberOfItems()];
-        String[] replies = new String[review.getNumberOfItems()];
-        Long[] commentTypes = new Long[review.getNumberOfItems()];
-
-        // Walk the items in the review setting appropriate values in the arrays
-        for (int i = 0; i < review.getNumberOfItems(); ++i) {
-            Item item = review.getItem(i);
-            Comment comment = item.getComment(0); // TODO: Retrieve all comments
-
-            answers[i] = (String) item.getAnswer();
-            replies[i] = comment.getComment();
-            commentTypes[i] = new Long(comment.getCommentType().getId());
-        }
-
-        /*
-         * Populate the form
-         */
-
-        LazyValidatorForm reviewForm = (LazyValidatorForm) form;
-
-        // Populate form properties
-        reviewForm.set("answer", answers);
-        reviewForm.set("comment", replies);
-        reviewForm.set("commentType", commentTypes);
-
-        return mapping.findForward(Constants.SUCCESS_FORWARD_NAME);
+        return editGenericReview(mapping, form, request, "Approval");
     }
 
     /**
@@ -2633,224 +2165,7 @@ public class ProjectReviewActions extends DispatchAction {
     public ActionForward saveApproval(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response)
         throws BaseException {
-        // Verify that certain requirements are met before proceeding with the Action
-        CorrectnessCheckResult verification = null;
-        if (request.getParameter("rid") != null) {
-            verification = checkForCorrectReviewId(mapping, request, Constants.PERFORM_APPROVAL_PERM_NAME);
-        }
-        if (verification == null && request.getParameter("sid") != null) {
-            verification = checkForCorrectSubmissionId(mapping, request, Constants.PERFORM_APPROVAL_PERM_NAME);
-        }
-
-        // If neither "sid" nor "rid" was specified, return an action forward to the error page
-        if (verification == null) {
-            return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
-                    Constants.PERFORM_APPROVAL_PERM_NAME, "Error.SubmissionAndReviewIdNotSpecified");
-        }
-        // If check was not successful, return an appropriate action forward
-        if (!verification.isSuccessful()) {
-            return verification.getForward();
-        }
-
-        // Retrieve the review to edit (if any)
-        Review review = verification.getReview();
-        Scorecard scorecardTemplate = null;
-
-        if (review == null) {
-            /*
-             * Verify that the user is not trying to create approval that already exists
-             */
-
-            // Get current project
-            Project project = verification.getProject();
-
-            // Get an array of all phases for the project
-            Phase[] phases = ActionsHelper.getPhasesForProject(ActionsHelper.createPhaseManager(request), project);
-            // Get active (current) phase
-            Phase phase = ActionsHelper.getPhase(phases, true, Constants.APPROVAL_PHASE_NAME);
-            // Get "My" resource for the Approval phase
-            Resource myResource = ActionsHelper.getMyResourceForPhase(request, phase);
-            // Retrieve a scorecard template for the Approval phase
-            scorecardTemplate = ActionsHelper.getScorecardTemplateForPhase(
-                    ActionsHelper.createScorecardManager(request), phase);
-
-            // Prepare filters
-            Filter filterResource = new EqualToFilter("reviewer", new Long(myResource.getId()));
-            Filter filterSubmission = new EqualToFilter("submission", new Long(verification.getSubmission().getId()));
-            Filter filterScorecard = new EqualToFilter("scorecardType",
-                    new Long(scorecardTemplate.getScorecardType().getId()));
-
-            // Build the list of all filters that should be joined using AND operator
-            List filters = new ArrayList();
-            filters.add(filterResource);
-            filters.add(filterSubmission);
-            filters.add(filterScorecard);
-
-            // Prepare final combined filter
-            Filter filter = new AndFilter(filters);
-            // Obtain an instance of Review Manager
-            ReviewManager revMgr = ActionsHelper.createReviewManager(request);
-            // Retrieve an array of reviews
-            Review[] reviews = revMgr.searchReviews(filter, false);
-
-            // Non-empty array of reviews indicates that
-            // user is trying to create approval that already exists
-            if (reviews.length != 0) {
-                review = reviews[0];
-                verification.setReview(review);
-            }
-        } else {
-            // Obtain an instance of Scorecard Manager
-            ScorecardManager scrMgr = ActionsHelper.createScorecardManager(request);
-            // Retrieve a scorecard template for the review
-            scorecardTemplate = scrMgr.getScorecard(review.getScorecard());
-        }
-
-        // Verify that the scorecard template for this review is of correct type
-        if (!scorecardTemplate.getScorecardType().getName().equalsIgnoreCase("Client Review")) {
-            return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
-                    Constants.PERFORM_APPROVAL_PERM_NAME, "Error.ReviewTypeIncorrect");
-        }
-
-        // Verify that review has not been committed yet
-        if (review != null && review.isCommitted()) {
-            return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
-                    Constants.PERFORM_APPROVAL_PERM_NAME, "Error.ReviewCommitted");
-        }
-
-        // Retrieve some basic project info (such as icons' names) and place it into request
-        ActionsHelper.retrieveAndStoreBasicProjectInfo(request, verification.getProject(), getResources(request));
-        // Retrieve the information about the submitter and place it into the request
-        ActionsHelper.retrieveAndStoreSubmitterInfo(request, verification.getSubmission().getUpload());        
-        // Place the type of the review into the request
-        request.setAttribute("reviewType", "Approval");
-
-        // Get an array of phases for the project
-        Phase[] phases = ActionsHelper.getPhasesForProject(
-                ActionsHelper.createPhaseManager(request), verification.getProject());
-        // Get an active phase for the project
-        Phase phase = ActionsHelper.getPhase(phases, true, Constants.APPROVAL_PHASE_NAME);
-        // Retrieve a resource for the Approval phase
-        Resource resource = ActionsHelper.getMyResourceForPhase(request, phase);
-        // Get the form defined for this action
-        LazyValidatorForm reviewForm = (LazyValidatorForm) form;
-
-        // Get form's fields
-        String[] answers = (String[]) reviewForm.get("answer");
-        String[] replies = (String[]) reviewForm.get("comment");
-        Long[] commentTypeIds = (Long[]) reviewForm.get("commentType");
-        int index = 0;
-
-        // Obtain an instance of review manager
-        ReviewManager revMgr = ActionsHelper.createReviewManager(request);
-
-        // Retrieve all comment types
-        CommentType[] commentTypes = revMgr.getAllCommentTypes();
-
-        // If the review hasn't been created yet
-        if (review == null) {
-            // Create a convenient review editor
-            ReviewEditor reviewEditor =
-                new ReviewEditor(Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
-
-            // Iterate over the scorecard template's questions,
-            // so items will be created for every question
-            for (int i = 0; i < scorecardTemplate.getNumberOfGroups(); ++i) {
-                Group group = scorecardTemplate.getGroup(i);
-                for (int j = 0; j < group.getNumberOfSections(); ++j) {
-                    Section section = group.getSection(j);
-                    for (int k = 0; k < section.getNumberOfQuestions(); ++k) {
-                        Question question = section.getQuestion(k);
-
-                        // Create review item and comment for that item
-                        Item item = new Item();
-                        Comment comment = new Comment();
-
-                        // Set required fields of the comment
-                        comment.setAuthor(resource.getId());
-                        comment.setComment(replies[index]);
-                        comment.setCommentType(
-                                ActionsHelper.findCommentTypeById(commentTypes, commentTypeIds[index].longValue()));
-                        // Add comment to the item
-                        item.addComment(comment);
-
-                        // Set required fields of the item
-                        item.setAnswer(answers[index]);
-                        item.setQuestion(question.getId());
-                        // Add item to the review
-                        reviewEditor.addItem(item);
-
-                        ++index;
-                    }
-                }
-            }
-
-            // Finally, set required fields of the review
-            reviewEditor.setAuthor(resource.getId());
-            reviewEditor.setSubmission(verification.getSubmission().getId());
-            reviewEditor.setScorecard(scorecardTemplate.getId());
-
-            review = reviewEditor.getReview();
-        } else {
-            // Iterate over items of the existing review that needs updating
-            for (int i = 0; i < review.getNumberOfItems(); ++i) {
-                // Get an item and its comment
-                Item item = review.getItem(i);
-                Comment comment = item.getComment(0); // TODO: Retrieve and update all comments
-
-                // Update the comment only if type or text have changed
-                if (comment.getCommentType().getId() != commentTypeIds[i].longValue() ||
-                        !comment.getComment().equals(replies[i])) {
-                    comment.setComment(replies[i]);
-                    comment.setCommentType(
-                            ActionsHelper.findCommentTypeById(commentTypes, commentTypeIds[i].longValue()));
-                    // Update the author of the comment
-                    comment.setAuthor(resource.getId());
-                }
-
-                // Update the answer
-                item.setAnswer(answers[i]);
-            }
-        }
-
-        // If the user has requested to complete the review
-        if ("submit".equalsIgnoreCase(request.getParameter("save"))) {
-            // TODO: Validate review here
-
-            // Obtain an instance of CalculationManager
-            CalculationManager scoreCalculator = new CalculationManager();
-            // Compute scorecard's score
-            review.setScore(new Float(scoreCalculator.getScore(scorecardTemplate, review)));
-
-            // Set the completed status of the review
-            review.setCommitted(true);
-        } else if ("preview".equalsIgnoreCase(request.getParameter("save"))) {
-            // Retrieve an information about my role(s) and place it into the request
-            ActionsHelper.retrieveAndStoreMyRole(request, getResources(request));
-            // Place scorecard template object into request as attribute
-            request.setAttribute("scorecardTemplate", scorecardTemplate);
-            // Place review object into request as attribute
-            request.setAttribute("review", review);
-
-            // Get the word "of" for Test Case type of question
-            String wordOf = getResources(request).getMessage("editReview.Question.Response.TestCase.of");
-            // Plase the string into the request as attribute
-            request.setAttribute("wordOf", " "  + wordOf + " ");
-
-            // Forward to preview page
-            return mapping.findForward(Constants.PREVIEW_FORWARD_NAME);
-        }
-
-        // Determine which action should be performed -- creation or updating
-        if (verification.getReview() == null) {
-            revMgr.createReview(review, Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
-        } else {
-            revMgr.updateReview(review, Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
-        }
-
-        // Forward to project details page
-        return ActionsHelper.cloneForwardAndAppendToPath(
-                mapping.findForward(Constants.SUCCESS_FORWARD_NAME), "&pid=" + verification.getProject().getId());
+        return saveGenericReview(mapping, form, request, "Review");
     }
 
     /**
@@ -2876,47 +2191,7 @@ public class ProjectReviewActions extends DispatchAction {
     public ActionForward viewApproval(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response)
         throws BaseException {
-        // Verify that certain requirements are met before proceeding with the Action
-        CorrectnessCheckResult verification =
-                checkForCorrectReviewId(mapping, request, Constants.VIEW_APPROVAL_PERM_NAME);
-        // If any error has occured, return action forward contained in the result bean
-        if (!verification.isSuccessful()) {
-            return verification.getForward();
-        }
-
-        // Obtain an instance of Scorecard Manager
-        ScorecardManager scrMgr = ActionsHelper.createScorecardManager(request);
-        // Retrieve a scorecard template for this review
-        Scorecard scorecardTemplate = scrMgr.getScorecard(verification.getReview().getScorecard());
-
-        // Verify that the scorecard template for this review is of correct type
-        if (!scorecardTemplate.getScorecardType().getName().equalsIgnoreCase("Client Review")) {
-            return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
-                    Constants.VIEW_APPROVAL_PERM_NAME, "Error.ReviewTypeIncorrect");
-        }
-        // Make sure that the user is not trying to view unfinished review
-        if (!verification.getReview().isCommitted()) {
-            return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
-                    Constants.VIEW_APPROVAL_PERM_NAME, "Error.ReviewNotCommitted");
-        }
-
-        // Retrieve some basic project info (such as icons' names) and place it into request
-        ActionsHelper.retrieveAndStoreBasicProjectInfo(request, verification.getProject(), getResources(request));
-        // Retrieve an information about my role(s) and place it into the request
-        ActionsHelper.retrieveAndStoreMyRole(request, getResources(request));
-        // Retrieve the information about the submitter and place it into the request
-        ActionsHelper.retrieveAndStoreSubmitterInfo(request, verification.getSubmission().getUpload());        
-        // Place the type of the review into the request
-        request.setAttribute("reviewType", "Approval");
-        // Place Scorecard template in the request
-        request.setAttribute("scorecardTemplate", scorecardTemplate);
-
-        // Get the word "of" for Test Case type of question
-        String wordOf = getResources(request).getMessage("editReview.Question.Response.TestCase.of");
-        // Plase the string into the request as attribute
-        request.setAttribute("wordOf", " "  + wordOf + " ");
-
-        return mapping.findForward(Constants.SUCCESS_FORWARD_NAME);
+        return viewGenericReview(mapping, form, request, "Screening");
     }
 
     /**
