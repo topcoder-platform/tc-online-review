@@ -3,6 +3,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="html" uri="/tags/struts-html" %>
 <%@ taglib prefix="bean" uri="/tags/struts-bean" %>
+<%@ taglib prefix="orfn" uri="/tags/or-functions" %>
 <%@ taglib prefix="tc-webtag" uri="/tags/tc-webtags" %>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 
@@ -73,11 +74,11 @@
 					<c:forEach items="${scorecardTemplate.allGroups}" var="group" varStatus="groupStatus">
 						<table class="scorecard" cellpadding="0" width="100%" style="border-collapse: collapse;" id="table1">
 							<tr>
-								<td class="title" colspan="6">${group.name}</td>
+								<td class="title" colspan="6">${orfn:htmlEncode(group.name)}</td>
 							</tr>
 							<c:forEach items="${group.allSections}" var="section" varStatus="sectionStatus">
 								<tr>
-									<td class="subheader" width="100%">${section.name}</td>
+									<td class="subheader" width="100%">${orfn:htmlEncode(section.name)}</td>
 									<td class="subheader" align="center" width="49%"><bean:message key="editReview.SectionHeader.Weight" /></td>
 									<td class="subheader" align="center"><b><bean:message key="editReview.SectionHeader.Average" /></b></td>
 									<c:forEach items="${reviews}" var="review">
@@ -94,19 +95,19 @@
 											<div class="showText" id="shortQ_${itemIdx}">
 												<a href="javascript:toggleDisplay('shortQ_${itemIdx}');toggleDisplay('longQ_${itemIdx}');" class="statLink"><html:img src="../i/plus.gif" altKey="global.plus.alt" border="0" /></a>
 												<b><bean:message key="editReview.Question.title" /> ${groupStatus.index + 1}.${sectionStatus.index + 1}.${questionStatus.index + 1}</b>
-												${question.description}
+												${orfn:htmlEncode(question.description)}
 											</div>
 											<div class="hideText" id="longQ_${itemIdx}">
 												<a href="javascript:toggleDisplay('shortQ_${itemIdx}');toggleDisplay('longQ_${itemIdx}');" class="statLink"><html:img src="../i/minus.gif" altKey="global.minus.alt" border="0" /></a>
 												<b><bean:message key="editReview.Question.title" /> ${groupStatus.index + 1}.${sectionStatus.index + 1}.${questionStatus.index + 1}</b>
-												${question.description}<br />
-												${question.guideline}
+												${orfn:htmlEncode(question.description)}<br />
+												${orfn:htmlEncode(question.guideline)}
 											</div>
 										</td>
 										<td class="valueC">${question.weight}</td>
-										<td class="valueC" nowrap>${avgScores[itemIdx]}</td>
+										<td class="valueC" nowrap="nowrap">${avgScores[itemIdx]}</td>
 										<c:forEach items="${reviews}" var="review" varStatus="reviewStatus">
-											<td class="valueC" nowrap>${scores[reviewStatus.index][itemIdx]}</td>
+											<td class="valueC" nowrap="nowrap">${scores[reviewStatus.index][itemIdx]}</td>
 										</c:forEach>
 									</tr>
 									<tr class="dark">
@@ -124,11 +125,11 @@
 														<c:if test="${(comment.commentType.name eq 'Required') or (comment.commentType.name eq 'Recommended') or (comment.commentType.name eq 'Comment')}">
 															<b><bean:message key="editReview.Question.Response.title" />
 																${commentNum}:
-																${comment.commentType.name}
+																<bean:message key='CommentType.${fn:replace(comment.commentType.name, " ", "")}' />
 															</b>
 														</c:if>
 														(<tc-webtag:handle coderId="${review.author}" context="component" />) <br>
-														${comment.comment}<br>
+														${orfn:htmlEncode(comment.comment)}<br>
 														<%-- TODO: Comeplete handling of documents--%>
 														<b>Document </b>(required)<b>: </b><a href="#">test.doc</a><br /><br />
 													</c:forEach>
@@ -148,7 +149,7 @@
 										<td class="value" align="left" colspan="2" > </td>
 										<td class="valueC" nowrap="nowrap"><b><%-- TODO: Put avg. score here --%>##.##</b></td>
 										<c:forEach items="${reviews}" var="review">
-											<td class="valueC" nowrap="nowrap"><b>${review.score}</b></td>
+											<td class="valueC" nowrap="nowrap"><b>${orfn:htmlEncode(review.score)}</b></td>
 										</c:forEach>
 									</tr>
 									<tr>

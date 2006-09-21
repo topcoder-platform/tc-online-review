@@ -3,6 +3,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="html" uri="/tags/struts-html" %>
 <%@ taglib prefix="bean" uri="/tags/struts-bean" %>
+<%@ taglib prefix="orfn" uri="/tags/or-functions" %>
 <%@ taglib prefix="tc-webtag" uri="/tags/tc-webtags" %>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html:html xhtml="true">
@@ -75,8 +76,8 @@
 
 				<div id="mainMiddleContent">
 					<jsp:include page="../includes/review/review_project.jsp" />
-					
-					<h3>${scorecardTemplate.name}</h3>
+
+					<h3>${orfn:htmlEncode(scorecardTemplate.name)}</h3>
 
 					<html:form action="/actions/Save${reviewType}">
 						<html:hidden property="method" value="save${reviewType}" />
@@ -92,11 +93,11 @@
 						<c:forEach items="${scorecardTemplate.allGroups}" var="group" varStatus="groupStatus">
 							<table cellpadding="0" cellspacing="0" width="100%" class="scorecard" style="border-collapse:collapse;">
 								<tr>
-									<td class="title" colspan="3">${group.name}</td>
+									<td class="title" colspan="3">${orfn:htmlEncode(group.name)}</td>
 								</tr>
 								<c:forEach items="${group.allSections}" var="section" varStatus="sectionStatus">
 									<tr>
-										<td class="subheader" width="100%">${section.name}</td>
+										<td class="subheader" width="100%">${orfn:htmlEncode(section.name)}</td>
 										<td class="subheader" width="49%" align="center"><bean:message key="editReview.SectionHeader.Weight" /></td>
 										<td class="subheader" width="1%" align="center"><bean:message key="editReview.SectionHeader.Response" /></td>
 									</tr>
@@ -107,13 +108,13 @@
 											<div class="showText" id="shortQ_${itemIdx}">
 												<a href="javascript:toggleDisplay('shortQ_${itemIdx}');toggleDisplay('longQ_${itemIdx}');" class="statLink"><html:img src="../i/plus.gif" altKey="global.plus.alt" border="0" /></a>
 												<b><bean:message key="editReview.Question.title" /> ${groupStatus.index + 1}.${sectionStatus.index + 1}.${questionStatus.index + 1}</b>
-												${question.description}
+												${orfn:htmlEncode(question.description)}
 											</div>
 											<div class="hideText" id="longQ_${itemIdx}">
 												<a href="javascript:toggleDisplay('shortQ_${itemIdx}');toggleDisplay('longQ_${itemIdx}');" class="statLink"><html:img src="../i/minus.gif" altKey="global.minus.alt" border="0" /></a>
 												<b><bean:message key="editReview.Question.title" /> ${groupStatus.index + 1}.${sectionStatus.index + 1}.${questionStatus.index + 1}</b>
-												${question.description}<br />
-												${question.guideline}
+												${orfn:htmlEncode(question.description)}<br />
+												${orfn:htmlEncode(question.guideline)}
 											</div>
 											</td>
 											<td class="valueC">${question.weight}</td>
