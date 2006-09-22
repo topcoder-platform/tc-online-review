@@ -982,12 +982,13 @@ class ActionsHelper {
         for (int i = 0; i < phases.length; ++i) {
             // Get a phase for the current iteration
             Phase phase = phases[i];
-            // If the search is being performed for active phase only, skip already closed phase
+            // Add the phase to list if it is open and, hence, active
             if (phase.getPhaseStatus().getName().equalsIgnoreCase("Open")) {
                 activePhases.add(phase);
             }
         }
 
+        // Convert the list to array and return it
         return (Phase[]) activePhases.toArray(new Phase[activePhases.size()]);
     }
 
@@ -1012,30 +1013,55 @@ class ActionsHelper {
         // Validate parameters
         validateParameterNotNull(phases, "phases");
 
-        for (int i = 0; i < phases.length; ++i) {
-            // Get a phase for the current iteration
-            Phase phase = phases[i];
-            // Get a name of status of this phase
-            String phaseStatus = phase.getPhaseStatus().getName();
-            // If the search is being performed for active phase only, skip already closed phase
-            if (activeOnly == true && phaseStatus.equalsIgnoreCase("Closed")) {
-                continue;
-            }
-/* TODO: Uncomment this when phases have correct status
-            // There is no active phase with specified name, or there is an error in database
-            if (activeOnly == true && strPhaseStatus.equalsIgnoreCase("Sheduled")) {
+        if (activeOnly == true) {
+            // This method is a simpler version of the getActivePhases one
+            // It will simply return the first phase in the array returned
+            // from that method that has the specified name if the name was specified
+            Phase[] activePhases = getActivePhases(phases);
+
+            // No active phases?
+            if (activePhases.length == 0) {
                 return null;
             }
-*/
-            // If the name of the phase was not specified,
-            // or the name of the current phase equals desired name, return this phase
-            if (phaseName == null || phaseName.equalsIgnoreCase(phase.getPhaseType().getName())) {
-                // Return it
-                return phase;
+            // Return first phase in the active phases array if phase name was not specified
+            if (phaseName == null) {
+                return activePhases[0];
             }
+
+            // Perform a search
+            for (int i = 0; i < activePhases.length; ++i) {
+                if (activePhases[i].getPhaseType().getName().equalsIgnoreCase(phaseName)) {
+                    return activePhases[i];
+                }
+            }
+            // Active phase with specified name has not been found
+            return null;
+        } else {
+            // Phase name should be specified if the search is done for (possibly) closed phase
+            validateParameterStringNotEmpty(phaseName, "phaseName");
+
+            Phase phaseFound = null;
+
+            for (int i = 0; i < phases.length; ++i) {
+                // Get a phase for the current iteration
+                Phase phase = phases[i];
+                // Get a name of status of this phase
+                String phaseStatus = phase.getPhaseStatus().getName();
+                // If the phase found that is not yet open, stop the search
+                if (phaseStatus.equalsIgnoreCase("Scheduled")) {
+                    break;
+                }
+                // If the name of the current phase matches the one
+                // specified by method's parameter, remeber this phase
+                if (phase.getPhaseType().getName().equalsIgnoreCase(phaseName)) {
+                    phaseFound = phase;
+                }
+            }
+
+            // The phaseFound variable will contain the latest phase that has already been closed
+            // or is currently open, or null if no phase with the required name has been found
+            return phaseFound;
         }
-        // No phase has been found
-        return null;
     }
 
     public static Phase getPhaseForDeliverable(Phase[] phases, Deliverable deliverable) {
