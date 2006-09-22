@@ -2297,6 +2297,16 @@ public class ProjectReviewActions extends DispatchAction {
         if (!verification.isSuccessful()) {
             return verification.getForward();
         }
+        
+        // Get current project
+        Project project = verification.getProject();
+
+        // Get an array of all phases for the project
+        Phase[] phases = ActionsHelper.getPhasesForProject(ActionsHelper.createPhaseManager(request), project);
+        // Get active (current) phase
+        Phase phase = ActionsHelper.getPhase(phases, true, phaseName);
+        // Get "My" resource for the Screening phase
+        Resource myResource = ActionsHelper.getMyResourceForPhase(request, phase);
 
         // Retrieve the review to edit (if any)
         Review review = verification.getReview();
@@ -2304,19 +2314,10 @@ public class ProjectReviewActions extends DispatchAction {
 
         if (review == null) {
             /*
-             * Verify that the user is not trying to create screening that already exists
+             * Verify that the user is not trying to create review that already exists
              */
 
-            // Get current project
-            Project project = verification.getProject();
-
-            // Get an array of all phases for the project
-            Phase[] phases = ActionsHelper.getPhasesForProject(ActionsHelper.createPhaseManager(request), project);
-            // Get active (current) phase
-            Phase phase = ActionsHelper.getPhase(phases, true, phaseName);
-            // Get "My" resource for the Screening phase
-            Resource myResource = ActionsHelper.getMyResourceForPhase(request, phase);
-            // Retrieve a scorecard template for the Screening phase
+            // Retrieve a scorecard template for the appropriate phase
             scorecardTemplate = ActionsHelper.getScorecardTemplateForPhase(
                     ActionsHelper.createScorecardManager(request), phase);
 
@@ -2355,22 +2356,15 @@ public class ProjectReviewActions extends DispatchAction {
         // Verify that the scorecard template for this review is of correct type
         if (!scorecardTemplate.getScorecardType().getName().equalsIgnoreCase(scorecardTypeName)) {
             return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
-                    Constants.PERFORM_SCREENING_PERM_NAME, "Error.ReviewTypeIncorrect");
+                    permName, "Error.ReviewTypeIncorrect");
         }
 
         // Verify that review has not been committed yet
         if (review != null && review.isCommitted()) {
             return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
-                    Constants.PERFORM_SCREENING_PERM_NAME, "Error.ReviewCommitted");
+                    permName, "Error.ReviewCommitted");
         }
 
-        // Get an array of phases for the project
-        Phase[] phases = ActionsHelper.getPhasesForProject(
-                ActionsHelper.createPhaseManager(request), verification.getProject());
-        // Get an active phase for the project
-        Phase phase = ActionsHelper.getPhase(phases, true, Constants.SCREENING_PHASE_NAME);
-        // Retrieve a resource for the Screening phase
-        Resource resource = ActionsHelper.getMyResourceForPhase(request, phase);
         // Get the form defined for this action
         LazyValidatorForm reviewForm = (LazyValidatorForm) form;
 
@@ -2406,7 +2400,7 @@ public class ProjectReviewActions extends DispatchAction {
                         Comment comment = new Comment();
 
                         // Set required fields of the comment
-                        comment.setAuthor(resource.getId());
+                        comment.setAuthor(myResource.getId());
                         comment.setComment(replies[index]);
                         comment.setCommentType(
                                 ActionsHelper.findCommentTypeById(commentTypes, commentTypeIds[index].longValue()));
@@ -2425,7 +2419,7 @@ public class ProjectReviewActions extends DispatchAction {
             }
 
             // Finally, set required fields of the review
-            reviewEditor.setAuthor(resource.getId());
+            reviewEditor.setAuthor(myResource.getId());
             reviewEditor.setSubmission(verification.getSubmission().getId());
             reviewEditor.setScorecard(scorecardTemplate.getId());
 
@@ -2444,7 +2438,7 @@ public class ProjectReviewActions extends DispatchAction {
                     comment.setCommentType(
                             ActionsHelper.findCommentTypeById(commentTypes, commentTypeIds[i].longValue()));
                     // Update the author of the comment
-                    comment.setAuthor(resource.getId());
+                    comment.setAuthor(myResource.getId());
                 }
 
                 // Update the answer
