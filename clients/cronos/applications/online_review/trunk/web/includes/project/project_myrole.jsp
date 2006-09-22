@@ -3,6 +3,7 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="html" uri="/tags/struts-html" %>
 <%@ taglib prefix="bean" uri="/tags/struts-bean" %>
+<%@ taglib prefix="tc-webtag" uri="/tags/tc-webtags" %>
 	<table class="scorecard" style="border-collapse:collapse;" cellpadding="0" cellspacing="0" width="100%">
 		<tr>
 			<td class="title"><bean:message key="viewProjectDetails.box.MyRole" /></td>
@@ -52,8 +53,16 @@
 							</c:when>
 						</c:choose>
 						${myDeliverableDates[deliverableStatus.index]}
-						<b><bean:message key='Deliverable.${fn:replace(deliverable.name, " ", "")}' /></b><c:if
-							test="${deliverableStatus.index != fn:length(myDeliverables) - 1}"><br />
+						<c:if test="${empty myDeliverableLinks[deliverableStatus.index]}">
+							<b><bean:message key='Deliverable.${fn:replace(deliverable.name, " ", "")}' /></b><c:if
+								test="${deliverableStatus.index != fn:length(myDeliverables) - 1}"><br />
+							</c:if>
+						</c:if>
+						<c:if test="${!(empty myDeliverableLinks[deliverableStatus.index])}">
+							<html:link page="/actions/${myDeliverableLinks[deliverableStatus.index]}"><b><bean:message
+								key='Deliverable.${fn:replace(deliverable.name, " ", "")}' /></b></html:link><c:if
+								test="${deliverableStatus.index != fn:length(myDeliverables) - 1}"><br />
+							</c:if>
 						</c:if>
 					</c:forEach>
 				</td>
@@ -77,9 +86,16 @@
 							</c:when>
 						</c:choose>
 						${outstandingDeliverableDates[deliverableStatus.index]}
-						<b><bean:message key='Deliverable.${fn:replace(deliverable.name, " ", "")}' /></b><c:if
-							test="${deliverableStatus.index != fn:length(myDeliverables) - 1}"><br />
+						<c:if test="${!(empty outstandingDeliverableUserIds[deliverableStatus.index])}">
+							<tc-webtag:handle coderId="${outstandingDeliverableUserIds[deliverableStatus.index]}" context="component" /><b>:</b>
 						</c:if>
+						<b><bean:message key='Deliverable.${fn:replace(deliverable.name, " ", "")}' /></b>
+						<c:if test="${!(empty deliverable.submission)}">
+							${deliverable.submission}
+							<c:if test="${(isManager == true) && !(empty outstandingDeliverableSubmissionUserIds[deliverableStatus.index])}">
+								(<tc-webtag:handle coderId="${outstandingDeliverableSubmissionUserIds[deliverableStatus.index]}" context="component" />)
+							</c:if>
+						</c:if><br />
 					</c:forEach>
 				</td>
 			</c:if>
