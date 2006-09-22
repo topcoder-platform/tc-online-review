@@ -72,6 +72,7 @@ import com.topcoder.management.scorecard.ScorecardManager;
 import com.topcoder.management.scorecard.ScorecardManagerImpl;
 import com.topcoder.management.scorecard.data.Group;
 import com.topcoder.management.scorecard.data.Scorecard;
+import com.topcoder.management.scorecard.data.ScorecardType;
 import com.topcoder.management.scorecard.data.Section;
 import com.topcoder.project.phases.Phase;
 import com.topcoder.project.phases.PhaseDateComparator;
@@ -223,12 +224,39 @@ class ActionsHelper {
     // --------------------------------------------------------------- Finder type of methods -----
 
     /**
+     * This static method searches for the scorecard type with the specified name in a provided
+     * array of scorecard types.
+     *
+     * @return found scorecard type, or <code>null</code> if a type with the specified name has
+     *         not been found in the provided array of scorecard types.
+     * @param scorecardTypes
+     *            an array of scorecard types to search for wanted scorecard type among.
+     * @param typeName
+     *            the name of the needed scorecard type.
+     * @throws IllegalArgumentException
+     *             if any of the parameters are <code>null</code>, or <code>typeName</code>
+     *             parameter is empty string.
+     */
+    public static ScorecardType findScorecardTypeByName(ScorecardType[] scorecardTypes, String typeName) {
+        // Validate parameters
+        validateParameterNotNull(scorecardTypes, "scorecardTypes");
+        validateParameterStringNotEmpty(typeName, "typeName");
+
+        for (int i = 0; i < scorecardTypes.length; ++i) {
+            if (scorecardTypes[i].getName().equalsIgnoreCase(typeName)) {
+                return scorecardTypes[i];
+            }
+        }
+        return null;
+    }
+
+    /**
      * This static method searches for the comment type with the specified ID in a provided array of
      * comment types.
      *
      * @return found comment type, or <code>null</code> if a type with the specified ID has not
      *         been found in the provided array of comment types.
-     * @param projectCategories
+     * @param commentTypes
      *            an array of comment types to search for wanted comment type among.
      * @param typeId
      *            the ID of the needed comment type.
@@ -1014,7 +1042,7 @@ class ActionsHelper {
         validateParameterNotNull(deliverable, "deliverable");
 
         for (int i = 0; i < phases.length; ++i) {
-            if (phases[i].getPhaseType().getId() == deliverable.getId()) {
+            if (phases[i].getPhaseType().getId() == deliverable.getPhase()) {
                 return phases[i];
             }
         }
@@ -1225,25 +1253,10 @@ class ActionsHelper {
         // Build final combined filter
         Filter filter = (filterPhase != null) ? new AndFilter(filterProject, filterPhase) : filterProject;
         // Perform a search for the deliverables
-        Deliverable[] allDeliverables = manager.searchDeliverables(filter, null);
-
-        /*
-         * Note, it seems that search performed by searchDeliverables method always return the
-         * deliverables for all project, regardless of the fact that project filter was specified.
-         * The following section is a temporary workaround for the problem.
-         * TODO: Correct this code when the possible bug in Deliverable Management component is fixed
-         */
-
-        List deliverables = new ArrayList();
-
-        for (int i = 0; i < allDeliverables.length; ++i) {
-            if (allDeliverables[i].getProject() == project.getId()) {
-                deliverables.add(allDeliverables[i]);
-            }
-        }
+        Deliverable[] deliverables = manager.searchDeliverables(filter, null);
 
         // Return found deliverables
-        return (Deliverable[]) deliverables.toArray(new Deliverable[deliverables.size()]);
+        return deliverables;
     }
 
     /**
@@ -1296,7 +1309,7 @@ class ActionsHelper {
             boolean found = false;
             // Determine if this deliverable is assigned to currently logged in user
             for (int j = 0; j < myResources.length; ++j) {
-                if (deliverable.getResource() == myResources[j].getResourceRole().getId()) {
+                if (deliverable.getResource() == myResources[j].getId()) {
                     found = true;
                     break;
                 }
@@ -1590,7 +1603,7 @@ class ActionsHelper {
             // The checkers are used when deliverable instances are retrieved
             Map checkers = new HashMap();
             checkers.put(Constants.SUBMISSION_DELIVERABLE_NAME, new SubmissionDeliverableChecker(dbconn));
-            checkers.put(Constants.SCREENING_DELIVERABLE_NAME, new CommittedReviewDeliverableChecker(dbconn));
+//            checkers.put(Constants.SCREENING_DELIVERABLE_NAME, new CommittedReviewDeliverableChecker(dbconn));
             checkers.put(Constants.REVIEW_DELIVERABLE_NAME, new CommittedReviewDeliverableChecker(dbconn));
             checkers.put(Constants.ACC_TEST_CASES_DELIVERABLE_NAME, new TestCasesDeliverableChecker(dbconn));
             checkers.put(Constants.FAIL_TEST_CASES_DELIVERABLE_NAME, new TestCasesDeliverableChecker(dbconn));
