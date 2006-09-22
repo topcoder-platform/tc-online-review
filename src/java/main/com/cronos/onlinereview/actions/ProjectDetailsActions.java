@@ -49,10 +49,18 @@ import com.topcoder.management.resource.Resource;
 import com.topcoder.management.resource.ResourceManager;
 import com.topcoder.management.resource.search.NotificationFilterBuilder;
 import com.topcoder.management.resource.search.ResourceFilterBuilder;
+import com.topcoder.management.review.ReviewManagementException;
+import com.topcoder.management.review.ReviewManager;
+import com.topcoder.management.review.data.Comment;
+import com.topcoder.management.review.data.Review;
 import com.topcoder.management.scorecard.data.Scorecard;
+import com.topcoder.management.scorecard.data.ScorecardType;
 import com.topcoder.project.phases.Phase;
 import com.topcoder.search.builder.filter.AndFilter;
+import com.topcoder.search.builder.filter.EqualToFilter;
 import com.topcoder.search.builder.filter.Filter;
+import com.topcoder.search.builder.filter.InFilter;
+import com.topcoder.search.builder.filter.OrFilter;
 import com.topcoder.servlet.request.FileUpload;
 import com.topcoder.servlet.request.FileUploadResult;
 import com.topcoder.servlet.request.UploadedFile;
@@ -153,59 +161,51 @@ public class ProjectDetailsActions extends DispatchAction {
         request.setAttribute("myDeliverables", myDeliverables);
         request.setAttribute("outstandingDeliverables", outstandingDeliverables);
 
-        Format format = new SimpleDateFormat("MM.dd.yyyy hh:mm a");
-        String[] myDeliverableDates = new String[myDeliverables.length];
-        String[] outstandingDeliverableDates = new String[outstandingDeliverables.length];
-        int[] myDeliverableStatuses = new int[myDeliverables.length];
-        int[] outstandingDeliverableStatuses = new int[outstandingDeliverables.length];
-
         // Obtain an array of all active phases of the project
         Phase[] activePhases = ActionsHelper.getActivePhases(phases);
         long currentTime = (new Date()).getTime();
+
+        // These two arrays will contain Deadline near / Late / Completed codes for deliverables
+        int[] myDeliverableStatuses = getDeliverableStatusCodes(myDeliverables, activePhases, currentTime);
+        int[] outstandingDeliverableStatuses =
+            getDeliverableStatusCodes(outstandingDeliverables, activePhases, currentTime);
+
+        Format format = new SimpleDateFormat("MM.dd.yyyy hh:mm a");
+        String[] myDeliverableDates = new String[myDeliverables.length];
+        String[] outstandingDeliverableDates = new String[outstandingDeliverables.length];
 
         for (int i = 0; i < myDeliverables.length; ++i) {
             Deliverable deliverable = myDeliverables[i];
             if (deliverable.isComplete()) {
                 myDeliverableDates[i] = format.format(deliverable.getCompletionDate());
-                myDeliverableStatuses[i] = 0;
             } else {
                 Phase phase = ActionsHelper.getPhaseForDeliverable(activePhases, deliverable);
                 myDeliverableDates[i] = format.format(phase.calcEndDate());
-
-                long deliverableTime = phase.calcEndDate().getTime();
-                if (currentTime > deliverableTime) {
-                    myDeliverableStatuses[i] = 2; // Late
-                } else if (currentTime + (2 * 60 * 60 * 1000) > deliverableTime) {
-                    myDeliverableStatuses[i] = 1; // Deadline near
-                } else {
-                    myDeliverableStatuses[i] = 0;
-                }
             }
         }
         for (int i = 0; i < outstandingDeliverables.length; ++i) {
             Deliverable deliverable = outstandingDeliverables[i];
             if (deliverable.isComplete()) {
                 outstandingDeliverableDates[i] = format.format(deliverable.getCompletionDate());
-                outstandingDeliverableStatuses[i] = 0;
             } else {
                 Phase phase = ActionsHelper.getPhaseForDeliverable(activePhases, deliverable);
                 outstandingDeliverableDates[i] = format.format(phase.calcEndDate());
-
-                long deliverableTime = phase.calcEndDate().getTime();
-                if (currentTime > deliverableTime) {
-                    outstandingDeliverableStatuses[i] = 2; // Late
-                } else if (currentTime + (2 * 60 * 60 * 1000) > deliverableTime) {
-                    outstandingDeliverableStatuses[i] = 1; // Deadline near
-                } else {
-                    outstandingDeliverableStatuses[i] = 0;
-                }
             }
         }
+
+        String[] myDeliverableLinks = generateDeliverableLinks(request, myDeliverables, phases);
+        String[] outstandingDeliverableUserIds = getDeliverableUserIds(
+                ActionsHelper.createResourceManager(request), outstandingDeliverables);
+        String[] outstandingDeliverableSubmissionUserIds =
+            getDeliverableSubmissionUserIds(request, outstandingDeliverables);
 
         request.setAttribute("myDeliverableDates", myDeliverableDates);
         request.setAttribute("outstandingDeliverableDates", outstandingDeliverableDates);
         request.setAttribute("myDeliverableStatuses", myDeliverableStatuses);
         request.setAttribute("outstandingDeliverableStatuses", outstandingDeliverableStatuses);
+        request.setAttribute("myDeliverableLinks", myDeliverableLinks);
+        request.setAttribute("outstandingDeliverableUserIds", outstandingDeliverableUserIds);
+        request.setAttribute("outstandingDeliverableSubmissionUserIds", outstandingDeliverableSubmissionUserIds);
 
         String[] displayedStart = new String[phases.length];
         String[] displayedEnd = new String[phases.length];
@@ -387,6 +387,8 @@ public class ProjectDetailsActions extends DispatchAction {
         request.setAttribute("sendTLNotifications", (sendTLNotifications) ? "On" : "Off");
 
         // Check permissions
+        request.setAttribute("isManager",
+                new Boolean(AuthorizationHelper.hasUserRole(request, Constants.MANAGER_ROLE_NAME)));
         request.setAttribute("isAllowedToViewSVNLink",
                 new Boolean(AuthorizationHelper.hasUserPermission(request, Constants.VIEW_SVN_LINK_PERM_NAME)));
         request.setAttribute("isAllowedToViewPayment",
@@ -1553,5 +1555,342 @@ public class ProjectDetailsActions extends DispatchAction {
         AuthorizationHelper.gatherUserRoles(request, project.getId());
 
         return result;
+    }
+
+    /**
+     * This static method
+     *
+     * @return
+     * @param deliverables
+     * @param activePhases
+     * @param currentTime
+     */
+    private static int[] getDeliverableStatusCodes(Deliverable[] deliverables,
+            Phase[] activePhases, long currentTime) {
+        // Validate parameters
+        ActionsHelper.validateParameterNotNull(deliverables, "deliverables");
+        ActionsHelper.validateParameterNotNull(activePhases, "activePhases");
+
+        int[] statusCodes = new int[deliverables.length];
+        for (int i = 0; i < deliverables.length; ++i) {
+            // Get a Deliverable for the current iteraction
+            Deliverable deliverable = deliverables[i];
+            if (deliverable.isComplete()) {
+                statusCodes[i] = 0;
+            } else {
+                Phase phase = ActionsHelper.getPhaseForDeliverable(activePhases, deliverable);
+
+                long deliverableTime = phase.calcEndDate().getTime();
+                if (currentTime > deliverableTime) {
+                    statusCodes[i] = 2; // Late
+                } else if (currentTime + (2 * 60 * 60 * 1000) > deliverableTime) {
+                    statusCodes[i] = 1; // Deadline near
+                } else {
+                    statusCodes[i] = 0;
+                }
+            }
+        }
+        return statusCodes;
+    }
+
+    /**
+     * This static method analyzes the array of deliverables and generates links for them.
+     *
+     * @return an array of links. If some deliverable does not have its appropriate link, then that
+     *         entry in the returned array will be empty (containing <code>null</code> value).
+     * @param request
+     *            an <code>HttpServletRequest</code> object.
+     * @param deliverables
+     *            an array of deliverables to generate the links for.
+     * @param phases
+     *            an array of all phases for the current project.
+     * @throws IllegalArgumentException
+     *             if any of the parameters are <code>null</code>.
+     * @throws BaseException
+     *             if any error occurs.
+     */
+    private static String[] generateDeliverableLinks(HttpServletRequest request,
+            Deliverable[] deliverables, Phase[] phases)
+        throws BaseException {
+        // Validate parameters
+        ActionsHelper.validateParameterNotNull(request, "request");
+        ActionsHelper.validateParameterNotNull(deliverables, "deliverables");
+        ActionsHelper.validateParameterNotNull(phases, "phases");
+
+        String[] links = new String[deliverables.length];
+
+        ScorecardType[] allScorecardTypes = null;
+
+        for (int i = 0; i < deliverables.length; ++i) {
+            // Get a Deliverable for the current iteration
+            Deliverable deliverable = deliverables[i];
+            String delivName = deliverable.getName();
+            if (delivName.equalsIgnoreCase("Submission")) {
+                links[i] = "UploadSubmission.do?method=uploadSubmission&pid=" + deliverable.getProject();
+            } else if (delivName.equalsIgnoreCase("Screening Scorecard")) {
+                if (allScorecardTypes == null) {
+                    // Get all scorecard types
+                    allScorecardTypes = ActionsHelper.createScorecardManager(request).getAllScorecardTypes();
+                }
+
+                Review review = findReviewForSubmission(ActionsHelper.createReviewManager(request),
+                        ActionsHelper.findScorecardTypeByName(allScorecardTypes, "Screening"),
+                        deliverable.getSubmission(), deliverable.getResource(), false);
+
+                if (review == null) {
+                    links[i] = "CreateScreening.do?method=createScreening&sid=" +
+                            deliverable.getSubmission().longValue();
+                } else if (!review.isCommitted()) {
+                    links[i] = "EditScreening.do?method=editScreening&rid=" + review.getId();
+                } else {
+                    links[i] = "ViewScreening.do?method=viewScreening&rid=" + review.getId();
+                }
+            } else if (delivName.equalsIgnoreCase("Review Scorecard")) {
+                if (allScorecardTypes == null) {
+                    // Get all scorecard types
+                    allScorecardTypes = ActionsHelper.createScorecardManager(request).getAllScorecardTypes();
+                }
+
+                Review review = findReviewForSubmission(ActionsHelper.createReviewManager(request),
+                        ActionsHelper.findScorecardTypeByName(allScorecardTypes, "Review"),
+                        deliverable.getSubmission(), deliverable.getResource(), false);
+
+                if (review == null) {
+                    links[i] = "CreateReview.do?method=createReview&sid=" +
+                            deliverable.getSubmission().longValue();
+                } else if (!review.isCommitted()) {
+                    links[i] = "EditReview.do?method=editReview&rid=" + review.getId();
+                } else {
+                    links[i] = "ViewReview.do?method=viewReview&rid=" + review.getId();
+                }
+            } else if (delivName.equalsIgnoreCase("Accuracy Test Cases") ||
+                    delivName.equalsIgnoreCase("Failure Test Cases") ||
+                    delivName.equalsIgnoreCase("Stress Test Cases")) {
+                links[i] = "UploadTestCase.do?method=uploadTestCase&pid=" + deliverable.getProject();
+            } else if (delivName.equalsIgnoreCase("Appeal Responses")) {
+                // TODO: Assign links for Appeal Responses
+            } else if (delivName.equalsIgnoreCase("Aggregation")) {
+                if (allScorecardTypes == null) {
+                    // Get all scorecard types
+                    allScorecardTypes = ActionsHelper.createScorecardManager(request).getAllScorecardTypes();
+                }
+
+                Review review = findReviewForSubmission(ActionsHelper.createReviewManager(request),
+                        ActionsHelper.findScorecardTypeByName(allScorecardTypes, "Review"),
+                        deliverable.getSubmission(), deliverable.getResource(), false);
+
+                if (review != null) {
+                    if (!review.isCommitted()) {
+                        links[i] = "EditAggregation.do?method=editAggregation&rid=" + review.getId();
+                    } else {
+                        links[i] = "ViewAggregation.do?method=viewAggregation&rid=" + review.getId();
+                    }
+                }
+            } else if (delivName.equalsIgnoreCase("Aggregation Review")) {
+                Phase phase = ActionsHelper.getPhase(phases, false, Constants.AGGREGATION_PHASE_NAME);
+                Resource[] aggregator =
+                    ActionsHelper.getAllResourcesForPhase(ActionsHelper.createResourceManager(request), phase);
+
+                if (allScorecardTypes == null) {
+                    // Get all scorecard types
+                    allScorecardTypes = ActionsHelper.createScorecardManager(request).getAllScorecardTypes();
+                }
+
+                Review review = findReviewForSubmission(ActionsHelper.createReviewManager(request),
+                        ActionsHelper.findScorecardTypeByName(allScorecardTypes, "Review"),
+                        deliverable.getSubmission(), aggregator[0].getId(), true);
+
+                if (review == null) {
+                    continue;
+                }
+
+                Comment myComment = null;
+
+                for (int j = 0; j < review.getNumberOfComments(); ++j) {
+                    if (review.getComment(j).getAuthor() == deliverable.getResource()) {
+                        myComment = review.getComment(j);
+                        break;
+                    }
+                }
+
+                if (myComment == null ||
+                        !("Approved".equalsIgnoreCase((String) myComment.getExtraInfo()) ||
+                        "Rejected".equalsIgnoreCase((String) myComment.getExtraInfo()))) {
+                    links[i] = "EditAggregationReview.do?method=editAggregationReview&rid=" + review.getId();
+                }
+            } else if (delivName.equalsIgnoreCase("Final Fix")) {
+                links[i] = "UploadFinalFix.do?method=uploadFinalFix&pid=" + deliverable.getProject();
+            } else if (delivName.equalsIgnoreCase("Scorecard Comment")) {
+                // TODO: Determine what should be done here
+            } else if (delivName.equalsIgnoreCase("Final Review")) {
+                if (allScorecardTypes == null) {
+                    // Get all scorecard types
+                    allScorecardTypes = ActionsHelper.createScorecardManager(request).getAllScorecardTypes();
+                }
+
+                Review review = findReviewForSubmission(ActionsHelper.createReviewManager(request),
+                        ActionsHelper.findScorecardTypeByName(allScorecardTypes, "Review"),
+                        deliverable.getSubmission(), deliverable.getResource(), false);
+
+                if (review != null) {
+                    if (!review.isCommitted()) {
+                        links[i] = "EditFinalReview.do?method=editFinalReview&rid=" + review.getId();
+                    } else {
+                        links[i] = "ViewFinalReview.do?method=viewFinalReview&rid=" + review.getId();
+                    }
+                }
+            } else if (delivName.equalsIgnoreCase("Approval")) {
+                if (allScorecardTypes == null) {
+                    // Get all scorecard types
+                    allScorecardTypes = ActionsHelper.createScorecardManager(request).getAllScorecardTypes();
+                }
+
+                Review review = findReviewForSubmission(ActionsHelper.createReviewManager(request),
+                        ActionsHelper.findScorecardTypeByName(allScorecardTypes, "Client Review"),
+                        deliverable.getSubmission(), deliverable.getResource(), false);
+
+                if (review == null) {
+                    links[i] = "CreateAggregation.do?method=createAggregation&sid=" +
+                            deliverable.getSubmission().longValue();
+                } else if (!review.isCommitted()) {
+                    links[i] = "EditAggregation.do?method=editAggregation&rid=" + review.getId();
+                } else {
+                    links[i] = "ViewAggregation.do?method=viewAggregation&rid=" + review.getId();
+                }
+            }
+        }
+
+        return links;
+    }
+
+    private static String[] getDeliverableUserIds(ResourceManager manager, Deliverable[] deliverables)
+        throws BaseException {
+        List resourceIds = new ArrayList();
+
+        for (int i = 0; i < deliverables.length; ++i) {
+            resourceIds.add(new Long(deliverables[i].getResource()));
+        }
+
+        Filter filter = new InFilter("resource.resource_id", resourceIds);
+
+        Resource[] resources = manager.searchResources(filter);
+
+        String[] ids = new String[deliverables.length];
+
+        for (int i = 0; i < deliverables.length; ++i) {
+            for (int j = 0; j < resources.length; ++j) {
+                if (resources[j].getId() == deliverables[i].getResource()) {
+                    ids[i] = (String) resources[j].getProperty("External Reference ID");
+                    break;
+                }
+            }
+        }
+
+        return ids;
+    }
+
+    private static String[] getDeliverableSubmissionUserIds(HttpServletRequest request, Deliverable[] deliverables)
+        throws BaseException {
+        List submissionFilters = new ArrayList();
+
+        for (int i = 0; i < deliverables.length; ++i) {
+            if (deliverables[i].getSubmission() != null) {
+                submissionFilters.add(SubmissionFilterBuilder.createSubmissionIdFilter(
+                        deliverables[i].getSubmission().longValue()));
+            }
+        }
+
+        if (submissionFilters.isEmpty()) {
+            return new String[0];
+        }
+
+        Filter filterSubmissions = new OrFilter(submissionFilters);
+
+        // Obtain an instance of Upload Manager
+        UploadManager upMgr = ActionsHelper.createUploadManager(request);
+        Submission[] submissions = upMgr.searchSubmissions(filterSubmissions);
+
+        List resourceIds = new ArrayList();
+
+        for (int i = 0; i < submissions.length; ++i) {
+            resourceIds.add(new Long(submissions[i].getUpload().getOwner()));
+        }
+
+        Filter filterResources = new InFilter("resource.resource_id", resourceIds);
+
+        // Obtain an instance of Resource Manager
+        ResourceManager resMgr = ActionsHelper.createResourceManager(request);
+        Resource[] resources = resMgr.searchResources(filterResources);
+
+        String[] ids = new String[deliverables.length];
+
+        for (int i = 0; i < deliverables.length; ++i) {
+            if (deliverables[i].getSubmission() == null) {
+                continue;
+            }
+            long deliverableId = deliverables[i].getSubmission().longValue();
+            for (int j = 0; j < submissions.length; ++j) {
+                if (submissions[j].getId() != deliverableId) {
+                    continue;
+                }
+                long submissionOwnerId = submissions[j].getUpload().getOwner();
+                for (int k = 0; k < resources.length; ++k) {
+                    if (resources[k].getId() == submissionOwnerId) {
+                        ids[i] = (String) resources[k].getProperty("External Reference ID");
+                        break;
+                    }
+                }
+                break;
+            }
+        }
+
+        return ids;
+    }
+
+    /**
+     * This static method finds and returns a review of specified scorecard template type for
+     * specified submission ID and made by specified resource.
+     *
+     * @return found review or <code>null</code> if no review has been found.
+     * @param manager
+     *            an instance of <code>ReviewManager</code> class that retrieves a review from the
+     *            database.
+     * @param scorecardType
+     *            a scorecard template type that found review should have.
+     * @param submissionId
+     *            an ID of the submission which the review was made for.
+     * @param resourceId
+     *            an ID of the resource who made (created) the review.
+     * @param complete
+     *            specifies whether retrieved review should have all infomration (like all items and
+     *            their comments).
+     * @throws IllegalArgumentException
+     *             if <code>scorecardType</code> or <code>submissionId</code> parameters are
+     *             <code>null</code>, or if <code>submissionId</code> or
+     *             <code>resourceId</code> parameters contain negative value or zero.
+     * @throws ReviewManagementException
+     *             if any error occurs during review search or retrieval.
+     */
+    private static Review findReviewForSubmission(ReviewManager manager,
+            ScorecardType scorecardType, Long submissionId, long resourceId, boolean complete)
+        throws ReviewManagementException {
+        // Validate parameters
+        ActionsHelper.validateParameterNotNull(manager, "manager");
+        ActionsHelper.validateParameterNotNull(scorecardType, "scorecardType");
+        ActionsHelper.validateParameterNotNull(submissionId, "submissionId");
+        ActionsHelper.validateParameterPositive(submissionId.longValue(), "submissionId");
+        ActionsHelper.validateParameterPositive(resourceId, "resourceId");
+
+        Filter filterSubmission = new EqualToFilter("submission", submissionId);
+        Filter filterScorecard = new EqualToFilter("scorecardType", new Long(scorecardType.getId()));
+        Filter filterReviewer = new EqualToFilter("reviewer", new Long (resourceId));
+
+        Filter filter = new AndFilter(Arrays.asList(
+                new Filter[] {filterSubmission, filterScorecard, filterReviewer}));
+
+        // Get a review(s) that pass filter
+        Review[] reviews = manager.searchReviews(filter, complete);
+        // Return the first found review if any, or null
+        return (reviews.length != 0) ? reviews[0] : null;
     }
 }
