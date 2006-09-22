@@ -60,7 +60,6 @@ import com.topcoder.search.builder.filter.AndFilter;
 import com.topcoder.search.builder.filter.EqualToFilter;
 import com.topcoder.search.builder.filter.Filter;
 import com.topcoder.search.builder.filter.InFilter;
-import com.topcoder.search.builder.filter.OrFilter;
 import com.topcoder.servlet.request.FileUpload;
 import com.topcoder.servlet.request.FileUploadResult;
 import com.topcoder.servlet.request.UploadedFile;
@@ -247,6 +246,9 @@ public class ProjectDetailsActions extends DispatchAction {
             }
         }
 
+        // This array will contain Open / Closing / Late / Closed codes for phases
+        int[] phaseStatuseCodes = getPhaseStatusCodes(phases, currentTime);
+
         /*
          * Place all gathered information about phases into the request as attributes
          */
@@ -256,6 +258,7 @@ public class ProjectDetailsActions extends DispatchAction {
         request.setAttribute("displayedEnd", displayedEnd);
         request.setAttribute("originalStart", originalStart);
         request.setAttribute("originalEnd", originalEnd);
+        request.setAttribute("phaseStatuseCodes", phaseStatuseCodes);
         // Place phases durations for Gantt chart
         request.setAttribute("ganttOffsets", ganttOffsets);
         request.setAttribute("ganttLengths", ganttLengths);
@@ -1557,6 +1560,34 @@ public class ProjectDetailsActions extends DispatchAction {
         return result;
     }
 
+    private static int[] getPhaseStatusCodes(Phase[] phases, long currentTime) {
+        // Validate parameters
+        ActionsHelper.validateParameterNotNull(phases, "phases");
+
+        int[] statusCodes = new int[phases.length];
+        for (int i = 0; i < phases.length; ++i) {
+            // Get a Phase for the current iteration
+            Phase phase = phases[i];
+            String phaseStatus = phase.getPhaseStatus().getName();
+            if (phaseStatus.equalsIgnoreCase("Scheduled")) {
+                statusCodes[i] = 0; // Scheduled, not yet open, nothing will be displayed
+            } else if (phaseStatus.equalsIgnoreCase("Closed")) {
+                statusCodes[i] = 1; // Closed
+            } else if (phaseStatus.equalsIgnoreCase("Open")) {
+                long phaseTime = phase.calcEndDate().getTime();
+
+                if (currentTime > phaseTime) {
+                    statusCodes[i] = 4; // Late
+                } else if (currentTime + (2 * 60 * 60 * 1000) > phaseTime) {
+                    statusCodes[i] = 3; // Closing
+                } else {
+                    statusCodes[i] = 2; // Open
+                }
+            }
+        }
+        return statusCodes;
+    }
+
     /**
      * This static method
      *
@@ -1573,7 +1604,7 @@ public class ProjectDetailsActions extends DispatchAction {
 
         int[] statusCodes = new int[deliverables.length];
         for (int i = 0; i < deliverables.length; ++i) {
-            // Get a Deliverable for the current iteraction
+            // Get a Deliverable for the current iteration
             Deliverable deliverable = deliverables[i];
             if (deliverable.isComplete()) {
                 statusCodes[i] = 0;
@@ -1628,6 +1659,7 @@ public class ProjectDetailsActions extends DispatchAction {
             if (delivName.equalsIgnoreCase("Submission")) {
                 links[i] = "UploadSubmission.do?method=uploadSubmission&pid=" + deliverable.getProject();
             } else if (delivName.equalsIgnoreCase("Screening Scorecard")) {
+/* This is commented out until Deliverable Management is fixed  TODO: Uncomment this block
                 if (allScorecardTypes == null) {
                     // Get all scorecard types
                     allScorecardTypes = ActionsHelper.createScorecardManager(request).getAllScorecardTypes();
@@ -1645,6 +1677,7 @@ public class ProjectDetailsActions extends DispatchAction {
                 } else {
                     links[i] = "ViewScreening.do?method=viewScreening&rid=" + review.getId();
                 }
+*/
             } else if (delivName.equalsIgnoreCase("Review Scorecard")) {
                 if (allScorecardTypes == null) {
                     // Get all scorecard types
@@ -1771,6 +1804,10 @@ public class ProjectDetailsActions extends DispatchAction {
             resourceIds.add(new Long(deliverables[i].getResource()));
         }
 
+        if (resourceIds.isEmpty()) {
+            return new String[0];
+        }
+
         Filter filter = new InFilter("resource.resource_id", resourceIds);
 
         Resource[] resources = manager.searchResources(filter);
@@ -1791,20 +1828,19 @@ public class ProjectDetailsActions extends DispatchAction {
 
     private static String[] getDeliverableSubmissionUserIds(HttpServletRequest request, Deliverable[] deliverables)
         throws BaseException {
-        List submissionFilters = new ArrayList();
+        List submissionIds = new ArrayList();
 
         for (int i = 0; i < deliverables.length; ++i) {
             if (deliverables[i].getSubmission() != null) {
-                submissionFilters.add(SubmissionFilterBuilder.createSubmissionIdFilter(
-                        deliverables[i].getSubmission().longValue()));
+                submissionIds.add(deliverables[i].getSubmission());
             }
         }
 
-        if (submissionFilters.isEmpty()) {
+        if (submissionIds.isEmpty()) {
             return new String[0];
         }
 
-        Filter filterSubmissions = new OrFilter(submissionFilters);
+        Filter filterSubmissions = new InFilter("submission_id", submissionIds);
 
         // Obtain an instance of Upload Manager
         UploadManager upMgr = ActionsHelper.createUploadManager(request);
