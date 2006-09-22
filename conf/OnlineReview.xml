@@ -2796,6 +2796,22 @@
                 <Value>Global Manager</Value>
                 <Value>Manager</Value>
             </Property>
+            <!-- Note: The following permission wasn't originally defined
+                in the Requirements Specification's permission matrix -->
+            <Property name="Download Review Document">
+                <Value>Global Manager</Value>
+                <Value>Manager</Value>
+                <Value>Observer</Value>
+                <Value>Submitter</Value>
+                <Value>Reviewer</Value>
+                <Value>Accuracy Reviewer</Value>
+                <Value>Failure Reviewer</Value>
+                <Value>Stress Reviewer</Value>
+                <Value>Aggregator</Value>
+                <Value>Final Reviewer</Value>
+                <Value>Approver</Value>
+                <Value>Public</Value>
+            </Property>
         </Property>
 
         <Property name="PhaseGrouping">
