@@ -397,15 +397,9 @@ public class ProjectReviewActions extends DispatchAction {
         // Retrieve current project
         Project project = verification.getProject();
 
-        // Retrieve some basic project info (such as icons' names) and place it into request
-        ActionsHelper.retrieveAndStoreBasicProjectInfo(request, project, getResources(request));
-        // Retrieve an information about my role(s) and place it into the request
-        ActionsHelper.retrieveAndStoreMyRole(request, getResources(request));
-        // Retrieve some basic aggregation info and place it into request
-        retrieveAndStoreBasicAggregationInfo(request, verification, scorecardTemplate);
-        // Place Scorecard template in the request
-        request.setAttribute("scorecardTemplate", scorecardTemplate);
-
+        // Retrieve some basic aggregation info and store it into the request
+        retrieveAndStoreBasicAggregationInfo(request, verification, scorecardTemplate, "Aggregation");
+        
         // Obtain an instance of Review Manager
         ReviewManager revMgr = ActionsHelper.createReviewManager(request);
 
@@ -616,12 +610,9 @@ public class ProjectReviewActions extends DispatchAction {
             comment.setComment("");
             review.addComment(comment);
         } else if ("preview".equalsIgnoreCase(request.getParameter("save"))) {
-            // Retrieve some basic project info (such as icons' names) and place it into request
-            ActionsHelper.retrieveAndStoreBasicProjectInfo(request, verification.getProject(), getResources(request));
-            // Retrieve some basic aggregation info and place it into request
-            retrieveAndStoreBasicAggregationInfo(request, verification, scorecardTemplate);
-            // Place scorecard template object into request as attribute
-            request.setAttribute("scorecardTemplate", scorecardTemplate);
+            // Retrieve some basic aggregation info and store it into the request
+            retrieveAndStoreBasicAggregationInfo(request, verification, scorecardTemplate, "Aggregation");
+
             // Update review object stored in the request
             request.setAttribute("review", review);
 
@@ -692,14 +683,8 @@ public class ProjectReviewActions extends DispatchAction {
                     Constants.VIEW_AGGREGATION_PERM_NAME, "Error.ReviewNotCommitted");
         }
 
-        // Retrieve some basic project info (such as icons' names) and place it into request
-        ActionsHelper.retrieveAndStoreBasicProjectInfo(request, verification.getProject(), getResources(request));
-        // Retrieve an information about my role(s) and place it into the request
-        ActionsHelper.retrieveAndStoreMyRole(request, getResources(request));
-        // Retrieve some basic aggregation info and place it into request
-        retrieveAndStoreBasicAggregationInfo(request, verification, scorecardTemplate);
-        // Place Scorecard template in the request
-        request.setAttribute("scorecardTemplate", scorecardTemplate);
+        // Retrieve some basic aggregation info and store it into the request
+        retrieveAndStoreBasicAggregationInfo(request, verification, scorecardTemplate, "Aggregation");
 
         // Get the word "of" for Test Case type of question
         String wordOf = getResources(request).getMessage("editReview.Question.Response.TestCase.of");
@@ -836,14 +821,8 @@ public class ProjectReviewActions extends DispatchAction {
         // Retrieve current project
         Project project = verification.getProject();
 
-        // Retrieve some basic project info (such as icons' names) and place it into request
-        ActionsHelper.retrieveAndStoreBasicProjectInfo(request, project, getResources(request));
-        // Retrieve an information about my role(s) and place it into the request
-        ActionsHelper.retrieveAndStoreMyRole(request, getResources(request));
-        // Retrieve some basic aggregation info and place it into request
-        retrieveAndStoreBasicAggregationInfo(request, verification, scorecardTemplate);
-        // Place Scorecard template in the request
-        request.setAttribute("scorecardTemplate", scorecardTemplate);
+        // Retrieve some basic aggregation info and store it into the request
+        retrieveAndStoreBasicAggregationInfo(request, verification, scorecardTemplate, "AggregationReview");
 
         LazyValidatorForm aggregationReviewForm = (LazyValidatorForm) form;
 
@@ -1109,15 +1088,9 @@ public class ProjectReviewActions extends DispatchAction {
             }
         }
 
-        // Retrieve some basic project info (such as icons' names) and place it into request
-        ActionsHelper.retrieveAndStoreBasicProjectInfo(request, verification.getProject(), getResources(request));
-        // Retrieve an information about my role(s) and place it into the request
-        ActionsHelper.retrieveAndStoreMyRole(request, getResources(request));
-        // Retrieve some basic aggregation info and place it into request
-        retrieveAndStoreBasicAggregationInfo(request, verification, scorecardTemplate);
-        // Place Scorecard template in the request
-        request.setAttribute("scorecardTemplate", scorecardTemplate);
-
+        // Retrieve some basic aggregation info and store it into the request
+        retrieveAndStoreBasicAggregationInfo(request, verification, scorecardTemplate, "AggregationReview");
+        
         // Get the word "of" for Test Case type of question
         String wordOf = getResources(request).getMessage("editReview.Question.Response.TestCase.of");
         // Place the string into the request as attribute
@@ -1204,15 +1177,9 @@ public class ProjectReviewActions extends DispatchAction {
                     Constants.PERFORM_FINAL_REVIEW_PERM_NAME, "Error.ReviewCommitted");
         }
 
-        // Retrieve some basic project info (such as icons' names) and place it into request
-        ActionsHelper.retrieveAndStoreBasicProjectInfo(request, verification.getProject(), getResources(request));
-        // Retrieve an information about my role(s) and place it into the request
-        ActionsHelper.retrieveAndStoreMyRole(request, getResources(request));
-        // Retrieve some basic aggregation info and place it into request
-        retrieveAndStoreBasicAggregationInfo(request, verification, scorecardTemplate);
-        // Place Scorecard template in the request
-        request.setAttribute("scorecardTemplate", scorecardTemplate);
-
+        // Retrieve some basic aggregation info and store it into the request
+        retrieveAndStoreBasicAggregationInfo(request, verification, scorecardTemplate, "AggregationReview");
+        
         int reviewerCommentsNum = 0;
         int[] lastCommentIdxs = new int[review.getNumberOfItems()];
 
@@ -1421,12 +1388,9 @@ public class ProjectReviewActions extends DispatchAction {
             // Set the completed status of the review
             review.setCommitted(true);
         } else if ("preview".equalsIgnoreCase(request.getParameter("save"))) {
-            // Retrieve some basic project info (such as icons' names) and place it into request
-            ActionsHelper.retrieveAndStoreBasicProjectInfo(request, verification.getProject(), getResources(request));
-            // Retrieve some basic aggregation info and place it into request
-            retrieveAndStoreBasicAggregationInfo(request, verification, scorecardTemplate);
-            // Place scorecard template object into request as attribute
-            request.setAttribute("scorecardTemplate", scorecardTemplate);
+            // Retrieve some basic aggregation info and store it into the request
+            retrieveAndStoreBasicAggregationInfo(request, verification, scorecardTemplate, "FinalReview");
+      
             // Update review object stored in the request
             request.setAttribute("review", review);
 
@@ -1497,14 +1461,8 @@ public class ProjectReviewActions extends DispatchAction {
                     Constants.VIEW_FINAL_REVIEW_PERM_NAME, "Error.ReviewNotCommitted");
         }
 
-        // Retrieve some basic project info (such as icons' names) and place it into request
-        ActionsHelper.retrieveAndStoreBasicProjectInfo(request, verification.getProject(), getResources(request));
-        // Retrieve an information about my role(s) and place it into the request
-        ActionsHelper.retrieveAndStoreMyRole(request, getResources(request));
-        // Retrieve some basic aggregation info and place it into request
-        retrieveAndStoreBasicAggregationInfo(request, verification, scorecardTemplate);
-        // Place Scorecard template in the request
-        request.setAttribute("scorecardTemplate", scorecardTemplate);
+        // Retrieve some basic aggregation info and store it into the request
+        retrieveAndStoreBasicAggregationInfo(request, verification, scorecardTemplate, "FinalReview");
 
         int[] lastCommentIdxs = new int[review.getNumberOfItems()];
 
@@ -1716,12 +1674,9 @@ public class ProjectReviewActions extends DispatchAction {
             return null; // TODO: Forward to userError.jsp page
         }
 
-        // Retrieve some basic project info (such as icons' names) and place it into request
-        ActionsHelper.retrieveAndStoreBasicProjectInfo(request, verification.getProject(), getResources(request));
-        // Retrieve an information about my role(s) and place it into the request
-        ActionsHelper.retrieveAndStoreMyRole(request, getResources(request));
-        // Place Scorecard template in the request
-        request.setAttribute("scorecardTemplate", scorecardTemplate);
+        // Retrieve some basic review info and store it in the request
+        retrieveAndStoreBasicReviewInfo(request, verification, "CompositeReview", scorecardTemplate);
+
         // Store reviews in the request
         request.setAttribute("reviews", reviews);
 
@@ -1955,29 +1910,24 @@ public class ProjectReviewActions extends DispatchAction {
      *            current project and aggregation for this method to succeed.
      * @param scorecardTemplate
      *            a scorecard template that describes questions (items) of the aggregation.
+     * @param reviewType
+     *            a type of the review, can be one of "Aggregation", "AggregationReview", "FinalReview"
      * @throws BaseException
      *             if any error occurs.
      */
-    private static void retrieveAndStoreBasicAggregationInfo(
-            HttpServletRequest request, CorrectnessCheckResult verification, Scorecard scorecardTemplate)
+    private void retrieveAndStoreBasicAggregationInfo(
+            HttpServletRequest request, CorrectnessCheckResult verification, Scorecard scorecardTemplate, String reviewType)
         throws BaseException {
         // Retrieve a project from verification-result bean
         Project project = verification.getProject();
         // Retrieve a review from verification-result bean
         Review review = verification.getReview();
 
-        // Obtain an instance of Resource Manager
-        ResourceManager resMgr = ActionsHelper.createResourceManager(request);
         // Retrieve a submission to edit an aggregation scorecard for
         Submission submission = verification.getSubmission();
-        // Get Aggregator's resource
-        Resource aggregator = resMgr.getResource(review.getAuthor());
 
-        // Place aggregator's user ID into the request
-        request.setAttribute("aggregatorId", aggregator.getProperty("External Reference ID"));
-
-        // Retrieve and place info about submitter into request
-        ActionsHelper.retrieveAndStoreSubmitterInfo(request, submission.getUpload());
+        // Retrieve some basic review info and store it in the request
+        retrieveAndStoreBasicReviewInfo(request, verification, reviewType, scorecardTemplate);
 
         // Get an array of all phases for current project
         Phase[] phases = ActionsHelper.getPhasesForProject(
@@ -2036,7 +1986,7 @@ public class ProjectReviewActions extends DispatchAction {
      * @param request
      * @throws BaseException
      */
-    private static void retreiveAndStoreReviewLookUpData(HttpServletRequest request) throws BaseException {
+    private void retreiveAndStoreReviewLookUpData(HttpServletRequest request) throws BaseException {
         // Obtain Review Manager instance
         ReviewManager revMgr = ActionsHelper.createReviewManager(request);
 
@@ -2059,7 +2009,7 @@ public class ProjectReviewActions extends DispatchAction {
      * @param upload
      * @throws BaseException
      */
-    private static void retrieveAndStoreReviewAuthorInfo(HttpServletRequest request, Review review)
+    private void retrieveAndStoreReviewAuthorInfo(HttpServletRequest request, Review review)
         throws BaseException {
         // TODO: Remove this and other functions to a separate helper class. Name it ProjectReviewActionsHelper
 
