@@ -57,7 +57,8 @@
 						<html:hidden property="method" value="uploadSubmission" />
 						<html:hidden property="postBack" value="y" />
 						<html:hidden property="pid" value="${project.id}" />
-						<table class="scorecard" cellpadding="0" cellspacing="0" width="100%" style="border-collapse:collapse;">
+
+						<table class="scorecard" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;">
 							<tr>
 								<td class="title"><bean:message key="uploadSubmission.box.UploadSubmission" /></td>
 							</tr>
@@ -65,7 +66,7 @@
 								<td class="value">
 									<bean:message key="uploadSubmission.HelpLine1" />
 									<a href="#"><bean:message key="linkHere" /></a>.<br /><br />
-									<bean:message key="uploadSubmission.UploadSubmission" />:
+									<bean:message key="uploadSubmission.UploadSubmission" />
 									<html:file property="file" size="20" styleClass="inputBox" style="width:350px;vertical-align:middle;" />
 									<html:image srcKey="btnUpload.img" altKey="btnUpload.alt" border="0" style="vertical-align:bottom;" /><br /><br />
 									<bean:message key="uploadSubmission.HelpLine2" />
@@ -84,6 +85,7 @@
 						<a href="javascript:history.go(-1)"><html:img srcKey="btnBack.img" altKey="btnBack.alt" border="0" /></a>
 					</div><br />
 				</div>
+				<br /><br />
 			</td>
 			<!-- Center Column Ends -->
 
