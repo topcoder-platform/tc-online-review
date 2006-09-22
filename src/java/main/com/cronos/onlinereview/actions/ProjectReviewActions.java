@@ -22,7 +22,6 @@ import com.topcoder.management.project.Project;
 import com.topcoder.management.resource.Resource;
 import com.topcoder.management.resource.ResourceManager;
 import com.topcoder.management.review.ReviewEntityNotFoundException;
-import com.topcoder.management.review.ReviewManagementException;
 import com.topcoder.management.review.ReviewManager;
 import com.topcoder.management.review.data.Comment;
 import com.topcoder.management.review.data.CommentType;
@@ -118,12 +117,10 @@ public class ProjectReviewActions extends DispatchAction {
      */
     public ActionForward createScreening(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response)
-        throws BaseException {        
-        return createGenericReview(mapping, form, request, "Screening");        
+        throws BaseException {
+        return createGenericReview(mapping, form, request, "Screening");
     }
 
-
-    
     /**
      * This method is an implementation of &quot;Edit Screening&quot; Struts Action defined for this
      * assembly, which is supposed to gather needed information (screening and scorecard template)
@@ -154,7 +151,6 @@ public class ProjectReviewActions extends DispatchAction {
         return editGenericReview(mapping, form, request, "Screening");
     }
 
-    
     /**
      * This method is an implementation of &quot;Save Screening&quot; Struts Action defined for this
      * assembly, which is supposed to save information posted from /jsp/editReview.jsp page. This
@@ -205,10 +201,9 @@ public class ProjectReviewActions extends DispatchAction {
     public ActionForward viewScreening(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response)
         throws BaseException {
-        return viewGenericReview(mapping, form, request, "Screening");        
+        return viewGenericReview(mapping, form, request, "Screening");
     }
 
-        
     /**
      * This method is an implementation of &quot;Create Review&quot; Struts Action defined for this
      * assembly, which is supposed to gather needed information (scorecard template) and present it
@@ -1510,9 +1505,9 @@ public class ProjectReviewActions extends DispatchAction {
         retrieveAndStoreBasicAggregationInfo(request, verification, scorecardTemplate);
         // Place Scorecard template in the request
         request.setAttribute("scorecardTemplate", scorecardTemplate);
-        
+
         int[] lastCommentIdxs = new int[review.getNumberOfItems()];
-        
+
         Arrays.fill(lastCommentIdxs, 0);
 
         for (int i = 0; i < review.getNumberOfItems(); ++i) {
@@ -1983,7 +1978,7 @@ public class ProjectReviewActions extends DispatchAction {
 
         // Retrieve and place info about submitter into request
         ActionsHelper.retrieveAndStoreSubmitterInfo(request, submission.getUpload());
-        
+
         // Get an array of all phases for current project
         Phase[] phases = ActionsHelper.getPhasesForProject(
                 ActionsHelper.createPhaseManager(request), project);
@@ -2034,17 +2029,17 @@ public class ProjectReviewActions extends DispatchAction {
         }
         request.setAttribute("lastCommentIdxs", lastCommentIdxs);
     }
-    
+
     /**
      * TODO: Document it.
-     * 
+     *
      * @param request
      * @throws BaseException
      */
-    private void retreiveAndStoreReviewLookUpData(HttpServletRequest request) throws BaseException {
+    private static void retreiveAndStoreReviewLookUpData(HttpServletRequest request) throws BaseException {
         // Obtain Review Manager instance
         ReviewManager revMgr = ActionsHelper.createReviewManager(request);
-        
+
         // Retrieve all comment types first
         CommentType reviewCommentTypesAll[] = revMgr.getAllCommentTypes();
         // Select only those needed for this scorecard
@@ -2056,15 +2051,41 @@ public class ProjectReviewActions extends DispatchAction {
         // Place comment types in the request
         request.setAttribute("allCommentTypes", reviewCommentTypes);
     }
-    
+
+    /**
+     * TODO: Document it
+     *
+     * @param request
+     * @param upload
+     * @throws BaseException
+     */
+    private static void retrieveAndStoreReviewAuthorInfo(HttpServletRequest request, Review review)
+        throws BaseException {
+        // TODO: Remove this and other functions to a separate helper class. Name it ProjectReviewActionsHelper
+
+        // Validate parameters
+        ActionsHelper.validateParameterNotNull(request, "request");
+        ActionsHelper.validateParameterNotNull(review, "review");
+
+        // Obtain an instance of Resource Manager
+        ResourceManager resMgr = ActionsHelper.createResourceManager(request);
+        // Get review author's resource
+        Resource author = resMgr.getResource(review.getAuthor());
+
+        // Place submitter's user ID into the request
+        request.setAttribute("authorId", author.getProperty("External Reference ID"));
+        // Place submitter's resource into the request
+        request.setAttribute("authorResource", author);
+    }
+
     /**
      * TODO: Document it.
-     * 
+     *
      * @param request
      * @param verification
      * @param reviewType
      * @param scorecardTemplate
-     * @throws BaseException 
+     * @throws BaseException
      */
     private void retrieveAndStoreBasicReviewInfo(HttpServletRequest request, CorrectnessCheckResult verification,
             String reviewType, Scorecard scorecardTemplate) throws BaseException {
@@ -2076,17 +2097,17 @@ public class ProjectReviewActions extends DispatchAction {
         ActionsHelper.retrieveAndStoreSubmitterInfo(request, verification.getSubmission().getUpload());
         if (verification.getReview() != null) {
                 // Retrieve the information about the review author and place it into the request
-                ActionsHelper.retrieveAndStoreReviewAuthorInfo(request, verification.getReview());  
+                retrieveAndStoreReviewAuthorInfo(request, verification.getReview());
         }
         // Place Scorecard template in the request
         request.setAttribute("scorecardTemplate", scorecardTemplate);
         // Place the type of the review into the request
         request.setAttribute("reviewType", reviewType);
     }
-    
+
     /**
      * TODO: Document it.
-     * 
+     *
      * @param mapping
      * @param form
      * @param request
@@ -2107,8 +2128,8 @@ public class ProjectReviewActions extends DispatchAction {
         } else {
             permName = Constants.PERFORM_APPROVAL_PERM_NAME;
             phaseName = Constants.APPROVAL_PHASE_NAME;
-        }  
-        
+        }
+
         // Verify that certain requirements are met before proceeding with the Action
         CorrectnessCheckResult verification =
                 checkForCorrectSubmissionId(mapping, request, permName);
@@ -2167,7 +2188,7 @@ public class ProjectReviewActions extends DispatchAction {
         request.setAttribute("authorId", new Long(AuthorizationHelper.getLoggedInUserId(request)));
         // Retrive some look-up data and store it into the request
         retreiveAndStoreReviewLookUpData(request);
-        
+
         /*
          * Populate the form
          */
@@ -2193,10 +2214,10 @@ public class ProjectReviewActions extends DispatchAction {
 
         return mapping.findForward(Constants.SUCCESS_FORWARD_NAME);
     }
-    
+
     /**
      * TODO: Document it
-     * 
+     *
      * @param mapping
      * @param form
      * @param request
@@ -2213,8 +2234,8 @@ public class ProjectReviewActions extends DispatchAction {
             permName = Constants.PERFORM_REVIEW_PERM_NAME;
         } else {
             permName = Constants.PERFORM_APPROVAL_PERM_NAME;
-        }  
-        
+        }
+
         // Verify that certain requirements are met before proceeding with the Action
         CorrectnessCheckResult verification =
                 checkForCorrectReviewId(mapping, request, permName);
@@ -2247,7 +2268,7 @@ public class ProjectReviewActions extends DispatchAction {
         retrieveAndStoreBasicReviewInfo(request, verification, reviewType, scorecardTemplate);
 
         // Retrive some look-up data and store it into the request
-        retreiveAndStoreReviewLookUpData(request);        
+        retreiveAndStoreReviewLookUpData(request);
 
         // Prepare the arrays
         String[] answers = new String[review.getNumberOfItems()];
@@ -2280,7 +2301,7 @@ public class ProjectReviewActions extends DispatchAction {
 
     /**
      * TODO: Document it
-     * 
+     *
      * @param mapping
      * @param form
      * @param request
@@ -2305,8 +2326,8 @@ public class ProjectReviewActions extends DispatchAction {
             permName = Constants.PERFORM_APPROVAL_PERM_NAME;
             phaseName = Constants.APPROVAL_PHASE_NAME;
             scorecardTypeName = "Client Review";
-        }  
-        
+        }
+
         // Verify that certain requirements are met before proceeding with the Action
         CorrectnessCheckResult verification = null;
         if (request.getParameter("rid") != null) {
@@ -2492,7 +2513,7 @@ public class ProjectReviewActions extends DispatchAction {
 
             // Set the completed status of the review
             review.setCommitted(true);
-        } else if ("preview".equalsIgnoreCase(request.getParameter("save"))) {            
+        } else if ("preview".equalsIgnoreCase(request.getParameter("save"))) {
             // Retrieve some basic review info and store it in the request
             retrieveAndStoreBasicReviewInfo(request, verification, reviewType, scorecardTemplate);
 
@@ -2516,10 +2537,10 @@ public class ProjectReviewActions extends DispatchAction {
         return ActionsHelper.cloneForwardAndAppendToPath(
                 mapping.findForward(Constants.SUCCESS_FORWARD_NAME), "&pid=" + verification.getProject().getId());
     }
-    
+
     /**
      * TODO: Document it.
-     * 
+     *
      * @param mapping
      * @param form
      * @param request
@@ -2541,8 +2562,8 @@ public class ProjectReviewActions extends DispatchAction {
         } else {
             permName = Constants.PERFORM_APPROVAL_PERM_NAME;
             scorecardTypeName = "Client Review";
-        }  
-        
+        }
+
         // Verify that certain requirements are met before proceeding with the Action
         CorrectnessCheckResult verification =
                 checkForCorrectReviewId(mapping, request, permName);
@@ -2566,15 +2587,15 @@ public class ProjectReviewActions extends DispatchAction {
             return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
                     permName, "Error.ReviewNotCommitted");
         }
-        
+
         // Retrieve some basic review info and store it in the request
         retrieveAndStoreBasicReviewInfo(request, verification, reviewType, scorecardTemplate);
-       
+
         // Get the word "of" for Test Case type of question
         String wordOf = getResources(request).getMessage("editReview.Question.Response.TestCase.of");
         // Plase the string into the request as attribute
         request.setAttribute("wordOf", " "  + wordOf + " ");
 
-        return mapping.findForward(Constants.SUCCESS_FORWARD_NAME); 
+        return mapping.findForward(Constants.SUCCESS_FORWARD_NAME);
     }
 }
