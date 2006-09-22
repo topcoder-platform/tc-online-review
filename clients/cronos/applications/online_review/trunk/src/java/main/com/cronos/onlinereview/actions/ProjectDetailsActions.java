@@ -40,6 +40,7 @@ import com.topcoder.management.deliverable.UploadManager;
 import com.topcoder.management.deliverable.UploadStatus;
 import com.topcoder.management.deliverable.UploadType;
 import com.topcoder.management.deliverable.search.SubmissionFilterBuilder;
+import com.topcoder.management.deliverable.search.UploadFilterBuilder;
 import com.topcoder.management.phase.PhaseManager;
 import com.topcoder.management.project.Project;
 import com.topcoder.management.project.ProjectManager;
@@ -54,7 +55,6 @@ import com.topcoder.search.builder.filter.AndFilter;
 import com.topcoder.search.builder.filter.Filter;
 import com.topcoder.servlet.request.FileUpload;
 import com.topcoder.servlet.request.FileUploadResult;
-import com.topcoder.servlet.request.LocalFileUpload;
 import com.topcoder.servlet.request.UploadedFile;
 import com.topcoder.util.errorhandling.BaseException;
 
@@ -492,8 +492,7 @@ public class ProjectDetailsActions extends DispatchAction {
         StrutsRequestParser parser = new StrutsRequestParser();
         parser.AddFile(file);
 
-//        FileUpload fileUpload = new RemoteFileUpload("com.topcoder.servlet.request.RemoteFileUpload");
-        FileUpload fileUpload = new LocalFileUpload("com.topcoder.servlet.request.LocalFileUpload");
+        FileUpload fileUpload = ActionsHelper.createFileUploadManager(request);
 
         FileUploadResult uploadResult = fileUpload.uploadFiles(request, parser);
         UploadedFile uploadedFile = uploadResult.getUploadedFile("file");
@@ -578,6 +577,7 @@ public class ProjectDetailsActions extends DispatchAction {
      * @throws BaseException
      *             if any error occurs.
      * @throws IOException
+     *             if some error occurs during disk input/output operation.
      */
     public ActionForward downloadSubmission(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response)
@@ -664,8 +664,7 @@ public class ProjectDetailsActions extends DispatchAction {
         Submission[] submissions = upMgr.searchSubmissions(filter);
         Submission submission = (submissions.length != 0) ? submissions[0] : null;
 
-//        FileUpload fileUpload = new RemoteFileUpload("com.topcoder.servlet.request.RemoteFileUpload");
-        FileUpload fileUpload = new LocalFileUpload("com.topcoder.servlet.request.LocalFileUpload");
+        FileUpload fileUpload = ActionsHelper.createFileUploadManager(request);
         UploadedFile uploadedFile = fileUpload.getUploadedFile(upload.getParameter());
 
         InputStream in = uploadedFile.getInputStream();
@@ -702,9 +701,18 @@ public class ProjectDetailsActions extends DispatchAction {
     }
 
     /**
-     * TODO: Write sensible description for method uploadFinalFix here
+     * This method is an implementation of &quot;Upload Final Fix&quot; Struts Action defined for
+     * this assembly, which is supposed to let the user upload his submission to the server. This
+     * action gets executed twice &#x96; once to display the page with the form, and once to process
+     * the uploaded file.
      *
-     * @return TODO: Write sensible description of return value for method uploadFinalFix
+     * @return an action forward to the appropriate page. If no error has occured and this action
+     *         was called the first time, the forward will be to uploadFinalFix.jsp page, which
+     *         displays the form where user can specify the file he/she wants to upload. If this
+     *         action was called during the post back (the second time), then the request should
+     *         contain the file uploaded by user. In this case, this method verifies if everything
+     *         is correct, stores the file on file server and returns a forward to the View Project
+     *         Details page.
      * @param mapping
      *            action mapping.
      * @param form
@@ -713,17 +721,99 @@ public class ProjectDetailsActions extends DispatchAction {
      *            the http request.
      * @param response
      *            the http response.
+     * @throws BaseException
+     *             if any error occurs.
      */
     public ActionForward uploadFinalFix(ActionMapping mapping, ActionForm form,
-            HttpServletRequest request, HttpServletResponse response) {
-        // TODO: Add implementation of method uploadFinalFix here
-        return null;
+            HttpServletRequest request, HttpServletResponse response)
+        throws BaseException {
+        // Verify that certain requirements are met before processing with the Action
+        CorrectnessCheckResult verification =
+            checkForCorrectProjectId(mapping, request, Constants.PERFORM_FINAL_FIX_PERM_NAME);
+        // If any error has occured, return action forward contained in the result bean
+        if (!verification.isSuccessful()) {
+            return verification.getForward();
+        }
+
+        // Determine if this request is a post back
+        boolean postBack = (request.getParameter("postBack") != null);
+
+        if (postBack != true) {
+            // Retrieve some basic project info (such as icons' names) and place it into request
+            ActionsHelper.retrieveAndStoreBasicProjectInfo(request, verification.getProject(), getResources(request));
+            return mapping.findForward(Constants.DISPLAY_PAGE_FORWARD_NAME);
+        }
+
+        // Retrieve current project
+        Project project = verification.getProject();
+
+        // Get all phases for the current project
+        Phase[] phases = ActionsHelper.getPhasesForProject(ActionsHelper.createPhaseManager(request), project);
+        // Retrieve the current phase for the project
+        Phase currentPhase = ActionsHelper.getPhase(phases, true, Constants.FINAL_FIX_PHASE_NAME);
+        // Check that active phase is Final Fix
+        if (currentPhase == null) {
+            return ActionsHelper.produceErrorReport(mapping, getResources(request),
+                    request, Constants.PERFORM_FINAL_FIX_PERM_NAME, "Error.IncorrectPhase");
+        }
+
+        DynaValidatorForm uploadSubmissionForm = (DynaValidatorForm) form;
+        FormFile file = (FormFile) uploadSubmissionForm.get("file");
+
+        StrutsRequestParser parser = new StrutsRequestParser();
+        parser.AddFile(file);
+
+        FileUpload fileUpload = ActionsHelper.createFileUploadManager(request);
+
+        FileUploadResult uploadResult = fileUpload.uploadFiles(request, parser);
+        UploadedFile uploadedFile = uploadResult.getUploadedFile("file");
+
+        // Obtain an instance of Upload Manager
+        UploadManager upMgr = ActionsHelper.createUploadManager(request);
+        UploadStatus[] allUploadStatuses = upMgr.getAllUploadStatuses();
+        UploadType[] allUploadTypes = upMgr.getAllUploadTypes();
+
+        // Get my resource
+        Resource resource = ActionsHelper.getMyResourceForPhase(request, null);
+
+        Filter filterProject = UploadFilterBuilder.createProjectIdFilter(project.getId());
+        Filter filterResource = UploadFilterBuilder.createResourceIdFilter(resource.getId());
+        Filter filterStatus = UploadFilterBuilder.createUploadStatusIdFilter(
+                ActionsHelper.findUploadStatusByName(allUploadStatuses, "Active").getId());
+        Filter filterType = UploadFilterBuilder.createUploadTypeIdFilter(
+                ActionsHelper.findUploadTypeByName(allUploadTypes, "Final Fix").getId());
+
+        Filter filter = new AndFilter(
+                Arrays.asList(new Filter[] {filterProject, filterResource, filterStatus, filterType}));
+
+        Upload[] uploads = upMgr.searchUploads(filter);
+        Upload oldUpload = (uploads.length != 0) ? uploads[0] : null;
+
+        Upload upload = new Upload();
+
+        upload.setProject(project.getId());
+        upload.setOwner(resource.getId());
+        upload.setUploadStatus(ActionsHelper.findUploadStatusByName(allUploadStatuses, "Active"));
+        upload.setUploadType(ActionsHelper.findUploadTypeByName(allUploadTypes, "Final Fix"));
+        upload.setParameter(uploadedFile.getFileId());
+
+        if (oldUpload != null) {
+            oldUpload.setUploadStatus(ActionsHelper.findUploadStatusByName(allUploadStatuses, "Deleted"));
+            upMgr.updateUpload(oldUpload, Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
+        }
+
+        upMgr.createUpload(upload, Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
+
+        return ActionsHelper.cloneForwardAndAppendToPath(
+                mapping.findForward(Constants.SUCCESS_FORWARD_NAME), "&pid=" + project.getId());
     }
 
     /**
-     * TODO: Write sensible description for method downloadFinalFix here
+     * This method is an implementation of &quot;Download Final Fix&quot; Struts Action defined for
+     * this assembly, which is supposed to let the user download a final fixes from the server.
      *
-     * @return TODO: Write sensible description of return value for method downloadFinalFix
+     * @return a <code>null</code> code if everything went fine, or an action forward to
+     *         /jsp/userError.jsp page which will display the information about the cause of error.
      * @param mapping
      *            action mapping.
      * @param form
@@ -732,17 +822,91 @@ public class ProjectDetailsActions extends DispatchAction {
      *            the http request.
      * @param response
      *            the http response.
+     * @throws BaseException
+     *             if any error occurs.
+     * @throws IOException
+     *             if some error occurs during disk input/output operation.
      */
     public ActionForward downloadFinalFix(ActionMapping mapping, ActionForm form,
-            HttpServletRequest request, HttpServletResponse response) {
-        // TODO: Add implementation of method downloadFinalFix here
+            HttpServletRequest request, HttpServletResponse response)
+        throws BaseException, IOException {
+        // Verify that certain requirements are met before processing with the Action
+        CorrectnessCheckResult verification =
+            checkForCorrectUploadId(mapping, request, Constants.DOWNLOAD_FINAL_FIX_PERM_NAME);
+        // If any error has occured, return action forward contained in the result bean
+        if (!verification.isSuccessful()) {
+            return verification.getForward();
+        }
+
+        // Check that user has permissions to download Final Fixes
+        if (!AuthorizationHelper.hasUserPermission(request, Constants.DOWNLOAD_FINAL_FIX_PERM_NAME)) {
+            return ActionsHelper.produceErrorReport(mapping, getResources(request),
+                    request, Constants.DOWNLOAD_FINAL_FIX_PERM_NAME, "Error.NoPermission");
+        }
+
+        // Get an upload the user wants to download
+        Upload upload = verification.getUpload();
+
+        // Verify that upload is a Final Fix
+        if (!upload.getUploadType().getName().equalsIgnoreCase("Final Fix")) {
+            return ActionsHelper.produceErrorReport(mapping, getResources(request),
+                    request, Constants.DOWNLOAD_FINAL_FIX_PERM_NAME, "Error.NotAFinalFix");
+        }
+        // Verify the status of upload
+        if (upload.getUploadStatus().getName().equalsIgnoreCase("Deleted")) {
+            return ActionsHelper.produceErrorReport(mapping, getResources(request),
+                    request, Constants.DOWNLOAD_FINAL_FIX_PERM_NAME, "Error.UploadDeleted");
+        }
+
+        FileUpload fileUpload = ActionsHelper.createFileUploadManager(request);
+        UploadedFile uploadedFile = fileUpload.getUploadedFile(upload.getParameter());
+
+        InputStream in = uploadedFile.getInputStream();
+
+        response.setHeader("Content-Type", "application/octet-stream");
+        response.setStatus(HttpServletResponse.SC_OK);
+        response.setIntHeader("Content-Length", (int) uploadedFile.getSize());
+        response.setHeader("Content-Location",
+                "final-fix-" + Long.toString(upload.getId()) + ".zip");
+
+        response.flushBuffer();
+
+        OutputStream out = null;
+
+        try {
+            out = response.getOutputStream();
+            byte[] buffer = new byte[65536];
+
+            for (;;) {
+                int numOfBytesRead = in.read(buffer);
+                if (numOfBytesRead == -1) {
+                    break;
+                }
+                out.write(buffer, 0, numOfBytesRead);
+            }
+        } finally {
+            in.close();
+            if (out != null) {
+                out.close();
+            }
+        }
+
         return null;
     }
 
     /**
-     * TODO: Write sensible description for method uploadTestCase here
+     * This method is an implementation of &quot;Upload Test Case&quot; Struts Action defined for
+     * this assembly, which is supposed to let the user upload his test cases to the server. This
+     * action gets executed twice &#x96; once to display the page with the form, and once to process
+     * the uploaded file.
      *
-     * @return TODO: Write sensible description of return value for method uploadTestCase
+     * @return an action forward to the appropriate page. If no error has occured and this action
+     *         was called the first time, the forward will be to uploadTestCase.jsp page, which
+     *         displays the form where user can specify the file he/she wants to upload. If this
+     *         action was called during the post back (the second time), then the request should
+     *         contain the file uploaded by user. In this case, this method verifies if everything
+     *         is correct, stores the file on file server and returns a forward to the View Project
+     *         Details page.
      * @param mapping
      *            action mapping.
      * @param form
@@ -751,17 +915,105 @@ public class ProjectDetailsActions extends DispatchAction {
      *            the http request.
      * @param response
      *            the http response.
+     * @throws BaseException
+     *             if any error occurs.
      */
     public ActionForward uploadTestCase(ActionMapping mapping, ActionForm form,
-            HttpServletRequest request, HttpServletResponse response) {
-        // TODO: Add implementation of method uploadTestCase here
-        return null;
+            HttpServletRequest request, HttpServletResponse response)
+        throws BaseException {
+        // Verify that certain requirements are met before processing with the Action
+        CorrectnessCheckResult verification =
+            checkForCorrectProjectId(mapping, request, Constants.UPLOAD_TEST_CASES_PERM_NAME);
+        // If any error has occured, return action forward contained in the result bean
+        if (!verification.isSuccessful()) {
+            return verification.getForward();
+        }
+
+        // Determine if this request is a post back
+        boolean postBack = (request.getParameter("postBack") != null);
+
+        if (postBack != true) {
+            // Retrieve some basic project info (such as icons' names) and place it into request
+            ActionsHelper.retrieveAndStoreBasicProjectInfo(request, verification.getProject(), getResources(request));
+            return mapping.findForward(Constants.DISPLAY_PAGE_FORWARD_NAME);
+        }
+
+        // Retrieve current project
+        Project project = verification.getProject();
+
+        // Get all phases for the current project
+        Phase[] phases = ActionsHelper.getPhasesForProject(ActionsHelper.createPhaseManager(request), project);
+        // Retrieve the current phase for the project
+        // TODO: Retrieve current phase correctly
+        Phase currentPhase = ActionsHelper.getPhase(phases, true, Constants.REVIEW_PHASE_NAME);
+
+        if (currentPhase == null) {
+            return ActionsHelper.produceErrorReport(mapping, getResources(request),
+                    request, Constants.UPLOAD_TEST_CASES_PERM_NAME, "Error.IncorrectPhase");
+        }
+
+        DynaValidatorForm uploadSubmissionForm = (DynaValidatorForm) form;
+        FormFile file = (FormFile) uploadSubmissionForm.get("file");
+
+        StrutsRequestParser parser = new StrutsRequestParser();
+        parser.AddFile(file);
+
+        FileUpload fileUpload = ActionsHelper.createFileUploadManager(request);
+
+        FileUploadResult uploadResult = fileUpload.uploadFiles(request, parser);
+        UploadedFile uploadedFile = uploadResult.getUploadedFile("file");
+
+        // Obtain an instance of Upload Manager
+        UploadManager upMgr = ActionsHelper.createUploadManager(request);
+        UploadStatus[] allUploadStatuses = upMgr.getAllUploadStatuses();
+        UploadType[] allUploadTypes = upMgr.getAllUploadTypes();
+
+        // Get my resource
+        Resource resource = ActionsHelper.getMyResourceForPhase(
+                request, ActionsHelper.getPhase(phases, false, Constants.REVIEW_PHASE_NAME));
+
+        Filter filterProject = UploadFilterBuilder.createProjectIdFilter(project.getId());
+        Filter filterResource = UploadFilterBuilder.createResourceIdFilter(resource.getId());
+        Filter filterStatus = UploadFilterBuilder.createUploadStatusIdFilter(
+                ActionsHelper.findUploadStatusByName(allUploadStatuses, "Active").getId());
+        Filter filterType = UploadFilterBuilder.createUploadTypeIdFilter(
+                ActionsHelper.findUploadTypeByName(allUploadTypes, "Test Case").getId());
+
+        Filter filter = new AndFilter(
+                Arrays.asList(new Filter[] {filterProject, filterResource, filterStatus, filterType}));
+
+        Upload[] uploads = upMgr.searchUploads(filter);
+        Upload oldUpload = (uploads.length != 0) ? uploads[0] : null;
+
+        Upload upload = new Upload();
+
+        upload.setProject(project.getId());
+        upload.setOwner(resource.getId());
+        upload.setUploadStatus(ActionsHelper.findUploadStatusByName(allUploadStatuses, "Active"));
+        upload.setUploadType(ActionsHelper.findUploadTypeByName(allUploadTypes, "Test Case"));
+        upload.setParameter(uploadedFile.getFileId());
+
+        if (oldUpload != null) {
+            oldUpload.setUploadStatus(ActionsHelper.findUploadStatusByName(allUploadStatuses, "Deleted"));
+            upMgr.updateUpload(oldUpload, Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
+        }
+
+        upMgr.createUpload(upload, Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
+
+        if (oldUpload != null) {
+            // TODO: Send email notifications here
+        }
+
+        return ActionsHelper.cloneForwardAndAppendToPath(
+                mapping.findForward(Constants.SUCCESS_FORWARD_NAME), "&pid=" + project.getId());
     }
 
     /**
-     * TODO: Write sensible description for method downloadTestCase here
+     * This method is an implementation of &quot;Download Test Case&quot; Struts Action defined for
+     * this assembly, which is supposed to let the user download a final fixes from the server.
      *
-     * @return TODO: Write sensible description of return value for method downloadTestCase
+     * @return a <code>null</code> code if everything went fine, or an action forward to
+     *         /jsp/userError.jsp page which will display the information about the cause of error.
      * @param mapping
      *            action mapping.
      * @param form
@@ -770,17 +1022,92 @@ public class ProjectDetailsActions extends DispatchAction {
      *            the http request.
      * @param response
      *            the http response.
+     * @throws BaseException
+     *             if any error occurs.
+     * @throws IOException
+     *             if some error occurs during disk input/output operation.
      */
     public ActionForward downloadTestCase(ActionMapping mapping, ActionForm form,
-            HttpServletRequest request, HttpServletResponse response) {
-        // TODO: Add implementation of method downloadTestCase here
+            HttpServletRequest request, HttpServletResponse response)
+        throws BaseException, IOException {
+        // Verify that certain requirements are met before processing with the Action
+        CorrectnessCheckResult verification =
+            checkForCorrectUploadId(mapping, request, Constants.DOWNLOAD_TEST_CASES_PERM_NAME);
+        // If any error has occured, return action forward contained in the result bean
+        if (!verification.isSuccessful()) {
+            return verification.getForward();
+        }
+
+        // Check that user has permissions to download Test Cases
+        if (!AuthorizationHelper.hasUserPermission(request, Constants.DOWNLOAD_TEST_CASES_PERM_NAME)) {
+            return ActionsHelper.produceErrorReport(mapping, getResources(request),
+                    request, Constants.DOWNLOAD_TEST_CASES_PERM_NAME, "Error.NoPermission");
+        }
+
+        // Get an upload the user wants to download
+        Upload upload = verification.getUpload();
+
+        // Verify that upload is Test Cases
+        if (!upload.getUploadType().getName().equalsIgnoreCase("Test Case")) {
+            return ActionsHelper.produceErrorReport(mapping, getResources(request),
+                    request, Constants.DOWNLOAD_TEST_CASES_PERM_NAME, "Error.NotTestCases");
+        }
+        // Verify the status of upload
+        if (upload.getUploadStatus().getName().equalsIgnoreCase("Deleted")) {
+            return ActionsHelper.produceErrorReport(mapping, getResources(request),
+                    request, Constants.DOWNLOAD_TEST_CASES_PERM_NAME, "Error.UploadDeleted");
+        }
+
+        FileUpload fileUpload = ActionsHelper.createFileUploadManager(request);
+        UploadedFile uploadedFile = fileUpload.getUploadedFile(upload.getParameter());
+
+        InputStream in = uploadedFile.getInputStream();
+
+        response.setHeader("Content-Type", "application/octet-stream");
+        response.setStatus(HttpServletResponse.SC_OK);
+        response.setIntHeader("Content-Length", (int) uploadedFile.getSize());
+        response.setHeader("Content-Location",
+                "test-cases-" + Long.toString(upload.getId()) + ".zip");
+
+        response.flushBuffer();
+
+        OutputStream out = null;
+
+        try {
+            out = response.getOutputStream();
+            byte[] buffer = new byte[65536];
+
+            for (;;) {
+                int numOfBytesRead = in.read(buffer);
+                if (numOfBytesRead == -1) {
+                    break;
+                }
+                out.write(buffer, 0, numOfBytesRead);
+            }
+        } finally {
+            in.close();
+            if (out != null) {
+                out.close();
+            }
+        }
+
         return null;
     }
 
     /**
-     * TODO: Write sensible description for method deleteSubmission here
+     * This method is an implementation of &quot;Delete Submission&quot; Struts Action defined for
+     * this assembly, which is supposed to delete (mark as deleted) submission for particular upload
+     * (denoted by <code>uid</code> parameter). This action gets executed twice &#x96; once to
+     * display the page with the confirmation, and once to process the confiremed delete request to
+     * actually delete the submission.
      *
-     * @return TODO: Write sensible description of return value for method deleteSubmission
+     * @return an action forward to the appropriate page. If no error has occured and this action
+     *         was called the first time, the forward will be to /jsp/confirmDeleteSubmission.jsp
+     *         page, which displays the confirmation dialog where user can confirm his intention to
+     *         remove the submission. If this action was called during the post back (the second
+     *         time), then this method verifies if everything is correct, and marks submission and
+     *         its current active upload as deleted. After this it returns a forward to the View
+     *         Project Details page.
      * @param mapping
      *            action mapping.
      * @param form
@@ -789,17 +1116,76 @@ public class ProjectDetailsActions extends DispatchAction {
      *            the http request.
      * @param response
      *            the http response.
+     * @throws BaseException
+     *             if any error occurs.
      */
     public ActionForward deleteSubmission(ActionMapping mapping, ActionForm form,
-            HttpServletRequest request, HttpServletResponse response) {
-        // TODO: Add implementation of method deleteSubmission here
-        return null;
+            HttpServletRequest request, HttpServletResponse response)
+        throws BaseException {
+        // Verify that certain requirements are met before processing with the Action
+        CorrectnessCheckResult verification =
+            checkForCorrectUploadId(mapping, request, Constants.REMOVE_SUBM_PERM_NAME);
+        // If any error has occured, return action forward contained in the result bean
+        if (!verification.isSuccessful()) {
+            return verification.getForward();
+        }
+
+        // Retrieve the upload user tries to delete
+        Upload upload = verification.getUpload();
+
+        // Check that user has permissions to delete submission
+        if (!AuthorizationHelper.hasUserPermission(request, Constants.REMOVE_SUBM_PERM_NAME)) {
+            return ActionsHelper.produceErrorReport(mapping, getResources(request),
+                    request, Constants.REMOVE_SUBM_PERM_NAME, "Error.NoPermission");
+        }
+        // Verify that the user is attempting to delete submission
+        if (!upload.getUploadType().getName().equalsIgnoreCase("Submission")) {
+            return ActionsHelper.produceErrorReport(mapping, getResources(request),
+                    request, Constants.REMOVE_SUBM_PERM_NAME, "Error.NotASubmission2");
+        }
+
+        Filter filter = SubmissionFilterBuilder.createUploadIdFilter(upload.getId());
+        // Obtain an instance of Upload Manager
+        UploadManager upMgr = ActionsHelper.createUploadManager(request);
+        Submission[] submissions = upMgr.searchSubmissions(filter);
+        Submission submission = (submissions.length != 0) ? submissions[0] : null;
+
+        if (submission == null || submission.getSubmissionStatus().getName().equalsIgnoreCase("Deleted")) {
+            return ActionsHelper.produceErrorReport(mapping, getResources(request),
+                    request, Constants.REMOVE_SUBM_PERM_NAME, "Error.SubmissionDeleted");
+        }
+
+        // Determine if this request is a post back
+        boolean postBack = (request.getParameter("delete") != null);
+
+        if (postBack != true) {
+            // Retrieve some basic project info (such as icons' names) and place it into request
+            ActionsHelper.retrieveAndStoreBasicProjectInfo(request, verification.getProject(), getResources(request));
+            // Place upload ID into the request as attribute
+            request.setAttribute("uid", new Long(upload.getId()));
+            return mapping.findForward(Constants.DISPLAY_PAGE_FORWARD_NAME);
+        }
+
+        UploadStatus[] allUploadStatuses = upMgr.getAllUploadStatuses();
+        SubmissionStatus[] allSubmissionStatuses = upMgr.getAllSubmissionStatuses();
+
+        upload.setUploadStatus(ActionsHelper.findUploadStatusByName(allUploadStatuses, "Deleted"));
+        submission.setSubmissionStatus(ActionsHelper.findSubmissionStatusByName(allSubmissionStatuses, "Deleted"));
+
+        upMgr.updateUpload(upload, Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
+        upMgr.updateSubmission(submission, Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
+
+        return ActionsHelper.cloneForwardAndAppendToPath(
+                mapping.findForward(Constants.SUCCESS_FORWARD_NAME), "&pid=" + verification.getProject().getId());
     }
 
     /**
-     * TODO: Write sensible description for method downloadDocument here
+     * This method is an implementation of &quot;Download Document&quot; Struts Action defined for
+     * this assembly, which is supposed to let the user download a review's document from the
+     * server.
      *
-     * @return TODO: Write sensible description of return value for method downloadDocument
+     * @return a <code>null</code> code if everything went fine, or an action forward to
+     *         /jsp/userError.jsp page which will display the information about the cause of error.
      * @param mapping
      *            action mapping.
      * @param form
@@ -808,17 +1194,87 @@ public class ProjectDetailsActions extends DispatchAction {
      *            the http request.
      * @param response
      *            the http response.
+     * @throws BaseException
+     *             if any error occurs.
+     * @throws IOException
+     *             if some error occurs during disk input/output operation.
      */
     public ActionForward downloadDocument(ActionMapping mapping, ActionForm form,
-            HttpServletRequest request, HttpServletResponse response) {
-        // TODO: Add implementation of method downloadDocument here
+            HttpServletRequest request, HttpServletResponse response)
+        throws BaseException, IOException {
+        // Verify that certain requirements are met before processing with the Action
+        CorrectnessCheckResult verification =
+            checkForCorrectUploadId(mapping, request, Constants.DOWNLOAD_DOCUMENT_PERM_NAME);
+        // If any error has occured, return action forward contained in the result bean
+        if (!verification.isSuccessful()) {
+            return verification.getForward();
+        }
+
+        // Check that user has permissions to download a Document
+        if (!AuthorizationHelper.hasUserPermission(request, Constants.DOWNLOAD_DOCUMENT_PERM_NAME)) {
+            return ActionsHelper.produceErrorReport(mapping, getResources(request),
+                    request, Constants.DOWNLOAD_DOCUMENT_PERM_NAME, "Error.NoPermission");
+        }
+
+        // Get an upload the user wants to download
+        Upload upload = verification.getUpload();
+
+        // Verify that upload is a Review Document
+        if (!upload.getUploadType().getName().equalsIgnoreCase("Review Document")) {
+            return ActionsHelper.produceErrorReport(mapping, getResources(request),
+                    request, Constants.DOWNLOAD_DOCUMENT_PERM_NAME, "Error.NotADocument");
+        }
+        // Verify the status of upload
+        if (upload.getUploadStatus().getName().equalsIgnoreCase("Deleted")) {
+            return ActionsHelper.produceErrorReport(mapping, getResources(request),
+                    request, Constants.DOWNLOAD_DOCUMENT_PERM_NAME, "Error.UploadDeleted");
+        }
+
+        FileUpload fileUpload = ActionsHelper.createFileUploadManager(request);
+        UploadedFile uploadedFile = fileUpload.getUploadedFile(upload.getParameter());
+
+        InputStream in = uploadedFile.getInputStream();
+
+        response.setHeader("Content-Type", "application/octet-stream");
+        response.setStatus(HttpServletResponse.SC_OK);
+        response.setIntHeader("Content-Length", (int) uploadedFile.getSize());
+        response.setHeader("Content-Location",
+                "review-document-" + Long.toString(upload.getId()) + ".zip");
+
+        response.flushBuffer();
+
+        OutputStream out = null;
+
+        try {
+            out = response.getOutputStream();
+            byte[] buffer = new byte[65536];
+
+            for (;;) {
+                int numOfBytesRead = in.read(buffer);
+                if (numOfBytesRead == -1) {
+                    break;
+                }
+                out.write(buffer, 0, numOfBytesRead);
+            }
+        } finally {
+            in.close();
+            if (out != null) {
+                out.close();
+            }
+        }
+
         return null;
     }
 
     /**
-     * TODO: Write sensible description for method viewAutoScreening here
+     * This method is an implementation of &quot;View Auto Screening&quot; Struts Action defined for
+     * this assembly, which is supposed to show the results of auto screening to user.
      *
-     * @return TODO: Write sensible description of return value for method viewAutoScreening
+     * @return &quot;success&quot; forward, which forwards to the /jsp/viewAutoScreening.jsp page
+     *         (as defined in struts-config.xml file), or &quot;userError&quot; forward, which
+     *         forwards to the /jsp/userError.jsp page, which displays information about an error
+     *         that is usually caused by incorrect user input (such as absent upload id, or the lack
+     *         of permissions, etc.).
      * @param mapping
      *            action mapping.
      * @param form
@@ -827,11 +1283,11 @@ public class ProjectDetailsActions extends DispatchAction {
      *            the http request.
      * @param response
      *            the http response.
-     * @throws BaseException 
+     * @throws BaseException
+     *             if any error occurs.
      */
     public ActionForward viewAutoScreening(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response) throws BaseException {
-        
         // TODO: Add implementation of method viewAutoScreening here
         // Verify that certain requirements are met before processing with the Action
         CorrectnessCheckResult verification =
@@ -840,9 +1296,9 @@ public class ProjectDetailsActions extends DispatchAction {
         if (!verification.isSuccessful()) {
             return verification.getForward();
         }
-        
+
         // TODO: Refactor permission check
-        
+
         // Get an upload to display autoscreening results of
         Upload upload = verification.getUpload();
 
@@ -851,7 +1307,7 @@ public class ProjectDetailsActions extends DispatchAction {
             return ActionsHelper.produceErrorReport(
                     mapping, getResources(request), request, "ViewSubmission", "Error.NotASubmission");
         }
-        
+
         // Verify the status of upload and check whether the user has permission to download old uploads
         if (upload.getUploadStatus().getName().equalsIgnoreCase("Deleted") &&
                 !AuthorizationHelper.hasUserPermission(request, Constants.VIEW_ALL_SUBM_PERM_NAME)) {
@@ -859,16 +1315,15 @@ public class ProjectDetailsActions extends DispatchAction {
                     mapping, getResources(request), request, "ViewSubmission", "Error.UploadDeleted");
         }
 
-
         boolean noRights = true;
 
         if (AuthorizationHelper.hasUserPermission(request, Constants.VIEW_ALL_SUBM_PERM_NAME)) {
             noRights = false;
         }
-        
+
         // Obtain an array of "my" resources
-        Resource[] myResources = (Resource[]) request.getAttribute("myResources");        
-        
+        Resource[] myResources = (Resource[]) request.getAttribute("myResources");
+
         if (noRights && AuthorizationHelper.hasUserPermission(request, Constants.VIEW_MY_SUBM_PERM_NAME)) {
             long owningResourceId = upload.getOwner();
             for (int i = 0; i < myResources.length; ++i) {
@@ -883,39 +1338,39 @@ public class ProjectDetailsActions extends DispatchAction {
             return ActionsHelper.produceErrorReport(
                     mapping, getResources(request), request, "ViewSubmission", "Error.NoPermission");
         }
-        
+
         // Retrieve some basic project info (such as icons' names) and place it into request
         ActionsHelper.retrieveAndStoreBasicProjectInfo(request, verification.getProject(), messages);
 
         // Place a string that represents "my" current role(s) into the request
         ActionsHelper.retrieveAndStoreMyRole(request, getResources(request));
-        
+
         // Retrieve the submitter id and place it into request
         ActionsHelper.retrieveAndStoreSubmitterInfo(request, upload);
-        
-        // Obtain Screening Manager instance 
-        ScreeningManager screeningManager = ActionsHelper.createScreeningManager(request);  
-        
+
+        // Obtain Screening Manager instance
+        ScreeningManager screeningManager = ActionsHelper.createScreeningManager(request);
+
         // Retrieve the automated screening results
         ScreeningTask screeningTask = screeningManager.getScreeningDetails(upload.getId());
         ScreeningResult[] screeningResults = screeningTask.getAllScreeningResults();
 
         // Group the results according to severity statuses and screening responses
-        // Finally the results are grouped into the map where 
-        // the keys are the ids of severity statuses and the values are another maps, 
+        // Finally the results are grouped into the map where
+        // the keys are the ids of severity statuses and the values are another maps,
         // in which keys are ids of screening responses and the values are screening results.
-        Map screeningResultsMap = new TreeMap();        
+        Map screeningResultsMap = new TreeMap();
         for (int i = 0; i < screeningResults.length; i++) {
             ResponseSeverity responseSeverity = screeningResults[i].getScreeningResponse().getResponseSeverity();
             Long responseSeverityId = new Long(responseSeverity.getId());
             Long screeningResponseId = new Long(screeningResults[i].getScreeningResponse().getId());
             Map innerMap;
             if (screeningResultsMap.containsKey(responseSeverityId)) {
-                innerMap = (Map) screeningResultsMap.get(responseSeverityId);                
+                innerMap = (Map) screeningResultsMap.get(responseSeverityId);
             } else {
                 innerMap = new TreeMap();
                 screeningResultsMap.put(responseSeverityId, innerMap);
-            }            
+            }
             if (innerMap.containsKey(screeningResponseId)) {
                 ((List) innerMap.get(screeningResponseId)).add(screeningResults[i]);
             } else {
@@ -926,7 +1381,7 @@ public class ProjectDetailsActions extends DispatchAction {
         }
         // Store grouped results in the request
         request.setAttribute("screeningResultsMap", screeningResultsMap);
-        
+
         // Return success forward
         return mapping.findForward(Constants.SUCCESS_FORWARD_NAME);
     }
