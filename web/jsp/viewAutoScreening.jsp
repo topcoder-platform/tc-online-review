@@ -5,8 +5,6 @@
 <%@ taglib prefix="bean" uri="/tags/struts-bean" %>
 <%@ taglib prefix="tc-webtag" uri="/tags/tc-webtags" %>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html>
-
 <html:html xhtml="true">
 
 <head>
@@ -24,11 +22,10 @@
 </head>
 
 <body>
-
-<jsp:include page="../includes/inc_header.jsp" />
+	<jsp:include page="../includes/inc_header.jsp" />
 	<table width="100%" border="0" cellpadding="0" cellspacing="0">
 		<tr valign="top">
-			<!-- Left Column Begins-->
+			<!-- Left Column Begins -->
 			<td width="180">
 				<jsp:include page="../includes/inc_leftnav.jsp" />
 			</td>
@@ -44,7 +41,7 @@
 
 				<div id="mainMiddleContent">
 					<div style="padding: 11px 6px 9px 0px;">
-						<table border="0" cellpadding="0" cellspacing="0" width="100%" id="table1">
+						<table width="100%" cellpadding="0" cellspacing="0" border="0">
 							<tr>
 								<td>
 									<table cellspacing="0" cellpadding="0" border="0">
@@ -68,12 +65,12 @@
 					&#160;<b><bean:message key="editReview.Submission" /></b> ${sid}
 					(<tc-webtag:handle coderId="${submitterId}" context="component" />)<br />
 					&#160;<b><bean:message key="editReview.MyRole" /></b> ${myRole}<br />
-					<%-- Should have distinction between wranings, results, errors  --%>
+					<%-- Should have distinction between warnings, results, errors  --%>
 					<h3><bean:message key="viewAutoScreening.Warnings" /></h3>
 				
 					<table class="scorecard" cellpadding="0" width="100%" style="border-collapse: collapse;">
 						<tr>
-				        		<td class="title"><bean:message key="viewAutoScreening.ScreeningResponses" /></td>			
+							<td class="title"><bean:message key="viewAutoScreening.ScreeningResponses" /></td>			
 						</tr>
 						<c:forEach var="severityEntry" items="${screeningResultsMap}">	
 							<c:forEach var="responseEntry" varStatus="responseStatus" items="${severityEntry.value}">
@@ -86,18 +83,18 @@
 												</td>  
 											</tr>
 											<tr class="light">    
-								            			<td class="value">
-										</c:if>									
-													<br>
-													<font color="#CC0000"><b>${result.screeningResponse.responseCode}:</b> 
-														${result.screeningResponse.responseText}<br>
-													</font>		
-													<ul>							
-									</c:if>																		
-														<li>${result.dynamicText}</li>				
-									<c:if test="${resultStatus.last}">
-													</ul>
-										<c:if test="${responseStatus.last}"> 													
+												<td class="value">
+													</c:if>									
+														<br />
+														<font color="#CC0000"><b>${result.screeningResponse.responseCode}:</b> 
+															${result.screeningResponse.responseText}<br />
+														</font>		
+														<ul>							
+													</c:if>																		
+													<li>${result.dynamicText}</li>				
+													<c:if test="${resultStatus.last}">
+														</ul>
+													<c:if test="${responseStatus.last}"> 													
 												</td>
 											</tr>
 										</c:if>
@@ -106,9 +103,9 @@
 							</c:forEach>							
 						</c:forEach>						
 						<tr>		
-				        		<td class="lastRowTD"></td>
+							<td class="lastRowTD"><!-- @ --></td>
 						</tr>
-					</table>
+					</table><br />
 					
 					<div align="right">
 						<a href="javascript:history.go(-1)"><html:img srcKey="btnBack.img" altKey="btnBack.alt" border="0" /></a><br />
