@@ -394,12 +394,9 @@ public class ProjectReviewActions extends DispatchAction {
                     Constants.PERFORM_AGGREGATION_PERM_NAME, "Error.ReviewCommitted");
         }
 
-        // Retrieve current project
-        Project project = verification.getProject();
-
         // Retrieve some basic aggregation info and store it into the request
         retrieveAndStoreBasicAggregationInfo(request, verification, scorecardTemplate, "Aggregation");
-        
+
         // Obtain an instance of Review Manager
         ReviewManager revMgr = ActionsHelper.createReviewManager(request);
 
@@ -523,6 +520,12 @@ public class ProjectReviewActions extends DispatchAction {
                 ActionsHelper.createPhaseManager(request), verification.getProject());
         // Get an active phase for the project
         Phase phase = ActionsHelper.getPhase(phases, true, Constants.AGGREGATION_PHASE_NAME);
+        // Check that Aggregation phase is really active (open)
+        if (phase == null) {
+            return ActionsHelper.produceErrorReport(mapping, getResources(request),
+                    request, Constants.PERFORM_AGGREGATION_PERM_NAME, "Error.IncorrectPhase");
+        }
+
         // Retrieve a resource for the Aggregation phase
         Resource resource = ActionsHelper.getMyResourceForPhase(request, phase);
         // Get the form defined for this action
@@ -818,9 +821,6 @@ public class ProjectReviewActions extends DispatchAction {
             }
         }
 
-        // Retrieve current project
-        Project project = verification.getProject();
-
         // Retrieve some basic aggregation info and store it into the request
         retrieveAndStoreBasicAggregationInfo(request, verification, scorecardTemplate, "AggregationReview");
 
@@ -1090,7 +1090,7 @@ public class ProjectReviewActions extends DispatchAction {
 
         // Retrieve some basic aggregation info and store it into the request
         retrieveAndStoreBasicAggregationInfo(request, verification, scorecardTemplate, "AggregationReview");
-        
+
         // Get the word "of" for Test Case type of question
         String wordOf = getResources(request).getMessage("editReview.Question.Response.TestCase.of");
         // Place the string into the request as attribute
@@ -1179,7 +1179,7 @@ public class ProjectReviewActions extends DispatchAction {
 
         // Retrieve some basic aggregation info and store it into the request
         retrieveAndStoreBasicAggregationInfo(request, verification, scorecardTemplate, "AggregationReview");
-        
+
         int reviewerCommentsNum = 0;
         int[] lastCommentIdxs = new int[review.getNumberOfItems()];
 
@@ -1310,6 +1310,12 @@ public class ProjectReviewActions extends DispatchAction {
                 ActionsHelper.createPhaseManager(request), verification.getProject());
         // Get an active phase for the project
         Phase phase = ActionsHelper.getPhase(phases, true, Constants.FINAL_REVIEW_PHASE_NAME);
+        // Check that Final Review Phase is really active (open)
+        if (phase == null) {
+            return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
+                    Constants.PERFORM_FINAL_REVIEW_PERM_NAME, "Error.IncorrectPhase");
+        }
+
         // Retrieve a resource for the Final Review phase
         Resource resource = ActionsHelper.getMyResourceForPhase(request, phase);
         // Get the form defined for this action
@@ -1390,7 +1396,7 @@ public class ProjectReviewActions extends DispatchAction {
         } else if ("preview".equalsIgnoreCase(request.getParameter("save"))) {
             // Retrieve some basic aggregation info and store it into the request
             retrieveAndStoreBasicAggregationInfo(request, verification, scorecardTemplate, "FinalReview");
-      
+
             // Update review object stored in the request
             request.setAttribute("review", review);
 
@@ -2095,7 +2101,13 @@ public class ProjectReviewActions extends DispatchAction {
         Phase[] phases = ActionsHelper.getPhasesForProject(ActionsHelper.createPhaseManager(request), project);
         // Get active (current) phase
         Phase phase = ActionsHelper.getPhase(phases, true, phaseName);
-        // Get "My" resource for the Screening phase
+        // Check that the phase in question is really active (open)
+        if (phase == null) {
+            return ActionsHelper.produceErrorReport(
+                    mapping, getResources(request), request, permName, "Error.IncorrectPhase");
+        }
+
+        // Get "My" resource for the appropriate phase
         Resource myResource = ActionsHelper.getMyResourceForPhase(request, phase);
         // Retrieve a scorecard template for the appropriate phase
         Scorecard scorecardTemplate = ActionsHelper.getScorecardTemplateForPhase(
@@ -2111,14 +2123,8 @@ public class ProjectReviewActions extends DispatchAction {
         Filter filterScorecard = new EqualToFilter("scorecardType",
                 new Long(scorecardTemplate.getScorecardType().getId()));
 
-        // Build the list of all filters that should be joined using AND operator
-        List filters = new ArrayList();
-        filters.add(filterResource);
-        filters.add(filterSubmission);
-        filters.add(filterScorecard);
-
         // Prepare final combined filter
-        Filter filter = new AndFilter(filters);
+        Filter filter = new AndFilter(Arrays.asList(new Filter[] {filterResource, filterSubmission, filterScorecard}));
         // Obtain an instance of Review Manager
         ReviewManager revMgr = ActionsHelper.createReviewManager(request);
         // Retrieve an array of reviews
@@ -2207,7 +2213,6 @@ public class ProjectReviewActions extends DispatchAction {
             return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
                     permName, "Error.ReviewTypeIncorrect");
         }
-
         // Verify that review has not been committed yet
         if (review.isCommitted()) {
             return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
@@ -2297,7 +2302,7 @@ public class ProjectReviewActions extends DispatchAction {
         if (!verification.isSuccessful()) {
             return verification.getForward();
         }
-        
+
         // Get current project
         Project project = verification.getProject();
 
@@ -2305,7 +2310,13 @@ public class ProjectReviewActions extends DispatchAction {
         Phase[] phases = ActionsHelper.getPhasesForProject(ActionsHelper.createPhaseManager(request), project);
         // Get active (current) phase
         Phase phase = ActionsHelper.getPhase(phases, true, phaseName);
-        // Get "My" resource for the Screening phase
+        // Check that the phase in question is really active (open)
+        if (phase == null) {
+            return ActionsHelper.produceErrorReport(
+                    mapping, getResources(request), request, permName, "Error.IncorrectPhase");
+        }
+
+        // Get "My" resource for the appropriate phase
         Resource myResource = ActionsHelper.getMyResourceForPhase(request, phase);
 
         // Retrieve the review to edit (if any)
