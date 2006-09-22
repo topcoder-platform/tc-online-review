@@ -1423,8 +1423,7 @@
                 </Property>
 
                 <Property name="context">
-                    <Value>
-                        SELECT DISTINCT project.project_id FROM project JOIN project_category_lu ON
+                    <Value>SELECT DISTINCT project.project_id FROM project JOIN project_category_lu ON
                         project.project_category_id = project_category_lu.project_category_id JOIN project_status_lu ON
                         project.project_status_id = project_status_lu.project_status_id JOIN project_type_lu ON
                         project_category_lu.project_type_id = project_type_lu.project_type_id LEFT JOIN project_info ON
@@ -1517,8 +1516,7 @@
                 </Property>
 
                 <Property name="context">
-                    <Value>
-                        SELECT DISTINCT scorecard.scorecard_id FROM scorecard JOIN scorecard_status_lu ON
+                    <Value>SELECT DISTINCT scorecard.scorecard_id FROM scorecard JOIN scorecard_status_lu ON
                         scorecard.scorecard_status_id = scorecard_status_lu.scorecard_status_id JOIN scorecard_type_lu
                         ON scorecard.scorecard_type_id = scorecard_type_lu.scorecard_type_id JOIN project_category_lu ON
                         scorecard.project_category_id = project_category_lu.project_category_id WHERE
@@ -1576,13 +1574,11 @@
                 <Property name="name">
                     <Value>Deliverable Search Bundle</Value>
                 </Property>
-
                 <Property name="searchStrategy">
                     <Property name="class">
                         <Value>dbStrategy</Value>
                     </Property>
                 </Property>
-
                 <Property name="searchableFields">
                     <Property name="dummy">
                         <Property name="validator">
@@ -1595,11 +1591,14 @@
                         </Property>
                     </Property>
                 </Property>
-
                 <Property name="context">
-                    <Value>SELECT UNIQUE(deliverable_id) FROM deliverable_lu CROSS JOIN project WHERE</Value>
+                    <Value>SELECT UNIQUE deliverable_id, resource_id
+                        FROM deliverable_lu
+                        INNER JOIN resource
+                        ON deliverable_lu.resource_role_id = resource.resource_role_id 
+                        WHERE
+                    </Value>
                 </Property>
-
                 <Property name="alias">
                     <Property name="deliverable_id">
                         <Value>deliverable_lu.deliverable_id</Value>
@@ -1608,13 +1607,13 @@
                         <Value>deliverable_lu.name</Value>
                     </Property>
                     <Property name="project_id">
-                        <Value>project.project_id</Value>
+                        <Value>resource.project_id</Value>
                     </Property>
                     <Property name="phase_id">
                         <Value>deliverable_lu.phase_type_id</Value>
                     </Property>
                     <Property name="resource_id">
-                        <Value>deliverable_lu.resource_role_id</Value>
+                        <Value>resource.resource_id</Value>
                     </Property>
                     <Property name="required">
                         <Value>deliverable_lu.required</Value>
@@ -1629,13 +1628,11 @@
                 <Property name="name">
                     <Value>Deliverable With Submission Search Bundle</Value>
                 </Property>
-
                 <Property name="searchStrategy">
                     <Property name="class">
                         <Value>dbStrategy</Value>
                     </Property>
                 </Property>
-
                 <Property name="searchableFields">
                     <Property name="dummy">
                         <Property name="validator">
@@ -1648,17 +1645,19 @@
                         </Property>
                     </Property>
                 </Property>
-
                 <Property name="context">
-                    <Value>
-                        SELECT deliverable_id, submission_id FROM deliverable_lu CROSS JOIN project CROSS JOIN
-                        submission INNER JOIN submission_status_lu ON submission.submission_status_id =
-                        submission_status_lu.submission_status_id INNER JOIN upload ON submission.upload_id =
-                        upload.upload_id WHERE submission_status_lu.name = 'Active' AND deliverable_lu.per_submission =
-                        1 AND upload.project_id = project.project_id AND
+                    <Value>SELECT deliverable_id, resource.resource_id, submission_id
+                        FROM deliverable_lu
+                        INNER JOIN resource ON resource.resource_role_id = deliverable_lu.resource_role_id
+                        CROSS JOIN submission
+                        INNER JOIN submission_status_lu
+                        ON submission.submission_status_id = submission_status_lu.submission_status_id
+                        INNER JOIN upload
+                        ON submission.upload_id = upload.upload_id
+                        WHERE submission_status_lu.name = 'Active' AND deliverable_lu.per_submission = 1 AND
+                        upload.project_id=resource.project_id AND
                     </Value>
                 </Property>
-
                 <Property name="alias">
                     <Property name="deliverable_id">
                         <Value>deliverable_lu.deliverable_id</Value>
@@ -1667,13 +1666,13 @@
                         <Value>deliverable_lu.name</Value>
                     </Property>
                     <Property name="project_id">
-                        <Value>project.project_id</Value>
+                        <Value>resource.project_id</Value>
                     </Property>
                     <Property name="phase_id">
                         <Value>deliverable_lu.phase_type_id</Value>
                     </Property>
                     <Property name="resource_id">
-                        <Value>deliverable_lu.resource_role_id</Value>
+                        <Value>resource.resource_id</Value>
                     </Property>
                     <Property name="required">
                         <Value>deliverable_lu.required</Value>
@@ -1691,13 +1690,11 @@
                 <Property name="name">
                     <Value>Submission Search Bundle</Value>
                 </Property>
-
                 <Property name="searchStrategy">
                     <Property name="class">
                         <Value>dbStrategy</Value>
                     </Property>
                 </Property>
-
                 <Property name="searchableFields">
                     <Property name="dummy">
                         <Property name="validator">
@@ -1710,14 +1707,14 @@
                         </Property>
                     </Property>
                 </Property>
-
                 <Property name="context">
-                    <Value>
-                        SELECT submission_id FROM submission INNER JOIN upload ON submission.upload_id =
-                        upload.upload_id WHERE
+                    <Value>SELECT submission_id
+                        FROM submission
+                        INNER JOIN upload
+                        ON submission.upload_id = upload.upload_id
+                        WHERE
                     </Value>
                 </Property>
-
                 <Property name="alias">
                     <Property name="submission_id">
                         <Value>submission.submission_id</Value>
@@ -1744,13 +1741,11 @@
                 <Property name="name">
                     <Value>Upload Search Bundle</Value>
                 </Property>
-
                 <Property name="searchStrategy">
                     <Property name="class">
                         <Value>dbStrategy</Value>
                     </Property>
                 </Property>
-
                 <Property name="searchableFields">
                     <Property name="dummy">
                         <Property name="validator">
@@ -1763,11 +1758,9 @@
                         </Property>
                     </Property>
                 </Property>
-
                 <Property name="context">
-                    <Value>SELECT upload_id FROM upload WHERE</Value>
+                    <Value>SELECT upload_id FROM upload WHERE </Value>
                 </Property>
-
                 <Property name="alias">
                     <Property name="upload_id">
                         <Value>upload.upload_id</Value>
