@@ -41,37 +41,8 @@
 				<jsp:include page="../includes/project/project_tabs.jsp" />
 
 				<div id="mainMiddleContent">
-					<div style="padding: 11px 6px 9px 0px;">
-						<table border="0" cellpadding="0" cellspacing="0" width="100%">
-							<tr>
-								<td>
-									<table cellspacing="0" cellpadding="0" border="0">
-										<tr valign="middle">
-											<td><img src="../i/${categoryIconName}" border="0" /></td>
-											<td><img src="../i/${rootCatalogIcon}" alt="${rootCatalogName}" border="0" /></td>
-											<td>
-												<span class="bodyTitle">${project.allProperties["Project Name"]}</span>
-												<c:if test='${!(empty project.allProperties["Project Version"])}'>
-													<font size="4"><bean:message key="global.version" />
-														${project.allProperties["Project Version"]}</font>
-												</c:if>
-											</td>
-										</tr>
-									</table>
-								</td>
-								<td align="right" valign="top">
-									<a href="javascript:showAll();"><bean:message key="global.expandAll" /></a>&#160;|
-									<a href="javascript:hideAll();"><bean:message key="global.collapseAll" /></a>
-								</td>
-							</tr>
-						</table>
-					</div>
-
-					&#160;<b><bean:message key="editReview.Reviewer" /></b>
-					<tc-webtag:handle coderId="${aggregatorId}" context="component" /><br />
-					&#160;<b><bean:message key="editReview.Submission" /></b> ${sid}
-					(<tc-webtag:handle coderId="${submitterId}" context="component" />)<br />
-					&#160;<b><bean:message key="editReview.MyRole" /></b> ${myRole}<br />
+					<jsp:include page="../includes/review/review_project.jsp" />
+					
 					<h3><bean:message key="editFinalReview.Scorecard.title" /></h3>
 
 					<c:set var="itemIdx" value="0" />

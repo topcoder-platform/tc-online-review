@@ -30,7 +30,6 @@
 		</tr>
 	</table>
 </div>
-<%--
 <c:if test="${reviewType ne 'AutoScreening'}">
 	<c:if test="${reviewType eq 'Screening'}">
 		&#160;<b><bean:message key="editReview.Screener" /></b>
@@ -41,13 +40,12 @@
 	<c:if test="${reviewType eq 'Approval'}">
 		&#160;<b><bean:message key="editReview.Approver" /></b>
 	</c:if>
-	<c:if test="${reviewType eq 'Aggregation'}">
+	<c:if test="${reviewType eq 'Aggregation' or reviewType eq 'AggregationReview' or reviewType eq 'FinalReview'}">
 		&#160;<b><bean:message key="editReview.Aggregator" /></b>
 	</c:if>
 	<tc-webtag:handle coderId="${authorId}" context="component" />
 <br />
 </c:if>
---%>
 &#160;<b><bean:message key="editReview.Submission" /></b> ${sid}
 <c:if test="${reviewType ne 'Screening' and reviewType ne 'Review'}">
 	(<tc-webtag:handle coderId="${submitterId}" context="component" />)
