@@ -67,7 +67,6 @@ import com.topcoder.management.resource.search.ResourceRoleFilterBuilder;
 import com.topcoder.management.review.DefaultReviewManager;
 import com.topcoder.management.review.ReviewManager;
 import com.topcoder.management.review.data.CommentType;
-import com.topcoder.management.review.data.Review;
 import com.topcoder.management.scorecard.PersistenceException;
 import com.topcoder.management.scorecard.ScorecardManager;
 import com.topcoder.management.scorecard.ScorecardManagerImpl;
@@ -85,6 +84,9 @@ import com.topcoder.search.builder.SearchBundleManager;
 import com.topcoder.search.builder.filter.AndFilter;
 import com.topcoder.search.builder.filter.Filter;
 import com.topcoder.search.builder.filter.OrFilter;
+import com.topcoder.servlet.request.DisallowedDirectoryException;
+import com.topcoder.servlet.request.FileUpload;
+import com.topcoder.servlet.request.LocalFileUpload;
 import com.topcoder.util.datavalidator.LongValidator;
 import com.topcoder.util.datavalidator.StringValidator;
 import com.topcoder.util.errorhandling.BaseException;
@@ -808,29 +810,6 @@ class ActionsHelper {
         request.setAttribute("submitterId", submitter.getProperty("External Reference ID"));
         // Place submitter's resource into the request
         request.setAttribute("submitterResource", submitter);
-    }
-
-    /**
-     * TODO: Document it
-     *
-     * @param request
-     * @param upload
-     * @throws BaseException
-     */
-    public static void retrieveAndStoreReviewAuthorInfo(HttpServletRequest request, Review review) throws BaseException {
-        // Validate parameters
-        validateParameterNotNull(request, "request");
-        validateParameterNotNull(review, "review");
-
-        // Obtain an instance of Resource Manager
-        ResourceManager resMgr = ActionsHelper.createResourceManager(request);
-        // Get review author's resource
-        Resource author = resMgr.getResource(review.getAuthor());
-
-        // Place submitter's user ID into the request
-        request.setAttribute("authorId", author.getProperty("External Reference ID"));
-        // Place submitter's resource into the request
-        request.setAttribute("authorResource", author);
     }
 
     /**
@@ -1759,6 +1738,39 @@ class ActionsHelper {
 
         // Return the Upload Retrieval object
         return manager;
+    }
+
+    /**
+     * This static method helps to create an object of the <code>FileUpload</code> class.
+     *
+     * @return a newly created instance of the class.
+     * @param request
+     *            an <code>HttpServletRequest</code> obejct, where created
+     *            <code>UserRetrieval</code> object can be stored to let reusing it later for the
+     *            same request.
+     * @throws com.topcoder.servlet.request.ConfigurationException
+     *             if any error occurs while reading parameters from the configuration file.
+     * @throws DisallowedDirectoryException
+     *             if the directory is not one of the allowed directories.
+     */
+    public static FileUpload createFileUploadManager(HttpServletRequest request)
+        throws DisallowedDirectoryException, com.topcoder.servlet.request.ConfigurationException {
+        // Validate parameter
+        validateParameterNotNull(request, "request");
+
+        // Try retrieving File Upload from the request's attribute first
+        FileUpload fileUpload = (FileUpload) request.getAttribute("fileUploadManager");
+        // If this is the first time this method is called for the request,
+        // create a new instance of the object
+        if (fileUpload == null) {
+//            fileUpload = new RemoteFileUpload("com.topcoder.servlet.request.RemoteFileUpload");
+            fileUpload = new LocalFileUpload("com.topcoder.servlet.request.LocalFileUpload");
+            // Place newly-created object into the request as attribute
+            request.setAttribute("fileUploadManager", fileUpload);
+        }
+
+        // Return the File Upload object
+        return fileUpload;
     }
 
     /**
