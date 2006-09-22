@@ -79,7 +79,7 @@
             <form-property name="msg" type="java.lang.String" />
         </form-bean>
 
-        <form-bean name="uploadSubmissionForm" dynamic="true"
+        <form-bean name="fileUploadForm" dynamic="true"
             type="org.apache.struts.validator.DynaValidatorForm">
             <form-property name="file" type="org.apache.struts.upload.FormFile" />
         </form-bean>
@@ -264,7 +264,7 @@
         <action path="/actions/UploadSubmission" unknown="false"
             type="com.cronos.onlinereview.actions.ProjectDetailsActions"
             parameter="method" scope="request"
-            name="uploadSubmissionForm"
+            name="fileUploadForm"
             input="/jsp/uploadSubmission.jsp">
             <forward name="displayPage" path="/jsp/uploadSubmission.jsp" redirect="false" />
             <forward name="success" path="/actions/ViewProjectDetails.do?method=viewProjectDetails" redirect="true" />
@@ -281,8 +281,10 @@
         <action path="/actions/UploadFinalFix" unknown="false"
             type="com.cronos.onlinereview.actions.ProjectDetailsActions"
             parameter="method" scope="request"
+            name="fileUploadForm"
             input="/jsp/uploadFinalFix.jsp">
-            <forward name="success" path="/actions/ViewProjectDetails.do?method=viewProjectDetails" redirect="false" />
+            <forward name="displayPage" path="/jsp/uploadFinalFix.jsp" redirect="false" />
+            <forward name="success" path="/actions/ViewProjectDetails.do?method=viewProjectDetails" redirect="true" />
         </action>
 
         <!-- "Download Final Fix" action -->
@@ -296,8 +298,10 @@
         <action path="/actions/UploadTestCase" unknown="false"
             type="com.cronos.onlinereview.actions.ProjectDetailsActions"
             parameter="method" scope="request"
+            name="fileUploadForm"
             input="/jsp/uploadTestCase.jsp">
-            <forward name="success" path="/actions/ViewProjectDetails.do?method=viewProjectDetails" redirect="false" />
+            <forward name="displayPage" path="/jsp/uploadTestCase.jsp" redirect="false" />
+            <forward name="success" path="/actions/ViewProjectDetails.do?method=viewProjectDetails" redirect="true" />
         </action>
 
         <!-- "Download Test Case" action -->
@@ -318,7 +322,8 @@
             type="com.cronos.onlinereview.actions.ProjectDetailsActions"
             parameter="method" scope="request"
             input="/jsp/confirmDeleteSubmission.jsp">
-            <forward name="success" path="/actions/ViewProjectDetails.do?method=viewProjectDetails" redirect="false"/>
+            <forward name="displayPage" path="/jsp/confirmDeleteSubmission.jsp" redirect="false"/>
+            <forward name="success" path="/actions/ViewProjectDetails.do?method=viewProjectDetails" redirect="true"/>
         </action>
 
         <!-- "View Auto Screening" action -->
