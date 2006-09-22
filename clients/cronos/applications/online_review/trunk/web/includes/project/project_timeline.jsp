@@ -32,23 +32,41 @@
 						<td class="headerC"><bean:message key="viewProjectDetails.Timeline.Start" /></td>
 						<td class="headerC"><bean:message key="viewProjectDetails.Timeline.End" /></td>
 					</tr>
-					<c:forEach items="${phases}" var="phase" varStatus="idxrPhase">
-						<tr class='${(idxrPhase.index % 2 == 0) ? "light" : "dark"}'>
-							<c:if test="${phaseGroupIndexes[idxrPhase.index] == -1}">
+					<c:forEach items="${phases}" var="phase" varStatus="phaseStatus">
+						<tr class='${(phaseStatus.index % 2 == 0) ? "light" : "dark"}'>
+							<c:if test="${phaseGroupIndexes[phaseStatus.index] == -1}">
 								<td class="value" nowrap="nowrap">
 									<b><bean:message key='ProjectPhase.${fn:replace(phase.phaseType.name, " ", "")}' /></b></td>
 							</c:if>
-							<c:if test="${phaseGroupIndexes[idxrPhase.index] != -1}">
+							<c:if test="${phaseGroupIndexes[phaseStatus.index] != -1}">
 								<td class="value" nowrap="nowrap">
-									<a onClick='return expandcontent("sc${phaseGroupIndexes[idxrPhase.index] + 1}", this)'
+									<a onClick='return expandcontent("sc${phaseGroupIndexes[phaseStatus.index] + 1}", this)'
 										href="javascript:void(0)"><b><bean:message
 											key='ProjectPhase.${fn:replace(phase.phaseType.name, " ", "")}' /></b></a></td>
 							</c:if>
-							<td class="valueC" nowrap="nowrap">
-								<bean:message key='ProjectPhase.Status.${fn:replace(phase.phaseStatus.name, " ", "")}' />
-							</td>
-							<td class="valueC" nowrap="nowrap" title='${!(empty originalStart[idxrPhase.index]) ? originalStart[idxrPhase.index] : ""}'>${displayedStart[idxrPhase.index]}</td>
-							<td class="valueC" nowrap="nowrap" title='${!(empty originalEnd[idxrPhase.index]) ? originalEnd[idxrPhase.index] : ""}'>${displayedEnd[idxrPhase.index]}</td>
+							<c:choose>
+								<c:when test="${phaseStatuseCodes[phaseStatus.index] == 0}">
+									<td class="valueC" nowrap="nowrap"><bean:message key="ProjectPhaseStatus.Scheduled" /></td>
+								</c:when>
+								<c:when test="${phaseStatuseCodes[phaseStatus.index] == 1}">
+									<td class="valueC" nowrap="nowrap"><bean:message key="ProjectPhaseStatus.Closed" /></td>
+								</c:when>
+								<c:when test="${phaseStatuseCodes[phaseStatus.index] == 2}">
+									<td class="valueC" nowrap="nowrap"><bean:message key="ProjectPhaseStatus.Open" /></td>
+								</c:when>
+								<c:when test="${phaseStatuseCodes[phaseStatus.index] == 3}">
+									<td class="valueC" nowrap="nowrap" style="color:cccc00;"><bean:message key="ProjectPhaseStatus.Closing" /></td>
+								</c:when>
+								<c:when test="${phaseStatuseCodes[phaseStatus.index] == 4}">
+									<td class="valueC" nowrap="nowrap" style="color:#cc0000;"><bean:message key="ProjectPhaseStatus.Late" /></td>
+								</c:when>
+								<c:otherwise>
+									<%-- This should never happen --%>
+									<td class="valueC" nowrap="nowrap"><!-- @ --></td>
+								</c:otherwise>
+							</c:choose>
+							<td class="valueC" nowrap="nowrap" title='${!(empty originalStart[phaseStatus.index]) ? originalStart[phaseStatus.index] : ""}'>${displayedStart[phaseStatus.index]}</td>
+							<td class="valueC" nowrap="nowrap" title='${!(empty originalEnd[phaseStatus.index]) ? originalEnd[phaseStatus.index] : ""}'>${displayedEnd[phaseStatus.index]}</td>
 						</tr>
 					</c:forEach>
 				</table>
