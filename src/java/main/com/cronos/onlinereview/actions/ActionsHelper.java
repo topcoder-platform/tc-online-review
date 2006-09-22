@@ -21,6 +21,8 @@ import com.cronos.onlinereview.deliverables.AggregationReviewDeliverableChecker;
 import com.cronos.onlinereview.deliverables.AppealResponsesDeliverableChecker;
 import com.cronos.onlinereview.deliverables.CommittedReviewDeliverableChecker;
 import com.cronos.onlinereview.deliverables.FinalFixesDeliverableChecker;
+import com.cronos.onlinereview.deliverables.FinalReviewDeliverableChecker;
+import com.cronos.onlinereview.deliverables.IndividualReviewDeliverableChecker;
 import com.cronos.onlinereview.deliverables.SubmissionDeliverableChecker;
 import com.cronos.onlinereview.deliverables.SubmitterCommentDeliverableChecker;
 import com.cronos.onlinereview.deliverables.TestCasesDeliverableChecker;
@@ -1603,7 +1605,7 @@ class ActionsHelper {
             // The checkers are used when deliverable instances are retrieved
             Map checkers = new HashMap();
             checkers.put(Constants.SUBMISSION_DELIVERABLE_NAME, new SubmissionDeliverableChecker(dbconn));
-//            checkers.put(Constants.SCREENING_DELIVERABLE_NAME, new CommittedReviewDeliverableChecker(dbconn));
+            checkers.put(Constants.SCREENING_DELIVERABLE_NAME, new IndividualReviewDeliverableChecker(dbconn));
             checkers.put(Constants.REVIEW_DELIVERABLE_NAME, new CommittedReviewDeliverableChecker(dbconn));
             checkers.put(Constants.ACC_TEST_CASES_DELIVERABLE_NAME, new TestCasesDeliverableChecker(dbconn));
             checkers.put(Constants.FAIL_TEST_CASES_DELIVERABLE_NAME, new TestCasesDeliverableChecker(dbconn));
@@ -1613,9 +1615,8 @@ class ActionsHelper {
             checkers.put(Constants.AGGREGATION_REV_DELIVERABLE_NAME, new AggregationReviewDeliverableChecker(dbconn));
             checkers.put(Constants.FINAL_FIX_DELIVERABLE_NAME, new FinalFixesDeliverableChecker(dbconn));
             checkers.put(Constants.SCORECARD_COMM_DELIVERABLE_NAME, new SubmitterCommentDeliverableChecker(dbconn));
-/* Not sure about the following one.  TODO: Verify it
-            checkers.put(Constants.APPROVAL_DELIVERABLE_NAME, new FinalReviewDeliverableChecker(dbconn));
- */
+            checkers.put(Constants.FINAL_REVIEW_PHASE_NAME, new FinalReviewDeliverableChecker(dbconn));
+            checkers.put(Constants.APPROVAL_DELIVERABLE_NAME, new CommittedReviewDeliverableChecker(dbconn));
 
             // Initialize the PersistenceDeliverableManager
             manager = new PersistenceDeliverableManager(deliverablePersistence, checkers,
