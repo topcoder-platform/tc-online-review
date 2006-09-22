@@ -8,19 +8,19 @@ Notes on testing some actions from Project Admin & Review
 
        http://localhost:8080/online_review/actions/UploadSubmission.do?method=uploadSubmission&pid=<id-of-project>
 
-		 where <id-of-project> part is the ID of any of the existing projects. The
-		 user you are logged under must have a Submitter role for that project to
-		 be able to upload submission.
-		 After uploading a file to the server you may inspect a folder the path to
-		 which is specified by the "FileStorePath" property in the configuration
-		 file. You may also excute the following SQL commands to verify the state
-		 of the database after uploading the file:
+     where <id-of-project> part is the ID of any of the existing projects. The
+     user you are logged under must have a Submitter role for that project to
+     be able to upload submission.
+     After uploading a file to the server you may inspect a folder the path to
+     which is specified by the "FileStorePath" property in the configuration
+     file. You may also excute the following SQL commands to verify the state
+     of the database after uploading the file:
 
-		   SELECT * FROM upload;
-		   SELECT * FROM submission;
+       SELECT * FROM upload;
+       SELECT * FROM submission;
 
-		 Also, it is possible to use an ID of the newly-created submission in
-		 subsequent testing of actions from Project Review assembly.
+     Also, it is possible to use an ID of the newly-created submission in
+     subsequent testing of actions from Project Review assembly.
 
   2. Download Submission
 
@@ -108,9 +108,9 @@ Notes on testing some actions from Project Review assembly.
 
      Refer to section 3 for information on <id-of-review>.
      Note, that you may view only finished (committed) reviews and approvals.
-     
+
   8. Edit Aggregation
-  
+
      To edit Aggregation you need to have review of type Aggregation in your
      database. File "I-7 - Add Reviews.Sql", which can be found in /src/sql
      directory, contains appropriate SQL scripts that create such sample
@@ -120,9 +120,9 @@ Notes on testing some actions from Project Review assembly.
      Aggregation page by following this link:
 
        http://localhost:8080/online_review/actions/EditAggregation.do?method=editAggregation&rid=<id-of-review>
-       
+
   9. View Aggregation
-  
+
      To view Aggregation you must commit it first. Use Edit Aggregation action
      to edit and submit (or commit) Aggregation (detailed descriptions of how it
      can be done now are contained in item 8). When you have commited
@@ -130,12 +130,12 @@ Notes on testing some actions from Project Review assembly.
      this link:
 
        http://localhost:8080/online_review/actions/ViewAggregation.do?method=viewAggregation&rid=<id-of-review>
-       
+
      Note, that review ID will be the same as the one you used with Edit
      Aggregation action.
-     
+
  10. Edit Aggregation Review
- 
+
      User is allowed to review an Aggregation only if that Aggregation was
      committed first (refer to item 8 for information on how to edit
      Aggregation). The following link will lead you to Edit Aggregation Review
@@ -145,15 +145,15 @@ Notes on testing some actions from Project Review assembly.
 
      As with View Aggregation action, the ID of review is the same as the one
      used to Edit Aggregation.
-     
+
  11. Committing Aggregation Review
- 
+
      Aggregation Review must be committed by all reviewers and a submitter who
      this Aggregation was made for. If some reviewer is also an Aggregator (who
      committed Aggregation), he does not need to commit the Aggregation Review.
-     
+
  12. View Aggregation Review
- 
+
      Users are allowed to view reviewed Aggregation once it has been reviewed
      and commited by all users who had to do that. Refer to items 10 and 11 to
      get more information on how an Aggregation can be reviewed and committed.
@@ -161,9 +161,9 @@ Notes on testing some actions from Project Review assembly.
      participants for you:
 
        http://localhost:8080/online_review/actions/ViewAggregationReview.do?method=viewAggregationReview&rid=<id-of-review>
-     
+
  13. Edit Final Review
- 
+
      To perform Final Review you need to have review of type "Final Review" in
      your database. File "I-7 - Add Reviews.Sql", which can be found in /src/sql
      directory, contains appropriate SQL scripts that create such sample
@@ -173,9 +173,9 @@ Notes on testing some actions from Project Review assembly.
      Final Review page by following this link:
 
        http://localhost:8080/online_review/actions/EditFinalReview.do?method=editFinalReview&rid=<id-of-review>
-       
+
  14. View Final Review
-  
+
      To view Final Review you must commit it first. Use Edit Final Review action
      to edit and submit (or commit) Final Review (detailed descriptions of how
      it can be done now are contained in item 13). When you have commited Final
@@ -183,10 +183,10 @@ Notes on testing some actions from Project Review assembly.
      link:
 
        http://localhost:8080/online_review/actions/ViewFinalReview.do?method=viewFinalReview&rid=<id-of-review>
-       
+
      Note, that review ID will be the same as the one you used with Edit
      Final Review action.
-     
+
  15. Save Aggregation, Save Aggregation Review, and Save Final Review
 
      You don't have to undertake any special actions to access these Struts
