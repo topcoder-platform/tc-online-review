@@ -426,6 +426,12 @@ public class Constants {
      */
     public static final String EDIT_ANY_SCORECARD_PERM_NAME = "Edit Any Scorecard";
 
+    /**
+     * This member variable is a string constant that defines the name of the
+     * Download Review Document permission.
+     */
+    public static final String DOWNLOAD_DOCUMENT_PERM_NAME = "Download Review Document";
+
 
     // -------------------------------------------------------------------------- Phase names -----
 
