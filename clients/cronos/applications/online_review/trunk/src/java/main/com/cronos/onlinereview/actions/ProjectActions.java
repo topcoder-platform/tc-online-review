@@ -291,6 +291,7 @@ public class ProjectActions extends DispatchAction {
         // Retrive project phases
         Phase[] phases = ActionsHelper.getPhasesForProject(phaseManager, project);
         
+        
         // Populate form with phases data
         for (int i = 0; i < phases.length; ++i) {
             form.set("phase_id", i + 1, new Long(phases[i].getId()));
@@ -336,6 +337,13 @@ public class ProjectActions extends DispatchAction {
                 form.set("phase_view_appeal_responses", i + 1, 
                         Boolean.valueOf("Yes".equals(phases[i].getAttribute("Submission Number"))));
             }
+        }
+        
+        // Get current project phase
+        Phase currentPhase = getCurrentProjectPhase(phases);
+        if (currentPhase != null) {
+            // Populate current phase
+            form.set("current_phase", "loaded_" + currentPhase.getId());
         }
     }
 
@@ -576,6 +584,21 @@ public class ProjectActions extends DispatchAction {
 
     /**
      * TODO: Document it
+     * 
+     * @param projectPhases
+     * @return
+     */
+    private Phase getCurrentProjectPhase(Phase[] projectPhases) {
+        for (int i = 0; i < projectPhases.length; i++) {
+            if (projectPhases[i].getPhaseStatus().getName().equals(PhaseStatus.OPEN.getName())) {
+                return projectPhases[i];
+            }
+        }
+        return null;
+    }
+
+    /**
+     * TODO: Document it
      * @param newProject 
      * 
      * @param request
@@ -609,13 +632,7 @@ public class ProjectActions extends DispatchAction {
         Phase[] oldPhases = phProject.getAllPhases();
         
         // Get the list of all existing phase types
-        PhaseType[] allPhaseTypes = phaseManager.getAllPhaseTypes();
-       
-        // Get the list of all existing phase statuses
-        PhaseStatus[] allPhaseStatuses = phaseManager.getAllPhaseStatuses();
-        
-        // Get the "Scheduled" phase status
-        PhaseStatus scheduledStatus = ActionsHelper.findPhaseStatusByName(allPhaseStatuses, "Scheduled");
+        PhaseType[] allPhaseTypes = phaseManager.getAllPhaseTypes();      
         
         // Create the map to store the mapping from phase JS ids to phases
         Map phasesJsMap = new HashMap();
@@ -673,7 +690,7 @@ public class ProjectActions extends DispatchAction {
                 // Set phase type
                 phase.setPhaseType(ActionsHelper.findPhaseTypeById(allPhaseTypes, phaseTypes[i].longValue()));
                 // Set phase status to "Scheduled"
-                phase.setPhaseStatus(scheduledStatus);
+                phase.setPhaseStatus(PhaseStatus.SCHEDULED);
             }
         
             try {
@@ -767,11 +784,60 @@ public class ProjectActions extends DispatchAction {
                 phase.setAttribute("View Response During Appeals", viewAppealResponses.booleanValue() ? "Yes" : "No");
             } 
         }
-        
+                
         // Save the phases at the persistence level
-        phaseManager.updatePhases(phProject, AuthorizationHelper.getLoggedInUserId(request) + "");
-
-        return phProject.getAllPhases();
+        phaseManager.updatePhases(phProject, AuthorizationHelper.getLoggedInUserId(request) + "");        
+                
+        Phase[] projectPhases = phProject.getAllPhases();
+        
+        // If needed switch project current phase
+        if (!newProject) {
+            // Get current project phase
+            Phase currentPhase = getCurrentProjectPhase(projectPhases);
+            // Get new current phase id
+            String newCurPhaseId = (String) lazyForm.get("current_phase");
+            // Get new current phase
+            Phase newCurrentPhase = (Phase) phasesJsMap.get(newCurPhaseId);
+            if (newCurrentPhase != null) {
+                int i = 0;
+                for (; i < projectPhases.length; i++) {
+                    if (projectPhases[i] == currentPhase) {
+                        break;
+                    }
+                }
+                for (; i < projectPhases.length; i++) {
+                    if (projectPhases[i] != newCurrentPhase) {
+                        if (projectPhases[i].getPhaseStatus().getName().equals(PhaseStatus.OPEN.getName())) {
+                            if (phaseManager.canEnd(projectPhases[i])) {
+                                phaseManager.end(projectPhases[i], 
+                                        Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
+                            } else {
+                                // TODO: issue an error
+                            }
+                        } else if (projectPhases[i].getPhaseStatus().getName().equals(PhaseStatus.SCHEDULED.getName())) {
+                            if (phaseManager.canStart(projectPhases[i])) {
+                                phaseManager.start(projectPhases[i], 
+                                        Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
+                            }
+                            if (phaseManager.canEnd(projectPhases[i])) {
+                                phaseManager.end(projectPhases[i], 
+                                        Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
+                            }
+                        }
+                    } else {
+                        if (projectPhases[i].getPhaseStatus().getName().equals(PhaseStatus.SCHEDULED.getName())) {
+                            if (phaseManager.canStart(projectPhases[i])) {
+                                phaseManager.start(projectPhases[i], 
+                                        Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
+                            }
+                        }
+                        break;
+                    }                        
+                }
+            }
+        }        
+        
+        return projectPhases;
     }
 
     /**

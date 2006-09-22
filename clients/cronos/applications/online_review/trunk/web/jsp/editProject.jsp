@@ -25,6 +25,7 @@
 		// TODO: Write docs for following vars
 		var lastResourceIndex = ${fn:length(projectForm.map['resources_id']) - 1};
 		var lastPhaseIndex = ${fn:length(projectForm.map['phase_id']) - 1};	
+		var nameCellIndex = ${newProject ? 0 : 1};
 		
 		/*
 		 * TODO: Write docs for this function
@@ -263,7 +264,7 @@
 
 			// Populate phase name
 			// TODO: Implement numbering of same-typed phases
-			var phaseNameCell = newRow.cells[0];
+			var phaseNameCell = newRow.cells[nameCellIndex];
 			dojo.dom.textContent(phaseNameCell, phaseName);
 			getChildByNamePrefix(newRow, "phase_name").value = phaseName;				
 			
