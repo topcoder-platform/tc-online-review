@@ -2661,6 +2661,11 @@
             <Property name="Edit My Review during Review">
                 <Value>Screener</Value>
                 <Value>Primary Screener</Value>
+                <Value>Reviewer</Value>
+                <Value>Accuracy Reviewer</Value>
+                <Value>Failure Reviewer</Value>
+                <Value>Stress Reviewer</Value>
+                <Value>Approver</Value>
             </Property>
             <Property name="Perform Appeal">
                 <Value>Submitter</Value>
