@@ -42,22 +42,24 @@
     								</tr>
     							</table>
 								</td>
-								<td class="value">Manager</td>
-								<td class="value" nowrap="nowrap">Submission</td>
-								<td class="valueC" nowrap="nowrap">
-									00.00.0000<br>
-									00:00 AM
-								</td>
-								<td class="valueC" nowrap="nowrap">
-									00.00.0000<br>
-									00:00 AM
-								</td>
-								<td class="value" nowrap="nowrap">Submission</td>
+								<td class="valueC">${myRoles[idxrCategory.index][idxrProject.index]}</td>
+								<c:set var="phase" value="${phases[idxrCategory.index][idxrProject.index]}" />
+								<c:if test="${!(empty phase)}">
+									<td class="value" nowrap="nowrap"><bean:message key='ProjectPhase.${fn:replace(phase.phaseType.name, " ", "")}' /></td>
+									<td class="valueC">${phaseEndDates[idxrCategory.index][idxrProject.index]}</td>
+									<td class="valueC">${projectEndDates[idxrCategory.index][idxrProject.index]}</td>
+								</c:if>
+								<c:if test="${empty phase}">
+									<td class="value"><!-- @ --></td>
+									<td class="value"><!-- @ --></td>
+									<td class="value"><!-- @ --></td>
+								</c:if>
+								<td class="value" nowrap="nowrap"><!-- @ --></td>
 							</tr>
 						</c:forEach>
 						<c:if test="${fn:length(projects[idxrCategory.index]) == 0}">
 							<tr class="light">
-        						<td class="value" colspan="7"><bean:message key="listProjects.NoProjects.Category" /></td>
+								<td class="value" colspan="7"><bean:message key="listProjects.NoProjects.Category" /></td>
 							</tr>
 						</c:if>
 						<tr>
