@@ -792,42 +792,48 @@ public class ProjectActions extends DispatchAction {
         if (!newProject) {
             // Get current project phase
             Phase currentPhase = getCurrentProjectPhase(projectPhases);
+            System.out.println(currentPhase + "|" + ((currentPhase != null) ? currentPhase.getId() : 0));
             // Get new current phase id
-            String newCurPhaseId = (String) lazyForm.get("current_phase");
+            String newCurPhaseId = (String) lazyForm.get("current_phase");            
             // Get new current phase
             Phase newCurrentPhase = (Phase) phasesJsMap.get(newCurPhaseId);
+            System.out.println(newCurPhaseId + "|" + newCurrentPhase);            
             if (newCurrentPhase != null) {
                 int i = 0;
-                for (; i < projectPhases.length; i++) {
-                    if (projectPhases[i] == currentPhase) {
-                        break;
+                if (currentPhase != null) {
+                    for (; i < projectPhases.length; i++) {
+                        if (projectPhases[i] == currentPhase) {
+                            break;
+                        }
                     }
                 }
                 for (; i < projectPhases.length; i++) {
+                    System.out.println(i + "|" + phaseManager.canStart(projectPhases[i]) + phaseManager.canEnd(projectPhases[i]));
+                    
                     if (projectPhases[i] != newCurrentPhase) {
                         if (projectPhases[i].getPhaseStatus().getName().equals(PhaseStatus.OPEN.getName())) {
-                            if (phaseManager.canEnd(projectPhases[i])) {
-                                phaseManager.end(projectPhases[i],
+                            /*if (phaseManager.canEnd(projectPhases[i])) {
+                            */    phaseManager.end(projectPhases[i],
                                         Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
-                            } else {
+                            /*} else {
                                 // TODO: issue an error
-                            }
+                            }*/
                         } else if (projectPhases[i].getPhaseStatus().getName().equals(PhaseStatus.SCHEDULED.getName())) {
-                            if (phaseManager.canStart(projectPhases[i])) {
-                                phaseManager.start(projectPhases[i],
+                            /*if (phaseManager.canStart(projectPhases[i])) {
+                            */    phaseManager.start(projectPhases[i],
                                         Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
-                            }
+                            /*}
                             if (phaseManager.canEnd(projectPhases[i])) {
-                                phaseManager.end(projectPhases[i],
+                            */    phaseManager.end(projectPhases[i],
                                         Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
-                            }
+                            //}
                         }
                     } else {
                         if (projectPhases[i].getPhaseStatus().getName().equals(PhaseStatus.SCHEDULED.getName())) {
-                            if (phaseManager.canStart(projectPhases[i])) {
-                                phaseManager.start(projectPhases[i],
+                            /*if (phaseManager.canStart(projectPhases[i])) {
+                            */    phaseManager.start(projectPhases[i],
                                         Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
-                            }
+                            //}
                         }
                         break;
                     }
