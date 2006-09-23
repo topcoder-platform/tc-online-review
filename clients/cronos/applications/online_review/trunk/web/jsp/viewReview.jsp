@@ -59,62 +59,13 @@
 								</tr>
 								<c:forEach items="${section.allQuestions}" var="question" varStatus="questionStatus">
 									<c:set var="item" value="${review.allItems[itemIdx]}" />
+									
 									<tr class="light">
-										<td class="value">
-											<div class="showText" id="shortQ_${itemIdx}">
-												<a href="javascript:toggleDisplay('shortQ_${itemIdx}');toggleDisplay('longQ_${itemIdx}');" class="statLink"><html:img src="../i/plus.gif" altKey="global.plus.alt" border="0" /></a>
-												<b><bean:message key="editReview.Question.title" /> ${groupStatus.index + 1}.${sectionStatus.index + 1}.${questionStatus.index + 1}</b>
-												${orfn:htmlEncode(question.description)}
-											</div>
-											<div class="hideText" id="longQ_${itemIdx}">
-												<a href="javascript:toggleDisplay('shortQ_${itemIdx}');toggleDisplay('longQ_${itemIdx}');" class="statLink"><html:img src="../i/minus.gif" altKey="global.minus.alt" border="0" /></a>
-												<b><bean:message key="editReview.Question.title" /> ${groupStatus.index + 1}.${sectionStatus.index + 1}.${questionStatus.index + 1}</b>
-												${orfn:htmlEncode(question.description)}<br />
-												${orfn:htmlEncode(question.guideline)}
-											</div>
-										</td>
-										<td class="valueC">${question.weight}</td>
-										<td class="valueC" nowrap="nowrap">
-											<c:choose>
-												<c:when test="${empty item.answer}"><!-- @ --></c:when>
-												<c:when test='${question.questionType.name == "Yes/No"}'>
-													<c:if test='${item.answer != "1"}'>
-														<bean:message key="global.answer.No" />
-													</c:if>
-													<c:if test='${item.answer == "1"}'>
-														<bean:message key="global.answer.Yes" />
-													</c:if>
-												</c:when>
-												<c:when test='${question.questionType.name == "Scale (1-4)"}'>
-													<c:if test='${!(empty fn:replace(item.answer, "/4", ""))}'>
-														<bean:message key='Answer.Score4.ans${fn:replace(item.answer, "/4", "")}'/>
-													</c:if>
-												</c:when>
-												<c:when test='${question.questionType.name == "Scale (1-10)"}'>
-													<bean:message key="Answer.Score10.Rating.title" /> ${fn:replace(item.answer, "/10", "")}
-												</c:when>
-												<c:when test='${question.questionType.name == "Test Case"}'>
-													${fn:replace(item.answer, "/", wordOf)}
-												</c:when>
-												<c:otherwise>
-													${orfn:htmlEncode(item.answer)}
-												</c:otherwise>
-											</c:choose>
-										</td>
+										<%@ include file="../includes/review/review_question.jsp" %>	
+										<%@ include file="../includes/review/review_static_answer.jsp" %>
 									</tr>
-
-									<c:forEach items="${item.allComments}" var="comment" varStatus="commentStatus">
-										<tr class="dark">
-											<td class="value" width="100%">
-												<b><bean:message key="editReview.Question.Response.title" />
-													${commentStatus.index + 1}:
-													<bean:message key='CommentType.${fn:replace(comment.commentType.name, " ", "")}' /></b>
-													&#160;${orfn:htmlEncode(comment.comment)}
-											</td>
-											<td class="value"><!-- @ --></td>
-											<td class="value"><!-- @ --></td>
-										</tr>
-									</c:forEach>
+									
+									<%@ include file="../includes/review/review_comments.jsp" %>									
 
 									<c:set var="itemIdx" value="${itemIdx + 1}" />
 								</c:forEach>

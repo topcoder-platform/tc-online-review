@@ -102,67 +102,40 @@
 										<td class="subheader" width="1%" align="center"><bean:message key="editReview.SectionHeader.Response" /></td>
 									</tr>
 									<c:forEach items="${section.allQuestions}" var="question" varStatus="questionStatus">
+										<c:if test="${managerEdit}">
+											<c:set var="item" value="${review.allItems[itemIdx]}" />									
+										</c:if>
+										
 										<tr class="light">
-											<td class="value" width="100%">
-
-											<div class="showText" id="shortQ_${itemIdx}">
-												<a href="javascript:toggleDisplay('shortQ_${itemIdx}');toggleDisplay('longQ_${itemIdx}');" class="statLink"><html:img src="../i/plus.gif" altKey="global.plus.alt" border="0" /></a>
-												<b><bean:message key="editReview.Question.title" /> ${groupStatus.index + 1}.${sectionStatus.index + 1}.${questionStatus.index + 1}</b>
-												${orfn:htmlEncode(question.description)}
-											</div>
-											<div class="hideText" id="longQ_${itemIdx}">
-												<a href="javascript:toggleDisplay('shortQ_${itemIdx}');toggleDisplay('longQ_${itemIdx}');" class="statLink"><html:img src="../i/minus.gif" altKey="global.minus.alt" border="0" /></a>
-												<b><bean:message key="editReview.Question.title" /> ${groupStatus.index + 1}.${sectionStatus.index + 1}.${questionStatus.index + 1}</b>
-												${orfn:htmlEncode(question.description)}<br />
-												${orfn:htmlEncode(question.guideline)}
-											</div>
-											</td>
-											<td class="valueC">${question.weight}</td>
-											<td class="valueC" nowrap="nowrap">
-												<c:choose>
-													<c:when test="${question.questionType.name eq 'Yes/No'}">
-														<html:select property="answer[${itemIdx}]" styleClass="inputBox">
-															<html:option value=""><bean:message key="Answer.Select" /></html:option>
-															<html:option value="1"><bean:message key="global.answer.Yes" /></html:option>
-															<html:option value="0"><bean:message key="global.answer.No" /></html:option>
-														</html:select>
-													</c:when>
-													<c:when test="${question.questionType.name eq 'Scale (1-4)'}">
-														<html:select property="answer[${itemIdx}]" styleClass="inputBox">
-															<html:option value=""><bean:message key="Answer.Select" /></html:option>
-															<html:option value="1/4"><bean:message key="Answer.Score4.ans1" /></html:option>
-															<html:option value="2/4"><bean:message key="Answer.Score4.ans2" /></html:option>
-															<html:option value="3/4"><bean:message key="Answer.Score4.ans3" /></html:option>
-															<html:option value="4/4"><bean:message key="Answer.Score4.ans4" /></html:option>
-														</html:select>
-													</c:when>
-													<c:when test="${question.questionType.name eq 'Scale (1-10)'}">
-														<html:select property="answer[${itemIdx}]" styleClass="inputBox">
-															<html:option value=""><bean:message key="Answer.Select" /></html:option>
-															<c:forEach var="rating" begin="1" end="10">
-																<html:option value="${rating}/10"><bean:message key="Answer.Score10.Rating.title" /> ${rating}</html:option>
-															</c:forEach>
-														</html:select>
-													</c:when>
-													<c:when test="${question.questionType.name eq 'Test Case'}">
-														<html:text property="passed_tests" value="" styleClass="inputBox" style="width:25;" onchange="populateTestCaseAnswer(${itemIdx});"/>
-														<bean:message key="editReview.Question.Response.TestCase.of" />
-														<html:text property="all_tests" value="" styleClass="inputBox" style="width:25;" onchange="populateTestCaseAnswer(${itemIdx});"/>
-														<html:hidden property="answer[${itemIdx}]" />
-													</c:when>
-												</c:choose>
-											</td>
+											<%@ include file="../includes/review/review_question.jsp" %>	
+											<c:if test="${not managerEdit}">																					
+												<%@ include file="../includes/review/review_answer.jsp" %>
+											</c:if>				
+											<c:if test="${managerEdit}">																					
+												<%@ include file="../includes/review/review_static_answer.jsp" %>
+											</c:if>														
 										</tr>
+										<c:if test="${managerEdit}">
+											<%@ include file="../includes/review/review_comments.jsp" %>									
+										</c:if>										
 										<tr class="highlighted">
-											<td class="value" colspan="3">
-												<b><bean:message key="editReview.Question.Response.title"/> 1:</b>
-												<html:select property="commentType[${itemIdx}]" styleClass="inputBox">
-													<c:forEach items="${allCommentTypes}" var="commentType" >
-														<html:option value="${commentType.id}">${commentType.name}</html:option>
-													</c:forEach>
-												</html:select>
-												<html:textarea rows="2" property="comment[${itemIdx}]" cols="20" styleClass="inputTextBox" />
+											<td class="value" colspan="${managerEdit ? 2 : 3}">
+												<c:if test="${not managerEdit}">
+													<b><bean:message key="editReview.Question.Response.title"/> 1:</b>
+													<html:select property="commentType[${itemIdx}]" styleClass="inputBox">
+														<c:forEach items="${allCommentTypes}" var="commentType" >
+															<html:option value="${commentType.id}">${commentType.name}</html:option>
+														</c:forEach>
+													</html:select>
+												</c:if>
+												<c:if test="${managerEdit}">
+													<b><bean:message key="editReview.Question.ManagerComment.title"/>:</b>
+												</c:if>		
+												<html:textarea rows="2" property="comment[${itemIdx}]" cols="20" styleClass="inputTextBox" />			
 											</td>
+											<c:if test="${managerEdit}">																					
+												<%@ include file="../includes/review/review_answer.jsp" %>
+											</c:if>	
 										</tr>
 
 										<c:set var="itemIdx" value="${itemIdx + 1}" />
@@ -175,8 +148,10 @@
 						</c:forEach>
 
 						<div align="right">
-							<html:hidden property="save" value="" />
-							<html:image onclick="javascript:this.form.save.value='submit';" srcKey="editReview.Button.SaveAndCommit.img" altKey="editReview.Button.SaveAndCommit.alt" border="0" />&#160;
+							<html:hidden property="save" value="" />		
+							<c:if test="${not managerEdit}">
+								<html:image onclick="javascript:this.form.save.value='submit';" srcKey="editReview.Button.SaveAndCommit.img" altKey="editReview.Button.SaveAndCommit.alt" border="0" />&#160;
+							</c:if>
 							<html:image onclick="javascript:this.form.save.value='save';" srcKey="editReview.Button.SaveForLater.img" altKey="editReview.Button.SaveForLater.alt" border="0" />&#160;
 							<html:image onclick="javascript:this.form.save.value='preview';" srcKey="editReview.Button.Preview.img" altKey="editReview.Button.Preview.alt" border="0" />
 						</div>

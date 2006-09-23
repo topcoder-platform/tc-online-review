@@ -1888,17 +1888,6 @@ public class ProjectReviewActions extends DispatchAction {
         // Gather the roles the user has for current request
         AuthorizationHelper.gatherUserRoles(request, project.getId());
 
-        // If permission parameter was not null or empty string ...
-        if (permission != null) {
-            // ... verify that this permission is granted for currently logged in user
-            if (!AuthorizationHelper.hasUserPermission(request, permission)) {
-                result.setForward(ActionsHelper.produceErrorReport(
-                        mapping, getResources(request), request, permission, "Error.NoPermission"));
-                // Return the result of the check
-                return result;
-            }
-        }
-
         // Return the result of the check
         return result;
     }
@@ -2099,6 +2088,9 @@ public class ProjectReviewActions extends DispatchAction {
 
         // Get an array of all phases for the project
         Phase[] phases = ActionsHelper.getPhasesForProject(ActionsHelper.createPhaseManager(request), project);
+        System.out.println(phases.length + phaseName);
+        System.out.println(phases[2].getPhaseStatus().getName());
+        
         // Get active (current) phase
         Phase phase = ActionsHelper.getPhase(phases, true, phaseName);
         // Check that the phase in question is really active (open)
@@ -2182,24 +2174,37 @@ public class ProjectReviewActions extends DispatchAction {
      * @throws BaseException
      */
     private ActionForward editGenericReview(ActionMapping mapping, ActionForm form, HttpServletRequest request, String reviewType) throws BaseException {
-        String permName;
+        String scorecardTypeName;
         // Determine permission name and phase name from the review type
         if ("Screening".equals(reviewType)) {
-            permName = Constants.PERFORM_SCREENING_PERM_NAME;
+            scorecardTypeName = "Screening";
         } else if ("Review".equals(reviewType)) {
-            permName = Constants.PERFORM_REVIEW_PERM_NAME;
+            scorecardTypeName = "Review";
         } else {
-            permName = Constants.PERFORM_APPROVAL_PERM_NAME;
+            scorecardTypeName = "Client Review";
         }
 
+                    
         // Verify that certain requirements are met before proceeding with the Action
         CorrectnessCheckResult verification =
-                checkForCorrectReviewId(mapping, request, permName);
+                checkForCorrectReviewId(mapping, request, Constants.EDIT_MY_REVIEW_PERM_NAME);
         // If any error has occured, return action forward contained in the result bean
         if (!verification.isSuccessful()) {
             return verification.getForward();
         }
-
+        
+        // Verify that the user has permission to edit review
+        if (!AuthorizationHelper.hasUserPermission(request, Constants.EDIT_ANY_SCORECARD_PERM_NAME)) {
+            // FIXME: Temporarly dropped the permission check due to to permission granted to Screener only
+            /*if (!AuthorizationHelper.hasUserPermission(request, Constants.EDIT_MY_REVIEW_PERM_NAME)) {
+                return ActionsHelper.produceErrorReport(mapping, getResources(request), 
+                    request, Constants.EDIT_MY_REVIEW_PERM_NAME, "Error.NoPermission");                
+            } else if(verification.getReview().getAuthor() != AuthorizationHelper.getLoggedInUserId(request)) {
+                return ActionsHelper.produceErrorReport(mapping, getResources(request), 
+                        request, Constants.EDIT_MY_REVIEW_PERM_NAME, "Error.NoPermission");
+            }     */       
+        }    
+        
         // Retrieve a review to edit
         Review review = verification.getReview();
 
@@ -2209,14 +2214,23 @@ public class ProjectReviewActions extends DispatchAction {
         Scorecard scorecardTemplate = scorMgr.getScorecard(review.getScorecard());
 
         // Verify that the scorecard template for this review is of correct type
-        if (!scorecardTemplate.getScorecardType().getName().equalsIgnoreCase("Screening")) {
+        if (!scorecardTemplate.getScorecardType().getName().equalsIgnoreCase(scorecardTypeName)) {
             return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
-                    permName, "Error.ReviewTypeIncorrect");
+                    Constants.EDIT_MY_REVIEW_PERM_NAME, "Error.ReviewTypeIncorrect");
         }
-        // Verify that review has not been committed yet
+        
+        boolean managerEdit = false;        
+        // Check if review has been committed
         if (review.isCommitted()) {
-            return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
-                    permName, "Error.ReviewCommitted");
+            // If user has a Manager role, put special flag to the request, 
+            // indicating that we need "Manager Edit"
+            if(AuthorizationHelper.hasUserRole(request, Constants.MANAGER_ROLE_NAME)) {
+                request.setAttribute("managerEdit", Boolean.TRUE);
+                managerEdit = true;
+            } else {
+                return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
+                            Constants.EDIT_MY_REVIEW_PERM_NAME, "Error.ReviewCommitted");
+            }
         }
 
         // Retrieve some basic review info and store it in the request
@@ -2233,11 +2247,26 @@ public class ProjectReviewActions extends DispatchAction {
         // Walk the items in the review setting appropriate values in the arrays
         for (int i = 0; i < review.getNumberOfItems(); ++i) {
             Item item = review.getItem(i);
-            Comment comment = item.getComment(0); // TODO: Retrieve all comments
-
+            Comment comment;
+            if (!managerEdit) {
+                comment = getItemReviewerComments(item)[0]; // TODO: Retrieve all comments
+            } else {
+                Comment[] managerComments = getItemManagerComments(item);
+                if (managerComments.length > 0) {
+                    comment = managerComments[0]; // TODO: Retrieve all comments
+                } else {
+                    comment = null;
+                }
+            }
             answers[i] = (String) item.getAnswer();
-            replies[i] = comment.getComment();
-            commentTypes[i] = new Long(comment.getCommentType().getId());
+            if (comment != null) {
+                replies[i] = comment.getComment();
+                commentTypes[i] = new Long(comment.getCommentType().getId());
+            } else {
+                replies[i] = "";
+                commentTypes[i] = null;
+            }
+            
         }
 
         /*
@@ -2251,7 +2280,46 @@ public class ProjectReviewActions extends DispatchAction {
         reviewForm.set("comment", replies);
         reviewForm.set("commentType", commentTypes);
 
+        // Get the word "of" for Test Case type of question
+        String wordOf = getResources(request).getMessage("editReview.Question.Response.TestCase.of");
+        // Plase the string into the request as attribute
+        request.setAttribute("wordOf", " "  + wordOf + " ");
+        
         return mapping.findForward(Constants.SUCCESS_FORWARD_NAME);
+    }
+
+    /**
+     * TODO: Document it 
+     * 
+     * @param item
+     * @return
+     */
+    private Comment[] getItemManagerComments(Item item) {
+        List result = new ArrayList();
+        for (int i = 0; i < item.getNumberOfComments(); i++) {
+            if (item.getComment(i).getCommentType().getName().equals("Manager Comment")) {
+                result.add(item.getComment(i));
+            }
+        }
+        return (Comment[]) result.toArray(new Comment[result.size()]);
+    }
+
+    /**
+     * TODO: Document it 
+     * 
+     * @param item
+     * @return
+     */
+    private Comment[] getItemReviewerComments(Item item) {
+        List result = new ArrayList();
+        for (int i = 0; i < item.getNumberOfComments(); i++) {
+            if (item.getComment(i).getCommentType().getName().equals("Comment") ||
+                    item.getComment(i).getCommentType().getName().equals("Required") ||
+                    item.getComment(i).getCommentType().getName().equals("Recommended")) {
+                result.add(item.getComment(i));
+            }
+        }
+        return (Comment[]) result.toArray(new Comment[result.size()]);
     }
 
     /**
@@ -2265,6 +2333,12 @@ public class ProjectReviewActions extends DispatchAction {
      * @throws BaseException
      */
     private ActionForward saveGenericReview(ActionMapping mapping, ActionForm form, HttpServletRequest request, String reviewType) throws BaseException {
+        // FIXME: IMPORTANT!!!!!!!!!!!!!!!!!!!!!!!
+        // FIXME: Check the permissions here and everywhere, 
+        // as they where dropped from checkForCorrectReviewId(ActionMapping, HttpServletRequest, String)
+        // FIXME: Also check current phase everywhere
+        
+        
         String permName;
         String phaseName;
         String scorecardTypeName;
@@ -2370,10 +2444,18 @@ public class ProjectReviewActions extends DispatchAction {
                     permName, "Error.ReviewTypeIncorrect");
         }
 
-        // Verify that review has not been committed yet
-        if (review != null && review.isCommitted()) {
-            return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
-                    permName, "Error.ReviewCommitted");
+        boolean managerEdit = false;        
+        // Check if review has been committed
+        if (review.isCommitted()) {
+            // If user has a Manager role, put special flag to the request, 
+            // indicating that we need "Manager Edit"
+            if(AuthorizationHelper.hasUserRole(request, Constants.MANAGER_ROLE_NAME)) {
+                request.setAttribute("managerEdit", Boolean.TRUE);
+                managerEdit = true;
+            } else {
+                return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
+                            Constants.EDIT_MY_REVIEW_PERM_NAME, "Error.ReviewCommitted");
+            }
         }
 
         // Get the form defined for this action
@@ -2440,18 +2522,30 @@ public class ProjectReviewActions extends DispatchAction {
             for (int i = 0; i < review.getNumberOfItems(); ++i) {
                 // Get an item and its comment
                 Item item = review.getItem(i);
-                Comment comment = item.getComment(0); // TODO: Retrieve and update all comments
+                Comment comment;
+                if (!managerEdit) {
+                    comment = getItemReviewerComments(item)[0]; // TODO: Retrieve all comments
+                    // Update the comment only if type or text have changed
+                    if (comment.getCommentType().getId() != commentTypeIds[i].longValue() ||
+                            !comment.getComment().equals(replies[i])) {
+                        comment.setComment(replies[i]);
+                        comment.setCommentType(
+                                ActionsHelper.findCommentTypeById(commentTypes, commentTypeIds[i].longValue()));
+                        // Update the author of the comment
+                        comment.setAuthor(myResource.getId());
+                    }
 
-                // Update the comment only if type or text have changed
-                if (comment.getCommentType().getId() != commentTypeIds[i].longValue() ||
-                        !comment.getComment().equals(replies[i])) {
-                    comment.setComment(replies[i]);
-                    comment.setCommentType(
-                            ActionsHelper.findCommentTypeById(commentTypes, commentTypeIds[i].longValue()));
-                    // Update the author of the comment
-                    comment.setAuthor(myResource.getId());
+                } else {
+                    Comment[] managerComments = getItemManagerComments(item);
+                    if (managerComments.length > 0) {
+                        comment = managerComments[0]; // TODO: Retrieve all comments
+                        comment.setComment(replies[i]);                        
+                    } else {
+                        comment = null;
+                    }
                 }
-
+                
+                
                 // Update the answer
                 item.setAnswer(answers[i]);
             }
