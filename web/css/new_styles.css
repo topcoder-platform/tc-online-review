@@ -142,11 +142,16 @@ table.stat tr.dark
 	background-color: #f7f7f7;
 }
 
-table.stat td.value
+table.stat td.value, table.stat td.valueLast
 {
 	font-size: 11px;
 	padding: 1px 5px 1px 5px;
 	vertical-align: top;
+}
+
+table.stat td.valueLast
+{
+	border-bottom: 1px solid #999999;
 }
 
 table.stat td.ganttRow
@@ -283,10 +288,10 @@ table.stat td.darkInvert, table.scorecard td.darkInvertC
 	vertical-align: top;
 }
 
-td.value input.imgLogin
+input.imgLogin
 {
-	margin-bottom: 10px;
-	margin-top: 10px;
+	margin-bottom: 16px;
+	margin-top: 16px;
 }
 
 table.scorecard td.darkInvertC

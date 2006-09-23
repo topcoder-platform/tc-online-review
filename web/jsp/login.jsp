@@ -57,9 +57,12 @@
 								<td class="value"><html:password property="password" /></td>
 							</tr>
 							<tr>
-								<td class="value"><div align="right">&nbsp; </div></td>
-								<td class="value"><html:image altKey="login.formLogin.btnLogin.alt"
+								<td class="valueLast"><div align="right">&nbsp; </div></td>
+								<td class="valueLast"><html:image altKey="login.formLogin.btnLogin.alt"
 										srcKey="login.formLogin.btnLogin.img" border="0" styleClass="imgLogin" /></td>
+							</tr>
+							<tr>
+								<td class="lastRowTD" colspan="2"><!-- @ --></td>
 							</tr>
 						</table><br />
 					</html:form>
