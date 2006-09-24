@@ -56,15 +56,15 @@
 									<td class="subheader" width="100%">${orfn:htmlEncode(section.name)}</td>
 									<td class="subheader" align="center" width="49%"><bean:message key="editReview.SectionHeader.Weight" /></td>
 									<td class="subheader" align="center"><b><bean:message key="editReview.SectionHeader.Average" /></b></td>
-									<c:forEach items="${reviews}" var="review">
+									<c:forEach items="${reviews}" var="review" varStatus="reviewStatus">
 										<td class="subheader" align="center" nowrap="nowrap">
 											<b><a href="ViewReview.do?method=viewReview&rid=${review.id}"><bean:message key="editReview.SectionHeader.Review" /></a><br /></b>
-											(<tc-webtag:handle coderId="${review.author}" context="component" />)
+											(<tc-webtag:handle coderId="${authors[reviewStatus.index]}" context="component" />)
 										</td>
 									</c:forEach>
 								</tr>
 								<c:forEach items="${section.allQuestions}" var="question" varStatus="questionStatus">
-<%--									<c:set var="item" value="${review.allItems[itemIdx]}" /> --%>
+									<c:set var="item" value="${review.allItems[itemIdx]}" />
 									<tr class="light">
 										<td class="value">
 											<div class="showText" id="shortQ_${itemIdx}">
@@ -93,9 +93,9 @@
 											</div>
 											<div class="hideText" id="longQ_resp_${itemIdx}">
 												<a href="javascript:toggleDisplay('shortQ_resp_${itemIdx}');toggleDisplay('longQ_resp_${itemIdx}');" class="statLink"><img src="../i/minus.gif" alt="close" border="0" /></a>
-												<c:forEach items="${reviews}" var="review">
-												  <c:set var="item" value="${review.allItems[itemIdx]}" />
-													<c:set var="commentNum" value="1" />
+												<c:forEach items="${reviews}" var="review" varStatus="reviewStatus">
+												  	<c:set var="item" value="${review.allItems[itemIdx]}" />
+												  	<c:set var="commentNum" value="1" />
 													<c:forEach items="${item.allComments}" var="comment">
 														<c:if test="${(comment.commentType.name eq 'Required') or (comment.commentType.name eq 'Recommended') or (comment.commentType.name eq 'Comment')}">
 															<b><bean:message key="editReview.Question.Response.title" />
@@ -103,9 +103,9 @@
 																<bean:message key='CommentType.${fn:replace(comment.commentType.name, " ", "")}' />
 															</b>
 														</c:if>
-														(<tc-webtag:handle coderId="${review.author}" context="component" />) <br>
+														(<tc-webtag:handle coderId="${authors[reviewStatus.index]}" context="component" />) <br>
 														${orfn:htmlEncode(comment.comment)}<br>
-														<%-- TODO: Comeplete handling of documents--%>
+														<%-- TODO: Complete handling of documents--%>
 														<b>Document </b>(required)<b>: </b><a href="#">test.doc</a><br /><br />
 													</c:forEach>
 												</c:forEach>
@@ -122,7 +122,7 @@
 								<c:if test="${groupStatus.index eq (fn:length(scorecardTemplate.allGroups) - 1)}">
 									<tr>
 										<td class="value" align="left" colspan="2" > </td>
-										<td class="valueC" nowrap="nowrap"><b><%-- TODO: Put avg. score here --%>##.##</b></td>
+										<td class="valueC" nowrap="nowrap"><b>${avgScore}</b></td>
 										<c:forEach items="${reviews}" var="review">
 											<td class="valueC" nowrap="nowrap"><b>${orfn:htmlEncode(review.score)}</b></td>
 										</c:forEach>

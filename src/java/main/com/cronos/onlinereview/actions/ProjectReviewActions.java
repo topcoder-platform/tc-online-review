@@ -29,6 +29,9 @@ import com.topcoder.management.review.data.Item;
 import com.topcoder.management.review.data.Review;
 import com.topcoder.management.review.data.ReviewEditor;
 import com.topcoder.management.review.scorecalculator.CalculationManager;
+import com.topcoder.management.review.scorecalculator.ScoreCalculator;
+import com.topcoder.management.review.scorecalculator.ScorecardMatrix;
+import com.topcoder.management.review.scorecalculator.builders.DefaultScorecardMatrixBuilder;
 import com.topcoder.management.scorecard.ScorecardManager;
 import com.topcoder.management.scorecard.data.Group;
 import com.topcoder.management.scorecard.data.Question;
@@ -1674,12 +1677,51 @@ public class ProjectReviewActions extends DispatchAction {
         // Obtain an instance of Review Manager
         ReviewManager revMgr = ActionsHelper.createReviewManager(request);
         // Retrieve an array of reviews
-        Review[] reviews = revMgr.searchReviews(filter, false);
+        Review[] reviews = revMgr.searchReviews(filter, true);
 
         if (reviews.length != 3) {
             return null; // TODO: Forward to userError.jsp page
         }
 
+        // Obtain Resource Manager instance
+        ResourceManager resourceManager = ActionsHelper.createResourceManager(request);        
+        // Obtain ScorecardMatrix for scorecard
+        ScorecardMatrix matrix = (new DefaultScorecardMatrixBuilder()).buildScorecardMatrix(scorecardTemplate);
+        // Create CalculationManager instance
+        CalculationManager calculationManager = new CalculationManager();
+        
+        // Retrieve the user ids for the review authors 
+        // and additionally the individual item scores and average total score
+        long[] authors = new long[reviews.length];
+        float avgScore = 0;
+        float[][] scores = new float[reviews.length][];
+        for (int i = 0; i < reviews.length; i++) {
+            Resource authorResource = resourceManager.getResource(reviews[i].getAuthor());
+            authors[i] = Long.parseLong((String) authorResource.getProperty("External Reference ID"));
+            avgScore += reviews[i].getScore().floatValue();
+            scores[i] = new float[reviews[i].getNumberOfItems()];
+            int itemIdx = 0;
+            for (int groupIdx = 0; groupIdx < scorecardTemplate.getNumberOfGroups(); groupIdx++) {
+                Group group = scorecardTemplate.getGroup(groupIdx);
+                for (int sectionIdx = 0; sectionIdx < group.getNumberOfSections(); sectionIdx++) {
+                    Section section = group.getSection(sectionIdx);
+                    for (int questionIdx = 0; questionIdx < section.getNumberOfQuestions(); questionIdx++) {
+                        Question question = section.getQuestion(questionIdx);
+                        ScoreCalculator scoreCalculator = calculationManager.getScoreCalculator(question.getQuestionType().getId());
+                        scores[i][itemIdx] = (float) (matrix.getLineItem(question.getId()).getWeight() * 
+                            scoreCalculator.evaluateItem(reviews[i].getItem(itemIdx), question));
+                        itemIdx++;
+                    }                    
+                }                
+            }
+        }
+        // TODO: Calculate average per-item scores
+        avgScore /= reviews.length;
+        // Store gathered data into the request
+        request.setAttribute("authors", authors);
+        request.setAttribute("avgScore", new Float(avgScore));
+        request.setAttribute("scores", scores);
+                
         // Retrieve some basic review info and store it in the request
         retrieveAndStoreBasicReviewInfo(request, verification, "CompositeReview", scorecardTemplate);
 
