@@ -30,7 +30,7 @@
 		</tr>
 	</table>
 </div>
-<c:if test="${reviewType ne 'AutoScreening'}">
+<c:if test="${reviewType ne 'AutoScreening' and reviewType ne 'CompositeReview'}">
 	<c:if test="${reviewType eq 'Screening'}">
 		&#160;<b><bean:message key="editReview.Screener" /></b>
 	</c:if>

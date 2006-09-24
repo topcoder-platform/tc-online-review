@@ -722,7 +722,6 @@ public class ProjectActions extends DispatchAction {
                     }
                     long lagTime = unitMutiplier * ((Integer) lazyForm.get("phase_start_amount", i)).longValue();
 
-                    System.out.println("phase_start_phase: " + lazyForm.get("phase_start_phase", i));
                     // Create phase Dependency
                     Dependency dependency = new Dependency((Phase) phasesJsMap.get(lazyForm.get("phase_start_phase", i)),
                             phase, dependencyStart, dependantStart, lagTime);
@@ -792,12 +791,10 @@ public class ProjectActions extends DispatchAction {
         if (!newProject) {
             // Get current project phase
             Phase currentPhase = getCurrentProjectPhase(projectPhases);
-            System.out.println(currentPhase + "|" + ((currentPhase != null) ? currentPhase.getId() : 0));
             // Get new current phase id
             String newCurPhaseId = (String) lazyForm.get("current_phase");            
             // Get new current phase
             Phase newCurrentPhase = (Phase) phasesJsMap.get(newCurPhaseId);
-            System.out.println(newCurPhaseId + "|" + newCurrentPhase);            
             if (newCurrentPhase != null) {
                 int i = 0;
                 if (currentPhase != null) {
@@ -808,8 +805,6 @@ public class ProjectActions extends DispatchAction {
                     }
                 }
                 for (; i < projectPhases.length; i++) {
-                    System.out.println(i + "|" + phaseManager.canStart(projectPhases[i]) + phaseManager.canEnd(projectPhases[i]));
-                    
                     if (projectPhases[i] != newCurrentPhase) {
                         if (projectPhases[i].getPhaseStatus().getName().equals(PhaseStatus.OPEN.getName())) {
                             /*if (phaseManager.canEnd(projectPhases[i])) {

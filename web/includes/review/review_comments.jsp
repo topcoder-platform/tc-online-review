@@ -5,15 +5,29 @@
 <%@ taglib prefix="bean" uri="/tags/struts-bean" %>
 <%@ taglib prefix="orfn" uri="/tags/or-functions" %>
 <%@ taglib prefix="tc-webtag" uri="/tags/tc-webtags" %>
-<c:forEach items="${item.allComments}" var="comment" varStatus="commentStatus">
-	<tr class="dark">
-		<td class="value" width="100%">
-			<b><bean:message key="editReview.Question.Response.title" />
-				${commentStatus.index + 1}:
-				<bean:message key="CommentType.${fn:replace(comment.commentType.name, ' ', '')}" /></b>
-				&#160;${orfn:htmlEncode(comment.comment)}
-		</td>
-		<td class="value"><!-- @ --></td>
-		<td class="value"><!-- @ --></td>
-	</tr>
+
+<c:set var="responseNum" value="1" />
+<c:forEach items="${item.allComments}" var="comment">
+	<c:if test="${not (managerEdit and comment.commentType.name eq 'Manager Comment')}">
+		<tr class="dark">
+			<td class="value" width="100%">
+				<c:choose>
+					<c:when test="${comment.commentType.name eq 'Manager Comment'}">
+						
+						<b><bean:message key="editReview.Question.ManagerComment.title" />:</b>
+					</c:when>
+					<c:otherwise>
+						<b><bean:message key="editReview.Question.Response.title" />
+							${responseNum}:
+							<bean:message key="CommentType.${fn:replace(comment.commentType.name, ' ', '')}" />
+						</b>
+						<c:set var="responseNum" value="${responseNum + 1}" />
+					</c:otherwise>
+				</c:choose>
+				&#160;${orfn:htmlEncode(comment.comment)}		
+			</td>
+			<td class="value"><!-- @ --></td>
+			<td class="value"><!-- @ --></td>
+		</tr>
+	</c:if>
 </c:forEach>
