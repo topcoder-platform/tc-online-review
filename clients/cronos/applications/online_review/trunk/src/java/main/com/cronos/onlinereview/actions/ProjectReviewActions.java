@@ -2088,8 +2088,6 @@ public class ProjectReviewActions extends DispatchAction {
 
         // Get an array of all phases for the project
         Phase[] phases = ActionsHelper.getPhasesForProject(ActionsHelper.createPhaseManager(request), project);
-        System.out.println(phases.length + phaseName);
-        System.out.println(phases[2].getPhaseStatus().getName());
         
         // Get active (current) phase
         Phase phase = ActionsHelper.getPhase(phases, true, phaseName);
@@ -2392,7 +2390,11 @@ public class ProjectReviewActions extends DispatchAction {
 
         // Get "My" resource for the appropriate phase
         Resource myResource = ActionsHelper.getMyResourceForPhase(request, phase);
-
+        // If no resource found for particular phase, try to find resource without phase assigned
+        if (myResource == null) {
+            myResource = ActionsHelper.getMyResourceForPhase(request, null);
+        }
+        
         // Retrieve the review to edit (if any)
         Review review = verification.getReview();
         Scorecard scorecardTemplate = null;
@@ -2430,8 +2432,9 @@ public class ProjectReviewActions extends DispatchAction {
             if (reviews.length != 0) {
                 review = reviews[0];
                 verification.setReview(review);
-            }
-        } else {
+            } 
+        } 
+        if (review != null){
             // Obtain an instance of Scorecard Manager
             ScorecardManager scrMgr = ActionsHelper.createScorecardManager(request);
             // Retrieve a scorecard template for the review
@@ -2446,7 +2449,7 @@ public class ProjectReviewActions extends DispatchAction {
 
         boolean managerEdit = false;        
         // Check if review has been committed
-        if (review.isCommitted()) {
+        if (review != null && review.isCommitted()) {
             // If user has a Manager role, put special flag to the request, 
             // indicating that we need "Manager Edit"
             if(AuthorizationHelper.hasUserRole(request, Constants.MANAGER_ROLE_NAME)) {
@@ -2539,10 +2542,13 @@ public class ProjectReviewActions extends DispatchAction {
                     Comment[] managerComments = getItemManagerComments(item);
                     if (managerComments.length > 0) {
                         comment = managerComments[0]; // TODO: Retrieve all comments
-                        comment.setComment(replies[i]);                        
                     } else {
-                        comment = null;
+                        comment = new Comment();
+                        comment.setCommentType(ActionsHelper.findCommentTypeByName(commentTypes, "Manager Comment"));
+                        item.addComment(comment);
                     }
+                    comment.setAuthor(myResource.getId());                    
+                    comment.setComment(replies[i]);                                            
                 }
                 
                 
