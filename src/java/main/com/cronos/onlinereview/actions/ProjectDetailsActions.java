@@ -428,7 +428,7 @@ public class ProjectDetailsActions extends DispatchAction {
 
                 phaseGroup.setSubmissions(submissions);
 
-                if (submissions != null) {
+                if (submissions != null && submissions.length != 0) {
                     long[] uploadIds = new long[submissions.length];
 
                     for (int j = 0; j < submissions.length; ++j) {
@@ -1836,7 +1836,7 @@ public class ProjectDetailsActions extends DispatchAction {
 
         // Retrieve the submitter id and place it into request
         ActionsHelper.retrieveAndStoreSubmitterInfo(request, upload);
-        
+
         // Put review type into the request
         request.setAttribute("reviewType", "AutoScreening");
 
