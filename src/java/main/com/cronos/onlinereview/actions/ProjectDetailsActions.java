@@ -733,6 +733,9 @@ public class ProjectDetailsActions extends DispatchAction {
                     winner = ActionsHelper.getWinner(phaseGroup.getSubmitters());
                     phaseGroup.setWinner(winner);
                 }
+                if (winner == null) {
+                    continue;
+                }
 
                 // Obtain an instance of Upload Manager
                 UploadManager upMgr = ActionsHelper.createUploadManager(request);
@@ -760,6 +763,9 @@ public class ProjectDetailsActions extends DispatchAction {
                 if (winner == null) {
                     winner = ActionsHelper.getWinner(phaseGroup.getSubmitters());
                     phaseGroup.setWinner(winner);
+                }
+                if (winner == null) {
+                    continue;
                 }
 
                 Resource[] reviewer = null;
