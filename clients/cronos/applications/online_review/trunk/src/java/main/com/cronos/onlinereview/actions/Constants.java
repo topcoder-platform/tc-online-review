@@ -330,6 +330,12 @@ public class Constants {
     public static final String EDIT_MY_REVIEW_PERM_NAME = "Edit My Review during Review";
 
     /**
+     * This member variable is a string constant that defines the name of the Perform Appeal
+     * permission.
+     */
+    public static final String PERFORM_APPEAL_PERM_NAME = "Perform Appeal";
+
+    /**
      * This member variable is a string constant that defines the name of the View Appeals
      * permission.
      */
