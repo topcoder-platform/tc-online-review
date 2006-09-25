@@ -33,6 +33,7 @@ import com.topcoder.db.connectionfactory.DBConnectionFactory;
 import com.topcoder.db.connectionfactory.DBConnectionFactoryImpl;
 import com.topcoder.db.connectionfactory.UnknownConnectionException;
 import com.topcoder.management.deliverable.Deliverable;
+import com.topcoder.management.deliverable.DeliverableChecker;
 import com.topcoder.management.deliverable.DeliverableManager;
 import com.topcoder.management.deliverable.PersistenceDeliverableManager;
 import com.topcoder.management.deliverable.PersistenceUploadManager;
@@ -49,6 +50,7 @@ import com.topcoder.management.deliverable.persistence.UploadPersistence;
 import com.topcoder.management.deliverable.persistence.sql.SqlDeliverablePersistence;
 import com.topcoder.management.deliverable.persistence.sql.SqlUploadPersistence;
 import com.topcoder.management.deliverable.search.DeliverableFilterBuilder;
+import com.topcoder.management.deliverable.search.SubmissionFilterBuilder;
 import com.topcoder.management.phase.DefaultPhaseManager;
 import com.topcoder.management.phase.PhaseManagementException;
 import com.topcoder.management.phase.PhaseManager;
@@ -172,6 +174,37 @@ class ActionsHelper {
         if (value <= 0) {
             throw new IllegalArgumentException("Parameter '" + paramName + "' must not be negative or zero." +
                     " Current value of the parameters is " + value + ".");
+        }
+    }
+
+    /**
+     * This static method verifies that parameter of type <code>int</code> specified by
+     * <code>value</code> parameter falls in the range of allowed values specified by
+     * <code>minValue</code> and <code>maxValue</code> parameters. The reange's boundaries are
+     * inclusive. This method itself throws an exception if the value of <code>minValue</code> is
+     * greater than the value of <code>maxValue</code> parameter.
+     *
+     * @param value
+     *            an <code>int</code> value to validate.
+     * @param paramName
+     *            a name of the parameter that is being validated.
+     * @param minValue
+     *            the lower boundary of the range. The boundary is inclusive.
+     * @param maxValue
+     *            the upper boundary of the range. The boundary is inclusive.
+     * @throws IllegalArgumentException
+     *             if parameter <code>value</code> is less than <code>minValue</code> or greater
+     *             than <code>maxValue</code>, or if <code>minValue</code> is greater than
+     *             <code>maxValue</code>.
+     */
+    public static void validateParameterInRange(int value, String paramName, int minValue, int maxValue)
+        throws IllegalArgumentException {
+        if (minValue > maxValue) {
+            throw new IllegalArgumentException("Parameter 'minValue' is greater than 'maxValue'.");
+        }
+        if (value < minValue || value > maxValue) {
+            throw new IllegalArgumentException("Parameter '" + paramName +
+                    "' does not fall into the specifed range of [" + minValue + "; " + maxValue + "].");
         }
     }
 
@@ -1114,6 +1147,31 @@ class ActionsHelper {
     }
 
     /**
+     * This static method retrieves the resources for a project using provided Resource Manager.
+     *
+     * @return an array of the resources for the specified project.
+     * @param manager
+     *            an instance of <code>ResourceManager</code> object used to retrieve resources.
+     * @param project
+     *            a project to retrieve the resources for.
+     * @throws IllegalArgumentException
+     *             if any of the parameters are <code>null</code>.
+     * @throws BaseException
+     *             if any error occurs.
+     */
+    public static Resource[] getAllResourcesForProject(ResourceManager manager, Project project)
+        throws IllegalArgumentException, BaseException {
+        // Validate parameters
+        validateParameterNotNull(manager, "manager");
+        validateParameterNotNull(project, "project");
+
+        // Build a filter to fetch all resources for the current project
+        Filter filter = ResourceFilterBuilder.createProjectIdFilter(project.getId());
+        // Perform a search for the resources and return them
+        return manager.searchResources(filter);
+    }
+
+    /**
      * This static method retrieves the resources for a phase using provided Resource Manager.
      *
      * @return an array of the resources for the specified phase.
@@ -1122,12 +1180,12 @@ class ActionsHelper {
      * @param phase
      *            a phase to retrieve the resources for.
      * @throws IllegalArgumentException
-     *             if any of the arguments are <code>null</code>.
+     *             if any of the parameters are <code>null</code>.
      * @throws BaseException
      *             if any error occurs.
      */
     public static Resource[] getAllResourcesForPhase(ResourceManager manager, Phase phase)
-        throws IllegalArgumentException, BaseException {
+        throws BaseException {
         // Validate parameters
         validateParameterNotNull(manager, "manager");
         validateParameterNotNull(phase, "phase");
@@ -1141,6 +1199,64 @@ class ActionsHelper {
 
         // Perform a search for the resources and return them
         return manager.searchResources(filter);
+    }
+
+    /**
+     * This static method retrieves the resources for a phase using provided array of resources.
+     *
+     * @return an array of the resources for the specified phase.
+     * @param resources
+     *            an array of resources to retrieve needed resources from.
+     * @param phase
+     *            a phase to retrieve the resources for.
+     * @throws IllegalArgumentException
+     *             if parameters <code>resources</code> is <code>null</code>.
+     */
+    public static Resource[] getResourcesForPhase(Resource[] resources, Phase phase) {
+        // Validate parameters
+        validateParameterNotNull(resources, "resources");
+
+        List foundResources = new ArrayList();
+
+        for (int i = 0; i < resources.length; ++i) {
+            // Get a resource for the current iteration
+            Resource resource = resources[i];
+            // Check if this resource is from phase in question
+            if ((phase == null && resource.getPhase() == null) ||
+                    (resource.getPhase() != null && resource.getPhase().longValue() == phase.getId())) {
+                // Add it to list
+                foundResources.add(resource);
+            }
+        }
+
+        // Convert the list of resources to an array and return it
+        return (Resource[]) foundResources.toArray(new Resource[foundResources.size()]);
+    }
+
+    /**
+     * This static method searches the provided array of resources for submitters (resources that
+     * have Submitter role) and returns an array of all found resources.
+     *
+     * @return an array of submitters found in the provided array of resources.
+     * @param resources
+     *            an array of resource to search for submitters among.
+     * @throws IllegalArgumentException
+     *             if parameter <code>resources</code> is <code>null</code>.
+     */
+    public static Resource[] getAllSubmitters(Resource[] resources) {
+        // Validate parmaeter
+        validateParameterNotNull(resources, "resources");
+
+        List submitters = new ArrayList();
+        // Search for the appropriate resources and add them to the list
+        for (int j = 0; j < resources.length; ++j) {
+            if (resources[j].getResourceRole().getName().equalsIgnoreCase(Constants.SUBMITTER_ROLE_NAME)) {
+                submitters.add(resources[j]);
+            }
+        }
+
+        // Convert the list of found submitters to array and return it
+        return (Resource[]) submitters.toArray(new Resource[submitters.size()]);
     }
 
     /**
@@ -1182,6 +1298,33 @@ class ActionsHelper {
     }
 
     /**
+     * This static method returns the array of resources for the currently logged in user associated with
+     * the specified phase. The list of all resources for the currently logged in user is retrieved
+     * from the <code>HttpServletRequest</code> object specified by <code>request</code>
+     * parameter. Method <code>gatherUserRoles(HttpServletRequest, long)</code> should be called
+     * prior making a call to this method.
+     *
+     * @return an array of found resources, or emtpy array if no resources for currently logged in user
+     *         found such that those resources would be associated with the specified phase.
+     * @param request
+     *            an <code>HttpServletRequest</code> object containing additional information.
+     * @param phase
+     *            a phase to search the resouces for. This parameter can be <code>null</code>, in
+     *            which case the search is made for resources with no phase assigned.
+     * @throws IllegalArgumentException
+     *             if <code>request</code> parameter is <code>null</code>.
+     */
+    public static Resource[] getMyResourcesForPhase(HttpServletRequest request, Phase phase) {
+        // Validate parameters
+        validateParameterNotNull(request, "request");
+        // Retrieve the list of "my" resources from the request's attribute
+        Resource[] myResources = (Resource[]) validateAttributeNotNull(request, "myResources");
+
+        // Return the resources using another helper-method
+        return getResourcesForPhase(myResources, phase);
+    }
+
+    /**
      * This static method retrieves the resource for the currently logged in user associated with
      * the specified phase. The list of all resources for the currently logged in user is retrieved
      * from the <code>HttpServletRequest</code> object specified by <code>request</code>
@@ -1191,7 +1334,7 @@ class ActionsHelper {
      * @return found resource, or <code>null</code> if no resource for currently logged in user
      *         found such that that resource would be associated with the specified phase.
      * @param request
-     *            an <code>HtppServletRequest</code> object containing additional information.
+     *            an <code>HttpServletRequest</code> object containing additional information.
      * @param phase
      *            a phase to search the resouce for. This parameter can be <code>null</code>, in
      *            which case the search is made for resources with no phase assigned.
@@ -1199,24 +1342,8 @@ class ActionsHelper {
      *             if <code>request</code> parameter is <code>null</code>.
      */
     public static Resource getMyResourceForPhase(HttpServletRequest request, Phase phase) {
-        // Validate parameters
-        validateParameterNotNull(request, "request");
-        // Retrieve the list of "my" resources from the request's attribute
-        Resource[] resources = (Resource[]) validateAttributeNotNull(request, "myResources");
-
-        for (int i = 0; i < resources.length; ++i) {
-            // Get a resource for current iteration
-            Resource resource = resources[i];
-            // Find the resource for phase in question
-            if ((phase == null && resource.getPhase() == null) ||
-                    (resource.getPhase() != null && resource.getPhase().longValue() == phase.getId())) {
-                // Return it
-                return resource;
-            }
-        }
-
-        // No "My" resource has been found for the specified phase
-        return null;
+        Resource[] resources = getMyResourcesForPhase(request, phase);
+        return (resources.length != 0) ? resources[0] : null;
     }
 
     /**
@@ -1279,12 +1406,20 @@ class ActionsHelper {
         }
 
         // Build final combined filter
-        Filter filter = (filterPhase != null) ? new AndFilter(filterProject, filterPhase) : filterProject;
+        Filter filter = new AndFilter(filterProject, filterPhase);
         // Perform a search for the deliverables
-        Deliverable[] deliverables = manager.searchDeliverables(filter, null);
+        Deliverable[] allDeliverables = manager.searchDeliverables(filter, null);
+
+        List deliverables = new ArrayList();
+
+        for (int i = 0; i < allDeliverables.length; ++i) {
+            if (allDeliverables[i].getProject() == project.getId()) {
+                deliverables.add(allDeliverables[i]);
+            }
+        }
 
         // Return found deliverables
-        return deliverables;
+        return (Deliverable[]) deliverables.toArray(new Deliverable[deliverables.size()]);
     }
 
     /**
@@ -1352,6 +1487,19 @@ class ActionsHelper {
         return (Deliverable[]) deliverables.toArray(new Deliverable[deliverables.size()]);
     }
 
+    public static Submission[] getMostRecentSubmissions(UploadManager manager, Project project)
+        throws BaseException {
+        SubmissionStatus[] allSubmissionStatuses = manager.getAllSubmissionStatuses();
+
+        Filter filterProject = SubmissionFilterBuilder.createProjectIdFilter(project.getId());
+        Filter filterStatus = SubmissionFilterBuilder.createSubmissionStatusIdFilter(
+                findSubmissionStatusByName(allSubmissionStatuses, "Active").getId());
+
+        Filter filter = new AndFilter(filterProject, filterStatus);
+
+        return manager.searchSubmissions(filter);
+    }
+
     /**
      * This static method retrieves the project that the submission specified by the
      * <code>submission</code> parameter was made for.
@@ -1379,6 +1527,93 @@ class ActionsHelper {
         Project project = manager.getProject(upload.getProject());
         // Return the project
         return project;
+    }
+
+    public static boolean isAfterAppealsResponse(Phase[] phases, int phaseIndex) {
+        // Validate parameters
+        validateParameterNotNull(phases, "phases");
+        validateParameterInRange(phaseIndex, "phaseIndex", 0, phases.length - 1);
+
+        boolean found = false;
+
+        for (int i = phaseIndex; i < phases.length; ++i) {
+            // Get a phase for the current iteration
+            Phase phase = phases[i];
+            // Get this phase's type name
+            String phaseName = phase.getPhaseType().getName();
+
+            if (phaseName.equalsIgnoreCase(Constants.REVIEW_PHASE_NAME) ||
+                    phaseName.equalsIgnoreCase(Constants.APPEALS_PHASE_NAME) ||
+                    phaseName.equalsIgnoreCase(Constants.APPEALS_RESPONE_PHASE_NAME)) {
+                if (!phase.getPhaseStatus().getName().equalsIgnoreCase("Closed")) {
+                    return false;
+                }
+                found = true;
+                continue;
+            }
+            if (found == true) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static boolean isAfterAppealsResponse(Phase[] phases) {
+        // Validate parameter
+        validateParameterNotNull(phases, "phases");
+
+        int i;
+
+        for (i = 0; i < phases.length; ++i) {
+            // Get a phase for the current iteration
+            Phase phase = phases[i];
+            // Get this phase's status name
+            String phaseStatus = phase.getPhaseStatus().getName();
+            // If first Open or Scheduled phase found, stop the search
+            if (phaseStatus.equalsIgnoreCase("Open") || phaseStatus.equalsIgnoreCase("Scheduled")) {
+                break;
+            }
+        }
+        // If all phases are closed, then we should definitely be past Appeals Response one
+        if (i >= phases.length) {
+            return true;
+        }
+
+        boolean anyOtherPhaseFound = false;
+
+        for (; i >= 0; --i) {
+            // Get a phase for the current iteration
+            Phase phase = phases[i];
+            String phaseName = phase.getPhaseType().getName();
+
+            // If registration or Submission phase found before the Open one (or one of those
+            // phases is currently Open), return false, as we are not past Appeals Response one
+            if (phaseName.equalsIgnoreCase(Constants.REGISTRATION_PHASE_NAME) ||
+                    phaseName.equalsIgnoreCase(Constants.SUBMISSION_PHASE_NAME)) {
+                return false;
+            }
+            // Skip the Open or Scheduled phase, as only Closed phases make interest
+            if (!phase.getPhaseStatus().getName().equalsIgnoreCase("Closed")) {
+                continue;
+            }
+            // If Appeals response is the closed phase,
+            // then definetely the project is at after Appeals Response stage
+            if (phaseName.equalsIgnoreCase(Constants.APPEALS_RESPONE_PHASE_NAME)) {
+                return true;
+            }
+            // If the phase Review or Appeals is found, but there were other closed phases after them,
+            // regard this as after Appeals Response (if Appeals Response is actually absent)
+            if (anyOtherPhaseFound &&
+                    (phaseName.equalsIgnoreCase(Constants.APPEALS_PHASE_NAME) ||
+                            phaseName.equalsIgnoreCase(Constants.REVIEW_PHASE_NAME))) {
+                return true;
+            }
+            anyOtherPhaseFound = true;
+        }
+
+        // If i is negative, the needed phase has not been found
+        // The project is not in after Appeals Response phase
+        return (i >= 0);
     }
 
 
@@ -1630,19 +1865,24 @@ class ActionsHelper {
 
             // The checkers are used when deliverable instances are retrieved
             Map checkers = new HashMap();
+
+            // Some checkers are used more than once
+            DeliverableChecker committedChecker = new CommittedReviewDeliverableChecker(dbconn);
+            DeliverableChecker testCasesChecker = new TestCasesDeliverableChecker(dbconn);
+
             checkers.put(Constants.SUBMISSION_DELIVERABLE_NAME, new SubmissionDeliverableChecker(dbconn));
             checkers.put(Constants.SCREENING_DELIVERABLE_NAME, new IndividualReviewDeliverableChecker(dbconn));
-            checkers.put(Constants.REVIEW_DELIVERABLE_NAME, new CommittedReviewDeliverableChecker(dbconn));
-            checkers.put(Constants.ACC_TEST_CASES_DELIVERABLE_NAME, new TestCasesDeliverableChecker(dbconn));
-            checkers.put(Constants.FAIL_TEST_CASES_DELIVERABLE_NAME, new TestCasesDeliverableChecker(dbconn));
-            checkers.put(Constants.STRS_TEST_CASES_DELIVERABLE_NAME, new TestCasesDeliverableChecker(dbconn));
+            checkers.put(Constants.REVIEW_DELIVERABLE_NAME, committedChecker);
+            checkers.put(Constants.ACC_TEST_CASES_DELIVERABLE_NAME, testCasesChecker);
+            checkers.put(Constants.FAIL_TEST_CASES_DELIVERABLE_NAME, testCasesChecker);
+            checkers.put(Constants.STRS_TEST_CASES_DELIVERABLE_NAME, testCasesChecker);
             checkers.put(Constants.APPEAL_RESP_DELIVERABLE_NAME, new AppealResponsesDeliverableChecker(dbconn));
             checkers.put(Constants.AGGREGATION_DELIVERABLE_NAME, new AggregationDeliverableChecker(dbconn));
             checkers.put(Constants.AGGREGATION_REV_DELIVERABLE_NAME, new AggregationReviewDeliverableChecker(dbconn));
             checkers.put(Constants.FINAL_FIX_DELIVERABLE_NAME, new FinalFixesDeliverableChecker(dbconn));
             checkers.put(Constants.SCORECARD_COMM_DELIVERABLE_NAME, new SubmitterCommentDeliverableChecker(dbconn));
             checkers.put(Constants.FINAL_REVIEW_PHASE_NAME, new FinalReviewDeliverableChecker(dbconn));
-            checkers.put(Constants.APPROVAL_DELIVERABLE_NAME, new CommittedReviewDeliverableChecker(dbconn));
+            checkers.put(Constants.APPROVAL_DELIVERABLE_NAME, committedChecker);
 
             // Initialize the PersistenceDeliverableManager
             manager = new PersistenceDeliverableManager(deliverablePersistence, checkers,
