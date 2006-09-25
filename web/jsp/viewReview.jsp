@@ -20,6 +20,76 @@
 	<!-- CSS and JS by Petar -->
 	<link type="text/css" rel="stylesheet" href="../css/new_styles.css" />
 	<script language="JavaScript" type="text/javascript" src="../scripts/rollovers.js"><!-- @ --></script>
+	<script language="JavaScript" type="text/javascript" src="../scripts/dojo.js"><!-- @ --></script>
+	<script language="JavaScript" type="text/javascript">
+		
+		// create the request object
+		function createXMLHttpRequest() {
+			var xmlHttp;
+			if (window.ActiveXObject) {
+				xmlHttp = new ActiveXObject("Microsoft.XMLHTTP");
+			} else if (window.XMLHttpRequest) {
+				xmlHttp = new XMLHttpRequest();
+			}
+			return xmlHttp;
+		}
+		
+		/**
+		 * TODO: Document it		 
+		 */
+		function placeAppeal(itemIdx, itemId, reviewId) {
+			// Find appeal text input node
+			appealTextNode = document.getElementsByName("appeal_text[" + itemIdx + "]");
+			// Get appeal text
+			var appealText = appealTextNode.value;
+			
+			
+			// create the Ajax request
+			var myRequest = createXMLHttpRequest();
+			
+			// assemble the request XML
+			var content =
+				'<?xml version="1.0" ?>' +
+				'<request type="PlaceAppeal">' +
+				"<parameters>" +
+				'<parameter name="ReviewId">' +
+				reviewId +
+				"</parameter>" +
+				'<parameter name="ItemId">' +
+				itemId +
+				"</parameter>" +
+				'<parameter name="AppealText">' +
+				appealText +
+				"</parameter>" +
+				"</parameters>" +
+				"</request>";
+			// set the callback function
+			// TODO: Check for errors no handled by Ajax Support
+			myRequest.onReadyStateChange = function() {
+				if (myRequest.readyState == 4 && myRequest.status == 200) {
+					// the response is ready
+					var respXML = myRequest.responseXML;
+					// retrieve the result
+					var result = respXML.getElementsByTagName("result")[0].getAttribute("status");
+					if (result == "Success") {
+						// operation succeeded
+						// TODO: Some changes to here
+						toggleDisplay("appealText_${itemIdx}");
+						toggleDisplay("placeAppeal_${itemIdx}");
+					} else {
+						// operation failed, alert the error message to the user
+						alert("An error occured while placing the appeal: " + result);
+					}
+				}
+			};
+	
+			// send the request
+			myRequest.open("POST", "<html:rewrite page='/ajaxSupport' />", true);
+			myRequest.setRequestHeader("Content-Type", "text/xml");
+			myRequest.send(content);
+		}
+	</script>
+
 </head>
 
 <body>
@@ -74,20 +144,25 @@
 										</c:if>
 										<c:if test="${canPlaceAppeal}">				
 											<td class="valueC">
-												<html:img styleId="placeAppeal_${itemIdx}" styleClass="showText" srcKey="editReview.Button.Appeal.img" altKey="editReview.Button.Appeal.alt" 
-													onclick="toggleDisplay('appealText_${itemIdx}');toggleDisplay('placeAppeal_${itemIdx}');"/>
+												<html:link href="javascript:toggleDisplay('appealText_${itemIdx}');toggleDisplay('placeAppeal_${itemIdx}');">
+													<html:img styleId="placeAppeal_${itemIdx}" styleClass="showText" srcKey="editReview.Button.Appeal.img" altKey="editReview.Button.Appeal.alt" />
+												</html:link>
 											</td>
 										</c:if>
-									</tr>
-									
+									</tr>									
 									<%@ include file="../includes/review/review_comments.jsp" %>									
 									<c:if test="${canPlaceAppeal}">	
 										<tr class="highlighted">
 											<td class="value" colspan="6">
 												<div id="appealText_${itemIdx}" class="hideText">
-													<b>Appeal Text:</b><br>			
-													<textarea rows="2" name="S2" cols="20" style="font-size: 10px; font-family: sans-serif;width:99%;height:50px;border:1px solid #ccc;margin:3px;"></textarea><br>
-													<a href="#Q4" onClick="toggleDisplay('appealText_${itemIdx}');toggleDisplay('placeAppeal_${itemIdx}');"><img src="../i/bttn_submit_appeal.gif" border="0" hspace="5" vspace="9"></a><br>
+													<b><bean:message key="editReview.Question.AppealText.title"/>:</b> 
+													<br/>			
+													<textarea name="appeal_text[${itemIdx}]" rows="2" cols="20" style="font-size: 10px; font-family: sans-serif;width:99%;height:50px;border:1px solid #ccc;margin:3px;"></textarea> 
+													<br/>
+													<html:link href="javascript:placeAppeal(${itemIdx}, ${item.id}, ${review.id});">
+														<html:img srcKey="editReview.Button.SubmitAppeal.img" altKey="editReview.Button.SubmitAppeal.alt" border="0" hspace="5" vspace="9" />
+													</html:link> 
+													<br/>
 												</div>
 											</td>
 										</tr>
