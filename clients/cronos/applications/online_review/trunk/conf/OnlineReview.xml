@@ -1595,7 +1595,7 @@
                     <Value>SELECT UNIQUE deliverable_id, resource_id
                         FROM deliverable_lu
                         INNER JOIN resource
-                        ON deliverable_lu.resource_role_id = resource.resource_role_id 
+                        ON deliverable_lu.resource_role_id = resource.resource_role_id
                         WHERE
                     </Value>
                 </Property>
@@ -2609,7 +2609,6 @@
                 <Value>Stress Reviewer</Value>
             </Property>
             <Property name="Upload Test Cases">
-                <Value>Reviewer</Value>
                 <Value>Accuracy Reviewer</Value>
                 <Value>Failure Reviewer</Value>
                 <Value>Stress Reviewer</Value>
@@ -2833,7 +2832,7 @@
                     <Value>Screening</Value>
                 </Property>
                 <Property name="AppFunction">
-                    <Value></Value>
+                    <Value>VIEW_SUBMISSIONS</Value>
                 </Property>
             </Property>
             <Property name="Review_Appeals">
@@ -2846,7 +2845,7 @@
                     <Value>Appeals Response</Value>
                 </Property>
                 <Property name="AppFunction">
-                    <Value></Value>
+                    <Value>VIEW_REVIEWS</Value>
                 </Property>
             </Property>
             <Property name="Aggregation_Review">
@@ -2858,7 +2857,7 @@
                     <Value>Aggregation Review</Value>
                 </Property>
                 <Property name="AppFunction">
-                    <Value></Value>
+                    <Value>AGGREGATION</Value>
                 </Property>
             </Property>
             <Property name="FinalFix_Review">
@@ -2870,7 +2869,7 @@
                     <Value>Final Review</Value>
                 </Property>
                 <Property name="AppFunction">
-                    <Value></Value>
+                    <Value>FINAL_FIX</Value>
                 </Property>
             </Property>
             <Property name="Approval">
@@ -2881,7 +2880,7 @@
                     <Value>Approval</Value>
                 </Property>
                 <Property name="AppFunction">
-                    <Value></Value>
+                    <Value>APPROVAL</Value>
                 </Property>
             </Property>
         </Property>
