@@ -3,6 +3,14 @@
  */
 package com.cronos.onlinereview.actions;
 
+import java.util.Date;
+
+import com.cronos.onlinereview.autoscreening.management.ScreeningTask;
+import com.topcoder.management.resource.Resource;
+import com.topcoder.management.review.data.Review;
+import com.topcoder.management.deliverable.Submission;
+import com.topcoder.management.deliverable.Upload;
+
 /**
  * This class defines a phase group bean.
  *
@@ -32,6 +40,82 @@ public class PhaseGroup {
     private String applicationFunction = "";
 
     /**
+     * This member variable holds an array of submitters who made their submissions for the project.
+     */
+    private Resource[] submitters = null;
+
+    /**
+     * This member variable holds an array of submissions assigned to this phase group, or
+     * <code>null</code> value if no such array has been assigned to the phase group.
+     */
+    private Submission[] submissions = null;
+
+    /**
+     *
+     */
+    private ScreeningTask[] screeningTasks = null;
+
+    /**
+     *
+     */
+    private Resource[] reviewers = null;
+
+    /**
+     *
+     */
+    private Review[] screenings = null;
+
+    /**
+     *
+     */
+    private Review[][] reviews = null;
+
+    /**
+     *
+     */
+    private Upload[] testCases = null;
+
+    /**
+     *
+     */
+    private Date[] reviewDates = null;
+
+    /**
+     *
+     */
+    private Review aggregation = null;
+
+    /**
+     *
+     */
+    private boolean aggregationReviewCommitted = false;
+
+    /**
+     *
+     */
+    private Upload finalFix = null;
+
+    /**
+     *
+     */
+    private Review finalReview = null;
+
+    /**
+     *
+     */
+    private boolean finalReviewCommitted = false;
+
+    /**
+     *
+     */
+    private Review approval = null;
+
+    /**
+     *
+     */
+    private Resource winner = null;
+
+    /**
      * This member variable holds a reference to the object containing additional info for this
      * group. This object can typically be an array or a list. This member variable is initialized
      * in the constructor and can be accessed and changed via corresponding get/set methods. The
@@ -43,11 +127,15 @@ public class PhaseGroup {
     private Object additionalInfo = null;
 
     /**
+     * This member variable indicates if the phase represented by this phase group has been opened.
+     */
+    private boolean phaseOpen = false;
+
+    /**
      * Constructs a new instance of the <code>PhaseGroup</code> class setting all fields to their
      * default values.
      */
     public PhaseGroup() {
-
     }
 
     /**
@@ -103,6 +191,284 @@ public class PhaseGroup {
     }
 
     /**
+     * This method returns array of Submitter resources who made ther submissions for the project.
+     *
+     * @return an array of submitters.
+     */
+    public Resource[] getSubmitters() {
+        return this.submitters;
+    }
+
+    /**
+     * This method sets a reference to array of submitters.
+     *
+     * @param submitters
+     *            a reference to array of submitters.
+     */
+    public void setSubmitters(Resource[] submitters) {
+        this.submitters = submitters;
+    }
+
+    /**
+     * This method returns array of submissions that could have been set for this phase group.
+     *
+     * @return an array of submissions.
+     */
+    public Submission[] getSubmissions() {
+        return this.submissions;
+    }
+
+    /**
+     * This method sets a reference to array of submissions.
+     *
+     * @param submissions
+     *            a reference to array of submissions.
+     */
+    public void setSubmissions(Submission[] submissions) {
+        this.submissions = submissions;
+    }
+
+    public ScreeningTask[] getScreeningTasks() {
+        return this.screeningTasks;
+    }
+
+    public void setScreeningTasks(ScreeningTask[] screeningTasks) {
+        this.screeningTasks = screeningTasks;
+    }
+
+    /**
+     * This method returns array of reviewers assigned to this phase group.
+     *
+     * @return an array of reviewers.
+     */
+    public Resource[] getReviewers() {
+        return this.reviewers;
+    }
+
+    /**
+     * This method sets a reference to array of reviewers.
+     *
+     * @param reviewers
+     *            a reference to array of reviewers.
+     */
+    public void setReviewers(Resource[] reviewers) {
+        this.reviewers = reviewers;
+    }
+
+    /**
+     * This method returns array of screening reviews assigned to this phase group.
+     *
+     * @return an array of screening reviews.
+     */
+    public Review[] getScreenings() {
+        return this.screenings;
+    }
+
+    /**
+     * This method sets a reference to array of screening reviews.
+     *
+     * @param screenings
+     *            a reference to array of screening reviews.
+     */
+    public void setScreenings(Review[] screenings) {
+        this.screenings = screenings;
+    }
+
+    /**
+     * This method returns array of reviews assigned to this phase group.
+     *
+     * @return an array of reviews.
+     */
+    public Review[][] getReviews() {
+        return this.reviews;
+    }
+
+    /**
+     * This method sets a reference to array of reviews.
+     *
+     * @param reviews
+     *            a reference to array of reviews.
+     */
+    public void setReviews(Review[][] reviews) {
+        this.reviews = reviews;
+    }
+
+    /**
+     * This method returns array of uploaded test cases assigned to this phase group.
+     *
+     * @return an array of uploaded test cases.
+     */
+    public Upload[] getTestCases() {
+        return this.testCases;
+    }
+
+    /**
+     * This method sets a reference to array of uploaded test cases.
+     *
+     * @param testCases
+     *            a reference to array of uploaded test cases.
+     */
+    public void setTestCases(Upload[] testCases) {
+        this.testCases = testCases;
+    }
+
+    /**
+     * This method returns array of dates when the reviews were completed cases assigned to this
+     * phase group.
+     *
+     * @return an array of dates.
+     */
+    public Date[] getReviewDates() {
+        return this.reviewDates;
+    }
+
+    /**
+     * This method sets a reference to array of dates when reviews were completed.
+     *
+     * @param reviewDates
+     *            a reference to array of dates.
+     */
+    public void setReviewDates(Date[] reviewDates) {
+        this.reviewDates = reviewDates;
+    }
+
+    /**
+     * This method returns review scorecard of type Aggregation or Aggregation Review.
+     *
+     * @return an appropriate review object.
+     */
+    public Review getAggregation() {
+        return this.aggregation;
+    }
+
+    /**
+     * This method sets a reference to a review scorecard of type Aggregation or Aggregation Review.
+     *
+     * @param aggregation
+     *            a reference to review object.
+     */
+    public void setAggregation(Review aggregation) {
+        this.aggregation = aggregation;
+    }
+
+    /**
+     * This method determines whether Aggregation Review has been committed by all users who had to
+     * do that.
+     *
+     * @return <code>true</code> if aggregation review has been committed by all users who had to
+     *         do that, <code>false</code> if at least one user did not do that.
+     */
+    public boolean isAggregationReviewCommitted() {
+        return this.aggregationReviewCommitted;
+    }
+
+    /**
+     * This method sets status flag that determines whether Aggregation Review has been committed.
+     *
+     * @param aggregationReviewCommitted
+     *            a value indicating whether Aggregation Review has been committed.
+     */
+    public void setAggregationReviewCommitted(boolean aggregationReviewCommitted) {
+        this.aggregationReviewCommitted = aggregationReviewCommitted;
+    }
+
+    /**
+     * This method returns upload object for final fix.
+     *
+     * @return an upload for final fix.
+     */
+    public Upload getFinalFix() {
+        return this.finalFix;
+    }
+
+    /**
+     * This method sets a reference to an upload object for final fix.
+     *
+     * @param finalFix
+     *            a reference to upload.
+     */
+    public void setFinalFix(Upload finalFix) {
+        this.finalFix = finalFix;
+    }
+
+    /**
+     * This method returns review scorecard of type Final Review.
+     *
+     * @return a final review object.
+     */
+    public Review getFinalReview() {
+        return this.finalReview;
+    }
+
+    /**
+     * This method sets a reference to a review scorecard of type Final Review.
+     *
+     * @param finalReview
+     *            a reference to final review object.
+     */
+    public void setFinalReview(Review finalReview) {
+        this.finalReview = finalReview;
+    }
+
+    /**
+     * This method determines whether Final Review has been committed.
+     *
+     * @return <code>true</code> if final review has been committed, <code>false</code> if it
+     *         hasn't.
+     */
+    public boolean isFinalReviewCommitted() {
+        return this.finalReviewCommitted;
+    }
+
+    /**
+     * This method sets status flag that determines whether Final Review has been committed.
+     *
+     * @param finalReviewCommitted
+     *            a value indicating whether Final Review has been committed.
+     */
+    public void setFinalReviewCommitted(boolean finalReviewCommitted) {
+        this.finalReviewCommitted = finalReviewCommitted;
+    }
+
+    /**
+     * This method returns approval scorecard.
+     *
+     * @return an approval scorecard.
+     */
+    public Review getApproval() {
+        return this.approval;
+    }
+
+    /**
+     * This method sets a reference to an approval scorecard.
+     *
+     * @param approval
+     *            a reference to approval scorecard.
+     */
+    public void setApproval(Review approval) {
+        this.approval = approval;
+    }
+
+    /**
+     * This method returns the Submitter resource that is a winnier.
+     *
+     * @return a winner resource.
+     */
+    public Resource getWinner() {
+        return this.winner;
+    }
+
+    /**
+     * This method associates new winner resource with the phase group.
+     *
+     * @param winner
+     *            a new winner resource to set for this phase group.
+     */
+    public void setWinner(Resource winner) {
+        this.winner = winner;
+    }
+
+    /**
      * This method returns additional info that could have been set for this phase group.
      *
      * @return an object representing additional info.
@@ -121,5 +487,28 @@ public class PhaseGroup {
      */
     public void setAdditionalInfo(Object additionalInfo) {
         this.additionalInfo = additionalInfo;
+    }
+
+    /**
+     * This method returns a value indication whether the phase represented by this phase group has
+     * been opened.
+     *
+     * @return <code>true</code> if the phase has been opened, <code>false</code> if hte phase
+     *         is surrently in scheduled state.
+     */
+    public boolean isPhaseOpen() {
+        return this.phaseOpen;
+    }
+
+    /**
+     * Ths method sets an indication of whether the phase represented by this phase group has been
+     * opened. If this bean represents several phases, then value <code>true</code> indicates that
+     * at least one of them has been opened.
+     *
+     * @param phaseOpen
+     *            a value indicating whether the phase has been opened.
+     */
+    public void setPhaseOpen(boolean phaseOpen) {
+        this.phaseOpen = phaseOpen;
     }
 }
