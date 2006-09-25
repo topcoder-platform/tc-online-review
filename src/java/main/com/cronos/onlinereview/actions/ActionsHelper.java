@@ -1259,6 +1259,20 @@ class ActionsHelper {
         return (Resource[]) submitters.toArray(new Resource[submitters.size()]);
     }
 
+    public static Resource getWinner(Resource[] resources) {
+        // Validate parameter
+        validateParameterNotNull(resources, "resources");
+
+        for (int i = 0; i < resources.length; ++i) {
+            if ("1".equals(resources[i].getProperty("Placement"))) {
+                return resources[i];
+            }
+        }
+
+        // No winners have been found
+        return null;
+    }
+
     /**
      * This static method searches the array of resources specified and finds a resource with
      * &quot;External Reference ID&quot; property being equal to the parameter specified.
@@ -1534,6 +1548,7 @@ class ActionsHelper {
         validateParameterNotNull(phases, "phases");
         validateParameterInRange(phaseIndex, "phaseIndex", 0, phases.length - 1);
 
+        boolean prevPhase = false;
         boolean found = false;
 
         for (int i = phaseIndex; i < phases.length; ++i) {
@@ -1542,6 +1557,15 @@ class ActionsHelper {
             // Get this phase's type name
             String phaseName = phase.getPhaseType().getName();
 
+            if (phaseName.equalsIgnoreCase(Constants.REGISTRATION_PHASE_NAME) ||
+                    phaseName.equalsIgnoreCase(Constants.SUBMISSION_PHASE_NAME)) {
+                if (prevPhase == true) {
+                    return true;
+                }
+                prevPhase = false;
+                continue;
+            }
+            prevPhase = true;
             if (phaseName.equalsIgnoreCase(Constants.REVIEW_PHASE_NAME) ||
                     phaseName.equalsIgnoreCase(Constants.APPEALS_PHASE_NAME) ||
                     phaseName.equalsIgnoreCase(Constants.APPEALS_RESPONE_PHASE_NAME)) {
@@ -1555,7 +1579,7 @@ class ActionsHelper {
                 return true;
             }
         }
-        return false;
+        return true;
     }
 
     public static boolean isAfterAppealsResponse(Phase[] phases) {
@@ -1880,8 +1904,8 @@ class ActionsHelper {
             checkers.put(Constants.AGGREGATION_DELIVERABLE_NAME, new AggregationDeliverableChecker(dbconn));
             checkers.put(Constants.AGGREGATION_REV_DELIVERABLE_NAME, new AggregationReviewDeliverableChecker(dbconn));
             checkers.put(Constants.FINAL_FIX_DELIVERABLE_NAME, new FinalFixesDeliverableChecker(dbconn));
-            checkers.put(Constants.SCORECARD_COMM_DELIVERABLE_NAME, new SubmitterCommentDeliverableChecker(dbconn));
-            checkers.put(Constants.FINAL_REVIEW_PHASE_NAME, new FinalReviewDeliverableChecker(dbconn));
+//            checkers.put(Constants.SCORECARD_COMM_DELIVERABLE_NAME, new SubmitterCommentDeliverableChecker(dbconn));
+//            checkers.put(Constants.FINAL_REVIEW_PHASE_NAME, new FinalReviewDeliverableChecker(dbconn));
             checkers.put(Constants.APPROVAL_DELIVERABLE_NAME, committedChecker);
 
             // Initialize the PersistenceDeliverableManager
