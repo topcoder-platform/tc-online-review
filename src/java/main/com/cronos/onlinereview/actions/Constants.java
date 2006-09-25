@@ -500,6 +500,31 @@ public class Constants {
      */
     public static final String VIEW_REGISTRANTS_APP_FUNC = "VIEW_REGISTRANTS";
 
+    /**
+     * TODO: Add reasonable description here
+     */
+    public static final String VIEW_SUBMISSIONS_APP_FUNC = "VIEW_SUBMISSIONS";
+
+    /**
+     * TODO: Add reasonable description here
+     */
+    public static final String VIEW_REVIEWS_APP_FUNC = "VIEW_REVIEWS";
+
+    /**
+     * TODO: Add reasonable description here
+     */
+    public static final String AGGREGATION_APP_FUNC = "AGGREGATION";
+
+    /**
+     * TODO: Add reasonable description here
+     */
+    public static final String FINAL_FIX_APP_FUNC = "FINAL_FIX";
+
+    /**
+     * TODO: Add reasonable description here
+     */
+    public static final String APPROVAL_APP_FUNC = "APPROVAL";
+
 
     // -------------------------------------------------------------------- Deliverable names -----
 
@@ -567,6 +592,12 @@ public class Constants {
      * deliverable.
      */
     public static final String SCORECARD_COMM_DELIVERABLE_NAME = "Scorecard Comment";
+
+    /**
+     * This member variable is a string constant that defines the name of the Final Review
+     * deliverable.
+     */
+    public static final String FINAL_REVIEW_DELIVERABLE_NAME = "Final Review";
 
     /**
      * This member variable is a string constant that defines the name of the Approval deliverable.
