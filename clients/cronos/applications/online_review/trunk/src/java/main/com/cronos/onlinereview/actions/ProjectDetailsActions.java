@@ -1790,6 +1790,7 @@ public class ProjectDetailsActions extends DispatchAction {
         // Get an upload to display autoscreening results of
         Upload upload = verification.getUpload();
 
+        // TODO: Should probably depict that we have AutoScreening not ViewSubmission
         // Verify that upload is a submission
         if (!upload.getUploadType().getName().equalsIgnoreCase("Submission")) {
             return ActionsHelper.produceErrorReport(
@@ -1835,6 +1836,9 @@ public class ProjectDetailsActions extends DispatchAction {
 
         // Retrieve the submitter id and place it into request
         ActionsHelper.retrieveAndStoreSubmitterInfo(request, upload);
+        
+        // Put review type into the request
+        request.setAttribute("reviewType", "AutoScreening");
 
         // Obtain Screening Manager instance
         ScreeningManager screeningManager = ActionsHelper.createScreeningManager(request);

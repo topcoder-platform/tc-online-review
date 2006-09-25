@@ -2680,10 +2680,32 @@ public class ProjectReviewActions extends DispatchAction {
                     permName, "Error.ReviewTypeIncorrect");
         }
         // Make sure that the user is not trying to view unfinished review
-        if (!verification.getReview().isCommitted()) {
+        if (!verification.getReview().isCommitted()) {            
             return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
                     permName, "Error.ReviewNotCommitted");
+        } else {
+            // If user has a Manager role, put special flag to the request, 
+            // indicating that we can edit the review
+            if(AuthorizationHelper.hasUserRole(request, Constants.MANAGER_ROLE_NAME)) {
+                request.setAttribute("canEditScorecard", Boolean.TRUE);                
+            }
         }
+        
+        // Get an array of all phases for the project
+        Phase[] phases = ActionsHelper.getPhasesForProject(ActionsHelper.createPhaseManager(request), verification.getProject());
+        // Get active (current) phase
+        Phase phase = ActionsHelper.getPhase(phases, true, null);
+        
+        // Check if user can place appeals or appeal responses
+        if (phase.getPhaseType().getName().equals(Constants.APPEALS_PHASE_NAME) && 
+                AuthorizationHelper.hasUserPermission(request, Constants.PERFORM_APPEAL_PERM_NAME)) {
+            // Can place appeal, put appropriate flag to request
+            request.setAttribute("canPlaceAppeal", Boolean.TRUE);                
+        } else if (phase.getPhaseType().getName().equals(Constants.APPEALS_RESPONE_PHASE_NAME) && 
+                AuthorizationHelper.hasUserPermission(request, Constants.PERFORM_APPEAL_RESP_PERM_NAME)) {
+            // Can place response, put appropriate flag to request
+            request.setAttribute("canPlaceAppealResponse", Boolean.TRUE);                
+        }  
 
         // Retrieve some basic review info and store it in the request
         retrieveAndStoreBasicReviewInfo(request, verification, reviewType, scorecardTemplate);
