@@ -66,20 +66,8 @@
 								<c:forEach items="${section.allQuestions}" var="question" varStatus="questionStatus">
 									<c:set var="item" value="${review.allItems[itemIdx]}" />
 									<tr class="light">
-										<td class="value">
-											<div class="showText" id="shortQ_${itemIdx}">
-												<a href="javascript:toggleDisplay('shortQ_${itemIdx}');toggleDisplay('longQ_${itemIdx}');" class="statLink"><html:img src="../i/plus.gif" altKey="global.plus.alt" border="0" /></a>
-												<b><bean:message key="editReview.Question.title" /> ${groupStatus.index + 1}.${sectionStatus.index + 1}.${questionStatus.index + 1}</b>
-												${orfn:htmlEncode(question.description)}
-											</div>
-											<div class="hideText" id="longQ_${itemIdx}">
-												<a href="javascript:toggleDisplay('shortQ_${itemIdx}');toggleDisplay('longQ_${itemIdx}');" class="statLink"><html:img src="../i/minus.gif" altKey="global.minus.alt" border="0" /></a>
-												<b><bean:message key="editReview.Question.title" /> ${groupStatus.index + 1}.${sectionStatus.index + 1}.${questionStatus.index + 1}</b>
-												${orfn:htmlEncode(question.description)}<br />
-												${orfn:htmlEncode(question.guideline)}
-											</div>
-										</td>
-										<td class="valueC">${question.weight}</td>
+										<%@ include file="../includes/review/review_question.jsp" %>
+										
 										<td class="valueC" nowrap="nowrap">${avgScores[itemIdx]}</td>
 										<c:forEach items="${reviews}" var="review" varStatus="reviewStatus">
 											<td class="valueC" nowrap="nowrap">${scores[reviewStatus.index][itemIdx]}</td>

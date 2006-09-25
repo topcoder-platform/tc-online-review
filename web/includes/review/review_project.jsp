@@ -23,10 +23,15 @@
 					</tr>
 				</table>
 			</td>
-			<td align="right" valign="top">
-				<a href="javascript:showAll();"><bean:message key="global.expandAll" /></a>&#160;|
-				<a href="javascript:hideAll();"><bean:message key="global.collapseAll" /></a>
-			</td>
+			<c:if test="${reviewType ne 'AutoScreening'}" >
+				<td align="right" valign="top">
+					<c:if test="${canEditScorecard}">
+						<a href="../actions/EditReview.do?method=editReview&rid=${review.id}"><bean:message key="editReview.EditScorecard" /></a>&#160;|
+					</c:if>
+					<a href="javascript:showAll();"><bean:message key="global.expandAll" /></a>&#160;|
+					<a href="javascript:hideAll();"><bean:message key="global.collapseAll" /></a>				
+				</td>
+			</c:if>
 		</tr>
 	</table>
 </div>

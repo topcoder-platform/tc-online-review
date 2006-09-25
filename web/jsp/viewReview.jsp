@@ -49,13 +49,19 @@
 					<c:forEach items="${scorecardTemplate.allGroups}" var="group" varStatus="groupStatus">
 						<table class="scorecard" cellpadding="0" width="100%" style="border-collapse: collapse;" id="table2">
 							<tr>
-								<td class="title" colspan="3">${orfn:htmlEncode(group.name)}</td>
+								<td class="title" colspan="${canPlaceAppeal ? 5 : (canPlaceAppealResponse ? 4 : 3)}">${orfn:htmlEncode(group.name)}</td>
 							</tr>
 							<c:forEach items="${group.allSections}" var="section" varStatus="sectionStatus">
 								<tr>
 									<td class="subheader" width="100%">${orfn:htmlEncode(section.name)}</td>
 									<td class="subheader" align="center" width="49%"><bean:message key="editReview.SectionHeader.Weight" /></td>
 									<td class="subheader" align="center" width="1%"><bean:message key="editReview.SectionHeader.Response" /></td>
+									<c:if test="${canPlaceAppeal or canPlaceAppealResponse}">
+										<td class="subheader" align="center" width="1%"><bean:message key="editReview.SectionHeader.AppealStatus" /></td>
+									</c:if>
+									<c:if test="${canPlaceAppeal}">
+										<td class="subheader" align="center" width="1%"><bean:message key="editReview.SectionHeader.Appeal" /></td>
+									</c:if>
 								</tr>
 								<c:forEach items="${section.allQuestions}" var="question" varStatus="questionStatus">
 									<c:set var="item" value="${review.allItems[itemIdx]}" />
@@ -63,9 +69,29 @@
 									<tr class="light">
 										<%@ include file="../includes/review/review_question.jsp" %>	
 										<%@ include file="../includes/review/review_static_answer.jsp" %>
+										<c:if test="${canPlaceAppeal or canPlaceAppealResponse}">
+											<td class="valueC"><%-- TODO: Appeal status should go here --%></td>
+										</c:if>
+										<c:if test="${canPlaceAppeal}">				
+											<td class="valueC">
+												<html:img styleId="placeAppeal_${itemIdx}" styleClass="showText" srcKey="editReview.Button.Appeal.img" altKey="editReview.Button.Appeal.alt" 
+													onclick="toggleDisplay('appealText_${itemIdx}');toggleDisplay('placeAppeal_${itemIdx}');"/>
+											</td>
+										</c:if>
 									</tr>
 									
 									<%@ include file="../includes/review/review_comments.jsp" %>									
+									<c:if test="${canPlaceAppeal}">	
+										<tr class="highlighted">
+											<td class="value" colspan="6">
+												<div id="appealText_${itemIdx}" class="hideText">
+													<b>Appeal Text:</b><br>			
+													<textarea rows="2" name="S2" cols="20" style="font-size: 10px; font-family: sans-serif;width:99%;height:50px;border:1px solid #ccc;margin:3px;"></textarea><br>
+													<a href="#Q4" onClick="toggleDisplay('appealText_${itemIdx}');toggleDisplay('placeAppeal_${itemIdx}');"><img src="../i/bttn_submit_appeal.gif" border="0" hspace="5" vspace="9"></a><br>
+												</div>
+											</td>
+										</tr>
+									</c:if>
 
 									<c:set var="itemIdx" value="${itemIdx + 1}" />
 								</c:forEach>
@@ -91,7 +117,8 @@
 					</c:forEach><br />
 
 					<div align="right">
-						<a href="javascript:history.go(-1)"><html:img srcKey="btnBack.img" altKey="btnBack.alt" border="0" /></a><br />
+						<a href="javascript:history.go(-1)"><html:img srcKey="btnBack.img" altKey="btnBack.alt" border="0" /></a>
+						<br />
 					</div><br />
 				</div>
 				<br /><br />

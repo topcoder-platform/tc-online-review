@@ -15,6 +15,14 @@
 					<c:when test="${comment.commentType.name eq 'Manager Comment'}">
 						
 						<b><bean:message key="editReview.Question.ManagerComment.title" />:</b>
+					</c:when>					
+					<c:when test="${comment.commentType.name eq 'Appeal'}">
+						
+						<b><bean:message key="editReview.Question.AppealText.title" />:</b>
+					</c:when>					
+					<c:when test="${comment.commentType.name eq 'Appeal Response'}">
+						
+						<b><bean:message key="editReview.Question.AppealResponseText.title" />:</b>
 					</c:when>
 					<c:otherwise>
 						<b><bean:message key="editReview.Question.Response.title" />
@@ -26,8 +34,7 @@
 				</c:choose>
 				&#160;${orfn:htmlEncode(comment.comment)}		
 			</td>
-			<td class="value"><!-- @ --></td>
-			<td class="value"><!-- @ --></td>
+			<td class="value" colspan="${canPlaceAppeal ? 5 : (canPlaceAppealResponse ? 4 : 3)}"><!-- @ --></td>
 		</tr>
 	</c:if>
 </c:forEach>
