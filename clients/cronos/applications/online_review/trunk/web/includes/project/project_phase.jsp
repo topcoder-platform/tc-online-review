@@ -1,5 +1,7 @@
 <%@ page language="java" isELIgnored="false" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<%@ taglib prefix="html" uri="/tags/struts-html" %>
 <%@ taglib prefix="bean" uri="/tags/struts-bean" %>
 <%@ taglib prefix="tc-webtag" uri="/tags/tc-webtags" %>
 	<a name="tabs"></a>
@@ -13,792 +15,540 @@
 					</c:forEach>
 				</ul>
 				<div style="clear:both;"></div>
-				<c:choose>
-					<c:when test='${group.appFunc == "VIEW_REGISTRANTS"}'>
-						<table class="scorecard" style="border-collapse:collapse;" cellpadding="0" cellspacing="0" width="100%">
-							<tr>
-								<td class="title" colspan="5">${group.name}</td>
-							</tr>
-							<tr>
-								<td class="header"><bean:message key="viewProjectDetails.box.Registration.Handle" /></td>
-								<td class="header"><bean:message key="viewProjectDetails.box.Registration.Email" /></td>
-								<td class="header"><bean:message key="viewProjectDetails.box.Registration.Reliability" /></td>
-								<td class="header"><bean:message key="viewProjectDetails.box.Registration.Rating" /></td>
-								<td class="headerC"><bean:message key="viewProjectDetails.box.Registration.RegistrationDate" /></td>
-							</tr>
-							<c:forEach items="${group.additionalInfo}" var="resource" varStatus="resourceStatus">
-								<tr class='${(resourceStatus.index % 2 == 0) ? "light" : "dark"}'>
-									<td class="value" nowrap="nowrap"><tc-webtag:handle coderId='${resource.allProperties["External Reference ID"]}' context="component" /></td>
-									<td class="value">e-mail will go here</td>
-									<c:set var="reliability" value='${resource.allProperties["Reliability"]}' />
-									<c:if test="${empty reliability}">
-										<td class="value" nowrap="nowrap"><bean:message key="NotAvailable" /></td>
-									</c:if>
-									<c:if test="${!(empty reliability)}">
-										<td class="value" nowrap="nowrap">${reliability}%</td>
-									</c:if>
-									<c:set var="rating" value='${resource.allProperties["Rating"]}' />
-									<c:choose>
-										<c:when test="${empty rating}">
-											<c:set var="ratingColor" value="coderTextBlack" />
-										</c:when>
-<%--										<c:when test="${rating == 0}">
-											<c:set var="ratingColor" value="coderTextBlack" />
-										</c:when>
-										<c:when test="${(rating > 0) && (rating < 900)}">
-											<c:set var="ratingColor" value="coderTextGray" />
-										</c:when>
-										<c:when test="${(rating >= 900) && (rating < 1200)}">
-											<c:set var="ratingColor" value="coderTextGreen" />
-										</c:when>
-										<c:when test="${(rating >= 1200) && (rating < 1500)}">
-											<c:set var="ratingColor" value="coderTextBlue" />
-										</c:when>
-										<c:when test="${(rating >= 1500) && (rating < 2200)}">
-											<c:set var="ratingColor" value="coderTextYellow" />
-										</c:when>
-										<c:when test="${rating >= 2200}">
-											<c:set var="ratingColor" value="coderTextRed" />
-										</c:when> --%>
-									</c:choose>
-									<c:if test="${empty rating}">
-										<td class="value" nowrap="nowrap"><bean:message key="NotRated" /></td>
-									</c:if>
-									<c:if test="${!(empty rating)}">
-										<td class="value" nowrap="nowrap"><span class="${ratingColor}">${rating}</span></td>
-									</c:if>
-									<td class="valueC" nowrap="nowrap">${resource.allProperties["Registration Date"]}</td>
+				<c:if test="${group.phaseOpen != true}">
+					<table class="scorecard" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;">
+						<tr>
+							<td class="title" colspan="5">${group.name}</td>
+						</tr>
+						<tr class="light">
+							<td class="valueC" nowrap="nowrap"><bean:message key="viewProjectDetails.Tabs.PhaseNotOpen" /></td>
+						</tr>
+						<tr>
+							<td class="lastRowTD"><!-- @ --></td>
+						</tr>
+					</table>
+				</c:if>
+				<c:if test="${group.phaseOpen == true}">
+					<c:choose>
+						<c:when test='${group.appFunc == "VIEW_REGISTRANTS"}'>
+							<table class="scorecard" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;">
+								<tr>
+									<td class="title" colspan="5">${group.name}</td>
 								</tr>
-							</c:forEach>
-							<tr>
-								<td class="lastRowTD" colspan="5"><!-- @ --></td>
-							</tr>
-						</table>
-					</c:when>
-					<c:otherwise>
-						<table class="scorecard" style="border-collapse:collapse;" cellpadding="0" cellspacing="0" width="100%">
-							<tr>
-								<td class="title">${group.name}</td>
-							</tr>
-							<tr class="light">
-								<td class="valueC" nowrap="nowrap">The contents for this tab is not generated yet.<br />This functionality is to be implemented.</td>
-							</tr>
-							<tr>
-								<td class="lastRowTD"><!-- @ --></td>
-							</tr>
-						</table>
-					</c:otherwise>
-				</c:choose>
+								<tr>
+									<td class="header"><bean:message key="viewProjectDetails.box.Registration.Handle" /></td>
+									<td class="header"><bean:message key="viewProjectDetails.box.Registration.Email" /></td>
+									<td class="header"><bean:message key="viewProjectDetails.box.Registration.Reliability" /></td>
+									<td class="header"><bean:message key="viewProjectDetails.box.Registration.Rating" /></td>
+									<td class="headerC"><bean:message key="viewProjectDetails.box.Registration.RegistrationDate" /></td>
+								</tr>
+								<c:forEach items="${group.submitters}" var="resource" varStatus="resourceStatus">
+									<tr class='${(resourceStatus.index % 2 == 0) ? "light" : "dark"}'>
+										<td class="value" nowrap="nowrap"><tc-webtag:handle coderId='${resource.allProperties["External Reference ID"]}' context="component" /></td>
+										<td class="value">e-mail will go here</td>
+										<c:set var="reliability" value='${resource.allProperties["Reliability"]}' />
+										<c:if test="${empty reliability}">
+											<td class="value" nowrap="nowrap"><bean:message key="NotAvailable" /></td>
+										</c:if>
+										<c:if test="${!(empty reliability)}">
+											<td class="value" nowrap="nowrap">${reliability}%</td>
+										</c:if>
+										<c:set var="rating" value='${resource.allProperties["Rating"]}' />
+										<c:choose>
+											<c:when test="${empty rating}">
+												<c:set var="ratingColor" value="coderTextBlack" />
+											</c:when>
+										</c:choose>
+										<c:if test="${empty rating}">
+											<td class="value" nowrap="nowrap"><bean:message key="NotRated" /></td>
+										</c:if>
+										<c:if test="${!(empty rating)}">
+											<td class="value" nowrap="nowrap"><span class="${ratingColor}">${rating}</span></td>
+										</c:if>
+										<td class="valueC" nowrap="nowrap">${resource.allProperties["Registration Date"]}</td>
+									</tr>
+								</c:forEach>
+								<tr>
+									<td class="lastRowTD" colspan="5"><!-- @ --></td>
+								</tr>
+							</table>
+						</c:when>
+						<c:when test='${group.appFunc == "VIEW_SUBMISSIONS"}'>
+							<table class="scorecard" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;">
+								<tr>
+									<td class="title" colspan="7">${group.name}</td>
+								</tr>
+								<tr>
+									<td class="header" colspan="2" nowrap="nowrap"><bean:message key="viewProjectDetails.box.Submission.ID" /></td>
+									<td class="header" width="22%" nowrap="nowrap"><bean:message key="viewProjectDetails.box.Submission.Date" /></td>
+									<td class="headerC" width="14%" nowrap="nowrap"><bean:message key="viewProjectDetails.box.Submission.AutoScreening" /></td>
+									<td class="header" width="15%" nowrap="nowrap"><bean:message key="viewProjectDetails.box.Submission.Screener" /></td>
+									<td class="headerC" width="14%" nowrap="nowrap"><bean:message key="viewProjectDetails.box.Submission.ScreeningScore" /></td>
+									<td class="headerC" width="15%" nowrap="nowrap"><bean:message key="viewProjectDetails.box.Submission.ScreeningResult" /></td>
+								</tr>
+								<c:forEach items="${group.submissions}" var="submission" varStatus="submissionStatus">
+									<tr class='${(submissionStatus.index % 2 == 0) ? "light" : "dark"}'>
+										<td class="value" width="10%" nowrap="nowrap">
+<%--											<img id="Out1" class="Outline" border="0" src="../i/plus.gif" width="9" height="9" style="margin-right:5px;" title="View Previous Submissions"> --%>
+<%--											<img border="0" src="../i/icon_gold.gif" class="Outline" alt="Winner"> --%>
+												<html:link page="/actions/DownloadSubmission.do?method=downloadSubmission&uid=${submission.upload.id}" titleKey="viewProjectDetails.box.Submission.Download">${submission.id}</html:link>
+												<c:forEach items="${group.submitters}" var="submitter">
+													<c:if test="${submitter.id == submission.upload.owner}">
+														(<tc-webtag:handle coderId='${submitter.allProperties["External Reference ID"]}' context="component" />)
+													</c:if>
+												</c:forEach>
+										</td>
+										<c:if test="${isManager == true}">
+											<td class="value" width="5%"><html:link page="/actions/DeleteSubmission.do?method=deleteSubmission&uid=${submission.upload.id}"><html:img srcKey="viewProjectDetails.box.Submission.icoTrash.img" altKey="viewProjectDetails.box.Submission.icoTrash.alt" border="0" styleClass="Outline" /></html:link></td>
+										</c:if>
+										<c:if test="${isManager != true}">
+											<td class="value"><!-- @ --></td>
+										</c:if>
+										<td class="value" width="22%">${submission.modificationTimestamp}</td>
+										<c:set var="scrTask" value="${group.screeningTasks[submissionStatus.index]}" />
+										<c:if test="${empty scrTask}">
+											<td class="valueC" width="14%"><img src="../i/clear.gif" width="8" height="10" /></td>
+										</c:if>
+										<c:if test="${!(empty scrTask)}">
+											<c:set var="scrTaskStatus" value="${scrTask.screeningStatus.name}" />
+											<c:choose>
+												<c:when test='${scrTaskStatus == "Passed"}'>
+													<td class="valueC" width="14%">
+														<html:link page="/actions/ViewAutoScreening.do?method=viewAutoScreening&uid=${submission.upload.id}"><html:img
+															srcKey="viewProjectDetails.box.Submission.icoPassed.img"
+															altKey="viewProjectDetails.box.Submission.icoPassed.alt" /></html:link></td>
+												</c:when>
+												<c:when test='${scrTaskStatus == "Passed with Warning"}'>
+													<td class="valueC" width="14%">
+														<html:link page="/actions/ViewAutoScreening.do?method=viewAutoScreening&uid=${submission.upload.id}"><html:img
+															srcKey="viewProjectDetails.box.Submission.icoPassedWW.img"
+															altKey="viewProjectDetails.box.Submission.icoPassedWW.alt" /></html:link></td>
+												</c:when>
+												<c:when test='${scrTaskStatus == "Failed"}'>
+													<td class="valueC" width="14%">
+														<html:link page="/actions/ViewAutoScreening.do?method=viewAutoScreening&uid=${submission.upload.id}"><html:img
+															srcKey="viewProjectDetails.box.Submission.icoFailed.img"
+															altKey="viewProjectDetails.box.Submission.icoFailed.alt" /></html:link></td>
+												</c:when>
+												<c:otherwise>
+													<td class="valueC" width="14%"><img src="../i/clear.gif" width="8" height="10" /></td>
+												</c:otherwise>
+											</c:choose>
+										</c:if>
+										<c:set var="screener" value="" />
+										<c:forEach items="${group.reviewers}" var="reviewer">
+											<c:if test="${!(empty reviewer.submission) && (reviewer.submission == submission.id)}">
+												<c:set var="screener" value="${curScreener}" />
+											</c:if>
+										</c:forEach>
+										<c:if test="${empty screener}">
+											<td class="value" width="15%">not assigned</td>
+										</c:if>
+										<c:if test="${!(empty screener)}">
+											<td class="value" width="15%"><tc-webtag:handle coderId='${screener.allProperties["External Reference ID"]}' context="component" /></td>
+										</c:if>
+										<c:set var="review" value="" />
+										<c:forEach items="${group.screenings}" var="screening">
+											<c:if test="${screening.submission == submission.id}">
+												<c:set var="review" value="${screening}" />
+											</c:if>
+										</c:forEach>
+										<c:if test="${empty review}">
+											<c:if test="${isAllowedToPerformScreening == true}">
+												<td class="valueC" width="14%" nowrap="nowrap">
+													<b><html:link page="/actions/CreateScreening.do?method=createScreening&sid=${submission.id}"><bean:message
+														key="viewProjectDetails.box.Screening.Submit" /></html:link></b></td>
+											</c:if>
+											<c:if test="${isAllowedToPerformScreening != true}">
+												<td class="valueC" width="14%"><bean:message key="Pending" /></td>
+											</c:if>
+											<td class="valueC" width="15%"><bean:message key="NotAvailable" /></td>
+										</c:if>
+										<c:if test="${!(empty review)}">
+											<c:if test="${review.committed == true}">
+												<c:if test="${isAllowedToViewScreening == true}">
+													<td class="valueC" width="14%">
+														<html:link page="/actions/ViewScreening.do?method=viewScreening&rid=${review.id}">${review.score}</html:link></td>
+												</c:if>
+												<c:if test="${isAllowedToViewScreening != true}">
+													<td class="valueC" width="14%">${review.score}</td>
+												</c:if>
+												<c:if test="${review.score >= passingMinimum}">
+													<td class="valueC" width="15%"><bean:message key="viewProjectDetails.box.Screening.Passed" /></td>
+												</c:if>
+												<c:if test="${review.score < passingMinimum}">
+													<td class="valueC" width="15%"><bean:message key="viewProjectDetails.box.Screening.Failed" /></td>
+												</c:if>
+											</c:if>
+											<c:if test="${review.committed != true}">
+												<c:if test="${isAllowedToPerformScreening == true}">
+													<td class="valueC" width="14%" nowrap="nowrap">
+														<b><html:link page="/actions/EditScreening.do?method=editScreening&rid=${review.id}"><bean:message
+															key="viewProjectDetails.box.Screening.Submit" /></html:link></b></td>
+												</c:if>
+												<c:if test="${isAllowedToPerformScreening != true}">
+													<td class="valueC" width="14%"><bean:message key="Pending" /></td>
+												</c:if>
+												<td class="valueC" width="15%"><bean:message key="NotAvailable" /></td>
+											</c:if>
+										</c:if>
+									</tr>
+								</c:forEach>
+								<tr>
+									<td class="lastRowTD" colspan="7"><!-- @ --></td>
+								</tr>
+							</table>
+						</c:when>
+						<c:when test='${group.appFunc == "VIEW_REVIEWS"}'>
+							<table class="scorecard" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;">
+								<c:set var="colSpan" value="${(fn:length(group.reviewers) * 2) + 3}" />
+								<c:if test="${isAllowedToEditHisReviews != true}">
+									<c:set var="colSpan" value="${colSpan + 1}" />
+								</c:if>
+								<tr>
+									<td class="title" colspan="${colSpan}">${group.name}</td>
+								</tr>
+								<tr>
+									<td class="value" colspan="${(isAllowedToEditHisReviews == true) ? 3 : 4}"><!-- @ --></td>
+									<c:forEach items="${group.reviewers}" var="reviewer">
+										<td class="valueC" colspan="2" nowrap="nowrap">
+											<b><bean:message key='ResourceRole.${fn:replace(reviewer.resourceRole.name, " ", "")}' />:</b>
+											<tc-webtag:handle coderId='${reviewer.allProperties["External Reference ID"]}' context="component" />
+											<c:set var="testCase" value="" />
+											<c:forEach items="${group.testCases}" var="curTestCase">
+												<c:if test="${curTestCase.owner == reviewer.id}">
+													<c:set var="testCase" value="${curTestCase}" />
+												</c:if>
+											</c:forEach>
+											<c:if test="${!(empty testCase)}">
+												<html:link page="/actions/DownloadTestCase.do?method=downloadTestCase&uid=${testCase.id}"
+													titleKey="viewProjectDetails.box.Review.TestCase.hint"><bean:message
+														key="viewProjectDetails.box.Review.TestCase" /></html:link>
+												<c:if test="${isAllowedToUploadTC == true}">
+													[
+													<html:link page="/actions/UploadTestCase.do?method=uploadTestCase&pid=${project.id}"
+														titleKey="viewProjectDetails.box.Review.TestCase.Update.hint"><bean:message
+															key="viewProjectDetails.box.Review.TestCase.Update" /></html:link>
+													]
+												</c:if>
+											</c:if>
+											<c:if test="${(empty testCase) && (isAllowedToUploadTC == true)}">
+												<html:link page="/actions/UploadTestCase.do?method=uploadTestCase&pid=${project.id}"
+													titleKey="viewProjectDetails.box.Review.TestCase.Upload.hint"><bean:message
+														key="viewProjectDetails.box.Review.TestCase.Upload" /></html:link>
+											</c:if>
+										</td>
+									</c:forEach>
+								</tr>
+								<tr>
+									<td class="header" nowrap="nowrap"><bean:message key="viewProjectDetails.box.Submission.ID" /></td>
+									<td class="headerC" width="4%" nowrap="nowrap"><bean:message key="viewProjectDetails.box.Review.Status" /></td>
+									<td class="headerC" width="7%"><bean:message key="viewProjectDetails.box.Review.Date" /></td>
+									<c:if test="${isAllowedToEditHisReviews != true}">
+										<td class="headerC" width="12%"><bean:message key="viewProjectDetails.box.Review.Score" /></td>
+									</c:if>
+									<c:forEach items="${group.reviewers}" var="reviewer">
+										<td class="headerC" width="8%"><bean:message key="viewProjectDetails.box.Review.Score.short" /></td>
+										<td class="headerC" width="12%"><bean:message key="viewProjectDetails.box.Review.Appeals" /></td>
+									</c:forEach>
+								</tr>
+								<c:forEach items="${group.submissions}" var="submission" varStatus="submissionStatus">
+									<tr class='${(submissionStatus.index % 2 == 0) ? "light" : "dark"}'>
+										<c:set var="submitter" value="" />
+										<c:forEach items="${group.submitters}" var="curSubmitter">
+											<c:if test="${curSubmitter.id == submission.upload.owner}">
+												<c:set var="submitter" value="${curSubmitter}" />
+											</c:if>
+										</c:forEach>
+										<td class="value" nowrap="nowrap">
+											<c:set var="placement" value="" />
+											<c:if test="${!(empty submitter)}">
+												<c:set var="placement" value='${submitter.allProperties["Placement"]}' />
+											</c:if>
+											<c:if test="${!(empty placement)}">
+												<c:choose>
+													<c:when test="${placement == 1}">
+														<html:img srcKey="viewProjectDetails.Submitter.icoWinner.img" altKey="viewProjectDetails.Submitter.icoWinner.alt" styleClass="Outline" border="0" />
+													</c:when>
+													<c:when test="${placement == 2}">
+														<html:img srcKey="viewProjectDetails.Submitter.icoRunnerUp.img" altKey="viewProjectDetails.Submitter.icoRunnerUp.alt" styleClass="Outline" border="0" />
+													</c:when>
+													<c:otherwise>
+														<html:img srcKey="viewProjectDetails.Submitter.icoOther.img" alt="${placement} Place" styleClass="Outline" border="0" />
+													</c:otherwise>
+												</c:choose>
+											</c:if>
+											<html:link page="/actions/DownloadSubmission.do?method=downloadSubmission&uid=${submission.upload.id}"
+												titleKey="viewProjectDetails.box.Submission.Download">${submission.id}</html:link>
+											<c:if test="${!(empty submitter)}">
+												(<tc-webtag:handle coderId='${submitter.allProperties["External Reference ID"]}' context="component" />)
+											</c:if>
+										</td>
+										<td class="valueC" width="4%">
+											<img border="0" src="../i/clear.gif" class="Outline" width="10" height="8" /></td>
+										<td class="valueC" width="7%">${group.reviewDates[submissionStatus.index]}</td>
+										<c:if test="${isAllowedToEditHisReviews != true}">
+											<c:if test="${!(empty submitter)}">
+												<td class="valueC" width="12%"><html:link page="/actions/ViewCompositeScorecard.do?method=viewCompositeScorecard&sid=${submission.id}">${submitter.allProperties["Final Score"]}</html:link></td>
+											</c:if>
+											<c:if test="${empty submitter}">
+												<td class="valueC" width="12%"><bean:message key="Incomplete" /></td>
+											</c:if>
+										</c:if>
+										<c:forEach items="${group.reviews[submissionStatus.index]}" var="review">
+											<c:if test="${empty review}">
+												<c:if test="${isAllowedToEditHisReviews == true}">
+													<td class="valueC" width="8%"><html:link page="/actions/CreateReview.do?method=createReview&sid=${submission.id}"><bean:message key="viewProjectDetails.box.Review.Submit" /></html:link></td>
+												</c:if>
+												<c:if test="${isAllowedToEditHisReviews != true}">
+													<td class="valueC" width="8%"><bean:message key="Pending" /></td>
+												</c:if>
+											</c:if>
+											<c:if test="${!(empty review)}">
+												<c:if test="${review.committed == true}">
+													<td class="valueC" width="8%"><html:link page="/actions/ViewReview.do?method=viewReview&rid=${review.id}">${review.score}</html:link></td>
+												</c:if>
+												<c:if test="${review.committed != true}">
+													<c:if test="${isAllowedToEditHisReviews == true}">
+														<td class="valueC" width="8%"><html:link page="/actions/EditReview.do?method=editReview&rid=${review.id}"><bean:message key="viewProjectDetails.box.Review.Submit" /></html:link></td>
+													</c:if>
+													<c:if test="${isAllowedToEditHisReviews != true}">
+													<td class="valueC" width="8%"><bean:message key="Pending" /></td>
+													</c:if>
+												</c:if>
+											</c:if>
+											<td class="valueC" width="12%" nowrap="nowrap">[
+												<html:link page="/actions/ViewReview.do?method=viewReview&rid=${review.id}">x</html:link> /
+												<html:link page="/actions/ViewReview.do?method=viewReview&rid=${review.id}">y</html:link>
+												]</td>
+										</c:forEach>
+									</tr>
+								</c:forEach>
+								<tr>
+									<td class="lastRowTD" colspan="${colSpan}"><!-- @ --></td>
+								</tr>
+							</table>
+						</c:when>
+						<c:when test='${group.appFunc == "AGGREGATION"}'>
+							<table class="scorecard" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;">
+								<tr>
+									<td class="title" colspan="5">${group.name}</td>
+								</tr>
+								<tr>
+									<td class="header" nowrap="nowrap"><bean:message key="viewProjectDetails.box.Submission.ID" /></td>
+									<td class="headerC" nowrap="nowrap"><bean:message key="viewProjectDetails.box.Aggregation.Date" /></td>
+									<td class="headerC" nowrap="nowrap"><bean:message key="viewProjectDetails.box.Aggregation.Aggregation" /></td>
+									<td class="headerC" nowrap="nowrap"><bean:message key="viewProjectDetails.box.AggregationReview.Date" /></td>
+									<td class="headerC" nowrap="nowrap"><bean:message key="viewProjectDetails.box.AggregationReview.Review" /></td>
+								</tr>
+								<c:set var="winningSubmission" value="" />
+								<c:forEach items="${group.submissions}" var="submission">
+									<c:if test="${!(empty group.winner) && (group.winner.id == submission.upload.owner)}">
+										<c:set var="winningSubmission" value="${submission}" />
+									</c:if>
+								</c:forEach>
+								<c:if test="${!(empty winningSubmission)}">
+									<tr class="light">
+										<td class="value" nowrap="nowrap">
+											<html:img srcKey="viewProjectDetails.Submitter.icoWinner.img" altKey="viewProjectDetails.Submitter.icoWinner.alt" border="0" styleClass="Outline" />
+											<html:link page="/actions/DownloadSubmission.do?method=downloadSubmission&uid=${winningSubmission.upload.id}"
+												titleKey="viewProjectDetails.box.Submission.Download">${winningSubmission.upload.id}</html:link>
+											(<tc-webtag:handle coderId='${group.winner.allProperties["External Reference ID"]}' context="component" />)
+										</td>
+										<c:if test="${!(empty group.aggregation)}">
+											<c:if test="${group.aggregation.committed == true}">
+												<td class="valueC">${group.aggregation.modificationTimestamp}</td>
+												<td class="valueC" nowrap="nowrap">
+													<html:link page="/actions/ViewAggregation.do?method=viewAggregation&rid=${group.aggregation.id}"><bean:message
+														key="viewProjectDetails.box.Aggregation.ViewResults" /></html:link></td>
+											</c:if>
+											<c:if test="${group.aggregation.committed != true}">
+												<td class="value"><!-- @ --></td>
+												<c:if test="${isAllowedToPerformAggregation == true}">
+													<td class="valueC" nowrap="nowrap">
+														<html:link page="/actions/EditAggregation.do?method=editAggregation&rid=${group.aggregation.id}"><bean:message
+															key="viewProjectDetails.box.Aggregation.Submit" /></html:link></td>
+												</c:if>
+												<c:if test="${isAllowedToPerformAggregation != true}">
+													<td class="valueC" nowrap="nowrap"><bean:message key="Pending" /></td>
+												</c:if>
+											</c:if>
+											<c:if test="${group.aggregationReviewCommitted == true}">
+												<td class="valueC">${group.aggregation.modificationTimestamp}</td>
+												<td class="valueC" nowrap="nowrap">
+													<html:link page="/actions/ViewAggregationReview.do?method=viewAggregationReview&rid=${group.aggregation.id}"><bean:message
+														key="viewProjectDetails.box.Aggregation.ViewResults" /></html:link></td>
+											</c:if>
+											<c:if test="${group.aggregationReviewCommitted != true}">
+												<td class="value"><!-- @ --></td>
+												<c:if test="${isAllowedToPerformAggregationReview == true}">
+													<td class="valueC" nowrap="nowrap">
+														<html:link page="/actions/EditAggregationReview.do?method=editAggregationReview&rid=${group.aggregation.id}"><bean:message
+															key="viewProjectDetails.box.AggregationReview.Submit" /></html:link></td>
+												</c:if>
+												<c:if test="${isAllowedToPerformAggregationReview != true}">
+													<td class="valueC" nowrap="nowrap"><bean:message key="Pending" /></td>
+												</c:if>
+											</c:if>
+										</c:if>
+										<c:if test="${empty group.aggregation}">
+											<td class="valueC"><!-- @ --></td>
+											<td class="valueC"><bean:message key="NotAvailable" /></td>
+											<td class="valueC"><!-- @ --></td>
+											<td class="valueC"><bean:message key="NotAvailable" /></td>
+										</c:if>
+									</tr>
+								</c:if>
+								<tr>
+									<td class="lastRowTD" colspan="5"><!-- @ --></td>
+								</tr>
+							</table>
+						</c:when>
+						<c:when test='${group.appFunc == "FINAL_FIX"}'>
+							<table class="scorecard" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;">
+								<tr>
+									<td class="title" colspan="5">${group.name}</td>
+								</tr>
+								<tr>
+									<td class="header" nowrap="nowrap"><bean:message key="viewProjectDetails.box.Submission.ID" /></td>
+									<td class="headerC" nowrap="nowrap"><bean:message key="viewProjectDetails.box.FinalFix.Date" /></td>
+									<td class="headerC" nowrap="nowrap"><bean:message key="viewProjectDetails.box.FinalFix.Fix" /></td>
+									<td class="headerC" nowrap="nowrap"><bean:message key="viewProjectDetails.box.FinalReview.Date" /></td>
+									<td class="headerC" nowrap="nowrap"><bean:message key="viewProjectDetails.box.FinalReview.Review" /></td>
+								</tr>
+								<c:set var="winningSubmission" value="" />
+								<c:forEach items="${group.submissions}" var="submission">
+									<c:if test="${!(empty group.winner) && (group.winner.id == submission.upload.owner)}">
+										<c:set var="winningSubmission" value="${submission}" />
+									</c:if>
+								</c:forEach>
+								<c:if test="${!(empty winningSubmission)}">
+									<tr class="light">
+										<td class="value" nowrap="nowrap">
+											<html:img srcKey="viewProjectDetails.Submitter.icoWinner.img" altKey="viewProjectDetails.Submitter.icoWinner.alt" border="0" styleClass="Outline" />
+											<html:link page="/actions/DownloadSubmission.do?method=downloadSubmission&uid=${winningSubmission.upload.id}"
+												titleKey="viewProjectDetails.box.Submission.Download">${winningSubmission.upload.id}</html:link>
+											(<tc-webtag:handle coderId='${group.winner.allProperties["External Reference ID"]}' context="component" />)
+										</td>
+										<c:if test="${!(empty group.finalFix)}">
+											<td class="valueC" nowrap="nowrap">${group.finalFix.modificationTimestamp}</td>
+											<td class="valueC" nowrap="nowrap">
+												<html:link page="/actions/DownloadFinalFix.do?method=downloadFinalFix&uid=${group.finalFix.id}"
+													titleKey="viewProjectDetails.box.FinalFix.Download.alt"><bean:message
+													key="viewProjectDetails.box.FinalFix.Download" /></html:link>
+												<c:if test="${isAllowedToUploadFF == true}">
+													[
+													<html:link page="/actions/UploadFinalFix.do?method=uploadFinalFix&pid=${project.id}"
+														titleKey="viewProjectDetails.box.FinalFix.Update.alt"><bean:message
+														key="viewProjectDetails.box.FinalFix.Update" /></html:link>
+													]
+												</c:if>
+											</td>
+										</c:if>
+										<c:if test="${empty group.finalFix}">
+											<td class="value"><!-- @ --></td>
+											<c:if test="${isAllowedToUploadFF == true}">
+												<td class="valueC" nowrap="nowrap">
+													<html:link page="/actions/UploadFinalFix.do?method=uploadFinalFix&pid=${project.id}"><bean:message
+														key="viewProjectDetails.box.FinalFix.Upload" /></html:link></td>
+											</c:if>
+											<c:if test="${isAllowedToUploadFF != true}">
+												<td class="valueC"><bean:message key="Incomplete" /></td>
+											</c:if>
+										</c:if>
+										<c:if test="${!(empty group.finalReview)}">
+											<c:if test="${group.finalReview.committed == true}">
+												<td class="valueC" nowrap="nowrap">${group.finalReview.modificationTimestamp}</td>
+												<td class="valueC" nowrap="nowrap">
+													<html:link page="/actions/ViewFinalReview.do?method=viewFinalReview&rid=${group.finalReview.id}"><bean:message
+														key="viewProjectDetails.box.FinalReview.ViewResults" /></html:link></td>
+											</c:if>
+											<c:if test="${group.finalReview.committed != true}">
+												<td class="value"><!-- @ --></td>
+												<c:if test="${isAllowedToPerformFinalReview == true}">
+													<td class="valueC" nowrap="nowrap">
+														<html:link page="/actions/EditFinalReview.do?method=editFinalReview&rid=${group.finalReview.id}"><bean:message
+															key="viewProjectDetails.box.FinalReview.Submit" /></html:link></td>
+												</c:if>
+												<c:if test="${isAllowedToPerformFinalReview != true}">
+													<td class="valueC" nowrap="nowrap"><bean:message key="Pending" /></td>
+												</c:if>
+											</c:if>
+										</c:if>
+										<c:if test="${empty group.finalReview}">
+											<td class="value"><!-- @ --></td>
+											<td class="valueC" nowrap="nowrap"><bean:message key="NotAvailable" /></td>
+										</c:if>
+									</tr>
+								</c:if>
+								<tr>
+									<td class="lastRowTD" colspan="5"><!-- @ --></td>
+								</tr>
+							</table>
+						</c:when>
+						<c:when test='${group.appFunc == "APPROVAL"}'>
+							<table class="scorecard" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;">
+								<tr>
+									<td class="title" colspan="3">${group.name}</td>
+								</tr>
+								<tr>
+									<td class="header" nowrap="nowrap"><bean:message key="viewProjectDetails.box.Submission.ID" /></td>
+									<td class="headerC" nowrap="nowrap"><bean:message key="viewProjectDetails.box.Approval.Date" /></td>
+									<td class="headerC" nowrap="nowrap"><bean:message key="viewProjectDetails.box.Approval.Approval" /></td>
+								</tr>
+								<c:set var="winningSubmission" value="" />
+								<c:forEach items="${group.submissions}" var="submission">
+									<c:if test="${!(empty group.winner) && (group.winner.id == submission.upload.owner)}">
+										<c:set var="winningSubmission" value="${submission}" />
+									</c:if>
+								</c:forEach>
+								<c:if test="${!(empty winningSubmission)}">
+									<tr class="light">
+										<td class="value" nowrap="nowrap">
+											<html:img srcKey="viewProjectDetails.Submitter.icoWinner.img" altKey="viewProjectDetails.Submitter.icoWinner.alt" border="0" styleClass="Outline" />
+											<html:link page="/actions/DownloadSubmission.do?method=downloadSubmission&uid=${winningSubmission.upload.id}"
+												titleKey="viewProjectDetails.box.Submission.Download">${winningSubmission.upload.id}</html:link>
+											(<tc-webtag:handle coderId='${group.winner.allProperties["External Reference ID"]}' context="component" />)
+										</td>
+										<c:if test="${!(empty group.approval)}">
+											<c:if test="${group.approval.committed == true}">
+												<td class="valueC" nowrap="nowrap">${group.approval.modificationTimestamp}</td>
+												<td class="valueC" nowrap="nowrap">
+													<html:link page="/actions/ViewApproval.do?method=viewApproval&rid=${group.approval.id}"><bean:message
+														key="viewProjectDetails.box.Approval.ViewResults" /></html:link></td>
+											</c:if>
+											<c:if test="${group.approval.committed != true}">
+												<td class="value"><!-- @ --></td>
+												<c:if test="${isAllowedToPerformApproval == true}">
+													<td class="valueC" nowrap="nowrap">
+														<html:link page="/actions/EditApproval.do?method=editApproval&rid=${group.approval.id}"><bean:message
+															key="viewProjectDetails.box.Approval.Submit" /></html:link></td>
+												</c:if>
+												<c:if test="${isAllowedToPerformApproval != true}">
+													<td class="valueC" nowrap="nowrap"><bean:message key="Pending" /></td>
+												</c:if>
+											</c:if>
+										</c:if>
+										<c:if test="${empty group.finalReview}">
+											<td class="value"><!-- @ --></td>
+											<c:if test="${isAllowedToPerformApproval == true}">
+												<td class="valueC" nowrap="nowrap">
+													<html:link page="/actions/CreateApproval.do?method=createApproval&sid=${winningSubmission.id}"><bean:message
+														key="viewProjectDetails.box.Approval.Submit" /></html:link></td>
+											</c:if>
+											<c:if test="${isAllowedToPerformApproval != true}">
+												<td class="valueC" nowrap="nowrap"><bean:message key="Pending" /></td>
+											</c:if>
+										</c:if>
+									</tr>
+								</c:if>
+								<tr>
+									<td class="lastRowTD" colspan="3"><!-- @ --></td>
+								</tr>
+							</table>
+						</c:when>
+					</c:choose>
+				</c:if>
 			</div>
 		</c:forEach>
 	</div><br />
-
-
-
-<%--
-							<table class="scorecard" style="border-collapse: collapse;"cellpadding="0" cellspacing="0" width="100%">
-								<tr>
-									<td class="title" colspan="5">Registrants</td>
-								</tr>
-								<tr>
-									<td class="header">Handle</td>
-									<td class="header">Email</td>
-									<td class="header">Reliability</td>
-									<td class="header">Rating</td>
-									<td class="headerC">Registration Date</td>
-								</tr>
-								<tr class="light">
-									<td class="value" nowrap><a href="#" class="coderTextYellow">henryouly</a></td>
-									<td class="value"><a href="mailto:henryouly@email.com">henryouly@email.com</a></td>
-									<td class="value" nowrap>83%</td>
-									<td class="value" nowrap><span class="coderTextYellow">1532</span></td>
-									<td class="valueC" nowrap>00.00.00 00:00 AM</td>
-								</tr>
-								<tr class="dark">
-									<td class="value"><a href="#" class="coderTextBlack">Tavo</a></td>
-									<td class="value"><a href="mailto:Tavo@email.com">Tavo@email.com</a></td>
-									<td class="value" nowrap>N/A</td>
-									<td class="value" nowrap><span class="coderTextBlack">Not Rated</td>
-									<td class="valueC" nowrap>00.00.00 00:00 AM</td>
-								</tr>
-								<tr class="light">
-									<td class="value" nowrap><a href="#" class="coderTextYellow">mayi</a></td>
-									<td class="value" nowrap><a href="mailto:mayi@yahoo.com">mayi@yahoo.com</a></td>
-									<td class="value" nowrap>80%</td>
-									<td class="value" nowrap><span class="coderTextYellow">1599</span></td>
-									<td class="valueC" nowrap>00.00.00 00:00 AM</td>
-								</tr>
-								<tr>
-									<td class="lastRowTD" colspan="5"></td>
-								</tr>
-							</table>
-			</div>
-		</c:forEach>
-	</div>
-<%
-    //                        0  1  2  3  4  5  6  7  8  9  10
-	int[] phases = new int[] {0, 1, 2, 3, 3, 4, 5, 5, 6, 7, 7};
-	int phaseIndex = ((Integer)request.getAttribute("phaseIndex")).intValue();
-	phaseIndex = phases[phaseIndex];
-	String role = (String) request.getAttribute("role");
-%>
-					<a name="tabs"></a>
-					<div id="tabcontentcontainer">
-						<!-- REGISTRATION TAB -->
-						<div id="sc1" class="tabcontent">
-							<ul id="tablist">
-								<li id="current"><a href="#tabs" onClick="return expandcontent('sc1', this)">Registration</a></li>
-								<li><a href="#tabs" onClick="return expandcontent('sc2', this)">Submission/Screening</a></li>
-								<li><a href="#tabs" onClick="return expandcontent('sc3', this)">Review/Appeals</a></li>
-								<%if (phaseIndex == 7) {%> <li><a href="#tabs" onClick="return expandcontent('sc7', this)">Approval</a></li>  <% } %>
-								<li><a href="#tabs" onClick="return expandcontent('sc4', this)">Aggregation/Review</a></li>
-								<li><a href="#tabs" onClick="return expandcontent('sc5', this)">Final Fix/Review</a></li>
-								<li><a href="#tabs" onClick="return expandcontent('sc6', this)">Approval<%if (phaseIndex == 7) {%> 2<% } %></a></li>
-							</ul>
-							<div style="clear:both;"></div>
-<%if (phaseIndex == 1) {%>
-							<table class="scorecard" style="border-collapse: collapse;"cellpadding="0" cellspacing="0" width="100%">
-								<tr>
-									<td class="title" colspan="5">Registrants</td>
-								</tr>
-								<tr>
-									<td class="header">Handle</td>
-									<td class="header">Email</td>
-									<td class="header">Reliability</td>
-									<td class="header">Rating</td>
-									<td class="headerC">Registration Date</td>
-								</tr>
-								<tr class="light">
-									<td class="value" nowrap><a href="#" class="coderTextYellow">henryouly</a></td>
-									<td class="value"><a href="mailto:henryouly@email.com">henryouly@email.com</a></td>
-									<td class="value" nowrap>83%</td>
-									<td class="value" nowrap><span class="coderTextYellow">1532</span></td>
-									<td class="valueC" nowrap>00.00.00 00:00 AM</td>
-								</tr>
-								<tr class="dark">
-									<td class="value"><a href="#" class="coderTextBlack">Tavo</a></td>
-									<td class="value"><a href="mailto:Tavo@email.com">Tavo@email.com</a></td>
-									<td class="value" nowrap>N/A</td>
-									<td class="value" nowrap><span class="coderTextBlack">Not Rated</td>
-									<td class="valueC" nowrap>00.00.00 00:00 AM</td>
-								</tr>
-								<tr class="light">
-									<td class="value" nowrap><a href="#" class="coderTextYellow">mayi</a></td>
-									<td class="value" nowrap><a href="mailto:mayi@yahoo.com">mayi@yahoo.com</a></td>
-									<td class="value" nowrap>80%</td>
-									<td class="value" nowrap><span class="coderTextYellow">1599</span></td>
-									<td class="valueC" nowrap>00.00.00 00:00 AM</td>
-								</tr>
-								<tr>
-									<td class="lastRowTD" colspan="5"></td>
-								</tr>
-							</table>
-<%}%>
-						</div>
-
-						<!-- SUBMISSION/SCREENING TAB -->
-						<div id="sc2" class="tabcontent">
-							<ul id="tablist">
-								<li><a href="#tabs" onClick="return expandcontent('sc1', this)">Registration</a></li>
-								<li id="current"><a href="#tabs" onClick="return expandcontent('sc2', this)">Submission/Screening</a></li>
-								<li><a href="#tabs" onClick="return expandcontent('sc3', this)">Review/Appeals</a></li>
-								<%if (phaseIndex == 7) {%> <li><a href="#tabs" onClick="return expandcontent('sc7', this)">Approval</a></li>  <% } %>
-								<li><a href="#tabs" onClick="return expandcontent('sc4', this)">Aggregation/Review</a></li>
-								<li><a href="#tabs" onClick="return expandcontent('sc5', this)">Final Fix/Review</a></li>
-								<li><a href="#tabs" onClick="return expandcontent('sc6', this)">Approval<%if (phaseIndex == 7) {%> 2<% } %></a></li>
-							</ul>
-							<div style="clear:both;"></div>
-<%if (phaseIndex >=2) {%>
-							<table class="scorecard" style="border-collapse: collapse;"cellpadding="0" cellspacing="0" width="100%">
-								<tr>
-									<td class="title" colspan="7">Submission/Screening</td>
-								</tr>
-								<tr>
-									<td class="header" colspan="2"><b>Submission ID</b></td>
-									<td class="header" width="22%"><b>Submission Date</b></td>
-									<td class="headerC" nowrap width="14%"><b>Auto Screening</b></td>
-									<td class="headerC" nowrap width="15%" style="text-align: left"><b>Screener</b></td>
-									<td class="headerC" width="14%"><b>Screening Score</b></td>
-									<td class="headerC" width="15%"><b>Screening&nbsp; Result</b></td>
-								</tr>
-								<tr class="light">
-									<td class="value" nowrap width="10%" >
-										<img ID="Out1" CLASS="Outline" border="0" src="../i/plus.gif" width="9" height="9" style="margin-right:5px" title="View Previous Submissions">
-										<img border="0" src="../i/icon_gold.gif" class="Outline" alt="Winner">
-											<a href="#" title="Download Submission">11889718 </a>(<a href="#" class="coderTextYellow">henryouly</a>)
-									</td>
-									<td class="value" width="5%"><a href="#"><img border="0" src="../i/icon_trash.gif" class="Outline" width="10" height="10" alt="Remove this Submission"></a></td>
-									<td class="value" nowrap width="22%">00.00.0000 00:00 AM</td>
-									<td class="valueC" nowrap width="14%"><a target="_top" href="pc-manager-screening_results.jsp">
-										<img border="0" src="../i/icon_authorization.gif" class="Outline" alt="Passed" width="10" height="8"></a>
-									</td>
-									<td class="valueC" width="15%" style="text-align: left"><a href="#" class="coderTextRed">WishingBone</a></td>
-									<td class="valueC" width="14%"><a href="pc-manager-screening_results.jsp">98.34</a></td>
-									<td class="valueC" width="15%">Passed</td>
-								</tr>
-<%
-	if (role.equalsIgnoreCase("manager")) {
-%>
-								<tr class="dark">
-									<td class="value" nowrap width="10%">
-										<img ID="Out1" CLASS="Outline" border="0" src="../i/plus.gif" width="9" height="9" style="margin-right:5px" title="View Previous Submissions"><img border="0" src="../i/icon_bronze.gif" class="Outline" alt="3rd Place">
-										<a href="#" title="Download Submission">14818660 (Tavo)</a>
-									</td>
-									<td class="value" width="5%"><a href="#"><img border="0" src="../i/icon_trash.gif" class="Outline" width="10" height="10" alt="Remove this Submission"></a></td>
-									<td class="value" nowrap width="22%">00.00.0000 00:00 AM</td>
-									<td class="valueC" nowrap width="14%"><a target="_top" href="pc-manager-warnings.jsp">
-										<img border="0" src="../i/icon_authorization2.gif" alt="Passed with Warnings" width="10" height="8"></a>
-									</td>
-									<td class="valueC" width="15%" style="text-align: left"><a href="#" class="coderTextRed">WishingBone</a></td>
-									<td class="valueC" width="14%"><a href="pc-manager-screening_results.jsp">99.59</a></td>
-									<td class="valueC" width="15%">Passed</td>
-								</tr>
-								<tr class="light">
-									<td class="value" nowrap width="10%">
-										<img ID="Out1" CLASS="Outline" border="0" src="../i/plus.gif" width="9" height="9" style="margin-right:5px" title="View Previous Submissions"><img border="0" src="../i/icon_silver.gif" class="Outline" alt="2nd Place">
-										<a href="#" title="Download Submission">15655112 </a> (<a href="#" class="coderTextYellow">mayi</a>)
-									</td>
-									<td class="value" width="5%"><a href="#"><img border="0" src="../i/icon_trash.gif" class="Outline" width="10" height="10" alt="Remove this Submission"></a></td>
-									<td class="value" nowrap width="22%">00.00.0000 00:00 AM</td>
-									<td class="valueC" nowrap width="14%"><a target="_top" href="pc-manager-warnings.jsp">
-										<img border="0" src="../i/icon_authorization2.gif" alt="Passed with Warnings" width="10" height="8"></a>
-									</td>
-									<td class="valueC" width="15%" style="text-align: left"><a href="#" class="coderTextRed">oldbig</a></td>
-									<td class="valueC" width="14%"><a href="pc-manager-screening_results.jsp">100.00</a></td>
-									<td class="valueC" width="15%">Passed</td>
-								</tr>
-<%
-	}
-%>
-								<tr>
-									<td class="lastRowTD" colspan="7"></td>
-								</tr>
-							</table>
-<% } else {%>
-							<table class="scorecard" style="border-collapse: collapse;"cellpadding="0" cellspacing="0" width="100%">
-								<tr>
-									<td class="title">Submission/Screening</td>
-								</tr>
-								<tr class="light">
-									<td class="valueC" nowrap>This Phase is not yet Open.</td>
-								</tr>
-								<tr>
-									<td class="lastRowTD"></td>
-								</tr>
-							</table>
-<% } %>
-						</div>
-
-						<!-- REVIEW/APPEALS TAB-->
-						<div id="sc3" class="tabcontent">
-							<ul id="tablist">
-								<li><a href="#tabs" onClick="return expandcontent('sc1', this)">Registration</a></li>
-								<li><a href="#tabs" onClick="return expandcontent('sc2', this)">Submission/Screening</a></li>
-								<li id="current"><a href="#tabs" onClick="return expandcontent('sc3', this)">Review/Appeals</a></li>
-								<%if (phaseIndex == 7) {%> <li><a href="#tabs" onClick="return expandcontent('sc7', this)">Approval</a></li>  <% } %>
-								<li><a href="#tabs" onClick="return expandcontent('sc4', this)">Aggregation/Review</a></li>
-								<li><a href="#tabs" onClick="return expandcontent('sc5', this)">Final Fix/Review</a></li>
-								<li><a href="#tabs" onClick="return expandcontent('sc6', this)">Approval<%if (phaseIndex == 7) {%> 2<% } %></a></li>
-							</ul>
-							<div style="clear:both;"></div>
-<%if (phaseIndex >= 3) {%>
-							<table class="scorecard" style="border-collapse: collapse;"cellpadding="0" cellspacing="0" width="100%">
-								<tr>
-									<td class="title">Review</td>
-								</tr>
-							</table>
-							<table class="scorecard" cellpadding="0" width="100%" style="border-collapse: collapse;" id="table14">
-								<tr>
-									<td class="valueC" nowrap>&nbsp;</td>
-									<td class="valueC" nowrap width="4%">&nbsp;</td>
-									<td class="valueC" nowrap width="7%">&nbsp;</td>
-									<td class="valueC" nowrap width="13%">&nbsp;</td>
-<% if (role.equalsIgnoreCase("reviewer")) {%>
-									<td class="valueC" nowrap colspan="6">
-										<b>Stress: </b><a href="#" title="Download Test Case">Test Case</a>(<a href="#" class="coderTextGreen">qiucx0161</a>)
-<%} else {%>
-									<td class="valueC" nowrap colspan="2">
-										<b>Stress: </b><a href="#" title="Download Test Case">Test Case</a>(<a href="#" class="coderTextGreen">qiucx0161</a>)
-									</td>
-									<td class="valueC" nowrap colspan="2">
-										<b>Failure: </b><a href="#" title="Download Test Case">Test Case</a>(<a href="#" class="coderTextYellow">mgmg</a>)
-									</td>
-									<td class="valueC" nowrap colspan="2">
-										<b>Accuracy: </b><a href="#" title="Download Test Case">Test Case</a>(<a href="#" class="coderTextYellow">slion</a>)
-									</td>
-<%}%>
-								</tr>
-								<tr>
-									<td class="header" nowrap>Submission ID</td>
-									<td class="headerC" nowrap width="4%">Status</td>
-									<td class="headerC" nowrap width="7%">Review <br>Date</td>
-									<td class="headerC" nowrap width="13%"><b>Review<br>Score</b></td>
-									<td class="headerC" nowrap width="9%"><b>Score</b></td>
-									<td class="headerC" nowrap width="12%"><b>Appeals</b></td>
-									<td class="headerC" nowrap width="8%"><b>Score</b></td>
-									<td class="headerC" nowrap width="11%"><b>Appeals</b></td>
-									<td class="headerC" nowrap width="9%"><b>Score</b></td>
-									<td class="headerC" nowrap width="11%"><b>Appeals</b></td>
-								</tr>
-								<tr class="light">
-									<td class="value" nowrap>
-										<img border="0" src="../i/icon_gold.gif" class="Outline" alt="Winner">
-										<a href="#" title="Download Submission">11889718 </a>(<a href="#" class="coderTextYellow">henryouly</a>)
-									</td>
-									<td class="valueC" nowrap width="4%">
-										<img border="0" src="../i/icon_authorization.gif" class="Outline" alt="Complete" width="10" height="8">
-									</td>
-									<td class="valueC" nowrap width="7%">00.00.00<br>00:00 AM</td>
-									<td class="valueC" nowrap width="13%"><a target="_top" href="pc-readonly-review_results.jsp">98.37</a></td>
-									<td class="valueC" nowrap width="9%"><a href="pc-readonly-review_individual_all_resolved.jsp">9</a><a target="_top" href="pc-readonly-review_individual_all_resolved.jsp">9.31</a></td>
-									<td class="valueC" nowrap width="12%" >[ <a target="_top" href="pc-readonly-review_individual_all_resolved.jsp" title="Unresolved">0</a> / <a target="_top" title="Total" href="pc-readonly-review_individual_all_resolved.jsp">7</a> ]</td>
-									<td class="valueC" nowrap width="8%">
-										<a href="pc-readonly-review_individual_all_resolved.jsp">9</a>
-										<a target="_top" href="pc-readonly-review_individual_all_resolved.jsp">1.75</a>
-									</td>
-									<td class="valueC" nowrap width="11%">
-										[ <a target="_top" href="pc-readonly-review_individual_all_resolved.jsp" title="Unresolved">0</a> /
-										<a target="_top" title="Total" href="pc-readonly-review_individual_all_resolved.jsp">7</a> ]
-									</td>
-									<td class="valueC" nowrap width="9%">
-										<a href="pc-readonly-review_individual_all_resolved.jsp">
-										98</a><a target="_top" href="pc-readonly-review_individual_all_resolved.jsp">.00</a>
-									</td>
-									<td class="valueC" nowrap width="11%" >
-										[ <a target="_top" href="pc-readonly-review_individual_all_resolved.jsp" title="Unresolved">0</a> /
-										<a target="_top" title="Total" href="pc-readonly-review_individual_all_resolved.jsp">7</a> ]
-									</td>
-								</tr>
-<%
-	if (role.equalsIgnoreCase("manager") || role.equalsIgnoreCase("reviewer")) {
-%>
-								<tr class="dark">
-									<td class="value" nowrap>
-										<img border="0" src="../i/icon_bronze.gif" class="Outline" alt="3rd Place">
-										<a href="#" title="Download Submission">14818660 </a>(<a href="#" class="coderTextBlack">Tavo</a>)
-									</td>
-									<td class="valueC" nowrap width="4%">
-										<img border="0" src="../i/icon_authorization.gif" class="Outline" alt="Complete" width="10" height="8">
-									</td>
-									<td class="valueC" nowrap width="7%">00.00.00<br>00:00 AM</td>
-									<td class="valueC" nowrap width="13%">
-										<a target="_top" href="pc-readonly-review_results.jsp">88.21</a>
-									</td>
-									<td class="valueC" nowrap width="9%">
-										<a target="_top" href="pc-readonly-review_individual_all_resolved.jsp">87.21</a>
-									</td>
-									<td class="valueC" nowrap width="12%" >
-										[ <a target="_top" href="pc-readonly-review_individual_all_resolved.jsp" title="Unresolved">0</a> /
-										<a target="_top" title="Total" href="pc-readonly-review_individual_all_resolved.jsp">7</a> ]
-									</td>
-									<td class="valueC" nowrap width="8%">
-										<a href="pc-readonly-review_individual_all_resolved.jsp">8</a>
-										<a target="_top" href="pc-readonly-review_individual_all_resolved.jsp">8.73</a>
-									</td>
-									<td class="valueC" nowrap width="11%">
-										[ <a target="_top" href="pc-readonly-review_individual_all_resolved.jsp" title="Unresolved">0</a> /
-										<a target="_top" title="Total" href="pc-readonly-review_individual_all_resolved.jsp">7</a> ]
-									</td>
-									<td class="valueC" nowrap width="9%">
-										<a target="_top" href="pc-readonly-review_individual_all_resolved.jsp">89.06</a>
-									</td>
-									<td class="valueC" nowrap width="11%" >
-										[ <a target="_top" href="pc-readonly-review_individual_all_resolved.jsp" title="Unresolved">0</a> /
-										<a target="_top" title="Total" href="pc-readonly-review_individual_all_resolved.jsp">7</a> ]
-									</td>
-								</tr>
-								<tr class="light">
-									<td class="value" width="10%" nowrap>
-										<img border="0" src="../i/icon_silver.gif" class="Outline" alt="2nd Place">
-										<a href="#" title="Download Submission">15655112 </a>(<a href="#" class="coderTextYellow">mayi</a>)
-									</td>
-									<td class="valueC" nowrap width="4%">
-										<img border="0" src="../i/icon_authorization.gif" class="Outline" alt="Complete" width="10" height="8">
-									</td>
-									<td class="valueC" nowrap width="7%">00.00.00<br>00:00 AM</td>
-									<td class="valueC" nowrap width="13%">
-										<a target="_top" href="pc-readonly-review_results.jsp">97.00</a>
-									</td>
-									<td class="valueC" nowrap width="9%">
-										<a href="pc-readonly-review_individual_all_resolved.jsp">
-										90</a><a target="_top" href="pc-readonly-review_individual_all_resolved.jsp">.00</a>
-									</td>
-									<td class="valueC" nowrap width="12%" >
-										[ <a target="_top" href="pc-readonly-review_individual_all_resolved.jsp" title="Unresolved">0</a> /
-										<a target="_top" title="Total" href="pc-readonly-review_individual_all_resolved.jsp">7</a> ]
-									</td>
-									<td class="valueC" nowrap width="8%">
-										<a target="_top" href="pc-readonly-review_individual_all_resolved.jsp">92.00</a>
-									</td>
-									<td class="valueC" nowrap width="11%">
-										[ <a target="_top" href="pc-readonly-review_individual_all_resolved.jsp" title="Unresolved">0</a> /
-										<a target="_top" title="Total" href="pc-readonly-review_individual_all_resolved.jsp">7</a> ]
-									</td>
-									<td class="valueC" nowrap width="9%">
-										<a href="pc-readonly-review_individual_all_resolved.jsp">
-										92</a><a target="_top" href="pc-readonly-review_individual_all_resolved.jsp">.33</a>
-									</td>
-									<td class="valueC" nowrap width="11%" >
-										[ <a target="_top" href="pc-readonly-review_individual_all_resolved.jsp" title="Unresolved">0</a> /
-										<a target="_top" title="Total" href="pc-readonly-review_individual_all_resolved.jsp">7</a> ]
-									</td>
-								</tr>
-<%}%>
-								<tr>
-									<td class="lastRowTD" colspan="10"></td>
-								</tr>
-							</table>
-<% } else {%>
-							<table class="scorecard" style="border-collapse: collapse;"cellpadding="0" cellspacing="0" width="100%">
-								<tr>
-									<td class="title">Review</td>
-								</tr>
-								<tr class="light">
-									<td class="valueC" nowrap>This Phase is not yet Open.</td>
-								</tr>
-								<tr>
-									<td class="lastRowTD"></td>
-								</tr>
-							</table>
-<% } %>
-						</div>
-
-						<!-- AGGREGATION TAB-->
-						<div id="sc4" class="tabcontent">
-							<ul id="tablist">
-								<li><a href="#tabs" onClick="return expandcontent('sc1', this)">Registration</a></li>
-								<li><a href="#tabs" onClick="return expandcontent('sc2', this)">Submission/Screening</a></li>
-								<li><a href="#tabs" onClick="return expandcontent('sc3', this)">Review/Appeals</a></li>
-								<%if (phaseIndex == 7) {%> <li><a href="#tabs" onClick="return expandcontent('sc7', this)">Approval</a></li>  <% } %>
-								<li id="current"><a href="#tabs" onClick="return expandcontent('sc4', this)">Aggregation/Review</a></li>
-								<li><a href="#tabs" onClick="return expandcontent('sc5', this)">Final Fix/Review</a></li>
-								<li><a href="#tabs" onClick="return expandcontent('sc6', this)">Approval<%if (phaseIndex == 7) {%> 2<% } %></a></li>
-
-							</ul>
-							<div style="clear:both;"></div>
-<%if (phaseIndex >= 4) {%>
-							<table class="scorecard" style="border-collapse: collapse;"cellpadding="0" cellspacing="0" width="100%">
-								<tr>
-									<td class="title" colspan="6">Aggregation</td>
-								</tr>
-								<tr>
-									<td class="header" nowrap>Submission ID</td>
-									<td class="headerC" nowrap>Status</td>
-									<td class="headerC" nowrap>Aggregation Date</td>
-									<td class="headerC" nowrap>Aggregation</td>
-									<td class="headerC" nowrap>Review Date</td>
-									<td class="headerC" nowrap>Aggregation Review</td>
-								</tr>
-								<tr class="light">
-									<td class="value" nowrap>
-										<img border="0" src="../i/icon_goldstar.gif" width="12" height="12"> <a href="#" title="Download Submission">11889718 </a>(<a href="#" class="coderTextYellow">henryouly</a>)
-									</td>
-									<td class="valueC" nowrap>
-										<img border="0" src="../i/icon_authorization.gif" class="Outline" alt="Complete" width="10" height="8">
-									</td>
-									<td class="valueC" nowrap>00.00.00 00:00 AM</td>
-									<td class="valueC" nowrap><a href="pc-readonly-aggregation.jsp">View Results</a></td>
-									<td class="valueC" nowrap>00.00.00 00:00 AM</td>
-									<td class="valueC" nowrap>
-										<u><font color="#000000"><a target="_top" href="pc-readonly-aggregation_results.jsp">View Results</a></font></u>
-									</td>
-								</tr>
-								<tr>
-									<td class="lastRowTD" colspan="6"></td>
-								</tr>
-							</table>
-<%} else {%>
-							<table class="scorecard" style="border-collapse: collapse;"cellpadding="0" cellspacing="0" width="100%">
-								<tr>
-									<td class="title">Aggregation</td>
-								</tr>
-								<tr class="light">
-									<td class="valueC" nowrap>This Phase is not yet Open.</td>
-								</tr>
-								<tr>
-									<td class="lastRowTD"></td>
-								</tr>
-							</table>
-<%}%>
-						</div>
-
-
-
-						<!-- FINAL FIX/REVIEW TAB-->
-						<div id="sc5" class="tabcontent">
-							<ul id="tablist">
-								<li><a href="#tabs" onClick="return expandcontent('sc1', this)">Registration</a></li>
-								<li><a href="#tabs" onClick="return expandcontent('sc2', this)">Submission/Screening</a></li>
-								<li><a href="#tabs" onClick="return expandcontent('sc3', this)">Review/Appeals</a></li>
-								<%if (phaseIndex == 7) {%> <li><a href="#tabs" onClick="return expandcontent('sc7', this)">Approval</a></li>  <% } %>
-								<li><a href="#tabs" onClick="return expandcontent('sc4', this)">Aggregation/Review</a></li>
-								<li id="current"><a href="#tabs" onClick="return expandcontent('sc5', this)">Final Fix/Review</a></li>
-								<li><a href="#tabs" onClick="return expandcontent('sc6', this)">Approval<%if (phaseIndex == 7) {%> 2<% } %></a></li>
-							</ul>
-							<div style="clear:both;"></div>
-<%if ((phaseIndex >= 5 ) && !role.equalsIgnoreCase("aggregator")) {%>
-							<table class="scorecard" style="border-collapse: collapse;"cellpadding="0" cellspacing="0" width="100%">
-								<tr>
-									<td class="title" colspan="6">Final Review / Fix</td>
-								</tr>
-								<tr>
-									<td class="header" nowrap>Submission ID</td>
-									<td class="headerC" nowrap>Status</td>
-									<td class="headerC" nowrap>Final Fix Date</td>
-									<td class="headerC" nowrap>Final Fix</td>
-									<td class="headerC">Final Review Date</td>
-									<td class="headerC">Final Review Results</td>
-								</tr>
-								<tr class="light">
-									<td class="value" nowrap>
-										<img border="0" src="../i/icon_goldstar.gif" width="12" height="12">
-										<a href="#" title="Download Submission">11889718 </a>(<a href="#" class="coderTextYellow">henryouly</a>)&nbsp;
-									</td>
-									<td class="valueC" nowrap>
-										<img border="0" src="../i/icon_authorization.gif" class="Outline" alt="Complete" width="10" height="8">
-									</td>
-									<td class="valueC" nowrap>00.00.00 00:00 AM</td>
-									<td class="valueC" nowrap>
-										<font color="#000000"><a target="_top" href="pc_aggregation.jsp?role=manager&projectTabIndex=0">Download</a></font>
-									</td>
-									<td class="valueC" nowrap>00.00.00 00:00 AM</td>
-									<td class="valueC" nowrap>
-										<font color="#000000"><a target="_top" href="pc_review_results_final.jsp?role=manager&projectTabIndex=0">View Results</a></font>
-									</td>
-								</tr>
-								<tr>
-									<td class="lastRowTD" colspan="6"></td>
-								</tr>
-							</table>
-<%} else {%>
-							<table class="scorecard" style="border-collapse: collapse;"cellpadding="0" cellspacing="0" width="100%">
-								<tr>
-									<td class="title">Final Review / Fix</td>
-								</tr>
-								<tr class="light">
-									<td class="valueC" nowrap>This Phase is not yet Open.</td>
-								</tr>
-								<tr>
-									<td class="lastRowTD"></td>
-								</tr>
-							</table>
-<%}%>
-						</div>
-
-<%if (phaseIndex != 7) {%>
-						<!-- APPROVAL TAB-->
-						<div id="sc6" class="tabcontent">
-							<ul id="tablist">
-								<li><a href="#tabs" onClick="return expandcontent('sc1', this)">Registration</a></li>
-								<li><a href="#tabs" onClick="return expandcontent('sc2', this)">Submission/Screening</a></li>
-								<li><a href="#tabs" onClick="return expandcontent('sc3', this)">Review/Appeals</a></li>
-								<li><a href="#tabs" onClick="return expandcontent('sc4', this)">Aggregation/Review</a></li>
-								<li><a href="#tabs" onClick="return expandcontent('sc5', this)">Final Fix/Review</a></li>
-								<li id="current"><a href="#tabs" onClick="return expandcontent('sc6', this)">Approval</a></li>
-							</ul>
-							<div style="clear:both;"></div>
-<%if (phaseIndex >= 6) {%>
-	<% if (!"observer".equalsIgnoreCase(role) || "manager".equalsIgnoreCase(role)) {%>
-							<table class="scorecard" style="border-collapse: collapse;"cellpadding="0" cellspacing="0" width="100%">
-								<tr>
-									<td class="title" colspan="4">Approval</td>
-								</tr>
-								<tr>
-									<td class="header" nowrap>Handle</td>
-									<td class="headerC" nowrap>Status</td>
-									<td class="headerC" nowrap>Approval Date</td>
-									<td class="headerC" nowrap>Approval</td>
-								</tr>
-								<tr class="highlighted">
-									<td class="value" nowrap>
-										<img border="0" src="../i/icon_goldstar.gif" width="12" height="12">
-										<a href="#" title="Download Submission">11889718 </a>(<a href="#" class="coderTextYellow">henryouly</a>)</a>&nbsp;
-									</td>
-									<td class="valueC" nowrap>
-										<img border="0" src="../i/icon_notification.gif" class="Outline" alt="Deadline near" width="10" height="10">
-									</td>
-									<td class="valueC" nowrap>00.00.00 00:00 AM</td>
-									<td class="valueC" nowrap><b><a href="pc_edit_approval_scorecard.jsp?role=approver&projectTabIndex=0">Submit Approval</a></b></td>
-								</tr>
-								<tr>
-									<td class="lastRowTD" colspan="4"></td>
-								</tr>
-							</table>
-	<%} else {%>
-							<table class="scorecard" style="border-collapse: collapse;"cellpadding="0" cellspacing="0" width="100%">
-								<tr>
-									<td class="title" colspan="6">Final Review / Fix</td>
-								</tr>
-								<tr>
-									<td class="header" nowrap>Handle</td>
-									<td class="headerC" nowrap>Status</td>
-									<td class="headerC" nowrap>Final Fix Date</td>
-									<td class="headerC" nowrap>Final Fix</td>
-									<td class="headerC">Final Review Date</td>
-									<td class="headerC">Final Review Results</td>
-								</tr>
-								<tr class="light">
-									<td class="value" nowrap>
-										<img border="0" src="../i/icon_goldstar.gif" width="12" height="12">
-										<a href="#" title="Download Submission">11889718 </a>(<a href="#" class="coderTextYellow">henryouly</a>)&nbsp;
-									</td>
-									<td class="valueC" nowrap>
-										<img border="0" src="../i/icon_authorization.gif" class="Outline" alt="Complete" width="10" height="8">
-									</td>
-									<td class="valueC" nowrap>00.00.00 00:00 AM</td>
-									<td class="valueC" nowrap>
-										<font color="#000000">
-										<a target="_top" href="pc_aggregation_results.jsp?role=readonly&projectTabIndex=0">Download</a></font>
-									</td>
-									<td class="valueC" nowrap>00.00.00 00:00 AM</td>
-									<td class="valueC" nowrap>
-										<font color="#000000">
-										<a target="_top" href="pc_review_results_final.jsp?role=readonly&projectTabIndex=0">View Results</a></font>
-									</td>
-								</tr>
-								<tr>
-									<td class="lastRowTD" colspan="6"></td>
-								</tr>
-							</table>
-	<%}%>
-<%} else {%>
-							<table class="scorecard" style="border-collapse: collapse;"cellpadding="0" cellspacing="0" width="100%">
-								<tr>
-									<td class="title">Approval</td>
-								</tr>
-								<tr class="light">
-									<td class="valueC" nowrap>This Phase is not yet Open.</td>
-								</tr>
-								<tr>
-									<td class="lastRowTD"></td>
-								</tr>
-							</table>
-<%} }%>
-						</div>
-<%if (phaseIndex == 7) {%>
-<%if (((Integer)request.getAttribute("phaseIndex")).intValue() == 9) { %>
-						<!-- APPROVAL 2 TAB-->
-						<div id="sc6" class="tabcontent">
-							<ul id="tablist">
-								<li><a href="#tabs" onClick="return expandcontent('sc1', this)">Registration</a></li>
-								<li><a href="#tabs" onClick="return expandcontent('sc2', this)">Submission/Screening</a></li>
-								<li><a href="#tabs" onClick="return expandcontent('sc3', this)">Review/Appeals</a></li>
-								<li><a href="#tabs" onClick="return expandcontent('sc7', this)">Approval</a></li>
-								<li><a href="#tabs" onClick="return expandcontent('sc4', this)">Aggregation/Review</a></li>
-								<li><a href="#tabs" onClick="return expandcontent('sc5', this)">Final Fix/Review</a></li>
-								<li id="current"><a href="#tabs" onClick="return expandcontent('sc6', this)">Approval 2</a></li>
-							</ul>
-							<div style="clear:both;"></div>
-							<table class="scorecard" style="border-collapse: collapse;"cellpadding="0" cellspacing="0" width="100%">
-								<tr>
-									<td class="title" colspan="4">Approval 2</td>
-								</tr>
-								<tr>
-									<td class="header" nowrap>Submission ID</td>
-									<td class="headerC" nowrap>Status</td>
-									<td class="headerC" nowrap>Approval 2 Date</td>
-									<td class="headerC" nowrap>Approval 2</td>
-								</tr>
-								<tr class="light">
-									<td class="value" nowrap>
-										<img border="0" src="../i/icon_goldstar.gif" width="12" height="12">
-										<a href="#" title="Download Submission">11889718 </a>(<a href="#" class="coderTextYellow">henryouly</a>)</a>&nbsp;
-									</td>
-									<td class="valueC" nowrap>
-										<img border="0" src="../i/icon_authorization.gif" class="Outline" alt="Complete" width="10" height="8">
-									</td>
-									<td class="valueC" nowrap>00.00.00 00:00 AM</td>
-									<td class="valueC" nowrap>
-										<u><font color="#000000"><a target="_top" href="pc_approval_scorecard.jsp?role=observer&projectTabIndex=0">View Results</a></font></u>
-									</td>
-								</tr>
-								<tr>
-									<td class="lastRowTD" colspan="4"></td>
-								</tr>
-							</table>
-						</div>
-<%} else {%>
-						<!-- APPROVAL 2 TAB-->
-						<div id="sc6" class="tabcontent">
-							<ul id="tablist">
-								<li><a href="#tabs" onClick="return expandcontent('sc1', this)">Registration</a></li>
-								<li><a href="#tabs" onClick="return expandcontent('sc2', this)">Submission/Screening</a></li>
-								<li><a href="#tabs" onClick="return expandcontent('sc3', this)">Review/Appeals</a></li>
-								<li><a href="#tabs" onClick="return expandcontent('sc7', this)">Approval</a></li>
-								<li><a href="#tabs" onClick="return expandcontent('sc4', this)">Aggregation/Review</a></li>
-								<li><a href="#tabs" onClick="return expandcontent('sc5', this)">Final Fix/Review</a></li>
-								<li id="current"><a href="#tabs" onClick="return expandcontent('sc6', this)">Approval 2</a></li>
-							</ul>
-							<div style="clear:both;"></div>
-							<table class="scorecard" style="border-collapse: collapse;"cellpadding="0" cellspacing="0" width="100%">
-								<tr>
-									<td class="title" colspan="4">Approval 2</td>
-								</tr>
-								<tr>
-									<td class="header" nowrap>Submission ID</td>
-									<td class="headerC" nowrap>Status</td>
-									<td class="headerC" nowrap>Approval 2 Date</td>
-									<td class="headerC" nowrap>Approval 2</td>
-								</tr>
-								<tr class="light">
-									<td class="value" nowrap>
-										<img border="0" src="../i/icon_goldstar.gif" width="12" height="12">
-										<a href="#" title="Download Submission">11889718 </a>(<a href="#" class="coderTextYellow">henryouly</a>)</a>&nbsp;
-									</td>
-									<td class="valueC" nowrap>
-										<img border="0" src="../i/icon_authorization.gif" class="Outline" alt="Complete" width="10" height="8">
-									</td>
-									<td class="valueC" nowrap>00.00.00 00:00 AM</td>
-									<td class="valueC" nowrap>
-										<u><font color="#000000">
-											<a target="_top" href="pc_approval_scorecard.jsp?role=observer&projectTabIndex=0">View Results</a></font></u>
-									</td>
-								</tr>
-								<tr>
-									<td class="lastRowTD" colspan="4"></td>
-								</tr>
-							</table>
-						</div>
-<%    }%>
-
-						<!-- APPROVAL TAB -->
-						<div id="sc7" class="tabcontent">
-							<ul id="tablist">
-								<li><a href="#tabs" onClick="return expandcontent('sc1', this)">Registration</a></li>
-								<li><a href="#tabs" onClick="return expandcontent('sc2', this)">Submission/Screening</a></li>
-								<li><a href="#tabs" onClick="return expandcontent('sc3', this)">Review/Appeals</a></li>
-								<li id="current"><a href="#tabs" onClick="return expandcontent('sc7', this)">Approval</a></li>
-								<li><a href="#tabs" onClick="return expandcontent('sc4', this)">Aggregation/Review</a></li>
-								<li><a href="#tabs" onClick="return expandcontent('sc5', this)">Final Fix/Review</a></li>
-								<li><a href="#tabs" onClick="return expandcontent('sc6', this)">Approval 2</a></li>
-							</ul>
-							<div style="clear:both;"></div>
-							<table class="scorecard" style="border-collapse: collapse;"cellpadding="0" cellspacing="0" width="100%">
-								<tr>
-									<td class="title" colspan="4">Approval</td>
-								</tr>
-								<tr>
-									<td class="header" nowrap>Submission ID</td>
-									<td class="headerC" nowrap>Status</td>
-									<td class="headerC" nowrap>Approval Date</td>
-									<td class="headerC" nowrap>Approval</td>
-								</tr>
-								<tr class="light">
-									<td class="value" nowrap>
-										<img border="0" src="../i/icon_goldstar.gif" width="12" height="12">
-										<a href="#" title="Download Submission">11889718 </a>(<a href="#" class="coderTextYellow">henryouly</a>)</a>&nbsp;
-									</td>
-									<td class="valueC" nowrap>
-										<img border="0" src="../i/icon_authorization.gif" class="Outline" alt="Complete" width="10" height="8">
-									</td>
-									<td class="valueC" nowrap>00.00.00 00:00 AM</td>
-									<td class="valueC" nowrap>
-										<u><font color="#000000"><a target="_top" href="pc_approval_scorecard.jsp?role=observer&projectTabIndex=0">View Results</a></font></u>
-									</td>
-								</tr>
-								<tr>
-									<td class="lastRowTD" colspan="4"></td>
-								</tr>
-							</table>
-						</div>
-<%}%> --%>
