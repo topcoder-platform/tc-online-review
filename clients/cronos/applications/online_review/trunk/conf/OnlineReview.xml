@@ -11,11 +11,22 @@
             </Property>
             <Property name="tcs">
                 <Property name="producer">
-                    <Value>com.topcoder.db.connectionfactory.producers.JNDIConnectionProducer</Value>
+                    <Value>com.topcoder.db.connectionfactory.producers.JDBCConnectionProducer</Value>
                 </Property>
                 <Property name="parameters">
-                    <Property name="jndi_name">
-                        <Value>java:JTS_TCS_CATALOG</Value>
+                    <Property name="jdbc_driver">
+                        <Value>com.informix.jdbc.IfxDriver</Value>
+                    </Property>
+                    <Property name="jdbc_url">
+<!--                        <Value>jdbc:informix-sqli://63.118.154.218:1526/tcs_catalog_new:INFORMIXSERVER=devinformix10_shm;</Value> -->
+                        <Value>jdbc:informix-sqli://194.6.198.134:1526/review:informixserver=top_coder</Value>
+                    </Property>
+                    <Property name="user">
+                        <Value>informix</Value>
+                    </Property>
+                    <Property name="password">
+<!--                        <Value>lansing</Value> -->
+                        <Value>informix</Value>
                     </Property>
                 </Property>
             </Property>
