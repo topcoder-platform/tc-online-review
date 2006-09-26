@@ -2701,7 +2701,7 @@ public class ProjectReviewActions extends DispatchAction {
                 AuthorizationHelper.hasUserPermission(request, Constants.PERFORM_APPEAL_PERM_NAME)) {
             // Can place appeal, put appropriate flag to request
             request.setAttribute("canPlaceAppeal", Boolean.TRUE);                
-        } else if (phase.getPhaseType().getName().equals(Constants.APPEALS_RESPONE_PHASE_NAME) && 
+        } else if (phase.getPhaseType().getName().equals(Constants.APPEALS_RESPONSE_PHASE_NAME) && 
                 AuthorizationHelper.hasUserPermission(request, Constants.PERFORM_APPEAL_RESP_PERM_NAME)) {
             // Can place response, put appropriate flag to request
             request.setAttribute("canPlaceAppealResponse", Boolean.TRUE);                

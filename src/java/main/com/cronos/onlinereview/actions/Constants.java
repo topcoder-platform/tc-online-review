@@ -470,7 +470,7 @@ public class Constants {
      * This member variable is a string constant that defines the name of the Appeals Response
      * phase.
      */
-    public static final String APPEALS_RESPONE_PHASE_NAME = "Appeals Response";
+    public static final String APPEALS_RESPONSE_PHASE_NAME = "Appeals Response";
 
     /**
      * This member variable is a string constant that defines the name of the Aggregation phase.

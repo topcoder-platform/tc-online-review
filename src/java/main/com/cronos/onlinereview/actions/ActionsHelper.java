@@ -28,6 +28,17 @@ import com.cronos.onlinereview.deliverables.SubmitterCommentDeliverableChecker;
 import com.cronos.onlinereview.deliverables.TestCasesDeliverableChecker;
 import com.cronos.onlinereview.external.UserRetrieval;
 import com.cronos.onlinereview.external.impl.DBUserRetrieval;
+import com.cronos.onlinereview.phases.AggregationPhaseHandler;
+import com.cronos.onlinereview.phases.AggregationReviewPhaseHandler;
+import com.cronos.onlinereview.phases.AppealsPhaseHandler;
+import com.cronos.onlinereview.phases.AppealsResponsePhaseHandler;
+import com.cronos.onlinereview.phases.ApprovalPhaseHandler;
+import com.cronos.onlinereview.phases.FinalFixPhaseHandler;
+import com.cronos.onlinereview.phases.FinalReviewPhaseHandler;
+import com.cronos.onlinereview.phases.RegistrationPhaseHandler;
+import com.cronos.onlinereview.phases.ReviewPhaseHandler;
+import com.cronos.onlinereview.phases.ScreeningPhaseHandler;
+import com.cronos.onlinereview.phases.SubmissionPhaseHandler;
 import com.topcoder.db.connectionfactory.ConfigurationException;
 import com.topcoder.db.connectionfactory.DBConnectionFactory;
 import com.topcoder.db.connectionfactory.DBConnectionFactoryImpl;
@@ -52,8 +63,10 @@ import com.topcoder.management.deliverable.persistence.sql.SqlUploadPersistence;
 import com.topcoder.management.deliverable.search.DeliverableFilterBuilder;
 import com.topcoder.management.deliverable.search.SubmissionFilterBuilder;
 import com.topcoder.management.phase.DefaultPhaseManager;
+import com.topcoder.management.phase.PhaseHandler;
 import com.topcoder.management.phase.PhaseManagementException;
 import com.topcoder.management.phase.PhaseManager;
+import com.topcoder.management.phase.PhaseOperationEnum;
 import com.topcoder.management.project.Project;
 import com.topcoder.management.project.ProjectCategory;
 import com.topcoder.management.project.ProjectManager;
@@ -1568,7 +1581,7 @@ class ActionsHelper {
             prevPhase = true;
             if (phaseName.equalsIgnoreCase(Constants.REVIEW_PHASE_NAME) ||
                     phaseName.equalsIgnoreCase(Constants.APPEALS_PHASE_NAME) ||
-                    phaseName.equalsIgnoreCase(Constants.APPEALS_RESPONE_PHASE_NAME)) {
+                    phaseName.equalsIgnoreCase(Constants.APPEALS_RESPONSE_PHASE_NAME)) {
                 if (!phase.getPhaseStatus().getName().equalsIgnoreCase("Closed")) {
                     return false;
                 }
@@ -1622,7 +1635,7 @@ class ActionsHelper {
             }
             // If Appeals response is the closed phase,
             // then definetely the project is at after Appeals Response stage
-            if (phaseName.equalsIgnoreCase(Constants.APPEALS_RESPONE_PHASE_NAME)) {
+            if (phaseName.equalsIgnoreCase(Constants.APPEALS_RESPONSE_PHASE_NAME)) {
                 return true;
             }
             // If the phase Review or Appeals is found, but there were other closed phases after them,
@@ -1653,12 +1666,11 @@ class ActionsHelper {
      *            same request.
      * @throws IllegalArgumentException
      *             if <code>request</code> parameter is <code>null</code>.
-     * @throws com.topcoder.management.phase.ConfigurationException
-     *             if any required configuration parameter is missing, or if any of the supplied
-     *             parameters in cofiguration are invalid.
+     * @throws BaseException 
+     *             if any error happens while object creation
      */
     public static PhaseManager createPhaseManager(HttpServletRequest request)
-        throws com.topcoder.management.phase.ConfigurationException {
+        throws BaseException {
         // Validate parameter
         validateParameterNotNull(request, "request");
 
@@ -1668,13 +1680,60 @@ class ActionsHelper {
         // create a new instance of the object
         if (manager == null) {
             manager = new DefaultPhaseManager("com.topcoder.management.phase");
+                        
             // Place newly-created object into the request as attribute
             request.setAttribute("phaseManager", manager);
+            
+            // TODO: Make the following code work
+            /*
+            PhaseType[] phaseTypes = manager.getAllPhaseTypes();
+            
+            // Register the phase handlers
+            registerPhaseHandlerForAllOperations(manager, phaseTypes, 
+                    new RegistrationPhaseHandler(), Constants.REGISTRATION_PHASE_NAME);
+            registerPhaseHandlerForAllOperations(manager, phaseTypes, 
+                    new SubmissionPhaseHandler(), Constants.SUBMISSION_PHASE_NAME);
+            registerPhaseHandlerForAllOperations(manager, phaseTypes, 
+                    new ScreeningPhaseHandler(), Constants.SCREENING_PHASE_NAME);
+            registerPhaseHandlerForAllOperations(manager, phaseTypes, 
+                    new ReviewPhaseHandler(), Constants.REVIEW_PHASE_NAME);
+            registerPhaseHandlerForAllOperations(manager, phaseTypes, 
+                    new AppealsPhaseHandler(), Constants.APPEALS_PHASE_NAME);
+            registerPhaseHandlerForAllOperations(manager, phaseTypes, 
+                    new AppealsResponsePhaseHandler(), Constants.APPEALS_RESPONSE_PHASE_NAME);
+            registerPhaseHandlerForAllOperations(manager, phaseTypes, 
+                    new AggregationPhaseHandler(), Constants.AGGREGATION_PHASE_NAME);
+            registerPhaseHandlerForAllOperations(manager, phaseTypes, 
+                    new AggregationReviewPhaseHandler(), Constants.AGGREGATION_REVIEW_PHASE_NAME);            
+            registerPhaseHandlerForAllOperations(manager, phaseTypes, 
+                    new FinalFixPhaseHandler(), Constants.FINAL_FIX_PHASE_NAME);
+            registerPhaseHandlerForAllOperations(manager, phaseTypes, 
+                    new FinalReviewPhaseHandler(), Constants.FINAL_REVIEW_PHASE_NAME);
+            registerPhaseHandlerForAllOperations(manager, phaseTypes, 
+                    new ApprovalPhaseHandler(), Constants.APPROVAL_PHASE_NAME);            
+            */           
         }
 
         // Return the Phase Manager object
         return manager;
     }
+
+    
+    
+    /**
+     * TODO: Document it!
+     * 
+     * @param manager
+     * @param phaseTypes
+     * @param handler
+     * @param phaseName
+     */
+    private static void registerPhaseHandlerForAllOperations(PhaseManager manager, PhaseType[] phaseTypes, PhaseHandler handler, String phaseName) {
+        manager.registerHandler(handler, findPhaseTypeByName(phaseTypes, phaseName), PhaseOperationEnum.START);
+        manager.registerHandler(handler, findPhaseTypeByName(phaseTypes, phaseName), PhaseOperationEnum.END);
+        manager.registerHandler(handler, findPhaseTypeByName(phaseTypes, phaseName), PhaseOperationEnum.CANCEL);        
+    }
+
 
     /**
      * This static method helps to create an object of the <code>ProjectManager</code> class.
