@@ -1,2 +1,2 @@
-DELETE screening_result;
-DELETE screening_task;
+DELETE FROM screening_result;
+DELETE FROM screening_task;

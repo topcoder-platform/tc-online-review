@@ -1,4 +1,4 @@
-DELETE review_item_comment;
-DELETE review_item;
-DELETE review_comment;
-DELETE review;
+DELETE FROM review_item_comment;
+DELETE FROM review_item;
+DELETE FROM review_comment;
+DELETE FROM review;
