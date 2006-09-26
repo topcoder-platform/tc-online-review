@@ -216,7 +216,7 @@
     <property name="project_phases.path" value="project_phases/${project_phases.version}" />
     <property name="project_phases.jar" value="${tcs_libdir}/${project_phases.path}/${project_phases.jar.name}" />
 
-    <property name="project_phase_template.version" value="2.0" />
+    <property name="project_phase_template.version" value="1.0" />
     <property name="project_phase_template.jar.name" value="project_phase_template.jar" />
     <property name="project_phase_template.path" value="project_phase_template/${project_phase_template.version}" />
     <property name="project_phase_template.jar" value="${tcs_libdir}/${project_phase_template.path}/${project_phase_template.jar.name}" />
