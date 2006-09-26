@@ -1666,8 +1666,8 @@ class ActionsHelper {
      *            same request.
      * @throws IllegalArgumentException
      *             if <code>request</code> parameter is <code>null</code>.
-     * @throws BaseException 
-     *             if any error happens while object creation
+     * @throws BaseException
+     *             if any error happens during object creation.
      */
     public static PhaseManager createPhaseManager(HttpServletRequest request)
         throws BaseException {
@@ -1680,60 +1680,56 @@ class ActionsHelper {
         // create a new instance of the object
         if (manager == null) {
             manager = new DefaultPhaseManager("com.topcoder.management.phase");
-                        
+
+/* TODO: Make the following code work
+            PhaseType[] phaseTypes = manager.getAllPhaseTypes();
+
+            // Register the phase handlers
+            registerPhaseHandlerForOperation(manager, phaseTypes,
+                    new RegistrationPhaseHandler(), Constants.REGISTRATION_PHASE_NAME);
+            registerPhaseHandlerForOperation(manager, phaseTypes,
+                    new SubmissionPhaseHandler(), Constants.SUBMISSION_PHASE_NAME);
+            registerPhaseHandlerForOperation(manager, phaseTypes,
+                    new ScreeningPhaseHandler(), Constants.SCREENING_PHASE_NAME);
+            registerPhaseHandlerForOperation(manager, phaseTypes,
+                    new ReviewPhaseHandler(), Constants.REVIEW_PHASE_NAME);
+            registerPhaseHandlerForOperation(manager, phaseTypes,
+                    new AppealsPhaseHandler(), Constants.APPEALS_PHASE_NAME);
+            registerPhaseHandlerForOperation(manager, phaseTypes,
+                    new AppealsResponsePhaseHandler(), Constants.APPEALS_RESPONSE_PHASE_NAME);
+            registerPhaseHandlerForOperation(manager, phaseTypes,
+                    new AggregationPhaseHandler(), Constants.AGGREGATION_PHASE_NAME);
+            registerPhaseHandlerForOperation(manager, phaseTypes,
+                    new AggregationReviewPhaseHandler(), Constants.AGGREGATION_REVIEW_PHASE_NAME);
+            registerPhaseHandlerForOperation(manager, phaseTypes,
+                    new FinalFixPhaseHandler(), Constants.FINAL_FIX_PHASE_NAME);
+            registerPhaseHandlerForOperation(manager, phaseTypes,
+                    new FinalReviewPhaseHandler(), Constants.FINAL_REVIEW_PHASE_NAME);
+            registerPhaseHandlerForOperation(manager, phaseTypes,
+                    new ApprovalPhaseHandler(), Constants.APPROVAL_PHASE_NAME);
+*/
+
             // Place newly-created object into the request as attribute
             request.setAttribute("phaseManager", manager);
-            
-            // TODO: Make the following code work
-            /*
-            PhaseType[] phaseTypes = manager.getAllPhaseTypes();
-            
-            // Register the phase handlers
-            registerPhaseHandlerForAllOperations(manager, phaseTypes, 
-                    new RegistrationPhaseHandler(), Constants.REGISTRATION_PHASE_NAME);
-            registerPhaseHandlerForAllOperations(manager, phaseTypes, 
-                    new SubmissionPhaseHandler(), Constants.SUBMISSION_PHASE_NAME);
-            registerPhaseHandlerForAllOperations(manager, phaseTypes, 
-                    new ScreeningPhaseHandler(), Constants.SCREENING_PHASE_NAME);
-            registerPhaseHandlerForAllOperations(manager, phaseTypes, 
-                    new ReviewPhaseHandler(), Constants.REVIEW_PHASE_NAME);
-            registerPhaseHandlerForAllOperations(manager, phaseTypes, 
-                    new AppealsPhaseHandler(), Constants.APPEALS_PHASE_NAME);
-            registerPhaseHandlerForAllOperations(manager, phaseTypes, 
-                    new AppealsResponsePhaseHandler(), Constants.APPEALS_RESPONSE_PHASE_NAME);
-            registerPhaseHandlerForAllOperations(manager, phaseTypes, 
-                    new AggregationPhaseHandler(), Constants.AGGREGATION_PHASE_NAME);
-            registerPhaseHandlerForAllOperations(manager, phaseTypes, 
-                    new AggregationReviewPhaseHandler(), Constants.AGGREGATION_REVIEW_PHASE_NAME);            
-            registerPhaseHandlerForAllOperations(manager, phaseTypes, 
-                    new FinalFixPhaseHandler(), Constants.FINAL_FIX_PHASE_NAME);
-            registerPhaseHandlerForAllOperations(manager, phaseTypes, 
-                    new FinalReviewPhaseHandler(), Constants.FINAL_REVIEW_PHASE_NAME);
-            registerPhaseHandlerForAllOperations(manager, phaseTypes, 
-                    new ApprovalPhaseHandler(), Constants.APPROVAL_PHASE_NAME);            
-            */           
         }
 
         // Return the Phase Manager object
         return manager;
     }
 
-    
-    
     /**
      * TODO: Document it!
-     * 
+     *
      * @param manager
      * @param phaseTypes
      * @param handler
      * @param phaseName
      */
-    private static void registerPhaseHandlerForAllOperations(PhaseManager manager, PhaseType[] phaseTypes, PhaseHandler handler, String phaseName) {
+    private static void registerPhaseHandlerForOperation(PhaseManager manager, PhaseType[] phaseTypes, PhaseHandler handler, String phaseName) {
         manager.registerHandler(handler, findPhaseTypeByName(phaseTypes, phaseName), PhaseOperationEnum.START);
         manager.registerHandler(handler, findPhaseTypeByName(phaseTypes, phaseName), PhaseOperationEnum.END);
-        manager.registerHandler(handler, findPhaseTypeByName(phaseTypes, phaseName), PhaseOperationEnum.CANCEL);        
+        manager.registerHandler(handler, findPhaseTypeByName(phaseTypes, phaseName), PhaseOperationEnum.CANCEL);
     }
-
 
     /**
      * This static method helps to create an object of the <code>ProjectManager</code> class.
@@ -1963,8 +1959,8 @@ class ActionsHelper {
             checkers.put(Constants.AGGREGATION_DELIVERABLE_NAME, new AggregationDeliverableChecker(dbconn));
             checkers.put(Constants.AGGREGATION_REV_DELIVERABLE_NAME, new AggregationReviewDeliverableChecker(dbconn));
             checkers.put(Constants.FINAL_FIX_DELIVERABLE_NAME, new FinalFixesDeliverableChecker(dbconn));
-//            checkers.put(Constants.SCORECARD_COMM_DELIVERABLE_NAME, new SubmitterCommentDeliverableChecker(dbconn));
-//            checkers.put(Constants.FINAL_REVIEW_PHASE_NAME, new FinalReviewDeliverableChecker(dbconn));
+            checkers.put(Constants.SCORECARD_COMM_DELIVERABLE_NAME, new SubmitterCommentDeliverableChecker(dbconn));
+            checkers.put(Constants.FINAL_REVIEW_PHASE_NAME, new FinalReviewDeliverableChecker(dbconn));
             checkers.put(Constants.APPROVAL_DELIVERABLE_NAME, committedChecker);
 
             // Initialize the PersistenceDeliverableManager
