@@ -3,13 +3,14 @@
 --       about all auto screening results as well.  You'll need to repopulate
 --       the database with that information using appropritate scripts.
 
-DELETE screening_result;
-DELETE screening_task;
+DELETE FROM screening_result;
+DELETE FROM screening_task;
 
-DELETE review_item_comment;
-DELETE review_item;
-DELETE review_comment;
-DELETE review;
+DELETE FROM review_item_comment;
+DELETE FROM review_item;
+DELETE FROM review_comment;
+DELETE FROM review;
 
+DELETE FROM resource_submission;
 DELETE FROM submission;
 DELETE FROM upload;
