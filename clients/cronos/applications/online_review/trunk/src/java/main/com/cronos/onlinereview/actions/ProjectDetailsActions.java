@@ -193,8 +193,8 @@ public class ProjectDetailsActions extends DispatchAction {
         }
 
         String[] myDeliverableLinks = generateDeliverableLinks(request, myDeliverables, phases);
-        String[] outstandingDeliverableUserIds = getDeliverableUserIds(
-                ActionsHelper.createResourceManager(request), outstandingDeliverables);
+        String[] outstandingDeliverableUserIds =
+            getDeliverableUserIds(ActionsHelper.createResourceManager(request), outstandingDeliverables);
         String[] outstandingDeliverableSubmissionUserIds =
             getDeliverableSubmissionUserIds(request, outstandingDeliverables);
 
@@ -2252,7 +2252,39 @@ public class ProjectDetailsActions extends DispatchAction {
             } else if (delivName.equalsIgnoreCase(Constants.FINAL_FIX_DELIVERABLE_NAME)) {
                 links[i] = "UploadFinalFix.do?method=uploadFinalFix&pid=" + deliverable.getProject();
             } else if (delivName.equalsIgnoreCase(Constants.SCORECARD_COMM_DELIVERABLE_NAME)) {
-                // TODO: Determine what should be done here
+/*
+                Phase phase = ActionsHelper.getPhase(phases, false, Constants.AGGREGATION_PHASE_NAME);
+                Resource[] aggregator =
+                    ActionsHelper.getAllResourcesForPhase(ActionsHelper.createResourceManager(request), phase);
+
+                if (allScorecardTypes == null) {
+                    // Get all scorecard types
+                    allScorecardTypes = ActionsHelper.createScorecardManager(request).getAllScorecardTypes();
+                }
+
+                Review review = findReviewForSubmission(ActionsHelper.createReviewManager(request),
+                        ActionsHelper.findScorecardTypeByName(allScorecardTypes, "Review"),
+                        deliverable.getSubmission(), aggregator[0].getId(), true);
+
+                if (review == null) {
+                    continue;
+                }
+
+                Comment myComment = null;
+
+                for (int j = 0; j < review.getNumberOfComments(); ++j) {
+                    if (review.getComment(j).getAuthor() == deliverable.getResource()) {
+                        myComment = review.getComment(j);
+                        break;
+                    }
+                }
+
+                if (myComment == null ||
+                        !("Approved".equalsIgnoreCase((String) myComment.getExtraInfo()) ||
+                        "Rejected".equalsIgnoreCase((String) myComment.getExtraInfo()))) {
+                    links[i] = "EditAggregationReview.do?method=editAggregationReview&rid=" + review.getId();
+                }
+*/
             } else if (delivName.equalsIgnoreCase(Constants.FINAL_REVIEW_DELIVERABLE_NAME)) {
 /*                if (allScorecardTypes == null) {
                     // Get all scorecard types
