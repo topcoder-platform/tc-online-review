@@ -88,15 +88,35 @@
 								</tr>
 								<c:forEach items="${group.submissions}" var="submission" varStatus="submissionStatus">
 									<tr class='${(submissionStatus.index % 2 == 0) ? "light" : "dark"}'>
+										<c:set var="submitter" value="" />
+										<c:forEach items="${group.submitters}" var="curSubmitter">
+											<c:if test="${curSubmitter.id == submission.upload.owner}">
+												<c:set var="submitter" value="${curSubmitter}" />
+											</c:if>
+										</c:forEach>
 										<td class="value" width="10%" nowrap="nowrap">
 <%--											<img id="Out1" class="Outline" border="0" src="../i/plus.gif" width="9" height="9" style="margin-right:5px;" title="View Previous Submissions"> --%>
-<%--											<img border="0" src="../i/icon_gold.gif" class="Outline" alt="Winner"> --%>
-												<html:link page="/actions/DownloadSubmission.do?method=downloadSubmission&uid=${submission.upload.id}" titleKey="viewProjectDetails.box.Submission.Download">${submission.id}</html:link>
-												<c:forEach items="${group.submitters}" var="submitter">
-													<c:if test="${submitter.id == submission.upload.owner}">
-														(<tc-webtag:handle coderId='${submitter.allProperties["External Reference ID"]}' context="component" />)
-													</c:if>
-												</c:forEach>
+											<c:set var="placement" value="" />
+											<c:if test="${!(empty submitter)}">
+												<c:set var="placement" value='${submitter.allProperties["Placement"]}' />
+											</c:if>
+											<c:if test="${!(empty placement)}">
+												<c:choose>
+													<c:when test="${placement == 1}">
+														<html:img srcKey="viewProjectDetails.Submitter.icoWinner.img" altKey="viewProjectDetails.Submitter.icoWinner.alt" styleClass="Outline" border="0" />
+													</c:when>
+													<c:when test="${placement == 2}">
+														<html:img srcKey="viewProjectDetails.Submitter.icoRunnerUp.img" altKey="viewProjectDetails.Submitter.icoRunnerUp.alt" styleClass="Outline" border="0" />
+													</c:when>
+													<c:otherwise>
+														<html:img srcKey="viewProjectDetails.Submitter.icoOther.img" alt="${placement} Place" styleClass="Outline" border="0" />
+													</c:otherwise>
+												</c:choose>
+											</c:if>
+											<html:link page="/actions/DownloadSubmission.do?method=downloadSubmission&uid=${submission.upload.id}" titleKey="viewProjectDetails.box.Submission.Download">${submission.id}</html:link>
+											<c:if test="${!(empty submitter)}">
+												(<tc-webtag:handle coderId='${submitter.allProperties["External Reference ID"]}' context="component" />)
+											</c:if>
 										</td>
 										<c:if test="${isManager == true}">
 											<td class="value" width="5%"><html:link page="/actions/DeleteSubmission.do?method=deleteSubmission&uid=${submission.upload.id}"><html:img srcKey="viewProjectDetails.box.Submission.icoTrash.img" altKey="viewProjectDetails.box.Submission.icoTrash.alt" border="0" styleClass="Outline" /></html:link></td>
@@ -137,8 +157,11 @@
 										</c:if>
 										<c:set var="screener" value="" />
 										<c:forEach items="${group.reviewers}" var="reviewer">
+											<c:if test="${(empty reviewer.submission) && (empty screener)}">
+												<c:set var="screener" value="${reviewer}" />
+											</c:if>
 											<c:if test="${!(empty reviewer.submission) && (reviewer.submission == submission.id)}">
-												<c:set var="screener" value="${curScreener}" />
+												<c:set var="screener" value="${reviewer}" />
 											</c:if>
 										</c:forEach>
 										<c:if test="${empty screener}">
