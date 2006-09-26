@@ -121,6 +121,16 @@
     <property name="deliverable_management_persistence.path" value="deliverable_management_persistence/${deliverable_management_persistence.version}" />
     <property name="deliverable_management_persistence.jar" value="${tcs_libdir}/${deliverable_management_persistence.path}/${deliverable_management_persistence.jar.name}" />
 
+    <property name="document_generator.version" value="2.0"/>
+    <property name="document_generator.jar.name" value="document_generator.jar"/>
+    <property name="document_generator.path" value="document_generator/${document_generator.version}"/>
+    <property name="document_generator.jar" value="${tcs_libdir}/${document_generator.path}/${document_generator.jar.name}"/>
+
+    <property name="email_engine.version" value="3.0" />
+    <property name="email_engine.jar.name" value="email_engine.jar" />
+    <property name="email_engine.path" value="email_engine/${email_engine.version}" />
+    <property name="email_engine.jar" value="${tcs_libdir}/${email_engine.path}/${email_engine.jar.name}" />
+
     <property name="file_system_server.version" value="1.0" />
     <property name="file_system_server.jar.name" value="file_system_server.jar" />
     <property name="file_system_server.path" value="file_system_server/${file_system_server.version}" />
@@ -176,6 +186,11 @@
     <property name="online_review_login.path" value="online_review_login/${online_review_login.version}" />
     <property name="online_review_login.jar" value="${tcs_libdir}/${online_review_login.path}/${online_review_login.jar.name}" />
 
+    <property name="online_review_phases.version" value="1.0" />
+    <property name="online_review_phases.jar.name" value="online_review_phases.jar" />
+    <property name="online_review_phases.path" value="online_review_phases/${online_review_phases.version}" />
+    <property name="online_review_phases.jar" value="${tcs_libdir}/${online_review_phases.path}/${online_review_phases.jar.name}" />
+
     <property name="phase_management.version" value="1.0.1" />
     <property name="phase_management.jar.name" value="phase_management.jar" />
     <property name="phase_management.path" value="phase_management/${phase_management.version}" />
@@ -201,6 +216,11 @@
     <property name="project_phases.path" value="project_phases/${project_phases.version}" />
     <property name="project_phases.jar" value="${tcs_libdir}/${project_phases.path}/${project_phases.jar.name}" />
 
+    <property name="project_phase_template.version" value="2.0" />
+    <property name="project_phase_template.jar.name" value="project_phase_template.jar" />
+    <property name="project_phase_template.path" value="project_phase_template/${project_phase_template.version}" />
+    <property name="project_phase_template.jar" value="${tcs_libdir}/${project_phase_template.path}/${project_phase_template.jar.name}" />
+
     <property name="resource_management.version" value="1.0" />
     <property name="resource_management.jar.name" value="resource_management.jar" />
     <property name="resource_management.path" value="resource_management/${resource_management.version}" />
@@ -225,6 +245,11 @@
     <property name="review_management_persistence.jar.name" value="review_management_persistence.jar" />
     <property name="review_management_persistence.path" value="review_management_persistence/${review_management_persistence.version}" />
     <property name="review_management_persistence.jar" value="${tcs_libdir}/${review_management_persistence.path}/${review_management_persistence.jar.name}" />
+
+    <property name="review_score_aggregator.version" value="1.0" />
+    <property name="review_score_aggregator.jar.name" value="review_score_aggregator.jar" />
+    <property name="review_score_aggregator.path" value="review_score_aggregator/${review_score_aggregator.version}" />
+    <property name="review_score_aggregator.jar" value="${tcs_libdir}/${review_score_aggregator.path}/${review_score_aggregator.jar.name}" />
 
     <property name="review_score_calculator.version" value="1.0" />
     <property name="review_score_calculator.jar.name" value="review_score_calculator.jar" />
@@ -323,6 +348,8 @@
         <pathelement location="${db_connection_factory.jar}" />
         <pathelement location="${deliverable_management.jar}" />
         <pathelement location="${deliverable_management_persistence.jar}" />
+        <pathelement location="${document_generator.jar}" />
+        <pathelement location="${email_engine.jar}" />
         <pathelement location="${file_system_server.jar}" />
         <pathelement location="${file_upload.jar}" />
         <pathelement location="${guid_generator.jar}" />
@@ -334,16 +361,19 @@
         <pathelement location="${online_review_ajax_support.jar}" />
         <pathelement location="${online_review_deliverables.jar}" />
         <pathelement location="${online_review_login.jar}" />
+        <pathelement location="${online_review_phases.jar}" />
         <pathelement location="${phase_management.jar}" />
         <pathelement location="${phase_management_persistence.jar}" />
         <pathelement location="${project_management.jar}" />
         <pathelement location="${project_management_persistence.jar}" />
         <pathelement location="${project_phases.jar}" />
+        <pathelement location="${project_phase_template.jar}" />
         <pathelement location="${resource_management.jar}" />
         <pathelement location="${resource_management_persistence.jar}" />
         <pathelement location="${review_data_structure.jar}" />
         <pathelement location="${review_management.jar}" />
         <pathelement location="${review_management_persistence.jar}" />
+        <pathelement location="${review_score_aggregator.jar}" />
         <pathelement location="${review_score_calculator.jar}" />
         <pathelement location="${scorecard_data_structure.jar}" />
         <pathelement location="${scorecard_management.jar}" />
@@ -480,6 +510,8 @@
             <lib dir="${jar_tcs_libdir}/${db_connection_factory.path}" includes="*.jar" />
             <lib dir="${jar_tcs_libdir}/${deliverable_management.path}" includes="*.jar" />
             <lib dir="${jar_tcs_libdir}/${deliverable_management_persistence.path}" includes="*.jar" />
+            <lib dir="${jar_tcs_libdir}/${document_generator.path}" includes="*.jar" />
+            <lib dir="${jar_tcs_libdir}/${email_engine.path}" includes="*.jar" />
             <lib dir="${jar_tcs_libdir}/${file_system_server.path}" includes="*.jar" />
             <lib dir="${jar_tcs_libdir}/${file_upload.path}" includes="*.jar" />
             <lib dir="${jar_tcs_libdir}/${guid_generator.path}" includes="*.jar" />
@@ -491,16 +523,19 @@
             <lib dir="${jar_tcs_libdir}/${online_review_ajax_support.path}" includes="*.jar" />
             <lib dir="${jar_tcs_libdir}/${online_review_deliverables.path}" includes="*.jar" />
             <lib dir="${jar_tcs_libdir}/${online_review_login.path}" includes="*.jar" />
+            <lib dir="${jar_tcs_libdir}/${online_review_phases.path}" includes="*.jar" />
             <lib dir="${jar_tcs_libdir}/${phase_management.path}" includes="*.jar" />
             <lib dir="${jar_tcs_libdir}/${phase_management_persistence.path}" includes="*.jar" />
             <lib dir="${jar_tcs_libdir}/${project_management.path}" includes="*.jar" />
             <lib dir="${jar_tcs_libdir}/${project_management_persistence.path}" includes="*.jar" />
             <lib dir="${jar_tcs_libdir}/${project_phases.path}" includes="*.jar" />
+            <lib dir="${jar_tcs_libdir}/${project_phase_template.path}" includes="*.jar" />
             <lib dir="${jar_tcs_libdir}/${resource_management.path}" includes="*.jar" />
             <lib dir="${jar_tcs_libdir}/${resource_management_persistence.path}" includes="*.jar" />
             <lib dir="${jar_tcs_libdir}/${review_data_structure.path}" includes="*.jar" />
             <lib dir="${jar_tcs_libdir}/${review_management.path}" includes="*.jar" />
             <lib dir="${jar_tcs_libdir}/${review_management_persistence.path}" includes="*.jar" />
+            <lib dir="${jar_tcs_libdir}/${review_score_aggregator.path}" includes="*.jar" />
             <lib dir="${jar_tcs_libdir}/${review_score_calculator.path}" includes="*.jar" />
             <lib dir="${jar_tcs_libdir}/${scorecard_data_structure.path}" includes="*.jar" />
             <lib dir="${jar_tcs_libdir}/${scorecard_management.path}" includes="*.jar" />

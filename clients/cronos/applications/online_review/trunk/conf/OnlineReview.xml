@@ -98,9 +98,10 @@
 
         <!-- The names of the Ajax request handlers -->
         <Property name="Handlers">
-            <Value>SetScorecardStatus</Value>
+            <!--<Value>SetScorecardStatus</Value>
             <Value>LoadTimelineTemplate</Value>
             <Value>SetTimelineNotification</Value>
+              -->
             <Value>PlaceAppeal</Value>
             <Value>ResolveAppeal</Value>
         </Property>
@@ -209,13 +210,13 @@
             </Property>
         </Property>
 
-        <!-- defining the review manager concrete implementation
-            <Property name="com/topcoder/management/review/ReviewManager">
+        <!-- defining the review manager concrete implementation -->
+        <Property name="com/topcoder/management/review/ReviewManager">
             <Property name="type">
-            <Value>com.topcoder.management.review.MockReviewManager</Value>
+                <Value>com.topcoder.management.review.DefaultReviewManager</Value>
             </Property>
-            </Property>
-        -->
+        </Property>
+
         <!-- defining the phase templae concrete implementation
             <Property name="com/topcoder/project/phases/template/PhaseTemplate">
             <Property name="type">
@@ -230,13 +231,23 @@
             </Property>
             </Property>
         -->
-        <!-- defining the phase templae concrete implementation
-            <Property name="com/topcoder/management/phase/PhaseManager">
+        <!-- defining the phase manager concrete implementation -->
+        <Property name="com/topcoder/management/phase/PhaseManager">
             <Property name="type">
-            <Value>com.topcoder.management.phase.MockPhaseManager</Value>
+                <Value>com.topcoder.management.phase.DefaultPhaseManager</Value>
+            </Property>            
+            <Property name="params">
+                <Property name="param1">
+                    <Property name="type">
+                        <Value>String</Value>
+                    </Property>
+                    <Property name="value">
+                        <Value>com.topcoder.management.phase</Value>
+                    </Property>
+                </Property>                
             </Property>
-            </Property>
-        -->
+        </Property>
+
         <!-- defining the phase templae concrete implementation
             <Property name="com/topcoder/management/review/scorecalculator/CalculationManager">
             <Property name="type">
@@ -625,10 +636,10 @@
     <!-- Default namespace for Registration handler -->
     <Config name="com.cronos.onlinereview.phases.RegistrationPhaseHandler">
         <Property name="ConnectionFactoryNS">
-            <Value>Dbconnection.factory</Value>
+            <Value>com.topcoder.db.connectionfactory.DBConnectionFactoryImpl</Value>
         </Property>
         <Property name="ConnectionName">
-            <Value>dbconnection</Value>
+            <Value>tcs</Value>
         </Property>
         <Property name="ManagerHelperNamespace">
             <Value>com.cronos.onlinereview.phases.ManagerHelper</Value>
@@ -666,10 +677,10 @@
     <!-- Default namespace for Submission handler -->
     <Config name="com.cronos.onlinereview.phases.SubmissionPhaseHandler">
         <Property name="ConnectionFactoryNS">
-            <Value>Dbconnection.factory</Value>
+            <Value>com.topcoder.db.connectionfactory.DBConnectionFactoryImpl</Value>
         </Property>
         <Property name="ConnectionName">
-            <Value>dbconnection</Value>
+            <Value>tcs</Value>
         </Property>
         <Property name="ManagerHelperNamespace">
             <Value>com.cronos.onlinereview.phases.ManagerHelper</Value>
@@ -707,10 +718,10 @@
     <!-- Default namespace for Screening handler -->
     <Config name="com.cronos.onlinereview.phases.ScreeningPhaseHandler">
         <Property name="ConnectionFactoryNS">
-            <Value>Dbconnection.factory</Value>
+            <Value>com.topcoder.db.connectionfactory.DBConnectionFactoryImpl</Value>
         </Property>
         <Property name="ConnectionName">
-            <Value>dbconnection</Value>
+            <Value>tcs</Value>
         </Property>
         <Property name="ManagerHelperNamespace">
             <Value>com.cronos.onlinereview.phases.ManagerHelper</Value>
@@ -748,10 +759,10 @@
     <!-- Default namespace for Review handler -->
     <Config name="com.cronos.onlinereview.phases.ReviewPhaseHandler">
         <Property name="ConnectionFactoryNS">
-            <Value>Dbconnection.factory</Value>
+            <Value>com.topcoder.db.connectionfactory.DBConnectionFactoryImpl</Value>
         </Property>
         <Property name="ConnectionName">
-            <Value>dbconnection</Value>
+            <Value>tcs</Value>
         </Property>
         <Property name="ManagerHelperNamespace">
             <Value>com.cronos.onlinereview.phases.ManagerHelper</Value>
@@ -789,10 +800,10 @@
     <!-- Default namespace for Appeals handler -->
     <Config name="com.cronos.onlinereview.phases.AppealsPhaseHandler">
         <Property name="ConnectionFactoryNS">
-            <Value>Dbconnection.factory</Value>
+            <Value>com.topcoder.db.connectionfactory.DBConnectionFactoryImpl</Value>
         </Property>
         <Property name="ConnectionName">
-            <Value>dbconnection</Value>
+            <Value>tcs</Value>
         </Property>
         <Property name="ManagerHelperNamespace">
             <Value>com.cronos.onlinereview.phases.ManagerHelper</Value>
@@ -830,10 +841,10 @@
     <!-- Default namespace for Appeals Response handler -->
     <Config name="com.cronos.onlinereview.phases.AppealsResponsePhaseHandler">
         <Property name="ConnectionFactoryNS">
-            <Value>Dbconnection.factory</Value>
+            <Value>com.topcoder.db.connectionfactory.DBConnectionFactoryImpl</Value>
         </Property>
         <Property name="ConnectionName">
-            <Value>dbconnection</Value>
+            <Value>tcs</Value>
         </Property>
         <Property name="ManagerHelperNamespace">
             <Value>com.cronos.onlinereview.phases.ManagerHelper</Value>
@@ -871,10 +882,10 @@
     <!-- Default namespace for Aggregation handler -->
     <Config name="com.cronos.onlinereview.phases.AggregationPhaseHandler">
         <Property name="ConnectionFactoryNS">
-            <Value>Dbconnection.factory</Value>
+            <Value>com.topcoder.db.connectionfactory.DBConnectionFactoryImpl</Value>
         </Property>
         <Property name="ConnectionName">
-            <Value>dbconnection</Value>
+            <Value>tcs</Value>
         </Property>
         <Property name="ManagerHelperNamespace">
             <Value>com.cronos.onlinereview.phases.ManagerHelper</Value>
@@ -912,10 +923,10 @@
     <!-- Default namespace for Aggregation Review handler -->
     <Config name="com.cronos.onlinereview.phases.AggregationReviewPhaseHandler">
         <Property name="ConnectionFactoryNS">
-            <Value>Dbconnection.factory</Value>
+            <Value>com.topcoder.db.connectionfactory.DBConnectionFactoryImpl</Value>
         </Property>
         <Property name="ConnectionName">
-            <Value>dbconnection</Value>
+            <Value>tcs</Value>
         </Property>
         <Property name="ManagerHelperNamespace">
             <Value>com.cronos.onlinereview.phases.ManagerHelper</Value>
@@ -953,10 +964,10 @@
     <!-- Default namespace for Final Fix handler -->
     <Config name="com.cronos.onlinereview.phases.FinalFixPhaseHandler">
         <Property name="ConnectionFactoryNS">
-            <Value>Dbconnection.factory</Value>
+            <Value>com.topcoder.db.connectionfactory.DBConnectionFactoryImpl</Value>
         </Property>
         <Property name="ConnectionName">
-            <Value>dbconnection</Value>
+            <Value>tcs</Value>
         </Property>
         <Property name="ManagerHelperNamespace">
             <Value>com.cronos.onlinereview.phases.ManagerHelper</Value>
@@ -994,10 +1005,10 @@
     <!-- Default namespace for Final Review handler -->
     <Config name="com.cronos.onlinereview.phases.FinalReviewPhaseHandler">
         <Property name="ConnectionFactoryNS">
-            <Value>Dbconnection.factory</Value>
+            <Value>com.topcoder.db.connectionfactory.DBConnectionFactoryImpl</Value>
         </Property>
         <Property name="ConnectionName">
-            <Value>dbconnection</Value>
+            <Value>tcs</Value>
         </Property>
         <Property name="ManagerHelperNamespace">
             <Value>com.cronos.onlinereview.phases.ManagerHelper</Value>
@@ -1035,10 +1046,10 @@
     <!-- Default namespace for Approval handler -->
     <Config name="com.cronos.onlinereview.phases.ApprovalPhaseHandler">
         <Property name="ConnectionFactoryNS">
-            <Value>Dbconnection.factory</Value>
+            <Value>com.topcoder.db.connectionfactory.DBConnectionFactoryImpl</Value>
         </Property>
         <Property name="ConnectionName">
-            <Value>dbconnection</Value>
+            <Value>tcs</Value>
         </Property>
         <Property name="ManagerHelperNamespace">
             <Value>com.cronos.onlinereview.phases.ManagerHelper</Value>
@@ -1850,7 +1861,7 @@
                 </Property>
 
                 <Property name="searchableFields">
-                    <Property name="dummy">
+                    <Property name="resource_id">
                         <Property name="validator">
                             <Property name="class">
                                 <Value>validator</Value>
@@ -1900,7 +1911,7 @@
                 </Property>
 
                 <Property name="searchableFields">
-                    <Property name="dummy">
+                    <Property name="resource_role_id">
                         <Property name="validator">
                             <Property name="class">
                                 <Value>validator</Value>
@@ -1931,8 +1942,8 @@
                 </Property>
 
                 <Property name="alias">
-                    <Property name="The ID">
-                        <Value>peopleID</Value>
+                    <Property name="resource_role_id">
+                        <Value>resource_role_id</Value>
                     </Property>
                 </Property>
             </Property>
@@ -2125,6 +2136,18 @@
     <!-- Object Factory configuration for validator -->
     <Config name="com.topcoder.search.builder.validator.factory">
         <Property name="validator:default">
+            <Property name="type">
+                <Value>com.topcoder.util.datavalidator.NotValidator</Value>
+            </Property>            
+            <Property name="params">
+                <Property name="param1">
+                    <Property name="name">
+                        <Value>validator:null</Value>
+                    </Property>
+                </Property>
+            </Property>
+        </Property>        
+        <Property name="validator:null">
             <Property name="type">
                 <Value>com.topcoder.util.datavalidator.NullValidator</Value>
             </Property>

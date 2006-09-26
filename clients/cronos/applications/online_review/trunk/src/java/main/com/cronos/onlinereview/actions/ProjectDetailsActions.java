@@ -867,7 +867,7 @@ public class ProjectDetailsActions extends DispatchAction {
                         request, Constants.VIEW_REVIEWER_REVIEWS_PERM_NAME) &&
                         (ActionsHelper.getPhase(phases, true, Constants.REVIEW_PHASE_NAME) != null ||
                                 ActionsHelper.getPhase(phases, true, Constants.APPEALS_PHASE_NAME) != null ||
-                                ActionsHelper.getPhase(phases, true, Constants.APPEALS_RESPONE_PHASE_NAME) != null)));
+                                ActionsHelper.getPhase(phases, true, Constants.APPEALS_RESPONSE_PHASE_NAME) != null)));
         request.setAttribute("isAllowedToUploadTC",
                 new Boolean(AuthorizationHelper.hasUserPermission(request, Constants.UPLOAD_TEST_CASES_PERM_NAME)));
         request.setAttribute("isAllowedToPerformAggregation",
