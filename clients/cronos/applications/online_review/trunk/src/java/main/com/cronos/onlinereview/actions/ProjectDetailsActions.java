@@ -480,6 +480,11 @@ public class ProjectDetailsActions extends DispatchAction {
 
                 phaseGroup.setReviewers(screeners);
 
+                // No need to fetch auto screening results if there are no submissions
+                if (submissions.length == 0) {
+                    continue;
+                }
+
                 // Obtain an instance of Scorecard Manager
                 ScorecardManager scrMgr = ActionsHelper.createScorecardManager(request);
                 ScorecardType[] allScorecardTypes = scrMgr.getAllScorecardTypes();
