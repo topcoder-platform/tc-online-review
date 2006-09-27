@@ -11,13 +11,23 @@
             </Property>
             <Property name="tcs">
                 <Property name="producer">
-                    <Value>com.topcoder.db.connectionfactory.producers.JNDIConnectionProducer</Value>
+                    <Value>com.topcoder.db.connectionfactory.producers.JDBCConnectionProducer</Value>
                 </Property>
                 <Property name="parameters">
-                    <Property name="jndi_name">
-                        <Value>java:JTS_TCS_CATALOG</Value>
+                    <Property name="jdbc_driver">
+                        <Value>com.informix.jdbc.IfxDriver</Value>
+                    </Property>
+                    <Property name="jdbc_url">
+                        <Value>jdbc:informix-sqli://localhost:1526/review:informixserver=top_coder</Value>
+                    </Property>
+                    <Property name="user">
+                        <Value>informix</Value>
+                    </Property>
+                    <Property name="password">
+                        <Value>informix</Value>
                     </Property>
                 </Property>
+
             </Property>
         </Property>
     </Config>
@@ -154,7 +164,7 @@
                         <Value>String</Value>
                     </Property>
                     <Property name="value">
-                        <Value>com.topcoder.searchbuilder.ResourceManagement</Value>
+                        <Value>com.topcoder.searchbuilder.common</Value>
                     </Property>
                 </Property>
             </Property>
@@ -545,7 +555,7 @@
         </Property>
 
         <Property name="SearchBundleManagerNS">
-            <Value>com.topcoder.searchbuilder.ResourceManagement</Value>
+            <Value>com.topcoder.searchbuilder.common</Value>
         </Property>
 
         <Property name="ResourceManager">
@@ -613,13 +623,13 @@
                 <Value>com.cronos.onlinereview.external.impl.DBUserRetrieval</Value>
             </Property>
             <Property name="UserRetrievalNamespace">
-                <Value>com.cronos.onlinereview.external</Value>
+                <Value>com.topcoder.db.connectionfactory.DBConnectionFactoryImpl</Value>
             </Property>
             <Property name="ProjectRetrievalClassName">
                 <Value>com.cronos.onlinereview.external.impl.DBProjectRetrieval</Value>
             </Property>
             <Property name="ProjectRetrievalNamespace">
-                <Value>com.cronos.onlinereview.external</Value>
+                <Value>com.topcoder.db.connectionfactory.DBConnectionFactoryImpl</Value>
             </Property>
         </Property>
 
@@ -1206,7 +1216,7 @@
     -->
     <Config name="com.topcoder.management.project">
         <Property name="SearchBuilderNamespace">
-            <Value>com.topcoder.searchbuilder.ProjectManagement</Value>
+            <Value>com.topcoder.searchbuilder.common</Value>
         </Property>
         <Property name="PersistenceClass">
             <Value>com.topcoder.management.project.persistence.InformixProjectPersistence</Value>
@@ -1280,7 +1290,7 @@
     -->
     <Config name="com.topcoder.management.scorecard">
         <Property name="SearchBuilderNamespace">
-            <Value>com.topcoder.searchbuilder.ScorecardManagement</Value>
+            <Value>com.topcoder.searchbuilder.common</Value>
         </Property>
         <Property name="PersistenceClass">
             <Value>com.topcoder.management.scorecard.persistence.InformixScorecardPersistence</Value>
@@ -1344,7 +1354,7 @@
         </Property>
 
         <Property name="search_bundle_manager_namespace">
-            <Value>com.topcoder.searchbuilder.ReviewManagement</Value>
+            <Value>com.topcoder.searchbuilder.common</Value>
         </Property>
         <Property name="search_bundle_name">
             <Value>Review Search Bundle</Value>
@@ -1356,8 +1366,7 @@
         ==========  Configuration for Search Builder component  ==========
     -->
 
-    <!-- Project-searching logic -->
-    <Config name="com.topcoder.searchbuilder.ProjectManagement">
+    <Config name="com.topcoder.searchbuilder.common">
         <Property name="searchStrategyFactoryNamespace">
             <Value>com.topcoder.search.builder.strategy.factory</Value>
         </Property>
@@ -1366,6 +1375,8 @@
         </Property>
 
         <Property name="searchBundles">
+            <!-- Project-searching logic -->
+    
             <Property name="ProjectSearchBundle">
                 <Property name="type">
                     <Value>Database</Value>
@@ -1536,19 +1547,8 @@
                     </Property>
                 </Property>
             </Property>
-        </Property>
-    </Config>
-
-    <!-- Scorecard-searching logic -->
-    <Config name="com.topcoder.searchbuilder.ScorecardManagement">
-        <Property name="searchStrategyFactoryNamespace">
-            <Value>com.topcoder.search.builder.strategy.factory</Value>
-        </Property>
-        <Property name="fieldValidatorFactoryNamespace">
-            <Value>com.topcoder.search.builder.validator.factory</Value>
-        </Property>
-
-        <Property name="searchBundles">
+            
+            <!-- Scorecard-searching logic -->
             <Property name="ScorecardSearchBundle">
                 <Property name="type">
                     <Value>Database</Value>
@@ -1615,19 +1615,8 @@
                     </Property>
                 </Property>
             </Property>
-        </Property>
-    </Config>
 
-    <!-- Deliverable-searching logic -->
-    <Config name="com.topcoder.searchbuilder.DeliverableManagement">
-        <Property name="searchStrategyFactoryNamespace">
-            <Value>com.topcoder.search.builder.strategy.factory</Value>
-        </Property>
-        <Property name="fieldValidatorFactoryNamespace">
-            <Value>com.topcoder.search.builder.validator.factory</Value>
-        </Property>
-
-        <Property name="searchBundles">
+            <!-- Deliverable-searching logic -->
             <Property name="Deliverable Search Bundle">
                 <Property name="type">
                     <Value>Database</Value>
@@ -1840,19 +1829,7 @@
                     </Property>
                 </Property>
             </Property>
-        </Property>
-    </Config>
-
-    <!-- Resource-searching logic -->
-    <Config name="com.topcoder.searchbuilder.ResourceManagement">
-        <Property name="searchStrategyFactoryNamespace">
-            <Value>com.topcoder.search.builder.strategy.factory</Value>
-        </Property>
-        <Property name="fieldValidatorFactoryNamespace">
-            <Value>com.topcoder.search.builder.validator.factory</Value>
-        </Property>
-
-        <Property name="searchBundles">
+            <!-- Resource-searching logic -->
             <Property name="Resource Search Bundle">
                 <Property name="searchStrategy">
                     <Property name="class">
@@ -2039,19 +2016,8 @@
                     </Property>
                 </Property>
             </Property>
-        </Property>
-    </Config>
-
-    <!-- Review-searching logic -->
-    <Config name="com.topcoder.searchbuilder.ReviewManagement">
-        <Property name="searchStrategyFactoryNamespace">
-            <Value>com.topcoder.search.builder.strategy.factory</Value>
-        </Property>
-        <Property name="fieldValidatorFactoryNamespace">
-            <Value>com.topcoder.search.builder.validator.factory</Value>
-        </Property>
-
-        <Property name="searchBundles">
+    
+            <!-- Review-searching logic -->
             <Property name="Review Search Bundle">
                 <Property name="searchStrategy">
                     <Property name="class">
@@ -2112,7 +2078,8 @@
                 </Property>
             </Property>
         </Property>
-    </Config>
+    </Config>    
+    
 
     <!-- Object factory configuration for DBStrategy -->
     <Config name="com.topcoder.search.builder.strategy.factory">

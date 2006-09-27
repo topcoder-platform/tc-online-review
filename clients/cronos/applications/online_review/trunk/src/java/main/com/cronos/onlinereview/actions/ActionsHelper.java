@@ -1681,7 +1681,7 @@ class ActionsHelper {
         if (manager == null) {
             manager = new DefaultPhaseManager("com.topcoder.management.phase");
 
-/* TODO: Make the following code work
+// TODO: Make the following code work
             PhaseType[] phaseTypes = manager.getAllPhaseTypes();
 
             // Register the phase handlers
@@ -1707,7 +1707,6 @@ class ActionsHelper {
                     new FinalReviewPhaseHandler(), Constants.FINAL_REVIEW_PHASE_NAME);
             registerPhaseHandlerForOperation(manager, phaseTypes,
                     new ApprovalPhaseHandler(), Constants.APPROVAL_PHASE_NAME);
-*/
 
             // Place newly-created object into the request as attribute
             request.setAttribute("phaseManager", manager);
@@ -1801,7 +1800,7 @@ class ActionsHelper {
 
             // get the search bundles
             SearchBundleManager searchBundleManager =
-                    new SearchBundleManager("com.topcoder.searchbuilder.ResourceManagement");
+                    new SearchBundleManager("com.topcoder.searchbuilder.common");
 
             SearchBundle resourceSearchBundle = searchBundleManager.getSearchBundle(
                     PersistenceResourceManager.RESOURCE_SEARCH_BUNDLE_NAME);
@@ -1935,7 +1934,7 @@ class ActionsHelper {
 
             // Get the search bundles
             SearchBundleManager searchBundleManager =
-                    new SearchBundleManager("com.topcoder.searchbuilder.DeliverableManagement");
+                    new SearchBundleManager("com.topcoder.searchbuilder.common");
 
             SearchBundle deliverableSearchBundle = searchBundleManager.getSearchBundle(
                     PersistenceDeliverableManager.DELIVERABLE_SEARCH_BUNDLE_NAME);
@@ -2015,7 +2014,7 @@ class ActionsHelper {
 
             // Get the search bundles
             SearchBundleManager searchBundleManager =
-                    new SearchBundleManager("com.topcoder.searchbuilder.DeliverableManagement");
+                    new SearchBundleManager("com.topcoder.searchbuilder.common");
 
             SearchBundle uploadSearchBundle = searchBundleManager.getSearchBundle(
                     PersistenceUploadManager.UPLOAD_SEARCH_BUNDLE_NAME);
