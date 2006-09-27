@@ -688,6 +688,9 @@ public class ProjectDetailsActions extends DispatchAction {
                 } else {
                     aggregator = ActionsHelper.getAllResourcesForPhase(resMgr, phase);
                 }
+                if (aggregator == null || aggregator.length == 0) {
+                    continue;
+                }
 
                 Filter filterResource = new EqualToFilter("reviewer", new Long(aggregator[0].getId()));
                 Filter filterProject = new EqualToFilter("project", new Long(project.getId()));
@@ -780,6 +783,9 @@ public class ProjectDetailsActions extends DispatchAction {
                 } else {
                     reviewer = ActionsHelper.getAllResourcesForPhase(resMgr, phase);
                 }
+                if (reviewer == null || reviewer.length == 0) {
+                    continue;
+                }
 
                 Filter filterResource = new EqualToFilter("reviewer", new Long(reviewer[0].getId()));
                 Filter filterProject = new EqualToFilter("project", new Long(project.getId()));
@@ -806,6 +812,9 @@ public class ProjectDetailsActions extends DispatchAction {
                     approver = ActionsHelper.getResourcesForPhase(allProjectResources, phase);
                 } else {
                     approver = ActionsHelper.getAllResourcesForPhase(resMgr, phase);
+                }
+                if (approver == null || approver.length == 0) {
+                    continue;
                 }
 
                 // Obtain an instance of Scorecard Manager
