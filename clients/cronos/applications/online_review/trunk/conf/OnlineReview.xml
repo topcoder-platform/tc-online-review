@@ -11,23 +11,13 @@
             </Property>
             <Property name="tcs">
                 <Property name="producer">
-                    <Value>com.topcoder.db.connectionfactory.producers.JDBCConnectionProducer</Value>
+                    <Value>com.topcoder.db.connectionfactory.producers.JNDIConnectionProducer</Value>
                 </Property>
                 <Property name="parameters">
-                    <Property name="jdbc_driver">
-                        <Value>com.informix.jdbc.IfxDriver</Value>
-                    </Property>
-                    <Property name="jdbc_url">
-                        <Value>jdbc:informix-sqli://localhost:1526/review:informixserver=top_coder</Value>
-                    </Property>
-                    <Property name="user">
-                        <Value>informix</Value>
-                    </Property>
-                    <Property name="password">
-                        <Value>informix</Value>
+                    <Property name="jndi_name">
+                        <Value>java:JTS_TCS_CATALOG</Value>
                     </Property>
                 </Property>
-
             </Property>
         </Property>
     </Config>
@@ -108,10 +98,11 @@
 
         <!-- The names of the Ajax request handlers -->
         <Property name="Handlers">
-            <!--<Value>SetScorecardStatus</Value>
+<!--
+            <Value>SetScorecardStatus</Value>
             <Value>LoadTimelineTemplate</Value>
             <Value>SetTimelineNotification</Value>
-              -->
+ -->
             <Value>PlaceAppeal</Value>
             <Value>ResolveAppeal</Value>
         </Property>
@@ -234,38 +225,13 @@
             </Property>
             </Property>
         -->
-        <!-- defining the upload manager concrete implementation -->
-        <!-- wrapper class is used due to inability of OF to create Maps -->
-        <Property name="com/topcoder/management/deliverable/UploadManager">
+        <!-- defining the phase templae concrete implementation
+            <Property name="com/topcoder/management/deliverable/UploadManager">
             <Property name="type">
-                <Value>com.topcoder.management.deliverable.PersistenceUploadManager</Value>
+            <Value>com.topcoder.management.deliverable.MockUploadManager</Value>
             </Property>
-            <Property name="params">
-                <Property name="param1">
-                    <Property name="name">
-                        <Value>com/topcoder/management/deliverable/UploadPersistence</Value>
-                    </Property>
-                </Property>
-                <Property name="param2">
-                    <Property name="name">
-                        <Value>com/topcoder/search/builder/SearchBundleManager</Value>
-                    </Property>
-                </Property>                
             </Property>
-        </Property>
-        <Property name="com/topcoder/management/deliverable/UploadPersistence">
-            <Property name="type">
-                <Value>com.topcoder.management.deliverable.persistence.sql.SqlUploadPersistence</Value>
-            </Property>
-            <Property name="params">
-                <Property name="param1">
-                    <Property name="name">
-                        <Value>com/topcoder/db/connectionfactory/DBConnectionFactory</Value>
-                    </Property>
-                </Property>                
-            </Property>
-        </Property>
-
+        -->
         <!-- defining the phase manager concrete implementation -->
         <Property name="com/topcoder/management/phase/PhaseManager">
             <Property name="type">
@@ -283,14 +249,14 @@
             </Property>
         </Property>
 
-        <!-- defining the calculation manager concrete implementation -->
-        <Property name="com/topcoder/management/review/scorecalculator/CalculationManager">
+        <!-- defining the phase templae concrete implementation
+            <Property name="com/topcoder/management/review/scorecalculator/CalculationManager">
             <Property name="type">
-                <Value>com.topcoder.management.review.scorecalculator.CalculationManager</Value>
+            <Value>com.topcoder.management.review.scorecalculator.CalculationManager</Value>
             </Property>
-        </Property>
-
-
+            </Property>
+        -->
+        
         <Property name="com/topcoder/management/scorecard/ScorecardManager">
             <Property name="type">
                 <Value>com.topcoder.management.scorecard.ScorecardManagerImpl</Value>
@@ -374,10 +340,10 @@
             <Value>-1</Value>
         </Property>
         <Property name="allowed_dirs">
-            <Value>C:\\tmp\\file_store</Value>
+            <Value>E:\\Temp\\file_store</Value>
         </Property>
         <Property name="default_dir">
-            <Value>C:\\tmp\\file_store</Value>
+            <Value>E:\\Temp\\file_store</Value>
         </Property>
         <Property name="overwrite">
             <Value>false</Value>
@@ -392,7 +358,7 @@
             <Value>-1</Value>
         </Property>
         <Property name="temp_dir">
-            <Value>C:\\tmp\\System\\</Value>
+            <Value>E:\\Temp\\System\\</Value>
         </Property>
         <Property name="ip_address">
             <Value>127.0.0.1</Value>
@@ -1401,7 +1367,6 @@
 
         <Property name="searchBundles">
             <!-- Project-searching logic -->
-    
             <Property name="ProjectSearchBundle">
                 <Property name="type">
                     <Value>Database</Value>
@@ -1572,7 +1537,7 @@
                     </Property>
                 </Property>
             </Property>
-            
+
             <!-- Scorecard-searching logic -->
             <Property name="ScorecardSearchBundle">
                 <Property name="type">
@@ -1854,6 +1819,7 @@
                     </Property>
                 </Property>
             </Property>
+
             <!-- Resource-searching logic -->
             <Property name="Resource Search Bundle">
                 <Property name="searchStrategy">
@@ -2041,7 +2007,7 @@
                     </Property>
                 </Property>
             </Property>
-    
+
             <!-- Review-searching logic -->
             <Property name="Review Search Bundle">
                 <Property name="searchStrategy">
@@ -2103,8 +2069,7 @@
                 </Property>
             </Property>
         </Property>
-    </Config>    
-    
+    </Config>
 
     <!-- Object factory configuration for DBStrategy -->
     <Config name="com.topcoder.search.builder.strategy.factory">
