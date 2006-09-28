@@ -251,24 +251,6 @@ class ActionsHelper {
     }
 
 
-    /**
-     * This static method converts all line terminators found in the provided text into
-     * <code>&lt;br /&gt;</code> tag, so the resulting converted text can be displayed on a JSP
-     * page. The line terminators are the ones specified in the description of the class
-     * <code>java.util.regex.Pattern</code>.
-     * <p>
-     * This class is thread safe as it contains only static methods and no inner state.
-     * </p>
-     *
-     * @return converted text.
-     * @param text
-     *            text that needs conversion of line-breaks.
-     */
-    public static String addLineBreaks(String text) {
-        return text.replaceAll("(\r\n)|[\n\r\u0085\u2029]", "<br />");
-    }
-
-
     // --------------------------------------------------------------- Finder type of methods -----
 
     /**
@@ -733,6 +715,36 @@ class ActionsHelper {
             }
         }
         return questionCount;
+    }
+
+    /**
+     * This static method counts the number of uploads that are required or optional in the whole
+     * scorecard template.
+     *
+     * @return a number of uploads in the scorecard.
+     * @param scorecardTemplate
+     *            a scorecard template to count uploads in.
+     * @throws IllegalArgumentException
+     *             if <code>scorecardTemplate</code> parameter is <code>null</code>.
+     */
+    public static int getScorecardUploadsCount(Scorecard scorecardTemplate) {
+        // Validate parameter
+        validateParameterNotNull(scorecardTemplate, "scorecardTemplate");
+
+        int uploadCount = 0;
+        // Count the number of uploads for this scorecard template
+        for (int i = 0; i < scorecardTemplate.getNumberOfGroups(); ++i) {
+            Group group = scorecardTemplate.getGroup(i);
+            for (int j = 0; j < group.getNumberOfSections(); ++j) {
+                Section section = group.getSection(j);
+                for (int k = 0; k < section.getNumberOfQuestions(); ++k){
+                    if (section.getQuestion(k).isUploadDocument()) {
+                        ++uploadCount;
+                    }
+                }
+            }
+        }
+        return uploadCount;
     }
 
     /**
