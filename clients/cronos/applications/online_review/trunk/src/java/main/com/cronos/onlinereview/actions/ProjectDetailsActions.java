@@ -63,7 +63,10 @@ import com.topcoder.search.builder.filter.InFilter;
 import com.topcoder.servlet.request.FileUpload;
 import com.topcoder.servlet.request.FileUploadResult;
 import com.topcoder.servlet.request.UploadedFile;
+import com.topcoder.util.config.ConfigManagerException;
 import com.topcoder.util.errorhandling.BaseException;
+import com.topcoder.util.file.DocumentGenerator;
+import com.topcoder.util.file.Template;
 
 /**
  * This class contains Struts Actions that are meant to deal with Project's details. There are
@@ -900,7 +903,7 @@ public class ProjectDetailsActions extends DispatchAction {
      * this assembly, which is supposed to send a message entered by user to the manager of some
      * project. This action gets executed twice &#x96; once to display the page with the form, and
      * once to process the message entered by user on that form.
-     *
+     * 
      * @return an action forward to the appropriate page. If no error has occured and this action
      *         was called the first time, the forward will be to contactManager.jsp page, which
      *         displays the form where user can enter his message. If this action was called during
@@ -917,10 +920,12 @@ public class ProjectDetailsActions extends DispatchAction {
      *            the http response.
      * @throws BaseException
      *             if any error occurs.
+     * @throws ConfigManagerException
+     *             if any error occurs while loading the document generator's configuration.
      */
     public ActionForward contactManager(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response)
-        throws BaseException {
+        throws BaseException, ConfigManagerException {
         // Verify that certain requirements are met before processing with the Action
         CorrectnessCheckResult verification = checkForCorrectProjectId(mapping, request, Constants.CONTACT_PM_PERM_NAME);
         // If any error has occured, return action forward contained in the result bean
@@ -934,9 +939,14 @@ public class ProjectDetailsActions extends DispatchAction {
         if (!postBack) {
             // Retrieve some basic project info (such as icons' names) and place it into request
             ActionsHelper.retrieveAndStoreBasicProjectInfo(request, verification.getProject(), getResources(request));
+            return mapping.findForward(Constants.DISPLAY_PAGE_FORWARD_NAME);
         }
+        
+        DocumentGenerator docGenerator = DocumentGenerator.getInstance();
+        Template docTemplate = docGenerator.getTemplate(
+                ConfigHelper.getContactManagerEmailSrcType(), ConfigHelper.getContactManagerEmailTemplate());
 
-        return mapping.findForward((postBack) ? Constants.SUCCESS_FORWARD_NAME : Constants.DISPLAY_PAGE_FORWARD_NAME);
+        return mapping.findForward(Constants.SUCCESS_FORWARD_NAME);
     }
 
     /**
@@ -1182,8 +1192,9 @@ public class ProjectDetailsActions extends DispatchAction {
         response.setHeader("Content-Type", "application/octet-stream");
         response.setStatus(HttpServletResponse.SC_OK);
         response.setIntHeader("Content-Length", (int) uploadedFile.getSize());
-        response.setHeader("Content-Location",
-                "submission-" + ((submission != null) ? Long.toString(submission.getId()) : "") + ".zip");
+        response.setHeader("Content-Disposition",
+                "attachment; filename=\"submission-" + submission.getId() +
+                "-" + uploadedFile.getRemoteFileName() + "\"");
 
         response.flushBuffer();
 
@@ -1376,8 +1387,8 @@ public class ProjectDetailsActions extends DispatchAction {
         response.setHeader("Content-Type", "application/octet-stream");
         response.setStatus(HttpServletResponse.SC_OK);
         response.setIntHeader("Content-Length", (int) uploadedFile.getSize());
-        response.setHeader("Content-Location",
-                "final-fix-" + Long.toString(upload.getId()) + ".zip");
+        response.setHeader("Content-Disposition",
+                "attachment; filename=\"" + uploadedFile.getRemoteFileName() + "\"");
 
         response.flushBuffer();
 
@@ -1576,8 +1587,8 @@ public class ProjectDetailsActions extends DispatchAction {
         response.setHeader("Content-Type", "application/octet-stream");
         response.setStatus(HttpServletResponse.SC_OK);
         response.setIntHeader("Content-Length", (int) uploadedFile.getSize());
-        response.setHeader("Content-Location",
-                "test-cases-" + Long.toString(upload.getId()) + ".zip");
+        response.setHeader("Content-Disposition",
+                "attachment; filename=\"" + uploadedFile.getRemoteFileName() + "\"");
 
         response.flushBuffer();
 
@@ -1748,8 +1759,8 @@ public class ProjectDetailsActions extends DispatchAction {
         response.setHeader("Content-Type", "application/octet-stream");
         response.setStatus(HttpServletResponse.SC_OK);
         response.setIntHeader("Content-Length", (int) uploadedFile.getSize());
-        response.setHeader("Content-Location",
-                "review-document-" + Long.toString(upload.getId()) + ".zip");
+        response.setHeader("Content-Disposition",
+                "attachment; filename=\"" + uploadedFile.getRemoteFileName() + "\"");
 
         response.flushBuffer();
 
