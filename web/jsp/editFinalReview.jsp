@@ -121,6 +121,9 @@
 																			<html:link page="/actions/ViewReview.do?method=viewReview&rid=${subReview.id}"><bean:message key="editReview.EditAggregation.ViewReview" /></html:link>
 																		</c:if>
 																	</c:forEach>
+																	<c:if test="${!(empty item.document)}">
+																		<html:link page="/actions/DownloadDocument.do?method=downloadDocument&uid=${item.document}"><bean:message key="editReview.Document.Download" /></html:link>
+																	</c:if>
 																</td>
 																<c:set var="firstTime" value="${false}" />
 															</c:if>
