@@ -22,7 +22,7 @@
 	<script language="JavaScript" type="text/javascript" src="../scripts/rollovers.js"><!-- @ --></script>
 	<script language="JavaScript" type="text/javascript" src="../scripts/dojo.js"><!-- @ --></script>
 	<script language="JavaScript" type="text/javascript">
-		
+
 		// create the request object
 		function createXMLHttpRequest() {
 			var xmlHttp;
@@ -33,20 +33,20 @@
 			}
 			return xmlHttp;
 		}
-		
+
 		/**
-		 * TODO: Document it		 
+		 * TODO: Document it
 		 */
 		function placeAppeal(itemIdx, itemId, reviewId) {
 			// Find appeal text input node
 			appealTextNode = document.getElementsByName("appeal_text[" + itemIdx + "]");
 			// Get appeal text
 			var appealText = appealTextNode.value;
-			
-			
+
+
 			// create the Ajax request
 			var myRequest = createXMLHttpRequest();
-			
+
 			// assemble the request XML
 			var content =
 				'<?xml version="1.0" ?>' +
@@ -82,7 +82,7 @@
 					}
 				}
 			};
-	
+
 			// send the request
 			myRequest.open("POST", "<html:rewrite page='/ajaxSupport' />", true);
 			myRequest.setRequestHeader("Content-Type", "text/xml");
@@ -135,33 +135,33 @@
 								</tr>
 								<c:forEach items="${section.allQuestions}" var="question" varStatus="questionStatus">
 									<c:set var="item" value="${review.allItems[itemIdx]}" />
-									
+
 									<tr class="light">
-										<%@ include file="../includes/review/review_question.jsp" %>	
+										<%@ include file="../includes/review/review_question.jsp" %>
 										<%@ include file="../includes/review/review_static_answer.jsp" %>
 										<c:if test="${canPlaceAppeal or canPlaceAppealResponse}">
-											<td class="valueC"><%-- TODO: Appeal status should go here --%></td>
+											<td class="valueC"><%-- TODO: Appeal status should go here --%><!-- @ --></td>
 										</c:if>
-										<c:if test="${canPlaceAppeal}">				
+										<c:if test="${canPlaceAppeal}">
 											<td class="valueC">
 												<html:link href="javascript:toggleDisplay('appealText_${itemIdx}');toggleDisplay('placeAppeal_${itemIdx}');">
 													<html:img styleId="placeAppeal_${itemIdx}" styleClass="showText" srcKey="editReview.Button.Appeal.img" altKey="editReview.Button.Appeal.alt" />
 												</html:link>
 											</td>
 										</c:if>
-									</tr>									
-									<%@ include file="../includes/review/review_comments.jsp" %>									
-									<c:if test="${canPlaceAppeal}">	
+									</tr>
+									<%@ include file="../includes/review/review_comments.jsp" %>
+									<c:if test="${canPlaceAppeal}">
 										<tr class="highlighted">
 											<td class="value" colspan="6">
 												<div id="appealText_${itemIdx}" class="hideText">
-													<b><bean:message key="editReview.Question.AppealText.title"/>:</b> 
-													<br/>			
-													<textarea name="appeal_text[${itemIdx}]" rows="2" cols="20" style="font-size: 10px; font-family: sans-serif;width:99%;height:50px;border:1px solid #ccc;margin:3px;"></textarea> 
+													<b><bean:message key="editReview.Question.AppealText.title"/>:</b>
+													<br/>
+													<textarea name="appeal_text[${itemIdx}]" rows="2" cols="20" style="font-size: 10px; font-family: sans-serif;width:99%;height:50px;border:1px solid #ccc;margin:3px;"></textarea>
 													<br/>
 													<html:link href="javascript:placeAppeal(${itemIdx}, ${item.id}, ${review.id});">
 														<html:img srcKey="editReview.Button.SubmitAppeal.img" altKey="editReview.Button.SubmitAppeal.alt" border="0" hspace="5" vspace="9" />
-													</html:link> 
+													</html:link>
 													<br/>
 												</div>
 											</td>

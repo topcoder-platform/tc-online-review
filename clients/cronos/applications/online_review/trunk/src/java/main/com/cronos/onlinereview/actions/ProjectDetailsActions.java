@@ -992,6 +992,7 @@ public class ProjectDetailsActions extends DispatchAction {
         StrutsRequestParser parser = new StrutsRequestParser();
         parser.AddFile(file);
 
+        // Obtain an instance of File Upload Manager
         FileUpload fileUpload = ActionsHelper.createFileUploadManager(request);
 
         FileUploadResult uploadResult = fileUpload.uploadFiles(request, parser);

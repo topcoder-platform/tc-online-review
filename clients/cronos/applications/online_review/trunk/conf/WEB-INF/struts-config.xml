@@ -92,6 +92,7 @@
             <form-property name="answer" type="java.lang.String[]" />
             <form-property name="commentType" type="java.lang.Long[]" />
             <form-property name="comment" type="java.lang.String[]" />
+            <form-property name="file" type="org.apache.struts.upload.FormFile[]" />
         </form-bean>
 
         <form-bean name="aggregationForm" dynamic="true"

@@ -14,10 +14,14 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.actions.DispatchAction;
+import org.apache.struts.upload.FormFile;
 import org.apache.struts.validator.LazyValidatorForm;
 
 import com.topcoder.management.deliverable.Submission;
+import com.topcoder.management.deliverable.Upload;
 import com.topcoder.management.deliverable.UploadManager;
+import com.topcoder.management.deliverable.UploadStatus;
+import com.topcoder.management.deliverable.UploadType;
 import com.topcoder.management.project.Project;
 import com.topcoder.management.resource.Resource;
 import com.topcoder.management.resource.ResourceManager;
@@ -42,6 +46,9 @@ import com.topcoder.search.builder.filter.AndFilter;
 import com.topcoder.search.builder.filter.EqualToFilter;
 import com.topcoder.search.builder.filter.Filter;
 import com.topcoder.search.builder.filter.InFilter;
+import com.topcoder.servlet.request.FileUpload;
+import com.topcoder.servlet.request.FileUploadResult;
+import com.topcoder.servlet.request.UploadedFile;
 import com.topcoder.util.errorhandling.BaseException;
 
 /**
@@ -1684,13 +1691,13 @@ public class ProjectReviewActions extends DispatchAction {
         }
 
         // Obtain Resource Manager instance
-        ResourceManager resourceManager = ActionsHelper.createResourceManager(request);        
+        ResourceManager resourceManager = ActionsHelper.createResourceManager(request);
         // Obtain ScorecardMatrix for scorecard
         ScorecardMatrix matrix = (new DefaultScorecardMatrixBuilder()).buildScorecardMatrix(scorecardTemplate);
         // Create CalculationManager instance
         CalculationManager calculationManager = new CalculationManager();
-        
-        // Retrieve the user ids for the review authors 
+
+        // Retrieve the user ids for the review authors
         // and additionally the individual item scores and average total score
         long[] authors = new long[reviews.length];
         float avgScore = 0;
@@ -1708,11 +1715,11 @@ public class ProjectReviewActions extends DispatchAction {
                     for (int questionIdx = 0; questionIdx < section.getNumberOfQuestions(); questionIdx++) {
                         Question question = section.getQuestion(questionIdx);
                         ScoreCalculator scoreCalculator = calculationManager.getScoreCalculator(question.getQuestionType().getId());
-                        scores[i][itemIdx] = (float) (matrix.getLineItem(question.getId()).getWeight() * 
+                        scores[i][itemIdx] = (float) (matrix.getLineItem(question.getId()).getWeight() *
                             scoreCalculator.evaluateItem(reviews[i].getItem(itemIdx), question));
                         itemIdx++;
-                    }                    
-                }                
+                    }
+                }
             }
         }
         // TODO: Calculate average per-item scores
@@ -1721,7 +1728,7 @@ public class ProjectReviewActions extends DispatchAction {
         request.setAttribute("authors", authors);
         request.setAttribute("avgScore", new Float(avgScore));
         request.setAttribute("scores", scores);
-                
+
         // Retrieve some basic review info and store it in the request
         retrieveAndStoreBasicReviewInfo(request, verification, "CompositeReview", scorecardTemplate);
 
@@ -2130,7 +2137,7 @@ public class ProjectReviewActions extends DispatchAction {
 
         // Get an array of all phases for the project
         Phase[] phases = ActionsHelper.getPhasesForProject(ActionsHelper.createPhaseManager(request), project);
-        
+
         // Get active (current) phase
         Phase phase = ActionsHelper.getPhase(phases, true, phaseName);
         // Check that the phase in question is really active (open)
@@ -2224,7 +2231,7 @@ public class ProjectReviewActions extends DispatchAction {
             scorecardTypeName = "Client Review";
         }
 
-                    
+
         // Verify that certain requirements are met before proceeding with the Action
         CorrectnessCheckResult verification =
                 checkForCorrectReviewId(mapping, request, Constants.EDIT_MY_REVIEW_PERM_NAME);
@@ -2232,19 +2239,19 @@ public class ProjectReviewActions extends DispatchAction {
         if (!verification.isSuccessful()) {
             return verification.getForward();
         }
-        
+
         // Verify that the user has permission to edit review
         if (!AuthorizationHelper.hasUserPermission(request, Constants.EDIT_ANY_SCORECARD_PERM_NAME)) {
             // FIXME: Temporarly dropped the permission check due to to permission granted to Screener only
             /*if (!AuthorizationHelper.hasUserPermission(request, Constants.EDIT_MY_REVIEW_PERM_NAME)) {
-                return ActionsHelper.produceErrorReport(mapping, getResources(request), 
-                    request, Constants.EDIT_MY_REVIEW_PERM_NAME, "Error.NoPermission");                
+                return ActionsHelper.produceErrorReport(mapping, getResources(request),
+                    request, Constants.EDIT_MY_REVIEW_PERM_NAME, "Error.NoPermission");
             } else if(verification.getReview().getAuthor() != AuthorizationHelper.getLoggedInUserId(request)) {
-                return ActionsHelper.produceErrorReport(mapping, getResources(request), 
+                return ActionsHelper.produceErrorReport(mapping, getResources(request),
                         request, Constants.EDIT_MY_REVIEW_PERM_NAME, "Error.NoPermission");
-            }     */       
-        }    
-        
+            }     */
+        }
+
         // Retrieve a review to edit
         Review review = verification.getReview();
 
@@ -2258,11 +2265,11 @@ public class ProjectReviewActions extends DispatchAction {
             return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
                     Constants.EDIT_MY_REVIEW_PERM_NAME, "Error.ReviewTypeIncorrect");
         }
-        
-        boolean managerEdit = false;        
+
+        boolean managerEdit = false;
         // Check if review has been committed
         if (review.isCommitted()) {
-            // If user has a Manager role, put special flag to the request, 
+            // If user has a Manager role, put special flag to the request,
             // indicating that we need "Manager Edit"
             if(AuthorizationHelper.hasUserRole(request, Constants.MANAGER_ROLE_NAME)) {
                 request.setAttribute("managerEdit", Boolean.TRUE);
@@ -2283,31 +2290,50 @@ public class ProjectReviewActions extends DispatchAction {
         String[] answers = new String[review.getNumberOfItems()];
         String[] replies = new String[review.getNumberOfItems()];
         Long[] commentTypes = new Long[review.getNumberOfItems()];
+        FormFile[] files = new FormFile[ActionsHelper.getScorecardUploadsCount(scorecardTemplate)];
+        Arrays.fill(files, null);
+
+        Long[] uploadedFileIds = new Long[files.length];
+        Arrays.fill(uploadedFileIds, null);
+
+        int itemIdx = 0;
+        int fileIdx = 0;
 
         // Walk the items in the review setting appropriate values in the arrays
-        for (int i = 0; i < review.getNumberOfItems(); ++i) {
-            Item item = review.getItem(i);
-            Comment comment;
-            if (!managerEdit) {
-                comment = getItemReviewerComments(item)[0]; // TODO: Retrieve all comments
-            } else {
-                Comment[] managerComments = getItemManagerComments(item);
-                if (managerComments.length > 0) {
-                    comment = managerComments[0]; // TODO: Retrieve all comments
-                } else {
-                    comment = null;
+        for (int groupIdx = 0; groupIdx < scorecardTemplate.getNumberOfGroups(); ++groupIdx) {
+            Group group = scorecardTemplate.getGroup(groupIdx);
+            for (int sectionIdx = 0; sectionIdx < group.getNumberOfSections(); ++sectionIdx) {
+                Section section = group.getSection(sectionIdx);
+                for (int questionIdx = 0; questionIdx < section.getNumberOfQuestions(); ++questionIdx, ++itemIdx) {
+                    Item item = review.getItem(itemIdx);
+                    Comment comment;
+                    if (!managerEdit) {
+                        comment = getItemReviewerComments(item)[0]; // TODO: Retrieve all comments
+                    } else {
+                        Comment[] managerComments = getItemManagerComments(item);
+                        if (managerComments.length > 0) {
+                            comment = managerComments[0]; // TODO: Retrieve all comments
+                        } else {
+                            comment = null;
+                        }
+                    }
+                    answers[itemIdx] = (String) item.getAnswer();
+                    if (comment != null) {
+                        replies[itemIdx] = comment.getComment();
+                        commentTypes[itemIdx] = new Long(comment.getCommentType().getId());
+                    } else {
+                        replies[itemIdx] = "";
+                        commentTypes[itemIdx] = null;
+                    }
+
+                    if (!managerEdit && section.getQuestion(questionIdx).isUploadDocument()) {
+                        uploadedFileIds[fileIdx++] = item.getDocument();
+                    }
                 }
             }
-            answers[i] = (String) item.getAnswer();
-            if (comment != null) {
-                replies[i] = comment.getComment();
-                commentTypes[i] = new Long(comment.getCommentType().getId());
-            } else {
-                replies[i] = "";
-                commentTypes[i] = null;
-            }
-            
         }
+
+        request.setAttribute("uploadedFileIds", uploadedFileIds);
 
         /*
          * Populate the form
@@ -2319,18 +2345,19 @@ public class ProjectReviewActions extends DispatchAction {
         reviewForm.set("answer", answers);
         reviewForm.set("comment", replies);
         reviewForm.set("commentType", commentTypes);
+        reviewForm.set("file", files);
 
         // Get the word "of" for Test Case type of question
         String wordOf = getResources(request).getMessage("editReview.Question.Response.TestCase.of");
         // Plase the string into the request as attribute
         request.setAttribute("wordOf", " "  + wordOf + " ");
-        
+
         return mapping.findForward(Constants.SUCCESS_FORWARD_NAME);
     }
 
     /**
-     * TODO: Document it 
-     * 
+     * TODO: Document it
+     *
      * @param item
      * @return
      */
@@ -2345,8 +2372,8 @@ public class ProjectReviewActions extends DispatchAction {
     }
 
     /**
-     * TODO: Document it 
-     * 
+     * TODO: Document it
+     *
      * @param item
      * @return
      */
@@ -2374,11 +2401,11 @@ public class ProjectReviewActions extends DispatchAction {
      */
     private ActionForward saveGenericReview(ActionMapping mapping, ActionForm form, HttpServletRequest request, String reviewType) throws BaseException {
         // FIXME: IMPORTANT!!!!!!!!!!!!!!!!!!!!!!!
-        // FIXME: Check the permissions here and everywhere, 
+        // FIXME: Check the permissions here and everywhere,
         // as they where dropped from checkForCorrectReviewId(ActionMapping, HttpServletRequest, String)
         // FIXME: Also check current phase everywhere
-        
-        
+
+
         String permName;
         String phaseName;
         String scorecardTypeName;
@@ -2436,7 +2463,7 @@ public class ProjectReviewActions extends DispatchAction {
         if (myResource == null) {
             myResource = ActionsHelper.getMyResourceForPhase(request, null);
         }
-        
+
         // Retrieve the review to edit (if any)
         Review review = verification.getReview();
         Scorecard scorecardTemplate = null;
@@ -2474,8 +2501,8 @@ public class ProjectReviewActions extends DispatchAction {
             if (reviews.length != 0) {
                 review = reviews[0];
                 verification.setReview(review);
-            } 
-        } 
+            }
+        }
         if (review != null){
             // Obtain an instance of Scorecard Manager
             ScorecardManager scrMgr = ActionsHelper.createScorecardManager(request);
@@ -2489,10 +2516,10 @@ public class ProjectReviewActions extends DispatchAction {
                     permName, "Error.ReviewTypeIncorrect");
         }
 
-        boolean managerEdit = false;        
+        boolean managerEdit = false;
         // Check if review has been committed
         if (review != null && review.isCommitted()) {
-            // If user has a Manager role, put special flag to the request, 
+            // If user has a Manager role, put special flag to the request,
             // indicating that we need "Manager Edit"
             if(AuthorizationHelper.hasUserRole(request, Constants.MANAGER_ROLE_NAME)) {
                 request.setAttribute("managerEdit", Boolean.TRUE);
@@ -2510,13 +2537,37 @@ public class ProjectReviewActions extends DispatchAction {
         String[] answers = (String[]) reviewForm.get("answer");
         String[] replies = (String[]) reviewForm.get("comment");
         Long[] commentTypeIds = (Long[]) reviewForm.get("commentType");
-        int index = 0;
+        FormFile[] files = (FormFile[]) reviewForm.get("file");
+
+        StrutsRequestParser parser = new StrutsRequestParser();
+
+        for (int i = 0; i < files.length; ++i) {
+            if (files[i] != null && files[i].getFileName().trim().length() != 0) {
+                parser.AddFile(files[i]);
+            }
+        }
+
+        // Obtain an instance of File Upload Manager
+        FileUpload fileUpload = ActionsHelper.createFileUploadManager(request);
+
+        FileUploadResult uploadResult = fileUpload.uploadFiles(request, parser);
+        UploadedFile[] uploadedFiles = uploadResult.getUploadedFiles("file");
 
         // Obtain an instance of review manager
         ReviewManager revMgr = ActionsHelper.createReviewManager(request);
+        // Obtain an instance of Upload Manager
+        UploadManager upMgr = ActionsHelper.createUploadManager(request);
 
         // Retrieve all comment types
         CommentType[] commentTypes = revMgr.getAllCommentTypes();
+        // Retrieve all upload statuses
+        UploadStatus[] allUploadStatuses = upMgr.getAllUploadStatuses();
+        // Retrieve all upload types
+        UploadType[] allUploadType = upMgr.getAllUploadTypes();
+
+        int index = 0;
+        int fileIdx = 0;
+        int uploadedFileIdx = 0;
 
         // If the review hasn't been created yet
         if (review == null) {
@@ -2548,6 +2599,27 @@ public class ProjectReviewActions extends DispatchAction {
                         // Set required fields of the item
                         item.setAnswer(answers[index]);
                         item.setQuestion(question.getId());
+
+                        if (question.isUploadDocument()) {
+                            if (fileIdx < files.length && files[fileIdx] != null) {
+                                Upload upload = new Upload();
+
+                                upload.setOwner(myResource.getId());
+                                upload.setProject(project.getId());
+                                upload.setParameter(uploadedFiles[uploadedFileIdx++].getFileId());
+                                upload.setUploadStatus(
+                                        ActionsHelper.findUploadStatusByName(allUploadStatuses, "Active"));
+                                upload.setUploadType(
+                                        ActionsHelper.findUploadTypeByName(allUploadType, "Review Document"));
+
+                                upMgr.createUpload(upload,
+                                        Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
+
+                                item.setDocument(new Long(upload.getId()));
+                            }
+                            ++fileIdx;
+                        }
+
                         // Add item to the review
                         reviewEditor.addItem(item);
 
@@ -2563,39 +2635,71 @@ public class ProjectReviewActions extends DispatchAction {
 
             review = reviewEditor.getReview();
         } else {
-            // Iterate over items of the existing review that needs updating
-            for (int i = 0; i < review.getNumberOfItems(); ++i) {
-                // Get an item and its comment
-                Item item = review.getItem(i);
-                Comment comment;
-                if (!managerEdit) {
-                    comment = getItemReviewerComments(item)[0]; // TODO: Retrieve all comments
-                    // Update the comment only if type or text have changed
-                    if (comment.getCommentType().getId() != commentTypeIds[i].longValue() ||
-                            !comment.getComment().equals(replies[i])) {
-                        comment.setComment(replies[i]);
-                        comment.setCommentType(
-                                ActionsHelper.findCommentTypeById(commentTypes, commentTypeIds[i].longValue()));
-                        // Update the author of the comment
-                        comment.setAuthor(myResource.getId());
-                    }
+            for (int i = 0; i < scorecardTemplate.getNumberOfGroups(); ++i) {
+                Group group = scorecardTemplate.getGroup(i);
+                for (int j = 0; j < group.getNumberOfSections(); ++j) {
+                    Section section = group.getSection(j);
+                    for (int k = 0; k < section.getNumberOfQuestions(); ++k, ++index) {
+                        // Get an item and its comment
+                        Item item = review.getItem(index);
+                        Comment comment;
+                        if (!managerEdit) {
+                            comment = getItemReviewerComments(item)[0]; // TODO: Retrieve all comments
+                            // Update the comment only if type or text have changed
+                            if (comment.getCommentType().getId() != commentTypeIds[index].longValue() ||
+                                    !comment.getComment().equals(replies[index])) {
+                                comment.setComment(replies[index]);
+                                comment.setCommentType(ActionsHelper.findCommentTypeById(
+                                        commentTypes, commentTypeIds[index].longValue()));
+                                // Update the author of the comment
+                                comment.setAuthor(myResource.getId());
+                            }
+                        } else {
+                            Comment[] managerComments = getItemManagerComments(item);
+                            if (managerComments.length > 0) {
+                                comment = managerComments[0]; // TODO: Retrieve all comments
+                            } else {
+                                comment = new Comment();
+                                comment.setCommentType(
+                                        ActionsHelper.findCommentTypeByName(commentTypes, "Manager Comment"));
+                                item.addComment(comment);
+                            }
+                            comment.setAuthor(myResource.getId());
+                            comment.setComment(replies[index]);
+                        }
 
-                } else {
-                    Comment[] managerComments = getItemManagerComments(item);
-                    if (managerComments.length > 0) {
-                        comment = managerComments[0]; // TODO: Retrieve all comments
-                    } else {
-                        comment = new Comment();
-                        comment.setCommentType(ActionsHelper.findCommentTypeByName(commentTypes, "Manager Comment"));
-                        item.addComment(comment);
+                        // Update the answer
+                        item.setAnswer(answers[index]);
+
+                        if (!managerEdit && section.getQuestion(k).isUploadDocument()) {
+                            if (fileIdx < files.length && files[fileIdx] != null &&
+                                    files[fileIdx].getFileName().trim().length() != 0) {
+                                Upload oldUpload = null;
+                                if (item.getDocument() != null) {
+                                    oldUpload = upMgr.getUpload(item.getDocument().longValue());
+                                }
+
+                                Upload upload = new Upload();
+
+                                upload.setOwner(myResource.getId());
+                                upload.setProject(oldUpload.getProject());
+                                upload.setParameter(uploadedFiles[uploadedFileIdx++].getFileId());
+                                upload.setUploadStatus(oldUpload.getUploadStatus());
+                                upload.setUploadType(oldUpload.getUploadType());
+                                oldUpload.setUploadStatus(
+                                        ActionsHelper.findUploadStatusByName(allUploadStatuses, "Deleted"));
+
+                                upMgr.updateUpload(oldUpload,
+                                        Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
+                                upMgr.createUpload(upload,
+                                        Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
+
+                                item.setDocument(new Long(upload.getId()));
+                            }
+                            ++fileIdx;
+                        }
                     }
-                    comment.setAuthor(myResource.getId());                    
-                    comment.setComment(replies[i]);                                            
                 }
-                
-                
-                // Update the answer
-                item.setAnswer(answers[i]);
             }
         }
 
@@ -2680,32 +2784,32 @@ public class ProjectReviewActions extends DispatchAction {
                     permName, "Error.ReviewTypeIncorrect");
         }
         // Make sure that the user is not trying to view unfinished review
-        if (!verification.getReview().isCommitted()) {            
+        if (!verification.getReview().isCommitted()) {
             return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
                     permName, "Error.ReviewNotCommitted");
         } else {
-            // If user has a Manager role, put special flag to the request, 
+            // If user has a Manager role, put special flag to the request,
             // indicating that we can edit the review
             if(AuthorizationHelper.hasUserRole(request, Constants.MANAGER_ROLE_NAME)) {
-                request.setAttribute("canEditScorecard", Boolean.TRUE);                
+                request.setAttribute("canEditScorecard", Boolean.TRUE);
             }
         }
-        
+
         // Get an array of all phases for the project
         Phase[] phases = ActionsHelper.getPhasesForProject(ActionsHelper.createPhaseManager(request), verification.getProject());
         // Get active (current) phase
         Phase phase = ActionsHelper.getPhase(phases, true, null);
-        
+
         // Check if user can place appeals or appeal responses
-        if (phase.getPhaseType().getName().equals(Constants.APPEALS_PHASE_NAME) && 
+        if (phase.getPhaseType().getName().equals(Constants.APPEALS_PHASE_NAME) &&
                 AuthorizationHelper.hasUserPermission(request, Constants.PERFORM_APPEAL_PERM_NAME)) {
             // Can place appeal, put appropriate flag to request
-            request.setAttribute("canPlaceAppeal", Boolean.TRUE);                
-        } else if (phase.getPhaseType().getName().equals(Constants.APPEALS_RESPONSE_PHASE_NAME) && 
+            request.setAttribute("canPlaceAppeal", Boolean.TRUE);
+        } else if (phase.getPhaseType().getName().equals(Constants.APPEALS_RESPONSE_PHASE_NAME) &&
                 AuthorizationHelper.hasUserPermission(request, Constants.PERFORM_APPEAL_RESP_PERM_NAME)) {
             // Can place response, put appropriate flag to request
-            request.setAttribute("canPlaceAppealResponse", Boolean.TRUE);                
-        }  
+            request.setAttribute("canPlaceAppealResponse", Boolean.TRUE);
+        }
 
         // Retrieve some basic review info and store it in the request
         retrieveAndStoreBasicReviewInfo(request, verification, reviewType, scorecardTemplate);
