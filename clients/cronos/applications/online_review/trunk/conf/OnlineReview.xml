@@ -1938,17 +1938,22 @@
 
                 <Property name="context">
                     <Value>
-                          SELECT DISTINCT resource.resource_id 
-  FROM resource,
-       resource_submission,
-       resource_info,
-       resource_info_type_lu
- WHERE 1=1
-   AND  resource.resource_id = resource_submission.resource_id 
-   AND  resource_info.resource_info_type_id = resource_info_type_lu.resource_info_type_id 
-   AND resource.resource_id = resource_info.resource_id 
-   AND 
+                        SELECT DISTINCT resource.resource_id
+                          FROM resource,
+                               resource_info,
+                               resource_info_type_lu
+                         WHERE resource.resource_id = resource_info.resource_id
+                           AND resource_info.resource_info_type_id = resource_info_type_lu.resource_info_type_id
+                           AND
                     </Value>
+<!-- The old SELECT query. TODO: Remove it when the above one is verified as working properly
+                    <Value>
+                        SELECT DISTINCT resource.resource_id FROM resource LEFT OUTER JOIN resource_submission ON
+                        resource.resource_id = resource_submission.resource_id LEFT OUTER JOIN resource_info ON
+                        resource.resource_id = resource_info.resource_id LEFT OUTER JOIN resource_info_type_lu ON
+                        resource_info.resource_info_type_id = resource_info_type_lu.resource_info_type_id WHERE
+                    </Value>
+ -->
                 </Property>
 
                 <Property name="DBNamcespace">
