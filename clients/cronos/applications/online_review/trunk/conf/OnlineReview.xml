@@ -37,7 +37,7 @@
         </Property>
 
         <Property name="authenticator_name">
-            <Value>MockAuthenticator</Value>
+            <Value>ORAuthenticator</Value>
         </Property>
 
         <!-- <Property name="logger_name">
@@ -66,6 +66,17 @@
                 <!-- the full qualified class name, required. -->
                 <Property name="class">
                     <Value>com.cronos.onlinereview.mockups.MockAuthenticator</Value>
+                </Property>
+
+                <!-- the namespace to load configuration values, required. -->
+                <Property name="namespace">
+                    <Value>com.cronos.onlinereview.login.authenticator.SecurityManagerAuthenticator</Value>
+                </Property>
+            </Property>
+            <Property name="ORAuthenticator">
+                <!-- the full qualified class name, required. -->
+                <Property name="class">
+                    <Value>com.cronos.onlinereview.login.authenticator.SecurityManagerAuthenticator</Value>
                 </Property>
 
                 <!-- the namespace to load configuration values, required. -->
