@@ -143,7 +143,7 @@ class ConfigHelper {
      *
      * @see #PHASE_GROUP_RM_KEY_PROP
      * @see #PHASES_DEFINITIONS_PROP
-     * @see #PHASE_GROUP_APP_FUNCTION
+     * @see #PHASE_GROUP_APP_FUNCTION_PROP
      */
     private static final String PHASE_GROUPING_PROP = "PhaseGrouping";
 
@@ -154,7 +154,7 @@ class ConfigHelper {
      *
      * @see #PHASE_GROUPING_PROP
      * @see #PHASES_DEFINITIONS_PROP
-     * @see #PHASE_GROUP_APP_FUNCTION
+     * @see #PHASE_GROUP_APP_FUNCTION_PROP
      */
     private static final String PHASE_GROUP_RM_KEY_PROP = "NameKey";
 
@@ -164,7 +164,7 @@ class ConfigHelper {
      *
      * @see #PHASE_GROUPING_PROP
      * @see #PHASE_GROUP_RM_KEY_PROP
-     * @see #PHASE_GROUP_APP_FUNCTION
+     * @see #PHASE_GROUP_APP_FUNCTION_PROP
      */
     private static final String PHASES_DEFINITIONS_PROP = "Phases";
 
@@ -177,7 +177,50 @@ class ConfigHelper {
      * @see #PHASE_GROUP_RM_KEY_PROP
      * @see #PHASES_DEFINITIONS_PROP
      */
-    private static final String PHASE_GROUP_APP_FUNCTION = "AppFunction";
+    private static final String PHASE_GROUP_APP_FUNCTION_PROP = "AppFunction";
+
+    /**
+     * This member variable is a string constant that specifies the name of the property which
+     * contains definitions of other proerties that describe how mails sent to managers will be
+     * gererated.
+     *
+     * @see #EMAIL_TEMPLATE_SOURCE_TYPE_PROP
+     * @see #EMAIL_TEMPLATE_NAME_PROP
+     * @see #EMAIL_SUBJECT_PROP
+     */
+    private static final String CONTACT_MANAGER_EMAIL_PROP = "ContactManagerEmail";
+
+    /**
+     * This member variable is a string constant that specifies the name of the property which
+     * specifies the type of source where email template can be loaded from.
+     *
+     * @see #CONTACT_MANAGER_EMAIL_PROP
+     * @see #EMAIL_TEMPLATE_NAME_PROP
+     * @see #EMAIL_SUBJECT_PROP
+     */
+    private static final String EMAIL_TEMPLATE_SOURCE_TYPE_PROP = "EmailTemplateSource";
+
+    /**
+     * This member variable is a string constant that specifies the name of the property which
+     * specifies the name of file (or any other type of source) where email teplate can be loaded
+     * from using the type of source specified in the propety which name is defined by
+     * {@link #EMAIL_TEMPLATE_SOURCE_TYPE_PROP} constant.
+     *
+     * @see #CONTACT_MANAGER_EMAIL_PROP
+     * @see #EMAIL_TEMPLATE_SOURCE_TYPE_PROP
+     * @see #EMAIL_SUBJECT_PROP
+     */
+    private static final String EMAIL_TEMPLATE_NAME_PROP = "EmailTemplateName";
+
+    /**
+     * This member variable is a string constant that specifies the name of the property which
+     * specifies the subject that will be used in outgoing email.
+     *
+     * @see #CONTACT_MANAGER_EMAIL_PROP
+     * @see #EMAIL_TEMPLATE_SOURCE_TYPE_PROP
+     * @see #EMAIL_TEMPLATE_NAME_PROP
+     */
+    private static final String EMAIL_SUBJECT_PROP = "EmailSubject";
 
     /**
      * This member variable holds the name of the session attribute which ID of the currently logged
@@ -242,6 +285,24 @@ class ConfigHelper {
      */
     private static final List phaseGroupFunctions = new ArrayList();
 
+    /**
+     * This member variable holds the type of the source that will be used to load email template to
+     * send message to project's manager.
+     */
+    private static String contactManagerEmailSrcType = "";
+
+    /**
+     * This member variable holds the path where email template can be loaded from to send message
+     * to project's manager.
+     */
+    private static String contactManagerEmailTemplate = "";
+
+    /**
+     * This member variable holds the subject of email message that will be used when sending
+     * messages to project's manager.
+     */
+    private static String contactManagerEmailSubject = "";
+
     static {
         // Obtaining the instance of Configurtaion Manager
         ConfigManager cfgMgr = ConfigManager.getInstance();
@@ -262,7 +323,7 @@ class ConfigHelper {
 
             while (propsIcons.hasMoreElements()) {
                 // Get the name of the next property in the list
-                String strPropName = (String)propsIcons.nextElement();
+                String strPropName = (String) propsIcons.nextElement();
 
                 // Retrieve the ID of the Root Catalog
                 String strID = propRootCatIcons.getValue(strPropName + "." + ROOT_CATALOG_ID_PROP);
@@ -296,7 +357,7 @@ class ConfigHelper {
             while (propsIcons.hasMoreElements()) {
                 // Get the name of the next property in the list.
                 // The property name retrieved is also the name of a Project Category
-                String strPropName = (String)propsIcons.nextElement();
+                String strPropName = (String) propsIcons.nextElement();
                 // Retrieve small icon's filename that should be associated with the Project Category name
                 String strFilenameSm = propProjCatIcons.getValue(strPropName + "." + PROJECT_CATEGORY_ICON_SM_PROP);
                 // Retrieve icon's filename that should be associated with the Project Category name
@@ -357,7 +418,7 @@ class ConfigHelper {
                 // Retrieve an array of phase names included in this group
                 String[] strPhases = propPhaseGrouping.getValues(propertyName + PHASES_DEFINITIONS_PROP);
                 // Retrieve a name of application's functionality
-                String strAppFunction = propPhaseGrouping.getValue(propertyName + PHASE_GROUP_APP_FUNCTION);
+                String strAppFunction = propPhaseGrouping.getValue(propertyName + PHASE_GROUP_APP_FUNCTION_PROP);
 
                 // If everything has been read fine ...
                 if (strGroupNameKey != null && strGroupNameKey.trim().length() != 0 &&
@@ -374,6 +435,15 @@ class ConfigHelper {
                         phasesSet.add(strPhases[i]);
                     }
                 }
+            }
+
+            Property propContactManagerEmail =
+                cfgMgr.getPropertyObject(ONLINE_REVIEW_CFG_NS, CONTACT_MANAGER_EMAIL_PROP);
+
+            if (propContactManagerEmail != null) {
+                contactManagerEmailSrcType = propContactManagerEmail.getValue(EMAIL_TEMPLATE_SOURCE_TYPE_PROP);
+                contactManagerEmailTemplate = propContactManagerEmail.getValue(EMAIL_TEMPLATE_NAME_PROP);
+                contactManagerEmailSubject = propContactManagerEmail.getValue(EMAIL_SUBJECT_PROP);
             }
         } catch (UnknownNamespaceException une) {
             // TODO: Add proper logging here
@@ -401,7 +471,7 @@ class ConfigHelper {
      *            Root Catalog ID which small icon's filename should be looked up for.
      */
     public static String getRootCatalogIconNameSm(String rootCatalogId) {
-        return (String)rootCatalogIconsSm.get(rootCatalogId);
+        return (String) rootCatalogIconsSm.get(rootCatalogId);
     }
 
     /**
@@ -415,7 +485,7 @@ class ConfigHelper {
      *            Root Catalog ID which name should be looked up for.
      */
     public static String getRootCatalogAltTextKey(String rootCatalogId) {
-        return (String)rootCatalogAltTextKeys.get(rootCatalogId);
+        return (String) rootCatalogAltTextKeys.get(rootCatalogId);
     }
 
     /**
@@ -428,7 +498,7 @@ class ConfigHelper {
      *            Project Category name which small icon's filename should be looked up for.
      */
     public static String getProjectCategoryIconNameSm(String projectCategoryName) {
-        return (String)projectCategoryIconsSm.get(projectCategoryName);
+        return (String) projectCategoryIconsSm.get(projectCategoryName);
     }
 
     /**
@@ -440,7 +510,7 @@ class ConfigHelper {
      *            Project Category name which icon's filename should be looked up for.
      */
     public static String getProjectCategoryIconName(String projectCategoryName) {
-        return (String)projectCategoryIcons.get(projectCategoryName);
+        return (String) projectCategoryIcons.get(projectCategoryName);
     }
 
     /**
@@ -465,7 +535,7 @@ class ConfigHelper {
      *            name of the permission which list of role names should be retrieved for.
      */
     public static String[] getRolesForPermission(String permissionName) {
-        String[] roles = (String[])permissionsMatrix.get(permissionName);
+        String[] roles = (String[]) permissionsMatrix.get(permissionName);
         return (roles != null) ? roles : new String[0];
     }
 
@@ -532,5 +602,34 @@ class ConfigHelper {
      */
     public static String getPhaseGroupAppFunction(int index) {
         return (String) phaseGroupFunctions.get(index);
+    }
+
+    /**
+     * This static method returns the type of the source where email template to send to project's
+     * manager can be loaded from.
+     *
+     * @return a string representing the type of source.
+     */
+    public static String getContactManagerEmailSrcType() {
+        return contactManagerEmailSrcType;
+    }
+
+    /**
+     * This static method returns the path where email template to send to project's manager can be
+     * loaded from.
+     *
+     * @return a string containing the path to email template.
+     */
+    public static String getContactManagerEmailTemplate() {
+        return contactManagerEmailTemplate;
+    }
+
+    /**
+     * This method returns the subject of the email message that will be sent to project's manager.
+     *
+     * @return a string containing the subject.
+     */
+    public static String getContactManagerEmailSubject() {
+        return contactManagerEmailSubject;
     }
 }
