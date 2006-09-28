@@ -109,11 +109,11 @@
 
         <!-- The names of the Ajax request handlers -->
         <Property name="Handlers">
-<!--
             <Value>SetScorecardStatus</Value>
+<!--
             <Value>LoadTimelineTemplate</Value>
-            <Value>SetTimelineNotification</Value>
  -->
+            <Value>SetTimelineNotification</Value>
             <Value>PlaceAppeal</Value>
             <Value>ResolveAppeal</Value>
         </Property>
@@ -155,7 +155,7 @@
             </Property>
         </Property>
 
-        
+
         <Property name="com/topcoder/search/builder/SearchBundleManager">
             <Property name="type">
                 <Value>com.topcoder.search.builder.SearchBundleManager</Value>
@@ -229,12 +229,12 @@
             </Property>
         </Property>
 
-        <!-- defining the phase templae concrete implementation
-            <Property name="com/topcoder/project/phases/template/PhaseTemplate">
+        <!-- defining the phase template concrete implementation
+        <Property name="com/topcoder/project/phases/template/PhaseTemplate">
             <Property name="type">
-            <Value>com.topcoder.project.phases.template.MockPhaseTemplate</Value>
+                <Value>com.topcoder.project.phases.template.MockPhaseTemplate</Value>
             </Property>
-            </Property>
+        </Property>
         -->
         <!-- defining the upload manager concrete implementation -->
         <!-- wrapper class is used due to inability of OF to create Maps -->
@@ -252,7 +252,7 @@
                     <Property name="name">
                         <Value>com/topcoder/search/builder/SearchBundleManager</Value>
                     </Property>
-                </Property>                
+                </Property>
             </Property>
         </Property>
         <Property name="com/topcoder/management/deliverable/UploadPersistence">
@@ -264,7 +264,7 @@
                     <Property name="name">
                         <Value>com/topcoder/db/connectionfactory/DBConnectionFactory</Value>
                     </Property>
-                </Property>                
+                </Property>
             </Property>
         </Property>
 
@@ -272,7 +272,7 @@
         <Property name="com/topcoder/management/phase/PhaseManager">
             <Property name="type">
                 <Value>com.topcoder.management.phase.DefaultPhaseManager</Value>
-            </Property>            
+            </Property>
             <Property name="params">
                 <Property name="param1">
                     <Property name="type">
@@ -281,7 +281,7 @@
                     <Property name="value">
                         <Value>com.topcoder.management.phase</Value>
                     </Property>
-                </Property>                
+                </Property>
             </Property>
         </Property>
 
@@ -291,7 +291,6 @@
                 <Value>com.topcoder.management.review.scorecalculator.CalculationManager</Value>
             </Property>
         </Property>
-
 
         <Property name="com/topcoder/management/scorecard/ScorecardManager">
             <Property name="type">
@@ -394,7 +393,7 @@
             <Value>-1</Value>
         </Property>
         <Property name="temp_dir">
-            <Value>C:\\tmp\\System\\</Value>
+            <Value>E:\\Temp\\System\\</Value>
         </Property>
         <Property name="ip_address">
             <Value>127.0.0.1</Value>
@@ -1392,7 +1391,6 @@
     <!--
         ==========  Configuration for Search Builder component  ==========
     -->
-
     <Config name="com.topcoder.searchbuilder.common">
         <Property name="searchStrategyFactoryNamespace">
             <Value>com.topcoder.search.builder.strategy.factory</Value>
@@ -1865,7 +1863,67 @@
                 </Property>
 
                 <Property name="searchableFields">
-                    <Property name="resource_id">
+                    <Property name="resource.resource_id">
+                        <Property name="validator">
+                            <Property name="class">
+                                <Value>validator</Value>
+                            </Property>
+                            <Property name="identifier">
+                                <Value>default</Value>
+                            </Property>
+                        </Property>
+                    </Property>
+                    <Property name="project_phase_id">
+                        <Property name="validator">
+                            <Property name="class">
+                                <Value>validator</Value>
+                            </Property>
+                            <Property name="identifier">
+                                <Value>default</Value>
+                            </Property>
+                        </Property>
+                    </Property>
+                    <Property name="project_id">
+                        <Property name="validator">
+                            <Property name="class">
+                                <Value>validator</Value>
+                            </Property>
+                            <Property name="identifier">
+                                <Value>default</Value>
+                            </Property>
+                        </Property>
+                    </Property>
+                    <Property name="submission_id">
+                        <Property name="validator">
+                            <Property name="class">
+                                <Value>validator</Value>
+                            </Property>
+                            <Property name="identifier">
+                                <Value>default</Value>
+                            </Property>
+                        </Property>
+                    </Property>
+                    <Property name="resource_role_id">
+                        <Property name="validator">
+                            <Property name="class">
+                                <Value>validator</Value>
+                            </Property>
+                            <Property name="identifier">
+                                <Value>default</Value>
+                            </Property>
+                        </Property>
+                    </Property>
+                    <Property name="name">
+                        <Property name="validator">
+                            <Property name="class">
+                                <Value>validator</Value>
+                            </Property>
+                            <Property name="identifier">
+                                <Value>default</Value>
+                            </Property>
+                        </Property>
+                    </Property>
+                    <Property name="value">
                         <Property name="validator">
                             <Property name="class">
                                 <Value>validator</Value>
@@ -1902,7 +1960,7 @@
 
                 <Property name="alias">
                     <Property name="resource_id">
-                        <Value>resource_id</Value>
+                        <Value>resource.resource_id</Value>
                     </Property>
                 </Property>
             </Property>
@@ -1915,6 +1973,26 @@
                 </Property>
 
                 <Property name="searchableFields">
+                    <Property name="name">
+                        <Property name="validator">
+                            <Property name="class">
+                                <Value>validator</Value>
+                            </Property>
+                            <Property name="identifier">
+                                <Value>default</Value>
+                            </Property>
+                        </Property>
+                    </Property>
+                    <Property name="phase_type_id">
+                        <Property name="validator">
+                            <Property name="class">
+                                <Value>validator</Value>
+                            </Property>
+                            <Property name="identifier">
+                                <Value>default</Value>
+                            </Property>
+                        </Property>
+                    </Property>
                     <Property name="resource_role_id">
                         <Property name="validator">
                             <Property name="class">
@@ -1960,7 +2038,27 @@
                 </Property>
 
                 <Property name="searchableFields">
-                    <Property name="dummy">
+                    <Property name="external_ref_id">
+                        <Property name="validator">
+                            <Property name="class">
+                                <Value>validator</Value>
+                            </Property>
+                            <Property name="identifier">
+                                <Value>default</Value>
+                            </Property>
+                        </Property>
+                    </Property>
+                    <Property name="notification_type_id">
+                        <Property name="validator">
+                            <Property name="class">
+                                <Value>validator</Value>
+                            </Property>
+                            <Property name="identifier">
+                                <Value>default</Value>
+                            </Property>
+                        </Property>
+                    </Property>
+                    <Property name="project_id">
                         <Property name="validator">
                             <Property name="class">
                                 <Value>validator</Value>
@@ -2007,7 +2105,17 @@
                 </Property>
 
                 <Property name="searchableFields">
-                    <Property name="dummy">
+                    <Property name="notification_type_id">
+                        <Property name="validator">
+                            <Property name="class">
+                                <Value>validator</Value>
+                            </Property>
+                            <Property name="identifier">
+                                <Value>default</Value>
+                            </Property>
+                        </Property>
+                    </Property>
+                    <Property name="name">
                         <Property name="validator">
                             <Property name="class">
                                 <Value>validator</Value>
@@ -2038,8 +2146,8 @@
                 </Property>
 
                 <Property name="alias">
-                    <Property name="The ID">
-                        <Value>peopleID</Value>
+                    <Property name="notification_type_id">
+                        <Value>notification_type_id</Value>
                     </Property>
                 </Property>
             </Property>
@@ -2131,7 +2239,7 @@
         <Property name="validator:default">
             <Property name="type">
                 <Value>com.topcoder.util.datavalidator.NotValidator</Value>
-            </Property>            
+            </Property>
             <Property name="params">
                 <Property name="param1">
                     <Property name="name">
@@ -2139,7 +2247,7 @@
                     </Property>
                 </Property>
             </Property>
-        </Property>        
+        </Property>
         <Property name="validator:null">
             <Property name="type">
                 <Value>com.topcoder.util.datavalidator.NullValidator</Value>
