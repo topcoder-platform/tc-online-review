@@ -1938,13 +1938,13 @@
 
                 <Property name="context">
                     <Value>
-                        SELECT DISTINCT resource.resource_id
-                          FROM resource,
-                               resource_info,
-                               resource_info_type_lu
-                         WHERE resource.resource_id = resource_info.resource_id
-                           AND resource_info.resource_info_type_id = resource_info_type_lu.resource_info_type_id
-                           AND
+                        SELECT DISTINCT resource.resource_id 
+  FROM resource, 
+       resource_info, 
+       resource_info_type_lu 
+ WHERE resource.resource_id = resource_info.resource_id 
+   AND resource_info.resource_info_type_id = resource_info_type_lu.resource_info_type_id  
+   AND 
                     </Value>
 <!-- The old SELECT query. TODO: Remove it when the above one is verified as working properly
                     <Value>
