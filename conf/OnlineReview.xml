@@ -1513,24 +1513,37 @@
                 </Property>
 
                 <Property name="context">
-                    <Value>SELECT DISTINCT project.project_id FROM project JOIN project_category_lu ON
-                        project.project_category_id = project_category_lu.project_category_id JOIN project_status_lu ON
-                        project.project_status_id = project_status_lu.project_status_id JOIN project_type_lu ON
-                        project_category_lu.project_type_id = project_type_lu.project_type_id LEFT JOIN project_info ON
-                        project.project_id = project_info.project_id LEFT JOIN project_info_type_lu ON
-                        project_info.project_info_type_id = project_info_type_lu.project_info_type_id LEFT JOIN resource
-                        ON project.project_id = resource.project_id LEFT JOIN resource_info ON resource.resource_id =
-                        resource_info.resource_id LEFT JOIN resource_info_type_lu ON resource_info.resource_info_type_id
-                        = resource_info_type_lu.resource_info_type_id WHERE
+                    <Value>
+                        SELECT DISTINCT project.project_id
+                             FROM project
+                             JOIN project_category_lu
+                               ON project.project_category_id = project_category_lu.project_category_id
+                             JOIN project_status_lu
+                               ON project.project_status_id = project_status_lu.project_status_id
+                             JOIN project_type_lu
+                               ON project_category_lu.project_type_id = project_type_lu.project_type_id
+                        LEFT JOIN project_info
+                               ON project.project_id = project_info.project_id
+                        LEFT JOIN project_info_type_lu
+                               ON project_info.project_info_type_id = project_info_type_lu.project_info_type_id
+                        LEFT JOIN resource
+                               ON project.project_id = resource.project_id
+                        LEFT JOIN resource_info
+                               ON resource.resource_id = resource_info.resource_id
+                        LEFT JOIN resource_info_type_lu
+                               ON resource_info.resource_info_type_id = resource_info_type_lu.resource_info_type_id
+                        WHERE
                     </Value>
                 </Property>
 
+<!-- TODO: Check if everything works well without the following config, and remove it if everyting does
                 <Property name="DBNamespace">
                     <Value>com.topcoder.db.connectionfactory.DBConnectionFactoryImpl</Value>
                 </Property>
                 <Property name="connectionProducerName">
                     <Value>tcs</Value>
                 </Property>
+ -->
 
                 <Property name="alias">
                     <Property name="ProjectTypeID">
@@ -1595,19 +1608,27 @@
                 </Property>
 
                 <Property name="context">
-                    <Value>SELECT DISTINCT scorecard.scorecard_id FROM scorecard JOIN scorecard_status_lu ON
-                        scorecard.scorecard_status_id = scorecard_status_lu.scorecard_status_id JOIN scorecard_type_lu
-                        ON scorecard.scorecard_type_id = scorecard_type_lu.scorecard_type_id JOIN project_category_lu ON
-                        scorecard.project_category_id = project_category_lu.project_category_id WHERE
+                    <Value>
+                        SELECT DISTINCT scorecard.scorecard_id
+                          FROM scorecard
+                          JOIN scorecard_status_lu
+                            ON scorecard.scorecard_status_id = scorecard_status_lu.scorecard_status_id
+                          JOIN scorecard_type_lu
+                            ON scorecard.scorecard_type_id = scorecard_type_lu.scorecard_type_id
+                          JOIN project_category_lu
+                            ON scorecard.project_category_id = project_category_lu.project_category_id
+                         WHERE
                     </Value>
                 </Property>
 
-                <Property name="DBNamcespace">
+<!-- TODO: Check if everything works well without the following config, and remove it if everyting does
+                <Property name="DBNamespace">
                     <Value>com.topcoder.db.connectionfactory.DBConnectionFactoryImpl</Value>
                 </Property>
                 <Property name="connectionProducerName">
                     <Value>tcs</Value>
                 </Property>
+ -->
 
                 <Property name="alias">
                     <Property name="ScorecardStatusID">
@@ -1660,11 +1681,13 @@
                     </Property>
                 </Property>
                 <Property name="context">
-                    <Value>SELECT UNIQUE deliverable_id, resource_id
-                        FROM deliverable_lu
-                        INNER JOIN resource
-                        ON deliverable_lu.resource_role_id = resource.resource_role_id
-                        WHERE
+                    <Value>
+                        SELECT UNIQUE deliverable_id,
+                                      resource_id
+                                 FROM deliverable_lu
+                           INNER JOIN resource
+                                   ON deliverable_lu.resource_role_id = resource.resource_role_id
+                                WHERE
                     </Value>
                 </Property>
                 <Property name="alias">
@@ -1714,16 +1737,22 @@
                     </Property>
                 </Property>
                 <Property name="context">
-                    <Value>SELECT deliverable_id, resource.resource_id, submission_id
-                        FROM deliverable_lu
-                        INNER JOIN resource ON resource.resource_role_id = deliverable_lu.resource_role_id
+                    <Value>
+                        SELECT     deliverable_id,
+                                   resource.resource_id,
+                                   submission_id
+                              FROM deliverable_lu
+                        INNER JOIN resource
+                                ON resource.resource_role_id = deliverable_lu.resource_role_id
                         CROSS JOIN submission
                         INNER JOIN submission_status_lu
-                        ON submission.submission_status_id = submission_status_lu.submission_status_id
+                                ON submission.submission_status_id = submission_status_lu.submission_status_id
                         INNER JOIN upload
-                        ON submission.upload_id = upload.upload_id
-                        WHERE submission_status_lu.name = 'Active' AND deliverable_lu.per_submission = 1 AND
-                        upload.project_id=resource.project_id AND
+                                ON submission.upload_id = upload.upload_id
+                             WHERE submission_status_lu.name = 'Active'
+                               AND deliverable_lu.per_submission = 1
+                               AND upload.project_id = resource.project_id
+                               AND
                     </Value>
                 </Property>
                 <Property name="alias">
@@ -1776,11 +1805,12 @@
                     </Property>
                 </Property>
                 <Property name="context">
-                    <Value>SELECT submission_id
-                        FROM submission
+                    <Value>
+                        SELECT     submission_id
+                              FROM submission
                         INNER JOIN upload
-                        ON submission.upload_id = upload.upload_id
-                        WHERE
+                                ON submission.upload_id = upload.upload_id
+                             WHERE
                     </Value>
                 </Property>
                 <Property name="alias">
@@ -1827,7 +1857,11 @@
                     </Property>
                 </Property>
                 <Property name="context">
-                    <Value>SELECT upload_id FROM upload WHERE </Value>
+                    <Value>
+                        SELECT upload_id
+                          FROM upload
+                         WHERE
+                    </Value>
                 </Property>
                 <Property name="alias">
                     <Property name="upload_id">
@@ -1942,20 +1976,22 @@
                           FROM resource,
                                resource_info,
                                resource_info_type_lu,
-                         OUTER resource_submission  
+                         OUTER resource_submission
                          WHERE resource.resource_id = resource_info.resource_id
                            AND resource_info.resource_info_type_id = resource_info_type_lu.resource_info_type_id
-                           AND resource.resource_id = resource_submission.resource_id 
+                           AND resource.resource_id = resource_submission.resource_id
                            AND
                     </Value>
                 </Property>
 
-                <Property name="DBNamcespace">
+<!-- TODO: Check if everything works well without the following config, and remove it if everyting does
+                <Property name="DBNamespace">
                     <Value>com.topcoder.db.connectionfactory.DBConnectionFactoryImpl</Value>
                 </Property>
                 <Property name="connectionProducerName">
                     <Value>tcs</Value>
                 </Property>
+ -->
 
                 <Property name="alias">
                     <Property name="resource_id">
@@ -2012,15 +2048,21 @@
                 </Property>
 
                 <Property name="context">
-                    <Value>SELECT DISTINCT resource_role_id FROM resource_role_lu WHERE</Value>
+                    <Value>
+                        SELECT DISTINCT resource_role_id
+                          FROM resource_role_lu
+                         WHERE
+                    </Value>
                 </Property>
 
-                <Property name="DBNamcespace">
+<!-- TODO: Check if everything works well without the following config, and remove it if everyting does
+                <Property name="DBNamespace">
                     <Value>com.topcoder.db.connectionfactory.DBConnectionFactoryImpl</Value>
                 </Property>
                 <Property name="connectionProducerName">
                     <Value>tcs</Value>
                 </Property>
+ -->
 
                 <Property name="alias">
                     <Property name="resource_role_id">
@@ -2078,16 +2120,22 @@
 
                 <Property name="context">
                     <Value>
-                        SELECT DISTINCT external_ref_id, project_id, notification_type_id FROM notification WHERE
+                        SELECT DISTINCT external_ref_id,
+                               project_id,
+                               notification_type_id
+                          FROM notification
+                         WHERE
                     </Value>
                 </Property>
 
-                <Property name="DBNamcespace">
+<!-- TODO: Check if everything works well without the following config, and remove it if everyting does
+                <Property name="DBNamespace">
                     <Value>com.topcoder.db.connectionfactory.DBConnectionFactoryImpl</Value>
                 </Property>
                 <Property name="connectionProducerName">
                     <Value>tcs</Value>
                 </Property>
+ -->
 
                 <Property name="alias">
                     <Property name="The ID">
@@ -2134,15 +2182,21 @@
                 </Property>
 
                 <Property name="context">
-                    <Value>SELECT DISTINCT notification_type_id FROM notification_type_lu WHERE</Value>
+                    <Value>
+                        SELECT DISTINCT notification_type_id
+                          FROM notification_type_lu
+                         WHERE
+                    </Value>
                 </Property>
 
-                <Property name="DBNamcespace">
+<!-- TODO: Check if everything works well without the following config, and remove it if everyting does
+                <Property name="DBNamespace">
                     <Value>com.topcoder.db.connectionfactory.DBConnectionFactoryImpl</Value>
                 </Property>
                 <Property name="connectionProducerName">
                     <Value>tcs</Value>
                 </Property>
+ -->
 
                 <Property name="alias">
                     <Property name="notification_type_id">
@@ -2181,17 +2235,23 @@
 
                 <Property name="context">
                     <Value>
-                        SELECT DISTINCT review_id from review, scorecard, resource WHERE review.scorecard_id =
-                        scorecard.scorecard_id AND review.resource_id = resource.resource_id AND
+                        SELECT DISTINCT review_id from review,
+                               scorecard,
+                               resource
+                         WHERE review.scorecard_id = scorecard.scorecard_id
+                           AND review.resource_id = resource.resource_id
+                           AND
                     </Value>
                 </Property>
 
-                <Property name="DBNamcespace">
+<!-- TODO: Check if everything works well without the following config, and remove it if everyting does
+                <Property name="DBNamespace">
                     <Value>com.topcoder.db.connectionfactory.DBConnectionFactoryImpl</Value>
                 </Property>
                 <Property name="connectionProducerName">
                     <Value>tcs</Value>
                 </Property>
+ -->
 
                 <Property name="alias">
                     <Property name="scorecardType">
