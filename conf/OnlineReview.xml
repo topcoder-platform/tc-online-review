@@ -63,23 +63,17 @@
         <Property name="authenticators">
             <!-- SecurityManagerAuthenticator -->
             <Property name="MockAuthenticator">
-                <!-- the full qualified class name, required. -->
                 <Property name="class">
                     <Value>com.cronos.onlinereview.mockups.MockAuthenticator</Value>
                 </Property>
-
-                <!-- the namespace to load configuration values, required. -->
                 <Property name="namespace">
                     <Value>com.cronos.onlinereview.login.authenticator.SecurityManagerAuthenticator</Value>
                 </Property>
             </Property>
             <Property name="ORAuthenticator">
-                <!-- the full qualified class name, required. -->
                 <Property name="class">
                     <Value>com.cronos.onlinereview.login.authenticator.SecurityManagerAuthenticator</Value>
                 </Property>
-
-                <!-- the namespace to load configuration values, required. -->
                 <Property name="namespace">
                     <Value>com.cronos.onlinereview.login.authenticator.SecurityManagerAuthenticator</Value>
                 </Property>
@@ -3056,6 +3050,21 @@
                 <Property name="AppFunction">
                     <Value>APPROVAL</Value>
                 </Property>
+            </Property>
+        </Property>
+
+        <Property name="ContactManagerEmail">
+            <Property name="EmailTemplateSource">
+                <Value>file</Value>
+            </Property>
+            <Property name="EmailTemplateName">
+                <Value>templates/contact_manager_template.txt</Value>
+            </Property>
+            <Property name="EmailSubject">
+                <Value>Contact Manager Message</Value>
+            </Property>
+            <Property name="EmailFromAddress">
+                <Value>top_coder@mail.ru</Value>
             </Property>
         </Property>
     </Config>
