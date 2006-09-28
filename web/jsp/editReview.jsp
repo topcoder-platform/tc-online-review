@@ -79,7 +79,7 @@
 
 					<h3>${orfn:htmlEncode(scorecardTemplate.name)}</h3>
 
-					<html:form action="/actions/Save${reviewType}">
+					<html:form action="/actions/Save${reviewType}" method="POST" enctype="multipart/form-data">
 						<html:hidden property="method" value="save${reviewType}" />
 						<c:if test="${!(empty review)}">
 							<html:hidden property="rid" value="${review.id}" />
@@ -89,6 +89,7 @@
 						</c:if>
 
 						<c:set var="itemIdx" value="0" />
+						<c:set var="fileIdx" value="0" />
 
 						<c:forEach items="${scorecardTemplate.allGroups}" var="group" varStatus="groupStatus">
 							<table cellpadding="0" cellspacing="0" width="100%" class="scorecard" style="border-collapse:collapse;">
@@ -103,24 +104,24 @@
 									</tr>
 									<c:forEach items="${section.allQuestions}" var="question" varStatus="questionStatus">
 										<c:if test="${managerEdit}">
-											<c:set var="item" value="${review.allItems[itemIdx]}" />									
+											<c:set var="item" value="${review.allItems[itemIdx]}" />
 										</c:if>
-										
+
 										<tr class="light">
-											<%@ include file="../includes/review/review_question.jsp" %>	
-											<c:if test="${not managerEdit}">																					
+											<%@ include file="../includes/review/review_question.jsp" %>
+											<c:if test="${(empty managerEdit) || (managerEdit != true)}">
 												<%@ include file="../includes/review/review_answer.jsp" %>
-											</c:if>				
-											<c:if test="${managerEdit}">																					
+											</c:if>
+											<c:if test="${!(empty managerEdit) && (managerEdit == true)}">
 												<%@ include file="../includes/review/review_static_answer.jsp" %>
-											</c:if>														
+											</c:if>
 										</tr>
-										<c:if test="${managerEdit}">
-											<%@ include file="../includes/review/review_comments.jsp" %>									
-										</c:if>										
+										<c:if test="${!(empty managerEdit) && (managerEdit == true)}">
+											<%@ include file="../includes/review/review_comments.jsp" %>
+										</c:if>
 										<tr class="highlighted">
 											<td class="value" colspan="${managerEdit ? 2 : 3}">
-												<c:if test="${not managerEdit}">
+												<c:if test="${(empty managerEdit) || (managerEdit != true)}">
 													<b><bean:message key="editReview.Question.Response.title"/> 1:</b>
 													<html:select property="commentType[${itemIdx}]" styleClass="inputBox">
 														<c:forEach items="${allCommentTypes}" var="commentType" >
@@ -128,28 +129,46 @@
 														</c:forEach>
 													</html:select>
 												</c:if>
-												<c:if test="${managerEdit}">
+												<c:if test="${!(empty managerEdit) && (managerEdit == true)}">
 													<b><bean:message key="editReview.Question.ManagerComment.title"/>:</b>
-												</c:if>		
-												<html:textarea rows="2" property="comment[${itemIdx}]" cols="20" styleClass="inputTextBox" />			
+												</c:if>
+												<html:textarea rows="2" property="comment[${itemIdx}]" cols="20" styleClass="inputTextBox" />
+												<c:if test="${((empty managerEdit) || (managerEdit != true)) && (question.uploadDocument == true)}">
+													<c:if test="${empty uploadedFileIds[fileIdx]}">
+														<b><bean:message key="editReview.Document.Upload" />
+														<c:if test="${question.uploadRequired == true}">
+															<font color="#CC0000"><bean:message key="global.required.paren" /></font>:
+														</c:if>
+														<c:if test="${question.uploadRequired != true}">
+															<span style="font-weight:normal;"><bean:message key="global.optional.paren" /></span>:
+														</c:if></b>
+													</c:if>
+													<c:if test="${!(empty uploadedFileIds[fileIdx])}">
+														<html:link page="/actions/DownloadDocument.do?method=downloadDocument&uid=${uploadedFileIds[fileIdx]}"><bean:message key="editReview.Document.Download" /></html:link>
+														<b>&#160; <bean:message key="editReview.Document.Update" />
+														<span style="font-weight:normal;"><bean:message key="global.optional.paren" /></span>:</b>
+													</c:if>
+													&#160;<html:file property="file[${fileIdx}]" size="20" styleClass="inputBox" style="width:350px;vertical-align:middle;" />
+													<c:set var="fileIdx" value="${fileIdx + 1}" />
+												</c:if>
 											</td>
-											<c:if test="${managerEdit}">																					
+											<c:if test="${!(empty managerEdit) && (managerEdit == true)}">
 												<%@ include file="../includes/review/review_answer.jsp" %>
-											</c:if>	
+											</c:if>
 										</tr>
 
 										<c:set var="itemIdx" value="${itemIdx + 1}" />
 									</c:forEach>
 								</c:forEach>
-        							<tr>
+								<tr>
 									<td class="lastRowTD" colspan="3"><!-- @ --></td>
 								</tr>
 							</table><br />
 						</c:forEach>
 
 						<div align="right">
-							<html:hidden property="save" value="" />		
-							<c:if test="${not managerEdit}">
+							<html:hidden property="save" value="" />
+							<c:if test="${(empty managerEdit) || (managerEdit != true)}">
 								<html:image onclick="javascript:this.form.save.value='submit';" srcKey="editReview.Button.SaveAndCommit.img" altKey="editReview.Button.SaveAndCommit.alt" border="0" />&#160;
 							</c:if>
 							<html:image onclick="javascript:this.form.save.value='save';" srcKey="editReview.Button.SaveForLater.img" altKey="editReview.Button.SaveForLater.alt" border="0" />&#160;
