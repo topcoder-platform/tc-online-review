@@ -39,7 +39,7 @@
 		 */
 		function placeAppeal(itemIdx, itemId, reviewId) {
 			// Find appeal text input node
-			appealTextNode = document.getElementsByName("appeal_text[" + itemIdx + "]");
+			appealTextNode = document.getElementsByName("appeal_text[" + itemIdx + "]")[0];
 			// Get appeal text
 			var appealText = appealTextNode.value;
 
@@ -58,7 +58,7 @@
 				'<parameter name="ItemId">' +
 				itemId +
 				"</parameter>" +
-				'<parameter name="AppealText">' +
+				'<parameter name="text">' +
 				appealText +
 				"</parameter>" +
 				"</parameters>" +
