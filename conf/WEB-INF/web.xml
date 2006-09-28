@@ -69,4 +69,10 @@
     <taglib-uri>/tags/tc-webtags</taglib-uri>
     <taglib-location>/WEB-INF/tc-webtags.tld</taglib-location>
   </taglib>
+    <ejb-ref>
+        <ejb-ref-name>security/Login</ejb-ref-name>
+        <ejb-ref-type>Session</ejb-ref-type>
+        <home>com.topcoder.security.login.LoginRemoteHome</home>
+        <remote>com.topcoder.security.login.LoginRemote</remote>
+    </ejb-ref>
 </web-app>
