@@ -66,6 +66,58 @@
 				}
 			);
 		}
+		
+		/**
+		 * TODO: Document it
+		 */
+		function placeAppealResponse(itemIdx, itemId, reviewId) {
+			// Find appeal response text input node
+			responseTextNode = document.getElementsByName("appeal_response_text[" + itemIdx + "]")[0];
+			// Get appeal response text
+			var responseText = responseTextNode.value;
+			
+			// Find appeal response modified answer node
+			answerNode = document.getElementsByName("answer[" + itemIdx + "]")[0];
+			// Retrieve modified answer value
+			modifiedAnswer = answerNode.value;
+			
+			// assemble the request XML
+			var content =
+				'<?xml version="1.0" ?>' +
+				'<request type="ResolveAppeal">' +
+				"<parameters>" +
+				'<parameter name="ReviewId">' +
+				reviewId +
+				"</parameter>" +
+				'<parameter name="ItemId">' +
+				itemId +
+				"</parameter>" +
+				'<parameter name="text">' +
+				responseText +
+				"</parameter>" +
+				'<parameter name="Answer">' +
+				modifiedAnswer +
+				"</parameter>" +
+				'<parameter name="Status">' +
+				// TODO: Add checkbox for status
+				"Succeeded" +
+				"</parameter>" +
+				"</parameters>" +
+				"</request>";
+				
+			// Send the AJAX request
+			sendRequest(content, 
+				function (result, respXML) { 
+					// operation succeeded
+					// TODO: Some changes to here
+					toggleDisplay("appealResponseText_" + itemIdx);
+				},
+				function (result, respXML) {
+					// operation failed, alert the error message to the user
+					alert("An error occured while resolving the appeal: " + result);
+				}
+			);
+		}
 	</script>
 
 </head>
@@ -87,12 +139,15 @@
 			<!-- Center Column Begins -->
 			<td class="bodyText">
 				<jsp:include page="../includes/project/project_tabs.jsp" />
-
+				
 				<div id="mainMiddleContent">
 					<jsp:include page="../includes/review/review_project.jsp" />
 
 					<h3>${orfn:htmlEncode(scorecardTemplate.name)}</h3>
-
+					
+					<!-- Note, that the form is a "dummy" one, only needed to support Struts tags inside of it -->
+					<html:form action="/actions/ViewReview.do?method=viewReview&rid=${review.id}">
+					
 					<c:set var="itemIdx" value="0" />
 					<c:forEach items="${scorecardTemplate.allGroups}" var="group" varStatus="groupStatus">
 						<table class="scorecard" cellpadding="0" width="100%" style="border-collapse: collapse;" id="table2">
@@ -147,7 +202,27 @@
 											</td>
 										</tr>
 									</c:if>
-
+									<c:if test="${canPlaceAppealResponse}">
+										<tr class="highlighted">
+											<td class="value" colspan="3">
+												<b><bean:message key="editReview.Question.AppealResponseText.title"/>:</b>
+												<br/>				
+												<textarea rows="2" name="appeal_response_text[${itemIdx}]" cols="20" style="font-size: 10px; font-family: sans-serif;width:99%;height:50px;border:1px solid #ccc;margin:3px;"></textarea>
+												<br/>
+											</td>
+											<td class="value">
+												<bean:message key="editReview.Question.ModifiedResponse.title"/>:
+												<br/>
+												<%@include file="../includes/review/review_answer.jsp" %>
+												<br/><br/>
+												<html:link href="javascript:placeAppealResponse(${itemIdx}, ${item.id}, ${review.id});">
+													<html:img srcKey="editReview.Button.SubmitAppealResponse.img" altKey="editReview.Button.SubmitAppealResponse.alt" border="0"/>
+												</html:link>
+											</td>
+											<td class="value"><!-- @ --></td>				
+										</tr>
+									</c:if>
+									
 									<c:set var="itemIdx" value="${itemIdx + 1}" />
 								</c:forEach>
 							</c:forEach>
@@ -170,6 +245,7 @@
 							</c:if>
 						</table>
 					</c:forEach><br />
+					</html:form>
 
 					<div align="right">
 						<a href="javascript:history.go(-1)"><html:img srcKey="btnBack.img" altKey="btnBack.alt" border="0" /></a>

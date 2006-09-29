@@ -2,7 +2,6 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="html" uri="/tags/struts-html" %>
 <%@ taglib prefix="bean" uri="/tags/struts-bean" %>
-	<td class="valueC" nowrap="nowrap">
 		<c:choose>
 			<c:when test="${question.questionType.name eq 'Yes/No'}">
 				<html:select property="answer[${itemIdx}]" styleClass="inputBox">
@@ -35,4 +34,3 @@
 				<html:hidden property="answer[${itemIdx}]" />
 			</c:when>
 		</c:choose>
-	</td>
