@@ -373,6 +373,7 @@
         <action path="/actions/ViewScreening" unknown="false"
             type="com.cronos.onlinereview.actions.ProjectReviewActions"
             parameter="method" scope="request"
+            name="reviewForm"
             input="/jsp/viewReview.jsp">
             <forward name="success" path="/jsp/viewReview.jsp" redirect="false"/>
         </action>
@@ -410,6 +411,7 @@
         <action path="/actions/ViewReview" unknown="false"
             type="com.cronos.onlinereview.actions.ProjectReviewActions"
             parameter="method" scope="request"
+            name="reviewForm"
             input="/jsp/viewProjectDetails.jsp">
             <forward name="success" path="/jsp/viewReview.jsp" redirect="false"/>
         </action>
@@ -545,6 +547,7 @@
         <action path="/actions/ViewApproval" unknown="false"
             type="com.cronos.onlinereview.actions.ProjectReviewActions"
             parameter="method" scope="request"
+            name="reviewForm"
             input="/jsp/viewProjectDetails.jsp">
             <forward name="success" path="/jsp/viewReview.jsp" redirect="false"/>
         </action>

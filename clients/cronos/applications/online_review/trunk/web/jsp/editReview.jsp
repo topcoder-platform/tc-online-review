@@ -81,7 +81,7 @@
 
 					<html:form action="/actions/Save${reviewType}" method="POST" enctype="multipart/form-data">
 						<html:hidden property="method" value="save${reviewType}" />
-						<c:if test="${!(empty review)}">
+						<c:if test="${not empty review}">
 							<html:hidden property="rid" value="${review.id}" />
 						</c:if>
 						<c:if test="${empty review}">
@@ -109,19 +109,20 @@
 
 										<tr class="light">
 											<%@ include file="../includes/review/review_question.jsp" %>
-											<c:if test="${(empty managerEdit) || (managerEdit != true)}">
-												<%@ include file="../includes/review/review_answer.jsp" %>
-											</c:if>
-											<c:if test="${!(empty managerEdit) && (managerEdit == true)}">
+											<c:if test="${not managerEdit}">
+												<td class="valueC" nowrap="nowrap">
+													<%@ include file="../includes/review/review_answer.jsp" %>
+												</td>																						</c:if>
+											<c:if test="${managerEdit}">
 												<%@ include file="../includes/review/review_static_answer.jsp" %>
 											</c:if>
 										</tr>
-										<c:if test="${!(empty managerEdit) && (managerEdit == true)}">
+										<c:if test="${managerEdit}">
 											<%@ include file="../includes/review/review_comments.jsp" %>
 										</c:if>
 										<tr class="highlighted">
 											<td class="value" colspan="${managerEdit ? 2 : 3}">
-												<c:if test="${(empty managerEdit) || (managerEdit != true)}">
+												<c:if test="${not managerEdit}">
 													<b><bean:message key="editReview.Question.Response.title"/> 1:</b>
 													<html:select property="commentType[${itemIdx}]" styleClass="inputBox">
 														<c:forEach items="${allCommentTypes}" var="commentType" >
@@ -129,11 +130,11 @@
 														</c:forEach>
 													</html:select>
 												</c:if>
-												<c:if test="${!(empty managerEdit) && (managerEdit == true)}">
+												<c:if test="${managerEdit}">
 													<b><bean:message key="editReview.Question.ManagerComment.title"/>:</b>
 												</c:if>
 												<html:textarea rows="2" property="comment[${itemIdx}]" cols="20" styleClass="inputTextBox" />
-												<c:if test="${((empty managerEdit) || (managerEdit != true)) && (question.uploadDocument == true)}">
+												<c:if test="${(not managerEdit) and question.uploadDocument}">
 													<c:if test="${empty uploadedFileIds[fileIdx]}">
 														<b><bean:message key="editReview.Document.Upload" />
 														<c:if test="${question.uploadRequired == true}">
@@ -143,7 +144,7 @@
 															<span style="font-weight:normal;"><bean:message key="global.optional.paren" /></span>:
 														</c:if></b>
 													</c:if>
-													<c:if test="${!(empty uploadedFileIds[fileIdx])}">
+													<c:if test="${not empty uploadedFileIds[fileIdx]}">
 														<html:link page="/actions/DownloadDocument.do?method=downloadDocument&uid=${uploadedFileIds[fileIdx]}"><bean:message key="editReview.Document.Download" /></html:link>
 														<b>&#160; <bean:message key="editReview.Document.Update" />
 														<span style="font-weight:normal;"><bean:message key="global.optional.paren" /></span>:</b>
@@ -152,8 +153,10 @@
 													<c:set var="fileIdx" value="${fileIdx + 1}" />
 												</c:if>
 											</td>
-											<c:if test="${!(empty managerEdit) && (managerEdit == true)}">
-												<%@ include file="../includes/review/review_answer.jsp" %>
+											<c:if test="${managerEdit}">
+												<td class="valueC" nowrap="nowrap">		
+													<%@ include file="../includes/review/review_answer.jsp" %>
+												</td>
 											</c:if>
 										</tr>
 
@@ -168,7 +171,7 @@
 
 						<div align="right">
 							<html:hidden property="save" value="" />
-							<c:if test="${(empty managerEdit) || (managerEdit != true)}">
+							<c:if test="${not managerEdit}">
 								<html:image onclick="javascript:this.form.save.value='submit';" srcKey="editReview.Button.SaveAndCommit.img" altKey="editReview.Button.SaveAndCommit.alt" border="0" />&#160;
 							</c:if>
 							<html:image onclick="javascript:this.form.save.value='save';" srcKey="editReview.Button.SaveForLater.img" altKey="editReview.Button.SaveForLater.alt" border="0" />&#160;
