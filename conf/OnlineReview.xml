@@ -430,7 +430,7 @@
             <Value>25</Value>
         </Property>
         <Property name="username">
-            <Value>top_coder@mail.ru</Value>
+            <Value>service@topcodersoftware.com</Value>
         </Property>
         <Property name="password">
             <Value>top_coder</Value>
@@ -685,7 +685,7 @@
                 <Value>Phase Start</Value>
             </Property>
             <Property name="EmailFromAddress">
-                <Value>top_coder@mail.ru</Value>
+                <Value>service@topcodersoftware.com</Value>
             </Property>
         </Property>
         <Property name="EndPhaseEmail">
@@ -699,7 +699,7 @@
                 <Value>Phase End</Value>
             </Property>
             <Property name="EmailFromAddress">
-                <Value>top_coder@mail.ru</Value>
+                <Value>service@topcodersoftware.com</Value>
             </Property>
         </Property>
     </Config>
@@ -726,7 +726,7 @@
                 <Value>Phase Start</Value>
             </Property>
             <Property name="EmailFromAddress">
-                <Value>top_coder@mail.ru</Value>
+                <Value>service@topcodersoftware.com</Value>
             </Property>
         </Property>
         <Property name="EndPhaseEmail">
@@ -740,7 +740,7 @@
                 <Value>Phase End</Value>
             </Property>
             <Property name="EmailFromAddress">
-                <Value>top_coder@mail.ru</Value>
+                <Value>service@topcodersoftware.com</Value>
             </Property>
         </Property>
     </Config>
@@ -767,7 +767,7 @@
                 <Value>Phase Start</Value>
             </Property>
             <Property name="EmailFromAddress">
-                <Value>top_coder@mail.ru</Value>
+                <Value>service@topcodersoftware.com</Value>
             </Property>
         </Property>
         <Property name="EndPhaseEmail">
@@ -781,7 +781,7 @@
                 <Value>Phase End</Value>
             </Property>
             <Property name="EmailFromAddress">
-                <Value>top_coder@mail.ru</Value>
+                <Value>service@topcodersoftware.com</Value>
             </Property>
         </Property>
     </Config>
@@ -808,7 +808,7 @@
                 <Value>Phase Start</Value>
             </Property>
             <Property name="EmailFromAddress">
-                <Value>top_coder@mail.ru</Value>
+                <Value>service@topcodersoftware.com</Value>
             </Property>
         </Property>
         <Property name="EndPhaseEmail">
@@ -822,7 +822,7 @@
                 <Value>Phase End</Value>
             </Property>
             <Property name="EmailFromAddress">
-                <Value>top_coder@mail.ru</Value>
+                <Value>service@topcodersoftware.com</Value>
             </Property>
         </Property>
     </Config>
@@ -849,7 +849,7 @@
                 <Value>Phase Start</Value>
             </Property>
             <Property name="EmailFromAddress">
-                <Value>top_coder@mail.ru</Value>
+                <Value>service@topcodersoftware.com</Value>
             </Property>
         </Property>
         <Property name="EndPhaseEmail">
@@ -863,7 +863,7 @@
                 <Value>Phase End</Value>
             </Property>
             <Property name="EmailFromAddress">
-                <Value>top_coder@mail.ru</Value>
+                <Value>service@topcodersoftware.com</Value>
             </Property>
         </Property>
     </Config>
@@ -890,7 +890,7 @@
                 <Value>Phase Start</Value>
             </Property>
             <Property name="EmailFromAddress">
-                <Value>top_coder@mail.ru</Value>
+                <Value>service@topcodersoftware.com</Value>
             </Property>
         </Property>
         <Property name="EndPhaseEmail">
@@ -904,7 +904,7 @@
                 <Value>Phase End</Value>
             </Property>
             <Property name="EmailFromAddress">
-                <Value>top_coder@mail.ru</Value>
+                <Value>service@topcodersoftware.com</Value>
             </Property>
         </Property>
     </Config>
@@ -931,7 +931,7 @@
                 <Value>Phase Start</Value>
             </Property>
             <Property name="EmailFromAddress">
-                <Value>top_coder@mail.ru</Value>
+                <Value>service@topcodersoftware.com</Value>
             </Property>
         </Property>
         <Property name="EndPhaseEmail">
@@ -945,7 +945,7 @@
                 <Value>Phase End</Value>
             </Property>
             <Property name="EmailFromAddress">
-                <Value>top_coder@mail.ru</Value>
+                <Value>service@topcodersoftware.com</Value>
             </Property>
         </Property>
     </Config>
@@ -972,7 +972,7 @@
                 <Value>Phase Start</Value>
             </Property>
             <Property name="EmailFromAddress">
-                <Value>top_coder@mail.ru</Value>
+                <Value>service@topcodersoftware.com</Value>
             </Property>
         </Property>
         <Property name="EndPhaseEmail">
@@ -986,7 +986,7 @@
                 <Value>Phase End</Value>
             </Property>
             <Property name="EmailFromAddress">
-                <Value>top_coder@mail.ru</Value>
+                <Value>service@topcodersoftware.com</Value>
             </Property>
         </Property>
     </Config>
@@ -1013,7 +1013,7 @@
                 <Value>Phase Start</Value>
             </Property>
             <Property name="EmailFromAddress">
-                <Value>top_coder@mail.ru</Value>
+                <Value>service@topcodersoftware.com</Value>
             </Property>
         </Property>
         <Property name="EndPhaseEmail">
@@ -1027,7 +1027,7 @@
                 <Value>Phase End</Value>
             </Property>
             <Property name="EmailFromAddress">
-                <Value>top_coder@mail.ru</Value>
+                <Value>service@topcodersoftware.com</Value>
             </Property>
         </Property>
     </Config>
@@ -1054,7 +1054,7 @@
                 <Value>Phase Start</Value>
             </Property>
             <Property name="EmailFromAddress">
-                <Value>top_coder@mail.ru</Value>
+                <Value>service@topcodersoftware.com</Value>
             </Property>
         </Property>
         <Property name="EndPhaseEmail">
@@ -1068,7 +1068,7 @@
                 <Value>Phase End</Value>
             </Property>
             <Property name="EmailFromAddress">
-                <Value>top_coder@mail.ru</Value>
+                <Value>service@topcodersoftware.com</Value>
             </Property>
         </Property>
     </Config>
@@ -1095,7 +1095,7 @@
                 <Value>Phase Start</Value>
             </Property>
             <Property name="EmailFromAddress">
-                <Value>top_coder@mail.ru</Value>
+                <Value>service@topcodersoftware.com</Value>
             </Property>
         </Property>
         <Property name="EndPhaseEmail">
@@ -3129,7 +3129,7 @@
                 <Value>Contact Manager Message</Value>
             </Property>
             <Property name="EmailFromAddress">
-                <Value>top_coder@mail.ru</Value>
+                <Value>service@topcodersoftware.com</Value>
             </Property>
         </Property>
     </Config>
