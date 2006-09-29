@@ -121,7 +121,7 @@ public final class MockHandleTag extends TagSupport {
         // Retrieve pseudo-cache
         Map userCache = createExtUserCache(pageContext.getSession());
         // Try to retrieve user's object from cache
-        ExternalUser user = (ExternalUser) userCache.get(coderId + "-" + context);
+        ExternalUser user = (ExternalUser) userCache.get(coderId);
 
         // Determine the actual color based on the coderId and context attributes
         try {
@@ -134,6 +134,8 @@ public final class MockHandleTag extends TagSupport {
                 if (user == null) {
                     throw new BaseException("no such user");
                 }
+                // Store the external user in the cache for later use
+                userCache.put(coderId, user);
             }
 
             coderName = user.getHandle();
@@ -172,8 +174,12 @@ public final class MockHandleTag extends TagSupport {
         }
 
         // Handle some special situations
-        if (coderId.equals("1") || // "1" equals to admin2 in TopCoder's database
+        if (coderId.equals("1") || // Denotes coder "admin2" in TopCoder's database
+            coderId.equals("304") || // Denotes coder "admin" in TopCoder's database
             coderId.equals("1000") || // Coder "admin"
+            coderId.equals("305384") || // Coder "mess"
+            coderId.equals("107160") || // Coder "uler3161"
+            coderId.equals("278287") || // Coder "moffitt"
             coderId.equals("156859")) { // Coder "ivern"
             textColor = "coderTextOrange";
         }
