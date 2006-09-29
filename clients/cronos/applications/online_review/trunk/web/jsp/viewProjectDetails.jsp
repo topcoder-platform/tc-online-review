@@ -22,74 +22,57 @@
 	<link type="text/css" rel="stylesheet" href="../css/new_styles.css" />
 	<link type="text/css" rel="stylesheet" href="../css/phasetabs.css" />
 	<script language="JavaScript" type="text/javascript" src="../scripts/rollovers.js"><!-- @ --></script>
-
-<script language="JavaScript" type="text/javascript">
-	// create the request object
-	function createXMLHttpRequest() {
-		var xmlHttp;
-		if (window.ActiveXObject) {
-			xmlHttp = new ActiveXObject("Microsoft.XMLHTTP");
-		} else if (window.XMLHttpRequest) {
-			xmlHttp = new XMLHttpRequest();
-		}
-		return xmlHttp;
-	}
-
-	// send the Ajax request
-	function sendRequest(pid, chbox) {
-		// create the Ajax request
-		var myRequest = createXMLHttpRequest();
-		var targetStatus;
-		if (chbox.checked == true) {
-			// DO NOT be confused here
-			// at the very moment the checkbox is clicked, the Inactive scorecard's "checked" status is "on"
-			targetStatus = "On";
-		} else {
-			// at the very moment the checkbox is clicked, the Active scorecard's "checked" status is "off"
-			targetStatus = "Off";
-		}
-		// assemble the request XML
-		var content =
-			'<?xml version="1.0" ?>' +
-			'<request type="SetTimelineNotification">' +
-			"<parameters>" +
-			'<parameter name="ProjectId">' +
-			pid +
-			"</parameter>" +
-			'<parameter name="Status">' +
-			targetStatus +
-			"</parameter>" +
-			"</parameters>" +
-			"</request>";
-		// set the callback function
-		myRequest.onReadyStateChange = function() {
-			if (myRequest.readyState == 4 && myRequest.status == 200) {
-				// the response is ready
-				var respXML = myRequest.responseXML;
-				// retrieve the result
-				var result = respXML.getElementsByTagName("result")[0].getAttribute("status");
-				if (result == "Success") {
+	<script language="JavaScript" type="text/javascript" src="../scripts/dojo.js"><!-- @ --></script>
+	<script language="JavaScript" type="text/javascript">
+		var ajaxSupportUrl = "<html:rewrite page='/ajaxSupport' />";
+	</script>
+	<script language="JavaScript" type="text/javascript" src="../scripts/ajax.js"><!-- @ --></script>		
+	<script language="JavaScript" type="text/javascript">
+		// send the Ajax request
+		function setTimelineNotification(pid, chbox) {
+			var targetStatus;
+			if (chbox.checked == true) {
+				// DO NOT be confused here
+				// at the very moment the checkbox is clicked, the Inactive scorecard's "checked" status is "on"
+				targetStatus = "On";
+			} else {
+				// at the very moment the checkbox is clicked, the Active scorecard's "checked" status is "off"
+				targetStatus = "Off";
+			}
+			// assemble the request XML
+			var content =
+				'<?xml version="1.0" ?>' +
+				'<request type="SetTimelineNotification">' +
+				"<parameters>" +
+				'<parameter name="ProjectId">' +
+				pid +
+				"</parameter>" +
+				'<parameter name="Status">' +
+				targetStatus +
+				"</parameter>" +
+				"</parameters>" +
+				"</request>";
+		
+			// Send the AJAX request
+			sendRequest(content, 
+				function (result, respXML) { 
 					// operation succeeded, change the status of corresponding checkbox
 					if (chbox.checked) {
 						chbox.checked = false;
 					} else if (!chbox.checked){
 						chbox.checked = true;
 					}
+					// TODO: Check what is supposed  to be done by the next line of code
 					// refresh the filter
 					refreshFilter();
-				} else {
+				},
+				function (result, respXML) { 
 					// operation failed, alert the error message to the user
 					alert("An error occured while setting the Timeline change notification: " + result);
 				}
-			}
-		};
-
-		// send the request
-		myRequest.open("POST", "<html:rewrite page='/ajaxSupport' />", true);
-		myRequest.setRequestHeader("Content-Type", "text/xml");
-		myRequest.send(content);
-	}
-</script>
+			);	
+		}
+	</script>
 
 	<!-- TABS JS -->
 <script type="text/javascript">
