@@ -50,7 +50,7 @@
     <classpathentry exported="true" kind="lib" path="lib/tcs/security_manager/1.1/security_manager.jar"/>
     <classpathentry exported="true" kind="lib" path="lib/tcs/simple_cache/2.0/simple_cache.jar"/>
     <classpathentry exported="true" kind="lib" path="lib/tcs/typesafe_enum/1.0/typesafe_enum.jar"/>
-    <classpathentry exported="true" kind="lib" path="lib/tcs/user_project_data_store/1.0/user_project_data_store.jar"/>
+    <classpathentry exported="true" kind="lib" path="lib/tcs/user_project_data_store/1.0.1/user_project_data_store.jar"/>
     <classpathentry exported="true" kind="lib" path="lib/tcs/weighted_calculator/1.0/weighted_calculator.jar"/>
     <classpathentry exported="true" kind="lib" path="lib/tcs/workdays/1.0/workdays.jar"/>
     <classpathentry exported="true" kind="lib" path="lib/tcs/tcsUtil.jar"/>

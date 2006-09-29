@@ -291,7 +291,7 @@
     <property name="typesafe_enum.path" value="typesafe_enum/${typesafe_enum.version}" />
     <property name="typesafe_enum.jar" value="${tcs_libdir}/${typesafe_enum.path}/${typesafe_enum.jar.name}" />
 
-    <property name="user_project_data_store.version" value="1.0" />
+    <property name="user_project_data_store.version" value="1.0.1" />
     <property name="user_project_data_store.jar.name" value="user_project_data_store.jar" />
     <property name="user_project_data_store.path" value="user_project_data_store/${user_project_data_store.version}" />
     <property name="user_project_data_store.jar" value="${tcs_libdir}/${user_project_data_store.path}/${user_project_data_store.jar.name}" />
