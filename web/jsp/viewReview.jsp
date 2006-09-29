@@ -22,17 +22,10 @@
 	<script language="JavaScript" type="text/javascript" src="../scripts/rollovers.js"><!-- @ --></script>
 	<script language="JavaScript" type="text/javascript" src="../scripts/dojo.js"><!-- @ --></script>
 	<script language="JavaScript" type="text/javascript">
-
-		// create the request object
-		function createXMLHttpRequest() {
-			var xmlHttp;
-			if (window.ActiveXObject) {
-				xmlHttp = new ActiveXObject("Microsoft.XMLHTTP");
-			} else if (window.XMLHttpRequest) {
-				xmlHttp = new XMLHttpRequest();
-			}
-			return xmlHttp;
-		}
+		var ajaxSupportUrl = "<html:rewrite page='/ajaxSupport' />";
+	</script>
+	<script language="JavaScript" type="text/javascript" src="../scripts/ajax.js"><!-- @ --></script>
+	<script language="JavaScript" type="text/javascript">	
 
 		/**
 		 * TODO: Document it
@@ -42,11 +35,7 @@
 			appealTextNode = document.getElementsByName("appeal_text[" + itemIdx + "]")[0];
 			// Get appeal text
 			var appealText = appealTextNode.value;
-
-
-			// create the Ajax request
-			var myRequest = createXMLHttpRequest();
-
+			
 			// assemble the request XML
 			var content =
 				'<?xml version="1.0" ?>' +
@@ -63,30 +52,19 @@
 				"</parameter>" +
 				"</parameters>" +
 				"</request>";
-			// set the callback function
-			// TODO: Check for errors no handled by Ajax Support
-			myRequest.onReadyStateChange = function() {
-				if (myRequest.readyState == 4 && myRequest.status == 200) {
-					// the response is ready
-					var respXML = myRequest.responseXML;
-					// retrieve the result
-					var result = respXML.getElementsByTagName("result")[0].getAttribute("status");
-					if (result == "Success") {
-						// operation succeeded
-						// TODO: Some changes to here
-						toggleDisplay("appealText_${itemIdx}");
-						toggleDisplay("placeAppeal_${itemIdx}");
-					} else {
-						// operation failed, alert the error message to the user
-						alert("An error occured while placing the appeal: " + result);
-					}
+				
+			// Send the AJAX request
+			sendRequest(content, 
+				function (result, respXML) { 
+					// operation succeeded
+					// TODO: Some changes to here
+					toggleDisplay("appealText_" + itemIdx);
+				},
+				function (result, respXML) {
+					// operation failed, alert the error message to the user
+					alert("An error occured while placing the appeal: " + result);
 				}
-			};
-
-			// send the request
-			myRequest.open("POST", "<html:rewrite page='/ajaxSupport' />", true);
-			myRequest.setRequestHeader("Content-Type", "text/xml");
-			myRequest.send(content);
+			);
 		}
 	</script>
 
@@ -144,9 +122,11 @@
 										</c:if>
 										<c:if test="${canPlaceAppeal}">
 											<td class="valueC">
-												<html:link href="javascript:toggleDisplay('appealText_${itemIdx}');toggleDisplay('placeAppeal_${itemIdx}');">
-													<html:img styleId="placeAppeal_${itemIdx}" styleClass="showText" srcKey="editReview.Button.Appeal.img" altKey="editReview.Button.Appeal.alt" />
-												</html:link>
+												<div>
+													<html:link href="javascript:toggleDisplay('appealText_${itemIdx}');toggleDisplay('placeAppeal_${itemIdx}');">
+														<html:img styleId="placeAppeal_${itemIdx}" styleClass="showText" srcKey="editReview.Button.Appeal.img" altKey="editReview.Button.Appeal.alt" />
+													</html:link>
+												</div>
 											</td>
 										</c:if>
 									</tr>
