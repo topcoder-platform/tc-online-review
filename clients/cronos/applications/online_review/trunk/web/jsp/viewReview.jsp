@@ -173,7 +173,8 @@
 										<%@ include file="../includes/review/review_question.jsp" %>
 										<%@ include file="../includes/review/review_static_answer.jsp" %>
 										<c:if test="${canPlaceAppeal or canPlaceAppealResponse}">
-											<td class="valueC"><%-- TODO: Appeal status should go here --%><!-- @ --></td>
+											<%-- TODO:  Localize appeal statuses --%>
+											<td class="valueC">${appealStatuses[itemIdx]}<!-- @ --></td>
 										</c:if>
 										<c:if test="${canPlaceAppeal}">
 											<td class="valueC">
@@ -186,7 +187,7 @@
 										</c:if>
 									</tr>
 									<%@ include file="../includes/review/review_comments.jsp" %>
-									<c:if test="${canPlaceAppeal}">
+									<c:if test="${canPlaceAppeal and empty appealStatuses[itemIdx]}">
 										<tr class="highlighted">
 											<td class="value" colspan="6">
 												<div id="appealText_${itemIdx}" class="hideText">
@@ -202,7 +203,7 @@
 											</td>
 										</tr>
 									</c:if>
-									<c:if test="${canPlaceAppealResponse}">
+									<c:if test="${canPlaceAppealResponse and appealStatuses[itemIdx] eq 'Unresolved'}">
 										<tr class="highlighted">
 											<td class="value" colspan="3">
 												<b><bean:message key="editReview.Question.AppealResponseText.title"/>:</b>
