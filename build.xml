@@ -91,6 +91,11 @@
     <property name="class_associations.path" value="class_associations/${class_associations.version}" />
     <property name="class_associations.jar" value="${tcs_libdir}/${class_associations.path}/${class_associations.jar.name}" />
 
+  	<property name="command_line_utility.version" value="1.0" />
+  	<property name="command_line_utility.jar.name" value="command_line_utility.jar" />
+	  <property name="command_line_utility.path" value="command_line_utility/${command_line_utility.version}" />
+	  <property name="command_line_utility.jar" value="${tcs_libdir}/${command_line_utility.path}/${command_line_utility.jar.name}" />
+
     <property name="configuration_manager.version" value="2.1.5" />
     <property name="configuration_manager.jar.name" value="configuration_manager.jar" />
     <property name="configuration_manager.path" value="configuration_manager/${configuration_manager.version}" />
@@ -342,6 +347,7 @@
         <pathelement location="${auto_screening_management.jar}" />
         <pathelement location="${base_exception.jar}" />
         <pathelement location="${class_associations.jar}" />
+	      <pathelement location="${command_line_utility.jar}" />
         <pathelement location="${configuration_manager.jar}" />
         <pathelement location="${data_validation.jar}" />
         <pathelement location="${database_abstraction.jar}" />
@@ -504,6 +510,7 @@
             <lib dir="${jar_tcs_libdir}/${auto_screening_management.path}" includes="*.jar" />
             <lib dir="${jar_tcs_libdir}/${base_exception.path}" includes="*.jar" />
             <lib dir="${jar_tcs_libdir}/${class_associations.path}" includes="*.jar" />
+						<lib dir="${jar_tcs_libdir}/${command_line_utility.path}" includes="*.jar" />
             <lib dir="${jar_tcs_libdir}/${configuration_manager.path}" includes="*.jar" />
             <lib dir="${jar_tcs_libdir}/${data_validation.path}" includes="*.jar" />
             <lib dir="${jar_tcs_libdir}/${database_abstraction.path}" includes="*.jar" />

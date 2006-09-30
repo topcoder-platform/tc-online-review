@@ -20,6 +20,9 @@
         <dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/review/lib/tcs/class_associations/1.0/class_associations.jar">
             <dependency-type>uses</dependency-type>
         </dependent-module>
+        <dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/review/lib/tcs/command_line_utility/1.0/command_line_utility.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
         <dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/review/lib/tcs/configuration_manager/2.1.5/configuration_manager.jar">
             <dependency-type>uses</dependency-type>
         </dependent-module>
