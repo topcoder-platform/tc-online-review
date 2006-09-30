@@ -1694,7 +1694,7 @@ class ActionsHelper {
             manager = new DefaultPhaseManager("com.topcoder.management.phase");
 
 // TODO: Make the following code work
-/*            PhaseType[] phaseTypes = manager.getAllPhaseTypes();
+            PhaseType[] phaseTypes = manager.getAllPhaseTypes();
 
             // Register the phase handlers
             registerPhaseHandlerForOperation(manager, phaseTypes,
@@ -1719,7 +1719,7 @@ class ActionsHelper {
                     new FinalReviewPhaseHandler(), Constants.FINAL_REVIEW_PHASE_NAME);
             registerPhaseHandlerForOperation(manager, phaseTypes,
                     new ApprovalPhaseHandler(), Constants.APPROVAL_PHASE_NAME);
-*/
+
             // Place newly-created object into the request as attribute
             request.setAttribute("phaseManager", manager);
         }

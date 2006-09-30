@@ -312,10 +312,10 @@ public class ProjectActions extends DispatchAction {
             }
 
             populateDatetimeFormProperties(form, "phase_start_date", "phase_start_time", "phase_start_AMPM", i + 1,
-                    phases[i].getScheduledStartDate());
+                    phases[i].calcStartDate());
 
             populateDatetimeFormProperties(form, "phase_end_date", "phase_end_time", "phase_end_AMPM", i + 1,
-                    phases[i].getScheduledEndDate());
+                    phases[i].calcEndDate());
 
             form.set("phase_duration", i + 1, new Integer((int) (phases[i].getLength() / 3600 / 1000)));
 
@@ -364,7 +364,7 @@ public class ProjectActions extends DispatchAction {
         String[] parts = dateFormat.format(date).split("[ ]");
         form.set(dateProperty, index, parts[0]);
         form.set(timeProperty, index, parts[1]);
-        form.set(ampmProperty, index, parts[2]);
+        form.set(ampmProperty, index, parts[2].toLowerCase());
     }
 
     /**
@@ -808,25 +808,25 @@ public class ProjectActions extends DispatchAction {
                     if (projectPhases[i] != newCurrentPhase) {
                         if (projectPhases[i].getPhaseStatus().getName().equals(PhaseStatus.OPEN.getName())) {
                             /*if (phaseManager.canEnd(projectPhases[i])) {
-                            */    phaseManager.end(projectPhases[i],
+                              */  phaseManager.end(projectPhases[i],
                                         Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
                             /*} else {
                                 // TODO: issue an error
                             }*/
                         } else if (projectPhases[i].getPhaseStatus().getName().equals(PhaseStatus.SCHEDULED.getName())) {
                             /*if (phaseManager.canStart(projectPhases[i])) {
-                            */    phaseManager.start(projectPhases[i],
+                              */  phaseManager.start(projectPhases[i],
                                         Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
                             /*}
                             if (phaseManager.canEnd(projectPhases[i])) {
-                            */    phaseManager.end(projectPhases[i],
+                              */  phaseManager.end(projectPhases[i],
                                         Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
                             //}
                         }
                     } else {
                         if (projectPhases[i].getPhaseStatus().getName().equals(PhaseStatus.SCHEDULED.getName())) {
                             /*if (phaseManager.canStart(projectPhases[i])) {
-                            */    phaseManager.start(projectPhases[i],
+                              */  phaseManager.start(projectPhases[i],
                                         Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
                             //}
                         }
