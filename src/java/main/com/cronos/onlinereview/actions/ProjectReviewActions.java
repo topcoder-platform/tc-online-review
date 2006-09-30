@@ -2800,17 +2800,40 @@ public class ProjectReviewActions extends DispatchAction {
         // Get active (current) phase
         Phase phase = ActionsHelper.getPhase(phases, true, null);
 
+        boolean canPlaceAppeal = false;
+        boolean canPlaceAppealResponse = false;        
         // Check if user can place appeals or appeal responses
         if (phase.getPhaseType().getName().equals(Constants.APPEALS_PHASE_NAME) &&
                 AuthorizationHelper.hasUserPermission(request, Constants.PERFORM_APPEAL_PERM_NAME)) {
             // Can place appeal, put appropriate flag to request
             request.setAttribute("canPlaceAppeal", Boolean.TRUE);
+            canPlaceAppeal = true;
         } else if (phase.getPhaseType().getName().equals(Constants.APPEALS_RESPONSE_PHASE_NAME) &&
                 AuthorizationHelper.hasUserPermission(request, Constants.PERFORM_APPEAL_RESP_PERM_NAME)) {
             // Can place response, put appropriate flag to request
             request.setAttribute("canPlaceAppealResponse", Boolean.TRUE);
+            canPlaceAppealResponse = true;
         }
 
+        if (canPlaceAppeal || canPlaceAppealResponse) {
+            // Gather the appeal statuses
+            String[] appealStatuses = new String[verification.getReview().getNumberOfItems()];
+            for (int i = 0; i < appealStatuses.length; i++) {
+                Comment appeal = getItemAppeal(verification.getReview().getItem(i).getAllComments());
+                Comment response = getItemAppealResponse(verification.getReview().getItem(i).getAllComments());
+                if (appeal != null && response == null) {
+                    // TODO: Localize the strings
+                    appealStatuses[i] = "Unresolved";
+                } else if (appeal != null) {
+                    appealStatuses[i] = "Resolved";
+                } else {
+                    appealStatuses[i] = "";
+                }
+            }
+            // Place appeal statuses to request
+            request.setAttribute("appealStatuses", appealStatuses);
+        }
+        
         // Retrieve some basic review info and store it in the request
         retrieveAndStoreBasicReviewInfo(request, verification, reviewType, scorecardTemplate);
 
@@ -2820,5 +2843,35 @@ public class ProjectReviewActions extends DispatchAction {
         request.setAttribute("wordOf", " "  + wordOf + " ");
 
         return mapping.findForward(Constants.SUCCESS_FORWARD_NAME);
+    }
+
+    /**
+     * TODO: Document it
+     * 
+     * @param allComments
+     * @return
+     */
+    private Comment getItemAppealResponse(Comment[] allComments) {
+        for (int i = 0; i < allComments.length; i++) {
+            if (allComments[i].getCommentType().getName().equals("Appeal Response")) {
+                return allComments[i];
+            }
+        }
+        return null;
+    }
+
+    /**
+     * TODO: Document it
+     * 
+     * @param allComments
+     * @return
+     */
+    private Comment getItemAppeal(Comment[] allComments) {
+        for (int i = 0; i < allComments.length; i++) {
+            if (allComments[i].getCommentType().getName().equals("Appeal")) {
+                return allComments[i];
+            }
+        }
+        return null;
     }
 }
