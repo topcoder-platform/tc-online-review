@@ -11,8 +11,8 @@
 			<td>
 				<table cellspacing="0" cellpadding="0" border="0">
 					<tr valign="middle">
-						<td><img src="../i/${categoryIconName}" border="0" /></td>
-						<td><img src="../i/${rootCatalogIcon}" alt="${rootCatalogName}" border="0" /></td>
+						<td><html:img page="/i/${categoryIconName}" border="0" /></td>
+						<td><html:img page="/i/${rootCatalogIcon}" alt="${rootCatalogName}" border="0" /></td>
 						<td>
 							<span class="bodyTitle">${orfn:htmlEncode(project.allProperties['Project Name'])}</span>
 							<c:if test="${!(empty project.allProperties['Project Version'])}">
@@ -26,7 +26,7 @@
 			<c:if test="${reviewType ne 'AutoScreening'}" >
 				<td align="right" valign="top">
 					<c:if test="${canEditScorecard}">
-						<a href="../actions/EditReview.do?method=editReview&rid=${review.id}"><bean:message key="editReview.EditScorecard" /></a>&#160;|
+						<html:link page="/actions/Edit${reviewType}.do?method=edit${reviewType}&rid=${review.id}"><bean:message key="editReview.EditScorecard" /></html:link>&#160;|
 					</c:if>
 					<a href="javascript:showAll();"><bean:message key="global.expandAll" /></a>&#160;|
 					<a href="javascript:hideAll();"><bean:message key="global.collapseAll" /></a>				

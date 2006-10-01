@@ -146,7 +146,7 @@
 					<h3>${orfn:htmlEncode(scorecardTemplate.name)}</h3>
 					
 					<!-- Note, that the form is a "dummy" one, only needed to support Struts tags inside of it -->
-					<html:form action="/actions/ViewReview.do?method=viewReview&rid=${review.id}">
+					<html:form action="/actions/View${reviewType}.do?method=view${reviewType}&rid=${review.id}">
 					
 					<c:set var="itemIdx" value="0" />
 					<c:forEach items="${scorecardTemplate.allGroups}" var="group" varStatus="groupStatus">
