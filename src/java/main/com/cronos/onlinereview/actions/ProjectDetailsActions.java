@@ -673,6 +673,25 @@ public class ProjectDetailsActions extends DispatchAction {
                     submissions =
                         ActionsHelper.getMostRecentSubmissions(ActionsHelper.createUploadManager(request), project);
                 }
+                if (submissions == null &&
+                        AuthorizationHelper.hasUserPermission(request, Constants.VIEW_MY_SUBM_PERM_NAME)) {
+                    // Obtain an instance of Upload Manager
+                    UploadManager upMgr = ActionsHelper.createUploadManager(request);
+                    SubmissionStatus[] allSubmissionStatuses = upMgr.getAllSubmissionStatuses();
+
+                    // Get "my" (submitter's) resource
+                    Resource myResource = ActionsHelper.getMyResourceForPhase(request, null);
+
+                    Filter filterProject = SubmissionFilterBuilder.createProjectIdFilter(project.getId());
+                    Filter filterStatus = SubmissionFilterBuilder.createSubmissionStatusIdFilter(
+                            ActionsHelper.findSubmissionStatusByName(allSubmissionStatuses, "Active").getId());
+                    Filter filterResource = SubmissionFilterBuilder.createResourceIdFilter(myResource.getId());
+
+                    Filter filter =
+                        new AndFilter(Arrays.asList(new Filter[] {filterProject, filterStatus, filterResource}));
+
+                    submissions = upMgr.searchSubmissions(filter);
+                }
                 if (submissions != null) {
                     phaseGroup.setSubmissions(submissions);
                 }
@@ -903,7 +922,7 @@ public class ProjectDetailsActions extends DispatchAction {
      * this assembly, which is supposed to send a message entered by user to the manager of some
      * project. This action gets executed twice &#x96; once to display the page with the form, and
      * once to process the message entered by user on that form.
-     * 
+     *
      * @return an action forward to the appropriate page. If no error has occured and this action
      *         was called the first time, the forward will be to contactManager.jsp page, which
      *         displays the form where user can enter his message. If this action was called during
@@ -941,7 +960,7 @@ public class ProjectDetailsActions extends DispatchAction {
             ActionsHelper.retrieveAndStoreBasicProjectInfo(request, verification.getProject(), getResources(request));
             return mapping.findForward(Constants.DISPLAY_PAGE_FORWARD_NAME);
         }
-        
+
         DocumentGenerator docGenerator = DocumentGenerator.getInstance();
         Template docTemplate = docGenerator.getTemplate(
                 ConfigHelper.getContactManagerEmailSrcType(), ConfigHelper.getContactManagerEmailTemplate());
@@ -2334,12 +2353,12 @@ public class ProjectDetailsActions extends DispatchAction {
                         deliverable.getSubmission(), deliverable.getResource(), false);
 
                 if (review == null) {
-                    links[i] = "CreateAggregation.do?method=createAggregation&sid=" +
+                    links[i] = "CreateApproval.do?method=createApproval&sid=" +
                             deliverable.getSubmission().longValue();
                 } else if (!review.isCommitted()) {
-                    links[i] = "EditAggregation.do?method=editAggregation&rid=" + review.getId();
+                    links[i] = "EditApproval.do?method=editApproval&rid=" + review.getId();
                 } else {
-                    links[i] = "ViewAggregation.do?method=viewAggregation&rid=" + review.getId();
+                    links[i] = "ViewApproval.do?method=viewApproval&rid=" + review.getId();
                 }
             }
         }
