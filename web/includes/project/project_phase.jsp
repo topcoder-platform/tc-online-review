@@ -224,7 +224,7 @@
 						</c:when>
 						<c:when test='${group.appFunc == "VIEW_REVIEWS"}'>
 							<table class="scorecard" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;">
-								<c:set var="colSpan" value="${(fn:length(group.reviewers) * 2) + 3}" />
+								<c:set var="colSpan" value="${(fn:length(group.reviewers) * 2) + 2}" />
 								<c:if test="${isAllowedToEditHisReviews != true}">
 									<c:set var="colSpan" value="${colSpan + 1}" />
 								</c:if>
@@ -265,7 +265,6 @@
 								</tr>
 								<tr>
 									<td class="header" nowrap="nowrap"><bean:message key="viewProjectDetails.box.Submission.ID" /></td>
-									<td class="headerC" width="4%" nowrap="nowrap"><bean:message key="viewProjectDetails.box.Review.Status" /></td>
 									<td class="headerC" width="7%"><bean:message key="viewProjectDetails.box.Review.Date" /></td>
 									<c:if test="${isAllowedToEditHisReviews != true}">
 										<td class="headerC" width="12%"><bean:message key="viewProjectDetails.box.Review.Score" /></td>
@@ -307,8 +306,6 @@
 												(<tc-webtag:handle coderId='${submitter.allProperties["External Reference ID"]}' context="component" />)
 											</c:if>
 										</td>
-										<td class="valueC" width="4%">
-											<img border="0" src="../i/clear.gif" class="Outline" width="10" height="8" /></td>
 										<td class="valueC" width="7%">${group.reviewDates[submissionStatus.index]}</td>
 										<c:if test="${isAllowedToEditHisReviews != true}">
 											<c:if test="${!(empty submitter)}">
@@ -552,7 +549,7 @@
 												</c:if>
 											</c:if>
 										</c:if>
-										<c:if test="${empty group.finalReview}">
+										<c:if test="${empty group.approval}">
 											<td class="value"><!-- @ --></td>
 											<c:if test="${isAllowedToPerformApproval == true}">
 												<td class="valueC" nowrap="nowrap">
