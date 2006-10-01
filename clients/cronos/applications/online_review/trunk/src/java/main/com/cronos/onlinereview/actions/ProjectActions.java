@@ -540,11 +540,11 @@ public class ProjectActions extends DispatchAction {
             // Populate project eligibility
             project.setProperty("Eligibility", lazyForm.get("eligibility"));
             // Populate project public flag
-            project.setProperty("Public", lazyForm.get("public"));
+            project.setProperty("Public", Boolean.TRUE.equals(lazyForm.get("public")) ? "Yes" : "No");
         } else {
             // Populate project status
             project.setProjectStatus(
-                    ActionsHelper.findProjectStatusById(projectStatuses, ((Long) lazyForm.get("status")).intValue()));
+                    ActionsHelper.findProjectStatusById(projectStatuses, ((Long) lazyForm.get("status")).longValue()));
         }
         // Populate project forum id
         project.setProperty("Developer Forum ID", lazyForm.get("forum_id"));

@@ -2453,8 +2453,13 @@ public class ProjectReviewActions extends DispatchAction {
         Phase phase = ActionsHelper.getPhase(phases, true, phaseName);
         // Check that the phase in question is really active (open)
         if (phase == null) {
-            return ActionsHelper.produceErrorReport(
-                    mapping, getResources(request), request, permName, "Error.IncorrectPhase");
+            if (AuthorizationHelper.hasUserRole(request, Constants.MANAGER_ROLE_NAME)) {
+                // Manager can edit review in any phase
+                phase = ActionsHelper.getPhase(phases, false, phaseName);
+            } else {
+                return ActionsHelper.produceErrorReport(
+                        mapping, getResources(request), request, permName, "Error.IncorrectPhase");
+            }
         }
 
         // Get "My" resource for the appropriate phase
@@ -2661,11 +2666,15 @@ public class ProjectReviewActions extends DispatchAction {
                             } else {
                                 comment = new Comment();
                                 comment.setCommentType(
-                                        ActionsHelper.findCommentTypeByName(commentTypes, "Manager Comment"));
+                                        ActionsHelper.findCommentTypeByName(commentTypes, "Manager Comment"));                                
                                 item.addComment(comment);
                             }
                             comment.setAuthor(myResource.getId());
                             comment.setComment(replies[index]);
+                            
+                            if (comment.getComment().trim().length() == 0) {
+                                item.removeComment(comment);
+                            }
                         }
 
                         // Update the answer
