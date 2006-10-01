@@ -1337,6 +1337,7 @@ public class ProjectReviewActions extends DispatchAction {
         Boolean approveFixesObj = (Boolean) finalReviewForm.get("approve_fixes");
         boolean approveFixes = (approveFixesObj != null && approveFixesObj.booleanValue() == true);
         int commentIndex = 0;
+        int finalIdx = 0;
 
         // Obtain an instance of review manager
         ReviewManager revMgr = ActionsHelper.createReviewManager(request);
@@ -1347,6 +1348,11 @@ public class ProjectReviewActions extends DispatchAction {
         for (int i = 0; i < review.getNumberOfItems(); ++i) {
             // Get an item
             Item item = review.getItem(i);
+
+            if (item.getNumberOfComments() == 0) {
+                continue;
+            }
+
             Comment finalReviewComment = null;
 
             for (int j = 0; j < item.getNumberOfComments(); ++j) {
@@ -1370,7 +1376,7 @@ public class ProjectReviewActions extends DispatchAction {
                 item.addComment(finalReviewComment);
             }
 
-            finalReviewComment.setComment(finalComments[i]);
+            finalReviewComment.setComment(finalComments[finalIdx++]);
             finalReviewComment.setAuthor(resource.getId());
         }
 
@@ -1594,7 +1600,7 @@ public class ProjectReviewActions extends DispatchAction {
     public ActionForward saveApproval(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response)
         throws BaseException {
-        return saveGenericReview(mapping, form, request, "Review");
+        return saveGenericReview(mapping, form, request, "Approval");
     }
 
     /**
@@ -1620,7 +1626,7 @@ public class ProjectReviewActions extends DispatchAction {
     public ActionForward viewApproval(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response)
         throws BaseException {
-        return viewGenericReview(mapping, form, request, "Screening");
+        return viewGenericReview(mapping, form, request, "Approval");
     }
 
     /**
@@ -2666,12 +2672,12 @@ public class ProjectReviewActions extends DispatchAction {
                             } else {
                                 comment = new Comment();
                                 comment.setCommentType(
-                                        ActionsHelper.findCommentTypeByName(commentTypes, "Manager Comment"));                                
+                                        ActionsHelper.findCommentTypeByName(commentTypes, "Manager Comment"));
                                 item.addComment(comment);
                             }
                             comment.setAuthor(myResource.getId());
                             comment.setComment(replies[index]);
-                            
+
                             if (comment.getComment().trim().length() == 0) {
                                 item.removeComment(comment);
                             }
@@ -2810,7 +2816,7 @@ public class ProjectReviewActions extends DispatchAction {
         Phase phase = ActionsHelper.getPhase(phases, true, null);
 
         boolean canPlaceAppeal = false;
-        boolean canPlaceAppealResponse = false;        
+        boolean canPlaceAppealResponse = false;
         // Check if user can place appeals or appeal responses
         if (phase.getPhaseType().getName().equals(Constants.APPEALS_PHASE_NAME) &&
                 AuthorizationHelper.hasUserPermission(request, Constants.PERFORM_APPEAL_PERM_NAME)) {
@@ -2842,7 +2848,7 @@ public class ProjectReviewActions extends DispatchAction {
             // Place appeal statuses to request
             request.setAttribute("appealStatuses", appealStatuses);
         }
-        
+
         // Retrieve some basic review info and store it in the request
         retrieveAndStoreBasicReviewInfo(request, verification, reviewType, scorecardTemplate);
 
@@ -2856,7 +2862,7 @@ public class ProjectReviewActions extends DispatchAction {
 
     /**
      * TODO: Document it
-     * 
+     *
      * @param allComments
      * @return
      */
@@ -2871,7 +2877,7 @@ public class ProjectReviewActions extends DispatchAction {
 
     /**
      * TODO: Document it
-     * 
+     *
      * @param allComments
      * @return
      */
