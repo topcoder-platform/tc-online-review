@@ -115,7 +115,7 @@
 																		</c:if>
 																	</c:forEach>
 																	<c:if test="${!(empty item.document)}">
-																		<html:link page="/actions/DownloadDocument.do?method=downloadDocument&uid=${item.document}"><bean:message key="editReview.Document.Download" /></html:link>
+																		<br /><html:link page="/actions/DownloadDocument.do?method=downloadDocument&uid=${item.document}"><bean:message key="editReview.Document.Download" /></html:link>
 																	</c:if>
 																</c:if>
 															</td>
@@ -167,7 +167,7 @@
 														<bean:message key="editAggregationReview.Function.Accept" />
 														<html:radio property="review_function[${globalItemIndex}]" value="Reject" />
 														<bean:message key="editAggregationReview.Function.Reject" /><br />
-														<html:textarea rows="4" property="reject_reason[${globalItemIndex}]" cols="20" styleClass="inputTextBox" />
+														<html:textarea rows="3" property="reject_reason[${globalItemIndex}]" cols="20" styleClass="inputTextBox" />
 													</td>
 												</tr>
 												<c:set var="globalItemIndex" value="${globalItemIndex + 1}" />
