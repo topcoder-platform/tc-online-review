@@ -47,7 +47,7 @@
 				'<parameter name="ItemId">' +
 				itemId +
 				"</parameter>" +
-				'<parameter name="text">' +
+				'<parameter name="Text">' +
 				appealText +
 				"</parameter>" +
 				"</parameters>" +
@@ -92,7 +92,7 @@
 				'<parameter name="ItemId">' +
 				itemId +
 				"</parameter>" +
-				'<parameter name="text">' +
+				'<parameter name="Text">' +
 				responseText +
 				"</parameter>" +
 				'<parameter name="Answer">' +
