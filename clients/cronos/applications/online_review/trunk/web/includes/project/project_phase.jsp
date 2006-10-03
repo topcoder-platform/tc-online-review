@@ -232,7 +232,7 @@
 									<td class="title" colspan="${colSpan}">${group.name}</td>
 								</tr>
 								<tr>
-									<td class="value" colspan="${(isAllowedToEditHisReviews == true) ? 3 : 4}"><!-- @ --></td>
+									<td class="value" colspan="${(isAllowedToEditHisReviews == true) ? 2 : 3}"><!-- @ --></td>
 									<c:forEach items="${group.reviewers}" var="reviewer">
 										<td class="valueC" colspan="2" nowrap="nowrap">
 											<b><bean:message key='ResourceRole.${fn:replace(reviewer.resourceRole.name, " ", "")}' />:</b>
@@ -318,7 +318,9 @@
 										<c:forEach items="${group.reviews[submissionStatus.index]}" var="review">
 											<c:if test="${empty review}">
 												<c:if test="${isAllowedToEditHisReviews == true}">
-													<td class="valueC" width="8%"><html:link page="/actions/CreateReview.do?method=createReview&sid=${submission.id}"><bean:message key="viewProjectDetails.box.Review.Submit" /></html:link></td>
+													<td class="valueC" width="8%"><html:link
+														page="/actions/CreateReview.do?method=createReview&sid=${submission.id}"><b><bean:message
+														key="viewProjectDetails.box.Review.Submit" /></b></html:link></td>
 												</c:if>
 												<c:if test="${isAllowedToEditHisReviews != true}">
 													<td class="valueC" width="8%"><bean:message key="Pending" /></td>
@@ -326,11 +328,14 @@
 											</c:if>
 											<c:if test="${!(empty review)}">
 												<c:if test="${review.committed == true}">
-													<td class="valueC" width="8%"><html:link page="/actions/ViewReview.do?method=viewReview&rid=${review.id}">${review.score}</html:link></td>
+													<td class="valueC" width="8%"><html:link
+														page="/actions/ViewReview.do?method=viewReview&rid=${review.id}">${review.score}</html:link></td>
 												</c:if>
 												<c:if test="${review.committed != true}">
 													<c:if test="${isAllowedToEditHisReviews == true}">
-														<td class="valueC" width="8%"><html:link page="/actions/EditReview.do?method=editReview&rid=${review.id}"><bean:message key="viewProjectDetails.box.Review.Submit" /></html:link></td>
+														<td class="valueC" width="8%"><html:link
+															page="/actions/EditReview.do?method=editReview&rid=${review.id}"><b><bean:message
+															key="viewProjectDetails.box.Review.Submit" /></b></html:link></td>
 													</c:if>
 													<c:if test="${isAllowedToEditHisReviews != true}">
 													<td class="valueC" width="8%"><bean:message key="Pending" /></td>
@@ -395,16 +400,16 @@
 											</c:if>
 											<c:if test="${group.aggregationReviewCommitted == true}">
 												<td class="valueC">${group.aggregation.modificationTimestamp}</td>
-												<td class="valueC" nowrap="nowrap">
-													<html:link page="/actions/ViewAggregationReview.do?method=viewAggregationReview&rid=${group.aggregation.id}"><bean:message
-														key="viewProjectDetails.box.Aggregation.ViewResults" /></html:link></td>
+												<td class="valueC" nowrap="nowrap"><html:link
+													page="/actions/ViewAggregationReview.do?method=viewAggregationReview&rid=${group.aggregation.id}"><bean:message
+													key="viewProjectDetails.box.Aggregation.ViewResults" /></html:link></td>
 											</c:if>
 											<c:if test="${group.aggregationReviewCommitted != true}">
 												<td class="value"><!-- @ --></td>
 												<c:if test="${isAllowedToPerformAggregationReview == true}">
-													<td class="valueC" nowrap="nowrap">
-														<html:link page="/actions/EditAggregationReview.do?method=editAggregationReview&rid=${group.aggregation.id}"><bean:message
-															key="viewProjectDetails.box.AggregationReview.Submit" /></html:link></td>
+													<td class="valueC" nowrap="nowrap"><html:link
+														page="/actions/EditAggregationReview.do?method=editAggregationReview&rid=${group.aggregation.id}"><b><bean:message
+														key="viewProjectDetails.box.AggregationReview.Submit" /></b></html:link></td>
 												</c:if>
 												<c:if test="${isAllowedToPerformAggregationReview != true}">
 													<td class="valueC" nowrap="nowrap"><bean:message key="Pending" /></td>
@@ -486,9 +491,9 @@
 											<c:if test="${group.finalReview.committed != true}">
 												<td class="value"><!-- @ --></td>
 												<c:if test="${isAllowedToPerformFinalReview == true}">
-													<td class="valueC" nowrap="nowrap">
-														<html:link page="/actions/EditFinalReview.do?method=editFinalReview&rid=${group.finalReview.id}"><bean:message
-															key="viewProjectDetails.box.FinalReview.Submit" /></html:link></td>
+													<td class="valueC" nowrap="nowrap"><html:link
+														page="/actions/EditFinalReview.do?method=editFinalReview&rid=${group.finalReview.id}"><b><bean:message
+														key="viewProjectDetails.box.FinalReview.Submit" /></b></html:link></td>
 												</c:if>
 												<c:if test="${isAllowedToPerformFinalReview != true}">
 													<td class="valueC" nowrap="nowrap"><bean:message key="Pending" /></td>
