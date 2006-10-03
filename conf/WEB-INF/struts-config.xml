@@ -134,13 +134,9 @@
 
     <global-forwards>
         <!-- Default forward to login page action -->
-        <forward
-            name="Login"
-            path="/jsp/login.jsp"/>
-        <forward
-            name="userError"
-            path="/jsp/userError.jsp"
-            redirect="false"/>
+        <forward name="Login" path="/jsp/login.jsp"/>
+        <forward name="userError" path="/jsp/userError.jsp" redirect="false"/>
+        <forward name="reviewCommitted" path="/jsp/reviewCommitted.jsp" redirect="false"/>
     </global-forwards>
 
 
