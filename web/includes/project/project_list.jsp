@@ -2,7 +2,8 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="bean" uri="/tags/struts-bean" %>
-	<img src="../i/minus.gif" style="display:none;" /><%-- This image is used to precache "minus" image in Internet Explorer --%>
+<%@ taglib prefix="html" uri="/tags/struts-html" %>
+	<html:img page="/i/minus.gif" style="display:none;" /><%-- This image is used to precache "minus" image in Internet Explorer --%>
 	<c:if test="${totalProjectsCount != 0}">
 	<c:forEach items="${projectTypes}" var="type" varStatus="idxrType">
 		<c:if test="${typeCounts[idxrType.index] != 0}">
@@ -13,12 +14,14 @@
 				<c:if test="${category.projectType.id == type.id}">
 					<table class="scorecard" style="border-bottom:none;" cellpadding="0" cellspacing="0" width="100%">
 						<tr>
-    					<td class="title" colspan="7"><img
-    						src="../i/${categoryIconNames[idxrCategory.index]}" alt="" width="25" height="17" border="0"
-    						align="right"><a onclick="return expcollHandler(this)" href="javascript:void(0)" id="Out${idxrCategory.index}" class="Outline"><img
-    						id="Out${idxrCategory.index}i" class="Outline" border="0" src="../i/plus.gif" width="9" height="9"
-    						style="margin-right:5px;"><bean:message key='ProjectCategory.${fn:replace(category.name, " ", "")}' /></a>
-    						(${fn:length(projects[idxrCategory.index])})</td>
+    					<td class="title" colspan="7">
+    						<html:img page="/i/${categoryIconNames[idxrCategory.index]}" alt="" width="25" height="17" border="0" align="right" />
+    						<a onclick="return expcollHandler(this)" href="javascript:void(0)" id="Out${idxrCategory.index}" class="Outline">
+    						<html:img styleId="Out${idxrCategory.index}i" styleClass="Outline" border="0" page="/i/plus.gif" width="9" height="9" style="margin-right:5px;" />
+    						<bean:message key='ProjectCategory.${fn:replace(category.name, " ", "")}' />
+    						</a>
+    						(${fn:length(projects[idxrCategory.index])})
+    					</td>
 						</tr>
 						<tbody ID="Out${idxrCategory.index}r" style="display:none">
 						<tr>
@@ -35,9 +38,9 @@
 								<td class="value" nowrap="nowrap" colspan="2" width="100%">
     							<table cellspacing="0" cellpadding="0" border="0">
     								<tr valign="middle">
-    									<td><img src="../i/${categoryIconNames[idxrCategory.index]}" alt="" width="25" height="17" border="0" /></td>
-    									<td><img src="../i/${rootCatalogIcons[idxrCategory.index][idxrProject.index]}" alt="${rootCatalogNames[idxrCategory.index][idxrProject.index]}" border="0" /></td>
-    									<td><img src="../i/clear.gif" border="0" width="5" height="17" /></td>
+    									<td><html:img page="/i/${categoryIconNames[idxrCategory.index]}" alt="" width="25" height="17" border="0" /></td>
+    									<td><html:img page="/i/${rootCatalogIcons[idxrCategory.index][idxrProject.index]}" alt="${rootCatalogNames[idxrCategory.index][idxrProject.index]}" border="0" /></td>
+    									<td><html:img page="/i/clear.gif" border="0" width="5" height="17" /></td>
     									<td><a href="ViewProjectDetails.do?method=viewProjectDetails&pid=${project.id}"><strong>${project.allProperties["Project Name"]}</strong> version ${project.allProperties["Project Version"]}</a></td>
     								</tr>
     							</table>

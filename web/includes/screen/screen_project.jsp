@@ -1,3 +1,4 @@
+<%@ taglib prefix="html" uri="/tags/struts-html" %>
 <%
    String role = (String) request.getParameter("role");
 %>
@@ -5,8 +6,8 @@
 						<table border="0" cellpadding="0" cellspacing="0" width="100%">
 							<tr>
 								<td>
-									<img src="../images/iconStatusSpecSm.gif" alt="" width="25" height="17" border="0" >
-									<img src="../images/javaSm.gif" alt="" border="0"><span class="bodyTitle">Ajax Timed Survey </span><font size="4">version 1.0</font><br>
+									<html:img page="/i/iconStatusSpecSm.gif" alt="" width="25" height="17" border="0" />
+									<html:img page="/i/javaSm.gif" alt="" border="0" /><span class="bodyTitle">Ajax Timed Survey </span><font size="4">version 1.0</font><br>
 								</td>
 								<td align="right" valign="top">
 							<% if (role.equalsIgnoreCase("manager")) {%>

@@ -12,16 +12,16 @@
 	<title><bean:message key="OnlineReviewApp.title" /></title>
 
 	<!-- TopCoder CSS -->
-	<link type="text/css" rel="stylesheet" href="../css/style.css" />
-	<link type="text/css" rel="stylesheet" href="../css/coders.css" />
-	<link type="text/css" rel="stylesheet" href="../css/stats.css" />
-	<link type="text/css" rel="stylesheet" href="../css/tcStyles.css" />
+	<link type="text/css" rel="stylesheet" href="<html:rewrite page='/css/style.css' />" />
+	<link type="text/css" rel="stylesheet" href="<html:rewrite page='/css/coders.css' />" />
+	<link type="text/css" rel="stylesheet" href="<html:rewrite page='/css/stats.css' />" />
+	<link type="text/css" rel="stylesheet" href="<html:rewrite page='/css/tcStyles.css' />" />
 
 	<!-- CSS and JS by Petar -->
-	<link type="text/css" rel="stylesheet" href="../css/new_styles.css" />
-	<script language="JavaScript" type="text/javascript" src="../scripts/rollovers.js"><!-- @ --></script>
-	<script language="JavaScript" type="text/javascript" src="../scripts/dojo.js"><!-- @ --></script>
-	<script language="JavaScript" type="text/javascript" src="../scripts/util.js"><!-- @ --></script>
+	<link type="text/css" rel="stylesheet" href="<html:rewrite page='/css/new_styles.css' />" />
+	<script language="JavaScript" type="text/javascript" src="<html:rewrite page='/scripts/rollovers.js' />"><!-- @ --></script>
+	<script language="JavaScript" type="text/javascript" src="<html:rewrite page='/scripts/dojo.js' />"><!-- @ --></script>
+	<script language="JavaScript" type="text/javascript" src="<html:rewrite page='/scripts/util.js' />"><!-- @ --></script>
 
 	<script language="javascript" type="text/javascript">
 	<!--
@@ -57,25 +57,25 @@
 </head>
 
 <body>
-	<jsp:include page="../includes/inc_header.jsp" />
+	<jsp:include page="/includes/inc_header.jsp" />
 	<table width="100%" border="0" cellpadding="0" cellspacing="0">
 		<tr valign="top">
 			<!-- Left Column Begins-->
 			<td width="180">
-				<jsp:include page="../includes/inc_leftnav.jsp" />
+				<jsp:include page="/includes/inc_leftnav.jsp" />
 			</td>
 			<!-- Left Column Ends -->
 
 			<!-- Gutter Begins -->
-			<td width="15"><img src="../i/clear.gif" width="15" height="1" border="0" /></td>
+			<td width="15"><html:img page="/i/clear.gif" width="15" height="1" border="0" /></td>
 			<!-- Gutter Ends -->
 
 			<!-- Center Column Begins -->
 			<td class="bodyText">
-				<jsp:include page="../includes/project/project_tabs.jsp" />
+				<jsp:include page="/includes/project/project_tabs.jsp" />
 
 				<div id="mainMiddleContent">
-					<jsp:include page="../includes/review/review_project.jsp" />
+					<jsp:include page="/includes/review/review_project.jsp" />
 
 					<h3>${orfn:htmlEncode(scorecardTemplate.name)}</h3>
 
@@ -108,17 +108,18 @@
 										</c:if>
 
 										<tr class="light">
-											<%@ include file="../includes/review/review_question.jsp" %>
+											<jsp:include page="/includes/review/review_question.jsp" />
 											<c:if test="${not managerEdit}">
 												<td class="valueC" nowrap="nowrap">
-													<%@ include file="../includes/review/review_answer.jsp" %>
-												</td>																						</c:if>
+													<jsp:include page="/includes/review/review_answer.jsp" />
+												</td>
+											</c:if>
 											<c:if test="${managerEdit}">
-												<%@ include file="../includes/review/review_static_answer.jsp" %>
+												<jsp:include page="/includes/review/review_static_answer.jsp" />
 											</c:if>
 										</tr>
 										<c:if test="${managerEdit}">
-											<%@ include file="../includes/review/review_comments.jsp" %>
+											<jsp:include page="/includes/review/review_comments.jsp" />
 										</c:if>
 										<tr class="highlighted">
 											<td class="value" colspan="${managerEdit ? 2 : 3}">
@@ -155,7 +156,7 @@
 											</td>
 											<c:if test="${managerEdit}">
 												<td class="valueC" nowrap="nowrap">		
-													<%@ include file="../includes/review/review_answer.jsp" %>
+													<jsp:include page="/includes/review/review_answer.jsp" />
 												</td>
 											</c:if>
 										</tr>
@@ -184,15 +185,15 @@
 			<!-- Center Column Ends -->
 
 			<!-- Gutter -->
-			<td width="15"><img src="../i/clear.gif" width="25" height="1" border="0" /></td>
+			<td width="15"><html:img page="/i/clear.gif" width="25" height="1" border="0" /></td>
 			<!-- Gutter Ends -->
 
 			<!-- Gutter -->
-			<td width="2"><img src="../i/clear.gif" width="2" height="1" border="0" /></td>
+			<td width="2"><html:img page="/i/clear.gif" width="2" height="1" border="0" /></td>
 			<!-- Gutter Ends -->
 		</tr>
 	</table>
 
-	<jsp:include page="../includes/inc_footer.jsp" />
+	<jsp:include page="/includes/inc_footer.jsp" />
 </body>
 </html:html>

@@ -21,7 +21,7 @@
 					<option>Security</option>
 					<option>Process</option>
 				</select>
-				<a href="pc-manager-create_project.jsp?L=1"><img src="../i/bttn_load_template.gif" name="load_template" id="load_template" /></a>
+				<a href="pc-manager-create_project.jsp?L=1"><html:img page="/i/bttn_load_template.gif" imageName="load_template" styleId="load_template" /></a>
 			</td>
 		</tr>
 	</table><br />
