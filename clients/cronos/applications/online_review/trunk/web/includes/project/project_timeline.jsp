@@ -2,6 +2,7 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="bean" uri="/tags/struts-bean" %>
+<%@ taglib prefix="html" uri="/tags/struts-html" %>
 <%@ page import="com.cronos.onlinereview.actions.AuthorizationHelper" %>
 <%@ page import="com.cronos.onlinereview.actions.Constants" %>
 	<table class="stat" cellpadding="0" cellspacing="0" width="100%" style="table-layout: fixed; border-bottom: 1px solid #999999;">
@@ -83,7 +84,7 @@
 									<table>
 										<tr>
 											<c:if test="${ganttOffsets[phaseStatus.index] != 0}">
-												<td><img width="${ganttOffsets[phaseStatus.index] * pixelsPerHour}" src="../i/clear.gif" height="0" /></td>
+												<td><html:img width="${ganttOffsets[phaseStatus.index] * pixelsPerHour}" page="/i/clear.gif" height="0" /></td>
 											</c:if>
 											<td class="phase"><div style="width:${ganttLengths[phaseStatus.index] * pixelsPerHour}px;"><bean:message key='ProjectPhase.${fn:replace(phase.phaseType.name, " ", "")}' /></div></td>
 											<td class="length">${ganttLengths[phaseStatus.index]} hrs</td>

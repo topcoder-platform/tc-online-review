@@ -1,3 +1,4 @@
+<%@ taglib prefix="html" uri="/tags/struts-html" %>
 <!-- Footer Include Begins -->
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
 	<!-- TopCoder Links Begins -->
@@ -24,7 +25,7 @@
 
     <tr>
 		<td height="4" class="footerStripe">
-			<img src="../i/corp/clear.gif" width="10" height="4" border="0"/>
+			<html:img page="/i/corp/clear.gif" width="10" height="4" border="0" />
 		</td>
 	</tr>
     <tr>

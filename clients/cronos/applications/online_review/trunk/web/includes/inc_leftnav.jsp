@@ -1,4 +1,5 @@
-	<script language="JavaScript" type="text/javascript" src="../js/arena.js"></script>
+<%@ taglib prefix="html" uri="/tags/struts-html" %>
+	<script language="JavaScript" type="text/javascript" src="<html:rewrite page='/js/arena.js' />"></script>
 	<script language="javascript" type="text/javascript">
 	<!--
 		function toggleMenu(menuTitle,menuID) {
@@ -22,7 +23,7 @@
 
 	<!--node is des_contest_status -->
 	<div style="float: left; padding: 0px 0px 0px 0px;">
-		<img src="../i/interface/leftnav_top.gif" alt="" /></div>
+		<html:img page="/i/interface/leftnav_top.gif" alt="" /></div>
 	<div id="navbar">
 
 	<ul>
@@ -211,5 +212,5 @@
 		</div>
 	</div>
 	<div style="float: left; clear:left; padding: 0px 0px 23px 0px;">
-		<img src="../i/interface/leftnav_bottom.gif" alt="" />
+		<html:img page="/i/interface/leftnav_bottom.gif" alt="" />
 	</div>

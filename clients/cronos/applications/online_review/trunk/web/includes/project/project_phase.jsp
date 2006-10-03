@@ -95,7 +95,7 @@
 											</c:if>
 										</c:forEach>
 										<td class="value" width="10%" nowrap="nowrap">
-<%--											<img id="Out1" class="Outline" border="0" src="../i/plus.gif" width="9" height="9" style="margin-right:5px;" title="View Previous Submissions"> --%>
+<%--											<html:img id="Out1" class="Outline" border="0" page="/i/plus.gif" width="9" height="9" style="margin-right:5px;" title="View Previous Submissions"> --%>
 											<c:set var="placement" value="" />
 											<c:if test="${!(empty submitter)}">
 												<c:set var="placement" value='${submitter.allProperties["Placement"]}' />
@@ -127,7 +127,7 @@
 										<td class="value" width="22%">${submission.modificationTimestamp}</td>
 										<c:set var="scrTask" value="${group.screeningTasks[submissionStatus.index]}" />
 										<c:if test="${empty scrTask}">
-											<td class="valueC" width="14%"><img src="../i/clear.gif" width="8" height="10" /></td>
+											<td class="valueC" width="14%"><html:img page="/i/clear.gif" width="8" height="10" /></td>
 										</c:if>
 										<c:if test="${!(empty scrTask)}">
 											<c:set var="scrTaskStatus" value="${scrTask.screeningStatus.name}" />
@@ -151,7 +151,7 @@
 															altKey="viewProjectDetails.box.Submission.icoFailed.alt" /></html:link></td>
 												</c:when>
 												<c:otherwise>
-													<td class="valueC" width="14%"><img src="../i/clear.gif" width="8" height="10" /></td>
+													<td class="valueC" width="14%"><html:img page="/i/clear.gif" width="8" height="10" /></td>
 												</c:otherwise>
 											</c:choose>
 										</c:if>
