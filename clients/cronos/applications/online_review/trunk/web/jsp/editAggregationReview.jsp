@@ -43,7 +43,6 @@
 
 				<div id="mainMiddleContent">
 					<jsp:include page="/includes/review/review_project.jsp" />
-					
 					<h3><bean:message key="editAggregationReview.Scorecard.title" /></h3>
 
 					<html:form action="/actions/SaveAggregationReview">
@@ -77,6 +76,7 @@
 													${orfn:htmlEncode(question.guideline)}
 												</div>
 											</td>
+											<c:set var="itemIdx" value="${itemIdx + 1}" />
 										</tr>
 										<tr>
 											<td class="header"><bean:message key="editReview.EditAggregation.Reviewer" /></td>
@@ -87,8 +87,9 @@
 										</tr>
 
 										<c:forEach items="${review.allItems}" var="item" varStatus="itemStatus">
+											<c:set var="commentNum" value="1" />
+											<c:set var="firstTime" value="${true}" />
 											<c:if test="${item.question == question.id}">
-												<c:set var="commentNum" value="1" />
 												<c:forEach items="${item.allComments}" var="comment" varStatus="commentStatus">
 													<c:set var="commentType" value="${comment.commentType.name}" />
 													<c:choose>
@@ -100,11 +101,12 @@
 														</c:otherwise>
 													</c:choose>
 													<c:if test='${(isReviewerComment == true) || (commentType == "Manager Comment") ||
+															(commentType == "Appeal") || (commentType == "Appeal Response") ||
 															(commentType == "Aggregation Comment") ||
 															((empty isSubmitter) && !(empty submitterCommitted) && (commentType == "Submitter Comment"))}'>
 														<tr class="dark">
 															<td class="value">
-																<c:if test="${commentStatus.index == 0}">
+																<c:if test="${firstTime == true}">
 																	<c:forEach items="${reviewResources}" var="resource">
 																		<c:if test="${resource.id == comment.author}">
 																			<tc-webtag:handle coderId='${resource.allProperties["External Reference ID"]}' context="component" /><br />
@@ -118,6 +120,7 @@
 																	<c:if test="${!(empty item.document)}">
 																		<br /><html:link page="/actions/DownloadDocument.do?method=downloadDocument&uid=${item.document}"><bean:message key="editReview.Document.Download" /></html:link>
 																	</c:if>
+																	<c:set var="firstTime" value="${false}" />
 																</c:if>
 															</td>
 															<c:if test="${isReviewerComment == true}">
@@ -132,32 +135,22 @@
 																	<c:when test="${isReviewerComment == true}">
 																		<b><bean:message key="editReview.EditAggregation.ReviewerResponse" /></b>
 																	</c:when>
-																	<c:when test='${commentType == "Manager Comment"}'>
-																		<b><bean:message key="editReview.EditAggregation.ManagerComment" /></b>
-																	</c:when>
-																	<c:when test='${commentType == "Aggregation Comment"}'>
-																		<b><bean:message key="editReview.EditAggregation.AggregatorResponse" /></b>
-																	</c:when>
-																	<c:when test='${commentType == "Submitter Comment"}'>
-																		<b><bean:message key="editReview.EditAggregation.SubmitterComment" /></b>
+																	<c:when test='${(commentType == "Manager Comment") ||
+																			(commentType == "Appeal") || (commentType == "Appeal Response") ||
+																			(commentType == "Aggregation Comment") || (commentType == "Submitter Comment")}'>
+																		<b><bean:message key='editReview.EditAggregation.${fn:replace(commentType, " ", "")}' /></b>
 																	</c:when>
 																</c:choose>
 																${orfn:htmlEncode(comment.comment)}
 															</td>
 															<c:if test="${isReviewerComment == true}">
-																<td class="value" ><bean:message key="CommentType.${commentType}" /></td>
+																<td class="value"><bean:message key="CommentType.${commentType}" /></td>
+																<td class="value"><bean:message key="AggregationItemStatus.${comment.extraInfo}" /></td>
 															</c:if>
 															<c:if test="${isReviewerComment != true}">
-																<td class="value" ><!-- @ --></td>
+																<td class="value"><!-- @ --></td>
+																<td class="value"><!-- @ --></td>
 															</c:if>
-															<c:choose>
-																<c:when test='${empty comment.extraInfo || commentType == "Submitter Comment"}'>
-																	<td class="value"><!-- @ --></td>
-																</c:when>
-																<c:otherwise>
-																	<td class="value"><bean:message key="AggregationItemStatus.${comment.extraInfo}" /></td>
-																</c:otherwise>
-															</c:choose>
 														</tr>
 													</c:if>
 												</c:forEach>
@@ -175,7 +168,6 @@
 											</c:if>
 										</c:forEach>
 									</c:forEach>
-									<c:set var="itemIdx" value="${itemIdx + 1}" />
 								</c:forEach>
 								<tr>
 									<td class="lastRowTD" colspan="5"><!-- @ --></td>

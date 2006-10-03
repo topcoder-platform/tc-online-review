@@ -43,7 +43,6 @@
 
 				<div id="mainMiddleContent">
 					<jsp:include page="/includes/review/review_project.jsp" />
-					
 					<h3><bean:message key="viewAggregation.AggregationWorksheet" /></h3>
 
 					<c:set var="itemIdx" value="0" />
@@ -73,6 +72,7 @@
 												${orfn:htmlEncode(question.guideline)}
 											</div>
 										</td>
+										<c:set var="itemIdx" value="${itemIdx + 1}" />
 									</tr>
 
 									<tr>
@@ -86,6 +86,7 @@
 									<c:forEach items="${review.allItems}" var="item" varStatus="itemStatus">
 										<c:if test="${item.question == question.id}">
 											<c:set var="commentNum" value="1" />
+											<c:set var="firstTime" value="${true}" />
 											<c:forEach items="${item.allComments}" var="comment" varStatus="commentStatus">
 												<c:set var="commentType" value="${comment.commentType.name}" />
 												<c:choose>
@@ -97,11 +98,12 @@
 													</c:otherwise>
 												</c:choose>
 												<c:if test='${(isReviewerComment == true) || (commentType == "Manager Comment") ||
+														(commentType == "Appeal") || (commentType == "Appeal Response") ||
 														(commentType == "Aggregation Comment") || (commentType == "Aggregation Review Comment") ||
 														(commentType == "Submitter Comment")}'>
 													<tr class="dark">
 														<td class="value">
-															<c:if test="${commentStatus.index == 0}">
+															<c:if test="${firstTime == true}">
 																<c:forEach items="${reviewResources}" var="resource">
 																	<c:if test="${resource.id == comment.author}">
 																		<tc-webtag:handle coderId='${resource.allProperties["External Reference ID"]}' context="component" /><br />
@@ -112,6 +114,7 @@
 																		<html:link page="/actions/ViewReview.do?method=viewReview&rid=${subReview.id}"><bean:message key="editReview.EditAggregation.ViewReview" /></html:link>
 																	</c:if>
 																</c:forEach>
+																<c:set var="firstTime" value="${false}" />
 															</c:if>
 														</td>
 														<c:if test="${isReviewerComment == true}">
@@ -127,12 +130,10 @@
 																	<b><bean:message key="editReview.EditAggregation.ReviewerResponse" /></b>
 																	${orfn:htmlEncode(comment.comment)}
 																</c:when>
-																<c:when test='${commentType == "Manager Comment"}'>
-																	<b><bean:message key="editReview.EditAggregation.ManagerComment" /></b>
-																	${orfn:htmlEncode(comment.comment)}
-																</c:when>
-																<c:when test='${commentType == "Aggregation Comment"}'>
-																	<b><bean:message key="editReview.EditAggregation.AggregatorResponse" /></b>
+																<c:when test='${(commentType == "Manager Comment") ||
+																		(commentType == "Appeal") || (commentType == "Appeal Response") ||
+																		(commentType == "Aggregation Comment")}'>
+																	<b><bean:message key='editReview.EditAggregation.${fn:replace(commentType, " ", "")}' /></b>
 																	${orfn:htmlEncode(comment.comment)}
 																</c:when>
 																<c:when test='${commentType == "Aggregation Review Comment"}'>
