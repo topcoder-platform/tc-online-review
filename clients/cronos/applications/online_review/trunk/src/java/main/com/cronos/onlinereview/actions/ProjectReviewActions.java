@@ -2089,8 +2089,9 @@ public class ProjectReviewActions extends DispatchAction {
      * @param scorecardTemplate
      * @throws BaseException
      */
-    private void retrieveAndStoreBasicReviewInfo(HttpServletRequest request, CorrectnessCheckResult verification,
-            String reviewType, Scorecard scorecardTemplate) throws BaseException {
+    private void retrieveAndStoreBasicReviewInfo(HttpServletRequest request,
+            CorrectnessCheckResult verification, String reviewType, Scorecard scorecardTemplate)
+        throws BaseException {
         // Retrieve some basic project info (such as icons' names) and place it into request
         ActionsHelper.retrieveAndStoreBasicProjectInfo(request, verification.getProject(), getResources(request));
         // Retrieve an information about my role(s) and place it into the request
@@ -2238,7 +2239,6 @@ public class ProjectReviewActions extends DispatchAction {
         } else {
             scorecardTypeName = "Client Review";
         }
-
 
         // Verify that certain requirements are met before proceeding with the Action
         CorrectnessCheckResult verification =
@@ -2749,6 +2749,19 @@ public class ProjectReviewActions extends DispatchAction {
             revMgr.createReview(review, Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
         } else {
             revMgr.updateReview(review, Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
+        }
+        
+        if ("submit".equalsIgnoreCase(request.getParameter("save"))) {
+            // Retrieve some basic review info and store it in the request
+            retrieveAndStoreBasicReviewInfo(request, verification, reviewType, scorecardTemplate);
+
+            // Place information about the final score into the request
+            request.setAttribute("reviewScore", review.getScore());
+            // Place review ID into the request
+            request.setAttribute("rid", new Long(review.getId()));
+
+            // Forward to the page that says that scorecard has been committed
+            return mapping.findForward(Constants.REVIEW_COMMITTD_FORWARD_NAME);
         }
 
         // Forward to project details page

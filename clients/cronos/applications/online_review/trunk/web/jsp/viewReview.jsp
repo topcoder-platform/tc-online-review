@@ -145,10 +145,9 @@
 				
 				<div id="mainMiddleContent">
 					<jsp:include page="/includes/review/review_project.jsp" />
-
 					<h3>${orfn:htmlEncode(scorecardTemplate.name)}</h3>
 					
-					<!-- Note, that the form is a "dummy" one, only needed to support Struts tags inside of it -->
+					<%-- Note, that the form is a "dummy" one, only needed to support Struts tags inside of it --%>
 					<html:form action="/actions/View${reviewType}.do?method=view${reviewType}&rid=${review.id}">
 					
 					<c:set var="itemIdx" value="0" />
