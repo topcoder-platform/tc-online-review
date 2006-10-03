@@ -173,8 +173,8 @@
 									<c:set var="item" value="${review.allItems[itemIdx]}" />
 
 									<tr class="light">
-										<jsp:include page="/includes/review/review_question.jsp" />
-										<jsp:include file="/includes/review/review_static_answer.jsp" />
+										<%@ include file="../includes/review/review_question.jsp" %>
+										<%@ include file="../includes/review/review_static_answer.jsp" %>
 										<c:if test="${canPlaceAppeal or canPlaceAppealResponse}">
 											<%-- TODO:  Localize appeal statuses --%>
 											<td class="valueC">${appealStatuses[itemIdx]}<!-- @ --></td>
@@ -189,7 +189,7 @@
 											</td>
 										</c:if>
 									</tr>
-									<jsp:include page="/includes/review/review_comments.jsp" />
+									<%@ include file="../includes/review/review_comments.jsp" %>
 									<c:if test="${canPlaceAppeal and empty appealStatuses[itemIdx]}">
 										<tr class="highlighted">
 											<td class="value" colspan="6">
@@ -217,7 +217,7 @@
 											<td class="value">
 												<bean:message key="editReview.Question.ModifiedResponse.title"/>:
 												<br/>
-												<jsp:include page="/includes/review/review_answer.jsp" />
+												<%@include file="../includes/review/review_answer.jsp" %>
 												<br/><br/>
 												<html:link href="javascript:placeAppealResponse(${itemIdx}, ${item.id}, ${review.id});">
 													<html:img srcKey="editReview.Button.SubmitAppealResponse.img" altKey="editReview.Button.SubmitAppealResponse.alt" border="0"/>

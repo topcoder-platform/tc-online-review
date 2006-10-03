@@ -108,18 +108,18 @@
 										</c:if>
 
 										<tr class="light">
-											<jsp:include page="/includes/review/review_question.jsp" />
+											<%@ include file="../includes/review/review_question.jsp" %>
 											<c:if test="${not managerEdit}">
 												<td class="valueC" nowrap="nowrap">
-													<jsp:include page="/includes/review/review_answer.jsp" />
+													<%@ include file="../includes/review/review_answer.jsp" %>
 												</td>
 											</c:if>
 											<c:if test="${managerEdit}">
-												<jsp:include page="/includes/review/review_static_answer.jsp" />
+												<%@ include file="../includes/review/review_static_answer.jsp" %>
 											</c:if>
 										</tr>
 										<c:if test="${managerEdit}">
-											<jsp:include page="/includes/review/review_comments.jsp" />
+											<%@ include file="../includes/review/review_comments.jsp" %>
 										</c:if>
 										<tr class="highlighted">
 											<td class="value" colspan="${managerEdit ? 2 : 3}">
@@ -156,7 +156,7 @@
 											</td>
 											<c:if test="${managerEdit}">
 												<td class="valueC" nowrap="nowrap">		
-													<jsp:include page="/includes/review/review_answer.jsp" />
+													<%@ include file="../includes/review/review_answer.jsp" %>
 												</td>
 											</c:if>
 										</tr>
