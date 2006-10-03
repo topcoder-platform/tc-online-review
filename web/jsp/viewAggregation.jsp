@@ -71,6 +71,7 @@
 												${orfn:htmlEncode(question.guideline)}
 											</div>
 										</td>
+										<c:set var="itemIdx" value="${itemIdx + 1}" />
 									</tr>
 
 									<tr>
@@ -82,19 +83,25 @@
 									</tr>
 
 									<c:forEach items="${review.allItems}" var="item" varStatus="itemStatus">
+										<c:set var="commentNum" value="1" />
+										<c:set var="firstTime" value="${true}" />
 										<c:if test="${item.question == question.id}">
-											<c:forEach items="${item.allComments}" var="comment">
-												<c:if test='${comment.commentType.name == "Aggregation Comment"}'>
-													<c:set var="aggregatorResponse" value="${orfn:htmlEncode(comment.comment)}" />
-												</c:if>
-											</c:forEach>
-											<c:set var="commentNum" value="1" />
 											<c:forEach items="${item.allComments}" var="comment" varStatus="commentStatus">
 												<c:set var="commentType" value="${comment.commentType.name}" />
-												<c:if test='${(commentType == "Required") || (commentType == "Recommended") || (commentType == "Comment")}'>
+												<c:choose>
+													<c:when test='${(commentType == "Required") || (commentType == "Recommended") || (commentType == "Comment")}'>
+														<c:set var="isReviewerComment" value="${true}" />
+													</c:when>
+													<c:otherwise>
+														<c:set var="isReviewerComment" value="${false}" />
+													</c:otherwise>
+												</c:choose>
+												<c:if test='${(isReviewerComment == true) || (commentType == "Manager Comment") ||
+														(commentType == "Appeal") || (commentType == "Appeal Response") ||
+														(commentType == "Aggregation Comment")}'>
 													<tr class="dark">
 														<td class="value">
-															<c:if test="${commentStatus.index == 0}">
+															<c:if test="${firstTime == true}">
 																<c:forEach items="${reviewResources}" var="resource">
 																	<c:if test="${resource.id == comment.author}">
 																		<tc-webtag:handle coderId='${resource.allProperties["External Reference ID"]}' context="component" /><br />
@@ -105,36 +112,48 @@
 																		<html:link page="/actions/ViewReview.do?method=viewReview&rid=${subReview.id}"><bean:message key="editReview.EditAggregation.ViewReview" /></html:link>
 																	</c:if>
 																</c:forEach>
+																<c:set var="firstTime" value="${false}" />
 															</c:if>
 														</td>
-														<td class="valueC">${commentNum}</td>
-														<td class="value">
-															<b><bean:message key="editReview.EditAggregation.ReviewerResponse" /></b>
-															${orfn:htmlEncode(comment.comment)}<br />
-															<c:if test="${commentStatus.index == lastCommentIdxs[itemStatus.index]}">
-																<div style="padding-top:4px;">
-																	<b><bean:message key="viewAggregation.AggregatorResponse" /></b>
-																	${aggregatorResponse}
-																</div>
-															</c:if>
-														</td>
-														<td class="value"><bean:message key="CommentType.${commentType}" /></td>
-														<c:if test="${empty comment.extraInfo}">
+														<c:if test="${isReviewerComment == true}">
+															<td class="valueC">${commentNum}</td>
+															<c:set var="commentNum" value="${commentNum + 1}" />
+														</c:if>
+														<c:if test="${isReviewerComment != true}">
 															<td class="value"><!-- @ --></td>
 														</c:if>
-														<c:if test="${!(empty comment.extraInfo)}">
-															<td class="value"><bean:message key="AggregationItemStatus.${comment.extraInfo}" /></td>
+														<td class="value">
+															<c:choose>
+																<c:when test="${isReviewerComment == true}">
+																	<b><bean:message key="editReview.EditAggregation.ReviewerResponse" /></b>
+																</c:when>
+																<c:when test='${(commentType == "Manager Comment") ||
+																	(commentType == "Appeal") || (commentType == "Appeal Response") ||
+																	(commentType == "Aggregation Comment")}'>
+																	<b><bean:message key='editReview.EditAggregation.${fn:replace(commentType, " ", "")}' /></b>
+																</c:when>
+															</c:choose>
+															${orfn:htmlEncode(comment.comment)}<br />
+														</td>
+														<c:if test="${isReviewerComment == true}">
+															<td class="value"><bean:message key="CommentType.${commentType}" /></td>
+															<c:if test="${empty comment.extraInfo}">
+																<td class="value"><!-- @ --></td>
+															</c:if>
+															<c:if test="${!(empty comment.extraInfo)}">
+																<td class="value"><bean:message key="AggregationItemStatus.${comment.extraInfo}" /></td>
+															</c:if>
+														</c:if>
+														<c:if test="${isReviewerComment != true}">
+															<td class="value"><!-- @ --></td>
+															<td class="value"><!-- @ --></td>
 														</c:if>
 													</tr>
-
-													<c:set var="commentNum" value="${commentNum + 1}" />
 												</c:if>
 											</c:forEach>
 										</c:if>
 									</c:forEach>
 								</c:forEach>
-
-								<c:set var="itemIdx" value="${itemIdx + 1}" />
 							</c:forEach>
 						</c:forEach>
 						<tr>
