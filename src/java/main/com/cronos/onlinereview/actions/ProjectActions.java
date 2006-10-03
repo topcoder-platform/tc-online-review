@@ -17,9 +17,13 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.struts.Globals;
+import org.apache.struts.action.ActionError;
+import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.apache.struts.action.ActionMessage;
 import org.apache.struts.actions.DispatchAction;
 import org.apache.struts.util.MessageResources;
 import org.apache.struts.validator.LazyValidatorForm;
@@ -68,7 +72,7 @@ import com.topcoder.management.scorecard.data.Scorecard;
  * @version 1.0
  */
 public class ProjectActions extends DispatchAction {
-
+    
     /**
      * Creates a new instance of the <code>ProjectActions</code> class.
      */
@@ -117,6 +121,10 @@ public class ProjectActions extends DispatchAction {
         loadProjectEditLookups(request);
 
         LazyValidatorForm lazyForm = (LazyValidatorForm) form;
+
+        // Set the JS id to start generation from
+        lazyForm.set("js_current_id", new Long(0));
+        
         // Populate form with some data so that resources row template
         // is rendered properly by the appropriate JSP
         lazyForm.set("resources_role", 0, new Long(-1));
@@ -196,6 +204,9 @@ public class ProjectActions extends DispatchAction {
     private void populateProjectForm(HttpServletRequest request, LazyValidatorForm form, Project project) throws BaseException {
         // TODO: Possibly use string constants instead of hardcoded strings
 
+        // Set the JS id to start generation from
+        form.set("js_current_id", new Long(0));
+        
         // Populate project id
         form.set("pid", new Long(project.getId()));
 
@@ -290,7 +301,9 @@ public class ProjectActions extends DispatchAction {
 
         // Retrive project phases
         Phase[] phases = ActionsHelper.getPhasesForProject(phaseManager, project);
-
+        // Sort project phases
+        Arrays.sort(phases, new ProjectPhaseComparer());
+        
 
         // Populate form with phases data
         for (int i = 0; i < phases.length; ++i) {
@@ -306,6 +319,7 @@ public class ProjectActions extends DispatchAction {
                 Dependency dependency = phases[i].getAllDependencies()[0];
                 form.set("phase_start_phase", i + 1, "loaded_" + dependency.getDependency().getId());
                 form.set("phase_start_amount", i + 1, new Integer((int) (dependency.getLagTime() / 3600 / 1000)));
+                form.set("phase_start_when", i + 1, dependency.isDependencyStart() ? "starts" : "ends");                
                 form.set("phase_start_dayshrs", i + 1, "hrs");
             } else {
                 form.set("phase_start_by_phase", i + 1, Boolean.FALSE);
@@ -335,7 +349,7 @@ public class ProjectActions extends DispatchAction {
             }
             if (phases[i].getAttribute("View Response During Appeals") != null) {
                 form.set("phase_view_appeal_responses", i + 1,
-                        Boolean.valueOf("Yes".equals(phases[i].getAttribute("Submission Number"))));
+                        Boolean.valueOf("Yes".equals(phases[i].getAttribute("View Response During Appeals"))));
             }
         }
 
@@ -457,7 +471,7 @@ public class ProjectActions extends DispatchAction {
 
         // Populate the form with project properties
         populateProjectForm(request, (LazyValidatorForm) form, project);
-
+                
         return mapping.findForward(Constants.SUCCESS_FORWARD_NAME);
     }
 
@@ -564,20 +578,36 @@ public class ProjectActions extends DispatchAction {
 
         // TODO: Project status change, includes additional explanation to be concatenated
 
-        if (newProject) {
-            // Create project in persistence level
-            manager.createProject(project, AuthorizationHelper.getLoggedInUserId(request) + "");
-        } else {
-            manager.updateProject(project, (String) lazyForm.get("explanation"), AuthorizationHelper.getLoggedInUserId(request) + "");
-        }
-
+        
         // Save the project phases
+        // FIXME: the project it slef is also saved by the following call. Needs to be refactored
         Phase[] projectPhases = saveProjectPhases(newProject, request, lazyForm, project);
+        
+        // Check if there are any validation errors and return appropriate forward
+        if (request.getAttribute(Globals.ERROR_KEY) != null) {
+            // TODO : Check if the form is really for new project
+            request.setAttribute("newProject", Boolean.valueOf(newProject));
+            
 
+            // Load the lookup data
+            loadProjectEditLookups(request);
+
+            if (!newProject) {
+                // Store project statuses in the request
+                request.setAttribute("projectStatuses", projectStatuses);
+    
+                // Store the retieved project in the request
+                request.setAttribute("project", project);
+            }
+            
+            return mapping.getInputForward();
+        } 
+        
         // Save the project resources
         saveResources(newProject, request, lazyForm, project, projectPhases);
-
-        return mapping.findForward(Constants.SUCCESS_FORWARD_NAME);
+        
+        // Return success forward
+        return mapping.findForward(Constants.SUCCESS_FORWARD_NAME);        
     }
 
     /**
@@ -618,9 +648,6 @@ public class ProjectActions extends DispatchAction {
             // TODO: Use real values for date and workdays, not the test ones
             // TODO: Handle the situation of project being edited
             phProject = new com.topcoder.project.phases.Project(new Date(), new DefaultWorkdays());
-
-            // Set the id of Phases Project to be equal to the id of appropriate Project
-            phProject.setId(project.getId());
         } else {
             // Retrive the Phases Project with the id equal to the id of specified Project
             phProject = phaseManager.getPhases(project.getId());
@@ -706,12 +733,12 @@ public class ProjectActions extends DispatchAction {
                     // TODO: These parameters should probably be populated in some other way
                     boolean dependencyStart;
                     boolean dependantStart;
-                    if ("starts".equals(lazyForm.get("phase_start_when", i))) {
+                    if ("ends".equals(lazyForm.get("phase_start_when", i))) {
                         dependencyStart = false;
                         dependantStart = true;
                     } else {
                         dependencyStart = true;
-                        dependantStart = false;
+                        dependantStart = true;
                     }
 
                     long unitMutiplier = 1000 * 3600 * ("days".equals(lazyForm.get("phase_start_dayshrs", i)) ? 24 : 1);
@@ -782,11 +809,35 @@ public class ProjectActions extends DispatchAction {
             }
         }
 
+        Phase[] projectPhases = phProject.getAllPhases();        
+        // Sort project phases
+        Arrays.sort(projectPhases, new ProjectPhaseComparer());
+        
+        // Validate the project phases
+        if (!validateProjectPhases(request, project, projectPhases)) {
+            // If project phases are invalid, return immediately
+            return projectPhases;
+        }        
+
+
+        // FIXME: Refactor it
+        ProjectManager projectManager = ActionsHelper.createProjectManager(request);
+        if (newProject) {
+            // Create project in persistence level
+            projectManager.createProject(project, AuthorizationHelper.getLoggedInUserId(request) + "");
+        
+            // Set the id of Phases Project to be equal to the id of appropriate Project
+            phProject.setId(project.getId());
+        } else {
+            projectManager.updateProject(project, (String) lazyForm.get("explanation"), AuthorizationHelper.getLoggedInUserId(request) + "");
+        }
+        
+        
         // Save the phases at the persistence level
         phaseManager.updatePhases(phProject, AuthorizationHelper.getLoggedInUserId(request) + "");
-
-        Phase[] projectPhases = phProject.getAllPhases();
-
+        // TODO : The following line was added just to be safe. May be unneeded as well as another one.
+        projectPhases = phProject.getAllPhases();
+        
         // If needed switch project current phase
         if (!newProject) {
             // Get current project phase
@@ -837,6 +888,65 @@ public class ProjectActions extends DispatchAction {
         }
 
         return projectPhases;
+    }
+
+    /**
+     * TODO: Document it
+     * Note, that this method assumes that phases are already sorted by the start date, etc.
+     * 
+     * 
+     * @param request
+     * @param project
+     * @param allPhases
+     * @return
+     */
+    private boolean validateProjectPhases(HttpServletRequest request, Project project, Phase[] projectPhases) {
+        boolean arePhasesValid = true;
+        
+        // Check the beginning phase, it should be either Registration or submission
+        if (projectPhases.length > 0 && 
+                !projectPhases[0].getPhaseType().getName().equals(Constants.REGISTRATION_PHASE_NAME) &&
+                !projectPhases[0].getPhaseType().getName().equals(Constants.SUBMISSION_PHASE_NAME)) {
+            ActionsHelper.addErrorToRequest(request, ActionErrors.GLOBAL_MESSAGE, 
+                    new ActionMessage("error.com.cronos.onlinereview.actions.editProject.WrongBeginningPhase"));
+            arePhasesValid = false;
+        }
+        
+        // Check the phases as a whole
+        for (int i = 0; i < projectPhases.length; i++) {
+            if (projectPhases[i].getPhaseType().getName().equals(Constants.SUBMISSION_PHASE_NAME)) {
+                // Submission should follow registration if it exists
+                if (i > 0 && !projectPhases[i - 1].getPhaseType().getName().equals(Constants.REGISTRATION_PHASE_NAME)) {
+                    ActionsHelper.addErrorToRequest(request, ActionErrors.GLOBAL_MESSAGE, 
+                            new ActionMessage("error.com.cronos.onlinereview.actions.editProject.SubmissionMustFollow"));
+                    arePhasesValid = false;
+                }
+            } else if (projectPhases[i].getPhaseType().getName().equals(Constants.REGISTRATION_PHASE_NAME)) {
+                // Submission should follow registration
+                if (i == projectPhases.length - 1 || !projectPhases[i + 1].getPhaseType().getName().equals(Constants.SUBMISSION_PHASE_NAME)) {
+                    ActionsHelper.addErrorToRequest(request, ActionErrors.GLOBAL_MESSAGE, 
+                            new ActionMessage("error.com.cronos.onlinereview.actions.editProject.SubmissionMustFollow"));
+                    arePhasesValid = false;
+                }
+            } else if (projectPhases[i].getPhaseType().getName().equals(Constants.REVIEW_PHASE_NAME)) {
+                // Review should follow submission or screening
+                if (i == 0 || (!projectPhases[i - 1].getPhaseType().getName().equals(Constants.SUBMISSION_PHASE_NAME) &&
+                        !projectPhases[i - 1].getPhaseType().getName().equals(Constants.SCREENING_PHASE_NAME))) {
+                    ActionsHelper.addErrorToRequest(request, ActionErrors.GLOBAL_MESSAGE, 
+                            new ActionMessage("error.com.cronos.onlinereview.actions.editProject.ReviewMustFollow"));
+                    arePhasesValid = false;
+                }
+            } else if (projectPhases[i].getPhaseType().getName().equals(Constants.APPEALS_PHASE_NAME)) {
+                // Appeals should follow review
+                if (i == 0 || !projectPhases[i - 1].getPhaseType().getName().equals(Constants.REVIEW_PHASE_NAME)) {
+                    ActionsHelper.addErrorToRequest(request, ActionErrors.GLOBAL_MESSAGE, 
+                            new ActionMessage("error.com.cronos.onlinereview.actions.editProject.AppealsMustFollow"));
+                    arePhasesValid = false;
+                }
+            } 
+        }
+        
+        return arePhasesValid;
     }
 
     /**
@@ -969,6 +1079,42 @@ public class ProjectActions extends DispatchAction {
             resourceManager.updateResource(resource, AuthorizationHelper.getLoggedInUserId(request) + "");
         }
     }
+    
+    /**
+     * TODO: Document it, and members.
+     *
+     */
+    static class ProjectPhaseComparer implements Comparator {
+        public ProjectPhaseComparer() {
+            
+        }
+
+        public int compare(Object o1, Object o2) {
+            Phase phase1 = (Phase) o1;       
+            Phase phase2 = (Phase) o2;       
+            int compareResult = phase1.calcStartDate().compareTo(phase2.calcStartDate());
+            if (compareResult == 0) {
+                int ranking1 = getPhaseRanking(phase1);
+                int ranking2 = getPhaseRanking(phase2);
+                return  ranking1 - ranking2;
+            }
+            return compareResult;
+        }
+
+        private int getPhaseRanking(Phase phase1) {
+            String[] phaseOrder = new String[] {"Registration", "Submission", "Screening", "Review", 
+                    "Appeals", "Appeals Response", "Aggregation", "Aggregation Review", 
+                    "Final Fixes", "Final Review", "Approval"};
+            for (int i = 0; i < phaseOrder.length; i++) {
+                if (phaseOrder[i].equals(phase1.getPhaseType().getName())) {
+                    return i;
+                }
+            }
+            
+            return phaseOrder.length;
+        }
+    }
+
 
     /**
      * This class implements <code>Comparator</code> interface and is used to sort ProjectTypes

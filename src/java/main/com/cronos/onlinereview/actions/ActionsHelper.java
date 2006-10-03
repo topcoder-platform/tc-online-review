@@ -12,8 +12,12 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.struts.Globals;
+import org.apache.struts.action.ActionError;
+import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.apache.struts.action.ActionMessage;
 import org.apache.struts.util.MessageResources;
 
 import com.cronos.onlinereview.autoscreening.management.ScreeningManager;
@@ -2183,5 +2187,26 @@ class ActionsHelper {
         fields.put(NotificationTypeFilterBuilder.NAME_FIELD_NAME, StringValidator.startsWith(""));
 
         searchBundle.setSearchableFields(fields);
+    }
+
+
+    /**
+     * TODO: Document it
+     * 
+     * @param request
+     * @param error_key
+     * @param error
+     */
+    public static void addErrorToRequest(HttpServletRequest request, String messageKey, ActionMessage error) {
+        // Check if the errors bean is already present in request
+        ActionErrors errors = (ActionErrors) request.getAttribute(Globals.ERROR_KEY);        
+        if (errors == null) {
+            // If not - create it and store in the request
+            errors = new ActionErrors();
+            request.setAttribute(Globals.ERROR_KEY, errors);
+        }
+        
+        // Add error to the errors bean
+        errors.add(messageKey, error);
     }
 }
