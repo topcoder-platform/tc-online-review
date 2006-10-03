@@ -27,6 +27,14 @@
 		var lastPhaseIndex = ${fn:length(projectForm.map['phase_id']) - 1};	
 		var nameCellIndex = ${newProject ? 0 : 1};
 		
+		function getUniqueId() {
+			var idNode = document.getElementsByName("js_current_id")[0];
+			var currentId = parseInt(idNode.value, 10);
+			currentId++;
+			idNode.value = currentId + "";
+			return "js_id_" + currentId;
+		}
+		
 		/*
 		 * TODO: Write docs for this function
 		 */
@@ -194,7 +202,7 @@
  				criterionRow = cloneInputRow(templateRow);
  				
  				// Assign the id
-				criterionRow.id = dojo.dom.getUniqueId();
+				criterionRow.id = getUniqueId();
 				// Remove "display: none;"
 				criterionRow.style["display"] = "";
 	
@@ -220,7 +228,7 @@
 			var phaseName = dojo.dom.textContent(selectedOption);
 
 			// Generate phase id (for use in the DOM)
-			var phaseId = dojo.dom.getUniqueId();
+			var phaseId = getUniqueId();
 
 			// Add the name of the added phase to the select options for add phase form
 			var whereCombo = getChildByName(addPhaseTable, "addphase_where");
@@ -364,10 +372,15 @@
 					<html:form action="/actions/SaveProject">
 						<html:hidden property="method" value="saveProject" />
 						
+						<%-- TODO: Validation errors display should be much more than is here --%>
+						<html:errors/>
+						
 						<%-- If editing the existing project, render its pid --%>
 						<c:if test="${not newProject}">
 							<html:hidden property="pid" />
 						</c:if>
+						
+						<html:hidden property="js_current_id" />
 						
 						<%-- If creating a new project, show project details table --%>
 						<c:if test="${newProject}">
