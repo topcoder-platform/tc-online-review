@@ -903,6 +903,8 @@ public class ProjectActions extends DispatchAction {
     private boolean validateProjectPhases(HttpServletRequest request, Project project, Phase[] projectPhases) {
         boolean arePhasesValid = true;
         
+        // TODO: Refactor this function, make it more concise
+        
         // Check the beginning phase, it should be either Registration or submission
         if (projectPhases.length > 0 && 
                 !projectPhases[0].getPhaseType().getName().equals(Constants.REGISTRATION_PHASE_NAME) &&
@@ -922,10 +924,10 @@ public class ProjectActions extends DispatchAction {
                     arePhasesValid = false;
                 }
             } else if (projectPhases[i].getPhaseType().getName().equals(Constants.REGISTRATION_PHASE_NAME)) {
-                // Submission should follow registration
+                // Registration should be followed by submission
                 if (i == projectPhases.length - 1 || !projectPhases[i + 1].getPhaseType().getName().equals(Constants.SUBMISSION_PHASE_NAME)) {
                     ActionsHelper.addErrorToRequest(request, ActionErrors.GLOBAL_MESSAGE, 
-                            new ActionMessage("error.com.cronos.onlinereview.actions.editProject.SubmissionMustFollow"));
+                            new ActionMessage("error.com.cronos.onlinereview.actions.editProject.RegistrationMustBeFollowed"));
                     arePhasesValid = false;
                 }
             } else if (projectPhases[i].getPhaseType().getName().equals(Constants.REVIEW_PHASE_NAME)) {
@@ -943,7 +945,69 @@ public class ProjectActions extends DispatchAction {
                             new ActionMessage("error.com.cronos.onlinereview.actions.editProject.AppealsMustFollow"));
                     arePhasesValid = false;
                 }
-            } 
+                // Appeals should be followed by the appeals response
+                if (i == projectPhases.length - 1 || 
+                        !projectPhases[i + 1].getPhaseType().getName().equals(Constants.APPEALS_RESPONSE_PHASE_NAME)) {
+                    ActionsHelper.addErrorToRequest(request, ActionErrors.GLOBAL_MESSAGE, 
+                            new ActionMessage("error.com.cronos.onlinereview.actions.editProject.AppealsMustBeFollowed"));
+                    arePhasesValid = false;
+                }                
+            } else if (projectPhases[i].getPhaseType().getName().equals(Constants.APPEALS_RESPONSE_PHASE_NAME)) {
+                // Appeal response should follow appeals
+                if (i == 0 || !projectPhases[i - 1].getPhaseType().getName().equals(Constants.APPEALS_PHASE_NAME)) {
+                    ActionsHelper.addErrorToRequest(request, ActionErrors.GLOBAL_MESSAGE, 
+                            new ActionMessage("error.com.cronos.onlinereview.actions.editProject.AppealsResponseMustFollow"));
+                    arePhasesValid = false;
+                } 
+            } else if (projectPhases[i].getPhaseType().getName().equals(Constants.AGGREGATION_PHASE_NAME)) {
+                // Aggregation should follow appeals response or review
+                if (i == 0 || 
+                        (!projectPhases[i - 1].getPhaseType().getName().equals(Constants.APPEALS_RESPONSE_PHASE_NAME) && 
+                        !projectPhases[i - 1].getPhaseType().getName().equals(Constants.REVIEW_PHASE_NAME))) {
+                    ActionsHelper.addErrorToRequest(request, ActionErrors.GLOBAL_MESSAGE, 
+                            new ActionMessage("error.com.cronos.onlinereview.actions.editProject.AggregationMustFollow"));
+                    arePhasesValid = false;
+                } 
+                // Aggregation should be followed by the aggregation review
+                if (i == projectPhases.length - 1 || 
+                        !projectPhases[i + 1].getPhaseType().getName().equals(Constants.AGGREGATION_REVIEW_PHASE_NAME)) {
+                    ActionsHelper.addErrorToRequest(request, ActionErrors.GLOBAL_MESSAGE, 
+                            new ActionMessage("error.com.cronos.onlinereview.actions.editProject.AggregationMustBeFollowed"));
+                    arePhasesValid = false;
+                }                                
+            } else if (projectPhases[i].getPhaseType().getName().equals(Constants.AGGREGATION_REVIEW_PHASE_NAME)) {
+                // Aggregation review should follow aggregation
+                if (i == 0 || 
+                        !projectPhases[i - 1].getPhaseType().getName().equals(Constants.AGGREGATION_PHASE_NAME)) {
+                    ActionsHelper.addErrorToRequest(request, ActionErrors.GLOBAL_MESSAGE, 
+                            new ActionMessage("error.com.cronos.onlinereview.actions.editProject.AggregationReviewMustFollow"));
+                    arePhasesValid = false;
+                }                 
+            } else if (projectPhases[i].getPhaseType().getName().equals(Constants.FINAL_FIX_PHASE_NAME)) {
+                // Final fix should follow either appeals response or aggregation review
+                if (i == 0 || 
+                        (!projectPhases[i - 1].getPhaseType().getName().equals(Constants.APPEALS_RESPONSE_PHASE_NAME) && 
+                        !projectPhases[i - 1].getPhaseType().getName().equals(Constants.AGGREGATION_REVIEW_PHASE_NAME))) {
+                    ActionsHelper.addErrorToRequest(request, ActionErrors.GLOBAL_MESSAGE, 
+                            new ActionMessage("error.com.cronos.onlinereview.actions.editProject.FinalFixMustFollow"));
+                    arePhasesValid = false;
+                } 
+                // Final fix should be followed by the final review
+                if (i == projectPhases.length - 1 || 
+                        !projectPhases[i + 1].getPhaseType().getName().equals(Constants.FINAL_REVIEW_PHASE_NAME)) {
+                    ActionsHelper.addErrorToRequest(request, ActionErrors.GLOBAL_MESSAGE, 
+                            new ActionMessage("error.com.cronos.onlinereview.actions.editProject.FinalFixMustBeFollowed"));
+                    arePhasesValid = false;
+                }                                
+            }  else if (projectPhases[i].getPhaseType().getName().equals(Constants.FINAL_REVIEW_PHASE_NAME)) {
+                // Final review should follow final fix
+                if (i == 0 || 
+                        !projectPhases[i - 1].getPhaseType().getName().equals(Constants.FINAL_FIX_PHASE_NAME)) {
+                    ActionsHelper.addErrorToRequest(request, ActionErrors.GLOBAL_MESSAGE, 
+                            new ActionMessage("error.com.cronos.onlinereview.actions.editProject.FinalReviewMustFollow"));
+                    arePhasesValid = false;
+                }                 
+            }   
         }
         
         return arePhasesValid;
