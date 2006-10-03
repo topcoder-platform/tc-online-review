@@ -383,16 +383,16 @@
 										<c:if test="${!(empty group.aggregation)}">
 											<c:if test="${group.aggregation.committed == true}">
 												<td class="valueC">${group.aggregation.modificationTimestamp}</td>
-												<td class="valueC" nowrap="nowrap">
-													<html:link page="/actions/ViewAggregation.do?method=viewAggregation&rid=${group.aggregation.id}"><bean:message
-														key="viewProjectDetails.box.Aggregation.ViewResults" /></html:link></td>
+												<td class="valueC" nowrap="nowrap"><html:link
+													page="/actions/ViewAggregation.do?method=viewAggregation&rid=${group.aggregation.id}"><bean:message
+													key="viewProjectDetails.box.Aggregation.ViewResults" /></html:link></td>
 											</c:if>
 											<c:if test="${group.aggregation.committed != true}">
 												<td class="value"><!-- @ --></td>
 												<c:if test="${isAllowedToPerformAggregation == true}">
-													<td class="valueC" nowrap="nowrap">
-														<html:link page="/actions/EditAggregation.do?method=editAggregation&rid=${group.aggregation.id}"><bean:message
-															key="viewProjectDetails.box.Aggregation.Submit" /></html:link></td>
+													<td class="valueC" nowrap="nowrap"><html:link
+														page="/actions/EditAggregation.do?method=editAggregation&rid=${group.aggregation.id}"><b><bean:message
+														key="viewProjectDetails.box.Aggregation.Submit" /></b></html:link></td>
 												</c:if>
 												<c:if test="${isAllowedToPerformAggregation != true}">
 													<td class="valueC" nowrap="nowrap"><bean:message key="Pending" /></td>
