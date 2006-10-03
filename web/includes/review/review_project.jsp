@@ -5,8 +5,8 @@
 <%@ taglib prefix="bean" uri="/tags/struts-bean" %>
 <%@ taglib prefix="orfn" uri="/tags/or-functions" %>
 <%@ taglib prefix="tc-webtag" uri="/tags/tc-webtags" %>
-<div style="padding: 11px 6px 9px 0px;">
-	<table border="0" cellpadding="0" cellspacing="0" width="100%" id="table1">
+<div style="padding: 11px 0px 9px 0px;">
+	<table width="100%" cellpadding="0" cellspacing="0" border="0">
 		<tr>
 			<td>
 				<table cellspacing="0" cellpadding="0" border="0">
@@ -23,13 +23,13 @@
 					</tr>
 				</table>
 			</td>
-			<c:if test="${reviewType ne 'AutoScreening'}" >
+			<c:if test="${not noExpandCollapse}" >
 				<td align="right" valign="top">
 					<c:if test="${canEditScorecard}">
 						<html:link page="/actions/Edit${reviewType}.do?method=edit${reviewType}&rid=${review.id}"><bean:message key="editReview.EditScorecard" /></html:link>&#160;|
 					</c:if>
-					<a href="javascript:showAll();"><bean:message key="global.expandAll" /></a>&#160;|
-					<a href="javascript:hideAll();"><bean:message key="global.collapseAll" /></a>				
+					<a href="javascript:showAll();"><bean:message key="global.expandAll" /></a> |
+					<a href="javascript:hideAll();"><bean:message key="global.collapseAll" /></a>
 				</td>
 			</c:if>
 		</tr>
@@ -48,11 +48,13 @@
 	<c:if test="${reviewType eq 'Aggregation' or reviewType eq 'AggregationReview' or reviewType eq 'FinalReview'}">
 		&#160;<b><bean:message key="editReview.Aggregator" /></b>
 	</c:if>
-	<tc-webtag:handle coderId="${authorId}" context="component" />
-<br />
+	<c:if test="${not empty authorId}">
+		<tc-webtag:handle coderId="${authorId}" context="component" />
+	</c:if>
+	<br />
 </c:if>
 &#160;<b><bean:message key="editReview.Submission" /></b> ${sid}
-<c:if test="${reviewType ne 'Screening' and reviewType ne 'Review'}">
+<c:if test="${not empty submitterId and reviewType ne 'Screening' and reviewType ne 'Review'}">
 	(<tc-webtag:handle coderId="${submitterId}" context="component" />)
 </c:if>
 <br />

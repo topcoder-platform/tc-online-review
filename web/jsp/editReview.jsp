@@ -76,7 +76,6 @@
 
 				<div id="mainMiddleContent">
 					<jsp:include page="/includes/review/review_project.jsp" />
-
 					<h3>${orfn:htmlEncode(scorecardTemplate.name)}</h3>
 
 					<html:form action="/actions/Save${reviewType}" method="POST" enctype="multipart/form-data">

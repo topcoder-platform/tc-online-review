@@ -620,6 +620,12 @@ public class Constants {
     public static final String USER_ERRROR_FORWARD_NAME = "userError";
 
     /**
+     * This member variable is a string constant that defines the name of the Review Committed
+     * global action forward.
+     */
+    public static final String REVIEW_COMMITTD_FORWARD_NAME = "reviewCommitted";
+
+    /**
      * This member variable is a string constant that defines the name of the Success commonly used
      * action forward.
      */
