@@ -1003,6 +1003,16 @@ public class ProjectDetailsActions extends DispatchAction {
             return verification.getForward();
         }
 
+        // Retrieve current project
+        Project project = verification.getProject();
+        // Get all phases for the current project
+        Phase[] phases = ActionsHelper.getPhasesForProject(ActionsHelper.createPhaseManager(request), project);
+
+        if (ActionsHelper.getPhase(phases, true, Constants.SUBMISSION_PHASE_NAME) == null) {
+            return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
+                    Constants.PERFORM_SUBM_PERM_NAME, "Error.IncorrectPhase");
+        }
+
         // Determine if this request is a post back
         boolean postBack = (request.getParameter("postBack") != null);
 
@@ -1011,9 +1021,6 @@ public class ProjectDetailsActions extends DispatchAction {
             ActionsHelper.retrieveAndStoreBasicProjectInfo(request, verification.getProject(), getResources(request));
             return mapping.findForward(Constants.DISPLAY_PAGE_FORWARD_NAME);
         }
-
-        // Retrieve current project
-        Project project = verification.getProject();
 
         DynaValidatorForm uploadSubmissionForm = (DynaValidatorForm) form;
         FormFile file = (FormFile) uploadSubmissionForm.get("file");
@@ -1146,6 +1153,10 @@ public class ProjectDetailsActions extends DispatchAction {
         }
 
         boolean noRights = true;
+
+        if (AuthorizationHelper.hasUserPermission(request, Constants.VIEW_ALL_SUBM_PERM_NAME)) {
+            noRights = false;
+        }
 
         if (AuthorizationHelper.hasUserPermission(request, Constants.VIEW_MY_SUBM_PERM_NAME)) {
             long owningResourceId = upload.getOwner();
