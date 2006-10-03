@@ -1203,7 +1203,9 @@ public class ProjectReviewActions extends DispatchAction {
                         commentType.equalsIgnoreCase("Recommended")) {
                     ++reviewerCommentsNum;
                     ++lastCommentIdxs[i];
-                } else if (commentType.equalsIgnoreCase("Appeal") || commentType.equalsIgnoreCase("Appeal Response") ||
+                } else if (commentType.equalsIgnoreCase("Manager Comment") ||
+                        commentType.equalsIgnoreCase("Appeal") ||
+                        commentType.equalsIgnoreCase("Appeal Response") ||
                         commentType.equalsIgnoreCase("Aggregation Comment") ||
                         commentType.equalsIgnoreCase("Aggregation Review Comment") ||
                         commentType.equalsIgnoreCase("Submitter Comment")) {

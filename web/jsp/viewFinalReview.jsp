@@ -43,7 +43,6 @@
 
 				<div id="mainMiddleContent">
 					<jsp:include page="/includes/review/review_project.jsp" />
-					
 					<h3><bean:message key="editFinalReview.Scorecard.title" /></h3>
 
 					<c:set var="itemIdx" value="0" />
@@ -72,6 +71,7 @@
 												${orfn:htmlEncode(question.guideline)}
 											</div>
 										</td>
+										<c:set var="itemIdx" value="${itemIdx + 1}" />
 									</tr>
 
 									<tr>
@@ -132,11 +132,11 @@
 																<c:when test="${isReviewerComment == true}">
 																	<b><bean:message key="editReview.EditAggregation.ReviewerResponse" /></b>
 																</c:when>
-																<c:when test='${commentType == "Manager Comment"}'>
-																	<b><bean:message key="editReview.EditAggregation.ManagerComment" /></b>
-																</c:when>
-																<c:when test='${commentType == "Aggregation Comment"}'>
-																	<b><bean:message key="editReview.EditAggregation.AggregatorResponse" /></b>
+																<c:when test='${(commentType == "Manager Comment") ||
+																		(commentType == "Appeal") || (commentType == "Appeal Response") ||
+																		(commentType == "Aggregation Comment") || (commentType == "Submitter Comment") ||
+																		(commentType == "Final Review Comment")}'>
+																	<b><bean:message key='editReview.EditAggregation.${fn:replace(commentType, " ", "")}' /></b>
 																</c:when>
 																<c:when test='${commentType == "Aggregation Review Comment"}'>
 																	<c:forEach items="${reviewResources}" var="resource">
@@ -146,12 +146,6 @@
 																			<bean:message key="viewAggregationReview.Response" /></b>
 																		</c:if>
 																	</c:forEach>
-																</c:when>
-																<c:when test='${commentType == "Submitter Comment"}'>
-																	<b><bean:message key="editReview.EditAggregation.SubmitterComment" /></b>
-																</c:when>
-																<c:when test='${commentType == "Final Review Comment"}'>
-																	<b><bean:message key="editReview.EditAggregation.FinalReviewerComment" /></b>
 																</c:when>
 															</c:choose>
 															${orfn:htmlEncode(comment.comment)}
