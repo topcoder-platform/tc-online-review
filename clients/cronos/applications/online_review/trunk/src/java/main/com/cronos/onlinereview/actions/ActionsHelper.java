@@ -3,6 +3,8 @@
  */
 package com.cronos.onlinereview.actions;
 
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -92,7 +94,6 @@ import com.topcoder.management.scorecard.data.Scorecard;
 import com.topcoder.management.scorecard.data.ScorecardType;
 import com.topcoder.management.scorecard.data.Section;
 import com.topcoder.project.phases.Phase;
-import com.topcoder.project.phases.PhaseDateComparator;
 import com.topcoder.project.phases.PhaseStatus;
 import com.topcoder.project.phases.PhaseType;
 import com.topcoder.search.builder.SearchBuilderConfigurationException;
@@ -907,7 +908,7 @@ class ActionsHelper {
      * this condition is not perforemd by this method.
      *
      * @return a string with the role(s) the resource from the specified array have. If there are
-     *         more than one role, the roles will be separated by forward slash(<code>/</code>)
+     *         more than one role, the roles will be separated by forward slash (<code>/</code>)
      *         character.
      * @param request
      *            an <code>HttpServletRequest</code> object.
@@ -961,16 +962,16 @@ class ActionsHelper {
         return roles.toString();
     }
 
-    public static Integer determineMyPayment(Resource[] myResources) {
-        int totalPayment = -1; // -1 will mean N/A
+    public static String determineMyPayment(Resource[] myResources) {
+        double totalPayment = -1.0; // -1 will mean N/A
 
         for (int i = 0; i < myResources.length; ++i) {
             // Get a resource for the current iteration
             Resource resource = myResources[i];
             String paymentStr = (String) resource.getProperty("Payment");
             if (paymentStr != null && paymentStr.trim().length() != 0) {
-                int payment = Integer.parseInt(paymentStr);
-                if (totalPayment == -1) {
+                double payment = Double.parseDouble(paymentStr);
+                if (totalPayment == -1.0) {
                     totalPayment = payment;
                 } else {
                     totalPayment += payment;
@@ -978,7 +979,13 @@ class ActionsHelper {
             }
         }
 
-        return (totalPayment != -1) ? new Integer(totalPayment) : null;
+        if (totalPayment == -1.0) {
+            return null;
+        }
+
+        NumberFormat nf = new DecimalFormat("#,###.##");
+
+        return nf.format(totalPayment);
     }
 
     public static Boolean determineMyPaymentPaid(Resource[] myResources) {
@@ -1017,7 +1024,7 @@ class ActionsHelper {
 
         // Get all phases for the project
         com.topcoder.project.phases.Project phProj = manager.getPhases(project.getId());
-        Phase[] phases = phProj.getAllPhases(new PhaseDateComparator());
+        Phase[] phases = phProj.getAllPhases();
         return phases;
     }
 
