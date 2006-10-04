@@ -168,7 +168,7 @@
 				<td class="value" colspan="4"><bean:message key="editProject.Phases.Criteria.Scorecard" />
 					<html:select style="width:350px;" styleClass="inputBox" property="phase_scorecard[${phaseIdx}]" >
 						<c:forEach items="${screeningScorecards}" var="scorecard">
-							<html:option value="${scorecard.id}">${scorecard.name}</html:option>					
+							<html:option value="${scorecard.id}">${scorecard.name} ${scorecard.version}</html:option>					
 						</c:forEach>
 					</html:select>
 				</td>
@@ -190,7 +190,7 @@
 				<td class="value" colspan="4"><bean:message key="editProject.Phases.Criteria.Scorecard" />
 					<html:select style="width:350px;" styleClass="inputBox" property="phase_scorecard[${phaseIdx}]" >
 						<c:forEach items="${reviewScorecards}" var="scorecard">
-							<html:option value="${scorecard.id}">${scorecard.name}</html:option>					
+							<html:option value="${scorecard.id}">${scorecard.name} ${scorecard.version}</html:option>					
 						</c:forEach>
 					</html:select>
 				</td>
@@ -212,7 +212,7 @@
 				<td class="value" colspan="4"><bean:message key="editProject.Phases.Criteria.Scorecard" />
 					<html:select style="width:350px;" styleClass="inputBox" property="phase_scorecard[${phaseIdx}]" >
 						<c:forEach items="${approvalScorecards}" var="scorecard">
-							<html:option value="${scorecard.id}">${scorecard.name}</html:option>					
+							<html:option value="${scorecard.id}">${scorecard.name} ${scorecard.version}</html:option>					
 						</c:forEach>
 					</html:select>
 				</td>

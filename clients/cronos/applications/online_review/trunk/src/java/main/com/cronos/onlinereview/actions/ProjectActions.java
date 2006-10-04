@@ -18,7 +18,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.struts.Globals;
-import org.apache.struts.action.ActionError;
 import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
@@ -51,6 +50,7 @@ import com.topcoder.management.resource.Resource;
 import com.topcoder.management.resource.ResourceManager;
 import com.topcoder.management.resource.ResourceRole;
 import com.topcoder.management.resource.search.ResourceFilterBuilder;
+import com.topcoder.management.scorecard.PersistenceException;
 import com.topcoder.management.scorecard.ScorecardManager;
 import com.topcoder.management.scorecard.ScorecardSearchBundle;
 import com.topcoder.management.scorecard.data.Scorecard;
@@ -178,16 +178,30 @@ public class ProjectActions extends DispatchAction {
 
         // TODO: Check if we need to filter by the project category
         // Retrieve the scorecard lists
-        Scorecard[] screeningScorecards = scorecardManager.searchScorecards(
-                ScorecardSearchBundle.buildTypeNameEqualFilter("Screening"), true);
-        Scorecard[] reviewScorecards = scorecardManager.searchScorecards(
-                ScorecardSearchBundle.buildTypeNameEqualFilter("Review"), true);
-        Scorecard[] approvalScorecards = scorecardManager.searchScorecards(
-                ScorecardSearchBundle.buildTypeNameEqualFilter("Client Review"), true);
+        Scorecard[] screeningScorecards = searchActiveScorecards(scorecardManager, "Screening");
+        Scorecard[] reviewScorecards = searchActiveScorecards(scorecardManager, "Review");
+        Scorecard[] approvalScorecards = searchActiveScorecards(scorecardManager, "Client Review");
+        
         // Store them in the request
         request.setAttribute("screeningScorecards", screeningScorecards);
         request.setAttribute("reviewScorecards", reviewScorecards);
         request.setAttribute("approvalScorecards", approvalScorecards);
+    }
+
+    /**
+     * TODO: Document it
+     * Note, that the scorecard data(items) is not fully retrieved 
+     * 
+     * @param scorecardManager
+     * @param scorecardTypeName
+     * @return
+     * @throws BaseException
+     */
+    private Scorecard[] searchActiveScorecards(ScorecardManager scorecardManager, String scorecardTypeName) throws BaseException {
+        Filter filter = ScorecardSearchBundle.buildAndFilter(
+                ScorecardSearchBundle.buildTypeNameEqualFilter(scorecardTypeName),
+                ScorecardSearchBundle.buildStatusNameEqualFilter("Active"));
+        return scorecardManager.searchScorecards(filter, false);
     }
 
     /**
@@ -335,7 +349,7 @@ public class ProjectActions extends DispatchAction {
 
             // Populate phase criteria
             if (phases[i].getAttribute("Scorecard ID") != null) {
-                form.set("phase_scorecard_id", i + 1, Long.valueOf((String) phases[i].getAttribute("Scorecard ID")));
+                form.set("phase_scorecard", i + 1, Long.valueOf((String) phases[i].getAttribute("Scorecard ID")));
             }
             if (phases[i].getAttribute("Registration Number") != null) {
                 form.set("phase_required_registrations", i + 1,
@@ -664,6 +678,8 @@ public class ProjectActions extends DispatchAction {
 
         // Get the array of phase types specified for each phase
         Long[] phaseTypes = (Long[]) lazyForm.get("phase_type");
+        
+        // FIRST PASS
         // 0-index phase is skipped as it is a "dummy" one
         for (int i = 1; i < phaseTypes.length; i++) {
             Phase phase = null;
@@ -706,11 +722,24 @@ public class ProjectActions extends DispatchAction {
                 phProject.removePhase(phase);
                 continue;
             }
-
+        }
+        
+        // SECOND PASS
+        for (int i = 1; i < phaseTypes.length; i++) {
+            Object phaseObj = phasesJsMap.get(lazyForm.get("phase_js_id", i));
+            // If phase is not found in map, it was deleted and should not be processed
+            if (phaseObj == null) {
+                continue;
+            }
+            
+            Phase phase = (Phase) phaseObj;
+            
             /*
              * Set phase properties
              */
-
+            
+            String phaseAction = (String) lazyForm.get("phase_action", i);
+            
             if ("add".equals(phaseAction)) {
                 // Set phase type
                 phase.setPhaseType(ActionsHelper.findPhaseTypeById(allPhaseTypes, phaseTypes[i].longValue()));
