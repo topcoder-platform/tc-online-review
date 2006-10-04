@@ -122,7 +122,8 @@ table.scorecard td.titleRlink
 table.stat
 {
 	border: 1px solid #999999;
-	border-bottom: 0px none #999999;
+	border-bottom: none;
+	border-collapse: collapse;
 	padding: 0px;
 	vertical-align: top;
 }
