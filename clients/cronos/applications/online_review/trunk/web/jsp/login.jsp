@@ -54,7 +54,7 @@
 							</tr>
 							<tr>
 								<td class="value"><div align="right"><bean:message key="login.formLogin.password" /> </div></td>
-								<td class="value"><html:password property="password" /></td>
+								<td class="value"><input type="password" name="password" /></td>
 							</tr>
 							<tr>
 								<td class="valueLast"><div align="right">&nbsp; </div></td>
