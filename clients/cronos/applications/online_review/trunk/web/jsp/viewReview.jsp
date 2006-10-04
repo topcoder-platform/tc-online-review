@@ -240,6 +240,12 @@
 										<td class="value"><!-- @ --></td>
 										<td class="valueC" nowrap="nowrap"><b>${orfn:htmlEncode(review.score)}</b></td>
 										<td class="valueC"><!-- @ --></td>
+										<c:if test="${canPlaceAppeal or canPlaceAppealResponse}">
+											<td class="valueC"><!-- @ --></td>
+										</c:if>
+										<c:if test="${canPlaceAppeal}">
+											<td class="valueC"><!-- @ --></td>
+										</c:if>
 									</tr>
 								</c:if>
 								<tr>

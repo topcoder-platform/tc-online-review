@@ -283,11 +283,16 @@
 				timelineTable.tBodies[0].appendChild(newRow);
 			} else {
 				// Find the reference phase row
-				var wherePhaseNode = document.getElementById(wherePhaseId);
-
+				var wherePhaseNode = document.getElementById(wherePhaseId);	
+				
 				if (getChildByName(addPhaseTable, "addphase_when").value == "before") {
 					dojo.dom.insertBefore(newRow, wherePhaseNode);
 				} else {
+					if (dojo.dom.nextElement(wherePhaseNode) && 
+							dojo.dom.nextElement(wherePhaseNode).className == "highlighted") {
+						wherePhaseNode = dojo.dom.nextElement(wherePhaseNode);
+					} 
+					
 					dojo.dom.insertAfter(newRow, wherePhaseNode);
 				}
 			}
