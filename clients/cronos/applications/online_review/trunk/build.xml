@@ -691,7 +691,7 @@
 
     <target name="dev_dist">
         <!-- copy TCS Dependencies -->
-        <mkdir dir="${jar_tcs_libdir}/${configmanager.path}" />
+        <mkdir dir="${jar_tcs_libdir}/${configuration_manager.path}" />
         <copy file="${configmanager.jar}" todir="${jar_tcs_libdir}/${configmanager.path}" />
         <mkdir dir="${jar_tcs_libdir}/${db_connection_factory.path}" />
         <copy file="${db_connection_factory.jar}" todir="${jar_tcs_libdir}/${db_connection_factory.path}" />
