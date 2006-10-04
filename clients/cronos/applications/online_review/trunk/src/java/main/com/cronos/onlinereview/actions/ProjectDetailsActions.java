@@ -361,8 +361,8 @@ public class ProjectDetailsActions extends DispatchAction {
             }
 
             boolean isAfterAppealsResponse = ActionsHelper.isAfterAppealsResponse(phases, i);
-            boolean canSeeSubmitters =
-                (isAfterAppealsResponse || AuthorizationHelper.hasUserRole(request, Constants.MANAGER_ROLE_NAME));
+            boolean canSeeSubmitters = (isAfterAppealsResponse ||
+                    AuthorizationHelper.hasUserPermission(request, Constants.VIEW_ALL_SUBM_PERM_NAME));
 
             if (canSeeSubmitters) {
                 if (submitters == null) {
