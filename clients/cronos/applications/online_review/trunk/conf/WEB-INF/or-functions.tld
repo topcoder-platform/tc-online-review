@@ -15,4 +15,14 @@
         <function-class>com.cronos.onlinereview.functions.Functions</function-class>
         <function-signature>java.lang.String htmlEncode(java.lang.String)</function-signature>
     </function> 
+    <function>
+        <name>isUserLoggedIn</name>
+        <function-class>com.cronos.onlinereview.functions.Functions</function-class>
+        <function-signature>java.lang.Boolean isUserLoggedIn(javax.servlet.http.HttpServletRequest)</function-signature>
+    </function> 
+    <function>
+        <name>getLoggedInUserId</name>
+        <function-class>com.cronos.onlinereview.functions.Functions</function-class>
+        <function-signature>java.lang.String getLoggedInUserId(javax.servlet.http.HttpServletRequest)</function-signature>
+    </function> 
 </taglib>

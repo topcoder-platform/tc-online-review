@@ -1,7 +1,8 @@
 <%@ page language="java" isELIgnored="false" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="html" uri="/tags/struts-html" %>
+<%@ taglib prefix="orfn" uri="/tags/or-functions" %>
 <%@ taglib prefix="tc-webtag" uri="/tags/tc-webtags" %>
-<%@ page import="com.cronos.onlinereview.actions.AuthorizationHelper" %>
 <script language="javascript" type="text/javascript">
 <!--
 	var objPopUp = null;
@@ -98,19 +99,14 @@ div.launchPopUp {
 
 <div class="topBar">
 	<div style="float: right; margin-left: 650px;">
-<%
-		if (AuthorizationHelper.isUserLoggedIn(request)) {
-%>
-			Hello, <tc-webtag:handle coderId='<%= String.valueOf(AuthorizationHelper.getLoggedInUserId(request)) %>' context="component" />
+		<c:if test="${orfn:isUserLoggedIn(pageContext.request)}">
+			Hello, <tc-webtag:handle coderId="${orfn:getLoggedInUserId(pageContext.request)}" context="component" />
 			&#160;&#160;|&#160;&#160;<html:link styleClass="gMetal" action="/actions/Logout.do?method=logout">Logout</html:link>
-<%
-		} else {
-%>		    
+		</c:if>
+		<c:if test="${not orfn:isUserLoggedIn(pageContext.request)}">
 			<html:link styleClass="gMetal" page="/jsp/login.jsp">Login</html:link>
 			&#160;&#160;|&#160;&#160;<a class="gMetal" href="http://www.topcoder.com/Registration">Register</a>
 			&#160;&#160;|&#160;&#160;<a class="gMetal" href="http://www.topcoder.com/">Home</a>
-<%
-		}
-%>		    
+		</c:if>
 	</div>
 </div>

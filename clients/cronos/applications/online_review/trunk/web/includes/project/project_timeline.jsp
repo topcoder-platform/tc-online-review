@@ -3,26 +3,19 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="bean" uri="/tags/struts-bean" %>
 <%@ taglib prefix="html" uri="/tags/struts-html" %>
-<%@ page import="com.cronos.onlinereview.actions.AuthorizationHelper" %>
-<%@ page import="com.cronos.onlinereview.actions.Constants" %>
 	<table class="stat" cellpadding="0" cellspacing="0" width="100%" style="table-layout: fixed; border-bottom: 1px solid #999999;">
 		<tr>
 			<td class="title" width="392"><bean:message key="viewProjectDetails.box.Timeline" /></td>
-			<%
-				if (AuthorizationHelper.hasUserPermission(request, Constants.SET_TL_NOTIFY_PERM_NAME)) {
-			%>
-				<td class="title" style="text-align: right;">
+			<c:if test="${isAllowedToSetTL}">
+				<td class="title" style="text-align:right;">
 					<input type="checkbox" onclick="setTimelineNotification(${project.id}, this); return false;"
 						${(sendTLNotifications == 'On') ? 'value="On" checked="checked"' : 'value="Off"' } />
 					<bean:message key="viewProjectDetails.ReceiveTLNotifications" />
 				</td>
-			<%
-				} else {
-			%>
+			</c:if>
+			<c:if test="${not isAllowedToSetTL}">
 				<td class="title">&nbsp;</td>
-			<%
-				}
-			%>
+			</c:if>
 		</tr>
 		<tr>
 			<td valign="top" style="overflow:visible;border-bottom: 1px solid #999999;">

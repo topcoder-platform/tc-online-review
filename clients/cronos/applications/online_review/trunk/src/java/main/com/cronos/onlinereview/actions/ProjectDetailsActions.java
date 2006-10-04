@@ -88,7 +88,8 @@ import com.topcoder.util.file.Template;
  * This class is thread-safe as it does not contain any mutable inner state.
  * </p>
  *
- * @author TCSAssemblyTeam
+ * @author George1
+ * @author real_vg
  * @version 1.0
  */
 public class ProjectDetailsActions extends DispatchAction {
@@ -884,10 +885,20 @@ public class ProjectDetailsActions extends DispatchAction {
         // Check permissions
         request.setAttribute("isManager",
                 new Boolean(AuthorizationHelper.hasUserRole(request, Constants.MANAGER_ROLE_NAME)));
+        request.setAttribute("isAllowedToEditProjects",
+                new Boolean(AuthorizationHelper.hasUserPermission(request, Constants.EDIT_PROJECT_DETAILS_PERM_NAME)));
+        request.setAttribute("isAllowedToContactPM",
+                new Boolean(AuthorizationHelper.hasUserPermission(request, Constants.CONTACT_PM_PERM_NAME)));
+        request.setAttribute("isAllowedToSetTL",
+                new Boolean(AuthorizationHelper.hasUserPermission(request, Constants.SET_TL_NOTIFY_PERM_NAME)));
         request.setAttribute("isAllowedToViewSVNLink",
                 new Boolean(AuthorizationHelper.hasUserPermission(request, Constants.VIEW_SVN_LINK_PERM_NAME)));
         request.setAttribute("isAllowedToViewPayment",
                 new Boolean(AuthorizationHelper.hasUserPermission(request, Constants.VIEW_MY_PAY_INFO_PERM_NAME)));
+        request.setAttribute("isAllowedToViewAllPayment",
+                new Boolean(AuthorizationHelper.hasUserPermission(request, Constants.VIEW_ALL_PAYMENT_INFO_PERM_NAME)));
+        request.setAttribute("isAllowedToViewResources",
+                new Boolean(AuthorizationHelper.hasUserPermission(request, Constants.VIEW_PROJECT_RESOURCES_PERM_NAME)));
         request.setAttribute("isAllowedToPerformScreening",
                 new Boolean(AuthorizationHelper.hasUserPermission(request, Constants.PERFORM_SCREENING_PERM_NAME) &&
                         ActionsHelper.getPhase(phases, true, Constants.SCREENING_PHASE_NAME) != null));

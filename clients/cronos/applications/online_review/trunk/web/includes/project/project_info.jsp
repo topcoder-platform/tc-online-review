@@ -4,8 +4,6 @@
 <%@ taglib prefix="bean" uri="/tags/struts-bean" %>
 <%@ taglib prefix="orfn" uri="/tags/or-functions" %>
 <%@ taglib prefix="html" uri="/tags/struts-html" %>
-<%@ page import="com.cronos.onlinereview.actions.AuthorizationHelper" %>
-<%@ page import="com.cronos.onlinereview.actions.Constants" %>
 	<table border="0" width="100%" id="table12" cellspacing="0" cellpadding="0">
 		<tr>
 			<td valign="top"><html:img alt="" page="/i/${categoryIconName}" /></td>
@@ -16,13 +14,9 @@
 						${project.allProperties["Project Version"]}</font>
 				</c:if></td>
 			<td width="50%" valign="top" align="right">
-				<%
-					if (AuthorizationHelper.hasUserPermission(request, Constants.CONTACT_PM_PERM_NAME)) {
-				%>
-						<a href="ContactManager.do?method=contactManager&amp;pid=${project.id}"><bean:message key="viewProjectDetails.ContactPM" /></a> |
-				<%
-					}
-				%>
+				<c:if test="${isAllowedToContactPM}">
+					<html:link page="/actions/ContactManager.do?method=contactManager&amp;pid=${project.id}"><bean:message key="viewProjectDetails.ContactPM" /></html:link> |
+				</c:if>
 				<a class="breadcrumbLinks"
 					href='https://software.topcoder.com/catalog/c_component.jsp?comp=${project.allProperties["Component ID"]}&ver=${project.allProperties["Version ID"]}'><bean:message
 						key="viewProjectDetails.FullDescription" /></a> |
@@ -33,11 +27,10 @@
 		</tr>
 	</table>
 
-	<%-- NOTES TABLE HERE --%>
 	<c:set var="notesText" value='${project.allProperties["Notes"]}' />
 	<c:if test='${!(empty notesText)}'>
 		<br />
-		<table class="scorecard" style="border-collapse: collapse;" cellpadding="0" cellspacing="0" width="100%">
+		<table class="scorecard" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;">
 			<tr>
 				<td class="title"><bean:message key="viewProjectDetails.box.Notes" /></td>
 			</tr>
