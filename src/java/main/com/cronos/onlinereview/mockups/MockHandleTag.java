@@ -174,13 +174,14 @@ public final class MockHandleTag extends TagSupport {
         }
 
         // Handle some special situations
-        if (coderId.equals("1") || // Denotes coder "admin2" in TopCoder's database
-            coderId.equals("304") || // Denotes coder "admin" in TopCoder's database
-            coderId.equals("1000") || // Coder "admin"
+        if (coderId.equals("1000") || // Coder "admin"
+            coderId.equals("100142") || // Coder "mike"
             coderId.equals("305384") || // Coder "mess"
             coderId.equals("107160") || // Coder "uler3161"
             coderId.equals("278287") || // Coder "moffitt"
-            coderId.equals("156859")) { // Coder "ivern"
+            coderId.equals("160049") || // Coder "FogleBird"
+            coderId.equals("156859") || // Coder "ivern"
+            coderId.equals("8547899")) { // Coder "TonyJ" 
             textColor = "coderTextOrange";
         }
 
