@@ -4,8 +4,6 @@
 <%@ taglib prefix="html" uri="/tags/struts-html" %>
 <%@ taglib prefix="bean" uri="/tags/struts-bean" %>
 <%@ taglib prefix="tc-webtag" uri="/tags/tc-webtags" %>
-<%@ page import="com.cronos.onlinereview.actions.AuthorizationHelper" %>
-<%@ page import="com.cronos.onlinereview.actions.Constants" %>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html:html xhtml="true">
 
@@ -166,7 +164,7 @@
 	<jsp:include page="/includes/inc_header.jsp" />
 	<table width="100%" border="0" cellpadding="0" cellspacing="0">
 		<tr valign="top">
-			<!-- Left Column Begins-->
+			<!-- Left Column Begins -->
 			<td width="180">
 				<jsp:include page="/includes/inc_leftnav.jsp" />
 			</td>
@@ -189,16 +187,10 @@
 					<jsp:include page="/includes/project/project_resource.jsp" />
 
 					<div align="right">
-						<a href="javascript:history.go(-1)"><html:img srcKey="btnBack.img" altKey="btnBack.alt" border="0" /></a>&#160;
-						<%
-							if (AuthorizationHelper.hasUserPermission(request, Constants.EDIT_PROJECT_DETAILS_PERM_NAME)) {
-						%>
-								<a href="EditProject.do?method=editProject&pid=${project.id}"><html:img
-									srcKey="viewProjectDetails.btnEdit.img" border="0"
-									altKey="viewProjectDetails.btnEdit.alt" /></a>
-						<%
-							}
-						%><br />
+						<c:if test="${isAllowedToEditProjects}">
+							<a href="EditProject.do?method=editProject&pid=${project.id}"><html:img srcKey="viewProjectDetails.btnEdit.img" border="0" altKey="viewProjectDetails.btnEdit.alt" /></a>&#160;
+						</c:if>
+						<a href="javascript:history.go(-1)"><html:img srcKey="btnBack.img" altKey="btnBack.alt" border="0" /></a>
 					</div><br />
 				</div>
 				<br /><br />
