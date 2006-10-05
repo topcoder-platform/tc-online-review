@@ -1,0 +1,3 @@
+. Configure correct DBConnectionFactoryImpl in auto_pilot.xml
+. modify lib path of auto_pilot.sh (.bat)
+. empty com\topcoder\util\config\ConfigManager.properties is just used to avoid configuration exception stacktrace display, is optional
