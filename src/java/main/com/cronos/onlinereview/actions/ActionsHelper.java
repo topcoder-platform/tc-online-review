@@ -13,7 +13,6 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.struts.Globals;
-import org.apache.struts.action.ActionError;
 import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
@@ -1257,11 +1256,15 @@ class ActionsHelper {
         for (int i = 0; i < resources.length; ++i) {
             // Get a resource for the current iteration
             Resource resource = resources[i];
-            // Check if this resource is from phase in question
-            if ((phase == null && resource.getPhase() == null) ||
-                    (resource.getPhase() != null && resource.getPhase().longValue() == phase.getId())) {
-                // Add it to list
-                foundResources.add(resource);
+            // Check if this resource is from phase in question, add it to the list
+            if (phase == null) {
+                if (resource.getPhase() == null) {
+                    foundResources.add(resource);
+                }
+            } else {
+                if (resource.getPhase() != null && resource.getPhase().longValue() == phase.getId()) {
+                    foundResources.add(resource);
+                }
             }
         }
 
@@ -1345,6 +1348,43 @@ class ActionsHelper {
         }
         // Indicate that the resource with specified external user assigned does not exist
         return null;
+    }
+
+    /**
+     * This static method selects the resources for a project from the list of all resources
+     * supplied to this method.
+     *
+     * @return an array containing just the resources that belong to the project specified. The
+     *         returned array will be empty, if there are no such resources.
+     * @param allResources
+     *            all the resources to select a subset from.
+     * @param project
+     *            project which the subset of resources is needed for.
+     * @throws IllegalArgumentException
+     *             if <code>project</code> parameter is <code>null</code>.
+     */
+    public static Resource[] getResourcesForProject(Resource[] allResources, Project project) {
+        // Validate parameters
+        validateParameterNotNull(project, "project");
+
+        // If the given list of resources is null or empty, return empty subset immediately
+        if (allResources == null || allResources.length == 0) {
+            return new Resource[0];
+        }
+
+        List myResources = new ArrayList();
+
+        for (int i = 0; i < allResources.length; ++i) {
+            // Get a resource for the current iteration
+            Resource resource = allResources[i];
+            // Determine if the resource is for current project
+            if (resource.getProject() != null && resource.getProject().longValue() == project.getId()) {
+                myResources.add(resource);
+            }
+        }
+
+        // Convert the list to array and return it
+        return (Resource[]) myResources.toArray(new Resource[myResources.size()]);
     }
 
     /**
@@ -1674,6 +1714,26 @@ class ActionsHelper {
         // If i is negative, the needed phase has not been found
         // The project is not in after Appeals Response phase
         return (i >= 0);
+    }
+
+    /**
+     * TODO: Document it
+     *
+     * @param request
+     * @param error_key
+     * @param error
+     */
+    public static void addErrorToRequest(HttpServletRequest request, String messageKey, ActionMessage error) {
+        // Check if the errors bean is already present in request
+        ActionErrors errors = (ActionErrors) request.getAttribute(Globals.ERROR_KEY);
+        if (errors == null) {
+            // If not - create it and store in the request
+            errors = new ActionErrors();
+            request.setAttribute(Globals.ERROR_KEY, errors);
+        }
+
+        // Add error to the errors bean
+        errors.add(messageKey, error);
     }
 
 
@@ -2187,26 +2247,5 @@ class ActionsHelper {
         fields.put(NotificationTypeFilterBuilder.NAME_FIELD_NAME, StringValidator.startsWith(""));
 
         searchBundle.setSearchableFields(fields);
-    }
-
-
-    /**
-     * TODO: Document it
-     * 
-     * @param request
-     * @param error_key
-     * @param error
-     */
-    public static void addErrorToRequest(HttpServletRequest request, String messageKey, ActionMessage error) {
-        // Check if the errors bean is already present in request
-        ActionErrors errors = (ActionErrors) request.getAttribute(Globals.ERROR_KEY);        
-        if (errors == null) {
-            // If not - create it and store in the request
-            errors = new ActionErrors();
-            request.setAttribute(Globals.ERROR_KEY, errors);
-        }
-        
-        // Add error to the errors bean
-        errors.add(messageKey, error);
     }
 }
