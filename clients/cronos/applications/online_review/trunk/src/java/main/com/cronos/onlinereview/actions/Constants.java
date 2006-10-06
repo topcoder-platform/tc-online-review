@@ -9,7 +9,8 @@ package com.cronos.onlinereview.actions;
  * This class is thread safe as it contains only immutable data.
  * </p>
  *
- * @author TCSAssemblyTeam
+ * @author George1
+ * @author real_vg
  * @version 1.0
  */
 public class Constants {
@@ -614,6 +615,12 @@ public class Constants {
     // ----------------------------------------------------------------- Action Forward names -----
 
     /**
+     * This member variable is a string constant that defines the name of the Not Authorized global
+     * action forward.
+     */
+    public static final String NOT_AUTHORIZED_FORWARD_NAME = "notAuthorized";
+
+    /**
      * This member variable is a string constant that defines the name of the User Error global
      * action forward.
      */
@@ -630,12 +637,6 @@ public class Constants {
      * action forward.
      */
     public static final String SUCCESS_FORWARD_NAME = "success";
-
-    /**
-     * This member variable is a string constant that defines the name of the Not Authorized
-     * commonly used action forward.
-     */
-    public static final String NOT_AUTHORIZED_FORWARD_NAME = "notAuthorized";
 
     /**
      * This member variable is a string constant that defines the name of the Preview commonly used
