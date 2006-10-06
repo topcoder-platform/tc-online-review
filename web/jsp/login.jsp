@@ -1,4 +1,5 @@
 <%@ page language="java" %>
+<%@ page import="com.topcoder.shared.util.ApplicationServer" %>
 <%@ taglib  uri="/tags/struts-html" prefix="html" %>
 <%@ taglib  uri="/tags/struts-bean" prefix="bean" %>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
@@ -70,9 +71,9 @@
 						<tr>
 							<td class="value" colspan="2">
 								<strong><bean:message key="login.forgotPassword" /></strong><br/>
-								<bean:message key="login.cannotRememberPassword1" /> <a href="http://www.topcoder.com/tc?&module=PasswordEmail"><bean:message key="clickHere" /></a> <bean:message key="login.cannotRememberPassword2" /><br /><br />
+								<bean:message key="login.cannotRememberPassword1" /> <a href="http://<%=ApplicationServer.SERVER_NAME%>/tc?&module=PasswordEmail"><bean:message key="clickHere" /></a> <bean:message key="login.cannotRememberPassword2" /><br /><br />
 								<strong><bean:message key="login.newToTopCoder" /></strong><br/>
-								<a href="https://www.topcoder.com/reg/"><bean:message key="login.registerNow" /></a> <bean:message key="login.afterYouCompleteTheRegProcess" />
+								<a href="https://<%=ApplicationServer.SERVER_NAME%>/reg/"><bean:message key="login.registerNow" /></a> <bean:message key="login.afterYouCompleteTheRegProcess" />
 							</td>
 						</tr>
 					</table>
