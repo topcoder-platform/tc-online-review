@@ -118,7 +118,8 @@ import com.topcoder.util.idgenerator.IDGeneratorFactory;
 /**
  * This class contains handy helper-methods that perform frequently needed operations.
  *
- * @author TCSAssemblyTeam
+ * @author George1
+ * @author real_vg
  * @version 1.0
  */
 class ActionsHelper {
@@ -1227,7 +1228,7 @@ class ActionsHelper {
 
         // Prepare filter to select resource by project ID
         Filter filterProject = ResourceFilterBuilder.createProjectIdFilter(phase.getProject().getId());
-        // Prepare filterr to select resource by phase ID
+        // Prepare filter to select resource by phase ID
         Filter filterPhase = ResourceFilterBuilder.createPhaseIdFilter(phase.getId());
         // Combine the above filters into one
         Filter filter = new AndFilter(filterProject, filterPhase);
@@ -1256,7 +1257,7 @@ class ActionsHelper {
         for (int i = 0; i < resources.length; ++i) {
             // Get a resource for the current iteration
             Resource resource = resources[i];
-            // Check if this resource is from phase in question, add it to the list
+            // If this resource is from phase in question, add it to the list
             if (phase == null) {
                 if (resource.getPhase() == null) {
                     foundResources.add(resource);
