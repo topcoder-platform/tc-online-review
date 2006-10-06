@@ -21,8 +21,6 @@ CP=$CP:/home/coder/online_review/lib/tcs/search_builder/1.3/search_builder.jar
 CP=$CP:/home/coder/online_review/lib/tcs/typesafe_enum/1.0/typesafe_enum.jar
 CP=$CP:/home/coder/online_review/lib/tcs/workdays/1.0/workdays.jar
 CP=$CP:/home/coder/online_review/lib/third_party/xerces.jar
-CP=$CP:/home/coder/online_review/lib/third_party/dom.jar
-CP=$CP:/home/coder/online_review/lib/third_party/xml-api.jar
 CP=$CP:/home/coder/online_review/lib/third_party/ifx-jdbc.jar
 
 java -cp $CP com.topcoder.management.phase.autopilot.AutoPilotJob -config auto_pilot.xml -namespace AutoPilotJob -autopilot com.topcoder.management.phase.autopilot.AutoPilot -poll 5

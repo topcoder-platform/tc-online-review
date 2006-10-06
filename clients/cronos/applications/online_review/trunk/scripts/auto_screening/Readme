@@ -1,0 +1,4 @@
+. modify checkstyle-all-4.2.jar path in checkstyle.bat
+, make sure temp dir exist under current dir, temp is used for 
+. Config and create file_system_id_seq in file_server.xml
+. modify lib path of auto_pilot.sh (.bat)
