@@ -1,4 +1,4 @@
-<%@ page language="java" %>
+<%@ page language="java" isELIgnored="false" %>
 <%@ page import="com.topcoder.shared.util.ApplicationServer" %>
 <%@ taglib  uri="/tags/struts-html" prefix="html" %>
 <%@ taglib  uri="/tags/struts-bean" prefix="bean" %>
@@ -27,7 +27,7 @@
 	<jsp:include page="/includes/inc_header.jsp" />
 	<table width="100%" border="0" cellpadding="0" cellspacing="0">
 		<tr valign="top">
-			<!-- Left Column Begins-->
+			<!-- Left Column Begins -->
 			<td width="180"><jsp:include page="/includes/inc_leftnav.jsp" /></td>
 			<!-- Left Column Ends -->
 
@@ -39,12 +39,15 @@
 			<td class="bodyText">
 				<br /><br />
 				<div align="center">
-					<html:errors />
-					<table cellpadding="0" cellspacing="0" width="50%">
+					<table width="50%" cellpadding="0" cellspacing="0" border="0">
+						<tr><td width="16"><!-- @ --></td><td><!-- @ --></td></tr>
 						<tr>
-							<td class="errorText">
-								<bean:message key="error.com.cronos.onlinereview.login.invalid" />
-							</td>
+							<td colspan="2"><bean:message key="error.com.cronos.onlinereview.Errors" /></td>
+						</tr>
+						<html:errors />
+						<tr>
+							<td><!-- @ --></td>
+							<td class="errorText"><bean:message key="error.com.cronos.onlinereview.login.invalid" /></td>
 						</tr>
 					</table><br />
 
