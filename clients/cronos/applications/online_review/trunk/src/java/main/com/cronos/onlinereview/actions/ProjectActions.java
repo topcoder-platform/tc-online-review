@@ -8,11 +8,13 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -395,7 +397,7 @@ public class ProjectActions extends DispatchAction {
     private void populateDatetimeFormProperties(LazyValidatorForm form, String dateProperty, String timeProperty,
             String ampmProperty, int index, Date date) {
         // TODO: Reuse the DateFormat instance
-        DateFormat dateFormat = new SimpleDateFormat(("MM.dd.yy hh:mm aa"));
+        DateFormat dateFormat = new SimpleDateFormat("MM.dd.yy hh:mm aa", Locale.US);
         String[] parts = dateFormat.format(date).split("[ ]");
         form.set(dateProperty, index, parts[0]);
         form.set(timeProperty, index, parts[1]);
@@ -754,68 +756,61 @@ public class ProjectActions extends DispatchAction {
                 phase.setPhaseStatus(PhaseStatus.SCHEDULED);
             }
 
-            try {
-                // If phase is not started by other phase end
-                if (Boolean.FALSE.equals(lazyForm.get("phase_start_by_phase", i))) {
-                    // Get phase start date from form
-                    Date phaseStartDate = parseDatetimeFormProperties(lazyForm, i, "phase_start_date",
-                            "phase_start_time", "phase_start_AMPM");
-                    // TODO: Determine which of the dates should actually be set
-                    // Set sheduled phase start date
-                    phase.setScheduledStartDate(phaseStartDate);
-                    // Set sheduled phase start date
-                    phase.setFixedStartDate(phaseStartDate);
+            // If phase is not started by other phase end
+            if (Boolean.FALSE.equals(lazyForm.get("phase_start_by_phase", i))) {
+                // Get phase start date from form
+                Date phaseStartDate = parseDatetimeFormProperties(lazyForm, i, "phase_start_date",
+                        "phase_start_time", "phase_start_AMPM");
+                // TODO: Determine which of the dates should actually be set
+                // Set sheduled phase start date
+                phase.setScheduledStartDate(phaseStartDate);
+                // Set sheduled phase start date
+                phase.setFixedStartDate(phaseStartDate);
+            } else {
+                // TODO: These parameters should probably be populated in some other way
+                boolean dependencyStart;
+                boolean dependantStart;
+                if ("ends".equals(lazyForm.get("phase_start_when", i))) {
+                    dependencyStart = false;
+                    dependantStart = true;
                 } else {
-                    // TODO: These parameters should probably be populated in some other way
-                    boolean dependencyStart;
-                    boolean dependantStart;
-                    if ("ends".equals(lazyForm.get("phase_start_when", i))) {
-                        dependencyStart = false;
-                        dependantStart = true;
-                    } else {
-                        dependencyStart = true;
-                        dependantStart = true;
-                    }
-
-                    long unitMutiplier = 1000 * 3600 * ("days".equals(lazyForm.get("phase_start_dayshrs", i)) ? 24 : 1);
-
-                    // TODO: minus should probably be handled by swapping the dependency and dependant phases
-                    if ("minus".equals(lazyForm.get("phase_start_plusminus", i))) {
-                        unitMutiplier = -unitMutiplier;
-                    }
-                    long lagTime = unitMutiplier * ((Integer) lazyForm.get("phase_start_amount", i)).longValue();
-
-                    // Create phase Dependency
-                    Dependency dependency = new Dependency((Phase) phasesJsMap.get(lazyForm.get("phase_start_phase", i)),
-                            phase, dependencyStart, dependantStart, lagTime);
-
-                    if ("update".equals(phaseAction)) {
-                        // Clear all the pre-existing dependencies
-                        phase.clearDependencies();
-                    }
-
-                    // Add dependency to phase
-                    phase.addDependency(dependency);
-
-                    // TODO: Check how to deal with it
-                    // Set scheduled start date to calculate start date
-                    phase.setScheduledStartDate(phase.calcStartDate());
+                    dependencyStart = true;
+                    dependantStart = true;
                 }
 
-                /*// Get phase end date from form
-                Date phaseEndDate = parseDatetimeFormProperties(lazyForm, i, "phase_end_date", "phase_end_time",
-                        "phase_end_AMPM");
-                */
-                // TODO: Set duration based on specified phase end date if needed
-                // Set sheduled phase end date
-                phase.setScheduledEndDate(new Date(phase.getScheduledStartDate().getTime() + phase.getLength())); //(phaseEndDate);
-            } catch (ParseException e) {
-                e.printStackTrace();
-                // TODO: handle exception
-                // Actually will be an unreal situation when form validation is
-                // configured properly
+                long unitMutiplier = 1000 * 3600 * ("days".equals(lazyForm.get("phase_start_dayshrs", i)) ? 24 : 1);
+
+                // TODO: minus should probably be handled by swapping the dependency and dependant phases
+                if ("minus".equals(lazyForm.get("phase_start_plusminus", i))) {
+                    unitMutiplier = -unitMutiplier;
+                }
+                long lagTime = unitMutiplier * ((Integer) lazyForm.get("phase_start_amount", i)).longValue();
+
+                // Create phase Dependency
+                Dependency dependency = new Dependency((Phase) phasesJsMap.get(lazyForm.get("phase_start_phase", i)),
+                        phase, dependencyStart, dependantStart, lagTime);
+
+                if ("update".equals(phaseAction)) {
+                    // Clear all the pre-existing dependencies
+                    phase.clearDependencies();
+                }
+
+                // Add dependency to phase
+                phase.addDependency(dependency);
+
+                // TODO: Check how to deal with it
+                // Set scheduled start date to calculate start date
+                phase.setScheduledStartDate(phase.calcStartDate());
             }
 
+            /*// Get phase end date from form
+            Date phaseEndDate = parseDatetimeFormProperties(lazyForm, i, "phase_end_date", "phase_end_time",
+                    "phase_end_AMPM");
+            */
+            // TODO: Set duration based on specified phase end date if needed
+            // Set sheduled phase end date
+            phase.setScheduledEndDate(new Date(phase.getScheduledStartDate().getTime() + phase.getLength())); //(phaseEndDate);
+        
 
             // Set phase criteria
             Long scorecardId = (Long) lazyForm.get("phase_scorecard", i);
@@ -1057,20 +1052,37 @@ public class ProjectActions extends DispatchAction {
      * @param timeProperty
      * @param ampmProperty
      * @return
-     * @throws ParseException
      */
     private Date parseDatetimeFormProperties(LazyValidatorForm lazyForm, int propertyIndex, String dateProperty,
-            String timeProperty, String ampmProperty) throws ParseException {
+            String timeProperty, String ampmProperty) {
         // Retrieve the values of form properties
         String dateString = (String) lazyForm.get(dateProperty, propertyIndex);
         String timeString = (String) lazyForm.get(timeProperty, propertyIndex);
         String ampmString = (String) lazyForm.get(ampmProperty, propertyIndex);
-        // Construct the full date/time string
-        String fullDate = dateString + " " + timeString + " " + ampmString;
-        // Parse the date
-        // TODO: Reuse the DateFormat instance instead of creating new ones
-        DateFormat dateFormat = new SimpleDateFormat("MM.dd.yy hh:mm aa");
-        return dateFormat.parse(fullDate);
+        
+        // Obtain calendar instance to be used to create Date instance
+        Calendar calendar = Calendar.getInstance();
+        
+        // Parse date string
+        String[] dateParts = dateString.trim().split("[./-]|([ ])+");
+        calendar.set(Calendar.YEAR, Integer.parseInt(dateParts[2]) + (dateParts[2].length() > 2  ? 0 : 2000));
+        calendar.set(Calendar.MONTH, Integer.parseInt(dateParts[0]) - 1);
+        calendar.set(Calendar.DAY_OF_MONTH, Integer.parseInt(dateParts[1]));
+        
+        // Parse time string
+        String[] timeParts = timeString.trim().split("[.:-]|([ ])+");
+        calendar.set(Calendar.HOUR, Integer.parseInt(timeParts[0]));        
+        if (timeParts.length == 1) {
+            calendar.set(Calendar.MINUTE, 0);
+        } else {
+            calendar.set(Calendar.MINUTE, Integer.parseInt(timeParts[1]));
+        }
+        
+        // Set am/pm property
+        calendar.set(Calendar.AM_PM, "am".equals(ampmString) ? Calendar.AM : Calendar.PM);
+        
+        // Returned parsed Date
+        return calendar.getTime();
     }
 
     /**
