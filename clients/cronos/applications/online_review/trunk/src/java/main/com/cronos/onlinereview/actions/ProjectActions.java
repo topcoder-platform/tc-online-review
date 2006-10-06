@@ -599,7 +599,6 @@ public class ProjectActions extends DispatchAction {
 
         // TODO: Project status change, includes additional explanation to be concatenated
 
-
         // Save the project phases
         // FIXME: the project it slef is also saved by the following call. Needs to be refactored
         Phase[] projectPhases = saveProjectPhases(newProject, request, lazyForm, project);
@@ -628,7 +627,8 @@ public class ProjectActions extends DispatchAction {
         saveResources(newProject, request, lazyForm, project, projectPhases);
 
         // Return success forward
-        return mapping.findForward(Constants.SUCCESS_FORWARD_NAME);
+        return ActionsHelper.cloneForwardAndAppendToPath(
+                mapping.findForward(Constants.SUCCESS_FORWARD_NAME),"&pid=" + project.getId());
     }
 
     /**
@@ -1084,7 +1084,6 @@ public class ProjectActions extends DispatchAction {
      */
     private void saveResources(boolean newProject, HttpServletRequest request, LazyValidatorForm lazyForm, Project project, Phase[] projectPhases)
             throws BaseException {
-
         // Obtain the instance of the User Retrieval
         UserRetrieval userRetrieval = ActionsHelper.createUserRetrieval(request);
 
@@ -1272,7 +1271,7 @@ public class ProjectActions extends DispatchAction {
         // Verify that "scope" parameter is specified and is not empty
         if (scope == null || scope.trim().length() == 0) {
             // Set default value for "scope" parameter, if previous condition has not been met
-            scope = "all";
+            scope = "my";
         }
 
         // If the user is trying to access pages he doesn't have permission to view,
