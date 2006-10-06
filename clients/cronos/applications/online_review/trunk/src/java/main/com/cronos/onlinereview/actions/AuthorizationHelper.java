@@ -178,10 +178,6 @@ public class AuthorizationHelper {
         }
 
         // Determine some common permissions
-        request.setAttribute("isAllowedToViewMyProjects",
-                new Boolean(hasUserPermission(request, Constants.VIEW_MY_PROJECTS_PERM_NAME)));
-        request.setAttribute("isAllowedToViewAllProjects",
-                new Boolean(hasUserPermission(request, Constants.VIEW_PROJECTS_PERM_NAME)));
         request.setAttribute("isAllowedToViewInactiveProjects",
                 new Boolean(hasUserPermission(request, Constants.VIEW_PROJECTS_INACTIVE_PERM_NAME)));
         request.setAttribute("isAllowedToCreateProject",
@@ -250,16 +246,6 @@ public class AuthorizationHelper {
             // Add the name of the role to the roles set (gather the role)
             roles.add(role.getName());
         }
-
-        // Redetermine some common permissions
-        request.setAttribute("isAllowedToViewMyProjects",
-                new Boolean(hasUserPermission(request, Constants.VIEW_MY_PROJECTS_PERM_NAME)));
-        request.setAttribute("isAllowedToViewAllProjects",
-                new Boolean(hasUserPermission(request, Constants.VIEW_PROJECTS_PERM_NAME)));
-        request.setAttribute("isAllowedToViewInactiveProjects",
-                new Boolean(hasUserPermission(request, Constants.VIEW_PROJECTS_INACTIVE_PERM_NAME)));
-        request.setAttribute("isAllowedToCreateProject",
-                new Boolean(hasUserPermission(request, Constants.CREATE_PROJECT_PERM_NAME)));
     }
 
     /**
