@@ -1,6 +1,9 @@
 <%@ taglib  uri="/tags/struts-html" prefix="html" %>
 <%@ page import="java.util.Date"%>
+<%@ page import="java.io.PrintWriter" %>
+<%@ page import="java.io.StringWriter" %>
 <%@ page language="java" session="true" isErrorPage="true" %>
+
 
 <html>
 <head>
@@ -46,14 +49,34 @@
     </tr>
 </table>
 
+<br><br>
+<%
+	// try to print stack trace into a String object.
+	String stackTrace;	
+	if(exception == null) {
+		stackTrace = "exception is null";
+	} else {
+		StringWriter sw = new StringWriter();
+		
+        PrintWriter pw = new PrintWriter(sw);
+        exception.printStackTrace(pw);
+        pw.close();
+        
+        stackTrace = sw.toString();
+        stackTrace = stackTrace.replaceAll("\n", "<br>");
+        stackTrace = stackTrace.replaceAll("\t", "&nbsp&nbsp&nbsp&nbsp ");
+	}
+%>
+<div align="left" class="homeText">
+Exception Info (for debugging): <%= stackTrace %>
+</div>
+
 <div class="centerer">
     <div style="padding:25px"><b>
         <span style="font-size: 18px; color: #990000;">Error</span>
         <br><br>
    <span class="homeText">
-   <b>An error has occurred when attempting to process your request.</b>
-   <br><br>
-   Exception Info (for debugging): <%= exception == null ? "exception is null" : exception.toString() %>
+      <b>An error has occurred when attempting to process your request.</b>
       <br><br>
       You may click <a href="javascript:history.back();">here</a> to return to the last page you were viewing.
       <br><br>
