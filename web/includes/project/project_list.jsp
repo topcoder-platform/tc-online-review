@@ -89,6 +89,13 @@
 
 	<c:if test="${totalProjectsCount == 0}">
 		<div style="text-align:center;margin-top:16px;margin-bottom:8px;">
-			<bean:message key="listProjects.NoProjects" />
+			<c:choose>
+				<c:when test="${projectTabIndex == 4}">
+					<bean:message key="listProjects.NoProjects.inactive" />
+				</c:when>
+				<c:otherwise>
+					<bean:message key="listProjects.NoProjects.open" />
+				</c:otherwise>
+			</c:choose>
 		</div>
 	</c:if>
