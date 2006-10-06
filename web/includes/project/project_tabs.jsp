@@ -1,10 +1,11 @@
 <%@ page language="java" isELIgnored="false" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="html" uri="/tags/struts-html" %>
+<%@ taglib prefix="orfn" uri="/tags/or-functions" %>
 
 <%-- We need to have no spaces between tabs, that's why the formatiing is weird --%>
 <div id="mainTabs"><c:if
-	test="${isAllowedToViewMyProjects}"><c:if
+	test="${orfn:isUserLoggedIn(pageContext.request)}"><c:if
 		test="${!(empty projectTabIndex) && (projectTabIndex == 1)}"><html:img
 			page="/i/tab_my_open_projects_on.gif" width="119" height="36" border="0" imageName="tab1" /></c:if><c:if
 		test="${(empty projectTabIndex) || (projectTabIndex != 1)}"><html:link
@@ -12,14 +13,13 @@
 			onmouseover="img_act('tab1')" onmouseout="img_inact('tab1')"><html:img
 			page="/i/tab_my_open_projects.gif" width="119" height="36" border="0"
 			imageName="tab1" /></html:link></c:if></c:if><c:if
-	test="${isAllowedToViewAllProjects}"><c:if
-		test="${!(empty projectTabIndex) && (projectTabIndex == 2)}"><html:img
-			page="/i/tab_all_open_projects_on.gif" width="119" height="36" imageName="tab2" /></c:if><c:if
-		test="${(empty projectTabIndex) || (projectTabIndex != 2)}"><html:link
-			page="/actions/ListProjects.do?method=listProjects&amp;scope=all"
-			onmouseover="img_act('tab2')" onmouseout="img_inact('tab2')"><html:img
-			page="/i/tab_all_open_projects.gif" width="119"height="36" border="0"
-			imageName="tab2" /></html:link></c:if></c:if><c:if
+	test="${!(empty projectTabIndex) && (projectTabIndex == 2)}"><html:img
+		page="/i/tab_all_open_projects_on.gif" width="119" height="36" imageName="tab2" /></c:if><c:if
+	test="${(empty projectTabIndex) || (projectTabIndex != 2)}"><html:link
+		page="/actions/ListProjects.do?method=listProjects&amp;scope=all"
+		onmouseover="img_act('tab2')" onmouseout="img_inact('tab2')"><html:img
+		page="/i/tab_all_open_projects.gif" width="119"height="36" border="0"
+		imageName="tab2" /></html:link></c:if><c:if
 	test="${isAllowedToViewInactiveProjects}"><c:if
 		test="${!(empty projectTabIndex) && (projectTabIndex == 4)}"><html:img
 			page="/i/tab_inactive_projects_on.gif" width="119" height="36" border="0" imageName="tab4" /></c:if><c:if
