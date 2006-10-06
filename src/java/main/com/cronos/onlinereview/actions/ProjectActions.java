@@ -11,8 +11,10 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -33,12 +35,17 @@ import com.topcoder.project.phases.Dependency;
 import com.topcoder.project.phases.Phase;
 import com.topcoder.project.phases.PhaseStatus;
 import com.topcoder.project.phases.PhaseType;
+import com.topcoder.search.builder.SearchBuilderException;
 import com.topcoder.search.builder.filter.AndFilter;
 import com.topcoder.search.builder.filter.Filter;
 import com.topcoder.search.builder.filter.InFilter;
 import com.topcoder.util.errorhandling.BaseException;
 
 import com.topcoder.date.workdays.DefaultWorkdays;
+import com.topcoder.management.deliverable.Deliverable;
+import com.topcoder.management.deliverable.DeliverableManager;
+import com.topcoder.management.deliverable.persistence.DeliverableCheckingException;
+import com.topcoder.management.deliverable.persistence.DeliverablePersistenceException;
 import com.topcoder.management.phase.PhaseManager;
 import com.topcoder.management.project.Project;
 import com.topcoder.management.project.ProjectCategory;
@@ -50,7 +57,6 @@ import com.topcoder.management.resource.Resource;
 import com.topcoder.management.resource.ResourceManager;
 import com.topcoder.management.resource.ResourceRole;
 import com.topcoder.management.resource.search.ResourceFilterBuilder;
-import com.topcoder.management.scorecard.PersistenceException;
 import com.topcoder.management.scorecard.ScorecardManager;
 import com.topcoder.management.scorecard.ScorecardSearchBundle;
 import com.topcoder.management.scorecard.data.Scorecard;
@@ -68,11 +74,12 @@ import com.topcoder.management.scorecard.data.Scorecard;
  * This class is thread-safe as it does not contain any mutable inner state.
  * </p>
  *
- * @author TCSAssemblyTeam
+ * @author George1
+ * @author real_vg
  * @version 1.0
  */
 public class ProjectActions extends DispatchAction {
-    
+
     /**
      * Creates a new instance of the <code>ProjectActions</code> class.
      */
@@ -124,7 +131,7 @@ public class ProjectActions extends DispatchAction {
 
         // Set the JS id to start generation from
         lazyForm.set("js_current_id", new Long(0));
-        
+
         // Populate form with some data so that resources row template
         // is rendered properly by the appropriate JSP
         lazyForm.set("resources_role", 0, new Long(-1));
@@ -181,7 +188,7 @@ public class ProjectActions extends DispatchAction {
         Scorecard[] screeningScorecards = searchActiveScorecards(scorecardManager, "Screening");
         Scorecard[] reviewScorecards = searchActiveScorecards(scorecardManager, "Review");
         Scorecard[] approvalScorecards = searchActiveScorecards(scorecardManager, "Client Review");
-        
+
         // Store them in the request
         request.setAttribute("screeningScorecards", screeningScorecards);
         request.setAttribute("reviewScorecards", reviewScorecards);
@@ -190,8 +197,8 @@ public class ProjectActions extends DispatchAction {
 
     /**
      * TODO: Document it
-     * Note, that the scorecard data(items) is not fully retrieved 
-     * 
+     * Note, that the scorecard data(items) is not fully retrieved
+     *
      * @param scorecardManager
      * @param scorecardTypeName
      * @return
@@ -220,7 +227,7 @@ public class ProjectActions extends DispatchAction {
 
         // Set the JS id to start generation from
         form.set("js_current_id", new Long(0));
-        
+
         // Populate project id
         form.set("pid", new Long(project.getId()));
 
@@ -317,7 +324,7 @@ public class ProjectActions extends DispatchAction {
         Phase[] phases = ActionsHelper.getPhasesForProject(phaseManager, project);
         // Sort project phases
         Arrays.sort(phases, new ProjectPhaseComparer());
-        
+
 
         // Populate form with phases data
         for (int i = 0; i < phases.length; ++i) {
@@ -333,7 +340,7 @@ public class ProjectActions extends DispatchAction {
                 Dependency dependency = phases[i].getAllDependencies()[0];
                 form.set("phase_start_phase", i + 1, "loaded_" + dependency.getDependency().getId());
                 form.set("phase_start_amount", i + 1, new Integer((int) (dependency.getLagTime() / 3600 / 1000)));
-                form.set("phase_start_when", i + 1, dependency.isDependencyStart() ? "starts" : "ends");                
+                form.set("phase_start_when", i + 1, dependency.isDependencyStart() ? "starts" : "ends");
                 form.set("phase_start_dayshrs", i + 1, "hrs");
             } else {
                 form.set("phase_start_by_phase", i + 1, Boolean.FALSE);
@@ -485,7 +492,7 @@ public class ProjectActions extends DispatchAction {
 
         // Populate the form with project properties
         populateProjectForm(request, (LazyValidatorForm) form, project);
-                
+
         return mapping.findForward(Constants.SUCCESS_FORWARD_NAME);
     }
 
@@ -592,16 +599,16 @@ public class ProjectActions extends DispatchAction {
 
         // TODO: Project status change, includes additional explanation to be concatenated
 
-        
+
         // Save the project phases
         // FIXME: the project it slef is also saved by the following call. Needs to be refactored
         Phase[] projectPhases = saveProjectPhases(newProject, request, lazyForm, project);
-        
+
         // Check if there are any validation errors and return appropriate forward
         if (request.getAttribute(Globals.ERROR_KEY) != null) {
             // TODO : Check if the form is really for new project
             request.setAttribute("newProject", Boolean.valueOf(newProject));
-            
+
 
             // Load the lookup data
             loadProjectEditLookups(request);
@@ -609,19 +616,19 @@ public class ProjectActions extends DispatchAction {
             if (!newProject) {
                 // Store project statuses in the request
                 request.setAttribute("projectStatuses", projectStatuses);
-    
+
                 // Store the retieved project in the request
                 request.setAttribute("project", project);
             }
-            
+
             return mapping.getInputForward();
-        } 
-        
+        }
+
         // Save the project resources
         saveResources(newProject, request, lazyForm, project, projectPhases);
-        
+
         // Return success forward
-        return mapping.findForward(Constants.SUCCESS_FORWARD_NAME);        
+        return mapping.findForward(Constants.SUCCESS_FORWARD_NAME);
     }
 
     /**
@@ -678,7 +685,7 @@ public class ProjectActions extends DispatchAction {
 
         // Get the array of phase types specified for each phase
         Long[] phaseTypes = (Long[]) lazyForm.get("phase_type");
-        
+
         // FIRST PASS
         // 0-index phase is skipped as it is a "dummy" one
         for (int i = 1; i < phaseTypes.length; i++) {
@@ -723,7 +730,7 @@ public class ProjectActions extends DispatchAction {
                 continue;
             }
         }
-        
+
         // SECOND PASS
         for (int i = 1; i < phaseTypes.length; i++) {
             Object phaseObj = phasesJsMap.get(lazyForm.get("phase_js_id", i));
@@ -731,15 +738,15 @@ public class ProjectActions extends DispatchAction {
             if (phaseObj == null) {
                 continue;
             }
-            
+
             Phase phase = (Phase) phaseObj;
-            
+
             /*
              * Set phase properties
              */
-            
+
             String phaseAction = (String) lazyForm.get("phase_action", i);
-            
+
             if ("add".equals(phaseAction)) {
                 // Set phase type
                 phase.setPhaseType(ActionsHelper.findPhaseTypeById(allPhaseTypes, phaseTypes[i].longValue()));
@@ -838,15 +845,15 @@ public class ProjectActions extends DispatchAction {
             }
         }
 
-        Phase[] projectPhases = phProject.getAllPhases();        
+        Phase[] projectPhases = phProject.getAllPhases();
         // Sort project phases
         Arrays.sort(projectPhases, new ProjectPhaseComparer());
-        
+
         // Validate the project phases
         if (!validateProjectPhases(request, project, projectPhases)) {
             // If project phases are invalid, return immediately
             return projectPhases;
-        }        
+        }
 
 
         // FIXME: Refactor it
@@ -854,25 +861,25 @@ public class ProjectActions extends DispatchAction {
         if (newProject) {
             // Create project in persistence level
             projectManager.createProject(project, AuthorizationHelper.getLoggedInUserId(request) + "");
-        
+
             // Set the id of Phases Project to be equal to the id of appropriate Project
             phProject.setId(project.getId());
         } else {
             projectManager.updateProject(project, (String) lazyForm.get("explanation"), AuthorizationHelper.getLoggedInUserId(request) + "");
         }
-        
-        
+
+
         // Save the phases at the persistence level
         phaseManager.updatePhases(phProject, AuthorizationHelper.getLoggedInUserId(request) + "");
         // TODO : The following line was added just to be safe. May be unneeded as well as another one.
         projectPhases = phProject.getAllPhases();
-        
+
         // If needed switch project current phase
         if (!newProject) {
             // Get current project phase
             Phase currentPhase = getCurrentProjectPhase(projectPhases);
             // Get new current phase id
-            String newCurPhaseId = (String) lazyForm.get("current_phase");            
+            String newCurPhaseId = (String) lazyForm.get("current_phase");
             // Get new current phase
             Phase newCurrentPhase = (Phase) phasesJsMap.get(newCurPhaseId);
             if (newCurrentPhase != null) {
@@ -922,8 +929,8 @@ public class ProjectActions extends DispatchAction {
     /**
      * TODO: Document it
      * Note, that this method assumes that phases are already sorted by the start date, etc.
-     * 
-     * 
+     *
+     *
      * @param request
      * @param project
      * @param allPhases
@@ -931,31 +938,31 @@ public class ProjectActions extends DispatchAction {
      */
     private boolean validateProjectPhases(HttpServletRequest request, Project project, Phase[] projectPhases) {
         boolean arePhasesValid = true;
-        
+
         // TODO: Refactor this function, make it more concise
-        
+
         // Check the beginning phase, it should be either Registration or submission
-        if (projectPhases.length > 0 && 
+        if (projectPhases.length > 0 &&
                 !projectPhases[0].getPhaseType().getName().equals(Constants.REGISTRATION_PHASE_NAME) &&
                 !projectPhases[0].getPhaseType().getName().equals(Constants.SUBMISSION_PHASE_NAME)) {
-            ActionsHelper.addErrorToRequest(request, ActionErrors.GLOBAL_MESSAGE, 
+            ActionsHelper.addErrorToRequest(request, ActionErrors.GLOBAL_MESSAGE,
                     new ActionMessage("error.com.cronos.onlinereview.actions.editProject.WrongBeginningPhase"));
             arePhasesValid = false;
         }
-        
+
         // Check the phases as a whole
         for (int i = 0; i < projectPhases.length; i++) {
             if (projectPhases[i].getPhaseType().getName().equals(Constants.SUBMISSION_PHASE_NAME)) {
                 // Submission should follow registration if it exists
                 if (i > 0 && !projectPhases[i - 1].getPhaseType().getName().equals(Constants.REGISTRATION_PHASE_NAME)) {
-                    ActionsHelper.addErrorToRequest(request, ActionErrors.GLOBAL_MESSAGE, 
+                    ActionsHelper.addErrorToRequest(request, ActionErrors.GLOBAL_MESSAGE,
                             new ActionMessage("error.com.cronos.onlinereview.actions.editProject.SubmissionMustFollow"));
                     arePhasesValid = false;
                 }
             } else if (projectPhases[i].getPhaseType().getName().equals(Constants.REGISTRATION_PHASE_NAME)) {
                 // Registration should be followed by submission
                 if (i == projectPhases.length - 1 || !projectPhases[i + 1].getPhaseType().getName().equals(Constants.SUBMISSION_PHASE_NAME)) {
-                    ActionsHelper.addErrorToRequest(request, ActionErrors.GLOBAL_MESSAGE, 
+                    ActionsHelper.addErrorToRequest(request, ActionErrors.GLOBAL_MESSAGE,
                             new ActionMessage("error.com.cronos.onlinereview.actions.editProject.RegistrationMustBeFollowed"));
                     arePhasesValid = false;
                 }
@@ -963,82 +970,82 @@ public class ProjectActions extends DispatchAction {
                 // Review should follow submission or screening
                 if (i == 0 || (!projectPhases[i - 1].getPhaseType().getName().equals(Constants.SUBMISSION_PHASE_NAME) &&
                         !projectPhases[i - 1].getPhaseType().getName().equals(Constants.SCREENING_PHASE_NAME))) {
-                    ActionsHelper.addErrorToRequest(request, ActionErrors.GLOBAL_MESSAGE, 
+                    ActionsHelper.addErrorToRequest(request, ActionErrors.GLOBAL_MESSAGE,
                             new ActionMessage("error.com.cronos.onlinereview.actions.editProject.ReviewMustFollow"));
                     arePhasesValid = false;
                 }
             } else if (projectPhases[i].getPhaseType().getName().equals(Constants.APPEALS_PHASE_NAME)) {
                 // Appeals should follow review
                 if (i == 0 || !projectPhases[i - 1].getPhaseType().getName().equals(Constants.REVIEW_PHASE_NAME)) {
-                    ActionsHelper.addErrorToRequest(request, ActionErrors.GLOBAL_MESSAGE, 
+                    ActionsHelper.addErrorToRequest(request, ActionErrors.GLOBAL_MESSAGE,
                             new ActionMessage("error.com.cronos.onlinereview.actions.editProject.AppealsMustFollow"));
                     arePhasesValid = false;
                 }
                 // Appeals should be followed by the appeals response
-                if (i == projectPhases.length - 1 || 
+                if (i == projectPhases.length - 1 ||
                         !projectPhases[i + 1].getPhaseType().getName().equals(Constants.APPEALS_RESPONSE_PHASE_NAME)) {
-                    ActionsHelper.addErrorToRequest(request, ActionErrors.GLOBAL_MESSAGE, 
+                    ActionsHelper.addErrorToRequest(request, ActionErrors.GLOBAL_MESSAGE,
                             new ActionMessage("error.com.cronos.onlinereview.actions.editProject.AppealsMustBeFollowed"));
                     arePhasesValid = false;
-                }                
+                }
             } else if (projectPhases[i].getPhaseType().getName().equals(Constants.APPEALS_RESPONSE_PHASE_NAME)) {
                 // Appeal response should follow appeals
                 if (i == 0 || !projectPhases[i - 1].getPhaseType().getName().equals(Constants.APPEALS_PHASE_NAME)) {
-                    ActionsHelper.addErrorToRequest(request, ActionErrors.GLOBAL_MESSAGE, 
+                    ActionsHelper.addErrorToRequest(request, ActionErrors.GLOBAL_MESSAGE,
                             new ActionMessage("error.com.cronos.onlinereview.actions.editProject.AppealsResponseMustFollow"));
                     arePhasesValid = false;
-                } 
+                }
             } else if (projectPhases[i].getPhaseType().getName().equals(Constants.AGGREGATION_PHASE_NAME)) {
                 // Aggregation should follow appeals response or review
-                if (i == 0 || 
-                        (!projectPhases[i - 1].getPhaseType().getName().equals(Constants.APPEALS_RESPONSE_PHASE_NAME) && 
+                if (i == 0 ||
+                        (!projectPhases[i - 1].getPhaseType().getName().equals(Constants.APPEALS_RESPONSE_PHASE_NAME) &&
                         !projectPhases[i - 1].getPhaseType().getName().equals(Constants.REVIEW_PHASE_NAME))) {
-                    ActionsHelper.addErrorToRequest(request, ActionErrors.GLOBAL_MESSAGE, 
+                    ActionsHelper.addErrorToRequest(request, ActionErrors.GLOBAL_MESSAGE,
                             new ActionMessage("error.com.cronos.onlinereview.actions.editProject.AggregationMustFollow"));
                     arePhasesValid = false;
-                } 
+                }
                 // Aggregation should be followed by the aggregation review
-                if (i == projectPhases.length - 1 || 
+                if (i == projectPhases.length - 1 ||
                         !projectPhases[i + 1].getPhaseType().getName().equals(Constants.AGGREGATION_REVIEW_PHASE_NAME)) {
-                    ActionsHelper.addErrorToRequest(request, ActionErrors.GLOBAL_MESSAGE, 
+                    ActionsHelper.addErrorToRequest(request, ActionErrors.GLOBAL_MESSAGE,
                             new ActionMessage("error.com.cronos.onlinereview.actions.editProject.AggregationMustBeFollowed"));
                     arePhasesValid = false;
-                }                                
+                }
             } else if (projectPhases[i].getPhaseType().getName().equals(Constants.AGGREGATION_REVIEW_PHASE_NAME)) {
                 // Aggregation review should follow aggregation
-                if (i == 0 || 
+                if (i == 0 ||
                         !projectPhases[i - 1].getPhaseType().getName().equals(Constants.AGGREGATION_PHASE_NAME)) {
-                    ActionsHelper.addErrorToRequest(request, ActionErrors.GLOBAL_MESSAGE, 
+                    ActionsHelper.addErrorToRequest(request, ActionErrors.GLOBAL_MESSAGE,
                             new ActionMessage("error.com.cronos.onlinereview.actions.editProject.AggregationReviewMustFollow"));
                     arePhasesValid = false;
-                }                 
+                }
             } else if (projectPhases[i].getPhaseType().getName().equals(Constants.FINAL_FIX_PHASE_NAME)) {
                 // Final fix should follow either appeals response or aggregation review
-                if (i == 0 || 
-                        (!projectPhases[i - 1].getPhaseType().getName().equals(Constants.APPEALS_RESPONSE_PHASE_NAME) && 
+                if (i == 0 ||
+                        (!projectPhases[i - 1].getPhaseType().getName().equals(Constants.APPEALS_RESPONSE_PHASE_NAME) &&
                         !projectPhases[i - 1].getPhaseType().getName().equals(Constants.AGGREGATION_REVIEW_PHASE_NAME))) {
-                    ActionsHelper.addErrorToRequest(request, ActionErrors.GLOBAL_MESSAGE, 
+                    ActionsHelper.addErrorToRequest(request, ActionErrors.GLOBAL_MESSAGE,
                             new ActionMessage("error.com.cronos.onlinereview.actions.editProject.FinalFixMustFollow"));
                     arePhasesValid = false;
-                } 
+                }
                 // Final fix should be followed by the final review
-                if (i == projectPhases.length - 1 || 
+                if (i == projectPhases.length - 1 ||
                         !projectPhases[i + 1].getPhaseType().getName().equals(Constants.FINAL_REVIEW_PHASE_NAME)) {
-                    ActionsHelper.addErrorToRequest(request, ActionErrors.GLOBAL_MESSAGE, 
+                    ActionsHelper.addErrorToRequest(request, ActionErrors.GLOBAL_MESSAGE,
                             new ActionMessage("error.com.cronos.onlinereview.actions.editProject.FinalFixMustBeFollowed"));
                     arePhasesValid = false;
-                }                                
+                }
             }  else if (projectPhases[i].getPhaseType().getName().equals(Constants.FINAL_REVIEW_PHASE_NAME)) {
                 // Final review should follow final fix
-                if (i == 0 || 
+                if (i == 0 ||
                         !projectPhases[i - 1].getPhaseType().getName().equals(Constants.FINAL_FIX_PHASE_NAME)) {
-                    ActionsHelper.addErrorToRequest(request, ActionErrors.GLOBAL_MESSAGE, 
+                    ActionsHelper.addErrorToRequest(request, ActionErrors.GLOBAL_MESSAGE,
                             new ActionMessage("error.com.cronos.onlinereview.actions.editProject.FinalReviewMustFollow"));
                     arePhasesValid = false;
-                }                 
-            }   
+                }
+            }
         }
-        
+
         return arePhasesValid;
     }
 
@@ -1172,19 +1179,19 @@ public class ProjectActions extends DispatchAction {
             resourceManager.updateResource(resource, AuthorizationHelper.getLoggedInUserId(request) + "");
         }
     }
-    
+
     /**
      * TODO: Document it, and members.
      *
      */
     static class ProjectPhaseComparer implements Comparator {
         public ProjectPhaseComparer() {
-            
+
         }
 
         public int compare(Object o1, Object o2) {
-            Phase phase1 = (Phase) o1;       
-            Phase phase2 = (Phase) o2;       
+            Phase phase1 = (Phase) o1;
+            Phase phase2 = (Phase) o2;
             int compareResult = phase1.calcStartDate().compareTo(phase2.calcStartDate());
             if (compareResult == 0) {
                 int ranking1 = getPhaseRanking(phase1);
@@ -1195,15 +1202,15 @@ public class ProjectActions extends DispatchAction {
         }
 
         private int getPhaseRanking(Phase phase1) {
-            String[] phaseOrder = new String[] {"Registration", "Submission", "Screening", "Review", 
-                    "Appeals", "Appeals Response", "Aggregation", "Aggregation Review", 
+            String[] phaseOrder = new String[] {"Registration", "Submission", "Screening", "Review",
+                    "Appeals", "Appeals Response", "Aggregation", "Aggregation Review",
                     "Final Fixes", "Final Review", "Approval"};
             for (int i = 0; i < phaseOrder.length; i++) {
                 if (phaseOrder[i].equals(phase1.getPhaseType().getName())) {
                     return i;
                 }
             }
-            
+
             return phaseOrder.length;
         }
     }
@@ -1270,8 +1277,7 @@ public class ProjectActions extends DispatchAction {
 
         // If the user is trying to access pages he doesn't have permission to view,
         // redirect him to scope-all page, where public projects are listed
-        if (scope.equalsIgnoreCase("my") &&
-                !AuthorizationHelper.hasUserPermission(request, Constants.VIEW_MY_PROJECTS_PERM_NAME)) {
+        if (scope.equalsIgnoreCase("my") && !AuthorizationHelper.isUserLoggedIn(request)) {
             return mapping.findForward("all");
         }
         if (scope.equalsIgnoreCase("inactive") &&
@@ -1314,21 +1320,29 @@ public class ProjectActions extends DispatchAction {
         int[] categoryCounts = new int[projectCategories.length];
         String[] categoryIconNames = new String[projectCategories.length];
 
+        // This is to signify whether "My" Projects list is displayed, or any other
+        // type of Projects List. Some columns are present only in "My" Projects List
+        boolean myProjects = scope.equalsIgnoreCase("my");
+
         Project[][] projects = new Project[projectCategories.length][];
         String[][] rootCatalogIcons = new String[projectCategories.length][];
         String[][] rootCatalogNames = new String[projectCategories.length][];
-        String[][] myRoles = new String[projectCategories.length][];
-        Phase[][] phases = new Phase[projectCategories.length][];
+        Phase[][][] phases = new Phase[projectCategories.length][][];
         Date[][] phaseEndDates = new Date[projectCategories.length][];
         Date[][] projectEndDates = new Date[projectCategories.length][];
 
-        // Fetch projects from the database.  These projects will require further grouping
+        // The following will only be non-null for the list of "My" Projects
+        Resource[][][] myResources = (myProjects) ? new Resource[projectCategories.length][][] : null;
+        String[][] myRoles = (myProjects) ? new String[projectCategories.length][] : null;
+        String[][] myDeliverables = (myProjects) ? new String[projectCategories.length][] : null;
+
+        // Fetch projects from the database. These projects will require further grouping
         Project[] ungroupedProjects = (projectsFilter != null) ? manager.searchProjects(projectsFilter) :
                 manager.getUserProjects(AuthorizationHelper.getLoggedInUserId(request));
 
         Resource[] allMyResources = null;
 
-        if (ungroupedProjects.length != 0 && AuthorizationHelper.isUserLoggedIn(request)) {
+        if (ungroupedProjects.length != 0 && AuthorizationHelper.isUserLoggedIn(request) && myProjects) {
             Filter filterExtIDname = ResourceFilterBuilder.createExtensionPropertyNameFilter("External Reference ID");
             Filter filterExtIDvalue = ResourceFilterBuilder.createExtensionPropertyValueFilter(
                     String.valueOf(AuthorizationHelper.getLoggedInUserId(request)));
@@ -1345,6 +1359,7 @@ public class ProjectActions extends DispatchAction {
                     new Filter[] {filterExtIDname, filterExtIDvalue, filterProjects}));
             // Obtain an instance of Resource Manager
             ResourceManager resMgr = ActionsHelper.createResourceManager(request);
+            // Get all "My" resources for the list of projects
             allMyResources = resMgr.searchResources(filter);
         }
 
@@ -1375,10 +1390,14 @@ public class ProjectActions extends DispatchAction {
             Project[] projs = new Project[categoryCounts[i]];
             String[] rcIcons = new String[categoryCounts[i]];
             String[] rcNames = new String[categoryCounts[i]];
-            String[] rols = new String[categoryCounts[i]];
-            Phase[] phass = new Phase[categoryCounts[i]];
+            Phase[][] phass = new Phase[categoryCounts[i]][];
             Date[] pheds = new Date[categoryCounts[i]];
             Date[] preds = new Date[categoryCounts[i]];
+
+            // No need to collect any Resources or Roles
+            // if the list of projects is not just "My" Projects
+            Resource[][] myRss = (myProjects) ? new Resource[categoryCounts[i]][] : null;
+            String[] rols = (myProjects) ? new String[categoryCounts[i]] : null;
 
             if (categoryCounts[i] != 0) {
                 // Counter of projects currently added to this category
@@ -1401,27 +1420,23 @@ public class ProjectActions extends DispatchAction {
                     // Fetch Root Catalog name depending depending on ID of the Root Catalog
                     rcNames[counter] = messages.getMessage(ConfigHelper.getRootCatalogAltTextKey(rootCatalogId));
 
-                    if (allMyResources != null) {
-                        for (int k = 0; k < allMyResources.length; ++k) {
-                            // Get a Resource for the current iteration
-                            Resource resource = allMyResources[k];
-                            if (resource.getProject() == null || resource.getProject().longValue() != project.getId()) {
-                                continue;
-                            }
-                            rols[counter] = messages.getMessage("ResourceRole." +
-                                    resource.getResourceRole().getName().replaceAll(" ", ""));
-                        }
-                    }
-
-                    if (rols[counter] == null || rols[counter].length() == 0) {
-                        rols[counter] = messages.getMessage("ResourceRole.Public");
-                    }
+                    Phase[] activePhases = null;
 
                     if (phProjects[j] != null) {
                         preds[counter] = phProjects[j].calcEndDate();
-                        Phase activePhase = ActionsHelper.getPhase(phProjects[j].getAllPhases(), true, null);
-                        phass[counter] = activePhase;
-                        pheds[counter] = (activePhase != null) ? activePhase.calcEndDate() : null;
+                        activePhases = ActionsHelper.getActivePhases(phProjects[j].getAllPhases());
+                        pheds[counter] = null;
+                    }
+
+                    if (activePhases != null && activePhases.length != 0) {
+                        phass[counter] = activePhases;
+                        pheds[counter] = activePhases[0].calcEndDate();
+                    }
+
+                    if (myProjects) {
+                        Resource[] myResources2 = ActionsHelper.getResourcesForProject(allMyResources, project);
+                        myRss[counter] = myResources2;
+                        rols[counter] = getRolesFromResources(messages, myResources2);
                     }
 
                     // Store project in a group and increment counter
@@ -1433,12 +1448,32 @@ public class ProjectActions extends DispatchAction {
             projects[i] = projs;
             rootCatalogIcons[i] = rcIcons;
             rootCatalogNames[i] = rcNames;
-            myRoles[i] = rols;
             phases[i] = phass;
             phaseEndDates[i] = pheds;
             projectEndDates[i] = preds;
+
+            if (myProjects) {
+                myResources[i] = myRss;
+                myRoles[i] = rols;
+            }
+
             // Fetch Project Category icon's filename depending on the name of the current category
             categoryIconNames[i] = ConfigHelper.getProjectCategoryIconNameSm(projectCategories[i].getName());
+        }
+
+        if (ungroupedProjects.length != 0 && myProjects) {
+            Deliverable[] allMyDeliverables = getDeliverables(
+                    ActionsHelper.createDeliverableManager(request), projects, phases, myResources);
+
+            // Group the deliverables per projects in list
+            for (int i = 0; i < projects.length; ++i) {
+                String[] deliverables = new String[projects[i].length];
+                for (int j = 0; j < projects[i].length; ++j) {
+                    deliverables[j] = getMyDeliverablesForPhases(
+                            messages, allMyDeliverables, phases[i][j], myResources[i][j]);
+                }
+                myDeliverables[i] = deliverables;
+            }
         }
 
         int totalProjectsCount = 0;
@@ -1456,7 +1491,6 @@ public class ProjectActions extends DispatchAction {
         request.setAttribute("projects", projects);
         request.setAttribute("rootCatalogIcons", rootCatalogIcons);
         request.setAttribute("rootCatalogNames", rootCatalogNames);
-        request.setAttribute("myRoles", myRoles);
         request.setAttribute("phases", phases);
         request.setAttribute("phaseEndDates", phaseEndDates);
         request.setAttribute("projectEndDates", projectEndDates);
@@ -1465,7 +1499,168 @@ public class ProjectActions extends DispatchAction {
         request.setAttribute("totalProjectsCount", new Integer(totalProjectsCount));
         request.setAttribute("categoryIconNames", categoryIconNames);
 
+        // If the currently displayed list is a list of "My" Projects, add some more attributes
+        if (myProjects) {
+            request.setAttribute("isMyProjects", new Boolean(myProjects));
+            request.setAttribute("myRoles", myRoles);
+            request.setAttribute("myDeliverables", myDeliverables);
+        }
+
         // Signal about successfull execution of the Action
         return mapping.findForward(Constants.SUCCESS_FORWARD_NAME);
+    }
+
+    private Deliverable[] getDeliverables(
+            DeliverableManager manager, Project[][] projects, Phase[][][] phases, Resource[][][] resources)
+        throws DeliverablePersistenceException, SearchBuilderException, DeliverableCheckingException {
+        // Validate parameters
+        ActionsHelper.validateParameterNotNull(manager, "manager");
+        ActionsHelper.validateParameterNotNull(projects, "projects");
+        ActionsHelper.validateParameterNotNull(phases, "phases");
+        ActionsHelper.validateParameterNotNull(resources, "resources");
+
+        List projectIds = new ArrayList();
+        List phaseTypeIds = new ArrayList();
+        List resourceIds = new ArrayList();
+        Set phaseTypesSet = new HashSet();
+
+        for (int i = 0; i < projects.length; ++i) {
+            for (int j = 0; j < projects[i].length; ++j) {
+                projectIds.add(new Long(projects[i][j].getId()));
+
+                // Get an array of active phases for the project
+                Phase[] activePhases = phases[i][j];
+                // If there are no active phases, no need to select deliverables for this project
+                if (activePhases == null) {
+                    continue;
+                }
+
+                for (int k = 0; k < activePhases.length; ++k) {
+                    Long phaseTypeId = new Long(activePhases[k].getPhaseType().getId());
+
+                    // Do not add phase type more than once
+                    if (!phaseTypesSet.contains(phaseTypeId)) {
+                        phaseTypeIds.add(phaseTypeId);
+                        phaseTypesSet.add(phaseTypeId);
+                    }
+                }
+
+                // Get an array of "my" resources for the active phases
+                Resource[] myResources = resources[i][j];
+                // If there are no "my" resources, skip the rest of the loop
+                if (resources == null) {
+                    continue;
+                }
+
+                for (int k = 0; k < myResources.length; ++k) {
+                    resourceIds.add(new Long(myResources[k].getId()));
+                }
+            }
+        }
+
+        // If any of the sets is empty, there cannot be any deliverables
+        if (projectIds.isEmpty() || phaseTypeIds.isEmpty() || resourceIds.isEmpty()) {
+            return new Deliverable[0]; // No deliverables
+        }
+
+        // Build filters to select deliverables
+        Filter filterProjects = new InFilter("project_id", projectIds);
+        Filter filterPhases = new InFilter("phase_id", phaseTypeIds);
+        Filter filterResources = new InFilter("resource_id", resourceIds);
+        // Build final combined filter
+        Filter filter = new AndFilter(Arrays.asList(new Filter[] {filterProjects, filterPhases, filterResources}));
+
+        // Get and return an array of my incomplete deliverables for all active phases.
+        // These deliverables will require furter grouping
+        return manager.searchDeliverables(filter, new Boolean(false));
+    }
+
+    private String getRolesFromResources(MessageResources messages, Resource[] resources) {
+        // Validate parameters
+        ActionsHelper.validateParameterNotNull(messages, "messages");
+        ActionsHelper.validateParameterNotNull(resources, "resources");
+
+        if (resources == null || resources.length == 0) {
+            return messages.getMessage("ResourceRole.Public");
+        }
+
+        StringBuffer buffer = new StringBuffer();
+        Set rolesSet = new HashSet();
+
+        for (int i = 0; i < resources.length; ++i) {
+            // Get the name for a resource in the current iteration
+            String resourceRole = resources[i].getResourceRole().getName();
+
+            if (rolesSet.contains(resourceRole)) {
+                continue;
+            }
+
+            if (buffer.length() != 0) {
+                buffer.append("<br />");
+            }
+            buffer.append(messages.getMessage("ResourceRole." + resourceRole.replaceAll(" ", "")));
+            rolesSet.add(resourceRole);
+        }
+
+        return (buffer.length() != 0) ? buffer.toString() : messages.getMessage("ResourceRole.Public");
+    }
+
+    private String getMyDeliverablesForPhases(
+            MessageResources messages, Deliverable[] deliverables, Phase[] phases, Resource[] resources) {
+        // Validate parameters
+        ActionsHelper.validateParameterNotNull(messages, "messages");
+
+        if (deliverables == null || deliverables.length == 0 ||
+                phases == null || phases.length == 0 ||
+                resources == null || resources.length == 0) {
+            return null; // No deliverables
+        }
+
+        StringBuffer buffer = new StringBuffer();
+        Set deliverablesSet = new HashSet();
+
+        for (int i = 0; i < deliverables.length; ++i) {
+            // Get a deliverable for the current iteration
+            Deliverable deliverable = deliverables[i];
+
+            // Check if this deliverable is for any of the phases in question
+            int j = 0;
+
+            for (;j < phases.length; ++j) {
+                if (deliverable.getPhase() == phases[j].getPhaseType().getId()) {
+                    break;
+                }
+            }
+            // If this deliverable is not for any of the phases, continue the search
+            if (j == phases.length) {
+                continue;
+            }
+
+            for (j = 0;j < resources.length; ++j) {
+                if (deliverable.getResource() == resources[j].getId()) {
+                    break;
+                }
+            }
+            // If this deliverable is not for any of the resources, continue the search
+            if (j == resources.length) {
+                continue;
+            }
+
+            // Get the name of the deliverable
+            String deliverableName = deliverable.getName();
+            // Do not add the same deliverable twice
+            if (deliverablesSet.contains(deliverableName)) {
+                continue;
+            }
+
+            // If this is not the first deliverable, add line-breaking tag
+            if (buffer.length() != 0) {
+                buffer.append("<br />");
+            }
+            buffer.append(messages.getMessage("Deliverable." + deliverableName.replaceAll(" ", "")));
+            deliverablesSet.add(deliverableName);
+        }
+
+        return (buffer.length() != 0) ? buffer.toString() : null;
     }
 }
