@@ -38,25 +38,7 @@
 		 * TODO: Write docs for this function
 		 */
 		function patchParamIndex(paramNode, newIndex) {
-			// Note, that this function was written in weird way,
-			// hoping that it will work in IE. But it cannot be actually tested,
-			// as there are many other problems.
-			var newName = paramNode.name.replace(/\[([0-9])+\]/, "[" + newIndex + "]");
-			var newNode = document.createElement(paramNode.tagName);
-			if (paramNode.hasChildNodes()) {
-				for (var i = 0; i < paramNode.childNodes.length; i++) {
-					newNode.appendChild(paramNode.childNodes.item(i));
-				}
-			}
-			for (var i = 0; i < paramNode.attributes.length; i++) {
-				var attrNode = paramNode.attributes.item(i);
-				if (attrNode.nodeName == "name") {
-					newNode.setAttribute("name", newName);
-				} else {
-					newNode.setAttribute(attrNode.nodeName, attrNode.nodeValue);
-				}				
-			}
-			paramNode.parentNode.replaceChild(newNode, paramNode);
+			paramNode.name = paramNode.name.replace(/\[([0-9])+\]/, "[" + newIndex + "]");
 		}
 		
 		/*
@@ -255,7 +237,7 @@
 			// Also add it to the phase rows
 			var startPhaseCombos = getChildrenByNamePrefix(document.documentElement, "phase_start_phase");			
 			for (var i = 0; i < startPhaseCombos.length; i++) {
-			//	startPhaseCombos[i].add(new Option(phaseName, phaseId), null);
+				startPhaseCombos[i].add(new Option(phaseName, phaseId), null);
 			}
 
 			// Create a new row to represent the phase
