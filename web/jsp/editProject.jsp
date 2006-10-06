@@ -10,6 +10,7 @@
 	<title><bean:message key="OnlineReviewApp.title" /></title>
 
 	<!-- TopCoder CSS -->
+	<link type="text/css" rel="stylesheet" href="<html:rewrite page='/css/style.css' />" />
 	<link type="text/css" rel="stylesheet" href="<html:rewrite page='/css/coders.css' />" />
 	<link type="text/css" rel="stylesheet" href="<html:rewrite page='/css/tcStyles.css' />" />
 
@@ -369,7 +370,15 @@
 						<html:hidden property="method" value="saveProject" />
 
 						<%-- TODO: Validation errors display should be much more than is here --%>
-						<html:errors/>
+						<c:if test="${not empty requestScope['org.apache.struts.action.ERROR']}">
+							<table cellpadding="0" cellspacing="0" border="0">
+								<tr><td width="16"><!-- @ --></td><td><!-- @ --></td></tr>
+								<tr>
+									<td colspan="2"><bean:message key="error.com.cronos.onlinereview.Errors" /></td>
+								</tr>
+								<html:errors />
+							</table><br />
+						</c:if>
 
 						<%-- If editing the existing project, render its pid --%>
 						<c:if test="${not newProject}">
