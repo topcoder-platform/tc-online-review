@@ -5,7 +5,9 @@
         <wb-resource deploy-path="/WEB-INF" source-path="/conf/WEB-INF"/>
         <wb-resource deploy-path="/WEB-INF/classes/com" source-path="/conf/com"/>
         <wb-resource deploy-path="/WEB-INF/classes/templates" source-path="/conf/templates"/>
+        <wb-resource deploy-path="/WEB-INF/classes/ApplicationServer.properties" source-path="/conf/ApplicationServer.properties"/>
         <wb-resource deploy-path="/WEB-INF/classes/MessageResources.properties" source-path="/conf/MessageResources.properties"/>
+        <wb-resource deploy-path="/WEB-INF/classes/log4j.xml" source-path="/conf/log4j.xml"/>
         <wb-resource deploy-path="/WEB-INF/classes/OnlineReview.xml" source-path="/conf/OnlineReview.xml"/>
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/java/main"/>
         <dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/review/lib/tcs/authentication_factory/2.0/authentication_factory.jar">
@@ -180,6 +182,12 @@
             <dependency-type>uses</dependency-type>
         </dependent-module>
         <dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/review/lib/third_party/jstl.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/review/lib/third_party/log4j.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/review/lib/third_party/shared.jar">
             <dependency-type>uses</dependency-type>
         </dependent-module>
         <dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/review/lib/third_party/standard.jar">

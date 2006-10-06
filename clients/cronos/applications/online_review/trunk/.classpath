@@ -64,6 +64,8 @@
     <classpathentry exported="true" kind="lib" path="lib/third_party/ifx-jdbc.jar"/>
     <classpathentry exported="true" kind="lib" path="lib/third_party/jakarta-oro.jar"/>
     <classpathentry exported="true" kind="lib" path="lib/third_party/jstl.jar"/>
+    <classpathentry exported="true" kind="lib" path="lib/third_party/log4j.jar"/>
+    <classpathentry exported="true" kind="lib" path="lib/third_party/shared.jar"/>
     <classpathentry exported="true" kind="lib" path="lib/third_party/standard.jar"/>
     <classpathentry exported="true" kind="lib" path="lib/third_party/struts-1.2.9.jar"/>
     <classpathentry exported="true" kind="lib" path="lib/third_party/struts-el.jar"/>
