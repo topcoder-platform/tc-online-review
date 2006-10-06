@@ -12,9 +12,9 @@
 				(${typeCounts[idxrType.index]})</span></div>
 			<c:forEach items="${projectCategories}" var="category" varStatus="idxrCategory">
 				<c:if test="${category.projectType.id == type.id}">
-					<table class="scorecard" style="border-bottom:none;" cellpadding="0" cellspacing="0" width="100%">
+					<table class="scorecard" width="100%" cellpadding="0" cellspacing="0">
 						<tr>
-    					<td class="title" colspan="7">
+    					<td class="title" colspan='${(isMyProjects) ? "7" : "5"}'>
     						<html:img page="/i/${categoryIconNames[idxrCategory.index]}" alt="" width="25" height="17" border="0" align="right" />
     						<a onclick="return expcollHandler(this)" href="javascript:void(0)" id="Out${idxrCategory.index}" class="Outline">
     						<html:img styleId="Out${idxrCategory.index}i" styleClass="Outline" border="0" page="/i/plus.gif" width="9" height="9" style="margin-right:5px;" />
@@ -27,11 +27,15 @@
 						<tr>
 							<td class="headerC" width="1%"></td>
 							<td class="header"><bean:message key="listProjects.tblHeader.Project" /></td>
-							<td class="header"><bean:message key="listProjects.tblHeader.MyRole" /></td>
-							<td class="header" nowrap="nowrap"><a href="#" style="text-decoration:underline;"><bean:message key="listProjects.tblHeader.Phase" /></a></td>
-							<td class="headerC" nowrap="nowrap"><a href="#" style="text-decoration:underline;"><bean:message key="listProjects.tblHeader.PhaseEndDate" /></a></td>
-							<td class="headerC" nowrap="nowrap"><a href="#" style="text-decoration:underline;"><bean:message key="listProjects.tblHeader.ProjectEndDate" /></a></td>
-							<td class="header" nowrap="nowrap"><a href="#" style="text-decoration:underline;"><bean:message key="listProjects.tblHeader.Deliverable" /></a></td>
+							<c:if test="${isMyProjects}">
+								<td class="header"><bean:message key="listProjects.tblHeader.MyRole" /></td>
+							</c:if>
+							<td class="header" nowrap="nowrap"><bean:message key="listProjects.tblHeader.Phase" /></td>
+							<td class="headerC" nowrap="nowrap"><bean:message key="listProjects.tblHeader.PhaseEndDate" /></td>
+							<td class="headerC" nowrap="nowrap"><bean:message key="listProjects.tblHeader.ProjectEndDate" /></td>
+							<c:if test="${isMyProjects}">
+								<td class="header" nowrap="nowrap"><bean:message key="listProjects.tblHeader.Deliverable" /></td>
+							</c:if>
 						</tr>
 						<c:forEach items="${projects[idxrCategory.index]}" var="project" varStatus="idxrProject">
 							<tr class='${(idxrProject.index % 2 == 0) ? "light" : "dark"}'>
@@ -41,32 +45,39 @@
     									<td><html:img page="/i/${categoryIconNames[idxrCategory.index]}" alt="" width="25" height="17" border="0" /></td>
     									<td><html:img page="/i/${rootCatalogIcons[idxrCategory.index][idxrProject.index]}" alt="${rootCatalogNames[idxrCategory.index][idxrProject.index]}" border="0" /></td>
     									<td><html:img page="/i/clear.gif" border="0" width="5" height="17" /></td>
-    									<td><a href="ViewProjectDetails.do?method=viewProjectDetails&pid=${project.id}"><strong>${project.allProperties["Project Name"]}</strong> version ${project.allProperties["Project Version"]}</a></td>
+    									<td>
+    										<html:link page="/actions/ViewProjectDetails.do?method=viewProjectDetails&amp;pid=${project.id}"><strong>${project.allProperties["Project Name"]}</strong>
+    											version ${project.allProperties["Project Version"]}</html:link></td>
     								</tr>
     							</table>
 								</td>
-								<td class="valueC">${myRoles[idxrCategory.index][idxrProject.index]}</td>
+								<c:if test="${isMyProjects}">
+									<td class="valueC">${myRoles[idxrCategory.index][idxrProject.index]}</td>
+								</c:if>
 								<c:set var="phase" value="${phases[idxrCategory.index][idxrProject.index]}" />
 								<c:if test="${!(empty phase)}">
-									<td class="value" nowrap="nowrap"><bean:message key='ProjectPhase.${fn:replace(phase.phaseType.name, " ", "")}' /></td>
+									<td class="value" nowrap="nowrap"><bean:message key='ProjectPhase.${fn:replace(phase[0].phaseType.name, " ", "")}' /></td>
 									<td class="valueC">${phaseEndDates[idxrCategory.index][idxrProject.index]}</td>
 									<td class="valueC">${projectEndDates[idxrCategory.index][idxrProject.index]}</td>
+									<c:if test="${isMyProjects}">
+										<td class="value" nowrap="nowrap">${myDeliverables[idxrCategory.index][idxrProject.index]}</td>
+									</c:if>
 								</c:if>
 								<c:if test="${empty phase}">
-									<td class="value"><!-- @ --></td>
-									<td class="value"><!-- @ --></td>
-									<td class="value"><!-- @ --></td>
+									<td class="value" colspan="3"><!-- @ --></td>
+									<c:if test="${isMyProjects}">
+										<td class="value"><!-- @ --></td>
+									</c:if>
 								</c:if>
-								<td class="value" nowrap="nowrap"><!-- @ --></td>
 							</tr>
 						</c:forEach>
 						<c:if test="${fn:length(projects[idxrCategory.index]) == 0}">
 							<tr class="light">
-								<td class="value" colspan="7"><bean:message key="listProjects.NoProjects.Category" /></td>
+								<td class="value" colspan='${(isMyProjects) ? "7" : "5"}'><bean:message key="listProjects.NoProjects.Category" /></td>
 							</tr>
 						</c:if>
 						<tr>
-							<td class="lastRowTD" colspan="7"><!-- @ --></td>
+							<td class="lastRowTD" colspan='${(isMyProjects) ? "7" : "5"}'><!-- @ --></td>
 						</tr>
 						</tbody>
 					</table>
