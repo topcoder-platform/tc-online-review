@@ -20,12 +20,12 @@
 	<script language="JavaScript" type="text/javascript" src="<html:rewrite page='/scripts/util.js' />"><!-- @ --></script>
 
 	<script language="JavaScript" type="text/javascript"><!--
-				
+
 		// TODO: Write docs for following vars
 		var lastResourceIndex = ${fn:length(projectForm.map['resources_id']) - 1};
-		var lastPhaseIndex = ${fn:length(projectForm.map['phase_id']) - 1};	
+		var lastPhaseIndex = ${fn:length(projectForm.map['phase_id']) - 1};
 		var nameCellIndex = ${newProject ? 0 : 1};
-		
+
 		function getUniqueId() {
 			var idNode = document.getElementsByName("js_current_id")[0];
 			var currentId = parseInt(idNode.value, 10);
@@ -33,14 +33,14 @@
 			idNode.value = currentId + "";
 			return "js_id_" + currentId;
 		}
-		
+
 		/*
 		 * TODO: Write docs for this function
 		 */
 		function patchParamIndex(paramNode, newIndex) {
 			paramNode.name = paramNode.name.replace(/\[([0-9])+\]/, "[" + newIndex + "]");
 		}
-		
+
 		/*
 		 * TODO: Write docs for this function
 		 */
@@ -66,17 +66,14 @@
 				newSelectNodes[i].value = oldSelectNodes[i].value;
 			}
 			return clonedNode;
-		}		
-	
-		
-	
-	
+		}
+
 		/*
 		 * This function adds a new row to resources table.
 		 */
 		function addNewResource() {
 			// TODO: Make the combos and possibly radio buttons copy their state correctly
-		
+
 			// Get resources table node
 			var resourcesTable = document.getElementById("resources_tbl");
 			// Get the number of rows in table
@@ -99,15 +96,15 @@
 			// Set hidden resources_action parameter to "add"
 			var actionInput = inputs[0];
 			actionInput.value = "add";
-			
+
 			// Increase resource index
 			lastResourceIndex++;
-			
+
 			// Rename all the inputs to have a new index
 			patchAllChildParamIndexes(newRow, lastResourceIndex);
 
 			// Insert new row into resources table
-			resourcesTable.tBodies[0].insertBefore(newRow, resourcesTable.rows[rowCount - 1]);			
+			resourcesTable.tBodies[0].insertBefore(newRow, resourcesTable.rows[rowCount - 1]);
 		}
 
 		/*
@@ -118,7 +115,7 @@
 			var inputs = resourceRowNode.cells[4].getElementsByTagName("input");
 			// Check if the resource to be deleted has been persisted
 			var id = inputs[1].value;
-			
+
 			// Hide the row, don't delete it as the resource
 			// should be deleted from DB on submit
 			resourceRowNode.style["display"] = "none";
@@ -126,7 +123,6 @@
 			// Set hidden resources_action parameter to "delete"
 			var actionInput = inputs[0];
 			actionInput.value = "delete";
-		
 
 			// TODO: Complete it, doesn't work for some reason
 			// TODO: Probably the fix is to skip hidden rows, etc.
@@ -139,7 +135,6 @@
 					rows[i].className = "light";
 				}
 			}
-
 		}
 
 
@@ -181,7 +176,7 @@
 			var criterionRow = null;
 			// TODO: Should be done in locale-independent way
 			// Check if the phase should have a criterion row and at it if it is needed
-			if (phaseName == "Screening" || phaseName == "Review" || phaseName == "Approval" || 
+			if (phaseName == "Screening" || phaseName == "Review" || phaseName == "Approval" ||
 					phaseName == "Registration" || phaseName == "Submission" || phaseName == "Appeals") {
 				var templateRow;
 				if (phaseName == "Screening") {
@@ -197,22 +192,21 @@
 				} else if (phaseName == "Appeals") {
 				  	templateRow = document.getElementById("view_appeal_responses_row_template");
 				}
-				 
+
  				criterionRow = cloneInputRow(templateRow);
- 				
+
  				// Assign the id
 				criterionRow.id = getUniqueId();
 				// Remove "display: none;"
 				criterionRow.style["display"] = "";
-	
+
 				// Rename all the inputs to have a new index
 				patchAllChildParamIndexes(criterionRow, lastPhaseIndex);
 				// Insert criterion row into proper position - after new phase row
 				dojo.dom.insertAfter(criterionRow, phaseRow);
 			}
-		
 		}
-		
+
 		/*
 		 * This function adds new phase to phases table, it includes addition of several rows.
 		 */
@@ -235,32 +229,32 @@
 			var startPhaseCombo = getChildByName(addPhaseTable, "addphase_start_phase");
 			startPhaseCombo.add(new Option(phaseName, phaseId), null);
 			// Also add it to the phase rows
-			var startPhaseCombos = getChildrenByNamePrefix(document.documentElement, "phase_start_phase");			
+			var startPhaseCombos = getChildrenByNamePrefix(document.documentElement, "phase_start_phase");
 			for (var i = 0; i < startPhaseCombos.length; i++) {
 				startPhaseCombos[i].add(new Option(phaseName, phaseId), null);
 			}
 
 			// Create a new row to represent the phase
 			// TODO: Check why retreive by id doesn't work
-			var newRow = cloneInputRow(timelineTable.rows[1]);  //document.getElementById("phase_row_template"));			
+			var newRow = cloneInputRow(timelineTable.rows[1]);  //document.getElementById("phase_row_template"));
 			// Assign the id
 			newRow.id = phaseId;
 			// Remove "display: none;"
 			newRow.style["display"] = "";
-			
+
 			// Set the phase id hidden control
-			var jsIdNode = getChildByNamePrefix(newRow, "phase_js_id");			
-			jsIdNode.value = phaseId;		
-						
+			var jsIdNode = getChildByNamePrefix(newRow, "phase_js_id");
+			jsIdNode.value = phaseId;
+
 			// Increase phase index
 			lastPhaseIndex++;
-			
+
 			// Rename all the inputs to have a new index
 			patchAllChildParamIndexes(newRow, lastPhaseIndex);
 
-			
+
 			// Populate newly created phase inputs from the add phase form
-			var inputNames = ["type", 
+			var inputNames = ["type",
 				"start_date", "start_time", "start_AMPM",
 				"start_by_phase", "start_phase", "start_when",
 				"start_plusminus", "start_amount", "start_dayshrs",
@@ -273,8 +267,8 @@
 			// TODO: Implement numbering of same-typed phases
 			var phaseNameCell = newRow.cells[nameCellIndex];
 			dojo.dom.textContent(phaseNameCell, phaseName);
-			getChildByNamePrefix(newRow, "phase_name").value = phaseName;				
-			
+			getChildByNamePrefix(newRow, "phase_name").value = phaseName;
+
 			// Add the row to the appropriate position
 			var wherePhaseId = whereCombo.value;
 			if (wherePhaseId == "") {
@@ -282,25 +276,25 @@
 				timelineTable.tBodies[0].appendChild(newRow);
 			} else {
 				// Find the reference phase row
-				var wherePhaseNode = document.getElementById(wherePhaseId);	
-				
+				var wherePhaseNode = document.getElementById(wherePhaseId);
+
 				if (getChildByName(addPhaseTable, "addphase_when").value == "before") {
 					dojo.dom.insertBefore(newRow, wherePhaseNode);
 				} else {
-					if (dojo.dom.nextElement(wherePhaseNode) && 
+					if (dojo.dom.nextElement(wherePhaseNode) &&
 							dojo.dom.nextElement(wherePhaseNode).className == "highlighted") {
 						wherePhaseNode = dojo.dom.nextElement(wherePhaseNode);
-					} 
-					
+					}
+
 					dojo.dom.insertAfter(newRow, wherePhaseNode);
 				}
 			}
-					
+
 			// Add phase criterion row if needed
 			addPhaseCriterion(phaseName, newRow);
-		}		
-		
-		
+		}
+
+
 		/*
 		 * This function deletes the option from select input which has the specified value.
 		 */
@@ -312,7 +306,7 @@
 				}
 			}
 		}
-		
+
 		/*
 		 * This function deletes the exisiting phase from the phases table.
 		 * It also deletes the corresponding phase criterion if needed.
@@ -325,31 +319,29 @@
 			// Set hidden phase_action parameter to "delete"
 			var actionInput = getChildByNamePrefix(phaseRowNode, "phase_action");
 			actionInput.value = "delete";
-			
+
 			// Get phase JS id
 			var phaseId = phaseRowNode.id;
-						
+
 			// Delete phase from addphase form select options
 			var addPhaseTable = document.getElementById("addphase_tbl");
 			var whereCombo = getChildByName(addPhaseTable, "addphase_where");
-			deleteOptionWithValue(whereCombo, phaseId);			
+			deleteOptionWithValue(whereCombo, phaseId);
 			var startPhaseCombo = getChildByName(addPhaseTable, "addphase_start_phase");
 			deleteOptionWithValue(startPhaseCombo, phaseId);
-			
+
 			// Also delete it from the phase rows
-			var startPhaseCombos = getChildrenByNamePrefix(document.documentElement, "phase_start_phase");			
+			var startPhaseCombos = getChildrenByNamePrefix(document.documentElement, "phase_start_phase");
 			for (var i = 0; i < startPhaseCombos.length; i++) {
 				deleteOptionWithValue(startPhaseCombos[i], phaseId)
 			}
-			
-			// Remove phase criterion row if needed 
+
+			// Remove phase criterion row if needed
 			nextRowNode = dojo.dom.nextElement(phaseRowNode);
 			if (nextRowNode.className == "highlighted") {
 				nextRowNode.parentNode.removeChild(nextRowNode);
 			}
 		}
-
-		
 	--></script>
 </head>
 
@@ -358,7 +350,7 @@
 
 	<table width="100%" border="0" cellpadding="0" cellspacing="0">
 		<tr valign="top">
-			<!-- Left Column Begins-->	
+			<!-- Left Column Begins -->
 			<td width="180">
 				<jsp:include page="/includes/inc_leftnav.jsp" />
 			</td>
@@ -375,17 +367,17 @@
 				<div id="mainMiddleContent">
 					<html:form action="/actions/SaveProject">
 						<html:hidden property="method" value="saveProject" />
-						
+
 						<%-- TODO: Validation errors display should be much more than is here --%>
 						<html:errors/>
-						
+
 						<%-- If editing the existing project, render its pid --%>
 						<c:if test="${not newProject}">
 							<html:hidden property="pid" />
 						</c:if>
-						
+
 						<html:hidden property="js_current_id" />
-						
+
 						<%-- If creating a new project, show project details table --%>
 						<c:if test="${newProject}">
 							<table class="scorecard" cellpadding="0" width="100%" style="border-collapse: collapse;">
@@ -436,7 +428,7 @@
 								</tr>
 							</table><br />
 						</c:if>
-						
+
 						<%-- If editing the exsiting project, include timeline editor here --%>
 						<c:if test="${not newProject}">
 							<jsp:include page="/includes/project/project_edit_timeline.jsp" />
@@ -472,22 +464,22 @@
 						<table class="scorecard" cellpadding="0" cellspacing="0" width="100%" style="border-collapse: collapse;">
 							<tr>
 								<%-- If creating a new project, name this table as "References" --%>
-								<c:if test="${newProject}">								
+								<c:if test="${newProject}">
 									<td class="title" colspan="2"><bean:message key="editProject.References.title" /></td>
-								</c:if>								
+								</c:if>
 								<%-- If editing the existing project, name this table as "Project Details" --%>
-								<c:if test="${not newProject}">								
+								<c:if test="${not newProject}">
 									<td class="title" colspan="2"><bean:message key="editProject.ProjectDetails.title" /></td>
 								</c:if>
 							</tr>
 							<%-- If editing the existing project, should have project name edited here --%>
-							<c:if test="${not newProject}">		
+							<c:if test="${not newProject}">
 								<tr>
 									<td class="valueB"><bean:message key="editProject.ProjectDetails.Name" /></td>
 									<td class="value" nowrap="nowrap"><html:text styleClass="inputBox" property="project_name" style="width: 350px;" /></td>
 								</tr>
-							</c:if>						
-								
+							</c:if>
+
 							<tr class="light">
 								<td class="value" nowrap="nowrap">
 									<b><bean:message key="editProject.References.ForumId" /></b><br />
@@ -522,7 +514,7 @@
 								<td class="lastRowTD"><!-- @ --></td>
 							</tr>
 						</table><br />
-						
+
 						<%-- If creating a new project, include timeline editor here --%>
 						<c:if test="${newProject}">
 							<jsp:include page="/includes/project/project_edit_timeline.jsp" />
@@ -530,14 +522,14 @@
 
 						<%-- Include resources editor --%>
 						<jsp:include page="/includes/project/project_edit_resources.jsp" />
-						
+
 						<c:if test="${not newProject}">
 							<table class="scorecard" id="status">
 								<tr>
 									<td class="title"><b><bean:message key="editProject.Status.title" /></b></td>
 								</tr>
 								<tr class="light">
-									<td class="value"><p align="left"><b>&nbsp;<bean:message key="editProject.Status.CurrentStatus" />&nbsp; </b>		
+									<td class="value"><p align="left"><b>&nbsp;<bean:message key="editProject.Status.CurrentStatus" />&nbsp; </b>
 										<html:select styleClass="inputBox" property="status">
 											<c:forEach var="status" items="${projectStatuses}">
 												<html:option key='ProjectStatus.${fn:replace(status.name, " ", "")}' value="${status.id}" />
@@ -548,33 +540,37 @@
 									</td>
 								</tr>
 								<tr>
-		
-									<td class="lastRowTD"></td>
+									<td class="lastRowTD"><!-- @ --></td>
 								</tr>
 							</table><br />
-						
+
 							<table class="scorecard" id="Explanation">
 								<tr>
 									<td class="title"><bean:message key="editProject.Explanation.title" /></td>
 								</tr>
-								<tr class="light">		
+								<tr class="light">
 									<td class="Value"><bean:message key="editProject.Explanation.description" /><br />
 										<html:textarea styleClass="inputTextBox" property="explanation" />
 									</td>
 								</tr>
 								<tr>
-									<td class="lastRowTD"></td>
+									<td class="lastRowTD"><!-- @ --></td>
 								</tr>
-							</table>
+							</table><br />
 						</c:if>
-												
+
 						<div align="right">
 							<html:image srcKey="btnSave.img" altKey="btnSave.alt" border="0" />&#160;
-							<a href="javascript:history.go(-1)"><html:img srcKey="btnCancel.img" altKey="btnCancel.alt" border="0" /></a>
+							<c:if test="${newProject}">
+								<html:link page="/actions/ListProjects.do?method=listProjects"><html:img srcKey="btnCancel.img" altKey="btnCancel.alt" border="0" /></html:link>
+							</c:if>
+							<c:if test="${not newProject}">
+								<html:link page="/actions/ViewProjectDetails.do?method=viewProjectDetails&pid=${project.id}"><html:img srcKey="btnCancel.img" altKey="btnCancel.alt" border="0" /></html:link>
+							</c:if>
 						</div>
 					</html:form>
 				</div>
-				<p><br /></p>
+				<br /><br />
 			</td>
 			<!-- Center Column Ends -->
 
