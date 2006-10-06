@@ -10,16 +10,15 @@
 
     <form-beans>
 
-        <form-bean name="loginForm" dynamic="true"
-        	type="org.apache.struts.validator.DynaValidatorForm">
-        	<form-property name="userName" type="java.lang.String" />
-        	<form-property name="password" type="java.lang.String" />
+        <form-bean name="loginForm" dynamic="true" type="org.apache.struts.validator.DynaValidatorForm">
+            <form-property name="userName" type="java.lang.String" />
+            <form-property name="password" type="java.lang.String" />
         </form-bean>
 
         <form-bean name="projectForm" dynamic="true"
             type="org.apache.struts.validator.LazyValidatorForm">
             <form-property name="js_current_id" type="java.lang.Long" />
-                        
+
             <form-property name="pid" type="java.lang.Long" />
             <form-property name="project_name" type="java.lang.String" />
             <form-property name="project_type" type="java.lang.Long" />
@@ -565,12 +564,10 @@
 
 <!-- =============================================== Plug Ins Configuration -->
 
-  <!-- =================================================== Validator plugin -->
+    <!-- =================================================== Validator plugin -->
 
-  <plug-in className="org.apache.struts.validator.ValidatorPlugIn">
-    <set-property
-        property="pathnames"
-        value="/WEB-INF/validator-rules.xml,/WEB-INF/validation.xml"/>
-  </plug-in>
+    <plug-in className="org.apache.struts.validator.ValidatorPlugIn">
+        <set-property property="pathnames" value="/WEB-INF/validator-rules.xml,/WEB-INF/validation.xml"/>
+        <!-- set-property property="stopOnFirstError" value="false"/ -->
+    </plug-in>
 </struts-config>
-

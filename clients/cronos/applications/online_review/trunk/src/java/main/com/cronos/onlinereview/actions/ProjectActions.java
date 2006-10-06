@@ -4,7 +4,6 @@
 package com.cronos.onlinereview.actions;
 
 import java.text.DateFormat;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -516,7 +515,6 @@ public class ProjectActions extends DispatchAction {
             HttpServletRequest request, HttpServletResponse response) throws BaseException {
         // TODO: Complete this method
         // It is actually very-very incomplete just partially demonstrates the functionality
-        // We assume that the project is always being created; edit is not supported yet
 
         // Cast the form to its actual type
         LazyValidatorForm lazyForm = (LazyValidatorForm) form;
@@ -544,7 +542,6 @@ public class ProjectActions extends DispatchAction {
         ProjectManager manager = ActionsHelper.createProjectManager(request);
 
         // Retrieve project types, categories and statuses
-//        ProjectType[] projectTypes = manager.getAllProjectTypes(); // This line is causing warning
         ProjectCategory[] projectCategories = manager.getAllProjectCategories();
         ProjectStatus[] projectStatuses = manager.getAllProjectStatuses();
 
@@ -658,8 +655,9 @@ public class ProjectActions extends DispatchAction {
      * @return
      * @throws BaseException
      */
-    private Phase[] saveProjectPhases(boolean newProject, HttpServletRequest request, LazyValidatorForm lazyForm, Project project)
-            throws BaseException {
+    private Phase[] saveProjectPhases(boolean newProject,
+            HttpServletRequest request, LazyValidatorForm lazyForm, Project project)
+        throws BaseException {
         // TODO Auto-generated method stub
 
         // Obtain the instance of Phase Manager
@@ -850,7 +848,6 @@ public class ProjectActions extends DispatchAction {
             return projectPhases;
         }
 
-
         // FIXME: Refactor it
         ProjectManager projectManager = ActionsHelper.createProjectManager(request);
         if (newProject) {
@@ -862,7 +859,6 @@ public class ProjectActions extends DispatchAction {
         } else {
             projectManager.updateProject(project, (String) lazyForm.get("explanation"), AuthorizationHelper.getLoggedInUserId(request) + "");
         }
-
 
         // Save the phases at the persistence level
         phaseManager.updatePhases(phProject, AuthorizationHelper.getLoggedInUserId(request) + "");

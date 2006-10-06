@@ -18,13 +18,23 @@
             </field>
         </form>
         
-<!--        <form name="contactManagerForm">
+<!--
+        <form name="projectForm">
+            <field property="explanation" depends="required">
+                <arg0 key="error.com.cronos.onlinereview.actions.editProject.explanation" />
+            </field>
+        </form>
+-->
+
+<!--
+        <form name="contactManagerForm">
             <field property="cat" depends="required">
                 <msg name="required" key="error.com.cronos.onlinereview.actions.contactManager.Category" />
             </field>
             <field property="msg" depends="required">
                 <msg name="required" key="error.com.cronos.onlinereview.actions.contactManager.Message" />
             </field>
-        </form> -->
+        </form>
+-->
     </formset>
 </form-validation>
