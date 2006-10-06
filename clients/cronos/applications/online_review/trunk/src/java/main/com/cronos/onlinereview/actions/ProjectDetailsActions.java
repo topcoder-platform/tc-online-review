@@ -559,8 +559,7 @@ public class ProjectDetailsActions extends DispatchAction {
 
                 if (AuthorizationHelper.hasUserPermission(request, Constants.VIEW_REVIEWER_REVIEWS_PERM_NAME)) {
                     // Get "my" (reviewer's) resource
-                    Resource myResource = ActionsHelper.getMyResourceForPhase(request, phase);
-                    reviewers = new Resource[] {myResource};
+                    reviewers = ActionsHelper.getMyResourcesForPhase(request, phase);
                 }
 
                 if (reviewers == null) {
