@@ -23,10 +23,8 @@ set classpath=%classpath%;%LIB%/tcs/search_builder/1.3/search_builder.jar
 set classpath=%classpath%;%LIB%/tcs/typesafe_enum/1.0/typesafe_enum.jar
 set classpath=%classpath%;%LIB%/tcs/workdays/1.0/workdays.jar
 set classpath=%classpath%;%LIB%/third_party/xerces.jar
-set classpath=%classpath%;%LIB%/third_party/dom.jar
 set classpath=%classpath%;%LIB%/third_party/log4j.jar
-set classpath=%classpath%;%LIB%/third_party/xml-api.jar
 set classpath=%classpath%;%LIB%/third_party/ifx-jdbc.jar
 
-java -classpath "%classpath%" com.topcoder.management.phase.autopilot.AutoPilotJob -config auto_pilot.xml -namespace AutoPilotJob -autopilot com.topcoder.management.phase.autopilot.AutoPilot -poll 50
+java -classpath "%classpath%" com.topcoder.management.phase.autopilot.AutoPilotJob -config auto_pilot.xml -namespace AutoPilotJob -autopilot com.topcoder.management.phase.autopilot.AutoPilot -poll 5
 rem java -classpath "%classpath%" com.topcoder.management.phase.autopilot.AutoPilotJob -config auto_pilot.xml  -namespace com.topcoder.management.phase.autopilot.AutoPilotJob -autopilot com.topcoder.management.phase.autopilot.AutoPilot -project
