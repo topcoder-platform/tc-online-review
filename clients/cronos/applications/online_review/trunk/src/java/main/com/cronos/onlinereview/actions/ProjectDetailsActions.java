@@ -31,6 +31,7 @@ import com.cronos.onlinereview.autoscreening.management.ScreeningManager;
 import com.cronos.onlinereview.autoscreening.management.ScreeningResult;
 import com.cronos.onlinereview.autoscreening.management.ScreeningTask;
 import com.cronos.onlinereview.external.ExternalUser;
+import com.cronos.onlinereview.external.RetrievalException;
 import com.cronos.onlinereview.external.UserRetrieval;
 import com.topcoder.management.deliverable.Deliverable;
 import com.topcoder.management.deliverable.Submission;
@@ -280,40 +281,9 @@ public class ProjectDetailsActions extends DispatchAction {
         if (AuthorizationHelper.hasUserPermission(request, Constants.VIEW_PROJECT_RESOURCES_PERM_NAME)) {
             // Get an array of resources for the project
             allProjectResources = ActionsHelper.getAllResourcesForProject(resMgr, project);
-
-            // Prepare an array to store External User IDs
-            long[] extUserIds = new long[allProjectResources.length];
-            // Fill the array with user IDs retrieved from resource properties
-            for (int i = 0; i < allProjectResources.length; ++i) {
-                String userID = (String) allProjectResources[i].getProperty("External Reference ID");
-                extUserIds[i] = Long.valueOf(userID).longValue();
-            }
-
-            ExternalUser[] extUsers = null;
-            // If there are no resource for this project defined,
-            // there will be no external users
-            if (extUserIds.length != 0) {
-                // Obtain an instance of User Retrieval
-                UserRetrieval usrMgr = ActionsHelper.createUserRetrieval(request);
-                // Retrieve external users for the list of resources using batch retrieval
-                extUsers = usrMgr.retrieveUsers(extUserIds);
-            } else {
-                extUsers = new ExternalUser[0];
-            }
-
-            // This is final array for External User objects. It is needed because the previous
-            // operation may return shorter array than there are resources for the project
-            // (sometimes several resources can be associated with one external user)
-            allProjectExtUsers = new ExternalUser[allProjectResources.length];
-
-            for (int i = 0; i < extUserIds.length; ++i) {
-                for (int j = 0; j < extUsers.length; ++j) {
-                    if (extUsers[j].getId() == extUserIds[i]) {
-                        allProjectExtUsers[i] = extUsers[j];
-                        break;
-                    }
-                }
-            }
+            // Get an array of external users for the corresponding resources
+            allProjectExtUsers = getExternalUsersForResources(
+                    ActionsHelper.createUserRetrieval(request), allProjectResources);
 
             // Place resources and external users into the request
             request.setAttribute("resources", allProjectResources);
@@ -383,8 +353,24 @@ public class ProjectDetailsActions extends DispatchAction {
                 continue;
             }
 
-            if (phaseGroup.getAppFunc().equals(Constants.VIEW_REGISTRANTS_APP_FUNC)) {
-                // TODO: Retrieve submitters' emails as well
+            if (phaseGroup.getAppFunc().equals(Constants.VIEW_REGISTRANTS_APP_FUNC) && submitters != null) {
+                // Get corresponding external users for the array of submitters
+                ExternalUser[] extUsers = (allProjectExtUsers != null) ? allProjectExtUsers :
+                    getExternalUsersForResources(ActionsHelper.createUserRetrieval(request), submitters);
+                String[] userEmails = new String[submitters.length];
+
+                for (int j = 0; j < submitters.length; ++j) {
+                    // Get external ID for the current submitter's resource
+                    long extUserId = Long.parseLong((String) submitters[j].getProperty("External Reference ID"), 10);
+                    for (int k = 0; k < extUsers.length; ++k) {
+                        if (extUserId == extUsers[k].getId()) {
+                            userEmails[j] = extUsers[k].getEmail();
+                            break;
+                        }
+                    }
+                }
+
+                phaseGroup.setRegistantsEmails(userEmails);
             }
 
             if (phaseGroup.getAppFunc().equals(Constants.VIEW_SUBMISSIONS_APP_FUNC) &&
@@ -2474,6 +2460,61 @@ public class ProjectDetailsActions extends DispatchAction {
         }
 
         return ids;
+    }
+
+    /**
+     * This static method retrieves an array of external user objects for the specified array of
+     * resources. Each entry in the resulting array will correspond to the corresponding entry in
+     * the input <code>resources</code> array. If there are no matches found for some resource,
+     * the corresponding item in the resulting array will contain <code>null</code>.
+     *
+     * @return an array of external user objects for the specified resources.
+     * @param retrieval
+     *            a <code>UserRetrieval</code> object used to retrieve external user objects.
+     * @param resources
+     *            an array of resources to retrieve corresponding external user objects for.
+     * @throws IllegalArgumentException
+     *             if any of the parameters are <code>null</code>.
+     * @throws RetrievalException
+     *             if some error happend during external user retrieval.
+     */
+    private static ExternalUser[] getExternalUsersForResources(UserRetrieval retrieval, Resource[] resources)
+        throws RetrievalException {
+        // Validate parameters
+        ActionsHelper.validateParameterNotNull(retrieval, "retrieval");
+        ActionsHelper.validateParameterNotNull(resources, "resources");
+
+        // If there are no resource for this project defined, there will be no external users
+        if (resources.length == 0) {
+            return new ExternalUser[0];
+        }
+
+        // Prepare an array to store External User IDs
+        long[] extUserIds = new long[resources.length];
+        // Fill the array with user IDs retrieved from resource properties
+        for (int i = 0; i < resources.length; ++i) {
+            String userID = (String) resources[i].getProperty("External Reference ID");
+            extUserIds[i] = Long.parseLong(userID, 10);
+        }
+
+        // Retrieve external users to the temporary array
+        ExternalUser[] extUsers = retrieval.retrieveUsers(extUserIds);
+
+        // This is final array for External User objects. It is needed because the previous
+        // operation may return shorter array than there are resources for the project
+        // (sometimes several resources can be associated with one external user)
+        ExternalUser[] allExtUsers = new ExternalUser[resources.length];
+
+        for (int i = 0; i < extUserIds.length; ++i) {
+            for (int j = 0; j < extUsers.length; ++j) {
+                if (extUsers[j].getId() == extUserIds[i]) {
+                    allExtUsers[i] = extUsers[j];
+                    break;
+                }
+            }
+        }
+
+        return allExtUsers;
     }
 
     /**
