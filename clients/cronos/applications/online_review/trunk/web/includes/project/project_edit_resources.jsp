@@ -16,7 +16,7 @@
 		<td class="headerC"><!-- @ --></td>
 	</tr>
 	<c:forEach var="resourceIdx" begin="0" end="${fn:length(projectForm.map['resources_role']) - 1}">
-		<tr class="light">
+		<tr class="light" style="${projectForm.map['resources_action'][resourceIdx] eq 'delete' ? 'display:none' : ''}">
 			<td class="value" nowrap="nowrap">
 				<html:select styleClass="inputBox" property="resources_role[${resourceIdx}]" style="width:150px;">
 					<html:option key="editProject.Resources.SelectRole" value="-1" />
