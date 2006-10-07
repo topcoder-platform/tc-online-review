@@ -73,7 +73,9 @@
 				<html:select styleClass="inputBox" property="phase_start_phase[${phaseIdx}]" style="width:120px;">
 					<html:option key="editProject.Phases.SelectPhase" value="" />
 					<c:forEach var="i" begin="1" end="${fn:length(projectForm.map['phase_id']) - 1}">
-						<html:option value="${projectForm.map['phase_js_id'][i]}">${projectForm.map['phase_name'][i]}</html:option>
+						<c:if test="${phaseIdx ne i}">
+							<html:option value="${projectForm.map['phase_js_id'][i]}">${projectForm.map['phase_name'][i]}</html:option>
+						</c:if>
 					</c:forEach>
 				</html:select>
 				<html:select styleClass="inputBox" property="phase_start_when[${phaseIdx}]">
