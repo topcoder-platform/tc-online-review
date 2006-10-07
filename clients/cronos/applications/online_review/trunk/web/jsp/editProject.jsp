@@ -224,6 +224,13 @@
 			// Generate phase id (for use in the DOM)
 			var phaseId = getUniqueId();
 
+			// Create a new row to represent the phase
+			var newRow = cloneInputRow(document.getElementById("phase_row_template"));
+			// Assign the id
+			newRow.id = phaseId;
+			// Remove "display: none;"
+			newRow.style["display"] = "";
+			
 			// Add the name of the added phase to the select options for add phase form
 			var whereCombo = getChildByName(addPhaseTable, "addphase_where");
 			whereCombo.add(new Option(phaseName, phaseId), null);
@@ -235,14 +242,7 @@
 				startPhaseCombos[i].add(new Option(phaseName, phaseId), null);
 			}
 
-			// Create a new row to represent the phase
-			// TODO: Check why retreive by id doesn't work
-			var newRow = cloneInputRow(timelineTable.rows[1]);  //document.getElementById("phase_row_template"));
-			// Assign the id
-			newRow.id = phaseId;
-			// Remove "display: none;"
-			newRow.style["display"] = "";
-
+			
 			// Set the phase id hidden control
 			var jsIdNode = getChildByNamePrefix(newRow, "phase_js_id");
 			jsIdNode.value = phaseId;

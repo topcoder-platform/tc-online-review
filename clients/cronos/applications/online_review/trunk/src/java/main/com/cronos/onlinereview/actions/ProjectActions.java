@@ -598,28 +598,33 @@ public class ProjectActions extends DispatchAction {
 
         // TODO: Project status change, includes additional explanation to be concatenated
 
+        // Create the map to store the mapping from phase JS ids to phases
+        Map phasesJsMap = new HashMap();
+        
         // Save the project phases
         // FIXME: the project it slef is also saved by the following call. Needs to be refactored
-        Phase[] projectPhases = saveProjectPhases(newProject, request, lazyForm, project);
-
+        Phase[] projectPhases = saveProjectPhases(newProject, request, lazyForm, project, phasesJsMap);
+        
         // Check if there are any validation errors and return appropriate forward
         if (request.getAttribute(Globals.ERROR_KEY) != null) {
             // TODO : Check if the form is really for new project
             request.setAttribute("newProject", Boolean.valueOf(newProject));
 
-
             // Load the lookup data
             loadProjectEditLookups(request);
-
             if (!newProject) {
                 // Store project statuses in the request
                 request.setAttribute("projectStatuses", projectStatuses);
-
                 // Store the retieved project in the request
                 request.setAttribute("project", project);
             }
-
+            
             return mapping.getInputForward();
+        }
+        
+        // If needed switch project current phase
+        if (!newProject) {
+            switchProjectPhase(request, lazyForm, projectPhases, phasesJsMap);
         }
 
         // Save the project resources
@@ -648,17 +653,16 @@ public class ProjectActions extends DispatchAction {
     /**
      * TODO: Document it
      * @param newProject
-     *
      * @param request
      * @param lazyForm
      * @param project
+     * @param phasesJsMap TODO
+     *
      * @return
      * @throws BaseException
      */
-    private Phase[] saveProjectPhases(boolean newProject,
-            HttpServletRequest request, LazyValidatorForm lazyForm, Project project)
-        throws BaseException {
-        // TODO Auto-generated method stub
+    private Phase[] saveProjectPhases(boolean newProject, HttpServletRequest request, LazyValidatorForm lazyForm, 
+            Project project, Map phasesJsMap) throws BaseException {
 
         // Obtain the instance of Phase Manager
         PhaseManager phaseManager = ActionsHelper.createPhaseManager(request);
@@ -679,9 +683,6 @@ public class ProjectActions extends DispatchAction {
 
         // Get the list of all existing phase types
         PhaseType[] allPhaseTypes = phaseManager.getAllPhaseTypes();
-
-        // Create the map to store the mapping from phase JS ids to phases
-        Map phasesJsMap = new HashMap();
 
         // Get the array of phase types specified for each phase
         Long[] phaseTypes = (Long[]) lazyForm.get("phase_type");
@@ -865,58 +866,71 @@ public class ProjectActions extends DispatchAction {
         // TODO : The following line was added just to be safe. May be unneeded as well as another one.
         projectPhases = phProject.getAllPhases();
 
-        // If needed switch project current phase
-        if (!newProject) {
-            // Get current project phase
-            Phase currentPhase = getCurrentProjectPhase(projectPhases);
-            // Get new current phase id
-            String newCurPhaseId = (String) lazyForm.get("current_phase");
-            // Get new current phase
-            Phase newCurrentPhase = (Phase) phasesJsMap.get(newCurPhaseId);
-            if (newCurrentPhase != null) {
-                int i = 0;
-                if (currentPhase != null) {
-                    for (; i < projectPhases.length; i++) {
-                        if (projectPhases[i] == currentPhase) {
-                            break;
-                        }
-                    }
-                }
+        return projectPhases;
+    }
+
+    /**
+     * 
+     * TODO: Document it.
+     * 
+     * @param request
+     * @param lazyForm
+     * @param projectPhases
+     * @param phasesJsMap
+     * @throws BaseException
+     */
+    private void switchProjectPhase(HttpServletRequest request, LazyValidatorForm lazyForm, 
+            Phase[] projectPhases, Map phasesJsMap) throws BaseException {
+        
+        // Get current project phase
+        Phase currentPhase = getCurrentProjectPhase(projectPhases);
+        // Get new current phase id
+        String newCurPhaseId = (String) lazyForm.get("current_phase");
+        // Get new current phase
+        Phase newCurrentPhase = (Phase) phasesJsMap.get(newCurPhaseId);
+        if (newCurrentPhase != null) {
+            int i = 0;
+            if (currentPhase != null) {
                 for (; i < projectPhases.length; i++) {
-                    if (projectPhases[i] != newCurrentPhase) {
-                        if (projectPhases[i].getPhaseStatus().getName().equals(PhaseStatus.OPEN.getName())) {
-                            /*if (phaseManager.canEnd(projectPhases[i])) {
-                              */  phaseManager.end(projectPhases[i],
-                                        Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
-                            /*} else {
-                                // TODO: issue an error
-                            }*/
-                        } else if (projectPhases[i].getPhaseStatus().getName().equals(PhaseStatus.SCHEDULED.getName())) {
-                            /*if (phaseManager.canStart(projectPhases[i])) {
-                              */  phaseManager.start(projectPhases[i],
-                                        Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
-                            /*}
-                            if (phaseManager.canEnd(projectPhases[i])) {
-                              */  phaseManager.end(projectPhases[i],
-                                        Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
-                            //}
-                        }
-                    } else {
-                        if (projectPhases[i].getPhaseStatus().getName().equals(PhaseStatus.SCHEDULED.getName())) {
-                            /*if (phaseManager.canStart(projectPhases[i])) {
-                              */  phaseManager.start(projectPhases[i],
-                                        Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
-                            //}
-                        }
+                    if (projectPhases[i] == currentPhase) {
                         break;
                     }
                 }
             }
+            // Obtain Phase Manager instance
+            PhaseManager phaseManager = ActionsHelper.createPhaseManager(request);            
+            for (; i < projectPhases.length; i++) {
+                if (projectPhases[i] != newCurrentPhase) {
+                    if (projectPhases[i].getPhaseStatus().getName().equals(PhaseStatus.OPEN.getName())) {
+                        /*if (phaseManager.canEnd(projectPhases[i])) {
+                          */  phaseManager.end(projectPhases[i],
+                                    Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
+                        /*} else {
+                            // TODO: issue an error
+                        }*/
+                    } else if (projectPhases[i].getPhaseStatus().getName().equals(PhaseStatus.SCHEDULED.getName())) {
+                        /*if (phaseManager.canStart(projectPhases[i])) {
+                          */  phaseManager.start(projectPhases[i],
+                                    Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
+                        /*}
+                        if (phaseManager.canEnd(projectPhases[i])) {
+                          */  phaseManager.end(projectPhases[i],
+                                    Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
+                        //}
+                    }
+                } else {
+                    if (projectPhases[i].getPhaseStatus().getName().equals(PhaseStatus.SCHEDULED.getName())) {
+                        /*if (phaseManager.canStart(projectPhases[i])) {
+                          */  phaseManager.start(projectPhases[i],
+                                    Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
+                        //}
+                    }
+                    break;
+                }
+            }
         }
-
-        return projectPhases;
     }
-
+    
     /**
      * TODO: Document it
      * Note, that this method assumes that phases are already sorted by the start date, etc.
