@@ -45,7 +45,8 @@
 			<tr class="dark" style="display: none;" id="phase_row_template">
 		</c:if>
 		<c:if test="${phaseIdx ne 0}">
-			<tr class="dark" id="${projectForm.map['phase_js_id'][phaseIdx]}">
+			<tr class="dark" id="${projectForm.map['phase_js_id'][phaseIdx]}" 
+				style="${projectForm.map['phase_action'][phaseIdx] eq 'delete' ? 'display:none' : ''}" >
 		</c:if>
 		<c:if test="${not newProject}">
 			<td class="value">
