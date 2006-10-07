@@ -36,82 +36,162 @@ public class PhaseGroup {
      * properly to the end user. This member variable is initialized in the constructor and can be
      * accessed and changed via corresponding get/set methods. The default value of this variable is
      * an empty string.
+     *
+     * @see #getAppFunc()
+     * @see #setAppFunc(String)
      */
     private String applicationFunction = "";
 
     /**
+     * This member variable holds an array of registrants' emails that might have been assigned to
+     * this phase group, or <code>null</code> value if no such array has been assigned to the
+     * phase group.
+     *
+     * @see #getRegistantsEmails()
+     * @see #setRegistantsEmails(String[])
+     */
+    private String[] registantsEmails = null;
+
+    /**
      * This member variable holds an array of submitters who made their submissions for the project.
+     *
+     * @see #getSubmitters()
+     * @see #setSubmitters(Resource[])
      */
     private Resource[] submitters = null;
 
     /**
-     * This member variable holds an array of submissions assigned to this phase group, or
-     * <code>null</code> value if no such array has been assigned to the phase group.
+     * This member variable holds an array of submissions that might have been assigned to this
+     * phase group, or <code>null</code> value if no such array has been assigned to the phase
+     * group.
+     *
+     * @see #getSubmissions()
+     * @see #setSubmissions(Submission[])
      */
     private Submission[] submissions = null;
 
     /**
+     * This member variable holds an array of screening tasks that might have been assigned to this
+     * phase group, or <code>null</code> value if no such array has been assigned to the phase
+     * group.
      *
+     * @see #getScreeningTasks()
+     * @see #setScreeningTasks(ScreeningTask[])
      */
     private ScreeningTask[] screeningTasks = null;
 
     /**
+     * This member variable holds an array of reviewers that might have been assigned to this phase
+     * group, or <code>null</code> value if no such array has been assigned to the phase group.
      *
+     * @see #getReviewers()
+     * @see #setReviews(Review[][])
      */
     private Resource[] reviewers = null;
 
     /**
+     * This member variable holds an array of screenings that might have been assigned to this phase
+     * group, or <code>null</code> value if no such array has been assigned to the phase group.
      *
+     * @see #getScreenings()
+     * @see #setScreenings(Review[])
      */
     private Review[] screenings = null;
 
     /**
+     * This member variable holds an array of reviews that might have been assigned to this phase
+     * group, or <code>null</code> value if no such array has been assigned to the phase group.
      *
+     * @see #getReviews()
+     * @see #setReviews(Review[][])
      */
     private Review[][] reviews = null;
 
     /**
+     * This member variable holds an array of test case uploads that might have been assigned to
+     * this phase group, or <code>null</code> value if no such array has been assigned to the
+     * phase group.
      *
+     * @see #getTestCases()
+     * @see #setTestCases(Upload[])
      */
     private Upload[] testCases = null;
 
     /**
+     * This member variable holds an array of dated when certain reviews were committed that might
+     * have been assigned to this phase group, or <code>null</code> value if no such array has
+     * been assigned to the phase group.
      *
+     * @see #getReviewDates()
+     * @see #setReviewDates(Date[])
      */
     private Date[] reviewDates = null;
 
     /**
+     * This member variable holds an aggregation scorecard that might have been assigned assigned to
+     * this phase group, or <code>null</code> value if no such scorecard has been assigned to the
+     * phase group.
      *
+     * @see #getAggregation()
+     * @see #setAggregation(Review)
      */
     private Review aggregation = null;
 
     /**
+     * This member variable holds a value that determines whether aggregation scorecard has been
+     * committed.
      *
+     * @see #isAggregationReviewCommitted()
+     * @see #setAggregationReviewCommitted(boolean)
      */
     private boolean aggregationReviewCommitted = false;
 
     /**
+     * This member variable holds an upload for a final fix that might might have been assigned
+     * assigned to this phase group, or <code>null</code> value if no such upload has been
+     * assigned to the phase group.
      *
+     * @see #getFinalFix()
+     * @see #setFinalFix(Upload)
      */
     private Upload finalFix = null;
 
     /**
+     * This member variable holds a final review scorecard that might have been assigned assigned to
+     * this phase group, or <code>null</code> value if no such scorecard has been assigned to the
+     * phase group.
      *
+     * @see #getFinalReview()
+     * @see #setFinalReview(Review)
      */
     private Review finalReview = null;
 
     /**
+     * This member variable holds a value that determines whether final review scorecard has been
+     * committed.
      *
+     * @see #isFinalReviewCommitted()
+     * @see #setFinalReviewCommitted(boolean)
      */
     private boolean finalReviewCommitted = false;
 
     /**
+     * This member variable holds an approval scorecard that might have been assigned assigned to
+     * this phase group, or <code>null</code> value if no such scorecard has been assigned to the
+     * phase group.
      *
+     * @see #getApproval()
+     * @see #setApproval(Review)
      */
     private Review approval = null;
 
     /**
+     * This member variable holds a reference to the winner resource that might have been assigned
+     * to this phase group, or <code>null</code> value if no such resource has been assigned to
+     * the phase group.
      *
+     * @see #getWinner()
+     * @see #setWinner(Resource)
      */
     private Resource winner = null;
 
@@ -188,6 +268,27 @@ public class PhaseGroup {
         ActionsHelper.validateParameterNotNull(appFunc, "appFunc");
 
         this.applicationFunction = appFunc;
+    }
+
+    /**
+     * This method returns a reference to array of registrants' emails.
+     *
+     * @return an array of registrants' emails, or <code>null</code> if no such array has been
+     *         assigned to this phase group.
+     */
+    public String[] getRegistantsEmails() {
+        return this.registantsEmails;
+    }
+
+    /**
+     * This method sets a reference to array of registrants' emails that should be assignedto this
+     * phase group.
+     *
+     * @param registantsEmails
+     *            a reference to array of registrants' emails.
+     */
+    public void setRegistantsEmails(String[] registantsEmails) {
+        this.registantsEmails = registantsEmails;
     }
 
     /**

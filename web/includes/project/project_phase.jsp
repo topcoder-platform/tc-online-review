@@ -43,9 +43,15 @@
 									<td class="headerC"><bean:message key="viewProjectDetails.box.Registration.RegistrationDate" /></td>
 								</tr>
 								<c:forEach items="${group.submitters}" var="resource" varStatus="resourceStatus">
+									<c:set var="registrantEmail" value="${group.registantsEmails[resourceStatus.index]}" />
 									<tr class='${(resourceStatus.index % 2 == 0) ? "light" : "dark"}'>
 										<td class="value" nowrap="nowrap"><tc-webtag:handle coderId='${resource.allProperties["External Reference ID"]}' context="component" /></td>
-										<td class="value">e-mail will go here</td>
+										<c:if test="${not empty registrantEmail}">
+											<td class="value" nowrap="nowrap"><a href="mailto:${registrantEmail}">${registrantEmail}</a></td>
+										</c:if>
+										<c:if test="${empty registrantEmail}">
+											<td class="value" nowrap="nowrap"><bean:message key="viewProjectDetails.box.Registration.EmailUnknown" /></td>
+										</c:if>
 										<c:set var="reliability" value='${resource.allProperties["Reliability"]}' />
 										<c:if test="${empty reliability}">
 											<td class="value" nowrap="nowrap"><bean:message key="NotAvailable" /></td>
