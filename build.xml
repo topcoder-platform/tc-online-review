@@ -2,7 +2,7 @@
 
 <project name="Online Review" default="dist" basedir=".">
 
-    <property file="../topcoder_global.properties" />
+    <property file="topcoder_global.properties" />
 
     <!-- COMPONENT PARAMETERS -->
     <property name="component" value="online_review" />
@@ -43,8 +43,8 @@
     <property name="build_tcsdistdir" value="${build_distdir}/${distfilename}-${component_version}" />
 
     <!-- Server installation directories -->
-    <property name="cactus.home.tomcat5x" value="C:\tools\tomcat5" />
-    <property name="deploy-dir" value="C:\Program Files\jboss-4.0.2\server\default\deploy\${distfilename}.war" />
+	<property name="cactus.home.tomcat5x" value="C:\tools\tomcat5" />
+    <property name="deploy-dir" value="/home/onlinereview2/jboss-4.0.2/server/default/deploy/${distfilename}.war" />
 
     <!-- EXECUTION TAGS -->
     <property name="debug" value="off" />
@@ -318,8 +318,8 @@
     <property name="ifx-jdbc.jar" value="${ext_libdir}/ifx-jdbc.jar" />
     <property name="jstl.jar" value="${ext_libdir}/jstl.jar" />
     <property name="servlet.jar" value="${cactus.home.tomcat5x}/common/lib/servlet-api.jar" />
-    <property name="servlet.jsp.jar" value="${cactus.home.tomcat5x}/common/lib/jsp-api.jar" />
-    <property name="struts.jar" value="${ext_libdir}/struts-1.2.9.jar" />
+    <property name="servlet.jsp.jar" value="${cactus.home.tomcat5x}/common/lib/jsp-api.jar" />    
+<property name="struts.jar" value="${ext_libdir}/struts-1.2.9.jar" />
 
     <property name="commons.beanutils.jar" value="${ext_libdir}/commons-beanutils.jar" />
 
