@@ -60,7 +60,7 @@
 	<jsp:include page="/includes/inc_header.jsp" />
 	<table width="100%" border="0" cellpadding="0" cellspacing="0">
 		<tr valign="top">
-			<!-- Left Column Begins-->
+			<!-- Left Column Begins -->
 			<td width="180">
 				<jsp:include page="/includes/inc_leftnav.jsp" />
 			</td>
@@ -154,7 +154,7 @@
 												</c:if>
 											</td>
 											<c:if test="${managerEdit}">
-												<td class="valueC" nowrap="nowrap">		
+												<td class="valueC" nowrap="nowrap">
 													<%@ include file="../includes/review/review_answer.jsp" %>
 												</td>
 											</c:if>
@@ -172,14 +172,14 @@
 						<div align="right">
 							<html:hidden property="save" value="" />
 							<c:if test="${not managerEdit}">
-								<html:image onclick="javascript:this.form.save.value='submit';" srcKey="editReview.Button.SaveAndCommit.img" altKey="editReview.Button.SaveAndCommit.alt" border="0" />&#160;
+								<html:image onclick="javascript:this.form.save.value='submit'; this.parentNode.parentNode.target='_self';" srcKey="editReview.Button.SaveAndCommit.img" altKey="editReview.Button.SaveAndCommit.alt" border="0" />&#160;
 							</c:if>
-							<html:image onclick="javascript:this.form.save.value='save';" srcKey="editReview.Button.SaveForLater.img" altKey="editReview.Button.SaveForLater.alt" border="0" />&#160;
-							<html:image onclick="javascript:this.form.save.value='preview';" srcKey="editReview.Button.Preview.img" altKey="editReview.Button.Preview.alt" border="0" />
+							<html:image onclick="javascript:this.form.save.value='save'; this.parentNode.parentNode.target='_self';" srcKey="editReview.Button.SaveForLater.img" altKey="editReview.Button.SaveForLater.alt" border="0" />&#160;
+							<html:image onclick="javascript:this.form.save.value='preview'; this.parentNode.parentNode.target='_blank';" srcKey="editReview.Button.Preview.img" altKey="editReview.Button.Preview.alt" border="0" />
 						</div>
 					</html:form>
 				</div>
-				<p><br /></p>
+				<br /><br />
 			</td>
 			<!-- Center Column Ends -->
 
