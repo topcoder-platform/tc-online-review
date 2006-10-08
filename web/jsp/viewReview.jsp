@@ -28,7 +28,7 @@
 	</script>
 	<script language="JavaScript" type="text/javascript"
 		src="<html:rewrite page='/scripts/ajax.js' />"><!-- @ --></script>
-	<script language="JavaScript" type="text/javascript">	
+	<script language="JavaScript" type="text/javascript">
 
 		/**
 		 * TODO: Document it
@@ -38,7 +38,7 @@
 			appealTextNode = document.getElementsByName("appeal_text[" + itemIdx + "]")[0];
 			// Get appeal text
 			var appealText = appealTextNode.value;
-			
+
 			// assemble the request XML
 			var content =
 				'<?xml version="1.0" ?>' +
@@ -55,10 +55,10 @@
 				"</parameter>" +
 				"</parameters>" +
 				"</request>";
-				
+
 			// Send the AJAX request
-			sendRequest(content, 
-				function (result, respXML) { 
+			sendRequest(content,
+				function (result, respXML) {
 					// operation succeeded
 					// TODO: Some changes to here
 					toggleDisplay("appealText_" + itemIdx);
@@ -69,7 +69,7 @@
 				}
 			);
 		}
-		
+
 		/**
 		 * TODO: Document it
 		 */
@@ -78,12 +78,12 @@
 			responseTextNode = document.getElementsByName("appeal_response_text[" + itemIdx + "]")[0];
 			// Get appeal response text
 			var responseText = responseTextNode.value;
-			
+
 			// Find appeal response modified answer node
 			answerNode = document.getElementsByName("answer[" + itemIdx + "]")[0];
 			// Retrieve modified answer value
 			modifiedAnswer = answerNode.value;
-			
+
 			// assemble the request XML
 			var content =
 				'<?xml version="1.0" ?>' +
@@ -107,10 +107,10 @@
 				"</parameter>" +
 				"</parameters>" +
 				"</request>";
-				
+
 			// Send the AJAX request
-			sendRequest(content, 
-				function (result, respXML) { 
+			sendRequest(content,
+				function (result, respXML) {
 					// operation succeeded
 					// TODO: Some changes to here
 					toggleDisplay("appealResponseText_" + itemIdx);
@@ -129,7 +129,7 @@
 	<jsp:include page="/includes/inc_header.jsp" />
 	<table width="100%" border="0" cellpadding="0" cellspacing="0">
 		<tr valign="top">
-			<!-- Left Column Begins-->
+			<!-- Left Column Begins -->
 			<td width="180">
 				<jsp:include page="/includes/inc_leftnav.jsp" />
 			</td>
@@ -142,14 +142,14 @@
 			<!-- Center Column Begins -->
 			<td class="bodyText">
 				<jsp:include page="/includes/project/project_tabs.jsp" />
-				
+
 				<div id="mainMiddleContent">
 					<jsp:include page="/includes/review/review_project.jsp" />
 					<h3>${orfn:htmlEncode(scorecardTemplate.name)}</h3>
-					
+
 					<%-- Note, that the form is a "dummy" one, only needed to support Struts tags inside of it --%>
 					<html:form action="/actions/View${reviewType}.do?method=view${reviewType}&rid=${review.id}">
-					
+
 					<c:set var="itemIdx" value="0" />
 					<c:forEach items="${scorecardTemplate.allGroups}" var="group" varStatus="groupStatus">
 						<table class="scorecard" cellpadding="0" width="100%" style="border-collapse: collapse;" id="table2">
@@ -209,7 +209,7 @@
 										<tr class="highlighted">
 											<td class="value" colspan="3">
 												<b><bean:message key="editReview.Question.AppealResponseText.title"/>:</b>
-												<br/>				
+												<br/>
 												<textarea rows="2" name="appeal_response_text[${itemIdx}]" cols="20" style="font-size: 10px; font-family: sans-serif;width:99%;height:50px;border:1px solid #ccc;margin:3px;"></textarea>
 												<br/>
 											</td>
@@ -222,10 +222,10 @@
 													<html:img srcKey="editReview.Button.SubmitAppealResponse.img" altKey="editReview.Button.SubmitAppealResponse.alt" border="0"/>
 												</html:link>
 											</td>
-											<td class="value"><!-- @ --></td>				
+											<td class="value"><!-- @ --></td>
 										</tr>
 									</c:if>
-									
+
 									<c:set var="itemIdx" value="${itemIdx + 1}" />
 								</c:forEach>
 							</c:forEach>
@@ -257,7 +257,12 @@
 					</html:form>
 
 					<div align="right">
-						<a href="javascript:history.go(-1)"><html:img srcKey="btnBack.img" altKey="btnBack.alt" border="0" /></a>
+						<c:if test="${isPreview}">
+							<a href="javascript:window.close();"><html:img srcKey="btnClose.img" altKey="btnClose.alt" border="0" /></a>
+						</c:if>
+						<c:if test="${not isPreview}">
+							<a href="javascript:history.go(-1)"><html:img srcKey="btnBack.img" altKey="btnBack.alt" border="0" /></a>
+						</c:if>
 						<br />
 					</div><br />
 				</div>
