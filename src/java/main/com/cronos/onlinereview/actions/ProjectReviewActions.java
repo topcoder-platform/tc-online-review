@@ -91,7 +91,8 @@ import com.topcoder.util.errorhandling.BaseException;
  * This class is thread-safe as it does not contain any mutable inner state.
  * </p>
  *
- * @author TCSAssemblyTeam
+ * @author George1
+ * @author real_vg
  * @version 1.0
  */
 public class ProjectReviewActions extends DispatchAction {
@@ -2543,6 +2544,11 @@ public class ProjectReviewActions extends DispatchAction {
             }
         }
 
+        // This variable determines if Save and Mark Complete button has been clicked
+        boolean commitRequested = "submit".equalsIgnoreCase(request.getParameter("save"));
+        // This variable determines if the Preview button has been clicked
+        boolean previewRequested = "preview".equalsIgnoreCase(request.getParameter("save"));
+
         // Get the form defined for this action
         LazyValidatorForm reviewForm = (LazyValidatorForm) form;
 
@@ -2552,19 +2558,27 @@ public class ProjectReviewActions extends DispatchAction {
         Long[] commentTypeIds = (Long[]) reviewForm.get("commentType");
         FormFile[] files = (FormFile[]) reviewForm.get("file");
 
-        StrutsRequestParser parser = new StrutsRequestParser();
+        // Uploaded files will be held here
+        UploadedFile[] uploadedFiles = null;
 
-        for (int i = 0; i < files.length; ++i) {
-            if (files[i] != null && files[i].getFileName().trim().length() != 0) {
-                parser.AddFile(files[i]);
+        // Files won't be uploaded, if a mere Preview operation was requested
+        if (!previewRequested) {
+            StrutsRequestParser parser = new StrutsRequestParser();
+
+            for (int i = 0; i < files.length; ++i) {
+                if (files[i] != null && files[i].getFileName().trim().length() != 0) {
+                    parser.AddFile(files[i]);
+                }
             }
+
+            // Obtain an instance of File Upload Manager
+            FileUpload fileUpload = ActionsHelper.createFileUploadManager(request);
+
+            // Upload files to the file server
+            FileUploadResult uploadResult = fileUpload.uploadFiles(request, parser);
+            // Get an information about uploaded files (an uploaded file's ID in particular)
+            uploadedFiles = uploadResult.getUploadedFiles("file");
         }
-
-        // Obtain an instance of File Upload Manager
-        FileUpload fileUpload = ActionsHelper.createFileUploadManager(request);
-
-        FileUploadResult uploadResult = fileUpload.uploadFiles(request, parser);
-        UploadedFile[] uploadedFiles = uploadResult.getUploadedFiles("file");
 
         // Obtain an instance of review manager
         ReviewManager revMgr = ActionsHelper.createReviewManager(request);
@@ -2613,8 +2627,9 @@ public class ProjectReviewActions extends DispatchAction {
                         item.setAnswer(answers[index]);
                         item.setQuestion(question.getId());
 
-                        if (question.isUploadDocument()) {
-                            if (fileIdx < files.length && files[fileIdx] != null) {
+                        if (!previewRequested && question.isUploadDocument()) {
+                            if (fileIdx < files.length && files[fileIdx] != null &&
+                                    files[fileIdx].getFileName().trim().length() != 0) {
                                 Upload upload = new Upload();
 
                                 upload.setOwner(myResource.getId());
@@ -2688,7 +2703,7 @@ public class ProjectReviewActions extends DispatchAction {
                         // Update the answer
                         item.setAnswer(answers[index]);
 
-                        if (!managerEdit && section.getQuestion(k).isUploadDocument()) {
+                        if (!previewRequested && !managerEdit && section.getQuestion(k).isUploadDocument()) {
                             if (fileIdx < files.length && files[fileIdx] != null &&
                                     files[fileIdx].getFileName().trim().length() != 0) {
                                 Upload oldUpload = null;
@@ -2721,7 +2736,7 @@ public class ProjectReviewActions extends DispatchAction {
         }
 
         // If the user has requested to complete the review
-        if ("submit".equalsIgnoreCase(request.getParameter("save"))) {
+        if (commitRequested) {
             // TODO: Validate review here
 
             // Obtain an instance of CalculationManager
@@ -2731,7 +2746,11 @@ public class ProjectReviewActions extends DispatchAction {
 
             // Set the completed status of the review
             review.setCommitted(true);
-        } else if ("preview".equalsIgnoreCase(request.getParameter("save"))) {
+        } else if (previewRequested) {
+            // Put the review object into the request
+            request.setAttribute("review", review);
+            // Put the review object into the bean (it may not always be there by default)
+            verification.setReview(review);
             // Retrieve some basic review info and store it in the request
             retrieveAndStoreBasicReviewInfo(request, verification, reviewType, scorecardTemplate);
 
@@ -2740,6 +2759,8 @@ public class ProjectReviewActions extends DispatchAction {
             // Plase the string into the request as attribute
             request.setAttribute("wordOf", " "  + wordOf + " ");
 
+            // Notify View page that this is actually a preview operation
+            request.setAttribute("isPreview", new Boolean(true));
             // Forward to preview page
             return mapping.findForward(Constants.PREVIEW_FORWARD_NAME);
         }
@@ -2750,8 +2771,10 @@ public class ProjectReviewActions extends DispatchAction {
         } else {
             revMgr.updateReview(review, Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
         }
-        
-        if ("submit".equalsIgnoreCase(request.getParameter("save"))) {
+
+        if (commitRequested) {
+            // Put the review object into the bean (it may not always be there by default)
+            verification.setReview(review);
             // Retrieve some basic review info and store it in the request
             retrieveAndStoreBasicReviewInfo(request, verification, reviewType, scorecardTemplate);
 
