@@ -1074,13 +1074,13 @@ public class ProjectActions extends DispatchAction {
         Calendar calendar = Calendar.getInstance();
         
         // Parse date string
-        String[] dateParts = dateString.trim().split("[./-]|([ ])+");
+        String[] dateParts = dateString.trim().split("[./:-]|([ ])+");
         calendar.set(Calendar.YEAR, Integer.parseInt(dateParts[2]) + (dateParts[2].length() > 2  ? 0 : 2000));
         calendar.set(Calendar.MONTH, Integer.parseInt(dateParts[0]) - 1);
         calendar.set(Calendar.DAY_OF_MONTH, Integer.parseInt(dateParts[1]));
         
         // Parse time string
-        String[] timeParts = timeString.trim().split("[.:-]|([ ])+");
+        String[] timeParts = timeString.trim().split("[./:-]|([ ])+");
         calendar.set(Calendar.HOUR, Integer.parseInt(timeParts[0]));        
         if (timeParts.length == 1) {
             calendar.set(Calendar.MINUTE, 0);
