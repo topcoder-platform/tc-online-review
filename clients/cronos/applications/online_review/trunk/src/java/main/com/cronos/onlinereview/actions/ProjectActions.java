@@ -1323,13 +1323,16 @@ public class ProjectActions extends DispatchAction {
                 !AuthorizationHelper.hasUserPermission(request, Constants.VIEW_PROJECTS_INACTIVE_PERM_NAME)) {
             return mapping.findForward("all");
         }
-
+        Date currentDate = new Date();
+        logger.log(Level.ERROR, "obtaining projectmanager " + dateFormat.format(currentDate));
+        
         // Obtain an instance of Project Manager
         ProjectManager manager = ActionsHelper.createProjectManager(request);
         // This variable will specify the index of active tab on the JSP page
         int activeTab;
         Filter projectsFilter = null;
-
+        Date currentDate = new Date();
+        logger.log(Level.ERROR, "got projectmanager " + dateFormat.format(currentDate));
         // Determine projects displayed and index of the active tab
         // based on the value of the "scope" parameter
         if (scope.equalsIgnoreCase("my")) {
@@ -1383,7 +1386,7 @@ public class ProjectActions extends DispatchAction {
         currentDate = new Date();
         logger.log(Level.ERROR, "done fetching listProjects" + dateFormat.format(currentDate));
         Resource[] allMyResources = null;
-
+/*****************************************************************************************************************************************/
         if (ungroupedProjects.length != 0 && AuthorizationHelper.isUserLoggedIn(request) && myProjects) {
             Filter filterExtIDname = ResourceFilterBuilder.createExtensionPropertyNameFilter("External Reference ID");
             Filter filterExtIDvalue = ResourceFilterBuilder.createExtensionPropertyValueFilter(
@@ -1399,10 +1402,17 @@ public class ProjectActions extends DispatchAction {
 
             Filter filter = new AndFilter(Arrays.asList(
                     new Filter[] {filterExtIDname, filterExtIDvalue, filterProjects}));
+
+        currentDate = new Date();
+        logger.log(Level.ERROR, "begin searchResources" + dateFormat.format(currentDate));
+
             // Obtain an instance of Resource Manager
             ResourceManager resMgr = ActionsHelper.createResourceManager(request);
             // Get all "My" resources for the list of projects
             allMyResources = resMgr.searchResources(filter);
+        currentDate = new Date();
+        logger.log(Level.ERROR, "end searchResources" + dateFormat.format(currentDate));
+
         }
 
         // Obtain an instance of Phase Manager
@@ -1415,7 +1425,7 @@ public class ProjectActions extends DispatchAction {
         }
 
         com.topcoder.project.phases.Project[] phProjects = phMgr.getPhases(allProjectIds);
-
+/*****************************************************************************************************************************************/
         currentDate = new Date();
         logger.log(Level.ERROR, "get message resources" + dateFormat.format(currentDate));
         // Message Resources to be used for this request
