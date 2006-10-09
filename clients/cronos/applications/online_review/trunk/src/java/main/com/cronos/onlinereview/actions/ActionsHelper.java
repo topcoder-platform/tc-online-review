@@ -1757,7 +1757,7 @@ class ActionsHelper {
         throws BaseException {
         // Validate parameter
         java.text.DateFormat dateFormat = new java.text.SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-        Date currentDate = new Date();
+        java.util.Date currentDate = new Date();
         
         System.out.println("REMOVE ME entering create Phase Manager: "  + dateFormat.format(currentDate));
         
