@@ -32,6 +32,12 @@ import org.apache.struts.validator.LazyValidatorForm;
 
 import com.cronos.onlinereview.external.ExternalUser;
 import com.cronos.onlinereview.external.UserRetrieval;
+
+import com.topcoder.util.log.Level;
+import com.topcoder.util.log.Log;
+import com.topcoder.util.log.LogFactory;
+
+
 import com.topcoder.project.phases.Dependency;
 import com.topcoder.project.phases.Phase;
 import com.topcoder.project.phases.PhaseStatus;
@@ -81,10 +87,19 @@ import com.topcoder.management.scorecard.data.Scorecard;
  */
 public class ProjectActions extends DispatchAction {
 
+    private final Log logger;
+
+    private static java.text.DateFormat dateFormat = new java.text.SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+
+
+
     /**
      * Creates a new instance of the <code>ProjectActions</code> class.
      */
     public ProjectActions() {
+
+        logger = LogFactory.getLog("ProjectActions");
+
     }
 
     /**
@@ -1285,6 +1300,9 @@ public class ProjectActions extends DispatchAction {
     public ActionForward listProjects(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response)
         throws BaseException {
+          
+        Date currentDate = new Date();
+        logger.log(Level.ERROR, "entering listProjects" + dateFormat.format(currentDate));
         // Gather the roles the user has for current request
         AuthorizationHelper.gatherUserRoles(request);
 
@@ -1357,10 +1375,13 @@ public class ProjectActions extends DispatchAction {
         String[][] myRoles = (myProjects) ? new String[projectCategories.length][] : null;
         String[][] myDeliverables = (myProjects) ? new String[projectCategories.length][] : null;
 
+        currentDate = new Date();
+        logger.log(Level.ERROR, "fetching listProjects" + dateFormat.format(currentDate));
         // Fetch projects from the database. These projects will require further grouping
         Project[] ungroupedProjects = (projectsFilter != null) ? manager.searchProjects(projectsFilter) :
                 manager.getUserProjects(AuthorizationHelper.getLoggedInUserId(request));
-
+        currentDate = new Date();
+        logger.log(Level.ERROR, "done fetching listProjects" + dateFormat.format(currentDate));
         Resource[] allMyResources = null;
 
         if (ungroupedProjects.length != 0 && AuthorizationHelper.isUserLoggedIn(request) && myProjects) {
@@ -1395,9 +1416,12 @@ public class ProjectActions extends DispatchAction {
 
         com.topcoder.project.phases.Project[] phProjects = phMgr.getPhases(allProjectIds);
 
+        currentDate = new Date();
+        logger.log(Level.ERROR, "get message resources" + dateFormat.format(currentDate));
         // Message Resources to be used for this request
         MessageResources messages = getResources(request);
-
+        currentDate = new Date();
+        logger.log(Level.ERROR, "got message resources" + dateFormat.format(currentDate));
         for (int i = 0; i < projectCategories.length; ++i) {
             // Count projects of this category
             for (int j = 0; j < ungroupedProjects.length; ++j) {
@@ -1481,7 +1505,8 @@ public class ProjectActions extends DispatchAction {
             // Fetch Project Category icon's filename depending on the name of the current category
             categoryIconNames[i] = ConfigHelper.getProjectCategoryIconNameSm(projectCategories[i].getName());
         }
-
+        currentDate = new Date();
+        logger.log(Level.ERROR, "before ungrouped" + dateFormat.format(currentDate));
         if (ungroupedProjects.length != 0 && myProjects) {
             Deliverable[] allMyDeliverables = getDeliverables(
                     ActionsHelper.createDeliverableManager(request), projects, phases, myResources);
@@ -1508,7 +1533,8 @@ public class ProjectActions extends DispatchAction {
             }
             totalProjectsCount += typeCounts[i];
         }
-
+        currentDate = new Date();
+        logger.log(Level.ERROR, "after count" + dateFormat.format(currentDate));
         request.setAttribute("projects", projects);
         request.setAttribute("rootCatalogIcons", rootCatalogIcons);
         request.setAttribute("rootCatalogNames", rootCatalogNames);
@@ -1527,6 +1553,8 @@ public class ProjectActions extends DispatchAction {
             request.setAttribute("myDeliverables", myDeliverables);
         }
 
+        currentDate = new Date();
+        logger.log(Level.ERROR, "leaving list projects" + dateFormat.format(currentDate));
         // Signal about successfull execution of the Action
         return mapping.findForward(Constants.SUCCESS_FORWARD_NAME);
     }
