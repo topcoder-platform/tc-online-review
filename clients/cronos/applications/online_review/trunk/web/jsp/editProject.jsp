@@ -75,9 +75,16 @@
 			for (var i = 0; i < oldSelectNodes.length; i++) {
 				newSelectNodes[i].value = oldSelectNodes[i].value;
 			}
+			var oldInputNodes = rowNode.getElementsByTagName("input");
+			var newInputNodes = clonedNode.getElementsByTagName("input");
+			for (var i = 0; i < oldInputNodes.length; i++) {
+				if (oldInputNodes[i].type == "radio") {
+					newInputNodes[i].checked = oldInputNodes[i].checked;
+					newInputNodes[i].defaultChecked = oldInputNodes[i].checked;
+				}
+			}
 			return clonedNode;
 		}
-
 		/*
 		 * This function adds a new row to resources table.
 		 */
@@ -156,6 +163,7 @@
 			if (destInputs[0].tagName != "SELECT") {
 				if (destInputs[0].type == "checkbox") {
 					destInputs[0].checked = srcInputs[0].checked;
+					destInputs[0].defaultChecked = srcInputs[0].checked;
 				} else if (destInputs[0].type == "radio") {
 					var selectedValue = null;
 					for (var i = 0; i < srcInputs.length; i++) {
