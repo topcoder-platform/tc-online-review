@@ -1416,7 +1416,7 @@ public class ProjectActions extends DispatchAction {
         logger.log(Level.ERROR, "end searchResources" + dateFormat.format(currentDate));
 
         }
-
+logger.log(Level.ERROR, "get phase manager" + dateFormat.format(currentDate));
         // Obtain an instance of Phase Manager
         PhaseManager phMgr = ActionsHelper.createPhaseManager(request);
 
@@ -1425,8 +1425,9 @@ public class ProjectActions extends DispatchAction {
         for (int i = 0; i < ungroupedProjects.length; ++i) {
             allProjectIds[i] = ungroupedProjects[i].getId();
         }
-
+logger.log(Level.ERROR, "getting phases phase manager" + dateFormat.format(currentDate));
         com.topcoder.project.phases.Project[] phProjects = phMgr.getPhases(allProjectIds);
+        logger.log(Level.ERROR, "got phases phase manager" + dateFormat.format(currentDate));
 /*****************************************************************************************************************************************/
         currentDate = new Date();
         logger.log(Level.ERROR, "get message resources" + dateFormat.format(currentDate));
