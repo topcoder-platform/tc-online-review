@@ -1756,6 +1756,11 @@ class ActionsHelper {
     public static PhaseManager createPhaseManager(HttpServletRequest request)
         throws BaseException {
         // Validate parameter
+        java.text.DateFormat dateFormat = new java.text.SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+        Date currentDate = new Date();
+        
+        System.out.println("REMOVE ME entering create Phase Manager: "  + dateFormat.format(currentDate));
+        
         validateParameterNotNull(request, "request");
 
         // Try retrieving Phase Manager from the request's attribute first
@@ -1796,6 +1801,10 @@ class ActionsHelper {
             request.setAttribute("phaseManager", manager);
         }
 
+        
+        currentDate = new Date();
+        
+        System.out.println("REMOVE ME leaving create Phase Manager: "  + dateFormat.format(currentDate));
         // Return the Phase Manager object
         return manager;
     }
