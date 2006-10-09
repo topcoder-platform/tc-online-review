@@ -40,6 +40,13 @@
 		 */
 		function patchParamIndex(paramNode, newIndex) {
 			paramNode.name = paramNode.name.replace(/\[([0-9])+\]/, "[" + newIndex + "]");
+			if (paramNode.outerHTML) {
+				var pNode = document.createElement(paramNode.outerHTML.replace(/\[([0-9])+\]/, "[" + newIndex + "]"));
+				while (paramNode.children.length > 0) {
+					pNode.appendChild(paramNode.children[0]);
+				}
+				paramNode.parentNode.replaceChild(pNode, paramNode);
+			}
 		}
 
 		/*
@@ -52,7 +59,9 @@
 			}
 			var allSelects = node.getElementsByTagName("select");
 			for (var i = 0; i < allSelects.length; i++) {
+				var selectIndex = allSelects[i].selectedIndex;
 				patchParamIndex(allSelects[i], newIndex);
+				allSelects[i].selectedIndex = selectIndex;
 			}
 		}
 
@@ -89,21 +98,20 @@
 			}
 
 			// Make delete button visible and hide add button
-			var images = newRow.cells[4].getElementsByTagName("img");
+			var myCell = newRow.getElementsByTagName("TD")[4];
+			var images = myCell.getElementsByTagName("img");
 			images[0].style["display"] = "none";
 			images[1].removeAttribute("style");
 			// Retrieve hidden inputs
-			var inputs = newRow.cells[4].getElementsByTagName("input");
+			var inputs = myCell.getElementsByTagName("input");
 			// Set hidden resources_action parameter to "add"
 			var actionInput = inputs[0];
 			actionInput.value = "add";
 
 			// Increase resource index
 			lastResourceIndex++;
-
 			// Rename all the inputs to have a new index
 			patchAllChildParamIndexes(newRow, lastResourceIndex);
-
 			// Insert new row into resources table
 			resourcesTable.tBodies[0].insertBefore(newRow, resourcesTable.rows[rowCount - 1]);
 		}
@@ -159,6 +167,7 @@
 					for (var i = 0; i < destInputs.length; i++) {
 						if (destInputs[i].value == selectedValue) {
 							destInputs[i].checked = true;
+							destInputs[i].defaultChecked = true;
 							break;
 						}
 					}
@@ -226,6 +235,7 @@
 
 			// Create a new row to represent the phase
 			var newRow = cloneInputRow(document.getElementById("phase_row_template"));
+			
 			// Assign the id
 			newRow.id = phaseId;
 			// Remove "display: none;"
@@ -233,13 +243,40 @@
 			
 			// Add the name of the added phase to the select options for add phase form
 			var whereCombo = getChildByName(addPhaseTable, "addphase_where");
-			whereCombo.add(new Option(phaseName, phaseId), null);
+			//whereCombo.add(new Option(phaseName, phaseId), null);
+			var whereOption = document.createElement('option');
+			whereOption.text = phaseName;
+			whereOption.value = phaseId;
+			try {
+				whereCombo.add(whereOption, null);
+			} catch (ex) {
+				whereCombo.add(whereOption, whereCombo.selectedIndex);
+			}
+
 			var startPhaseCombo = getChildByName(addPhaseTable, "addphase_start_phase");
-			startPhaseCombo.add(new Option(phaseName, phaseId), null);
+			//startPhaseCombo.add(new Option(phaseName, phaseId), null);
+                        var startPhaseOption = document.createElement('option');
+			startPhaseOption.text = phaseName;
+			startPhaseOption.value = phaseId;
+                        try {
+                                startPhaseCombo.add(startPhaseOption, null);
+                        } catch (ex) {
+                                startPhaseCombo.add(startPhaseOption, startPhaseCombo.selectedIndex);
+                        }
+
 			// Also add it to the phase rows
 			var startPhaseCombos = getChildrenByNamePrefix(document.documentElement, "phase_start_phase");
 			for (var i = 0; i < startPhaseCombos.length; i++) {
-				startPhaseCombos[i].add(new Option(phaseName, phaseId), null);
+                	        var startPhaseOption2 = document.createElement('option');
+				startPhaseOption2.text = phaseName;
+        	                startPhaseOption2.value = phaseId;
+	                        try {	
+                        	        startPhaseCombos[i].add(startPhaseOption2, null);
+                	        } catch (ex) {
+        	                        startPhaseCombos[i].add(startPhaseOption2, startPhaseCombos[i].selectedIndex);
+	                        }
+
+//				startPhaseCombos[i].add(new Option(phaseName, phaseId), null);
 			}
 
 			
@@ -249,10 +286,9 @@
 
 			// Increase phase index
 			lastPhaseIndex++;
-
+			
 			// Rename all the inputs to have a new index
 			patchAllChildParamIndexes(newRow, lastPhaseIndex);
-
 
 			// Populate newly created phase inputs from the add phase form
 			var inputNames = ["type",
@@ -267,6 +303,9 @@
 			// Populate phase name
 			// TODO: Implement numbering of same-typed phases
 			var phaseNameCell = newRow.cells[nameCellIndex];
+			if (phaseNameCell == null) {
+				phaseNameCell = newRow.getElementsByTagName('TD')[nameCellIndex];
+			}
 			dojo.dom.textContent(phaseNameCell, phaseName);
 			getChildByNamePrefix(newRow, "phase_name").value = phaseName;
 
@@ -339,7 +378,7 @@
 
 			// Remove phase criterion row if needed
 			nextRowNode = dojo.dom.nextElement(phaseRowNode);
-			if (nextRowNode.className == "highlighted") {
+			if (nextRowNode != null && nextRowNode.className == "highlighted") {
 				nextRowNode.parentNode.removeChild(nextRowNode);
 			}
 		}
