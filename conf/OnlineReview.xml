@@ -34,15 +34,19 @@
             <Property name="namespace">
                 <Value>com.cronos.OnlineReview</Value>
             </Property>
+        		<Property name="logger_name">
+        			<Value>LoginActions</Value>
+        		</Property>
+
         </Property>
 
         <Property name="authenticator_name">
             <Value>ORAuthenticator</Value>
         </Property>
 
-        <!-- <Property name="logger_name">
-            <Value>logingActionsLoggerName</Value>
-            </Property> -->
+        <Property name="logger_name">
+            <Value>LoginActions</Value>
+        </Property>
     </Config>
 
     <Config name="com.cronos.onlinereview.login.authenticator.SecurityManagerAuthenticator">
