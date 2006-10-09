@@ -116,6 +116,8 @@ public class ProjectDetailsActions extends DispatchAction {
      *            the http request.
      * @param response
      *            the http response.
+     * @throws BaseException
+     *             if any error occurs.
      */
     public ActionForward viewProjectDetails(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response)
@@ -293,6 +295,7 @@ public class ProjectDetailsActions extends DispatchAction {
         int[] phaseGroupIndexes = new int[phases.length];
         List phaseGroups = new ArrayList();
         int phaseGroupIdx = -1;
+        int activeTabIdx = -1;
         PhaseGroup phaseGroup = null;
         Resource[] submitters = null;
 
@@ -327,6 +330,9 @@ public class ProjectDetailsActions extends DispatchAction {
             String phaseStatus = phase.getPhaseStatus().getName();
 
             if (phaseStatus.equalsIgnoreCase("Closed") || phaseStatus.equalsIgnoreCase("Open")) {
+                if (activeTabIdx == -1 && phaseStatus.equalsIgnoreCase("Open") && phaseGroupIdx != -1) {
+                    activeTabIdx = phaseGroupIdx;
+                }
                 phaseGroup.setPhaseOpen(true);
             }
 
@@ -849,6 +855,7 @@ public class ProjectDetailsActions extends DispatchAction {
 
         request.setAttribute("phaseGroupIndexes", phaseGroupIndexes);
         request.setAttribute("phaseGroups", phaseGroups);
+        request.setAttribute("activeTabIdx", new Integer((activeTabIdx != -1) ? activeTabIdx : 0));
 
         boolean sendTLNotifications = false;
 

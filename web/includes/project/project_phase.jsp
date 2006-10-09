@@ -7,11 +7,11 @@
 	<a name="tabs"></a>
 	<div id="tabcontentcontainer">
 		<c:forEach items="${phaseGroups}" var="group" varStatus="groupStatus">
-			<div id="sc${groupStatus.index + 1}" class="tabcontent">
+			<div id="sc${groupStatus.index + 1}" style='display:${(groupStatus.index == activeTabIdx) ? "block" : "none"};'>
 				<ul id="tablist">
 					<c:forEach items="${phaseGroups}" var="innerGroup" varStatus="innerGroupStatus">
 						<li ${(groupStatus.index == innerGroupStatus.index) ? "id='current'" : ""}><a href="javascript:void(0)"
-							onClick="return expandcontent('sc${innerGroupStatus.index + 1}', this)">${innerGroup.name}</a></li>
+							onClick="return activateTab('sc${innerGroupStatus.index + 1}', this)">${innerGroup.name}</a></li>
 					</c:forEach>
 				</ul>
 				<div style="clear:both;"></div>
@@ -583,3 +583,38 @@
 			</div>
 		</c:forEach>
 	</div><br />
+
+<script language="JavaScript" type="text/javascript">
+<!--
+	// A reference to the previously active tab
+	<c:if test="${(not empty activeTabIdx) && (activeTabIdx != -1)}">
+	var previousActiveTab = document.getElementById("sc${activeTabIdx + 1}");
+	</c:if>
+	<c:if test="${(empty activeTabIdx) || (activeTabIdx == -1)}">
+	var previousActiveTab = null;
+	</c:if>
+
+	/*
+	 * This function will deactivate the previously active tab (if there was any),
+	 * and activate the new one.
+	 */
+	function activateTab(tabId, aObject) {
+		var tabToActivate = document.getElementById(tabId);
+		if (tabToActivate == null) {
+			return false;
+		}
+		// Deactivate the previously active tab
+		if (previousActiveTab != null) {
+			previousActiveTab.style.display = "none";
+		}
+		// Activate the new one and update the reference to the previously active tab
+		tabToActivate.style.display = "block";
+		previousActiveTab = tabToActivate;
+		// Remove focus from the link that triggered the activation
+		if (aobject.blur) {
+			aobject.blur();
+		}
+		return false;
+	}
+//-->
+</script>

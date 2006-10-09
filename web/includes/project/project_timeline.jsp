@@ -34,7 +34,7 @@
 							</c:if>
 							<c:if test="${phaseGroupIndexes[phaseStatus.index] != -1}">
 								<td class="value" nowrap="nowrap">
-									<a onClick='return expandcontent("sc${phaseGroupIndexes[phaseStatus.index] + 1}", this)'
+									<a onClick='return activateTab("sc${phaseGroupIndexes[phaseStatus.index] + 1}", this)'
 										href="javascript:void(0)"><b><bean:message
 											key='ProjectPhase.${fn:replace(phase.phaseType.name, " ", "")}' /></b></a></td>
 							</c:if>
