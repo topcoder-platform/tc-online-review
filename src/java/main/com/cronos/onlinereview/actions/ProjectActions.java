@@ -1323,7 +1323,7 @@ public class ProjectActions extends DispatchAction {
                 !AuthorizationHelper.hasUserPermission(request, Constants.VIEW_PROJECTS_INACTIVE_PERM_NAME)) {
             return mapping.findForward("all");
         }
-        Date currentDate = new Date();
+        currentDate = new Date();
         logger.log(Level.ERROR, "obtaining projectmanager " + dateFormat.format(currentDate));
         
         // Obtain an instance of Project Manager
@@ -1331,7 +1331,7 @@ public class ProjectActions extends DispatchAction {
         // This variable will specify the index of active tab on the JSP page
         int activeTab;
         Filter projectsFilter = null;
-        Date currentDate = new Date();
+        currentDate = new Date();
         logger.log(Level.ERROR, "got projectmanager " + dateFormat.format(currentDate));
         // Determine projects displayed and index of the active tab
         // based on the value of the "scope" parameter
