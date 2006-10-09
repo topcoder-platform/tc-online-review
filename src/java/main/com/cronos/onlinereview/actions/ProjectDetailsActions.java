@@ -331,7 +331,7 @@ public class ProjectDetailsActions extends DispatchAction {
 
             if (phaseStatus.equalsIgnoreCase("Closed") || phaseStatus.equalsIgnoreCase("Open")) {
                 if (activeTabIdx == -1 && phaseStatus.equalsIgnoreCase("Open") && phaseGroupIdx != -1) {
-                    activeTabIdx = phaseGroupIdx;
+                    activeTabIdx = phaseGroups.size() - 1;
                 }
                 phaseGroup.setPhaseOpen(true);
             }

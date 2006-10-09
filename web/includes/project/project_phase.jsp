@@ -611,8 +611,8 @@
 		tabToActivate.style.display = "block";
 		previousActiveTab = tabToActivate;
 		// Remove focus from the link that triggered the activation
-		if (aobject.blur) {
-			aobject.blur();
+		if (aObject.blur) {
+			aObject.blur();
 		}
 		return false;
 	}
