@@ -1397,6 +1397,8 @@ public class ProjectActions extends DispatchAction {
             for (int i = 0; i < ungroupedProjects.length; ++i) {
                 projectFilters.add(new Long(ungroupedProjects[i].getId()));
             }
+        currentDate = new Date();
+        logger.log(Level.ERROR, "got project filters: " +  ungroupedProjects.length +" - " + dateFormat.format(currentDate));
 
             Filter filterProjects = new InFilter(ResourceFilterBuilder.PROJECT_ID_FIELD_NAME, projectFilters);
 
