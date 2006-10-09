@@ -1304,7 +1304,9 @@ public class ProjectActions extends DispatchAction {
         Date currentDate = new Date();
         logger.log(Level.ERROR, "entering listProjects" + dateFormat.format(currentDate));
         // Gather the roles the user has for current request
+        logger.log(Level.ERROR, "gathering user roles" + dateFormat.format(new Date()));
         AuthorizationHelper.gatherUserRoles(request);
+        logger.log(Level.ERROR, "got user roles" + dateFormat.format(new Date()));
 
         // Retrieve the value of "scope" parameter
         String scope = request.getParameter("scope");
