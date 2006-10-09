@@ -1769,14 +1769,21 @@ class ActionsHelper {
         // If this is the first time this method is called for the request,
         // create a new instance of the object
         if (manager == null) {
+        System.out.println("REMOVE ME entering create Default Phase Manager: "  + dateFormat.format(new Date()));
             manager = new DefaultPhaseManager("com.topcoder.management.phase");
+        System.out.println("REMOVE ME finishing create Default Phase Manager: "  + dateFormat.format(new Date()));
 
 // TODO: Make the following code work
+        System.out.println("REMOVE ME entering getAllPhaseTypes: "  + dateFormat.format(new Date()));
             PhaseType[] phaseTypes = manager.getAllPhaseTypes();
+        System.out.println("REMOVE ME finishing getAllPhaseTypes: "  + dateFormat.format(new Date()));
 
+        System.out.println("REMOVE ME entering register all phase handlers: "  + dateFormat.format(new Date()));
+        System.out.println("REMOVE ME entering register registration phase handler: "  + dateFormat.format(new Date()));
             // Register the phase handlers
             registerPhaseHandlerForOperation(manager, phaseTypes,
                     new RegistrationPhaseHandler(), Constants.REGISTRATION_PHASE_NAME);
+        System.out.println("REMOVE ME finishing register registration phase handler: "  + dateFormat.format(new Date()));
             registerPhaseHandlerForOperation(manager, phaseTypes,
                     new SubmissionPhaseHandler(), Constants.SUBMISSION_PHASE_NAME);
             registerPhaseHandlerForOperation(manager, phaseTypes,
@@ -1797,7 +1804,7 @@ class ActionsHelper {
                     new FinalReviewPhaseHandler(), Constants.FINAL_REVIEW_PHASE_NAME);
             registerPhaseHandlerForOperation(manager, phaseTypes,
                     new ApprovalPhaseHandler(), Constants.APPROVAL_PHASE_NAME);
-
+        System.out.println("REMOVE ME finishing register all phase handlers: "  + dateFormat.format(new Date()));
             // Place newly-created object into the request as attribute
             request.setAttribute("phaseManager", manager);
         }
