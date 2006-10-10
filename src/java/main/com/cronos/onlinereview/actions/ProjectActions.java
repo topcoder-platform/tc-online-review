@@ -262,35 +262,25 @@ public class ProjectActions extends DispatchAction {
         Long projectStatusId = new Long(project.getProjectStatus().getId());
         form.set("status", projectStatusId);
 
-        // Populate project eligibility
-        populateProjectFormProperty(form, String.class, "eligibility", project, "Eligibility");
-
-        // Populate project public option
-        populateProjectFormProperty(form, Boolean.class, "public", project, "Public");
-
-        // Populate project autopilot option
-        populateProjectFormProperty(form, Boolean.class, "autopilot", project, "Autopilot");
-
-        // Populate project status notification option
-        populateProjectFormProperty(form, Boolean.class, "email_notifications", project, "Status Notification");
-
-        // Populate project status notification option
-        // Note, this property is inverse by its meaning in project and form
-        if ("Yes".equals(project.getProperty("Rated"))) {
-            form.set("no_rate_project", Boolean.FALSE);
-        } else {
-            form.set("no_rate_project", Boolean.TRUE);
-        }
-
-        // Populate project status notification option
-        populateProjectFormProperty(form, Boolean.class, "timeline_notifications", project, "Timeline Notification");
-
         // Populate project forum name
         populateProjectFormProperty(form, Long.class, "forum_id", project, "Developer Forum ID");
 
+        // Populate project public option
+        form.set("public", new Boolean("Yes".equals(project.getProperty("Public"))));
+        // Populate project autopilot option
+        form.set("autopilot", new Boolean("On".equals(project.getProperty("Autopilot"))));
+        // Populate project status notification option
+        form.set("email_notifications", new Boolean("On".equals(project.getProperty("Status Notification"))));
+        // Populate project status notification option
+        form.set("timeline_notifications", new Boolean("On".equals(project.getProperty("Timeline Notification"))));
+        // Populate project status notification option
+        // Note, this property is inverse by its meaning in project and form
+        form.set("no_rate_project", new Boolean(!("Yes".equals(project.getProperty("Rated")))));
+
+        // Populate project eligibility
+        populateProjectFormProperty(form, String.class, "eligibility", project, "Eligibility");
         // Populate project SVN module
         populateProjectFormProperty(form, String.class, "SVN_module", project, "SVN Module");
-
         // TODO: Check whether edit or add notes?
         // Populate project notes
         populateProjectFormProperty(form, String.class, "notes", project, "Notes");
@@ -599,14 +589,29 @@ public class ProjectActions extends DispatchAction {
         project.setProperty("Developer Forum ID", lazyForm.get("forum_id"));
         // Populate project SVN module
         project.setProperty("SVN Module", lazyForm.get("SVN_module"));
+
+        // Extract project's properties from the form
+        Boolean autopilotOnObj = (Boolean) lazyForm.get("autopilot");
+        Boolean sendEmailNotificationsObj = (Boolean) lazyForm.get("email_notifications");
+        Boolean sendTLChangeNotificationsObj = (Boolean) lazyForm.get("timeline_notifications");
+        Boolean doNotRateProjectObj = (Boolean) lazyForm.get("no_rate_project");
+
+        // Unbox the properties
+        boolean autopilotOn = (autopilotOnObj != null) ? autopilotOnObj.booleanValue() : false;
+        boolean sendEmailNotifications =
+            (sendEmailNotificationsObj != null) ? sendEmailNotificationsObj.booleanValue() : false;
+        boolean sendTLChangeNotifications =
+            (sendTLChangeNotificationsObj != null) ? sendTLChangeNotificationsObj.booleanValue() : false;
+        boolean doNotRateProject = (doNotRateProjectObj != null) ? doNotRateProjectObj.booleanValue() : false;
+
         // Populate project autopilot option
-        project.setProperty("Autopilot Option", Boolean.TRUE.equals(lazyForm.get("autopilot")) ? "On" : "Off");
+        project.setProperty("Autopilot Option", (autopilotOn) ? "On" : "Off");
         // Populate project status notifications option
-        project.setProperty("Status Notification", Boolean.TRUE.equals(lazyForm.get("email_notifications")) ? "On" : "Off");
+        project.setProperty("Status Notification", (sendEmailNotifications) ? "On" : "Off");
         // Populate project timeline notifications option
-        project.setProperty("Timeline Notification", Boolean.TRUE.equals(lazyForm.get("timeline_notifications")) ? "On" : "Off");
+        project.setProperty("Timeline Notification", (sendTLChangeNotifications) ? "On" : "Off");
         // Populate project rated option, note that it is inveresed
-        project.setProperty("Rated", Boolean.TRUE.equals(lazyForm.get("no_rate_project")) ? "Off" : "On");
+        project.setProperty("Rated", (doNotRateProject) ? "No" : "Yes");
 
         // Populate project notes
         project.setProperty("Notes", lazyForm.get("notes"));
@@ -617,12 +622,12 @@ public class ProjectActions extends DispatchAction {
         Map phasesJsMap = new HashMap();
 
         // Save the project phases
-        // FIXME: the project it slef is also saved by the following call. Needs to be refactored
+        // FIXME: the project itself is also saved by the following call. Needs to be refactored
         Phase[] projectPhases = saveProjectPhases(newProject, request, lazyForm, project, phasesJsMap);
 
         // Check if there are any validation errors and return appropriate forward
         if (request.getAttribute(Globals.ERROR_KEY) != null) {
-            // TODO : Check if the form is really for new project
+            // TODO: Check if the form is really for new project
             request.setAttribute("newProject", Boolean.valueOf(newProject));
 
             // Load the lookup data
@@ -1217,7 +1222,7 @@ public class ProjectActions extends DispatchAction {
     }
 
     /**
-     * TODO: Document it, and members.
+     * TODO: Document it, and its members.
      *
      */
     static class ProjectPhaseComparer implements Comparator {
