@@ -234,7 +234,7 @@
 									<tr>
 										<td class="header"><!-- @ --></td>
 										<td class="headerC"><bean:message key="editReview.SectionHeader.Total" /></td>
-										<td class="headerC"><!-- @ --></td>
+										<td class="headerC" colspan="${canPlaceAppeal ? 3 : (canPlaceAppealResponse ? 2 : 1)}"><!-- @ --></td>
 									</tr>
 									<tr>
 										<td class="value"><!-- @ --></td>
@@ -249,7 +249,7 @@
 									</tr>
 								</c:if>
 								<tr>
-									<td class="lastRowTD" colspan="3"><!-- @ --></td>
+									<td class="lastRowTD" colspan="${canPlaceAppeal ? 5 : (canPlaceAppealResponse ? 4 : 3)}"><!-- @ --></td>
 								</tr>
 							</c:if>
 						</table>
