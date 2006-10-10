@@ -91,10 +91,10 @@
     <property name="class_associations.path" value="class_associations/${class_associations.version}" />
     <property name="class_associations.jar" value="${tcs_libdir}/${class_associations.path}/${class_associations.jar.name}" />
 
-  	<property name="command_line_utility.version" value="1.0" />
-  	<property name="command_line_utility.jar.name" value="command_line_utility.jar" />
-	  <property name="command_line_utility.path" value="command_line_utility/${command_line_utility.version}" />
-	  <property name="command_line_utility.jar" value="${tcs_libdir}/${command_line_utility.path}/${command_line_utility.jar.name}" />
+    <property name="command_line_utility.version" value="1.0" />
+    <property name="command_line_utility.jar.name" value="command_line_utility.jar" />
+    <property name="command_line_utility.path" value="command_line_utility/${command_line_utility.version}" />
+    <property name="command_line_utility.jar" value="${tcs_libdir}/${command_line_utility.path}/${command_line_utility.jar.name}" />
 
     <property name="configuration_manager.version" value="2.1.5" />
     <property name="configuration_manager.jar.name" value="configuration_manager.jar" />
@@ -116,12 +116,12 @@
     <property name="db_connection_factory.path" value="db_connection_factory/${db_connection_factory.version}" />
     <property name="db_connection_factory.jar" value="${tcs_libdir}/${db_connection_factory.path}/${db_connection_factory.jar.name}" />
 
-    <property name="deliverable_management.version" value="1.0" />
+    <property name="deliverable_management.version" value="1.0.1" />
     <property name="deliverable_management.jar.name" value="deliverable_management.jar" />
     <property name="deliverable_management.path" value="deliverable_management/${deliverable_management.version}" />
     <property name="deliverable_management.jar" value="${tcs_libdir}/${deliverable_management.path}/${deliverable_management.jar.name}" />
 
-    <property name="deliverable_management_persistence.version" value="1.0" />
+    <property name="deliverable_management_persistence.version" value="1.0.1" />
     <property name="deliverable_management_persistence.jar.name" value="deliverable_management_persistence.jar" />
     <property name="deliverable_management_persistence.path" value="deliverable_management_persistence/${deliverable_management_persistence.version}" />
     <property name="deliverable_management_persistence.jar" value="${tcs_libdir}/${deliverable_management_persistence.path}/${deliverable_management_persistence.jar.name}" />
@@ -176,7 +176,7 @@
     <property name="object_factory.path" value="object_factory/${object_factory.version}" />
     <property name="object_factory.jar" value="${tcs_libdir}/${object_factory.path}/${object_factory.jar.name}" />
 
-    <property name="online_review_ajax_support.version" value="1.0" />
+    <property name="online_review_ajax_support.version" value="1.0.1" />
     <property name="online_review_ajax_support.jar.name" value="online_review_ajax_support.jar" />
     <property name="online_review_ajax_support.path" value="online_review_ajax_support/${online_review_ajax_support.version}" />
     <property name="online_review_ajax_support.jar" value="${tcs_libdir}/${online_review_ajax_support.path}/${online_review_ajax_support.jar.name}" />
@@ -318,8 +318,8 @@
     <property name="ifx-jdbc.jar" value="${ext_libdir}/ifx-jdbc.jar" />
     <property name="jstl.jar" value="${ext_libdir}/jstl.jar" />
     <property name="servlet.jar" value="${cactus.home.tomcat5x}/common/lib/servlet-api.jar" />
-    <property name="servlet.jsp.jar" value="${cactus.home.tomcat5x}/common/lib/jsp-api.jar" />    
-<property name="struts.jar" value="${ext_libdir}/struts-1.2.9.jar" />
+    <property name="servlet.jsp.jar" value="${cactus.home.tomcat5x}/common/lib/jsp-api.jar" />
+    <property name="struts.jar" value="${ext_libdir}/struts-1.2.9.jar" />
 
     <property name="commons.beanutils.jar" value="${ext_libdir}/commons-beanutils.jar" />
 
@@ -350,7 +350,7 @@
         <pathelement location="${auto_screening_management.jar}" />
         <pathelement location="${base_exception.jar}" />
         <pathelement location="${class_associations.jar}" />
-	      <pathelement location="${command_line_utility.jar}" />
+        <pathelement location="${command_line_utility.jar}" />
         <pathelement location="${configuration_manager.jar}" />
         <pathelement location="${data_validation.jar}" />
         <pathelement location="${database_abstraction.jar}" />
