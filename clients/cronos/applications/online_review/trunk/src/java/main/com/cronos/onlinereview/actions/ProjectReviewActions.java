@@ -212,7 +212,7 @@ public class ProjectReviewActions extends DispatchAction {
     public ActionForward viewScreening(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response)
         throws BaseException {
-        return viewGenericReview(mapping, form, request, "Screening");
+        return viewGenericReview(mapping, request, "Screening");
     }
 
     /**
@@ -324,7 +324,7 @@ public class ProjectReviewActions extends DispatchAction {
     public ActionForward viewReview(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response)
         throws BaseException {
-        return viewGenericReview(mapping, form, request, "Review");
+        return viewGenericReview(mapping, request, "Review");
     }
 
     /**
@@ -1629,7 +1629,7 @@ public class ProjectReviewActions extends DispatchAction {
     public ActionForward viewApproval(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response)
         throws BaseException {
-        return viewGenericReview(mapping, form, request, "Approval");
+        return viewGenericReview(mapping, request, "Approval");
     }
 
     /**
@@ -2796,32 +2796,43 @@ public class ProjectReviewActions extends DispatchAction {
     /**
      * TODO: Document it.
      *
+     * @return
      * @param mapping
-     * @param form
      * @param request
      * @param reviewType
-     * @return
      * @throws BaseException
+     * @throws IllegalArgumentException
+     *             if any of the parameters are <code>null</code>, or if <code>reviewType</code>
+     *             parameter is empty string, or if that parameter contains the value that does not
+     *             match either <code>&quot;Screening&quot;</code>, or
+     *             <code>&quot;Review&quot;</code>, or <code>&quot;Approval&quot;</code>.
      */
-    private ActionForward viewGenericReview(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-            String reviewType) throws BaseException {
+    private ActionForward viewGenericReview(ActionMapping mapping, HttpServletRequest request, String reviewType)
+        throws BaseException {
+        // Validate parameters
+        ActionsHelper.validateParameterNotNull(mapping, "mapping");
+        ActionsHelper.validateParameterNotNull(request, "request");
+        ActionsHelper.validateParameterStringNotEmpty(reviewType, "reviewType");
+
         String permName;
         String scorecardTypeName;
+
         // Determine permission name and phase name from the review type
-        if ("Screening".equals(reviewType)) {
+        if (reviewType.equals("Screening")) {
             permName = Constants.PERFORM_SCREENING_PERM_NAME;
             scorecardTypeName = "Screening";
-        } else if ("Review".equals(reviewType)) {
+        } else if (reviewType.equals("Review")) {
             permName = Constants.PERFORM_REVIEW_PERM_NAME;
             scorecardTypeName = "Review";
-        } else {
+        } else if (reviewType.equals("Approval")) {
             permName = Constants.PERFORM_APPROVAL_PERM_NAME;
             scorecardTypeName = "Client Review";
+        } else {
+            throw new IllegalArgumentException("Incorrect review type specified: " + reviewType + ".");
         }
 
         // Verify that certain requirements are met before proceeding with the Action
-        CorrectnessCheckResult verification =
-                checkForCorrectReviewId(mapping, request, permName);
+        CorrectnessCheckResult verification = checkForCorrectReviewId(mapping, request, permName);
         // If any error has occured, return action forward contained in the result bean
         if (!verification.isSuccessful()) {
             return verification.getForward();
@@ -2844,48 +2855,55 @@ public class ProjectReviewActions extends DispatchAction {
         } else {
             // If user has a Manager role, put special flag to the request,
             // indicating that we can edit the review
-            if(AuthorizationHelper.hasUserRole(request, Constants.MANAGER_ROLE_NAME)) {
+            if (AuthorizationHelper.hasUserRole(request, Constants.MANAGER_ROLE_NAME)) {
                 request.setAttribute("canEditScorecard", Boolean.TRUE);
             }
         }
 
-        // Get an array of all phases for the project
-        Phase[] phases = ActionsHelper.getPhasesForProject(ActionsHelper.createPhaseManager(request), verification.getProject());
-        // Get active (current) phase
-        Phase phase = ActionsHelper.getPhase(phases, true, null);
+        // Check that the type of the review is Review,
+        // as appeals and responses to them can ony be placed to that type of scorecard
+        if (scorecardTypeName.equals("Review")) {
+            // Get an array of all phases for the project
+            Phase[] phases = ActionsHelper.getPhasesForProject(
+                    ActionsHelper.createPhaseManager(request), verification.getProject());
+            // Determine if either Appeals or Appeals Response phase is active (or both)
+            Phase appealsPhase = ActionsHelper.getPhase(phases, true, Constants.APPEALS_PHASE_NAME);
+            Phase appealsResponsePhase = ActionsHelper.getPhase(phases, true, Constants.APPEALS_RESPONSE_PHASE_NAME);
 
-        boolean canPlaceAppeal = false;
-        boolean canPlaceAppealResponse = false;
-        // Check if user can place appeals or appeal responses
-        if (phase.getPhaseType().getName().equals(Constants.APPEALS_PHASE_NAME) &&
-                AuthorizationHelper.hasUserPermission(request, Constants.PERFORM_APPEAL_PERM_NAME)) {
-            // Can place appeal, put appropriate flag to request
-            request.setAttribute("canPlaceAppeal", Boolean.TRUE);
-            canPlaceAppeal = true;
-        } else if (phase.getPhaseType().getName().equals(Constants.APPEALS_RESPONSE_PHASE_NAME) &&
-                AuthorizationHelper.hasUserPermission(request, Constants.PERFORM_APPEAL_RESP_PERM_NAME)) {
-            // Can place response, put appropriate flag to request
-            request.setAttribute("canPlaceAppealResponse", Boolean.TRUE);
-            canPlaceAppealResponse = true;
-        }
+            boolean canPlaceAppeal = false;
+            boolean canPlaceAppealResponse = false;
 
-        if (canPlaceAppeal || canPlaceAppealResponse) {
-            // Gather the appeal statuses
-            String[] appealStatuses = new String[verification.getReview().getNumberOfItems()];
-            for (int i = 0; i < appealStatuses.length; i++) {
-                Comment appeal = getItemAppeal(verification.getReview().getItem(i).getAllComments());
-                Comment response = getItemAppealResponse(verification.getReview().getItem(i).getAllComments());
-                if (appeal != null && response == null) {
-                    // TODO: Localize the strings
-                    appealStatuses[i] = "Unresolved";
-                } else if (appeal != null) {
-                    appealStatuses[i] = "Resolved";
-                } else {
-                    appealStatuses[i] = "";
-                }
+            // Check if user can place appeals or appeal responses
+            if (appealsPhase != null &&
+                    AuthorizationHelper.hasUserPermission(request, Constants.PERFORM_APPEAL_PERM_NAME)) {
+                // Can place appeal, put an appropriate flag to request
+                request.setAttribute("canPlaceAppeal", Boolean.TRUE);
+                canPlaceAppeal = true;
+            } else if (appealsResponsePhase != null &&
+                    AuthorizationHelper.hasUserPermission(request, Constants.PERFORM_APPEAL_RESP_PERM_NAME)) {
+                // Can place response, put an appropriate flag to request
+                request.setAttribute("canPlaceAppealResponse", Boolean.TRUE);
+                canPlaceAppealResponse = true;
             }
-            // Place appeal statuses to request
-            request.setAttribute("appealStatuses", appealStatuses);
+
+            if (canPlaceAppeal || canPlaceAppealResponse) {
+                // Gather the appeal statuses
+                String[] appealStatuses = new String[verification.getReview().getNumberOfItems()];
+                for (int i = 0; i < appealStatuses.length; i++) {
+                    Comment appeal = getCommentAppeal(verification.getReview().getItem(i).getAllComments());
+                    Comment response = getCommentAppealResponse(verification.getReview().getItem(i).getAllComments());
+                    if (appeal != null && response == null) {
+                        // TODO: Localize the strings
+                        appealStatuses[i] = "Unresolved";
+                    } else if (appeal != null) {
+                        appealStatuses[i] = "Resolved";
+                    } else {
+                        appealStatuses[i] = "";
+                    }
+                }
+                // Place appeal statuses to request
+                request.setAttribute("appealStatuses", appealStatuses);
+            }
         }
 
         // Retrieve some basic review info and store it in the request
@@ -2902,12 +2920,12 @@ public class ProjectReviewActions extends DispatchAction {
     /**
      * TODO: Document it
      *
-     * @param allComments
      * @return
+     * @param allComments
      */
-    private Comment getItemAppealResponse(Comment[] allComments) {
+    private static Comment getCommentAppeal(Comment[] allComments) {
         for (int i = 0; i < allComments.length; i++) {
-            if (allComments[i].getCommentType().getName().equals("Appeal Response")) {
+            if (allComments[i].getCommentType().getName().equals("Appeal")) {
                 return allComments[i];
             }
         }
@@ -2917,12 +2935,12 @@ public class ProjectReviewActions extends DispatchAction {
     /**
      * TODO: Document it
      *
-     * @param allComments
      * @return
+     * @param allComments
      */
-    private Comment getItemAppeal(Comment[] allComments) {
+    private static Comment getCommentAppealResponse(Comment[] allComments) {
         for (int i = 0; i < allComments.length; i++) {
-            if (allComments[i].getCommentType().getName().equals("Appeal")) {
+            if (allComments[i].getCommentType().getName().equals("Appeal Response")) {
                 return allComments[i];
             }
         }
