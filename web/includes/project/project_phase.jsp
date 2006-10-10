@@ -4,6 +4,7 @@
 <%@ taglib prefix="html" uri="/tags/struts-html" %>
 <%@ taglib prefix="bean" uri="/tags/struts-bean" %>
 <%@ taglib prefix="tc-webtag" uri="/tags/tc-webtags" %>
+	<c:set var="submBoxIdx" value="0" />
 	<a name="tabs"></a>
 	<div id="tabcontentcontainer">
 		<c:forEach items="${phaseGroups}" var="group" varStatus="groupStatus">
@@ -80,7 +81,7 @@
 							</table>
 						</c:when>
 						<c:when test='${group.appFunc == "VIEW_SUBMISSIONS"}'>
-							<table class="scorecard" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;">
+							<table id="Submissions${submBoxIdx}" class="scorecard" width="100%" cellpadding="0" cellspacing="0" border="0">
 								<tr>
 									<td class="title" colspan="7">${group.name}</td>
 								</tr>
@@ -92,16 +93,29 @@
 									<td class="headerC" width="14%" nowrap="nowrap"><bean:message key="viewProjectDetails.box.Submission.ScreeningScore" /></td>
 									<td class="headerC" width="15%" nowrap="nowrap"><bean:message key="viewProjectDetails.box.Submission.ScreeningResult" /></td>
 								</tr>
+								<c:set var="prevSubm" value="${group.pastSubmissions}" />
+								<c:set var="prevSubmissions" value="" />
 								<c:forEach items="${group.submissions}" var="submission" varStatus="submissionStatus">
+									<c:set var="submitter" value="" />
+									<c:forEach items="${group.submitters}" var="curSubmitter">
+										<c:if test="${curSubmitter.id == submission.upload.owner}">
+											<c:set var="submitter" value="${curSubmitter}" />
+										</c:if>
+									</c:forEach>
+									<c:if test="${not empty prevSubm}">
+										<c:set var="prevSubmissions" value="${prevSubm[submissionStatus.index]}" />
+									</c:if>
 									<tr class='${(submissionStatus.index % 2 == 0) ? "light" : "dark"}'>
-										<c:set var="submitter" value="" />
-										<c:forEach items="${group.submitters}" var="curSubmitter">
-											<c:if test="${curSubmitter.id == submission.upload.owner}">
-												<c:set var="submitter" value="${curSubmitter}" />
-											</c:if>
-										</c:forEach>
 										<td class="value" width="10%" nowrap="nowrap">
-<%--											<html:img id="Out1" class="Outline" border="0" page="/i/plus.gif" width="9" height="9" style="margin-right:5px;" title="View Previous Submissions"> --%>
+											<c:if test="${not empty prevSubmissions}">
+												<a id="PrevSubm${submBoxIdx}_${submissionStatus.index}_plus" href="javascript:void(0)" onClick='return expandSubmissions(${submBoxIdx}, ${submissionStatus.index}, this)'><html:img
+														styleClass="Outline" border="0" srcKey="viewProjectDetails.box.Submission.icoShowMore.img" altKey="viewProjectDetails.box.Submission.icoShowMore.alt" /></a><a
+													id="PrevSubm${submBoxIdx}_${submissionStatus.index}_minus" href="javascript:void(0)" onClick='return collapseSubmissions(${submBoxIdx}, ${submissionStatus.index}, this)' style="display:none;"><html:img
+														styleClass="Outline" border="0" srcKey="viewProjectDetails.box.Submission.icoShowLess.img" altKey="viewProjectDetails.box.Submission.icoShowLess.alt" /></a>
+											</c:if>
+											<c:if test="${(empty prevSubmissions) && (not empty prevSubm)}">
+												<html:img styleClass="Outline" border="0" srcKey="viewProjectDetails.box.Submission.icoShowMore.img" style="visibility:hidden;" />
+											</c:if>
 											<c:set var="placement" value="" />
 											<c:if test="${!(empty submitter)}">
 												<c:set var="placement" value='${submitter.allProperties["Placement"]}' />
@@ -222,11 +236,65 @@
 											</c:if>
 										</c:if>
 									</tr>
+									<c:forEach items="${prevSubmissions}" var="pastSubmission" varStatus="pastSubmissionStatus">
+										<tr id="PrevSubm${submBoxIdx}_${submissionStatus.index}" class='${(submissionStatus.index % 2 == 0) ? "light" : "dark"}' style="display:none;">
+											<td class="value" colspan="2" nowrap="nowrap">
+												<html:img border="0" srcKey="viewProjectDetails.box.Submission.icoShowMore.img" styleClass="Outline" style="visibility:hidden;" />
+												<html:link page="/actions/DownloadSubmission.do?method=downloadSubmission&amp;uid=${pastSubmission.id}">
+													<bean:message key="viewProjectDetails.box.Submission.Previous.UploadID" />
+													${pastSubmission.id}</html:link></td>
+											<td class="value" width="22%">${pastSubmission.modificationTimestamp}</td>
+											<td class="value" width="14%"><!-- @ --></td>
+											<td class="value" width="15%"><!-- @ --></td>
+											<td class="value" width="14%"><!-- @ --></td>
+											<td class="value" width="15%"><!-- @ --></td>
+										</tr>
+									</c:forEach>
 								</c:forEach>
 								<tr>
 									<td class="lastRowTD" colspan="7"><!-- @ --></td>
 								</tr>
 							</table>
+
+							<c:if test="${(not empty prevSubm) && (submBoxIdx == 0)}">
+<script language="JavaScript" type="text/javascript">
+	function expandSubmissions(iBoxIdx, iLinkIdx, aObject) {
+		return expcollSubmissions(iBoxIdx, iLinkIdx, aObject, "none", "inline", "");
+	}
+	function collapseSubmissions(iBoxIdx, iLinkIdx, aObject) {
+		return expcollSubmissions(iBoxIdx, iLinkIdx, aObject, "inline", "none", "none");
+	}
+
+	function expcollSubmissions(iBoxIdx, iLinkIdx, aObject, strStyle1, strStyle2, strStyle3) {
+		var strRowGroup = "PrevSubm" + iBoxIdx + "_" + iLinkIdx;
+		var imgPlus = document.getElementById(strRowGroup + "_plus");
+		var imgMinus = document.getElementById(strRowGroup + "_minus");
+		var table = document.getElementById("Submissions" + iBoxIdx);
+
+		if (imgPlus) {
+			imgPlus.style.display = strStyle1;
+		}
+		if (imgMinus) {
+			imgMinus.style.display = strStyle2;
+		}
+		if (table) {
+			var rows = table.getElementsByTagName("tr");
+			for (var i = 0; i < rows.length; ++i) {
+				var row = table.rows[i];
+				if (row.id == strRowGroup) {
+					row.style.display = strStyle3;
+				}
+			}
+		}
+
+		if (aObject.blur) {
+			aObject.blur();
+		}
+		return false;
+	}
+</script>
+							</c:if>
+							<c:set var="submBoxIdx" value="${submBoxIdx + 1}" />
 						</c:when>
 						<c:when test='${group.appFunc == "VIEW_REVIEWS"}'>
 							<table class="scorecard" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;">

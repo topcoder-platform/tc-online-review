@@ -71,6 +71,16 @@ public class PhaseGroup {
     private Submission[] submissions = null;
 
     /**
+     * This member variable holds an array of uploads of Submission type which were deleted due to a
+     * newer version has been uploaded by Submitter, or <code>null</code> value if no such array
+     * has been assigned to the phase group.
+     *
+     * @see #getPastSubmissions()
+     * @see #setPastSubmissions(Upload[][])
+     */
+    private Upload[][] pastSubmissions = null;
+
+    /**
      * This member variable holds an array of screening tasks that might have been assigned to this
      * phase group, or <code>null</code> value if no such array has been assigned to the phase
      * group.
@@ -327,6 +337,26 @@ public class PhaseGroup {
      */
     public void setSubmissions(Submission[] submissions) {
         this.submissions = submissions;
+    }
+
+    /**
+     * This method returns array of uploads of Submission type that could have been assigned to this
+     * phase group.
+     *
+     * @return an array of uploads.
+     */
+    public Upload[][] getPastSubmissions() {
+        return this.pastSubmissions;
+    }
+
+    /**
+     * This method sets a reference to array of uploads of Submission type.
+     *
+     * @param pastSubmissions
+     *            a reference to array of uploads.
+     */
+    public void setPastSubmissions(Upload[][] pastSubmissions) {
+        this.pastSubmissions = pastSubmissions;
     }
 
     public ScreeningTask[] getScreeningTasks() {
