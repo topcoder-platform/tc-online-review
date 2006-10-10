@@ -3,33 +3,33 @@
  */
 package com.cronos.onlinereview.project;
 
+import com.gargoylesoftware.htmlunit.html.HtmlTable;
 import com.topcoder.db.connectionfactory.DBConnectionFactory;
 import com.topcoder.db.connectionfactory.DBConnectionFactoryImpl;
-import com.gargoylesoftware.htmlunit.html.HtmlTable;
 import junit.framework.Assert;
 import junit.framework.AssertionFailedError;
 import org.dbunit.Assertion;
 import org.dbunit.DatabaseTestCase;
 import org.dbunit.database.DatabaseConnection;
 import org.dbunit.database.IDatabaseConnection;
+import org.dbunit.database.DatabaseConfig;
+import org.dbunit.dataset.CompositeDataSet;
 import org.dbunit.dataset.IDataSet;
 import org.dbunit.dataset.ITable;
-import org.dbunit.dataset.CompositeDataSet;
 import org.dbunit.dataset.xml.FlatXmlDataSet;
 import org.dbunit.operation.DatabaseOperation;
-import org.dbunit.operation.CompositeOperation;
 
-import java.io.InputStream;
 import java.io.BufferedReader;
 import java.io.FileReader;
+import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.Statement;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.LinkedHashMap;
-import java.util.Iterator;
 
 /**
  * <p></p>
@@ -160,7 +160,7 @@ public abstract class AbstractTestCase extends DatabaseTestCase {
 
     protected void setUp() throws Exception {
         this.user = new UserSimulator(UserSimulator.MANAGER);
-        clearDatabase();
+//        clearDatabase();
         super.setUp();
     }
 
@@ -168,7 +168,7 @@ public abstract class AbstractTestCase extends DatabaseTestCase {
     protected void tearDown() throws Exception {
         this.user = null;
         super.tearDown();
-        clearDatabase();
+//        clearDatabase();
     }
 
     protected void setUser(String username) {
@@ -188,7 +188,10 @@ public abstract class AbstractTestCase extends DatabaseTestCase {
     protected IDatabaseConnection getConnection() throws Exception {
         DBConnectionFactory factory = new DBConnectionFactoryImpl(DBConnectionFactoryImpl.class.getName());
         Connection connection = factory.createConnection();
-        return new DatabaseConnection(connection);
+        DatabaseConnection databaseConnection = new DatabaseConnection(connection);
+        DatabaseConfig config = databaseConnection.getConfig();
+        config.setFeature("http://www.dbunit.org/features/batchedStatements", true);
+        return databaseConnection;
     }
 
     /**
@@ -232,7 +235,8 @@ public abstract class AbstractTestCase extends DatabaseTestCase {
      * @throws Exception if an unexpected error occurs.
      */
     protected DatabaseOperation getSetUpOperation() throws Exception {
-        return new CompositeOperation(DatabaseOperation.DELETE_ALL, DatabaseOperation.REFRESH);
+//        return new CompositeOperation(DatabaseOperation.DELETE_ALL, DatabaseOperation.REFRESH);
+        return DatabaseOperation.REFRESH;
     }
 
     /**
@@ -242,7 +246,8 @@ public abstract class AbstractTestCase extends DatabaseTestCase {
      * @throws Exception if an unexpected error occurs.
      */
     protected DatabaseOperation getTearDownOperation() throws Exception {
-        return DatabaseOperation.DELETE_ALL;
+        return DatabaseOperation.DELETE;
+//        return DatabaseOperation.DELETE_ALL;
 //        return DatabaseOperation.NONE;
     }
 
@@ -710,6 +715,7 @@ public abstract class AbstractTestCase extends DatabaseTestCase {
         }
         Assert.assertFalse("Not all group sections are displayed", groupSectionsIterator.hasNext());
     }
+
     private void clearDatabase() throws Exception {
         BufferedReader reader = new BufferedReader(new FileReader("test_files/DeleteAll.sql"));
         IDatabaseConnection connection = null;
