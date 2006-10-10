@@ -2736,16 +2736,17 @@ public class ProjectReviewActions extends DispatchAction {
         }
 
         // If the user has requested to complete the review
-        if (commitRequested) {
+        if (commitRequested || managerEdit) {
             // TODO: Validate review here
 
             // Obtain an instance of CalculationManager
             CalculationManager scoreCalculator = new CalculationManager();
             // Compute scorecard's score
             review.setScore(new Float(scoreCalculator.getScore(scorecardTemplate, review)));
-
-            // Set the completed status of the review
-            review.setCommitted(true);
+            if (commitRequested) {
+                // Set the completed status of the review
+                review.setCommitted(true);
+            }
         } else if (previewRequested) {
             // Put the review object into the request
             request.setAttribute("review", review);
