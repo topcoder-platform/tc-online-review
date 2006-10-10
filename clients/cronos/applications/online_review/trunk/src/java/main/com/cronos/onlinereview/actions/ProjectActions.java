@@ -615,11 +615,11 @@ public class ProjectActions extends DispatchAction {
 
         // Create the map to store the mapping from phase JS ids to phases
         Map phasesJsMap = new HashMap();
-        
+
         // Save the project phases
         // FIXME: the project it slef is also saved by the following call. Needs to be refactored
         Phase[] projectPhases = saveProjectPhases(newProject, request, lazyForm, project, phasesJsMap);
-        
+
         // Check if there are any validation errors and return appropriate forward
         if (request.getAttribute(Globals.ERROR_KEY) != null) {
             // TODO : Check if the form is really for new project
@@ -633,10 +633,10 @@ public class ProjectActions extends DispatchAction {
                 // Store the retieved project in the request
                 request.setAttribute("project", project);
             }
-            
+
             return mapping.getInputForward();
         }
-        
+
         // If needed switch project current phase
         if (!newProject) {
             switchProjectPhase(request, lazyForm, projectPhases, phasesJsMap);
@@ -676,7 +676,7 @@ public class ProjectActions extends DispatchAction {
      * @return
      * @throws BaseException
      */
-    private Phase[] saveProjectPhases(boolean newProject, HttpServletRequest request, LazyValidatorForm lazyForm, 
+    private Phase[] saveProjectPhases(boolean newProject, HttpServletRequest request, LazyValidatorForm lazyForm,
             Project project, Map phasesJsMap) throws BaseException {
 
         // Obtain the instance of Phase Manager
@@ -824,7 +824,7 @@ public class ProjectActions extends DispatchAction {
             // TODO: Set duration based on specified phase end date if needed
             // Set sheduled phase end date
             phase.setScheduledEndDate(new Date(phase.getScheduledStartDate().getTime() + phase.getLength())); //(phaseEndDate);
-        
+
 
             // Set phase criteria
             Long scorecardId = (Long) lazyForm.get("phase_scorecard", i);
@@ -885,18 +885,18 @@ public class ProjectActions extends DispatchAction {
     }
 
     /**
-     * 
+     *
      * TODO: Document it.
-     * 
+     *
      * @param request
      * @param lazyForm
      * @param projectPhases
      * @param phasesJsMap
      * @throws BaseException
      */
-    private void switchProjectPhase(HttpServletRequest request, LazyValidatorForm lazyForm, 
+    private void switchProjectPhase(HttpServletRequest request, LazyValidatorForm lazyForm,
             Phase[] projectPhases, Map phasesJsMap) throws BaseException {
-        
+
         // Get current project phase
         Phase currentPhase = getCurrentProjectPhase(projectPhases);
         // Get new current phase id
@@ -913,7 +913,7 @@ public class ProjectActions extends DispatchAction {
                 }
             }
             // Obtain Phase Manager instance
-            PhaseManager phaseManager = ActionsHelper.createPhaseManager(request);            
+            PhaseManager phaseManager = ActionsHelper.createPhaseManager(request);
             for (; i < projectPhases.length; i++) {
                 if (projectPhases[i] != newCurrentPhase) {
                     if (projectPhases[i].getPhaseStatus().getName().equals(PhaseStatus.OPEN.getName())) {
@@ -945,7 +945,7 @@ public class ProjectActions extends DispatchAction {
             }
         }
     }
-    
+
     /**
      * TODO: Document it
      * Note, that this method assumes that phases are already sorted by the start date, etc.
@@ -1084,28 +1084,28 @@ public class ProjectActions extends DispatchAction {
         String dateString = (String) lazyForm.get(dateProperty, propertyIndex);
         String timeString = (String) lazyForm.get(timeProperty, propertyIndex);
         String ampmString = (String) lazyForm.get(ampmProperty, propertyIndex);
-        
+
         // Obtain calendar instance to be used to create Date instance
         Calendar calendar = Calendar.getInstance();
-        
+
         // Parse date string
         String[] dateParts = dateString.trim().split("[./:-]|([ ])+");
         calendar.set(Calendar.YEAR, Integer.parseInt(dateParts[2]) + (dateParts[2].length() > 2  ? 0 : 2000));
         calendar.set(Calendar.MONTH, Integer.parseInt(dateParts[0]) - 1);
         calendar.set(Calendar.DAY_OF_MONTH, Integer.parseInt(dateParts[1]));
-        
+
         // Parse time string
         String[] timeParts = timeString.trim().split("[./:-]|([ ])+");
-        calendar.set(Calendar.HOUR, Integer.parseInt(timeParts[0]));        
+        calendar.set(Calendar.HOUR, Integer.parseInt(timeParts[0]));
         if (timeParts.length == 1) {
             calendar.set(Calendar.MINUTE, 0);
         } else {
             calendar.set(Calendar.MINUTE, Integer.parseInt(timeParts[1]));
         }
-        
+
         // Set am/pm property
         calendar.set(Calendar.AM_PM, "am".equals(ampmString) ? Calendar.AM : Calendar.PM);
-        
+
         // Returned parsed Date
         return calendar.getTime();
     }
@@ -1300,7 +1300,7 @@ public class ProjectActions extends DispatchAction {
     public ActionForward listProjects(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response)
         throws BaseException {
-          
+
         Date currentDate = new Date();
         logger.log(Level.ERROR, "entering listProjects" + dateFormat.format(currentDate));
         // Gather the roles the user has for current request
@@ -1327,7 +1327,7 @@ public class ProjectActions extends DispatchAction {
         }
         currentDate = new Date();
         logger.log(Level.ERROR, "obtaining projectmanager " + dateFormat.format(currentDate));
-        
+
         // Obtain an instance of Project Manager
         ProjectManager manager = ActionsHelper.createProjectManager(request);
         // This variable will specify the index of active tab on the JSP page
@@ -1437,7 +1437,6 @@ logger.log(Level.ERROR, "getting phases phase manager" + dateFormat.format(curre
 /*****************************************************************************************************************************************/
         currentDate = new Date();
 
-        
         logger.log(Level.ERROR, "get message resources" + dateFormat.format(currentDate));
         // Message Resources to be used for this request
         MessageResources messages = getResources(request);
@@ -1642,7 +1641,7 @@ logger.log(Level.ERROR, "getting phases phase manager" + dateFormat.format(curre
 
         // Get and return an array of my incomplete deliverables for all active phases.
         // These deliverables will require furter grouping
-        return manager.searchDeliverables(filter, new Boolean(false));
+        return manager.searchDeliverables(filter, Boolean.FALSE);
     }
 
     private String getRolesFromResources(MessageResources messages, Resource[] resources) {

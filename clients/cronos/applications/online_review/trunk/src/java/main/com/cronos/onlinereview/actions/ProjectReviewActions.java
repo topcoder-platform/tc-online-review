@@ -827,7 +827,7 @@ public class ProjectReviewActions extends DispatchAction {
                         "Rejected".equalsIgnoreCase(submitterExtraInfo)) {
                     // Indicate to the underlying JSP page that submitter has committed its
                     // Aggregation Review, so submitter's comments can be displayed to the reviewers
-                    request.setAttribute("submitterCommitted", new Boolean(true));
+                    request.setAttribute("submitterCommitted", Boolean.TRUE);
                 }
             }
         }
@@ -2761,7 +2761,7 @@ public class ProjectReviewActions extends DispatchAction {
             request.setAttribute("wordOf", " "  + wordOf + " ");
 
             // Notify View page that this is actually a preview operation
-            request.setAttribute("isPreview", new Boolean(true));
+            request.setAttribute("isPreview", Boolean.TRUE);
             // Forward to preview page
             return mapping.findForward(Constants.PREVIEW_FORWARD_NAME);
         }
