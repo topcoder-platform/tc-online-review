@@ -386,6 +386,43 @@ public class ProjectDetailsActions extends DispatchAction {
                 if (AuthorizationHelper.hasUserPermission(request, Constants.VIEW_ALL_SUBM_PERM_NAME)) {
                     submissions =
                         ActionsHelper.getMostRecentSubmissions(ActionsHelper.createUploadManager(request), project);
+
+                    // Obtain an instance of Upload Manager
+                    UploadManager upMgr = ActionsHelper.createUploadManager(request);
+                    // Get all upload types
+                    UploadType[] allUploadTypes = upMgr.getAllUploadTypes();
+                    // Get all upload statuses
+                    UploadStatus[] allUploadStatuses = upMgr.getAllUploadStatuses();
+
+                    Filter filterProject = UploadFilterBuilder.createProjectIdFilter(project.getId());
+                    Filter filterUploadType = UploadFilterBuilder.createUploadTypeIdFilter(
+                            ActionsHelper.findUploadTypeByName(allUploadTypes, "Submission").getId());
+                    Filter filterUploadStatus = UploadFilterBuilder.createUploadStatusIdFilter(
+                            ActionsHelper.findUploadStatusByName(allUploadStatuses, "Deleted").getId());
+
+                    Filter filter =
+                        new AndFilter(Arrays.asList(new Filter[] {filterProject, filterUploadType, filterUploadStatus}));
+                    Upload[] ungroupedUploads = upMgr.searchUploads(filter);
+                    Upload[][] pastSubmissions = new Upload[submissions.length][];
+
+                    for (int j = 0; j < pastSubmissions.length; ++j) {
+                        List temp = new ArrayList();
+                        long currentUploadOwnerId = submissions[j].getUpload().getOwner();
+
+                        for (int k = 0; k < ungroupedUploads.length; ++k) {
+                            if (currentUploadOwnerId == ungroupedUploads[k].getOwner()) {
+                                temp.add(ungroupedUploads[k]);
+                            }
+                        }
+
+                        if (!temp.isEmpty()) {
+                            pastSubmissions[j] = (Upload[]) temp.toArray(new Upload[temp.size()]);
+                        }
+                    }
+
+                    if (pastSubmissions.length != 0) {
+                        phaseGroup.setPastSubmissions(pastSubmissions);
+                    }
                 }
 
                 boolean mayViewMostRecentAfterAppealsResponse =
@@ -542,7 +579,7 @@ public class ProjectDetailsActions extends DispatchAction {
                     submissions = upMgr.searchSubmissions(filter);
                 }
                 // No submissions -- nothing to review,
-                // but the list of submissions must not be non-null in this case
+                // but the list of submissions must not be null in this case
                 if (submissions == null) {
                     submissions = new Submission[0];
                 }
@@ -614,23 +651,25 @@ public class ProjectDetailsActions extends DispatchAction {
                     ungroupedReviews = new Review[0];
                 }
 
-                // Obtain an instance of Upload Manager
-                UploadManager upMgr = ActionsHelper.createUploadManager(request);
-                UploadStatus[] allUploadStatuses = upMgr.getAllUploadStatuses();
-                UploadType[] allUploadTypes = upMgr.getAllUploadTypes();
+                if (!reviewerIds.isEmpty()) {
+                    // Obtain an instance of Upload Manager
+                    UploadManager upMgr = ActionsHelper.createUploadManager(request);
+                    UploadStatus[] allUploadStatuses = upMgr.getAllUploadStatuses();
+                    UploadType[] allUploadTypes = upMgr.getAllUploadTypes();
 
-                Filter filterResource = new InFilter("resource_id", reviewerIds);
-                Filter filterStatus = UploadFilterBuilder.createUploadStatusIdFilter(
-                        ActionsHelper.findUploadStatusByName(allUploadStatuses, "Active").getId());
-                Filter filterType = UploadFilterBuilder.createUploadTypeIdFilter(
-                        ActionsHelper.findUploadTypeByName(allUploadTypes, "Test Case").getId());
+                    Filter filterResource = new InFilter("resource_id", reviewerIds);
+                    Filter filterStatus = UploadFilterBuilder.createUploadStatusIdFilter(
+                            ActionsHelper.findUploadStatusByName(allUploadStatuses, "Active").getId());
+                    Filter filterType = UploadFilterBuilder.createUploadTypeIdFilter(
+                            ActionsHelper.findUploadTypeByName(allUploadTypes, "Test Case").getId());
 
-                Filter filterForUploads =
-                    new AndFilter(Arrays.asList(new Filter[] {filterResource, filterStatus, filterType}));
+                    Filter filterForUploads =
+                        new AndFilter(Arrays.asList(new Filter[] {filterResource, filterStatus, filterType}));
 
-                Upload[] testCases = upMgr.searchUploads(filterForUploads);
+                    Upload[] testCases = upMgr.searchUploads(filterForUploads);
 
-                phaseGroup.setTestCases(testCases);
+                    phaseGroup.setTestCases(testCases);
+                }
 
                 Review[][] reviews = new Review[submissions.length][];
                 Date[] reviewDates = new Date[submissions.length];
