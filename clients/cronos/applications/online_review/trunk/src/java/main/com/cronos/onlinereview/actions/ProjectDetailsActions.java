@@ -541,6 +541,8 @@ public class ProjectDetailsActions extends DispatchAction {
 
                     submissions = upMgr.searchSubmissions(filter);
                 }
+                // No submissions -- nothing to review,
+                // but the list of submissions must not be non-null in this case
                 if (submissions == null) {
                     submissions = new Submission[0];
                 }
@@ -563,7 +565,12 @@ public class ProjectDetailsActions extends DispatchAction {
                     }
                 }
 
+                // Put collected reviewers into the phase group
                 phaseGroup.setReviewers(reviewers);
+                // A safety check: create an empty array in case reviewers is null
+                if (reviewers == null) {
+                    reviewers = new Resource[0];
+                }
 
                 // Obtain an instance of Scorecard Manager
                 ScorecardManager scrMgr = ActionsHelper.createScorecardManager(request);
@@ -581,24 +588,31 @@ public class ProjectDetailsActions extends DispatchAction {
                     reviewerIds.add(new Long(reviewers[j].getId()));
                 }
 
-                Filter filterSubmissions =
-                    (submissionIds.isEmpty()) ? null : new InFilter("submission", submissionIds);
-                Filter filterReviewers = new InFilter("reviewer", reviewerIds);
-                Filter filterScorecard = new EqualToFilter("scorecardType",
-                        new Long(ActionsHelper.findScorecardTypeByName(allScorecardTypes, "Review").getId()));
+                Review[] ungroupedReviews = null;
 
-                List reviewFilters = new ArrayList();
-                reviewFilters.add(filterReviewers);
-                reviewFilters.add(filterScorecard);
-                if (filterSubmissions != null) {
-                    reviewFilters.add(filterSubmissions);
+                if (!(submissionIds.isEmpty() || reviewerIds.isEmpty())) {
+                    Filter filterSubmissions = new InFilter("submission", submissionIds);
+                    Filter filterReviewers = new InFilter("reviewer", reviewerIds);
+                    Filter filterScorecard = new EqualToFilter("scorecardType",
+                            new Long(ActionsHelper.findScorecardTypeByName(allScorecardTypes, "Review").getId()));
+
+                    List reviewFilters = new ArrayList();
+                    reviewFilters.add(filterReviewers);
+                    reviewFilters.add(filterScorecard);
+                    if (filterSubmissions != null) {
+                        reviewFilters.add(filterSubmissions);
+                    }
+
+                    Filter filterForReviews = new AndFilter(reviewFilters);
+
+                    // Obtain an instance of Review Manager
+                    ReviewManager revMgr = ActionsHelper.createReviewManager(request);
+                    // Get the reviews from every individual reviewer
+                    ungroupedReviews = revMgr.searchReviews(filterForReviews, false);
                 }
-
-                Filter filterForReviews = new AndFilter(reviewFilters);
-
-                // Obtain an instance of Review Manager
-                ReviewManager revMgr = ActionsHelper.createReviewManager(request);
-                Review[] ungroupedReviews = revMgr.searchReviews(filterForReviews, false);
+                if (ungroupedReviews == null) {
+                    ungroupedReviews = new Review[0];
+                }
 
                 // Obtain an instance of Upload Manager
                 UploadManager upMgr = ActionsHelper.createUploadManager(request);
