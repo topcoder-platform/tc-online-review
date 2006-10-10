@@ -1278,9 +1278,15 @@ public class ProjectDetailsActions extends DispatchAction {
         response.setHeader("Content-Type", "application/octet-stream");
         response.setStatus(HttpServletResponse.SC_OK);
         response.setIntHeader("Content-Length", (int) uploadedFile.getSize());
-        response.setHeader("Content-Disposition",
-                "attachment; filename=\"submission-" + submission.getId() +
-                "-" + uploadedFile.getRemoteFileName() + "\"");
+        if (submission != null) {
+            response.setHeader("Content-Disposition",
+                    "attachment; filename=\"submission-" + submission.getId() +
+                    "-" + uploadedFile.getRemoteFileName() + "\"");
+        } else {
+            response.setHeader("Content-Disposition",
+                    "attachment; filename=\"upload-" + upload.getId() +
+                    "-" + uploadedFile.getRemoteFileName() + "\"");
+        }
 
         response.flushBuffer();
 
