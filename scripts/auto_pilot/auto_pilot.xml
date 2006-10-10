@@ -993,4 +993,12 @@
             </Property>
         </Property>
     </Config>
+    <Config name="com.topcoder.date.workdays">
+        <Property name="file_name">
+            <Value>com/topcoder/date/workdays/defaultWorkdaysFactory.properties</Value>
+        </Property>
+        <Property name="file_format">
+            <Value>properties</Value>
+        </Property>
+    </Config>
 </CMConfig>
