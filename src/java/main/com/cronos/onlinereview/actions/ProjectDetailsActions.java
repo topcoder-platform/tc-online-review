@@ -1964,7 +1964,7 @@ public class ProjectDetailsActions extends DispatchAction {
         // Put review type into the request
         request.setAttribute("reviewType", "AutoScreening");
         // Specify that Expand All / Collapse All links are not needed
-        request.setAttribute("noExpandCollapse", new Boolean(true));
+        request.setAttribute("noExpandCollapse", Boolean.TRUE);
 
         // Obtain Screening Manager instance
         ScreeningManager screeningManager = ActionsHelper.createScreeningManager(request);

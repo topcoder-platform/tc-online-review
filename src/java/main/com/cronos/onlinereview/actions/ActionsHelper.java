@@ -999,11 +999,11 @@ class ActionsHelper {
             Resource resource = myResources[i];
             String paid = (String) resource.getProperty("Payment Status");
             if (!("Yes".equalsIgnoreCase(paid))) {
-                return new Boolean(false);
+                return Boolean.FALSE;
             }
         }
 
-        return new Boolean(true);
+        return Boolean.TRUE;
     }
 
     /**
@@ -1759,9 +1759,9 @@ class ActionsHelper {
         // Validate parameter
         java.text.DateFormat dateFormat = new java.text.SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
         java.util.Date currentDate = new Date();
-        
+
         System.out.println("REMOVE ME entering create Phase Manager: "  + dateFormat.format(currentDate));
-        
+
         validateParameterNotNull(request, "request");
 
         // Try retrieving Phase Manager from the request's attribute first
@@ -1773,7 +1773,6 @@ class ActionsHelper {
             manager = new DefaultPhaseManager("com.topcoder.management.phase");
         System.out.println("REMOVE ME finishing create Default Phase Manager: "  + dateFormat.format(new Date()));
 
-// TODO: Make the following code work
         System.out.println("REMOVE ME entering getAllPhaseTypes: "  + dateFormat.format(new Date()));
             PhaseType[] phaseTypes = manager.getAllPhaseTypes();
         System.out.println("REMOVE ME finishing getAllPhaseTypes: "  + dateFormat.format(new Date()));
@@ -1809,9 +1808,8 @@ class ActionsHelper {
             request.setAttribute("phaseManager", manager);
         }
 
-        
         currentDate = new Date();
-        
+
         System.out.println("REMOVE ME leaving create Phase Manager: "  + dateFormat.format(currentDate));
         // Return the Phase Manager object
         return manager;
