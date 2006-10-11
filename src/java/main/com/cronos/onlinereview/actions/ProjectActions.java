@@ -851,7 +851,10 @@ public class ProjectActions extends DispatchAction {
             // If the manual screening flag is specified, set it
             if (manualScreening != null) {
                 phase.setAttribute("Manual Screening", manualScreening.booleanValue() ? "Yes" : "No");
+            } else {
+            	phase.setAttribute("Manual Screening", "No");
             }
+            
             Boolean viewAppealResponses = (Boolean) lazyForm.get("phase_view_appeal_responses", i);
             // If the view appeal response during appeals flag is specified, set it
             if (viewAppealResponses != null) {

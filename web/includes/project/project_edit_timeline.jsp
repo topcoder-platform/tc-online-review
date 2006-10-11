@@ -151,6 +151,7 @@
 					<html:text styleClass="inputBox" property="phase_required_submissions[${phaseIdx}]" style="width: 30px;" />
 					<bean:message key="editProject.Phases.Criteria.RequiredSubmissions.afterInput" /><br />
 					<html:checkbox property="phase_manual_screening[${phaseIdx}]" />
+					<html:hidden property="phase_manual_screening[${phaseIdx}]" value="false"/>
 					<bean:message key="editProject.Phases.Criteria.RequiredSubmissions.ManualScreening" />
 				</td>
 			</tr>	
