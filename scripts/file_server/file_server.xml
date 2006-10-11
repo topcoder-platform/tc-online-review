@@ -60,9 +60,11 @@
         </Property>
     </Config>
 	<Config name="com.topcoder.onlinereview.SubmissionFileSystemServerTool">
+		<!-- the file system server name which should be the same as corresponding one of ip server -->
 		<Property name="server_name">
 			<Value>fileserver</Value>
 		</Property>
+		<!-- the dir used for store upload file -->
 		<Property name="server_dir">
 			<Value>server</Value>
 		</Property>
@@ -93,7 +95,7 @@
                         <Value>com.informix.jdbc.IfxDriver</Value>
                     </Property>
                     <Property name="jdbc_url">
-                        <Value>jdbc:informix-sqli://63.118.154.218:1526/tcs_catalog_new2:INFORMIXSERVER=devinformix10_shm;</Value>
+                        <Value>jdbc:informix-sqli://63.118.154.218:1526/tcs_catalog_new:INFORMIXSERVER=devinformix10_shm;</Value>
                     </Property>
                     <Property name="user">
                         <Value>informix</Value>
