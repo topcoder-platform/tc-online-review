@@ -114,6 +114,7 @@
 					// operation succeeded
 					// TODO: Some changes to here
 					toggleDisplay("appealResponseText_" + itemIdx);
+					toggleDisplay("placeAppealResponse_" + itemIdx);
 				},
 				function (result, respXML) {
 					// operation failed, alert the error message to the user
@@ -208,19 +209,23 @@
 									<c:if test="${canPlaceAppealResponse and appealStatuses[itemIdx] eq 'Unresolved'}">
 										<tr class="highlighted">
 											<td class="value" colspan="3">
-												<b><bean:message key="editReview.Question.AppealResponseText.title"/>:</b>
-												<br/>
-												<textarea rows="2" name="appeal_response_text[${itemIdx}]" cols="20" style="font-size: 10px; font-family: sans-serif;width:99%;height:50px;border:1px solid #ccc;margin:3px;"></textarea>
-												<br/>
+												<div id="appealResponseText_${itemIdx}" class="showText">
+													<b><bean:message key="editReview.Question.AppealResponseText.title"/>:</b>
+													<br/>
+													<textarea rows="2" name="appeal_response_text[${itemIdx}]" cols="20" style="font-size: 10px; font-family: sans-serif;width:99%;height:50px;border:1px solid #ccc;margin:3px;"></textarea>
+													<br/>
+												</div>
 											</td>
 											<td class="value">
-												<bean:message key="editReview.Question.ModifiedResponse.title"/>:
-												<br/>
-												<%@include file="../includes/review/review_answer.jsp" %>
-												<br/><br/>
-												<html:link href="javascript:placeAppealResponse(${itemIdx}, ${item.id}, ${review.id});">
-													<html:img srcKey="editReview.Button.SubmitAppealResponse.img" altKey="editReview.Button.SubmitAppealResponse.alt" border="0"/>
-												</html:link>
+												<div id="placeAppealResponse_${itemIdx}" class="showText">
+													<bean:message key="editReview.Question.ModifiedResponse.title"/>:
+													<br/>
+													<%@include file="../includes/review/review_answer.jsp" %>
+													<br/><br/>
+													<html:link href="javascript:placeAppealResponse(${itemIdx}, ${item.id}, ${review.id});">
+														<html:img srcKey="editReview.Button.SubmitAppealResponse.img" altKey="editReview.Button.SubmitAppealResponse.alt" border="0"/>
+													</html:link>
+												</div>
 											</td>
 											<td class="value"><!-- @ --></td>
 										</tr>
