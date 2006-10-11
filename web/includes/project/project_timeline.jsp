@@ -80,7 +80,12 @@
 												<td><html:img width="${ganttOffsets[phaseStatus.index] * pixelsPerHour}" page="/i/clear.gif" height="0" /></td>
 											</c:if>
 											<td class="phase"><div style="width:${ganttLengths[phaseStatus.index] * pixelsPerHour}px;"><bean:message key='ProjectPhase.${fn:replace(phase.phaseType.name, " ", "")}' /></div></td>
-											<td class="length">${ganttLengths[phaseStatus.index]} hrs</td>
+											<c:if test="${ganttLengths[phaseStatus.index] <= 1}">
+												<td class="length">${ganttLengths[phaseStatus.index]} hr</td>
+											</c:if>
+											<c:if test="${ganttLengths[phaseStatus.index] > 1}">
+												<td class="length">${ganttLengths[phaseStatus.index]} hrs</td>
+											</c:if>
 										</tr>
 									</table>
 								</td>
