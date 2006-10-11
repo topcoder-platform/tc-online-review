@@ -915,7 +915,7 @@ public class ProjectActions extends DispatchAction {
                     // Set scheduled start date to calculated start date
                     // FIXME: Remove stupid check for end date < start date from the component
                     // FIXME: Remove next line
-                    phase.setScheduledEndDate(phase.calcStartDate());
+                    phase.setScheduledEndDate(phase.calcEndDate());
                     phase.setScheduledStartDate(phase.calcStartDate());                
                     
                     if (lazyForm.get("phase_end_date", paramIndex).toString().trim().length() > 0) {
