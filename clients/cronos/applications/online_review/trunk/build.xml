@@ -330,6 +330,7 @@
     <property name="commons.collections.jar" value="${ext_libdir}/testing/commons-collections-2.1.jar" />
     <property name="commons.httpclient.jar" value="${ext_libdir}/testing/commons-httpclient-2.0.2.jar" />
     <property name="commons.logging.jar" value="${ext_libdir}/testing/commons-logging-1.0.4.jar" />
+    <property name="commons.digester.jar" value="${ext_libdir}/commons-digester.jar" />
     <property name="httpunit.jar" value="${ext_libdir}/testing/httpunit-1.6.jar" />
     <property name="junit.jar" value="${ext_libdir}/testing/junit-3.8.1.jar" />
     <property name="nekohtml.jar" value="${ext_libdir}/testing/nekohtml-0.9.1.jar" />
@@ -395,6 +396,7 @@
         <pathelement location="${weighted_calculator.jar}" />
         <pathelement location="${workdays.jar}" />
         <pathelement location="${tcsUtil.jar}" />
+       <pathelement location="${commons.digester.jar}"/>
 <!--
         <pathelement location="${servlet-api.jar}" />
         <pathelement location="${javax.servlet.jsp.jar}" />
@@ -410,7 +412,7 @@
         <pathelement location="${commons.httpclient.jar}" />
         <pathelement location="${commons.logging.jar}" />
         <pathelement location="${commons.collections.jar}"/>
-        <pathelement location="${httpunit.jar}" />
+         <pathelement location="${httpunit.jar}" />
         <pathelement location="${nekohtml.jar}" />
         <pathelement location="${strutstest.jar}" />
 
