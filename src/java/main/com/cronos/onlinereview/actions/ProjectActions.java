@@ -34,7 +34,6 @@ import org.apache.struts.validator.LazyValidatorForm;
 import com.cronos.onlinereview.external.ExternalUser;
 import com.cronos.onlinereview.external.UserRetrieval;
 
-import com.sun.rsasign.d;
 import com.topcoder.util.log.Level;
 import com.topcoder.util.log.Log;
 import com.topcoder.util.log.LogFactory;
@@ -271,7 +270,7 @@ public class ProjectActions extends DispatchAction {
         // Populate project public option
         form.set("public", new Boolean("Yes".equals(project.getProperty("Public"))));
         // Populate project autopilot option
-        form.set("autopilot", new Boolean("On".equals(project.getProperty("Autopilot"))));
+        form.set("autopilot", new Boolean("On".equals(project.getProperty("Autopilot Option"))));
         // Populate project status notification option
         form.set("email_notifications", new Boolean("On".equals(project.getProperty("Status Notification"))));
         // Populate project status notification option
@@ -712,7 +711,7 @@ public class ProjectActions extends DispatchAction {
 
         // This will be a Map from phases to their indexes in form
         Map phasesToForm = new HashMap();
-        
+
         // FIRST PASS
         // 0-index phase is skipped as it is a "dummy" one
         for (int i = 1; i < phaseTypes.length; i++) {
@@ -755,11 +754,11 @@ public class ProjectActions extends DispatchAction {
                 phProject.removePhase(phase);
                 continue;
             }
-            
+
             // Put the phase to the map from phase JS ids to phases
             phasesJsMap.put(lazyForm.get("phase_js_id", i), phase);
             // Put the phase to the map from phases to the indexes of form inputs
-            phasesToForm.put(phase, new Integer(i)); 
+            phasesToForm.put(phase, new Integer(i));
         }
 
         // SECOND PASS
@@ -817,7 +816,7 @@ public class ProjectActions extends DispatchAction {
 
             /*
              *  Set phase criteria
-             */            
+             */
             Long scorecardId = (Long) lazyForm.get("phase_scorecard", i);
             // If the scorecard id is specified, set it
             if (scorecardId != null) {
@@ -839,7 +838,7 @@ public class ProjectActions extends DispatchAction {
                 phase.setAttribute("Manual Screening", manualScreening.booleanValue() ? "Yes" : "No");
             } else {
             	phase.setAttribute("Manual Screening", "No");
-            }            
+            }
             Boolean viewAppealResponses = (Boolean) lazyForm.get("phase_view_appeal_responses", i);
             // If the view appeal response during appeals flag is specified, set it
             if (viewAppealResponses != null) {
@@ -858,20 +857,20 @@ public class ProjectActions extends DispatchAction {
             }
 
             Phase phase = (Phase) phaseObj;
-            
+
             // If phase was already processed, skip it
             if (processed.contains(phase)) {
                 continue;
             }
-            
+
             Set visited = new HashSet();
             Stack stack = new Stack();
-            
+
             for (;;) {
                 processed.add(phase);
-                visited.add(phase);                
+                visited.add(phase);
                 stack.push(phase);
-                
+
                 Dependency[] dependencies = phase.getAllDependencies();
                 // Actually there should be either zero or one dependecy, we'll assume it
                 if (dependencies.length == 0) {
@@ -880,7 +879,7 @@ public class ProjectActions extends DispatchAction {
                 } else {
                     phase = dependencies[0].getDependency();
                     if (visited.contains(phase)) {
-                        // There is circular dependency, report it and stop processing 
+                        // There is circular dependency, report it and stop processing
                         // TODO: Report the particular phases
                         ActionsHelper.addErrorToRequest(request, ActionErrors.GLOBAL_MESSAGE,
                                 new ActionMessage("error.com.cronos.onlinereview.actions.editProject.CircularDependency"));
@@ -889,48 +888,48 @@ public class ProjectActions extends DispatchAction {
                     }
                 }
             }
-            
+
             while (!stack.empty()) {
                 phase = (Phase) stack.pop();
-                int paramIndex = ((Integer) phasesToForm.get(phase)).intValue();                    
-                
+                int paramIndex = ((Integer) phasesToForm.get(phase)).intValue();
+
                 // If the phase is scheduled to start before some other phase start/end
                 if (Boolean.TRUE.equals(lazyForm.get("phase_start_by_phase", paramIndex)) &&
                         "minus".equals(lazyForm.get("phase_start_plusminus", paramIndex))) {
                     Dependency dependency = phase.getAllDependencies()[0];
-                    
+
                     Date dependencyDate;
                     if ("ends".equals(lazyForm.get("phase_start_when", paramIndex))) {
                         dependencyDate = dependency.getDependency().getScheduledEndDate();
-                    } else { 
+                    } else {
                         dependencyDate = dependency.getDependency().getScheduledStartDate();
                     }
                     phase.setFixedStartDate(new Date(dependencyDate.getTime() - dependency.getLagTime()));
-                    
+
                     phase.clearDependencies();
                 }
-                
+
                 try {
-                    
+
                     // Set scheduled start date to calculated start date
                     // FIXME: Remove stupid check for end date < start date from the component
                     // FIXME: Remove next line
                     phase.setScheduledEndDate(phase.calcEndDate());
-                    phase.setScheduledStartDate(phase.calcStartDate());                
-                    
+                    phase.setScheduledStartDate(phase.calcStartDate());
+
                     if (lazyForm.get("phase_end_date", paramIndex).toString().trim().length() > 0) {
                         // Get phase end date from form
-                        Date phaseEndDate = parseDatetimeFormProperties(lazyForm, paramIndex, 
-                                "phase_end_date", "phase_end_time", "phase_end_AMPM");                
-                        
-                        // Set phase duration appropriately 
+                        Date phaseEndDate = parseDatetimeFormProperties(lazyForm, paramIndex,
+                                "phase_end_date", "phase_end_time", "phase_end_AMPM");
+
+                        // Set phase duration appropriately
                         phase.setLength(phaseEndDate.getTime() - phase.getScheduledStartDate().getTime());
                     }
-                    
+
                     // Set sheduled phase end date to calculated end date
-                    phase.setScheduledEndDate(phase.calcEndDate()); 
+                    phase.setScheduledEndDate(phase.calcEndDate());
                 } catch (CyclicDependencyException e) {
-                    // There is circular dependency, report it and stop processing 
+                    // There is circular dependency, report it and stop processing
                     // TODO: Report the particular phases
                     ActionsHelper.addErrorToRequest(request, ActionErrors.GLOBAL_MESSAGE,
                             new ActionMessage("error.com.cronos.onlinereview.actions.editProject.CircularDependency"));
@@ -938,7 +937,7 @@ public class ProjectActions extends DispatchAction {
                     break;
                 }
             }
-            
+
             if (hasCircularDependencies) {
                 break;
             }
@@ -948,11 +947,11 @@ public class ProjectActions extends DispatchAction {
             // TODO: Return null or so
             return oldPhases;
         }
-        
+
         Phase[] projectPhases = phProject.getAllPhases();
         // Sort project phases
         Arrays.sort(projectPhases, new ProjectPhaseComparer());
-        
+
         // Validate the project phases
         if (!validateProjectPhases(request, project, projectPhases)) {
             // If project phases are invalid, return immediately
@@ -963,17 +962,18 @@ public class ProjectActions extends DispatchAction {
         ProjectManager projectManager = ActionsHelper.createProjectManager(request);
         if (newProject) {
             // Create project in persistence level
-            projectManager.createProject(project, AuthorizationHelper.getLoggedInUserId(request) + "");
+            projectManager.createProject(project, Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
 
             // Set the id of Phases Project to be equal to the id of appropriate Project
             phProject.setId(project.getId());
         } else {
-            projectManager.updateProject(project, (String) lazyForm.get("explanation"), AuthorizationHelper.getLoggedInUserId(request) + "");
+            projectManager.updateProject(project, (String) lazyForm.get("explanation"),
+                    Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
         }
 
         // Save the phases at the persistence level
-        phaseManager.updatePhases(phProject, AuthorizationHelper.getLoggedInUserId(request) + "");
-        // TODO : The following line was added just to be safe. May be unneeded as well as another one.
+        phaseManager.updatePhases(phProject, Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
+        // TODO: The following line was added just to be safe. May be unneeded as well as another one
         projectPhases = phProject.getAllPhases();
         // Sort project phases
         Arrays.sort(projectPhases, new ProjectPhaseComparer());
@@ -1253,7 +1253,8 @@ public class ProjectActions extends DispatchAction {
 
             // If action is "delete", delete the resource and proceed to the next one
             if ("delete".equals(resourceAction)) {
-                resourceManager.removeResource(resource,  AuthorizationHelper.getLoggedInUserId(request) + "");
+                resourceManager.removeResource(resource,
+                        Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
                 continue;
             }
 
@@ -1309,7 +1310,7 @@ public class ProjectActions extends DispatchAction {
             }
 
             // Save the resource in the persistence level
-            resourceManager.updateResource(resource, AuthorizationHelper.getLoggedInUserId(request) + "");
+            resourceManager.updateResource(resource, Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
         }
     }
 
