@@ -9,4 +9,8 @@ function expcollHandler(srcElement) {
     rowElement.style.display = "none";
     document.getElementById(iconId).src = "../i/plus.gif";
   }
+  if (srcElement.blur) {
+  	srcElement.blur();
+  }
+  return false;
 }
