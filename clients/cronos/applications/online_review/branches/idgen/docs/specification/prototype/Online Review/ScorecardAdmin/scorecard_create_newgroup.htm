@@ -1,0 +1,359 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" >
+<head>
+    <title>Scorecard Administration</title>
+    <link rel="stylesheet" type="text/css" href="https://software.topcoder.com/includes/tcs_style.css" />  
+    <link rel="stylesheet" type="text/css" href="includes/new_styles.css" />
+    <script language="JavaScript" type="text/javascript" src="scripts/javascriptAdmin.js">
+</script>
+</head>
+<body leftmargin="0" rightmargin="0" topmargin="0" height="100%">
+<div id="holder">
+<!--Header begins-->
+    <table width="100%" border="0" cellpadding="0" cellspacing="0" class="head">
+    	<tr valign="top">
+		    <td height="57" align="left" rowspan="2" style="width: 219px"><img src="images/logoTCSHome.gif" alt="TopCoder Software" width="216" height="57" border="0" /></td>
+		    <td width="155" height="57" align="left" rowspan="2"><img src="images/homeBannerAdmin.gif" alt="Administration" width="155" height="57" border="0" /></td>
+		    <td class="headRight">
+			    <table border="0" cellpadding="0" cellspacing="0" class="adminSearch" align="right">
+				    <tr valign="middle">
+					    <td width="24" height="25" valign="bottom"><img src="images/searchHeaderLeft.gif" alt="" width="24" height="25" border="0"></td>
+					    <td><img src="images/clear.gif" alt="" width="6" border="0" /></td>
+    				    <td class="login">kimba is logged in.</td>
+					    <td><img src="images/clear.gif" alt="" width="10" border="0" /></td>
+   					    <td class="login"><a href="#" class="loginLinks">:: Logout</a></td>
+    				    <td><img src="images/clear.gif" alt="" width="10" border="0" /></td>
+				    </tr>
+			    </table>
+		    </td>
+        </tr>
+	    <tr valign="bottom">
+		    <td class="headRight"><img src="images/homeBannerHead.gif" alt="The Future of Software Development" width="510" height="13" border="0" /></td>
+	</tr>
+	<tr>
+	    <td height="4" class="headStripe" colspan="3"><img src="images/clear.gif" alt="" height="4" border="0" /></td>
+	</tr>
+</table>
+<!-- Nav Bar begins -->
+<table width="100%" border="0" cellpadding="0" cellspacing="0" >
+	<tr>
+		<td width="20" class="adminTopNav"><img src="images/clear.gif" alt="" width="20" height="21" border="0"></td>
+		<td>
+			<table width="3%" border="0" cellpadding="0" cellspacing="0" class="adminTopNav">
+				<tr valign="middle">
+					<td width="46" align="center" class="adminTopNav"><a onmouseover="document.images['siteAdmin'].src = siteAdminon.src; window.status='Return to Regular Site'; return true;" onmouseout="document.images['siteAdmin'].src = siteAdminoff.src" class="topNavLinks" href="http://software.topcoder.com"><img src="images/siteAdmin_off.gif" alt="RETURN TO SITE" name="siteAdmin" width="84" height="21" border="0" /></a></td>
+					<td width="66" align="center" class="adminTopNav"><a onmouseover="document.images['catalogAdmin'].src = catalogAdminon.src; window.status='Catalog Administration'; return true;" onmouseout="document.images['catalogAdmin'].src = catalogAdminoff.src" class="topNavLinks" href="#"><img src="images/catalogAdmin_off.gif" alt="CATALOG ADMIN" name="catalogAdmin" width="97" height="21" border="0" /></a></td>
+					<td width="106" align="center" class="adminTopNav"><a onmouseover="document.images['categoryAdmin'].src = categoryAdminon.src; window.status='Category Administration'; return true;" onmouseout="document.images['categoryAdmin'].src = categoryAdminoff.src" class="topNavLinks" href="#"><img src="images/categoryAdmin_off.gif" alt="CATEGORY ADMIN" name="categoryAdmin" width="104" height="21" border="0" /></a></td>
+					<td width="156" align="center" class="adminTopNav"><a onmouseover="document.images['userAdmin'].src = userAdminon.src; window.status='User Administration'; return true;" onmouseout="document.images['userAdmin'].src = userAdminoff.src" class="topNavLinks" href="#"><img src="images/userAdmin_off.gif" alt="USER ADMIN" name="userAdmin" width="79" height="21" border="0" /></a></td>
+					<td width="106" align="center" class="adminTopNav"><a onmouseover="document.images['listsAdmin'].src = listsAdminon.src; window.status='Lists Administration'; return true;" onmouseout="document.images['listsAdmin'].src = listsAdminoff.src" class="topNavLinks" href="#"><img src="images/listAdmin_off.gif" alt="LISTS ADMIN" name="listsAdmin" width="79" height="21" border="0" /></a></td>
+					<td width="106" align="center" class="adminTopNav"><a onmouseover="document.images['scorecardAdmin'].src = scorecardAdminon.src; window.status='Scorecard Administration'; return true;" onmouseout="document.images['scorecardAdmin'].src = scorecardAdminoff.src" class="topNavLinks" href="#"><img src="images/scorecardAdmin_off.gif" alt="SCORECARD ADMIN" name="scorecardAdmin" height="21" border="0" /></a></td>
+				</tr>
+			</table>
+		</td>
+		<td width="97%" class="adminTopNav"><img src="images/clear.gif" alt="" border="0"></td>
+	</tr>
+</table>
+<!-- Nav Bar ends -->
+<!--Header ends -->
+<div id="contentarea">
+<!-- Tabs -->
+<table width="100%" border="0" cellpadding="0" cellspacing="0">
+    <tr valign="top">
+        <td width="1%" class="normal"><a href="index.htm"><img src="images/tabComponent_on.gif" alt="Component" border="0"></a></td>
+        <td width="1%" class="normal"><img src="images/tabApplication_off.gif" alt="Application" border="0"></td>
+        <td width="1%" class="normal">&nbsp;</td>
+        <td width="1%" class="normal">&nbsp;</td>
+        <td width="98%" align="right">&nbsp;</td>
+    </tr>
+    <tr valign="top">
+        <td colspan="5" class="forumHeadFoot"><img src="images/clear.gif" alt="" width="10" height="7" border="0"></td>
+    </tr>
+</table>
+<!-- Tabs end -->
+
+<!-- Content begins -->
+<table width="100%" border="0" cellpadding="0" cellspacing="1" class="forumBkgd">
+    <tr>
+        <td class="whiteBkgnd" style="height: 100%">
+            <table border="0" cellpadding="0" cellspacing="0" width="100%">
+                <tr>
+                    <td width="100%" nowrap class="tableHeader"><strong>Component Scorecards</strong> </td>
+                    <td align="right" style="height:35px"></td>
+                </tr>
+                <tr>
+                    <td class="whiteBkgnd" colspan="3"><img src="images/clear.gif" alt="" width="1" height="1" border="0"></td>
+                </tr>
+            </table>
+
+<!-- Scorecards -->
+            <table width="100%" border="0" cellpadding="0" cellspacing="1" class="forumBkgd">
+                <tr>
+                    <td class="forumTextEven" colspan="8">
+					<strong>Scorecard Details:</strong></td>
+                </tr>
+                <tr>
+                    <td class="forumTitle" width="6%">ID</td>
+                    <td class="forumTitle" style="width: 40%">Scorecard Name</td>
+                    <td class="forumTitle" style="width: 17%">Project Type</td>
+                    <td class="forumTitle" style="width: 17%">Category</td>
+                    <td class="forumTitle" width="7%">
+                        Type</td>
+                    <td class="forumTitle" width="6%">
+                        Min. Score</td>
+                    <td class="forumTitle" width="6%">
+                        Max. Score</td>
+                    <td class="forumTitle" width="14%">
+                        Status</td>
+                </tr>
+<!--Begin lists -->
+                <tr>
+                    <td class="forumTextOdd" nowrap width="6%">00000000</td>
+                    <td class="forumTextOdd" style="width: 40%" nowrap>
+					<input type="text" style="width:300px" name="T1"  class="inputBox" size="1" disabled>
+					<input type="text" style="width:50; height:16" name="T114"  class="inputBox" value="v1.0" size="1" disabled></td>
+                    <td class="forumTextOdd" style="width: 17%">
+                        <select id="Select1" class="inputBox" style="margin-right:3px;margin-left:5px;" name="status" size="1">
+                            <option>Component</option>
+							<option>Application</option>
+                        </select></td>
+                    <td class="forumTextOdd" style="width: 17%">
+                        <select id="Select1" class="inputBox" style="margin-right:3px;margin-left:5px;" name="status87" size="1">
+                            <option>Design</option>
+							<option>Development</option>
+                        	<option>Security</option>
+							<option>Process</option>
+							<option>Testing Competition</option>
+                        </select></td>
+                    <td class="forumTextOdd"  width="7%">
+                        <select id="Select1" class="inputBox" style="margin-right:3px;margin-left:5px;" name="status1" size="1">
+                            <option selected>Screening</option>
+							<option>Review</option>
+							<option>Approval</option>
+                        </select></td>
+                    <td class="forumTextOdd"  width="6%">
+                        <input type="text" style="width:30px" name="T129"  class="inputBox" value="90" size="30"></td>
+                    <td class="forumTextOdd"  width="6%">
+                        <input type="text" style="width:30px" name="T130"  class="inputBox" value="100" size="30"></td>
+                    <td class="forumTextOdd"  width="14%">
+                        <select id="Select1" class="inputBox" style="margin-right:3px;margin-left:5px;" name="status86" size="1">
+                            <option>Select</option>
+							<option selected>Active</option>
+							<option>Inactive</option>
+                        </select></td>
+                </tr>
+                <tr>
+                    <td class="forumHeadFoot" colspan="8" height="5"><img src="images/clear.gif" alt="" width="10" height="5" border="0"/></td>
+                </tr>
+            </table>
+<!-- End lists -->
+<!-- Spacer -->
+            <table border="0" cellpadding="0" cellspacing="1" class="whiteBkgd" width="100%">
+                <tr>
+                    <td class="forumTextOdd"><img src="images/clear.gif" alt="" width="1" height="5" border="0"></td>
+                </tr>
+            </table>
+            <table width="100%" border="0" cellpadding="0" cellspacing="1" class="forumBkgd" id="table1">
+                <tr>
+                    <td class="forumTitle" colspan="4">Group:&nbsp;
+					<input type="text" style="width:300px;margin-left:8px;" name="T56"  class="inputBox" size="20"></td>
+                    <td class="forumTitle" >
+					<input type="button" onClick='document.location="#"'  value="Add New" class="Buttons"></td>
+                </tr>
+				<tr>
+                    <td class="forumTextEven" colspan="4">
+					<strong>Section:&nbsp;
+					<input type="text" style="width:300px" name="T57"  class="inputBox" size="20">&nbsp;Weight:  </strong> 
+					<input type="text" style="width:50px" name="T128"  class="inputBox" size="20" disabled></td>
+                    <td class="forumTextEven" >
+					<input type="button" onClick='document.location="#"'  value="Add New" class="Buttons"></td>
+                </tr>
+				<tr>
+                    <td class="SectionHeaderQ" width="66%">
+					Question</td>
+                    <td class="SectionHeader" width="11%">
+					Type</td>
+                    <td class="SectionHeader" width="3%">
+					Weight</td>
+                    <td class="SectionHeader" nowrap width="12%" >
+                        Document Upload</td>
+                    <td class="SectionHeader" width="4%" >
+					<input type="button" onClick='document.location="#"'  value="Add New" class="Buttons"></td>
+                </tr>
+				<tr>
+                    <td class="ForumQuestion" width="66%">
+					Question Text:<br>
+					<textarea rows="2" name="S29" cols="20" class="inputBoxQuestion"></textarea><br>
+					Question Guideline:<br>
+					<textarea rows="3" name="S31" cols="20" class="inputBoxGuideline"></textarea></td>
+                    <td class="forumTextOdd" width="11%">
+                        <select id="Select1" class="inputBox" style="margin-right:3px;margin-left:5px;" name="status30" size="1">
+                            <option>Select</option>
+                            <option>Scale (1-4)</option>
+							<option>Scale (1-10)</option>
+							<option>Test Case</option>
+							<option>Yes/No</option>
+                        	<option>Dynamic</option>
+                        </select></td>
+                    <td class="forumTextOdd" width="3%">
+                        <input type="text" style="width:30px; height:16px" name="T59"  class="inputBox" size="20"></td>
+                    <td class="forumTextOdd" nowrap width="12%" >
+                        <select id="Select1" class="inputBox" style="margin-right:3px;margin-left:5px;" name="status58" size="1">
+                            <option>N/A</option>
+							<option>Required</option>
+							<option>Optional</option>
+                        </select></td>
+                    <td class="forumTextOdd" width="4%" >
+					<input type="button" onClick='document.location="#"'  value="Remove" class="Buttons"></td>
+                </tr>
+				<tr>
+                    <td class="ForumQuestion" width="66%">
+					&nbsp;</td>
+                    <td class="forumTextOdd" width="11%" nowrap>
+                        <p style="text-align: right"><strong>Question Subtotal:</strong></td>
+                    <td class="forumTextOdd" width="19%" colspan="3" nowrap>
+                        <input type="text" style="width:30px; height:16px" name="T131"  class="inputBox" size="20" disabled>&nbsp; 
+						Section
+                        Questions must total 100.</td>
+                </tr>
+				<tr>
+                    <td class="forumTextEven" width="66%">
+					&nbsp;</td>
+                    <td class="forumTextEven" width="11%" nowrap>
+                        <p style="text-align: right"><strong>Section Subtotal:</strong></td>
+                    <td class="forumTextEven" width="19%" colspan="3" nowrap>
+                        <input type="text" style="width:30px; height:16px" name="T132"  class="inputBox" size="20" disabled>&nbsp; 
+						Group Sections must total 100.</td>
+                </tr>
+<!--Begin lists -->
+                
+<!--Begin lists -->
+				<tr>
+                    <td class="forumHeadFoot" colspan="5" height="5"><img src="images/clear.gif" alt="" width="10" height="5" border="0"/></td>
+                </tr>
+				</table><br />
+            <table width="100%" border="0" cellpadding="0" cellspacing="1" class="forumBkgd" id="table2">
+                <tr>
+                    <td class="forumTitle" colspan="4">Group:&nbsp;
+					<input type="text" style="width:300px;margin-left:8px;" name="T133"  class="inputBox" size="20"></td>
+                    <td class="forumTitle" >
+					<input type="button" onClick='document.location="#"'  value="Add New" class="Buttons"></td>
+                </tr>
+				<tr>
+                    <td class="forumTextEven" colspan="4">
+					<strong>Section:&nbsp;
+					<input type="text" style="width:300px" name="T134"  class="inputBox" size="20">&nbsp;Weight:  </strong> 
+					<input type="text" style="width:50px" name="T135"  class="inputBox" size="20" disabled></td>
+                    <td class="forumTextEven" >
+					<input type="button" onClick='document.location="#"'  value="Add New" class="Buttons"></td>
+                </tr>
+				<tr>
+                    <td class="SectionHeaderQ" width="66%">
+					Question</td>
+                    <td class="SectionHeader" width="11%">
+					Type</td>
+                    <td class="SectionHeader" width="3%">
+					Weight</td>
+                    <td class="SectionHeader" nowrap width="12%" >
+                        Document Upload</td>
+                    <td class="SectionHeader" width="4%" >
+					<input type="button" onClick='document.location="#"'  value="Add New" class="Buttons"></td>
+                </tr>
+				<tr>
+                    <td class="ForumQuestion" width="66%">
+					Question Text:<br>
+					<textarea rows="2" name="S32" cols="20" class="inputBoxQuestion"></textarea><br>
+					Question Guideline:<br>
+					<textarea rows="3" name="S30" cols="20" class="inputBoxGuideline"></textarea></td>
+                    <td class="forumTextOdd" width="11%">
+                        <select id="Select1" class="inputBox" style="margin-right:3px;margin-left:5px;" name="status88" size="1">
+                            <option>Select</option>
+                            <option>Scale (1-4)</option>
+							<option>Scale (1-10)</option>
+							<option>Test Case</option>
+							<option>Yes/No</option>
+                        	<option>Dynamic</option>
+                        </select></td>
+                    <td class="forumTextOdd" width="3%">
+                        <input type="text" style="width:30px; height:16px" name="T136"  class="inputBox" size="20"></td>
+                    <td class="forumTextOdd" nowrap width="12%" >
+                        <select id="Select1" class="inputBox" style="margin-right:3px;margin-left:5px;" name="status89" size="1">
+                            <option>N/A</option>
+							<option>Required</option>
+							<option>Optional</option>
+                        </select></td>
+                    <td class="forumTextOdd" width="4%" >
+					<input type="button" onClick='document.location="#"'  value="Remove" class="Buttons"></td>
+                </tr>
+				<tr>
+                    <td class="ForumQuestion" width="66%">
+					&nbsp;</td>
+                    <td class="forumTextOdd" width="11%" nowrap>
+                        <p style="text-align: right"><strong>Question Subtotal:</strong></td>
+                    <td class="forumTextOdd" width="19%" colspan="3" nowrap>
+                        <input type="text" style="width:30px; height:16px" name="T137"  class="inputBox" size="20" disabled>&nbsp; 
+						Section
+                        Questions must total 100.</td>
+                </tr>
+				<tr>
+                    <td class="forumTextEven" width="66%">
+					&nbsp;</td>
+                    <td class="forumTextEven" width="11%" nowrap>
+                        <p style="text-align: right"><strong>Section Subtotal:</strong></td>
+                    <td class="forumTextEven" width="19%" colspan="3" nowrap>
+                        <input type="text" style="width:30px; height:16px" name="T138"  class="inputBox" size="20" disabled>&nbsp; 
+						Group Sections must total 100.</td>
+                </tr>
+<!--Begin lists -->
+                
+<!--Begin lists -->
+				<tr>
+                    <td class="forumHeadFoot" colspan="5" height="5"><img src="images/clear.gif" alt="" width="10" height="5" border="0"/></td>
+                </tr>
+				</table>
+        	<p align="center">
+			<input type="button" onClick='document.location="index.htm"' style="width:125px; float:center;" value="Save New Scorecard" class="Buttons2"><br>
+&nbsp;</td>
+    </tr>
+</table>
+</div><!-- End Contentarea Div -->
+
+<!-- Footer begins -->
+<!-- Footer Include Begins -->
+<div id="footer">
+<table width="100%" border="0" cellpadding="0" cellspacing="0" bgcolor="#666666">
+    <tr>
+        <td height="15" background="images/footer_graphic_tile.gif" align="left"><img src="images/footer_graphic.gif" width="710" height="16" border="0"/></td>
+    </tr>
+
+    <tr valign="top">
+        <td width="100%" align="center" bgcolor="#43515E"><img src="images/clear.gif" width="1" height="5" border="0"/><br/>
+            <div class="smallFoot">
+            <A href="http://www.topcoder.com" class="smallFoot">Homee</A>&#160;&#160;|&#160;&#160;
+            <A href="http://www.topcoder.com/tc?module=Static&d1=about&d2=index" class="smallFoot">About TopCoder</A>&#160;&#160;|&#160;&#160;
+            <a href="http://www.topcoder.com/tc/?d1=review_board&d2=competition" class="smallFoot">Review Boards</A>&#160;&#160;|&#160;&#160;
+            <A href="http://www.topcoder.com/?t=news_events&c=index" class="smallFoot">Press Room</A>&#160;&#160;|&#160;&#160;
+            <A href="/http://www.topcoder.com?t=contacts&c=index" class="smallFoot">Contact Us</A>&#160;&#160;|&#160;&#160;
+            <A href="http://www.topcoder.com/tc?module=Static&d1=about&d2=privacy" class="smallFoot">Privacy</A>&#160;&#160;|&#160;&#160;
+            <A href="http://www.topcoder.com/tc?module=Static&d1=about&d2=terms" class="smallFoot">Terms</A><br /><br />
+
+            <A href="http://www.topcoder.com" class="smallFoot">Competition</A>&#160;&#160;|&#160;&#160;
+            <A href="http://www.topcoder.com/?t=development&c=index" class="smallFoot">Development</A>&#160;&#160;|&#160;&#160;
+            <A href="http://software.topcoder.com" class="smallFoot">Software</A>&#160;&#160;|&#160;&#160;
+            <A href="http://corporate.topcoder.com/?module=Static&d1=corpd2=tces_home" class="smallFoot">Employment Services</A>&#160;&#160;|&#160;&#160;
+            <A href="http://corporate.topcoder.com/?module=Static&d1=corp&d2=spon_prog&d3=index" class="smallFoot">Sponsorship</A><br /><br />
+
+            Copyright &#169; 2001-2006, TopCoder, Inc. All rights reserved.
+            </div>
+            <br/><br/>
+        </td>
+    </tr>
+</table>
+</div><!-- End Footer Div -->
+</div><!-- End Holder Div -->
+<!-- Footer Include Ends -->
+
+<!-- Footer ends -->
+
+
+</body>
+</html>

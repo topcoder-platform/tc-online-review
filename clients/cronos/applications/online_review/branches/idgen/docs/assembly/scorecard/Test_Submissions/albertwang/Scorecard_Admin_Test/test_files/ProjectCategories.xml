@@ -1,0 +1,89 @@
+<?xml version="1.0" ?>
+<CMConfig>
+	<Config name="com.cronos.onlinereview.scorecard.functionaltests.ProjectCategories">
+			<Property name="1">
+				<Value>Design</Value>
+				<Property name="project_type">
+					<Value>Component</Value>
+				</Property>
+			</Property>
+			<Property name="2">
+				<Value>Development</Value>
+				<Property name="project_type">
+					<Value>Component</Value>
+				</Property>
+			</Property>
+			<Property name="3">
+				<Value>Security</Value>
+				<Property name="project_type">
+					<Value>Component</Value>
+				</Property>
+			</Property>
+			<Property name="4">
+				<Value>Process</Value>
+				<Property name="project_type">
+					<Value>Component</Value>
+				</Property>
+			</Property>
+			<Property name="5">
+				<Value>Testing Competition</Value>
+				<Property name="project_type">
+					<Value>Component</Value>
+				</Property>
+			</Property>
+			<Property name="6">
+				<Value>Specification</Value>
+				<Property name="project_type">
+					<Value>Application</Value>
+				</Property>
+			</Property>
+			<Property name="7">
+				<Value>Architecture</Value>
+				<Property name="project_type">
+					<Value>Application</Value>
+				</Property>
+			</Property>
+			<Property name="8">
+				<Value>Component Production</Value>
+				<Property name="project_type">
+					<Value>Application</Value>
+				</Property>
+			</Property>
+			<Property name="9">
+				<Value>Quality Assurance</Value>
+				<Property name="project_type">
+					<Value>Application</Value>
+				</Property>
+			</Property>
+			<Property name="10">
+				<Value>Deployment</Value>
+				<Property name="project_type">
+					<Value>Application</Value>
+				</Property>
+			</Property>
+			<Property name="11">
+				<Value>Security</Value>
+				<Property name="project_type">
+					<Value>Application</Value>
+				</Property>
+			</Property>
+			<Property name="12">
+				<Value>Process</Value>
+				<Property name="project_type">
+					<Value>Application</Value>
+				</Property>
+			</Property>
+			<Property name="13">
+				<Value>Testing Competition</Value>
+				<Property name="project_type">
+					<Value>Application</Value>
+				</Property>
+			</Property>
+			<Property name="14">
+				<Value>Assembly Competition</Value>
+				<Property name="project_type">
+					<Value>Application</Value>
+				</Property>
+			</Property>
+</Config>
+</CMConfig>		

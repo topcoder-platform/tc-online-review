@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE taglib PUBLIC "-//Sun Microsystems, Inc.//DTD JSP Tag Library 1.1//EN" "http://java.sun.com/j2ee/dtds/web-jsptaglibrary_1_1.dtd">
+
+<taglib>
+    <tlibversion>1.0</tlibversion>
+    <jspversion>1.1</jspversion>
+    <shortname>orfn</shortname>
+    <uri>http://www.topcoder.com/taglibs/online_review/functions-1.0</uri>
+    <info>
+    </info>
+
+    <function>
+        <name>htmlEncode</name>
+        <function-class>com.cronos.onlinereview.functions.Functions</function-class>
+        <function-signature>java.lang.String htmlEncode(java.lang.String)</function-signature>
+    </function> 
+    <function>
+        <name>isUserLoggedIn</name>
+        <function-class>com.cronos.onlinereview.functions.Functions</function-class>
+        <function-signature>java.lang.Boolean isUserLoggedIn(javax.servlet.http.HttpServletRequest)</function-signature>
+    </function> 
+    <function>
+        <name>getLoggedInUserId</name>
+        <function-class>com.cronos.onlinereview.functions.Functions</function-class>
+        <function-signature>java.lang.String getLoggedInUserId(javax.servlet.http.HttpServletRequest)</function-signature>
+    </function> 
+</taglib>
