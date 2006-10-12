@@ -913,7 +913,7 @@ public class ProjectActions extends DispatchAction {
 
                     // Set scheduled start date to calculated start date
                     // FIXME: Remove stupid check for end date < start date from the component
-
+System.out.println("BEFORE START/END: " + phase.calcStartDate()+"/"+phase.calcEndDate());
                     phase.setScheduledStartDate(phase.calcStartDate());
 
                     if (lazyForm.get("phase_end_date", paramIndex).toString().trim().length() > 0) {
@@ -924,7 +924,7 @@ public class ProjectActions extends DispatchAction {
                         // Set phase duration appropriately
                         phase.setLength(phaseEndDate.getTime() - phase.getScheduledStartDate().getTime());
                     }
-System.out.println("START/END: " + phase.calcStartDate()+"/"+phase.calcEndDate());
+System.out.println("AFTER START/END: " + phase.calcStartDate()+"/"+phase.calcEndDate());
                     // Set sheduled phase end date to calculated end date
                     phase.setScheduledEndDate(phase.calcEndDate());
                 } catch (CyclicDependencyException e) {
