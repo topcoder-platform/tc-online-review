@@ -148,7 +148,7 @@ public class ProjectDetailsActions extends DispatchAction {
         request.setAttribute("wasPaid", ActionsHelper.determineMyPaymentPaid(myResources));
 
         // Obtain an instance of Phase Manager
-        PhaseManager phaseMgr = ActionsHelper.createPhaseManager(request);
+        PhaseManager phaseMgr = ActionsHelper.createPhaseManager(request, false);
 
         // Calculate the date when this project is supposed to end
         com.topcoder.project.phases.Project phProj = phaseMgr.getPhases(project.getId());
@@ -1062,7 +1062,7 @@ public class ProjectDetailsActions extends DispatchAction {
         // Retrieve current project
         Project project = verification.getProject();
         // Get all phases for the current project
-        Phase[] phases = ActionsHelper.getPhasesForProject(ActionsHelper.createPhaseManager(request), project);
+        Phase[] phases = ActionsHelper.getPhasesForProject(ActionsHelper.createPhaseManager(request, false), project);
 
         if (ActionsHelper.getPhase(phases, true, Constants.SUBMISSION_PHASE_NAME) == null) {
             return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
@@ -1361,7 +1361,7 @@ public class ProjectDetailsActions extends DispatchAction {
         Project project = verification.getProject();
 
         // Get all phases for the current project
-        Phase[] phases = ActionsHelper.getPhasesForProject(ActionsHelper.createPhaseManager(request), project);
+        Phase[] phases = ActionsHelper.getPhasesForProject(ActionsHelper.createPhaseManager(request, false), project);
         // Retrieve the current phase for the project
         Phase currentPhase = ActionsHelper.getPhase(phases, true, Constants.FINAL_FIX_PHASE_NAME);
         // Check that active phase is Final Fix
@@ -1555,7 +1555,7 @@ public class ProjectDetailsActions extends DispatchAction {
         Project project = verification.getProject();
 
         // Get all phases for the current project
-        Phase[] phases = ActionsHelper.getPhasesForProject(ActionsHelper.createPhaseManager(request), project);
+        Phase[] phases = ActionsHelper.getPhasesForProject(ActionsHelper.createPhaseManager(request, false), project);
         // Retrieve the current phase for the project
         // TODO: Retrieve current phase correctly
         Phase currentPhase = ActionsHelper.getPhase(phases, true, Constants.REVIEW_PHASE_NAME);

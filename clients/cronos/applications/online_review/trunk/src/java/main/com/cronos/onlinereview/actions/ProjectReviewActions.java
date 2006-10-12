@@ -528,7 +528,7 @@ public class ProjectReviewActions extends DispatchAction {
 
         // Get an array of all phases for current project
         Phase[] phases = ActionsHelper.getPhasesForProject(
-                ActionsHelper.createPhaseManager(request), verification.getProject());
+                ActionsHelper.createPhaseManager(request, false), verification.getProject());
         // Get an active phase for the project
         Phase phase = ActionsHelper.getPhase(phases, true, Constants.AGGREGATION_PHASE_NAME);
         // Check that Aggregation phase is really active (open)
@@ -1320,7 +1320,7 @@ public class ProjectReviewActions extends DispatchAction {
 
         // Get an array of all phases for current project
         Phase[] phases = ActionsHelper.getPhasesForProject(
-                ActionsHelper.createPhaseManager(request), verification.getProject());
+                ActionsHelper.createPhaseManager(request, false), verification.getProject());
         // Get an active phase for the project
         Phase phase = ActionsHelper.getPhase(phases, true, Constants.FINAL_REVIEW_PHASE_NAME);
         // Check that Final Review Phase is really active (open)
@@ -1669,7 +1669,7 @@ public class ProjectReviewActions extends DispatchAction {
         Project project = verification.getProject();
 
         // Get an array of all phases for the project
-        Phase[] phases = ActionsHelper.getPhasesForProject(ActionsHelper.createPhaseManager(request), project);
+        Phase[] phases = ActionsHelper.getPhasesForProject(ActionsHelper.createPhaseManager(request, false), project);
         // Get the Review phase
         Phase phase = ActionsHelper.getPhase(phases, false, Constants.REVIEW_PHASE_NAME);
         // Retrieve a scorecard template for the Review phase
@@ -1984,7 +1984,7 @@ public class ProjectReviewActions extends DispatchAction {
 
         // Get an array of all phases for current project
         Phase[] phases = ActionsHelper.getPhasesForProject(
-                ActionsHelper.createPhaseManager(request), project);
+                ActionsHelper.createPhaseManager(request, false), project);
 
         // Get a Review phase
         Phase reviewPhase = ActionsHelper.getPhase(phases, false, Constants.REVIEW_PHASE_NAME);
@@ -2146,7 +2146,7 @@ public class ProjectReviewActions extends DispatchAction {
         Project project = verification.getProject();
 
         // Get an array of all phases for the project
-        Phase[] phases = ActionsHelper.getPhasesForProject(ActionsHelper.createPhaseManager(request), project);
+        Phase[] phases = ActionsHelper.getPhasesForProject(ActionsHelper.createPhaseManager(request, false), project);
 
         // Get active (current) phase
         Phase phase = ActionsHelper.getPhase(phases, true, phaseName);
@@ -2414,7 +2414,6 @@ public class ProjectReviewActions extends DispatchAction {
         // as they where dropped from checkForCorrectReviewId(ActionMapping, HttpServletRequest, String)
         // FIXME: Also check current phase everywhere
 
-
         String permName;
         String phaseName;
         String scorecardTypeName;
@@ -2457,7 +2456,7 @@ public class ProjectReviewActions extends DispatchAction {
         Project project = verification.getProject();
 
         // Get an array of all phases for the project
-        Phase[] phases = ActionsHelper.getPhasesForProject(ActionsHelper.createPhaseManager(request), project);
+        Phase[] phases = ActionsHelper.getPhasesForProject(ActionsHelper.createPhaseManager(request, false), project);
         // Get active (current) phase
         Phase phase = ActionsHelper.getPhase(phases, true, phaseName);
         // Check that the phase in question is really active (open)
@@ -2544,9 +2543,9 @@ public class ProjectReviewActions extends DispatchAction {
             }
         }
 
-        // This variable determines if Save and Mark Complete button has been clicked
+        // This variable determines if 'Save and Mark Complete' button has been clicked
         boolean commitRequested = "submit".equalsIgnoreCase(request.getParameter("save"));
-        // This variable determines if the Preview button has been clicked
+        // This variable determines if Preview button has been clicked
         boolean previewRequested = "preview".equalsIgnoreCase(request.getParameter("save"));
 
         // Get the form defined for this action
@@ -2565,6 +2564,7 @@ public class ProjectReviewActions extends DispatchAction {
         if (!previewRequested) {
             StrutsRequestParser parser = new StrutsRequestParser();
 
+            // Collect uploaded files and add them to adapter
             for (int i = 0; i < files.length; ++i) {
                 if (files[i] != null && files[i].getFileName().trim().length() != 0) {
                     parser.AddFile(files[i]);
@@ -2576,7 +2576,7 @@ public class ProjectReviewActions extends DispatchAction {
 
             // Upload files to the file server
             FileUploadResult uploadResult = fileUpload.uploadFiles(request, parser);
-            // Get an information about uploaded files (an uploaded file's ID in particular)
+            // Get an information about uploaded files (an uploaded files' ID in particular)
             uploadedFiles = uploadResult.getUploadedFiles("file");
         }
 
@@ -2604,12 +2604,12 @@ public class ProjectReviewActions extends DispatchAction {
 
             // Iterate over the scorecard template's questions,
             // so items will be created for every question
-            for (int i = 0; i < scorecardTemplate.getNumberOfGroups(); ++i) {
-                Group group = scorecardTemplate.getGroup(i);
-                for (int j = 0; j < group.getNumberOfSections(); ++j) {
-                    Section section = group.getSection(j);
-                    for (int k = 0; k < section.getNumberOfQuestions(); ++k) {
-                        Question question = section.getQuestion(k);
+            for (int iGroup = 0; iGroup < scorecardTemplate.getNumberOfGroups(); ++iGroup) {
+                Group group = scorecardTemplate.getGroup(iGroup);
+                for (int iSection = 0; iSection < group.getNumberOfSections(); ++iSection) {
+                    Section section = group.getSection(iSection);
+                    for (int iQuestion = 0; iQuestion < section.getNumberOfQuestions(); ++iQuestion) {
+                        Question question = section.getQuestion(iQuestion);
 
                         // Create review item and comment for that item
                         Item item = new Item();
@@ -2865,7 +2865,7 @@ public class ProjectReviewActions extends DispatchAction {
         if (scorecardTypeName.equals("Review")) {
             // Get an array of all phases for the project
             Phase[] phases = ActionsHelper.getPhasesForProject(
-                    ActionsHelper.createPhaseManager(request), verification.getProject());
+                    ActionsHelper.createPhaseManager(request, false), verification.getProject());
             // Determine if either Appeals or Appeals Response phase is active (or both)
             Phase appealsPhase = ActionsHelper.getPhase(phases, true, Constants.APPEALS_PHASE_NAME);
             Phase appealsResponsePhase = ActionsHelper.getPhase(phases, true, Constants.APPEALS_RESPONSE_PHASE_NAME);

@@ -191,7 +191,7 @@ public class ProjectActions extends DispatchAction {
         request.setAttribute("resourceRoles", resourceRoles);
 
         // Obtain an instance of Phase Manager
-        PhaseManager phaseManager = ActionsHelper.createPhaseManager(request);
+        PhaseManager phaseManager = ActionsHelper.createPhaseManager(request, false);
         // Get all phase types
         PhaseType[] phaseTypes = phaseManager.getAllPhaseTypes();
         // Place them into request as an attribute
@@ -325,7 +325,7 @@ public class ProjectActions extends DispatchAction {
         }
 
         // Obtain Phase Manager instance
-        PhaseManager phaseManager = ActionsHelper.createPhaseManager(request);
+        PhaseManager phaseManager = ActionsHelper.createPhaseManager(request, false);
 
         // Retrive project phases
         Phase[] phases = ActionsHelper.getPhasesForProject(phaseManager, project);
@@ -673,20 +673,19 @@ public class ProjectActions extends DispatchAction {
 
     /**
      * TODO: Document it
+     *
+     * @return
      * @param newProject
      * @param request
      * @param lazyForm
      * @param project
      * @param phasesJsMap TODO
-     *
-     * @return
      * @throws BaseException
      */
     private Phase[] saveProjectPhases(boolean newProject, HttpServletRequest request, LazyValidatorForm lazyForm,
             Project project, Map phasesJsMap) throws BaseException {
-
-        // Obtain the instance of Phase Manager
-        PhaseManager phaseManager = ActionsHelper.createPhaseManager(request);
+        // Obtain an instance of Phase Manager
+        PhaseManager phaseManager = ActionsHelper.createPhaseManager(request, false);
 
         com.topcoder.project.phases.Project phProject;
         if (newProject) {
@@ -1015,8 +1014,9 @@ public class ProjectActions extends DispatchAction {
                     }
                 }
             }
-            // Obtain Phase Manager instance
-            PhaseManager phaseManager = ActionsHelper.createPhaseManager(request);
+
+            // Obtain an instance of Phase Manager
+            PhaseManager phaseManager = ActionsHelper.createPhaseManager(request, true);
             for (; i < projectPhases.length; i++) {
                 if (projectPhases[i] != newCurrentPhase) {
                     if (projectPhases[i].getPhaseStatus().getName().equals(PhaseStatus.OPEN.getName())) {
@@ -1525,7 +1525,7 @@ public class ProjectActions extends DispatchAction {
         currentDate = new Date();
 logger.log(Level.ERROR, "get phase manager" + dateFormat.format(currentDate));
         // Obtain an instance of Phase Manager
-        PhaseManager phMgr = ActionsHelper.createPhaseManager(request);
+        PhaseManager phMgr = ActionsHelper.createPhaseManager(request, false);
 
         long[] allProjectIds = new long[ungroupedProjects.length];
 

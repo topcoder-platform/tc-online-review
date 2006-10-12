@@ -1806,68 +1806,78 @@ class ActionsHelper {
      *            an <code>HttpServletRequest</code> obejct, where created
      *            <code>PhaseManager</code> object can be stored to let reusing it later for the
      *            same request.
+     * @param registerPhaseHandlers
+     *            a boolean parameter that determines whether phase handlers need to be registered
+     *            with the newly-created (or already existing) Phase Manager.
      * @throws IllegalArgumentException
      *             if <code>request</code> parameter is <code>null</code>.
      * @throws BaseException
      *             if any error happens during object creation.
      */
-    public static PhaseManager createPhaseManager(HttpServletRequest request)
+    public static PhaseManager createPhaseManager(HttpServletRequest request, boolean registerPhaseHandlers)
         throws BaseException {
         // Validate parameter
-        java.text.DateFormat dateFormat = new java.text.SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-        java.util.Date currentDate = new Date();
-
-        System.out.println("REMOVE ME entering create Phase Manager: "  + dateFormat.format(currentDate));
-
         validateParameterNotNull(request, "request");
 
+        java.text.DateFormat dateFormat = new java.text.SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+
+    System.out.println("REMOVE ME entering create Phase Manager: " + dateFormat.format(new Date()));
+
         // Try retrieving Phase Manager from the request's attribute first
-        PhaseManager manager = (PhaseManager) request.getAttribute("phaseManager");
-        // If this is the first time this method is called for the request,
-        // create a new instance of the object
+        PhaseManager manager = (PhaseManager) request.getAttribute("phaseManager+handlers");
         if (manager == null) {
-        System.out.println("REMOVE ME entering create Default Phase Manager: "  + dateFormat.format(new Date()));
-            manager = new DefaultPhaseManager("com.topcoder.management.phase");
-        System.out.println("REMOVE ME finishing create Default Phase Manager: "  + dateFormat.format(new Date()));
-
-        System.out.println("REMOVE ME entering getAllPhaseTypes: "  + dateFormat.format(new Date()));
-            PhaseType[] phaseTypes = manager.getAllPhaseTypes();
-        System.out.println("REMOVE ME finishing getAllPhaseTypes: "  + dateFormat.format(new Date()));
-
-        System.out.println("REMOVE ME entering register all phase handlers: "  + dateFormat.format(new Date()));
-        System.out.println("REMOVE ME entering register registration phase handler: "  + dateFormat.format(new Date()));
-            // Register the phase handlers
-            registerPhaseHandlerForOperation(manager, phaseTypes,
-                    new RegistrationPhaseHandler(), Constants.REGISTRATION_PHASE_NAME);
-        System.out.println("REMOVE ME finishing register registration phase handler: "  + dateFormat.format(new Date()));
-            registerPhaseHandlerForOperation(manager, phaseTypes,
-                    new SubmissionPhaseHandler(), Constants.SUBMISSION_PHASE_NAME);
-            registerPhaseHandlerForOperation(manager, phaseTypes,
-                    new ScreeningPhaseHandler(), Constants.SCREENING_PHASE_NAME);
-            registerPhaseHandlerForOperation(manager, phaseTypes,
-                    new ReviewPhaseHandler(), Constants.REVIEW_PHASE_NAME);
-            registerPhaseHandlerForOperation(manager, phaseTypes,
-                    new AppealsPhaseHandler(), Constants.APPEALS_PHASE_NAME);
-            registerPhaseHandlerForOperation(manager, phaseTypes,
-                    new AppealsResponsePhaseHandler(), Constants.APPEALS_RESPONSE_PHASE_NAME);
-            registerPhaseHandlerForOperation(manager, phaseTypes,
-                    new AggregationPhaseHandler(), Constants.AGGREGATION_PHASE_NAME);
-            registerPhaseHandlerForOperation(manager, phaseTypes,
-                    new AggregationReviewPhaseHandler(), Constants.AGGREGATION_REVIEW_PHASE_NAME);
-            registerPhaseHandlerForOperation(manager, phaseTypes,
-                    new FinalFixPhaseHandler(), Constants.FINAL_FIX_PHASE_NAME);
-            registerPhaseHandlerForOperation(manager, phaseTypes,
-                    new FinalReviewPhaseHandler(), Constants.FINAL_REVIEW_PHASE_NAME);
-            registerPhaseHandlerForOperation(manager, phaseTypes,
-                    new ApprovalPhaseHandler(), Constants.APPROVAL_PHASE_NAME);
-        System.out.println("REMOVE ME finishing register all phase handlers: "  + dateFormat.format(new Date()));
-            // Place newly-created object into the request as attribute
-            request.setAttribute("phaseManager", manager);
+            manager = (PhaseManager) request.getAttribute("phaseManager");
+        } else {
+            registerPhaseHandlers = false;
         }
 
-        currentDate = new Date();
+        // If this is the first time this method is called for the request,
+        // create a new instance of the object, and possibly register phase handlers
+        if (manager == null || registerPhaseHandlers) {
+            // Create Phase Manager object if needed
+            if (manager == null) {
+            System.out.println("REMOVE ME entering create Default Phase Manager: " + dateFormat.format(new Date()));
+                manager = new DefaultPhaseManager("com.topcoder.management.phase");
+            System.out.println("REMOVE ME finishing create Default Phase Manager: " + dateFormat.format(new Date()));
+            }
 
-        System.out.println("REMOVE ME leaving create Phase Manager: "  + dateFormat.format(currentDate));
+            // Register phase handlers if this was requested
+            if (registerPhaseHandlers) {
+            System.out.println("REMOVE ME entering getAllPhaseTypes: " + dateFormat.format(new Date()));
+                PhaseType[] phaseTypes = manager.getAllPhaseTypes();
+            System.out.println("REMOVE ME finishing getAllPhaseTypes: " + dateFormat.format(new Date()));
+
+            System.out.println("REMOVE ME entering register all phase handlers: " + dateFormat.format(new Date()));
+                registerPhaseHandlerForOperation(manager, phaseTypes,
+                        new RegistrationPhaseHandler(), Constants.REGISTRATION_PHASE_NAME);
+                registerPhaseHandlerForOperation(manager, phaseTypes,
+                        new SubmissionPhaseHandler(), Constants.SUBMISSION_PHASE_NAME);
+                registerPhaseHandlerForOperation(manager, phaseTypes,
+                        new ScreeningPhaseHandler(), Constants.SCREENING_PHASE_NAME);
+                registerPhaseHandlerForOperation(manager, phaseTypes,
+                        new ReviewPhaseHandler(), Constants.REVIEW_PHASE_NAME);
+                registerPhaseHandlerForOperation(manager, phaseTypes,
+                        new AppealsPhaseHandler(), Constants.APPEALS_PHASE_NAME);
+                registerPhaseHandlerForOperation(manager, phaseTypes,
+                        new AppealsResponsePhaseHandler(), Constants.APPEALS_RESPONSE_PHASE_NAME);
+                registerPhaseHandlerForOperation(manager, phaseTypes,
+                        new AggregationPhaseHandler(), Constants.AGGREGATION_PHASE_NAME);
+                registerPhaseHandlerForOperation(manager, phaseTypes,
+                        new AggregationReviewPhaseHandler(), Constants.AGGREGATION_REVIEW_PHASE_NAME);
+                registerPhaseHandlerForOperation(manager, phaseTypes,
+                        new FinalFixPhaseHandler(), Constants.FINAL_FIX_PHASE_NAME);
+                registerPhaseHandlerForOperation(manager, phaseTypes,
+                        new FinalReviewPhaseHandler(), Constants.FINAL_REVIEW_PHASE_NAME);
+                registerPhaseHandlerForOperation(manager, phaseTypes,
+                        new ApprovalPhaseHandler(), Constants.APPROVAL_PHASE_NAME);
+            System.out.println("REMOVE ME finishing register all phase handlers: " + dateFormat.format(new Date()));
+            }
+
+            // Place newly-created object into the request as attribute
+            request.setAttribute((registerPhaseHandlers) ? "phaseManager+handlers" : "phaseManager", manager);
+        }
+
+    System.out.println("REMOVE ME leaving create Phase Manager: " + dateFormat.format(new Date()));
         // Return the Phase Manager object
         return manager;
     }
