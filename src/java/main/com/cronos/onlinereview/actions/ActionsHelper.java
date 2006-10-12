@@ -825,6 +825,83 @@ class ActionsHelper {
     }
 
     /**
+     * TODO: Document it
+     *
+     * @param request
+     * @param errorKey
+     * @throws IllegalArgumentException
+     *             if any of the parameters are <code>null</code>, or if <code>errorKey</code>
+     *             parameter is empty string.
+     */
+    public static void addErrorToRequest(HttpServletRequest request, String errorKey) {
+        // Validate the errorKey parameter. Other parameters will be validated in overloaded method
+        validateParameterStringNotEmpty(errorKey, "errorKey");
+        // Call overload to do the actual job
+        addErrorToRequest(request, ActionErrors.GLOBAL_MESSAGE, new ActionMessage(errorKey));
+    }
+
+    /**
+     * TODO: Document it
+     *
+     * @param request
+     * @param errorMessage
+     * @throws IllegalArgumentException
+     *             if any of the parameters are <code>null</code>.
+     */
+    public static void addErrorToRequest(HttpServletRequest request, ActionMessage errorMessage) {
+        // Call overload to do the actual job
+        addErrorToRequest(request, ActionErrors.GLOBAL_MESSAGE, errorMessage);
+    }
+
+    /**
+     * TODO: Document it
+     *
+     * @param request
+     * @param messageProperty
+     * @param errorKey
+     * @throws IllegalArgumentException
+     *             if any of the parameters are <code>null</code>, or if any of the
+     *             <code>messageProperty</code> or <code>errorKey</code> parameters are empty
+     *             strings.
+     */
+    public static void addErrorToRequest(HttpServletRequest request, String messageProperty, String errorKey) {
+        // Validate the errorKey parameter. Other parameters will be validated in overloaded method
+        validateParameterStringNotEmpty(errorKey, "errorKey");
+        // Call overload to do the actual job
+        addErrorToRequest(request, messageProperty, new ActionMessage(errorKey));
+    }
+
+    /**
+     * TODO: Document it
+     *
+     * @param request
+     * @param messageProperty
+     * @param errorMessage
+     * @throws IllegalArgumentException
+     *             if any of the parameters are <code>null</code>, or if
+     *             <code>messageProperty</code> parameter is empty string.
+     */
+    public static void addErrorToRequest(HttpServletRequest request,
+            String messageProperty, ActionMessage errorMessage) {
+        // Validate parameters
+        validateParameterNotNull(request, "request");
+        validateParameterStringNotEmpty(messageProperty, "messageProperty");
+        validateParameterNotNull(errorMessage, "errorMessage");
+
+        // Retrieve the errors bean from the request
+        ActionErrors errors = (ActionErrors) request.getAttribute(Globals.ERROR_KEY);
+        // Check if the errors bean has been present in the request
+        if (errors == null) {
+            // If not, create it and store in the request
+            errors = new ActionErrors();
+            request.setAttribute(Globals.ERROR_KEY, errors);
+        }
+
+        // Add an error to the errors bean
+        errors.add(messageProperty, errorMessage);
+    }
+
+    /**
      * This method helps gather some commonly used information about the project. When the
      * information has been gathered, this method places it into the request as a set of attributes.
      *
@@ -1716,26 +1793,6 @@ class ActionsHelper {
         // If i is negative, the needed phase has not been found
         // The project is not in after Appeals Response phase
         return (i >= 0);
-    }
-
-    /**
-     * TODO: Document it
-     *
-     * @param request
-     * @param error_key
-     * @param error
-     */
-    public static void addErrorToRequest(HttpServletRequest request, String messageKey, ActionMessage error) {
-        // Check if the errors bean is already present in request
-        ActionErrors errors = (ActionErrors) request.getAttribute(Globals.ERROR_KEY);
-        if (errors == null) {
-            // If not - create it and store in the request
-            errors = new ActionErrors();
-            request.setAttribute(Globals.ERROR_KEY, errors);
-        }
-
-        // Add error to the errors bean
-        errors.add(messageKey, error);
     }
 
 
