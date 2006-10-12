@@ -912,21 +912,29 @@ public class ProjectActions extends DispatchAction {
                 try {
 
                     // Set scheduled start date to calculated start date
-                    // FIXME: Remove stupid check for end date < start date from the component
-
                     phase.setScheduledStartDate(phase.calcStartDate());
 
                     if (lazyForm.get("phase_end_date", paramIndex).toString().trim().length() > 0) {
                         // Get phase end date from form
-                        Date phaseEndDate = parseDatetimeFormProperties(lazyForm, paramIndex,
-                                "phase_end_date", "phase_end_time", "phase_end_AMPM");
-
-                        // Set phase duration appropriately
-                        phase.setLength(phaseEndDate.getTime() - phase.getScheduledStartDate().getTime());
+                        Date phaseEndDate = parseDatetimeFormProperties(lazyForm, paramIndex, 
+                                "phase_end_date", "phase_end_time", "phase_end_AMPM");                
+                        
+                        // Calculate phase length
+                        long length = phaseEndDate.getTime() - phase.getScheduledStartDate().getTime();
+                        // Check if the end date of phase goes after the start date                        
+                        if (length < 0) {
+                            ActionsHelper.addErrorToRequest(request, ActionErrors.GLOBAL_MESSAGE,
+                                    new ActionMessage("error.com.cronos.onlinereview.actions.editProject.StartAfterEnd", 
+                                            phase.getPhaseType().getName()));
+                            break;
+                        } else {
+                            // Set phase duration appropriately 
+                            phase.setLength(length);
+                        }
                     }
-
-                    // Set sheduled phase end date to calculated end date
-                    phase.setScheduledEndDate(phase.calcEndDate());
+                    
+                    // Set sheduled phase end date to calculated end datehase
+                    phase.setScheduledEndDate(phase.calcEndDate()); 
                 } catch (CyclicDependencyException e) {
                     // There is circular dependency, report it and stop processing
                     // TODO: Report the particular phases
