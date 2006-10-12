@@ -22,7 +22,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.struts.Globals;
-import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
@@ -881,8 +880,8 @@ public class ProjectActions extends DispatchAction {
                     if (visited.contains(phase)) {
                         // There is circular dependency, report it and stop processing
                         // TODO: Report the particular phases
-                        ActionsHelper.addErrorToRequest(request, ActionErrors.GLOBAL_MESSAGE,
-                                new ActionMessage("error.com.cronos.onlinereview.actions.editProject.CircularDependency"));
+                        ActionsHelper.addErrorToRequest(request,
+                                "error.com.cronos.onlinereview.actions.editProject.CircularDependency");
                         hasCircularDependencies = true;
                         break;
                     }
@@ -916,30 +915,30 @@ public class ProjectActions extends DispatchAction {
 
                     if (lazyForm.get("phase_end_date", paramIndex).toString().trim().length() > 0) {
                         // Get phase end date from form
-                        Date phaseEndDate = parseDatetimeFormProperties(lazyForm, paramIndex, 
-                                "phase_end_date", "phase_end_time", "phase_end_AMPM");                
-                        
+                        Date phaseEndDate = parseDatetimeFormProperties(lazyForm, paramIndex,
+                                "phase_end_date", "phase_end_time", "phase_end_AMPM");
+
                         // Calculate phase length
                         long length = phaseEndDate.getTime() - phase.getScheduledStartDate().getTime();
-                        // Check if the end date of phase goes after the start date                        
+                        // Check if the end date of phase goes after the start date
                         if (length < 0) {
-                            ActionsHelper.addErrorToRequest(request, ActionErrors.GLOBAL_MESSAGE,
-                                    new ActionMessage("error.com.cronos.onlinereview.actions.editProject.StartAfterEnd", 
-                                            phase.getPhaseType().getName()));
+                            ActionsHelper.addErrorToRequest(request, new ActionMessage(
+                                    "error.com.cronos.onlinereview.actions.editProject.StartAfterEnd",
+                                    phase.getPhaseType().getName()));
                             break;
                         } else {
-                            // Set phase duration appropriately 
+                            // Set phase duration appropriately
                             phase.setLength(length);
                         }
                     }
-                    
+
                     // Set sheduled phase end date to calculated end datehase
-                    phase.setScheduledEndDate(phase.calcEndDate()); 
+                    phase.setScheduledEndDate(phase.calcEndDate());
                 } catch (CyclicDependencyException e) {
                     // There is circular dependency, report it and stop processing
                     // TODO: Report the particular phases
-                    ActionsHelper.addErrorToRequest(request, ActionErrors.GLOBAL_MESSAGE,
-                            new ActionMessage("error.com.cronos.onlinereview.actions.editProject.CircularDependency"));
+                    ActionsHelper.addErrorToRequest(request,
+                            "error.com.cronos.onlinereview.actions.editProject.CircularDependency");
                     hasCircularDependencies = true;
                     break;
                 }
@@ -1069,8 +1068,8 @@ public class ProjectActions extends DispatchAction {
         if (projectPhases.length > 0 &&
                 !projectPhases[0].getPhaseType().getName().equals(Constants.REGISTRATION_PHASE_NAME) &&
                 !projectPhases[0].getPhaseType().getName().equals(Constants.SUBMISSION_PHASE_NAME)) {
-            ActionsHelper.addErrorToRequest(request, ActionErrors.GLOBAL_MESSAGE,
-                    new ActionMessage("error.com.cronos.onlinereview.actions.editProject.WrongBeginningPhase"));
+            ActionsHelper.addErrorToRequest(request,
+                    "error.com.cronos.onlinereview.actions.editProject.WrongBeginningPhase");
             arePhasesValid = false;
         }
 
@@ -1079,44 +1078,44 @@ public class ProjectActions extends DispatchAction {
             if (projectPhases[i].getPhaseType().getName().equals(Constants.SUBMISSION_PHASE_NAME)) {
                 // Submission should follow registration if it exists
                 if (i > 0 && !projectPhases[i - 1].getPhaseType().getName().equals(Constants.REGISTRATION_PHASE_NAME)) {
-                    ActionsHelper.addErrorToRequest(request, ActionErrors.GLOBAL_MESSAGE,
-                            new ActionMessage("error.com.cronos.onlinereview.actions.editProject.SubmissionMustFollow"));
+                    ActionsHelper.addErrorToRequest(request,
+                            "error.com.cronos.onlinereview.actions.editProject.SubmissionMustFollow");
                     arePhasesValid = false;
                 }
             } else if (projectPhases[i].getPhaseType().getName().equals(Constants.REGISTRATION_PHASE_NAME)) {
                 // Registration should be followed by submission
                 if (i == projectPhases.length - 1 || !projectPhases[i + 1].getPhaseType().getName().equals(Constants.SUBMISSION_PHASE_NAME)) {
-                    ActionsHelper.addErrorToRequest(request, ActionErrors.GLOBAL_MESSAGE,
-                            new ActionMessage("error.com.cronos.onlinereview.actions.editProject.RegistrationMustBeFollowed"));
+                    ActionsHelper.addErrorToRequest(request,
+                            "error.com.cronos.onlinereview.actions.editProject.RegistrationMustBeFollowed");
                     arePhasesValid = false;
                 }
             } else if (projectPhases[i].getPhaseType().getName().equals(Constants.REVIEW_PHASE_NAME)) {
                 // Review should follow submission or screening
                 if (i == 0 || (!projectPhases[i - 1].getPhaseType().getName().equals(Constants.SUBMISSION_PHASE_NAME) &&
                         !projectPhases[i - 1].getPhaseType().getName().equals(Constants.SCREENING_PHASE_NAME))) {
-                    ActionsHelper.addErrorToRequest(request, ActionErrors.GLOBAL_MESSAGE,
-                            new ActionMessage("error.com.cronos.onlinereview.actions.editProject.ReviewMustFollow"));
+                    ActionsHelper.addErrorToRequest(request,
+                            "error.com.cronos.onlinereview.actions.editProject.ReviewMustFollow");
                     arePhasesValid = false;
                 }
             } else if (projectPhases[i].getPhaseType().getName().equals(Constants.APPEALS_PHASE_NAME)) {
                 // Appeals should follow review
                 if (i == 0 || !projectPhases[i - 1].getPhaseType().getName().equals(Constants.REVIEW_PHASE_NAME)) {
-                    ActionsHelper.addErrorToRequest(request, ActionErrors.GLOBAL_MESSAGE,
-                            new ActionMessage("error.com.cronos.onlinereview.actions.editProject.AppealsMustFollow"));
+                    ActionsHelper.addErrorToRequest(request,
+                            "error.com.cronos.onlinereview.actions.editProject.AppealsMustFollow");
                     arePhasesValid = false;
                 }
                 // Appeals should be followed by the appeals response
                 if (i == projectPhases.length - 1 ||
                         !projectPhases[i + 1].getPhaseType().getName().equals(Constants.APPEALS_RESPONSE_PHASE_NAME)) {
-                    ActionsHelper.addErrorToRequest(request, ActionErrors.GLOBAL_MESSAGE,
-                            new ActionMessage("error.com.cronos.onlinereview.actions.editProject.AppealsMustBeFollowed"));
+                    ActionsHelper.addErrorToRequest(request,
+                            "error.com.cronos.onlinereview.actions.editProject.AppealsMustBeFollowed");
                     arePhasesValid = false;
                 }
             } else if (projectPhases[i].getPhaseType().getName().equals(Constants.APPEALS_RESPONSE_PHASE_NAME)) {
                 // Appeal response should follow appeals
                 if (i == 0 || !projectPhases[i - 1].getPhaseType().getName().equals(Constants.APPEALS_PHASE_NAME)) {
-                    ActionsHelper.addErrorToRequest(request, ActionErrors.GLOBAL_MESSAGE,
-                            new ActionMessage("error.com.cronos.onlinereview.actions.editProject.AppealsResponseMustFollow"));
+                    ActionsHelper.addErrorToRequest(request,
+                            "error.com.cronos.onlinereview.actions.editProject.AppealsResponseMustFollow");
                     arePhasesValid = false;
                 }
             } else if (projectPhases[i].getPhaseType().getName().equals(Constants.AGGREGATION_PHASE_NAME)) {
@@ -1124,23 +1123,23 @@ public class ProjectActions extends DispatchAction {
                 if (i == 0 ||
                         (!projectPhases[i - 1].getPhaseType().getName().equals(Constants.APPEALS_RESPONSE_PHASE_NAME) &&
                         !projectPhases[i - 1].getPhaseType().getName().equals(Constants.REVIEW_PHASE_NAME))) {
-                    ActionsHelper.addErrorToRequest(request, ActionErrors.GLOBAL_MESSAGE,
-                            new ActionMessage("error.com.cronos.onlinereview.actions.editProject.AggregationMustFollow"));
+                    ActionsHelper.addErrorToRequest(request,
+                            "error.com.cronos.onlinereview.actions.editProject.AggregationMustFollow");
                     arePhasesValid = false;
                 }
                 // Aggregation should be followed by the aggregation review
                 if (i == projectPhases.length - 1 ||
                         !projectPhases[i + 1].getPhaseType().getName().equals(Constants.AGGREGATION_REVIEW_PHASE_NAME)) {
-                    ActionsHelper.addErrorToRequest(request, ActionErrors.GLOBAL_MESSAGE,
-                            new ActionMessage("error.com.cronos.onlinereview.actions.editProject.AggregationMustBeFollowed"));
+                    ActionsHelper.addErrorToRequest(request,
+                            "error.com.cronos.onlinereview.actions.editProject.AggregationMustBeFollowed");
                     arePhasesValid = false;
                 }
             } else if (projectPhases[i].getPhaseType().getName().equals(Constants.AGGREGATION_REVIEW_PHASE_NAME)) {
                 // Aggregation review should follow aggregation
                 if (i == 0 ||
                         !projectPhases[i - 1].getPhaseType().getName().equals(Constants.AGGREGATION_PHASE_NAME)) {
-                    ActionsHelper.addErrorToRequest(request, ActionErrors.GLOBAL_MESSAGE,
-                            new ActionMessage("error.com.cronos.onlinereview.actions.editProject.AggregationReviewMustFollow"));
+                    ActionsHelper.addErrorToRequest(request,
+                            "error.com.cronos.onlinereview.actions.editProject.AggregationReviewMustFollow");
                     arePhasesValid = false;
                 }
             } else if (projectPhases[i].getPhaseType().getName().equals(Constants.FINAL_FIX_PHASE_NAME)) {
@@ -1148,23 +1147,23 @@ public class ProjectActions extends DispatchAction {
                 if (i == 0 ||
                         (!projectPhases[i - 1].getPhaseType().getName().equals(Constants.APPEALS_RESPONSE_PHASE_NAME) &&
                         !projectPhases[i - 1].getPhaseType().getName().equals(Constants.AGGREGATION_REVIEW_PHASE_NAME))) {
-                    ActionsHelper.addErrorToRequest(request, ActionErrors.GLOBAL_MESSAGE,
-                            new ActionMessage("error.com.cronos.onlinereview.actions.editProject.FinalFixMustFollow"));
+                    ActionsHelper.addErrorToRequest(request,
+                            "error.com.cronos.onlinereview.actions.editProject.FinalFixMustFollow");
                     arePhasesValid = false;
                 }
                 // Final fix should be followed by the final review
                 if (i == projectPhases.length - 1 ||
                         !projectPhases[i + 1].getPhaseType().getName().equals(Constants.FINAL_REVIEW_PHASE_NAME)) {
-                    ActionsHelper.addErrorToRequest(request, ActionErrors.GLOBAL_MESSAGE,
-                            new ActionMessage("error.com.cronos.onlinereview.actions.editProject.FinalFixMustBeFollowed"));
+                    ActionsHelper.addErrorToRequest(request,
+                            "error.com.cronos.onlinereview.actions.editProject.FinalFixMustBeFollowed");
                     arePhasesValid = false;
                 }
             }  else if (projectPhases[i].getPhaseType().getName().equals(Constants.FINAL_REVIEW_PHASE_NAME)) {
                 // Final review should follow final fix
                 if (i == 0 ||
                         !projectPhases[i - 1].getPhaseType().getName().equals(Constants.FINAL_FIX_PHASE_NAME)) {
-                    ActionsHelper.addErrorToRequest(request, ActionErrors.GLOBAL_MESSAGE,
-                            new ActionMessage("error.com.cronos.onlinereview.actions.editProject.FinalReviewMustFollow"));
+                    ActionsHelper.addErrorToRequest(request,
+                            "error.com.cronos.onlinereview.actions.editProject.FinalReviewMustFollow");
                     arePhasesValid = false;
                 }
             }
