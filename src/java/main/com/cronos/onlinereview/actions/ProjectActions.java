@@ -924,7 +924,7 @@ public class ProjectActions extends DispatchAction {
                         // Set phase duration appropriately
                         phase.setLength(phaseEndDate.getTime() - phase.getScheduledStartDate().getTime());
                     }
-
+System.out.println("START/END: " + phase.calcStartDate()+"/"+phase.calcEndDate());
                     // Set sheduled phase end date to calculated end date
                     phase.setScheduledEndDate(phase.calcEndDate());
                 } catch (CyclicDependencyException e) {
