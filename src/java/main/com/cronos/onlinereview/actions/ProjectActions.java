@@ -744,6 +744,9 @@ public class ProjectActions extends DispatchAction {
 
                 // Clear all the pre-existing dependencies
                 phase.clearDependencies();
+                
+                // Clear the previously set fixed start date
+                phase.setFixedStartDate(null);
             }
 
             // If action is "delete", delete the phase and proceed to the next one
@@ -759,6 +762,9 @@ public class ProjectActions extends DispatchAction {
             phasesToForm.put(phase, new Integer(i));
         }
 
+        // Minimal date will be the project start date
+        Date minDate = null;
+        
         // SECOND PASS
         for (int i = 1; i < phaseTypes.length; i++) {
             Object phaseObj = phasesJsMap.get(lazyForm.get("phase_js_id", i));
@@ -789,6 +795,11 @@ public class ProjectActions extends DispatchAction {
                         "phase_start_time", "phase_start_AMPM");
                 // Set phase fixed start date
                 phase.setFixedStartDate(phaseStartDate);
+                
+                // Check if the current date is minimal
+                if (minDate == null || phaseStartDate.getTime() < minDate.getTime()) {
+                    minDate = phaseStartDate;
+                }                
             } else {
                 // TODO: These parameters should probably be populated in some other way
                 boolean dependencyStart;
@@ -842,6 +853,11 @@ public class ProjectActions extends DispatchAction {
             if (viewAppealResponses != null) {
                 phase.setAttribute("View Response During Appeals", viewAppealResponses.booleanValue() ? "Yes" : "No");
             }
+        }
+        
+        // Update project start date if needed
+        if (minDate != null) {
+            phProject.setStartDate(minDate);
         }
 
         // THIRD PASS
@@ -912,7 +928,8 @@ public class ProjectActions extends DispatchAction {
                     // Set scheduled start date to calculated start date
                     phase.setScheduledStartDate(phase.calcStartDate());
 
-                    if (lazyForm.get("phase_end_date", paramIndex).toString().trim().length() > 0) {
+                    // If phase duration was not specified
+                    if (((Integer) lazyForm.get("phase_duration", paramIndex)).intValue() <= 0) {
                         // Get phase end date from form
                         Date phaseEndDate = parseDatetimeFormProperties(lazyForm, paramIndex,
                                 "phase_end_date", "phase_end_time", "phase_end_AMPM");
@@ -1020,28 +1037,28 @@ public class ProjectActions extends DispatchAction {
             for (; i < projectPhases.length; i++) {
                 if (projectPhases[i] != newCurrentPhase) {
                     if (projectPhases[i].getPhaseStatus().getName().equals(PhaseStatus.OPEN.getName())) {
-                        /*if (phaseManager.canEnd(projectPhases[i])) {
-                          */  phaseManager.end(projectPhases[i],
-                                    Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
-                        /*} else {
-                            // TODO: issue an error
-                        }*/
-                    } else if (projectPhases[i].getPhaseStatus().getName().equals(PhaseStatus.SCHEDULED.getName())) {
-                        /*if (phaseManager.canStart(projectPhases[i])) {
-                          */  phaseManager.start(projectPhases[i],
-                                    Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
-                        /*}
                         if (phaseManager.canEnd(projectPhases[i])) {
-                          */  phaseManager.end(projectPhases[i],
+                            phaseManager.end(projectPhases[i],
                                     Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
-                        //}
+                        } else {
+                            // TODO: issue an error, or probably not?
+                        }
+                    } else if (projectPhases[i].getPhaseStatus().getName().equals(PhaseStatus.SCHEDULED.getName())) {
+                        if (phaseManager.canStart(projectPhases[i])) {
+                            phaseManager.start(projectPhases[i],
+                                    Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
+                        }
+                        if (phaseManager.canEnd(projectPhases[i])) {
+                            phaseManager.end(projectPhases[i],
+                                    Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
+                        }
                     }
                 } else {
                     if (projectPhases[i].getPhaseStatus().getName().equals(PhaseStatus.SCHEDULED.getName())) {
-                        /*if (phaseManager.canStart(projectPhases[i])) {
-                          */  phaseManager.start(projectPhases[i],
+                        if (phaseManager.canStart(projectPhases[i])) {
+                            phaseManager.start(projectPhases[i],
                                     Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
-                        //}
+                        }
                     }
                     break;
                 }
