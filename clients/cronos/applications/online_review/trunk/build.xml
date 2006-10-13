@@ -592,6 +592,11 @@
         <unwar src="${component.war}" dest="${deploy-dir}" />
     </target>
 
+    <target name="deploy-prod">
+        <mkdir dir="${deploy-dir}" />
+        <unwar src="${distfilename}.war" dest="${deploy-dir}" />
+    </target>
+
     <target name="main" depends="deploy,test">
     </target>
 
