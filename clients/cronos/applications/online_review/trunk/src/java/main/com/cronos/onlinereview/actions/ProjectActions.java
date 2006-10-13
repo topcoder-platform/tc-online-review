@@ -372,7 +372,7 @@ public class ProjectActions extends DispatchAction {
             if (phases[i].getAttribute("Submission Number") != null) {
                 form.set("phase_required_submissions", i + 1,
                         Integer.valueOf((String) phases[i].getAttribute("Submission Number")));
-                form.set("manual_screening", i + 1,
+                form.set("phase_manual_screening", i + 1,
                         Boolean.valueOf("Yes".equals(phases[i].getAttribute("Manual Screening"))));
             }
             if (phases[i].getAttribute("View Response During Appeals") != null) {
