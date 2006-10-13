@@ -2741,9 +2741,8 @@ public class ProjectReviewActions extends DispatchAction {
 
             // Obtain an instance of CalculationManager
             CalculationManager scoreCalculator = new CalculationManager();
-
-            //Compute scorecard's score
-            review.setScore(new Float(scoreCalculator.getScore(scorecardTemplate, review)));                     
+            // Compute scorecard's score
+            review.setScore(new Float(scoreCalculator.getScore(scorecardTemplate, review)));
             if (commitRequested) {
                 // Set the completed status of the review
                 review.setCommitted(true);
