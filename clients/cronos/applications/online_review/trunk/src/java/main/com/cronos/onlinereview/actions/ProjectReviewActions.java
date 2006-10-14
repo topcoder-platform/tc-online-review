@@ -2745,7 +2745,7 @@ public class ProjectReviewActions extends DispatchAction {
         		verification.setReview(review);
                 // Retrieve some basic review info and store it in the request
         		retrieveAndStoreBasicReviewInfo(request, verification, reviewType, scorecardTemplate);
-        		
+        		retreiveAndStoreReviewLookUpData(request);
         		return mapping.getInputForward();        		
         	}
 
