@@ -5,6 +5,7 @@ package com.cronos.onlinereview.functions;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.cronos.onlinereview.actions.ActionsHelper;
 import com.cronos.onlinereview.actions.AuthorizationHelper;
 
 /**
@@ -126,5 +127,27 @@ public final class Functions {
         }
 
         return String.valueOf(AuthorizationHelper.getLoggedInUserId(request));
+    }
+
+    /**
+     * This static method determines whether standar errors bean from Sytruts framework has been
+     * created and stored in the request specified by <code>request</code> parameter.
+     * <p>
+     * This method is an implementeation of <code>isErrorsPresent</code> function used from EL
+     * expressions in JSP pages.
+     * </p>
+     *
+     * @return <code>true</code> if there were errors, <code>false</code> if there weren't.
+     * @param request
+     *            an <code>HttpServletRequest</code> object. Normally, you should write the
+     *            following: &quot;<code>pageContext.request</code>&quot; in a JSP page when you
+     *            call this method to pass it valid object.
+     */
+    public static Boolean isErrorsPresent(HttpServletRequest request) {
+        if (request == null) {
+            return Boolean.FALSE;
+        }
+
+        return new Boolean(ActionsHelper.isErrorsPresent(request));
     }
 }
