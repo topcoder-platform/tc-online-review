@@ -1,7 +1,7 @@
 <%@ page language="java" isELIgnored="false" %>
 <%@ page import="com.topcoder.shared.util.ApplicationServer" %>
-<%@ taglib  uri="/tags/struts-html" prefix="html" %>
-<%@ taglib  uri="/tags/struts-bean" prefix="bean" %>
+<%@ taglib prefix="html" uri="/tags/struts-html" %>
+<%@ taglib prefix="bean" uri="/tags/struts-bean" %>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html:html xhtml="true">
 

@@ -1,8 +1,9 @@
 <%@ page language="java" isELIgnored="false" %>
-<%@ page import="com.topcoder.shared.util.ApplicationServer" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ taglib  uri="/tags/struts-html" prefix="html" %>
-<%@ taglib  uri="/tags/struts-bean" prefix="bean" %>
+<%@ taglib prefix="html" uri="/tags/struts-html" %>
+<%@ taglib prefix="bean" uri="/tags/struts-bean" %>
+<%@ taglib prefix="orfn" uri="/tags/or-functions" %>
+<%@ page import="com.topcoder.shared.util.ApplicationServer" %>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html:html xhtml="true">
 
@@ -40,7 +41,7 @@
 			<td class="bodyText">
 				<br /><br />
 				<div align="center">
-					<c:if test="${not empty requestScope['org.apache.struts.action.ERROR']}">
+					<c:if test="${orfn:isErrorsPresent(pageContext.request)}">
 						<table width="50%" cellpadding="0" cellspacing="0" border="0">
 							<tr><td width="16"><!-- @ --></td><td><!-- @ --></td></tr>
 							<tr>

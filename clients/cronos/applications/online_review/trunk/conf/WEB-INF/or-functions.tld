@@ -28,6 +28,6 @@
     <function>
         <name>isErrorsPresent</name>
         <function-class>com.cronos.onlinereview.functions.Functions</function-class>
-        <function-signature>java.lang.Boolean getLoggedInUserId(javax.servlet.http.HttpServletRequest)</function-signature>
+        <function-signature>java.lang.Boolean isErrorsPresent(javax.servlet.http.HttpServletRequest)</function-signature>
     </function>
 </taglib>

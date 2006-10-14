@@ -417,7 +417,7 @@
 						<html:hidden property="method" value="saveProject" />
 
 						<%-- TODO: Validation errors display should be much more than is here --%>
-						<c:if test="${not empty requestScope['org.apache.struts.action.ERROR']}">
+						<c:if test="${orfn:isErrorsPresent(pageContext.request)}">
 							<table cellpadding="0" cellspacing="0" border="0">
 								<tr><td width="16"><!-- @ --></td><td><!-- @ --></td></tr>
 								<tr>
