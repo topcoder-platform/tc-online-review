@@ -2814,7 +2814,7 @@ public class ProjectReviewActions extends DispatchAction {
 		boolean areReviewInvalid = false;
 		
 		Item[] items = review.getAllItems();
-		for (int i = 0; i < items.length; i++) {			
+		for (int i = 0; i < items.length; i++) {
 			if (items[i] != null && items[i].getAnswer() instanceof String) {
 				String answer = (String)items[i].getAnswer();
 				if (answer.trim().length() != 0)
@@ -2826,7 +2826,7 @@ public class ProjectReviewActions extends DispatchAction {
 					"error.com.cronos.onlinereview.actions.editReview.WrongAnswer");
 		}
 		
-		if (!areReviewInvalid) {
+		if (areReviewInvalid) {
 			ActionsHelper.addErrorToRequest(request, 
 					"error.com.cronos.onlinereview.actions.editReview.WrongInput");
 		}
