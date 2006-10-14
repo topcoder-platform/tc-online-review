@@ -902,6 +902,20 @@ class ActionsHelper {
     }
 
     /**
+     *
+     * @return
+     * @param request
+     * @throws IllegalArgumentException
+     *             if <code>request</code> parameter is <code>null</code>.
+     */
+    public static boolean isErrorsPresent(HttpServletRequest request) {
+        // Validate parameter
+        validateParameterNotNull(request, "request");
+
+        return (request.getAttribute(Globals.ERROR_KEY) != null);
+    }
+
+    /**
      * This method helps gather some commonly used information about the project. When the
      * information has been gathered, this method places it into the request as a set of attributes.
      *
