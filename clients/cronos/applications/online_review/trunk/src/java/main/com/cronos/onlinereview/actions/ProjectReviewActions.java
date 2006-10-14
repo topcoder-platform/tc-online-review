@@ -2738,7 +2738,7 @@ public class ProjectReviewActions extends DispatchAction {
         // If the user has requested to complete the review
         if (commitRequested || managerEdit) {
             // TODO: Validate review here
-        	if (!validateReview(request, review)) {
+        	if (validateReview(request, review)) {
                 // Put the review object into the request        		
         		request.setAttribute("review", review);
         		//Put the review object into the bean (it may not always be there by default)        		
