@@ -2814,12 +2814,9 @@ public class ProjectReviewActions extends DispatchAction {
 		boolean areReviewInvalid = false;
 		
 		Item[] items = review.getAllItems();
-System.out.println("ITEMS IN REVIEW: "+items.length);
 		for (int i = 0; i < items.length; i++) {
-System.out.println("ITEM: " + i);
 			if (items[i] != null && items[i].getAnswer() instanceof String) {
 				String answer = (String)items[i].getAnswer();
-System.out.println(answer.trim().length()+":"+answer);
 				if (answer.trim().length() != 0)
 					continue;
 			}
