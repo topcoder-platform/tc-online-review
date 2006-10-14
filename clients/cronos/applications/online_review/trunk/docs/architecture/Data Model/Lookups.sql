@@ -269,9 +269,9 @@ INSERT INTO comment_type_lu(comment_type_id, name, description, create_user, cre
 INSERT INTO deliverable_lu(deliverable_id, phase_type_id, resource_role_id, name, description, per_submission, required, create_user, create_date, modify_user, modify_date)
   VALUES(1, 2, 1, 'Submission', 'Submission', 0, 0, 'System', CURRENT, 'System', CURRENT);
 INSERT INTO deliverable_lu(deliverable_id, phase_type_id, resource_role_id, name, description, per_submission, required, create_user, create_date, modify_user, modify_date)
-  VALUES(2, 3, 2, 'Screening Scorecard', 'Screening Scorecard', 1, 1, 'System', CURRENT, 'System', CURRENT);
+  VALUES(2, 3, 2, 'Primary Screening Scorecard', 'Primary Screening Scorecard', 1, 1, 'System', CURRENT, 'System', CURRENT);
 INSERT INTO deliverable_lu(deliverable_id, phase_type_id, resource_role_id, name, description, per_submission, required, create_user, create_date, modify_user, modify_date)
-  VALUES(3, 3, 3, 'Primary Screening Scorecard', 'Primary Screening Scorecard', 0, 1, 'System', CURRENT, 'System', CURRENT);
+  VALUES(3, 3, 3, 'Screening Scorecard', 'Screening Scorecard', 0, 1, 'System', CURRENT, 'System', CURRENT);
 INSERT INTO deliverable_lu(deliverable_id, phase_type_id, resource_role_id, name, description, per_submission, required, create_user, create_date, modify_user, modify_date)
   VALUES(4, 4, 4, 'Review Scorecard', 'Review Scorecard', 1, 1, 'System', CURRENT, 'System', CURRENT);
 INSERT INTO deliverable_lu(deliverable_id, phase_type_id, resource_role_id, name, description, per_submission, required, create_user, create_date, modify_user, modify_date)
