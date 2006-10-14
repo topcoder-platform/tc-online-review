@@ -2116,6 +2116,7 @@ class ActionsHelper {
 
             checkers.put(Constants.SUBMISSION_DELIVERABLE_NAME, new SubmissionDeliverableChecker(dbconn));
             checkers.put(Constants.SCREENING_DELIVERABLE_NAME, new IndividualReviewDeliverableChecker(dbconn));
+            checkers.put(Constants.PRIMARY_SCREENING_DELIVERABLE_NAME, committedChecker);
             checkers.put(Constants.REVIEW_DELIVERABLE_NAME, committedChecker);
             checkers.put(Constants.ACC_TEST_CASES_DELIVERABLE_NAME, testCasesChecker);
             checkers.put(Constants.FAIL_TEST_CASES_DELIVERABLE_NAME, testCasesChecker);

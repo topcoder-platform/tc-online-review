@@ -548,6 +548,12 @@ public class Constants {
     public static final String SCREENING_DELIVERABLE_NAME = "Screening Scorecard";
 
     /**
+     * This member variable is a string constant that defines the name of the Primary Screening Scorecard
+     * deliverable.
+     */
+    public static final String PRIMARY_SCREENING_DELIVERABLE_NAME = "Primary Screening Scorecard";
+
+    /**
      * This member variable is a string constant that defines the name of the Review Scorecard
      * deliverable.
      */
