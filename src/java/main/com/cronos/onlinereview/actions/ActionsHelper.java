@@ -123,7 +123,7 @@ import com.topcoder.util.idgenerator.IDGeneratorFactory;
  * @author real_vg
  * @version 1.0
  */
-class ActionsHelper {
+public class ActionsHelper {
 
     /**
      * This member variable is a string constant that defines the name of the configurtaion
