@@ -21,7 +21,8 @@ import com.topcoder.util.errorhandling.BaseException;
  * It is implemented for testing purpose.
  * </p>
  *
- * @author TCSAssemblyTeam
+ * @author George1
+ * @author real_vg
  * @version 1.0
  */
 public class MockAuthenticator extends AbstractAuthenticator {

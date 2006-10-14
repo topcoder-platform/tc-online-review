@@ -21,7 +21,8 @@ import com.topcoder.util.errorhandling.BaseException;
  * This class defines a mock up for real TopCoder's <tc-webtag:handle> tag, which displays members'
  * handles using diffferent color schemas based on the users' rating.
  *
- * @author TCSAssemblyTeam
+ * @author George1
+ * @author real_vg
  * @version 1.0
  */
 public final class MockHandleTag extends TagSupport {
