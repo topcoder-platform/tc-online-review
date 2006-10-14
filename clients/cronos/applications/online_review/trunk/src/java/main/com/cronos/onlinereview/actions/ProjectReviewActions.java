@@ -2738,6 +2738,16 @@ public class ProjectReviewActions extends DispatchAction {
         // If the user has requested to complete the review
         if (commitRequested || managerEdit) {
             // TODO: Validate review here
+        	if (!validateReview(request, review)) {
+                // Put the review object into the request        		
+        		request.setAttribute("review", review);
+        		//Put the review object into the bean (it may not always be there by default)        		
+        		verification.setReview(review);
+                // Retrieve some basic review info and store it in the request
+        		retrieveAndStoreBasicReviewInfo(request, verification, reviewType, scorecardTemplate);
+        		
+        		return mapping.getInputForward();        		
+        	}
 
             // Obtain an instance of CalculationManager
             CalculationManager scoreCalculator = new CalculationManager();
@@ -2793,7 +2803,37 @@ public class ProjectReviewActions extends DispatchAction {
                 mapping.findForward(Constants.SUCCESS_FORWARD_NAME), "&pid=" + verification.getProject().getId());
     }
 
-    /**
+	/**
+     * TODO Document it
+     * 
+     * @param request
+     * @param review
+     * @return
+     */
+    private boolean validateReview(HttpServletRequest request, Review review) {
+		boolean areReviewInvalid = false;
+		
+		Item[] items = review.getAllItems();
+		for (int i = 0; i < items.length; i++) {			
+			if (items[i] != null && items[i].getAnswer() instanceof String) {
+				String answer = (String)items[i].getAnswer();
+				if (answer.trim().length() != 0)
+					continue;
+			}
+			areReviewInvalid = true;
+
+			ActionsHelper.addErrorToRequest(request, "Item" + String.valueOf(i), 
+					"error.com.cronos.onlinereview.actions.editReview.WrongAnswer");
+		}
+		
+		if (!areReviewInvalid) {
+			ActionsHelper.addErrorToRequest(request, 
+					"error.com.cronos.onlinereview.actions.editReview.WrongInput");
+		}
+		return areReviewInvalid;
+	}
+
+	/**
      * TODO: Document it.
      *
      * @return

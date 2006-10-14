@@ -80,6 +80,17 @@
 
 					<html:form action="/actions/Save${reviewType}" method="POST" enctype="multipart/form-data">
 						<html:hidden property="method" value="save${reviewType}" />
+						<!-- Validation errors display -->						
+						<c:if test="${not empty requestScope['org.apache.struts.action.ERROR']}">
+							<table cellpadding="0" cellspacing="0" border="0">
+								<tr><td width="16"><!-- @ --></td><td><!-- @ --></td></tr>
+								<tr>
+									<td colspan="2"><bean:message key="error.com.cronos.onlinereview.Errors" /></td>
+								</tr>
+								<html:errors property="org.apache.struts.action.GLOBAL_MESSAGE"/>
+							</table><br />
+						</c:if>
+						
 						<c:if test="${not empty review}">
 							<html:hidden property="rid" value="${review.id}" />
 						</c:if>
@@ -101,7 +112,11 @@
 										<td class="subheader" width="49%" align="center"><bean:message key="editReview.SectionHeader.Weight" /></td>
 										<td class="subheader" width="1%" align="center"><bean:message key="editReview.SectionHeader.Response" /></td>
 									</tr>
-									<c:forEach items="${section.allQuestions}" var="question" varStatus="questionStatus">
+									<c:forEach items="${section.allQuestions}" var="question" varStatus="questionStatus">																											
+										<tr>
+											<td colspan="3"><html:errors property="Item${itemIdx}"/></td>
+										</tr>												
+																													
 										<c:if test="${managerEdit}">
 											<c:set var="item" value="${review.allItems[itemIdx]}" />
 										</c:if>
