@@ -441,3 +441,18 @@ A.footerLinks:active
 	text-align: center;
 	white-space: nowrap;
 }
+
+.error
+{
+	color: #CC0000;
+	font-size: 11px;
+	font-weight: bold;
+}
+div.error
+{
+	padding: 2px 0 0 0;
+}
+span.error
+{
+	vertical-align: top;
+}
