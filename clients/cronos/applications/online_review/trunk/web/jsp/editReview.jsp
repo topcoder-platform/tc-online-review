@@ -51,7 +51,6 @@
 			}
 		}
 	});
-
 	// -->
 	</script>
 </head>
@@ -80,22 +79,17 @@
 
 					<html:form action="/actions/Save${reviewType}" method="POST" enctype="multipart/form-data">
 						<html:hidden property="method" value="save${reviewType}" />
-						<!-- Validation errors display -->						
-						<c:if test="${not empty requestScope['org.apache.struts.action.ERROR']}">
-							<table cellpadding="0" cellspacing="0" border="0">
-								<tr><td width="16"><!-- @ --></td><td><!-- @ --></td></tr>
-								<tr>
-									<td colspan="2"><bean:message key="error.com.cronos.onlinereview.Errors" /></td>
-								</tr>
-								<html:errors property="org.apache.struts.action.GLOBAL_MESSAGE"/>
-							</table><br />
-						</c:if>
-						
 						<c:if test="${not empty review}">
 							<html:hidden property="rid" value="${review.id}" />
 						</c:if>
 						<c:if test="${empty review}">
 							<html:hidden property="sid" value="${sid}" />
+						</c:if>
+
+						<c:if test="${orfn:isErrorsPresent(pageContext.request)}">
+							<table cellpadding="0" cellspacing="0" border="0">
+								<tr><td class="errorText"><bean:message key="Error.saveReview.ValidationFailed" /></td></tr>
+							</table><br />
 						</c:if>
 
 						<c:set var="itemIdx" value="0" />
@@ -112,11 +106,7 @@
 										<td class="subheader" width="49%" align="center"><bean:message key="editReview.SectionHeader.Weight" /></td>
 										<td class="subheader" width="1%" align="center"><bean:message key="editReview.SectionHeader.Response" /></td>
 									</tr>
-									<c:forEach items="${section.allQuestions}" var="question" varStatus="questionStatus">																											
-										<tr>
-											<td colspan="3"><html:errors property="Item${itemIdx}"/></td>
-										</tr>												
-																													
+									<c:forEach items="${section.allQuestions}" var="question" varStatus="questionStatus">
 										<c:if test="${managerEdit}">
 											<c:set var="item" value="${review.allItems[itemIdx]}" />
 										</c:if>
@@ -126,6 +116,7 @@
 											<c:if test="${not managerEdit}">
 												<td class="valueC" nowrap="nowrap">
 													<%@ include file="../includes/review/review_answer.jsp" %>
+													<div class="error"><html:errors property="answer[${itemIdx}]" prefix="" suffix="" /></div>
 												</td>
 											</c:if>
 											<c:if test="${managerEdit}">
@@ -147,7 +138,8 @@
 												</c:if>
 												<c:if test="${managerEdit}">
 													<b><bean:message key="editReview.Question.ManagerComment.title"/>:</b>
-												</c:if>
+												</c:if> &#160;
+												<span class="error"><html:errors property="comment[${itemIdx}]" prefix="" suffix="" /></span>
 												<html:textarea rows="2" property="comment[${itemIdx}]" cols="20" styleClass="inputTextBox" />
 												<c:if test="${(not managerEdit) and question.uploadDocument}">
 													<c:if test="${empty uploadedFileIds[fileIdx]}">
@@ -165,12 +157,14 @@
 														<span style="font-weight:normal;"><bean:message key="global.optional.paren" /></span>:</b>
 													</c:if>
 													&#160;<html:file property="file[${fileIdx}]" size="20" styleClass="inputBox" style="width:350px;vertical-align:middle;" />
+													&#160; <span class="error"><html:errors property="file[${fileIdx}]" prefix="" suffix="" /></span>
 													<c:set var="fileIdx" value="${fileIdx + 1}" />
 												</c:if>
 											</td>
 											<c:if test="${managerEdit}">
 												<td class="valueC" nowrap="nowrap">
 													<%@ include file="../includes/review/review_answer.jsp" %>
+													<div class="error"><html:errors property="answer[${itemIdx}]" prefix="" suffix="" /></div>
 												</td>
 											</c:if>
 										</tr>
@@ -188,10 +182,10 @@
 							<html:hidden property="save" value="" />
 							<c:if test="${not managerEdit}">
 								<html:image onclick="javascript:this.form.save.value='submit'; this.parentNode.parentNode.target='_self';" srcKey="editReview.Button.SaveAndCommit.img" altKey="editReview.Button.SaveAndCommit.alt" border="0" />&#160;
-								<html:image onclick="javascript:this.form.save.value='save'; this.parentNode.parentNode.target='_self';" srcKey="editReview.Button.SaveForLater.img" altKey="editReview.Button.SaveForLater.alt" border="0" />&#160;							
+								<html:image onclick="javascript:this.form.save.value='save'; this.parentNode.parentNode.target='_self';" srcKey="editReview.Button.SaveForLater.img" altKey="editReview.Button.SaveForLater.alt" border="0" />&#160;
 							</c:if>
 							<c:if test="${managerEdit}">
-								<html:image onclick="javascript:this.form.save.value='save'; this.parentNode.parentNode.target='_self';" srcKey="btnSave.img" altKey="btnSave.alt" border="0" />&#160;							
+								<html:image onclick="javascript:this.form.save.value='save'; this.parentNode.parentNode.target='_self';" srcKey="btnSaveChanges.img" altKey="btnSaveChanges.alt" border="0" />&#160;
 							</c:if>
 							<html:image onclick="javascript:this.form.save.value='preview'; this.parentNode.parentNode.target='_blank';" srcKey="editReview.Button.Preview.img" altKey="editReview.Button.Preview.alt" border="0" />
 						</div>
