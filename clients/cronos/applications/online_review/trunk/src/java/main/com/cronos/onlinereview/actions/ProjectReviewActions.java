@@ -2526,6 +2526,7 @@ public class ProjectReviewActions extends DispatchAction {
                 review = reviews[0];
                 verification.setReview(review);
             }
+            System.out.println(review.getNumberOfItems());
         }
         if (review != null){
             // Obtain an instance of Scorecard Manager
