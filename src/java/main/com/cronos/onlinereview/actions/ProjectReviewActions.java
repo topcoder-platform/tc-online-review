@@ -2490,6 +2490,7 @@ public class ProjectReviewActions extends DispatchAction {
 
         // Retrieve the review to edit (if any)
         Review review = verification.getReview();
+        System.out.println(review == null);
         Scorecard scorecardTemplate = null;
 
         if (review == null) {
