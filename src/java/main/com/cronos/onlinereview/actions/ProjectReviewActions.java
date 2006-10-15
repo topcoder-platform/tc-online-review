@@ -5,7 +5,9 @@ package com.cronos.onlinereview.actions;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -96,6 +98,24 @@ import com.topcoder.util.errorhandling.BaseException;
  * @version 1.0
  */
 public class ProjectReviewActions extends DispatchAction {
+
+    /**
+     * This member variable holds the all possible values of answers to &#39;Scale&#160;(1-4)&#39;
+     * and &#39;Scale&#160;(1-10)&#39; types of scorecard question.
+     */
+    private static final Map correctAnswers = new HashMap();
+
+    // Initialize the above map
+    static {
+        String scale1_4 = "Scale (1-4)";
+        String scale1_10 = "Scale (1-10)";
+        for (int i = 1; i <= 10; ++i) {
+            if (i <= 4) {
+                correctAnswers.put(i + "/4", scale1_4);
+            }
+            correctAnswers.put(i + "/10", scale1_10);
+        }
+    }
 
     /**
      * Creates a new instance of the <code>ProjectReviewActions</code> class.
@@ -2299,14 +2319,8 @@ public class ProjectReviewActions extends DispatchAction {
         String[] answers = new String[review.getNumberOfItems()];
         String[] replies = new String[review.getNumberOfItems()];
         Long[] commentTypes = new Long[review.getNumberOfItems()];
-        FormFile[] files = new FormFile[ActionsHelper.getScorecardUploadsCount(scorecardTemplate)];
-        Arrays.fill(files, null);
-
-        Long[] uploadedFileIds = new Long[files.length];
-        Arrays.fill(uploadedFileIds, null);
 
         int itemIdx = 0;
-        int fileIdx = 0;
 
         // Walk the items in the review setting appropriate values in the arrays
         for (int groupIdx = 0; groupIdx < scorecardTemplate.getNumberOfGroups(); ++groupIdx) {
@@ -2334,15 +2348,13 @@ public class ProjectReviewActions extends DispatchAction {
                         replies[itemIdx] = "";
                         commentTypes[itemIdx] = null;
                     }
-
-                    if (!managerEdit && section.getQuestion(questionIdx).isUploadDocument()) {
-                        uploadedFileIds[fileIdx++] = item.getDocument();
-                    }
                 }
             }
         }
 
-        request.setAttribute("uploadedFileIds", uploadedFileIds);
+        if (!managerEdit) {
+            request.setAttribute("uploadedFileIds", collectUploadedFileIds(scorecardTemplate, review));
+        }
 
         /*
          * Populate the form
@@ -2354,7 +2366,6 @@ public class ProjectReviewActions extends DispatchAction {
         reviewForm.set("answer", answers);
         reviewForm.set("comment", replies);
         reviewForm.set("commentType", commentTypes);
-        reviewForm.set("file", files);
 
         // Get the word "of" for Test Case type of question
         String wordOf = getResources(request).getMessage("editReview.Question.Response.TestCase.of");
@@ -2663,11 +2674,11 @@ public class ProjectReviewActions extends DispatchAction {
 
             review = reviewEditor.getReview();
         } else {
-            for (int i = 0; i < scorecardTemplate.getNumberOfGroups(); ++i) {
-                Group group = scorecardTemplate.getGroup(i);
-                for (int j = 0; j < group.getNumberOfSections(); ++j) {
-                    Section section = group.getSection(j);
-                    for (int k = 0; k < section.getNumberOfQuestions(); ++k, ++index) {
+            for (int iGroup = 0; iGroup < scorecardTemplate.getNumberOfGroups(); ++iGroup) {
+                Group group = scorecardTemplate.getGroup(iGroup);
+                for (int iSection = 0; iSection < group.getNumberOfSections(); ++iSection) {
+                    Section section = group.getSection(iSection);
+                    for (int iQuestion = 0; iQuestion < section.getNumberOfQuestions(); ++iQuestion, ++index) {
                         // Get an item and its comment
                         Item item = review.getItem(index);
                         Comment comment;
@@ -2703,26 +2714,36 @@ public class ProjectReviewActions extends DispatchAction {
                         // Update the answer
                         item.setAnswer(answers[index]);
 
-                        if (!previewRequested && !managerEdit && section.getQuestion(k).isUploadDocument()) {
+                        if (!previewRequested && !managerEdit && section.getQuestion(iQuestion).isUploadDocument()) {
                             if (fileIdx < files.length && files[fileIdx] != null &&
                                     files[fileIdx].getFileName().trim().length() != 0) {
                                 Upload oldUpload = null;
+                                // If this item has already had uploaded file,
+                                // it is going to be updated
                                 if (item.getDocument() != null) {
                                     oldUpload = upMgr.getUpload(item.getDocument().longValue());
                                 }
 
                                 Upload upload = new Upload();
 
+                                // Set fields of the new upload
                                 upload.setOwner(myResource.getId());
-                                upload.setProject(oldUpload.getProject());
                                 upload.setParameter(uploadedFiles[uploadedFileIdx++].getFileId());
-                                upload.setUploadStatus(oldUpload.getUploadStatus());
-                                upload.setUploadType(oldUpload.getUploadType());
-                                oldUpload.setUploadStatus(
-                                        ActionsHelper.findUploadStatusByName(allUploadStatuses, "Deleted"));
+                                upload.setProject(project.getId());
+                                upload.setUploadStatus(
+                                        ActionsHelper.findUploadStatusByName(allUploadStatuses, "Active"));
+                                upload.setUploadType(
+                                        ActionsHelper.findUploadTypeByName(allUploadType, "Review Document"));
 
-                                upMgr.updateUpload(oldUpload,
-                                        Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
+                                // Update and store old upload (if there was any)
+                                if (oldUpload != null) {
+                                    oldUpload.setUploadStatus(
+                                            ActionsHelper.findUploadStatusByName(allUploadStatuses, "Deleted"));
+                                    upMgr.updateUpload(oldUpload,
+                                            Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
+                                }
+
+                                // Save information about current upload
                                 upMgr.createUpload(upload,
                                         Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
 
@@ -2735,20 +2756,11 @@ public class ProjectReviewActions extends DispatchAction {
             }
         }
 
-        // If the user has requested to complete the review
-        if (commitRequested || managerEdit) {
-            // TODO: Validate review here
-        	if (validateReview(request, review)) {
-                // Put the review object into the request        		
-        		request.setAttribute("review", review);
-        		//Put the review object into the bean (it may not always be there by default)        		
-        		verification.setReview(review);
-                // Retrieve some basic review info and store it in the request
-        		retrieveAndStoreBasicReviewInfo(request, verification, reviewType, scorecardTemplate);
-        		retreiveAndStoreReviewLookUpData(request);
-        		return mapping.getInputForward();        		
-        	}
+        boolean validationSucceeded =
+            (commitRequested || managerEdit) ? validateGenericScorecard(request, scorecardTemplate, review) : true;
 
+        // If the user has requested to complete the review
+        if (validationSucceeded && (commitRequested || managerEdit)) {
             // Obtain an instance of CalculationManager
             CalculationManager scoreCalculator = new CalculationManager();
             // Compute scorecard's score
@@ -2776,14 +2788,17 @@ public class ProjectReviewActions extends DispatchAction {
             return mapping.findForward(Constants.PREVIEW_FORWARD_NAME);
         }
 
-        // Determine which action should be performed -- creation or updating
-        if (verification.getReview() == null) {
-            revMgr.createReview(review, Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
-        } else {
-            revMgr.updateReview(review, Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
+        // Do not allow to save invalid manager's edits
+        if (!managerEdit || validationSucceeded) {
+            // Determine which action should be performed -- creation or updating
+            if (verification.getReview() == null) {
+                revMgr.createReview(review, Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
+            } else {
+                revMgr.updateReview(review, Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
+            }
         }
 
-        if (commitRequested) {
+        if (validationSucceeded && commitRequested) {
             // Put the review object into the bean (it may not always be there by default)
             verification.setReview(review);
             // Retrieve some basic review info and store it in the request
@@ -2798,42 +2813,29 @@ public class ProjectReviewActions extends DispatchAction {
             return mapping.findForward(Constants.REVIEW_COMMITTD_FORWARD_NAME);
         }
 
+        if (!validationSucceeded) {
+            // Put the review object into the request
+            request.setAttribute("review", review);
+            // Put the review object into the bean (it may not always be there by default)
+            verification.setReview(review);
+            // Retrieve some basic review info and store it in the request
+            retrieveAndStoreBasicReviewInfo(request, verification, reviewType, scorecardTemplate);
+            // Retrive some look-up data and store it into the request
+            retreiveAndStoreReviewLookUpData(request);
+            // Need to store uploaded file IDs, so that the user will be able to download them
+            if (!managerEdit) {
+                request.setAttribute("uploadedFileIds", collectUploadedFileIds(scorecardTemplate, review));
+            }
+
+            return mapping.getInputForward();
+        }
+
         // Forward to project details page
         return ActionsHelper.cloneForwardAndAppendToPath(
                 mapping.findForward(Constants.SUCCESS_FORWARD_NAME), "&pid=" + verification.getProject().getId());
     }
 
-	/**
-     * TODO Document it
-     * 
-     * @param request
-     * @param review
-     * @return
-     */
-    private boolean validateReview(HttpServletRequest request, Review review) {
-		boolean areReviewInvalid = false;
-		
-		Item[] items = review.getAllItems();
-		for (int i = 0; i < items.length; i++) {
-			if (items[i] != null && items[i].getAnswer() instanceof String) {
-				String answer = (String)items[i].getAnswer();
-				if (answer.trim().length() != 0)
-					continue;
-			}
-			areReviewInvalid = true;
-
-			ActionsHelper.addErrorToRequest(request, "Item" + String.valueOf(i), 
-					"error.com.cronos.onlinereview.actions.editReview.WrongAnswer");
-		}
-		
-		if (areReviewInvalid) {
-			ActionsHelper.addErrorToRequest(request, 
-					"error.com.cronos.onlinereview.actions.editReview.WrongInput");
-		}
-		return areReviewInvalid;
-	}
-
-	/**
+    /**
      * TODO: Document it.
      *
      * @return
@@ -2955,6 +2957,231 @@ public class ProjectReviewActions extends DispatchAction {
         request.setAttribute("wordOf", " "  + wordOf + " ");
 
         return mapping.findForward(Constants.SUCCESS_FORWARD_NAME);
+    }
+
+    /**
+     *
+     * @return
+     * @param scorecardTemplate
+     * @param review
+     * @throws IllegalArgumentException
+     *             if any of the parameters are <code>null</code>.
+     */
+    private static Long[] collectUploadedFileIds(Scorecard scorecardTemplate, Review review) {
+        // Validate parameters
+        ActionsHelper.validateParameterNotNull(scorecardTemplate, "scorecardTemplate");
+        ActionsHelper.validateParameterNotNull(review, "review");
+
+        int uploadsCount = ActionsHelper.getScorecardUploadsCount(scorecardTemplate);
+        if (uploadsCount == 0) {
+            return null; // No upload IDs
+        }
+
+        Long[] uploadedFileIds = new Long[ActionsHelper.getScorecardUploadsCount(scorecardTemplate)];
+        int itemIdx = 0;
+        int fileIdx = 0;
+
+        for (int iGroup = 0; iGroup < scorecardTemplate.getNumberOfGroups(); ++iGroup) {
+            Group group = scorecardTemplate.getGroup(iGroup);
+            for (int iSection = 0; iSection < group.getNumberOfSections(); ++iSection) {
+                Section section = group.getSection(iSection);
+                for (int iQuestion = 0; iQuestion < section.getNumberOfQuestions(); ++iQuestion, ++itemIdx) {
+                    Question question = section.getQuestion(iQuestion);
+                    Item item = review.getItem(itemIdx);
+                    if (question.isUploadDocument()) {
+                        uploadedFileIds[fileIdx++] = item.getDocument();
+                    }
+                }
+            }
+        }
+
+        return uploadedFileIds;
+    }
+
+    /**
+     *
+     * @return
+     * @param request
+     * @param scorecardTemplate
+     * @param review
+     * @throws IllegalArgumentException
+     *             if any of the parameters are <code>null</code>.
+     */
+    private static boolean validateGenericScorecard(
+            HttpServletRequest request, Scorecard scorecardTemplate, Review review) {
+        // Validate parameters
+        ActionsHelper.validateParameterNotNull(request, "request");
+        ActionsHelper.validateParameterNotNull(scorecardTemplate, "scorecardTemplate");
+        ActionsHelper.validateParameterNotNull(review, "review");
+
+        int itemIdx = 0;
+        int fileIdx = 0;
+
+        for (int iGroup = 0; iGroup < scorecardTemplate.getNumberOfGroups(); ++iGroup) {
+            Group group = scorecardTemplate.getGroup(iGroup);
+            for (int iSection = 0; iSection < group.getNumberOfSections(); ++iSection) {
+                Section section = group.getSection(iSection);
+                for (int iQuestion = 0; iQuestion < section.getNumberOfQuestions(); ++iQuestion, ++itemIdx) {
+                    Question question = section.getQuestion(iQuestion);
+                    Item item = review.getItem(itemIdx);
+
+                    validateScorecardItemAnswer(request, question, item, itemIdx);
+                    validateScorecardComment(request, item.getComment(0), itemIdx);
+
+                    if (question.isUploadDocument()) {
+                        validateScorecardItemUpload(request, question, item, fileIdx++);
+                    }
+                }
+            }
+        }
+
+        return !ActionsHelper.isErrorsPresent(request);
+    }
+
+    /**
+     *
+     * @return
+     * @param request
+     * @param question
+     * @param item
+     * @param answerNum
+     * @throws IllegalArgumentException
+     *             if <code>request</code>, <code>question</code>, or <code>item</code> parameters are
+     *             <code>null</code>, or if <code>answerNum</code> parameter is negative (less
+     *             than zero).
+     */
+    private static boolean validateScorecardItemAnswer(
+            HttpServletRequest request, Question question, Item item, int answerNum) {
+        // Validate parameters
+        ActionsHelper.validateParameterNotNull(request, "request");
+        ActionsHelper.validateParameterNotNull(question, "question");
+        ActionsHelper.validateParameterNotNull(item, "item");
+        ActionsHelper.validateParameterInRange(answerNum, "answerNum", 0, Integer.MAX_VALUE);
+
+        String errorKey = "answer[" + answerNum + "]";
+
+        // Validate that answer is not null
+        if (item.getAnswer() == null || !(item.getAnswer() instanceof String)) {
+            ActionsHelper.addErrorToRequest(request, errorKey, "Error.saveReview.Answer.Absent");
+            return false;
+        }
+
+        String answer = (String) item.getAnswer();
+
+        // Validate that answer is not empty
+        if (answer.trim().length() == 0) {
+            ActionsHelper.addErrorToRequest(request, errorKey, "Error.saveReview.Answer.Absent");
+            return false;
+        }
+
+        // Success indicator
+        boolean success = true;
+        // Get a type of the question for the current answer
+        String questionType = question.getQuestionType().getName();
+
+        if (questionType.equalsIgnoreCase("Scale (1-4)") || questionType.equalsIgnoreCase("Scale (1-10)")) {
+            if (!(correctAnswers.containsKey(answer) && correctAnswers.get(answer).equals(questionType))) {
+                ActionsHelper.addErrorToRequest(request, errorKey, "Error.saveReview.Answer.Incorrect");
+                success = false;
+            }
+        } else if (questionType.equalsIgnoreCase("Test Case")) {
+            String[] answers = answer.split("/");
+            // The number of answers for Testcase type of question must be exactly 2
+            if (answers.length < 2) {
+                ActionsHelper.addErrorToRequest(request, errorKey, "Error.saveReview.Answer.TestCase.LessTwo");
+            } else if (answers.length > 2) {
+                ActionsHelper.addErrorToRequest(request, errorKey, "Error.saveReview.Answer.TestCase.GreaterTwo");
+            } else {
+                try {
+                    // Try to convert strings to integer value (and validate whether they are convertible)
+                    int answer1 = Integer.parseInt(answers[0], 10);
+                    int answer2 = Integer.parseInt(answers[1], 10);
+
+                    // Validate some more circumstances
+                    if (answer1 < 0 || answer2 < 0) {
+                        ActionsHelper.addErrorToRequest(
+                                request, errorKey, "Error.saveReview.Answer.TestCase.Negative");
+                        success = false;
+                    } else if (answer1 > answer2) {
+                        ActionsHelper.addErrorToRequest(
+                                request, errorKey, "Error.saveReview.Answer.TestCase.FirstGreaterSecond");
+                        success = false;
+                    }
+                } catch (NumberFormatException nfe) {
+                    // eat the exception and report about validation error
+                    ActionsHelper.addErrorToRequest(request, errorKey, "Error.saveReview.Answer.TestCase.NotInt");
+                    success = false;
+                }
+            }
+        } else if (questionType.equalsIgnoreCase("Yes/No")) {
+            // For 'Yes/No' type of question the two possible values for answer are either "0" or "1"
+            if (!(answer.equals("0") || answer.equals("1"))) {
+                ActionsHelper.addErrorToRequest(request, errorKey, "Error.saveReview.Answer.Incorrect");
+                success = false;
+            }
+        }
+
+        return success;
+    }
+
+    /**
+     *
+     * @return
+     * @param request
+     * @param comment
+     * @param commentNum
+     * @throws IllegalArgumentException
+     *             if <code>request</code> or <code>comment</code> parameters are
+     *             <code>null</code>, or if <code>commentNum</code> parameter is negative (less
+     *             than zero).
+     */
+    private static boolean validateScorecardComment(HttpServletRequest request, Comment comment, int commentNum) {
+        // Validate parameters
+        ActionsHelper.validateParameterNotNull(request, "request");
+        ActionsHelper.validateParameterNotNull(comment, "comment");
+        ActionsHelper.validateParameterInRange(commentNum, "commentNum", 0, Integer.MAX_VALUE);
+
+        String errorKey = "comment[" + commentNum + "]";
+        String strComment = comment.getComment();
+
+        if (strComment == null || strComment.trim().length() == 0) {
+            ActionsHelper.addErrorToRequest(request, errorKey, "Error.saveReview.Comment.Absent");
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     *
+     * @return
+     * @param request
+     * @param question
+     * @param item
+     * @param fileNum
+     * @throws IllegalArgumentException
+     *             if <code>request</code>, <code>question</code>, or <code>item</code>
+     *             parameters are <code>null</code>, or if <code>fileNum</code> parameter is
+     *             negative (less than zero).
+     */
+    private static boolean validateScorecardItemUpload(
+            HttpServletRequest request, Question question, Item item, int fileNum) {
+        // Validate parameters
+        ActionsHelper.validateParameterNotNull(request, "request");
+        ActionsHelper.validateParameterNotNull(question, "question");
+        ActionsHelper.validateParameterNotNull(item, "item");
+        ActionsHelper.validateParameterInRange(fileNum, "fileNum", 0, Integer.MAX_VALUE);
+
+        if (!question.isUploadDocument() || !question.isUploadRequired()) {
+            return true;
+        }
+
+        if (item.getDocument() == null) {
+            ActionsHelper.addErrorToRequest(request, "file[" + fileNum + "]", "Error.saveReview.File.Absent");
+            return false;
+        }
+
+        return true;
     }
 
     /**
