@@ -79,12 +79,15 @@
 
 					<html:form action="/actions/Save${reviewType}" method="POST" enctype="multipart/form-data">
 						<html:hidden property="method" value="save${reviewType}" />
-						<c:if test="${not empty review}">
-							<html:hidden property="rid" value="${review.id}" />
-						</c:if>
-						<c:if test="${empty review}">
-							<html:hidden property="sid" value="${sid}" />
-						</c:if>
+                                        <c:choose>
+                                                <c:when test="$(review.id > -1}">
+                                                        <html:hidden property="rid" value="${review.id}" />
+                                                </c:when>
+                                                <c:otherwise>
+                                                        <html:hidden property="sid" value="${sid}" />
+                                                </c:otherwise>
+                                        </c:choose>
+
 
 						<c:if test="${orfn:isErrorsPresent(pageContext.request)}">
 							<table cellpadding="0" cellspacing="0" border="0">
