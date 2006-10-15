@@ -2283,7 +2283,7 @@ public class ProjectReviewActions extends DispatchAction {
 
         // Retrieve a review to edit
         Review review = verification.getReview();
-System.out.println("GOT REVIEW:"+review.getId());
+
         // Obtain an instance of Scorecard Manager
         ScorecardManager scorMgr = ActionsHelper.createScorecardManager(request);
         // Retrieve a scorecard template for the review
@@ -2371,7 +2371,7 @@ System.out.println("GOT REVIEW:"+review.getId());
         String wordOf = getResources(request).getMessage("editReview.Question.Response.TestCase.of");
         // Plase the string into the request as attribute
         request.setAttribute("wordOf", " "  + wordOf + " ");
-
+        System.out.println("GOT REVIEW ENDING:"+review.getId());
         return mapping.findForward(Constants.SUCCESS_FORWARD_NAME);
     }
 
