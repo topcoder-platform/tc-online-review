@@ -2371,7 +2371,6 @@ public class ProjectReviewActions extends DispatchAction {
         String wordOf = getResources(request).getMessage("editReview.Question.Response.TestCase.of");
         // Plase the string into the request as attribute
         request.setAttribute("wordOf", " "  + wordOf + " ");
-        System.out.println("GOT REVIEW ENDING:"+review.getId());
         return mapping.findForward(Constants.SUCCESS_FORWARD_NAME);
     }
 
