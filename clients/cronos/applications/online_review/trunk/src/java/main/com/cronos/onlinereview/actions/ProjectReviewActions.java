@@ -2283,7 +2283,7 @@ public class ProjectReviewActions extends DispatchAction {
 
         // Retrieve a review to edit
         Review review = verification.getReview();
-
+System.out.println("GOT REVIEW:"+review.getId());
         // Obtain an instance of Scorecard Manager
         ScorecardManager scorMgr = ActionsHelper.createScorecardManager(request);
         // Retrieve a scorecard template for the review
@@ -2526,7 +2526,6 @@ public class ProjectReviewActions extends DispatchAction {
                 review = reviews[0];
                 verification.setReview(review);
             }
-            System.out.println(review.getNumberOfItems());
         }
         if (review != null){
             // Obtain an instance of Scorecard Manager
