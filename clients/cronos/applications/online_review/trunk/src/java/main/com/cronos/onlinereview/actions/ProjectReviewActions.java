@@ -2528,6 +2528,7 @@ public class ProjectReviewActions extends DispatchAction {
                 verification.setReview(review);
             }
         }
+        System.out.println(review == null);
         if (review != null){
             // Obtain an instance of Scorecard Manager
             ScorecardManager scrMgr = ActionsHelper.createScorecardManager(request);
