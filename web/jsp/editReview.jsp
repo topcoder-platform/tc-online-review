@@ -80,7 +80,7 @@
 					<html:form action="/actions/Save${reviewType}" method="POST" enctype="multipart/form-data">
 						<html:hidden property="method" value="save${reviewType}" />
                                         <c:choose>
-                                                <c:when test="$(review.id > -1}">
+                                                <c:when test="${review.id > -1}">
                                                         <html:hidden property="rid" value="${review.id}" />
                                                 </c:when>
                                                 <c:otherwise>
