@@ -1035,29 +1035,50 @@ public class ProjectActions extends DispatchAction {
             // Obtain an instance of Phase Manager
             PhaseManager phaseManager = ActionsHelper.createPhaseManager(request, true);
             for (; i < projectPhases.length; i++) {
+                logger.log(Level.INFO, "switchProjectPhase: " + projectPhases[i].getPhaseType().getName() + 
+                        " is in " + projectPhases[i].getPhaseStatus().getName() + " state");
                 if (projectPhases[i] != newCurrentPhase) {
                     if (projectPhases[i].getPhaseStatus().getName().equals(PhaseStatus.OPEN.getName())) {
                         if (phaseManager.canEnd(projectPhases[i])) {
+                            logger.log(Level.INFO, "switchProjectPhase: " + projectPhases[i].getPhaseType().getName() + 
+                                    " is being closed");
                             phaseManager.end(projectPhases[i],
                                     Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
                         } else {
+                            logger.log(Level.INFO, "switchProjectPhase: " + projectPhases[i].getPhaseType().getName() + 
+                                    " cannot be closed");
                             // TODO: issue an error, or probably not?
                         }
                     } else if (projectPhases[i].getPhaseStatus().getName().equals(PhaseStatus.SCHEDULED.getName())) {
                         if (phaseManager.canStart(projectPhases[i])) {
+                            logger.log(Level.INFO, "switchProjectPhase: " + projectPhases[i].getPhaseType().getName() + 
+                                    " is being started");
                             phaseManager.start(projectPhases[i],
                                     Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
+                        } else {
+                            logger.log(Level.INFO, "switchProjectPhase: " + projectPhases[i].getPhaseType().getName() + 
+                                    " cannot be started");                    
                         }
                         if (phaseManager.canEnd(projectPhases[i])) {
+                            logger.log(Level.INFO, "switchProjectPhase: " + projectPhases[i].getPhaseType().getName() + 
+                                    " is being closed");
                             phaseManager.end(projectPhases[i],
                                     Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
+                            logger.log(Level.INFO, "switchProjectPhase: " + projectPhases[i].getPhaseType().getName() + 
+                                    " cannot be closed");                    
                         }
+                        
                     }
                 } else {
                     if (projectPhases[i].getPhaseStatus().getName().equals(PhaseStatus.SCHEDULED.getName())) {
                         if (phaseManager.canStart(projectPhases[i])) {
+                            logger.log(Level.INFO, "switchProjectPhase: " + projectPhases[i].getPhaseType().getName() + 
+                                    " is being started");
                             phaseManager.start(projectPhases[i],
                                     Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
+                        } else {
+                            logger.log(Level.INFO, "switchProjectPhase: " + projectPhases[i].getPhaseType().getName() + 
+                                    " cannot be started");                                                
                         }
                     }
                     break;
