@@ -14,9 +14,10 @@ Notes: Most namespaces of this OnlineReview.xml are the same as OnlineReview.xml
 	. Configuration for File Upload component
 	. Configuration for the Online Review Application itself
 		
+. ant dist
+. copy build.xml and auto_pilot_app.jar to the deploy dir
+. ant deploy
+. ant auto_pilot (auto_pilot_background)
 
-. modify lib path of auto_pilot.sh (.bat)
-. make sure all jars existing
-. execute auto_pilot.bat or auto_pilot.sh
 
 Notes: empty com\topcoder\util\config\ConfigManager.properties is just used to avoid configuration exception stacktrace display, is optional
