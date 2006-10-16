@@ -90,11 +90,11 @@
             <form-property name="rid" type="java.lang.Long" />
             <form-property name="sid" type="java.lang.Long" />
             <form-property name="save" type="java.lang.String" />
-            <form-property name="answer" type="java.lang.String[]" />            
+            <form-property name="answer" type="java.lang.String[]" />
             <form-property name="comment_count" type="java.lang.Integer[]" />
             <form-property name="comment_type" type="java.util.HashMap" />
             <form-property name="comment" type="java.util.HashMap" />
-            <form-property name="file" type="org.apache.struts.upload.FormFile[]" />            
+            <form-property name="file" type="org.apache.struts.upload.FormFile[]" />
         </form-bean>
 
         <form-bean name="aggregationForm" dynamic="true"
