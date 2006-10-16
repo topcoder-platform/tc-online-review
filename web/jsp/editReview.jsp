@@ -45,7 +45,7 @@
 			var allTestsNode = getChildByName(passedTestsNodes[i].parentNode, "all_tests");
 			var answerNode = getChildByNamePrefix(passedTestsNodes[i].parentNode, "answer[");
 			var parts = answerNode.value.split("/");
-			if (parts && parts.length == 2) {
+			if (parts && parts.length >= 2) {
 				passedTestsNodes[i].value = parts[0];
 				allTestsNode.value = parts[1];
 			}
