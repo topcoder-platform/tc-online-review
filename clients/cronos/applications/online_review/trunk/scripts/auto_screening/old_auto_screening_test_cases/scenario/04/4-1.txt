@@ -1,0 +1,6 @@
+Java Dev - Empty log folder.
+
+ Fatal Errors: 
+ TCS-006: Your submission is missing the appropriate unit test log files. 
+The plain text log does not exist. 
+The xml log does not exist.  
