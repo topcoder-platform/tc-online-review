@@ -2234,18 +2234,18 @@ public class ProjectReviewActions extends DispatchAction {
 
         // TODO: Probably make it a static class memeber or even configurable value
         int commentsCount = 3;
-        
+
         Integer[] commentCounts = new Integer[questionsCount];
         Arrays.fill(commentCounts, new Integer(commentsCount));
         reviewForm.set("comment_count", commentCounts);
-        
+
         for (int i = 0; i < questionsCount; i++) {
             for (int j = 0; j < commentsCount; j++) {
                 reviewForm.set("comment", i + "." + j, "");
-                reviewForm.set("comment_type", i + "." + j, typeComment);                
+                reviewForm.set("comment_type", i + "." + j, typeComment);
             }
         }
-        
+
         return mapping.findForward(Constants.SUCCESS_FORWARD_NAME);
     }
 
@@ -2326,11 +2326,11 @@ public class ProjectReviewActions extends DispatchAction {
 
         // Prepare the arrays
         String[] answers = new String[review.getNumberOfItems()];
-        
+
         int itemIdx = 0;
 
         LazyValidatorForm reviewForm = (LazyValidatorForm) form;
-        
+
         // Walk the items in the review setting appropriate values in the arrays
         for (int groupIdx = 0; groupIdx < scorecardTemplate.getNumberOfGroups(); ++groupIdx) {
             Group group = scorecardTemplate.getGroup(groupIdx);
@@ -2340,26 +2340,26 @@ public class ProjectReviewActions extends DispatchAction {
                     Item item = review.getItem(itemIdx);
                     List comments;
                     if (!managerEdit) {
-                        comments = getItemReviewerComments(item); 
+                        comments = getItemReviewerComments(item);
                     } else {
                         comments = getItemManagerComments(item);
                     }
                     answers[itemIdx] = (String) item.getAnswer();
 
                     reviewForm.set("comment_type", itemIdx + ".0", null);
-                    reviewForm.set("comment", itemIdx + ".0", "");                        
-                
-                    reviewForm.set("comment_count", itemIdx, new Integer(comments.size()));                    
-                    
+                    reviewForm.set("comment", itemIdx + ".0", "");
+
+                    reviewForm.set("comment_count", itemIdx, new Integer(comments.size()));
+
                     if (comments.size() > 0) {
                         reviewForm.set("comment_count", itemIdx, new Integer(comments.size()));
                         for (int i = 0; i < comments.size(); i++) {
                             Comment comment = (Comment) comments.get(i);
-                            reviewForm.set("comment_type", itemIdx + "." + (i + 1), 
+                            reviewForm.set("comment_type", itemIdx + "." + (i + 1),
                                     new Long(comment.getCommentType().getId()));
                             reviewForm.set("comment", itemIdx + "." + (i + 1), comment.getComment());
                         }
-                    } 
+                    }
                 }
             }
         }
@@ -2374,11 +2374,12 @@ public class ProjectReviewActions extends DispatchAction {
 
         // Populate form properties
         reviewForm.set("answer", answers);
-        
+
         // Get the word "of" for Test Case type of question
         String wordOf = getResources(request).getMessage("editReview.Question.Response.TestCase.of");
         // Plase the string into the request as attribute
         request.setAttribute("wordOf", " "  + wordOf + " ");
+
         return mapping.findForward(Constants.SUCCESS_FORWARD_NAME);
     }
 
@@ -2634,9 +2635,9 @@ public class ProjectReviewActions extends DispatchAction {
                         Item item = new Item();
 
                         // Populate the review item comments
-                        populateItemComments(managerEdit, myResource, item, itemIdx, 
+                        populateItemComments(managerEdit, myResource, item, itemIdx,
                                 commentCounts[itemIdx].intValue(), replies, commentTypes, commentTypeIds);
-                        
+
                         // Set required fields of the item
                         item.setAnswer(answers[itemIdx]);
                         item.setQuestion(question.getId());
@@ -2682,13 +2683,13 @@ public class ProjectReviewActions extends DispatchAction {
                 for (int sectionIdx = 0; sectionIdx < group.getNumberOfSections(); ++sectionIdx) {
                     Section section = group.getSection(sectionIdx);
                     for (int questionIdx = 0; questionIdx < section.getNumberOfQuestions(); ++questionIdx, ++itemIdx) {
-                        // Get an item 
+                        // Get an item
                         Item item = review.getItem(itemIdx);
-                        
+
                         // Populate the review item comments
-                        populateItemComments(managerEdit, myResource, item, itemIdx, 
+                        populateItemComments(managerEdit, myResource, item, itemIdx,
                                 commentCounts[itemIdx].intValue(), replies, commentTypes, commentTypeIds);
-                        
+
                         // Update the answer
                         item.setAnswer(answers[itemIdx]);
 
@@ -2734,8 +2735,8 @@ public class ProjectReviewActions extends DispatchAction {
             }
         }
 
-        boolean validationSucceeded =
-            (commitRequested || managerEdit) ? validateGenericScorecard(request, scorecardTemplate, review) : true;
+        boolean validationSucceeded = (commitRequested || managerEdit) ?
+                validateGenericScorecard(request, scorecardTemplate, review, managerEdit) : true;
 
         // If the user has requested to complete the review
         if (validationSucceeded && (commitRequested || managerEdit)) {
@@ -2813,10 +2814,10 @@ public class ProjectReviewActions extends DispatchAction {
                 mapping.findForward(Constants.SUCCESS_FORWARD_NAME), "&pid=" + verification.getProject().getId());
     }
 
-    
+
 	/**
      * TODO: Document it
-     * 
+     *
 	 * @param managerEdit
 	 * @param myResource
 	 * @param item
@@ -2833,75 +2834,40 @@ public class ProjectReviewActions extends DispatchAction {
         } else {
             comments = getItemManagerComments(item);
         }
-        
+
         while (comments.size() < commentCount) {
            Comment comment = new Comment();
            comments.add(comment);
            item.addComment(comment);
-        } 
+        }
         while (comments.size() > commentCount) {
             Comment comment = (Comment) comments.get(comments.size() - 1);
             item.removeComment(comment);
             comments.remove(comments.size() - 1);
         }
-        
+
         for (int i = 0; i < commentCount; i++) {
             Comment comment = (Comment) comments.get(i);
-            
+
             // Set the comment text
             comment.setComment((String) replies.get(itemIdx + "." + (i + 1)));
-            
+
             // Set the comment type
             CommentType commentType;
             if (!managerEdit) {
                 System.out.println("lalala" + itemIdx + "." + (i + 1));
-                commentType = ActionsHelper.findCommentTypeById(commentTypes, 
+                commentType = ActionsHelper.findCommentTypeById(commentTypes,
                         Long.parseLong((String) commentTypeIds.get(itemIdx + "." + (i + 1))));
             } else {
                 commentType = ActionsHelper.findCommentTypeByName(commentTypes, "Manager Comment");
             }
             comment.setCommentType(commentType);
-            
+
             // Update the author of the comment
             comment.setAuthor(myResource.getId());
         }
     }
 
-    /**
-     * TODO Document it
-     * 
-     * @param request
-     * @param review
-     * @return
-     */
-    private boolean validateReview(HttpServletRequest request, Review review) {
-		boolean areReviewInvalid = false;
-		
-		Item[] items = review.getAllItems();
-System.out.println("ITEMS IN REVIEW: "+items.length);
-		for (int i = 0; i < items.length; i++) {
-System.out.println("ITEM: " + i);
-			if (items[i] != null && items[i].getAnswer() instanceof String) {
-				String answer = (String)items[i].getAnswer();
-System.out.println(answer.trim().length());
-				if (answer.trim().length() != 0)
-					continue;
-			}
-			areReviewInvalid = true;
-
-			ActionsHelper.addErrorToRequest(request, "Item" + String.valueOf(i), 
-					"error.com.cronos.onlinereview.actions.editReview.WrongAnswer");
-		}
-		
-		if (areReviewInvalid) {
-			ActionsHelper.addErrorToRequest(request, 
-					"error.com.cronos.onlinereview.actions.editReview.WrongInput");
-		}
-		return areReviewInvalid;
-	}
-
-	
-	
 	/**
      * TODO: Document it.
      *
@@ -3071,11 +3037,12 @@ System.out.println(answer.trim().length());
      * @param request
      * @param scorecardTemplate
      * @param review
+     * @param managerEdit
      * @throws IllegalArgumentException
      *             if any of the parameters are <code>null</code>.
      */
     private static boolean validateGenericScorecard(
-            HttpServletRequest request, Scorecard scorecardTemplate, Review review) {
+            HttpServletRequest request, Scorecard scorecardTemplate, Review review, boolean managerEdit) {
         // Validate parameters
         ActionsHelper.validateParameterNotNull(request, "request");
         ActionsHelper.validateParameterNotNull(scorecardTemplate, "scorecardTemplate");
@@ -3084,17 +3051,19 @@ System.out.println(answer.trim().length());
         int itemIdx = 0;
         int fileIdx = 0;
 
-        for (int iGroup = 0; iGroup < scorecardTemplate.getNumberOfGroups(); ++iGroup) {
-            Group group = scorecardTemplate.getGroup(iGroup);
-            for (int iSection = 0; iSection < group.getNumberOfSections(); ++iSection) {
-                Section section = group.getSection(iSection);
-                for (int iQuestion = 0; iQuestion < section.getNumberOfQuestions(); ++iQuestion, ++itemIdx) {
-                    Question question = section.getQuestion(iQuestion);
+        for (int groupIdx = 0; groupIdx < scorecardTemplate.getNumberOfGroups(); ++groupIdx) {
+            Group group = scorecardTemplate.getGroup(groupIdx);
+            for (int sectionIdx = 0; sectionIdx < group.getNumberOfSections(); ++sectionIdx) {
+                Section section = group.getSection(sectionIdx);
+                for (int questionIdx = 0; questionIdx < section.getNumberOfQuestions(); ++questionIdx, ++itemIdx) {
+                    Question question = section.getQuestion(questionIdx);
                     Item item = review.getItem(itemIdx);
 
                     validateScorecardItemAnswer(request, question, item, itemIdx);
-                    validateScorecardComment(request, item.getComment(0), itemIdx);
 
+                    if (!managerEdit) {
+                        validateScorecardComments(request, item, itemIdx);
+                    }
                     if (question.isUploadDocument()) {
                         validateScorecardItemUpload(request, question, item, fileIdx++);
                     }
@@ -3195,28 +3164,59 @@ System.out.println(answer.trim().length());
      *
      * @return
      * @param request
-     * @param comment
-     * @param commentNum
+     * @param item
+     * @param itemNum
      * @throws IllegalArgumentException
-     *             if <code>request</code> or <code>comment</code> parameters are
-     *             <code>null</code>, or if <code>commentNum</code> parameter is negative (less
+     *             if <code>request</code> or <code>item</code> parameters are
+     *             <code>null</code>, or if <code>itemNum</code> parameter is negative (less
      *             than zero).
      */
-    private static boolean validateScorecardComment(HttpServletRequest request, Comment comment, int commentNum) {
+    private static boolean validateScorecardComments(
+            HttpServletRequest request, Item item, int itemNum) {
         // Validate parameters
         ActionsHelper.validateParameterNotNull(request, "request");
-        ActionsHelper.validateParameterNotNull(comment, "comment");
-        ActionsHelper.validateParameterInRange(commentNum, "commentNum", 0, Integer.MAX_VALUE);
+        ActionsHelper.validateParameterNotNull(item, "item");
+        ActionsHelper.validateParameterInRange(itemNum, "itemNum", 0, Integer.MAX_VALUE);
 
-        String errorKey = "comment[" + commentNum + "]";
-        String strComment = comment.getComment();
+        boolean noCommentsEntered = true;
 
-        if (strComment == null || strComment.trim().length() == 0) {
-            ActionsHelper.addErrorToRequest(request, errorKey, "Error.saveReview.Comment.Absent");
+        for (int i = 0; i < item.getNumberOfComments(); ++i) {
+            Comment comment = item.getComment(i);
+            String commentText = comment.getComment();
+            if (commentText != null && commentText.trim().length() != 0) {
+                noCommentsEntered = false;
+                break;
+            }
+        }
+
+        if (noCommentsEntered) {
+            int numOfComments = Math.max(item.getNumberOfComments(), 3);
+
+            for (int i = 1; i <= numOfComments; ++i) {
+                ActionsHelper.addErrorToRequest(request,
+                        "comment(" + itemNum + "." + i + ")", "Error.saveReview.Comment.AtLeastOne");
+            }
             return false;
         }
 
-        return true;
+        // Success indicator
+        boolean success = true;
+
+        for (int i = 0; i < item.getNumberOfComments(); ++i) {
+            Comment comment = item.getComment(i);
+            String commentType = comment.getCommentType().getName();
+            if (commentType.equalsIgnoreCase("Comment") || commentType.equalsIgnoreCase("Required") ||
+                    commentType.equalsIgnoreCase("Recommended")) {
+                String commentText = comment.getComment();
+                if (commentText == null || commentText.trim().length() == 0) {
+                    ActionsHelper.addErrorToRequest(request,
+                            "comment(" + itemNum + "." + (i + 1) + ")", "Error.saveReview.Comment.Absent");
+                    success = false;
+                }
+            }
+        }
+
+        return success;
     }
 
     /**
