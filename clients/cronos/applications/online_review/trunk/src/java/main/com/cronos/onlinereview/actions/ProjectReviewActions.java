@@ -2635,8 +2635,8 @@ public class ProjectReviewActions extends DispatchAction {
                         Item item = new Item();
 
                         // Populate the review item comments
-                        populateItemComments(managerEdit, myResource, item, itemIdx,
-                                commentCounts[itemIdx].intValue(), replies, commentTypes, commentTypeIds);
+                        populateItemComments(managerEdit, commitRequested, myResource, item,
+                                itemIdx, commentCounts[itemIdx].intValue(), replies, commentTypes, commentTypeIds);
 
                         // Set required fields of the item
                         item.setAnswer(answers[itemIdx]);
@@ -2687,8 +2687,8 @@ public class ProjectReviewActions extends DispatchAction {
                         Item item = review.getItem(itemIdx);
 
                         // Populate the review item comments
-                        populateItemComments(managerEdit, myResource, item, itemIdx,
-                                commentCounts[itemIdx].intValue(), replies, commentTypes, commentTypeIds);
+                        populateItemComments(managerEdit, commitRequested || managerEdit, myResource, item,
+                                itemIdx, commentCounts[itemIdx].intValue(), replies, commentTypes, commentTypeIds);
 
                         // Update the answer
                         item.setAnswer(answers[itemIdx]);
@@ -2819,15 +2819,16 @@ public class ProjectReviewActions extends DispatchAction {
      * TODO: Document it
      *
 	 * @param managerEdit
+	 * @param removeEmpty TODO
 	 * @param myResource
 	 * @param item
 	 * @param itemIdx
-     * @param commentCount
+	 * @param commentCount
 	 * @param replies
 	 * @param commentTypes
 	 * @param commentTypeIds
 	 */
-	private void populateItemComments(boolean managerEdit, Resource myResource, Item item, int itemIdx, int commentCount, Map replies, CommentType[] commentTypes, Map commentTypeIds) {
+	private void populateItemComments(boolean managerEdit, boolean removeEmpty, Resource myResource, Item item, int itemIdx, int commentCount, Map replies, CommentType[] commentTypes, Map commentTypeIds) {
         List comments;
         if (!managerEdit) {
             comments = getItemReviewerComments(item);
@@ -2855,7 +2856,6 @@ public class ProjectReviewActions extends DispatchAction {
             // Set the comment type
             CommentType commentType;
             if (!managerEdit) {
-                System.out.println("lalala" + itemIdx + "." + (i + 1));
                 commentType = ActionsHelper.findCommentTypeById(commentTypes,
                         Long.parseLong((String) commentTypeIds.get(itemIdx + "." + (i + 1))));
             } else {
@@ -2865,6 +2865,15 @@ public class ProjectReviewActions extends DispatchAction {
 
             // Update the author of the comment
             comment.setAuthor(myResource.getId());
+        }
+        
+        // If needed remove empty comments
+        if (removeEmpty) {
+            for (int i = 0; i < item.getNumberOfComments(); i++) {
+                if (item.getComment(i).getComment().trim().length() == 0) {
+                    item.removeComment(item.getComment(i));
+                }
+            }
         }
     }
 

@@ -730,6 +730,13 @@ public class ProjectActions extends DispatchAction {
                 if (phaseId != -1) {
                     // Retrieve the phase with the specified id
                     phase = ActionsHelper.findPhaseById(oldPhases, phaseId);
+                    
+                    // Clear all the pre-existing dependencies
+                    phase.clearDependencies();
+                    
+                    // Clear the previously set fixed start date
+                    phase.setFixedStartDate(null);
+
                 } else {
                     // -1 value as id marks the phases that were't persisted in DB yet
                     // and so should be skipped for actions other then "add"
@@ -741,18 +748,10 @@ public class ProjectActions extends DispatchAction {
             if ("update".equals(phaseAction)) {
                 // Set phase duration
                 phase.setLength(((Integer) lazyForm.get("phase_duration", i)).longValue() * 3600 * 1000);
-
-                // Clear all the pre-existing dependencies
-                phase.clearDependencies();
-                
-                // Clear the previously set fixed start date
-                phase.setFixedStartDate(null);
             }
 
-            // If action is "delete", delete the phase and proceed to the next one
+            // If action is "delete", proceed to the next phase
             if ("delete".equals(phaseAction)) {
-                // TODO: Maybe phase should be canceled instead of jsut being removed.
-                phProject.removePhase(phase);
                 continue;
             }
 
@@ -768,8 +767,19 @@ public class ProjectActions extends DispatchAction {
         // SECOND PASS
         for (int i = 1; i < phaseTypes.length; i++) {
             Object phaseObj = phasesJsMap.get(lazyForm.get("phase_js_id", i));
-            // If phase is not found in map, it was deleted and should not be processed
+            // If phase is not found in map, it is to be deleted
             if (phaseObj == null) {
+                long phaseId = ((Long) lazyForm.get("phase_id", i)).longValue();
+                
+                if (phaseId != -1) {
+                    // Retrieve the phase with the specified id
+                    Phase phase = ActionsHelper.findPhaseById(oldPhases, phaseId);
+                
+                    // TODO: Maybe phase should be canceled instead of jsut being removed.
+                    phProject.removePhase(phase);
+                }
+                
+                // Skip further processing
                 continue;
             }
 
@@ -801,26 +811,30 @@ public class ProjectActions extends DispatchAction {
                     minDate = phaseStartDate;
                 }                
             } else {
-                // TODO: These parameters should probably be populated in some other way
-                boolean dependencyStart;
-                boolean dependantStart;
-                if ("ends".equals(lazyForm.get("phase_start_when", i))) {
-                    dependencyStart = false;
-                    dependantStart = true;
-                } else {
-                    dependencyStart = true;
-                    dependantStart = true;
+                // Get the dependency phase
+                Phase dependencyPhase = (Phase) phasesJsMap.get(lazyForm.get("phase_start_phase", i));
+                
+                if (dependencyPhase != null) {                
+                    boolean dependencyStart;
+                    boolean dependantStart;
+                    if ("ends".equals(lazyForm.get("phase_start_when", i))) {
+                        dependencyStart = false;
+                        dependantStart = true;
+                    } else {
+                        dependencyStart = true;
+                        dependantStart = true;
+                    }
+    
+                    long unitMutiplier = 1000 * 3600 * ("days".equals(lazyForm.get("phase_start_dayshrs", i)) ? 24 : 1);
+                    long lagTime = unitMutiplier * ((Integer) lazyForm.get("phase_start_amount", i)).longValue();
+    
+                    // Create phase Dependency
+                    Dependency dependency = new Dependency(dependencyPhase, phase, 
+                            dependencyStart, dependantStart, lagTime);
+    
+                    // Add dependency to phase
+                    phase.addDependency(dependency);                
                 }
-
-                long unitMutiplier = 1000 * 3600 * ("days".equals(lazyForm.get("phase_start_dayshrs", i)) ? 24 : 1);
-                long lagTime = unitMutiplier * ((Integer) lazyForm.get("phase_start_amount", i)).longValue();
-
-                // Create phase Dependency
-                Dependency dependency = new Dependency((Phase) phasesJsMap.get(lazyForm.get("phase_start_phase", i)),
-                        phase, dependencyStart, dependantStart, lagTime);
-
-                // Add dependency to phase
-                phase.addDependency(dependency);
             }
 
             /*
