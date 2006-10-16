@@ -1,4 +1,20 @@
-. Configure correct DBConnectionFactoryImpl in auto_pilot.xml
+. Configure correct DBConnectionFactoryImpl, email settting, log settting in OnlineReview.xml
+
+Notes: Most namespaces of this OnlineReview.xml are the same as OnlineReview.xml of OR application. except web app specific namespace as below
+
+	Changed namespaces
+	. Configuration for DB Connection Factory component
+	. com.topcoder.util.log
+	
+	Non-exsiting namespaces
+	. com.cronos.onlinereview.login.LoginActions
+	. Configuration for Authentication Factory component
+	. Configuration for Online Review Ajax Support component
+	. Configuration for IP Server component
+	. Configuration for File Upload component
+	. Configuration for the Online Review Application itself
+		
+
 . modify lib path of auto_pilot.sh (.bat)
 . make sure all jars existing
 . execute auto_pilot.bat or auto_pilot.sh
