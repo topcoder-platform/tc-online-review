@@ -76,9 +76,47 @@
 		// Append the newly created node to the existing ones
 		dojo.dom.insertAfter(newNode, responseNodes[responseNodes.length - 1]);
 
-		// Change the number of the newly added response
-		dojo.dom.textContent(getChildByName(newNode, "comment_number"), responseCount + "");
+		var responseNumberNode = getChildByName(newNode, "comment_number");
+		if (responseNumberNode) {	
+			// Change the number of the response
+			dojo.dom.textContent(responseNumberNode, responseCount + "");
+		}
 	}
+	
+	/*
+	 * TODO: Document it
+	 */
+	function removeReviewResponse(itemIdx, responseNode) {
+		// Get responses cell node
+		var responsesCellNode = responseNode.parentNode;
+		
+		// Delete the node for particular response
+		responsesCellNode.removeChild(responseNode);
+		
+		// Get the count of responses
+		var responseCountNode = getChildByNamePrefix(responsesCellNode, "comment_count");
+		var responseCount = parseInt(responseCountNode.value);
+		// Decrease response count
+		responseCount--;
+		responseCountNode.value = responseCount + "";
+		
+		// Get the response nodes
+		var responseNodes = getChildrenByName(responsesCellNode, "response");
+			
+		// Renumber the other responses
+		for (var i = 1; i < responseNodes.length; i++) {
+			// Rename all the inputs to have a new index
+			patchAllChildParamIndexes(responseNodes[i], itemIdx + "." + i);
+			
+			var responseNumberNode = getChildByName(responseNodes[i], "comment_number");
+			if (responseNumberNode) {	
+				// Change the number of the response
+				dojo.dom.textContent(responseNumberNode, i + "");
+			}					
+		} 
+	}
+	
+	
 
 	// -->
 	</script>
@@ -177,6 +215,7 @@
 														</c:if>
 														<span class="error"><html:errors property="comment(${itemIdx}.${commentIdx})" prefix="" suffix="" /></span>
 														<html:textarea rows="2" property="comment(${itemIdx}.${commentIdx})" cols="20" styleClass="inputTextBox" />
+														<html:img srcKey="btnDelete.img" altKey="btnDelete.alt" onclick="removeReviewResponse(${itemIdx}, this.parentNode)"/>
 													</div>
 												</c:forEach>
 												<html:img srcKey="editReview.Button.AddResponse.img" altKey="editReview.Button.AddResponse.alt"
