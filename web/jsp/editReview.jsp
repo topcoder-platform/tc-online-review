@@ -51,6 +51,35 @@
 			}
 		}
 	});
+
+
+	/*
+	 * TODO: Document it
+	 */
+	function addReviewResponse(itemIdx, responsesCellNode) {
+		// Get the count of responses
+		var responseCountNode = getChildByNamePrefix(responsesCellNode, "comment_count");
+		var responseCount = parseInt(responseCountNode.value);
+		// Increase response count
+		responseCount++;
+		responseCountNode.value = responseCount + "";
+			
+		// Get the response nodes
+		var responseNodes = getChildrenByName(responsesCellNode, "response");		
+		
+		// Clone template response node
+		var newNode = responseNodes[0].cloneNode(true);	
+		// Alter the style of node, so that it is visible
+		newNode.style["display"] = "";	
+		// Rename all the inputs to have a new index
+		patchAllChildParamIndexes(newNode, itemIdx + "." + responseCount);
+		// Append the newly created node to the existing ones
+		dojo.dom.insertAfter(newNode, responseNodes[responseNodes.length - 1]);
+		
+		// Change the number of the newly added response
+		dojo.dom.textContent(getChildByName(newNode, "comment_number"), responseCount + "");
+	}
+
 	// -->
 	</script>
 </head>
@@ -130,26 +159,32 @@
 										</c:if>
 										<tr class="highlighted">
 											<td class="value" colspan="${managerEdit ? 2 : 3}">
-												<c:if test="${not managerEdit}">
-													<b><bean:message key="editReview.Question.Response.title"/> 1:</b>
-													<html:select property="commentType[${itemIdx}]" styleClass="inputBox">
-														<c:forEach items="${allCommentTypes}" var="commentType" >
-															<html:option value="${commentType.id}">${commentType.name}</html:option>
-														</c:forEach>
-													</html:select>
-												</c:if>
-												<c:if test="${managerEdit}">
-													<b><bean:message key="editReview.Question.ManagerComment.title"/>:</b>
-												</c:if> &#160;
-												<span class="error"><html:errors property="comment[${itemIdx}]" prefix="" suffix="" /></span>
-												<html:textarea rows="2" property="comment[${itemIdx}]" cols="20" styleClass="inputTextBox" />
+												<html:hidden property="comment_count[${itemIdx}]" />
+												<c:forEach var="commentIdx" begin="0" end="${reviewForm.map['comment_count'][itemIdx]}">													
+													<div name="response" style="${commentIdx eq 0 ? 'display: none;' : ''}">
+														<c:if test="${not managerEdit}">
+															<b><bean:message key="editReview.Question.Response.title"/> 
+																<span name="comment_number">${commentIdx}</span>:
+															</b>
+															<html:select property="comment_type(${itemIdx}.${commentIdx})" styleClass="inputBox">
+																<c:forEach items="${allCommentTypes}" var="commentType" >
+																	<html:option value="${commentType.id}">${commentType.name}</html:option>
+																</c:forEach>
+															</html:select>
+														</c:if>
+														<c:if test="${managerEdit}">
+															<b><bean:message key="editReview.Question.ManagerComment.title"/>:</b>
+														</c:if>
+														<html:textarea rows="2" property="comment(${itemIdx}.${commentIdx})" cols="20" styleClass="inputTextBox" />
+													</div>
+												</c:forEach>
 												<c:if test="${(not managerEdit) and question.uploadDocument}">
 													<c:if test="${empty uploadedFileIds[fileIdx]}">
 														<b><bean:message key="editReview.Document.Upload" />
-														<c:if test="${question.uploadRequired == true}">
+														<c:if test="${question.uploadRequired}">
 															<font color="#CC0000"><bean:message key="global.required.paren" /></font>:
 														</c:if>
-														<c:if test="${question.uploadRequired != true}">
+														<c:if test="${not question.uploadRequired}">
 															<span style="font-weight:normal;"><bean:message key="global.optional.paren" /></span>:
 														</c:if></b>
 													</c:if>
@@ -162,6 +197,9 @@
 													&#160; <span class="error"><html:errors property="file[${fileIdx}]" prefix="" suffix="" /></span>
 													<c:set var="fileIdx" value="${fileIdx + 1}" />
 												</c:if>
+												<br />
+												<html:img srcKey="editReview.Button.AddResponse.img" altKey="editReview.Button.AddResponse.alt" 
+													onclick="addReviewResponse(${itemIdx}, this.parentNode);" />
 											</td>
 											<c:if test="${managerEdit}">
 												<td class="valueC" nowrap="nowrap">

@@ -2228,15 +2228,24 @@ public class ProjectReviewActions extends DispatchAction {
 
         // Populate form properties
         reviewForm.set("answer", emptyStrings);
-        reviewForm.set("comment", emptyStrings.clone());
 
-        Long[] commentTypes = new Long[questionsCount];
         CommentType typeComment = ActionsHelper.findCommentTypeByName(
                 (CommentType[]) request.getAttribute("allCommentTypes"), "Comment");
 
-        Arrays.fill(commentTypes, new Long(typeComment.getId()));
-        reviewForm.set("commentType", commentTypes);
-
+        // TODO: Probably make it a static class memeber or even configurable value
+        int commentsCount = 3;
+        
+        Integer[] commentCounts = new Integer[questionsCount];
+        Arrays.fill(commentCounts, new Integer(commentsCount));
+        reviewForm.set("comment_count", commentCounts);
+        
+        for (int i = 0; i < questionsCount; i++) {
+            for (int j = 0; j < commentsCount; j++) {
+                reviewForm.set("comment", i + "." + j, "");
+                reviewForm.set("comment_type", i + "." + j, typeComment);                
+            }
+        }
+        
         return mapping.findForward(Constants.SUCCESS_FORWARD_NAME);
     }
 
@@ -2317,11 +2326,11 @@ public class ProjectReviewActions extends DispatchAction {
 
         // Prepare the arrays
         String[] answers = new String[review.getNumberOfItems()];
-        String[] replies = new String[review.getNumberOfItems()];
-        Long[] commentTypes = new Long[review.getNumberOfItems()];
-
+        
         int itemIdx = 0;
 
+        LazyValidatorForm reviewForm = (LazyValidatorForm) form;
+        
         // Walk the items in the review setting appropriate values in the arrays
         for (int groupIdx = 0; groupIdx < scorecardTemplate.getNumberOfGroups(); ++groupIdx) {
             Group group = scorecardTemplate.getGroup(groupIdx);
@@ -2329,25 +2338,28 @@ public class ProjectReviewActions extends DispatchAction {
                 Section section = group.getSection(sectionIdx);
                 for (int questionIdx = 0; questionIdx < section.getNumberOfQuestions(); ++questionIdx, ++itemIdx) {
                     Item item = review.getItem(itemIdx);
-                    Comment comment;
+                    List comments;
                     if (!managerEdit) {
-                        comment = getItemReviewerComments(item)[0]; // TODO: Retrieve all comments
+                        comments = getItemReviewerComments(item); 
                     } else {
-                        Comment[] managerComments = getItemManagerComments(item);
-                        if (managerComments.length > 0) {
-                            comment = managerComments[0]; // TODO: Retrieve all comments
-                        } else {
-                            comment = null;
-                        }
+                        comments = getItemManagerComments(item);
                     }
                     answers[itemIdx] = (String) item.getAnswer();
-                    if (comment != null) {
-                        replies[itemIdx] = comment.getComment();
-                        commentTypes[itemIdx] = new Long(comment.getCommentType().getId());
-                    } else {
-                        replies[itemIdx] = "";
-                        commentTypes[itemIdx] = null;
-                    }
+
+                    reviewForm.set("comment_type", itemIdx + ".0", null);
+                    reviewForm.set("comment", itemIdx + ".0", "");                        
+                
+                    reviewForm.set("comment_count", itemIdx, new Integer(comments.size()));                    
+                    
+                    if (comments.size() > 0) {
+                        reviewForm.set("comment_count", itemIdx, new Integer(comments.size()));
+                        for (int i = 0; i < comments.size(); i++) {
+                            Comment comment = (Comment) comments.get(i);
+                            reviewForm.set("comment_type", itemIdx + "." + (i + 1), 
+                                    new Long(comment.getCommentType().getId()));
+                            reviewForm.set("comment", itemIdx + "." + (i + 1), comment.getComment());
+                        }
+                    } 
                 }
             }
         }
@@ -2357,16 +2369,12 @@ public class ProjectReviewActions extends DispatchAction {
         }
 
         /*
-         * Populate the form
+         * Populate the form properties which weren't populated above
          */
-
-        LazyValidatorForm reviewForm = (LazyValidatorForm) form;
 
         // Populate form properties
         reviewForm.set("answer", answers);
-        reviewForm.set("comment", replies);
-        reviewForm.set("commentType", commentTypes);
-
+        
         // Get the word "of" for Test Case type of question
         String wordOf = getResources(request).getMessage("editReview.Question.Response.TestCase.of");
         // Plase the string into the request as attribute
@@ -2380,14 +2388,14 @@ public class ProjectReviewActions extends DispatchAction {
      * @param item
      * @return
      */
-    private Comment[] getItemManagerComments(Item item) {
+    private List getItemManagerComments(Item item) {
         List result = new ArrayList();
         for (int i = 0; i < item.getNumberOfComments(); i++) {
             if (item.getComment(i).getCommentType().getName().equals("Manager Comment")) {
                 result.add(item.getComment(i));
             }
         }
-        return (Comment[]) result.toArray(new Comment[result.size()]);
+        return result;
     }
 
     /**
@@ -2396,7 +2404,7 @@ public class ProjectReviewActions extends DispatchAction {
      * @param item
      * @return
      */
-    private Comment[] getItemReviewerComments(Item item) {
+    private List getItemReviewerComments(Item item) {
         List result = new ArrayList();
         for (int i = 0; i < item.getNumberOfComments(); i++) {
             if (item.getComment(i).getCommentType().getName().equals("Comment") ||
@@ -2405,7 +2413,7 @@ public class ProjectReviewActions extends DispatchAction {
                 result.add(item.getComment(i));
             }
         }
-        return (Comment[]) result.toArray(new Comment[result.size()]);
+        return result;
     }
 
     /**
@@ -2563,8 +2571,9 @@ public class ProjectReviewActions extends DispatchAction {
 
         // Get form's fields
         String[] answers = (String[]) reviewForm.get("answer");
-        String[] replies = (String[]) reviewForm.get("comment");
-        Long[] commentTypeIds = (Long[]) reviewForm.get("commentType");
+        Integer[] commentCounts = (Integer[]) reviewForm.get("comment_count");
+        Map replies = (Map) reviewForm.get("comment");
+        Map commentTypeIds = (Map) reviewForm.get("comment_type");
         FormFile[] files = (FormFile[]) reviewForm.get("file");
 
         // Uploaded files will be held here
@@ -2602,7 +2611,7 @@ public class ProjectReviewActions extends DispatchAction {
         // Retrieve all upload types
         UploadType[] allUploadType = upMgr.getAllUploadTypes();
 
-        int index = 0;
+        int itemIdx = 0;
         int fileIdx = 0;
         int uploadedFileIdx = 0;
 
@@ -2614,27 +2623,22 @@ public class ProjectReviewActions extends DispatchAction {
 
             // Iterate over the scorecard template's questions,
             // so items will be created for every question
-            for (int iGroup = 0; iGroup < scorecardTemplate.getNumberOfGroups(); ++iGroup) {
-                Group group = scorecardTemplate.getGroup(iGroup);
-                for (int iSection = 0; iSection < group.getNumberOfSections(); ++iSection) {
-                    Section section = group.getSection(iSection);
-                    for (int iQuestion = 0; iQuestion < section.getNumberOfQuestions(); ++iQuestion) {
-                        Question question = section.getQuestion(iQuestion);
+            for (int groupIdx = 0; groupIdx < scorecardTemplate.getNumberOfGroups(); ++groupIdx) {
+                Group group = scorecardTemplate.getGroup(groupIdx);
+                for (int sectionIdx = 0; sectionIdx < group.getNumberOfSections(); ++sectionIdx) {
+                    Section section = group.getSection(sectionIdx);
+                    for (int questionIdx = 0; questionIdx < section.getNumberOfQuestions(); ++questionIdx) {
+                        Question question = section.getQuestion(questionIdx);
 
-                        // Create review item and comment for that item
+                        // Create review item
                         Item item = new Item();
-                        Comment comment = new Comment();
 
-                        // Set required fields of the comment
-                        comment.setAuthor(myResource.getId());
-                        comment.setComment(replies[index]);
-                        comment.setCommentType(
-                                ActionsHelper.findCommentTypeById(commentTypes, commentTypeIds[index].longValue()));
-                        // Add comment to the item
-                        item.addComment(comment);
-
+                        // Populate the review item comments
+                        populateItemComments(managerEdit, myResource, item, itemIdx, 
+                                commentCounts[itemIdx].intValue(), replies, commentTypes, commentTypeIds);
+                        
                         // Set required fields of the item
-                        item.setAnswer(answers[index]);
+                        item.setAnswer(answers[itemIdx]);
                         item.setQuestion(question.getId());
 
                         if (!previewRequested && question.isUploadDocument()) {
@@ -2661,7 +2665,7 @@ public class ProjectReviewActions extends DispatchAction {
                         // Add item to the review
                         reviewEditor.addItem(item);
 
-                        ++index;
+                        ++itemIdx;
                     }
                 }
             }
@@ -2673,47 +2677,22 @@ public class ProjectReviewActions extends DispatchAction {
 
             review = reviewEditor.getReview();
         } else {
-            for (int iGroup = 0; iGroup < scorecardTemplate.getNumberOfGroups(); ++iGroup) {
-                Group group = scorecardTemplate.getGroup(iGroup);
-                for (int iSection = 0; iSection < group.getNumberOfSections(); ++iSection) {
-                    Section section = group.getSection(iSection);
-                    for (int iQuestion = 0; iQuestion < section.getNumberOfQuestions(); ++iQuestion, ++index) {
-                        // Get an item and its comment
-                        Item item = review.getItem(index);
-                        Comment comment;
-                        if (!managerEdit) {
-                            comment = getItemReviewerComments(item)[0]; // TODO: Retrieve all comments
-                            // Update the comment only if type or text have changed
-                            if (comment.getCommentType().getId() != commentTypeIds[index].longValue() ||
-                                    !comment.getComment().equals(replies[index])) {
-                                comment.setComment(replies[index]);
-                                comment.setCommentType(ActionsHelper.findCommentTypeById(
-                                        commentTypes, commentTypeIds[index].longValue()));
-                                // Update the author of the comment
-                                comment.setAuthor(myResource.getId());
-                            }
-                        } else {
-                            Comment[] managerComments = getItemManagerComments(item);
-                            if (managerComments.length > 0) {
-                                comment = managerComments[0]; // TODO: Retrieve all comments
-                            } else {
-                                comment = new Comment();
-                                comment.setCommentType(
-                                        ActionsHelper.findCommentTypeByName(commentTypes, "Manager Comment"));
-                                item.addComment(comment);
-                            }
-                            comment.setAuthor(myResource.getId());
-                            comment.setComment(replies[index]);
-
-                            if (comment.getComment().trim().length() == 0) {
-                                item.removeComment(comment);
-                            }
-                        }
-
+            for (int groupIdx = 0; groupIdx < scorecardTemplate.getNumberOfGroups(); ++groupIdx) {
+                Group group = scorecardTemplate.getGroup(groupIdx);
+                for (int sectionIdx = 0; sectionIdx < group.getNumberOfSections(); ++sectionIdx) {
+                    Section section = group.getSection(sectionIdx);
+                    for (int questionIdx = 0; questionIdx < section.getNumberOfQuestions(); ++questionIdx, ++itemIdx) {
+                        // Get an item 
+                        Item item = review.getItem(itemIdx);
+                        
+                        // Populate the review item comments
+                        populateItemComments(managerEdit, myResource, item, itemIdx, 
+                                commentCounts[itemIdx].intValue(), replies, commentTypes, commentTypeIds);
+                        
                         // Update the answer
-                        item.setAnswer(answers[index]);
+                        item.setAnswer(answers[itemIdx]);
 
-                        if (!previewRequested && !managerEdit && section.getQuestion(iQuestion).isUploadDocument()) {
+                        if (!previewRequested && !managerEdit && section.getQuestion(questionIdx).isUploadDocument()) {
                             if (fileIdx < files.length && files[fileIdx] != null &&
                                     files[fileIdx].getFileName().trim().length() != 0) {
                                 Upload oldUpload = null;
@@ -2834,7 +2813,96 @@ public class ProjectReviewActions extends DispatchAction {
                 mapping.findForward(Constants.SUCCESS_FORWARD_NAME), "&pid=" + verification.getProject().getId());
     }
 
+    
+	/**
+     * TODO: Document it
+     * 
+	 * @param managerEdit
+	 * @param myResource
+	 * @param item
+	 * @param itemIdx
+     * @param commentCount
+	 * @param replies
+	 * @param commentTypes
+	 * @param commentTypeIds
+	 */
+	private void populateItemComments(boolean managerEdit, Resource myResource, Item item, int itemIdx, int commentCount, Map replies, CommentType[] commentTypes, Map commentTypeIds) {
+        List comments;
+        if (!managerEdit) {
+            comments = getItemReviewerComments(item);
+        } else {
+            comments = getItemManagerComments(item);
+        }
+        
+        while (comments.size() < commentCount) {
+           Comment comment = new Comment();
+           comments.add(comment);
+           item.addComment(comment);
+        } 
+        while (comments.size() > commentCount) {
+            Comment comment = (Comment) comments.get(comments.size() - 1);
+            item.removeComment(comment);
+            comments.remove(comments.size() - 1);
+        }
+        
+        for (int i = 0; i < commentCount; i++) {
+            Comment comment = (Comment) comments.get(i);
+            
+            // Set the comment text
+            comment.setComment((String) replies.get(itemIdx + "." + (i + 1)));
+            
+            // Set the comment type
+            CommentType commentType;
+            if (!managerEdit) {
+                System.out.println("lalala" + itemIdx + "." + (i + 1));
+                commentType = ActionsHelper.findCommentTypeById(commentTypes, 
+                        Long.parseLong((String) commentTypeIds.get(itemIdx + "." + (i + 1))));
+            } else {
+                commentType = ActionsHelper.findCommentTypeByName(commentTypes, "Manager Comment");
+            }
+            comment.setCommentType(commentType);
+            
+            // Update the author of the comment
+            comment.setAuthor(myResource.getId());
+        }
+    }
+
     /**
+     * TODO Document it
+     * 
+     * @param request
+     * @param review
+     * @return
+     */
+    private boolean validateReview(HttpServletRequest request, Review review) {
+		boolean areReviewInvalid = false;
+		
+		Item[] items = review.getAllItems();
+System.out.println("ITEMS IN REVIEW: "+items.length);
+		for (int i = 0; i < items.length; i++) {
+System.out.println("ITEM: " + i);
+			if (items[i] != null && items[i].getAnswer() instanceof String) {
+				String answer = (String)items[i].getAnswer();
+System.out.println(answer.trim().length());
+				if (answer.trim().length() != 0)
+					continue;
+			}
+			areReviewInvalid = true;
+
+			ActionsHelper.addErrorToRequest(request, "Item" + String.valueOf(i), 
+					"error.com.cronos.onlinereview.actions.editReview.WrongAnswer");
+		}
+		
+		if (areReviewInvalid) {
+			ActionsHelper.addErrorToRequest(request, 
+					"error.com.cronos.onlinereview.actions.editReview.WrongInput");
+		}
+		return areReviewInvalid;
+	}
+
+	
+	
+	/**
      * TODO: Document it.
      *
      * @return
