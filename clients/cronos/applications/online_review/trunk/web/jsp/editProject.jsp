@@ -36,56 +36,7 @@
 			return "js_id_" + currentId;
 		}
 
-		/*
-		 * TODO: Write docs for this function
-		 */
-		function patchParamIndex(paramNode, newIndex) {
-			paramNode.name = paramNode.name.replace(/\[([0-9])+\]/, "[" + newIndex + "]");
-			if (paramNode.outerHTML) {
-				var pNode = document.createElement(paramNode.outerHTML.replace(/\[([0-9])+\]/, "[" + newIndex + "]"));
-				while (paramNode.children.length > 0) {
-					pNode.appendChild(paramNode.children[0]);
-				}
-				paramNode.parentNode.replaceChild(pNode, paramNode);
-			}
-		}
 
-		/*
-		 * TODO: Write docs for this function
-		 */
-		function patchAllChildParamIndexes(node, newIndex) {
-			var allInputs = node.getElementsByTagName("input");
-			for (var i = 0; i < allInputs.length; i++) {
-				patchParamIndex(allInputs[i], newIndex);
-			}
-			var allSelects = node.getElementsByTagName("select");
-			for (var i = 0; i < allSelects.length; i++) {
-				var selectIndex = allSelects[i].selectedIndex;
-				patchParamIndex(allSelects[i], newIndex);
-				allSelects[i].selectedIndex = selectIndex;
-			}
-		}
-
-		/*
-		 * TODO: Write docs for this function
-		 */
-		function cloneInputRow(rowNode) {
-			var clonedNode = rowNode.cloneNode(true);
-			var oldSelectNodes = rowNode.getElementsByTagName("select");
-			var newSelectNodes = clonedNode.getElementsByTagName("select");
-			for (var i = 0; i < oldSelectNodes.length; i++) {
-				newSelectNodes[i].value = oldSelectNodes[i].value;
-			}
-			var oldInputNodes = rowNode.getElementsByTagName("input");
-			var newInputNodes = clonedNode.getElementsByTagName("input");
-			for (var i = 0; i < oldInputNodes.length; i++) {
-				if (oldInputNodes[i].type == "radio") {
-					newInputNodes[i].checked = oldInputNodes[i].checked;
-					newInputNodes[i].defaultChecked = oldInputNodes[i].checked;
-				}
-			}
-			return clonedNode;
-		}
 		/*
 		 * This function adds a new row to resources table.
 		 */
