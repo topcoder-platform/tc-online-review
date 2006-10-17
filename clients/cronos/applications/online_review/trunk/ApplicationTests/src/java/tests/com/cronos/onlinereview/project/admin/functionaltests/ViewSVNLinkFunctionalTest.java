@@ -14,6 +14,8 @@ import org.dbunit.dataset.IDataSet;
  *
  * @author  TCSDEVELOPER
  * @version 1.0
+ * @test-status Passed
+ * @test-date   10/16/2006
  */
 public class ViewSVNLinkFunctionalTest extends AbstractTestCase {
 
@@ -43,13 +45,11 @@ public class ViewSVNLinkFunctionalTest extends AbstractTestCase {
     public void testScenario75() throws Exception {
         for (int i = 0; i < AUTHORIZED_USERS.length; i++) {
             setUser(AUTHORIZED_USERS[i]);
-//            System.out.println("IIII : " + i);
             this.user.openProjectDetails(PROJECT_NAME);
             HtmlTable table = this.user.findPageSectionTable("Project Details");
             boolean found = false;
             for (int j = 0; j < table.getRowCount(); j++) {
                 String cellText = table.getCellAt(j, 0).asText().trim();
-//                System.out.println("CELL TEXT " + cellText);
                 if (cellText.equals("SVN Module:")) {
                     found = true;
                     String svnUrl = table.getCellAt(j, 1).asText().trim();

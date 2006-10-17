@@ -3,13 +3,6 @@
  */
 package com.cronos.onlinereview.project;
 
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.LinkedHashMap;
-import java.io.InputStream;
-
 import com.gargoylesoftware.htmlunit.AlertHandler;
 import com.gargoylesoftware.htmlunit.ConfirmHandler;
 import com.gargoylesoftware.htmlunit.Page;
@@ -19,19 +12,26 @@ import com.gargoylesoftware.htmlunit.html.ClickableElement;
 import com.gargoylesoftware.htmlunit.html.HtmlAnchor;
 import com.gargoylesoftware.htmlunit.html.HtmlCheckBoxInput;
 import com.gargoylesoftware.htmlunit.html.HtmlElement;
+import com.gargoylesoftware.htmlunit.html.HtmlImageInput;
 import com.gargoylesoftware.htmlunit.html.HtmlInput;
+import com.gargoylesoftware.htmlunit.html.HtmlOption;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
+import com.gargoylesoftware.htmlunit.html.HtmlRadioButtonInput;
 import com.gargoylesoftware.htmlunit.html.HtmlSelect;
 import com.gargoylesoftware.htmlunit.html.HtmlTable;
-import com.gargoylesoftware.htmlunit.html.HtmlTableRow;
 import com.gargoylesoftware.htmlunit.html.HtmlTableCell;
+import com.gargoylesoftware.htmlunit.html.HtmlTableRow;
 import com.gargoylesoftware.htmlunit.html.HtmlTextArea;
-import com.gargoylesoftware.htmlunit.html.HtmlRadioButtonInput;
 import com.gargoylesoftware.htmlunit.html.HtmlTextInput;
-import com.gargoylesoftware.htmlunit.html.HtmlOption;
-import com.gargoylesoftware.htmlunit.html.HtmlImageInput;
-import com.gargoylesoftware.htmlunit.html.SubmittableElement;
+import com.gargoylesoftware.htmlunit.html.HtmlImage;
 import junit.framework.Assert;
+
+import java.io.InputStream;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * <p>
@@ -41,6 +41,8 @@ import junit.framework.Assert;
  * </p>
  * @author TCSTESTER
  * @version 1.0
+ * @test-status Failed
+ * @test-date   10/16/2006
  */
 public class UserSimulator implements AlertHandler, ConfirmHandler {
     /**
@@ -434,8 +436,11 @@ public class UserSimulator implements AlertHandler, ConfirmHandler {
      */
     public void clickCreateProject() throws Exception {
         HtmlAnchor link = findLinkWithImage("tab_create_project.gif");
-        assert (link != null) : "The [Create Project] link is not displayed";
-        this.currentPage = (HtmlPage) link.click();
+        if (link != null) {
+            this.currentPage = (HtmlPage) link.click();
+        } else {
+            Assert.assertTrue("[Create Project] tab is not available", isTabOpened("tab_create_project_on.gif"));
+        }
     }
 
     /**
@@ -445,8 +450,32 @@ public class UserSimulator implements AlertHandler, ConfirmHandler {
      */
     public void clickMyOpenProjects() throws Exception {
         HtmlAnchor link = findLinkWithImage("tab_my_open_projects.gif");
-        assert (link != null) : "The [My Open Projects] link is not displayed";
-        this.currentPage = (HtmlPage) link.click();
+        if (link != null) {
+            this.currentPage = (HtmlPage) link.click();
+        } else {
+            Assert.assertTrue("[My Open Projects] tab is not available", isTabOpened("tab_my_open_projects_on.gif"));
+        }
+    }
+
+    /**
+     * <p>Verifies if the specified tab is currently opened. The tab is identified by the name of the image file.</p>
+     *
+     * @param imageFile a <code>String</code> providing the name with tab image file.
+     * @return <code>true</code> if requested tab is currently opened; <code>false</code> otherwise.
+     * @throws Exception if an unexpected error occurs.
+     */
+    private boolean isTabOpened(String imageFile) throws Exception {
+        HtmlElement div = findElement("div:id:mainTabs", false);
+        List images = div.getHtmlElementsByTagName("img");
+        for (int i = 0; i < images.size(); i++) {
+            HtmlImage image = (HtmlImage) images.get(i);
+            if (image.getSrcAttribute().endsWith(imageFile)) {
+                if (image.getParentNode() == div) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     /**
@@ -456,7 +485,7 @@ public class UserSimulator implements AlertHandler, ConfirmHandler {
      */
     public void clickInactiveProjects() throws Exception {
         HtmlAnchor link = findLinkWithImage("tab_inactive_projects.gif");
-        assert (link != null) : "The [Inactive Projects] link is not displayed";
+        Assert.assertNotNull("The [Inactive Projects] link is not displayed", link);
         this.currentPage = (HtmlPage) link.click();
     }
 
@@ -1588,7 +1617,7 @@ public class UserSimulator implements AlertHandler, ConfirmHandler {
         List tds = getContent().getHtmlElementsByAttribute("td", "class", "title");
         for (int i = 0; i < tds.size(); i++) {
             HtmlTableCell cell = (HtmlTableCell) tds.get(i);
-            if (cell.asText().trim().equals(sectionHeader)) {
+            if (cell.asText().trim().startsWith(sectionHeader)) {
                 return cell.getEnclosingRow().getEnclosingTable();
             }
         }
@@ -1654,8 +1683,10 @@ public class UserSimulator implements AlertHandler, ConfirmHandler {
      */
     public void removeSubmission(String submissionId) throws Exception {
         HtmlTable submissionsSection = findPageSectionTable("Submission/Screening");
-        for (int i = 2; i < submissionsSection.getRowCount() - 1; i++) {
-            if (submissionsSection.getCellAt(i, 0).asText().trim().startsWith(submissionId + " ")) {
+        for (int i = 0; i < submissionsSection.getRowCount() - 1; i++) {
+//            System.out.println("Cell = " + submissionsSection.getCellAt(i, 0).asText().trim());
+//            System.out.println("Cell2 = " + submissionsSection.getCellAt(i, 1).asXml().trim());
+            if (submissionsSection.getCellAt(i, 0).asText().trim().startsWith(submissionId + " (")) {
                 List links = submissionsSection.getCellAt(i, 1).getHtmlElementsByTagName("a");
                 HtmlAnchor trashLink = (HtmlAnchor) links.get(0);
                 click(trashLink);
@@ -1672,7 +1703,7 @@ public class UserSimulator implements AlertHandler, ConfirmHandler {
     public boolean isSubmissionDisplayed(String submissionId) throws Exception {
         HtmlTable submissionsSection = findPageSectionTable("Submission/Screening");
         for (int i = 2; i < submissionsSection.getRowCount() - 1; i++) {
-            if (submissionsSection.getCellAt(i, 0).asText().trim().startsWith(submissionId + " ")) {
+            if (submissionsSection.getCellAt(i, 0).asText().trim().startsWith(submissionId + " (")) {
                 return true;
             }
         }

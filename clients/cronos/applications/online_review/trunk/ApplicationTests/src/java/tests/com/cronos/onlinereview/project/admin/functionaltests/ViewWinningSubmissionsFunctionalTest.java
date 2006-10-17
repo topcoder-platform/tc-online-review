@@ -22,6 +22,8 @@ import java.io.InputStream;
  *
  * @author  TCSDEVELOPER
  * @version 1.0
+ * @test-status Failed
+ * @test-date   10/16/2006
  */
 public class ViewWinningSubmissionsFunctionalTest extends AbstractTestCase {
 

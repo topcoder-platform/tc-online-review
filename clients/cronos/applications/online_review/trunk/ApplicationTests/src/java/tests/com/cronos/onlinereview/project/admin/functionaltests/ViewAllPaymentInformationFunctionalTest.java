@@ -4,25 +4,26 @@
 package com.cronos.onlinereview.project.admin.functionaltests;
 
 import com.cronos.onlinereview.project.AbstractTestCase;
-import com.cronos.onlinereview.project.UserSimulator;
 import com.cronos.onlinereview.project.Project;
 import com.cronos.onlinereview.project.Resource;
+import com.cronos.onlinereview.project.UserSimulator;
 import com.gargoylesoftware.htmlunit.html.HtmlTable;
 import com.gargoylesoftware.htmlunit.html.HtmlTableCell;
+import junit.framework.Assert;
 import org.dbunit.dataset.IDataSet;
 import org.dbunit.dataset.xml.FlatXmlDataSet;
 
-import java.util.Map;
-import java.util.Iterator;
 import java.io.InputStream;
-
-import junit.framework.Assert;
+import java.util.Iterator;
+import java.util.Map;
 
 /**
  * <p>A test case for <code>View All Payment Information</code> Use Case.</p>
  *
  * @author  TCSDEVELOPER
  * @version 1.0
+ * @test-status Failed
+ * @test-date   10/16/2006
  */
 public class ViewAllPaymentInformationFunctionalTest extends AbstractTestCase {
 

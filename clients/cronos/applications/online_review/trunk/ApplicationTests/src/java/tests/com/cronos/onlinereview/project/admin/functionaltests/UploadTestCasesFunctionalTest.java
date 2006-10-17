@@ -22,6 +22,8 @@ import java.util.List;
  *
  * @author  TCSDEVELOPER
  * @version 1.0
+ * @test-status Passed
+ * @test-date   10/16/2006
  */
 public class UploadTestCasesFunctionalTest extends AbstractTestCase {
     // TODO : Each test requires a separate data file (initial)

@@ -82,20 +82,22 @@ public class Project {
                 // submissions
                 LinkedHashMap projectSubmissions = new LinkedHashMap();
                 project.data.put("submissions", projectSubmissions);
-                ITable resourcesTable = dataSet.getTable("resource");
-                ITable resourceSubmissionsTable = dataSet.getTable("resource_submission");
-                ITable submissionsTable = dataSet.getTable("submission");
-                for (int j = 0; j < resourcesTable.getRowCount(); j++) {
-                    if (String.valueOf(resourcesTable.getValue(j,"project_id")).equals(id)) {
-                        String resourceId = String.valueOf(resourcesTable.getValue(j,"resource_id"));
-                        for (int k = 0; k < resourceSubmissionsTable.getRowCount(); k++) {
-                            if (String.valueOf(resourceSubmissionsTable.getValue(k, "resource_id")).equals(resourceId)) {
-                                for (int m = 0; m < submissionsTable.getRowCount(); m++) {
-                                    if (String.valueOf(submissionsTable.getValue(m, "submission_id")).equals(
-                                        String.valueOf(resourceSubmissionsTable.getValue(k, "submission_id")))) {
-                                        Map submissionData = new LinkedHashMap();
-                                        fill(submissionData, submissionsTable, m);
-                                        projectSubmissions.put(submissionData.get("submission_id"), submissionData);
+                if (containsTable(dataSet, "resource")) {
+                    ITable resourcesTable = dataSet.getTable("resource");
+                    ITable resourceSubmissionsTable = dataSet.getTable("resource_submission");
+                    ITable submissionsTable = dataSet.getTable("submission");
+                    for (int j = 0; j < resourcesTable.getRowCount(); j++) {
+                        if (String.valueOf(resourcesTable.getValue(j,"project_id")).equals(id)) {
+                            String resourceId = String.valueOf(resourcesTable.getValue(j,"resource_id"));
+                            for (int k = 0; k < resourceSubmissionsTable.getRowCount(); k++) {
+                                if (String.valueOf(resourceSubmissionsTable.getValue(k, "resource_id")).equals(resourceId)) {
+                                    for (int m = 0; m < submissionsTable.getRowCount(); m++) {
+                                        if (String.valueOf(submissionsTable.getValue(m, "submission_id")).equals(
+                                            String.valueOf(resourceSubmissionsTable.getValue(k, "submission_id")))) {
+                                            Map submissionData = new LinkedHashMap();
+                                            fill(submissionData, submissionsTable, m);
+                                            projectSubmissions.put(submissionData.get("submission_id"), submissionData);
+                                        }
                                     }
                                 }
                             }
@@ -182,5 +184,15 @@ public class Project {
         Map infos = (Map) this.data.get("infos");
         Map handleInfo = (Map) infos.get("23");
         return (String) handleInfo.get("value");
+    }
+
+    private static boolean containsTable(IDataSet dataSet, String tableName) throws DataSetException {
+        String[] tableNames = dataSet.getTableNames();
+        for (int i = 0; i < tableNames.length; i++) {
+            if (tableNames[i].equalsIgnoreCase(tableName)) {
+                return true;
+            }
+        }
+        return false;
     }
 }

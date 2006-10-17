@@ -21,6 +21,8 @@ import java.util.Iterator;
  *
  * @author  TCSDEVELOPER
  * @version 1.0
+ * @test-status Passed
+ * @test-date   10/16/2006
  */
 public class ViewProjectResourcesFunctionalTest extends AbstractTestCase {
 

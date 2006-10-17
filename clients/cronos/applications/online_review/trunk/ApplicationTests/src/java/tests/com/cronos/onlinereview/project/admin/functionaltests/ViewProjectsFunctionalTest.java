@@ -3,25 +3,26 @@
  */
 package com.cronos.onlinereview.project.admin.functionaltests;
 
-import com.cronos.onlinereview.project.UserSimulator;
 import com.cronos.onlinereview.project.AbstractTestCase;
-import com.cronos.onlinereview.project.Project;
 import com.cronos.onlinereview.project.Lookup;
+import com.cronos.onlinereview.project.Project;
+import com.cronos.onlinereview.project.UserSimulator;
 import com.gargoylesoftware.htmlunit.html.HtmlTable;
-
-import java.util.Map;
-import java.util.Iterator;
-import java.io.InputStream;
-
+import junit.framework.Assert;
 import org.dbunit.dataset.IDataSet;
 import org.dbunit.dataset.xml.FlatXmlDataSet;
-import junit.framework.Assert;
+
+import java.io.InputStream;
+import java.util.Iterator;
+import java.util.Map;
 
 /**
  * <p>A test case for <code>View Projects</code> Use Case.</p>
  *
  * @author  TCSDEVELOPER
  * @version 1.0
+ * @test-status Failed
+ * @test-date   10/16/2006
  */
 public class ViewProjectsFunctionalTest extends AbstractTestCase {
 
@@ -47,7 +48,7 @@ public class ViewProjectsFunctionalTest extends AbstractTestCase {
      * User is able to view a list of all open projects. </p>
      */
     public void testScenario64() throws Exception {
-        setUser(UserSimulator.WINNING_SUBMITTER);
+        setUser(UserSimulator.MANAGER);
         this.user.openAllProjectsPage();
 
         Map projects = Project.loadAllProjects(getActiveProjectsData());
@@ -103,7 +104,8 @@ public class ViewProjectsFunctionalTest extends AbstractTestCase {
     protected static IDataSet getActiveProjectsData() throws Exception {
         InputStream projectDataStream
             = ViewProjectsFunctionalTest.class.getClassLoader().getResourceAsStream(ACTIVE_PROJECTS_TEST_DATA_FILE_NAME);
-        return new FlatXmlDataSet(projectDataStream);
+        FlatXmlDataSet xmlDataSet = new FlatXmlDataSet(projectDataStream);
+        return xmlDataSet;
     }
 
     /**
@@ -128,6 +130,7 @@ public class ViewProjectsFunctionalTest extends AbstractTestCase {
         Lookup lookup = Lookup.getInstance();
         String projectNameVersion = project.getName() + " version " + project.getVersion();
         String projectCategory = lookup.getProjectCategoryName(project.getCategoryId());
+//        System.out.println("RESPONSE = \n" + this.user.getCurrentPage().asXml());
         HtmlTable table = this.user.findPageSectionTable(projectCategory);
         for (int i = 2; i < table.getRowCount(); i++) {
             if (table.getCellAt(i, 0).asText().trim().equals(projectNameVersion)) {
