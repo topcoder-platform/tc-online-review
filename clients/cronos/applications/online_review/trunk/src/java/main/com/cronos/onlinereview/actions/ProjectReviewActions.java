@@ -462,29 +462,45 @@ public class ProjectReviewActions extends DispatchAction {
         int commentIndex = 0;
         int itemIndex = 0;
 
-        for (int i = 0; i < aggregatorResponses.length; ++i) {
-            Item item = review.getItem(i);
-            for (int j = 0; j < item.getNumberOfComments(); ++j) {
-                Comment comment = item.getComment(j);
-                String commentType = comment.getCommentType().getName();
+        for (int groupIdx = 0; groupIdx < scorecardTemplate.getNumberOfGroups(); ++groupIdx) {
+            Group group = scorecardTemplate.getGroup(groupIdx);
+            for (int sectionIdx = 0; sectionIdx < group.getNumberOfSections(); ++sectionIdx) {
+                Section section = group.getSection(sectionIdx);
+                for (int questionIdx = 0; questionIdx < section.getNumberOfQuestions(); ++questionIdx) {
+                    Question question = section.getQuestion(questionIdx);
+                    long questionId = question.getId();
 
-                if (commentType.equalsIgnoreCase("Comment") || commentType.equalsIgnoreCase("Required") ||
-                        commentType.equalsIgnoreCase("Recommended")) {
-                    String aggregFunction = (String) comment.getExtraInfo();
-                    if ("Reject".equalsIgnoreCase(aggregFunction)) {
-                        aggregateFunctions[commentIndex] = "Reject";
-                    } else if ("Accept".equalsIgnoreCase(aggregFunction)) {
-                        aggregateFunctions[commentIndex] = "Accept";
-                    } else if ("Duplicate".equalsIgnoreCase(aggregFunction)) {
-                        aggregateFunctions[commentIndex] = "Duplicate";
-                    } else {
-                        aggregateFunctions[commentIndex] = "";
+                    for (int i = 0; i < aggregatorResponses.length; ++i) {
+                        if (review.getItem(i).getQuestion() != questionId) {
+                            continue;
+                        }
+
+                        // Get a review's item
+                        Item item = review.getItem(i);
+                        for (int j = 0; j < item.getNumberOfComments(); ++j) {
+                            Comment comment = item.getComment(j);
+                            String commentType = comment.getCommentType().getName();
+
+                            if (commentType.equalsIgnoreCase("Comment") || commentType.equalsIgnoreCase("Required") ||
+                                    commentType.equalsIgnoreCase("Recommended")) {
+                                String aggregFunction = (String) comment.getExtraInfo();
+                                if ("Reject".equalsIgnoreCase(aggregFunction)) {
+                                    aggregateFunctions[commentIndex] = "Reject";
+                                } else if ("Accept".equalsIgnoreCase(aggregFunction)) {
+                                    aggregateFunctions[commentIndex] = "Accept";
+                                } else if ("Duplicate".equalsIgnoreCase(aggregFunction)) {
+                                    aggregateFunctions[commentIndex] = "Duplicate";
+                                } else {
+                                    aggregateFunctions[commentIndex] = "";
+                                }
+                                responseTypeIds[commentIndex] = new Long(comment.getCommentType().getId());
+                                ++commentIndex;
+                            }
+                            if (commentType.equalsIgnoreCase("Aggregation Comment")) {
+                                aggregatorResponses[itemIndex++] = comment.getComment();
+                            }
+                        }
                     }
-                    responseTypeIds[commentIndex] = new Long(comment.getCommentType().getId());
-                    ++commentIndex;
-                }
-                if (commentType.equalsIgnoreCase("Aggregation Comment")) {
-                    aggregatorResponses[itemIndex++] = comment.getComment();
                 }
             }
         }
@@ -557,6 +573,11 @@ public class ProjectReviewActions extends DispatchAction {
                     request, Constants.PERFORM_AGGREGATION_PERM_NAME, "Error.IncorrectPhase");
         }
 
+        // This variable determines if 'Save and Mark Complete' button has been clicked
+        boolean commitRequested = "submit".equalsIgnoreCase(request.getParameter("save"));
+        // This variable determines if Preview button has been clicked
+        boolean previewRequested = "preview".equalsIgnoreCase(request.getParameter("save"));
+
         // Retrieve a resource for the Aggregation phase
         Resource resource = ActionsHelper.getMyResourceForPhase(request, phase);
         // Get the form defined for this action
@@ -573,44 +594,65 @@ public class ProjectReviewActions extends DispatchAction {
         ReviewManager revMgr = ActionsHelper.createReviewManager(request);
         // Retrieve all comment types
         CommentType[] allCommentTypes = revMgr.getAllCommentTypes();
+        int numberOfItems = review.getNumberOfItems();
 
-        // Iterate over the items of existing review that needs updating
-        for (int i = 0; i < review.getNumberOfItems(); ++i) {
-            // Get an item
-            Item item = review.getItem(i);
-            Comment aggregatorComment = null;
+        for (int groupIdx = 0; groupIdx < scorecardTemplate.getNumberOfGroups(); ++groupIdx) {
+            Group group = scorecardTemplate.getGroup(groupIdx);
+            for (int sectionIdx = 0; sectionIdx < group.getNumberOfSections(); ++sectionIdx) {
+                Section section = group.getSection(sectionIdx);
+                for (int questionIdx = 0; questionIdx < section.getNumberOfQuestions(); ++ questionIdx) {
+                    Question question = section.getQuestion(questionIdx);
+                    long questionId = question.getId();
 
-            for (int j = 0; j < item.getNumberOfComments(); ++j) {
-                Comment comment = item.getComment(j);
-                String typeName = comment.getCommentType().getName();
+                    for (int i = 0; i < numberOfItems; ++i) {
+                        if (review.getItem(i).getQuestion() != questionId) {
+                            continue;
+                        }
 
-                if (typeName.equalsIgnoreCase("Comment") || typeName.equalsIgnoreCase("Required") ||
-                        typeName.equalsIgnoreCase("Recommended")) {
-                    comment.setExtraInfo(aggregateFunctions[commentIndex]);
-                    comment.setCommentType(ActionsHelper.findCommentTypeById(
-                            allCommentTypes, responseTypeIds[commentIndex].longValue()));
-                    ++commentIndex;
-                }
-                if (typeName.equalsIgnoreCase("Aggregation Comment")) {
-                    aggregatorComment = comment;
+                        // Get an item
+                        Item item = review.getItem(i);
+                        Comment aggregatorComment = null;
+
+                        for (int j = 0; j < item.getNumberOfComments(); ++j) {
+                            Comment comment = item.getComment(j);
+                            String typeName = comment.getCommentType().getName();
+
+                            if (typeName.equalsIgnoreCase("Comment") || typeName.equalsIgnoreCase("Required") ||
+                                    typeName.equalsIgnoreCase("Recommended")) {
+                                if (commentIndex < aggregateFunctions.length && aggregateFunctions[commentIndex] != null &&
+                                        aggregateFunctions[commentIndex].trim().length() != 0) {
+                                    comment.setExtraInfo(aggregateFunctions[commentIndex]);
+                                } else {
+                                    comment.setExtraInfo(null);
+                                }
+                                comment.setCommentType(ActionsHelper.findCommentTypeById(
+                                        allCommentTypes, responseTypeIds[commentIndex].longValue()));
+                                ++commentIndex;
+                            }
+                            if (typeName.equalsIgnoreCase("Aggregation Comment")) {
+                                aggregatorComment = comment;
+                            }
+                        }
+
+                        if (aggregatorComment == null) {
+                            aggregatorComment = new Comment();
+                            aggregatorComment.setCommentType(
+                                    ActionsHelper.findCommentTypeByName(allCommentTypes, "Aggregation Comment"));
+                            item.addComment(aggregatorComment);
+                        }
+
+                        aggregatorComment.setComment(responses[itemIndex++]);
+                        aggregatorComment.setAuthor(resource.getId());
+                    }
                 }
             }
-
-            if (aggregatorComment == null) {
-                aggregatorComment = new Comment();
-                aggregatorComment.setCommentType(
-                        ActionsHelper.findCommentTypeByName(allCommentTypes, "Aggregation Comment"));
-                item.addComment(aggregatorComment);
-            }
-
-            aggregatorComment.setComment(responses[itemIndex++]);
-            aggregatorComment.setAuthor(resource.getId());
         }
 
-        // If the user has requested to complete the review
-        if ("submit".equalsIgnoreCase(request.getParameter("save"))) {
-            // TODO: Validate review here
+        boolean validationSucceeded =
+            (commitRequested) ? validateAggregationScorecard(request, scorecardTemplate, review, false) : true;
 
+        // If the user has requested to complete the review
+        if (validationSucceeded && commitRequested) {
             // Set the completed status of the review
             review.setCommitted(true);
 
@@ -643,12 +685,11 @@ public class ProjectReviewActions extends DispatchAction {
             comment.setExtraInfo("Approving");
             comment.setComment("");
             review.addComment(comment);
-        } else if ("preview".equalsIgnoreCase(request.getParameter("save"))) {
+        } else if (previewRequested) {
+            // Put the review object into the request
+            request.setAttribute("review", review);
             // Retrieve some basic aggregation info and store it into the request
             retrieveAndStoreBasicAggregationInfo(request, verification, scorecardTemplate, "Aggregation");
-
-            // Update review object stored in the request
-            request.setAttribute("review", review);
 
             // Get the word "of" for Test Case type of question
             String wordOf = getResources(request).getMessage("editReview.Question.Response.TestCase.of");
@@ -661,6 +702,17 @@ public class ProjectReviewActions extends DispatchAction {
 
         // Update (save) edited Aggregation
         revMgr.updateReview(review, Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
+
+        if (!validationSucceeded) {
+            // Put the review object into the request
+            request.setAttribute("review", review);
+            // Retrieve some basic review info and store it in the request
+            retrieveAndStoreBasicAggregationInfo(request, verification, scorecardTemplate, "Aggregation");
+            // Retrive some look-up data and store it into the request
+            retreiveAndStoreReviewLookUpData(request);
+
+            return mapping.getInputForward();
+        }
 
         // Forward to project details page
         return ActionsHelper.cloneForwardAndAppendToPath(
@@ -1988,8 +2040,8 @@ public class ProjectReviewActions extends DispatchAction {
      * @throws BaseException
      *             if any error occurs.
      */
-    private void retrieveAndStoreBasicAggregationInfo(
-            HttpServletRequest request, CorrectnessCheckResult verification, Scorecard scorecardTemplate, String reviewType)
+    private void retrieveAndStoreBasicAggregationInfo(HttpServletRequest request,
+            CorrectnessCheckResult verification, Scorecard scorecardTemplate, String reviewType)
         throws BaseException {
         // Retrieve a project from verification-result bean
         Project project = verification.getProject();
@@ -2866,7 +2918,7 @@ public class ProjectReviewActions extends DispatchAction {
             // Update the author of the comment
             comment.setAuthor(myResource.getId());
         }
-        
+
         // If needed remove empty comments
         if (removeEmpty) {
             for (int i = 0; i < item.getNumberOfComments(); i++) {
@@ -3084,6 +3136,74 @@ public class ProjectReviewActions extends DispatchAction {
     }
 
     /**
+     * This static method validates Aggregation scorecard. Aggregation must have all its aggregate
+     * functions to be specified, as well as all aggregator's comments entered for every item.
+     * 
+     * @return <code>true</code> if aggregation scorecard passes validation, <code>false</code>
+     *         if it fails it.
+     * @param request
+     *            an <code>HttpServletRequest</code> object where validation error messages will
+     *            be placed to in case there are any.
+     * @param scorecardTemplate
+     *            a scorecard template of type &quot;Review&quot; that was used to generate the
+     *            aggregation scorecard to be validated.
+     * @param aggregation
+     *            an aggregation scorecard to be validated.
+     * @param managerEdit
+     *            specifies whether it was manager who edited the scorecard.
+     * @throws IllegalArgumentException
+     *             if parameters <code>request</code>, <code>scorecardTemplate</code>, or
+     *             <code>aggregation</code> are <code>null</code>.
+     */
+    private static boolean validateAggregationScorecard(
+            HttpServletRequest request, Scorecard scorecardTemplate, Review aggregation, boolean managerEdit) {
+        // Validate parameters
+        ActionsHelper.validateParameterNotNull(request, "request");
+        ActionsHelper.validateParameterNotNull(scorecardTemplate, "scorecardTemplate");
+        ActionsHelper.validateParameterNotNull(aggregation, "aggregation");
+
+        int itemIdx = 0;
+        int commentIdx = 0;
+        int numberOfItems = aggregation.getNumberOfItems();
+
+        for (int groupIdx = 0; groupIdx < scorecardTemplate.getNumberOfGroups(); ++groupIdx) {
+            Group group = scorecardTemplate.getGroup(groupIdx);
+            for (int sectionIdx = 0; sectionIdx < group.getNumberOfSections(); ++sectionIdx) {
+                Section section = group.getSection(sectionIdx);
+                for (int questionIdx = 0; questionIdx < section.getNumberOfQuestions(); ++questionIdx, ++itemIdx) {
+                    Question question = section.getQuestion(questionIdx);
+                    long questionId = question.getId();
+
+                    for (int i = 0; i < numberOfItems; ++i) {
+                        if (aggregation.getItem(i).getQuestion() != questionId) {
+                            continue;
+                        }
+
+                        // Get a review's item
+                        Item item = aggregation.getItem(i);
+
+                        // Validate item's aggregate functions
+                        for (int j = 0; j < item.getNumberOfComments(); ++j) {
+                            Comment comment = item.getComment(j);
+                            String commentType = comment.getCommentType().getName();
+
+                            if (commentType.equalsIgnoreCase("Comment") || commentType.equalsIgnoreCase("Required") ||
+                                    commentType.equalsIgnoreCase("Recommended")) {
+                                validateAggregateFunction(request, item.getComment(j), commentIdx++);
+                            }
+                            if (commentType.equalsIgnoreCase("Aggregation Comment")) {
+                                validateScorecardComment(request, comment, "aggregator_response[" + itemIdx + "]");
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        return !ActionsHelper.isErrorsPresent(request);
+    }
+
+    /**
      *
      * @return
      * @param request
@@ -3216,16 +3336,100 @@ public class ProjectReviewActions extends DispatchAction {
             String commentType = comment.getCommentType().getName();
             if (commentType.equalsIgnoreCase("Comment") || commentType.equalsIgnoreCase("Required") ||
                     commentType.equalsIgnoreCase("Recommended")) {
-                String commentText = comment.getComment();
-                if (commentText == null || commentText.trim().length() == 0) {
-                    ActionsHelper.addErrorToRequest(request,
-                            "comment(" + itemNum + "." + (i + 1) + ")", "Error.saveReview.Comment.Absent");
-                    success = false;
-                }
+                success =
+                    success && validateScorecardComment(request, comment, "comment(" + itemNum + "." + (i + 1) + ")");
             }
         }
 
         return success;
+    }
+
+    /**
+     * This static method validates single comment at a time. The comment must have its text to be
+     * non-null and non-empty string to be regarded as passing validation.
+     * 
+     * @return <code>true<code> if validation succeeds, <code>false</code> if it doesn't.
+     * @param request
+     *            an <code>HttpServletRequest</code> object where validation error messages will
+     *            be placed to in case there are any.
+     * @param comment
+     *            a comment to validate.
+     * @param errorMessageProperty
+     *            a string parameter that determines which key an error message will be stored
+     *            under.
+     * @throws IllegalArgumentException
+     *             if parameters <code>request</code>, <code>comment</code>, or
+     *             <code>errorMessageProperty</code> are <code>null</code>, or if parameter
+     *             <code>errorMessageProperty</code> is empty string.
+     */
+    private static boolean validateScorecardComment(
+            HttpServletRequest request, Comment comment, String errorMessageProperty) {
+        // Validate parameters
+        ActionsHelper.validateParameterNotNull(request, "request");
+        ActionsHelper.validateParameterNotNull(comment, "comment");
+        ActionsHelper.validateParameterStringNotEmpty(errorMessageProperty, "errorMessageProperty");
+
+        String commentText = comment.getComment();
+        if (commentText == null || commentText.trim().length() == 0) {
+            ActionsHelper.addErrorToRequest(request, errorMessageProperty, "Error.saveReview.Comment.Absent");
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * This static method validates a reviewer's comment to have an aggregate function. The
+     * aggregate function must be specified (non-null and non-empty string), and must be equal to
+     * one of the following values:
+     * <ul>
+     * <li>&quot;<code>Accept</code>&quot;</li>
+     * <li>&quot;<code>Reject</code>&quot;</li>
+     * <li>&quot;<code>Duplicate</code>&quot;</li>
+     * </ul>
+     *
+     * @return <code>true</code> if validation was successful, <code>false</code> if it wasn't.
+     * @param request
+     *            an <code>HttpServletRequest</code> object where validation error messages will
+     *            be placed to in case there are any.
+     * @param comment
+     *            a reviewer's comment to validate.
+     * @param commentIdx
+     *            absolute index of the comment on the page.
+     * @throws IllegalArgumentException
+     *             if parameters <code>request</code> or <code>comment</code> are
+     *             <code>null</code>, or if comment specified by parameter <code>comment</code>
+     *             is not a reviewer's comment.
+     */
+    private static boolean validateAggregateFunction(HttpServletRequest request, Comment comment, int commentIdx) {
+        // Validate parameters
+        ActionsHelper.validateParameterNotNull(request, "request");
+        ActionsHelper.validateParameterNotNull(comment, "comment");
+
+        String commentType = comment.getCommentType().getName();
+
+        if (!(commentType.equalsIgnoreCase("Comment") || commentType.equalsIgnoreCase("Required") ||
+                commentType.equalsIgnoreCase("Recommended"))) {
+            throw new IllegalArgumentException(
+                    "Specified comment is not a reviewer's comment. Comment type: '" + commentType + "'.");
+        }
+
+        String aggregationFunction = (String) comment.getExtraInfo();
+
+        if (aggregationFunction == null || aggregationFunction.trim().length() == 0) {
+            ActionsHelper.addErrorToRequest(request,
+                    "aggregate_function[" + commentIdx + "]", "Error.saveAggregation.Function.Absent");
+            return false;
+        }
+
+        if (!(aggregationFunction.equalsIgnoreCase("Accept") || aggregationFunction.equalsIgnoreCase("Reject") ||
+                aggregationFunction.equalsIgnoreCase("Duplicate"))) {
+            ActionsHelper.addErrorToRequest(request,
+                    "aggregate_function[" + commentIdx + "]", "Error.saveAggregation.Function.Invalid");
+            return false;
+        }
+
+        return true;
     }
 
     /**

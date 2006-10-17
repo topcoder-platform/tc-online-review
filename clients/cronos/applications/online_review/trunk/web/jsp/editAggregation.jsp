@@ -48,6 +48,12 @@
 						<html:hidden property="method" value="saveAggregation" />
 						<html:hidden property="rid" value="${review.id}" />
 
+						<c:if test="${orfn:isErrorsPresent(pageContext.request)}">
+							<table cellpadding="0" cellspacing="0" border="0">
+								<tr><td class="errorText"><bean:message key="Error.saveReview.ValidationFailed" /></td></tr>
+							</table><br />
+						</c:if>
+
 						<c:set var="itemIdx" value="0" />
 						<c:set var="globalCommentIdx" value="0" />
 						<c:set var="globalResponseIdx" value="0" />
@@ -143,7 +149,8 @@
 																${orfn:htmlEncode(comment.comment)}<br />
 																<c:if test="${commentStatus.index == lastCommentIdxs[itemStatus.index]}">
 																	<div style="padding-top:4px;">
-																		<b><bean:message key="editReview.EditAggregation.ResponseText" /></b><br />
+																		<b><bean:message key="editReview.EditAggregation.ResponseText" /></b> &#160;
+																		<span class="error"><html:errors property="aggregator_response[${globalResponseIdx}]" prefix="" suffix="" /></span><br />
 																		<html:textarea rows="2" property="aggregator_response[${globalResponseIdx}]" cols="20" styleClass="inputTextBox" />
 																	</div>
 																	<c:set var="globalResponseIdx" value="${globalResponseIdx + 1}" />
@@ -157,6 +164,7 @@
 																			<html:option value="${commentType2.id}">${commentType2.name}</html:option>
 																		</c:forEach>
 																	</html:select>
+																	<div class="error" align="right"><html:errors property="aggregate_function[${globalCommentIdx}]" prefix="" suffix="" /></div>
 																</td>
 																<td class="valueC"><html:radio value="Reject" property="aggregate_function[${globalCommentIdx}]" /></td>
 																<td class="valueC"><html:radio value="Accept" property="aggregate_function[${globalCommentIdx}]" /></td>
