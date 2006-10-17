@@ -155,5 +155,13 @@ function cloneInputRow(rowNode) {
 	for (var i = 0; i < oldSelectNodes.length; i++) {
 		newSelectNodes[i].value = oldSelectNodes[i].value;
 	}
+			var oldInputNodes = rowNode.getElementsByTagName("input");
+			var newInputNodes = clonedNode.getElementsByTagName("input");
+			for (var i = 0; i < oldInputNodes.length; i++) {
+				if (oldInputNodes[i].type == "radio") {
+					newInputNodes[i].checked = oldInputNodes[i].checked;
+					newInputNodes[i].defaultChecked = oldInputNodes[i].checked;
+				}
+			}
 	return clonedNode;
 }
