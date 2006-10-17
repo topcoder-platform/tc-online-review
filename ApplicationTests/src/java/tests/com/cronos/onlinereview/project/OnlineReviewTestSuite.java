@@ -3,11 +3,11 @@
  */
 package com.cronos.onlinereview.project;
 
+import com.cronos.onlinereview.project.admin.functionaltests.ProjectAdminAndDetailsTestSuite;
+import com.cronos.onlinereview.project.review.functionaltests.ProjectReviewTestSuite;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
-import com.cronos.onlinereview.project.review.functionaltests.ProjectReviewTestSuite;
-import com.cronos.onlinereview.project.admin.functionaltests.ProjectAdminAndDetailsTestSuite;
 
 /**
  * @author TCSTester

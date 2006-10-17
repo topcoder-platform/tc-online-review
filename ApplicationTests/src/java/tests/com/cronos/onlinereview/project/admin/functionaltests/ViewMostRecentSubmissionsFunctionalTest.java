@@ -4,9 +4,10 @@
 package com.cronos.onlinereview.project.admin.functionaltests;
 
 import com.cronos.onlinereview.project.AbstractTestCase;
-import com.cronos.onlinereview.project.UserSimulator;
 import com.cronos.onlinereview.project.Project;
+import com.cronos.onlinereview.project.UserSimulator;
 import com.gargoylesoftware.htmlunit.html.HtmlTable;
+import junit.framework.Assert;
 import org.dbunit.dataset.IDataSet;
 import org.dbunit.dataset.xml.FlatXmlDataSet;
 
@@ -14,13 +15,13 @@ import java.io.InputStream;
 import java.util.Iterator;
 import java.util.Map;
 
-import junit.framework.Assert;
-
 /**
  * <p>A test case for <code>View Most Recent Submissions</code> Use Case.</p>
  *
  * @author  TCSDEVELOPER
  * @version 1.0
+ * @test-status Failed
+ * @test-date   10/16/2006
  */
 public class ViewMostRecentSubmissionsFunctionalTest extends AbstractTestCase {
 
@@ -97,7 +98,7 @@ public class ViewMostRecentSubmissionsFunctionalTest extends AbstractTestCase {
         String submissionId = (String) submission.get("submission_id");
         boolean submissionDisplayed = false;
         for (int i = 2; i < submissionsSection.getRowCount(); i++) {
-            if (submissionsSection.getCellAt(i, 0).asText().trim().equals(submissionId)) {
+            if (submissionsSection.getCellAt(i, 0).asText().trim().startsWith(submissionId + " (")) {
                 submissionDisplayed = true;
             }
         }

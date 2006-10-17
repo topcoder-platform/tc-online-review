@@ -8,20 +8,21 @@ import com.cronos.onlinereview.project.Project;
 import com.cronos.onlinereview.project.UserSimulator;
 import com.gargoylesoftware.htmlunit.html.HtmlTable;
 import com.gargoylesoftware.htmlunit.html.HtmlTableCell;
+import junit.framework.Assert;
 import org.dbunit.dataset.IDataSet;
 import org.dbunit.dataset.xml.FlatXmlDataSet;
 
 import java.io.InputStream;
-import java.util.Map;
 import java.util.Iterator;
-
-import junit.framework.Assert;
+import java.util.Map;
 
 /**
  * <p>A test case for <code>Post Deliverables</code> Use Case.</p>
  *
  * @author  TCSDEVELOPER
  * @version 1.0
+ * @test-status Passed
+ * @test-date   10/16/2006
  */
 public class PostDeliverablesFunctionalTest extends AbstractTestCase {
 
@@ -149,16 +150,17 @@ public class PostDeliverablesFunctionalTest extends AbstractTestCase {
 
     private void assertOutstandingDeliverablesDisplayed(boolean flag) throws Exception {
         HtmlTable section = this.user.findPageSectionTable("My Role");
+        System.out.println(section.asXml());
         HtmlTableCell cell = section.getCellAt(0, 2);
         Assert.assertEquals("Project outstanding deliverables are not displayed",
-                            "Outstanding Deliverables:", cell.asText().trim());
+                            "Outstanding Deliverables", cell.asText().trim());
         cell = section.getCellAt(1, 2);
         if (flag) {
             Assert.assertFalse("Project outstanding deliverables are not displayed",
                               cell.asText().trim().length() == 0);
         } else {
-            Assert.assertTrue("Project outstanding deliverables are displayed",
-                              cell.asText().trim().length() == 0);
+            Assert.assertEquals("Project outstanding deliverables are displayed",
+                              "There are no outstanding deliverables.", cell.asText().trim());
         }
     }
 }

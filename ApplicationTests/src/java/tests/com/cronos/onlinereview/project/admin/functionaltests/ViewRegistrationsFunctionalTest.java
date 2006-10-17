@@ -18,6 +18,8 @@ import java.util.HashMap;
  *
  * @author  TCSDEVELOPER
  * @version 1.0
+ * @test-status Failed
+ * @test-date   10/16/2006 
  */
 public class ViewRegistrationsFunctionalTest extends AbstractTestCase {
 

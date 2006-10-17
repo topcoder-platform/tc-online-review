@@ -3,25 +3,24 @@
  */
 package com.cronos.onlinereview.project.admin.functionaltests;
 
-import junit.framework.TestCase;
-import junit.framework.Assert;
 import com.cronos.onlinereview.project.AbstractTestCase;
-import com.cronos.onlinereview.project.UserSimulator;
-import com.cronos.onlinereview.project.Project;
 import com.cronos.onlinereview.project.Messages;
-
-import java.util.Map;
-import java.util.Iterator;
-import java.io.InputStream;
-
+import com.cronos.onlinereview.project.Project;
+import com.cronos.onlinereview.project.UserSimulator;
 import org.dbunit.dataset.IDataSet;
 import org.dbunit.dataset.xml.FlatXmlDataSet;
+
+import java.io.InputStream;
+import java.util.Iterator;
+import java.util.Map;
 
 /**
  * <p>A test case for <code>Contact Project Managers</code> Use Case.</p>
  *
  * @author  TCSDEVELOPER
  * @version 1.0
+ * @test-status Failed
+ * @test-date   10/16/2006
  */
 public class ContactProjectManagersFunctionalTest extends AbstractTestCase {
 
@@ -62,7 +61,6 @@ public class ContactProjectManagersFunctionalTest extends AbstractTestCase {
             Project project = (Project) entry.getValue();
             this.user.openProjectDetails(project.getName() + " version " + project.getVersion());
             this.user.contactManager("Question", "test_question01");
-//            System.out.println("MMM : " + Messages.getContactManagerConfirmation());
             assertDisplayedMessage(Messages.getContactManagerConfirmation());
         }
     }

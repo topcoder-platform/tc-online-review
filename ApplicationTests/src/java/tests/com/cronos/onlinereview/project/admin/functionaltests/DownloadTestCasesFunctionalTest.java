@@ -3,24 +3,25 @@
  */
 package com.cronos.onlinereview.project.admin.functionaltests;
 
-import com.cronos.onlinereview.project.UserSimulator;
-import com.cronos.onlinereview.project.Project;
-import com.cronos.onlinereview.project.Messages;
 import com.cronos.onlinereview.project.AbstractTestCase;
-
-import java.util.Map;
-import java.util.Iterator;
-import java.io.InputStream;
-
+import com.cronos.onlinereview.project.Messages;
+import com.cronos.onlinereview.project.Project;
+import com.cronos.onlinereview.project.UserSimulator;
+import junit.framework.Assert;
 import org.dbunit.dataset.IDataSet;
 import org.dbunit.dataset.xml.FlatXmlDataSet;
-import junit.framework.Assert;
+
+import java.io.InputStream;
+import java.util.Iterator;
+import java.util.Map;
 
 /**
  * <p>A test case for <code>Download Test Cases</code> Use Case.</p>
  *
  * @author  TCSDEVELOPER
  * @version 1.0
+ * @test-status Failed
+ * @test-date   10/16/2006
  */
 public class DownloadTestCasesFunctionalTest extends AbstractTestCase {
 

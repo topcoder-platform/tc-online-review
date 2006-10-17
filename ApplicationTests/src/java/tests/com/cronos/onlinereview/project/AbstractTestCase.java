@@ -10,9 +10,9 @@ import junit.framework.Assert;
 import junit.framework.AssertionFailedError;
 import org.dbunit.Assertion;
 import org.dbunit.DatabaseTestCase;
+import org.dbunit.database.DatabaseConfig;
 import org.dbunit.database.DatabaseConnection;
 import org.dbunit.database.IDatabaseConnection;
-import org.dbunit.database.DatabaseConfig;
 import org.dbunit.dataset.CompositeDataSet;
 import org.dbunit.dataset.IDataSet;
 import org.dbunit.dataset.ITable;
@@ -247,8 +247,6 @@ public abstract class AbstractTestCase extends DatabaseTestCase {
      */
     protected DatabaseOperation getTearDownOperation() throws Exception {
         return DatabaseOperation.DELETE;
-//        return DatabaseOperation.DELETE_ALL;
-//        return DatabaseOperation.NONE;
     }
 
     /**
@@ -660,6 +658,11 @@ public abstract class AbstractTestCase extends DatabaseTestCase {
         return resources;
     }
 
+    protected void printCurrentPage() {
+        System.out.println("Response as XML : \n" + this.user.getContent().asXml());
+        System.out.println("Response As Text : \n" + this.user.getContent().asText());
+        System.out.println("Response Fullt : \n" + this.user.getCurrentPage().asXml());
+    }
     /**
      * <p>Verifies that the details for specified scorecard group are displayed correctly.</p>
      *
@@ -737,4 +740,6 @@ public abstract class AbstractTestCase extends DatabaseTestCase {
             connection.close();
         }
     }
+
+
 }

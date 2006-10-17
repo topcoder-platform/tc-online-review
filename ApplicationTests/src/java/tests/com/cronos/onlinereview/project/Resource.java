@@ -271,7 +271,11 @@ public class Resource {
     public String getPayment() {
         Map infos = (Map) this.data.get("infos");
         Map handleInfo = (Map) infos.get("7");
-        return (String) handleInfo.get("value");
+        if (handleInfo != null) {
+            return (String) handleInfo.get("value");
+        } else {
+            return "N/A";
+        }
     }
 
     /**
@@ -282,7 +286,11 @@ public class Resource {
     public String getPaymentStatus() {
         Map infos = (Map) this.data.get("infos");
         Map handleInfo = (Map) infos.get("8");
-        return (String) handleInfo.get("value");
+        if (handleInfo != null) {
+            return (String) handleInfo.get("value");
+        } else {
+            return "N/A";
+        }
     }
 
     /**

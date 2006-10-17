@@ -23,6 +23,8 @@ import org.dbunit.dataset.xml.FlatXmlDataSet;
  *
  * @author  TCSDEVELOPER
  * @version 1.0
+ * @test-status Passed
+ * @test-date   10/16/2006
  */
 public class ViewProjectDetailFunctionalTest extends AbstractTestCase {
 
@@ -168,7 +170,7 @@ public class ViewProjectDetailFunctionalTest extends AbstractTestCase {
             HtmlTable section = this.user.findPageSectionTable("My Role");
             HtmlTableCell cell = section.getCellAt(0, 2);
             Assert.assertEquals("Project outstanding deliverables are not displayed",
-                                "Outstanding Deliverables:", cell.asText().trim());
+                                "Outstanding Deliverables", cell.asText().trim());
         }
     }
 

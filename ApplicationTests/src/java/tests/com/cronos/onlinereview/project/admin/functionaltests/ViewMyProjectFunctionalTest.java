@@ -3,25 +3,30 @@
  */
 package com.cronos.onlinereview.project.admin.functionaltests;
 
+import com.cronos.onlinereview.project.AbstractTestCase;
+import com.cronos.onlinereview.project.Lookup;
+import com.cronos.onlinereview.project.Project;
+import com.cronos.onlinereview.project.Resource;
+import com.cronos.onlinereview.project.UserSimulator;
+import com.gargoylesoftware.htmlunit.html.HtmlTable;
+import com.gargoylesoftware.htmlunit.html.HtmlAnchor;
+import com.gargoylesoftware.htmlunit.html.HtmlTableBody;
+import com.gargoylesoftware.htmlunit.html.HtmlTableRow;
 import junit.framework.Assert;
 import org.dbunit.dataset.IDataSet;
 import org.dbunit.dataset.xml.FlatXmlDataSet;
 
 import java.io.InputStream;
 import java.util.Map;
-
-import com.cronos.onlinereview.project.AbstractTestCase;
-import com.cronos.onlinereview.project.UserSimulator;
-import com.cronos.onlinereview.project.Project;
-import com.cronos.onlinereview.project.Lookup;
-import com.cronos.onlinereview.project.Resource;
-import com.gargoylesoftware.htmlunit.html.HtmlTable;
+import java.util.List;
 
 /**
  * <p>A test case for <code>View My Project</code> Use Case.</p>
  *
  * @author  TCSDEVELOPER
  * @version 1.0
+ * @test-status Passed
+ * @test-date   10/16/2006
  */
 public class ViewMyProjectFunctionalTest extends AbstractTestCase {
 
@@ -91,8 +96,15 @@ public class ViewMyProjectFunctionalTest extends AbstractTestCase {
         String projectNameVersion = project.getName() + " version " + project.getVersion();
         String projectCategory = lookup.getProjectCategoryName(project.getCategoryId());
         HtmlTable table = this.user.findPageSectionTable(projectCategory);
-        for (int i = 2; i < table.getRowCount(); i++) {
-            if (table.getCellAt(i, 0).asText().trim().equals(projectNameVersion)) {
+        List links = table.getCellAt(0, 0).getHtmlElementsByTagName("a");
+        ((HtmlAnchor) links.get(0)).click();
+        table = this.user.findPageSectionTable(projectCategory);
+        printCurrentPage();
+        HtmlTableBody tbody = (HtmlTableBody) table.getHtmlElementsByTagName("tbody").get(0);
+        List rows = tbody.getHtmlElementsByTagName("tr");
+        for (int i = 0; i < rows.size(); i++) {
+            HtmlTableRow row = (HtmlTableRow) rows.get(i);
+            if (row.getCell(0).asText().trim().equals(projectNameVersion)) {
                 return;
             }
         }
