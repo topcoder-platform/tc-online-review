@@ -91,6 +91,7 @@
 					<html:option key="editProject.Phases.Days" value="days" />
 					<html:option key="editProject.Phases.Hrs" value="hrs" />
 				</html:select>
+				<div name="start_date_validation_msg" class="error" style="display:none"></div>
 			</td>
 			<td class="value" nowrap="nowrap">
 				<html:text styleClass="inputBoxDate" property="phase_end_date[${phaseIdx}]" />
@@ -100,6 +101,7 @@
 					<html:option key="editProject.Phases.PM" value="pm" />
 				</html:select>
 				<bean:message key="global.Timezone.EST" />
+				<div name="end_date_validation_msg" class="error" style="display:none"></div>
 			</td>
 			<td class="value">
 				<html:text styleClass="inputBoxDuration" property="phase_duration[${phaseIdx}]" />

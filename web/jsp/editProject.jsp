@@ -20,9 +20,9 @@
 	<script language="JavaScript" type="text/javascript" src="<html:rewrite page='/scripts/rollovers.js' />"><!-- @ --></script>
 	<script language="JavaScript" type="text/javascript" src="<html:rewrite page='/scripts/dojo.js' />"><!-- @ --></script>
 	<script language="JavaScript" type="text/javascript" src="<html:rewrite page='/scripts/util.js' />"><!-- @ --></script>
-
+	<script language="JavaScript" type="text/javascript" src="<html:rewrite page='/scripts/validation_util.js' />"><!-- @ --></script>
+	<script language="JavaScript" type="text/javascript" src="<html:rewrite page='/scripts/validation_edit_project.js' />"><!-- @ --></script>
 	<script language="JavaScript" type="text/javascript"><!--
-
 		// TODO: Write docs for following vars
 		var lastResourceIndex = ${fn:length(projectForm.map['resources_id']) - 1};
 		var lastPhaseIndex = ${fn:length(projectForm.map['phase_id']) - 1};
@@ -342,7 +342,7 @@
 				nextRowNode.parentNode.removeChild(nextRowNode);
 			}
 		}
-	--></script>
+	//--></script>
 </head>
 
 <body>
@@ -365,7 +365,7 @@
 				<jsp:include page="/includes/project/project_tabs.jsp" />
 
 				<div id="mainMiddleContent">
-					<html:form action="/actions/SaveProject">
+					<html:form action="/actions/SaveProject" onsubmit="return validate_form(this, true);">
 						<html:hidden property="method" value="saveProject" />
 
 						<%-- TODO: Validation errors display should be much more than is here --%>
@@ -394,7 +394,10 @@
 								</tr>
 								<tr>
 									<td class="valueB"><bean:message key="editProject.ProjectDetails.Name" /></td>
-									<td class="value" nowrap="nowrap"><html:text styleClass="inputBox" property="project_name" style="width: 350px;" /></td>
+									<td class="value" nowrap="nowrap">
+										<html:text styleClass="inputBox" property="project_name" style="width: 350px;" />
+										<div id="project_name_validation_msg" style="display:none" class="error"></div>
+									</td>
 								</tr>
 								<tr class="dark">
 									<td width="9%" class="valueB"><bean:message key="editProject.ProjectDetails.Type" /></td>
@@ -484,7 +487,10 @@
 							<c:if test="${not newProject}">
 								<tr>
 									<td class="valueB"><bean:message key="editProject.ProjectDetails.Name" /></td>
-									<td class="value" nowrap="nowrap"><html:text styleClass="inputBox" property="project_name" style="width: 350px;" /></td>
+									<td class="value" nowrap="nowrap">
+										<html:text styleClass="inputBox" property="project_name" style="width: 350px;" />
+										<div id="project_name_validation_msg" style="display:none" class="error"></div>
+									</td>
 								</tr>
 							</c:if>
 
@@ -494,6 +500,7 @@
 								</td>
 								<td class="value" nowrap="nowrap">
 									<html:text styleClass="inputBox" property="forum_id" style="width: 350px;" />
+									<div id="forum_id_validation_msg" style="display:none" class="error"></div>
 								</td>
 							</tr>
 							<tr class="dark">
