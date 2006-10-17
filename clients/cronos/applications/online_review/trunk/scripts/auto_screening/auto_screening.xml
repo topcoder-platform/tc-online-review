@@ -848,7 +848,7 @@
     </Config>
     <Config name="com.cronos.onlinereview.autoscreening.tool.ScreeningTool">
         <Property name="screening">
-            <Value>StartDTG:October 6, 2006 2:45:10 PM</Value>
+            <Value>StartDTG:October 17, 2006 10:16:25 AM</Value>
             <Value>EndDTG:</Value>
             <Value>IntervalValue:30</Value>
             <Value>IntervalUnit:SECOND</Value>

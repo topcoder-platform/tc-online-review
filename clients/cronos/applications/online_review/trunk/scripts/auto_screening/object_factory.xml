@@ -420,7 +420,7 @@
                         <Value>String</Value>
                     </Property>
                     <Property name="value">
-                        <Value>checkstyle.bat</Value>
+                        <Value>checkstyle.sh</Value>
                     </Property>
                 </Property>
                 <Property name="param2">
@@ -443,7 +443,7 @@
                         <Value>String</Value>
                     </Property>
                     <Property name="value">
-                        <Value>checkstyle_test.bat</Value>
+                        <Value>checkstyle_test.sh</Value>
                     </Property>
                 </Property>
                 <Property name="param2">

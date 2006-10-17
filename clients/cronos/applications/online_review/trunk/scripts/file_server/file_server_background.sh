@@ -1,1 +1,1 @@
-nohup ./file_sevrer.sh 1> file_sevrer.out 2> file_sevrer.err &
+nohup ./file_server.sh 1> file_server.out 2> file_server.err &
