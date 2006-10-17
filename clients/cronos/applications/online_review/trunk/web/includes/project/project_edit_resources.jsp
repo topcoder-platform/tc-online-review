@@ -24,14 +24,17 @@
 						<html:option key="ResourceRole.${fn:replace(role.name, ' ', '')}" value="${role.id}" />
 					</c:forEach>
 				</html:select>
+				<div name="role_validation_msg" class="error" style="display:none"></div>
 			</td>
 			<td class="value">
 				<html:text styleClass="inputBoxName" property="resources_name[${resourceIdx}]" />
+				<div name="name_validation_msg" class="error" style="display:none"></div>
 			</td>
 			<td class="value" nowrap="nowrap">
 				<html:radio property="resources_payment[${resourceIdx}]" value="true" />${"$"}
 				<html:text styleClass="inputBoxDuration" property="resources_payment_amount[${resourceIdx}]" />
-				<html:radio property="resources_payment[${resourceIdx}]" value="false" /><bean:message key="NotAvailable" />									
+				<html:radio property="resources_payment[${resourceIdx}]" value="false" /><bean:message key="NotAvailable" />
+				<div name="payment_validation_msg" class="error" style="display:none"></div>								
 			</td>
 			<td class="value" nowrap="nowrap">
 				<html:select styleClass="inputBox" property="resources_paid[${resourceIdx}]" style="width:120px;">
@@ -41,6 +44,7 @@
 					<html:option key="editProject.Resources.Paid.NotPaid" value="No" />
 					<html:option key="editProject.Resources.Paid.Paid" value="Yes" />
 				</html:select>
+				<div name="paid_validation_msg" class="error" style="display:none"></div>
 			</td>
 			<td class="valueC" nowrap="nowrap">
 				<c:if test="${resourceIdx eq 0}">
