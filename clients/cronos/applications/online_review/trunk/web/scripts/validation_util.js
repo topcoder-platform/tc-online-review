@@ -18,6 +18,16 @@ function isAllDigits(argvalue) {
     return true;
 }
 
+function isFloat(argvalue) {
+    argvalue = argvalue.toString();
+
+    var fValue = parseFloat(argvalue);
+    if (isNaN(fValue)) {
+        return false;
+    }
+    return true;
+}
+
 function isInteger(argvalue) {
     argvalue = argvalue.toString();
     

@@ -22,6 +22,7 @@
 	<script language="JavaScript" type="text/javascript" src="<html:rewrite page='/scripts/util.js' />"><!-- @ --></script>
 	<script language="JavaScript" type="text/javascript" src="<html:rewrite page='/scripts/validation_util.js' />"><!-- @ --></script>
 	<script language="JavaScript" type="text/javascript" src="<html:rewrite page='/scripts/validation_edit_project.js' />"><!-- @ --></script>
+	<script language="JavaScript" type="text/javascript" src="<html:rewrite page='/scripts/parseDate.js' />"><!-- @ --></script>
 	<script language="JavaScript" type="text/javascript"><!--
 		// TODO: Write docs for following vars
 		var lastResourceIndex = ${fn:length(projectForm.map['resources_id']) - 1};
@@ -203,7 +204,7 @@
 			
 			// Add the name of the added phase to the select options for add phase form
 			var whereCombo = getChildByName(addPhaseTable, "addphase_where");
-			//whereCombo.add(new Option(phaseName, phaseId), null);
+
 			var whereOption = document.createElement('option');
 			whereOption.text = phaseName;
 			whereOption.value = phaseId;
@@ -214,15 +215,14 @@
 			}
 
 			var startPhaseCombo = getChildByName(addPhaseTable, "addphase_start_phase");
-			//startPhaseCombo.add(new Option(phaseName, phaseId), null);
-                        var startPhaseOption = document.createElement('option');
+            var startPhaseOption = document.createElement('option');
 			startPhaseOption.text = phaseName;
 			startPhaseOption.value = phaseId;
-                        try {
-                                startPhaseCombo.add(startPhaseOption, null);
-                        } catch (ex) {
-                                startPhaseCombo.add(startPhaseOption, startPhaseCombo.selectedIndex);
-                        }
+            try {
+                startPhaseCombo.add(startPhaseOption, null);
+            } catch (ex) {
+                startPhaseCombo.add(startPhaseOption, startPhaseCombo.selectedIndex);
+            }
 
 			// Also add it to the phase rows
 			var startPhaseCombos = getChildrenByNamePrefix(document.documentElement, "phase_start_phase");
@@ -236,7 +236,6 @@
         	                        startPhaseCombos[i].add(startPhaseOption2, startPhaseCombos[i].selectedIndex);
 	                        }
 
-//				startPhaseCombos[i].add(new Option(phaseName, phaseId), null);
 			}
 
 			
