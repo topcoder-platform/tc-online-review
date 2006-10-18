@@ -3,6 +3,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="bean" uri="/tags/struts-bean" %>
 <%@ taglib prefix="html" uri="/tags/struts-html" %>
+<%@ taglib prefix="orfn" uri="/tags/or-functions" %>
 	<table class="stat" cellpadding="0" cellspacing="0" width="100%" style="table-layout: fixed; border-bottom: 1px solid #999999;">
 		<tr>
 			<td class="title" width="392"><bean:message key="viewProjectDetails.box.Timeline" /></td>
@@ -76,16 +77,12 @@
 								<td class="ganttRow">
 									<table>
 										<tr>
-											<c:if test="${ganttOffsets[phaseStatus.index] != 0}">
-												<td><html:img width="${ganttOffsets[phaseStatus.index] * pixelsPerHour}" page="/i/clear.gif" height="0" /></td>
+											<c:set var="ganttOffset" value="${orfn:getGanttLen(ganttOffsets[phaseStatus.index])}" />
+											<c:if test="${ganttOffset != 0}">
+												<td><html:img width="${ganttOffset}" page="/i/clear.gif" height="0" /></td>
 											</c:if>
-											<td class="phase"><div style="width:${ganttLengths[phaseStatus.index] * pixelsPerHour}px;"><bean:message key='ProjectPhase.${fn:replace(phase.phaseType.name, " ", "")}' /></div></td>
-											<c:if test="${ganttLengths[phaseStatus.index] <= 1}">
-												<td class="length">${ganttLengths[phaseStatus.index]} hr</td>
-											</c:if>
-											<c:if test="${ganttLengths[phaseStatus.index] > 1}">
-												<td class="length">${ganttLengths[phaseStatus.index]} hrs</td>
-											</c:if>
+											<td class="phase"><div style="width:${orfn:getGanttLen(ganttLengths[phaseStatus.index])}px;"><bean:message key='ProjectPhase.${fn:replace(phase.phaseType.name, " ", "")}' /></div></td>
+											<td class="length">${orfn:getGanttHours(pageContext, ganttLengths[phaseStatus.index])}</td>
 										</tr>
 									</table>
 								</td>
