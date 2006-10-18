@@ -279,22 +279,27 @@ function getAMPMDropDown(parent) {
         if (child.name && child.name.length >= "phase_start_AMPM".length && child.name.substring(0, "phase_start_AMPM".length) == "phase_start_AMPM") {
             return child;
         }
+        if (child.name && child.name.length >= "phase_end_AMPM".length && child.name.substring(0, "phase_end_AMPM".length) == "phase_end_AMPM") {
+            return child;
+        }
+
         child = child.nextSibling;
     }
     return null;
+
 }
 
 function checkTimeValues(hours, minutes, seconds, parent){
+
     var date = new Date();
     date.setHours(hours);
     date.setMinutes(minutes);
     date.setSeconds(seconds);
-    
     var returnHours = "";
     var returnMinutes = "";
     var returnAMPM = "";
-    
-    if (date.getHours() < 11){
+
+    if (date.getHours() <= 11){
         if (date.getHours()==0)
             returnHours = "12";
         else
@@ -310,10 +315,10 @@ function checkTimeValues(hours, minutes, seconds, parent){
         returnAMPM = "PM";
     }
     returnMinutes = ""+date.getMinutes();
-    if (date.getMinutes < 10)
+    if (returnMinutes.length == 1)
         returnMinutes = "0"+returnMinutes;
     if (minutes == 0)
-        returnMinutes +="0";
+        returnMinutes = "00";
 
     var ampmDropDown = getAMPMDropDown(parent);
 
@@ -325,5 +330,6 @@ function checkTimeValues(hours, minutes, seconds, parent){
     }
 
     return returnHours+":"+returnMinutes;
+
 }
 
