@@ -41,6 +41,11 @@
         <url-pattern>/ajaxSupport</url-pattern>
     </servlet-mapping>
 
+
+   <session-config>
+      <session-timeout>120</session-timeout>
+   </session-config>
+
     <!-- Struts Tag Library Descriptors -->
     <taglib>
         <taglib-uri>/tags/struts-bean</taglib-uri>
