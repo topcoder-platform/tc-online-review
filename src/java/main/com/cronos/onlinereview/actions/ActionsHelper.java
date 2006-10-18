@@ -80,6 +80,7 @@ import com.topcoder.management.project.ProjectManagerImpl;
 import com.topcoder.management.project.ProjectStatus;
 import com.topcoder.management.resource.Resource;
 import com.topcoder.management.resource.ResourceManager;
+import com.topcoder.management.resource.ResourceRole;
 import com.topcoder.management.resource.persistence.PersistenceResourceManager;
 import com.topcoder.management.resource.persistence.ResourcePersistence;
 import com.topcoder.management.resource.persistence.sql.SqlResourcePersistence;
@@ -447,6 +448,33 @@ public class ActionsHelper {
         for (int i = 0; i < projectStatuses.length; ++i) {
             if (projectStatuses[i].getName().equalsIgnoreCase(statusName)) {
                 return projectStatuses[i];
+            }
+        }
+        return null;
+    }
+
+    /**
+     * This static method searches for the resource role with the specified ID in a provided array
+     * of resource roles.
+     *
+     * @return found resource role, or <code>null</code> if a role with the specified ID has not
+     *         been found in the provided array of resource roles.
+     * @param resourceRoles
+     *            an array of resource roles to search for wanted resource role among.
+     * @param roleId
+     *            the ID of the needed resource role.
+     * @throws IllegalArgumentException
+     *             if <code>resourceRoles</code> parameter is <code>null</code>, or
+     *             <code>roleId</code> parameter is zero or negative.
+     */
+    public static ResourceRole findResourceRoleById(ResourceRole[] resourceRoles, long roleId) {
+        // Validate parameters
+        validateParameterNotNull(resourceRoles, "resourceRoles");
+        validateParameterPositive(roleId, "roleId");
+
+        for (int i = 0; i < resourceRoles.length; ++i) {
+            if (resourceRoles[i].getId() == roleId) {
+                return resourceRoles[i];
             }
         }
         return null;
