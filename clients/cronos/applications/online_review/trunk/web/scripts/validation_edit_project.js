@@ -117,9 +117,9 @@ function validate_resources(thisForm, msgList) {
         var payment = thisForm["resources_payment[" + i + "]"][0].checked;
         var payment_amount = thisForm["resources_payment_amount[" + i + "]"].value;
         if (payment) {
-            // if there is a payment, payment amount should be an integer
+            // if there is a payment, payment amount should be a float
             if (!isAllDigits(payment_amount) || !isFloat(payment_amount)) {
-            	msg = "Payment Amount should be an integer.";
+            	msg = "Payment Amount should be a currency value.";
             	add_error_message(msg, msgPrefix, msgDiv, msgList);
             }
         }
