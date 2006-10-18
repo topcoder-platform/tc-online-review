@@ -240,7 +240,6 @@ function getTimeString(timeString, ampmDropDown){
         var hours = parseInt(result[1], 10);
         if (result[4]!=null && result[4].match(/^a/i) && hours > 11) {
             ampmflag = true;
-            hours-=12;
         }
         else if (result[4]!=null && result[4].match(/^p/i) && hours < 12) {
             hours+=12;
@@ -258,7 +257,6 @@ function getTimeString(timeString, ampmDropDown){
         var hours = parseInt(result[1], 10);
         if (result[3]!=null && result[3].match(/^a/i) && hours > 11) {
             hours-=12;
-            ampmflag = true;
         }
         else if (result[3]!=null && result[3].match(/^p/i) && hours < 12) {
             hours+=12;
@@ -276,7 +274,6 @@ function getTimeString(timeString, ampmDropDown){
         var hours = parseInt(result[1], 10);
         if (result[2]!=null && result[2].match(/^a/i) && hours > 11) {
             hours-=12;
-            ampmflag = true;
         }
         else if (result[2]!=null && result[2].match(/^p/i) && hours < 12)
             hours+=12;
