@@ -97,7 +97,7 @@ function getDateString(dateString){
     expression = /tod/i;
     if (result = expression.exec(dateString)){
         var date = new Date();
-        return checkDateValues(date.getDate(), date.getMonth()+1, date.getYear());
+        return checkDateValues(date.getDate(), date.getMonth()+1, date.getFullYear());
     }
     
     //For string tomorrow
@@ -105,7 +105,7 @@ function getDateString(dateString){
     if (result = expression.exec(dateString)){
         var date = new Date();
         date.setDate(date.getDate()+1);
-        return checkDateValues(date.getDate(), date.getMonth()+1, date.getYear());
+        return checkDateValues(date.getDate(), date.getMonth()+1, date.getFullYear());
     }
     
     //For string yesterday
@@ -113,7 +113,7 @@ function getDateString(dateString){
     if (result = expression.exec(dateString)){
         var date = new Date();
         date.setDate(date.getDate()-1);
-        return checkDateValues(date.getDate(), date.getMonth()+1, date.getYear());
+        return checkDateValues(date.getDate(), date.getMonth()+1, date.getFullYear());
     }        
 
     //For last weekdays
@@ -126,7 +126,7 @@ function getDateString(dateString){
         if (subtractDays < 0)
             subtractDays+=6;
         date.setDate(date.getDate()-subtractDays);
-        return checkDateValues(date.getDate(), date.getMonth()+1, date.getYear());
+        return checkDateValues(date.getDate(), date.getMonth()+1, date.getFullYear());
     } 
     //For next weekdays
     expression = /next ((mon.*)|(tue.*)|(wed.*)|(thu.*)|(fri.*)|(sat.*)|(sun.*))/i;
@@ -138,7 +138,7 @@ function getDateString(dateString){
         if (addDays <= 0)
             addDays+=6;
         date.setDate(date.getDate()+addDays+1);
-        return checkDateValues(date.getDate(), date.getMonth()+1, date.getYear());
+        return checkDateValues(date.getDate(), date.getMonth()+1, date.getFullYear());
     }     
                 
     return 'Invalid';    
