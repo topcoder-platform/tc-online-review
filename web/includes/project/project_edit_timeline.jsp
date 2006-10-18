@@ -62,7 +62,7 @@
 				<html:hidden property="phase_name[${phaseIdx}]" />										
 				<html:radio property="phase_start_by_phase[${phaseIdx}]" value="false" /> 
 				<html:text onblur="JavaScript:this.value=getDateString(this.value);" styleClass="inputBoxDate" property="phase_start_date[${phaseIdx}]" />
-				<html:text onblur="JavaScript:this.value=getTimeString(this.value, this.nextSibling);" styleClass="inputBoxTime" property="phase_start_time[${phaseIdx}]" />
+				<html:text onblur="JavaScript:this.value=getTimeString(this.value, this.parentNode);" styleClass="inputBoxTime" property="phase_start_time[${phaseIdx}]" />
 				<html:select styleClass="inputBox" property="phase_start_AMPM[${phaseIdx}]">
 					<html:option key="editProject.Phases.AM" value="am" />
 					<html:option key="editProject.Phases.PM" value="pm" />
@@ -95,7 +95,7 @@
 			</td>
 			<td class="value" nowrap="nowrap">
 				<html:text onblur="JavaScript:this.value=getDateString(this.value);" styleClass="inputBoxDate" property="phase_end_date[${phaseIdx}]" />
-				<html:text onblur="JavaScript:this.value=getTimeString(this.value, this.nextSibling);" styleClass="inputBoxTime" property="phase_end_time[${phaseIdx}]" />
+				<html:text onblur="JavaScript:this.value=getTimeString(this.value, this.parentNode);" styleClass="inputBoxTime" property="phase_end_time[${phaseIdx}]" />
 				<html:select styleClass="inputBox" property="phase_end_AMPM[${phaseIdx}]">
 					<html:option key="editProject.Phases.AM" value="am" />
 					<html:option key="editProject.Phases.PM" value="pm" />
@@ -281,7 +281,7 @@
 		<td class="value" width="37%" nowrap="nowrap">
 			<html:radio property="addphase_start_by_phase" value="false" />
 			<html:text onblur="JavaScript:this.value=getDateString(this.value);" styleClass="inputBoxDate" property="addphase_start_date" />
-			<html:text onblur="JavaScript:this.value=getTimeString(this.value, this.nextSibling);" styleClass="inputBoxTime" property="addphase_start_time" />
+			<html:text onblur="JavaScript:this.value=getTimeString(this.value, this.parentNode);" styleClass="inputBoxTime" property="addphase_start_time" />
 			<html:select styleClass="inputBox" property="addphase_start_AMPM">
 				<html:option key="editProject.Phases.AM" value="am" />
 				<html:option key="editProject.Phases.PM" value="pm" />
@@ -311,7 +311,7 @@
 		</td>
       		<td class="value" width="18%" nowrap="nowrap">
 			<html:text onblur="JavaScript:this.value=getDateString(this.value);" styleClass="inputBoxDate" property="addphase_end_date" />
-			<html:text onblur="JavaScript:this.value=getTimeString(this.value, this.nextSibling);" styleClass="inputBoxTime" property="addphase_end_time" />
+			<html:text onblur="JavaScript:this.value=getTimeString(this.value, this.parentNode);" styleClass="inputBoxTime" property="addphase_end_time" />
 			<html:select styleClass="inputBox" property="addphase_end_AMPM">
 				<html:option key="editProject.Phases.AM" value="am" />
 				<html:option key="editProject.Phases.PM" value="pm" />

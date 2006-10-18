@@ -97,7 +97,8 @@ function getDateString(dateString){
     expression = /tod/i;
     if (result = expression.exec(dateString)){
         var date = new Date();
-        return (date.getMonth()+1)+"/"+date.getDate()+"/"+(""+date.getYear()).substring(2,4);
+        return checkDateValue(date.getDate(), date.getMonth()+1, date.getYear());
+//        return (date.getMonth()+1)+"/"+date.getDate()+"/"+(""+date.getYear()).substring(2,4);
     }
     
     //For string tomorrow
@@ -105,7 +106,7 @@ function getDateString(dateString){
     if (result = expression.exec(dateString)){
         var date = new Date();
         date.setDate(date.getDate()+1);
-        return (date.getMonth()+1)+"/"+date.getDate()+"/"+(""+date.getYear()).substring(2,4);
+        return checkDateValue(date.getDate(), date.getMonth()+1, date.getYear());
     }
     
     //For string yesterday
@@ -113,7 +114,7 @@ function getDateString(dateString){
     if (result = expression.exec(dateString)){
         var date = new Date();
         date.setDate(date.getDate()-1);
-        return (date.getMonth()+1)+"/"+date.getDate()+"/"+(""+date.getYear()).substring(2,4);
+        return checkDateValue(date.getDate(), date.getMonth()+1, date.getYear());
     }        
 
     //For last weekdays
@@ -126,7 +127,7 @@ function getDateString(dateString){
         if (subtractDays < 0)
             subtractDays+=6;
         date.setDate(date.getDate()-subtractDays);
-        return (date.getMonth()+1)+"/"+date.getDate()+"/"+(""+date.getYear()).substring(2,4);
+        return checkDateValue(date.getDate(), date.getMonth()+1, date.getYear());
     } 
     //For next weekdays
     expression = /next ((mon.*)|(tue.*)|(wed.*)|(thu.*)|(fri.*)|(sat.*)|(sun.*))/i;
@@ -138,7 +139,7 @@ function getDateString(dateString){
         if (addDays <= 0)
             addDays+=6;
         date.setDate(date.getDate()+addDays+1);
-        return (date.getMonth()+1)+"/"+date.getDate()+"/"+(""+date.getYear()).substring(2,4);
+        return checkDateValue(date.getDate(), date.getMonth()+1, date.getYear());
     }     
                 
     return 'Invalid';    
@@ -272,7 +273,19 @@ function getTimeString(timeString, ampmDropDown){
     return 'Invalid';
 }
 
-function checkTimeValues(hours, minutes, seconds, ampmDropDown){
+function getAMPMDropDown(parent) {
+    var child = parent.firstChild;
+
+    while (child) {
+        if (child.name.substring(0, "addphase_start_AMPM".length) == "addphase_start_AMPM") {
+            return child;
+        }
+        child = child.nextSibling;
+    }
+    return null;
+}
+
+function checkTimeValues(hours, minutes, seconds, parent){
     var date = new Date();
     date.setHours(hours);
     date.setMinutes(minutes);
@@ -302,6 +315,8 @@ function checkTimeValues(hours, minutes, seconds, ampmDropDown){
         returnMinutes = "0"+returnMinutes;
     if (minutes == 0)
         returnMinutes +="0";
+
+    var ampmDropDown = getAMPMDropDown(parent);
 
     for (var i = 0; i < ampmDropDown.options.length; i++) {
         if (ampmDropDown.options[i].value.toUpperCase() == returnAMPM) {
