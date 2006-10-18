@@ -237,11 +237,14 @@ function getTimeString(timeString, ampmDropDown){
     // This is for hh:mm:ss a|p
     var expression = /(\d{1,2}):(\d{1,2}):(\d{1,2})\s?(a|p)?/;
     if (result = expression.exec(timeString)){
-        var hours = result[1];
-        if (result[4]!=null && result[4].match(/^a/i) && hours > 11)
+        var hours = parseInt(result[1], 10);
+        if (result[4]!=null && result[4].match(/^a/i) && hours > 11) {
+            ampmflag = true;
             hours-=12;
-        else if (result[4]!=null && result[4].match(/^p/i) && hours < 12)
+        }
+        else if (result[4]!=null && result[4].match(/^p/i) && hours < 12) {
             hours+=12;
+        }
 	if (result[4]!=null && (result[4].match(/^a/i) || result[4].match(/^p/i))) {
 		ampmflag = true;
 	}        
@@ -252,11 +255,14 @@ function getTimeString(timeString, ampmDropDown){
     // This is for hh:mm a|p
     var expression = /(\d{1,2}):(\d{1,2})\s?(a|p)?/;
     if (result = expression.exec(timeString)){
-        var hours = result[1];
-        if (result[3]!=null && result[3].match(/^a/i) && hours > 11)
+        var hours = parseInt(result[1], 10);
+        if (result[3]!=null && result[3].match(/^a/i) && hours > 11) {
             hours-=12;
-        else if (result[3]!=null && result[3].match(/^p/i) && hours < 12)
+            ampmflag = true;
+        }
+        else if (result[3]!=null && result[3].match(/^p/i) && hours < 12) {
             hours+=12;
+        }
         if (result[4]!=null && (result[4].match(/^a/i) || result[4].match(/^p/i))) {
                 ampmflag = true;
         }
@@ -267,9 +273,11 @@ function getTimeString(timeString, ampmDropDown){
     // This is for hh a|p
     var expression = /(\d{1,2})\s?(a|p)?/;
     if (result = expression.exec(timeString)){
-        var hours = result[1];
-        if (result[2]!=null && result[2].match(/^a/i) && hours > 11)
+        var hours = parseInt(result[1], 10);
+        if (result[2]!=null && result[2].match(/^a/i) && hours > 11) {
             hours-=12;
+            ampmflag = true;
+        }
         else if (result[2]!=null && result[2].match(/^p/i) && hours < 12)
             hours+=12;
         if (result[2]!=null && (result[2].match(/^a/i) || result[2].match(/^p/i))) {
@@ -303,7 +311,6 @@ function getAMPMDropDown(parent) {
 }
 
 function checkTimeValues(hours, minutes, seconds, parent, ampmflag){
-
     var date = new Date();
     date.setHours(hours);
     date.setMinutes(minutes);
