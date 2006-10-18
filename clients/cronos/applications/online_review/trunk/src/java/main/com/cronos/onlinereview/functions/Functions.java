@@ -3,10 +3,20 @@
  */
 package com.cronos.onlinereview.functions;
 
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
+
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.jsp.JspException;
+import javax.servlet.jsp.PageContext;
+
+import org.apache.struts.Globals;
+import org.apache.struts.taglib.TagUtils;
+import org.apache.struts.util.MessageResources;
 
 import com.cronos.onlinereview.actions.ActionsHelper;
 import com.cronos.onlinereview.actions.AuthorizationHelper;
+import com.cronos.onlinereview.actions.ConfigHelper;
 
 /**
  * This class implements several helper-functions that can be used from JSP pages.
@@ -19,6 +29,12 @@ import com.cronos.onlinereview.actions.AuthorizationHelper;
  * @version 1.0
  */
 public final class Functions {
+
+    /**
+     * This static member variable is a constant that holds a formatting rule to format amount of
+     * minutes so that the number will be displayed with a leading zero.
+     */
+    private static final NumberFormat minutesFormat = new DecimalFormat("00");
 
     /**
      * This is the hidden constructor of the <code>Functions</code> class to prevent this class's
@@ -99,7 +115,7 @@ public final class Functions {
      * @param request
      *            an <code>HttpServletRequest</code> object. Normally, you should write the
      *            following: &quot;<code>pageContext.request</code>&quot; in a JSP page when you
-     *            call this method to pass it valid object.
+     *            call this method to pass a valid object to it.
      */
     public static Boolean isUserLoggedIn(HttpServletRequest request) {
         return new Boolean((request != null) ? AuthorizationHelper.isUserLoggedIn(request) : false);
@@ -119,7 +135,7 @@ public final class Functions {
      * @param request
      *            an <code>HttpServletRequest</code> object. Normally, you should write the
      *            following: &quot;<code>pageContext.request</code>&quot; in a JSP page when you
-     *            call this method to pass it valid object.
+     *            call this method to pass a valid object to it.
      */
     public static String getLoggedInUserId(HttpServletRequest request) {
         if (request == null) {
@@ -141,7 +157,7 @@ public final class Functions {
      * @param request
      *            an <code>HttpServletRequest</code> object. Normally, you should write the
      *            following: &quot;<code>pageContext.request</code>&quot; in a JSP page when you
-     *            call this method to pass it valid object.
+     *            call this method to pass a valid object to it.
      */
     public static Boolean isErrorsPresent(HttpServletRequest request) {
         if (request == null) {
@@ -149,5 +165,110 @@ public final class Functions {
         }
 
         return new Boolean(ActionsHelper.isErrorsPresent(request));
+    }
+
+    /**
+     * This static method returns message string loaded from default message resources currently set
+     * for this session or for entire application. If a message with the specified key was not found
+     * in message resources, this method returns empty string.
+     * <p>
+     * This method is an implementeation of <code>getMessage</code> function used from EL
+     * expressions in JSP pages.
+     * </p>
+     *
+     * @return retrieved message string that corresponds the specified key.
+     * @param pageContext
+     *            a <code>PageContext</code> object. Normally, you should write the following:
+     *            &quot;<code>pageContext</code>&quot; in a JSP page when you call this method
+     *            to pass a valid object to it.
+     * @param key
+     *            a key that the string to retrieve is stored under.
+     */
+    public static String getMessage(PageContext pageContext, String key) {
+        // Check that parameters are correct, and return empty string if that's not the case
+        if (pageContext == null || key == null) {
+            return null;
+        }
+
+        MessageResources messages = null;
+
+        try {
+            // Use a helper method from Struts framework to obtain Message Resources
+            messages = TagUtils.getInstance().retrieveMessageResources(pageContext, Globals.MESSAGES_KEY, false);
+        } catch (JspException e) {
+            return "";
+        }
+
+        if (messages == null) {
+            return "";
+        }
+
+        // Retrieve message string from Message Resources
+        String message = messages.getMessage(key);
+        // If the specified key exists, return a string for it, or return empty string otherwise
+        return (message != null) ? message : "";
+    }
+
+    /**
+     * This static method computes the amount of pixels to display for the specified time duration
+     * in minutes.
+     * <p>
+     * This method is an implementeation of <code>getMessage</code> function used from EL
+     * expressions in JSP pages.
+     * </p>
+     *
+     * @return amount of pixels for the specified time duration.
+     * @param minutes
+     *            a time duration, in minutes.
+     */
+    public static Integer getGanttLen(Integer minutes) {
+        // Return zero for incorrect input values
+        if (minutes == null || minutes.intValue() < 0) {
+            return new Integer(0);
+        }
+
+        // Compute the amount of pixels
+        return new Integer((minutes.intValue() * ConfigHelper.getPixelsPerHour()) / 60);
+    }
+
+    /**
+     * This static method returns string to display time duration, specified in minutes, in hours-minutes format.
+     * <p>
+     * This method is an implementeation of <code>getMessage</code> function used from EL
+     * expressions in JSP pages.
+     * </p>
+     *
+     * @return a string containing time duration in hours-minutes format.
+     * @param pageContext
+     *            a <code>PageContext</code> object. Normally, you should write the following:
+     *            &quot;<code>pageContext</code>&quot; in a JSP page when you call this method
+     *            to pass a valid object to it.
+     * @param minutes
+     *            a time duration, in minutes.
+     */
+    public static String getGanttHours(PageContext pageContext, Integer minutes) {
+        // Return empty string for incorrect input values
+        if (minutes == null || minutes.intValue() < 0) {
+            return "";
+        }
+
+        int mins = minutes.intValue();
+
+        // Special formatting is needed in case amount of minutes is not zero
+        if (mins % 60 != 0) {
+            // Compute amount of hours and minutes
+            int hour = mins / 60;
+            int min = mins - (hour * 60);
+
+            // Retrieve messages
+            String strHours = getMessage(pageContext, "global.hour.shortening");
+            String strMinutes = getMessage(pageContext, "global.minute.shortening");
+
+            // Form the resulting string
+            return hour + strHours + " " + minutesFormat.format(min) + strMinutes;
+        }
+
+        int hours = mins / 60;
+        return hours + " " + getMessage(pageContext, (hours == 1) ? "global.hour.singular" : "global.hour.plural");
     }
 }
