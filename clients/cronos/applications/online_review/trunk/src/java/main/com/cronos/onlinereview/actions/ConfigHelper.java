@@ -24,10 +24,11 @@ import com.topcoder.util.config.UnknownNamespaceException;
  * is not changed afterwards.
  * </p>
  *
- * @author TCSAssemblyTeam
+ * @author George1
+ * @author real_vg
  * @version 1.0
  */
-class ConfigHelper {
+public class ConfigHelper {
 
     /**
      * This member variable is a string constant that specifies the configurtaion namespace under
@@ -515,12 +516,12 @@ class ConfigHelper {
 
     /**
      * This static methods returns the amount of pixels that should be displayed for each hour in
-     * the propject's Gantt chart.
+     * the project's Gantt chart.
      *
      * @return a value that reporesent the amount of pixels per each hour.
      */
-    public static Integer getPixelsPerHour() {
-        return new Integer(pixelsPerHour);
+    public static int getPixelsPerHour() {
+        return pixelsPerHour;
     }
 
     /**
