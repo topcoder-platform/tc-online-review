@@ -1252,7 +1252,8 @@ public class ProjectActions extends DispatchAction {
 
         // Parse time string
         String[] timeParts = timeString.trim().split("[./:-]|([ ])+");
-        calendar.set(Calendar.HOUR, Integer.parseInt(timeParts[0]));
+        int hour = Integer.parseInt(timeParts[0]);
+        calendar.set(Calendar.HOUR, hour != 12 ? hour : 0);
         if (timeParts.length == 1) {
             calendar.set(Calendar.MINUTE, 0);
         } else {
@@ -1262,6 +1263,10 @@ public class ProjectActions extends DispatchAction {
         // Set am/pm property
         calendar.set(Calendar.AM_PM, "am".equals(ampmString) ? Calendar.AM : Calendar.PM);
 
+        // Set seconds, milliseconds
+        calendar.set(Calendar.SECOND, 0);
+        calendar.set(Calendar.MILLISECOND, 0);
+        
         // Returned parsed Date
         return calendar.getTime();
     }
