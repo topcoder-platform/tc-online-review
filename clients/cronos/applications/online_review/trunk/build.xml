@@ -226,7 +226,7 @@
     <property name="project_phase_template.path" value="project_phase_template/${project_phase_template.version}" />
     <property name="project_phase_template.jar" value="${tcs_libdir}/${project_phase_template.path}/${project_phase_template.jar.name}" />
 
-    <property name="resource_management.version" value="1.0" />
+    <property name="resource_management.version" value="1.0.1" />
     <property name="resource_management.jar.name" value="resource_management.jar" />
     <property name="resource_management.path" value="resource_management/${resource_management.version}" />
     <property name="resource_management.jar" value="${tcs_libdir}/${resource_management.path}/${resource_management.jar.name}" />
@@ -256,7 +256,7 @@
     <property name="review_score_aggregator.path" value="review_score_aggregator/${review_score_aggregator.version}" />
     <property name="review_score_aggregator.jar" value="${tcs_libdir}/${review_score_aggregator.path}/${review_score_aggregator.jar.name}" />
 
-    <property name="review_score_calculator.version" value="1.0" />
+    <property name="review_score_calculator.version" value="1.0.1" />
     <property name="review_score_calculator.jar.name" value="review_score_calculator.jar" />
     <property name="review_score_calculator.path" value="review_score_calculator/${review_score_calculator.version}" />
     <property name="review_score_calculator.jar" value="${tcs_libdir}/${review_score_calculator.path}/${review_score_calculator.jar.name}" />
@@ -276,7 +276,7 @@
     <property name="scorecard_management_persistence.path" value="scorecard_management_persistence/${scorecard_management_persistence.version}" />
     <property name="scorecard_management_persistence.jar" value="${tcs_libdir}/${scorecard_management_persistence.path}/${scorecard_management_persistence.jar.name}" />
 
-    <property name="search_builder.version" value="1.3" />
+    <property name="search_builder.version" value="1.3.1" />
     <property name="search_builder.jar.name" value="search_builder.jar" />
     <property name="search_builder.path" value="search_builder/${search_builder.version}" />
     <property name="search_builder.jar" value="${tcs_libdir}/${search_builder.path}/${search_builder.jar.name}" />
