@@ -691,11 +691,6 @@ public class ProjectReviewActions extends DispatchAction {
             // Retrieve some basic aggregation info and store it into the request
             retrieveAndStoreBasicAggregationInfo(request, verification, scorecardTemplate, "Aggregation");
 
-            // Get the word "of" for Test Case type of question
-            String wordOf = getResources(request).getMessage("editReview.Question.Response.TestCase.of");
-            // Plase the string into the request as attribute
-            request.setAttribute("wordOf", " "  + wordOf + " ");
-
             // Forward to preview page
             return mapping.findForward(Constants.PREVIEW_FORWARD_NAME);
         }
@@ -771,11 +766,6 @@ public class ProjectReviewActions extends DispatchAction {
 
         // Retrieve some basic aggregation info and store it into the request
         retrieveAndStoreBasicAggregationInfo(request, verification, scorecardTemplate, "Aggregation");
-
-        // Get the word "of" for Test Case type of question
-        String wordOf = getResources(request).getMessage("editReview.Question.Response.TestCase.of");
-        // Place the string into the request as attribute
-        request.setAttribute("wordOf", " "  + wordOf + " ");
 
         return mapping.findForward(Constants.SUCCESS_FORWARD_NAME);
     }
@@ -1174,11 +1164,6 @@ public class ProjectReviewActions extends DispatchAction {
         // Retrieve some basic aggregation info and store it into the request
         retrieveAndStoreBasicAggregationInfo(request, verification, scorecardTemplate, "AggregationReview");
 
-        // Get the word "of" for Test Case type of question
-        String wordOf = getResources(request).getMessage("editReview.Question.Response.TestCase.of");
-        // Place the string into the request as attribute
-        request.setAttribute("wordOf", " "  + wordOf + " ");
-
         return mapping.findForward(Constants.SUCCESS_FORWARD_NAME);
     }
 
@@ -1491,11 +1476,6 @@ public class ProjectReviewActions extends DispatchAction {
             // Update review object stored in the request
             request.setAttribute("review", review);
 
-            // Get the word "of" for Test Case type of question
-            String wordOf = getResources(request).getMessage("editReview.Question.Response.TestCase.of");
-            // Plase the string into the request as attribute
-            request.setAttribute("wordOf", " "  + wordOf + " ");
-
             // Forward to preview page
             return mapping.findForward(Constants.PREVIEW_FORWARD_NAME);
         }
@@ -1583,11 +1563,6 @@ public class ProjectReviewActions extends DispatchAction {
         }
 
         request.setAttribute("lastCommentIdxs", lastCommentIdxs);
-
-        // Get the word "of" for Test Case type of question
-        String wordOf = getResources(request).getMessage("editReview.Question.Response.TestCase.of");
-        // Place the string into the request as attribute
-        request.setAttribute("wordOf", " "  + wordOf + " ");
 
         return mapping.findForward(Constants.SUCCESS_FORWARD_NAME);
     }
@@ -1815,11 +1790,6 @@ public class ProjectReviewActions extends DispatchAction {
 
         // Store reviews in the request
         request.setAttribute("reviews", reviews);
-
-        // Get the word "of" for Test Case type of question
-        String wordOf = getResources(request).getMessage("editReview.Question.Response.TestCase.of");
-        // Plase the string into the request as attribute
-        request.setAttribute("wordOf", " "  + wordOf + " ");
 
         return mapping.findForward(Constants.SUCCESS_FORWARD_NAME);
     }
@@ -2427,11 +2397,6 @@ public class ProjectReviewActions extends DispatchAction {
         // Populate form properties
         reviewForm.set("answer", answers);
 
-        // Get the word "of" for Test Case type of question
-        String wordOf = getResources(request).getMessage("editReview.Question.Response.TestCase.of");
-        // Plase the string into the request as attribute
-        request.setAttribute("wordOf", " "  + wordOf + " ");
-
         return mapping.findForward(Constants.SUCCESS_FORWARD_NAME);
     }
 
@@ -2808,11 +2773,6 @@ public class ProjectReviewActions extends DispatchAction {
             // Retrieve some basic review info and store it in the request
             retrieveAndStoreBasicReviewInfo(request, verification, reviewType, scorecardTemplate);
 
-            // Get the word "of" for Test Case type of question
-            String wordOf = getResources(request).getMessage("editReview.Question.Response.TestCase.of");
-            // Plase the string into the request as attribute
-            request.setAttribute("wordOf", " "  + wordOf + " ");
-
             // Notify View page that this is actually a preview operation
             request.setAttribute("isPreview", Boolean.TRUE);
             // Forward to preview page
@@ -3045,11 +3005,6 @@ public class ProjectReviewActions extends DispatchAction {
         // Retrieve some basic review info and store it in the request
         retrieveAndStoreBasicReviewInfo(request, verification, reviewType, scorecardTemplate);
 
-        // Get the word "of" for Test Case type of question
-        String wordOf = getResources(request).getMessage("editReview.Question.Response.TestCase.of");
-        // Plase the string into the request as attribute
-        request.setAttribute("wordOf", " "  + wordOf + " ");
-
         return mapping.findForward(Constants.SUCCESS_FORWARD_NAME);
     }
 
@@ -3138,7 +3093,7 @@ public class ProjectReviewActions extends DispatchAction {
     /**
      * This static method validates Aggregation scorecard. Aggregation must have all its aggregate
      * functions to be specified, as well as all aggregator's comments entered for every item.
-     * 
+     *
      * @return <code>true</code> if aggregation scorecard passes validation, <code>false</code>
      *         if it fails it.
      * @param request
@@ -3347,7 +3302,7 @@ public class ProjectReviewActions extends DispatchAction {
     /**
      * This static method validates single comment at a time. The comment must have its text to be
      * non-null and non-empty string to be regarded as passing validation.
-     * 
+     *
      * @return <code>true<code> if validation succeeds, <code>false</code> if it doesn't.
      * @param request
      *            an <code>HttpServletRequest</code> object where validation error messages will
