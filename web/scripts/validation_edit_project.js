@@ -48,11 +48,12 @@ function validate_forum_id(thisForm, msgList) {
 	msgDiv.style.display = "none";
 	
 	var forum_id = thisForm["forum_id"].value;
-    if (!isAllDigits(forum_id) || !isInteger(forum_id)) {
-        msg = "Forum Id should be an integer [0, 2147483647].";
-	    add_error_message(msg, "", msgDiv, msgList);
+    if (forum_id.length > 0) {
+        if (!isAllDigits(forum_id) || !isInteger(forum_id)) {
+            msg = "Forum Id should be an integer [0, 2147483647].";
+	        add_error_message(msg, "", msgDiv, msgList);
+    	}
 	}
-	
 	return msg == null;
 }
 
@@ -117,14 +118,8 @@ function validate_resources(thisForm, msgList) {
         var payment_amount = thisForm["resources_payment_amount[" + i + "]"].value;
         if (payment) {
             // if there is a payment, payment amount should be an integer
-            if (!isAllDigits(payment_amount) || !isInteger(payment_amount)) {
+            if (!isAllDigits(payment_amount) || !isFloat(payment_amount)) {
             	msg = "Payment Amount should be an integer.";
-            	add_error_message(msg, msgPrefix, msgDiv, msgList);
-            }
-        } else {
-            // if there is no payment, payment amount should be empty
-            if (!emptyString.test(payment_amount) && payment_amount != "0") {
-                msg = "Payment Amount should be empty.";
             	add_error_message(msg, msgPrefix, msgDiv, msgList);
             }
         }
@@ -199,7 +194,9 @@ function validate_timeline(thisForm, msgList) {
             // if the phase starts by another phase, try to validate its additional days/hours
             
             var start_amount = thisForm["phase_start_amount[" + i + "]"].value;
-            if (!isAllDigits(start_amount) || !isInteger(start_amount)) {
+            if (start_amount == '') {
+                start_amount = 0;
+            }else if (!isAllDigits(start_amount) || !isInteger(start_amount)) {
                 msg = "Additional Days/Hours should be an integer.";
                 add_error_message(msg, msgPrefix, msgDiv, msgList);
             }
