@@ -11,7 +11,8 @@ package com.cronos.onlinereview.actions;
  * This class is thread safe as it contains only static methods and no inner state.
  * </p>
  * 
- * @author TCSAssemblyTeam
+ * @author George1
+ * @author real_vg
  * @version 1.0
  */
 final class LoggingHelper {
