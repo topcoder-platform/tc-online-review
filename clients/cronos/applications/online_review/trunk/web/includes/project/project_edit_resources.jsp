@@ -29,12 +29,13 @@
 			<td class="value">
 				<html:text styleClass="inputBoxName" property="resources_name[${resourceIdx}]" />
 				<div name="name_validation_msg" class="error" style="display:none"></div>
+				<div class="error"><html:errors property="resources_name[${resourceIdx}]" prefix="" suffix="" /></div>
 			</td>
 			<td class="value" nowrap="nowrap">
 				<html:radio property="resources_payment[${resourceIdx}]" value="true" />${"$"}
 				<html:text styleClass="inputBoxDuration" property="resources_payment_amount[${resourceIdx}]" />
 				<html:radio property="resources_payment[${resourceIdx}]" value="false" /><bean:message key="NotAvailable" />
-				<div name="payment_validation_msg" class="error" style="display:none"></div>								
+				<div name="payment_validation_msg" class="error" style="display:none"></div>
 			</td>
 			<td class="value" nowrap="nowrap">
 				<html:select styleClass="inputBox" property="resources_paid[${resourceIdx}]" style="width:120px;">
@@ -54,7 +55,7 @@
 				<html:hidden property="resources_action[${resourceIdx}]" />
 				<html:hidden property="resources_id[${resourceIdx}]" />
 			</td>
-	
+
 			<%-- TODO: Iterate through exisitng resources here (for edit page only) --%>
 		</tr>
 	</c:forEach>

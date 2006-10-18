@@ -196,12 +196,12 @@
 
 			// Create a new row to represent the phase
 			var newRow = cloneInputRow(document.getElementById("phase_row_template"));
-			
+
 			// Assign the id
 			newRow.id = phaseId;
 			// Remove "display: none;"
 			newRow.style["display"] = "";
-			
+
 			// Add the name of the added phase to the select options for add phase form
 			var whereCombo = getChildByName(addPhaseTable, "addphase_where");
 
@@ -230,7 +230,7 @@
                 	        var startPhaseOption2 = document.createElement('option');
 				startPhaseOption2.text = phaseName;
         	                startPhaseOption2.value = phaseId;
-	                        try {	
+	                        try {
                         	        startPhaseCombos[i].add(startPhaseOption2, null);
                 	        } catch (ex) {
         	                        startPhaseCombos[i].add(startPhaseOption2, startPhaseCombos[i].selectedIndex);
@@ -238,14 +238,13 @@
 
 			}
 
-			
 			// Set the phase id hidden control
 			var jsIdNode = getChildByNamePrefix(newRow, "phase_js_id");
 			jsIdNode.value = phaseId;
 
 			// Increase phase index
 			lastPhaseIndex++;
-			
+
 			// Rename all the inputs to have a new index
 			patchAllChildParamIndexes(newRow, lastPhaseIndex);
 
@@ -372,9 +371,9 @@
 							<table cellpadding="0" cellspacing="0" border="0">
 								<tr><td width="16"><!-- @ --></td><td><!-- @ --></td></tr>
 								<tr>
-									<td colspan="2"><bean:message key="error.com.cronos.onlinereview.Errors" /></td>
+									<td colspan="2"><span style="color:red;"><bean:message key="Error.saveReview.ValidationFailed" /></span></td>
 								</tr>
-								<html:errors />
+								<html:errors property="org.apache.struts.action.GLOBAL_MESSAGE" />
 							</table><br />
 						</c:if>
 

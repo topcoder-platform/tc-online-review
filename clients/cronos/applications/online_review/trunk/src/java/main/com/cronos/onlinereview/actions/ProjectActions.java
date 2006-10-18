@@ -21,7 +21,6 @@ import java.util.Stack;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.struts.Globals;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
@@ -626,8 +625,16 @@ public class ProjectActions extends DispatchAction {
         // FIXME: the project itself is also saved by the following call. Needs to be refactored
         Phase[] projectPhases = saveProjectPhases(newProject, request, lazyForm, project, phasesJsMap);
 
+        // If needed switch project current phase
+        if (!newProject) {
+            switchProjectPhase(request, lazyForm, projectPhases, phasesJsMap);
+        }
+
+        // Save the project resources
+        saveResources(newProject, request, lazyForm, project, projectPhases);
+
         // Check if there are any validation errors and return appropriate forward
-        if (request.getAttribute(Globals.ERROR_KEY) != null) {
+        if (ActionsHelper.isErrorsPresent(request)) {
             // TODO: Check if the form is really for new project
             request.setAttribute("newProject", Boolean.valueOf(newProject));
 
@@ -642,14 +649,6 @@ public class ProjectActions extends DispatchAction {
 
             return mapping.getInputForward();
         }
-
-        // If needed switch project current phase
-        if (!newProject) {
-            switchProjectPhase(request, lazyForm, projectPhases, phasesJsMap);
-        }
-
-        // Save the project resources
-        saveResources(newProject, request, lazyForm, project, projectPhases);
 
         // Return success forward
         return ActionsHelper.cloneForwardAndAppendToPath(
@@ -730,10 +729,10 @@ public class ProjectActions extends DispatchAction {
                 if (phaseId != -1) {
                     // Retrieve the phase with the specified id
                     phase = ActionsHelper.findPhaseById(oldPhases, phaseId);
-                    
+
                     // Clear all the pre-existing dependencies
                     phase.clearDependencies();
-                    
+
                     // Clear the previously set fixed start date
                     phase.setFixedStartDate(null);
 
@@ -763,22 +762,22 @@ public class ProjectActions extends DispatchAction {
 
         // Minimal date will be the project start date
         Date minDate = null;
-        
+
         // SECOND PASS
         for (int i = 1; i < phaseTypes.length; i++) {
             Object phaseObj = phasesJsMap.get(lazyForm.get("phase_js_id", i));
             // If phase is not found in map, it is to be deleted
             if (phaseObj == null) {
                 long phaseId = ((Long) lazyForm.get("phase_id", i)).longValue();
-                
+
                 if (phaseId != -1) {
                     // Retrieve the phase with the specified id
                     Phase phase = ActionsHelper.findPhaseById(oldPhases, phaseId);
-                
+
                     // TODO: Maybe phase should be canceled instead of jsut being removed.
                     phProject.removePhase(phase);
                 }
-                
+
                 // Skip further processing
                 continue;
             }
@@ -805,16 +804,16 @@ public class ProjectActions extends DispatchAction {
                         "phase_start_time", "phase_start_AMPM");
                 // Set phase fixed start date
                 phase.setFixedStartDate(phaseStartDate);
-                
+
                 // Check if the current date is minimal
                 if (minDate == null || phaseStartDate.getTime() < minDate.getTime()) {
                     minDate = phaseStartDate;
-                }                
+                }
             } else {
                 // Get the dependency phase
                 Phase dependencyPhase = (Phase) phasesJsMap.get(lazyForm.get("phase_start_phase", i));
-                
-                if (dependencyPhase != null) {                
+
+                if (dependencyPhase != null) {
                     boolean dependencyStart;
                     boolean dependantStart;
                     if ("ends".equals(lazyForm.get("phase_start_when", i))) {
@@ -824,16 +823,16 @@ public class ProjectActions extends DispatchAction {
                         dependencyStart = true;
                         dependantStart = true;
                     }
-    
+
                     long unitMutiplier = 1000 * 3600 * ("days".equals(lazyForm.get("phase_start_dayshrs", i)) ? 24 : 1);
                     long lagTime = unitMutiplier * ((Integer) lazyForm.get("phase_start_amount", i)).longValue();
-    
+
                     // Create phase Dependency
-                    Dependency dependency = new Dependency(dependencyPhase, phase, 
+                    Dependency dependency = new Dependency(dependencyPhase, phase,
                             dependencyStart, dependantStart, lagTime);
-    
+
                     // Add dependency to phase
-                    phase.addDependency(dependency);                
+                    phase.addDependency(dependency);
                 }
             }
 
@@ -868,7 +867,7 @@ public class ProjectActions extends DispatchAction {
                 phase.setAttribute("View Response During Appeals", viewAppealResponses.booleanValue() ? "Yes" : "No");
             }
         }
-        
+
         // Update project start date if needed
         if (minDate != null) {
             phProject.setStartDate(minDate);
@@ -1049,50 +1048,50 @@ public class ProjectActions extends DispatchAction {
             // Obtain an instance of Phase Manager
             PhaseManager phaseManager = ActionsHelper.createPhaseManager(request, true);
             for (; i < projectPhases.length; i++) {
-                logger.log(Level.INFO, "switchProjectPhase: " + projectPhases[i].getPhaseType().getName() + 
+                logger.log(Level.INFO, "switchProjectPhase: " + projectPhases[i].getPhaseType().getName() +
                         " is in " + projectPhases[i].getPhaseStatus().getName() + " state");
                 if (projectPhases[i] != newCurrentPhase) {
                     if (projectPhases[i].getPhaseStatus().getName().equals(PhaseStatus.OPEN.getName())) {
                         if (phaseManager.canEnd(projectPhases[i])) {
-                            logger.log(Level.INFO, "switchProjectPhase: " + projectPhases[i].getPhaseType().getName() + 
+                            logger.log(Level.INFO, "switchProjectPhase: " + projectPhases[i].getPhaseType().getName() +
                                     " is being closed");
                             phaseManager.end(projectPhases[i],
                                     Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
                         } else {
-                            logger.log(Level.INFO, "switchProjectPhase: " + projectPhases[i].getPhaseType().getName() + 
+                            logger.log(Level.INFO, "switchProjectPhase: " + projectPhases[i].getPhaseType().getName() +
                                     " cannot be closed");
                             // TODO: issue an error, or probably not?
                         }
                     } else if (projectPhases[i].getPhaseStatus().getName().equals(PhaseStatus.SCHEDULED.getName())) {
                         if (phaseManager.canStart(projectPhases[i])) {
-                            logger.log(Level.INFO, "switchProjectPhase: " + projectPhases[i].getPhaseType().getName() + 
+                            logger.log(Level.INFO, "switchProjectPhase: " + projectPhases[i].getPhaseType().getName() +
                                     " is being started");
                             phaseManager.start(projectPhases[i],
                                     Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
                         } else {
-                            logger.log(Level.INFO, "switchProjectPhase: " + projectPhases[i].getPhaseType().getName() + 
-                                    " cannot be started");                    
+                            logger.log(Level.INFO, "switchProjectPhase: " + projectPhases[i].getPhaseType().getName() +
+                                    " cannot be started");
                         }
                         if (phaseManager.canEnd(projectPhases[i])) {
-                            logger.log(Level.INFO, "switchProjectPhase: " + projectPhases[i].getPhaseType().getName() + 
+                            logger.log(Level.INFO, "switchProjectPhase: " + projectPhases[i].getPhaseType().getName() +
                                     " is being closed");
                             phaseManager.end(projectPhases[i],
                                     Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
-                            logger.log(Level.INFO, "switchProjectPhase: " + projectPhases[i].getPhaseType().getName() + 
-                                    " cannot be closed");                    
+                            logger.log(Level.INFO, "switchProjectPhase: " + projectPhases[i].getPhaseType().getName() +
+                                    " cannot be closed");
                         }
-                        
+
                     }
                 } else {
                     if (projectPhases[i].getPhaseStatus().getName().equals(PhaseStatus.SCHEDULED.getName())) {
                         if (phaseManager.canStart(projectPhases[i])) {
-                            logger.log(Level.INFO, "switchProjectPhase: " + projectPhases[i].getPhaseType().getName() + 
+                            logger.log(Level.INFO, "switchProjectPhase: " + projectPhases[i].getPhaseType().getName() +
                                     " is being started");
                             phaseManager.start(projectPhases[i],
                                     Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
                         } else {
-                            logger.log(Level.INFO, "switchProjectPhase: " + projectPhases[i].getPhaseType().getName() + 
-                                    " cannot be started");                                                
+                            logger.log(Level.INFO, "switchProjectPhase: " + projectPhases[i].getPhaseType().getName() +
+                                    " cannot be started");
                         }
                     }
                     break;
@@ -1266,22 +1265,23 @@ public class ProjectActions extends DispatchAction {
         // Set seconds, milliseconds
         calendar.set(Calendar.SECOND, 0);
         calendar.set(Calendar.MILLISECOND, 0);
-        
+
         // Returned parsed Date
         return calendar.getTime();
     }
 
     /**
      * TODO: Document it
-     * @param newProject
      *
+     * @param newProject
      * @param request
      * @param lazyForm
      * @param project
      * @throws BaseException
      */
-    private void saveResources(boolean newProject, HttpServletRequest request, LazyValidatorForm lazyForm, Project project, Phase[] projectPhases)
-            throws BaseException {
+    private void saveResources(boolean newProject, HttpServletRequest request,
+            LazyValidatorForm lazyForm, Project project, Phase[] projectPhases)
+        throws BaseException {
         // Obtain the instance of the User Retrieval
         UserRetrieval userRetrieval = ActionsHelper.createUserRetrieval(request);
 
@@ -1322,14 +1322,31 @@ public class ProjectActions extends DispatchAction {
                 continue;
             }
 
+            if (resourceNames[i] == null || resourceNames[i].trim().length() == 0) {
+                ActionsHelper.addErrorToRequest(request, "resources_name[" + i + "]",
+                        "error.com.cronos.onlinereview.actions.editProject.Resource.Empty");
+                continue;
+            }
+
+            // Get info about user with the specified handle
+            ExternalUser user = userRetrieval.retrieveUser(resourceNames[i]);
+
+            // If there is no user with such handle, indicate an error
+            if (user == null) {
+                ActionsHelper.addErrorToRequest(request, "resources_name[" + i + "]",
+                        "error.com.cronos.onlinereview.actions.editProject.Resource.NotFound");
+                continue;
+            }
+
             // Set resource properties
             resource.setProject(new Long(project.getId()));
-            for (int j = 0; j < resourceRoles.length; j++) {
-                if (resourceRoles[j].getId() == ((Long) lazyForm.get("resources_role", i)).longValue()) {
-                    resource.setResourceRole(resourceRoles[j]);
-                    break;
-                }
+
+            ResourceRole role = ActionsHelper.findResourceRoleById(
+                    resourceRoles, ((Long) lazyForm.get("resources_role", i)).longValue());
+            if (role != null) {
+                resource.setResourceRole(role);
             }
+
             resource.setProperty("Handle", resourceNames[i]);
             if (Boolean.TRUE.equals(lazyForm.get("resources_payment", i))) {
                 resource.setProperty("Payment", lazyForm.get("resources_payment_amount", i));
@@ -1348,10 +1365,6 @@ public class ProjectActions extends DispatchAction {
                 resource.setPhase(new Long(phase.getId()));
             }
 
-            // Get info about user with the specified handle
-            // TODO: Check if user exists
-            ExternalUser user = userRetrieval.retrieveUser(resourceNames[i]);
-
             // Set resource properties copied from external user
             resource.setProperty("External Reference ID", new Long(user.getId()));
             resource.setProperty("Email", user.getEmail());
@@ -1367,6 +1380,7 @@ public class ProjectActions extends DispatchAction {
                     resource.setProperty("Reliability", user.getDevReliability());
                 }
             }
+            // TODO: Handle actual registration event, and update the following only then
             // If resource is a submitter, screener or reviewer, store registration date
             if (resourceRole.equals("Submitter") || resourceRole.equals("Screener") ||
                     resourceRole.equals("Reviewer")) {
