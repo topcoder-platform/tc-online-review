@@ -219,7 +219,7 @@ public class ProjectDetailsActions extends DispatchAction {
         String[] originalEnd = new String[phases.length];
         String strOrigStartTime = messages.getMessage("viewProjectDetails.Timeline.OriginalStartTime") + " ";
         String strOrigEndTime = messages.getMessage("viewProjectDetails.Timeline.OriginalEndTime") + " ";
-        long projectStartTime = phProj.getStartDate().getTime();
+        long projectStartTime = phProj.getStartDate().getTime() / (60 * 1000);
         // The following two arrays are used to display Gantt chart
         long[] ganttOffsets = new long[phases.length];
         long[] ganttLengths = new long[phases.length];
@@ -234,15 +234,19 @@ public class ProjectDetailsActions extends DispatchAction {
             Date startDate = phase.calcStartDate();
             Date endDate = phase.calcEndDate();
 
+            // Get times in minutes
+            long startTime = startDate.getTime() / (60 * 1000);
+            long endTime = endDate.getTime() / (60 * 1000);
+
             // Determine the strings to display for start/end dates
             displayedStart[i] = format.format(startDate);
             originalStart[i] = strOrigStartTime + format.format(phase.getScheduledStartDate());
             displayedEnd[i] = format.format(endDate);
             originalEnd[i] = strOrigEndTime + format.format(phase.getScheduledEndDate());
 
-            // Determine offsets and lengths of the bars in Gantt chart, in hours
-            ganttOffsets[i] = (startDate.getTime() - projectStartTime) / (60 * 60 * 1000);
-            ganttLengths[i] = (endDate.getTime() - startDate.getTime()) / (60 * 60 * 1000);
+            // Determine offsets and lengths of the bars in Gantt chart, in minutes
+            ganttOffsets[i] = startTime - projectStartTime;
+            ganttLengths[i] = endTime - startTime;
 
             // Get a scorecard template associated with this phase if any
             Scorecard scorecardTemplate = ActionsHelper.getScorecardTemplateForPhase(
@@ -253,7 +257,7 @@ public class ProjectDetailsActions extends DispatchAction {
             }
         }
 
-        // This array will contain Open / Closing / Late / Closed codes for phases
+        // Collect Open / Closing / Late / Closed codes for phases
         int[] phaseStatuseCodes = getPhaseStatusCodes(phases, currentTime);
 
         /*
@@ -269,8 +273,6 @@ public class ProjectDetailsActions extends DispatchAction {
         // Place phases durations for Gantt chart
         request.setAttribute("ganttOffsets", ganttOffsets);
         request.setAttribute("ganttLengths", ganttLengths);
-        // Determine the amount of pixels to display in Gantt chart for every hour
-        request.setAttribute("pixelsPerHour", ConfigHelper.getPixelsPerHour());
         // Place information about used scorecard templates
         request.setAttribute("scorecardTemplates", scorecardTemplates);
 
