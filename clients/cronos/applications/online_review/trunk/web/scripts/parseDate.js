@@ -220,12 +220,9 @@ function checkDateValues(day, month, year){
     var returnDay = d.getDate();
     if (d.getDate() < 10)
         returnDay = "0"+returnDay;
-    var returnYear = d.getYear();
-    if (returnYear < 10)
-        returnYear = "0"+returnYear;
-    if (returnYear > 99)
-        returnYear = (""+returnYear).substring(2, 4);
-    return returnMonth+"."+returnDay+"."+returnYear;
+    var returnYear = ""+d.getFullYear();
+    return returnMonth+"."+returnDay+"."+returnYear.substring(2,4);
+
 }
 
 function getTimeString(timeString, ampmDropDown){
@@ -276,7 +273,7 @@ function getAMPMDropDown(parent) {
     var child = parent.firstChild;
 
     while (child) {
-        if (child.name.substring(0, "addphase_start_AMPM".length) == "addphase_start_AMPM") {
+        if (child.name && child.name.substring(0, "addphase_start_AMPM".length) == "addphase_start_AMPM") {
             return child;
         }
         child = child.nextSibling;
