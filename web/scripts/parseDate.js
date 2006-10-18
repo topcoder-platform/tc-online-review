@@ -273,7 +273,10 @@ function getAMPMDropDown(parent) {
     var child = parent.firstChild;
 
     while (child) {
-        if (child.name && child.name.substring(0, "addphase_start_AMPM".length) == "addphase_start_AMPM") {
+        if (child.name && child.name.length >= "addphase_start_AMPM".length && child.name.substring(0, "addphase_start_AMPM".length) == "addphase_start_AMPM") {
+            return child;
+        }
+        if (child.name && child.name.length >= "phase_start_AMPM".length && child.name.substring(0, "phase_start_AMPM".length) == "phase_start_AMPM") {
             return child;
         }
         child = child.nextSibling;
