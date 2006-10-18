@@ -1195,10 +1195,11 @@ public class ProjectActions extends DispatchAction {
                     arePhasesValid = false;
                 }
             } else if (projectPhases[i].getPhaseType().getName().equals(Constants.FINAL_FIX_PHASE_NAME)) {
-                // Final fix should follow either appeals response or aggregation review
+                // Final fix should follow either appeals response or aggregation review, or final review
                 if (i == 0 ||
                         (!projectPhases[i - 1].getPhaseType().getName().equals(Constants.APPEALS_RESPONSE_PHASE_NAME) &&
-                        !projectPhases[i - 1].getPhaseType().getName().equals(Constants.AGGREGATION_REVIEW_PHASE_NAME))) {
+                        !projectPhases[i - 1].getPhaseType().getName().equals(Constants.AGGREGATION_REVIEW_PHASE_NAME) &&
+                        !projectPhases[i - 1].getPhaseType().getName().equals(Constants.FINAL_REVIEW_PHASE_NAME))) {
                     ActionsHelper.addErrorToRequest(request,
                             "error.com.cronos.onlinereview.actions.editProject.FinalFixMustFollow");
                     arePhasesValid = false;
