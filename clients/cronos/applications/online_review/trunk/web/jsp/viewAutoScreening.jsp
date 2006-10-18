@@ -17,9 +17,9 @@
 	<link type="text/css" rel="stylesheet" href="<html:rewrite page='/css/tcStyles.css' />" />
 
 	<!-- CSS and JS by Petar -->
-	<link type="text/css" rel="stylesheet" href="<html:rewrite page='/css/new_styles.css' />" />
+	<link type="text/css" rel="stylesheet" href="<html:rewrite page='/css/or/new_styles.css' />" />
 	<script language="JavaScript" type="text/javascript"
-		src="<html:rewrite page='/scripts/rollovers.js' />"><!-- @ --></script>
+		src="<html:rewrite page='/js/or/rollovers.js' />"><!-- @ --></script>
 </head>
 
 <body>

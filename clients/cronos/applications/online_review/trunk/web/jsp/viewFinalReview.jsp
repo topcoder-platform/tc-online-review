@@ -18,9 +18,9 @@
 	<link type="text/css" rel="stylesheet" href="<html:rewrite page='/css/tcStyles.css' />" />
 
 	<!-- CSS and JS by Petar -->
-	<link type="text/css" rel="stylesheet" href="<html:rewrite page='/css/new_styles.css' />" />
+	<link type="text/css" rel="stylesheet" href="<html:rewrite page='/css/or/new_styles.css' />" />
 	<script language="JavaScript" type="text/javascript"
-		src="<html:rewrite page='/scripts/rollovers.js' />"><!-- @ --></script>
+		src="<html:rewrite page='/js/or/rollovers.js' />"><!-- @ --></script>
 </head>
 
 <body>
@@ -60,12 +60,12 @@
 									<tr class="light">
 										<td class="value" colspan="6">
 											<div class="showText" id="shortQ_${itemIdx}">
-												<a href="javascript:toggleDisplay('shortQ_${itemIdx}');toggleDisplay('longQ_${itemIdx}');" class="statLink"><html:img page="/i/plus.gif" altKey="global.plus.alt" border="0" /></a>
+												<a href="javascript:toggleDisplay('shortQ_${itemIdx}');toggleDisplay('longQ_${itemIdx}');" class="statLink"><html:img page="/i/or/plus.gif" altKey="global.plus.alt" border="0" /></a>
 												<b><bean:message key="editReview.Question.title" /> ${groupStatus.index + 1}.${sectionStatus.index + 1}.${questionStatus.index + 1}</b>
 												${orfn:htmlEncode(question.description)}
 											</div>
 											<div class="hideText" id="longQ_${itemIdx}">
-												<a href="javascript:toggleDisplay('shortQ_${itemIdx}');toggleDisplay('longQ_${itemIdx}');" class="statLink"><html:img page="/i/minus.gif" altKey="global.minus.alt" border="0" /></a>
+												<a href="javascript:toggleDisplay('shortQ_${itemIdx}');toggleDisplay('longQ_${itemIdx}');" class="statLink"><html:img page="/i/or/minus.gif" altKey="global.minus.alt" border="0" /></a>
 												<b><bean:message key="editReview.Question.title" /> ${groupStatus.index + 1}.${sectionStatus.index + 1}.${questionStatus.index + 1}</b>
 												${orfn:htmlEncode(question.description)}<br />
 												${orfn:htmlEncode(question.guideline)}

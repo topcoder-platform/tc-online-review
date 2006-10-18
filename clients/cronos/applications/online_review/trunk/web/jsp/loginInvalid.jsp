@@ -15,11 +15,11 @@
 	<link type="text/css" rel="stylesheet" href="<html:rewrite page='/css/tcStyles.css' />" />
 
 	<!-- CSS and JS from wireframes -->
-	<script language="javascript" type="text/javascript" src="<html:rewrite page='/scripts/expand_collapse.js' />"><!-- @ --></script>
+	<script language="javascript" type="text/javascript" src="<html:rewrite page='/js/or/expand_collapse.js' />"><!-- @ --></script>
 
 	<!-- CSS and JS by Petar -->
-	<link type="text/css" rel="stylesheet" href="<html:rewrite page='/css/new_styles.css' />" />
-	<script language="JavaScript" type="text/javascript" src="<html:rewrite page='/scripts/rollovers.js' />"><!-- @ --></script>
+	<link type="text/css" rel="stylesheet" href="<html:rewrite page='/css/or/new_styles.css' />" />
+	<script language="JavaScript" type="text/javascript" src="<html:rewrite page='/js/or/rollovers.js' />"><!-- @ --></script>
 </head>
 <body>
 

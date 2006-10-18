@@ -18,9 +18,9 @@
 	<link type="text/css" rel="stylesheet" href="<html:rewrite page='/css/tcStyles.css' />" />
 
 	<!-- CSS and JS by Petar -->
-	<link type="text/css" rel="stylesheet" href="<html:rewrite page='/css/new_styles.css' />" />
+	<link type="text/css" rel="stylesheet" href="<html:rewrite page='/css/or/new_styles.css' />" />
 	<script language="JavaScript" type="text/javascript"
-		src="<html:rewrite page='/scripts/rollovers.js' />"><!-- @ --></script>
+		src="<html:rewrite page='/js/or/rollovers.js' />"><!-- @ --></script>
 </head>
 
 <body>
@@ -77,11 +77,11 @@
 									<tr class="dark">
 										<td class="value" align="left">
 											<div class="showText" id="shortQ_resp_${itemIdx}" style="width: 100%;">
-												<a href="javascript:toggleDisplay('shortQ_resp_${itemIdx}');toggleDisplay('longQ_resp_${itemIdx}');" class="statLink"><html:img page="/i/plus.gif" alt="open" border="0" /></a>
+												<a href="javascript:toggleDisplay('shortQ_resp_${itemIdx}');toggleDisplay('longQ_resp_${itemIdx}');" class="statLink"><html:img page="/i/or/plus.gif" alt="open" border="0" /></a>
 												<b><bean:message key="editReview.Question.Response.plural" /></b>
 											</div>
 											<div class="hideText" id="longQ_resp_${itemIdx}">
-												<a href="javascript:toggleDisplay('shortQ_resp_${itemIdx}');toggleDisplay('longQ_resp_${itemIdx}');" class="statLink"><html:img page="/i/minus.gif" alt="close" border="0" /></a>
+												<a href="javascript:toggleDisplay('shortQ_resp_${itemIdx}');toggleDisplay('longQ_resp_${itemIdx}');" class="statLink"><html:img page="/i/or/minus.gif" alt="close" border="0" /></a>
 												<c:forEach items="${reviews}" var="review" varStatus="reviewStatus">
 												  	<c:set var="item" value="${review.allItems[itemIdx]}" />
 												  	<c:set var="commentNum" value="1" />

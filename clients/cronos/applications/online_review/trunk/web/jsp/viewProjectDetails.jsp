@@ -17,17 +17,17 @@
 	<link type="text/css" rel="stylesheet" href="<html:rewrite page='/css/tcStyles.css' />" />
 
 	<!-- CSS and JS by Petar -->
-	<link type="text/css" rel="stylesheet" href="<html:rewrite page='/css/new_styles.css' />" />
-	<link type="text/css" rel="stylesheet" href="<html:rewrite page='/css/phasetabs.css' />" />
+	<link type="text/css" rel="stylesheet" href="<html:rewrite page='/css/or/new_styles.css' />" />
+	<link type="text/css" rel="stylesheet" href="<html:rewrite page='/css/or/phasetabs.css' />" />
 	<script language="JavaScript" type="text/javascript"
-		src="<html:rewrite page='/scripts/rollovers.js' />"><!-- @ --></script>
+		src="<html:rewrite page='/js/or/rollovers.js' />"><!-- @ --></script>
 	<script language="JavaScript" type="text/javascript"
-		src="<html:rewrite page='/scripts/dojo.js' />"><!-- @ --></script>
+		src="<html:rewrite page='/js/or/dojo.js' />"><!-- @ --></script>
 	<script language="JavaScript" type="text/javascript">
 		var ajaxSupportUrl = "<html:rewrite page='/ajaxSupport' />";
 	</script>
 	<script language="JavaScript" type="text/javascript"
-		src="<html:rewrite page='/scripts/ajax.js' />"><!-- @ --></script>
+		src="<html:rewrite page='/js/or/ajax.js' />"><!-- @ --></script>
 
 <script language="JavaScript" type="text/javascript">
 	// send the Ajax request
