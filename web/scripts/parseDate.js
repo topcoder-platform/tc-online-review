@@ -232,6 +232,8 @@ function getTimeString(timeString, ampmDropDown){
     var result = null;
     var returnValue = null;
     
+    var ampmflag = false;
+
     // This is for hh:mm:ss a|p
     var expression = /(\d{1,2}):(\d{1,2}):(\d{1,2})\s?(a|p)?/;
     if (result = expression.exec(timeString)){
@@ -240,8 +242,11 @@ function getTimeString(timeString, ampmDropDown){
             hours-=12;
         else if (result[4]!=null && result[4].match(/^p/i) && hours < 12)
             hours+=12;
-        
-        return checkTimeValues(hours, result[2], result[3], ampmDropDown);
+	if (result[4]!=null && (result[4].match(/^a/i) || result[4].match(/^p/i))) {
+		ampmflag = true;
+	}        
+
+        return checkTimeValues(hours, result[2], result[3], ampmDropDown, ampmflag);
     }
     
     // This is for hh:mm a|p
@@ -252,7 +257,11 @@ function getTimeString(timeString, ampmDropDown){
             hours-=12;
         else if (result[3]!=null && result[3].match(/^p/i) && hours < 12)
             hours+=12;
-        return checkTimeValues(hours, result[2], 0, ampmDropDown);
+        if (result[4]!=null && (result[4].match(/^a/i) || result[4].match(/^p/i))) {
+                ampmflag = true;
+        }
+
+        return checkTimeValues(hours, result[2], 0, ampmDropDown, ampmflag);
     }   
     
     // This is for hh a|p
@@ -263,7 +272,11 @@ function getTimeString(timeString, ampmDropDown){
             hours-=12;
         else if (result[2]!=null && result[2].match(/^p/i) && hours < 12)
             hours+=12;
-        return checkTimeValues(hours, 0, 0, ampmDropDown);
+        if (result[2]!=null && (result[2].match(/^a/i) || result[2].match(/^p/i))) {
+                ampmflag = true;
+        }
+
+        return checkTimeValues(hours, 0, 0, ampmDropDown, ampmflag);
     }
          
     return 'Invalid';
@@ -289,7 +302,7 @@ function getAMPMDropDown(parent) {
 
 }
 
-function checkTimeValues(hours, minutes, seconds, parent){
+function checkTimeValues(hours, minutes, seconds, parent, ampmflag){
 
     var date = new Date();
     date.setHours(hours);
@@ -319,16 +332,17 @@ function checkTimeValues(hours, minutes, seconds, parent){
         returnMinutes = "0"+returnMinutes;
     if (minutes == 0)
         returnMinutes = "00";
+    
+    if (ampmflag) {
+	    var ampmDropDown = getAMPMDropDown(parent);
 
-    var ampmDropDown = getAMPMDropDown(parent);
-
-    for (var i = 0; i < ampmDropDown.options.length; i++) {
-        if (ampmDropDown.options[i].value.toUpperCase() == returnAMPM) {
-            ampmDropDown.selectedIndex = i;
-            break;
-        }
+	    for (var i = 0; i < ampmDropDown.options.length; i++) {
+        	if (ampmDropDown.options[i].value.toUpperCase() == returnAMPM) {
+	            ampmDropDown.selectedIndex = i;
+        	    break;
+	        }
+	    }
     }
-
     return returnHours+":"+returnMinutes;
 
 }
