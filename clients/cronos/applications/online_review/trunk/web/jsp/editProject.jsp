@@ -16,13 +16,13 @@
 	<link type="text/css" rel="stylesheet" href="<html:rewrite page='/css/tcStyles.css' />" />
 
 	<!-- CSS and JS by Petar -->
-	<link type="text/css" rel="stylesheet" href="<html:rewrite page='/css/new_styles.css' />" />
-	<script language="JavaScript" type="text/javascript" src="<html:rewrite page='/scripts/rollovers.js' />"><!-- @ --></script>
-	<script language="JavaScript" type="text/javascript" src="<html:rewrite page='/scripts/dojo.js' />"><!-- @ --></script>
-	<script language="JavaScript" type="text/javascript" src="<html:rewrite page='/scripts/util.js' />"><!-- @ --></script>
-	<script language="JavaScript" type="text/javascript" src="<html:rewrite page='/scripts/validation_util.js' />"><!-- @ --></script>
-	<script language="JavaScript" type="text/javascript" src="<html:rewrite page='/scripts/validation_edit_project.js' />"><!-- @ --></script>
-	<script language="JavaScript" type="text/javascript" src="<html:rewrite page='/scripts/parseDate.js' />"><!-- @ --></script>
+	<link type="text/css" rel="stylesheet" href="<html:rewrite page='/css/or/new_styles.css' />" />
+	<script language="JavaScript" type="text/javascript" src="<html:rewrite page='/js/or/rollovers.js' />"><!-- @ --></script>
+	<script language="JavaScript" type="text/javascript" src="<html:rewrite page='/js/or/dojo.js' />"><!-- @ --></script>
+	<script language="JavaScript" type="text/javascript" src="<html:rewrite page='/js/or/util.js' />"><!-- @ --></script>
+	<script language="JavaScript" type="text/javascript" src="<html:rewrite page='/js/or/validation_util.js' />"><!-- @ --></script>
+	<script language="JavaScript" type="text/javascript" src="<html:rewrite page='/js/or/validation_edit_project.js' />"><!-- @ --></script>
+	<script language="JavaScript" type="text/javascript" src="<html:rewrite page='/js/or/parseDate.js' />"><!-- @ --></script>
 	<script language="JavaScript" type="text/javascript"><!--
 		// TODO: Write docs for following vars
 		var lastResourceIndex = ${fn:length(projectForm.map['resources_id']) - 1};
