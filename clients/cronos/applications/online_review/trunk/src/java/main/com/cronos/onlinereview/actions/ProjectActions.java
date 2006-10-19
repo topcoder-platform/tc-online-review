@@ -630,8 +630,11 @@ public class ProjectActions extends DispatchAction {
             switchProjectPhase(request, lazyForm, projectPhases, phasesJsMap);
         }
 
-        // Save the project resources
-        saveResources(newProject, request, lazyForm, project, projectPhases);
+        // FIXME: resources must be saved even if there are validation errors to validate resources
+        if (!ActionsHelper.isErrorsPresent(request)) {
+            // Save the project resources
+            saveResources(newProject, request, lazyForm, project, projectPhases);
+        }
 
         // Check if there are any validation errors and return appropriate forward
         if (ActionsHelper.isErrorsPresent(request)) {
