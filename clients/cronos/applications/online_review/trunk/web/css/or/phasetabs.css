@@ -36,7 +36,7 @@
 	margin: 0px;
 	display: inline;
 	padding: 0 0 0 6px;
-	background-image: url(../i/or/tab_left_off.gif);
+	background-image: url(../../i/or/tab_left_off.gif);
 	background-repeat: no-repeat;
 	background-position: left top;
 }
@@ -54,7 +54,7 @@
 }
 
 #tablist a:hover { color: #000; }
-#tablist #current { background-image: url(../i/or/tab_left_on.gif); }
+#tablist #current { background-image: url(../../i/or/tab_left_on.gif); }
 
 #tablist #current a
 {
