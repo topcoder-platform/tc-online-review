@@ -310,7 +310,7 @@
                 <Value>file</Value>
             </Property>
             <Property name="EmailTemplateName">
-                <Value>/home/onlinereview2/email_template.txt</Value>
+                <Value>email_template.txt</Value>
             </Property>
             <Property name="EmailSubject">
                 <Value>Phase Start</Value>
@@ -324,7 +324,7 @@
                 <Value>file</Value>
             </Property>
             <Property name="EmailTemplateName">
-                <Value>/home/onlinereview2/email_template.txt</Value>
+                <Value>email_template.txt</Value>
             </Property>
             <Property name="EmailSubject">
                 <Value>Phase End</Value>
@@ -351,7 +351,7 @@
                 <Value>file</Value>
             </Property>
             <Property name="EmailTemplateName">
-                <Value>/home/onlinereview2/email_template.txt</Value>
+                <Value>email_template.txt</Value>
             </Property>
             <Property name="EmailSubject">
                 <Value>Phase Start</Value>
@@ -365,7 +365,7 @@
                 <Value>file</Value>
             </Property>
             <Property name="EmailTemplateName">
-                <Value>/home/onlinereview2/email_template.txt</Value>
+                <Value>email_template.txt</Value>
             </Property>
             <Property name="EmailSubject">
                 <Value>Phase End</Value>
@@ -392,7 +392,7 @@
                 <Value>file</Value>
             </Property>
             <Property name="EmailTemplateName">
-                <Value>/home/onlinereview2/email_template.txt</Value>
+                <Value>email_template.txt</Value>
             </Property>
             <Property name="EmailSubject">
                 <Value>Phase Start</Value>
@@ -406,7 +406,7 @@
                 <Value>file</Value>
             </Property>
             <Property name="EmailTemplateName">
-                <Value>/home/onlinereview2/email_template.txt</Value>
+                <Value>email_template.txt</Value>
             </Property>
             <Property name="EmailSubject">
                 <Value>Phase End</Value>
@@ -433,7 +433,7 @@
                 <Value>file</Value>
             </Property>
             <Property name="EmailTemplateName">
-                <Value>/home/onlinereview2/email_template.txt</Value>
+                <Value>email_template.txt</Value>
             </Property>
             <Property name="EmailSubject">
                 <Value>Phase Start</Value>
@@ -447,7 +447,7 @@
                 <Value>file</Value>
             </Property>
             <Property name="EmailTemplateName">
-                <Value>/home/onlinereview2/email_template.txt</Value>
+                <Value>email_template.txt</Value>
             </Property>
             <Property name="EmailSubject">
                 <Value>Phase End</Value>
@@ -474,7 +474,7 @@
                 <Value>file</Value>
             </Property>
             <Property name="EmailTemplateName">
-                <Value>/home/onlinereview2/email_template.txt</Value>
+                <Value>email_template.txt</Value>
             </Property>
             <Property name="EmailSubject">
                 <Value>Phase Start</Value>
@@ -488,7 +488,7 @@
                 <Value>file</Value>
             </Property>
             <Property name="EmailTemplateName">
-                <Value>/home/onlinereview2/email_template.txt</Value>
+                <Value>email_template.txt</Value>
             </Property>
             <Property name="EmailSubject">
                 <Value>Phase End</Value>
@@ -515,7 +515,7 @@
                 <Value>file</Value>
             </Property>
             <Property name="EmailTemplateName">
-                <Value>/home/onlinereview2/email_template.txt</Value>
+                <Value>email_template.txt</Value>
             </Property>
             <Property name="EmailSubject">
                 <Value>Phase Start</Value>
@@ -529,7 +529,7 @@
                 <Value>file</Value>
             </Property>
             <Property name="EmailTemplateName">
-                <Value>/home/onlinereview2/email_template.txt</Value>
+                <Value>email_template.txt</Value>
             </Property>
             <Property name="EmailSubject">
                 <Value>Phase End</Value>
@@ -556,7 +556,7 @@
                 <Value>file</Value>
             </Property>
             <Property name="EmailTemplateName">
-                <Value>/home/onlinereview2/email_template.txt</Value>
+                <Value>email_template.txt</Value>
             </Property>
             <Property name="EmailSubject">
                 <Value>Phase Start</Value>
@@ -570,7 +570,7 @@
                 <Value>file</Value>
             </Property>
             <Property name="EmailTemplateName">
-                <Value>/home/onlinereview2/email_template.txt</Value>
+                <Value>email_template.txt</Value>
             </Property>
             <Property name="EmailSubject">
                 <Value>Phase End</Value>
@@ -597,7 +597,7 @@
                 <Value>file</Value>
             </Property>
             <Property name="EmailTemplateName">
-                <Value>/home/onlinereview2/email_template.txt</Value>
+                <Value>email_template.txt</Value>
             </Property>
             <Property name="EmailSubject">
                 <Value>Phase Start</Value>
@@ -611,7 +611,7 @@
                 <Value>file</Value>
             </Property>
             <Property name="EmailTemplateName">
-                <Value>/home/onlinereview2/email_template.txt</Value>
+                <Value>email_template.txt</Value>
             </Property>
             <Property name="EmailSubject">
                 <Value>Phase End</Value>
@@ -638,7 +638,7 @@
                 <Value>file</Value>
             </Property>
             <Property name="EmailTemplateName">
-                <Value>/home/onlinereview2/email_template.txt</Value>
+                <Value>email_template.txt</Value>
             </Property>
             <Property name="EmailSubject">
                 <Value>Phase Start</Value>
@@ -652,7 +652,7 @@
                 <Value>file</Value>
             </Property>
             <Property name="EmailTemplateName">
-                <Value>/home/onlinereview2/email_template.txt</Value>
+                <Value>email_template.txt</Value>
             </Property>
             <Property name="EmailSubject">
                 <Value>Phase End</Value>
@@ -679,7 +679,7 @@
                 <Value>file</Value>
             </Property>
             <Property name="EmailTemplateName">
-                <Value>/home/onlinereview2/email_template.txt</Value>
+                <Value>email_template.txt</Value>
             </Property>
             <Property name="EmailSubject">
                 <Value>Phase Start</Value>
@@ -693,7 +693,7 @@
                 <Value>file</Value>
             </Property>
             <Property name="EmailTemplateName">
-                <Value>/home/onlinereview2/email_template.txt</Value>
+                <Value>email_template.txt</Value>
             </Property>
             <Property name="EmailSubject">
                 <Value>Phase End</Value>
@@ -720,7 +720,7 @@
                 <Value>file</Value>
             </Property>
             <Property name="EmailTemplateName">
-                <Value>/home/onlinereview2/email_template.txt</Value>
+                <Value>email_template.txt</Value>
             </Property>
             <Property name="EmailSubject">
                 <Value>Phase Start</Value>
@@ -734,13 +734,13 @@
                 <Value>file</Value>
             </Property>
             <Property name="EmailTemplateName">
-                <Value>/home/onlinereview2/email_template.txt</Value>
+                <Value>email_template.txt</Value>
             </Property>
             <Property name="EmailSubject">
                 <Value>Phase End</Value>
             </Property>
             <Property name="EmailFromAddress">
-                <Value>top_code@mail.ru</Value>
+                <Value>service@topcodersoftware.com</Value>
             </Property>
         </Property>
     </Config>
