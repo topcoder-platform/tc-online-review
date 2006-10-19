@@ -3282,6 +3282,16 @@ public class ProjectReviewActions extends DispatchAction {
             }
             return false;
         }
+        
+        Comment[] comments = item.getAllComments();
+        for (int i = 0; i < comments.length; i++) {
+            Comment comment = comments[i];
+            if (comment.getCommentType().getName().equalsIgnoreCase("Comment")) {
+                if (comment.getComment() == null || comment.getComment().trim().length() == 0) {
+                    item.removeComment(comment);
+                }
+            }
+        }
 
         // Success indicator
         boolean success = true;
@@ -3289,7 +3299,7 @@ public class ProjectReviewActions extends DispatchAction {
         for (int i = 0; i < item.getNumberOfComments(); ++i) {
             Comment comment = item.getComment(i);
             String commentType = comment.getCommentType().getName();
-            if (commentType.equalsIgnoreCase("Comment") || commentType.equalsIgnoreCase("Required") ||
+            if (commentType.equalsIgnoreCase("Required") ||
                     commentType.equalsIgnoreCase("Recommended")) {
                 success =
                     success && validateScorecardComment(request, comment, "comment(" + itemNum + "." + (i + 1) + ")");
