@@ -44,7 +44,7 @@
 
     <!-- Server installation directories -->
 	<property name="cactus.home.tomcat5x" value="C:\tools\tomcat5" />
-    <property name="deploy-dir" value="/home/onlinereview2/jboss-4.0.2/server/default/deploy/${distfilename}.war" />
+    <property name="deploy-dir" value="/home/onlinereview/jboss-4.0.2/server/default/deploy/${distfilename}.war" />
 
     <!-- EXECUTION TAGS -->
     <property name="debug" value="off" />
@@ -560,7 +560,7 @@
 
             <lib dir="${jar_tcs_libdir}" includes="*.jar" />
             <lib dir="${jar_ext_libdir}" includes="*.jar" />
-            <fileset dir="${webdir}" includes="**" />
+            <fileset dir="${webdir}" includes="**" excludes="i/**, js/**, css/**" />
         </war>
     </target>
 
