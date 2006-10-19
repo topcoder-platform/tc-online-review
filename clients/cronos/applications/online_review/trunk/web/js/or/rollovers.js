@@ -8,24 +8,24 @@ function img_inact(v) {
 }
 
 tab1off = new Image(119, 36);
-tab1off.src = "../i/or/tab_my_open_projects.gif";
+tab1off.src = "/i/or/tab_my_open_projects.gif";
 tab1on = new Image(119, 36);
-tab1on.src = "../i/or/tab_my_open_projects_o.gif";
+tab1on.src = "/i/or/tab_my_open_projects_o.gif";
 
 tab2off = new Image(119, 36);
-tab2off.src = "../i/or/tab_all_open_projects.gif";
+tab2off.src = "/i/or/tab_all_open_projects.gif";
 tab2on = new Image(119, 36);
-tab2on.src = "../i/or/tab_all_open_projects_o.gif";
+tab2on.src = "/i/or/tab_all_open_projects_o.gif";
 
 tab3off = new Image(119, 36);
-tab3off.src = "../i/or/tab_create_project.gif";
+tab3off.src = "/i/or/tab_create_project.gif";
 tab3on = new Image(119, 36);
-tab3on.src = "../i/or/tab_create_project_o.gif";
+tab3on.src = "/i/or/tab_create_project_o.gif";
 
 tab4off = new Image(119, 36);
-tab4off.src = "../i/or/tab_inactive_projects.gif";
+tab4off.src = "/i/or/tab_inactive_projects.gif";
 tab4on = new Image(119, 36);
-tab4on.src = "../i/or/tab_inactive_projects_o.gif";
+tab4on.src = "/i/or/tab_inactive_projects_o.gif";
 
 
 

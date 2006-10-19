@@ -17,7 +17,7 @@
 
         .centerer {
             width: 400px;
-            background-image: url( ../i/interface/errorBox.gif );
+            background-image: url( /i/interface/errorBox.gif );
             background-repeat: no-repeat;
             background-position: top center;
             text-align: left;
