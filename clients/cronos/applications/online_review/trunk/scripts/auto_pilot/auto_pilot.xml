@@ -772,22 +772,22 @@
 	  <!-- The defination for handler -->
 	  <Property name="handler_registration_def">
 		  <Property name="type">
-			  <Value>com.cronos.onlinereview.phases.RegistrationPhaseHandler</Value>
+			  <Value>com.cronos.onlinereview.phases.PRRegistrationPhaseHandler</Value>
 		  </Property>
 	  </Property>
 	  <Property name="handler_submission_def">
 		  <Property name="type">
-			  <Value>com.cronos.onlinereview.phases.SubmissionPhaseHandler</Value>
+			  <Value>com.cronos.onlinereview.phases.PRSubmissionPhaseHandler</Value>
 		  </Property>
 	  </Property>
 	  <Property name="handler_screening_def">
 		  <Property name="type">
-			  <Value>com.cronos.onlinereview.phases.ScreeningPhaseHandler</Value>
+			  <Value>com.cronos.onlinereview.phases.PRScreeningPhaseHandler</Value>
 		  </Property>
 	  </Property>
 	  <Property name="handler_review_def">
 		  <Property name="type">
-			  <Value>com.cronos.onlinereview.phases.ReviewPhaseHandler</Value>
+			  <Value>com.cronos.onlinereview.phases.PRReviewPhaseHandler</Value>
 		  </Property>
 	  </Property>
 	  <Property name="handler_appeals_def">
@@ -797,7 +797,7 @@
 	  </Property>
 	  <Property name="handler_appeals_response_def">
 		  <Property name="type">
-			  <Value>com.cronos.onlinereview.phases.AppealsResponsePhaseHandler</Value>
+			  <Value>com.cronos.onlinereview.phases.PRAppealResponsePhaseHandler</Value>
 		  </Property>
 	  </Property>
 	  <Property name="handler_aggregation_def">
