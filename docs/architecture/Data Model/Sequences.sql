@@ -7,15 +7,15 @@
 -- );
 
 INSERT INTO id_sequences(name, next_block_start, block_size, exhausted)
-  VALUES('scorecard_id_seq', 5000, 10, 0);
+  VALUES('scorecard_id_seq', 30000000, 10, 0);
 INSERT INTO id_sequences(name, next_block_start, block_size, exhausted)
   VALUES('scorecard_group_id_seq', 5000, 10, 0);
 INSERT INTO id_sequences(name, next_block_start, block_size, exhausted)
   VALUES('scorecard_section_id_seq', 5000, 10, 0);
 INSERT INTO id_sequences(name, next_block_start, block_size, exhausted)
-  VALUES('scorecard_question_id_seq', 5000, 10, 0);
+  VALUES('scorecard_question_id_seq', 30000000, 10, 0);
 INSERT INTO id_sequences(name, next_block_start, block_size, exhausted)
-  VALUES('project_id_seq', 5000, 10, 0);
+  VALUES('project_id_seq', 30000000, 10, 0);
 INSERT INTO id_sequences(name, next_block_start, block_size, exhausted)
   VALUES('project_phase_id_seq', 5000, 10, 0);
 INSERT INTO id_sequences(name, next_block_start, block_size, exhausted)
