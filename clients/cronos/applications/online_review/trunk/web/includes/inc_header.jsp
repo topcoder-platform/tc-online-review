@@ -84,13 +84,13 @@ div.launchPopUp {
 	<area shape="rect" alt="" coords="166,0,228,30" href="http://<%=ApplicationServer.SERVER_NAME%>/longcontest/?module=ViewActiveContests" onmouseover="popDescription('launch4')" onmouseout="hideDescription()" />
 </map>
 <div style="position:absolute; left:0px; top:31px;">
-	<html:img page="/i/interface/launchBar.gif" alt="" usemap="#launchBar"/>
+	<html:img src="/i/interface/launchBar.gif" alt="" usemap="#launchBar"/>
 </div>
 <div align="center" style="margin: 0px 290px 0px 280px;">
 	<div id="outerLogo">
 		<div id="innerLogo">
 			<A href="http://<%=ApplicationServer.SERVER_NAME%>/">
-				<html:img page="/i/interface/topcoder.gif" alt="TopCoder" /></A>
+				<html:img src="/i/interface/topcoder.gif" alt="TopCoder" /></A>
 		</div>
 	</div>
 </div>

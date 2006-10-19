@@ -8,8 +8,8 @@
 <html>
 <head>
     <title>TopCoder - Error</title>
-    <link type="text/css" rel="stylesheet" href="<html:rewrite page='/css/home.css' />"/>
-    <link type="image/x-icon" rel="shortcut icon" href="<html:rewrite page='/i/favicon.ico' />"/>
+    <link type="text/css" rel="stylesheet" href="<html:rewrite href='/css/home.css' />"/>
+    <link type="image/x-icon" rel="shortcut icon" href="<html:rewrite href='/i/favicon.ico' />"/>
     <STYLE TYPE="text/css">
         body {
             text-align: center;
@@ -44,7 +44,7 @@
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
     <tr>
         <td width="50%" class="homeLogo" align="left">
-            <A href="/"><html:img page="/i/home/TC_homeLogo.gif" alt="TopCoder" /></A></td>
+            <A href="/"><html:img src="/i/home/TC_homeLogo.gif" alt="TopCoder" /></A></td>
         <td width="50%" class="homeLogo" align="right">&#160;</td>
     </tr>
 </table>

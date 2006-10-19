@@ -3,7 +3,7 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="bean" uri="/tags/struts-bean" %>
 <%@ taglib prefix="html" uri="/tags/struts-html" %>
-<html:img page="/i/or/minus.gif" style="display:none;" /><%-- This image is used to precache "minus" image in Internet Explorer --%>
+<html:img src="/i/or/minus.gif" style="display:none;" /><%-- This image is used to precache "minus" image in Internet Explorer --%>
 <c:if test="${totalProjectsCount != 0}">
 	<c:forEach items="${projectTypes}" var="type" varStatus="idxrType">
 		<c:if test="${typeCounts[idxrType.index] != 0}">
@@ -15,7 +15,7 @@
 					<table class="scorecard" width="100%" cellpadding="0" cellspacing="0">
 						<tr>
     					<td class="title" colspan='${(isMyProjects) ? "7" : "5"}'>
-    						<html:img page="/i/${categoryIconNames[idxrCategory.index]}" alt="" width="25" height="17" border="0" align="right" />
+    						<html:img src="/i/${categoryIconNames[idxrCategory.index]}" alt="" width="25" height="17" border="0" align="right" />
     						<a onclick="return expcollHandler(this)" href="javascript:void(0)" id="Out${idxrCategory.index}" class="Outline"><html:img
     							styleId="Out${idxrCategory.index}i" styleClass="Outline" border="0" page="/i/or/plus.gif" width="9" height="9" style="margin-right:5px;" />
     							<bean:message key='ProjectCategory.${fn:replace(category.name, " ", "")}' /></a>
@@ -41,9 +41,9 @@
 									<td class="value" nowrap="nowrap" colspan="2" width="100%">
 	    							<table cellspacing="0" cellpadding="0" border="0">
 	    								<tr valign="middle">
-	    									<td><html:img page="/i/${categoryIconNames[idxrCategory.index]}" alt="" width="25" height="17" border="0" /></td>
-	    									<td><html:img page="/i/${rootCatalogIcons[idxrCategory.index][idxrProject.index]}" alt="${rootCatalogNames[idxrCategory.index][idxrProject.index]}" border="0" /></td>
-	    									<td><html:img page="/i/clear.gif" border="0" width="5" height="17" /></td>
+	    									<td><html:img src="/i/${categoryIconNames[idxrCategory.index]}" alt="" width="25" height="17" border="0" /></td>
+	    									<td><html:img src="/i/${rootCatalogIcons[idxrCategory.index][idxrProject.index]}" alt="${rootCatalogNames[idxrCategory.index][idxrProject.index]}" border="0" /></td>
+	    									<td><html:img src="/i/clear.gif" border="0" width="5" height="17" /></td>
 	    									<td>
 	    										<html:link page="/actions/ViewProjectDetails.do?method=viewProjectDetails&amp;pid=${project.id}"><strong>${project.allProperties["Project Name"]}</strong>
 	    											version ${project.allProperties["Project Version"]}</html:link></td>

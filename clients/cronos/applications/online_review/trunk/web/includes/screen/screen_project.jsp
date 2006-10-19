@@ -6,8 +6,8 @@
 						<table border="0" cellpadding="0" cellspacing="0" width="100%">
 							<tr>
 								<td>
-									<html:img page="/i/iconStatusSpecSm.gif" alt="" width="25" height="17" border="0" />
-									<html:img page="/i/javaSm.gif" alt="" border="0" /><span class="bodyTitle">Ajax Timed Survey </span><font size="4">version 1.0</font><br>
+									<html:img src="/i/iconStatusSpecSm.gif" alt="" width="25" height="17" border="0" />
+									<html:img src="/i/javaSm.gif" alt="" border="0" /><span class="bodyTitle">Ajax Timed Survey </span><font size="4">version 1.0</font><br>
 								</td>
 								<td align="right" valign="top">
 							<% if (role.equalsIgnoreCase("manager")) {%>
