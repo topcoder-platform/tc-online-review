@@ -34,10 +34,9 @@
             <Property name="namespace">
                 <Value>com.cronos.OnlineReview</Value>
             </Property>
-        		<Property name="logger_name">
-        			<Value>LoginActions</Value>
-        		</Property>
-
+            <Property name="logger_name">
+                <Value>LoginActions</Value>
+            </Property>
         </Property>
 
         <Property name="authenticator_name">
@@ -1306,6 +1305,16 @@
                 <Value>com.topcoder.db.connectionfactory.DBConnectionFactoryImpl</Value>
             </Property>
         </Property>
+        <Property name="ObjectFactoryNamespace">
+            <Value>com.topcoder.management.phase.ObjectFactory</Value>
+        </Property>
+        <Property name="Handlers">
+            <!-- All handlers are registered directly from application's code -->
+        </Property>
+    </Config>
+
+    <Config name="com.topcoder.management.phase.ObjectFactory">
+        <!-- All handlers are registered directly from application's code -->
     </Config>
 
 
@@ -1688,10 +1697,10 @@
                     <Value>
                         SELECT UNIQUE deliverable_id,
                                       resource_id
-                                 FROM deliverable_lu
-                           INNER JOIN resource
-                                   ON deliverable_lu.resource_role_id = resource.resource_role_id
-                                WHERE
+                                 FROM deliverable_lu,
+                                      resource
+                                WHERE deliverable_lu.resource_role_id = resource.resource_role_id
+                                  AND
                     </Value>
                 </Property>
                 <Property name="alias">
