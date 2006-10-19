@@ -5,10 +5,10 @@
     <property file="topcoder_global.properties" />
 
     <!-- COMPONENT PARAMETERS -->
-    <property name="component" value="auto_pilot" />
+    <property name="component" value="auto_screening" />
     <property name="package" value="com.topcoder.onlinereview" />
     <property name="packagedir" value="com/topcoder/onlinereview" />
-    <property name="distfilename" value="project_review_and_details" />
+    <property name="distfilename" value="auto_screening" />
     <property name="component_version" value="1.0" />
     <property name="component_path" value="${distfilename}/${component_version}" />
 
@@ -366,7 +366,7 @@
     </path>
 
 	<target name="dist">	
-		<jar destfile="auto_pilot_app.jar" filesonly="true">
+		<jar destfile="file_server_app.jar" filesonly="true">
 		    <fileset dir="../../lib/tcs">    
 		    	<include  name="**/*.jar"/>
 		    </fileset>
@@ -376,9 +376,8 @@
 		    	<include  name="xerces.jar"/> 
 		    </fileset>
 		    <fileset dir=".">    
-		    	<exclude  name="build.xml"/> 
+    			<include name="file_server.jar"/>
 		    	<include  name="**/*.xml"/>
-		    	<include  name="**/*.txt"/>
 		    	<include  name="**/*.properties"/>
 		    </fileset>
 		</jar>
@@ -386,30 +385,31 @@
 
 	<target name="deploy">	
         <mkdir dir="lib" />
-    	<unjar src="auto_pilot_app.jar" dest="lib">
+        <mkdir dir="server" />
+    	<unjar src="file_server_app.jar" dest="lib">
     		<patternset>
-    			<include name="**/*.jars"/>
+    			<include name="**/*.jar"/>
     		</patternset>
     	</unjar>
-    	<unjar src="auto_pilot_app.jar" dest=".">
+    	<unjar src="file_server_app.jar" dest=".">
     		<patternset>
+    			<include name="file_server.jar"/>
 		    	<include  name="**/*.xml"/>
-		    	<include  name="**/*.txt"/>
 		    	<include  name="**/*.properties"/>
     		</patternset>
     	</unjar>
 	</target>
-
-	<target name="auto_pilot">
-    	<java classname="com.topcoder.management.phase.autopilot.AutoPilotJob" fork="true">
-    		<arg line="-config auto_pilot.xml -namespace AutoPilotJob -autopilot com.topcoder.management.phase.autopilot.AutoPilot -poll 5" />
+	
+	<target name="file_server">
+    	<java classname="com.topcoder.onlinereview.SubmissionFileSystemServerTool" fork="true">
+    		<arg line="-config file_server.xml" />
     		<classpath refid="buildlibs" />
     	</java>
 	</target>
 
-	<target name="auto_pilot_background">
-    	<java classname="com.topcoder.management.phase.autopilot.AutoPilotJob" fork="true" spawn="true">
-    		<arg line="-config auto_pilot.xml -namespace AutoPilotJob -autopilot com.topcoder.management.phase.autopilot.AutoPilot -poll 5" />
+	<target name="file_server_background">
+    	<java classname="com.topcoder.onlinereview.SubmissionFileSystemServerTool" fork="true" spawn="true">
+    		<arg line="-config file_server.xml" />
     		<classpath refid="buildlibs" />
     	</java>
 	</target>

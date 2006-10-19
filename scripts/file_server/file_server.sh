@@ -13,9 +13,7 @@ CP=$CP:/home/onlinereview/online_review/lib/tcs/typesafe_enum/1.0/typesafe_enum.
 CP=$CP:/home/onlinereview/online_review/lib/tcs/file_system_server/1.0/file_system_server.jar
 CP=$CP:/home/onlinereview/online_review/lib/tcs/ip_server/2.0.1/ip_server.jar
 CP=$CP:/home/onlinereview/online_review/lib/third_party/xerces.jar
-CP=$CP:/home/onlinereview/online_review/lib/third_party/dom.jar 
 CP=$CP:/home/onlinereview/online_review/lib/third_party/log4j.jar
-CP=$CP:/home/onlinereview/online_review/lib/third_party/xml-api.jar
 CP=$CP:/home/onlinereview/online_review/lib/third_party/ifx-jdbc.jar
 CP=$CP:file_server.jar
 
