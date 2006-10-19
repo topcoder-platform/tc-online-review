@@ -9,15 +9,15 @@
 	<title><bean:message key="OnlineReviewApp.title" /></title>
 
 	<!-- TopCoder CSS -->
-	<link type="text/css" rel="stylesheet" href="<html:rewrite page='/css/style.css' />" />
-	<link type="text/css" rel="stylesheet" href="<html:rewrite page='/css/coders.css' />" />
-	<link type="text/css" rel="stylesheet" href="<html:rewrite page='/css/stats.css' />" />
-	<link type="text/css" rel="stylesheet" href="<html:rewrite page='/css/tcStyles.css' />" />
+	<link type="text/css" rel="stylesheet" href="<html:rewrite href='/css/style.css' />" />
+	<link type="text/css" rel="stylesheet" href="<html:rewrite href='/css/coders.css' />" />
+	<link type="text/css" rel="stylesheet" href="<html:rewrite href='/css/stats.css' />" />
+	<link type="text/css" rel="stylesheet" href="<html:rewrite href='/css/tcStyles.css' />" />
 
 	<!-- CSS and JS by Petar -->
-	<link type="text/css" rel="stylesheet" href="<html:rewrite page='/css/or/new_styles.css' />" />
+	<link type="text/css" rel="stylesheet" href="<html:rewrite href='/css/or/new_styles.css' />" />
 	<script language="JavaScript" type="text/javascript"
-		src="<html:rewrite page='/js/or/rollovers.js' />"><!-- @ --></script>
+		src="<html:rewrite href='/js/or/rollovers.js' />"><!-- @ --></script>
 </head>
 
 <body>
@@ -31,7 +31,7 @@
 			<!-- Left Column Ends -->
 
 			<!-- Gutter Begins -->
-			<td width="15"><html:img page="/i/clear.gif" width="15" height="1" border="0" /></td>
+			<td width="15"><html:img src="/i/clear.gif" width="15" height="1" border="0" /></td>
 			<!-- Gutter Ends -->
 
 			<!-- Center Column Begins -->
@@ -43,8 +43,8 @@
 					<div style="padding: 11px 6px 9px 0px;">
 						<table cellspacing="0" cellpadding="0" border="0">
 							<tr valign="middle">
-								<td><html:img page="/i/${categoryIconName}" alt="" border="0" /></td>
-								<td><html:img page="/i/${rootCatalogIcon}" alt="${rootCatalogName}" border="0" /></td>
+								<td><html:img src="/i/${categoryIconName}" alt="" border="0" /></td>
+								<td><html:img src="/i/${rootCatalogIcon}" alt="${rootCatalogName}" border="0" /></td>
 								<td>
 									<span class="bodyTitle">${project.allProperties["Project Name"]}</span>
 									<c:if test='${!(empty project.allProperties["Project Version"])}'>
@@ -81,11 +81,11 @@
 			<!-- Center Column Ends -->
 
 			<!-- Gutter -->
-			<td width="15"><html:img page="/i/clear.gif" width="25" height="1" border="0" /></td>
+			<td width="15"><html:img src="/i/clear.gif" width="25" height="1" border="0" /></td>
 			<!-- Gutter Ends -->
 
 			<!-- Gutter -->
-			<td width="2"><html:img page="/i/clear.gif" width="2" height="1" border="0" /></td>
+			<td width="2"><html:img src="/i/clear.gif" width="2" height="1" border="0" /></td>
 			<!-- Gutter Ends -->
 		</tr>
 	</table>

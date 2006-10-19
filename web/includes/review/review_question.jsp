@@ -5,12 +5,12 @@
 <%@ taglib prefix="orfn" uri="/tags/or-functions" %>
 	<td class="value" width="100%">
 		<div class="showText" id="shortQ_${itemIdx}">
-			<a href="javascript:toggleDisplay('shortQ_${itemIdx}');toggleDisplay('longQ_${itemIdx}');" class="statLink"><html:img page="/i/or/plus.gif" altKey="global.plus.alt" border="0" /></a>
+			<a href="javascript:toggleDisplay('shortQ_${itemIdx}');toggleDisplay('longQ_${itemIdx}');" class="statLink"><html:img src="/i/or/plus.gif" altKey="global.plus.alt" border="0" /></a>
 			<b><bean:message key="editReview.Question.title" /> ${groupStatus.index + 1}.${sectionStatus.index + 1}.${questionStatus.index + 1}</b>
 			${orfn:htmlEncode(question.description)}
 		</div>
 		<div class="hideText" id="longQ_${itemIdx}">
-			<a href="javascript:toggleDisplay('shortQ_${itemIdx}');toggleDisplay('longQ_${itemIdx}');" class="statLink"><html:img page="/i/or/minus.gif" altKey="global.minus.alt" border="0" /></a>
+			<a href="javascript:toggleDisplay('shortQ_${itemIdx}');toggleDisplay('longQ_${itemIdx}');" class="statLink"><html:img src="/i/or/minus.gif" altKey="global.minus.alt" border="0" /></a>
 			<b><bean:message key="editReview.Question.title" /> ${groupStatus.index + 1}.${sectionStatus.index + 1}.${questionStatus.index + 1}</b>
 			${orfn:htmlEncode(question.description)}<br />
 			${orfn:htmlEncode(question.guideline)}

@@ -43,13 +43,13 @@
 						<c:set var="devrStatus" value="${myDeliverableStatuses[deliverableStatus.index]}" />
 						<c:choose>
 							<c:when test="${deliverable.complete}">
-								<html:img page="/i/or/icon_authorization.gif" altKey="global.Completed" styleClass="Outline" />
+								<html:img src="/i/or/icon_authorization.gif" altKey="global.Completed" styleClass="Outline" />
 							</c:when>
 							<c:when test="${devrStatus == 1}">
-								<html:img page="/i/or/icon_notification.gif" altKey="global.DeadlineNear" styleClass="Outline" />
+								<html:img src="/i/or/icon_notification.gif" altKey="global.DeadlineNear" styleClass="Outline" />
 							</c:when>
 							<c:when test="${devrStatus == 2}">
-								<html:img page="/i/or/icon_warning.gif" altKey="global.Late" styleClass="Outline" />
+								<html:img src="/i/or/icon_warning.gif" altKey="global.Late" styleClass="Outline" />
 							</c:when>
 						</c:choose>
 						${myDeliverableDates[deliverableStatus.index]}
@@ -76,13 +76,13 @@
 						<c:set var="devrStatus" value="${outstandingDeliverableStatuses[deliverableStatus.index]}" />
 						<c:choose>
 							<c:when test="${deliverable.complete}">
-								<html:img page="/i/or/icon_authorization.gif" altKey="global.Completed" styleClass="Outline" />
+								<html:img src="/i/or/icon_authorization.gif" altKey="global.Completed" styleClass="Outline" />
 							</c:when>
 							<c:when test="${devrStatus == 1}">
-								<html:img page="/i/or/icon_notification.gif" altKey="global.DeadlineNear" styleClass="Outline" />
+								<html:img src="/i/or/icon_notification.gif" altKey="global.DeadlineNear" styleClass="Outline" />
 							</c:when>
 							<c:when test="${devrStatus == 2}">
-								<html:img page="/i/or/icon_warning.gif" altKey="global.Late" styleClass="Outline" />
+								<html:img src="/i/or/icon_warning.gif" altKey="global.Late" styleClass="Outline" />
 							</c:when>
 						</c:choose>
 						${outstandingDeliverableDates[deliverableStatus.index]}

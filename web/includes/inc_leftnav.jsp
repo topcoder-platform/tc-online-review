@@ -1,6 +1,6 @@
 <%@ page import="com.topcoder.shared.util.ApplicationServer" %>
 <%@ taglib prefix="html" uri="/tags/struts-html" %>
-	<script language="JavaScript" type="text/javascript" src="<html:rewrite page='/js/arena.js' />"></script>
+	<script language="JavaScript" type="text/javascript" src="<html:rewrite href='/js/arena.js' />"></script>
 	<script language="javascript" type="text/javascript">
 	<!--
 		function toggleMenu(menuTitle,menuID) {
@@ -24,7 +24,7 @@
 
 	<!--node is des_contest_status -->
 	<div style="float: left; padding: 0px 0px 0px 0px;">
-		<html:img page="/i/interface/leftnav_top.gif" alt="" /></div>
+		<html:img src="/i/interface/leftnav_top.gif" alt="" /></div>
 	<div id="navbar">
 
 	<ul>
@@ -213,5 +213,5 @@
 		</div>
 	</div>
 	<div style="float: left; clear:left; padding: 0px 0px 23px 0px;">
-		<html:img page="/i/interface/leftnav_bottom.gif" alt="" />
+		<html:img src="/i/interface/leftnav_bottom.gif" alt="" />
 	</div>

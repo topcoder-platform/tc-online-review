@@ -27,7 +27,7 @@
 
     <tr>
 		<td height="4" class="footerStripe">
-			<html:img page="/i/corp/clear.gif" width="10" height="4" border="0" />
+			<html:img src="/i/corp/clear.gif" width="10" height="4" border="0" />
 		</td>
 	</tr>
     <tr>

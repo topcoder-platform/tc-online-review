@@ -12,15 +12,15 @@
 	<title><bean:message key="OnlineReviewApp.title" /></title>
 
 	<!-- TopCoder CSS -->
-	<link type="text/css" rel="stylesheet" href="<html:rewrite page='/css/style.css' />" />
-	<link type="text/css" rel="stylesheet" href="<html:rewrite page='/css/coders.css' />" />
-	<link type="text/css" rel="stylesheet" href="<html:rewrite page='/css/stats.css' />" />
-	<link type="text/css" rel="stylesheet" href="<html:rewrite page='/css/tcStyles.css' />" />
+	<link type="text/css" rel="stylesheet" href="<html:rewrite href='/css/style.css' />" />
+	<link type="text/css" rel="stylesheet" href="<html:rewrite href='/css/coders.css' />" />
+	<link type="text/css" rel="stylesheet" href="<html:rewrite href='/css/stats.css' />" />
+	<link type="text/css" rel="stylesheet" href="<html:rewrite href='/css/tcStyles.css' />" />
 
 	<!-- CSS and JS by Petar -->
-	<link type="text/css" rel="stylesheet" href="<html:rewrite page='/css/or/new_styles.css' />" />
+	<link type="text/css" rel="stylesheet" href="<html:rewrite href='/css/or/new_styles.css' />" />
 	<script language="JavaScript" type="text/javascript"
-		src="<html:rewrite page='/js/or/rollovers.js' />"><!-- @ --></script>
+		src="<html:rewrite href='/js/or/rollovers.js' />"><!-- @ --></script>
 </head>
 
 <body>
@@ -34,7 +34,7 @@
 			<!-- Left Column Ends -->
 
 			<!-- Gutter Begins -->
-			<td width="15"><html:img page="/i/clear.gif" width="15" height="1" border="0" /></td>
+			<td width="15"><html:img src="/i/clear.gif" width="15" height="1" border="0" /></td>
 			<!-- Gutter Ends -->
 
 			<!-- Center Column Begins -->
@@ -61,12 +61,12 @@
 									<tr class="light">
 										<td class="value" width="100%" colspan="5">
 											<div class="showText" id="shortQ_${itemIdx}">
-												<a href="javascript:toggleDisplay('shortQ_${itemIdx}');toggleDisplay('longQ_${itemIdx}');" class="statLink"><html:img page="/i/or/plus.gif" altKey="global.plus.alt" border="0" /></a>
+												<a href="javascript:toggleDisplay('shortQ_${itemIdx}');toggleDisplay('longQ_${itemIdx}');" class="statLink"><html:img src="/i/or/plus.gif" altKey="global.plus.alt" border="0" /></a>
 												<b><bean:message key="editReview.Question.title" /> ${groupStatus.index + 1}.${sectionStatus.index + 1}.${questionStatus.index + 1}</b>
 												${orfn:htmlEncode(question.description)}
 											</div>
 											<div class="hideText" id="longQ_${itemIdx}">
-												<a href="javascript:toggleDisplay('shortQ_${itemIdx}');toggleDisplay('longQ_${itemIdx}');" class="statLink"><html:img page="/i/or/minus.gif" altKey="global.minus.alt" border="0" /></a>
+												<a href="javascript:toggleDisplay('shortQ_${itemIdx}');toggleDisplay('longQ_${itemIdx}');" class="statLink"><html:img src="/i/or/minus.gif" altKey="global.minus.alt" border="0" /></a>
 												<b><bean:message key="editReview.Question.title" /> ${groupStatus.index + 1}.${sectionStatus.index + 1}.${questionStatus.index + 1}</b>
 												${orfn:htmlEncode(question.description)}<br />
 												${orfn:htmlEncode(question.guideline)}
@@ -141,7 +141,7 @@
 																		<c:if test="${resource.id == comment.author}">
 																			<div class="showText" id="shortR_${respIdx}">
 																				<c:if test="${!(empty comment.comment)}">
-																					<a href="javascript:toggleDisplay('shortR_${respIdx}');toggleDisplay('longR_${respIdx}');" class="statLink"><html:img page="/i/or/plus.gif" altKey="global.plus.alt" border="0" /></a>
+																					<a href="javascript:toggleDisplay('shortR_${respIdx}');toggleDisplay('longR_${respIdx}');" class="statLink"><html:img src="/i/or/plus.gif" altKey="global.plus.alt" border="0" /></a>
 																				</c:if>
 																				<b><bean:message key='ResourceRole.${fn:replace(resource.resourceRole.name, " ", "")}' />
 																				(<tc-webtag:handle coderId='${resource.allProperties["External Reference ID"]}' context="component" />)
@@ -150,7 +150,7 @@
 																			</div>
 																			<c:if test="${!(empty comment.comment)}">
 																				<div class="hideText" id="longR_${respIdx}">
-																					<a href="javascript:toggleDisplay('shortR_${respIdx}');toggleDisplay('longR_${respIdx}');" class="statLink"><html:img page="/i/or/minus.gif" altKey="global.minus.alt" border="0" /></a>
+																					<a href="javascript:toggleDisplay('shortR_${respIdx}');toggleDisplay('longR_${respIdx}');" class="statLink"><html:img src="/i/or/minus.gif" altKey="global.minus.alt" border="0" /></a>
 																					<b><bean:message key='ResourceRole.${fn:replace(resource.resourceRole.name, " ", "")}' />
 																					(<tc-webtag:handle coderId='${resource.allProperties["External Reference ID"]}' context="component" />)
 																					<bean:message key="viewAggregationReview.Response" /></b>
@@ -165,7 +165,7 @@
 																<c:when test='${(submitterResource.id == comment.author) && (commentType == "Submitter Comment")}'>
 																	<div class="showText" id="shortR_${respIdx}">
 																		<c:if test="${!(empty comment.comment)}">
-																			<a href="javascript:toggleDisplay('shortR_${respIdx}');toggleDisplay('longR_${respIdx}');" class="statLink"><html:img page="/i/or/plus.gif" altKey="global.plus.alt" border="0" /></a>
+																			<a href="javascript:toggleDisplay('shortR_${respIdx}');toggleDisplay('longR_${respIdx}');" class="statLink"><html:img src="/i/or/plus.gif" altKey="global.plus.alt" border="0" /></a>
 																		</c:if>
 																		<b><bean:message key='ResourceRole.${fn:replace(submitterResource.resourceRole.name, " ", "")}' />
 																		<bean:message key="viewAggregationReview.Response" /></b>
@@ -173,7 +173,7 @@
 																	</div>
 																	<c:if test="${!(empty comment.comment)}">
 																		<div class="hideText" id="longR_${respIdx}">
-																			<a href="javascript:toggleDisplay('shortR_${respIdx}');toggleDisplay('longR_${respIdx}');" class="statLink"><html:img page="/i/or/minus.gif" altKey="global.minus.alt" border="0" /></a>
+																			<a href="javascript:toggleDisplay('shortR_${respIdx}');toggleDisplay('longR_${respIdx}');" class="statLink"><html:img src="/i/or/minus.gif" altKey="global.minus.alt" border="0" /></a>
 																			<b><bean:message key='ResourceRole.${fn:replace(submitterResource.resourceRole.name, " ", "")}' />
 																			<bean:message key="viewAggregationReview.Response" /></b>
 																			<bean:message key='AggregationItemStatus.${fn:replace(comment.extraInfo, " ", "")}' /><br />
@@ -214,11 +214,11 @@
 			<!-- Center Column Ends -->
 
 			<!-- Gutter -->
-			<td width="15"><html:img page="/i/clear.gif" width="25" height="1" border="0" /></td>
+			<td width="15"><html:img src="/i/clear.gif" width="25" height="1" border="0" /></td>
 			<!-- Gutter Ends -->
 
 			<!-- Gutter -->
-			<td width="2"><html:img page="/i/clear.gif" width="2" height="1" border="0" /></td>
+			<td width="2"><html:img src="/i/clear.gif" width="2" height="1" border="0" /></td>
 			<!-- Gutter Ends -->
 		</tr>
 	</table>
