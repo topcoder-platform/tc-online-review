@@ -96,7 +96,7 @@ table.scorecard
 table.scorecard td.title
 {
 	background-color: #999999;
-	background-image: url(../i/stats/headerBG.gif);
+	background-image: url(../../i/stats/headerBG.gif);
 	border-bottom: 1px solid #999999;
 	font-size: 12px;
 	font-weight: bold;
@@ -110,7 +110,7 @@ table.scorecard td.title
 table.scorecard td.titleRlink
 {
 	background-color: #999999;
-	background-image: url(../i/scorecards/headerBG.gif);
+	background-image: url(../../i/scorecards/headerBG.gif);
 	border-bottom: 1px solid #999999;
 	font-size: 11px;
 	padding: 3px 5px 3px 5px;
