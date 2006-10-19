@@ -34,9 +34,10 @@
             <Property name="namespace">
                 <Value>com.cronos.OnlineReview</Value>
             </Property>
-        	<Property name="logger_name">
-            	<Value>LoginActions</Value>
-	        </Property>
+        		<Property name="logger_name">
+        			<Value>LoginActions</Value>
+        		</Property>
+
         </Property>
 
         <Property name="authenticator_name">
@@ -1305,14 +1306,6 @@
                 <Value>com.topcoder.db.connectionfactory.DBConnectionFactoryImpl</Value>
             </Property>
         </Property>
-        <Property name="ObjectFactoryNamespace">
-            <Value>com.topcoder.management.phase.ObjectFactory</Value>
-        </Property>
-        <Property name="Handlers">
-        </Property>
-    </Config>
-
-    <Config name="com.topcoder.management.phase.ObjectFactory">
     </Config>
 
 
@@ -1526,15 +1519,25 @@
                 <Property name="context">
                     <Value>
                         SELECT DISTINCT project.project_id
-                          FROM project,
-                               project_category_lu,
-                               project_status_lu,
-                               project_type_lu
-                         WHERE project.project_category_id = project_category_lu.project_category_id
-                           AND project.project_status_id = project_status_lu.project_status_id
-                           AND project_category_lu.project_type_id = project_type_lu.project_type_id
-                           AND
-                        </Value>
+                             FROM project
+                             JOIN project_category_lu
+                               ON project.project_category_id = project_category_lu.project_category_id
+                             JOIN project_status_lu
+                               ON project.project_status_id = project_status_lu.project_status_id
+                             JOIN project_type_lu
+                               ON project_category_lu.project_type_id = project_type_lu.project_type_id
+                        LEFT JOIN project_info
+                               ON project.project_id = project_info.project_id
+                        LEFT JOIN project_info_type_lu
+                               ON project_info.project_info_type_id = project_info_type_lu.project_info_type_id
+                        LEFT JOIN resource
+                               ON project.project_id = resource.project_id
+                        LEFT JOIN resource_info
+                               ON resource.resource_id = resource_info.resource_id
+                        LEFT JOIN resource_info_type_lu
+                               ON resource_info.resource_info_type_id = resource_info_type_lu.resource_info_type_id
+                        WHERE
+                    </Value>
                 </Property>
 
 <!-- TODO: Check if everything works well without the following config, and remove it if everyting does
@@ -1685,10 +1688,10 @@
                     <Value>
                         SELECT UNIQUE deliverable_id,
                                       resource_id
-                                 FROM deliverable_lu,
-                                      resource
-                                WHERE deliverable_lu.resource_role_id = resource.resource_role_id
-                                  AND
+                                 FROM deliverable_lu
+                           INNER JOIN resource
+                                   ON deliverable_lu.resource_role_id = resource.resource_role_id
+                                WHERE
                     </Value>
                 </Property>
                 <Property name="alias">
