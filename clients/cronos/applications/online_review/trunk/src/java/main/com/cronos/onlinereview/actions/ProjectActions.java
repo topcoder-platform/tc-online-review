@@ -1170,10 +1170,11 @@ public class ProjectActions extends DispatchAction {
                     arePhasesValid = false;
                 }
             } else if (projectPhases[i].getPhaseType().getName().equals(Constants.AGGREGATION_PHASE_NAME)) {
-                // Aggregation should follow appeals response or review
+                // Aggregation should follow appeals response or review, or aggregation review
                 if (i == 0 ||
                         (!projectPhases[i - 1].getPhaseType().getName().equals(Constants.APPEALS_RESPONSE_PHASE_NAME) &&
-                        !projectPhases[i - 1].getPhaseType().getName().equals(Constants.REVIEW_PHASE_NAME))) {
+                        !projectPhases[i - 1].getPhaseType().getName().equals(Constants.REVIEW_PHASE_NAME) && 
+                        !projectPhases[i - 1].getPhaseType().getName().equals(Constants.AGGREGATION_REVIEW_PHASE_NAME))) {
                     ActionsHelper.addErrorToRequest(request,
                             "error.com.cronos.onlinereview.actions.editProject.AggregationMustFollow");
                     arePhasesValid = false;
