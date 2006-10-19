@@ -63,6 +63,7 @@
 					<html:form action="/actions/ContactManager">
 						<html:hidden property="method" value="contactManager" />
 						<html:hidden property="postBack" value="y" />
+						<html:hidden property="pid" value="${project.id}" />
 						<table class="scorecard" id="table1">
 							<tr>
 								<td class="title"><b><bean:message key="contactManager.Contact" /></b></td>
