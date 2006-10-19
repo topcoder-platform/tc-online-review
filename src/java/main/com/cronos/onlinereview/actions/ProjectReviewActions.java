@@ -3282,7 +3282,8 @@ public class ProjectReviewActions extends DispatchAction {
             }
             return false;
         }
-        
+/*
+    Commenting this out because it still needs work apparently
         Comment[] comments = item.getAllComments();
         for (int i = 0; i < comments.length; i++) {
             Comment comment = comments[i];
@@ -3292,14 +3293,14 @@ public class ProjectReviewActions extends DispatchAction {
                 }
             }
         }
-
+*/
         // Success indicator
         boolean success = true;
 
         for (int i = 0; i < item.getNumberOfComments(); ++i) {
             Comment comment = item.getComment(i);
             String commentType = comment.getCommentType().getName();
-            if (commentType.equalsIgnoreCase("Required") ||
+            if (commentType.equalsIgnoreCase("Comment") || commentType.equalsIgnoreCase("Required") ||
                     commentType.equalsIgnoreCase("Recommended")) {
                 success =
                     success && validateScorecardComment(request, comment, "comment(" + itemNum + "." + (i + 1) + ")");
