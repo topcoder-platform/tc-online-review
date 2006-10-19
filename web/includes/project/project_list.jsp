@@ -17,7 +17,7 @@
     					<td class="title" colspan='${(isMyProjects) ? "7" : "5"}'>
     						<html:img src="/i/${categoryIconNames[idxrCategory.index]}" alt="" width="25" height="17" border="0" align="right" />
     						<a onclick="return expcollHandler(this)" href="javascript:void(0)" id="Out${idxrCategory.index}" class="Outline"><html:img
-    							styleId="Out${idxrCategory.index}i" styleClass="Outline" border="0" page="/i/or/plus.gif" width="9" height="9" style="margin-right:5px;" />
+    							styleId="Out${idxrCategory.index}i" styleClass="Outline" border="0" src="/i/or/plus.gif" width="9" height="9" style="margin-right:5px;" />
     							<bean:message key='ProjectCategory.${fn:replace(category.name, " ", "")}' /></a>
     						(${fn:length(projects[idxrCategory.index])})
     					</td>
