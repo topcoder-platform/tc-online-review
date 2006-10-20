@@ -220,7 +220,13 @@ public class PhaseGroup {
      * This member variable indicates if the phase represented by this phase group has been opened.
      */
     private boolean phaseOpen = false;
-
+    
+    /**
+     * This member variable holds the status of "Review" phase. It is used to indicate if the appeals
+     * information should be available to present(If it is "Open", then appeals information will not
+     * be available to present). Default to null.
+     */
+    private String reviewPhaseStatus = null;
     /**
      * Constructs a new instance of the <code>PhaseGroup</code> class setting all fields to their
      * default values.
@@ -641,5 +647,21 @@ public class PhaseGroup {
      */
     public void setPhaseOpen(boolean phaseOpen) {
         this.phaseOpen = phaseOpen;
+    }
+    
+    /**
+     * This method returns the status of "Review" phase.
+     * @return the status of "Review" phase
+     */
+    public String getReviewPhaseStatus() {
+    	return this.reviewPhaseStatus;
+    }
+    
+    /**
+     * This method sets the status of "Review" phase.
+     * @param reviewPhaseStatus the status
+     */
+    public void setReviewPhaseStatus(String reviewPhaseStatus) {
+    	this.reviewPhaseStatus = reviewPhaseStatus;
     }
 }
