@@ -702,6 +702,8 @@ public class ProjectDetailsActions extends DispatchAction {
                 }
                 phaseGroup.setReviews(reviews);
                 phaseGroup.setReviewDates(reviewDates);
+                // set the review phase status to indicate if the appeals information should be available
+                phaseGroup.setReviewPhaseStatus(phase.getPhaseStatus().getName());
             }
 
             if ((phaseGroup.getAppFunc().equalsIgnoreCase(Constants.AGGREGATION_APP_FUNC) ||

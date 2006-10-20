@@ -412,14 +412,19 @@
 															key="viewProjectDetails.box.Review.Submit" /></b></html:link></td>
 													</c:if>
 													<c:if test="${isAllowedToEditHisReviews != true}">
-													<td class="valueC" width="8%"><bean:message key="Pending" /></td>
+														<td class="valueC" width="8%"><bean:message key="Pending" /></td>
 													</c:if>
 												</c:if>
+												<c:if test="${group.reviewPhaseStatus == 'Closed'}">
+													<td class="valueC" width="12%" nowrap="nowrap">[
+														<html:link page="/actions/ViewReview.do?method=viewReview&rid=${review.id}">x</html:link> /
+														<html:link page="/actions/ViewReview.do?method=viewReview&rid=${review.id}">y</html:link>
+													]</td>
+												</c:if>
+												<c:if test="${group.reviewPhaseStatus == 'Open'}">
+													<td class="valueC" width="12%" nowrap="nowrap"></td>
+												</c:if>
 											</c:if>
-											<td class="valueC" width="12%" nowrap="nowrap">[
-												<html:link page="/actions/ViewReview.do?method=viewReview&rid=${review.id}">x</html:link> /
-												<html:link page="/actions/ViewReview.do?method=viewReview&rid=${review.id}">y</html:link>
-												]</td>
 										</c:forEach>
 									</tr>
 								</c:forEach>
