@@ -201,20 +201,20 @@ public abstract class AbstractTestCase extends DatabaseTestCase {
      * @throws Exception if an unexpected error occurs.
      */
     protected IDataSet getDataSet() throws Exception {
-        InputStream lookupsDataStream
-            = getClass().getClassLoader().getResourceAsStream(AbstractTestCase.LOOKUPS_TEST_DATA_FILE_NAME);
+//        InputStream lookupsDataStream
+//            = getClass().getClassLoader().getResourceAsStream(AbstractTestCase.LOOKUPS_TEST_DATA_FILE_NAME);
         InputStream scorecardsDataStream
             = getClass().getClassLoader().getResourceAsStream(AbstractTestCase.SCORECARDS_TEST_DATA_FILE_NAME);
         InputStream usersDataStream
             = getClass().getClassLoader().getResourceAsStream(AbstractTestCase.USERS_TEST_DATA_FILE_NAME);
         IDataSet[] customDataSets = getDataSets();
 
-        IDataSet[] dataSets = new IDataSet[3 + customDataSets.length];
-        dataSets[0] = new FlatXmlDataSet(lookupsDataStream);
-        dataSets[1] = new FlatXmlDataSet(scorecardsDataStream);
-        dataSets[2] = new FlatXmlDataSet(usersDataStream);
+        IDataSet[] dataSets = new IDataSet[2 + customDataSets.length];
+//        dataSets[0] = new FlatXmlDataSet(lookupsDataStream);
+        dataSets[0] = new FlatXmlDataSet(scorecardsDataStream);
+        dataSets[1] = new FlatXmlDataSet(usersDataStream);
         for (int i = 0; i < customDataSets.length; i++) {
-            dataSets[i + 3] = customDataSets[i];
+            dataSets[i + 2] = customDataSets[i];
         }
         return new CompositeDataSet(dataSets);
     }
