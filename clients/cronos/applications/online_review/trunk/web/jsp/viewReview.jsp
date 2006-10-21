@@ -24,7 +24,7 @@
 	<script language="JavaScript" type="text/javascript"
 		src="<html:rewrite href='/js/or/dojo.js' />"><!-- @ --></script>
 	<script language="JavaScript" type="text/javascript">
-		var ajaxSupportUrl = "<html:rewrite href='/ajaxSupport' />";
+		var ajaxSupportUrl = "<html:rewrite page='/ajaxSupport' />";
 	</script>
 	<script language="JavaScript" type="text/javascript"
 		src="<html:rewrite href='/js/or/ajax.js' />"><!-- @ --></script>
