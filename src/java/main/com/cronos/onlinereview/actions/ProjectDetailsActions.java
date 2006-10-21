@@ -52,6 +52,7 @@ import com.topcoder.management.resource.search.NotificationFilterBuilder;
 import com.topcoder.management.review.ReviewManagementException;
 import com.topcoder.management.review.ReviewManager;
 import com.topcoder.management.review.data.Comment;
+import com.topcoder.management.review.data.Item;
 import com.topcoder.management.review.data.Review;
 import com.topcoder.management.scorecard.ScorecardManager;
 import com.topcoder.management.scorecard.data.Scorecard;
@@ -642,12 +643,26 @@ public class ProjectDetailsActions extends DispatchAction {
                         reviewFilters.add(filterSubmissions);
                     }
 
+                    // Create final filter
                     Filter filterForReviews = new AndFilter(reviewFilters);
+
+                    boolean needFullReviews = false;
+
+                    // Take next phase (if the current one is not the last)
+                    Phase nextPhase = (i + 1 != phases.length) ? phases[i + 1] : null;
+                    // If next phase is Appeals and that phase is not scheduled, ...
+                    if (nextPhase != null &&
+                            nextPhase.getPhaseType().getName().equalsIgnoreCase(Constants.APPEALS_PHASE_NAME)) {
+                        // ... indicate that full review (with all comments) must be retrieved
+                        if (!nextPhase.getPhaseStatus().getName().equalsIgnoreCase("Scheduled")) {
+                            needFullReviews = true;
+                        }
+                    }
 
                     // Obtain an instance of Review Manager
                     ReviewManager revMgr = ActionsHelper.createReviewManager(request);
                     // Get the reviews from every individual reviewer
-                    ungroupedReviews = revMgr.searchReviews(filterForReviews, false);
+                    ungroupedReviews = revMgr.searchReviews(filterForReviews, needFullReviews);
                 }
                 if (ungroupedReviews == null) {
                     ungroupedReviews = new Review[0];
@@ -702,8 +717,26 @@ public class ProjectDetailsActions extends DispatchAction {
                 }
                 phaseGroup.setReviews(reviews);
                 phaseGroup.setReviewDates(reviewDates);
-                // set the review phase status to indicate if the appeals information should be available
-                phaseGroup.setReviewPhaseStatus(phase.getPhaseStatus().getName());
+            }
+
+            if (phaseGroup.getAppFunc().equalsIgnoreCase(Constants.VIEW_REVIEWS_APP_FUNC) &&
+                    phaseName.equalsIgnoreCase(Constants.APPEALS_PHASE_NAME) && phaseGroup.getReviews() != null) {
+                // set the Appeals phase status to indicate
+                // if the appeals information should be available
+                if (!phase.getPhaseStatus().getName().equalsIgnoreCase("Scheduled")) {
+                    phaseGroup.setAppealsPhaseOpened(true);
+                } else {
+                    continue;
+                }
+
+                Review[][] reviews = phaseGroup.getReviews();
+                int[][] totalAppeals = new int[reviews.length][];
+                int[][] unresolvedAppeals = new int[reviews.length][];
+
+                countAppeals(reviews, totalAppeals, unresolvedAppeals);
+
+                phaseGroup.setTotalAppealsCounts(totalAppeals);
+                phaseGroup.setUnresolvedAppealsCounts(unresolvedAppeals);
             }
 
             if ((phaseGroup.getAppFunc().equalsIgnoreCase(Constants.AGGREGATION_APP_FUNC) ||
@@ -2275,8 +2308,8 @@ public class ProjectDetailsActions extends DispatchAction {
             String delivName = deliverable.getName();
             if (delivName.equalsIgnoreCase(Constants.SUBMISSION_DELIVERABLE_NAME)) {
                 links[i] = "UploadSubmission.do?method=uploadSubmission&pid=" + deliverable.getProject();
-            } else if (delivName.equalsIgnoreCase(Constants.SCREENING_DELIVERABLE_NAME)) {
-/* This is commented out until Deliverable Management is fixed  TODO: Uncomment this block
+            } else if (delivName.equalsIgnoreCase(Constants.SCREENING_DELIVERABLE_NAME) ||
+                    delivName.equalsIgnoreCase(Constants.PRIMARY_SCREENING_DELIVERABLE_NAME)) {
                 if (allScorecardTypes == null) {
                     // Get all scorecard types
                     allScorecardTypes = ActionsHelper.createScorecardManager(request).getAllScorecardTypes();
@@ -2294,7 +2327,6 @@ public class ProjectDetailsActions extends DispatchAction {
                 } else {
                     links[i] = "ViewScreening.do?method=viewScreening&rid=" + review.getId();
                 }
-*/
             } else if (delivName.equalsIgnoreCase(Constants.REVIEW_DELIVERABLE_NAME)) {
                 if (allScorecardTypes == null) {
                     // Get all scorecard types
@@ -2320,7 +2352,8 @@ public class ProjectDetailsActions extends DispatchAction {
             } else if (delivName.equalsIgnoreCase(Constants.APPEAL_RESP_DELIVERABLE_NAME)) {
                 // TODO: Assign links for Appeal Responses
             } else if (delivName.equalsIgnoreCase(Constants.AGGREGATION_DELIVERABLE_NAME)) {
-/*                if (allScorecardTypes == null) {
+/* TODO: Uncomment this section when Deliverable Management component is fixed
+                if (allScorecardTypes == null) {
                     // Get all scorecard types
                     allScorecardTypes = ActionsHelper.createScorecardManager(request).getAllScorecardTypes();
                 }
@@ -2335,43 +2368,11 @@ public class ProjectDetailsActions extends DispatchAction {
                     } else {
                         links[i] = "ViewAggregation.do?method=viewAggregation&rid=" + review.getId();
                     }
-                }*/
-            } else if (delivName.equalsIgnoreCase(Constants.AGGREGATION_REV_DELIVERABLE_NAME)) {
-/*                Phase phase = ActionsHelper.getPhase(phases, false, Constants.AGGREGATION_PHASE_NAME);
-                Resource[] aggregator =
-                    ActionsHelper.getAllResourcesForPhase(ActionsHelper.createResourceManager(request), phase);
-
-                if (allScorecardTypes == null) {
-                    // Get all scorecard types
-                    allScorecardTypes = ActionsHelper.createScorecardManager(request).getAllScorecardTypes();
                 }
-
-                Review review = findReviewForSubmission(ActionsHelper.createReviewManager(request),
-                        ActionsHelper.findScorecardTypeByName(allScorecardTypes, "Review"),
-                        deliverable.getSubmission(), aggregator[0].getId(), true);
-
-                if (review == null) {
-                    continue;
-                }
-
-                Comment myComment = null;
-
-                for (int j = 0; j < review.getNumberOfComments(); ++j) {
-                    if (review.getComment(j).getAuthor() == deliverable.getResource()) {
-                        myComment = review.getComment(j);
-                        break;
-                    }
-                }
-
-                if (myComment == null ||
-                        !("Approved".equalsIgnoreCase((String) myComment.getExtraInfo()) ||
-                        "Rejected".equalsIgnoreCase((String) myComment.getExtraInfo()))) {
-                    links[i] = "EditAggregationReview.do?method=editAggregationReview&rid=" + review.getId();
-                }*/
-            } else if (delivName.equalsIgnoreCase(Constants.FINAL_FIX_DELIVERABLE_NAME)) {
-                links[i] = "UploadFinalFix.do?method=uploadFinalFix&pid=" + deliverable.getProject();
-            } else if (delivName.equalsIgnoreCase(Constants.SCORECARD_COMM_DELIVERABLE_NAME)) {
-/*
+*/
+            } else if (delivName.equalsIgnoreCase(Constants.AGGREGATION_REV_DELIVERABLE_NAME) ||
+                    delivName.equalsIgnoreCase(Constants.SCORECARD_COMM_DELIVERABLE_NAME)) {
+/* TODO: Uncomment this section when Deliverable Management component is fixed
                 Phase phase = ActionsHelper.getPhase(phases, false, Constants.AGGREGATION_PHASE_NAME);
                 Resource[] aggregator =
                     ActionsHelper.getAllResourcesForPhase(ActionsHelper.createResourceManager(request), phase);
@@ -2404,6 +2405,8 @@ public class ProjectDetailsActions extends DispatchAction {
                     links[i] = "EditAggregationReview.do?method=editAggregationReview&rid=" + review.getId();
                 }
 */
+            } else if (delivName.equalsIgnoreCase(Constants.FINAL_FIX_DELIVERABLE_NAME)) {
+                links[i] = "UploadFinalFix.do?method=uploadFinalFix&pid=" + deliverable.getProject();
             } else if (delivName.equalsIgnoreCase(Constants.FINAL_REVIEW_DELIVERABLE_NAME)) {
 /*                if (allScorecardTypes == null) {
                     // Get all scorecard types
@@ -2585,6 +2588,84 @@ public class ProjectDetailsActions extends DispatchAction {
         }
 
         return allExtUsers;
+    }
+
+    /**
+     * This static method counts the number of total and unresolved appeals for every review in the
+     * provided array of reviews. The other two arrays (specified by parameters
+     * <code>totalAppeals</code> and <code>unresolvedAppeals</code>) must be of the same length
+     * as the array specified by <code>reviews<code> parameter.
+     *
+     * @param reviews
+     *            a two-dimensional array of reviews to count appeals counts in.
+     * @param totalAppeals
+     *            specifies an array that on output will receive the amount of total appeals per
+     *            every review in <code>reviews</code> input array.
+     * @param unresolvedAppeals
+     *            specifies an array that on output will receive the amount of unresolved appeals
+     *            per every review in <code>reviews</code> input array.
+     * @throws IllegalArgumentException
+     *             if any of the parameters are <code>null</code>, or if the number of items in
+     *             <code>totalAppeals</code> or <code>unresolvedAppeals</code> arrays does not match
+     *             the number of items in the <code>reviews</code> array.
+     */
+    private static void countAppeals(Review[][] reviews, int[][] totalAppeals, int[][] unresolvedAppeals) {
+        // Validate parameters
+        ActionsHelper.validateParameterNotNull(reviews, "reviews");
+        ActionsHelper.validateParameterNotNull(totalAppeals, "totalAppeals");
+        ActionsHelper.validateParameterNotNull(unresolvedAppeals, "unresolvedAppeals");
+
+        // Validate array lengths
+        if (reviews.length != totalAppeals.length) {
+            throw new IllegalArgumentException("The number of items in 'reviews' array (" + reviews.length + ")" +
+                    " does not match the number of items in 'totalAppeals' array (" + totalAppeals.length + ").");
+        }
+        if (reviews.length != unresolvedAppeals.length) {
+            throw new IllegalArgumentException("The number of items in 'reviews' array (" + reviews.length + ")" +
+                    " does not match the number of items in 'unresolvedAppeals' array (" + unresolvedAppeals.length +
+                    ").");
+        }
+
+        for (int i = 0; i < reviews.length; ++i) {
+            Review[] innerReviews = reviews[i];
+            int[] innerTotalAppeals = new int[innerReviews.length];
+            int[] innerUnresolvedAppeals = new int[innerReviews.length];
+
+            for (int j = 0; j < innerReviews.length; ++j) {
+                Review review = innerReviews[j];
+
+                for (int itemIdx = 0; itemIdx < review.getNumberOfItems(); ++itemIdx) {
+                    Item item = review.getItem(itemIdx);
+                    boolean appealFound = false;
+                    boolean appealResolved = false;
+
+                    for (int commentIdx = 0;
+                            commentIdx < item.getNumberOfComments() && !(appealFound && appealResolved);
+                            ++commentIdx) {
+                        String commentType = item.getComment(commentIdx).getCommentType().getName();
+
+                        if (!appealFound && commentType.equalsIgnoreCase("Appeal")) {
+                            appealFound = true;
+                            continue;
+                        }
+                        if (!appealResolved && commentType.equalsIgnoreCase("Appeal Response")) {
+                            appealResolved = true;
+                            continue;
+                        }
+                    }
+
+                    if (appealFound) {
+                        ++innerTotalAppeals[j];
+                        if (!appealResolved) {
+                            ++innerUnresolvedAppeals[j];
+                        }
+                    }
+                }
+            }
+
+            totalAppeals[i] = innerTotalAppeals;
+            unresolvedAppeals[i] = innerUnresolvedAppeals;
+        }
     }
 
     /**
