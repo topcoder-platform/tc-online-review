@@ -106,7 +106,7 @@ div.launchPopUp {
 		</c:if>
 		<c:if test="${not orfn:isUserLoggedIn(pageContext.request)}">
 			<html:link styleClass="gMetal" page="/jsp/login.jsp">Login</html:link>
-			&#160;&#160;|&#160;&#160;<a class="gMetal" href="http://<%=ApplicationServer.SERVER_NAME%>/Registration">Register</a>
+			&#160;&#160;|&#160;&#160;<a class="gMetal" href="http://<%=ApplicationServer.SERVER_NAME%>/reg/">Register</a>
 			&#160;&#160;|&#160;&#160;<a class="gMetal" href="http://<%=ApplicationServer.SERVER_NAME%>/">Home</a>
 		</c:if>
 	</div>
