@@ -389,7 +389,17 @@
 												<td class="valueC" width="12%"><bean:message key="Incomplete" /></td>
 											</c:if>
 										</c:if>
-										<c:forEach items="${group.reviews[submissionStatus.index]}" var="review">
+										<c:choose>
+											<c:when test="${group.appealsPhaseOpened}">
+												<c:set var="totalAppeals" value="${group.totalAppealsCounts[submissionStatus.index]}" />
+												<c:set var="unresolvedAppeals" value="${group.unresolvedAppealsCounts[submissionStatus.index]}" />
+											</c:when>
+											<c:otherwise>
+												<c:set var="totalAppeals" value="" />
+												<c:set var="unresolvedAppeals" value="" />
+											</c:otherwise>
+										</c:choose>
+										<c:forEach items="${group.reviews[submissionStatus.index]}" var="review" varStatus="reviewStatus">
 											<c:if test="${empty review}">
 												<c:if test="${isAllowedToEditHisReviews == true}">
 													<td class="valueC" width="8%"><html:link
@@ -397,7 +407,8 @@
 														key="viewProjectDetails.box.Review.Submit" /></b></html:link></td>
 												</c:if>
 												<c:if test="${isAllowedToEditHisReviews != true}">
-													<td class="valueC" width="8%"><bean:message key="Pending" /></td>
+													<td class="valueC" width="8%"><bean:message key="NotAvailable" /></td>
+													<td class="value"><bean:message key="NotAvailable" /></td>
 												</c:if>
 											</c:if>
 											<c:if test="${!(empty review)}">
@@ -415,14 +426,16 @@
 														<td class="valueC" width="8%"><bean:message key="Pending" /></td>
 													</c:if>
 												</c:if>
-												<c:if test="${group.reviewPhaseStatus == 'Closed'}">
+												<c:if test="${group.appealsPhaseOpened}">
 													<td class="valueC" width="12%" nowrap="nowrap">[
-														<html:link page="/actions/ViewReview.do?method=viewReview&rid=${review.id}">x</html:link> /
-														<html:link page="/actions/ViewReview.do?method=viewReview&rid=${review.id}">y</html:link>
+														<html:link page="/actions/ViewReview.do?method=viewReview&rid=${review.id}"
+															titleKey="viewProjectDetails.box.Review.Appeals.Unresolved">${unresolvedAppeals[reviewStatus.index]}</html:link> /
+														<html:link page="/actions/ViewReview.do?method=viewReview&rid=${review.id}"
+															titleKey="viewProjectDetails.box.Review.Appeals.Total">${totalAppeals[reviewStatus.index]}</html:link>
 													]</td>
 												</c:if>
-												<c:if test="${group.reviewPhaseStatus == 'Open'}">
-													<td class="valueC" width="12%" nowrap="nowrap"></td>
+												<c:if test="${not group.appealsPhaseOpened}">
+													<td class="value"><bean:message key="NotAvailable" /></td>
 												</c:if>
 											</c:if>
 										</c:forEach>

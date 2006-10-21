@@ -138,6 +138,24 @@ public class PhaseGroup {
     private Date[] reviewDates = null;
 
     /**
+     * This member variable determines whether &quot;Appeals&quot; phase is open or has ever been
+     * opened. It is used to indicate if the appeals information should be available to present. The
+     * default value of this member variable is <code>false</code>.
+     */
+    private boolean appealsPhaseOpened = false;
+
+    /**
+     * This member variable holds an array of counts of appeals put for every particular review.
+     */
+    private int totalAppealsCounts[][] = null;
+
+    /**
+     * This member variable holds an array of counts of appeals that haven't been resolved yet for
+     * every particular review.
+     */
+    private int unresolvedAppealsCounts[][] = null;
+
+    /**
      * This member variable holds an aggregation scorecard that might have been assigned assigned to
      * this phase group, or <code>null</code> value if no such scorecard has been assigned to the
      * phase group.
@@ -220,13 +238,7 @@ public class PhaseGroup {
      * This member variable indicates if the phase represented by this phase group has been opened.
      */
     private boolean phaseOpen = false;
-    
-    /**
-     * This member variable holds the status of "Review" phase. It is used to indicate if the appeals
-     * information should be available to present(If it is "Open", then appeals information will not
-     * be available to present). Default to null.
-     */
-    private String reviewPhaseStatus = null;
+
     /**
      * Constructs a new instance of the <code>PhaseGroup</code> class setting all fields to their
      * default values.
@@ -470,6 +482,68 @@ public class PhaseGroup {
     }
 
     /**
+     * This method determines whether &quot;Appeals&quot; phase is open or has ever been opened.
+     *
+     * @return <code>true</code> if &quot;Appeals&quot; phase is currently open or was opened some
+     *         time in the past, <code>false</code> if &quot;Appeals&quot; phase is in scheduled
+     *         state, or there are no appeals phase for the current phase group.
+     */
+    public boolean getAppealsPhaseOpened() {
+        return this.appealsPhaseOpened;
+    }
+
+    /**
+     * This method sets the indicator of whether &quot;Appeals&quot; phase is open or has ever been
+     * opened.
+     *
+     * @param appealsPhaseOpened
+     *            a new value of type <code>boolean</code> to set.
+     */
+    public void setAppealsPhaseOpened(boolean appealsPhaseOpened) {
+        this.appealsPhaseOpened = appealsPhaseOpened;
+    }
+
+    /**
+     * This method returns an array containing total amount of appeals put for every review. The
+     * counts are per review.
+     *
+     * @return an array containing appeals counts.
+     */
+    public int[][] getTotalAppealsCounts() {
+        return this.totalAppealsCounts;
+    }
+
+    /**
+     * This method assigns new array of appeals counts to this phase group.
+     *
+     * @param totalAppealsCounts
+     *            a new array to assign to this phase group.
+     */
+    public void setTotalAppealsCounts(int[][] totalAppealsCounts) {
+        this.totalAppealsCounts = totalAppealsCounts;
+    }
+
+    /**
+     * This method returns an array containing amount of appeals that have not been resolved yet for
+     * every review. The counts are per review.
+     *
+     * @return an array containing appeals counts.
+     */
+    public int[][] getUnresolvedAppealsCounts() {
+        return this.unresolvedAppealsCounts;
+    }
+
+    /**
+     * This method assigns new array of appeals counts to this phase group.
+     *
+     * @param unresolvedAppealsCounts
+     *            a new array to assign to this phase group.
+     */
+    public void setUnresolvedAppealsCounts(int[][] unresolvedAppealsCounts) {
+        this.unresolvedAppealsCounts = unresolvedAppealsCounts;
+    }
+
+    /**
      * This method returns review scorecard of type Aggregation or Aggregation Review.
      *
      * @return an appropriate review object.
@@ -647,21 +721,5 @@ public class PhaseGroup {
      */
     public void setPhaseOpen(boolean phaseOpen) {
         this.phaseOpen = phaseOpen;
-    }
-    
-    /**
-     * This method returns the status of "Review" phase.
-     * @return the status of "Review" phase
-     */
-    public String getReviewPhaseStatus() {
-    	return this.reviewPhaseStatus;
-    }
-    
-    /**
-     * This method sets the status of "Review" phase.
-     * @param reviewPhaseStatus the status
-     */
-    public void setReviewPhaseStatus(String reviewPhaseStatus) {
-    	this.reviewPhaseStatus = reviewPhaseStatus;
     }
 }
