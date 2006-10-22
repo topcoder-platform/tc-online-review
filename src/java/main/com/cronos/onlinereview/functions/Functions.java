@@ -4,7 +4,10 @@
 package com.cronos.onlinereview.functions;
 
 import java.text.DecimalFormat;
+import java.text.Format;
 import java.text.NumberFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.JspException;
@@ -29,12 +32,6 @@ import com.cronos.onlinereview.actions.ConfigHelper;
  * @version 1.0
  */
 public final class Functions {
-
-    /**
-     * This static member variable is a constant that holds a formatting rule to format amount of
-     * minutes so that the number will be displayed with a leading zero.
-     */
-    private static final NumberFormat minutesFormat = new DecimalFormat("00");
 
     /**
      * This is the hidden constructor of the <code>Functions</code> class to prevent this class's
@@ -213,7 +210,7 @@ public final class Functions {
      * This static method computes the amount of pixels to display for the specified time duration
      * in minutes.
      * <p>
-     * This method is an implementeation of <code>getMessage</code> function used from EL
+     * This method is an implementeation of <code>getGanttLen</code> function used from EL
      * expressions in JSP pages.
      * </p>
      *
@@ -234,7 +231,7 @@ public final class Functions {
     /**
      * This static method returns string to display time duration, specified in minutes, in hours-minutes format.
      * <p>
-     * This method is an implementeation of <code>getMessage</code> function used from EL
+     * This method is an implementeation of <code>getGanttHours</code> function used from EL
      * expressions in JSP pages.
      * </p>
      *
@@ -260,15 +257,166 @@ public final class Functions {
             int hour = mins / 60;
             int min = mins - (hour * 60);
 
-            // Retrieve messages
-            String strHours = getMessage(pageContext, "global.hour.shortening");
-            String strMinutes = getMessage(pageContext, "global.minute.shortening");
+            StringBuffer buffer = new StringBuffer();
 
-            // Form the resulting string
-            return hour + strHours + " " + minutesFormat.format(min) + strMinutes;
+            // Append hours value, but only if it is not zero.
+            if (hour != 0) {
+                buffer.append(hour);
+                buffer.append(' ');
+                buffer.append(getMessage(pageContext, "global.hour.shortening"));
+                buffer.append(' ');
+            }
+
+            // Append minutes value
+            if (hour != 0) {
+                // Prepare a format for minutes
+                NumberFormat minutesFormat = new DecimalFormat("00");
+                // Append minutes value using prepared format
+                buffer.append(minutesFormat.format(min));
+            } else {
+                buffer.append(min);
+            }
+            buffer.append(' ');
+            buffer.append(getMessage(pageContext, "global.minute.shortening"));
+
+            // Return the resulting string
+            return buffer.toString();
         }
 
         int hours = mins / 60;
-        return hours + " " + getMessage(pageContext, (hours == 1) ? "global.hour.singular" : "global.hour.plural");
+        return hours + ' ' + getMessage(pageContext, (hours == 1) ? "global.hour.singular" : "global.hour.plural");
+    }
+
+    /**
+     * This static method converts specified double value to its string representation, rounding the
+     * fractional part to two digits. This method is used to correctly display scorecard scores on
+     * JSP pages.
+     * <p>
+     * This method is an implementeation of <code>displayScore</code> function used from EL
+     * expressions in JSP pages.
+     * </p>
+     *
+     * @return string repesentation of the score.
+     * @param request
+     *            an <code>HttpServletRequest</code> object, where pre-built formatting object
+     *            could be used for later reuse. Normally, you should write the following:
+     *            &quot;<code>pageContext.request</code>&quot; in a JSP page when you call this
+     *            method to pass a valid object to it.
+     * @param score
+     *            a score (double) value to convert to textual form, rounding it to two deimal
+     *            digits after decimal point.
+     */
+    public static String displayScore(HttpServletRequest request, Double score) {
+        // Return empty string for incorrect input values
+        if (score == null || score.doubleValue() < 0) {
+            return "";
+        }
+
+        // Try to extract a formatter from the request
+        Format format = (Format) ((request != null) ? request.getAttribute("scorecard_score_format") : null);
+        // If there is no such attribute stored in the request, build a new one and store it
+        if (format == null) {
+            format = new DecimalFormat(ConfigHelper.getScorecardScoreFormat());
+            if (request != null) {
+                request.setAttribute("scorecard_score_format", format);
+            }
+        }
+
+        // Return converted value
+        return format.format(score);
+    }
+
+    /**
+     * This static method converts specified date value to its string representation, applying the
+     * format set in application's configuration file. This method is used to correctly display
+     * date/time values on JSP pages.
+     * <p>
+     * This method is an implementeation of <code>displayDate</code> function used from EL
+     * expressions in JSP pages.
+     * </p>
+     *
+     * @return string representation of the date.
+     * @param request
+     *            an <code>HttpServletRequest</code> object, where pre-built formatting object
+     *            could be used for later reuse. Normally, you should write the following:
+     *            &quot;<code>pageContext.request</code>&quot; in a JSP page when you call this
+     *            method to pass a valid object to it.
+     * @param date
+     *            a date value to convert to textual form.
+     */
+    public static String displayDate(HttpServletRequest request, Date date) {
+        // Return empty string for incorrect input values
+        if (date == null) {
+            return "";
+        }
+
+        // Try to extract a formatter from the request
+        Format format = (Format) ((request != null) ? request.getAttribute("date_format") : null);
+        // If there is no such attribute stored in the request, build a new one and store it
+        if (format == null) {
+            format = new SimpleDateFormat(ConfigHelper.getDateFormat());
+            if (request != null) {
+                request.setAttribute("date_format", format);
+            }
+        }
+
+        // Return converted value
+        return format.format(date);
+    }
+
+    /**
+     * This static method converts specified date value to its string representation, applying the
+     * format set in application's configuration file. It adds <code>&lt;br /&gt;</code> tag between
+     * date and time parts of the date, so that dates appear to be displayed on two lines. This
+     * method is used to correctly display date/time values on JSP pages.
+     * <p>
+     * This method is an implementeation of <code>displayDateBr</code> function used from EL
+     * expressions in JSP pages.
+     * </p>
+     *
+     * @return string representation of the date.
+     * @param request
+     *            an <code>HttpServletRequest</code> object, where pre-built formatting object
+     *            could be used for later reuse. Normally, you should write the following:
+     *            &quot;<code>pageContext.request</code>&quot; in a JSP page when you call this
+     *            method to pass a valid object to it.
+     * @param date
+     *            a date value to convert to textual form.
+     */
+    public static String displayDateBr(HttpServletRequest request, Date date) {
+        // Return empty string for incorrect input values
+        if (date == null) {
+            return "";
+        }
+
+        // Try to extract a date-only formatter from the request
+        Format dateFormat = (Format) ((request != null) ? request.getAttribute("date_only_format") : null);
+        // If there is no such attribute stored in the request, build a new one and store it
+        if (dateFormat == null) {
+            dateFormat = new SimpleDateFormat(ConfigHelper.getDateOnlyFormat());
+            if (request != null) {
+                request.setAttribute("date_only_format", dateFormat);
+            }
+        }
+
+        // Try to extract a time-only formatter from the request
+        Format timeFormat = (Format) ((request != null) ? request.getAttribute("time_only_format") : null);
+        // If there is no such attribute stored in the request, build a new one and store it
+        if (timeFormat == null) {
+            timeFormat = new SimpleDateFormat(ConfigHelper.getTimeOnlyFormat());
+            if (request != null) {
+                request.setAttribute("time_only_format", timeFormat);
+            }
+        }
+
+        StringBuffer buffer = new StringBuffer();
+
+        // Build converted date value
+        buffer.append(dateFormat.format(date));
+        buffer.append("<br />");
+        buffer.append(timeFormat.format(date));
+
+        // Return converted value
+        return buffer.toString();
     }
 }
