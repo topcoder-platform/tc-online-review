@@ -33,6 +33,7 @@
             <form-property name="scorecard_review" type="java.lang.Long" />
             <form-property name="scorecard_approval" type="java.lang.Long" />
             <form-property name="forum_id" type="java.lang.Long" />
+            <form-property name="component_id" type="java.lang.Long" />
             <form-property name="SVN_module" type="java.lang.String" />
             <form-property name="notes" type="java.lang.String" />
             <form-property name="explanation" type="java.lang.String" />
@@ -41,6 +42,7 @@
             <form-property name="current_phase" type="java.lang.String" />
 
             <form-property name="resources_role" type="java.lang.Long[]" />
+            <form-property name="resources_phase" type="java.lang.String[]" />
             <form-property name="resources_name" type="java.lang.String[]" />
             <form-property name="resources_payment" type="java.lang.Boolean[]" />
             <!-- TODO: Check the type of the following field -->
@@ -51,6 +53,8 @@
 
             <form-property name="phase_type" type="java.lang.Long[]" />
             <form-property name="phase_id" type="java.lang.Long[]" />
+            <form-property name="phase_name" type="java.lang.String[]" />
+            <form-property name="phase_number" type="java.lang.Integer[]" />
             <form-property name="phase_js_id" type="java.lang.String[]" />
             <form-property name="phase_action" type="java.lang.String[]" />
             <form-property name="phase_start_by_phase" type="java.lang.Boolean[]" />
