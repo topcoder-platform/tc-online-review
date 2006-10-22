@@ -1176,7 +1176,7 @@ public class ProjectActions extends DispatchAction {
                 // Aggregation should follow appeals response or review, or aggregation review
                 if (i == 0 ||
                         (!projectPhases[i - 1].getPhaseType().getName().equals(Constants.APPEALS_RESPONSE_PHASE_NAME) &&
-                        !projectPhases[i - 1].getPhaseType().getName().equals(Constants.REVIEW_PHASE_NAME) && 
+                        !projectPhases[i - 1].getPhaseType().getName().equals(Constants.REVIEW_PHASE_NAME) &&
                         !projectPhases[i - 1].getPhaseType().getName().equals(Constants.AGGREGATION_REVIEW_PHASE_NAME))) {
                     ActionsHelper.addErrorToRequest(request,
                             "error.com.cronos.onlinereview.actions.editProject.AggregationMustFollow");
@@ -1476,6 +1476,8 @@ public class ProjectActions extends DispatchAction {
      *            the http request.
      * @param response
      *            the http response.
+     * @throws BaseException
+     *             if any error occurs.
      */
     public ActionForward listProjects(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response)
@@ -1483,8 +1485,8 @@ public class ProjectActions extends DispatchAction {
 
         Date currentDate = new Date();
         logger.log(Level.ERROR, "entering listProjects" + dateFormat.format(currentDate));
-        // Gather the roles the user has for current request
         logger.log(Level.ERROR, "gathering user roles" + dateFormat.format(new Date()));
+        // Gather the roles the user has for current request
         AuthorizationHelper.gatherUserRoles(request);
         logger.log(Level.ERROR, "got user roles" + dateFormat.format(new Date()));
 
@@ -1505,6 +1507,7 @@ public class ProjectActions extends DispatchAction {
                 !AuthorizationHelper.hasUserPermission(request, Constants.VIEW_PROJECTS_INACTIVE_PERM_NAME)) {
             return mapping.findForward("all");
         }
+
         currentDate = new Date();
         logger.log(Level.ERROR, "obtaining projectmanager " + dateFormat.format(currentDate));
 
@@ -1515,6 +1518,7 @@ public class ProjectActions extends DispatchAction {
         Filter projectsFilter = null;
         currentDate = new Date();
         logger.log(Level.ERROR, "got projectmanager " + dateFormat.format(currentDate));
+
         // Determine projects displayed and index of the active tab
         // based on the value of the "scope" parameter
         if (scope.equalsIgnoreCase("my")) {
@@ -1523,7 +1527,15 @@ public class ProjectActions extends DispatchAction {
             projectsFilter = ProjectFilterUtility.buildStatusNameEqualFilter("Inactive");
             activeTab = 4;
         } else {
-            projectsFilter = ProjectFilterUtility.buildStatusNameEqualFilter("Active");
+            // Create filters to select only public projects
+            Filter filterPublicName = ProjectFilterUtility.buildProjectPropertyNameEqualFilter("Public");
+            Filter filterPublicValue = ProjectFilterUtility.buildProjectPropertyValueEqualFilter("Yes");
+            // Create filter to select only active projects
+            Filter filterStatus = ProjectFilterUtility.buildStatusNameEqualFilter("Active");
+            // Build final filter
+            projectsFilter =
+                new AndFilter(Arrays.asList(new Filter[] {filterPublicName, filterPublicValue, filterStatus}));
+            // Specify the index of the active tab
             activeTab = 2;
         }
 
@@ -1609,35 +1621,36 @@ logger.log(Level.ERROR, "get phase manager" + dateFormat.format(currentDate));
             allProjectIds[i] = ungroupedProjects[i].getId();
         }
         currentDate = new Date();
-logger.log(Level.ERROR, "getting phases phase manager" + dateFormat.format(currentDate));
+        logger.log(Level.ERROR, "getting phases phase manager" + dateFormat.format(currentDate));
         com.topcoder.project.phases.Project[] phProjects = phMgr.getPhases(allProjectIds);
         currentDate = new Date();
-
         logger.log(Level.ERROR, "got phases phase manager" + dateFormat.format(currentDate));
 /*****************************************************************************************************************************************/
         currentDate = new Date();
-
         logger.log(Level.ERROR, "get message resources" + dateFormat.format(currentDate));
         // Message Resources to be used for this request
         MessageResources messages = getResources(request);
         currentDate = new Date();
         logger.log(Level.ERROR, "got message resources" + dateFormat.format(currentDate));
+
         for (int i = 0; i < projectCategories.length; ++i) {
-            // Count projects of this category
+            // Count number of projects in this category
             for (int j = 0; j < ungroupedProjects.length; ++j) {
                 if (ungroupedProjects[j].getProjectCategory().getId() == projectCategories[i].getId()) {
                     ++categoryCounts[i];
                 }
             }
 
-            // Now, as the exact count of projects in this category is known,
-            // it is possible to initialize arrays
-            Project[] projs = new Project[categoryCounts[i]];
-            String[] rcIcons = new String[categoryCounts[i]];
-            String[] rcNames = new String[categoryCounts[i]];
-            Phase[][] phass = new Phase[categoryCounts[i]][];
-            Date[] pheds = new Date[categoryCounts[i]];
-            Date[] preds = new Date[categoryCounts[i]];
+            /*
+             * Now, as the exact count of projects in this category is known,
+             * it is possible to initialize arrays
+             */
+            Project[] projs = new Project[categoryCounts[i]]; // This Category's Projects
+            String[] rcIcons = new String[categoryCounts[i]]; // Root Catalog Icons
+            String[] rcNames = new String[categoryCounts[i]]; // Root Catalog Names (shown in tooltip)
+            Phase[][] phass = new Phase[categoryCounts[i]][]; // Projects' active Phases
+            Date[] pheds = new Date[categoryCounts[i]]; // End date of every first active phase
+            Date[] preds = new Date[categoryCounts[i]]; // Projects' end dates
 
             // No need to collect any Resources or Roles
             // if the list of projects is not just "My" Projects
@@ -1667,17 +1680,20 @@ logger.log(Level.ERROR, "getting phases phase manager" + dateFormat.format(curre
 
                     Phase[] activePhases = null;
 
+                    // Calculate end date of the project and get all active phases (if any)
                     if (phProjects[j] != null) {
                         preds[counter] = phProjects[j].calcEndDate();
                         activePhases = ActionsHelper.getActivePhases(phProjects[j].getAllPhases());
                         pheds[counter] = null;
                     }
 
+                    // Get currently open phase end calculate its end date
                     if (activePhases != null && activePhases.length != 0) {
                         phass[counter] = activePhases;
                         pheds[counter] = activePhases[0].calcEndDate();
                     }
 
+                    // Retrieve information about my roles, and my current unfinished deliverables
                     if (myProjects) {
                         Resource[] myResources2 = ActionsHelper.getResourcesForProject(allMyResources, project);
                         myRss[counter] = myResources2;
@@ -1690,6 +1706,7 @@ logger.log(Level.ERROR, "getting phases phase manager" + dateFormat.format(curre
                 }
             }
 
+            // Save collected data in main arrays
             projects[i] = projs;
             rootCatalogIcons[i] = rcIcons;
             rootCatalogNames[i] = rcNames;
@@ -1697,6 +1714,7 @@ logger.log(Level.ERROR, "getting phases phase manager" + dateFormat.format(curre
             phaseEndDates[i] = pheds;
             projectEndDates[i] = preds;
 
+            // Resources and roles must not always be saved
             if (myProjects) {
                 myResources[i] = myRss;
                 myRoles[i] = rols;
@@ -1705,8 +1723,9 @@ logger.log(Level.ERROR, "getting phases phase manager" + dateFormat.format(curre
             // Fetch Project Category icon's filename depending on the name of the current category
             categoryIconNames[i] = ConfigHelper.getProjectCategoryIconNameSm(projectCategories[i].getName());
         }
+
         currentDate = new Date();
-        logger.log(Level.ERROR, "before ungrouped" + dateFormat.format(currentDate));
+        logger.log(Level.ERROR, "before ungrouped " + dateFormat.format(currentDate));
         if (ungroupedProjects.length != 0 && myProjects) {
             Deliverable[] allMyDeliverables = getDeliverables(
                     ActionsHelper.createDeliverableManager(request), projects, phases, myResources);
@@ -1734,7 +1753,9 @@ logger.log(Level.ERROR, "getting phases phase manager" + dateFormat.format(curre
             totalProjectsCount += typeCounts[i];
         }
         currentDate = new Date();
-        logger.log(Level.ERROR, "after count" + dateFormat.format(currentDate));
+        logger.log(Level.ERROR, "after count " + dateFormat.format(currentDate));
+
+        // Place all collected data into the request as attributes
         request.setAttribute("projects", projects);
         request.setAttribute("rootCatalogIcons", rootCatalogIcons);
         request.setAttribute("rootCatalogNames", rootCatalogNames);
@@ -1754,12 +1775,40 @@ logger.log(Level.ERROR, "getting phases phase manager" + dateFormat.format(curre
         }
 
         currentDate = new Date();
-        logger.log(Level.ERROR, "leaving list projects" + dateFormat.format(currentDate));
+        logger.log(Level.ERROR, "leaving list projects " + dateFormat.format(currentDate));
+
         // Signal about successfull execution of the Action
         return mapping.findForward(Constants.SUCCESS_FORWARD_NAME);
     }
 
-    private Deliverable[] getDeliverables(
+    /**
+     * This static method performs a search for all outstanding deliverables. The list of these
+     * deliverables is returned as is, i.e. as one-dimensional array, and will require further
+     * grouping.
+     *
+     * @return an array of outstanding (incomplete) deliverables.
+     * @param manager
+     *            an instance of <code>DeliverableManager</code> class that will be used to
+     *            perform a search for deliverables.
+     * @param projects
+     *            an array of the projects to search the deliverables for.
+     * @param phases
+     *            an array of active phases for the projects specified by <code>projects</code>
+     *            parameter. The deliverables found will only be related to these phases.
+     * @param resources
+     *            an array of resources to search the deliverables for. Each of the deliverables
+     *            found will have to be complited by one of the resources from this array.
+     * @throws IllegalArgumentException
+     *             if any of the parameters are <code>null</code>.
+     * @throws DeliverablePersistenceException
+     *             if there is an error reading the persistence store.
+     * @throws SearchBuilderException
+     *             if there is an error executing the filter.
+     * @throws DeliverableCheckingException
+     *             if there is an error determining whether some Deliverable has been completed or
+     *             not.
+     */
+    private static Deliverable[] getDeliverables(
             DeliverableManager manager, Project[][] projects, Phase[][][] phases, Resource[][][] resources)
         throws DeliverablePersistenceException, SearchBuilderException, DeliverableCheckingException {
         // Validate parameters
@@ -1824,7 +1873,23 @@ logger.log(Level.ERROR, "getting phases phase manager" + dateFormat.format(curre
         return manager.searchDeliverables(filter, Boolean.FALSE);
     }
 
-    private String getRolesFromResources(MessageResources messages, Resource[] resources) {
+    /**
+     * This static method returns a string that lists all the different roles the resources
+     * specified by <code>resources</code> array have. The roles will be delimeted by
+     * line-breaking tag (<code>&lt;br&#160;/&gt;</code>). If there are no resources in
+     * <code>resources</code> array or no roles have been found, this method returns a string that
+     * denotes Public role (usually this string just says &quot;Public&quot;).
+     *
+     * @return a human-readable list of resource roles.
+     * @param messages
+     *            an instance of <code>MessageResources</code> class used to retrieve textual
+     *            representation of resource roles in different locales.
+     * @param resources
+     *            an array of the roles to determine the names of their resource roles.
+     * @throws IllegalArgumentException
+     *             if any of the parameters are <code>null</code>.
+     */
+    private static String getRolesFromResources(MessageResources messages, Resource[] resources) {
         // Validate parameters
         ActionsHelper.validateParameterNotNull(messages, "messages");
         ActionsHelper.validateParameterNotNull(resources, "resources");
@@ -1854,7 +1919,27 @@ logger.log(Level.ERROR, "getting phases phase manager" + dateFormat.format(curre
         return (buffer.length() != 0) ? buffer.toString() : messages.getMessage("ResourceRole.Public");
     }
 
-    private String getMyDeliverablesForPhases(
+    /**
+     * This static method returns a string that lists all the different outstanding (i.e.
+     * incomplete) deliverables the resources specified by <code>resources</code> array have. The
+     * deliverables will be delimeted by line-breaking tag (<code>&lt;br&#160;/&gt;</code>). If
+     * any of the arrays passed to this method is <code>null</code> or emtpy, or no deliverables
+     * have been found, this method returns empty string.
+     *
+     * @return a human-readable list of deliverables.
+     * @param messages
+     *            an instance of <code>MessageResources</code> class used to retrieve textual
+     *            representation of deliverables' names in different locales.
+     * @param deliverables
+     *            an array of deliverables to fetch outstanding deliverables (and their names) from.
+     * @param phases
+     *            an array of phases to look up the deliverables for.
+     * @param resources
+     *            an array of resources to look up the deliverables for.
+     * @throws IllegalArgumentException
+     *             if parameter <code>messages</code> is <code>null</code>.
+     */
+    private static String getMyDeliverablesForPhases(
             MessageResources messages, Deliverable[] deliverables, Phase[] phases, Resource[] resources) {
         // Validate parameters
         ActionsHelper.validateParameterNotNull(messages, "messages");
