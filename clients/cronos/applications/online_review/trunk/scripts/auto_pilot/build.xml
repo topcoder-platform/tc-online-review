@@ -388,7 +388,7 @@
         <mkdir dir="lib" />
     	<unjar src="auto_pilot_app.jar" dest="lib">
     		<patternset>
-    			<include name="**/*.jars"/>
+    			<include name="**/*.jar"/>
     		</patternset>
     	</unjar>
     	<unjar src="auto_pilot_app.jar" dest=".">
