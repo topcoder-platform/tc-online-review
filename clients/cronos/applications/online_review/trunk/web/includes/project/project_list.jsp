@@ -3,6 +3,7 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="bean" uri="/tags/struts-bean" %>
 <%@ taglib prefix="html" uri="/tags/struts-html" %>
+<%@ taglib prefix="orfn" uri="/tags/or-functions" %>
 <html:img src="/i/or/minus.gif" style="display:none;" /><%-- This image is used to precache "minus" image in Internet Explorer --%>
 <c:if test="${totalProjectsCount != 0}">
 	<c:forEach items="${projectTypes}" var="type" varStatus="idxrType">
@@ -56,8 +57,8 @@
 									<c:set var="phase" value="${phases[idxrCategory.index][idxrProject.index]}" />
 									<c:if test="${!(empty phase)}">
 										<td class="value" nowrap="nowrap"><bean:message key='ProjectPhase.${fn:replace(phase[0].phaseType.name, " ", "")}' /></td>
-										<td class="valueC">${phaseEndDates[idxrCategory.index][idxrProject.index]}</td>
-										<td class="valueC">${projectEndDates[idxrCategory.index][idxrProject.index]}</td>
+										<td class="valueC" nowrap="nowrap">${orfn:displayDateBr(pageContext.request, phaseEndDates[idxrCategory.index][idxrProject.index])}</td>
+										<td class="valueC" nowrap="nowrap">${orfn:displayDateBr(pageContext.request, projectEndDates[idxrCategory.index][idxrProject.index])}</td>
 										<c:if test="${isMyProjects}">
 											<td class="value" nowrap="nowrap">${myDeliverables[idxrCategory.index][idxrProject.index]}</td>
 										</c:if>

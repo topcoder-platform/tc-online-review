@@ -51,7 +51,7 @@
 							<td class="valueC">
 								<br />
 								<bean:message key="reviewCommitted.Score" />
-								<b>${reviewScore}</b><br /><br />
+								<b>${orfn:displayScore(null, reviewScore)}</b><br /><br />
 							</td>
 						</tr>
 						<tr>

@@ -243,7 +243,7 @@
 									</tr>
 									<tr>
 										<td class="value"><!-- @ --></td>
-										<td class="valueC" nowrap="nowrap"><b>${orfn:htmlEncode(review.score)}</b></td>
+										<td class="valueC" nowrap="nowrap"><b>${orfn:displayScore(null, review.score)}</b></td>
 										<td class="valueC"><!-- @ --></td>
 										<c:if test="${canPlaceAppeal or canPlaceAppealResponse}">
 											<td class="valueC"><!-- @ --></td>
