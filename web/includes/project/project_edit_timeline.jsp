@@ -53,13 +53,17 @@
 				<html:radio property="current_phase" value="${projectForm.map['phase_js_id'][phaseIdx]}" />
 			</td>
 		</c:if>		
-			<td class="valueB" nowrap="nowrap">${projectForm.map['phase_name'][phaseIdx]}</td>
+			<td class="valueB" nowrap="nowrap">
+				<span name="phase_name_text">${projectForm.map['phase_name'][phaseIdx]}</span>
+				<span name="phase_number_text">${projectForm.map['phase_number'][phaseIdx]}</span>
+			</td>
 			<td class="value" nowrap="nowrap">								
 				<html:hidden property="phase_type[${phaseIdx}]" />
 				<html:hidden property="phase_id[${phaseIdx}]" />
 				<html:hidden property="phase_js_id[${phaseIdx}]" />
 				<html:hidden property="phase_action[${phaseIdx}]" />
-				<html:hidden property="phase_name[${phaseIdx}]" />										
+				<html:hidden property="phase_name[${phaseIdx}]" />
+				<html:hidden property="phase_number[${phaseIdx}]" />										
 				<html:radio property="phase_start_by_phase[${phaseIdx}]" value="false" /> 
 				<html:text onblur="JavaScript:this.value=getDateString(this.value);" styleClass="inputBoxDate" property="phase_start_date[${phaseIdx}]" />
 				<html:text onblur="JavaScript:this.value=getTimeString(this.value, this.parentNode);" styleClass="inputBoxTime" property="phase_start_time[${phaseIdx}]" />

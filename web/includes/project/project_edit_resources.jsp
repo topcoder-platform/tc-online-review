@@ -18,12 +18,24 @@
 	<c:forEach var="resourceIdx" begin="0" end="${fn:length(projectForm.map['resources_role']) - 1}">
 		<tr class="light" style="${projectForm.map['resources_action'][resourceIdx] eq 'delete' ? 'display:none' : ''}">
 			<td class="value" nowrap="nowrap">
-				<html:select styleClass="inputBox" property="resources_role[${resourceIdx}]" style="width:150px;">
+				<html:select styleClass="inputBox" property="resources_role[${resourceIdx}]" 
+						style="width:150px;" onchange="onResourceRoleChange(this.parentNode.parentNode);">
 					<html:option key="editProject.Resources.SelectRole" value="-1" />
 					<c:forEach items="${requestScope.resourceRoles}" var="role">
 						<html:option key="ResourceRole.${fn:replace(role.name, ' ', '')}" value="${role.id}" />
 					</c:forEach>
 				</html:select>
+				<html:select styleClass="inputBox" property="resources_phase[${resourceIdx}]" >
+					<c:forEach items="${requestScope.resourceRoles}" var="role">
+						<c:if test="${role.id eq projectForm.map['resources_role'][resourceIdx] and not empty role.phaseType}">
+							<c:forEach var="phaseIdx" begin="1" end="${fn:length(projectForm.map['phase_type'])}">
+								<c:if test="${projectForm.map['phase_type'][phaseIdx] eq role.phaseType}">
+									<html:option value="${projectForm.map['phase_js_id'][phaseIdx]}">${projectForm.map['phase_number'][phaseIdx]}</html:option>
+								</c:if>
+							</c:forEach>
+						</c:if>	
+					</c:forEach>
+				</html:select>			
 				<div name="role_validation_msg" class="error" style="display:none"></div>
 			</td>
 			<td class="value">

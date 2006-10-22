@@ -262,8 +262,11 @@ public class ProjectActions extends DispatchAction {
         Long projectStatusId = new Long(project.getProjectStatus().getId());
         form.set("status", projectStatusId);
 
-        // Populate project forum name
+        // Populate project forum id
         populateProjectFormProperty(form, Long.class, "forum_id", project, "Developer Forum ID");
+        
+        // Populate project component id
+        populateProjectFormProperty(form, Long.class, "component_id", project, "Component ID");
 
         // Populate project public option
         form.set("public", new Boolean("Yes".equals(project.getProperty("Public"))));
@@ -281,13 +284,13 @@ public class ProjectActions extends DispatchAction {
         populateProjectFormProperty(form, String.class, "eligibility", project, "Eligibility");
         // Populate project SVN module
         populateProjectFormProperty(form, String.class, "SVN_module", project, "SVN Module");
-        // TODO: Check whether edit or add notes?
         // Populate project notes
         populateProjectFormProperty(form, String.class, "notes", project, "Notes");
 
         // Populate form with some data so that resources row template
         // is rendered properly by the appropriate JSP
         form.set("resources_role", 0, new Long(-1));
+        form.set("resources_phase", 0, "");
         form.set("resources_id", 0, new Long(-1));
         form.set("resources_action", 0, "add");
 
@@ -307,15 +310,18 @@ public class ProjectActions extends DispatchAction {
         for (int i = 0; i < resources.length; ++i) {
             form.set("resources_id", i + 1, new Long(resources[i].getId()));
             form.set("resources_action", i + 1, "update");
+            
             form.set("resources_role", i + 1, new Long(resources[i].getResourceRole().getId()));
-
+            form.set("resources_phase", i + 1, "loaded_" + resources[i].getPhase());
             form.set("resources_name", i + 1, resources[i].getProperty("Handle"));
+            
             if (resources[i].getProperty("Payment") != null) {
                 form.set("resources_payment", i + 1, Boolean.TRUE);
                 form.set("resources_payment_amount", i + 1, Long.valueOf((String) resources[i].getProperty("Payment")));
             } else {
                 form.set("resources_payment", i + 1, Boolean.FALSE);
             }
+            
             if (resources[i].getProperty("Payment Status") != null) {
                 form.set("resources_paid", i + 1, resources[i].getProperty("Payment Status"));
             } else {
@@ -331,11 +337,23 @@ public class ProjectActions extends DispatchAction {
         // Sort project phases
         Arrays.sort(phases, new ProjectPhaseComparer());
 
-
+        Map phaseNumberMap = new HashMap();
+               
         // Populate form with phases data
         for (int i = 0; i < phases.length; ++i) {
             form.set("phase_id", i + 1, new Long(phases[i].getId()));
-            form.set("phase_type", i + 1, new Long(phases[i].getPhaseType().getId()));
+            
+            Long phaseTypeId = new Long(phases[i].getPhaseType().getId());
+            form.set("phase_type", i + 1, phaseTypeId);
+            Integer phaseNumber = (Integer) phaseNumberMap.get(phaseTypeId);
+            if (phaseNumber == null) {
+                phaseNumber = new Integer(1);
+            } else {
+                phaseNumber = new Integer(phaseNumber.intValue() + 1);
+            }
+            phaseNumberMap.put(phaseTypeId, phaseNumber);
+            form.set("phase_number", i + 1, phaseNumber);
+            
             form.set("phase_name", i + 1, phases[i].getPhaseType().getName());
             form.set("phase_action", i + 1, "update");
             form.set("phase_js_id", i + 1, "loaded_" + phases[i].getId());
@@ -587,6 +605,8 @@ public class ProjectActions extends DispatchAction {
         }
         // Populate project forum id
         project.setProperty("Developer Forum ID", lazyForm.get("forum_id"));
+        // Populate project component id
+        project.setProperty("Component ID", lazyForm.get("component_id"));
         // Populate project SVN module
         project.setProperty("SVN Module", lazyForm.get("SVN_module"));
 
@@ -633,7 +653,7 @@ public class ProjectActions extends DispatchAction {
         // FIXME: resources must be saved even if there are validation errors to validate resources
         if (!ActionsHelper.isErrorsPresent(request)) {
             // Save the project resources
-            saveResources(newProject, request, lazyForm, project, projectPhases);
+            saveResources(newProject, request, lazyForm, project, projectPhases, phasesJsMap);
         }
 
         // Check if there are any validation errors and return appropriate forward
@@ -1281,10 +1301,12 @@ public class ProjectActions extends DispatchAction {
      * @param request
      * @param lazyForm
      * @param project
+     * @param projectPhases
+     * @param phasesJsMap
      * @throws BaseException
      */
     private void saveResources(boolean newProject, HttpServletRequest request,
-            LazyValidatorForm lazyForm, Project project, Phase[] projectPhases)
+            LazyValidatorForm lazyForm, Project project, Phase[] projectPhases, Map phasesJsMap)
         throws BaseException {
         // Obtain the instance of the User Retrieval
         UserRetrieval userRetrieval = ActionsHelper.createUserRetrieval(request);
@@ -1326,6 +1348,7 @@ public class ProjectActions extends DispatchAction {
                 continue;
             }
 
+            // TODO: Actually no updates should be done at all in the case validation fails!!!            
             if (resourceNames[i] == null || resourceNames[i].trim().length() == 0) {
                 ActionsHelper.addErrorToRequest(request, "resources_name[" + i + "]",
                         "error.com.cronos.onlinereview.actions.editProject.Resource.Empty");
@@ -1335,6 +1358,8 @@ public class ProjectActions extends DispatchAction {
             // Get info about user with the specified handle
             ExternalUser user = userRetrieval.retrieveUser(resourceNames[i]);
 
+            
+            // TODO: Actually no updates should be done at all in the case validation fails!!!
             // If there is no user with such handle, indicate an error
             if (user == null) {
                 ActionsHelper.addErrorToRequest(request, "resources_name[" + i + "]",
@@ -1345,10 +1370,12 @@ public class ProjectActions extends DispatchAction {
             // Set resource properties
             resource.setProject(new Long(project.getId()));
 
+            boolean resourceRoleChanged = false;
             ResourceRole role = ActionsHelper.findResourceRoleById(
                     resourceRoles, ((Long) lazyForm.get("resources_role", i)).longValue());
-            if (role != null) {
+            if (role != null && role != resource.getResourceRole()) {                
                 resource.setResourceRole(role);
+                resourceRoleChanged = true;
             }
 
             resource.setProperty("Handle", resourceNames[i]);
@@ -1363,10 +1390,13 @@ public class ProjectActions extends DispatchAction {
             }
             // Set resource phase id, if needed
             Long phaseTypeId = resource.getResourceRole().getPhaseType();
-            if (phaseTypeId != null) {
-                // TODO: Need to support several same typed phases
-                Phase phase = ActionsHelper.findPhaseByPhaseTypeId(projectPhases, phaseTypeId.longValue());
-                resource.setPhase(new Long(phase.getId()));
+            if (phaseTypeId != null) {                
+                Phase phase = (Phase) phasesJsMap.get(lazyForm.get("resources_phase", i));
+                if (phase != null) {
+                    resource.setPhase(new Long(phase.getId()));
+                } else {
+                    // TODO: Probably issue validation error here
+                }
             }
 
             // Set resource properties copied from external user
@@ -1375,7 +1405,8 @@ public class ProjectActions extends DispatchAction {
 
             String resourceRole = resource.getResourceRole().getName();
             // If resource is a submitter, we need to store appropriate rating and reliability
-            if (resourceRole.equals("Submitter")) {
+            // Note, that it is done only in the case resource is added or resource role is changed
+            if (resourceRole.equals("Submitter") && (resourceRoleChanged || resourceAction.equals("add"))) {
                 if (project.getProjectCategory().getName().equals("Design")) {
                     resource.setProperty("Rating", user.getDesignRating());
                     resource.setProperty("Reliability", user.getDesignReliability());
