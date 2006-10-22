@@ -4,13 +4,14 @@
 <%@ taglib prefix="html" uri="/tags/struts-html" %>
 <%@ taglib prefix="bean" uri="/tags/struts-bean" %>
 <%@ taglib prefix="tc-webtag" uri="/tags/tc-webtags" %>
-	<table class="scorecard" style="border-collapse:collapse;" cellpadding="0" cellspacing="0" width="100%">
+<%@ taglib prefix="orfn" uri="/tags/or-functions" %>
+	<table class="scorecard" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;">
 		<tr>
 			<td class="title"><bean:message key="viewProjectDetails.box.MyRole" /></td>
 			<c:if test="${empty myDeliverables}">
 				<td class="title"><!-- @ --></td>
 			</c:if>
-			<c:if test="${!(empty myDeliverables)}">
+			<c:if test="${not empty myDeliverables}">
 				<td class="title"><bean:message key="viewProjectDetails.box.MyDeliverabes" /></td>
 			</c:if>
 			<td class="title"><bean:message key="viewProjectDetails.box.OutstandingDeliverabes" /></td>
@@ -18,17 +19,17 @@
 		<tr class="light">
 			<td class="value" width="15%" align="left">
 				<b>${myRole}</b><br />
-				<c:if test="${isAllowedToViewPayment == true}">
+				<c:if test="${isAllowedToViewPayment}">
 					<b><bean:message key="viewProjectDetails.Payment" />:</b>
 					<c:if test="${empty myPayment}">
 						<bean:message key="NotAvailable" />
 					</c:if>
-					<c:if test="${!(empty myPayment)}">
+					<c:if test="${not empty myPayment}">
 						${"$"}${myPayment}
-						<c:if test="${!(empty wasPaid) && wasPaid == true}">
+						<c:if test="${(not empty wasPaid) && wasPaid == true}">
 							<bean:message key="viewProjectDetails.Paid.yes" />
 						</c:if>
-						<c:if test="${!(empty wasPaid) && wasPaid != true}">
+						<c:if test="${(not empty wasPaid) && wasPaid != true}">
 							<bean:message key="viewProjectDetails.Paid.no" />
 						</c:if>
 					</c:if>
@@ -37,7 +38,7 @@
 			<c:if test="${empty myDeliverables}">
 				<td class="value" width="45%" align="left" nowrap="nowrap"><!-- @ --></td>
 			</c:if>
-			<c:if test="${!(empty myDeliverables)}">
+			<c:if test="${not empty myDeliverables}">
 				<td class="value" width="45%" align="left" nowrap="nowrap">
 					<c:forEach items="${myDeliverables}" var="deliverable" varStatus="deliverableStatus">
 						<c:set var="devrStatus" value="${myDeliverableStatuses[deliverableStatus.index]}" />
@@ -52,13 +53,13 @@
 								<html:img src="/i/or/icon_warning.gif" altKey="global.Late" styleClass="Outline" />
 							</c:when>
 						</c:choose>
-						${myDeliverableDates[deliverableStatus.index]}
+						${orfn:displayDate(pageContext.request, myDeliverableDates[deliverableStatus.index])}
 						<c:if test="${empty myDeliverableLinks[deliverableStatus.index]}">
 							<b><bean:message key='Deliverable.${fn:replace(deliverable.name, " ", "")}' /></b><c:if
 								test="${deliverableStatus.index != fn:length(myDeliverables) - 1}"><br />
 							</c:if>
 						</c:if>
-						<c:if test="${!(empty myDeliverableLinks[deliverableStatus.index])}">
+						<c:if test="${not empty myDeliverableLinks[deliverableStatus.index]}">
 							<html:link page="/actions/${myDeliverableLinks[deliverableStatus.index]}"><b><bean:message
 								key='Deliverable.${fn:replace(deliverable.name, " ", "")}' /></b></html:link><c:if
 								test="${deliverableStatus.index != fn:length(myDeliverables) - 1}"><br />
@@ -70,7 +71,7 @@
 			<c:if test="${empty outstandingDeliverables}">
 				<td class="value" width="40%" align="left" nowrap="nowrap"><bean:message key="viewProjectDetails.NoOutstandingDeliverables" /></td>
 			</c:if>
-			<c:if test="${!(empty outstandingDeliverables)}">
+			<c:if test="${not empty outstandingDeliverables}">
 				<td class="value" width="40%" align="left" nowrap="nowrap">
 					<c:forEach items="${outstandingDeliverables}" var="deliverable" varStatus="deliverableStatus">
 						<c:set var="devrStatus" value="${outstandingDeliverableStatuses[deliverableStatus.index]}" />
@@ -85,14 +86,14 @@
 								<html:img src="/i/or/icon_warning.gif" altKey="global.Late" styleClass="Outline" />
 							</c:when>
 						</c:choose>
-						${outstandingDeliverableDates[deliverableStatus.index]}
-						<c:if test="${!(empty outstandingDeliverableUserIds[deliverableStatus.index])}">
+						${orfn:displayDate(pageContext.request, outstandingDeliverableDates[deliverableStatus.index])}
+						<c:if test="${not empty outstandingDeliverableUserIds[deliverableStatus.index]}">
 							<tc-webtag:handle coderId="${outstandingDeliverableUserIds[deliverableStatus.index]}" context="component" /><b>:</b>
 						</c:if>
 						<b><bean:message key='Deliverable.${fn:replace(deliverable.name, " ", "")}' /></b>
-						<c:if test="${!(empty deliverable.submission)}">
+						<c:if test="${not empty deliverable.submission}">
 							${deliverable.submission}
-							<c:if test="${(isManager == true) && !(empty outstandingDeliverableSubmissionUserIds[deliverableStatus.index])}">
+							<c:if test="${(isManager) && (not empty outstandingDeliverableSubmissionUserIds[deliverableStatus.index])}">
 								(<tc-webtag:handle coderId="${outstandingDeliverableSubmissionUserIds[deliverableStatus.index]}" context="component" />)
 							</c:if>
 						</c:if><br />

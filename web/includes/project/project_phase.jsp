@@ -4,6 +4,7 @@
 <%@ taglib prefix="html" uri="/tags/struts-html" %>
 <%@ taglib prefix="bean" uri="/tags/struts-bean" %>
 <%@ taglib prefix="tc-webtag" uri="/tags/tc-webtags" %>
+<%@ taglib prefix="orfn" uri="/tags/or-functions" %>
 	<c:set var="submBoxIdx" value="0" />
 	<a name="tabs"></a>
 	<div id="tabcontentcontainer">
@@ -144,7 +145,7 @@
 										<c:if test="${isManager != true}">
 											<td class="value"><!-- @ --></td>
 										</c:if>
-										<td class="value" width="22%">${submission.modificationTimestamp}</td>
+										<td class="value" width="22%">${orfn:displayDate(pageContext.request, submission.modificationTimestamp)}</td>
 										<c:set var="scrTask" value="${group.screeningTasks[submissionStatus.index]}" />
 										<c:if test="${empty scrTask}">
 											<td class="valueC" width="14%"><html:img src="/i/clear.gif" width="8" height="10" /></td>
@@ -185,7 +186,7 @@
 											</c:if>
 										</c:forEach>
 										<c:if test="${empty screener}">
-											<td class="value" width="15%">not assigned</td>
+											<td class="value" width="15%"><bean:message key="viewProjectDetails.box.Screening.ScreenerNotAssigned" /></td>
 										</c:if>
 										<c:if test="${!(empty screener)}">
 											<td class="value" width="15%"><tc-webtag:handle coderId='${screener.allProperties["External Reference ID"]}' context="component" /></td>
@@ -197,24 +198,24 @@
 											</c:if>
 										</c:forEach>
 										<c:if test="${empty review}">
-											<c:if test="${isAllowedToPerformScreening == true}">
+											<c:if test="${isAllowedToPerformScreening}">
 												<td class="valueC" width="14%" nowrap="nowrap">
 													<b><html:link page="/actions/CreateScreening.do?method=createScreening&sid=${submission.id}"><bean:message
 														key="viewProjectDetails.box.Screening.Submit" /></html:link></b></td>
 											</c:if>
-											<c:if test="${isAllowedToPerformScreening != true}">
+											<c:if test="${not isAllowedToPerformScreening}">
 												<td class="valueC" width="14%"><bean:message key="Pending" /></td>
 											</c:if>
 											<td class="valueC" width="15%"><bean:message key="NotAvailable" /></td>
 										</c:if>
 										<c:if test="${!(empty review)}">
-											<c:if test="${review.committed == true}">
-												<c:if test="${isAllowedToViewScreening == true}">
+											<c:if test="${review.committed}">
+												<c:if test="${isAllowedToViewScreening}">
 													<td class="valueC" width="14%">
-														<html:link page="/actions/ViewScreening.do?method=viewScreening&rid=${review.id}">${review.score}</html:link></td>
+														<html:link page="/actions/ViewScreening.do?method=viewScreening&rid=${review.id}">${orfn:displayScore(pageContext.request, review.score)}</html:link></td>
 												</c:if>
 												<c:if test="${isAllowedToViewScreening != true}">
-													<td class="valueC" width="14%">${review.score}</td>
+													<td class="valueC" width="14%">${orfn:displayScore(review.score)}</td>
 												</c:if>
 												<c:if test="${review.score >= passingMinimum}">
 													<td class="valueC" width="15%"><bean:message key="viewProjectDetails.box.Screening.Passed" /></td>
@@ -223,13 +224,13 @@
 													<td class="valueC" width="15%"><bean:message key="viewProjectDetails.box.Screening.Failed" /></td>
 												</c:if>
 											</c:if>
-											<c:if test="${review.committed != true}">
-												<c:if test="${isAllowedToPerformScreening == true}">
+											<c:if test="${not review.committed}">
+												<c:if test="${isAllowedToPerformScreening}">
 													<td class="valueC" width="14%" nowrap="nowrap">
 														<b><html:link page="/actions/EditScreening.do?method=editScreening&rid=${review.id}"><bean:message
 															key="viewProjectDetails.box.Screening.Submit" /></html:link></b></td>
 												</c:if>
-												<c:if test="${isAllowedToPerformScreening != true}">
+												<c:if test="${not isAllowedToPerformScreening}">
 													<td class="valueC" width="14%"><bean:message key="Pending" /></td>
 												</c:if>
 												<td class="valueC" width="15%"><bean:message key="NotAvailable" /></td>
@@ -243,7 +244,7 @@
 												<html:link page="/actions/DownloadSubmission.do?method=downloadSubmission&amp;uid=${pastSubmission.id}">
 													<bean:message key="viewProjectDetails.box.Submission.Previous.UploadID" />
 													${pastSubmission.id}</html:link></td>
-											<td class="value" width="22%">${pastSubmission.modificationTimestamp}</td>
+											<td class="value" width="22%">${orfn:displayDate(pageContext.request, pastSubmission.modificationTimestamp)}</td>
 											<td class="value" width="14%"><!-- @ --></td>
 											<td class="value" width="15%"><!-- @ --></td>
 											<td class="value" width="14%"><!-- @ --></td>
@@ -380,10 +381,10 @@
 												(<tc-webtag:handle coderId='${submitter.allProperties["External Reference ID"]}' context="component" />)
 											</c:if>
 										</td>
-										<td class="valueC" width="7%">${group.reviewDates[submissionStatus.index]}</td>
+										<td class="valueC" width="7%">${orfn:displayDateBr(pageContext.request, group.reviewDates[submissionStatus.index])}</td>
 										<c:if test="${isAllowedToEditHisReviews != true}">
-											<c:if test="${!(empty submitter)}">
-												<td class="valueC" width="12%"><html:link page="/actions/ViewCompositeScorecard.do?method=viewCompositeScorecard&sid=${submission.id}">${submitter.allProperties["Final Score"]}</html:link></td>
+											<c:if test="${not empty submitter}">
+												<td class="valueC" width="12%"><html:link page="/actions/ViewCompositeScorecard.do?method=viewCompositeScorecard&sid=${submission.id}">${orfn:displayScore(pageContext.request, submitter.allProperties["Final Score"])}</html:link></td>
 											</c:if>
 											<c:if test="${empty submitter}">
 												<td class="valueC" width="12%"><bean:message key="Incomplete" /></td>
@@ -414,7 +415,7 @@
 											<c:if test="${!(empty review)}">
 												<c:if test="${review.committed == true}">
 													<td class="valueC" width="8%"><html:link
-														page="/actions/ViewReview.do?method=viewReview&rid=${review.id}">${review.score}</html:link></td>
+														page="/actions/ViewReview.do?method=viewReview&rid=${review.id}">${orfn:displayScore(pageContext.request, review.score)}</html:link></td>
 												</c:if>
 												<c:if test="${review.committed != true}">
 													<c:if test="${isAllowedToEditHisReviews == true}">
@@ -472,26 +473,26 @@
 												titleKey="viewProjectDetails.box.Submission.Download">${winningSubmission.upload.id}</html:link>
 											(<tc-webtag:handle coderId='${group.winner.allProperties["External Reference ID"]}' context="component" />)
 										</td>
-										<c:if test="${!(empty group.aggregation)}">
-											<c:if test="${group.aggregation.committed == true}">
-												<td class="valueC">${group.aggregation.modificationTimestamp}</td>
+										<c:if test="${not empty group.aggregation}">
+											<c:if test="${group.aggregation.committed}">
+												<td class="valueC" nowrap="nowrap">${orfn:displayDate(pageContext.request, group.aggregation.modificationTimestamp)}</td>
 												<td class="valueC" nowrap="nowrap"><html:link
 													page="/actions/ViewAggregation.do?method=viewAggregation&rid=${group.aggregation.id}"><bean:message
 													key="viewProjectDetails.box.Aggregation.ViewResults" /></html:link></td>
 											</c:if>
-											<c:if test="${group.aggregation.committed != true}">
+											<c:if test="${not group.aggregation.committed}">
 												<td class="value"><!-- @ --></td>
-												<c:if test="${isAllowedToPerformAggregation == true}">
+												<c:if test="${isAllowedToPerformAggregation}">
 													<td class="valueC" nowrap="nowrap"><html:link
 														page="/actions/EditAggregation.do?method=editAggregation&rid=${group.aggregation.id}"><b><bean:message
 														key="viewProjectDetails.box.Aggregation.Submit" /></b></html:link></td>
 												</c:if>
-												<c:if test="${isAllowedToPerformAggregation != true}">
+												<c:if test="${not isAllowedToPerformAggregation}">
 													<td class="valueC" nowrap="nowrap"><bean:message key="Pending" /></td>
 												</c:if>
 											</c:if>
-											<c:if test="${group.aggregationReviewCommitted == true}">
-												<td class="valueC">${group.aggregation.modificationTimestamp}</td>
+											<c:if test="${group.aggregationReviewCommitted}">
+												<td class="valueC" nowrap="nowrap">${orfn:displayDate(pageContext.request, group.aggregation.modificationTimestamp)}</td>
 												<td class="valueC" nowrap="nowrap"><html:link
 													page="/actions/ViewAggregationReview.do?method=viewAggregationReview&rid=${group.aggregation.id}"><bean:message
 													key="viewProjectDetails.box.Aggregation.ViewResults" /></html:link></td>
@@ -548,7 +549,7 @@
 											(<tc-webtag:handle coderId='${group.winner.allProperties["External Reference ID"]}' context="component" />)
 										</td>
 										<c:if test="${!(empty group.finalFix)}">
-											<td class="valueC" nowrap="nowrap">${group.finalFix.modificationTimestamp}</td>
+											<td class="valueC" nowrap="nowrap">${orfn:displayDate(pageContext.request, group.finalFix.modificationTimestamp)}</td>
 											<td class="valueC" nowrap="nowrap">
 												<html:link page="/actions/DownloadFinalFix.do?method=downloadFinalFix&uid=${group.finalFix.id}"
 													titleKey="viewProjectDetails.box.FinalFix.Download.alt"><bean:message
@@ -575,7 +576,7 @@
 										</c:if>
 										<c:if test="${!(empty group.finalReview)}">
 											<c:if test="${group.finalReview.committed == true}">
-												<td class="valueC" nowrap="nowrap">${group.finalReview.modificationTimestamp}</td>
+												<td class="valueC" nowrap="nowrap">${orfn:displayDate(pageContext.request, group.finalReview.modificationTimestamp)}</td>
 												<td class="valueC" nowrap="nowrap">
 													<html:link page="/actions/ViewFinalReview.do?method=viewFinalReview&rid=${group.finalReview.id}"><bean:message
 														key="viewProjectDetails.box.FinalReview.ViewResults" /></html:link></td>
@@ -627,21 +628,21 @@
 												titleKey="viewProjectDetails.box.Submission.Download">${winningSubmission.upload.id}</html:link>
 											(<tc-webtag:handle coderId='${group.winner.allProperties["External Reference ID"]}' context="component" />)
 										</td>
-										<c:if test="${!(empty group.approval)}">
-											<c:if test="${group.approval.committed == true}">
-												<td class="valueC" nowrap="nowrap">${group.approval.modificationTimestamp}</td>
+										<c:if test="${not empty group.approval}">
+											<c:if test="${group.approval.committed}">
+												<td class="valueC" nowrap="nowrap">${orfn:displayDate(pageContext.request, group.approval.modificationTimestamp)}</td>
 												<td class="valueC" nowrap="nowrap">
 													<html:link page="/actions/ViewApproval.do?method=viewApproval&rid=${group.approval.id}"><bean:message
 														key="viewProjectDetails.box.Approval.ViewResults" /></html:link></td>
 											</c:if>
-											<c:if test="${group.approval.committed != true}">
+											<c:if test="${not group.approval.committed}">
 												<td class="value"><!-- @ --></td>
-												<c:if test="${isAllowedToPerformApproval == true}">
+												<c:if test="${isAllowedToPerformApproval}">
 													<td class="valueC" nowrap="nowrap">
 														<html:link page="/actions/EditApproval.do?method=editApproval&rid=${group.approval.id}"><bean:message
 															key="viewProjectDetails.box.Approval.Submit" /></html:link></td>
 												</c:if>
-												<c:if test="${isAllowedToPerformApproval != true}">
+												<c:if test="${not isAllowedToPerformApproval}">
 													<td class="valueC" nowrap="nowrap"><bean:message key="Pending" /></td>
 												</c:if>
 											</c:if>

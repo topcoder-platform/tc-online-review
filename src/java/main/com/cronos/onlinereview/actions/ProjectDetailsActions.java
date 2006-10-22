@@ -6,8 +6,6 @@ package com.cronos.onlinereview.actions;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.text.Format;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -177,26 +175,25 @@ public class ProjectDetailsActions extends DispatchAction {
         int[] outstandingDeliverableStatuses =
             getDeliverableStatusCodes(outstandingDeliverables, activePhases, currentTime);
 
-        Format format = new SimpleDateFormat("MM.dd.yyyy hh:mm a");
-        String[] myDeliverableDates = new String[myDeliverables.length];
-        String[] outstandingDeliverableDates = new String[outstandingDeliverables.length];
+        Date[] myDeliverableDates = new Date[myDeliverables.length];
+        Date[] outstandingDeliverableDates = new Date[outstandingDeliverables.length];
 
         for (int i = 0; i < myDeliverables.length; ++i) {
             Deliverable deliverable = myDeliverables[i];
             if (deliverable.isComplete()) {
-                myDeliverableDates[i] = format.format(deliverable.getCompletionDate());
+                myDeliverableDates[i] = deliverable.getCompletionDate();
             } else {
                 Phase phase = ActionsHelper.getPhaseForDeliverable(activePhases, deliverable);
-                myDeliverableDates[i] = format.format(phase.calcEndDate());
+                myDeliverableDates[i] = phase.calcEndDate();
             }
         }
         for (int i = 0; i < outstandingDeliverables.length; ++i) {
             Deliverable deliverable = outstandingDeliverables[i];
             if (deliverable.isComplete()) {
-                outstandingDeliverableDates[i] = format.format(deliverable.getCompletionDate());
+                outstandingDeliverableDates[i] = deliverable.getCompletionDate();
             } else {
                 Phase phase = ActionsHelper.getPhaseForDeliverable(activePhases, deliverable);
-                outstandingDeliverableDates[i] = format.format(phase.calcEndDate());
+                outstandingDeliverableDates[i] = phase.calcEndDate();
             }
         }
 
@@ -214,12 +211,10 @@ public class ProjectDetailsActions extends DispatchAction {
         request.setAttribute("outstandingDeliverableUserIds", outstandingDeliverableUserIds);
         request.setAttribute("outstandingDeliverableSubmissionUserIds", outstandingDeliverableSubmissionUserIds);
 
-        String[] displayedStart = new String[phases.length];
-        String[] displayedEnd = new String[phases.length];
-        String[] originalStart = new String[phases.length];
-        String[] originalEnd = new String[phases.length];
-        String strOrigStartTime = messages.getMessage("viewProjectDetails.Timeline.OriginalStartTime") + " ";
-        String strOrigEndTime = messages.getMessage("viewProjectDetails.Timeline.OriginalEndTime") + " ";
+        Date[] displayedStart = new Date[phases.length];
+        Date[] displayedEnd = new Date[phases.length];
+        Date[] originalStart = new Date[phases.length];
+        Date[] originalEnd = new Date[phases.length];
         long projectStartTime = phProj.getStartDate().getTime() / (60 * 1000);
         // The following two arrays are used to display Gantt chart
         long[] ganttOffsets = new long[phases.length];
@@ -240,10 +235,10 @@ public class ProjectDetailsActions extends DispatchAction {
             long endTime = endDate.getTime() / (60 * 1000);
 
             // Determine the strings to display for start/end dates
-            displayedStart[i] = format.format(startDate);
-            originalStart[i] = strOrigStartTime + format.format(phase.getScheduledStartDate());
-            displayedEnd[i] = format.format(endDate);
-            originalEnd[i] = strOrigEndTime + format.format(phase.getScheduledEndDate());
+            displayedStart[i] = startDate;
+            originalStart[i] = phase.getScheduledStartDate();
+            displayedEnd[i] = endDate;
+            originalEnd[i] = phase.getScheduledEndDate();
 
             // Determine offsets and lengths of the bars in Gantt chart, in minutes
             ganttOffsets[i] = startTime - projectStartTime;

@@ -2796,9 +2796,7 @@ public class ProjectReviewActions extends DispatchAction {
             retrieveAndStoreBasicReviewInfo(request, verification, reviewType, scorecardTemplate);
 
             // Place information about the final score into the request
-            // rounded to 2-digit fractions
-            request.setAttribute("reviewScore",
-            		new Float((float) Math.round(review.getScore().floatValue() * 100) / 100));
+            request.setAttribute("reviewScore", review.getScore());
             // Place review ID into the request
             request.setAttribute("rid", new Long(review.getId()));
 

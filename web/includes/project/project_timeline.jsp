@@ -4,7 +4,7 @@
 <%@ taglib prefix="bean" uri="/tags/struts-bean" %>
 <%@ taglib prefix="html" uri="/tags/struts-html" %>
 <%@ taglib prefix="orfn" uri="/tags/or-functions" %>
-	<table class="stat" cellpadding="0" cellspacing="0" width="100%" style="table-layout: fixed; border-bottom: 1px solid #999999;">
+	<table class="stat" width="100%" cellpadding="0" cellspacing="0" style="table-layout: fixed; border-bottom: 1px solid #999999;">
 		<tr>
 			<td class="title" width="392"><bean:message key="viewProjectDetails.box.Timeline" /></td>
 			<c:if test="${isAllowedToSetTL}">
@@ -60,8 +60,24 @@
 									<td class="valueC" nowrap="nowrap"><!-- @ --></td>
 								</c:otherwise>
 							</c:choose>
-							<td class="valueC" nowrap="nowrap" title='${!(empty originalStart[phaseStatus.index]) ? originalStart[phaseStatus.index] : ""}'>${displayedStart[phaseStatus.index]}</td>
-							<td class="valueC" nowrap="nowrap" title='${!(empty originalEnd[phaseStatus.index]) ? originalEnd[phaseStatus.index] : ""}'>${displayedEnd[phaseStatus.index]}</td>
+							<c:choose>
+								<c:when test="${not empty originalStart[phaseStatus.index]}">
+									<c:set var="originalStartDate" value='${orfn:getMessage(pageContext, "viewProjectDetails.Timeline.OriginalStartTime")} ${orfn:displayDate(pageContext.request, originalStart[phaseStatus.index])}' />
+								</c:when>
+								<c:otherwise>
+									<c:set var="originalStartDate" value="" />
+								</c:otherwise>
+							</c:choose>
+							<c:choose>
+								<c:when test="${not empty originalEnd[phaseStatus.index]}">
+									<c:set var="originalEndDate" value='${orfn:getMessage(pageContext, "viewProjectDetails.Timeline.OriginalEndTime")} ${orfn:displayDate(pageContext.request, originalEnd[phaseStatus.index])}' />
+								</c:when>
+								<c:otherwise>
+									<c:set var="originalEndDate" value="" />
+								</c:otherwise>
+							</c:choose>
+							<td class="valueC" nowrap="nowrap" title="${originalStartDate}">${orfn:displayDate(pageContext.request, displayedStart[phaseStatus.index])}</td>
+							<td class="valueC" nowrap="nowrap" title="${originalEndDate}">${orfn:displayDate(pageContext.request, displayedEnd[phaseStatus.index])}</td>
 						</tr>
 					</c:forEach>
 				</table>
