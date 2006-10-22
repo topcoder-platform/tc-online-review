@@ -131,6 +131,49 @@ public class ConfigHelper {
 
     /**
      * This member variable is a string constant that specifies the name of the property which
+     * contains format-strings to use to build formatting classes to format different values into strings.
+     *
+     * @see #SCORECARD_SCORE_FORMAT_PROP
+     * @see #DATE_FORMAT_PROP
+     * @see #DATE_ONLY_FORMAT_PROP
+     * @see #TIME_ONLY_FORMAT_PROP
+     */
+    private static final String FORMATS_PROP = "Formats";
+
+    /**
+     * This member variable is a string constant that specifies the name of the property which
+     * defines the formatting string used to format scorecard scores.
+     *
+     * @see #FORMATS_PROP
+     */
+    private static final String SCORECARD_SCORE_FORMAT_PROP = "ScorecardScore";
+
+    /**
+     * This member variable is a string constant that specifies the name of the property which
+     * defines the formatting string used to format dates.
+     *
+     * @see #FORMATS_PROP
+     */
+    private static final String DATE_FORMAT_PROP = "Date";
+
+    /**
+     * This member variable is a string constant that specifies the name of the property which
+     * defines the formatting string used to format dates (only the date part of them).
+     *
+     * @see #FORMATS_PROP
+     */
+    private static final String DATE_ONLY_FORMAT_PROP = "DateOnly";
+
+    /**
+     * This member variable is a string constant that specifies the name of the property which
+     * defines the formatting string used to format dates (only the time part of them).
+     *
+     * @see #FORMATS_PROP
+     */
+    private static final String TIME_ONLY_FORMAT_PROP = "TimeOnly";
+
+    /**
+     * This member variable is a string constant that specifies the name of the property which
      * contains definition of the whole Permissions Matrix.  The Matrix is defined on
      * per-permission basis, i.e. for every permission name there is a list of values, each value
      * defines the name of single Resource Role which this permission is granted to.
@@ -260,6 +303,28 @@ public class ConfigHelper {
     private static int pixelsPerHour = 5;
 
     /**
+     * This member variable holds the formatting string used to format scorecard scores.
+     */
+    private static String scorecardScoreFormat = "0";
+
+    /**
+     * This member variable holds the formatting string used to format dates.
+     */
+    private static String dateFormat = "MM.dd.yyyy hh:mm a";
+
+    /**
+     * This member variable holds the formatting string used to format dates (onlt the date part of
+     * them).
+     */
+    private static String dateOnlyFormat = "MM.dd.yyyy";
+
+    /**
+     * This member variable holds the formatting string used to format dates (onlt the time part of
+     * them).
+     */
+    private static String timeOnlyFormat = "hh:mm a";
+
+    /**
      * This member variable holds the names of all permissions for the application (as keys), and
      * lists of roles that have every of the permissions (as values for the corresponding keys).
      */
@@ -385,6 +450,29 @@ public class ConfigHelper {
                 if (pixels > 0) {
                     pixelsPerHour = pixels;
                 }
+            }
+
+            // Retrieve property that contains definitions of formatting strings
+            Property propFormats = cfgMgr.getPropertyObject(ONLINE_REVIEW_CFG_NS, FORMATS_PROP);
+            // Get a formatting string for scorecard scores
+            String formattingString = propFormats.getValue(SCORECARD_SCORE_FORMAT_PROP);
+            if (formattingString != null && formattingString.trim().length() != 0) {
+                scorecardScoreFormat = formattingString;
+            }
+            // Get a formatting string for dates
+            formattingString = propFormats.getValue(DATE_FORMAT_PROP);
+            if (formattingString != null && formattingString.trim().length() != 0) {
+                dateFormat = formattingString;
+            }
+            // Get a formatting string for dates-only
+            formattingString = propFormats.getValue(DATE_ONLY_FORMAT_PROP);
+            if (formattingString != null && formattingString.trim().length() != 0) {
+                dateOnlyFormat = formattingString;
+            }
+            // Get a formatting string for times-only
+            formattingString = propFormats.getValue(TIME_ONLY_FORMAT_PROP);
+            if (formattingString != null && formattingString.trim().length() != 0) {
+                timeOnlyFormat = formattingString;
             }
 
             // Retrieve property that contains definition of Permissions Matrix
@@ -522,6 +610,42 @@ public class ConfigHelper {
      */
     public static int getPixelsPerHour() {
         return pixelsPerHour;
+    }
+
+    /**
+     * This static method returns the formatting string used to format scorecard scores.
+     *
+     * @return formatting string for scorecard scores.
+     */
+    public static String getScorecardScoreFormat() {
+        return scorecardScoreFormat;
+    }
+
+    /**
+     * This static method returns the formatting string used to format dates.
+     *
+     * @return formatting string for dates.
+     */
+    public static String getDateFormat() {
+        return dateFormat;
+    }
+
+    /**
+     * This static method returns the formatting string used to format dates.
+     *
+     * @return formatting string for dates. This string will output only the date part (no time).
+     */
+    public static String getDateOnlyFormat() {
+        return dateOnlyFormat;
+    }
+
+    /**
+     * This static method returns the formatting string used to format dates.
+     *
+     * @return formatting string for dates. This string will output only the time part (no date).
+     */
+    public static String getTimeOnlyFormat() {
+        return timeOnlyFormat;
     }
 
     /**
