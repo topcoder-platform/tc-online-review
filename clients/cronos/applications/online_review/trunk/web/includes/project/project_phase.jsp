@@ -155,9 +155,9 @@
 											<c:choose>
 												<c:when test='${scrTaskStatus == "Passed"}'>
 													<td class="valueC" width="14%">
-														<html:link page="/actions/ViewAutoScreening.do?method=viewAutoScreening&uid=${submission.upload.id}"><html:img
+														<html:img
 															srcKey="viewProjectDetails.box.Submission.icoPassed.img"
-															altKey="viewProjectDetails.box.Submission.icoPassed.alt" /></html:link></td>
+															altKey="viewProjectDetails.box.Submission.icoPassed.alt" /></td>
 												</c:when>
 												<c:when test='${scrTaskStatus == "Passed with Warning"}'>
 													<td class="valueC" width="14%">
