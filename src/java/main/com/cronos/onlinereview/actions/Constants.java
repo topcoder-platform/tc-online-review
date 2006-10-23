@@ -616,7 +616,20 @@ public class Constants {
      * This member variable is a string constant that defines the name of the Approval deliverable.
      */
     public static final String APPROVAL_DELIVERABLE_NAME = "Approval";
-
+    
+    // ----------------------------------------------------------------- Auto Screening Response Severities
+    /**
+     * This member variable is a string constant that defines the name of the Fatal Error severity.
+     */
+    public static final String FATAL_ERROR_SCREENING_SEVERITY_NAME = "Fatal Error";
+    /**
+     * This member variable is a string constant that defines the name of the Warning severity.
+     */
+    public static final String WARNING_SCREENING_SEVERITY_NAME = "Warning";
+    /**
+     * This member variable is a string constant that defines the name of the Success severity.
+     */
+    public static final String SUCCESS_SCREENING_SEVERITY_NAME = "Success";
 
     // ----------------------------------------------------------------- Action Forward names -----
 

@@ -2012,6 +2012,10 @@ public class ProjectDetailsActions extends DispatchAction {
         Map screeningResultsMap = new TreeMap();
         for (int i = 0; i < screeningResults.length; i++) {
             ResponseSeverity responseSeverity = screeningResults[i].getScreeningResponse().getResponseSeverity();
+            // ignore response with "Success" severity
+            if (Constants.SUCCESS_SCREENING_SEVERITY_NAME.equalsIgnoreCase(responseSeverity.getName())) {
+            	continue;
+            }
             Long responseSeverityId = new Long(responseSeverity.getId());
             Long screeningResponseId = new Long(screeningResults[i].getScreeningResponse().getId());
             Map innerMap;
