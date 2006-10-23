@@ -84,7 +84,7 @@
 	}
 
 	/*
-	 * TODO: Document it
+	 * TODO: Delete this function
 	 */
 	function removeReviewResponse(itemIdx, responseNode) {
 		// Get responses cell node
@@ -210,8 +210,8 @@
 														<c:if test="${managerEdit}">
 															<b><bean:message key="editReview.Question.ManagerComment.title"/>:</b>
 														</c:if>
-														&#160; <span class="error"><html:errors property="comment(${itemIdx}.${commentIdx})" prefix="" suffix="" /></span>
-														<html:img srcKey="btnDelete.img" altKey="btnDelete.alt" onclick="removeReviewResponse(${itemIdx}, this.parentNode)" style="cursor:hand;vertical-align:bottom;"/>
+														<span class="error"><html:errors property="comment(${itemIdx}.${commentIdx})" prefix="" suffix="" /></span>
+<%-- TODO: Delete this commented piece														<html:img srcKey="btnDelete.img" altKey="btnDelete.alt" onclick="removeReviewResponse(${itemIdx}, this.parentNode)" style="cursor:hand;vertical-align:bottom;"/> --%>
 														<html:textarea rows="2" property="comment(${itemIdx}.${commentIdx})" cols="20" styleClass="inputTextBox" />
 													</div>
 												</c:forEach>

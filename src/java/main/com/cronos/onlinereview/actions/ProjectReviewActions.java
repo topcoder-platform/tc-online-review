@@ -2081,7 +2081,7 @@ public class ProjectReviewActions extends DispatchAction {
      * @param request
      * @throws BaseException
      */
-    private void retreiveAndStoreReviewLookUpData(HttpServletRequest request) throws BaseException {
+    private CommentType[] retreiveAndStoreReviewLookUpData(HttpServletRequest request) throws BaseException {
         // Obtain Review Manager instance
         ReviewManager revMgr = ActionsHelper.createReviewManager(request);
 
@@ -2095,6 +2095,8 @@ public class ProjectReviewActions extends DispatchAction {
 
         // Place comment types in the request
         request.setAttribute("allCommentTypes", reviewCommentTypes);
+        // and return them
+        return reviewCommentTypes;
     }
 
     /**
@@ -2262,7 +2264,7 @@ public class ProjectReviewActions extends DispatchAction {
         reviewForm.set("comment_count", commentCounts);
 
         for (int i = 0; i < questionsCount; i++) {
-            for (int j = 0; j < commentsCount; j++) {
+            for (int j = 0; j <= commentsCount; j++) {
                 reviewForm.set("comment", i + "." + j, "");
                 reviewForm.set("comment_type", i + "." + j, typeComment);
             }
@@ -2302,7 +2304,7 @@ public class ProjectReviewActions extends DispatchAction {
 
         // Verify that the user has permission to edit review
         if (!AuthorizationHelper.hasUserPermission(request, Constants.EDIT_ANY_SCORECARD_PERM_NAME)) {
-            // FIXME: Temporarly dropped the permission check due to to permission granted to Screener only
+            // FIXME: Temporarily dropped the permission check due to to permission granted to Screener only
             /*if (!AuthorizationHelper.hasUserPermission(request, Constants.EDIT_MY_REVIEW_PERM_NAME)) {
                 return ActionsHelper.produceErrorReport(mapping, getResources(request),
                     request, Constants.EDIT_MY_REVIEW_PERM_NAME, "Error.NoPermission");
@@ -2331,7 +2333,7 @@ public class ProjectReviewActions extends DispatchAction {
         if (review.isCommitted()) {
             // If user has a Manager role, put special flag to the request,
             // indicating that we need "Manager Edit"
-            if(AuthorizationHelper.hasUserRole(request, Constants.MANAGER_ROLE_NAME)) {
+            if (AuthorizationHelper.hasUserRole(request, Constants.MANAGER_ROLE_NAME)) {
                 request.setAttribute("managerEdit", Boolean.TRUE);
                 managerEdit = true;
             } else {
@@ -2344,7 +2346,7 @@ public class ProjectReviewActions extends DispatchAction {
         retrieveAndStoreBasicReviewInfo(request, verification, reviewType, scorecardTemplate);
 
         // Retrive some look-up data and store it into the request
-        retreiveAndStoreReviewLookUpData(request);
+        CommentType[] commentTypes = retreiveAndStoreReviewLookUpData(request);
 
         // Prepare the arrays
         String[] answers = new String[review.getNumberOfItems()];
@@ -2360,27 +2362,25 @@ public class ProjectReviewActions extends DispatchAction {
                 Section section = group.getSection(sectionIdx);
                 for (int questionIdx = 0; questionIdx < section.getNumberOfQuestions(); ++questionIdx, ++itemIdx) {
                     Item item = review.getItem(itemIdx);
-                    List comments;
-                    if (!managerEdit) {
-                        comments = getItemReviewerComments(item);
-                    } else {
-                        comments = getItemManagerComments(item);
-                    }
+                    Comment[] comments = (managerEdit) ? getItemManagerComments(item) : getItemReviewerComments(item);
+
                     answers[itemIdx] = (String) item.getAnswer();
 
                     reviewForm.set("comment_type", itemIdx + ".0", null);
                     reviewForm.set("comment", itemIdx + ".0", "");
 
-                    reviewForm.set("comment_count", itemIdx, new Integer(comments.size()));
+                    final int commentCount = Math.max(comments.length, (managerEdit) ? 1 : 3);
 
-                    if (comments.size() > 0) {
-                        reviewForm.set("comment_count", itemIdx, new Integer(comments.size()));
-                        for (int i = 0; i < comments.size(); i++) {
-                            Comment comment = (Comment) comments.get(i);
-                            reviewForm.set("comment_type", itemIdx + "." + (i + 1),
-                                    new Long(comment.getCommentType().getId()));
-                            reviewForm.set("comment", itemIdx + "." + (i + 1), comment.getComment());
-                        }
+                    reviewForm.set("comment_count", itemIdx, new Integer(commentCount));
+
+                    for (int i = 0; i < commentCount; ++i) {
+                        String commentKey = itemIdx + "." + (i + 1);
+                        Comment comment = (i < comments.length) ? comments[i] : null;
+
+                        reviewForm.set("comment", commentKey, (comment != null) ? comment.getComment() : "");
+                        reviewForm.set("comment_type", commentKey,
+                                new Long((comment != null) ? comment.getCommentType().getId() :
+                                    ActionsHelper.findCommentTypeByName(commentTypes, "Comment").getId()));
                     }
                 }
             }
@@ -2406,14 +2406,15 @@ public class ProjectReviewActions extends DispatchAction {
      * @param item
      * @return
      */
-    private List getItemManagerComments(Item item) {
+    private static Comment[] getItemManagerComments(Item item) {
         List result = new ArrayList();
         for (int i = 0; i < item.getNumberOfComments(); i++) {
-            if (item.getComment(i).getCommentType().getName().equals("Manager Comment")) {
-                result.add(item.getComment(i));
+            Comment comment = item.getComment(i);
+            if (ActionsHelper.isManagerComment(comment)) {
+                result.add(comment);
             }
         }
-        return result;
+        return (Comment[]) result.toArray(new Comment[result.size()]);
     }
 
     /**
@@ -2422,16 +2423,15 @@ public class ProjectReviewActions extends DispatchAction {
      * @param item
      * @return
      */
-    private List getItemReviewerComments(Item item) {
+    private static Comment[] getItemReviewerComments(Item item) {
         List result = new ArrayList();
         for (int i = 0; i < item.getNumberOfComments(); i++) {
-            if (item.getComment(i).getCommentType().getName().equals("Comment") ||
-                    item.getComment(i).getCommentType().getName().equals("Required") ||
-                    item.getComment(i).getCommentType().getName().equals("Recommended")) {
-                result.add(item.getComment(i));
+            Comment comment = item.getComment(i);
+            if (ActionsHelper.isReviewerComment(comment)) {
+                result.add(comment);
             }
         }
-        return result;
+        return (Comment[]) result.toArray(new Comment[result.size()]);
     }
 
     /**
@@ -2652,13 +2652,18 @@ public class ProjectReviewActions extends DispatchAction {
                         Item item = new Item();
 
                         // Populate the review item comments
-                        populateItemComments(managerEdit, commitRequested, myResource, item,
-                                itemIdx, commentCounts[itemIdx].intValue(), replies, commentTypes, commentTypeIds);
+                        int newCommentCount = populateItemComments(item, itemIdx, replies, commentTypeIds,
+                                commentCounts[itemIdx].intValue(), commentTypes, myResource, managerEdit);
+
+                        if (newCommentCount != commentCounts[itemIdx].intValue()) {
+                            commentCounts[itemIdx] = new Integer(newCommentCount);
+                        }
 
                         // Set required fields of the item
                         item.setAnswer(answers[itemIdx]);
                         item.setQuestion(question.getId());
 
+                        // Handle uploads
                         if (!previewRequested && question.isUploadDocument()) {
                             if (fileIdx < files.length && files[fileIdx] != null &&
                                     files[fileIdx].getFileName().trim().length() != 0) {
@@ -2704,12 +2709,17 @@ public class ProjectReviewActions extends DispatchAction {
                         Item item = review.getItem(itemIdx);
 
                         // Populate the review item comments
-                        populateItemComments(managerEdit, commitRequested || managerEdit, myResource, item,
-                                itemIdx, commentCounts[itemIdx].intValue(), replies, commentTypes, commentTypeIds);
+                        int newCommentCount = populateItemComments(item, itemIdx, replies, commentTypeIds,
+                                commentCounts[itemIdx].intValue(), commentTypes, myResource, managerEdit);
+
+                        if (newCommentCount != commentCounts[itemIdx].intValue()) {
+                            commentCounts[itemIdx] = new Integer(newCommentCount);
+                        }
 
                         // Update the answer
                         item.setAnswer(answers[itemIdx]);
 
+                        // Handle uploads
                         if (!previewRequested && !managerEdit && section.getQuestion(questionIdx).isUploadDocument()) {
                             if (fileIdx < files.length && files[fileIdx] != null &&
                                     files[fileIdx].getFileName().trim().length() != 0) {
@@ -2826,27 +2836,177 @@ public class ProjectReviewActions extends DispatchAction {
                 mapping.findForward(Constants.SUCCESS_FORWARD_NAME), "&pid=" + verification.getProject().getId());
     }
 
-
-	/**
-     * TODO: Document it
+    /**
+     * TODO: Document this method
      *
-	 * @param managerEdit
-	 * @param removeEmpty TODO
-	 * @param myResource
-	 * @param item
-	 * @param itemIdx
-	 * @param commentCount
-	 * @param replies
-	 * @param commentTypes
-	 * @param commentTypeIds
-	 */
-	private void populateItemComments(boolean managerEdit, boolean removeEmpty, Resource myResource, Item item, int itemIdx, int commentCount, Map replies, CommentType[] commentTypes, Map commentTypeIds) {
-        List comments;
-        if (!managerEdit) {
-            comments = getItemReviewerComments(item);
-        } else {
-            comments = getItemManagerComments(item);
+     * @return
+     * @param myResource
+     * @param item
+     * @param itemIdx
+     * @param replies
+     * @param commentTypeIds
+     * @param commentCount
+     * @param commentTypes
+     * @param managerEdit
+     * @throws IllegalArgumentException
+     *             if any of the parameters <code>item</code>, <code>replies</code>,
+     *             <code>commentTypeIds</code>, <code>commentTypes</code>, or
+     *             <code>myResource</code> is <code>null</code>, or if parameters
+     *             <code>itemIdx</code> or <code>commentCount</code> are negative.
+     */
+    private static int populateItemComments(Item item, int itemIdx, Map replies, Map commentTypeIds,
+            int commentCount, CommentType[] commentTypes, Resource myResource, boolean managerEdit) {
+        // Validate parameters
+        ActionsHelper.validateParameterNotNull(item, "item");
+        ActionsHelper.validateParameterInRange(itemIdx, "itemIdx", 0, Integer.MAX_VALUE);
+        ActionsHelper.validateParameterNotNull(replies, "replies");
+        ActionsHelper.validateParameterNotNull(commentTypeIds, "commentTypeIds");
+        ActionsHelper.validateParameterInRange(commentCount, "commentCount", 0, Integer.MAX_VALUE);
+        ActionsHelper.validateParameterNotNull(myResource, "myResource");
+
+        int newCommentCount = 1;
+
+        int commentIdx = 0;
+        Comment currentComment = null;
+
+        for (int i = 0; i < commentCount; ++i) {
+            if (currentComment == null) {
+                for (;commentIdx < item.getNumberOfComments();) {
+                    // Get a comment for the current iteration
+                    Comment comment = item.getComment(commentIdx++);
+
+                    // Locate next manager's comment for Manager edits or
+                    // next reviewer's comment for non-Manager edits
+                    if ((managerEdit && ActionsHelper.isManagerComment(comment)) ||
+                            (!managerEdit && ActionsHelper.isReviewerComment(comment))) {
+                        currentComment = comment;
+                        break;
+                    }
+                }
+            }
+
+            String commentKey = itemIdx + "." + (i + 1);
+            CommentType commentType;
+
+            if (managerEdit) {
+                commentType = ActionsHelper.findCommentTypeByName(commentTypes, "Manager Comment");
+            } else {
+                commentType = ActionsHelper.findCommentTypeById(
+                        commentTypes, Long.parseLong((String) commentTypeIds.get(commentKey)));
+            }
+            // Check that correct comment type ID has been specified
+            // (user may intentionally submit malformed form data)
+            if (commentType == null) {
+                replies.remove(commentKey);
+                commentTypeIds.remove(commentKey);
+                continue;
+            }
+
+            // Get user's reply, i.e. comment's text
+            String reply = (String) replies.get(commentKey);
+            // Do not let user's reply to be null
+            if (reply == null) {
+                reply = "";
+            }
+
+            // Skip empty comments of type "Comment" or any empty comment for Manager edits
+            if ((managerEdit || commentType.getName().equalsIgnoreCase("Comment")) && reply.trim().length() == 0) {
+                replies.remove(commentKey);
+                commentTypeIds.remove(commentKey);
+                continue;
+            }
+
+            // Determine if new comment must be added
+            boolean newComment = (currentComment == null);
+            // If new comment needs to be added, create new Comment object
+            if (newComment) {
+                commentIdx = Integer.MAX_VALUE;
+                currentComment = new Comment();
+            }
+
+            String updatedCommentKey = itemIdx + "." + newCommentCount;
+
+            // Update form's fields (so they will be up to date in case scorecard fails validation)
+            replies.put(updatedCommentKey, reply);
+            if (!managerEdit) {
+                commentTypeIds.put(updatedCommentKey, new Long(commentType.getId()));
+            }
+            // Increase the counter of the processed comments
+            ++newCommentCount;
+
+            // Do not update unchanged comments (skip them)
+            if (!newComment && reply.equals(currentComment.getComment()) &&
+                    currentComment.getCommentType().getId() == commentType.getId()) {
+                // Indicate that there are no current comment anymore,
+                // so it will be located or created during next iteration
+                currentComment = null;
+                continue;
+            }
+
+            // Update the author of the comment
+            currentComment.setAuthor(myResource.getId());
+            // Set (possibly new) comment's text
+            currentComment.setComment(reply);
+            // Set (possibly new) comment's type
+            currentComment.setCommentType(commentType);
+
+            // If new comment needs to be added to review's item, add it
+            if (newComment) {
+                item.addComment(currentComment);
+            }
+            // Indicate that there are no current comment anymore,
+            // so it will be located or created during next iteration
+            currentComment = null;
         }
+
+        // If last current comment was not used, the most likely it is needed to be deleted
+        if (currentComment != null) {
+            --commentIdx;
+        }
+
+        // At this point there may exist excess comments, which need to be removed.
+        // So, remove them, starting from the last
+        for (int i = item.getNumberOfComments() - 1; i >= commentIdx; --i) {
+            // Get a comment for the current iteration
+            Comment comment = item.getComment(i);
+
+            if ((managerEdit && ActionsHelper.isManagerComment(comment)) ||
+                    (!managerEdit && ActionsHelper.isReviewerComment(comment))) {
+                item.removeComment(comment);
+            }
+        }
+
+        final int properCommentCount = (managerEdit) ? 1 : 3;
+
+        for (;newCommentCount <= properCommentCount; ++newCommentCount) {
+            String emptyCommentKey = itemIdx + "." + newCommentCount;
+            replies.put(emptyCommentKey, "");
+            commentTypeIds.put(emptyCommentKey,
+                    new Long(ActionsHelper.findCommentTypeByName(commentTypes, "Comment").getId()));
+        }
+
+        return newCommentCount - 1;
+
+/* TODO: Remove this commented block if this method works well
+        for (int i = 0; i < item.getNumberOfComments(); ++i) {
+            // Get a comment for the current iteration
+            Comment comment = item.getComment(i);
+
+            // Skip non-manager's comments for Manager edits
+            if (managerEdit && !ActionsHelper.isManagerComment(comment)) {
+                continue;
+            }
+            // Skip non-reviewer's comments for non-Manager edits
+            if (!managerEdit && !ActionsHelper.isReviewerComment(comment)) {
+                continue;
+            }
+
+            String commentKey = itemIdx + "." + (commentIdx + 1);
+            String reply = (String) replies.get(commentKey);
+
+        }
+
+        List comments = (managerEdit) ? getItemManagerComments(item) : getItemReviewerComments(item);
 
         while (comments.size() < commentCount) {
            Comment comment = new Comment();
@@ -2886,11 +3046,11 @@ public class ProjectReviewActions extends DispatchAction {
                     item.removeComment(item.getComment(i));
                 }
             }
-        }
+        }*/
     }
 
 	/**
-     * TODO: Document it.
+     * TODO: Document it
      *
      * @return
      * @param mapping
@@ -3009,6 +3169,7 @@ public class ProjectReviewActions extends DispatchAction {
     }
 
     /**
+     * TODO: Write documentation for this method
      *
      * @return
      * @param scorecardTemplate
@@ -3048,6 +3209,7 @@ public class ProjectReviewActions extends DispatchAction {
     }
 
     /**
+     * TODO: Write documentation for this method
      *
      * @return
      * @param request
@@ -3057,8 +3219,8 @@ public class ProjectReviewActions extends DispatchAction {
      * @throws IllegalArgumentException
      *             if any of the parameters are <code>null</code>.
      */
-    private static boolean validateGenericScorecard(
-            HttpServletRequest request, Scorecard scorecardTemplate, Review review, boolean managerEdit) {
+    private static boolean validateGenericScorecard(HttpServletRequest request,
+            Scorecard scorecardTemplate, Review review, boolean managerEdit) {
         // Validate parameters
         ActionsHelper.validateParameterNotNull(request, "request");
         ActionsHelper.validateParameterNotNull(scorecardTemplate, "scorecardTemplate");
@@ -3077,9 +3239,12 @@ public class ProjectReviewActions extends DispatchAction {
 
                     validateScorecardItemAnswer(request, question, item, itemIdx);
 
-                    if (!managerEdit) {
-                        validateScorecardComments(request, item, itemIdx);
+                    // Skip the rest of the validation for Manager edits
+                    if (managerEdit) {
+                        continue;
                     }
+
+                    validateScorecardComments(request, item, itemIdx);
                     if (question.isUploadDocument()) {
                         validateScorecardItemUpload(request, question, item, fileIdx++);
                     }
@@ -3159,6 +3324,7 @@ public class ProjectReviewActions extends DispatchAction {
     }
 
     /**
+     * TODO: Write documentation for this method
      *
      * @return
      * @param request
@@ -3245,6 +3411,7 @@ public class ProjectReviewActions extends DispatchAction {
     }
 
     /**
+     * TODO: Write documentation for this method
      *
      * @return
      * @param request
@@ -3255,8 +3422,7 @@ public class ProjectReviewActions extends DispatchAction {
      *             <code>null</code>, or if <code>itemNum</code> parameter is negative (less
      *             than zero).
      */
-    private static boolean validateScorecardComments(
-            HttpServletRequest request, Item item, int itemNum) {
+    private static boolean validateScorecardComments(HttpServletRequest request, Item item, int itemNum) {
         // Validate parameters
         ActionsHelper.validateParameterNotNull(request, "request");
         ActionsHelper.validateParameterNotNull(item, "item");
@@ -3265,45 +3431,28 @@ public class ProjectReviewActions extends DispatchAction {
         boolean noCommentsEntered = true;
 
         for (int i = 0; i < item.getNumberOfComments(); ++i) {
-            Comment comment = item.getComment(i);
-            String commentText = comment.getComment();
-            if (commentText != null && commentText.trim().length() != 0) {
+            if (ActionsHelper.isReviewerComment(item.getComment(i))) {
                 noCommentsEntered = false;
                 break;
             }
         }
 
         if (noCommentsEntered) {
-            int numOfComments = Math.max(item.getNumberOfComments(), 3);
-
-            for (int i = 1; i <= numOfComments; ++i) {
-                ActionsHelper.addErrorToRequest(request,
-                        "comment(" + itemNum + "." + i + ")", "Error.saveReview.Comment.AtLeastOne");
-            }
+            ActionsHelper.addErrorToRequest(request,
+                    "comment(" + itemNum + ".1)", "Error.saveReview.Comment.AtLeastOne");
             return false;
         }
-/*
-    Commenting this out because it still needs work apparently
-        Comment[] comments = item.getAllComments();
-        for (int i = 0; i < comments.length; i++) {
-            Comment comment = comments[i];
-            if (comment.getCommentType().getName().equalsIgnoreCase("Comment")) {
-                if (comment.getComment() == null || comment.getComment().trim().length() == 0) {
-                    item.removeComment(comment);
-                }
-            }
-        }
-*/
+
         // Success indicator
         boolean success = true;
 
         for (int i = 0; i < item.getNumberOfComments(); ++i) {
             Comment comment = item.getComment(i);
-            String commentType = comment.getCommentType().getName();
-            if (commentType.equalsIgnoreCase("Comment") || commentType.equalsIgnoreCase("Required") ||
-                    commentType.equalsIgnoreCase("Recommended")) {
-                success =
-                    success && validateScorecardComment(request, comment, "comment(" + itemNum + "." + (i + 1) + ")");
+
+            if (ActionsHelper.isReviewerComment(comment)) {
+                if (!validateScorecardComment(request, comment, "comment(" + itemNum + "." + (i + 1) + ")")) {
+                    success = false;
+                }
             }
         }
 
@@ -3399,6 +3548,7 @@ public class ProjectReviewActions extends DispatchAction {
     }
 
     /**
+     * TODO: Write documentation for this method
      *
      * @return
      * @param request
