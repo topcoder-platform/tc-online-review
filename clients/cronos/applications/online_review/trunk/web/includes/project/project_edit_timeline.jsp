@@ -55,7 +55,7 @@
 		</c:if>		
 			<td class="valueB" nowrap="nowrap">
 				<span name="phase_name_text">${projectForm.map['phase_name'][phaseIdx]}</span>
-				<span name="phase_number_text">${projectForm.map['phase_number'][phaseIdx]}</span>
+				&nbsp; <span name="phase_number_text">${projectForm.map['phase_number'][phaseIdx]}</span>
 			</td>
 			<td class="value" nowrap="nowrap">								
 				<html:hidden property="phase_type[${phaseIdx}]" />
