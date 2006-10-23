@@ -340,13 +340,13 @@
 								</tr>
 								<tr>
 									<td class="header" nowrap="nowrap"><bean:message key="viewProjectDetails.box.Submission.ID" /></td>
-									<td class="headerC" width="7%"><bean:message key="viewProjectDetails.box.Review.Date" /></td>
+									<td class="headerC" width="12%"><bean:message key="viewProjectDetails.box.Review.Date" /></td>
 									<c:if test="${isAllowedToEditHisReviews != true}">
-										<td class="headerC" width="12%"><bean:message key="viewProjectDetails.box.Review.Score" /></td>
+										<td class="headerC" width="8%"><bean:message key="viewProjectDetails.box.Review.Score" /></td>
 									</c:if>
 									<c:forEach items="${group.reviewers}" var="reviewer">
 										<td class="headerC" width="8%"><bean:message key="viewProjectDetails.box.Review.Score.short" /></td>
-										<td class="headerC" width="12%"><bean:message key="viewProjectDetails.box.Review.Appeals" /></td>
+										<td class="headerC" width="8%"><bean:message key="viewProjectDetails.box.Review.Appeals" /></td>
 									</c:forEach>
 								</tr>
 								<c:forEach items="${group.submissions}" var="submission" varStatus="submissionStatus">
@@ -381,13 +381,13 @@
 												(<tc-webtag:handle coderId='${submitter.allProperties["External Reference ID"]}' context="component" />)
 											</c:if>
 										</td>
-										<td class="valueC" width="7%">${orfn:displayDateBr(pageContext.request, group.reviewDates[submissionStatus.index])}</td>
+										<td class="valueC" width="12%">${orfn:displayDateBr(pageContext.request, group.reviewDates[submissionStatus.index])}</td>
 										<c:if test="${isAllowedToEditHisReviews != true}">
 											<c:if test="${not empty submitter}">
-												<td class="valueC" width="12%"><html:link page="/actions/ViewCompositeScorecard.do?method=viewCompositeScorecard&sid=${submission.id}">${orfn:displayScore(pageContext.request, submitter.allProperties["Final Score"])}</html:link></td>
+												<td class="valueC" width="8%"><html:link page="/actions/ViewCompositeScorecard.do?method=viewCompositeScorecard&sid=${submission.id}">${orfn:displayScore(pageContext.request, submitter.allProperties["Final Score"])}</html:link></td>
 											</c:if>
 											<c:if test="${empty submitter}">
-												<td class="valueC" width="12%"><bean:message key="Incomplete" /></td>
+												<td class="valueC" width="8%"><bean:message key="Incomplete" /></td>
 											</c:if>
 										</c:if>
 										<c:choose>
@@ -403,16 +403,17 @@
 										<c:forEach items="${group.reviews[submissionStatus.index]}" var="review" varStatus="reviewStatus">
 											<c:if test="${empty review}">
 												<c:if test="${isAllowedToEditHisReviews == true}">
-													<td class="valueC" width="8%"><html:link
+													<td class="valueC" width="8%" nowrap="nowrap"><html:link
 														page="/actions/CreateReview.do?method=createReview&sid=${submission.id}"><b><bean:message
 														key="viewProjectDetails.box.Review.Submit" /></b></html:link></td>
+													<td class="valueC"><bean:message key="NotAvailable" /></td>
 												</c:if>
 												<c:if test="${isAllowedToEditHisReviews != true}">
 													<td class="valueC" width="8%"><bean:message key="NotAvailable" /></td>
-													<td class="value"><bean:message key="NotAvailable" /></td>
+													<td class="valueC"><bean:message key="NotAvailable" /></td>
 												</c:if>
 											</c:if>
-											<c:if test="${!(empty review)}">
+											<c:if test="${not empty review}">
 												<c:if test="${review.committed == true}">
 													<td class="valueC" width="8%"><html:link
 														page="/actions/ViewReview.do?method=viewReview&rid=${review.id}">${orfn:displayScore(pageContext.request, review.score)}</html:link></td>
@@ -428,7 +429,7 @@
 													</c:if>
 												</c:if>
 												<c:if test="${group.appealsPhaseOpened}">
-													<td class="valueC" width="12%" nowrap="nowrap">[
+													<td class="valueC" nowrap="nowrap">[
 														<html:link page="/actions/ViewReview.do?method=viewReview&rid=${review.id}"
 															titleKey="viewProjectDetails.box.Review.Appeals.Unresolved">${unresolvedAppeals[reviewStatus.index]}</html:link> /
 														<html:link page="/actions/ViewReview.do?method=viewReview&rid=${review.id}"
@@ -436,7 +437,7 @@
 													]</td>
 												</c:if>
 												<c:if test="${not group.appealsPhaseOpened}">
-													<td class="value"><bean:message key="NotAvailable" /></td>
+													<td class="valueC"><bean:message key="NotAvailable" /></td>
 												</c:if>
 											</c:if>
 										</c:forEach>
