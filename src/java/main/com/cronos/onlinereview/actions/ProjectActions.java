@@ -8,6 +8,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
@@ -640,10 +641,13 @@ public class ProjectActions extends DispatchAction {
 
         // Create the map to store the mapping from phase JS ids to phases
         Map phasesJsMap = new HashMap();
-
+        
+        // Create the list to store the phases to be deleted
+        List phasesToDelete = new ArrayList();
+        
         // Save the project phases
         // FIXME: the project itself is also saved by the following call. Needs to be refactored
-        Phase[] projectPhases = saveProjectPhases(newProject, request, lazyForm, project, phasesJsMap);
+        Phase[] projectPhases = saveProjectPhases(newProject, request, lazyForm, project, phasesJsMap, phasesToDelete);
 
         // If needed switch project current phase
         if (!newProject) {
@@ -655,6 +659,11 @@ public class ProjectActions extends DispatchAction {
             // Save the project resources
             saveResources(newProject, request, lazyForm, project, projectPhases, phasesJsMap);
         }
+
+        if (!ActionsHelper.isErrorsPresent(request)) {
+            // Delete the phases to be deleted
+            deletePhases(request, project, phasesToDelete);
+        }        
 
         // Check if there are any validation errors and return appropriate forward
         if (ActionsHelper.isErrorsPresent(request)) {
@@ -676,6 +685,32 @@ public class ProjectActions extends DispatchAction {
         // Return success forward
         return ActionsHelper.cloneForwardAndAppendToPath(
                 mapping.findForward(Constants.SUCCESS_FORWARD_NAME),"&pid=" + project.getId());
+    }
+
+    /**
+     * TODO: Document it 
+     * 
+     * @param request
+     * @param project
+     * @param phasesToDelete
+     * @throws BaseException 
+     */
+    private void deletePhases(HttpServletRequest request, Project project, List phasesToDelete) throws BaseException {
+        if (phasesToDelete.isEmpty()) {
+            return;
+        }
+        
+        Phase phase = (Phase) phasesToDelete.get(0);
+        com.topcoder.project.phases.Project phProject = phase.getProject();
+        
+        for (int i = 0; i < phasesToDelete.size(); i++) {
+            phase = (Phase) phasesToDelete.get(i);
+            phProject.removePhase(phase);
+        }
+        
+        PhaseManager phaseManager = ActionsHelper.createPhaseManager(request, false);
+        
+        phaseManager.updatePhases(phProject, Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
     }
 
     /**
@@ -702,10 +737,11 @@ public class ProjectActions extends DispatchAction {
      * @param lazyForm
      * @param project
      * @param phasesJsMap TODO
+     * @param phasesToDelete TODO
      * @throws BaseException
      */
     private Phase[] saveProjectPhases(boolean newProject, HttpServletRequest request, LazyValidatorForm lazyForm,
-            Project project, Map phasesJsMap) throws BaseException {
+            Project project, Map phasesJsMap, List phasesToDelete) throws BaseException {
         // Obtain an instance of Phase Manager
         PhaseManager phaseManager = ActionsHelper.createPhaseManager(request, false);
 
@@ -731,6 +767,9 @@ public class ProjectActions extends DispatchAction {
 
         // This will be a Map from phases to their indexes in form
         Map phasesToForm = new HashMap();
+        
+        // This will be a list of all the phases except the ones to be deleted
+        List phaseList = new ArrayList();
 
         // FIRST PASS
         // 0-index phase is skipped as it is a "dummy" one
@@ -747,6 +786,8 @@ public class ProjectActions extends DispatchAction {
                 phase = new Phase(phProject, ((Integer) lazyForm.get("phase_duration", i)).longValue() * 3600 * 1000);
                 // Add it to Phases Project
                 phProject.addPhase(phase);
+                // Add the phase to the list
+                phaseList.add(phase);
             }  else {
                 long phaseId = ((Long) lazyForm.get("phase_id", i)).longValue();
                 if (phaseId != -1) {
@@ -758,7 +799,6 @@ public class ProjectActions extends DispatchAction {
 
                     // Clear the previously set fixed start date
                     phase.setFixedStartDate(null);
-
                 } else {
                     // -1 value as id marks the phases that were't persisted in DB yet
                     // and so should be skipped for actions other then "add"
@@ -770,6 +810,8 @@ public class ProjectActions extends DispatchAction {
             if ("update".equals(phaseAction)) {
                 // Set phase duration
                 phase.setLength(((Integer) lazyForm.get("phase_duration", i)).longValue() * 3600 * 1000);
+                // Add the phase to the list
+                phaseList.add(phase);
             }
 
             // If action is "delete", proceed to the next phase
@@ -797,8 +839,8 @@ public class ProjectActions extends DispatchAction {
                     // Retrieve the phase with the specified id
                     Phase phase = ActionsHelper.findPhaseById(oldPhases, phaseId);
 
-                    // TODO: Maybe phase should be canceled instead of jsut being removed.
-                    phProject.removePhase(phase);
+                    // Signal that phases are to be deleted
+                    phasesToDelete.add(phase);
                 }
 
                 // Skip further processing
@@ -1006,9 +1048,10 @@ public class ProjectActions extends DispatchAction {
             return oldPhases;
         }
 
-        Phase[] projectPhases = phProject.getAllPhases();
         // Sort project phases
-        Arrays.sort(projectPhases, new ProjectPhaseComparer());
+        Collections.sort(phaseList, new ProjectPhaseComparer());
+        
+        Phase[] projectPhases = (Phase[]) phaseList.toArray(new Phase[phaseList.size()]);
 
         // Validate the project phases
         if (!validateProjectPhases(request, project, projectPhases)) {
@@ -1058,16 +1101,20 @@ public class ProjectActions extends DispatchAction {
         String newCurPhaseId = (String) lazyForm.get("current_phase");
         // Get new current phase
         Phase newCurrentPhase = (Phase) phasesJsMap.get(newCurPhaseId);
-        if (newCurrentPhase != null) {
+        if (newCurrentPhase != null && (currentPhase == null || newCurrentPhase.getId() != currentPhase.getId())) {
             int i = 0;
             if (currentPhase != null) {
                 for (; i < projectPhases.length; i++) {
                     if (projectPhases[i] == currentPhase) {
                         break;
+                    } else if (projectPhases[i] == newCurrentPhase) {
+                        ActionsHelper.addErrorToRequest(request, new ActionMessage(
+                                "error.com.cronos.onlinereview.actions.editProject.CannotSwitchBack"));
+                        return;
                     }
                 }
             }
-
+            
             // Obtain an instance of Phase Manager
             PhaseManager phaseManager = ActionsHelper.createPhaseManager(request, true);
             for (; i < projectPhases.length; i++) {
@@ -1083,7 +1130,9 @@ public class ProjectActions extends DispatchAction {
                         } else {
                             logger.log(Level.INFO, "switchProjectPhase: " + projectPhases[i].getPhaseType().getName() +
                                     " cannot be closed");
-                            // TODO: issue an error, or probably not?
+                            ActionsHelper.addErrorToRequest(request, new ActionMessage(
+                                    "error.com.cronos.onlinereview.actions.editProject.CannotClosePhase",
+                                    projectPhases[i].getPhaseType().getName()));                            
                         }
                     } else if (projectPhases[i].getPhaseStatus().getName().equals(PhaseStatus.SCHEDULED.getName())) {
                         if (phaseManager.canStart(projectPhases[i])) {
@@ -1094,14 +1143,21 @@ public class ProjectActions extends DispatchAction {
                         } else {
                             logger.log(Level.INFO, "switchProjectPhase: " + projectPhases[i].getPhaseType().getName() +
                                     " cannot be started");
+                            ActionsHelper.addErrorToRequest(request, new ActionMessage(
+                                    "error.com.cronos.onlinereview.actions.editProject.CannotOpenPhase",
+                                    projectPhases[i].getPhaseType().getName()));
                         }
                         if (phaseManager.canEnd(projectPhases[i])) {
                             logger.log(Level.INFO, "switchProjectPhase: " + projectPhases[i].getPhaseType().getName() +
                                     " is being closed");
                             phaseManager.end(projectPhases[i],
                                     Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
+                        } else {
                             logger.log(Level.INFO, "switchProjectPhase: " + projectPhases[i].getPhaseType().getName() +
                                     " cannot be closed");
+                            ActionsHelper.addErrorToRequest(request, new ActionMessage(
+                                    "error.com.cronos.onlinereview.actions.editProject.CannotClosePhase",
+                                    projectPhases[i].getPhaseType().getName()));
                         }
 
                     }
@@ -1115,6 +1171,9 @@ public class ProjectActions extends DispatchAction {
                         } else {
                             logger.log(Level.INFO, "switchProjectPhase: " + projectPhases[i].getPhaseType().getName() +
                                     " cannot be started");
+                            ActionsHelper.addErrorToRequest(request, new ActionMessage(
+                                    "error.com.cronos.onlinereview.actions.editProject.CannotOpenPhase",
+                                    projectPhases[i].getPhaseType().getName()));
                         }
                     }
                     break;
