@@ -7,7 +7,7 @@
 <%@ taglib prefix="html" uri="/tags/struts-html" %>
 	<table border="0" width="100%" id="table12" cellspacing="0" cellpadding="0">
 		<tr>
-			<td valign="top"><html:img alt="" page="/i/${categoryIconName}" /></td>
+			<td valign="top"><html:img alt="" src="/i/${categoryIconName}" /></td>
 			<td width="6%" height="45" valign="middle"><html:img src="/i/${rootCatalogIcon}" alt="${rootCatalogName}" border="0" /></td>
 			<td width="40%"><span class="bodyTitle">${project.allProperties["Project Name"]}</span>
 				<c:if test='${!(empty project.allProperties["Project Version"])}'>
