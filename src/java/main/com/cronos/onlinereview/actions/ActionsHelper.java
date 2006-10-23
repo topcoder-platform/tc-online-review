@@ -90,6 +90,7 @@ import com.topcoder.management.resource.search.ResourceFilterBuilder;
 import com.topcoder.management.resource.search.ResourceRoleFilterBuilder;
 import com.topcoder.management.review.DefaultReviewManager;
 import com.topcoder.management.review.ReviewManager;
+import com.topcoder.management.review.data.Comment;
 import com.topcoder.management.review.data.CommentType;
 import com.topcoder.management.scorecard.PersistenceException;
 import com.topcoder.management.scorecard.ScorecardManager;
@@ -941,6 +942,47 @@ public class ActionsHelper {
         validateParameterNotNull(request, "request");
 
         return (request.getAttribute(Globals.ERROR_KEY) != null);
+    }
+
+    /**
+     * This static method determines if the specifed comment is reviewer's comment. Reviewer's
+     * comments are those of any of the following types: &quot;Comment&quot;, &quot;Required&quot;,
+     * or &quot;Recommended&quot;.
+     *
+     * @return <code>true</code> if the specifed comment is reviewer's comment, <code>false</code>
+     *         if it is not.
+     * @param comment
+     *            a comment to determine type of.
+     * @throws IllegalArgumentException
+     *             if <code>comment</code> parameter is <code>null</code>.
+     */
+    public static boolean isReviewerComment(Comment comment) {
+        // Validate parameter
+        validateParameterNotNull(comment, "comment");
+
+        String commentType = comment.getCommentType().getName();
+
+        return (commentType != null && (commentType.equalsIgnoreCase("Comment") ||
+                commentType.equalsIgnoreCase("Required") || commentType.equalsIgnoreCase("Recommended")));
+    }
+
+    /**
+     * This static method determines if the specified comment is manager's comment.
+     *
+     * @return <code>true</code> if the specifed comment is manager's comment, <code>false</code>
+     *         if it is not.
+     * @param comment
+     *            a comment to determine type of.
+     * @throws IllegalArgumentException
+     *             if <code>comment</code> parameter is <code>null</code>.
+     */
+    public static boolean isManagerComment(Comment comment) {
+        // Validate parameter
+        validateParameterNotNull(comment, "comment");
+
+        String commentType = comment.getCommentType().getName();
+
+        return (commentType != null && commentType.equalsIgnoreCase("Manager Comment"));
     }
 
     /**
