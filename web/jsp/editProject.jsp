@@ -372,12 +372,16 @@
 			for (var i = 0; i < phaseTypeNodes.length; i++) {
 				if (phaseTypeNodes[i].value == phaseTypeId && phaseActionNodes[i].value != "delete") {
 					addComboOption(phaseCombo, phaseNumberNodes[i].value, phaseIdNodes[i].value);
-					/*if (phaseIdNodes[i].value == lastValue) {
+					if (phaseCombo.length == 1) {
+						// Trick needed for IE
+						phaseCombo.selectedIndex = 0;
+					}
+					if (phaseIdNodes[i].value == lastValue) {
 						phaseCombo.selectedIndex = phaseCombo.length - 1;
-					}*/
+					}
 				}
 			}		
-			phaseCombo.value = lastValue;
+			// phaseCombo.value = lastValue;
 		}
 
 		/*
