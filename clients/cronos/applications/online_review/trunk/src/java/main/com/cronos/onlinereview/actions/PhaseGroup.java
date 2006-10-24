@@ -4,12 +4,15 @@
 package com.cronos.onlinereview.actions;
 
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 import com.cronos.onlinereview.autoscreening.management.ScreeningTask;
 import com.topcoder.management.resource.Resource;
 import com.topcoder.management.review.data.Review;
 import com.topcoder.management.deliverable.Submission;
 import com.topcoder.management.deliverable.Upload;
+import com.topcoder.project.phases.Phase;
 
 /**
  * This class defines a phase group bean.
@@ -31,6 +34,27 @@ public class PhaseGroup {
     private String name = "";
 
     /**
+     * This member variable holds the name of the table for this phase group. This name is usually
+     * the same as the name of the phase group itself, but sometimes it may differ, e.g.
+     * &quot;Registration&quot; tab can have table named &quot;Registrants&quot;, etc.
+     *
+     * @see #getTableName()
+     * @see #setTableName(String)
+     */
+    private String tableName = "";
+
+    /**
+     * This member variable holds a custom string &#x96; an index of this phase group. If there are
+     * more than one phase group of some type in the whole set, all subsequent phase groups
+     * (starting from the second one) will be assigned their index. This index will be displayed to
+     * user, so he/she can distinguish between two similarly-named phase groups.
+     *
+     * @see #getGroupIndex()
+     * @see #setGroupIndex(String)
+     */
+    private String groupIndex = "";
+
+    /**
      * This member variable holds the name of application's functionality that should be executed to
      * initially collect all required information for this phase group, and later present it
      * properly to the end user. This member variable is initialized in the constructor and can be
@@ -41,6 +65,16 @@ public class PhaseGroup {
      * @see #setAppFunc(String)
      */
     private String applicationFunction = "";
+
+    /**
+     * This member variable is a set that lets the user determine whether some phase has been
+     * grouped within this phase group. No two phases with the same name can be grouped into the
+     * same phase group.
+     *
+     * @see #isPhaseInThisGroup(Phase)
+     * @see #addPhase(Phase)
+     */
+    private final Set accumulatedPhases = new HashSet();
 
     /**
      * This member variable holds an array of registrants' emails that might have been assigned to
@@ -269,6 +303,45 @@ public class PhaseGroup {
         ActionsHelper.validateParameterNotNull(name, "name");
 
         this.name = name;
+    }
+
+    /**
+     * This method returns the name for this phase group's table.
+     *
+     * @return a table's name.
+     */
+    public String getTableName() {
+        return (this.tableName != null) ? this.tableName : getName();
+    }
+
+    /**
+     * This method sets a new name for this phase group's table. If the <code>tableName</code>
+     * parameter is <code>null</code>, then the name of this group will be used.
+     *
+     * @param tableName
+     *            a new name for the table.
+     */
+    public void setTableName(String tableName) {
+        this.tableName = tableName;
+    }
+
+    /**
+     * This method returns current index of this group.
+     *
+     * @return an index of this phase group.
+     */
+    public String getGroupIndex() {
+        return this.groupIndex;
+    }
+
+    /**
+     * This method sets a new index for this phase group.
+     *
+     * @param groupIndex
+     *            a string representing new index to set for this new group.
+     */
+    public void setGroupIndex(String groupIndex) {
+        this.groupIndex = groupIndex;
     }
 
     /**
@@ -721,5 +794,43 @@ public class PhaseGroup {
      */
     public void setPhaseOpen(boolean phaseOpen) {
         this.phaseOpen = phaseOpen;
+    }
+
+    /**
+     * This method determines whether some this phase group already has a phase of similar type as
+     * that one specified via <code>phase</code> parameter.
+     *
+     * @return <code>true</code> if this phase group already contains a phase of the same type as
+     *         the one specified by <code>phase</code> parameter, or <code>false</code> if no
+     *         such phase has been added to this phase group yet.
+     * @param phase
+     *            a phase which type needs to be tested.
+     * @throws IllegalArgumentException
+     *             if <code>phase</code> parameter is <code>null</code>.
+     */
+    public boolean isPhaseInThisGroup(Phase phase) {
+        // Validate parameter
+        ActionsHelper.validateParameterNotNull(phase, "phase");
+
+        return accumulatedPhases.contains(phase.getPhaseType().getName().toLowerCase());
+    }
+
+    /**
+     * This method adds a phase to this group. This does not mean a reference to a phase is actually
+     * stored somewhere inside this object, but a mere name of the phase's type in stored into inner
+     * variable, so it can be determined if some phase type is already contained inside the phase
+     * group represented by this class. This method does not verify if some phase type has already
+     * been contained in phase group. It is a user's responsibility to do that.
+     *
+     * @param phase
+     *            a phase to add to this phase group.
+     * @throws IllegalArgumentException
+     *             if <code>phase</code> parameter is <code>null</code>.
+     */
+    public void addPhase(Phase phase) {
+        // Validate parameter
+        ActionsHelper.validateParameterNotNull(phase, "phase");
+
+        accumulatedPhases.add(phase.getPhaseType().getName().toLowerCase());
     }
 }

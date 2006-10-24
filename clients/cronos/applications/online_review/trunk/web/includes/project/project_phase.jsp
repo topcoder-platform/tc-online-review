@@ -20,7 +20,7 @@
 				<c:if test="${group.phaseOpen != true}">
 					<table class="scorecard" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;">
 						<tr>
-							<td class="title" colspan="5">${group.name}</td>
+							<td class="title" colspan="5">${group.tableName}</td>
 						</tr>
 						<tr class="light">
 							<td class="valueC" nowrap="nowrap"><bean:message key="viewProjectDetails.Tabs.PhaseNotOpen" /></td>
@@ -35,7 +35,7 @@
 						<c:when test='${group.appFunc == "VIEW_REGISTRANTS"}'>
 							<table class="scorecard" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;">
 								<tr>
-									<td class="title" colspan="5">${group.name}</td>
+									<td class="title" colspan="5">${group.tableName}</td>
 								</tr>
 								<tr>
 									<td class="header"><bean:message key="viewProjectDetails.box.Registration.Handle" /></td>
@@ -84,15 +84,15 @@
 						<c:when test='${group.appFunc == "VIEW_SUBMISSIONS"}'>
 							<table id="Submissions${submBoxIdx}" class="scorecard" width="100%" cellpadding="0" cellspacing="0" border="0">
 								<tr>
-									<td class="title" colspan="7">${group.name}</td>
+									<td class="title" colspan="7">${group.tableName}</td>
 								</tr>
 								<tr>
 									<td class="header" colspan="2" nowrap="nowrap"><bean:message key="viewProjectDetails.box.Submission.ID" /></td>
-									<td class="header" width="22%" nowrap="nowrap"><bean:message key="viewProjectDetails.box.Submission.Date" /></td>
+									<td class="header" width="22%" nowrap="nowrap"><bean:message key="viewProjectDetails.box.Submission.Date" arg0="${group.groupIndex}" /></td>
 									<td class="headerC" width="14%" nowrap="nowrap"><bean:message key="viewProjectDetails.box.Submission.AutoScreening" /></td>
 									<td class="header" width="15%" nowrap="nowrap"><bean:message key="viewProjectDetails.box.Submission.Screener" /></td>
-									<td class="headerC" width="14%" nowrap="nowrap"><bean:message key="viewProjectDetails.box.Submission.ScreeningScore" /></td>
-									<td class="headerC" width="15%" nowrap="nowrap"><bean:message key="viewProjectDetails.box.Submission.ScreeningResult" /></td>
+									<td class="headerC" width="14%" nowrap="nowrap"><bean:message key="viewProjectDetails.box.Submission.ScreeningScore" arg0="${group.groupIndex}" /></td>
+									<td class="headerC" width="15%" nowrap="nowrap"><bean:message key="viewProjectDetails.box.Submission.ScreeningResult" arg0="${group.groupIndex}" /></td>
 								</tr>
 								<c:set var="prevSubm" value="${group.pastSubmissions}" />
 								<c:set var="prevSubmissions" value="" />
@@ -304,7 +304,7 @@
 									<c:set var="colSpan" value="${colSpan + 1}" />
 								</c:if>
 								<tr>
-									<td class="title" colspan="${colSpan}">${group.name}</td>
+									<td class="title" colspan="${colSpan}">${group.tableName}</td>
 								</tr>
 								<tr>
 									<td class="value" colspan="${(isAllowedToEditHisReviews == true) ? 2 : 3}"><!-- @ --></td>
@@ -340,9 +340,9 @@
 								</tr>
 								<tr>
 									<td class="header" nowrap="nowrap"><bean:message key="viewProjectDetails.box.Submission.ID" /></td>
-									<td class="headerC" width="12%"><bean:message key="viewProjectDetails.box.Review.Date" /></td>
+									<td class="headerC" width="12%"><bean:message key="viewProjectDetails.box.Review.Date" arg0="${group.groupIndex}" /></td>
 									<c:if test="${isAllowedToEditHisReviews != true}">
-										<td class="headerC" width="8%"><bean:message key="viewProjectDetails.box.Review.Score" /></td>
+										<td class="headerC" width="8%"><bean:message key="viewProjectDetails.box.Review.Score" arg0="${group.groupIndex}" /></td>
 									</c:if>
 									<c:forEach items="${group.reviewers}" var="reviewer">
 										<td class="headerC" width="8%"><bean:message key="viewProjectDetails.box.Review.Score.short" /></td>
@@ -451,14 +451,14 @@
 						<c:when test='${group.appFunc == "AGGREGATION"}'>
 							<table class="scorecard" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;">
 								<tr>
-									<td class="title" colspan="5">${group.name}</td>
+									<td class="title" colspan="5">${group.tableName}</td>
 								</tr>
 								<tr>
 									<td class="header" nowrap="nowrap"><bean:message key="viewProjectDetails.box.Submission.ID" /></td>
-									<td class="headerC" nowrap="nowrap"><bean:message key="viewProjectDetails.box.Aggregation.Date" /></td>
-									<td class="headerC" nowrap="nowrap"><bean:message key="viewProjectDetails.box.Aggregation.Aggregation" /></td>
-									<td class="headerC" nowrap="nowrap"><bean:message key="viewProjectDetails.box.AggregationReview.Date" /></td>
-									<td class="headerC" nowrap="nowrap"><bean:message key="viewProjectDetails.box.AggregationReview.Review" /></td>
+									<td class="headerC" nowrap="nowrap"><bean:message key="viewProjectDetails.box.Aggregation.Date" arg0="${group.groupIndex}" /></td>
+									<td class="headerC" nowrap="nowrap"><bean:message key="viewProjectDetails.box.Aggregation.Aggregation" arg0="${group.groupIndex}" /></td>
+									<td class="headerC" nowrap="nowrap"><bean:message key="viewProjectDetails.box.AggregationReview.Date" arg0="${group.groupIndex}" /></td>
+									<td class="headerC" nowrap="nowrap"><bean:message key="viewProjectDetails.box.AggregationReview.Review" arg0="${group.groupIndex}" /></td>
 								</tr>
 								<c:set var="winningSubmission" value="" />
 								<c:forEach items="${group.submissions}" var="submission">
@@ -526,14 +526,14 @@
 						<c:when test='${group.appFunc == "FINAL_FIX"}'>
 							<table class="scorecard" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;">
 								<tr>
-									<td class="title" colspan="5">${group.name}</td>
+									<td class="title" colspan="5">${group.tableName}</td>
 								</tr>
 								<tr>
 									<td class="header" nowrap="nowrap"><bean:message key="viewProjectDetails.box.Submission.ID" /></td>
-									<td class="headerC" nowrap="nowrap"><bean:message key="viewProjectDetails.box.FinalFix.Date" /></td>
-									<td class="headerC" nowrap="nowrap"><bean:message key="viewProjectDetails.box.FinalFix.Fix" /></td>
-									<td class="headerC" nowrap="nowrap"><bean:message key="viewProjectDetails.box.FinalReview.Date" /></td>
-									<td class="headerC" nowrap="nowrap"><bean:message key="viewProjectDetails.box.FinalReview.Review" /></td>
+									<td class="headerC" nowrap="nowrap"><bean:message key="viewProjectDetails.box.FinalFix.Date" arg0="${group.groupIndex}" /></td>
+									<td class="headerC" nowrap="nowrap"><bean:message key="viewProjectDetails.box.FinalFix.Fix" arg0="${group.groupIndex}" /></td>
+									<td class="headerC" nowrap="nowrap"><bean:message key="viewProjectDetails.box.FinalReview.Date" arg0="${group.groupIndex}" /></td>
+									<td class="headerC" nowrap="nowrap"><bean:message key="viewProjectDetails.box.FinalReview.Review" arg0="${group.groupIndex}" /></td>
 								</tr>
 								<c:set var="winningSubmission" value="" />
 								<c:forEach items="${group.submissions}" var="submission">
@@ -608,12 +608,12 @@
 						<c:when test='${group.appFunc == "APPROVAL"}'>
 							<table class="scorecard" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;">
 								<tr>
-									<td class="title" colspan="3">${group.name}</td>
+									<td class="title" colspan="3">${group.tableName}</td>
 								</tr>
 								<tr>
 									<td class="header" nowrap="nowrap"><bean:message key="viewProjectDetails.box.Submission.ID" /></td>
-									<td class="headerC" nowrap="nowrap"><bean:message key="viewProjectDetails.box.Approval.Date" /></td>
-									<td class="headerC" nowrap="nowrap"><bean:message key="viewProjectDetails.box.Approval.Approval" /></td>
+									<td class="headerC" nowrap="nowrap"><bean:message key="viewProjectDetails.box.Approval.Date" arg0="${group.groupIndex}" /></td>
+									<td class="headerC" nowrap="nowrap"><bean:message key="viewProjectDetails.box.Approval.Approval" arg0="${group.groupIndex}" /></td>
 								</tr>
 								<c:set var="winningSubmission" value="" />
 								<c:forEach items="${group.submissions}" var="submission">

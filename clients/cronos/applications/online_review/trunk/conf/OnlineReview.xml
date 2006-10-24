@@ -3014,6 +3014,9 @@
                 <Property name="NameKey">
                     <Value>ProjectPhaseGroup.Registration</Value>
                 </Property>
+                <Property name="TableNameKey">
+                    <Value>ProjectPhaseGroup.Registration.table</Value>
+                </Property>
                 <Property name="Phases">
                     <Value>Registration</Value>
                 </Property>
@@ -3024,6 +3027,9 @@
             <Property name="Submission_Screening">
                 <Property name="NameKey">
                     <Value>ProjectPhaseGroup.Submission_Screening</Value>
+                </Property>
+                <Property name="TableNameKey">
+                    <Value>ProjectPhaseGroup.Submission_Screening.table</Value>
                 </Property>
                 <Property name="Phases">
                     <Value>Submission</Value>
@@ -3036,6 +3042,9 @@
             <Property name="Review_Appeals">
                 <Property name="NameKey">
                     <Value>ProjectPhaseGroup.Review_Appeals</Value>
+                </Property>
+                <Property name="TableNameKey">
+                    <Value>ProjectPhaseGroup.Review_Appeals.table</Value>
                 </Property>
                 <Property name="Phases">
                     <Value>Review</Value>
@@ -3050,6 +3059,9 @@
                 <Property name="NameKey">
                     <Value>ProjectPhaseGroup.Aggregation_Review</Value>
                 </Property>
+                <Property name="TableNameKey">
+                    <Value>ProjectPhaseGroup.Aggregation_Review.table</Value>
+                </Property>
                 <Property name="Phases">
                     <Value>Aggregation</Value>
                     <Value>Aggregation Review</Value>
@@ -3062,6 +3074,9 @@
                 <Property name="NameKey">
                     <Value>ProjectPhaseGroup.FinalFix_Review</Value>
                 </Property>
+                <Property name="TableNameKey">
+                    <Value>ProjectPhaseGroup.FinalFix_Review.table</Value>
+                </Property>
                 <Property name="Phases">
                     <Value>Final Fix</Value>
                     <Value>Final Review</Value>
@@ -3073,6 +3088,9 @@
             <Property name="Approval">
                 <Property name="NameKey">
                     <Value>ProjectPhaseGroup.Approval</Value>
+                </Property>
+                <Property name="TableNameKey">
+                    <Value>ProjectPhaseGroup.Approval.table</Value>
                 </Property>
                 <Property name="Phases">
                     <Value>Approval</Value>
