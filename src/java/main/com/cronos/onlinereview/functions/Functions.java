@@ -284,7 +284,7 @@ public final class Functions {
         }
 
         int hours = mins / 60;
-        return hours + ' ' + getMessage(pageContext, (hours == 1) ? "global.hour.singular" : "global.hour.plural");
+        return hours + " " + getMessage(pageContext, (hours == 1) ? "global.hour.singular" : "global.hour.plural");
     }
 
     /**
