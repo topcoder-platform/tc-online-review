@@ -9,6 +9,7 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -292,8 +293,9 @@ public class ProjectDetailsActions extends DispatchAction {
 
         int[] phaseGroupIndexes = new int[phases.length];
         List phaseGroups = new ArrayList();
-        int phaseGroupIdx = -1;
+        Map similarPhaseGroupIndexes = new HashMap();
         int activeTabIdx = -1;
+        int phaseGroupIdx = -1;
         PhaseGroup phaseGroup = null;
         Resource[] submitters = null;
 
@@ -302,8 +304,9 @@ public class ProjectDetailsActions extends DispatchAction {
             Phase phase = phases[i];
             String phaseName = phase.getPhaseType().getName();
 
-            if (phaseGroupIdx == -1 ||
-                    !ConfigHelper.isPhaseGroupContainsPhase(phaseGroupIdx, phaseName)) {
+            if (phaseGroup == null || !ConfigHelper.isPhaseGroupContainsPhase(phaseGroupIdx, phaseName) ||
+                    phaseGroup.isPhaseInThisGroup(phase)) {
+                // Get an index of this potential phase group in the configuration
                 phaseGroupIdx = ConfigHelper.findPhaseGroupForPhaseName(phaseName);
 
                 String appFuncName = ConfigHelper.getPhaseGroupAppFunction(phaseGroupIdx);
@@ -313,7 +316,18 @@ public class ProjectDetailsActions extends DispatchAction {
                     phaseGroup = new PhaseGroup();
                     phaseGroups.add(phaseGroup);
 
-                    phaseGroup.setName(messages.getMessage(ConfigHelper.getPhaseGroupNameKey(phaseGroupIdx)));
+                    Integer groupIndexObj = (Integer) similarPhaseGroupIndexes.get(appFuncName);
+                    int groupIndex = (groupIndexObj != null) ? groupIndexObj.intValue() : 0;
+
+                    similarPhaseGroupIndexes.put(appFuncName, new Integer(groupIndex + 1));
+
+                    String groupIndexStr = (groupIndex != 0) ? ("&#160;" + (groupIndex + 1)) : "";
+
+                    phaseGroup.setName(messages.getMessage(
+                            ConfigHelper.getPhaseGroupNameKey(phaseGroupIdx), groupIndexStr));
+                    phaseGroup.setTableName(messages.getMessage(
+                            ConfigHelper.getPhaseGroupTableNameKey(phaseGroupIdx), groupIndexStr));
+                    phaseGroup.setGroupIndex(groupIndexStr);
                     phaseGroup.setAppFunc(appFuncName);
                 } else {
                     phaseGroup = null;
@@ -351,6 +365,7 @@ public class ProjectDetailsActions extends DispatchAction {
 
             phaseGroup.setSubmitters(submitters);
 
+            // Determine an index of the current phase group (needed for timeline phases list)
             phaseGroupIndexes[i] = phaseGroups.size() - 1;
 
             if (!phaseGroup.isPhaseOpen()) {
@@ -2309,6 +2324,12 @@ public class ProjectDetailsActions extends DispatchAction {
                 links[i] = "UploadSubmission.do?method=uploadSubmission&pid=" + deliverable.getProject();
             } else if (delivName.equalsIgnoreCase(Constants.SCREENING_DELIVERABLE_NAME) ||
                     delivName.equalsIgnoreCase(Constants.PRIMARY_SCREENING_DELIVERABLE_NAME)) {
+                // Skip deliverables with empty Submission ID field,
+                // as no links can be generated for such deliverables
+                if (deliverable.getSubmission() == null) {
+                    continue;
+                }
+
                 if (allScorecardTypes == null) {
                     // Get all scorecard types
                     allScorecardTypes = ActionsHelper.createScorecardManager(request).getAllScorecardTypes();
@@ -2327,6 +2348,12 @@ public class ProjectDetailsActions extends DispatchAction {
                     links[i] = "ViewScreening.do?method=viewScreening&rid=" + review.getId();
                 }
             } else if (delivName.equalsIgnoreCase(Constants.REVIEW_DELIVERABLE_NAME)) {
+                // Skip deliverables with empty Submission ID field,
+                // as no links can be generated for such deliverables
+                if (deliverable.getSubmission() == null) {
+                    continue;
+                }
+
                 if (allScorecardTypes == null) {
                     // Get all scorecard types
                     allScorecardTypes = ActionsHelper.createScorecardManager(request).getAllScorecardTypes();
@@ -2351,7 +2378,12 @@ public class ProjectDetailsActions extends DispatchAction {
             } else if (delivName.equalsIgnoreCase(Constants.APPEAL_RESP_DELIVERABLE_NAME)) {
                 // TODO: Assign links for Appeal Responses
             } else if (delivName.equalsIgnoreCase(Constants.AGGREGATION_DELIVERABLE_NAME)) {
-/* TODO: Uncomment this section when Deliverable Management component is fixed
+                // Skip deliverables with empty Submission ID field,
+                // as no links can be generated for such deliverables
+                if (deliverable.getSubmission() == null) {
+                    continue;
+                }
+
                 if (allScorecardTypes == null) {
                     // Get all scorecard types
                     allScorecardTypes = ActionsHelper.createScorecardManager(request).getAllScorecardTypes();
@@ -2368,10 +2400,14 @@ public class ProjectDetailsActions extends DispatchAction {
                         links[i] = "ViewAggregation.do?method=viewAggregation&rid=" + review.getId();
                     }
                 }
-*/
             } else if (delivName.equalsIgnoreCase(Constants.AGGREGATION_REV_DELIVERABLE_NAME) ||
                     delivName.equalsIgnoreCase(Constants.SCORECARD_COMM_DELIVERABLE_NAME)) {
-/* TODO: Uncomment this section when Deliverable Management component is fixed
+                // Skip deliverables with empty Submission ID field,
+                // as no links can be generated for such deliverables
+                if (deliverable.getSubmission() == null) {
+                    continue;
+                }
+
                 Phase phase = ActionsHelper.getPhase(phases, false, Constants.AGGREGATION_PHASE_NAME);
                 Resource[] aggregator =
                     ActionsHelper.getAllResourcesForPhase(ActionsHelper.createResourceManager(request), phase);
@@ -2403,11 +2439,16 @@ public class ProjectDetailsActions extends DispatchAction {
                         "Rejected".equalsIgnoreCase((String) myComment.getExtraInfo()))) {
                     links[i] = "EditAggregationReview.do?method=editAggregationReview&rid=" + review.getId();
                 }
-*/
             } else if (delivName.equalsIgnoreCase(Constants.FINAL_FIX_DELIVERABLE_NAME)) {
                 links[i] = "UploadFinalFix.do?method=uploadFinalFix&pid=" + deliverable.getProject();
             } else if (delivName.equalsIgnoreCase(Constants.FINAL_REVIEW_DELIVERABLE_NAME)) {
-/*                if (allScorecardTypes == null) {
+                // Skip deliverables with empty Submission ID field,
+                // as no links can be generated for such deliverables
+                if (deliverable.getSubmission() == null) {
+                    continue;
+                }
+
+                if (allScorecardTypes == null) {
                     // Get all scorecard types
                     allScorecardTypes = ActionsHelper.createScorecardManager(request).getAllScorecardTypes();
                 }
@@ -2422,7 +2463,7 @@ public class ProjectDetailsActions extends DispatchAction {
                     } else {
                         links[i] = "ViewFinalReview.do?method=viewFinalReview&rid=" + review.getId();
                     }
-                }*/
+                }
             } else if (delivName.equalsIgnoreCase(Constants.APPROVAL_DELIVERABLE_NAME)) {
                 if (allScorecardTypes == null) {
                     // Get all scorecard types

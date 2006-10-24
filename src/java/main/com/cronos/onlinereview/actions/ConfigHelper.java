@@ -186,6 +186,7 @@ public class ConfigHelper {
      * displayed under the same tab on View Project Details page.
      *
      * @see #PHASE_GROUP_RM_KEY_PROP
+     * @see #PHASE_GROUP_TBL_NAME_KEY_PROP
      * @see #PHASES_DEFINITIONS_PROP
      * @see #PHASE_GROUP_APP_FUNCTION_PROP
      */
@@ -197,6 +198,7 @@ public class ConfigHelper {
      * be displayed for grouped phases.
      *
      * @see #PHASE_GROUPING_PROP
+     * @see #PHASE_GROUP_TBL_NAME_KEY_PROP
      * @see #PHASES_DEFINITIONS_PROP
      * @see #PHASE_GROUP_APP_FUNCTION_PROP
      */
@@ -204,10 +206,23 @@ public class ConfigHelper {
 
     /**
      * This member variable is a string constant that specifies the name of the property which
+     * contains the name of the key in message resources file. This key denotes message that should
+     * be displayed for tables for grouped phases.
+     *
+     * @see #PHASE_GROUPING_PROP
+     * @see #PHASE_GROUP_RM_KEY_PROP
+     * @see #PHASES_DEFINITIONS_PROP
+     * @see #PHASE_GROUP_APP_FUNCTION_PROP
+     */
+    private static final String PHASE_GROUP_TBL_NAME_KEY_PROP = "TableNameKey";
+
+    /**
+     * This member variable is a string constant that specifies the name of the property which
      * contains the names of phases that will be considered as belonging to the same.
      *
      * @see #PHASE_GROUPING_PROP
      * @see #PHASE_GROUP_RM_KEY_PROP
+     * @see #PHASE_GROUP_TBL_NAME_KEY_PROP
      * @see #PHASE_GROUP_APP_FUNCTION_PROP
      */
     private static final String PHASES_DEFINITIONS_PROP = "Phases";
@@ -219,6 +234,7 @@ public class ConfigHelper {
      *
      * @see #PHASE_GROUPING_PROP
      * @see #PHASE_GROUP_RM_KEY_PROP
+     * @see #PHASE_GROUP_TBL_NAME_KEY_PROP
      * @see #PHASES_DEFINITIONS_PROP
      */
     private static final String PHASE_GROUP_APP_FUNCTION_PROP = "AppFunction";
@@ -332,11 +348,19 @@ public class ConfigHelper {
 
     /**
      * This member variable holds the list of names of the phase groups. The names are represented
-     * as keys which should be used to retrieve localized group name from the message resources
-     * file. Every item in this list should be of type <code>String</code> and cannot be
+     * as keys that should be used to retrieve localized group name from the message resources file.
+     * Every item in this list should be of type <code>String</code> and cannot be
      * <code>null</code>.
      */
     private static final List phaseGroupNames = new ArrayList();
+
+    /**
+     * This member variable holds the list of names of tables for the phase groups. The names are
+     * represented as keys that should be used to retrieve localized name from the message resources
+     * file. Every item in this list should be of type <code>String</code> and cannot be
+     * <code>null</code>.
+     */
+    private static final List phaseGroupTableNames = new ArrayList();
 
     /**
      * This member variable holds the list of sets. Every set in this list denotes a single phase
@@ -502,8 +526,10 @@ public class ConfigHelper {
             while (phaseGroups.hasMoreElements()) {
                 // Get the name of the next property in the list.
                 String propertyName = ((String) phaseGroups.nextElement()) + ".";
-                // Retrieve a name of key that will point to a message containing the name of group
+                // Retrieve a name of a key that will point to a message containing the name of group
                 String strGroupNameKey = propPhaseGrouping.getValue(propertyName + PHASE_GROUP_RM_KEY_PROP);
+                // Retrieve a name of a key that will point to a message containing the name of table
+                String strGroupTableNameKey = propPhaseGrouping.getValue(propertyName + PHASE_GROUP_TBL_NAME_KEY_PROP);
                 // Retrieve an array of phase names included in this group
                 String[] strPhases = propPhaseGrouping.getValues(propertyName + PHASES_DEFINITIONS_PROP);
                 // Retrieve a name of application's functionality
@@ -514,8 +540,14 @@ public class ConfigHelper {
                         strAppFunction != null && /*strAppFunction.trim().length() != 0 &&*/
                         strPhases != null && strPhases.length != 0) {
                     // ... store phase group definition for later use
-                    phaseGroupNames.add(strGroupNameKey);
-                    phaseGroupFunctions.add(strAppFunction);
+                    phaseGroupNames.add(strGroupNameKey.trim());
+                    phaseGroupFunctions.add(strAppFunction.trim());
+
+                    if (strGroupTableNameKey != null && strGroupTableNameKey.trim().length() != 0) {
+                        phaseGroupTableNames.add(strGroupTableNameKey.trim());
+                    } else {
+                        phaseGroupTableNames.add(phaseGroupNames.get(phaseGroupNames.size() - 1));
+                    }
 
                     Set phasesSet = new HashSet();
                     phaseGroupPhases.add(phasesSet);
@@ -700,6 +732,18 @@ public class ConfigHelper {
      */
     public static String getPhaseGroupNameKey(int index) {
         return (String) phaseGroupNames.get(index);
+    }
+
+    /**
+     * This static method returns the name of a key for a phase group referenced by its index.
+     *
+     * @return the name of a key. This key can later be used to retrieve the loclized name of table
+     *         for some phase group from message resources.
+     * @param index
+     *            an index of a phase group to retrieve the name of a key for.
+     */
+    public static String getPhaseGroupTableNameKey(int index) {
+        return (String) phaseGroupTableNames.get(index);
     }
 
     /**
