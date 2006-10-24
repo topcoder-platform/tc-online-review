@@ -64,9 +64,6 @@
 				} else if (!chbox.checked){
 					chbox.checked = true;
 				}
-				// TODO: Check what is supposed  to be done by the next line of code
-				// refresh the filter
-				refreshFilter();
 			},
 			function (result, respXML) {
 				// operation failed, alert the error message to the user
