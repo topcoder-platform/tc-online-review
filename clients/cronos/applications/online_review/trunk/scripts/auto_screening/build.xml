@@ -319,6 +319,7 @@
 	    	<filename name="**/*.jar"/>
 	    </fileset>
         <pathelement location="." />
+        <pathelement location="conf" />
         <pathelement location="${ifx-jdbc.jar}" />
 
         <pathelement location="${auto_screening_management.jar}" />
