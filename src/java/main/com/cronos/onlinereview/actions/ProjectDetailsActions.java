@@ -2465,6 +2465,12 @@ public class ProjectDetailsActions extends DispatchAction {
                     }
                 }
             } else if (delivName.equalsIgnoreCase(Constants.APPROVAL_DELIVERABLE_NAME)) {
+                // Skip deliverables with empty Submission ID field,
+                // as no links can be generated for such deliverables
+                if (deliverable.getSubmission() == null) {
+                    continue;
+                }
+
                 if (allScorecardTypes == null) {
                     // Get all scorecard types
                     allScorecardTypes = ActionsHelper.createScorecardManager(request).getAllScorecardTypes();
