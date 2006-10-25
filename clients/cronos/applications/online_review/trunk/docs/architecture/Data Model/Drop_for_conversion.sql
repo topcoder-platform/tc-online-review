@@ -19,7 +19,7 @@ DROP TABLE project_template;
 DROP TABLE project_type;
 DROP TABLE question_template;
 DROP TABLE r_user_role;
-DROP TABLE response_serverity_lu;
+DROP TABLE response_severity_lu;
 DROP TABLE response_type;
 DROP TABLE review_phase;
 DROP TABLE review_role;
