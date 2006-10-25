@@ -221,7 +221,7 @@ CREATE TABLE phase_dependency (
   create_date                   DATETIME YEAR TO FRACTION(3)    NOT NULL,
   modify_user                   VARCHAR(64)                     NOT NULL,
   modify_date                   DATETIME YEAR TO FRACTION(3)    NOT NULL,
-  PRIMARY KEY(dependency_phase_id, dependent_phase_id) CONSTRAINT PK_PHASE_DEPENDENCY,
+  PRIMARY KEY(dependency_phase_id, dependent_phase_id, dependency_start, dependent_start) CONSTRAINT PK_PHASE_DEPENDENCY,
   FOREIGN KEY(dependency_phase_id)
     REFERENCES project_phase(project_phase_id) CONSTRAINT FK_PHASEDEPENDENCY_PROJECTPHASE_DEPENDENCYPHASEID,
   FOREIGN KEY(dependent_phase_id)
