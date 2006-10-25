@@ -41,3 +41,4 @@ DROP TABLE testcase_question;
 DROP TABLE testcase_review;
 DROP TABLE testcases;
 DROP TABLE user_role;
+DROP TABLE default_scorecard;
