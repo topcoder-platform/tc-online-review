@@ -239,7 +239,8 @@ public class ProjectActions extends DispatchAction {
      *            the project to take the data from
      * @throws BaseException
      */
-    private void populateProjectForm(HttpServletRequest request, LazyValidatorForm form, Project project) throws BaseException {
+    private void populateProjectForm(HttpServletRequest request, LazyValidatorForm form, Project project)
+        throws BaseException {
         // TODO: Possibly use string constants instead of hardcoded strings
 
         // Set the JS id to start generation from
@@ -265,7 +266,7 @@ public class ProjectActions extends DispatchAction {
 
         // Populate project forum id
         populateProjectFormProperty(form, Long.class, "forum_id", project, "Developer Forum ID");
-        
+
         // Populate project component id
         populateProjectFormProperty(form, Long.class, "component_id", project, "Component ID");
 
@@ -311,18 +312,18 @@ public class ProjectActions extends DispatchAction {
         for (int i = 0; i < resources.length; ++i) {
             form.set("resources_id", i + 1, new Long(resources[i].getId()));
             form.set("resources_action", i + 1, "update");
-            
+
             form.set("resources_role", i + 1, new Long(resources[i].getResourceRole().getId()));
             form.set("resources_phase", i + 1, "loaded_" + resources[i].getPhase());
             form.set("resources_name", i + 1, resources[i].getProperty("Handle"));
-            
+
             if (resources[i].getProperty("Payment") != null) {
                 form.set("resources_payment", i + 1, Boolean.TRUE);
                 form.set("resources_payment_amount", i + 1, Long.valueOf((String) resources[i].getProperty("Payment")));
             } else {
                 form.set("resources_payment", i + 1, Boolean.FALSE);
             }
-            
+
             if (resources[i].getProperty("Payment Status") != null) {
                 form.set("resources_paid", i + 1, resources[i].getProperty("Payment Status"));
             } else {
@@ -339,11 +340,11 @@ public class ProjectActions extends DispatchAction {
         Arrays.sort(phases, new ProjectPhaseComparer());
 
         Map phaseNumberMap = new HashMap();
-               
+
         // Populate form with phases data
         for (int i = 0; i < phases.length; ++i) {
             form.set("phase_id", i + 1, new Long(phases[i].getId()));
-            
+
             Long phaseTypeId = new Long(phases[i].getPhaseType().getId());
             form.set("phase_type", i + 1, phaseTypeId);
             Integer phaseNumber = (Integer) phaseNumberMap.get(phaseTypeId);
@@ -354,7 +355,7 @@ public class ProjectActions extends DispatchAction {
             }
             phaseNumberMap.put(phaseTypeId, phaseNumber);
             form.set("phase_number", i + 1, phaseNumber);
-            
+
             form.set("phase_name", i + 1, phases[i].getPhaseType().getName());
             form.set("phase_action", i + 1, "update");
             form.set("phase_js_id", i + 1, "loaded_" + phases[i].getId());
@@ -537,9 +538,6 @@ public class ProjectActions extends DispatchAction {
      */
     public ActionForward saveProject(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response) throws BaseException {
-        // TODO: Complete this method
-        // It is actually very-very incomplete just partially demonstrates the functionality
-
         // Cast the form to its actual type
         LazyValidatorForm lazyForm = (LazyValidatorForm) form;
 
@@ -569,6 +567,10 @@ public class ProjectActions extends DispatchAction {
         ProjectCategory[] projectCategories = manager.getAllProjectCategories();
         ProjectStatus[] projectStatuses = manager.getAllProjectStatuses();
 
+        // This variable determines whether status of the project has been changed by this save
+        // operation. This is usefule to determine whether Explanation is a rquired field or not
+        boolean statusHasChanged = false;
+
         Project project;
         if (newProject) {
             // Find "Active" project status
@@ -578,6 +580,7 @@ public class ProjectActions extends DispatchAction {
                     ((Long) lazyForm.get("project_category")).longValue());
             // Create Project instance
             project = new Project(category, activeStatus);
+            statusHasChanged = true; // Status is always considered to be changed for new projects
         } else {
             // Retrieve Project instance to be edited
             // TODO: Probably check it for null, and issue the error, etc.
@@ -587,10 +590,12 @@ public class ProjectActions extends DispatchAction {
         /*
          * Populate the properties of the project
          */
+
         // Populate project name
         project.setProperty("Project Name", lazyForm.get("project_name"));
         if (newProject) {
             // Populate project version (always set to 1.0)
+            // TODO: Fix the version of the project
             project.setProperty("Project Version", "1.0");
             // Populate project root catalog id (always set to Application)
             // TODO: There should be an ability to specify different Root Catalog
@@ -600,10 +605,20 @@ public class ProjectActions extends DispatchAction {
             // Populate project public flag
             project.setProperty("Public", Boolean.TRUE.equals(lazyForm.get("public")) ? "Yes" : "No");
         } else {
-            // Populate project status
-            project.setProjectStatus(
-                    ActionsHelper.findProjectStatusById(projectStatuses, ((Long) lazyForm.get("status")).longValue()));
+            ProjectStatus newProjectStatus =
+                ActionsHelper.findProjectStatusById(projectStatuses, ((Long) lazyForm.get("status")).longValue());
+            String oldStatusName = project.getProjectStatus().getName();
+            String newStatusName = (newProjectStatus != null) ? newProjectStatus.getName() : oldStatusName;
+
+            // Determine if status has changed
+            statusHasChanged = !oldStatusName.equalsIgnoreCase(newStatusName);
+            // If status has changed, update the project
+            if (statusHasChanged) {
+                // Populate project status
+                project.setProjectStatus(newProjectStatus);
+            }
         }
+
         // Populate project forum id
         project.setProperty("Developer Forum ID", lazyForm.get("forum_id"));
         // Populate project component id
@@ -641,13 +656,14 @@ public class ProjectActions extends DispatchAction {
 
         // Create the map to store the mapping from phase JS ids to phases
         Map phasesJsMap = new HashMap();
-        
+
         // Create the list to store the phases to be deleted
         List phasesToDelete = new ArrayList();
-        
+
         // Save the project phases
         // FIXME: the project itself is also saved by the following call. Needs to be refactored
-        Phase[] projectPhases = saveProjectPhases(newProject, request, lazyForm, project, phasesJsMap, phasesToDelete);
+        Phase[] projectPhases =
+            saveProjectPhases(newProject, request, lazyForm, project, phasesJsMap, phasesToDelete, statusHasChanged);
 
         // If needed switch project current phase
         if (!newProject) {
@@ -663,7 +679,7 @@ public class ProjectActions extends DispatchAction {
         if (!ActionsHelper.isErrorsPresent(request)) {
             // Delete the phases to be deleted
             deletePhases(request, project, phasesToDelete);
-        }        
+        }
 
         // Check if there are any validation errors and return appropriate forward
         if (ActionsHelper.isErrorsPresent(request)) {
@@ -688,28 +704,28 @@ public class ProjectActions extends DispatchAction {
     }
 
     /**
-     * TODO: Document it 
-     * 
+     * TODO: Document it
+     *
      * @param request
      * @param project
      * @param phasesToDelete
-     * @throws BaseException 
+     * @throws BaseException
      */
     private void deletePhases(HttpServletRequest request, Project project, List phasesToDelete) throws BaseException {
         if (phasesToDelete.isEmpty()) {
             return;
         }
-        
+
         Phase phase = (Phase) phasesToDelete.get(0);
         com.topcoder.project.phases.Project phProject = phase.getProject();
-        
+
         for (int i = 0; i < phasesToDelete.size(); i++) {
             phase = (Phase) phasesToDelete.get(i);
             phProject.removePhase(phase);
         }
-        
+
         PhaseManager phaseManager = ActionsHelper.createPhaseManager(request, false);
-        
+
         phaseManager.updatePhases(phProject, Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
     }
 
@@ -741,7 +757,8 @@ public class ProjectActions extends DispatchAction {
      * @throws BaseException
      */
     private Phase[] saveProjectPhases(boolean newProject, HttpServletRequest request, LazyValidatorForm lazyForm,
-            Project project, Map phasesJsMap, List phasesToDelete) throws BaseException {
+            Project project, Map phasesJsMap, List phasesToDelete, boolean statusHasChanged)
+        throws BaseException {
         // Obtain an instance of Phase Manager
         PhaseManager phaseManager = ActionsHelper.createPhaseManager(request, false);
 
@@ -767,7 +784,7 @@ public class ProjectActions extends DispatchAction {
 
         // This will be a Map from phases to their indexes in form
         Map phasesToForm = new HashMap();
-        
+
         // This will be a list of all the phases except the ones to be deleted
         List phaseList = new ArrayList();
 
@@ -1050,12 +1067,27 @@ public class ProjectActions extends DispatchAction {
 
         // Sort project phases
         Collections.sort(phaseList, new ProjectPhaseComparer());
-        
+
         Phase[] projectPhases = (Phase[]) phaseList.toArray(new Phase[phaseList.size()]);
 
         // Validate the project phases
-        if (!validateProjectPhases(request, project, projectPhases)) {
-            // If project phases are invalid, return immediately
+        boolean validationSucceeded = validateProjectPhases(request, project, projectPhases);
+
+        // Get Explanation for edited project.
+        // It does not matter what this string contains for new projects
+        String explanationText = (!newProject && !statusHasChanged) ? (String) lazyForm.get("explanation") : "***";
+
+        // Validate Explanation, but only if status has not been changed
+        if (explanationText == null || explanationText.trim().length() == 0) {
+            // Indicate unsuccessful validation
+            validationSucceeded = false;
+            // Add error that explains the validation error
+            ActionsHelper.addErrorToRequest(request, "explanation",
+                    "error.com.cronos.onlinereview.actions.editProject.explanation");
+        }
+
+        if (!validationSucceeded) {
+            // If project validation has failed, return immediately
             return projectPhases;
         }
 
@@ -1114,7 +1146,7 @@ public class ProjectActions extends DispatchAction {
                     }
                 }
             }
-            
+
             // Obtain an instance of Phase Manager
             PhaseManager phaseManager = ActionsHelper.createPhaseManager(request, true);
             for (; i < projectPhases.length; i++) {
@@ -1132,7 +1164,7 @@ public class ProjectActions extends DispatchAction {
                                     " cannot be closed");
                             ActionsHelper.addErrorToRequest(request, new ActionMessage(
                                     "error.com.cronos.onlinereview.actions.editProject.CannotClosePhase",
-                                    projectPhases[i].getPhaseType().getName()));                            
+                                    projectPhases[i].getPhaseType().getName()));
                         }
                     } else if (projectPhases[i].getPhaseStatus().getName().equals(PhaseStatus.SCHEDULED.getName())) {
                         if (phaseManager.canStart(projectPhases[i])) {
@@ -1407,7 +1439,7 @@ public class ProjectActions extends DispatchAction {
                 continue;
             }
 
-            // TODO: Actually no updates should be done at all in the case validation fails!!!            
+            // TODO: Actually no updates should be done at all in the case validation fails!!!
             if (resourceNames[i] == null || resourceNames[i].trim().length() == 0) {
                 ActionsHelper.addErrorToRequest(request, "resources_name[" + i + "]",
                         "error.com.cronos.onlinereview.actions.editProject.Resource.Empty");
@@ -1417,7 +1449,7 @@ public class ProjectActions extends DispatchAction {
             // Get info about user with the specified handle
             ExternalUser user = userRetrieval.retrieveUser(resourceNames[i]);
 
-            
+
             // TODO: Actually no updates should be done at all in the case validation fails!!!
             // If there is no user with such handle, indicate an error
             if (user == null) {
@@ -1432,7 +1464,7 @@ public class ProjectActions extends DispatchAction {
             boolean resourceRoleChanged = false;
             ResourceRole role = ActionsHelper.findResourceRoleById(
                     resourceRoles, ((Long) lazyForm.get("resources_role", i)).longValue());
-            if (role != null && role != resource.getResourceRole()) {                
+            if (role != null && role != resource.getResourceRole()) {
                 resource.setResourceRole(role);
                 resourceRoleChanged = true;
             }
@@ -1449,7 +1481,7 @@ public class ProjectActions extends DispatchAction {
             }
             // Set resource phase id, if needed
             Long phaseTypeId = resource.getResourceRole().getPhaseType();
-            if (phaseTypeId != null) {                
+            if (phaseTypeId != null) {
                 Phase phase = (Phase) phasesJsMap.get(lazyForm.get("resources_phase", i));
                 if (phase != null) {
                     resource.setPhase(new Long(phase.getId()));
