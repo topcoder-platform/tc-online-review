@@ -13,6 +13,7 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -61,6 +62,7 @@ import com.topcoder.management.project.ProjectFilterUtility;
 import com.topcoder.management.project.ProjectManager;
 import com.topcoder.management.project.ProjectStatus;
 import com.topcoder.management.project.ProjectType;
+import com.topcoder.management.resource.NotificationType;
 import com.topcoder.management.resource.Resource;
 import com.topcoder.management.resource.ResourceManager;
 import com.topcoder.management.resource.ResourceRole;
@@ -1407,11 +1409,48 @@ public class ProjectActions extends DispatchAction {
 
         // Get all types of resource roles
         ResourceRole[] resourceRoles = resourceManager.getAllResourceRoles();
+        
+        // Get all types of notifications
+        NotificationType[] types = resourceManager.getAllNotificationTypes();
+        long timelineNotificationId = Long.MIN_VALUE;
+        
+        // get the id for the timelineNotification
+        for (int i = 0; i < types.length; ++i) {
+        	if (types[i].getName().equals("Timeline Notification")) {
+        		timelineNotificationId = types[i].getId();
+        		break;
+        	}
+        }
+        
+        // TODO: we assume timelineNotifictionId exists here, need to do the check
 
         // Get the array of resource names
         String[] resourceNames = (String[]) lazyForm.get("resources_name");
+        
+        // HashSet used to identify resource of new user
+        Set users = new HashSet();
+        
         // 0-index resource is skipped as it is a "dummy" one
         for (int i = 1; i < resourceNames.length; i++) {
+        	
+            // TODO: Actually no updates should be done at all in the case validation fails!!!            
+            if (resourceNames[i] == null || resourceNames[i].trim().length() == 0) {
+                ActionsHelper.addErrorToRequest(request, "resources_name[" + i + "]",
+                        "error.com.cronos.onlinereview.actions.editProject.Resource.Empty");
+                continue;
+            }
+            
+            // Get info about user with the specified handle
+            ExternalUser user = userRetrieval.retrieveUser(resourceNames[i]);
+            
+            // TODO: Actually no updates should be done at all in the case validation fails!!!
+            // If there is no user with such handle, indicate an error
+            if (user == null) {
+                ActionsHelper.addErrorToRequest(request, "resources_name[" + i + "]",
+                        "error.com.cronos.onlinereview.actions.editProject.Resource.NotFound");
+                continue;
+            }
+            
             Resource resource;
 
             // Check what is the action to be performed with the resource
@@ -1420,11 +1459,16 @@ public class ProjectActions extends DispatchAction {
             if ("add".equals(resourceAction)) {
                 // Create new resource
                 resource = new Resource();
+                
+                users.add(new Long(user.getId()));
             }  else {
                 Long resourceId = (Long) lazyForm.get("resources_id", i);
+                
                 if (resourceId.longValue() != -1) {
                     // Retrieve the resource with the specified id
                     resource = resourceManager.getResource(resourceId.longValue());
+                    
+                    users.remove(new Long(user.getId()));
                 } else {
                     // -1 value as id marks the resources that were't persisted in DB yet
                     // and so should be skipped for actions other then "add"
@@ -1436,25 +1480,8 @@ public class ProjectActions extends DispatchAction {
             if ("delete".equals(resourceAction)) {
                 resourceManager.removeResource(resource,
                         Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
-                continue;
-            }
-
-            // TODO: Actually no updates should be done at all in the case validation fails!!!
-            if (resourceNames[i] == null || resourceNames[i].trim().length() == 0) {
-                ActionsHelper.addErrorToRequest(request, "resources_name[" + i + "]",
-                        "error.com.cronos.onlinereview.actions.editProject.Resource.Empty");
-                continue;
-            }
-
-            // Get info about user with the specified handle
-            ExternalUser user = userRetrieval.retrieveUser(resourceNames[i]);
-
-
-            // TODO: Actually no updates should be done at all in the case validation fails!!!
-            // If there is no user with such handle, indicate an error
-            if (user == null) {
-                ActionsHelper.addErrorToRequest(request, "resources_name[" + i + "]",
-                        "error.com.cronos.onlinereview.actions.editProject.Resource.NotFound");
+                resourceManager.removeNotifications(new long[] {user.getId()}, project.getId(), 
+                		timelineNotificationId, Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
                 continue;
             }
 
@@ -1464,7 +1491,7 @@ public class ProjectActions extends DispatchAction {
             boolean resourceRoleChanged = false;
             ResourceRole role = ActionsHelper.findResourceRoleById(
                     resourceRoles, ((Long) lazyForm.get("resources_role", i)).longValue());
-            if (role != null && role != resource.getResourceRole()) {
+            if (role != null && role != resource.getResourceRole()) {                
                 resource.setResourceRole(role);
                 resourceRoleChanged = true;
             }
@@ -1481,7 +1508,7 @@ public class ProjectActions extends DispatchAction {
             }
             // Set resource phase id, if needed
             Long phaseTypeId = resource.getResourceRole().getPhaseType();
-            if (phaseTypeId != null) {
+            if (phaseTypeId != null) {                
                 Phase phase = (Phase) phasesJsMap.get(lazyForm.get("resources_phase", i));
                 if (phase != null) {
                     resource.setPhase(new Long(phase.getId()));
@@ -1515,6 +1542,18 @@ public class ProjectActions extends DispatchAction {
 
             // Save the resource in the persistence level
             resourceManager.updateResource(resource, Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
+        }
+        
+        // Update all the timeline notifications
+        if (project.getProperty("Timeline Notification").equals("On")) {
+        	long[] userIds = new long[users.size()];
+        	int i = 0;
+        	for (Iterator itr = users.iterator(); itr.hasNext();) {
+        		userIds[i++] = ((Long) itr.next()).longValue();
+        	}
+        	
+        	resourceManager.addNotifications(userIds, project.getId(), 
+        			timelineNotificationId, Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
         }
     }
 
