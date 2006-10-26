@@ -863,6 +863,7 @@ public class ProjectReviewActions extends DispatchAction {
                 return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
                         Constants.PERFORM_AGGREG_REVIEW_PERM_NAME, "Error.CannotReviewOwnAggregation");
             } else {
+                // Otherwise, the user does not have permission to edit this review
                 return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
                         Constants.PERFORM_AGGREG_REVIEW_PERM_NAME, "Error.NoPermission");
             }
@@ -905,23 +906,45 @@ public class ProjectReviewActions extends DispatchAction {
         Arrays.fill(reviewFunctions, "Accept");
         Arrays.fill(rejectReasons, "");
 
-        for (int i = 0; i < reviewFunctions.length; ++i) {
-            Item item = review.getItem(i);
-            for (int j = 0; j < item.getNumberOfComments(); ++j) {
-                Comment comment = item.getComment(j);
-                String commentType = comment.getCommentType().getName();
+        int itemIdx = 0;
 
-                if ((isSubmitter && commentType.equalsIgnoreCase("Submitter Comment")) ||
-                        (!isSubmitter && myReviewComment.getAuthor() == comment.getAuthor() &&
-                                commentType.equalsIgnoreCase("Aggregation Review Comment"))) {
-                    String reviewFunction = (String) comment.getExtraInfo();
-                    if ("Reject".equalsIgnoreCase(reviewFunction)) {
-                        reviewFunctions[i] = "Reject";
+        for (int groupIdx = 0; groupIdx < scorecardTemplate.getNumberOfGroups(); ++groupIdx) {
+            Group group = scorecardTemplate.getGroup(groupIdx);
+            for (int sectionIdx = 0; sectionIdx < group.getNumberOfSections(); ++sectionIdx) {
+                Section section = group.getSection(sectionIdx);
+                for (int questionIdx = 0; questionIdx < section.getNumberOfQuestions(); ++questionIdx) {
+                    // Get the ID of the current question
+                    final long questionId = section.getQuestion(questionIdx).getId();
+
+                    // Iterate over the items of existing review that needs editing
+                    for (int i = 0; i < review.getNumberOfItems(); ++i) {
+                        // Get an item for the current iteration
+                        Item item = review.getItem(i);
+                        // Verify that the item is for current scorecard template question
+                        if (item.getQuestion() != questionId) {
+                            continue;
+                        }
+
+                        for (int j = 0; j < item.getNumberOfComments(); ++j) {
+                            Comment comment = item.getComment(j);
+                            String commentType = comment.getCommentType().getName();
+
+                            if ((isSubmitter && commentType.equalsIgnoreCase("Submitter Comment")) ||
+                                    (!isSubmitter && myReviewComment.getAuthor() == comment.getAuthor() &&
+                                            commentType.equalsIgnoreCase("Aggregation Review Comment"))) {
+                                String reviewFunction = (String) comment.getExtraInfo();
+                                if ("Reject".equalsIgnoreCase(reviewFunction)) {
+                                    reviewFunctions[itemIdx] = "Reject";
+                                }
+                                if (comment.getComment() != null && comment.getComment().trim().length() != 0) {
+                                    rejectReasons[itemIdx] = comment.getComment();
+                                }
+
+                                ++itemIdx;
+                                break;
+                            }
+                        }
                     }
-                    if (comment.getComment() != null && comment.getComment().trim().length() != 0) {
-                        rejectReasons[i] = comment.getComment();
-                    }
-                    break;
                 }
             }
         }
@@ -1045,41 +1068,61 @@ public class ProjectReviewActions extends DispatchAction {
         // This variable will be updated during the next loop over all items of the review
         boolean rejected = false;
 
-        // Iterate over the items of existing review that needs updating
-        for (int i = 0; i < review.getNumberOfItems(); ++i) {
-            // Get an item for the current iteration
-            Item item = review.getItem(i);
+        int itemIdx = 0;
 
-            // Find a comment from this user
-            Comment userComment = null;
-            for (int j = 0; j < item.getNumberOfComments(); ++j) {
-                Comment comment = item.getComment(j);
+        for (int groupIdx = 0; groupIdx < scorecardTemplate.getNumberOfGroups(); ++groupIdx) {
+            Group group = scorecardTemplate.getGroup(groupIdx);
+            for (int sectionIdx = 0; sectionIdx < group.getNumberOfSections(); ++sectionIdx) {
+                Section section = group.getSection(sectionIdx);
+                for (int questionIdx = 0; questionIdx < section.getNumberOfQuestions(); ++questionIdx) {
+                    // Get the ID of the current scorecard template's question
+                    final long questionId = section.getQuestion(questionIdx).getId();
 
-                if (comment.getAuthor() == myReviewComment.getAuthor() &&
-                        comment.getCommentType().getId() == commentType.getId()) {
-                    userComment = comment;
-                    break;
+                    // Iterate over the items of existing review that needs updating
+                    for (int i = 0; i < review.getNumberOfItems(); ++i) {
+                        // Get an item for the current iteration
+                        Item item = review.getItem(i);
+                        // Skip items that are not for the current scorecard template question
+                        if (item.getQuestion() != questionId) {
+                            continue;
+                        }
+
+                        // Find a comment from this user
+                        Comment userComment = null;
+                        for (int j = 0; j < item.getNumberOfComments(); ++j) {
+                            Comment comment = item.getComment(j);
+
+                            if (comment.getAuthor() == myReviewComment.getAuthor() &&
+                                    comment.getCommentType().getId() == commentType.getId()) {
+                                userComment = comment;
+                                break;
+                            }
+                        }
+
+                        // If comment has not been found, it means that this user has not had
+                        // chance to enter his comments yet, so create the Comment object first
+                        if (userComment == null) {
+                            userComment = new Comment();
+                            // Prefill needed fields
+                            userComment.setCommentType(commentType);
+                            userComment.setAuthor(myReviewComment.getAuthor());
+                            // Add this newly-created comment to review's item
+                            item.addComment(userComment);
+                        }
+
+                        // Set the reason of reject/accept (i.e. actual comment's text)
+                        userComment.setComment(rejectReasons[itemIdx]);
+
+                        // If review function equals to anythning but "Accept", then regard the item as rejected
+                        if ("Accept".equalsIgnoreCase(reviewFunctions[itemIdx])) {
+                            userComment.setExtraInfo("Accept");
+                        } else {
+                            userComment.setExtraInfo("Reject");
+                            rejected = true;
+                        }
+                        ++itemIdx;
+                    }
                 }
-            }
-
-            // If comment has not been found, it means that this user has not had
-            // chance to enter his comments yet, so create the Comment object first
-            if (userComment == null) {
-                userComment = new Comment();
-                // Prefill needed fields
-                userComment.setCommentType(commentType);
-                userComment.setAuthor(myReviewComment.getAuthor());
-                // Add this newly-created comment to review's item
-                item.addComment(userComment);
-            }
-
-            userComment.setComment(rejectReasons[i]);
-            // If review function equals to anythning but "Accept", then regard the item as rejected
-            if ("Accept".equalsIgnoreCase(reviewFunctions[i])) {
-                userComment.setExtraInfo("Accept");
-            } else {
-                userComment.setExtraInfo("Reject");
-                rejected = true;
             }
         }
 
@@ -1289,31 +1332,52 @@ public class ProjectReviewActions extends DispatchAction {
         String[] fixStatuses = new String[reviewerCommentsNum];
         String[] finalComments = new String[review.getNumberOfItems()];
         Boolean approveFixes = new Boolean(fixesApproved);
-        int commentIndex = 0;
 
-        for (int i = 0; i < finalComments.length; ++i) {
-            Item item = review.getItem(i);
-            boolean finalReviewCommentNotFound = true;
+        Arrays.fill(fixStatuses, "");
+        Arrays.fill(finalComments, "");
 
-            for (int j = 0; j < item.getNumberOfComments(); ++j) {
-                Comment comment = item.getComment(j);
-                String commentType = comment.getCommentType().getName();
+        int commentIdx = 0;
+        int itemIdx = 0;
 
-                if (commentType.equalsIgnoreCase("Comment") || commentType.equalsIgnoreCase("Required") ||
-                        commentType.equalsIgnoreCase("Recommended")) {
-                    String fixStatus = (String) comment.getExtraInfo();
-                    if ("Fixed".equalsIgnoreCase(fixStatus)) {
-                        fixStatuses[commentIndex] = "Fixed";
-                    } else if ("Not Fixed".equalsIgnoreCase(fixStatus)) {
-                        fixStatuses[commentIndex] = "Not Fixed";
-                    } else {
-                        fixStatuses[commentIndex] = "";
+        for (int groupIdx = 0; groupIdx < scorecardTemplate.getNumberOfGroups(); ++groupIdx) {
+            Group group = scorecardTemplate.getGroup(groupIdx);
+            for (int sectionIdx = 0; sectionIdx < group.getNumberOfSections(); ++sectionIdx) {
+                Section section = group.getSection(sectionIdx);
+                for (int questionIdx = 0; questionIdx < section.getNumberOfQuestions(); ++questionIdx) {
+                    // Get the ID of the current scorecard template's question
+                    final long questionId = section.getQuestion(questionIdx).getId();
+
+                    // Iterate over the items of existing review that needs editing
+                    for (int i = 0; i < review.getNumberOfItems(); ++i) {
+                        // Get an item for the current iteration
+                        Item item = review.getItem(i);
+                        // Verify that this item is for the current scorecard template question
+                        if (item.getQuestion() != questionId) {
+                            continue;
+                        }
+
+                        boolean finalReviewCommentNotFound = true;
+
+                        for (int j = 0; j < item.getNumberOfComments(); ++j) {
+                            Comment comment = item.getComment(j);
+                            String commentType = comment.getCommentType().getName();
+
+                            if (ActionsHelper.isReviewerComment(comment)) {
+                                String fixStatus = (String) comment.getExtraInfo();
+                                if ("Fixed".equalsIgnoreCase(fixStatus)) {
+                                    fixStatuses[commentIdx] = "Fixed";
+                                } else if ("Not Fixed".equalsIgnoreCase(fixStatus)) {
+                                    fixStatuses[commentIdx] = "Not Fixed";
+                                }
+                                ++commentIdx;
+                            }
+                            if (finalReviewCommentNotFound && commentType.equalsIgnoreCase("Final Review Comment")) {
+                                finalComments[itemIdx] = comment.getComment();
+                                finalReviewCommentNotFound = false;
+                            }
+                        }
+                        ++itemIdx;
                     }
-                    ++commentIndex;
-                }
-                if (finalReviewCommentNotFound && commentType.equalsIgnoreCase("Final Review Comment")) {
-                    finalComments[i] = comment.getComment();
-                    finalReviewCommentNotFound = false;
                 }
             }
         }
@@ -1396,48 +1460,58 @@ public class ProjectReviewActions extends DispatchAction {
         String[] finalComments = (String[]) finalReviewForm.get("final_comment");
         Boolean approveFixesObj = (Boolean) finalReviewForm.get("approve_fixes");
         boolean approveFixes = (approveFixesObj != null && approveFixesObj.booleanValue() == true);
-        int commentIndex = 0;
-        int finalIdx = 0;
+        int commentIdx = 0;
+        int itemIdx = 0;
 
         // Obtain an instance of review manager
         ReviewManager revMgr = ActionsHelper.createReviewManager(request);
         // Retrieve all comment types
         CommentType[] allCommentTypes = revMgr.getAllCommentTypes();
 
-        // Iterate over the items of existing review that needs updating
-        for (int i = 0; i < review.getNumberOfItems(); ++i) {
-            // Get an item
-            Item item = review.getItem(i);
+        for (int groupIdx = 0; groupIdx < scorecardTemplate.getNumberOfGroups(); ++groupIdx) {
+            Group group = scorecardTemplate.getGroup(groupIdx);
+            for (int sectionIdx = 0; sectionIdx < group.getNumberOfSections(); ++sectionIdx) {
+                Section section = group.getSection(sectionIdx);
+                for (int questionIdx = 0; questionIdx < section.getNumberOfQuestions(); ++questionIdx) {
+                    // Get the ID of the current scorecard template's question
+                    final long questionId = section.getQuestion(questionIdx).getId();
 
-            if (item.getNumberOfComments() == 0) {
-                continue;
-            }
+                    // Iterate over the items of existing review that needs updating
+                    for (int i = 0; i < review.getNumberOfItems(); ++i) {
+                        // Get an item for the current iteration
+                        Item item = review.getItem(i);
+                        // Skip items that are not for the current scorecard template question
+                        // or items that do not have any comments
+                        if (item.getQuestion() != questionId || item.getNumberOfComments() == 0) {
+                            continue;
+                        }
 
-            Comment finalReviewComment = null;
+                        Comment finalReviewComment = null;
 
-            for (int j = 0; j < item.getNumberOfComments(); ++j) {
-                Comment comment = item.getComment(j);
-                String typeName = comment.getCommentType().getName();
+                        for (int j = 0; j < item.getNumberOfComments(); ++j) {
+                            Comment comment = item.getComment(j);
+                            String commentType = comment.getCommentType().getName();
 
-                if (typeName.equalsIgnoreCase("Comment") || typeName.equalsIgnoreCase("Required") ||
-                        typeName.equalsIgnoreCase("Recommended")) {
-                    comment.setExtraInfo(fixStatuses[commentIndex]);
-                    ++commentIndex;
+                            if (commentIdx < fixStatuses.length && ActionsHelper.isReviewerComment(comment)) {
+                                comment.setExtraInfo(fixStatuses[commentIdx++]);
+                            }
+                            if (commentType.equalsIgnoreCase("Final Review Comment")) {
+                                finalReviewComment = comment;
+                            }
+                        }
+
+                        if (finalReviewComment == null) {
+                            finalReviewComment = new Comment();
+                            finalReviewComment.setCommentType(
+                                    ActionsHelper.findCommentTypeByName(allCommentTypes, "Final Review Comment"));
+                            item.addComment(finalReviewComment);
+                        }
+
+                        finalReviewComment.setComment(finalComments[itemIdx++]);
+                        finalReviewComment.setAuthor(resource.getId());
+                    }
                 }
-                if (typeName.equalsIgnoreCase("Final Review Comment")) {
-                    finalReviewComment = comment;
-                }
             }
-
-            if (finalReviewComment == null) {
-                finalReviewComment = new Comment();
-                finalReviewComment.setCommentType(
-                        ActionsHelper.findCommentTypeByName(allCommentTypes, "Final Review Comment"));
-                item.addComment(finalReviewComment);
-            }
-
-            finalReviewComment.setComment(finalComments[finalIdx++]);
-            finalReviewComment.setAuthor(resource.getId());
         }
 
         Comment reviewLevelComment = null;
@@ -1704,6 +1778,10 @@ public class ProjectReviewActions extends DispatchAction {
     public ActionForward viewCompositeScorecard(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response)
         throws BaseException {
+
+        // FIXME: This method needs fixing!!!!
+        // TODO: Fix this method at the first possibility!!
+        
         // Verify that certain requirements are met before proceeding with the Action
         CorrectnessCheckResult verification =
                 checkForCorrectSubmissionId(mapping, request, Constants.VIEW_COMPOS_SCORECARD_PERM_NAME);
@@ -1742,11 +1820,11 @@ public class ProjectReviewActions extends DispatchAction {
         // Retrieve an array of reviews
         Review[] reviews = revMgr.searchReviews(filter, true);
 
-        if (reviews.length != 3) {
+        if (reviews.length == 0) {
             return null; // TODO: Forward to userError.jsp page
         }
 
-        // Obtain Resource Manager instance
+        // Obtain an instance of Resource Manager
         ResourceManager resourceManager = ActionsHelper.createResourceManager(request);
         // Obtain ScorecardMatrix for scorecard
         ScorecardMatrix matrix = (new DefaultScorecardMatrixBuilder()).buildScorecardMatrix(scorecardTemplate);
@@ -1758,26 +1836,31 @@ public class ProjectReviewActions extends DispatchAction {
         long[] authors = new long[reviews.length];
         float avgScore = 0;
         float[][] scores = new float[reviews.length][];
+
         for (int i = 0; i < reviews.length; i++) {
             Resource authorResource = resourceManager.getResource(reviews[i].getAuthor());
             authors[i] = Long.parseLong((String) authorResource.getProperty("External Reference ID"));
-            avgScore += reviews[i].getScore().floatValue();
+            avgScore += (reviews[i].getScore() != null) ? reviews[i].getScore().floatValue() : 0;
             scores[i] = new float[reviews[i].getNumberOfItems()];
             int itemIdx = 0;
+
             for (int groupIdx = 0; groupIdx < scorecardTemplate.getNumberOfGroups(); groupIdx++) {
                 Group group = scorecardTemplate.getGroup(groupIdx);
                 for (int sectionIdx = 0; sectionIdx < group.getNumberOfSections(); sectionIdx++) {
                     Section section = group.getSection(sectionIdx);
                     for (int questionIdx = 0; questionIdx < section.getNumberOfQuestions(); questionIdx++) {
                         Question question = section.getQuestion(questionIdx);
-                        ScoreCalculator scoreCalculator = calculationManager.getScoreCalculator(question.getQuestionType().getId());
+
+                        ScoreCalculator scoreCalculator =
+                            calculationManager.getScoreCalculator(question.getQuestionType().getId());
                         scores[i][itemIdx] = (float) (matrix.getLineItem(question.getId()).getWeight() *
                             scoreCalculator.evaluateItem(reviews[i].getItem(itemIdx), question));
-                        itemIdx++;
+                        ++itemIdx;
                     }
                 }
             }
         }
+
         // TODO: Calculate average per-item scores
         avgScore /= reviews.length;
         // Store gathered data into the request
