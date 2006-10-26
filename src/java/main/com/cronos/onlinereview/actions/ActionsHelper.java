@@ -482,6 +482,33 @@ public class ActionsHelper {
     }
 
     /**
+     * This static method searches for the resource role with the specified name in a provided array
+     * of resource roles.
+     *
+     * @return foundresource role, or <code>null</code> if a role with the specified name has not
+     *         been found in the provided array of resource roles.
+     * @param resourceRoles
+     *            an array of resource roles to search for wanted resource role among.
+     * @param roleName
+     *            the name of the needed resource role.
+     * @throws IllegalArgumentException
+     *             if any of the parameters are <code>null</code>, or if <code>roleName</code>
+     *             parameter is empty string.
+     */
+    public static ResourceRole findResourceRoleByName(ResourceRole[] resourceRoles, String roleName) {
+        // Validate parameters
+        validateParameterNotNull(resourceRoles, "resourceRoles");
+        validateParameterStringNotEmpty(roleName, "roleName");
+
+        for (int i = 0; i < resourceRoles.length; ++i) {
+            if (resourceRoles[i].getName().equalsIgnoreCase(roleName)) {
+                return resourceRoles[i];
+            }
+        }
+        return null;
+    }
+
+    /**
      * This static method searches for the project phase with the specified ID in a provided array
      * of project phases.
      *
