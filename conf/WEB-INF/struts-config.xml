@@ -258,7 +258,7 @@
             name="contactManagerForm"
             input="/jsp/contactManager.jsp">
             <forward name="displayPage" path="/jsp/contactManager.jsp" redirect="false" />
-            <forward name="success" path="/actions/ViewProjectDetails.do?method=viewProjectDetails" redirect="true" />
+            <forward name="success" path="/actions/ViewProjectDetails.do?method=viewProjectDetails" redirect="false" />
         </action>
 
         <!-- "Upload Submission" action -->
