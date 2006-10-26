@@ -1,9 +1,10 @@
 <%@ page language="java" isELIgnored="false" %>
-<%@ page import="com.topcoder.shared.util.ApplicationServer" %>
+<%@ page import="java.text.DecimalFormat,com.topcoder.shared.util.ApplicationServer" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="html" uri="/tags/struts-html" %>
 <%@ taglib prefix="orfn" uri="/tags/or-functions" %>
 <%@ taglib prefix="tc-webtag" uri="/tags/tc-webtags" %>
+<jsp:useBean id="sessionInfo" class="com.topcoder.web.common.SessionInfo" scope="request" />
 <script language="javascript" type="text/javascript">
 <!--
 	var objPopUp = null;
@@ -94,8 +95,10 @@ div.launchPopUp {
 		</div>
 	</div>
 </div>
-<div class="memberCountBox">Member Count: 76,412 - March 16, 2006&#160;
-	<a class="gMetal" href="Javascript:tcTime()">[Get Time]</a>
+
+<div class="memberCountBox">
+Member Count: <%=new DecimalFormat("#,##0").format(sessionInfo.getMemberCount())%> - <tc-webtag:format object="<%=sessionInfo.getDate()%>" format="MMMM d, yyyy"/>
+&#160;<a class="gMetal" href="Javascript:tcTime()">[Get Time]</a>
 </div>
 
 <div class="topBar">

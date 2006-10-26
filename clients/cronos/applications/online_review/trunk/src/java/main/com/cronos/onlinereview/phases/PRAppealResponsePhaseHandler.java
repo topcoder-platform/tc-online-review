@@ -116,7 +116,6 @@ public class PRAppealResponsePhaseHandler extends AppealsResponsePhaseHandler {
         		updateStmt.setFloat(1, finalScore);
         		updateStmt.setInt(2, placed);
         		// 1 is active, 4 is Completed Without Win
-        		System.out.println("status: " + status + " userId: " + userId + " finalScore: " + finalScore + " placed: " + placed);
         		updateStmt.setInt(3, status == 1 || status == 4 ? 1 : 0);
         		updateStmt.setLong(4, projectId);
         		updateStmt.setLong(5, userId);
