@@ -118,6 +118,8 @@ public class ConfigHelper {
      * length, etc.
      *
      * @see #PIXELS_PER_HOUR_PROP
+     * @see #PHASE_DURATION_PROP
+     * @see #DEADLINE_NEAR_DURATION_PROP
      */
     private static final String DEFAULT_VALUES_PROP = "Defaults";
 
@@ -131,7 +133,26 @@ public class ConfigHelper {
 
     /**
      * This member variable is a string constant that specifies the name of the property which
-     * contains format-strings to use to build formatting classes to format different values into strings.
+     * defines the default duration, in hours, for all newly-created phases.
+     *
+     * @see #DEFAULT_VALUES_PROP
+     */
+    private static final String PHASE_DURATION_PROP = "PhaseDuration";
+
+    /**
+     * This member variable is a string constant that specifies the name of the property which
+     * defines the time duration, in hours, before phase ends during which outstanding deliverables
+     * are displayed with &quot;Deadline&#160;Near&quot; status, and phases' statuses are shown as
+     * &quot;Closing&quot;.
+     *
+     * @see #DEFAULT_VALUES_PROP
+     */
+    private static final String DEADLINE_NEAR_DURATION_PROP = "DeadlineNearDuration";
+
+    /**
+     * This member variable is a string constant that specifies the name of the property which
+     * contains format-strings to use to build formatting classes to format different values into
+     * strings.
      *
      * @see #SCORECARD_SCORE_FORMAT_PROP
      * @see #DATE_FORMAT_PROP
@@ -319,6 +340,18 @@ public class ConfigHelper {
     private static int pixelsPerHour = 5;
 
     /**
+     * This member variable holds the default duration of newly-created phase, in hours.
+     */
+    private static int phaseDuration = 168;
+
+    /**
+     * This member variable holds the time duration, in hours, before phase ends during which
+     * outstanding deliverables are shown with &quot;Deadline&#160;Near&quot; status, and statuses
+     * of open phases are shown as &quot;Closing&quot;.
+     */
+    private static int deadlineNearDuration = 48;
+
+    /**
      * This member variable holds the formatting string used to format scorecard scores.
      */
     private static String scorecardScoreFormat = "0";
@@ -469,10 +502,30 @@ public class ConfigHelper {
             Property propDefaults = cfgMgr.getPropertyObject(ONLINE_REVIEW_CFG_NS, DEFAULT_VALUES_PROP);
             // Get the amount of pixels to display for every hour
             String pixelsStr = propDefaults.getValue(PIXELS_PER_HOUR_PROP);
+            // Get the default phase duration
+            String phaseDurationStr = propDefaults.getValue(PHASE_DURATION_PROP);
+            // Get the duration of "Deadline Near" status
+            String deadlineNearDurationStr = propDefaults.getValue(DEADLINE_NEAR_DURATION_PROP);
+
+            // Verify that amount of pixels was specified, and assign it
             if (pixelsStr != null && pixelsStr.trim().length() != 0) {
-                int pixels = Integer.parseInt(pixelsStr);
+                int pixels = Integer.parseInt(pixelsStr, 10);
                 if (pixels > 0) {
                     pixelsPerHour = pixels;
+                }
+            }
+            // Verify that default phase duration was specified, and assign it
+            if (phaseDurationStr != null && phaseDurationStr.trim().length() != 0) {
+                int duration = Integer.parseInt(phaseDurationStr, 10);
+                if (duration >= 0) {
+                    phaseDuration = duration;
+                }
+            }
+            // Verify that duration of "Deadline Near" status was specified, and assign it
+            if (deadlineNearDurationStr != null && deadlineNearDurationStr.trim().length() != 0) {
+                int duration = Integer.parseInt(deadlineNearDurationStr, 10);
+                if (duration >= 0) {
+                    deadlineNearDuration = duration;
                 }
             }
 
@@ -635,13 +688,34 @@ public class ConfigHelper {
     }
 
     /**
-     * This static methods returns the amount of pixels that should be displayed for each hour in
+     * This static method returns the amount of pixels that should be displayed for each hour in
      * the project's Gantt chart.
      *
      * @return a value that reporesent the amount of pixels per each hour.
      */
     public static int getPixelsPerHour() {
         return pixelsPerHour;
+    }
+
+    /**
+     * This static method returns default duration, in hours, that will be used on Create/Edit
+     * Project page every time a new phase is added to the timeline.
+     *
+     * @return default duration of a phase, in hours.
+     */
+    public static int getDefaultPhaseDuration() {
+        return phaseDuration;
+    }
+
+    /**
+     * This static method returns the time duration, in hours, before phase ends during which all
+     * outstanding deliverables are shown with &quot;Deadline&#160;Near&quot; status, and all open
+     * phases are shown with &quot;Closing&quot; status.
+     *
+     * @return the time duration, in hours.
+     */
+    public static int getDeadlineNearDuration() {
+        return deadlineNearDuration;
     }
 
     /**
