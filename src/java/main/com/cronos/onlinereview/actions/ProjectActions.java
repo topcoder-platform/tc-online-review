@@ -1409,11 +1409,11 @@ public class ProjectActions extends DispatchAction {
 
         // Get all types of resource roles
         ResourceRole[] resourceRoles = resourceManager.getAllResourceRoles();
-        
+
         // Get all types of notifications
         NotificationType[] types = resourceManager.getAllNotificationTypes();
         long timelineNotificationId = Long.MIN_VALUE;
-        
+
         // get the id for the timelineNotification
         for (int i = 0; i < types.length; ++i) {
         	if (types[i].getName().equals("Timeline Notification")) {
@@ -1421,29 +1421,29 @@ public class ProjectActions extends DispatchAction {
         		break;
         	}
         }
-        
+
         // TODO: we assume timelineNotifictionId exists here, need to do the check
 
         // Get the array of resource names
         String[] resourceNames = (String[]) lazyForm.get("resources_name");
-        
+
         // HashSet used to identify resource of new user
         Set newUsers = new HashSet();
         Set oldUsers = new HashSet();
-        
+
         // 0-index resource is skipped as it is a "dummy" one
         for (int i = 1; i < resourceNames.length; i++) {
-        	
-            // TODO: Actually no updates should be done at all in the case validation fails!!!            
+
+            // TODO: Actually no updates should be done at all in the case validation fails!!!
             if (resourceNames[i] == null || resourceNames[i].trim().length() == 0) {
                 ActionsHelper.addErrorToRequest(request, "resources_name[" + i + "]",
                         "error.com.cronos.onlinereview.actions.editProject.Resource.Empty");
                 continue;
             }
-            
+
             // Get info about user with the specified handle
             ExternalUser user = userRetrieval.retrieveUser(resourceNames[i]);
-            
+
             // TODO: Actually no updates should be done at all in the case validation fails!!!
             // If there is no user with such handle, indicate an error
             if (user == null) {
@@ -1451,7 +1451,7 @@ public class ProjectActions extends DispatchAction {
                         "error.com.cronos.onlinereview.actions.editProject.Resource.NotFound");
                 continue;
             }
-            
+
             Resource resource;
 
             // Check what is the action to be performed with the resource
@@ -1460,13 +1460,13 @@ public class ProjectActions extends DispatchAction {
             if ("add".equals(resourceAction)) {
                 // Create new resource
                 resource = new Resource();
-                
+
                 newUsers.add(new Long(user.getId()));
-                
+
                 System.out.println("ADD:" + user.getId());
             }  else {
                 Long resourceId = (Long) lazyForm.get("resources_id", i);
-                
+
                 if (resourceId.longValue() != -1) {
                     // Retrieve the resource with the specified id
                     resource = resourceManager.getResource(resourceId.longValue());
@@ -1485,7 +1485,7 @@ public class ProjectActions extends DispatchAction {
             if ("delete".equals(resourceAction)) {
                 resourceManager.removeResource(resource,
                         Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
-                resourceManager.removeNotifications(new long[] {user.getId()}, project.getId(), 
+                resourceManager.removeNotifications(new long[] {user.getId()}, project.getId(),
                 		timelineNotificationId, Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
                 continue;
             }
@@ -1496,7 +1496,7 @@ public class ProjectActions extends DispatchAction {
             boolean resourceRoleChanged = false;
             ResourceRole role = ActionsHelper.findResourceRoleById(
                     resourceRoles, ((Long) lazyForm.get("resources_role", i)).longValue());
-            if (role != null && role != resource.getResourceRole()) {                
+            if (role != null && role != resource.getResourceRole()) {
                 resource.setResourceRole(role);
                 resourceRoleChanged = true;
             }
@@ -1513,7 +1513,7 @@ public class ProjectActions extends DispatchAction {
             }
             // Set resource phase id, if needed
             Long phaseTypeId = resource.getResourceRole().getPhaseType();
-            if (phaseTypeId != null) {                
+            if (phaseTypeId != null) {
                 Phase phase = (Phase) phasesJsMap.get(lazyForm.get("resources_phase", i));
                 if (phase != null) {
                     resource.setPhase(new Long(phase.getId()));
@@ -1548,11 +1548,11 @@ public class ProjectActions extends DispatchAction {
             // Save the resource in the persistence level
             resourceManager.updateResource(resource, Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
         }
-        
+
         for (Iterator itr = oldUsers.iterator(); itr.hasNext();) {
         	newUsers.remove(itr.next());
         }
-          
+
         // Update all the timeline notifications
         if (project.getProperty("Timeline Notification").equals("On")) {
         	long[] userIds = new long[newUsers.size()];
@@ -1560,8 +1560,8 @@ public class ProjectActions extends DispatchAction {
         	for (Iterator itr = newUsers.iterator(); itr.hasNext();) {
         		userIds[i++] = ((Long) itr.next()).longValue();
         	}
-        	
-        	resourceManager.addNotifications(userIds, project.getId(), 
+
+        	resourceManager.addNotifications(userIds, project.getId(),
         			timelineNotificationId, Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
         }
     }
@@ -1990,7 +1990,6 @@ logger.log(Level.ERROR, "get phase manager" + dateFormat.format(currentDate));
         List projectIds = new ArrayList();
         List phaseTypeIds = new ArrayList();
         List resourceIds = new ArrayList();
-        Set phaseTypesSet = new HashSet();
 
         for (int i = 0; i < projects.length; ++i) {
             for (int j = 0; j < projects[i].length; ++j) {
@@ -2004,13 +2003,7 @@ logger.log(Level.ERROR, "get phase manager" + dateFormat.format(currentDate));
                 }
 
                 for (int k = 0; k < activePhases.length; ++k) {
-                    Long phaseTypeId = new Long(activePhases[k].getPhaseType().getId());
-
-                    // Do not add phase type more than once
-                    if (!phaseTypesSet.contains(phaseTypeId)) {
-                        phaseTypeIds.add(phaseTypeId);
-                        phaseTypesSet.add(phaseTypeId);
-                    }
+                    phaseTypeIds.add(new Long(activePhases[k].getId()));
                 }
 
                 // Get an array of "my" resources for the active phases

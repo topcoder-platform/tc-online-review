@@ -1680,8 +1680,11 @@
                         SELECT UNIQUE deliverable_id,
                                resource_id
                           FROM deliverable_lu,
-                               resource
+                               resource,
+                               resource_role_lu
                          WHERE deliverable_lu.resource_role_id = resource.resource_role_id
+                           AND resource.resource_role_id = resource_role_lu.resource_role_id
+                           AND resource_role_lu.phase_type_id = deliverable_lu.phase_type_id
                            AND
                     </Value>
                 </Property>
@@ -1696,7 +1699,7 @@
                         <Value>resource.project_id</Value>
                     </Property>
                     <Property name="phase_id">
-                        <Value>deliverable_lu.phase_type_id</Value>
+                        <Value>resource.project_phase_id</Value>
                     </Property>
                     <Property name="resource_id">
                         <Value>resource.resource_id</Value>

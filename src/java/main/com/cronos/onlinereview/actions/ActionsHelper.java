@@ -1645,14 +1645,14 @@ public class ActionsHelper {
         case 1:
             // If there is currently only one active phase,
             // create filter for it directly (no OR filters needed)
-            filterPhase = DeliverableFilterBuilder.createPhaseIdFilter(activePhases[0].getPhaseType().getId());
+            filterPhase = DeliverableFilterBuilder.createPhaseIdFilter(activePhases[0].getId());
             break;
 
         default:
             List phaseFilters = new ArrayList();
             // Prepare a list of filters for each phase in the array of active phases
             for (int i = 0; i < activePhases.length; ++i) {
-                phaseFilters.add(DeliverableFilterBuilder.createPhaseIdFilter(activePhases[i].getPhaseType().getId()));
+                phaseFilters.add(DeliverableFilterBuilder.createPhaseIdFilter(activePhases[i].getId()));
             }
             // Combine all filters using OR operator
             filterPhase = new OrFilter(phaseFilters);
