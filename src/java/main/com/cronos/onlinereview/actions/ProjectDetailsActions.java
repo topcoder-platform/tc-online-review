@@ -10,8 +10,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 
 import javax.servlet.http.HttpServletRequest;
@@ -47,7 +50,10 @@ import com.topcoder.management.project.ProjectManager;
 import com.topcoder.management.resource.Notification;
 import com.topcoder.management.resource.Resource;
 import com.topcoder.management.resource.ResourceManager;
+import com.topcoder.management.resource.ResourceRole;
 import com.topcoder.management.resource.search.NotificationFilterBuilder;
+import com.topcoder.management.resource.search.ResourceFilterBuilder;
+import com.topcoder.management.resource.search.ResourceRoleFilterBuilder;
 import com.topcoder.management.review.ReviewManagementException;
 import com.topcoder.management.review.ReviewManager;
 import com.topcoder.management.review.data.Comment;
@@ -56,6 +62,8 @@ import com.topcoder.management.review.data.Review;
 import com.topcoder.management.scorecard.ScorecardManager;
 import com.topcoder.management.scorecard.data.Scorecard;
 import com.topcoder.management.scorecard.data.ScorecardType;
+import com.topcoder.message.email.EmailEngine;
+import com.topcoder.message.email.TCSEmailMessage;
 import com.topcoder.project.phases.Phase;
 import com.topcoder.search.builder.filter.AndFilter;
 import com.topcoder.search.builder.filter.EqualToFilter;
@@ -68,6 +76,9 @@ import com.topcoder.util.config.ConfigManagerException;
 import com.topcoder.util.errorhandling.BaseException;
 import com.topcoder.util.file.DocumentGenerator;
 import com.topcoder.util.file.Template;
+import com.topcoder.util.file.fieldconfig.Field;
+import com.topcoder.util.file.fieldconfig.Node;
+import com.topcoder.util.file.fieldconfig.TemplateFields;
 
 /**
  * This class contains Struts Actions that are meant to deal with Project's details. There are
@@ -1063,11 +1074,80 @@ public class ProjectDetailsActions extends DispatchAction {
             ActionsHelper.retrieveAndStoreBasicProjectInfo(request, verification.getProject(), getResources(request));
             return mapping.findForward(Constants.DISPLAY_PAGE_FORWARD_NAME);
         }
-
+        
         DocumentGenerator docGenerator = DocumentGenerator.getInstance();
+        
+        // Gets the template of email
         Template docTemplate = docGenerator.getTemplate(
                 ConfigHelper.getContactManagerEmailSrcType(), ConfigHelper.getContactManagerEmailTemplate());
+        
+        // Gets the sender
+        long senderId = AuthorizationHelper.getLoggedInUserId(request);
+        UserRetrieval retrieval = ActionsHelper.createUserRetrieval(request);
+        ExternalUser sender = retrieval.retrieveUser(senderId);
+        
+        // Gets the managers
+        ResourceManager resm = ActionsHelper.createResourceManager(request);
+        Filter roleFilter = ResourceRoleFilterBuilder.createNameFilter("Manager");
+        ResourceRole[] managerRole = resm.searchResourceRoles(roleFilter);
+        Resource[] managerResources = new Resource[0];
+        if (managerRole.length > 0) {
+        	Filter managerFilter = ResourceFilterBuilder.createResourceRoleIdFilter(managerRole[0].getId());
+        	managerResources = resm.searchResources(managerFilter);
+        }
+        Set managerEmails = new HashSet();
+        
+        for (int i = 0; i < managerResources.length; ++i) {
+        	long managerId = Long.parseLong((String) managerResources[i].getProperty("External Reference ID"));
+        	managerEmails.add(retrieval.retrieveUser(managerId).getEmail());
+        	
+        }
+        
+        // Gets the project
+        Project project = (Project) request.getAttribute("project");
+        String questionType = request.getParameter("cat");
+        String text = request.getParameter("msg");
+        
+        // Constructs the body of the email
+        TemplateFields fileds = docGenerator.getFields(docTemplate);
+        Node[] nodes = fileds.getNodes();
+        
+        for (int i = 0; i < nodes.length; i++) {
+            if (nodes[i] instanceof Field) {
+                Field field = (Field) nodes[i];
 
+                if ("USER_FIRST_NAME".equals(field.getName())) {
+                    field.setValue(sender.getFirstName());
+                } else if ("USER_LAST_NAME".equals(field.getName())) {
+                    field.setValue(sender.getLastName());
+                } else if ("USER_HANDLE".equals(field.getName())) {
+                    field.setValue(sender.getHandle());
+                } else if ("PROJECT_NAME".equals(field.getName())) {
+                    field.setValue("" + project.getProperty("Project Name"));
+                } else if ("PROJECT_VERSION".equals(field.getName())) {
+                    field.setValue("" + project.getProperty("Project Version"));
+                } else if ("QUESTION_TYPE".equals(field.getName())) {
+                	field.setValue(questionType);
+                } else if ("TEXT".equals(field.getName())) {
+                	field.setValue(text);
+                }
+            }
+        }
+        
+        String emailContent = docGenerator.applyTemplate(fileds);
+        
+        // Send the email
+        TCSEmailMessage message = new TCSEmailMessage();
+        message.setSubject(ConfigHelper.getContactManagerEmailSubject());
+        message.setBody(emailContent);
+        message.setFromAddress(sender.getEmail());
+        
+        for (Iterator itr = managerEmails.iterator(); itr.hasNext();) {
+        	message.addToAddress((String) itr.next(), TCSEmailMessage.TO);
+        }
+        
+        EmailEngine.send(message);
+        
         return mapping.findForward(Constants.SUCCESS_FORWARD_NAME);
     }
 
