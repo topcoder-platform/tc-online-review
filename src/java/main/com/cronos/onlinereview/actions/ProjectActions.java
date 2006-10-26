@@ -1428,7 +1428,8 @@ public class ProjectActions extends DispatchAction {
         String[] resourceNames = (String[]) lazyForm.get("resources_name");
         
         // HashSet used to identify resource of new user
-        Set users = new HashSet();
+        Set newUsers = new HashSet();
+        Set oldUsers = new HashSet();
         
         // 0-index resource is skipped as it is a "dummy" one
         for (int i = 1; i < resourceNames.length; i++) {
@@ -1460,18 +1461,22 @@ public class ProjectActions extends DispatchAction {
                 // Create new resource
                 resource = new Resource();
                 
-                users.add(new Long(user.getId()));
+                newUsers.add(new Long(user.getId()));
+                
+                System.out.println("ADD:" + user.getId());
             }  else {
                 Long resourceId = (Long) lazyForm.get("resources_id", i);
                 
                 if (resourceId.longValue() != -1) {
                     // Retrieve the resource with the specified id
                     resource = resourceManager.getResource(resourceId.longValue());
-                    
-                    users.remove(new Long(user.getId()));
+                    oldUsers.add(new Long(user.getId()));
+                    System.out.println("REMOVE:" + user.getId());
                 } else {
                     // -1 value as id marks the resources that were't persisted in DB yet
                     // and so should be skipped for actions other then "add"
+                	oldUsers.add(new Long(user.getId()));
+                	System.out.println("REMOVE:" + user.getId());
                     continue;
                 }
             }
@@ -1544,11 +1549,15 @@ public class ProjectActions extends DispatchAction {
             resourceManager.updateResource(resource, Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
         }
         
+        for (Iterator itr = oldUsers.iterator(); itr.hasNext();) {
+        	newUsers.remove(itr.next());
+        }
+          
         // Update all the timeline notifications
         if (project.getProperty("Timeline Notification").equals("On")) {
-        	long[] userIds = new long[users.size()];
+        	long[] userIds = new long[newUsers.size()];
         	int i = 0;
-        	for (Iterator itr = users.iterator(); itr.hasNext();) {
+        	for (Iterator itr = newUsers.iterator(); itr.hasNext();) {
         		userIds[i++] = ((Long) itr.next()).longValue();
         	}
         	
