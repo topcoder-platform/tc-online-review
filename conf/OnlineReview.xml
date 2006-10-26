@@ -2412,7 +2412,7 @@
         <Property name="RootCatalogs">
             <Property name="Java">
                 <Property name="id">
-                    <Value>58017776</Value>
+                    <Value>5801776</Value>
                 </Property>
                 <Property name="IconSmall">
                     <Value>javaSm.gif</Value>
