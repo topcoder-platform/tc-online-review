@@ -98,6 +98,7 @@
 								<c:set var="prevSubmissions" value="" />
 								<c:forEach items="${group.submissions}" var="submission" varStatus="submissionStatus">
 									<c:set var="submitter" value="" />
+									<c:set var="submissionStatusName" value="${submission.submissionStatus.name}" />
 									<c:forEach items="${group.submitters}" var="curSubmitter">
 										<c:if test="${curSubmitter.id == submission.upload.owner}">
 											<c:set var="submitter" value="${curSubmitter}" />
@@ -118,10 +119,10 @@
 												<html:img styleClass="Outline" border="0" srcKey="viewProjectDetails.box.Submission.icoShowMore.img" style="visibility:hidden;" />
 											</c:if>
 											<c:set var="placement" value="" />
-											<c:if test="${!(empty submitter)}">
+											<c:if test="${not empty submitter}">
 												<c:set var="placement" value='${submitter.allProperties["Placement"]}' />
 											</c:if>
-											<c:if test="${!(empty placement)}">
+											<c:if test="${not empty placement}">
 												<c:choose>
 													<c:when test="${placement == 1}">
 														<html:img srcKey="viewProjectDetails.Submitter.icoWinner.img" altKey="viewProjectDetails.Submitter.icoWinner.alt" styleClass="Outline" border="0" />
@@ -133,6 +134,11 @@
 														<html:img srcKey="viewProjectDetails.Submitter.icoOther.img" alt="${placement} Place" styleClass="Outline" border="0" />
 													</c:otherwise>
 												</c:choose>
+											</c:if>
+											<c:if test="${empty placement}">
+												<c:if test='${(submissionStatusName == "Failed Screening") || (submissionStatusName == "Failed Review")}'>
+													<html:img srcKey="viewProjectDetails.box.Submission.icoFailed.img" altKey='SubmissionStatus.${fn:replace(submissionStatusName, " ", "")}' border="0" />
+												</c:if>
 											</c:if>
 											<html:link page="/actions/DownloadSubmission.do?method=downloadSubmission&uid=${submission.upload.id}" titleKey="viewProjectDetails.box.Submission.Download">${submission.id}</html:link>
 											<c:if test="${!(empty submitter)}">
@@ -349,99 +355,112 @@
 										<td class="headerC" width="8%"><bean:message key="viewProjectDetails.box.Review.Appeals" /></td>
 									</c:forEach>
 								</tr>
+								<c:set var="submissionIdx" value="0" />
 								<c:forEach items="${group.submissions}" var="submission" varStatus="submissionStatus">
-									<tr class='${(submissionStatus.index % 2 == 0) ? "light" : "dark"}'>
-										<c:set var="submitter" value="" />
-										<c:forEach items="${group.submitters}" var="curSubmitter">
-											<c:if test="${curSubmitter.id == submission.upload.owner}">
-												<c:set var="submitter" value="${curSubmitter}" />
-											</c:if>
-										</c:forEach>
-										<td class="value" nowrap="nowrap">
-											<c:set var="placement" value="" />
-											<c:if test="${!(empty submitter)}">
-												<c:set var="placement" value='${submitter.allProperties["Placement"]}' />
-											</c:if>
-											<c:if test="${!(empty placement)}">
-												<c:choose>
-													<c:when test="${placement == 1}">
-														<html:img srcKey="viewProjectDetails.Submitter.icoWinner.img" altKey="viewProjectDetails.Submitter.icoWinner.alt" styleClass="Outline" border="0" />
-													</c:when>
-													<c:when test="${placement == 2}">
-														<html:img srcKey="viewProjectDetails.Submitter.icoRunnerUp.img" altKey="viewProjectDetails.Submitter.icoRunnerUp.alt" styleClass="Outline" border="0" />
-													</c:when>
-													<c:otherwise>
-														<html:img srcKey="viewProjectDetails.Submitter.icoOther.img" alt="${placement} Place" styleClass="Outline" border="0" />
-													</c:otherwise>
-												</c:choose>
-											</c:if>
-											<html:link page="/actions/DownloadSubmission.do?method=downloadSubmission&uid=${submission.upload.id}"
-												titleKey="viewProjectDetails.box.Submission.Download">${submission.id}</html:link>
-											<c:if test="${!(empty submitter)}">
-												(<tc-webtag:handle coderId='${submitter.allProperties["External Reference ID"]}' context="component" />)
-											</c:if>
-										</td>
-										<td class="valueC" width="12%">${orfn:displayDateBr(pageContext.request, group.reviewDates[submissionStatus.index])}</td>
-										<c:if test="${isAllowedToEditHisReviews != true}">
-											<c:if test="${not empty submitter}">
-												<td class="valueC" width="8%"><html:link page="/actions/ViewCompositeScorecard.do?method=viewCompositeScorecard&sid=${submission.id}">${orfn:displayScore(pageContext.request, submitter.allProperties["Final Score"])}</html:link></td>
-											</c:if>
-											<c:if test="${empty submitter}">
-												<td class="valueC" width="8%"><bean:message key="Incomplete" /></td>
-											</c:if>
-										</c:if>
-										<c:choose>
-											<c:when test="${group.appealsPhaseOpened}">
-												<c:set var="totalAppeals" value="${group.totalAppealsCounts[submissionStatus.index]}" />
-												<c:set var="unresolvedAppeals" value="${group.unresolvedAppealsCounts[submissionStatus.index]}" />
-											</c:when>
-											<c:otherwise>
-												<c:set var="totalAppeals" value="" />
-												<c:set var="unresolvedAppeals" value="" />
-											</c:otherwise>
-										</c:choose>
-										<c:forEach items="${group.reviews[submissionStatus.index]}" var="review" varStatus="reviewStatus">
-											<c:if test="${empty review}">
-												<c:if test="${isAllowedToEditHisReviews == true}">
-													<td class="valueC" width="8%" nowrap="nowrap"><html:link
-														page="/actions/CreateReview.do?method=createReview&sid=${submission.id}"><b><bean:message
-														key="viewProjectDetails.box.Review.Submit" /></b></html:link></td>
-													<td class="valueC"><bean:message key="NotAvailable" /></td>
+									<c:set var="submissionStatusName" value="${submission.submissionStatus.name}" />
+									<c:if test='${(submissionStatusName != "Failed Screening") && (submissionStatusName != "Deleted")}'>
+										<tr class='${(submissionIdx % 2 == 0) ? "light" : "dark"}'>
+											<c:set var="submitter" value="" />
+											<c:forEach items="${group.submitters}" var="curSubmitter">
+												<c:if test="${curSubmitter.id == submission.upload.owner}">
+													<c:set var="submitter" value="${curSubmitter}" />
 												</c:if>
-												<c:if test="${isAllowedToEditHisReviews != true}">
-													<td class="valueC" width="8%"><bean:message key="NotAvailable" /></td>
-													<td class="valueC"><bean:message key="NotAvailable" /></td>
+											</c:forEach>
+											<td class="value" nowrap="nowrap">
+												<c:set var="placement" value="" />
+												<c:if test="${not empty submitter}">
+													<c:set var="placement" value='${submitter.allProperties["Placement"]}' />
+												</c:if>
+												<c:if test="${not empty placement}">
+													<c:choose>
+														<c:when test="${placement == 1}">
+															<html:img srcKey="viewProjectDetails.Submitter.icoWinner.img" altKey="viewProjectDetails.Submitter.icoWinner.alt" styleClass="Outline" border="0" />
+														</c:when>
+														<c:when test="${placement == 2}">
+															<html:img srcKey="viewProjectDetails.Submitter.icoRunnerUp.img" altKey="viewProjectDetails.Submitter.icoRunnerUp.alt" styleClass="Outline" border="0" />
+														</c:when>
+														<c:otherwise>
+															<html:img srcKey="viewProjectDetails.Submitter.icoOther.img" alt="${placement} Place" styleClass="Outline" border="0" />
+														</c:otherwise>
+													</c:choose>
+												</c:if>
+												<c:if test="${empty placement}">
+													<c:if test='${submissionStatusName == "Failed Review"}'>
+														<html:img srcKey="viewProjectDetails.box.Submission.icoFailed.img" altKey='SubmissionStatus.${fn:replace(submissionStatusName, " ", "")}' border="0" />
+													</c:if>
+												</c:if>
+												<html:link page="/actions/DownloadSubmission.do?method=downloadSubmission&uid=${submission.upload.id}"
+													titleKey="viewProjectDetails.box.Submission.Download">${submission.id}</html:link>
+												<c:if test="${!(empty submitter)}">
+													(<tc-webtag:handle coderId='${submitter.allProperties["External Reference ID"]}' context="component" />)
+												</c:if>
+											</td>
+											<td class="valueC" width="12%">${orfn:displayDateBr(pageContext.request, group.reviewDates[submissionStatus.index])}</td>
+											<c:if test="${isAllowedToEditHisReviews != true}">
+												<c:if test="${not empty submitter}">
+													<c:set var="finalScore" value='${submitter.allProperties["Final Score"]}' />
+												</c:if>
+												<c:if test="${not empty finalScore}">
+													<td class="valueC" width="8%"><html:link page="/actions/ViewCompositeScorecard.do?method=viewCompositeScorecard&sid=${submission.id}">${orfn:displayScore(pageContext.request, finalScore)}</html:link></td>
+												</c:if>
+												<c:if test="${empty finalScore}">
+													<td class="valueC" width="8%"><bean:message key="Incomplete" /></td>
 												</c:if>
 											</c:if>
-											<c:if test="${not empty review}">
-												<c:if test="${review.committed == true}">
-													<td class="valueC" width="8%"><html:link
-														page="/actions/ViewReview.do?method=viewReview&rid=${review.id}">${orfn:displayScore(pageContext.request, review.score)}</html:link></td>
-												</c:if>
-												<c:if test="${review.committed != true}">
+											<c:choose>
+												<c:when test="${group.appealsPhaseOpened}">
+													<c:set var="totalAppeals" value="${group.totalAppealsCounts[submissionStatus.index]}" />
+													<c:set var="unresolvedAppeals" value="${group.unresolvedAppealsCounts[submissionStatus.index]}" />
+												</c:when>
+												<c:otherwise>
+													<c:set var="totalAppeals" value="" />
+													<c:set var="unresolvedAppeals" value="" />
+												</c:otherwise>
+											</c:choose>
+											<c:forEach items="${group.reviews[submissionStatus.index]}" var="review" varStatus="reviewStatus">
+												<c:if test="${empty review}">
 													<c:if test="${isAllowedToEditHisReviews == true}">
-														<td class="valueC" width="8%"><html:link
-															page="/actions/EditReview.do?method=editReview&rid=${review.id}"><b><bean:message
+														<td class="valueC" width="8%" nowrap="nowrap"><html:link
+															page="/actions/CreateReview.do?method=createReview&sid=${submission.id}"><b><bean:message
 															key="viewProjectDetails.box.Review.Submit" /></b></html:link></td>
+														<td class="valueC"><bean:message key="NotAvailable" /></td>
 													</c:if>
 													<c:if test="${isAllowedToEditHisReviews != true}">
-														<td class="valueC" width="8%"><bean:message key="Pending" /></td>
+														<td class="valueC" width="8%"><bean:message key="NotAvailable" /></td>
+														<td class="valueC"><bean:message key="NotAvailable" /></td>
 													</c:if>
 												</c:if>
-												<c:if test="${group.appealsPhaseOpened}">
-													<td class="valueC" nowrap="nowrap">[
-														<html:link page="/actions/ViewReview.do?method=viewReview&rid=${review.id}"
-															titleKey="viewProjectDetails.box.Review.Appeals.Unresolved">${unresolvedAppeals[reviewStatus.index]}</html:link> /
-														<html:link page="/actions/ViewReview.do?method=viewReview&rid=${review.id}"
-															titleKey="viewProjectDetails.box.Review.Appeals.Total">${totalAppeals[reviewStatus.index]}</html:link>
-													]</td>
+												<c:if test="${not empty review}">
+													<c:if test="${review.committed == true}">
+														<td class="valueC" width="8%"><html:link
+															page="/actions/ViewReview.do?method=viewReview&rid=${review.id}">${orfn:displayScore(pageContext.request, review.score)}</html:link></td>
+													</c:if>
+													<c:if test="${review.committed != true}">
+														<c:if test="${isAllowedToEditHisReviews == true}">
+															<td class="valueC" width="8%"><html:link
+																page="/actions/EditReview.do?method=editReview&rid=${review.id}"><b><bean:message
+																key="viewProjectDetails.box.Review.Submit" /></b></html:link></td>
+														</c:if>
+														<c:if test="${isAllowedToEditHisReviews != true}">
+															<td class="valueC" width="8%"><bean:message key="Pending" /></td>
+														</c:if>
+													</c:if>
+													<c:if test="${group.appealsPhaseOpened}">
+														<td class="valueC" nowrap="nowrap">[
+															<html:link page="/actions/ViewReview.do?method=viewReview&rid=${review.id}"
+																titleKey="viewProjectDetails.box.Review.Appeals.Unresolved">${unresolvedAppeals[reviewStatus.index]}</html:link> /
+															<html:link page="/actions/ViewReview.do?method=viewReview&rid=${review.id}"
+																titleKey="viewProjectDetails.box.Review.Appeals.Total">${totalAppeals[reviewStatus.index]}</html:link>
+														]</td>
+													</c:if>
+													<c:if test="${not group.appealsPhaseOpened}">
+														<td class="valueC"><bean:message key="NotAvailable" /></td>
+													</c:if>
 												</c:if>
-												<c:if test="${not group.appealsPhaseOpened}">
-													<td class="valueC"><bean:message key="NotAvailable" /></td>
-												</c:if>
-											</c:if>
-										</c:forEach>
-									</tr>
+											</c:forEach>
+										</tr>
+										<c:set var="submissionIdx" value="${submissionIdx + 1}" />
+									</c:if>
 								</c:forEach>
 								<tr>
 									<td class="lastRowTD" colspan="${colSpan}"><!-- @ --></td>
