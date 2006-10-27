@@ -1176,7 +1176,7 @@ public class ProjectDetailsActions extends DispatchAction {
         EmailEngine.send(message);
 
         return ActionsHelper.cloneForwardAndAppendToPath(
-                mapping.findForward(Constants.SUCCESS_FORWARD_NAME), "pid=" + project.getId());
+                mapping.findForward(Constants.SUCCESS_FORWARD_NAME), "&pid=" + project.getId());
     }
 
     /**
