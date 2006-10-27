@@ -1681,10 +1681,9 @@
                                resource_id
                           FROM deliverable_lu,
                                resource,
-                               resource_role_lu
+                               project_phase
                          WHERE deliverable_lu.resource_role_id = resource.resource_role_id
-                           AND resource.resource_role_id = resource_role_lu.resource_role_id
-                           AND resource_role_lu.phase_type_id = deliverable_lu.phase_type_id
+                           AND deliverable_lu.phase_type_id = project_phase.phase_type_id
                            AND
                     </Value>
                 </Property>
@@ -1699,7 +1698,7 @@
                         <Value>resource.project_id</Value>
                     </Property>
                     <Property name="phase_id">
-                        <Value>resource.project_phase_id</Value>
+                        <Value>project_phase.project_phase_id</Value>
                     </Property>
                     <Property name="resource_id">
                         <Value>resource.resource_id</Value>
@@ -1739,9 +1738,9 @@
                         SELECT     deliverable_id,
                                    resource.resource_id,
                                    submission_id
-                              FROM deliverable_lu
-                        INNER JOIN resource
-                                ON resource.resource_role_id = deliverable_lu.resource_role_id
+                              FROM deliverable_lu,
+                                   resource,
+                                   project_phase
                         CROSS JOIN submission
                         INNER JOIN submission_status_lu
                                 ON submission.submission_status_id = submission_status_lu.submission_status_id
@@ -1750,6 +1749,8 @@
                              WHERE submission_status_lu.name = 'Active'
                                AND deliverable_lu.per_submission = 1
                                AND upload.project_id = resource.project_id
+                               AND deliverable_lu.resource_role_id = resource.resource_role_id
+                               AND deliverable_lu.phase_type_id = project_phase.phase_type_id
                                AND
                     </Value>
                 </Property>
@@ -1764,7 +1765,7 @@
                         <Value>resource.project_id</Value>
                     </Property>
                     <Property name="phase_id">
-                        <Value>deliverable_lu.phase_type_id</Value>
+                        <Value>project_phase.project_phase_id</Value>
                     </Property>
                     <Property name="resource_id">
                         <Value>resource.resource_id</Value>
