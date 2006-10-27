@@ -212,6 +212,9 @@ public class ProjectActions extends DispatchAction {
         request.setAttribute("screeningScorecards", screeningScorecards);
         request.setAttribute("reviewScorecards", reviewScorecards);
         request.setAttribute("approvalScorecards", approvalScorecards);
+        
+        // Get the default phase duration and store it in the request
+        request.setAttribute("defaultPhaseDuration", new Integer(ConfigHelper.getDefaultPhaseDuration()));
     }
 
     /**
