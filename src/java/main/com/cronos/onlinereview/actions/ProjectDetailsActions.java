@@ -53,7 +53,6 @@ import com.topcoder.management.resource.ResourceManager;
 import com.topcoder.management.resource.ResourceRole;
 import com.topcoder.management.resource.search.NotificationFilterBuilder;
 import com.topcoder.management.resource.search.ResourceFilterBuilder;
-import com.topcoder.management.resource.search.ResourceRoleFilterBuilder;
 import com.topcoder.management.review.ReviewManagementException;
 import com.topcoder.management.review.ReviewManager;
 import com.topcoder.management.review.data.Comment;
@@ -468,8 +467,7 @@ public class ProjectDetailsActions extends DispatchAction {
                     Resource myResource = ActionsHelper.getMyResourceForPhase(request, null);
 
                     Filter filterProject = SubmissionFilterBuilder.createProjectIdFilter(project.getId());
-                    Filter filterStatus = SubmissionFilterBuilder.createSubmissionStatusIdFilter(
-                            ActionsHelper.findSubmissionStatusByName(allSubmissionStatuses, "Active").getId());
+                    Filter filterStatus = ActionsHelper.createSubmissionStatusFilter(allSubmissionStatuses);
                     Filter filterResource = SubmissionFilterBuilder.createResourceIdFilter(myResource.getId());
 
                     Filter filter =
@@ -593,8 +591,7 @@ public class ProjectDetailsActions extends DispatchAction {
                     Resource myResource = ActionsHelper.getMyResourceForPhase(request, null);
 
                     Filter filterProject = SubmissionFilterBuilder.createProjectIdFilter(project.getId());
-                    Filter filterStatus = SubmissionFilterBuilder.createSubmissionStatusIdFilter(
-                            ActionsHelper.findSubmissionStatusByName(allSubmissionStatuses, "Active").getId());
+                    Filter filterStatus = ActionsHelper.createSubmissionStatusFilter(allSubmissionStatuses);
                     Filter filterResource = SubmissionFilterBuilder.createResourceIdFilter(myResource.getId());
 
                     Filter filter =
@@ -1051,16 +1048,17 @@ public class ProjectDetailsActions extends DispatchAction {
      *            the http request.
      * @param response
      *            the http response.
-     * @throws BaseException
-     *             if any error occurs.
      * @throws ConfigManagerException
      *             if any error occurs while loading the document generator's configuration.
+     * @throws BaseException
+     *             if any other error occurs.
      */
     public ActionForward contactManager(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response)
         throws BaseException, ConfigManagerException {
         // Verify that certain requirements are met before processing with the Action
-        CorrectnessCheckResult verification = checkForCorrectProjectId(mapping, request, Constants.CONTACT_PM_PERM_NAME);
+        CorrectnessCheckResult verification =
+            checkForCorrectProjectId(mapping, request, Constants.CONTACT_PM_PERM_NAME);
         // If any error has occured, return action forward contained in the result bean
         if (!verification.isSuccessful()) {
             return verification.getForward();
@@ -1074,44 +1072,69 @@ public class ProjectDetailsActions extends DispatchAction {
             ActionsHelper.retrieveAndStoreBasicProjectInfo(request, verification.getProject(), getResources(request));
             return mapping.findForward(Constants.DISPLAY_PAGE_FORWARD_NAME);
         }
-        
+
+        // Obtain an instance of Document Generator
         DocumentGenerator docGenerator = DocumentGenerator.getInstance();
-        
-        // Gets the template of email
+
+        // Get the template of email
         Template docTemplate = docGenerator.getTemplate(
                 ConfigHelper.getContactManagerEmailSrcType(), ConfigHelper.getContactManagerEmailTemplate());
-        
-        // Gets the sender
+
+        // Get the ID of the sender
         long senderId = AuthorizationHelper.getLoggedInUserId(request);
-        UserRetrieval retrieval = ActionsHelper.createUserRetrieval(request);
-        ExternalUser sender = retrieval.retrieveUser(senderId);
-        
-        // Gets the managers
-        ResourceManager resm = ActionsHelper.createResourceManager(request);
-        Filter roleFilter = ResourceRoleFilterBuilder.createNameFilter("Manager");
-        ResourceRole[] managerRole = resm.searchResourceRoles(roleFilter);
-        Resource[] managerResources = new Resource[0];
-        if (managerRole.length > 0) {
-        	Filter managerFilter = ResourceFilterBuilder.createResourceRoleIdFilter(managerRole[0].getId());
-        	managerResources = resm.searchResources(managerFilter);
+        // Obtain an instance of User Retrieval
+        UserRetrieval userMgr = ActionsHelper.createUserRetrieval(request);
+        // Retrieve information about an external user by its ID
+        ExternalUser sender = userMgr.retrieveUser(senderId);
+
+        // Obtain an instance of Resource Manager
+        ResourceManager resMgr = ActionsHelper.createResourceManager(request);
+        // Get all Resource Roles
+        ResourceRole[] allResourceRoles = resMgr.getAllResourceRoles();
+
+        // Get current project from the verification result bean
+        Project project = verification.getProject();
+
+        // Build filters
+        Filter filterProject = ResourceFilterBuilder.createProjectIdFilter(project.getId());
+        Filter filterRole = ResourceFilterBuilder.createResourceRoleIdFilter(
+                ActionsHelper.findResourceRoleByName(allResourceRoles, "Manager").getId());
+        // Build final filter
+        Filter filter = new AndFilter(filterProject, filterRole);
+        // Search for the managers of this project
+        Resource[] managers = resMgr.searchResources(filter);
+
+        Set existingManagers = new HashSet();
+
+        // Collect unique external user IDs first,
+        // as there may exist multiple manager resources for the same user
+        for (int i = 0; i < managers.length; ++i) {
+            String extUserId = ((String) managers[i].getProperty("External Reference ID")).trim();
+            if (!existingManagers.contains(extUserId)) {
+                existingManagers.add(extUserId);
+            }
         }
-        Set managerEmails = new HashSet();
-        
-        for (int i = 0; i < managerResources.length; ++i) {
-        	long managerId = Long.parseLong((String) managerResources[i].getProperty("External Reference ID"));
-        	managerEmails.add(retrieval.retrieveUser(managerId).getEmail());
-        	
+
+        long[] extUsrManagerIds = new long[existingManagers.size()];
+        int managerIdx = 0;
+
+        // This inefficient operation, but going over all resources' properties is even more inefficient
+        for (Iterator iter = existingManagers.iterator(); iter.hasNext(); ) {
+            extUsrManagerIds[managerIdx++] = Long.parseLong((String) iter.next());
         }
-        
-        // Gets the project
-        Project project = (Project) request.getAttribute("project");
+
+        // Retrieve all external resources for managers in a single batch operation
+        ExternalUser[] extUsrManagers = userMgr.retrieveUsers(extUsrManagerIds);
+
+        // Get the category of the question
         String questionType = request.getParameter("cat");
+        // Get question's text
         String text = request.getParameter("msg");
-        
-        // Constructs the body of the email
-        TemplateFields fileds = docGenerator.getFields(docTemplate);
-        Node[] nodes = fileds.getNodes();
-        
+
+        TemplateFields fields = docGenerator.getFields(docTemplate);
+        Node[] nodes = fields.getNodes();
+
+        // Construct the body of the email
         for (int i = 0; i < nodes.length; i++) {
             if (nodes[i] instanceof Field) {
                 Field field = (Field) nodes[i];
@@ -1133,22 +1156,27 @@ public class ProjectDetailsActions extends DispatchAction {
                 }
             }
         }
-        
-        String emailContent = docGenerator.applyTemplate(fileds);
-        
-        // Send the email
+
+        // Compose a message to send
         TCSEmailMessage message = new TCSEmailMessage();
-        message.setSubject(ConfigHelper.getContactManagerEmailSubject());
-        message.setBody(emailContent);
-        message.setFromAddress(sender.getEmail());
-        
-        for (Iterator itr = managerEmails.iterator(); itr.hasNext();) {
-        	message.addToAddress((String) itr.next(), TCSEmailMessage.TO);
+
+        // Add 'To' addresses to message
+        for (int i = 0; i < extUsrManagers.length; ++i) {
+            message.addToAddress(extUsrManagers[i].getEmail(), TCSEmailMessage.TO);
         }
-        
+
+        // Add 'From' address
+        message.setFromAddress(sender.getEmail());
+        // Set message's subject
+        message.setSubject(ConfigHelper.getContactManagerEmailSubject());
+        // Insert a body into the message
+        message.setBody(docGenerator.applyTemplate(fields));
+
+        // Send an email
         EmailEngine.send(message);
-        
-        return mapping.findForward(Constants.SUCCESS_FORWARD_NAME);
+
+        return ActionsHelper.cloneForwardAndAppendToPath(
+                mapping.findForward(Constants.SUCCESS_FORWARD_NAME), "pid=" + project.getId());
     }
 
     /**
@@ -2759,6 +2787,10 @@ public class ProjectDetailsActions extends DispatchAction {
 
             for (int j = 0; j < innerReviews.length; ++j) {
                 Review review = innerReviews[j];
+
+                if (review == null) {
+                    continue;
+                }
 
                 for (int itemIdx = 0; itemIdx < review.getNumberOfItems(); ++itemIdx) {
                     Item item = review.getItem(itemIdx);
