@@ -98,7 +98,7 @@ public class PRScreeningPhaseHandler extends ScreeningPhaseHandler {
         	try {
         		processPR(phase.getProject().getId(), conn);
         	} finally {
-        		close(conn);
+        		PRHelper.close(conn);
         	}
         }
     }
@@ -116,7 +116,7 @@ public class PRScreeningPhaseHandler extends ScreeningPhaseHandler {
         	pstmt = conn.prepareStatement(FAILED_PASS_SCREENING_STMT);
         	pstmt.setLong(1, projectId);
         	pstmt.execute();
-        	close(pstmt);
+        	PRHelper.close(pstmt);
 
         	// Update all users who pass screen, set valid_submission_ind = 1
         	pstmt = conn.prepareStatement(PASS_SCREENING_STMT);
@@ -125,28 +125,7 @@ public class PRScreeningPhaseHandler extends ScreeningPhaseHandler {
     	} catch(SQLException e) {
     		throw new PhaseHandlingException("Failed to push data to project_result", e);
     	} finally {
-    		close(pstmt);
+    		PRHelper.close(pstmt);
     	}    	
-    }
-
-    /**
-     * Close the jdbc resource.
-     * 
-     * @param obj the jdbc resource object
-     */
-    private static void close(Object obj) {
-    	if (obj instanceof Connection) {
-    		try {
-    			((Connection) obj).close();
-    		} catch(Exception e) {
-    			// Just ignore
-    		}
-    	} else if (obj instanceof PreparedStatement) {
-    		try {
-    			((PreparedStatement) obj).close();
-    		} catch(Exception e) {
-    			// Just ignore
-    		}
-    	}
     }
 }

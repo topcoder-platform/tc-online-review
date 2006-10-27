@@ -84,7 +84,7 @@ public class PRAppealResponsePhaseHandler extends AppealsResponsePhaseHandler {
         	try {
         		processPR(phase.getId(), conn);
         	} finally {
-        		close(conn);
+        		PRHelper.close(conn);
         	}
         }
     }
@@ -124,36 +124,9 @@ public class PRAppealResponsePhaseHandler extends AppealsResponsePhaseHandler {
     	} catch(SQLException e) {
     		throw new PhaseHandlingException("Failed to push data to project_result", e);
     	} finally {
-    		close(rs);
-    		close(pstmt);
-    		close(updateStmt);
-    	}
-    }
-
-    /**
-     * Close the jdbc resource.
-     * 
-     * @param obj the jdbc resource object
-     */
-    private static void close(Object obj) {
-    	if (obj instanceof Connection) {
-    		try {
-    			((Connection) obj).close();
-    		} catch(Exception e) {
-    			// Just ignore
-    		}
-    	} else if (obj instanceof PreparedStatement) {
-    		try {
-    			((PreparedStatement) obj).close();
-    		} catch(Exception e) {
-    			// Just ignore
-    		}
-    	} else if (obj instanceof ResultSet) {
-    		try {
-    			((ResultSet) obj).close();
-    		} catch(Exception e) {
-    			// Just ignore
-    		}
+    		PRHelper.close(rs);
+    		PRHelper.close(pstmt);
+    		PRHelper.close(updateStmt);
     	}
     }
 }
