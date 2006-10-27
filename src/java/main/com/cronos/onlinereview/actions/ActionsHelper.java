@@ -6,6 +6,7 @@ package com.cronos.onlinereview.actions;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -108,6 +109,7 @@ import com.topcoder.search.builder.SearchBundle;
 import com.topcoder.search.builder.SearchBundleManager;
 import com.topcoder.search.builder.filter.AndFilter;
 import com.topcoder.search.builder.filter.Filter;
+import com.topcoder.search.builder.filter.InFilter;
 import com.topcoder.search.builder.filter.OrFilter;
 import com.topcoder.servlet.request.DisallowedDirectoryException;
 import com.topcoder.servlet.request.FileUpload;
@@ -1658,8 +1660,8 @@ public class ActionsHelper {
 
         // Prepare filter to search for deliverables for specific project
         Filter filterProject = DeliverableFilterBuilder.createProjectIdFilter(project.getId());
-        // filter to search for deliverables for specific phase(s) of the project
-        Filter filterPhase = null;
+        // A filter to search for deliverables for specific phase(s) of the project
+        Filter filterPhases = null;
 
         // Obtain an array of all active phases of the project
         Phase[] activePhases = getActivePhases(phases);
@@ -1672,7 +1674,7 @@ public class ActionsHelper {
         case 1:
             // If there is currently only one active phase,
             // create filter for it directly (no OR filters needed)
-            filterPhase = DeliverableFilterBuilder.createPhaseIdFilter(activePhases[0].getId());
+            filterPhases = DeliverableFilterBuilder.createPhaseIdFilter(activePhases[0].getId());
             break;
 
         default:
@@ -1682,23 +1684,23 @@ public class ActionsHelper {
                 phaseFilters.add(DeliverableFilterBuilder.createPhaseIdFilter(activePhases[i].getId()));
             }
             // Combine all filters using OR operator
-            filterPhase = new OrFilter(phaseFilters);
+            filterPhases = new OrFilter(phaseFilters);
         }
 
         // Build final combined filter
-        Filter filter = new AndFilter(filterProject, filterPhase);
+        Filter filter = new AndFilter(filterProject, filterPhases);
+
+        // TODO: Verify the following sections of code and clean it up eventually
+
         // Perform a search for the deliverables
-        Deliverable[] allDeliverables = manager.searchDeliverables(filter, null);
+        Deliverable[] deliverablesNoSubm = manager.searchDeliverables(filter, null);
+        Deliverable[] deliverablesSubm = manager.searchDeliverablesWithSubmissionFilter(filter, null);
 
         List deliverables = new ArrayList();
 
-        for (int i = 0; i < allDeliverables.length; ++i) {
-            if (allDeliverables[i].getProject() == project.getId()) {
-                deliverables.add(allDeliverables[i]);
-            }
-        }
+        deliverables.addAll(Arrays.asList(deliverablesNoSubm));
+//        deliverables.addAll(Arrays.asList(deliverablesSubm));
 
-        // Return found deliverables
         return (Deliverable[]) deliverables.toArray(new Deliverable[deliverables.size()]);
     }
 
@@ -1767,17 +1769,53 @@ public class ActionsHelper {
         return (Deliverable[]) deliverables.toArray(new Deliverable[deliverables.size()]);
     }
 
+    /**
+     * TODO: Write documentation for this method.
+     *
+     * @return
+     * @param manager
+     * @param project
+     * @throws IllegalArgumentException
+     *             if any of the parameters are <code>null</code>.
+     * @throws BaseException
+     */
     public static Submission[] getMostRecentSubmissions(UploadManager manager, Project project)
         throws BaseException {
+        // Validate parameters
+        validateParameterNotNull(manager, "manager");
+        validateParameterNotNull(project, "project");
+
         SubmissionStatus[] allSubmissionStatuses = manager.getAllSubmissionStatuses();
 
         Filter filterProject = SubmissionFilterBuilder.createProjectIdFilter(project.getId());
-        Filter filterStatus = SubmissionFilterBuilder.createSubmissionStatusIdFilter(
-                findSubmissionStatusByName(allSubmissionStatuses, "Active").getId());
+        Filter filterStatus = createSubmissionStatusFilter(allSubmissionStatuses);
 
         Filter filter = new AndFilter(filterProject, filterStatus);
 
         return manager.searchSubmissions(filter);
+    }
+
+    /**
+     * TODO: Write documentation for this method.
+     *
+     * @return
+     * @param allSubmissionStatuses
+     * @throws IllegalArgumentException
+     *             if <code>allSubmissionStatuses</code> parameter is <code>null</code>.
+     */
+    public static Filter createSubmissionStatusFilter(SubmissionStatus[] allSubmissionStatuses) {
+        // Validate parameter
+        validateParameterNotNull(allSubmissionStatuses, "allSubmissionStatuses");
+
+        List statusIds = new ArrayList();
+
+        for (int i = 0; i < allSubmissionStatuses.length; ++i) {
+            if (!allSubmissionStatuses[i].getName().equalsIgnoreCase("Deleted")) {
+                statusIds.add(new Long(allSubmissionStatuses[i].getId()));
+            }
+        }
+
+        return new InFilter("submission_status_id", statusIds);
     }
 
     /**
