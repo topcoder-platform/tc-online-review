@@ -6,6 +6,8 @@ package com.cronos.onlinereview.phases;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.Iterator;
+import java.util.List;
 
 import com.topcoder.management.phase.PhaseHandlingException;
 import com.topcoder.project.phases.Phase;
@@ -86,7 +88,7 @@ public class PRSubmissionPhaseHandler extends SubmissionPhaseHandler {
         	try {
         		processPR(phase.getProject().getId(), conn);
         	} finally {
-        		close(conn);
+        		PRHelper.close(conn);
         	}
         }
     }
@@ -100,6 +102,12 @@ public class PRSubmissionPhaseHandler extends SubmissionPhaseHandler {
     public static void processPR(long projectId, Connection conn) throws PhaseHandlingException {
     	PreparedStatement pstmt = null;
     	try {
+    		// Ensure project_result exist
+        	List submitters = PRHelper.getSubmitters(conn, projectId);
+        	for (Iterator iter = submitters.iterator(); iter.hasNext();) {
+        		PRHelper.insertProjectResult(conn, iter.next().toString(), projectId);
+        	}
+
         	// Update all users who submit submission
         	pstmt = conn.prepareStatement(UPDATE_PROJECT_RESULT_STMT);
         	pstmt.setLong(1, projectId);
@@ -107,28 +115,7 @@ public class PRSubmissionPhaseHandler extends SubmissionPhaseHandler {
     	} catch(SQLException e) {
     		throw new PhaseHandlingException("Failed to push data to project_result", e);
     	} finally {
-    		close(pstmt);
-    	}    	
-    }
-
-    /**
-     * Close the jdbc resource.
-     * 
-     * @param obj the jdbc resource object
-     */
-    private static void close(Object obj) {
-    	if (obj instanceof Connection) {
-    		try {
-    			((Connection) obj).close();
-    		} catch(Exception e) {
-    			// Just ignore
-    		}
-    	} else if (obj instanceof PreparedStatement) {
-    		try {
-    			((PreparedStatement) obj).close();
-    		} catch(Exception e) {
-    			// Just ignore
-    		}
+    		PRHelper.close(pstmt);
     	}
     }
 }
