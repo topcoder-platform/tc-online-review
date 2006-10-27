@@ -1693,8 +1693,8 @@ public class ActionsHelper {
         // TODO: Verify the following sections of code and clean it up eventually
 
         // Perform a search for the deliverables
-        Deliverable[] deliverablesNoSubm = manager.searchDeliverables(filter, null);
-        Deliverable[] deliverablesSubm = manager.searchDeliverablesWithSubmissionFilter(filter, null);
+        Deliverable[] deliverablesNoSubm = manager.searchDeliverables(filterPhases, null);
+        Deliverable[] deliverablesSubm = manager.searchDeliverablesWithSubmissionFilter(filterPhases, null);
 
         List deliverables = new ArrayList();
 
