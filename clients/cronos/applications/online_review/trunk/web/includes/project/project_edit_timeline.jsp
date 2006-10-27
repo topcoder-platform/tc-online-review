@@ -322,9 +322,8 @@
 			</html:select>
 			<bean:message key="global.Timezone.EST" />
 		</td>
-		<td class="value" width="6%" colspan="2" nowrap="nowrap">
-			<%-- TODO: The default value for duration is set to 7 days just for testing --%>
-			<html:text styleClass="inputBoxDuration" property="addphase_duration" value="168" />
+		<td class="value" width="6%" colspan="2" nowrap="nowrap">	
+			<html:text styleClass="inputBoxDuration" property="addphase_duration" value="${defaultPhaseDuration}" />
 		</td>
 		<td class="value" width="7%">
 			<html:img srcKey="editProject.Phases.AddPhase.img" altKey="editProject.Phases.AddPhase.alt" onclick="addNewPhase();" />
