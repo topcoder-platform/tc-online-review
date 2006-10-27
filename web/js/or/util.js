@@ -165,3 +165,15 @@ function cloneInputRow(rowNode) {
 			}
 	return clonedNode;
 }
+
+/*
+ * This function sets the value of the "answer" input with the specified index,
+ * to the value composed from values of appropriate "passed_tests" and "all_tests" inputs.
+ */
+function populateTestCaseAnswer(itemIdx) {
+	var answerNode = document.getElementsByName("answer[" + itemIdx + "]")[0];
+	var passedNode = getChildByName(answerNode.parentNode, "passed_tests");
+	var allNode = getChildByName(answerNode.parentNode, "all_tests");
+
+	answerNode.value = passedNode.value + "/" + allNode.value;
+}
