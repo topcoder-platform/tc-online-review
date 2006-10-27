@@ -1,5 +1,5 @@
 INSERT INTO scorecard (scorecard_id, scorecard_status_id, scorecard_type_id, project_category_id, name, version, min_score, max_score, create_user, create_date, modify_user, modify_date)
-  VALUES (101, 1, 1, 1, 'Sample Screening Component Design Scorecard', '1.0', 0.00, 100.0000000000, 'System', '2006-08-28 18:41:06.682', 'System', '2006-08-28 18:41:06.682');
+  VALUES (101, 1, 1, 1, 'Sample Screening Component Design Scorecard', '1.0', 75.00, 100.0000000000, 'System', '2006-08-28 18:41:06.682', 'System', '2006-08-28 18:41:06.682');
 
 INSERT INTO scorecard_group (scorecard_group_id, scorecard_id, name, weight, sort, create_user, create_date, modify_user, modify_date)
   VALUES (101, 101, 'Group Number 1', 95.00000000000, 0, 'System', '2006-08-28 18:41:06.979', 'System', '2006-08-28 18:41:06.979');
@@ -29,7 +29,7 @@ INSERT INTO scorecard_question (scorecard_question_id, scorecard_question_type_i
 
 
 INSERT INTO scorecard (scorecard_id, scorecard_status_id, scorecard_type_id, project_category_id, name, version, min_score, max_score, create_user, create_date, modify_user, modify_date)
-  VALUES (201, 1, 2, 1, 'Sample Review Component Design Scorecard', '1.1', 0.00, 100.0000000000, 'System', '2006-08-28 18:41:06.682', 'System', '2006-08-28 18:41:06.682');
+  VALUES (201, 1, 2, 1, 'Sample Review Component Design Scorecard', '1.1', 75.00, 100.0000000000, 'System', '2006-08-28 18:41:06.682', 'System', '2006-08-28 18:41:06.682');
 
 INSERT INTO scorecard_group (scorecard_group_id, scorecard_id, name, weight, sort, create_user, create_date, modify_user, modify_date)
   VALUES (201, 201, 'Group Number 1', 95.00000000000, 0, 'System', '2006-08-28 18:41:06.979', 'System', '2006-08-28 18:41:06.979');
@@ -59,7 +59,7 @@ INSERT INTO scorecard_question (scorecard_question_id, scorecard_question_type_i
 
 
 INSERT INTO scorecard (scorecard_id, scorecard_status_id, scorecard_type_id, project_category_id, name, version, min_score, max_score, create_user, create_date, modify_user, modify_date)
-  VALUES (301, 1, 3, 1, 'Sample Client Review Component Design Scorecard', '1.0.2', 0.00, 100.0000000000, 'System', '2006-08-28 18:41:06.682', 'System', '2006-08-28 18:41:06.682');
+  VALUES (301, 1, 3, 1, 'Sample Client Review Component Design Scorecard', '1.0.2', 75.00, 100.0000000000, 'System', '2006-08-28 18:41:06.682', 'System', '2006-08-28 18:41:06.682');
 
 INSERT INTO scorecard_group (scorecard_group_id, scorecard_id, name, weight, sort, create_user, create_date, modify_user, modify_date)
   VALUES (301, 301, 'Group Number 1', 95.00000000000, 0, 'System', '2006-08-28 18:41:06.979', 'System', '2006-08-28 18:41:06.979');
