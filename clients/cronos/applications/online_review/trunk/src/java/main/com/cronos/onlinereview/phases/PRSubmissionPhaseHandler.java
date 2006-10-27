@@ -4,10 +4,7 @@
 package com.cronos.onlinereview.phases;
 
 import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.util.Iterator;
-import java.util.List;
 
 import com.topcoder.management.phase.PhaseHandlingException;
 import com.topcoder.project.phases.Phase;
@@ -19,18 +16,6 @@ import com.topcoder.project.phases.Phase;
  * @version 1.0
  */
 public class PRSubmissionPhaseHandler extends SubmissionPhaseHandler {
-	private static final int RESOURCE_INFO_EXTERNAL_ID = 1;
-	private static final int SUBMISSION_STATUS_DELETE_ID = 5;
-	private static final String UPDATE_PROJECT_RESULT_STMT = 
-				"update project_result set valid_submission_ind = 0 " +
-				"where not exists(select * from submission s " +
-				"	inner join upload u on u.upload_id = s.upload_id and upload_type_id = 1  " +
-				"	and u.project_id = project_result.project_id " +
-				"	inner join resource r on r.resource_id = u.resource_id " +
-				"	inner join resource_info ri on ri.resource_id = r.resource_id " +
-				"	and ri.value = project_result.user_id and ri.resource_info_type_id = " + RESOURCE_INFO_EXTERNAL_ID +
-				"	where submission_status_id <> " + SUBMISSION_STATUS_DELETE_ID + " ) and " +
-				" project_id = ?";
 
     /**
      * Create a new instance of SubmissionPhaseHandler using the default namespace for loading configuration settings.
@@ -100,22 +85,10 @@ public class PRSubmissionPhaseHandler extends SubmissionPhaseHandler {
      * @throws PhaseHandlingException if error occurs
      */
     public static void processPR(long projectId, Connection conn) throws PhaseHandlingException {
-    	PreparedStatement pstmt = null;
     	try {
-    		// Ensure project_result exist
-        	List submitters = PRHelper.getSubmitters(conn, projectId);
-        	for (Iterator iter = submitters.iterator(); iter.hasNext();) {
-        		PRHelper.insertProjectResult(conn, iter.next().toString(), projectId);
-        	}
-
-        	// Update all users who submit submission
-        	pstmt = conn.prepareStatement(UPDATE_PROJECT_RESULT_STMT);
-        	pstmt.setLong(1, projectId);
-        	pstmt.execute();
+        	PRHelper.processSubmissionPR(projectId, conn);
     	} catch(SQLException e) {
     		throw new PhaseHandlingException("Failed to push data to project_result", e);
-    	} finally {
-    		PRHelper.close(pstmt);
     	}
     }
 }

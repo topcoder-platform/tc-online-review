@@ -4,8 +4,6 @@
 package com.cronos.onlinereview.phases;
 
 import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import com.topcoder.management.phase.PhaseHandlingException;
@@ -18,29 +16,6 @@ import com.topcoder.project.phases.Phase;
  * @version 1.0
  */
 public class PRAppealResponsePhaseHandler extends AppealsResponsePhaseHandler {
-	private static final int RESOURCE_INFO_EXTERNAL_ID = 1;
-	private static final int RESOURCE_INFO_FINAL_SCORE_ID = 11;
-	private static final int RESOURCE_INFO_PLACED_ID = 12;
-
-	private static final String SELECT_STMT = 
-				"select ri_s.value as final_score, ri_u.value as user_id, round(ri_p.value) as placed, r.project_id, s.submission_status_id " +
-				"from resource r " +
-				"inner join resource_info ri_u " +
-				"on r.resource_id = ri_u.resource_id " +
-				"and ri_u.resource_info_type_id = " + RESOURCE_INFO_EXTERNAL_ID + " " +
-				"inner join resource_info ri_s " +
-				"on r.resource_id = ri_s.resource_id " +
-				"and ri_s.resource_info_type_id =  " + RESOURCE_INFO_FINAL_SCORE_ID + " " +
-				"inner join resource_info ri_p " +
-				"on r.resource_id = ri_p.resource_id " +
-				"and ri_p.resource_info_type_id =  " + RESOURCE_INFO_PLACED_ID + " " +
-				"inner join upload u on u.project_id = r.project_id and u.resource_id = r.resource_id and upload_type_id = 1 " +
-				"inner join submission s on u.upload_id = s.upload_id " +
-				"where r.project_id = ? and r.resource_role_id = 1 ";
-
-	private static final String UPDATE_PROJECT_RESULT_STMT = 
-				"update project_result set final_score = ?, placed = ?, passed_review_ind = ?  " +
-				"where project_id = ? and user_id = ? ";
 
     /**
      * Create a new instance of AppealsResponsePhaseHandler using the default namespace for loading configuration settings.
@@ -96,37 +71,10 @@ public class PRAppealResponsePhaseHandler extends AppealsResponsePhaseHandler {
      * @throws PhaseHandlingException if error occurs
      */
     public static void processPR(long projectId, Connection conn) throws PhaseHandlingException {
-    	PreparedStatement pstmt = null;
-    	PreparedStatement updateStmt = null;
-    	ResultSet rs = null;
     	try {
-        	// Retrieve all 
-        	pstmt = conn.prepareStatement(SELECT_STMT);
-        	pstmt.setLong(1, projectId);
-        	rs = pstmt.executeQuery();
-
-        	updateStmt = conn.prepareStatement(UPDATE_PROJECT_RESULT_STMT);
-        	while(rs.next()) {
-        		float finalScore = rs.getFloat("final_score");
-        		long userId = rs.getLong("user_id");
-        		int status = rs.getInt("submission_status_id");
-        		int placed = rs.getInt("placed");
-
-        		// Update final score, placed and passed_review_ind
-        		updateStmt.setFloat(1, finalScore);
-        		updateStmt.setInt(2, placed);
-        		// 1 is active, 4 is Completed Without Win
-        		updateStmt.setInt(3, status == 1 || status == 4 ? 1 : 0);
-        		updateStmt.setLong(4, projectId);
-        		updateStmt.setLong(5, userId);
-        		updateStmt.execute();
-        	}
+        	PRHelper.processAppealResponsePR(projectId, conn);
     	} catch(SQLException e) {
     		throw new PhaseHandlingException("Failed to push data to project_result", e);
-    	} finally {
-    		PRHelper.close(rs);
-    		PRHelper.close(pstmt);
-    		PRHelper.close(updateStmt);
     	}
     }
 }

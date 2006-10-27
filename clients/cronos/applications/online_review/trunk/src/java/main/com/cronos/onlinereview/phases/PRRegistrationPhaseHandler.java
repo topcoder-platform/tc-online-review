@@ -4,11 +4,7 @@
 package com.cronos.onlinereview.phases;
 
 import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Types;
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -76,10 +72,7 @@ public class PRRegistrationPhaseHandler extends RegistrationPhaseHandler {
      */
     public static void processPR(long projectId, Connection conn) throws PhaseHandlingException {
     	try {
-        	List submitters = PRHelper.getSubmitters(conn, projectId);
-        	for (Iterator iter = submitters.iterator(); iter.hasNext();) {
-        		PRHelper.insertProjectResult(conn, iter.next().toString(), projectId);
-        	}
+        	PRHelper.processRegistrationPR(projectId, conn);
     	} catch(SQLException e) {
     		throw new PhaseHandlingException("Failed to push data to project_result", e);
     	}
