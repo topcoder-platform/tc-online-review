@@ -212,7 +212,7 @@ public class ProjectActions extends DispatchAction {
         request.setAttribute("screeningScorecards", screeningScorecards);
         request.setAttribute("reviewScorecards", reviewScorecards);
         request.setAttribute("approvalScorecards", approvalScorecards);
-        
+
         // Get the default phase duration and store it in the request
         request.setAttribute("defaultPhaseDuration", new Integer(ConfigHelper.getDefaultPhaseDuration()));
     }
@@ -1700,14 +1700,21 @@ public class ProjectActions extends DispatchAction {
             projectsFilter = ProjectFilterUtility.buildStatusNameEqualFilter("Inactive");
             activeTab = 4;
         } else {
-            // Create filters to select only public projects
-            Filter filterPublicName = ProjectFilterUtility.buildProjectPropertyNameEqualFilter("Public");
-            Filter filterPublicValue = ProjectFilterUtility.buildProjectPropertyValueEqualFilter("Yes");
             // Create filter to select only active projects
             Filter filterStatus = ProjectFilterUtility.buildStatusNameEqualFilter("Active");
-            // Build final filter
-            projectsFilter =
-                new AndFilter(Arrays.asList(new Filter[] {filterPublicName, filterPublicValue, filterStatus}));
+
+            if (!AuthorizationHelper.hasUserRole(request, Constants.GLOBAL_MANAGER_ROLE_NAME)) {
+                // Create filters to select only public projects
+                Filter filterPublicName = ProjectFilterUtility.buildProjectPropertyNameEqualFilter("Public");
+                Filter filterPublicValue = ProjectFilterUtility.buildProjectPropertyValueEqualFilter("Yes");
+                // Build final filter
+                projectsFilter =
+                    new AndFilter(Arrays.asList(new Filter[] {filterPublicName, filterPublicValue, filterStatus}));
+            } else {
+                // Only Global Managers can see private projects in All Projects list
+                projectsFilter = filterStatus;
+            }
+
             // Specify the index of the active tab
             activeTab = 2;
         }
