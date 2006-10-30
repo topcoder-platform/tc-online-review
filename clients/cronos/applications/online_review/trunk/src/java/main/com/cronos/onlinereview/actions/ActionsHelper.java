@@ -1694,7 +1694,8 @@ public class ActionsHelper {
 
         // Perform a search for the deliverables
         Deliverable[] deliverablesNoSubm = manager.searchDeliverables(filterPhases, null);
-        Deliverable[] deliverablesSubm = manager.searchDeliverablesWithSubmissionFilter(filterPhases, null);
+        // The following command causes problems. That's strange...
+//        Deliverable[] deliverablesSubm = manager.searchDeliverablesWithSubmissionFilter(filterPhases, null);
 
         List deliverables = new ArrayList();
 
