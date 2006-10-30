@@ -174,7 +174,7 @@
 										<%@ include file="../includes/review/review_question.jsp" %>
 										<%@ include file="../includes/review/review_static_answer.jsp" %>
 										<c:if test="${canPlaceAppeal or canPlaceAppealResponse}">
-											<%-- TODO:  Localize appeal statuses --%>
+											<%-- TODO: Localize appeal statuses --%>
 											<td class="valueC">${appealStatuses[itemIdx]}<!-- @ --></td>
 										</c:if>
 										<c:if test="${canPlaceAppeal}">
@@ -233,7 +233,7 @@
 								</c:forEach>
 							</c:forEach>
 							<c:if test="${groupStatus.index == scorecardTemplate.numberOfGroups - 1}">
-								<c:if test="${!(empty review.score)}">
+								<c:if test="${not empty review.score}">
 									<tr>
 										<td class="header"><!-- @ --></td>
 										<td class="headerC"><bean:message key="editReview.SectionHeader.Total" /></td>
@@ -241,7 +241,7 @@
 									</tr>
 									<tr>
 										<td class="value"><!-- @ --></td>
-										<td class="valueC" nowrap="nowrap"><b>${orfn:displayScore(null, review.score)}</b></td>
+										<td class="valueC" nowrap="nowrap"><b>${orfn:displayScore(pageContext.request, review.score)}</b></td>
 										<td class="valueC"><!-- @ --></td>
 										<c:if test="${canPlaceAppeal or canPlaceAppealResponse}">
 											<td class="valueC"><!-- @ --></td>
