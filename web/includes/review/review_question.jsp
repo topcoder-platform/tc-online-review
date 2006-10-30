@@ -16,7 +16,7 @@
 			${orfn:htmlEncode(question.guideline)}
 		</div>
 	</td>
-	<c:if test="${!(empty noQuestionWeight) || (noQuestionWeight != true)}">
-		<td class="valueC">${question.weight}</td>
+	<c:if test="${not noQuestionWeight}">
+		<td class="valueC">${orfn:displayScore(pageContext.request, question.weight)}</td>
 	</c:if>
 											
