@@ -662,7 +662,7 @@ public class ProjectActions extends DispatchAction {
             saveProjectPhases(newProject, request, lazyForm, project, phasesJsMap, phasesToDelete, statusHasChanged);
 
         // If needed switch project current phase
-        if (!newProject) {
+        if (!newProject && !ActionsHelper.isErrorsPresent(request)) {
             switchProjectPhase(request, lazyForm, projectPhases, phasesJsMap);
         }
 
