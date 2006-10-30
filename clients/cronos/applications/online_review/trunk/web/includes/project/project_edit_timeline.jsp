@@ -50,7 +50,14 @@
 		</c:if>
 		<c:if test="${not newProject}">
 			<td class="value">
-				<html:radio property="current_phase" value="${projectForm.map['phase_js_id'][phaseIdx]}" />
+				<html:hidden property="phase_can_open[${phaseIdx}]" />
+				<html:hidden property="phase_can_close[${phaseIdx}]" />
+				<html:img onclick="javascript:openOrClosePhase(this.parentNode.parentNode, 'open_phase');" 
+					srcKey="editProject.Phases.OpenPhase.img" altKey="editProject.Phases.OpenPhase.alt" border="0" 
+					imageName="open_phase_img" style="${projectForm.map['phase_can_open'][phaseIdx] ? '' : 'display: none;'}" />&#160;
+				<html:img onclick="javascript:openOrClosePhase(this.parentNode.parentNode, 'close_phase');" 
+					srcKey="editProject.Phases.ClosePhase.img" altKey="editProject.Phases.ClosePhase.alt" border="0" 
+					imageName="close_phase_img" style="${projectForm.map['phase_can_close'][phaseIdx] ? '' : 'display: none;'}" />&#160;
 			</td>
 		</c:if>		
 			<td class="valueB" nowrap="nowrap">
@@ -323,7 +330,7 @@
 			<bean:message key="global.Timezone.EST" />
 		</td>
 		<td class="value" width="6%" colspan="2" nowrap="nowrap">	
-			<html:text styleClass="inputBoxDuration" property="addphase_duration" value="${defaultPhaseDuration}" />
+			<html:text styleClass="inputBoxDuration" property="addphase_duration" />
 		</td>
 		<td class="value" width="7%">
 			<html:img srcKey="editProject.Phases.AddPhase.img" altKey="editProject.Phases.AddPhase.alt" onclick="addNewPhase();" />

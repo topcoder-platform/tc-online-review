@@ -146,8 +146,14 @@ public class ProjectActions extends DispatchAction {
         // Load the look up data
         loadProjectEditLookups(request);
 
-        LazyValidatorForm lazyForm = (LazyValidatorForm) form;
+        // Populate the default values of some project form fields
+        populateProjectFormDefaults((LazyValidatorForm) form);
+                
+        // Return the success forward
+        return mapping.findForward(Constants.SUCCESS_FORWARD_NAME);
+    }
 
+    private void populateProjectFormDefaults(LazyValidatorForm lazyForm) {
         // Set the JS id to start generation from
         lazyForm.set("js_current_id", new Long(0));
 
@@ -157,13 +163,15 @@ public class ProjectActions extends DispatchAction {
         lazyForm.set("resources_id", 0, new Long(-1));
         lazyForm.set("resources_action", 0, "add");
 
-        // Populate form with some data so that resources row template
+        // Populate form with some data so that phases row template
         // is rendered properly by the appropriate JSP
         lazyForm.set("phase_id", 0, new Long(-1));
         lazyForm.set("phase_action", 0, "add");
-
-        // Return the success forward
-        return mapping.findForward(Constants.SUCCESS_FORWARD_NAME);
+        lazyForm.set("phase_can_open", 0, Boolean.TRUE);
+        lazyForm.set("phase_can_close", 0, Boolean.FALSE);
+        
+        // Populate default phase duration
+        lazyForm.set("addphase_duration", new Integer(ConfigHelper.getDefaultPhaseDuration()));        
     }
 
     /**
@@ -212,9 +220,6 @@ public class ProjectActions extends DispatchAction {
         request.setAttribute("screeningScorecards", screeningScorecards);
         request.setAttribute("reviewScorecards", reviewScorecards);
         request.setAttribute("approvalScorecards", approvalScorecards);
-
-        // Get the default phase duration and store it in the request
-        request.setAttribute("defaultPhaseDuration", new Integer(ConfigHelper.getDefaultPhaseDuration()));
     }
 
     /**
@@ -247,9 +252,6 @@ public class ProjectActions extends DispatchAction {
     private void populateProjectForm(HttpServletRequest request, LazyValidatorForm form, Project project)
         throws BaseException {
         // TODO: Possibly use string constants instead of hardcoded strings
-
-        // Set the JS id to start generation from
-        form.set("js_current_id", new Long(0));
 
         // Populate project id
         form.set("pid", new Long(project.getId()));
@@ -294,17 +296,8 @@ public class ProjectActions extends DispatchAction {
         // Populate project notes
         populateProjectFormProperty(form, String.class, "notes", project, "Notes");
 
-        // Populate form with some data so that resources row template
-        // is rendered properly by the appropriate JSP
-        form.set("resources_role", 0, new Long(-1));
-        form.set("resources_phase", 0, "");
-        form.set("resources_id", 0, new Long(-1));
-        form.set("resources_action", 0, "add");
-
-        // Populate form with some data so that resources row template
-        // is rendered properly by the appropriate JSP
-        form.set("phase_id", 0, new Long(-1));
-        form.set("phase_action", 0, "add");
+        // Populate the default values of some project form fields
+        populateProjectFormDefaults(form);
 
         // Obtain Resource Manager instance
         ResourceManager resourceManager = ActionsHelper.createResourceManager(request);
@@ -350,6 +343,11 @@ public class ProjectActions extends DispatchAction {
         for (int i = 0; i < phases.length; ++i) {
             form.set("phase_id", i + 1, new Long(phases[i].getId()));
 
+            form.set("phase_can_open", i + 1, 
+                    Boolean.valueOf(phases[i].getPhaseStatus().getName().equals(PhaseStatus.SCHEDULED.getName())));
+            form.set("phase_can_close", i + 1,  
+                    Boolean.valueOf(phases[i].getPhaseStatus().getName().equals(PhaseStatus.OPEN.getName())));
+            
             Long phaseTypeId = new Long(phases[i].getPhaseType().getId());
             form.set("phase_type", i + 1, phaseTypeId);
             Integer phaseNumber = (Integer) phaseNumberMap.get(phaseTypeId);
@@ -403,13 +401,6 @@ public class ProjectActions extends DispatchAction {
                 form.set("phase_view_appeal_responses", i + 1,
                         Boolean.valueOf("Yes".equals(phases[i].getAttribute("View Response During Appeals"))));
             }
-        }
-
-        // Get current project phase
-        Phase currentPhase = getCurrentProjectPhase(phases);
-        if (currentPhase != null) {
-            // Populate current phase
-            form.set("current_phase", "loaded_" + currentPhase.getId());
         }
     }
 
@@ -734,20 +725,6 @@ public class ProjectActions extends DispatchAction {
         phaseManager.updatePhases(phProject, Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
     }
 
-    /**
-     * TODO: Document it
-     *
-     * @param projectPhases
-     * @return
-     */
-    private Phase getCurrentProjectPhase(Phase[] projectPhases) {
-        for (int i = 0; i < projectPhases.length; i++) {
-            if (projectPhases[i].getPhaseStatus().getName().equals(PhaseStatus.OPEN.getName())) {
-                return projectPhases[i];
-            }
-        }
-        return null;
-    }
 
     /**
      * TODO: Document it
@@ -1130,92 +1107,51 @@ public class ProjectActions extends DispatchAction {
      * @throws BaseException
      */
     private void switchProjectPhase(HttpServletRequest request, LazyValidatorForm lazyForm,
-            Phase[] projectPhases, Map phasesJsMap) throws BaseException {
+            Phase[] projectPhases, Map phasesJsMap) throws BaseException {        
 
-        // Get current project phase
-        Phase currentPhase = getCurrentProjectPhase(projectPhases);
+        // Get name of action to be performed
+        String action = (String) lazyForm.get("action");
+        
         // Get new current phase id
-        String newCurPhaseId = (String) lazyForm.get("current_phase");
-        // Get new current phase
-        Phase newCurrentPhase = (Phase) phasesJsMap.get(newCurPhaseId);
-        if (newCurrentPhase != null && (currentPhase == null || newCurrentPhase.getId() != currentPhase.getId())) {
-            int i = 0;
-            if (currentPhase != null) {
-                for (; i < projectPhases.length; i++) {
-                    if (projectPhases[i] == currentPhase) {
-                        break;
-                    } else if (projectPhases[i] == newCurrentPhase) {
-                        ActionsHelper.addErrorToRequest(request, new ActionMessage(
-                                "error.com.cronos.onlinereview.actions.editProject.CannotSwitchBack"));
-                        return;
-                    }
-                }
-            }
-
+        String phaseJsId = (String) lazyForm.get("action_phase");
+        
+        if (phaseJsId != null && phasesJsMap.containsKey(phaseJsId)) {            
+            // Get the phase to be operated on 
+            Phase phase = (Phase) phasesJsMap.get(phaseJsId);
+            
+            // Get the status of phase
+            PhaseStatus phaseStatus = phase.getPhaseStatus();            
+            // Get the type of the phase
+            PhaseType phaseType = phase.getPhaseType(); 
+            
             // Obtain an instance of Phase Manager
             PhaseManager phaseManager = ActionsHelper.createPhaseManager(request, true);
-            for (; i < projectPhases.length; i++) {
-                logger.log(Level.INFO, "switchProjectPhase: " + projectPhases[i].getPhaseType().getName() +
-                        " is in " + projectPhases[i].getPhaseStatus().getName() + " state");
-                if (projectPhases[i] != newCurrentPhase) {
-                    if (projectPhases[i].getPhaseStatus().getName().equals(PhaseStatus.OPEN.getName())) {
-                        if (phaseManager.canEnd(projectPhases[i])) {
-                            logger.log(Level.INFO, "switchProjectPhase: " + projectPhases[i].getPhaseType().getName() +
-                                    " is being closed");
-                            phaseManager.end(projectPhases[i],
-                                    Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
-                        } else {
-                            logger.log(Level.INFO, "switchProjectPhase: " + projectPhases[i].getPhaseType().getName() +
-                                    " cannot be closed");
-                            ActionsHelper.addErrorToRequest(request, new ActionMessage(
-                                    "error.com.cronos.onlinereview.actions.editProject.CannotClosePhase",
-                                    projectPhases[i].getPhaseType().getName()));
-                        }
-                    } else if (projectPhases[i].getPhaseStatus().getName().equals(PhaseStatus.SCHEDULED.getName())) {
-                        if (phaseManager.canStart(projectPhases[i])) {
-                            logger.log(Level.INFO, "switchProjectPhase: " + projectPhases[i].getPhaseType().getName() +
-                                    " is being started");
-                            phaseManager.start(projectPhases[i],
-                                    Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
-                        } else {
-                            logger.log(Level.INFO, "switchProjectPhase: " + projectPhases[i].getPhaseType().getName() +
-                                    " cannot be started");
-                            ActionsHelper.addErrorToRequest(request, new ActionMessage(
-                                    "error.com.cronos.onlinereview.actions.editProject.CannotOpenPhase",
-                                    projectPhases[i].getPhaseType().getName()));
-                        }
-                        if (phaseManager.canEnd(projectPhases[i])) {
-                            logger.log(Level.INFO, "switchProjectPhase: " + projectPhases[i].getPhaseType().getName() +
-                                    " is being closed");
-                            phaseManager.end(projectPhases[i],
-                                    Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
-                        } else {
-                            logger.log(Level.INFO, "switchProjectPhase: " + projectPhases[i].getPhaseType().getName() +
-                                    " cannot be closed");
-                            ActionsHelper.addErrorToRequest(request, new ActionMessage(
-                                    "error.com.cronos.onlinereview.actions.editProject.CannotClosePhase",
-                                    projectPhases[i].getPhaseType().getName()));
-                        }
-
-                    }
+            
+            if ("close_phase".equals(action)) {
+                logger.log(Level.INFO, "switchProjectPhase: " + phaseType.getName() +
+                        " is in " + phaseStatus.getName() + " state");
+                if (phaseStatus.getName().equals(PhaseStatus.OPEN.getName()) && phaseManager.canEnd(phase)) {
+                    logger.log(Level.INFO, "switchProjectPhase: " + phaseType.getName() + " is being closed");
+                    // Close the phase
+                    phaseManager.end(phase, Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
                 } else {
-                    if (projectPhases[i].getPhaseStatus().getName().equals(PhaseStatus.SCHEDULED.getName())) {
-                        if (phaseManager.canStart(projectPhases[i])) {
-                            logger.log(Level.INFO, "switchProjectPhase: " + projectPhases[i].getPhaseType().getName() +
-                                    " is being started");
-                            phaseManager.start(projectPhases[i],
-                                    Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
-                        } else {
-                            logger.log(Level.INFO, "switchProjectPhase: " + projectPhases[i].getPhaseType().getName() +
-                                    " cannot be started");
-                            ActionsHelper.addErrorToRequest(request, new ActionMessage(
-                                    "error.com.cronos.onlinereview.actions.editProject.CannotOpenPhase",
-                                    projectPhases[i].getPhaseType().getName()));
-                        }
-                    }
-                    break;
+                    logger.log(Level.INFO, "switchProjectPhase: " + phaseType.getName() + " cannot be closed");
+                    ActionsHelper.addErrorToRequest(request, new ActionMessage(
+                            "error.com.cronos.onlinereview.actions.editProject.CannotClosePhase", phaseType.getName()));
                 }
-            }
+            } else if ("open_phase".equals(action)) {                   
+                logger.log(Level.INFO, "switchProjectPhase: " + phaseType.getName() +
+                        " is in " + phaseStatus.getName() + " state");
+                if (phaseStatus.getName().equals(PhaseStatus.SCHEDULED.getName()) && phaseManager.canStart(phase)) {
+                    logger.log(Level.INFO, "switchProjectPhase: " + phaseType.getName() + " is being started");
+                    // Open the phase
+                    phaseManager.start(phase, Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
+                } else {
+                    logger.log(Level.INFO, "switchProjectPhase: " + phaseType.getName() + " cannot be started");
+                    ActionsHelper.addErrorToRequest(request, new ActionMessage(
+                            "error.com.cronos.onlinereview.actions.editProject.CannotOpenPhase", phaseType.getName()));
+                }
+            }                                
         }
     }
 

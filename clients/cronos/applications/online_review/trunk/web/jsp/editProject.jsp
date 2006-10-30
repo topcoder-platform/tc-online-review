@@ -458,6 +458,19 @@
 				nextRowNode.parentNode.removeChild(nextRowNode);
 			}
 		}
+		
+		/*
+		 * TODO: Document it
+		 */
+		function openOrClosePhase(phaseRow, action) {
+			var actionNode = document.getElementsByName("action")[0];
+			actionNode.value = action;	
+			var phaseId = phaseRow.id;
+			var actionPhaseNode = document.getElementsByName("action_phase")[0];
+			actionPhaseNode.value = phaseId;	
+			actionNode.form.submit();
+		}
+		
 	//--></script>
 </head>
 
@@ -501,6 +514,8 @@
 						</c:if>
 
 						<html:hidden property="js_current_id" />
+						<html:hidden property="action" />
+						<html:hidden property="action_phase" />
 
 						<%-- If creating a new project, show project details table --%>
 						<c:if test="${newProject}">

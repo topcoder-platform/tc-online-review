@@ -2324,8 +2324,8 @@ public class ProjectReviewActions extends DispatchAction {
         // Retrieve the information about the submitter and place it into the request
         ActionsHelper.retrieveAndStoreSubmitterInfo(request, verification.getSubmission().getUpload());
         if (verification.getReview() != null) {
-                // Retrieve the information about the review author and place it into the request
-                retrieveAndStoreReviewAuthorInfo(request, verification.getReview());
+            // Retrieve the information about the review author and place it into the request
+            retrieveAndStoreReviewAuthorInfo(request, verification.getReview());
         }
         // Place Scorecard template in the request
         request.setAttribute("scorecardTemplate", scorecardTemplate);
@@ -2488,17 +2488,6 @@ public class ProjectReviewActions extends DispatchAction {
             return verification.getForward();
         }
 
-        // Verify that the user has permission to edit review
-        if (!AuthorizationHelper.hasUserPermission(request, Constants.EDIT_ANY_SCORECARD_PERM_NAME)) {
-            if (!AuthorizationHelper.hasUserPermission(request, Constants.EDIT_MY_REVIEW_PERM_NAME)) {
-                return ActionsHelper.produceErrorReport(mapping, getResources(request),
-                    request, Constants.EDIT_MY_REVIEW_PERM_NAME, "Error.NoPermission");
-            } else if(verification.getReview().getAuthor() != AuthorizationHelper.getLoggedInUserId(request)) {
-                return ActionsHelper.produceErrorReport(mapping, getResources(request),
-                        request, Constants.EDIT_MY_REVIEW_PERM_NAME, "Error.NoPermission");
-            }     
-        }
-
         // Retrieve a review to edit
         Review review = verification.getReview();
 
@@ -2530,6 +2519,18 @@ public class ProjectReviewActions extends DispatchAction {
         // Retrieve some basic review info and store it in the request
         retrieveAndStoreBasicReviewInfo(request, verification, reviewType, scorecardTemplate);
 
+        // Verify that the user has permission to edit review
+        if (!AuthorizationHelper.hasUserPermission(request, Constants.EDIT_ANY_SCORECARD_PERM_NAME)) {
+            if (!AuthorizationHelper.hasUserPermission(request, Constants.EDIT_MY_REVIEW_PERM_NAME)) {
+                return ActionsHelper.produceErrorReport(mapping, getResources(request),
+                    request, Constants.EDIT_MY_REVIEW_PERM_NAME, "Error.NoPermission");
+            } else if(verification.getReview().getAuthor() != 
+                    ((Resource) request.getAttribute("authorResource")).getId()) {
+                return ActionsHelper.produceErrorReport(mapping, getResources(request),
+                        request, Constants.EDIT_MY_REVIEW_PERM_NAME, "Error.NoPermission");
+            }     
+        }
+        
         // Retrive some look-up data and store it into the request
         CommentType[] commentTypes = retreiveAndStoreReviewLookUpData(request);
 
@@ -2749,7 +2750,8 @@ public class ProjectReviewActions extends DispatchAction {
                 if (!AuthorizationHelper.hasUserPermission(request, Constants.EDIT_MY_REVIEW_PERM_NAME)) {
                     return ActionsHelper.produceErrorReport(mapping, getResources(request),
                         request, Constants.EDIT_MY_REVIEW_PERM_NAME, "Error.NoPermission");
-                } else if(verification.getReview().getAuthor() != AuthorizationHelper.getLoggedInUserId(request)) {
+                } else if(verification.getReview().getAuthor() !=  
+                        ((Resource) request.getAttribute("authorResource")).getId()) {
                     return ActionsHelper.produceErrorReport(mapping, getResources(request),
                             request, Constants.EDIT_MY_REVIEW_PERM_NAME, "Error.NoPermission");
                 }     
@@ -3336,7 +3338,7 @@ public class ProjectReviewActions extends DispatchAction {
                     verification.getReview().getAuthor() == myResource.getId()) {
             // User is authorized to view review authored by him
             isAllowed = true;
-        } else if (verification.getSubmission().getUpload().getOwner() == myResource.getId()) {
+        } else if (myResource != null && verification.getSubmission().getUpload().getOwner() == myResource.getId()) {
             // User is authorized to view review for his submission 
             isAllowed = true;
         } else if (AuthorizationHelper.hasUserPermission(request, Constants.VIEW_ALL_REVIEWS_PERM_NAME)) {
