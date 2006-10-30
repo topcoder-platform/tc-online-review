@@ -1243,7 +1243,7 @@ public class ActionsHelper {
             // Get a phase for the current iteration
             Phase phase = phases[i];
             // Add the phase to list if it is open and, hence, active
-            if (phase.getPhaseStatus().getName().equalsIgnoreCase("Open")) {
+            if (phase.getPhaseStatus().getName().equals(PhaseStatus.OPEN)) {
                 activePhases.add(phase);
             }
         }
@@ -1251,7 +1251,7 @@ public class ActionsHelper {
         // Convert the list to array and return it
         return (Phase[]) activePhases.toArray(new Phase[activePhases.size()]);
     }
-
+    
     /**
      * This static method returns the phase with a particular name for a project.
      *
@@ -1308,7 +1308,7 @@ public class ActionsHelper {
                 // Get a name of status of this phase
                 String phaseStatus = phase.getPhaseStatus().getName();
                 // If the phase found that is not yet open, stop the search
-                if (phaseStatus.equalsIgnoreCase("Scheduled")) {
+                if (phaseStatus.equals(PhaseStatus.SCHEDULED)) {
                     break;
                 }
                 // If the name of the current phase matches the one
@@ -1324,6 +1324,13 @@ public class ActionsHelper {
         }
     }
 
+    /**
+     * TODO: Document this method.
+     * 
+     * @return
+     * @param phases
+     * @param deliverable
+     */
     public static Phase getPhaseForDeliverable(Phase[] phases, Deliverable deliverable) {
         // Validate parameters
         validateParameterNotNull(phases, "phases");
@@ -1848,6 +1855,13 @@ public class ActionsHelper {
         return project;
     }
 
+    /**
+     * TODO: Document this method.
+     * 
+     * @return
+     * @param phases
+     * @param phaseIndex
+     */
     public static boolean isAfterAppealsResponse(Phase[] phases, int phaseIndex) {
         // Validate parameters
         validateParameterNotNull(phases, "phases");
@@ -1874,7 +1888,7 @@ public class ActionsHelper {
             if (phaseName.equalsIgnoreCase(Constants.REVIEW_PHASE_NAME) ||
                     phaseName.equalsIgnoreCase(Constants.APPEALS_PHASE_NAME) ||
                     phaseName.equalsIgnoreCase(Constants.APPEALS_RESPONSE_PHASE_NAME)) {
-                if (!phase.getPhaseStatus().getName().equalsIgnoreCase("Closed")) {
+                if (!phase.getPhaseStatus().getName().equals(PhaseStatus.CLOSED)) {
                     return false;
                 }
                 found = true;
@@ -1887,6 +1901,12 @@ public class ActionsHelper {
         return true;
     }
 
+    /**
+     * TODO: Document this method.
+     * 
+     * @return
+     * @param phases
+     */
     public static boolean isAfterAppealsResponse(Phase[] phases) {
         // Validate parameter
         validateParameterNotNull(phases, "phases");
@@ -1899,7 +1919,7 @@ public class ActionsHelper {
             // Get this phase's status name
             String phaseStatus = phase.getPhaseStatus().getName();
             // If first Open or Scheduled phase found, stop the search
-            if (phaseStatus.equalsIgnoreCase("Open") || phaseStatus.equalsIgnoreCase("Scheduled")) {
+            if (phaseStatus.equals(PhaseStatus.OPEN) || phaseStatus.equals(PhaseStatus.SCHEDULED)) {
                 break;
             }
         }
@@ -1922,7 +1942,7 @@ public class ActionsHelper {
                 return false;
             }
             // Skip the Open or Scheduled phase, as only Closed phases make interest
-            if (!phase.getPhaseStatus().getName().equalsIgnoreCase("Closed")) {
+            if (!phase.getPhaseStatus().getName().equals(PhaseStatus.CLOSED)) {
                 continue;
             }
             // If Appeals response is the closed phase,
