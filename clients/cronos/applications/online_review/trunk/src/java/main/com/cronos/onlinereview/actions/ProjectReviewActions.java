@@ -2750,8 +2750,7 @@ public class ProjectReviewActions extends DispatchAction {
                 if (!AuthorizationHelper.hasUserPermission(request, Constants.EDIT_MY_REVIEW_PERM_NAME)) {
                     return ActionsHelper.produceErrorReport(mapping, getResources(request),
                         request, Constants.EDIT_MY_REVIEW_PERM_NAME, "Error.NoPermission");
-                } else if(verification.getReview().getAuthor() !=  
-                        ((Resource) request.getAttribute("authorResource")).getId()) {
+                } else if(verification.getReview().getAuthor() != myResource.getId()) {
                     return ActionsHelper.produceErrorReport(mapping, getResources(request),
                             request, Constants.EDIT_MY_REVIEW_PERM_NAME, "Error.NoPermission");
                 }     
