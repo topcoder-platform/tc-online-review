@@ -2052,17 +2052,6 @@ public class ProjectReviewActions extends DispatchAction {
         // Gather the roles the user has for current request
         AuthorizationHelper.gatherUserRoles(request, project.getId());
 
-        // If permission parameter was not null or empty string ...
-        if (permission != null) {
-            // ... verify that this permission is granted for currently logged in user
-            if (!AuthorizationHelper.hasUserPermission(request, permission)) {
-                result.setForward(ActionsHelper.produceErrorReport(
-                        mapping, getResources(request), request, permission, "Error.NoPermission"));
-                // Return the result of the check
-                return result;
-            }
-        }
-
         // Return the result of the check
         return result;
     }
@@ -2357,7 +2346,7 @@ public class ProjectReviewActions extends DispatchAction {
             permName = Constants.PERFORM_APPROVAL_PERM_NAME;
             phaseName = Constants.APPROVAL_PHASE_NAME;
         }
-
+        
         // Verify that user has the permission to perform review
         if (!AuthorizationHelper.hasUserPermission(request, permName)) {
             return ActionsHelper.produceErrorReport(
