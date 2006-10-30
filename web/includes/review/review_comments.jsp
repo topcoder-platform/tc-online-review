@@ -6,7 +6,7 @@
 <%@ taglib prefix="orfn" uri="/tags/or-functions" %>
 	<c:set var="responseNum" value="1" />
 	<c:set var="lastComment" value="${-1}" />
-	<c:if test="${!(empty item.document)}">
+	<c:if test="${not empty item.document}">
 		<c:forEach items="${item.allComments}" var="comment" varStatus="commentStatus">
 			<c:set var="commentType" value="${comment.commentType.name}" />
 			<c:if test='${commentType == "Comment" || commentType == "Required" || commentType == "Recommended"}'>
@@ -15,7 +15,7 @@
 		</c:forEach>
 	</c:if>
 	<c:forEach items="${item.allComments}" var="comment" varStatus="commentStatus">
-		<c:if test="${(empty managerEdit) || (managerEdit != true) || (comment.commentType.name != 'Manager Comment')}">
+		<c:if test="${(not managerEdit) || (comment.commentType.name != 'Manager Comment')}">
 			<tr class="dark">
 				<td class="value" width="100%">
 					<c:choose>
