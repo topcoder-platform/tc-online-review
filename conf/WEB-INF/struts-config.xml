@@ -18,6 +18,9 @@
         <form-bean name="projectForm" dynamic="true"
             type="org.apache.struts.validator.LazyValidatorForm">
             <form-property name="js_current_id" type="java.lang.Long" />
+    
+            <form-property name="action" type="java.lang.String" />
+            <form-property name="action_phase" type="java.lang.String" />           
 
             <form-property name="pid" type="java.lang.Long" />
             <form-property name="project_name" type="java.lang.String" />
@@ -39,8 +42,7 @@
             <form-property name="explanation" type="java.lang.String" />
             <form-property name="status" type="java.lang.Long" />
             <form-property name="status_explanation" type="java.lang.String" />
-            <form-property name="current_phase" type="java.lang.String" />
-
+            
             <form-property name="resources_role" type="java.lang.Long[]" />
             <form-property name="resources_phase" type="java.lang.String[]" />
             <form-property name="resources_name" type="java.lang.String[]" />
@@ -51,6 +53,8 @@
             <form-property name="resources_action" type="java.lang.String[]" />
             <form-property name="resources_id" type="java.lang.Long[]" />
 
+            <form-property name="phase_can_open" type="java.lang.Boolean[]" />
+            <form-property name="phase_can_close" type="java.lang.Boolean[]" />
             <form-property name="phase_type" type="java.lang.Long[]" />
             <form-property name="phase_id" type="java.lang.Long[]" />
             <form-property name="phase_name" type="java.lang.String[]" />
