@@ -27,6 +27,7 @@ import com.topcoder.management.deliverable.UploadType;
 import com.topcoder.management.project.Project;
 import com.topcoder.management.resource.Resource;
 import com.topcoder.management.resource.ResourceManager;
+import com.topcoder.management.resource.search.ResourceFilterBuilder;
 import com.topcoder.management.review.ReviewEntityNotFoundException;
 import com.topcoder.management.review.ReviewManager;
 import com.topcoder.management.review.data.Comment;
@@ -412,7 +413,7 @@ public class ProjectReviewActions extends DispatchAction {
             return ActionsHelper.produceErrorReport(
                     mapping, getResources(request), request, Constants.PERFORM_AGGREGATION_PERM_NAME, "Error.NoPermission");
         }
-        
+
         // Retrieve a review to edit
         Review review = verification.getReview();
 
@@ -555,7 +556,7 @@ public class ProjectReviewActions extends DispatchAction {
             return ActionsHelper.produceErrorReport(
                     mapping, getResources(request), request, Constants.PERFORM_AGGREGATION_PERM_NAME, "Error.NoPermission");
         }
-        
+
         // Retrieve a review to save
         Review review = verification.getReview();
 
@@ -757,13 +758,13 @@ public class ProjectReviewActions extends DispatchAction {
         if (!verification.isSuccessful()) {
             return verification.getForward();
         }
-        
+
         // Verify that user has the permission to view aggregation
         if (!AuthorizationHelper.hasUserPermission(request, Constants.VIEW_AGGREGATION_PERM_NAME)) {
             return ActionsHelper.produceErrorReport(
                     mapping, getResources(request), request, Constants.VIEW_AGGREGATION_PERM_NAME, "Error.NoPermission");
         }
-        
+
         // Retrieve a review (aggregation) to view
         Review review = verification.getReview();
 
@@ -829,8 +830,8 @@ public class ProjectReviewActions extends DispatchAction {
         if (!AuthorizationHelper.hasUserPermission(request, Constants.PERFORM_AGGREG_REVIEW_PERM_NAME)) {
             return ActionsHelper.produceErrorReport(
                     mapping, getResources(request), request, Constants.PERFORM_AGGREG_REVIEW_PERM_NAME, "Error.NoPermission");
-        }        
-        
+        }
+
         // Retrieve a review to edit
         Review review = verification.getReview();
 
@@ -1015,8 +1016,8 @@ public class ProjectReviewActions extends DispatchAction {
         if (!AuthorizationHelper.hasUserPermission(request, Constants.PERFORM_AGGREG_REVIEW_PERM_NAME)) {
             return ActionsHelper.produceErrorReport(
                     mapping, getResources(request), request, Constants.PERFORM_AGGREG_REVIEW_PERM_NAME, "Error.NoPermission");
-        }        
-        
+        }
+
         // Retrieve a review to save
         Review review = verification.getReview();
 
@@ -1211,7 +1212,7 @@ public class ProjectReviewActions extends DispatchAction {
             return ActionsHelper.produceErrorReport(
                     mapping, getResources(request), request, Constants.VIEW_AGGREG_REVIEW_PERM_NAME, "Error.NoPermission");
         }
-        
+
         // Retrieve a review (aggregation) to view
         Review review = verification.getReview();
 
@@ -1304,7 +1305,7 @@ public class ProjectReviewActions extends DispatchAction {
         // If any error has occured, return action forward contained in the result bean
         if (!verification.isSuccessful()) {
             return verification.getForward();
-        }        
+        }
 
         // Verify that user has the permission to perform final review
         if (!AuthorizationHelper.hasUserPermission(request, Constants.PERFORM_FINAL_REVIEW_PERM_NAME)) {
@@ -1647,7 +1648,7 @@ public class ProjectReviewActions extends DispatchAction {
             return ActionsHelper.produceErrorReport(
                     mapping, getResources(request), request, Constants.VIEW_FINAL_REVIEW_PERM_NAME, "Error.NoPermission");
         }
-        
+
         // Retrieve a review to view
         Review review = verification.getReview();
 
@@ -1833,10 +1834,6 @@ public class ProjectReviewActions extends DispatchAction {
     public ActionForward viewCompositeScorecard(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response)
         throws BaseException {
-
-        // FIXME: This method needs fixing!!!!
-        // TODO: Fix this method at the first possibility!!
-        
         // Verify that certain requirements are met before proceeding with the Action
         CorrectnessCheckResult verification =
                 checkForCorrectSubmissionId(mapping, request, Constants.VIEW_COMPOS_SCORECARD_PERM_NAME);
@@ -1845,100 +1842,113 @@ public class ProjectReviewActions extends DispatchAction {
             return verification.getForward();
         }
 
+        // Verify that currently logged in user has enough rights to proceed with the action
+        if (!AuthorizationHelper.hasUserPermission(request, Constants.VIEW_COMPOS_SCORECARD_PERM_NAME)) {
+            return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
+                    Constants.VIEW_COMPOS_SCORECARD_PERM_NAME, "Error.NoPermission");
+        }
+
         // Get current project
         Project project = verification.getProject();
 
         // Get an array of all phases for the project
         Phase[] phases = ActionsHelper.getPhasesForProject(ActionsHelper.createPhaseManager(request, false), project);
-        // Get active (opened) phases names
-        List activePhases = new ArrayList();
-        for (int i = 0; i < phases.length; i++) {
-            if (phases[i].getPhaseStatus().getName().equals(PhaseStatus.OPEN.getName())) {
-                activePhases.add(phases[i].getPhaseType().getName());
-            }
+
+        if (!ActionsHelper.isAfterAppealsResponse(phases)) {
+            return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
+                    Constants.VIEW_COMPOS_SCORECARD_PERM_NAME, "Error.CompositeScorecardWrongStage");
         }
 
         // Get the Review phase
         Phase phase = ActionsHelper.getPhase(phases, false, Constants.REVIEW_PHASE_NAME);
 
-        // Get "My" resource for the appropriate phase
-        Resource myResource = ActionsHelper.getMyResourceForPhase(request, phase);
-        // If no resource found for particular phase, try to find resource without phase assigned
-        if (myResource == null) {
-            myResource = ActionsHelper.getMyResourceForPhase(request, null);
-        }
-
-        /*
-         *  Verify that user has the permission to view the composite review
-         */
-        boolean isAllowed = false;
-        if (AuthorizationHelper.hasUserRole(request, Constants.MANAGER_ROLE_NAME) || 
-                AuthorizationHelper.hasUserRole(request, Constants.GLOBAL_MANAGER_ROLE_NAME) ||
-                AuthorizationHelper.hasUserRole(request, Constants.OBSERVER_ROLE_NAME)) {
-            // User is manager or observer
-            isAllowed = true;
-        } else if (verification.getSubmission().getUpload().getOwner() == myResource.getId()) {
-            // User is authorized to view review for his submission 
-            isAllowed = true;
-        } else if (AuthorizationHelper.hasUserPermission(request, Constants.VIEW_COMPOS_SCORECARD_PERM_NAME)) {
-            // User is authorized to view all composite scorecards (when not in Review, Appeals or Appeals Response)
-            if (!activePhases.contains(Constants.REVIEW_PHASE_NAME) && 
-                    !activePhases.contains(Constants.APPEALS_PHASE_NAME) &&
-                    !activePhases.contains(Constants.APPEALS_RESPONSE_PHASE_NAME)) {
-                isAllowed = true;
-            }
-        }
-         
-        if (!isAllowed) {
-            return ActionsHelper.produceErrorReport(
-                    mapping, getResources(request), request, Constants.VIEW_COMPOS_SCORECARD_PERM_NAME, "Error.NoPermission");        
-        }
-        
         // Retrieve a scorecard template for the Review phase
         Scorecard scorecardTemplate = ActionsHelper.getScorecardTemplateForPhase(
                 ActionsHelper.createScorecardManager(request), phase);
+        // Get the count of questions in the current scorecard
+        final int questionsCount = ActionsHelper.getScorecardQuestionsCount(scorecardTemplate);
+
+        // Build a filter to select resources (i.e. reviewers) for Review phase
+        Filter filterPhase = ResourceFilterBuilder.createPhaseIdFilter(phase.getId());
+        // Obtain an instance of Resource Manager
+        ResourceManager resMgr = ActionsHelper.createResourceManager(request);
+        // Retrieve reviewers that did the reviews
+        Resource[] reviewers = resMgr.searchResources(filterPhase);
+
+        if (reviewers.length == 0) {
+            return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
+                    Constants.VIEW_COMPOS_SCORECARD_PERM_NAME, "Error.InternalError");
+        }
+
+        List reviewerIds = new ArrayList();
+
+        for (int i = 0; i < reviewers.length; ++i) {
+            reviewerIds.add(new Long(reviewers[i].getId()));
+        }
 
         // Prepare filters
+        Filter filterReviewers = new InFilter("reviewer", reviewerIds);
         Filter filterSubmission = new EqualToFilter("submission", new Long(verification.getSubmission().getId()));
         Filter filterCommitted = new EqualToFilter("committed", new Integer(1));
         Filter filterScorecard = new EqualToFilter("scorecardType",
                 new Long(scorecardTemplate.getScorecardType().getId()));
 
-        // Build the list of all filters that should be joined using AND operator
-        List filters = new ArrayList();
-        filters.add(filterSubmission);
-        filters.add(filterScorecard);
-        filters.add(filterCommitted);
-
         // Prepare final combined filter
-        Filter filter = new AndFilter(filters);
+        Filter filter = new AndFilter(Arrays.asList(
+                new Filter[] {filterReviewers, filterSubmission, filterCommitted, filterScorecard}));
         // Obtain an instance of Review Manager
         ReviewManager revMgr = ActionsHelper.createReviewManager(request);
         // Retrieve an array of reviews
         Review[] reviews = revMgr.searchReviews(filter, true);
 
-        if (reviews.length == 0) {
-            return null; // TODO: Forward to userError.jsp page
+        if (reviews.length != reviewers.length) {
+            return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
+                    Constants.VIEW_COMPOS_SCORECARD_PERM_NAME, "Error.CompositeScorecardIsNotReady");
         }
 
-        // Obtain an instance of Resource Manager
-        ResourceManager resourceManager = ActionsHelper.createResourceManager(request);
+        // Verify that number of items in every review scorecard
+        // match the number of questions in scorecard template
+        for (int i = 0; i < reviews.length; ++i) {
+            if (reviews[i].getNumberOfItems() != questionsCount) {
+                return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
+                        Constants.VIEW_COMPOS_SCORECARD_PERM_NAME, "Error.InternalError");
+            }
+        }
+
         // Obtain ScorecardMatrix for scorecard
         ScorecardMatrix matrix = (new DefaultScorecardMatrixBuilder()).buildScorecardMatrix(scorecardTemplate);
         // Create CalculationManager instance
         CalculationManager calculationManager = new CalculationManager();
 
+
         // Retrieve the user ids for the review authors
         // and additionally the individual item scores and average total score
-        long[] authors = new long[reviews.length];
-        float avgScore = 0;
-        float[][] scores = new float[reviews.length][];
+        long[] authors = new long[reviewers.length];
+        double avgScore = 0.0;
+        double[] avgScores = new double[questionsCount];
+        double[][] scores = new double[reviews.length][];
 
         for (int i = 0; i < reviews.length; i++) {
-            Resource authorResource = resourceManager.getResource(reviews[i].getAuthor());
-            authors[i] = Long.parseLong((String) authorResource.getProperty("External Reference ID"));
-            avgScore += (reviews[i].getScore() != null) ? reviews[i].getScore().floatValue() : 0;
-            scores[i] = new float[reviews[i].getNumberOfItems()];
+            // Get a review for the current iteration
+            Review review = reviews[i];
+
+            Resource reviewer = null;
+            // Find a reviewer that is authour of the current review
+            for (int j = 0; j < reviewers.length; ++j) {
+                if (review.getAuthor() == reviewers[j].getId()) {
+                    reviewer = reviewers[j];
+                    break;
+                }
+            }
+
+            if (reviewer == null) {
+                return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
+                        Constants.VIEW_COMPOS_SCORECARD_PERM_NAME, "Error.InternalError");
+            }
+
+            authors[i] = Long.parseLong((String) reviewer.getProperty("External Reference ID"));
+            avgScore += (review.getScore() != null) ? review.getScore().floatValue() : 0;
+            scores[i] = new double[questionsCount];
             int itemIdx = 0;
 
             for (int groupIdx = 0; groupIdx < scorecardTemplate.getNumberOfGroups(); groupIdx++) {
@@ -1951,18 +1961,30 @@ public class ProjectReviewActions extends DispatchAction {
                         ScoreCalculator scoreCalculator =
                             calculationManager.getScoreCalculator(question.getQuestionType().getId());
                         scores[i][itemIdx] = (float) (matrix.getLineItem(question.getId()).getWeight() *
-                            scoreCalculator.evaluateItem(reviews[i].getItem(itemIdx), question));
+                            scoreCalculator.evaluateItem(review.getItem(itemIdx), question));
                         ++itemIdx;
                     }
                 }
             }
         }
 
-        // TODO: Calculate average per-item scores
-        avgScore /= reviews.length;
+        // Calculate average per-item scores
+        for (int i = 0; i < questionsCount; ++i) {
+            double itemScore = 0.0;
+
+            for (int j = 0; j < reviewers.length; ++j) {
+                itemScore += scores[j][i];
+                avgScores[i] = itemScore / reviewers.length;
+            }
+        }
+
+        // Calculate average score
+        avgScore /= reviewers.length;
+
         // Store gathered data into the request
         request.setAttribute("authors", authors);
-        request.setAttribute("avgScore", new Float(avgScore));
+        request.setAttribute("avgScore", new Double(avgScore));
+        request.setAttribute("avgScores", avgScores);
         request.setAttribute("scores", scores);
 
         // Retrieve some basic review info and store it in the request
@@ -2513,13 +2535,13 @@ public class ProjectReviewActions extends DispatchAction {
             if (!AuthorizationHelper.hasUserPermission(request, Constants.EDIT_MY_REVIEW_PERM_NAME)) {
                 return ActionsHelper.produceErrorReport(mapping, getResources(request),
                     request, Constants.EDIT_MY_REVIEW_PERM_NAME, "Error.NoPermission");
-            } else if(verification.getReview().getAuthor() != 
+            } else if(verification.getReview().getAuthor() !=
                     ((Resource) request.getAttribute("authorResource")).getId()) {
                 return ActionsHelper.produceErrorReport(mapping, getResources(request),
                         request, Constants.EDIT_MY_REVIEW_PERM_NAME, "Error.NoPermission");
-            }     
+            }
         }
-        
+
         // Retrive some look-up data and store it into the request
         CommentType[] commentTypes = retreiveAndStoreReviewLookUpData(request);
 
@@ -2698,7 +2720,7 @@ public class ProjectReviewActions extends DispatchAction {
                 return ActionsHelper.produceErrorReport(
                         mapping, getResources(request), request, permName, "Error.NoPermission");
             }
-            
+
             /*
              * Verify that the user is not trying to create review that already exists
              */
@@ -2733,7 +2755,8 @@ public class ProjectReviewActions extends DispatchAction {
                 verification.setReview(review);
             }
         }
-        if (review != null) {            
+
+        if (review != null) {
             // Verify that the user has permission to edit review
             if (!AuthorizationHelper.hasUserPermission(request, Constants.EDIT_ANY_SCORECARD_PERM_NAME)) {
                 if (!AuthorizationHelper.hasUserPermission(request, Constants.EDIT_MY_REVIEW_PERM_NAME)) {
@@ -2742,9 +2765,9 @@ public class ProjectReviewActions extends DispatchAction {
                 } else if(verification.getReview().getAuthor() != myResource.getId()) {
                     return ActionsHelper.produceErrorReport(mapping, getResources(request),
                             request, Constants.EDIT_MY_REVIEW_PERM_NAME, "Error.NoPermission");
-                }     
+                }
             }
-            
+
             // Obtain an instance of Scorecard Manager
             ScorecardManager scrMgr = ActionsHelper.createScorecardManager(request);
             // Retrieve a scorecard template for the review
@@ -3317,32 +3340,32 @@ public class ProjectReviewActions extends DispatchAction {
          *  Verify that user has the permission to view the review
          */
         boolean isAllowed = false;
-        if (AuthorizationHelper.hasUserRole(request, Constants.MANAGER_ROLE_NAME) || 
+        if (AuthorizationHelper.hasUserRole(request, Constants.MANAGER_ROLE_NAME) ||
                 AuthorizationHelper.hasUserRole(request, Constants.GLOBAL_MANAGER_ROLE_NAME) ||
                 AuthorizationHelper.hasUserRole(request, Constants.OBSERVER_ROLE_NAME)) {
             // User is manager or observer
             isAllowed = true;
-        } else if (AuthorizationHelper.hasUserPermission(request, Constants.VIEW_REVIEWER_REVIEWS_PERM_NAME) && 
+        } else if (AuthorizationHelper.hasUserPermission(request, Constants.VIEW_REVIEWER_REVIEWS_PERM_NAME) &&
                     verification.getReview().getAuthor() == myResource.getId()) {
             // User is authorized to view review authored by him
             isAllowed = true;
         } else if (myResource != null && verification.getSubmission().getUpload().getOwner() == myResource.getId()) {
-            // User is authorized to view review for his submission 
+            // User is authorized to view review for his submission
             isAllowed = true;
         } else if (AuthorizationHelper.hasUserPermission(request, Constants.VIEW_ALL_REVIEWS_PERM_NAME)) {
             // User is authorized to view all reviews (when not in Review, Appeals or Appeals Response)
-            if (!activePhases.contains(Constants.REVIEW_PHASE_NAME) && 
+            if (!activePhases.contains(Constants.REVIEW_PHASE_NAME) &&
                     !activePhases.contains(Constants.APPEALS_PHASE_NAME) &&
                     !activePhases.contains(Constants.APPEALS_RESPONSE_PHASE_NAME)) {
                 isAllowed = true;
             }
         }
-         
+
         if (!isAllowed) {
             return ActionsHelper.produceErrorReport(
-                    mapping, getResources(request), request, permName, "Error.NoPermission");        
+                    mapping, getResources(request), request, permName, "Error.NoPermission");
         }
-        
+
         // Obtain an instance of Scorecard Manager
         ScorecardManager scrMgr = ActionsHelper.createScorecardManager(request);
         // Retrieve a scorecard template for this review
