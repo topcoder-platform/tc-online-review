@@ -2347,12 +2347,6 @@ public class ProjectReviewActions extends DispatchAction {
             phaseName = Constants.APPROVAL_PHASE_NAME;
         }
         
-        // Verify that user has the permission to perform review
-        if (!AuthorizationHelper.hasUserPermission(request, permName)) {
-            return ActionsHelper.produceErrorReport(
-                    mapping, getResources(request), request, permName, "Error.NoPermission");
-        }
-        
         // Verify that certain requirements are met before proceeding with the Action
         CorrectnessCheckResult verification =
                 checkForCorrectSubmissionId(mapping, request, permName);
@@ -2361,6 +2355,12 @@ public class ProjectReviewActions extends DispatchAction {
             return verification.getForward();
         }
 
+        // Verify that user has the permission to perform review
+        if (!AuthorizationHelper.hasUserPermission(request, permName)) {
+            return ActionsHelper.produceErrorReport(
+                    mapping, getResources(request), request, permName, "Error.NoPermission");
+        }
+                        
         // Get current project
         Project project = verification.getProject();
 
