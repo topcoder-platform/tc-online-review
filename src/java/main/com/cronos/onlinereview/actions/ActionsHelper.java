@@ -1077,6 +1077,25 @@ public class ActionsHelper {
     }
 
     /**
+     * This static method determines if the specified comment is a final review comment.
+     *
+     * @return <code>true</code> if the specifed comment is final review comment,
+     *         <code>false</code> if it is not.
+     * @param comment
+     *            a comment to determine type of.
+     * @throws IllegalArgumentException
+     *             if <code>comment</code> parameter is <code>null</code>.
+     */
+    public static boolean isFinalReviewComment(Comment comment) {
+        // Validate parameter
+        validateParameterNotNull(comment, "comment");
+
+        String commentType = comment.getCommentType().getName();
+
+        return (commentType != null && commentType.equalsIgnoreCase("Final Review Comment"));
+    }
+
+    /**
      * This method helps gather some commonly used information about the project. When the
      * information has been gathered, this method places it into the request as a set of attributes.
      *

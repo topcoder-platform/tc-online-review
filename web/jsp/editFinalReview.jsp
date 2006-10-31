@@ -158,7 +158,8 @@
 																${orfn:htmlEncode(comment.comment)}
 																<c:if test="${isLastCommentForItem == true}">
 																	<div style="padding-top:4px;">
-																		<b><bean:message key="editReview.EditAggregation.ResponseText" /></b><br />
+																		<b><bean:message key="editReview.EditAggregation.ResponseText" /></b> &#160;
+																		<span class="error"><html:errors property="final_comment[${globalCommentIdx}]" prefix="" suffix="" /></span><br />
 																		<html:textarea rows="2" property="final_comment[${globalCommentIdx}]" cols="20" styleClass="inputTextBox" />
 																		<c:set var="globalCommentIdx" value="${globalCommentIdx + 1}" />
 																	</div>
@@ -166,7 +167,9 @@
 															</td>
 															<c:if test="${isReviewerComment == true}">
 																<td class="${rowClass}">
-																	<bean:message key='CommentType.${fn:replace(commentType, " ", "")}' /></td>
+																	<bean:message key='CommentType.${fn:replace(commentType, " ", "")}' />
+																	<div class="error" align="right"><html:errors property="fix_status[${globalStatusIdx}]" prefix="" suffix="" /></div>
+																</td>
 																<td class="${rowClass}C" valign="top">
 																	<html:radio property="fix_status[${globalStatusIdx}]" value="Fixed" /></td>
 																<td class="${rowClass}C" valign="top">
