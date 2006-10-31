@@ -3303,7 +3303,7 @@ public class ProjectReviewActions extends DispatchAction {
         }
 
         // Get active (current) phase with specified name
-        Phase phase = ActionsHelper.getPhase(phases, true, phaseName);
+        Phase phase = ActionsHelper.getPhase(phases, false, phaseName);
 
         // Get "My" resource for the appropriate phase (for reviewers actually)
         Resource myResource = ActionsHelper.getMyResourceForPhase(request, phase);
