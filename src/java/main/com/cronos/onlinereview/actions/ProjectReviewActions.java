@@ -17,6 +17,7 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.actions.DispatchAction;
 import org.apache.struts.upload.FormFile;
+import org.apache.struts.util.MessageResources;
 import org.apache.struts.validator.LazyValidatorForm;
 
 import com.topcoder.management.deliverable.Submission;
@@ -101,6 +102,18 @@ import com.topcoder.util.errorhandling.BaseException;
  */
 public class ProjectReviewActions extends DispatchAction {
 
+    /**
+     * This member variable is a constant that specifies the count of comments displayed for each
+     * item by default on Edit Screening, Edit Review, and Edit Approval pages.
+     */
+    private static final int DEFAULT_COMMENTS_NUMBER = 3;
+    
+    /**
+     * This member variable is a constant that specifies the count of comments displayed for each
+     * item when Manager opens either Edit Screening, Edit Review, or Edit Approval page.
+     */
+    private static final int MANAGER_COMMENTS_NUMBER = 1;
+    
     /**
      * This member variable holds the all possible values of answers to &#39;Scale&#160;(1-4)&#39;
      * and &#39;Scale&#160;(1-10)&#39; types of scorecard question.
@@ -2453,15 +2466,12 @@ public class ProjectReviewActions extends DispatchAction {
         CommentType typeComment = ActionsHelper.findCommentTypeByName(
                 (CommentType[]) request.getAttribute("allCommentTypes"), "Comment");
 
-        // TODO: Probably make it a static class memeber or even configurable value
-        int commentsCount = 3;
-
         Integer[] commentCounts = new Integer[questionsCount];
-        Arrays.fill(commentCounts, new Integer(commentsCount));
+        Arrays.fill(commentCounts, new Integer(DEFAULT_COMMENTS_NUMBER));
         reviewForm.set("comment_count", commentCounts);
 
         for (int i = 0; i < questionsCount; i++) {
-            for (int j = 0; j <= commentsCount; j++) {
+            for (int j = 0; j <= DEFAULT_COMMENTS_NUMBER; j++) {
                 reviewForm.set("comment", i + "." + j, "");
                 reviewForm.set("comment_type", i + "." + j, typeComment);
             }
@@ -2566,7 +2576,8 @@ public class ProjectReviewActions extends DispatchAction {
                     reviewForm.set("comment_type", itemIdx + ".0", null);
                     reviewForm.set("comment", itemIdx + ".0", "");
 
-                    final int commentCount = Math.max(comments.length, (managerEdit) ? 1 : 3);
+                    final int commentCount =
+                        Math.max(comments.length, (managerEdit) ? MANAGER_COMMENTS_NUMBER : DEFAULT_COMMENTS_NUMBER);
 
                     reviewForm.set("comment_count", itemIdx, new Integer(commentCount));
 
@@ -3201,67 +3212,6 @@ public class ProjectReviewActions extends DispatchAction {
         }
 
         return newCommentCount - 1;
-
-/* TODO: Remove this commented block if this method works well
-        for (int i = 0; i < item.getNumberOfComments(); ++i) {
-            // Get a comment for the current iteration
-            Comment comment = item.getComment(i);
-
-            // Skip non-manager's comments for Manager edits
-            if (managerEdit && !ActionsHelper.isManagerComment(comment)) {
-                continue;
-            }
-            // Skip non-reviewer's comments for non-Manager edits
-            if (!managerEdit && !ActionsHelper.isReviewerComment(comment)) {
-                continue;
-            }
-
-            String commentKey = itemIdx + "." + (commentIdx + 1);
-            String reply = (String) replies.get(commentKey);
-
-        }
-
-        List comments = (managerEdit) ? getItemManagerComments(item) : getItemReviewerComments(item);
-
-        while (comments.size() < commentCount) {
-           Comment comment = new Comment();
-           comments.add(comment);
-           item.addComment(comment);
-        }
-        while (comments.size() > commentCount) {
-            Comment comment = (Comment) comments.get(comments.size() - 1);
-            item.removeComment(comment);
-            comments.remove(comments.size() - 1);
-        }
-
-        for (int i = 0; i < commentCount; i++) {
-            Comment comment = (Comment) comments.get(i);
-
-            // Set the comment text
-            comment.setComment((String) replies.get(itemIdx + "." + (i + 1)));
-
-            // Set the comment type
-            CommentType commentType;
-            if (!managerEdit) {
-                commentType = ActionsHelper.findCommentTypeById(commentTypes,
-                        Long.parseLong((String) commentTypeIds.get(itemIdx + "." + (i + 1))));
-            } else {
-                commentType = ActionsHelper.findCommentTypeByName(commentTypes, "Manager Comment");
-            }
-            comment.setCommentType(commentType);
-
-            // Update the author of the comment
-            comment.setAuthor(myResource.getId());
-        }
-
-        // If needed remove empty comments
-        if (removeEmpty) {
-            for (int i = 0; i < item.getNumberOfComments(); i++) {
-                if (item.getComment(i).getComment().trim().length() == 0) {
-                    item.removeComment(item.getComment(i));
-                }
-            }
-        }*/
     }
 
 	/**
@@ -3410,14 +3360,15 @@ public class ProjectReviewActions extends DispatchAction {
             if (canPlaceAppeal || canPlaceAppealResponse) {
                 // Gather the appeal statuses
                 String[] appealStatuses = new String[verification.getReview().getNumberOfItems()];
+                // Message Resources to be used for the Action
+                MessageResources messages = getResources(request);
                 for (int i = 0; i < appealStatuses.length; i++) {
                     Comment appeal = getCommentAppeal(verification.getReview().getItem(i).getAllComments());
                     Comment response = getCommentAppealResponse(verification.getReview().getItem(i).getAllComments());
                     if (appeal != null && response == null) {
-                        // TODO: Localize the strings
-                        appealStatuses[i] = "Unresolved";
+                        appealStatuses[i] = messages.getMessage("editReview.Appeal.Unresolved");
                     } else if (appeal != null) {
-                        appealStatuses[i] = "Resolved";
+                        appealStatuses[i] = messages.getMessage("editReview.Appeal.Resolved");
                     } else {
                         appealStatuses[i] = "";
                     }
