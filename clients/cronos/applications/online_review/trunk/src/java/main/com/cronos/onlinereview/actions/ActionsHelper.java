@@ -1015,6 +1015,68 @@ public class ActionsHelper {
     }
 
     /**
+     * This static method determines if the specified comment is appeal or appeal response.
+     *
+     * @return <code>true</code> if the specifed comment is appeal or appeal response,
+     *         <code>false</code> if it is not.
+     * @param comment
+     *            a comment to determine type of.
+     * @throws IllegalArgumentException
+     *             if <code>comment</code> parameter is <code>null</code>.
+     */
+    public static boolean isAppealsComment(Comment comment) {
+        // Validate parameter
+        validateParameterNotNull(comment, "comment");
+
+        String commentType = comment.getCommentType().getName();
+
+        return (commentType != null &&
+                (commentType.equalsIgnoreCase("Appeal") || commentType.equalsIgnoreCase("Appeal Response")));
+    }
+
+    /**
+     * This static method determines if the specified comment is aggregator's comment.
+     *
+     * @return <code>true</code> if the specifed comment is aggregator's comment,
+     *         <code>false</code> if it is not.
+     * @param comment
+     *            a comment to determine type of.
+     * @throws IllegalArgumentException
+     *             if <code>comment</code> parameter is <code>null</code>.
+     */
+    public static boolean isAggregatorComment(Comment comment) {
+        // Validate parameter
+        validateParameterNotNull(comment, "comment");
+
+        String commentType = comment.getCommentType().getName();
+
+        return (commentType != null && commentType.equalsIgnoreCase("Aggregation Comment"));
+    }
+
+    /**
+     * This static method determines if the specified comment is aggregation review comment.
+     * Aggregation review comments are those that were put either by reviewer or by submitter when
+     * they were doing the review of aggregation scorecard.
+     *
+     * @return <code>true</code> if the specifed comment is aggregation review comment,
+     *         <code>false</code> if it is not.
+     * @param comment
+     *            a comment to determine type of.
+     * @throws IllegalArgumentException
+     *             if <code>comment</code> parameter is <code>null</code>.
+     */
+    public static boolean isAggregationReviewComment(Comment comment) {
+        // Validate parameter
+        validateParameterNotNull(comment, "comment");
+
+        String commentType = comment.getCommentType().getName();
+
+        return (commentType != null &&
+                (commentType.equalsIgnoreCase("Aggregation Review Comment") ||
+                commentType.equalsIgnoreCase("Submitter Comment")));
+    }
+
+    /**
      * This method helps gather some commonly used information about the project. When the
      * information has been gathered, this method places it into the request as a set of attributes.
      *
@@ -1251,7 +1313,7 @@ public class ActionsHelper {
         // Convert the list to array and return it
         return (Phase[]) activePhases.toArray(new Phase[activePhases.size()]);
     }
-    
+
     /**
      * This static method returns the phase with a particular name for a project.
      *
@@ -1326,7 +1388,7 @@ public class ActionsHelper {
 
     /**
      * TODO: Document this method.
-     * 
+     *
      * @return
      * @param phases
      * @param deliverable
@@ -1857,7 +1919,7 @@ public class ActionsHelper {
 
     /**
      * TODO: Document this method.
-     * 
+     *
      * @return
      * @param phases
      * @param phaseIndex
@@ -1903,7 +1965,7 @@ public class ActionsHelper {
 
     /**
      * TODO: Document this method.
-     * 
+     *
      * @return
      * @param phases
      */

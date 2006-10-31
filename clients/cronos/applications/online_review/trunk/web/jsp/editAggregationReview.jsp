@@ -160,7 +160,8 @@
 														<html:radio property="review_function[${globalItemIndex}]" value="Accept" />
 														<bean:message key="editAggregationReview.Function.Accept" />
 														<html:radio property="review_function[${globalItemIndex}]" value="Reject" />
-														<bean:message key="editAggregationReview.Function.Reject" /><br />
+														<bean:message key="editAggregationReview.Function.Reject" /> &#160;
+														<span class="error"><html:errors property="reject_reason[${globalItemIndex}]" prefix="" suffix="" /></span><br />
 														<html:textarea rows="3" property="reject_reason[${globalItemIndex}]" cols="20" styleClass="inputTextBox" />
 													</td>
 												</tr>
