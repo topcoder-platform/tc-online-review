@@ -5,7 +5,8 @@
 <%@ taglib prefix="orfn" uri="/tags/or-functions" %>
 <%@ taglib prefix="tc-webtag" uri="/tags/tc-webtags" %>
 <jsp:useBean id="sessionInfo" class="com.topcoder.web.common.SessionInfo" scope="request" />
-<script language="javascript" type="text/javascript">
+<script language="JavaScript" type="text/javascript" src="/js/tcscript.js"><!-- @ --></script>
+<script language="JavaScript" type="text/javascript">
 <!--
 	var objPopUp = null;
 	function popUpUnder(event,objectID) {
@@ -97,8 +98,8 @@ div.launchPopUp {
 </div>
 
 <div class="memberCountBox">
-Member Count: <%=new DecimalFormat("#,##0").format(sessionInfo.getMemberCount())%> - <tc-webtag:format object="<%=sessionInfo.getDate()%>" format="MMMM d, yyyy"/>
-&#160;<a class="gMetal" href="Javascript:tcTime()">[Get Time]</a>
+	Member Count: <%=new DecimalFormat("#,##0").format(sessionInfo.getMemberCount())%> - <tc-webtag:format object="<%=sessionInfo.getDate()%>" format="MMMM d, yyyy"/>
+	&#160;<a class="gMetal" href="Javascript:tcTime()">[Get Time]</a>
 </div>
 
 <div class="topBar">
