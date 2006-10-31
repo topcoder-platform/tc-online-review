@@ -349,7 +349,7 @@ public class ConfigHelper {
      * outstanding deliverables are shown with &quot;Deadline&#160;Near&quot; status, and statuses
      * of open phases are shown as &quot;Closing&quot;.
      */
-    private static int deadlineNearDuration = 48;
+    private static long deadlineNearDuration = 48;
 
     /**
      * This member variable holds the formatting string used to format scorecard scores.
@@ -523,7 +523,7 @@ public class ConfigHelper {
             }
             // Verify that duration of "Deadline Near" status was specified, and assign it
             if (deadlineNearDurationStr != null && deadlineNearDurationStr.trim().length() != 0) {
-                int duration = Integer.parseInt(deadlineNearDurationStr, 10);
+                long duration = Long.parseLong(deadlineNearDurationStr, 10);
                 if (duration >= 0) {
                     deadlineNearDuration = duration;
                 }
@@ -714,7 +714,7 @@ public class ConfigHelper {
      *
      * @return the time duration, in hours.
      */
-    public static int getDeadlineNearDuration() {
+    public static long getDeadlineNearDuration() {
         return deadlineNearDuration;
     }
 

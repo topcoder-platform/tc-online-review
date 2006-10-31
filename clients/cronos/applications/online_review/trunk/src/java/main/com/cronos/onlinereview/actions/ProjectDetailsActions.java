@@ -2336,6 +2336,8 @@ public class ProjectDetailsActions extends DispatchAction {
         // Validate parameters
         ActionsHelper.validateParameterNotNull(phases, "phases");
 
+        final long deadlineNear = ConfigHelper.getDeadlineNearDuration() * 60 * 60 * 1000;
+
         int[] statusCodes = new int[phases.length];
         for (int i = 0; i < phases.length; ++i) {
             // Get a Phase for the current iteration
@@ -2350,7 +2352,7 @@ public class ProjectDetailsActions extends DispatchAction {
 
                 if (currentTime > phaseTime) {
                     statusCodes[i] = 4; // Late
-                } else if (currentTime + (2 * 60 * 60 * 1000) > phaseTime) {
+                } else if (currentTime + deadlineNear > phaseTime) {
                     statusCodes[i] = 3; // Closing
                 } else {
                     statusCodes[i] = 2; // Open
