@@ -1357,7 +1357,7 @@ public class ProjectReviewActions extends DispatchAction {
         }
 
         // Retrieve some basic aggregation info and store it into the request
-        retrieveAndStoreBasicAggregationInfo(request, verification, scorecardTemplate, "AggregationReview");
+        retrieveAndStoreBasicAggregationInfo(request, verification, scorecardTemplate, "FinalReview");
 
         int reviewerCommentsNum = 0;
         int[] lastCommentIdxs = new int[review.getNumberOfItems()];
@@ -1524,6 +1524,11 @@ public class ProjectReviewActions extends DispatchAction {
                     Constants.PERFORM_FINAL_REVIEW_PERM_NAME, "Error.IncorrectPhase");
         }
 
+        // This variable determines if 'Save and Mark Complete' button has been clicked
+        final boolean commitRequested = "submit".equalsIgnoreCase(request.getParameter("save"));
+        // This variable determines if Preview button has been clicked
+        final boolean previewRequested = "preview".equalsIgnoreCase(request.getParameter("save"));
+
         // Retrieve a resource for the Final Review phase
         Resource resource = ActionsHelper.getMyResourceForPhase(request, phase);
         // Get the form defined for this action
@@ -1607,17 +1612,18 @@ public class ProjectReviewActions extends DispatchAction {
             review.addComment(reviewLevelComment);
         }
 
-        reviewLevelComment.setExtraInfo((approveFixes == true) ? "Approved" : "Approving");
+        reviewLevelComment.setExtraInfo("Approving");
+
+        boolean validationSucceeded =
+            (commitRequested) ? validateFinalReviewScorecard(request, scorecardTemplate, review) : true;
 
         // If the user has requested to complete the review
-        if ("submit".equalsIgnoreCase(request.getParameter("save"))) {
-            // TODO: Validate review here
-
+        if (validationSucceeded && commitRequested) {
             reviewLevelComment.setExtraInfo((approveFixes == true) ? "Approved" : "Rejected");
 
             // Set the completed status of the review
             review.setCommitted(true);
-        } else if ("preview".equalsIgnoreCase(request.getParameter("save"))) {
+        } else if (previewRequested) {
             // Retrieve some basic aggregation info and store it into the request
             retrieveAndStoreBasicAggregationInfo(request, verification, scorecardTemplate, "FinalReview");
 
@@ -1630,6 +1636,15 @@ public class ProjectReviewActions extends DispatchAction {
 
         // Update (save) edited Aggregation
         revMgr.updateReview(review, Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
+
+        if (!validationSucceeded) {
+            // Put the review object into the request
+            request.setAttribute("review", review);
+            // Retrieve some basic review info and store it in the request
+            retrieveAndStoreBasicAggregationInfo(request, verification, scorecardTemplate, "FinalReview");
+
+            return mapping.getInputForward();
+        }
 
         // Forward to project details page
         return ActionsHelper.cloneForwardAndAppendToPath(
@@ -3569,7 +3584,9 @@ public class ProjectReviewActions extends DispatchAction {
      *            an ID of the resource which was used to update the aggregation review scorecard
      *            that needs validation.
      * @throws IllegalArgumentException
-     *             if any of the parameters are <code>null</code>.
+     *             if any of the <code>request</code>, <code>scorecardTemplate</code>, or
+     *             <code>aggregationReview</code> parameters are <code>null</code>, or if
+     *             <code>authorId</code> parameter is zero or negative.
      */
     private static boolean validateAggregationReviewScorecard(
             HttpServletRequest request, Scorecard scorecardTemplate, Review aggregationReview, long authorId) {
@@ -3619,6 +3636,98 @@ public class ProjectReviewActions extends DispatchAction {
                                     (commentText == null || commentText.trim().length() == 0)) {
                                 ActionsHelper.addErrorToRequest(request, "reject_reason[" + itemIdx + "]",
                                         "Error.saveAggregationReview.RejectReason.Absent");
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        return !ActionsHelper.isErrorsPresent(request);
+    }
+
+    /**
+     * This static method validates Final Review scorecard. This type of scorecard is considered
+     * valid if all reviewers' notes have been marked as &#39;Fixed&#39;, or if comments have been
+     * entered for notes marked as &#39;Not&#160;Fixed&#39;.
+     *
+     * @return <code>true</code> if scorecard passes validation, <code>false</code> if it does
+     *         not.
+     * @param request
+     *            an <code>HttpServletRequest</code> object where validation error messages will
+     *            be placed to in case there are any.
+     * @param scorecardTemplate
+     *            a scorecard template of type &quot;Review&quot; that was used to generate the
+     *            aggregation review scorecard to be validated.
+     * @param finalReview
+     *            a final review scorecard to be validated.
+     * @throws IllegalArgumentException
+     *             if any of the parameters are <code>null</code>.
+     */
+    private static boolean validateFinalReviewScorecard(
+            HttpServletRequest request, Scorecard scorecardTemplate, Review finalReview) {
+        // Validate parameters
+        ActionsHelper.validateParameterNotNull(request, "request");
+        ActionsHelper.validateParameterNotNull(scorecardTemplate, "scorecardTemplate");
+        ActionsHelper.validateParameterNotNull(finalReview, "finalReview");
+
+        final int numberOfItems = finalReview.getNumberOfItems();
+        int itemIdx = -1;
+        int commentIdx = -1;
+
+        for (int groupIdx = 0; groupIdx < scorecardTemplate.getNumberOfGroups(); ++groupIdx) {
+            Group group = scorecardTemplate.getGroup(groupIdx);
+            for (int sectionIdx = 0; sectionIdx < group.getNumberOfSections(); ++sectionIdx) {
+                Section section = group.getSection(sectionIdx);
+                for (int questionIdx = 0; questionIdx < section.getNumberOfQuestions(); ++questionIdx) {
+                    Question question = section.getQuestion(questionIdx);
+                    long questionId = question.getId();
+
+                    for (int i = 0; i < numberOfItems; ++i) {
+                        if (finalReview.getItem(i).getQuestion() != questionId) {
+                            continue;
+                        }
+
+                        // Get a review's item
+                        Item item = finalReview.getItem(i);
+                        // Specifies whether at least one "Not Fixed" radio box is checked
+                        boolean notFixed = false;
+
+                        // Validate item's Accept/Reject status
+                        for (int j = 0; j < item.getNumberOfComments(); ++j) {
+                            // Get a comment for the current iteration
+                            Comment comment = item.getComment(j);
+
+                            if (ActionsHelper.isReviewerComment(comment)) {
+                                ++commentIdx;
+                                String fixed = (String) comment.getExtraInfo();
+                                if (fixed == null ||
+                                        !(fixed.equalsIgnoreCase("Fixed") || fixed.equalsIgnoreCase("Not Fixed"))) {
+                                    ActionsHelper.addErrorToRequest(request,
+                                            "fix_status[" + commentIdx + "]", "Error.saveFinalReview.Fix.Absent");
+                                    continue;
+                                }
+                                if (fixed.equalsIgnoreCase("Not Fixed")) {
+                                    notFixed = true;
+                                }
+                                continue;
+                            }
+
+                            // Skip unneeded comments
+                            if (!ActionsHelper.isFinalReviewComment(comment)) {
+                                continue;
+                            }
+
+                            ++itemIdx;
+                            if (!notFixed) {
+                                break; // Everything's good
+                            }
+
+                            String commentText = comment.getComment();
+
+                            if (commentText == null || commentText.trim().length() == 0) {
+                                ActionsHelper.addErrorToRequest(request, "final_comment[" + itemIdx + "]",
+                                        "Error.saveFinalReview.Response.Absent");
                             }
                         }
                     }
