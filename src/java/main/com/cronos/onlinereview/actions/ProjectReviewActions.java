@@ -107,13 +107,13 @@ public class ProjectReviewActions extends DispatchAction {
      * item by default on Edit Screening, Edit Review, and Edit Approval pages.
      */
     private static final int DEFAULT_COMMENTS_NUMBER = 3;
-    
+
     /**
      * This member variable is a constant that specifies the count of comments displayed for each
      * item when Manager opens either Edit Screening, Edit Review, or Edit Approval page.
      */
     private static final int MANAGER_COMMENTS_NUMBER = 1;
-    
+
     /**
      * This member variable holds the all possible values of answers to &#39;Scale&#160;(1-4)&#39;
      * and &#39;Scale&#160;(1-10)&#39; types of scorecard question.
@@ -601,9 +601,9 @@ public class ProjectReviewActions extends DispatchAction {
         }
 
         // This variable determines if 'Save and Mark Complete' button has been clicked
-        boolean commitRequested = "submit".equalsIgnoreCase(request.getParameter("save"));
+        final boolean commitRequested = "submit".equalsIgnoreCase(request.getParameter("save"));
         // This variable determines if Preview button has been clicked
-        boolean previewRequested = "preview".equalsIgnoreCase(request.getParameter("save"));
+        final boolean previewRequested = "preview".equalsIgnoreCase(request.getParameter("save"));
 
         // Retrieve a resource for the Aggregation phase
         Resource resource = ActionsHelper.getMyResourceForPhase(request, phase);
@@ -1091,8 +1091,10 @@ public class ProjectReviewActions extends DispatchAction {
                     Constants.PERFORM_AGGREG_REVIEW_PERM_NAME, "Error.ReviewCommitted");
         }
 
+        // This variable determines if 'Save and Mark Complete' button has been clicked
+        final boolean commitRequested = "submit".equalsIgnoreCase(request.getParameter("save"));
         // Determine if the user is Submitter
-        boolean isSubmitter = AuthorizationHelper.hasUserRole(request, Constants.SUBMITTER_ROLE_NAME);
+        final boolean isSubmitter = AuthorizationHelper.hasUserRole(request, Constants.SUBMITTER_ROLE_NAME);
 
         // Get the form defined for this action
         LazyValidatorForm aggregationReviewForm = (LazyValidatorForm) form;
@@ -1119,7 +1121,7 @@ public class ProjectReviewActions extends DispatchAction {
             Group group = scorecardTemplate.getGroup(groupIdx);
             for (int sectionIdx = 0; sectionIdx < group.getNumberOfSections(); ++sectionIdx) {
                 Section section = group.getSection(sectionIdx);
-                for (int questionIdx = 0; questionIdx < section.getNumberOfQuestions(); ++questionIdx) {
+                for (int questionIdx = 0; questionIdx < section.getNumberOfQuestions(); ++questionIdx, ++itemIdx) {
                     // Get the ID of the current scorecard template's question
                     final long questionId = section.getQuestion(questionIdx).getId();
 
@@ -1165,22 +1167,31 @@ public class ProjectReviewActions extends DispatchAction {
                             userComment.setExtraInfo("Reject");
                             rejected = true;
                         }
-                        ++itemIdx;
                     }
                 }
             }
         }
 
-        // If the user has requested to complete the review
-        if ("submit".equalsIgnoreCase(request.getParameter("save"))) {
-            // TODO: Validate review here
+        boolean validationSucceeded = (commitRequested) ? validateAggregationReviewScorecard(
+                request, scorecardTemplate, review, myReviewComment.getAuthor()) : true;
 
+        // If the user has requested to complete the review
+        if (validationSucceeded && commitRequested) {
             // Values "Approved" or "Rejected" will denote committed review
             myReviewComment.setExtraInfo((rejected == true) ? "Rejected" : "Approved");
         }
 
         // Update (save) edited Aggregation Review
         revMgr.updateReview(review, Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
+
+        if (!validationSucceeded) {
+            // Put the review object into the request
+            request.setAttribute("review", review);
+            // Retrieve some basic review info and store it in the request
+            retrieveAndStoreBasicAggregationInfo(request, verification, scorecardTemplate, "AggregationReview");
+
+            return mapping.getInputForward();
+        }
 
         // Forward to project details page
         return ActionsHelper.cloneForwardAndAppendToPath(
@@ -2381,7 +2392,7 @@ public class ProjectReviewActions extends DispatchAction {
             permName = Constants.PERFORM_APPROVAL_PERM_NAME;
             phaseName = Constants.APPROVAL_PHASE_NAME;
         }
-        
+
         // Verify that certain requirements are met before proceeding with the Action
         CorrectnessCheckResult verification =
                 checkForCorrectSubmissionId(mapping, request, permName);
@@ -2395,7 +2406,7 @@ public class ProjectReviewActions extends DispatchAction {
             return ActionsHelper.produceErrorReport(
                     mapping, getResources(request), request, permName, "Error.NoPermission");
         }
-                        
+
         // Get current project
         Project project = verification.getProject();
 
@@ -3498,9 +3509,9 @@ public class ProjectReviewActions extends DispatchAction {
         ActionsHelper.validateParameterNotNull(scorecardTemplate, "scorecardTemplate");
         ActionsHelper.validateParameterNotNull(aggregation, "aggregation");
 
+        final int numberOfItems = aggregation.getNumberOfItems();
         int itemIdx = 0;
         int commentIdx = 0;
-        int numberOfItems = aggregation.getNumberOfItems();
 
         for (int groupIdx = 0; groupIdx < scorecardTemplate.getNumberOfGroups(); ++groupIdx) {
             Group group = scorecardTemplate.getGroup(groupIdx);
@@ -3529,6 +3540,85 @@ public class ProjectReviewActions extends DispatchAction {
                             }
                             if (commentType.equalsIgnoreCase("Aggregation Comment")) {
                                 validateScorecardComment(request, comment, "aggregator_response[" + itemIdx + "]");
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        return !ActionsHelper.isErrorsPresent(request);
+    }
+
+    /**
+     * This static method validates Aggregation Review scorecard. This type of scorecard is
+     * considered valid if all items in the Aggregation have been accepted by user, or if comments
+     * have been entered for rejected items.
+     *
+     * @return <code>true</code> if scorecard passes validation, <code>false</code> if it does
+     *         not.
+     * @param request
+     *            an <code>HttpServletRequest</code> object where validation error messages will
+     *            be placed to in case there are any.
+     * @param scorecardTemplate
+     *            a scorecard template of type &quot;Review&quot; that was used to generate the
+     *            aggregation review scorecard to be validated.
+     * @param aggregationReview
+     *            an aggregation review scorecard to be validated.
+     * @param authorId
+     *            an ID of the resource which was used to update the aggregation review scorecard
+     *            that needs validation.
+     * @throws IllegalArgumentException
+     *             if any of the parameters are <code>null</code>.
+     */
+    private static boolean validateAggregationReviewScorecard(
+            HttpServletRequest request, Scorecard scorecardTemplate, Review aggregationReview, long authorId) {
+        // Validate parameters
+        ActionsHelper.validateParameterNotNull(request, "request");
+        ActionsHelper.validateParameterNotNull(scorecardTemplate, "scorecardTemplate");
+        ActionsHelper.validateParameterNotNull(aggregationReview, "aggregationReview");
+        ActionsHelper.validateParameterPositive(authorId, "authorId");
+
+        final int numberOfItems = aggregationReview.getNumberOfItems();
+        int itemIdx = 0;
+
+        for (int groupIdx = 0; groupIdx < scorecardTemplate.getNumberOfGroups(); ++groupIdx) {
+            Group group = scorecardTemplate.getGroup(groupIdx);
+            for (int sectionIdx = 0; sectionIdx < group.getNumberOfSections(); ++sectionIdx) {
+                Section section = group.getSection(sectionIdx);
+                for (int questionIdx = 0; questionIdx < section.getNumberOfQuestions(); ++questionIdx, ++itemIdx) {
+                    Question question = section.getQuestion(questionIdx);
+                    long questionId = question.getId();
+
+                    for (int i = 0; i < numberOfItems; ++i) {
+                        if (aggregationReview.getItem(i).getQuestion() != questionId) {
+                            continue;
+                        }
+
+                        // Get a review's item
+                        Item item = aggregationReview.getItem(i);
+
+                        // Validate item's Accept/Reject status
+                        for (int j = 0; j < item.getNumberOfComments(); ++j) {
+                            // Get a comment for the current iteration
+                            Comment comment = item.getComment(j);
+
+                            // Skip unneeded comments
+                            if (!ActionsHelper.isAggregationReviewComment(comment)) {
+                                continue;
+                            }
+                            // Skip comments from other people
+                            if (comment.getAuthor() != authorId) {
+                                continue;
+                            }
+
+                            String extraInfo = (String) comment.getExtraInfo();
+                            String commentText = comment.getComment();
+
+                            if (extraInfo.equalsIgnoreCase("Reject") &&
+                                    (commentText == null || commentText.trim().length() == 0)) {
+                                ActionsHelper.addErrorToRequest(request, "reject_reason[" + itemIdx + "]",
+                                        "Error.saveAggregationReview.RejectReason.Absent");
                             }
                         }
                     }
