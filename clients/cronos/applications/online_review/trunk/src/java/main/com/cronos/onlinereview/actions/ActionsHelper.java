@@ -1243,7 +1243,7 @@ public class ActionsHelper {
             // Get a phase for the current iteration
             Phase phase = phases[i];
             // Add the phase to list if it is open and, hence, active
-            if (phase.getPhaseStatus().getName().equals(PhaseStatus.OPEN)) {
+            if (phase.getPhaseStatus().getName().equals(PhaseStatus.OPEN.getName())) {
                 activePhases.add(phase);
             }
         }
@@ -1308,7 +1308,7 @@ public class ActionsHelper {
                 // Get a name of status of this phase
                 String phaseStatus = phase.getPhaseStatus().getName();
                 // If the phase found that is not yet open, stop the search
-                if (phaseStatus.equals(PhaseStatus.SCHEDULED)) {
+                if (phaseStatus.equals(PhaseStatus.SCHEDULED.getName())) {
                     break;
                 }
                 // If the name of the current phase matches the one
@@ -1888,7 +1888,7 @@ public class ActionsHelper {
             if (phaseName.equalsIgnoreCase(Constants.REVIEW_PHASE_NAME) ||
                     phaseName.equalsIgnoreCase(Constants.APPEALS_PHASE_NAME) ||
                     phaseName.equalsIgnoreCase(Constants.APPEALS_RESPONSE_PHASE_NAME)) {
-                if (!phase.getPhaseStatus().getName().equals(PhaseStatus.CLOSED)) {
+                if (!phase.getPhaseStatus().getName().equals(PhaseStatus.CLOSED.getName())) {
                     return false;
                 }
                 found = true;
@@ -1919,7 +1919,7 @@ public class ActionsHelper {
             // Get this phase's status name
             String phaseStatus = phase.getPhaseStatus().getName();
             // If first Open or Scheduled phase found, stop the search
-            if (phaseStatus.equals(PhaseStatus.OPEN) || phaseStatus.equals(PhaseStatus.SCHEDULED)) {
+            if (phaseStatus.equals(PhaseStatus.OPEN.getName()) || phaseStatus.equals(PhaseStatus.SCHEDULED.getName())) {
                 break;
             }
         }
@@ -1942,7 +1942,7 @@ public class ActionsHelper {
                 return false;
             }
             // Skip the Open or Scheduled phase, as only Closed phases make interest
-            if (!phase.getPhaseStatus().getName().equals(PhaseStatus.CLOSED)) {
+            if (!phase.getPhaseStatus().getName().equals(PhaseStatus.CLOSED.getName())) {
                 continue;
             }
             // If Appeals response is the closed phase,
