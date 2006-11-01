@@ -1824,10 +1824,11 @@
                 </Property>
                 <Property name="context">
                     <Value>
-                        SELECT     submission_id
-                              FROM submission, upload
-                             WHERE submission.upload_id = upload.upload_id
-                             AND
+                        SELECT submission_id
+                          FROM submission,
+                               upload
+                         WHERE submission.upload_id = upload.upload_id
+                           AND
                     </Value>
                 </Property>
                 <Property name="alias">
