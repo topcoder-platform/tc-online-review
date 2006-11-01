@@ -42,6 +42,11 @@ import com.cronos.onlinereview.phases.AppealsResponsePhaseHandler;
 import com.cronos.onlinereview.phases.ApprovalPhaseHandler;
 import com.cronos.onlinereview.phases.FinalFixPhaseHandler;
 import com.cronos.onlinereview.phases.FinalReviewPhaseHandler;
+import com.cronos.onlinereview.phases.PRAppealResponsePhaseHandler;
+import com.cronos.onlinereview.phases.PRRegistrationPhaseHandler;
+import com.cronos.onlinereview.phases.PRReviewPhaseHandler;
+import com.cronos.onlinereview.phases.PRScreeningPhaseHandler;
+import com.cronos.onlinereview.phases.PRSubmissionPhaseHandler;
 import com.cronos.onlinereview.phases.RegistrationPhaseHandler;
 import com.cronos.onlinereview.phases.ReviewPhaseHandler;
 import com.cronos.onlinereview.phases.ScreeningPhaseHandler;
@@ -2100,17 +2105,17 @@ public class ActionsHelper {
 
             System.out.println("REMOVE ME entering register all phase handlers: " + dateFormat.format(new Date()));
                 registerPhaseHandlerForOperation(manager, phaseTypes,
-                        new RegistrationPhaseHandler(), Constants.REGISTRATION_PHASE_NAME);
+                        new PRRegistrationPhaseHandler(), Constants.REGISTRATION_PHASE_NAME);
                 registerPhaseHandlerForOperation(manager, phaseTypes,
-                        new SubmissionPhaseHandler(), Constants.SUBMISSION_PHASE_NAME);
+                        new PRSubmissionPhaseHandler(), Constants.SUBMISSION_PHASE_NAME);
                 registerPhaseHandlerForOperation(manager, phaseTypes,
-                        new ScreeningPhaseHandler(), Constants.SCREENING_PHASE_NAME);
+                        new PRScreeningPhaseHandler(), Constants.SCREENING_PHASE_NAME);
                 registerPhaseHandlerForOperation(manager, phaseTypes,
-                        new ReviewPhaseHandler(), Constants.REVIEW_PHASE_NAME);
+                        new PRReviewPhaseHandler(), Constants.REVIEW_PHASE_NAME);
                 registerPhaseHandlerForOperation(manager, phaseTypes,
                         new AppealsPhaseHandler(), Constants.APPEALS_PHASE_NAME);
                 registerPhaseHandlerForOperation(manager, phaseTypes,
-                        new AppealsResponsePhaseHandler(), Constants.APPEALS_RESPONSE_PHASE_NAME);
+                        new PRAppealResponsePhaseHandler(), Constants.APPEALS_RESPONSE_PHASE_NAME);
                 registerPhaseHandlerForOperation(manager, phaseTypes,
                         new AggregationPhaseHandler(), Constants.AGGREGATION_PHASE_NAME);
                 registerPhaseHandlerForOperation(manager, phaseTypes,
