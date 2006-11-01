@@ -309,10 +309,12 @@ public class ProjectDetailsActions extends DispatchAction {
         PhaseGroup phaseGroup = null;
         Resource[] submitters = null;
 
-        for (int i = 0; i < phases.length; ++i) {
+        for (int phaseIdx = 0; phaseIdx < phases.length; ++phaseIdx) {
             // Get a phase for the current iteration
-            Phase phase = phases[i];
+            Phase phase = phases[phaseIdx];
             String phaseName = phase.getPhaseType().getName();
+            // Take next phase (if the current one is not the last)
+            Phase nextPhase = (phaseIdx + 1 != phases.length) ? phases[phaseIdx + 1] : null;
 
             if (phaseGroup == null || !ConfigHelper.isPhaseGroupContainsPhase(phaseGroupIdx, phaseName) ||
                     phaseGroup.isPhaseInThisGroup(phase)) {
@@ -345,7 +347,7 @@ public class ProjectDetailsActions extends DispatchAction {
             }
 
             if (phaseGroup == null) {
-                phaseGroupIndexes[i] = -1;
+                phaseGroupIndexes[phaseIdx] = -1;
                 continue;
             }
 
@@ -358,7 +360,7 @@ public class ProjectDetailsActions extends DispatchAction {
                 phaseGroup.setPhaseOpen(true);
             }
 
-            boolean isAfterAppealsResponse = ActionsHelper.isAfterAppealsResponse(phases, i);
+            boolean isAfterAppealsResponse = ActionsHelper.isAfterAppealsResponse(phases, phaseIdx);
             boolean canSeeSubmitters = (isAfterAppealsResponse ||
                     AuthorizationHelper.hasUserPermission(request, Constants.VIEW_ALL_SUBM_PERM_NAME));
 
@@ -376,7 +378,7 @@ public class ProjectDetailsActions extends DispatchAction {
             phaseGroup.setSubmitters(submitters);
 
             // Determine an index of the current phase group (needed for timeline phases list)
-            phaseGroupIndexes[i] = phaseGroups.size() - 1;
+            phaseGroupIndexes[phaseIdx] = phaseGroups.size() - 1;
 
             if (!phaseGroup.isPhaseOpen()) {
                 continue;
@@ -607,9 +609,40 @@ public class ProjectDetailsActions extends DispatchAction {
 
                 phaseGroup.setSubmissions(submissions);
 
+                // Some resource roles can always see links to reviews (if there are any).
+                // There is no corresponding permission, so the list of roles is hard-coded
+                boolean allowedToSeeReviewLink =
+                    AuthorizationHelper.hasUserRole(request, new String[] {
+                        Constants.MANAGER_ROLE_NAME, Constants.GLOBAL_MANAGER_ROLE_NAME,
+                        Constants.REVIEWER_ROLE_NAME, Constants.ACCURACY_REVIEWER_ROLE_NAME,
+                        Constants.FAILURE_REVIEWER_ROLE_NAME, Constants.STRESS_REVIEWER_ROLE_NAME,
+                        Constants.OBSERVER_ROLE_NAME});
+
+                if (!allowedToSeeReviewLink) {
+                    // Determine if the Review phase is closed
+                    boolean isReviewClosed =
+                        phase.getPhaseStatus().getName().equalsIgnoreCase(Constants.CLOSED_PH_STATUS_NAME);
+                    boolean isAppealsOpen = false;
+
+                    // Determine if the Appeals phase is open and user is allowed to put appeals
+                    if (!isReviewClosed && nextPhase != null &&
+                            AuthorizationHelper.hasUserPermission(request, Constants.PERFORM_APPEAL_PERM_NAME) &&
+                            nextPhase.getPhaseType().getName().equalsIgnoreCase(Constants.APPEALS_PHASE_NAME) &&
+                            nextPhase.getPhaseStatus().getName().equalsIgnoreCase(Constants.OPEN_PH_STATUS_NAME)) {
+                        isAppealsOpen = true;
+                    }
+
+                    if (isReviewClosed || isAppealsOpen) {
+                        allowedToSeeReviewLink = true;
+                    }
+                }
+
+                phaseGroup.setDisplayReviewLinks(allowedToSeeReviewLink);
+
                 Resource[] reviewers = null;
 
-                if (AuthorizationHelper.hasUserPermission(request, Constants.VIEW_REVIEWER_REVIEWS_PERM_NAME)) {
+                if (AuthorizationHelper.hasUserPermission(request, Constants.VIEW_REVIEWER_REVIEWS_PERM_NAME) &&
+                        AuthorizationHelper.hasUserRole(request, Constants.REVIEWER_ROLE_NAMES)) {
                     // Get "my" (reviewer's) resource
                     reviewers = ActionsHelper.getMyResourcesForPhase(request, phase);
                 }
@@ -666,8 +699,6 @@ public class ProjectDetailsActions extends DispatchAction {
 
                     boolean needFullReviews = false;
 
-                    // Take next phase (if the current one is not the last)
-                    Phase nextPhase = (i + 1 != phases.length) ? phases[i + 1] : null;
                     // If next phase is Appeals and that phase is not scheduled, ...
                     if (nextPhase != null &&
                             nextPhase.getPhaseType().getName().equalsIgnoreCase(Constants.APPEALS_PHASE_NAME)) {

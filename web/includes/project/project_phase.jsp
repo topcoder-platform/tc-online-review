@@ -418,30 +418,30 @@
 												</c:otherwise>
 											</c:choose>
 											<c:forEach items="${group.reviews[submissionStatus.index]}" var="review" varStatus="reviewStatus">
-												<c:if test="${empty review}">
-													<c:if test="${isAllowedToEditHisReviews == true}">
+												<c:if test="${(empty review) || (not group.displayReviewLinks)}">
+													<c:if test="${isAllowedToEditHisReviews && group.displayReviewLinks}">
 														<td class="valueC" width="8%" nowrap="nowrap"><html:link
 															page="/actions/CreateReview.do?method=createReview&sid=${submission.id}"><b><bean:message
 															key="viewProjectDetails.box.Review.Submit" /></b></html:link></td>
 														<td class="valueC"><bean:message key="NotAvailable" /></td>
 													</c:if>
-													<c:if test="${isAllowedToEditHisReviews != true}">
+													<c:if test="${(not isAllowedToEditHisReviews) || (not group.displayReviewLinks)}">
 														<td class="valueC" width="8%"><bean:message key="NotAvailable" /></td>
 														<td class="valueC"><bean:message key="NotAvailable" /></td>
 													</c:if>
 												</c:if>
-												<c:if test="${not empty review}">
-													<c:if test="${review.committed == true}">
+												<c:if test="${(not empty review) && group.displayReviewLinks}">
+													<c:if test="${review.committed}">
 														<td class="valueC" width="8%"><html:link
 															page="/actions/ViewReview.do?method=viewReview&rid=${review.id}">${orfn:displayScore(pageContext.request, review.score)}</html:link></td>
 													</c:if>
-													<c:if test="${review.committed != true}">
-														<c:if test="${isAllowedToEditHisReviews == true}">
+													<c:if test="${not review.committed}">
+														<c:if test="${isAllowedToEditHisReviews}">
 															<td class="valueC" width="8%"><html:link
 																page="/actions/EditReview.do?method=editReview&rid=${review.id}"><b><bean:message
 																key="viewProjectDetails.box.Review.Submit" /></b></html:link></td>
 														</c:if>
-														<c:if test="${isAllowedToEditHisReviews != true}">
+														<c:if test="${not isAllowedToEditHisReviews}">
 															<td class="valueC" width="8%"><bean:message key="Pending" /></td>
 														</c:if>
 													</c:if>

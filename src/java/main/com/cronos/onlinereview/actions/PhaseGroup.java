@@ -172,6 +172,14 @@ public class PhaseGroup {
     private Date[] reviewDates = null;
 
     /**
+     * This member variable determines if user sees any links to reviews on his page.
+     *
+     * @see #isDisplayReviewLinks()
+     * @see #setDisplayReviewLinks(boolean)
+     */
+    private boolean displayReviewLinks = false;
+
+    /**
      * This member variable determines whether &quot;Appeals&quot; phase is open or has ever been
      * opened. It is used to indicate if the appeals information should be available to present. The
      * default value of this member variable is <code>false</code>.
@@ -552,6 +560,27 @@ public class PhaseGroup {
      */
     public void setReviewDates(Date[] reviewDates) {
         this.reviewDates = reviewDates;
+    }
+
+    /**
+     * This method determines whether a user is allowed to see links to reviews when he opens a tab
+     * which this phase group is assigned to.
+     *
+     * @return <code>true</code> if the user is allowed to see review links, <code>false</code>
+     *         if he isn't.
+     */
+    public boolean isDisplayReviewLinks() {
+        return this.displayReviewLinks;
+    }
+
+    /**
+     * This method sets a value that determines if a user can see links to reviews.
+     *
+     * @param displayReviewLinks
+     *            a new value.
+     */
+    public void setDisplayReviewLinks(boolean displayReviewLinks) {
+        this.displayReviewLinks = displayReviewLinks;
     }
 
     /**
