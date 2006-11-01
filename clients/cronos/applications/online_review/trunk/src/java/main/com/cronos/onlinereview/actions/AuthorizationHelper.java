@@ -280,6 +280,35 @@ public class AuthorizationHelper {
     }
 
     /**
+     * This static method checks whether the logged in user has at least one role from the specified
+     * array of resource roles. The information about logged in user is taken from the session
+     * associated with the specified request.
+     * <p>
+     * Note, one of the <code>gatherUserRoles</code> static methods must be called prior making a
+     * call to this method, or the result of this call will be <code>false</code>.
+     * </p>
+     *
+     * @return <code>true</code> if the logged in user has at least one of the specified roles in
+     *         current context, <code>false</code> if he doesn't.
+     * @param request
+     *            the <code>HttpServletRequest</code> to take the information about roles
+     *            currently logged in user has in current context.
+     * @param roles
+     *            an array of roles to check.
+     * @see #gatherUserRoles(HttpServletRequest)
+     * @see #gatherUserRoles(HttpServletRequest, long)
+     */
+    public static boolean hasUserRole(HttpServletRequest request, String[] roles) {
+        for (int i = 0; i < roles.length; ++i) {
+            if (hasUserRole(request, roles[i])) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
      * This static method checks whether the logged in user has the permission to perform the
      * specified action.  The information about logged in user is taken from the session associated
      * with the specified request.
