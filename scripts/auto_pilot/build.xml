@@ -41,7 +41,7 @@
     <property name="build_webdir" value="${builddir}/${webdir}" />
     <property name="build_lib" value="${builddir}/lib" />
     <property name="build_tcsdistdir" value="${build_distdir}/${distfilename}-${component_version}" />
-
+		
     <!-- Server installation directories -->
 	<property name="cactus.home.tomcat5x" value="C:\tools\tomcat5" />
     <property name="deploy-dir" value="/home/onlinereview2/jboss-4.0.2/server/default/deploy/${distfilename}.war" />
@@ -69,7 +69,7 @@
     <property name="design_submission.jar" value="${component}_${component_version}_design_submission.jar" />
     <property name="dev_dist.jar" value="${component}_${component_version}_dev_dist.jar" />
     <property name="design_dist.jar" value="${component}_${component_version}_design_dist.jar" />
-
+		
     <!-- TCS Dependencies -->
     <property name="authentication_factory.version" value="2.0" />
     <property name="authentication_factory.jar.name" value="authentication_factory.jar" />
@@ -313,13 +313,14 @@
 
     <!-- 3rd Party Dependencies  -->
     <property name="ifx-jdbc.jar" value="${ext_libdir}/ifx-jdbc.jar" />
-
+		<property name="javamail.jar" value="${ext_libdir}/mail.jar" />
     <path id="buildlibs">
 	    <fileset dir="lib">    
 	    	<filename name="**/*.jar"/>
 	    </fileset>
         <pathelement location="." />
         <pathelement location="${ifx-jdbc.jar}" />
+        <pathelement location="${javamail.jar}" />
 
         <pathelement location="${auto_screening_management.jar}" />
         <pathelement location="${base_exception.jar}" />
@@ -373,6 +374,7 @@
 		    <fileset dir="../../lib/third_party">   
 		    	<include  name="ifx-jdbc.jar"/> 
 		    	<include  name="log4j.jar"/> 
+		    	<include name="mail.jar" />
 		    	<include  name="xerces.jar"/> 
 		    </fileset>
 		    <fileset dir=".">    
@@ -402,14 +404,14 @@
 
 	<target name="auto_pilot">
     	<java classname="com.topcoder.management.phase.autopilot.AutoPilotJob" fork="true">
-    		<arg line="-config auto_pilot.xml -namespace AutoPilotJob -autopilot com.topcoder.management.phase.autopilot.AutoPilot -poll 5" />
+    		<arg line="-config auto_pilot.xml -namespace AutoPilotJob -autopilot com.topcoder.management.phase.autopilot.AutoPilot -poll 1" />
     		<classpath refid="buildlibs" />
     	</java>
 	</target>
 
 	<target name="auto_pilot_background">
     	<java classname="com.topcoder.management.phase.autopilot.AutoPilotJob" fork="true" spawn="true">
-    		<arg line="-config auto_pilot.xml -namespace AutoPilotJob -autopilot com.topcoder.management.phase.autopilot.AutoPilot -poll 5" />
+    		<arg line="-config auto_pilot.xml -namespace AutoPilotJob -autopilot com.topcoder.management.phase.autopilot.AutoPilot -poll 1" />
     		<classpath refid="buildlibs" />
     	</java>
 	</target>
