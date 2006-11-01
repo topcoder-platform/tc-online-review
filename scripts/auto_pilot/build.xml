@@ -314,6 +314,8 @@
     <!-- 3rd Party Dependencies  -->
     <property name="ifx-jdbc.jar" value="${ext_libdir}/ifx-jdbc.jar" />
 		<property name="javamail.jar" value="${ext_libdir}/mail.jar" />
+		<property name="activation.jar" value="${ext_libdir}/activation.jar" />
+		
     <path id="buildlibs">
 	    <fileset dir="lib">    
 	    	<filename name="**/*.jar"/>
@@ -375,6 +377,7 @@
 		    	<include  name="ifx-jdbc.jar"/> 
 		    	<include  name="log4j.jar"/> 
 		    	<include name="mail.jar" />
+		    	<include name="activation.jar"
 		    	<include  name="xerces.jar"/> 
 		    </fileset>
 		    <fileset dir=".">    
