@@ -91,6 +91,17 @@ public class Constants {
     public static final String STRESS_REVIEWER_ROLE_NAME = "Stress Reviewer";
 
     /**
+     * This member variable is a constant array that holds names of different reviewer roles.
+     *
+     * @see #REVIEWER_ROLE_NAME
+     * @see #ACCURACY_REVIEWER_ROLE_NAME
+     * @see #FAILURE_REVIEWER_ROLE_NAME
+     * @see #STRESS_REVIEWER_ROLE_NAME
+     */
+    public static final String[] REVIEWER_ROLE_NAMES = new String[] {
+        REVIEWER_ROLE_NAME, ACCURACY_REVIEWER_ROLE_NAME, FAILURE_REVIEWER_ROLE_NAME, STRESS_REVIEWER_ROLE_NAME};
+
+    /**
      * This member variable is a string constant that defines the name of the Aggregator role.
      * Aggregator role is assigned in the aggregation phase.  Aggregators can perform aggregation
      * during the aggregation phase.
@@ -498,6 +509,24 @@ public class Constants {
      * This member variable is a string constant that defines the name of the Approval phase.
      */
     public static final String APPROVAL_PHASE_NAME = "Approval";
+
+
+    // ------------------------------------------------------------------- Phase Status names -----
+
+    /**
+     * This member variable is a string constant that defines the name of Scheduled phase status.
+     */
+    public static final String SCHEDULED_PH_STATUS_NAME = "Scheduled";
+
+    /**
+     * This member variable is a string constant that defines the name of Open phase status.
+     */
+    public static final String OPEN_PH_STATUS_NAME = "Open";
+
+    /**
+     * This member variable is a string constant that defines the name of Closed phase status.
+     */
+    public static final String CLOSED_PH_STATUS_NAME = "Closed";
 
 
     // ---------------------------------------------------- Application's Functionality names -----
