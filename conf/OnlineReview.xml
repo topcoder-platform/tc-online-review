@@ -19,6 +19,16 @@
                     </Property>
                 </Property>
             </Property>
+            <Property name="DefaultSequence">
+                <Property name="producer">
+                    <Value>com.topcoder.db.connectionfactory.producers.JNDIConnectionProducer</Value>
+                </Property>
+                <Property name="parameters">
+                    <Property name="jndi_name">
+                        <Value>java:JTS_TCS_CATALOG_IDGEN</Value>
+                    </Property>
+                </Property>
+            </Property>
         </Property>
     </Config>
 
