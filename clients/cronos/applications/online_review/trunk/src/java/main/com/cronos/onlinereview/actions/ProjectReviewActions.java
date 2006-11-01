@@ -3326,8 +3326,10 @@ public class ProjectReviewActions extends DispatchAction {
             // User is authorized to view review authored by him
             isAllowed = true;
         } else if (myResource != null && verification.getSubmission().getUpload().getOwner() == myResource.getId()) {
-            // User is authorized to view review for his submission
-            isAllowed = true;
+            // User is authorized to view review for his submission (when not in Review or in Appeals)
+            if (!activePhases.contains(Constants.REVIEW_PHASE_NAME) || activePhases.contains(Constants.APPEALS_PHASE_NAME)) {
+                isAllowed = true;   
+            }
         } else if (AuthorizationHelper.hasUserPermission(request, Constants.VIEW_ALL_REVIEWS_PERM_NAME)) {
             // User is authorized to view all reviews (when not in Review, Appeals or Appeals Response)
             if (!activePhases.contains(Constants.REVIEW_PHASE_NAME) &&
