@@ -607,3 +607,12 @@ CREATE TABLE default_scorecard (
   FOREIGN KEY(scorecard_id)
     REFERENCES scorecard(scorecard_id) CONSTRAINT FK_DEFAULTSCORECARD_SCORECARD_SCORECARDID
 );
+CREATE TABLE project_result (
+  project_id                    INTEGER                         NOT NULL,
+  user_id                       VARCHAR(20)                     NOT NULL,
+  rating_ind                    INTEGER                         NOT NULL,
+  reliability_ind               INTEGER                         NOT NULL,
+  valid_submission_ind          INTEGER                         NOT NULL,
+  old_rating                    FLOAT,
+  old_reliability               FLOAT
+);
