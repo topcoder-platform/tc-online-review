@@ -98,8 +98,9 @@ div.launchPopUp {
 </div>
 
 <div class="memberCountBox">
-	Member Count: <%=new DecimalFormat("#,##0").format(sessionInfo.getMemberCount())%> - <tc-webtag:format object="<%=sessionInfo.getDate()%>" format="MMMM d, yyyy"/>
-	&#160;<a class="gMetal" href="Javascript:tcTime()">[Get Time]</a>
+Member Count: <tc-webtag:format object="${sessionInfo.memberCount}" format="#,##0"/> -
+            <tc-webtag:format object="${sessionInfo.date}" format="MMMM d, yyyy"/>            	
+&#160;<a class="gMetal" href="Javascript:tcTime()">[Get Time]</a>
 </div>
 
 <div class="topBar">
