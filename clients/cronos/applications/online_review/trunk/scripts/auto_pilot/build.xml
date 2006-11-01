@@ -377,7 +377,7 @@
 		    	<include  name="ifx-jdbc.jar"/> 
 		    	<include  name="log4j.jar"/> 
 		    	<include name="mail.jar" />
-		    	<include name="activation.jar"
+		    	<include name="activation.jar" />
 		    	<include  name="xerces.jar"/> 
 		    </fileset>
 		    <fileset dir=".">    
