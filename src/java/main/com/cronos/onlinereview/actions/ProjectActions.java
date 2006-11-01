@@ -1128,26 +1128,26 @@ public class ProjectActions extends DispatchAction {
             PhaseManager phaseManager = ActionsHelper.createPhaseManager(request, true);
             
             if ("close_phase".equals(action)) {
-                logger.log(Level.INFO, "switchProjectPhase: " + phaseType.getName() +
+                //logger.log(Level.INFO, "switchProjectPhase: " + phaseType.getName() +
                         " is in " + phaseStatus.getName() + " state");
                 if (phaseStatus.getName().equals(PhaseStatus.OPEN.getName()) && phaseManager.canEnd(phase)) {
-                    logger.log(Level.INFO, "switchProjectPhase: " + phaseType.getName() + " is being closed");
+                    //logger.log(Level.INFO, "switchProjectPhase: " + phaseType.getName() + " is being closed");
                     // Close the phase
                     phaseManager.end(phase, Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
                 } else {
-                    logger.log(Level.INFO, "switchProjectPhase: " + phaseType.getName() + " cannot be closed");
+                    //logger.log(Level.INFO, "switchProjectPhase: " + phaseType.getName() + " cannot be closed");
                     ActionsHelper.addErrorToRequest(request, new ActionMessage(
                             "error.com.cronos.onlinereview.actions.editProject.CannotClosePhase", phaseType.getName()));
                 }
             } else if ("open_phase".equals(action)) {                   
-                logger.log(Level.INFO, "switchProjectPhase: " + phaseType.getName() +
+                //logger.log(Level.INFO, "switchProjectPhase: " + phaseType.getName() +
                         " is in " + phaseStatus.getName() + " state");
                 if (phaseStatus.getName().equals(PhaseStatus.SCHEDULED.getName()) && phaseManager.canStart(phase)) {
-                    logger.log(Level.INFO, "switchProjectPhase: " + phaseType.getName() + " is being started");
+                    //logger.log(Level.INFO, "switchProjectPhase: " + phaseType.getName() + " is being started");
                     // Open the phase
                     phaseManager.start(phase, Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
                 } else {
-                    logger.log(Level.INFO, "switchProjectPhase: " + phaseType.getName() + " cannot be started");
+                    //logger.log(Level.INFO, "switchProjectPhase: " + phaseType.getName() + " cannot be started");
                     ActionsHelper.addErrorToRequest(request, new ActionMessage(
                             "error.com.cronos.onlinereview.actions.editProject.CannotOpenPhase", phaseType.getName()));
                 }
@@ -1402,7 +1402,7 @@ public class ProjectActions extends DispatchAction {
 
                 newUsers.add(new Long(user.getId()));
 
-                System.out.println("ADD:" + user.getId());
+                //System.out.println("ADD:" + user.getId());
             }  else {
                 Long resourceId = (Long) lazyForm.get("resources_id", i);
 
@@ -1410,12 +1410,12 @@ public class ProjectActions extends DispatchAction {
                     // Retrieve the resource with the specified id
                     resource = resourceManager.getResource(resourceId.longValue());
                     oldUsers.add(new Long(user.getId()));
-                    System.out.println("REMOVE:" + user.getId());
+                    //System.out.println("REMOVE:" + user.getId());
                 } else {
                     // -1 value as id marks the resources that were't persisted in DB yet
                     // and so should be skipped for actions other then "add"
                 	oldUsers.add(new Long(user.getId()));
-                	System.out.println("REMOVE:" + user.getId());
+                	//System.out.println("REMOVE:" + user.getId());
                     continue;
                 }
             }
@@ -1593,11 +1593,11 @@ public class ProjectActions extends DispatchAction {
         throws BaseException {
 
         Date currentDate = new Date();
-        logger.log(Level.ERROR, "entering listProjects" + dateFormat.format(currentDate));
-        logger.log(Level.ERROR, "gathering user roles" + dateFormat.format(new Date()));
+        //logger.log(Level.ERROR, "entering listProjects" + dateFormat.format(currentDate));
+        //logger.log(Level.ERROR, "gathering user roles" + dateFormat.format(new Date()));
         // Gather the roles the user has for current request
         AuthorizationHelper.gatherUserRoles(request);
-        logger.log(Level.ERROR, "got user roles" + dateFormat.format(new Date()));
+        //logger.log(Level.ERROR, "got user roles" + dateFormat.format(new Date()));
 
         // Retrieve the value of "scope" parameter
         String scope = request.getParameter("scope");
@@ -1618,7 +1618,7 @@ public class ProjectActions extends DispatchAction {
         }
 
         currentDate = new Date();
-        logger.log(Level.ERROR, "obtaining projectmanager " + dateFormat.format(currentDate));
+        //logger.log(Level.ERROR, "obtaining projectmanager " + dateFormat.format(currentDate));
 
         // Obtain an instance of Project Manager
         ProjectManager manager = ActionsHelper.createProjectManager(request);
@@ -1626,7 +1626,7 @@ public class ProjectActions extends DispatchAction {
         int activeTab;
         Filter projectsFilter = null;
         currentDate = new Date();
-        logger.log(Level.ERROR, "got projectmanager " + dateFormat.format(currentDate));
+        //logger.log(Level.ERROR, "got projectmanager " + dateFormat.format(currentDate));
 
         // Determine projects displayed and index of the active tab
         // based on the value of the "scope" parameter
@@ -1689,12 +1689,12 @@ public class ProjectActions extends DispatchAction {
         String[][] myDeliverables = (myProjects) ? new String[projectCategories.length][] : null;
 
         currentDate = new Date();
-        logger.log(Level.ERROR, "fetching listProjects" + dateFormat.format(currentDate));
+        //logger.log(Level.ERROR, "fetching listProjects" + dateFormat.format(currentDate));
         // Fetch projects from the database. These projects will require further grouping
         Project[] ungroupedProjects = (projectsFilter != null) ? manager.searchProjects(projectsFilter) :
                 manager.getUserProjects(AuthorizationHelper.getLoggedInUserId(request));
         currentDate = new Date();
-        logger.log(Level.ERROR, "done fetching listProjects" + dateFormat.format(currentDate));
+        //logger.log(Level.ERROR, "done fetching listProjects" + dateFormat.format(currentDate));
         Resource[] allMyResources = null;
 /*****************************************************************************************************************************************/
         if (ungroupedProjects.length != 0 && AuthorizationHelper.isUserLoggedIn(request) && myProjects) {
@@ -1708,7 +1708,7 @@ public class ProjectActions extends DispatchAction {
                 projectFilters.add(new Long(ungroupedProjects[i].getId()));
             }
         currentDate = new Date();
-        logger.log(Level.ERROR, "got project filters: " +  ungroupedProjects.length +" - " + dateFormat.format(currentDate));
+        //logger.log(Level.ERROR, "got project filters: " +  ungroupedProjects.length +" - " + dateFormat.format(currentDate));
 
             Filter filterProjects = new InFilter(ResourceFilterBuilder.PROJECT_ID_FIELD_NAME, projectFilters);
 
@@ -1716,18 +1716,18 @@ public class ProjectActions extends DispatchAction {
                     new Filter[] {filterExtIDname, filterExtIDvalue, filterProjects}));
 
         currentDate = new Date();
-        logger.log(Level.ERROR, "begin searchResources" + dateFormat.format(currentDate));
+        //logger.log(Level.ERROR, "begin searchResources" + dateFormat.format(currentDate));
 
             // Obtain an instance of Resource Manager
             ResourceManager resMgr = ActionsHelper.createResourceManager(request);
             // Get all "My" resources for the list of projects
             allMyResources = resMgr.searchResources(filter);
         currentDate = new Date();
-        logger.log(Level.ERROR, "end searchResources" + dateFormat.format(currentDate));
+        //logger.log(Level.ERROR, "end searchResources" + dateFormat.format(currentDate));
 
         }
         currentDate = new Date();
-logger.log(Level.ERROR, "get phase manager" + dateFormat.format(currentDate));
+//logger.log(Level.ERROR, "get phase manager" + dateFormat.format(currentDate));
         // Obtain an instance of Phase Manager
         PhaseManager phMgr = ActionsHelper.createPhaseManager(request, false);
 
@@ -1737,17 +1737,17 @@ logger.log(Level.ERROR, "get phase manager" + dateFormat.format(currentDate));
             allProjectIds[i] = ungroupedProjects[i].getId();
         }
         currentDate = new Date();
-        logger.log(Level.ERROR, "getting phases phase manager" + dateFormat.format(currentDate));
+        //logger.log(Level.ERROR, "getting phases phase manager" + dateFormat.format(currentDate));
         com.topcoder.project.phases.Project[] phProjects = phMgr.getPhases(allProjectIds);
         currentDate = new Date();
-        logger.log(Level.ERROR, "got phases phase manager" + dateFormat.format(currentDate));
+        //logger.log(Level.ERROR, "got phases phase manager" + dateFormat.format(currentDate));
 /*****************************************************************************************************************************************/
         currentDate = new Date();
-        logger.log(Level.ERROR, "get message resources" + dateFormat.format(currentDate));
+        //logger.log(Level.ERROR, "get message resources" + dateFormat.format(currentDate));
         // Message Resources to be used for this request
         MessageResources messages = getResources(request);
         currentDate = new Date();
-        logger.log(Level.ERROR, "got message resources" + dateFormat.format(currentDate));
+        //logger.log(Level.ERROR, "got message resources" + dateFormat.format(currentDate));
 
         for (int i = 0; i < projectCategories.length; ++i) {
             // Count number of projects in this category
@@ -1841,7 +1841,7 @@ logger.log(Level.ERROR, "get phase manager" + dateFormat.format(currentDate));
         }
 
         currentDate = new Date();
-        logger.log(Level.ERROR, "before ungrouped " + dateFormat.format(currentDate));
+        //logger.log(Level.ERROR, "before ungrouped " + dateFormat.format(currentDate));
         if (ungroupedProjects.length != 0 && myProjects) {
             Deliverable[] allMyDeliverables = getDeliverables(
                     ActionsHelper.createDeliverableManager(request), projects, phases, myResources);
@@ -1869,7 +1869,7 @@ logger.log(Level.ERROR, "get phase manager" + dateFormat.format(currentDate));
             totalProjectsCount += typeCounts[i];
         }
         currentDate = new Date();
-        logger.log(Level.ERROR, "after count " + dateFormat.format(currentDate));
+        //logger.log(Level.ERROR, "after count " + dateFormat.format(currentDate));
 
         // Place all collected data into the request as attributes
         request.setAttribute("projects", projects);
@@ -1891,7 +1891,7 @@ logger.log(Level.ERROR, "get phase manager" + dateFormat.format(currentDate));
         }
 
         currentDate = new Date();
-        logger.log(Level.ERROR, "leaving list projects " + dateFormat.format(currentDate));
+        //logger.log(Level.ERROR, "leaving list projects " + dateFormat.format(currentDate));
 
         // Signal about successfull execution of the Action
         return mapping.findForward(Constants.SUCCESS_FORWARD_NAME);
