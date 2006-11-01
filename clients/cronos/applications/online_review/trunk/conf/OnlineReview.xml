@@ -519,14 +519,13 @@
         <Property name="default_scale">
             <Value>4</Value>
         </Property>
-	</Config>
+    </Config>
 
-    
     <Config name="com.topcoder.management.review.scorecalculator.calculators.Scale10">
         <Property name="default_scale">
             <Value>10</Value>
         </Property>
-	</Config>
+    </Config>
 
 
     <!--
