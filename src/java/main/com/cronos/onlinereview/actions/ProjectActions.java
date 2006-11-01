@@ -1129,7 +1129,7 @@ public class ProjectActions extends DispatchAction {
             
             if ("close_phase".equals(action)) {
                 //logger.log(Level.INFO, "switchProjectPhase: " + phaseType.getName() +
-                        " is in " + phaseStatus.getName() + " state");
+                //        " is in " + phaseStatus.getName() + " state");
                 if (phaseStatus.getName().equals(PhaseStatus.OPEN.getName()) && phaseManager.canEnd(phase)) {
                     //logger.log(Level.INFO, "switchProjectPhase: " + phaseType.getName() + " is being closed");
                     // Close the phase
@@ -1141,7 +1141,7 @@ public class ProjectActions extends DispatchAction {
                 }
             } else if ("open_phase".equals(action)) {                   
                 //logger.log(Level.INFO, "switchProjectPhase: " + phaseType.getName() +
-                        " is in " + phaseStatus.getName() + " state");
+                //        " is in " + phaseStatus.getName() + " state");
                 if (phaseStatus.getName().equals(PhaseStatus.SCHEDULED.getName()) && phaseManager.canStart(phase)) {
                     //logger.log(Level.INFO, "switchProjectPhase: " + phaseType.getName() + " is being started");
                     // Open the phase
