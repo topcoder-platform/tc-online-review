@@ -1632,14 +1632,14 @@
                 <Property name="context">
                     <Value>
                         SELECT DISTINCT scorecard.scorecard_id
-                          FROM scorecard
-                          JOIN scorecard_status_lu
-                            ON scorecard.scorecard_status_id = scorecard_status_lu.scorecard_status_id
-                          JOIN scorecard_type_lu
-                            ON scorecard.scorecard_type_id = scorecard_type_lu.scorecard_type_id
-                          JOIN project_category_lu
-                            ON scorecard.project_category_id = project_category_lu.project_category_id
-                         WHERE
+                          FROM scorecard,
+                               scorecard_status_lu,
+                               scorecard_type_lu,
+                               project_category_lu
+                         WHERE scorecard.scorecard_status_id = scorecard_status_lu.scorecard_status_id
+                           AND scorecard.scorecard_type_id = scorecard_type_lu.scorecard_type_id
+                           AND scorecard.project_category_id = project_category_lu.project_category_id
+                           AND
                     </Value>
                 </Property>
 
@@ -1825,10 +1825,9 @@
                 <Property name="context">
                     <Value>
                         SELECT     submission_id
-                              FROM submission
-                        INNER JOIN upload
-                                ON submission.upload_id = upload.upload_id
-                             WHERE
+                              FROM submission, upload
+                             WHERE submission.upload_id = upload.upload_id
+                             AND
                     </Value>
                 </Property>
                 <Property name="alias">
