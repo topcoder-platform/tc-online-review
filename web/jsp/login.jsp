@@ -53,6 +53,7 @@
 
 					<html:form action="/actions/Login" focus="userName">
 						<html:hidden property="method" value="login" />
+						<html:hidden property="redirectToProjectID" value="${param['redirectToProjectID']}" />
 						<table class="stat" cellpadding="0" cellspacing="0" width="50%">
 							<tr>
 								<td class="title" colspan="2"><bean:message key="login.formLogin.title" /></td>
