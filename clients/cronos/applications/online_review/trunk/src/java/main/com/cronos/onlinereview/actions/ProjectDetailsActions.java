@@ -306,6 +306,7 @@ public class ProjectDetailsActions extends DispatchAction {
         Map similarPhaseGroupIndexes = new HashMap();
         int activeTabIdx = -1;
         int phaseGroupIdx = -1;
+        long winnerUserId = Long.MIN_VALUE;
         PhaseGroup phaseGroup = null;
         Resource[] submitters = null;
 
@@ -899,6 +900,8 @@ public class ProjectDetailsActions extends DispatchAction {
                 if (winner == null) {
                     continue;
                 }
+                
+                winnerUserId = Long.parseLong((String) winner.getProperty("External Reference ID"));
 
                 // Obtain an instance of Upload Manager
                 UploadManager upMgr = ActionsHelper.createUploadManager(request);
@@ -918,6 +921,7 @@ public class ProjectDetailsActions extends DispatchAction {
                     phaseGroup.setFinalFix(uploads[0]);
                 }
             }
+            
 
             if (phaseGroup.getAppFunc().equalsIgnoreCase(Constants.FINAL_FIX_APP_FUNC) &&
                     phaseName.equalsIgnoreCase(Constants.FINAL_REVIEW_PHASE_NAME) &&
@@ -930,6 +934,9 @@ public class ProjectDetailsActions extends DispatchAction {
                 if (winner == null) {
                     continue;
                 }
+                
+                // Get the user if of the winner   
+                winnerUserId = Long.parseLong((String) winner.getProperty("External Reference ID"));
 
                 Resource[] reviewer = null;
 
@@ -1050,7 +1057,7 @@ public class ProjectDetailsActions extends DispatchAction {
         request.setAttribute("isAllowedToPerformAggregationReview",
                 new Boolean(AuthorizationHelper.hasUserPermission(request, Constants.PERFORM_AGGREG_REVIEW_PERM_NAME)));
         request.setAttribute("isAllowedToUploadFF",
-                new Boolean(AuthorizationHelper.hasUserPermission(request, Constants.PERFORM_FINAL_FIX_PERM_NAME)));
+                new Boolean(AuthorizationHelper.getLoggedInUserId(request) == winnerUserId));
         request.setAttribute("isAllowedToPerformFinalReview",
                 new Boolean(ActionsHelper.getPhase(phases, true, Constants.FINAL_REVIEW_PHASE_NAME) != null &&
                         AuthorizationHelper.hasUserPermission(request, Constants.PERFORM_FINAL_REVIEW_PERM_NAME)));
