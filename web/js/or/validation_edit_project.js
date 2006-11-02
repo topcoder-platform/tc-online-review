@@ -58,6 +58,32 @@ function validate_forum_id(thisForm, msgList) {
 }
 
 /*
+ * Validates the component id.
+ */
+function validate_component_id(thisForm, msgList) {
+	var msg = null;
+	
+	var msgDiv = document.getElementById("component_id_validation_msg");
+    	msgDiv.innerHTML = "";
+	msgDiv.style.display = "none";
+	
+	var forum_id = thisForm["component_id"].value;
+    	if (forum_id.length > 0) {
+        	if (!isAllDigits(forum_id) || !isInteger(forum_id)) {
+            		msg = "Component Id should be an integer [0, 2147483647].";
+	        	add_error_message(msg, "", msgDiv, msgList);
+    		}
+	} else {
+		var project_type = thisForm["project_type"].value;
+		if (project_type == "1") {
+			msg = "If project type is Component, Component Id field is required";
+	        	add_error_message(msg, "", msgDiv, msgList);
+		}
+	}
+	return msg == null;
+}
+
+/*
  * Validates the project resources.
  * @param thisForm the form to validate
  * @msgList the list of validation error messages
@@ -259,6 +285,8 @@ function validate_form(thisForm, popup) {
 	validate_project_name(thisForm, msgList);
 	
 	validate_forum_id(thisForm, msgList);
+	
+	validate_component_id(thisForm, msgList);
 		
 	validate_timeline(thisForm, msgList);
 

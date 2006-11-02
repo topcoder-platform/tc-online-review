@@ -317,7 +317,7 @@ public class ProjectActions extends DispatchAction {
 
             if (resources[i].getProperty("Payment") != null) {
                 form.set("resources_payment", i + 1, Boolean.TRUE);
-                form.set("resources_payment_amount", i + 1, Long.valueOf((String) resources[i].getProperty("Payment")));
+                form.set("resources_payment_amount", i + 1, Double.valueOf((String) resources[i].getProperty("Payment")));
             } else {
                 form.set("resources_payment", i + 1, Boolean.FALSE);
             }
