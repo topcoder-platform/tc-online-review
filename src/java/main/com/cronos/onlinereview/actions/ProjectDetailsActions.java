@@ -351,6 +351,8 @@ public class ProjectDetailsActions extends DispatchAction {
                 continue;
             }
 
+            phaseGroup.addPhase(phase);
+
             String phaseStatus = phase.getPhaseStatus().getName();
 
             if (phaseStatus.equalsIgnoreCase("Closed") || phaseStatus.equalsIgnoreCase("Open")) {
@@ -1743,7 +1745,6 @@ public class ProjectDetailsActions extends DispatchAction {
         // Get all phases for the current project
         Phase[] phases = ActionsHelper.getPhasesForProject(ActionsHelper.createPhaseManager(request, false), project);
         // Retrieve the current phase for the project
-        // TODO: Retrieve current phase correctly
         Phase currentPhase = ActionsHelper.getPhase(phases, true, Constants.REVIEW_PHASE_NAME);
 
         if (currentPhase == null) {
@@ -2100,7 +2101,6 @@ public class ProjectDetailsActions extends DispatchAction {
         // Get an upload to display autoscreening results of
         Upload upload = verification.getUpload();
 
-        // TODO: Should probably depict that we have AutoScreening not ViewSubmission
         // Verify that upload is a submission
         if (!upload.getUploadType().getName().equalsIgnoreCase("Submission")) {
             return ActionsHelper.produceErrorReport(
