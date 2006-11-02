@@ -1,0 +1,15 @@
+<?xml version="1.0" ?>
+<CMConfig>
+	<Config name="com.cronos.onlinereview.scorecard.functionaltests.ScorecardTypes">
+			<Property name="1">
+				<Value>Screening</Value>
+			</Property>
+			<Property name="2">
+				<Value>Review</Value>
+			</Property>
+			<Property name="3">
+				<Value>Client Review</Value>
+			</Property>
+			
+</Config>
+</CMConfig>		
