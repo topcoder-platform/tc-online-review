@@ -40,4 +40,5 @@ DROP TABLE testcase_approval;
 DROP TABLE testcase_question;
 DROP TABLE testcase_review;
 DROP TABLE testcases;
-DROP TABLE user_role;
+--If you drop user_role, the catalog breaks
+--DROP TABLE user_role;
