@@ -19,28 +19,17 @@ import java.util.List;
  * @version 1.0
  */
 class PRHelper {
-	private static final int RESOURCE_INFO_EXTERNAL_ID = 1;	
-	private static final int RESOURCE_INFO_INITIAL_SCORE_ID = 10;
-	private static final int RESOURCE_INFO_FINAL_SCORE_ID = 11;
-	private static final int RESOURCE_INFO_PLACED_ID = 12;
-	private static final int SUBMISSION_STATUS_FAILED_SCREENING_ID = 2;
-	private static final int SUBMISSION_STATUS_DELETE_ID = 5;
-
 	private static final String APPEAL_RESPONSE_SELECT_STMT = 
-				"select ri_s.value as final_score, ri_u.value as user_id, round(ri_p.value) as placed, r.project_id, s.submission_status_id " +
-				"from resource r " +
-				"inner join resource_info ri_u " +
-				"on r.resource_id = ri_u.resource_id " +
-				"and ri_u.resource_info_type_id = " + RESOURCE_INFO_EXTERNAL_ID + " " +
-				"inner join resource_info ri_s " +
-				"on r.resource_id = ri_s.resource_id " +
-				"and ri_s.resource_info_type_id =  " + RESOURCE_INFO_FINAL_SCORE_ID + " " +
-				"inner join resource_info ri_p " +
-				"on r.resource_id = ri_p.resource_id " +
-				"and ri_p.resource_info_type_id =  " + RESOURCE_INFO_PLACED_ID + " " +
-				"inner join upload u on u.project_id = r.project_id and u.resource_id = r.resource_id and upload_type_id = 1 " +
-				"inner join submission s on u.upload_id = s.upload_id " +
-				"where r.project_id = ? and r.resource_role_id = 1 ";
+				"select ri_s.value as final_score, ri_u.value as user_id, ri_p.value as placed, r.project_id, s.submission_status_id " +
+				"from resource r, resource_info ri_u,resource_info ri_s,resource_info ri_p,upload u,submission s " +
+				"where  r.resource_id = ri_u.resource_id " +
+				"and ri_u.resource_info_type_id = 1 " +
+				"and r.resource_id = ri_s.resource_id " +
+				"and ri_s.resource_info_type_id = 11 " +
+				"and r.resource_id = ri_p.resource_id " +
+				"and ri_p.resource_info_type_id = 12 " +
+				"and u.project_id = r.project_id and u.resource_id = r.resource_id and upload_type_id = 1 " +
+				"and u.upload_id = s.upload_id and r.project_id = ? and r.resource_role_id = 1 ";
 
 	private static final String APPEAL_RESPONSE_UPDATE_PROJECT_RESULT_STMT = 
 				"update project_result set final_score = ?, placed = ?, passed_review_ind = ?  " +
@@ -48,54 +37,51 @@ class PRHelper {
 
 	private static final String REVIEW_SELECT_STMT = 
 				"select ri_s.value as raw_score, ri_u.value as user_id, r.project_id " +
-				"from resource r " +
-				"inner join resource_info ri_u " +
-				"on r.resource_id = ri_u.resource_id " +
-				"and ri_u.resource_info_type_id = " + RESOURCE_INFO_EXTERNAL_ID + " " +
-				"inner join resource_info ri_s " +
-				"on r.resource_id = ri_s.resource_id " +
-				"and ri_s.resource_info_type_id =  " + RESOURCE_INFO_INITIAL_SCORE_ID + " " +
-				"where r.project_id = ? ";
+				"from resource r, resource_info ri_u,resource_info ri_s  " +
+				"where r.resource_id = ri_s.resource_id and ri_s.resource_info_type_id = 10 " +
+				" and r.resource_id = ri_u.resource_id and ri_u.resource_info_type_id = 1 and r.project_id = ? ";
 
 	private static final String REVIEW_UPDATE_PROJECT_RESULT_STMT = 
 				"update project_result set raw_score = ?  " +
 				"where project_id = ? and user_id = ? ";
 	private static final String FAILED_PASS_SCREENING_STMT = 
 				"update project_result set valid_submission_ind = 0, reliability_ind = 0, rating_ind = 0 " +
-				"where exists(select * from submission s " +
-				"	inner join upload u on u.upload_id = s.upload_id and u.upload_type_id = 1 " +
+				"where exists(select * from submission s,upload u,resource r,resource_info ri   " +
+				"	where u.upload_id = s.upload_id and u.upload_type_id = 1 " +
 				"	and u.project_id = project_result.project_id " +
-				"	inner join resource r on r.resource_id = u.resource_id " +
-				"	inner join resource_info ri on ri.resource_id = r.resource_id " +
-				"	and ri.value = project_result.user_id and ri.resource_info_type_id = " + RESOURCE_INFO_EXTERNAL_ID +
-				"	where submission_status_id = " + SUBMISSION_STATUS_FAILED_SCREENING_ID + " ) and " +
+				"	and r.resource_id = u.resource_id " +
+				"	and ri.resource_id = r.resource_id " +
+				"	and ri.value = project_result.user_id and ri.resource_info_type_id = 1" + 
+				"	and submission_status_id = 2 ) and " +
 				" project_id = ?";
 
 	private static final String PASS_SCREENING_STMT = 
 		"update project_result set valid_submission_ind = 1, reliability_ind = 1, rating_ind = 1 " +
-		"where exists(select * from submission s " +
-		"	inner join upload u on u.upload_id = s.upload_id and u.upload_type_id = 1  " +
+		"where exists(select * from submission s,upload u,resource r,resource_info ri    " +
+		"	where u.upload_id = s.upload_id and u.upload_type_id = 1  " +
 		"	and u.project_id = project_result.project_id " +
-		"	inner join resource r on r.resource_id = u.resource_id " +
-		"	inner join resource_info ri on ri.resource_id = r.resource_id " +
-		"	and ri.value = project_result.user_id and ri.resource_info_type_id = " + RESOURCE_INFO_EXTERNAL_ID +
-		"	where submission_status_id not in (" + SUBMISSION_STATUS_FAILED_SCREENING_ID + "," + SUBMISSION_STATUS_DELETE_ID  + ") ) and " +
+		"	and r.resource_id = u.resource_id " +
+		"	and ri.resource_id = r.resource_id " +
+		"	and ri.value = project_result.user_id and ri.resource_info_type_id = 1 " + 
+		"	and submission_status_id not in (2,5) ) and " +
 		" project_id = ?";
+	
 	private static final String UPDATE_PROJECT_RESULT_STMT = 
 				"update project_result set valid_submission_ind = 0 " +
-				"where not exists(select * from submission s " +
-				"	inner join upload u on u.upload_id = s.upload_id and upload_type_id = 1  " +
+				"where not exists(select * from submission s,upload u,resource r,resource_info ri  " +
+				"	where u.upload_id = s.upload_id and upload_type_id = 1  " +
 				"	and u.project_id = project_result.project_id " +
-				"	inner join resource r on r.resource_id = u.resource_id " +
-				"	inner join resource_info ri on ri.resource_id = r.resource_id " +
-				"	and ri.value = project_result.user_id and ri.resource_info_type_id = " + RESOURCE_INFO_EXTERNAL_ID +
-				"	where submission_status_id <> " + SUBMISSION_STATUS_DELETE_ID + " ) and " +
+				"	and r.resource_id = u.resource_id " +
+				"	and ri.resource_id = r.resource_id " +
+				"	and ri.value = project_result.user_id and ri.resource_info_type_id = 1 " + 
+				"	and submission_status_id <> 5 ) and " +
 				" project_id = ?";
+	
 	private static final String SELECT_SUBMITTERS_STMT = 
 		"SELECT value from resource_info ri, resource r " +
 		"where ri.resource_id = r.resource_id " +
 		"and r.project_id = ? and r.resource_role_id = 1 " +
-		"and ri.resource_info_type_id = " + RESOURCE_INFO_EXTERNAL_ID;
+		"and ri.resource_info_type_id = 1";
 	
 	/**
 	 * Prevent to be created outside.
@@ -219,11 +205,23 @@ class PRHelper {
         		double finalScore = rs.getDouble("final_score");
         		long userId = rs.getLong("user_id");
         		int status = rs.getInt("submission_status_id");
-        		int placed = rs.getInt("placed");
+        		String p = rs.getString("placed");
+        		int placed = 0;
+        		if (p != null) {
+        			try {
+        				placed = Integer.parseInt(p);
+        			} catch (Exception e) {
+        				// Ignore
+        			}
+        		}
 
         		// Update final score, placed and passed_review_ind
         		updateStmt.setDouble(1, finalScore);
-        		updateStmt.setInt(2, placed);
+        		if (placed == 0) {
+        			updateStmt.setNull(2, Types.INTEGER);
+        		} else {
+        			updateStmt.setInt(2, placed);
+        		}
         		// 1 is active, 4 is Completed Without Win
         		updateStmt.setInt(3, status == 1 || status == 4 ? 1 : 0);
         		updateStmt.setLong(4, projectId);
