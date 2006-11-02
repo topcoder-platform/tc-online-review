@@ -61,6 +61,7 @@
     <classpathentry exported="true" kind="lib" path="lib/third_party/commons-fileupload.jar"/>
     <classpathentry exported="true" kind="lib" path="lib/third_party/commons-logging.jar"/>
     <classpathentry exported="true" kind="lib" path="lib/third_party/commons-validator.jar"/>
+    <classpathentry exported="true" kind="lib" path="lib/third_party/ejb-2_0.jar"/>
     <classpathentry exported="true" kind="lib" path="lib/third_party/ifx-jdbc.jar"/>
     <classpathentry exported="true" kind="lib" path="lib/third_party/jakarta-oro.jar"/>
     <classpathentry exported="true" kind="lib" path="lib/third_party/jstl.jar"/>
