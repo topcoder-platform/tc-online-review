@@ -1,0 +1,200 @@
+<?xml version="1.0"?>
+<!DOCTYPE module PUBLIC
+    "-//Puppy Crawl//DTD Check Configuration 1.2//EN"
+    "http://www.puppycrawl.com/dtds/configuration_1_2.dtd">
+
+<!--
+    #################################################################################################
+    #                   TopCoder Checkstyle Configuration File for JUnit Tests                      #
+    ################################################################################################# 
+    #  Run "ant checkstyle_tests" to run checkstyle against your submission's unit tests.           #
+    #                                                                                               #
+    #  NOTE: This will only check the code located in your src/java/tests directory.  To check the  #
+    #  style of your main code, run "ant checkstyle".                                               #
+    #                                                                                               #
+    #################################################################################################
+-->
+
+<module name="Checker">
+    <module name="TreeWalker">
+        <property name="severity" value="error" /> 
+
+        <module name="JavadocType">
+            <property name="scope" value="public" />
+
+            <!-- "To preserve anonymity, author must be labeled 'TCSDEVELOPER'" -->
+            <property name="authorFormat" value="^TCSDEVELOPER$" />
+
+            <!-- "Version tag must match '1.0' pattern" -->
+            <property name="versionFormat" value="\d+\.\d+"/>
+        </module>
+
+        <!-- Javadocs must be present for all variables. -->
+        <module name="JavadocVariable" />
+
+        <!-- Javadocs must be present for all Methods. All @param, @return and @throws tags must be present -->
+        <module name="JavadocMethod">
+            <!-- Allow @throws even if the throws is not present in the method signature, as long as its a RuntimeException. -->
+            <property name="allowUndeclaredRTE" value="true" />
+           
+            <!-- Allow developer to be more detailed in his documentation. -->
+            <property name="allowThrowsTagsForSubclasses" value="true" />
+        </module>    
+
+
+        <!-- Javadoc style checking is present. For additional checks, run "ant javadoc" and make sure no error messages are present. -->
+        <module name="JavadocStyle" />
+
+        <!-- Standard naming conventions for local variables, member names, etc. -->
+        <!-- Constants (static final) variables start with capital letter, followed by capital letters, digits and "_" character -->
+        <module name="ConstantName" /> 
+
+        <!-- Most of the variables and method names must start with no-caps alphabet character, followed by any number of character or digit. -->
+        <module name="LocalFinalVariableName" />
+        <module name="LocalVariableName" />
+        <module name="MemberName" />
+        <module name="LocalFinalVariableName" />
+        <module name="ParameterName" />
+        <module name="StaticVariableName" />
+
+        <!-- Class names must begin with capital letter, followed by any number or digit -->
+        <module name="TypeName" />
+
+        <module name="RegexpHeader">
+            <property name="headerFile" value="${basedir}\topcoder.header" />
+        </module>
+
+        <!-- No start, illegal, redundant, and unused imports -->
+        <module name="AvoidStarImport" />
+        <module name="IllegalImport" />
+        <module name="RedundantImport" />
+        <module name="UnusedImports" />
+
+
+        <module name="FileLength">
+            <property name="severity" value="info" />
+        </module>
+
+        <!-- Line length of 120 characters, as defined by TopCoder Member Guide.  -->
+        <module name="LineLength">
+            <property name="max" value="120"/>
+        </module>
+
+        <!-- Nothing is specifically said about these attributes in Java Coding Conventions, so they are marked as INFO, and up to the developer to react. -->
+        <module name="ExecutableStatementCount">
+            <property name="severity" value="info" />
+        </module>
+
+        <module name="MethodLength">
+            <property name="severity" value="info" />
+        </module>
+
+        <module name="AnonInnerLength">
+            <property name="severity" value="info" />
+        </module>
+
+        <module name="ParameterNumber">
+            <property name="severity" value="info" />
+        </module>
+
+        <!-- Default CheckStyle Whitespace rules seem reasonable to use. -->
+        <module name="EmptyForIteratorPad"/>
+        <module name="MethodParamPad"/>
+        <module name="NoWhitespaceAfter"/>
+        <module name="NoWhitespaceBefore"/>
+        <module name="OperatorWrap"/>
+        <module name="ParenPad"/>
+        <module name="TypecastParenPad"/>
+        <module name="TabCharacter"/>
+        <module name="WhitespaceAfter"/>
+        <module name="WhitespaceAround"/>
+
+        <!-- Modifier Order as specified by Java Language Specifications. -->
+        <module name="ModifierOrder"/>
+        
+        <!-- Default CheckStyle rules seem reasonable for "{ }" blocks. -->
+
+        <!-- Empty blocks allowed, as long as they have explicit comments stating why they are empty.  -->
+        <module name="EmptyBlock">
+            <property name="option" value="text"/> 
+        </module>
+
+        <module name="LeftCurly"/>
+        <module name="NeedBraces"/>
+        <module name="RightCurly"/>
+
+
+        <!-- Checks the style of JUnit test cases. -->
+        <module name="JUnitTestCase" />
+
+        <!-- Standalone ';' not allowed. -->
+        <module name="EmptyStatement"/>
+
+        <!-- Added some coding problems as INFO.  Up to developer to react to them. -->
+        <module name="CovariantEquals">
+            <property name="severity" value="info" />
+        </module>
+
+        <module name="DoubleCheckedLocking">
+            <property name="severity" value="info" />
+        </module>
+
+        <module name="IllegalInstantiation">
+            <property name="severity" value="info" />
+        </module>
+
+        <!-- Developer should probably bring up this issue with designer if ever it occurs. -->
+        <module name="EqualsHashCode">
+            <property name="severity" value="info" />
+        </module>
+
+        <!-- Only apply this to local variables; Designers seem to prefer using same parameter names as class members. -->
+        <module name="HiddenField">
+            <property name="tokens" value="VARIABLE_DEF"/>
+        </module>
+
+        <!-- No multiple assignement in a single line. -->  
+        <module name="InnerAssignment" />
+
+        <!-- Place switch defaults in switch statements -->
+        <module name="MissingSwitchDefault" />
+
+        <!-- RuntimeExceptions aren't declared in the method signature. Subclasses of the main exception may not be declared in the method signature. -->
+        <module name="RedundantThrows">
+            <property name="allowUnchecked" value="false" />
+            <property name="allowSubclasses" value="false" />
+        </module>
+
+        <module name="SimplifyBooleanExpression"/>
+        <module name="SimplifyBooleanReturn"/>
+        <module name="StringLiteralEquality"/>
+
+        <module name="IllegalCatch">
+            <property name="severity" value="info" />
+        </module>
+
+        <!-- Declaration order suggested by Sun. -->
+        <module name="DeclarationOrder" />
+
+
+        <!-- Only private class members allowed. (With the exception of constants) -->        
+        <module name="VisibilityModifier" />
+
+        <module name="InterfaceIsType" />
+        <module name="HideUtilityClassConstructor" />
+
+        <!-- Indentation as recommended by Sun. -->
+        <module name="Indentation">
+            <property name="caseIndent" value="0" />
+        </module>
+
+
+        <!-- No trailing spaces allowed -->
+        <module name="GenericIllegalRegexp">
+            <property name="format" value="\s+$"/>
+            <property name="message" value="Line has trailing spaces."/>
+        </module>
+
+    </module>
+
+</module>
