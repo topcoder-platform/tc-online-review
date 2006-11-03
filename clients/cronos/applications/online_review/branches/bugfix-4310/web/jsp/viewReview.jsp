@@ -176,7 +176,6 @@
 										<%@ include file="../includes/review/review_question.jsp" %>
 										<%@ include file="../includes/review/review_static_answer.jsp" %>
 										<c:if test="${canPlaceAppeal or canPlaceAppealResponse}">
-											<%-- TODO: Localize appeal statuses --%>
 											<td class="valueC">${appealStatuses[itemIdx]}<!-- @ --></td>
 										</c:if>
 										<c:if test="${canPlaceAppeal}">
