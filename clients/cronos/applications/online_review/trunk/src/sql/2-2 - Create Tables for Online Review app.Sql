@@ -607,12 +607,27 @@ CREATE TABLE default_scorecard (
   FOREIGN KEY(scorecard_id)
     REFERENCES scorecard(scorecard_id) CONSTRAINT FK_DEFAULTSCORECARD_SCORECARD_SCORECARDID
 );
-CREATE TABLE project_result (
-  project_id                    INTEGER                         NOT NULL,
-  user_id                       VARCHAR(20)                     NOT NULL,
-  rating_ind                    INTEGER                         NOT NULL,
-  reliability_ind               INTEGER                         NOT NULL,
-  valid_submission_ind          INTEGER                         NOT NULL,
-  old_rating                    FLOAT,
-  old_reliability               FLOAT
+CREATE TABLE project_result
+(
+   user_id                      DECIMAL(10),
+   project_id                   DECIMAL(10),
+   old_rating                   DECIMAL(5),
+   new_rating                   DECIMAL(5),
+   old_reliability              DECIMAL(5, 4),
+   new_reliability              DECIMAL(5, 4),
+   raw_score                    DECIMAL(5, 2),
+   final_score                  DECIMAL(5, 2),
+   payment                      DECIMAL(10, 2),
+   placed                       DECIMAL(6),
+   rating_ind                   DECIMAL(1),
+   valid_submission_ind         DECIMAL(1),
+   reliability_ind              DECIMAL(1),
+   create_date                  DATETIME YEAR TO FRACTION(3),
+   modify_date                  DATETIME YEAR TO FRACTION(3),
+   reliable_submission_ind      DECIMAL(1),
+   passed_review_ind            DECIMAL(1),
+   point_adjustment             DECIMAL(5),
+   current_reliability_ind      DECIMAL(1),
+   PRIMARY KEY(user_id, project_id) CONSTRAINT PK_PROJECT_RESULT
 );
+CREATE INDEX proj_result_idx1 ON project_result(project_id);
