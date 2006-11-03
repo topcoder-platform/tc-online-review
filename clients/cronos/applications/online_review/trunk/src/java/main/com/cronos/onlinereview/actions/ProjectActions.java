@@ -1803,7 +1803,7 @@ public class ProjectActions extends DispatchAction {
                     // Get currently open phase end calculate its end date
                     if (activePhases != null && activePhases.length != 0) {
                         phass[counter] = activePhases;
-                        pheds[counter] = activePhases[0].calcEndDate();
+                        pheds[counter] = activePhases[0].getScheduledEndDate();
                     }
 
                     // Retrieve information about my roles, and my current unfinished deliverables
