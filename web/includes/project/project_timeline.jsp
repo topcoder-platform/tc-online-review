@@ -9,7 +9,7 @@
 			<td class="title" width="392"><bean:message key="viewProjectDetails.box.Timeline" /></td>
 			<c:if test="${isAllowedToSetTL}">
 				<td class="title" style="text-align:right;">
-					<input type="checkbox" onclick="setTimelineNotification(${project.id}, this); return false;"
+					<input type="checkbox" onclick="setTimelineNotification(${project.id}, this)"
 						${(sendTLNotifications == 'On') ? 'value="On" checked="checked"' : 'value="Off"' } />
 					<bean:message key="viewProjectDetails.ReceiveTLNotifications" />
 				</td>
@@ -60,24 +60,9 @@
 									<td class="valueC" nowrap="nowrap"><!-- @ --></td>
 								</c:otherwise>
 							</c:choose>
-							<c:choose>
-								<c:when test="${not empty originalStart[phaseStatus.index]}">
-									<c:set var="originalStartDate" value='${orfn:getMessage(pageContext, "viewProjectDetails.Timeline.OriginalStartTime")} ${orfn:displayDate(pageContext.request, originalStart[phaseStatus.index])}' />
-								</c:when>
-								<c:otherwise>
-									<c:set var="originalStartDate" value="" />
-								</c:otherwise>
-							</c:choose>
-							<c:choose>
-								<c:when test="${not empty originalEnd[phaseStatus.index]}">
-									<c:set var="originalEndDate" value='${orfn:getMessage(pageContext, "viewProjectDetails.Timeline.OriginalEndTime")} ${orfn:displayDate(pageContext.request, originalEnd[phaseStatus.index])}' />
-								</c:when>
-								<c:otherwise>
-									<c:set var="originalEndDate" value="" />
-								</c:otherwise>
-							</c:choose>
-							<td class="valueC" nowrap="nowrap" title="${originalStartDate}">${orfn:displayDate(pageContext.request, displayedStart[phaseStatus.index])}</td>
-							<td class="valueC" nowrap="nowrap" title="${originalEndDate}">${orfn:displayDate(pageContext.request, displayedEnd[phaseStatus.index])}</td>
+							
+							<td class="valueC" nowrap="nowrap" >${orfn:displayDate(pageContext.request, originalStart[phaseStatus.index])}</td>
+							<td class="valueC" nowrap="nowrap" >${orfn:displayDate(pageContext.request, originalEnd[phaseStatus.index])}</td>
 						</tr>
 					</c:forEach>
 				</table>
