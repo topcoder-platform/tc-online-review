@@ -222,8 +222,7 @@ public class ProjectDetailsActions extends DispatchAction {
         request.setAttribute("outstandingDeliverableUserIds", outstandingDeliverableUserIds);
         request.setAttribute("outstandingDeliverableSubmissionUserIds", outstandingDeliverableSubmissionUserIds);
 
-        Date[] displayedStart = new Date[phases.length];
-        Date[] displayedEnd = new Date[phases.length];
+    
         Date[] originalStart = new Date[phases.length];
         Date[] originalEnd = new Date[phases.length];
         long projectStartTime = phProj.getStartDate().getTime() / (60 * 1000);
@@ -246,9 +245,9 @@ public class ProjectDetailsActions extends DispatchAction {
             long endTime = endDate.getTime() / (60 * 1000);
 
             // Determine the strings to display for start/end dates
-            displayedStart[i] = startDate;
+          
             originalStart[i] = phase.getScheduledStartDate();
-            displayedEnd[i] = endDate;
+            
             originalEnd[i] = phase.getScheduledEndDate();
 
             // Determine offsets and lengths of the bars in Gantt chart, in minutes
@@ -272,8 +271,6 @@ public class ProjectDetailsActions extends DispatchAction {
          */
 
         // Place phases' start/end dates
-        request.setAttribute("displayedStart", displayedStart);
-        request.setAttribute("displayedEnd", displayedEnd);
         request.setAttribute("originalStart", originalStart);
         request.setAttribute("originalEnd", originalEnd);
         request.setAttribute("phaseStatuseCodes", phaseStatuseCodes);
