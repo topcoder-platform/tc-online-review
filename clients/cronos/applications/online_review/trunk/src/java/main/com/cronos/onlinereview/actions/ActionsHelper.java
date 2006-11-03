@@ -6,7 +6,6 @@ package com.cronos.onlinereview.actions;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -1417,7 +1416,7 @@ public class ActionsHelper {
         validateParameterNotNull(deliverable, "deliverable");
 
         for (int i = 0; i < phases.length; ++i) {
-            if (phases[i].getPhaseType().getId() == deliverable.getPhase()) {
+            if (phases[i].getId() == deliverable.getPhase()) {
                 return phases[i];
             }
         }
@@ -1720,15 +1719,12 @@ public class ActionsHelper {
      * This method returns either completed or incomplete deliverables.
      *
      * @return an array of deliverables.
-     * @param request
-     *            an <code>HttpServeltRequest</code> object that contains additional information
-     *            such as current project and a list of all phases for that project.
      * @param manager
      *            an instance of the <code>DeliverableManager</code> class.
+     * @param phases
+     *            an array of pahses to search deliverables for.
      * @throws IllegalArgumentException
-     *             if any of the parameters are <code>null</code>, or if request specified by
-     *             <code>request</code> parameter does not contain needed prerequisites, such as
-     *             an object representing current project and a list of all phases for that project.
+     *             if any of the parameters are <code>null</code>.
      * @throws DeliverablePersistenceException
      *             if an error occurs while reading from the persistence store.
      * @throws SearchBuilderException
@@ -1737,58 +1733,57 @@ public class ActionsHelper {
      *             if an error occurs when determining whether a Deliverable has been completed or
      *             not.
      */
-    public static Deliverable[] getAllDeliverablesForActivePhases(
-            HttpServletRequest request, DeliverableManager manager)
+    public static Deliverable[] getAllDeliverablesForPhases(DeliverableManager manager, Phase[] phases)
         throws DeliverablePersistenceException, SearchBuilderException, DeliverableCheckingException {
         // Validate parameters
         validateParameterNotNull(manager, "manager");
-        Project project = (Project) validateAttributeNotNull(request, "project");
-        Phase[] phases = (Phase[]) validateAttributeNotNull(request, "phases");
+        validateParameterNotNull(phases, "phases");
 
-        // Prepare filter to search for deliverables for specific project
-        Filter filterProject = DeliverableFilterBuilder.createProjectIdFilter(project.getId());
         // A filter to search for deliverables for specific phase(s) of the project
-        Filter filterPhases = null;
+        Filter filter = null;
 
-        // Obtain an array of all active phases of the project
-        Phase[] activePhases = getActivePhases(phases);
-
-        switch (activePhases.length) {
+        switch (phases.length) {
         case 0:
-            // No active phases -- no deliverables
+            // No phases -- no deliverables
             return new Deliverable[0];
 
         case 1:
-            // If there is currently only one active phase,
+            // If there is only one phase in the provided array,
             // create filter for it directly (no OR filters needed)
-            filterPhases = DeliverableFilterBuilder.createPhaseIdFilter(activePhases[0].getId());
+            filter = DeliverableFilterBuilder.createPhaseIdFilter(phases[0].getId());
             break;
 
         default:
             List phaseFilters = new ArrayList();
-            // Prepare a list of filters for each phase in the array of active phases
-            for (int i = 0; i < activePhases.length; ++i) {
-                phaseFilters.add(DeliverableFilterBuilder.createPhaseIdFilter(activePhases[i].getId()));
+            // Prepare a list of filters for each phase in the array of phases
+            for (int i = 0; i < phases.length; ++i) {
+                phaseFilters.add(DeliverableFilterBuilder.createPhaseIdFilter(phases[i].getId()));
             }
             // Combine all filters using OR operator
-            filterPhases = new OrFilter(phaseFilters);
+            filter = new OrFilter(phaseFilters);
         }
 
-        // Build final combined filter
-        Filter filter = new AndFilter(filterProject, filterPhases);
-
-        // TODO: Verify the following sections of code and clean it up eventually
-
         // Perform a search for the deliverables
-        Deliverable[] deliverablesNoSubm = manager.searchDeliverables(filterPhases, null);
-        // The following command causes problems. That's strange...
-//        Deliverable[] deliverablesSubm = manager.searchDeliverablesWithSubmissionFilter(filterPhases, null);
+        Deliverable[] allDeliverables = manager.searchDeliverables(filter, null);
 
         List deliverables = new ArrayList();
 
-        deliverables.addAll(Arrays.asList(deliverablesNoSubm));
-//        deliverables.addAll(Arrays.asList(deliverablesSubm));
+        // Additionally filter deliverables because sometimes deliverables
+        // for another phases get though the above filter
+        for (int i = 0; i < allDeliverables.length; ++i) {
+            // Get an ID of phase this deliverable is assigned to
+            final long deliverablePhaseId = allDeliverables[i].getPhase();
+            // Verify that there is a phase with such ID
+            for (int j = 0; j < phases.length; ++j) {
+                if (deliverablePhaseId == phases[j].getId()) {
+                    // Add current deliverable to a list if there is such phase
+                    deliverables.add(allDeliverables[i]);
+                    break;
+                }
+            }
+        }
 
+        // Convert the list of deliverables into array and return it
         return (Deliverable[]) deliverables.toArray(new Deliverable[deliverables.size()]);
     }
 

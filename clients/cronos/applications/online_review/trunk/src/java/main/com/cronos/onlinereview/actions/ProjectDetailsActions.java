@@ -165,20 +165,20 @@ public class ProjectDetailsActions extends DispatchAction {
         phProj.calcEndDate();
         // Get all phases for the current project
         Phase[] phases = phProj.getAllPhases();
+        // Obtain an array of all active phases of the project
+        Phase[] activePhases = ActionsHelper.getActivePhases(phases);
 
         // Place all phases of the project into the request
         request.setAttribute("phases", phases);
 
-        Deliverable[] deliverables = ActionsHelper.getAllDeliverablesForActivePhases(
-                request, ActionsHelper.createDeliverableManager(request));
+        Deliverable[] deliverables = ActionsHelper.getAllDeliverablesForPhases(
+                ActionsHelper.createDeliverableManager(request), activePhases);
         Deliverable[] myDeliverables = ActionsHelper.getMyDeliverables(deliverables, myResources);
         Deliverable[] outstandingDeliverables = ActionsHelper.getOutstandingDeliverables(deliverables);
 
         request.setAttribute("myDeliverables", myDeliverables);
         request.setAttribute("outstandingDeliverables", outstandingDeliverables);
 
-        // Obtain an array of all active phases of the project
-        Phase[] activePhases = ActionsHelper.getActivePhases(phases);
         long currentTime = (new Date()).getTime();
 
         // These two arrays will contain Deadline near / Late / Completed codes for deliverables
@@ -900,7 +900,8 @@ public class ProjectDetailsActions extends DispatchAction {
                 if (winner == null) {
                     continue;
                 }
-                
+
+                // Get External User ID of the winner
                 winnerUserId = Long.parseLong((String) winner.getProperty("External Reference ID"));
 
                 // Obtain an instance of Upload Manager
@@ -921,7 +922,6 @@ public class ProjectDetailsActions extends DispatchAction {
                     phaseGroup.setFinalFix(uploads[0]);
                 }
             }
-            
 
             if (phaseGroup.getAppFunc().equalsIgnoreCase(Constants.FINAL_FIX_APP_FUNC) &&
                     phaseName.equalsIgnoreCase(Constants.FINAL_REVIEW_PHASE_NAME) &&
@@ -934,8 +934,8 @@ public class ProjectDetailsActions extends DispatchAction {
                 if (winner == null) {
                     continue;
                 }
-                
-                // Get the user if of the winner   
+
+                // Get External User ID of the winner
                 winnerUserId = Long.parseLong((String) winner.getProperty("External Reference ID"));
 
                 Resource[] reviewer = null;

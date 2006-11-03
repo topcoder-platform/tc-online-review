@@ -1706,7 +1706,8 @@
                 <Property name="context">
                     <Value>
                         SELECT UNIQUE deliverable_id,
-                               resource_id
+                               resource_id,
+                               project_phase.project_phase_id
                           FROM deliverable_lu,
                                resource,
                                project_phase
@@ -1766,6 +1767,7 @@
                     <Value>
                         SELECT     deliverable_id,
                                    resource.resource_id,
+                                   project_phase.project_phase_id
                                    submission_id
                               FROM deliverable_lu,
                                    resource,
