@@ -89,24 +89,33 @@
 			var content =
 				'<?xml version="1.0" ?>' +
 				'<request type="ResolveAppeal">' +
-				"<parameters>" +
+				'<parameters>' +
 				'<parameter name="ReviewId">' +
 				reviewId +
-				"</parameter>" +
+				'</parameter>' +
 				'<parameter name="ItemId">' +
 				itemId +
-				"</parameter>" +
+				'</parameter>' +
 				'<parameter name="Text">' +
 				responseText +
-				"</parameter>" +
+				'</parameter>' +
 				'<parameter name="Answer">' +
 				modifiedAnswer +
-				"</parameter>" +
+				'</parameter>' +
 				'<parameter name="Status">' +
 				(appealSuccessNode.checked ? "Succeeded" : "Failed") +
-				"</parameter>" +
-				"</parameters>" +
-				"</request>";
+				'</parameter>';
+				
+			commentTypeNodes = document.getElementsByName("comment_type[" + itemIdx + "]");
+			commentIdNodes = document.getElementsByName("comment_id[" + itemIdx + "]");
+			
+			for (var i = 0; i < commentTypeNodes.length; i++) {
+				content = content + '<parameter name="CommentType' + 
+					commentIdNodes[i].value + '">' +
+					commentTypeNodes[i].value + '</parameter>';	
+			}
+				
+			content = content + "</parameters>" + "</request>";
 
 			// Send the AJAX request
 			sendRequest(content,

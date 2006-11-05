@@ -3403,6 +3403,9 @@ public class ProjectReviewActions extends DispatchAction {
                 }
                 // Place appeal statuses to request
                 request.setAttribute("appealStatuses", appealStatuses);
+               
+                // Retrive some look-up data and store it into the request
+                retreiveAndStoreReviewLookUpData(request);
             }
         }
 
