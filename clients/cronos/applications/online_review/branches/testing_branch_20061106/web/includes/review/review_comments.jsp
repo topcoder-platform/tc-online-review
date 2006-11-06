@@ -30,8 +30,20 @@
 						</c:when>
 						<c:otherwise>
 							<b><bean:message key="editReview.Question.Response.title" />
-								${responseNum}:
-								<bean:message key="CommentType.${fn:replace(comment.commentType.name, ' ', '')}" /></b>
+								${responseNum}: </b>
+							<c:choose>
+								<c:when test="${canPlaceAppealResponse && appealStatuses[itemIdx] eq 'Unresolved' && (comment.commentType.name eq 'Comment' || comment.commentType.name eq 'Required' || comment.commentType.name eq 'Recommended')}">
+									<html:hidden property="comment_id[${itemIdx}]" value="${comment.id}"/>
+									<html:select property="comment_type[${itemIdx}]" styleClass="inputBox" value="${comment.commentType.id}">
+										<c:forEach items="${allCommentTypes}" var="commentType" >
+											<html:option value="${commentType.name}" key="CommentType.${fn:replace(commentType.name, ' ', '')}" />
+										</c:forEach>
+									</html:select>
+								</c:when>
+								<c:otherwise>
+									<b><bean:message key="CommentType.${fn:replace(comment.commentType.name, ' ', '')}" /></b>
+								</c:otherwise>
+							</c:choose>		
 							<c:set var="responseNum" value="${responseNum + 1}" />
 						</c:otherwise>
 					</c:choose>

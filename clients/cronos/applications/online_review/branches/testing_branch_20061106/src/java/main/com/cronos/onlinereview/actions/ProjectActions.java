@@ -392,6 +392,10 @@ public class ProjectActions extends DispatchAction {
                 form.set("phase_manual_screening", i + 1,
                         Boolean.valueOf("Yes".equals(phases[i].getAttribute("Manual Screening"))));
             }
+            if (phases[i].getAttribute("Reviewer Number") != null) {
+            	form.set("phase_required_reviewers", i + 1,
+            			Integer.valueOf((String) phases[i].getAttribute("Reviewer Number")));
+            }
             if (phases[i].getAttribute("View Response During Appeals") != null) {
                 form.set("phase_view_appeal_responses", i + 1,
                         Boolean.valueOf("Yes".equals(phases[i].getAttribute("View Response During Appeals"))));
@@ -913,6 +917,12 @@ public class ProjectActions extends DispatchAction {
             if (requiredSubmissions != null) {
                 phase.setAttribute("Submission Number", requiredSubmissions.toString());
             }
+            // If the number of required reviewers is specified, set it
+            Integer requiredReviewer = (Integer) lazyForm.get("phase_required_reviewers", i);          
+            if (requiredReviewer != null) {
+            	phase.setAttribute("Reviewer Number", requiredReviewer.toString());
+            }
+            
             Boolean manualScreening = (Boolean) lazyForm.get("phase_manual_screening", i);
             // If the manual screening flag is specified, set it
             if (manualScreening != null) {
