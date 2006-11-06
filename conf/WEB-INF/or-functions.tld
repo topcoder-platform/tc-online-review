@@ -46,11 +46,6 @@
         <function-signature>java.lang.String getGanttHours(javax.servlet.jsp.PageContext, java.lang.Integer)</function-signature>
     </function>
     <function>
-        <name>displayPaymentAmt</name>
-        <function-class>com.cronos.onlinereview.functions.Functions</function-class>
-        <function-signature>java.lang.String displayPaymentAmt(javax.servlet.http.HttpServletRequest, java.lang.Double)</function-signature>
-    </function>
-    <function>
         <name>displayScore</name>
         <function-class>com.cronos.onlinereview.functions.Functions</function-class>
         <function-signature>java.lang.String displayScore(javax.servlet.http.HttpServletRequest, java.lang.Double)</function-signature>
