@@ -69,9 +69,6 @@
 	}
 */
 %>
-<div align="left" class="homeText">
-Exception Info (for debugging): <%= stackTrace %>
-</div>
 
 <div class="centerer">
     <div style="padding:25px"><b>
