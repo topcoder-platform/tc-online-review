@@ -34,8 +34,8 @@
 		function placeAppeal(itemIdx, itemId, reviewId) {
 			// Find appeal text input node
 			appealTextNode = document.getElementsByName("appeal_text[" + itemIdx + "]")[0];
-			// Get html-encoded Appeal text
-			var appealText = htmlEncode(appealTextNode.value);
+			// Get appeal text
+			var appealText = appealTextNode.value;
 
 			// assemble the request XML
 			var content =
@@ -75,15 +75,12 @@
 			// Find appeal response text input node
 			responseTextNode = document.getElementsByName("appeal_response_text[" + itemIdx + "]")[0];
 			// Get appeal response text
-			var responseText = htmlEncode(responseTextNode.value);
+			var responseText = responseTextNode.value;
 
 			// Find appeal response modified answer node
 			answerNode = document.getElementsByName("answer[" + itemIdx + "]")[0];
 			// Retrieve modified answer value
 			modifiedAnswer = answerNode.value;
-			
-			// Find the appeal success status node
-			appealSuccessNode = document.getElementsByName("appeal_response_success[" + itemIdx + "]")[0];
 
 			// assemble the request XML
 			var content =
@@ -103,7 +100,8 @@
 				modifiedAnswer +
 				"</parameter>" +
 				'<parameter name="Status">' +
-				(appealSuccessNode.checked ? "Succeeded" : "Failed") +
+				// TODO: Add checkbox for status
+				"Succeeded" +
 				"</parameter>" +
 				"</parameters>" +
 				"</request>";
@@ -176,6 +174,7 @@
 										<%@ include file="../includes/review/review_question.jsp" %>
 										<%@ include file="../includes/review/review_static_answer.jsp" %>
 										<c:if test="${canPlaceAppeal or canPlaceAppealResponse}">
+											<%-- TODO: Localize appeal statuses --%>
 											<td class="valueC">${appealStatuses[itemIdx]}<!-- @ --></td>
 										</c:if>
 										<c:if test="${canPlaceAppeal}">
@@ -213,8 +212,6 @@
 													<br/>
 													<textarea rows="2" name="appeal_response_text[${itemIdx}]" cols="20" style="font-size: 10px; font-family: sans-serif;width:99%;height:50px;border:1px solid #ccc;margin:3px;"></textarea>
 													<br/>
-													<input type="checkbox" name="appeal_response_success[${itemIdx}]" />
-													<bean:message key="editReview.Question.AppealSucceeded.title" />
 												</div>
 											</td>
 											<td class="value">

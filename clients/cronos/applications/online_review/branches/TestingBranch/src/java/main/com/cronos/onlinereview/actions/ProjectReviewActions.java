@@ -3396,7 +3396,7 @@ public class ProjectReviewActions extends DispatchAction {
                     if (appeal != null && response == null) {
                         appealStatuses[i] = messages.getMessage("editReview.Appeal.Unresolved");
                     } else if (appeal != null) {
-                        appealStatuses[i] = messages.getMessage("editReview.Appeal.Resolved." + appeal.getExtraInfo());
+                        appealStatuses[i] = messages.getMessage("editReview.Appeal.Resolved");
                     } else {
                         appealStatuses[i] = "";
                     }

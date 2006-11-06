@@ -1576,6 +1576,14 @@ public class ActionsHelper {
         return (Resource[]) submitters.toArray(new Resource[submitters.size()]);
     }
 
+    /**
+     * TODO: Doccument this method.
+     *
+     * @return
+     * @param resources
+     * @throws IllegalArgumentException
+     *             if <code>resources</code> parameter is <code>null</code>.
+     */
     public static Resource getWinner(Resource[] resources) {
         // Validate parameter
         validateParameterNotNull(resources, "resources");
@@ -1723,8 +1731,14 @@ public class ActionsHelper {
      *            an instance of the <code>DeliverableManager</code> class.
      * @param phases
      *            an array of pahses to search deliverables for.
+     * @param resources
+     *            an array of all resource? for the current project.
+     * @param winnerExtUserId
+     *            an External User ID of the user who is the winner for the project. If there is no
+     *            winner for the project, this parameter must be negative.
      * @throws IllegalArgumentException
-     *             if any of the parameters are <code>null</code>.
+     *             if any of the <code>manager</code>, <code>phases</code> or
+     *             <code>resources</code> parameters are <code>null</code>.
      * @throws DeliverablePersistenceException
      *             if an error occurs while reading from the persistence store.
      * @throws SearchBuilderException
@@ -1733,7 +1747,8 @@ public class ActionsHelper {
      *             if an error occurs when determining whether a Deliverable has been completed or
      *             not.
      */
-    public static Deliverable[] getAllDeliverablesForPhases(DeliverableManager manager, Phase[] phases)
+    public static Deliverable[] getAllDeliverablesForPhases(
+            DeliverableManager manager, Phase[] phases, Resource[] resources, long winnerExtUserId)
         throws DeliverablePersistenceException, SearchBuilderException, DeliverableCheckingException {
         // Validate parameters
         validateParameterNotNull(manager, "manager");
@@ -1771,16 +1786,59 @@ public class ActionsHelper {
         // Additionally filter deliverables because sometimes deliverables
         // for another phases get though the above filter
         for (int i = 0; i < allDeliverables.length; ++i) {
-            // Get an ID of phase this deliverable is assigned to
-            final long deliverablePhaseId = allDeliverables[i].getPhase();
-            // Verify that there is a phase with such ID
-            for (int j = 0; j < phases.length; ++j) {
-                if (deliverablePhaseId == phases[j].getId()) {
-                    // Add current deliverable to a list if there is such phase
-                    deliverables.add(allDeliverables[i]);
+            // Get an ID of resource this deliverable is for
+            final long deliverableResourceId = allDeliverables[i].getResource();
+            Resource forResource = null;
+            int j;
+            // Find a resource this deliverable is for
+            for (j = 0; j < resources.length; ++j) {
+                if (resources[j].getId() == deliverableResourceId) {
+                    forResource = resources[j];
                     break;
                 }
             }
+            // There must be a resource associated with this deliverable, but
+            // in case there isn't skip this deliverable for safety
+            if (forResource == null) {
+                continue;
+            }
+
+            // Make sure this is the correct resource first. Some deliverables are
+            // assigned to resources not in their phase, and that's still considered correct
+            final String resourceRole = forResource.getResourceRole().getName();
+            // If found resource is associated with a phase,
+            // make sure this phase is among ones the deliverables needed for
+            if (forResource.getPhase() != null &&
+                    (resourceRole.equalsIgnoreCase(Constants.FINAL_REVIEWER_ROLE_NAME) ||
+                    resourceRole.equalsIgnoreCase(Constants.AGGREGATOR_ROLE_NAME) ||
+                    resourceRole.equalsIgnoreCase(Constants.APPROVER_ROLE_NAME))) {
+                final long resourcePhaseId = forResource.getPhase().longValue();
+                for (j = 0; j < phases.length; ++j) {
+                    if (phases[j].getId() == resourcePhaseId) {
+                        break;
+                    }
+                }
+                // No phases for this resource, wrong deliverable, skip it
+                if (j == phases.length) {
+                    continue;
+                }
+            }
+
+            // If there is a winner for the project,
+            // verify that the current deliverable is not for non-winning submitter
+            if (winnerExtUserId > 0) {
+                // Check that found resource is submitter and non-winner. The deliverable will
+                // be skipped in this case. In all other cases it will be added to the list
+                if (resourceRole.equalsIgnoreCase(Constants.SUBMITTER_ROLE_NAME)) {
+                    if (winnerExtUserId !=
+                            Long.parseLong((String) forResource.getProperty("External Reference ID"), 10)) {
+                        continue;
+                    }
+                }
+            }
+
+            // Add current deliverable to the list of deliverables
+            deliverables.add(allDeliverables[i]);
         }
 
         // Convert the list of deliverables into array and return it

@@ -1,10 +1,12 @@
 <%@ page language="java" isELIgnored="false" %>
-<%@ page import="com.topcoder.shared.util.ApplicationServer" %>
+<%@ page import="java.text.DecimalFormat,com.topcoder.shared.util.ApplicationServer" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="html" uri="/tags/struts-html" %>
 <%@ taglib prefix="orfn" uri="/tags/or-functions" %>
 <%@ taglib prefix="tc-webtag" uri="/tags/tc-webtags" %>
-<script language="javascript" type="text/javascript">
+<jsp:useBean id="sessionInfo" class="com.topcoder.web.common.SessionInfo" scope="request" />
+<script language="JavaScript" type="text/javascript" src="/js/tcscript.js"><!-- @ --></script>
+<script language="JavaScript" type="text/javascript">
 <!--
 	var objPopUp = null;
 	function popUpUnder(event,objectID) {
@@ -94,8 +96,12 @@ div.launchPopUp {
 		</div>
 	</div>
 </div>
-<div class="memberCountBox">Member Count: 76,412 - March 16, 2006&#160;
-	<a class="gMetal" href="Javascript:tcTime()">[Get Time]</a>
+
+<div class="memberCountBox">
+	Member Count:
+	<tc-webtag:format object="${sessionInfo.memberCount}" format="#,##0"/> -
+	<tc-webtag:format object="${sessionInfo.date}" format="MMMM d, yyyy"/>
+	&#160;<a class="gMetal" href="Javascript:tcTime()">[Get Time]</a>
 </div>
 
 <div class="topBar">
@@ -106,7 +112,7 @@ div.launchPopUp {
 		</c:if>
 		<c:if test="${not orfn:isUserLoggedIn(pageContext.request)}">
 			<html:link styleClass="gMetal" page="/jsp/login.jsp">Login</html:link>
-			&#160;&#160;|&#160;&#160;<a class="gMetal" href="http://<%=ApplicationServer.SERVER_NAME%>/Registration">Register</a>
+			&#160;&#160;|&#160;&#160;<a class="gMetal" href="http://<%=ApplicationServer.SERVER_NAME%>/reg/">Register</a>
 			&#160;&#160;|&#160;&#160;<a class="gMetal" href="http://<%=ApplicationServer.SERVER_NAME%>/">Home</a>
 		</c:if>
 	</div>

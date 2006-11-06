@@ -11,24 +11,14 @@
             </Property>
             <Property name="tcs">
                 <Property name="producer">
-                    <Value>com.topcoder.db.connectionfactory.producers.JDBCConnectionProducer</Value>
+                    <Value>com.topcoder.db.connectionfactory.producers.JNDIConnectionProducer</Value>
                 </Property>
                 <Property name="parameters">
-                    <Property name="jdbc_driver">
-                        <Value>com.informix.jdbc.IfxDriver</Value>
-                    </Property>
-                    <Property name="jdbc_url">
-                        <Value>jdbc:informix-sqli://localhost:1526/review:informixserver=top_coder</Value>
-                    </Property>
-                    <Property name="user">
-                        <Value>informix</Value>
-                    </Property>
-                    <Property name="password">
-                        <Value>informix</Value>
+                    <Property name="jndi_name">
+                        <Value>java:JTS_TCS_CATALOG</Value>
                     </Property>
                 </Property>
             </Property>
-            <!--  
             <Property name="DefaultSequence">
                 <Property name="producer">
                     <Value>com.topcoder.db.connectionfactory.producers.JNDIConnectionProducer</Value>
@@ -39,7 +29,6 @@
                     </Property>
                 </Property>
             </Property>
-            -->
         </Property>
     </Config>
 
@@ -61,7 +50,7 @@
         </Property>
 
         <Property name="authenticator_name">
-            <Value>MockAuthenticator</Value>
+            <Value>ORAuthenticator</Value>
         </Property>
 
         <Property name="logger_name">
@@ -94,7 +83,6 @@
                     <Value>com.cronos.onlinereview.login.authenticator.SecurityManagerAuthenticator</Value>
                 </Property>
             </Property>
-            <!--
             <Property name="ORAuthenticator">
                 <Property name="class">
                     <Value>com.cronos.onlinereview.login.authenticator.SecurityManagerAuthenticator</Value>
@@ -103,7 +91,6 @@
                     <Value>com.cronos.onlinereview.login.authenticator.SecurityManagerAuthenticator</Value>
                 </Property>
             </Property>
-            -->
         </Property>
     </Config>
 
@@ -395,10 +382,10 @@
             <Value>-1</Value>
         </Property>
         <Property name="allowed_dirs">
-            <Value>C:\\tmp\\file_store</Value>
+            <Value>/home/onlinereview2/downloads</Value>
         </Property>
         <Property name="default_dir">
-            <Value>C:\\tmp\\file_store</Value>
+            <Value>/home/onlinereview2/downloads</Value>
         </Property>
         <Property name="overwrite">
             <Value>false</Value>
@@ -413,7 +400,7 @@
             <Value>-1</Value>
         </Property>
         <Property name="temp_dir">
-            <Value>C:\\tmp\\System\\</Value>
+            <Value>E:\\Temp\\System\\</Value>
         </Property>
         <Property name="ip_address">
             <Value>127.0.0.1</Value>
@@ -723,7 +710,7 @@
                 <Value>file</Value>
             </Property>
             <Property name="EmailTemplateName">
-                <Value>C:\\tmp\\templates\\email_template.txt</Value>
+                <Value>/home/onlinereview2/email_template.txt</Value>
             </Property>
             <Property name="EmailSubject">
                 <Value>Phase Start</Value>
@@ -737,7 +724,7 @@
                 <Value>file</Value>
             </Property>
             <Property name="EmailTemplateName">
-                <Value>C:\\tmp\\templates\\email_template.txt</Value>
+                <Value>/home/onlinereview2/email_template.txt</Value>
             </Property>
             <Property name="EmailSubject">
                 <Value>Phase End</Value>
@@ -764,7 +751,7 @@
                 <Value>file</Value>
             </Property>
             <Property name="EmailTemplateName">
-                <Value>C:\\tmp\\templates\\email_template.txt</Value>
+                <Value>/home/onlinereview2/email_template.txt</Value>
             </Property>
             <Property name="EmailSubject">
                 <Value>Phase Start</Value>
@@ -778,7 +765,7 @@
                 <Value>file</Value>
             </Property>
             <Property name="EmailTemplateName">
-                <Value>C:\\tmp\\templates\\email_template.txt</Value>
+                <Value>/home/onlinereview2/email_template.txt</Value>
             </Property>
             <Property name="EmailSubject">
                 <Value>Phase End</Value>
@@ -805,7 +792,7 @@
                 <Value>file</Value>
             </Property>
             <Property name="EmailTemplateName">
-                <Value>C:\\tmp\\templates\\email_template.txt</Value>
+                <Value>/home/onlinereview2/email_template.txt</Value>
             </Property>
             <Property name="EmailSubject">
                 <Value>Phase Start</Value>
@@ -819,7 +806,7 @@
                 <Value>file</Value>
             </Property>
             <Property name="EmailTemplateName">
-                <Value>C:\\tmp\\templates\\email_template.txt</Value>
+                <Value>/home/onlinereview2/email_template.txt</Value>
             </Property>
             <Property name="EmailSubject">
                 <Value>Phase End</Value>
@@ -846,7 +833,7 @@
                 <Value>file</Value>
             </Property>
             <Property name="EmailTemplateName">
-                <Value>C:\\tmp\\templates\\email_template.txt</Value>
+                <Value>/home/onlinereview2/email_template.txt</Value>
             </Property>
             <Property name="EmailSubject">
                 <Value>Phase Start</Value>
@@ -860,7 +847,7 @@
                 <Value>file</Value>
             </Property>
             <Property name="EmailTemplateName">
-                <Value>C:\\tmp\\templates\\email_template.txt</Value>
+                <Value>/home/onlinereview2/email_template.txt</Value>
             </Property>
             <Property name="EmailSubject">
                 <Value>Phase End</Value>
@@ -887,7 +874,7 @@
                 <Value>file</Value>
             </Property>
             <Property name="EmailTemplateName">
-                <Value>C:\\tmp\\templates\\email_template.txt</Value>
+                <Value>/home/onlinereview2/email_template.txt</Value>
             </Property>
             <Property name="EmailSubject">
                 <Value>Phase Start</Value>
@@ -901,7 +888,7 @@
                 <Value>file</Value>
             </Property>
             <Property name="EmailTemplateName">
-                <Value>C:\\tmp\\templates\\email_template.txt</Value>
+                <Value>/home/onlinereview2/email_template.txt</Value>
             </Property>
             <Property name="EmailSubject">
                 <Value>Phase End</Value>
@@ -928,7 +915,7 @@
                 <Value>file</Value>
             </Property>
             <Property name="EmailTemplateName">
-                <Value>C:\\tmp\\templates\\email_template.txt</Value>
+                <Value>/home/onlinereview2/email_template.txt</Value>
             </Property>
             <Property name="EmailSubject">
                 <Value>Phase Start</Value>
@@ -942,7 +929,7 @@
                 <Value>file</Value>
             </Property>
             <Property name="EmailTemplateName">
-                <Value>C:\\tmp\\templates\\email_template.txt</Value>
+                <Value>/home/onlinereview2/email_template.txt</Value>
             </Property>
             <Property name="EmailSubject">
                 <Value>Phase End</Value>
@@ -969,7 +956,7 @@
                 <Value>file</Value>
             </Property>
             <Property name="EmailTemplateName">
-                <Value>C:\\tmp\\templates\\email_template.txt</Value>
+                <Value>/home/onlinereview2/email_template.txt</Value>
             </Property>
             <Property name="EmailSubject">
                 <Value>Phase Start</Value>
@@ -983,7 +970,7 @@
                 <Value>file</Value>
             </Property>
             <Property name="EmailTemplateName">
-                <Value>C:\\tmp\\templates\\email_template.txt</Value>
+                <Value>/home/onlinereview2/email_template.txt</Value>
             </Property>
             <Property name="EmailSubject">
                 <Value>Phase End</Value>
@@ -1010,7 +997,7 @@
                 <Value>file</Value>
             </Property>
             <Property name="EmailTemplateName">
-                <Value>C:\\tmp\\templates\\email_template.txt</Value>
+                <Value>/home/onlinereview2/email_template.txt</Value>
             </Property>
             <Property name="EmailSubject">
                 <Value>Phase Start</Value>
@@ -1024,7 +1011,7 @@
                 <Value>file</Value>
             </Property>
             <Property name="EmailTemplateName">
-                <Value>C:\\tmp\\templates\\email_template.txt</Value>
+                <Value>/home/onlinereview2/email_template.txt</Value>
             </Property>
             <Property name="EmailSubject">
                 <Value>Phase End</Value>
@@ -1051,7 +1038,7 @@
                 <Value>file</Value>
             </Property>
             <Property name="EmailTemplateName">
-                <Value>C:\\tmp\\templates\\email_template.txt</Value>
+                <Value>/home/onlinereview2/email_template.txt</Value>
             </Property>
             <Property name="EmailSubject">
                 <Value>Phase Start</Value>
@@ -1065,7 +1052,7 @@
                 <Value>file</Value>
             </Property>
             <Property name="EmailTemplateName">
-                <Value>C:\\tmp\\templates\\email_template.txt</Value>
+                <Value>/home/onlinereview2/email_template.txt</Value>
             </Property>
             <Property name="EmailSubject">
                 <Value>Phase End</Value>
@@ -1092,7 +1079,7 @@
                 <Value>file</Value>
             </Property>
             <Property name="EmailTemplateName">
-                <Value>C:\\tmp\\templates\\email_template.txt</Value>
+                <Value>/home/onlinereview2/email_template.txt</Value>
             </Property>
             <Property name="EmailSubject">
                 <Value>Phase Start</Value>
@@ -1106,7 +1093,7 @@
                 <Value>file</Value>
             </Property>
             <Property name="EmailTemplateName">
-                <Value>C:\\tmp\\templates\\email_template.txt</Value>
+                <Value>/home/onlinereview2/email_template.txt</Value>
             </Property>
             <Property name="EmailSubject">
                 <Value>Phase End</Value>
@@ -1133,7 +1120,7 @@
                 <Value>file</Value>
             </Property>
             <Property name="EmailTemplateName">
-                <Value>C:\\tmp\\templates\\email_template.txt</Value>
+                <Value>/home/onlinereview2/email_template.txt</Value>
             </Property>
             <Property name="EmailSubject">
                 <Value>Phase Start</Value>
@@ -1147,7 +1134,7 @@
                 <Value>file</Value>
             </Property>
             <Property name="EmailTemplateName">
-                <Value>C:\\tmp\\templates\\email_template.txt</Value>
+                <Value>/home/onlinereview2/email_template.txt</Value>
             </Property>
             <Property name="EmailSubject">
                 <Value>Phase End</Value>
@@ -3161,7 +3148,7 @@
                 <Value>file</Value>
             </Property>
             <Property name="EmailTemplateName">
-                <Value>C:\\tmp\\templates\\contact_manager_template.txt</Value>
+                <Value>/home/onlinereview2/contact_manager_template.txt</Value>
             </Property>
             <Property name="EmailSubject">
                 <Value>Contact Manager Message</Value>

@@ -1803,7 +1803,7 @@ public class ProjectActions extends DispatchAction {
                     // Get currently open phase end calculate its end date
                     if (activePhases != null && activePhases.length != 0) {
                         phass[counter] = activePhases;
-                        pheds[counter] = activePhases[0].calcEndDate();
+                        pheds[counter] = activePhases[0].getScheduledEndDate();
                     }
 
                     // Retrieve information about my roles, and my current unfinished deliverables
@@ -1847,8 +1847,13 @@ public class ProjectActions extends DispatchAction {
             for (int i = 0; i < projects.length; ++i) {
                 String[] deliverables = new String[projects[i].length];
                 for (int j = 0; j < projects[i].length; ++j) {
+                    String winnerIdStr = (String) projects[i][j].getProperty("Winner External Reference ID");
+                    if (winnerIdStr != null && winnerIdStr.trim().length() == 0) {
+                        winnerIdStr = null;
+                    }
+
                     deliverables[j] = getMyDeliverablesForPhases(
-                            messages, allMyDeliverables, phases[i][j], myResources[i][j]);
+                            messages, allMyDeliverables, phases[i][j], myResources[i][j], winnerIdStr);
                 }
                 myDeliverables[i] = deliverables;
             }
@@ -2042,11 +2047,14 @@ public class ProjectActions extends DispatchAction {
      *            an array of phases to look up the deliverables for.
      * @param resources
      *            an array of resources to look up the deliverables for.
+     * @param winnerExtUserId
+     *            an External User ID of the winning user for the project, if any. If there is no
+     *            winner for the project, this parameter must be <code>null</code>.
      * @throws IllegalArgumentException
      *             if parameter <code>messages</code> is <code>null</code>.
      */
-    private static String getMyDeliverablesForPhases(
-            MessageResources messages, Deliverable[] deliverables, Phase[] phases, Resource[] resources) {
+    private static String getMyDeliverablesForPhases(MessageResources messages,
+            Deliverable[] deliverables, Phase[] phases, Resource[] resources, String winnerExtUserId) {
         // Validate parameters
         ActionsHelper.validateParameterNotNull(messages, "messages");
 
@@ -2084,6 +2092,16 @@ public class ProjectActions extends DispatchAction {
             // If this deliverable is not for any of the resources, continue the search
             if (j == resources.length) {
                 continue;
+            }
+
+            // Skip deliverables that are not for winning submitter
+            if (winnerExtUserId != null) {
+                Resource resource = resources[j];
+
+                if (resource.getResourceRole().getName().equalsIgnoreCase(Constants.SUBMITTER_ROLE_NAME) &&
+                        !winnerExtUserId.equals(resources[j].getProperty("External Reference ID"))) {
+                    continue;
+                }
             }
 
             // Get the name of the deliverable

@@ -177,28 +177,3 @@ function populateTestCaseAnswer(itemIdx) {
 
 	answerNode.value = passedNode.value + "/" + allNode.value;
 }
-
-/*
- * This function ancodes chanracters used to form HTML/XML/XHTML
- * code replacing them with their corresponding entities
- */
-function htmlEncode(textToEncode) {
-	var resultingText = "";
-	for (var i = 0; i < textToEncode.length; ++i) {
-		var ch = textToEncode.charAt(i);
-		switch (ch) {
-		case '&':
-			resultingText += "&amp;";
-			break;
-		case '<':
-			resultingText += "&lt;";
-			break;
-		case '>':
-			resultingText += "&gt;";
-			break;
-		default:
-			resultingText += ch;
-		}
-	}
-	return resultingText;
-}
