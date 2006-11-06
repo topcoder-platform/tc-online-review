@@ -1,0 +1,540 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" >
+<head>
+    <title>Scorecard Administration</title>
+    <link rel="stylesheet" type="text/css" href="https://software.topcoder.com/includes/tcs_style.css" />  
+    <link rel="stylesheet" type="text/css" href="includes/new_styles.css" />
+    <script language="JavaScript" type="text/javascript" src="scripts/javascriptAdmin.js">
+</script>
+</head>
+<body leftmargin="0" rightmargin="0" topmargin="0" height="100%">
+<div id="holder">
+<!--Header begins-->
+    <table width="100%" border="0" cellpadding="0" cellspacing="0" class="head">
+    	<tr valign="top">
+		    <td height="57" align="left" rowspan="2" style="width: 219px"><img src="images/logoTCSHome.gif" alt="TopCoder Software" width="216" height="57" border="0" /></td>
+		    <td width="155" height="57" align="left" rowspan="2"><img src="images/homeBannerAdmin.gif" alt="Administration" width="155" height="57" border="0" /></td>
+		    <td class="headRight">
+			    <table border="0" cellpadding="0" cellspacing="0" class="adminSearch" align="right">
+				    <tr valign="middle">
+					    <td width="24" height="25" valign="bottom"><img src="images/searchHeaderLeft.gif" alt="" width="24" height="25" border="0"></td>
+					    <td><img src="images/clear.gif" alt="" width="6" border="0" /></td>
+    				    <td class="login">kimba is logged in.</td>
+					    <td><img src="images/clear.gif" alt="" width="10" border="0" /></td>
+   					    <td class="login"><a href="#" class="loginLinks">:: Logout</a></td>
+    				    <td><img src="images/clear.gif" alt="" width="10" border="0" /></td>
+				    </tr>
+			    </table>
+		    </td>
+        </tr>
+	    <tr valign="bottom">
+		    <td class="headRight"><img src="images/homeBannerHead.gif" alt="The Future of Software Development" width="510" height="13" border="0" /></td>
+	</tr>
+	<tr>
+	    <td height="4" class="headStripe" colspan="3"><img src="images/clear.gif" alt="" height="4" border="0" /></td>
+	</tr>
+</table>
+<!-- Nav Bar begins -->
+<table width="100%" border="0" cellpadding="0" cellspacing="0" >
+	<tr>
+		<td width="20" class="adminTopNav"><img src="images/clear.gif" alt="" width="20" height="21" border="0"></td>
+		<td>
+			<table width="3%" border="0" cellpadding="0" cellspacing="0" class="adminTopNav">
+				<tr valign="middle">
+					<td width="46" align="center" class="adminTopNav"><a onmouseover="document.images['siteAdmin'].src = siteAdminon.src; window.status='Return to Regular Site'; return true;" onmouseout="document.images['siteAdmin'].src = siteAdminoff.src" class="topNavLinks" href="http://software.topcoder.com"><img src="images/siteAdmin_off.gif" alt="RETURN TO SITE" name="siteAdmin" width="84" height="21" border="0" /></a></td>
+					<td width="66" align="center" class="adminTopNav"><a onmouseover="document.images['catalogAdmin'].src = catalogAdminon.src; window.status='Catalog Administration'; return true;" onmouseout="document.images['catalogAdmin'].src = catalogAdminoff.src" class="topNavLinks" href="#"><img src="images/catalogAdmin_off.gif" alt="CATALOG ADMIN" name="catalogAdmin" width="97" height="21" border="0" /></a></td>
+					<td width="106" align="center" class="adminTopNav"><a onmouseover="document.images['categoryAdmin'].src = categoryAdminon.src; window.status='Category Administration'; return true;" onmouseout="document.images['categoryAdmin'].src = categoryAdminoff.src" class="topNavLinks" href="#"><img src="images/categoryAdmin_off.gif" alt="CATEGORY ADMIN" name="categoryAdmin" width="104" height="21" border="0" /></a></td>
+					<td width="156" align="center" class="adminTopNav"><a onmouseover="document.images['userAdmin'].src = userAdminon.src; window.status='User Administration'; return true;" onmouseout="document.images['userAdmin'].src = userAdminoff.src" class="topNavLinks" href="#"><img src="images/userAdmin_off.gif" alt="USER ADMIN" name="userAdmin" width="79" height="21" border="0" /></a></td>
+					<td width="106" align="center" class="adminTopNav"><a onmouseover="document.images['listsAdmin'].src = listsAdminon.src; window.status='Lists Administration'; return true;" onmouseout="document.images['listsAdmin'].src = listsAdminoff.src" class="topNavLinks" href="#"><img src="images/listAdmin_off.gif" alt="LISTS ADMIN" name="listsAdmin" width="79" height="21" border="0" /></a></td>
+					<td width="106" align="center" class="adminTopNav"><a onmouseover="document.images['scorecardAdmin'].src = scorecardAdminon.src; window.status='Scorecard Administration'; return true;" onmouseout="document.images['scorecardAdmin'].src = scorecardAdminoff.src" class="topNavLinks" href="#"><img src="images/scorecardAdmin_off.gif" alt="SCORECARD ADMIN" name="scorecardAdmin" height="21" border="0" /></a></td>
+				</tr>
+			</table>
+		</td>
+		<td width="97%" class="adminTopNav"><img src="images/clear.gif" alt="" border="0"></td>
+	</tr>
+</table>
+<!-- Nav Bar ends -->
+<!--Header ends -->
+<div id="contentarea">
+<!-- Tabs -->
+<table width="100%" border="0" cellpadding="0" cellspacing="0">
+    <tr valign="top">
+        <td width="1%" class="normal"><img src="images/tabComponent_on.gif" alt="Component" border="0"></td>
+        <td width="1%" class="normal"><img src="images/tabApplication_off.gif" alt="Application" border="0"></td>
+        <td width="1%" class="normal"><img src="images/tabAssembly_off.gif" alt="Assembly Competitions" border="0"></td>
+        <td width="1%" class="normal"><img src="images/tabTesting_off.gif" alt="Testing Competitions" border="0"></td>
+        <td width="98%" align="right">&nbsp;</td>
+    </tr>
+    <tr valign="top">
+        <td colspan="5" class="forumHeadFoot"><img src="images/clear.gif" alt="" width="10" height="7" border="0"></td>
+    </tr>
+</table>
+<!-- Tabs end -->
+
+<!-- Content begins -->
+<table width="100%" border="0" cellpadding="0" cellspacing="1" class="forumBkgd">
+    <tr>
+        <td class="whiteBkgnd" style="height: 100%">
+            <table border="0" cellpadding="0" cellspacing="0" width="100%">
+                <tr>
+                    <td width="100%" nowrap class="tableHeader"><strong>Component Scorecards</strong> </td>
+                    <td align="right" style="height:35px"></td>
+                </tr>
+                <tr>
+                    <td class="whiteBkgnd" colspan="3"><img src="images/clear.gif" alt="" width="1" height="1" border="0"></td>
+                </tr>
+            </table>
+
+<!-- Scorecards -->
+            <table width="100%" border="0" cellpadding="0" cellspacing="1" class="forumBkgd">
+                <tr>
+                    <td class="forumTextEven" colspan="5">
+					<input type="button" onClick='document.location="scorecard_edit_component.htm"' style="width:80px; float:right;" value="Copy" class="Buttons2"><strong>Scorecard Details:</strong></td>
+                </tr>
+                <tr>
+                    <td class="forumTitle" width="8%">ID</td>
+                    <td class="forumTitle" style="width: 39%">Scorecard Name</td>
+                    <td class="forumTitle" style="width: 17%">Phase</td>
+                    <td class="forumTitle" width="19%">
+                        Category</td>
+                    <td class="forumTitle" width="14%">
+                        Status</td>
+                </tr>
+<!--Begin lists -->
+                <tr>
+                    <td class="forumTextOdd" nowrap width="8%">15371497</td>
+                    <td class="forumTextOdd" style="width: 39%">Component 
+					Design Screening Scorecard v1.0</td>
+                    <td class="forumTextOdd" style="width: 17%">
+                        Design</td>
+                    <td class="forumTextOdd" style="border-right:1px solid #819DA9;" width="19%">
+                        Screening</td>
+                    <td class="forumTextOdd" style="border-right:1px solid #819DA9;" width="14%">
+                        Active</td>
+                </tr>
+                <tr>
+                    <td class="forumHeadFoot" colspan="5" height="5"><img src="images/clear.gif" alt="" width="10" height="5" border="0"/></td>
+                </tr>
+            </table>
+<!-- End lists -->
+<!-- Spacer -->
+            <table border="0" cellpadding="0" cellspacing="1" class="whiteBkgd" width="100%">
+                <tr>
+                    <td class="forumTextOdd"><img src="images/clear.gif" alt="" width="1" height="5" border="0"></td>
+                </tr>
+            </table>
+            <table width="100%" border="0" cellpadding="0" cellspacing="1" class="forumBkgd" id="table1">
+                <tr>
+                    <td class="forumTitle" colspan="3">Group:&nbsp;
+					<span style="font-weight: 400">Minimum Requirements 
+					Checklist</span></td>
+                </tr>
+<!--Begin lists -->
+                <tr>
+                    <td class="forumTextEven">
+					<strong>Section:&nbsp; <span style="font-weight: 400">
+					Minimum Requirements Checklist</span></strong></td>
+                    <td class="forumTextEven" colspan="2">
+					<b>Weight:</b> 0</td>
+                </tr>
+                <tr>
+                    <td class="SectionHeader" nowrap width="86%">Question</td>
+                    <td class="SectionHeader" style="width: 8%">Type</td>
+                    <td class="SectionHeader" width="3%">
+                        Weight</td>
+                </tr>
+                <tr>
+                    <td class="forumTextOdd" width="86%">Diagrams exist in a .zuml 
+					(Poseidon 3.x) file.</td>
+                    <td class="forumTextOdd" style="width: 8%" nowrap>Objective 
+					(yes/no)</td>
+                    <td class="forumTextOdd" width="3%" style="text-align: center">
+                        1</td>
+                </tr>
+                <tr>
+                    <td class="forumTextOdd" width="86%">Class Diagram(s) 
+					exist(s) in the .zuml file.</td>
+                    <td class="forumTextOdd" style="width: 8%" nowrap>Objective 
+					(yes/no)</td>
+                    <td class="forumTextOdd" width="3%" style="text-align: center">
+                        1</td>
+                </tr>
+                <tr>
+                    <td class="forumTextOdd" width="86%">Use-Case Diagram(s) 
+					exist(s) in the .zuml file.</td>
+                    <td class="forumTextOdd" style="width: 8%" nowrap>Objective 
+					(yes/no)</td>
+                    <td class="forumTextOdd" width="3%" style="text-align: center">
+                        1</td>
+                </tr>
+                <tr>
+                    <td class="forumTextOdd" width="86%">Sequence Diagram(s) 
+					exist(s) in the .zuml file. If there are no non-trivial use 
+					cases (involving interaction between 5 or more classes), 
+					sequence diagrams may be omitted. In that case, answer &quot;Yes&quot; 
+					here.</td>
+                    <td class="forumTextOdd" style="width: 8%" nowrap>Objective 
+					(yes/no)</td>
+                    <td class="forumTextOdd" width="3%" style="text-align: center">
+                        1</td>
+                </tr>
+                <tr>
+                    <td class="forumTextOdd" width="86%">A Component 
+					Specification document exists.</td>
+                    <td class="forumTextOdd" style="width: 8%" nowrap>Objective 
+					(yes/no)</td>
+                    <td class="forumTextOdd" width="3%" style="text-align: center">
+                        1</td>
+                </tr>
+                <tr>
+                    <td class="forumTextOdd" width="86%">All of the above 
+					diagrams and documents contain meaningful information 
+					related to the component, and give the appearance that at 
+					least a reasonable attempt was made to submit a complete 
+					design.</td>
+                    <td class="forumTextOdd" style="width: 8%" nowrap>Objective 
+					(yes/no)</td>
+                    <td class="forumTextOdd" width="3%" style="text-align: center">
+                        1</td>
+                </tr>
+                <tr>
+                    <td class="forumTextOdd" width="86%">If algorithms are 
+					required in section 1.3 of the Requirements Specification, 
+					are algorithms defined in section 1.3 of the Component 
+					Specification?<br>
+					If algorithms are not required, answer &quot;Yes&quot;</td>
+                    <td class="forumTextOdd" style="width: 8%" nowrap>Objective 
+					(yes/no)</td>
+                    <td class="forumTextOdd" width="3%" style="text-align: center">
+                        1						</td>
+                </tr>
+                
+                <tr>
+                    <td class="forumTitle" colspan="3">Group:&nbsp;
+					<span style="font-weight: 400">Design Review</span></td>
+                </tr>
+<!--Begin lists -->
+                <tr>
+                    <td class="forumTextEven">
+					<strong>Section:&nbsp; <span style="font-weight: 400">Class 
+					Definition</span></strong></td>
+                    <td class="forumTextEven" colspan="2">
+					<b>Weight:</b> 30</td>
+                </tr>
+				<tr>
+                    <td class="SectionHeader" nowrap width="86%">Question</td>
+                    <td class="SectionHeader" style="width: 8%">Type</td>
+                    <td class="SectionHeader" width="3%">
+                        Weight</td>
+                </tr>
+				<tr>
+                    <td class="forumTextOdd" width="86%">Provides a descriptive 
+					overview of class usage in the Documentation tab of Poseidon</td>
+                    <td class="forumTextOdd" style="width: 8%">Subjective (1-4) </td>
+                    <td class="forumTextOdd" width="3%" style="text-align: center">
+                        10</td>
+                </tr>
+				<tr>
+                    <td class="forumTextOdd" width="86%">Where applicable 
+					sub-packages have been created to separate functionality.</td>
+                    <td class="forumTextOdd" style="width: 8%">Subjective (1-4) </td>
+                    <td class="forumTextOdd" width="3%" style="text-align: center">
+                        10</td>
+                </tr>
+				<tr>
+                    <td class="forumTextOdd" width="86%">Class scope properly 
+					matches class usage. (i.e. objects defined as public 
+					packages)</td>
+                    <td class="forumTextOdd" style="width: 8%">Subjective (1-4) </td>
+                    <td class="forumTextOdd" width="3%" style="text-align: center">
+                        20</td>
+                </tr>
+				<tr>
+                    <td class="forumTextOdd" width="86%">Proper and effective 
+					use of inheritance and abstraction. The Component is 
+					designed to be extended</td>
+                    <td class="forumTextOdd" style="width: 8%">Subjective (1-4) </td>
+                    <td class="forumTextOdd" width="3%" style="text-align: center">
+                        20</td>
+                </tr>
+				<tr>
+                    <td class="forumTextOdd" width="86%">Interfaces are used 
+					appropriately.</td>
+                    <td class="forumTextOdd" style="width: 8%">Subjective (1-4) </td>
+                    <td class="forumTextOdd" width="3%" style="text-align: center">
+                        20</td>
+                </tr>
+				<tr>
+                    <td class="forumTextOdd" width="86%">Suitable constructors 
+					are defined for the component.</td>
+                    <td class="forumTextOdd" style="width: 8%">Subjective (1-4) </td>
+                    <td class="forumTextOdd" width="3%" style="text-align: center">
+                        10</td>
+                </tr>
+				<tr>
+                    <td class="forumTextOdd" width="86%">Class modifiers such as 
+					final, static, abstract are appropriately used where 
+					applicable.</td>
+                    <td class="forumTextOdd" style="width: 8%">Subjective (1-4) </td>
+                    <td class="forumTextOdd" width="3%" style="text-align: center">
+                        10</td>
+                </tr>
+				<tr>
+                    <td class="forumHeadFoot" colspan="3" height="5"><img src="images/clear.gif" alt="" width="10" height="5" border="0"/></td>
+                </tr>
+				<tr>
+                    <td class="forumTextEven">
+					<strong>Section:&nbsp; <span style="font-weight: 400">
+					Variable Definition</span></strong></td>
+                    <td class="forumTextEven" colspan="2">
+					<b>Weight:</b> 10</td>
+                </tr>
+				<tr>
+                    <td class="SectionHeader" nowrap width="86%">Question</td>
+                    <td class="SectionHeader" style="width: 8%">Type</td>
+                    <td class="SectionHeader" width="3%">
+                        Weight</td>
+                </tr>
+				<tr>
+                    <td class="forumTextOdd" width="86%">Variable scope is 
+					correctly defined (i.e. the variables are well 
+					encapsulated.)</td>
+                    <td class="forumTextOdd" style="width: 8%">Subjective (1-4) </td>
+                    <td class="forumTextOdd" width="3%" style="text-align: center">
+                        33</td>
+                </tr>
+				<tr>
+                    <td class="forumTextOdd" width="86%">Type assignments are 
+					defined with respect to both efficiency and flexibility as 
+					pertains to this component.<br>
+					(i.e. generic objects may be used to increase component 
+					flexibility at the cost of efficiency.)</td>
+                    <td class="forumTextOdd" style="width: 8%">Subjective (1-4) </td>
+                    <td class="forumTextOdd" width="3%" style="text-align: center">
+                        34</td>
+                </tr>
+				<tr>
+                    <td class="forumTextOdd" width="86%">Variable details 
+					(scope, type, name, description) are defined in the 
+					'Documentation' tab of Poseidon.</td>
+                    <td class="forumTextOdd" style="width: 8%">Subjective (1-4) </td>
+                    <td class="forumTextOdd" width="3%" style="text-align: center">
+                        33</td>
+                </tr>
+				<tr>
+                    <td class="forumHeadFoot" colspan="3" height="5"><img src="images/clear.gif" alt="" width="10" height="5" border="0"/></td>
+                </tr>
+				<tr>
+                    <td class="forumTextEven">
+					<strong>Section:&nbsp; <span style="font-weight: 400">Method 
+					Definition</span></strong></td>
+                    <td class="forumTextEven" colspan="2">
+					<b>Weight:</b> 15</td>
+                </tr>
+				<tr>
+                    <td class="SectionHeader" nowrap width="86%">Question</td>
+                    <td class="SectionHeader" style="width: 8%">Type</td>
+                    <td class="SectionHeader" width="3%">
+                        Weight</td>
+                </tr>
+				<tr>
+                    <td class="forumTextOdd" width="86%">Method scope is 
+					correctly defined (i.e. Not everything is public.)</td>
+                    <td class="forumTextOdd" style="width: 8%" nowrap>Subjective (1-4) </td>
+                    <td class="forumTextOdd" width="3%" style="text-align: center">
+                        15</td>
+                </tr>
+				<tr>
+                    <td class="forumTextOdd" width="86%">All exceptions are 
+					properly handled and thrown. Custom exceptions must be 
+					displayed in the diagram.<br>
+					(If exceptions are not detailed in the Class Diagram, they 
+					must be detailed in the Component Specification.)</td>
+                    <td class="forumTextOdd" style="width: 8%" nowrap>Subjective (1-4) </td>
+                    <td class="forumTextOdd" width="3%" style="text-align: center">
+                        15</td>
+                </tr>
+				<tr>
+                    <td class="forumTextOdd" width="86%">Modifiers are properly 
+					used where applicable.</td>
+                    <td class="forumTextOdd" style="width: 8%" nowrap>Subjective (1-4) </td>
+                    <td class="forumTextOdd" width="3%" style="text-align: center">
+                        14</td>
+                </tr>
+				<tr>
+                    <td class="forumTextOdd" width="86%">Return types are 
+					appropriately defined.<br>
+					(i.e. instead of returning a Boolean for success/failure, an 
+					Exception is thrown).</td>
+                    <td class="forumTextOdd" style="width: 8%" nowrap>Subjective (1-4)</td>
+                    <td class="forumTextOdd" width="3%" style="text-align: center">
+                        14</td>
+                </tr>
+				<tr>
+                    <td class="forumTextOdd" width="86%">Method arguments are 
+					appropriately defined (i.e. instead of passing in 10+ 
+					arguments an object is passed in).</td>
+                    <td class="forumTextOdd" style="width: 8%" nowrap>Subjective (1-4)</td>
+                    <td class="forumTextOdd" width="3%" style="text-align: center">
+                        14</td>
+                </tr>
+				<tr>
+                    <td class="forumTextOdd" width="86%">The required API as 
+					stated in the requirements specification is available.</td>
+                    <td class="forumTextOdd" style="width: 8%" nowrap>Subjective (1-4)</td>
+                    <td class="forumTextOdd" width="3%" style="text-align: center">
+                        14</td>
+                </tr>
+				<tr>
+                    <td class="forumTextOdd" width="86%">Method details (scope, 
+					type, name, description) are defined in the 'Documentation' 
+					tab of Poseidon.</td>
+                    <td class="forumTextOdd" style="width: 8%" nowrap>Subjective (1-4)</td>
+                    <td class="forumTextOdd" width="3%" style="text-align: center">
+                        14</td>
+                </tr>
+				<tr>
+                    <td class="forumHeadFoot" colspan="3" height="5"><img src="images/clear.gif" alt="" width="10" height="5" border="0"/></td>
+                </tr>
+				<tr>
+                    <td class="forumTextEven">
+					<strong>Section:&nbsp; <span style="font-weight: 400">Use 
+					Case Diagrams</span></strong></td>
+                    <td class="forumTextEven" colspan="2">
+					<b>Weight:</b> 35</td>
+                </tr>
+				<tr>
+                    <td class="SectionHeader" nowrap width="86%">Question</td>
+                    <td class="SectionHeader" style="width: 8%">Type</td>
+                    <td class="SectionHeader" width="3%">
+                        Weight</td>
+                </tr>
+				<tr>
+                    <td class="forumTextOdd" width="86%">The Use Case Diagrams 
+					reflect the functionality as outlined in the Requirements 
+					Specification.</td>
+                    <td class="forumTextOdd" style="width: 8%">Subjective (1-4) </td>
+                    <td class="forumTextOdd" width="3%" style="text-align: center">
+                        50</td>
+                </tr>
+				<tr>
+                    <td class="forumHeadFoot" colspan="3" height="5"><img src="images/clear.gif" alt="" width="10" height="5" border="0"/></td>
+                </tr>
+				<tr>
+                    <td class="forumTextEven">
+					<strong>Section:&nbsp; <span style="font-weight: 400">
+					Sequence Diagrams</span></strong></td>
+                    <td class="forumTextEven" colspan="2">
+					<b>Weight:</b> 35</td>
+                </tr>
+				<tr>
+                    <td class="SectionHeader" nowrap width="86%">Question</td>
+                    <td class="SectionHeader" style="width: 8%">Type</td>
+                    <td class="SectionHeader" width="3%">
+                        Weight</td>
+                </tr>
+				<tr>
+                    <td class="forumTextOdd" width="86%">At least one Sequence 
+					Diagram exists for each non-trivial concrete Use Case in the 
+					Use Case Diagrams. If there are no non-trivial use cases 
+					(involving interaction between 5 or more classes), the 
+					submission may have no sequence diagrams. In that case, give 
+					this item a score of 4.</td>
+                    <td class="forumTextOdd" style="width: 8%">Subjective (1-4) </td>
+                    <td class="forumTextOdd" width="3%" style="text-align: center">
+                        50</td>
+                </tr>
+				<tr>
+                    <td class="forumHeadFoot" colspan="3" height="5"><img src="images/clear.gif" alt="" width="10" height="5" border="0"/></td>
+                </tr>
+				<tr>
+                    <td class="forumTextEven">
+					<strong>Section:&nbsp; <span style="font-weight: 400">Anonymity</span></strong></td>
+                    <td class="forumTextEven" colspan="2">
+					<b>Weight:</b> 10</td>
+                </tr>
+				<tr>
+                    <td class="SectionHeader" nowrap width="86%">Question</td>
+                    <td class="SectionHeader" style="width: 8%">Type</td>
+                    <td class="SectionHeader" width="3%">
+                        Weight</td>
+                </tr>
+				<tr>
+                    <td class="forumTextOdd" width="86%">The submission does not 
+					contain any information identifying the designer.</td>
+                    <td class="forumTextOdd" style="width: 8%">Subjective (1-4) </td>
+                    <td class="forumTextOdd" width="3%" style="text-align: center">
+                        100</td>
+                </tr>
+				<tr>
+                    <td class="forumHeadFoot" colspan="3" height="5"><img src="images/clear.gif" alt="" width="10" height="5" border="0"/></td>
+                </tr>
+                <tr>
+                    <td class="forumTextEven">
+					<strong>Section:&nbsp; <span style="font-weight: 400">
+					Overall</span></strong></td>
+                    <td class="forumTextEven" colspan="2">
+					<b>Weight:</b> 50</td>
+                </tr>
+                <tr>
+                    <td class="SectionHeader" nowrap width="86%">Question</td>
+                    <td class="SectionHeader" style="width: 8%">Type</td>
+                    <td class="SectionHeader" width="3%">
+                        Weight</td>
+                </tr>
+                <tr>
+                    <td class="forumTextOdd" width="86%">This submission is 
+					worthy of being reviewed.</td>
+                    <td class="forumTextOdd" style="width: 8%">Subjective (1-4) </td>
+                    <td class="forumTextOdd" width="3%" style="text-align: center">
+                        100</td>
+                </tr>
+                <tr>
+                    <td class="forumHeadFoot" colspan="3" height="5"><img src="images/clear.gif" alt="" width="10" height="5" border="0"/></td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+</table>
+</div><!-- End Contentarea Div -->
+
+<!-- Footer begins -->
+<!-- Footer Include Begins -->
+<div id="footer">
+<table width="100%" border="0" cellpadding="0" cellspacing="0" bgcolor="#666666">
+    <tr>
+        <td height="15" background="images/footer_graphic_tile.gif" align="left"><img src="images/footer_graphic.gif" width="710" height="16" border="0"/></td>
+    </tr>
+
+    <tr valign="top">
+        <td width="100%" align="center" bgcolor="#43515E"><img src="images/clear.gif" width="1" height="5" border="0"/><br/>
+            <div class="smallFoot">
+            <A href="http://www.topcoder.com" class="smallFoot">Home</A>&#160;&#160;|&#160;&#160;
+            <A href="http://www.topcoder.com/tc?module=Static&d1=about&d2=index" class="smallFoot">About TopCoder</A>&#160;&#160;|&#160;&#160;
+            <a href="http://www.topcoder.com/tc/?d1=review_board&d2=competition" class="smallFoot">Review Boards</A>&#160;&#160;|&#160;&#160;
+            <A href="http://www.topcoder.com/?t=news_events&c=index" class="smallFoot">Press Room</A>&#160;&#160;|&#160;&#160;
+            <A href="/http://www.topcoder.com?t=contacts&c=index" class="smallFoot">Contact Us</A>&#160;&#160;|&#160;&#160;
+            <A href="http://www.topcoder.com/tc?module=Static&d1=about&d2=privacy" class="smallFoot">Privacy</A>&#160;&#160;|&#160;&#160;
+            <A href="http://www.topcoder.com/tc?module=Static&d1=about&d2=terms" class="smallFoot">Terms</A><br /><br />
+
+            <A href="http://www.topcoder.com" class="smallFoot">Competition</A>&#160;&#160;|&#160;&#160;
+            <A href="http://www.topcoder.com/?t=development&c=index" class="smallFoot">Development</A>&#160;&#160;|&#160;&#160;
+            <A href="http://software.topcoder.com" class="smallFoot">Software</A>&#160;&#160;|&#160;&#160;
+            <A href="http://corporate.topcoder.com/?module=Static&d1=corpd2=tces_home" class="smallFoot">Employment Services</A>&#160;&#160;|&#160;&#160;
+            <A href="http://corporate.topcoder.com/?module=Static&d1=corp&d2=spon_prog&d3=index" class="smallFoot">Sponsorship</A><br /><br />
+
+            Copyright &#169; 2001-2006, TopCoder, Inc. All rights reserved.
+            </div>
+            <br/><br/>
+        </td>
+    </tr>
+</table>
+</div><!-- End Footer Div -->
+</div><!-- End Holder Div -->
+<!-- Footer Include Ends -->
+
+<!-- Footer ends -->
+
+
+</body>
+</html>

@@ -1,0 +1,1 @@
+CREATE SYNONYM id_sequences FOR common_oltp:id_sequences;
