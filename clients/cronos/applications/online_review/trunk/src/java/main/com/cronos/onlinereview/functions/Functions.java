@@ -299,11 +299,11 @@ public final class Functions {
      * @return string repesentation of the score.
      * @param request
      *            an <code>HttpServletRequest</code> object, where pre-built formatting object
-     *            could be stored for later reuse. Normally, you should write the following:
+     *            could be used for later reuse. Normally, you should write the following:
      *            &quot;<code>pageContext.request</code>&quot; in a JSP page when you call this
      *            method to pass a valid object to it.
      * @param score
-     *            a score (double) value to convert to textual form, rounding it to two decimal
+     *            a score (double) value to convert to textual form, rounding it to two deimal
      *            digits after decimal point.
      */
     public static String displayScore(HttpServletRequest request, Double score) {
@@ -327,59 +327,6 @@ public final class Functions {
     }
 
     /**
-     * This static method converts specified double value to its string representation, rounding the
-     * fractional part to two digits. This method is used to correctly display payment amounts on
-     * JSP pages.
-     * <p>
-     * This method is an implementeation of <code>displayPaymentAmt</code> function used from EL
-     * expressions in JSP pages.
-     * </p>
-     *
-     * @return formatted string representation of amount of the payment, not including the dollar sign.
-     * @param request
-     *            an <code>HttpServletRequest</code> object, where pre-built formatting object
-     *            could be stored for later reuse. Normally, you should write the following:
-     *            &quot;<code>pageContext.request</code>&quot; in a JSP page when you call this
-     *            method to pass a valid object to it.
-     * @param payment
-     *            a payment amount (double) value to convert to textual form, rounding it to two decimal
-     *            digits after decimal point.
-     */
-    public static String displayPaymentAmt(HttpServletRequest request, Double payment) {
-        // Return empty string for incorrect input values
-        if (payment == null || payment.doubleValue() < 0) {
-            return "";
-        }
-
-        Format format = null;
-
-        if (Math.round(payment.doubleValue() * 100) % 100 == 0) {
-            // Try to extract a formatter from the request
-            format = (Format) ((request != null) ? request.getAttribute("payment_amount_nf_format") : null);
-            // If there is no such attribute stored in the request, build a new one and store it
-            if (format == null) {
-                format = new DecimalFormat(ConfigHelper.getMonetaryValueNoFracFormat());
-                if (request != null) {
-                    request.setAttribute("payment_amount_nf_format", format);
-                }
-            }
-        } else {
-            // Try to extract a formatter from the request
-            format = (Format) ((request != null) ? request.getAttribute("payment_amount_full_format") : null);
-            // If there is no such attribute stored in the request, build a new one and store it
-            if (format == null) {
-                format = new DecimalFormat(ConfigHelper.getMonetaryValueFullFormat());
-                if (request != null) {
-                    request.setAttribute("payment_amount_full_format", format);
-                }
-            }
-        }
-
-        // Return converted value
-        return format.format(payment);
-    }
-
-    /**
      * This static method converts specified date value to its string representation, applying the
      * format set in application's configuration file. This method is used to correctly display
      * date/time values on JSP pages.
@@ -391,7 +338,7 @@ public final class Functions {
      * @return string representation of the date.
      * @param request
      *            an <code>HttpServletRequest</code> object, where pre-built formatting object
-     *            could be stored for later reuse. Normally, you should write the following:
+     *            could be used for later reuse. Normally, you should write the following:
      *            &quot;<code>pageContext.request</code>&quot; in a JSP page when you call this
      *            method to pass a valid object to it.
      * @param date
@@ -430,7 +377,7 @@ public final class Functions {
      * @return string representation of the date.
      * @param request
      *            an <code>HttpServletRequest</code> object, where pre-built formatting object
-     *            could be stored for later reuse. Normally, you should write the following:
+     *            could be used for later reuse. Normally, you should write the following:
      *            &quot;<code>pageContext.request</code>&quot; in a JSP page when you call this
      *            method to pass a valid object to it.
      * @param date

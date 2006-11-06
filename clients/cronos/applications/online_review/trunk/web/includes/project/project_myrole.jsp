@@ -25,11 +25,11 @@
 						<bean:message key="NotAvailable" />
 					</c:if>
 					<c:if test="${not empty myPayment}">
-						${"$"}${orfn:displayPaymentAmt(pageContext.request, myPayment)}
-						<c:if test="${wasPaid}">
+						${"$"}${myPayment}
+						<c:if test="${(not empty wasPaid) && wasPaid == true}">
 							<bean:message key="viewProjectDetails.Paid.yes" />
 						</c:if>
-						<c:if test="${not wasPaid}">
+						<c:if test="${(not empty wasPaid) && wasPaid != true}">
 							<bean:message key="viewProjectDetails.Paid.no" />
 						</c:if>
 					</c:if>
