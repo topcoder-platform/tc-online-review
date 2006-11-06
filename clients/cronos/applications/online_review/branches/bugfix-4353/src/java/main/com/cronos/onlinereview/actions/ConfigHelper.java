@@ -155,6 +155,8 @@ public class ConfigHelper {
      * strings.
      *
      * @see #SCORECARD_SCORE_FORMAT_PROP
+     * @see #MONETARY_VALUE_FULL_FORMAT_PROP
+     * @see #MONETARY_VALUE_NO_FRAC_FORMAT_PROP
      * @see #DATE_FORMAT_PROP
      * @see #DATE_ONLY_FORMAT_PROP
      * @see #TIME_ONLY_FORMAT_PROP
@@ -168,6 +170,24 @@ public class ConfigHelper {
      * @see #FORMATS_PROP
      */
     private static final String SCORECARD_SCORE_FORMAT_PROP = "ScorecardScore";
+
+    /**
+     * This member variable is a string constant that specifies the name of the property which
+     * defines the formatting string used to format monetary values (used to display payment
+     * amounts).
+     *
+     * @see #FORMATS_PROP
+     */
+    private static final String MONETARY_VALUE_FULL_FORMAT_PROP = "MonetaryValueFull";
+
+    /**
+     * This member variable is a string constant that specifies the name of the property which
+     * defines the formatting string used to format monetary values without fractional part (used to
+     * display payment amounts).
+     *
+     * @see #FORMATS_PROP
+     */
+    private static final String MONETARY_VALUE_NO_FRAC_FORMAT_PROP = "MonetaryValueNoFrac";
 
     /**
      * This member variable is a string constant that specifies the name of the property which
@@ -357,6 +377,17 @@ public class ConfigHelper {
     private static String scorecardScoreFormat = "0";
 
     /**
+     * This member variable holds the formatting string used to format monetary values.
+     */
+    private static String monetaryValueFullFormat = "#.##";
+
+    /**
+     * This member variable holds the formatting string used to format monetary values without
+     * fractional part.
+     */
+    private static String monetaryValueNoFracFormat = "0";
+
+    /**
      * This member variable holds the formatting string used to format dates.
      */
     private static String dateFormat = "MM.dd.yyyy hh:mm a";
@@ -535,6 +566,16 @@ public class ConfigHelper {
             String formattingString = propFormats.getValue(SCORECARD_SCORE_FORMAT_PROP);
             if (formattingString != null && formattingString.trim().length() != 0) {
                 scorecardScoreFormat = formattingString;
+            }
+            // Get a formatting string for monetary values (full form)
+            formattingString = propFormats.getValue(MONETARY_VALUE_FULL_FORMAT_PROP);
+            if (formattingString != null && formattingString.trim().length() != 0) {
+                monetaryValueFullFormat = formattingString;
+            }
+            // Get a formatting string for monetary values (form with no fractional part)
+            formattingString = propFormats.getValue(MONETARY_VALUE_NO_FRAC_FORMAT_PROP);
+            if (formattingString != null && formattingString.trim().length() != 0) {
+                monetaryValueNoFracFormat = formattingString;
             }
             // Get a formatting string for dates
             formattingString = propFormats.getValue(DATE_FORMAT_PROP);
@@ -725,6 +766,25 @@ public class ConfigHelper {
      */
     public static String getScorecardScoreFormat() {
         return scorecardScoreFormat;
+    }
+
+    /**
+     * This static method returns the formatting string used to format monetary values.
+     *
+     * @return formatting string for monetary values.
+     */
+    public static String getMonetaryValueFullFormat() {
+        return monetaryValueFullFormat;
+    }
+
+    /**
+     * This static method returns the formatting string used to format monetary values without
+     * fractional part.
+     *
+     * @return formatting string for monetary values.
+     */
+    public static String getMonetaryValueNoFracFormat() {
+        return monetaryValueNoFracFormat;
     }
 
     /**
