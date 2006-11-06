@@ -1,9 +1,0 @@
-<?xml version="1.0" ?>
-<CMConfig>
-    <Config name="com.cronos.onlinereview.scorecard.functionaltests.Configuration">
-        <Property name="preloads">
-            <Value>DBConnectionFactoryImpl.xml</Value>
-            <Value>ScorecardManager.xml</Value>
-        </Property>
-    </Config>
-</CMConfig>
