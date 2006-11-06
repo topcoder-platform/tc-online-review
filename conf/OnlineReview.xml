@@ -2624,13 +2624,19 @@
                 <Value>168</Value>
             </Property>
             <Property name="DeadlineNearDuration">
-                <Value>48</Value>
+                <Value>2</Value>
             </Property>
         </Property>
 
         <Property name="Formats">
             <Property name="ScorecardScore">
                 <Value>0.0#</Value>
+            </Property>
+            <Property name="MonetaryValueFull">
+                <Value>#,###.00</Value>
+            </Property>
+            <Property name="MonetaryValueNoFrac">
+                <Value>#,###</Value>
             </Property>
             <Property name="Date">
                 <Value>MM.dd.yyyy hh:mm a</Value>

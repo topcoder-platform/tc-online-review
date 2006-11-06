@@ -3,8 +3,6 @@
  */
 package com.cronos.onlinereview.actions;
 
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -1236,7 +1234,13 @@ public class ActionsHelper {
         return roles.toString();
     }
 
-    public static String determineMyPayment(Resource[] myResources) {
+    /**
+     * TODO: Write docs for this method.
+     *
+     * @return
+     * @param myResources
+     */
+    public static Double determineMyPayment(Resource[] myResources) {
         double totalPayment = -1.0; // -1 will mean N/A
 
         for (int i = 0; i < myResources.length; ++i) {
@@ -1253,15 +1257,15 @@ public class ActionsHelper {
             }
         }
 
-        if (totalPayment == -1.0) {
-            return null;
-        }
-
-        NumberFormat nf = new DecimalFormat("#,###.##");
-
-        return nf.format(totalPayment);
+        return (totalPayment != -1.0) ? new Double(totalPayment) : null;
     }
 
+    /**
+     * TODO: Write docs for this method.
+     *
+     * @return
+     * @param myResources
+     */
     public static Boolean determineMyPaymentPaid(Resource[] myResources) {
         for (int i = 0; i < myResources.length; ++i) {
             // Get a resource for the current iteration
