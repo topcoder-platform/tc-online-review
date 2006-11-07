@@ -34,8 +34,8 @@
 		function placeAppeal(itemIdx, itemId, reviewId) {
 			// Find appeal text input node
 			appealTextNode = document.getElementsByName("appeal_text[" + itemIdx + "]")[0];
-			// Get appeal text
-			var appealText = appealTextNode.value;
+			// Get html-encoded Appeal text
+			var appealText = htmlEncode(appealTextNode.value);
 
 			// assemble the request XML
 			var content =
@@ -75,7 +75,7 @@
 			// Find appeal response text input node
 			responseTextNode = document.getElementsByName("appeal_response_text[" + itemIdx + "]")[0];
 			// Get appeal response text
-			var responseText = responseTextNode.value;
+			var responseText = htmlEncode(responseTextNode.value);
 
 			// Find appeal response modified answer node
 			answerNode = document.getElementsByName("answer[" + itemIdx + "]")[0];

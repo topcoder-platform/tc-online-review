@@ -76,6 +76,7 @@
 
             <form-property name="phase_required_registrations" type="java.lang.Integer[]" />
             <form-property name="phase_required_submissions" type="java.lang.Integer[]" />
+            <form-property name="phase_required_reviewers" type="java.lang.Integer[]" />
             <form-property name="phase_manual_screening" type="java.lang.Boolean[]" />
             <form-property name="phase_view_appeal_responses" type="java.lang.Boolean[]" />
             <form-property name="phase_scorecard" type="java.lang.Long[]" />

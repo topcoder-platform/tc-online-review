@@ -392,6 +392,10 @@ public class ProjectActions extends DispatchAction {
                 form.set("phase_manual_screening", i + 1,
                         Boolean.valueOf("Yes".equals(phases[i].getAttribute("Manual Screening"))));
             }
+            if (phases[i].getAttribute("Reviewer Number") != null) {
+            	form.set("phase_required_reviewers", i + 1,
+            			Integer.valueOf((String) phases[i].getAttribute("Reviewer Number")));
+            }
             if (phases[i].getAttribute("View Response During Appeals") != null) {
                 form.set("phase_view_appeal_responses", i + 1,
                         Boolean.valueOf("Yes".equals(phases[i].getAttribute("View Response During Appeals"))));
@@ -913,6 +917,12 @@ public class ProjectActions extends DispatchAction {
             if (requiredSubmissions != null) {
                 phase.setAttribute("Submission Number", requiredSubmissions.toString());
             }
+            // If the number of required reviewers is specified, set it
+            Integer requiredReviewer = (Integer) lazyForm.get("phase_required_reviewers", i);          
+            if (requiredReviewer != null) {
+            	phase.setAttribute("Reviewer Number", requiredReviewer.toString());
+            }
+            
             Boolean manualScreening = (Boolean) lazyForm.get("phase_manual_screening", i);
             // If the manual screening flag is specified, set it
             if (manualScreening != null) {
@@ -1847,8 +1857,13 @@ public class ProjectActions extends DispatchAction {
             for (int i = 0; i < projects.length; ++i) {
                 String[] deliverables = new String[projects[i].length];
                 for (int j = 0; j < projects[i].length; ++j) {
+                    String winnerIdStr = (String) projects[i][j].getProperty("Winner External Reference ID");
+                    if (winnerIdStr != null && winnerIdStr.trim().length() == 0) {
+                        winnerIdStr = null;
+                    }
+
                     deliverables[j] = getMyDeliverablesForPhases(
-                            messages, allMyDeliverables, phases[i][j], myResources[i][j]);
+                            messages, allMyDeliverables, phases[i][j], myResources[i][j], winnerIdStr);
                 }
                 myDeliverables[i] = deliverables;
             }
@@ -2042,11 +2057,14 @@ public class ProjectActions extends DispatchAction {
      *            an array of phases to look up the deliverables for.
      * @param resources
      *            an array of resources to look up the deliverables for.
+     * @param winnerExtUserId
+     *            an External User ID of the winning user for the project, if any. If there is no
+     *            winner for the project, this parameter must be <code>null</code>.
      * @throws IllegalArgumentException
      *             if parameter <code>messages</code> is <code>null</code>.
      */
-    private static String getMyDeliverablesForPhases(
-            MessageResources messages, Deliverable[] deliverables, Phase[] phases, Resource[] resources) {
+    private static String getMyDeliverablesForPhases(MessageResources messages,
+            Deliverable[] deliverables, Phase[] phases, Resource[] resources, String winnerExtUserId) {
         // Validate parameters
         ActionsHelper.validateParameterNotNull(messages, "messages");
 
@@ -2084,6 +2102,16 @@ public class ProjectActions extends DispatchAction {
             // If this deliverable is not for any of the resources, continue the search
             if (j == resources.length) {
                 continue;
+            }
+
+            // Skip deliverables that are not for winning submitter
+            if (winnerExtUserId != null) {
+                Resource resource = resources[j];
+
+                if (resource.getResourceRole().getName().equalsIgnoreCase(Constants.SUBMITTER_ROLE_NAME) &&
+                        !winnerExtUserId.equals(resources[j].getProperty("External Reference ID"))) {
+                    continue;
+                }
             }
 
             // Get the name of the deliverable
