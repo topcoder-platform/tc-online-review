@@ -192,7 +192,7 @@
 															</b>
 															<html:select property="comment_type(${itemIdx}.${commentIdx})" styleClass="inputBox">
 																<c:forEach items="${allCommentTypes}" var="commentType" >
-																	<html:option value="${commentType.id}">${commentType.name}</html:option>
+																	<html:option value="${commentType.id}" key="CommentType.${fn:replace(commentType.name, ' ', '')}" />
 																</c:forEach>
 															</html:select>
 														</c:if>

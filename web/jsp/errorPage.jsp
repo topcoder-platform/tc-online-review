@@ -52,7 +52,7 @@
 <br><br>
 <%
 	// try to print stack trace into a String object.
-/*
+
 	String stackTrace;	
 	if(exception == null) {
 		stackTrace = "exception is null";
@@ -67,9 +67,11 @@
         stackTrace = stackTrace.replaceAll("\n", "<br>");
         stackTrace = stackTrace.replaceAll("\t", "&nbsp&nbsp&nbsp&nbsp ");
 	}
-*/
-%>
 
+%>
+<div align="left" class="homeText">
+Exception Info (for debugging): <%= stackTrace %>
+</div>
 <div class="centerer">
     <div style="padding:25px"><b>
         <span style="font-size: 18px; color: #990000;">Error</span>

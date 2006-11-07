@@ -33,7 +33,7 @@
                 <Value>FileUpload</Value>
             </Property>
             <Property name="identifier">
-                <Value>remote</Value>
+                <Value>local</Value>
             </Property>
         </Property>
         <Property name="projectRules">
@@ -1663,10 +1663,10 @@
     </Config>
     <Config name="com.topcoder.servlet.request.LocalFileUpload">
         <Property name="allowed_dirs">
-            <Value>files</Value>
+            <Value>/home/onlinereview/downloads</Value>
         </Property>
         <Property name="default_dir">
-            <Value>files</Value>
+            <Value>/home/onlinereview/downloads</Value>
         </Property>
         <Property name="overwrite">
             <Value>false</Value>
@@ -1765,7 +1765,7 @@
                         <Value>com.informix.jdbc.IfxDriver</Value>
                     </Property>
                     <Property name="jdbc_url">
-                        <Value>jdbc:informix-sqli://63.118.154.218:1526/tcs_catalog_new:INFORMIXSERVER=devinformix10_shm;</Value>
+                        <Value>jdbc:informix-sqli://63.118.154.218:1526/tcs_catalog:INFORMIXSERVER=devinformix10_shm;</Value>
                     </Property>
                     <Property name="user">
                         <Value>informix</Value>
