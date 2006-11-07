@@ -3396,13 +3396,16 @@ public class ProjectReviewActions extends DispatchAction {
                     if (appeal != null && response == null) {
                         appealStatuses[i] = messages.getMessage("editReview.Appeal.Unresolved");
                     } else if (appeal != null) {
-                        appealStatuses[i] = messages.getMessage("editReview.Appeal.Resolved");
+                        appealStatuses[i] = messages.getMessage("editReview.Appeal.Resolved." + appeal.getExtraInfo());
                     } else {
                         appealStatuses[i] = "";
                     }
                 }
                 // Place appeal statuses to request
                 request.setAttribute("appealStatuses", appealStatuses);
+               
+                // Retrive some look-up data and store it into the request
+                retreiveAndStoreReviewLookUpData(request);
             }
         }
 
