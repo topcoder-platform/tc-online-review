@@ -2614,6 +2614,14 @@
                     <Value>IconAssembly.gif</Value>
                 </Property>
             </Property>
+            <Property name="Legacy">
+                <Property name="IconSmall">
+                    <Value>IconLegacySm.gif</Value>
+                </Property>
+                <Property name="Icon">
+                    <Value>IconLegacy.gif</Value>
+                </Property>
+            </Property>
         </Property>
 
         <Property name="Defaults">
