@@ -3500,8 +3500,8 @@ public class ProjectReviewActions extends DispatchAction {
     }
 
     /**
-     * This static method validates Aggregation scorecard. Aggregation must have all its aggregate
-     * functions to be specified, as well as all aggregator's comments entered for every item.
+     * This static method validates Aggregation scorecard. In order to pass validation, Aggregation
+     * must have all its aggregate functions to be specified. Per-item comments ae not required.
      *
      * @return <code>true</code> if aggregation scorecard passes validation, <code>false</code>
      *         if it fails it.
@@ -3555,9 +3555,11 @@ public class ProjectReviewActions extends DispatchAction {
                                     commentType.equalsIgnoreCase("Recommended")) {
                                 validateAggregateFunction(request, item.getComment(j), commentIdx++);
                             }
+                            /* Request from David Messinger [11/06/2006]:
+                               No need to verify presence of comments
                             if (commentType.equalsIgnoreCase("Aggregation Comment")) {
                                 validateScorecardComment(request, comment, "aggregator_response[" + itemIdx + "]");
-                            }
+                            }*/
                         }
                     }
                 }
