@@ -1132,7 +1132,7 @@ public class ProjectDetailsActions extends DispatchAction {
         // Get the category of the question
         String questionType = request.getParameter("cat");
         // Get question's text
-        String text = request.getParameter("msg");
+	String text = "<![CDATA[" + request.getParameter("msg") +"]]>";
 
         TemplateFields fields = docGenerator.getFields(docTemplate);
         Node[] nodes = fields.getNodes();
