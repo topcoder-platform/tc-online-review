@@ -318,6 +318,12 @@ public class Constants {
     public static final String DOWNLOAD_TEST_CASES_PERM_NAME = "Download Test Cases";
 
     /**
+     * This member variable is a string constant that defines the name of the
+     * Download Test Cases during Review permission.
+     */
+    public static final String DOWNLOAD_TC_DUR_REVIEW_PERM_NAME = "Download Test Cases during Review";
+
+    /**
      * This member variable is a string constant that defines the name of the View All Reviews
      * permission.
      */
