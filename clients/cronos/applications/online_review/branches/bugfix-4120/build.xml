@@ -502,7 +502,20 @@
         <echo>The execution of reports is complete.  Reports are available in /${reports}</echo>
     </target>
 
-    <target name="dist" depends="clean, compile">
+    <!-- assume the user is already logged in to cvs and the env is set up. -->
+	<target name="update_left_nav">
+        <mkdir dir="${build_distdir}" />
+		<cvs command="update -Pd" package="web/src/main/com/topcoder/web/jsp/includes/global_left.jsp"
+       		dest="${build_distdir}"/>
+        <copy file="${build_distdir}/web/src/main/com/topcoder/web/jsp/includes/global_left.jsp" 
+        	tofile="${webdir}/jsp/includes/global_left.jsp"/>
+
+		<cvs command="update -Pd" package="web/resources/taglib/nav.tld" dest="${build_distdir}"/>
+        <copy file="${build_distdir}/web/resources/taglib/nav.tld" 
+        	tofile="${configdir}/WEB-INF/nav.tld"/>
+	</target>
+
+    <target name="dist" depends="clean, update_left_nav, compile">
         <mkdir dir="${build_distdir}" />
 
         <delete file="${component.war}" failonerror="false" />
