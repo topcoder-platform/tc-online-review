@@ -50,6 +50,7 @@
 </table>
 
 <br><br>
+<!--
 <%
 	// try to print stack trace into a String object.
 
@@ -69,6 +70,8 @@
 	}
 
 %>
+-->
+
 <div align="left" class="homeText">
 Exception Info (for debugging): <%= stackTrace %>
 </div>
