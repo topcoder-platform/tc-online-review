@@ -131,6 +131,27 @@
 				}
 			);
 		}
+		
+		
+		// TODO: Make the following code reusable with editReview.jsp
+		
+		// The "passed_tests" and "all_tests" inputs should be populated
+		// by the values taken from appropriate hidden "answer" input
+		dojo.addOnLoad(function () {
+			var passedTestsNodes = document.getElementsByName("passed_tests");
+			for (var i = 0; i < passedTestsNodes.length; i++) {
+				var allTestsNode = getChildByName(passedTestsNodes[i].parentNode, "all_tests");
+				var answerNode = getChildByNamePrefix(passedTestsNodes[i].parentNode, "answer[");
+				var parts = answerNode.value.split("/");
+				if (parts && parts.length >= 2) {
+					passedTestsNodes[i].value = parts[0];
+					allTestsNode.value = parts[1];
+				}
+			}
+		});
+		
+		
+		
 	</script>
 
 </head>

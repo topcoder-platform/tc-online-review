@@ -2873,14 +2873,24 @@
                 <Value>Observer</Value>
                 <Value>Submitter</Value>
                 <Value>Reviewer</Value>
+                <Value>Accuracy Reviewer</Value>
+                <Value>Failure Reviewer</Value>
+                <Value>Stress Reviewer</Value>
                 <!-- The following two roles were added to the permissions matrix
                     by Lorie after the issue had been raised on forum -->
                 <Value>Aggregator</Value>
                 <Value>Final Reviewer</Value>
+                <Value>Approver</Value>
+            </Property>
+            <!-- Note, the following permission was not originally present in the Permission Matrix -->
+            <Property name="Download Test Cases during Review">
+                <Value>Global Manager</Value>
+                <Value>Manager</Value>
+                <Value>Observer</Value>
+                <Value>Reviewer</Value>
                 <Value>Accuracy Reviewer</Value>
                 <Value>Failure Reviewer</Value>
                 <Value>Stress Reviewer</Value>
-                <Value>Approver</Value>
             </Property>
             <Property name="View All Reviews">
                 <Value>Global Manager</Value>

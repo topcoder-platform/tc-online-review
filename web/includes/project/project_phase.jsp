@@ -204,12 +204,12 @@
 											</c:if>
 										</c:forEach>
 										<c:if test="${empty review}">
-											<c:if test="${isAllowedToPerformScreening}">
+											<c:if test='${(isAllowedToPerformScreening) && ((scrTaskStatus == "Passed") || (scrTaskStatus == "Passed with Warning"))}'>
 												<td class="valueC" width="14%" nowrap="nowrap">
 													<b><html:link page="/actions/CreateScreening.do?method=createScreening&sid=${submission.id}"><bean:message
 														key="viewProjectDetails.box.Screening.Submit" /></html:link></b></td>
 											</c:if>
-											<c:if test="${not isAllowedToPerformScreening}">
+											<c:if test='${(not isAllowedToPerformScreening) || (scrTaskStatus == "Failed") || (scrTaskStatus == "Pending") || (scrTaskStatus == "Screening")}'>
 												<td class="valueC" width="14%"><bean:message key="Pending" /></td>
 											</c:if>
 											<td class="valueC" width="15%"><bean:message key="NotAvailable" /></td>

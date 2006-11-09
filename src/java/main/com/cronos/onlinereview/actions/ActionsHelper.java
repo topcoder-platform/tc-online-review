@@ -1993,6 +1993,36 @@ public class ActionsHelper {
     }
 
     /**
+     * This static method // TODO: should be documented
+     *
+     * @return
+     * @param phases
+     * @param phaseIndex
+     * @param phaseName
+     * @throws IllegalArgumentException
+     *             if <code>phases</code> parameter is <code>null</code> or if
+     *             <code>phaseIndex</code> parameter is not within valid range of the array
+     *             specified by <code>phases</code> parameter (thus, there is no way to pass an
+     *             empty array to this method).
+     */
+    public static boolean isInOrAfterPhase(Phase[] phases, int phaseIndex, String phaseName) {
+        // Validate parameters
+        validateParameterNotNull(phases, "phases");
+        validateParameterInRange(phaseIndex, "phaseIndex", 0, phases.length - 1);
+        validateParameterStringNotEmpty(phaseName, "phaseName");
+
+        for (int i = phaseIndex; i < phases.length; ++i) {
+            // Get a phase for the current iteration
+            final Phase phase = phases[i];
+
+            if (phase.getPhaseType().getName().equalsIgnoreCase(phaseName)) {
+                return (!phase.getPhaseStatus().getName().equalsIgnoreCase(Constants.SCHEDULED_PH_STATUS_NAME));
+            }
+        }
+        return false;
+    }
+
+    /**
      * TODO: Document this method.
      *
      * @return

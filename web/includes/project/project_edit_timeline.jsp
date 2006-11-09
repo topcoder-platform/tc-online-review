@@ -161,7 +161,7 @@
 				</c:if>	
 				<td class="value"><!-- @ --></td>
 				<td class="value" colspan="4"><bean:message key="editProject.Phases.Criteria.RequiredSubmissions.beforeInput" />
-					<html:text styleClass="inputBox" property="phase_required_submissions[${phaseIdx}]" style="width: 30px;" />
+					<html:text styleClass="inputBox" property="phase_required_submissions[${phaseIdx}]" style="width:30px;text-align:right;" />
 					<bean:message key="editProject.Phases.Criteria.RequiredSubmissions.afterInput" /><br />
 					<html:checkbox property="phase_manual_screening[${phaseIdx}]" />					
 					<bean:message key="editProject.Phases.Criteria.RequiredSubmissions.ManualScreening" />
@@ -203,7 +203,13 @@
 					</td>
 				</c:if>	
 				<td class="value">&nbsp;</td>
-				<td class="value" colspan="4"><bean:message key="editProject.Phases.Criteria.Scorecard" />
+				<td class="value" colspan="4"><bean:message key="editProject.Phases.Criteria.ReviewNumber.beforeInput" /> 
+					<html:text style="width:30px;text-align:right;" styleClass="inputBox" 
+							size="30" property="phase_required_reviewers[${phaseIdx}]" />
+					&nbsp;<bean:message key="editProject.Phases.Criteria.ReviewNumber.afterInput" />
+			
+			
+			</br><bean:message key="editProject.Phases.Criteria.Scorecard" />
 					<html:select style="width:350px;" styleClass="inputBox" property="phase_scorecard[${phaseIdx}]" >
 						<c:forEach items="${reviewScorecards}" var="scorecard">
 							<html:option value="${scorecard.id}">${scorecard.name} ${scorecard.version}</html:option>					
