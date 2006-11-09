@@ -48,6 +48,14 @@ public class Constants {
     public static final String PRIMARY_SCREENER_ROLE_NAME = "Primary Screener";
 
     /**
+     * This member variable is a constant array that holds names of different screener roles.
+     *
+     * @see #SCREENER_ROLE_NAME
+     * @see #PRIMARY_SCREENER_ROLE_NAME
+     */
+    public static final String[] SCREENER_ROLE_NAMES = new String[] {SCREENER_ROLE_NAME, PRIMARY_SCREENER_ROLE_NAME};
+
+    /**
      * This member variable is a string constant that defines the name of the Reviewer role.
      * Reviewer role is assigned in the review phase.  Reviewer can perform review during the
      * review phase and resolve appeals in the following appeal response phase, perform

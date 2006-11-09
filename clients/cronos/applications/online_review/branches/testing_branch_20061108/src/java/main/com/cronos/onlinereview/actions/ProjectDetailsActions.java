@@ -366,10 +366,8 @@ public class ProjectDetailsActions extends DispatchAction {
             boolean canSeeSubmitters = (isAfterAppealsResponse ||
                     AuthorizationHelper.hasUserPermission(request, Constants.VIEW_ALL_SUBM_PERM_NAME));
 
-            if (canSeeSubmitters) {
-                if (submitters == null) {
-                    submitters = ActionsHelper.getAllSubmitters(allProjectResources);
-                }
+            if (submitters == null && canSeeSubmitters) {
+                submitters = ActionsHelper.getAllSubmitters(allProjectResources);
             } else {
                 submitters = null;
             }
@@ -453,8 +451,20 @@ public class ProjectDetailsActions extends DispatchAction {
                     AuthorizationHelper.hasUserPermission(request, Constants.VIEW_RECENT_SUBM_AAR_PERM_NAME);
 
                 if (submissions == null &&
-                        ((mayViewMostRecentAfterAppealsResponse && isAfterAppealsResponse) ||
-                        AuthorizationHelper.hasUserPermission(request, Constants.VIEW_RECENT_SUBM_PERM_NAME))) {
+                        ((mayViewMostRecentAfterAppealsResponse && isAfterAppealsResponse))) {
+                    submissions =
+                        ActionsHelper.getMostRecentSubmissions(ActionsHelper.createUploadManager(request), project);
+                }
+                if (submissions == null &&
+                        AuthorizationHelper.hasUserPermission(request, Constants.VIEW_RECENT_SUBM_PERM_NAME) &&
+                        !AuthorizationHelper.hasUserRole(request, Constants.REVIEWER_ROLE_NAMES)) {
+                    submissions =
+                        ActionsHelper.getMostRecentSubmissions(ActionsHelper.createUploadManager(request), project);
+                }
+                if (submissions == null &&
+                        AuthorizationHelper.hasUserPermission(request, Constants.VIEW_RECENT_SUBM_PERM_NAME) &&
+                        AuthorizationHelper.hasUserRole(request, Constants.REVIEWER_ROLE_NAMES) &&
+                        ActionsHelper.isInOrAfterPhase(phases, phaseIdx, Constants.REVIEW_PHASE_NAME)) {
                     submissions =
                         ActionsHelper.getMostRecentSubmissions(ActionsHelper.createUploadManager(request), project);
                 }
@@ -477,7 +487,8 @@ public class ProjectDetailsActions extends DispatchAction {
                     submissions = upMgr.searchSubmissions(filter);
                 }
                 if (submissions == null &&
-                        AuthorizationHelper.hasUserPermission(request, Constants.VIEW_SCREENER_SUBM_PERM_NAME)) {
+                        AuthorizationHelper.hasUserPermission(request, Constants.VIEW_SCREENER_SUBM_PERM_NAME) &&
+                        ActionsHelper.isInOrAfterPhase(phases, phaseIdx, Constants.SCREENING_PHASE_NAME)) {
                     submissions =
                         ActionsHelper.getMostRecentSubmissions(ActionsHelper.createUploadManager(request), project);
                 }
@@ -1371,6 +1382,10 @@ public class ProjectDetailsActions extends DispatchAction {
                     mapping, getResources(request), request, "ViewSubmission", "Error.UploadDeleted");
         }
 
+        // Get all phases for the current project (needed to do permission checks)
+        Phase[] phases = ActionsHelper.getPhasesForProject(
+                ActionsHelper.createPhaseManager(request, false), verification.getProject());
+
         boolean noRights = true;
 
         if (AuthorizationHelper.hasUserPermission(request, Constants.VIEW_ALL_SUBM_PERM_NAME)) {
@@ -1388,12 +1403,28 @@ public class ProjectDetailsActions extends DispatchAction {
             }
         }
 
-        if (noRights && AuthorizationHelper.hasUserPermission(request, Constants.VIEW_RECENT_SUBM_PERM_NAME)) {
-            noRights = false;
+        if (noRights && AuthorizationHelper.hasUserPermission(request, Constants.VIEW_SCREENER_SUBM_PERM_NAME)) {
+            // Determine whether Screening phase has already been opened (does not have Scheduled status)
+            final boolean isScreeningOpen = ActionsHelper.isInOrAfterPhase(phases, 0, Constants.SCREENING_PHASE_NAME);
+            // If screener tries to download submission before Screening phase opens,
+            // notify him about this wrong-doing and do not let perform the action
+            if (AuthorizationHelper.hasUserRole(request, Constants.SCREENER_ROLE_NAMES) && !isScreeningOpen) {
+                return ActionsHelper.produceErrorReport(
+                        mapping, getResources(request), request, "ViewSubmission", "Error.IncorrectPhase");
+            }
+            noRights = false; // TODO: Check if screener can download this submission
         }
 
-        if (noRights && AuthorizationHelper.hasUserPermission(request, Constants.VIEW_SCREENER_SUBM_PERM_NAME)) {
-            noRights = false; // TODO: Check if screener can download this submission
+        if (noRights && AuthorizationHelper.hasUserPermission(request, Constants.VIEW_RECENT_SUBM_PERM_NAME)) {
+            // Determine whether Review phase has already been opened (does not have Scheduled status)
+            final boolean isReviewOpen = ActionsHelper.isInOrAfterPhase(phases, 0, Constants.REVIEW_PHASE_NAME);
+            // If reviewer tries to download submission before Review phase opens,
+            // notify him about this wrong-doing and do not let perform the action
+            if (AuthorizationHelper.hasUserRole(request, Constants.REVIEWER_ROLE_NAMES) && !isReviewOpen) {
+                return ActionsHelper.produceErrorReport(
+                        mapping, getResources(request), request, "ViewSubmission", "Error.IncorrectPhase");
+            }
+            noRights = false;
         }
 
         if (noRights && AuthorizationHelper.hasUserPermission(request, Constants.VIEW_WINNING_SUBM_PERM_NAME)) {
