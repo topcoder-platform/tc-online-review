@@ -247,7 +247,7 @@ public class ProjectReviewActions extends DispatchAction {
     public ActionForward viewScreening(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response)
         throws BaseException {
-        return viewGenericReview(mapping, request, "Screening");
+        return viewGenericReview(mapping, form, request, "Screening");
     }
 
     /**
@@ -359,7 +359,7 @@ public class ProjectReviewActions extends DispatchAction {
     public ActionForward viewReview(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response)
         throws BaseException {
-        return viewGenericReview(mapping, request, "Review");
+        return viewGenericReview(mapping, form, request, "Review");
     }
 
     /**
@@ -1844,7 +1844,7 @@ public class ProjectReviewActions extends DispatchAction {
     public ActionForward viewApproval(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response)
         throws BaseException {
-        return viewGenericReview(mapping, request, "Approval");
+        return viewGenericReview(mapping, form, request, "Approval");
     }
 
     /**
@@ -3253,7 +3253,7 @@ public class ProjectReviewActions extends DispatchAction {
      *             match either <code>&quot;Screening&quot;</code>, or
      *             <code>&quot;Review&quot;</code>, or <code>&quot;Approval&quot;</code>.
      */
-    private ActionForward viewGenericReview(ActionMapping mapping, HttpServletRequest request, String reviewType)
+    private ActionForward viewGenericReview(ActionMapping mapping, ActionForm form, HttpServletRequest request, String reviewType)
         throws BaseException {
         // Validate parameters
         ActionsHelper.validateParameterNotNull(mapping, "mapping");
@@ -3386,8 +3386,9 @@ public class ProjectReviewActions extends DispatchAction {
             }
 
             if (canPlaceAppeal || canPlaceAppealResponse) {
-                // Gather the appeal statuses
+                // Gather the appeal statuses and item answers
                 String[] appealStatuses = new String[verification.getReview().getNumberOfItems()];
+                String[] answers = new String[verification.getReview().getNumberOfItems()];
                 // Message Resources to be used for the Action
                 MessageResources messages = getResources(request);
                 for (int i = 0; i < appealStatuses.length; i++) {
@@ -3400,7 +3401,11 @@ public class ProjectReviewActions extends DispatchAction {
                     } else {
                         appealStatuses[i] = "";
                     }
+                    
+                    answers[i] = verification.getReview().getItem(i).getAnswer().toString();
                 }
+                // Set review item answers form property
+                ((LazyValidatorForm) form).set("answer", answers);
                 // Place appeal statuses to request
                 request.setAttribute("appealStatuses", appealStatuses);
                
