@@ -609,22 +609,18 @@ public class ProjectDetailsActions extends DispatchAction {
                         Constants.REVIEWER_ROLE_NAME, Constants.ACCURACY_REVIEWER_ROLE_NAME,
                         Constants.FAILURE_REVIEWER_ROLE_NAME, Constants.STRESS_REVIEWER_ROLE_NAME,
                         Constants.OBSERVER_ROLE_NAME});
+                // Determine if the Review phase is closed
+                boolean isReviewClosed =
+                    phase.getPhaseStatus().getName().equalsIgnoreCase(Constants.CLOSED_PH_STATUS_NAME);
+                // Determine if the Appeals phase is open
+                boolean isAppealsOpen = (nextPhase != null &&
+                        nextPhase.getPhaseType().getName().equalsIgnoreCase(Constants.APPEALS_PHASE_NAME) &&
+                        nextPhase.getPhaseStatus().getName().equalsIgnoreCase(Constants.OPEN_PH_STATUS_NAME));
 
                 if (!allowedToSeeReviewLink) {
-                    // Determine if the Review phase is closed
-                    boolean isReviewClosed =
-                        phase.getPhaseStatus().getName().equalsIgnoreCase(Constants.CLOSED_PH_STATUS_NAME);
-                    boolean isAppealsOpen = false;
-
-                    // Determine if the Appeals phase is open and user is allowed to put appeals
-                    if (!isReviewClosed && nextPhase != null &&
-                            AuthorizationHelper.hasUserPermission(request, Constants.PERFORM_APPEAL_PERM_NAME) &&
-                            nextPhase.getPhaseType().getName().equalsIgnoreCase(Constants.APPEALS_PHASE_NAME) &&
-                            nextPhase.getPhaseStatus().getName().equalsIgnoreCase(Constants.OPEN_PH_STATUS_NAME)) {
-                        isAppealsOpen = true;
-                    }
-
-                    if (isReviewClosed || isAppealsOpen) {
+                    // Determine if the user is allowed to place appeals and Appeals phase is open
+                    if (isReviewClosed || (isAppealsOpen &&
+                            AuthorizationHelper.hasUserPermission(request, Constants.PERFORM_APPEAL_PERM_NAME))) {
                         allowedToSeeReviewLink = true;
                     }
                 }
@@ -704,7 +700,16 @@ public class ProjectDetailsActions extends DispatchAction {
                     ungroupedReviews = new Review[0];
                 }
 
-                if (!reviewerIds.isEmpty()) {
+                boolean canDownloadTestCases =
+                    (isReviewClosed &&
+                            AuthorizationHelper.hasUserPermission(request, Constants.DOWNLOAD_TEST_CASES_PERM_NAME)) ||
+                    (!isReviewClosed &&
+                            AuthorizationHelper.hasUserPermission(request, Constants.DOWNLOAD_TC_DUR_REVIEW_PERM_NAME)) ||
+                    (!isReviewClosed && isAppealsOpen &&
+                            AuthorizationHelper.hasUserPermission(request, Constants.PERFORM_APPEAL_PERM_NAME) &&
+                            AuthorizationHelper.hasUserPermission(request, Constants.DOWNLOAD_TEST_CASES_PERM_NAME));
+
+                if (!reviewerIds.isEmpty() && canDownloadTestCases) {
                     // Obtain an instance of Upload Manager
                     UploadManager upMgr = ActionsHelper.createUploadManager(request);
                     UploadStatus[] allUploadStatuses = upMgr.getAllUploadStatuses();
@@ -1808,8 +1813,60 @@ public class ProjectDetailsActions extends DispatchAction {
             return verification.getForward();
         }
 
-        // Check that user has permissions to download Test Cases
-        if (!AuthorizationHelper.hasUserPermission(request, Constants.DOWNLOAD_TEST_CASES_PERM_NAME)) {
+        Phase[] phases = ActionsHelper.getPhasesForProject(
+                ActionsHelper.createPhaseManager(request, false), verification.getProject());
+
+        boolean isReviewClosed = false;
+        boolean isAppealsOpen = false;
+
+        for (int i = 0; i < phases.length; ++i) {
+            // Get phase's type name for the current iteration
+            String phaseName = phases[i].getPhaseType().getName();
+            // Skip the phase if it is not a Review phase
+            if (!phaseName.equalsIgnoreCase(Constants.REVIEW_PHASE_NAME)) {
+                continue;
+            }
+            // Check if this phase is closed
+            if (phases[i].getPhaseStatus().getName().equalsIgnoreCase(Constants.CLOSED_PH_STATUS_NAME)) {
+                isReviewClosed = true;
+                // Review phase is closed, not need to check anything else
+                break;
+            }
+            // Check that there are more phases, and exit from cycle if current phase is the last
+            if (i + 1 == phases.length) {
+                break;
+            }
+            // Get next phase
+            Phase nextPhase = phases[i + 1];
+            // Check that next phase is Appeals and it is open
+            if (nextPhase.getPhaseType().getName().equalsIgnoreCase(Constants.APPEALS_PHASE_NAME) &&
+                    nextPhase.getPhaseStatus().getName().equalsIgnoreCase(Constants.OPEN_PH_STATUS_NAME)) {
+                isAppealsOpen = true;
+            }
+            // No need to proceed with the cycle anymore
+            break;
+        }
+
+        final boolean canDownload =
+            AuthorizationHelper.hasUserPermission(request, Constants.DOWNLOAD_TEST_CASES_PERM_NAME);
+        final boolean canDownloadDuringReview =
+            AuthorizationHelper.hasUserPermission(request, Constants.DOWNLOAD_TC_DUR_REVIEW_PERM_NAME);
+        final boolean canPlaceAppeals =
+            AuthorizationHelper.hasUserPermission(request, Constants.PERFORM_APPEAL_PERM_NAME);
+
+        // If Review phase is not closed yet, there is a need to check whether the user that is
+        // attempting to download test cases is a Submitter and an Appeals phase is open
+        if (canDownload && canPlaceAppeals && !isReviewClosed && !canDownloadDuringReview && !isAppealsOpen) {
+            return ActionsHelper.produceErrorReport(mapping, getResources(request),
+                    request, Constants.DOWNLOAD_TEST_CASES_PERM_NAME, "Error.IncorrectPhase");
+        }
+        // Verify that user can download test cases during Review
+        if (canDownload && !isReviewClosed && !canDownloadDuringReview) {
+            return ActionsHelper.produceErrorReport(mapping, getResources(request),
+                    request, Constants.DOWNLOAD_TEST_CASES_PERM_NAME, "Error.IncorrectPhase");
+        }
+        // Check that the user is allowed to download test cases in general
+        if (!canDownload) {
             return ActionsHelper.produceErrorReport(mapping, getResources(request),
                     request, Constants.DOWNLOAD_TEST_CASES_PERM_NAME, "Error.NoPermission");
         }
