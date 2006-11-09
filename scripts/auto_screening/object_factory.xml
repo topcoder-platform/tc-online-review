@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <CMConfig>
     <Config name="com.cronos.onlinereview.autoscreening.tool.ObjectFactory">
         <Property name="ConnectionFactory:default">
@@ -301,7 +301,7 @@
                         <Value>String</Value>
                     </Property>
                     <Property name="value">
-                        <Value>.txt</Value>
+                        <Value>.log</Value>
                     </Property>
                 </Property>
                 <Property name="param2">

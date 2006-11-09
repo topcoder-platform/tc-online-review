@@ -1310,8 +1310,7 @@ public class ProjectDetailsActions extends DispatchAction {
             upload.setParameter(uploadedFile.getFileId());
 
             submission.setUpload(upload);
-            // Either creating or updating a submission record it should set the status to active
-            submission.setSubmissionStatus(ActionsHelper.findSubmissionStatusByName(submissionStatuses, "Active"));
+
             deletedUpload.setUploadStatus(ActionsHelper.findUploadStatusByName(uploadStatuses, "Deleted"));
         }
 

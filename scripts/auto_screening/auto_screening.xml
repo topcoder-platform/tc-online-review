@@ -66,10 +66,10 @@
                             <Value>PASS</Value>
                         </Property>
                         <Property name="failSeverity">
-                            <Value>WARN</Value>
+                            <Value>FAIL</Value>
                         </Property>
                         <Property name="errorSeverity">
-                            <Value>WARN</Value>
+                            <Value>FAIL</Value>
                         </Property>
                         <Property name="succeedCode">
         <!-- Refer to the thread https://software.topcoder.com/forum/c_forum_message.jsp?f=22462209&r=22639961 for the response codes -->
@@ -119,10 +119,10 @@
                             <Value>PASS</Value>
                         </Property>
                         <Property name="failSeverity">
-                            <Value>WARN</Value>
+                            <Value>FAIL</Value>
                         </Property>
                         <Property name="errorSeverity">
-                            <Value>WARN</Value>
+                            <Value>FAIL</Value>
                         </Property>
                         <Property name="succeedCode">
                             <Value>15</Value>
@@ -171,10 +171,10 @@
                             <Value>PASS</Value>
                         </Property>
                         <Property name="failSeverity">
-                            <Value>WARN</Value>
+                            <Value>FAIL</Value>
                         </Property>
                         <Property name="errorSeverity">
-                            <Value>WARN</Value>
+                            <Value>FAIL</Value>
                         </Property>
                         <Property name="succeedCode">
                             <Value>15</Value>
@@ -197,10 +197,10 @@
                             <Value>PASS</Value>
                         </Property>
                         <Property name="failSeverity">
-                            <Value>WARN</Value>
+                            <Value>FAIL</Value>
                         </Property>
                         <Property name="errorSeverity">
-                            <Value>WARN</Value>
+                            <Value>FAIL</Value>
                         </Property>
                         <Property name="succeedCode">
                             <Value>15</Value>
@@ -241,10 +241,10 @@
                             <Value>PASS</Value>
                         </Property>
                         <Property name="failSeverity">
-                            <Value>WARN</Value>
+                            <Value>FAIL</Value>
                         </Property>
                         <Property name="errorSeverity">
-                            <Value>WARN</Value>
+                            <Value>FAIL</Value>
                         </Property>
                         <Property name="succeedCode">
                             <Value>15</Value>
@@ -293,10 +293,10 @@
                             <Value>PASS</Value>
                         </Property>
                         <Property name="failSeverity">
-                            <Value>WARN</Value>
+                            <Value>FAIL</Value>
                         </Property>
                         <Property name="errorSeverity">
-                            <Value>WARN</Value>
+                            <Value>FAIL</Value>
                         </Property>
                         <Property name="succeedCode">
                             <Value>15</Value>
@@ -345,10 +345,10 @@
                             <Value>PASS</Value>
                         </Property>
                         <Property name="failSeverity">
-                            <Value>WARN</Value>
+                            <Value>FAIL</Value>
                         </Property>
                         <Property name="errorSeverity">
-                            <Value>WARN</Value>
+                            <Value>FAIL</Value>
                         </Property>
                         <Property name="succeedCode">
                             <Value>15</Value>
@@ -371,10 +371,10 @@
                             <Value>PASS</Value>
                         </Property>
                         <Property name="failSeverity">
-                            <Value>WARN</Value>
+                            <Value>FAIL</Value>
                         </Property>
                         <Property name="errorSeverity">
-                            <Value>WARN</Value>
+                            <Value>FAIL</Value>
                         </Property>
                         <Property name="succeedCode">
                             <Value>15</Value>
@@ -415,10 +415,10 @@
                             <Value>PASS</Value>
                         </Property>
                         <Property name="failSeverity">
-                            <Value>WARN</Value>
+                            <Value>FAIL</Value>
                         </Property>
                         <Property name="errorSeverity">
-                            <Value>WARN</Value>
+                            <Value>FAIL</Value>
                         </Property>
                         <Property name="succeedCode">
         <!-- Refer to the thread https://software.topcoder.com/forum/c_forum_message.jsp?f=22462209&r=22639961 for the response codes -->
@@ -468,10 +468,10 @@
                             <Value>PASS</Value>
                         </Property>
                         <Property name="failSeverity">
-                            <Value>WARN</Value>
+                            <Value>FAIL</Value>
                         </Property>
                         <Property name="errorSeverity">
-                            <Value>WARN</Value>
+                            <Value>FAIL</Value>
                         </Property>
                         <Property name="succeedCode">
                             <Value>15</Value>
@@ -520,10 +520,10 @@
                             <Value>PASS</Value>
                         </Property>
                         <Property name="failSeverity">
-                            <Value>WARN</Value>
+                            <Value>FAIL</Value>
                         </Property>
                         <Property name="errorSeverity">
-                            <Value>WARN</Value>
+                            <Value>FAIL</Value>
                         </Property>
                         <Property name="succeedCode">
                             <Value>15</Value>
@@ -546,10 +546,10 @@
                             <Value>PASS</Value>
                         </Property>
                         <Property name="failSeverity">
-                            <Value>WARN</Value>
+                            <Value>FAIL</Value>
                         </Property>
                         <Property name="errorSeverity">
-                            <Value>WARN</Value>
+                            <Value>FAIL</Value>
                         </Property>
                         <Property name="succeedCode">
                             <Value>15</Value>
@@ -590,10 +590,10 @@
                             <Value>PASS</Value>
                         </Property>
                         <Property name="failSeverity">
-                            <Value>WARN</Value>
+                            <Value>FAIL</Value>
                         </Property>
                         <Property name="errorSeverity">
-                            <Value>WARN</Value>
+                            <Value>FAIL</Value>
                         </Property>
                         <Property name="succeedCode">
                             <Value>15</Value>
@@ -642,10 +642,10 @@
                             <Value>PASS</Value>
                         </Property>
                         <Property name="failSeverity">
-                            <Value>WARN</Value>
+                            <Value>FAIL</Value>
                         </Property>
                         <Property name="errorSeverity">
-                            <Value>WARN</Value>
+                            <Value>FAIL</Value>
                         </Property>
                         <Property name="succeedCode">
                             <Value>15</Value>
@@ -694,10 +694,10 @@
                             <Value>PASS</Value>
                         </Property>
                         <Property name="failSeverity">
-                            <Value>WARN</Value>
+                            <Value>FAIL</Value>
                         </Property>
                         <Property name="errorSeverity">
-                            <Value>WARN</Value>
+                            <Value>FAIL</Value>
                         </Property>
                         <Property name="succeedCode">
                             <Value>15</Value>
@@ -720,10 +720,10 @@
                             <Value>PASS</Value>
                         </Property>
                         <Property name="failSeverity">
-                            <Value>WARN</Value>
+                            <Value>FAIL</Value>
                         </Property>
                         <Property name="errorSeverity">
-                            <Value>WARN</Value>
+                            <Value>FAIL</Value>
                         </Property>
                         <Property name="succeedCode">
                             <Value>15</Value>
@@ -767,10 +767,10 @@
                             <Value>PASS</Value>
                         </Property>
                         <Property name="failSeverity">
-                            <Value>WARN</Value>
+                            <Value>FAIL</Value>
                         </Property>
                         <Property name="errorSeverity">
-                            <Value>WARN</Value>
+                            <Value>FAIL</Value>
                         </Property>
                         <Property name="succeedCode">
                             <Value>15</Value>
@@ -819,10 +819,10 @@
                             <Value>PASS</Value>
                         </Property>
                         <Property name="failSeverity">
-                            <Value>WARN</Value>
+                            <Value>FAIL</Value>
                         </Property>
                         <Property name="errorSeverity">
-                            <Value>WARN</Value>
+                            <Value>FAIL</Value>
                         </Property>
                         <Property name="succeedCode">
                             <Value>15</Value>
@@ -845,10 +845,10 @@
                             <Value>PASS</Value>
                         </Property>
                         <Property name="failSeverity">
-                            <Value>WARN</Value>
+                            <Value>FAIL</Value>
                         </Property>
                         <Property name="errorSeverity">
-                            <Value>WARN</Value>
+                            <Value>FAIL</Value>
                         </Property>
                         <Property name="succeedCode">
                             <Value>15</Value>
@@ -1020,10 +1020,10 @@
                             <Value>PASS</Value>
                         </Property>
                         <Property name="failSeverity">
-                            <Value>WARN</Value>
+                            <Value>FAIL</Value>
                         </Property>
                         <Property name="errorSeverity">
-                            <Value>WARN</Value>
+                            <Value>FAIL</Value>
                         </Property>
                         <Property name="succeedCode">
                             <Value>15</Value>
@@ -1072,10 +1072,10 @@
                             <Value>PASS</Value>
                         </Property>
                         <Property name="failSeverity">
-                            <Value>WARN</Value>
+                            <Value>FAIL</Value>
                         </Property>
                         <Property name="errorSeverity">
-                            <Value>WARN</Value>
+                            <Value>FAIL</Value>
                         </Property>
                         <Property name="succeedCode">
                             <Value>15</Value>
@@ -1098,10 +1098,10 @@
                             <Value>PASS</Value>
                         </Property>
                         <Property name="failSeverity">
-                            <Value>WARN</Value>
+                            <Value>FAIL</Value>
                         </Property>
                         <Property name="errorSeverity">
-                            <Value>WARN</Value>
+                            <Value>FAIL</Value>
                         </Property>
                         <Property name="succeedCode">
                             <Value>15</Value>
@@ -1223,10 +1223,10 @@
                             <Value>PASS</Value>
                         </Property>
                         <Property name="failSeverity">
-                            <Value>WARN</Value>
+                            <Value>FAIL</Value>
                         </Property>
                         <Property name="errorSeverity">
-                            <Value>WARN</Value>
+                            <Value>FAIL</Value>
                         </Property>
                         <Property name="succeedCode">
                             <Value>15</Value>
@@ -1275,10 +1275,10 @@
                             <Value>PASS</Value>
                         </Property>
                         <Property name="failSeverity">
-                            <Value>WARN</Value>
+                            <Value>FAIL</Value>
                         </Property>
                         <Property name="errorSeverity">
-                            <Value>WARN</Value>
+                            <Value>FAIL</Value>
                         </Property>
                         <Property name="succeedCode">
                             <Value>15</Value>
@@ -1301,10 +1301,10 @@
                             <Value>PASS</Value>
                         </Property>
                         <Property name="failSeverity">
-                            <Value>WARN</Value>
+                            <Value>FAIL</Value>
                         </Property>
                         <Property name="errorSeverity">
-                            <Value>WARN</Value>
+                            <Value>FAIL</Value>
                         </Property>
                         <Property name="succeedCode">
                             <Value>15</Value>
@@ -1476,10 +1476,10 @@
                             <Value>PASS</Value>
                         </Property>
                         <Property name="failSeverity">
-                            <Value>WARN</Value>
+                            <Value>FAIL</Value>
                         </Property>
                         <Property name="errorSeverity">
-                            <Value>WARN</Value>
+                            <Value>FAIL</Value>
                         </Property>
                         <Property name="succeedCode">
                             <Value>15</Value>
@@ -1528,10 +1528,10 @@
                             <Value>PASS</Value>
                         </Property>
                         <Property name="failSeverity">
-                            <Value>WARN</Value>
+                            <Value>FAIL</Value>
                         </Property>
                         <Property name="errorSeverity">
-                            <Value>WARN</Value>
+                            <Value>FAIL</Value>
                         </Property>
                         <Property name="succeedCode">
                             <Value>15</Value>
@@ -1554,10 +1554,10 @@
                             <Value>PASS</Value>
                         </Property>
                         <Property name="failSeverity">
-                            <Value>WARN</Value>
+                            <Value>FAIL</Value>
                         </Property>
                         <Property name="errorSeverity">
-                            <Value>WARN</Value>
+                            <Value>FAIL</Value>
                         </Property>
                         <Property name="succeedCode">
                             <Value>15</Value>
