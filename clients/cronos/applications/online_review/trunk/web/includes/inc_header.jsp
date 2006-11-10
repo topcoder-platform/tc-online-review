@@ -82,7 +82,7 @@ div.launchPopUp {
 	<area shape="rect" alt="" coords="0,0,68,30" href="http://<%=ApplicationServer.SERVER_NAME%>/tc" onmouseover="popDescription('launch0')" onmouseout="hideDescription()" />
 	<area shape="rect" alt="" coords="70,0,110,30" href="javascript:arena();" onmouseover="popDescription('launch1')" onmouseout="hideDescription()" />
 	<area shape="rect" alt="" coords="111,0,140,30" href="http://<%=ApplicationServer.SERVER_NAME%>/tc?module=ViewActiveContests&ph=112" onmouseover="popDescription('launch2')" onmouseout="hideDescription()" />
-	<area shape="rect" alt="" coords="141,0,165,30" href="http:/<%=ApplicationServer.SERVER_NAME%>/tc?module=ViewActiveContests&ph=113" onmouseover="popDescription('launch3')" onmouseout="hideDescription()" />
+	<area shape="rect" alt="" coords="141,0,165,30" href="http://<%=ApplicationServer.SERVER_NAME%>/tc?module=ViewActiveContests&ph=113" onmouseover="popDescription('launch3')" onmouseout="hideDescription()" />
 	<area shape="rect" alt="" coords="166,0,228,30" href="http://<%=ApplicationServer.SERVER_NAME%>/longcontest/?module=ViewActiveContests" onmouseover="popDescription('launch4')" onmouseout="hideDescription()" />
 </map>
 <div style="position:absolute; left:0px; top:31px;">
