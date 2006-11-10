@@ -682,37 +682,6 @@ public class ProjectReviewActions extends DispatchAction {
         if (validationSucceeded && commitRequested) {
             // Set the completed status of the review
             review.setCommitted(true);
-
-/* TODO: Remove this block completely when Online Review Phases has appropriate fixes
-            // Obtain an instance of Resource Manager
-            ResourceManager resMgr = ActionsHelper.createResourceManager(request);
-            Phase reviewPhase = ActionsHelper.getPhase(phases, false, Constants.REVIEW_PHASE_NAME);
-            Resource[] reviewers = ActionsHelper.getAllResourcesForPhase(resMgr, reviewPhase);
-            Resource submitter = resMgr.getResource(verification.getSubmission().getUpload().getOwner());
-
-            for (int i = 0; i < reviewers.length; ++i) {
-                Resource reviewer = reviewers[i];
-                long currentId = Long.parseLong((String) reviewer.getProperty("External Reference ID"));
-                if (currentId == AuthorizationHelper.getLoggedInUserId(request)) {
-                    continue;
-                }
-                // A new review-level comment from Reviewer
-                Comment comment = new Comment();
-                comment.setCommentType(
-                        ActionsHelper.findCommentTypeByName(allCommentTypes, "Aggregation Review Comment"));
-                comment.setAuthor(reviewer.getId());
-                comment.setExtraInfo("Approving");
-                comment.setComment("");
-                review.addComment(comment);
-            }
-            // A new review-level comment from Submitter
-            Comment comment = new Comment();
-            comment.setCommentType(
-                    ActionsHelper.findCommentTypeByName(allCommentTypes, "Submitter Comment"));
-            comment.setAuthor(submitter.getId());
-            comment.setExtraInfo("Approving");
-            comment.setComment("");
-            review.addComment(comment);*/
         } else if (previewRequested) {
             // Put the review object into the request
             request.setAttribute("review", review);
