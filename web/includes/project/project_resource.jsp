@@ -4,9 +4,8 @@
 <%@ taglib prefix="html" uri="/tags/struts-html" %>
 <%@ taglib prefix="bean" uri="/tags/struts-bean" %>
 <%@ taglib prefix="tc-webtag" uri="/tags/tc-webtags" %>
-<%@ taglib prefix="orfn" uri="/tags/or-functions" %>
 <c:if test="${isAllowedToViewResources}">
-	<table class="scorecard" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;">
+	<table class="scorecard" style="border-collapse: collapse;" cellpadding="0" cellspacing="0" width="100%">
 		<tr>
 			<td class="title" colspan='${(isAllowedToViewAllPayment) ? "4" : "2"}'><bean:message key="viewProjectDetails.box.Resources" /></td>
 		</tr>
@@ -27,15 +26,15 @@
 				</td>
 				<c:if test="${isAllowedToViewAllPayment}">
 					<c:choose>
-						<c:when test='${not empty resource.allProperties["Payment"]}'>
-							<td class="value" nowrap="nowrap">${"$"}${orfn:displayPaymentAmt(pageContext.request, resource.allProperties["Payment"])}</td>
+						<c:when test='${!(empty resource.allProperties["Payment"])}'>
+							<td class="value" nowrap="nowrap">${"$"}${resource.allProperties["Payment"]}</td>
 						</c:when>
 						<c:otherwise>
 							<td class="value" nowrap="nowrap"><bean:message key="NotAvailable" /></td>
 						</c:otherwise>
 					</c:choose>
 					<c:choose>
-						<c:when test='${(not empty resource.allProperties["Payment"]) && (not empty resource.allProperties["Payment Status"])}'>
+						<c:when test='${!(empty resource.allProperties["Payment"]) && !(empty resource.allProperties["Payment Status"])}'>
 							<td class="value" nowrap="nowrap"><bean:message key='viewProjectDetails.Resource.Paid.${(resource.allProperties["Payment Status"] == "Yes") ? "yes" : "no"}' /></td>
 						</c:when>
 						<c:otherwise>

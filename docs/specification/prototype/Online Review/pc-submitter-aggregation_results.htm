@@ -1,0 +1,1863 @@
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+
+<head>
+<!-- TopCoder CSS -->
+        <link type="text/css" rel="stylesheet" href="http://www.topcoder.com/css/style.css">
+        <link type="text/css" rel="stylesheet" href="http://www.topcoder.com/css/coders.css">
+        <link type="text/css" rel="stylesheet" href="http://www.topcoder.com/css/stats.css">
+        <link type="text/css" rel="stylesheet" href="http://www.topcoder.com/css/tcStyles.css">
+		
+<!-- JS from wireframes -->
+		<script language="javascript" type="text/javascript" src="scripts/popup.js"></script>
+		
+		<script language="javascript" type="text/javascript" src="scripts/expand_collapse.js"></script>
+		
+<!-- CSS and JS by Petar -->		
+		<link type="text/css" rel="stylesheet" href="css/new_styles.css">   
+		<script language="JavaScript" type="text/javascript" src="rollovers.js"></script>
+        
+</head>
+
+<body>
+
+
+<!--webbot bot="Include" U-Include="inc_header.htm" TAG="BODY" startspan -->
+<script language="javascript" type="text/javascript">
+<!--
+var objPopUp = null;
+function popUpUnder(event,objectID){
+   objPopTrig = document.getElementById(event);
+   alert(objPopTrig);
+   objPopUp = document.getElementById(objectID);
+   xPos = objPopTrig.offsetLeft;
+   if(xPos + objPopUp.offsetWidth > document.body.clientWidth) xPos = xPos - objPopUp.offsetWidth;
+   objPopUp.style.left = xPos + 'px';
+   objPopUp.style.display = 'block';
+}
+function popDescription(objectID){
+   objPopUp = document.getElementById(objectID);
+   objPopUp.style.visibility = 'visible';
+//   objPopUp.style.display = 'block';
+}
+function hideDescription(){
+   objPopUp.style.visibility = 'hidden';
+//   objPopUp.style.display = 'none';
+   objPopUp = null;
+}
+
+// -->
+</script>
+<STYLE TYPE="text/css">
+div.topBar, div.topBar div, div.memberCountBox
+{
+color: #FFFFFF;
+font-size: 11px;
+}
+div.memberCountBox
+{
+position:absolute;
+top:5;
+left:3;
+z-index:1;
+}
+div.topBar
+{
+background: #FFFFFF url(http://www.topcoder.com/i/interface/top_bg.gif) top center repeat-x;
+vertical-align: top;
+padding: 5px 10px 80px 3px;
+white-space: nowrap;
+}
+div.launchPopUp
+{
+font-size: 11px;
+background-color: #FFFFCC;
+visibility: hidden;
+position: absolute;
+padding: 3px 5px 3px 5px;
+border: solid 1px black;
+font-weight:bold;
+z-index: 3;
+}
+#outerLogo
+{
+width: 360px;
+position: relative;
+z-index: 2;
+}
+#innerLogo
+{
+position: absolute;
+left: 0px;
+}
+</STYLE>
+
+
+<div id="launch0" class="launchPopUp" style="left:73;top:65;">Competitions Home</div>
+<div id="launch1" class="launchPopUp" style="left:115;top:65;">Launch Algorithm Competitions Arena</div>
+<div id="launch2" class="launchPopUp" style="left:140;top:65;">Component Design Active Contests</div>
+<div id="launch3" class="launchPopUp" style="left:170;top:65;">Component Development Active Contests</div>
+<div id="launch4" class="launchPopUp" style="left:210;top:65;">Marathon Match Active Contests</div>
+<map name="launchBar">
+<area shape="rect" alt="" coords="0,0,68,30" href="http://www.topcoder.com/tc" onmouseover="popDescription('launch0')" onmouseout="hideDescription()" />
+<area shape="rect" alt="" coords="70,0,110,30" href="javascript:arena();" onmouseover="popDescription('launch1')" onmouseout="hideDescription()" />
+<area shape="rect" alt="" coords="111,0,140,30" href="http://www.topcoder.com/tc?module=ViewActiveContests&ph=112" onmouseover="popDescription('launch2')" onmouseout="hideDescription()" />
+<area shape="rect" alt="" coords="141,0,165,30" href="http://www.topcoder.com/tc?module=ViewActiveContests&ph=113" onmouseover="popDescription('launch3')" onmouseout="hideDescription()" />
+<area shape="rect" alt="" coords="166,0,228,30" href="http://www.topcoder.com/longcontest/?module=ViewActiveContests" onmouseover="popDescription('launch4')" onmouseout="hideDescription()" />
+</map>
+<div style="position:absolute; left:0px; top:31px;">
+<img src="i/interface/launchBar.gif" alt="" usemap="#launchBar"/>
+</div>
+
+
+<div align="center" style="margin: 0px 290px 0px 280px;">
+   <div id="outerLogo">
+      <div id="innerLogo">
+      <A href="http://www.topcoder.com/">
+		<img src="http://www.topcoder.com/i/interface/topcoder.gif" alt="TopCoder" /></A>
+      </div>
+   </div>
+</div>
+
+<div class="memberCountBox">
+Member Count: 76,412 - 
+March 16, 2006
+
+&#160;<a class="gMetal" href="Javascript:tcTime()">[Get Time]</a>
+</div>
+
+<div class="topBar">
+   <div style="float: right; margin-left: 650px;">
+   
+               <a class="gMetal" href="http://www.topcoder.com/tc?&module=Login">Login</a>
+      
+               &#160;&#160;|&#160;&#160;<a class="gMetal" href="http://www.topcoder.com/Registration">Register</a>
+   
+               &#160;&#160;|&#160;&#160;<a class="gMetal" href="http://www.topcoder.com/">Home</a>
+   </div>
+</div>
+<!--webbot bot="Include" i-checksum="12674" endspan --><table width="100%" border="0" cellpadding="0" cellspacing="0">
+<tr valign="top">
+<!-- Left Column Begins-->
+<td width="180">
+
+<!--webbot bot="Include" U-Include="inc_leftnav.htm" TAG="BODY" startspan -->
+
+
+<script language="JavaScript" type="text/javascript" src="http://www.topcoder.com/js/arena.js"></script>
+
+<script language="javascript" type="text/javascript">
+<!--
+function toggleMenu(menuTitle,menuID){
+   var menu = document.getElementById(menuID);
+   if(menu.style.display == 'block') menu.className = 'CLOSED';
+   else if(menu.className == 'OPEN' && menu.style.display != 'none') menu.className = 'CLOSED';
+   else {
+      menu.className = 'OPEN';
+   }
+   if(menuTitle.blur)menuTitle.blur();
+   if(menuTitle.className == 'exp') menuTitle.className = 'exp_ed';
+   else menuTitle.className = 'exp';
+   return;
+}
+function flipMenu(myMenuName){
+   var menuName = document.getElementById(myMenuName);
+   menuName.className = 'exp_ed';
+}
+
+// -->
+</script>
+
+<!--node is des_contest_status -->
+<div style="float: left; padding: 0px 0px 0px 0px;">
+	<img src="http://www.topcoder.com/i/interface/leftnav_top.gif" alt="" /></div>
+<div id="navbar">
+
+<ul>
+<li><a href="javascript:void(0)" class="exp_ed" onClick="Javascript:toggleMenu(this,'m_competitions')">Competitions</a>
+<ul id="m_competitions" class="OPEN">
+<li><a href="http://www.topcoder.com/tc">Home</a></li>
+<li><a href="http://www.topcoder.com/Registration">Register to Compete</a></li>
+<li><a href="javascript:void(0)" class="exp" onClick="Javascript:toggleMenu(this,'m_competitor_stats')">Competitor Statistics</a>
+<ul id="m_competitor_stats">
+<li><a href="http://www.topcoder.com/tc?module=ViewAdvanced">Find a Competitor</a></li>
+<li><a href="javascript:void(0)" class="exp" onClick="Javascript:toggleMenu(this,'m_top_rated_competitors')">Top Ranked</a>
+<ul id="m_top_rated_competitors">
+<li><a href="http://www.topcoder.com/tc?module=AlgoRank">Algorithm</a></li>
+<li><a href="http://www.topcoder.com/stat?c=top_designers">Design</a></li>
+<li><a href="http://www.topcoder.com/stat?c=top_developers">Development</a></li>
+</ul></li>
+<li><a href="javascript:void(0)" class="exp" onClick="Javascript:toggleMenu(this,'m_recordbook')">Record Book</a>
+<ul id="m_recordbook">
+<li><a href="http://www.topcoder.com/tc?module=Static&amp;d1=statistics&amp;d2=recordbook_home">Algorithm</a></li>
+<li><a href="http://www.topcoder.com/tc?module=Static&amp;d1=compstats&amp;d2=comp_recordbook_home">Component</a></li>
+</ul></li>
+<li><a href="http://www.topcoder.com/tc?module=SimpleStats&amp;trans=true&amp;c=com_history&amp;d1=statistics&amp;d2=coderOfMonth">Coder of the Month</a></li>
+</ul></li>
+<li><a href="javascript:void(0)" class="exp" onClick="Javascript:toggleMenu(this,'m_algo_competitions')">Algorithm</a>
+<ul id="m_algo_competitions">
+<li><a href="javascript:arena();">Compete<br>(Launch Arena)</a></li>
+<li><a href="javascript:void(0)" class="exp" onClick="Javascript:toggleMenu(this,'m_algo_stats')">Statistics</a>
+<ul id="m_algo_stats">
+<li><a href="http://www.topcoder.com/tc?module=MatchList">Match Archive</a></li>
+<li><a href="http://www.topcoder.com/stat?c=round_overview">Match Overviews</a></li>
+<li><a href="http://www.topcoder.com/tc?module=SrmDivisionWins">Match Winners</a></li>
+<li><a href="http://www.topcoder.com/stat?c=last_match">Match Results</a></li>
+<li><a href="http://www.topcoder.com/tc?module=Static&amp;d1=match_editorials&amp;d2=archive">Match Editorials</a></li>
+<li><a href="http://www.topcoder.com/tc?module=ProblemArchive">Problem Archive</a></li>
+</ul></li>
+</ul></li>
+<li><a href="javascript:void(0)" class="exp" onClick="Javascript:toggleMenu(this,'m_des_competitions')">Software Design</a>
+<ul id="m_des_competitions" class="exp">
+<li><a href="http://www.topcoder.com/tc?module=ViewActiveContests&amp;ph=112">Active Contests</a></li>
+<li><a href="http://www.topcoder.com/tc?module=ContestStatus&amp;ph=112">Contest Status</a></li>
+<li><a href="http://www.topcoder.com/tc?module=ViewReviewProjects&amp;ph=112">Review Opportunities</a></li>
+<li><a href="http://software.topcoder.com/forum/c_active_collab.jsp?ft=2">TCS Developer Forums</a></li>
+<li><a href="http://software.topcoder.com/review">Submit Deliverables &amp; Reviews</a></li>
+<li><a href="http://www.topcoder.com/tc?module=CompList&amp;ph=112">Statistics</a></li>
+<li><a href="http://www.topcoder.com/tc?module=ReviewBoard&amp;ph=112">Meet the Review Board</a></li>
+</ul></li>
+<li><a href="javascript:void(0)" class="exp" onClick="Javascript:toggleMenu(this,'m_dev_competitions')">Software Development</a>
+<ul id="m_dev_competitions">
+<li><a href="http://www.topcoder.com/tc?module=ViewActiveContests&amp;ph=113">Active Contests</a></li>
+<li><a href="http://www.topcoder.com/tc?module=ContestStatus&amp;ph=113">Contest Status</a></li>
+<li><a href="http://www.topcoder.com/tc?module=ViewReviewProjects&amp;ph=113">Review Opportunities</a></li>
+<li><a href="http://software.topcoder.com/forum/c_active_collab.jsp?ft=2">TCS Developer Forums</a></li>
+<li><a href="http://software.topcoder.com/review">Submit Deliverables &amp; Reviews</a></li>
+<li><a href="http://www.topcoder.com/tc?module=CompList&amp;ph=113">Statistics</a></li>
+<li><a href="http://www.topcoder.com/tc?module=ReviewBoard&amp;ph=113">Meet the Review Board</a></li>
+</ul></li>
+<li><a href="javascript:void(0)" class="exp" onClick="Javascript:toggleMenu(this,'m_assembly_competitions')">Software Assembly</a>
+<ul id="m_assembly_competitions">
+<li><a href="http://www.topcoder.com/tc?module=Static&d1=dev&d2=assembly&d3=overview">Overview</a></li>
+<li><a href="http://www.topcoder.com/tc?module=Static&d1=dev&d2=assembly&d3=activeContests">Active Contests</a></li>
+</ul></li>
+<li><a href="javascript:void(0)" class="exp" onClick="Javascript:toggleMenu(this,'m_testing_competitions')">Software Testing</a>
+<ul id="m_testing_competitions">
+<li><a href="http://www.topcoder.com/tc?module=Static&d1=dev&d2=testing&d3=overview">Overview</a></li>
+</ul></li>
+<li><a href="javascript:void(0)" class="exp" onClick="Javascript:toggleMenu(this,'m_long_contests')">Marathon Matches</a>
+<ul id="m_long_contests">
+<li><a href="http://www.topcoder.com/longcontest/?module=ViewActiveContests">Compete</a></li>
+<li><a href="http://www.topcoder.com/longcontest/?module=ViewPractice&amp;rt=14">Practice</a></li>
+<li><a href="http://www.topcoder.com/longcontest/?module=Static&amp;d1=intel_overview">Intel Multi-Threading Competition Series</a></li>
+<li><a href="http://www.topcoder.com/longcontest/?module=ViewActiveContests&amp;rt=15">Intel Active Contests</a></li>
+<li><a href="http://www.topcoder.com/longcontest/?module=ViewPractice&amp;rt=16">Intel Practice</a></li>
+<li><a href="http://www.topcoder.com/longcontest/?module=ViewQueue">Queue Status</a></li>
+<li><a href="http://www.topcoder.com/longcontest/?module=Static&amp;d1=match_editorials&amp;d2=archive">Match Editorials</a></li>
+</ul></li>
+<li><a href="javascript:void(0)" class="exp" onClick="Javascript:toggleMenu(this,'m_tournaments')">Tournaments</a>
+<ul id="m_tournaments">
+<li><a href="http://www.topcoder.com/tc?module=Static&amp;d1=tournaments&amp;d2=home">TopCoder</a></li>
+<li><a href="http://www.topcoder.com/pl/">Powered by TopCoder</a></li>
+<li><a href="http://www.topcoder.com/tc?module=CRPFStatic&amp;d1=crpf&amp;d2=crpf_overview">Charity</a></li>
+</ul></li>
+<li><a href="javascript:void(0)" class="exp" onClick="Javascript:toggleMenu(this,'m_edu_content')">Educational Content</a>
+<ul id="m_edu_content">
+<li><a href="http://www.topcoder.com/tc?module=Static&amp;d1=tutorials&amp;d2=alg_index">Algorithm Tutorials</a></li>
+<li><a href="http://www.topcoder.com/tc?module=Static&amp;d1=tutorials&amp;d2=comp_index">Component Tutorials</a></li>
+<li><a href="http://www.topcoder.com/tc?module=Static&amp;d1=features&amp;d2=archive">Features</a></li>
+<li><a href="http://www.topcoder.com/tc?module=Static&amp;d1=tutor_transcripts&amp;d2=index">Tutor Transcripts</a></li>
+</ul></li>
+<li><a href="http://www.topcoder.com/tc?&module=SurveyList">Surveys</a></li>
+<li><a href="javascript:void(0)" class="exp" onClick="Javascript:toggleMenu(this,'m_my_tc')">My TopCoder</a>
+<ul id="m_my_tc">
+<li><a href="http://www.topcoder.com/Registration?update=true">Update My Profile</a></li>
+<li><a href="http://www.topcoder.com/tc?module=ViewReferrals">Members I've Referred</a></li>
+<li><a href="http://www.topcoder.com/PactsMemberServlet?t=affidavit&amp;c=affidavit_history">Affidavits</a></li>
+<li><a href="http://www.topcoder.com/tc?module=Static&amp;d1=card&amp;d2=description">Cards / Badges</a></li>
+</ul></li>
+<li><a href="http://www.topcoder.com/tc?module=Static&amp;d1=calendar&amp;d2=thisMonth">Event Calendar</a></li>
+<li><a href="javascript:void(0)" class="exp" onClick="Javascript:toggleMenu(this,'m_support')">Support / FAQs / Docs</a>
+<ul id="m_support">
+<li><a href="javascript:void(0)" class="exp" onClick="Javascript:toggleMenu(this,'m_algo_support')">Algorithm</a>
+<ul id="m_algo_support">
+<li><a href="http://www.topcoder.com/tc?module=Static&amp;d1=help&amp;d2=index">How to Compete</a></li>
+<li><a href="http://www.topcoder.com/tc?module=Static&amp;d1=help&amp;d2=faqIndex">FAQs</a></li>
+<li><a href="http://www.topcoder.com/tc?module=Static&amp;d1=help&amp;d2=sampleProblems">Sample Problems</a></li>
+<li><a href="http://www.topcoder.com/tc?module=Static&amp;d1=help&amp;d2=ratings">Rating System</a></li>
+<li><a href="http://www.topcoder.com/tc?module=Static&amp;d1=help&amp;d2=algPayment">How to Get Paid</a></li>
+<li><a href="http://www.topcoder.com/tc?module=Static&amp;d1=help&amp;d2=charity">Charity Donations</a></li>
+</ul></li>
+<li><a href="javascript:void(0)" class="exp" onClick="Javascript:toggleMenu(this,'m_des_support')">Design</a>
+<ul id="m_des_support">
+<li><a href="http://www.topcoder.com/tc?module=Static&amp;d1=dev&amp;d2=support&amp;d3=desGettingStarted">How to Compete</a></li>
+<li><a href="http://www.topcoder.com/tc?module=Static&amp;d1=dev&amp;d2=support&amp;d3=desGettingPaid">How to Get Paid</a></li>
+<li><a href="http://www.topcoder.com/tc?module=Static&amp;d1=dev&amp;d2=support&amp;d3=desDocumentation">Documentation</a></li>
+<li><a href="http://www.topcoder.com/tc?module=Static&amp;d1=dev&amp;d2=support&amp;d3=desRatings">Ratings</a></li>
+<li><a href="http://www.topcoder.com/tc?module=Static&amp;d1=dev&amp;d2=support&amp;d3=desReliability">Reliability Ratings</a></li>
+</ul></li>
+<li><a href="javascript:void(0)" class="exp" onClick="Javascript:toggleMenu(this,'m_dev_support')">Development</a>
+<ul id="m_dev_support">
+<li><a href="http://www.topcoder.com/tc?module=Static&amp;d1=dev&amp;d2=support&amp;d3=devGettingStarted">How to Compete</a></li>
+<li><a href="http://www.topcoder.com/tc?module=Static&amp;d1=dev&amp;d2=support&amp;d3=devGettingPaid">How to Get Paid</a></li>
+<li><a href="http://www.topcoder.com/tc?module=Static&amp;d1=dev&amp;d2=support&amp;d3=devDocumentation">Documentation</a></li>
+<li><a href="http://www.topcoder.com/tc?module=Static&amp;d1=dev&amp;d2=support&amp;d3=devRatings">Ratings</a></li>
+<li><a href="http://www.topcoder.com/tc?module=Static&amp;d1=dev&amp;d2=support&amp;d3=devReliability">Reliability Ratings</a></li>
+</ul></li>
+<li><a href="javascript:void(0)" class="exp" onClick="Javascript:toggleMenu(this,'m_assembly_support')">Assembly</a>
+<ul id="m_assembly_support">
+<li><a href="http://www.topcoder.com/tc?module=Static&d1=dev&d2=assembly&d3=instructions">How to Compete</a></li>
+<li><a href="http://www.topcoder.com/tc?module=Static&d1=dev&d2=assembly&d3=tutorial">Tutorial</a></li>
+<li><a href="http://www.topcoder.com/tc?module=Static&d1=dev&d2=assembly&d3=documentation">Documentation</a></li>
+</ul></li>
+<li><a href="javascript:void(0)" class="exp" onClick="Javascript:toggleMenu(this,'m_testing_support')">Testing</a>
+<ul id="m_testing_support">
+<li><a href="http://www.topcoder.com/tc?module=Static&d1=dev&d2=testing&d3=instructions">How to Compete</a></li>
+<li><a href="http://www.topcoder.com/tc?module=Static&d1=dev&d2=testing&d3=documentation">Documentation</a></li>
+</ul></li>
+<li><a href="javascript:void(0)" class="exp" onClick="Javascript:toggleMenu(this,'m_long_support')">Marathon Match</a>
+<ul id="m_long_support">
+<li><a href="http://www.topcoder.com/longcontest/?module=Static&d1=instructions">How to Compete</a></li>
+</ul></li>
+</ul></li>
+</ul></li>
+<li><a href="http://forums.topcoder.com/">Forums</a></li>
+<li><a href="http://www.topcoder.com/tc?module=Static&amp;d1=pressroom&amp;d2=index">Press Room</a></li>
+<li><a href="javascript:void(0)" class="exp" onClick="Javascript:toggleMenu(this,'m_about_tc')">About TopCoder</a>
+<ul id="m_about_tc">
+<li><a href="http://www.topcoder.com/tc?module=Static&amp;d1=about&amp;d2=index">Overview</a></li>
+<li><a href="http://www.topcoder.com/tc?module=Static&amp;d1=about&amp;d2=contactus">Contact Us</a></li>
+<li><a href="http://www.topcoder.com/tc?module=Static&amp;d1=about&amp;d2=whyjoin">Why Join TopCoder?</a></li>
+<li><a href="http://www.topcoder.com/tc?module=Static&amp;d1=about&amp;d2=jobs">Working at TopCoder</a></li>
+<li><a href="http://www.topcoder.com/tc?module=Static&amp;d1=about&amp;d2=management">Management Team</a></li>
+<li><a href="http://www.topcoder.com/tc?module=Static&amp;d1=about&amp;d2=terms">Terms, Revisions</a></li>
+<li><a href="http://www.topcoder.com/tc?module=Static&amp;d1=about&amp;d2=privacy">Privacy Policy</a></li>
+</ul></li></ul>
+
+
+
+<div id="navbarSearch">
+<b>Member Search:</b>
+<form name="simpleSearchForm" method="get" action="http://www.topcoder.com/tc" class="noSpace">
+   <input class="noSpace" type="hidden" name="module" value="SimpleSearch" />
+   <input class="noSpace" type="text" name="ha" value="Handle:" size="12" maxlength="15"
+      onFocus="javascript:
+         if (document.simpleSearchForm.ha.value=='Handle:')
+            document.simpleSearchForm.ha.value = '';"
+      onBlur="javascript:
+         if (document.simpleSearchForm.ha.value == '')
+            document.simpleSearchForm.ha.value = 'Handle:';" />
+   <A class="gMetal" href="javascript:void document.simpleSearchForm.submit();">Go</A><br>
+   <A class="gMetal" href="http://www.topcoder.com/tc?module=ViewAdvanced">Advanced Search</A>
+</form>
+</div>
+</div>
+<div style="float: left; clear:left; padding: 0px 0px 23px 0px;">
+	<img src="http://www.topcoder.com/i/interface/leftnav_bottom.gif" alt="" /></div>
+
+
+
+
+
+
+<!--webbot bot="Include" i-checksum="23413" endspan --></td>
+<!-- Left Column Ends -->
+
+<!-- Gutter Begins -->
+<td width="15"><img src="/i/clear.gif" width="15" height="1" border="0"/></td>
+<!-- Gutter Ends -->
+
+<!-- Center Column Begins -->
+<td class="bodyText">
+
+<div id="mainTabs">
+	<a href="pc-manager-index.htm" onMouseOver="img_act('tab1')" onMouseOut="img_inact('tab1')"><img src="images/tab_my_open_projects.gif" width="119" height="36" border="0" name="tab1"></a><a href="pc-manager-index_all.htm" onMouseOver="img_act('tab2')" onMouseOut="img_inact('tab2')"><img src="images/tab_all_open_projects.gif" width="119" height="36" border="0" name="tab2"></a><br>
+</div>
+
+<div id="mainMiddleContent">
+	<div style="padding: 11px 6px 9px 0px; ">
+		<table border="0" width="100%" id="table12" cellspacing="0" cellpadding="0">
+			<tr>
+				<td width="6%">
+					<img src="images/iconStatusSpecSm.gif" alt="" width="25" height="17" border="0" ><img src="images/javaSm.gif" alt="" border="0" align="absmiddle">&nbsp;
+				</td>
+				<td width="45%">
+					<strong><font size="3" >Ajax Timed Survey</font></strong><font size="3"> 
+				version 1.0</font><br>
+				<td width="45%">
+				<p align="right">
+					<A href="javascript:showAll();">Expand all questions</A>&#160;|&#160;<A href="javascript:hideAll();">Contract all questions</A></td>
+			</tr>
+		</table>
+		<br>
+		&nbsp;<b>My Role:</b> Submitter<br>
+        &nbsp;<b>Submission:</b>11889718 <br>
+        <h3>Aggregation Scorecard</h3>
+	</div>
+
+
+<!-- CONTENT TABLE STARTS HERE -->
+		<table cellpadding="0" border="0" width="100%" class="stat" style="border-collapse: collapse">
+
+            
+
+            
+            <tr>
+               <td class="title" colspan="6"  >
+				<b>Category</b></td>
+            </tr>
+            
+
+
+            
+            <tr class="light">
+               <td class="value" width="100%"   colspan="6">
+
+               <div class="showText" id="shortQ_0">
+               
+               <a href="javascript:toggleDisplay('shortQ_0');toggleDisplay('longQ_0');" ><img src="images/plus.gif" alt="open" border="0" /></a>
+               
+                   <b>Question x.x.x</b> The design addresses all the requirements as specified in the requirements documents and the forum. The reviewer should be able to take each point in the requirements document and find the associated implementation in the design. The reviewer should  The reviewer should  The reviewer should  The reviewer should  The reviewer should  The reviewer should  The reviewer should  The reviewer should  The reviewer should  The reviewer should  The reviewer should  The reviewer should  The reviewer should  The reviewer should  The reviewer should  The reviewer should  The reviewer should  The reviewer should igno
+               </div>
+
+               <div class="hideText" id="longQ_0">
+               
+               <a href="javascript:toggleDisplay('shortQ_0');toggleDisplay('longQ_0');" ><img src="images/minus.gif" alt="close" border="0" /></a>
+               
+                   The design addresses all the requirements as specified in the requirements documents and the forum. The reviewer should be able to take each point in the requirements document and find the associated implementation in the design. The reviewer should ignore the quality aspects of the implementation at this point, and only verify whether a requirement is addressed or not. Other questions of the scorecard give you an opportunity to express your concerns about the quality of the design. <br /><br />Rating 1 [\u150] Missing requirement(s) prevent the design from fulfilling the goal of the requirements. <br />Rating 2 [\u150] The design addresses all requirements to solve the problem for which the component was requested, but is missing major features from the requirements document. <br />Rating 3 [\u150] The design addresses all of the  requirements and potentially includes minor additional functionality. The design solves the problem for which the component was requested but either does not provide enhancements on top of the requirements, or the added functionality does not alter the customer[\u146]s experience with the component. <br />Rating 4 [\u150] The design addresses all requirements and provides new and substantially useful and pertinent functionality. 
+               </div>
+
+               </td>
+            </tr>
+            
+            <tr>
+               <td class="header"  >
+               <b>Reviewer</b></td>
+               <td class="headerC"  >
+<b>Comment<br>Number</b></td>
+               <td class="header"  >
+               <b>Response</b></td>
+               <td class="header"  >
+               <b>Type</b></td>
+               <td class="header"  >
+               <b>Status</b></td>
+			   <td class="header"  >
+               </td>
+            </tr>
+            
+
+            
+
+            
+
+
+            
+            <tr class="light">
+               <td class="value" >
+               <a href="pc-readonly-review_individual.htm">qiucx0161</a></td>
+               <td class="valueC" >
+               1</td>
+               <td class="value" >
+              Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat.
+			  <div style="padding-top:6px;"><b>Aggregator Comment:</b> Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat.</div>
+			  <div style="padding-top:6px;"><b>Reviewer Comment:</b> Lorem ipsum consectetuer adipiscing elit, sed diam nonummy dolor sit amet, consectetuer adipiscing elit, laoreet dolore magna aliquam erat dolore magna.</div></td>
+               <td class="value" >
+               Recommended</td>
+               <td class="value" >
+               Accepted</td>
+			   <td class="value"  >
+               <a href="#" onClick="showLayer('Comment1');return true;"><img src="images/bttn_add_comment.gif" border="0" vspace="2"></a></td>
+            </tr>
+            
+			<tr class="light">
+				<td class="value" colspan="6">
+				<div id="Comment1" name="Comment1" style="display: none;">
+				Comment Text:</b><br>
+				<textarea rows="2" name="S2" cols="20" style="font-size: 10px; font-family: sans-serif;width:99%;height:50px;border:1px solid #ccc;margin:3px;"></textarea><br>
+				</div>
+			</td>
+            
+
+            
+
+
+            
+            <tr class="dark">
+               <td class="value" >
+               <a href="pc-readonly-review_individual.htm">mgmg</a></td>
+               <td class="valueC" >
+               1</td>
+               <td class="value" >
+               Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo consequat.
+<div style="padding-top:6px;"><b>Aggregator Comment:</b> Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat.</div>
+			  <div style="padding-top:6px;"><b>Reviewer Comment:</b> Lorem ipsum consectetuer adipiscing elit, sed diam nonummy dolor sit amet, consectetuer adipiscing elit, laoreet dolore magna aliquam erat dolore magna.</div></td>
+               <td class="value" >
+               Recommended</td>
+               <td class="value" >
+               Duplicate</td>
+			   <td class="value"  >
+               <a href="#" onClick="showLayer('Comment2');return true;"><img src="images/bttn_add_comment.gif" border="0" vspace="2"></a></td>
+            </tr>
+            
+			<tr class="dark">
+				<td class="value" colspan="6">
+				<div id="Comment2" name="Comment2" style="display: none;">
+				Comment Text:</b><br>
+				<textarea rows="2" name="S2" cols="20" style="font-size: 10px; font-family: sans-serif;width:99%;height:50px;border:1px solid #ccc;margin:3px;"></textarea><br>
+				</div>
+			</td>
+            
+
+            
+
+            
+
+
+            
+            <tr class="light">
+               <td class="value" >
+               <a href="review_individual.htm">slion</a></td>
+               <td class="valueC" >
+               1</td>
+               <td class="value" >
+              Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. Ut wisi enim ad minim veniam, quis nostrud exerci.
+<div style="padding-top:6px;"><b>Aggregator Comment:</b> Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat.</div>
+			  <div style="padding-top:6px;"><b>Reviewer Comment:</b> Lorem ipsum consectetuer adipiscing elit, sed diam nonummy dolor sit amet, consectetuer adipiscing elit, laoreet dolore magna aliquam erat dolore magna.</div></td>
+               <td class="value" >
+               Recommended</td>
+               <td class="value" >
+               Duplicate</td>
+			   <td class="value"  >
+               <a href="#" onClick="showLayer('Comment3');return true;"><img src="images/bttn_add_comment.gif" border="0" vspace="2"></a></td>
+            </tr>
+            
+			<tr class="light">
+				<td class="value" colspan="6">
+				<div id="Comment3" name="Comment3" style="display: none;">
+				Comment Text:</b><br>
+				<textarea rows="2" name="S2" cols="20" style="font-size: 10px; font-family: sans-serif;width:99%;height:50px;border:1px solid #ccc;margin:3px;"></textarea><br>
+				</div>
+			</td>
+            
+
+            
+
+            
+
+
+            
+            <tr class="dark">
+               <td class="value" width="100%"   colspan="6">
+
+               <div class="showText" id="shortQ_1">
+               
+               <a href="javascript:toggleDisplay('shortQ_1');toggleDisplay('longQ_1');" ><img src="images/plus.gif" alt="open" border="0" /></a>
+               
+                   <b>Question x.x.x</b> The component specification includes a clear and easily grasped explanation of algorithms used in the design.
+               </div>
+
+               <div class="hideText" id="longQ_1">
+               
+               <a href="javascript:toggleDisplay('shortQ_1');toggleDisplay('longQ_1');" ><img src="images/minus.gif" alt="close" border="0" /></a>
+               
+                   The component specification includes a clear and easily grasped explanation of algorithms used in the design. <br /><br />The reviewer should judge whether the algorithm descriptions are complete, accurate and contain enough information for the developer to properly implement the algorithms. Please note that this review question should judge only the correctness of the algorithm and how well the designer relates the algorithm [\u150] the grammar and spelling should NOT be included in this question.  The algorithms stated can be actual code, pseudo-code or even simple textual descriptions, as long as the designer effectively relates the point of the algorithm. <br /><br />Rating 1 [\u150] The component specification is missing a description for any of the algorithms defined in the requirements, or external research is required to understand how to implement any of the algorithms. <br />Rating 2 [\u150] The component specification includes all the algorithms defined in the requirements. However, the description contains logical errors or easily leads to misinterpretations or is generally written in a style that is hard to understand [\u150] generally requiring many readings to fully grasp the algorithm. The developer may need external research to fully understand the algorithm. <br />Rating 3 [\u150] The component specification includes all the algorithms defined in the requirements and optionally any [\u145]complicated[\u146] sections of the design. The description is fairly clear with, at most, minor errors and includes everything needed by the developer to implement without any external research. <br />Rating 4 [\u150] The component specification includes all the algorithms defined in the requirements and any [\u145]complicated[\u146] sections of the design. The description is clear, contains no logical errors, and can be understood from a single reading.
+               </div>
+
+               </td>
+            </tr>
+            
+            <tr>
+               <td class="header"  >
+               <b>Reviewer</b></td>
+               <td class="headerC"  >
+<b>Comment<br>Number</b></td>
+               <td class="header"  >
+               <b>Response</b></td>
+               <td class="header"  >
+               <b>Type</b></td>
+               <td class="header"  >
+               <b>Status</b></td>
+			   <td class="header" ></td>
+               </tr>
+			<tr class="light">
+               <td class="value" >
+               <a href="pc-readonly-review_individual.htm">qiucx0161</a></td>
+               <td class="valueC" >
+               1</td>
+               <td class="value" >
+              Lorem ipsum dolor sit amet, consectetuer adipiscing elit, quis nostrud exerci tation ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo consequat.
+<div style="padding-top:6px;"><b>Aggregator Comment:</b> Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat.</div>
+			  <div style="padding-top:6px;"><b>Reviewer Comment:</b> Lorem ipsum consectetuer adipiscing elit, sed diam nonummy dolor sit amet, consectetuer adipiscing elit, laoreet dolore magna aliquam erat dolore magna.</div></td>
+               <td class="value" >
+               Recommended</td>
+               <td class="value" >
+               Accepted</td>
+			   <td class="value"  >
+               <a href="#" onClick="showLayer('Comment4');return true;"><img src="images/bttn_add_comment.gif" border="0" vspace="2"></a></td>
+            </tr>
+            
+			<tr class="light">
+				<td class="value" colspan="6">
+				<div id="Comment4" name="Comment4" style="display: none;">
+				Comment Text:</b><br>
+				<textarea rows="2" name="S2" cols="20" style="font-size: 10px; font-family: sans-serif;width:99%;height:50px;border:1px solid #ccc;margin:3px;"></textarea><br>
+				</div>
+				</td>
+			</tr>
+			<tr class="dark">
+               <td class="value" >
+               <a href="pc-readonly-review_individual.htm">mgmg</a></td>
+               <td class="valueC" >
+               1</td>
+               <td class="value" >
+              Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. Ut wisi enim ad minim veniam.
+<div style="padding-top:6px;"><b>Aggregator Comment:</b> Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat.</div>
+			  <div style="padding-top:6px;"><b>Reviewer Comment:</b> Lorem ipsum consectetuer adipiscing elit, sed diam nonummy dolor sit amet, consectetuer adipiscing elit, laoreet dolore magna aliquam erat dolore magna.</div></td>
+               <td class="value" >
+               Recommended</td>
+               <td class="value" ></td>
+               <td class="value"  >
+               <a href="#" onClick="showLayer('Comment5');return true;"><img src="images/bttn_add_comment.gif" border="0" vspace="2"></a></td>
+            </tr>
+            
+			<tr class="dark">
+				<td class="value" colspan="6">
+					<div id="Comment5" name="Comment5" style="display: none;">
+					Comment Text:</b><br>
+					<textarea rows="2" name="S2" cols="20" style="font-size: 10px; font-family: sans-serif;width:99%;height:50px;border:1px solid #ccc;margin:3px;"></textarea><br><br>
+					</div>
+				</td>
+			</tr>
+
+			<tr class="light">
+               <td class="value" >
+               <a href="pc-readonly-review_individual.htm">slion</a></td>
+               <td class="valueC" >
+               1</td>
+               <td class="value" >
+              Lorem ipsum dolor sit amet, quis nostrud exerci tation ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo consequat.
+<div style="padding-top:6px;"><b>Aggregator Comment:</b> Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat.</div>
+			  <div style="padding-top:6px;"><b>Reviewer Comment:</b> Lorem ipsum consectetuer adipiscing elit, sed diam nonummy dolor sit amet, consectetuer adipiscing elit, laoreet dolore magna aliquam erat dolore magna.</div></td>
+               <td class="value" >
+               Recommended</td>
+               <td class="value" >
+               Duplicate</td>
+			   <td class="value"  >
+               <a href="#" onClick="showLayer('Comment6');return true;"><img src="images/bttn_add_comment.gif" border="0" vspace="2"></a></td>
+            </tr>
+            
+			<tr class="light">
+				<td class="value" colspan="6">
+					<div id="Comment6" name="Comment6" style="display: none;">
+					Comment Text:</b><br>
+					<textarea rows="2" name="S2" cols="20" style="font-size: 10px; font-family: sans-serif;width:99%;height:50px;border:1px solid #ccc;margin:3px;"></textarea><br>
+					</div>
+				</td>
+			</tr>
+            
+
+            
+
+            
+
+
+            
+            <tr class="dark">
+               <td class="value" width="100%"   colspan="6">
+
+               <div class="showText" id="shortQ_2">
+               
+               <a href="javascript:toggleDisplay('shortQ_2');toggleDisplay('longQ_2');" ><img src="images/plus.gif" alt="open" border="0" /></a>
+               
+                   <b>Question x.x.x</b> The use cases cover all the business requirements as stated in the requirements document.
+               </div>
+
+               <div class="hideText" id="longQ_2">
+               
+               <a href="javascript:toggleDisplay('shortQ_2');toggleDisplay('longQ_2');" ><img src="images/minus.gif" alt="close" border="0" /></a>
+               
+                   The use cases cover all the business requirements as stated in the requirements document.<br /><br />The reviewer should be able to take each requirement and find a use case covering it. Use cases must not be too high-level or too low-level. Additional functionality beyond the requirements must be covered by use cases as well.<br /><br />These rules should be considered when judging the use cases:<br /><br />a)&#160;&#160;&#160;&#160;A use case is something an actor wants the system to do<br />b)&#160;&#160;&#160;&#160;Use cases are always started by an actor<br />c)&#160;&#160;&#160;&#160;Use cases are always defined from the point of view of an actor<br />d)&#160;&#160;&#160;&#160;Use cases are always described by a verb phrase<br /><br />When a single use case covers multiple unrelated activities, it is considered too high-level. A good indicator of this is a single use case covering multiple points in the requirements document.<br /><br />Too low-level is defined as multiple use cases covering related activities. For example, providing a use case for each constructor or each version of an overloaded method are considered too low-level.<br /><br />Use cases must not reveal the intended implementation. For example, a use case of [\u147]Read Configuration[\u148] should not specify how it reads the configuration (i.e. it should not say [\u147]Read Configuration via Configuration Manager,[\u148] unless the component provides other user-selectable alternatives for obtaining the configuration without the Configuration Manager).<br /><br />This question does not address the presentation of the diagrams; only the logical content needs to be considered.<br /><br />Rating 1 [\u150] Only a minority (&lt;= 49%) of the requirements are covered by the use cases. <br />Rating 2 [\u150] A majority (&gt; 49%) of the requirements are covered but at least one requirement is missing and/or the use cases are too high (or low) level in detail as explained above.<br />Rating 3 [\u150] All the requirements are covered at a proper level of detail as explained above. <br />Rating 4 [\u150] All the requirements are covered at a proper level of detail as explained above, and the designer made proper use of inherited
+               </div>
+
+               </td>
+            </tr>
+            
+            <tr>
+               <td class="header"  >
+               <b>Reviewer</b></td>
+               <td class="headerC"  >
+<b>Comment<br>Number</b></td>
+               <td class="header"  >
+               <b>Response</b></td>
+               <td class="header"  >
+               <b>Type</b></td>
+               <td class="header"  >
+               <b>Status</b></td><td class="header"></td>
+               </tr>
+			<tr class="light">
+               <td class="value" >
+               <a href="pc-readonly-review_individual.htm">qiucx0161</a></td>
+               <td class="valueC" >
+               1</td>
+               <td class="value" >
+              Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo consequat.
+<div style="padding-top:6px;"><b>Aggregator Comment:</b> Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat.</div>
+			  <div style="padding-top:6px;"><b>Reviewer Comment:</b> Lorem ipsum consectetuer adipiscing elit, sed diam nonummy dolor sit amet, consectetuer adipiscing elit, laoreet dolore magna aliquam erat dolore magna.</div></td>
+               <td class="value" >
+               Recommended</td>
+               <td class="value" >
+               Accepted</td>
+<td class="value"><img src="images/bttn_add_comment.gif" border="0" vspace="2"></td>
+               </tr>
+			<tr class="dark">
+               <td class="value" >
+               <a href="pc-readonly-review_individual.htm">mgmg</a></td>
+               <td class="valueC" >
+               1</td>
+               <td class="value" >
+              Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper suscipit lobortis nisl ut consequat.
+<div style="padding-top:6px;"><b>Aggregator Comment:</b> Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat.</div>
+			  <div style="padding-top:6px;"><b>Reviewer Comment:</b> Lorem ipsum consectetuer adipiscing elit, sed diam nonummy dolor sit amet, consectetuer adipiscing elit, laoreet dolore magna aliquam erat dolore magna.</div></td>
+               <td class="value" >
+               Recommended</td>
+               <td class="value" >
+               Duplicate</td>
+<td class="value"><img src="images/bttn_add_comment.gif" border="0" vspace="2"></td>
+               </tr>
+			<tr class="light">
+               <td class="value" >
+               <a href="pc-readonly-review_individual.htm">slion</a></td>
+               <td class="valueC" >
+               1</td>
+               <td class="value" >
+              Lorem ipsum dolor laoreet dolore magna aliquam erat volutpat. Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo consequat.
+<div style="padding-top:6px;"><b>Aggregator Comment:</b> Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat.</div>
+			  <div style="padding-top:6px;"><b>Reviewer Comment:</b> Lorem ipsum consectetuer adipiscing elit, sed diam nonummy dolor sit amet, consectetuer adipiscing elit, laoreet dolore magna aliquam erat dolore magna.</div></td>
+               <td class="value" >
+               Recommended</td>
+               <td class="value" >
+               Duplicate</td>
+<td class="value"><img src="images/bttn_add_comment.gif" border="0" vspace="2"></td>
+               </tr>
+            
+
+            
+
+            
+
+
+            
+            <tr class="dark">
+               <td class="value" width="100%"   colspan="6">
+
+               <div class="showText" id="shortQ_3">
+               
+               <a href="javascript:toggleDisplay('shortQ_3');toggleDisplay('longQ_3');" ><img src="images/plus.gif" alt="open" border="0" /></a>
+               
+                   <b>Question x.x.x</b> The sequence diagrams cover complicated use cases or other complicated sequences where the interactions of the objects are not obvious.
+               </div>
+
+               <div class="hideText" id="longQ_3">
+               
+               <a href="javascript:toggleDisplay('shortQ_3');toggleDisplay('longQ_3');" ><img src="images/minus.gif" alt="close" border="0" /></a>
+               
+                   The sequence diagrams cover complicated use cases or other complicated sequences where the interactions of the objects are not obvious.<br /><br />Sequence diagrams should be included when there are interactions between objects that need to be demonstrated or where interactions are not immediately obvious or where method documentation may benefit from a supplemental diagram.<br /><br />Interactions involving five or more objects (both system and/or component) are considered complicated.  Designers may include SDs with less than five objects, but they are not required to do so.<br />This question does not address the presentation of the diagrams; only the logical content needs to be considered for this question.<br /><br />Rating 1 [\u150] Only a minority (&lt;=49%) of the complicated interactions are covered by the sequence diagrams. Identify all complicated interactions without the diagrams in your comments.<br />Rating 2 [\u150] At least one complicated interaction is missing a sequence diagram, or a majority (&gt;49%) of the diagrams are misleading or incorrect. You must either identify the missing interaction or add explanations of how to fix misleading or incorrect diagrams in your comments.<br />Rating 3 [\u150] All the complicated interactions are covered by sequence diagrams, but at least one of the diagrams is incorrect or misleading (missing participants or missing calls on any of the diagrams make that diagram grossly incorrect). You must add explanations of how to fix misleading or incorrect diagrams in your comments.<br />Rating 4 [\u150] All [\u145]complicated[\u146] interactions have been described by corresponding sequence diagrams, and none of the diagrams are incorrect or misleading. This rating permits minor issues such as mislabeled methods or mismatched parameters or return values to exist in the diagram.
+               </div>
+
+               </td>
+            </tr>
+            
+            <tr>
+               <td class="header"  >
+               <b>Reviewer</b></td>
+               <td class="headerC"  >
+<b>Comment<br>Number</b></td>
+               <td class="header"  >
+               <b>Response</b></td>
+               <td class="header"  >
+               <b>Type</b></td>
+               <td class="header"  >
+               <b>Status</b></td><td class="header"></td>
+               </tr>
+			<tr class="light">
+               <td class="value" >
+               <a href="pc-readonly-review_individual.htm">qiucx0161</a></td>
+               <td class="valueC" >
+               1</td>
+               <td class="value" >
+              Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. Ut wisi enim ad minim veniam.
+<div style="padding-top:6px;"><b>Aggregator Comment:</b> Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat.</div>
+			  <div style="padding-top:6px;"><b>Reviewer Comment:</b> Lorem ipsum consectetuer adipiscing elit, sed diam nonummy dolor sit amet, consectetuer adipiscing elit, laoreet dolore magna aliquam erat dolore magna.</div></td>
+               <td class="value" >
+               Recommended</td>
+               <td class="value" >
+               Accepted</td>
+<td class="value"><img src="images/bttn_add_comment.gif" border="0" vspace="2"></td>
+               </tr>
+			<tr class="dark">
+               <td class="value" >
+               <a href="pc-readonly-review_individual.htm">mgmg</a></td>
+               <td class="valueC" >
+               1</td>
+               <td class="value" >
+              Lorem ipsum dolor sit amet, wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo consequat.
+<div style="padding-top:6px;"><b>Aggregator Comment:</b> Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat.</div>
+			  <div style="padding-top:6px;"><b>Reviewer Comment:</b> Lorem ipsum consectetuer adipiscing elit, sed diam nonummy dolor sit amet, consectetuer adipiscing elit, laoreet dolore magna aliquam erat dolore magna.</div></td>
+               <td class="value" >
+               Recommended</td>
+               <td class="value" >
+               Duplicate</td>
+<td class="value"><img src="images/bttn_add_comment.gif" border="0" vspace="2"></td>
+               </tr>
+			<tr class="light">
+               <td class="value" >
+               <a href="pc-readonly-review_individual.htm">slion</a></td>
+               <td class="valueC" >
+               1</td>
+               <td class="value" >
+              Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. Mostrud exerci tation ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo consequat.
+<div style="padding-top:6px;"><b>Aggregator Comment:</b> Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat.</div>
+			  <div style="padding-top:6px;"><b>Reviewer Comment:</b> Lorem ipsum consectetuer adipiscing elit, sed diam nonummy dolor sit amet, consectetuer adipiscing elit, laoreet dolore magna aliquam erat dolore magna.</div></td>
+               <td class="value" >
+               Recommended</td>
+               <td class="value" >
+               Duplicate</td>
+<td class="value"><img src="images/bttn_add_comment.gif" border="0" vspace="2"></td>
+               </tr>
+            
+			<tr>
+        		<td class="lastRowTD" colspan="6"></td>
+			</tr>
+		</table>
+		<br>
+		<table cellpadding="0" border="0" width="100%" class="stat" style="border-collapse: collapse">
+  
+            <tr>
+               <td class="title" colspan="6"  >
+				<b>Category</b></td>
+            </tr>
+            
+
+
+            
+            <tr class="light">
+               <td class="value" width="100%"   colspan="6">
+
+               <div class="showText" id="shortQ_4">
+               
+               <a href="javascript:toggleDisplay('shortQ_4');toggleDisplay('longQ_4');" ><img src="images/plus.gif" alt="open" border="0" /></a>
+               
+                   <b>Question x.x.x</b> The design incorporates standard design patterns and methodologies where applicable (e.g. Model-View-Controller, Factory Pattern, Object Oriented design principles, follows J2EE specs or Microsoft Design Guidelines for Class Library Developers).
+               </div>
+
+               <div class="hideText" id="longQ_4">
+               
+               <a href="javascript:toggleDisplay('shortQ_4');toggleDisplay('longQ_4');" ><img src="images/minus.gif" alt="close" border="0" /></a>
+               
+                   The design incorporates standard design patterns and methodologies where applicable (e.g. Model-View-Controller, Factory Pattern, Object Oriented design principles, follows J2EE specs or Microsoft Design Guidelines for Class Library Developers).<br /><br />The reviewer should determine a few things: Are the patterns/methodologies used 'forced' (i.e. is there good justification for using the pattern or did the designer force the pattern into the design to say they used that pattern). Are the patterns/methodologies implemented correctly (this does not mean completely [\u150] the design may justify a partial implementation)? Did the designer show an understanding of the pattern/methodology? Did the designer recognize and document all the patterns used? <br /><br />Rating 1 [\u150] The design consistently uses patterns/methodologies inappropriately, causing potential problems either in implementing the component or in implementing future enhancements to the component. <br />Rating 2 [\u150] An appropriate pattern/methodology was used but the designer showed a lack of understanding in the implementation of it. A pattern/methodology should have been used but was not (name the missing patterns and explain how the design would benefit from using them). A pattern/methodology was 'forced' (name the inappropriate patterns and explain why they are not applicable to the design). <br />Rating 3 [\u150] Appropriate patterns and/or methodologies were used but the designer missed some in the component specification (either missed completely or incorrectly labeled). <br />Rating 4 [\u150] Appropriate patterns and/or methodologies were used and were identified correctly in the component specification. The reviewer should also assign this rating if the design, appropriately, does not need any patterns/methodologies.
+               </div>
+
+               </td>
+            </tr>
+            
+            <tr>
+               <td class="header"  >
+               <b>Reviewer</b></td>
+               <td class="headerC"  >
+<b>Comment<br>Number</b></td>
+               <td class="header"  >
+               <b>Response</b></td>
+               <td class="header"  >
+               <b>Type</b></td>
+               <td class="header"  >
+               <b>Status</b></td><td class="header"></td>
+               </tr>
+			<tr class="light">
+               <td class="value" >
+               <a href="pc-readonly-review_individual.htm">qiucx0161</a></td>
+               <td class="valueC" >
+               1</td>
+               <td class="value" >
+              Lorem ipsum dolor sit amet, consectetuer adipiscing elit, exerci tation ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo consequat.
+<div style="padding-top:6px;"><b>Aggregator Comment:</b> Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat.</div>
+			  <div style="padding-top:6px;"><b>Reviewer Comment:</b> Lorem ipsum consectetuer adipiscing elit, sed diam nonummy dolor sit amet, consectetuer adipiscing elit, laoreet dolore magna aliquam erat dolore magna.</div></td>
+               <td class="value" >
+               Recommended</td>
+               <td class="value" >
+               Accepted</td>
+<td class="value"><img src="images/bttn_add_comment.gif" border="0" vspace="2"></td>
+               </tr>
+			<tr class="dark">
+               <td class="value" >
+               <a href="pc-readonly-review_individual.htm">mgmg</a></td>
+               <td class="valueC" >
+               1</td>
+               <td class="value" >
+              Lorem ipsum dolor sit amet, quis nostrud exerci tation ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo consequat.
+<div style="padding-top:6px;"><b>Aggregator Comment:</b> Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat.</div>
+			  <div style="padding-top:6px;"><b>Reviewer Comment:</b> Lorem ipsum consectetuer adipiscing elit, sed diam nonummy dolor sit amet, consectetuer adipiscing elit, laoreet dolore magna aliquam erat dolore magna.</div></td>
+               <td class="value" >
+               Recommended</td>
+               <td class="value" >
+               Duplicate</td>
+<td class="value"><img src="images/bttn_add_comment.gif" border="0" vspace="2"></td>
+               </tr>
+			<tr class="light">
+               <td class="value" >
+               <a href="pc-readonly-review_individual.htm">slion</a></td>
+               <td class="valueC" >
+               1</td>
+               <td class="value" >
+              Lorem ipsum dolor sit amet, magna aliquam erat volutpat. Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo consequat.
+<div style="padding-top:6px;"><b>Aggregator Comment:</b> Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat.</div>
+			  <div style="padding-top:6px;"><b>Reviewer Comment:</b> Lorem ipsum consectetuer adipiscing elit, sed diam nonummy dolor sit amet, consectetuer adipiscing elit, laoreet dolore magna aliquam erat dolore magna.</div></td>
+               <td class="value" >
+               Recommended</td>
+               <td class="value" >
+               Duplicate</td>
+<td class="value"><img src="images/bttn_add_comment.gif" border="0" vspace="2"></td>
+               </tr>
+            
+
+            
+
+            
+
+
+            
+            <tr class="dark">
+               <td class="value" width="100%"   colspan="6">
+
+               <div class="showText" id="shortQ_5">
+               
+               <a href="javascript:toggleDisplay('shortQ_5');toggleDisplay('longQ_5');" ><img src="images/plus.gif" alt="open" border="0" /></a>
+               
+                   <b>Question x.x.x</b> The design accounts for incorporating future enhancements and/or features beyond the requirements.
+               </div>
+
+               <div class="hideText" id="longQ_5">
+               
+               <a href="javascript:toggleDisplay('shortQ_5');toggleDisplay('longQ_5');" ><img src="images/minus.gif" alt="close" border="0" /></a>
+               
+                   The design accounts for incorporating future enhancements and/or features beyond the requirements. <br /><br />The reviewer should consider what enhancement/features the next version of the component will likely be or what types of enhancements a client of the component will likely request. The reviewer should then review the future enhancements that the designer included in the component specification for their vision of what the next likely enhancements are. The reviewer should also consider how tightly coupled the classes were or what assumptions the design was built upon when considering how [\u145]substantial[\u146] the modifications would be. <br /><br />Rating 1 [\u150] The component would need a complete redesign to accommodate reasonable enhancements within the general scope of this component. <br />Rating 2 [\u150] The design could accommodate reasonable enhancements within the general scope of this component, but doing so would require substantial changes to the design. <br />Rating 3 [\u150] The design could accommodate reasonable enhancements within the general scope of this component with multiple simple changes. <br />Rating 4 [\u150] The design could easily accommodate reasonable enhancements to the component.
+               </div>
+
+               </td>
+            </tr>
+            
+            <tr>
+               <td class="header"  >
+               <b>Reviewer</b></td>
+               <td class="headerC"  >
+<b>Comment<br>Number</b></td>
+               <td class="header"  >
+               <b>Response</b></td>
+               <td class="header"  >
+               <b>Type</b></td>
+               <td class="header"  >
+               <b>Status</b></td><td class="header"></td>
+               </tr>
+			<tr class="light">
+               <td class="value" >
+               <a href="pc-readonly-review_individual.htm">qiucx0161</a></td>
+               <td class="valueC" >
+               1</td>
+               <td class="value" >
+              Lorem ipsum dolor sit amet, ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo consequat.
+<div style="padding-top:6px;"><b>Aggregator Comment:</b> Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat.</div>
+			  <div style="padding-top:6px;"><b>Reviewer Comment:</b> Lorem ipsum consectetuer adipiscing elit, sed diam nonummy dolor sit amet, consectetuer adipiscing elit, laoreet dolore magna aliquam erat dolore magna.</div></td>
+               <td class="value" >
+               Recommended</td>
+               <td class="value" >
+               Accepted</td>
+<td class="value"><img src="images/bttn_add_comment.gif" border="0" vspace="2"></td>
+               </tr>
+			<tr class="dark">
+               <td class="value" >
+               <a href="pc-readonly-review_individual.htm">mgmg</a></td>
+               <td class="valueC" >
+               1</td>
+               <td class="value" >
+              Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. Guis nostrud exerci tation ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo consequat.
+<div style="padding-top:6px;"><b>Aggregator Comment:</b> Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat.</div>
+			  <div style="padding-top:6px;"><b>Reviewer Comment:</b> Lorem ipsum consectetuer adipiscing elit, sed diam nonummy dolor sit amet, consectetuer adipiscing elit, laoreet dolore magna aliquam erat dolore magna.</div></td>
+               <td class="value" >
+               Recommended</td>
+               <td class="value" >
+               Duplicate</td>
+<td class="value"><img src="images/bttn_add_comment.gif" border="0" vspace="2"></td>
+               </tr>
+			<tr class="light">
+               <td class="value" >
+               <a href="pc-readonly-review_individual.htm">slion</a></td>
+               <td class="valueC" >
+               1</td>
+               <td class="value" >
+              Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo consequat.
+<div style="padding-top:6px;"><b>Aggregator Comment:</b> Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat.</div>
+			  <div style="padding-top:6px;"><b>Reviewer Comment:</b> Lorem ipsum consectetuer adipiscing elit, sed diam nonummy dolor sit amet, consectetuer adipiscing elit, laoreet dolore magna aliquam erat dolore magna.</div></td>
+               <td class="value" >
+               Recommended</td>
+               <td class="value" >
+               Duplicate</td>
+<td class="value"><img src="images/bttn_add_comment.gif" border="0" vspace="2"></td>
+               </tr>
+            
+
+            
+
+            
+
+
+            
+            <tr class="dark">
+               <td class="value" width="100%"   colspan="6">
+
+               <div class="showText" id="shortQ_6">
+               
+               <a href="javascript:toggleDisplay('shortQ_6');toggleDisplay('longQ_6');" ><img src="images/plus.gif" alt="open" border="0" /></a>
+               
+                   <b>Question x.x.x</b> 
+               The component makes effective use of the TopCoder component catalog.
+               </div>
+
+               <div class="hideText" id="longQ_6">
+               
+               <a href="javascript:toggleDisplay('shortQ_6');toggleDisplay('longQ_6');" ><img src="images/minus.gif" alt="close" border="0" /></a>
+               
+                   <b>2.1.3   </b>
+                   The component makes effective use of the TopCoder component catalog. <br /><br />The reviewer should review the components recommended in the requirements documentation. The designer will need to provide justification (either in the component specification or in the component forum) if they choose not to use the recommendations. The reviewer should also review the TopCoder catalog for any components that could potentially be used in the component design. The reviewer should not be critical of the designer's use, assumptions or lack of details for components that are being proposed in the design or are currently in the design/development stage - as long as the designer has included verbiage in the component specification stating that the design may need to change based on the final 'look' of the dependent component. Please note that any components being proposed or changed by this design is dependent upon permission from the PM. <br /><br />Rating 1 [\u150] The design did not use any of the recommended components and did not give any justification as to why. <br />Rating 2 [\u150] The design used at least one of the recommended components but not all and did not give any justification as to why. Likewise, assign this rating if the designer missed using likely components, used any other component incorrectly, or provided flawed justification as to why a component should not be used. <br />Rating 3 [\u150] The design used all the recommended components correctly but missed using other components that would make the design easier to implement without changing its overall approach. <br />Rating 4 [\u150] The design used all recommended and likely components that fit the designer[\u146]s approach correctly. Likewise, assign this rating if components were appropriately not used.
+               </div>
+
+               </td>
+            </tr>
+            
+            <tr>
+               <td class="header"  >
+               <b>Reviewer</b></td>
+               <td class="headerC"  >
+<b>Comment<br>Number</b></td>
+               <td class="header"  >
+               <b>Response</b></td>
+               <td class="header"  >
+               <b>Type</b></td>
+               <td class="header"  >
+               <b>Status</b></td><td class="header"></td>
+               </tr>
+			<tr class="light">
+               <td class="value" >
+               <a href="pc-readonly-review_individual.htm">qiucx0161</a></td>
+               <td class="valueC" >
+               1</td>
+               <td class="value" >
+              Lorem ipsum dolor sit amet, quis nostrud exerci tation ullamcorper suscipit, exerci tation ullamcorper suscipit lobortis, lobortis nisl ut aliquip ex ea commodo consequat.
+<div style="padding-top:6px;"><b>Aggregator Comment:</b> Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat.</div>
+			  <div style="padding-top:6px;"><b>Reviewer Comment:</b> Lorem ipsum consectetuer adipiscing elit, sed diam nonummy dolor sit amet, consectetuer adipiscing elit, laoreet dolore magna aliquam erat dolore magna.</div></td>
+               <td class="value" >
+               Recommended</td>
+               <td class="value" >
+               Accepted</td>
+<td class="value"><img src="images/bttn_add_comment.gif" border="0" vspace="2"></td>
+               </tr>
+			<tr class="dark">
+               <td class="value" >
+               <a href="pc-readonly-review_individual.htm">mgmg</a></td>
+               <td class="valueC" >
+               1</td>
+               <td class="value" >
+              Lorem ipsum dolor sit amet, euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo consequat.
+<div style="padding-top:6px;"><b>Aggregator Comment:</b> Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat.</div>
+			  <div style="padding-top:6px;"><b>Reviewer Comment:</b> Lorem ipsum consectetuer adipiscing elit, sed diam nonummy dolor sit amet, consectetuer adipiscing elit, laoreet dolore magna aliquam erat dolore magna.</div></td>
+               <td class="value" >
+               Recommended</td>
+               <td class="value" >
+               Duplicate</td>
+<td class="value"><img src="images/bttn_add_comment.gif" border="0" vspace="2"></td>
+               </tr>
+			<tr class="light">
+               <td class="value" >
+               <a href="pc-readonly-review_individual.htm">slion</a></td>
+               <td class="valueC" >
+               1</td>
+               <td class="value" >
+              Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam magna aliquam erat volutpat. Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo consequat.
+<div style="padding-top:6px;"><b>Aggregator Comment:</b> Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat.</div>
+			  <div style="padding-top:6px;"><b>Reviewer Comment:</b> Lorem ipsum consectetuer adipiscing elit, sed diam nonummy dolor sit amet, consectetuer adipiscing elit, laoreet dolore magna aliquam erat dolore magna.</div></td>
+               <td class="value" >
+               Recommended</td>
+               <td class="value" >
+               Duplicate</td>
+<td class="value"><img src="images/bttn_add_comment.gif" border="0" vspace="2"></td>
+               </tr>
+            
+
+            
+
+            
+
+
+            
+            <tr class="dark">
+               <td class="value" width="100%"   colspan="6">
+
+               <div class="showText" id="shortQ_7">
+               
+               <a href="javascript:toggleDisplay('shortQ_7');toggleDisplay('longQ_7');" ><img src="images/plus.gif" alt="open" border="0" /></a>
+               
+                   <b>Question x.x.x</b> The component presents an easy-to-use API for the application to use. Class structure and method names make usage of the API apparent to a new user. Each method has a singular purpose and causes minimal side-effects. Convenience methods should be careful
+               </div>
+
+               <div class="hideText" id="longQ_7">
+               
+               <a href="javascript:toggleDisplay('shortQ_7');toggleDisplay('longQ_7');" ><img src="images/minus.gif" alt="close" border="0" /></a>
+               
+                   The component presents an easy-to-use API for the application to use. Class structure and method names make usage of the API apparent to a new user. Each method has a singular purpose and causes minimal side-effects. Convenience methods should be carefully chosen to simplify the overall API. Excessive use of convenience methods should be avoided.<br /><br />The reviewer should look at the demo section of the component specification to see the designer's vision of how the component will be used. The reviewer should then analyze how the API addresses the requirements and how easy it is to use the API to accomplish the requirements. <br /><br />Rating 1 [\u150] The API demonstrates an obvious lack of consistency, cohesion, or is generally hard to use. Tasks (as defined by the requirements) take multiple API calls to accomplish what should be done atomically. <br />Rating 2 [\u150] The API is not immediately obvious; one cannot understand how to accomplish the required tasks by looking at the class diagram and reading the demo section (provide the name(s) of the requirement task(s) not easily performed using the API). <br />Rating 3 [\u150] The API is obvious (by looking at the class diagram and the demo section) but could have been made simpler or more powerful/flexible (provide specific modifications to the API that would make it easier to use). <br />Rating 4 [\u150] The API is consistent, powerful, flexible, and is easy to understand. The design of the API is driven by a single concept, making the API easy to learn. The common tasks (as defined by the requirements) are easy to perform using the API.
+               </div>
+
+               </td>
+            </tr>
+            
+            <tr>
+               <td class="header"  >
+               <b>Reviewer</b></td>
+               <td class="headerC"  >
+<b>Comment<br>Number</b></td>
+               <td class="header"  >
+               <b>Response</b></td>
+               <td class="header"  >
+               <b>Type</b></td>
+               <td class="header"  >
+               <b>Status</b></td><td class="header"></td>
+               </tr>
+			<tr class="light">
+               <td class="value" >
+               <a href="pc-readonly-review_individual.htm">qiucx0161</a></td>
+               <td class="valueC" >
+               1</td>
+               <td class="value" >
+              Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. Ut wisi enim ad minim veniam, nisl ut aliquip ex ea commodo consequat.
+<div style="padding-top:6px;"><b>Aggregator Comment:</b> Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat.</div>
+			  <div style="padding-top:6px;"><b>Reviewer Comment:</b> Lorem ipsum consectetuer adipiscing elit, sed diam nonummy dolor sit amet, consectetuer adipiscing elit, laoreet dolore magna aliquam erat dolore magna.</div></td>
+               <td class="value" >
+               Recommended</td>
+               <td class="value" >
+               Accepted</td>
+<td class="value"><img src="images/bttn_add_comment.gif" border="0" vspace="2"></td>
+               </tr>
+			<tr class="dark">
+               <td class="value" >
+               <a href="pc-readonly-review_individual.htm">mgmg</a></td>
+               <td class="valueC" >
+               1</td>
+               <td class="value" >
+              Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed laoreet dolore magna aliquam erat volutpat. Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo consequat.
+<div style="padding-top:6px;"><b>Aggregator Comment:</b> Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat.</div>
+			  <div style="padding-top:6px;"><b>Reviewer Comment:</b> Lorem ipsum consectetuer adipiscing elit, sed diam nonummy dolor sit amet, consectetuer adipiscing elit, laoreet dolore magna aliquam erat dolore magna.</div></td>
+               <td class="value" >
+               Recommended</td>
+               <td class="value" >
+               Duplicate</td>
+<td class="value"><img src="images/bttn_add_comment.gif" border="0" vspace="2"></td>
+               </tr>
+			<tr class="light">
+               <td class="value" >
+               <a href="pc-readonly-review_individual.htm">slion</a></td>
+               <td class="valueC" >
+               1</td>
+               <td class="value" >
+              Lorem ipsum dolor sit amet, consectetuer adipiscing elit laoreet dolore magna aliquam erat volutpat. Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo consequat.
+<div style="padding-top:6px;"><b>Aggregator Comment:</b> Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat.</div>
+			  <div style="padding-top:6px;"><b>Reviewer Comment:</b> Lorem ipsum consectetuer adipiscing elit, sed diam nonummy dolor sit amet, consectetuer adipiscing elit, laoreet dolore magna aliquam erat dolore magna.</div></td>
+               <td class="value" >
+               Recommended</td>
+               <td class="value" >
+               Duplicate</td>
+<td class="value"><img src="images/bttn_add_comment.gif" border="0" vspace="2"></td>
+               </tr>
+            
+
+            
+
+            
+
+
+            
+            <tr class="dark">
+               <td class="value" width="100%"   colspan="6">
+
+               <div class="showText" id="shortQ_8">
+               
+               <a href="javascript:toggleDisplay('shortQ_8');toggleDisplay('longQ_8');" ><img src="images/plus.gif" alt="open" border="0" /></a>
+               
+                   <b>Question x.x.x</b> The design addresses whether the component is thread safe or not.
+               </div>
+
+               <div class="hideText" id="longQ_8">
+               
+               <a href="javascript:toggleDisplay('shortQ_8');toggleDisplay('longQ_8');" ><img src="images/minus.gif" alt="close" border="0" /></a>
+               
+                   The design addresses whether the component is thread safe or not. <br /><br />If the component is deemed thread safe, the designer should have documented their approach to thread safety in order to determine if the approach is sound.   The approach can come in two forms:<br /><br />a) A high level overview written in the component specification and specific detail included in the class/method/variable documentation tabs.<br />b) A detailed approach written in the component specification and references to it written in the class/method/variable documentation tabs.<br /><br />If the component is deemed not to be thread safe, the designer should document any reasons why the component is not thread safe and, if applicable, provide a high level summary of what could be done to make the component thread safe. <br /><br />Rating 1 [\u150] There is no mention of whether the component is thread safe or not. <br />Rating 2 [\u150] The designer mentions thread safety but fails to provide the reasoning<br />Rating 3 [\u150] The designer mentions thread safety but is incorrect in the reasoning<br />Rating 4 [\u150] The designer mentions thread safety and provides correct arguments to back it up.
+               </div>
+
+               </td>
+            </tr>
+            
+            <tr>
+               <td class="header"  >
+               <b>Reviewer</b></td>
+               <td class="headerC"  >
+<b>Comment<br>Number</b></td>
+               <td class="header"  >
+               <b>Response</b></td>
+               <td class="header"  >
+               <b>Type</b></td>
+               <td class="header"  >
+               <b>Status</b></td><td class="header"></td>
+               </tr>
+			<tr class="light">
+               <td class="value" >
+               <a href="pc-readonly-review_individual.htm">qiucx0161</a></td>
+               <td class="valueC" >
+               1</td>
+               <td class="value" >
+              Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. Ut wisi enim ad minim lobortis nisl ut aliquip ex ea commodo consequat.
+<div style="padding-top:6px;"><b>Aggregator Comment:</b> Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat.</div>
+			  <div style="padding-top:6px;"><b>Reviewer Comment:</b> Lorem ipsum consectetuer adipiscing elit, sed diam nonummy dolor sit amet, consectetuer adipiscing elit, laoreet dolore magna aliquam erat dolore magna.</div></td>
+               <td class="value" >
+               Recommended</td>
+               <td class="value" >
+               Accepted</td>
+<td class="value"><img src="images/bttn_add_comment.gif" border="0" vspace="2"></td>
+               </tr>
+			<tr class="dark">
+               <td class="value" >
+               <a href="pc-readonly-review_individual.htm">mgmg</a></td>
+               <td class="valueC" >
+               1</td>
+               <td class="value" >
+              Lorem ipsum dolor sit amet, consectetuer adipiscing elit, dolore magna aliquam erat volutpat. Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo consequat.
+<div style="padding-top:6px;"><b>Aggregator Comment:</b> Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat.</div>
+			  <div style="padding-top:6px;"><b>Reviewer Comment:</b> Lorem ipsum consectetuer adipiscing elit, sed diam nonummy dolor sit amet, consectetuer adipiscing elit, laoreet dolore magna aliquam erat dolore magna.</div></td>
+               <td class="value" >
+               Recommended</td>
+               <td class="value" >
+               Duplicate</td>
+<td class="value"><img src="images/bttn_add_comment.gif" border="0" vspace="2"></td>
+               </tr>
+			<tr class="light">
+               <td class="value" >
+               <a href="pc-readonly-review_individual.htm">slion</a></td>
+               <td class="valueC" >
+               1</td>
+               <td class="value" >
+              Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna ation ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo consequat.
+<div style="padding-top:6px;"><b>Aggregator Comment:</b> Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat.</div>
+			  <div style="padding-top:6px;"><b>Reviewer Comment:</b> Lorem ipsum consectetuer adipiscing elit, sed diam nonummy dolor sit amet, consectetuer adipiscing elit, laoreet dolore magna aliquam erat dolore magna.</div></td>
+               <td class="value" >
+               Recommended</td>
+               <td class="value" >
+               Duplicate</td>
+<td class="value"><img src="images/bttn_add_comment.gif" border="0" vspace="2"></td>
+               </tr>
+            
+
+            
+
+            
+
+
+            
+            <tr class="dark">
+               <td class="value" width="100%"   colspan="6">
+
+               <div class="showText" id="shortQ_9">
+               
+               <a href="javascript:toggleDisplay('shortQ_9');toggleDisplay('longQ_9');" ><img src="images/plus.gif" alt="open" border="0" /></a>
+               
+                   <b>Question x.x.x</b> The classes are well scoped.
+               </div>
+
+               <div class="hideText" id="longQ_9">
+               
+               <a href="javascript:toggleDisplay('shortQ_9');toggleDisplay('longQ_9');" ><img src="images/minus.gif" alt="close" border="0" /></a>
+               
+                   The classes are well scoped. <br /><br />The reviewer should determine whether the classes in the design attempt have too large of a scope (it tries to do too many tasks) or has too small of a scope (the task was broken down into too many classes). A good clue to a violation of this is whether the name of the class adequately encompasses the API of the class. If so, then the class is probably properly scoped (unless the name is too generic or too high-level). <br /><br />Rating 1 [\u150] Multiple unrelated groups of related classes violate scope and must be refactored into smaller or larger classes. Describe in your comments the purpose of refactoring for each class or a group of related classes, and state its tangible benefits to the design.<br />Rating 2 [\u150] A single group of related classes violates scope and must be refactored into smaller or larger classes. Describe in your comments the purpose of refactoring, and state its tangible benefits to the design.<br />Rating 3 [\u150] The classes seem fine but at least one class could potentially benefit from being refactored. Describe in your comments the proposed refactoring, and explain what makes the refactored solution preferable to the designer[\u146]s solution.<br />Rating 4 [\u150] All classes are scoped well.
+               </div>
+
+               </td>
+            </tr>
+            
+            <tr>
+               <td class="header"  >
+               <b>Reviewer</b></td>
+               <td class="headerC"  >
+<b>Comment<br>Number</b></td>
+               <td class="header"  >
+               <b>Response</b></td>
+               <td class="header"  >
+               <b>Type</b></td>
+               <td class="header"  >
+               <b>Status</b></td><td class="header"></td>
+               </tr>
+			<tr class="light">
+               <td class="value" >
+               <a href="pc-readonly-review_individual.htm">qiucx0161</a></td>
+               <td class="valueC" >
+               1</td>
+               <td class="value" >
+              Lorem ipsum dolor sit amet, consectetuer adipiscing elit, dolore magna aliquam erat volutpat. Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo consequat.
+<div style="padding-top:6px;"><b>Aggregator Comment:</b> Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat.</div>
+			  <div style="padding-top:6px;"><b>Reviewer Comment:</b> Lorem ipsum consectetuer adipiscing elit, sed diam nonummy dolor sit amet, consectetuer adipiscing elit, laoreet dolore magna aliquam erat dolore magna.</div></td>
+               <td class="value" >
+               Recommended</td>
+               <td class="value" >
+               Accepted</td>
+<td class="value"><img src="images/bttn_add_comment.gif" border="0" vspace="2"></td>
+               </tr>
+			<tr class="dark">
+               <td class="value" >
+               <a href="pc-readonly-review_individual.htm">mgmg</a></td>
+               <td class="valueC" >
+               1</td>
+               <td class="value" >
+              Lorem ipsum dolor sit amet.</td>
+               <td class="value" >
+               Recommended</td>
+               <td class="value" >
+               Duplicate</td>
+<td class="value"><img src="images/bttn_add_comment.gif" border="0" vspace="2"></td>
+               </tr>
+			<tr class="light">
+               <td class="value" >
+               <a href="pc-readonly-review_individual.htm">slion</a></td>
+               <td class="valueC" >
+               1</td>
+               <td class="value" >
+              Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. Suscipit lobortis nisl ut aliquip ex ea commodo consequat.
+<div style="padding-top:6px;"><b>Aggregator Comment:</b> Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat.</div>
+			  <div style="padding-top:6px;"><b>Reviewer Comment:</b> Lorem ipsum consectetuer adipiscing elit, sed diam nonummy dolor sit amet, consectetuer adipiscing elit, laoreet dolore magna aliquam erat dolore magna.</div></td>
+               <td class="value" >
+               Recommended</td>
+               <td class="value" >
+               Duplicate</td>
+<td class="value"><img src="images/bttn_add_comment.gif" border="0" vspace="2"></td>
+               </tr>
+            
+			<tr>
+        		<td class="lastRowTD" colspan="6"></td>
+			</tr>
+		</table>
+		<br>
+		<table cellpadding="0" border="0" width="100%" class="stat" style="border-collapse: collapse">
+            
+
+            
+            <tr>
+               <td class="title" colspan="6">
+				<b>Category</b></td>
+            </tr>
+            
+
+
+            
+            <tr class="light">
+               <td class="value" width="100%"   colspan="6">
+
+               <div class="showText" id="shortQ_10">
+               
+               <a href="javascript:toggleDisplay('shortQ_10');toggleDisplay('longQ_10');" ><img src="images/plus.gif" alt="open" border="0" /></a>
+               
+                   <b>Question x.x.x</b> Sub-packages have been defined to separate functionality into maintainable units.
+               its.
+               its.
+               its.
+               its.
+               its.
+               </div>
+
+               <div class="hideText" id="longQ_10">
+               
+               <a href="javascript:toggleDisplay('shortQ_10');toggleDisplay('longQ_10');" ><img src="images/minus.gif" alt="close" border="0" /></a>
+               
+                   Sub-packages have been defined to separate functionality into maintainable units. <br /><br />The reviewer should make a determination whether classes in the design could be grouped into separate packages. This category generally applies to complex components or components that allow for functionality to be plugged in (where the functionality should justifiably exist in a separate package).<br /><br />Rating 1 [\u150] The component is sufficiently complex or uses pluggable classes that can justifiably be separated into sub-packages and was not. <br />Rating 2 [\u150] The designer separated some classes into separate sub-packages but either missed some classes or missed other sub-packages that could be justified based on the designer[\u146]s approach. For example, when one set of features was moved into a separate package, but another similar set was left in the main package.<br />Rating 3 [\u150] The designer created an unnecessary sub-package or the component could potentially benefit from an additional sub-package The reviewer should provide their reasoning when suggesting a sub package be eliminated or added.<br />Rating 4 [\u150] The designer appropriately used sub-packages or the design did not need any sub-packages.
+               </div>
+
+               </td>
+            </tr>
+            
+            <tr>
+               <td class="header"  >
+               <b>Reviewer</b></td>
+               <td class="headerC"  >
+<b>Comment<br>Number</b></td>
+               <td class="header"  >
+               <b>Response</b></td>
+               <td class="header"  >
+               <b>Type</b></td>
+               <td class="header"  >
+               <b>Status</b></td><td class="header"></td>
+               </tr>
+			<tr class="light">
+               <td class="value" >
+               <a href="pc-readonly-review_individual.htm">qiucx0161</a></td>
+               <td class="valueC" >
+               1</td>
+               <td class="value" >
+              Lorem ipsum dolor sit amet, consectetuer ut laoreet dolore magna aliquam erat volutpat. Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo consequat.
+<div style="padding-top:6px;"><b>Aggregator Comment:</b> Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat.</div>
+			  <div style="padding-top:6px;"><b>Reviewer Comment:</b> Lorem ipsum consectetuer adipiscing elit, sed diam nonummy dolor sit amet, consectetuer adipiscing elit, laoreet dolore magna aliquam erat dolore magna.</div></td>
+               <td class="value" >
+               Recommended</td>
+               <td class="value" >
+               Accepted</td>
+<td class="value"><img src="images/bttn_add_comment.gif" border="0" vspace="2"></td>
+               </tr>
+			<tr class="dark">
+               <td class="value" >
+               <a href="pc-readonly-review_individual.htm">mgmg</a></td>
+               <td class="valueC" >
+               1</td>
+               <td class="value" >
+              Lorem ipsum dolor sit amet, consectetuer adipiscing laoreet dolore magna aliquam erat volutpat. Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo consequat.
+<div style="padding-top:6px;"><b>Aggregator Comment:</b> Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat.</div>
+			  <div style="padding-top:6px;"><b>Reviewer Comment:</b> Lorem ipsum consectetuer adipiscing elit, sed diam nonummy dolor sit amet, consectetuer adipiscing elit, laoreet dolore magna aliquam erat dolore magna.</div></td>
+               <td class="value" >
+               Recommended</td>
+               <td class="value" >
+               Duplicate</td>
+<td class="value"><img src="images/bttn_add_comment.gif" border="0" vspace="2"></td>
+               </tr>
+			<tr class="light">
+               <td class="value" >
+               <a href="pc-readonly-review_individual.htm">slion</a></td>
+               <td class="valueC" >
+               1</td>
+               <td class="value" >
+              Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. Ut wisi nisl ut aliquip ex ea commodo consequat.
+<div style="padding-top:6px;"><b>Aggregator Comment:</b> Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat.</div>
+			  <div style="padding-top:6px;"><b>Reviewer Comment:</b> Lorem ipsum consectetuer adipiscing elit, sed diam nonummy dolor sit amet, consectetuer adipiscing elit, laoreet dolore magna aliquam erat dolore magna.</div></td>
+               <td class="value" >
+               Recommended</td>
+               <td class="value" >
+               Duplicate</td>
+<td class="value"><img src="images/bttn_add_comment.gif" border="0" vspace="2"></td>
+               </tr>
+            
+
+            
+
+            
+
+
+            
+            <tr class="dark">
+               <td class="value" width="100%"   colspan="6">
+
+               <div class="showText" id="shortQ_11">
+               
+               <a href="javascript:toggleDisplay('shortQ_11');toggleDisplay('longQ_11');" ><img src="images/plus.gif" alt="open" border="0" /></a>
+               
+               <b>Question x.x.x</b> 
+               Modifiers (final, abstract, synchronized, property, virtual, overrides, etc.) and scope (private, package, public, etc.) are appropriately used in the design in the classes/methods/variables. Attributes are appropriately used for .Net classes/methods/var
+               </div>
+
+               <div class="hideText" id="longQ_11">
+               
+               <a href="javascript:toggleDisplay('shortQ_11');toggleDisplay('longQ_11');" ><img src="images/minus.gif" alt="close" border="0" /></a>
+               
+                   <b>3.1.2   </b>
+                   Modifiers (final, abstract, synchronized, property, virtual, overrides, etc.) and scope (private, package, public, etc.) are appropriately used in the design in the classes/methods/variables. Attributes are appropriately used for .Net classes/methods/variables.<br /><br />Have internally used classes been defined incorrectly as public? Has a public class improperly exposed protected or private members? Are classes that are intended to be abstract defined as such in the class diagram? Is the Serializable attribute used in lieu of implementing the ISerializable interface for standard serialization of .Net classes? It is strongly advised that variables have a private scope and only be accessible via get/set methods or C#'s property variables. C# reviewers should note that Poseidon does not have the proper choices to fully represent the C# modifiers and therefore should not be marked down if the designer either uses the closest java modifier OR specifies it in the documentation tab. Additionally, the effect of the final, virtual and other similar modifiers on class extendibility should be considered in this question. Each class and method should be designed for extension or marked as final.  This question addresses the logical aspect of providing the modifiers, not the presentation. When there are multiple ways to convey a modifier, not using all of them is considered a presentation issue. An abstract class must have an abstract checkbox on the attributes page, an abstract stereotype and a color of the abstract class. Any of the three methods is sufficient to convey that the class is abstract.<br /><br />Rating 1 - The design demonstrates obvious lack of understanding or ignores modifiers fully. For example, variables with accessor methods are declared public or key methods of the API are declared private.<br />Rating 2 - The design misidentifies a majority (&gt;49%) of the modifiers or scope.<br />Rating 3 - The designer misidentifies a minority (&lt;49%) of modifiers or scope.<br />Rating 4 - The designer identifies the modifiers/scope appropriatel
+               </div>
+
+               </td>
+            </tr>
+            
+            <tr>
+               <td class="header"  >
+               <b>Reviewer</b></td>
+               <td class="headerC"  >
+<b>Comment<br>Number</b></td>
+               <td class="header"  >
+               <b>Response</b></td>
+               <td class="header"  >
+               <b>Type</b></td>
+               <td class="header"  >
+               <b>Status</b></td><td class="header"></td>
+               </tr>
+			<tr class="light">
+               <td class="value" >
+               <a href="pc-readonly-review_individual.htm">qiucx0161</a></td>
+               <td class="valueC" >
+               1</td>
+               <td class="value" >
+              Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. Ut wisi enim.
+<div style="padding-top:6px;"><b>Aggregator Comment:</b> Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat.</div>
+			  <div style="padding-top:6px;"><b>Reviewer Comment:</b> Lorem ipsum consectetuer adipiscing elit, sed diam nonummy dolor sit amet, consectetuer adipiscing elit, laoreet dolore magna aliquam erat dolore magna.</div></td>
+               <td class="value" >
+               Recommended</td>
+               <td class="value" >
+               Accepted</td>
+<td class="value"><img src="images/bttn_add_comment.gif" border="0" vspace="2"></td>
+               </tr>
+			<tr class="dark">
+               <td class="value" >
+               <a href="pc-readonly-review_individual.htm">mgmg</a></td>
+               <td class="valueC" >
+               1</td>
+               <td class="value" >
+              Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo consequat.
+<div style="padding-top:6px;"><b>Aggregator Comment:</b> Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat.</div>
+			  <div style="padding-top:6px;"><b>Reviewer Comment:</b> Lorem ipsum consectetuer adipiscing elit, sed diam nonummy dolor sit amet, consectetuer adipiscing elit, laoreet dolore magna aliquam erat dolore magna.</div></td>
+               <td class="value" >
+               Recommended</td>
+               <td class="value" >
+               Duplicate</td>
+<td class="value"><img src="images/bttn_add_comment.gif" border="0" vspace="2"></td>
+               </tr>
+			<tr class="light">
+               <td class="value" >
+               <a href="pc-readonly-review_individual.htm">slion</a></td>
+               <td class="valueC" >
+               1</td>
+               <td class="value" >
+              Lorem ipsum dolor sit amet, consectetuer adipiscing elit, magna aliquam erat volutpat. Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo consequat.
+<div style="padding-top:6px;"><b>Aggregator Comment:</b> Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat.</div>
+			  <div style="padding-top:6px;"><b>Reviewer Comment:</b> Lorem ipsum consectetuer adipiscing elit, sed diam nonummy dolor sit amet, consectetuer adipiscing elit, laoreet dolore magna aliquam erat dolore magna.</div></td>
+               <td class="value" >
+               Recommended</td>
+               <td class="value" >
+               Duplicate</td>
+<td class="value"><img src="images/bttn_add_comment.gif" border="0" vspace="2"></td>
+               </tr>
+            
+
+            
+
+            
+
+
+            
+            <tr class="dark">
+               <td class="value" width="100%"   colspan="6">
+
+               <div class="showText" id="shortQ_12">
+               
+               <a href="javascript:toggleDisplay('shortQ_12');toggleDisplay('longQ_12');" ><img src="images/plus.gif" alt="open" border="0" /></a>
+               
+                   <b>Question x.x.x</b> Custom exceptions are appropriately defined and do not cover multiple, unrelated reasons. .Net Custom exceptions follow the Microsoft Design Guidelines on defining custom exceptions and have the appropriate constructors and are marked as Serializable.
+               </div>
+
+               <div class="hideText" id="longQ_12">
+               
+               <a href="javascript:toggleDisplay('shortQ_12');toggleDisplay('longQ_12');" ><img src="images/minus.gif" alt="close" border="0" /></a>
+               
+                   Custom exceptions are appropriately defined and do not cover multiple, unrelated reasons. .Net Custom exceptions follow the Microsoft Design Guidelines on defining custom exceptions and have the appropriate constructors and are marked as Serializable.<br /><br />Has the designer appropriately reused existing system exceptions and appropriately defined custom exceptions for the rest? The reviewer should also imagine they were using this component in an application. If a custom exception is thrown, does it give enough information to the application to react appropriately? Example: an inappropriate custom exception would be some high level exception that is thrown for multiple, unrelated, reasons.<br /><br />Please note that TopCoder Software has decided that java components should not throw NullPointerException.  When null is illegally passed to a method which doesn[\u146]t accept it, Java components should throw IllegalArgumentException and C# components should throw ArgumentNullException.<br /><br />Rating 1 [\u150] System exceptions were re-used where a specific custom exception should have been defined. Appropriate custom exceptions were not defined or a single generic exception is used throughout the component for every custom reason. <br />Rating 2 [\u150] Appropriate custom exceptions were defined but for multiple, unrelated reasons or system exceptions were reused inappropriately. <br />Rating 3 [\u150] Custom exceptions were used appropriately for multiple, related reasons but do not give specific reason details beyond the included text or the design inappropriately identified a null argument exception. <br />Rating 4 [\u150] System exceptions were reused appropriately. Custom exceptions were used appropriately and give reason details beyond simple text. Custom exceptions were used appropriately and for a single specific reason alone. Custom exceptions were not appropriate for this design.
+               </div>
+
+               </td>
+            </tr>
+            
+            <tr>
+               <td class="header"  >
+               <b>Reviewer</b></td>
+               <td class="headerC"  >
+<b>Comment<br>Number</b></td>
+               <td class="header"  >
+               <b>Response</b></td>
+               <td class="header"  >
+               <b>Type</b></td>
+               <td class="header"  >
+               <b>Status</b></td><td class="header"></td>
+               </tr>
+			<tr class="light">
+               <td class="value" >
+               <a href="pc-readonly-review_individual.htm">qiucx0161</a></td>
+               <td class="valueC" >
+               1</td>
+               <td class="value" >
+              Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. Ut wisi enim ad minim veniam, lobortis nisl ut aliquip ex ea commodo consequat.
+<div style="padding-top:6px;"><b>Aggregator Comment:</b> Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat.</div>
+			  <div style="padding-top:6px;"><b>Reviewer Comment:</b> Lorem ipsum consectetuer adipiscing elit, sed diam nonummy dolor sit amet, consectetuer adipiscing elit, laoreet dolore magna aliquam erat dolore magna.</div></td>
+               <td class="value" >
+               Recommended</td>
+               <td class="value" >
+               Accepted</td>
+<td class="value"><img src="images/bttn_add_comment.gif" border="0" vspace="2"></td>
+               </tr>
+			<tr class="dark">
+               <td class="value" >
+               <a href="pc-readonly-review_individual.htm">mgmg</a></td>
+               <td class="valueC" >
+               1</td>
+               <td class="value" >
+              Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. Ut lobortis nisl ut aliquip ex ea commodo consequat.
+<div style="padding-top:6px;"><b>Aggregator Comment:</b> Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat.</div>
+			  <div style="padding-top:6px;"><b>Reviewer Comment:</b> Lorem ipsum consectetuer adipiscing elit, sed diam nonummy dolor sit amet, consectetuer adipiscing elit, laoreet dolore magna aliquam erat dolore magna.</div></td>
+               <td class="value" >
+               Recommended</td>
+               <td class="value" >
+               Duplicate</td>
+<td class="value"><img src="images/bttn_add_comment.gif" border="0" vspace="2"></td>
+               </tr>
+			<tr class="light">
+               <td class="value" >
+               <a href="pc-readonly-review_individual.htm">slion</a></td>
+               <td class="valueC" >
+               1</td>
+               <td class="value" >
+              Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod uis nostrud exerci tation ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo consequat.
+<div style="padding-top:6px;"><b>Aggregator Comment:</b> Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat.</div>
+			  <div style="padding-top:6px;"><b>Reviewer Comment:</b> Lorem ipsum consectetuer adipiscing elit, sed diam nonummy dolor sit amet, consectetuer adipiscing elit, laoreet dolore magna aliquam erat dolore magna.</div></td>
+               <td class="value" >
+               Recommended</td>
+               <td class="value" >
+               Duplicate</td>
+<td class="value"><img src="images/bttn_add_comment.gif" border="0" vspace="2"></td>
+               </tr>
+            
+
+            
+
+            
+
+
+            
+            <tr class="dark">
+               <td class="value" width="100%"   colspan="6">
+
+               <div class="showText" id="shortQ_13">
+               
+               <a href="javascript:toggleDisplay('shortQ_13');toggleDisplay('longQ_13');" ><img src="images/plus.gif" alt="open" border="0" /></a>
+               
+                   <b>Question x.x.x</b> Type assignments have been used appropriately for method arguments, variables and return types.
+               </div>
+
+               <div class="hideText" id="longQ_13">
+               
+               <a href="javascript:toggleDisplay('shortQ_13');toggleDisplay('longQ_13');" ><img src="images/minus.gif" alt="close" border="0" /></a>
+               
+                   Type assignments have been used appropriately for method arguments, variables and return types. <br /><br />Are the type assignments correct and what you'd expect?  Are the method signatures as descriptive as possible?  Are method parameters and return value object types statically identified, or is the user expected to cast to the appropriate type?  Please note that TopCoder Software has made determination to prefer statically defined parameter and return values rather than to require the component user to cast objects to the appropriate type.  When Collections are used, are they used appropriately?  Was the best (in terms of performance and overhead) Collection implementation used for the component's internal representation?<br /><br />Rating 1 [\u150] A majority (&gt;49%) of types are used incorrectly (not including array to collection stuff). That is, a string used where an integer should be etc. <br />Rating 2 [\u150] At least one type is used incorrectly (same limitation as Rating 1). <br />Rating 3 [\u150] The types are appropriate and arrays are used where collections should have been. <br />Rating 4 [\u150] The types are appropriate and the collection interfaces are used where appropriate (i.e. arrays are used when justified). Method parameters and return types are statically identified.
+               </div>
+
+               </td>
+            </tr>
+            
+            <tr>
+               <td class="header"  >
+               <b>Reviewer</b></td>
+               <td class="headerC"  >
+<b>Comment<br>Number</b></td>
+               <td class="header"  >
+               <b>Response</b></td>
+               <td class="header"  >
+               <b>Type</b></td>
+               <td class="header"  >
+               <b>Status</b></td><td class="header"></td>
+               </tr>
+			<tr class="light">
+               <td class="value" >
+               <a href="pc-readonly-review_individual.htm">qiucx0161</a></td>
+               <td class="valueC" >
+               1</td>
+               <td class="value" >
+              Lorem ipsum dolor sit amet, consectetuer adipiscing oreet dolore magna aliquam erat volutpat. Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo consequat.
+<div style="padding-top:6px;"><b>Aggregator Comment:</b> Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat.</div>
+			  <div style="padding-top:6px;"><b>Reviewer Comment:</b> Lorem ipsum consectetuer adipiscing elit, sed diam nonummy dolor sit amet, consectetuer adipiscing elit, laoreet dolore magna aliquam erat dolore magna.</div></td>
+               <td class="value" >
+               Recommended</td>
+               <td class="value" >
+               Accepted</td>
+<td class="value"><img src="images/bttn_add_comment.gif" border="0" vspace="2"></td>
+               </tr>
+			<tr class="dark">
+               <td class="value" >
+               <a href="pc-readonly-review_individual.htm">mgmg</a></td>
+               <td class="valueC" >
+               1</td>
+               <td class="value" >
+              Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore is nisl ut aliquip ex ea commodo consequat.
+<div style="padding-top:6px;"><b>Aggregator Comment:</b> Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat.</div>
+			  <div style="padding-top:6px;"><b>Reviewer Comment:</b> Lorem ipsum consectetuer adipiscing elit, sed diam nonummy dolor sit amet, consectetuer adipiscing elit, laoreet dolore magna aliquam erat dolore magna.</div></td>
+               <td class="value" >
+               Recommended</td>
+               <td class="value" >
+               Duplicate</td>
+<td class="value"><img src="images/bttn_add_comment.gif" border="0" vspace="2"></td>
+               </tr>
+			<tr class="light">
+               <td class="value" >
+               <a href="pc-readonly-review_individual.htm">slion</a></td>
+               <td class="valueC" >
+               1</td>
+               <td class="value" >
+              Lorem ipsum dolor sit amet, consectetuer adipiscing elit, dolore magna aliquam erat volutpat. Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo consequat.
+<div style="padding-top:6px;"><b>Aggregator Comment:</b> Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat.</div>
+			  <div style="padding-top:6px;"><b>Reviewer Comment:</b> Lorem ipsum consectetuer adipiscing elit, sed diam nonummy dolor sit amet, consectetuer adipiscing elit, laoreet dolore magna aliquam erat dolore magna.</div></td>
+               <td class="value" >
+               Recommended</td>
+               <td class="value" >
+               Duplicate</td>
+<td class="value"><img src="images/bttn_add_comment.gif" border="0" vspace="2"></td>
+               </tr>
+
+			<tr>
+        		<td class="lastRowTD" colspan="6"></td>
+			</tr>
+		</table>
+		<br>
+		<table cellpadding="0" border="0" width="100%" class="stat" style="border-collapse: collapse">    
+
+            
+            <tr>
+               <td class="title" colspan="6"  >
+				<b>Overall Comments</b></td>
+            </tr>
+            
+
+
+            
+            <tr class="light">
+               <td class="value" width="100%"   colspan="6">
+
+               <div class="showText" id="shortQ_24">
+               
+               <a href="javascript:toggleDisplay('shortQ_24');toggleDisplay('longQ_24');" ><img src="images/plus.gif" alt="open" border="0" /></a>
+               
+                   <b>Question x.x.x</b> Overall, this is a quality design that meets all requirements.
+               nts.
+               </div>
+
+               <div class="hideText" id="longQ_24">
+               
+               <a href="javascript:toggleDisplay('shortQ_24');toggleDisplay('longQ_24');" ><img src="images/minus.gif" alt="close" border="0" /></a>
+               
+                   <b>&nbsp;</b>Overall, this is a quality design that meets all requirements. <br />Please detail any additional comments regarding the component design.  The reviewer must include their reasoning for assigning anything but a perfect score in this category.
+               </div>
+
+               </td>
+            </tr>
+            
+            <tr>
+               <td class="header"  >
+               <b>Reviewer</b></td>
+               <td class="headerC"  >
+<b>Comment<br>Number</b></td>
+               <td class="header"  >
+               <b>Response</b></td>
+               <td class="header"  >
+               <b>Type</b></td>
+               <td class="header"  >
+               <b>Status</b></td><td class="header"></td>
+               </tr>
+			<tr class="light">
+               <td class="value" >
+               <a href="pc-readonly-review_individual.htm">qiucx0161</a></td>
+               <td class="valueC" >
+               1</td>
+               <td class="value" >
+              Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. Ut wisi enim ad minim veniam, quis ut aliquip ex ea commodo consequat.
+<div style="padding-top:6px;"><b>Aggregator Comment:</b> Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat.</div>
+			  <div style="padding-top:6px;"><b>Reviewer Comment:</b> Lorem ipsum consectetuer adipiscing elit, sed diam nonummy dolor sit amet, consectetuer adipiscing elit, laoreet dolore magna aliquam erat dolore magna.</div></td>
+               <td class="value" >
+               Recommended</td>
+               <td class="value" >
+               Accepted</td>
+<td class="value"><img src="images/bttn_add_comment.gif" border="0" vspace="2"></td>
+               </tr>
+			<tr class="dark">
+               <td class="value" >
+               <a href="pc-readonly-review_individual.htm">mgmg</a></td>
+               <td class="valueC" >
+               1</td>
+               <td class="value" >
+              Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo consequat.
+<div style="padding-top:6px;"><b>Aggregator Comment:</b> Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat.</div>
+			  <div style="padding-top:6px;"><b>Reviewer Comment:</b> Lorem ipsum consectetuer adipiscing elit, sed diam nonummy dolor sit amet, consectetuer adipiscing elit, laoreet dolore magna aliquam erat dolore magna.</div></td>
+               <td class="value" >
+               Recommended</td>
+               <td class="value" >
+               Duplicate</td>
+<td class="value"><img src="images/bttn_add_comment.gif" border="0" vspace="2"></td>
+               </tr>
+			<tr class="light">
+               <td class="value" >
+               <a href="pc-readonly-review_individual.htm">slion</a></td>
+               <td class="valueC" >
+               1</td>
+               <td class="value" >
+              Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh aliquam erat volutpat. Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo consequat.
+<div style="padding-top:6px;"><b>Aggregator Comment:</b> Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat.</div>
+			  <div style="padding-top:6px;"><b>Reviewer Comment:</b> Lorem ipsum consectetuer adipiscing elit, sed diam nonummy dolor sit amet, consectetuer adipiscing elit, laoreet dolore magna aliquam erat dolore magna.</div></td>
+               <td class="value" >
+               Recommended</td>
+               <td class="value" >
+               Duplicate</td>
+<td class="value"><img src="images/bttn_add_comment.gif" border="0" vspace="2"></td>
+               </tr>
+
+            <tr>
+        		<td class="lastRowTD" colspan="6"></td>
+			</tr>
+         </table>
+		 <a href="#" onClick="parent.location='javascript:history.go(-1)'"><img src="images/bttn_accept.gif" border="0" align="right" vspace="11" hspace="9"></a><a href="#" onClick="parent.location='javascript:history.go(-1)'"><img src="images/bttn_back.gif" width="57" height="18" border="0" align="right" vspace="11"></a><br>
+		
+	<br>
+</div>
+
+<!--
+		<tr>
+        	<td class="lastRowTD" colspan="6"></td>
+		</tr>
+-->
+
+    <p><br/><br/><br/><br/><br/><br/><br/><br/></p>
+
+
+</td>
+<!-- Center Column Ends -->
+
+<!-- Gutter -->
+<td width="15"><img src="/i/clear.gif" width="25" height="1" border="0"></td>
+<!-- Gutter Ends -->
+
+<!-- Gutter -->
+<td width="2"><img src="/i/clear.gif" width="2" height="1" border="0"></td>
+<!-- Gutter Ends -->
+
+</tr>
+</table>
+
+
+
+
+
+<!--webbot bot="Include" U-Include="inc_footer.htm" TAG="BODY" startspan -->
+<!-- Footer Include Begins -->
+<table width="100%" border="0" cellpadding="0" cellspacing="0">
+<!-- TopCoder Links Begins -->
+    <tr><td width="100%" class="footer">
+            <A href="http://www.topcoder.com/" class="footerLinks">Home</A>&#160;&#160;|&#160;&#160;
+            <A href="http://www.topcoder.com/tc?module=Static&d1=about&d2=index" class="footerLinks">About TopCoder</A>&#160;&#160;|&#160;&#160;
+            <A href="http://www.topcoder.com/tc?module=Static&d1=pressroom&d2=index" class="footerLinks">Press Room</A>&#160;&#160;|&#160;&#160;
+            <A href="http://www.topcoder.com/tc?module=Static&d1=about&d2=contactus" class="footerLinks">Contact Us</A>&#160;&#160;|&#160;&#160;
+            <A href="http://www.topcoder.com/tc?module=Static&d1=about&d2=privacy" class="footerLinks">Privacy</A>&#160;&#160;|&#160;&#160;
+            <A href="http://www.topcoder.com/tc?module=Static&d1=about&d2=terms" class="footerLinks">Terms</A></td></tr>
+<!-- TopCoder Links Ends -->
+
+<!-- Member Sites Begins -->
+    <tr><td width="100%" class="footer">
+            <A href="http://www.topcoder.com/tc" class="footerLinks">Developer Center</A>&#160;&#160;|&#160;&#160;
+            <A href="http://www.topcoder.com/corp/?module=Static&d1=corp&d2=index" class="footerLinks">Corporate Services</A>
+<!-- Member Sites Ends -->
+
+    <tr><td height="4" class="footerStripe"><img src="http://www.topcoder.com/i/corp/clear.gif" width="10" height="4" border="0"/></td></tr>
+
+    <tr><td width="100%" class="copyright">Copyright &#169; 2001-2005, TopCoder, Inc. All rights reserved.</td></tr>
+</table>
+<!-- Footer Include Ends -->
+
+
+
+<!--webbot bot="Include" i-checksum="34924" endspan -->
+
+
+
+
+
+</body>
+
+</html>
+
+

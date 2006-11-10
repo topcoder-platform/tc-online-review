@@ -247,7 +247,7 @@ public class ProjectReviewActions extends DispatchAction {
     public ActionForward viewScreening(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response)
         throws BaseException {
-        return viewGenericReview(mapping, form, request, "Screening");
+        return viewGenericReview(mapping, request, "Screening");
     }
 
     /**
@@ -359,7 +359,7 @@ public class ProjectReviewActions extends DispatchAction {
     public ActionForward viewReview(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response)
         throws BaseException {
-        return viewGenericReview(mapping, form, request, "Review");
+        return viewGenericReview(mapping, request, "Review");
     }
 
     /**
@@ -468,7 +468,8 @@ public class ProjectReviewActions extends DispatchAction {
         for (int i = 0; i < review.getNumberOfItems(); ++i) {
             Item item = review.getItem(i);
             for (int j = 0; j < item.getNumberOfComments(); ++j) {
-                if (ActionsHelper.isReviewerComment(item.getComment(j))) {
+                String commentType = item.getComment(j).getCommentType().getName();
+                if (!commentType.equalsIgnoreCase("Aggregation Comment")) {
                     ++allCommentsNum;
                 }
             }
@@ -479,8 +480,8 @@ public class ProjectReviewActions extends DispatchAction {
         String[] aggregatorResponses = new String[review.getNumberOfItems()];
         String[] aggregateFunctions = new String[allCommentsNum];
         Long[] responseTypeIds = new Long[allCommentsNum];
-        int commentIdx = 0;
-        int itemIdx = 0;
+        int commentIndex = 0;
+        int itemIndex = 0;
 
         for (int groupIdx = 0; groupIdx < scorecardTemplate.getNumberOfGroups(); ++groupIdx) {
             Group group = scorecardTemplate.getGroup(groupIdx);
@@ -499,26 +500,25 @@ public class ProjectReviewActions extends DispatchAction {
                         Item item = review.getItem(i);
                         for (int j = 0; j < item.getNumberOfComments(); ++j) {
                             Comment comment = item.getComment(j);
+                            String commentType = comment.getCommentType().getName();
 
-                            if (ActionsHelper.isReviewerComment(comment)) {
+                            if (commentType.equalsIgnoreCase("Comment") || commentType.equalsIgnoreCase("Required") ||
+                                    commentType.equalsIgnoreCase("Recommended")) {
                                 String aggregFunction = (String) comment.getExtraInfo();
                                 if ("Reject".equalsIgnoreCase(aggregFunction)) {
-                                    aggregateFunctions[commentIdx] = "Reject";
+                                    aggregateFunctions[commentIndex] = "Reject";
                                 } else if ("Accept".equalsIgnoreCase(aggregFunction)) {
-                                    aggregateFunctions[commentIdx] = "Accept";
+                                    aggregateFunctions[commentIndex] = "Accept";
                                 } else if ("Duplicate".equalsIgnoreCase(aggregFunction)) {
-                                    aggregateFunctions[commentIdx] = "Duplicate";
+                                    aggregateFunctions[commentIndex] = "Duplicate";
                                 } else {
-                                    aggregateFunctions[commentIdx] = "";
+                                    aggregateFunctions[commentIndex] = "";
                                 }
-                                responseTypeIds[commentIdx] = new Long(comment.getCommentType().getId());
-                                ++commentIdx;
+                                responseTypeIds[commentIndex] = new Long(comment.getCommentType().getId());
+                                ++commentIndex;
                             }
-
-                            final String commentType = comment.getCommentType().getName();
-
                             if (commentType.equalsIgnoreCase("Aggregation Comment")) {
-                                aggregatorResponses[itemIdx++] = comment.getComment();
+                                aggregatorResponses[itemIndex++] = comment.getComment();
                             }
                         }
                     }
@@ -615,7 +615,7 @@ public class ProjectReviewActions extends DispatchAction {
         String[] aggregateFunctions = (String[]) aggregationForm.get("aggregate_function");
         Long[] responseTypeIds = (Long[]) aggregationForm.get("aggregator_response_type");
         int commentIndex = 0;
-        int itemIdx = 0;
+        int itemIndex = 0;
 
         // Obtain an instance of review manager
         ReviewManager revMgr = ActionsHelper.createReviewManager(request);
@@ -668,7 +668,7 @@ public class ProjectReviewActions extends DispatchAction {
                             item.addComment(aggregatorComment);
                         }
 
-                        aggregatorComment.setComment(responses[itemIdx++]);
+                        aggregatorComment.setComment(responses[itemIndex++]);
                         aggregatorComment.setAuthor(resource.getId());
                     }
                 }
@@ -1121,7 +1121,7 @@ public class ProjectReviewActions extends DispatchAction {
             Group group = scorecardTemplate.getGroup(groupIdx);
             for (int sectionIdx = 0; sectionIdx < group.getNumberOfSections(); ++sectionIdx) {
                 Section section = group.getSection(sectionIdx);
-                for (int questionIdx = 0; questionIdx < section.getNumberOfQuestions(); ++questionIdx) {
+                for (int questionIdx = 0; questionIdx < section.getNumberOfQuestions(); ++questionIdx, ++itemIdx) {
                     // Get the ID of the current scorecard template's question
                     final long questionId = section.getQuestion(questionIdx).getId();
 
@@ -1167,7 +1167,6 @@ public class ProjectReviewActions extends DispatchAction {
                             userComment.setExtraInfo("Reject");
                             rejected = true;
                         }
-                        ++itemIdx;
                     }
                 }
             }
@@ -1845,7 +1844,7 @@ public class ProjectReviewActions extends DispatchAction {
     public ActionForward viewApproval(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response)
         throws BaseException {
-        return viewGenericReview(mapping, form, request, "Approval");
+        return viewGenericReview(mapping, request, "Approval");
     }
 
     /**
@@ -3254,7 +3253,7 @@ public class ProjectReviewActions extends DispatchAction {
      *             match either <code>&quot;Screening&quot;</code>, or
      *             <code>&quot;Review&quot;</code>, or <code>&quot;Approval&quot;</code>.
      */
-    private ActionForward viewGenericReview(ActionMapping mapping, ActionForm form, HttpServletRequest request, String reviewType)
+    private ActionForward viewGenericReview(ActionMapping mapping, HttpServletRequest request, String reviewType)
         throws BaseException {
         // Validate parameters
         ActionsHelper.validateParameterNotNull(mapping, "mapping");
@@ -3327,8 +3326,7 @@ public class ProjectReviewActions extends DispatchAction {
             isAllowed = true;
         } else if (myResource != null && verification.getSubmission().getUpload().getOwner() == myResource.getId()) {
             // User is authorized to view review for his submission (when not in Review or in Appeals)
-            if (reviewType != "Review" || !activePhases.contains(Constants.REVIEW_PHASE_NAME) ||
-                    activePhases.contains(Constants.APPEALS_PHASE_NAME)) {
+            if (!activePhases.contains(Constants.REVIEW_PHASE_NAME) || activePhases.contains(Constants.APPEALS_PHASE_NAME)) {
                 isAllowed = true;
             }
         } else if (AuthorizationHelper.hasUserPermission(request, Constants.VIEW_ALL_REVIEWS_PERM_NAME)) {
@@ -3387,9 +3385,8 @@ public class ProjectReviewActions extends DispatchAction {
             }
 
             if (canPlaceAppeal || canPlaceAppealResponse) {
-                // Gather the appeal statuses and item answers
+                // Gather the appeal statuses
                 String[] appealStatuses = new String[verification.getReview().getNumberOfItems()];
-                String[] answers = new String[verification.getReview().getNumberOfItems()];
                 // Message Resources to be used for the Action
                 MessageResources messages = getResources(request);
                 for (int i = 0; i < appealStatuses.length; i++) {
@@ -3398,20 +3395,13 @@ public class ProjectReviewActions extends DispatchAction {
                     if (appeal != null && response == null) {
                         appealStatuses[i] = messages.getMessage("editReview.Appeal.Unresolved");
                     } else if (appeal != null) {
-                        appealStatuses[i] = messages.getMessage("editReview.Appeal.Resolved." + appeal.getExtraInfo());
+                        appealStatuses[i] = messages.getMessage("editReview.Appeal.Resolved");
                     } else {
                         appealStatuses[i] = "";
                     }
-                    
-                    answers[i] = verification.getReview().getItem(i).getAnswer().toString();
                 }
-                // Set review item answers form property
-                ((LazyValidatorForm) form).set("answer", answers);
                 // Place appeal statuses to request
                 request.setAttribute("appealStatuses", appealStatuses);
-
-                // Retrive some look-up data and store it into the request
-                retreiveAndStoreReviewLookUpData(request);
             }
         }
 
@@ -3509,8 +3499,8 @@ public class ProjectReviewActions extends DispatchAction {
     }
 
     /**
-     * This static method validates Aggregation scorecard. In order to pass validation, Aggregation
-     * must have all its aggregate functions to be specified. Per-item comments ae not required.
+     * This static method validates Aggregation scorecard. Aggregation must have all its aggregate
+     * functions to be specified, as well as all aggregator's comments entered for every item.
      *
      * @return <code>true</code> if aggregation scorecard passes validation, <code>false</code>
      *         if it fails it.
@@ -3564,11 +3554,9 @@ public class ProjectReviewActions extends DispatchAction {
                                     commentType.equalsIgnoreCase("Recommended")) {
                                 validateAggregateFunction(request, item.getComment(j), commentIdx++);
                             }
-                            /* Request from David Messinger [11/06/2006]:
-                               No need to verify presence of comments
                             if (commentType.equalsIgnoreCase("Aggregation Comment")) {
                                 validateScorecardComment(request, comment, "aggregator_response[" + itemIdx + "]");
-                            }*/
+                            }
                         }
                     }
                 }

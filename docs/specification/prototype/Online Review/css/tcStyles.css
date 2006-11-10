@@ -1,0 +1,227 @@
+/* GENERAL SITE STYLES */
+html, body {
+font-family: Arial, Helvetica, Verdana, sans-serif;
+line-height: 1.4;
+font-size: 12px;
+color: #333333;
+background-color: #FFFFFF;
+padding: 0px;
+margin: 0px;
+}
+img { border: none }
+A:link { color: #00F;text-decoration: underline; }
+A:visited { color: #006; text-decoration: underline; }
+A:hover, A:active { color: #F00; }
+ul{ margin-left: 10px; padding-left: 10px;}
+li{ padding-top: 2px; padding-bottom: 2px; }
+.noSpace{ margin: 0px; padding: 0px; }
+td, th{ font-family: Arial, Helvetica, Verdana, sans-serif; color: #333333; text-decoration: none; line-height: 1.4; font-size: 12px; }
+H1, H2, H3{ font-family: Arial, Helvetica, Verdana, sans-serif; font-size: 200%; text-decoration: none; }
+H2 { font-size: 150%; }
+H3 { font-size: 125%; }
+
+/* BODY TEXT STYLES */
+.bodyText
+{
+color: #333333;
+font-size: 12px;
+font-weight: normal;
+font-style: normal;
+}
+span.title {
+font-size: 200%;
+text-decoration: none;
+}
+span.subtitle, span.bodySubtitle {
+font-size: 14px;
+font-weight: bold;
+}
+span.bigRed{ color: #F00; font-size: 12px; font-weight: bold; text-decoration: none; }
+A.bigRed:link, A.bigRed:visited, A.bigRed:active { color: #FF0000; text-decoration: underline; }
+A.bigRed:hover { color: #000000; text-decoration: underline;}
+
+td.bodyColumn{ padding: 0px 15px 15px 15px;}
+
+div.fixedWidthBody{ 
+width: 510px;
+padding: 0px;
+margin: 0px auto 0px auto;
+text-align: left;
+}
+div.sectionHeader{
+text-align: left;
+background: #999999 url(/i/stats/headerBG.gif) top center;
+border: 1px solid #999999; 
+font-size: 12px;
+font-weight: bold;
+text-decoration: none;
+padding: 3px 5px 3px 5px;
+margin-bottom: 10px;
+white-space: nowrap;
+}
+
+/* STAT TABLE -- I HAVE MODIFIED BOTTOM-BORDER -- NEW STAT TABLE IS IN new_styles.css -- PETAR
+
+table.stat {
+border: 1px solid #999;
+border-bottom: 7px solid #CCCCCC;
+vertical-align: top;
+padding: 0px;
+}
+table.stat td.title {
+text-align: left;
+background-color: #999999;
+background-image: url(/i/stats/headerBG.gif);
+border-bottom: 1px solid #999999; 
+font-size: 12px;
+font-weight: bold;
+text-decoration: none;
+padding: 3px 5px 3px 5px;
+white-space: nowrap;
+}
+table.stat td.header,table.stat td.headerC,table.stat td.headerR {
+color: #000000;
+font-size: 11px;
+font-weight: bold;
+line-height: 14px;
+padding: 2px 5px 2px 5px;
+background-color: #DDDDDD;
+vertical-align: top;
+}
+table.stat td.headerC { text-align: center }
+table.stat td.headerR { text-align: right }
+table.stat tr.light { background-color: #FFFFFF }
+table.stat tr.dark { background-color: #e7e7e7 }
+table.stat td.field {
+color: #000000;
+font-weight: bold;
+font-size: 11px;
+padding: 1px 5px 1px 5px;
+vertical-align: top;
+}
+table.stat td.value, table.stat td.valueC, table.stat td.valueR {
+font-size: 11px;
+padding: 1px 5px 1px 5px;
+vertical-align: top;
+}
+table.stat td.valueC { text-align: center }
+table.stat td.valueR { text-align: right }
+
+table.stat td a:link { text-decoration: none; }
+table.stat td a:visited { text-decoration: none; }
+table.stat td a:hover { text-decoration: none; }
+table.stat td a:active { text-decoration: none; }
+
+END OF STAT TABLE */
+
+/* LEFT NAV */
+#navbar {
+float: left;
+clear: both;
+background: #FFFFFF url(/i/interface/leftnav_bg.gif) center right repeat-y;
+font-size: 11px;
+font-weight: bold;
+width: 185px; /* width of whole left column is content width + padding */
+padding: 0px 0px 10px 0px;
+margin: 0px;
+}
+#navbar a.highlight:link, #navbar a.highlight:visited, #navbar a.highlight:hover {
+background-color: #990000;
+color: #FFFFFF;
+}
+#navbar ul {
+padding: 0px 0px 0px 3px;
+margin: 0px;
+float: left;
+clear: both;
+}
+#navbar ul li.title {
+text-align: right;
+font-weight: bold;
+padding: 0px 4px 0px 5px;
+margin: 0px;
+border-bottom: 1px solid #CCCCCC;
+}
+#navbar ul li {
+width: 182px;
+float: left;
+clear: both;
+list-style-type: none;
+background: transparent;
+padding: 0px 0px 0px 0px;
+margin: 0px;
+}
+#navbar ul li ul {
+display: none;
+padding: 0px;
+margin: 0px;
+border: 0px;
+}
+#navbar ul.OPEN {
+display: block;
+padding-bottom: 8px;
+}
+#navbar ul.CLOSED {
+display: none;
+padding-bottom: 0px;
+}
+#navbar ul li a.exp:link, #navbar ul li a.exp:visited {
+background-image: url(/i/interface/exp.gif);
+background-repeat: no-repeat;
+background-position: 1px 50%;
+}
+#navbar ul li a.exp_ed:link, #navbar ul li a.exp_ed:visited {
+background-image: url(/i/interface/exp_ed.gif);
+background-repeat: no-repeat;
+background-position: 1px 50%;
+}
+#navbar ul li a.exp:hover { background-image: url(/i/interface/exp_w.gif) }
+#navbar ul li a.exp_ed:hover { background-image: url(/i/interface/exp_ed_w.gif) }
+
+#navbar ul li a:link, #navbar ul li a:visited {
+float: left;
+font-size: 12px;
+line-height: 100%;
+color: #FFCC33;
+text-decoration: none;
+margin: 0px 15px 0px 0px;
+padding: 3px 10px 3px 10px;
+}
+#navbar ul li ul li a:link, #navbar ul li ul li a:visited {
+color: #DDDDDD;
+font-size: 12px;
+line-height: 100%;
+margin: 0px 15px 0px 5px;
+padding: 5px 10px 5px 10px;
+}
+#navbar ul li ul li ul li a:link, #navbar ul li ul li ul li a:visited {
+color: #BBBBBB;
+font-size: 11px;
+line-height: 100%;
+margin: 0px 15px 0px 12px;
+padding: 3px 10px 3px 10px;
+}
+#navbar ul li ul li ul li ul li a:link, #navbar ul li ul li ul li ul li a:visited {
+color: #999999;
+font-size: 11px;
+line-height: 100%;
+margin: 0px 15px 0px 20px;
+}
+#navbar ul li a:hover, #navbar ul li ul li a:hover, #navbar ul li ul li ul li a:hover, #navbar ul li ul li ul li ul li a:hover  {
+color: #000000;
+background-color: #FFFFFF;
+}
+#navbarSearch
+{
+color: #FFFFFF;
+float: left; 
+clear: left; 
+margin: 20px 0px 10px 3px;
+padding: 5px 0px 0px 3px;
+border-top: 1px solid #999999;
+white-space: nowrap; 
+}
+a.gMetal:link { color:#FFCC33;text-decoration: none; }
+a.gMetal:visited { color:#CC9933;text-decoration: none; }
+a.gMetal:hover { color:#AAAAAA;text-decoration: underline; }
+a.gMetal:active { color:#AAAAAA;text-decoration: underline; }

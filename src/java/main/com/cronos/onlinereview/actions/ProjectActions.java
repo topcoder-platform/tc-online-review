@@ -34,6 +34,11 @@ import org.apache.struts.validator.LazyValidatorForm;
 import com.cronos.onlinereview.external.ExternalUser;
 import com.cronos.onlinereview.external.UserRetrieval;
 
+import com.topcoder.util.log.Level;
+import com.topcoder.util.log.Log;
+import com.topcoder.util.log.LogFactory;
+
+
 import com.topcoder.project.phases.CyclicDependencyException;
 import com.topcoder.project.phases.Dependency;
 import com.topcoder.project.phases.Phase;
@@ -85,18 +90,18 @@ import com.topcoder.management.scorecard.data.Scorecard;
  */
 public class ProjectActions extends DispatchAction {
 
-/* TODO: Remove all these logging-related entries
     private final Log logger;
 
     private static java.text.DateFormat dateFormat = new java.text.SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-*/
+
+
 
     /**
      * Creates a new instance of the <code>ProjectActions</code> class.
      */
     public ProjectActions() {
 
-//        logger = LogFactory.getLog("ProjectActions");
+        logger = LogFactory.getLog("ProjectActions");
 
     }
 
@@ -143,7 +148,7 @@ public class ProjectActions extends DispatchAction {
 
         // Populate the default values of some project form fields
         populateProjectFormDefaults((LazyValidatorForm) form);
-
+                
         // Return the success forward
         return mapping.findForward(Constants.SUCCESS_FORWARD_NAME);
     }
@@ -164,9 +169,9 @@ public class ProjectActions extends DispatchAction {
         lazyForm.set("phase_action", 0, "add");
         lazyForm.set("phase_can_open", 0, Boolean.TRUE);
         lazyForm.set("phase_can_close", 0, Boolean.FALSE);
-
+        
         // Populate default phase duration
-        lazyForm.set("addphase_duration", new Integer(ConfigHelper.getDefaultPhaseDuration()));
+        lazyForm.set("addphase_duration", new Integer(ConfigHelper.getDefaultPhaseDuration()));        
     }
 
     /**
@@ -338,11 +343,11 @@ public class ProjectActions extends DispatchAction {
         for (int i = 0; i < phases.length; ++i) {
             form.set("phase_id", i + 1, new Long(phases[i].getId()));
 
-            form.set("phase_can_open", i + 1,
+            form.set("phase_can_open", i + 1, 
                     Boolean.valueOf(phases[i].getPhaseStatus().getName().equals(PhaseStatus.SCHEDULED.getName())));
-            form.set("phase_can_close", i + 1,
+            form.set("phase_can_close", i + 1,  
                     Boolean.valueOf(phases[i].getPhaseStatus().getName().equals(PhaseStatus.OPEN.getName())));
-
+            
             Long phaseTypeId = new Long(phases[i].getPhaseType().getId());
             form.set("phase_type", i + 1, phaseTypeId);
             Integer phaseNumber = (Integer) phaseNumberMap.get(phaseTypeId);
@@ -391,10 +396,6 @@ public class ProjectActions extends DispatchAction {
                         Integer.valueOf((String) phases[i].getAttribute("Submission Number")));
                 form.set("phase_manual_screening", i + 1,
                         Boolean.valueOf("Yes".equals(phases[i].getAttribute("Manual Screening"))));
-            }
-            if (phases[i].getAttribute("Reviewer Number") != null) {
-            	form.set("phase_required_reviewers", i + 1,
-            			Integer.valueOf((String) phases[i].getAttribute("Reviewer Number")));
             }
             if (phases[i].getAttribute("View Response During Appeals") != null) {
                 form.set("phase_view_appeal_responses", i + 1,
@@ -917,12 +918,6 @@ public class ProjectActions extends DispatchAction {
             if (requiredSubmissions != null) {
                 phase.setAttribute("Submission Number", requiredSubmissions.toString());
             }
-            // If the number of required reviewers is specified, set it
-            Integer requiredReviewer = (Integer) lazyForm.get("phase_required_reviewers", i);          
-            if (requiredReviewer != null) {
-            	phase.setAttribute("Reviewer Number", requiredReviewer.toString());
-            }
-            
             Boolean manualScreening = (Boolean) lazyForm.get("phase_manual_screening", i);
             // If the manual screening flag is specified, set it
             if (manualScreening != null) {
@@ -1112,26 +1107,26 @@ public class ProjectActions extends DispatchAction {
      * @throws BaseException
      */
     private void switchProjectPhase(HttpServletRequest request, LazyValidatorForm lazyForm,
-            Phase[] projectPhases, Map phasesJsMap) throws BaseException {
+            Phase[] projectPhases, Map phasesJsMap) throws BaseException {        
 
         // Get name of action to be performed
         String action = (String) lazyForm.get("action");
-
+        
         // Get new current phase id
         String phaseJsId = (String) lazyForm.get("action_phase");
-
-        if (phaseJsId != null && phasesJsMap.containsKey(phaseJsId)) {
-            // Get the phase to be operated on
+        
+        if (phaseJsId != null && phasesJsMap.containsKey(phaseJsId)) {            
+            // Get the phase to be operated on 
             Phase phase = (Phase) phasesJsMap.get(phaseJsId);
-
+            
             // Get the status of phase
-            PhaseStatus phaseStatus = phase.getPhaseStatus();
+            PhaseStatus phaseStatus = phase.getPhaseStatus();            
             // Get the type of the phase
-            PhaseType phaseType = phase.getPhaseType();
-
+            PhaseType phaseType = phase.getPhaseType(); 
+            
             // Obtain an instance of Phase Manager
             PhaseManager phaseManager = ActionsHelper.createPhaseManager(request, true);
-
+            
             if ("close_phase".equals(action)) {
                 //logger.log(Level.INFO, "switchProjectPhase: " + phaseType.getName() +
                 //        " is in " + phaseStatus.getName() + " state");
@@ -1144,7 +1139,7 @@ public class ProjectActions extends DispatchAction {
                     ActionsHelper.addErrorToRequest(request, new ActionMessage(
                             "error.com.cronos.onlinereview.actions.editProject.CannotClosePhase", phaseType.getName()));
                 }
-            } else if ("open_phase".equals(action)) {
+            } else if ("open_phase".equals(action)) {                   
                 //logger.log(Level.INFO, "switchProjectPhase: " + phaseType.getName() +
                 //        " is in " + phaseStatus.getName() + " state");
                 if (phaseStatus.getName().equals(PhaseStatus.SCHEDULED.getName()) && phaseManager.canStart(phase)) {
@@ -1156,7 +1151,7 @@ public class ProjectActions extends DispatchAction {
                     ActionsHelper.addErrorToRequest(request, new ActionMessage(
                             "error.com.cronos.onlinereview.actions.editProject.CannotOpenPhase", phaseType.getName()));
                 }
-            }
+            }                                
         }
     }
 
@@ -1597,9 +1592,7 @@ public class ProjectActions extends DispatchAction {
             HttpServletRequest request, HttpServletResponse response)
         throws BaseException {
 
-/* TODO: Remove all these logging entries from this method
         Date currentDate = new Date();
-*/
         //logger.log(Level.ERROR, "entering listProjects" + dateFormat.format(currentDate));
         //logger.log(Level.ERROR, "gathering user roles" + dateFormat.format(new Date()));
         // Gather the roles the user has for current request
@@ -1624,7 +1617,7 @@ public class ProjectActions extends DispatchAction {
             return mapping.findForward("all");
         }
 
-        //currentDate = new Date();
+        currentDate = new Date();
         //logger.log(Level.ERROR, "obtaining projectmanager " + dateFormat.format(currentDate));
 
         // Obtain an instance of Project Manager
@@ -1632,7 +1625,7 @@ public class ProjectActions extends DispatchAction {
         // This variable will specify the index of active tab on the JSP page
         int activeTab;
         Filter projectsFilter = null;
-        //currentDate = new Date();
+        currentDate = new Date();
         //logger.log(Level.ERROR, "got projectmanager " + dateFormat.format(currentDate));
 
         // Determine projects displayed and index of the active tab
@@ -1695,12 +1688,12 @@ public class ProjectActions extends DispatchAction {
         String[][] myRoles = (myProjects) ? new String[projectCategories.length][] : null;
         String[][] myDeliverables = (myProjects) ? new String[projectCategories.length][] : null;
 
-        //currentDate = new Date();
+        currentDate = new Date();
         //logger.log(Level.ERROR, "fetching listProjects" + dateFormat.format(currentDate));
         // Fetch projects from the database. These projects will require further grouping
         Project[] ungroupedProjects = (projectsFilter != null) ? manager.searchProjects(projectsFilter) :
                 manager.getUserProjects(AuthorizationHelper.getLoggedInUserId(request));
-        //currentDate = new Date();
+        currentDate = new Date();
         //logger.log(Level.ERROR, "done fetching listProjects" + dateFormat.format(currentDate));
         Resource[] allMyResources = null;
 /*****************************************************************************************************************************************/
@@ -1714,7 +1707,7 @@ public class ProjectActions extends DispatchAction {
             for (int i = 0; i < ungroupedProjects.length; ++i) {
                 projectFilters.add(new Long(ungroupedProjects[i].getId()));
             }
-        //currentDate = new Date();
+        currentDate = new Date();
         //logger.log(Level.ERROR, "got project filters: " +  ungroupedProjects.length +" - " + dateFormat.format(currentDate));
 
             Filter filterProjects = new InFilter(ResourceFilterBuilder.PROJECT_ID_FIELD_NAME, projectFilters);
@@ -1722,18 +1715,18 @@ public class ProjectActions extends DispatchAction {
             Filter filter = new AndFilter(Arrays.asList(
                     new Filter[] {filterExtIDname, filterExtIDvalue, filterProjects}));
 
-        //currentDate = new Date();
+        currentDate = new Date();
         //logger.log(Level.ERROR, "begin searchResources" + dateFormat.format(currentDate));
 
             // Obtain an instance of Resource Manager
             ResourceManager resMgr = ActionsHelper.createResourceManager(request);
             // Get all "My" resources for the list of projects
             allMyResources = resMgr.searchResources(filter);
-        //currentDate = new Date();
+        currentDate = new Date();
         //logger.log(Level.ERROR, "end searchResources" + dateFormat.format(currentDate));
 
         }
-        //currentDate = new Date();
+        currentDate = new Date();
 //logger.log(Level.ERROR, "get phase manager" + dateFormat.format(currentDate));
         // Obtain an instance of Phase Manager
         PhaseManager phMgr = ActionsHelper.createPhaseManager(request, false);
@@ -1743,17 +1736,17 @@ public class ProjectActions extends DispatchAction {
         for (int i = 0; i < ungroupedProjects.length; ++i) {
             allProjectIds[i] = ungroupedProjects[i].getId();
         }
-        //currentDate = new Date();
+        currentDate = new Date();
         //logger.log(Level.ERROR, "getting phases phase manager" + dateFormat.format(currentDate));
         com.topcoder.project.phases.Project[] phProjects = phMgr.getPhases(allProjectIds);
-        //currentDate = new Date();
+        currentDate = new Date();
         //logger.log(Level.ERROR, "got phases phase manager" + dateFormat.format(currentDate));
 /*****************************************************************************************************************************************/
-        //currentDate = new Date();
+        currentDate = new Date();
         //logger.log(Level.ERROR, "get message resources" + dateFormat.format(currentDate));
         // Message Resources to be used for this request
         MessageResources messages = getResources(request);
-        //currentDate = new Date();
+        currentDate = new Date();
         //logger.log(Level.ERROR, "got message resources" + dateFormat.format(currentDate));
 
         for (int i = 0; i < projectCategories.length; ++i) {
@@ -1813,7 +1806,7 @@ public class ProjectActions extends DispatchAction {
                     // Get currently open phase end calculate its end date
                     if (activePhases != null && activePhases.length != 0) {
                         phass[counter] = activePhases;
-                        pheds[counter] = activePhases[0].getScheduledEndDate();
+                        pheds[counter] = activePhases[0].calcEndDate();
                     }
 
                     // Retrieve information about my roles, and my current unfinished deliverables
@@ -1847,7 +1840,7 @@ public class ProjectActions extends DispatchAction {
             categoryIconNames[i] = ConfigHelper.getProjectCategoryIconNameSm(projectCategories[i].getName());
         }
 
-        //currentDate = new Date();
+        currentDate = new Date();
         //logger.log(Level.ERROR, "before ungrouped " + dateFormat.format(currentDate));
         if (ungroupedProjects.length != 0 && myProjects) {
             Deliverable[] allMyDeliverables = getDeliverables(
@@ -1857,13 +1850,8 @@ public class ProjectActions extends DispatchAction {
             for (int i = 0; i < projects.length; ++i) {
                 String[] deliverables = new String[projects[i].length];
                 for (int j = 0; j < projects[i].length; ++j) {
-                    String winnerIdStr = (String) projects[i][j].getProperty("Winner External Reference ID");
-                    if (winnerIdStr != null && winnerIdStr.trim().length() == 0) {
-                        winnerIdStr = null;
-                    }
-
                     deliverables[j] = getMyDeliverablesForPhases(
-                            messages, allMyDeliverables, phases[i][j], myResources[i][j], winnerIdStr);
+                            messages, allMyDeliverables, phases[i][j], myResources[i][j]);
                 }
                 myDeliverables[i] = deliverables;
             }
@@ -1880,7 +1868,7 @@ public class ProjectActions extends DispatchAction {
             }
             totalProjectsCount += typeCounts[i];
         }
-        //currentDate = new Date();
+        currentDate = new Date();
         //logger.log(Level.ERROR, "after count " + dateFormat.format(currentDate));
 
         // Place all collected data into the request as attributes
@@ -1902,7 +1890,7 @@ public class ProjectActions extends DispatchAction {
             request.setAttribute("myDeliverables", myDeliverables);
         }
 
-        //currentDate = new Date();
+        currentDate = new Date();
         //logger.log(Level.ERROR, "leaving list projects " + dateFormat.format(currentDate));
 
         // Signal about successfull execution of the Action
@@ -2057,14 +2045,11 @@ public class ProjectActions extends DispatchAction {
      *            an array of phases to look up the deliverables for.
      * @param resources
      *            an array of resources to look up the deliverables for.
-     * @param winnerExtUserId
-     *            an External User ID of the winning user for the project, if any. If there is no
-     *            winner for the project, this parameter must be <code>null</code>.
      * @throws IllegalArgumentException
      *             if parameter <code>messages</code> is <code>null</code>.
      */
-    private static String getMyDeliverablesForPhases(MessageResources messages,
-            Deliverable[] deliverables, Phase[] phases, Resource[] resources, String winnerExtUserId) {
+    private static String getMyDeliverablesForPhases(
+            MessageResources messages, Deliverable[] deliverables, Phase[] phases, Resource[] resources) {
         // Validate parameters
         ActionsHelper.validateParameterNotNull(messages, "messages");
 
@@ -2085,7 +2070,7 @@ public class ProjectActions extends DispatchAction {
             int j = 0;
 
             for (;j < phases.length; ++j) {
-                if (deliverable.getPhase() == phases[j].getId()) {
+                if (deliverable.getPhase() == phases[j].getPhaseType().getId()) {
                     break;
                 }
             }
@@ -2102,16 +2087,6 @@ public class ProjectActions extends DispatchAction {
             // If this deliverable is not for any of the resources, continue the search
             if (j == resources.length) {
                 continue;
-            }
-
-            // Skip deliverables that are not for winning submitter
-            if (winnerExtUserId != null) {
-                Resource resource = resources[j];
-
-                if (resource.getResourceRole().getName().equalsIgnoreCase(Constants.SUBMITTER_ROLE_NAME) &&
-                        !winnerExtUserId.equals(resources[j].getProperty("External Reference ID"))) {
-                    continue;
-                }
             }
 
             // Get the name of the deliverable
