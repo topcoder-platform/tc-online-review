@@ -366,8 +366,10 @@ public class ProjectDetailsActions extends DispatchAction {
             boolean canSeeSubmitters = (isAfterAppealsResponse ||
                     AuthorizationHelper.hasUserPermission(request, Constants.VIEW_ALL_SUBM_PERM_NAME));
 
-            if (submitters == null && canSeeSubmitters) {
-                submitters = ActionsHelper.getAllSubmitters(allProjectResources);
+            if (canSeeSubmitters) {
+                if (submitters == null) {
+                    submitters = ActionsHelper.getAllSubmitters(allProjectResources);
+                }
             } else {
                 submitters = null;
             }
