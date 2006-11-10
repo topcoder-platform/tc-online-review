@@ -157,11 +157,6 @@ public class ProjectDetailsActions extends DispatchAction {
         // Place an information about my payment status into the request
         request.setAttribute("wasPaid", ActionsHelper.determineMyPaymentPaid(myResources));
 
-        // Obtain an instance of Resource Manager
-        ResourceManager resMgr = ActionsHelper.createResourceManager(request);
-        // Get an array of all resources for the project
-        Resource[] allProjectResources = ActionsHelper.getAllResourcesForProject(resMgr, project);
-
         // Obtain an instance of Phase Manager
         PhaseManager phaseMgr = ActionsHelper.createPhaseManager(request, false);
 
@@ -170,27 +165,20 @@ public class ProjectDetailsActions extends DispatchAction {
         phProj.calcEndDate();
         // Get all phases for the current project
         Phase[] phases = phProj.getAllPhases();
-        // Obtain an array of all active phases of the project
-        Phase[] activePhases = ActionsHelper.getActivePhases(phases);
 
         // Place all phases of the project into the request
         request.setAttribute("phases", phases);
 
-        long winnerExtUserId = Long.MIN_VALUE;
-        String winnerExtRefId = (String) project.getProperty("Winner External Reference ID");
-
-        if (winnerExtRefId != null && winnerExtRefId.trim().length() != 0) {
-            winnerExtUserId = Long.parseLong(winnerExtRefId, 10);
-        }
-
-        Deliverable[] deliverables = ActionsHelper.getAllDeliverablesForPhases(
-                ActionsHelper.createDeliverableManager(request), activePhases, allProjectResources, winnerExtUserId);
+        Deliverable[] deliverables = ActionsHelper.getAllDeliverablesForActivePhases(
+                request, ActionsHelper.createDeliverableManager(request));
         Deliverable[] myDeliverables = ActionsHelper.getMyDeliverables(deliverables, myResources);
         Deliverable[] outstandingDeliverables = ActionsHelper.getOutstandingDeliverables(deliverables);
 
         request.setAttribute("myDeliverables", myDeliverables);
         request.setAttribute("outstandingDeliverables", outstandingDeliverables);
 
+        // Obtain an array of all active phases of the project
+        Phase[] activePhases = ActionsHelper.getActivePhases(phases);
         long currentTime = (new Date()).getTime();
 
         // These two arrays will contain Deadline near / Late / Completed codes for deliverables
@@ -207,7 +195,7 @@ public class ProjectDetailsActions extends DispatchAction {
                 myDeliverableDates[i] = deliverable.getCompletionDate();
             } else {
                 Phase phase = ActionsHelper.getPhaseForDeliverable(activePhases, deliverable);
-                myDeliverableDates[i] = phase.getScheduledEndDate();
+                myDeliverableDates[i] = phase.calcEndDate();
             }
         }
         for (int i = 0; i < outstandingDeliverables.length; ++i) {
@@ -216,12 +204,13 @@ public class ProjectDetailsActions extends DispatchAction {
                 outstandingDeliverableDates[i] = deliverable.getCompletionDate();
             } else {
                 Phase phase = ActionsHelper.getPhaseForDeliverable(activePhases, deliverable);
-                outstandingDeliverableDates[i] = phase.getScheduledEndDate();
+                outstandingDeliverableDates[i] = phase.calcEndDate();
             }
         }
 
         String[] myDeliverableLinks = generateDeliverableLinks(request, myDeliverables, phases);
-        String[] outstandingDeliverableUserIds = getDeliverableUserIds(outstandingDeliverables, allProjectResources);
+        String[] outstandingDeliverableUserIds =
+            getDeliverableUserIds(ActionsHelper.createResourceManager(request), outstandingDeliverables);
         String[] outstandingDeliverableSubmissionUserIds =
             getDeliverableSubmissionUserIds(request, outstandingDeliverables);
 
@@ -233,6 +222,8 @@ public class ProjectDetailsActions extends DispatchAction {
         request.setAttribute("outstandingDeliverableUserIds", outstandingDeliverableUserIds);
         request.setAttribute("outstandingDeliverableSubmissionUserIds", outstandingDeliverableSubmissionUserIds);
 
+        Date[] displayedStart = new Date[phases.length];
+        Date[] displayedEnd = new Date[phases.length];
         Date[] originalStart = new Date[phases.length];
         Date[] originalEnd = new Date[phases.length];
         long projectStartTime = phProj.getStartDate().getTime() / (60 * 1000);
@@ -247,16 +238,18 @@ public class ProjectDetailsActions extends DispatchAction {
             // Get a phase for this iteration
             Phase phase = phases[i];
 
-            Date startDate = phase.getScheduledStartDate();
-            Date endDate = phase.getScheduledEndDate();
+            Date startDate = phase.calcStartDate();
+            Date endDate = phase.calcEndDate();
 
             // Get times in minutes
             long startTime = startDate.getTime() / (60 * 1000);
             long endTime = endDate.getTime() / (60 * 1000);
 
-            // Determine the dates to display for start/end dates
-            originalStart[i] = startDate;
-            originalEnd[i] = endDate;
+            // Determine the strings to display for start/end dates
+            displayedStart[i] = startDate;
+            originalStart[i] = phase.getScheduledStartDate();
+            displayedEnd[i] = endDate;
+            originalEnd[i] = phase.getScheduledEndDate();
 
             // Determine offsets and lengths of the bars in Gantt chart, in minutes
             ganttOffsets[i] = startTime - projectStartTime;
@@ -279,6 +272,8 @@ public class ProjectDetailsActions extends DispatchAction {
          */
 
         // Place phases' start/end dates
+        request.setAttribute("displayedStart", displayedStart);
+        request.setAttribute("displayedEnd", displayedEnd);
         request.setAttribute("originalStart", originalStart);
         request.setAttribute("originalEnd", originalEnd);
         request.setAttribute("phaseStatuseCodes", phaseStatuseCodes);
@@ -288,10 +283,15 @@ public class ProjectDetailsActions extends DispatchAction {
         // Place information about used scorecard templates
         request.setAttribute("scorecardTemplates", scorecardTemplates);
 
+        // Obtain an instance of Resource Manager
+        ResourceManager resMgr = ActionsHelper.createResourceManager(request);
+        Resource[] allProjectResources = null;
         ExternalUser[] allProjectExtUsers = null;
 
         // Determine if the user has permission to view a list of resources for the project
         if (AuthorizationHelper.hasUserPermission(request, Constants.VIEW_PROJECT_RESOURCES_PERM_NAME)) {
+            // Get an array of resources for the project
+            allProjectResources = ActionsHelper.getAllResourcesForProject(resMgr, project);
             // Get an array of external users for the corresponding resources
             allProjectExtUsers = getExternalUsersForResources(
                     ActionsHelper.createUserRetrieval(request), allProjectResources);
@@ -366,8 +366,13 @@ public class ProjectDetailsActions extends DispatchAction {
             boolean canSeeSubmitters = (isAfterAppealsResponse ||
                     AuthorizationHelper.hasUserPermission(request, Constants.VIEW_ALL_SUBM_PERM_NAME));
 
-            if (submitters == null && canSeeSubmitters) {
-                submitters = ActionsHelper.getAllSubmitters(allProjectResources);
+            if (canSeeSubmitters) {
+                if (submitters == null) {
+                    if (allProjectResources == null) {
+                        allProjectResources = ActionsHelper.getAllResourcesForProject(resMgr, project);
+                    }
+                    submitters = ActionsHelper.getAllSubmitters(allProjectResources);
+                }
             } else {
                 submitters = null;
             }
@@ -451,20 +456,8 @@ public class ProjectDetailsActions extends DispatchAction {
                     AuthorizationHelper.hasUserPermission(request, Constants.VIEW_RECENT_SUBM_AAR_PERM_NAME);
 
                 if (submissions == null &&
-                        ((mayViewMostRecentAfterAppealsResponse && isAfterAppealsResponse))) {
-                    submissions =
-                        ActionsHelper.getMostRecentSubmissions(ActionsHelper.createUploadManager(request), project);
-                }
-                if (submissions == null &&
-                        AuthorizationHelper.hasUserPermission(request, Constants.VIEW_RECENT_SUBM_PERM_NAME) &&
-                        !AuthorizationHelper.hasUserRole(request, Constants.REVIEWER_ROLE_NAMES)) {
-                    submissions =
-                        ActionsHelper.getMostRecentSubmissions(ActionsHelper.createUploadManager(request), project);
-                }
-                if (submissions == null &&
-                        AuthorizationHelper.hasUserPermission(request, Constants.VIEW_RECENT_SUBM_PERM_NAME) &&
-                        AuthorizationHelper.hasUserRole(request, Constants.REVIEWER_ROLE_NAMES) &&
-                        ActionsHelper.isInOrAfterPhase(phases, phaseIdx, Constants.REVIEW_PHASE_NAME)) {
+                        ((mayViewMostRecentAfterAppealsResponse && isAfterAppealsResponse) ||
+                        AuthorizationHelper.hasUserPermission(request, Constants.VIEW_RECENT_SUBM_PERM_NAME))) {
                     submissions =
                         ActionsHelper.getMostRecentSubmissions(ActionsHelper.createUploadManager(request), project);
                 }
@@ -487,8 +480,7 @@ public class ProjectDetailsActions extends DispatchAction {
                     submissions = upMgr.searchSubmissions(filter);
                 }
                 if (submissions == null &&
-                        AuthorizationHelper.hasUserPermission(request, Constants.VIEW_SCREENER_SUBM_PERM_NAME) &&
-                        ActionsHelper.isInOrAfterPhase(phases, phaseIdx, Constants.SCREENING_PHASE_NAME)) {
+                        AuthorizationHelper.hasUserPermission(request, Constants.VIEW_SCREENER_SUBM_PERM_NAME)) {
                     submissions =
                         ActionsHelper.getMostRecentSubmissions(ActionsHelper.createUploadManager(request), project);
                 }
@@ -536,7 +528,14 @@ public class ProjectDetailsActions extends DispatchAction {
                     phaseGroup.setScreeningTasks((ScreeningTask[]) tasks.toArray(new ScreeningTask[tasks.size()]));
                 }
 
-                Resource[] screeners = ActionsHelper.getResourcesForPhase(allProjectResources, phase);
+                Resource[] screeners = null;
+
+                if (allProjectResources != null) {
+                    screeners = ActionsHelper.getResourcesForPhase(allProjectResources, phase);
+                } else {
+                    screeners = ActionsHelper.getAllResourcesForPhase(
+                            ActionsHelper.createResourceManager(request), phase);
+                }
 
                 phaseGroup.setReviewers(screeners);
 
@@ -620,18 +619,22 @@ public class ProjectDetailsActions extends DispatchAction {
                         Constants.REVIEWER_ROLE_NAME, Constants.ACCURACY_REVIEWER_ROLE_NAME,
                         Constants.FAILURE_REVIEWER_ROLE_NAME, Constants.STRESS_REVIEWER_ROLE_NAME,
                         Constants.OBSERVER_ROLE_NAME});
-                // Determine if the Review phase is closed
-                boolean isReviewClosed =
-                    phase.getPhaseStatus().getName().equalsIgnoreCase(Constants.CLOSED_PH_STATUS_NAME);
-                // Determine if the Appeals phase is open
-                boolean isAppealsOpen = (nextPhase != null &&
-                        nextPhase.getPhaseType().getName().equalsIgnoreCase(Constants.APPEALS_PHASE_NAME) &&
-                        nextPhase.getPhaseStatus().getName().equalsIgnoreCase(Constants.OPEN_PH_STATUS_NAME));
 
                 if (!allowedToSeeReviewLink) {
-                    // Determine if the user is allowed to place appeals and Appeals phase is open
-                    if (isReviewClosed || (isAppealsOpen &&
-                            AuthorizationHelper.hasUserPermission(request, Constants.PERFORM_APPEAL_PERM_NAME))) {
+                    // Determine if the Review phase is closed
+                    boolean isReviewClosed =
+                        phase.getPhaseStatus().getName().equalsIgnoreCase(Constants.CLOSED_PH_STATUS_NAME);
+                    boolean isAppealsOpen = false;
+
+                    // Determine if the Appeals phase is open and user is allowed to put appeals
+                    if (!isReviewClosed && nextPhase != null &&
+                            AuthorizationHelper.hasUserPermission(request, Constants.PERFORM_APPEAL_PERM_NAME) &&
+                            nextPhase.getPhaseType().getName().equalsIgnoreCase(Constants.APPEALS_PHASE_NAME) &&
+                            nextPhase.getPhaseStatus().getName().equalsIgnoreCase(Constants.OPEN_PH_STATUS_NAME)) {
+                        isAppealsOpen = true;
+                    }
+
+                    if (isReviewClosed || isAppealsOpen) {
                         allowedToSeeReviewLink = true;
                     }
                 }
@@ -647,7 +650,12 @@ public class ProjectDetailsActions extends DispatchAction {
                 }
 
                 if (reviewers == null) {
-                    reviewers = ActionsHelper.getResourcesForPhase(allProjectResources, phase);
+                    if (allProjectResources != null) {
+                        reviewers = ActionsHelper.getResourcesForPhase(allProjectResources, phase);
+                    } else {
+                        reviewers = ActionsHelper.getAllResourcesForPhase(
+                                ActionsHelper.createResourceManager(request), phase);
+                    }
                 }
 
                 // Put collected reviewers into the phase group
@@ -711,16 +719,7 @@ public class ProjectDetailsActions extends DispatchAction {
                     ungroupedReviews = new Review[0];
                 }
 
-                boolean canDownloadTestCases =
-                    (isReviewClosed &&
-                            AuthorizationHelper.hasUserPermission(request, Constants.DOWNLOAD_TEST_CASES_PERM_NAME)) ||
-                    (!isReviewClosed &&
-                            AuthorizationHelper.hasUserPermission(request, Constants.DOWNLOAD_TC_DUR_REVIEW_PERM_NAME)) ||
-                    (!isReviewClosed && isAppealsOpen &&
-                            AuthorizationHelper.hasUserPermission(request, Constants.PERFORM_APPEAL_PERM_NAME) &&
-                            AuthorizationHelper.hasUserPermission(request, Constants.DOWNLOAD_TEST_CASES_PERM_NAME));
-
-                if (!reviewerIds.isEmpty() && canDownloadTestCases) {
+                if (!reviewerIds.isEmpty()) {
                     // Obtain an instance of Upload Manager
                     UploadManager upMgr = ActionsHelper.createUploadManager(request);
                     UploadStatus[] allUploadStatuses = upMgr.getAllUploadStatuses();
@@ -837,8 +836,13 @@ public class ProjectDetailsActions extends DispatchAction {
                 Resource winner = ActionsHelper.getWinner(phaseGroup.getSubmitters());
                 phaseGroup.setWinner(winner);
 
-                Resource[] aggregator = ActionsHelper.getResourcesForPhase(allProjectResources, phase);
+                Resource[] aggregator = null;
 
+                if (allProjectResources != null) {
+                    aggregator = ActionsHelper.getResourcesForPhase(allProjectResources, phase);
+                } else {
+                    aggregator = ActionsHelper.getAllResourcesForPhase(resMgr, phase);
+                }
                 if (aggregator == null || aggregator.length == 0) {
                     continue;
                 }
@@ -927,8 +931,13 @@ public class ProjectDetailsActions extends DispatchAction {
                     continue;
                 }
 
-                Resource[] reviewer = ActionsHelper.getResourcesForPhase(allProjectResources, phase);
+                Resource[] reviewer = null;
 
+                if (allProjectResources != null) {
+                    reviewer = ActionsHelper.getResourcesForPhase(allProjectResources, phase);
+                } else {
+                    reviewer = ActionsHelper.getAllResourcesForPhase(resMgr, phase);
+                }
                 if (reviewer == null || reviewer.length == 0) {
                     continue;
                 }
@@ -952,8 +961,13 @@ public class ProjectDetailsActions extends DispatchAction {
                 Resource winner = ActionsHelper.getWinner(phaseGroup.getSubmitters());
                 phaseGroup.setWinner(winner);
 
-                Resource[] approver = ActionsHelper.getResourcesForPhase(allProjectResources, phase);
+                Resource[] approver = null;
 
+                if (allProjectResources != null) {
+                    approver = ActionsHelper.getResourcesForPhase(allProjectResources, phase);
+                } else {
+                    approver = ActionsHelper.getAllResourcesForPhase(resMgr, phase);
+                }
                 if (approver == null || approver.length == 0) {
                     continue;
                 }
@@ -998,50 +1012,50 @@ public class ProjectDetailsActions extends DispatchAction {
         }
 
         request.setAttribute("sendTLNotifications", (sendTLNotifications) ? "On" : "Off");
-        request.setAttribute("passingMinimum", new Float(75.0)); // TODO: Take this value from scorecard template
+
+        request.setAttribute("passingMinimum", new Float(75.0));
 
         // Check permissions
         request.setAttribute("isManager",
-                Boolean.valueOf(AuthorizationHelper.hasUserRole(request, Constants.MANAGER_ROLE_NAME)));
+                new Boolean(AuthorizationHelper.hasUserRole(request, Constants.MANAGER_ROLE_NAME)));
         request.setAttribute("isAllowedToEditProjects",
-                Boolean.valueOf(AuthorizationHelper.hasUserPermission(request, Constants.EDIT_PROJECT_DETAILS_PERM_NAME)));
+                new Boolean(AuthorizationHelper.hasUserPermission(request, Constants.EDIT_PROJECT_DETAILS_PERM_NAME)));
         request.setAttribute("isAllowedToContactPM",
-                Boolean.valueOf(AuthorizationHelper.hasUserPermission(request, Constants.CONTACT_PM_PERM_NAME)));
+                new Boolean(AuthorizationHelper.hasUserPermission(request, Constants.CONTACT_PM_PERM_NAME)));
         request.setAttribute("isAllowedToSetTL",
-                Boolean.valueOf(AuthorizationHelper.hasUserPermission(request, Constants.SET_TL_NOTIFY_PERM_NAME)));
+                new Boolean(AuthorizationHelper.hasUserPermission(request, Constants.SET_TL_NOTIFY_PERM_NAME)));
         request.setAttribute("isAllowedToViewSVNLink",
-                Boolean.valueOf(AuthorizationHelper.hasUserPermission(request, Constants.VIEW_SVN_LINK_PERM_NAME)));
+                new Boolean(AuthorizationHelper.hasUserPermission(request, Constants.VIEW_SVN_LINK_PERM_NAME)));
         request.setAttribute("isAllowedToViewPayment",
-                Boolean.valueOf(AuthorizationHelper.hasUserPermission(request, Constants.VIEW_MY_PAY_INFO_PERM_NAME)));
+                new Boolean(AuthorizationHelper.hasUserPermission(request, Constants.VIEW_MY_PAY_INFO_PERM_NAME)));
         request.setAttribute("isAllowedToViewAllPayment",
-                Boolean.valueOf(AuthorizationHelper.hasUserPermission(request, Constants.VIEW_ALL_PAYMENT_INFO_PERM_NAME)));
+                new Boolean(AuthorizationHelper.hasUserPermission(request, Constants.VIEW_ALL_PAYMENT_INFO_PERM_NAME)));
         request.setAttribute("isAllowedToViewResources",
-                Boolean.valueOf(AuthorizationHelper.hasUserPermission(request, Constants.VIEW_PROJECT_RESOURCES_PERM_NAME)));
+                new Boolean(AuthorizationHelper.hasUserPermission(request, Constants.VIEW_PROJECT_RESOURCES_PERM_NAME)));
         request.setAttribute("isAllowedToPerformScreening",
-                Boolean.valueOf(AuthorizationHelper.hasUserPermission(request, Constants.PERFORM_SCREENING_PERM_NAME) &&
+                new Boolean(AuthorizationHelper.hasUserPermission(request, Constants.PERFORM_SCREENING_PERM_NAME) &&
                         ActionsHelper.getPhase(phases, true, Constants.SCREENING_PHASE_NAME) != null));
         request.setAttribute("isAllowedToViewScreening",
-                Boolean.valueOf(AuthorizationHelper.hasUserPermission(request, Constants.VIEW_SCREENING_PERM_NAME)));
+                new Boolean(AuthorizationHelper.hasUserPermission(request, Constants.VIEW_SCREENING_PERM_NAME)));
         request.setAttribute("isAllowedToEditHisReviews",
-                Boolean.valueOf(AuthorizationHelper.hasUserPermission(
+                new Boolean(AuthorizationHelper.hasUserPermission(
                         request, Constants.VIEW_REVIEWER_REVIEWS_PERM_NAME) &&
                         (ActionsHelper.getPhase(phases, true, Constants.REVIEW_PHASE_NAME) != null ||
                                 ActionsHelper.getPhase(phases, true, Constants.APPEALS_PHASE_NAME) != null ||
                                 ActionsHelper.getPhase(phases, true, Constants.APPEALS_RESPONSE_PHASE_NAME) != null)));
         request.setAttribute("isAllowedToUploadTC",
-                Boolean.valueOf(AuthorizationHelper.hasUserPermission(request, Constants.UPLOAD_TEST_CASES_PERM_NAME)));
+                new Boolean(AuthorizationHelper.hasUserPermission(request, Constants.UPLOAD_TEST_CASES_PERM_NAME)));
         request.setAttribute("isAllowedToPerformAggregation",
-                Boolean.valueOf(AuthorizationHelper.hasUserPermission(request, Constants.PERFORM_AGGREGATION_PERM_NAME)));
+                new Boolean(AuthorizationHelper.hasUserPermission(request, Constants.PERFORM_AGGREGATION_PERM_NAME)));
         request.setAttribute("isAllowedToPerformAggregationReview",
-                Boolean.valueOf(AuthorizationHelper.hasUserPermission(request, Constants.PERFORM_AGGREG_REVIEW_PERM_NAME)));
+                new Boolean(AuthorizationHelper.hasUserPermission(request, Constants.PERFORM_AGGREG_REVIEW_PERM_NAME)));
         request.setAttribute("isAllowedToUploadFF",
-                Boolean.valueOf(AuthorizationHelper.hasUserPermission(request, Constants.PERFORM_FINAL_FIX_PERM_NAME) &&
-                        AuthorizationHelper.getLoggedInUserId(request) == winnerExtUserId));
+                new Boolean(AuthorizationHelper.hasUserPermission(request, Constants.PERFORM_FINAL_FIX_PERM_NAME)));
         request.setAttribute("isAllowedToPerformFinalReview",
-                Boolean.valueOf(ActionsHelper.getPhase(phases, true, Constants.FINAL_REVIEW_PHASE_NAME) != null &&
+                new Boolean(ActionsHelper.getPhase(phases, true, Constants.FINAL_REVIEW_PHASE_NAME) != null &&
                         AuthorizationHelper.hasUserPermission(request, Constants.PERFORM_FINAL_REVIEW_PERM_NAME)));
         request.setAttribute("isAllowedToPerformApproval",
-                Boolean.valueOf(ActionsHelper.getPhase(phases, true, Constants.APPROVAL_PHASE_NAME) != null &&
+                new Boolean(ActionsHelper.getPhase(phases, true, Constants.APPROVAL_PHASE_NAME) != null &&
                         AuthorizationHelper.hasUserPermission(request, Constants.PERFORM_APPROVAL_PERM_NAME)));
 
         return mapping.findForward(Constants.SUCCESS_FORWARD_NAME);
@@ -1148,7 +1162,7 @@ public class ProjectDetailsActions extends DispatchAction {
         // Get the category of the question
         String questionType = request.getParameter("cat");
         // Get question's text
-        String text = "<![CDATA[" + request.getParameter("msg") +"]]>";
+        String text = request.getParameter("msg");
 
         TemplateFields fields = docGenerator.getFields(docTemplate);
         Node[] nodes = fields.getNodes();
@@ -1382,10 +1396,6 @@ public class ProjectDetailsActions extends DispatchAction {
                     mapping, getResources(request), request, "ViewSubmission", "Error.UploadDeleted");
         }
 
-        // Get all phases for the current project (needed to do permission checks)
-        Phase[] phases = ActionsHelper.getPhasesForProject(
-                ActionsHelper.createPhaseManager(request, false), verification.getProject());
-
         boolean noRights = true;
 
         if (AuthorizationHelper.hasUserPermission(request, Constants.VIEW_ALL_SUBM_PERM_NAME)) {
@@ -1403,28 +1413,12 @@ public class ProjectDetailsActions extends DispatchAction {
             }
         }
 
-        if (noRights && AuthorizationHelper.hasUserPermission(request, Constants.VIEW_SCREENER_SUBM_PERM_NAME)) {
-            // Determine whether Screening phase has already been opened (does not have Scheduled status)
-            final boolean isScreeningOpen = ActionsHelper.isInOrAfterPhase(phases, 0, Constants.SCREENING_PHASE_NAME);
-            // If screener tries to download submission before Screening phase opens,
-            // notify him about this wrong-doing and do not let perform the action
-            if (AuthorizationHelper.hasUserRole(request, Constants.SCREENER_ROLE_NAMES) && !isScreeningOpen) {
-                return ActionsHelper.produceErrorReport(
-                        mapping, getResources(request), request, "ViewSubmission", "Error.IncorrectPhase");
-            }
-            noRights = false; // TODO: Check if screener can download this submission
+        if (noRights && AuthorizationHelper.hasUserPermission(request, Constants.VIEW_RECENT_SUBM_PERM_NAME)) {
+            noRights = false;
         }
 
-        if (noRights && AuthorizationHelper.hasUserPermission(request, Constants.VIEW_RECENT_SUBM_PERM_NAME)) {
-            // Determine whether Review phase has already been opened (does not have Scheduled status)
-            final boolean isReviewOpen = ActionsHelper.isInOrAfterPhase(phases, 0, Constants.REVIEW_PHASE_NAME);
-            // If reviewer tries to download submission before Review phase opens,
-            // notify him about this wrong-doing and do not let perform the action
-            if (AuthorizationHelper.hasUserRole(request, Constants.REVIEWER_ROLE_NAMES) && !isReviewOpen) {
-                return ActionsHelper.produceErrorReport(
-                        mapping, getResources(request), request, "ViewSubmission", "Error.IncorrectPhase");
-            }
-            noRights = false;
+        if (noRights && AuthorizationHelper.hasUserPermission(request, Constants.VIEW_SCREENER_SUBM_PERM_NAME)) {
+            noRights = false; // TODO: Check if screener can download this submission
         }
 
         if (noRights && AuthorizationHelper.hasUserPermission(request, Constants.VIEW_WINNING_SUBM_PERM_NAME)) {
@@ -1844,60 +1838,8 @@ public class ProjectDetailsActions extends DispatchAction {
             return verification.getForward();
         }
 
-        Phase[] phases = ActionsHelper.getPhasesForProject(
-                ActionsHelper.createPhaseManager(request, false), verification.getProject());
-
-        boolean isReviewClosed = false;
-        boolean isAppealsOpen = false;
-
-        for (int i = 0; i < phases.length; ++i) {
-            // Get phase's type name for the current iteration
-            String phaseName = phases[i].getPhaseType().getName();
-            // Skip the phase if it is not a Review phase
-            if (!phaseName.equalsIgnoreCase(Constants.REVIEW_PHASE_NAME)) {
-                continue;
-            }
-            // Check if this phase is closed
-            if (phases[i].getPhaseStatus().getName().equalsIgnoreCase(Constants.CLOSED_PH_STATUS_NAME)) {
-                isReviewClosed = true;
-                // Review phase is closed, not need to check anything else
-                break;
-            }
-            // Check that there are more phases, and exit from cycle if current phase is the last
-            if (i + 1 == phases.length) {
-                break;
-            }
-            // Get next phase
-            Phase nextPhase = phases[i + 1];
-            // Check that next phase is Appeals and it is open
-            if (nextPhase.getPhaseType().getName().equalsIgnoreCase(Constants.APPEALS_PHASE_NAME) &&
-                    nextPhase.getPhaseStatus().getName().equalsIgnoreCase(Constants.OPEN_PH_STATUS_NAME)) {
-                isAppealsOpen = true;
-            }
-            // No need to proceed with the cycle anymore
-            break;
-        }
-
-        final boolean canDownload =
-            AuthorizationHelper.hasUserPermission(request, Constants.DOWNLOAD_TEST_CASES_PERM_NAME);
-        final boolean canDownloadDuringReview =
-            AuthorizationHelper.hasUserPermission(request, Constants.DOWNLOAD_TC_DUR_REVIEW_PERM_NAME);
-        final boolean canPlaceAppeals =
-            AuthorizationHelper.hasUserPermission(request, Constants.PERFORM_APPEAL_PERM_NAME);
-
-        // If Review phase is not closed yet, there is a need to check whether the user that is
-        // attempting to download test cases is a Submitter and an Appeals phase is open
-        if (canDownload && canPlaceAppeals && !isReviewClosed && !canDownloadDuringReview && !isAppealsOpen) {
-            return ActionsHelper.produceErrorReport(mapping, getResources(request),
-                    request, Constants.DOWNLOAD_TEST_CASES_PERM_NAME, "Error.IncorrectPhase");
-        }
-        // Verify that user can download test cases during Review
-        if (canDownload && !isReviewClosed && !canDownloadDuringReview) {
-            return ActionsHelper.produceErrorReport(mapping, getResources(request),
-                    request, Constants.DOWNLOAD_TEST_CASES_PERM_NAME, "Error.IncorrectPhase");
-        }
-        // Check that the user is allowed to download test cases in general
-        if (!canDownload) {
+        // Check that user has permissions to download Test Cases
+        if (!AuthorizationHelper.hasUserPermission(request, Constants.DOWNLOAD_TEST_CASES_PERM_NAME)) {
             return ActionsHelper.produceErrorReport(mapping, getResources(request),
                     request, Constants.DOWNLOAD_TEST_CASES_PERM_NAME, "Error.NoPermission");
         }
@@ -2421,15 +2363,6 @@ public class ProjectDetailsActions extends DispatchAction {
         return result;
     }
 
-    /**
-     * TODO: Write docummentation for this method.
-     *
-     * @return
-     * @param phases
-     * @param currentTime
-     * @throws IllegalArgumentException
-     *             if <code>phases</code> parameter is <code>null</code>.
-     */
     private static int[] getPhaseStatusCodes(Phase[] phases, long currentTime) {
         // Validate parameters
         ActionsHelper.validateParameterNotNull(phases, "phases");
@@ -2446,7 +2379,7 @@ public class ProjectDetailsActions extends DispatchAction {
             } else if (phaseStatus.equalsIgnoreCase("Closed")) {
                 statusCodes[i] = 1; // Closed
             } else if (phaseStatus.equalsIgnoreCase("Open")) {
-                long phaseTime = phase.getScheduledEndDate().getTime();
+                long phaseTime = phase.calcEndDate().getTime();
 
                 if (currentTime > phaseTime) {
                     statusCodes[i] = 4; // Late
@@ -2483,7 +2416,7 @@ public class ProjectDetailsActions extends DispatchAction {
             } else {
                 Phase phase = ActionsHelper.getPhaseForDeliverable(activePhases, deliverable);
 
-                long deliverableTime = phase.getScheduledEndDate().getTime();
+                long deliverableTime = phase.calcEndDate().getTime();
                 if (currentTime > deliverableTime) {
                     statusCodes[i] = 2; // Late
                 } else if (currentTime + (2 * 60 * 60 * 1000) > deliverableTime) {
@@ -2702,26 +2635,27 @@ public class ProjectDetailsActions extends DispatchAction {
         return links;
     }
 
-    /**
-     * TODO: Doccument this method.
-     *
-     * @return
-     * @param deliverables
-     * @param resources
-     * @throws BaseException
-     */
-    private static String[] getDeliverableUserIds(Deliverable[] deliverables, Resource[] resources)
+    private static String[] getDeliverableUserIds(ResourceManager manager, Deliverable[] deliverables)
         throws BaseException {
-        // Validate parameters
-        ActionsHelper.validateParameterNotNull(deliverables, "deliverables");
-        ActionsHelper.validateParameterNotNull(resources, "resources");
+        List resourceIds = new ArrayList();
+
+        for (int i = 0; i < deliverables.length; ++i) {
+            resourceIds.add(new Long(deliverables[i].getResource()));
+        }
+
+        if (resourceIds.isEmpty()) {
+            return new String[0];
+        }
+
+        Filter filter = new InFilter("resource.resource_id", resourceIds);
+
+        Resource[] resources = manager.searchResources(filter);
 
         String[] ids = new String[deliverables.length];
 
         for (int i = 0; i < deliverables.length; ++i) {
-            final long deliverableResourceId = deliverables[i].getResource();
             for (int j = 0; j < resources.length; ++j) {
-                if (resources[j].getId() == deliverableResourceId) {
+                if (resources[j].getId() == deliverables[i].getResource()) {
                     ids[i] = (String) resources[j].getProperty("External Reference ID");
                     break;
                 }
@@ -2731,14 +2665,6 @@ public class ProjectDetailsActions extends DispatchAction {
         return ids;
     }
 
-    /**
-     * TODO: Write documentation for this method.
-     *
-     * @return
-     * @param request
-     * @param deliverables
-     * @throws BaseException
-     */
     private static String[] getDeliverableSubmissionUserIds(HttpServletRequest request, Deliverable[] deliverables)
         throws BaseException {
         List submissionIds = new ArrayList();

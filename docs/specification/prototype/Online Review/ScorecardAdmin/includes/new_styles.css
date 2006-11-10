@@ -1,0 +1,63 @@
+*/ ----- Body ----- */
+
+A:link { color:#6688AE;text-decoration:none; }
+A:visited { color:#6688AE;text-decoration:none; }
+A:active { color:#6688AE;text-decoration:none; }
+A:hover { color:#6688AE;text-decoration:underline; }
+
+/* ----- Body Styles ----- */
+html, body, #holder { min-height: 100%; width: 100%; height: 100%;}
+html>body, html>body #holder { height: auto; top: 0; left: 0;}
+body { margin: 0; padding:0; }
+#holder { position: absolute;}
+
+#contentarea { clear:both;width:96%;height:auto;padding-top:25px;padding-left:25px;padding-bottom:150px;font-size:11px; }
+.tableHeader { font-size: 17px;font-weight: normal;font-style: normal;text-align: left;color: #333;background-color: #FFF;padding: 0px 0px 0px 5px; }
+.whiteBkgnd { font-size: 12px;font-weight: bold;font-style: normal;color: #000;font-variant: normal;background-color: #FFF;padding: 5px; }
+.SectionHeader {font-size: 11px;color: #fff;font-weight: bold;font-style: normal;line-height: 14px;text-align: left;background-color: #819DA9;padding: 5px; }
+.ForumQuestion { font-size: 11px; padding-left:35px;padding-right:5px;padding-top:5px;padding-bottom:5px; color: #000;font-weight: normal;font-style: normal;line-height: 14px;text-align: left;background-color: #FFF; }
+.SectionHeaderQ {font-size: 11px;color: #fff;font-weight: bold;font-style: normal;line-height: 14px;text-align: left;background-color: #819DA9;padding-left:35px;padding-right:5px;padding-top:5px;padding-bottom:5px;  }
+.Question { font-size: 11px; color: #000;font-weight: normal;font-style: normal;line-height: 14px;text-align: left; }
+.ExpandCollapse { font-size: 11px; color: #547584;font-weight: bold;font-style: normal;line-height: 14px;text-align: right; }
+
+
+#footer {clear: both;  bottom: 0; left: 0; background: #CCC;  border: none; width: 100%;}
+/* hide from Mac IE5 */
+/* \*/
+#footer {position: absolute; }
+/* */
+
+/* Change in Opera 5+ (and some others) */
+html>body div#footer {
+    position: static;
+}
+
+/* Change back in everything except Opera 5 and 6, still hiding from Mac IE5 */
+/* \*/
+head:first-child+body div#footer {
+    position: absolute;
+}
+/* */
+
+
+A.SectionHeader:link { color: #fff;text-decoration: none; }
+A.SectionHeader:visited { color: #fff;text-decoration: none; }
+A.SectionHeader:hover { color: #FFF;text-decoration: underline; }
+A.SectionHeader:active { color: #FFF;text-decoration: underline; }
+
+
+
+.smallFoot { color: #FFFFFF;font-size: 11px;font-weight: normal; }
+A.smallFoot:link { color: #CCC;text-decoration: none; }
+A.smallFoot:visited { color: #CCC;text-decoration: none; }
+A.smallFoot:hover { color: #FFF;text-decoration: underline; }
+A.smallFoot:active { color: #FFF;text-decoration: underline; }
+
+.Buttons { font-family: "Verdana", "Arial", "Helvetica", sans-serif; font-size: 9px; color: #EEE; font-style: normal; font-weight: bold; background-color: #547584;padding: 0px;  }
+.Buttons2 { font-family: "Verdana", "Arial", "Helvetica", sans-serif; font-size: 9px; color: #EEE; font-style: normal; font-weight: bold; background-color: #819DA9;padding: 0px;  }
+.inputBox { font-size: 10px;height: 16px;font-family: Arial,Verdana;color: #333;border: 1px solid #ccc; }
+.inputBoxQuestion { margin-top:2px;font-size: 10px;height: 28px;width:98%;font-family: Arial,Verdana;color: #333;border: 1px solid #ccc;margin-bottom:3px; }
+.inputBoxGuideline { margin-top:2px;font-size: 10px;height: 46px;width:98%;font-family: Arial,Verdana;color: #333;border: 1px solid #ccc; }
+
+.showText{ display: block;margin-top:5px;margin-bottom:2px; }
+.hideText{ display: none;margin-top:2px;margin-bottom:2px; }

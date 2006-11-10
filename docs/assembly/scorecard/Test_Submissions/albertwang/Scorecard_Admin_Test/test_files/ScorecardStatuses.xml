@@ -1,0 +1,15 @@
+<?xml version="1.0" ?>
+<CMConfig>
+	<Config name="com.cronos.onlinereview.scorecard.functionaltests.ScorecardStatuses">
+			<Property name="1">
+				<Value>Active</Value>
+			</Property>
+			<Property name="2">
+				<Value>Inactive</Value>
+			</Property>
+			<Property name="3">
+				<Value>Deleted</Value>
+			</Property>
+			
+</Config>
+</CMConfig>		

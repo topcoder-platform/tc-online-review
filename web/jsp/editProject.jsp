@@ -33,17 +33,8 @@
 		<c:forEach var="resourceRole" items="${resourceRoles}">
 			resourceRoleToPhaseTypeMap[${resourceRole.id}] = "${empty resourceRole.phaseType ? 'null' : resourceRole.phaseType}";
 		</c:forEach>
-		
-		var projectCategories = [];
-		<c:forEach var="category" items="${projectCategories}">
-			projectCategories.push({});
-			projectCategories[projectCategories.length - 1]["id"] = ${category.id};
-			projectCategories[projectCategories.length - 1]["projectType"] = ${category.projectType.id};		
-			// TODO: Localize the catagory name
-			projectCategories[projectCategories.length - 1]["name"] = "${category.name}";			
-		</c:forEach>
-					
-		/*	
+
+		/*
 		 * TODO: Document it
 		 */
 		function getUniqueId() {
@@ -68,25 +59,6 @@
 				comboNode.add(option, option.selectedIndex);
 			}
 		}
-	
-		/*
-		 * TODO: Document it.
-		 */
-		function onProjectTypeChange(projectTypeNode) {
-			var projectCategoryNode = document.getElementsByName("project_category")[0];
-			// Clear combo options
-			while (projectCategoryNode.length > 0) {
-				projectCategoryNode.remove(projectCategoryNode.length - 1);
-			}
-			// Add new combo options
-			for (var i = 0; i < projectCategories.length; i++) {
-				if (projectTypeNode.value == projectCategories[i]["projectType"]) {
-					addComboOption(projectCategoryNode, 
-						projectCategories[i]["name"], projectCategories[i]["id"]);
-				}
-			}
-		} 
-		 
 
 		/*
 		 * This function adds a new row to resources table.
@@ -499,19 +471,10 @@
 			actionNode.form.submit();
 		}
 		
-		
-		// To be done on page load
-		function onLoad() {
-			var projectCategoryNode = document.getElementsByName("project_category")[0];
-			if (projectCategoryNode.length == 0) {
-				onProjectTypeChange(document.getElementsByName("project_type")[0]);
-			}
-		}
-		
 	//--></script>
 </head>
 
-<body onload="onLoad();">
+<body>
 	<jsp:include page="/includes/inc_header.jsp" />
 
 	<table width="100%" border="0" cellpadding="0" cellspacing="0">
@@ -570,8 +533,7 @@
 								<tr class="dark">
 									<td width="9%" class="valueB"><bean:message key="editProject.ProjectDetails.Type" /></td>
 									<td width="91%" class="value" nowrap="nowrap">
-										<html:select styleClass="inputBox" property="project_type" style="width:150px"
-												onchange="onProjectTypeChange(this);">
+										<html:select styleClass="inputBox" property="project_type" style="width:150px">
 											<c:forEach items="${projectTypes}" var="type">
 												<html:option key='ProjectType.${fn:replace(type.name, " ", "")}.plural' value="${type.id}" />
 											</c:forEach>
@@ -581,11 +543,9 @@
 								<tr class="light">
 									<td class="valueB"><bean:message key="editProject.ProjectDetails.Category" /></td>
 									<td class="value" nowrap="nowrap">
-										<html:select styleClass="inputBox" property="project_category" style="width:150px;">				
+										<html:select styleClass="inputBox" property="project_category" style="width:150px;">
 											<c:forEach items="${projectCategories}" var="category">
-												<c:if test="${category.projectType.id eq projectForm.map['project_type']}">
-													<html:option key='ProjectCategory.${fn:replace(category.name, " ", "")}' value="${category.id}" />
-												</c:if>
+												<html:option key='ProjectCategory.${fn:replace(category.name, " ", "")}' value="${category.id}" />
 											</c:forEach>
 										</html:select>
 									</td>
@@ -609,10 +569,6 @@
 									<td class="lastRowTD" colspan="2"><!-- @ --></td>
 								</tr>
 							</table><br />
-						</c:if>
-						<c:if test="${not newProject}">
-							<html:hidden property="project_type" />
-							<html:hidden property="project_category" />
 						</c:if>
 
 						<%-- If editing the exsiting project, include timeline editor here --%>

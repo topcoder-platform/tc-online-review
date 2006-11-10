@@ -3,7 +3,10 @@
  */
 package com.cronos.onlinereview.actions;
 
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -1234,13 +1237,7 @@ public class ActionsHelper {
         return roles.toString();
     }
 
-    /**
-     * TODO: Write docs for this method.
-     *
-     * @return
-     * @param myResources
-     */
-    public static Double determineMyPayment(Resource[] myResources) {
+    public static String determineMyPayment(Resource[] myResources) {
         double totalPayment = -1.0; // -1 will mean N/A
 
         for (int i = 0; i < myResources.length; ++i) {
@@ -1257,15 +1254,15 @@ public class ActionsHelper {
             }
         }
 
-        return (totalPayment != -1.0) ? new Double(totalPayment) : null;
+        if (totalPayment == -1.0) {
+            return null;
+        }
+
+        NumberFormat nf = new DecimalFormat("#,###.##");
+
+        return nf.format(totalPayment);
     }
 
-    /**
-     * TODO: Write docs for this method.
-     *
-     * @return
-     * @param myResources
-     */
     public static Boolean determineMyPaymentPaid(Resource[] myResources) {
         for (int i = 0; i < myResources.length; ++i) {
             // Get a resource for the current iteration
@@ -1420,7 +1417,7 @@ public class ActionsHelper {
         validateParameterNotNull(deliverable, "deliverable");
 
         for (int i = 0; i < phases.length; ++i) {
-            if (phases[i].getId() == deliverable.getPhase()) {
+            if (phases[i].getPhaseType().getId() == deliverable.getPhase()) {
                 return phases[i];
             }
         }
@@ -1580,14 +1577,6 @@ public class ActionsHelper {
         return (Resource[]) submitters.toArray(new Resource[submitters.size()]);
     }
 
-    /**
-     * TODO: Doccument this method.
-     *
-     * @return
-     * @param resources
-     * @throws IllegalArgumentException
-     *             if <code>resources</code> parameter is <code>null</code>.
-     */
     public static Resource getWinner(Resource[] resources) {
         // Validate parameter
         validateParameterNotNull(resources, "resources");
@@ -1731,18 +1720,15 @@ public class ActionsHelper {
      * This method returns either completed or incomplete deliverables.
      *
      * @return an array of deliverables.
+     * @param request
+     *            an <code>HttpServeltRequest</code> object that contains additional information
+     *            such as current project and a list of all phases for that project.
      * @param manager
      *            an instance of the <code>DeliverableManager</code> class.
-     * @param phases
-     *            an array of pahses to search deliverables for.
-     * @param resources
-     *            an array of all resource? for the current project.
-     * @param winnerExtUserId
-     *            an External User ID of the user who is the winner for the project. If there is no
-     *            winner for the project, this parameter must be negative.
      * @throws IllegalArgumentException
-     *             if any of the <code>manager</code>, <code>phases</code> or
-     *             <code>resources</code> parameters are <code>null</code>.
+     *             if any of the parameters are <code>null</code>, or if request specified by
+     *             <code>request</code> parameter does not contain needed prerequisites, such as
+     *             an object representing current project and a list of all phases for that project.
      * @throws DeliverablePersistenceException
      *             if an error occurs while reading from the persistence store.
      * @throws SearchBuilderException
@@ -1751,101 +1737,58 @@ public class ActionsHelper {
      *             if an error occurs when determining whether a Deliverable has been completed or
      *             not.
      */
-    public static Deliverable[] getAllDeliverablesForPhases(
-            DeliverableManager manager, Phase[] phases, Resource[] resources, long winnerExtUserId)
+    public static Deliverable[] getAllDeliverablesForActivePhases(
+            HttpServletRequest request, DeliverableManager manager)
         throws DeliverablePersistenceException, SearchBuilderException, DeliverableCheckingException {
         // Validate parameters
         validateParameterNotNull(manager, "manager");
-        validateParameterNotNull(phases, "phases");
+        Project project = (Project) validateAttributeNotNull(request, "project");
+        Phase[] phases = (Phase[]) validateAttributeNotNull(request, "phases");
 
+        // Prepare filter to search for deliverables for specific project
+        Filter filterProject = DeliverableFilterBuilder.createProjectIdFilter(project.getId());
         // A filter to search for deliverables for specific phase(s) of the project
-        Filter filter = null;
+        Filter filterPhases = null;
 
-        switch (phases.length) {
+        // Obtain an array of all active phases of the project
+        Phase[] activePhases = getActivePhases(phases);
+
+        switch (activePhases.length) {
         case 0:
-            // No phases -- no deliverables
+            // No active phases -- no deliverables
             return new Deliverable[0];
 
         case 1:
-            // If there is only one phase in the provided array,
+            // If there is currently only one active phase,
             // create filter for it directly (no OR filters needed)
-            filter = DeliverableFilterBuilder.createPhaseIdFilter(phases[0].getId());
+            filterPhases = DeliverableFilterBuilder.createPhaseIdFilter(activePhases[0].getId());
             break;
 
         default:
             List phaseFilters = new ArrayList();
-            // Prepare a list of filters for each phase in the array of phases
-            for (int i = 0; i < phases.length; ++i) {
-                phaseFilters.add(DeliverableFilterBuilder.createPhaseIdFilter(phases[i].getId()));
+            // Prepare a list of filters for each phase in the array of active phases
+            for (int i = 0; i < activePhases.length; ++i) {
+                phaseFilters.add(DeliverableFilterBuilder.createPhaseIdFilter(activePhases[i].getId()));
             }
             // Combine all filters using OR operator
-            filter = new OrFilter(phaseFilters);
+            filterPhases = new OrFilter(phaseFilters);
         }
 
+        // Build final combined filter
+        Filter filter = new AndFilter(filterProject, filterPhases);
+
+        // TODO: Verify the following sections of code and clean it up eventually
+
         // Perform a search for the deliverables
-        Deliverable[] allDeliverables = manager.searchDeliverables(filter, null);
+        Deliverable[] deliverablesNoSubm = manager.searchDeliverables(filterPhases, null);
+        // The following command causes problems. That's strange...
+//        Deliverable[] deliverablesSubm = manager.searchDeliverablesWithSubmissionFilter(filterPhases, null);
 
         List deliverables = new ArrayList();
 
-        // Additionally filter deliverables because sometimes deliverables
-        // for another phases get though the above filter
-        for (int i = 0; i < allDeliverables.length; ++i) {
-            // Get an ID of resource this deliverable is for
-            final long deliverableResourceId = allDeliverables[i].getResource();
-            Resource forResource = null;
-            int j;
-            // Find a resource this deliverable is for
-            for (j = 0; j < resources.length; ++j) {
-                if (resources[j].getId() == deliverableResourceId) {
-                    forResource = resources[j];
-                    break;
-                }
-            }
-            // There must be a resource associated with this deliverable, but
-            // in case there isn't skip this deliverable for safety
-            if (forResource == null) {
-                continue;
-            }
+        deliverables.addAll(Arrays.asList(deliverablesNoSubm));
+//        deliverables.addAll(Arrays.asList(deliverablesSubm));
 
-            // Make sure this is the correct resource first. Some deliverables are
-            // assigned to resources not in their phase, and that's still considered correct
-            final String resourceRole = forResource.getResourceRole().getName();
-            // If found resource is associated with a phase,
-            // make sure this phase is among ones the deliverables needed for
-            if (forResource.getPhase() != null &&
-                    (resourceRole.equalsIgnoreCase(Constants.FINAL_REVIEWER_ROLE_NAME) ||
-                    resourceRole.equalsIgnoreCase(Constants.AGGREGATOR_ROLE_NAME) ||
-                    resourceRole.equalsIgnoreCase(Constants.APPROVER_ROLE_NAME))) {
-                final long resourcePhaseId = forResource.getPhase().longValue();
-                for (j = 0; j < phases.length; ++j) {
-                    if (phases[j].getId() == resourcePhaseId) {
-                        break;
-                    }
-                }
-                // No phases for this resource, wrong deliverable, skip it
-                if (j == phases.length) {
-                    continue;
-                }
-            }
-
-            // If there is a winner for the project,
-            // verify that the current deliverable is not for non-winning submitter
-            if (winnerExtUserId > 0) {
-                // Check that found resource is submitter and non-winner. The deliverable will
-                // be skipped in this case. In all other cases it will be added to the list
-                if (resourceRole.equalsIgnoreCase(Constants.SUBMITTER_ROLE_NAME)) {
-                    if (winnerExtUserId !=
-                            Long.parseLong((String) forResource.getProperty("External Reference ID"), 10)) {
-                        continue;
-                    }
-                }
-            }
-
-            // Add current deliverable to the list of deliverables
-            deliverables.add(allDeliverables[i]);
-        }
-
-        // Convert the list of deliverables into array and return it
         return (Deliverable[]) deliverables.toArray(new Deliverable[deliverables.size()]);
     }
 
@@ -1990,36 +1933,6 @@ public class ActionsHelper {
         Project project = manager.getProject(upload.getProject());
         // Return the project
         return project;
-    }
-
-    /**
-     * This static method // TODO: should be documented
-     *
-     * @return
-     * @param phases
-     * @param phaseIndex
-     * @param phaseName
-     * @throws IllegalArgumentException
-     *             if <code>phases</code> parameter is <code>null</code> or if
-     *             <code>phaseIndex</code> parameter is not within valid range of the array
-     *             specified by <code>phases</code> parameter (thus, there is no way to pass an
-     *             empty array to this method).
-     */
-    public static boolean isInOrAfterPhase(Phase[] phases, int phaseIndex, String phaseName) {
-        // Validate parameters
-        validateParameterNotNull(phases, "phases");
-        validateParameterInRange(phaseIndex, "phaseIndex", 0, phases.length - 1);
-        validateParameterStringNotEmpty(phaseName, "phaseName");
-
-        for (int i = phaseIndex; i < phases.length; ++i) {
-            // Get a phase for the current iteration
-            final Phase phase = phases[i];
-
-            if (phase.getPhaseType().getName().equalsIgnoreCase(phaseName)) {
-                return (!phase.getPhaseStatus().getName().equalsIgnoreCase(Constants.SCHEDULED_PH_STATUS_NAME));
-            }
-        }
-        return false;
     }
 
     /**
