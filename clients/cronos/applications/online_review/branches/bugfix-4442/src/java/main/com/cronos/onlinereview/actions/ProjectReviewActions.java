@@ -683,6 +683,7 @@ public class ProjectReviewActions extends DispatchAction {
             // Set the completed status of the review
             review.setCommitted(true);
 
+/* TODO: Remove this block completely when Online Review Phases has appropriate fixes
             // Obtain an instance of Resource Manager
             ResourceManager resMgr = ActionsHelper.createResourceManager(request);
             Phase reviewPhase = ActionsHelper.getPhase(phases, false, Constants.REVIEW_PHASE_NAME);
@@ -711,7 +712,7 @@ public class ProjectReviewActions extends DispatchAction {
             comment.setAuthor(submitter.getId());
             comment.setExtraInfo("Approving");
             comment.setComment("");
-            review.addComment(comment);
+            review.addComment(comment);*/
         } else if (previewRequested) {
             // Put the review object into the request
             request.setAttribute("review", review);
