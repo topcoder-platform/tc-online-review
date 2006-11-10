@@ -83,7 +83,7 @@
 						<tr>
 							<td class="value" colspan="2">
 								<strong><bean:message key="login.forgotPassword" /></strong><br/>
-								<bean:message key="login.cannotRememberPassword1" /> <a href="http://<%=ApplicationServer.SERVER_NAME%>/tc?&module=PasswordEmail"><bean:message key="clickHere" /></a> <bean:message key="login.cannotRememberPassword2" /><br /><br />
+								<bean:message key="login.cannotRememberPassword1" /> <a href="http://<%=ApplicationServer.SERVER_NAME%>/tc?&module=RecoverPassword"><bean:message key="clickHere" /></a> <bean:message key="login.cannotRememberPassword2" /><br /><br />
 								<strong><bean:message key="login.newToTopCoder" /></strong><br/>
 								<a href="https://<%=ApplicationServer.SERVER_NAME%>/reg/"><bean:message key="login.registerNow" /></a> <bean:message key="login.afterYouCompleteTheRegProcess" />
 							</td>
