@@ -46,6 +46,7 @@ import com.topcoder.search.builder.filter.InFilter;
 import com.topcoder.util.errorhandling.BaseException;
 
 import com.topcoder.date.workdays.DefaultWorkdays;
+import com.topcoder.date.workdays.DefaultWorkdaysFactory;
 import com.topcoder.management.deliverable.Deliverable;
 import com.topcoder.management.deliverable.DeliverableManager;
 import com.topcoder.management.deliverable.persistence.DeliverableCheckingException;
@@ -748,7 +749,7 @@ public class ProjectActions extends DispatchAction {
             // Create new Phases Project
             // TODO: Use real values for date and workdays, not the test ones
             // TODO: Handle the situation of project being edited
-            phProject = new com.topcoder.project.phases.Project(new Date(), new DefaultWorkdays());
+            phProject = new com.topcoder.project.phases.Project(new Date(), (new DefaultWorkdaysFactory()).createWorkdaysInstance());
         } else {
             // Retrive the Phases Project with the id equal to the id of specified Project
             phProject = phaseManager.getPhases(project.getId());
