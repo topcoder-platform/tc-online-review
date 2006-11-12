@@ -33,18 +33,6 @@ import org.apache.struts.validator.LazyValidatorForm;
 
 import com.cronos.onlinereview.external.ExternalUser;
 import com.cronos.onlinereview.external.UserRetrieval;
-
-import com.topcoder.project.phases.CyclicDependencyException;
-import com.topcoder.project.phases.Dependency;
-import com.topcoder.project.phases.Phase;
-import com.topcoder.project.phases.PhaseStatus;
-import com.topcoder.project.phases.PhaseType;
-import com.topcoder.search.builder.SearchBuilderException;
-import com.topcoder.search.builder.filter.AndFilter;
-import com.topcoder.search.builder.filter.Filter;
-import com.topcoder.search.builder.filter.InFilter;
-import com.topcoder.util.errorhandling.BaseException;
-
 import com.topcoder.date.workdays.DefaultWorkdays;
 import com.topcoder.management.deliverable.Deliverable;
 import com.topcoder.management.deliverable.DeliverableManager;
@@ -65,6 +53,16 @@ import com.topcoder.management.resource.search.ResourceFilterBuilder;
 import com.topcoder.management.scorecard.ScorecardManager;
 import com.topcoder.management.scorecard.ScorecardSearchBundle;
 import com.topcoder.management.scorecard.data.Scorecard;
+import com.topcoder.project.phases.CyclicDependencyException;
+import com.topcoder.project.phases.Dependency;
+import com.topcoder.project.phases.Phase;
+import com.topcoder.project.phases.PhaseStatus;
+import com.topcoder.project.phases.PhaseType;
+import com.topcoder.search.builder.SearchBuilderException;
+import com.topcoder.search.builder.filter.AndFilter;
+import com.topcoder.search.builder.filter.Filter;
+import com.topcoder.search.builder.filter.InFilter;
+import com.topcoder.util.errorhandling.BaseException;
 
 /**
  * This class contains Struts Actions that are meant to deal with Projects. There are following
@@ -164,6 +162,7 @@ public class ProjectActions extends DispatchAction {
         lazyForm.set("phase_action", 0, "add");
         lazyForm.set("phase_can_open", 0, Boolean.TRUE);
         lazyForm.set("phase_can_close", 0, Boolean.FALSE);
+        lazyForm.set("phase_use_duration", 0, Boolean.TRUE);
 
         // Populate default phase duration
         lazyForm.set("addphase_duration", new Integer(ConfigHelper.getDefaultPhaseDuration()));
@@ -375,8 +374,22 @@ public class ProjectActions extends DispatchAction {
 
             populateDatetimeFormProperties(form, "phase_end_date", "phase_end_time", "phase_end_AMPM", i + 1,
                     phases[i].calcEndDate());
-
-            form.set("phase_duration", i + 1, new Integer((int) (phases[i].getLength() / 3600 / 1000)));
+            // always use duration
+            form.set("phase_use_duration", i + 1, Boolean.TRUE);
+            
+            // populate the phase duration
+            long phaseLength = phases[i].getLength();
+            String phaseDuration = "";
+            if (phaseLength % (3600*1000) == 0) {
+            	phaseDuration = "" + phaseLength / (3600 * 1000);
+            } else {
+            	long hour = phaseLength / 3600 / 1000;
+            	long min = (phaseLength % (3600 * 1000)) / 1000 / 60;
+            	phaseDuration = hour + ":" + (min >= 10 ? "" + min : "0" + min);
+            }
+            
+            
+            form.set("phase_duration", i + 1, phaseDuration);
 
             // Populate phase criteria
             if (phases[i].getAttribute("Scorecard ID") != null) {
@@ -770,23 +783,87 @@ public class ProjectActions extends DispatchAction {
         List phaseList = new ArrayList();
 
         // FIRST PASS
-        // 0-index phase is skipped as it is a "dummy" one
+        // 0-index phase is skipped since it is a "dummy" one
         for (int i = 1; i < phaseTypes.length; i++) {
             Phase phase = null;
 
             // Check what is the action to be performed with the phase
             // and obtain Phase instance in appropriate way
             String phaseAction = (String) lazyForm.get("phase_action", i);
+            
+            ////////////////////////////////
+            // Add new phase
+            ////////////////////////////////
             if ("add".equals(phaseAction)) {
-                // Create new phase
-                // TODO: Check if the phase duration is specified as
-                // just number of hours or as "hrs:min", also check the untis of measure
-                phase = new Phase(phProject, ((Integer) lazyForm.get("phase_duration", i)).longValue() * 3600 * 1000);
-                // Add it to Phases Project
-                phProject.addPhase(phase);
-                // Add the phase to the list
-                phaseList.add(phase);
-            }  else {
+				// Create a Phase using a default length 0 first
+				phase = new Phase(phProject, 0);
+				
+                // Set phase type
+                phase.setPhaseType(ActionsHelper.findPhaseTypeById(allPhaseTypes, phaseTypes[i].longValue()));
+                // Set phase status to "Scheduled"
+                phase.setPhaseStatus(PhaseStatus.SCHEDULED);
+
+				// Get the start phase
+				if (Boolean.FALSE.equals(lazyForm.get("phase_start_by_phase", i))) {
+					// Get phase start date from form
+					Date phaseStartDate = parseDatetimeFormProperties(lazyForm, i, "phase_start_date",
+							"phase_start_time", "phase_start_AMPM");
+					
+					// Set phase fixed start date
+					phase.setFixedStartDate(phaseStartDate);
+					phase.setScheduledStartDate(phase.calcStartDate());
+				}
+
+				// flag value indicates using end date or using duration
+				boolean useDuration = true;
+				// length of the phase
+				long length;
+
+				useDuration = ((Boolean) lazyForm.get("phase_use_duration", i)).booleanValue();
+				
+
+				// If phase duration was not specified
+				if (!useDuration) {
+					// Get phase end date from form
+					Date phaseEndDate = parseDatetimeFormProperties(lazyForm, i, "phase_end_date", "phase_end_time",
+							"phase_end_AMPM");
+					
+					// Calculate phase length
+					length = phaseEndDate.getTime() - phase.getFixedStartDate().getTime();
+						
+					// Check if the end date of phase goes after the start date
+					if (length < 0) {
+						ActionsHelper.addErrorToRequest(request,
+								new ActionMessage("error.com.cronos.onlinereview.actions.editProject.StartAfterEnd",
+										phase.getPhaseType().getName()));
+						break;
+					} else {
+						// Set phase duration appropriately
+						phase.setLength(length);
+					}
+				} else {
+
+					String duration = (String) lazyForm.get("phase_duration", i);
+					String[] parts = duration.split(":");
+
+					if (parts.length == 1) {
+						// use hh format
+						length = Long.parseLong(duration) * 3600 * 1000;
+					} else {
+						// use hh:mm format
+						length = (Long.parseLong(parts[0]) * 60 + Long.parseLong(parts[1])) * 60 * 1000;
+					}
+
+				}
+
+				phase.setLength(length);
+				phase.setScheduledEndDate(phase.calcEndDate());
+				
+				// Add it to Phases Project
+				phProject.addPhase(phase);
+				// Add the phase to the list
+				phaseList.add(phase);
+			}  else {
                 long phaseId = ((Long) lazyForm.get("phase_id", i)).longValue();
                 if (phaseId != -1) {
                     // Retrieve the phase with the specified id
@@ -799,15 +876,71 @@ public class ProjectActions extends DispatchAction {
                     phase.setFixedStartDate(null);
                 } else {
                     // -1 value as id marks the phases that were't persisted in DB yet
-                    // and so should be skipped for actions other then "add"
+                    // and so should be skipped for actions other than "add"
                     continue;
                 }
             }
-
+            
+            
+            /////////////////////////////
+            // Update existing phase
+            /////////////////////////////
             // If action is "update", update phase duration, put the phase to the map
             if ("update".equals(phaseAction)) {
+            	
+                // Get the start phase
+            	if (Boolean.FALSE.equals(lazyForm.get("phase_start_by_phase", i))) {
+                    // Get phase start date from form
+                    Date phaseStartDate = parseDatetimeFormProperties(lazyForm, i, "phase_start_date",
+                            "phase_start_time", "phase_start_AMPM");
+                    // Set phase fixed start date
+                    phase.setFixedStartDate(phaseStartDate);
+                    phase.setScheduledStartDate(phase.calcStartDate());
+                }
+            	
+               // flag value indicates using end date or using duration
+                boolean useDuration = true;
+                // the length of the phase
+                long length;
+                
+                useDuration = ((Boolean) lazyForm.get("phase_use_duration", i)).booleanValue();
+                
+
+                // If phase duration was not specified
+                if (!useDuration) {
+                    // Get phase end date from form
+                    Date phaseEndDate = parseDatetimeFormProperties(lazyForm, i,
+                            "phase_end_date", "phase_end_time", "phase_end_AMPM");
+
+                    // Calculate phase length
+                    length = phaseEndDate.getTime() - phase.getFixedStartDate().getTime();
+                    // Check if the end date of phase goes after the start date
+                    if (length < 0) {
+                        ActionsHelper.addErrorToRequest(request, new ActionMessage(
+                                "error.com.cronos.onlinereview.actions.editProject.StartAfterEnd",
+                                phase.getPhaseType().getName()));
+                        break;
+                    } else {
+                        // Set phase duration appropriately
+                        phase.setLength(length);
+                    }
+                } else {
+
+					String duration = (String) lazyForm.get("phase_duration", i);
+					String[] parts = duration.split(":");
+
+					if (parts.length == 1) {
+						// use hh format
+						length = Long.parseLong(duration) * 3600 * 1000;
+					} else {
+						// use hh:mm format
+						length = (Long.parseLong(parts[0]) * 60 + Long.parseLong(parts[1])) * 60 * 1000;
+					}
+
+				}
+            	
                 // Set phase duration
-                phase.setLength(((Integer) lazyForm.get("phase_duration", i)).longValue() * 3600 * 1000);
+                phase.setLength(length);
                 // Add the phase to the list
                 phaseList.add(phase);
             }
@@ -829,6 +962,7 @@ public class ProjectActions extends DispatchAction {
         // SECOND PASS
         for (int i = 1; i < phaseTypes.length; i++) {
             Object phaseObj = phasesJsMap.get(lazyForm.get("phase_js_id", i));
+            
             // If phase is not found in map, it is to be deleted
             if (phaseObj == null) {
                 long phaseId = ((Long) lazyForm.get("phase_id", i)).longValue();
@@ -1009,15 +1143,22 @@ public class ProjectActions extends DispatchAction {
 
                     // Set scheduled start date to calculated start date
                     phase.setScheduledStartDate(phase.calcStartDate());
+                    
+                    // flag value indicates using end date or using duration
+                    boolean useDuration = true;
+                    
+                    useDuration = ((Boolean) lazyForm.get("phase_use_duration", paramIndex)).booleanValue();
+                    
 
                     // If phase duration was not specified
-                    if (((Integer) lazyForm.get("phase_duration", paramIndex)).intValue() <= 0) {
+                    if (!useDuration) {
                         // Get phase end date from form
                         Date phaseEndDate = parseDatetimeFormProperties(lazyForm, paramIndex,
                                 "phase_end_date", "phase_end_time", "phase_end_AMPM");
-
+                        
                         // Calculate phase length
-                        long length = phaseEndDate.getTime() - phase.getScheduledStartDate().getTime();
+                        long length = phaseEndDate.getTime() - phase.getFixedStartDate().getTime();
+                        
                         // Check if the end date of phase goes after the start date
                         if (length < 0) {
                             ActionsHelper.addErrorToRequest(request, new ActionMessage(
@@ -1032,6 +1173,7 @@ public class ProjectActions extends DispatchAction {
 
                     // Set sheduled phase end date to calculated end datehase
                     phase.setScheduledEndDate(phase.calcEndDate());
+                    
                 } catch (CyclicDependencyException e) {
                     // There is circular dependency, report it and stop processing
                     // TODO: Report the particular phases
