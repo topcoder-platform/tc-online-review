@@ -4,6 +4,7 @@
 package com.cronos.onlinereview.actions;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -42,6 +43,8 @@ import com.cronos.onlinereview.phases.PRRegistrationPhaseHandler;
 import com.cronos.onlinereview.phases.PRReviewPhaseHandler;
 import com.cronos.onlinereview.phases.PRScreeningPhaseHandler;
 import com.cronos.onlinereview.phases.PRSubmissionPhaseHandler;
+import com.topcoder.date.workdays.DefaultWorkdaysFactory;
+import com.topcoder.date.workdays.Workdays;
 import com.topcoder.db.connectionfactory.ConfigurationException;
 import com.topcoder.db.connectionfactory.DBConnectionFactory;
 import com.topcoder.db.connectionfactory.DBConnectionFactoryImpl;
@@ -75,6 +78,7 @@ import com.topcoder.management.project.ProjectCategory;
 import com.topcoder.management.project.ProjectManager;
 import com.topcoder.management.project.ProjectManagerImpl;
 import com.topcoder.management.project.ProjectStatus;
+import com.topcoder.management.project.ProjectType;
 import com.topcoder.management.resource.Resource;
 import com.topcoder.management.resource.ResourceManager;
 import com.topcoder.management.resource.ResourceRole;
@@ -99,6 +103,13 @@ import com.topcoder.management.scorecard.data.Section;
 import com.topcoder.project.phases.Phase;
 import com.topcoder.project.phases.PhaseStatus;
 import com.topcoder.project.phases.PhaseType;
+import com.topcoder.project.phases.template.DefaultPhaseTemplate;
+import com.topcoder.project.phases.template.PhaseTemplate;
+import com.topcoder.project.phases.template.PhaseTemplatePersistence;
+import com.topcoder.project.phases.template.StartDateGenerationException;
+import com.topcoder.project.phases.template.StartDateGenerator;
+import com.topcoder.project.phases.template.persistence.XmlPhaseTemplatePersistence;
+import com.topcoder.project.phases.template.startdategenerator.RelativeWeekTimeStartDateGenerator;
 import com.topcoder.search.builder.SearchBuilderConfigurationException;
 import com.topcoder.search.builder.SearchBuilderException;
 import com.topcoder.search.builder.SearchBundle;
@@ -127,10 +138,15 @@ public class ActionsHelper {
 
     /**
      * This member variable is a string constant that defines the name of the configurtaion
-     * namespace which the parameters for database connection factory is stored under.
+     * namespace which the parameters for database connection factory are stored under.
      */
     private static final String DB_CONNECTION_NAMESPACE = "com.topcoder.db.connectionfactory.DBConnectionFactoryImpl";
 
+    /**
+     * This member variable is a string constant that defines the name of the configurtaion
+     * namespace which the parameters for Phases Template persistence are stored under.
+     */
+    private static final String PHASES_TEMPLATE_PERSISTENCE_NAMESPACE = "com.topcoder.project.phases.template.persistence.XmlPhaseTemplatePersistence";
 
     /**
      * This constructor is declared private to prohibit instantiation of the
@@ -2624,6 +2640,45 @@ public class ActionsHelper {
         return fileUpload;
     }
 
+    /**
+     * This static method helps to create an object of the <code>PhaseTemplate</code> class.
+     *
+     * @return a newly created instance of the class.
+     * @param projectType
+     *            a project type for which the PhaseTemplate object should be created, 
+     *            can be null if start date generator type doesn't matter
+     * @throws IllegalArgumentException
+     *             if <code>request</code> parameter is <code>null</code>.
+     * @throws BaseException
+     *             if any error happens during object creation.
+     */
+    public static PhaseTemplate createPhaseTemplate(ProjectType projectType) throws BaseException {
+        // Create phase template persistence
+        PhaseTemplatePersistence persistence = new XmlPhaseTemplatePersistence(PHASES_TEMPLATE_PERSISTENCE_NAMESPACE);
+        // Create start date generator
+        StartDateGenerator generator;
+        if ("Component".equals(projectType)) {
+            // TODO: Specify conf. namespace
+            generator = new RelativeWeekTimeStartDateGenerator("");
+        } else {
+            // Create start date generator which always returns current date
+            generator = new StartDateGenerator() {
+                public Date generateStartDate() {
+                    return new Date();
+                }                
+            };
+        }
+        
+        // Create workdays instance
+        Workdays workdays = (new DefaultWorkdaysFactory()).createWorkdaysInstance();
+        
+        // Create phase template instance
+        PhaseTemplate phaseTemplate = new DefaultPhaseTemplate(persistence, generator, workdays );
+        
+        return phaseTemplate;
+    }
+    
+    
     /**
      * Sets the searchable fields to the search bundle.
      *
