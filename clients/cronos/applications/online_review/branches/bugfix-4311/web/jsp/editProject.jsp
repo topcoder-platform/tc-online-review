@@ -204,6 +204,12 @@
 							break;
 						}
 					}
+					for (var i = 0; i < destInputs.length; i++) {
+						if (selectedValue != null && destInputs[i].value != selectedValue) {
+							destInputs[i].checked = false;
+							destInputs[i].defaultChecked = false;
+						}
+					}
 				} else {
 					destInputs[0].value = srcInputs[0].value;
 				}
@@ -338,7 +344,7 @@
 			var inputNames = ["type",
 				"start_date", "start_time", "start_AMPM",
 				"start_by_phase", "start_phase", "start_when",
-				"start_plusminus", "start_amount", "start_dayshrs",
+				"start_plusminus", "start_amount", "start_dayshrs", "use_duration",
 				"end_date", "end_time", "end_AMPM", "duration"];
 			for (var i = 0; i < inputNames.length; i++) {
 				populatePhaseParam(newRow, addPhaseTable, inputNames[i], lastPhaseIndex);
