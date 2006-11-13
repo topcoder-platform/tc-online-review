@@ -47,6 +47,12 @@
 			projectCategories[projectCategories.length - 1]["name"] = "${category.name}";			
 		</c:forEach>
 		
+		var projectTypeNamesMap = {};
+		<c:forEach var="projectType" items="${projectTypes}">
+			projectTypeNamesMap["${projectType.id}"] = "${projectType.name}";
+		</c:forEach>
+		
+		
 		var phaseTypeIdsMap = {};
 		<c:forEach var="phaseType" items="${phaseTypes}">
 			phaseTypeIdsMap["${phaseType.name}"] = "${phaseType.id}";
@@ -278,14 +284,14 @@
 		/*
 		 * TODO: Document it.
 		 */
-		function createNewPhaseRow(phaseName, phaseTypeId) {
+		function createNewPhaseRow(phaseName, phaseTypeId, _phaseId) {
 			// Retrieve timeline table
 			var timelineTable = document.getElementById("timeline_tbl");
 			// Retrieve add phase table
 			var addPhaseTable = document.getElementById("addphase_tbl");
 			
 			// Generate phase id (for use in the DOM)
-			var phaseId = getUniqueId();
+			var phaseId = _phaseId ? _phaseId : getUniqueId();
 
 			// Create a new row to represent the phase
 			var newRow = cloneInputRow(document.getElementById("phase_row_template"));
@@ -535,16 +541,6 @@
 			// Get html-encoded template name
 			var templateName = htmlEncode(templateNameNode.value);
 			
-			/*
-			// Find project type input node
-			var projectTypeNode = document.getElementsByName("project_type")[0];
-			// TODO: Make it dependent on project type name instead of id
-			var specifyStartDate = true;
-			if (projectTypeNode.value == "1") {
-				// For component the start date will be generated automatically
-				specifyStartDate = false;
-			}*/
-				
 			// assemble the request XML
 			var content =
 				'<?xml version="1.0" ?>' +
@@ -553,11 +549,9 @@
 				'<parameter name="TemplateName">' +
 				templateName +
 				'</parameter>' +
-				/*(specifyStartDate 
-					? ('<parameter name="StartDate">' + new Date() + '</parameter>' ) 
-					: ''
-				) */
-				'<parameter name="StartDate">11.11.2006 11:00 pm</parameter>' + '</parameters>' +
+				'<parameter name="ProjectTypeName">' + 
+				projectTypeNamesMap[document.getElementsByName("project_type")[0].value] + 
+				'</parameter>' + '</parameters>' +
 				'</request>';
 
 			// Send the AJAX request
@@ -596,10 +590,14 @@
 			
 			// Add new project phases
 			var phaseNodes = templateXML.getElementsByTagName("phase");
+			var phaseRows = []; 
+			// PASS 1
 			for (var i = 0; i < phaseNodes.length; i++)  {
 				var phaseName = phaseNodes[i].getAttribute("type");
+				var phaseId = phaseNodes[i].getAttribute("id");
 				var phaseTypeId = phaseTypeIdsMap[phaseName];
-				var newPhaseRow = createNewPhaseRow(phaseName, phaseTypeId);
+				var newPhaseRow = createNewPhaseRow(phaseName, phaseTypeId, "template_" + phaseId);
+				phaseRows[i] = newPhaseRow;
 				timelineTable.tBodies[0].appendChild(newPhaseRow);
 				
 				var startDate = dojo.dom.textContent(phaseNodes[i].getElementsByTagName("start-date")[0]);
@@ -614,8 +612,33 @@
 				
 				getChildByNamePrefix(newPhaseRow, "phase_end_date").value = endDateParts[0];
 				getChildByNamePrefix(newPhaseRow, "phase_end_time").value = endDateParts[1];
-				getChildByNamePrefix(newPhaseRow, "phase_end_AMPM").value = endDateParts[2].toLowerCase();	
+				getChildByNamePrefix(newPhaseRow, "phase_end_AMPM").value = endDateParts[2].toLowerCase();
+				
+				var duration = parseInt(dojo.dom.textContent(phaseNodes[i].getElementsByTagName("length")[0])) / 3600; 
+				getChildByNamePrefix(newPhaseRow, "phase_duration").value = duration;	
+	
 			}
+			// PASS 2
+			for (var i = 0; i < phaseNodes.length; i++) {
+				var newPhaseRow = phaseRows[i];
+				var dependencies = phaseNodes[i].getElementsByTagName("dependency");
+				var phaseStartButtons = getChildrenByNamePrefix(newPhaseRow, "start_by_phase");
+				for (var j = 0; j < phaseStartButtons.length; j++) {
+					if (phaseStartButtons[j].value == "true") {
+						phaseStartButtons[j].selected = (dependencies.length != 0);
+					} else {
+						phaseStartButtons[j].selected = (dependencies.length == 0);
+					}
+				}
+			
+				if (dependencies.length != 0) {
+					var dependencyId =  dojo.dom.textContent(dependencies[0].getElementsByTagName("dependency-phase-id")[0]);
+					var dependencyStart =  dojo.dom.textContent(dependencies[0].getElementsByTagName("dependency-phase-start")[0]);
+					getChildByNamePrefix(newPhaseRow, "phase_start_phase").value = "template_" + dependencyId;
+					getChildByNamePrefix(newPhaseRow, "phase_start_when").value = dependencyStart ? "starts" : "ends";			
+				}
+			}
+			
 		}
 		
 		// To be done on page load
