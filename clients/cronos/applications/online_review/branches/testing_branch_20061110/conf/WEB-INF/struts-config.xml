@@ -72,7 +72,8 @@
             <form-property name="phase_end_date" type="java.lang.String[]" />
             <form-property name="phase_end_time" type="java.lang.String[]" />
             <form-property name="phase_end_AMPM" type="java.lang.String[]" />
-            <form-property name="phase_duration" type="java.lang.Integer[]" />
+            <form-property name="phase_use_duration" type="java.lang.Boolean[]" />
+            <form-property name="phase_duration" type="java.lang.String[]" />
 
             <form-property name="phase_required_registrations" type="java.lang.Integer[]" />
             <form-property name="phase_required_submissions" type="java.lang.Integer[]" />
