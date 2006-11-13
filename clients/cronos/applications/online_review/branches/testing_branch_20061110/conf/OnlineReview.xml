@@ -83,7 +83,6 @@
                     <Value>com.cronos.onlinereview.login.authenticator.SecurityManagerAuthenticator</Value>
                 </Property>
             </Property>
-            <!-- 
             <Property name="ORAuthenticator">
                 <Property name="class">
                     <Value>com.cronos.onlinereview.login.authenticator.SecurityManagerAuthenticator</Value>
@@ -92,7 +91,6 @@
                     <Value>com.cronos.onlinereview.login.authenticator.SecurityManagerAuthenticator</Value>
                 </Property>
             </Property>
-            -->
         </Property>
     </Config>
 
