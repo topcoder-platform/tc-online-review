@@ -1,0 +1,20 @@
+
+---- This is maximum line length marker. No lines text should extend past it |
+---------------------------------------------------------------------------- |
+
+
+=====  Clearing orphanned spaces in some particular file automatically
+  Perform the following steps:
+   1. Open the file you want to perform clean up in (you might skip this step
+      if you have been working on the file and have it opened already)
+   2. Go to the beginning of file [Ctrl+Home] (this might be unneeded, not
+      verfied yet, so perform it for safety)
+   3. Bring up Find/Replace dialog box [Ctrl+F]
+   4. Type "[ \t]+$" as Find expression (without quotes)
+   5. Clear Replace With field
+   6. Make sure "Regular expressions" checkbox is checked
+   7. Click "Replace All" button
+
+
+---------------------------------------------------------------------------- |
+---- This is maximum line length marker. No lines text should extend past it |

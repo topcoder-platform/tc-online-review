@@ -1,0 +1,258 @@
+INFO Thread-1 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - Wed Oct 04 15:04:40 CST 2006 - 22454558 - 56418:Final Review - END - AutoPilotJob
+INFO Thread-1 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - Wed Oct 04 15:04:58 CST 2006 - 22454558 - 56418:Final Review - END - AutoPilotJob
+INFO Thread-1 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - Wed Oct 04 15:05:19 CST 2006 - 22454558 - 56418:Final Review - END - AutoPilotJob
+INFO Thread-1 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - start process phases, project: 14803754
+INFO Thread-1 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - end process phases, project: 14803754
+INFO Thread-1 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - exit process phases, project: 14803754
+INFO Thread-1 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - start process phases, project: 14865802
+INFO Thread-1 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - end process phases, project: 14865802
+INFO Thread-1 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - exit process phases, project: 14865802
+INFO Thread-1 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - start process phases, project: 15047751
+INFO Thread-1 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - end process phases, project: 15047751
+INFO Thread-1 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - exit process phases, project: 15047751
+INFO Thread-1 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - start process phases, project: 15139239
+INFO Thread-1 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - end process phases, project: 15139239
+INFO Thread-1 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - exit process phases, project: 15139239
+INFO Thread-1 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - start process phases, project: 16004241
+INFO Thread-1 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - end process phases, project: 16004241
+INFO Thread-1 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - exit process phases, project: 16004241
+INFO Thread-1 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - start process phases, project: 16004287
+INFO Thread-1 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - end process phases, project: 16004287
+INFO Thread-1 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - exit process phases, project: 16004287
+INFO Thread-1 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - start process phases, project: 16004352
+INFO Thread-1 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - end process phases, project: 16004352
+INFO Thread-1 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - exit process phases, project: 16004352
+INFO Thread-1 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - start process phases, project: 20887248
+INFO Thread-1 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - end process phases, project: 20887248
+INFO Thread-1 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - exit process phases, project: 20887248
+INFO Thread-2 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - start process phases, project: 14803754
+INFO Thread-2 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - end process phases, project: 14803754
+INFO Thread-2 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - exit process phases, project: 14803754
+INFO Thread-2 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - start process phases, project: 14865802
+INFO Thread-2 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - end process phases, project: 14865802
+INFO Thread-2 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - exit process phases, project: 14865802
+INFO Thread-1 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - start process phases, project: 21394248
+INFO Thread-1 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - end process phases, project: 21394248
+INFO Thread-1 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - exit process phases, project: 21394248
+INFO Thread-2 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - start process phases, project: 15047751
+INFO Thread-2 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - end process phases, project: 15047751
+INFO Thread-2 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - exit process phases, project: 15047751
+INFO Thread-1 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - start process phases, project: 22101294
+INFO Thread-1 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - end process phases, project: 22101294
+INFO Thread-1 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - exit process phases, project: 22101294
+INFO Thread-2 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - start process phases, project: 15139239
+INFO Thread-2 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - end process phases, project: 15139239
+INFO Thread-2 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - exit process phases, project: 15139239
+INFO Thread-1 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - start process phases, project: 22101328
+INFO Thread-1 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - end process phases, project: 22101328
+INFO Thread-1 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - exit process phases, project: 22101328
+INFO Thread-2 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - start process phases, project: 16004241
+INFO Thread-2 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - end process phases, project: 16004241
+INFO Thread-2 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - exit process phases, project: 16004241
+INFO Thread-1 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - start process phases, project: 22269072
+INFO Thread-1 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - end process phases, project: 22269072
+INFO Thread-1 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - exit process phases, project: 22269072
+INFO Thread-2 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - start process phases, project: 16004287
+INFO Thread-2 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - end process phases, project: 16004287
+INFO Thread-2 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - exit process phases, project: 16004287
+INFO Thread-1 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - start process phases, project: 22454558
+INFO Thread-1 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - end process phases, project: 22454558
+INFO Thread-1 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - exit process phases, project: 22454558
+INFO Thread-2 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - start process phases, project: 16004352
+INFO Thread-2 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - end process phases, project: 16004352
+INFO Thread-2 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - exit process phases, project: 16004352
+INFO Thread-1 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - start process phases, project: 22461530
+INFO Thread-1 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - Wed Oct 04 15:19:54 CST 2006 - 22461530 - 56458:Final Review - END - AutoPilotJob
+INFO Thread-2 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - start process phases, project: 20887248
+INFO Thread-2 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - end process phases, project: 20887248
+INFO Thread-2 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - exit process phases, project: 20887248
+INFO Thread-1 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - Wed Oct 04 15:20:17 CST 2006 - 22461530 - 56458:Final Review - END - AutoPilotJob
+INFO Thread-2 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - start process phases, project: 21394248
+INFO Thread-2 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - end process phases, project: 21394248
+INFO Thread-2 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - exit process phases, project: 21394248
+INFO Thread-1 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - Wed Oct 04 15:20:42 CST 2006 - 22461530 - 56458:Final Review - END - AutoPilotJob
+INFO Thread-3 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - start process phases, project: 14803754
+INFO Thread-3 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - end process phases, project: 14803754
+INFO Thread-3 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - exit process phases, project: 14803754
+INFO Thread-1 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - start process phases, project: 14803754
+INFO Thread-1 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - end process phases, project: 14803754
+INFO Thread-1 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - exit process phases, project: 14803754
+INFO Thread-1 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - start process phases, project: 14865802
+INFO Thread-1 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - end process phases, project: 14865802
+INFO Thread-1 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - exit process phases, project: 14865802
+INFO Thread-1 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - start process phases, project: 15047751
+INFO Thread-1 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - phase id : 47355 status: Closed
+INFO Thread-1 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - phase id : 47354 status: Open
+INFO Thread-1 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - Wed Oct 04 15:52:43 CST 2006 - 15047751 - 47354:Submission - END - AutoPilotJob
+INFO Thread-1 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - phase id : 47356 status: Scheduled
+INFO Thread-1 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - Wed Oct 04 15:53:12 CST 2006 - 15047751 - 47356:Screening - START - AutoPilotJob
+INFO Thread-1 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - phase id : 47357 status: Scheduled
+INFO Thread-1 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - phase id : 47362 status: Scheduled
+INFO Thread-1 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - phase id : 47363 status: Scheduled
+INFO Thread-1 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - phase id : 47358 status: Scheduled
+INFO Thread-1 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - phase id : 47359 status: Scheduled
+INFO Thread-1 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - phase id : 47360 status: Scheduled
+INFO Thread-1 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - phase id : 47361 status: Scheduled
+INFO Thread-1 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - phase id : 47355 status: Closed
+INFO Thread-1 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - phase id : 47354 status: Open
+INFO Thread-1 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - Wed Oct 04 15:53:40 CST 2006 - 15047751 - 47354:Submission - END - AutoPilotJob
+INFO Thread-1 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - phase id : 47356 status: Scheduled
+INFO Thread-1 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - Wed Oct 04 15:53:58 CST 2006 - 15047751 - 47356:Screening - START - AutoPilotJob
+INFO Thread-1 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - phase id : 47357 status: Scheduled
+INFO Thread-1 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - phase id : 47362 status: Scheduled
+INFO Thread-1 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - phase id : 47363 status: Scheduled
+INFO Thread-1 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - phase id : 47358 status: Scheduled
+INFO Thread-1 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - phase id : 47359 status: Scheduled
+INFO Thread-1 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - phase id : 47360 status: Scheduled
+INFO Thread-1 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - phase id : 47361 status: Scheduled
+INFO Thread-1 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - phase id : 47355 status: Closed
+INFO Thread-1 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - phase id : 47354 status: Open
+INFO Thread-1 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - Wed Oct 04 15:54:18 CST 2006 - 15047751 - 47354:Submission - END - AutoPilotJob
+INFO Thread-1 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - phase id : 47356 status: Scheduled
+INFO Thread-1 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - Wed Oct 04 15:54:41 CST 2006 - 15047751 - 47356:Screening - START - AutoPilotJob
+INFO Thread-1 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - phase id : 47357 status: Scheduled
+INFO Thread-1 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - phase id : 47362 status: Scheduled
+INFO Thread-1 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - phase id : 47363 status: Scheduled
+INFO Thread-1 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - phase id : 47358 status: Scheduled
+INFO Thread-1 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - phase id : 47359 status: Scheduled
+INFO Thread-1 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - phase id : 47360 status: Scheduled
+INFO Thread-1 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - phase id : 47361 status: Scheduled
+INFO Thread-1 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - phase id : 47355 status: Closed
+INFO Thread-1 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - phase id : 47354 status: Open
+INFO Thread-1 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - Wed Oct 04 15:55:02 CST 2006 - 15047751 - 47354:Submission - END - AutoPilotJob
+INFO Thread-1 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - phase id : 47356 status: Scheduled
+INFO Thread-1 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - Wed Oct 04 15:55:24 CST 2006 - 15047751 - 47356:Screening - START - AutoPilotJob
+INFO Thread-1 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - phase id : 47357 status: Scheduled
+INFO Thread-1 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - phase id : 47362 status: Scheduled
+INFO Thread-1 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - phase id : 47363 status: Scheduled
+INFO Thread-1 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - phase id : 47358 status: Scheduled
+INFO Thread-1 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - phase id : 47359 status: Scheduled
+INFO Thread-1 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - phase id : 47360 status: Scheduled
+INFO Thread-1 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - phase id : 47361 status: Scheduled
+INFO Thread-1 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - phase id : 47355 status: Closed
+INFO Thread-1 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - phase id : 47354 status: Open
+INFO Thread-1 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - Wed Oct 04 15:55:42 CST 2006 - 15047751 - 47354:Submission - END - AutoPilotJob
+INFO Thread-1 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - phase id : 47356 status: Scheduled
+INFO Thread-1 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - start process phases, project: 14803754
+INFO Thread-1 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - end process phases, project: 14803754
+INFO Thread-1 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - exit process phases, project: 14803754
+INFO Thread-1 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - start process phases, project: 14865802
+INFO Thread-1 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - end process phases, project: 14865802
+INFO Thread-1 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - exit process phases, project: 14865802
+INFO Thread-1 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - start process phases, project: 15047751
+INFO Thread-1 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - phase id : 47355 status: Closedphasecom.topcoder.project.phases.Phase@d73c7a
+INFO Thread-1 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - phase id : 47354 status: Openphasecom.topcoder.project.phases.Phase@79ed7f
+INFO Thread-1 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - Wed Oct 04 17:31:59 CST 2006 - 15047751 - 47354:Submission - END - AutoPilotJob
+INFO Thread-1 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - Wed Oct 04 17:32:16 CST 2006 - 15047751 - 47356:Screening - START - AutoPilotJob
+INFO Thread-1 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - Wed Oct 04 17:38:51 CST 2006 - 22491482 - 56530:Appeals Response - END - AutoPilotJob
+INFO Thread-1 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - Wed Oct 04 17:39:06 CST 2006 - 22491482 - 56525:Aggregation - START - AutoPilotJob
+INFO Thread-1 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - Wed Oct 04 17:39:51 CST 2006 - 22493892 - 56568:Final Review - END - AutoPilotJob
+INFO Thread-1 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - Wed Oct 04 17:40:40 CST 2006 - 22503004 - 56571:Submission - END - AutoPilotJob
+INFO Thread-1 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - Wed Oct 04 17:41:08 CST 2006 - 22503004 - 56573:Screening - START - AutoPilotJob
+INFO Thread-1 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - Wed Oct 04 17:41:56 CST 2006 - 22527673 - 56598:Final Review - END - AutoPilotJob
+INFO Thread-1 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - Wed Oct 04 17:43:11 CST 2006 - 22527753 - 56617:Final Fix - END - AutoPilotJob
+INFO Thread-1 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - Wed Oct 04 17:43:26 CST 2006 - 22527753 - 56618:Final Review - START - AutoPilotJob
+INFO Thread-1 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - Wed Oct 04 17:44:12 CST 2006 - 22527787 - 56628:Final Review - END - AutoPilotJob
+INFO Thread-1 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - Wed Oct 04 17:44:58 CST 2006 - 22527981 - 56638:Final Review - END - AutoPilotJob
+INFO Thread-1 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - Wed Oct 04 17:46:17 CST 2006 - 22528049 - 56658:Final Review - END - AutoPilotJob
+INFO Thread-1 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - Wed Oct 04 17:47:00 CST 2006 - 22539512 - 56667:Final Fix - END - AutoPilotJob
+INFO Thread-1 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - Wed Oct 04 17:47:18 CST 2006 - 22539512 - 56668:Final Review - START - AutoPilotJob
+INFO Thread-1 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - Wed Oct 04 17:48:12 CST 2006 - 22656672 - 56747:Final Fix - END - AutoPilotJob
+INFO Thread-1 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - Wed Oct 04 17:48:26 CST 2006 - 22656672 - 56748:Final Review - START - AutoPilotJob
+INFO Thread-1 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - Wed Oct 04 17:49:17 CST 2006 - 22659558 - 56788:Final Review - END - AutoPilotJob
+INFO Thread-1 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - Wed Oct 04 17:50:03 CST 2006 - 22660356 - 56797:Final Fix - END - AutoPilotJob
+INFO Thread-1 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - Wed Oct 04 17:50:18 CST 2006 - 22660356 - 56798:Final Review - START - AutoPilotJob
+INFO Thread-1 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - Wed Oct 04 17:51:04 CST 2006 - 22714989 - 56834:Review - END - AutoPilotJob
+INFO Thread-1 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - Wed Oct 04 17:51:21 CST 2006 - 22714989 - 56839:Appeals - START - AutoPilotJob
+INFO Thread-1 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - Wed Oct 04 17:52:07 CST 2006 - 22715015 - 56847:Final Fix - END - AutoPilotJob
+INFO Thread-1 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - Wed Oct 04 17:52:23 CST 2006 - 22715015 - 56848:Final Review - START - AutoPilotJob
+INFO Thread-1 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - Wed Oct 04 17:53:06 CST 2006 - 22715041 - 56854:Review - END - AutoPilotJob
+INFO Thread-1 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - Wed Oct 04 17:53:40 CST 2006 - 22715041 - 56859:Appeals - START - AutoPilotJob
+INFO Thread-1 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - Wed Oct 04 17:54:21 CST 2006 - 22715068 - 56870:Appeals Response - END - AutoPilotJob
+INFO Thread-1 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - Wed Oct 04 17:54:35 CST 2006 - 22715068 - 56865:Aggregation - START - AutoPilotJob
+INFO Thread-1 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - Wed Oct 04 17:55:15 CST 2006 - 22715095 - 56878:Final Review - END - AutoPilotJob
+INFO Thread-1 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - Wed Oct 04 17:55:59 CST 2006 - 22715121 - 56888:Final Review - END - AutoPilotJob
+INFO Thread-1 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - Wed Oct 04 17:56:44 CST 2006 - 22715147 - 56898:Final Review - END - AutoPilotJob
+INFO Thread-1 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - Wed Oct 04 17:57:37 CST 2006 - 22715173 - 56908:Final Review - END - AutoPilotJob
+INFO Thread-1 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - Wed Oct 04 17:58:25 CST 2006 - 22717582 - 56940:Appeals Response - END - AutoPilotJob
+INFO Thread-1 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - Wed Oct 04 17:58:39 CST 2006 - 22717582 - 56935:Aggregation - START - AutoPilotJob
+INFO Thread-1 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - Wed Oct 04 17:59:29 CST 2006 - 22743981 - 56947:Final Fix - END - AutoPilotJob
+INFO Thread-1 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - Wed Oct 04 17:59:43 CST 2006 - 22743981 - 56948:Final Review - START - AutoPilotJob
+INFO Thread-1 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - Wed Oct 04 18:00:29 CST 2006 - 22745318 - 56970:Appeals Response - END - AutoPilotJob
+INFO Thread-1 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - Wed Oct 04 18:00:42 CST 2006 - 22745318 - 56965:Aggregation - START - AutoPilotJob
+INFO Thread-1 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - Wed Oct 04 18:01:28 CST 2006 - 22745352 - 56978:Final Review - END - AutoPilotJob
+INFO Thread-1 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - Wed Oct 04 18:02:15 CST 2006 - 22745384 - 56986:Aggregation Review - END - AutoPilotJob
+INFO Thread-1 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - Wed Oct 04 18:02:30 CST 2006 - 22745384 - 56987:Final Fix - START - AutoPilotJob
+INFO Thread-1 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - Wed Oct 04 18:03:12 CST 2006 - 22745416 - 56997:Final Fix - END - AutoPilotJob
+INFO Thread-1 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - Wed Oct 04 18:03:32 CST 2006 - 22745416 - 56998:Final Review - START - AutoPilotJob
+INFO Thread-1 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - Wed Oct 04 18:04:23 CST 2006 - 22745450 - 57010:Appeals Response - END - AutoPilotJob
+INFO Thread-1 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - Wed Oct 04 18:04:38 CST 2006 - 22745450 - 57005:Aggregation - START - AutoPilotJob
+INFO Thread-1 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - Wed Oct 04 18:05:21 CST 2006 - 22764001 - 57027:Final Fix - END - AutoPilotJob
+INFO Thread-1 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - Wed Oct 04 18:05:36 CST 2006 - 22764001 - 57028:Final Review - START - AutoPilotJob
+INFO Thread-1 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - Wed Oct 04 18:06:20 CST 2006 - 22764150 - 57038:Final Review - END - AutoPilotJob
+INFO Thread-1 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - Wed Oct 04 18:07:04 CST 2006 - 22777356 - 57064:Review - END - AutoPilotJob
+INFO Thread-1 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - Wed Oct 04 18:07:20 CST 2006 - 22777356 - 57069:Appeals - START - AutoPilotJob
+INFO Thread-1 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - Wed Oct 04 18:08:04 CST 2006 - 22826624 - 57083:Screening - END - AutoPilotJob
+INFO Thread-1 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - Wed Oct 04 18:08:18 CST 2006 - 22826624 - 57084:Review - START - AutoPilotJob
+INFO Thread-1 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - Wed Oct 04 18:09:01 CST 2006 - 22826676 - 57093:Screening - END - AutoPilotJob
+INFO Thread-1 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - Wed Oct 04 18:09:15 CST 2006 - 22826676 - 57094:Review - START - AutoPilotJob
+INFO Thread-1 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - Wed Oct 04 18:09:58 CST 2006 - 22826702 - 57104:Review - END - AutoPilotJob
+INFO Thread-1 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - Wed Oct 04 18:10:13 CST 2006 - 22826702 - 57109:Appeals - START - AutoPilotJob
+INFO Thread-1 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - Wed Oct 04 18:10:57 CST 2006 - 22826728 - 57114:Review - END - AutoPilotJob
+INFO Thread-1 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - Wed Oct 04 18:11:11 CST 2006 - 22826728 - 57119:Appeals - START - AutoPilotJob
+INFO Thread-1 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - Wed Oct 04 18:11:53 CST 2006 - 22826754 - 57123:Screening - END - AutoPilotJob
+INFO Thread-1 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - Wed Oct 04 18:12:07 CST 2006 - 22826754 - 57124:Review - START - AutoPilotJob
+INFO Thread-1 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - Wed Oct 04 18:12:53 CST 2006 - 22827055 - 57144:Review - END - AutoPilotJob
+INFO Thread-1 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - Wed Oct 04 18:13:06 CST 2006 - 22827055 - 57149:Appeals - START - AutoPilotJob
+INFO Thread-1 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - Wed Oct 04 18:13:50 CST 2006 - 22834077 - 57164:Review - END - AutoPilotJob
+INFO Thread-1 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - Wed Oct 04 18:14:04 CST 2006 - 22834077 - 57169:Appeals - START - AutoPilotJob
+INFO Thread-1 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - Wed Oct 04 18:14:47 CST 2006 - 22838089 - 57174:Review - END - AutoPilotJob
+INFO Thread-1 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - Wed Oct 04 18:15:03 CST 2006 - 22838089 - 57179:Appeals - START - AutoPilotJob
+INFO Thread-1 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - Wed Oct 04 18:15:44 CST 2006 - 22839175 - 57183:Screening - END - AutoPilotJob
+INFO Thread-1 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - Wed Oct 04 18:16:03 CST 2006 - 22839175 - 57184:Review - START - AutoPilotJob
+INFO Thread-1 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - Wed Oct 04 18:16:45 CST 2006 - 22839447 - 57193:Screening - END - AutoPilotJob
+INFO Thread-1 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - Wed Oct 04 18:16:58 CST 2006 - 22839447 - 57194:Review - START - AutoPilotJob
+INFO Thread-1 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - Wed Oct 04 18:17:48 CST 2006 - 22847318 - 57213:Screening - END - AutoPilotJob
+INFO Thread-1 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - Wed Oct 04 18:18:01 CST 2006 - 22847318 - 57214:Review - START - AutoPilotJob
+INFO Thread-1 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - Wed Oct 04 18:18:45 CST 2006 - 22847379 - 57234:Review - END - AutoPilotJob
+INFO Thread-1 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - Wed Oct 04 18:18:58 CST 2006 - 22847379 - 57239:Appeals - START - AutoPilotJob
+INFO Thread-1 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - Wed Oct 04 18:19:41 CST 2006 - 22847501 - 57243:Screening - END - AutoPilotJob
+INFO Thread-1 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - Wed Oct 04 18:19:58 CST 2006 - 22847501 - 57244:Review - START - AutoPilotJob
+INFO Thread-1 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - Wed Oct 04 18:20:41 CST 2006 - 22847631 - 57263:Screening - END - AutoPilotJob
+INFO Thread-1 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - Wed Oct 04 18:20:56 CST 2006 - 22847631 - 57264:Review - START - AutoPilotJob
+INFO Thread-1 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - Wed Oct 04 18:21:39 CST 2006 - 22887949 - 57283:Screening - END - AutoPilotJob
+INFO Thread-1 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - Wed Oct 04 18:21:54 CST 2006 - 22887949 - 57284:Review - START - AutoPilotJob
+INFO Thread-1 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - Wed Oct 04 18:22:35 CST 2006 - 22888463 - 57293:Screening - END - AutoPilotJob
+INFO Thread-1 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - Wed Oct 04 18:22:50 CST 2006 - 22888463 - 57294:Review - START - AutoPilotJob
+INFO Thread-1 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - Wed Oct 04 18:23:36 CST 2006 - 22888745 - 57303:Screening - END - AutoPilotJob
+INFO Thread-1 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - Wed Oct 04 18:23:49 CST 2006 - 22888745 - 57304:Review - START - AutoPilotJob
+INFO Thread-1 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - Wed Oct 04 18:24:44 CST 2006 - 22888801 - 57313:Screening - END - AutoPilotJob
+INFO Thread-1 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - Wed Oct 04 18:24:57 CST 2006 - 22888801 - 57314:Review - START - AutoPilotJob
+INFO Thread-1 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - Wed Oct 04 18:25:46 CST 2006 - 22893103 - 57343:Screening - END - AutoPilotJob
+INFO Thread-1 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - Wed Oct 04 18:26:00 CST 2006 - 22893103 - 57344:Review - START - AutoPilotJob
+INFO Thread-1 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - Wed Oct 04 18:26:46 CST 2006 - 22893342 - 57353:Screening - END - AutoPilotJob
+INFO Thread-1 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - Wed Oct 04 18:27:04 CST 2006 - 22893342 - 57354:Review - START - AutoPilotJob
+INFO Thread-1 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - Wed Oct 04 18:27:52 CST 2006 - 22893591 - 57363:Screening - END - AutoPilotJob
+INFO Thread-1 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - Wed Oct 04 18:28:07 CST 2006 - 22893591 - 57364:Review - START - AutoPilotJob
+INFO Thread-1 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - Wed Oct 04 18:28:54 CST 2006 - 22893849 - 57373:Screening - END - AutoPilotJob
+INFO Thread-1 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - Wed Oct 04 18:29:10 CST 2006 - 22893849 - 57374:Review - START - AutoPilotJob
+INFO Thread-1 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - Wed Oct 04 18:29:53 CST 2006 - 22894193 - 57383:Screening - END - AutoPilotJob
+INFO Thread-1 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - Wed Oct 04 18:30:07 CST 2006 - 22894193 - 57384:Review - START - AutoPilotJob
+INFO Thread-1 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - Wed Oct 04 18:30:49 CST 2006 - 22894419 - 57393:Screening - END - AutoPilotJob
+INFO Thread-1 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - Wed Oct 04 18:31:03 CST 2006 - 22894419 - 57394:Review - START - AutoPilotJob
+INFO Thread-1 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - Wed Oct 04 18:31:48 CST 2006 - 22894597 - 57403:Screening - END - AutoPilotJob
+INFO Thread-1 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - Wed Oct 04 18:32:02 CST 2006 - 22894597 - 57404:Review - START - AutoPilotJob
+INFO Thread-1 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - Wed Oct 04 18:32:56 CST 2006 - 22894629 - 57413:Screening - END - AutoPilotJob
+INFO Thread-1 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - Wed Oct 04 18:33:10 CST 2006 - 22894629 - 57414:Review - START - AutoPilotJob
+INFO Thread-1 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - Wed Oct 04 18:34:02 CST 2006 - 22894700 - 57423:Screening - END - AutoPilotJob
+INFO Thread-1 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - Wed Oct 04 18:34:15 CST 2006 - 22894700 - 57424:Review - START - AutoPilotJob
+INFO Thread-1 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - Wed Oct 04 18:34:55 CST 2006 - 22895167 - 57433:Screening - END - AutoPilotJob
+INFO Thread-1 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - Wed Oct 04 18:35:09 CST 2006 - 22895167 - 57434:Review - START - AutoPilotJob
+INFO Thread-1 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - Wed Oct 04 18:36:00 CST 2006 - 22895300 - 57443:Screening - END - AutoPilotJob
+INFO Thread-1 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - Wed Oct 04 18:36:13 CST 2006 - 22895300 - 57444:Review - START - AutoPilotJob
+INFO Thread-1 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - Wed Oct 04 18:37:03 CST 2006 - 22922852 - 57453:Screening - END - AutoPilotJob
+INFO Thread-1 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - Wed Oct 04 18:37:19 CST 2006 - 22922852 - 57454:Review - START - AutoPilotJob
+INFO Thread-1 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - Wed Oct 04 18:38:01 CST 2006 - 22922878 - 57463:Screening - END - AutoPilotJob
+INFO Thread-1 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - Wed Oct 04 18:38:15 CST 2006 - 22922878 - 57464:Review - START - AutoPilotJob
+INFO Thread-1 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - Wed Oct 04 18:38:59 CST 2006 - 22923079 - 57483:Screening - END - AutoPilotJob
+INFO Thread-1 com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot - Wed Oct 04 18:39:12 CST 2006 - 22923079 - 57484:Review - START - AutoPilotJob

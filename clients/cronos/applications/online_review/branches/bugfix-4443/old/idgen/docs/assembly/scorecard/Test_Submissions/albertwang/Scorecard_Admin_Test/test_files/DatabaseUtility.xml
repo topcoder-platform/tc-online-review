@@ -1,0 +1,11 @@
+<?xml version="1.0" ?>
+<CMConfig>
+    <Config name="com.cronos.onlinereview.scorecard.functionaltests.DatabaseUtility">
+        <Property name="connection_factory_namespace">
+            <Value>com.topcoder.db.connectionfactory.DBConnectionFactoryImpl</Value>
+        </Property>
+        <Property name="connection_name">
+            <Value>tcs</Value>
+        </Property>
+    </Config>
+</CMConfig>
