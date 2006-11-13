@@ -14,14 +14,15 @@
 		<tr class="light">
 			<td class="value" width="2%" nowrap="nowrap"><b><bean:message key="editProject.CreateTimeline.UseTemplate" /></b></td>
 			<td class="value">
-				<select class="inputBox" name="template" id="template" style="width:100px;">
-					<option>Select</option>
-					<option>Design</option>
-					<option>Development</option>
-					<option>Security</option>
-					<option>Process</option>
-				</select>
-				<a href="pc-manager-create_project.jsp?L=1"><html:img src="/i/or/bttn_load_template.gif" imageName="load_template" styleId="load_template" /></a>
+				<html:select styleClass="inputBox" property="template_name" style="width:100px;">	
+					<html:option value="">Select</html:option>
+					<c:forEach var="templateName" items="${phaseTemplateNames}">
+						<html:option value="${templateName}">${templateName}</html:option>	
+					</c:forEach>
+				</html:select>
+				<html:link href="javascript:loadTimelineTemplate();">
+					<html:img src="/i/or/bttn_load_template.gif" imageName="load_template" styleId="load_template" />
+				</html:link>
 			</td>
 		</tr>
 	</table><br />

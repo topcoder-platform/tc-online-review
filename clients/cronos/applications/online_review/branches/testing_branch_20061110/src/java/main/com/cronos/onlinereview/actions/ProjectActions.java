@@ -215,6 +215,10 @@ public class ProjectActions extends DispatchAction {
         request.setAttribute("screeningScorecards", screeningScorecards);
         request.setAttribute("reviewScorecards", reviewScorecards);
         request.setAttribute("approvalScorecards", approvalScorecards);
+        
+        // Load phase template names
+        String[] phaseTemplateNames = ActionsHelper.createPhaseTemplate(null).getAllTemplateNames();
+        request.setAttribute("phaseTemplateNames", phaseTemplateNames);
     }
 
     /**

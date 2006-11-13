@@ -23,6 +23,10 @@
 	<script language="JavaScript" type="text/javascript" src="<html:rewrite href='/js/or/validation_util.js' />"><!-- @ --></script>
 	<script language="JavaScript" type="text/javascript" src="<html:rewrite href='/js/or/validation_edit_project.js' />"><!-- @ --></script>
 	<script language="JavaScript" type="text/javascript" src="<html:rewrite href='/js/or/parseDate.js' />"><!-- @ --></script>
+	<script language="JavaScript" type="text/javascript">
+		var ajaxSupportUrl = "<html:rewrite page='/ajaxSupport' />";
+	</script>
+	<script language="JavaScript" type="text/javascript" src="<html:rewrite href='/js/or/ajax.js' />"><!-- @ --></script>
 	<script language="JavaScript" type="text/javascript"><!--
 		// TODO: Write docs for following vars
 		var lastResourceIndex = ${fn:length(projectForm.map['resources_id']) - 1};
@@ -42,7 +46,13 @@
 			// TODO: Localize the catagory name
 			projectCategories[projectCategories.length - 1]["name"] = "${category.name}";			
 		</c:forEach>
-					
+		
+		var phaseTypeIdsMap = {};
+		<c:forEach var="phaseType" items="${phaseTypes}">
+			phaseTypeIdsMap["${phaseType.name}"] = "${phaseType.id}";
+		</c:forEach>
+		
+	
 		/*	
 		 * TODO: Document it
 		 */
@@ -260,8 +270,8 @@
 		 * TODO: Document it
 		 */
 		function getNumberOfPhasesWithType(phaseTypeId) {
-			var phaseTypeNodes = getChildrenByNamePrefix(document, "phase_type");
-			var phaseActionNodes = getChildrenByNamePrefix(document, "phase_action");
+			var phaseTypeNodes = getChildrenByNamePrefix(document.documentElement, "phase_type");
+			var phaseActionNodes = getChildrenByNamePrefix(document.documentElement, "phase_action");
 			var result = 0;
 			for (var i = 1; i < phaseTypeNodes.length; i++) {
 				if (phaseTypeNodes[i].value == phaseTypeId && phaseActionNodes[i].value != "delete") {
@@ -271,21 +281,15 @@
 			return result;
 		}
 
-
 		/*
-		 * This function adds new phase to phases table, it includes addition of several rows.
+		 * TODO: Document it.
 		 */
-		function addNewPhase() {
-			// Retrieve timeline and add phase tables
+		function createNewPhaseRow(phaseName, phaseTypeId) {
+			// Retrieve timeline table
 			var timelineTable = document.getElementById("timeline_tbl");
+			// Retrieve add phase table
 			var addPhaseTable = document.getElementById("addphase_tbl");
-
-			// Retrieve phase name
-			var phaseNameInput = getChildByName(addPhaseTable, "addphase_type");
-			var selectedOption = phaseNameInput.options[phaseNameInput.selectedIndex];
-			var phaseName = dojo.dom.textContent(selectedOption);
-			var phaseTypeId = phaseNameInput.value;
-
+			
 			// Generate phase id (for use in the DOM)
 			var phaseId = getUniqueId();
 
@@ -338,8 +342,30 @@
 			lastPhaseIndex++;
 
 			// Rename all the inputs to have a new index
-			patchAllChildParamIndexes(newRow, lastPhaseIndex);
+			patchAllChildParamIndexes(newRow, lastPhaseIndex);	
+		
+			return newRow;
+		}
+		
 
+		/*
+		 * This function adds new phase to phases table, it includes addition of several rows.
+		 */
+		function addNewPhase() {
+			// Retrieve timeline table
+			var timelineTable = document.getElementById("timeline_tbl");
+			// Retrieve add phase table
+			var addPhaseTable = document.getElementById("addphase_tbl");
+						
+			// Retrieve phase name
+			var phaseNameInput = getChildByName(addPhaseTable, "addphase_type");
+			var selectedOption = phaseNameInput.options[phaseNameInput.selectedIndex];
+			var phaseName = dojo.dom.textContent(selectedOption);
+			var phaseTypeId = phaseNameInput.value;
+				
+			// Create a new row to represent the phase
+			var newRow = createNewPhaseRow(phaseName, phaseTypeId);
+			
 			// Populate newly created phase inputs from the add phase form
 			var inputNames = ["type",
 				"start_date", "start_time", "start_AMPM",
@@ -349,8 +375,9 @@
 			for (var i = 0; i < inputNames.length; i++) {
 				populatePhaseParam(newRow, addPhaseTable, inputNames[i], lastPhaseIndex);
 			}
-
-
+			
+			var whereCombo = getChildByName(addPhaseTable, "addphase_where");
+			
 			// Add the row to the appropriate position
 			var wherePhaseId = whereCombo.value;
 			if (wherePhaseId == "") {
@@ -505,6 +532,97 @@
 			actionNode.form.submit();
 		}
 		
+		/**
+		 * TODO: Document it
+		 */
+		function loadTimelineTemplate() {
+			// Find template name input node
+			templateNameNode = document.getElementsByName("template_name")[0];
+			// Get html-encoded template name
+			var templateName = htmlEncode(templateNameNode.value);
+			
+			/*
+			// Find project type input node
+			var projectTypeNode = document.getElementsByName("project_type")[0];
+			// TODO: Make it dependent on project type name instead of id
+			var specifyStartDate = true;
+			if (projectTypeNode.value == "1") {
+				// For component the start date will be generated automatically
+				specifyStartDate = false;
+			}*/
+				
+			// assemble the request XML
+			var content =
+				'<?xml version="1.0" ?>' +
+				'<request type="LoadTimelineTemplate">' +
+				'<parameters>' +
+				'<parameter name="TemplateName">' +
+				templateName +
+				'</parameter>' +
+				/*(specifyStartDate 
+					? ('<parameter name="StartDate">' + new Date() + '</parameter>' ) 
+					: ''
+				) */
+				'<parameter name="StartDate">11.11.2006 11:00 pm</parameter>' + '</parameters>' +
+				'</request>';
+
+			// Send the AJAX request
+			sendRequest(content,
+				function (result, respXML) {
+					// operation succeeded
+					// Populate project phases using loaded template
+					populateTimeLineFromTemplate(respXML.getElementsByTagName("timeline")[0]);
+				},
+				function (result, respXML) {
+					// operation failed, alert the error message to the user
+					alert("An error occured while loading timeline template: " + result);
+				}
+			);
+		}
+		
+		/**
+		 * TODO: Document it
+		 */
+		function populateTimeLineFromTemplate(templateXML) {
+			// Clear all the project phases
+			var phaseActionNodes = getChildrenByNamePrefix(document, "phase_action");
+			for (var i = 1; i < phaseActionNodes.length; i++) {
+				phaseActionNodes[i].value = "delete";
+				var phaseRowNode = phaseActionNodes[i].parentNode.parentNode;
+				phaseRowNode.style["display"] = "none";
+				// Remove phase criterion row if needed
+				nextRowNode = dojo.dom.nextElement(phaseRowNode);
+				if (nextRowNode != null && nextRowNode.className == "highlighted") {
+					nextRowNode.parentNode.removeChild(nextRowNode);
+				}
+			}
+			
+			// Retrieve timeline table
+			var timelineTable = document.getElementById("timeline_tbl");
+			
+			// Add new project phases
+			var phaseNodes = templateXML.getElementsByTagName("phase");
+			for (var i = 0; i < phaseNodes.length; i++)  {
+				var phaseName = phaseNodes[i].getAttribute("type");
+				var phaseTypeId = phaseTypeIdsMap[phaseName];
+				var newPhaseRow = createNewPhaseRow(phaseName, phaseTypeId);
+				timelineTable.tBodies[0].appendChild(newPhaseRow);
+				
+				var startDate = dojo.dom.textContent(phaseNodes[i].getElementsByTagName("start-date")[0]);
+				var startDateParts = startDate.split(" ");
+				
+				getChildByNamePrefix(newPhaseRow, "phase_start_date").value = startDateParts[0];
+				getChildByNamePrefix(newPhaseRow, "phase_start_time").value = startDateParts[1];
+				getChildByNamePrefix(newPhaseRow, "phase_start_AMPM").value = startDateParts[2].toLowerCase();
+				
+				var endDate = dojo.dom.textContent(phaseNodes[i].getElementsByTagName("end-date")[0]);
+				var endDateParts = endDate.split(" ");
+				
+				getChildByNamePrefix(newPhaseRow, "phase_end_date").value = endDateParts[0];
+				getChildByNamePrefix(newPhaseRow, "phase_end_time").value = endDateParts[1];
+				getChildByNamePrefix(newPhaseRow, "phase_end_AMPM").value = endDateParts[2].toLowerCase();	
+			}
+		}
 		
 		// To be done on page load
 		function onLoad() {

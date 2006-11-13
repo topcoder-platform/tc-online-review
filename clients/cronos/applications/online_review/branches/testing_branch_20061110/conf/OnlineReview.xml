@@ -11,14 +11,24 @@
             </Property>
             <Property name="tcs">
                 <Property name="producer">
-                    <Value>com.topcoder.db.connectionfactory.producers.JNDIConnectionProducer</Value>
+                    <Value>com.topcoder.db.connectionfactory.producers.JDBCConnectionProducer</Value>
                 </Property>
                 <Property name="parameters">
-                    <Property name="jndi_name">
-                        <Value>java:JTS_TCS_CATALOG</Value>
+                    <Property name="jdbc_driver">
+                        <Value>com.informix.jdbc.IfxDriver</Value>
+                    </Property>
+                    <Property name="jdbc_url">
+                        <Value>jdbc:informix-sqli://localhost:1526/review:informixserver=top_coder</Value>
+                    </Property>
+                    <Property name="user">
+                        <Value>informix</Value>
+                    </Property>
+                    <Property name="password">
+                        <Value>informix</Value>
                     </Property>
                 </Property>
             </Property>
+            <!-- 
             <Property name="DefaultSequence">
                 <Property name="producer">
                     <Value>com.topcoder.db.connectionfactory.producers.JNDIConnectionProducer</Value>
@@ -29,6 +39,7 @@
                     </Property>
                 </Property>
             </Property>
+            -->
         </Property>
     </Config>
 
@@ -50,7 +61,7 @@
         </Property>
 
         <Property name="authenticator_name">
-            <Value>ORAuthenticator</Value>
+            <Value>MockAuthenticator</Value>
         </Property>
 
         <Property name="logger_name">
@@ -83,6 +94,7 @@
                     <Value>com.cronos.onlinereview.login.authenticator.SecurityManagerAuthenticator</Value>
                 </Property>
             </Property>
+            <!-- 
             <Property name="ORAuthenticator">
                 <Property name="class">
                     <Value>com.cronos.onlinereview.login.authenticator.SecurityManagerAuthenticator</Value>
@@ -91,6 +103,7 @@
                     <Value>com.cronos.onlinereview.login.authenticator.SecurityManagerAuthenticator</Value>
                 </Property>
             </Property>
+            -->
         </Property>
     </Config>
 
@@ -117,9 +130,7 @@
         <!-- The names of the Ajax request handlers -->
         <Property name="Handlers">
             <Value>SetScorecardStatus</Value>
-<!--
             <Value>LoadTimelineTemplate</Value>
- -->
             <Value>SetTimelineNotification</Value>
             <Value>PlaceAppeal</Value>
             <Value>ResolveAppeal</Value>
@@ -236,13 +247,23 @@
             </Property>
         </Property>
 
-        <!-- defining the phase template concrete implementation
+        <!-- defining the phase template concrete implementation -->
         <Property name="com/topcoder/project/phases/template/PhaseTemplate">
             <Property name="type">
-                <Value>com.topcoder.project.phases.template.MockPhaseTemplate</Value>
+                <Value>com.topcoder.project.phases.template.DefaultPhaseTemplate</Value>
+            </Property>
+            <Property name="params">
+                <Property name="param1">
+                    <Property name="type">
+                        <Value>String</Value>
+                    </Property>
+                    <Property name="value">
+                        <Value>com.topcoder.project.phases.template.DefaultPhaseTemplate</Value>
+                    </Property>
+                </Property>
             </Property>
         </Property>
-        -->
+        -
         <!-- defining the upload manager concrete implementation -->
         <!-- wrapper class is used due to inability of OF to create Maps -->
         <Property name="com/topcoder/management/deliverable/UploadManager">
@@ -382,10 +403,10 @@
             <Value>-1</Value>
         </Property>
         <Property name="allowed_dirs">
-            <Value>/home/onlinereview/downloads</Value>
+            <Value>C:\\tmp\\file_store</Value>
         </Property>
         <Property name="default_dir">
-            <Value>/home/onlinereview/downloads</Value>
+            <Value>C:\\tmp\\file_store</Value>
         </Property>
         <Property name="overwrite">
             <Value>false</Value>
@@ -710,7 +731,7 @@
                 <Value>file</Value>
             </Property>
             <Property name="EmailTemplateName">
-                <Value>/home/onlinereview/email_template.txt</Value>
+                <Value>C:\\tmp\\templates\\email_template.txt</Value>
             </Property>
             <Property name="EmailSubject">
                 <Value>Phase Start</Value>
@@ -724,7 +745,7 @@
                 <Value>file</Value>
             </Property>
             <Property name="EmailTemplateName">
-                <Value>/home/onlinereview/email_template.txt</Value>
+                <Value>C:\\tmp\\templates\\email_template.txt</Value>
             </Property>
             <Property name="EmailSubject">
                 <Value>Phase End</Value>
@@ -751,7 +772,7 @@
                 <Value>file</Value>
             </Property>
             <Property name="EmailTemplateName">
-                <Value>/home/onlinereview/email_template.txt</Value>
+                <Value>C:\\tmp\\templates\\email_template.txt</Value>
             </Property>
             <Property name="EmailSubject">
                 <Value>Phase Start</Value>
@@ -765,7 +786,7 @@
                 <Value>file</Value>
             </Property>
             <Property name="EmailTemplateName">
-                <Value>/home/onlinereview/email_template.txt</Value>
+                <Value>C:\\tmp\\templates\\email_template.txt</Value>
             </Property>
             <Property name="EmailSubject">
                 <Value>Phase End</Value>
@@ -792,7 +813,7 @@
                 <Value>file</Value>
             </Property>
             <Property name="EmailTemplateName">
-                <Value>/home/onlinereview/email_template.txt</Value>
+                <Value>C:\\tmp\\templates\\email_template.txt</Value>
             </Property>
             <Property name="EmailSubject">
                 <Value>Phase Start</Value>
@@ -806,7 +827,7 @@
                 <Value>file</Value>
             </Property>
             <Property name="EmailTemplateName">
-                <Value>/home/onlinereview/email_template.txt</Value>
+                <Value>C:\\tmp\\templates\\email_template.txt</Value>
             </Property>
             <Property name="EmailSubject">
                 <Value>Phase End</Value>
@@ -833,7 +854,7 @@
                 <Value>file</Value>
             </Property>
             <Property name="EmailTemplateName">
-                <Value>/home/onlinereview/email_template.txt</Value>
+                <Value>C:\\tmp\\templates\\email_template.txt</Value>
             </Property>
             <Property name="EmailSubject">
                 <Value>Phase Start</Value>
@@ -847,7 +868,7 @@
                 <Value>file</Value>
             </Property>
             <Property name="EmailTemplateName">
-                <Value>/home/onlinereview/email_template.txt</Value>
+                <Value>C:\\tmp\\templates\\email_template.txt</Value>
             </Property>
             <Property name="EmailSubject">
                 <Value>Phase End</Value>
@@ -874,7 +895,7 @@
                 <Value>file</Value>
             </Property>
             <Property name="EmailTemplateName">
-                <Value>/home/onlinereview/email_template.txt</Value>
+                <Value>C:\\tmp\\templates\\email_template.txt</Value>
             </Property>
             <Property name="EmailSubject">
                 <Value>Phase Start</Value>
@@ -888,7 +909,7 @@
                 <Value>file</Value>
             </Property>
             <Property name="EmailTemplateName">
-                <Value>/home/onlinereview/email_template.txt</Value>
+                <Value>C:\\tmp\\templates\\email_template.txt</Value>
             </Property>
             <Property name="EmailSubject">
                 <Value>Phase End</Value>
@@ -915,7 +936,7 @@
                 <Value>file</Value>
             </Property>
             <Property name="EmailTemplateName">
-                <Value>/home/onlinereview/email_template.txt</Value>
+                <Value>C:\\tmp\\templates\\email_template.txt</Value>
             </Property>
             <Property name="EmailSubject">
                 <Value>Phase Start</Value>
@@ -929,7 +950,7 @@
                 <Value>file</Value>
             </Property>
             <Property name="EmailTemplateName">
-                <Value>/home/onlinereview/email_template.txt</Value>
+                <Value>C:\\tmp\\templates\\email_template.txt</Value>
             </Property>
             <Property name="EmailSubject">
                 <Value>Phase End</Value>
@@ -956,7 +977,7 @@
                 <Value>file</Value>
             </Property>
             <Property name="EmailTemplateName">
-                <Value>/home/onlinereview/email_template.txt</Value>
+                <Value>C:\\tmp\\templates\\email_template.txt</Value>
             </Property>
             <Property name="EmailSubject">
                 <Value>Phase Start</Value>
@@ -970,7 +991,7 @@
                 <Value>file</Value>
             </Property>
             <Property name="EmailTemplateName">
-                <Value>/home/onlinereview/email_template.txt</Value>
+                <Value>C:\\tmp\\templates\\email_template.txt</Value>
             </Property>
             <Property name="EmailSubject">
                 <Value>Phase End</Value>
@@ -997,7 +1018,7 @@
                 <Value>file</Value>
             </Property>
             <Property name="EmailTemplateName">
-                <Value>/home/onlinereview/email_template.txt</Value>
+                <Value>C:\\tmp\\templates\\email_template.txt</Value>
             </Property>
             <Property name="EmailSubject">
                 <Value>Phase Start</Value>
@@ -1011,7 +1032,7 @@
                 <Value>file</Value>
             </Property>
             <Property name="EmailTemplateName">
-                <Value>/home/onlinereview/email_template.txt</Value>
+                <Value>C:\\tmp\\templates\\email_template.txt</Value>
             </Property>
             <Property name="EmailSubject">
                 <Value>Phase End</Value>
@@ -1038,7 +1059,7 @@
                 <Value>file</Value>
             </Property>
             <Property name="EmailTemplateName">
-                <Value>/home/onlinereview/email_template.txt</Value>
+                <Value>C:\\tmp\\templates\\email_template.txt</Value>
             </Property>
             <Property name="EmailSubject">
                 <Value>Phase Start</Value>
@@ -1052,7 +1073,7 @@
                 <Value>file</Value>
             </Property>
             <Property name="EmailTemplateName">
-                <Value>/home/onlinereview/email_template.txt</Value>
+                <Value>C:\\tmp\\templates\\email_template.txt</Value>
             </Property>
             <Property name="EmailSubject">
                 <Value>Phase End</Value>
@@ -1079,7 +1100,7 @@
                 <Value>file</Value>
             </Property>
             <Property name="EmailTemplateName">
-                <Value>/home/onlinereview/email_template.txt</Value>
+                <Value>C:\\tmp\\templates\\email_template.txt</Value>
             </Property>
             <Property name="EmailSubject">
                 <Value>Phase Start</Value>
@@ -1093,7 +1114,7 @@
                 <Value>file</Value>
             </Property>
             <Property name="EmailTemplateName">
-                <Value>/home/onlinereview/email_template.txt</Value>
+                <Value>C:\\tmp\\templates\\email_template.txt</Value>
             </Property>
             <Property name="EmailSubject">
                 <Value>Phase End</Value>
@@ -1120,7 +1141,7 @@
                 <Value>file</Value>
             </Property>
             <Property name="EmailTemplateName">
-                <Value>/home/onlinereview/email_template.txt</Value>
+                <Value>C:\\tmp\\templates\\email_template.txt</Value>
             </Property>
             <Property name="EmailSubject">
                 <Value>Phase Start</Value>
@@ -1134,7 +1155,7 @@
                 <Value>file</Value>
             </Property>
             <Property name="EmailTemplateName">
-                <Value>/home/onlinereview/email_template.txt</Value>
+                <Value>C:\\tmp\\templates\\email_template.txt</Value>
             </Property>
             <Property name="EmailSubject">
                 <Value>Phase End</Value>
@@ -1344,6 +1365,108 @@
     <Config name="com.topcoder.management.phase.ObjectFactory">
         <!-- All handlers are registered directly from application's code -->
     </Config>
+
+    
+    <!--
+        =====  Configuration for Phase Template component  =====
+    -->
+    <Config name="com.topcoder.project.phases.template.DefaultPhaseTemplate">
+        <!-- configuration for persistence -->
+        <Property name="persistence">
+            <!-- class of the PhaseTemplatePersistence -->
+            <Property name="class">
+                <Value>com.topcoder.project.phases.template.persistence.XmlPhaseTemplatePersistence</Value>
+            </Property>
+            <!-- namespace from which the PhaseTemplatePersistence will be created, optional, if not provided, no arg ctor will be used to create the persistence. -->
+            <Property name="namespace">
+                <Value>com.topcoder.project.phases.template.persistence.XmlPhaseTemplatePersistence</Value>
+            </Property>
+        </Property>
+        <!-- configuration for start date generator -->
+        <Property name="start_date_generator">
+            <!-- class of the StartDateGenerator -->
+            <Property name="class">
+                <Value>com.topcoder.project.phases.template.startdategenerator.RelativeWeekTimeStartDateGenerator</Value>
+            </Property>
+            <!-- namespace from which the StartDateGenerator will be created, optional, if not provided, no arg ctor will be used to create the startDateGenerator. -->
+            <Property name="namespace">
+                <Value>com.topcoder.project.phases.template.startdategenerator.RelativeWeekTimeStartDateGenerator</Value>
+            </Property>
+        </Property>
+        <!-- configuration for workdays, the workdays will be created with Object Factory -->
+        <Property name="workdays">
+            <!-- namespace of the object specification configuration of the workdays, required -->
+            <Property name="object_specification_namespace">
+                <Value>com.topcoder.project.phases.template.DefaultPhaseTemplate.workdays</Value>
+            </Property>
+            <!-- key of the workdays object, required -->
+            <Property name="object_key">
+                <Value>workdays</Value>
+            </Property>
+            <!-- identifier of the workdays object, optional -->
+            <Property name="object_identifier">
+                <Value>default</Value>
+            </Property>
+        </Property>
+    </Config>
+
+    <Config name="com.topcoder.project.phases.template.persistence.XmlPhaseTemplatePersistence">
+        <!-- XML files from which the templates will be loaded. -->
+        <Property name="template_files">
+            <Value>c:\\tmp\\templates\\ComponentTimeline.xml</Value>
+        </Property>
+    </Config>
+
+    <Config name="com.topcoder.project.phases.template.startdategenerator.RelativeWeekTimeStartDateGenerator">
+        <!-- 9:00 AM next Thursday will be generated -->
+        <!-- the week offset from current week, here 1 means the next week -->
+        <Property name="week_offset">
+            <Value>1</Value>
+        </Property>
+        <!-- the day of the week, values will be 1 to 7, representing SUNDAY to SATURDAY respectively. -->
+        <Property name="day_of_week">
+            <Value>5</Value>
+        </Property>
+        <!-- hour in 24-hour clock -->
+        <Property name="hour">
+            <Value>9</Value>
+        </Property>
+        <!-- minute value -->
+        <Property name="minute">
+            <Value>0</Value>
+        </Property>
+        <!-- second value -->
+        <Property name="second">
+            <Value>0</Value>
+        </Property>
+    </Config>
+    
+    <Config name="com.topcoder.project.phases.template.DefaultPhaseTemplate.workdays">
+        <Property name="workdays:default">
+            <Property name="type">
+                <Value>com.topcoder.date.workdays.DefaultWorkdays</Value>
+            </Property>
+            <Property name="params">
+                <Property name="param1">
+                    <Property name="type">
+                        <Value>String</Value>
+                    </Property>
+                    <Property name="value">
+                        <Value>com/topcoder/date/workdays/defaultWorkdaysFactory.properties</Value>
+                    </Property>
+                </Property>
+                <Property name="param2">
+                    <Property name="type">
+                        <Value>String</Value>
+                    </Property>
+                    <Property name="value">
+                        <Value>properties</Value>
+                    </Property>
+                </Property>
+            </Property>
+        </Property>
+    </Config>
+
 
 
     <!--

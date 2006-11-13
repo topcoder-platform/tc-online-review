@@ -9,6 +9,7 @@
         <wb-resource deploy-path="/WEB-INF/classes/MessageResources.properties" source-path="/conf/MessageResources.properties"/>
         <wb-resource deploy-path="/WEB-INF/classes/log4j.xml" source-path="/conf/log4j.xml"/>
         <wb-resource deploy-path="/WEB-INF/classes/OnlineReview.xml" source-path="/conf/OnlineReview.xml"/>
+        <wb-resource deploy-path="/WEB-INF/classes/xml_phase_template.xsd" source-path="/conf/xml_phase_template.xsd"/>
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/java/main"/>
         <dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/review/lib/tcs/authentication_factory/2.0/authentication_factory.jar">
             <dependency-type>uses</dependency-type>
