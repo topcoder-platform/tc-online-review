@@ -816,8 +816,9 @@ public class ProjectActions extends DispatchAction {
 					
 					// Set phase fixed start date
 					phase.setFixedStartDate(phaseStartDate);
-					phase.setScheduledStartDate(phase.calcStartDate());
 				}
+				
+				phase.setScheduledStartDate(phase.calcStartDate());
 
 				// flag value indicates using end date or using duration
 				boolean useDuration = true;
@@ -834,7 +835,7 @@ public class ProjectActions extends DispatchAction {
 							"phase_end_AMPM");
 					
 					// Calculate phase length
-					length = phaseEndDate.getTime() - phase.getFixedStartDate().getTime();
+					length = phaseEndDate.getTime() - phase.getScheduledStartDate().getTime();
 						
 					// Check if the end date of phase goes after the start date
 					if (length < 0) {
@@ -900,8 +901,9 @@ public class ProjectActions extends DispatchAction {
                             "phase_start_time", "phase_start_AMPM");
                     // Set phase fixed start date
                     phase.setFixedStartDate(phaseStartDate);
-                    phase.setScheduledStartDate(phase.calcStartDate());
                 }
+            	
+            	phase.setScheduledStartDate(phase.calcStartDate());
             	
                // flag value indicates using end date or using duration
                 boolean useDuration = true;
@@ -918,7 +920,7 @@ public class ProjectActions extends DispatchAction {
                             "phase_end_date", "phase_end_time", "phase_end_AMPM");
 
                     // Calculate phase length
-                    length = phaseEndDate.getTime() - phase.getFixedStartDate().getTime();
+                    length = phaseEndDate.getTime() - phase.getScheduledStartDate().getTime();
                     // Check if the end date of phase goes after the start date
                     if (length < 0) {
                         ActionsHelper.addErrorToRequest(request, new ActionMessage(
@@ -1162,7 +1164,7 @@ public class ProjectActions extends DispatchAction {
                                 "phase_end_date", "phase_end_time", "phase_end_AMPM");
                         
                         // Calculate phase length
-                        long length = phaseEndDate.getTime() - phase.getFixedStartDate().getTime();
+                        long length = phaseEndDate.getTime() - phase.getScheduledStartDate().getTime();
                         
                         // Check if the end date of phase goes after the start date
                         if (length < 0) {
