@@ -73,5 +73,4 @@
     <classpathentry kind="var" path="JUNIT_HOME/junit.jar"/>
     <classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/Web App Testing"/>
     <classpathentry kind="output" path="build/classes"/>
-
 </classpath>
