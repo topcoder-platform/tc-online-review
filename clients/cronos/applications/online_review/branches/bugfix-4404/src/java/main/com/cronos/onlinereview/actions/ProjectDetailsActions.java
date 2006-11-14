@@ -8,6 +8,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -104,6 +105,36 @@ import com.topcoder.util.file.fieldconfig.TemplateFields;
  * @version 1.0
  */
 public class ProjectDetailsActions extends DispatchAction {
+
+    /**
+     * This class implements <code>Comparator</code> interface and is used to sort Uploads in
+     * array. It sorts Uploads by their modification time, from the least recent to the most recent
+     * ones.
+     */
+    static class UploadComparer implements Comparator {
+
+        /**
+         * This method compares its two arguments for order. This method expects that type of
+         * objects passed as arguments is <code>Upload</code>.
+         * <p>
+         * This method implements the <code>compare</code> method from the
+         * <code>Comparator</code> interface.
+         * </p>
+         *
+         * @return a negative integer, zero, or a positive integer as the first argument is less
+         *         than, equal to, or greater than the second respectively.
+         * @param o1
+         *            the first object to be compared.
+         * @param o2
+         *            the second object to be compared.
+         */
+        public int compare(Object o1, Object o2) {
+            Upload up1 = (Upload)o1;
+            Upload up2 = (Upload)o2;
+
+            return up1.getModificationTimestamp().compareTo(up2.getModificationTimestamp());
+        }
+    }
 
     /**
      * Creates a new instance of the <code>ProjectDetailsActions</code> class.
@@ -308,6 +339,8 @@ public class ProjectDetailsActions extends DispatchAction {
         int phaseGroupIdx = -1;
         PhaseGroup phaseGroup = null;
         Resource[] submitters = null;
+        Upload[] finalFixes = null;
+        int finalFixIdx = -1;
 
         for (int phaseIdx = 0; phaseIdx < phases.length; ++phaseIdx) {
             // Get a phase for the current iteration
@@ -366,8 +399,10 @@ public class ProjectDetailsActions extends DispatchAction {
             boolean canSeeSubmitters = (isAfterAppealsResponse ||
                     AuthorizationHelper.hasUserPermission(request, Constants.VIEW_ALL_SUBM_PERM_NAME));
 
-            if (submitters == null && canSeeSubmitters) {
-                submitters = ActionsHelper.getAllSubmitters(allProjectResources);
+            if (canSeeSubmitters) {
+                if (submitters == null) {
+                    submitters = ActionsHelper.getAllSubmitters(allProjectResources);
+                }
             } else {
                 submitters = null;
             }
@@ -885,7 +920,6 @@ public class ProjectDetailsActions extends DispatchAction {
             }
 
             if (phaseGroup.getAppFunc().equalsIgnoreCase(Constants.FINAL_FIX_APP_FUNC) &&
-                    phaseName.equalsIgnoreCase(Constants.FINAL_FIX_PHASE_NAME) &&
                     phaseGroup.getSubmitters() != null) {
                 Resource winner = phaseGroup.getWinner();
                 if (winner == null) {
@@ -896,37 +930,38 @@ public class ProjectDetailsActions extends DispatchAction {
                     continue;
                 }
 
-                // Obtain an instance of Upload Manager
-                UploadManager upMgr = ActionsHelper.createUploadManager(request);
-                UploadStatus[] allUploadStatuses = upMgr.getAllUploadStatuses();
-                UploadType[] allUploadTypes = upMgr.getAllUploadTypes();
+                if (finalFixes == null) {
+                    // Obtain an instance of Upload Manager
+                    UploadManager upMgr = ActionsHelper.createUploadManager(request);
+                    UploadStatus[] allUploadStatuses = upMgr.getAllUploadStatuses();
+                    UploadType[] allUploadTypes = upMgr.getAllUploadTypes();
 
-                Filter filterStatus = UploadFilterBuilder.createUploadStatusIdFilter(
-                        ActionsHelper.findUploadStatusByName(allUploadStatuses, "Active").getId());
-                Filter filterType = UploadFilterBuilder.createUploadTypeIdFilter(
-                        ActionsHelper.findUploadTypeByName(allUploadTypes, "Final Fix").getId());
-                Filter filterResource = UploadFilterBuilder.createResourceIdFilter(winner.getId());
+                    Filter filterStatus = UploadFilterBuilder.createUploadStatusIdFilter(
+                            ActionsHelper.findUploadStatusByName(allUploadStatuses, "Active").getId());
+                    Filter filterType = UploadFilterBuilder.createUploadTypeIdFilter(
+                            ActionsHelper.findUploadTypeByName(allUploadTypes, "Final Fix").getId());
+                    Filter filterResource = UploadFilterBuilder.createResourceIdFilter(winner.getId());
 
-                Filter filter = new AndFilter(Arrays.asList(
-                        new Filter[] {filterStatus, filterType, filterResource}));
-                Upload[] uploads = upMgr.searchUploads(filter);
-                if (uploads.length != 0) {
-                    phaseGroup.setFinalFix(uploads[0]);
+                    Filter filter = new AndFilter(Arrays.asList(
+                            new Filter[] {/*filterStatus, */filterType, filterResource}));
+                    finalFixes = upMgr.searchUploads(filter);
+
+                    Arrays.sort(finalFixes, new UploadComparer());
+
+                    finalFixIdx = 0;
+                }
+            }
+
+            if (phaseGroup.getAppFunc().equalsIgnoreCase(Constants.FINAL_FIX_APP_FUNC) &&
+                    phaseName.equalsIgnoreCase(Constants.FINAL_FIX_PHASE_NAME) && finalFixes != null) {
+                if (finalFixIdx < finalFixes.length) {
+                    phaseGroup.setFinalFix(finalFixes[finalFixIdx++]);
                 }
             }
 
             if (phaseGroup.getAppFunc().equalsIgnoreCase(Constants.FINAL_FIX_APP_FUNC) &&
                     phaseName.equalsIgnoreCase(Constants.FINAL_REVIEW_PHASE_NAME) &&
                     phaseGroup.getSubmitters() != null) {
-                Resource winner = phaseGroup.getWinner();
-                if (winner == null) {
-                    winner = ActionsHelper.getWinner(phaseGroup.getSubmitters());
-                    phaseGroup.setWinner(winner);
-                }
-                if (winner == null) {
-                    continue;
-                }
-
                 Resource[] reviewer = ActionsHelper.getResourcesForPhase(allProjectResources, phase);
 
                 if (reviewer == null || reviewer.length == 0) {
@@ -1564,6 +1599,18 @@ public class ProjectDetailsActions extends DispatchAction {
                     request, Constants.PERFORM_FINAL_FIX_PERM_NAME, "Error.IncorrectPhase");
         }
 
+        int finalFixCount = 0;
+
+        for (int i = 0; i < phases.length; ++i) {
+            Phase phase = phases[i];
+            if (phase.getPhaseType().getName().equalsIgnoreCase(Constants.FINAL_FIX_PHASE_NAME)) {
+                ++finalFixCount;
+            }
+            if (phase == currentPhase) {
+                break;
+            }
+        }
+
         DynaValidatorForm uploadSubmissionForm = (DynaValidatorForm) form;
         FormFile file = (FormFile) uploadSubmissionForm.get("file");
 
@@ -1591,10 +1638,17 @@ public class ProjectDetailsActions extends DispatchAction {
                 ActionsHelper.findUploadTypeByName(allUploadTypes, "Final Fix").getId());
 
         Filter filter = new AndFilter(
-                Arrays.asList(new Filter[] {filterProject, filterResource, filterStatus, filterType}));
+                Arrays.asList(new Filter[] {filterProject, filterResource, /*filterStatus, */filterType}));
 
         Upload[] uploads = upMgr.searchUploads(filter);
-        Upload oldUpload = (uploads.length != 0) ? uploads[0] : null;
+
+        if (uploads.length >= finalFixCount) {
+            return ActionsHelper.produceErrorReport(mapping, getResources(request),
+                    request, Constants.PERFORM_FINAL_FIX_PERM_NAME, "Error.OnlyOneFinalFix");
+        }
+
+        Arrays.sort(uploads, new UploadComparer());
+        Upload oldUpload = (uploads.length != 0) ? uploads[uploads.length - 1] : null;
 
         Upload upload = new Upload();
 
