@@ -614,7 +614,7 @@
 				getChildByNamePrefix(newPhaseRow, "phase_end_time").value = endDateParts[1];
 				getChildByNamePrefix(newPhaseRow, "phase_end_AMPM").value = endDateParts[2].toLowerCase();
 				
-				var duration = parseInt(dojo.dom.textContent(phaseNodes[i].getElementsByTagName("length")[0])) / 3600; 
+				var duration = parseInt(dojo.dom.textContent(phaseNodes[i].getElementsByTagName("length")[0])) / 3600 / 1000; 
 				getChildByNamePrefix(newPhaseRow, "phase_duration").value = duration;	
 	
 			}
@@ -622,12 +622,12 @@
 			for (var i = 0; i < phaseNodes.length; i++) {
 				var newPhaseRow = phaseRows[i];
 				var dependencies = phaseNodes[i].getElementsByTagName("dependency");
-				var phaseStartButtons = getChildrenByNamePrefix(newPhaseRow, "start_by_phase");
+				var phaseStartButtons = getChildrenByNamePrefix(newPhaseRow, "phase_start_by_phase");
 				for (var j = 0; j < phaseStartButtons.length; j++) {
 					if (phaseStartButtons[j].value == "true") {
-						phaseStartButtons[j].selected = (dependencies.length != 0);
+						phaseStartButtons[j].checked = (dependencies.length != 0);
 					} else {
-						phaseStartButtons[j].selected = (dependencies.length == 0);
+						phaseStartButtons[j].checked = (dependencies.length == 0);
 					}
 				}
 			
@@ -635,7 +635,7 @@
 					var dependencyId =  dojo.dom.textContent(dependencies[0].getElementsByTagName("dependency-phase-id")[0]);
 					var dependencyStart =  dojo.dom.textContent(dependencies[0].getElementsByTagName("dependency-phase-start")[0]);
 					getChildByNamePrefix(newPhaseRow, "phase_start_phase").value = "template_" + dependencyId;
-					getChildByNamePrefix(newPhaseRow, "phase_start_when").value = dependencyStart ? "starts" : "ends";			
+					getChildByNamePrefix(newPhaseRow, "phase_start_when").value = (dependencyStart == "true") ? "starts" : "ends";			
 				}
 			}
 			

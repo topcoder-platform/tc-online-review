@@ -134,7 +134,7 @@ public class ProjectDetailsActions extends DispatchAction {
         throws BaseException {
         // Verify that certain requirements are met before processing with the Action
         CorrectnessCheckResult verification =
-            checkForCorrectProjectId(mapping, request, Constants.VIEW_PROJECT_DETAIL_PERM_NAME);
+            ActionsHelper.checkForCorrectProjectId(mapping, getResources(request), request, Constants.VIEW_PROJECT_DETAIL_PERM_NAME);
         // If any error has occured, return action forward contained in the result bean
         if (!verification.isSuccessful()) {
             return verification.getForward();
@@ -1077,7 +1077,7 @@ public class ProjectDetailsActions extends DispatchAction {
         throws BaseException, ConfigManagerException {
         // Verify that certain requirements are met before processing with the Action
         CorrectnessCheckResult verification =
-            checkForCorrectProjectId(mapping, request, Constants.CONTACT_PM_PERM_NAME);
+            ActionsHelper.checkForCorrectProjectId(mapping, getResources(request), request, Constants.CONTACT_PM_PERM_NAME);
         // If any error has occured, return action forward contained in the result bean
         if (!verification.isSuccessful()) {
             return verification.getForward();
@@ -1227,7 +1227,7 @@ public class ProjectDetailsActions extends DispatchAction {
         throws BaseException {
         // Verify that certain requirements are met before processing with the Action
         CorrectnessCheckResult verification =
-            checkForCorrectProjectId(mapping, request, Constants.PERFORM_SUBM_PERM_NAME);
+            ActionsHelper.checkForCorrectProjectId(mapping, getResources(request), request, Constants.PERFORM_SUBM_PERM_NAME);
         // If any error has occured, return action forward contained in the result bean
         if (!verification.isSuccessful()) {
             return verification.getForward();
@@ -1536,7 +1536,7 @@ public class ProjectDetailsActions extends DispatchAction {
         throws BaseException {
         // Verify that certain requirements are met before processing with the Action
         CorrectnessCheckResult verification =
-            checkForCorrectProjectId(mapping, request, Constants.PERFORM_FINAL_FIX_PERM_NAME);
+            ActionsHelper.checkForCorrectProjectId(mapping, getResources(request), request, Constants.PERFORM_FINAL_FIX_PERM_NAME);
         // If any error has occured, return action forward contained in the result bean
         if (!verification.isSuccessful()) {
             return verification.getForward();
@@ -1730,7 +1730,7 @@ public class ProjectDetailsActions extends DispatchAction {
         throws BaseException {
         // Verify that certain requirements are met before processing with the Action
         CorrectnessCheckResult verification =
-            checkForCorrectProjectId(mapping, request, Constants.UPLOAD_TEST_CASES_PERM_NAME);
+            ActionsHelper.checkForCorrectProjectId(mapping, getResources(request), request, Constants.UPLOAD_TEST_CASES_PERM_NAME);
         // If any error has occured, return action forward contained in the result bean
         if (!verification.isSuccessful()) {
             return verification.getForward();
@@ -2250,90 +2250,6 @@ public class ProjectDetailsActions extends DispatchAction {
 
         // Return success forward
         return mapping.findForward(Constants.SUCCESS_FORWARD_NAME);
-    }
-
-    /**
-     * This method verifies the request for ceratin conditions to be met. This includes verifying if
-     * the user has specified an ID of the project he wants to perform an operation on, if the ID of
-     * the project specified by user denotes existing project, and whether the user has rights to
-     * perform the operation specified by <code>permission</code> parameter.
-     *
-     * @return an instance of the {@link CorrectnessCheckResult} class, which specifies whether the
-     *         check was successful and, in the case it was, contains additional information
-     *         retrieved during the check operation, which might be of some use for the calling
-     *         method.
-     * @param mapping
-     *            action mapping.
-     * @param request
-     *            the http request.
-     * @param permission
-     *            permission to check against, or <code>null</code> if no check is requeired.
-     * @throws BaseException
-     *             if any error occurs.
-     */
-    private CorrectnessCheckResult checkForCorrectProjectId(ActionMapping mapping,
-            HttpServletRequest request, String permission)
-        throws BaseException {
-        // Prepare bean that will be returned as the result
-        CorrectnessCheckResult result = new CorrectnessCheckResult();
-
-        if (permission == null || permission.trim().length() == 0) {
-            permission = null;
-        }
-
-        // Verify that Project ID was specified and denotes correct project
-        String pidParam = request.getParameter("pid");
-        if (pidParam == null || pidParam.trim().length() == 0) {
-            result.setForward(ActionsHelper.produceErrorReport(
-                    mapping, getResources(request), request, permission, "Error.ProjectIdNotSpecified"));
-            // Return the result of the check
-            return result;
-        }
-
-        long pid;
-
-        try {
-            // Try to convert specified pid parameter to its integer representation
-            pid = Long.parseLong(pidParam, 10);
-        } catch (NumberFormatException nfe) {
-            result.setForward(ActionsHelper.produceErrorReport(
-                    mapping, getResources(request), request, permission, "Error.ProjectNotFound"));
-            // Return the result of the check
-            return result;
-        }
-
-        // Obtain an instance of Project Manager
-        ProjectManager projMgr = ActionsHelper.createProjectManager(request);
-        // Get Project by its id
-        Project project = projMgr.getProject(pid);
-        // Verify that project with given ID exists
-        if (project == null) {
-            result.setForward(ActionsHelper.produceErrorReport(
-                    mapping, getResources(request), request, permission, "Error.ProjectNotFound"));
-            // Return the result of the check
-            return result;
-        }
-
-        // Store Project object in the result bean
-        result.setProject(project);
-        // Place project as attribute in the request
-        request.setAttribute("project", project);
-
-        // Gather the roles the user has for current request
-        AuthorizationHelper.gatherUserRoles(request, pid);
-
-        // If permission parameter was not null or empty string ...
-        if (permission != null) {
-            // ... verify that this permission is granted for currently logged in user
-            if (!AuthorizationHelper.hasUserPermission(request, permission)) {
-                result.setForward(ActionsHelper.produceErrorReport(
-                        mapping, getResources(request), request, permission, "Error.NoPermission"));
-                // Return the result of the check
-                return result;
-            }
-        }
-
-        return result;
     }
 
     /**
