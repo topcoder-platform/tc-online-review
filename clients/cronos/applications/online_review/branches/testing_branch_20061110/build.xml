@@ -43,8 +43,8 @@
     <property name="build_tcsdistdir" value="${build_distdir}/${distfilename}-${component_version}" />
 
     <!-- Server installation directories -->
-    <property name="cactus.home.tomcat5x" value="C:\tools\tomcat5" />
-    <property name="deploy-dir" value="/home/onlinereview/jboss-4.0.2/server/default/deploy/${distfilename}.war" />
+	<property name="cactus.home.tomcat5x" value="d:\tomcat" />
+    <property name="deploy-dir" value="d:\tomcat\webapps\${distfilename}.war" />
 
     <!-- EXECUTION TAGS -->
     <property name="debug" value="off" />
@@ -505,17 +505,17 @@
     <!-- assume the user is already logged in to cvs and the env is set up. -->
 	<target name="update_left_nav">
         <mkdir dir="${build_distdir}" />
-		<cvs command="update -Pd" package="web/src/main/com/topcoder/web/jsp/includes/global_left.jsp"
+		<cvs package="web/src/main/com/topcoder/web/jsp/includes/global_left.jsp"
        		dest="${build_distdir}"/>
         <copy file="${build_distdir}/web/src/main/com/topcoder/web/jsp/includes/global_left.jsp" 
-        	tofile="${webdir}/jsp/includes/global_left.jsp"/>
+        	tofile="${webdir}/includes/inc_leftnav.jsp" overwrite="true"/>
 
-		<cvs command="update -Pd" package="web/resources/taglib/nav.tld" dest="${build_distdir}"/>
+		<cvs package="web/resources/taglib/nav.tld" dest="${build_distdir}"/>
         <copy file="${build_distdir}/web/resources/taglib/nav.tld" 
-        	tofile="${configdir}/WEB-INF/nav.tld"/>
+        	tofile="${configdir}/WEB-INF/nav.tld" overwrite="true"/>
 	</target>
 
-    <target name="dist" depends="clean, update_left_nav, compile">
+    <target name="dist" depends="clean, compile">
         <mkdir dir="${build_distdir}" />
 
         <delete file="${component.war}" failonerror="false" />
