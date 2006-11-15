@@ -757,6 +757,7 @@ public class ProjectActions extends DispatchAction {
         PhaseManager phaseManager = ActionsHelper.createPhaseManager(request, false);
 
         com.topcoder.project.phases.Project phProject;
+        
         if (newProject) {
             // Create new Phases Project
             // TODO: Use real values for date and workdays, not the test ones
@@ -846,13 +847,30 @@ public class ProjectActions extends DispatchAction {
 
 					String duration = (String) lazyForm.get("phase_duration", i);
 					String[] parts = duration.split(":");
+					
+					// the format should be hh or hh:mm
+					if (parts.length < 1 || parts.length > 2) {
+						ActionsHelper.addErrorToRequest(request, new ActionMessage("error.com.cronos.onlinereview.actions.editProject.InvalidDurationFormat",
+																		phase.getPhaseType().getName()));
+						break;
+					}
 
-					if (parts.length == 1) {
-						// use hh format
-						length = Long.parseLong(duration) * 3600 * 1000;
-					} else {
-						// use hh:mm format
-						length = (Long.parseLong(parts[0]) * 60 + Long.parseLong(parts[1])) * 60 * 1000;
+					try {
+
+						if (parts.length == 1) {
+							// use hh format
+							length = Long.parseLong(duration) * 3600 * 1000;
+						} else {
+							// use hh:mm format
+							length = (Long.parseLong(parts[0]) * 60 + Long.parseLong(parts[1])) * 60 * 1000;
+						}
+						
+					} catch (NumberFormatException nfe) {
+						// the hh or mm is not valid integer
+						ActionsHelper.addErrorToRequest(request, 
+								new ActionMessage("error.com.cronos.onlinereview.actions.editProject.InvalidDurationFormat",
+										phase.getPhaseType().getName()));
+						break;
 					}
 
 				}
@@ -930,6 +948,14 @@ public class ProjectActions extends DispatchAction {
 
 					String duration = (String) lazyForm.get("phase_duration", i);
 					String[] parts = duration.split(":");
+					
+					if (parts.length < 1 || parts.length > 2) {
+						ActionsHelper.addErrorToRequest(request, new ActionMessage("error.com.cronos.onlinereview.actions.editProject.InvalidDurationFormat",
+																	phase.getPhaseType().getName()));
+						break;
+					}
+					
+					try {
 
 					if (parts.length == 1) {
 						// use hh format
@@ -937,6 +963,12 @@ public class ProjectActions extends DispatchAction {
 					} else {
 						// use hh:mm format
 						length = (Long.parseLong(parts[0]) * 60 + Long.parseLong(parts[1])) * 60 * 1000;
+					}
+					
+					} catch (NumberFormatException nfe) {
+						ActionsHelper.addErrorToRequest(request, new ActionMessage("error.com.cronos.onlinereview.actions.editProject.InvalidDurationFormat",
+								phase.getPhaseType().getName()));
+						break;
 					}
 
 				}
