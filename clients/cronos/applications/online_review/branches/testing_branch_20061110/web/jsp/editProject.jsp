@@ -291,13 +291,8 @@
 		/*
 		 * TODO: Document it.
 		 */
-<<<<<<< .working
-		function createNewPhaseRow(phaseName, phaseTypeId) {
-			// Retrieve timeline table
-=======
 		function createNewPhaseRow(phaseName, phaseTypeId, _phaseId) {
 			// Retrieve timeline table
->>>>>>> .merge-right.r42634
 			var timelineTable = document.getElementById("timeline_tbl");
 			// Retrieve add phase table
 			var addPhaseTable = document.getElementById("addphase_tbl");
@@ -544,55 +539,6 @@
 			actionNode.form.submit();
 		}
 		
-<<<<<<< .working
-		/**
-		 * TODO: Document it
-		 */
-		function loadTimelineTemplate() {
-			// Find template name input node
-			templateNameNode = document.getElementsByName("template_name")[0];
-			// Get html-encoded template name
-			var templateName = htmlEncode(templateNameNode.value);
-			
-			/*
-			// Find project type input node
-			var projectTypeNode = document.getElementsByName("project_type")[0];
-			// TODO: Make it dependent on project type name instead of id
-			var specifyStartDate = true;
-			if (projectTypeNode.value == "1") {
-				// For component the start date will be generated automatically
-				specifyStartDate = false;
-			}*/
-				
-			// assemble the request XML
-			var content =
-				'<?xml version="1.0" ?>' +
-				'<request type="LoadTimelineTemplate">' +
-				'<parameters>' +
-				'<parameter name="TemplateName">' +
-				templateName +
-				'</parameter>' +
-				/*(specifyStartDate 
-					? ('<parameter name="StartDate">' + new Date() + '</parameter>' ) 
-					: ''
-				) */
-				'<parameter name="StartDate">11.11.2006 11:00 pm</parameter>' + '</parameters>' +
-				'</request>';
-
-			// Send the AJAX request
-			sendRequest(content,
-				function (result, respXML) {
-					// operation succeeded
-					// Populate project phases using loaded template
-					populateTimeLineFromTemplate(respXML.getElementsByTagName("timeline")[0]);
-				},
-				function (result, respXML) {
-					// operation failed, alert the error message to the user
-					alert("An error occured while loading timeline template: " + result);
-				}
-			);
-		}
-=======
 		/**
 		 * TODO: Document it
 		 */
@@ -628,54 +574,7 @@
 				}
 			);
 		}
->>>>>>> .merge-right.r42634
 		
-<<<<<<< .working
-		/**
-		 * TODO: Document it
-		 */
-		function populateTimeLineFromTemplate(templateXML) {
-			// Clear all the project phases
-			var phaseActionNodes = getChildrenByNamePrefix(document, "phase_action");
-			for (var i = 1; i < phaseActionNodes.length; i++) {
-				phaseActionNodes[i].value = "delete";
-				var phaseRowNode = phaseActionNodes[i].parentNode.parentNode;
-				phaseRowNode.style["display"] = "none";
-				// Remove phase criterion row if needed
-				nextRowNode = dojo.dom.nextElement(phaseRowNode);
-				if (nextRowNode != null && nextRowNode.className == "highlighted") {
-					nextRowNode.parentNode.removeChild(nextRowNode);
-				}
-			}
-			
-			// Retrieve timeline table
-			var timelineTable = document.getElementById("timeline_tbl");
-			
-			// Add new project phases
-			var phaseNodes = templateXML.getElementsByTagName("phase");
-			for (var i = 0; i < phaseNodes.length; i++)  {
-				var phaseName = phaseNodes[i].getAttribute("type");
-				var phaseTypeId = phaseTypeIdsMap[phaseName];
-				var newPhaseRow = createNewPhaseRow(phaseName, phaseTypeId);
-				timelineTable.tBodies[0].appendChild(newPhaseRow);
-				
-				var startDate = dojo.dom.textContent(phaseNodes[i].getElementsByTagName("start-date")[0]);
-				var startDateParts = startDate.split(" ");
-				
-				getChildByNamePrefix(newPhaseRow, "phase_start_date").value = startDateParts[0];
-				getChildByNamePrefix(newPhaseRow, "phase_start_time").value = startDateParts[1];
-				getChildByNamePrefix(newPhaseRow, "phase_start_AMPM").value = startDateParts[2].toLowerCase();
-				
-				var endDate = dojo.dom.textContent(phaseNodes[i].getElementsByTagName("end-date")[0]);
-				var endDateParts = endDate.split(" ");
-				
-				getChildByNamePrefix(newPhaseRow, "phase_end_date").value = endDateParts[0];
-				getChildByNamePrefix(newPhaseRow, "phase_end_time").value = endDateParts[1];
-				getChildByNamePrefix(newPhaseRow, "phase_end_AMPM").value = endDateParts[2].toLowerCase();	
-			}
-		}
-		
-=======
 		/**
 		 * TODO: Document it
 		 */
@@ -749,7 +648,7 @@
 			
 		}
 		
->>>>>>> .merge-right.r42634
+
 		// To be done on page load
 		function onLoad() {
 			var projectCategoryNode = document.getElementsByName("project_category")[0];
