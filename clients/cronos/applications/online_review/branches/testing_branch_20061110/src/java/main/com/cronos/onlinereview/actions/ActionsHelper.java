@@ -3,6 +3,8 @@
  */
 package com.cronos.onlinereview.actions;
 
+import java.text.Format;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -2723,6 +2725,7 @@ public class ActionsHelper {
 
         searchBundle.setSearchableFields(fields);
     }
+
     /**
      * Populate project_result for new submitters.
      * 
@@ -2934,5 +2937,51 @@ public class ActionsHelper {
         }
     
         return result;
+    }
+    
+    /**
+     * Set Completion Timestamp while the project turn to completed, Cancelled - Failed Review or Deleted status.
+     * 
+     * @param project the project instance
+     * @param newProjectStatus new project status
+     * @param format the date format
+     */
+    static void setProjectCompletionDate(Project project, ProjectStatus newProjectStatus, Format format) {
+    	String name = newProjectStatus.getName();
+    	if ("Completed".equals(name) || "Cancelled - Failed Review".equals(name) || "Deleted".equals(name)) {
+            if (format == null) {
+                format = new SimpleDateFormat(ConfigHelper.getDateFormat());
+            }
+    		project.setProperty("Completion Timestamp", format.format(new Date()));
+    	}
+    }
+    
+    /**
+     * Set Rated Timestamp with the end date of submission phase.
+     * 
+     * @param project the project instance
+     * @param format the date format
+     */
+    static void setProjectRatingDate(Project project, Phase[] projectPhases, Format format) {
+    	Date endDate = null;
+    	for (int i = 0; projectPhases != null && i < projectPhases.length; i++) {
+    		if ("Submission".equals(projectPhases[i].getPhaseType().getName())) {
+    			endDate = projectPhases[i].getActualEndDate();
+    			if (endDate == null) {
+    				endDate = projectPhases[i].getScheduledEndDate();
+    			}
+    			break;
+    		}
+    	}
+
+    	if (endDate == null) {
+    		return;
+    	}
+
+        if (format == null) {
+            format = new SimpleDateFormat(ConfigHelper.getDateFormat());
+        }
+
+		project.setProperty("Rated Timestamp", format.format(endDate));
     }
 }
