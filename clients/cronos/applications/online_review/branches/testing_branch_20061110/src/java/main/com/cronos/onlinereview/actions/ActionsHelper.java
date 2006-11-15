@@ -2713,4 +2713,133 @@ public class ActionsHelper {
 
         searchBundle.setSearchableFields(fields);
     }
+
+    /**
+     * Populate project_result for new submitters.
+     * 
+     * @param projectId the project_id
+     * @param newSubmitters new submitters external ids.
+     * @throws BaseException if error occurs
+     */
+    public static void populateProjectResult(long projectId, Collection newSubmitters) throws BaseException {
+    	Connection conn = null;
+    	PreparedStatement ps = null;
+    	PreparedStatement existStmt = null;
+    	PreparedStatement ratingStmt = null;
+    	PreparedStatement reliabilityStmt = null;
+		try {
+	        DBConnectionFactory dbconn;
+				dbconn = new DBConnectionFactoryImpl(DB_CONNECTION_NAMESPACE);
+	        conn = dbconn.createConnection();
+	        // add reliability_ind and old_reliability
+	    	ps = conn.prepareStatement("INSERT INTO project_result " +
+	                "(project_id, user_id, rating_ind, reliability_ind, valid_submission_ind, old_rating, old_reliability) " +
+	                "values (?, ?, ?, ?, ?, ?, ?)");
+	
+	        existStmt = conn.prepareStatement("SELECT 1 FROM PROJECT_RESULT WHERE user_id = ? and project_id = ?");
+	
+	        ratingStmt = conn.prepareStatement("SELECT rating from user_rating where user_id = ? and phase_id = " +
+	                "(select 111+project_category_id from project where project_id = ?)");
+	        
+	        reliabilityStmt = conn.prepareStatement("SELECT rating from user_reliability where user_id = ? and phase_id = " +
+	                "(select 111+project_category_id from project where project_id = ?)");
+	
+	    	for (Iterator iter = newSubmitters.iterator(); iter.hasNext();) {
+	    		String userId = iter.next().toString();
+	
+	    		// Check if projectResult exist
+	    		existStmt.clearParameters();
+	            existStmt.setString(1, userId);
+	            existStmt.setLong(2, projectId);
+	            if (existStmt.executeQuery().next()) {
+	            	continue;
+	            }
+	
+	            // Retrieve oldRating
+	            double oldRating = 0;
+	            ratingStmt.clearParameters();
+	            ratingStmt.setString(1, userId);
+	            ratingStmt.setLong(2, projectId);
+	            ResultSet rs = ratingStmt.executeQuery();
+	
+	            if (rs.next()) {
+	                oldRating = rs.getLong(1);
+	            }
+				close(rs);
+
+	            // Retrieve Reliability
+	            double oldReliability = 0;
+	            reliabilityStmt.clearParameters();
+	            reliabilityStmt.setString(1, userId);
+	            reliabilityStmt.setLong(2, projectId);
+	            rs = reliabilityStmt.executeQuery();
+	
+	            if (rs.next()) {
+	                oldReliability = rs.getDouble(1);
+	            }
+				close(rs);
+	
+		        ps.setLong(1, projectId);
+		        ps.setString(2, userId);
+		        ps.setLong(3, 0);
+		        ps.setLong(4, 0);
+		        ps.setLong(5, 0);
+	
+		        if (oldRating == 0) {
+		            ps.setNull(6, Types.DOUBLE);
+		        } else {
+		            ps.setDouble(6, oldRating);
+		        }
+		
+		        if (oldReliability == 0) {
+		            ps.setNull(7, Types.DOUBLE);
+		        } else {
+		            ps.setDouble(7, oldReliability);
+		        }
+		        ps.addBatch();
+	    	}
+	    	ps.executeBatch();
+		} catch (UnknownConnectionException e) {
+			throw new BaseException("Failed to create connection", e);
+		} catch (ConfigurationException e) {
+			throw new BaseException("Failed to config for DBNamespace", e);
+		} catch (SQLException e) {
+			throw new BaseException("Failed to populate project_result", e);
+		} catch (DBConnectionException e) {
+			throw new BaseException("Failed to return DBConnection", e);
+		} finally {
+			close(ps);
+			close(existStmt);
+			close(ratingStmt);
+			close(reliabilityStmt);
+			close(conn);
+		}
+    }
+    
+    /**
+     * Close jdbc resource.
+     * 
+     * @param obj jdbc resource
+     */
+    private static void close(Object obj) {
+		if (obj instanceof Connection) {
+			try {
+				((Connection) obj).close();
+			} catch (SQLException e) {
+				// Ignore
+			}
+		} else if (obj instanceof Statement) {
+			try {
+				((Statement) obj).close();
+			} catch (SQLException e) {
+				// Ignore
+			}
+		} else if (obj instanceof ResultSet) {
+			try {
+				((ResultSet) obj).close();
+			} catch (SQLException e) {
+				// Ignore
+			}
+		}
+    }
 }

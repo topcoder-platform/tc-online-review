@@ -1646,6 +1646,9 @@ public class ProjectActions extends DispatchAction {
         	newUsers.remove(itr.next());
         }
 
+        // Populate project_result for new submitters
+        ActionsHelper.populateProjectResult(project.getId(), newUsers);
+        
         // Update all the timeline notifications
         if (project.getProperty("Timeline Notification").equals("On")) {
         	long[] userIds = new long[newUsers.size()];
