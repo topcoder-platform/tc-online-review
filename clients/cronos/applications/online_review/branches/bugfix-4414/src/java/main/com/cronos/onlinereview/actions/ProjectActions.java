@@ -4,6 +4,7 @@
 package com.cronos.onlinereview.actions;
 
 import java.text.DateFormat;
+import java.text.Format;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -611,6 +612,9 @@ public class ProjectActions extends DispatchAction {
             if (statusHasChanged) {
                 // Populate project status
                 project.setProjectStatus(newProjectStatus);
+
+                // Set Completion Timestamp once the status is changed to completed, Cancelled - Failed Review or Deleted
+                ActionsHelper.setProjectCompletionDate(project, newProjectStatus, (Format) request.getAttribute("date_format"));
             }
         }
 
@@ -1080,6 +1084,10 @@ public class ProjectActions extends DispatchAction {
 
         // FIXME: Refactor it
         ProjectManager projectManager = ActionsHelper.createProjectManager(request);
+        
+        // Set project rating date
+        ActionsHelper.setProjectRatingDate(project, projectPhases, (Format) request.getAttribute("date_format"));
+
         if (newProject) {
             // Create project in persistence level
             projectManager.createProject(project, Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
