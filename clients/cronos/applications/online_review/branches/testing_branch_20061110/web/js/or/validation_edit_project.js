@@ -236,6 +236,7 @@ function validate_timeline(thisForm, msgList) {
         var use_duration_true = thisForm["phase_use_duration[" + i + "]"][1].checked;
         var use_duration_false = thisForm["phase_use_duration[" + i + "]"][0].checked;
         
+        // if neither two radio is selected, use duration by default
         if (! (use_duration_true || use_duration_false)) {
         	use_duration_true = true;
         }
@@ -249,17 +250,18 @@ function validate_timeline(thisForm, msgList) {
         		msg = "End Date should be specified.";
         		add_error_message(msg, msgPrefix, msgDiv, msgList);
         	}
-        }
         
-        if (!empty_end_datetime) {
-            // if end date/time are specified, validate them.
-            if (!isDateString(end_date)) {
-                msg = "End Date should be in the form of \"mm.dd.yy\".";
-                add_error_message(msg, msgPrefix, msgDiv, msgList);
-            }
-            if (!isTimeString(end_time)) {
-                msg = "End Time should be in the form of \"hh:mm\".";
-                add_error_message(msg, msgPrefix, msgDiv, msgList);
+        
+            if (!empty_end_datetime) {
+                // if end date/time are specified, validate them.
+                if (!isDateString(end_date)) {
+                    msg = "End Date should be in the form of \"mm.dd.yy\".";
+                    add_error_message(msg, msgPrefix, msgDiv, msgList);
+                }
+                if (!isTimeString(end_time)) {
+                    msg = "End Time should be in the form of \"hh:mm\".";
+                    add_error_message(msg, msgPrefix, msgDiv, msgList);
+                }
             }
         }
         
@@ -275,13 +277,14 @@ function validate_timeline(thisForm, msgList) {
         		msg = "Duration should be specified.";
         		add_error_message(msg, msgPrefix, msgDiv, msgList);
         	}
-        }
         
-        if (!empty_duration) {
-            // if duration is specified, validate them.
-            if (!isTimeSpanString(duration)) {            
-                msg = "Duration should be in the form of \"hh\" or \"hh:mm\".";
-                add_error_message(msg, msgPrefix, msgDiv, msgList);
+        
+            if (!empty_duration) {
+                // if duration is specified, validate them.
+                if (!isTimeSpanString(duration)) {            
+                    msg = "Duration should be in the form of \"hh\" or \"hh:mm\".";
+                    add_error_message(msg, msgPrefix, msgDiv, msgList);
+                }
             }
         }
         
