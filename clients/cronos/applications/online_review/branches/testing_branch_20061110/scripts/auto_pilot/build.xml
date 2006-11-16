@@ -368,7 +368,8 @@
         <pathelement location="${workdays.jar}" />
     </path>
 
-	<target name="dist">	
+	<target name="dist">
+         <delete file="auto_pilot_app.jar" failonerror="false" />	
 		<jar destfile="auto_pilot_app.jar" filesonly="true">
 		    <fileset dir="../../lib/tcs">    
 		    	<include  name="**/*.jar"/>
