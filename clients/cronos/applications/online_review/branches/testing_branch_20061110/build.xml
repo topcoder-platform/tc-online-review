@@ -515,7 +515,7 @@
         	tofile="${configdir}/WEB-INF/nav.tld" overwrite="true"/>
 	</target>
 
-    <target name="dist" depends="clean, compile">
+    <target name="dist" depends="clean, update_left_nav, compile">
         <mkdir dir="${build_distdir}" />
 
         <delete file="${component.war}" failonerror="false" />
