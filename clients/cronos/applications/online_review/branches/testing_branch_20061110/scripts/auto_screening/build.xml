@@ -367,6 +367,7 @@
     </path>
 
 	<target name="dist">	
+        <delete file="$auto_screening_app.jar" failonerror="false" />
 		<jar destfile="auto_screening_app.jar" filesonly="true">
 		    <fileset dir="../../lib/tcs">    
 		    	<include  name="**/*.jar"/>
