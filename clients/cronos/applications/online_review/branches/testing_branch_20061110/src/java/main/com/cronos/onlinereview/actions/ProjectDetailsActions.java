@@ -1714,11 +1714,13 @@ public class ProjectDetailsActions extends DispatchAction {
             return ActionsHelper.produceErrorReport(mapping, getResources(request),
                     request, Constants.DOWNLOAD_FINAL_FIX_PERM_NAME, "Error.NotAFinalFix");
         }
+/* TODO: Remove this commented block when everything works ok
         // Verify the status of upload
         if (upload.getUploadStatus().getName().equalsIgnoreCase("Deleted")) {
             return ActionsHelper.produceErrorReport(mapping, getResources(request),
                     request, Constants.DOWNLOAD_FINAL_FIX_PERM_NAME, "Error.UploadDeleted");
         }
+*/
 
         FileUpload fileUpload = ActionsHelper.createFileUploadManager(request);
         UploadedFile uploadedFile = fileUpload.getUploadedFile(upload.getParameter());
