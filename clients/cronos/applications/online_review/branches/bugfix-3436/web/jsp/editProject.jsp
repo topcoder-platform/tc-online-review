@@ -617,6 +617,9 @@
 				var duration = parseInt(dojo.dom.textContent(phaseNodes[i].getElementsByTagName("length")[0])) / 3600 / 1000; 
 				getChildByNamePrefix(newPhaseRow, "phase_duration").value = duration;	
 	
+					
+				// Add phase criterion row if needed
+				addPhaseCriterion(phaseName, newPhaseRow);	
 			}
 			// PASS 2
 			for (var i = 0; i < phaseNodes.length; i++) {
