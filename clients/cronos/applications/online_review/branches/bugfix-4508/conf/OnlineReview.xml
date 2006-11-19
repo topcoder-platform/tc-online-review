@@ -2988,6 +2988,8 @@
                 <Value>Accuracy Reviewer</Value>
                 <Value>Failure Reviewer</Value>
                 <Value>Stress Reviewer</Value>
+                <!-- Aggregator must be allowed to see Aggregation (especially, if it is its own one) -->
+                <Value>Aggregator</Value>
                 <Value>Approver</Value>
                 <Value>Public</Value>
                 <Value>Designer</Value>
