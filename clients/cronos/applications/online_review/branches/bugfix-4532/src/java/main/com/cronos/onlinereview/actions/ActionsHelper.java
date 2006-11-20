@@ -2828,10 +2828,13 @@ public class ActionsHelper {
     				" WHERE " + nameField + " = 'main_sequence'";
     	String updateNextID = "UPDATE " + tableName + " SET " + currentValueField + " = ? " +
     				" WHERE " + nameField + " = 'main_sequence'" + " AND " + currentValueField + " = ? ";
+    	PreparedStatement getNextIDStmt = null;
+    	PreparedStatement updateNextIDStmt = null;
+    	ResultSet rs = null;
+
     	try {
-	    	PreparedStatement getNextIDStmt = conn.prepareStatement(getNextID);
-	    	PreparedStatement updateNextIDStmt = conn.prepareStatement(updateNextID);
-	    	ResultSet rs = null;
+	    	getNextIDStmt = conn.prepareStatement(getNextID);
+	    	updateNextIDStmt = conn.prepareStatement(updateNextID);
 	    	while (true) {
 	    		rs = getNextIDStmt.executeQuery();
 	    		rs.next();
@@ -2848,6 +2851,10 @@ public class ActionsHelper {
 	    	}
     	} catch (SQLException e) {
     		throw new BaseException("Failed to retrieve next component_inquiry_id", e);
+    	} finally {
+    		close(rs);
+    		close(getNextIDStmt);
+    		close(updateNextIDStmt);
     	}
     }
 
