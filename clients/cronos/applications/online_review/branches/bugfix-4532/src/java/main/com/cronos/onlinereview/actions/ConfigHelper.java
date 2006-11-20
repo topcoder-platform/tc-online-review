@@ -935,4 +935,23 @@ public class ConfigHelper {
     public static String getContactManagerEmailSubject() {
         return contactManagerEmailSubject;
     }
+
+    /**
+     * Return the property value of online_review namespace.
+     *  
+     * @param name the property name
+     * @param defaultValue the default value
+     * @return property value
+     */
+    public static String getPropertyValue(String name, String defaultValue) {    	
+		try {
+			String value = ConfigManager.getInstance().getString(ONLINE_REVIEW_CFG_NS, name);
+	    	if (value != null && value.trim().length() > 0) {
+	    		return value;
+	    	}
+		} catch (UnknownNamespaceException e) {
+			// Ignore
+		}
+		return defaultValue;
+	}
 }

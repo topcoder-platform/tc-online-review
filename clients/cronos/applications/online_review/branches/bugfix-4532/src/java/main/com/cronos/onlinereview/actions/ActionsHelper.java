@@ -3,8 +3,16 @@
  */
 package com.cronos.onlinereview.actions;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.sql.Types;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -43,6 +51,7 @@ import com.cronos.onlinereview.phases.PRReviewPhaseHandler;
 import com.cronos.onlinereview.phases.PRScreeningPhaseHandler;
 import com.cronos.onlinereview.phases.PRSubmissionPhaseHandler;
 import com.topcoder.db.connectionfactory.ConfigurationException;
+import com.topcoder.db.connectionfactory.DBConnectionException;
 import com.topcoder.db.connectionfactory.DBConnectionFactory;
 import com.topcoder.db.connectionfactory.DBConnectionFactoryImpl;
 import com.topcoder.db.connectionfactory.UnknownConnectionException;
@@ -2657,5 +2666,231 @@ public class ActionsHelper {
         fields.put(NotificationTypeFilterBuilder.NAME_FIELD_NAME, StringValidator.startsWith(""));
 
         searchBundle.setSearchableFields(fields);
+    }
+
+    /**
+     * Populate project_result and component_inquiry for new submitters.
+     * 
+     * @param project the project
+     * @param newSubmitters new submitters external ids.
+     * @throws BaseException if error occurs
+     */
+    public static void populateProjectResult(Project project, Collection newSubmitters) throws BaseException {
+    	Connection conn = null;
+    	PreparedStatement ps = null;
+    	PreparedStatement existStmt = null;
+    	PreparedStatement existCIStmt = null;
+    	PreparedStatement ratingStmt = null;
+    	PreparedStatement reliabilityStmt = null;
+    	PreparedStatement componentInquiryStmt = null;
+		try {
+	        DBConnectionFactory dbconn;
+				dbconn = new DBConnectionFactoryImpl(DB_CONNECTION_NAMESPACE);
+	        conn = dbconn.createConnection();
+	        long projectId = project.getId();
+	        // retrieve and update component_inquiry_id
+	        long componentInquiryId = getNextComponentInquiryId(conn, newSubmitters.size());
+	    	long componentId = getProjectLongValue(project, "Component ID");
+	    	long phaseId = 111 + project.getProjectCategory().getId();
+	    	long version = getProjectLongValue(project, "Version ID");	        
+
+	        // add reliability_ind and old_reliability
+	    	ps = conn.prepareStatement("INSERT INTO project_result " +
+	                "(project_id, user_id, rating_ind, reliability_ind, valid_submission_ind, old_rating, old_reliability) " +
+	                "values (?, ?, ?, ?, ?, ?, ?)");
+
+	    	componentInquiryStmt = conn.prepareStatement("INSERT INTO component_inquiry " +
+	                "(component_inquiry_id, component_id, user_id, project_id, phase, tc_user_id, agreed_to_terms, rating, version, create_time) " +
+	                "values (?, ?, ?, ?, ?, ?, 1, ?, ?, current)");
+      	
+	        existStmt = conn.prepareStatement("SELECT 1 FROM PROJECT_RESULT WHERE user_id = ? and project_id = ?");
+
+	        existCIStmt = conn.prepareStatement("SELECT 1 FROM component_inquiry WHERE user_id = ? and project_id = ?");
+	
+	        ratingStmt = conn.prepareStatement("SELECT rating from user_rating where user_id = ? and phase_id = " +
+	                "(select 111+project_category_id from project where project_id = ?)");
+	        
+	        reliabilityStmt = conn.prepareStatement("SELECT rating from user_reliability where user_id = ? and phase_id = " +
+	                "(select 111+project_category_id from project where project_id = ?)");
+
+	    	for (Iterator iter = newSubmitters.iterator(); iter.hasNext();) {
+	    		String userId = iter.next().toString();
+
+	    		// Check if projectResult exist
+	    		existStmt.clearParameters();
+	            existStmt.setString(1, userId);
+	            existStmt.setLong(2, projectId);
+	            boolean existPR = existStmt.executeQuery().next();
+
+	    		// Check if component_inquiry exist
+	            existCIStmt.clearParameters();
+	            existCIStmt.setString(1, userId);
+	            existCIStmt.setLong(2, projectId);
+	            boolean existCI = existCIStmt.executeQuery().next();
+
+	            // Retrieve oldRating
+	            double oldRating = 0;
+	            ResultSet rs = null;
+	            if (!existPR || !existCI) {
+		            ratingStmt.clearParameters();
+		            ratingStmt.setString(1, userId);
+		            ratingStmt.setLong(2, projectId);
+		            rs = ratingStmt.executeQuery();
+		
+		            if (rs.next()) {
+		                oldRating = rs.getLong(1);
+		            }
+					close(rs);
+	            }
+
+	            // Retrieve Reliability
+	            double oldReliability = 0;
+	            if (!existPR) {
+		            reliabilityStmt.clearParameters();
+		            reliabilityStmt.setString(1, userId);
+		            reliabilityStmt.setLong(2, projectId);
+		            rs = reliabilityStmt.executeQuery();
+		
+		            if (rs.next()) {
+		                oldReliability = rs.getDouble(1);
+		            }
+					close(rs);
+	            }
+
+	            // add project_result
+	            if (!existPR) {	            	
+			        ps.setLong(1, projectId);
+			        ps.setString(2, userId);
+			        ps.setLong(3, 0);
+			        ps.setLong(4, 0);
+			        ps.setLong(5, 0);
+
+			        if (oldRating == 0) {
+			            ps.setNull(6, Types.DOUBLE);
+			        } else {
+			            ps.setDouble(6, oldRating);
+			        }
+
+			        if (oldReliability == 0) {
+			            ps.setNull(7, Types.DOUBLE);
+			        } else {
+			            ps.setDouble(7, oldReliability);
+			        }
+			        ps.addBatch();
+	            }
+
+	            // add component_inquiry
+	            if (!existCI && phaseId < 114 && componentId > 0) {
+	            	componentInquiryStmt.setLong(1, componentInquiryId++);
+	            	componentInquiryStmt.setLong(2, componentId);
+	            	componentInquiryStmt.setString(3, userId);
+	            	componentInquiryStmt.setLong(4, projectId);
+	            	componentInquiryStmt.setLong(5, phaseId);
+	            	componentInquiryStmt.setString(6, userId);
+	            	componentInquiryStmt.setDouble(7, oldRating);
+	            	componentInquiryStmt.setLong(8, version);
+	            	componentInquiryStmt.addBatch();
+	            }
+	    	}
+	    	ps.executeBatch();
+	    	componentInquiryStmt.executeBatch();
+		} catch (UnknownConnectionException e) {
+			throw new BaseException("Failed to create connection", e);
+		} catch (ConfigurationException e) {
+			throw new BaseException("Failed to config for DBNamespace", e);
+		} catch (SQLException e) {
+			throw new BaseException("Failed to populate project_result", e);
+		} catch (DBConnectionException e) {
+			throw new BaseException("Failed to return DBConnection", e);
+		} finally {
+			close(componentInquiryStmt);
+			close(ps);
+			close(existStmt);
+			close(existCIStmt);
+			close(ratingStmt);
+			close(reliabilityStmt);
+			close(conn);
+		}
+    }
+
+    /**
+     * Retrieve and update next ComponentInquiryId.
+     *  
+     * @param conn the connection
+     * @param count the count of new submitters
+     * @return next component_inquiry_id
+     */
+    private static long getNextComponentInquiryId(Connection conn, int count) throws BaseException {
+    	String tableName = ConfigHelper.getPropertyValue("component_inquiry.tablename", "sequence_object");
+    	String nameField = ConfigHelper.getPropertyValue("component_inquiry.name", "name");
+    	String currentValueField = ConfigHelper.getPropertyValue("component_inquiry.current_value", "current_value");
+    	String getNextID = "SELECT max(" + currentValueField + ") FROM " + tableName + 
+    				" WHERE " + nameField + " = 'main_sequence'";
+    	String updateNextID = "UPDATE " + tableName + " SET " + currentValueField + " = ? " +
+    				" WHERE " + nameField + " = 'main_sequence'" + " AND " + currentValueField + " = ? ";
+    	try {
+	    	PreparedStatement getNextIDStmt = conn.prepareStatement(getNextID);
+	    	PreparedStatement updateNextIDStmt = conn.prepareStatement(updateNextID);
+	    	ResultSet rs = null;
+	    	while (true) {
+	    		rs = getNextIDStmt.executeQuery();
+	    		rs.next();
+	    		long currentValue = rs.getLong(1);
+
+	    		// Update the next value
+	    		updateNextIDStmt.clearParameters();
+	    		updateNextIDStmt.setLong(1, currentValue + count);
+	    		updateNextIDStmt.setLong(2, currentValue);
+	    		int ret = updateNextIDStmt.executeUpdate();
+	    		if (ret > 0) {
+	    			return currentValue;
+	    		}
+	    	}
+    	} catch (SQLException e) {
+    		throw new BaseException("Failed to retrieve next component_inquiry_id", e);
+    	}
+    }
+
+    /**
+     * Return project property long value.
+     * 
+     * @param project the project object
+     * @param name the proeprty name
+     * @return the long value, 0 if it does not exist
+     */
+    private static long getProjectLongValue(Project project, String name) {
+    	Object obj = project.getProperty(name);
+    	if (obj == null) {
+    		return 0;
+    	} else {
+    		return Long.parseLong(obj.toString());
+    	}    	
+    }
+
+    /**
+     * Close jdbc resource.
+     * 
+     * @param obj jdbc resource
+     */
+    private static void close(Object obj) {
+		if (obj instanceof Connection) {
+			try {
+				((Connection) obj).close();
+			} catch (SQLException e) {
+				// Ignore
+			}
+		} else if (obj instanceof Statement) {
+			try {
+				((Statement) obj).close();
+			} catch (SQLException e) {
+				// Ignore
+			}
+		} else if (obj instanceof ResultSet) {
+			try {
+				((ResultSet) obj).close();
+			} catch (SQLException e) {
+				// Ignore
+			}
+		}
     }
 }

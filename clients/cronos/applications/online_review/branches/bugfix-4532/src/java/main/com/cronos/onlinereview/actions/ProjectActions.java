@@ -1496,6 +1496,9 @@ public class ProjectActions extends DispatchAction {
         for (Iterator itr = oldUsers.iterator(); itr.hasNext();) {
         	newUsers.remove(itr.next());
         }
+	
+        // Populate project_result and component_inquiry for new submitters
+        ActionsHelper.populateProjectResult(project, newUsers);
 
         // Update all the timeline notifications
         if (project.getProperty("Timeline Notification").equals("On")) {
