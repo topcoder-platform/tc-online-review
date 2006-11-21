@@ -3,10 +3,23 @@
  */
 package com.cronos.onlinereview.actions;
 
+import java.text.Format;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import java.sql.SQLException;
+import java.sql.ResultSet;
+import java.sql.Statement;
+import java.sql.Connection;
+import com.topcoder.db.connectionfactory.DBConnectionException;
+import java.sql.Types;
+import java.util.Iterator;
+import java.sql.PreparedStatement;
+import java.util.Collection;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -42,6 +55,8 @@ import com.cronos.onlinereview.phases.PRRegistrationPhaseHandler;
 import com.cronos.onlinereview.phases.PRReviewPhaseHandler;
 import com.cronos.onlinereview.phases.PRScreeningPhaseHandler;
 import com.cronos.onlinereview.phases.PRSubmissionPhaseHandler;
+import com.topcoder.date.workdays.DefaultWorkdaysFactory;
+import com.topcoder.date.workdays.Workdays;
 import com.topcoder.db.connectionfactory.ConfigurationException;
 import com.topcoder.db.connectionfactory.DBConnectionFactory;
 import com.topcoder.db.connectionfactory.DBConnectionFactoryImpl;
@@ -75,6 +90,7 @@ import com.topcoder.management.project.ProjectCategory;
 import com.topcoder.management.project.ProjectManager;
 import com.topcoder.management.project.ProjectManagerImpl;
 import com.topcoder.management.project.ProjectStatus;
+import com.topcoder.management.project.ProjectType;
 import com.topcoder.management.resource.Resource;
 import com.topcoder.management.resource.ResourceManager;
 import com.topcoder.management.resource.ResourceRole;
@@ -99,6 +115,13 @@ import com.topcoder.management.scorecard.data.Section;
 import com.topcoder.project.phases.Phase;
 import com.topcoder.project.phases.PhaseStatus;
 import com.topcoder.project.phases.PhaseType;
+import com.topcoder.project.phases.template.DefaultPhaseTemplate;
+import com.topcoder.project.phases.template.PhaseTemplate;
+import com.topcoder.project.phases.template.PhaseTemplatePersistence;
+import com.topcoder.project.phases.template.StartDateGenerationException;
+import com.topcoder.project.phases.template.StartDateGenerator;
+import com.topcoder.project.phases.template.persistence.XmlPhaseTemplatePersistence;
+import com.topcoder.project.phases.template.startdategenerator.RelativeWeekTimeStartDateGenerator;
 import com.topcoder.search.builder.SearchBuilderConfigurationException;
 import com.topcoder.search.builder.SearchBuilderException;
 import com.topcoder.search.builder.SearchBundle;
@@ -127,10 +150,15 @@ public class ActionsHelper {
 
     /**
      * This member variable is a string constant that defines the name of the configurtaion
-     * namespace which the parameters for database connection factory is stored under.
+     * namespace which the parameters for database connection factory are stored under.
      */
     private static final String DB_CONNECTION_NAMESPACE = "com.topcoder.db.connectionfactory.DBConnectionFactoryImpl";
 
+    /**
+     * This member variable is a string constant that defines the name of the configurtaion
+     * namespace which the parameters for Phases Template persistence are stored under.
+     */
+    private static final String PHASES_TEMPLATE_PERSISTENCE_NAMESPACE = "com.topcoder.project.phases.template.persistence.XmlPhaseTemplatePersistence";
 
     /**
      * This constructor is declared private to prohibit instantiation of the
@@ -2625,6 +2653,45 @@ public class ActionsHelper {
     }
 
     /**
+     * This static method helps to create an object of the <code>PhaseTemplate</code> class.
+     *
+     * @return a newly created instance of the class.
+     * @param projectType
+     *            a project type for which the PhaseTemplate object should be created, 
+     *            can be null if start date generator type doesn't matter
+     * @throws IllegalArgumentException
+     *             if <code>request</code> parameter is <code>null</code>.
+     * @throws BaseException
+     *             if any error happens during object creation.
+     */
+    public static PhaseTemplate createPhaseTemplate(ProjectType projectType) throws BaseException {
+        // Create phase template persistence
+        PhaseTemplatePersistence persistence = new XmlPhaseTemplatePersistence(PHASES_TEMPLATE_PERSISTENCE_NAMESPACE);
+        // Create start date generator
+        StartDateGenerator generator;
+        if ("Component".equals(projectType)) {
+            // TODO: Specify conf. namespace
+            generator = new RelativeWeekTimeStartDateGenerator("");
+        } else {
+            // Create start date generator which always returns current date
+            generator = new StartDateGenerator() {
+                public Date generateStartDate() {
+                    return new Date();
+                }                
+            };
+        }
+        
+        // Create workdays instance
+        Workdays workdays = (new DefaultWorkdaysFactory()).createWorkdaysInstance();
+        
+        // Create phase template instance
+        PhaseTemplate phaseTemplate = new DefaultPhaseTemplate(persistence, generator, workdays );
+        
+        return phaseTemplate;
+    }
+    
+    
+    /**
      * Sets the searchable fields to the search bundle.
      *
      * @param searchBundle
@@ -2657,5 +2724,264 @@ public class ActionsHelper {
         fields.put(NotificationTypeFilterBuilder.NAME_FIELD_NAME, StringValidator.startsWith(""));
 
         searchBundle.setSearchableFields(fields);
+    }
+
+    /**
+     * Populate project_result for new submitters.
+     * 
+     * @param projectId the project_id
+     * @param newSubmitters new submitters external ids.
+     * @throws BaseException if error occurs
+     */
+    public static void populateProjectResult(long projectId, Collection newSubmitters) throws BaseException {
+    	Connection conn = null;
+    	PreparedStatement ps = null;
+    	PreparedStatement existStmt = null;
+    	PreparedStatement ratingStmt = null;
+    	PreparedStatement reliabilityStmt = null;
+		try {
+	        DBConnectionFactory dbconn;
+				dbconn = new DBConnectionFactoryImpl(DB_CONNECTION_NAMESPACE);
+	        conn = dbconn.createConnection();
+	        // add reliability_ind and old_reliability
+	    	ps = conn.prepareStatement("INSERT INTO project_result " +
+	                "(project_id, user_id, rating_ind, reliability_ind, valid_submission_ind, old_rating, old_reliability) " +
+	                "values (?, ?, ?, ?, ?, ?, ?)");
+	
+	        existStmt = conn.prepareStatement("SELECT 1 FROM PROJECT_RESULT WHERE user_id = ? and project_id = ?");
+	
+	        ratingStmt = conn.prepareStatement("SELECT rating from user_rating where user_id = ? and phase_id = " +
+	                "(select 111+project_category_id from project where project_id = ?)");
+	        
+	        reliabilityStmt = conn.prepareStatement("SELECT rating from user_reliability where user_id = ? and phase_id = " +
+	                "(select 111+project_category_id from project where project_id = ?)");
+	
+	    	for (Iterator iter = newSubmitters.iterator(); iter.hasNext();) {
+	    		String userId = iter.next().toString();
+	
+	    		// Check if projectResult exist
+	    		existStmt.clearParameters();
+	            existStmt.setString(1, userId);
+	            existStmt.setLong(2, projectId);
+	            if (existStmt.executeQuery().next()) {
+	            	continue;
+	            }
+	
+	            // Retrieve oldRating
+	            double oldRating = 0;
+	            ratingStmt.clearParameters();
+	            ratingStmt.setString(1, userId);
+	            ratingStmt.setLong(2, projectId);
+	            ResultSet rs = ratingStmt.executeQuery();
+	
+	            if (rs.next()) {
+	                oldRating = rs.getLong(1);
+	            }
+				close(rs);
+
+	            // Retrieve Reliability
+	            double oldReliability = 0;
+	            reliabilityStmt.clearParameters();
+	            reliabilityStmt.setString(1, userId);
+	            reliabilityStmt.setLong(2, projectId);
+	            rs = reliabilityStmt.executeQuery();
+	
+	            if (rs.next()) {
+	                oldReliability = rs.getDouble(1);
+	            }
+				close(rs);
+	
+		        ps.setLong(1, projectId);
+		        ps.setString(2, userId);
+		        ps.setLong(3, 0);
+		        ps.setLong(4, 0);
+		        ps.setLong(5, 0);
+	
+		        if (oldRating == 0) {
+		            ps.setNull(6, Types.DOUBLE);
+		        } else {
+		            ps.setDouble(6, oldRating);
+		        }
+		
+		        if (oldReliability == 0) {
+		            ps.setNull(7, Types.DOUBLE);
+		        } else {
+		            ps.setDouble(7, oldReliability);
+		        }
+		        ps.addBatch();
+	    	}
+	    	ps.executeBatch();
+		} catch (UnknownConnectionException e) {
+			throw new BaseException("Failed to create connection", e);
+		} catch (ConfigurationException e) {
+			throw new BaseException("Failed to config for DBNamespace", e);
+		} catch (SQLException e) {
+			throw new BaseException("Failed to populate project_result", e);
+		} catch (DBConnectionException e) {
+			throw new BaseException("Failed to return DBConnection", e);
+		} finally {
+			close(ps);
+			close(existStmt);
+			close(ratingStmt);
+			close(reliabilityStmt);
+			close(conn);
+		}
+    }
+    
+    /**
+     * Close jdbc resource.
+     * 
+     * @param obj jdbc resource
+     */
+    private static void close(Object obj) {
+		if (obj instanceof Connection) {
+			try {
+				((Connection) obj).close();
+			} catch (SQLException e) {
+				// Ignore
+			}
+		} else if (obj instanceof Statement) {
+			try {
+				((Statement) obj).close();
+			} catch (SQLException e) {
+				// Ignore
+			}
+		} else if (obj instanceof ResultSet) {
+			try {
+				((ResultSet) obj).close();
+			} catch (SQLException e) {
+				// Ignore
+			}
+		}
+    }
+
+    /**
+     * This method verifies the request for ceratin conditions to be met. This includes verifying if
+     * the user has specified an ID of the project he wants to perform an operation on, if the ID of
+     * the project specified by user denotes existing project, and whether the user has rights to
+     * perform the operation specified by <code>permission</code> parameter.
+     *
+     * @return an instance of the {@link CorrectnessCheckResult} class, which specifies whether the
+     *         check was successful and, in the case it was, contains additional information
+     *         retrieved during the check operation, which might be of some use for the calling
+     *         method.
+     * @param mapping
+     *            action mapping.
+     * @param request
+     *            the http request.
+     * @param permission
+     *            permission to check against, or <code>null</code> if no check is requeired.
+     * @throws BaseException
+     *             if any error occurs.
+     */
+    public static CorrectnessCheckResult checkForCorrectProjectId(ActionMapping mapping, MessageResources resources,
+            HttpServletRequest request, String permission)
+        throws BaseException {
+        // Prepare bean that will be returned as the result
+        CorrectnessCheckResult result = new CorrectnessCheckResult();
+    
+        if (permission == null || permission.trim().length() == 0) {
+            permission = null;
+        }
+    
+        // Verify that Project ID was specified and denotes correct project
+        String pidParam = request.getParameter("pid");
+        if (pidParam == null || pidParam.trim().length() == 0) {
+            result.setForward(produceErrorReport(
+                    mapping, resources, request, permission, "Error.ProjectIdNotSpecified"));
+            // Return the result of the check
+            return result;
+        }
+    
+        long pid;
+    
+        try {
+            // Try to convert specified pid parameter to its integer representation
+            pid = Long.parseLong(pidParam, 10);
+        } catch (NumberFormatException nfe) {
+            result.setForward(produceErrorReport(
+                    mapping, resources, request, permission, "Error.ProjectNotFound"));
+            // Return the result of the check
+            return result;
+        }
+    
+        // Obtain an instance of Project Manager
+        ProjectManager projMgr = createProjectManager(request);
+        // Get Project by its id
+        Project project = projMgr.getProject(pid);
+        // Verify that project with given ID exists
+        if (project == null) {
+            result.setForward(produceErrorReport(
+                    mapping, resources, request, permission, "Error.ProjectNotFound"));
+            // Return the result of the check
+            return result;
+        }
+    
+        // Store Project object in the result bean
+        result.setProject(project);
+        // Place project as attribute in the request
+        request.setAttribute("project", project);
+    
+        // Gather the roles the user has for current request
+        AuthorizationHelper.gatherUserRoles(request, pid);
+    
+        // If permission parameter was not null or empty string ...
+        if (permission != null) {
+            // ... verify that this permission is granted for currently logged in user
+            if (!AuthorizationHelper.hasUserPermission(request, permission)) {
+                result.setForward(produceErrorReport(
+                        mapping, resources, request, permission, "Error.NoPermission"));
+                // Return the result of the check
+                return result;
+            }
+        }
+    
+        return result;
+    }
+    
+    /**
+     * Set Completion Timestamp while the project turn to completed, Cancelled - Failed Review or Deleted status.
+     * 
+     * @param project the project instance
+     * @param newProjectStatus new project status
+     * @param format the date format
+     */
+    static void setProjectCompletionDate(Project project, ProjectStatus newProjectStatus, Format format) {
+    	String name = newProjectStatus.getName();
+    	if ("Completed".equals(name) || "Cancelled - Failed Review".equals(name) || "Deleted".equals(name)) {
+            if (format == null) {
+                format = new SimpleDateFormat(ConfigHelper.getDateFormat());
+            }
+    		project.setProperty("Completion Timestamp", format.format(new Date()));
+    	}
+    }
+    
+    /**
+     * Set Rated Timestamp with the end date of submission phase.
+     * 
+     * @param project the project instance
+     * @param format the date format
+     */
+    static void setProjectRatingDate(Project project, Phase[] projectPhases, Format format) {
+    	Date endDate = null;
+    	for (int i = 0; projectPhases != null && i < projectPhases.length; i++) {
+    		if ("Submission".equals(projectPhases[i].getPhaseType().getName())) {
+    			endDate = projectPhases[i].getActualEndDate();
+    			if (endDate == null) {
+    				endDate = projectPhases[i].getScheduledEndDate();
+    			}
+    			break;
+    		}
+    	}
+
+    	if (endDate == null) {
+    		return;
+    	}
+
+        if (format == null) {
+            format = new SimpleDateFormat(ConfigHelper.getDateFormat());
+        }
+
+		project.setProperty("Rated Timestamp", format.format(endDate));
     }
 }

@@ -14,14 +14,15 @@
 		<tr class="light">
 			<td class="value" width="2%" nowrap="nowrap"><b><bean:message key="editProject.CreateTimeline.UseTemplate" /></b></td>
 			<td class="value">
-				<select class="inputBox" name="template" id="template" style="width:100px;">
-					<option>Select</option>
-					<option>Design</option>
-					<option>Development</option>
-					<option>Security</option>
-					<option>Process</option>
-				</select>
-				<a href="pc-manager-create_project.jsp?L=1"><html:img src="/i/or/bttn_load_template.gif" imageName="load_template" styleId="load_template" /></a>
+				<html:select styleClass="inputBox" property="template_name" style="width:100px;">	
+					<html:option value="">Select</html:option>
+					<c:forEach var="templateName" items="${phaseTemplateNames}">
+						<html:option value="${templateName}">${templateName}</html:option>	
+					</c:forEach>
+				</html:select>
+				<html:link href="javascript:loadTimelineTemplate();">
+					<html:img src="/i/or/bttn_load_template.gif" imageName="load_template" styleId="load_template" />
+				</html:link>
 			</td>
 		</tr>
 	</table><br />
@@ -105,6 +106,7 @@
 				<div name="start_date_validation_msg" class="error" style="display:none"></div>
 			</td>
 			<td class="value" nowrap="nowrap">
+				<html:radio property="phase_use_duration[${phaseIdx}]" value="false" />
 				<html:text onblur="JavaScript:this.value=getDateString(this.value);" styleClass="inputBoxDate" property="phase_end_date[${phaseIdx}]" />
 				<html:text onblur="JavaScript:this.value=getTimeString(this.value, this.parentNode);" styleClass="inputBoxTime" property="phase_end_time[${phaseIdx}]" />
 				<html:select styleClass="inputBox" property="phase_end_AMPM[${phaseIdx}]">
@@ -115,8 +117,11 @@
 				<div name="end_date_validation_msg" class="error" style="display:none"></div>
 			</td>
 			<td class="value">
+				<html:radio property="phase_use_duration[${phaseIdx}]" value="true" />
 				<html:text styleClass="inputBoxDuration" property="phase_duration[${phaseIdx}]" />
+			    <div name="duration_validation_msg" class="error" style="display:none"></div>
 			</td> 
+			    
 			<td class="value">
 				<html:img srcKey="editProject.Phases.DeletePhase.img" 
 					altKey="editProject.Phases.DeletePhase.alt" 
@@ -327,6 +332,7 @@
 			</html:select>
 		</td>
       		<td class="value" width="18%" nowrap="nowrap">
+      	    <html:radio property="addphase_use_duration" value="false" />
 			<html:text onblur="JavaScript:this.value=getDateString(this.value);" styleClass="inputBoxDate" property="addphase_end_date" />
 			<html:text onblur="JavaScript:this.value=getTimeString(this.value, this.parentNode);" styleClass="inputBoxTime" property="addphase_end_time" />
 			<html:select styleClass="inputBox" property="addphase_end_AMPM">
@@ -336,6 +342,7 @@
 			<bean:message key="global.Timezone.EST" />
 		</td>
 		<td class="value" width="6%" colspan="2" nowrap="nowrap">	
+			<html:radio property="addphase_use_duration" value="true" />
 			<html:text styleClass="inputBoxDuration" property="addphase_duration" />
 		</td>
 		<td class="value" width="7%">

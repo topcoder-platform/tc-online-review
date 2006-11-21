@@ -191,7 +191,7 @@
     <property name="online_review_login.path" value="online_review_login/${online_review_login.version}" />
     <property name="online_review_login.jar" value="${tcs_libdir}/${online_review_login.path}/${online_review_login.jar.name}" />
 
-    <property name="online_review_phases.version" value="1.0" />
+    <property name="online_review_phases.version" value="1.0.2" />
     <property name="online_review_phases.jar.name" value="online_review_phases.jar" />
     <property name="online_review_phases.path" value="online_review_phases/${online_review_phases.version}" />
     <property name="online_review_phases.jar" value="${tcs_libdir}/${online_review_phases.path}/${online_review_phases.jar.name}" />
@@ -368,7 +368,8 @@
         <pathelement location="${workdays.jar}" />
     </path>
 
-	<target name="dist">	
+	<target name="dist">
+         <delete file="auto_pilot_app.jar" failonerror="false" />	
 		<jar destfile="auto_pilot_app.jar" filesonly="true">
 		    <fileset dir="../../lib/tcs">    
 		    	<include  name="**/*.jar"/>
@@ -407,14 +408,14 @@
 
 	<target name="auto_pilot">
     	<java classname="com.topcoder.management.phase.autopilot.AutoPilotJob" fork="true">
-    		<arg line="-config auto_pilot.xml -namespace AutoPilotJob -autopilot com.topcoder.management.phase.autopilot.AutoPilot -poll 1" />
+    		<arg line="-config auto_pilot.xml -namespace AutoPilotJob -autopilot com.topcoder.management.phase.autopilot.AutoPilot -poll 5" />
     		<classpath refid="buildlibs" />
     	</java>
 	</target>
 
 	<target name="auto_pilot_background">
     	<java classname="com.topcoder.management.phase.autopilot.AutoPilotJob" fork="true" spawn="true">
-    		<arg line="-config auto_pilot.xml -namespace AutoPilotJob -autopilot com.topcoder.management.phase.autopilot.AutoPilot -poll 1" />
+    		<arg line="-config auto_pilot.xml -namespace AutoPilotJob -autopilot com.topcoder.management.phase.autopilot.AutoPilot -poll 5" />
     		<classpath refid="buildlibs" />
     	</java>
 	</target>

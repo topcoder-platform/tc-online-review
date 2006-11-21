@@ -556,11 +556,11 @@
 								</tr>
 								<c:set var="winningSubmission" value="" />
 								<c:forEach items="${group.submissions}" var="submission">
-									<c:if test="${!(empty group.winner) && (group.winner.id == submission.upload.owner)}">
+									<c:if test="${(not empty group.winner) && (group.winner.id == submission.upload.owner)}">
 										<c:set var="winningSubmission" value="${submission}" />
 									</c:if>
 								</c:forEach>
-								<c:if test="${!(empty winningSubmission)}">
+								<c:if test="${not empty winningSubmission}">
 									<tr class="light">
 										<td class="value" nowrap="nowrap">
 											<html:img srcKey="viewProjectDetails.Submitter.icoWinner.img" altKey="viewProjectDetails.Submitter.icoWinner.alt" border="0" styleClass="Outline" />
@@ -568,47 +568,40 @@
 												titleKey="viewProjectDetails.box.Submission.Download">${winningSubmission.upload.id}</html:link>
 											(<tc-webtag:handle coderId='${group.winner.allProperties["External Reference ID"]}' context="component" />)
 										</td>
-										<c:if test="${!(empty group.finalFix)}">
+										<c:if test="${not empty group.finalFix}">
 											<td class="valueC" nowrap="nowrap">${orfn:displayDate(pageContext.request, group.finalFix.modificationTimestamp)}</td>
 											<td class="valueC" nowrap="nowrap">
 												<html:link page="/actions/DownloadFinalFix.do?method=downloadFinalFix&uid=${group.finalFix.id}"
 													titleKey="viewProjectDetails.box.FinalFix.Download.alt"><bean:message
 													key="viewProjectDetails.box.FinalFix.Download" /></html:link>
-												<c:if test="${isAllowedToUploadFF == true}">
-													[
-													<html:link page="/actions/UploadFinalFix.do?method=uploadFinalFix&pid=${project.id}"
-														titleKey="viewProjectDetails.box.FinalFix.Update.alt"><bean:message
-														key="viewProjectDetails.box.FinalFix.Update" /></html:link>
-													]
-												</c:if>
 											</td>
 										</c:if>
 										<c:if test="${empty group.finalFix}">
 											<td class="value"><!-- @ --></td>
-											<c:if test="${isAllowedToUploadFF == true}">
+											<c:if test="${isAllowedToUploadFF}">
 												<td class="valueC" nowrap="nowrap">
 													<html:link page="/actions/UploadFinalFix.do?method=uploadFinalFix&pid=${project.id}"><bean:message
 														key="viewProjectDetails.box.FinalFix.Upload" /></html:link></td>
 											</c:if>
-											<c:if test="${isAllowedToUploadFF != true}">
+											<c:if test="${not isAllowedToUploadFF}">
 												<td class="valueC"><bean:message key="Incomplete" /></td>
 											</c:if>
 										</c:if>
-										<c:if test="${!(empty group.finalReview)}">
-											<c:if test="${group.finalReview.committed == true}">
+										<c:if test="${not empty group.finalReview}">
+											<c:if test="${group.finalReview.committed}">
 												<td class="valueC" nowrap="nowrap">${orfn:displayDate(pageContext.request, group.finalReview.modificationTimestamp)}</td>
 												<td class="valueC" nowrap="nowrap">
 													<html:link page="/actions/ViewFinalReview.do?method=viewFinalReview&rid=${group.finalReview.id}"><bean:message
 														key="viewProjectDetails.box.FinalReview.ViewResults" /></html:link></td>
 											</c:if>
-											<c:if test="${group.finalReview.committed != true}">
+											<c:if test="${not group.finalReview.committed}">
 												<td class="value"><!-- @ --></td>
 												<c:if test="${isAllowedToPerformFinalReview == true}">
 													<td class="valueC" nowrap="nowrap"><html:link
 														page="/actions/EditFinalReview.do?method=editFinalReview&rid=${group.finalReview.id}"><b><bean:message
 														key="viewProjectDetails.box.FinalReview.Submit" /></b></html:link></td>
 												</c:if>
-												<c:if test="${isAllowedToPerformFinalReview != true}">
+												<c:if test="${not isAllowedToPerformFinalReview}">
 													<td class="valueC" nowrap="nowrap"><bean:message key="Pending" /></td>
 												</c:if>
 											</c:if>
