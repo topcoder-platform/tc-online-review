@@ -57,7 +57,7 @@ public class PRAppealResponsePhaseHandler extends AppealsResponsePhaseHandler {
         	// Only will perform while submission phase is ended
         	Connection conn = this.createConnection();
         	try {
-        		processPR(phase.getId(), conn);
+        		processPR(phase.getProject().getId(), conn);
         	} finally {
         		PRHelper.close(conn);
         	}

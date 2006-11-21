@@ -233,38 +233,61 @@ function validate_timeline(thisForm, msgList) {
         msgDiv.style.display = "none";
         msgDiv.innerHTML = "";
         
+        var use_duration_true = thisForm["phase_use_duration[" + i + "]"][1].checked;
+        var use_duration_false = thisForm["phase_use_duration[" + i + "]"][0].checked;
+        
+        // if neither two radio is selected, use duration by default
+        if (! (use_duration_true || use_duration_false)) {
+        	use_duration_true = true;
+        }
+        
         var end_date = thisForm["phase_end_date[" + i + "]"].value;
         var end_time = thisForm["phase_end_time[" + i + "]"].value;
         var empty_end_datetime = emptyString.test(end_date) && emptyString.test(end_time);
         
-        if (!empty_end_datetime) {
-            // if end date/time are specified, validate them.
-            if (!isDateString(end_date)) {
-                msg = "End Date should be in the form of \"mm.dd.yy\".";
-                add_error_message(msg, msgPrefix, msgDiv, msgList);
-            }
-            if (!isTimeString(end_time)) {
-                msg = "End Time should be in the form of \"hh:mm\".";
-                add_error_message(msg, msgPrefix, msgDiv, msgList);
+        if (use_duration_false) {
+        	if (empty_end_datetime) {
+        		msg = "End Date should be specified.";
+        		add_error_message(msg, msgPrefix, msgDiv, msgList);
+        	}
+        
+        
+            if (!empty_end_datetime) {
+                // if end date/time are specified, validate them.
+                if (!isDateString(end_date)) {
+                    msg = "End Date should be in the form of \"mm.dd.yy\".";
+                    add_error_message(msg, msgPrefix, msgDiv, msgList);
+                }
+                if (!isTimeString(end_time)) {
+                    msg = "End Time should be in the form of \"hh:mm\".";
+                    add_error_message(msg, msgPrefix, msgDiv, msgList);
+                }
             }
         }
         
         var duration = thisForm["phase_duration[" + i + "]"].value;
         var empty_duration = emptyString.test(duration);
         
-        if (!empty_duration) {
-            // if duration is specified, validate them.
-            if (!isTimeSpanString(duration)) {
-                msg = "Duration should be in the form of \"hh\" or \"hh:mm\".";
-                add_error_message(msg, msgPrefix, msgDiv, msgList);
+        msgDiv = getChildByName(phase_row, "duration_validation_msg");
+        msgDiv.style.display = "none";
+        msgDiv.innerHTML = "";
+        
+        if (use_duration_true) {
+        	if (empty_duration) {
+        		msg = "Duration should be specified.";
+        		add_error_message(msg, msgPrefix, msgDiv, msgList);
+        	}
+        
+        
+            if (!empty_duration) {
+                // if duration is specified, validate them.
+                if (!isTimeSpanString(duration)) {            
+                    msg = "Duration should be in the form of \"hh\" or \"hh:mm\".";
+                    add_error_message(msg, msgPrefix, msgDiv, msgList);
+                }
             }
         }
         
-        // either end datetime or duration must be specified.
-        if (empty_end_datetime && empty_duration) {
-            msg = "End DateTime or Duration Required.";
-            add_error_message(msg, msgPrefix, msgDiv, msgList);
-        }
     }
     
     return msg == null;

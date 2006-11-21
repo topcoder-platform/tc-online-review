@@ -46,9 +46,13 @@ function isDateString(str) {
     var result = null;
     
     // for mm.dd.yy
-    expression = /^(\d{1,2})\.(\d{1,2})\.(\d{2})$/;
+    expression = /^(\d{1,2})\.(\d{1,2})\.((\d{2})|(\d{4}))$/;
     if (result = expression.exec(str)) {
-    	year = 2000 + parseInt(result[3], 10);
+    	if (result[3].length == 4) {
+    		year = parseInt(result[3], 10);
+    	} else {
+    		year = 2000 + parseInt(result[3], 10);
+    	}
     	month = parseInt(result[1], 10) - 1;
     	day = parseInt(result[2], 10);
     	

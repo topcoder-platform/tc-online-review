@@ -5,6 +5,7 @@ package com.cronos.onlinereview.actions;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -682,36 +683,6 @@ public class ProjectReviewActions extends DispatchAction {
         if (validationSucceeded && commitRequested) {
             // Set the completed status of the review
             review.setCommitted(true);
-
-            // Obtain an instance of Resource Manager
-            ResourceManager resMgr = ActionsHelper.createResourceManager(request);
-            Phase reviewPhase = ActionsHelper.getPhase(phases, false, Constants.REVIEW_PHASE_NAME);
-            Resource[] reviewers = ActionsHelper.getAllResourcesForPhase(resMgr, reviewPhase);
-            Resource submitter = resMgr.getResource(verification.getSubmission().getUpload().getOwner());
-
-            for (int i = 0; i < reviewers.length; ++i) {
-                Resource reviewer = reviewers[i];
-                long currentId = Long.parseLong((String) reviewer.getProperty("External Reference ID"));
-                if (currentId == AuthorizationHelper.getLoggedInUserId(request)) {
-                    continue;
-                }
-                // A new review-level comment from Reviewer
-                Comment comment = new Comment();
-                comment.setCommentType(
-                        ActionsHelper.findCommentTypeByName(allCommentTypes, "Aggregation Review Comment"));
-                comment.setAuthor(reviewer.getId());
-                comment.setExtraInfo("Approving");
-                comment.setComment("");
-                review.addComment(comment);
-            }
-            // A new review-level comment from Submitter
-            Comment comment = new Comment();
-            comment.setCommentType(
-                    ActionsHelper.findCommentTypeByName(allCommentTypes, "Submitter Comment"));
-            comment.setAuthor(submitter.getId());
-            comment.setExtraInfo("Approving");
-            comment.setComment("");
-            review.addComment(comment);
         } else if (previewRequested) {
             // Put the review object into the request
             request.setAttribute("review", review);
@@ -769,7 +740,36 @@ public class ProjectReviewActions extends DispatchAction {
             checkForCorrectReviewId(mapping, request, Constants.VIEW_AGGREGATION_PERM_NAME);
         // If any error has occured, return action forward contained in the result bean
         if (!verification.isSuccessful()) {
-            return verification.getForward();
+            // Need to support view aggregation just by specifying the project id
+            verification = ActionsHelper.checkForCorrectProjectId(mapping, getResources(request), request, Constants.VIEW_AGGREGATION_PERM_NAME);
+            if (!verification.isSuccessful()) {
+                return verification.getForward();
+            } else {
+                // Find the latest aggregation for the project
+                ReviewManager reviewManager = ActionsHelper.createReviewManager(request);
+                Filter filterCommitted = new EqualToFilter("committed", new Integer(1));
+                Filter filterProject = new EqualToFilter("project", new Long(verification.getProject().getId()));
+                Review[] reviews = reviewManager.searchReviews(new AndFilter(filterProject, filterCommitted), true);
+                Arrays.sort(reviews, new Comparator() {
+                    public int compare(Object o1, Object o2) {
+                        return ((Review) o1).getCreationTimestamp().compareTo(((Review) o2).getCreationTimestamp());
+                    }
+                });
+                Review review = reviews[reviews.length - 1];
+                verification.setReview(review);
+                // Place the review object as attribute in the request
+                request.setAttribute("review", review);
+
+                // Obtain an instance of Deliverable Manager
+                UploadManager upMgr = ActionsHelper.createUploadManager(request);
+                // Get Submission by its id
+                Submission submission = upMgr.getSubmission(review.getSubmission());
+
+                // Store Submission object in the result bean
+                verification.setSubmission(submission);
+                // Place the id of the submission as attribute in the request
+                request.setAttribute("sid", new Long(submission.getId()));
+            }
         }
 
         // Verify that user has the permission to view aggregation

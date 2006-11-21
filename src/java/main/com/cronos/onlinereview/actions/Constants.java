@@ -166,6 +166,14 @@ public class Constants {
      */
     public static final String GLOBAL_MANAGER_ROLE_NAME = "Global Manager";
 
+    /**
+     * This member variable is a constant array that holds names of different manager roles.
+     *
+     * @see #MANAGER_ROLE_NAME
+     * @see #GLOBAL_MANAGER_ROLE_NAME
+     */
+    public static final String[] MANAGER_ROLE_NAMES = new String[] {MANAGER_ROLE_NAME, GLOBAL_MANAGER_ROLE_NAME};
+
 
     // --------------------------------------------------------------------- Permission names -----
 

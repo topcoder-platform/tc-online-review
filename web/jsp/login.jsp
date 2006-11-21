@@ -1,3 +1,4 @@
+<%@ page contentType="text/html;charset=UTF-8" %>
 <%@ page language="java" isELIgnored="false" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="html" uri="/tags/struts-html" %>
@@ -9,6 +10,7 @@
 
 <head>
 	<title><bean:message key="login.title" /></title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 
 	<!-- TopCoder CSS -->
 	<link type="text/css" rel="stylesheet" href="<html:rewrite href='/css/style.css' />" />

@@ -1,3 +1,4 @@
+<%@ page contentType="text/html;charset=UTF-8" %>
 <%@ page language="java" isELIgnored="false" %>
 <%@ taglib prefix="html" uri="/tags/struts-html" %>
 <%@ taglib prefix="bean" uri="/tags/struts-bean" %>
@@ -7,6 +8,7 @@
 
 <head>
 	<title><bean:message key="OnlineReviewApp.title" /></title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 
 	<!-- TopCoder CSS -->
 	<link type="text/css" rel="stylesheet" href="<html:rewrite href='/css/style.css' />">

@@ -1,3 +1,4 @@
+<%@ page contentType="text/html;charset=UTF-8" %>
 <%@ taglib  uri="/tags/struts-html" prefix="html" %>
 <%@ page import="java.util.Date"%>
 <%@ page import="java.io.PrintWriter" %>
@@ -8,6 +9,7 @@
 <html>
 <head>
     <title>TopCoder - Error</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <link type="text/css" rel="stylesheet" href="<html:rewrite href='/css/home.css' />"/>
     <link type="image/x-icon" rel="shortcut icon" href="<html:rewrite href='/i/favicon.ico' />"/>
     <STYLE TYPE="text/css">

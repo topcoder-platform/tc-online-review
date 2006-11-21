@@ -1,3 +1,4 @@
+<%@ page contentType="text/html;charset=UTF-8" %>
 <%@ page language="java" isELIgnored="false" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
@@ -9,6 +10,7 @@
 
 <head>
 	<title><bean:message key="OnlineReviewApp.title" /></title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 
 	<!-- TopCoder CSS -->
 	<link type="text/css" rel="stylesheet" href="<html:rewrite href='/css/style.css' />" />
@@ -23,6 +25,10 @@
 	<script language="JavaScript" type="text/javascript" src="<html:rewrite href='/js/or/validation_util.js' />"><!-- @ --></script>
 	<script language="JavaScript" type="text/javascript" src="<html:rewrite href='/js/or/validation_edit_project.js' />"><!-- @ --></script>
 	<script language="JavaScript" type="text/javascript" src="<html:rewrite href='/js/or/parseDate.js' />"><!-- @ --></script>
+	<script language="JavaScript" type="text/javascript">
+		var ajaxSupportUrl = "<html:rewrite page='/ajaxSupport' />";
+	</script>
+	<script language="JavaScript" type="text/javascript" src="<html:rewrite href='/js/or/ajax.js' />"><!-- @ --></script>
 	<script language="JavaScript" type="text/javascript"><!--
 		// TODO: Write docs for following vars
 		var lastResourceIndex = ${fn:length(projectForm.map['resources_id']) - 1};
@@ -42,7 +48,18 @@
 			// TODO: Localize the catagory name
 			projectCategories[projectCategories.length - 1]["name"] = "${category.name}";			
 		</c:forEach>
-					
+		
+		var projectTypeNamesMap = {};
+		<c:forEach var="projectType" items="${projectTypes}">
+			projectTypeNamesMap["${projectType.id}"] = "${projectType.name}";
+		</c:forEach>
+		
+		
+		var phaseTypeIdsMap = {};
+		<c:forEach var="phaseType" items="${phaseTypes}">
+			phaseTypeIdsMap["${phaseType.name}"] = "${phaseType.id}";
+		</c:forEach>
+		
 		/*	
 		 * TODO: Document it
 		 */
@@ -204,6 +221,12 @@
 							break;
 						}
 					}
+					for (var i = 0; i < destInputs.length; i++) {
+						if (selectedValue != null && destInputs[i].value != selectedValue) {
+							destInputs[i].checked = false;
+							destInputs[i].defaultChecked = false;
+						}
+					}
 				} else {
 					destInputs[0].value = srcInputs[0].value;
 				}
@@ -254,8 +277,8 @@
 		 * TODO: Document it
 		 */
 		function getNumberOfPhasesWithType(phaseTypeId) {
-			var phaseTypeNodes = getChildrenByNamePrefix(document, "phase_type");
-			var phaseActionNodes = getChildrenByNamePrefix(document, "phase_action");
+			var phaseTypeNodes = getChildrenByNamePrefix(document.documentElement, "phase_type");
+			var phaseActionNodes = getChildrenByNamePrefix(document.documentElement, "phase_action");
 			var result = 0;
 			for (var i = 1; i < phaseTypeNodes.length; i++) {
 				if (phaseTypeNodes[i].value == phaseTypeId && phaseActionNodes[i].value != "delete") {
@@ -265,23 +288,17 @@
 			return result;
 		}
 
-
 		/*
-		 * This function adds new phase to phases table, it includes addition of several rows.
+		 * TODO: Document it.
 		 */
-		function addNewPhase() {
-			// Retrieve timeline and add phase tables
+		function createNewPhaseRow(phaseName, phaseTypeId, _phaseId) {
+			// Retrieve timeline table
 			var timelineTable = document.getElementById("timeline_tbl");
+			// Retrieve add phase table
 			var addPhaseTable = document.getElementById("addphase_tbl");
-
-			// Retrieve phase name
-			var phaseNameInput = getChildByName(addPhaseTable, "addphase_type");
-			var selectedOption = phaseNameInput.options[phaseNameInput.selectedIndex];
-			var phaseName = dojo.dom.textContent(selectedOption);
-			var phaseTypeId = phaseNameInput.value;
-
+			
 			// Generate phase id (for use in the DOM)
-			var phaseId = getUniqueId();
+			var phaseId = _phaseId ? _phaseId : getUniqueId();
 
 			// Create a new row to represent the phase
 			var newRow = cloneInputRow(document.getElementById("phase_row_template"));
@@ -332,19 +349,42 @@
 			lastPhaseIndex++;
 
 			// Rename all the inputs to have a new index
-			patchAllChildParamIndexes(newRow, lastPhaseIndex);
+			patchAllChildParamIndexes(newRow, lastPhaseIndex);	
+		
+			return newRow;
+		}
+		
 
+		/*
+		 * This function adds new phase to phases table, it includes addition of several rows.
+		 */
+		function addNewPhase() {
+			// Retrieve timeline table
+			var timelineTable = document.getElementById("timeline_tbl");
+			// Retrieve add phase table
+			var addPhaseTable = document.getElementById("addphase_tbl");
+						
+			// Retrieve phase name
+			var phaseNameInput = getChildByName(addPhaseTable, "addphase_type");
+			var selectedOption = phaseNameInput.options[phaseNameInput.selectedIndex];
+			var phaseName = dojo.dom.textContent(selectedOption);
+			var phaseTypeId = phaseNameInput.value;
+				
+			// Create a new row to represent the phase
+			var newRow = createNewPhaseRow(phaseName, phaseTypeId);
+			
 			// Populate newly created phase inputs from the add phase form
 			var inputNames = ["type",
 				"start_date", "start_time", "start_AMPM",
 				"start_by_phase", "start_phase", "start_when",
-				"start_plusminus", "start_amount", "start_dayshrs",
+				"start_plusminus", "start_amount", "start_dayshrs", "use_duration",
 				"end_date", "end_time", "end_AMPM", "duration"];
 			for (var i = 0; i < inputNames.length; i++) {
 				populatePhaseParam(newRow, addPhaseTable, inputNames[i], lastPhaseIndex);
 			}
-
-
+			
+			var whereCombo = getChildByName(addPhaseTable, "addphase_where");
+			
 			// Add the row to the appropriate position
 			var wherePhaseId = whereCombo.value;
 			if (wherePhaseId == "") {
@@ -499,7 +539,116 @@
 			actionNode.form.submit();
 		}
 		
+		/**
+		 * TODO: Document it
+		 */
+		function loadTimelineTemplate() {
+			// Find template name input node
+			templateNameNode = document.getElementsByName("template_name")[0];
+			// Get html-encoded template name
+			var templateName = htmlEncode(templateNameNode.value);
+			
+			// assemble the request XML
+			var content =
+				'<?xml version="1.0" ?>' +
+				'<request type="LoadTimelineTemplate">' +
+				'<parameters>' +
+				'<parameter name="TemplateName">' +
+				templateName +
+				'</parameter>' +
+				'<parameter name="ProjectTypeName">' + 
+				projectTypeNamesMap[document.getElementsByName("project_type")[0].value] + 
+				'</parameter>' + '</parameters>' +
+				'</request>';
+
+			// Send the AJAX request
+			sendRequest(content,
+				function (result, respXML) {
+					// operation succeeded
+					// Populate project phases using loaded template
+					populateTimeLineFromTemplate(respXML.getElementsByTagName("timeline")[0]);
+				},
+				function (result, respXML) {
+					// operation failed, alert the error message to the user
+					alert("An error occured while loading timeline template: " + result);
+				}
+			);
+		}
 		
+		/**
+		 * TODO: Document it
+		 */
+		function populateTimeLineFromTemplate(templateXML) {
+			// Clear all the project phases
+			var phaseActionNodes = getChildrenByNamePrefix(document, "phase_action");
+			for (var i = 1; i < phaseActionNodes.length; i++) {
+				phaseActionNodes[i].value = "delete";
+				var phaseRowNode = phaseActionNodes[i].parentNode.parentNode;
+				phaseRowNode.style["display"] = "none";
+				// Remove phase criterion row if needed
+				nextRowNode = dojo.dom.nextElement(phaseRowNode);
+				if (nextRowNode != null && nextRowNode.className == "highlighted") {
+					nextRowNode.parentNode.removeChild(nextRowNode);
+				}
+			}
+			
+			// Retrieve timeline table
+			var timelineTable = document.getElementById("timeline_tbl");
+			
+			// Add new project phases
+			var phaseNodes = templateXML.getElementsByTagName("phase");
+			var phaseRows = []; 
+			// PASS 1
+			for (var i = 0; i < phaseNodes.length; i++)  {
+				var phaseName = phaseNodes[i].getAttribute("type");
+				var phaseId = phaseNodes[i].getAttribute("id");
+				var phaseTypeId = phaseTypeIdsMap[phaseName];
+				var newPhaseRow = createNewPhaseRow(phaseName, phaseTypeId, "template_" + phaseId);
+				phaseRows[i] = newPhaseRow;
+				timelineTable.tBodies[0].appendChild(newPhaseRow);
+				
+				var startDate = dojo.dom.textContent(phaseNodes[i].getElementsByTagName("start-date")[0]);
+				var startDateParts = startDate.split(" ");
+				
+				getChildByNamePrefix(newPhaseRow, "phase_start_date").value = startDateParts[0];
+				getChildByNamePrefix(newPhaseRow, "phase_start_time").value = startDateParts[1];
+				getChildByNamePrefix(newPhaseRow, "phase_start_AMPM").value = startDateParts[2].toLowerCase();
+				
+				var endDate = dojo.dom.textContent(phaseNodes[i].getElementsByTagName("end-date")[0]);
+				var endDateParts = endDate.split(" ");
+				
+				getChildByNamePrefix(newPhaseRow, "phase_end_date").value = endDateParts[0];
+				getChildByNamePrefix(newPhaseRow, "phase_end_time").value = endDateParts[1];
+				getChildByNamePrefix(newPhaseRow, "phase_end_AMPM").value = endDateParts[2].toLowerCase();
+				
+				var duration = parseInt(dojo.dom.textContent(phaseNodes[i].getElementsByTagName("length")[0])) / 3600 / 1000; 
+				getChildByNamePrefix(newPhaseRow, "phase_duration").value = duration;	
+	
+			}
+			// PASS 2
+			for (var i = 0; i < phaseNodes.length; i++) {
+				var newPhaseRow = phaseRows[i];
+				var dependencies = phaseNodes[i].getElementsByTagName("dependency");
+				var phaseStartButtons = getChildrenByNamePrefix(newPhaseRow, "phase_start_by_phase");
+				for (var j = 0; j < phaseStartButtons.length; j++) {
+					if (phaseStartButtons[j].value == "true") {
+						phaseStartButtons[j].checked = (dependencies.length != 0);
+					} else {
+						phaseStartButtons[j].checked = (dependencies.length == 0);
+					}
+				}
+			
+				if (dependencies.length != 0) {
+					var dependencyId =  dojo.dom.textContent(dependencies[0].getElementsByTagName("dependency-phase-id")[0]);
+					var dependencyStart =  dojo.dom.textContent(dependencies[0].getElementsByTagName("dependency-phase-start")[0]);
+					getChildByNamePrefix(newPhaseRow, "phase_start_phase").value = "template_" + dependencyId;
+					getChildByNamePrefix(newPhaseRow, "phase_start_when").value = (dependencyStart == "true") ? "starts" : "ends";			
+				}
+			}
+			
+		}
+		
+
 		// To be done on page load
 		function onLoad() {
 			var projectCategoryNode = document.getElementsByName("project_category")[0];

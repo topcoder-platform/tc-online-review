@@ -211,7 +211,11 @@ function getDayIndex(name){
 }
 
 function checkDateValues(day, month, year){
-    var d = new Date(year, month-1, day);
+	var intYear = parseInt(year);
+	if (intYear >= 0 && intYear <= 99) {
+		intYear = intYear + 2000;
+	}
+    var d = new Date(intYear, month-1, day);
     var returnMonth = ""+(d.getMonth()+1);
     if (d.getMonth()+1 != month || d.getDate()!=day)
         return "Invalid";
@@ -219,9 +223,9 @@ function checkDateValues(day, month, year){
         returnMonth = "0"+returnMonth;
     var returnDay = d.getDate();
     if (d.getDate() < 10)
-        returnDay = "0"+returnDay;
-    var returnYear = ""+d.getFullYear();
-    return returnMonth+"."+returnDay+"."+returnYear.substring(2,4);
+        returnDay = "0"+ returnDay;
+    var returnYear = "" + d.getFullYear();
+    return returnMonth + "." + returnDay+ "." + returnYear;
 
 }
 
