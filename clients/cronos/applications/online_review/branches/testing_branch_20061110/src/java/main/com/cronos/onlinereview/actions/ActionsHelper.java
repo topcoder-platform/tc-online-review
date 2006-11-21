@@ -2738,22 +2738,18 @@ public class ActionsHelper {
     	PreparedStatement ps = null;
     	PreparedStatement existStmt = null;
     	PreparedStatement ratingStmt = null;
-    	PreparedStatement reliabilityStmt = null;
 		try {
 	        DBConnectionFactory dbconn;
 				dbconn = new DBConnectionFactoryImpl(DB_CONNECTION_NAMESPACE);
 	        conn = dbconn.createConnection();
 	        // add reliability_ind and old_reliability
 	    	ps = conn.prepareStatement("INSERT INTO project_result " +
-	                "(project_id, user_id, rating_ind, reliability_ind, valid_submission_ind, old_rating, old_reliability) " +
-	                "values (?, ?, ?, ?, ?, ?, ?)");
+	                "(project_id, user_id, rating_ind, valid_submission_ind, old_rating) " +
+	                "values (?, ?, ?, ?, ?)");
 	
 	        existStmt = conn.prepareStatement("SELECT 1 FROM PROJECT_RESULT WHERE user_id = ? and project_id = ?");
 	
 	        ratingStmt = conn.prepareStatement("SELECT rating from user_rating where user_id = ? and phase_id = " +
-	                "(select 111+project_category_id from project where project_id = ?)");
-	        
-	        reliabilityStmt = conn.prepareStatement("SELECT rating from user_reliability where user_id = ? and phase_id = " +
 	                "(select 111+project_category_id from project where project_id = ?)");
 	
 	    	for (Iterator iter = newSubmitters.iterator(); iter.hasNext();) {
@@ -2778,35 +2774,16 @@ public class ActionsHelper {
 	                oldRating = rs.getLong(1);
 	            }
 				close(rs);
-
-	            // Retrieve Reliability
-	            double oldReliability = 0;
-	            reliabilityStmt.clearParameters();
-	            reliabilityStmt.setString(1, userId);
-	            reliabilityStmt.setLong(2, projectId);
-	            rs = reliabilityStmt.executeQuery();
-	
-	            if (rs.next()) {
-	                oldReliability = rs.getDouble(1);
-	            }
-				close(rs);
 	
 		        ps.setLong(1, projectId);
 		        ps.setString(2, userId);
 		        ps.setLong(3, 0);
 		        ps.setLong(4, 0);
-		        ps.setLong(5, 0);
 	
 		        if (oldRating == 0) {
-		            ps.setNull(6, Types.DOUBLE);
+		            ps.setNull(5, Types.DOUBLE);
 		        } else {
-		            ps.setDouble(6, oldRating);
-		        }
-		
-		        if (oldReliability == 0) {
-		            ps.setNull(7, Types.DOUBLE);
-		        } else {
-		            ps.setDouble(7, oldReliability);
+		            ps.setDouble(5, oldRating);
 		        }
 		        ps.addBatch();
 	    	}
@@ -2823,7 +2800,6 @@ public class ActionsHelper {
 			close(ps);
 			close(existStmt);
 			close(ratingStmt);
-			close(reliabilityStmt);
 			close(conn);
 		}
     }
