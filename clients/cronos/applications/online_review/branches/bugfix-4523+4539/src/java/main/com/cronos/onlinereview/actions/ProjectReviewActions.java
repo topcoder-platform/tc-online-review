@@ -3322,7 +3322,7 @@ public class ProjectReviewActions extends DispatchAction {
             // User is manager or observer
             isAllowed = true;
         } else if (AuthorizationHelper.hasUserPermission(request, Constants.VIEW_REVIEWER_REVIEWS_PERM_NAME) &&
-                    verification.getReview().getAuthor() == myResource.getId()) {
+                    myResource != null && verification.getReview().getAuthor() == myResource.getId()) {
             // User is authorized to view review authored by him
             isAllowed = true;
         } else if (myResource != null && verification.getSubmission().getUpload().getOwner() == myResource.getId()) {
@@ -3331,14 +3331,18 @@ public class ProjectReviewActions extends DispatchAction {
                     activePhases.contains(Constants.APPEALS_PHASE_NAME)) {
                 isAllowed = true;
             }
-        } else if (AuthorizationHelper.hasUserPermission(request, Constants.VIEW_ALL_REVIEWS_PERM_NAME)) {
-            // User is authorized to view all reviews (when not in Review, Appeals or Appeals Response)
-            if (!activePhases.contains(Constants.REVIEW_PHASE_NAME) &&
-                    !activePhases.contains(Constants.APPEALS_PHASE_NAME) &&
-                    !activePhases.contains(Constants.APPEALS_RESPONSE_PHASE_NAME)) {
+        } else if (AuthorizationHelper.hasUserPermission(request, permName)) {
+            if (reviewType == "Review") {
+                // User is authorized to view all reviews (when not in Review, Appeals or Appeals Response)
+                if (!activePhases.contains(Constants.REVIEW_PHASE_NAME) &&
+                        !activePhases.contains(Constants.APPEALS_PHASE_NAME) &&
+                        !activePhases.contains(Constants.APPEALS_RESPONSE_PHASE_NAME)) {
+                    isAllowed = true;
+                }
+            } else {
                 isAllowed = true;
             }
-        }
+        } 
 
         if (!isAllowed) {
             return ActionsHelper.produceErrorReport(
