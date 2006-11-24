@@ -15,7 +15,7 @@
     <!-- DIRECTORY SETUP -->
     <property name="srcdir" value="src" />
     <property name="tcs_libdir" value="../../lib/tcs" />
-    <property name="ext_libdir" value="../../lib/third_party" />
+    <property name="ext_libdir" value="../../lib/" />
     <property name="jar_tcs_libdir" value="lib/tcs" />
     <property name="jar_ext_libdir" value="lib/third_party" />
     <property name="docsdir" value="docs" />
@@ -71,16 +71,16 @@
     <property name="design_dist.jar" value="${component}_${component_version}_design_dist.jar" />
 		
     <!-- TCS Dependencies -->
-    <property name="authentication_factory.version" value="2.0" />
-    <property name="authentication_factory.jar.name" value="authentication_factory.jar" />
-    <property name="authentication_factory.path" value="authentication_factory/${authentication_factory.version}" />
-    <property name="authentication_factory.jar" value="${tcs_libdir}/${authentication_factory.path}/${authentication_factory.jar.name}" />
+    <property name="auto_pilot.version" value="1.0" />
+    <property name="auto_pilot.jar.name" value="auto_pilot.jar" />
+    <property name="auto_pilot.path" value="auto_pilot/${auto_pilot.version}" />
+    <property name="auto_pilot.jar" value="${tcs_libdir}/${auto_pilot.path}/${auto_pilot.jar.name}" />
 
-    <property name="auto_screening_management.version" value="1.0" />
-    <property name="auto_screening_management.jar.name" value="auto_screening_management.jar" />
-    <property name="auto_screening_management.path" value="auto_screening_management/${auto_screening_management.version}" />
-    <property name="auto_screening_management.jar" value="${tcs_libdir}/${auto_screening_management.path}/${auto_screening_management.jar.name}" />
-
+    <property name="auto_screening_management.version" value="1.0"/>
+    <property name="auto_screening_management.jar.name" value="auto_screening_management.jar"/>
+    <property name="auto_screening_management.path" value="auto_screening_management/${auto_screening_management.version}"/>
+    <property name="auto_screening_management.jar" value="${tcs_libdir}/${auto_screening_management.path}/${auto_screening_management.jar.name}"/>
+    
     <property name="base_exception.version" value="1.0" />
     <property name="base_exception.jar.name" value="base_exception.jar" />
     <property name="base_exception.path" value="base_exception/${base_exception.version}" />
@@ -136,15 +136,15 @@
     <property name="email_engine.path" value="email_engine/${email_engine.version}" />
     <property name="email_engine.jar" value="${tcs_libdir}/${email_engine.path}/${email_engine.jar.name}" />
 
-    <property name="file_system_server.version" value="1.0" />
-    <property name="file_system_server.jar.name" value="file_system_server.jar" />
-    <property name="file_system_server.path" value="file_system_server/${file_system_server.version}" />
-    <property name="file_system_server.jar" value="${tcs_libdir}/${file_system_server.path}/${file_system_server.jar.name}" />
+    <property name="executable_wrapper.version" value="1.0" />
+    <property name="executable_wrapper.jar.name" value="executable_wrapper.jar" />
+    <property name="executable_wrapper.path" value="executable_wrapper/${executable_wrapper.version}" />
+    <property name="executable_wrapper.jar" value="${tcs_libdir}/${executable_wrapper.path}/${executable_wrapper.jar.name}" />
 
-    <property name="file_upload.version" value="2.0" />
-    <property name="file_upload.jar.name" value="file_upload.jar" />
-    <property name="file_upload.path" value="file_upload/${file_upload.version}" />
-    <property name="file_upload.jar" value="${tcs_libdir}/${file_upload.path}/${file_upload.jar.name}" />
+    <property name="generic_event_manager.version" value="1.0" />
+    <property name="generic_event_manager.jar.name" value="generic_event_manager.jar" />
+    <property name="generic_event_manager.path" value="generic_event_manager/${generic_event_manager.version}" />
+    <property name="generic_event_manager.jar" value="${tcs_libdir}/${generic_event_manager.path}/${generic_event_manager.jar.name}" />
 
     <property name="guid_generator.version" value="1.0" />
     <property name="guid_generator.jar.name" value="guid_generator.jar" />
@@ -156,45 +156,40 @@
     <property name="id_generator.path" value="id_generator/${id_generator.version}" />
     <property name="id_generator.jar" value="${tcs_libdir}/${id_generator.path}/${id_generator.jar.name}" />
 
-    <property name="ip_server.version" value="2.0.1" />
-    <property name="ip_server.jar.name" value="ip_server.jar" />
-    <property name="ip_server.path" value="ip_server/${ip_server.version}" />
-    <property name="ip_server.jar" value="${tcs_libdir}/${ip_server.path}/${ip_server.jar.name}" />
-
-    <property name="JNDI_Utility.version" value="1.0" />
-    <property name="JNDI_Utility.jar.name" value="JNDI_Utility.jar" />
-    <property name="JNDI_Utility.path" value="JNDI_Utility/${JNDI_Utility.version}" />
-    <property name="JNDI_Utility.jar" value="${tcs_libdir}/${JNDI_Utility.path}/${JNDI_Utility.jar.name}" />
+    <property name="job_scheduler.version" value="1.0" />
+    <property name="job_scheduler.jar.name" value="job_scheduler.jar" />
+    <property name="job_scheduler.path" value="job_scheduler/${job_scheduler.version}" />
+    <property name="job_scheduler.jar" value="${tcs_libdir}/${job_scheduler.path}/${job_scheduler.jar.name}" />
 
     <property name="logging_wrapper.version" value="1.2" />
     <property name="logging_wrapper.jar.name" value="logging_wrapper.jar" />
     <property name="logging_wrapper.path" value="logging_wrapper/${logging_wrapper.version}" />
     <property name="logging_wrapper.jar" value="${tcs_libdir}/${logging_wrapper.path}/${logging_wrapper.jar.name}" />
 
+    <property name="magic_numbers.version" value="1.0" />
+    <property name="magic_numbers.jar.name" value="magic_numbers.jar" />
+    <property name="magic_numbers.path" value="magic_numbers/${magic_numbers.version}" />
+    <property name="magic_numbers.jar" value="${tcs_libdir}/${magic_numbers.path}/${magic_numbers.jar.name}" />
+
     <property name="object_factory.version" value="2.0.1" />
     <property name="object_factory.jar.name" value="object_factory.jar" />
     <property name="object_factory.path" value="object_factory/${object_factory.version}" />
     <property name="object_factory.jar" value="${tcs_libdir}/${object_factory.path}/${object_factory.jar.name}" />
-
-    <property name="online_review_ajax_support.version" value="1.0.1" />
-    <property name="online_review_ajax_support.jar.name" value="online_review_ajax_support.jar" />
-    <property name="online_review_ajax_support.path" value="online_review_ajax_support/${online_review_ajax_support.version}" />
-    <property name="online_review_ajax_support.jar" value="${tcs_libdir}/${online_review_ajax_support.path}/${online_review_ajax_support.jar.name}" />
 
     <property name="online_review_deliverables.version" value="1.0" />
     <property name="online_review_deliverables.jar.name" value="online_review_deliverables.jar" />
     <property name="online_review_deliverables.path" value="online_review_deliverables/${online_review_deliverables.version}" />
     <property name="online_review_deliverables.jar" value="${tcs_libdir}/${online_review_deliverables.path}/${online_review_deliverables.jar.name}" />
 
-    <property name="online_review_login.version" value="1.0" />
-    <property name="online_review_login.jar.name" value="online_review_login.jar" />
-    <property name="online_review_login.path" value="online_review_login/${online_review_login.version}" />
-    <property name="online_review_login.jar" value="${tcs_libdir}/${online_review_login.path}/${online_review_login.jar.name}" />
-
     <property name="online_review_phases.version" value="1.0.2" />
     <property name="online_review_phases.jar.name" value="online_review_phases.jar" />
     <property name="online_review_phases.path" value="online_review_phases/${online_review_phases.version}" />
     <property name="online_review_phases.jar" value="${tcs_libdir}/${online_review_phases.path}/${online_review_phases.jar.name}" />
+
+    <property name="phase_handler_extend.version" value="1.0" />
+    <property name="phase_handler_extend.jar.name" value="phase_handler_extend.jar" />
+    <property name="phase_handler_extend.path" value="phase_handler_extend/${phase_handler_extend.version}" />
+    <property name="phase_handler_extend.jar" value="${tcs_libdir}/${phase_handler_extend.path}/${phase_handler_extend.jar.name}" />
 
     <property name="phase_management.version" value="1.0.3" />
     <property name="phase_management.jar.name" value="phase_management.jar" />
@@ -226,7 +221,7 @@
     <property name="project_phase_template.path" value="project_phase_template/${project_phase_template.version}" />
     <property name="project_phase_template.jar" value="${tcs_libdir}/${project_phase_template.path}/${project_phase_template.jar.name}" />
 
-    <property name="resource_management.version" value="1.0" />
+    <property name="resource_management.version" value="1.0.1" />
     <property name="resource_management.jar.name" value="resource_management.jar" />
     <property name="resource_management.path" value="resource_management/${resource_management.version}" />
     <property name="resource_management.jar" value="${tcs_libdir}/${resource_management.path}/${resource_management.jar.name}" />
@@ -256,7 +251,7 @@
     <property name="review_score_aggregator.path" value="review_score_aggregator/${review_score_aggregator.version}" />
     <property name="review_score_aggregator.jar" value="${tcs_libdir}/${review_score_aggregator.path}/${review_score_aggregator.jar.name}" />
 
-    <property name="review_score_calculator.version" value="1.0" />
+    <property name="review_score_calculator.version" value="1.0.1" />
     <property name="review_score_calculator.jar.name" value="review_score_calculator.jar" />
     <property name="review_score_calculator.path" value="review_score_calculator/${review_score_calculator.version}" />
     <property name="review_score_calculator.jar" value="${tcs_libdir}/${review_score_calculator.path}/${review_score_calculator.jar.name}" />
@@ -276,15 +271,10 @@
     <property name="scorecard_management_persistence.path" value="scorecard_management_persistence/${scorecard_management_persistence.version}" />
     <property name="scorecard_management_persistence.jar" value="${tcs_libdir}/${scorecard_management_persistence.path}/${scorecard_management_persistence.jar.name}" />
 
-    <property name="search_builder.version" value="1.3" />
+    <property name="search_builder.version" value="1.3.1" />
     <property name="search_builder.jar.name" value="search_builder.jar" />
     <property name="search_builder.path" value="search_builder/${search_builder.version}" />
     <property name="search_builder.jar" value="${tcs_libdir}/${search_builder.path}/${search_builder.jar.name}" />
-
-    <property name="security_manager.version" value="1.1" />
-    <property name="security_manager.jar.name" value="security_manager.jar" />
-    <property name="security_manager.path" value="security_manager/${security_manager.version}" />
-    <property name="security_manager.jar" value="${tcs_libdir}/${security_manager.path}/${security_manager.jar.name}" />
 
     <property name="simple_cache.version" value="2.0" />
     <property name="simple_cache.jar.name" value="simple_cache.jar" />
@@ -312,43 +302,48 @@
     <property name="workdays.jar" value="${tcs_libdir}/${workdays.path}/${workdays.jar.name}" />
 
     <!-- 3rd Party Dependencies  -->
-    <property name="ifx-jdbc.jar" value="${ext_libdir}/ifx-jdbc.jar" />
-		<property name="javamail.jar" value="${ext_libdir}/mail.jar" />
-		<property name="activation.jar" value="${ext_libdir}/activation.jar" />
+	<property name="activation.jar" value="${ext_libdir}/third_party/activation.jar" />
+    <property name="ifx-jdbc.jar" value="${ext_libdir}/third_party/ifx-jdbc.jar" />
+	<property name="mail.jar" value="${ext_libdir}/third_party/mail.jar" />
+	<property name="log4j.jar" value="${ext_libdir}/third_party/log4j.jar" />
+	<property name="xerces.jar" value="${ext_libdir}/third_party/xerces.jar" />
 		
     <path id="buildlibs">
-	    <fileset dir="lib">    
-	    	<filename name="**/*.jar"/>
-	    </fileset>
-        <pathelement location="." />
         <pathelement location="${ifx-jdbc.jar}" />
-        <pathelement location="${javamail.jar}" />
+        <pathelement location="${mail.jar}" />		 
+        <pathelement location="${log4j.jar}" />
+        <pathelement location="${activation.jar}" />	 
+        <pathelement location="${xerces.jar}" />	
 
+        <pathelement location="${auto_pilot.jar}" />
         <pathelement location="${auto_screening_management.jar}" />
         <pathelement location="${base_exception.jar}" />
         <pathelement location="${class_associations.jar}" />
         <pathelement location="${command_line_utility.jar}" />
-        <pathelement location="${configuration_manager.jar}" />
+        <pathelement location="${configuration_manager.jar}" />        
         <pathelement location="${data_validation.jar}" />
         <pathelement location="${database_abstraction.jar}" />
         <pathelement location="${db_connection_factory.jar}" />
         <pathelement location="${deliverable_management.jar}" />
-        <pathelement location="${deliverable_management_persistence.jar}" />
+        <pathelement location="${deliverable_management_persistence.jar}" />        
         <pathelement location="${document_generator.jar}" />
         <pathelement location="${email_engine.jar}" />
+        <pathelement location="${executable_wrapper.jar}" />
+        <pathelement location="${generic_event_manager.jar}" />
         <pathelement location="${guid_generator.jar}" />
         <pathelement location="${id_generator.jar}" />
-        <pathelement location="${logging_wrapper.jar}" />
-        <pathelement location="${object_factory.jar}" />
-        <pathelement location="${online_review_ajax_support.jar}" />
+        <pathelement location="${job_scheduler.jar}" />           
+        <pathelement location="${magic_numbers.jar}" />   
+        <pathelement location="${logging_wrapper.jar}" />        
+        <pathelement location="${object_factory.jar}" />        
         <pathelement location="${online_review_deliverables.jar}" />
-        <pathelement location="${online_review_login.jar}" />
-        <pathelement location="${online_review_phases.jar}" />
+        <pathelement location="${online_review_phases.jar}" />   
+        <pathelement location="${phase_handler_extend.jar}" />     
         <pathelement location="${phase_management.jar}" />
         <pathelement location="${phase_management_persistence.jar}" />
         <pathelement location="${project_management.jar}" />
         <pathelement location="${project_management_persistence.jar}" />
-        <pathelement location="${project_phases.jar}" />
+        <pathelement location="${project_phases.jar}" />        
         <pathelement location="${project_phase_template.jar}" />
         <pathelement location="${resource_management.jar}" />
         <pathelement location="${resource_management_persistence.jar}" />
@@ -366,26 +361,73 @@
         <pathelement location="${user_project_data_store.jar}" />
         <pathelement location="${weighted_calculator.jar}" />
         <pathelement location="${workdays.jar}" />
+        <!--below classphas used for prod environment which all jars exist in lib dir -->
+        <pathelement location="." />
+	    <fileset dir="lib">    
+	    	<filename name="**/*.jar"/>
+	    </fileset>
     </path>
 
 	<target name="dist">
-         <delete file="auto_pilot_app.jar" failonerror="false" />	
+        <delete file="auto_pilot_app.jar" failonerror="false" />	
 		<jar destfile="auto_pilot_app.jar" filesonly="true">
-		    <fileset dir="../../lib/tcs">    
-		    	<include  name="**/*.jar"/>
-		    </fileset>
-		    <fileset dir="../../lib/third_party">   
-		    	<include  name="ifx-jdbc.jar"/> 
-		    	<include  name="log4j.jar"/> 
-		    	<include name="mail.jar" />
-		    	<include name="activation.jar" />
-		    	<include  name="xerces.jar"/> 
-		    </fileset>
-		    <fileset dir=".">    
-		    	<exclude  name="build.xml"/> 
-		    	<include  name="**/*.xml"/>
-		    	<include  name="**/*.txt"/>
-		    	<include  name="**/*.properties"/>
+	    	<fileset file="${auto_pilot.jar}"/>
+	    	<fileset file="${auto_screening_management.jar}"/>
+	    	<fileset file="${base_exception.jar}"/>
+	    	<fileset file="${class_associations.jar}"/>
+	    	<fileset file="${command_line_utility.jar}"/>
+	    	<fileset file="${configuration_manager.jar}"/>
+	    	<fileset file="${data_validation.jar}"/>
+	    	<fileset file="${database_abstraction.jar}"/>
+	    	<fileset file="${db_connection_factory.jar}"/>
+	    	<fileset file="${deliverable_management.jar}"/>
+	    	<fileset file="${deliverable_management_persistence.jar}"/>
+	    	<fileset file="${document_generator.jar}"/>
+	    	<fileset file="${email_engine.jar}"/>
+	    	<fileset file="${executable_wrapper.jar}"/>
+	    	<fileset file="${generic_event_manager.jar}"/>
+	    	<fileset file="${guid_generator.jar}"/>
+	    	<fileset file="${id_generator.jar}"/>
+	    	<fileset file="${job_scheduler.jar}"/>
+	    	<fileset file="${logging_wrapper.jar}"/>
+	    	<fileset file="${magic_numbers.jar}"/>
+	    	<fileset file="${object_factory.jar}"/>
+	    	<fileset file="${online_review_deliverables.jar}"/>
+	    	<fileset file="${online_review_phases.jar}"/>
+	    	<fileset file="${phase_handler_extend.jar}"/>
+	    	<fileset file="${phase_management.jar}"/>
+	    	<fileset file="${phase_management_persistence.jar}"/>
+	    	<fileset file="${project_management.jar}"/>
+	    	<fileset file="${project_management_persistence.jar}"/>
+	    	<fileset file="${project_phases.jar}"/>
+	    	<fileset file="${project_phase_template.jar}"/>
+	    	<fileset file="${resource_management.jar}"/>		
+	    	<fileset file="${resource_management_persistence.jar}"/>	    
+	    	<fileset file="${review_data_structure.jar}"/>
+	    	<fileset file="${review_management.jar}"/>
+	    	<fileset file="${review_management_persistence.jar}"/>
+	    	<fileset file="${review_score_aggregator.jar}"/>
+	    	<fileset file="${review_score_calculator.jar}"/>
+	    	<fileset file="${scorecard_data_structure.jar}"/>
+	    	<fileset file="${scorecard_management.jar}"/>
+	    	<fileset file="${scorecard_management_persistence.jar}"/>
+	    	<fileset file="${search_builder.jar}"/>
+	    	<fileset file="${simple_cache.jar}"/>
+	    	<fileset file="${typesafe_enum.jar}"/>
+	    	<fileset file="${user_project_data_store.jar}"/>
+	    	<fileset file="${weighted_calculator.jar}"/>
+	    	<fileset file="${workdays.jar}"/>
+	    	<fileset file="${ifx-jdbc.jar}"/> 
+	    	<fileset file="${mail.jar}"/> 
+	    	<fileset file="${log4j.jar}" />
+	    	<fileset file="${activation.jar}" />
+	    	<fileset file="${xerces.jar}"/> 
+		    <fileset dir=".">
+		    	<exclude name="build.xml"/> 
+		    	<include name="**/*.sh"/>
+		    	<include name="**/*.xml"/>
+		    	<include name="**/*.txt"/>
+		    	<include name="**/*.properties"/>
 		    </fileset>
 		</jar>
 	</target>
@@ -399,9 +441,10 @@
     	</unjar>
     	<unjar src="auto_pilot_app.jar" dest=".">
     		<patternset>
-		    	<include  name="**/*.xml"/>
-		    	<include  name="**/*.txt"/>
-		    	<include  name="**/*.properties"/>
+		    	<include name="**/*.sh"/>
+		    	<include name="**/*.xml"/>
+		    	<include name="**/*.txt"/>
+		    	<include name="**/*.properties"/>
     		</patternset>
     	</unjar>
 	</target>
