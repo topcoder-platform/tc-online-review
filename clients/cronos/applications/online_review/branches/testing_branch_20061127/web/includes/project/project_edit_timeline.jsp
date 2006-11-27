@@ -139,9 +139,7 @@
 				<tr class="highlighted">
 			</c:if>	
 				<c:if test="${not newProject}">
-					<td class="value">
-						<td class="value">&nbsp;</td>				
-					</td>
+					<td class="value">&nbsp;</td>					
 				</c:if>	
 				<td class="value">&nbsp;</td>
 				<td class="value" colspan="4"><bean:message key="editProject.Phases.Criteria.RequiredRegistrations.beforeInput" /> 
@@ -160,9 +158,7 @@
 				<tr class="highlighted">
 			</c:if>	
 				<c:if test="${not newProject}">
-					<td class="value">
-						<td class="value">&nbsp;</td>				
-					</td>
+					<td class="value">&nbsp;</td>					
 				</c:if>	
 				<td class="value"><!-- @ --></td>
 				<td class="value" colspan="4"><bean:message key="editProject.Phases.Criteria.RequiredSubmissions.beforeInput" />
@@ -181,9 +177,7 @@
 				<tr class="highlighted">
 			</c:if>
 				<c:if test="${not newProject}">
-					<td class="value">
-						<td class="value">&nbsp;</td>				
-					</td>
+					<td class="value">&nbsp;</td>					
 				</c:if>	
 				<td class="value">&nbsp;</td>
 				<td class="value" colspan="4"><bean:message key="editProject.Phases.Criteria.Scorecard" />
@@ -203,9 +197,7 @@
 				<tr class="highlighted">
 			</c:if>
 				<c:if test="${not newProject}">
-					<td class="value">
-						<td class="value">&nbsp;</td>				
-					</td>
+					<td class="value">&nbsp;</td>					
 				</c:if>	
 				<td class="value">&nbsp;</td>
 				<td class="value" colspan="4"><bean:message key="editProject.Phases.Criteria.ReviewNumber.beforeInput" /> 
@@ -231,9 +223,7 @@
 				<tr class="highlighted">
 			</c:if>
 				<c:if test="${not newProject}">
-					<td class="value">
-						<td class="value">&nbsp;</td>				
-					</td>
+					<td class="value">&nbsp;</td>					
 				</c:if>	
 				<td class="value">&nbsp;</td>
 				<td class="value" colspan="4"><bean:message key="editProject.Phases.Criteria.Scorecard" />
@@ -253,9 +243,7 @@
 				<tr class="highlighted">
 			</c:if>
 			 	<c:if test="${not newProject}">
-					<td class="value">
-						<td class="value">&nbsp;</td>				
-					</td>
+					<td class="value">&nbsp;</td>					
 				</c:if>	
 				<td class="value">&nbsp;</td>
 				<td class="value" colspan="4">
