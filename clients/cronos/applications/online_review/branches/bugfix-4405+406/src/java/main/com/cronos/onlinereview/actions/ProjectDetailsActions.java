@@ -895,29 +895,26 @@ public class ProjectDetailsActions extends DispatchAction {
 
             if (phaseGroup.getAppFunc().equalsIgnoreCase(Constants.AGGREGATION_APP_FUNC) &&
                     phaseName.equalsIgnoreCase(Constants.AGGREGATION_REVIEW_PHASE_NAME) &&
-                    phaseGroup.getAggregation() != null) {
+                    phaseGroup.getAggregation() != null && phaseGroup.getAggregation().isCommitted()) {
                 Review aggregation = phaseGroup.getAggregation();
 
-                if (aggregation.isCommitted()) {
-                    int j = 0;
-                    for (; j < aggregation.getNumberOfComments(); ++j) {
-                        // Get a comment for the current iteration
-                        Comment comment = aggregation.getComment(j);
-                        String commentType = comment.getCommentType().getName();
+                boolean reviewCommitted = true;
+                
+                for (int j = 0; j < aggregation.getNumberOfComments(); ++j) {
+                    // Get a comment for the current iteration
+                    Comment comment = aggregation.getComment(j);
 
-                        if (commentType.equalsIgnoreCase("Aggregation Review Comment") ||
-                                commentType.equalsIgnoreCase("Submitter Comment")) {
-                            String extraInfo = (String) comment.getExtraInfo();
-                            if (!("Approved".equalsIgnoreCase(extraInfo) ||
-                                    "Rejected".equalsIgnoreCase(extraInfo))) {
-                                break;
-                            }
+                    if (ActionsHelper.isAggregationReviewComment(comment)) {
+                        String extraInfo = (String) comment.getExtraInfo();
+                        if (!("Approved".equalsIgnoreCase(extraInfo) ||
+                                "Rejected".equalsIgnoreCase(extraInfo))) {
+                        	reviewCommitted = false;
+                            break;
                         }
                     }
-                    if (j == aggregation.getNumberOfComments()) {
-                        phaseGroup.setAggregationReviewCommitted(true);
-                    }
                 }
+                
+                phaseGroup.setAggregationReviewCommitted(reviewCommitted);
             }
 
             if (phaseGroup.getAppFunc().equalsIgnoreCase(Constants.FINAL_FIX_APP_FUNC) &&
