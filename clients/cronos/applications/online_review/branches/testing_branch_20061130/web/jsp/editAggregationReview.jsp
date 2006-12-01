@@ -23,6 +23,26 @@
 	<link type="text/css" rel="stylesheet" href="<html:rewrite href='/css/or/new_styles.css' />" />
 	<script language="JavaScript" type="text/javascript"
 		src="<html:rewrite href='/js/or/rollovers.js' />"><!-- @ --></script>
+
+	<script language="JavaScript" type="text/javascript">
+function OnCompleteScorecardClick() {
+	var x = document.getElementsByTagName("input");
+	var isRejected = false;
+
+	for (var i = 0; i < x.length; ++i) {
+		var element = x[i];
+		if (element.type.toLowerCase() != "radio" || element.value.toLowerCase() != "reject") {
+			continue;
+		}
+		if (element.checked) {
+			isRejected = true;
+			break;
+		}
+	}
+
+	return (isRejected) ? confirm("<bean:message key='editAggregationReview.BeforeReject' />") : true;
+}
+	</script>
 </head>
 
 <body>
@@ -102,13 +122,13 @@
 															<c:set var="isReviewerComment" value="${false}" />
 														</c:otherwise>
 													</c:choose>
-													<c:if test='${(isReviewerComment == true) || (commentType == "Manager Comment") ||
+													<c:if test='${isReviewerComment || (commentType == "Manager Comment") ||
 															(commentType == "Appeal") || (commentType == "Appeal Response") ||
 															(commentType == "Aggregation Comment") ||
 															((empty isSubmitter) && !(empty submitterCommitted) && (commentType == "Submitter Comment"))}'>
 														<tr class="dark">
 															<td class="value">
-																<c:if test="${firstTime == true}">
+																<c:if test="${firstTime}">
 																	<c:forEach items="${reviewResources}" var="resource">
 																		<c:if test="${resource.id == comment.author}">
 																			<tc-webtag:handle coderId='${resource.allProperties["External Reference ID"]}' context="component" /><br />
@@ -119,22 +139,22 @@
 																			<html:link page="/actions/ViewReview.do?method=viewReview&rid=${subReview.id}"><bean:message key="editReview.EditAggregation.ViewReview" /></html:link>
 																		</c:if>
 																	</c:forEach>
-																	<c:if test="${!(empty item.document)}">
+																	<c:if test="${not empty item.document}">
 																		<br /><html:link page="/actions/DownloadDocument.do?method=downloadDocument&uid=${item.document}"><bean:message key="editReview.Document.Download" /></html:link>
 																	</c:if>
 																	<c:set var="firstTime" value="${false}" />
 																</c:if>
 															</td>
-															<c:if test="${isReviewerComment == true}">
+															<c:if test="${isReviewerComment}">
 																<td class="valueC">${commentNum}</td>
 																<c:set var="commentNum" value="${commentNum + 1}" />
 															</c:if>
-															<c:if test="${isReviewerComment != true}">
+															<c:if test="${not isReviewerComment}">
 																<td class="valueC"><!-- @ --></td>
 															</c:if>
 															<td class="value">
 																<c:choose>
-																	<c:when test="${isReviewerComment == true}">
+																	<c:when test="${isReviewerComment}">
 																		<b><bean:message key="editReview.EditAggregation.ReviewerResponse" /></b>
 																	</c:when>
 																	<c:when test='${(commentType == "Manager Comment") ||
@@ -145,11 +165,11 @@
 																</c:choose>
 																${orfn:htmlEncode(comment.comment)}
 															</td>
-															<c:if test="${isReviewerComment == true}">
+															<c:if test="${isReviewerComment}">
 																<td class="value"><bean:message key="CommentType.${commentType}" /></td>
 																<td class="value"><bean:message key="AggregationItemStatus.${comment.extraInfo}" /></td>
 															</c:if>
-															<c:if test="${isReviewerComment != true}">
+															<c:if test="${not isReviewerComment}">
 																<td class="value"><!-- @ --></td>
 																<td class="value"><!-- @ --></td>
 															</c:if>
@@ -180,7 +200,7 @@
 
 						<div align="right">
 							<html:hidden property="save" value="" />
-							<html:image onclick="javascript:this.form.save.value='submit';" srcKey="editReview.Button.SaveAndCommit.img" altKey="editReview.Button.SaveAndCommit.alt" border="0" />&#160;
+							<html:image onclick="javascript:this.form.save.value='submit';return OnCompleteScorecardClick();" srcKey="editReview.Button.SaveAndCommit.img" altKey="editReview.Button.SaveAndCommit.alt" border="0" />&#160;
 							<html:image onclick="javascript:this.form.save.value='save';" srcKey="editReview.Button.SaveForLater.img" altKey="editReview.Button.SaveForLater.alt" border="0" />
 						</div>
 					</html:form>
