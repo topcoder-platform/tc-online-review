@@ -34,6 +34,10 @@ class PRHelper {
 				"update project_result set final_score = ?, placed = ?, passed_review_ind = ?  " +
 				"where project_id = ? and user_id = ? ";
 
+	private static final String PLACED_FINALSCORE_UPDATE_PROJECT_RESULT_STMT = 
+				"update project_result set final_score = ?, placed = ?  " +
+				"where project_id = ? and user_id = ? ";
+
 	private static final String REVIEW_SELECT_STMT = 
 				"select ri_s.value as raw_score, ri_u.value as user_id, r.project_id " +
 				"from resource r, resource_info ri_u,resource_info ri_s  " +
@@ -215,6 +219,54 @@ class PRHelper {
         		updateStmt.setInt(3, status == 1 || status == 4 ? 1 : 0);
         		updateStmt.setLong(4, projectId);
         		updateStmt.setLong(5, userId);
+        		updateStmt.execute();
+        	}
+    	} finally {
+    		close(rs);
+    		close(pstmt);
+    		close(updateStmt);
+    	}
+    }
+
+    /**
+     * Pull data to project_result.
+     * 
+     * @param projectId the projectId
+     * @throws PhaseHandlingException if error occurs
+     */
+    static void processPlacedFinalScore(long projectId, Connection conn) throws SQLException {
+    	PreparedStatement pstmt = null;
+    	PreparedStatement updateStmt = null;
+    	ResultSet rs = null;
+    	try {
+        	// Retrieve all 
+        	pstmt = conn.prepareStatement(APPEAL_RESPONSE_SELECT_STMT);
+        	pstmt.setLong(1, projectId);
+        	rs = pstmt.executeQuery();
+
+        	updateStmt = conn.prepareStatement(PLACED_FINALSCORE_UPDATE_PROJECT_RESULT_STMT);
+        	while(rs.next()) {
+        		double finalScore = rs.getDouble("final_score");
+        		long userId = rs.getLong("user_id");
+        		String p = rs.getString("placed");
+        		int placed = 0;
+        		if (p != null) {
+        			try {
+        				placed = Integer.parseInt(p);
+        			} catch (Exception e) {
+        				// Ignore
+        			}
+        		}
+
+        		// Update final score, placed and passed_review_ind
+        		updateStmt.setDouble(1, finalScore);
+        		if (placed == 0) {
+        			updateStmt.setNull(2, Types.INTEGER);
+        		} else {
+        			updateStmt.setInt(2, placed);
+        		}
+        		updateStmt.setLong(3, projectId);
+        		updateStmt.setLong(4, userId);
         		updateStmt.execute();
         	}
     	} finally {

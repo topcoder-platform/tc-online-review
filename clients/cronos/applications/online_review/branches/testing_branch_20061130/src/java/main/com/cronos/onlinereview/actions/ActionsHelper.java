@@ -50,7 +50,11 @@ import com.cronos.onlinereview.phases.AppealsPhaseHandler;
 import com.cronos.onlinereview.phases.ApprovalPhaseHandler;
 import com.cronos.onlinereview.phases.FinalFixPhaseHandler;
 import com.cronos.onlinereview.phases.FinalReviewPhaseHandler;
+import com.cronos.onlinereview.phases.PRAggregationPhaseHandler;
+import com.cronos.onlinereview.phases.PRAggregationReviewPhaseHandler;
 import com.cronos.onlinereview.phases.PRAppealResponsePhaseHandler;
+import com.cronos.onlinereview.phases.PRFinalFixPhaseHandler;
+import com.cronos.onlinereview.phases.PRFinalReviewPhaseHandler;
 import com.cronos.onlinereview.phases.PRRegistrationPhaseHandler;
 import com.cronos.onlinereview.phases.PRReviewPhaseHandler;
 import com.cronos.onlinereview.phases.PRScreeningPhaseHandler;
@@ -2217,13 +2221,13 @@ public class ActionsHelper {
                 registerPhaseHandlerForOperation(manager, phaseTypes,
                         new PRAppealResponsePhaseHandler(), Constants.APPEALS_RESPONSE_PHASE_NAME);
                 registerPhaseHandlerForOperation(manager, phaseTypes,
-                        new AggregationPhaseHandler(), Constants.AGGREGATION_PHASE_NAME);
+                        new PRAggregationPhaseHandler(), Constants.AGGREGATION_PHASE_NAME);
                 registerPhaseHandlerForOperation(manager, phaseTypes,
-                        new AggregationReviewPhaseHandler(), Constants.AGGREGATION_REVIEW_PHASE_NAME);
+                        new PRAggregationReviewPhaseHandler(), Constants.AGGREGATION_REVIEW_PHASE_NAME);
                 registerPhaseHandlerForOperation(manager, phaseTypes,
-                        new FinalFixPhaseHandler(), Constants.FINAL_FIX_PHASE_NAME);
+                        new PRFinalFixPhaseHandler(), Constants.FINAL_FIX_PHASE_NAME);
                 registerPhaseHandlerForOperation(manager, phaseTypes,
-                        new FinalReviewPhaseHandler(), Constants.FINAL_REVIEW_PHASE_NAME);
+                        new PRFinalReviewPhaseHandler(), Constants.FINAL_REVIEW_PHASE_NAME);
                 registerPhaseHandlerForOperation(manager, phaseTypes,
                         new ApprovalPhaseHandler(), Constants.APPROVAL_PHASE_NAME);
             }
@@ -2744,8 +2748,9 @@ public class ActionsHelper {
 	        conn = dbconn.createConnection();
 	        // add reliability_ind and old_reliability
 	    	ps = conn.prepareStatement("INSERT INTO project_result " +
-	                "(project_id, user_id, rating_ind, valid_submission_ind, old_rating) " +
-	                "values (?, ?, ?, ?, ?)");
+	                "(project_id, user_id, rating_ind, valid_submission_ind, old_rating, old_reliability) " +
+	                "values (?, ?, ?, ?, ?, ?)");
+
 	
 	        existStmt = conn.prepareStatement("SELECT 1 FROM PROJECT_RESULT WHERE user_id = ? and project_id = ?");
 	
@@ -2785,6 +2790,13 @@ public class ActionsHelper {
 		        } else {
 		            ps.setDouble(5, oldRating);
 		        }
+	
+		        if (oldReliability == 0) {
+		            ps.setNull(6, Types.DOUBLE);
+		        } else {
+		            ps.setDouble(6, oldReliability);
+		        }
+
 		        ps.addBatch();
 	    	}
 	    	ps.executeBatch();
