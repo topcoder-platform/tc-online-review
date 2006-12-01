@@ -48,6 +48,7 @@
 			// TODO: Localize the catagory name
 			projectCategories[projectCategories.length - 1]["name"] = "${category.name}";			
 		</c:forEach>
+
 		
 		var projectTypeNamesMap = {};
 		<c:forEach var="projectType" items="${projectTypes}">
@@ -575,6 +576,7 @@
 			);
 		}
 		
+<<<<<<< .working
 		/**
 		 * TODO: Document it
 		 */
@@ -649,6 +651,84 @@
 		}
 		
 
+=======
+		/**
+		 * TODO: Document it
+		 */
+		function populateTimeLineFromTemplate(templateXML) {
+			// Clear all the project phases
+			var phaseActionNodes = getChildrenByNamePrefix(document, "phase_action");
+			for (var i = 1; i < phaseActionNodes.length; i++) {
+				phaseActionNodes[i].value = "delete";
+				var phaseRowNode = phaseActionNodes[i].parentNode.parentNode;
+				phaseRowNode.style["display"] = "none";
+				// Remove phase criterion row if needed
+				nextRowNode = dojo.dom.nextElement(phaseRowNode);
+				if (nextRowNode != null && nextRowNode.className == "highlighted") {
+					nextRowNode.parentNode.removeChild(nextRowNode);
+				}
+			}
+			
+			// Retrieve timeline table
+			var timelineTable = document.getElementById("timeline_tbl");
+			
+			// Add new project phases
+			var phaseNodes = templateXML.getElementsByTagName("phase");
+			var phaseRows = []; 
+			// PASS 1
+			for (var i = 0; i < phaseNodes.length; i++)  {
+				var phaseName = phaseNodes[i].getAttribute("type");
+				var phaseId = phaseNodes[i].getAttribute("id");
+				var phaseTypeId = phaseTypeIdsMap[phaseName];
+				var newPhaseRow = createNewPhaseRow(phaseName, phaseTypeId, "template_" + phaseId);
+				phaseRows[i] = newPhaseRow;
+				timelineTable.tBodies[0].appendChild(newPhaseRow);
+				
+				var startDate = dojo.dom.textContent(phaseNodes[i].getElementsByTagName("start-date")[0]);
+				var startDateParts = startDate.split(" ");
+				
+				getChildByNamePrefix(newPhaseRow, "phase_start_date").value = startDateParts[0];
+				getChildByNamePrefix(newPhaseRow, "phase_start_time").value = startDateParts[1];
+				getChildByNamePrefix(newPhaseRow, "phase_start_AMPM").value = startDateParts[2].toLowerCase();
+				
+				var endDate = dojo.dom.textContent(phaseNodes[i].getElementsByTagName("end-date")[0]);
+				var endDateParts = endDate.split(" ");
+				
+				getChildByNamePrefix(newPhaseRow, "phase_end_date").value = endDateParts[0];
+				getChildByNamePrefix(newPhaseRow, "phase_end_time").value = endDateParts[1];
+				getChildByNamePrefix(newPhaseRow, "phase_end_AMPM").value = endDateParts[2].toLowerCase();
+				
+				var duration = parseInt(dojo.dom.textContent(phaseNodes[i].getElementsByTagName("length")[0])) / 3600 / 1000; 
+				getChildByNamePrefix(newPhaseRow, "phase_duration").value = duration;	
+	
+					
+				// Add phase criterion row if needed
+				addPhaseCriterion(phaseName, newPhaseRow);	
+			}
+			// PASS 2
+			for (var i = 0; i < phaseNodes.length; i++) {
+				var newPhaseRow = phaseRows[i];
+				var dependencies = phaseNodes[i].getElementsByTagName("dependency");
+				var phaseStartButtons = getChildrenByNamePrefix(newPhaseRow, "phase_start_by_phase");
+				for (var j = 0; j < phaseStartButtons.length; j++) {
+					if (phaseStartButtons[j].value == "true") {
+						phaseStartButtons[j].checked = (dependencies.length != 0);
+					} else {
+						phaseStartButtons[j].checked = (dependencies.length == 0);
+					}
+				}
+			
+				if (dependencies.length != 0) {
+					var dependencyId =  dojo.dom.textContent(dependencies[0].getElementsByTagName("dependency-phase-id")[0]);
+					var dependencyStart =  dojo.dom.textContent(dependencies[0].getElementsByTagName("dependency-phase-start")[0]);
+					getChildByNamePrefix(newPhaseRow, "phase_start_phase").value = "template_" + dependencyId;
+					getChildByNamePrefix(newPhaseRow, "phase_start_when").value = (dependencyStart == "true") ? "starts" : "ends";			
+				}
+			}
+			
+		}
+		
+>>>>>>> .merge-right.r44360
 		// To be done on page load
 		function onLoad() {
 			var projectCategoryNode = document.getElementsByName("project_category")[0];
