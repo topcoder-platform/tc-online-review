@@ -2752,6 +2752,20 @@
             <Property name="PhaseDuration">
                 <Value>168</Value>
             </Property>
+            <Property name="NoteLength">
+                <Value>1</Value>
+            </Property>
+            <!-- Negative value in any of the three following fields means that there
+                 will be no default value displayed on the page (text field will be left empty) -->
+            <Property name="RequiredRegistrants">
+                <Value>-1</Value>
+            </Property>
+            <Property name="RequiredSubmissions">
+                <Value>1</Value>
+            </Property>
+            <Property name="RequiredReviewers">
+                <Value>3</Value>
+            </Property>
             <Property name="DeadlineNearDuration">
                 <Value>2</Value>
             </Property>
@@ -3109,6 +3123,8 @@
                 <Value>Accuracy Reviewer</Value>
                 <Value>Failure Reviewer</Value>
                 <Value>Stress Reviewer</Value>
+                <!-- Aggregator must be allowed to see Aggregation (especially, if it is its own one) -->
+                <Value>Aggregator</Value>
                 <Value>Approver</Value>
                 <Value>Public</Value>
                 <Value>Designer</Value>

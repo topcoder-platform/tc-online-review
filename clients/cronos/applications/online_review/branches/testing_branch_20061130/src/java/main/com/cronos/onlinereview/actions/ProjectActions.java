@@ -166,6 +166,17 @@ public class ProjectActions extends DispatchAction {
         lazyForm.set("phase_can_close", 0, Boolean.FALSE);
         lazyForm.set("phase_use_duration", 0, Boolean.TRUE);
 
+        // Populate some phase criteria with default values read from the configuration
+        if (ConfigHelper.getDefaultRequiredRegistrants() >= 0) {
+            lazyForm.set("phase_required_registrations", 0, new Integer(ConfigHelper.getDefaultRequiredRegistrants()));
+        }
+        if (ConfigHelper.getDefaultRequiredSubmissions() >= 0) {
+            lazyForm.set("phase_required_submissions", 0, new Integer(ConfigHelper.getDefaultRequiredSubmissions()));
+        }
+        if (ConfigHelper.getDefaultRequiredReviewers() >= 0) {
+            lazyForm.set("phase_required_reviewers", 0, new Integer(ConfigHelper.getDefaultRequiredReviewers()));
+        }
+
         // Populate default phase duration
         lazyForm.set("addphase_duration", new Integer(ConfigHelper.getDefaultPhaseDuration()));
     }
@@ -1095,11 +1106,11 @@ public class ProjectActions extends DispatchAction {
                 phase.setAttribute("Submission Number", requiredSubmissions.toString());
             }
             // If the number of required reviewers is specified, set it
-            Integer requiredReviewer = (Integer) lazyForm.get("phase_required_reviewers", i);          
+            Integer requiredReviewer = (Integer) lazyForm.get("phase_required_reviewers", i);
             if (requiredReviewer != null) {
             	phase.setAttribute("Reviewer Number", requiredReviewer.toString());
             }
-            
+
             Boolean manualScreening = (Boolean) lazyForm.get("phase_manual_screening", i);
             // If the manual screening flag is specified, set it
             if (manualScreening != null) {
