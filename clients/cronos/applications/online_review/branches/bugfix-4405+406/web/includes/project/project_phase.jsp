@@ -517,14 +517,14 @@
 													page="/actions/ViewAggregationReview.do?method=viewAggregationReview&rid=${group.aggregation.id}"><bean:message
 													key="viewProjectDetails.box.Aggregation.ViewResults" /></html:link></td>
 											</c:if>
-											<c:if test="${group.aggregationReviewCommitted != true}">
+											<c:if test="${not group.aggregationReviewCommitted}">
 												<td class="value"><!-- @ --></td>
-												<c:if test="${isAllowedToPerformAggregationReview == true}">
+												<c:if test="${group.aggregation.committed && isAllowedToPerformAggregationReview}">
 													<td class="valueC" nowrap="nowrap"><html:link
 														page="/actions/EditAggregationReview.do?method=editAggregationReview&rid=${group.aggregation.id}"><b><bean:message
 														key="viewProjectDetails.box.AggregationReview.Submit" /></b></html:link></td>
 												</c:if>
-												<c:if test="${isAllowedToPerformAggregationReview != true}">
+												<c:if test="${not (group.aggregation.committed && isAllowedToPerformAggregationReview)}">
 													<td class="valueC" nowrap="nowrap"><bean:message key="Pending" /></td>
 												</c:if>
 											</c:if>
