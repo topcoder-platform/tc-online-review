@@ -102,13 +102,13 @@
 															<c:set var="isReviewerComment" value="${false}" />
 														</c:otherwise>
 													</c:choose>
-													<c:if test='${(isReviewerComment == true) || (commentType == "Manager Comment") ||
+													<c:if test='${isReviewerComment || (commentType == "Manager Comment") ||
 															(commentType == "Appeal") || (commentType == "Appeal Response") ||
 															(commentType == "Aggregation Comment") ||
-															((empty isSubmitter) && !(empty submitterCommitted) && (commentType == "Submitter Comment"))}'>
+															((empty isSubmitter) && (not empty submitterCommitted) && (commentType == "Submitter Comment"))}'>
 														<tr class="dark">
 															<td class="value">
-																<c:if test="${firstTime == true}">
+																<c:if test="${firstTime}">
 																	<c:forEach items="${reviewResources}" var="resource">
 																		<c:if test="${resource.id == comment.author}">
 																			<tc-webtag:handle coderId='${resource.allProperties["External Reference ID"]}' context="component" /><br />
@@ -119,22 +119,22 @@
 																			<html:link page="/actions/ViewReview.do?method=viewReview&rid=${subReview.id}"><bean:message key="editReview.EditAggregation.ViewReview" /></html:link>
 																		</c:if>
 																	</c:forEach>
-																	<c:if test="${!(empty item.document)}">
+																	<c:if test="${not empty item.document}">
 																		<br /><html:link page="/actions/DownloadDocument.do?method=downloadDocument&uid=${item.document}"><bean:message key="editReview.Document.Download" /></html:link>
 																	</c:if>
 																	<c:set var="firstTime" value="${false}" />
 																</c:if>
 															</td>
-															<c:if test="${isReviewerComment == true}">
+															<c:if test="${isReviewerComment}">
 																<td class="valueC">${commentNum}</td>
 																<c:set var="commentNum" value="${commentNum + 1}" />
 															</c:if>
-															<c:if test="${isReviewerComment != true}">
+															<c:if test="${not isReviewerComment}">
 																<td class="valueC"><!-- @ --></td>
 															</c:if>
 															<td class="value">
 																<c:choose>
-																	<c:when test="${isReviewerComment == true}">
+																	<c:when test="${isReviewerComment}">
 																		<b><bean:message key="editReview.EditAggregation.ReviewerResponse" /></b>
 																	</c:when>
 																	<c:when test='${(commentType == "Manager Comment") ||
@@ -145,11 +145,11 @@
 																</c:choose>
 																${orfn:htmlEncode(comment.comment)}
 															</td>
-															<c:if test="${isReviewerComment == true}">
+															<c:if test="${isReviewerComment}">
 																<td class="value"><bean:message key="CommentType.${commentType}" /></td>
 																<td class="value"><bean:message key="AggregationItemStatus.${comment.extraInfo}" /></td>
 															</c:if>
-															<c:if test="${isReviewerComment != true}">
+															<c:if test="${not isReviewerComment}">
 																<td class="value"><!-- @ --></td>
 																<td class="value"><!-- @ --></td>
 															</c:if>
@@ -159,11 +159,19 @@
 
 												<tr class="highlighted">
 													<td class="value" colspan="5">
-														<html:radio property="review_function[${globalItemIndex}]" value="Accept" />
-														<bean:message key="editAggregationReview.Function.Accept" />
-														<html:radio property="review_function[${globalItemIndex}]" value="Reject" />
-														<bean:message key="editAggregationReview.Function.Reject" /> &#160;
-														<span class="error"><html:errors property="reject_reason[${globalItemIndex}]" prefix="" suffix="" /></span><br />
+														<c:choose>
+															<c:when test="${isSubmitter}">
+																<input type="hidden" name="review_function[${globalItemIndex}]" value="Accept" />
+																<bean:message key="editAggregationReview.EnterComment" /><br />
+															</c:when>
+															<c:otherwise>
+																<html:radio property="review_function[${globalItemIndex}]" value="Accept" />
+																<bean:message key="editAggregationReview.Function.Accept" />
+																<html:radio property="review_function[${globalItemIndex}]" value="Reject" />
+																<bean:message key="editAggregationReview.Function.Reject" /> &#160;
+																<span class="error"><html:errors property="reject_reason[${globalItemIndex}]" prefix="" suffix="" /></span><br />
+															</c:otherwise>
+														</c:choose>
 														<html:textarea rows="3" property="reject_reason[${globalItemIndex}]" cols="20" styleClass="inputTextBox" />
 													</td>
 												</tr>
