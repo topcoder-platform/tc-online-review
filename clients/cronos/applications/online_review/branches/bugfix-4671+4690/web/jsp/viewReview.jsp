@@ -83,7 +83,7 @@
 			answerNode = document.getElementsByName("answer[" + itemIdx + "]")[0];
 			// Retrieve modified answer value
 			modifiedAnswer = answerNode.value;
-			
+
 			// Find the appeal success status node
 			appealSuccessNode = document.getElementsByName("appeal_response_success[" + itemIdx + "]")[0];
 
@@ -107,16 +107,16 @@
 				'<parameter name="Status">' +
 				(appealSuccessNode.checked ? "Succeeded" : "Failed") +
 				'</parameter>';
-				
+
 			commentTypeNodes = document.getElementsByName("comment_type[" + itemIdx + "]");
 			commentIdNodes = document.getElementsByName("comment_id[" + itemIdx + "]");
-			
+
 			for (var i = 0; i < commentTypeNodes.length; i++) {
-				content = content + '<parameter name="CommentType' + 
+				content = content + '<parameter name="CommentType' +
 					commentIdNodes[i].value + '">' +
-					commentTypeNodes[i].value + '</parameter>';	
+					commentTypeNodes[i].value + '</parameter>';
 			}
-				
+
 			content = content + "</parameters>" + "</request>";
 
 			// Send the AJAX request
@@ -124,8 +124,9 @@
 				function (result, respXML) {
 					// operation succeeded
 					// TODO: Some changes to here
-					toggleDisplay("appealResponseText_" + itemIdx);
-					toggleDisplay("placeAppealResponse_" + itemIdx);
+					hideRow("placeAppealResponse_" + itemIdx);
+					alterComment(itemIdx);
+					alterScore(respXML.getElementsByTagName("result")[0]);
 				},
 				function (result, respXML) {
 					// operation failed, alert the error message to the user
@@ -133,10 +134,58 @@
 				}
 			);
 		}
-		
-		
+
+		/**
+		 * TODO: Document it
+		 */
+		function hideRow(rowId) {
+			if (document != null && document.getElementById != null) {
+				var row = document.getElementById(rowId);
+				if (row != null) row.style.display = "none";
+			}
+		}
+
+		/**
+		 * TODO: Document it
+		 */
+		function alterComment(itemIdx) {
+			var commentCombo = document.getElementById("cmtType_" + itemIdx);
+			var commentText = document.getElementById("cmtTypeStatic_" + itemIdx);
+			if (commentCombo == null || commentText == null) {
+				return;
+			}
+
+			var text = commentCombo.options[commentCombo.selectedIndex].value;
+
+			commentText.innerHTML = text;
+			commentCombo.style.display = "none";
+			commentText.style.display = "inline";
+		}
+
+		/**
+		 * TODO: Document it
+		 */
+		function alterScore(resultNode) {
+			if (document == null || document.getElementById == null) {
+				return;
+			}
+
+			var newScore = parseFloat(dojo.dom.textContent(resultNode));
+			var newScoreNormalized = Math.round(newScore * 100);
+
+			var scoreWhole = Math.floor(newScoreNormalized / 100);
+			var scoreFrac = newScoreNormalized % 100;
+
+			if (scoreFrac % 10 == 0) {
+				scoreFrac = Math.floor(scoreFrac / 10);
+			}
+
+			var scoreEl = document.getElementById("scoreHere");
+			if (scoreEl != null) scoreEl.innerHTML = scoreWhole.toString() + "." + scoreFrac.toString();
+		}
+
 		// TODO: Make the following code reusable with editReview.jsp
-		
+
 		// The "passed_tests" and "all_tests" inputs should be populated
 		// by the values taken from appropriate hidden "answer" input
 		dojo.addOnLoad(function () {
@@ -151,9 +200,16 @@
 				}
 			}
 		});
-		
-		
-		
+
+		/**
+		 * TODO: Document it
+		 */
+		function focusControl(ctrlId) {
+			if (document != null && document.getElementById != null) {
+				var ctrl = document.getElementById(ctrlId);
+				if (ctrl != null && ctrl.focus != null) ctrl.focus();
+			}
+		}
 	</script>
 
 </head>
@@ -184,8 +240,8 @@
 					<html:form action="/actions/View${reviewType}.do?method=view${reviewType}&rid=${review.id}">
 
 					<c:set var="itemIdx" value="0" />
-					<c:forEach items="${scorecardTemplate.allGroups}" var="group" varStatus="groupStatus">
-						<table class="scorecard" cellpadding="0" width="100%" style="border-collapse: collapse;" id="table2">
+					<table class="scorecard" cellpadding="0" width="100%" style="border-collapse: collapse;" id="table2">
+						<c:forEach items="${scorecardTemplate.allGroups}" var="group" varStatus="groupStatus">
 							<tr>
 								<td class="title" colspan="${canPlaceAppeal ? 5 : (canPlaceAppealResponse ? 4 : 3)}">${orfn:htmlEncode(group.name)}</td>
 							</tr>
@@ -211,56 +267,47 @@
 											<td class="valueC">${appealStatuses[itemIdx]}<!-- @ --></td>
 										</c:if>
 										<c:if test="${canPlaceAppeal}">
-											<td class="valueC">
-												<div>
-													<html:link href="javascript:toggleDisplay('appealText_${itemIdx}');toggleDisplay('placeAppeal_${itemIdx}');">
-														<html:img styleId="placeAppeal_${itemIdx}" styleClass="showText" srcKey="editReview.Button.Appeal.img" altKey="editReview.Button.Appeal.alt" />
-													</html:link>
-												</div>
-											</td>
+											<c:if test="${not empty appealStatuses[itemIdx]}">
+												<td class="value"><!-- @ --></td>
+											</c:if>
+											<c:if test="${empty appealStatuses[itemIdx]}">
+												<td class="valueC">
+													<a class="showText" id="placeAppeal_${itemIdx}"
+														href="javascript:toggleDisplay('appealText_${itemIdx}');toggleDisplay('placeAppeal_${itemIdx}');focusControl('appealArea_${itemIdx}');"><html:img
+														srcKey="editReview.Button.Appeal.img" altKey="editReview.Button.Appeal.alt" /></a>
+												</td>
+											</c:if>
 										</c:if>
 									</tr>
 									<%@ include file="../includes/review/review_comments.jsp" %>
-									<c:if test="${canPlaceAppeal and empty appealStatuses[itemIdx]}">
+									<c:if test="${canPlaceAppeal and (empty appealStatuses[itemIdx])}">
 										<tr class="highlighted">
 											<td class="value" colspan="6">
 												<div id="appealText_${itemIdx}" class="hideText">
-													<b><bean:message key="editReview.Question.AppealText.title"/>:</b>
-													<br/>
-													<textarea name="appeal_text[${itemIdx}]" rows="2" cols="20" style="font-size: 10px; font-family: sans-serif;width:99%;height:50px;border:1px solid #ccc;margin:3px;"></textarea>
-													<br/>
-													<html:link href="javascript:placeAppeal(${itemIdx}, ${item.id}, ${review.id});">
-														<html:img srcKey="editReview.Button.SubmitAppeal.img" altKey="editReview.Button.SubmitAppeal.alt" border="0" hspace="5" vspace="9" />
-													</html:link>
-													<br/>
+													<b><bean:message key="editReview.Question.AppealText.title"/>:</b><br />
+													<textarea id="appealArea_${itemIdx}" name="appeal_text[${itemIdx}]" rows="2" cols="20" style="font-size:10px;font-family:sans-serif;width:99%;height:50px;border:1px solid #ccc;margin:3px;"></textarea><br />
+													<a href="javascript:placeAppeal(${itemIdx}, ${item.id}, ${review.id});"><html:img
+														srcKey="editReview.Button.SubmitAppeal.img" altKey="editReview.Button.SubmitAppeal.alt"
+														border="0" hspace="5" vspace="9" /></a><br />
 												</div>
 											</td>
 										</tr>
 									</c:if>
-									<c:if test="${canPlaceAppealResponse and appealStatuses[itemIdx] eq 'Unresolved'}">
-										<tr class="highlighted">
+									<c:if test="${canPlaceAppealResponse and (appealStatuses[itemIdx] == 'Unresolved')}">
+										<tr id="placeAppealResponse_${itemIdx}" class="highlighted">
 											<td class="value" colspan="3">
-												<div id="appealResponseText_${itemIdx}" class="showText">
-													<b><bean:message key="editReview.Question.AppealResponseText.title"/>:</b>
-													<br/>
-													<textarea rows="2" name="appeal_response_text[${itemIdx}]" cols="20" style="font-size: 10px; font-family: sans-serif;width:99%;height:50px;border:1px solid #ccc;margin:3px;"></textarea>
-													<br/>
-													<input type="checkbox" name="appeal_response_success[${itemIdx}]" />
-													<bean:message key="editReview.Question.AppealSucceeded.title" />
-												</div>
+												<b><bean:message key="editReview.Question.AppealResponseText.title"/>:</b><br />
+												<textarea rows="2" name="appeal_response_text[${itemIdx}]" cols="20" style="font-size:10px;font-family:sans-serif;width:99%;height:50px;border:1px solid #ccc;margin:3px;"></textarea><br />
+												<input type="checkbox" name="appeal_response_success[${itemIdx}]" />
+												<bean:message key="editReview.Question.AppealSucceeded.title" />
 											</td>
 											<td class="value">
-												<div id="placeAppealResponse_${itemIdx}" class="showText">
-													<bean:message key="editReview.Question.ModifiedResponse.title"/>:
-													<br/>
-													<%@include file="../includes/review/review_answer.jsp" %>
-													<br/><br/>
-													<html:link href="javascript:placeAppealResponse(${itemIdx}, ${item.id}, ${review.id});">
-														<html:img srcKey="editReview.Button.SubmitAppealResponse.img" altKey="editReview.Button.SubmitAppealResponse.alt" border="0"/>
-													</html:link>
-												</div>
+												<bean:message key="editReview.Question.ModifiedResponse.title"/>:<br />
+												<%@ include file="../includes/review/review_answer.jsp" %><br /><br />
+												<a href="javascript:placeAppealResponse(${itemIdx}, ${item.id}, ${review.id});"><html:img
+													srcKey="editReview.Button.SubmitAppealResponse.img"
+													altKey="editReview.Button.SubmitAppealResponse.alt" border="0"/></a>
 											</td>
-											<td class="value"><!-- @ --></td>
 										</tr>
 									</c:if>
 
@@ -276,13 +323,13 @@
 									</tr>
 									<tr>
 										<td class="value"><!-- @ --></td>
-										<td class="valueC" nowrap="nowrap"><b>${orfn:displayScore(pageContext.request, review.score)}</b></td>
+										<td class="valueC" nowrap="nowrap"><b id="scoreHere">${orfn:displayScore(pageContext.request, review.score)}</b></td>
 										<td class="valueC"><!-- @ --></td>
 										<c:if test="${canPlaceAppeal or canPlaceAppealResponse}">
-											<td class="valueC"><!-- @ --></td>
+											<td class="value"><!-- @ --></td>
 										</c:if>
 										<c:if test="${canPlaceAppeal}">
-											<td class="valueC"><!-- @ --></td>
+											<td class="value"><!-- @ --></td>
 										</c:if>
 									</tr>
 								</c:if>
@@ -290,8 +337,8 @@
 									<td class="lastRowTD" colspan="${canPlaceAppeal ? 5 : (canPlaceAppealResponse ? 4 : 3)}"><!-- @ --></td>
 								</tr>
 							</c:if>
-						</table>
-					</c:forEach><br />
+						</c:forEach>
+					</table><br />
 					</html:form>
 
 					<div align="right">
