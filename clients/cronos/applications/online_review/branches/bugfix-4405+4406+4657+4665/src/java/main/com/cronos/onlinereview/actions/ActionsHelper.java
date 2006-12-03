@@ -118,7 +118,6 @@ import com.topcoder.project.phases.PhaseType;
 import com.topcoder.project.phases.template.DefaultPhaseTemplate;
 import com.topcoder.project.phases.template.PhaseTemplate;
 import com.topcoder.project.phases.template.PhaseTemplatePersistence;
-import com.topcoder.project.phases.template.StartDateGenerationException;
 import com.topcoder.project.phases.template.StartDateGenerator;
 import com.topcoder.project.phases.template.persistence.XmlPhaseTemplatePersistence;
 import com.topcoder.project.phases.template.startdategenerator.RelativeWeekTimeStartDateGenerator;
@@ -1706,9 +1705,9 @@ public class ActionsHelper {
     }
 
     /**
-     * This static method returns the array of resources for the currently logged in user associated with
-     * the specified phase. The list of all resources for the currently logged in user is retrieved
-     * from the <code>HttpServletRequest</code> object specified by <code>request</code>
+     * This static method returns the array of resources for the currently logged in user associated
+     * with the specified phase. The list of all resources for the currently logged in user is
+     * retrieved from the <code>HttpServletRequest</code> object specified by <code>request</code>
      * parameter. Method <code>gatherUserRoles(HttpServletRequest, long)</code> should be called
      * prior making a call to this method.
      *
@@ -1764,7 +1763,7 @@ public class ActionsHelper {
      * @param phases
      *            an array of pahses to search deliverables for.
      * @param resources
-     *            an array of all resource? for the current project.
+     *            an array of all resources for the current project.
      * @param winnerExtUserId
      *            an External User ID of the user who is the winner for the project. If there is no
      *            winner for the project, this parameter must be negative.
@@ -1818,8 +1817,10 @@ public class ActionsHelper {
         // Additionally filter deliverables because sometimes deliverables
         // for another phases get though the above filter
         for (int i = 0; i < allDeliverables.length; ++i) {
+        	// Get a deliverable for the current iteration
+        	final Deliverable deliverable = allDeliverables[i];
             // Get an ID of resource this deliverable is for
-            final long deliverableResourceId = allDeliverables[i].getResource();
+            final long deliverableResourceId = deliverable.getResource();
             Resource forResource = null;
             int j;
             // Find a resource this deliverable is for
@@ -1856,6 +1857,40 @@ public class ActionsHelper {
                 }
             }
 
+            // If current deliverable is Aggregation Review, and it is assigned to one of the reviewers,
+            // check to make sure this reviewer is not also an aggregator
+            if (deliverable.getName().equalsIgnoreCase(Constants.AGGREGATION_REV_DELIVERABLE_NAME) &&
+            		(resourceRole.equalsIgnoreCase(Constants.REVIEWER_ROLE_NAME) ||
+            		resourceRole.equalsIgnoreCase(Constants.ACCURACY_REVIEWER_ROLE_NAME) ||
+            		resourceRole.equalsIgnoreCase(Constants.FAILURE_REVIEWER_ROLE_NAME) ||
+            		resourceRole.equalsIgnoreCase(Constants.STRESS_REVIEWER_ROLE_NAME))) {
+            	final String originalExtId = (String) forResource.getProperty("External Reference ID");
+
+            	for (j = 0; j < resources.length; ++j) {
+            		// Skip resource that is being checked
+            		if (forResource == resources[j]) {
+            			continue;
+            		}
+
+            		// Get a resource for the current iteration
+            		final Resource otherResource = resources[j];
+            		// Verify whether this resource is an Aggregator, and skip it if it isn't
+            		if (!otherResource.getResourceRole().getName().equalsIgnoreCase(Constants.AGGREGATOR_ROLE_NAME)) {
+            			continue;
+            		}
+
+            		String otherExtId = (String) resources[j].getProperty("External Reference ID");
+            		// If appropriate aggregator's resource has been found, stop the search
+            		if (originalExtId.equals(otherExtId)) {
+            			break;
+            		}
+            	}
+            	// Skip this deliverable if it is assigned to aggregator
+            	if (j != resources.length) {
+            		continue;
+            	}
+            }
+
             // If there is a winner for the project,
             // verify that the current deliverable is not for non-winning submitter
             if (winnerExtUserId > 0) {
@@ -1870,7 +1905,7 @@ public class ActionsHelper {
             }
 
             // Add current deliverable to the list of deliverables
-            deliverables.add(allDeliverables[i]);
+            deliverables.add(deliverable);
         }
 
         // Convert the list of deliverables into array and return it
@@ -2657,7 +2692,7 @@ public class ActionsHelper {
      *
      * @return a newly created instance of the class.
      * @param projectType
-     *            a project type for which the PhaseTemplate object should be created, 
+     *            a project type for which the PhaseTemplate object should be created,
      *            can be null if start date generator type doesn't matter
      * @throws IllegalArgumentException
      *             if <code>request</code> parameter is <code>null</code>.
@@ -2677,20 +2712,19 @@ public class ActionsHelper {
             generator = new StartDateGenerator() {
                 public Date generateStartDate() {
                     return new Date();
-                }                
+                }
             };
         }
-        
+
         // Create workdays instance
         Workdays workdays = (new DefaultWorkdaysFactory()).createWorkdaysInstance();
-        
+
         // Create phase template instance
         PhaseTemplate phaseTemplate = new DefaultPhaseTemplate(persistence, generator, workdays );
-        
+
         return phaseTemplate;
     }
-    
-    
+
     /**
      * Sets the searchable fields to the search bundle.
      *
@@ -2728,7 +2762,7 @@ public class ActionsHelper {
 
     /**
      * Populate project_result for new submitters.
-     * 
+     *
      * @param projectId the project_id
      * @param newSubmitters new submitters external ids.
      * @throws BaseException if error occurs
@@ -2747,18 +2781,18 @@ public class ActionsHelper {
 	    	ps = conn.prepareStatement("INSERT INTO project_result " +
 	                "(project_id, user_id, rating_ind, reliability_ind, valid_submission_ind, old_rating, old_reliability) " +
 	                "values (?, ?, ?, ?, ?, ?, ?)");
-	
+
 	        existStmt = conn.prepareStatement("SELECT 1 FROM PROJECT_RESULT WHERE user_id = ? and project_id = ?");
-	
+
 	        ratingStmt = conn.prepareStatement("SELECT rating from user_rating where user_id = ? and phase_id = " +
 	                "(select 111+project_category_id from project where project_id = ?)");
-	        
+
 	        reliabilityStmt = conn.prepareStatement("SELECT rating from user_reliability where user_id = ? and phase_id = " +
 	                "(select 111+project_category_id from project where project_id = ?)");
-	
+
 	    	for (Iterator iter = newSubmitters.iterator(); iter.hasNext();) {
 	    		String userId = iter.next().toString();
-	
+
 	    		// Check if projectResult exist
 	    		existStmt.clearParameters();
 	            existStmt.setString(1, userId);
@@ -2766,14 +2800,14 @@ public class ActionsHelper {
 	            if (existStmt.executeQuery().next()) {
 	            	continue;
 	            }
-	
+
 	            // Retrieve oldRating
 	            double oldRating = 0;
 	            ratingStmt.clearParameters();
 	            ratingStmt.setString(1, userId);
 	            ratingStmt.setLong(2, projectId);
 	            ResultSet rs = ratingStmt.executeQuery();
-	
+
 	            if (rs.next()) {
 	                oldRating = rs.getLong(1);
 	            }
@@ -2785,24 +2819,24 @@ public class ActionsHelper {
 	            reliabilityStmt.setString(1, userId);
 	            reliabilityStmt.setLong(2, projectId);
 	            rs = reliabilityStmt.executeQuery();
-	
+
 	            if (rs.next()) {
 	                oldReliability = rs.getDouble(1);
 	            }
 				close(rs);
-	
+
 		        ps.setLong(1, projectId);
 		        ps.setString(2, userId);
 		        ps.setLong(3, 0);
 		        ps.setLong(4, 0);
 		        ps.setLong(5, 0);
-	
+
 		        if (oldRating == 0) {
 		            ps.setNull(6, Types.DOUBLE);
 		        } else {
 		            ps.setDouble(6, oldRating);
 		        }
-		
+
 		        if (oldReliability == 0) {
 		            ps.setNull(7, Types.DOUBLE);
 		        } else {
@@ -2827,10 +2861,10 @@ public class ActionsHelper {
 			close(conn);
 		}
     }
-    
+
     /**
      * Close jdbc resource.
-     * 
+     *
      * @param obj jdbc resource
      */
     private static void close(Object obj) {
@@ -2879,11 +2913,11 @@ public class ActionsHelper {
         throws BaseException {
         // Prepare bean that will be returned as the result
         CorrectnessCheckResult result = new CorrectnessCheckResult();
-    
+
         if (permission == null || permission.trim().length() == 0) {
             permission = null;
         }
-    
+
         // Verify that Project ID was specified and denotes correct project
         String pidParam = request.getParameter("pid");
         if (pidParam == null || pidParam.trim().length() == 0) {
@@ -2892,9 +2926,9 @@ public class ActionsHelper {
             // Return the result of the check
             return result;
         }
-    
+
         long pid;
-    
+
         try {
             // Try to convert specified pid parameter to its integer representation
             pid = Long.parseLong(pidParam, 10);
@@ -2904,7 +2938,7 @@ public class ActionsHelper {
             // Return the result of the check
             return result;
         }
-    
+
         // Obtain an instance of Project Manager
         ProjectManager projMgr = createProjectManager(request);
         // Get Project by its id
@@ -2916,15 +2950,15 @@ public class ActionsHelper {
             // Return the result of the check
             return result;
         }
-    
+
         // Store Project object in the result bean
         result.setProject(project);
         // Place project as attribute in the request
         request.setAttribute("project", project);
-    
+
         // Gather the roles the user has for current request
         AuthorizationHelper.gatherUserRoles(request, pid);
-    
+
         // If permission parameter was not null or empty string ...
         if (permission != null) {
             // ... verify that this permission is granted for currently logged in user
@@ -2935,13 +2969,13 @@ public class ActionsHelper {
                 return result;
             }
         }
-    
+
         return result;
     }
-    
+
     /**
      * Set Completion Timestamp while the project turn to completed, Cancelled - Failed Review or Deleted status.
-     * 
+     *
      * @param project the project instance
      * @param newProjectStatus new project status
      * @param format the date format
@@ -2955,10 +2989,10 @@ public class ActionsHelper {
     		project.setProperty("Completion Timestamp", format.format(new Date()));
     	}
     }
-    
+
     /**
      * Set Rated Timestamp with the end date of submission phase.
-     * 
+     *
      * @param project the project instance
      * @param format the date format
      */
