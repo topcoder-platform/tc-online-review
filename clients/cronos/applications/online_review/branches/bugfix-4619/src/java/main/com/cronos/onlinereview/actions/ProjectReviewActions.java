@@ -3402,7 +3402,7 @@ public class ProjectReviewActions extends DispatchAction {
                     } else {
                         appealStatuses[i] = "";
                     }
-                    
+
                     answers[i] = verification.getReview().getItem(i).getAnswer().toString();
                 }
                 // Set review item answers form property
