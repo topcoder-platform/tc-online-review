@@ -1708,7 +1708,7 @@ public class ProjectActions extends DispatchAction {
         ActionsHelper.populateProjectResult(project, newUsers);
 
         // Populate project_result for new submitters
-        ActionsHelper.populateProjectResult(project.getId(), newSubmitters);
+        ActionsHelper.populateProjectResult(project, newSubmitters);
         
         // Update all the timeline notifications
         if (project.getProperty("Timeline Notification").equals("On")) {
