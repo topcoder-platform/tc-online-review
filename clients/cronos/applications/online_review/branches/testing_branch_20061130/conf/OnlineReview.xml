@@ -11,24 +11,14 @@
             </Property>
             <Property name="tcs">
                 <Property name="producer">
-                    <Value>com.topcoder.db.connectionfactory.producers.JDBCConnectionProducer</Value>
+                    <Value>com.topcoder.db.connectionfactory.producers.JNDIConnectionProducer</Value>
                 </Property>
                 <Property name="parameters">
-                    <Property name="jdbc_driver">
-                        <Value>com.informix.jdbc.IfxDriver</Value>
-                    </Property>
-                    <Property name="jdbc_url">
-                        <Value>jdbc:informix-sqli://localhost:1526/review:informixserver=top_coder</Value>
-                    </Property>
-                    <Property name="user">
-                        <Value>informix</Value>
-                    </Property>
-                    <Property name="password">
-                        <Value>informix</Value>
+                    <Property name="jndi_name">
+                        <Value>java:JTS_TCS_CATALOG</Value>
                     </Property>
                 </Property>
             </Property>
-            <!-- 
             <Property name="DefaultSequence">
                 <Property name="producer">
                     <Value>com.topcoder.db.connectionfactory.producers.JNDIConnectionProducer</Value>
@@ -39,7 +29,6 @@
                     </Property>
                 </Property>
             </Property>
-            -->
         </Property>
     </Config>
 
