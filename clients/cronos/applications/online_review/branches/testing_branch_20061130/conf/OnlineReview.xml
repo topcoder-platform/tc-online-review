@@ -719,7 +719,7 @@
                 <Value>file</Value>
             </Property>
             <Property name="EmailTemplateName">
-                <Value>C:\\tmp\\templates\\email_template.txt</Value>
+                <Value>/home/onlinereview/email_template.txt</Value>
             </Property>
             <Property name="EmailSubject">
                 <Value>Phase Start</Value>
@@ -733,7 +733,7 @@
                 <Value>file</Value>
             </Property>
             <Property name="EmailTemplateName">
-                <Value>C:\\tmp\\templates\\email_template.txt</Value>
+                <Value>/home/onlinereview/email_template.txt</Value>
             </Property>
             <Property name="EmailSubject">
                 <Value>Phase End</Value>
