@@ -162,6 +162,15 @@ public class PhaseGroup {
     private Upload[] testCases = null;
 
     /**
+	 * This member variable determines whether an uploading of testcases is allowed for testcases
+	 * type of reviewers.
+	 *
+	 * @see #isUploadingTestcasesAllowed()
+	 * @see #setUploadingTestcasesAllowed(boolean)
+	 */
+    private boolean uploadingTestcasesAllowed = false;
+
+    /**
      * This member variable holds an array of dated when certain reviews were committed that might
      * have been assigned to this phase group, or <code>null</code> value if no such array has
      * been assigned to the phase group.
@@ -540,6 +549,28 @@ public class PhaseGroup {
      */
     public void setTestCases(Upload[] testCases) {
         this.testCases = testCases;
+    }
+
+    /**
+	 * This method determines whether uploading of testcases is allowed for testcases type of
+	 * reviewers for this phase group. Usually, uploading of testcases is allowed as soon as Review
+	 * phase is open till the end of the Appeals Response phase.
+	 *
+	 * @return <code>true</code> is testcases can be uploaded, <code>false</code> if they
+	 *         cannot.
+	 */
+    public boolean isUploadingTestcasesAllowed() {
+        return this.uploadingTestcasesAllowed;
+    }
+
+    /**
+     * This method sets a permission to upload testcases.
+     *
+     * @param uploadingTestcasesAllowed
+     *            a value determining whether uploading of testcases is allowed.
+     */
+    public void setUploadingTestcasesAllowed(boolean uploadingTestcasesAllowed) {
+        this.uploadingTestcasesAllowed = uploadingTestcasesAllowed;
     }
 
     /**

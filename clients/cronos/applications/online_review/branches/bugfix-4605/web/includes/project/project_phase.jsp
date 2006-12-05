@@ -313,7 +313,7 @@
 									<td class="title" colspan="${colSpan}">${group.tableName}</td>
 								</tr>
 								<tr>
-									<td class="value" colspan="${(isAllowedToEditHisReviews == true) ? 2 : 3}"><!-- @ --></td>
+									<td class="value" colspan="${(isAllowedToEditHisReviews) ? 2 : 3}"><!-- @ --></td>
 									<c:forEach items="${group.reviewers}" var="reviewer">
 										<td class="valueC" colspan="2" nowrap="nowrap">
 											<b><bean:message key='ResourceRole.${fn:replace(reviewer.resourceRole.name, " ", "")}' />:</b>
@@ -324,11 +324,11 @@
 													<c:set var="testCase" value="${curTestCase}" />
 												</c:if>
 											</c:forEach>
-											<c:if test="${!(empty testCase)}">
+											<c:if test="${not empty testCase}">
 												<html:link page="/actions/DownloadTestCase.do?method=downloadTestCase&uid=${testCase.id}"
 													titleKey="viewProjectDetails.box.Review.TestCase.hint"><bean:message
 														key="viewProjectDetails.box.Review.TestCase" /></html:link>
-												<c:if test="${isAllowedToUploadTC == true}">
+												<c:if test="${isAllowedToUploadTC and group.uploadingTestcasesAllowed}">
 													[
 													<html:link page="/actions/UploadTestCase.do?method=uploadTestCase&pid=${project.id}"
 														titleKey="viewProjectDetails.box.Review.TestCase.Update.hint"><bean:message
@@ -336,7 +336,7 @@
 													]
 												</c:if>
 											</c:if>
-											<c:if test="${(empty testCase) && (isAllowedToUploadTC == true)}">
+											<c:if test="${(empty testCase) and isAllowedToUploadTC and group.uploadingTestcasesAllowed}"><%-- and group.uploadingTestcasesAllowed --%>
 												<html:link page="/actions/UploadTestCase.do?method=uploadTestCase&pid=${project.id}"
 													titleKey="viewProjectDetails.box.Review.TestCase.Upload.hint"><bean:message
 														key="viewProjectDetails.box.Review.TestCase.Upload" /></html:link>
