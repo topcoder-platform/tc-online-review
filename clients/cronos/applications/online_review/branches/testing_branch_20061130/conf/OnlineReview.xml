@@ -394,7 +394,7 @@
             <Value>/home/onlinereview/downloads</Value>
         </Property>
         <Property name="default_dir">
-            <Value>/home/onlinereview/</Value>
+            <Value>/home/onlinereview/downloads</Value>
         </Property>
         <Property name="overwrite">
             <Value>false</Value>
