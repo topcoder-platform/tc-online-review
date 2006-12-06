@@ -1671,10 +1671,11 @@ public class ProjectActions extends DispatchAction {
                     resource.setProperty("Reliability", user.getDevReliability());
                 }
             }
-            // TODO: Handle actual registration event, and update the following only then
             // If resource is a submitter, screener or reviewer, store registration date
-            if (resourceRole.equals("Submitter") || resourceRole.equals("Screener") ||
-                    resourceRole.equals("Reviewer")) {
+            // Note, that it is updated here only if it was not set previously
+            if (resource.getProperty("Registration Date") == null  && (
+                    resourceRole.equals("Submitter") || resourceRole.equals("Screener") ||
+                    resourceRole.equals("Reviewer"))) {
                 resource.setProperty("Registration Date", new Date());
             }
 
