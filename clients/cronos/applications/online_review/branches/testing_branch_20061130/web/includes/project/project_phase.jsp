@@ -115,7 +115,7 @@
 													id="PrevSubm${submBoxIdx}_${submissionStatus.index}_minus" href="javascript:void(0)" onClick='return collapseSubmissions(${submBoxIdx}, ${submissionStatus.index}, this)' style="display:none;"><html:img
 														styleClass="Outline" border="0" srcKey="viewProjectDetails.box.Submission.icoShowLess.img" altKey="viewProjectDetails.box.Submission.icoShowLess.alt" /></a>
 											</c:if>
-											<c:if test="${(empty prevSubmissions) && (not empty prevSubm)}">
+											<c:if test="${(empty prevSubmissions) and (not empty prevSubm)}">
 												<html:img styleClass="Outline" border="0" srcKey="viewProjectDetails.box.Submission.icoShowMore.img" style="visibility:hidden;" />
 											</c:if>
 											<c:set var="placement" value="" />
@@ -136,27 +136,27 @@
 												</c:choose>
 											</c:if>
 											<c:if test="${empty placement}">
-												<c:if test='${(submissionStatusName == "Failed Screening") || (submissionStatusName == "Failed Review")}'>
+												<c:if test='${(submissionStatusName == "Failed Screening") or (submissionStatusName == "Failed Review")}'>
 													<html:img srcKey="viewProjectDetails.box.Submission.icoFailed.img" altKey='SubmissionStatus.${fn:replace(submissionStatusName, " ", "")}' border="0" />
 												</c:if>
 											</c:if>
 											<html:link page="/actions/DownloadSubmission.do?method=downloadSubmission&uid=${submission.upload.id}" titleKey="viewProjectDetails.box.Submission.Download">${submission.id}</html:link>
-											<c:if test="${!(empty submitter)}">
+											<c:if test="${not empty submitter}">
 												(<tc-webtag:handle coderId='${submitter.allProperties["External Reference ID"]}' context="component" />)
 											</c:if>
 										</td>
-										<c:if test="${isManager == true}">
+										<c:if test="${isManager}">
 											<td class="value" width="5%"><html:link page="/actions/DeleteSubmission.do?method=deleteSubmission&uid=${submission.upload.id}"><html:img srcKey="viewProjectDetails.box.Submission.icoTrash.img" altKey="viewProjectDetails.box.Submission.icoTrash.alt" border="0" styleClass="Outline" /></html:link></td>
 										</c:if>
-										<c:if test="${isManager != true}">
+										<c:if test="${not isManager}">
 											<td class="value"><!-- @ --></td>
 										</c:if>
-										<td class="value" width="22%">${orfn:displayDate(pageContext.request, submission.modificationTimestamp)}</td>
+										<td class="value" width="22%">${orfn:displayDate(pageContext.request, submission.upload.creationTimestamp)}</td>
 										<c:set var="scrTask" value="${group.screeningTasks[submissionStatus.index]}" />
 										<c:if test="${empty scrTask}">
 											<td class="valueC" width="14%"><html:img src="/i/clear.gif" width="8" height="10" /></td>
 										</c:if>
-										<c:if test="${!(empty scrTask)}">
+										<c:if test="${not empty scrTask}">
 											<c:set var="scrTaskStatus" value="${scrTask.screeningStatus.name}" />
 											<c:choose>
 												<c:when test='${scrTaskStatus == "Passed"}'>
@@ -184,17 +184,17 @@
 										</c:if>
 										<c:set var="screener" value="" />
 										<c:forEach items="${group.reviewers}" var="reviewer">
-											<c:if test="${(empty reviewer.submission) && (empty screener)}">
+											<c:if test="${(empty reviewer.submission) and (empty screener)}">
 												<c:set var="screener" value="${reviewer}" />
 											</c:if>
-											<c:if test="${!(empty reviewer.submission) && (reviewer.submission == submission.id)}">
+											<c:if test="${(not empty reviewer.submission) and (reviewer.submission == submission.id)}">
 												<c:set var="screener" value="${reviewer}" />
 											</c:if>
 										</c:forEach>
 										<c:if test="${empty screener}">
 											<td class="value" width="15%"><bean:message key="viewProjectDetails.box.Screening.ScreenerNotAssigned" /></td>
 										</c:if>
-										<c:if test="${!(empty screener)}">
+										<c:if test="${not empty screener}">
 											<td class="value" width="15%"><tc-webtag:handle coderId='${screener.allProperties["External Reference ID"]}' context="component" /></td>
 										</c:if>
 										<c:set var="review" value="" />
@@ -214,13 +214,13 @@
 											</c:if>
 											<td class="valueC" width="15%"><bean:message key="NotAvailable" /></td>
 										</c:if>
-										<c:if test="${!(empty review)}">
+										<c:if test="${not empty review}">
 											<c:if test="${review.committed}">
 												<c:if test="${isAllowedToViewScreening}">
 													<td class="valueC" width="14%">
 														<html:link page="/actions/ViewScreening.do?method=viewScreening&rid=${review.id}">${orfn:displayScore(pageContext.request, review.score)}</html:link></td>
 												</c:if>
-												<c:if test="${isAllowedToViewScreening != true}">
+												<c:if test="${not isAllowedToViewScreening}">
 													<td class="valueC" width="14%">${orfn:displayScore(review.score)}</td>
 												</c:if>
 												<c:if test="${review.score >= passingMinimum}">
@@ -250,7 +250,7 @@
 												<html:link page="/actions/DownloadSubmission.do?method=downloadSubmission&amp;uid=${pastSubmission.id}">
 													<bean:message key="viewProjectDetails.box.Submission.Previous.UploadID" />
 													${pastSubmission.id}</html:link></td>
-											<td class="value" width="22%">${orfn:displayDate(pageContext.request, pastSubmission.modificationTimestamp)}</td>
+											<td class="value" width="22%">${orfn:displayDate(pageContext.request, pastSubmission.upload.creationTimestamp)}</td>
 											<td class="value" width="14%"><!-- @ --></td>
 											<td class="value" width="15%"><!-- @ --></td>
 											<td class="value" width="14%"><!-- @ --></td>
@@ -313,7 +313,7 @@
 									<td class="title" colspan="${colSpan}">${group.tableName}</td>
 								</tr>
 								<tr>
-									<td class="value" colspan="${(isAllowedToEditHisReviews == true) ? 2 : 3}"><!-- @ --></td>
+									<td class="value" colspan="${(isAllowedToEditHisReviews) ? 2 : 3}"><!-- @ --></td>
 									<c:forEach items="${group.reviewers}" var="reviewer">
 										<td class="valueC" colspan="2" nowrap="nowrap">
 											<b><bean:message key='ResourceRole.${fn:replace(reviewer.resourceRole.name, " ", "")}' />:</b>
@@ -324,11 +324,11 @@
 													<c:set var="testCase" value="${curTestCase}" />
 												</c:if>
 											</c:forEach>
-											<c:if test="${!(empty testCase)}">
+											<c:if test="${not empty testCase}">
 												<html:link page="/actions/DownloadTestCase.do?method=downloadTestCase&uid=${testCase.id}"
 													titleKey="viewProjectDetails.box.Review.TestCase.hint"><bean:message
 														key="viewProjectDetails.box.Review.TestCase" /></html:link>
-												<c:if test="${isAllowedToUploadTC == true}">
+												<c:if test="${isAllowedToUploadTC and group.uploadingTestcasesAllowed}">
 													[
 													<html:link page="/actions/UploadTestCase.do?method=uploadTestCase&pid=${project.id}"
 														titleKey="viewProjectDetails.box.Review.TestCase.Update.hint"><bean:message
@@ -336,7 +336,7 @@
 													]
 												</c:if>
 											</c:if>
-											<c:if test="${(empty testCase) && (isAllowedToUploadTC == true)}">
+											<c:if test="${(empty testCase) and isAllowedToUploadTC and group.uploadingTestcasesAllowed}"><%-- and group.uploadingTestcasesAllowed --%>
 												<html:link page="/actions/UploadTestCase.do?method=uploadTestCase&pid=${project.id}"
 													titleKey="viewProjectDetails.box.Review.TestCase.Upload.hint"><bean:message
 														key="viewProjectDetails.box.Review.TestCase.Upload" /></html:link>
