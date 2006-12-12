@@ -511,22 +511,34 @@
 													<td class="valueC" nowrap="nowrap"><bean:message key="Pending" /></td>
 												</c:if>
 											</c:if>
-											<c:if test="${group.aggregationReviewCommitted}">
-												<td class="valueC" nowrap="nowrap">${orfn:displayDate(pageContext.request, group.aggregation.modificationTimestamp)}</td>
-												<td class="valueC" nowrap="nowrap"><html:link
-													page="/actions/ViewAggregationReview.do?method=viewAggregationReview&rid=${group.aggregation.id}"><bean:message
-													key="viewProjectDetails.box.Aggregation.ViewResults" /></html:link></td>
-											</c:if>
-											<c:if test="${group.aggregationReviewCommitted != true}">
-												<td class="value"><!-- @ --></td>
-												<c:if test="${isAllowedToPerformAggregationReview == true}">
+											<c:if test="${group.displayAggregationReviewLink}">
+												<c:if test="${group.aggregationReviewCommitted}">
+													<td class="valueC" nowrap="nowrap">${orfn:displayDate(pageContext.request, group.aggregation.modificationTimestamp)}</td>
 													<td class="valueC" nowrap="nowrap"><html:link
-														page="/actions/EditAggregationReview.do?method=editAggregationReview&rid=${group.aggregation.id}"><b><bean:message
-														key="viewProjectDetails.box.AggregationReview.Submit" /></b></html:link></td>
+														page="/actions/ViewAggregationReview.do?method=viewAggregationReview&rid=${group.aggregation.id}"><bean:message
+														key="viewProjectDetails.box.Aggregation.ViewResults" /></html:link></td>
 												</c:if>
-												<c:if test="${isAllowedToPerformAggregationReview != true}">
-													<td class="valueC" nowrap="nowrap"><bean:message key="Pending" /></td>
+												<c:if test="${not group.aggregationReviewCommitted}">
+													<td class="value"><!-- @ --></td>
+													<c:if test="${group.aggregation.committed and isAllowedToPerformAggregationReview}">
+														<c:if test="${isSubmitter}">
+															<c:set var="aggrRevKey" value="Comment" />
+														</c:if>
+														<c:if test="${not isSubmitter}">
+															<c:set var="aggrRevKey" value="Approval" />
+														</c:if>
+														<td class="valueC" nowrap="nowrap"><html:link
+															page="/actions/EditAggregationReview.do?method=editAggregationReview&rid=${group.aggregation.id}"><b><bean:message
+															key="viewProjectDetails.box.AggregationReview.Submit${aggrRevKey}" /></b></html:link></td>
+													</c:if>
+													<c:if test="${not (group.aggregation.committed and isAllowedToPerformAggregationReview)}">
+														<td class="valueC" nowrap="nowrap"><bean:message key="Pending" /></td>
+													</c:if>
 												</c:if>
+											</c:if>
+											<c:if test="${not group.displayAggregationReviewLink}">
+												<td class="value"><!-- @ --></td>
+												<td class="valueC" nowrap="nowrap"><bean:message key="Pending" /></td>
 											</c:if>
 										</c:if>
 										<c:if test="${empty group.aggregation}">
