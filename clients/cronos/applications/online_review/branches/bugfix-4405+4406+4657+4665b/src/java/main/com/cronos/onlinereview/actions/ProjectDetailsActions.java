@@ -898,29 +898,27 @@ public class ProjectDetailsActions extends DispatchAction {
 
             if (phaseGroup.getAppFunc().equalsIgnoreCase(Constants.AGGREGATION_APP_FUNC) &&
                     phaseName.equalsIgnoreCase(Constants.AGGREGATION_REVIEW_PHASE_NAME) &&
-                    phaseGroup.getAggregation() != null) {
+                    phaseGroup.getAggregation() != null && phaseGroup.getAggregation().isCommitted()) {
                 Review aggregation = phaseGroup.getAggregation();
 
-                if (aggregation.isCommitted()) {
-                    int j = 0;
-                    for (; j < aggregation.getNumberOfComments(); ++j) {
+                boolean reviewCommitted = true;
+
+                for (int j = 0; j < aggregation.getNumberOfComments(); ++j) {
                         // Get a comment for the current iteration
                         Comment comment = aggregation.getComment(j);
-                        String commentType = comment.getCommentType().getName();
 
-                        if (commentType.equalsIgnoreCase("Aggregation Review Comment") ||
-                                commentType.equalsIgnoreCase("Submitter Comment")) {
+                    if (ActionsHelper.isAggregationReviewComment(comment)) {
                             String extraInfo = (String) comment.getExtraInfo();
                             if (!("Approved".equalsIgnoreCase(extraInfo) ||
                                     "Rejected".equalsIgnoreCase(extraInfo))) {
+                                reviewCommitted = false;
                                 break;
                             }
                         }
                     }
-                    if (j == aggregation.getNumberOfComments()) {
-                        phaseGroup.setAggregationReviewCommitted(true);
-                    }
-                }
+
+                phaseGroup.setDisplayAggregationReviewLink(!phaseStatus.equalsIgnoreCase(Constants.SCHEDULED_PH_STATUS_NAME));
+                phaseGroup.setAggregationReviewCommitted(reviewCommitted);
             }
 
             if (phaseGroup.getAppFunc().equalsIgnoreCase(Constants.FINAL_FIX_APP_FUNC) &&
@@ -1039,9 +1037,12 @@ public class ProjectDetailsActions extends DispatchAction {
         request.setAttribute("sendTLNotifications", (sendTLNotifications) ? "On" : "Off");
         request.setAttribute("passingMinimum", new Float(75.0)); // TODO: Take this value from scorecard template
 
-        // Check permissions
+        // Check resource roles
         request.setAttribute("isManager",
-                Boolean.valueOf(AuthorizationHelper.hasUserRole(request, Constants.MANAGER_ROLE_NAME)));
+                Boolean.valueOf(AuthorizationHelper.hasUserRole(request, Constants.MANAGER_ROLE_NAMES)));
+        request.setAttribute("isSubmitter",
+        		Boolean.valueOf(AuthorizationHelper.hasUserRole(request, Constants.SUBMITTER_ROLE_NAME)));
+        // Check permissions
         request.setAttribute("isAllowedToEditProjects",
                 Boolean.valueOf(AuthorizationHelper.hasUserPermission(request, Constants.EDIT_PROJECT_DETAILS_PERM_NAME)));
         request.setAttribute("isAllowedToContactPM",
@@ -1071,8 +1072,6 @@ public class ProjectDetailsActions extends DispatchAction {
                 Boolean.valueOf(AuthorizationHelper.hasUserPermission(request, Constants.UPLOAD_TEST_CASES_PERM_NAME)));
         request.setAttribute("isAllowedToPerformAggregation",
                 Boolean.valueOf(AuthorizationHelper.hasUserPermission(request, Constants.PERFORM_AGGREGATION_PERM_NAME)));
-        request.setAttribute("isAllowedToPerformAggregationReview",
-                Boolean.valueOf(AuthorizationHelper.hasUserPermission(request, Constants.PERFORM_AGGREG_REVIEW_PERM_NAME)));
         request.setAttribute("isAllowedToUploadFF",
                 Boolean.valueOf(AuthorizationHelper.hasUserPermission(request, Constants.PERFORM_FINAL_FIX_PERM_NAME) &&
                         AuthorizationHelper.getLoggedInUserId(request) == winnerExtUserId));
@@ -1082,6 +1081,41 @@ public class ProjectDetailsActions extends DispatchAction {
         request.setAttribute("isAllowedToPerformApproval",
                 Boolean.valueOf(ActionsHelper.getPhase(phases, true, Constants.APPROVAL_PHASE_NAME) != null &&
                         AuthorizationHelper.hasUserPermission(request, Constants.PERFORM_APPROVAL_PERM_NAME)));
+
+        // Checking whether some user is allowed to submit his approval or comments for the
+        // Aggregation worksheet needs more robust verification since this check includes a test
+        // against whether a user is a submitter, and if it is, whether he is also a winner
+        boolean allowedToReviewAggregation = false;
+
+        if (AuthorizationHelper.hasUserPermission(request, Constants.PERFORM_AGGREG_REVIEW_PERM_NAME) &&
+                !AuthorizationHelper.hasUserPermission(request, Constants.PERFORM_AGGREGATION_PERM_NAME)) {
+            allowedToReviewAggregation = true;
+        }
+        if (allowedToReviewAggregation && AuthorizationHelper.hasUserRole(request, Constants.SUBMITTER_ROLE_NAME)) {
+            final String winnerExtId = (String) project.getProperty("Winner External Reference ID");
+
+            // Set 'allowed' status to false temporarily.
+            // If current user is a winning submitter, this variable will be reset back to true
+            allowedToReviewAggregation = false;
+
+            // Iterate over all 'my' resources looking for 'Submitter' ones and comparing them to the
+            // value of the winner for the current project (if there is any winner already)
+            for (int i = 0; i < myResources.length; ++i) {
+                // Get a resource for the current iteration
+                final Resource resource = myResources[i];
+                // Examine only Submitters, skip all other ones
+                if (!resource.getResourceRole().getName().equalsIgnoreCase(Constants.SUBMITTER_ROLE_NAME)) {
+                    continue;
+                }
+                // This resource is a submitter;
+                // compare its external user ID to the official project's winner's one
+                if (myResources[i].getProperty("External Reference ID").equals(winnerExtId)) {
+                        allowedToReviewAggregation = true;
+                    break;
+                }
+            }
+        }
+        request.setAttribute("isAllowedToPerformAggregationReview", Boolean.valueOf(allowedToReviewAggregation));
 
         return mapping.findForward(Constants.SUCCESS_FORWARD_NAME);
     }

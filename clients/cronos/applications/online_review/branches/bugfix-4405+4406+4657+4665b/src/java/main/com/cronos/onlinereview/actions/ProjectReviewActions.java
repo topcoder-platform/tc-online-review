@@ -920,7 +920,7 @@ public class ProjectReviewActions extends DispatchAction {
         // If the user is a Submitter, let underlying JSP page know about this fact
         if (AuthorizationHelper.hasUserRole(request, Constants.SUBMITTER_ROLE_NAME)) {
             isSubmitter = true;
-            request.setAttribute("isSubmitter", new Boolean(isSubmitter));
+            request.setAttribute("isSubmitter", Boolean.valueOf(isSubmitter));
         } else {
             // Otherwise examine the submitter's comment
             if (submitterComment != null) {
@@ -1093,7 +1093,7 @@ public class ProjectReviewActions extends DispatchAction {
 
         // This variable determines if 'Save and Mark Complete' button has been clicked
         final boolean commitRequested = "submit".equalsIgnoreCase(request.getParameter("save"));
-        // Determine if the user is Submitter
+        // Determine if the user is a Submitter
         final boolean isSubmitter = AuthorizationHelper.hasUserRole(request, Constants.SUBMITTER_ROLE_NAME);
 
         // Get the form defined for this action
@@ -1160,8 +1160,11 @@ public class ProjectReviewActions extends DispatchAction {
                         // Set the reason of reject/accept (i.e. actual comment's text)
                         userComment.setComment(rejectReasons[itemIdx]);
 
-                        // If review function equals to anythning but "Accept", then regard the item as rejected
-                        if ("Accept".equalsIgnoreCase(reviewFunctions[itemIdx])) {
+                        // If review function equals to anythning but "Accept", regard the item as
+                        // rejected. If current user is a Submitter, disregard a value in the
+                        // reviewFunctions array and always treat it as containing "Accept" string
+                        // (thus, Submitter can never reject aggregation worksheet)
+                        if (isSubmitter || "Accept".equalsIgnoreCase(reviewFunctions[itemIdx])) {
                             userComment.setExtraInfo("Accept");
                         } else {
                             userComment.setExtraInfo("Reject");
@@ -1171,6 +1174,11 @@ public class ProjectReviewActions extends DispatchAction {
                     }
                 }
             }
+        }
+
+        // A safety check: reset 'rejected' flag if the current user is a Submitter
+        if (isSubmitter) {
+        	rejected = false;
         }
 
         boolean validationSucceeded = (commitRequested) ? validateAggregationReviewScorecard(
@@ -3342,7 +3350,7 @@ public class ProjectReviewActions extends DispatchAction {
             } else {
                 isAllowed = true;
             }
-        } 
+        }
 
         if (!isAllowed) {
             return ActionsHelper.produceErrorReport(
@@ -3620,7 +3628,7 @@ public class ProjectReviewActions extends DispatchAction {
             Group group = scorecardTemplate.getGroup(groupIdx);
             for (int sectionIdx = 0; sectionIdx < group.getNumberOfSections(); ++sectionIdx) {
                 Section section = group.getSection(sectionIdx);
-                for (int questionIdx = 0; questionIdx < section.getNumberOfQuestions(); ++questionIdx, ++itemIdx) {
+                for (int questionIdx = 0; questionIdx < section.getNumberOfQuestions(); ++questionIdx) {
                     Question question = section.getQuestion(questionIdx);
                     long questionId = question.getId();
 
@@ -3655,6 +3663,7 @@ public class ProjectReviewActions extends DispatchAction {
                                         "Error.saveAggregationReview.RejectReason.Absent");
                             }
                         }
+                        ++itemIdx;
                     }
                 }
             }

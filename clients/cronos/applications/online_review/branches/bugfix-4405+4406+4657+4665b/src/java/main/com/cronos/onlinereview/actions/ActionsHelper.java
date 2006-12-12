@@ -21,7 +21,6 @@ import java.util.List;
 import java.util.Map;
 
 import com.topcoder.db.connectionfactory.DBConnectionException;
-import java.sql.Types;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -46,12 +45,8 @@ import com.cronos.onlinereview.deliverables.SubmitterCommentDeliverableChecker;
 import com.cronos.onlinereview.deliverables.TestCasesDeliverableChecker;
 import com.cronos.onlinereview.external.UserRetrieval;
 import com.cronos.onlinereview.external.impl.DBUserRetrieval;
-import com.cronos.onlinereview.phases.AggregationPhaseHandler;
-import com.cronos.onlinereview.phases.AggregationReviewPhaseHandler;
 import com.cronos.onlinereview.phases.AppealsPhaseHandler;
 import com.cronos.onlinereview.phases.ApprovalPhaseHandler;
-import com.cronos.onlinereview.phases.FinalFixPhaseHandler;
-import com.cronos.onlinereview.phases.FinalReviewPhaseHandler;
 import com.cronos.onlinereview.phases.PRAggregationPhaseHandler;
 import com.cronos.onlinereview.phases.PRAggregationReviewPhaseHandler;
 import com.cronos.onlinereview.phases.PRAppealResponsePhaseHandler;
@@ -64,7 +59,6 @@ import com.cronos.onlinereview.phases.PRSubmissionPhaseHandler;
 import com.topcoder.date.workdays.DefaultWorkdaysFactory;
 import com.topcoder.date.workdays.Workdays;
 import com.topcoder.db.connectionfactory.ConfigurationException;
-import com.topcoder.db.connectionfactory.DBConnectionException;
 import com.topcoder.db.connectionfactory.DBConnectionFactory;
 import com.topcoder.db.connectionfactory.DBConnectionFactoryImpl;
 import com.topcoder.db.connectionfactory.UnknownConnectionException;
@@ -125,7 +119,6 @@ import com.topcoder.project.phases.PhaseType;
 import com.topcoder.project.phases.template.DefaultPhaseTemplate;
 import com.topcoder.project.phases.template.PhaseTemplate;
 import com.topcoder.project.phases.template.PhaseTemplatePersistence;
-import com.topcoder.project.phases.template.StartDateGenerationException;
 import com.topcoder.project.phases.template.StartDateGenerator;
 import com.topcoder.project.phases.template.persistence.XmlPhaseTemplatePersistence;
 import com.topcoder.project.phases.template.startdategenerator.RelativeWeekTimeStartDateGenerator;
@@ -1713,9 +1706,9 @@ public class ActionsHelper {
     }
 
     /**
-     * This static method returns the array of resources for the currently logged in user associated with
-     * the specified phase. The list of all resources for the currently logged in user is retrieved
-     * from the <code>HttpServletRequest</code> object specified by <code>request</code>
+     * This static method returns the array of resources for the currently logged in user associated
+     * with the specified phase. The list of all resources for the currently logged in user is
+     * retrieved from the <code>HttpServletRequest</code> object specified by <code>request</code>
      * parameter. Method <code>gatherUserRoles(HttpServletRequest, long)</code> should be called
      * prior making a call to this method.
      *
@@ -1771,7 +1764,7 @@ public class ActionsHelper {
      * @param phases
      *            an array of pahses to search deliverables for.
      * @param resources
-     *            an array of all resource? for the current project.
+     *            an array of all resources for the current project.
      * @param winnerExtUserId
      *            an External User ID of the user who is the winner for the project. If there is no
      *            winner for the project, this parameter must be negative.
@@ -1825,8 +1818,10 @@ public class ActionsHelper {
         // Additionally filter deliverables because sometimes deliverables
         // for another phases get though the above filter
         for (int i = 0; i < allDeliverables.length; ++i) {
+            // Get a deliverable for the current iteration
+            final Deliverable deliverable = allDeliverables[i];
             // Get an ID of resource this deliverable is for
-            final long deliverableResourceId = allDeliverables[i].getResource();
+            final long deliverableResourceId = deliverable.getResource();
             Resource forResource = null;
             int j;
             // Find a resource this deliverable is for
@@ -1863,6 +1858,40 @@ public class ActionsHelper {
                 }
             }
 
+            // If current deliverable is Aggregation Review, and it is assigned to one of the reviewers,
+            // check to make sure this reviewer is not also an aggregator
+            if (deliverable.getName().equalsIgnoreCase(Constants.AGGREGATION_REV_DELIVERABLE_NAME) &&
+                    (resourceRole.equalsIgnoreCase(Constants.REVIEWER_ROLE_NAME) ||
+                    resourceRole.equalsIgnoreCase(Constants.ACCURACY_REVIEWER_ROLE_NAME) ||
+                    resourceRole.equalsIgnoreCase(Constants.FAILURE_REVIEWER_ROLE_NAME) ||
+                    resourceRole.equalsIgnoreCase(Constants.STRESS_REVIEWER_ROLE_NAME))) {
+                final String originalExtId = (String) forResource.getProperty("External Reference ID");
+
+                for (j = 0; j < resources.length; ++j) {
+                    // Skip resource that is being checked
+                    if (forResource == resources[j]) {
+                        continue;
+                    }
+
+                    // Get a resource for the current iteration
+                    final Resource otherResource = resources[j];
+                    // Verify whether this resource is an Aggregator, and skip it if it isn't
+                    if (!otherResource.getResourceRole().getName().equalsIgnoreCase(Constants.AGGREGATOR_ROLE_NAME)) {
+                        continue;
+                    }
+
+                    String otherExtId = (String) resources[j].getProperty("External Reference ID");
+                    // If appropriate aggregator's resource has been found, stop the search
+                    if (originalExtId.equals(otherExtId)) {
+                        break;
+                    }
+                }
+                // Skip this deliverable if it is assigned to aggregator
+                if (j != resources.length) {
+                    continue;
+                }
+            }
+
             // If there is a winner for the project,
             // verify that the current deliverable is not for non-winning submitter
             if (winnerExtUserId > 0) {
@@ -1877,7 +1906,7 @@ public class ActionsHelper {
             }
 
             // Add current deliverable to the list of deliverables
-            deliverables.add(allDeliverables[i]);
+            deliverables.add(deliverable);
         }
 
         // Convert the list of deliverables into array and return it
@@ -2684,20 +2713,19 @@ public class ActionsHelper {
             generator = new StartDateGenerator() {
                 public Date generateStartDate() {
                     return new Date();
-                }                
+                }
             };
         }
-        
+
         // Create workdays instance
         Workdays workdays = (new DefaultWorkdaysFactory()).createWorkdaysInstance();
-        
+
         // Create phase template instance
         PhaseTemplate phaseTemplate = new DefaultPhaseTemplate(persistence, generator, workdays );
-        
+
         return phaseTemplate;
     }
-    
-    
+
     /**
      * Sets the searchable fields to the search bundle.
      *
@@ -2803,11 +2831,11 @@ public class ActionsHelper {
         throws BaseException {
         // Prepare bean that will be returned as the result
         CorrectnessCheckResult result = new CorrectnessCheckResult();
-    
+
         if (permission == null || permission.trim().length() == 0) {
             permission = null;
         }
-    
+
         // Verify that Project ID was specified and denotes correct project
         String pidParam = request.getParameter("pid");
         if (pidParam == null || pidParam.trim().length() == 0) {
@@ -2816,9 +2844,9 @@ public class ActionsHelper {
             // Return the result of the check
             return result;
         }
-    
+
         long pid;
-    
+
         try {
             // Try to convert specified pid parameter to its integer representation
             pid = Long.parseLong(pidParam, 10);
@@ -2828,7 +2856,7 @@ public class ActionsHelper {
             // Return the result of the check
             return result;
         }
-    
+
         // Obtain an instance of Project Manager
         ProjectManager projMgr = createProjectManager(request);
         // Get Project by its id
@@ -2840,15 +2868,15 @@ public class ActionsHelper {
             // Return the result of the check
             return result;
         }
-    
+
         // Store Project object in the result bean
         result.setProject(project);
         // Place project as attribute in the request
         request.setAttribute("project", project);
-    
+
         // Gather the roles the user has for current request
         AuthorizationHelper.gatherUserRoles(request, pid);
-    
+
         // If permission parameter was not null or empty string ...
         if (permission != null) {
             // ... verify that this permission is granted for currently logged in user
@@ -2859,7 +2887,7 @@ public class ActionsHelper {
                 return result;
             }
         }
-    
+
         return result;
     }
 
@@ -3010,7 +3038,7 @@ public class ActionsHelper {
 
     /**
      * Retrieve and update next ComponentInquiryId.
-     *  
+     *
      * @param conn the connection
      * @param count the count of new submitters
      * @return next component_inquiry_id
