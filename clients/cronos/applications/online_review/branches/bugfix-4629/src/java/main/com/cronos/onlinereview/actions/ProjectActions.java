@@ -1563,6 +1563,7 @@ public class ProjectActions extends DispatchAction {
         // HashSet used to identify resource of new user
         Set newUsers = new HashSet();
         Set oldUsers = new HashSet();
+        Set newSubmitters = new HashSet();
 
         // 0-index resource is skipped as it is a "dummy" one
         for (int i = 1; i < resourceNames.length; i++) {
@@ -1680,14 +1681,19 @@ public class ProjectActions extends DispatchAction {
 
             // Save the resource in the persistence level
             resourceManager.updateResource(resource, Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
+            if ("add".equals(resourceAction) && resourceRole.equals("Submitter")) {
+                newSubmitters.add(new Long(user.getId()));
+            }
         }
 
         for (Iterator itr = oldUsers.iterator(); itr.hasNext();) {
-        	newUsers.remove(itr.next());
+        	Object obj = itr.next();
+        	newUsers.remove(obj);
+        	newSubmitters.remove(obj);
         }
 
         // Populate project_result for new submitters
-        ActionsHelper.populateProjectResult(project.getId(), newUsers);
+        ActionsHelper.populateProjectResult(project.getId(), newSubmitters);
         
         // Update all the timeline notifications
         if (project.getProperty("Timeline Notification").equals("On")) {
