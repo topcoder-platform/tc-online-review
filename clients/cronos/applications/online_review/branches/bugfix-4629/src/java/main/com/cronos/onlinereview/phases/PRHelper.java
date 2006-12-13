@@ -8,8 +8,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * The PRHelper which is used to provide helper method for Phase Handler.
@@ -28,7 +26,7 @@ class PRHelper {
 				"from resource r, " +
 				"	resource_info ri_u," +
 				"	resource_info ri_s," +
-				"	resource_info ri_p," +
+				"	outer resource_info ri_p," +
 				"	outer resource_info ri1," +
 				"	upload u," +
 				"	submission s " +
@@ -51,10 +49,6 @@ class PRHelper {
 				"update project_result set final_score = ?, placed = ?, passed_review_ind = ?, payment = ?  " +
 				"where project_id = ? and user_id = ? ";
 
-	private static final String PLACED_FINALSCORE_UPDATE_PROJECT_RESULT_STMT = 
-				"update project_result set final_score = ?, placed = ?, payment = ?  " +
-				"where project_id = ? and user_id = ? ";
-
 	private static final String REVIEW_SELECT_STMT = 
 				"select ri_s.value as raw_score, ri_u.value as user_id, r.project_id " +
 				"from resource r, resource_info ri_u,resource_info ri_s  " +
@@ -65,7 +59,7 @@ class PRHelper {
 				"update project_result set raw_score = ?  " +
 				"where project_id = ? and user_id = ? ";
 	private static final String FAILED_PASS_SCREENING_STMT = 
-				"update project_result set valid_submission_ind = 0, rating_ind = 0 " +
+				"update project_result set valid_submission_ind = 0 " +
 				"where exists(select * from submission s,upload u,resource r,resource_info ri   " +
 				"	where u.upload_id = s.upload_id and u.upload_type_id = 1 " +
 				"	and u.project_id = project_result.project_id " +
@@ -76,7 +70,7 @@ class PRHelper {
 				" project_id = ?";
 
 	private static final String PASS_SCREENING_STMT = 
-		"update project_result set valid_submission_ind = 1, rating_ind = 1 " +
+		"update project_result set valid_submission_ind = 1 " +
 		"where exists(select * from submission s,upload u,resource r,resource_info ri    " +
 		"	where u.upload_id = s.upload_id and u.upload_type_id = 1  " +
 		"	and u.project_id = project_result.project_id " +
@@ -96,12 +90,6 @@ class PRHelper {
 				"	and ri.value = project_result.user_id and ri.resource_info_type_id = 1 " + 
 				"	and submission_status_id <> 5 ) and " +
 				" project_id = ?";
-	
-	private static final String SELECT_SUBMITTERS_STMT = 
-		"SELECT value from resource_info ri, resource r " +
-		"where ri.resource_id = r.resource_id " +
-		"and r.project_id = ? and r.resource_role_id = 1 " +
-		"and ri.resource_info_type_id = 1";
 	
 	/**
 	 * Prevent to be created outside.
@@ -267,60 +255,7 @@ class PRHelper {
      * @throws PhaseHandlingException if error occurs
      */
     static void processPlacedFinalScore(long projectId, Connection conn) throws SQLException {
-    	PreparedStatement pstmt = null;
-    	PreparedStatement updateStmt = null;
-    	ResultSet rs = null;
-    	try {
-        	// Retrieve all 
-        	pstmt = conn.prepareStatement(APPEAL_RESPONSE_SELECT_STMT);
-        	pstmt.setLong(1, projectId);
-        	rs = pstmt.executeQuery();
-
-        	updateStmt = conn.prepareStatement(PLACED_FINALSCORE_UPDATE_PROJECT_RESULT_STMT);
-        	while(rs.next()) {
-        		double finalScore = rs.getDouble("final_score");
-        		long userId = rs.getLong("user_id");
-        		String p = rs.getString("placed");
-        		int placed = 0;
-        		if (p != null) {
-        			try {
-        				placed = Integer.parseInt(p);
-        			} catch (Exception e) {
-        				// Ignore
-        			}
-        		}
-
-        		double payment = 0;
-        		p = rs.getString("payment");
-        		if (p != null) {
-        			try {
-        				payment = Double.parseDouble(p);
-        			} catch (Exception e) {
-        				// Ignore
-        			}
-        		}
-        		
-        		// Update final score, placed and passed_review_ind
-        		updateStmt.setDouble(1, finalScore);
-        		if (placed == 0) {
-        			updateStmt.setNull(2, Types.INTEGER);
-        		} else {
-        			updateStmt.setInt(2, placed);
-        		}
-        		if (payment == 0) {
-        			updateStmt.setNull(3, Types.DOUBLE);
-        		} else {
-        			updateStmt.setDouble(3, payment);
-        		}
-        		updateStmt.setLong(4, projectId);
-        		updateStmt.setLong(5, userId);
-        		updateStmt.execute();
-        	}
-    	} finally {
-    		close(rs);
-    		close(pstmt);
-    		close(updateStmt);
-    	}
+    	processAppealResponsePR(projectId,  conn);
     }
     
     /**
@@ -342,26 +277,5 @@ class PRHelper {
     			// Just ignore
     		}
     	}
-    }
-
-    /**
-     * Retrieve all submitters's external ids.
-     * 
-     * @param conn the connection
-     * @param projectId the project id
-     * @return all submitters external ids
-     * @throws SQLException if error occurs while executing sql statement
-     */
-    static List getSubmitters(Connection conn, long projectId) throws SQLException {
-    	List submitters = new ArrayList();
-    	PreparedStatement pstmt = conn.prepareStatement(SELECT_SUBMITTERS_STMT);
-    	pstmt.setLong(1, projectId);
-    	ResultSet rs = pstmt.executeQuery();
-    	while (rs.next()) {
-    		submitters.add(rs.getString("value"));
-    	}
-    	close(rs);
-    	close(pstmt);
-    	return submitters;
     }
 }

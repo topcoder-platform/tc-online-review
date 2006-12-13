@@ -2946,16 +2946,38 @@ public class ActionsHelper {
      * @param newProjectStatus new project status
      * @param format the date format
      */
-    static void setProjectCompletionDate(Project project, ProjectStatus newProjectStatus, Format format) {
+    static void setProjectCompletionDate(Project project, ProjectStatus newProjectStatus, Format format) 
+    throws BaseException {
     	String name = newProjectStatus.getName();
     	if ("Completed".equals(name) || "Cancelled - Failed Review".equals(name) || "Deleted".equals(name)) {
             if (format == null) {
                 format = new SimpleDateFormat(ConfigHelper.getDateFormat());
             }
     		project.setProperty("Completion Timestamp", format.format(new Date()));
+    		if (!"Deleted".equals(name)) {
+    			Connection conn = null;
+	        	PreparedStatement ps = null;
+	    		try {
+	    	        DBConnectionFactory dbconn;
+	    				dbconn = new DBConnectionFactoryImpl(DB_CONNECTION_NAMESPACE);
+	    	        conn = dbconn.createConnection();
+	    	    	ps = conn.prepareStatement("update project_result set rating_ind = 1 where project_id = ? and valid_submission_ind = 1");
+	    	    	ps.setLong(1, project.getId());
+	    	    	ps.execute();
+	    		} catch(SQLException e) {
+	    			throw new BaseException("Failed to update project result for rating_ind", e);
+	    		} catch (UnknownConnectionException e) {
+	    			throw new BaseException("Failed to return DBConnection", e);
+				} catch (ConfigurationException e) {
+	    			throw new BaseException("Failed to return DBConnection", e);
+				} finally {
+	    			close(ps);
+	    			close(conn);
+	    		}
+    		}
     	}
     }
-    
+
     /**
      * Set Rated Timestamp with the end date of submission phase.
      * 
