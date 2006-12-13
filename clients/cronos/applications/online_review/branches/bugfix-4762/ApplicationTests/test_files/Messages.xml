@@ -1,0 +1,133 @@
+<?xml version="1.0" ?>
+<CMConfig>
+    <Config name="com.cronos.onlinereview.project.Messages">
+        <Property name="project">
+            <Property name="no_permission">
+                <Property name="phase_back">
+                    <Value>You are not granted a permission to move project phase back.</Value>
+                </Property>
+                <Property name="remove_submission">
+                    <Value>You are not granted a permission to remove submission.</Value>
+                </Property>
+                <Property name="download_final_fix">
+                    <Value>You are not granted a permission to download final fix.</Value>
+                </Property>
+                <Property name="download_test_cases">
+                    <Value>You are not granted a permission to download test cases.</Value>
+                </Property>
+                <Property name="view_screening">
+                    <Value>You are not granted a permission to view a screening scorcard.</Value>
+                </Property>
+                <Property name="view_final_review">
+                    <Value>You are not granted a permission to view a final review results.</Value>
+                </Property>
+                <Property name="view_compsite_review">
+                    <Value>You are not granted a permission to view a composite review results.</Value>
+                </Property>
+                <Property name="view_appeals">
+                    <Value>You are not granted a permission to view appeals for selected submission.</Value>
+                </Property>
+                <Property name="view_appeal_responses">
+                    <Value>You are not granted a permission to view appeal responses for selected submission.</Value>
+                </Property>
+                <Property name="view_reviewer_review">
+                    <Value>You are not granted a permission to view review made by another reviewer.</Value>
+                </Property>
+                <Property name="perform_approval">
+                    <Value>You are not granted a permission to submit approval for selected project.</Value>
+                </Property>
+                <Property name="perform_screening">
+                    <Value>You are not granted a permission to submit screening for selected submission.</Value>
+                </Property>
+                <Property name="perform_final_review">
+                    <Value>You are not granted a permission to submit final review for selected project.</Value>
+                </Property>
+                <Property name="perform_aggregation_review">
+                    <Value>You are not granted a permission to submit aggregation review for selected project.</Value>
+                </Property>
+                <Property name="edit_project">
+                    <Value>You are not granted a permission to edit details for selected project.</Value>
+                </Property>
+                <Property name="create_project">
+                    <Value>You are not granted a permission to create project.</Value>
+                </Property>
+            </Property>
+            <Property name="invalid_input">
+                <Property name="approval_incomplete">
+                    <Value>"Approval Scorecard" is incomplete  and required fields must be completed before proceeding.</Value>
+                </Property>
+                <Property name="screening_incomplete">
+                    <Value>"Screening Scorecard" is incomplete and required fields must be completed before proceeding.</Value>
+                </Property>
+                <Property name="appeals_response">
+                    <Property name="modified_response">
+                        <Property name="not_selected">
+                            <Value>Modified Response is not selected.</Value>
+                        </Property>
+                    </Property>
+                </Property>
+                <Property name="review_incomplete">
+                    <Value>"Review Scorecard" is incomplete and required fields must be completed before proceeding.</Value>
+                </Property>
+                <Property name="appeal_text_empty">
+                    <Value>Appeal Text is required.</Value>
+                </Property>
+                <Property name="aggregation_review_incomplete">
+                    <Value>"Aggregation Review Scorecard" is incomplete andrequired fields must be completed before
+                        proceeding.
+                    </Value>
+                </Property>
+                <Property name="aggregation_incomplete">
+                    <Value>"Aggregation Scorecard" is incomplete andrequired fields must be completed before proceeding.</Value>
+                </Property>
+                <Property name="edit_project">
+                    <Value>Project Details are incomplete.</Value>
+                </Property>
+                <Property name="start_end">
+                    <Value>The Start date must not be after End date.</Value>
+                </Property>
+                <Property name="phase_duration">
+                    <Value>The phase duration is invalid.</Value>
+                </Property>
+                <Property name="one_designer">
+                    <Value>Only a single designer must be specified.</Value>
+                </Property>
+                <Property name="one_reviewer">
+                    <Value>Only a single reviewer must be specified.</Value>
+                </Property>
+                <Property name="unknown_handle">
+                    <Value>Unknown handle.</Value>
+                </Property>
+            </Property>
+            <Property name="messages">
+                <Property name="confirmation">
+                    <Property name="final_review_no_approval">
+                        <Value>Final Review Scorecard will be submitted without Approval of Final Fixes.</Value>
+                    </Property>
+                    <Property name="bad_phase_date">
+                        <Value>There is a gap or overlap in project timeline</Value>
+                    </Property>
+                    <Property name="contact_manager">
+                        <Value>Your message has been sent to manager</Value>
+                    </Property>
+                </Property>
+                <Property name="notification">
+                    <Property name="final_review_failed">
+                        <Value>Final Review Scorecard will be submitted without Approval of Final Fixes.</Value>
+                    </Property>
+                </Property>
+                <Property name="not_required_perform_aggregation_review">
+                    <Value>You are not required to perform aggregation review.</Value>
+                </Property>
+                <Property name="invalid_phase_for_testcase">
+                    <Value>The test cases could not be submitted if a project is not in Review phase.</Value>
+                </Property>
+                <Property name="edit_project">
+                    <Property name="phase_not_deleted">
+                        <Value>The phase could not be deleted</Value>
+                    </Property>
+                </Property>
+            </Property>
+        </Property>
+    </Config>
+</CMConfig>
