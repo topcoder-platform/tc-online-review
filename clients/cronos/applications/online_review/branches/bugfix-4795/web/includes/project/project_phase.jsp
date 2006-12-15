@@ -250,7 +250,7 @@
 												<html:link page="/actions/DownloadSubmission.do?method=downloadSubmission&amp;uid=${pastSubmission.id}">
 													<bean:message key="viewProjectDetails.box.Submission.Previous.UploadID" />
 													${pastSubmission.id}</html:link></td>
-											<td class="value" width="22%">${orfn:displayDate(pageContext.request, pastSubmission.upload.creationTimestamp)}</td>
+											<td class="value" width="22%">${orfn:displayDate(pageContext.request, pastSubmission.creationTimestamp)}</td>
 											<td class="value" width="14%"><!-- @ --></td>
 											<td class="value" width="15%"><!-- @ --></td>
 											<td class="value" width="14%"><!-- @ --></td>
