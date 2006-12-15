@@ -187,9 +187,11 @@
 				</c:if>	
 				<td class="value">&nbsp;</td>
 				<td class="value" colspan="4"><bean:message key="editProject.Phases.Criteria.Scorecard" />
-					<html:select style="width:350px;" styleClass="inputBox" property="phase_scorecard[${phaseIdx}]" >
+					<html:select style="width:350px;" styleClass="inputBox" property="phase_screening_scorecard[${phaseIdx}]" >
 						<c:forEach items="${screeningScorecards}" var="scorecard">
-							<html:option value="${scorecard.id}">${scorecard.name} ${scorecard.version}</html:option>					
+							<c:if test="${(newProject && scorecard.category == 1) || (not newProject && project.projectCategory.id == scorecard.category)}">								
+								<html:option value="${scorecard.id}">${scorecard.name} ${scorecard.version}</html:option>					
+							</c:if>
 						</c:forEach>
 					</html:select>
 				</td>
@@ -215,9 +217,11 @@
 			
 			
 			</br><bean:message key="editProject.Phases.Criteria.Scorecard" />
-					<html:select style="width:350px;" styleClass="inputBox" property="phase_scorecard[${phaseIdx}]" >
+					<html:select style="width:350px;" styleClass="inputBox" property="phase_review_scorecard[${phaseIdx}]" >
 						<c:forEach items="${reviewScorecards}" var="scorecard">
+							<c:if test="${(newProject && scorecard.category == 1) || (not newProject && project.projectCategory.id == scorecard.category)}">	
 							<html:option value="${scorecard.id}">${scorecard.name} ${scorecard.version}</html:option>					
+							</c:if>				
 						</c:forEach>
 					</html:select>
 				</td>
@@ -237,9 +241,11 @@
 				</c:if>	
 				<td class="value">&nbsp;</td>
 				<td class="value" colspan="4"><bean:message key="editProject.Phases.Criteria.Scorecard" />
-					<html:select style="width:350px;" styleClass="inputBox" property="phase_scorecard[${phaseIdx}]" >
+					<html:select style="width:350px;" styleClass="inputBox" property="phase_approval_scorecard[${phaseIdx}]" >
 						<c:forEach items="${approvalScorecards}" var="scorecard">
-							<html:option value="${scorecard.id}">${scorecard.name} ${scorecard.version}</html:option>					
+							<c:if test="${(newProject && scorecard.category == 1) || (not newProject && project.projectCategory.id == scorecard.category)}">	
+							<html:option value="${scorecard.id}">${scorecard.name} ${scorecard.version}</html:option>						
+							</c:if>			
 						</c:forEach>
 					</html:select>
 				</td>
