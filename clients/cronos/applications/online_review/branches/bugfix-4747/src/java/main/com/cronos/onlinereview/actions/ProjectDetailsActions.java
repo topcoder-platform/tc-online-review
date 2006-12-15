@@ -504,6 +504,12 @@ public class ProjectDetailsActions extends DispatchAction {
                         ActionsHelper.getMostRecentSubmissions(ActionsHelper.createUploadManager(request), project);
                 }
                 if (submissions == null &&
+                        AuthorizationHelper.hasUserPermission(request, Constants.VIEW_SCREENER_SUBM_PERM_NAME) &&
+                        ActionsHelper.isInOrAfterPhase(phases, phaseIdx, Constants.SCREENING_PHASE_NAME)) {
+                    submissions =
+                        ActionsHelper.getMostRecentSubmissions(ActionsHelper.createUploadManager(request), project);
+                }
+                if (submissions == null &&
                         AuthorizationHelper.hasUserPermission(request, Constants.VIEW_MY_SUBM_PERM_NAME)) {
                     // Obtain an instance of Upload Manager
                     UploadManager upMgr = ActionsHelper.createUploadManager(request);
@@ -520,12 +526,6 @@ public class ProjectDetailsActions extends DispatchAction {
                         new AndFilter(Arrays.asList(new Filter[] {filterProject, filterStatus, filterResource}));
 
                     submissions = upMgr.searchSubmissions(filter);
-                }
-                if (submissions == null &&
-                        AuthorizationHelper.hasUserPermission(request, Constants.VIEW_SCREENER_SUBM_PERM_NAME) &&
-                        ActionsHelper.isInOrAfterPhase(phases, phaseIdx, Constants.SCREENING_PHASE_NAME)) {
-                    submissions =
-                        ActionsHelper.getMostRecentSubmissions(ActionsHelper.createUploadManager(request), project);
                 }
 
                 phaseGroup.setSubmissions(submissions);
