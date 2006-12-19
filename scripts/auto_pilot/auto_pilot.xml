@@ -802,22 +802,22 @@
 	  </Property>
 	  <Property name="handler_aggregation_def">
 		  <Property name="type">
-			  <Value>com.cronos.onlinereview.phases.AggregationPhaseHandler</Value>
+			  <Value>com.cronos.onlinereview.phases.PRAggregationPhaseHandler</Value>
 		  </Property>
 	  </Property>
 	  <Property name="handler_aggregation_review_def">
 		  <Property name="type">
-			  <Value>com.cronos.onlinereview.phases.AggregationReviewPhaseHandler</Value>
+			  <Value>com.cronos.onlinereview.phases.PRAggregationReviewPhaseHandler</Value>
 		  </Property>
 	  </Property>
 	  <Property name="handler_final_fix_def">
 		  <Property name="type">
-			  <Value>com.cronos.onlinereview.phases.FinalFixPhaseHandler</Value>
+			  <Value>com.cronos.onlinereview.phases.PRFinalFixPhaseHandler</Value>
 		  </Property>
 	  </Property>
 	  <Property name="handler_final_review_def">
 		  <Property name="type">
-			  <Value>com.cronos.onlinereview.phases.FinalReviewPhaseHandler</Value>
+			  <Value>com.cronos.onlinereview.phases.PRFinalReviewPhaseHandler</Value>
 		  </Property>
 	  </Property>
 	  <Property name="handler_approval_def">

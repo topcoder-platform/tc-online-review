@@ -31,7 +31,7 @@
 <table class="scorecard" id="timeline_tbl" cellpadding="0" width="100%" style="border-collapse: collapse;">
 	<tr>
 		<c:if test="${not newProject}">
-			<td class="header"><bean:message key="editProject.Phases.CurrentPhase" /></td>
+			<td class="headerC"><bean:message key="editProject.Phases.CurrentPhase" /></td>
 		</c:if>
 		<td class="header"><bean:message key="editProject.Phases.PhaseName" /></td>
 		<td class="header"><bean:message key="editProject.Phases.PhaseStart" /></td>
@@ -46,33 +46,32 @@
 			<tr class="dark" style="display: none;" id="phase_row_template">
 		</c:if>
 		<c:if test="${phaseIdx ne 0}">
-			<tr class="dark" id="${projectForm.map['phase_js_id'][phaseIdx]}" 
+			<tr class="dark" id="${projectForm.map['phase_js_id'][phaseIdx]}"
 				style="${projectForm.map['phase_action'][phaseIdx] eq 'delete' ? 'display:none' : ''}" >
 		</c:if>
 		<c:if test="${not newProject}">
-			<td class="value">
+			<td class="valueC">
 				<html:hidden property="phase_can_open[${phaseIdx}]" />
 				<html:hidden property="phase_can_close[${phaseIdx}]" />
-				<html:img onclick="javascript:openOrClosePhase(this.parentNode.parentNode, 'open_phase');" 
-					srcKey="editProject.Phases.OpenPhase.img" altKey="editProject.Phases.OpenPhase.alt" border="0" 
-					imageName="open_phase_img" style="${projectForm.map['phase_can_open'][phaseIdx] ? '' : 'display: none;'}" />&#160;
-				<html:img onclick="javascript:openOrClosePhase(this.parentNode.parentNode, 'close_phase');" 
-					srcKey="editProject.Phases.ClosePhase.img" altKey="editProject.Phases.ClosePhase.alt" border="0" 
-					imageName="close_phase_img" style="${projectForm.map['phase_can_close'][phaseIdx] ? '' : 'display: none;'}" />&#160;
-			</td>
-		</c:if>		
+				<html:img onclick="javascript:openOrClosePhase(this.parentNode.parentNode, 'open_phase');" border="0"
+					srcKey="editProject.Phases.OpenPhase.img" altKey="editProject.Phases.OpenPhase.alt" imageName="open_phase_img"
+					style="${projectForm.map['phase_can_open'][phaseIdx] ? 'cursor:hand;' : 'display:none;'}" /><html:img
+					onclick="javascript:openOrClosePhase(this.parentNode.parentNode, 'close_phase');" imageName="close_phase_img"
+					srcKey="editProject.Phases.ClosePhase.img" altKey="editProject.Phases.ClosePhase.alt" border="0"
+					style="${projectForm.map['phase_can_close'][phaseIdx] ? 'cursor:hand;' : 'display:none;'}" /></td>
+		</c:if>
 			<td class="valueB" nowrap="nowrap">
 				<span name="phase_name_text">${projectForm.map['phase_name'][phaseIdx]}</span>
 				&nbsp; <span name="phase_number_text">${projectForm.map['phase_number'][phaseIdx]}</span>
 			</td>
-			<td class="value" nowrap="nowrap">								
+			<td class="value" nowrap="nowrap">
 				<html:hidden property="phase_type[${phaseIdx}]" />
 				<html:hidden property="phase_id[${phaseIdx}]" />
 				<html:hidden property="phase_js_id[${phaseIdx}]" />
 				<html:hidden property="phase_action[${phaseIdx}]" />
 				<html:hidden property="phase_name[${phaseIdx}]" />
-				<html:hidden property="phase_number[${phaseIdx}]" />										
-				<html:radio property="phase_start_by_phase[${phaseIdx}]" value="false" /> 
+				<html:hidden property="phase_number[${phaseIdx}]" />
+				<html:radio property="phase_start_by_phase[${phaseIdx}]" value="false" />
 				<html:text onblur="JavaScript:this.value=getDateString(this.value);" styleClass="inputBoxDate" property="phase_start_date[${phaseIdx}]" />
 				<html:text onblur="JavaScript:this.value=getTimeString(this.value, this.parentNode);" styleClass="inputBoxTime" property="phase_start_time[${phaseIdx}]" />
 				<html:select styleClass="inputBox" property="phase_start_AMPM[${phaseIdx}]">
@@ -80,7 +79,7 @@
 					<html:option key="editProject.Phases.PM" value="pm" />
 				</html:select>
 				<bean:message key="global.Timezone.EST" /><br />
-				<html:radio property="phase_start_by_phase[${phaseIdx}]" value="true" /> 
+				<html:radio property="phase_start_by_phase[${phaseIdx}]" value="true" />
 				<bean:message key="editProject.Phases.When" />
 				<html:select styleClass="inputBox" property="phase_start_phase[${phaseIdx}]" style="width:120px;">
 					<html:option key="editProject.Phases.SelectPhase" value="" />
@@ -119,151 +118,92 @@
 			<td class="value">
 				<html:radio property="phase_use_duration[${phaseIdx}]" value="true" />
 				<html:text styleClass="inputBoxDuration" property="phase_duration[${phaseIdx}]" />
-			    <div name="duration_validation_msg" class="error" style="display:none"></div>
+				<div name="duration_validation_msg" class="error" style="display:none"></div>
 			</td> 
 			    
 			<td class="value">
-				<html:img srcKey="editProject.Phases.DeletePhase.img" 
-					altKey="editProject.Phases.DeletePhase.alt" 
-					onclick="deletePhase(this.parentNode.parentNode);" />
+				<html:img srcKey="editProject.Phases.DeletePhase.img"
+					altKey="editProject.Phases.DeletePhase.alt"
+					onclick="deletePhase(this.parentNode.parentNode);" style="cursor:hand;" />
 			</td>
 		</tr>
-		
+
 		<%-- PHASE CRITERIA ROWS GO HERE --%>
-		
-		<c:if test="${(phaseIdx eq 0) or (not empty projectForm.map['phase_required_registrations'][phaseIdx])}">	
-			<c:if test="${phaseIdx eq 0}">
-				<tr class="highlighted" id="required_registrations_row_template" style="display: none;">
-			</c:if>
-			<c:if test="${phaseIdx ne 0}">
-				<tr class="highlighted">
-			</c:if>	
-				<c:if test="${not newProject}">
-					<td class="value">
-						<td class="value">&nbsp;</td>				
-					</td>
-				</c:if>	
-				<td class="value">&nbsp;</td>
-				<td class="value" colspan="4"><bean:message key="editProject.Phases.Criteria.RequiredRegistrations.beforeInput" /> 
+		<c:if test="${(phaseIdx eq 0) or (not empty projectForm.map['phase_required_registrations'][phaseIdx])}">
+			<tr class="highlighted" ${(phaseIdx eq 0) ? 'id="required_registrations_row_template" style="display:none;"' : ''}>
+				<td class="value" colspan="${(newProject) ? 1 : 2}"><!-- @ --></td>
+				<td class="value" colspan="4">
+					<bean:message key="editProject.Phases.Criteria.RequiredRegistrations.beforeInput" />
 					<%-- TODO: Set default value in Action --%>
-					<html:text style="width:30px;text-align:right;" styleClass="inputBox" 
-							size="30" property="phase_required_registrations[${phaseIdx}]" />
+					<html:text style="width:30px;text-align:right;" styleClass="inputBox"
+						size="30" property="phase_required_registrations[${phaseIdx}]" />
 					&nbsp;<bean:message key="editProject.Phases.Criteria.RequiredRegistrations.afterInput" />
 					<br /><bean:message key="editProject.Phases.Criteria.RequiredRegistrations.note" /></td>
 			</tr>
 		</c:if>
-		<c:if test="${(phaseIdx eq 0) or (not empty projectForm.map['phase_required_submissions'][phaseIdx])}">	
-			<c:if test="${phaseIdx eq 0}">
-				<tr class="highlighted" id="required_submissions_row_template" style="display: none;">
-			</c:if>
-			<c:if test="${phaseIdx ne 0}">
-				<tr class="highlighted">
-			</c:if>	
-				<c:if test="${not newProject}">
-					<td class="value">
-						<td class="value">&nbsp;</td>				
-					</td>
-				</c:if>	
-				<td class="value"><!-- @ --></td>
-				<td class="value" colspan="4"><bean:message key="editProject.Phases.Criteria.RequiredSubmissions.beforeInput" />
+		<c:if test="${(phaseIdx eq 0) or (not empty projectForm.map['phase_required_submissions'][phaseIdx])}">
+			<tr class="highlighted" ${(phaseIdx eq 0) ? 'id="required_submissions_row_template" style="display:none;"' : ''}>
+				<td class="value" colspan="${(newProject) ? 1 : 2}"><!-- @ --></td>
+				<td class="value" colspan="4">
+					<bean:message key="editProject.Phases.Criteria.RequiredSubmissions.beforeInput" />
 					<html:text styleClass="inputBox" property="phase_required_submissions[${phaseIdx}]" style="width:30px;text-align:right;" />
 					<bean:message key="editProject.Phases.Criteria.RequiredSubmissions.afterInput" /><br />
-					<html:checkbox property="phase_manual_screening[${phaseIdx}]" />					
+					<html:checkbox property="phase_manual_screening[${phaseIdx}]" />
 					<bean:message key="editProject.Phases.Criteria.RequiredSubmissions.ManualScreening" />
 				</td>
-			</tr>	
+			</tr>
 		</c:if>
-		<c:if test="${(phaseIdx eq 0) or (not empty projectForm.map['phase_scorecard'][phaseIdx] and projectForm.map['phase_name'][phaseIdx] eq 'Screening')}">	
-			<c:if test="${phaseIdx eq 0}">
-				<tr class="highlighted" id="screening_scorecard_row_template" style="display: none;">
-			</c:if>
-			<c:if test="${phaseIdx ne 0}">
-				<tr class="highlighted">
-			</c:if>
-				<c:if test="${not newProject}">
-					<td class="value">
-						<td class="value">&nbsp;</td>				
-					</td>
-				</c:if>	
-				<td class="value">&nbsp;</td>
-				<td class="value" colspan="4"><bean:message key="editProject.Phases.Criteria.Scorecard" />
+		<c:if test="${(phaseIdx eq 0) or (not empty projectForm.map['phase_scorecard'][phaseIdx] and projectForm.map['phase_name'][phaseIdx] eq 'Screening')}">
+			<tr class="highlighted" ${(phaseIdx eq 0) ? 'id="screening_scorecard_row_template" style="display:none;"' : ''}>
+				<td class="value" colspan="${(newProject) ? 1 : 2}"><!-- @ --></td>
+				<td class="value" colspan="4">
+					<bean:message key="editProject.Phases.Criteria.Scorecard" />
 					<html:select style="width:350px;" styleClass="inputBox" property="phase_scorecard[${phaseIdx}]" >
 						<c:forEach items="${screeningScorecards}" var="scorecard">
-							<html:option value="${scorecard.id}">${scorecard.name} ${scorecard.version}</html:option>					
+							<html:option value="${scorecard.id}">${scorecard.name} ${scorecard.version}</html:option>
 						</c:forEach>
 					</html:select>
 				</td>
 			</tr>
 		</c:if>
-		<c:if test="${(phaseIdx eq 0) or (not empty projectForm.map['phase_scorecard'][phaseIdx] and projectForm.map['phase_name'][phaseIdx] eq 'Review')}">	
-			<c:if test="${phaseIdx eq 0}">
-				<tr class="highlighted" id="review_scorecard_row_template" style="display: none;">
-			</c:if>
-			<c:if test="${phaseIdx ne 0}">
-				<tr class="highlighted">
-			</c:if>
-				<c:if test="${not newProject}">
-					<td class="value">
-						<td class="value">&nbsp;</td>				
-					</td>
-				</c:if>	
-				<td class="value">&nbsp;</td>
-				<td class="value" colspan="4"><bean:message key="editProject.Phases.Criteria.ReviewNumber.beforeInput" /> 
-					<html:text style="width:30px;text-align:right;" styleClass="inputBox" 
-							size="30" property="phase_required_reviewers[${phaseIdx}]" />
+		<c:if test="${(phaseIdx eq 0) or (not empty projectForm.map['phase_scorecard'][phaseIdx] and projectForm.map['phase_name'][phaseIdx] eq 'Review')}">
+			<tr class="highlighted" ${(phaseIdx eq 0) ? 'id="review_scorecard_row_template" style="display:none;"' : ''}>
+				<td class="value" colspan="${(newProject) ? 1 : 2}"><!-- @ --></td>
+				<td class="value" colspan="4">
+					<bean:message key="editProject.Phases.Criteria.ReviewNumber.beforeInput" />
+					<html:text style="width:30px;text-align:right;" styleClass="inputBox"
+						size="30" property="phase_required_reviewers[${phaseIdx}]" />
 					&nbsp;<bean:message key="editProject.Phases.Criteria.ReviewNumber.afterInput" />
-			
-			
-			</br><bean:message key="editProject.Phases.Criteria.Scorecard" />
+					<br /><bean:message key="editProject.Phases.Criteria.Scorecard" />
 					<html:select style="width:350px;" styleClass="inputBox" property="phase_scorecard[${phaseIdx}]" >
 						<c:forEach items="${reviewScorecards}" var="scorecard">
-							<html:option value="${scorecard.id}">${scorecard.name} ${scorecard.version}</html:option>					
+							<html:option value="${scorecard.id}">${scorecard.name} ${scorecard.version}</html:option>
 						</c:forEach>
 					</html:select>
 				</td>
 			</tr>
 		</c:if>
-		<c:if test="${(phaseIdx eq 0) or (not empty projectForm.map['phase_scorecard'][phaseIdx] and projectForm.map['phase_name'][phaseIdx] eq 'Approval')}">	
-			<c:if test="${phaseIdx eq 0}">
-				<tr class="highlighted" id="approval_scorecard_row_template" style="display: none;">
-			</c:if>
-			<c:if test="${phaseIdx ne 0}">
-				<tr class="highlighted">
-			</c:if>
-				<c:if test="${not newProject}">
-					<td class="value">
-						<td class="value">&nbsp;</td>				
-					</td>
-				</c:if>	
-				<td class="value">&nbsp;</td>
-				<td class="value" colspan="4"><bean:message key="editProject.Phases.Criteria.Scorecard" />
+		<c:if test="${(phaseIdx eq 0) or (not empty projectForm.map['phase_scorecard'][phaseIdx] and projectForm.map['phase_name'][phaseIdx] eq 'Approval')}">
+			<tr class="highlighted" ${(phaseIdx eq 0) ? 'id="approval_scorecard_row_template" style="display:none;"' : ''}>
+				<td class="value" colspan="${(newProject) ? 1 : 2}"><!-- @ --></td>
+				<td class="value" colspan="4">
+					<bean:message key="editProject.Phases.Criteria.Scorecard" />
 					<html:select style="width:350px;" styleClass="inputBox" property="phase_scorecard[${phaseIdx}]" >
 						<c:forEach items="${approvalScorecards}" var="scorecard">
-							<html:option value="${scorecard.id}">${scorecard.name} ${scorecard.version}</html:option>					
+							<html:option value="${scorecard.id}">${scorecard.name} ${scorecard.version}</html:option>
 						</c:forEach>
 					</html:select>
 				</td>
 			</tr>
 		</c:if>
-		<c:if test="${(phaseIdx eq 0) or (not empty projectForm.map['phase_view_appeal_responses'][phaseIdx])}">	
-			<c:if test="${phaseIdx eq 0}">
-				<tr class="highlighted" id=view_appeal_responses_row_template style="display: none;">
-			</c:if>
-			<c:if test="${phaseIdx ne 0}">
-				<tr class="highlighted">
-			</c:if>
-			 	<c:if test="${not newProject}">
-					<td class="value">
-						<td class="value">&nbsp;</td>				
-					</td>
-				</c:if>	
-				<td class="value">&nbsp;</td>
+		<c:if test="${(phaseIdx eq 0) or (not empty projectForm.map['phase_view_appeal_responses'][phaseIdx])}">
+			<tr class="highlighted" ${(phaseIdx eq 0) ? 'id="view_appeal_responses_row_template" style="display:none;"' : ''}>
+				<td class="value" colspan="${(newProject) ? 1 : 2}"><!-- @ --></td>
 				<td class="value" colspan="4">
 					<html:radio value="true" property="phase_view_appeal_responses[${phaseIdx}]" />
-					<bean:message key="editProject.Phases.Criteria.ViewAppealResponses.Immediately" /> <br />
+					<bean:message key="editProject.Phases.Criteria.ViewAppealResponses.Immediately" /><br />
 					<html:radio value="false" property="phase_view_appeal_responses[${phaseIdx}]" />
-					<bean:message key="editProject.Phases.Criteria.ViewAppealResponses.AfterEnd" />
-				</td>
+					<bean:message key="editProject.Phases.Criteria.ViewAppealResponses.AfterEnd" /></td>
 			</tr>
 		</c:if>
 	</c:forEach>
@@ -331,7 +271,7 @@
 				<html:option key="editProject.Phases.Hrs" value="hrs" />
 			</html:select>
 		</td>
-      		<td class="value" width="18%" nowrap="nowrap">
+		<td class="value" width="18%" nowrap="nowrap">
       	    <html:radio property="addphase_use_duration" value="false" />
 			<html:text onblur="JavaScript:this.value=getDateString(this.value);" styleClass="inputBoxDate" property="addphase_end_date" />
 			<html:text onblur="JavaScript:this.value=getTimeString(this.value, this.parentNode);" styleClass="inputBoxTime" property="addphase_end_time" />
@@ -341,12 +281,12 @@
 			</html:select>
 			<bean:message key="global.Timezone.EST" />
 		</td>
-		<td class="value" width="6%" colspan="2" nowrap="nowrap">	
+		<td class="value" width="6%" colspan="2" nowrap="nowrap">
 			<html:radio property="addphase_use_duration" value="true" />
 			<html:text styleClass="inputBoxDuration" property="addphase_duration" />
 		</td>
 		<td class="value" width="7%">
-			<html:img srcKey="editProject.Phases.AddPhase.img" altKey="editProject.Phases.AddPhase.alt" onclick="addNewPhase();" />
+			<html:img srcKey="editProject.Phases.AddPhase.img" altKey="editProject.Phases.AddPhase.alt" onclick="addNewPhase();" style="cursor:hand;" />
 		</td>
 	</tr>
 	<!-- ADD PHASE FORM ENDS -->

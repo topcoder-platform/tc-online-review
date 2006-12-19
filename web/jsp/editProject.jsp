@@ -48,6 +48,7 @@
 			// TODO: Localize the catagory name
 			projectCategories[projectCategories.length - 1]["name"] = "${category.name}";			
 		</c:forEach>
+
 		
 		var projectTypeNamesMap = {};
 		<c:forEach var="projectType" items="${projectTypes}">
@@ -624,6 +625,9 @@
 				var duration = parseInt(dojo.dom.textContent(phaseNodes[i].getElementsByTagName("length")[0])) / 3600 / 1000; 
 				getChildByNamePrefix(newPhaseRow, "phase_duration").value = duration;	
 	
+					
+				// Add phase criterion row if needed
+				addPhaseCriterion(phaseName, newPhaseRow);	
 			}
 			// PASS 2
 			for (var i = 0; i < phaseNodes.length; i++) {
@@ -648,7 +652,6 @@
 			
 		}
 		
-
 		// To be done on page load
 		function onLoad() {
 			var projectCategoryNode = document.getElementsByName("project_category")[0];
