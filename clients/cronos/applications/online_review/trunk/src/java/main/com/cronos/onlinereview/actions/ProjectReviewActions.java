@@ -3322,7 +3322,7 @@ public class ProjectReviewActions extends DispatchAction {
             // User is manager or observer
             isAllowed = true;
         } else if (AuthorizationHelper.hasUserPermission(request, Constants.VIEW_REVIEWER_REVIEWS_PERM_NAME) &&
-                    verification.getReview().getAuthor() == myResource.getId()) {
+                    myResource != null && verification.getReview().getAuthor() == myResource.getId()) {
             // User is authorized to view review authored by him
             isAllowed = true;
         } else if (myResource != null && verification.getSubmission().getUpload().getOwner() == myResource.getId()) {
@@ -3331,14 +3331,18 @@ public class ProjectReviewActions extends DispatchAction {
                     activePhases.contains(Constants.APPEALS_PHASE_NAME)) {
                 isAllowed = true;
             }
-        } else if (AuthorizationHelper.hasUserPermission(request, Constants.VIEW_ALL_REVIEWS_PERM_NAME)) {
-            // User is authorized to view all reviews (when not in Review, Appeals or Appeals Response)
-            if (!activePhases.contains(Constants.REVIEW_PHASE_NAME) &&
-                    !activePhases.contains(Constants.APPEALS_PHASE_NAME) &&
-                    !activePhases.contains(Constants.APPEALS_RESPONSE_PHASE_NAME)) {
+        } else if (AuthorizationHelper.hasUserPermission(request, permName)) {
+            if (reviewType == "Review") {
+                // User is authorized to view all reviews (when not in Review, Appeals or Appeals Response)
+                if (!activePhases.contains(Constants.REVIEW_PHASE_NAME) &&
+                        !activePhases.contains(Constants.APPEALS_PHASE_NAME) &&
+                        !activePhases.contains(Constants.APPEALS_RESPONSE_PHASE_NAME)) {
+                    isAllowed = true;
+                }
+            } else {
                 isAllowed = true;
             }
-        }
+        } 
 
         if (!isAllowed) {
             return ActionsHelper.produceErrorReport(
@@ -3402,7 +3406,7 @@ public class ProjectReviewActions extends DispatchAction {
                     } else {
                         appealStatuses[i] = "";
                     }
-                    
+
                     answers[i] = verification.getReview().getItem(i).getAnswer().toString();
                 }
                 // Set review item answers form property
@@ -3705,6 +3709,8 @@ public class ProjectReviewActions extends DispatchAction {
                         Item item = finalReview.getItem(i);
                         // Specifies whether at least one "Not Fixed" radio box is checked
                         boolean notFixed = false;
+                        // Specifies whether the fix is required
+                        boolean required = false;
 
                         // Validate item's Accept/Reject status
                         for (int j = 0; j < item.getNumberOfComments(); ++j) {
@@ -3713,6 +3719,10 @@ public class ProjectReviewActions extends DispatchAction {
 
                             if (ActionsHelper.isReviewerComment(comment)) {
                                 ++commentIdx;
+                            	// Verify that the item is marked as requiring a fix
+                            	if (comment.getCommentType().getName().equalsIgnoreCase("Required")) {
+                            		required = true;
+                            	}
                                 String fixed = (String) comment.getExtraInfo();
                                 if (fixed == null ||
                                         !(fixed.equalsIgnoreCase("Fixed") || fixed.equalsIgnoreCase("Not Fixed"))) {
@@ -3732,7 +3742,7 @@ public class ProjectReviewActions extends DispatchAction {
                             }
 
                             ++itemIdx;
-                            if (!notFixed) {
+                            if (!notFixed || !required) {
                                 break; // Everything's good
                             }
 
@@ -3742,6 +3752,7 @@ public class ProjectReviewActions extends DispatchAction {
                                 ActionsHelper.addErrorToRequest(request, "final_comment[" + itemIdx + "]",
                                         "Error.saveFinalReview.Response.Absent");
                             }
+                            break;
                         }
                     }
                 }

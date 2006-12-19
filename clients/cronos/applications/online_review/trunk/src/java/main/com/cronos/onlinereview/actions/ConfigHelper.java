@@ -119,6 +119,10 @@ public class ConfigHelper {
      *
      * @see #PIXELS_PER_HOUR_PROP
      * @see #PHASE_DURATION_PROP
+     * @see #NOTE_LENGTH_PROP
+     * @see #REQ_REGISTRANTS_PROP
+     * @see #REQ_SUBMISSIONS_PROP
+     * @see #REQ_REVIEWERS_PROP
      * @see #DEADLINE_NEAR_DURATION_PROP
      */
     private static final String DEFAULT_VALUES_PROP = "Defaults";
@@ -138,6 +142,38 @@ public class ConfigHelper {
      * @see #DEFAULT_VALUES_PROP
      */
     private static final String PHASE_DURATION_PROP = "PhaseDuration";
+
+    /**
+     * This member variable is a string constant that specifies the name of the property which
+     * defines the default minimum length, in characters, of project's note text.
+     *
+     * @see #DEFAULT_VALUES_PROP
+     */
+    private static final String NOTE_LENGTH_PROP = "NoteLength";
+
+    /**
+     * This member variable is a string constant that specifies the name of the property which
+     * defines the default minimum amount of registrants required before Registration phase can end.
+     *
+     * @see #DEFAULT_VALUES_PROP
+     */
+    private static final String REQ_REGISTRANTS_PROP = "RequiredRegistrants";
+
+    /**
+     * This member variable is a string constant that specifies the name of the property which
+     * defines the default minimum amount of passing submissions before Submission phase can end.
+     *
+     * @see #DEFAULT_VALUES_PROP
+     */
+    private static final String REQ_SUBMISSIONS_PROP = "RequiredSubmissions";
+
+    /**
+     * This member variable is a string constant that specifies the name of the property which
+     * defines the default minimum amount of registered reviewers before Review phase can end.
+     *
+     * @see #DEFAULT_VALUES_PROP
+     */
+    private static final String REQ_REVIEWERS_PROP = "RequiredReviewers";
 
     /**
      * This member variable is a string constant that specifies the name of the property which
@@ -365,6 +401,30 @@ public class ConfigHelper {
     private static int phaseDuration = 168;
 
     /**
+     * This member variable holds the default minimum length of text, in characters, that should be
+     * entered into Note field for every new project created.
+     */
+    private static int noteLength = 1;
+
+    /**
+     * This member variable holds the default minimum amount of registrants required for ending
+     * Registration phase.
+     */
+    private static int reqRegistrants = -1;
+
+    /**
+     * This member variable holds the default minimum amount of passing submissions required for
+     * ending Submission phase.
+     */
+    private static int reqSubmissions = -1;
+
+    /**
+     * This member variable holds the default minimum amount of registred reviewers required for
+     * ending Review phase.
+     */
+    private static int reqReviewers = -1;
+
+    /**
      * This member variable holds the time duration, in hours, before phase ends during which
      * outstanding deliverables are shown with &quot;Deadline&#160;Near&quot; status, and statuses
      * of open phases are shown as &quot;Closing&quot;.
@@ -535,6 +595,14 @@ public class ConfigHelper {
             String pixelsStr = propDefaults.getValue(PIXELS_PER_HOUR_PROP);
             // Get the default phase duration
             String phaseDurationStr = propDefaults.getValue(PHASE_DURATION_PROP);
+            // Get the default note length
+            String noteLengthStr = propDefaults.getValue(NOTE_LENGTH_PROP);
+            // Get the default minimum registrants amount
+            String reqRegistrantsStr = propDefaults.getValue(REQ_REGISTRANTS_PROP);
+            // Get the default minimum submissions amount
+            String reqSubmissionsStr = propDefaults.getValue(REQ_SUBMISSIONS_PROP);
+            // Get the default minimum submissions amount
+            String reqReviewersStr = propDefaults.getValue(REQ_REVIEWERS_PROP);
             // Get the duration of "Deadline Near" status
             String deadlineNearDurationStr = propDefaults.getValue(DEADLINE_NEAR_DURATION_PROP);
 
@@ -550,6 +618,34 @@ public class ConfigHelper {
                 int duration = Integer.parseInt(phaseDurationStr, 10);
                 if (duration >= 0) {
                     phaseDuration = duration;
+                }
+            }
+            // Verify that default note length was specified, and assign it
+            if (noteLengthStr != null && noteLengthStr.trim().length() != 0) {
+                int length = Integer.parseInt(noteLengthStr, 10);
+                if (length >= 0) {
+                    noteLength = length;
+                }
+            }
+            // Verify that default minimum registrants amount is specified, and assign it
+            if (reqRegistrantsStr != null && reqRegistrantsStr.trim().length() != 0) {
+                int minimum = Integer.parseInt(reqRegistrantsStr, 10);
+                if (minimum >= 0) {
+                    reqRegistrants = minimum;
+                }
+            }
+            // Verify that default minimum submissions amount is specified, and assign it
+            if (reqSubmissionsStr != null && reqSubmissionsStr.trim().length() != 0) {
+                int minimum = Integer.parseInt(reqSubmissionsStr, 10);
+                if (minimum >= 0) {
+                    reqSubmissions = minimum;
+                }
+            }
+            // Verify that default minimum submissions amount is specified, and assign it
+            if (reqReviewersStr != null && reqReviewersStr.trim().length() != 0) {
+                int minimum = Integer.parseInt(reqReviewersStr, 10);
+                if (minimum >= 0) {
+                    reqReviewers = minimum;
                 }
             }
             // Verify that duration of "Deadline Near" status was specified, and assign it
@@ -749,6 +845,46 @@ public class ConfigHelper {
     }
 
     /**
+     * This static method returns default minimum length of the text, in characters, that should be
+     * entered into Note field for every new project.
+     *
+     * @return default minimum length of text, in characters.
+     */
+    public static int getDefaultNoteLength() {
+        return noteLength;
+    }
+
+    /**
+     * This static method returns default minimum of registrants required before Registration phase
+     * can be closed.
+     *
+     * @return default minimum amount, or -1 if there is no default minimum value.
+     */
+    public static int getDefaultRequiredRegistrants() {
+        return reqRegistrants;
+    }
+
+    /**
+     * This static method returns default minimum of submissions required before Submission phase
+     * can be closed.
+     *
+     * @return default minimum amount, or -1 if there is no default minimum value.
+     */
+    public static int getDefaultRequiredSubmissions() {
+        return reqSubmissions;
+    }
+
+    /**
+     * This static method returns default minimum of registered reviewers required before Review
+     * phase can be closed.
+     *
+     * @return default minimum amount, or -1 if there is no default minimum value.
+     */
+    public static int getDefaultRequiredReviewers() {
+        return reqReviewers;
+    }
+
+    /**
      * This static method returns the time duration, in hours, before phase ends during which all
      * outstanding deliverables are shown with &quot;Deadline&#160;Near&quot; status, and all open
      * phases are shown with &quot;Closing&quot; status.
@@ -935,4 +1071,23 @@ public class ConfigHelper {
     public static String getContactManagerEmailSubject() {
         return contactManagerEmailSubject;
     }
+
+    /**
+     * Return the property value of online_review namespace.
+     *  
+     * @param name the property name
+     * @param defaultValue the default value
+     * @return property value
+     */
+    public static String getPropertyValue(String name, String defaultValue) {    	
+		try {
+			String value = ConfigManager.getInstance().getString(ONLINE_REVIEW_CFG_NS, name);
+	    	if (value != null && value.trim().length() > 0) {
+	    		return value;
+	    	}
+		} catch (UnknownNamespaceException e) {
+			// Ignore
+		}
+		return defaultValue;
+	}
 }

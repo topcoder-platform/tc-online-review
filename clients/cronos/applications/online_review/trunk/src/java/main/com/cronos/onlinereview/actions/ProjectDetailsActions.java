@@ -605,6 +605,9 @@ public class ProjectDetailsActions extends DispatchAction {
 
             if (phaseGroup.getAppFunc().equalsIgnoreCase(Constants.VIEW_REVIEWS_APP_FUNC) &&
                     phaseName.equalsIgnoreCase(Constants.REVIEW_PHASE_NAME)) {
+            	// If the project is not in the after appeals response state, allow uploading of testcases
+            	phaseGroup.setUploadingTestcasesAllowed(!isAfterAppealsResponse);
+
                 Submission[] submissions = null;
 
                 if (AuthorizationHelper.hasUserPermission(request, Constants.VIEW_ALL_SUBM_PERM_NAME)) {

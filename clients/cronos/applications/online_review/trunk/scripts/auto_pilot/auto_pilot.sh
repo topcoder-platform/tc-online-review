@@ -1,26 +1,86 @@
+JAVACMD=${JAVA_HOME}/bin/java
+MAIN=com.topcoder.management.phase.autopilot.AutoPilotJob
+LOGFILE=auto_pilot-`date +%Y-%m-%d-%H-%M-%S`.log
+
 CP=""
-CP=$CP:/home/onlinereview/online_review/lib/tcs/auto_pilot/1.0/auto_pilot.jar
-CP=$CP:/home/onlinereview/online_review/lib/tcs/base_exception/1.0/base_exception.jar
-CP=$CP:/home/onlinereview/online_review/lib/tcs/class_associations/1.0/class_associations.jar
-CP=$CP:/home/onlinereview/online_review/lib/tcs/configuration_manager/2.1.5/configuration_manager.jar
-CP=$CP:/home/onlinereview/online_review/lib/tcs/command_line_utility/1.0/command_line_utility.jar
-CP=$CP:/home/onlinereview/online_review/lib/tcs/database_abstraction/1.1/database_abstraction.jar
-CP=$CP:/home/onlinereview/online_review/lib/tcs/data_validation/1.0/data_validation.jar
-CP=$CP:/home/onlinereview/online_review/lib/tcs/db_connection_factory/1.0/db_connection_factory.jar
-CP=$CP:/home/onlinereview/online_review/lib/tcs/executable_wrapper/1.0/executable_wrapper.jar
-CP=$CP:/home/onlinereview/online_review/lib/tcs/id_generator/3.0/id_generator.jar
-CP=$CP:/home/onlinereview/online_review/lib/tcs/job_scheduler/1.0/job_scheduler.jar
-CP=$CP:/home/onlinereview/online_review/lib/tcs/logging_wrapper/1.2/logging_wrapper.jar
-CP=$CP:/home/onlinereview/online_review/lib/tcs/object_factory/2.0.1/object_factory.jar
-CP=$CP:/home/onlinereview/online_review/lib/tcs/project_management/1.0/project_management.jar
-CP=$CP:/home/onlinereview/online_review/lib/tcs/project_management_persistence/1.0/project_management_persistence.jar
-CP=$CP:/home/onlinereview/online_review/lib/tcs/phase_management/1.0.1/phase_management.jar
-CP=$CP:/home/onlinereview/online_review/lib/tcs/phase_management_persistence/1.0/phase_management_persistence.jar
-CP=$CP:/home/onlinereview/online_review/lib/tcs/project_phases/2.0/project_phases.jar
-CP=$CP:/home/onlinereview/online_review/lib/tcs/search_builder/1.3/search_builder.jar
-CP=$CP:/home/onlinereview/online_review/lib/tcs/typesafe_enum/1.0/typesafe_enum.jar
-CP=$CP:/home/onlinereview/online_review/lib/tcs/workdays/1.0/workdays.jar
-CP=$CP:/home/onlinereview/online_review/lib/third_party/xerces.jar
-CP=$CP:/home/onlinereview/online_review/lib/third_party/ifx-jdbc.jar
-CP=$CP:/home/onlinereview/online_review/lib/third_party/log4j.jar
-/usr/java/jdk1.5.0_06/bin/java -cp $CP com.topcoder.management.phase.autopilot.AutoPilotJob -config auto_pilot.xml -namespace AutoPilotJob -autopilot com.topcoder.management.phase.autopilot.AutoPilot -poll 5
+CP=$CP:.
+CP=$CP:lib/auto_pilot.jar
+CP=$CP:lib/auto_screening_management.jar
+CP=$CP:lib/base_exception.jar
+CP=$CP:lib/class_associations.jar
+CP=$CP:lib/command_line_utility.jar
+CP=$CP:lib/configuration_manager.jar
+CP=$CP:lib/data_validation.jar
+CP=$CP:lib/database_abstraction.jar
+CP=$CP:lib/db_connection_factory.jar
+CP=$CP:lib/deliverable_management.jar
+CP=$CP:lib/deliverable_management_persistence.jar
+CP=$CP:lib/document_generator.jar
+CP=$CP:lib/email_engine.jar
+CP=$CP:lib/executable_wrapper.jar
+CP=$CP:lib/generic_event_manager.jar
+CP=$CP:lib/guid_generator.jar
+CP=$CP:lib/id_generator.jar
+CP=$CP:lib/job_scheduler.jar
+CP=$CP:lib/logging_wrapper.jar
+CP=$CP:lib/magic_numbers.jar
+CP=$CP:lib/object_factory.jar
+CP=$CP:lib/online_review_deliverables.jar
+CP=$CP:lib/online_review_phases.jar
+CP=$CP:lib/phase_handler_extend.jar
+CP=$CP:lib/phase_management.jar
+CP=$CP:lib/phase_management_persistence.jar
+CP=$CP:lib/project_management.jar
+CP=$CP:lib/project_management_persistence.jar
+CP=$CP:lib/project_phases.jar
+CP=$CP:lib/project_phase_template.jar
+CP=$CP:lib/resource_management.jar		
+CP=$CP:lib/resource_management_persistence.jar	    
+CP=$CP:lib/review_data_structure.jar
+CP=$CP:lib/review_management.jar
+CP=$CP:lib/review_management_persistence.jar
+CP=$CP:lib/review_score_aggregator.jar
+CP=$CP:lib/review_score_calculator.jar
+CP=$CP:lib/scorecard_data_structure.jar
+CP=$CP:lib/scorecard_management.jar
+CP=$CP:lib/scorecard_management_persistence.jar
+CP=$CP:lib/search_builder.jar
+CP=$CP:lib/simple_cache.jar
+CP=$CP:lib/typesafe_enum.jar
+CP=$CP:lib/user_project_data_store.jar
+CP=$CP:lib/weighted_calculator.jar
+CP=$CP:lib/workdays.jar
+CP=$CP:lib/ifx-jdbc.jar 
+CP=$CP:lib/mail.jar 
+CP=$CP:lib/log4j.jar
+CP=$CP:lib/activation.jar
+CP=$CP:lib/xerces.jar
+
+OPTIONS="-cp $CP"
+
+if [[ $1 != "" ]] ; then
+    CMD=$1
+    shift
+fi
+
+if [ "$CMD" = "start" ] ; then
+    nohup $JAVACMD $OPTIONS $MAIN -config auto_pilot.xml -namespace AutoPilotJob -autopilot com.topcoder.management.phase.autopilot.AutoPilot -poll 5 >$LOGFILE 2>&1 &
+    echo $! > autopilot.pid
+elif [ "$CMD" = "stop" ] ; then
+    kill `cat autopilot.pid`
+    rm -f autopilot.pid
+elif [ "$CMD" = "restart" ] ; then
+    kill `cat autopilot.pid`
+    rm -f autopilot.pid
+    nohup $JAVACMD $OPTIONS $MAIN -config auto_pilot.xml -namespace AutoPilotJob -autopilot com.topcoder.management.phase.autopilot.AutoPilot -poll 5 >$LOGFILE 2>&1 &
+    echo $! > autopilot.pid
+elif [ "$CMD" = "test" ] ; then
+	$JAVACMD $OPTIONS $MAIN -config auto_pilot.xml -namespace AutoPilotJob -autopilot com.topcoder.management.phase.autopilot.AutoPilot -poll 1
+else
+    echo "Usage:"
+    echo "auto_pilot.sh (run|start|stop|restart)"
+    echo "      start - start auto_pilot"
+    echo "      stop  - stop auto_pilot"
+    echo "      restart  - restart auto_pilot"
+fi
+
