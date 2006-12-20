@@ -38,6 +38,6 @@ function sendRequest(requestContent, successHandler, errorHandler) {
 
 	// send the request
 	myRequest.open("POST", ajaxSupportUrl, true);
-	myRequest.setRequestHeader("Content-Type", "text/xml");
+	myRequest.setRequestHeader("Content-Type", "text/xml;charset=UTF-8");
 	myRequest.send(requestContent);
 }
