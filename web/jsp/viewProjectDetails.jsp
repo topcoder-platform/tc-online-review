@@ -29,7 +29,7 @@
 		var ajaxSupportUrl = "<html:rewrite page='/ajaxSupport' />";
 	</script>
 	<script language="JavaScript" type="text/javascript"
-		src="<html:rewrite href='/js/or/ajax.js' />"><!-- @ --></script>
+		src="<html:rewrite href='/js/or/ajax1.js' />"><!-- @ --></script>
 
 <script language="JavaScript" type="text/javascript">
 	// send the Ajax request
