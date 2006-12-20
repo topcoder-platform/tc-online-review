@@ -28,7 +28,7 @@
 	<script language="JavaScript" type="text/javascript">
 		var ajaxSupportUrl = "<html:rewrite page='/ajaxSupport' />";
 	</script>
-	<script language="JavaScript" type="text/javascript" src="<html:rewrite href='/js/or/ajax.js' />"><!-- @ --></script>
+	<script language="JavaScript" type="text/javascript" src="<html:rewrite href='/js/or/ajax1.js' />"><!-- @ --></script>
 	<script language="JavaScript" type="text/javascript"><!--
 		// TODO: Write docs for following vars
 		var lastResourceIndex = ${fn:length(projectForm.map['resources_id']) - 1};
