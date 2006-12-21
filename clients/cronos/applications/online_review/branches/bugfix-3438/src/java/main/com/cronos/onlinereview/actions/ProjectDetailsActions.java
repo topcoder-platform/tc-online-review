@@ -163,6 +163,7 @@ public class ProjectDetailsActions extends DispatchAction {
     public ActionForward viewProjectDetails(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response)
         throws BaseException {
+    	LoggingHelper.logAction(request);
         // Verify that certain requirements are met before processing with the Action
         CorrectnessCheckResult verification =
             ActionsHelper.checkForCorrectProjectId(mapping, getResources(request), request, Constants.VIEW_PROJECT_DETAIL_PERM_NAME);
@@ -1114,6 +1115,7 @@ public class ProjectDetailsActions extends DispatchAction {
     public ActionForward contactManager(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response)
         throws BaseException, ConfigManagerException {
+    	LoggingHelper.logAction(request);
         // Verify that certain requirements are met before processing with the Action
         CorrectnessCheckResult verification =
             ActionsHelper.checkForCorrectProjectId(mapping, getResources(request), request, Constants.CONTACT_PM_PERM_NAME);
@@ -1264,6 +1266,7 @@ public class ProjectDetailsActions extends DispatchAction {
     public ActionForward uploadSubmission(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response)
         throws BaseException {
+    	LoggingHelper.logAction(request);
         // Verify that certain requirements are met before processing with the Action
         CorrectnessCheckResult verification =
             ActionsHelper.checkForCorrectProjectId(mapping, getResources(request), request, Constants.PERFORM_SUBM_PERM_NAME);
@@ -1397,6 +1400,7 @@ public class ProjectDetailsActions extends DispatchAction {
     public ActionForward downloadSubmission(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response)
         throws BaseException, IOException {
+    	LoggingHelper.logAction(request);
         // Verify that certain requirements are met before processing with the Action
         CorrectnessCheckResult verification =
             checkForCorrectUploadId(mapping, request, "ViewSubmission");
@@ -1573,6 +1577,7 @@ public class ProjectDetailsActions extends DispatchAction {
     public ActionForward uploadFinalFix(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response)
         throws BaseException {
+    	LoggingHelper.logAction(request);
         // Verify that certain requirements are met before processing with the Action
         CorrectnessCheckResult verification =
             ActionsHelper.checkForCorrectProjectId(mapping, getResources(request), request, Constants.PERFORM_FINAL_FIX_PERM_NAME);
@@ -1695,6 +1700,7 @@ public class ProjectDetailsActions extends DispatchAction {
     public ActionForward downloadFinalFix(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response)
         throws BaseException, IOException {
+    	LoggingHelper.logAction(request);
         // Verify that certain requirements are met before processing with the Action
         CorrectnessCheckResult verification =
             checkForCorrectUploadId(mapping, request, Constants.DOWNLOAD_FINAL_FIX_PERM_NAME);
@@ -1788,6 +1794,7 @@ public class ProjectDetailsActions extends DispatchAction {
     public ActionForward uploadTestCase(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response)
         throws BaseException {
+    	LoggingHelper.logAction(request);
         // Verify that certain requirements are met before processing with the Action
         CorrectnessCheckResult verification =
             ActionsHelper.checkForCorrectProjectId(mapping, getResources(request), request, Constants.UPLOAD_TEST_CASES_PERM_NAME);
@@ -1896,6 +1903,7 @@ public class ProjectDetailsActions extends DispatchAction {
     public ActionForward downloadTestCase(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response)
         throws BaseException, IOException {
+    	LoggingHelper.logAction(request);
         // Verify that certain requirements are met before processing with the Action
         CorrectnessCheckResult verification =
             checkForCorrectUploadId(mapping, request, Constants.DOWNLOAD_TEST_CASES_PERM_NAME);
@@ -2040,6 +2048,7 @@ public class ProjectDetailsActions extends DispatchAction {
     public ActionForward deleteSubmission(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response)
         throws BaseException {
+    	LoggingHelper.logAction(request);
         // Verify that certain requirements are met before processing with the Action
         CorrectnessCheckResult verification =
             checkForCorrectUploadId(mapping, request, Constants.REMOVE_SUBM_PERM_NAME);
@@ -2120,6 +2129,7 @@ public class ProjectDetailsActions extends DispatchAction {
     public ActionForward downloadDocument(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response)
         throws BaseException, IOException {
+    	LoggingHelper.logAction(request);
         // Verify that certain requirements are met before processing with the Action
         CorrectnessCheckResult verification =
             checkForCorrectUploadId(mapping, request, Constants.DOWNLOAD_DOCUMENT_PERM_NAME);
@@ -2206,6 +2216,7 @@ public class ProjectDetailsActions extends DispatchAction {
      */
     public ActionForward viewAutoScreening(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response) throws BaseException {
+    	LoggingHelper.logAction(request);
         // Verify that certain requirements are met before processing with the Action
         CorrectnessCheckResult verification =
             checkForCorrectUploadId(mapping, request, "ViewAutoScreening");

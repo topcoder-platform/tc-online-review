@@ -125,6 +125,7 @@ public class ProjectActions extends DispatchAction {
     public ActionForward newProject(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response)
         throws BaseException {
+    	LoggingHelper.logAction(request);
         // Gather the roles the user has for current request
         AuthorizationHelper.gatherUserRoles(request);
 
@@ -512,6 +513,7 @@ public class ProjectActions extends DispatchAction {
     public ActionForward editProject(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response)
         throws BaseException {
+    	LoggingHelper.logAction(request);
         // Retrieve the id of project to be edited
         long projectId = Long.parseLong(request.getParameter("pid"));
 
@@ -565,6 +567,7 @@ public class ProjectActions extends DispatchAction {
      */
     public ActionForward saveProject(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response) throws BaseException {
+    	LoggingHelper.logAction(request);
         // Cast the form to its actual type
         LazyValidatorForm lazyForm = (LazyValidatorForm) form;
 
@@ -1699,6 +1702,7 @@ public class ProjectActions extends DispatchAction {
     public ActionForward listProjects(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response)
         throws BaseException {
+    	LoggingHelper.logAction(request);
 
 /* TODO: Remove all these logging entries from this method
         Date currentDate = new Date();
