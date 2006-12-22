@@ -5,7 +5,6 @@ package com.cronos.onlinereview.actions;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -29,6 +28,7 @@ import com.topcoder.management.deliverable.UploadType;
 import com.topcoder.management.project.Project;
 import com.topcoder.management.resource.Resource;
 import com.topcoder.management.resource.ResourceManager;
+import com.topcoder.management.resource.ResourceRole;
 import com.topcoder.management.resource.search.ResourceFilterBuilder;
 import com.topcoder.management.review.ReviewEntityNotFoundException;
 import com.topcoder.management.review.ReviewManager;
@@ -738,6 +738,10 @@ public class ProjectReviewActions extends DispatchAction {
         // Verify that certain requirements are met before proceeding with the Action
         CorrectnessCheckResult verification =
             checkForCorrectReviewId(mapping, request, Constants.VIEW_AGGREGATION_PERM_NAME);
+
+        // Get message resources
+        MessageResources messages = getResources(request);
+
         // If any error has occured, return action forward contained in the result bean
         if (!verification.isSuccessful()) {
             // Need to support view aggregation just by specifying the project id
@@ -745,17 +749,52 @@ public class ProjectReviewActions extends DispatchAction {
             if (!verification.isSuccessful()) {
                 return verification.getForward();
             } else {
-                // Find the latest aggregation for the project
-                ReviewManager reviewManager = ActionsHelper.createReviewManager(request);
+                // Obtain an instance of Resource Manager
+                ResourceManager resMgr = ActionsHelper.createResourceManager(request);
+                // Get the list of all possible resource roles
+                ResourceRole[] allResourceRoles = resMgr.getAllResourceRoles();
+
+                // Create filters to select Aggregators for the project
+                Filter filterProject = ResourceFilterBuilder.createProjectIdFilter(verification.getProject().getId());
+                Filter filterRole = ResourceFilterBuilder.createResourceRoleIdFilter(
+                        ActionsHelper.findResourceRoleByName(allResourceRoles, Constants.AGGREGATOR_ROLE_NAME).getId());
+                // Combine the upper two filter
+                Filter filterAggregators = new AndFilter(filterProject, filterRole);
+                // Fetch all Aggregators for the project
+                Resource[] aggregators = resMgr.searchResources(filterAggregators);
+
+                // If the project does not have any Aggregators,
+                // there cannot be any Aggregation worksheets. Signal about the error to the user
+                if (aggregators.length == 0) {
+                    return ActionsHelper.produceErrorReport(mapping, messages, request,
+                            Constants.VIEW_AGGREGATION_PERM_NAME, "Error.NoAggregations");
+                }
+
+                List resourceIds = new ArrayList();
+
+                for (int i = 0; i < aggregators.length; ++i) {
+                    resourceIds.add(new Long(aggregators[i].getId()));
+                }
+
+                Filter filterReviewers = new InFilter("reviewer", resourceIds);
                 Filter filterCommitted = new EqualToFilter("committed", new Integer(1));
-                Filter filterProject = new EqualToFilter("project", new Long(verification.getProject().getId()));
-                Review[] reviews = reviewManager.searchReviews(new AndFilter(filterProject, filterCommitted), true);
-                Arrays.sort(reviews, new Comparator() {
-                    public int compare(Object o1, Object o2) {
-                        return ((Review) o1).getCreationTimestamp().compareTo(((Review) o2).getCreationTimestamp());
-                    }
-                });
+                // Build final combined filter
+                Filter filter = new AndFilter(filterReviewers, filterCommitted);
+                // Obtain an instance of Review Manager
+                ReviewManager reviewMgr = ActionsHelper.createReviewManager(request);
+                // Fetch all reviews (Aggregations only) for the project
+                Review[] reviews = reviewMgr.searchReviews(filter, true);
+
+                if (reviews.length == 0) {
+                    return ActionsHelper.produceErrorReport(mapping, messages, request,
+                            Constants.VIEW_AGGREGATION_PERM_NAME, "Error.NoAggregations");
+                }
+
+                // Sort reviews in array to find the latest Aggregation worksheet for the project
+                Arrays.sort(reviews, new Comparators.ReviewComparer());
+                // Fetch the most recent review from the array
                 Review review = reviews[reviews.length - 1];
+
                 verification.setReview(review);
                 // Place the review object as attribute in the request
                 request.setAttribute("review", review);
@@ -3342,7 +3381,7 @@ public class ProjectReviewActions extends DispatchAction {
             } else {
                 isAllowed = true;
             }
-        } 
+        }
 
         if (!isAllowed) {
             return ActionsHelper.produceErrorReport(
