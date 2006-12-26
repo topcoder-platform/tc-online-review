@@ -8,8 +8,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * The PRHelper which is used to provide helper method for Phase Handler.
@@ -48,11 +46,7 @@ class PRHelper {
 		"and r.resource_role_id = 1 ";
 
 	private static final String APPEAL_RESPONSE_UPDATE_PROJECT_RESULT_STMT = 
-				"update project_result set final_score = ?, placed = ?, passed_review_ind = ?  " +
-				"where project_id = ? and user_id = ? ";
-
-	private static final String PLACED_FINALSCORE_UPDATE_PROJECT_RESULT_STMT = 
-				"update project_result set final_score = ?, placed = ?  " +
+				"update project_result set final_score = ?, placed = ?, passed_review_ind = ?, payment = ? " +
 				"where project_id = ? and user_id = ? ";
 
 	private static final String REVIEW_SELECT_STMT = 
@@ -96,13 +90,7 @@ class PRHelper {
 				"	and ri.value = project_result.user_id and ri.resource_info_type_id = 1 " + 
 				"	and submission_status_id <> 5 ) and " +
 				" project_id = ?";
-	
-	private static final String SELECT_SUBMITTERS_STMT = 
-		"SELECT value from resource_info ri, resource r " +
-		"where ri.resource_id = r.resource_id " +
-		"and r.project_id = ? and r.resource_role_id = 1 " +
-		"and ri.resource_info_type_id = 1";
-	
+
 	/**
 	 * Prevent to be created outside.
 	 */
@@ -115,7 +103,7 @@ class PRHelper {
      * @param phaseId the phase id
      * @throws PhaseHandlingException if error occurs
      */
-    static void processRegistrationPR(long projectId, Connection conn) throws SQLException {
+    static void processRegistrationPR(long projectId, Connection conn, boolean toStart) throws SQLException {
     }
 
     /**
@@ -124,13 +112,15 @@ class PRHelper {
      * @param projectId the projectId
      * @throws PhaseHandlingException if error occurs
      */
-    static void processSubmissionPR(long projectId, Connection conn) throws SQLException {
+    static void processSubmissionPR(long projectId, Connection conn, boolean toStart) throws SQLException {
     	PreparedStatement pstmt = null;
     	try {
-        	// Update all users who submit submission
-        	pstmt = conn.prepareStatement(UPDATE_PROJECT_RESULT_STMT);
-        	pstmt.setLong(1, projectId);
-        	pstmt.execute();
+    		if (!toStart) {
+	        	// Update all users who submit submission
+	        	pstmt = conn.prepareStatement(UPDATE_PROJECT_RESULT_STMT);
+	        	pstmt.setLong(1, projectId);
+	        	pstmt.execute();
+    		}
     	} finally {
     		close(pstmt);
     	}
@@ -142,19 +132,24 @@ class PRHelper {
      * @param projectId the projectId
      * @throws PhaseHandlingException if error occurs
      */
-    static void processScreeningPR(long projectId, Connection conn) throws SQLException {
+    static void processScreeningPR(long projectId, Connection conn, boolean toStart) throws SQLException {
     	PreparedStatement pstmt = null;
     	try {
-        	// Update all users who failed to pass screen, set valid_submission_ind = 0
-        	pstmt = conn.prepareStatement(FAILED_PASS_SCREENING_STMT);
-        	pstmt.setLong(1, projectId);
-        	pstmt.execute();
-        	close(pstmt);
-
-        	// Update all users who pass screen, set valid_submission_ind = 1
-        	pstmt = conn.prepareStatement(PASS_SCREENING_STMT);
-        	pstmt.setLong(1, projectId);
-        	pstmt.execute();
+    		if (!toStart) {
+	        	// Update all users who failed to pass screen, set valid_submission_ind = 0
+	        	pstmt = conn.prepareStatement(FAILED_PASS_SCREENING_STMT);
+	        	pstmt.setLong(1, projectId);
+	        	pstmt.execute();
+	        	close(pstmt);
+	
+	        	// Update all users who pass screen, set valid_submission_ind = 1
+	        	pstmt = conn.prepareStatement(PASS_SCREENING_STMT);
+	        	pstmt.setLong(1, projectId);
+	        	pstmt.execute();
+    		} else {
+    			// Start screening phase
+    			AutoPaymentUtil.populateReviewerPayments(projectId, conn, AutoPaymentUtil.SCREENING_PHASE);
+    		}
     	} finally {
     		close(pstmt);
     	}    	
@@ -167,30 +162,46 @@ class PRHelper {
      * @param phaseId the phase id
      * @throws PhaseHandlingException if error occurs
      */
-    static void processReviewPR(long projectId, Connection conn) throws SQLException {
+    static void processReviewPR(long projectId, Connection conn, boolean toStart) throws SQLException {
     	PreparedStatement pstmt = null;
     	PreparedStatement updateStmt = null;
     	ResultSet rs = null;
     	try {
-        	// Retrieve all 
-        	pstmt = conn.prepareStatement(REVIEW_SELECT_STMT);
-        	pstmt.setLong(1, projectId);
-        	rs = pstmt.executeQuery();
+    		if (!toStart) {
+	        	// Retrieve all 
+	        	pstmt = conn.prepareStatement(REVIEW_SELECT_STMT);
+	        	pstmt.setLong(1, projectId);
+	        	rs = pstmt.executeQuery();
+	
+	        	updateStmt = conn.prepareStatement(REVIEW_UPDATE_PROJECT_RESULT_STMT);
+	        	while(rs.next()) {
+		        	// Update all raw score
+	        		double rawScore = rs.getDouble("raw_score");
+	        		long userId = rs.getLong("user_id");
+	        		updateStmt.setDouble(1, rawScore);
+	        		updateStmt.setLong(2, projectId);
+	        		updateStmt.setLong(3, userId);
+	        		updateStmt.execute();
+	        	}
+    		}
 
-        	updateStmt = conn.prepareStatement(REVIEW_UPDATE_PROJECT_RESULT_STMT);
-        	while(rs.next()) {
-	        	// Update all raw score
-        		double rawScore = rs.getDouble("raw_score");
-        		long userId = rs.getLong("user_id");
-        		updateStmt.setDouble(1, rawScore);
-        		updateStmt.setLong(2, projectId);
-        		updateStmt.setLong(3, userId);
-        		updateStmt.execute();
-        	}
+    		AutoPaymentUtil.populateReviewerPayments(projectId, conn, AutoPaymentUtil.REVIEW_PHASE);        	
     	} finally {
     		close(rs);
     		close(pstmt);
     		close(updateStmt);
+    	}
+    }
+
+    /**
+     * Pull data to project_result for while appeal response phase closed.
+     * 
+     * @param projectId the projectId
+     * @throws PhaseHandlingException if error occurs
+     */
+    static void processAppealResponsePR(long projectId, Connection conn, boolean toStart) throws SQLException {
+    	if (!toStart) {
+	    	populateProjectResult(projectId, conn);
     	}
     }
 
@@ -200,7 +211,65 @@ class PRHelper {
      * @param projectId the projectId
      * @throws PhaseHandlingException if error occurs
      */
-    static void processAppealResponsePR(long projectId, Connection conn) throws SQLException {
+    static void processAggregationPR(long projectId, Connection conn, boolean toStart) throws SQLException {
+    	if (!toStart) {
+    		populateProjectResult(projectId, conn);
+    	} else {
+    		// start this phase
+    		AutoPaymentUtil.populateReviewerPayments(projectId, conn, AutoPaymentUtil.AGGREGATION_PHASE);
+    	}
+    }
+
+    /**
+     * Pull data to project_result.
+     * 
+     * @param projectId the projectId
+     * @throws PhaseHandlingException if error occurs
+     */
+    static void processAggregationReviewPR(long projectId, Connection conn, boolean toStart) throws SQLException {
+    	if (!toStart) {
+    		populateProjectResult(projectId, conn);
+    	}
+    }
+
+    /**
+     * Pull data to project_result.
+     * 
+     * @param projectId the projectId
+     * @throws PhaseHandlingException if error occurs
+     */
+    static void processFinalFixPR(long projectId, Connection conn, boolean toStart) throws SQLException {
+    	if (!toStart) {
+    		populateProjectResult(projectId, conn);
+    	}
+    }
+
+    /**
+     * Pull data to project_result.
+     * 
+     * @param projectId the projectId
+     * @throws PhaseHandlingException if error occurs
+     */
+    static void processFinalReviewPR(long projectId, Connection conn, boolean toStart) throws SQLException {
+    	if (!toStart) {
+    		populateProjectResult(projectId, conn);
+    	} else {
+    		// start this phase
+    		AutoPaymentUtil.populateReviewerPayments(projectId, conn, AutoPaymentUtil.FINAL_REVIEW_PHASE);
+    	}
+    }
+
+    /**
+     * Populate final_score, placed and passed_review_ind.
+     * 
+     * @param projectId project id
+     * @param conn connection 
+     * @throws SQLException if error occurs
+     */
+    private static void populateProjectResult(long projectId, Connection conn) throws SQLException {
+    	// Payment should be set before populate to project_result table
+    	AutoPaymentUtil.populateSubmitterPayments(projectId, conn);
+
     	PreparedStatement pstmt = null;
     	PreparedStatement updateStmt = null;
     	ResultSet rs = null;
@@ -216,6 +285,17 @@ class PRHelper {
         		long userId = rs.getLong("user_id");
         		int status = rs.getInt("submission_status_id");
         		String p = rs.getString("placed");
+
+        		double payment = 0;
+        		p = rs.getString("payment");
+        		if (p != null) {
+        			try {
+        				payment = Double.parseDouble(p);
+        			} catch (Exception e) {
+        				// Ignore
+        			}
+        		}
+
         		int placed = 0;
         		if (p != null) {
         			try {
@@ -234,56 +314,13 @@ class PRHelper {
         		}
         		// 1 is active, 4 is Completed Without Win
         		updateStmt.setInt(3, status == 1 || status == 4 ? 1 : 0);
-        		updateStmt.setLong(4, projectId);
-        		updateStmt.setLong(5, userId);
-        		updateStmt.execute();
-        	}
-    	} finally {
-    		close(rs);
-    		close(pstmt);
-    		close(updateStmt);
-    	}
-    }
-
-    /**
-     * Pull data to project_result.
-     * 
-     * @param projectId the projectId
-     * @throws PhaseHandlingException if error occurs
-     */
-    static void processPlacedFinalScore(long projectId, Connection conn) throws SQLException {
-    	PreparedStatement pstmt = null;
-    	PreparedStatement updateStmt = null;
-    	ResultSet rs = null;
-    	try {
-        	// Retrieve all 
-        	pstmt = conn.prepareStatement(APPEAL_RESPONSE_SELECT_STMT);
-        	pstmt.setLong(1, projectId);
-        	rs = pstmt.executeQuery();
-
-        	updateStmt = conn.prepareStatement(PLACED_FINALSCORE_UPDATE_PROJECT_RESULT_STMT);
-        	while(rs.next()) {
-        		double finalScore = rs.getDouble("final_score");
-        		long userId = rs.getLong("user_id");
-        		String p = rs.getString("placed");
-        		int placed = 0;
-        		if (p != null) {
-        			try {
-        				placed = Integer.parseInt(p);
-        			} catch (Exception e) {
-        				// Ignore
-        			}
-        		}
-
-        		// Update final score, placed and passed_review_ind
-        		updateStmt.setDouble(1, finalScore);
-        		if (placed == 0) {
-        			updateStmt.setNull(2, Types.INTEGER);
+        		if (payment == 0) {
+        			updateStmt.setNull(4, Types.DOUBLE);
         		} else {
-        			updateStmt.setInt(2, placed);
+            		updateStmt.setDouble(4, payment);
         		}
-        		updateStmt.setLong(3, projectId);
-        		updateStmt.setLong(4, userId);
+        		updateStmt.setLong(5, projectId);
+        		updateStmt.setLong(6, userId);
         		updateStmt.execute();
         	}
     	} finally {
@@ -291,8 +328,9 @@ class PRHelper {
     		close(pstmt);
     		close(updateStmt);
     	}
+    	
     }
-    
+
     /**
      * Close the jdbc resource.
      * 
@@ -312,26 +350,5 @@ class PRHelper {
     			// Just ignore
     		}
     	}
-    }
-
-    /**
-     * Retrieve all submitters's external ids.
-     * 
-     * @param conn the connection
-     * @param projectId the project id
-     * @return all submitters external ids
-     * @throws SQLException if error occurs while executing sql statement
-     */
-    static List getSubmitters(Connection conn, long projectId) throws SQLException {
-    	List submitters = new ArrayList();
-    	PreparedStatement pstmt = conn.prepareStatement(SELECT_SUBMITTERS_STMT);
-    	pstmt.setLong(1, projectId);
-    	ResultSet rs = pstmt.executeQuery();
-    	while (rs.next()) {
-    		submitters.add(rs.getString("value"));
-    	}
-    	close(rs);
-    	close(pstmt);
-    	return submitters;
     }
 }
