@@ -55,6 +55,7 @@ CP=$CP:lib/mail.jar
 CP=$CP:lib/log4j.jar
 CP=$CP:lib/activation.jar
 CP=$CP:lib/xerces.jar
+CP=$CP:lib/tcwebcommon.jar
 
 OPTIONS="-cp $CP"
 
