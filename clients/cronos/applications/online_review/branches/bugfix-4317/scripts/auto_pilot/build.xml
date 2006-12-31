@@ -302,6 +302,8 @@
     <property name="workdays.jar" value="${tcs_libdir}/${workdays.path}/${workdays.jar.name}" />
 
 	<property name="tcwebcommon.jar" value="${tcs_libdir}/tcwebcommon.jar" />
+	<property name="tcsUtil.jar" value="${tcs_libdir}/tcsUtil.jar" />
+	<property name="shared.jar" value="${tcs_libdir}/shared.jar" />
 
     <!-- 3rd Party Dependencies  -->
 	<property name="activation.jar" value="${ext_libdir}/third_party/activation.jar" />
@@ -425,6 +427,8 @@
 	    	<fileset file="${activation.jar}" />
 	    	<fileset file="${xerces.jar}"/> 
 	    	<fileset file="${tcwebcommon.jar}"/>
+	    	<fileset file="${tcsUtil.jar}"/>
+	    	<fileset file="${shared.jar}"/>
 		    <fileset dir=".">
 		    	<exclude name="build.xml"/> 
 		    	<include name="**/*.sh"/>
