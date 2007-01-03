@@ -695,11 +695,6 @@ public class ProjectActions extends DispatchAction {
         Phase[] projectPhases =
             saveProjectPhases(newProject, request, lazyForm, project, phasesJsMap, phasesToDelete, statusHasChanged);
 
-        // If needed switch project current phase
-        if (!newProject && !ActionsHelper.isErrorsPresent(request)) {
-            switchProjectPhase(request, lazyForm, projectPhases, phasesJsMap);
-        }
-
         // FIXME: resources must be saved even if there are validation errors to validate resources
         if (!ActionsHelper.isErrorsPresent(request)) {
             // Save the project resources
@@ -709,6 +704,11 @@ public class ProjectActions extends DispatchAction {
         if (!ActionsHelper.isErrorsPresent(request)) {
             // Delete the phases to be deleted
             deletePhases(request, project, phasesToDelete);
+        }
+
+        // If needed switch project current phase
+        if (!newProject && !ActionsHelper.isErrorsPresent(request)) {
+            switchProjectPhase(request, lazyForm, projectPhases, phasesJsMap);
         }
 
         // Check if there are any validation errors and return appropriate forward
@@ -1597,9 +1597,9 @@ public class ProjectActions extends DispatchAction {
         // Populate project_result and component_inquiry for new submitters
         ActionsHelper.populateProjectResult(project, newUsers);
 
-        // Populate project_result for new submitters
+        // Populate project_result and component_inquiry for new submitters
         ActionsHelper.populateProjectResult(project, newSubmitters);
-        
+
         // Update all the timeline notifications
         if (project.getProperty("Timeline Notification").equals("On")) {
         	long[] userIds = new long[newUsers.size()];
