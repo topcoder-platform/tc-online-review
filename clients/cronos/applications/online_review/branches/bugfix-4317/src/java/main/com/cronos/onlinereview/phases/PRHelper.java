@@ -104,6 +104,15 @@ class PRHelper {
      * @throws PhaseHandlingException if error occurs
      */
     static void processRegistrationPR(long projectId, Connection conn, boolean toStart) throws SQLException {
+    	PreparedStatement pstmt = null;
+    	try {
+    		if (toStart) {
+	        	// Reset price of project
+    			AutoPaymentUtil.resetProjectPrice(projectId, conn);
+    		}
+    	} finally {
+    		close(pstmt);
+    	}
     }
 
     /**

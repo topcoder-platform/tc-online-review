@@ -36,11 +36,12 @@ class AutoPaymentUtil {
 
     /** Retrieve the price from project_info. */
     private static final String SELECT_PRICE_PROJECT_INFO = 
-    	"select value " + "	from project_info " +
+    	"select value " + 
+    	"	from project_info " +
         "	where project_info_type_id = 16 " + 
         "	and project_id = ? ";
     private static final String USER_ID = "phase_handler";
-    
+
     static final int SCREENING_PHASE = 3; 
     static final int REVIEW_PHASE = 4;
     static final int AGGREGATION_PHASE = 7;
@@ -50,6 +51,30 @@ class AutoPaymentUtil {
      * Prevent to be created.
      */
     private AutoPaymentUtil() {
+    }
+    
+    static void resetProjectPrice(long projectId, Connection conn) throws SQLException {
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+
+        double price = 0.0;
+
+        try {
+            pstmt = conn.prepareStatement(SELECT_PRICE_CVD);
+            pstmt.setLong(1, projectId);
+            rs = pstmt.executeQuery();
+
+            if (rs.next()) {
+            	price = rs.getDouble(1);
+            }
+        } finally {
+            PRHelper.close(rs);
+            PRHelper.close(pstmt);
+        }
+    	
+        if (price > 0) {
+        	updateProjectInfo(projectId, 16, String.valueOf(price), conn);
+        }
     }
 
     /**
@@ -366,6 +391,46 @@ class AutoPaymentUtil {
     }
 
     /**
+     * Update or insert project info with given value.
+     *
+     * @param projectId the project id
+     * @param projectInfoTypeId projectInfoTypeId
+     * @param value the value
+     * @param conn the connection
+     *
+     * @throws SQLException if error occurs
+     */
+    private static void updateProjectInfo(long projectId, long projectInfoTypeId, String value, Connection conn)
+        throws SQLException {
+        String UPDATE_SQL = "update project_info set value = ? where project_id = ? and project_info_type_id = ? ";
+        String INSERT_SQL = "INSERT INTO project_info " +
+            "(project_id, project_info_type_id, value, create_user, create_date, modify_user, modify_date) " +
+            " VALUES (?, ?, ?, ?, CURRENT, ?, CURRENT)";
+
+        // Update the ProjectInfo
+        PreparedStatement pstmt = conn.prepareStatement(UPDATE_SQL);
+        pstmt.setString(1, value);
+        pstmt.setLong(2, projectId);
+        pstmt.setLong(3, projectInfoTypeId);
+
+        int result = pstmt.executeUpdate();
+
+        if (result == 0) {
+            // No given ProjectInfo exists, insert instead
+            PRHelper.close(pstmt);
+            pstmt = conn.prepareStatement(INSERT_SQL);
+            pstmt.setLong(1, projectId);
+            pstmt.setLong(2, projectInfoTypeId);
+            pstmt.setString(3, value);
+            pstmt.setString(4, USER_ID);
+            pstmt.setString(5, USER_ID);
+            pstmt.execute();
+        }
+
+        PRHelper.close(pstmt);
+    }
+
+    /**
      * Retrieve price for given project.
      *
      * @param projectId project id
@@ -386,7 +451,9 @@ class AutoPaymentUtil {
             rs = pstmt.executeQuery();
 
             if (rs.next()) {
-                return rs.getDouble(1);
+            	if (rs.getDouble(1) > 0) {
+            		return rs.getDouble(1);
+            	}
             }
         } finally {
             PRHelper.close(rs);
