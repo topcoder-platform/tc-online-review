@@ -315,6 +315,15 @@ class AutoPaymentUtil {
             return;
         }
 
+        String clearPayment = "update resource_info set value = 0 " + 
+        					  " where resource_info_type_id = 7 " +
+        					  " and resource_id in (select resource_id from resource where resource_role_id = 1 and project_id = ?)";
+
+        PreparedStatement pstmt = conn.prepareStatement(clearPayment);
+        pstmt.setLong(1, projectId);
+        pstmt.executeUpdate();
+        PRHelper.close(pstmt);
+
         // prepare price for differnt placed
         double[] prices = new double[] { price, 0 };
         prices[1] = Math.round(price * .5);

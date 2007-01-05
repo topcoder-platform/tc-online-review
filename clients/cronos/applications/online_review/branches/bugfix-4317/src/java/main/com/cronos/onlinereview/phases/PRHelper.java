@@ -155,10 +155,9 @@ class PRHelper {
 	        	pstmt = conn.prepareStatement(PASS_SCREENING_STMT);
 	        	pstmt.setLong(1, projectId);
 	        	pstmt.execute();
-    		} else {
-    			// Start screening phase
-    			AutoPaymentUtil.populateReviewerPayments(projectId, conn, AutoPaymentUtil.SCREENING_PHASE);
     		}
+    		
+    		AutoPaymentUtil.populateReviewerPayments(projectId, conn, AutoPaymentUtil.SCREENING_PHASE);
     	} finally {
     		close(pstmt);
     	}    	
