@@ -374,6 +374,9 @@
 
     <target name="compile">
         <mkdir dir="${build_classdir}" />
+        <delete failonerror="false">
+            <fileset dir="${build_classdir}" includes="com/cronos/onlinereview/phases/*.class"/>
+        </delete>
         <javac srcdir="${javamain}" destdir="${build_classdir}" includes="com/cronos/onlinereview/phases/*.java" debug="true" verbose="${verbose}">
             <classpath refid="buildlibs" />
         </javac>
