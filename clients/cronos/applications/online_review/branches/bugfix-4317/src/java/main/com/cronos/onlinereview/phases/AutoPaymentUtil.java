@@ -200,7 +200,7 @@ class AutoPaymentUtil {
             "	where r.resource_id = ri.resource_id" + 
             "	and ri.resource_info_type_id = 1" +
             "	and r.resource_role_id in (2, 3, 4, 5, 6, 7, 8, 9)" + 
-            "	and r.project_id = ?";
+            "	and r.project_id = ? order by resource_role_id";
         PreparedStatement pstmt = null;
         ResultSet rs = null;
         List reviewers = new ArrayList();
