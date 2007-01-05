@@ -365,6 +365,9 @@
         <pathelement location="${user_project_data_store.jar}" />
         <pathelement location="${weighted_calculator.jar}" />
         <pathelement location="${workdays.jar}" />
+        <pathelement location="${tcwebcommon.jar}" />
+        <pathelement location="${tcsUtil.jar}" />
+        <pathelement location="${shared.jar}" />
         <!--below classphas used for prod environment which all jars exist in lib dir -->
         <pathelement location="." />
     </path>
@@ -380,7 +383,7 @@
     </target>
 
     <target name="dist_phase_handler" depends="compile">
-        <delete file="${phase_handler_extend.jar}" failonerror="false" />
+        <mkdir dir="${dist_lib}/"/>
         <jar destfile="${phase_handler_extend.jar}" basedir="${build_classdir}" includes="com/cronos/onlinereview/phases/**" />
     </target>
 
