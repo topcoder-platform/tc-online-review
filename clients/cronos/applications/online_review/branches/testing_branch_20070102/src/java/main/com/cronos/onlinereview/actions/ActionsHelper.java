@@ -50,6 +50,7 @@ import com.cronos.onlinereview.phases.AggregationPhaseHandler;
 import com.cronos.onlinereview.phases.AggregationReviewPhaseHandler;
 import com.cronos.onlinereview.phases.AppealsPhaseHandler;
 import com.cronos.onlinereview.phases.ApprovalPhaseHandler;
+import com.cronos.onlinereview.phases.AutoPaymentUtil;
 import com.cronos.onlinereview.phases.FinalFixPhaseHandler;
 import com.cronos.onlinereview.phases.FinalReviewPhaseHandler;
 import com.cronos.onlinereview.phases.PRAggregationPhaseHandler;
@@ -3006,6 +3007,28 @@ public class ActionsHelper {
 			close(reliabilityStmt);
 			close(conn);
 		}
+    }
+
+    /**
+     * Recaculate Screening reviewers payment.
+     *
+     * @param projectId project id
+     *
+     * @throws Exception if error occurs
+     */
+    public static void recaculateScreeningReviewerPayments(long projectId) throws BaseException {
+    	Connection conn = null;
+		try {
+	        DBConnectionFactory dbconn = new DBConnectionFactoryImpl(DB_CONNECTION_NAMESPACE);
+	        conn = dbconn.createConnection();
+	        AutoPaymentUtil.populateReviewerPayments(projectId, conn, AutoPaymentUtil.SCREENING_PHASE);
+		} catch (DBConnectionException e) {
+			throw new BaseException("Failed to return DBConnection", e);
+		} catch (SQLException e) {
+			throw new BaseException("Failed to recaculateScreeningReviewerPayments for project " + projectId, e);
+		} finally {
+			close(conn);
+		}    	
     }
 
     /**
