@@ -21,7 +21,7 @@ import java.util.List;
  * @author brain_cn
  * @version 1.0
  */
-class AutoPaymentUtil {
+public class AutoPaymentUtil {
     /** Retrieve the price from comp_version_date. */
     private static final String SELECT_PRICE_CVD = "select price " + 
     	"	from comp_version_dates, " +
@@ -42,10 +42,10 @@ class AutoPaymentUtil {
         "	and project_id = ? ";
     private static final String USER_ID = "phase_handler";
 
-    static final int SCREENING_PHASE = 3; 
-    static final int REVIEW_PHASE = 4;
-    static final int AGGREGATION_PHASE = 7;
-    static final int FINAL_REVIEW_PHASE = 10;
+    public static final int SCREENING_PHASE = 3; 
+    public static final int REVIEW_PHASE = 4;
+    public static final int AGGREGATION_PHASE = 7;
+    public static final int FINAL_REVIEW_PHASE = 10;
 
     /**
      * Prevent to be created.
@@ -85,7 +85,7 @@ class AutoPaymentUtil {
      *
      * @throws Exception if error occurs
      */
-    static void populateReviewerPayments(long projectId, Connection conn, int phaseId)
+    public static void populateReviewerPayments(long projectId, Connection conn, int phaseId)
         throws SQLException {
         long projectCategoryId = getProjectCategoryId(projectId, conn);
         int levelId = FixedPriceComponent.LEVEL1;
