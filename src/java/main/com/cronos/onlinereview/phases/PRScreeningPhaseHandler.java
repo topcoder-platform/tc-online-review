@@ -68,14 +68,12 @@ public class PRScreeningPhaseHandler extends ScreeningPhaseHandler {
     	super.perform(phase, operator);
         boolean toStart = PhasesHelper.checkPhaseStatus(phase.getPhaseStatus());
 
-        if (!toStart) {
-        	Connection conn = this.createConnection();
-        	try {
-        		processPR(phase.getProject().getId(), conn);
-        	} finally {
-        		PRHelper.close(conn);
-        	}
-        }
+    	Connection conn = this.createConnection();
+    	try {
+    		processPR(phase.getProject().getId(), conn, toStart);
+    	} finally {
+    		PRHelper.close(conn);
+    	}
     }
 
     /**
@@ -84,9 +82,9 @@ public class PRScreeningPhaseHandler extends ScreeningPhaseHandler {
      * @param projectId the projectId
      * @throws PhaseHandlingException if error occurs
      */
-    public static void processPR(long projectId, Connection conn) throws PhaseHandlingException {
+    public static void processPR(long projectId, Connection conn, boolean toStart) throws PhaseHandlingException {
     	try {
-        	PRHelper.processScreeningPR(projectId, conn);
+    		PRHelper.processScreeningPR(projectId, conn, toStart);
     	} catch(SQLException e) {
     		throw new PhaseHandlingException("Failed to push data to project_result", e);
     	}

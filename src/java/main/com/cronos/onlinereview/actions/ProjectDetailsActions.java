@@ -2093,6 +2093,9 @@ public class ProjectDetailsActions extends DispatchAction {
         upMgr.updateUpload(upload, Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
         upMgr.updateSubmission(submission, Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
 
+        // recaculate screening reviewer payments
+        ActionsHelper.recaculateScreeningReviewerPayments(upload.getProject());
+        
         return ActionsHelper.cloneForwardAndAppendToPath(
                 mapping.findForward(Constants.SUCCESS_FORWARD_NAME), "&pid=" + verification.getProject().getId());
     }
