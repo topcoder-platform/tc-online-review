@@ -78,6 +78,38 @@ public class AutoPaymentUtil {
     }
 
     /**
+     * Populate reviewers payment by retrieve which project_status is Open.
+     *
+     * @param projectId project id
+     * @param conn the connection
+     *
+     * @throws Exception if error occurs
+     */
+    public static void populateReviewerPayments(long projectId, Connection conn)
+    throws SQLException {
+        String SELECT_SQL = 
+        	"select max(phase_type_id) from project_phase  " +
+	        "	where phase_status_id = 2 and project_id = ? ";
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+
+        int openPhase = 0;
+        try {
+            pstmt = conn.prepareStatement(SELECT_SQL);
+            pstmt.setLong(1, projectId);
+            rs = pstmt.executeQuery();
+            rs.next();
+            openPhase =  rs.getInt(1);
+        } finally {
+            PRHelper.close(rs);
+            PRHelper.close(pstmt);
+        }
+        if (openPhase > 0) {
+        	populateReviewerPayments(projectId, conn, openPhase);
+        }
+	}
+
+    /**
      * Populate reviewers payment.
      *
      * @param projectId project id
@@ -85,19 +117,34 @@ public class AutoPaymentUtil {
      *
      * @throws Exception if error occurs
      */
-    public static void populateReviewerPayments(long projectId, Connection conn, int phaseId)
+    static void populateReviewerPayments(long projectId, Connection conn, int phaseId)
         throws SQLException {
         long projectCategoryId = getProjectCategoryId(projectId, conn);
         int levelId = FixedPriceComponent.LEVEL1;
-        int count = getCount(projectId, conn);
-        int passedCount = getScreenPassedCount(projectId, conn);
+        int count = getActiveSubmissionCount(projectId, conn);
+        int passedCount = getScreenPassedSubmissionCount(projectId, conn);
+        int countOfcompleteScreenings = 0; 
+        int countOfcompleteReviews = 0; 
         float[] payments = getPayments(projectId, projectCategoryId, conn);
-        FixedPriceComponent fpc = new FixedPriceComponent(levelId, count, passedCount,
-                (projectCategoryId == 1) ? 112 : 113, payments[0], payments[1]);
+
+        FixedPriceComponent fpc = null;
         List reviewers = getReviewers(projectId, conn);
 
         for (Iterator iter = reviewers.iterator(); iter.hasNext();) {
             Reviewer reviewer = (Reviewer) iter.next();
+            
+            if (phaseId == SCREENING_PHASE) {
+            	countOfcompleteScreenings = getNumberOfCompletedReview(reviewer.getResourceId(), 1, conn);
+            } else if (phaseId == REVIEW_PHASE) {
+            	countOfcompleteReviews = getNumberOfCompletedReview(reviewer.getResourceId(), 2, conn);  
+            }
+
+    		fpc = new FixedPriceComponent(levelId, 
+    						countOfcompleteScreenings > 0 ? countOfcompleteScreenings : count, 
+    			            countOfcompleteReviews > 0 ? countOfcompleteReviews : passedCount, 
+    			            (projectCategoryId == 1) ? 112 : 113, 
+                    		payments[0], 
+                    		payments[1]);
 
             if (reviewer.isPrimaryScreener() && phaseId == SCREENING_PHASE) {
                 updateResourcePayment(reviewer.getResourceId(), fpc.getScreeningCost(), conn);
@@ -116,6 +163,39 @@ public class AutoPaymentUtil {
     }
 
     /**
+     * Return the number of completed reviews.
+     *  
+     * @param resourceId the resourceId.
+     * @param scorecardType the scorecardType
+     * @param conn the connection
+     * @return the number of completed review
+     * @throws SQLException if error occurs
+     */
+    private static int getNumberOfCompletedReview(long resourceId, long scorecardType,Connection conn) throws SQLException {
+        String SELECT_SQL = 
+        	"select count(r.review_id) " +
+	        "	from review r, scorecard s " +
+	        "	where r.scorecard_id = s.scorecard_id " +
+	        "	and r.committed = 1 " +
+	        "	and r.resource_id = ?" +
+	        "	and s.scorecard_type_id = ? ";
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+
+        try {
+            pstmt = conn.prepareStatement(SELECT_SQL);
+            pstmt.setLong(1, resourceId);
+            pstmt.setLong(2, scorecardType);
+            rs = pstmt.executeQuery();
+            rs.next();
+            return rs.getInt(1);
+        } finally {
+            PRHelper.close(rs);
+            PRHelper.close(pstmt);
+        }
+    }
+    
+    /**
      * Return submission count for given project.
      * 
      * @param projectId project id
@@ -123,7 +203,7 @@ public class AutoPaymentUtil {
      * @return screening passed count
      * @throws SQLException if error occurs
      */
-    private static int getCount(long projectId, Connection conn)
+    private static int getActiveSubmissionCount(long projectId, Connection conn)
         throws SQLException {
         String SELECT_SQL = 
         	"select count(s.submission_id) " +
@@ -155,7 +235,7 @@ public class AutoPaymentUtil {
      * @return screening passed count
      * @throws SQLException if error occurs
      */
-    private static int getScreenPassedCount(long projectId, Connection conn)
+    private static int getScreenPassedSubmissionCount(long projectId, Connection conn)
         throws SQLException {
         String SELECT_SQL = 
         	"select count(s.submission_id) " +

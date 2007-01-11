@@ -21,7 +21,6 @@ import java.util.List;
 import java.util.Map;
 
 import com.topcoder.db.connectionfactory.DBConnectionException;
-import java.sql.Types;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -46,13 +45,9 @@ import com.cronos.onlinereview.deliverables.SubmitterCommentDeliverableChecker;
 import com.cronos.onlinereview.deliverables.TestCasesDeliverableChecker;
 import com.cronos.onlinereview.external.UserRetrieval;
 import com.cronos.onlinereview.external.impl.DBUserRetrieval;
-import com.cronos.onlinereview.phases.AggregationPhaseHandler;
-import com.cronos.onlinereview.phases.AggregationReviewPhaseHandler;
 import com.cronos.onlinereview.phases.AppealsPhaseHandler;
 import com.cronos.onlinereview.phases.ApprovalPhaseHandler;
 import com.cronos.onlinereview.phases.AutoPaymentUtil;
-import com.cronos.onlinereview.phases.FinalFixPhaseHandler;
-import com.cronos.onlinereview.phases.FinalReviewPhaseHandler;
 import com.cronos.onlinereview.phases.PRAggregationPhaseHandler;
 import com.cronos.onlinereview.phases.PRAggregationReviewPhaseHandler;
 import com.cronos.onlinereview.phases.PRAppealResponsePhaseHandler;
@@ -65,7 +60,6 @@ import com.cronos.onlinereview.phases.PRSubmissionPhaseHandler;
 import com.topcoder.date.workdays.DefaultWorkdaysFactory;
 import com.topcoder.date.workdays.Workdays;
 import com.topcoder.db.connectionfactory.ConfigurationException;
-import com.topcoder.db.connectionfactory.DBConnectionException;
 import com.topcoder.db.connectionfactory.DBConnectionFactory;
 import com.topcoder.db.connectionfactory.DBConnectionFactoryImpl;
 import com.topcoder.db.connectionfactory.UnknownConnectionException;
@@ -126,7 +120,6 @@ import com.topcoder.project.phases.PhaseType;
 import com.topcoder.project.phases.template.DefaultPhaseTemplate;
 import com.topcoder.project.phases.template.PhaseTemplate;
 import com.topcoder.project.phases.template.PhaseTemplatePersistence;
-import com.topcoder.project.phases.template.StartDateGenerationException;
 import com.topcoder.project.phases.template.StartDateGenerator;
 import com.topcoder.project.phases.template.persistence.XmlPhaseTemplatePersistence;
 import com.topcoder.project.phases.template.startdategenerator.RelativeWeekTimeStartDateGenerator;
@@ -3015,12 +3008,12 @@ public class ActionsHelper {
      *
      * @throws Exception if error occurs
      */
-    public static void recaculateScreeningReviewerPayments(long projectId) throws BaseException {
+    public static void recaculateReviewerPayments(long projectId) throws BaseException {
     	Connection conn = null;
 		try {
 	        DBConnectionFactory dbconn = new DBConnectionFactoryImpl(DB_CONNECTION_NAMESPACE);
 	        conn = dbconn.createConnection();
-	        AutoPaymentUtil.populateReviewerPayments(projectId, conn, AutoPaymentUtil.SCREENING_PHASE);
+	        AutoPaymentUtil.populateReviewerPayments(projectId, conn);
 		} catch (DBConnectionException e) {
 			throw new BaseException("Failed to return DBConnection", e);
 		} catch (SQLException e) {
