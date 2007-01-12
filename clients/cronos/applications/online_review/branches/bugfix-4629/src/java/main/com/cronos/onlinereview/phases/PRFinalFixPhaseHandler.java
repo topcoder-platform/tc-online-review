@@ -21,9 +21,9 @@ public class PRFinalFixPhaseHandler extends FinalFixPhaseHandler {
      *
      * @throws ConfigurationException if errors occurred while loading configuration settings.
      */
-	public PRFinalFixPhaseHandler() throws ConfigurationException {
-		super();
-	}
+    public PRFinalFixPhaseHandler() throws ConfigurationException {
+        super();
+    }
 
     /**
      * Create a new instance of FinalFixPhaseHandler using the given namespace for loading configuration settings.
@@ -33,9 +33,9 @@ public class PRFinalFixPhaseHandler extends FinalFixPhaseHandler {
      * missing.
      * @throws IllegalArgumentException if the input is null or empty string.
      */
-	public PRFinalFixPhaseHandler(String namespace) throws ConfigurationException {
-		super(namespace);
-	}
+    public PRFinalFixPhaseHandler(String namespace) throws ConfigurationException {
+        super(namespace);
+    }
 
     /**
      * Provides additional logic to execute a phase. this exetension will update placed, final_score
@@ -49,30 +49,30 @@ public class PRFinalFixPhaseHandler extends FinalFixPhaseHandler {
      * @throws IllegalArgumentException if the input parameters is null or empty string.
      */
     public void perform(Phase phase, String operator) throws PhaseHandlingException {
-    	super.perform(phase, operator);
+        super.perform(phase, operator);
         boolean toStart = PhasesHelper.checkPhaseStatus(phase.getPhaseStatus());
 
         if (!toStart) {
-        	Connection conn = this.createConnection();
-        	try {
-        		processPR(phase.getProject().getId(), conn);
-        	} finally {
-        		PRHelper.close(conn);
-        	}
+            Connection conn = this.createConnection();
+            try {
+                processPR(phase.getProject().getId(), conn);
+            } finally {
+                PRHelper.close(conn);
+            }
         }
     }
 
     /**
      * Pull data to project_result.
-     * 
+     *
      * @param projectId the projectId
      * @throws PhaseHandlingException if error occurs
      */
     public static void processPR(long projectId, Connection conn) throws PhaseHandlingException {
-    	try {
-        	PRHelper.processPlacedFinalScore(projectId, conn);
-    	} catch(SQLException e) {
-    		throw new PhaseHandlingException("Failed to push data to project_result", e);
-    	}
+        try {
+            PRHelper.processPlacedFinalScore(projectId, conn);
+        } catch(SQLException e) {
+            throw new PhaseHandlingException("Failed to push data to project_result", e);
+        }
     }
 }
