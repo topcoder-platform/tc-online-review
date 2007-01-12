@@ -21,7 +21,6 @@ import java.util.List;
 import java.util.Map;
 
 import com.topcoder.db.connectionfactory.DBConnectionException;
-import java.sql.Types;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -46,8 +45,6 @@ import com.cronos.onlinereview.deliverables.SubmitterCommentDeliverableChecker;
 import com.cronos.onlinereview.deliverables.TestCasesDeliverableChecker;
 import com.cronos.onlinereview.external.UserRetrieval;
 import com.cronos.onlinereview.external.impl.DBUserRetrieval;
-import com.cronos.onlinereview.phases.AggregationPhaseHandler;
-import com.cronos.onlinereview.phases.AggregationReviewPhaseHandler;
 import com.cronos.onlinereview.phases.AppealsPhaseHandler;
 import com.cronos.onlinereview.phases.ApprovalPhaseHandler;
 import com.cronos.onlinereview.phases.AutoPaymentUtil;
@@ -65,7 +62,6 @@ import com.cronos.onlinereview.phases.PRSubmissionPhaseHandler;
 import com.topcoder.date.workdays.DefaultWorkdaysFactory;
 import com.topcoder.date.workdays.Workdays;
 import com.topcoder.db.connectionfactory.ConfigurationException;
-import com.topcoder.db.connectionfactory.DBConnectionException;
 import com.topcoder.db.connectionfactory.DBConnectionFactory;
 import com.topcoder.db.connectionfactory.DBConnectionFactoryImpl;
 import com.topcoder.db.connectionfactory.UnknownConnectionException;
@@ -113,6 +109,8 @@ import com.topcoder.management.review.DefaultReviewManager;
 import com.topcoder.management.review.ReviewManager;
 import com.topcoder.management.review.data.Comment;
 import com.topcoder.management.review.data.CommentType;
+import com.topcoder.management.review.scoreaggregator.ReviewScoreAggregator;
+import com.topcoder.management.review.scoreaggregator.ReviewScoreAggregatorConfigException;
 import com.topcoder.management.scorecard.PersistenceException;
 import com.topcoder.management.scorecard.ScorecardManager;
 import com.topcoder.management.scorecard.ScorecardManagerImpl;
@@ -126,7 +124,6 @@ import com.topcoder.project.phases.PhaseType;
 import com.topcoder.project.phases.template.DefaultPhaseTemplate;
 import com.topcoder.project.phases.template.PhaseTemplate;
 import com.topcoder.project.phases.template.PhaseTemplatePersistence;
-import com.topcoder.project.phases.template.StartDateGenerationException;
 import com.topcoder.project.phases.template.StartDateGenerator;
 import com.topcoder.project.phases.template.persistence.XmlPhaseTemplatePersistence;
 import com.topcoder.project.phases.template.startdategenerator.RelativeWeekTimeStartDateGenerator;
@@ -2394,6 +2391,40 @@ public class ActionsHelper {
 
         // Return the Review Manager object
         return manager;
+    }
+
+    /**
+     * This static method helps to create an object of the <code>ReviewScoreAggregator</code>
+     * class.
+     *
+     * @return a newly created instance of the class.
+     * @param request
+     *            an <code>HttpServletRequest</code> obejct, where created
+     *            <code>ReviewScoreAggregator</code> object can be stored to let reusing it later
+     *            for the same request.
+     * @throws IllegalArgumentException
+     *             if <code>request</code> parameter is <code>null</code>.
+     * @throws ReviewScoreAggregatorConfigException
+     *             if any of the four required algorithm objects cannot be instantiated or the
+     *             configuration is invalid.
+     */
+    public static ReviewScoreAggregator createScoreAggregator(HttpServletRequest request)
+        throws ReviewScoreAggregatorConfigException {
+        // Validate parameter
+        validateParameterNotNull(request, "request");
+
+        // Try retrieving Review Score Aggregator from the request's attribute first
+        ReviewScoreAggregator aggregator = (ReviewScoreAggregator) request.getAttribute("reviewScoreAggregator");
+        // If this is the first time this method is called for the request,
+        // create a new instance of the object
+        if (aggregator == null) {
+            aggregator = new ReviewScoreAggregator("com.topcoder.management.review.scoreaggregator");
+            // Place newly-created object into the request as attribute
+            request.setAttribute("reviewScoreAggregator", aggregator);
+        }
+
+        // Return the Review Score Aggregator object
+        return aggregator;
     }
 
     /**
