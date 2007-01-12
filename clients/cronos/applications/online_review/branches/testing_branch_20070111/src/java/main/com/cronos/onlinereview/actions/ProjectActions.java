@@ -9,7 +9,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
@@ -34,7 +33,6 @@ import org.apache.struts.validator.LazyValidatorForm;
 
 import com.cronos.onlinereview.external.ExternalUser;
 import com.cronos.onlinereview.external.UserRetrieval;
-import com.topcoder.date.workdays.DefaultWorkdays;
 import com.topcoder.date.workdays.DefaultWorkdaysFactory;
 import com.topcoder.date.workdays.Workdays;
 import com.topcoder.date.workdays.WorkdaysUnitOfTime;
@@ -229,7 +227,7 @@ public class ProjectActions extends DispatchAction {
         request.setAttribute("screeningScorecards", screeningScorecards);
         request.setAttribute("reviewScorecards", reviewScorecards);
         request.setAttribute("approvalScorecards", approvalScorecards);
-        
+
         // Load phase template names
         String[] phaseTemplateNames = ActionsHelper.createPhaseTemplate(null).getAllTemplateNames();
         request.setAttribute("phaseTemplateNames", phaseTemplateNames);
@@ -395,7 +393,7 @@ public class ProjectActions extends DispatchAction {
                     phases[i].calcEndDate());
             // always use duration
             form.set("phase_use_duration", i + 1, Boolean.TRUE);
-            
+
             // populate the phase duration
             long phaseLength = phases[i].getLength();
             String phaseDuration = "";
@@ -406,8 +404,7 @@ public class ProjectActions extends DispatchAction {
             	long min = (phaseLength % (3600 * 1000)) / 1000 / 60;
             	phaseDuration = hour + ":" + (min >= 10 ? "" + min : "0" + min);
             }
-            
-            
+
             form.set("phase_duration", i + 1, phaseDuration);
 
             // Populate phase criteria
@@ -832,7 +829,7 @@ public class ProjectActions extends DispatchAction {
                     continue;
                 }
             }
-            
+
             // If action is "delete", proceed to the next phase
             if ("delete".equals(phaseAction)) {
                 continue;
@@ -1069,13 +1066,13 @@ public class ProjectActions extends DispatchAction {
                     
                     // flag value indicates using end date or using duration
                     boolean useDuration = ((Boolean) lazyForm.get("phase_use_duration", paramIndex)).booleanValue();
-                    
+
                     // If phase duration was not specified
                     if (!useDuration) {
                         // Get phase end date from form
                         Date phaseEndDate = parseDatetimeFormProperties(lazyForm, paramIndex,
                                 "phase_end_date", "phase_end_time", "phase_end_AMPM");
-                        
+
                         // Calculate phase length
                         long length = phaseEndDate.getTime() - phase.getScheduledStartDate().getTime();
                         // Check if the end date of phase goes after the start date
@@ -1084,8 +1081,8 @@ public class ProjectActions extends DispatchAction {
                                     "error.com.cronos.onlinereview.actions.editProject.StartAfterEnd",
                                     phase.getPhaseType().getName()));
                             break;
-                        } 
-                        
+                        }
+
                         // Get the workdays
                         Workdays workdays = phProject.getWorkdays();
                         
@@ -1112,7 +1109,7 @@ public class ProjectActions extends DispatchAction {
                         }
                         
                         // Set phase duration appropriately
-                        phase.setLength(length);                                                                        
+                        phase.setLength(length);
                     }
 
                     // Set sheduled phase end date to calculated end datehase
@@ -1165,7 +1162,7 @@ public class ProjectActions extends DispatchAction {
 
         // FIXME: Refactor it
         ProjectManager projectManager = ActionsHelper.createProjectManager(request);
-        
+
         // Set project rating date
         ActionsHelper.setProjectRatingDate(project, projectPhases, (Format) request.getAttribute("date_format"));
 
@@ -1593,6 +1590,9 @@ public class ProjectActions extends DispatchAction {
         	newUsers.remove(obj);
         	newSubmitters.remove(obj);
         }
+
+        // Populate project_result and component_inquiry for new submitters
+        ActionsHelper.populateProjectResult(project, newUsers);
 
         // Populate project_result and component_inquiry for new submitters
         ActionsHelper.populateProjectResult(project, newSubmitters);
@@ -2204,11 +2204,51 @@ public class ProjectActions extends DispatchAction {
                 continue;
             }
 
+            // Get a resource this deliverable is for
+            final Resource forResource = resources[j];
+
+            // Some additional special checking is need for Aggregation Review type of deliverables
+            if (deliverable.getName().equalsIgnoreCase(Constants.AGGREGATION_REV_DELIVERABLE_NAME)) {
+            	// Get the name of the resource's role
+            	final String resourceRole = forResource.getResourceRole().getName();
+            	// Check that this deliverable is for one of the reviewers
+            	if (resourceRole.equalsIgnoreCase(Constants.REVIEWER_ROLE_NAME) ||
+                        resourceRole.equalsIgnoreCase(Constants.ACCURACY_REVIEWER_ROLE_NAME) ||
+                        resourceRole.equalsIgnoreCase(Constants.FAILURE_REVIEWER_ROLE_NAME) ||
+                        resourceRole.equalsIgnoreCase(Constants.STRESS_REVIEWER_ROLE_NAME)) {
+                    final String originalExtId = (String) forResource.getProperty("External Reference ID");
+
+                    // Iterate over all resources and check
+                    // if there is any resource assigned to the same user
+                    for (j = 0; j < resources.length; ++j) {
+                        // Skip resource that is being checked
+                        if (forResource == resources[j]) {
+                            continue;
+                        }
+
+                        // Get a resource for the current iteration
+                        final Resource otherResource = resources[j];
+                        // Verify whether this resource is an Aggregator, and skip it if it isn't
+                        if (!otherResource.getResourceRole().getName().equalsIgnoreCase(Constants.AGGREGATOR_ROLE_NAME)) {
+                            continue;
+                        }
+
+                        String otherExtId = (String) resources[j].getProperty("External Reference ID");
+                        // If appropriate aggregator's resource has been found, stop the search
+                        if (originalExtId.equals(otherExtId)) {
+                            break;
+                        }
+                    }
+                    // Skip this deliverable if it is assigned to aggregator
+                    if (j != resources.length) {
+                        continue;
+                    }
+            	}
+            }
+
             // Skip deliverables that are not for winning submitter
             if (winnerExtUserId != null) {
-                Resource resource = resources[j];
-
-                if (resource.getResourceRole().getName().equalsIgnoreCase(Constants.SUBMITTER_ROLE_NAME) &&
+                if (forResource.getResourceRole().getName().equalsIgnoreCase(Constants.SUBMITTER_ROLE_NAME) &&
                         !winnerExtUserId.equals(resources[j].getProperty("External Reference ID"))) {
                     continue;
                 }
