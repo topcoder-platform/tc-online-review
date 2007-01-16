@@ -471,20 +471,6 @@
     	</unjar>
 	</target>
 
-	<target name="auto_pilot">
-    	<java classname="com.topcoder.management.phase.autopilot.AutoPilotJob" fork="true">
-    		<arg line="-config auto_pilot.xml -namespace AutoPilotJob -autopilot com.topcoder.management.phase.autopilot.AutoPilot -poll 5" />
-    		<classpath refid="buildlibs" />
-    	</java>
-	</target>
-
-	<target name="auto_pilot_background">
-    	<java classname="com.topcoder.management.phase.autopilot.AutoPilotJob" fork="true" spawn="true">
-    		<arg line="-config auto_pilot.xml -namespace AutoPilotJob -autopilot com.topcoder.management.phase.autopilot.AutoPilot -poll 5" />
-    		<classpath refid="buildlibs" />
-    	</java>
-	</target>
-
     <target name="clean">
         <delete failonerror="false">
             <fileset dir="${build_classdir}" includes="**/*.class"/>

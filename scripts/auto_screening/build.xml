@@ -329,19 +329,6 @@
     	</unjar>
 	</target>
 	
-	<target name="auto_screening">
-    	<java classname="com.cronos.onlinereview.autoscreening.tool.ScreeningTool" fork="true">
-    		<arg line="-interval 30000 -screenerId 100 -configNamespace com.cronos.onlinereview.autoscreening.tool.Screener" />
-    		<classpath refid="buildlibs" />
-    	</java>
-	</target>
-
-	<target name="auto_screening_background">
-    	<java classname="com.cronos.onlinereview.autoscreening.tool.ScreeningTool" fork="true" spawn="true">
-    		<arg line="-interval 30000 -screenerId 100 -configNamespace com.cronos.onlinereview.autoscreening.tool.Screener" />
-    		<classpath refid="buildlibs" />
-    	</java>
-	</target>
 
     <target name="clean">
         <delete failonerror="false">
