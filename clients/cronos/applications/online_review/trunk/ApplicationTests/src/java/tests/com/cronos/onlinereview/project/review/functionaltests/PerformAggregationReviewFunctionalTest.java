@@ -85,7 +85,7 @@ public class PerformAggregationReviewFunctionalTest extends AbstractTestCase {
     }
 
     /**
-     * <p>Scenario #135</p>
+     * <p>Scenario #134</p>
      * <pre>
      * Note: User is logged-in as a "Reviewer"
      * 1.  User clicks on "All Open Projects" tab
@@ -100,7 +100,7 @@ public class PerformAggregationReviewFunctionalTest extends AbstractTestCase {
      *
      * "Aggregation Scorecard/Worksheet" is saved, submitted, and marked as "Complete" </p>
      */
-    public void testScenario135() throws Exception {
+    public void testScenario134() throws Exception {
         for (int i = 0; i < REVIEWERS.length; i++) {
             setUser(REVIEWERS[i]);
             this.user.openAggregationReviewResultsPage(PROJECT_NAME);
@@ -129,7 +129,7 @@ public class PerformAggregationReviewFunctionalTest extends AbstractTestCase {
      *
      * "Aggregation Scorecard/Worksheet" is saved, submitted, and marked as "Complete" </p>
      */
-    public void testScenario135a() throws Exception {
+    public void testScenario135() throws Exception {
         for (int i = 0; i < REVIEWERS.length; i++) {
             setUser(REVIEWERS[i]);
             this.user.openAggregationReviewResultsPage(PROJECT_NAME);

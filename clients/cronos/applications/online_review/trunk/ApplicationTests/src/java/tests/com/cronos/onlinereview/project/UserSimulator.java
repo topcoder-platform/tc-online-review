@@ -5,6 +5,7 @@ package com.cronos.onlinereview.project;
 
 import com.gargoylesoftware.htmlunit.AlertHandler;
 import com.gargoylesoftware.htmlunit.ConfirmHandler;
+import com.gargoylesoftware.htmlunit.DefaultCredentialsProvider;
 import com.gargoylesoftware.htmlunit.Page;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.WebResponse;
@@ -149,6 +150,11 @@ public class UserSimulator implements AlertHandler, ConfirmHandler {
         client.setJavaScriptEnabled(true);
         client.setAlertHandler(this);
         client.setConfirmHandler(this);
+
+	DefaultCredentialsProvider credentials = new DefaultCredentialsProvider();
+	credentials.addCredentials("alexdelarge", "cl0ckw0rk");
+	client.setCredentialsProvider(credentials);
+	
     }
     /**
      * Perform a login.
@@ -162,9 +168,9 @@ public class UserSimulator implements AlertHandler, ConfirmHandler {
         // Fill username, password and submit the form.
         setInput("login.username_input", username, true);
         setInput("login.password_input", password, true);
-//        System.out.println("LOGGING AS [" + this.username + "] WITH [" + this.password + "]");
+        System.out.println("LOGGING AS [" + this.username + "] WITH [" + this.password + "]");
         click("login.login_button", true);
-//        System.out.println("PAGE = " + currentPage.asXml());
+        System.out.println("PAGE = " + currentPage.asXml());
     }
 
     /**
