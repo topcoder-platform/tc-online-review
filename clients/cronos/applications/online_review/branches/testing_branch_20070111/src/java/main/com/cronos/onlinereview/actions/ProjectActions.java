@@ -346,7 +346,7 @@ public class ProjectActions extends DispatchAction {
         // Retrive project phases
         Phase[] phases = ActionsHelper.getPhasesForProject(phaseManager, project);
         // Sort project phases
-        Arrays.sort(phases, new ProjectPhaseComparer());
+        Arrays.sort(phases, new Comparators.ProjectPhaseComparer());
 
         Map phaseNumberMap = new HashMap();
 
@@ -1137,7 +1137,7 @@ public class ProjectActions extends DispatchAction {
         // Get all the project phases
         Phase[] projectPhases = phProject.getAllPhases();        
         // Sort project phases
-        Arrays.sort(projectPhases, new ProjectPhaseComparer());
+        Arrays.sort(projectPhases, new Comparators.ProjectPhaseComparer());
 
         // Validate the project phases
         boolean validationSucceeded = validateProjectPhases(request, project, projectPhases);
@@ -1182,7 +1182,7 @@ public class ProjectActions extends DispatchAction {
         // TODO: The following line was added just to be safe. May be unneeded as well as another one
         projectPhases = phProject.getAllPhases();
         // Sort project phases
-        Arrays.sort(projectPhases, new ProjectPhaseComparer());
+        Arrays.sort(projectPhases, new Comparators.ProjectPhaseComparer());
 
         return projectPhases;
     }
@@ -1611,71 +1611,6 @@ public class ProjectActions extends DispatchAction {
     }
 
     /**
-     * TODO: Document it, and its members.
-     *
-     */
-    static class ProjectPhaseComparer implements Comparator {
-        public ProjectPhaseComparer() {
-
-        }
-
-        public int compare(Object o1, Object o2) {
-            Phase phase1 = (Phase) o1;
-            Phase phase2 = (Phase) o2;
-            int compareResult = phase1.calcStartDate().compareTo(phase2.calcStartDate());
-            if (compareResult == 0) {
-                int ranking1 = getPhaseRanking(phase1);
-                int ranking2 = getPhaseRanking(phase2);
-                return  ranking1 - ranking2;
-            }
-            return compareResult;
-        }
-
-        private int getPhaseRanking(Phase phase1) {
-            String[] phaseOrder = new String[] {"Registration", "Submission", "Screening", "Review",
-                    "Appeals", "Appeals Response", "Aggregation", "Aggregation Review",
-                    "Final Fixes", "Final Review", "Approval"};
-            for (int i = 0; i < phaseOrder.length; i++) {
-                if (phaseOrder[i].equals(phase1.getPhaseType().getName())) {
-                    return i;
-                }
-            }
-
-            return phaseOrder.length;
-        }
-    }
-
-
-    /**
-     * This class implements <code>Comparator</code> interface and is used to sort ProjectTypes
-     * in array.  It sorts Project Types by their name, in ascending order.
-     */
-    static class ProjectTypeComparer implements Comparator {
-
-        /**
-         * This method compares its two arguments for order. This method expects that type of
-         * objects passed as arguments is <code>ProjectType</code>.
-         * <p>
-         * This method implements the <code>compare</code> method from the
-         * <code>Comparator</code> interface.
-         * </p>
-         *
-         * @return a negative integer, zero, or a positive integer as the first argument is less
-         *         than, equal to, or greater than the second respectively.
-         * @param o1
-         *            the first object to be compared.
-         * @param o2
-         *            the second object to be compared.
-         */
-        public int compare(Object o1, Object o2) {
-            ProjectType pt1 = (ProjectType)o1;
-            ProjectType pt2 = (ProjectType)o2;
-
-            return pt1.getName().compareTo(pt2.getName());
-        }
-    }
-
-    /**
      * This method is an implementation of &quot;List Projects&quot; Struts Action defined for this
      * assembly, which is supposed to fetch list of projects from the database and pass it to the
      * JSP page for subsequent presentation to the end user.
@@ -1768,7 +1703,7 @@ public class ProjectActions extends DispatchAction {
         // Get all project types defined in the database (e.g. Assembly, Component, etc.)
         ProjectType[] projectTypes = manager.getAllProjectTypes();
         // Sort project types by their names in ascending order
-        Arrays.sort(projectTypes, new ProjectTypeComparer());
+        Arrays.sort(projectTypes, new Comparators.ProjectTypeComparer());
         // Get all project categories defined in the database (e.g. Design, Security, etc.)
         ProjectCategory[] projectCategories = manager.getAllProjectCategories();
 

@@ -8,7 +8,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -107,36 +106,6 @@ import com.topcoder.util.file.fieldconfig.TemplateFields;
 public class ProjectDetailsActions extends DispatchAction {
 
     /**
-     * This class implements <code>Comparator</code> interface and is used to sort Uploads in
-     * array. It sorts Uploads by their modification time, from the least recent to the most recent
-     * ones.
-     */
-    static class UploadComparer implements Comparator {
-
-        /**
-         * This method compares its two arguments for order. This method expects that type of
-         * objects passed as arguments is <code>Upload</code>.
-         * <p>
-         * This method implements the <code>compare</code> method from the
-         * <code>Comparator</code> interface.
-         * </p>
-         *
-         * @return a negative integer, zero, or a positive integer as the first argument is less
-         *         than, equal to, or greater than the second respectively.
-         * @param o1
-         *            the first object to be compared.
-         * @param o2
-         *            the second object to be compared.
-         */
-        public int compare(Object o1, Object o2) {
-            Upload up1 = (Upload)o1;
-            Upload up2 = (Upload)o2;
-
-            return up1.getModificationTimestamp().compareTo(up2.getModificationTimestamp());
-        }
-    }
-
-    /**
      * Creates a new instance of the <code>ProjectDetailsActions</code> class.
      */
     public ProjectDetailsActions() {
@@ -200,7 +169,7 @@ public class ProjectDetailsActions extends DispatchAction {
         com.topcoder.project.phases.Project phProj = phaseMgr.getPhases(project.getId());
         phProj.calcEndDate();
         // Get all phases for the current project
-        Phase[] phases = phProj.getAllPhases();
+        Phase[] phases = phProj.getAllPhases(new Comparators.ProjectPhaseComparer());
         // Obtain an array of all active phases of the project
         Phase[] activePhases = ActionsHelper.getActivePhases(phases);
 
@@ -948,7 +917,7 @@ public class ProjectDetailsActions extends DispatchAction {
                             new Filter[] {/*filterStatus, */filterType, filterResource}));
                     finalFixes = upMgr.searchUploads(filter);
 
-                    Arrays.sort(finalFixes, new UploadComparer());
+                    Arrays.sort(finalFixes, new Comparators.UploadComparer());
 
                     finalFixIdx = 0;
                 }
@@ -1685,7 +1654,7 @@ public class ProjectDetailsActions extends DispatchAction {
                     request, Constants.PERFORM_FINAL_FIX_PERM_NAME, "Error.OnlyOneFinalFix");
         }
 
-        Arrays.sort(uploads, new UploadComparer());
+        Arrays.sort(uploads, new Comparators.UploadComparer());
         Upload oldUpload = (uploads.length != 0) ? uploads[uploads.length - 1] : null;
 
         Upload upload = new Upload();
