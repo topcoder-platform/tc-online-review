@@ -26,21 +26,46 @@
 
 <style type="text/css">
 <!--
-table.credits tr th {
-	color: #CC0000;
+.creditsHeader {
+	background-image: url(/i/or/credits_hd.gif);
+	background-repeat: repeat-x;
+	color: white;
 	font-family: Arial, Helvetica, sans-serif;
 	font-size: 14px;
 	font-weight: bold;
-	padding-bottom: 3px;
-	padding-top: 27px;
+	height: 24px;
+	padding-left: 4px;
+}
+.creditsTitle {
+	color: cc0000;
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 14px;
+	font-weight: bold;
+	padding-bottom: 5px;
 	text-align: center;
 }
-table.credits tr td {
+.creditsSub {
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 14px;
+	text-align: center;
+}
+.creditsName {
 	font-family: Arial, Helvetica, sans-serif;
 	font-size: 14px;
 	padding-bottom: 5px;
-	text-align: center;
-	vertical-align: top;
+	text-align: left;
+}
+.creditsName2 {
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 12px;
+	padding-bottom: 5px;
+	text-align: left;
+}
+.creditsText {
+	color: #666666;
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 12px;
+	font-style: italic;
 }
 -->
 </style>
@@ -61,259 +86,377 @@ table.credits tr td {
 			<!-- Center Column Begins -->
 			<td class="bodyText">
 				<br /><br />
-				<div style="padding: 9px 6px 6px 3px;"><span class="subTitle"><bean:message key="credits.SubTitle" /></span></div>
-				<table class="stat credits" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:#E8E8E8;border-bottom:1px solid #999999;">
+				<table class="stat" width="100%" cellpadding="0" cellspacing="0">
 					<tr>
-						<th width="33%"><bean:message key="credits.QA" /></th>
-						<th width="34%"><bean:message key="credits.QA" /> / <bean:message key="credits.BugFixers" /></th>
-						<th width="33%"><bean:message key="credits.ProjectMgmt" /></th>
+						<td class="creditsHeader" colspan="3"><bean:message key="credits.SubTitle" /></td>
 					</tr>
-					<tr>
-						<td>Kelly Anne Costello - <tc-webtag:handle coderId="22644233" context="component" /><%-- soapbxr --%></td>
-						<td>
-							<tc-webtag:handle coderId="16096823" context="component" /><%-- hohosky --%><br />
-							<tc-webtag:handle coderId="10336829" context="component" /><%-- albertwang --%></td>
-						<td>Lorie Norman - <tc-webtag:handle coderId="278287" context="component" /></td>
+					<tr style="background-image:url(/i/or/credits_bk.gif);background-repeat:repeat-x;">
+						<td valign="top">
+							<table width="100%" cellpadding="0" cellspacing="0">
+								<tr>
+									<td class="creditsTitle"><br /><bean:message key="credits.QA" /></td>
+								</tr>
+								<tr>
+									<td class="creditsSub">hohosky<br />albertwang</td>
+								</tr>
+								<tr>
+									<td>&#160;</td>
+								</tr>
+							</table>
+						</td>
+						<td valign="top">
+							<table width="100%" cellpadding="0" cellspacing="0">
+								<tr>
+									<td class="creditsTitle"><br /><bean:message key="credits.Architect" /></td>
+								</tr>
+								<tr>
+									<td class="creditsSub">WishingBone</td>
+								</tr>
+							</table>
+						</td>
+						<td valign="top">
+							<table width="100%" cellpadding="0" cellspacing="0">
+								<tr>
+									<td class="creditsTitle" colspan="4"><br /><bean:message key="credits.Assemblers" /></td>
+								</tr>
+								<tr>
+									<td class="creditsSub">George1 &#160; real_vg<br />brain_cn &#160; flying2hk</td>
+								</tr>
+							</table>
+						</td>
 					</tr>
-					<tr>
-						<th><bean:message key="credits.BusinessAnalyst" /></th>
-						<th><bean:message key="credits.Architect" /></th>
-						<th><bean:message key="credits.DeplEngineer" /></th>
+
+					<tr style="background-image:url(/i/or/credits_bk.gif);background-repeat:repeat-x;">
+						<td valign="top" colspan="3">
+							<table width="100%" cellpadding="0" cellspacing="0">
+								<tr>
+									<td class="creditsTitle" colspan="5"><br /><br /><bean:message key="credits.Des_Dev_Review" /></td>
+								</tr>
+								<tr>
+									<td colspan="5" class="creditsText" style="padding:5px 15px 16px 15px;"><bean:message key="credits.MebersExplanatory" /></td>
+								</tr>
+								<tr>
+									<td class="creditsName" style="padding-left:15px;">AdamSelene</td>
+									<td class="creditsName">AleaActaEst</td>
+									<td class="creditsName">Angen</td>
+									<td class="creditsName">BEHiker57W</td>
+									<td class="creditsName">BigDaddy</td>
+								</tr>
+								<tr>
+									<td class="creditsName" style="padding-left:15px;">BryanChen</td>
+									<td class="creditsName">Chenhong</td>
+									<td class="creditsName">Code-Guru</td>
+									<td class="creditsName">DaTwinkDaddy</td>
+									<td class="creditsName">DanLazar</td>
+								</tr>
+								<tr>
+									<td class="creditsName" style="padding-left:15px">FTolToaster</td>
+									<td class="creditsName">FireIce</td>
+									<td class="creditsName">GavinWang</td>
+									<td class="creditsName">Ghostar</td>
+									<td class="creditsName">Ken_Vogel</td>
+								</tr>
+								<tr>
+									<td class="creditsName" style="padding-left:15px;">King_Bette</td>
+									<td class="creditsName">Luca</td>
+									<td class="creditsName">MPhk</td>
+									<td class="creditsName">Mr.Sketch</td>
+									<td class="creditsName">PE</td>
+								</tr>
+								<tr>
+									<td class="creditsName" style="padding-left:15px;">PabloGilberto</td>
+									<td class="creditsName">Pops</td>
+									<td class="creditsName">RachaelLCook</td>
+									<td class="creditsName">RoyItaqi</td>
+									<td class="creditsName">ShindouHikaru</td>
+								</tr>
+								<tr>
+									<td class="creditsName" style="padding-left:15px;">Sleeve</td>
+									<td class="creditsName">Standlove</td>
+									<td class="creditsName">StinkyCheeseMan</td>
+									<td class="creditsName">TheCois</td>
+									<td class="creditsName">ThinMan</td>
+								</tr>
+								<tr>
+									<td class="creditsName" style="padding-left:15px;">Thinfox</td>
+									<td class="creditsName">Tomson</td>
+									<td class="creditsName">UFP2161</td>
+									<td class="creditsName">Wendell</td>
+									<td class="creditsName">WishingBone</td>
+								</tr>
+								<tr>
+									<td class="creditsName" style="padding-left:15px;">XuChuan</td>
+									<td class="creditsName">abelli</td>
+									<td class="creditsName">adic</td>
+									<td class="creditsName">air2cold</td>
+									<td class="creditsName">akhil_bansal</td>
+								</tr>
+								<tr>
+									<td class="creditsName" style="padding-left:15px;">aksonov</td>
+									<td class="creditsName">alanSunny</td>
+									<td class="creditsName">albertwang</td>
+									<td class="creditsName">amitc</td>
+									<td class="creditsName">argolite</td>
+								</tr>
+								<tr>
+									<td class="creditsName" style="padding-left:15px;">arylio</td>
+									<td class="creditsName">assistant</td>
+									<td class="creditsName">aubergineanode</td>
+									<td class="creditsName">biotrail</td>
+									<td class="creditsName">bokbok</td>
+								</tr>
+								<tr>
+									<td class="creditsName" style="padding-left:15px;">bose_java</td>
+									<td class="creditsName">brain_cn</td>
+									<td class="creditsName">cmax</td>
+									<td class="creditsName">codedoc</td>
+									<td class="creditsName">colau</td>
+								</tr>
+								<tr>
+									<td class="creditsName" style="padding-left:15px;">cosherx</td>
+									<td class="creditsName">crackme</td>
+									<td class="creditsName">cucu</td>
+									<td class="creditsName">custos</td>
+									<td class="creditsName">daiwb</td>
+								</tr>
+								<tr>
+									<td class="creditsName" style="padding-left:15px;">danno</td>
+									<td class="creditsName">dmks</td>
+									<td class="creditsName">dplass</td>
+									<td class="creditsName">duner</td>
+									<td class="creditsName">fairytale</td>
+								</tr>
+								<tr>
+									<td class="creditsName" style="padding-left:15px;">flying2hk</td>
+									<td class="creditsName">gua</td>
+									<td class="creditsName">haozhangr</td>
+									<td class="creditsName">henryouly</td>
+									<td class="creditsName">hohosky</td>
+								</tr>
+								<tr>
+									<td class="creditsName" style="padding-left:15px;">holmana</td>
+									<td class="creditsName">iamajia</td>
+									<td class="creditsName">icyriver</td>
+									<td class="creditsName">idx</td>
+									<td class="creditsName">iggy36</td>
+								</tr>
+								<tr>
+									<td class="creditsName" style="padding-left:15px;">isv</td>
+									<td class="creditsName">ivern</td>
+									<td class="creditsName">jfjiang</td>
+									<td class="creditsName">justforplay</td>
+									<td class="creditsName">kinfkong</td>
+								</tr>
+								<tr>
+									<td class="creditsName" style="padding-left:15px;">kr00tki</td>
+									<td class="creditsName">littlebull</td>
+									<td class="creditsName">lyt</td>
+									<td class="creditsName">magicpig</td>
+									<td class="creditsName">maone</td>
+								</tr>
+								<tr>
+									<td class="creditsName" style="padding-left:15px;">marijnk</td>
+									<td class="creditsName">matmis</td>
+									<td class="creditsName">mayi</td>
+									<td class="creditsName">mgmg</td>
+									<td class="creditsName">mishagam</td>
+								</tr>
+								<tr>
+									<td class="creditsName" style="padding-left:15px;">myxgyy</td>
+									<td class="creditsName">nhzp339</td>
+									<td class="creditsName">nicka81</td>
+									<td class="creditsName">oldbig</td>
+									<td class="creditsName">oodinary</td>
+								</tr>
+								<tr>
+									<td class="creditsName" style="padding-left:15px;">opi</td>
+									<td class="creditsName">orb</td>
+									<td class="creditsName">preben</td>
+									<td class="creditsName">pzhao</td>
+									<td class="creditsName">qiucx0161</td>
+								</tr>
+								<tr>
+									<td class="creditsName" style="padding-left:15px;">real_vg</td>
+									<td class="creditsName">rem</td>
+									<td class="creditsName">roma</td>
+									<td class="creditsName">sapro</td>
+									<td class="creditsName">sb99</td>
+								</tr>
+								<tr>
+									<td class="creditsName" style="padding-left:15px;">seaniswise</td>
+									<td class="creditsName">semi_sleep</td>
+									<td class="creditsName">sindu</td>
+									<td class="creditsName">singlewood</td>
+									<td class="creditsName">skatou</td>
+								</tr>
+								<tr>
+									<td class="creditsName" style="padding-left:15px;">slion</td>
+									<td class="creditsName">smell</td>
+									<td class="creditsName">snard6</td>
+									<td class="creditsName">southwang</td>
+									<td class="creditsName">srowen</td>
+								</tr>
+								<tr>
+									<td class="creditsName" style="padding-left:15px;">still</td>
+									<td class="creditsName">telly12</td>
+									<td class="creditsName">topgear</td>
+									<td class="creditsName">ttsuchi</td>
+									<td class="creditsName">tuenm</td>
+								</tr>
+								<tr>
+									<td class="creditsName" style="padding-left:15px;">urtks</td>
+									<td class="creditsName">valeriy</td>
+									<td class="creditsName">victor_lxd</td>
+									<td class="creditsName">viking_hz</td>
+									<td class="creditsName">vilain</td>
+								</tr>
+								<tr>
+									<td class="creditsName" style="padding-left:15px;">vinnath</td>
+									<td class="creditsName">visualage</td>
+									<td class="creditsName">vividmxx</td>
+									<td class="creditsName">waits</td>
+									<td class="creditsName">wiedzmin</td>
+								</tr>
+								<tr>
+									<td class="creditsName" style="padding-left:15px;">woodjhon</td>
+									<td class="creditsName">yellow_gecko</td>
+									<td class="creditsName">zhuzeyuan</td>
+									<td class="creditsName">zimmy</td>
+									<td class="creditsName">zjq</td>
+								</tr>
+								<tr>
+									<td class="creditsName" style="padding-left:15px;">zsudraco</td>
+									<td class="creditsName" colspan="4"><!-- @ --></td>
+								</tr>
+								<tr>
+									<td colspan="5">&#160;</td>
+								</tr>
+							</table>
+						</td>
 					</tr>
-					<tr>
-						<td>
-							David Messinger - <tc-webtag:handle coderId="305384" context="component" /><br />
-							Javier-Fernandez Ivern - <tc-webtag:handle coderId="156859" context="component" /></td>
-						<td><tc-webtag:handle coderId="286907" context="component" /><%-- WishingBone --%></td>
-						<td>Daniel Ulery - <tc-webtag:handle coderId="107160" context="component" /></td>
-					</tr>
-					<tr>
-						<th colspan="3"><bean:message key="credits.Assemblers" /></th>
-					</tr>
-					<tr>
-						<td colspan="3">
-							<tc-webtag:handle coderId="20003257" context="component" /><%-- George1 --%> &#160;
-							<tc-webtag:handle coderId="15891862" context="component" /><%-- real_vg --%> &#160;
-							<tc-webtag:handle coderId="11770376" context="component" /><%-- brian_cn --%> &#160;
-							<tc-webtag:handle coderId="22498968" context="component" /><%-- flying2hk --%></td>
-					</tr>
-					<tr>
-						<th colspan="3"><bean:message key="credits.ProdRolloutTeam" /></th>
-					</tr>
-					<tr>
-						<td colspan="3">
-							Greg Paul - <tc-webtag:handle coderId="132456" context="component" /> &#160;
-							Travis Haas - <tc-webtag:handle coderId="150148" context="component" /> &#160;
-							Mike Lydon - <tc-webtag:handle coderId="100142" context="component" /></td>
-					</tr>
-					<tr>
-						<td colspan="3" style="padding-left:20px;padding-right:20px;"><br /><hr width="100%" noshade="noshade" size="1" /></td>
-					</tr>
-					<tr>
-						<td colspan="3">
-							<table class="credits" width="100%" cellpadding="0" cellspacing="0" border="0">
+
+					<tr style="background-image:url(/i/or/credits_bk.gif);background-repeat:repeat-x;">
+						<td valign="top" colspan="3" style="border-bottom: 1px solid #999999;">
+							<table width="100%" cellpadding="0" cellspacing="0">
 								<tr>
-									<th colspan="5"><bean:message key="credits.Des_Dev_Review" /></th>
+									<td class="creditsTitle" colspan="3"><br /><br /><bean:message key="credits.Components" /></td>
 								</tr>
 								<tr>
-									<td width="20%"><tc-webtag:handle coderId="251989" context="component" /><%-- AdamSelene --%></td>
-									<td width="20%"><tc-webtag:handle coderId="252022" context="component" /><%-- AleaActaEst --%></td>
-									<td width="20%"><tc-webtag:handle coderId="12029342" context="component" /><%-- Angen --%></td>
-									<td width="20%"><tc-webtag:handle coderId="7442489" context="component" /><%-- BEHiker57W --%></td>
-									<td width="20%"><tc-webtag:handle coderId="151360" context="component" /><%-- BigDaddy --%></td>
+									<td colspan="3" class="creditsText" style="padding:5px 15px 16px 15px;"><bean:message key="credits.ComponentsExplanatory" /></td>
 								</tr>
 								<tr>
-									<td><tc-webtag:handle coderId="290448" context="component" /><%-- BryanChen --%></td>
-									<td><tc-webtag:handle coderId="12006665" context="component" /><%-- Chenhong --%></td>
-									<td><tc-webtag:handle coderId="108281" context="component" /><%-- Code-Guru --%></td>
-									<td><tc-webtag:handle coderId="159921" context="component" /><%-- DaTwinkDaddy --%></td>
-									<td><tc-webtag:handle coderId="10143068" context="component" /><%-- DanLazar --%></td>
+									<td class="creditsName2" style="padding-left:15px;">Auto Screening Management 1.0</td>
+									<td class="creditsName2">Auto Screening Tool Persistence 1.0</td>
+									<td class="creditsName2">Deliverable Management Persistence 1.0</td>
 								</tr>
 								<tr>
-									<td><tc-webtag:handle coderId="289864" context="component" /><%-- FTolToaster --%></td>
-									<td><tc-webtag:handle coderId="15050434" context="component" /><%-- FireIce --%></td>
-									<td><tc-webtag:handle coderId="11981278" context="component" /><%-- GavinWang --%></td>
-									<td><tc-webtag:handle coderId="151743" context="component" /><%-- Ghostar --%></td>
-									<td><tc-webtag:handle coderId="154754" context="component" /><%-- Ken_Vogel --%></td>
+									<td class="creditsName2" style="padding-left:15px;">Online Review Ajax Support 1.0</td>
+									<td class="creditsName2">Online Review Deliverables 1.0</td>
+									<td class="creditsName2">Online Review Login 1.0</td>
 								</tr>
 								<tr>
-									<td><tc-webtag:handle coderId="15692538" context="component" /><%-- King_Bette --%></td>
-									<td><tc-webtag:handle coderId="10348862" context="component" /><%-- Luca --%></td>
-									<td><tc-webtag:handle coderId="289824" context="component" /><%-- MPhk --%></td>
-									<td><tc-webtag:handle coderId="292451" context="component" /><%-- Mr.Sketch --%></td>
-									<td><tc-webtag:handle coderId="9998760" context="component" /><%-- PE --%></td>
+									<td class="creditsName2" style="padding-left:15px;">Online Review Phases 1.0</td>
+									<td class="creditsName2">Phase Management Persistence 1.0</td>
+									<td class="creditsName2">Project Management Persistence 1.0</td>
 								</tr>
 								<tr>
-									<td><tc-webtag:handle coderId="112438" context="component" /><%-- PabloGilberto --%></td>
-									<td><tc-webtag:handle coderId="119676" context="component" /><%-- Pops --%></td>
-									<td><tc-webtag:handle coderId="150424" context="component" /><%-- RachaelLCook --%></td>
-									<td><tc-webtag:handle coderId="10269872" context="component" /><%-- RoyItaqi --%></td>
-									<td><tc-webtag:handle coderId="7463987" context="component" /><%-- ShindouHikaru --%></td>
+									<td class="creditsName2" style="padding-left:15px;">Resource Management Persistence 1.0</td>
+									<td class="creditsName2">Review Management Persistence 1.0</td>
+									<td class="creditsName2">Scorecard Management Persistence 1.0</td>
 								</tr>
 								<tr>
-									<td><tc-webtag:handle coderId="266705" context="component" /><%-- Sleeve --%></td>
-									<td><tc-webtag:handle coderId="310233" context="component" /><%-- Standlove --%></td>
-									<td><tc-webtag:handle coderId="283991" context="component" /><%-- StinkyCheeseMan --%></td>
-									<td><tc-webtag:handle coderId="297731" context="component" /><%-- TheCois --%></td>
-									<td><tc-webtag:handle coderId="150498" context="component" /><%-- ThinMan --%></td>
+									<td class="creditsName2" style="padding-left:15px;">User Project Data Store 1.0</td>
+									<td class="creditsName2">Authentication Factory 2.0</td>
+									<td class="creditsName2">Auto Pilot 1.0</td>
 								</tr>
 								<tr>
-									<td><tc-webtag:handle coderId="301597" context="component" /><%-- Thinfox --%></td>
-									<td><tc-webtag:handle coderId="302018" context="component" /><%-- Tomson --%></td>
-									<td><tc-webtag:handle coderId="260952" context="component" /><%-- UFP2161 --%></td>
-									<td><tc-webtag:handle coderId="8544935" context="component" /><%-- Wendell --%></td>
-									<td><tc-webtag:handle coderId="286907" context="component" /><%-- WishingBone --%></td>
+									<td class="creditsName2" style="padding-left:15px;">Auto Screening Tool 1.0</td>
+									<td class="creditsName2">Base Exception 1.0</td>
+									<td class="creditsName2">Cached Web Element Tag 1.0</td>
 								</tr>
 								<tr>
-									<td><tc-webtag:handle coderId="286911" context="component" /><%-- XuChuan --%></td>
-									<td><tc-webtag:handle coderId="20188980" context="component" /><%-- abelli --%></td>
-									<td><tc-webtag:handle coderId="278342" context="component" /><%-- adic --%></td>
-									<td><tc-webtag:handle coderId="11824548" context="component" /><%-- air2cold --%></td>
-									<td><tc-webtag:handle coderId="266149" context="component" /><%-- akhil_bansal --%></td>
+									<td class="creditsName2" style="padding-left:15px;">Class Associations 1.0</td>
+									<td class="creditsName2">Command Line Utility 1.0</td>
+									<td class="creditsName2">Compression Utility 2.0.1</td>
 								</tr>
 								<tr>
-									<td><tc-webtag:handle coderId="277356" context="component" /><%-- aksonov --%></td>
-									<td><tc-webtag:handle coderId="7231913" context="component" /><%-- alanSunny --%></td>
-									<td><tc-webtag:handle coderId="10336829" context="component" /><%-- albertwang --%></td>
-									<td><tc-webtag:handle coderId="260911" context="component" /><%-- amitc --%></td>
-									<td><tc-webtag:handle coderId="287614" context="component" /><%-- argolite --%></td>
+									<td class="creditsName2" style="padding-left:15px;">Configuration Manager 2.1.5</td>
+									<td class="creditsName2">Data Paging Tag 2.0</td>
+									<td class="creditsName2">Data Validation 1.0</td>
 								</tr>
 								<tr>
-									<td><tc-webtag:handle coderId="7489235" context="component" /><%-- arylio --%></td>
-									<td><tc-webtag:handle coderId="20076717" context="component" /><%-- assistant --%></td>
-									<td><tc-webtag:handle coderId="11797255" context="component" /><%-- aubergineanode --%></td>
-									<td><tc-webtag:handle coderId="14926554" context="component" /><%-- biotrail --%></td>
-									<td><tc-webtag:handle coderId="153434" context="component" /><%-- bokbok --%></td>
+									<td class="creditsName2" style="padding-left:15px;">Database Abstraction 1.1</td>
+									<td class="creditsName2">DB Connection Factory 1.0</td>
+									<td class="creditsName2">Deliverable Management 1.0</td>
 								</tr>
 								<tr>
-									<td><tc-webtag:handle coderId="13379412" context="component" /><%-- bose_java --%></td>
-									<td><tc-webtag:handle coderId="11770376" context="component" /><%-- brian_cn --%></td>
-									<td><tc-webtag:handle coderId="15868222" context="component" /><%-- cmax --%></td>
-									<td><tc-webtag:handle coderId="10535364" context="component" /><%-- codedoc --%></td>
-									<td><tc-webtag:handle coderId="10098406" context="component" /><%-- colau --%></td>
+									<td class="creditsName2" style="padding-left:15px;">Directory Validation 1.0</td>
+									<td class="creditsName2">Document Generator 2.0</td>
+									<td class="creditsName2">Email Engine 3.0</td>
 								</tr>
 								<tr>
-									<td><tc-webtag:handle coderId="8389509" context="component" /><%-- cosherx --%></td>
-									<td><tc-webtag:handle coderId="20708384" context="component" /><%-- crackme --%></td>
-									<td><tc-webtag:handle coderId="7545675" context="component" /><%-- cucu --%></td>
-									<td><tc-webtag:handle coderId="281421" context="component" /><%-- custos --%></td>
-									<td><tc-webtag:handle coderId="8347577" context="component" /><%-- daiwb --%></td>
+									<td class="creditsName2" style="padding-left:15px;">Executable Wrapper 1.0</td>
+									<td class="creditsName2">File Class 1.0</td>
+									<td class="creditsName2">File System Server 1.0</td>
 								</tr>
 								<tr>
-									<td><tc-webtag:handle coderId="260578" context="component" /><%-- danno --%></td>
-									<td><tc-webtag:handle coderId="7360309" context="component" /><%-- dmks --%></td>
-									<td><tc-webtag:handle coderId="251184" context="component" /><%-- dplass --%></td>
-									<td><tc-webtag:handle coderId="7390772" context="component" /><%-- duner --%></td>
-									<td><tc-webtag:handle coderId="13324255" context="component" /><%-- fairytale --%></td>
+									<td class="creditsName2" style="padding-left:15px;">File Upload 2.0</td>
+									<td class="creditsName2">Generic Event Manager 1.0</td>
+									<td class="creditsName2">Guid Generator 1.0</td>
 								</tr>
 								<tr>
-									<td><tc-webtag:handle coderId="22498968" context="component" /><%-- flying2hk --%></td>
-									<td>fuyungarykgeorgepf</td>
-									<td><tc-webtag:handle coderId="11770877" context="component" /><%-- gua --%></td>
-									<td><tc-webtag:handle coderId="15832162" context="component" /><%-- haozhangr --%></td>
-									<td><tc-webtag:handle coderId="11889718" context="component" /><%-- henryouly --%></td>
+									<td class="creditsName2" style="padding-left:15px;">Heartbeat 1.0</td>
+									<td class="creditsName2">ID Generator 3.0</td>
+									<td class="creditsName2">IP Server 2.0.1</td>
 								</tr>
 								<tr>
-									<td><tc-webtag:handle coderId="16096823" context="component" /><%-- hohosky --%></td>
-									<td><tc-webtag:handle coderId="154307" context="component" /><%-- holmana --%></td>
-									<td><tc-webtag:handle coderId="22627015" context="component" /><%-- iamajia --%></td>
-									<td><tc-webtag:handle coderId="10275123" context="component" /><%-- icyriver --%></td>
-									<td><tc-webtag:handle coderId="20719960" context="component" /><%-- idx --%></td>
+									<td class="creditsName2" style="padding-left:15px;">JNDI Utility 1.0</td>
+									<td class="creditsName2">Job Scheduler 1.0</td>
+									<td class="creditsName2">Logging Wrapper 1.2</td>
 								</tr>
 								<tr>
-									<td><tc-webtag:handle coderId="10447013" context="component" /><%-- iggy36 --%></td>
-									<td><tc-webtag:handle coderId="299180" context="component" /><%-- isv --%></td>
-									<td><tc-webtag:handle coderId="156859" context="component" /><%-- ivern --%></td>
-									<td><tc-webtag:handle coderId="288429" context="component" /><%-- jfjiang --%></td>
-									<td><tc-webtag:handle coderId="11775761" context="component" /><%-- justforplay --%></td>
+									<td class="creditsName2" style="padding-left:15px;">Magic Numbers 1.0</td>
+									<td class="creditsName2">Object Factory 2.0.1</td>
+									<td class="creditsName2">Phase Management 1.0</td>
 								</tr>
 								<tr>
-									<td><tc-webtag:handle coderId="11950083" context="component" /><%-- kinfkong --%></td>
-									<td><tc-webtag:handle coderId="10353806" context="component" /><%-- kr00tki --%></td>
-									<td><tc-webtag:handle coderId="15147311" context="component" /><%-- littlebull --%></td>
-									<td><tc-webtag:handle coderId="21075542" context="component" /><%-- lyt --%></td>
-									<td><tc-webtag:handle coderId="14788013" context="component" /><%-- magicpig --%></td>
+									<td class="creditsName2" style="padding-left:15px;">Project Management 1.0</td>
+									<td class="creditsName2">Project Phase Template 1.0</td>
+									<td class="creditsName2">Project Phases 2.0</td>
 								</tr>
 								<tr>
-									<td><tc-webtag:handle coderId="10425804" context="component" /><%-- maone --%></td>
-									<td><tc-webtag:handle coderId="7444051" context="component" /><%-- marijnk --%></td>
-									<td><tc-webtag:handle coderId="7251152" context="component" /><%-- matmis --%></td>
-									<td><tc-webtag:handle coderId="15655112" context="component" /><%-- mayi --%></td>
-									<td><tc-webtag:handle coderId="11971764" context="component" /><%-- mgmg --%></td>
+									<td class="creditsName2" style="padding-left:15px;">Resource Management 1.0</td>
+									<td class="creditsName2">Review Data Structure 1.0</td>
+									<td class="creditsName2">Review Management 1.0</td>
 								</tr>
 								<tr>
-									<td><tc-webtag:handle coderId="299904" context="component" /><%-- mishagam --%></td>
-									<td><tc-webtag:handle coderId="20758806" context="component" /><%-- myxgyy --%></td>
-									<td><tc-webtag:handle coderId="11789293" context="component" /><%-- nhzp339 --%></td>
-									<td><tc-webtag:handle coderId="293874" context="component" /><%-- nicka81 --%></td>
-									<td><tc-webtag:handle coderId="302053" context="component" /><%-- oldbig --%></td>
+									<td class="creditsName2" style="padding-left:15px;">Review Score Aggregator 1.0</td>
+									<td class="creditsName2">Review Score Calculator 1.0</td>
+									<td class="creditsName2">Scorecard Data Structure 1.0</td>
 								</tr>
 								<tr>
-									<td><tc-webtag:handle coderId="15832159" context="component" /><%-- oodinary --%></td>
-									<td><tc-webtag:handle coderId="301504" context="component" /><%-- opi --%></td>
-									<td><tc-webtag:handle coderId="150940" context="component" /><%-- orb --%></td>
-									<td><tc-webtag:handle coderId="153089" context="component" /><%-- preben --%></td>
-									<td><tc-webtag:handle coderId="296745" context="component" /><%-- pzhao --%></td>
+									<td class="creditsName2" style="padding-left:15px;">Scorecard Management 1.0</td>
+									<td class="creditsName2">Search Builder 1.3</td>
+									<td class="creditsName2">Security Manager 1.1</td>
 								</tr>
 								<tr>
-									<td><tc-webtag:handle coderId="10650643" context="component" /><%-- qiucx0161 --%></td>
-									<td><tc-webtag:handle coderId="15891862" context="component" /><%-- real_vg --%></td>
-									<td><tc-webtag:handle coderId="8394868" context="component" /><%-- rem --%></td>
-									<td><tc-webtag:handle coderId="7389864" context="component" /><%-- roma --%></td>
-									<td><tc-webtag:handle coderId="293470" context="component" /><%-- sapro --%></td>
+									<td class="creditsName2" style="padding-left:15px;">Simple Cache 2.0</td>
+									<td class="creditsName2">Typesafe Enum 1.0</td>
+									<td class="creditsName2">Weighted Calculator 1.0</td>
 								</tr>
 								<tr>
-									<td><tc-webtag:handle coderId="15816101" context="component" /><%-- sb99 --%></td>
-									<td><tc-webtag:handle coderId="278595" context="component" /><%-- seaniswise --%></td>
-									<td><tc-webtag:handle coderId="11802577" context="component" /><%-- semi_sleep --%></td>
-									<td><tc-webtag:handle coderId="7548200" context="component" /><%-- sindu --%></td>
-									<td><tc-webtag:handle coderId="15845095" context="component" /><%-- singlewood --%></td>
+									<td class="creditsName2" style="padding-left:15px;">Workdays 1.0</td>
+									<td class="creditsName2">XMI Parser 1.1</td>
+									<td class="creditsName2"><!-- @ --></td>
 								</tr>
 								<tr>
-									<td><tc-webtag:handle coderId="10119301" context="component" /><%-- skatou --%></td>
-									<td><tc-webtag:handle coderId="10022398" context="component" /><%-- slion --%></td>
-									<td><tc-webtag:handle coderId="9971384" context="component" /><%-- smell --%></td>
-									<td><tc-webtag:handle coderId="158236" context="component" /><%-- snard6 --%></td>
-									<td><tc-webtag:handle coderId="11798503" context="component" /><%-- southwang --%></td>
-								</tr>
-								<tr>
-									<td><tc-webtag:handle coderId="296145" context="component" /><%-- srowen --%></td>
-									<td><tc-webtag:handle coderId="15500330" context="component" /><%-- still --%></td>
-									<td><tc-webtag:handle coderId="10169506" context="component" /><%-- telly12 --%></td>
-									<td><tc-webtag:handle coderId="15608845" context="component" /><%-- topgear --%></td>
-									<td><tc-webtag:handle coderId="280167" context="component" /><%-- ttsuchi --%></td>
-								</tr>
-								<tr>
-									<td><tc-webtag:handle coderId="11781622" context="component" /><%-- tuenm --%></td>
-									<td><tc-webtag:handle coderId="21471587" context="component" /><%-- urtks --%></td>
-									<td><tc-webtag:handle coderId="269515" context="component" /><%-- valeriy --%></td>
-									<td><tc-webtag:handle coderId="13377493" context="component" /><%-- victor_lxd --%></td>
-									<td><tc-webtag:handle coderId="8416548" context="component" /><%-- viking_hz --%></td>
-								</tr>
-								<tr>
-									<td><tc-webtag:handle coderId="15002482" context="component" /><%-- vilain --%></td>
-									<td><tc-webtag:handle coderId="288617" context="component" /><%-- vinnath --%></td>
-									<td><tc-webtag:handle coderId="299979" context="component" /><%-- visualage --%></td>
-									<td><tc-webtag:handle coderId="8375801" context="component" /><%-- vividmxx --%></td>
-									<td><tc-webtag:handle coderId="15197513" context="component" /><%-- waits --%></td>
-								</tr>
-								<tr>
-									<td><tc-webtag:handle coderId="10405908" context="component" /><%-- wiedzmin --%></td>
-									<td><tc-webtag:handle coderId="9981727" context="component" /><%-- woodjhon --%></td>
-									<td><tc-webtag:handle coderId="272311" context="component" /><%-- yellow_gecko --%></td>
-									<td><tc-webtag:handle coderId="19929536" context="component" /><%-- zhuzeyuan --%></td>
-									<td><tc-webtag:handle coderId="264803" context="component" /><%-- zimmy --%></td>
-								</tr>
-								<tr>
-									<td><tc-webtag:handle coderId="10526732" context="component" /><%-- zjq --%></td>
-									<td><tc-webtag:handle coderId="14820574" context="component" /><%-- zsudraco --%></td>
-									<td colspan="3"><!-- @ --></td>
+									<td colspan="3">&#160;</td>
 								</tr>
 							</table>
 						</td>
 					</tr>
 					<tr>
-						<td colspan="3">&#160;</td>
+						<td class="lastRowTD" colspan="3"><!-- @ --></td>
 					</tr>
 				</table>
 
