@@ -1591,8 +1591,6 @@ public class ProjectActions extends DispatchAction {
         	newSubmitters.remove(obj);
         }
 
-        // Populate project_result and component_inquiry for new submitters
-        ActionsHelper.populateProjectResult(project, newUsers);
 
         // Populate project_result and component_inquiry for new submitters
         ActionsHelper.populateProjectResult(project, newSubmitters);
