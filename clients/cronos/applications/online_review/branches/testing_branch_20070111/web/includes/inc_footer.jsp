@@ -27,8 +27,9 @@
 	<tr>
 		<td height="4" class="footerStripe"><html:img src="/i/corp/clear.gif" width="10" height="4" border="0" /></td>
 	</tr>
+
 	<tr>
-		<td width="100%" class="copyright">Copyright &#169; 2001-2006, TopCoder, Inc. All rights reserved.</td>
+		<td width="100%" class="copyright">Copyright &#169; 2001-2007, TopCoder, Inc. All rights reserved.</td>
 	</tr>
 </table>
 <!-- Footer Include Ends -->
