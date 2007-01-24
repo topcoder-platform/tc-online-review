@@ -2732,7 +2732,7 @@ public class ActionsHelper {
      *
      * @return a newly created instance of the class.
      * @param projectType
-     *            a project type for which the PhaseTemplate object should be created, 
+     *            a project type for which the PhaseTemplate object should be created,
      *            can be null if start date generator type doesn't matter
      * @throws IllegalArgumentException
      *             if <code>request</code> parameter is <code>null</code>.
@@ -2752,16 +2752,16 @@ public class ActionsHelper {
             generator = new StartDateGenerator() {
                 public Date generateStartDate() {
                     return new Date();
-                }                
+                }
             };
         }
-        
+
         // Create workdays instance
         Workdays workdays = (new DefaultWorkdaysFactory()).createWorkdaysInstance();
-        
+
         // Create phase template instance
         PhaseTemplate phaseTemplate = new DefaultPhaseTemplate(persistence, generator, workdays );
-        
+
         return phaseTemplate;
     }
 
@@ -2799,27 +2799,50 @@ public class ActionsHelper {
 
         searchBundle.setSearchableFields(fields);
     }
-    
+
     /**
      * Set Completion Timestamp while the project turn to completed, Cancelled - Failed Review or Deleted status.
-     * 
+     *
      * @param project the project instance
      * @param newProjectStatus new project status
      * @param format the date format
      */
-    static void setProjectCompletionDate(Project project, ProjectStatus newProjectStatus, Format format) {
+    static void setProjectCompletionDate(Project project, ProjectStatus newProjectStatus, Format format)
+    throws BaseException {
     	String name = newProjectStatus.getName();
     	if ("Completed".equals(name) || "Cancelled - Failed Review".equals(name) || "Deleted".equals(name)) {
             if (format == null) {
                 format = new SimpleDateFormat(ConfigHelper.getDateFormat());
             }
     		project.setProperty("Completion Timestamp", format.format(new Date()));
+
+    		if (!"Deleted".equals(name)) {
+    			Connection conn = null;
+	        	PreparedStatement ps = null;
+	    		try {
+	    	        DBConnectionFactory dbconn;
+	    				dbconn = new DBConnectionFactoryImpl(DB_CONNECTION_NAMESPACE);
+	    	        conn = dbconn.createConnection();
+	    	    	ps = conn.prepareStatement("update project_result set rating_ind = 1 where project_id = ? and valid_submission_ind = 1");
+	    	    	ps.setLong(1, project.getId());
+	    	    	ps.execute();
+	    		} catch(SQLException e) {
+	    			throw new BaseException("Failed to update project result for rating_ind", e);
+	    		} catch (UnknownConnectionException e) {
+	    			throw new BaseException("Failed to return DBConnection", e);
+				} catch (ConfigurationException e) {
+	    			throw new BaseException("Failed to return DBConnection", e);
+				} finally {
+	    			close(ps);
+	    			close(conn);
+	    		}
+    		}
     	}
     }
-    
+
     /**
      * Set Rated Timestamp with the end date of submission phase.
-     * 
+     *
      * @param project the project instance
      * @param format the date format
      */
@@ -2870,11 +2893,11 @@ public class ActionsHelper {
         throws BaseException {
         // Prepare bean that will be returned as the result
         CorrectnessCheckResult result = new CorrectnessCheckResult();
-    
+
         if (permission == null || permission.trim().length() == 0) {
             permission = null;
         }
-    
+
         // Verify that Project ID was specified and denotes correct project
         String pidParam = request.getParameter("pid");
         if (pidParam == null || pidParam.trim().length() == 0) {
@@ -2883,9 +2906,9 @@ public class ActionsHelper {
             // Return the result of the check
             return result;
         }
-    
+
         long pid;
-    
+
         try {
             // Try to convert specified pid parameter to its integer representation
             pid = Long.parseLong(pidParam, 10);
@@ -2895,7 +2918,7 @@ public class ActionsHelper {
             // Return the result of the check
             return result;
         }
-    
+
         // Obtain an instance of Project Manager
         ProjectManager projMgr = createProjectManager(request);
         // Get Project by its id
@@ -2907,15 +2930,15 @@ public class ActionsHelper {
             // Return the result of the check
             return result;
         }
-    
+
         // Store Project object in the result bean
         result.setProject(project);
         // Place project as attribute in the request
         request.setAttribute("project", project);
-    
+
         // Gather the roles the user has for current request
         AuthorizationHelper.gatherUserRoles(request, pid);
-    
+
         // If permission parameter was not null or empty string ...
         if (permission != null) {
             // ... verify that this permission is granted for currently logged in user
@@ -2926,13 +2949,13 @@ public class ActionsHelper {
                 return result;
             }
         }
-    
+
         return result;
     }
 
     /**
      * Populate project_result and component_inquiry for new submitters.
-     * 
+     *
      * @param project the project
      * @param newSubmitters new submitters external ids.
      * @throws BaseException if error occurs
@@ -2954,7 +2977,7 @@ public class ActionsHelper {
 	        long componentInquiryId = getNextComponentInquiryId(conn, newSubmitters.size());
 	    	long componentId = getProjectLongValue(project, "Component ID");
 	    	long phaseId = 111 + project.getProjectCategory().getId();
-	    	long version = getProjectLongValue(project, "Version ID");	        
+	    	long version = getProjectLongValue(project, "Version ID");
 
 	        // add reliability_ind and old_reliability
 	    	ps = conn.prepareStatement("INSERT INTO project_result " +
@@ -2964,14 +2987,14 @@ public class ActionsHelper {
 	    	componentInquiryStmt = conn.prepareStatement("INSERT INTO component_inquiry " +
 	                "(component_inquiry_id, component_id, user_id, project_id, phase, tc_user_id, agreed_to_terms, rating, version, create_time) " +
 	                "values (?, ?, ?, ?, ?, ?, 1, ?, ?, current)");
-      	
+
 	        existStmt = conn.prepareStatement("SELECT 1 FROM PROJECT_RESULT WHERE user_id = ? and project_id = ?");
 
 	        existCIStmt = conn.prepareStatement("SELECT 1 FROM component_inquiry WHERE user_id = ? and project_id = ?");
-	
+
 	        ratingStmt = conn.prepareStatement("SELECT rating from user_rating where user_id = ? and phase_id = " +
 	                "(select 111+project_category_id from project where project_id = ?)");
-	        
+
 	        reliabilityStmt = conn.prepareStatement("SELECT rating from user_reliability where user_id = ? and phase_id = " +
 	                "(select 111+project_category_id from project where project_id = ?)");
 
@@ -2998,7 +3021,7 @@ public class ActionsHelper {
 		            ratingStmt.setString(1, userId);
 		            ratingStmt.setLong(2, projectId);
 		            rs = ratingStmt.executeQuery();
-		
+
 		            if (rs.next()) {
 		                oldRating = rs.getLong(1);
 		            }
@@ -3012,7 +3035,7 @@ public class ActionsHelper {
 		            reliabilityStmt.setString(1, userId);
 		            reliabilityStmt.setLong(2, projectId);
 		            rs = reliabilityStmt.executeQuery();
-		
+
 		            if (rs.next()) {
 		                oldReliability = rs.getDouble(1);
 		            }
@@ -3020,7 +3043,7 @@ public class ActionsHelper {
 	            }
 
 	            // add project_result
-	            if (!existPR) {	            	
+	            if (!existPR) {
 			        ps.setLong(1, projectId);
 			        ps.setString(2, userId);
 			        ps.setLong(3, 0);
@@ -3094,12 +3117,12 @@ public class ActionsHelper {
 			throw new BaseException("Failed to recaculateScreeningReviewerPayments for project " + projectId, e);
 		} finally {
 			close(conn);
-		}    	
+		}
     }
 
     /**
      * Retrieve and update next ComponentInquiryId.
-     *  
+     *
      * @param conn the connection
      * @param count the count of new submitters
      * @return next component_inquiry_id
@@ -3108,7 +3131,7 @@ public class ActionsHelper {
     	String tableName = ConfigHelper.getPropertyValue("component_inquiry.tablename", "sequence_object");
     	String nameField = ConfigHelper.getPropertyValue("component_inquiry.name", "name");
     	String currentValueField = ConfigHelper.getPropertyValue("component_inquiry.current_value", "current_value");
-    	String getNextID = "SELECT max(" + currentValueField + ") FROM " + tableName + 
+    	String getNextID = "SELECT max(" + currentValueField + ") FROM " + tableName +
     				" WHERE " + nameField + " = 'main_sequence'";
     	String updateNextID = "UPDATE " + tableName + " SET " + currentValueField + " = ? " +
     				" WHERE " + nameField + " = 'main_sequence'" + " AND " + currentValueField + " = ? ";
@@ -3144,7 +3167,7 @@ public class ActionsHelper {
 
     /**
      * Return project property long value.
-     * 
+     *
      * @param project the project object
      * @param name the proeprty name
      * @return the long value, 0 if it does not exist
@@ -3155,12 +3178,12 @@ public class ActionsHelper {
     		return 0;
     	} else {
     		return Long.parseLong(obj.toString());
-    	}    	
+    	}
     }
 
     /**
      * Close jdbc resource.
-     * 
+     *
      * @param obj jdbc resource
      */
     private static void close(Object obj) {
