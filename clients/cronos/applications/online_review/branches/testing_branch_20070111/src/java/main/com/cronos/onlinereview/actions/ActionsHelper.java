@@ -2981,8 +2981,8 @@ public class ActionsHelper {
 
 	        // add reliability_ind and old_reliability
 	    	ps = conn.prepareStatement("INSERT INTO project_result " +
-	                "(project_id, user_id, rating_ind, reliability_ind, valid_submission_ind, old_rating, old_reliability) " +
-	                "values (?, ?, ?, ?, ?, ?, ?)");
+	                "(project_id, user_id, rating_ind, valid_submission_ind, old_rating, old_reliability) " +
+	                "values (?, ?, ?, ?, ?, ?)");
 
 	    	componentInquiryStmt = conn.prepareStatement("INSERT INTO component_inquiry " +
 	                "(component_inquiry_id, component_id, user_id, project_id, phase, tc_user_id, agreed_to_terms, rating, version, create_time) " +
@@ -3048,18 +3048,17 @@ public class ActionsHelper {
 			        ps.setString(2, userId);
 			        ps.setLong(3, 0);
 			        ps.setLong(4, 0);
-			        ps.setLong(5, 0);
 
 			        if (oldRating == 0) {
-			            ps.setNull(6, Types.DOUBLE);
+			            ps.setNull(5, Types.DOUBLE);
 			        } else {
-			            ps.setDouble(6, oldRating);
+			            ps.setDouble(5, oldRating);
 			        }
 
 			        if (oldReliability == 0) {
-			            ps.setNull(7, Types.DOUBLE);
+			            ps.setNull(6, Types.DOUBLE);
 			        } else {
-			            ps.setDouble(7, oldReliability);
+			            ps.setDouble(6, oldReliability);
 			        }
 			        ps.addBatch();
 	            }
