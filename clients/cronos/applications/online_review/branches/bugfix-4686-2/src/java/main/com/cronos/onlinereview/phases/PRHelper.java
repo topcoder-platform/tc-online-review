@@ -292,7 +292,7 @@ class PRHelper {
         		double finalScore = rs.getDouble("final_score");
         		long userId = rs.getLong("user_id");
         		int status = rs.getInt("submission_status_id");
-        		String p = rs.getString("placed");
+        		String p = null; 
 
         		double payment = 0;
         		p = rs.getString("payment");
@@ -305,6 +305,7 @@ class PRHelper {
         		}
 
         		int placed = 0;
+        		p = rs.getString("placed");
         		if (p != null) {
         			try {
         				placed = Integer.parseInt(p);
