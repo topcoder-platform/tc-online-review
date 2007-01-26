@@ -209,6 +209,8 @@ class PRHelper {
      */
     static void processAppealResponsePR(long projectId, Connection conn, boolean toStart) throws SQLException {
     	if (!toStart) {
+        	// Reset price of project
+			AutoPaymentUtil.resetProjectPrice(projectId, conn);
 	    	populateProjectResult(projectId, conn);
     	}
     }
@@ -221,6 +223,8 @@ class PRHelper {
      */
     static void processAggregationPR(long projectId, Connection conn, boolean toStart) throws SQLException {
     	if (!toStart) {
+        	// Reset price of project
+			AutoPaymentUtil.resetProjectPrice(projectId, conn);
     		populateProjectResult(projectId, conn);
     	} else {
     		// start this phase
@@ -236,6 +240,8 @@ class PRHelper {
      */
     static void processAggregationReviewPR(long projectId, Connection conn, boolean toStart) throws SQLException {
     	if (!toStart) {
+        	// Reset price of project
+			AutoPaymentUtil.resetProjectPrice(projectId, conn);
     		populateProjectResult(projectId, conn);
     	}
     }
@@ -248,6 +254,8 @@ class PRHelper {
      */
     static void processFinalFixPR(long projectId, Connection conn, boolean toStart) throws SQLException {
     	if (!toStart) {
+        	// Reset price of project
+			AutoPaymentUtil.resetProjectPrice(projectId, conn);
     		populateProjectResult(projectId, conn);
     	}
     }
@@ -260,6 +268,8 @@ class PRHelper {
      */
     static void processFinalReviewPR(long projectId, Connection conn, boolean toStart) throws SQLException {
     	if (!toStart) {
+        	// Reset price of project
+			AutoPaymentUtil.resetProjectPrice(projectId, conn);
     		populateProjectResult(projectId, conn);
     	} else {
     		// start this phase
