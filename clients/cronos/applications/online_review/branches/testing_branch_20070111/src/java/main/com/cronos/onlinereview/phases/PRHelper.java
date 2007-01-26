@@ -76,7 +76,7 @@ class PRHelper {
 		"	and u.project_id = project_result.project_id " +
 		"	and r.resource_id = u.resource_id " +
 		"	and ri.resource_id = r.resource_id " +
-		"	and ri.value = project_result.user_id and ri.resource_info_type_id = 1 " +
+		"	and ri.value = project_result.user_id and ri.resource_info_type_id = 1 " + 
 		"	and submission_status_id in (1,3,4) ) and " +
 		" project_id = ?";
 
@@ -209,6 +209,8 @@ class PRHelper {
      */
     static void processAppealResponsePR(long projectId, Connection conn, boolean toStart) throws SQLException {
     	if (!toStart) {
+        	// Reset price of project
+			AutoPaymentUtil.resetProjectPrice(projectId, conn);
 	    	populateProjectResult(projectId, conn);
     	}
     }
@@ -221,6 +223,8 @@ class PRHelper {
      */
     static void processAggregationPR(long projectId, Connection conn, boolean toStart) throws SQLException {
     	if (!toStart) {
+        	// Reset price of project
+			AutoPaymentUtil.resetProjectPrice(projectId, conn);
     		populateProjectResult(projectId, conn);
     	} else {
     		// start this phase
@@ -236,6 +240,8 @@ class PRHelper {
      */
     static void processAggregationReviewPR(long projectId, Connection conn, boolean toStart) throws SQLException {
     	if (!toStart) {
+        	// Reset price of project
+			AutoPaymentUtil.resetProjectPrice(projectId, conn);
     		populateProjectResult(projectId, conn);
     	}
     }
@@ -248,6 +254,8 @@ class PRHelper {
      */
     static void processFinalFixPR(long projectId, Connection conn, boolean toStart) throws SQLException {
     	if (!toStart) {
+        	// Reset price of project
+			AutoPaymentUtil.resetProjectPrice(projectId, conn);
     		populateProjectResult(projectId, conn);
     	}
     }
@@ -260,6 +268,8 @@ class PRHelper {
      */
     static void processFinalReviewPR(long projectId, Connection conn, boolean toStart) throws SQLException {
     	if (!toStart) {
+        	// Reset price of project
+			AutoPaymentUtil.resetProjectPrice(projectId, conn);
     		populateProjectResult(projectId, conn);
     	} else {
     		// start this phase
