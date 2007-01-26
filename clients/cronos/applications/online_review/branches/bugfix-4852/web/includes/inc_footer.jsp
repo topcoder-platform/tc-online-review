@@ -6,22 +6,27 @@
 	<!-- TopCoder Links Begins -->
 	<tr>
 		<td width="100%" class="footer">
-			<a href="http://<%=ApplicationServer.SERVER_NAME%>/" class="footerLinks">Home</a>&#160;&#160;|&#160;&#160;
-			<a href="http://<%=ApplicationServer.SERVER_NAME%>/tc?module=Static&d1=about&d2=index" class="footerLinks">About TopCoder</a>&#160;&#160;|&#160;&#160;
-			<a href="http://<%=ApplicationServer.SERVER_NAME%>/tc?module=Static&d1=pressroom&d2=index" class="footerLinks">Press Room</a>&#160;&#160;|&#160;&#160;
-			<a href="http://<%=ApplicationServer.SERVER_NAME%>/tc?module=Static&d1=about&d2=contactus" class="footerLinks">Contact Us</a>&#160;&#160;|&#160;&#160;
-			<a href="http://<%=ApplicationServer.SERVER_NAME%>/tc?module=Static&d1=about&d2=privacy" class="footerLinks">Privacy</a>&#160;&#160;|&#160;&#160;
-			<a href="http://<%=ApplicationServer.SERVER_NAME%>/tc?module=Static&d1=about&d2=terms" class="footerLinks">Terms</a></td>
+			<a href="http://<%=ApplicationServer.SERVER_NAME%>/" class="footerLinks">Home</a>&#160;&#160;|&#160;&#160;<a
+				href="http://<%=ApplicationServer.SERVER_NAME%>/tc?module=Static&#x26;d1=about&#x26;d2=index" class="footerLinks">About
+					TopCoder</a>&#160;&#160;|&#160;&#160;<a
+				href="http://<%=ApplicationServer.SERVER_NAME%>/tc?module=Static&#x26;d1=pressroom&#x26;d2=index" class="footerLinks">Press
+					Room</a>&#160;&#160;|&#160;&#160;<a
+				href="http://<%=ApplicationServer.SERVER_NAME%>/tc?module=Static&#x26;d1=about&#x26;d2=contactus" class="footerLinks">Contact
+					Us</a>&#160;&#160;|&#160;&#160;<a
+				href="http://<%=ApplicationServer.SERVER_NAME%>/tc?module=Static&#x26;d1=about&#x26;d2=privacy"
+				class="footerLinks">Privacy</a>&#160;&#160;|&#160;&#160;<a
+				href="http://<%=ApplicationServer.SERVER_NAME%>/tc?module=Static&#x26;d1=about&#x26;d2=terms" class="footerLinks">Terms</a></td>
 	<tr>
 	<!-- TopCoder Links Ends -->
 
 	<!-- Member Sites Begins -->
 	<tr>
 		<td width="100%" class="footer">
-			<a href="http://<%=ApplicationServer.SERVER_NAME%>/tc" class="footerLinks">Developer Center</a>&#160;&#160;|&#160;&#160;
-			<a href="http://<%=ApplicationServer.CORP_SERVER_NAME%>/?module=Static&d1=corp&d2=index" class="footerLinks">Corporate Services</a>&#160;&#160;|&#160;&#160;
-			<html:link page="/jsp/credits.jsp" styleClass="footerLinks">Credits</html:link></td>
-	<tr>
+			<a href="http://<%=ApplicationServer.SERVER_NAME%>/tc" class="footerLinks">Developer Center</a>&#160;&#160;|&#160;&#160;<a
+				href="http://<%=ApplicationServer.CORP_SERVER_NAME%>/?module=Static&#x26;d1=corp&#x26;d2=index" class="footerLinks">Corporate
+					Services</a>&#160;&#160;|&#160;&#160;<html:link
+				page="/jsp/credits.jsp" styleClass="footerLinks">Credits</html:link></td>
+	</tr>
 	<!-- Member Sites Ends -->
 
 	<tr>
