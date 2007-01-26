@@ -22,7 +22,7 @@
 					href='https://<%=ApplicationServer.SOFTWARE_SERVER_NAME %>/catalog/c_component.jsp?comp=${project.allProperties["Component ID"]}&ver=${project.allProperties["Version ID"]}'><bean:message
 						key="viewProjectDetails.FullDescription" /></a> |
 				<a class="breadcrumbLinks"
-					href='https://<%=ApplicationServer.SOFTWARE_SERVER_NAME %>/forum/c_forum.jsp?f=${project.allProperties["Developer Forum ID"]}'><bean:message
+					href='https://<%=ApplicationServer.FORUMS_SERVER_NAME %>/?module=Category&categoryID=${project.allProperties["Developer Forum ID"]}'><bean:message
 						key="viewProjectDetails.DevelopmentForum" /></a>
 			</td>
 		</tr>
