@@ -174,11 +174,37 @@ final class Comparators {
             if (result != 0) {
                 return result;
             }
+
+            /*
+             * In case names of the projects are identical, comparison by versions is needed
+             */
+
             // Get versions of the projects
             final String strVersion1 = (String) project1.getProperty("Project Version");
             final String strVersion2 = (String) project2.getProperty("Project Version");
-            // Compare versions
-            return strVersion1.compareTo(strVersion2);
+            // Split version strings into array of subversions (assuming that separator is a dot)
+            final String[] versions1 = strVersion1.split("\\.");
+            final String[] versions2 = strVersion2.split("\\.");
+
+            // Versions can be badly formatted, so this section is guarded by try-catch
+            try {
+                for (int i = 0; i < versions1.length && i < versions2.length; ++i) {
+                    // Get every subversion number and try to convert it to number
+                    final int subVer1 = Integer.parseInt(versions1[i], 10);
+                    final int subVer2 = Integer.parseInt(versions2[i], 10);
+
+                    // If subversions differ, that's how order is determined
+                    if (subVer1 != subVer2) {
+                        return (subVer1 - subVer2);
+                    }
+                }
+            } catch (NumberFormatException nfe) {
+                // Compare versions by their text representation
+                return strVersion1.compareTo(strVersion2);
+            }
+
+            // Versions can have different number of parts (subversions)
+            return (versions1.length - versions2.length);
         }
     }
 
