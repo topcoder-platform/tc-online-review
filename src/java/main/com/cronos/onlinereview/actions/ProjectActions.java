@@ -9,7 +9,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
@@ -34,7 +33,6 @@ import org.apache.struts.validator.LazyValidatorForm;
 
 import com.cronos.onlinereview.external.ExternalUser;
 import com.cronos.onlinereview.external.UserRetrieval;
-import com.topcoder.date.workdays.DefaultWorkdays;
 import com.topcoder.date.workdays.DefaultWorkdaysFactory;
 import com.topcoder.date.workdays.Workdays;
 import com.topcoder.date.workdays.WorkdaysUnitOfTime;
@@ -229,7 +227,7 @@ public class ProjectActions extends DispatchAction {
         request.setAttribute("screeningScorecards", screeningScorecards);
         request.setAttribute("reviewScorecards", reviewScorecards);
         request.setAttribute("approvalScorecards", approvalScorecards);
-        
+
         // Load phase template names
         String[] phaseTemplateNames = ActionsHelper.createPhaseTemplate(null).getAllTemplateNames();
         request.setAttribute("phaseTemplateNames", phaseTemplateNames);
@@ -348,7 +346,7 @@ public class ProjectActions extends DispatchAction {
         // Retrive project phases
         Phase[] phases = ActionsHelper.getPhasesForProject(phaseManager, project);
         // Sort project phases
-        Arrays.sort(phases, new ProjectPhaseComparer());
+        Arrays.sort(phases, new Comparators.ProjectPhaseComparer());
 
         Map phaseNumberMap = new HashMap();
 
@@ -395,7 +393,7 @@ public class ProjectActions extends DispatchAction {
                     phases[i].calcEndDate());
             // always use duration
             form.set("phase_use_duration", i + 1, Boolean.TRUE);
-            
+
             // populate the phase duration
             long phaseLength = phases[i].getLength();
             String phaseDuration = "";
@@ -406,8 +404,7 @@ public class ProjectActions extends DispatchAction {
             	long min = (phaseLength % (3600 * 1000)) / 1000 / 60;
             	phaseDuration = hour + ":" + (min >= 10 ? "" + min : "0" + min);
             }
-            
-            
+
             form.set("phase_duration", i + 1, phaseDuration);
 
             // Populate phase criteria
@@ -832,7 +829,7 @@ public class ProjectActions extends DispatchAction {
                     continue;
                 }
             }
-            
+
             // If action is "delete", proceed to the next phase
             if ("delete".equals(phaseAction)) {
                 continue;
@@ -1069,13 +1066,13 @@ public class ProjectActions extends DispatchAction {
                     
                     // flag value indicates using end date or using duration
                     boolean useDuration = ((Boolean) lazyForm.get("phase_use_duration", paramIndex)).booleanValue();
-                    
+
                     // If phase duration was not specified
                     if (!useDuration) {
                         // Get phase end date from form
                         Date phaseEndDate = parseDatetimeFormProperties(lazyForm, paramIndex,
                                 "phase_end_date", "phase_end_time", "phase_end_AMPM");
-                        
+
                         // Calculate phase length
                         long length = phaseEndDate.getTime() - phase.getScheduledStartDate().getTime();
                         // Check if the end date of phase goes after the start date
@@ -1084,8 +1081,8 @@ public class ProjectActions extends DispatchAction {
                                     "error.com.cronos.onlinereview.actions.editProject.StartAfterEnd",
                                     phase.getPhaseType().getName()));
                             break;
-                        } 
-                        
+                        }
+
                         // Get the workdays
                         Workdays workdays = phProject.getWorkdays();
                         
@@ -1112,7 +1109,7 @@ public class ProjectActions extends DispatchAction {
                         }
                         
                         // Set phase duration appropriately
-                        phase.setLength(length);                                                                        
+                        phase.setLength(length);
                     }
 
                     // Set sheduled phase end date to calculated end datehase
@@ -1140,7 +1137,7 @@ public class ProjectActions extends DispatchAction {
         // Get all the project phases
         Phase[] projectPhases = phProject.getAllPhases();        
         // Sort project phases
-        Arrays.sort(projectPhases, new ProjectPhaseComparer());
+        Arrays.sort(projectPhases, new Comparators.ProjectPhaseComparer());
 
         // Validate the project phases
         boolean validationSucceeded = validateProjectPhases(request, project, projectPhases);
@@ -1165,7 +1162,7 @@ public class ProjectActions extends DispatchAction {
 
         // FIXME: Refactor it
         ProjectManager projectManager = ActionsHelper.createProjectManager(request);
-        
+
         // Set project rating date
         ActionsHelper.setProjectRatingDate(project, projectPhases, (Format) request.getAttribute("date_format"));
 
@@ -1185,7 +1182,7 @@ public class ProjectActions extends DispatchAction {
         // TODO: The following line was added just to be safe. May be unneeded as well as another one
         projectPhases = phProject.getAllPhases();
         // Sort project phases
-        Arrays.sort(projectPhases, new ProjectPhaseComparer());
+        Arrays.sort(projectPhases, new Comparators.ProjectPhaseComparer());
 
         return projectPhases;
     }
@@ -1594,6 +1591,7 @@ public class ProjectActions extends DispatchAction {
         	newSubmitters.remove(obj);
         }
 
+
         // Populate project_result and component_inquiry for new submitters
         ActionsHelper.populateProjectResult(project, newSubmitters);
 
@@ -1607,71 +1605,6 @@ public class ProjectActions extends DispatchAction {
 
         	resourceManager.addNotifications(userIds, project.getId(),
         			timelineNotificationId, Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
-        }
-    }
-
-    /**
-     * TODO: Document it, and its members.
-     *
-     */
-    static class ProjectPhaseComparer implements Comparator {
-        public ProjectPhaseComparer() {
-
-        }
-
-        public int compare(Object o1, Object o2) {
-            Phase phase1 = (Phase) o1;
-            Phase phase2 = (Phase) o2;
-            int compareResult = phase1.calcStartDate().compareTo(phase2.calcStartDate());
-            if (compareResult == 0) {
-                int ranking1 = getPhaseRanking(phase1);
-                int ranking2 = getPhaseRanking(phase2);
-                return  ranking1 - ranking2;
-            }
-            return compareResult;
-        }
-
-        private int getPhaseRanking(Phase phase1) {
-            String[] phaseOrder = new String[] {"Registration", "Submission", "Screening", "Review",
-                    "Appeals", "Appeals Response", "Aggregation", "Aggregation Review",
-                    "Final Fixes", "Final Review", "Approval"};
-            for (int i = 0; i < phaseOrder.length; i++) {
-                if (phaseOrder[i].equals(phase1.getPhaseType().getName())) {
-                    return i;
-                }
-            }
-
-            return phaseOrder.length;
-        }
-    }
-
-
-    /**
-     * This class implements <code>Comparator</code> interface and is used to sort ProjectTypes
-     * in array.  It sorts Project Types by their name, in ascending order.
-     */
-    static class ProjectTypeComparer implements Comparator {
-
-        /**
-         * This method compares its two arguments for order. This method expects that type of
-         * objects passed as arguments is <code>ProjectType</code>.
-         * <p>
-         * This method implements the <code>compare</code> method from the
-         * <code>Comparator</code> interface.
-         * </p>
-         *
-         * @return a negative integer, zero, or a positive integer as the first argument is less
-         *         than, equal to, or greater than the second respectively.
-         * @param o1
-         *            the first object to be compared.
-         * @param o2
-         *            the second object to be compared.
-         */
-        public int compare(Object o1, Object o2) {
-            ProjectType pt1 = (ProjectType)o1;
-            ProjectType pt2 = (ProjectType)o2;
-
-            return pt1.getName().compareTo(pt2.getName());
         }
     }
 
@@ -1768,7 +1701,7 @@ public class ProjectActions extends DispatchAction {
         // Get all project types defined in the database (e.g. Assembly, Component, etc.)
         ProjectType[] projectTypes = manager.getAllProjectTypes();
         // Sort project types by their names in ascending order
-        Arrays.sort(projectTypes, new ProjectTypeComparer());
+        Arrays.sort(projectTypes, new Comparators.ProjectTypeComparer());
         // Get all project categories defined in the database (e.g. Design, Security, etc.)
         ProjectCategory[] projectCategories = manager.getAllProjectCategories();
 
@@ -2204,11 +2137,51 @@ public class ProjectActions extends DispatchAction {
                 continue;
             }
 
+            // Get a resource this deliverable is for
+            final Resource forResource = resources[j];
+
+            // Some additional special checking is need for Aggregation Review type of deliverables
+            if (deliverable.getName().equalsIgnoreCase(Constants.AGGREGATION_REV_DELIVERABLE_NAME)) {
+            	// Get the name of the resource's role
+            	final String resourceRole = forResource.getResourceRole().getName();
+            	// Check that this deliverable is for one of the reviewers
+            	if (resourceRole.equalsIgnoreCase(Constants.REVIEWER_ROLE_NAME) ||
+                        resourceRole.equalsIgnoreCase(Constants.ACCURACY_REVIEWER_ROLE_NAME) ||
+                        resourceRole.equalsIgnoreCase(Constants.FAILURE_REVIEWER_ROLE_NAME) ||
+                        resourceRole.equalsIgnoreCase(Constants.STRESS_REVIEWER_ROLE_NAME)) {
+                    final String originalExtId = (String) forResource.getProperty("External Reference ID");
+
+                    // Iterate over all resources and check
+                    // if there is any resource assigned to the same user
+                    for (j = 0; j < resources.length; ++j) {
+                        // Skip resource that is being checked
+                        if (forResource == resources[j]) {
+                            continue;
+                        }
+
+                        // Get a resource for the current iteration
+                        final Resource otherResource = resources[j];
+                        // Verify whether this resource is an Aggregator, and skip it if it isn't
+                        if (!otherResource.getResourceRole().getName().equalsIgnoreCase(Constants.AGGREGATOR_ROLE_NAME)) {
+                            continue;
+                        }
+
+                        String otherExtId = (String) resources[j].getProperty("External Reference ID");
+                        // If appropriate aggregator's resource has been found, stop the search
+                        if (originalExtId.equals(otherExtId)) {
+                            break;
+                        }
+                    }
+                    // Skip this deliverable if it is assigned to aggregator
+                    if (j != resources.length) {
+                        continue;
+                    }
+            	}
+            }
+
             // Skip deliverables that are not for winning submitter
             if (winnerExtUserId != null) {
-                Resource resource = resources[j];
-
-                if (resource.getResourceRole().getName().equalsIgnoreCase(Constants.SUBMITTER_ROLE_NAME) &&
+                if (forResource.getResourceRole().getName().equalsIgnoreCase(Constants.SUBMITTER_ROLE_NAME) &&
                         !winnerExtUserId.equals(resources[j].getProperty("External Reference ID"))) {
                     continue;
                 }

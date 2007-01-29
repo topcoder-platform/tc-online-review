@@ -16,7 +16,7 @@ import java.sql.Types;
  * @version 1.0
  */
 class PRHelper {
-	private static final String APPEAL_RESPONSE_SELECT_STMT = 
+	private static final String APPEAL_RESPONSE_SELECT_STMT =
 		"select ri_s.value as final_score, " +
 		"	ri_u.value as user_id, " +
 		"	ri_p.value as placed, " +
@@ -45,61 +45,61 @@ class PRHelper {
 		"and r.project_id = ? " +
 		"and r.resource_role_id = 1 ";
 
-	private static final String APPEAL_RESPONSE_UPDATE_PROJECT_RESULT_STMT = 
+	private static final String APPEAL_RESPONSE_UPDATE_PROJECT_RESULT_STMT =
 				"update project_result set final_score = ?, placed = ?, passed_review_ind = ?, payment = ? " +
 				"where project_id = ? and user_id = ? ";
 
-	private static final String REVIEW_SELECT_STMT = 
+	private static final String REVIEW_SELECT_STMT =
 				"select ri_s.value as raw_score, ri_u.value as user_id, r.project_id " +
 				"from resource r, resource_info ri_u,resource_info ri_s  " +
 				"where r.resource_id = ri_s.resource_id and ri_s.resource_info_type_id = 10 " +
 				" and r.resource_id = ri_u.resource_id and ri_u.resource_info_type_id = 1 and r.project_id = ? ";
 
-	private static final String REVIEW_UPDATE_PROJECT_RESULT_STMT = 
+	private static final String REVIEW_UPDATE_PROJECT_RESULT_STMT =
 				"update project_result set raw_score = ?  " +
 				"where project_id = ? and user_id = ? ";
-	private static final String FAILED_PASS_SCREENING_STMT = 
+	private static final String FAILED_PASS_SCREENING_STMT =
 				"update project_result set valid_submission_ind = 0, rating_ind = 0 " +
 				"where exists(select * from submission s,upload u,resource r,resource_info ri   " +
 				"	where u.upload_id = s.upload_id and u.upload_type_id = 1 " +
 				"	and u.project_id = project_result.project_id " +
 				"	and r.resource_id = u.resource_id " +
 				"	and ri.resource_id = r.resource_id " +
-				"	and ri.value = project_result.user_id and ri.resource_info_type_id = 1" + 
+				"	and ri.value = project_result.user_id and ri.resource_info_type_id = 1" +
 				"	and submission_status_id = 2 ) and " +
 				" project_id = ?";
 
-	private static final String PASS_SCREENING_STMT = 
-		"update project_result set valid_submission_ind = 1, rating_ind = 1 " +
+	private static final String PASS_SCREENING_STMT =
+		"update project_result set valid_submission_ind = 1 " +
 		"where exists(select * from submission s,upload u,resource r,resource_info ri    " +
 		"	where u.upload_id = s.upload_id and u.upload_type_id = 1  " +
 		"	and u.project_id = project_result.project_id " +
 		"	and r.resource_id = u.resource_id " +
 		"	and ri.resource_id = r.resource_id " +
 		"	and ri.value = project_result.user_id and ri.resource_info_type_id = 1 " + 
-		"	and submission_status_id not in (2,5) ) and " +
+		"	and submission_status_id in (1,3,4) ) and " +
 		" project_id = ?";
-	
-	private static final String UPDATE_PROJECT_RESULT_STMT = 
+
+	private static final String UPDATE_PROJECT_RESULT_STMT =
 				"update project_result set valid_submission_ind = 0 " +
 				"where not exists(select * from submission s,upload u,resource r,resource_info ri  " +
 				"	where u.upload_id = s.upload_id and upload_type_id = 1  " +
 				"	and u.project_id = project_result.project_id " +
 				"	and r.resource_id = u.resource_id " +
 				"	and ri.resource_id = r.resource_id " +
-				"	and ri.value = project_result.user_id and ri.resource_info_type_id = 1 " + 
+				"	and ri.value = project_result.user_id and ri.resource_info_type_id = 1 " +
 				"	and submission_status_id <> 5 ) and " +
 				" project_id = ?";
 
 	/**
 	 * Prevent to be created outside.
 	 */
-	private PRHelper() {		
+	private PRHelper() {
 	}
 
     /**
      * Pull data to project_result.
-     * 
+     *
      * @param phaseId the phase id
      * @throws PhaseHandlingException if error occurs
      */
@@ -117,7 +117,7 @@ class PRHelper {
 
     /**
      * Pull data to project_result.
-     * 
+     *
      * @param projectId the projectId
      * @throws PhaseHandlingException if error occurs
      */
@@ -137,7 +137,7 @@ class PRHelper {
 
     /**
      * Pull data to project_result.
-     * 
+     *
      * @param projectId the projectId
      * @throws PhaseHandlingException if error occurs
      */
@@ -150,22 +150,22 @@ class PRHelper {
 	        	pstmt.setLong(1, projectId);
 	        	pstmt.execute();
 	        	close(pstmt);
-	
+
 	        	// Update all users who pass screen, set valid_submission_ind = 1
 	        	pstmt = conn.prepareStatement(PASS_SCREENING_STMT);
 	        	pstmt.setLong(1, projectId);
 	        	pstmt.execute();
     		}
-    		
+
     		AutoPaymentUtil.populateReviewerPayments(projectId, conn, AutoPaymentUtil.SCREENING_PHASE);
     	} finally {
     		close(pstmt);
-    	}    	
+    	}
     }
 
     /**
      * Pull data to project_result.
-     * 
+     *
      * @param projectId the projectId
      * @param phaseId the phase id
      * @throws PhaseHandlingException if error occurs
@@ -176,11 +176,11 @@ class PRHelper {
     	ResultSet rs = null;
     	try {
     		if (!toStart) {
-	        	// Retrieve all 
+	        	// Retrieve all
 	        	pstmt = conn.prepareStatement(REVIEW_SELECT_STMT);
 	        	pstmt.setLong(1, projectId);
 	        	rs = pstmt.executeQuery();
-	
+
 	        	updateStmt = conn.prepareStatement(REVIEW_UPDATE_PROJECT_RESULT_STMT);
 	        	while(rs.next()) {
 		        	// Update all raw score
@@ -193,7 +193,7 @@ class PRHelper {
 	        	}
     		}
 
-    		AutoPaymentUtil.populateReviewerPayments(projectId, conn, AutoPaymentUtil.REVIEW_PHASE);        	
+    		AutoPaymentUtil.populateReviewerPayments(projectId, conn, AutoPaymentUtil.REVIEW_PHASE);
     	} finally {
     		close(rs);
     		close(pstmt);
@@ -203,24 +203,28 @@ class PRHelper {
 
     /**
      * Pull data to project_result for while appeal response phase closed.
-     * 
+     *
      * @param projectId the projectId
      * @throws PhaseHandlingException if error occurs
      */
     static void processAppealResponsePR(long projectId, Connection conn, boolean toStart) throws SQLException {
     	if (!toStart) {
+        	// Reset price of project
+			AutoPaymentUtil.resetProjectPrice(projectId, conn);
 	    	populateProjectResult(projectId, conn);
     	}
     }
 
     /**
      * Pull data to project_result.
-     * 
+     *
      * @param projectId the projectId
      * @throws PhaseHandlingException if error occurs
      */
     static void processAggregationPR(long projectId, Connection conn, boolean toStart) throws SQLException {
     	if (!toStart) {
+        	// Reset price of project
+			AutoPaymentUtil.resetProjectPrice(projectId, conn);
     		populateProjectResult(projectId, conn);
     	} else {
     		// start this phase
@@ -230,36 +234,42 @@ class PRHelper {
 
     /**
      * Pull data to project_result.
-     * 
+     *
      * @param projectId the projectId
      * @throws PhaseHandlingException if error occurs
      */
     static void processAggregationReviewPR(long projectId, Connection conn, boolean toStart) throws SQLException {
     	if (!toStart) {
+        	// Reset price of project
+			AutoPaymentUtil.resetProjectPrice(projectId, conn);
     		populateProjectResult(projectId, conn);
     	}
     }
 
     /**
      * Pull data to project_result.
-     * 
+     *
      * @param projectId the projectId
      * @throws PhaseHandlingException if error occurs
      */
     static void processFinalFixPR(long projectId, Connection conn, boolean toStart) throws SQLException {
     	if (!toStart) {
+        	// Reset price of project
+			AutoPaymentUtil.resetProjectPrice(projectId, conn);
     		populateProjectResult(projectId, conn);
     	}
     }
 
     /**
      * Pull data to project_result.
-     * 
+     *
      * @param projectId the projectId
      * @throws PhaseHandlingException if error occurs
      */
     static void processFinalReviewPR(long projectId, Connection conn, boolean toStart) throws SQLException {
     	if (!toStart) {
+        	// Reset price of project
+			AutoPaymentUtil.resetProjectPrice(projectId, conn);
     		populateProjectResult(projectId, conn);
     	} else {
     		// start this phase
@@ -269,9 +279,9 @@ class PRHelper {
 
     /**
      * Populate final_score, placed and passed_review_ind.
-     * 
+     *
      * @param projectId project id
-     * @param conn connection 
+     * @param conn connection
      * @throws SQLException if error occurs
      */
     private static void populateProjectResult(long projectId, Connection conn) throws SQLException {
@@ -282,7 +292,7 @@ class PRHelper {
     	PreparedStatement updateStmt = null;
     	ResultSet rs = null;
     	try {
-        	// Retrieve all 
+        	// Retrieve all
         	pstmt = conn.prepareStatement(APPEAL_RESPONSE_SELECT_STMT);
         	pstmt.setLong(1, projectId);
         	rs = pstmt.executeQuery();
@@ -292,7 +302,7 @@ class PRHelper {
         		double finalScore = rs.getDouble("final_score");
         		long userId = rs.getLong("user_id");
         		int status = rs.getInt("submission_status_id");
-        		String p = rs.getString("placed");
+        		String p = null; 
 
         		double payment = 0;
         		p = rs.getString("payment");
@@ -305,6 +315,7 @@ class PRHelper {
         		}
 
         		int placed = 0;
+        		p = rs.getString("placed");
         		if (p != null) {
         			try {
         				placed = Integer.parseInt(p);
@@ -336,12 +347,12 @@ class PRHelper {
     		close(pstmt);
     		close(updateStmt);
     	}
-    	
+
     }
 
     /**
      * Close the jdbc resource.
-     * 
+     *
      * @param obj the jdbc resource object
      */
     static void close(Object obj) {

@@ -48,7 +48,6 @@
 			// TODO: Localize the catagory name
 			projectCategories[projectCategories.length - 1]["name"] = "${category.name}";			
 		</c:forEach>
-
 		
 		var projectTypeNamesMap = {};
 		<c:forEach var="projectType" items="${projectTypes}">

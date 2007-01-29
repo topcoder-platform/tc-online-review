@@ -125,7 +125,7 @@ function OnCompleteScorecardClick() {
 													<c:if test='${isReviewerComment || (commentType == "Manager Comment") ||
 															(commentType == "Appeal") || (commentType == "Appeal Response") ||
 															(commentType == "Aggregation Comment") ||
-															((empty isSubmitter) && !(empty submitterCommitted) && (commentType == "Submitter Comment"))}'>
+															((empty isSubmitter) && (not empty submitterCommitted) && (commentType == "Submitter Comment"))}'>
 														<tr class="dark">
 															<td class="value">
 																<c:if test="${firstTime}">
@@ -179,11 +179,19 @@ function OnCompleteScorecardClick() {
 
 												<tr class="highlighted">
 													<td class="value" colspan="5">
-														<html:radio property="review_function[${globalItemIndex}]" value="Accept" />
-														<bean:message key="editAggregationReview.Function.Accept" />
-														<html:radio property="review_function[${globalItemIndex}]" value="Reject" />
-														<bean:message key="editAggregationReview.Function.Reject" /> &#160;
-														<span class="error"><html:errors property="reject_reason[${globalItemIndex}]" prefix="" suffix="" /></span><br />
+														<c:choose>
+															<c:when test="${isSubmitter}">
+																<input type="hidden" name="review_function[${globalItemIndex}]" value="Accept" />
+																<bean:message key="editAggregationReview.EnterComment" /><br />
+															</c:when>
+															<c:otherwise>
+																<html:radio property="review_function[${globalItemIndex}]" value="Accept" />
+																<bean:message key="editAggregationReview.Function.Accept" />
+																<html:radio property="review_function[${globalItemIndex}]" value="Reject" />
+																<bean:message key="editAggregationReview.Function.Reject" /> &#160;
+																<span class="error"><html:errors property="reject_reason[${globalItemIndex}]" prefix="" suffix="" /></span><br />
+															</c:otherwise>
+														</c:choose>
 														<html:textarea rows="3" property="reject_reason[${globalItemIndex}]" cols="20" styleClass="inputTextBox" />
 													</td>
 												</tr>

@@ -5,7 +5,6 @@ package com.cronos.onlinereview.actions;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -29,6 +28,7 @@ import com.topcoder.management.deliverable.UploadType;
 import com.topcoder.management.project.Project;
 import com.topcoder.management.resource.Resource;
 import com.topcoder.management.resource.ResourceManager;
+import com.topcoder.management.resource.ResourceRole;
 import com.topcoder.management.resource.search.ResourceFilterBuilder;
 import com.topcoder.management.review.ReviewEntityNotFoundException;
 import com.topcoder.management.review.ReviewManager;
@@ -37,6 +37,8 @@ import com.topcoder.management.review.data.CommentType;
 import com.topcoder.management.review.data.Item;
 import com.topcoder.management.review.data.Review;
 import com.topcoder.management.review.data.ReviewEditor;
+import com.topcoder.management.review.scoreaggregator.AggregatedSubmission;
+import com.topcoder.management.review.scoreaggregator.ReviewScoreAggregator;
 import com.topcoder.management.review.scorecalculator.CalculationManager;
 import com.topcoder.management.review.scorecalculator.ScoreCalculator;
 import com.topcoder.management.review.scorecalculator.ScorecardMatrix;
@@ -738,6 +740,10 @@ public class ProjectReviewActions extends DispatchAction {
         // Verify that certain requirements are met before proceeding with the Action
         CorrectnessCheckResult verification =
             checkForCorrectReviewId(mapping, request, Constants.VIEW_AGGREGATION_PERM_NAME);
+
+        // Get message resources
+        MessageResources messages = getResources(request);
+
         // If any error has occured, return action forward contained in the result bean
         if (!verification.isSuccessful()) {
             // Need to support view aggregation just by specifying the project id
@@ -745,17 +751,52 @@ public class ProjectReviewActions extends DispatchAction {
             if (!verification.isSuccessful()) {
                 return verification.getForward();
             } else {
-                // Find the latest aggregation for the project
-                ReviewManager reviewManager = ActionsHelper.createReviewManager(request);
+                // Obtain an instance of Resource Manager
+                ResourceManager resMgr = ActionsHelper.createResourceManager(request);
+                // Get the list of all possible resource roles
+                ResourceRole[] allResourceRoles = resMgr.getAllResourceRoles();
+
+                // Create filters to select Aggregators for the project
+                Filter filterProject = ResourceFilterBuilder.createProjectIdFilter(verification.getProject().getId());
+                Filter filterRole = ResourceFilterBuilder.createResourceRoleIdFilter(
+                        ActionsHelper.findResourceRoleByName(allResourceRoles, Constants.AGGREGATOR_ROLE_NAME).getId());
+                // Combine the upper two filter
+                Filter filterAggregators = new AndFilter(filterProject, filterRole);
+                // Fetch all Aggregators for the project
+                Resource[] aggregators = resMgr.searchResources(filterAggregators);
+
+                // If the project does not have any Aggregators,
+                // there cannot be any Aggregation worksheets. Signal about the error to the user
+                if (aggregators.length == 0) {
+                    return ActionsHelper.produceErrorReport(mapping, messages, request,
+                            Constants.VIEW_AGGREGATION_PERM_NAME, "Error.NoAggregations");
+                }
+
+                List resourceIds = new ArrayList();
+
+                for (int i = 0; i < aggregators.length; ++i) {
+                    resourceIds.add(new Long(aggregators[i].getId()));
+                }
+
+                Filter filterReviewers = new InFilter("reviewer", resourceIds);
                 Filter filterCommitted = new EqualToFilter("committed", new Integer(1));
-                Filter filterProject = new EqualToFilter("project", new Long(verification.getProject().getId()));
-                Review[] reviews = reviewManager.searchReviews(new AndFilter(filterProject, filterCommitted), true);
-                Arrays.sort(reviews, new Comparator() {
-                    public int compare(Object o1, Object o2) {
-                        return ((Review) o1).getCreationTimestamp().compareTo(((Review) o2).getCreationTimestamp());
-                    }
-                });
+                // Build final combined filter
+                Filter filter = new AndFilter(filterReviewers, filterCommitted);
+                // Obtain an instance of Review Manager
+                ReviewManager reviewMgr = ActionsHelper.createReviewManager(request);
+                // Fetch all reviews (Aggregations only) for the project
+                Review[] reviews = reviewMgr.searchReviews(filter, true);
+
+                if (reviews.length == 0) {
+                    return ActionsHelper.produceErrorReport(mapping, messages, request,
+                            Constants.VIEW_AGGREGATION_PERM_NAME, "Error.NoAggregations");
+                }
+
+                // Sort reviews in array to find the latest Aggregation worksheet for the project
+                Arrays.sort(reviews, new Comparators.ReviewComparer());
+                // Fetch the most recent review from the array
                 Review review = reviews[reviews.length - 1];
+
                 verification.setReview(review);
                 // Place the review object as attribute in the request
                 request.setAttribute("review", review);
@@ -920,7 +961,7 @@ public class ProjectReviewActions extends DispatchAction {
         // If the user is a Submitter, let underlying JSP page know about this fact
         if (AuthorizationHelper.hasUserRole(request, Constants.SUBMITTER_ROLE_NAME)) {
             isSubmitter = true;
-            request.setAttribute("isSubmitter", new Boolean(isSubmitter));
+            request.setAttribute("isSubmitter", Boolean.valueOf(isSubmitter));
         } else {
             // Otherwise examine the submitter's comment
             if (submitterComment != null) {
@@ -1093,7 +1134,7 @@ public class ProjectReviewActions extends DispatchAction {
 
         // This variable determines if 'Save and Mark Complete' button has been clicked
         final boolean commitRequested = "submit".equalsIgnoreCase(request.getParameter("save"));
-        // Determine if the user is Submitter
+        // Determine if the user is a Submitter
         final boolean isSubmitter = AuthorizationHelper.hasUserRole(request, Constants.SUBMITTER_ROLE_NAME);
 
         // Get the form defined for this action
@@ -1160,8 +1201,11 @@ public class ProjectReviewActions extends DispatchAction {
                         // Set the reason of reject/accept (i.e. actual comment's text)
                         userComment.setComment(rejectReasons[itemIdx]);
 
-                        // If review function equals to anythning but "Accept", then regard the item as rejected
-                        if ("Accept".equalsIgnoreCase(reviewFunctions[itemIdx])) {
+                        // If review function equals to anythning but "Accept", regard the item as
+                        // rejected. If current user is a Submitter, disregard a value in the
+                        // reviewFunctions array and always treat it as containing "Accept" string
+                        // (thus, Submitter can never reject aggregation worksheet)
+                        if (isSubmitter || "Accept".equalsIgnoreCase(reviewFunctions[itemIdx])) {
                             userComment.setExtraInfo("Accept");
                         } else {
                             userComment.setExtraInfo("Reject");
@@ -1171,6 +1215,11 @@ public class ProjectReviewActions extends DispatchAction {
                     }
                 }
             }
+        }
+
+        // A safety check: reset 'rejected' flag if the current user is a Submitter
+        if (isSubmitter) {
+        	rejected = false;
         }
 
         boolean validationSucceeded = (commitRequested) ? validateAggregationReviewScorecard(
@@ -2552,9 +2601,9 @@ public class ProjectReviewActions extends DispatchAction {
         boolean managerEdit = false;
         // Check if review has been committed
         if (review.isCommitted()) {
-            // If user has a Manager role, put special flag to the request,
+            // If user has a Manager or Global Manager role, put special flag to the request
             // indicating that we need "Manager Edit"
-            if (AuthorizationHelper.hasUserRole(request, Constants.MANAGER_ROLE_NAME)) {
+            if (AuthorizationHelper.hasUserRole(request, Constants.MANAGER_ROLE_NAMES)) {
                 request.setAttribute("managerEdit", Boolean.TRUE);
                 managerEdit = true;
             } else {
@@ -2731,8 +2780,8 @@ public class ProjectReviewActions extends DispatchAction {
         Phase phase = ActionsHelper.getPhase(phases, true, phaseName);
         // Check that the phase in question is really active (open)
         if (phase == null) {
-            if (AuthorizationHelper.hasUserRole(request, Constants.MANAGER_ROLE_NAME)) {
-                // Manager can edit review in any phase
+            if (AuthorizationHelper.hasUserRole(request, Constants.MANAGER_ROLE_NAMES)) {
+                // Managers can edit reviews in any phase
                 phase = ActionsHelper.getPhase(phases, false, phaseName);
             } else {
                 return ActionsHelper.produceErrorReport(
@@ -3016,15 +3065,25 @@ public class ProjectReviewActions extends DispatchAction {
 
         boolean validationSucceeded = (commitRequested || managerEdit) ?
                 validateGenericScorecard(request, scorecardTemplate, review, managerEdit) : true;
+        // For Manager Edits this variable indicates whether recomputation of
+        // final aggregated score for the submitter may be required
+        boolean possibleFinalScoreUpdate = false;
 
         // If the user has requested to complete the review
         if (validationSucceeded && (commitRequested || managerEdit)) {
             // Obtain an instance of CalculationManager
             CalculationManager scoreCalculator = new CalculationManager();
             // Compute scorecard's score
-            review.setScore(new Float(scoreCalculator.getScore(scorecardTemplate, review)));
+            float newScore = scoreCalculator.getScore(scorecardTemplate, review);
+            // If score has been updated during Manager Edit, additional actions may need to be taken
+            if ("Review".equals(reviewType) && managerEdit &&
+                    (review.getScore() == null || review.getScore().floatValue() != newScore)) {
+                possibleFinalScoreUpdate = true;
+            }
+            // Update scorecard's score
+            review.setScore(new Float(newScore));
+            // Set the completed status of the review
             if (commitRequested) {
-                // Set the completed status of the review
                 review.setCommitted(true);
             }
         } else if (previewRequested) {
@@ -3049,6 +3108,11 @@ public class ProjectReviewActions extends DispatchAction {
             } else {
                 revMgr.updateReview(review, Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
             }
+        }
+
+        // This operation will possibly update final aggregated score for the submitter
+        if (possibleFinalScoreUpdate) {
+            updateFinalAggregatedScore(request, project, phase, verification.getSubmission());
         }
 
         if (validationSucceeded && commitRequested) {
@@ -3086,6 +3150,100 @@ public class ProjectReviewActions extends DispatchAction {
         // Forward to project details page
         return ActionsHelper.cloneForwardAndAppendToPath(
                 mapping.findForward(Constants.SUCCESS_FORWARD_NAME), "&pid=" + verification.getProject().getId());
+    }
+
+    /**
+     * This static method updates final score for the particular submitter. The score is updated
+     * only in the case, there was originally such score for the submitter (i.e. the project in the
+     * Aggregation or past-Aggregation phase). This operation is needed in the situation when
+     * Manager edits review scorecard and this operation results in scorecard's score change.
+     * Current version of the method does not take into account the possibility of changing places
+     * for submitters.
+     *
+     * @param request
+     *            the http request. Used internally by some helper functions.
+     * @param project
+     *            a project the submission was originally made for.
+     * @param reviewPhase
+     *            phase of type &quot;Review&quot; used internally to retrieve reviewers' resources.
+     * @param submission
+     *            a submission in question, i.e. the one that needs its final score updated.
+     * @throws IllegalArgumentException
+     *             if any of the parameters are <code>null</code>.
+     * @throws BaseException
+     *             if any unexpected error occurs during final score update.
+     */
+    private static void updateFinalAggregatedScore(
+            HttpServletRequest request, Project project, Phase reviewPhase, Submission submission)
+        throws BaseException {
+        // Validate parameters
+        ActionsHelper.validateParameterNotNull(request, "request");
+        ActionsHelper.validateParameterNotNull(project, "project");
+        ActionsHelper.validateParameterNotNull(reviewPhase, "reviewPhase");
+        ActionsHelper.validateParameterNotNull(submission, "submission");
+
+        // Obtain an instance of Resource Manager
+        ResourceManager resMgr = ActionsHelper.createResourceManager(request);
+        // Get a resource identificating the submitter for this review
+        Resource submitter = resMgr.getResource(submission.getUpload().getOwner());
+
+        // Get final aggregated score for this submitter, if any
+        String finalScore = (String) submitter.getProperty("Final Score");
+
+        // If there is no final (post Appeals Response) score for the submitter yet,
+        // there is nothing to do anymore
+        if (finalScore == null || finalScore.trim().length() == 0) {
+            return;
+        }
+
+        // Build a filter to select resources (i.e. reviewers) for Review phase
+        Filter filterPhase = ResourceFilterBuilder.createPhaseIdFilter(reviewPhase.getId());
+        // Retrieve reviewers that did the reviews
+        Resource[] reviewers = resMgr.searchResources(filterPhase);
+
+        if (reviewers.length == 0) {
+            // Impossible situation, but a safety-check prevents application from crashing
+            return;
+        }
+
+        List reviewerIds = new ArrayList();
+
+        for (int i = 0; i < reviewers.length; ++i) {
+            reviewerIds.add(new Long(reviewers[i].getId()));
+        }
+
+        // Prepare filters
+        Filter filterReviewers = new InFilter("reviewer", reviewerIds);
+        Filter filterSubmission = new EqualToFilter("submission", new Long(submission.getId()));
+        Filter filterCommitted = new EqualToFilter("committed", new Integer(1));
+
+        // Prepare final combined filter
+        Filter filter = new AndFilter(Arrays.asList(new Filter[] {filterReviewers, filterSubmission, filterCommitted}));
+        // Obtain an instance of Review Manager
+        ReviewManager revMgr = ActionsHelper.createReviewManager(request);
+        // Retrieve an array of reviews
+        Review[] reviews = revMgr.searchReviews(filter, true);
+
+        if (reviews.length == 0) {
+            // Another generally impossible situation guarded by a safety-check just in case
+            return;
+        }
+
+        float[] scores = new float[reviews.length];
+        // Prepare needed parameters for score aggregator
+        for (int i = 0; i < reviews.length; ++i) {
+            scores[i] = (reviews[i].getScore() != null) ? reviews[i].getScore().floatValue() : 0.0f;
+        }
+
+        // Obtain an instance of Review Score Aggregator
+        ReviewScoreAggregator aggregator = ActionsHelper.createScoreAggregator(request);
+        // Aggregate scores for the current submission
+        AggregatedSubmission[] aggrSubm = aggregator.aggregateScores(new float[][] {scores});
+
+        // Update this submitter's final score with aggregated one
+        submitter.setProperty("Final Score", String.valueOf(aggrSubm[0].getAggregatedScore()));
+        // Store updated information in the database
+        resMgr.updateResource(submitter, String.valueOf(AuthorizationHelper.getLoggedInUserId(request)));
     }
 
     /**
@@ -3342,7 +3500,7 @@ public class ProjectReviewActions extends DispatchAction {
             } else {
                 isAllowed = true;
             }
-        } 
+        }
 
         if (!isAllowed) {
             return ActionsHelper.produceErrorReport(
@@ -3620,7 +3778,7 @@ public class ProjectReviewActions extends DispatchAction {
             Group group = scorecardTemplate.getGroup(groupIdx);
             for (int sectionIdx = 0; sectionIdx < group.getNumberOfSections(); ++sectionIdx) {
                 Section section = group.getSection(sectionIdx);
-                for (int questionIdx = 0; questionIdx < section.getNumberOfQuestions(); ++questionIdx, ++itemIdx) {
+                for (int questionIdx = 0; questionIdx < section.getNumberOfQuestions(); ++questionIdx) {
                     Question question = section.getQuestion(questionIdx);
                     long questionId = question.getId();
 
@@ -3655,6 +3813,7 @@ public class ProjectReviewActions extends DispatchAction {
                                         "Error.saveAggregationReview.RejectReason.Absent");
                             }
                         }
+                        ++itemIdx;
                     }
                 }
             }

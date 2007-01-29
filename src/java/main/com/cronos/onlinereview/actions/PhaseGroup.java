@@ -217,6 +217,15 @@ public class PhaseGroup {
     private Review aggregation = null;
 
     /**
+     * This member variable holds a value that determines whether a link to commit Aggregation
+     * Review can be displayed for the current phase group.
+     *
+     * @see #isDisplayAggregationReviewLink()
+     * @see #setDisplayAggregationReviewLink(boolean)
+     */
+    private boolean displayAggregationReviewLink = false;
+
+    /**
      * This member variable holds a value that determines whether aggregation scorecard has been
      * committed.
      *
@@ -693,6 +702,27 @@ public class PhaseGroup {
      */
     public void setAggregation(Review aggregation) {
         this.aggregation = aggregation;
+    }
+
+    /**
+     * This method determines whether a link to commit Aggregation Review can be displayed for this
+     * phase group.
+     *
+     * @return <code>true</code> if a link can be displayed, <code>false</code> if it cannot.
+     */
+    public boolean isDisplayAggregationReviewLink() {
+        return this.displayAggregationReviewLink;
+    }
+
+    /**
+     * This method sets status flag that determines whether a link to commit Aggregation Review can
+     * be displayed for this phase group.
+     *
+     * @param displayAggregationReviewLink
+     *            a value indicating whether a link can be displayed.
+     */
+    public void setDisplayAggregationReviewLink(boolean displayAggregationReviewLink) {
+        this.displayAggregationReviewLink = displayAggregationReviewLink;
     }
 
     /**
