@@ -21,7 +21,6 @@ import java.util.List;
 import java.util.Map;
 
 import com.topcoder.db.connectionfactory.DBConnectionException;
-import java.sql.Types;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -46,8 +45,6 @@ import com.cronos.onlinereview.deliverables.SubmitterCommentDeliverableChecker;
 import com.cronos.onlinereview.deliverables.TestCasesDeliverableChecker;
 import com.cronos.onlinereview.external.UserRetrieval;
 import com.cronos.onlinereview.external.impl.DBUserRetrieval;
-import com.cronos.onlinereview.phases.AggregationPhaseHandler;
-import com.cronos.onlinereview.phases.AggregationReviewPhaseHandler;
 import com.cronos.onlinereview.phases.AppealsPhaseHandler;
 import com.cronos.onlinereview.phases.ApprovalPhaseHandler;
 import com.cronos.onlinereview.phases.AutoPaymentUtil;
@@ -65,7 +62,6 @@ import com.cronos.onlinereview.phases.PRSubmissionPhaseHandler;
 import com.topcoder.date.workdays.DefaultWorkdaysFactory;
 import com.topcoder.date.workdays.Workdays;
 import com.topcoder.db.connectionfactory.ConfigurationException;
-import com.topcoder.db.connectionfactory.DBConnectionException;
 import com.topcoder.db.connectionfactory.DBConnectionFactory;
 import com.topcoder.db.connectionfactory.DBConnectionFactoryImpl;
 import com.topcoder.db.connectionfactory.UnknownConnectionException;
@@ -113,6 +109,8 @@ import com.topcoder.management.review.DefaultReviewManager;
 import com.topcoder.management.review.ReviewManager;
 import com.topcoder.management.review.data.Comment;
 import com.topcoder.management.review.data.CommentType;
+import com.topcoder.management.review.scoreaggregator.ReviewScoreAggregator;
+import com.topcoder.management.review.scoreaggregator.ReviewScoreAggregatorConfigException;
 import com.topcoder.management.scorecard.PersistenceException;
 import com.topcoder.management.scorecard.ScorecardManager;
 import com.topcoder.management.scorecard.ScorecardManagerImpl;
@@ -126,7 +124,6 @@ import com.topcoder.project.phases.PhaseType;
 import com.topcoder.project.phases.template.DefaultPhaseTemplate;
 import com.topcoder.project.phases.template.PhaseTemplate;
 import com.topcoder.project.phases.template.PhaseTemplatePersistence;
-import com.topcoder.project.phases.template.StartDateGenerationException;
 import com.topcoder.project.phases.template.StartDateGenerator;
 import com.topcoder.project.phases.template.persistence.XmlPhaseTemplatePersistence;
 import com.topcoder.project.phases.template.startdategenerator.RelativeWeekTimeStartDateGenerator;
@@ -1714,9 +1711,9 @@ public class ActionsHelper {
     }
 
     /**
-     * This static method returns the array of resources for the currently logged in user associated with
-     * the specified phase. The list of all resources for the currently logged in user is retrieved
-     * from the <code>HttpServletRequest</code> object specified by <code>request</code>
+     * This static method returns the array of resources for the currently logged in user associated
+     * with the specified phase. The list of all resources for the currently logged in user is
+     * retrieved from the <code>HttpServletRequest</code> object specified by <code>request</code>
      * parameter. Method <code>gatherUserRoles(HttpServletRequest, long)</code> should be called
      * prior making a call to this method.
      *
@@ -1772,7 +1769,7 @@ public class ActionsHelper {
      * @param phases
      *            an array of pahses to search deliverables for.
      * @param resources
-     *            an array of all resource? for the current project.
+     *            an array of all resources for the current project.
      * @param winnerExtUserId
      *            an External User ID of the user who is the winner for the project. If there is no
      *            winner for the project, this parameter must be negative.
@@ -1826,8 +1823,10 @@ public class ActionsHelper {
         // Additionally filter deliverables because sometimes deliverables
         // for another phases get though the above filter
         for (int i = 0; i < allDeliverables.length; ++i) {
+            // Get a deliverable for the current iteration
+            final Deliverable deliverable = allDeliverables[i];
             // Get an ID of resource this deliverable is for
-            final long deliverableResourceId = allDeliverables[i].getResource();
+            final long deliverableResourceId = deliverable.getResource();
             Resource forResource = null;
             int j;
             // Find a resource this deliverable is for
@@ -1864,6 +1863,40 @@ public class ActionsHelper {
                 }
             }
 
+            // If current deliverable is Aggregation Review, and it is assigned to one of the reviewers,
+            // check to make sure this reviewer is not also an aggregator
+            if (deliverable.getName().equalsIgnoreCase(Constants.AGGREGATION_REV_DELIVERABLE_NAME) &&
+                    (resourceRole.equalsIgnoreCase(Constants.REVIEWER_ROLE_NAME) ||
+                    resourceRole.equalsIgnoreCase(Constants.ACCURACY_REVIEWER_ROLE_NAME) ||
+                    resourceRole.equalsIgnoreCase(Constants.FAILURE_REVIEWER_ROLE_NAME) ||
+                    resourceRole.equalsIgnoreCase(Constants.STRESS_REVIEWER_ROLE_NAME))) {
+                final String originalExtId = (String) forResource.getProperty("External Reference ID");
+
+                for (j = 0; j < resources.length; ++j) {
+                    // Skip resource that is being checked
+                    if (forResource == resources[j]) {
+                        continue;
+                    }
+
+                    // Get a resource for the current iteration
+                    final Resource otherResource = resources[j];
+                    // Verify whether this resource is an Aggregator, and skip it if it isn't
+                    if (!otherResource.getResourceRole().getName().equalsIgnoreCase(Constants.AGGREGATOR_ROLE_NAME)) {
+                        continue;
+                    }
+
+                    String otherExtId = (String) resources[j].getProperty("External Reference ID");
+                    // If appropriate aggregator's resource has been found, stop the search
+                    if (originalExtId.equals(otherExtId)) {
+                        break;
+                    }
+                }
+                // Skip this deliverable if it is assigned to aggregator
+                if (j != resources.length) {
+                    continue;
+                }
+            }
+
             // If there is a winner for the project,
             // verify that the current deliverable is not for non-winning submitter
             if (winnerExtUserId > 0) {
@@ -1878,7 +1911,7 @@ public class ActionsHelper {
             }
 
             // Add current deliverable to the list of deliverables
-            deliverables.add(allDeliverables[i]);
+            deliverables.add(deliverable);
         }
 
         // Convert the list of deliverables into array and return it
@@ -2397,6 +2430,40 @@ public class ActionsHelper {
     }
 
     /**
+     * This static method helps to create an object of the <code>ReviewScoreAggregator</code>
+     * class.
+     *
+     * @return a newly created instance of the class.
+     * @param request
+     *            an <code>HttpServletRequest</code> obejct, where created
+     *            <code>ReviewScoreAggregator</code> object can be stored to let reusing it later
+     *            for the same request.
+     * @throws IllegalArgumentException
+     *             if <code>request</code> parameter is <code>null</code>.
+     * @throws ReviewScoreAggregatorConfigException
+     *             if any of the four required algorithm objects cannot be instantiated or the
+     *             configuration is invalid.
+     */
+    public static ReviewScoreAggregator createScoreAggregator(HttpServletRequest request)
+        throws ReviewScoreAggregatorConfigException {
+        // Validate parameter
+        validateParameterNotNull(request, "request");
+
+        // Try retrieving Review Score Aggregator from the request's attribute first
+        ReviewScoreAggregator aggregator = (ReviewScoreAggregator) request.getAttribute("reviewScoreAggregator");
+        // If this is the first time this method is called for the request,
+        // create a new instance of the object
+        if (aggregator == null) {
+            aggregator = new ReviewScoreAggregator("com.topcoder.management.review.scoreaggregator");
+            // Place newly-created object into the request as attribute
+            request.setAttribute("reviewScoreAggregator", aggregator);
+        }
+
+        // Return the Review Score Aggregator object
+        return aggregator;
+    }
+
+    /**
      * This static method helps to create an object of the <code>ScorecardManager</code> class.
      *
      * @return a newly created instance of the class.
@@ -2665,7 +2732,7 @@ public class ActionsHelper {
      *
      * @return a newly created instance of the class.
      * @param projectType
-     *            a project type for which the PhaseTemplate object should be created, 
+     *            a project type for which the PhaseTemplate object should be created,
      *            can be null if start date generator type doesn't matter
      * @throws IllegalArgumentException
      *             if <code>request</code> parameter is <code>null</code>.
@@ -2685,20 +2752,19 @@ public class ActionsHelper {
             generator = new StartDateGenerator() {
                 public Date generateStartDate() {
                     return new Date();
-                }                
+                }
             };
         }
-        
+
         // Create workdays instance
         Workdays workdays = (new DefaultWorkdaysFactory()).createWorkdaysInstance();
-        
+
         // Create phase template instance
         PhaseTemplate phaseTemplate = new DefaultPhaseTemplate(persistence, generator, workdays );
-        
+
         return phaseTemplate;
     }
-    
-    
+
     /**
      * Sets the searchable fields to the search bundle.
      *
@@ -2733,27 +2799,50 @@ public class ActionsHelper {
 
         searchBundle.setSearchableFields(fields);
     }
-    
+
     /**
      * Set Completion Timestamp while the project turn to completed, Cancelled - Failed Review or Deleted status.
-     * 
+     *
      * @param project the project instance
      * @param newProjectStatus new project status
      * @param format the date format
      */
-    static void setProjectCompletionDate(Project project, ProjectStatus newProjectStatus, Format format) {
+    static void setProjectCompletionDate(Project project, ProjectStatus newProjectStatus, Format format)
+    throws BaseException {
     	String name = newProjectStatus.getName();
     	if ("Completed".equals(name) || "Cancelled - Failed Review".equals(name) || "Deleted".equals(name)) {
             if (format == null) {
                 format = new SimpleDateFormat(ConfigHelper.getDateFormat());
             }
     		project.setProperty("Completion Timestamp", format.format(new Date()));
+
+    		if (!"Deleted".equals(name)) {
+    			Connection conn = null;
+	        	PreparedStatement ps = null;
+	    		try {
+	    	        DBConnectionFactory dbconn;
+	    				dbconn = new DBConnectionFactoryImpl(DB_CONNECTION_NAMESPACE);
+	    	        conn = dbconn.createConnection();
+	    	    	ps = conn.prepareStatement("update project_result set rating_ind = 1 where project_id = ? and valid_submission_ind = 1");
+	    	    	ps.setLong(1, project.getId());
+	    	    	ps.execute();
+	    		} catch(SQLException e) {
+	    			throw new BaseException("Failed to update project result for rating_ind", e);
+	    		} catch (UnknownConnectionException e) {
+	    			throw new BaseException("Failed to return DBConnection", e);
+				} catch (ConfigurationException e) {
+	    			throw new BaseException("Failed to return DBConnection", e);
+				} finally {
+	    			close(ps);
+	    			close(conn);
+	    		}
+    		}
     	}
     }
-    
+
     /**
      * Set Rated Timestamp with the end date of submission phase.
-     * 
+     *
      * @param project the project instance
      * @param format the date format
      */
@@ -2804,11 +2893,11 @@ public class ActionsHelper {
         throws BaseException {
         // Prepare bean that will be returned as the result
         CorrectnessCheckResult result = new CorrectnessCheckResult();
-    
+
         if (permission == null || permission.trim().length() == 0) {
             permission = null;
         }
-    
+
         // Verify that Project ID was specified and denotes correct project
         String pidParam = request.getParameter("pid");
         if (pidParam == null || pidParam.trim().length() == 0) {
@@ -2817,9 +2906,9 @@ public class ActionsHelper {
             // Return the result of the check
             return result;
         }
-    
+
         long pid;
-    
+
         try {
             // Try to convert specified pid parameter to its integer representation
             pid = Long.parseLong(pidParam, 10);
@@ -2829,7 +2918,7 @@ public class ActionsHelper {
             // Return the result of the check
             return result;
         }
-    
+
         // Obtain an instance of Project Manager
         ProjectManager projMgr = createProjectManager(request);
         // Get Project by its id
@@ -2841,15 +2930,15 @@ public class ActionsHelper {
             // Return the result of the check
             return result;
         }
-    
+
         // Store Project object in the result bean
         result.setProject(project);
         // Place project as attribute in the request
         request.setAttribute("project", project);
-    
+
         // Gather the roles the user has for current request
         AuthorizationHelper.gatherUserRoles(request, pid);
-    
+
         // If permission parameter was not null or empty string ...
         if (permission != null) {
             // ... verify that this permission is granted for currently logged in user
@@ -2860,13 +2949,13 @@ public class ActionsHelper {
                 return result;
             }
         }
-    
+
         return result;
     }
 
     /**
      * Populate project_result and component_inquiry for new submitters.
-     * 
+     *
      * @param project the project
      * @param newSubmitters new submitters external ids.
      * @throws BaseException if error occurs
@@ -2888,24 +2977,24 @@ public class ActionsHelper {
 	        long componentInquiryId = getNextComponentInquiryId(conn, newSubmitters.size());
 	    	long componentId = getProjectLongValue(project, "Component ID");
 	    	long phaseId = 111 + project.getProjectCategory().getId();
-	    	long version = getProjectLongValue(project, "Version ID");	        
+	    	long version = getProjectLongValue(project, "Version ID");
 
 	        // add reliability_ind and old_reliability
 	    	ps = conn.prepareStatement("INSERT INTO project_result " +
-	                "(project_id, user_id, rating_ind, reliability_ind, valid_submission_ind, old_rating, old_reliability) " +
-	                "values (?, ?, ?, ?, ?, ?, ?)");
+	                "(project_id, user_id, rating_ind, valid_submission_ind, old_rating, old_reliability) " +
+	                "values (?, ?, ?, ?, ?, ?)");
 
 	    	componentInquiryStmt = conn.prepareStatement("INSERT INTO component_inquiry " +
 	                "(component_inquiry_id, component_id, user_id, project_id, phase, tc_user_id, agreed_to_terms, rating, version, create_time) " +
 	                "values (?, ?, ?, ?, ?, ?, 1, ?, ?, current)");
-      	
+
 	        existStmt = conn.prepareStatement("SELECT 1 FROM PROJECT_RESULT WHERE user_id = ? and project_id = ?");
 
 	        existCIStmt = conn.prepareStatement("SELECT 1 FROM component_inquiry WHERE user_id = ? and project_id = ?");
-	
+
 	        ratingStmt = conn.prepareStatement("SELECT rating from user_rating where user_id = ? and phase_id = " +
 	                "(select 111+project_category_id from project where project_id = ?)");
-	        
+
 	        reliabilityStmt = conn.prepareStatement("SELECT rating from user_reliability where user_id = ? and phase_id = " +
 	                "(select 111+project_category_id from project where project_id = ?)");
 
@@ -2932,7 +3021,7 @@ public class ActionsHelper {
 		            ratingStmt.setString(1, userId);
 		            ratingStmt.setLong(2, projectId);
 		            rs = ratingStmt.executeQuery();
-		
+
 		            if (rs.next()) {
 		                oldRating = rs.getLong(1);
 		            }
@@ -2946,7 +3035,7 @@ public class ActionsHelper {
 		            reliabilityStmt.setString(1, userId);
 		            reliabilityStmt.setLong(2, projectId);
 		            rs = reliabilityStmt.executeQuery();
-		
+
 		            if (rs.next()) {
 		                oldReliability = rs.getDouble(1);
 		            }
@@ -2954,23 +3043,22 @@ public class ActionsHelper {
 	            }
 
 	            // add project_result
-	            if (!existPR) {	            	
+	            if (!existPR) {
 			        ps.setLong(1, projectId);
 			        ps.setString(2, userId);
 			        ps.setLong(3, 0);
 			        ps.setLong(4, 0);
-			        ps.setLong(5, 0);
 
 			        if (oldRating == 0) {
-			            ps.setNull(6, Types.DOUBLE);
+			            ps.setNull(5, Types.DOUBLE);
 			        } else {
-			            ps.setDouble(6, oldRating);
+			            ps.setDouble(5, oldRating);
 			        }
 
 			        if (oldReliability == 0) {
-			            ps.setNull(7, Types.DOUBLE);
+			            ps.setNull(6, Types.DOUBLE);
 			        } else {
-			            ps.setDouble(7, oldReliability);
+			            ps.setDouble(6, oldReliability);
 			        }
 			        ps.addBatch();
 	            }
@@ -3028,12 +3116,12 @@ public class ActionsHelper {
 			throw new BaseException("Failed to recaculateScreeningReviewerPayments for project " + projectId, e);
 		} finally {
 			close(conn);
-		}    	
+		}
     }
 
     /**
      * Retrieve and update next ComponentInquiryId.
-     *  
+     *
      * @param conn the connection
      * @param count the count of new submitters
      * @return next component_inquiry_id
@@ -3042,7 +3130,7 @@ public class ActionsHelper {
     	String tableName = ConfigHelper.getPropertyValue("component_inquiry.tablename", "sequence_object");
     	String nameField = ConfigHelper.getPropertyValue("component_inquiry.name", "name");
     	String currentValueField = ConfigHelper.getPropertyValue("component_inquiry.current_value", "current_value");
-    	String getNextID = "SELECT max(" + currentValueField + ") FROM " + tableName + 
+    	String getNextID = "SELECT max(" + currentValueField + ") FROM " + tableName +
     				" WHERE " + nameField + " = 'main_sequence'";
     	String updateNextID = "UPDATE " + tableName + " SET " + currentValueField + " = ? " +
     				" WHERE " + nameField + " = 'main_sequence'" + " AND " + currentValueField + " = ? ";
@@ -3078,7 +3166,7 @@ public class ActionsHelper {
 
     /**
      * Return project property long value.
-     * 
+     *
      * @param project the project object
      * @param name the proeprty name
      * @return the long value, 0 if it does not exist
@@ -3089,12 +3177,12 @@ public class ActionsHelper {
     		return 0;
     	} else {
     		return Long.parseLong(obj.toString());
-    	}    	
+    	}
     }
 
     /**
      * Close jdbc resource.
-     * 
+     *
      * @param obj jdbc resource
      */
     private static void close(Object obj) {

@@ -8,7 +8,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -107,36 +106,6 @@ import com.topcoder.util.file.fieldconfig.TemplateFields;
 public class ProjectDetailsActions extends DispatchAction {
 
     /**
-     * This class implements <code>Comparator</code> interface and is used to sort Uploads in
-     * array. It sorts Uploads by their modification time, from the least recent to the most recent
-     * ones.
-     */
-    static class UploadComparer implements Comparator {
-
-        /**
-         * This method compares its two arguments for order. This method expects that type of
-         * objects passed as arguments is <code>Upload</code>.
-         * <p>
-         * This method implements the <code>compare</code> method from the
-         * <code>Comparator</code> interface.
-         * </p>
-         *
-         * @return a negative integer, zero, or a positive integer as the first argument is less
-         *         than, equal to, or greater than the second respectively.
-         * @param o1
-         *            the first object to be compared.
-         * @param o2
-         *            the second object to be compared.
-         */
-        public int compare(Object o1, Object o2) {
-            Upload up1 = (Upload)o1;
-            Upload up2 = (Upload)o2;
-
-            return up1.getModificationTimestamp().compareTo(up2.getModificationTimestamp());
-        }
-    }
-
-    /**
      * Creates a new instance of the <code>ProjectDetailsActions</code> class.
      */
     public ProjectDetailsActions() {
@@ -200,7 +169,7 @@ public class ProjectDetailsActions extends DispatchAction {
         com.topcoder.project.phases.Project phProj = phaseMgr.getPhases(project.getId());
         phProj.calcEndDate();
         // Get all phases for the current project
-        Phase[] phases = phProj.getAllPhases();
+        Phase[] phases = phProj.getAllPhases(new Comparators.ProjectPhaseComparer());
         // Obtain an array of all active phases of the project
         Phase[] activePhases = ActionsHelper.getActivePhases(phases);
 
@@ -504,6 +473,12 @@ public class ProjectDetailsActions extends DispatchAction {
                         ActionsHelper.getMostRecentSubmissions(ActionsHelper.createUploadManager(request), project);
                 }
                 if (submissions == null &&
+                        AuthorizationHelper.hasUserPermission(request, Constants.VIEW_SCREENER_SUBM_PERM_NAME) &&
+                        ActionsHelper.isInOrAfterPhase(phases, phaseIdx, Constants.SCREENING_PHASE_NAME)) {
+                    submissions =
+                        ActionsHelper.getMostRecentSubmissions(ActionsHelper.createUploadManager(request), project);
+                }
+                if (submissions == null &&
                         AuthorizationHelper.hasUserPermission(request, Constants.VIEW_MY_SUBM_PERM_NAME)) {
                     // Obtain an instance of Upload Manager
                     UploadManager upMgr = ActionsHelper.createUploadManager(request);
@@ -520,12 +495,6 @@ public class ProjectDetailsActions extends DispatchAction {
                         new AndFilter(Arrays.asList(new Filter[] {filterProject, filterStatus, filterResource}));
 
                     submissions = upMgr.searchSubmissions(filter);
-                }
-                if (submissions == null &&
-                        AuthorizationHelper.hasUserPermission(request, Constants.VIEW_SCREENER_SUBM_PERM_NAME) &&
-                        ActionsHelper.isInOrAfterPhase(phases, phaseIdx, Constants.SCREENING_PHASE_NAME)) {
-                    submissions =
-                        ActionsHelper.getMostRecentSubmissions(ActionsHelper.createUploadManager(request), project);
                 }
 
                 phaseGroup.setSubmissions(submissions);
@@ -898,29 +867,27 @@ public class ProjectDetailsActions extends DispatchAction {
 
             if (phaseGroup.getAppFunc().equalsIgnoreCase(Constants.AGGREGATION_APP_FUNC) &&
                     phaseName.equalsIgnoreCase(Constants.AGGREGATION_REVIEW_PHASE_NAME) &&
-                    phaseGroup.getAggregation() != null) {
+                    phaseGroup.getAggregation() != null && phaseGroup.getAggregation().isCommitted()) {
                 Review aggregation = phaseGroup.getAggregation();
 
-                if (aggregation.isCommitted()) {
-                    int j = 0;
-                    for (; j < aggregation.getNumberOfComments(); ++j) {
+                boolean reviewCommitted = true;
+
+                for (int j = 0; j < aggregation.getNumberOfComments(); ++j) {
                         // Get a comment for the current iteration
                         Comment comment = aggregation.getComment(j);
-                        String commentType = comment.getCommentType().getName();
 
-                        if (commentType.equalsIgnoreCase("Aggregation Review Comment") ||
-                                commentType.equalsIgnoreCase("Submitter Comment")) {
+                    if (ActionsHelper.isAggregationReviewComment(comment)) {
                             String extraInfo = (String) comment.getExtraInfo();
                             if (!("Approved".equalsIgnoreCase(extraInfo) ||
                                     "Rejected".equalsIgnoreCase(extraInfo))) {
+                                reviewCommitted = false;
                                 break;
                             }
                         }
                     }
-                    if (j == aggregation.getNumberOfComments()) {
-                        phaseGroup.setAggregationReviewCommitted(true);
-                    }
-                }
+
+                phaseGroup.setDisplayAggregationReviewLink(!phaseStatus.equalsIgnoreCase(Constants.SCHEDULED_PH_STATUS_NAME));
+                phaseGroup.setAggregationReviewCommitted(reviewCommitted);
             }
 
             if (phaseGroup.getAppFunc().equalsIgnoreCase(Constants.FINAL_FIX_APP_FUNC) &&
@@ -950,7 +917,7 @@ public class ProjectDetailsActions extends DispatchAction {
                             new Filter[] {/*filterStatus, */filterType, filterResource}));
                     finalFixes = upMgr.searchUploads(filter);
 
-                    Arrays.sort(finalFixes, new UploadComparer());
+                    Arrays.sort(finalFixes, new Comparators.UploadComparer());
 
                     finalFixIdx = 0;
                 }
@@ -1039,9 +1006,12 @@ public class ProjectDetailsActions extends DispatchAction {
         request.setAttribute("sendTLNotifications", (sendTLNotifications) ? "On" : "Off");
         request.setAttribute("passingMinimum", new Float(75.0)); // TODO: Take this value from scorecard template
 
-        // Check permissions
+        // Check resource roles
         request.setAttribute("isManager",
-                Boolean.valueOf(AuthorizationHelper.hasUserRole(request, Constants.MANAGER_ROLE_NAME)));
+                Boolean.valueOf(AuthorizationHelper.hasUserRole(request, Constants.MANAGER_ROLE_NAMES)));
+        request.setAttribute("isSubmitter",
+        		Boolean.valueOf(AuthorizationHelper.hasUserRole(request, Constants.SUBMITTER_ROLE_NAME)));
+        // Check permissions
         request.setAttribute("isAllowedToEditProjects",
                 Boolean.valueOf(AuthorizationHelper.hasUserPermission(request, Constants.EDIT_PROJECT_DETAILS_PERM_NAME)));
         request.setAttribute("isAllowedToContactPM",
@@ -1071,8 +1041,6 @@ public class ProjectDetailsActions extends DispatchAction {
                 Boolean.valueOf(AuthorizationHelper.hasUserPermission(request, Constants.UPLOAD_TEST_CASES_PERM_NAME)));
         request.setAttribute("isAllowedToPerformAggregation",
                 Boolean.valueOf(AuthorizationHelper.hasUserPermission(request, Constants.PERFORM_AGGREGATION_PERM_NAME)));
-        request.setAttribute("isAllowedToPerformAggregationReview",
-                Boolean.valueOf(AuthorizationHelper.hasUserPermission(request, Constants.PERFORM_AGGREG_REVIEW_PERM_NAME)));
         request.setAttribute("isAllowedToUploadFF",
                 Boolean.valueOf(AuthorizationHelper.hasUserPermission(request, Constants.PERFORM_FINAL_FIX_PERM_NAME) &&
                         AuthorizationHelper.getLoggedInUserId(request) == winnerExtUserId));
@@ -1082,6 +1050,41 @@ public class ProjectDetailsActions extends DispatchAction {
         request.setAttribute("isAllowedToPerformApproval",
                 Boolean.valueOf(ActionsHelper.getPhase(phases, true, Constants.APPROVAL_PHASE_NAME) != null &&
                         AuthorizationHelper.hasUserPermission(request, Constants.PERFORM_APPROVAL_PERM_NAME)));
+
+        // Checking whether some user is allowed to submit his approval or comments for the
+        // Aggregation worksheet needs more robust verification since this check includes a test
+        // against whether a user is a submitter, and if it is, whether he is also a winner
+        boolean allowedToReviewAggregation = false;
+
+        if (AuthorizationHelper.hasUserPermission(request, Constants.PERFORM_AGGREG_REVIEW_PERM_NAME) &&
+                !AuthorizationHelper.hasUserPermission(request, Constants.PERFORM_AGGREGATION_PERM_NAME)) {
+            allowedToReviewAggregation = true;
+        }
+        if (allowedToReviewAggregation && AuthorizationHelper.hasUserRole(request, Constants.SUBMITTER_ROLE_NAME)) {
+            final String winnerExtId = (String) project.getProperty("Winner External Reference ID");
+
+            // Set 'allowed' status to false temporarily.
+            // If current user is a winning submitter, this variable will be reset back to true
+            allowedToReviewAggregation = false;
+
+            // Iterate over all 'my' resources looking for 'Submitter' ones and comparing them to the
+            // value of the winner for the current project (if there is any winner already)
+            for (int i = 0; i < myResources.length; ++i) {
+                // Get a resource for the current iteration
+                final Resource resource = myResources[i];
+                // Examine only Submitters, skip all other ones
+                if (!resource.getResourceRole().getName().equalsIgnoreCase(Constants.SUBMITTER_ROLE_NAME)) {
+                    continue;
+                }
+                // This resource is a submitter;
+                // compare its external user ID to the official project's winner's one
+                if (myResources[i].getProperty("External Reference ID").equals(winnerExtId)) {
+                        allowedToReviewAggregation = true;
+                    break;
+                }
+            }
+        }
+        request.setAttribute("isAllowedToPerformAggregationReview", Boolean.valueOf(allowedToReviewAggregation));
 
         return mapping.findForward(Constants.SUCCESS_FORWARD_NAME);
     }
@@ -1651,7 +1654,7 @@ public class ProjectDetailsActions extends DispatchAction {
                     request, Constants.PERFORM_FINAL_FIX_PERM_NAME, "Error.OnlyOneFinalFix");
         }
 
-        Arrays.sort(uploads, new UploadComparer());
+        Arrays.sort(uploads, new Comparators.UploadComparer());
         Upload oldUpload = (uploads.length != 0) ? uploads[uploads.length - 1] : null;
 
         Upload upload = new Upload();
