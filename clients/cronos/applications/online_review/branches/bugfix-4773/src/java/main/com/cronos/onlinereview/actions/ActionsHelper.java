@@ -1335,8 +1335,7 @@ public class ActionsHelper {
 
         // Get all phases for the project
         com.topcoder.project.phases.Project phProj = manager.getPhases(project.getId());
-        Phase[] phases = phProj.getAllPhases();
-        return phases;
+        return (phProj != null) ? phProj.getAllPhases() : new Phase[0];
     }
 
     /**
