@@ -1,0 +1,522 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE TYPES SYSTEM "magic.dtd">
+<TYPES>
+    <TYPE>
+        <NAME>Rich text format</NAME>
+        <EXTENSION>rtf</EXTENSION>
+        <MIME>application/rtf</MIME>
+        <MAGICTEXT>
+            <STRING>{\rtf</STRING>
+        </MAGICTEXT>
+    </TYPE>
+	<TYPE>
+		<NAME>Java class file</NAME>
+		<EXTENSION>class</EXTENSION>
+		<MAGIC>
+			<VALUE>0xca</VALUE>
+			<VALUE>0xfe</VALUE>
+			<VALUE>0xba</VALUE>
+			<VALUE>0xbe</VALUE>
+		</MAGIC>
+	</TYPE>
+	<TYPE>
+		<NAME>Windows executable</NAME>
+		<EXTENSION>exe</EXTENSION>
+		<EXTENSION>dll</EXTENSION>
+		<MIME>application/x-ms-dos-executable</MIME>
+		<MAGIC>
+			<STRING>MZ</STRING>
+			<OFFSET>0x50</OFFSET>
+			<STRING>This</STRING>
+		</MAGIC>
+		<MAGIC>
+			<STRING>MZ</STRING>
+			<OFFSET>0x4e</OFFSET>
+			<STRING>This</STRING>
+		</MAGIC>
+	</TYPE>
+	<TYPE>
+		<NAME>DOS executable</NAME>
+		<EXTENSION>exe</EXTENSION>
+		<MIME>application/x-ms-dos-executable</MIME>
+		<MAGIC>
+			<STRING>MZ</STRING>
+		</MAGIC>
+	</TYPE>
+	<TYPE>
+		<NAME>DOS COM executable</NAME>
+		<EXTENSION>com</EXTENSION>
+		<MIME>application/x-ms-dos-executable</MIME>
+		<MAGIC>
+			<VALUE>0xe9</VALUE>
+		</MAGIC>
+	</TYPE>
+	<TYPE>
+		<NAME>ELF Linux executable</NAME>
+		<MIME>application/x-executable-file</MIME>
+		<MAGIC>
+			<VALUE>0177</VALUE>
+			<STRING>ELF</STRING>
+		</MAGIC>
+	</TYPE>
+	<TYPE>
+		<NAME>GIF image</NAME>
+		<EXTENSION>gif</EXTENSION>
+		<MIME>image/gif</MIME>
+		<MAGIC>
+			<STRING>GIF8</STRING>
+		</MAGIC>
+	</TYPE>
+	<TYPE>
+		<NAME>JPEG image</NAME>
+		<EXTENSION>jpg</EXTENSION>
+		<EXTENSION>jpeg</EXTENSION>
+		<MIME>image/jpeg</MIME>
+		<MAGIC>
+			<VALUE>0xff</VALUE>
+			<VALUE>0xd8</VALUE>
+			<OFFSET>-2</OFFSET>
+			<VALUE>0xff</VALUE>
+			<VALUE>0xd9</VALUE>
+		</MAGIC>
+	</TYPE>
+	<TYPE>
+		<NAME>BMP image</NAME>
+		<EXTENSION>bmp</EXTENSION>
+		<MIME>image/x-bmp</MIME>
+		<MAGIC>
+			<STRING>BM</STRING>
+		</MAGIC>
+	</TYPE>
+	<TYPE>
+		<NAME>TIFF image</NAME>
+		<EXTENSION>tif</EXTENSION>
+		<MIME>image/tiff</MIME>
+		<MAGIC>
+			<STRING>IIN1</STRING>
+		</MAGIC>
+		<MAGIC>
+			<STRING>MM</STRING>
+			<VALUE>0x00</VALUE>
+			<VALUE>0x2a</VALUE>
+		</MAGIC>
+		<MAGIC>
+			<STRING>II</STRING>
+			<VALUE>0x2a</VALUE>
+			<VALUE>0x00</VALUE>
+		</MAGIC>
+	</TYPE>
+	<TYPE>
+		<NAME>PNG image</NAME>
+		<EXTENSION>png</EXTENSION>
+		<MIME>image/x-png</MIME>
+		<MAGIC>
+			<OFFSET>1</OFFSET>
+			<STRING>PNG</STRING>
+		</MAGIC>
+	</TYPE>
+	<TYPE>
+		<NAME>MPEG video</NAME>
+		<EXTENSION>mpg</EXTENSION>
+		<EXTENSION>mpeg</EXTENSION>
+		<MIME>video/mpeg</MIME>
+		<MAGIC>
+			<VALUE>0</VALUE>
+			<VALUE>0</VALUE>
+			<VALUE>1</VALUE>
+			<VALUE>0xb3</VALUE>
+		</MAGIC>
+		<MAGIC>
+			<VALUE>0</VALUE>
+			<VALUE>0</VALUE>
+			<VALUE>1</VALUE>
+			<VALUE>0xba</VALUE>
+		</MAGIC>
+	</TYPE>
+	<TYPE>
+		<NAME>FLI video</NAME>
+		<EXTENSION>fli</EXTENSION>
+		<MIME>video/fli</MIME>
+		<MAGIC>
+			<OFFSET>4</OFFSET>
+			<VALUE>0xAF</VALUE>
+			<VALUE>0x11</VALUE>
+		</MAGIC>
+	</TYPE>
+	<TYPE>
+		<NAME>FLIC video</NAME>
+		<EXTENSION>flc</EXTENSION>
+		<MIME>video/flc</MIME>
+		<MAGIC>
+			<OFFSET>4</OFFSET>
+			<VALUE>0xAF</VALUE>
+			<VALUE>0x12</VALUE>
+		</MAGIC>
+	</TYPE>
+	<TYPE>
+		<NAME>Quicktime video</NAME>
+		<EXTENSION>mov</EXTENSION>
+		<MIME>video/quicktime</MIME>
+		<MAGIC>
+			<OFFSET>4</OFFSET>
+			<STRING>moov</STRING>
+		</MAGIC>
+		<MAGIC>
+			<OFFSET>4</OFFSET>
+			<STRING>mdat</STRING>
+		</MAGIC>
+	</TYPE>
+	<TYPE>
+		<NAME>ZIP archive</NAME>
+		<EXTENSION>zip</EXTENSION>
+		<MIME>application/zip</MIME>
+		<MAGIC>
+			<STRING>PK</STRING>
+		</MAGIC>
+	</TYPE>
+	<TYPE>
+		<NAME>ARJ archive</NAME>
+		<EXTENSION>arj</EXTENSION>
+		<MIME>application/x-arj</MIME>
+		<MAGIC>
+			<VALUE>0xea</VALUE>
+			<VALUE>0x60</VALUE>
+		</MAGIC>
+	</TYPE>
+	<TYPE>
+		<NAME>RAR archive</NAME>
+		<EXTENSION>rar</EXTENSION>
+		<MIME>application/x-rar</MIME>
+		<MAGIC>
+			<STRING>Rar!</STRING>
+		</MAGIC>
+	</TYPE>
+	<TYPE>
+		<NAME>ACE archive</NAME>
+		<EXTENSION>ace</EXTENSION>
+		<MIME>application/x-ace</MIME>
+		<MAGIC>
+		    <OFFSET>9</OFFSET>
+			<STRING>ACE</STRING>
+		</MAGIC>
+	</TYPE>
+	<TYPE>
+		<NAME>TAR archive</NAME>
+		<EXTENSION>tar</EXTENSION>
+		<MIME>application/x-tar</MIME>
+		<MAGIC>
+			<OFFSET>257</OFFSET>
+			<STRING>ustar</STRING>
+			<VALUE>0</VALUE>
+		</MAGIC>
+	</TYPE>
+	<TYPE>
+		<NAME>GTAR archive</NAME>
+		<EXTENSION>gtar</EXTENSION>
+		<MIME>application/x-gtar</MIME>
+		<MAGIC>
+			<OFFSET>257</OFFSET>
+			<STRING>ustar</STRING>
+			<VALUE>040</VALUE>
+			<VALUE>040</VALUE>
+			<VALUE>0</VALUE>
+		</MAGIC>
+	</TYPE>
+	<TYPE>
+		<NAME>LHARC archive</NAME>
+		<EXTENSION>lha</EXTENSION>
+		<MIME>application/x-lha</MIME>
+		<MAGIC>
+			<OFFSET>2</OFFSET>
+			<STRING>-lh0-</STRING>
+		</MAGIC>
+		<MAGIC>
+			<OFFSET>2</OFFSET>
+			<STRING>-lh1-</STRING>
+		</MAGIC>
+		<MAGIC>
+			<OFFSET>2</OFFSET>
+			<STRING>-lz1-</STRING>
+		</MAGIC>
+		<MAGIC>
+			<OFFSET>2</OFFSET>
+			<STRING>-lz4-</STRING>
+		</MAGIC>
+		<MAGIC>
+			<OFFSET>2</OFFSET>
+			<STRING>-lz5-</STRING>
+		</MAGIC>
+		<MAGIC>
+			<OFFSET>2</OFFSET>
+			<STRING>-lhd-</STRING>
+		</MAGIC>
+		<MAGIC>
+			<OFFSET>2</OFFSET>
+			<STRING>-lh2-</STRING>
+		</MAGIC>
+		<MAGIC>
+			<OFFSET>2</OFFSET>
+			<STRING>-lh3-</STRING>
+		</MAGIC>
+		<MAGIC>
+			<OFFSET>2</OFFSET>
+			<STRING>-lh4-</STRING>
+		</MAGIC>
+		<MAGIC>
+			<OFFSET>2</OFFSET>
+			<STRING>-lh5-</STRING>
+		</MAGIC>
+	</TYPE>
+	<TYPE>
+		<NAME>UC2 archive</NAME>
+		<EXTENSION>uc2</EXTENSION>
+		<MIME>application/data</MIME>
+		<MAGIC>
+			<STRING>UC2</STRING>
+			<VALUE>0x1a</VALUE>
+		</MAGIC>
+	</TYPE>
+	<TYPE>
+		<NAME>GZIP archive</NAME>
+		<EXTENSION>gz</EXTENSION>
+		<MIME>application/x-gzip</MIME>
+		<MAGIC>
+			<VALUE>037</VALUE>
+			<VALUE>0213</VALUE>
+		</MAGIC>
+	</TYPE>
+	<TYPE>
+		<NAME>BZIP archive</NAME>
+		<EXTENSION>bz</EXTENSION>
+		<MIME>application/x-bzip</MIME>
+		<MAGIC>
+			<STRING>BZ</STRING>
+		</MAGIC>
+	</TYPE>
+	<TYPE>
+		<NAME>CMF sound</NAME>
+		<EXTENSION>cmf</EXTENSION>
+		<MIME>audio/x-cmf</MIME>
+		<MAGIC>
+			<STRING>CTMF</STRING>
+		</MAGIC>
+	</TYPE>
+	<TYPE>
+		<NAME>Creative Voice File sound</NAME>
+		<EXTENSION>voc</EXTENSION>
+		<MIME>audio/x-midi</MIME>
+		<MAGIC>
+			<STRING>Creative Voice File</STRING>
+		</MAGIC>
+	</TYPE>
+	<TYPE>
+		<NAME>Real audio sound</NAME>
+		<EXTENSION>ra</EXTENSION>
+		<MIME>audio/x-pn-realaudio</MIME>
+		<MAGIC>
+			<VALUE>0x2e</VALUE>
+			<VALUE>0x72</VALUE>
+			<VALUE>0x61</VALUE>
+			<VALUE>0xfd</VALUE>
+		</MAGIC>
+	</TYPE>
+	<TYPE>
+		<NAME>MIDI sound</NAME>
+		<EXTENSION>mid</EXTENSION>
+		<MIME>audio/midi</MIME>
+		<MAGIC>
+			<STRING>MThd</STRING>
+		</MAGIC>
+	</TYPE>
+	<TYPE>
+		<NAME>WAVE sound</NAME>
+		<EXTENSION>wav</EXTENSION>
+		<MIME>audio/x-wav</MIME>
+		<MAGIC>
+			<STRING>RIFF</STRING>
+		</MAGIC>
+	</TYPE>
+	<TYPE>
+		<NAME>MP3 sound</NAME>
+		<EXTENSION>mp3</EXTENSION>
+		<MIME>audio/mpeg</MIME>
+		<MAGIC>
+			<VALUE>0xFF</VALUE>
+			<MASK>0xF0 0xF0</MASK>
+		</MAGIC>
+	</TYPE>
+	<TYPE>
+		<NAME>CPP file</NAME>
+		<EXTENSION>cpp</EXTENSION>
+		<MIME>text/cpp</MIME>
+		<MAGICTEXT>
+			<STRING>//</STRING>
+		</MAGICTEXT>
+		<MAGICTEXT>
+			<STRING>#include</STRING>
+		</MAGICTEXT>
+	</TYPE>
+	<TYPE>
+		<NAME>MS-DOS batch file text</NAME>
+		<EXTENSION>bat</EXTENSION>
+		<MAGICTEXT>
+			<STRING>@echo off</STRING>
+		</MAGICTEXT>
+	</TYPE>
+	<TYPE>
+		<NAME>Unix script</NAME>
+		<EXTENSION>sh</EXTENSION>
+		<MIME>application/x-sh</MIME>
+		<MAGICTEXT>
+			<STRING>#!</STRING>
+		</MAGICTEXT>
+	</TYPE>
+	<TYPE>
+		<NAME>HTML file</NAME>
+		<EXTENSION>htm</EXTENSION>
+		<EXTENSION>html</EXTENSION>
+		<EXTENSION>shtml</EXTENSION>
+		<MIME>text/html</MIME>
+		<MAGICTEXT>
+			<INTERVAL>1 5</INTERVAL>
+			<STRING>HTML</STRING>
+			<STRING>HEAD</STRING>
+		</MAGICTEXT>
+		<MAGICTEXT>
+			<INTERVAL>1 5</INTERVAL>
+			<STRING>html</STRING>
+			<STRING>head</STRING>
+		</MAGICTEXT>
+		<MAGICTEXT>
+			<INTERVAL>1 5</INTERVAL>
+			<STRING>HTML</STRING>
+			<STRING>BODY</STRING>
+		</MAGICTEXT>
+		<MAGICTEXT>
+			<INTERVAL>1 5</INTERVAL>
+			<STRING>html</STRING>
+			<STRING>body</STRING>
+		</MAGICTEXT>
+	</TYPE>
+	<TYPE>
+		<NAME>Latex file</NAME>
+		<EXTENSION>tex</EXTENSION>
+		<MAGICTEXT>
+			<STRING>\input</STRING>
+		</MAGICTEXT>
+		<MAGICTEXT>
+			<STRING>\section</STRING>
+		</MAGICTEXT>
+		<MAGICTEXT>
+			<STRING>\setlength</STRING>
+		</MAGICTEXT>
+		<MAGICTEXT>
+			<STRING>\documentstyle</STRING>
+		</MAGICTEXT>
+		<MAGICTEXT>
+			<STRING>\documentclass</STRING>
+		</MAGICTEXT>
+		<MAGICTEXT>
+			<STRING>\chapter</STRING>
+		</MAGICTEXT>
+		<MAGICTEXT>
+			<STRING>\relax</STRING>
+		</MAGICTEXT>
+		<MAGICTEXT>
+			<STRING>\contentsline</STRING>
+		</MAGICTEXT>
+		<MAGICTEXT>
+			<STRING>\indexentry</STRING>
+		</MAGICTEXT>
+	</TYPE>
+	<TYPE>
+		<NAME>XML file</NAME>
+		<EXTENSION>xml</EXTENSION>
+		<MIME>text/xml</MIME>
+		<MAGICTEXT>
+			<COLUMN>2</COLUMN>
+			<STRING>?xml</STRING>
+		</MAGICTEXT>
+	</TYPE>
+	<TYPE>
+		<NAME>Rich Text Format</NAME>
+		<EXTENSION>rtf</EXTENSION>
+		<MIME>application/rtf</MIME>
+		<MAGICTEXT>
+			<COLUMN>2</COLUMN>
+			<STRING>\rtf</STRING>
+		</MAGICTEXT>
+	</TYPE>
+	<TYPE>
+		<NAME>Java file</NAME>
+		<EXTENSION>java</EXTENSION>
+		<MIME>text/java</MIME>
+		<MAGICTEXT>
+			<INTERVAL>1 5</INTERVAL>
+			<STRING>/**</STRING>
+		</MAGICTEXT>
+		<MAGICTEXT>
+			<INTERVAL>1 5</INTERVAL>
+			<STRING>import</STRING>
+		</MAGICTEXT>
+		<MAGICTEXT>
+			<INTERVAL>1 5</INTERVAL>
+			<STRING>package </STRING>
+		</MAGICTEXT>
+	</TYPE>
+	<TYPE>
+		<NAME>Microsoft Word document file</NAME>
+		<EXTENSION>doc</EXTENSION>
+		<EXTENSION>dot</EXTENSION>
+		<MIME>text/vnd.ms-word</MIME>
+		<MAGIC>
+			<OFFSET>-480</OFFSET>
+			<STRING>Microsoft Word</STRING>
+		</MAGIC>
+		<MAGIC>
+			<OFFSET>2080</OFFSET>
+			<STRING>Microsoft Word 6.0 Document</STRING>
+		</MAGIC>
+		<MAGIC>
+			<OFFSET>2080</OFFSET>
+			<STRING>Documento Microsoft Word 6</STRING>
+		</MAGIC>
+		<MAGIC>
+			<OFFSET>2112</OFFSET>
+			<STRING>MSWordDoc</STRING>
+		</MAGIC>
+		<MAGIC>
+			<VALUE>0x31</VALUE>
+			<VALUE>0xbe</VALUE>
+			<VALUE>0</VALUE>
+			<VALUE>0</VALUE>
+		</MAGIC>
+		<MAGIC>
+			<STRING>PO^Q</STRING>
+		</MAGIC>
+	</TYPE>
+	<TYPE>
+		<NAME>Microsoft Excel document file</NAME>
+		<EXTENSION>xls</EXTENSION>
+		<MIME>text/vnd.ms-excel</MIME>
+		<MAGIC>
+			<OFFSET>-480</OFFSET>
+			<STRING>Microsoft Excel</STRING>
+		</MAGIC>
+		<MAGIC>
+			<OFFSET>2080</OFFSET>
+			<STRING>Microsoft Excel 5.0 Worksheet</STRING>
+		</MAGIC>
+		<MAGIC>
+			<OFFSET>2114</OFFSET>
+			<STRING>Biff5</STRING>
+		</MAGIC>
+	</TYPE>
+	<TYPE>
+		<NAME>Portable Document Format document</NAME>
+		<EXTENSION>pdf</EXTENSION>
+		<MAGIC>
+			<STRING>%PDF-</STRING>
+		</MAGIC>
+	</TYPE>
+</TYPES>
