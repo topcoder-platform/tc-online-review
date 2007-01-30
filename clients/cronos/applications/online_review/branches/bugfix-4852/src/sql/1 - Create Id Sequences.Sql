@@ -117,3 +117,17 @@ CREATE TABLE comp_version_dates
 
 CREATE INDEX compverdates_idx2 ON comp_version_dates(comp_vers_id, phase_id);
 CREATE INDEX compverdates_idx1 ON comp_version_dates(status_id);
+
+
+
+
+CREATE TABLE rboard_payment
+(
+  project_id                        DECIMAL(10)                   NOT NULL,
+  phase_id                          DECIMAL(5)                    NOT NULL,
+  primary_ind                       DECIMAL(1)                    NOT NULL,
+  amount                            DECIMAL(7, 2),
+  modify_date                       DATETIME YEAR TO FRACTION(3),
+  create_date                       DATETIME YEAR TO FRACTION(3),
+  PRIMARY KEY (project_id, phase_id, primary_ind) CONSTRAINT RBOARD_PAYMENT_PK
+);
