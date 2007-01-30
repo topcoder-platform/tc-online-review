@@ -49,18 +49,45 @@
 			projectCategories[projectCategories.length - 1]["name"] = "${category.name}";
 		</c:forEach>
 
+		var screeningScorecards = [];
+		<c:forEach var="scorecard" items="${screeningScorecards}">
+			screeningScorecards.push({});
+			screeningScorecards[screeningScorecards.length - 1]["id"] = ${scorecard.id};
+			screeningScorecards[screeningScorecards.length - 1]["category"] = ${scorecard.category};	
+			screeningScorecards[screeningScorecards.length - 1]["name"] = "${scorecard.name} ${scorecard.version}";	
+		</c:forEach>
+
+		var reviewScorecards = [];
+		<c:forEach var="scorecard" items="${reviewScorecards}">
+			reviewScorecards.push({});
+			reviewScorecards[reviewScorecards.length - 1]["id"] = ${scorecard.id};
+			reviewScorecards[reviewScorecards.length - 1]["category"] = ${scorecard.category};	
+			reviewScorecards[reviewScorecards.length - 1]["name"] = "${scorecard.name} ${scorecard.version}";	
+		</c:forEach>
+		
+		var approvalScorecards = [];
+		<c:forEach var="scorecard" items="${approvalScorecards}">
+			approvalScorecards.push({});
+			approvalScorecards[approvalScorecards.length - 1]["id"] = ${scorecard.id};
+			approvalScorecards[approvalScorecards.length - 1]["category"] = ${scorecard.category};	
+			approvalScorecards[approvalScorecards.length - 1]["name"] = "${scorecard.name} ${scorecard.version}";		
+		</c:forEach>
+
 		var projectTypeNamesMap = {};
 		<c:forEach var="projectType" items="${projectTypes}">
 			projectTypeNamesMap["${projectType.id}"] = "${projectType.name}";
-		</c:forEach>
-
+		</c:forEach>		
 
 		var phaseTypeIdsMap = {};
 		<c:forEach var="phaseType" items="${phaseTypes}">
 			phaseTypeIdsMap["${phaseType.name}"] = "${phaseType.id}";
 		</c:forEach>
+		
+		var screeningScorecardNode;
+		var reviewScorecardNode;
+		var approvalScorecardNode;
 
-		/*
+		/*	
 		 * TODO: Document it
 		 */
 		function getUniqueId() {
@@ -102,9 +129,35 @@
 						projectCategories[i]["name"], projectCategories[i]["id"]);
 				}
 			}
+		} 
+
+
+		function onProjectCategoryChange(projectCategoryNode) {
+			changeScorecardByCategory(document.getElementsByName("phase_screening_scorecard[0]")[0], projectCategoryNode.value);
+			changeScorecardByCategory(document.getElementsByName("phase_review_scorecard[0]")[0], projectCategoryNode.value);
+			changeScorecardByCategory(document.getElementsByName("phase_approval_scorecard[0]")[0], projectCategoryNode.value);
+			changeScorecardByCategory(screeningScorecardNode, projectCategoryNode.value);
+			changeScorecardByCategory(reviewScorecardNode, projectCategoryNode.value);
+			changeScorecardByCategory(approvalScorecardNode, projectCategoryNode.value);
 		}
 
-		/**
+		function changeScorecardByCategory(scorecardNode, category) {
+			if (scorecardNode) {
+				// Clear combo options
+				while (scorecardNode.length > 0) {
+					scorecardNode.remove(scorecardNode.length - 1);
+				}
+				// Add new combo options
+				for (var i = 0; i < screeningScorecards.length; i++) {
+					if (category == screeningScorecards[i]["category"]) {
+						addComboOption(scorecardNode, 
+							screeningScorecards[i]["name"], screeningScorecards[i]["id"]);
+					}
+				}
+			}
+		}
+
+		/*
 		 * This function adds a new row to resources table.
 		 */
 		function addNewResource() {
@@ -269,6 +322,14 @@
 				patchAllChildParamIndexes(criterionRow, lastPhaseIndex);
 				// Insert criterion row into proper position - after new phase row
 				dojo.dom.insertAfter(criterionRow, phaseRow);
+				
+ 				if (phaseName == "Screening") {
+					screeningScorecardNode = criterionRow.getElementsByTagName("select")[0];
+				} else if (phaseName == "Review") {
+					reviewScorecardNode = criterionRow.getElementsByTagName("select")[0];
+				} else if (phaseName == "Approval") {
+					approvalScorecardNode = criterionRow.getElementsByTagName("select")[0];
+				}
 			}
 		}
 
@@ -731,7 +792,8 @@
 								<tr class="light">
 									<td class="valueB"><bean:message key="editProject.ProjectDetails.Category" /></td>
 									<td class="value" nowrap="nowrap">
-										<html:select styleClass="inputBox" property="project_category" style="width:150px;">
+										<html:select styleClass="inputBox" property="project_category" style="width:150px;"
+												onchange="onProjectCategoryChange(this);">				
 											<c:forEach items="${projectCategories}" var="category">
 												<c:if test="${category.projectType.id eq projectForm.map['project_type']}">
 													<html:option key='ProjectCategory.${fn:replace(category.name, " ", "")}' value="${category.id}" />
