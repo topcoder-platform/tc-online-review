@@ -2566,7 +2566,26 @@ public class ProjectDetailsActions extends DispatchAction {
                     delivName.equalsIgnoreCase(Constants.STRS_TEST_CASES_DELIVERABLE_NAME)) {
                 links[i] = "UploadTestCase.do?method=uploadTestCase&pid=" + deliverable.getProject();
             } else if (delivName.equalsIgnoreCase(Constants.APPEAL_RESP_DELIVERABLE_NAME)) {
-                // TODO: Assign links for Appeal Responses
+                // Skip deliverables with empty Submission ID field,
+                // as no links can be generated for such deliverables
+                if (deliverable.getSubmission() == null) {
+                    continue;
+                }
+
+                if (allScorecardTypes == null) {
+                    // Get all scorecard types
+                    allScorecardTypes = ActionsHelper.createScorecardManager(request).getAllScorecardTypes();
+                }
+
+                Review review = findReviewForSubmission(ActionsHelper.createReviewManager(request),
+                        ActionsHelper.findScorecardTypeByName(allScorecardTypes, "Review"),
+                        deliverable.getSubmission(), deliverable.getResource(), false);
+
+                // If review for the submission is absent, something is wrong
+                // and no link for this deliverable can be generated
+                if (review != null) {
+                    links[i] = "ViewReview.do?method=viewReview&rid=" + review.getId();
+                }
             } else if (delivName.equalsIgnoreCase(Constants.AGGREGATION_DELIVERABLE_NAME)) {
                 // Skip deliverables with empty Submission ID field,
                 // as no links can be generated for such deliverables
