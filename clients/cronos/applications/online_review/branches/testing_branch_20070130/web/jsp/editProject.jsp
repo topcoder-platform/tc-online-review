@@ -729,7 +729,7 @@
 		<tr valign="top">
 			<!-- Left Column Begins -->
 			<td width="180">
-				<jsp:include page="/includes/inc_leftnav.jsp" />
+				<jsp:include page="/includes/global_left.jsp" />
 			</td>
 			<!-- Left Column Ends -->
 

@@ -512,7 +512,7 @@
 		<cvs package="web/src/main/com/topcoder/web/jsp/includes/global_left.jsp"
        		dest="${build_distdir}"/>
         <copy file="${build_distdir}/web/src/main/com/topcoder/web/jsp/includes/global_left.jsp" 
-        	tofile="${webdir}/includes/inc_leftnav.jsp" overwrite="true"/>
+        	tofile="${webdir}/includes/global_left.jsp" overwrite="true"/>
 
 		<cvs package="web/resources/taglib/nav.tld" dest="${build_distdir}"/>
         <copy file="${build_distdir}/web/resources/taglib/nav.tld" 
