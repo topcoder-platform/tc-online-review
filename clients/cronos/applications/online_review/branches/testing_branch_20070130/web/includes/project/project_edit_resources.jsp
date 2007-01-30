@@ -15,10 +15,10 @@
 		<td class="header"><bean:message key="editProject.Resources.Paid"/></td>
 		<td class="headerC"><!-- @ --></td>
 	</tr>
-	<c:forEach var="resourceIdx" begin="0" end="${fn:length(projectForm.map['resources_role']) - 1}">
-		<tr class="light" style="${projectForm.map['resources_action'][resourceIdx] eq 'delete' ? 'display:none' : ''}">
+	<c:forEach var="resourceIdx" varStatus="resourceStatus" begin="0" end="${fn:length(projectForm.map['resources_role']) - 1}">
+		<tr class="${(resourceStatus.index % 2 == 0) ? 'light' : 'dark'}" style="${projectForm.map['resources_action'][resourceIdx] eq 'delete' ? 'display:none' : ''}">
 			<td class="value" nowrap="nowrap">
-				<html:select styleClass="inputBox" property="resources_role[${resourceIdx}]" 
+				<html:select styleClass="inputBox" property="resources_role[${resourceIdx}]"
 						style="width:150px;" onchange="onResourceRoleChange(this.parentNode.parentNode);">
 					<html:option key="editProject.Resources.SelectRole" value="-1" />
 					<c:forEach items="${requestScope.resourceRoles}" var="role">
@@ -33,9 +33,9 @@
 									<html:option value="${projectForm.map['phase_js_id'][phaseIdx]}">${projectForm.map['phase_number'][phaseIdx]}</html:option>
 								</c:if>
 							</c:forEach>
-						</c:if>	
+						</c:if>
 					</c:forEach>
-				</html:select>			
+				</html:select>
 				<div name="role_validation_msg" class="error" style="display:none"></div>
 			</td>
 			<td class="value">
@@ -61,9 +61,9 @@
 			</td>
 			<td class="valueC" nowrap="nowrap">
 				<c:if test="${resourceIdx eq 0}">
-					<html:img srcKey="editProject.Resources.AddResource.img" altKey="editProject.Resources.AddResource.alt" onclick="addNewResource();" />
+					<html:img srcKey="editProject.Resources.AddResource.img" altKey="editProject.Resources.AddResource.alt" onclick="addNewResource();" style="cursor:hand;" />
 				</c:if>
-				<html:img style="${(resourceIdx eq 0) ? 'display: none;' : ''}" srcKey="editProject.Resources.DeleteResource.img" altKey="editProject.Resources.DeleteResource.alt" onclick="deleteResource(this.parentNode.parentNode);" />
+				<html:img style="cursor:hand;${(resourceIdx eq 0) ? 'display: none;' : ''}" srcKey="editProject.Resources.DeleteResource.img" altKey="editProject.Resources.DeleteResource.alt" onclick="deleteResource(this.parentNode.parentNode);" />
 				<html:hidden property="resources_action[${resourceIdx}]" />
 				<html:hidden property="resources_id[${resourceIdx}]" />
 			</td>
