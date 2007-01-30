@@ -1747,6 +1747,8 @@ public class ProjectActions extends DispatchAction {
         // Fetch projects from the database. These projects will require further grouping
         Project[] ungroupedProjects = (projectsFilter != null) ? manager.searchProjects(projectsFilter) :
                 manager.getUserProjects(AuthorizationHelper.getLoggedInUserId(request));
+        // Sort fetched projects. Currently sorting is done by projects' names only, in ascending order
+        Arrays.sort(ungroupedProjects, new Comparators.ProjectNameComparer());
         //currentDate = new Date();
         //logger.log(Level.ERROR, "done fetching listProjects" + dateFormat.format(currentDate));
         Resource[] allMyResources = null;
@@ -1822,8 +1824,8 @@ public class ProjectActions extends DispatchAction {
             Date[] pheds = new Date[categoryCounts[i]]; // End date of every first active phase
             Date[] preds = new Date[categoryCounts[i]]; // Projects' end dates
 
-            // No need to collect any Resources or Roles
-            // if the list of projects is not just "My" Projects
+            // No need to collect any Resources or Roles if
+            // the list of projects is not just "My" Projects
             Resource[][] myRss = (myProjects) ? new Resource[categoryCounts[i]][] : null;
             String[] rols = (myProjects) ? new String[categoryCounts[i]] : null;
 
