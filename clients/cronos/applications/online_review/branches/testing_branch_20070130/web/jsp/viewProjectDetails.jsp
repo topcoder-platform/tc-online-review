@@ -32,18 +32,13 @@
 		src="<html:rewrite href='/js/or/ajax1.js' />"><!-- @ --></script>
 
 <script language="JavaScript" type="text/javascript">
-	// send the Ajax request
+	/**
+	 * This function is designed to send AJAX requests for timeline notification setting change
+	 */
 	function setTimelineNotification(pid, chbox) {
-		var targetStatus;
-		if (chbox.checked == true) {
-			// DO NOT be confused here
-			// at the very moment the checkbox is clicked, the Inactive scorecard's "checked" status is "on"
-			targetStatus = "On";
-		} else {
-			// at the very moment the checkbox is clicked, the Active scorecard's "checked" status is "off"
-			targetStatus = "Off";
-		}
-		// assemble the request XML
+		chbox.disabled = true; // Disable the checkbox temporarily
+		var targetStatus = (chbox.checked) ? "On" : "Off";
+		// Assemble the request XML
 		var content =
 			'<?xml version="1.0" ?>' +
 			'<request type="SetTimelineNotification">' +
@@ -60,21 +55,20 @@
 		// Send the AJAX request
 		sendRequest(content,
 			function (result, respXML) {
-				// operation succeeded, change the status of corresponding checkbox
-				if (chbox.checked) {
-					chbox.checked = false;
-				} else if (!chbox.checked){
-					chbox.checked = true;
-				}
+				// Operation succeeded; do nothing, but enable the checkbox back
+				chbox.disabled = false;
 			},
 			function (result, respXML) {
-				// operation failed, alert the error message to the user
+				// Operation failed, alert the error message to the user
 				alert("An error occured while setting the Timeline change notification: " + result);
+				// Checkbox's status needs to be reset
+				chbox.checked = !chbox.checked;
+				// And finally, enable the checkbox
+				chbox.disabled = false;
 			}
 		);
 	}
 </script>
-
 </head>
 
 <body>
