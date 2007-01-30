@@ -164,12 +164,18 @@ public class ProjectDetailsActions extends DispatchAction {
 
         // Obtain an instance of Phase Manager
         PhaseManager phaseMgr = ActionsHelper.createPhaseManager(request, false);
-
-        // Calculate the date when this project is supposed to end
         com.topcoder.project.phases.Project phProj = phaseMgr.getPhases(project.getId());
-        phProj.calcEndDate();
-        // Get all phases for the current project
-        Phase[] phases = phProj.getAllPhases(new Comparators.ProjectPhaseComparer());
+        Phase[] phases;
+
+        if (phProj != null) {
+            // Calculate the date when this project is supposed to end
+            phProj.calcEndDate();
+            // Get all phases for the current project
+            phases = phProj.getAllPhases(new Comparators.ProjectPhaseComparer());
+        } else {
+            phases = new Phase[0];
+        }
+
         // Obtain an array of all active phases of the project
         Phase[] activePhases = ActionsHelper.getActivePhases(phases);
 
@@ -235,7 +241,7 @@ public class ProjectDetailsActions extends DispatchAction {
 
         Date[] originalStart = new Date[phases.length];
         Date[] originalEnd = new Date[phases.length];
-        long projectStartTime = phProj.getStartDate().getTime() / (60 * 1000);
+        long projectStartTime = (phProj != null) ? (phProj.getStartDate().getTime() / (60 * 1000)) : 0;
         // The following two arrays are used to display Gantt chart
         long[] ganttOffsets = new long[phases.length];
         long[] ganttLengths = new long[phases.length];
@@ -1297,6 +1303,12 @@ public class ProjectDetailsActions extends DispatchAction {
         DynaValidatorForm uploadSubmissionForm = (DynaValidatorForm) form;
         FormFile file = (FormFile) uploadSubmissionForm.get("file");
 
+        // Disallow uploading of empty files
+        if (file.getFileSize() == 0) {
+            return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
+                    Constants.PERFORM_SUBM_PERM_NAME, "Error.EmptyFileUploaded");
+        }
+
         StrutsRequestParser parser = new StrutsRequestParser();
         parser.AddFile(file);
 
@@ -1621,6 +1633,12 @@ public class ProjectDetailsActions extends DispatchAction {
         DynaValidatorForm uploadSubmissionForm = (DynaValidatorForm) form;
         FormFile file = (FormFile) uploadSubmissionForm.get("file");
 
+        // Disallow uploading of empty files
+        if (file.getFileSize() == 0) {
+            return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
+                    Constants.PERFORM_FINAL_FIX_PERM_NAME, "Error.EmptyFileUploaded");
+        }
+
         StrutsRequestParser parser = new StrutsRequestParser();
         parser.AddFile(file);
 
@@ -1823,6 +1841,12 @@ public class ProjectDetailsActions extends DispatchAction {
 
         DynaValidatorForm uploadSubmissionForm = (DynaValidatorForm) form;
         FormFile file = (FormFile) uploadSubmissionForm.get("file");
+
+        // Disallow uploading of empty files
+        if (file.getFileSize() == 0) {
+            return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
+                    Constants.UPLOAD_TEST_CASES_PERM_NAME, "Error.EmptyFileUploaded");
+        }
 
         StrutsRequestParser parser = new StrutsRequestParser();
         parser.AddFile(file);
@@ -2098,7 +2122,7 @@ public class ProjectDetailsActions extends DispatchAction {
 
         // recaculate screening reviewer payments
         ActionsHelper.recaculateScreeningReviewerPayments(upload.getProject());
-        
+
         return ActionsHelper.cloneForwardAndAppendToPath(
                 mapping.findForward(Constants.SUCCESS_FORWARD_NAME), "&pid=" + verification.getProject().getId());
     }

@@ -2835,7 +2835,7 @@ public class ProjectReviewActions extends DispatchAction {
             Review[] reviews = revMgr.searchReviews(filter, false);
 
             // Non-empty array of reviews indicates that
-            // user is trying to create screening that already exists
+            // user is trying to create review that already exists
             if (reviews.length != 0) {
                 review = reviews[0];
                 verification.setReview(review);
