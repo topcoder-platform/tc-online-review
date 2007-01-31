@@ -28,50 +28,46 @@ tab4on = new Image(119, 36);
 tab4on.src = "/i/or/tab_inactive_projects_o.gif";
 
 
-
-function showLayer (layername) 
-{
-document.getElementById(layername).style.display = 'block';
+function showLayer(layername) {
+	document.getElementById(layername).style.display = "block";
 }
-
-function hideLayer (layername) 
-{
-document.getElementById(layername).style.display = 'none';
+function hideLayer(layername) {
+	document.getElementById(layername).style.display = "none";
 }
-
-
-function swapLayer (layername1,layername2) 
-{
-document.getElementById(layername1).style.display = 'none';
-document.getElementById(layername2).style.display = 'block';
+function swapLayer(layername1, layername2) {
+	document.getElementById(layername1).style.display = "none";
+	document.getElementById(layername2).style.display = "block";
 }
-
 
 function toggleDisplay(objectID){
-   var object = document.getElementById(objectID);
-   if(object.className == 'showText') object.className = 'hideText';
-   else object.className = 'showText';
-   return;
+	var object = document.getElementById(objectID);
+	if (object.className == "showText") {
+		object.className = "hideText";
+	} else {
+		object.className = "showText";
+	}
 }
-function showAll(){
-   var x = document.getElementsByTagName('div');
-   for (var i=0;i<x.length;i++){
-      if (x[i].id.substring (0,5) == 'longQ'){
-         x[i].className = 'showText';
-      }else if(x[i].id.substring (0,6) == 'shortQ'){
-         x[i].className = 'hideText';
-      }
-   }
+function showAll() {
+	var x = document.getElementsByTagName("div");
+	for (var i=0;i<x.length;i++) {
+		if (x[i].id.indexOf("longQ") == 0 || x[i].id.indexOf("longR") == 0) {
+			x[i].className = "showText";
+		} else if (x[i].id.indexOf("shortQ") == 0) {
+			x[i].className = "hideText";
+		} else if (x[i].id.indexOf("shortR") == 0 && document.getElementById(x[i].id.replace(/shortR_/, "longR_")) != null) {
+			x[i].className = "hideText";
+		}
+	}
 }
-function hideAll(){
-   var x = document.getElementsByTagName('div');
-   for (var i=0;i<x.length;i++){
-      if (x[i].id.substring (0,5) == 'longQ'){
-         x[i].className = 'hideText';
-      }else if(x[i].id.substring (0,6) == 'shortQ'){
-         x[i].className = 'showText';
-      }
-   }
+function hideAll() {
+	var x = document.getElementsByTagName("div");
+	for (var i=0;i<x.length;i++) {
+		if (x[i].id.indexOf("longQ") == 0 || x[i].id.indexOf("longR") == 0) {
+			x[i].className = "hideText";
+		} else if (x[i].id.indexOf("shortQ") == 0 || x[i].id.indexOf("shortR") == 0) {
+			x[i].className = "showText";
+		}
+	}
 }
 
 
