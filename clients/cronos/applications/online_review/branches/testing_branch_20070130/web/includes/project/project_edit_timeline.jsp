@@ -153,11 +153,21 @@
 				</td>
 			</tr>
 		</c:if>
-		<c:if test="${(phaseIdx eq 0) or (not empty projectForm.map['phase_scorecard'][phaseIdx] and projectForm.map['phase_name'][phaseIdx] eq 'Screening')}">
-			<tr class="highlighted" ${(phaseIdx eq 0) ? 'id="screening_scorecard_row_template" style="display:none;"' : ''}>
-				<td class="value" colspan="${(newProject) ? 1 : 2}"><!-- @ --></td>
-				<td class="value" colspan="4">
-					<bean:message key="editProject.Phases.Criteria.Scorecard" />
+
+		<c:if test="${(phaseIdx eq 0) or (not empty projectForm.map['phase_scorecard'][phaseIdx] and projectForm.map['phase_name'][phaseIdx] eq 'Screening')}">	
+			<c:if test="${phaseIdx eq 0}">
+				<tr class="highlighted" id="screening_scorecard_row_template" style="display: none;">
+			</c:if>
+			<c:if test="${phaseIdx ne 0}">
+				<tr class="highlighted">
+			</c:if>
+				<c:if test="${not newProject}">
+					<td class="value">
+						<td class="value">&nbsp;</td>				
+					</td>
+				</c:if>	
+				<td class="value">&nbsp;</td>
+				<td class="value" colspan="4"><bean:message key="editProject.Phases.Criteria.Scorecard" />
 					<html:select style="width:350px;" styleClass="inputBox" property="phase_screening_scorecard[${phaseIdx}]" >
 						<c:forEach items="${screeningScorecards}" var="scorecard">
 							<c:if test="${(newProject && scorecard.category == 1) || (not newProject && project.projectCategory.id == scorecard.category)}">								
@@ -176,8 +186,10 @@
 					<html:text style="width:30px;text-align:right;" styleClass="inputBox"
 						size="30" property="phase_required_reviewers[${phaseIdx}]" />
 					&nbsp;<bean:message key="editProject.Phases.Criteria.ReviewNumber.afterInput" />
-					<br /><bean:message key="editProject.Phases.Criteria.Scorecard" />
+			
+			</br><bean:message key="editProject.Phases.Criteria.Scorecard" />
 					<html:select style="width:350px;" styleClass="inputBox" property="phase_review_scorecard[${phaseIdx}]" >
+
 						<c:forEach items="${reviewScorecards}" var="scorecard">
 							<c:if test="${(newProject && scorecard.category == 1) || (not newProject && project.projectCategory.id == scorecard.category)}">	
 							<html:option value="${scorecard.id}">${scorecard.name} ${scorecard.version}</html:option>					
@@ -187,11 +199,20 @@
 				</td>
 			</tr>
 		</c:if>
-		<c:if test="${(phaseIdx eq 0) or (not empty projectForm.map['phase_scorecard'][phaseIdx] and projectForm.map['phase_name'][phaseIdx] eq 'Approval')}">
-			<tr class="highlighted" ${(phaseIdx eq 0) ? 'id="approval_scorecard_row_template" style="display:none;"' : ''}>
-				<td class="value" colspan="${(newProject) ? 1 : 2}"><!-- @ --></td>
-				<td class="value" colspan="4">
-					<bean:message key="editProject.Phases.Criteria.Scorecard" />
+		<c:if test="${(phaseIdx eq 0) or (not empty projectForm.map['phase_scorecard'][phaseIdx] and projectForm.map['phase_name'][phaseIdx] eq 'Approval')}">	
+			<c:if test="${phaseIdx eq 0}">
+				<tr class="highlighted" id="approval_scorecard_row_template" style="display: none;">
+			</c:if>
+			<c:if test="${phaseIdx ne 0}">
+				<tr class="highlighted">
+			</c:if>
+				<c:if test="${not newProject}">
+					<td class="value">
+						<td class="value">&nbsp;</td>				
+					</td>
+				</c:if>	
+				<td class="value">&nbsp;</td>
+				<td class="value" colspan="4"><bean:message key="editProject.Phases.Criteria.Scorecard" />
 					<html:select style="width:350px;" styleClass="inputBox" property="phase_approval_scorecard[${phaseIdx}]" >
 						<c:forEach items="${approvalScorecards}" var="scorecard">
 							<c:if test="${(newProject && scorecard.category == 1) || (not newProject && project.projectCategory.id == scorecard.category)}">	
