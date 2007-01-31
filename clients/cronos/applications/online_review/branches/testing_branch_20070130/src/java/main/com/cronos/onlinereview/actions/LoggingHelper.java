@@ -50,12 +50,13 @@ final class LoggingHelper {
     	String pid = request.getParameter("pid");
     	String rid = request.getParameter("rid");
     	String sid = request.getParameter("sid");
-    	Long uid = AuthorizationHelper.getLoggedInUserId(request);
+    	long uid = AuthorizationHelper.getLoggedInUserId(request);
 
     	StringBuffer sb = new StringBuffer();
     	sb.append(dateFormat.format(new Date())).append(" - ");
-    	if (uid.longValue() != AuthorizationHelper.NO_USER_LOGGED_IN_ID) {
-    		sb.append("  User ID : ").append(uid);
+    	if (uid != AuthorizationHelper.NO_USER_LOGGED_IN_ID) {
+    		sb.append("  User ID : ");
+                sb.append(uid);
     	}
     	if (action != null) {
     		sb.append("  Action : ").append(action);
