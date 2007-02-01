@@ -75,7 +75,9 @@
 									<html:image srcKey="btnUpload.img" altKey="btnUpload.alt" border="0" style="vertical-align:bottom;" /><br /><br />
 									<bean:message key="uploadSubmission.HelpLine2" />
 									<bean:message key="uploadSubmission.HelpLine3" />
-									<a href="http://<%=ApplicationServer.SERVER_NAME%>/tc?module=Static&d1=dev&d2=support&d3=${(project.projectCategory.id eq 1) ? 'des' : 'dev'}ReviewSample"><bean:message key="uploadSubmission.SampleSubmissionAndDocs" /></a>
+
+									<a href="http://<%=ApplicationServer.SERVER_NAME%>/tc?module=Static&d1=dev&d2=support&d3=${(project.projectCategory.id eq 1) ? 'des' : 'dev'}Documentation"><bean:message key="uploadSubmission.SampleSubmissionAndDocs" /></a>
+
 									<bean:message key="uploadSubmission.HelpLine4" />
 								</td>
 							</tr>
