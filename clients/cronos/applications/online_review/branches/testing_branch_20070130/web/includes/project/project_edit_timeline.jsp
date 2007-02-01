@@ -168,7 +168,7 @@
 				</c:if>	
 				<td class="value">&nbsp;</td>
 				<td class="value" colspan="4"><bean:message key="editProject.Phases.Criteria.Scorecard" />
-					<html:select style="width:350px;" styleClass="inputBox" property="phase_screening_scorecard[${phaseIdx}]" >
+					<html:select style="width:350px;" styleClass="inputBox" property="phase_scorecard[${phaseIdx}]" >
 						<c:forEach items="${screeningScorecards}" var="scorecard">
 							<c:if test="${(newProject && scorecard.category == 1) || (not newProject && project.projectCategory.id == scorecard.category)}">								
 								<html:option value="${scorecard.id}">${scorecard.name} ${scorecard.version}</html:option>					
@@ -188,7 +188,7 @@
 					&nbsp;<bean:message key="editProject.Phases.Criteria.ReviewNumber.afterInput" />
 			
 			</br><bean:message key="editProject.Phases.Criteria.Scorecard" />
-					<html:select style="width:350px;" styleClass="inputBox" property="phase_review_scorecard[${phaseIdx}]" >
+					<html:select style="width:350px;" styleClass="inputBox" property="phase_scorecard[${phaseIdx}]" >
 
 						<c:forEach items="${reviewScorecards}" var="scorecard">
 							<c:if test="${(newProject && scorecard.category == 1) || (not newProject && project.projectCategory.id == scorecard.category)}">	
@@ -213,7 +213,7 @@
 				</c:if>	
 				<td class="value">&nbsp;</td>
 				<td class="value" colspan="4"><bean:message key="editProject.Phases.Criteria.Scorecard" />
-					<html:select style="width:350px;" styleClass="inputBox" property="phase_approval_scorecard[${phaseIdx}]" >
+					<html:select style="width:350px;" styleClass="inputBox" property="phase_scorecard[${phaseIdx}]" >
 						<c:forEach items="${approvalScorecards}" var="scorecard">
 							<c:if test="${(newProject && scorecard.category == 1) || (not newProject && project.projectCategory.id == scorecard.category)}">	
 							<html:option value="${scorecard.id}">${scorecard.name} ${scorecard.version}</html:option>						
