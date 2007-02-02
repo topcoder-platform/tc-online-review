@@ -139,7 +139,9 @@ public class ProjectActions extends DispatchAction {
 
         LazyValidatorForm formNewProject = (LazyValidatorForm) form;
 
-        // Make 'Receive Timeline Notifications' checkbox be checked by default
+        // Make 'Send Email Notifications' and
+        // 'Receive Timeline Notifications' checkboxes be checked by default
+        formNewProject.set("email_notifications", Boolean.TRUE);
         formNewProject.set("timeline_notifications", Boolean.TRUE);
 
         // Load the look up data
