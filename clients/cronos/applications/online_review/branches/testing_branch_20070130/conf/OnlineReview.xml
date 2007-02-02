@@ -1401,7 +1401,10 @@
     <Config name="com.topcoder.project.phases.template.persistence.XmlPhaseTemplatePersistence">
         <!-- XML files from which the templates will be loaded. -->
         <Property name="template_files">
-            <Value>/home/onlinereview/ComponentTimeline.xml</Value>
+<!--            <Value>/home/onlinereview/ComponentTimeline.xml</Value>-->
+            <Value>/home/onlinereview/TCS_Template_Design.xml</Value>
+            <Value>/home/onlinereview/TCS_Template_Development.xml</Value>
+            <Value>/home/onlinereview/TCS_Template_Application.xml</Value>
         </Property>
     </Config>
 
@@ -1413,11 +1416,11 @@
         </Property>
         <!-- the day of the week, values will be 1 to 7, representing SUNDAY to SATURDAY respectively. -->
         <Property name="day_of_week">
-            <Value>5</Value>
+            <Value>6</Value>
         </Property>
         <!-- hour in 24-hour clock -->
         <Property name="hour">
-            <Value>9</Value>
+            <Value>20</Value>
         </Property>
         <!-- minute value -->
         <Property name="minute">
