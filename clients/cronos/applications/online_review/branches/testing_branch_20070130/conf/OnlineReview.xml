@@ -1420,7 +1420,7 @@
         </Property>
         <!-- hour in 24-hour clock -->
         <Property name="hour">
-            <Value>20</Value>
+            <Value>23</Value>
         </Property>
         <!-- minute value -->
         <Property name="minute">
