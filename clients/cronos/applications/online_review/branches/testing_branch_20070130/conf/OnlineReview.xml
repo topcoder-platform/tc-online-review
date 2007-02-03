@@ -1416,11 +1416,11 @@
         </Property>
         <!-- the day of the week, values will be 1 to 7, representing SUNDAY to SATURDAY respectively. -->
         <Property name="day_of_week">
-            <Value>6</Value>
+            <Value>5</Value>
         </Property>
         <!-- hour in 24-hour clock -->
         <Property name="hour">
-            <Value>23</Value>
+            <Value>9</Value>
         </Property>
         <!-- minute value -->
         <Property name="minute">
