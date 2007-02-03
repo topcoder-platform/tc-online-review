@@ -1402,9 +1402,9 @@
         <!-- XML files from which the templates will be loaded. -->
         <Property name="template_files">
 <!--            <Value>/home/onlinereview/ComponentTimeline.xml</Value>-->
-            <Value>/home/onlinereview/TCS_Template_Design.xml</Value>
-            <Value>/home/onlinereview/TCS_Template_Development.xml</Value>
-            <Value>/home/onlinereview/TCS_Template_Application.xml</Value>
+            <Value>/home/onlinereview/TCSTemplate_Design.xml</Value>
+            <Value>/home/onlinereview/TCSTemplate_Development.xml</Value>
+            <Value>/home/onlinereview/TCSTemplate_Application.xml</Value>
         </Property>
     </Config>
 
