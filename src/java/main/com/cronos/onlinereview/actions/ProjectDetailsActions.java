@@ -132,6 +132,7 @@ public class ProjectDetailsActions extends DispatchAction {
     public ActionForward viewProjectDetails(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response)
         throws BaseException {
+    	LoggingHelper.logAction(request);
         // Verify that certain requirements are met before processing with the Action
         CorrectnessCheckResult verification =
             ActionsHelper.checkForCorrectProjectId(mapping, getResources(request), request, Constants.VIEW_PROJECT_DETAIL_PERM_NAME);
@@ -164,12 +165,18 @@ public class ProjectDetailsActions extends DispatchAction {
 
         // Obtain an instance of Phase Manager
         PhaseManager phaseMgr = ActionsHelper.createPhaseManager(request, false);
-
-        // Calculate the date when this project is supposed to end
         com.topcoder.project.phases.Project phProj = phaseMgr.getPhases(project.getId());
-        phProj.calcEndDate();
-        // Get all phases for the current project
-        Phase[] phases = phProj.getAllPhases(new Comparators.ProjectPhaseComparer());
+        Phase[] phases;
+
+        if (phProj != null) {
+            // Calculate the date when this project is supposed to end
+            phProj.calcEndDate();
+            // Get all phases for the current project
+            phases = phProj.getAllPhases(new Comparators.ProjectPhaseComparer());
+        } else {
+            phases = new Phase[0];
+        }
+
         // Obtain an array of all active phases of the project
         Phase[] activePhases = ActionsHelper.getActivePhases(phases);
 
@@ -235,7 +242,7 @@ public class ProjectDetailsActions extends DispatchAction {
 
         Date[] originalStart = new Date[phases.length];
         Date[] originalEnd = new Date[phases.length];
-        long projectStartTime = phProj.getStartDate().getTime() / (60 * 1000);
+        long projectStartTime = (phProj != null) ? (phProj.getStartDate().getTime() / (60 * 1000)) : 0;
         // The following two arrays are used to display Gantt chart
         long[] ganttOffsets = new long[phases.length];
         long[] ganttLengths = new long[phases.length];
@@ -1117,6 +1124,7 @@ public class ProjectDetailsActions extends DispatchAction {
     public ActionForward contactManager(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response)
         throws BaseException, ConfigManagerException {
+    	LoggingHelper.logAction(request);
         // Verify that certain requirements are met before processing with the Action
         CorrectnessCheckResult verification =
             ActionsHelper.checkForCorrectProjectId(mapping, getResources(request), request, Constants.CONTACT_PM_PERM_NAME);
@@ -1267,6 +1275,7 @@ public class ProjectDetailsActions extends DispatchAction {
     public ActionForward uploadSubmission(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response)
         throws BaseException {
+    	LoggingHelper.logAction(request);
         // Verify that certain requirements are met before processing with the Action
         CorrectnessCheckResult verification =
             ActionsHelper.checkForCorrectProjectId(mapping, getResources(request), request, Constants.PERFORM_SUBM_PERM_NAME);
@@ -1296,6 +1305,12 @@ public class ProjectDetailsActions extends DispatchAction {
 
         DynaValidatorForm uploadSubmissionForm = (DynaValidatorForm) form;
         FormFile file = (FormFile) uploadSubmissionForm.get("file");
+
+        // Disallow uploading of empty files
+        if (file.getFileSize() == 0) {
+            return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
+                    Constants.PERFORM_SUBM_PERM_NAME, "Error.EmptyFileUploaded");
+        }
 
         StrutsRequestParser parser = new StrutsRequestParser();
         parser.AddFile(file);
@@ -1400,6 +1415,7 @@ public class ProjectDetailsActions extends DispatchAction {
     public ActionForward downloadSubmission(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response)
         throws BaseException, IOException {
+    	LoggingHelper.logAction(request);
         // Verify that certain requirements are met before processing with the Action
         CorrectnessCheckResult verification =
             checkForCorrectUploadId(mapping, request, "ViewSubmission");
@@ -1576,6 +1592,7 @@ public class ProjectDetailsActions extends DispatchAction {
     public ActionForward uploadFinalFix(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response)
         throws BaseException {
+    	LoggingHelper.logAction(request);
         // Verify that certain requirements are met before processing with the Action
         CorrectnessCheckResult verification =
             ActionsHelper.checkForCorrectProjectId(mapping, getResources(request), request, Constants.PERFORM_FINAL_FIX_PERM_NAME);
@@ -1620,6 +1637,12 @@ public class ProjectDetailsActions extends DispatchAction {
 
         DynaValidatorForm uploadSubmissionForm = (DynaValidatorForm) form;
         FormFile file = (FormFile) uploadSubmissionForm.get("file");
+
+        // Disallow uploading of empty files
+        if (file.getFileSize() == 0) {
+            return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
+                    Constants.PERFORM_FINAL_FIX_PERM_NAME, "Error.EmptyFileUploaded");
+        }
 
         StrutsRequestParser parser = new StrutsRequestParser();
         parser.AddFile(file);
@@ -1698,6 +1721,7 @@ public class ProjectDetailsActions extends DispatchAction {
     public ActionForward downloadFinalFix(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response)
         throws BaseException, IOException {
+    	LoggingHelper.logAction(request);
         // Verify that certain requirements are met before processing with the Action
         CorrectnessCheckResult verification =
             checkForCorrectUploadId(mapping, request, Constants.DOWNLOAD_FINAL_FIX_PERM_NAME);
@@ -1791,6 +1815,7 @@ public class ProjectDetailsActions extends DispatchAction {
     public ActionForward uploadTestCase(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response)
         throws BaseException {
+    	LoggingHelper.logAction(request);
         // Verify that certain requirements are met before processing with the Action
         CorrectnessCheckResult verification =
             ActionsHelper.checkForCorrectProjectId(mapping, getResources(request), request, Constants.UPLOAD_TEST_CASES_PERM_NAME);
@@ -1823,6 +1848,12 @@ public class ProjectDetailsActions extends DispatchAction {
 
         DynaValidatorForm uploadSubmissionForm = (DynaValidatorForm) form;
         FormFile file = (FormFile) uploadSubmissionForm.get("file");
+
+        // Disallow uploading of empty files
+        if (file.getFileSize() == 0) {
+            return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
+                    Constants.UPLOAD_TEST_CASES_PERM_NAME, "Error.EmptyFileUploaded");
+        }
 
         StrutsRequestParser parser = new StrutsRequestParser();
         parser.AddFile(file);
@@ -1899,6 +1930,7 @@ public class ProjectDetailsActions extends DispatchAction {
     public ActionForward downloadTestCase(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response)
         throws BaseException, IOException {
+    	LoggingHelper.logAction(request);
         // Verify that certain requirements are met before processing with the Action
         CorrectnessCheckResult verification =
             checkForCorrectUploadId(mapping, request, Constants.DOWNLOAD_TEST_CASES_PERM_NAME);
@@ -2043,6 +2075,7 @@ public class ProjectDetailsActions extends DispatchAction {
     public ActionForward deleteSubmission(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response)
         throws BaseException {
+    	LoggingHelper.logAction(request);
         // Verify that certain requirements are met before processing with the Action
         CorrectnessCheckResult verification =
             checkForCorrectUploadId(mapping, request, Constants.REMOVE_SUBM_PERM_NAME);
@@ -2098,7 +2131,7 @@ public class ProjectDetailsActions extends DispatchAction {
 
         // recaculate screening reviewer payments
         ActionsHelper.recaculateScreeningReviewerPayments(upload.getProject());
-        
+
         return ActionsHelper.cloneForwardAndAppendToPath(
                 mapping.findForward(Constants.SUCCESS_FORWARD_NAME), "&pid=" + verification.getProject().getId());
     }
@@ -2126,6 +2159,7 @@ public class ProjectDetailsActions extends DispatchAction {
     public ActionForward downloadDocument(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response)
         throws BaseException, IOException {
+    	LoggingHelper.logAction(request);
         // Verify that certain requirements are met before processing with the Action
         CorrectnessCheckResult verification =
             checkForCorrectUploadId(mapping, request, Constants.DOWNLOAD_DOCUMENT_PERM_NAME);
@@ -2212,6 +2246,7 @@ public class ProjectDetailsActions extends DispatchAction {
      */
     public ActionForward viewAutoScreening(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response) throws BaseException {
+    	LoggingHelper.logAction(request);
         // Verify that certain requirements are met before processing with the Action
         CorrectnessCheckResult verification =
             checkForCorrectUploadId(mapping, request, "ViewAutoScreening");
@@ -2566,7 +2601,26 @@ public class ProjectDetailsActions extends DispatchAction {
                     delivName.equalsIgnoreCase(Constants.STRS_TEST_CASES_DELIVERABLE_NAME)) {
                 links[i] = "UploadTestCase.do?method=uploadTestCase&pid=" + deliverable.getProject();
             } else if (delivName.equalsIgnoreCase(Constants.APPEAL_RESP_DELIVERABLE_NAME)) {
-                // TODO: Assign links for Appeal Responses
+                // Skip deliverables with empty Submission ID field,
+                // as no links can be generated for such deliverables
+                if (deliverable.getSubmission() == null) {
+                    continue;
+                }
+
+                if (allScorecardTypes == null) {
+                    // Get all scorecard types
+                    allScorecardTypes = ActionsHelper.createScorecardManager(request).getAllScorecardTypes();
+                }
+
+                Review review = findReviewForSubmission(ActionsHelper.createReviewManager(request),
+                        ActionsHelper.findScorecardTypeByName(allScorecardTypes, "Review"),
+                        deliverable.getSubmission(), deliverable.getResource(), false);
+
+                // If review for the submission is absent, something is wrong
+                // and no link for this deliverable can be generated
+                if (review != null) {
+                    links[i] = "ViewReview.do?method=viewReview&rid=" + review.getId();
+                }
             } else if (delivName.equalsIgnoreCase(Constants.AGGREGATION_DELIVERABLE_NAME)) {
                 // Skip deliverables with empty Submission ID field,
                 // as no links can be generated for such deliverables

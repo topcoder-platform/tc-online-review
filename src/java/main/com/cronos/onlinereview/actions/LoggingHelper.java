@@ -3,6 +3,14 @@
  */
 package com.cronos.onlinereview.actions;
 
+import java.util.Date;
+
+import javax.servlet.http.HttpServletRequest;
+
+import com.topcoder.util.log.Level;
+import com.topcoder.util.log.Log;
+import com.topcoder.util.log.LogFactory;
+
 /**
  * This class prvides helper methods for logging some ceratin application's activity. This might
  * include writing to log informational messages, warnings, error reports as well as thrown
@@ -16,7 +24,9 @@ package com.cronos.onlinereview.actions;
  * @version 1.0
  */
 final class LoggingHelper {
-    
+    private static Log logger = LogFactory.getLog("OnlineReview");
+    private static java.text.DateFormat dateFormat = new java.text.SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+
     // Hidden constructor
     
     /**
@@ -30,10 +40,40 @@ final class LoggingHelper {
     // Static methods
     
     /**
-     * TODO: describe the purpose of the logAction static method
+     * Log All incoming requests.
+     * 
+     * Logging must comprise user ID, timestamp, action taken, and entity IDs effected
      */
-    public static void logAction() {
-        // TODO: Add appropriate logging code here
+    public static void logAction(HttpServletRequest request) {
+    	String action = request.getParameter("method");
+    	String subAction = request.getParameter("action");
+    	String pid = request.getParameter("pid");
+    	String rid = request.getParameter("rid");
+    	String sid = request.getParameter("sid");
+    	long uid = AuthorizationHelper.getLoggedInUserId(request);
+
+    	StringBuffer sb = new StringBuffer();
+    	sb.append(dateFormat.format(new Date())).append(" - ");
+    	if (uid != AuthorizationHelper.NO_USER_LOGGED_IN_ID) {
+    		sb.append("  User ID : ");
+                sb.append(uid);
+    	}
+    	if (action != null) {
+    		sb.append("  Action : ").append(action);
+    	}
+    	if (subAction != null) {
+    		sb.append("[").append(subAction).append(']');
+    	}
+    	if (pid != null) {
+    		sb.append("  Project ID : ").append(pid);
+    	}
+    	if (rid != null) {
+    		sb.append("  Review ID : ").append(rid);
+    	}
+    	if (sid != null) {
+    		sb.append("  Submission ID : ").append(sid);
+    	}
+    	logger.log(Level.INFO, sb.toString());
     }
     
     /**
@@ -44,6 +84,6 @@ final class LoggingHelper {
      *            exception containing the information to be logged
      */
     public static void logException(Exception e) {
-        // TODO: Add logging code here for the exception and probably rethrow the exception
+    	logger.log(Level.ERROR, e);
     }
 }

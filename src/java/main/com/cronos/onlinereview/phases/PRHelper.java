@@ -70,7 +70,7 @@ class PRHelper {
 				" project_id = ?";
 
 	private static final String PASS_SCREENING_STMT =
-		"update project_result set valid_submission_ind = 1 " +
+		"update project_result set valid_submission_ind = 1, rating_ind = 1 " +
 		"where exists(select * from submission s,upload u,resource r,resource_info ri    " +
 		"	where u.upload_id = s.upload_id and u.upload_type_id = 1  " +
 		"	and u.project_id = project_result.project_id " +

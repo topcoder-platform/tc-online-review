@@ -1,5 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ page language="java" isELIgnored="false" %>
+<%@ page import="com.topcoder.shared.util.ApplicationServer"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="html" uri="/tags/struts-html" %>
 <%@ taglib prefix="bean" uri="/tags/struts-bean" %>
@@ -27,7 +28,7 @@
 	<table width="100%" border="0" cellpadding="0" cellspacing="0">
 		<tr valign="top">
 			<!-- Left Column Begins -->
-			<td width="180"><jsp:include page="/includes/inc_leftnav.jsp" /></td>
+			<td width="180"><jsp:include page="/includes/global_left.jsp" /></td>
 			<!-- Left Column Ends -->
 
 			<!-- Gutter Begins -->
@@ -68,13 +69,15 @@
 							<tr class="light">
 								<td class="value">
 									<bean:message key="uploadSubmission.HelpLine1" />
-									<a href="#"><bean:message key="linkHere" /></a>.<br /><br />
+									<a href="http://<%=ApplicationServer.SERVER_NAME%>/tc?module=Static&d1=dev&d2=support&d3=${(project.projectCategory.id eq 1) ? 'des' : 'dev'}ScreeningSample"><bean:message key="linkHere" /></a>.<br /><br />
 									<bean:message key="uploadSubmission.UploadSubmission" />
 									<html:file property="file" size="20" styleClass="inputBox" style="width:350px;vertical-align:middle;" />
 									<html:image srcKey="btnUpload.img" altKey="btnUpload.alt" border="0" style="vertical-align:bottom;" /><br /><br />
 									<bean:message key="uploadSubmission.HelpLine2" />
 									<bean:message key="uploadSubmission.HelpLine3" />
-									<a href="#"><bean:message key="uploadSubmission.SampleSubmissionAndDocs" /></a>
+
+									<a href="http://<%=ApplicationServer.SERVER_NAME%>/tc?module=Static&d1=dev&d2=support&d3=${(project.projectCategory.id eq 1) ? 'des' : 'dev'}Documentation"><bean:message key="uploadSubmission.SampleSubmissionAndDocs" /></a>
+
 									<bean:message key="uploadSubmission.HelpLine4" />
 								</td>
 							</tr>

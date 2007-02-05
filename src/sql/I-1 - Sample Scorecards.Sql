@@ -85,3 +85,33 @@ INSERT INTO scorecard_question (scorecard_question_id, scorecard_question_type_i
   VALUES (305, 4, 302, 'Question 2 from Section 2 from Group 1.', 'Guideline for Question 2. This is Yes/No type of question.', 60.00000000000, 1, 0, 0, 'System', '2006-08-28 18:41:07.557', 'System', '2006-08-28 18:41:07.557');
 INSERT INTO scorecard_question (scorecard_question_id, scorecard_question_type_id, scorecard_section_id, description, guideline, weight, sort, upload_document, upload_document_required, create_user, create_date, modify_user, modify_date)
   VALUES (306, 3, 303, 'Question 1 from Section 1 from Group 2.', 'Guideline for Qestion 1. This is Testcase type of question.', 100.0000000000, 0, 0, 0, 'System', '2006-08-28 18:41:07.557', 'System', '2006-08-28 18:41:07.557');
+
+
+-- Very simple scorecards to speed up screening/reviewing processes
+
+INSERT INTO scorecard (scorecard_id, scorecard_status_id, scorecard_type_id, project_category_id, name, version, min_score, max_score, create_user, create_date, modify_user, modify_date)
+  VALUES (1001, 1, 1, 1, 'Concise Screening Scorecard', '80.0', 80.0, 100.0, 'System', CURRENT, 'System', CURRENT);
+INSERT INTO scorecard_group (scorecard_group_id, scorecard_id, name, weight, sort, create_user, create_date, modify_user, modify_date)
+  VALUES (1001, 1001, 'Single Group', 100.0, 0, 'System', CURRENT, 'System', CURRENT);
+INSERT INTO scorecard_section (scorecard_section_id, scorecard_group_id, name, weight, sort, create_user, create_date, modify_user, modify_date)
+  VALUES (1001, 1001, 'Single Section of Group', 100.0, 0, 'System', CURRENT, 'System', CURRENT);
+INSERT INTO scorecard_question (scorecard_question_id, scorecard_question_type_id, scorecard_section_id, description, guideline, weight, sort, upload_document, upload_document_required, create_user, create_date, modify_user, modify_date)
+  VALUES (1001, 2, 1001, 'Rate me!', 'This is Scale (1-10) type of question.', 100.0, 0, 0, 0, 'System', CURRENT, 'System', CURRENT);
+
+INSERT INTO scorecard (scorecard_id, scorecard_status_id, scorecard_type_id, project_category_id, name, version, min_score, max_score, create_user, create_date, modify_user, modify_date)
+  VALUES (2001, 1, 2, 1, 'Concise Review Scorecard', '70.0', 70.0, 100.0, 'System', CURRENT, 'System', CURRENT);
+INSERT INTO scorecard_group (scorecard_group_id, scorecard_id, name, weight, sort, create_user, create_date, modify_user, modify_date)
+  VALUES (2001, 2001, 'Single Group', 100.0, 0, 'System', CURRENT, 'System', CURRENT);
+INSERT INTO scorecard_section (scorecard_section_id, scorecard_group_id, name, weight, sort, create_user, create_date, modify_user, modify_date)
+  VALUES (2001, 2001, 'Single Section of Group', 100.0, 0, 'System', CURRENT, 'System', CURRENT);
+INSERT INTO scorecard_question (scorecard_question_id, scorecard_question_type_id, scorecard_section_id, description, guideline, weight, sort, upload_document, upload_document_required, create_user, create_date, modify_user, modify_date)
+  VALUES (2001, 2, 2001, 'Rate me!', 'This is Scale (1-10) type of question.', 100.0, 0, 0, 0, 'System', CURRENT, 'System', CURRENT);
+
+INSERT INTO scorecard (scorecard_id, scorecard_status_id, scorecard_type_id, project_category_id, name, version, min_score, max_score, create_user, create_date, modify_user, modify_date)
+  VALUES (3001, 1, 3, 1, 'Concise Client Review (Approval) Scorecard', '90.0', 90.0, 100.0, 'System', CURRENT, 'System', CURRENT);
+INSERT INTO scorecard_group (scorecard_group_id, scorecard_id, name, weight, sort, create_user, create_date, modify_user, modify_date)
+  VALUES (3001, 3001, 'Single Group', 100.0, 0, 'System', CURRENT, 'System', CURRENT);
+INSERT INTO scorecard_section (scorecard_section_id, scorecard_group_id, name, weight, sort, create_user, create_date, modify_user, modify_date)
+  VALUES (3001, 3001, 'Single Section of Group', 100.0, 0, 'System', CURRENT, 'System', CURRENT);
+INSERT INTO scorecard_question (scorecard_question_id, scorecard_question_type_id, scorecard_section_id, description, guideline, weight, sort, upload_document, upload_document_required, create_user, create_date, modify_user, modify_date)
+  VALUES (3001, 2, 3001, 'Rate me!', 'This is Scale (1-10) type of question.', 100.0, 0, 0, 0, 'System', CURRENT, 'System', CURRENT);

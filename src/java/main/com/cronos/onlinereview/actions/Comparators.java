@@ -6,6 +6,7 @@ package com.cronos.onlinereview.actions;
 import java.util.Comparator;
 
 import com.topcoder.management.deliverable.Upload;
+import com.topcoder.management.project.Project;
 import com.topcoder.management.project.ProjectType;
 import com.topcoder.management.review.data.Review;
 import com.topcoder.project.phases.Phase;
@@ -114,7 +115,7 @@ final class Comparators {
         /**
          * This method compares its two arguments for order. This method expects that type of
          * the objects passed as arguments is <code>ProjectType</code>. It then detemines which of
-         * the objects is smaller taking their names and comparing then using natural alphabetical
+         * the objects is smaller taking their names and comparing them using natural alphabetical
          * order.
          * <p>
          * This method implements the <code>compare</code> method from the <code>Comparator</code>
@@ -134,6 +135,76 @@ final class Comparators {
             ProjectType pt2 = (ProjectType)o2;
             // Compare project types by their name using natural alphabetic order
             return pt1.getName().compareTo(pt2.getName());
+        }
+    }
+
+    /**
+     * This class implements <code>Comparator</code> interface and is used to sort projects by
+     * their names in ascending order.
+     */
+    static public class ProjectNameComparer implements Comparator {
+
+        /**
+         * This method compares its two arguments for order. This method expects that type of the
+         * objects passed as arguments is <code>Project</code>. It then detemines which of the
+         * objects is smaller taking their names and comparing them using natural alphabetical
+         * order. For projects that have identical names, their order is determined by their version
+         * numbers. The case of the names does not matter (the comparison is case-insensitive).
+         * <p>
+         * This method implements the <code>compare</code> method from the <code>Comparator</code>
+         * interface.
+         * </p>
+         *
+         * @return a negative integer, zero, or a positive integer as the first argument is less
+         *         than, equal to, or greater than the second respectively.
+         * @param o1
+         *            the first object to be compared.
+         * @param o2
+         *            the second object to be compared.
+         */
+        public int compare(Object o1, Object o2) {
+            // Cast the passed parameters to the appropriate type
+            Project project1 = (Project)o1;
+            Project project2 = (Project)o2;
+            // Get the names of the projects
+            final String strName1 = (String) project1.getProperty("Project Name");
+            final String strName2 = (String) project2.getProperty("Project Name");
+            // Compare project names using natural alphabetic order
+            int result = strName1.compareToIgnoreCase(strName2);
+            if (result != 0) {
+                return result;
+            }
+
+            /*
+             * In case names of the projects are identical, comparison by versions is needed
+             */
+
+            // Get versions of the projects
+            final String strVersion1 = (String) project1.getProperty("Project Version");
+            final String strVersion2 = (String) project2.getProperty("Project Version");
+            // Split version strings into array of subversions (assuming that separator is a dot)
+            final String[] versions1 = strVersion1.split("\\.");
+            final String[] versions2 = strVersion2.split("\\.");
+
+            // Versions can be badly formatted, so this section is guarded by try-catch
+            try {
+                for (int i = 0; i < versions1.length && i < versions2.length; ++i) {
+                    // Get every subversion number and try to convert it to number
+                    final int subVer1 = Integer.parseInt(versions1[i], 10);
+                    final int subVer2 = Integer.parseInt(versions2[i], 10);
+
+                    // If subversions differ, that's how order is determined
+                    if (subVer1 != subVer2) {
+                        return (subVer1 - subVer2);
+                    }
+                }
+            } catch (NumberFormatException nfe) {
+                // Compare versions by their text representation
+                return strVersion1.compareTo(strVersion2);
+            }
+
+            // Versions can have different number of parts (subversions)
+            return (versions1.length - versions2.length);
         }
     }
 

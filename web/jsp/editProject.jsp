@@ -39,27 +39,70 @@
 		<c:forEach var="resourceRole" items="${resourceRoles}">
 			resourceRoleToPhaseTypeMap[${resourceRole.id}] = "${empty resourceRole.phaseType ? 'null' : resourceRole.phaseType}";
 		</c:forEach>
-		
+
 		var projectCategories = [];
 		<c:forEach var="category" items="${projectCategories}">
 			projectCategories.push({});
 			projectCategories[projectCategories.length - 1]["id"] = ${category.id};
-			projectCategories[projectCategories.length - 1]["projectType"] = ${category.projectType.id};		
+			projectCategories[projectCategories.length - 1]["projectType"] = ${category.projectType.id};
 			// TODO: Localize the catagory name
-			projectCategories[projectCategories.length - 1]["name"] = "${category.name}";			
+			projectCategories[projectCategories.length - 1]["name"] = "${category.name}";
+		</c:forEach>
+
+		var screeningScorecards = [];
+		<c:forEach var="scorecard" items="${screeningScorecards}">
+			screeningScorecards.push({});
+			screeningScorecards[screeningScorecards.length - 1]["id"] = ${scorecard.id};
+			screeningScorecards[screeningScorecards.length - 1]["category"] = ${scorecard.category};	
+			screeningScorecards[screeningScorecards.length - 1]["name"] = "${scorecard.name} ${scorecard.version}";	
+		</c:forEach>
+
+		var reviewScorecards = [];
+		<c:forEach var="scorecard" items="${reviewScorecards}">
+			reviewScorecards.push({});
+			reviewScorecards[reviewScorecards.length - 1]["id"] = ${scorecard.id};
+			reviewScorecards[reviewScorecards.length - 1]["category"] = ${scorecard.category};	
+			reviewScorecards[reviewScorecards.length - 1]["name"] = "${scorecard.name} ${scorecard.version}";	
 		</c:forEach>
 		
+		var screeningScorecards = [];
+		<c:forEach var="scorecard" items="${screeningScorecards}">
+			screeningScorecards.push({});
+			screeningScorecards[screeningScorecards.length - 1]["id"] = ${scorecard.id};
+			screeningScorecards[screeningScorecards.length - 1]["category"] = ${scorecard.category};	
+			screeningScorecards[screeningScorecards.length - 1]["name"] = "${scorecard.name} ${scorecard.version}";	
+		</c:forEach>
+
+		var reviewScorecards = [];
+		<c:forEach var="scorecard" items="${reviewScorecards}">
+			reviewScorecards.push({});
+			reviewScorecards[reviewScorecards.length - 1]["id"] = ${scorecard.id};
+			reviewScorecards[reviewScorecards.length - 1]["category"] = ${scorecard.category};	
+			reviewScorecards[reviewScorecards.length - 1]["name"] = "${scorecard.name} ${scorecard.version}";	
+		</c:forEach>
+		
+		var approvalScorecards = [];
+		<c:forEach var="scorecard" items="${approvalScorecards}">
+			approvalScorecards.push({});
+			approvalScorecards[approvalScorecards.length - 1]["id"] = ${scorecard.id};
+			approvalScorecards[approvalScorecards.length - 1]["category"] = ${scorecard.category};	
+			approvalScorecards[approvalScorecards.length - 1]["name"] = "${scorecard.name} ${scorecard.version}";		
+		</c:forEach>
+
 		var projectTypeNamesMap = {};
 		<c:forEach var="projectType" items="${projectTypes}">
 			projectTypeNamesMap["${projectType.id}"] = "${projectType.name}";
-		</c:forEach>
-		
-		
+		</c:forEach>		
+
 		var phaseTypeIdsMap = {};
 		<c:forEach var="phaseType" items="${phaseTypes}">
 			phaseTypeIdsMap["${phaseType.name}"] = "${phaseType.id}";
 		</c:forEach>
 		
+		var screeningScorecardNode;
+		var reviewScorecardNode;
+		var approvalScorecardNode;
+
 		/*	
 		 * TODO: Document it
 		 */
@@ -85,7 +128,7 @@
 				comboNode.add(option, option.selectedIndex);
 			}
 		}
-	
+
 		/*
 		 * TODO: Document it.
 		 */
@@ -98,37 +141,64 @@
 			// Add new combo options
 			for (var i = 0; i < projectCategories.length; i++) {
 				if (projectTypeNode.value == projectCategories[i]["projectType"]) {
-					addComboOption(projectCategoryNode, 
+					addComboOption(projectCategoryNode,
 						projectCategories[i]["name"], projectCategories[i]["id"]);
 				}
 			}
 		} 
-		 
+
+		function onProjectCategoryChange(projectCategoryNode) {
+			changeScorecardByCategory(document.getElementsByName("phase_screening_scorecard[0]")[0], projectCategoryNode.value, screeningScorecards);
+			changeScorecardByCategory(document.getElementsByName("phase_review_scorecard[0]")[0], projectCategoryNode.value, reviewScorecards);
+			changeScorecardByCategory(document.getElementsByName("phase_approval_scorecard[0]")[0], projectCategoryNode.value, approvalScorecards);
+			changeScorecardByCategory(screeningScorecardNode, projectCategoryNode.value, screeningScorecards);
+			changeScorecardByCategory(reviewScorecardNode, projectCategoryNode.value, reviewScorecards);
+			changeScorecardByCategory(approvalScorecardNode, projectCategoryNode.value, approvalScorecards);
+		}
+
+		function changeScorecardByCategory(scorecardNode, category, scorecards) {
+			if (scorecardNode) {
+				// Clear combo options
+				while (scorecardNode.length > 0) {
+					scorecardNode.remove(scorecardNode.length - 1);
+				}
+				// Add new combo options 
+				for (var i = 0; i < scorecards.length; i++) {
+					if (category == scorecards[i]["category"]) {
+							addComboOption(scorecardNode, 
+								scorecards[i]["name"], scorecards[i]["id"]);
+					}
+				}
+			}
+		}
 
 		/*
 		 * This function adds a new row to resources table.
 		 */
 		function addNewResource() {
-			// TODO: Make the combos and possibly radio buttons copy their state correctly
-
 			// Get resources table node
 			var resourcesTable = document.getElementById("resources_tbl");
 			// Get the number of rows in table
 			var rowCount = resourcesTable.rows.length;
 			// Create a new row into resources table
 			var newRow = cloneInputRow(resourcesTable.rows[2]);
+
 			// Rows should vary colors
-			if (rowCount % 2 == 0) {
-				newRow.className = "dark";
-			} else {
-				newRow.className = "light";
+			var rows = resourcesTable.rows;
+			var strLastRowStyle = "dark"; // This variable will remember the style of the last row
+			// Find first non-hidden row, starting from the bottom of the table
+			for (var i = rows.length - 2; i >= 0; --i) {
+				if (rows[i].style["display"] == "none") continue;
+				strLastRowStyle = rows[i].className;
+				break;
 			}
+			newRow.className = (strLastRowStyle == "dark") ? "light" : "dark";
 
 			// Make delete button visible and hide add button
-			var myCell = newRow.getElementsByTagName("TD")[4];
+			var myCell = newRow.getElementsByTagName("td")[4];
 			var images = myCell.getElementsByTagName("img");
 			images[0].style["display"] = "none";
-			images[1].removeAttribute("style");
+			images[1].style["display"] = "inline";
 			// Retrieve hidden inputs
 			var inputs = myCell.getElementsByTagName("input");
 			// Set hidden resources_action parameter to "add"
@@ -170,16 +240,13 @@
 			var actionInput = inputs[0];
 			actionInput.value = "delete";
 
-			// TODO: Complete it, doesn't work for some reason
-			// TODO: Probably the fix is to skip hidden rows, etc.
 			// Make rows vary color
-			var rows = resourceRowNode.parentNode.getElementsByTagName("tr");
+			var rows = resourceRowNode.parentNode.rows;
+			var initial = 0;
 			for (var i = 0; i < rows.length; i++) {
-				if (i % 2 == 1) {
-					rows[i].className = "dark";
-				} else {
-					rows[i].className = "light";
-				}
+				// Skip hidden rows as they shouldn't affect row coloring
+				if (rows[i].style["display"] == "none") continue;
+				rows[i].className = (initial++ % 2 == 0) ? "light" : "dark";
 			}
 		}
 
@@ -270,6 +337,14 @@
 				patchAllChildParamIndexes(criterionRow, lastPhaseIndex);
 				// Insert criterion row into proper position - after new phase row
 				dojo.dom.insertAfter(criterionRow, phaseRow);
+				
+ 				if (phaseName == "Screening") {
+					screeningScorecardNode = criterionRow.getElementsByTagName("select")[0];
+				} else if (phaseName == "Review") {
+					reviewScorecardNode = criterionRow.getElementsByTagName("select")[0];
+				} else if (phaseName == "Approval") {
+					approvalScorecardNode = criterionRow.getElementsByTagName("select")[0];
+				}
 			}
 		}
 
@@ -296,7 +371,7 @@
 			var timelineTable = document.getElementById("timeline_tbl");
 			// Retrieve add phase table
 			var addPhaseTable = document.getElementById("addphase_tbl");
-			
+
 			// Generate phase id (for use in the DOM)
 			var phaseId = _phaseId ? _phaseId : getUniqueId();
 
@@ -349,11 +424,11 @@
 			lastPhaseIndex++;
 
 			// Rename all the inputs to have a new index
-			patchAllChildParamIndexes(newRow, lastPhaseIndex);	
-		
+			patchAllChildParamIndexes(newRow, lastPhaseIndex);
+
 			return newRow;
 		}
-		
+
 
 		/*
 		 * This function adds new phase to phases table, it includes addition of several rows.
@@ -363,16 +438,16 @@
 			var timelineTable = document.getElementById("timeline_tbl");
 			// Retrieve add phase table
 			var addPhaseTable = document.getElementById("addphase_tbl");
-						
+
 			// Retrieve phase name
 			var phaseNameInput = getChildByName(addPhaseTable, "addphase_type");
 			var selectedOption = phaseNameInput.options[phaseNameInput.selectedIndex];
 			var phaseName = dojo.dom.textContent(selectedOption);
 			var phaseTypeId = phaseNameInput.value;
-				
+
 			// Create a new row to represent the phase
 			var newRow = createNewPhaseRow(phaseName, phaseTypeId);
-			
+
 			// Populate newly created phase inputs from the add phase form
 			var inputNames = ["type",
 				"start_date", "start_time", "start_AMPM",
@@ -382,9 +457,9 @@
 			for (var i = 0; i < inputNames.length; i++) {
 				populatePhaseParam(newRow, addPhaseTable, inputNames[i], lastPhaseIndex);
 			}
-			
+
 			var whereCombo = getChildByName(addPhaseTable, "addphase_where");
-			
+
 			// Add the row to the appropriate position
 			var wherePhaseId = whereCombo.value;
 			if (wherePhaseId == "") {
@@ -526,19 +601,19 @@
 				nextRowNode.parentNode.removeChild(nextRowNode);
 			}
 		}
-		
+
 		/*
 		 * TODO: Document it
 		 */
 		function openOrClosePhase(phaseRow, action) {
 			var actionNode = document.getElementsByName("action")[0];
-			actionNode.value = action;	
+			actionNode.value = action;
 			var phaseId = phaseRow.id;
 			var actionPhaseNode = document.getElementsByName("action_phase")[0];
-			actionPhaseNode.value = phaseId;	
+			actionPhaseNode.value = phaseId;
 			actionNode.form.submit();
 		}
-		
+
 		/**
 		 * TODO: Document it
 		 */
@@ -547,7 +622,7 @@
 			templateNameNode = document.getElementsByName("template_name")[0];
 			// Get html-encoded template name
 			var templateName = htmlEncode(templateNameNode.value);
-			
+
 			// assemble the request XML
 			var content =
 				'<?xml version="1.0" ?>' +
@@ -556,8 +631,8 @@
 				'<parameter name="TemplateName">' +
 				templateName +
 				'</parameter>' +
-				'<parameter name="ProjectTypeName">' + 
-				projectTypeNamesMap[document.getElementsByName("project_type")[0].value] + 
+				'<parameter name="ProjectTypeName">' +
+				projectTypeNamesMap[document.getElementsByName("project_type")[0].value] +
 				'</parameter>' + '</parameters>' +
 				'</request>';
 
@@ -574,7 +649,7 @@
 				}
 			);
 		}
-		
+
 		/**
 		 * TODO: Document it
 		 */
@@ -591,13 +666,13 @@
 					nextRowNode.parentNode.removeChild(nextRowNode);
 				}
 			}
-			
+
 			// Retrieve timeline table
 			var timelineTable = document.getElementById("timeline_tbl");
-			
+
 			// Add new project phases
 			var phaseNodes = templateXML.getElementsByTagName("phase");
-			var phaseRows = []; 
+			var phaseRows = [];
 			// PASS 1
 			for (var i = 0; i < phaseNodes.length; i++)  {
 				var phaseName = phaseNodes[i].getAttribute("type");
@@ -606,27 +681,27 @@
 				var newPhaseRow = createNewPhaseRow(phaseName, phaseTypeId, "template_" + phaseId);
 				phaseRows[i] = newPhaseRow;
 				timelineTable.tBodies[0].appendChild(newPhaseRow);
-				
+
 				var startDate = dojo.dom.textContent(phaseNodes[i].getElementsByTagName("start-date")[0]);
 				var startDateParts = startDate.split(" ");
-				
+
 				getChildByNamePrefix(newPhaseRow, "phase_start_date").value = startDateParts[0];
 				getChildByNamePrefix(newPhaseRow, "phase_start_time").value = startDateParts[1];
 				getChildByNamePrefix(newPhaseRow, "phase_start_AMPM").value = startDateParts[2].toLowerCase();
-				
+
 				var endDate = dojo.dom.textContent(phaseNodes[i].getElementsByTagName("end-date")[0]);
 				var endDateParts = endDate.split(" ");
-				
+
 				getChildByNamePrefix(newPhaseRow, "phase_end_date").value = endDateParts[0];
 				getChildByNamePrefix(newPhaseRow, "phase_end_time").value = endDateParts[1];
 				getChildByNamePrefix(newPhaseRow, "phase_end_AMPM").value = endDateParts[2].toLowerCase();
-				
-				var duration = parseInt(dojo.dom.textContent(phaseNodes[i].getElementsByTagName("length")[0])) / 3600 / 1000; 
-				getChildByNamePrefix(newPhaseRow, "phase_duration").value = duration;	
-	
-					
+
+				var duration = parseInt(dojo.dom.textContent(phaseNodes[i].getElementsByTagName("length")[0])) / 3600 / 1000;
+				getChildByNamePrefix(newPhaseRow, "phase_duration").value = duration;
+
+
 				// Add phase criterion row if needed
-				addPhaseCriterion(phaseName, newPhaseRow);	
+				addPhaseCriterion(phaseName, newPhaseRow);
 			}
 			// PASS 2
 			for (var i = 0; i < phaseNodes.length; i++) {
@@ -640,17 +715,17 @@
 						phaseStartButtons[j].checked = (dependencies.length == 0);
 					}
 				}
-			
+
 				if (dependencies.length != 0) {
 					var dependencyId =  dojo.dom.textContent(dependencies[0].getElementsByTagName("dependency-phase-id")[0]);
 					var dependencyStart =  dojo.dom.textContent(dependencies[0].getElementsByTagName("dependency-phase-start")[0]);
 					getChildByNamePrefix(newPhaseRow, "phase_start_phase").value = "template_" + dependencyId;
-					getChildByNamePrefix(newPhaseRow, "phase_start_when").value = (dependencyStart == "true") ? "starts" : "ends";			
+					getChildByNamePrefix(newPhaseRow, "phase_start_when").value = (dependencyStart == "true") ? "starts" : "ends";
 				}
 			}
-			
+
 		}
-		
+
 		// To be done on page load
 		function onLoad() {
 			var projectCategoryNode = document.getElementsByName("project_category")[0];
@@ -658,7 +733,7 @@
 				onProjectTypeChange(document.getElementsByName("project_type")[0]);
 			}
 		}
-		
+
 	//--></script>
 </head>
 
@@ -669,7 +744,7 @@
 		<tr valign="top">
 			<!-- Left Column Begins -->
 			<td width="180">
-				<jsp:include page="/includes/inc_leftnav.jsp" />
+				<jsp:include page="/includes/global_left.jsp" />
 			</td>
 			<!-- Left Column Ends -->
 
@@ -715,7 +790,7 @@
 									<td class="valueB"><bean:message key="editProject.ProjectDetails.Name" /></td>
 									<td class="value" nowrap="nowrap">
 										<html:text styleClass="inputBox" property="project_name" style="width: 350px;" />
-										<div id="project_name_validation_msg" style="display:none" class="error"></div>
+										<span id="project_name_validation_msg" style="display:none;" class="error"></span>
 									</td>
 								</tr>
 								<tr class="dark">
@@ -732,7 +807,8 @@
 								<tr class="light">
 									<td class="valueB"><bean:message key="editProject.ProjectDetails.Category" /></td>
 									<td class="value" nowrap="nowrap">
-										<html:select styleClass="inputBox" property="project_category" style="width:150px;">				
+										<html:select styleClass="inputBox" property="project_category" style="width:150px;"
+												onchange="onProjectCategoryChange(this);">				
 											<c:forEach items="${projectCategories}" var="category">
 												<c:if test="${category.projectType.id eq projectForm.map['project_type']}">
 													<html:option key='ProjectCategory.${fn:replace(category.name, " ", "")}' value="${category.id}" />
@@ -798,6 +874,7 @@
 							</tr>
 						</table><br />
 
+						<c:set var="projDetRowCount" value="0" />
 						<table class="scorecard" cellpadding="0" cellspacing="0" width="100%" style="border-collapse: collapse;">
 							<tr>
 								<%-- If creating a new project, name this table as "References" --%>
@@ -811,42 +888,42 @@
 							</tr>
 							<%-- If editing the existing project, should have project name edited here --%>
 							<c:if test="${not newProject}">
-								<tr>
+								<tr class="${(projDetRowCount % 2 == 0) ? 'light' : 'dark'}">
 									<td class="valueB"><bean:message key="editProject.ProjectDetails.Name" /></td>
 									<td class="value" nowrap="nowrap">
 										<html:text styleClass="inputBox" property="project_name" style="width: 350px;" />
-										<div id="project_name_validation_msg" style="display:none" class="error"></div>
+										<span id="project_name_validation_msg" style="display:none;" class="error"></span>
 									</td>
-								</tr>
+								</tr><c:set var="projDetRowCount" value="${projDetRowCount + 1}" />
 							</c:if>
 
-							<tr class="light">
+							<tr class="${(projDetRowCount % 2 == 0) ? 'light' : 'dark'}">
 								<td class="value" nowrap="nowrap">
 									<b><bean:message key="editProject.References.ForumId" /></b><br />
 								</td>
 								<td class="value" nowrap="nowrap">
 									<html:text styleClass="inputBox" property="forum_id" style="width: 350px;" />
-									<div id="forum_id_validation_msg" style="display:none" class="error"></div>
+									<span id="forum_id_validation_msg" style="display:none;" class="error"></span>
 								</td>
-							</tr>
-							<tr class="light">
+							</tr><c:set var="projDetRowCount" value="${projDetRowCount + 1}" />
+							<tr class="${(projDetRowCount % 2 == 0) ? 'light' : 'dark'}">
 								<td class="value" nowrap="nowrap">
 									<b><bean:message key="editProject.References.ComponentId" /></b><br />
 								</td>
 								<td class="value" nowrap="nowrap">
 									<html:text styleClass="inputBox" property="component_id" style="width: 350px;" />
-									<%-- TODO: Add validation for component id --%>
-									<div id="component_id_validation_msg" style="display:none" class="error"></div>
+									<span id="component_id_validation_msg" style="display:none;" class="error"></span>
 								</td>
-							</tr>
-							<tr class="dark">
+							</tr><c:set var="projDetRowCount" value="${projDetRowCount + 1}" />
+							<tr class="${(projDetRowCount % 2 == 0) ? 'light' : 'dark'}">
 								<td class="value" nowrap="nowrap">
 									<b><bean:message key="editProject.References.SVNModule" /></b><br />
 								</td>
 								<td class="value" nowrap="nowrap">
 									<html:text styleClass="inputBox" property="SVN_module" style="width: 350px;" />
+									<span id="SVN_module_validation_msg" style="display:none;" class="error"></span>
 								</td>
-							</tr>
+							</tr><c:set var="projDetRowCount" value="${projDetRowCount + 1}" />
 							<tr>
 								<td class="lastRowTD" colspan="2"><!-- @ --></td>
 							</tr>
@@ -859,6 +936,7 @@
 							<tr class="light">
 								<td class="value">
 									<html:textarea styleClass="inputTextBox" property="notes" />
+									<div id="notes_validation_msg" style="display:none;" class="error"></div>
 								</td>
 							</tr>
 							<tr>
@@ -880,13 +958,13 @@
 									<td class="title"><b><bean:message key="editProject.Status.title" /></b></td>
 								</tr>
 								<tr class="light">
-									<td class="value"><p align="left"><b>&nbsp;<bean:message key="editProject.Status.CurrentStatus" />&nbsp; </b>
+									<td class="value"><p align="left"><b>&#160;<bean:message key="editProject.Status.CurrentStatus" />&#160; </b>
 										<html:select styleClass="inputBox" property="status">
 											<c:forEach var="status" items="${projectStatuses}">
 												<html:option key='ProjectStatus.${fn:replace(status.name, " ", "")}' value="${status.id}" />
 											</c:forEach>
-										</html:select><br>
-										<br><bean:message key="editProject.Status.Explanation.description" /><br>
+										</html:select></p>
+										<bean:message key="editProject.Status.Explanation.description" /><br />
 										<html:textarea styleClass="inputTextBox" property="status_explanation" />
 									</td>
 								</tr>
@@ -902,7 +980,7 @@
 								<tr class="light">
 									<td class="Value">
 										<bean:message key="editProject.Explanation.description" /> &#160;
-										<span class="error"><html:errors property="explanation" prefix="" suffix="" /></span><br />
+										<span id="explanation_validation_msg" class="error"><html:errors property="explanation" prefix="" suffix="" /></span><br />
 										<html:textarea styleClass="inputTextBox" property="explanation" />
 									</td>
 								</tr>
