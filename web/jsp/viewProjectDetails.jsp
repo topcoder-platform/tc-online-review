@@ -22,7 +22,7 @@
 	<link type="text/css" rel="stylesheet" href="<html:rewrite href='/css/or/new_styles.css' />" />
 	<link type="text/css" rel="stylesheet" href="<html:rewrite href='/css/or/phasetabs.css' />" />
 	<script language="JavaScript" type="text/javascript"
-		src="<html:rewrite href='/js/or/rollovers.js' />"><!-- @ --></script>
+		src="<html:rewrite href='/js/or/rollovers2.js' />"><!-- @ --></script>
 	<script language="JavaScript" type="text/javascript"
 		src="<html:rewrite href='/js/or/dojo.js' />"><!-- @ --></script>
 	<script language="JavaScript" type="text/javascript">

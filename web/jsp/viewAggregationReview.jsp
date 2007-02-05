@@ -22,7 +22,7 @@
 	<!-- CSS and JS by Petar -->
 	<link type="text/css" rel="stylesheet" href="<html:rewrite href='/css/or/new_styles.css' />" />
 	<script language="JavaScript" type="text/javascript"
-		src="<html:rewrite href='/js/or/rollovers.js' />"><!-- @ --></script>
+		src="<html:rewrite href='/js/or/rollovers2.js' />"><!-- @ --></script>
 </head>
 
 <body>
