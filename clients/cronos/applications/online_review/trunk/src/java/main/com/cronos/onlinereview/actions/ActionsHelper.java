@@ -1335,8 +1335,7 @@ public class ActionsHelper {
 
         // Get all phases for the project
         com.topcoder.project.phases.Project phProj = manager.getPhases(project.getId());
-        Phase[] phases = phProj.getAllPhases();
-        return phases;
+        return (phProj != null) ? phProj.getAllPhases() : new Phase[0];
     }
 
     /**
@@ -2968,6 +2967,11 @@ public class ActionsHelper {
     	PreparedStatement ratingStmt = null;
     	PreparedStatement reliabilityStmt = null;
     	PreparedStatement componentInquiryStmt = null;
+    	if (project.getProjectCategory().getProjectType().getId() != 1) {
+    		// Only component project need project_result
+    		return;
+    	}
+
 		try {
 	        DBConnectionFactory dbconn;
 				dbconn = new DBConnectionFactoryImpl(DB_CONNECTION_NAMESPACE);

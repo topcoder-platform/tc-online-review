@@ -24,7 +24,7 @@
 		<Phase id="screeningPhase" length="86400000" type="screening">
 			<Dependency id="submissionPhase" isDependencyStart="false" isDependentStart="true" lagTime="0"/>
 		</Phase>
-		<Phase id="reviewPhase" length="259200000" type="review">
+		<Phase id="reviewPhase" length="345600000" type="review">
 			<!-- "isDependencyStart" is optional attribute(default to "false"), here it is omitted -->
 			<Dependency id="screeningPhase" isDependentStart="true" lagTime="0"/>
 		</Phase>
@@ -43,7 +43,7 @@
 		<Phase id="aggregationReviewPhase" length="43200000" type="aggregation_review">
 			<Dependency id="aggregationPhase"/>
 		</Phase>
-		<Phase id="finalFixesPhase" length="172800000" type="final_fixes">
+		<Phase id="finalFixesPhase" length="259200000" type="final_fixes">
 			<Dependency id="aggregationReviewPhase" />
 		</Phase>
 		<Phase id="finalReviewPhase" length="86400000" type="final_review">

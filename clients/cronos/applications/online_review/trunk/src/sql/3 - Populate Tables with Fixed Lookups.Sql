@@ -289,13 +289,13 @@ INSERT INTO deliverable_lu(deliverable_id, phase_type_id, resource_role_id, name
 INSERT INTO deliverable_lu(deliverable_id, phase_type_id, resource_role_id, name, description, per_submission, required, create_user, create_date, modify_user, modify_date)
   VALUES(10, 4, 7, 'Stress Test Cases', 'Stress Test Cases', 0, 1, 'System', CURRENT, 'System', CURRENT);
 INSERT INTO deliverable_lu(deliverable_id, phase_type_id, resource_role_id, name, description, per_submission, required, create_user, create_date, modify_user, modify_date)
-  VALUES(11, 6, 4, 'Appeal Responses', 'Appeal Responses', 0, 1, 'System', CURRENT, 'System', CURRENT);
+  VALUES(11, 6, 4, 'Appeal Responses', 'Appeal Responses', 1, 1, 'System', CURRENT, 'System', CURRENT);
 INSERT INTO deliverable_lu(deliverable_id, phase_type_id, resource_role_id, name, description, per_submission, required, create_user, create_date, modify_user, modify_date)
-  VALUES(12, 6, 5, 'Appeal Responses', 'Appeal Responses', 0, 1, 'System', CURRENT, 'System', CURRENT);
+  VALUES(12, 6, 5, 'Appeal Responses', 'Appeal Responses', 1, 1, 'System', CURRENT, 'System', CURRENT);
 INSERT INTO deliverable_lu(deliverable_id, phase_type_id, resource_role_id, name, description, per_submission, required, create_user, create_date, modify_user, modify_date)
-  VALUES(13, 6, 6, 'Appeal Responses', 'Appeal Responses', 0, 1, 'System', CURRENT, 'System', CURRENT);
+  VALUES(13, 6, 6, 'Appeal Responses', 'Appeal Responses', 1, 1, 'System', CURRENT, 'System', CURRENT);
 INSERT INTO deliverable_lu(deliverable_id, phase_type_id, resource_role_id, name, description, per_submission, required, create_user, create_date, modify_user, modify_date)
-  VALUES(14, 6, 7, 'Appeal Responses', 'Appeal Responses', 0, 1, 'System', CURRENT, 'System', CURRENT);
+  VALUES(14, 6, 7, 'Appeal Responses', 'Appeal Responses', 1, 1, 'System', CURRENT, 'System', CURRENT);
 INSERT INTO deliverable_lu(deliverable_id, phase_type_id, resource_role_id, name, description, per_submission, required, create_user, create_date, modify_user, modify_date)
   VALUES(15, 7, 8, 'Aggregation', 'Aggregation', 1, 1, 'System', CURRENT, 'System', CURRENT);
 INSERT INTO deliverable_lu(deliverable_id, phase_type_id, resource_role_id, name, description, per_submission, required, create_user, create_date, modify_user, modify_date)
