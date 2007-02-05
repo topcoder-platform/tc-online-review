@@ -4,7 +4,7 @@
 <%@ taglib prefix="html" uri="/tags/struts-html" %>
 <%@ taglib prefix="orfn" uri="/tags/or-functions" %>
 <%@ taglib prefix="tc-webtag" uri="/tags/tc-webtags" %>
-<jsp:useBean id="sessionInfo" class="com.topcoder.web.common.SessionInfo" scope="request" />
+<jsp:useBean id="sessionInfo" class="com.cronos.onlinereview.web.common.ORSessionInfo" scope="request" />
 <script language="JavaScript" type="text/javascript" src="/js/tcscript.js"><!-- @ --></script>
 <script language="JavaScript" type="text/javascript">
 <!--
@@ -98,8 +98,8 @@ div.launchPopUp {
 </div>
 
 <div class="memberCountBox">
-	Member Count:
-	<tc-webtag:format object="${sessionInfo.memberCount}" format="#,##0"/> -
+	Member Count: N/A
+	<%-- tc-webtag:format object="${sessionInfo.memberCount}" format="#,##0"/> --%>
 	<tc-webtag:format object="${sessionInfo.date}" format="MMMM d, yyyy"/>
 	&#160;<a class="gMetal" href="Javascript:tcTime()">[Get Time]</a>
 </div>
@@ -107,7 +107,7 @@ div.launchPopUp {
 <div class="topBar">
 	<div style="float: right; margin-left: 650px;">
 		<c:if test="${orfn:isUserLoggedIn(pageContext.request)}">
-			Hello, <tc-webtag:handle coderId="${orfn:getLoggedInUserId(pageContext.request)}" context="component" />
+			Hello, <tc-webtag:handle coderId="${orfn:getLoggedInUserId(pageContext.request)}" context="component" styleClass="gMetal"/>
 			&#160;&#160;|&#160;&#160;<html:link styleClass="gMetal" action="/actions/Logout.do?method=logout">Logout</html:link>
 		</c:if>
 		<c:if test="${not orfn:isUserLoggedIn(pageContext.request)}">
