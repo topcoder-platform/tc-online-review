@@ -23,7 +23,7 @@
 	<script language="JavaScript" type="text/javascript" src="<html:rewrite href='/js/or/dojo.js' />"><!-- @ --></script>
 	<script language="JavaScript" type="text/javascript" src="<html:rewrite href='/js/or/util.js' />"><!-- @ --></script>
 	<script language="JavaScript" type="text/javascript" src="<html:rewrite href='/js/or/validation_util2.js' />"><!-- @ --></script>
-	<script language="JavaScript" type="text/javascript" src="<html:rewrite href='/js/or/validation_edit_project2.js' />"><!-- @ --></script>
+	<script language="JavaScript" type="text/javascript" src="<html:rewrite href='/js/or/validation_edit_project3.js' />"><!-- @ --></script>
 	<script language="JavaScript" type="text/javascript" src="<html:rewrite href='/js/or/parseDate.js' />"><!-- @ --></script>
 	<script language="JavaScript" type="text/javascript">
 		var ajaxSupportUrl = "<html:rewrite page='/ajaxSupport' />";
