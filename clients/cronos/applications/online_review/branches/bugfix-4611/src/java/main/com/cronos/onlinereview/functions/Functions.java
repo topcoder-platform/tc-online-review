@@ -20,6 +20,7 @@ import org.apache.struts.util.MessageResources;
 import com.cronos.onlinereview.actions.ActionsHelper;
 import com.cronos.onlinereview.actions.AuthorizationHelper;
 import com.cronos.onlinereview.actions.ConfigHelper;
+import com.topcoder.management.project.Project;
 
 /**
  * This class implements several helper-functions that can be used from JSP pages.
@@ -140,6 +141,39 @@ public final class Functions {
         }
 
         return String.valueOf(AuthorizationHelper.getLoggedInUserId(request));
+    }
+
+    /**
+     * This static method returns context of handler base projectCategory.
+     * 
+     * <p>
+     * This method is an implementeation of <code>getLoggedInUserId</code> function used from EL
+     * expressions in JSP pages.
+     * </p>
+     *
+     * @return context of handler base projectCategory.
+     * @param request
+     *            an <code>HttpServletRequest</code> object. Normally, you should write the
+     *            following: &quot;<code>pageContext.request</code>&quot; in a JSP page when you
+     *            call this method to pass a valid object to it.
+     */
+    public static String getHandlerContext(HttpServletRequest request) {
+        if (request == null) {
+            return "";
+        }
+
+        Project project = (Project) request.getAttribute("projcet");
+        if (project == null) {
+        	return "";
+        }
+
+        if (project.getProjectCategory().getId() == 1) {
+        	return "design";
+        } else if (project.getProjectCategory().getId() == 2) {
+        	return "development";
+        } else {
+        	return "";
+        }
     }
 
     /**

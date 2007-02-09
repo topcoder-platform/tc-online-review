@@ -88,13 +88,13 @@
 						</c:choose>
 						${orfn:displayDate(pageContext.request, outstandingDeliverableDates[deliverableStatus.index])}
 						<c:if test="${not empty outstandingDeliverableUserIds[deliverableStatus.index]}">
-							<tc-webtag:handle coderId="${outstandingDeliverableUserIds[deliverableStatus.index]}" context="component" /><b>:</b>
+							<tc-webtag:handle coderId="${outstandingDeliverableUserIds[deliverableStatus.index]}" context="${orfn:getHandlerContext(pageContext.request)}" /><b>:</b>
 						</c:if>
 						<b><bean:message key='Deliverable.${fn:replace(deliverable.name, " ", "")}' /></b>
 						<c:if test="${not empty deliverable.submission}">
 							${deliverable.submission}
 							<c:if test="${(isManager) && (not empty outstandingDeliverableSubmissionUserIds[deliverableStatus.index])}">
-								(<tc-webtag:handle coderId="${outstandingDeliverableSubmissionUserIds[deliverableStatus.index]}" context="component" />)
+								(<tc-webtag:handle coderId="${outstandingDeliverableSubmissionUserIds[deliverableStatus.index]}" context="${orfn:getHandlerContext(pageContext.request)}" />)
 							</c:if>
 						</c:if><br />
 					</c:forEach>

@@ -47,7 +47,7 @@
 								<c:forEach items="${group.submitters}" var="resource" varStatus="resourceStatus">
 									<c:set var="registrantEmail" value="${group.registantsEmails[resourceStatus.index]}" />
 									<tr class='${(resourceStatus.index % 2 == 0) ? "light" : "dark"}'>
-										<td class="value" nowrap="nowrap"><tc-webtag:handle coderId='${resource.allProperties["External Reference ID"]}' context="component" /></td>
+										<td class="value" nowrap="nowrap"><tc-webtag:handle coderId='${resource.allProperties["External Reference ID"]}' context="${orfn:getHandlerContext(pageContext.request)}" /></td>
 										<c:if test="${not empty registrantEmail}">
 											<td class="value" nowrap="nowrap"><a href="mailto:${registrantEmail}">${registrantEmail}</a></td>
 										</c:if>
@@ -142,7 +142,7 @@
 											</c:if>
 											<html:link page="/actions/DownloadSubmission.do?method=downloadSubmission&uid=${submission.upload.id}" titleKey="viewProjectDetails.box.Submission.Download">${submission.id}</html:link>
 											<c:if test="${not empty submitter}">
-												(<tc-webtag:handle coderId='${submitter.allProperties["External Reference ID"]}' context="component" />)
+												(<tc-webtag:handle coderId='${submitter.allProperties["External Reference ID"]}' context="${orfn:getHandlerContext(pageContext.request)}" />)
 											</c:if>
 										</td>
 										<c:if test="${isManager}">
@@ -195,7 +195,7 @@
 											<td class="value" width="15%"><bean:message key="viewProjectDetails.box.Screening.ScreenerNotAssigned" /></td>
 										</c:if>
 										<c:if test="${not empty screener}">
-											<td class="value" width="15%"><tc-webtag:handle coderId='${screener.allProperties["External Reference ID"]}' context="component" /></td>
+											<td class="value" width="15%"><tc-webtag:handle coderId='${screener.allProperties["External Reference ID"]}' context="${orfn:getHandlerContext(pageContext.request)}" /></td>
 										</c:if>
 										<c:set var="review" value="" />
 										<c:forEach items="${group.screenings}" var="screening">
@@ -317,7 +317,7 @@
 									<c:forEach items="${group.reviewers}" var="reviewer">
 										<td class="valueC" colspan="2" nowrap="nowrap">
 											<b><bean:message key='ResourceRole.${fn:replace(reviewer.resourceRole.name, " ", "")}' />:</b>
-											<tc-webtag:handle coderId='${reviewer.allProperties["External Reference ID"]}' context="component" />
+											<tc-webtag:handle coderId='${reviewer.allProperties["External Reference ID"]}' context="${orfn:getHandlerContext(pageContext.request)}" />
 											<c:set var="testCase" value="" />
 											<c:forEach items="${group.testCases}" var="curTestCase">
 												<c:if test="${curTestCase.owner == reviewer.id}">
@@ -392,7 +392,7 @@
 												<html:link page="/actions/DownloadSubmission.do?method=downloadSubmission&uid=${submission.upload.id}"
 													titleKey="viewProjectDetails.box.Submission.Download">${submission.id}</html:link>
 												<c:if test="${!(empty submitter)}">
-													(<tc-webtag:handle coderId='${submitter.allProperties["External Reference ID"]}' context="component" />)
+													(<tc-webtag:handle coderId='${submitter.allProperties["External Reference ID"]}' context="${orfn:getHandlerContext(pageContext.request)}" />)
 												</c:if>
 											</td>
 											<td class="valueC" width="12%">${orfn:displayDateBr(pageContext.request, group.reviewDates[submissionStatus.index])}</td>
@@ -491,7 +491,7 @@
 											<html:img srcKey="viewProjectDetails.Submitter.icoWinner.img" altKey="viewProjectDetails.Submitter.icoWinner.alt" border="0" styleClass="Outline" />
 											<html:link page="/actions/DownloadSubmission.do?method=downloadSubmission&uid=${winningSubmission.upload.id}"
 												titleKey="viewProjectDetails.box.Submission.Download">${winningSubmission.upload.id}</html:link>
-											(<tc-webtag:handle coderId='${group.winner.allProperties["External Reference ID"]}' context="component" />)
+											(<tc-webtag:handle coderId='${group.winner.allProperties["External Reference ID"]}' context="${orfn:getHandlerContext(pageContext.request)}" />)
 										</td>
 										<c:if test="${not empty group.aggregation}">
 											<c:if test="${group.aggregation.committed}">
@@ -578,7 +578,7 @@
 											<html:img srcKey="viewProjectDetails.Submitter.icoWinner.img" altKey="viewProjectDetails.Submitter.icoWinner.alt" border="0" styleClass="Outline" />
 											<html:link page="/actions/DownloadSubmission.do?method=downloadSubmission&uid=${winningSubmission.upload.id}"
 												titleKey="viewProjectDetails.box.Submission.Download">${winningSubmission.upload.id}</html:link>
-											(<tc-webtag:handle coderId='${group.winner.allProperties["External Reference ID"]}' context="component" />)
+											(<tc-webtag:handle coderId='${group.winner.allProperties["External Reference ID"]}' context="${orfn:getHandlerContext(pageContext.request)}" />)
 										</td>
 										<c:if test="${not empty group.finalFix}">
 											<td class="valueC" nowrap="nowrap">${orfn:displayDate(pageContext.request, group.finalFix.modificationTimestamp)}</td>
@@ -651,7 +651,7 @@
 											<html:img srcKey="viewProjectDetails.Submitter.icoWinner.img" altKey="viewProjectDetails.Submitter.icoWinner.alt" border="0" styleClass="Outline" />
 											<html:link page="/actions/DownloadSubmission.do?method=downloadSubmission&uid=${winningSubmission.upload.id}"
 												titleKey="viewProjectDetails.box.Submission.Download">${winningSubmission.upload.id}</html:link>
-											(<tc-webtag:handle coderId='${group.winner.allProperties["External Reference ID"]}' context="component" />)
+											(<tc-webtag:handle coderId='${group.winner.allProperties["External Reference ID"]}' context="${orfn:getHandlerContext(pageContext.request)}" />)
 										</td>
 										<c:if test="${not empty group.approval}">
 											<c:if test="${group.approval.committed}">
