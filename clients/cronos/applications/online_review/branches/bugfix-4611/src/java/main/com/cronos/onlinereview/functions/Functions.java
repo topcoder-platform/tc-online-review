@@ -162,7 +162,7 @@ public final class Functions {
             return "";
         }
 
-        Project project = (Project) request.getAttribute("projcet");
+        Project project = (Project) request.getAttribute("project");
         if (project == null) {
         	return "";
         }
