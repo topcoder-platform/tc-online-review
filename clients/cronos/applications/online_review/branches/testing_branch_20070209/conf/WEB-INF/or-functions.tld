@@ -26,6 +26,11 @@
         <function-signature>java.lang.String getLoggedInUserId(javax.servlet.http.HttpServletRequest)</function-signature>
     </function>
     <function>
+        <name>getHandlerContext</name>
+        <function-class>com.cronos.onlinereview.functions.Functions</function-class>
+        <function-signature>java.lang.String getHandlerContext(javax.servlet.http.HttpServletRequest)</function-signature>
+    </function>
+    <function>
         <name>isErrorsPresent</name>
         <function-class>com.cronos.onlinereview.functions.Functions</function-class>
         <function-signature>java.lang.Boolean isErrorsPresent(javax.servlet.http.HttpServletRequest)</function-signature>
