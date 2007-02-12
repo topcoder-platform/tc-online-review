@@ -116,7 +116,7 @@
 																<td class="value" rowspan="${lastCommentIdx}">
 																	<c:forEach items="${reviewResources}" var="resource">
 																		<c:if test="${resource.id == comment.author}">
-																			<tc-webtag:handle coderId='${resource.allProperties["External Reference ID"]}' context="component" /><br />
+																			<tc-webtag:handle coderId='${resource.allProperties["External Reference ID"]}' context="${orfn:getHandlerContext(pageContext.request)}" /><br />
 																		</c:if>
 																	</c:forEach>
 																	<c:forEach items="${reviews}" var="subReview">
@@ -151,7 +151,7 @@
 																		<c:forEach items="${reviewResources}" var="resource">
 																			<c:if test="${resource.id == comment.author}">
 																				<b><bean:message key='ResourceRole.${fn:replace(resource.resourceRole.name, " ", "")}' />
-																				(<tc-webtag:handle coderId='${resource.allProperties["External Reference ID"]}' context="component" />)
+																				(<tc-webtag:handle coderId='${resource.allProperties["External Reference ID"]}' context="${orfn:getHandlerContext(pageContext.request)}" />)
 																				<bean:message key="viewAggregationReview.Response" /></b>
 																			</c:if>
 																		</c:forEach>
