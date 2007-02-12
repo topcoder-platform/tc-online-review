@@ -49,13 +49,13 @@
 		&#160;<b><bean:message key="editReview.Aggregator" /></b>
 	</c:if>
 	<c:if test="${not empty authorId}">
-		<tc-webtag:handle coderId="${authorId}" context="component" />
+		<tc-webtag:handle coderId="${authorId}" context="${orfn:getHandlerContext(pageContext.request)}" />
 	</c:if>
 	<br />
 </c:if>
 &#160;<b><bean:message key="editReview.Submission" /></b> ${sid}
 <c:if test="${not empty submitterId and reviewType ne 'Screening' and reviewType ne 'Review'}">
-	(<tc-webtag:handle coderId="${submitterId}" context="component" />)
+	(<tc-webtag:handle coderId="${submitterId}" context="${orfn:getHandlerContext(pageContext.request)}" />)
 </c:if>
 <br />
 &#160;<b><bean:message key="editReview.MyRole" /></b> ${myRole}<br />

@@ -106,7 +106,7 @@
 															<c:if test="${firstTime == true}">
 																<c:forEach items="${reviewResources}" var="resource">
 																	<c:if test="${resource.id == comment.author}">
-																		<tc-webtag:handle coderId='${resource.allProperties["External Reference ID"]}' context="component" /><br />
+																		<tc-webtag:handle coderId='${resource.allProperties["External Reference ID"]}' context="${orfn:getHandlerContext(pageContext.request)}" /><br />
 																	</c:if>
 																</c:forEach>
 																<c:forEach items="${reviews}" var="subReview">

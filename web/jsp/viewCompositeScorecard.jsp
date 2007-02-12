@@ -64,7 +64,7 @@
 									<c:forEach items="${reviews}" var="review" varStatus="reviewStatus">
 										<td class="subheader" align="center" nowrap="nowrap">
 											<a href="ViewReview.do?method=viewReview&rid=${review.id}"><bean:message key="editReview.SectionHeader.Review" /></a><br />
-											(<tc-webtag:handle coderId="${authors[reviewStatus.index]}" context="component" />)
+											(<tc-webtag:handle coderId="${authors[reviewStatus.index]}" context="${orfn:getHandlerContext(pageContext.request)}" />)
 										</td>
 									</c:forEach>
 								</tr>
@@ -96,7 +96,7 @@
 																<b><bean:message key="editReview.Question.Response.title" />
 																	${commentNum}:
 																	<bean:message key='CommentType.${fn:replace(comment.commentType.name, " ", "")}' /></b>
-																(<tc-webtag:handle coderId="${authors[reviewStatus.index]}" context="component" />)<br />
+																(<tc-webtag:handle coderId="${authors[reviewStatus.index]}" context="${orfn:getHandlerContext(pageContext.request)}" />)<br />
 															</c:when>
 															<c:when test='${(commentType == "Appeal") || (commentType == "Appeal Response") || (commentType == "Manager Comment")}'>
 																<b><bean:message key='editReview.EditAggregation.${fn:replace(commentType, " ", "")}'/></b>
@@ -123,7 +123,7 @@
 									<c:forEach items="${reviews}" var="review" varStatus="reviewStatus">
 										<td class="subheader" align="center" nowrap="nowrap">
 											<a href="ViewReview.do?method=viewReview&rid=${review.id}"><bean:message key="editReview.SectionHeader.Review" /></a><br />
-											(<tc-webtag:handle coderId="${authors[reviewStatus.index]}" context="component" />)
+											(<tc-webtag:handle coderId="${authors[reviewStatus.index]}" context="${orfn:getHandlerContext(pageContext.request)}" />)
 										</td>
 									</c:forEach>
 								</tr>

@@ -108,7 +108,7 @@
 															<c:if test="${firstTime == true}">
 																<c:forEach items="${reviewResources}" var="resource">
 																	<c:if test="${resource.id == comment.author}">
-																		<tc-webtag:handle coderId='${resource.allProperties["External Reference ID"]}' context="component" /><br />
+																		<tc-webtag:handle coderId='${resource.allProperties["External Reference ID"]}' context="${orfn:getHandlerContext(pageContext.request)}" /><br />
 																	</c:if>
 																</c:forEach>
 																<c:forEach items="${reviews}" var="subReview">
@@ -146,7 +146,7 @@
 																					<a href="javascript:void(0)" onclick="javascript:toggleDisplay('shortR_${respIdx}');toggleDisplay('longR_${respIdx}');return false;" class="statLink"><html:img src="/i/or/plus.gif" altKey="global.plus.alt" border="0" /></a>
 																				</c:if>
 																				<b><bean:message key='ResourceRole.${fn:replace(resource.resourceRole.name, " ", "")}' />
-																				(<tc-webtag:handle coderId='${resource.allProperties["External Reference ID"]}' context="component" />)
+																				(<tc-webtag:handle coderId='${resource.allProperties["External Reference ID"]}' context="${orfn:getHandlerContext(pageContext.request)}" />)
 																				<bean:message key="viewAggregationReview.Response" /></b>
 																				<bean:message key='AggregationItemStatus.${fn:replace(comment.extraInfo, " ", "")}' />
 																			</div>
@@ -154,7 +154,7 @@
 																				<div class="hideText" id="longR_${respIdx}">
 																					<a href="javascript:void(0)" onclick="javascript:toggleDisplay('shortR_${respIdx}');toggleDisplay('longR_${respIdx}');return false;" class="statLink"><html:img src="/i/or/minus.gif" altKey="global.minus.alt" border="0" /></a>
 																					<b><bean:message key='ResourceRole.${fn:replace(resource.resourceRole.name, " ", "")}' />
-																					(<tc-webtag:handle coderId='${resource.allProperties["External Reference ID"]}' context="component" />)
+																					(<tc-webtag:handle coderId='${resource.allProperties["External Reference ID"]}' context="${orfn:getHandlerContext(pageContext.request)}" />)
 																					<bean:message key="viewAggregationReview.Response" /></b>
 																					<bean:message key='AggregationItemStatus.${fn:replace(comment.extraInfo, " ", "")}' /><br />
 																					${orfn:htmlEncode(comment.comment)}

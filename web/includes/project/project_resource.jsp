@@ -23,7 +23,7 @@
 				<td class="value" nowrap="nowrap"><bean:message key='ResourceRole.${fn:replace(resource.resourceRole.name, " ", "")}.bold' /></td>
 				<td class="value" nowrap="nowrap">
 					<html:link href="mailto:${users[idxrResource.index].email}" title="Send Email"><html:img srcKey="viewProjectDetails.Resource.Email.img" border="0" /></html:link>
-					<tc-webtag:handle coderId="${users[idxrResource.index].id}" context="component" />
+					<tc-webtag:handle coderId="${users[idxrResource.index].id}" context="${orfn:getHandlerContext(pageContext.request)}" />
 				</td>
 				<c:if test="${isAllowedToViewAllPayment}">
 					<c:choose>
