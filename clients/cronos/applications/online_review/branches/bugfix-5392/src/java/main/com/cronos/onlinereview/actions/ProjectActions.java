@@ -1549,11 +1549,11 @@ public class ProjectActions extends DispatchAction {
             ResourceRole role = ActionsHelper.findResourceRoleById(
                     resourceRoles, ((Long) lazyForm.get("resources_role", i)).longValue());
             if (role != null && role != resource.getResourceRole()) {
-                resource.setResourceRole(role);
-                resourceRoleChanged = true;
             	// delete project_result if old role is submitter
                 // populate project_result if new role is submitter and project is component
                 ActionsHelper.changeResourceRole(project, user.getId(), resource.getResourceRole().getId(), role.getId());
+                resource.setResourceRole(role);
+                resourceRoleChanged = true;
             }
 
             resource.setProperty("Handle", resourceNames[i]);
