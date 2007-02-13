@@ -4,7 +4,7 @@
     <!--
         ==========  Configuration for DB Connection Factory component ==========
     -->
-    <Config name="com.topcoder.db.connectionfactory.DBConnectionFactoryImpl">
+    <Config name="com.topcoder.db.connectionfactory.OR">
         <Property name="connections">
             <Property name="default">
                 <Value>tcs</Value>
@@ -203,7 +203,7 @@
                         <Value>String</Value>
                     </Property>
                     <Property name="value">
-                        <Value>com.topcoder.db.connectionfactory.DBConnectionFactoryImpl</Value>
+                        <Value>com.topcoder.db.connectionfactory.OR</Value>
                     </Property>
                 </Property>
             </Property>
@@ -391,10 +391,10 @@
             <Value>-1</Value>
         </Property>
         <Property name="allowed_dirs">
-            <Value>/home/onlinereview/downloads</Value>
+            <Value>/home/csf/csffiles/onlinereview/downloads</Value>
         </Property>
         <Property name="default_dir">
-            <Value>/home/onlinereview/downloads</Value>
+            <Value>/home/csf/csffiles/onlinereview/downloads</Value>
         </Property>
         <Property name="overwrite">
             <Value>false</Value>
@@ -607,7 +607,7 @@
         </Property>
 
         <Property name="ConnectionFactoryNS">
-            <Value>com.topcoder.db.connectionfactory.DBConnectionFactoryImpl</Value>
+            <Value>com.topcoder.db.connectionfactory.OR</Value>
         </Property>
 
         <Property name="ConnectionName">
@@ -683,13 +683,13 @@
                 <Value>com.cronos.onlinereview.external.impl.DBUserRetrieval</Value>
             </Property>
             <Property name="UserRetrievalNamespace">
-                <Value>com.topcoder.db.connectionfactory.DBConnectionFactoryImpl</Value>
+                <Value>com.topcoder.db.connectionfactory.OR</Value>
             </Property>
             <Property name="ProjectRetrievalClassName">
                 <Value>com.cronos.onlinereview.external.impl.DBProjectRetrieval</Value>
             </Property>
             <Property name="ProjectRetrievalNamespace">
-                <Value>com.topcoder.db.connectionfactory.DBConnectionFactoryImpl</Value>
+                <Value>com.topcoder.db.connectionfactory.OR</Value>
             </Property>
         </Property>
 
@@ -706,7 +706,7 @@
     <!-- Default namespace for Registration handler -->
     <Config name="com.cronos.onlinereview.phases.RegistrationPhaseHandler">
         <Property name="ConnectionFactoryNS">
-            <Value>com.topcoder.db.connectionfactory.DBConnectionFactoryImpl</Value>
+            <Value>com.topcoder.db.connectionfactory.OR</Value>
         </Property>
         <Property name="ConnectionName">
             <Value>tcs</Value>
@@ -719,7 +719,7 @@
                 <Value>file</Value>
             </Property>
             <Property name="EmailTemplateName">
-                <Value>/home/onlinereview/email_template.txt</Value>
+                <Value>/home/csf/csffiles/onlinereview/email_template.txt</Value>
             </Property>
             <Property name="EmailSubject">
                 <Value>Phase Start</Value>
@@ -733,7 +733,7 @@
                 <Value>file</Value>
             </Property>
             <Property name="EmailTemplateName">
-                <Value>/home/onlinereview/email_template.txt</Value>
+                <Value>/home/csf/csffiles/onlinereview/email_template.txt</Value>
             </Property>
             <Property name="EmailSubject">
                 <Value>Phase End</Value>
@@ -747,7 +747,7 @@
     <!-- Default namespace for Submission handler -->
     <Config name="com.cronos.onlinereview.phases.SubmissionPhaseHandler">
         <Property name="ConnectionFactoryNS">
-            <Value>com.topcoder.db.connectionfactory.DBConnectionFactoryImpl</Value>
+            <Value>com.topcoder.db.connectionfactory.OR</Value>
         </Property>
         <Property name="ConnectionName">
             <Value>tcs</Value>
@@ -760,7 +760,7 @@
                 <Value>file</Value>
             </Property>
             <Property name="EmailTemplateName">
-                <Value>/home/onlinereview/email_template.txt</Value>
+                <Value>/home/csf/csffiles/onlinereview/email_template.txt</Value>
             </Property>
             <Property name="EmailSubject">
                 <Value>Phase Start</Value>
@@ -774,7 +774,7 @@
                 <Value>file</Value>
             </Property>
             <Property name="EmailTemplateName">
-                <Value>/home/onlinereview/email_template.txt</Value>
+                <Value>/home/csf/csffiles/onlinereview/email_template.txt</Value>
             </Property>
             <Property name="EmailSubject">
                 <Value>Phase End</Value>
@@ -788,7 +788,7 @@
     <!-- Default namespace for Screening handler -->
     <Config name="com.cronos.onlinereview.phases.ScreeningPhaseHandler">
         <Property name="ConnectionFactoryNS">
-            <Value>com.topcoder.db.connectionfactory.DBConnectionFactoryImpl</Value>
+            <Value>com.topcoder.db.connectionfactory.OR</Value>
         </Property>
         <Property name="ConnectionName">
             <Value>tcs</Value>
@@ -801,7 +801,7 @@
                 <Value>file</Value>
             </Property>
             <Property name="EmailTemplateName">
-                <Value>/home/onlinereview/email_template.txt</Value>
+                <Value>/home/csf/csffiles/onlinereview/email_template.txt</Value>
             </Property>
             <Property name="EmailSubject">
                 <Value>Phase Start</Value>
@@ -815,7 +815,7 @@
                 <Value>file</Value>
             </Property>
             <Property name="EmailTemplateName">
-                <Value>/home/onlinereview/email_template.txt</Value>
+                <Value>/home/csf/csffiles/onlinereview/email_template.txt</Value>
             </Property>
             <Property name="EmailSubject">
                 <Value>Phase End</Value>
@@ -829,7 +829,7 @@
     <!-- Default namespace for Review handler -->
     <Config name="com.cronos.onlinereview.phases.ReviewPhaseHandler">
         <Property name="ConnectionFactoryNS">
-            <Value>com.topcoder.db.connectionfactory.DBConnectionFactoryImpl</Value>
+            <Value>com.topcoder.db.connectionfactory.OR</Value>
         </Property>
         <Property name="ConnectionName">
             <Value>tcs</Value>
@@ -842,7 +842,7 @@
                 <Value>file</Value>
             </Property>
             <Property name="EmailTemplateName">
-                <Value>/home/onlinereview/email_template.txt</Value>
+                <Value>/home/csf/csffiles/onlinereview/email_template.txt</Value>
             </Property>
             <Property name="EmailSubject">
                 <Value>Phase Start</Value>
@@ -856,7 +856,7 @@
                 <Value>file</Value>
             </Property>
             <Property name="EmailTemplateName">
-                <Value>/home/onlinereview/email_template.txt</Value>
+                <Value>/home/csf/csffiles/onlinereview/email_template.txt</Value>
             </Property>
             <Property name="EmailSubject">
                 <Value>Phase End</Value>
@@ -870,7 +870,7 @@
     <!-- Default namespace for Appeals handler -->
     <Config name="com.cronos.onlinereview.phases.AppealsPhaseHandler">
         <Property name="ConnectionFactoryNS">
-            <Value>com.topcoder.db.connectionfactory.DBConnectionFactoryImpl</Value>
+            <Value>com.topcoder.db.connectionfactory.OR</Value>
         </Property>
         <Property name="ConnectionName">
             <Value>tcs</Value>
@@ -883,7 +883,7 @@
                 <Value>file</Value>
             </Property>
             <Property name="EmailTemplateName">
-                <Value>/home/onlinereview/email_template.txt</Value>
+                <Value>/home/csf/csffiles/onlinereview/email_template.txt</Value>
             </Property>
             <Property name="EmailSubject">
                 <Value>Phase Start</Value>
@@ -897,7 +897,7 @@
                 <Value>file</Value>
             </Property>
             <Property name="EmailTemplateName">
-                <Value>/home/onlinereview/email_template.txt</Value>
+                <Value>/home/csf/csffiles/onlinereview/email_template.txt</Value>
             </Property>
             <Property name="EmailSubject">
                 <Value>Phase End</Value>
@@ -911,7 +911,7 @@
     <!-- Default namespace for Appeals Response handler -->
     <Config name="com.cronos.onlinereview.phases.AppealsResponsePhaseHandler">
         <Property name="ConnectionFactoryNS">
-            <Value>com.topcoder.db.connectionfactory.DBConnectionFactoryImpl</Value>
+            <Value>com.topcoder.db.connectionfactory.OR</Value>
         </Property>
         <Property name="ConnectionName">
             <Value>tcs</Value>
@@ -924,7 +924,7 @@
                 <Value>file</Value>
             </Property>
             <Property name="EmailTemplateName">
-                <Value>/home/onlinereview/email_template.txt</Value>
+                <Value>/home/csf/csffiles/onlinereview/email_template.txt</Value>
             </Property>
             <Property name="EmailSubject">
                 <Value>Phase Start</Value>
@@ -938,7 +938,7 @@
                 <Value>file</Value>
             </Property>
             <Property name="EmailTemplateName">
-                <Value>/home/onlinereview/email_template.txt</Value>
+                <Value>/home/csf/csffiles/onlinereview/email_template.txt</Value>
             </Property>
             <Property name="EmailSubject">
                 <Value>Phase End</Value>
@@ -952,7 +952,7 @@
     <!-- Default namespace for Aggregation handler -->
     <Config name="com.cronos.onlinereview.phases.AggregationPhaseHandler">
         <Property name="ConnectionFactoryNS">
-            <Value>com.topcoder.db.connectionfactory.DBConnectionFactoryImpl</Value>
+            <Value>com.topcoder.db.connectionfactory.OR</Value>
         </Property>
         <Property name="ConnectionName">
             <Value>tcs</Value>
@@ -965,7 +965,7 @@
                 <Value>file</Value>
             </Property>
             <Property name="EmailTemplateName">
-                <Value>/home/onlinereview/email_template.txt</Value>
+                <Value>/home/csf/csffiles/onlinereview/email_template.txt</Value>
             </Property>
             <Property name="EmailSubject">
                 <Value>Phase Start</Value>
@@ -979,7 +979,7 @@
                 <Value>file</Value>
             </Property>
             <Property name="EmailTemplateName">
-                <Value>/home/onlinereview/email_template.txt</Value>
+                <Value>/home/csf/csffiles/onlinereview/email_template.txt</Value>
             </Property>
             <Property name="EmailSubject">
                 <Value>Phase End</Value>
@@ -993,7 +993,7 @@
     <!-- Default namespace for Aggregation Review handler -->
     <Config name="com.cronos.onlinereview.phases.AggregationReviewPhaseHandler">
         <Property name="ConnectionFactoryNS">
-            <Value>com.topcoder.db.connectionfactory.DBConnectionFactoryImpl</Value>
+            <Value>com.topcoder.db.connectionfactory.OR</Value>
         </Property>
         <Property name="ConnectionName">
             <Value>tcs</Value>
@@ -1006,7 +1006,7 @@
                 <Value>file</Value>
             </Property>
             <Property name="EmailTemplateName">
-                <Value>/home/onlinereview/email_template.txt</Value>
+                <Value>/home/csf/csffiles/onlinereview/email_template.txt</Value>
             </Property>
             <Property name="EmailSubject">
                 <Value>Phase Start</Value>
@@ -1020,7 +1020,7 @@
                 <Value>file</Value>
             </Property>
             <Property name="EmailTemplateName">
-                <Value>/home/onlinereview/email_template.txt</Value>
+                <Value>/home/csf/csffiles/onlinereview/email_template.txt</Value>
             </Property>
             <Property name="EmailSubject">
                 <Value>Phase End</Value>
@@ -1034,7 +1034,7 @@
     <!-- Default namespace for Final Fix handler -->
     <Config name="com.cronos.onlinereview.phases.FinalFixPhaseHandler">
         <Property name="ConnectionFactoryNS">
-            <Value>com.topcoder.db.connectionfactory.DBConnectionFactoryImpl</Value>
+            <Value>com.topcoder.db.connectionfactory.OR</Value>
         </Property>
         <Property name="ConnectionName">
             <Value>tcs</Value>
@@ -1047,7 +1047,7 @@
                 <Value>file</Value>
             </Property>
             <Property name="EmailTemplateName">
-                <Value>/home/onlinereview/email_template.txt</Value>
+                <Value>/home/csf/csffiles/onlinereview/email_template.txt</Value>
             </Property>
             <Property name="EmailSubject">
                 <Value>Phase Start</Value>
@@ -1061,7 +1061,7 @@
                 <Value>file</Value>
             </Property>
             <Property name="EmailTemplateName">
-                <Value>/home/onlinereview/email_template.txt</Value>
+                <Value>/home/csf/csffiles/onlinereview/email_template.txt</Value>
             </Property>
             <Property name="EmailSubject">
                 <Value>Phase End</Value>
@@ -1075,7 +1075,7 @@
     <!-- Default namespace for Final Review handler -->
     <Config name="com.cronos.onlinereview.phases.FinalReviewPhaseHandler">
         <Property name="ConnectionFactoryNS">
-            <Value>com.topcoder.db.connectionfactory.DBConnectionFactoryImpl</Value>
+            <Value>com.topcoder.db.connectionfactory.OR</Value>
         </Property>
         <Property name="ConnectionName">
             <Value>tcs</Value>
@@ -1088,7 +1088,7 @@
                 <Value>file</Value>
             </Property>
             <Property name="EmailTemplateName">
-                <Value>/home/onlinereview/email_template.txt</Value>
+                <Value>/home/csf/csffiles/onlinereview/email_template.txt</Value>
             </Property>
             <Property name="EmailSubject">
                 <Value>Phase Start</Value>
@@ -1102,7 +1102,7 @@
                 <Value>file</Value>
             </Property>
             <Property name="EmailTemplateName">
-                <Value>/home/onlinereview/email_template.txt</Value>
+                <Value>/home/csf/csffiles/onlinereview/email_template.txt</Value>
             </Property>
             <Property name="EmailSubject">
                 <Value>Phase End</Value>
@@ -1116,7 +1116,7 @@
     <!-- Default namespace for Approval handler -->
     <Config name="com.cronos.onlinereview.phases.ApprovalPhaseHandler">
         <Property name="ConnectionFactoryNS">
-            <Value>com.topcoder.db.connectionfactory.DBConnectionFactoryImpl</Value>
+            <Value>com.topcoder.db.connectionfactory.OR</Value>
         </Property>
         <Property name="ConnectionName">
             <Value>tcs</Value>
@@ -1129,7 +1129,7 @@
                 <Value>file</Value>
             </Property>
             <Property name="EmailTemplateName">
-                <Value>/home/onlinereview/email_template.txt</Value>
+                <Value>/home/csf/csffiles/onlinereview/email_template.txt</Value>
             </Property>
             <Property name="EmailSubject">
                 <Value>Phase Start</Value>
@@ -1143,7 +1143,7 @@
                 <Value>file</Value>
             </Property>
             <Property name="EmailTemplateName">
-                <Value>/home/onlinereview/email_template.txt</Value>
+                <Value>/home/csf/csffiles/onlinereview/email_template.txt</Value>
             </Property>
             <Property name="EmailSubject">
                 <Value>Phase End</Value>
@@ -1189,7 +1189,7 @@
                         <Value>String</Value>
                     </Property>
                     <Property name="value">
-                        <Value>com.topcoder.db.connectionfactory.DBConnectionFactoryImpl</Value>
+                        <Value>com.topcoder.db.connectionfactory.OR</Value>
                     </Property>
                 </Property>
             </Property>
@@ -1299,7 +1299,7 @@
     <Config name="com.topcoder.management.project.persistence.InformixProjectPersistence">
         <!-- The DBConnectionFactory class name used to create DB Connection Factory, required -->
         <Property name="ConnectionFactoryNS">
-            <Value>com.topcoder.db.connectionfactory.DBConnectionFactoryImpl</Value>
+            <Value>com.topcoder.db.connectionfactory.OR</Value>
         </Property>
         <!-- the connection name to retrieve connection in DB Connection Factory, required -->
         <Property name="ConnectionName">
@@ -1339,7 +1339,7 @@
                 <Value>com.topcoder.db.connectionfactory.DBConnectionFactoryImpl</Value>
             </Property>
             <Property name="namespace">
-                <Value>com.topcoder.db.connectionfactory.DBConnectionFactoryImpl</Value>
+                <Value>com.topcoder.db.connectionfactory.OR</Value>
             </Property>
         </Property>
         <Property name="ObjectFactoryNamespace">
@@ -1401,7 +1401,7 @@
     <Config name="com.topcoder.project.phases.template.persistence.XmlPhaseTemplatePersistence">
         <!-- XML files from which the templates will be loaded. -->
         <Property name="template_files">
-            <Value>/home/onlinereview/ComponentTimeline.xml</Value>
+            <Value>/home/csf/csffiles/onlinereview/ComponentTimeline.xml</Value>
         </Property>
     </Config>
 
@@ -1482,7 +1482,7 @@
     -->
     <Config name="com.topcoder.management.scorecard.persistence.InformixScorecardPersistence">
         <Property name="ConnectionFactoryNS">
-            <Value>com.topcoder.db.connectionfactory.DBConnectionFactoryImpl</Value>
+            <Value>com.topcoder.db.connectionfactory.OR</Value>
         </Property>
         <Property name="ConnectionName">
             <Value>tcs</Value>
@@ -1516,7 +1516,7 @@
             </Property>
             <!-- The DBConnectionFactory class name used to create DB Connection Factory, required -->
             <Property name="factory_namespace">
-                <Value>com.topcoder.db.connectionfactory.DBConnectionFactoryImpl</Value>
+                <Value>com.topcoder.db.connectionfactory.OR</Value>
             </Property>
             <Property name="factory_class">
                 <Value>com.topcoder.db.connectionfactory.DBConnectionFactoryImpl</Value>
@@ -2416,7 +2416,7 @@
 
             <!-- The namespace of the ConnectionFactory -->
             <Property name="name">
-                <Value>com.topcoder.db.connectionfactory.DBConnectionFactoryImpl</Value>
+                <Value>com.topcoder.db.connectionfactory.OR</Value>
             </Property>
         </Property>
 
@@ -3297,7 +3297,7 @@
                 <Value>file</Value>
             </Property>
             <Property name="EmailTemplateName">
-                <Value>/home/onlinereview/contact_manager_template.txt</Value>
+                <Value>/home/csf/csffiles/onlinereview/contact_manager_template.txt</Value>
             </Property>
             <Property name="EmailSubject">
                 <Value>Contact Manager Message</Value>

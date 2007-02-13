@@ -9,7 +9,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
@@ -34,7 +33,6 @@ import org.apache.struts.validator.LazyValidatorForm;
 
 import com.cronos.onlinereview.external.ExternalUser;
 import com.cronos.onlinereview.external.UserRetrieval;
-import com.topcoder.date.workdays.DefaultWorkdays;
 import com.topcoder.date.workdays.DefaultWorkdaysFactory;
 import com.topcoder.date.workdays.Workdays;
 import com.topcoder.date.workdays.WorkdaysUnitOfTime;
@@ -67,6 +65,9 @@ import com.topcoder.search.builder.filter.AndFilter;
 import com.topcoder.search.builder.filter.Filter;
 import com.topcoder.search.builder.filter.InFilter;
 import com.topcoder.util.errorhandling.BaseException;
+import com.topcoder.util.log.Level;
+import com.topcoder.util.log.Log;
+import com.topcoder.util.log.LogFactory;
 
 /**
  * This class contains Struts Actions that are meant to deal with Projects. There are following
@@ -87,19 +88,12 @@ import com.topcoder.util.errorhandling.BaseException;
  */
 public class ProjectActions extends DispatchAction {
 
-/* TODO: Remove all these logging-related entries
-    private final Log logger;
-
-    private static java.text.DateFormat dateFormat = new java.text.SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-*/
-
+	private final static Log logger = LogFactory.getLog(ProjectActions.class.getName());
+	private final static DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss.SSS"); 
     /**
      * Creates a new instance of the <code>ProjectActions</code> class.
      */
     public ProjectActions() {
-
-//        logger = LogFactory.getLog("ProjectActions");
-
     }
 
     /**
@@ -123,6 +117,21 @@ public class ProjectActions extends DispatchAction {
      *             when any error happens while processing in TCS components
      */
     public ActionForward newProject(ActionMapping mapping, ActionForm form,
+            HttpServletRequest request, HttpServletResponse response) throws BaseException {
+		try {
+			return newProject1(mapping, form, request, response);
+		} catch (Exception e) {
+			e.printStackTrace();
+			log.error(e, e);
+			if (e instanceof BaseException) {
+				throw (BaseException) e;
+			}
+			throw new BaseException(e);
+		}    	
+    }
+            
+    
+    private ActionForward newProject1(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response)
         throws BaseException {
         // Gather the roles the user has for current request
@@ -1696,15 +1705,28 @@ public class ProjectActions extends DispatchAction {
     public ActionForward listProjects(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response)
         throws BaseException {
+    	try {
+			return listProjects1(mapping, form, request, response);
+		} catch (Exception e) {
+			e.printStackTrace();
+			log.error(e, e);
+			if (e instanceof BaseException) {
+				throw (BaseException) e;				
+			}
+			throw new BaseException(e);
+		}
+    }
+    private ActionForward listProjects1(ActionMapping mapping, ActionForm form,
+            HttpServletRequest request, HttpServletResponse response)
+        throws BaseException {
 
 /* TODO: Remove all these logging entries from this method
         Date currentDate = new Date();
 */
-        //logger.log(Level.ERROR, "entering listProjects" + dateFormat.format(currentDate));
-        //logger.log(Level.ERROR, "gathering user roles" + dateFormat.format(new Date()));
-        // Gather the roles the user has for current request
-        AuthorizationHelper.gatherUserRoles(request);
-        //logger.log(Level.ERROR, "got user roles" + dateFormat.format(new Date()));
+        logger.log(Level.ERROR, "gathering user roles " + dateFormat.format(new Date()));
+		// Gather the roles the user has for current request
+		AuthorizationHelper.gatherUserRoles(request);
+		logger.log(Level.ERROR, "got user roles " + dateFormat.format(new Date()));
 
         // Retrieve the value of "scope" parameter
         String scope = request.getParameter("scope");
@@ -1725,7 +1747,7 @@ public class ProjectActions extends DispatchAction {
         }
 
         //currentDate = new Date();
-        //logger.log(Level.ERROR, "obtaining projectmanager " + dateFormat.format(currentDate));
+        logger.log(Level.ERROR, "obtaining projectmanager " + dateFormat.format(new Date()));
 
         // Obtain an instance of Project Manager
         ProjectManager manager = ActionsHelper.createProjectManager(request);
@@ -1733,7 +1755,7 @@ public class ProjectActions extends DispatchAction {
         int activeTab;
         Filter projectsFilter = null;
         //currentDate = new Date();
-        //logger.log(Level.ERROR, "got projectmanager " + dateFormat.format(currentDate));
+        logger.log(Level.ERROR, "got projectmanager " + dateFormat.format(new Date()));
 
         // Determine projects displayed and index of the active tab
         // based on the value of the "scope" parameter
@@ -1796,12 +1818,12 @@ public class ProjectActions extends DispatchAction {
         String[][] myDeliverables = (myProjects) ? new String[projectCategories.length][] : null;
 
         //currentDate = new Date();
-        //logger.log(Level.ERROR, "fetching listProjects" + dateFormat.format(currentDate));
+        logger.log(Level.ERROR, "fetching listProjects" + dateFormat.format(new Date()));
         // Fetch projects from the database. These projects will require further grouping
         Project[] ungroupedProjects = (projectsFilter != null) ? manager.searchProjects(projectsFilter) :
                 manager.getUserProjects(AuthorizationHelper.getLoggedInUserId(request));
         //currentDate = new Date();
-        //logger.log(Level.ERROR, "done fetching listProjects" + dateFormat.format(currentDate));
+        logger.log(Level.ERROR, "done fetching listProjects" + dateFormat.format(new Date()));
         Resource[] allMyResources = null;
 /*****************************************************************************************************************************************/
         if (ungroupedProjects.length != 0 && AuthorizationHelper.isUserLoggedIn(request) && myProjects) {
@@ -1815,7 +1837,7 @@ public class ProjectActions extends DispatchAction {
                 projectFilters.add(new Long(ungroupedProjects[i].getId()));
             }
         //currentDate = new Date();
-        //logger.log(Level.ERROR, "got project filters: " +  ungroupedProjects.length +" - " + dateFormat.format(currentDate));
+            logger.log(Level.ERROR, "got project filters: " +  ungroupedProjects.length +" - " + dateFormat.format(new Date()));
 
             Filter filterProjects = new InFilter(ResourceFilterBuilder.PROJECT_ID_FIELD_NAME, projectFilters);
 
@@ -1823,18 +1845,17 @@ public class ProjectActions extends DispatchAction {
                     new Filter[] {filterExtIDname, filterExtIDvalue, filterProjects}));
 
         //currentDate = new Date();
-        //logger.log(Level.ERROR, "begin searchResources" + dateFormat.format(currentDate));
+            logger.log(Level.ERROR, "begin searchResources" + dateFormat.format(new Date()));
 
             // Obtain an instance of Resource Manager
             ResourceManager resMgr = ActionsHelper.createResourceManager(request);
             // Get all "My" resources for the list of projects
             allMyResources = resMgr.searchResources(filter);
         //currentDate = new Date();
-        //logger.log(Level.ERROR, "end searchResources" + dateFormat.format(currentDate));
-
+            logger.log(Level.ERROR, "end searchResources" + dateFormat.format(new Date()));
         }
         //currentDate = new Date();
-//logger.log(Level.ERROR, "get phase manager" + dateFormat.format(currentDate));
+        logger.log(Level.ERROR, "get phase manager" + dateFormat.format(new Date()));
         // Obtain an instance of Phase Manager
         PhaseManager phMgr = ActionsHelper.createPhaseManager(request, false);
 
@@ -1844,13 +1865,13 @@ public class ProjectActions extends DispatchAction {
             allProjectIds[i] = ungroupedProjects[i].getId();
         }
         //currentDate = new Date();
-        //logger.log(Level.ERROR, "getting phases phase manager" + dateFormat.format(currentDate));
+        logger.log(Level.ERROR, "getting phases phase manager" + dateFormat.format(new Date()));
         com.topcoder.project.phases.Project[] phProjects = phMgr.getPhases(allProjectIds);
         //currentDate = new Date();
-        //logger.log(Level.ERROR, "got phases phase manager" + dateFormat.format(currentDate));
+        logger.log(Level.ERROR, "got phases phase manager" + dateFormat.format(new Date()));
 /*****************************************************************************************************************************************/
         //currentDate = new Date();
-        //logger.log(Level.ERROR, "get message resources" + dateFormat.format(currentDate));
+        logger.log(Level.ERROR, "get message resources" + dateFormat.format(new Date()));
         // Message Resources to be used for this request
         MessageResources messages = getResources(request);
         //currentDate = new Date();

@@ -604,6 +604,7 @@
 				var phaseName = phaseNodes[i].getAttribute("type");
 				var phaseId = phaseNodes[i].getAttribute("id");
 				var phaseTypeId = phaseTypeIdsMap[phaseName];
+				alert("Hola: pn:" + phaseName + " pid:" + phaseTypeIdsMap[phaseName]);
 				var newPhaseRow = createNewPhaseRow(phaseName, phaseTypeId, "template_" + phaseId);
 				phaseRows[i] = newPhaseRow;
 				timelineTable.tBodies[0].appendChild(newPhaseRow);

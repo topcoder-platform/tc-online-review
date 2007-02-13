@@ -84,6 +84,8 @@
 		<pathelement location="${servlet.jsp.jar}" />
 		<pathelement location="${mail.jar}" />
 		<pathelement location="${struts.jar}" />
+		<pathelement location="${axis.jar}" />
+		<pathelement location="${activation.jar}" />
 
 		<pathelement location="${authentication_factory.jar}" />
 		<pathelement location="${auto_screening_management.jar}" />
@@ -181,7 +183,10 @@
     </target>
 	
 	<target name="compile">
-		<javac srcdir="${javamain}" destdir="${build_classdir}" includes="**/*.java" debug="true" verbose="${verbose}">
+		<javac srcdir="${javamain}" 
+				destdir="${build_classdir}" 
+				includes="**/*.java" debug="true" verbose="${verbose}" 
+				target="1.4" source="1.4">
 			<classpath refid="buildlibs" />
 		</javac>
 	</target>
@@ -279,7 +284,7 @@
 		<delete file="${component.war}" failonerror="false" />
 
 		<war destfile="${component.war}" webxml="${configdir}/WEB-INF/web.xml" duplicate="fail">
-			<webinf dir="${configdir}/WEB-INF" includes="*.tld,*.xml" excludes="web.xml" />
+			<webinf dir="${configdir}/WEB-INF" includes="*.tld,*.xml, server-config.wsdd" excludes="web.xml" />
 			<classes dir="${build_classdir}" includes="**" />
 			<classes dir="${configdir}" includes="**" excludes="WEB-INF/**" />
 			<lib dir="${jar_tcs_libdir}/${authentication_factory.path}" includes="*.jar" />

@@ -737,6 +737,11 @@ public class Constants {
     public static final String EDIT_FORWARD_NAME = "edit";
 
 
+    /**
+     * Resource property for storing the user id.
+     */
+    public static final String EXTERNAL_REFERNCE_ID = "External Reference ID";
+    
     // Hidden constructor
 
     /**

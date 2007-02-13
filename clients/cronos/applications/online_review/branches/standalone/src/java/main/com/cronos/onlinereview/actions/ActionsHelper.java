@@ -3,25 +3,21 @@
  */
 package com.cronos.onlinereview.actions;
 
-import java.text.Format;
-import java.text.SimpleDateFormat;
-
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Types;
+import java.text.Format;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-
-import com.topcoder.db.connectionfactory.DBConnectionException;
-import java.sql.Types;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -34,6 +30,7 @@ import org.apache.struts.util.MessageResources;
 
 import com.cronos.onlinereview.autoscreening.management.ScreeningManager;
 import com.cronos.onlinereview.autoscreening.management.ScreeningManagerFactory;
+import com.cronos.onlinereview.commons.OnlineReviewHelper;
 import com.cronos.onlinereview.deliverables.AggregationDeliverableChecker;
 import com.cronos.onlinereview.deliverables.AggregationReviewDeliverableChecker;
 import com.cronos.onlinereview.deliverables.AppealResponsesDeliverableChecker;
@@ -46,22 +43,7 @@ import com.cronos.onlinereview.deliverables.SubmitterCommentDeliverableChecker;
 import com.cronos.onlinereview.deliverables.TestCasesDeliverableChecker;
 import com.cronos.onlinereview.external.UserRetrieval;
 import com.cronos.onlinereview.external.impl.DBUserRetrieval;
-import com.cronos.onlinereview.phases.AggregationPhaseHandler;
-import com.cronos.onlinereview.phases.AggregationReviewPhaseHandler;
-import com.cronos.onlinereview.phases.AppealsPhaseHandler;
-import com.cronos.onlinereview.phases.ApprovalPhaseHandler;
 import com.cronos.onlinereview.phases.AutoPaymentUtil;
-import com.cronos.onlinereview.phases.FinalFixPhaseHandler;
-import com.cronos.onlinereview.phases.FinalReviewPhaseHandler;
-import com.cronos.onlinereview.phases.PRAggregationPhaseHandler;
-import com.cronos.onlinereview.phases.PRAggregationReviewPhaseHandler;
-import com.cronos.onlinereview.phases.PRAppealResponsePhaseHandler;
-import com.cronos.onlinereview.phases.PRFinalFixPhaseHandler;
-import com.cronos.onlinereview.phases.PRFinalReviewPhaseHandler;
-import com.cronos.onlinereview.phases.PRRegistrationPhaseHandler;
-import com.cronos.onlinereview.phases.PRReviewPhaseHandler;
-import com.cronos.onlinereview.phases.PRScreeningPhaseHandler;
-import com.cronos.onlinereview.phases.PRSubmissionPhaseHandler;
 import com.topcoder.date.workdays.DefaultWorkdaysFactory;
 import com.topcoder.date.workdays.Workdays;
 import com.topcoder.db.connectionfactory.ConfigurationException;
@@ -88,15 +70,11 @@ import com.topcoder.management.deliverable.persistence.sql.SqlDeliverablePersist
 import com.topcoder.management.deliverable.persistence.sql.SqlUploadPersistence;
 import com.topcoder.management.deliverable.search.DeliverableFilterBuilder;
 import com.topcoder.management.deliverable.search.SubmissionFilterBuilder;
-import com.topcoder.management.phase.DefaultPhaseManager;
-import com.topcoder.management.phase.PhaseHandler;
 import com.topcoder.management.phase.PhaseManagementException;
 import com.topcoder.management.phase.PhaseManager;
-import com.topcoder.management.phase.PhaseOperationEnum;
 import com.topcoder.management.project.Project;
 import com.topcoder.management.project.ProjectCategory;
 import com.topcoder.management.project.ProjectManager;
-import com.topcoder.management.project.ProjectManagerImpl;
 import com.topcoder.management.project.ProjectStatus;
 import com.topcoder.management.project.ProjectType;
 import com.topcoder.management.resource.Resource;
@@ -126,7 +104,6 @@ import com.topcoder.project.phases.PhaseType;
 import com.topcoder.project.phases.template.DefaultPhaseTemplate;
 import com.topcoder.project.phases.template.PhaseTemplate;
 import com.topcoder.project.phases.template.PhaseTemplatePersistence;
-import com.topcoder.project.phases.template.StartDateGenerationException;
 import com.topcoder.project.phases.template.StartDateGenerator;
 import com.topcoder.project.phases.template.persistence.XmlPhaseTemplatePersistence;
 import com.topcoder.project.phases.template.startdategenerator.RelativeWeekTimeStartDateGenerator;
@@ -140,7 +117,6 @@ import com.topcoder.search.builder.filter.InFilter;
 import com.topcoder.search.builder.filter.OrFilter;
 import com.topcoder.servlet.request.DisallowedDirectoryException;
 import com.topcoder.servlet.request.FileUpload;
-import com.topcoder.servlet.request.LocalFileUpload;
 import com.topcoder.util.datavalidator.LongValidator;
 import com.topcoder.util.datavalidator.StringValidator;
 import com.topcoder.util.errorhandling.BaseException;
@@ -160,7 +136,8 @@ public class ActionsHelper {
      * This member variable is a string constant that defines the name of the configurtaion
      * namespace which the parameters for database connection factory are stored under.
      */
-    private static final String DB_CONNECTION_NAMESPACE = "com.topcoder.db.connectionfactory.DBConnectionFactoryImpl";
+//    private static final String DB_CONNECTION_NAMESPACE = "com.topcoder.db.connectionfactory.DBConnectionFactoryImpl";
+     private static final String DB_CONNECTION_NAMESPACE = OnlineReviewHelper.DB_CONNECTION_NAMESPACE;
 
     /**
      * This member variable is a string constant that defines the name of the configurtaion
@@ -619,33 +596,6 @@ public class ActionsHelper {
 
         for (int i = 0; i < phaseTypes.length; ++i) {
             if (phaseTypes[i].getId() == phaseTypeId) {
-                return phaseTypes[i];
-            }
-        }
-        return null;
-    }
-
-    /**
-     * This static method searches for the phase type with the specified name in a provided array of
-     * phase types. The search is case-insensitive.
-     *
-     * @return found phase type, or <code>null</code> if a type with the specified name has not been
-     *         found in the provided array of phase types.
-     * @param phaseTypes
-     *            an array of phase types to search for wanted phase type among.
-     * @param phaseTypeName
-     *            the name of the needed phase type.
-     * @throws IllegalArgumentException
-     *             if any of the parameters are <code>null</code>, or <code>phaseTypeName</code>
-     *             parameter is empty string.
-     */
-    public static PhaseType findPhaseTypeByName(PhaseType[] phaseTypes, String phaseTypeName) {
-        // Validate parameters
-        validateParameterNotNull(phaseTypes, "phaseTypes");
-        validateParameterStringNotEmpty(phaseTypeName, "phaseTypeName");
-
-        for (int i = 0; i < phaseTypes.length; ++i) {
-            if (phaseTypes[i].getName().equalsIgnoreCase(phaseTypeName)) {
                 return phaseTypes[i];
             }
         }
@@ -2203,59 +2153,13 @@ public class ActionsHelper {
         // If this is the first time this method is called for the request,
         // create a new instance of the object, and possibly register phase handlers
         if (manager == null || registerPhaseHandlers) {
-            // Create Phase Manager object if needed
-            if (manager == null) {
-                manager = new DefaultPhaseManager("com.topcoder.management.phase");
-            }
-
-            // Register phase handlers if this was requested
-            if (registerPhaseHandlers) {
-                PhaseType[] phaseTypes = manager.getAllPhaseTypes();
-
-                registerPhaseHandlerForOperation(manager, phaseTypes,
-                        new PRRegistrationPhaseHandler(), Constants.REGISTRATION_PHASE_NAME);
-                registerPhaseHandlerForOperation(manager, phaseTypes,
-                        new PRSubmissionPhaseHandler(), Constants.SUBMISSION_PHASE_NAME);
-                registerPhaseHandlerForOperation(manager, phaseTypes,
-                        new PRScreeningPhaseHandler(), Constants.SCREENING_PHASE_NAME);
-                registerPhaseHandlerForOperation(manager, phaseTypes,
-                        new PRReviewPhaseHandler(), Constants.REVIEW_PHASE_NAME);
-                registerPhaseHandlerForOperation(manager, phaseTypes,
-                        new AppealsPhaseHandler(), Constants.APPEALS_PHASE_NAME);
-                registerPhaseHandlerForOperation(manager, phaseTypes,
-                        new PRAppealResponsePhaseHandler(), Constants.APPEALS_RESPONSE_PHASE_NAME);
-                registerPhaseHandlerForOperation(manager, phaseTypes,
-                        new PRAggregationPhaseHandler(), Constants.AGGREGATION_PHASE_NAME);
-                registerPhaseHandlerForOperation(manager, phaseTypes,
-                        new PRAggregationReviewPhaseHandler(), Constants.AGGREGATION_REVIEW_PHASE_NAME);
-                registerPhaseHandlerForOperation(manager, phaseTypes,
-                        new PRFinalFixPhaseHandler(), Constants.FINAL_FIX_PHASE_NAME);
-                registerPhaseHandlerForOperation(manager, phaseTypes,
-                        new PRFinalReviewPhaseHandler(), Constants.FINAL_REVIEW_PHASE_NAME);
-                registerPhaseHandlerForOperation(manager, phaseTypes,
-                        new ApprovalPhaseHandler(), Constants.APPROVAL_PHASE_NAME);
-            }
-
+        	manager = OnlineReviewHelper.createPhaseManager(registerPhaseHandlers);
             // Place newly-created object into the request as attribute
             request.setAttribute((registerPhaseHandlers) ? "phaseManager+handlers" : "phaseManager", manager);
         }
 
         // Return the Phase Manager object
         return manager;
-    }
-
-    /**
-     * TODO: Document it!
-     *
-     * @param manager
-     * @param phaseTypes
-     * @param handler
-     * @param phaseName
-     */
-    private static void registerPhaseHandlerForOperation(PhaseManager manager, PhaseType[] phaseTypes, PhaseHandler handler, String phaseName) {
-        manager.registerHandler(handler, findPhaseTypeByName(phaseTypes, phaseName), PhaseOperationEnum.START);
-        manager.registerHandler(handler, findPhaseTypeByName(phaseTypes, phaseName), PhaseOperationEnum.END);
-        manager.registerHandler(handler, findPhaseTypeByName(phaseTypes, phaseName), PhaseOperationEnum.CANCEL);
     }
 
     /**
@@ -2282,7 +2186,7 @@ public class ActionsHelper {
         // If this is the first time this method is called for the request,
         // create a new instance of the object
         if (manager == null) {
-            manager = new ProjectManagerImpl();
+            manager = OnlineReviewHelper.createProjectManager();
             // Place newly-created object into the request as attribute
             request.setAttribute("projectManager", manager);
         }
@@ -2313,48 +2217,8 @@ public class ActionsHelper {
         // If this is the first time this method is called for the request,
         // create a new instance of the object
         if (manager == null) {
-            // get connection factory
-            DBConnectionFactory dbconn = new DBConnectionFactoryImpl(DB_CONNECTION_NAMESPACE);
-            // get the persistence
-            ResourcePersistence persistence = new SqlResourcePersistence(dbconn);
-
-            // get the id generators
-            IDGenerator resourceIdGenerator =
-                    IDGeneratorFactory.getIDGenerator(PersistenceResourceManager.RESOURCE_ID_GENERATOR_NAME);
-            IDGenerator resourceRoleIdGenerator =
-                    IDGeneratorFactory.getIDGenerator(PersistenceResourceManager.RESOURCE_ROLE_ID_GENERATOR_NAME);
-            IDGenerator notificationTypeIdGenerator =
-                    IDGeneratorFactory.getIDGenerator(PersistenceResourceManager.NOTIFICATION_TYPE_ID_GENERATOR_NAME);
-
-            // get the search bundles
-            SearchBundleManager searchBundleManager =
-                    new SearchBundleManager("com.topcoder.searchbuilder.common");
-
-            SearchBundle resourceSearchBundle = searchBundleManager.getSearchBundle(
-                    PersistenceResourceManager.RESOURCE_SEARCH_BUNDLE_NAME);
-            // set it searchable
-            setAllFieldsSearchable(resourceSearchBundle);
-
-            SearchBundle resourceRoleSearchBundle = searchBundleManager.getSearchBundle(
-                    PersistenceResourceManager.RESOURCE_ROLE_SEARCH_BUNDLE_NAME);
-            // set it searchable
-            setAllFieldsSearchable(resourceRoleSearchBundle);
-
-            SearchBundle notificationSearchBundle = searchBundleManager.getSearchBundle(
-                    PersistenceResourceManager.NOTIFICATION_SEARCH_BUNDLE_NAME);
-            // set it searchable
-            setAllFieldsSearchable(notificationSearchBundle);
-
-            SearchBundle notificationTypeSearchBundle = searchBundleManager.getSearchBundle(
-                    PersistenceResourceManager.NOTIFICATION_TYPE_SEARCH_BUNDLE_NAME);
-            // set it searchable
-            setAllFieldsSearchable(notificationTypeSearchBundle);
-
             // initialize the PersistenceResourceManager
-            manager = new PersistenceResourceManager(persistence, resourceSearchBundle,
-                    resourceRoleSearchBundle, notificationSearchBundle,
-                    notificationTypeSearchBundle, resourceIdGenerator,
-                    resourceRoleIdGenerator, notificationTypeIdGenerator);
+            manager = OnlineReviewHelper.createResourceManager();
             // Place newly-created object into the request as attribute
             request.setAttribute("resourceManager", manager);
         }
@@ -2524,37 +2388,7 @@ public class ActionsHelper {
         // If this is the first time this method is called for the request,
         // create a new instance of the object
         if (manager == null) {
-            // Get connection factory
-            DBConnectionFactory dbconn = new DBConnectionFactoryImpl(DB_CONNECTION_NAMESPACE);
-            // Get the persistence
-            UploadPersistence persistence = new SqlUploadPersistence(dbconn);
-
-            // Get the ID generators
-            IDGenerator uploadIdGenerator =
-                    IDGeneratorFactory.getIDGenerator(PersistenceUploadManager.UPLOAD_ID_GENERATOR_NAME);
-            IDGenerator uploadTypeIdGenerator =
-                    IDGeneratorFactory.getIDGenerator(PersistenceUploadManager.UPLOAD_TYPE_ID_GENERATOR_NAME);
-            IDGenerator uploadStatusIdGenerator =
-                    IDGeneratorFactory.getIDGenerator(PersistenceUploadManager.UPLOAD_STATUS_ID_GENERATOR_NAME);
-            IDGenerator submissionIdGenerator =
-                    IDGeneratorFactory.getIDGenerator(PersistenceUploadManager.SUBMISSION_ID_GENERATOR_NAME);
-            IDGenerator submissionStatusIdGenerator =
-                    IDGeneratorFactory.getIDGenerator(PersistenceUploadManager.SUBMISSION_STATUS_ID_GENERATOR_NAME);
-
-            // Get the search bundles
-            SearchBundleManager searchBundleManager =
-                    new SearchBundleManager("com.topcoder.searchbuilder.common");
-
-            SearchBundle uploadSearchBundle = searchBundleManager.getSearchBundle(
-                    PersistenceUploadManager.UPLOAD_SEARCH_BUNDLE_NAME);
-            SearchBundle submissionSearchBundle = searchBundleManager.getSearchBundle(
-                    PersistenceUploadManager.SUBMISSION_SEARCH_BUNDLE_NAME);
-
-            // Initialize the PersistenceUploadManager
-            manager = new PersistenceUploadManager(persistence,
-                    uploadSearchBundle, submissionSearchBundle,
-                    uploadIdGenerator, uploadTypeIdGenerator, uploadStatusIdGenerator,
-                    submissionIdGenerator, submissionStatusIdGenerator);
+            manager = OnlineReviewHelper.createUploadManager();
             // Place newly-created object into the request as attribute
             request.setAttribute("uploadManager", manager);
         }
@@ -2585,7 +2419,7 @@ public class ActionsHelper {
         // If this is the first time this method is called for the request,
         // create a new instance of the object
         if (manager == null) {
-            manager = ScreeningManagerFactory.createScreeningManager();
+            manager = OnlineReviewHelper.createScreeningManager();
             // Place newly-created object into the request as attribute
             request.setAttribute("screeningManager", manager);
         }
@@ -2651,7 +2485,7 @@ public class ActionsHelper {
         // create a new instance of the object
         if (fileUpload == null) {
 //            fileUpload = new RemoteFileUpload("com.topcoder.servlet.request.RemoteFileUpload");
-            fileUpload = new LocalFileUpload("com.topcoder.servlet.request.LocalFileUpload");
+            fileUpload = OnlineReviewHelper.createFileUploadManager();
             // Place newly-created object into the request as attribute
             request.setAttribute("fileUploadManager", fileUpload);
         }
@@ -2696,42 +2530,6 @@ public class ActionsHelper {
         PhaseTemplate phaseTemplate = new DefaultPhaseTemplate(persistence, generator, workdays );
         
         return phaseTemplate;
-    }
-    
-    
-    /**
-     * Sets the searchable fields to the search bundle.
-     *
-     * @param searchBundle
-     *            the search bundle to set.
-     */
-    private static void setAllFieldsSearchable(SearchBundle searchBundle) {
-        Map fields = new HashMap();
-
-        // set the resource filter fields
-        fields.put(ResourceFilterBuilder.RESOURCE_ID_FIELD_NAME, LongValidator.isPositive());
-        fields.put(ResourceFilterBuilder.PHASE_ID_FIELD_NAME, LongValidator.isPositive());
-        fields.put(ResourceFilterBuilder.PROJECT_ID_FIELD_NAME, LongValidator.isPositive());
-        fields.put(ResourceFilterBuilder.SUBMISSION_ID_FIELD_NAME, LongValidator.isPositive());
-        fields.put(ResourceFilterBuilder.RESOURCE_ROLE_ID_FIELD_NAME, LongValidator.isPositive());
-        fields.put(ResourceFilterBuilder.EXTENSION_PROPERTY_NAME_FIELD_NAME, StringValidator.startsWith(""));
-        fields.put(ResourceFilterBuilder.EXTENSION_PROPERTY_VALUE_FIELD_NAME, StringValidator.startsWith(""));
-
-        // set the resource role filter fields
-        fields.put(ResourceRoleFilterBuilder.NAME_FIELD_NAME, StringValidator.startsWith(""));
-        fields.put(ResourceRoleFilterBuilder.PHASE_TYPE_ID_FIELD_NAME, LongValidator.isPositive());
-        fields.put(ResourceRoleFilterBuilder.RESOURCE_ROLE_ID_FIELD_NAME, LongValidator.isPositive());
-
-        // set the notification filter fields
-        fields.put(NotificationFilterBuilder.EXTERNAL_REF_ID_FIELD_NAME, LongValidator.isPositive());
-        fields.put(NotificationFilterBuilder.NOTIFICATION_TYPE_ID_FIELD_NAME, LongValidator.isPositive());
-        fields.put(NotificationFilterBuilder.PROJECT_ID_FIELD_NAME, LongValidator.isPositive());
-
-        // set the notification type filter fields
-        fields.put(NotificationTypeFilterBuilder.NOTIFICATION_TYPE_ID_FIELD_NAME, LongValidator.isPositive());
-        fields.put(NotificationTypeFilterBuilder.NAME_FIELD_NAME, StringValidator.startsWith(""));
-
-        searchBundle.setSearchableFields(fields);
     }
     
     /**

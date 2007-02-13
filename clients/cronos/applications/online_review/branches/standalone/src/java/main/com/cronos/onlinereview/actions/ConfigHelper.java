@@ -11,6 +11,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.topcoder.servlet.request.ConfigurationException;
+import com.topcoder.servlet.request.DisallowedDirectoryException;
+import com.topcoder.servlet.request.LocalFileUpload;
+import com.topcoder.servlet.request.LocalUploadedFile;
 import com.topcoder.util.config.ConfigManager;
 import com.topcoder.util.config.Property;
 import com.topcoder.util.config.UnknownNamespaceException;
@@ -1072,6 +1076,21 @@ public class ConfigHelper {
         return contactManagerEmailSubject;
     }
 
+    /**
+     * This method returns the directory to upload files.
+     *  
+     * @return a string with the directory to upload files.
+     */
+    public static String getLocalUploadDirectory() {
+    	try {
+			return new LocalFileUpload(LocalFileUpload.class.getName()).getDir();
+		} catch (ConfigurationException e) {
+			throw new RuntimeException(e);
+		} catch (DisallowedDirectoryException e) {
+			throw new RuntimeException(e);
+		}
+    }
+    
     /**
      * Return the property value of online_review namespace.
      *  
