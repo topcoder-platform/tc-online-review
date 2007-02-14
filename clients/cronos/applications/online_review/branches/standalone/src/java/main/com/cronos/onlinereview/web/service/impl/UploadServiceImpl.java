@@ -8,8 +8,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.rmi.RemoteException;
 import java.util.Arrays;
-import java.util.Iterator;
-import java.util.Map;
 
 import javax.activation.DataHandler;
 
@@ -101,22 +99,9 @@ public class UploadServiceImpl implements UploadService {
 				throw new IncorrectPhaseRemoteException("Error.IncorrectPhase");
 	        }
 						
-			Resource[] resources = OnlineReviewHelper.findResourcesByProjectAndUser(projectId, ownerId);
-			if ((resources == null) || (resources.length == 0)) {
-				throw new RemoteException("cannot find resources for the user: " + ownerId + " project: " + projectId);
-			}
 			//Get the name (id) of the user performing the operations
 			String operator = Long.toString(ownerId);
-			Resource ownerResource = null;
-			for (int i = 0; i < resources.length && ownerResource == null; i++) {
-				Resource r = resources[i];
-				for (Iterator j = r.getAllProperties().entrySet().iterator(); j.hasNext();) {
-					Map.Entry entry = (Map.Entry) j.next();
-					if (Constants.EXTERNAL_REFERENCE_ID.equals(entry.getKey()) && operator.equals(entry.getValue())) {
-						ownerResource = r;
-					}
-				}
-			}
+			Resource ownerResource = OnlineReviewHelper.findExternalUserResourceForProject(projectId, ownerId);
 			if (ownerResource == null) {
 				throw new RemoteException("cannot find resources for the user: " + ownerId + " project: " + projectId);
 			}

@@ -2452,7 +2452,7 @@ public class ActionsHelper {
         // If this is the first time this method is called for the request,
         // create a new instance of the object
         if (manager == null) {
-            manager = new DBUserRetrieval(DB_CONNECTION_NAMESPACE);
+            manager = OnlineReviewHelper.createUserRetrieval();
             // Place newly-created object into the request as attribute
             request.setAttribute("userRetrieval", manager);
         }

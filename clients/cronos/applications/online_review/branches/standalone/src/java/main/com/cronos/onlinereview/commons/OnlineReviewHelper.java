@@ -1,12 +1,15 @@
 package com.cronos.onlinereview.commons;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 import com.cronos.onlinereview.actions.ActionsHelper;
 import com.cronos.onlinereview.actions.Constants;
 import com.cronos.onlinereview.autoscreening.management.ScreeningManager;
 import com.cronos.onlinereview.autoscreening.management.ScreeningManagerFactory;
+import com.cronos.onlinereview.external.UserRetrieval;
+import com.cronos.onlinereview.external.impl.DBUserRetrieval;
 import com.cronos.onlinereview.phases.AppealsPhaseHandler;
 import com.cronos.onlinereview.phases.ApprovalPhaseHandler;
 import com.cronos.onlinereview.phases.PRAggregationPhaseHandler;
@@ -308,4 +311,41 @@ public class OnlineReviewHelper {
         // Perform search for resources
         return resMgr.searchResources(filter);
     }
+    
+    /**
+     * This static method helps to create an object of the <code>UserRetrieval</code> class.
+     *
+     * @return a newly created instance of the class.
+     * @throws IllegalArgumentException
+     *             if <code>request</code> parameter is <code>null</code>.
+     * @throws com.cronos.onlinereview.external.ConfigException
+     *             if error occurs while loading configuration settings, or any of the required
+     *             configuration parameters are missing.
+     */
+    public static UserRetrieval createUserRetrieval()
+        throws com.cronos.onlinereview.external.ConfigException {
+
+    	return new DBUserRetrieval(DB_CONNECTION_NAMESPACE);
+
+    }
+    
+    public static Resource findExternalUserResourceForProject(long projectId, long ownerId) throws BaseException {
+		Resource[] resources = findResourcesByProjectAndUser(projectId, ownerId);
+		if ((resources == null) || (resources.length == 0)) {
+			return null;
+		}
+		// Get the name (id) of the user performing the operations
+		String operator = Long.toString(ownerId);
+		Resource ownerResource = null;
+		for (int i = 0; i < resources.length && ownerResource == null; i++) {
+			Resource r = resources[i];
+			for (Iterator j = r.getAllProperties().entrySet().iterator(); j.hasNext();) {
+				Map.Entry entry = (Map.Entry) j.next();
+				if (Constants.EXTERNAL_REFERENCE_ID.equals(entry.getKey()) && operator.equals(entry.getValue())) {
+					return r;
+				}
+			}
+		}
+		return null;
+	}
 }
