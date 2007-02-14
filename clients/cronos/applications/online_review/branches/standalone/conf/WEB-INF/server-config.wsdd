@@ -12,9 +12,14 @@
 	<service name="UploadService" provider="java:RPC">
 		<namespace>http://onlinereview.topcoder.com</namespace>
 		<parameter name="className" value="com.cronos.onlinereview.web.service.impl.UploadServiceImpl" />
-		<parameter name="allowedMethods" value="*" />
+		<parameter name="allowedMethods" value="uploadSubmission" />
 	</service>
-
+	<service name="UsersService" provider="java:RPC">
+		<namespace>http://onlinereview.topcoder.com</namespace>
+		<parameter name="className" value="com.cronos.onlinereview.web.service.impl.UsersServiceImpl" />
+		<parameter name="allowedMethods" value="addSubmitter" />
+	</service>
+	
 	<service name="AdminService" provider="java:MSG">
 		<parameter name="allowedMethods" value="*" />
 		<parameter name="className" value="org.apache.axis.utils.Admin" />
