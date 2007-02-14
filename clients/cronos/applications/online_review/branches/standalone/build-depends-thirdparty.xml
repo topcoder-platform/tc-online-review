@@ -8,6 +8,8 @@
 	<property name="servlet.jsp.jar" value="${cactus.home.tomcat5x}/common/lib/jsp-api.jar" />
 	<property name="mail.jar" value="${cactus.home.tomcat5x}/common/lib/mail.jar" />
 	<property name="struts.jar" value="${ext_libdir}/struts-1.2.9.jar" />
+	<property name="axis.jar" value="${ext_libdir}/axis-dok.jar" />
+	<property name="activation.jar" value="${ext_libdir}/activation.jar" />
 
 	<property name="commons.beanutils.jar" value="${ext_libdir}/commons-beanutils.jar" />
 
