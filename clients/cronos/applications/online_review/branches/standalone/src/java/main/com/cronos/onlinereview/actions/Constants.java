@@ -740,7 +740,7 @@ public class Constants {
     /**
      * Resource property for storing the user id.
      */
-    public static final String EXTERNAL_REFERNCE_ID = "External Reference ID";
+    public static final String EXTERNAL_REFERENCE_ID = "External Reference ID";
     
     // Hidden constructor
 

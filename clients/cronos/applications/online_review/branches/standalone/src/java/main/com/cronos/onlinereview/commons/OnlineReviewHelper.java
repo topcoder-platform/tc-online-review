@@ -294,7 +294,7 @@ public class OnlineReviewHelper {
     
     public static Resource[] findResourcesByProjectAndUser(long projectId, long userId) throws BaseException {
     	 // Prepare filter to select resources by the External ID of currently logged in user
-        Filter filterExtIDname = ResourceFilterBuilder.createExtensionPropertyNameFilter(Constants.EXTERNAL_REFERNCE_ID);
+        Filter filterExtIDname = ResourceFilterBuilder.createExtensionPropertyNameFilter(Constants.EXTERNAL_REFERENCE_ID);
         Filter filterExtIDvalue = ResourceFilterBuilder.createExtensionPropertyValueFilter(String.valueOf(userId));
         Filter filterExtID = new AndFilter(filterExtIDname, filterExtIDvalue);
 
