@@ -1,0 +1,36 @@
+TCS-003: Your submission does not conform to the directory standard.
+
+File or directory [E:\tcs\app\online_review\scripts\auto_screening\temp\2-3.jar.contents\.\src] failed to pass the validation: The directory does not exist 
+File or directory [E:\tcs\app\online_review\scripts\auto_screening\temp\2-3.jar.contents\.\src\java] failed to pass the validation: The directory does not exist 
+File or directory [E:\tcs\app\online_review\scripts\auto_screening\temp\2-3.jar.contents\.\src\java\main] failed to pass the validation: The directory does not exist 
+File or directory [E:\tcs\app\online_review\scripts\auto_screening\temp\2-3.jar.contents\.\src\java\tests] failed to pass the validation: The directory does not exist 
+File or directory [E:\tcs\app\online_review\scripts\auto_screening\temp\2-3.jar.contents\.\docs] failed to pass the validation: The directory does not exist 
+File or directory [E:\tcs\app\online_review\scripts\auto_screening\temp\2-3.jar.contents\.\log] failed to pass the validation: The directory does not exist 
+File or directory [E:\tcs\app\online_review\scripts\auto_screening\temp\2-3.jar.contents\.\conf] failed to pass the validation: The directory does not exist 
+File or directory [E:\tcs\app\online_review\scripts\auto_screening\temp\2-3.jar.contents\.\test_files] failed to pass the validation: The directory does not exist 
+
+TCS-004: Your submission does not contain a component specification document in rich text format (rtf).
+
+No component specification files are found in directory [E:\tcs\app\online_review\scripts\auto_screening\temp\2-3.jar.contents\docs], or they are not of rtf type. 
+
+TCS-006: Your submission is missing the appropriate unit test log files.
+
+No files with extension [.log] are found under directory [E:\tcs\app\online_review\scripts\auto_screening\temp\2-3.jar.contents\log]. 
+
+TCS-011: Your submission does not contain source code under /src.
+
+No files with extension [.java] are found under directory [E:\tcs\app\online_review\scripts\auto_screening\temp\2-3.jar.contents\src\java\main]. 
+
+TCS-012: Your submission does not contain test source code under /src.
+
+No files with extension [.java] are found under directory [E:\tcs\app\online_review\scripts\auto_screening\temp\2-3.jar.contents\src\java\tests]. 
+
+TCS-013: Checkstyle has produced the following warnings.
+
+Directory [E:\tcs\app\online_review\scripts\auto_screening\temp\2-3.jar.contents\src\java\main] to start checking style from does not exist. 
+Directory [E:\tcs\app\online_review\scripts\auto_screening\temp\2-3.jar.contents\src\java\tests] to start checking style from does not exist. 
+
+TCS-015: Your submission has passed the auto screening process.
+
+OK. The submission archive was successfully unzipped to [E:\tcs\app\online_review\scripts\auto_screening\temp\2-3.jar.contents]. 
+OK. There are no personal info in the submission. 
