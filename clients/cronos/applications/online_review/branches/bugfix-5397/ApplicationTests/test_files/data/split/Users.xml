@@ -1,0 +1,161 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<dataset>
+
+    <!-- *** user *** -->
+    <user user_id="1" first_name="Competitor" last_name="1" create_date="2006-09-04 00:24:37.0"
+          modify_date="2006-09-04 00:24:37.0" handle="competitor1" last_login="2006-08-16 23:22:56.173" status="hh1"
+          password="competitor1" activation_code="41FAEF947EB04312B6411C27D9EDFB27" middle_name=""
+          handle_lower="competitor1" timezone_id="1"/>
+    <user user_id="2" first_name="Competitor" last_name="2" create_date="2006-09-04 00:24:37.0"
+          modify_date="2006-09-04 00:24:37.0" handle="competitor2" last_login="2006-08-16 23:22:56.173" status="hh2"
+          password="competitor2" activation_code="57794E195CC54aaeBC401430FF0ABDF0" middle_name=""
+          handle_lower="competitor2" timezone_id="2"/>
+    <user user_id="3" first_name="Competitor" last_name="3" create_date="2006-09-04 00:24:37.0"
+          modify_date="2006-09-04 00:24:37.0" handle="competitor3" last_login="2006-08-16 23:22:56.173" status="hh2"
+          password="competitor3" activation_code="57794E195CC54aaeBC401430FF0ABDF0" middle_name=""
+          handle_lower="competitor3" timezone_id="2"/>
+    <user user_id="4" first_name="Primary" last_name="Reviewer" create_date="2006-09-04 00:24:37.0"
+          modify_date="2006-09-04 00:24:37.0" handle="primary" last_login="2006-08-06 23:12:16.0" status="yyy"
+          password="primary" activation_code="A344EACDC8FF478e8A5247846074B369" middle_name="" handle_lower="primary"
+          timezone_id="0"/>
+    <user user_id="5" first_name="Reviewer" last_name="1" create_date="2006-09-04 00:24:36.0"
+          modify_date="2006-09-04 00:24:36.0" handle="reviewer1" last_login="2006-03-05 14:15:16.0" status="xxx"
+          password="reviewer1" activation_code="FEF1BF67F0394f8c9225E28FB8B170BB" middle_name=""
+          handle_lower="reviewer1" timezone_id="1"/>
+    <user user_id="6" first_name="Reviewer" last_name="2" create_date="2006-09-04 00:24:37.0"
+          modify_date="2006-09-04 00:24:37.0" handle="reviewer2" last_login="2006-08-16 23:22:56.173" status="hh2"
+          password="reviewer2" activation_code="57794E195CC54aaeBC401430FF0ABDF0" middle_name=""
+          handle_lower="reviewer2" timezone_id="2"/>
+    <user user_id="7" first_name="Approver" last_name="Approver" create_date="2006-09-04 00:24:37.0"
+          modify_date="2006-09-04 00:24:37.0" handle="approver" last_login="2006-08-16 23:22:56.173" status="hh2"
+          password="approver" activation_code="57794E195CC54aaeBC401430FF0ABDF0" middle_name="" handle_lower="approver"
+          timezone_id="2"/>
+    <user user_id="8" first_name="Manager" last_name="Manager" create_date="2006-09-04 00:24:37.0"
+          modify_date="2006-09-04 00:24:37.0" handle="manager" last_login="2006-09-04 00:24:37.0" status="aaa"
+          password="manager" activation_code="5FA706F00D5240c2A922F1E5BEEEAFF0" middle_name="A" handle_lower="manager"
+          timezone_id="0"/>
+    <user user_id="9" first_name="Observer" last_name="Observer" create_date="2006-09-04 00:24:37.0"
+          modify_date="2006-09-04 00:24:37.0" handle="observer" last_login="2006-08-16 23:22:56.173" status="hh2"
+          password="observer" activation_code="57794E195CC54aaeBC401430FF0ABDF0" middle_name=""
+          handle_lower="observer" timezone_id="2"/>
+    <user user_id="10" first_name="Designer" last_name="Designer" create_date="2006-09-04 00:24:37.0"
+          modify_date="2006-09-04 00:24:37.0" handle="designer" last_login="2006-08-16 23:22:56.173" status="hh2"
+          password="designer" activation_code="57794E195CC54aaeBC401430FF0ABDF0" middle_name="" handle_lower="designer"
+          timezone_id="2"/>
+
+    <!-- *** email *** -->
+    <email email_id="4" user_id="1" email_type_id="1" address="competitor1@competitor1.ru"
+           create_date="2006-09-04 00:24:37.0" modify_date="2006-09-04 00:24:37.0" primary_ind="1" status_id="1"/>
+    <email email_id="5" user_id="2" email_type_id="1" address="competitor2@competitor2.ru"
+           create_date="2006-09-04 00:24:37.0" modify_date="2006-09-04 00:24:37.0" primary_ind="1" status_id="1"/>
+    <email email_id="12" user_id="3" email_type_id="1" address="competitor3@competitor3.ru"
+           create_date="2006-09-04 00:24:37.0" modify_date="2006-09-04 00:24:37.0" primary_ind="1" status_id="1"/>
+    <email email_id="2" user_id="4" email_type_id="1" address="primary@primary.ru"
+           create_date="2006-09-04 00:24:37.0" modify_date="2006-09-04 00:24:37.0" primary_ind="1" status_id="1"/>
+    <email email_id="1" user_id="5" email_type_id="1" address="reviewer1@reviewer1.ru"
+           create_date="2006-09-04 00:24:37.0" modify_date="2006-09-04 00:24:37.0" primary_ind="1" status_id="1"/>
+    <email email_id="8" user_id="6" email_type_id="1" address="reviewer2@reviewer2.ru"
+           create_date="2006-09-04 00:24:37.0" modify_date="2006-09-04 00:24:37.0" primary_ind="1" status_id="1"/>
+    <email email_id="10" user_id="7" email_type_id="1" address="approver@approver.ru"
+           create_date="2006-09-04 00:24:37.0" modify_date="2006-09-04 00:24:37.0" primary_ind="1" status_id="1"/>
+    <email email_id="3" user_id="8" email_type_id="1" address="manager@manager.ru" create_date="2006-09-04 00:24:37.0"
+           modify_date="2006-09-04 00:24:37.0" primary_ind="1" status_id="1"/>
+    <email email_id="9" user_id="9" email_type_id="1" address="observer@observer.ru"
+           create_date="2006-09-04 00:24:37.0" modify_date="2006-09-04 00:24:37.0" primary_ind="1" status_id="1"/>
+    <email email_id="11" user_id="10" email_type_id="1" address="designer@designer.ru"
+           create_date="2006-09-04 00:24:37.0" modify_date="2006-09-04 00:24:37.0" primary_ind="1" status_id="1"/>
+
+    <!-- *** user_rating *** -->
+    <user_rating user_id="1" phase_id="112" rating="0" vol="0" rating_no_vol="0" num_ratings="0"
+                 mod_date_time="2006-09-04 00:24:37.0" create_date_time="2006-09-04 00:24:37.0"
+                 last_rated_project_id="0"/>
+    <user_rating user_id="1" phase_id="113" rating="903" vol="428" rating_no_vol="0" num_ratings="1"
+                 mod_date_time="2006-09-04 00:24:37.0" create_date_time="2006-09-04 00:24:37.0"
+                 last_rated_project_id="0"/>
+    <user_rating user_id="2" phase_id="112" rating="1797" vol="416" rating_no_vol="0" num_ratings="1"
+                 mod_date_time="2006-09-04 00:24:37.0" create_date_time="2006-09-04 00:24:37.0"
+                 last_rated_project_id="0"/>
+    <user_rating user_id="2" phase_id="113" rating="794" vol="303" rating_no_vol="0" num_ratings="1"
+                 mod_date_time="2006-09-04 00:24:37.0" create_date_time="2006-09-04 00:24:37.0"
+                 last_rated_project_id="0"/>
+    <user_rating user_id="4" phase_id="112" rating="0" vol="0" rating_no_vol="0" num_ratings="0"
+                 mod_date_time="2006-09-04 00:24:37.0" create_date_time="2006-09-04 00:24:37.0"
+                 last_rated_project_id="0"/>
+    <user_rating user_id="4" phase_id="113" rating="0" vol="0" rating_no_vol="0" num_ratings="0"
+                 mod_date_time="2006-09-04 00:24:37.0" create_date_time="2006-09-04 00:24:37.0"
+                 last_rated_project_id="0"/>
+    <user_rating user_id="5" phase_id="112" rating="2275" vol="512" rating_no_vol="0" num_ratings="1"
+                 mod_date_time="2006-09-04 00:24:37.0" create_date_time="2006-09-04 00:24:37.0"
+                 last_rated_project_id="0"/>
+    <user_rating user_id="5" phase_id="113" rating="1709" vol="542" rating_no_vol="0" num_ratings="1"
+                 mod_date_time="2006-09-04 00:24:37.0" create_date_time="2006-09-04 00:24:37.0"
+                 last_rated_project_id="0"/>
+    <user_rating user_id="3" phase_id="112" rating="1420" vol="369" rating_no_vol="0" num_ratings="1"
+                 mod_date_time="2006-09-04 00:24:37.0" create_date_time="2006-09-04 00:24:37.0"
+                 last_rated_project_id="0"/>
+    <user_rating user_id="3" phase_id="113" rating="998" vol="214" rating_no_vol="0" num_ratings="1"
+                 mod_date_time="2006-09-04 00:24:37.0" create_date_time="2006-09-04 00:24:37.0"
+                 last_rated_project_id="0"/>
+    <user_rating user_id="6" phase_id="112" rating="1458" vol="175" rating_no_vol="0" num_ratings="1"
+                 mod_date_time="2006-09-04 00:24:37.0" create_date_time="2006-09-04 00:24:37.0"
+                 last_rated_project_id="0"/>
+    <user_rating user_id="6" phase_id="113" rating="2220" vol="540" rating_no_vol="0" num_ratings="1"
+                 mod_date_time="2006-09-04 00:24:37.0" create_date_time="2006-09-04 00:24:37.0"
+                 last_rated_project_id="0"/>
+    <user_rating user_id="7" phase_id="112" rating="1076" vol="277" rating_no_vol="0" num_ratings="1"
+                 mod_date_time="2006-09-04 00:24:37.0" create_date_time="2006-09-04 00:24:37.0"
+                 last_rated_project_id="0"/>
+    <user_rating user_id="7" phase_id="113" rating="995" vol="362" rating_no_vol="0" num_ratings="1"
+                 mod_date_time="2006-09-04 00:24:37.0" create_date_time="2006-09-04 00:24:37.0"
+                 last_rated_project_id="0"/>
+    <user_rating user_id="9" phase_id="112" rating="1179" vol="246" rating_no_vol="0" num_ratings="1"
+                 mod_date_time="2006-09-04 00:24:37.0" create_date_time="2006-09-04 00:24:37.0"
+                 last_rated_project_id="0"/>
+    <user_rating user_id="9" phase_id="113" rating="1193" vol="357" rating_no_vol="0" num_ratings="1"
+                 mod_date_time="2006-09-04 00:24:37.0" create_date_time="2006-09-04 00:24:37.0"
+                 last_rated_project_id="0"/>
+    <user_rating user_id="10" phase_id="112" rating="1032" vol="385" rating_no_vol="0" num_ratings="1"
+                 mod_date_time="2006-09-04 00:24:37.0" create_date_time="2006-09-04 00:24:37.0"
+                 last_rated_project_id="0"/>
+    <user_rating user_id="10" phase_id="113" rating="1558" vol="298" rating_no_vol="0" num_ratings="1"
+                 mod_date_time="2006-09-04 00:24:37.0" create_date_time="2006-09-04 00:24:37.0"
+                 last_rated_project_id="0"/>
+
+    <!-- *** user_reliability *** -->
+    <user_reliability user_id="1" phase_id="112" rating="0.0000" modify_date="2006-09-04 00:24:37.0"
+                      create_date="2006-09-04 00:24:37.0"/>
+    <user_reliability user_id="1" phase_id="113" rating="0.3333" modify_date="2006-09-04 00:24:37.0"
+                      create_date="2006-09-04 00:24:37.0"/>
+    <user_reliability user_id="2" phase_id="112" rating="0.8000" modify_date="2006-09-04 00:24:37.0"
+                      create_date="2006-09-04 00:24:37.0"/>
+    <user_reliability user_id="2" phase_id="113" rating="0.6666" modify_date="2006-09-04 00:24:37.0"
+                      create_date="2006-09-04 00:24:37.0"/>
+    <user_reliability user_id="4" phase_id="112" rating="0.0000" modify_date="2006-09-04 00:24:37.0"
+                      create_date="2006-09-04 00:24:37.0"/>
+    <user_reliability user_id="4" phase_id="113" rating="0.0000" modify_date="2006-09-04 00:24:37.0"
+                      create_date="2006-09-04 00:24:37.0"/>
+    <user_reliability user_id="5" phase_id="112" rating="1.0000" modify_date="2006-09-04 00:24:37.0"
+                      create_date="2006-09-04 00:24:37.0"/>
+    <user_reliability user_id="5" phase_id="113" rating="1.0000" modify_date="2006-09-04 00:24:37.0"
+                      create_date="2006-09-04 00:24:37.0"/>
+    <user_reliability user_id="3" phase_id="112" rating="0.6000" modify_date="2006-09-04 00:24:37.0"
+                      create_date="2006-09-04 00:24:37.0"/>
+    <user_reliability user_id="3" phase_id="113" rating="0.0667" modify_date="2006-09-04 00:24:37.0"
+                      create_date="2006-09-04 00:24:37.0"/>
+    <user_reliability user_id="6" phase_id="112" rating="1.0000" modify_date="2006-09-04 00:24:37.0"
+                      create_date="2006-09-04 00:24:37.0"/>
+    <user_reliability user_id="6" phase_id="113" rating="1.0000" modify_date="2006-09-04 00:24:37.0"
+                      create_date="2006-09-04 00:24:37.0"/>
+    <user_reliability user_id="7" phase_id="112" rating="0.2143" modify_date="2006-09-04 00:24:37.0"
+                      create_date="2006-09-04 00:24:37.0"/>
+    <user_reliability user_id="7" phase_id="113" rating="0.2000" modify_date="2006-09-04 00:24:37.0"
+                      create_date="2006-09-04 00:24:37.0"/>
+    <user_reliability user_id="9" phase_id="112" rating="0.1333" modify_date="2006-09-04 00:24:37.0"
+                      create_date="2006-09-04 00:24:37.0"/>
+    <user_reliability user_id="9" phase_id="113" rating="0.3333" modify_date="2006-09-04 00:24:37.0"
+                      create_date="2006-09-04 00:24:37.0"/>
+    <user_reliability user_id="10" phase_id="112" rating="0.1667" modify_date="2006-09-04 00:24:37.0"
+                      create_date="2006-09-04 00:24:37.0"/>
+    <user_reliability user_id="10" phase_id="113" rating="0.6000" modify_date="2006-09-04 00:24:37.0"
+                      create_date="2006-09-04 00:24:37.0"/>
+</dataset>
