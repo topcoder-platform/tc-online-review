@@ -99,9 +99,9 @@
 			phaseTypeIdsMap["${phaseType.name}"] = "${phaseType.id}";
 		</c:forEach>
 		
-		var screeningScorecardNode;
-		var reviewScorecardNode;
-		var approvalScorecardNode;
+		var screeningScorecardNodes = new Array();;
+		var reviewScorecardNodes = new Array();;
+		var approvalScorecardNodes = new Array();;
 
 		/*	
 		 * TODO: Document it
@@ -147,13 +147,25 @@
 			}
 		} 
 
-		function onProjectCategoryChange(projectCategoryNode) {
-			changeScorecardByCategory(document.getElementsByName("phase_screening_scorecard[0]")[0], projectCategoryNode.value, screeningScorecards);
-			changeScorecardByCategory(document.getElementsByName("phase_review_scorecard[0]")[0], projectCategoryNode.value, reviewScorecards);
-			changeScorecardByCategory(document.getElementsByName("phase_approval_scorecard[0]")[0], projectCategoryNode.value, approvalScorecards);
-			changeScorecardByCategory(screeningScorecardNode, projectCategoryNode.value, screeningScorecards);
-			changeScorecardByCategory(reviewScorecardNode, projectCategoryNode.value, reviewScorecards);
-			changeScorecardByCategory(approvalScorecardNode, projectCategoryNode.value, approvalScorecards);
+		function onProjectCategoryChange(projectCategoryNode) {						
+			var templateRow = document.getElementById("screening_scorecard_row_template");
+			changeScorecardByCategory(templateRow.getElementsByTagName("select")[0], projectCategoryNode.value, screeningScorecards);
+
+			templateRow = document.getElementById("review_scorecard_row_template");
+			changeScorecardByCategory(templateRow.getElementsByTagName("select")[0], projectCategoryNode.value, reviewScorecards);
+
+			templateRow = document.getElementById("approval_scorecard_row_template");
+			changeScorecardByCategory(templateRow.getElementsByTagName("select")[0], projectCategoryNode.value, approvalScorecards);
+
+			for (var i = 0; i < screeningScorecardNodes.length; i++) {
+				changeScorecardByCategory(screeningScorecardNodes[i], projectCategoryNode.value, screeningScorecards);
+			}
+			for (var i = 0; i < reviewScorecardNodes.length; i++) {
+				changeScorecardByCategory(reviewScorecardNodes[i], projectCategoryNode.value, reviewScorecards);
+			}
+			for (var i = 0; i < approvalScorecardNodes.length; i++) {
+				changeScorecardByCategory(approvalScorecardNodes[i], projectCategoryNode.value, approvalScorecards);
+			}
 		}
 
 		function changeScorecardByCategory(scorecardNode, category, scorecards) {
@@ -339,11 +351,11 @@
 				dojo.dom.insertAfter(criterionRow, phaseRow);
 				
  				if (phaseName == "Screening") {
-					screeningScorecardNode = criterionRow.getElementsByTagName("select")[0];
+					screeningScorecardNodes[screeningScorecardNodes.length] = criterionRow.getElementsByTagName("select")[0];
 				} else if (phaseName == "Review") {
-					reviewScorecardNode = criterionRow.getElementsByTagName("select")[0];
+					reviewScorecardNodes[reviewScorecardNodes.length] = criterionRow.getElementsByTagName("select")[0];
 				} else if (phaseName == "Approval") {
-					approvalScorecardNode = criterionRow.getElementsByTagName("select")[0];
+					approvalScorecardNodes[approvalScorecardNodes.length] = criterionRow.getElementsByTagName("select")[0];
 				}
 			}
 		}
