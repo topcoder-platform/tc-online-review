@@ -15,7 +15,7 @@ import java.sql.Types;
  * @author brain_cn
  * @version 1.0
  */
-class PRHelper {
+public class PRHelper {
 	private static final String APPEAL_RESPONSE_SELECT_STMT =
 		"select ri_s.value as final_score, " +
 		"	ri_u.value as user_id, " +
@@ -284,7 +284,7 @@ class PRHelper {
      * @param conn connection
      * @throws SQLException if error occurs
      */
-    private static void populateProjectResult(long projectId, Connection conn) throws SQLException {
+    public static void populateProjectResult(long projectId, Connection conn) throws SQLException {
     	// Payment should be set before populate to project_result table
     	AutoPaymentUtil.populateSubmitterPayments(projectId, conn);
 

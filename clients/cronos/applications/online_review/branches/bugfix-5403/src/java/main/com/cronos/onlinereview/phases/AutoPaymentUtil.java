@@ -325,18 +325,26 @@ public class AutoPaymentUtil {
         PRHelper.close(pstmt);
 
         // prepare price for differnt placed
-        double[] prices = new double[] { price, 0 };
-        prices[1] = Math.round(price * .5);
+        double[] prices = new double[] { price, Math.round(price * .5) };
 
         // Update the payment resource_info and paid resource_info
-        long[] placeds = new long[] { 1, 2 };
-
-        for (int i = 0; i < placeds.length; i++) {
-            long submitter = getResourceIdByPlaced(projectId, placeds[i], conn);
+        long winnerRunnerCount = getWinnerRunnerCount(projectId, conn);
+        
+        if (winnerRunnerCount > 0) {
+            long submitter = getResourceIdByPlaced(projectId, 1, conn);
 
             if (submitter > 0) {
                 // Update the payment for given submitter which has placed    
-                updateResourcePayment(submitter, prices[i], conn);
+                updateResourcePayment(submitter, prices[0], conn);
+            }
+        }
+
+        if (winnerRunnerCount > 1) {
+            long submitter = getResourceIdByPlaced(projectId, 2, conn);
+
+            if (submitter > 0) {
+                // Update the payment for given submitter which has placed    
+                updateResourcePayment(submitter, prices[1], conn);
             }
         }
     }
@@ -485,6 +493,36 @@ public class AutoPaymentUtil {
         return 0;
     }
 
+    /**
+     * Return the winner/Runner count with given project.
+     * 
+     * @param projectId the project id
+     * @param conn the connection
+     * @return the count
+     * @throws SQLException if error occurs
+     */
+    private static long getWinnerRunnerCount(long projectId, Connection conn) throws SQLException {
+    	String sqlString = "select count(*) from project_info where project_id = ? and project_info_type_id in (23,24);";
+
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+
+        try {
+            pstmt = conn.prepareStatement(sqlString);
+            pstmt.setLong(1, projectId);
+            rs = pstmt.executeQuery();
+
+            if (rs.next()) {
+                return rs.getLong(1);
+            } else {
+                return 0;
+            }
+        } finally {
+            PRHelper.close(rs);
+            PRHelper.close(pstmt);
+        }
+    }
+    
     /**
      * Retrieve the resourceId with placed, projectid.
      *
