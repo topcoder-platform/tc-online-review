@@ -3124,6 +3124,44 @@ public class ActionsHelper {
     }
 
     /**
+     * Retrieve all default scorecards.
+     *
+     * @throws Exception if error occurs
+     */
+    public static List getDefautlScorecards() throws BaseException {
+    	Connection conn = null;
+    	Statement stmt = null;
+    	ResultSet rs = null;
+		try {
+	        DBConnectionFactory dbconn = new DBConnectionFactoryImpl(DB_CONNECTION_NAMESPACE);
+	        conn = dbconn.createConnection();
+	        String sqlString = "select ds.*, st.name from default_scorecard ds, scorecard_type_lu st " +
+	        		"where ds.scorecard_type_id = st.scorecard_type_id";
+	        
+	        stmt = conn.createStatement();
+	        rs = stmt.executeQuery(sqlString);
+	        List list = new ArrayList();
+	        while (rs.next()) {
+	        	DefaultScorecard scorecard = new DefaultScorecard();
+	        	scorecard.setCategory(rs.getInt("project_category_id"));
+	        	scorecard.setScorecardType(rs.getInt("scorecard_type_id"));
+	        	scorecard.setScorecardId(rs.getLong("scorecard_id"));
+	        	scorecard.setName(rs.getString("name"));
+	        	list.add(scorecard);
+	        }
+	        return list;
+		} catch (DBConnectionException e) {
+			throw new BaseException("Failed to return DBConnection", e);
+		} catch (SQLException e) {
+			throw new BaseException("Failed to retrieve default scorecard ", e);
+		} finally {
+			close(rs);
+			close(stmt);
+			close(conn);
+		}
+    }
+
+    /**
      * Retrieve and update next ComponentInquiryId.
      *
      * @param conn the connection

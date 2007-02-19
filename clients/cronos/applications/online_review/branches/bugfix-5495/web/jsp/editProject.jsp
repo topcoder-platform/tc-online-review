@@ -48,22 +48,6 @@
 			// TODO: Localize the catagory name
 			projectCategories[projectCategories.length - 1]["name"] = "${category.name}";
 		</c:forEach>
-
-		var screeningScorecards = [];
-		<c:forEach var="scorecard" items="${screeningScorecards}">
-			screeningScorecards.push({});
-			screeningScorecards[screeningScorecards.length - 1]["id"] = ${scorecard.id};
-			screeningScorecards[screeningScorecards.length - 1]["category"] = ${scorecard.category};	
-			screeningScorecards[screeningScorecards.length - 1]["name"] = "${scorecard.name} ${scorecard.version}";	
-		</c:forEach>
-
-		var reviewScorecards = [];
-		<c:forEach var="scorecard" items="${reviewScorecards}">
-			reviewScorecards.push({});
-			reviewScorecards[reviewScorecards.length - 1]["id"] = ${scorecard.id};
-			reviewScorecards[reviewScorecards.length - 1]["category"] = ${scorecard.category};	
-			reviewScorecards[reviewScorecards.length - 1]["name"] = "${scorecard.name} ${scorecard.version}";	
-		</c:forEach>
 		
 		var screeningScorecards = [];
 		<c:forEach var="scorecard" items="${screeningScorecards}">
@@ -80,13 +64,22 @@
 			reviewScorecards[reviewScorecards.length - 1]["category"] = ${scorecard.category};	
 			reviewScorecards[reviewScorecards.length - 1]["name"] = "${scorecard.name} ${scorecard.version}";	
 		</c:forEach>
-		
+
 		var approvalScorecards = [];
 		<c:forEach var="scorecard" items="${approvalScorecards}">
 			approvalScorecards.push({});
 			approvalScorecards[approvalScorecards.length - 1]["id"] = ${scorecard.id};
 			approvalScorecards[approvalScorecards.length - 1]["category"] = ${scorecard.category};	
 			approvalScorecards[approvalScorecards.length - 1]["name"] = "${scorecard.name} ${scorecard.version}";		
+		</c:forEach>
+
+		var defaultScorecards = [];
+		<c:forEach var="scorecard" items="${defaultScorecards}">
+			defaultScorecards.push({});
+			defaultScorecards[defaultScorecards.length - 1]["id"] = ${scorecard.scorecardId};
+			defaultScorecards[defaultScorecards.length - 1]["category"] = ${scorecard.category};	
+			defaultScorecards[defaultScorecards.length - 1]["type"] = ${scorecard.scorecardType};	
+			defaultScorecards[defaultScorecards.length - 1]["name"] = ${scorecard.name};	
 		</c:forEach>
 
 		var projectTypeNamesMap = {};
@@ -149,26 +142,26 @@
 
 		function onProjectCategoryChange(projectCategoryNode) {						
 			var templateRow = document.getElementById("screening_scorecard_row_template");
-			changeScorecardByCategory(templateRow.getElementsByTagName("select")[0], projectCategoryNode.value, screeningScorecards);
+			changeScorecardByCategory(templateRow.getElementsByTagName("select")[0], projectCategoryNode.value, screeningScorecards, 'Screening');
 
 			templateRow = document.getElementById("review_scorecard_row_template");
-			changeScorecardByCategory(templateRow.getElementsByTagName("select")[0], projectCategoryNode.value, reviewScorecards);
+			changeScorecardByCategory(templateRow.getElementsByTagName("select")[0], projectCategoryNode.value, reviewScorecards, 'Review');
 
 			templateRow = document.getElementById("approval_scorecard_row_template");
-			changeScorecardByCategory(templateRow.getElementsByTagName("select")[0], projectCategoryNode.value, approvalScorecards);
+			changeScorecardByCategory(templateRow.getElementsByTagName("select")[0], projectCategoryNode.value, approvalScorecards, 'Client Review');
 
 			for (var i = 0; i < screeningScorecardNodes.length; i++) {
-				changeScorecardByCategory(screeningScorecardNodes[i], projectCategoryNode.value, screeningScorecards);
+				changeScorecardByCategory(screeningScorecardNodes[i], projectCategoryNode.value, screeningScorecards, 'Screening');
 			}
 			for (var i = 0; i < reviewScorecardNodes.length; i++) {
-				changeScorecardByCategory(reviewScorecardNodes[i], projectCategoryNode.value, reviewScorecards);
+				changeScorecardByCategory(reviewScorecardNodes[i], projectCategoryNode.value, reviewScorecards, 'Review');
 			}
 			for (var i = 0; i < approvalScorecardNodes.length; i++) {
-				changeScorecardByCategory(approvalScorecardNodes[i], projectCategoryNode.value, approvalScorecards);
+				changeScorecardByCategory(approvalScorecardNodes[i], projectCategoryNode.value, approvalScorecards, 'Client Review');
 			}
 		}
 
-		function changeScorecardByCategory(scorecardNode, category, scorecards) {
+		function changeScorecardByCategory(scorecardNode, category, scorecards, scorecardName) {			
 			if (scorecardNode) {
 				// Clear combo options
 				while (scorecardNode.length > 0) {
@@ -179,6 +172,13 @@
 					if (category == scorecards[i]["category"]) {
 							addComboOption(scorecardNode, 
 								scorecards[i]["name"], scorecards[i]["id"]);
+					}
+				}
+				
+				// set default scorecard id
+				for (var i = 0; i < defaultScorecards.length; i++) {
+					if (defaultScorecards[i]["category"] == category && defaultScorecards[i]["name"] == scorecardName) {
+						scorecardNode.value = defaultScorecards[i]["id"];
 					}
 				}
 			}
