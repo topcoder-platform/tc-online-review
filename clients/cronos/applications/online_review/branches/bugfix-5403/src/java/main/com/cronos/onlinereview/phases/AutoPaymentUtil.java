@@ -276,7 +276,7 @@ public class AutoPaymentUtil {
      * @return project category id
      * @throws SQLException if error occurs
      */
-    private static long getProjectCategoryId(long projectId, Connection conn)
+    static long getProjectCategoryId(long projectId, Connection conn)
         throws SQLException {
         PreparedStatement pstmt = null;
         ResultSet rs = null;
