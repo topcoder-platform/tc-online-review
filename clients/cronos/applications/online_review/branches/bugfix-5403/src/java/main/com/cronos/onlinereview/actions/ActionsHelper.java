@@ -3143,7 +3143,7 @@ public class ActionsHelper {
 		} catch (DBConnectionException e) {
 			throw new BaseException("Failed to return DBConnection", e);
 		} catch (SQLException e) {
-			throw new BaseException("Failed to recaculateScreeningReviewerPayments for project " + projectId, e);
+			throw new BaseException("Failed to resetProjectResultWithChangedScores for project " + projectId, e);
 		} finally {
 			close(conn);
 		}
