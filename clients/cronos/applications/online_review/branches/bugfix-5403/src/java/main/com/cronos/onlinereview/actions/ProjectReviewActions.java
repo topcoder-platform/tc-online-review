@@ -3281,7 +3281,8 @@ public class ProjectReviewActions extends DispatchAction {
 
         temp = submitter.getProperty("Placement");
         long oldPlacement = temp == null ? -1 : Long.parseLong(temp.toString());
-
+        Object userId = submitter.getProperty("External Reference ID");
+        
         // Update this submitter's final score with aggregated one
         submitter.setProperty("Final Score", String.valueOf(newScore));
         // Store updated information in the database
@@ -3433,7 +3434,7 @@ public class ProjectReviewActions extends DispatchAction {
         projectManager.updateProject(project, "Update the winner and runner up.",
         		String.valueOf(AuthorizationHelper.getLoggedInUserId(request)));
 
-        ActionsHelper.resetProjectResultWithChangedScores(project.getId());
+        ActionsHelper.resetProjectResultWithChangedScores(project.getId(), userId);
     }
 
     /**

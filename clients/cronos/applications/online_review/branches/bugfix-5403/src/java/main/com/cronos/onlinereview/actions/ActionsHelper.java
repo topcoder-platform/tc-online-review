@@ -3130,15 +3130,16 @@ public class ActionsHelper {
      * Reset ProjectResult With ChangedScores.
      *
      * @param projectId project id
+     * @param userId userId
      *
      * @throws Exception if error occurs
      */
-    public static void resetProjectResultWithChangedScores(long projectId) throws BaseException {
+    public static void resetProjectResultWithChangedScores(long projectId, Object userId) throws BaseException {
     	Connection conn = null;
 		try {
 	        DBConnectionFactory dbconn = new DBConnectionFactoryImpl(DB_CONNECTION_NAMESPACE);
 	        conn = dbconn.createConnection();
-	        PRHelper.populateProjectResult(projectId, conn);
+	        PRHelper.resetProjectResultWithChangedScores(projectId, userId, conn);
 		} catch (DBConnectionException e) {
 			throw new BaseException("Failed to return DBConnection", e);
 		} catch (SQLException e) {
