@@ -79,7 +79,7 @@
 			defaultScorecards[defaultScorecards.length - 1]["id"] = ${scorecard.scorecardId};
 			defaultScorecards[defaultScorecards.length - 1]["category"] = ${scorecard.category};	
 			defaultScorecards[defaultScorecards.length - 1]["type"] = ${scorecard.scorecardType};	
-			defaultScorecards[defaultScorecards.length - 1]["name"] = ${scorecard.name};	
+			defaultScorecards[defaultScorecards.length - 1]["name"] = "${scorecard.name}";	
 		</c:forEach>
 
 		var projectTypeNamesMap = {};
@@ -744,6 +744,14 @@
 			if (projectCategoryNode.length == 0) {
 				onProjectTypeChange(document.getElementsByName("project_type")[0]);
 			}
+			var templateRow = document.getElementById("screening_scorecard_row_template");
+			changeScorecardByCategory(templateRow.getElementsByTagName("select")[0], projectCategoryNode.value, screeningScorecards, 'Screening');
+
+			templateRow = document.getElementById("review_scorecard_row_template");
+			changeScorecardByCategory(templateRow.getElementsByTagName("select")[0], projectCategoryNode.value, reviewScorecards, 'Review');
+
+			templateRow = document.getElementById("approval_scorecard_row_template");
+			changeScorecardByCategory(templateRow.getElementsByTagName("select")[0], projectCategoryNode.value, approvalScorecards, 'Client Review');
 		}
 
 	//--></script>
