@@ -3548,7 +3548,7 @@ public class ProjectReviewActions extends DispatchAction {
         } else {
             // If user has a Manager role, put special flag to the request,
             // indicating that we can edit the review
-            if (AuthorizationHelper.hasUserRole(request, Constants.MANAGER_ROLE_NAME)) {
+            if (AuthorizationHelper.hasUserRole(request, Constants.MANAGER_ROLE_NAMES)) {
                 request.setAttribute("canEditScorecard", Boolean.TRUE);
             }
         }
