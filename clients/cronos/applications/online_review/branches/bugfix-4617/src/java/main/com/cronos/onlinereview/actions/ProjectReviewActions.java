@@ -2819,6 +2819,9 @@ public class ProjectReviewActions extends DispatchAction {
         if (myResource == null) {
             myResource = ActionsHelper.getMyResourceForPhase(request, null);
         }
+        if (myResource == null) {
+        	myResource = (Resource) request.getAttribute("global_resource");
+        }
 
         // Retrieve the review to edit (if any)
         Review review = verification.getReview();
