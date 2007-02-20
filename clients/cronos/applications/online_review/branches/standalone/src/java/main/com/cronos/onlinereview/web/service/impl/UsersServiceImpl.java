@@ -24,10 +24,22 @@ import com.topcoder.management.resource.ResourceRole;
 import com.topcoder.management.resource.persistence.ResourcePersistenceException;
 import com.topcoder.util.errorhandling.BaseException;
 
+/**
+ * Implementation of the users service
+ * 
+ * @author Bauna
+ */
 public class UsersServiceImpl implements UsersService {
 
-	
-	   private void saveResources(long projectId, long userId) throws RemoteException {
+	/**
+	 * Creates a <code>Resource</code> for setting an user as submitter in a project  
+	 * If the user already has a role in the project this method fail throwing an exception
+	 * 
+	 * @param projectId the projects's id
+	 * @param userId the user's id
+	 * @throws RemoteException if any error occurs.
+	 */
+	private void saveResources(long projectId, long userId) throws RemoteException {
 		try {
 			if (OnlineReviewHelper.findExternalUserResourceForProject(projectId, userId) != null) {
 				throw new RemoteException("the user id: " + userId + " already has a role in the project");
@@ -83,10 +95,7 @@ public class UsersServiceImpl implements UsersService {
 
 			// Set resource properties
 			resource.setProject(new Long(project.getId()));
-
-			ResourceRole role = ActionsHelper.findResourceRoleById(resourceRoles, 1);
 			resource.setResourceRole(submitterRole);
-
 			resource.setProperty("Handle", user.getHandle());
 			resource.setProperty("Payment", null);
 			resource.setProperty("Payment Status", "No");
@@ -94,7 +103,6 @@ public class UsersServiceImpl implements UsersService {
 			resource.setProperty(Constants.EXTERNAL_REFERENCE_ID, new Long(userId));
 			resource.setProperty("Email", user.getEmail());
 
-			//String resourceRole = resource.getResourceRole().getName();
 			// If resource is a submitter, we need to store appropriate rating and reliability
 			// Note, that it is done only in the case resource is added or resource role is changed
 			if ("Design".equals(project.getProjectCategory().getName())) {
@@ -111,12 +119,6 @@ public class UsersServiceImpl implements UsersService {
 
 			newSubmitters.add(new Long(user.getId()));
 
-			//	        for (Iterator itr = oldUsers.iterator(); itr.hasNext();) {
-			//	        	Object obj = itr.next();
-			//	        	newUsers.remove(obj);
-			//	        	newSubmitters.remove(obj);
-			//	        }
-
 			// Populate project_result and component_inquiry for new submitters
 			ActionsHelper.populateProjectResult(project, newSubmitters);
 
@@ -128,8 +130,7 @@ public class UsersServiceImpl implements UsersService {
 					userIds[i++] = ((Long) itr.next()).longValue();
 				}
 
-				resourceManager.addNotifications(userIds, project.getId(), timelineNotificationId, Long
-						.toString(userId));
+				resourceManager.addNotifications(userIds, project.getId(), timelineNotificationId, Long.toString(userId));
 			}
 		} catch (ConfigException e) {
 			e.printStackTrace(System.out);
@@ -151,7 +152,16 @@ public class UsersServiceImpl implements UsersService {
 			throw new RemoteException(e.getMessage(), e);
 		}
 	}
-	
+
+	/**
+	 * Add a user as submitter to a project. 
+	 * If the user already has a role in the project 
+	 * this method fail throwing an exception
+	 * 
+	 * @param projectId the projects's id
+	 * @param userId the user's id
+	 * @throws RemoteException if any error occurs.
+	 */
 	public void addSubmitter(long projectId, long userId) throws RemoteException {
 		saveResources(projectId, userId);
 	}

@@ -56,6 +56,12 @@ import com.topcoder.util.errorhandling.BaseException;
 import com.topcoder.util.idgenerator.IDGenerator;
 import com.topcoder.util.idgenerator.IDGeneratorFactory;
 
+/**
+ * This class contains handy helper-methods that perform frequently needed operations.
+ *
+ * @author Bauna
+ * @version 1.0
+ */
 public class OnlineReviewHelper {
 	
 	/**
@@ -64,16 +70,43 @@ public class OnlineReviewHelper {
      */
 	public static final String DB_CONNECTION_NAMESPACE = "com.topcoder.db.connectionfactory.OR";
 	
+	/**
+     * This static method helps to create an object of the <code>ProjectManager</code> class.
+     *
+     * @return a newly created instance of the class.
+     * @throws com.topcoder.management.project.ConfigurationException
+     *             if error occurs while loading configuration settings, or any of the required
+     *             configuration parameters are missing.
+     *             
+     * @see ProjectManager
+     */
 	public static ProjectManager createProjectManager() 
 			throws com.topcoder.management.project.ConfigurationException {
 		return new ProjectManagerImpl();
 	}
 	
+	/**
+     * This static method helps to create an object of the <code>UploadManager</code> class.
+     *
+     * @return a newly created instance of the class.
+     * @throws BaseException
+     *             if any error occurs.
+     */
 	public static FileUpload createFileUploadManager()
 			throws DisallowedDirectoryException, com.topcoder.servlet.request.ConfigurationException {
 		return new LocalFileUpload("com.topcoder.servlet.request.LocalFileUpload");
 	}
-	
+
+    /**
+     * This static method helps to create an object of the <code>PhaseManager</code> class.
+     *
+     * @return a newly created instance of the class.
+     * @param registerPhaseHandlers
+     *            a boolean parameter that determines whether phase handlers need to be registered
+     *            with the newly-created (or already existing) Phase Manager.
+     * @throws BaseException
+     *             if any error happens during object creation.
+     */	
 	public static PhaseManager createPhaseManager(boolean registerPhaseHandlers) throws BaseException {
         
             PhaseManager  manager = new DefaultPhaseManager("com.topcoder.management.phase");
@@ -242,12 +275,6 @@ public class OnlineReviewHelper {
      * This static method helps to create an object of the <code>UploadManager</code> class.
      *
      * @return a newly created instance of the class.
-     * @param request
-     *            an <code>HttpServletRequest</code> obejct, where created
-     *            <code>UploadManager</code> object can be stored to let reusing it later for the
-     *            same request.
-     * @throws IllegalArgumentException
-     *             if <code>request</code> parameter is <code>null</code>.
      * @throws BaseException
      *             if any error occurs.
      */
@@ -295,6 +322,16 @@ public class OnlineReviewHelper {
        return ScreeningManagerFactory.createScreeningManager();
     }
     
+    
+    /**
+     * This static method retrieves all the <code>Resource</code> of an user on an project 
+     * 
+     * @param projectId the project's id 
+     * @param userId the user's id
+     * @return an array containing all the resource for user in the project 
+     * @throws BaseException if any error occurs.
+     * @see Resource
+     */
     public static Resource[] findResourcesByProjectAndUser(long projectId, long userId) throws BaseException {
     	 // Prepare filter to select resources by the External ID of currently logged in user
         Filter filterExtIDname = ResourceFilterBuilder.createExtensionPropertyNameFilter(Constants.EXTERNAL_REFERENCE_ID);
@@ -323,26 +360,32 @@ public class OnlineReviewHelper {
      *             configuration parameters are missing.
      */
     public static UserRetrieval createUserRetrieval()
-        throws com.cronos.onlinereview.external.ConfigException {
-
+        	throws com.cronos.onlinereview.external.ConfigException {
     	return new DBUserRetrieval(DB_CONNECTION_NAMESPACE);
-
     }
     
-    public static Resource findExternalUserResourceForProject(long projectId, long ownerId) throws BaseException {
-		Resource[] resources = findResourcesByProjectAndUser(projectId, ownerId);
+    /**
+     * This static method retrieves the first <code>Resource</code> of an user on an project 
+     * that the <code>Resource</code> contains the "External Reference ID" resource property
+     * equals to the user's id
+     * 
+     * @param projectId the project's id 
+     * @param userId the user's id
+     * @return the user's <code>Resource</code> for project or null if it doesn't exists.  
+     * @throws BaseException if any error occurs.
+     */
+    public static Resource findExternalUserResourceForProject(long projectId, long userId) throws BaseException {
+		Resource[] resources = findResourcesByProjectAndUser(projectId, userId);
 		if ((resources == null) || (resources.length == 0)) {
 			return null;
 		}
 		// Get the name (id) of the user performing the operations
-		String operator = Long.toString(ownerId);
-		Resource ownerResource = null;
-		for (int i = 0; i < resources.length && ownerResource == null; i++) {
-			Resource r = resources[i];
-			for (Iterator j = r.getAllProperties().entrySet().iterator(); j.hasNext();) {
+		String operator = Long.toString(userId);
+		for (int i = 0; i < resources.length; i++) {
+			for (Iterator j = resources[i].getAllProperties().entrySet().iterator(); j.hasNext();) {
 				Map.Entry entry = (Map.Entry) j.next();
 				if (Constants.EXTERNAL_REFERENCE_ID.equals(entry.getKey()) && operator.equals(entry.getValue())) {
-					return r;
+					return resources[i];
 				}
 			}
 		}

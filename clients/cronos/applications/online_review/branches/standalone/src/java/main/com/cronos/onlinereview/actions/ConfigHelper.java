@@ -1080,15 +1080,11 @@ public class ConfigHelper {
      * This method returns the directory to upload files.
      *  
      * @return a string with the directory to upload files.
+     * @throws DisallowedDirectoryException if the configured directory is not writeable or not exists.
+     * @throws ConfigurationException 
      */
-    public static String getLocalUploadDirectory() {
-    	try {
-			return new LocalFileUpload(LocalFileUpload.class.getName()).getDir();
-		} catch (ConfigurationException e) {
-			throw new RuntimeException(e);
-		} catch (DisallowedDirectoryException e) {
-			throw new RuntimeException(e);
-		}
+    public static String getLocalUploadDirectory() throws ConfigurationException, DisallowedDirectoryException  {
+		return new LocalFileUpload(LocalFileUpload.class.getName()).getDir();
     }
     
     /**

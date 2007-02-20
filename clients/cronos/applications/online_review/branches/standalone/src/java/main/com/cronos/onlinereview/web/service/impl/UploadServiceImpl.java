@@ -39,47 +39,32 @@ import com.topcoder.util.generator.guid.Generator;
 import com.topcoder.util.generator.guid.UUIDType;
 import com.topcoder.util.generator.guid.UUIDUtility;
 
+
+/**
+ * Implementation of the upload service
+ * 
+ * @author Bauna
+ */ 
 public class UploadServiceImpl implements UploadService {
 	
 	/**
      * The GUID Generator to generate unique ids (for filenames).
      */
     private static final Generator GENERATOR = UUIDUtility.getGenerator(UUIDType.TYPEINT32);
-	
-	/**
-	 * @throws RemoteException 
-	 * @see com.cronos.onlinereview.web.service.UploadService#uploadSubmission(long, long)
-	 */
-    public int uploadTest(long projectId, long ownerId, String filename, DataHandler submissionDH) 
-			throws RemoteException {
-    	FileOutputStream out = null;
-    	try {
-			System.out.println("Project    : " + projectId);
-			System.out.println("Owner      : " + ownerId);
-			InputStream in = submissionDH.getInputStream();
-			out = new FileOutputStream("/tmp/OR.test");
-			byte[] buf = new byte[2048];
-			int c = 0;
-			while ((c = in.read(buf)) != -1) {
-				out.write(buf, 0, c);
-			}
-			System.out.println("Submission : " + submissionDH.getName());
-		} catch (IOException e) {
-			throw new RemoteException(e.toString());
-		} finally {
-			System.out.println("deleting temp submission");
-			if (out != null) {
-				try {
-					out.close();
-				} catch (Throwable e) {
-					e.printStackTrace();
-				}
-			}
-			new File(submissionDH.getName()).delete();
-		}
-    	return 0;
-    }
     
+    /**
+	 * Adds a new submission for an user on a specific project marking as deleted the previous submussion if it exists.   
+	 * 
+	 * @param projectId the project's id
+	 * @param ownerId the user's id
+	 * @param filename the filename that will be used to store the submission. 
+	 * @param submission the uploaded file
+	 * @return returns 0 (zero) if the process finalizes correctly
+	 * @throws IncorrectPhaseRemoteException if the submission phase is not open.
+	 * @throws RemoteException if any error occurs.
+	 * 
+	 * @see DataHandler
+	 */
 	public int uploadSubmission(long projectId, long ownerId, String filename, DataHandler submissionDH) 
 			throws RemoteException {
 		try {
@@ -180,11 +165,26 @@ public class UploadServiceImpl implements UploadService {
 		return 0; 
 	}
 	
+	/**
+	 * Generates a unique filename for the submission adding an UUID prefix 
+	 * 
+	 * @param filename the filename to concatenate the UUID prefix
+	 * @return a new filename with the UUID the prefix appended
+	 */
 	private String getUploadUniqueFilename(String filename) {
 		return new StringBuilder(GENERATOR.getNextUUID().toString()).append('_').append(new File(filename).getName()).toString();
 	}
 	
-	private String copyFileToUploadDir(InputStream in, String filename) throws IOException {
+	/**
+	 * Stores the data obtained from the <code>InputStream</code> on file system.
+	 * The file will be stored on the upload directory configured for the application. 
+	 * 
+	 * @param in the data to store in the file system
+	 * @param filename the filename to use to store the date
+	 * @return the unique file name generated to store the data
+	 * @throws IOException if any error occurs reading or saving the date.
+	 */
+	private String copyFileToUploadDir(InputStream in, String filename) throws IOException, BaseException {
 		String uploadDir = ConfigHelper.getLocalUploadDirectory() + '/';
 		System.out.println("Obtaining upload filename");
 		String uploadFilename = getUploadUniqueFilename(filename);

@@ -56,6 +56,9 @@ import com.topcoder.servlet.request.FileUpload;
 import com.topcoder.servlet.request.FileUploadResult;
 import com.topcoder.servlet.request.UploadedFile;
 import com.topcoder.util.errorhandling.BaseException;
+import com.topcoder.util.log.Level;
+import com.topcoder.util.log.Log;
+import com.topcoder.util.log.LogFactory;
 
 /**
  * This class contains Struts Actions that are meant to deal with Project's Reviews. There are
@@ -102,6 +105,7 @@ import com.topcoder.util.errorhandling.BaseException;
  * @version 1.0
  */
 public class ProjectReviewActions extends DispatchAction {
+	private final static Log logger = LogFactory.getLog(ProjectReviewActions.class.getName());
 
     /**
      * This member variable is a constant that specifies the count of comments displayed for each
@@ -137,6 +141,7 @@ public class ProjectReviewActions extends DispatchAction {
      * Creates a new instance of the <code>ProjectReviewActions</code> class.
      */
     public ProjectReviewActions() {
+    	logger.log(Level.ERROR, "constructor");
     }
 
     /**
@@ -165,7 +170,17 @@ public class ProjectReviewActions extends DispatchAction {
     public ActionForward createScreening(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response)
         throws BaseException {
-        return createGenericReview(mapping, form, request, "Screening");
+    	try {
+    		logger.log(Level.ERROR, "createGenericReview");
+    		return createGenericReview(mapping, form, request, "Screening");
+    	} catch (Exception e) {
+    		logger.log(Level.ERROR, e.getMessage());
+    		e.printStackTrace(System.out);
+    		if (e instanceof BaseException) {
+    			throw (BaseException) e;
+    		}
+    		throw new BaseException(e);
+		}
     }
 
     /**
@@ -195,7 +210,16 @@ public class ProjectReviewActions extends DispatchAction {
     public ActionForward editScreening(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response)
         throws BaseException {
-        return editGenericReview(mapping, form, request, "Screening");
+    	try {
+        	return editGenericReview(mapping, form, request, "Screening");
+        } catch (Exception e) {
+        	logger.log(Level.ERROR, e.getMessage());
+        	e.printStackTrace(System.out);
+    		if (e instanceof BaseException) {
+    			throw (BaseException) e;
+    		}
+    		throw new BaseException(e);
+		}
     }
 
     /**
@@ -222,7 +246,16 @@ public class ProjectReviewActions extends DispatchAction {
     public ActionForward saveScreening(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response)
         throws BaseException {
-        return saveGenericReview(mapping, form, request, "Screening");
+    	try {
+        	return saveGenericReview(mapping, form, request, "Screening");
+        } catch (Exception e) {
+        	logger.log(Level.ERROR, e.getMessage());
+    		e.printStackTrace(System.out);
+    		if (e instanceof BaseException) {
+    			throw (BaseException) e;
+    		}
+    		throw new BaseException(e);
+		}
     }
 
     /**
@@ -248,7 +281,15 @@ public class ProjectReviewActions extends DispatchAction {
     public ActionForward viewScreening(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response)
         throws BaseException {
-        return viewGenericReview(mapping, form, request, "Screening");
+    	try {
+        	return viewGenericReview(mapping, form, request, "Screening");
+        } catch (Exception e) {
+    		e.printStackTrace(System.out);
+    		if (e instanceof BaseException) {
+    			throw (BaseException) e;
+    		}
+    		throw new BaseException(e);
+		}
     }
 
     /**
@@ -277,7 +318,15 @@ public class ProjectReviewActions extends DispatchAction {
     public ActionForward createReview(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response)
         throws BaseException {
-        return createGenericReview(mapping, form, request, "Review");
+    	try {
+        	return createGenericReview(mapping, form, request, "Review");
+        } catch (Exception e) {
+    		e.printStackTrace(System.out);
+    		if (e instanceof BaseException) {
+    			throw (BaseException) e;
+    		}
+    		throw new BaseException(e);
+		}
     }
 
     /**
@@ -307,7 +356,15 @@ public class ProjectReviewActions extends DispatchAction {
     public ActionForward editReview(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response)
         throws BaseException {
-        return editGenericReview(mapping, form, request, "Review");
+    	try {
+    		return editGenericReview(mapping, form, request, "Review");
+        } catch (Exception e) {
+    		e.printStackTrace(System.out);
+    		if (e instanceof BaseException) {
+    			throw (BaseException) e;
+    		}
+    		throw new BaseException(e);
+		}
     }
 
     /**
@@ -334,7 +391,16 @@ public class ProjectReviewActions extends DispatchAction {
     public ActionForward saveReview(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response)
         throws BaseException {
-        return saveGenericReview(mapping, form, request, "Review");
+    	try {
+    		System.out.println("before save review");
+    		return saveGenericReview(mapping, form, request, "Review");
+    	} catch (Throwable e) {
+    		e.printStackTrace(System.out);
+    		if (e instanceof BaseException) {
+    			throw (BaseException) e;
+    		}
+    		throw new BaseException(e);
+		}
     }
 
     /**
@@ -2683,7 +2749,9 @@ public class ProjectReviewActions extends DispatchAction {
         // FIXME: Check the permissions here and everywhere,
         // as they where dropped from checkForCorrectReviewId(ActionMapping, HttpServletRequest, String)
         // FIXME: Also check current phase everywhere
-
+    	logger.log(Level.ERROR, "saveGenericReview");
+    	System.out.println("saveGenericReview");
+    	
         String permName;
         String phaseName;
         String scorecardTypeName;
