@@ -1551,7 +1551,9 @@ public class ProjectActions extends DispatchAction {
             if (role != null && role != resource.getResourceRole()) {
             	// delete project_result if old role is submitter
                 // populate project_result if new role is submitter and project is component
-                ActionsHelper.changeResourceRole(project, user.getId(), resource.getResourceRole().getId(), role.getId());
+            	if (resource.getResourceRole() != null) {
+            		ActionsHelper.changeResourceRole(project, user.getId(), resource.getResourceRole().getId(), role.getId());
+            	}
                 resource.setResourceRole(role);
                 resourceRoleChanged = true;
             }
