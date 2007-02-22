@@ -634,9 +634,8 @@ public class ProjectActions extends DispatchAction {
             // Populate project version (always set to 1.0)
             // TODO: Fix the version of the project
             project.setProperty("Project Version", "1.0");
-            // Populate project root catalog id (always set to Application)
-            // TODO: There should be an ability to specify different Root Catalog
-            project.setProperty("Root Catalog ID", "9926572");
+            // Populate project root catalog id
+            project.setProperty("Root Catalog ID", ActionsHelper.getRootCategoryIdByComponentId(lazyForm.get("component_id")));
             // Populate project eligibility
             project.setProperty("Eligibility", lazyForm.get("eligibility"));
             // Populate project public flag
