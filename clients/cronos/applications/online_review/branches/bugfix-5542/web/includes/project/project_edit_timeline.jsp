@@ -201,12 +201,7 @@
 			<c:if test="${phaseIdx ne 0}">
 				<tr class="highlighted">
 			</c:if>
-				<c:if test="${not newProject}">
-					<td class="value">
-						<td class="value">&nbsp;</td>				
-					</td>
-				</c:if>	
-				<td class="value">&nbsp;</td>
+				<td class="value" colspan="${(newProject) ? 1 : 2}"><!-- @ --></td>
 				<td class="value" colspan="4"><bean:message key="editProject.Phases.Criteria.Scorecard" />
 					<html:select style="width:350px;" styleClass="inputBox" property="phase_scorecard[${phaseIdx}]" >
 						<c:forEach items="${approvalScorecards}" var="scorecard">
