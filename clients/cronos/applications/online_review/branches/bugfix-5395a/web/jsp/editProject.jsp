@@ -682,6 +682,8 @@
 				phaseRows[i] = newPhaseRow;
 				timelineTable.tBodies[0].appendChild(newPhaseRow);
 
+				getChildByNamePrefix(newPhaseRow, "phase_type").value = phaseTypeId;	
+
 				var startDate = dojo.dom.textContent(phaseNodes[i].getElementsByTagName("start-date")[0]);
 				var startDateParts = startDate.split(" ");
 
