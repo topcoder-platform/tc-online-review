@@ -1672,14 +1672,14 @@ public class ProjectReviewActions extends DispatchAction {
 
         if (reviewLevelComment == null) {
             reviewLevelComment = new Comment();
-            reviewLevelComment.setAuthor(resource.getId());
-            reviewLevelComment.setComment("");
             reviewLevelComment.setCommentType(
                     ActionsHelper.findCommentTypeByName(allCommentTypes, "Final Review Comment"));
             review.addComment(reviewLevelComment);
         }
 
+        reviewLevelComment.setAuthor(resource.getId());
         reviewLevelComment.setExtraInfo("Approving");
+        reviewLevelComment.setComment("");
 
         boolean validationSucceeded =
             (commitRequested) ? validateFinalReviewScorecard(request, scorecardTemplate, review) : true;

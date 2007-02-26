@@ -88,6 +88,12 @@ public class AutoPaymentUtil {
     public static void populateReviewerPayments(long projectId, Connection conn, int phaseId)
         throws SQLException {
         long projectCategoryId = getProjectCategoryId(projectId, conn);
+
+        if (projectCategoryId != 1 && projectCategoryId != 2) {
+        	// Logic only apply to component
+        	return;
+        }
+
         int levelId = FixedPriceComponent.LEVEL1;
         int count = getCount(projectId, conn);
         int passedCount = getScreenPassedCount(projectId, conn);

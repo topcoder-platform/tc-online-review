@@ -109,7 +109,7 @@ public final class MockHandleTag extends TagSupport {
             throw new JspException("coderId should be specified and non-empty.");
         }
         if (context == null || context.trim().length() == 0) {
-            throw new JspException("context should be specified and non-empty.");
+            context = "component";
         }
         if (!context.equals("design") && !context.equals("development") && !context.equals("component")) {
             throw new JspException("context should be either 'design', 'development', or 'component'.");
@@ -182,7 +182,7 @@ public final class MockHandleTag extends TagSupport {
             coderId.equals("278287") || // Coder "moffitt"
             coderId.equals("160049") || // Coder "FogleBird"
             coderId.equals("156859") || // Coder "ivern"
-            coderId.equals("8547899")) { // Coder "TonyJ" 
+            coderId.equals("8547899")) { // Coder "TonyJ"
             textColor = "coderTextOrange";
         }
 

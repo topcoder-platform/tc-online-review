@@ -13,6 +13,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Types;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.Collection;
 import java.util.HashMap;
@@ -2967,8 +2968,9 @@ public class ActionsHelper {
     	PreparedStatement ratingStmt = null;
     	PreparedStatement reliabilityStmt = null;
     	PreparedStatement componentInquiryStmt = null;
-    	if (project.getProjectCategory().getProjectType().getId() != 1) {
-    		// Only component project need project_result
+    	long categoryId = project.getProjectCategory().getId();
+    	if (categoryId != 1 && categoryId != 2) {
+    		// design/development project need project_result
     		return;
     	}
 
@@ -3119,6 +3121,87 @@ public class ActionsHelper {
 		} catch (SQLException e) {
 			throw new BaseException("Failed to recaculateScreeningReviewerPayments for project " + projectId, e);
 		} finally {
+			close(conn);
+		}
+    }
+
+    /**
+     * Delete project_result and component_inquiry for new submitters if oldRole is submitter, added otherwise.
+     * 
+     * @param project the project
+     * @param userId userId
+     * @param roleId roleId
+     * @throws BaseException if error occurs
+     */
+    public static void changeResourceRole(Project project, long userId, long oldRoleId, long newRoleId) throws BaseException {
+    	Connection conn = null;
+    	PreparedStatement ps = null;
+    	long categoryId = project.getProjectCategory().getId();
+    	if (categoryId != 1 && categoryId != 2) {
+    		// design/development project need project_result
+    		return;
+    	}
+
+    	if (oldRoleId == 1) {
+    		// Delete project_result if the old role is submitter
+    		deleteProjectResult(project, userId, oldRoleId);
+    	}
+    	
+    	if (newRoleId == 1) {
+    		// added otherwise
+    		populateProjectResult(project, Arrays.asList(new String[] {String.valueOf(userId)}));
+    	}
+    }
+
+    /**
+     * Delete project_result and component_inquiry for new submitters.
+     *
+     * @param project the project
+     * @param userId userId
+     * @param roleId roleId
+     * @throws BaseException if error occurs
+     */
+    public static void deleteProjectResult(Project project, long userId, long roleId) throws BaseException {
+    	Connection conn = null;
+    	PreparedStatement ps = null;
+    	long categoryId = project.getProjectCategory().getId();
+    	if (categoryId != 1 && categoryId != 2) {
+    		// design/development project need project_result
+    		return;
+    	}
+
+    	if (roleId != 1) {
+    		// Only deal with submitters
+    		return;
+    	}
+
+		try {
+	        DBConnectionFactory dbconn;
+				dbconn = new DBConnectionFactoryImpl(DB_CONNECTION_NAMESPACE);
+	        conn = dbconn.createConnection();
+	        
+	        // delete from project_result
+	        ps = conn.prepareStatement("delete from project_result where project_id = ? and user_id = ?");
+	        ps.setLong(1, project.getId());
+	        ps.setLong(2, userId);
+	        ps.executeUpdate();
+	        close(ps);
+
+	        // delete from component_inquiry
+	        ps = conn.prepareStatement("delete from component_inquiry where project_id = ? and user_id = ?");
+	        ps.setLong(1, project.getId());
+	        ps.setLong(2, userId);
+	        ps.executeUpdate();
+		} catch (UnknownConnectionException e) {
+			throw new BaseException("Failed to create connection", e);
+		} catch (ConfigurationException e) {
+			throw new BaseException("Failed to config for DBNamespace", e);
+		} catch (SQLException e) {
+			throw new BaseException("Failed to populate project_result", e);
+		} catch (DBConnectionException e) {
+			throw new BaseException("Failed to return DBConnection", e);
+		} finally {
+			close(ps);
 			close(conn);
 		}
     }
