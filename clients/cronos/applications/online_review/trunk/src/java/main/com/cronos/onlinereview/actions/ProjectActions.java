@@ -551,7 +551,7 @@ public class ProjectActions extends DispatchAction {
         Project project = manager.getProject(projectId);
         // Store the retieved project in the request
         request.setAttribute("project", project);
-
+        
         // Populate the form with project properties
         populateProjectForm(request, (LazyValidatorForm) form, project);
 
@@ -1533,6 +1533,8 @@ public class ProjectActions extends DispatchAction {
 
             // If action is "delete", delete the resource and proceed to the next one
             if ("delete".equals(resourceAction)) {
+            	// delete project_result
+            	ActionsHelper.deleteProjectResult(project, user.getId(), ((Long) lazyForm.get("resources_role", i)).longValue());
                 resourceManager.removeResource(resource,
                         Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
                 resourceManager.removeNotifications(new long[] {user.getId()}, project.getId(),
@@ -1547,6 +1549,11 @@ public class ProjectActions extends DispatchAction {
             ResourceRole role = ActionsHelper.findResourceRoleById(
                     resourceRoles, ((Long) lazyForm.get("resources_role", i)).longValue());
             if (role != null && role != resource.getResourceRole()) {
+            	// delete project_result if old role is submitter
+                // populate project_result if new role is submitter and project is component
+            	if (resource.getResourceRole() != null) {
+            		ActionsHelper.changeResourceRole(project, user.getId(), resource.getResourceRole().getId(), role.getId());
+            	}
                 resource.setResourceRole(role);
                 resourceRoleChanged = true;
             }
