@@ -22,16 +22,7 @@
 	<!-- CSS and JS by Petar -->
 	<link type="text/css" rel="stylesheet" href="<html:rewrite href='/css/or/new_styles.css' />" />
 	<script language="JavaScript" type="text/javascript"
-		src="<html:rewrite href='/js/or/rollovers2.js' />"><!-- @ --></script>
-
-	<script language="JavaScript" type="text/javascript">
-function OnCompleteScorecardClick() {
-	var approveCheckBox = document.getElementById("approveFixes");
-	var isRejected = (approveCheckBox.checked != true);
-
-	return (isRejected) ? confirm("<bean:message key='editFinalReview.BeforeReject' />") : true;
-}
-	</script>
+		src="<html:rewrite href='/js/or/rollovers.js' />"><!-- @ --></script>
 </head>
 
 <body>
@@ -40,7 +31,7 @@ function OnCompleteScorecardClick() {
 		<tr valign="top">
 			<!-- Left Column Begins -->
 			<td width="180">
-				<jsp:include page="/includes/global_left.jsp" />
+				<jsp:include page="/includes/inc_leftnav.jsp" />
 			</td>
 			<!-- Left Column Ends -->
 
@@ -125,7 +116,7 @@ function OnCompleteScorecardClick() {
 																<td class="value" rowspan="${lastCommentIdx}">
 																	<c:forEach items="${reviewResources}" var="resource">
 																		<c:if test="${resource.id == comment.author}">
-																			<tc-webtag:handle coderId='${resource.allProperties["External Reference ID"]}' context="${orfn:getHandlerContext(pageContext.request)}" /><br />
+																			<tc-webtag:handle coderId='${resource.allProperties["External Reference ID"]}' context="component" /><br />
 																		</c:if>
 																	</c:forEach>
 																	<c:forEach items="${reviews}" var="subReview">
@@ -160,7 +151,7 @@ function OnCompleteScorecardClick() {
 																		<c:forEach items="${reviewResources}" var="resource">
 																			<c:if test="${resource.id == comment.author}">
 																				<b><bean:message key='ResourceRole.${fn:replace(resource.resourceRole.name, " ", "")}' />
-																				(<tc-webtag:handle coderId='${resource.allProperties["External Reference ID"]}' context="${orfn:getHandlerContext(pageContext.request)}" />)
+																				(<tc-webtag:handle coderId='${resource.allProperties["External Reference ID"]}' context="component" />)
 																				<bean:message key="viewAggregationReview.Response" /></b>
 																			</c:if>
 																		</c:forEach>
@@ -211,7 +202,7 @@ function OnCompleteScorecardClick() {
 							</tr>
 							<tr class="highlighted">
 								<td class="value">
-									<html:checkbox styleId="approveFixes" property="approve_fixes" />
+									<html:checkbox property="approve_fixes" />
 									<b><bean:message key="editFinalReview.ApproveFinalFixes" /></b></td>
 							</tr>
 							<tr>
@@ -221,7 +212,7 @@ function OnCompleteScorecardClick() {
 
 						<div align="right">
 							<html:hidden property="save" value="" />
-							<html:image onclick="javascript:this.form.save.value='submit';return OnCompleteScorecardClick();" srcKey="editReview.Button.SaveAndCommit.img" altKey="editReview.Button.SaveAndCommit.alt" border="0" />&#160;
+							<html:image onclick="javascript:this.form.save.value='submit';" srcKey="editReview.Button.SaveAndCommit.img" altKey="editReview.Button.SaveAndCommit.alt" border="0" />&#160;
 							<html:image onclick="javascript:this.form.save.value='save';" srcKey="editReview.Button.SaveForLater.img" altKey="editReview.Button.SaveForLater.alt" border="0" />&#160;
 							<html:image onclick="javascript:this.form.save.value='preview';" srcKey="editReview.Button.Preview.img" altKey="editReview.Button.Preview.alt" border="0" />
 						</div>

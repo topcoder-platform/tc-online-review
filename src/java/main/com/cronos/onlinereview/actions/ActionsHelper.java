@@ -3,25 +3,21 @@
  */
 package com.cronos.onlinereview.actions;
 
-import java.text.Format;
-import java.text.SimpleDateFormat;
-
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Types;
+import java.text.Format;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-
-import com.topcoder.db.connectionfactory.DBConnectionException;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -33,7 +29,7 @@ import org.apache.struts.action.ActionMessage;
 import org.apache.struts.util.MessageResources;
 
 import com.cronos.onlinereview.autoscreening.management.ScreeningManager;
-import com.cronos.onlinereview.autoscreening.management.ScreeningManagerFactory;
+import com.cronos.onlinereview.commons.OnlineReviewHelper;
 import com.cronos.onlinereview.deliverables.AggregationDeliverableChecker;
 import com.cronos.onlinereview.deliverables.AggregationReviewDeliverableChecker;
 import com.cronos.onlinereview.deliverables.AppealResponsesDeliverableChecker;
@@ -45,24 +41,11 @@ import com.cronos.onlinereview.deliverables.SubmissionDeliverableChecker;
 import com.cronos.onlinereview.deliverables.SubmitterCommentDeliverableChecker;
 import com.cronos.onlinereview.deliverables.TestCasesDeliverableChecker;
 import com.cronos.onlinereview.external.UserRetrieval;
-import com.cronos.onlinereview.external.impl.DBUserRetrieval;
-import com.cronos.onlinereview.phases.AppealsPhaseHandler;
-import com.cronos.onlinereview.phases.ApprovalPhaseHandler;
 import com.cronos.onlinereview.phases.AutoPaymentUtil;
-import com.cronos.onlinereview.phases.FinalFixPhaseHandler;
-import com.cronos.onlinereview.phases.FinalReviewPhaseHandler;
-import com.cronos.onlinereview.phases.PRAggregationPhaseHandler;
-import com.cronos.onlinereview.phases.PRAggregationReviewPhaseHandler;
-import com.cronos.onlinereview.phases.PRAppealResponsePhaseHandler;
-import com.cronos.onlinereview.phases.PRFinalFixPhaseHandler;
-import com.cronos.onlinereview.phases.PRFinalReviewPhaseHandler;
-import com.cronos.onlinereview.phases.PRRegistrationPhaseHandler;
-import com.cronos.onlinereview.phases.PRReviewPhaseHandler;
-import com.cronos.onlinereview.phases.PRScreeningPhaseHandler;
-import com.cronos.onlinereview.phases.PRSubmissionPhaseHandler;
 import com.topcoder.date.workdays.DefaultWorkdaysFactory;
 import com.topcoder.date.workdays.Workdays;
 import com.topcoder.db.connectionfactory.ConfigurationException;
+import com.topcoder.db.connectionfactory.DBConnectionException;
 import com.topcoder.db.connectionfactory.DBConnectionFactory;
 import com.topcoder.db.connectionfactory.DBConnectionFactoryImpl;
 import com.topcoder.db.connectionfactory.UnknownConnectionException;
@@ -70,7 +53,6 @@ import com.topcoder.management.deliverable.Deliverable;
 import com.topcoder.management.deliverable.DeliverableChecker;
 import com.topcoder.management.deliverable.DeliverableManager;
 import com.topcoder.management.deliverable.PersistenceDeliverableManager;
-import com.topcoder.management.deliverable.PersistenceUploadManager;
 import com.topcoder.management.deliverable.Submission;
 import com.topcoder.management.deliverable.SubmissionStatus;
 import com.topcoder.management.deliverable.Upload;
@@ -80,38 +62,24 @@ import com.topcoder.management.deliverable.UploadType;
 import com.topcoder.management.deliverable.persistence.DeliverableCheckingException;
 import com.topcoder.management.deliverable.persistence.DeliverablePersistence;
 import com.topcoder.management.deliverable.persistence.DeliverablePersistenceException;
-import com.topcoder.management.deliverable.persistence.UploadPersistence;
 import com.topcoder.management.deliverable.persistence.sql.SqlDeliverablePersistence;
-import com.topcoder.management.deliverable.persistence.sql.SqlUploadPersistence;
 import com.topcoder.management.deliverable.search.DeliverableFilterBuilder;
 import com.topcoder.management.deliverable.search.SubmissionFilterBuilder;
-import com.topcoder.management.phase.DefaultPhaseManager;
-import com.topcoder.management.phase.PhaseHandler;
 import com.topcoder.management.phase.PhaseManagementException;
 import com.topcoder.management.phase.PhaseManager;
-import com.topcoder.management.phase.PhaseOperationEnum;
 import com.topcoder.management.project.Project;
 import com.topcoder.management.project.ProjectCategory;
 import com.topcoder.management.project.ProjectManager;
-import com.topcoder.management.project.ProjectManagerImpl;
 import com.topcoder.management.project.ProjectStatus;
 import com.topcoder.management.project.ProjectType;
 import com.topcoder.management.resource.Resource;
 import com.topcoder.management.resource.ResourceManager;
 import com.topcoder.management.resource.ResourceRole;
-import com.topcoder.management.resource.persistence.PersistenceResourceManager;
-import com.topcoder.management.resource.persistence.ResourcePersistence;
-import com.topcoder.management.resource.persistence.sql.SqlResourcePersistence;
-import com.topcoder.management.resource.search.NotificationFilterBuilder;
-import com.topcoder.management.resource.search.NotificationTypeFilterBuilder;
 import com.topcoder.management.resource.search.ResourceFilterBuilder;
-import com.topcoder.management.resource.search.ResourceRoleFilterBuilder;
 import com.topcoder.management.review.DefaultReviewManager;
 import com.topcoder.management.review.ReviewManager;
 import com.topcoder.management.review.data.Comment;
 import com.topcoder.management.review.data.CommentType;
-import com.topcoder.management.review.scoreaggregator.ReviewScoreAggregator;
-import com.topcoder.management.review.scoreaggregator.ReviewScoreAggregatorConfigException;
 import com.topcoder.management.scorecard.PersistenceException;
 import com.topcoder.management.scorecard.ScorecardManager;
 import com.topcoder.management.scorecard.ScorecardManagerImpl;
@@ -138,12 +106,7 @@ import com.topcoder.search.builder.filter.InFilter;
 import com.topcoder.search.builder.filter.OrFilter;
 import com.topcoder.servlet.request.DisallowedDirectoryException;
 import com.topcoder.servlet.request.FileUpload;
-import com.topcoder.servlet.request.LocalFileUpload;
-import com.topcoder.util.datavalidator.LongValidator;
-import com.topcoder.util.datavalidator.StringValidator;
 import com.topcoder.util.errorhandling.BaseException;
-import com.topcoder.util.idgenerator.IDGenerator;
-import com.topcoder.util.idgenerator.IDGeneratorFactory;
 
 /**
  * This class contains handy helper-methods that perform frequently needed operations.
@@ -158,7 +121,8 @@ public class ActionsHelper {
      * This member variable is a string constant that defines the name of the configurtaion
      * namespace which the parameters for database connection factory are stored under.
      */
-    private static final String DB_CONNECTION_NAMESPACE = "com.topcoder.db.connectionfactory.DBConnectionFactoryImpl";
+//    private static final String DB_CONNECTION_NAMESPACE = "com.topcoder.db.connectionfactory.DBConnectionFactoryImpl";
+     private static final String DB_CONNECTION_NAMESPACE = OnlineReviewHelper.DB_CONNECTION_NAMESPACE;
 
     /**
      * This member variable is a string constant that defines the name of the configurtaion
@@ -617,33 +581,6 @@ public class ActionsHelper {
 
         for (int i = 0; i < phaseTypes.length; ++i) {
             if (phaseTypes[i].getId() == phaseTypeId) {
-                return phaseTypes[i];
-            }
-        }
-        return null;
-    }
-
-    /**
-     * This static method searches for the phase type with the specified name in a provided array of
-     * phase types. The search is case-insensitive.
-     *
-     * @return found phase type, or <code>null</code> if a type with the specified name has not been
-     *         found in the provided array of phase types.
-     * @param phaseTypes
-     *            an array of phase types to search for wanted phase type among.
-     * @param phaseTypeName
-     *            the name of the needed phase type.
-     * @throws IllegalArgumentException
-     *             if any of the parameters are <code>null</code>, or <code>phaseTypeName</code>
-     *             parameter is empty string.
-     */
-    public static PhaseType findPhaseTypeByName(PhaseType[] phaseTypes, String phaseTypeName) {
-        // Validate parameters
-        validateParameterNotNull(phaseTypes, "phaseTypes");
-        validateParameterStringNotEmpty(phaseTypeName, "phaseTypeName");
-
-        for (int i = 0; i < phaseTypes.length; ++i) {
-            if (phaseTypes[i].getName().equalsIgnoreCase(phaseTypeName)) {
                 return phaseTypes[i];
             }
         }
@@ -1336,7 +1273,8 @@ public class ActionsHelper {
 
         // Get all phases for the project
         com.topcoder.project.phases.Project phProj = manager.getPhases(project.getId());
-        return (phProj != null) ? phProj.getAllPhases() : new Phase[0];
+        Phase[] phases = phProj.getAllPhases();
+        return phases;
     }
 
     /**
@@ -1711,9 +1649,9 @@ public class ActionsHelper {
     }
 
     /**
-     * This static method returns the array of resources for the currently logged in user associated
-     * with the specified phase. The list of all resources for the currently logged in user is
-     * retrieved from the <code>HttpServletRequest</code> object specified by <code>request</code>
+     * This static method returns the array of resources for the currently logged in user associated with
+     * the specified phase. The list of all resources for the currently logged in user is retrieved
+     * from the <code>HttpServletRequest</code> object specified by <code>request</code>
      * parameter. Method <code>gatherUserRoles(HttpServletRequest, long)</code> should be called
      * prior making a call to this method.
      *
@@ -1769,7 +1707,7 @@ public class ActionsHelper {
      * @param phases
      *            an array of pahses to search deliverables for.
      * @param resources
-     *            an array of all resources for the current project.
+     *            an array of all resource? for the current project.
      * @param winnerExtUserId
      *            an External User ID of the user who is the winner for the project. If there is no
      *            winner for the project, this parameter must be negative.
@@ -1823,10 +1761,8 @@ public class ActionsHelper {
         // Additionally filter deliverables because sometimes deliverables
         // for another phases get though the above filter
         for (int i = 0; i < allDeliverables.length; ++i) {
-            // Get a deliverable for the current iteration
-            final Deliverable deliverable = allDeliverables[i];
             // Get an ID of resource this deliverable is for
-            final long deliverableResourceId = deliverable.getResource();
+            final long deliverableResourceId = allDeliverables[i].getResource();
             Resource forResource = null;
             int j;
             // Find a resource this deliverable is for
@@ -1863,40 +1799,6 @@ public class ActionsHelper {
                 }
             }
 
-            // If current deliverable is Aggregation Review, and it is assigned to one of the reviewers,
-            // check to make sure this reviewer is not also an aggregator
-            if (deliverable.getName().equalsIgnoreCase(Constants.AGGREGATION_REV_DELIVERABLE_NAME) &&
-                    (resourceRole.equalsIgnoreCase(Constants.REVIEWER_ROLE_NAME) ||
-                    resourceRole.equalsIgnoreCase(Constants.ACCURACY_REVIEWER_ROLE_NAME) ||
-                    resourceRole.equalsIgnoreCase(Constants.FAILURE_REVIEWER_ROLE_NAME) ||
-                    resourceRole.equalsIgnoreCase(Constants.STRESS_REVIEWER_ROLE_NAME))) {
-                final String originalExtId = (String) forResource.getProperty("External Reference ID");
-
-                for (j = 0; j < resources.length; ++j) {
-                    // Skip resource that is being checked
-                    if (forResource == resources[j]) {
-                        continue;
-                    }
-
-                    // Get a resource for the current iteration
-                    final Resource otherResource = resources[j];
-                    // Verify whether this resource is an Aggregator, and skip it if it isn't
-                    if (!otherResource.getResourceRole().getName().equalsIgnoreCase(Constants.AGGREGATOR_ROLE_NAME)) {
-                        continue;
-                    }
-
-                    String otherExtId = (String) resources[j].getProperty("External Reference ID");
-                    // If appropriate aggregator's resource has been found, stop the search
-                    if (originalExtId.equals(otherExtId)) {
-                        break;
-                    }
-                }
-                // Skip this deliverable if it is assigned to aggregator
-                if (j != resources.length) {
-                    continue;
-                }
-            }
-
             // If there is a winner for the project,
             // verify that the current deliverable is not for non-winning submitter
             if (winnerExtUserId > 0) {
@@ -1911,7 +1813,7 @@ public class ActionsHelper {
             }
 
             // Add current deliverable to the list of deliverables
-            deliverables.add(deliverable);
+            deliverables.add(allDeliverables[i]);
         }
 
         // Convert the list of deliverables into array and return it
@@ -2236,59 +2138,13 @@ public class ActionsHelper {
         // If this is the first time this method is called for the request,
         // create a new instance of the object, and possibly register phase handlers
         if (manager == null || registerPhaseHandlers) {
-            // Create Phase Manager object if needed
-            if (manager == null) {
-                manager = new DefaultPhaseManager("com.topcoder.management.phase");
-            }
-
-            // Register phase handlers if this was requested
-            if (registerPhaseHandlers) {
-                PhaseType[] phaseTypes = manager.getAllPhaseTypes();
-
-                registerPhaseHandlerForOperation(manager, phaseTypes,
-                        new PRRegistrationPhaseHandler(), Constants.REGISTRATION_PHASE_NAME);
-                registerPhaseHandlerForOperation(manager, phaseTypes,
-                        new PRSubmissionPhaseHandler(), Constants.SUBMISSION_PHASE_NAME);
-                registerPhaseHandlerForOperation(manager, phaseTypes,
-                        new PRScreeningPhaseHandler(), Constants.SCREENING_PHASE_NAME);
-                registerPhaseHandlerForOperation(manager, phaseTypes,
-                        new PRReviewPhaseHandler(), Constants.REVIEW_PHASE_NAME);
-                registerPhaseHandlerForOperation(manager, phaseTypes,
-                        new AppealsPhaseHandler(), Constants.APPEALS_PHASE_NAME);
-                registerPhaseHandlerForOperation(manager, phaseTypes,
-                        new PRAppealResponsePhaseHandler(), Constants.APPEALS_RESPONSE_PHASE_NAME);
-                registerPhaseHandlerForOperation(manager, phaseTypes,
-                        new PRAggregationPhaseHandler(), Constants.AGGREGATION_PHASE_NAME);
-                registerPhaseHandlerForOperation(manager, phaseTypes,
-                        new PRAggregationReviewPhaseHandler(), Constants.AGGREGATION_REVIEW_PHASE_NAME);
-                registerPhaseHandlerForOperation(manager, phaseTypes,
-                        new PRFinalFixPhaseHandler(), Constants.FINAL_FIX_PHASE_NAME);
-                registerPhaseHandlerForOperation(manager, phaseTypes,
-                        new PRFinalReviewPhaseHandler(), Constants.FINAL_REVIEW_PHASE_NAME);
-                registerPhaseHandlerForOperation(manager, phaseTypes,
-                        new ApprovalPhaseHandler(), Constants.APPROVAL_PHASE_NAME);
-            }
-
+        	manager = OnlineReviewHelper.createPhaseManager(registerPhaseHandlers);
             // Place newly-created object into the request as attribute
             request.setAttribute((registerPhaseHandlers) ? "phaseManager+handlers" : "phaseManager", manager);
         }
 
         // Return the Phase Manager object
         return manager;
-    }
-
-    /**
-     * TODO: Document it!
-     *
-     * @param manager
-     * @param phaseTypes
-     * @param handler
-     * @param phaseName
-     */
-    private static void registerPhaseHandlerForOperation(PhaseManager manager, PhaseType[] phaseTypes, PhaseHandler handler, String phaseName) {
-        manager.registerHandler(handler, findPhaseTypeByName(phaseTypes, phaseName), PhaseOperationEnum.START);
-        manager.registerHandler(handler, findPhaseTypeByName(phaseTypes, phaseName), PhaseOperationEnum.END);
-        manager.registerHandler(handler, findPhaseTypeByName(phaseTypes, phaseName), PhaseOperationEnum.CANCEL);
     }
 
     /**
@@ -2315,7 +2171,7 @@ public class ActionsHelper {
         // If this is the first time this method is called for the request,
         // create a new instance of the object
         if (manager == null) {
-            manager = new ProjectManagerImpl();
+            manager = OnlineReviewHelper.createProjectManager();
             // Place newly-created object into the request as attribute
             request.setAttribute("projectManager", manager);
         }
@@ -2346,48 +2202,8 @@ public class ActionsHelper {
         // If this is the first time this method is called for the request,
         // create a new instance of the object
         if (manager == null) {
-            // get connection factory
-            DBConnectionFactory dbconn = new DBConnectionFactoryImpl(DB_CONNECTION_NAMESPACE);
-            // get the persistence
-            ResourcePersistence persistence = new SqlResourcePersistence(dbconn);
-
-            // get the id generators
-            IDGenerator resourceIdGenerator =
-                    IDGeneratorFactory.getIDGenerator(PersistenceResourceManager.RESOURCE_ID_GENERATOR_NAME);
-            IDGenerator resourceRoleIdGenerator =
-                    IDGeneratorFactory.getIDGenerator(PersistenceResourceManager.RESOURCE_ROLE_ID_GENERATOR_NAME);
-            IDGenerator notificationTypeIdGenerator =
-                    IDGeneratorFactory.getIDGenerator(PersistenceResourceManager.NOTIFICATION_TYPE_ID_GENERATOR_NAME);
-
-            // get the search bundles
-            SearchBundleManager searchBundleManager =
-                    new SearchBundleManager("com.topcoder.searchbuilder.common");
-
-            SearchBundle resourceSearchBundle = searchBundleManager.getSearchBundle(
-                    PersistenceResourceManager.RESOURCE_SEARCH_BUNDLE_NAME);
-            // set it searchable
-            setAllFieldsSearchable(resourceSearchBundle);
-
-            SearchBundle resourceRoleSearchBundle = searchBundleManager.getSearchBundle(
-                    PersistenceResourceManager.RESOURCE_ROLE_SEARCH_BUNDLE_NAME);
-            // set it searchable
-            setAllFieldsSearchable(resourceRoleSearchBundle);
-
-            SearchBundle notificationSearchBundle = searchBundleManager.getSearchBundle(
-                    PersistenceResourceManager.NOTIFICATION_SEARCH_BUNDLE_NAME);
-            // set it searchable
-            setAllFieldsSearchable(notificationSearchBundle);
-
-            SearchBundle notificationTypeSearchBundle = searchBundleManager.getSearchBundle(
-                    PersistenceResourceManager.NOTIFICATION_TYPE_SEARCH_BUNDLE_NAME);
-            // set it searchable
-            setAllFieldsSearchable(notificationTypeSearchBundle);
-
             // initialize the PersistenceResourceManager
-            manager = new PersistenceResourceManager(persistence, resourceSearchBundle,
-                    resourceRoleSearchBundle, notificationSearchBundle,
-                    notificationTypeSearchBundle, resourceIdGenerator,
-                    resourceRoleIdGenerator, notificationTypeIdGenerator);
+            manager = OnlineReviewHelper.createResourceManager();
             // Place newly-created object into the request as attribute
             request.setAttribute("resourceManager", manager);
         }
@@ -2427,40 +2243,6 @@ public class ActionsHelper {
 
         // Return the Review Manager object
         return manager;
-    }
-
-    /**
-     * This static method helps to create an object of the <code>ReviewScoreAggregator</code>
-     * class.
-     *
-     * @return a newly created instance of the class.
-     * @param request
-     *            an <code>HttpServletRequest</code> obejct, where created
-     *            <code>ReviewScoreAggregator</code> object can be stored to let reusing it later
-     *            for the same request.
-     * @throws IllegalArgumentException
-     *             if <code>request</code> parameter is <code>null</code>.
-     * @throws ReviewScoreAggregatorConfigException
-     *             if any of the four required algorithm objects cannot be instantiated or the
-     *             configuration is invalid.
-     */
-    public static ReviewScoreAggregator createScoreAggregator(HttpServletRequest request)
-        throws ReviewScoreAggregatorConfigException {
-        // Validate parameter
-        validateParameterNotNull(request, "request");
-
-        // Try retrieving Review Score Aggregator from the request's attribute first
-        ReviewScoreAggregator aggregator = (ReviewScoreAggregator) request.getAttribute("reviewScoreAggregator");
-        // If this is the first time this method is called for the request,
-        // create a new instance of the object
-        if (aggregator == null) {
-            aggregator = new ReviewScoreAggregator("com.topcoder.management.review.scoreaggregator");
-            // Place newly-created object into the request as attribute
-            request.setAttribute("reviewScoreAggregator", aggregator);
-        }
-
-        // Return the Review Score Aggregator object
-        return aggregator;
     }
 
     /**
@@ -2591,37 +2373,7 @@ public class ActionsHelper {
         // If this is the first time this method is called for the request,
         // create a new instance of the object
         if (manager == null) {
-            // Get connection factory
-            DBConnectionFactory dbconn = new DBConnectionFactoryImpl(DB_CONNECTION_NAMESPACE);
-            // Get the persistence
-            UploadPersistence persistence = new SqlUploadPersistence(dbconn);
-
-            // Get the ID generators
-            IDGenerator uploadIdGenerator =
-                    IDGeneratorFactory.getIDGenerator(PersistenceUploadManager.UPLOAD_ID_GENERATOR_NAME);
-            IDGenerator uploadTypeIdGenerator =
-                    IDGeneratorFactory.getIDGenerator(PersistenceUploadManager.UPLOAD_TYPE_ID_GENERATOR_NAME);
-            IDGenerator uploadStatusIdGenerator =
-                    IDGeneratorFactory.getIDGenerator(PersistenceUploadManager.UPLOAD_STATUS_ID_GENERATOR_NAME);
-            IDGenerator submissionIdGenerator =
-                    IDGeneratorFactory.getIDGenerator(PersistenceUploadManager.SUBMISSION_ID_GENERATOR_NAME);
-            IDGenerator submissionStatusIdGenerator =
-                    IDGeneratorFactory.getIDGenerator(PersistenceUploadManager.SUBMISSION_STATUS_ID_GENERATOR_NAME);
-
-            // Get the search bundles
-            SearchBundleManager searchBundleManager =
-                    new SearchBundleManager("com.topcoder.searchbuilder.common");
-
-            SearchBundle uploadSearchBundle = searchBundleManager.getSearchBundle(
-                    PersistenceUploadManager.UPLOAD_SEARCH_BUNDLE_NAME);
-            SearchBundle submissionSearchBundle = searchBundleManager.getSearchBundle(
-                    PersistenceUploadManager.SUBMISSION_SEARCH_BUNDLE_NAME);
-
-            // Initialize the PersistenceUploadManager
-            manager = new PersistenceUploadManager(persistence,
-                    uploadSearchBundle, submissionSearchBundle,
-                    uploadIdGenerator, uploadTypeIdGenerator, uploadStatusIdGenerator,
-                    submissionIdGenerator, submissionStatusIdGenerator);
+            manager = OnlineReviewHelper.createUploadManager();
             // Place newly-created object into the request as attribute
             request.setAttribute("uploadManager", manager);
         }
@@ -2652,7 +2404,7 @@ public class ActionsHelper {
         // If this is the first time this method is called for the request,
         // create a new instance of the object
         if (manager == null) {
-            manager = ScreeningManagerFactory.createScreeningManager();
+            manager = OnlineReviewHelper.createScreeningManager();
             // Place newly-created object into the request as attribute
             request.setAttribute("screeningManager", manager);
         }
@@ -2685,7 +2437,7 @@ public class ActionsHelper {
         // If this is the first time this method is called for the request,
         // create a new instance of the object
         if (manager == null) {
-            manager = new DBUserRetrieval(DB_CONNECTION_NAMESPACE);
+            manager = OnlineReviewHelper.createUserRetrieval();
             // Place newly-created object into the request as attribute
             request.setAttribute("userRetrieval", manager);
         }
@@ -2718,7 +2470,7 @@ public class ActionsHelper {
         // create a new instance of the object
         if (fileUpload == null) {
 //            fileUpload = new RemoteFileUpload("com.topcoder.servlet.request.RemoteFileUpload");
-            fileUpload = new LocalFileUpload("com.topcoder.servlet.request.LocalFileUpload");
+            fileUpload = OnlineReviewHelper.createFileUploadManager();
             // Place newly-created object into the request as attribute
             request.setAttribute("fileUploadManager", fileUpload);
         }
@@ -2732,7 +2484,7 @@ public class ActionsHelper {
      *
      * @return a newly created instance of the class.
      * @param projectType
-     *            a project type for which the PhaseTemplate object should be created,
+     *            a project type for which the PhaseTemplate object should be created, 
      *            can be null if start date generator type doesn't matter
      * @throws IllegalArgumentException
      *             if <code>request</code> parameter is <code>null</code>.
@@ -2752,97 +2504,39 @@ public class ActionsHelper {
             generator = new StartDateGenerator() {
                 public Date generateStartDate() {
                     return new Date();
-                }
+                }                
             };
         }
-
+        
         // Create workdays instance
         Workdays workdays = (new DefaultWorkdaysFactory()).createWorkdaysInstance();
-
+        
         // Create phase template instance
         PhaseTemplate phaseTemplate = new DefaultPhaseTemplate(persistence, generator, workdays );
-
+        
         return phaseTemplate;
     }
-
-    /**
-     * Sets the searchable fields to the search bundle.
-     *
-     * @param searchBundle
-     *            the search bundle to set.
-     */
-    private static void setAllFieldsSearchable(SearchBundle searchBundle) {
-        Map fields = new HashMap();
-
-        // set the resource filter fields
-        fields.put(ResourceFilterBuilder.RESOURCE_ID_FIELD_NAME, LongValidator.isPositive());
-        fields.put(ResourceFilterBuilder.PHASE_ID_FIELD_NAME, LongValidator.isPositive());
-        fields.put(ResourceFilterBuilder.PROJECT_ID_FIELD_NAME, LongValidator.isPositive());
-        fields.put(ResourceFilterBuilder.SUBMISSION_ID_FIELD_NAME, LongValidator.isPositive());
-        fields.put(ResourceFilterBuilder.RESOURCE_ROLE_ID_FIELD_NAME, LongValidator.isPositive());
-        fields.put(ResourceFilterBuilder.EXTENSION_PROPERTY_NAME_FIELD_NAME, StringValidator.startsWith(""));
-        fields.put(ResourceFilterBuilder.EXTENSION_PROPERTY_VALUE_FIELD_NAME, StringValidator.startsWith(""));
-
-        // set the resource role filter fields
-        fields.put(ResourceRoleFilterBuilder.NAME_FIELD_NAME, StringValidator.startsWith(""));
-        fields.put(ResourceRoleFilterBuilder.PHASE_TYPE_ID_FIELD_NAME, LongValidator.isPositive());
-        fields.put(ResourceRoleFilterBuilder.RESOURCE_ROLE_ID_FIELD_NAME, LongValidator.isPositive());
-
-        // set the notification filter fields
-        fields.put(NotificationFilterBuilder.EXTERNAL_REF_ID_FIELD_NAME, LongValidator.isPositive());
-        fields.put(NotificationFilterBuilder.NOTIFICATION_TYPE_ID_FIELD_NAME, LongValidator.isPositive());
-        fields.put(NotificationFilterBuilder.PROJECT_ID_FIELD_NAME, LongValidator.isPositive());
-
-        // set the notification type filter fields
-        fields.put(NotificationTypeFilterBuilder.NOTIFICATION_TYPE_ID_FIELD_NAME, LongValidator.isPositive());
-        fields.put(NotificationTypeFilterBuilder.NAME_FIELD_NAME, StringValidator.startsWith(""));
-
-        searchBundle.setSearchableFields(fields);
-    }
-
+    
     /**
      * Set Completion Timestamp while the project turn to completed, Cancelled - Failed Review or Deleted status.
-     *
+     * 
      * @param project the project instance
      * @param newProjectStatus new project status
      * @param format the date format
      */
-    static void setProjectCompletionDate(Project project, ProjectStatus newProjectStatus, Format format)
-    throws BaseException {
+    static void setProjectCompletionDate(Project project, ProjectStatus newProjectStatus, Format format) {
     	String name = newProjectStatus.getName();
     	if ("Completed".equals(name) || "Cancelled - Failed Review".equals(name) || "Deleted".equals(name)) {
             if (format == null) {
                 format = new SimpleDateFormat(ConfigHelper.getDateFormat());
             }
     		project.setProperty("Completion Timestamp", format.format(new Date()));
-
-    		if (!"Deleted".equals(name)) {
-    			Connection conn = null;
-	        	PreparedStatement ps = null;
-	    		try {
-	    	        DBConnectionFactory dbconn;
-	    				dbconn = new DBConnectionFactoryImpl(DB_CONNECTION_NAMESPACE);
-	    	        conn = dbconn.createConnection();
-	    	    	ps = conn.prepareStatement("update project_result set rating_ind = 1 where project_id = ? and valid_submission_ind = 1");
-	    	    	ps.setLong(1, project.getId());
-	    	    	ps.execute();
-	    		} catch(SQLException e) {
-	    			throw new BaseException("Failed to update project result for rating_ind", e);
-	    		} catch (UnknownConnectionException e) {
-	    			throw new BaseException("Failed to return DBConnection", e);
-				} catch (ConfigurationException e) {
-	    			throw new BaseException("Failed to return DBConnection", e);
-				} finally {
-	    			close(ps);
-	    			close(conn);
-	    		}
-    		}
     	}
     }
-
+    
     /**
      * Set Rated Timestamp with the end date of submission phase.
-     *
+     * 
      * @param project the project instance
      * @param format the date format
      */
@@ -2893,11 +2587,11 @@ public class ActionsHelper {
         throws BaseException {
         // Prepare bean that will be returned as the result
         CorrectnessCheckResult result = new CorrectnessCheckResult();
-
+    
         if (permission == null || permission.trim().length() == 0) {
             permission = null;
         }
-
+    
         // Verify that Project ID was specified and denotes correct project
         String pidParam = request.getParameter("pid");
         if (pidParam == null || pidParam.trim().length() == 0) {
@@ -2906,9 +2600,9 @@ public class ActionsHelper {
             // Return the result of the check
             return result;
         }
-
+    
         long pid;
-
+    
         try {
             // Try to convert specified pid parameter to its integer representation
             pid = Long.parseLong(pidParam, 10);
@@ -2918,7 +2612,7 @@ public class ActionsHelper {
             // Return the result of the check
             return result;
         }
-
+    
         // Obtain an instance of Project Manager
         ProjectManager projMgr = createProjectManager(request);
         // Get Project by its id
@@ -2930,15 +2624,15 @@ public class ActionsHelper {
             // Return the result of the check
             return result;
         }
-
+    
         // Store Project object in the result bean
         result.setProject(project);
         // Place project as attribute in the request
         request.setAttribute("project", project);
-
+    
         // Gather the roles the user has for current request
         AuthorizationHelper.gatherUserRoles(request, pid);
-
+    
         // If permission parameter was not null or empty string ...
         if (permission != null) {
             // ... verify that this permission is granted for currently logged in user
@@ -2949,13 +2643,13 @@ public class ActionsHelper {
                 return result;
             }
         }
-
+    
         return result;
     }
 
     /**
      * Populate project_result and component_inquiry for new submitters.
-     *
+     * 
      * @param project the project
      * @param newSubmitters new submitters external ids.
      * @throws BaseException if error occurs
@@ -2968,12 +2662,6 @@ public class ActionsHelper {
     	PreparedStatement ratingStmt = null;
     	PreparedStatement reliabilityStmt = null;
     	PreparedStatement componentInquiryStmt = null;
-    	long categoryId = project.getProjectCategory().getId();
-    	if (categoryId != 1 && categoryId != 2) {
-    		// design/development project need project_result
-    		return;
-    	}
-
 		try {
 	        DBConnectionFactory dbconn;
 				dbconn = new DBConnectionFactoryImpl(DB_CONNECTION_NAMESPACE);
@@ -2983,24 +2671,24 @@ public class ActionsHelper {
 	        long componentInquiryId = getNextComponentInquiryId(conn, newSubmitters.size());
 	    	long componentId = getProjectLongValue(project, "Component ID");
 	    	long phaseId = 111 + project.getProjectCategory().getId();
-	    	long version = getProjectLongValue(project, "Version ID");
+	    	long version = getProjectLongValue(project, "Version ID");	        
 
 	        // add reliability_ind and old_reliability
 	    	ps = conn.prepareStatement("INSERT INTO project_result " +
-	                "(project_id, user_id, rating_ind, valid_submission_ind, old_rating, old_reliability) " +
-	                "values (?, ?, ?, ?, ?, ?)");
+	                "(project_id, user_id, rating_ind, reliability_ind, valid_submission_ind, old_rating, old_reliability) " +
+	                "values (?, ?, ?, ?, ?, ?, ?)");
 
 	    	componentInquiryStmt = conn.prepareStatement("INSERT INTO component_inquiry " +
 	                "(component_inquiry_id, component_id, user_id, project_id, phase, tc_user_id, agreed_to_terms, rating, version, create_time) " +
 	                "values (?, ?, ?, ?, ?, ?, 1, ?, ?, current)");
-
+      	
 	        existStmt = conn.prepareStatement("SELECT 1 FROM PROJECT_RESULT WHERE user_id = ? and project_id = ?");
 
 	        existCIStmt = conn.prepareStatement("SELECT 1 FROM component_inquiry WHERE user_id = ? and project_id = ?");
-
+	
 	        ratingStmt = conn.prepareStatement("SELECT rating from user_rating where user_id = ? and phase_id = " +
 	                "(select 111+project_category_id from project where project_id = ?)");
-
+	        
 	        reliabilityStmt = conn.prepareStatement("SELECT rating from user_reliability where user_id = ? and phase_id = " +
 	                "(select 111+project_category_id from project where project_id = ?)");
 
@@ -3027,7 +2715,7 @@ public class ActionsHelper {
 		            ratingStmt.setString(1, userId);
 		            ratingStmt.setLong(2, projectId);
 		            rs = ratingStmt.executeQuery();
-
+		
 		            if (rs.next()) {
 		                oldRating = rs.getLong(1);
 		            }
@@ -3041,7 +2729,7 @@ public class ActionsHelper {
 		            reliabilityStmt.setString(1, userId);
 		            reliabilityStmt.setLong(2, projectId);
 		            rs = reliabilityStmt.executeQuery();
-
+		
 		            if (rs.next()) {
 		                oldReliability = rs.getDouble(1);
 		            }
@@ -3049,22 +2737,23 @@ public class ActionsHelper {
 	            }
 
 	            // add project_result
-	            if (!existPR) {
+	            if (!existPR) {	            	
 			        ps.setLong(1, projectId);
 			        ps.setString(2, userId);
 			        ps.setLong(3, 0);
 			        ps.setLong(4, 0);
+			        ps.setLong(5, 0);
 
 			        if (oldRating == 0) {
-			            ps.setNull(5, Types.DOUBLE);
+			            ps.setNull(6, Types.DOUBLE);
 			        } else {
-			            ps.setDouble(5, oldRating);
+			            ps.setDouble(6, oldRating);
 			        }
 
 			        if (oldReliability == 0) {
-			            ps.setNull(6, Types.DOUBLE);
+			            ps.setNull(7, Types.DOUBLE);
 			        } else {
-			            ps.setDouble(6, oldReliability);
+			            ps.setDouble(7, oldReliability);
 			        }
 			        ps.addBatch();
 	            }
@@ -3122,93 +2811,12 @@ public class ActionsHelper {
 			throw new BaseException("Failed to recaculateScreeningReviewerPayments for project " + projectId, e);
 		} finally {
 			close(conn);
-		}
-    }
-
-    /**
-     * Delete project_result and component_inquiry for new submitters if oldRole is submitter, added otherwise.
-     * 
-     * @param project the project
-     * @param userId userId
-     * @param roleId roleId
-     * @throws BaseException if error occurs
-     */
-    public static void changeResourceRole(Project project, long userId, long oldRoleId, long newRoleId) throws BaseException {
-    	Connection conn = null;
-    	PreparedStatement ps = null;
-    	long categoryId = project.getProjectCategory().getId();
-    	if (categoryId != 1 && categoryId != 2) {
-    		// design/development project need project_result
-    		return;
-    	}
-
-    	if (oldRoleId == 1) {
-    		// Delete project_result if the old role is submitter
-    		deleteProjectResult(project, userId, oldRoleId);
-    	}
-    	
-    	if (newRoleId == 1) {
-    		// added otherwise
-    		populateProjectResult(project, Arrays.asList(new String[] {String.valueOf(userId)}));
-    	}
-    }
-
-    /**
-     * Delete project_result and component_inquiry for new submitters.
-     *
-     * @param project the project
-     * @param userId userId
-     * @param roleId roleId
-     * @throws BaseException if error occurs
-     */
-    public static void deleteProjectResult(Project project, long userId, long roleId) throws BaseException {
-    	Connection conn = null;
-    	PreparedStatement ps = null;
-    	long categoryId = project.getProjectCategory().getId();
-    	if (categoryId != 1 && categoryId != 2) {
-    		// design/development project need project_result
-    		return;
-    	}
-
-    	if (roleId != 1) {
-    		// Only deal with submitters
-    		return;
-    	}
-
-		try {
-	        DBConnectionFactory dbconn;
-				dbconn = new DBConnectionFactoryImpl(DB_CONNECTION_NAMESPACE);
-	        conn = dbconn.createConnection();
-	        
-	        // delete from project_result
-	        ps = conn.prepareStatement("delete from project_result where project_id = ? and user_id = ?");
-	        ps.setLong(1, project.getId());
-	        ps.setLong(2, userId);
-	        ps.executeUpdate();
-	        close(ps);
-
-	        // delete from component_inquiry
-	        ps = conn.prepareStatement("delete from component_inquiry where project_id = ? and user_id = ?");
-	        ps.setLong(1, project.getId());
-	        ps.setLong(2, userId);
-	        ps.executeUpdate();
-		} catch (UnknownConnectionException e) {
-			throw new BaseException("Failed to create connection", e);
-		} catch (ConfigurationException e) {
-			throw new BaseException("Failed to config for DBNamespace", e);
-		} catch (SQLException e) {
-			throw new BaseException("Failed to populate project_result", e);
-		} catch (DBConnectionException e) {
-			throw new BaseException("Failed to return DBConnection", e);
-		} finally {
-			close(ps);
-			close(conn);
-		}
+		}    	
     }
 
     /**
      * Retrieve and update next ComponentInquiryId.
-     *
+     *  
      * @param conn the connection
      * @param count the count of new submitters
      * @return next component_inquiry_id
@@ -3217,7 +2825,7 @@ public class ActionsHelper {
     	String tableName = ConfigHelper.getPropertyValue("component_inquiry.tablename", "sequence_object");
     	String nameField = ConfigHelper.getPropertyValue("component_inquiry.name", "name");
     	String currentValueField = ConfigHelper.getPropertyValue("component_inquiry.current_value", "current_value");
-    	String getNextID = "SELECT max(" + currentValueField + ") FROM " + tableName +
+    	String getNextID = "SELECT max(" + currentValueField + ") FROM " + tableName + 
     				" WHERE " + nameField + " = 'main_sequence'";
     	String updateNextID = "UPDATE " + tableName + " SET " + currentValueField + " = ? " +
     				" WHERE " + nameField + " = 'main_sequence'" + " AND " + currentValueField + " = ? ";
@@ -3253,7 +2861,7 @@ public class ActionsHelper {
 
     /**
      * Return project property long value.
-     *
+     * 
      * @param project the project object
      * @param name the proeprty name
      * @return the long value, 0 if it does not exist
@@ -3264,12 +2872,12 @@ public class ActionsHelper {
     		return 0;
     	} else {
     		return Long.parseLong(obj.toString());
-    	}
+    	}    	
     }
 
     /**
      * Close jdbc resource.
-     *
+     * 
      * @param obj jdbc resource
      */
     private static void close(Object obj) {

@@ -10,6 +10,7 @@ import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.cronos.onlinereview.commons.OnlineReviewHelper;
 import com.cronos.onlinereview.external.ExternalUser;
 import com.cronos.onlinereview.external.UserRetrieval;
 import com.topcoder.management.project.Project;
@@ -221,6 +222,7 @@ public class AuthorizationHelper {
             roles.remove(Constants.PUBLIC_ROLE_NAME);
         }
 
+        /* XXX Bauna - I moved this to OnlineReviewHelper
         // Prepare filter to select resources by the External ID of currently logged in user
         Filter filterExtIDname = ResourceFilterBuilder.createExtensionPropertyNameFilter("External Reference ID");
         Filter filterExtIDvalue = ResourceFilterBuilder.createExtensionPropertyValueFilter(
@@ -236,9 +238,13 @@ public class AuthorizationHelper {
         ResourceManager resMgr = ActionsHelper.createResourceManager(request);
         // Perform search for resources
         Resource[] resources = resMgr.searchResources(filter);
+        
+        */
+        
+        Resource[] resources = OnlineReviewHelper.findResourcesByProjectAndUser(projectId, getLoggedInUserId(request));
         // Plase resources for currently logged in user into the request
         request.setAttribute("myResources", resources);
-
+		
         // Iterate over all resources and retrieve their roles
         for (int i = 0; i < resources.length; ++i) {
             // Get the role this resource has

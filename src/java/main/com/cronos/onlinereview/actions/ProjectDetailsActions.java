@@ -8,6 +8,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -106,6 +107,36 @@ import com.topcoder.util.file.fieldconfig.TemplateFields;
 public class ProjectDetailsActions extends DispatchAction {
 
     /**
+     * This class implements <code>Comparator</code> interface and is used to sort Uploads in
+     * array. It sorts Uploads by their modification time, from the least recent to the most recent
+     * ones.
+     */
+    static class UploadComparer implements Comparator {
+
+        /**
+         * This method compares its two arguments for order. This method expects that type of
+         * objects passed as arguments is <code>Upload</code>.
+         * <p>
+         * This method implements the <code>compare</code> method from the
+         * <code>Comparator</code> interface.
+         * </p>
+         *
+         * @return a negative integer, zero, or a positive integer as the first argument is less
+         *         than, equal to, or greater than the second respectively.
+         * @param o1
+         *            the first object to be compared.
+         * @param o2
+         *            the second object to be compared.
+         */
+        public int compare(Object o1, Object o2) {
+            Upload up1 = (Upload)o1;
+            Upload up2 = (Upload)o2;
+
+            return up1.getModificationTimestamp().compareTo(up2.getModificationTimestamp());
+        }
+    }
+
+    /**
      * Creates a new instance of the <code>ProjectDetailsActions</code> class.
      */
     public ProjectDetailsActions() {
@@ -132,7 +163,6 @@ public class ProjectDetailsActions extends DispatchAction {
     public ActionForward viewProjectDetails(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response)
         throws BaseException {
-    	LoggingHelper.logAction(request);
         // Verify that certain requirements are met before processing with the Action
         CorrectnessCheckResult verification =
             ActionsHelper.checkForCorrectProjectId(mapping, getResources(request), request, Constants.VIEW_PROJECT_DETAIL_PERM_NAME);
@@ -165,18 +195,12 @@ public class ProjectDetailsActions extends DispatchAction {
 
         // Obtain an instance of Phase Manager
         PhaseManager phaseMgr = ActionsHelper.createPhaseManager(request, false);
+
+        // Calculate the date when this project is supposed to end
         com.topcoder.project.phases.Project phProj = phaseMgr.getPhases(project.getId());
-        Phase[] phases;
-
-        if (phProj != null) {
-            // Calculate the date when this project is supposed to end
-            phProj.calcEndDate();
-            // Get all phases for the current project
-            phases = phProj.getAllPhases(new Comparators.ProjectPhaseComparer());
-        } else {
-            phases = new Phase[0];
-        }
-
+        phProj.calcEndDate();
+        // Get all phases for the current project
+        Phase[] phases = phProj.getAllPhases();
         // Obtain an array of all active phases of the project
         Phase[] activePhases = ActionsHelper.getActivePhases(phases);
 
@@ -242,7 +266,7 @@ public class ProjectDetailsActions extends DispatchAction {
 
         Date[] originalStart = new Date[phases.length];
         Date[] originalEnd = new Date[phases.length];
-        long projectStartTime = (phProj != null) ? (phProj.getStartDate().getTime() / (60 * 1000)) : 0;
+        long projectStartTime = phProj.getStartDate().getTime() / (60 * 1000);
         // The following two arrays are used to display Gantt chart
         long[] ganttOffsets = new long[phases.length];
         long[] ganttLengths = new long[phases.length];
@@ -480,12 +504,6 @@ public class ProjectDetailsActions extends DispatchAction {
                         ActionsHelper.getMostRecentSubmissions(ActionsHelper.createUploadManager(request), project);
                 }
                 if (submissions == null &&
-                        AuthorizationHelper.hasUserPermission(request, Constants.VIEW_SCREENER_SUBM_PERM_NAME) &&
-                        ActionsHelper.isInOrAfterPhase(phases, phaseIdx, Constants.SCREENING_PHASE_NAME)) {
-                    submissions =
-                        ActionsHelper.getMostRecentSubmissions(ActionsHelper.createUploadManager(request), project);
-                }
-                if (submissions == null &&
                         AuthorizationHelper.hasUserPermission(request, Constants.VIEW_MY_SUBM_PERM_NAME)) {
                     // Obtain an instance of Upload Manager
                     UploadManager upMgr = ActionsHelper.createUploadManager(request);
@@ -502,6 +520,12 @@ public class ProjectDetailsActions extends DispatchAction {
                         new AndFilter(Arrays.asList(new Filter[] {filterProject, filterStatus, filterResource}));
 
                     submissions = upMgr.searchSubmissions(filter);
+                }
+                if (submissions == null &&
+                        AuthorizationHelper.hasUserPermission(request, Constants.VIEW_SCREENER_SUBM_PERM_NAME) &&
+                        ActionsHelper.isInOrAfterPhase(phases, phaseIdx, Constants.SCREENING_PHASE_NAME)) {
+                    submissions =
+                        ActionsHelper.getMostRecentSubmissions(ActionsHelper.createUploadManager(request), project);
                 }
 
                 phaseGroup.setSubmissions(submissions);
@@ -874,27 +898,29 @@ public class ProjectDetailsActions extends DispatchAction {
 
             if (phaseGroup.getAppFunc().equalsIgnoreCase(Constants.AGGREGATION_APP_FUNC) &&
                     phaseName.equalsIgnoreCase(Constants.AGGREGATION_REVIEW_PHASE_NAME) &&
-                    phaseGroup.getAggregation() != null && phaseGroup.getAggregation().isCommitted()) {
+                    phaseGroup.getAggregation() != null) {
                 Review aggregation = phaseGroup.getAggregation();
 
-                boolean reviewCommitted = true;
-
-                for (int j = 0; j < aggregation.getNumberOfComments(); ++j) {
+                if (aggregation.isCommitted()) {
+                    int j = 0;
+                    for (; j < aggregation.getNumberOfComments(); ++j) {
                         // Get a comment for the current iteration
                         Comment comment = aggregation.getComment(j);
+                        String commentType = comment.getCommentType().getName();
 
-                    if (ActionsHelper.isAggregationReviewComment(comment)) {
+                        if (commentType.equalsIgnoreCase("Aggregation Review Comment") ||
+                                commentType.equalsIgnoreCase("Submitter Comment")) {
                             String extraInfo = (String) comment.getExtraInfo();
                             if (!("Approved".equalsIgnoreCase(extraInfo) ||
                                     "Rejected".equalsIgnoreCase(extraInfo))) {
-                                reviewCommitted = false;
                                 break;
                             }
                         }
                     }
-
-                phaseGroup.setDisplayAggregationReviewLink(!phaseStatus.equalsIgnoreCase(Constants.SCHEDULED_PH_STATUS_NAME));
-                phaseGroup.setAggregationReviewCommitted(reviewCommitted);
+                    if (j == aggregation.getNumberOfComments()) {
+                        phaseGroup.setAggregationReviewCommitted(true);
+                    }
+                }
             }
 
             if (phaseGroup.getAppFunc().equalsIgnoreCase(Constants.FINAL_FIX_APP_FUNC) &&
@@ -924,7 +950,7 @@ public class ProjectDetailsActions extends DispatchAction {
                             new Filter[] {/*filterStatus, */filterType, filterResource}));
                     finalFixes = upMgr.searchUploads(filter);
 
-                    Arrays.sort(finalFixes, new Comparators.UploadComparer());
+                    Arrays.sort(finalFixes, new UploadComparer());
 
                     finalFixIdx = 0;
                 }
@@ -1013,12 +1039,9 @@ public class ProjectDetailsActions extends DispatchAction {
         request.setAttribute("sendTLNotifications", (sendTLNotifications) ? "On" : "Off");
         request.setAttribute("passingMinimum", new Float(75.0)); // TODO: Take this value from scorecard template
 
-        // Check resource roles
-        request.setAttribute("isManager",
-                Boolean.valueOf(AuthorizationHelper.hasUserRole(request, Constants.MANAGER_ROLE_NAMES)));
-        request.setAttribute("isSubmitter",
-        		Boolean.valueOf(AuthorizationHelper.hasUserRole(request, Constants.SUBMITTER_ROLE_NAME)));
         // Check permissions
+        request.setAttribute("isManager",
+                Boolean.valueOf(AuthorizationHelper.hasUserRole(request, Constants.MANAGER_ROLE_NAME)));
         request.setAttribute("isAllowedToEditProjects",
                 Boolean.valueOf(AuthorizationHelper.hasUserPermission(request, Constants.EDIT_PROJECT_DETAILS_PERM_NAME)));
         request.setAttribute("isAllowedToContactPM",
@@ -1048,6 +1071,8 @@ public class ProjectDetailsActions extends DispatchAction {
                 Boolean.valueOf(AuthorizationHelper.hasUserPermission(request, Constants.UPLOAD_TEST_CASES_PERM_NAME)));
         request.setAttribute("isAllowedToPerformAggregation",
                 Boolean.valueOf(AuthorizationHelper.hasUserPermission(request, Constants.PERFORM_AGGREGATION_PERM_NAME)));
+        request.setAttribute("isAllowedToPerformAggregationReview",
+                Boolean.valueOf(AuthorizationHelper.hasUserPermission(request, Constants.PERFORM_AGGREG_REVIEW_PERM_NAME)));
         request.setAttribute("isAllowedToUploadFF",
                 Boolean.valueOf(AuthorizationHelper.hasUserPermission(request, Constants.PERFORM_FINAL_FIX_PERM_NAME) &&
                         AuthorizationHelper.getLoggedInUserId(request) == winnerExtUserId));
@@ -1057,41 +1082,6 @@ public class ProjectDetailsActions extends DispatchAction {
         request.setAttribute("isAllowedToPerformApproval",
                 Boolean.valueOf(ActionsHelper.getPhase(phases, true, Constants.APPROVAL_PHASE_NAME) != null &&
                         AuthorizationHelper.hasUserPermission(request, Constants.PERFORM_APPROVAL_PERM_NAME)));
-
-        // Checking whether some user is allowed to submit his approval or comments for the
-        // Aggregation worksheet needs more robust verification since this check includes a test
-        // against whether a user is a submitter, and if it is, whether he is also a winner
-        boolean allowedToReviewAggregation = false;
-
-        if (AuthorizationHelper.hasUserPermission(request, Constants.PERFORM_AGGREG_REVIEW_PERM_NAME) &&
-                !AuthorizationHelper.hasUserPermission(request, Constants.PERFORM_AGGREGATION_PERM_NAME)) {
-            allowedToReviewAggregation = true;
-        }
-        if (allowedToReviewAggregation && AuthorizationHelper.hasUserRole(request, Constants.SUBMITTER_ROLE_NAME)) {
-            final String winnerExtId = (String) project.getProperty("Winner External Reference ID");
-
-            // Set 'allowed' status to false temporarily.
-            // If current user is a winning submitter, this variable will be reset back to true
-            allowedToReviewAggregation = false;
-
-            // Iterate over all 'my' resources looking for 'Submitter' ones and comparing them to the
-            // value of the winner for the current project (if there is any winner already)
-            for (int i = 0; i < myResources.length; ++i) {
-                // Get a resource for the current iteration
-                final Resource resource = myResources[i];
-                // Examine only Submitters, skip all other ones
-                if (!resource.getResourceRole().getName().equalsIgnoreCase(Constants.SUBMITTER_ROLE_NAME)) {
-                    continue;
-                }
-                // This resource is a submitter;
-                // compare its external user ID to the official project's winner's one
-                if (myResources[i].getProperty("External Reference ID").equals(winnerExtId)) {
-                        allowedToReviewAggregation = true;
-                    break;
-                }
-            }
-        }
-        request.setAttribute("isAllowedToPerformAggregationReview", Boolean.valueOf(allowedToReviewAggregation));
 
         return mapping.findForward(Constants.SUCCESS_FORWARD_NAME);
     }
@@ -1124,7 +1114,6 @@ public class ProjectDetailsActions extends DispatchAction {
     public ActionForward contactManager(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response)
         throws BaseException, ConfigManagerException {
-    	LoggingHelper.logAction(request);
         // Verify that certain requirements are met before processing with the Action
         CorrectnessCheckResult verification =
             ActionsHelper.checkForCorrectProjectId(mapping, getResources(request), request, Constants.CONTACT_PM_PERM_NAME);
@@ -1275,7 +1264,6 @@ public class ProjectDetailsActions extends DispatchAction {
     public ActionForward uploadSubmission(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response)
         throws BaseException {
-    	LoggingHelper.logAction(request);
         // Verify that certain requirements are met before processing with the Action
         CorrectnessCheckResult verification =
             ActionsHelper.checkForCorrectProjectId(mapping, getResources(request), request, Constants.PERFORM_SUBM_PERM_NAME);
@@ -1305,12 +1293,6 @@ public class ProjectDetailsActions extends DispatchAction {
 
         DynaValidatorForm uploadSubmissionForm = (DynaValidatorForm) form;
         FormFile file = (FormFile) uploadSubmissionForm.get("file");
-
-        // Disallow uploading of empty files
-        if (file.getFileSize() == 0) {
-            return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
-                    Constants.PERFORM_SUBM_PERM_NAME, "Error.EmptyFileUploaded");
-        }
 
         StrutsRequestParser parser = new StrutsRequestParser();
         parser.AddFile(file);
@@ -1415,7 +1397,6 @@ public class ProjectDetailsActions extends DispatchAction {
     public ActionForward downloadSubmission(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response)
         throws BaseException, IOException {
-    	LoggingHelper.logAction(request);
         // Verify that certain requirements are met before processing with the Action
         CorrectnessCheckResult verification =
             checkForCorrectUploadId(mapping, request, "ViewSubmission");
@@ -1592,7 +1573,6 @@ public class ProjectDetailsActions extends DispatchAction {
     public ActionForward uploadFinalFix(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response)
         throws BaseException {
-    	LoggingHelper.logAction(request);
         // Verify that certain requirements are met before processing with the Action
         CorrectnessCheckResult verification =
             ActionsHelper.checkForCorrectProjectId(mapping, getResources(request), request, Constants.PERFORM_FINAL_FIX_PERM_NAME);
@@ -1638,12 +1618,6 @@ public class ProjectDetailsActions extends DispatchAction {
         DynaValidatorForm uploadSubmissionForm = (DynaValidatorForm) form;
         FormFile file = (FormFile) uploadSubmissionForm.get("file");
 
-        // Disallow uploading of empty files
-        if (file.getFileSize() == 0) {
-            return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
-                    Constants.PERFORM_FINAL_FIX_PERM_NAME, "Error.EmptyFileUploaded");
-        }
-
         StrutsRequestParser parser = new StrutsRequestParser();
         parser.AddFile(file);
 
@@ -1677,7 +1651,7 @@ public class ProjectDetailsActions extends DispatchAction {
                     request, Constants.PERFORM_FINAL_FIX_PERM_NAME, "Error.OnlyOneFinalFix");
         }
 
-        Arrays.sort(uploads, new Comparators.UploadComparer());
+        Arrays.sort(uploads, new UploadComparer());
         Upload oldUpload = (uploads.length != 0) ? uploads[uploads.length - 1] : null;
 
         Upload upload = new Upload();
@@ -1721,7 +1695,6 @@ public class ProjectDetailsActions extends DispatchAction {
     public ActionForward downloadFinalFix(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response)
         throws BaseException, IOException {
-    	LoggingHelper.logAction(request);
         // Verify that certain requirements are met before processing with the Action
         CorrectnessCheckResult verification =
             checkForCorrectUploadId(mapping, request, Constants.DOWNLOAD_FINAL_FIX_PERM_NAME);
@@ -1815,7 +1788,6 @@ public class ProjectDetailsActions extends DispatchAction {
     public ActionForward uploadTestCase(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response)
         throws BaseException {
-    	LoggingHelper.logAction(request);
         // Verify that certain requirements are met before processing with the Action
         CorrectnessCheckResult verification =
             ActionsHelper.checkForCorrectProjectId(mapping, getResources(request), request, Constants.UPLOAD_TEST_CASES_PERM_NAME);
@@ -1848,12 +1820,6 @@ public class ProjectDetailsActions extends DispatchAction {
 
         DynaValidatorForm uploadSubmissionForm = (DynaValidatorForm) form;
         FormFile file = (FormFile) uploadSubmissionForm.get("file");
-
-        // Disallow uploading of empty files
-        if (file.getFileSize() == 0) {
-            return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
-                    Constants.UPLOAD_TEST_CASES_PERM_NAME, "Error.EmptyFileUploaded");
-        }
 
         StrutsRequestParser parser = new StrutsRequestParser();
         parser.AddFile(file);
@@ -1930,7 +1896,6 @@ public class ProjectDetailsActions extends DispatchAction {
     public ActionForward downloadTestCase(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response)
         throws BaseException, IOException {
-    	LoggingHelper.logAction(request);
         // Verify that certain requirements are met before processing with the Action
         CorrectnessCheckResult verification =
             checkForCorrectUploadId(mapping, request, Constants.DOWNLOAD_TEST_CASES_PERM_NAME);
@@ -2075,7 +2040,6 @@ public class ProjectDetailsActions extends DispatchAction {
     public ActionForward deleteSubmission(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response)
         throws BaseException {
-    	LoggingHelper.logAction(request);
         // Verify that certain requirements are met before processing with the Action
         CorrectnessCheckResult verification =
             checkForCorrectUploadId(mapping, request, Constants.REMOVE_SUBM_PERM_NAME);
@@ -2131,7 +2095,7 @@ public class ProjectDetailsActions extends DispatchAction {
 
         // recaculate screening reviewer payments
         ActionsHelper.recaculateScreeningReviewerPayments(upload.getProject());
-
+        
         return ActionsHelper.cloneForwardAndAppendToPath(
                 mapping.findForward(Constants.SUCCESS_FORWARD_NAME), "&pid=" + verification.getProject().getId());
     }
@@ -2159,7 +2123,6 @@ public class ProjectDetailsActions extends DispatchAction {
     public ActionForward downloadDocument(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response)
         throws BaseException, IOException {
-    	LoggingHelper.logAction(request);
         // Verify that certain requirements are met before processing with the Action
         CorrectnessCheckResult verification =
             checkForCorrectUploadId(mapping, request, Constants.DOWNLOAD_DOCUMENT_PERM_NAME);
@@ -2246,7 +2209,6 @@ public class ProjectDetailsActions extends DispatchAction {
      */
     public ActionForward viewAutoScreening(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response) throws BaseException {
-    	LoggingHelper.logAction(request);
         // Verify that certain requirements are met before processing with the Action
         CorrectnessCheckResult verification =
             checkForCorrectUploadId(mapping, request, "ViewAutoScreening");
@@ -2601,26 +2563,7 @@ public class ProjectDetailsActions extends DispatchAction {
                     delivName.equalsIgnoreCase(Constants.STRS_TEST_CASES_DELIVERABLE_NAME)) {
                 links[i] = "UploadTestCase.do?method=uploadTestCase&pid=" + deliverable.getProject();
             } else if (delivName.equalsIgnoreCase(Constants.APPEAL_RESP_DELIVERABLE_NAME)) {
-                // Skip deliverables with empty Submission ID field,
-                // as no links can be generated for such deliverables
-                if (deliverable.getSubmission() == null) {
-                    continue;
-                }
-
-                if (allScorecardTypes == null) {
-                    // Get all scorecard types
-                    allScorecardTypes = ActionsHelper.createScorecardManager(request).getAllScorecardTypes();
-                }
-
-                Review review = findReviewForSubmission(ActionsHelper.createReviewManager(request),
-                        ActionsHelper.findScorecardTypeByName(allScorecardTypes, "Review"),
-                        deliverable.getSubmission(), deliverable.getResource(), false);
-
-                // If review for the submission is absent, something is wrong
-                // and no link for this deliverable can be generated
-                if (review != null) {
-                    links[i] = "ViewReview.do?method=viewReview&rid=" + review.getId();
-                }
+                // TODO: Assign links for Appeal Responses
             } else if (delivName.equalsIgnoreCase(Constants.AGGREGATION_DELIVERABLE_NAME)) {
                 // Skip deliverables with empty Submission ID field,
                 // as no links can be generated for such deliverables

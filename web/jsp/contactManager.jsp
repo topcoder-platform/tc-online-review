@@ -25,7 +25,7 @@
 	<!-- CSS and JS by Petar -->
 	<link type="text/css" rel="stylesheet" href="<html:rewrite href='/css/or/new_styles.css' />" />
 	<script language="JavaScript" type="text/javascript"
-		src="<html:rewrite href='/js/or/rollovers2.js' />"><!-- @ --></script>
+		src="<html:rewrite href='/js/or/rollovers.js' />"><!-- @ --></script>
 </head>
 
 <body>
@@ -33,7 +33,7 @@
 	<table width="100%" border="0" cellpadding="0" cellspacing="0">
 		<tr valign="top">
 			<!-- Left Column Begins-->
-			<td width="180"><jsp:include page="/includes/global_left.jsp" /></td>
+			<td width="180"><jsp:include page="/includes/inc_leftnav.jsp" /></td>
 			<!-- Left Column Ends -->
 
 			<!-- Gutter Begins -->

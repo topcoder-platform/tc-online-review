@@ -22,7 +22,7 @@
 	<!-- CSS and JS by Petar -->
 	<link type="text/css" rel="stylesheet" href="<html:rewrite href='/css/or/new_styles.css' />" />
 	<script language="JavaScript" type="text/javascript"
-		src="<html:rewrite href='/js/or/rollovers2.js' />"><!-- @ --></script>
+		src="<html:rewrite href='/js/or/rollovers.js' />"><!-- @ --></script>
 </head>
 
 <body>
@@ -31,7 +31,7 @@
 		<tr valign="top">
 			<!-- Left Column Begins -->
 			<td width="180">
-				<jsp:include page="/includes/global_left.jsp" />
+				<jsp:include page="/includes/inc_leftnav.jsp" />
 			</td>
 			<!-- Left Column Ends -->
 
@@ -111,7 +111,7 @@
 															<td class="value" rowspan="${lastCommentIdx}">
 																<c:forEach items="${reviewResources}" var="resource">
 																	<c:if test="${resource.id == comment.author}">
-																		<tc-webtag:handle coderId='${resource.allProperties["External Reference ID"]}' context="${orfn:getHandlerContext(pageContext.request)}" /><br />
+																		<tc-webtag:handle coderId='${resource.allProperties["External Reference ID"]}' context="component" /><br />
 																	</c:if>
 																</c:forEach>
 																<c:forEach items="${reviews}" var="subReview">
@@ -144,7 +144,7 @@
 																	<c:forEach items="${reviewResources}" var="resource">
 																		<c:if test="${resource.id == comment.author}">
 																			<b><bean:message key='ResourceRole.${fn:replace(resource.resourceRole.name, " ", "")}' />
-																			(<tc-webtag:handle coderId='${resource.allProperties["External Reference ID"]}' context="${orfn:getHandlerContext(pageContext.request)}" />)
+																			(<tc-webtag:handle coderId='${resource.allProperties["External Reference ID"]}' context="component" />)
 																			<bean:message key="viewAggregationReview.Response" /></b>
 																		</c:if>
 																	</c:forEach>
