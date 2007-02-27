@@ -172,6 +172,7 @@ public class AuthorizationHelper {
             if (role.getName().equalsIgnoreCase(Constants.MANAGER_ROLE_NAME)) {
                 // Add Global Manager role to the roles set
                 roles.add(Constants.GLOBAL_MANAGER_ROLE_NAME);
+                request.setAttribute("global_resource", resources[i]);
                 // No need to iterate any further
                 break;
             }
