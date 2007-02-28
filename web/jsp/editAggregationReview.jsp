@@ -22,7 +22,7 @@
 	<!-- CSS and JS by Petar -->
 	<link type="text/css" rel="stylesheet" href="<html:rewrite href='/css/or/new_styles.css' />" />
 	<script language="JavaScript" type="text/javascript"
-		src="<html:rewrite href='/js/or/rollovers2.js' />"><!-- @ --></script>
+		src="<html:rewrite href='/js/or/rollovers.js' />"><!-- @ --></script>
 
 	<script language="JavaScript" type="text/javascript">
 function OnCompleteScorecardClick() {
@@ -51,7 +51,7 @@ function OnCompleteScorecardClick() {
 		<tr valign="top">
 			<!-- Left Column Begins-->
 			<td width="180">
-				<jsp:include page="/includes/global_left.jsp" />
+				<jsp:include page="/includes/inc_leftnav.jsp" />
 			</td>
 			<!-- Left Column Ends -->
 
@@ -125,13 +125,13 @@ function OnCompleteScorecardClick() {
 													<c:if test='${isReviewerComment || (commentType == "Manager Comment") ||
 															(commentType == "Appeal") || (commentType == "Appeal Response") ||
 															(commentType == "Aggregation Comment") ||
-															((empty isSubmitter) && (not empty submitterCommitted) && (commentType == "Submitter Comment"))}'>
+															((empty isSubmitter) && !(empty submitterCommitted) && (commentType == "Submitter Comment"))}'>
 														<tr class="dark">
 															<td class="value">
 																<c:if test="${firstTime}">
 																	<c:forEach items="${reviewResources}" var="resource">
 																		<c:if test="${resource.id == comment.author}">
-																			<tc-webtag:handle coderId='${resource.allProperties["External Reference ID"]}' context="${orfn:getHandlerContext(pageContext.request)}" /><br />
+																			<tc-webtag:handle coderId='${resource.allProperties["External Reference ID"]}' context="component" /><br />
 																		</c:if>
 																	</c:forEach>
 																	<c:forEach items="${reviews}" var="subReview">
@@ -179,19 +179,11 @@ function OnCompleteScorecardClick() {
 
 												<tr class="highlighted">
 													<td class="value" colspan="5">
-														<c:choose>
-															<c:when test="${isSubmitter}">
-																<input type="hidden" name="review_function[${globalItemIndex}]" value="Accept" />
-																<bean:message key="editAggregationReview.EnterComment" /><br />
-															</c:when>
-															<c:otherwise>
-																<html:radio property="review_function[${globalItemIndex}]" value="Accept" />
-																<bean:message key="editAggregationReview.Function.Accept" />
-																<html:radio property="review_function[${globalItemIndex}]" value="Reject" />
-																<bean:message key="editAggregationReview.Function.Reject" /> &#160;
-																<span class="error"><html:errors property="reject_reason[${globalItemIndex}]" prefix="" suffix="" /></span><br />
-															</c:otherwise>
-														</c:choose>
+														<html:radio property="review_function[${globalItemIndex}]" value="Accept" />
+														<bean:message key="editAggregationReview.Function.Accept" />
+														<html:radio property="review_function[${globalItemIndex}]" value="Reject" />
+														<bean:message key="editAggregationReview.Function.Reject" /> &#160;
+														<span class="error"><html:errors property="reject_reason[${globalItemIndex}]" prefix="" suffix="" /></span><br />
 														<html:textarea rows="3" property="reject_reason[${globalItemIndex}]" cols="20" styleClass="inputTextBox" />
 													</td>
 												</tr>

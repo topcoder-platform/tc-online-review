@@ -22,7 +22,7 @@
 	<!-- CSS and JS by Petar -->
 	<link type="text/css" rel="stylesheet" href="<html:rewrite href='/css/or/new_styles.css' />" />
 	<script language="JavaScript" type="text/javascript"
-		src="<html:rewrite href='/js/or/rollovers2.js' />"><!-- @ --></script>
+		src="<html:rewrite href='/js/or/rollovers.js' />"><!-- @ --></script>
 </head>
 
 <body>
@@ -31,7 +31,7 @@
 		<tr valign="top">
 			<!-- Left Column Begins -->
 			<td width="180">
-				<jsp:include page="/includes/global_left.jsp" />
+				<jsp:include page="/includes/inc_leftnav.jsp" />
 			</td>
 			<!-- Left Column Ends -->
 
@@ -64,7 +64,7 @@
 									<c:forEach items="${reviews}" var="review" varStatus="reviewStatus">
 										<td class="subheader" align="center" nowrap="nowrap">
 											<a href="ViewReview.do?method=viewReview&rid=${review.id}"><bean:message key="editReview.SectionHeader.Review" /></a><br />
-											(<tc-webtag:handle coderId="${authors[reviewStatus.index]}" context="${orfn:getHandlerContext(pageContext.request)}" />)
+											(<tc-webtag:handle coderId="${authors[reviewStatus.index]}" context="component" />)
 										</td>
 									</c:forEach>
 								</tr>
@@ -96,7 +96,7 @@
 																<b><bean:message key="editReview.Question.Response.title" />
 																	${commentNum}:
 																	<bean:message key='CommentType.${fn:replace(comment.commentType.name, " ", "")}' /></b>
-																(<tc-webtag:handle coderId="${authors[reviewStatus.index]}" context="${orfn:getHandlerContext(pageContext.request)}" />)<br />
+																(<tc-webtag:handle coderId="${authors[reviewStatus.index]}" context="component" />)<br />
 															</c:when>
 															<c:when test='${(commentType == "Appeal") || (commentType == "Appeal Response") || (commentType == "Manager Comment")}'>
 																<b><bean:message key='editReview.EditAggregation.${fn:replace(commentType, " ", "")}'/></b>
@@ -123,7 +123,7 @@
 									<c:forEach items="${reviews}" var="review" varStatus="reviewStatus">
 										<td class="subheader" align="center" nowrap="nowrap">
 											<a href="ViewReview.do?method=viewReview&rid=${review.id}"><bean:message key="editReview.SectionHeader.Review" /></a><br />
-											(<tc-webtag:handle coderId="${authors[reviewStatus.index]}" context="${orfn:getHandlerContext(pageContext.request)}" />)
+											(<tc-webtag:handle coderId="${authors[reviewStatus.index]}" context="component" />)
 										</td>
 									</c:forEach>
 								</tr>

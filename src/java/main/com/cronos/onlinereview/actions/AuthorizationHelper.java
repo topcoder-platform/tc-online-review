@@ -5,11 +5,13 @@ package com.cronos.onlinereview.actions;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.cronos.onlinereview.commons.OnlineReviewHelper;
 import com.cronos.onlinereview.external.ExternalUser;
 import com.cronos.onlinereview.external.UserRetrieval;
 import com.topcoder.management.project.Project;
@@ -35,8 +37,9 @@ import com.topcoder.util.errorhandling.BaseException;
  * @version 1.0
  */
 public class AuthorizationHelper {
-
-    /**
+	private static final org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(AuthorizationHelper.class);
+    
+	/**
      * This member variable is an integer constant that specifies the value which is used to denote
      * that no user is logged into application.
      */
@@ -221,6 +224,7 @@ public class AuthorizationHelper {
             roles.remove(Constants.PUBLIC_ROLE_NAME);
         }
 
+        /* XXX Bauna - I moved this to OnlineReviewHelper
         // Prepare filter to select resources by the External ID of currently logged in user
         Filter filterExtIDname = ResourceFilterBuilder.createExtensionPropertyNameFilter("External Reference ID");
         Filter filterExtIDvalue = ResourceFilterBuilder.createExtensionPropertyValueFilter(
@@ -236,15 +240,25 @@ public class AuthorizationHelper {
         ResourceManager resMgr = ActionsHelper.createResourceManager(request);
         // Perform search for resources
         Resource[] resources = resMgr.searchResources(filter);
+        
+        */
+        long userId = getLoggedInUserId(request);
+        Resource[] resources = OnlineReviewHelper.findResourcesByProjectAndUser(projectId, userId);
         // Plase resources for currently logged in user into the request
         request.setAttribute("myResources", resources);
-
+		
         // Iterate over all resources and retrieve their roles
         for (int i = 0; i < resources.length; ++i) {
             // Get the role this resource has
             ResourceRole role = resources[i].getResourceRole();
             // Add the name of the role to the roles set (gather the role)
             roles.add(role.getName());
+        }
+        if (log.isDebugEnabled()) {
+        	for (Iterator i = roles.iterator(); i.hasNext();) {
+				String role = (String) i.next();
+				log.debug("userId: " + userId + " has role: " + role);
+			}
         }
     }
 
