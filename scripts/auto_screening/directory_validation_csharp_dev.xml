@@ -49,6 +49,14 @@
     <SubDirectory>
       <Name>log</Name>
       <Validator>DirectoryExistsValidator</Validator>
+      <File>
+        <Name>coverage.xsl</Name>
+        <Validator>FileExistsValidator</Validator>
+	  </File>
+      <File>
+        <Name>NCover.log.txt</Name>
+        <Validator>FileExistsValidator</Validator>
+	  </File>
     </SubDirectory>
     <SubDirectory>
       <Name>conf</Name>
