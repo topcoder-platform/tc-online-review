@@ -49,6 +49,14 @@
     <SubDirectory>
       <Name>log</Name>
       <Validator>DirectoryExistsValidator</Validator>
+      <SubDirectory>
+        <Name>coverage</Name>
+        <Validator>DirectoryExistsValidator</Validator>
+	    <File>
+	      <Name>frame-summary.html</Name>
+	      <Validator>FileExistsValidator</Validator>
+		</File>
+      </SubDirectory>
     </SubDirectory>
     <SubDirectory>
       <Name>conf</Name>
