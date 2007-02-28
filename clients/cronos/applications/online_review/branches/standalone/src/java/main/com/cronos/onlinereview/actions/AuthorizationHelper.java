@@ -5,6 +5,7 @@ package com.cronos.onlinereview.actions;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -36,8 +37,9 @@ import com.topcoder.util.errorhandling.BaseException;
  * @version 1.0
  */
 public class AuthorizationHelper {
-
-    /**
+	private static final org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(AuthorizationHelper.class);
+    
+	/**
      * This member variable is an integer constant that specifies the value which is used to denote
      * that no user is logged into application.
      */
@@ -240,8 +242,8 @@ public class AuthorizationHelper {
         Resource[] resources = resMgr.searchResources(filter);
         
         */
-        
-        Resource[] resources = OnlineReviewHelper.findResourcesByProjectAndUser(projectId, getLoggedInUserId(request));
+        long userId = getLoggedInUserId(request);
+        Resource[] resources = OnlineReviewHelper.findResourcesByProjectAndUser(projectId, userId);
         // Plase resources for currently logged in user into the request
         request.setAttribute("myResources", resources);
 		
@@ -251,6 +253,12 @@ public class AuthorizationHelper {
             ResourceRole role = resources[i].getResourceRole();
             // Add the name of the role to the roles set (gather the role)
             roles.add(role.getName());
+        }
+        if (log.isDebugEnabled()) {
+        	for (Iterator i = roles.iterator(); i.hasNext();) {
+				String role = (String) i.next();
+				log.debug("userId: " + userId + " has role: " + role);
+			}
         }
     }
 

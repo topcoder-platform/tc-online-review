@@ -116,7 +116,7 @@ import com.topcoder.util.errorhandling.BaseException;
  * @version 1.0
  */
 public class ActionsHelper {
-
+	private static final org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(ActionsHelper.class);
     /**
      * This member variable is a string constant that defines the name of the configurtaion
      * namespace which the parameters for database connection factory are stored under.
@@ -2634,9 +2634,11 @@ public class ActionsHelper {
         AuthorizationHelper.gatherUserRoles(request, pid);
     
         // If permission parameter was not null or empty string ...
+        log.debug("checking user permissions");
         if (permission != null) {
             // ... verify that this permission is granted for currently logged in user
             if (!AuthorizationHelper.hasUserPermission(request, permission)) {
+            	log.debug("the user doesn't have the permission: " + permission);
                 result.setForward(produceErrorReport(
                         mapping, resources, request, permission, "Error.NoPermission"));
                 // Return the result of the check

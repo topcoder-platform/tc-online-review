@@ -30,7 +30,8 @@ import com.topcoder.util.errorhandling.BaseException;
  * @author Bauna
  */
 public class UsersServiceImpl implements UsersService {
-
+	private static final org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(UsersServiceImpl.class);
+	
 	/**
 	 * Creates a <code>Resource</code> for setting an user as submitter in a project  
 	 * If the user already has a role in the project this method fail throwing an exception
@@ -133,22 +134,22 @@ public class UsersServiceImpl implements UsersService {
 				resourceManager.addNotifications(userIds, project.getId(), timelineNotificationId, Long.toString(userId));
 			}
 		} catch (ConfigException e) {
-			e.printStackTrace(System.out);
+			log.error(e, e);
 			throw new RemoteException(e.getMessage(), e);
 		} catch (RetrievalException e) {
-			e.printStackTrace(System.out);
+			log.error(e, e);
 			throw new RemoteException(e.getMessage(), e);
 		} catch (PersistenceException e) {
-			e.printStackTrace(System.out);
+			log.error(e, e);
 			throw new RemoteException(e.getMessage(), e);
 		} catch (ConfigurationException e) {
-			e.printStackTrace(System.out);
+			log.error(e, e);
 			throw new RemoteException(e.getMessage(), e);
 		} catch (ResourcePersistenceException e) {
-			e.printStackTrace(System.out);
+			log.error(e, e);
 			throw new RemoteException(e.getMessage(), e);
 		} catch (BaseException e) {
-			e.printStackTrace(System.out);
+			log.error(e, e);
 			throw new RemoteException(e.getMessage(), e);
 		}
 	}
@@ -163,6 +164,7 @@ public class UsersServiceImpl implements UsersService {
 	 * @throws RemoteException if any error occurs.
 	 */
 	public void addSubmitter(long projectId, long userId) throws RemoteException {
+		log.info("add userId: " + userId + " as submitter in projectId: " + projectId);
 		saveResources(projectId, userId);
 	}
 

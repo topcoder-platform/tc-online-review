@@ -105,7 +105,8 @@ import com.topcoder.util.file.fieldconfig.TemplateFields;
  * @version 1.0
  */
 public class ProjectDetailsActions extends DispatchAction {
-
+	private static final org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(ProjectDetailsActions.class);
+	
     /**
      * This class implements <code>Comparator</code> interface and is used to sort Uploads in
      * array. It sorts Uploads by their modification time, from the least recent to the most recent
@@ -421,11 +422,15 @@ public class ProjectDetailsActions extends DispatchAction {
                 ExternalUser[] extUsers = (allProjectExtUsers != null) ? allProjectExtUsers :
                     getExternalUsersForResources(ActionsHelper.createUserRetrieval(request), submitters);
                 String[] userEmails = new String[submitters.length];
-
+                log.debug("submitters.length: " + submitters.length);
                 for (int j = 0; j < submitters.length; ++j) {
                     // Get external ID for the current submitter's resource
                     long extUserId = Long.parseLong((String) submitters[j].getProperty("External Reference ID"), 10);
+                    log.debug("looking email of user: " + extUserId);
                     for (int k = 0; k < extUsers.length; ++k) {
+                    	if (log.isDebugEnabled() && extUsers[k] == null) {
+                    		log.debug("extUsers[k] == null, k = " + k);
+                    	}
                         if (extUserId == extUsers[k].getId()) {
                             userEmails[j] = extUsers[k].getEmail();
                             break;
@@ -2824,6 +2829,9 @@ public class ProjectDetailsActions extends DispatchAction {
                     allExtUsers[i] = extUsers[j];
                     break;
                 }
+            }
+            if (allExtUsers[i] == null) {
+            	log.warn("doesn't exists a external_user for resourceId: " + resources[i].getId() + " - userId: " + extUserIds[i]);
             }
         }
 

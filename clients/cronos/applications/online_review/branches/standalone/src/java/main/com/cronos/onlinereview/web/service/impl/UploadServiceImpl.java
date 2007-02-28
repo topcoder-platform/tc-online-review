@@ -46,6 +46,7 @@ import com.topcoder.util.generator.guid.UUIDUtility;
  * @author Bauna
  */ 
 public class UploadServiceImpl implements UploadService {
+	private static final org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(UploadServiceImpl.class);
 	
 	/**
      * The GUID Generator to generate unique ids (for filenames).
@@ -68,6 +69,7 @@ public class UploadServiceImpl implements UploadService {
 	public int uploadSubmission(long projectId, long ownerId, String filename, DataHandler submissionDH) 
 			throws RemoteException {
 		try {
+			log.info("upload submission for projectId: " + projectId + " userId: " + ownerId + " filename: " + filename);
 			ProjectManager projectMgr = OnlineReviewHelper.createProjectManager();
 			PhaseManager phaseMgr = OnlineReviewHelper.createPhaseManager(false);
 			UploadManager uploadMgr = OnlineReviewHelper.createUploadManager();
@@ -90,7 +92,9 @@ public class UploadServiceImpl implements UploadService {
 			if (ownerResource == null) {
 				throw new RemoteException("cannot find resources for the user: " + ownerId + " project: " + projectId);
 			}
-			System.out.println("resource for user: " + ownerResource.getId());
+			if (log.isDebugEnabled()) {
+				log.debug("resource for user: " + ownerResource.getId());
+			}
 			
 			//get submission statuses
 			SubmissionStatus[] submissionStatuses = uploadMgr.getAllSubmissionStatuses();
@@ -133,33 +137,39 @@ public class UploadServiceImpl implements UploadService {
 	        uploadMgr.createUpload(upload, operator);
 	        
 	        if (submissions.length == 0) {
-	        	System.out.println("before createSubmission - operator: " + operator);
+	        	if (log.isDebugEnabled()) {
+	        		log.debug("before createSubmission - operator: " + operator);
+	        	}
 	            uploadMgr.createSubmission(submission, operator);
-	            System.out.println("after createSubmission - submission id: " + submission.getId());
+	            if (log.isDebugEnabled()) {
+	            	log.debug("after createSubmission - submission id: " + submission.getId());
+	            }
 	        } else {
 	            uploadMgr.updateSubmission(submission, operator);
 	        }
 	        scrMgr.initiateScreening(upload.getId(), operator);
 		} catch (ConfigurationException e) {
-			e.printStackTrace(System.out);
+			log.error(e, e);
 			throw new RemoteException(e.getMessage(), e);
 		} catch (PersistenceException e) {
-			e.printStackTrace(System.out);
+			log.error(e, e);
 			throw new RemoteException(e.getMessage(), e);
 		} catch (PhaseManagementException e) {
-			e.printStackTrace(System.out);
+			log.error(e, e);
 			throw new RemoteException(e.getMessage(), e);
 		} catch (BaseException e) {
-			e.printStackTrace(System.out);
+			log.error(e, e);
 			throw new RemoteException(e.getMessage(), e);
 		} catch (IOException e) {
-			e.printStackTrace(System.out);
+			log.error(e, e);
 			throw new RemoteException(e.getMessage(), e);
 		} catch (Throwable e) {
-			e.printStackTrace(System.out);
+			log.error(e, e);
 			throw new RemoteException(e.getMessage(), e);
 		} finally {
-			System.out.println("deleting attach: " + submissionDH.getName());
+			if (log.isDebugEnabled()) {
+				log.debug("deleting attach: " + submissionDH.getName());
+			}
 			new File(submissionDH.getName()).delete();
 		}
 		return 0; 
@@ -186,12 +196,16 @@ public class UploadServiceImpl implements UploadService {
 	 */
 	private String copyFileToUploadDir(InputStream in, String filename) throws IOException, BaseException {
 		String uploadDir = ConfigHelper.getLocalUploadDirectory() + '/';
-		System.out.println("Obtaining upload filename");
+		if (log.isDebugEnabled()) {
+			log.debug("Obtaining upload filename");
+		}
 		String uploadFilename = getUploadUniqueFilename(filename);
 		while (new File(uploadDir + uploadFilename).exists()) {
 			uploadFilename = getUploadUniqueFilename(filename);
 		} 
-		System.out.println("submission filename: " + uploadFilename); 
+		if (log.isDebugEnabled()) {
+			log.debug("submission filename: " + uploadFilename);
+		}
 		OutputStream out = null;
 		try {
 			out = new BufferedOutputStream(new FileOutputStream(uploadDir + uploadFilename));
