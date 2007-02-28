@@ -55,11 +55,13 @@
 
 <%
 	// try to print stack trace into a String object.
-
+	org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger("com.cronos.onlinereview");
 	String stackTrace;	
-	if(exception == null) {
+	if (exception == null) {
 		stackTrace = "exception is null";
+		log.error("OR: exception is null");
 	} else {
+		log.error("OR: exception is null", exception);
 		StringWriter sw = new StringWriter();
 		
         PrintWriter pw = new PrintWriter(sw);
