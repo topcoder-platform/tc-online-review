@@ -391,10 +391,10 @@
             <Value>-1</Value>
         </Property>
         <Property name="allowed_dirs">
-            <Value>/home/csf/csffiles/onlinereview/downloads</Value>
+            <Value>/csf_files/onlinereview/downloads</Value>
         </Property>
         <Property name="default_dir">
-            <Value>/home/csf/csffiles/onlinereview/downloads</Value>
+            <Value>/csf_files/onlinereview/downloads</Value>
         </Property>
         <Property name="overwrite">
             <Value>false</Value>
@@ -719,7 +719,7 @@
                 <Value>file</Value>
             </Property>
             <Property name="EmailTemplateName">
-                <Value>/home/csf/csffiles/onlinereview/email_template.txt</Value>
+                <Value>/csf_files/onlinereview/email_template.txt</Value>
             </Property>
             <Property name="EmailSubject">
                 <Value>Phase Start</Value>
@@ -733,7 +733,7 @@
                 <Value>file</Value>
             </Property>
             <Property name="EmailTemplateName">
-                <Value>/home/csf/csffiles/onlinereview/email_template.txt</Value>
+                <Value>/csf_files/onlinereview/email_template.txt</Value>
             </Property>
             <Property name="EmailSubject">
                 <Value>Phase End</Value>
@@ -760,7 +760,7 @@
                 <Value>file</Value>
             </Property>
             <Property name="EmailTemplateName">
-                <Value>/home/csf/csffiles/onlinereview/email_template.txt</Value>
+                <Value>/csf_files/onlinereview/email_template.txt</Value>
             </Property>
             <Property name="EmailSubject">
                 <Value>Phase Start</Value>
@@ -774,7 +774,7 @@
                 <Value>file</Value>
             </Property>
             <Property name="EmailTemplateName">
-                <Value>/home/csf/csffiles/onlinereview/email_template.txt</Value>
+                <Value>/csf_files/onlinereview/email_template.txt</Value>
             </Property>
             <Property name="EmailSubject">
                 <Value>Phase End</Value>
@@ -801,7 +801,7 @@
                 <Value>file</Value>
             </Property>
             <Property name="EmailTemplateName">
-                <Value>/home/csf/csffiles/onlinereview/email_template.txt</Value>
+                <Value>/csf_files/onlinereview/email_template.txt</Value>
             </Property>
             <Property name="EmailSubject">
                 <Value>Phase Start</Value>
@@ -815,7 +815,7 @@
                 <Value>file</Value>
             </Property>
             <Property name="EmailTemplateName">
-                <Value>/home/csf/csffiles/onlinereview/email_template.txt</Value>
+                <Value>/csf_files/onlinereview/email_template.txt</Value>
             </Property>
             <Property name="EmailSubject">
                 <Value>Phase End</Value>
@@ -842,7 +842,7 @@
                 <Value>file</Value>
             </Property>
             <Property name="EmailTemplateName">
-                <Value>/home/csf/csffiles/onlinereview/email_template.txt</Value>
+                <Value>/csf_files/onlinereview/email_template.txt</Value>
             </Property>
             <Property name="EmailSubject">
                 <Value>Phase Start</Value>
@@ -856,7 +856,7 @@
                 <Value>file</Value>
             </Property>
             <Property name="EmailTemplateName">
-                <Value>/home/csf/csffiles/onlinereview/email_template.txt</Value>
+                <Value>/csf_files/onlinereview/email_template.txt</Value>
             </Property>
             <Property name="EmailSubject">
                 <Value>Phase End</Value>
@@ -883,7 +883,7 @@
                 <Value>file</Value>
             </Property>
             <Property name="EmailTemplateName">
-                <Value>/home/csf/csffiles/onlinereview/email_template.txt</Value>
+                <Value>/csf_files/onlinereview/email_template.txt</Value>
             </Property>
             <Property name="EmailSubject">
                 <Value>Phase Start</Value>
@@ -897,7 +897,7 @@
                 <Value>file</Value>
             </Property>
             <Property name="EmailTemplateName">
-                <Value>/home/csf/csffiles/onlinereview/email_template.txt</Value>
+                <Value>/csf_files/onlinereview/email_template.txt</Value>
             </Property>
             <Property name="EmailSubject">
                 <Value>Phase End</Value>
@@ -924,7 +924,7 @@
                 <Value>file</Value>
             </Property>
             <Property name="EmailTemplateName">
-                <Value>/home/csf/csffiles/onlinereview/email_template.txt</Value>
+                <Value>/csf_files/onlinereview/email_template.txt</Value>
             </Property>
             <Property name="EmailSubject">
                 <Value>Phase Start</Value>
@@ -938,7 +938,7 @@
                 <Value>file</Value>
             </Property>
             <Property name="EmailTemplateName">
-                <Value>/home/csf/csffiles/onlinereview/email_template.txt</Value>
+                <Value>/csf_files/onlinereview/email_template.txt</Value>
             </Property>
             <Property name="EmailSubject">
                 <Value>Phase End</Value>
@@ -965,7 +965,7 @@
                 <Value>file</Value>
             </Property>
             <Property name="EmailTemplateName">
-                <Value>/home/csf/csffiles/onlinereview/email_template.txt</Value>
+                <Value>/csf_files/onlinereview/email_template.txt</Value>
             </Property>
             <Property name="EmailSubject">
                 <Value>Phase Start</Value>
@@ -979,7 +979,7 @@
                 <Value>file</Value>
             </Property>
             <Property name="EmailTemplateName">
-                <Value>/home/csf/csffiles/onlinereview/email_template.txt</Value>
+                <Value>/csf_files/onlinereview/email_template.txt</Value>
             </Property>
             <Property name="EmailSubject">
                 <Value>Phase End</Value>
@@ -1006,7 +1006,7 @@
                 <Value>file</Value>
             </Property>
             <Property name="EmailTemplateName">
-                <Value>/home/csf/csffiles/onlinereview/email_template.txt</Value>
+                <Value>/csf_files/onlinereview/email_template.txt</Value>
             </Property>
             <Property name="EmailSubject">
                 <Value>Phase Start</Value>
@@ -1020,7 +1020,7 @@
                 <Value>file</Value>
             </Property>
             <Property name="EmailTemplateName">
-                <Value>/home/csf/csffiles/onlinereview/email_template.txt</Value>
+                <Value>/csf_files/onlinereview/email_template.txt</Value>
             </Property>
             <Property name="EmailSubject">
                 <Value>Phase End</Value>
@@ -1047,7 +1047,7 @@
                 <Value>file</Value>
             </Property>
             <Property name="EmailTemplateName">
-                <Value>/home/csf/csffiles/onlinereview/email_template.txt</Value>
+                <Value>/csf_files/onlinereview/email_template.txt</Value>
             </Property>
             <Property name="EmailSubject">
                 <Value>Phase Start</Value>
@@ -1061,7 +1061,7 @@
                 <Value>file</Value>
             </Property>
             <Property name="EmailTemplateName">
-                <Value>/home/csf/csffiles/onlinereview/email_template.txt</Value>
+                <Value>/csf_files/onlinereview/email_template.txt</Value>
             </Property>
             <Property name="EmailSubject">
                 <Value>Phase End</Value>
@@ -1088,7 +1088,7 @@
                 <Value>file</Value>
             </Property>
             <Property name="EmailTemplateName">
-                <Value>/home/csf/csffiles/onlinereview/email_template.txt</Value>
+                <Value>/csf_files/onlinereview/email_template.txt</Value>
             </Property>
             <Property name="EmailSubject">
                 <Value>Phase Start</Value>
@@ -1102,7 +1102,7 @@
                 <Value>file</Value>
             </Property>
             <Property name="EmailTemplateName">
-                <Value>/home/csf/csffiles/onlinereview/email_template.txt</Value>
+                <Value>/csf_files/onlinereview/email_template.txt</Value>
             </Property>
             <Property name="EmailSubject">
                 <Value>Phase End</Value>
@@ -1129,7 +1129,7 @@
                 <Value>file</Value>
             </Property>
             <Property name="EmailTemplateName">
-                <Value>/home/csf/csffiles/onlinereview/email_template.txt</Value>
+                <Value>/csf_files/onlinereview/email_template.txt</Value>
             </Property>
             <Property name="EmailSubject">
                 <Value>Phase Start</Value>
@@ -1143,7 +1143,7 @@
                 <Value>file</Value>
             </Property>
             <Property name="EmailTemplateName">
-                <Value>/home/csf/csffiles/onlinereview/email_template.txt</Value>
+                <Value>/csf_files/onlinereview/email_template.txt</Value>
             </Property>
             <Property name="EmailSubject">
                 <Value>Phase End</Value>
@@ -1401,7 +1401,7 @@
     <Config name="com.topcoder.project.phases.template.persistence.XmlPhaseTemplatePersistence">
         <!-- XML files from which the templates will be loaded. -->
         <Property name="template_files">
-            <Value>/home/csf/csffiles/onlinereview/ComponentTimeline.xml</Value>
+            <Value>/csf_files/onlinereview/ComponentTimeline.xml</Value>
         </Property>
     </Config>
 
@@ -3297,7 +3297,7 @@
                 <Value>file</Value>
             </Property>
             <Property name="EmailTemplateName">
-                <Value>/home/csf/csffiles/onlinereview/contact_manager_template.txt</Value>
+                <Value>/csf_files/onlinereview/contact_manager_template.txt</Value>
             </Property>
             <Property name="EmailSubject">
                 <Value>Contact Manager Message</Value>
