@@ -1,0 +1,566 @@
+<?xml version="1.0"?>
+<project name="Online Review" default="dist" basedir=".">
+	<property file="topcoder_global.properties" />
+
+	<!-- COMPONENT PARAMETERS -->
+	<property name="component" value="online_review" />
+	<property name="package" value="com.topcoder.onlinereview" />
+	<property name="packagedir" value="com/topcoder/onlinereview" />
+	<!-- bauna property name="distfilename" value="project_review_and_details" /-->
+	<property name="distfilename" value="review"/>
+	<property name="component_version" value="1.0" />
+	<property name="component_path" value="${distfilename}/${component_version}" />
+
+	<!-- DIRECTORY SETUP -->
+	<property name="srcdir" value="src" />
+	<property name="tcs_libdir" value="lib/tcs" />
+	<property name="ext_libdir" value="lib/third_party" />
+	<property name="jar_tcs_libdir" value="lib/tcs" />
+	<property name="jar_ext_libdir" value="lib/third_party" />
+	<property name="docsdir" value="docs" />
+	<property name="configdir" value="conf" />
+	<property name="testlogdir" value="log" />
+	<property name="testfiles" value="test_files" />
+	<property name="javadocsdir" value="${docsdir}/javadocs" />
+	<property name="webdir" value="web" />
+	<property name="reports" value="reports" />
+
+	<property name="javasrc" value="${srcdir}/java" />
+	<property name="javamain" value="${javasrc}/main" />
+	<property name="javatests" value="${javasrc}/tests" />
+	<property name="sqlsrc" value="${srcdir}/sql" />
+
+	<property name="builddir" value="build/ant" />
+	<property name="build_classdir" value="${builddir}/classes" />
+	<property name="build_testclassdir" value="${builddir}/testClasses" />
+	<property name="build_targetclassdir" value="${builddir}/targetclasses" />
+	<property name="build_distdir" value="${builddir}/dist" />
+	<property name="build_docsdir" value="${builddir}/${docsdir}" />
+	<property name="build_javadocsdir" value="${builddir}/${javadocsdir}" />
+	<property name="build_webdir" value="${builddir}/${webdir}" />
+	<property name="build_lib" value="${builddir}/lib" />
+	<property name="build_tcsdistdir" value="${build_distdir}/${distfilename}-${component_version}" />
+
+	<!-- Server installation directories -->
+	<property name="cactus.home.tomcat5x" value="d:\tomcat" />
+	<property name="deploy-dir" value="d:\tomcat\webapps\${distfilename}.war" />
+
+	<!-- EXECUTION TAGS -->
+	<property name="debug" value="off" />
+	<property name="verbose" value="no" />
+
+	<!-- COMPONENT DISTRIBUTION STRUCTURE -->
+	<property name="dist_conf" value="${build_tcsdistdir}/${configdir}" />
+	<property name="dist_lib" value="${build_distdir}/lib/tcs" />
+	<property name="dist_src" value="${build_tcsdistdir}/${srcdir}" />
+	<property name="dist_docs" value="${build_tcsdistdir}/${docsdir}" />
+	<property name="dist_javadocs" value="${build_tcsdistdir}/${javadocsdir}" />
+	<property name="dist_testfiles" value="${build_tcsdistdir}/${testfiles}" />
+
+	<!-- NAME FOR .JAR AND .WAR FILES -->
+	<property name="component.jar" value="${dist_lib}/${component_path}/${distfilename}.jar" />
+	<property name="javadoc.jar" value="${builddir}/javadocs.jar" />
+	<property name="component.tests.jar" value="${dist_lib}/${distfilename}_tests.jar" />
+	<property name="component.war" value="${build_distdir}/${distfilename}.war" />
+	<property name="component_test.war" value="${build_distdir}/${distfilename}_test.war" />
+	<property name="component.dist.jar" value="${build_distdir}/${distfilename}-${component_version}.jar" />
+	<property name="dev_submission.jar" value="${component}_${component_version}_dev_submission.jar" />
+	<property name="design_submission.jar" value="${component}_${component_version}_design_submission.jar" />
+	<property name="dev_dist.jar" value="${component}_${component_version}_dev_dist.jar" />
+	<property name="design_dist.jar" value="${component}_${component_version}_design_dist.jar" />
+
+	<!-- NAME FOR .EAR FILE -->
+	<property name="onlineReview.ear" value="${build_distdir}/${distfilename}.ear"/>
+	
+	<!-- TCS Dependencies -->
+	<import file="build-depends-tcs.xml"/>
+	<!-- 3rd Party Dependencies  -->
+	<import file="build-depends-thirdparty.xml"/>
+
+	<path id="buildlibs">
+		<pathelement location="${ifx-jdbc.jar}" />
+		<pathelement location="${jstl.jar}" />
+		<pathelement location="${servlet.jar}" />
+		<pathelement location="${servlet.jsp.jar}" />
+		<pathelement location="${mail.jar}" />
+		<pathelement location="${struts.jar}" />
+		<pathelement location="${axis.jar}" />
+		<pathelement location="${activation.jar}" />
+
+		<pathelement location="${authentication_factory.jar}" />
+		<pathelement location="${auto_screening_management.jar}" />
+		<pathelement location="${base_exception.jar}" />
+		<pathelement location="${class_associations.jar}" />
+		<pathelement location="${command_line_utility.jar}" />
+		<pathelement location="${configuration_manager.jar}" />
+		<pathelement location="${data_validation.jar}" />
+		<pathelement location="${database_abstraction.jar}" />
+		<pathelement location="${db_connection_factory.jar}" />
+		<pathelement location="${deliverable_management.jar}" />
+		<pathelement location="${deliverable_management_persistence.jar}" />
+		<pathelement location="${document_generator.jar}" />
+		<pathelement location="${email_engine.jar}" />
+		<pathelement location="${file_system_server.jar}" />
+		<pathelement location="${file_upload.jar}" />
+		<pathelement location="${guid_generator.jar}" />
+		<pathelement location="${id_generator.jar}" />
+		<pathelement location="${ip_server.jar}" />
+		<pathelement location="${JNDI_Utility.jar}" />
+		<pathelement location="${logging_wrapper.jar}" />
+		<pathelement location="${object_factory.jar}" />
+		<pathelement location="${online_review_ajax_support.jar}" />
+		<pathelement location="${online_review_deliverables.jar}" />
+		<pathelement location="${online_review_login.jar}" />
+		<pathelement location="${online_review_phases.jar}" />
+		<pathelement location="${phase_management.jar}" />
+		<pathelement location="${phase_management_persistence.jar}" />
+		<pathelement location="${project_management.jar}" />
+		<pathelement location="${project_management_persistence.jar}" />
+		<pathelement location="${project_phases.jar}" />
+		<pathelement location="${project_phase_template.jar}" />
+		<pathelement location="${resource_management.jar}" />
+		<pathelement location="${resource_management_persistence.jar}" />
+		<pathelement location="${review_data_structure.jar}" />
+		<pathelement location="${review_management.jar}" />
+		<pathelement location="${review_management_persistence.jar}" />
+		<pathelement location="${review_score_aggregator.jar}" />
+		<pathelement location="${review_score_calculator.jar}" />
+		<pathelement location="${scorecard_data_structure.jar}" />
+		<pathelement location="${scorecard_management.jar}" />
+		<pathelement location="${scorecard_management_persistence.jar}" />
+		<pathelement location="${search_builder.jar}" />
+		<pathelement location="${security_manager.jar}" />
+		<pathelement location="${simple_cache.jar}" />
+		<pathelement location="${typesafe_enum.jar}" />
+		<pathelement location="${user_project_data_store.jar}" />
+		<pathelement location="${weighted_calculator.jar}" />
+		<pathelement location="${workdays.jar}" />
+		<pathelement location="${tcsUtil.jar}" />
+		<pathelement location="${tcwebcommon.jar}" />
+		<pathelement location="${shared.jar}" />
+		<pathelement location="${object_formatter.jar}" />
+		
+		<pathelement location="${log4j.jar}" />
+	</path>
+
+	<path id="cactus.classpath">
+		<pathelement location="${junit.jar}" />
+		<pathelement location="${aspectjrt.jar}" />
+		<pathelement location="${cactus.jar}" />
+		<pathelement location="${cactus.ant.jar}" />
+		<pathelement location="${commons.beanutils.jar}" />
+		<pathelement location="${commons.httpclient.jar}" />
+		<pathelement location="${commons.logging.jar}" />
+		<pathelement location="${commons.collections.jar}"/>
+		<pathelement location="${httpunit.jar}" />
+		<pathelement location="${nekohtml.jar}" />
+		<pathelement location="${strutstest.jar}" />
+
+		<pathelement location="${cargo.jar}" />
+
+		<pathelement location="${build_testclassdir}" />
+
+		<path refid="buildlibs" />
+	</path>
+
+	<taskdef resource="cactus.tasks" classpathref="cactus.classpath" />
+
+	<path id="test.build.classpath">
+		<pathelement location="${build_testclassdir}" />
+		<pathelement location="${build_classdir}" />
+		<path refid="buildlibs" />
+		<path refid="cactus.classpath" />
+	</path>
+
+	<path id="runtime.classpath">
+		<pathelement location="${build_classdir}" />
+		<path refid="buildlibs" />
+	</path>
+
+	<!-- - - - - - - - - - - - - - - - - - 
+          target: init                      
+         - - - - - - - - - - - - - - - - - -->
+    <target name="init">
+		<mkdir dir="${build_classdir}" />
+    </target>
+	
+	<target name="compile">
+		<javac srcdir="${javamain}" 
+				destdir="${build_classdir}" 
+				includes="**/*.java" debug="true" verbose="${verbose}" 
+				target="1.4" source="1.4">
+			<classpath refid="buildlibs" />
+		</javac>
+	</target>
+
+	<target name="compile_tests" depends="compile">
+		<mkdir dir="${build_testclassdir}" />
+		<javac srcdir="${javatests}" destdir="${build_testclassdir}" includes="**/*.java" debug="true" verbose="${verbose}">
+			<classpath refid="test.build.classpath" />
+		</javac>
+	</target>
+
+	<target name="prepare_tests_war" depends="dist, compile_tests">
+
+		<!-- Cactify the web-app archive -->
+		<!-- Done manually becaue of Cactus itself being buggy with out web.xml -->
+
+		<copy file="${component.war}" tofile="${component_test.war}"/>
+
+		<war destfile="${component_test.war}" webxml="${testfiles}/web.xml" update="true">
+			<classes dir="${build_testclassdir}" />
+			<lib dir="${jar_ext_libdir}/testing" includes="*.jar" />
+			<fileset
+                dir="${testfiles}"
+                includes="jspRedirector.jsp"
+            />
+		</war>
+
+	</target>
+
+	<target name="test" depends="prepare_tests_war">
+		<mkdir dir="${testlogdir}" />
+
+		<!-- Run the tests -->
+		<cactus warfile="${component_test.war}" fork="yes">
+			<classpath refid="cactus.classpath" />
+			<containerset timeout="180000">
+				<tomcat5x if="cactus.home.tomcat5x"
+                    dir="${cactus.home.tomcat5x}" port="8080"
+                    output="${testlogdir}/tomcat5x.out"
+                    todir="${testlogdir}"
+                    serverxml="${testfiles}/server.xml"
+                />
+			</containerset>
+			<formatter type="brief" usefile="true" />
+			<formatter type="xml" />
+			<batchtest>
+				<fileset dir="${javatests}">
+					<include name="**/*.java" />
+				</fileset>
+			</batchtest>
+		</cactus>
+
+	</target>
+
+	<target name="reports" depends="test">
+		<mkdir dir="${reports}" />
+
+		<junitreport todir="${reports}">
+			<fileset dir="${testlogdir}">
+				<include name="*.xml" />
+			</fileset>
+			<report format="frames" todir="${reports}" />
+		</junitreport>
+		<echo>The execution of reports is complete.  Reports are available in /${reports}</echo>
+	</target>
+
+	<!-- assume the user is already logged in to cvs and the env is set up. -->
+	<target name="update_left_nav" >
+		<mkdir dir="${build_distdir}" />
+		<cvs package="web/src/main/com/topcoder/web/jsp/includes/global_left.jsp"
+       		dest="${build_distdir}"/>
+		<copy file="${build_distdir}/web/src/main/com/topcoder/web/jsp/includes/global_left.jsp" 
+        	tofile="${webdir}/includes/inc_leftnav.jsp" overwrite="true"/>
+
+		<cvs package="web/resources/taglib/nav.tld" dest="${build_distdir}"/>
+		<copy file="${build_distdir}/web/resources/taglib/nav.tld" 
+        	tofile="${configdir}/WEB-INF/nav.tld" overwrite="true"/>
+	</target>
+
+	<!-- - - - - - - - - - - - - - - - - - 
+          target: update_security_config                      
+         - - - - - - - - - - - - - - - - - -->
+    <target name="update_security_config" depends="init">
+		<cvs package="web/resources/com/topcoder/security/Util.properties" dest="${build_distdir}"/>
+		<copy file="${build_distdir}/web/resources/com/topcoder/security/Util.properties" 
+			tofile="${build_classdir}/com/topcoder/security/Util.properties"/>
+    </target>
+	
+	<!-- - - - - - - - - - - - - - - - - - 
+          target: war                      
+         - - - - - - - - - - - - - - - - - -->
+	<target name="war" depends="update_left_nav, update_security_config, compile">
+		<mkdir dir="${build_distdir}" />
+
+		<delete file="${component.war}" failonerror="false" />
+
+		<war destfile="${component.war}" webxml="${configdir}/WEB-INF/web.xml" duplicate="fail">
+			<webinf dir="${configdir}/WEB-INF" includes="*.tld,*.xml, server-config.wsdd" excludes="web.xml" />
+			<classes dir="${build_classdir}" includes="**" />
+			<classes dir="${configdir}" includes="**" excludes="WEB-INF/**" />
+			<lib dir="${jar_tcs_libdir}/${authentication_factory.path}" includes="*.jar" />
+			<lib dir="${jar_tcs_libdir}/${auto_screening_management.path}" includes="*.jar" />
+			<lib dir="${jar_tcs_libdir}/${base_exception.path}" includes="*.jar" />
+			<lib dir="${jar_tcs_libdir}/${class_associations.path}" includes="*.jar" />
+			<lib dir="${jar_tcs_libdir}/${command_line_utility.path}" includes="*.jar" />
+			<lib dir="${jar_tcs_libdir}/${configuration_manager.path}" includes="*.jar" />
+			<lib dir="${jar_tcs_libdir}/${data_validation.path}" includes="*.jar" />
+			<lib dir="${jar_tcs_libdir}/${database_abstraction.path}" includes="*.jar" />
+			<lib dir="${jar_tcs_libdir}/${db_connection_factory.path}" includes="*.jar" />
+			<lib dir="${jar_tcs_libdir}/${deliverable_management.path}" includes="*.jar" />
+			<lib dir="${jar_tcs_libdir}/${deliverable_management_persistence.path}" includes="*.jar" />
+			<lib dir="${jar_tcs_libdir}/${document_generator.path}" includes="*.jar" />
+			<lib dir="${jar_tcs_libdir}/${email_engine.path}" includes="*.jar" />
+			<lib dir="${jar_tcs_libdir}/${file_system_server.path}" includes="*.jar" />
+			<lib dir="${jar_tcs_libdir}/${file_upload.path}" includes="*.jar" />
+			<lib dir="${jar_tcs_libdir}/${guid_generator.path}" includes="*.jar" />
+			<lib dir="${jar_tcs_libdir}/${id_generator.path}" includes="*.jar" />
+			<lib dir="${jar_tcs_libdir}/${ip_server.path}" includes="*.jar" />
+			<lib dir="${jar_tcs_libdir}/${JNDI_Utility.path}" includes="*.jar" />
+			<lib dir="${jar_tcs_libdir}/${logging_wrapper.path}" includes="*.jar" />
+			<lib dir="${jar_tcs_libdir}/${object_factory.path}" includes="*.jar" />
+			<lib dir="${jar_tcs_libdir}/${online_review_ajax_support.path}" includes="*.jar" />
+			<lib dir="${jar_tcs_libdir}/${online_review_deliverables.path}" includes="*.jar" />
+			<lib dir="${jar_tcs_libdir}/${online_review_login.path}" includes="*.jar" />
+			<lib dir="${jar_tcs_libdir}/${online_review_phases.path}" includes="*.jar" />
+			<lib dir="${jar_tcs_libdir}/${phase_management.path}" includes="*.jar" />
+			<lib dir="${jar_tcs_libdir}/${phase_management_persistence.path}" includes="*.jar" />
+			<lib dir="${jar_tcs_libdir}/${project_management.path}" includes="*.jar" />
+			<lib dir="${jar_tcs_libdir}/${project_management_persistence.path}" includes="*.jar" />
+			<lib dir="${jar_tcs_libdir}/${project_phases.path}" includes="*.jar" />
+			<lib dir="${jar_tcs_libdir}/${project_phase_template.path}" includes="*.jar" />
+			<lib dir="${jar_tcs_libdir}/${resource_management.path}" includes="*.jar" />
+			<lib dir="${jar_tcs_libdir}/${resource_management_persistence.path}" includes="*.jar" />
+			<lib dir="${jar_tcs_libdir}/${review_data_structure.path}" includes="*.jar" />
+			<lib dir="${jar_tcs_libdir}/${review_management.path}" includes="*.jar" />
+			<lib dir="${jar_tcs_libdir}/${review_management_persistence.path}" includes="*.jar" />
+			<lib dir="${jar_tcs_libdir}/${review_score_aggregator.path}" includes="*.jar" />
+			<lib dir="${jar_tcs_libdir}/${review_score_calculator.path}" includes="*.jar" />
+			<lib dir="${jar_tcs_libdir}/${scorecard_data_structure.path}" includes="*.jar" />
+			<lib dir="${jar_tcs_libdir}/${scorecard_management.path}" includes="*.jar" />
+			<lib dir="${jar_tcs_libdir}/${scorecard_management_persistence.path}" includes="*.jar" />
+			<lib dir="${jar_tcs_libdir}/${search_builder.path}" includes="*.jar" />
+			<!--
+    		Note: The security manager that comes with the app may not be compatible with the server it's deployed on 
+    		(security is already deployed, but different version), so this is not being packaged. 
+    		If needed, however, uncomment this.
+    		-->
+			<lib dir="${jar_tcs_libdir}/${security_manager.path}" includes="*.jar" />
+			<lib dir="${jar_tcs_libdir}/${simple_cache.path}" includes="*.jar" />
+			<lib dir="${jar_tcs_libdir}/${typesafe_enum.path}" includes="*.jar" />
+			<lib dir="${jar_tcs_libdir}/${user_project_data_store.path}" includes="*.jar" />
+			<lib dir="${jar_tcs_libdir}/${weighted_calculator.path}" includes="*.jar" />
+			<lib dir="${jar_tcs_libdir}/${workdays.path}" includes="*.jar" />
+			<lib dir="${jar_tcs_libdir}/${object_formatter.path}" includes="*.jar" />
+			<lib dir="${jar_tcs_libdir}" includes="*.jar" />
+			<lib dir="${jar_ext_libdir}" includes="*.jar" excludes="mail.jar, ejb-2_0.jar, log4j.jar" />
+			<fileset dir="${webdir}" includes="**" excludes="i/**, js/**, css/**" />
+		</war>
+	</target>
+
+	<!-- - - - - - - - - - - - - - - - - - 
+          target: ear                      
+         - - - - - - - - - - - - - - - - - -->
+    <target name="ear" depends="war">
+		<jar destfile="${onlineReview.ear}" duplicate="fail">
+			<fileset dir="ear" includes="**"/>
+			<!-- ejb-jars -->
+			<fileset dir="${jar_tcs_libdir}/${security_manager.path}" includes="*.jar" />
+			<fileset dir="${jar_tcs_libdir}/${id_generator.path}" includes="*.jar" />
+	
+			<!-- OR war -->
+			<fileset file="${component.war}"/>
+		</jar>
+    </target>
+	
+	<target name="dist" depends="clean, ear">
+
+	</target>
+
+	<target name="dist_tests" depends="compile_tests">
+		<mkdir dir="${dist_lib}" />
+		<jar jarfile="${component.tests.jar}" basedir="${build_testclassdir}" />
+	</target>
+
+	<target name="javadoc" depends="compile">
+		<mkdir dir="${dist_javadocs}" />
+		<javadoc packagenames="${package}.*" sourcepath="${javamain}" classpath="${build_classdir}" classpathref="buildlibs" destdir="${dist_javadocs}" windowtitle="Topcoder Software" header="&lt;table border=0 cellpadding=0 cellspacing=2&gt;&lt;tr&gt;&lt;td&gt;&lt;font class=tcoder2&gt;&#091; &lt;/font&gt;&lt;font class=tcoder1&gt;TOP&lt;/font&gt;&lt;font class=tcoder2&gt;CODER &lt;/font&gt;&lt;font class=tcoder2&gt;&#093;&lt;/font&gt;&lt;/td&gt;&lt;td&gt;&lt;font class=tcoder4&gt;&#153;&lt;/font&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td class=tcoder3 align=center&gt;&lt;font class=tcoder3&gt;SOFTWARE&lt;/font&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" footer="&lt;table border=0 cellpadding=0 cellspacing=2&gt;&lt;tr&gt;&lt;td&gt;&lt;font class=tcoder2&gt;&#091; &lt;/font&gt;&lt;font class=tcoder1&gt;TOP&lt;/font&gt;&lt;font class=tcoder2&gt;CODER &lt;/font&gt;&lt;font class=tcoder2&gt;&#093;&lt;/font&gt;&lt;/td&gt;&lt;td&gt;&lt;font class=tcoder4&gt;&#153;&lt;/font&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td class=tcoder3 align=center&gt;&lt;font class=tcoder3&gt;SOFTWARE&lt;/font&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" bottom="&lt;font class=tcoder5&gt;Contact TopCoder Software at &lt;a href='http://www.topcodersoftware.com'&gt;www.topcodersoftware.com&lt;/a&gt;&lt;/font&gt;" stylesheetfile="${javadocsdir}/stylesheet.css" verbose="${verbose}">
+			<tag name="copyright" description="Copyright:" scope="types" />
+		</javadoc>
+	</target>
+
+	<target name="clean">
+		<delete failonerror="false">
+			<fileset dir="${build_classdir}" includes="**/*.class" />
+		</delete>
+		<delete failonerror="false">
+			<fileset dir="${build_testclassdir}" includes="**/*.class" />
+		</delete>
+		<delete file="${component.war}" failonerror="false" />
+		<delete file="${component_test.war}" failonerror="false" />
+	</target>
+
+	<!-- - - - - - - - - - - - - - - - - - 
+          target: undeploy                      
+         - - - - - - - - - - - - - - - - - -->
+	<target name="undeploy">
+		<delete file="${deploy-ear}" />
+	</target>
+
+	<target name="deploy" depends="undeploy, clean, ear">
+		<!--
+        <mkdir dir="${deploy-dir}" />
+        <unwar src="${component.war}" dest="${deploy-dir}" />
+        -->
+		<copy file="${onlineReview.ear}" tofile="${deploy-ear}"/>
+	</target>
+
+	<target name="deploy-prod">
+		<mkdir dir="${deploy-dir}" />
+		<unwar src="${distfilename}.war" dest="${deploy-dir}" />
+	</target>
+
+	<target name="main" depends="deploy,test">
+	</target>
+
+	<!-- ************************************************************************** -->
+	<!-- ************ REMOVE EVERYTHING BELOW HERE FOR THE DISTRIBUTION ************* -->
+	<!-- ************************************************************************** -->
+
+	<target name="dist_tcs" depends="clean,dist,javadoc">
+		<!-- define tcs distribution format -->
+		<!-- uncomment if configuration files exist.
+        <mkdir dir="${dist_conf}"/>
+        <copy todir="${dist_conf}">
+            <fileset dir="${configdir}" />
+        </copy>
+-->
+
+		<mkdir dir="${dist_src}" />
+		<copy todir="${dist_src}">
+			<fileset dir="${srcdir}" />
+		</copy>
+
+		<copy todir="${dist_docs}">
+			<fileset dir="${docsdir}">
+				<include name="${component}_Class_Diagram*" />
+				<include name="${component}_Use_Case_Diagram*" />
+				<include name="${component}_Sequence_Diagram*" />
+				<include name="${component}_Requirements_Specification*" />
+				<include name="${component}_Component_Specification*" />
+				<include name="${component}.zargo" />
+				<include name="${component}.zuml" />
+			</fileset>
+		</copy>
+
+		<mkdir dir="${dist_javadocs}" />
+		<copy todir="${dist_javadocs}">
+			<fileset dir="${javadocsdir}" />
+		</copy>
+
+		<jar jarfile="${javadoc.jar}" basedir="${build_tcsdistdir}\docs\javadocs" />
+
+		<!-- uncomment if test files exist.
+        <mkdir dir="${dist_testfiles}"/>
+        <copy todir="${dist_testfiles}">
+            <fileset dir="${testfiles}" />
+        </copy>
+-->
+		<copy file="build_dist.xml" tofile="${build_tcsdistdir}/build.xml" />
+		<copy file="README" tofile="${build_tcsdistdir}/README" />
+		<jar jarfile="${component.dist.jar}" basedir="${build_distdir}" excludes="*.jar" />
+		<antcall target="moveToTCS" />
+
+	</target>
+
+	<target name="moveToTCS">
+		<mkdir dir="${tcs_libdir}/${component_path}" />
+		<mkdir dir="${tcs_libdir}/${component_path}/dist" />
+
+		<copy file="${component.jar}" todir="${tcs_libdir}/${component_path}" />
+
+		<copy file="${component.dist.jar}" todir="${tcs_libdir}/${component_path}/dist" />
+
+
+	</target>
+
+	<target name="dev_submission">
+		<jar jarfile="${dev_submission.jar}" basedir="."
+            includes="build.xml,
+                      README.txt,
+                      topcoder_global.properties,
+                      ${configdir}/**,
+                      ${docsdir}/DeploymentGuide.Doc,
+                      ${tcs_libdir}/**/*.*,
+                      ${ext_libdir}/**/*.*,
+                      ${srcdir}/**/*.java,
+                      ${sqlsrc}/**/*.*,
+                      ${javatests}/${packagedir}/**,
+                      ${testlogdir}/**,
+                      ${testfiles}/**,
+                      ${webdir}/**/*.*"
+            excludes="${webdir}/**/*.htm*,
+                      ${webdir}/jsp2/**/*.*,
+                      ${webdir}/images/**/*.*,
+                      ${webdir}/styles/**/*.*,
+                      ${webdir}/includes/review/*.*,
+                      ${webdir}/includes/screen/*.*,
+                      ${webdir}/**/pc-*.*,
+                      ${webdir}/**/pc_*.*,
+                      ${webdir}/**/new_pc-*.*,
+                      ${webdir}/**/new_pc_*.*,
+                      ${webdir}/**/new-pc-*.*,
+                      ${webdir}/**/new-pc_*.*"
+        />
+	</target>
+
+	<target name="design_submission">
+		<jar jarfile="${design_submission.jar}" basedir="." includes="${configdir}/**,${javamain}/**,${docsdir}/**,${testfiles}/**" />
+	</target>
+
+	<target name="dev_dist">
+		<!-- copy TCS Dependencies -->
+		<mkdir dir="${jar_tcs_libdir}/${configuration_manager.path}" />
+		<copy file="${configmanager.jar}" todir="${jar_tcs_libdir}/${configmanager.path}" />
+		<mkdir dir="${jar_tcs_libdir}/${db_connection_factory.path}" />
+		<copy file="${db_connection_factory.jar}" todir="${jar_tcs_libdir}/${db_connection_factory.path}" />
+		<mkdir dir="${jar_tcs_libdir}/${authentication_factory.path}" />
+		<copy file="${authentication_factory.jar}" todir="${jar_tcs_libdir}/${authentication_factory.path}" />
+		<mkdir dir="${jar_tcs_libdir}/${authorization.path}" />
+		<copy file="${authorization.jar}" todir="${jar_tcs_libdir}/${authorization.path}" />
+		<mkdir dir="${jar_tcs_libdir}/${id_generator.path}" />
+		<copy file="${id_generator.jar}" todir="${jar_tcs_libdir}/${id_generator.path}" />
+		<mkdir dir="${jar_tcs_libdir}/${base_exception.path}"/>
+		<copy file="${base_exception.jar}" todir="${jar_tcs_libdir}/${base_exception.path}" />
+
+		<jar jarfile="${dev_dist.jar}"
+             basedir="."
+             includes="build.xml,
+                       ${configdir}/**,
+                       ${srcdir}/**,
+                       ${docsdir}/**,
+                       ${jar_tcs_libdir}/**,
+                       ${testfiles}/**"
+        />
+
+		<delete dir="${jar_tcs_libdir}"/>
+	</target>
+
+	<target name="design_dist">
+		<!-- copy TCS Dependencies -->
+		<!--
+        <mkdir dir="${jar_tcs_libdir}/${configmanager.path}"/>
+        <copy file="${configmanager.jar}" todir="${jar_tcs_libdir}/${configmanager.path}" />
+        -->
+		<jar jarfile="${design_dist.jar}"
+             basedir="."
+             includes="build.xml,
+                       ${configdir}/**,
+                       ${srcdir}/**,
+                       ${docsdir}/**,
+                       ${jar_tcs_libdir}/**,
+                       ${testfiles}/**"
+        />
+
+		<!--
+        <delete dir="${jar_tcs_libdir}"/>
+        -->
+	</target>
+
+	<!-- ************************************************************************** -->
+	<!-- ************************ END REMOVE EVERYTHING ***************************** -->
+	<!-- ************************************************************************** -->
+
+
+</project>
