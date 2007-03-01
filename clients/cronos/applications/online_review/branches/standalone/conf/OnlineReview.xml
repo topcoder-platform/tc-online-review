@@ -3099,7 +3099,7 @@
             <Property name="Perform Aggregation">
                 <!-- Note: Originally this permission had been granted
                     to Reviewers (and all Testcase Reviewers as well),
-                    but this waas changed later on after this issue was raised on forum -->
+                    but this was changed later on after this issue was raised on forum -->
                 <Value>Aggregator</Value>
             </Property>
             <Property name="View Aggregation">
