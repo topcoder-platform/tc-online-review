@@ -139,6 +139,8 @@
 		<pathelement location="${tcwebcommon.jar}" />
 		<pathelement location="${shared.jar}" />
 		<pathelement location="${object_formatter.jar}" />
+		
+		<pathelement location="${log4j.jar}" />
 	</path>
 
 	<path id="cactus.classpath">
@@ -342,7 +344,7 @@
 			<lib dir="${jar_tcs_libdir}/${workdays.path}" includes="*.jar" />
 			<lib dir="${jar_tcs_libdir}/${object_formatter.path}" includes="*.jar" />
 			<lib dir="${jar_tcs_libdir}" includes="*.jar" />
-			<lib dir="${jar_ext_libdir}" includes="*.jar" excludes="mail.jar, ejb-2_0.jar" />
+			<lib dir="${jar_ext_libdir}" includes="*.jar" excludes="mail.jar, ejb-2_0.jar, log4j.jar" />
 			<fileset dir="${webdir}" includes="**" excludes="i/**, js/**, css/**" />
 		</war>
 	</target>
