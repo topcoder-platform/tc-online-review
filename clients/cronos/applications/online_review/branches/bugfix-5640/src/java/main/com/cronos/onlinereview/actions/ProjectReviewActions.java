@@ -1986,6 +1986,9 @@ public class ProjectReviewActions extends DispatchAction {
         ResourceManager resMgr = ActionsHelper.createResourceManager(request);
         // Retrieve reviewers that did the reviews
         Resource[] reviewers = resMgr.searchResources(filterPhase);
+        for (int i = 0; i < reviewers.length; i++) {
+            ActionsHelper.populateEmailProperty(request, reviewers[i]);
+        }
 
         if (reviewers.length == 0) {
             return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
@@ -2336,6 +2339,9 @@ public class ProjectReviewActions extends DispatchAction {
         // Retrieve all resources (reviewers) for that phase
         Resource[] reviewResources = ActionsHelper.getAllResourcesForPhase(
                 ActionsHelper.createResourceManager(request), reviewPhase);
+        for (int i = 0; i < reviewResources.length; i++) {
+            ActionsHelper.populateEmailProperty(request, reviewResources[i]);
+        }
         // Place information about reviews into the request
         request.setAttribute("reviewResources", reviewResources);
 
@@ -2421,6 +2427,7 @@ public class ProjectReviewActions extends DispatchAction {
         ResourceManager resMgr = ActionsHelper.createResourceManager(request);
         // Get review author's resource
         Resource author = resMgr.getResource(review.getAuthor());
+        ActionsHelper.populateEmailProperty(request, author);
 
         // Place submitter's user ID into the request
         request.setAttribute("authorId", author.getProperty("External Reference ID"));

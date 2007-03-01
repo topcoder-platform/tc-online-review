@@ -1581,7 +1581,7 @@ public class ProjectActions extends DispatchAction {
 
             // Set resource properties copied from external user
             resource.setProperty("External Reference ID", new Long(user.getId()));
-            resource.setProperty("Email", user.getEmail());
+            // not store in resource info resource.setProperty("Email", user.getEmail());
 
             String resourceRole = resource.getResourceRole().getName();
             // If resource is a submitter, we need to store appropriate rating and reliability
