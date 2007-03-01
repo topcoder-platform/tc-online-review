@@ -581,7 +581,7 @@ packaged. If needed, however, uncomment this.
             <lib dir="${jar_tcs_libdir}/${weighted_calculator.path}" includes="*.jar" />
             <lib dir="${jar_tcs_libdir}/${workdays.path}" includes="*.jar" />
 
-            <lib dir="${jar_tcs_libdir}" includes="*.jar" />
+            <lib dir="${jar_tcs_libdir}" includes="*.jar" excludes="tcwebcommon.jar" />
             <lib dir="${jar_ext_libdir}" includes="*.jar" excludes="mail.jar, ejb-2_0.jar" />
             <fileset dir="${webdir}" includes="**" excludes="i/**, js/**, css/**" />
         </war>

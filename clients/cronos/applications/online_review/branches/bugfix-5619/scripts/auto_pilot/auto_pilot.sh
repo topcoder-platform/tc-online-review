@@ -55,7 +55,7 @@ CP=$CP:lib/mail.jar
 CP=$CP:lib/log4j.jar
 CP=$CP:lib/activation.jar
 CP=$CP:lib/xerces.jar
-CP=$CP:lib/tcwebcommon.jar
+CP=$CP:/home/onlinereview/jboss-4.0.2/server/default/lib/tcwebcommon.jar
 CP=$CP:lib/tcsUtil.jar
 CP=$CP:lib/shared.jar
 

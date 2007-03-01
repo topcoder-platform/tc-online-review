@@ -441,7 +441,6 @@
 	    	<fileset file="${log4j.jar}" />
 	    	<fileset file="${activation.jar}" />
 	    	<fileset file="${xerces.jar}"/> 
-	    	<fileset file="${tcwebcommon.jar}"/>
 	    	<fileset file="${tcsUtil.jar}"/>
 	    	<fileset file="${shared.jar}"/>
 		    <fileset dir=".">
