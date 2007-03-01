@@ -22,7 +22,7 @@
 	<!-- CSS and JS by Petar -->
 	<link type="text/css" rel="stylesheet" href="<html:rewrite href='/css/or/new_styles.css' />" />
 	<script language="JavaScript" type="text/javascript"
-		src="<html:rewrite href='/js/or/rollovers2.js' />"><!-- @ --></script>
+		src="<html:rewrite href='/js/or/rollovers.js' />"><!-- @ --></script>
 </head>
 
 <body>
@@ -30,7 +30,7 @@
 	<table width="100%" border="0" cellpadding="0" cellspacing="0">
 		<tr valign="top">
 			<!-- Left Column Begins-->
-			<td width="180"><jsp:include page="/includes/global_left.jsp" /></td>
+			<td width="180"><jsp:include page="/includes/inc_leftnav.jsp" /></td>
 			<!-- Left Column Ends -->
 
 			<!-- Gutter Begins -->
@@ -119,7 +119,7 @@
 																<c:if test="${firstTime == true}">
 																	<c:forEach items="${reviewResources}" var="resource">
 																		<c:if test="${resource.id == comment.author}">
-																			<tc-webtag:handle coderId='${resource.allProperties["External Reference ID"]}' context="${orfn:getHandlerContext(pageContext.request)}" /><br />
+																			<tc-webtag:handle coderId='${resource.allProperties["External Reference ID"]}' context="component" /><br />
 																		</c:if>
 																	</c:forEach>
 																	<c:forEach items="${reviews}" var="subReview">
@@ -144,30 +144,28 @@
 																<c:choose>
 																	<c:when test="${isReviewerComment == true}">
 																		<b><bean:message key="editReview.EditAggregation.ReviewerResponse" /></b>
-																		${orfn:htmlEncode(comment.comment)}
 																	</c:when>
 																	<c:when test='${(commentType == "Manager Comment") ||
 																		(commentType == "Appeal") || (commentType == "Appeal Response")}'>
 																		<b><bean:message key='editReview.EditAggregation.${fn:replace(commentType, " ", "")}' /></b>
-																		${orfn:htmlEncode(comment.comment)}
 																	</c:when>
 																	<c:when test='${commentType == "Aggregation Review Comment"}'>
 																		<c:forEach items="${reviewResources}" var="resource">
 																			<c:if test="${resource.id == comment.author}">
 																				<div class="showText" id="shortR_${respIdx}">
 																					<c:if test="${not empty comment.comment}">
-																						<a href="javascript:void(0)" onclick="javascript:toggleDisplay('shortR_${respIdx}');toggleDisplay('longR_${respIdx}');return false;" class="statLink"><html:img src="/i/or/plus.gif" altKey="global.plus.alt" border="0" /></a>
+																						<a href="javascript:toggleDisplay('shortR_${respIdx}');toggleDisplay('longR_${respIdx}');" class="statLink"><html:img src="/i/or/plus.gif" altKey="global.plus.alt" border="0" /></a>
 																					</c:if>
 																					<b><bean:message key='ResourceRole.${fn:replace(resource.resourceRole.name, " ", "")}' />
-																					(<tc-webtag:handle coderId='${resource.allProperties["External Reference ID"]}' context="${orfn:getHandlerContext(pageContext.request)}" />)
+																					(<tc-webtag:handle coderId='${resource.allProperties["External Reference ID"]}' context="component" />)
 																					<bean:message key="viewAggregationReview.Response" /></b>
 																					<bean:message key='AggregationItemStatus.${fn:replace(comment.extraInfo, " ", "")}' />
 																				</div>
 																				<c:if test="${not empty comment.comment}">
 																					<div class="hideText" id="longR_${respIdx}">
-																						<a href="javascript:void(0)" onclick="javascript:toggleDisplay('shortR_${respIdx}');toggleDisplay('longR_${respIdx}');return false;" class="statLink"><html:img src="/i/or/minus.gif" altKey="global.minus.alt" border="0" /></a>
+																						<a href="javascript:toggleDisplay('shortR_${respIdx}');toggleDisplay('longR_${respIdx}');" class="statLink"><html:img src="/i/or/minus.gif" altKey="global.minus.alt" border="0" /></a>
 																						<b><bean:message key='ResourceRole.${fn:replace(resource.resourceRole.name, " ", "")}' />
-																						(<tc-webtag:handle coderId='${resource.allProperties["External Reference ID"]}' context="${orfn:getHandlerContext(pageContext.request)}" />)
+																						(<tc-webtag:handle coderId='${resource.allProperties["External Reference ID"]}' context="component" />)
 																						<bean:message key="viewAggregationReview.Response" /></b>
 																						<bean:message key='AggregationItemStatus.${fn:replace(comment.extraInfo, " ", "")}' /><br />
 																						${orfn:htmlEncode(comment.comment)}
@@ -180,7 +178,7 @@
 																	<c:when test='${(submitterResource.id == comment.author) && (commentType == "Submitter Comment")}'>
 																		<div class="showText" id="shortR_${respIdx}">
 																			<c:if test="${not empty comment.comment}">
-																				<a href="javascript:void(0)" onclick="javascript:toggleDisplay('shortR_${respIdx}');toggleDisplay('longR_${respIdx}');return false;" class="statLink"><html:img src="/i/or/plus.gif" altKey="global.plus.alt" border="0" /></a>
+																				<a href="javascript:toggleDisplay('shortR_${respIdx}');toggleDisplay('longR_${respIdx}');" class="statLink"><html:img src="/i/or/plus.gif" altKey="global.plus.alt" border="0" /></a>
 																			</c:if>
 																			<b><bean:message key='ResourceRole.${fn:replace(submitterResource.resourceRole.name, " ", "")}' />
 																			<bean:message key="viewAggregationReview.Response" /></b>
@@ -188,7 +186,7 @@
 																		</div>
 																		<c:if test="${not empty comment.comment}">
 																			<div class="hideText" id="longR_${respIdx}">
-																				<a href="javascript:void(0)" onclick="javascript:toggleDisplay('shortR_${respIdx}');toggleDisplay('longR_${respIdx}');return false;" class="statLink"><html:img src="/i/or/minus.gif" altKey="global.minus.alt" border="0" /></a>
+																				<a href="javascript:toggleDisplay('shortR_${respIdx}');toggleDisplay('longR_${respIdx}');" class="statLink"><html:img src="/i/or/minus.gif" altKey="global.minus.alt" border="0" /></a>
 																				<b><bean:message key='ResourceRole.${fn:replace(submitterResource.resourceRole.name, " ", "")}' />
 																				<bean:message key="viewAggregationReview.Response" /></b>
 																				<bean:message key='AggregationItemStatus.${fn:replace(comment.extraInfo, " ", "")}' /><br />
@@ -198,6 +196,7 @@
 																		<c:set var="respIdx" value="${respIdx + 1}" />
 																	</c:when>
 																</c:choose>
+																${orfn:htmlEncode(comment.comment)}<br />
 																<c:if test="${commentStatus.index == lastCommentIdxs[itemStatus.index]}">
 																	<div style="padding-top:4px;">
 																		<b><bean:message key="editReview.EditAggregation.ResponseText" /></b> &#160;

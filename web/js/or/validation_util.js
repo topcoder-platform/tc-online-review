@@ -1,5 +1,4 @@
 var emptyString = /^\s*$/;
-var float_test = /^\d*\.{0,1}\d*$/;
 
 function trim(str)
 {
@@ -26,8 +25,7 @@ function isFloat(argvalue) {
     if (isNaN(fValue)) {
         return false;
     }
-    
-    return float_test.test(argvalue);
+    return true;
 }
 
 function isInteger(argvalue) {

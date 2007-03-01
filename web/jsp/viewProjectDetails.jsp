@@ -22,7 +22,7 @@
 	<link type="text/css" rel="stylesheet" href="<html:rewrite href='/css/or/new_styles.css' />" />
 	<link type="text/css" rel="stylesheet" href="<html:rewrite href='/css/or/phasetabs.css' />" />
 	<script language="JavaScript" type="text/javascript"
-		src="<html:rewrite href='/js/or/rollovers2.js' />"><!-- @ --></script>
+		src="<html:rewrite href='/js/or/rollovers.js' />"><!-- @ --></script>
 	<script language="JavaScript" type="text/javascript"
 		src="<html:rewrite href='/js/or/dojo.js' />"><!-- @ --></script>
 	<script language="JavaScript" type="text/javascript">
@@ -32,13 +32,18 @@
 		src="<html:rewrite href='/js/or/ajax1.js' />"><!-- @ --></script>
 
 <script language="JavaScript" type="text/javascript">
-	/**
-	 * This function is designed to send AJAX requests for timeline notification setting change
-	 */
+	// send the Ajax request
 	function setTimelineNotification(pid, chbox) {
-		chbox.disabled = true; // Disable the checkbox temporarily
-		var targetStatus = (chbox.checked) ? "On" : "Off";
-		// Assemble the request XML
+		var targetStatus;
+		if (chbox.checked == true) {
+			// DO NOT be confused here
+			// at the very moment the checkbox is clicked, the Inactive scorecard's "checked" status is "on"
+			targetStatus = "On";
+		} else {
+			// at the very moment the checkbox is clicked, the Active scorecard's "checked" status is "off"
+			targetStatus = "Off";
+		}
+		// assemble the request XML
 		var content =
 			'<?xml version="1.0" ?>' +
 			'<request type="SetTimelineNotification">' +
@@ -55,20 +60,21 @@
 		// Send the AJAX request
 		sendRequest(content,
 			function (result, respXML) {
-				// Operation succeeded; do nothing, but enable the checkbox back
-				chbox.disabled = false;
+				// operation succeeded, change the status of corresponding checkbox
+				if (chbox.checked) {
+					chbox.checked = false;
+				} else if (!chbox.checked){
+					chbox.checked = true;
+				}
 			},
 			function (result, respXML) {
-				// Operation failed, alert the error message to the user
+				// operation failed, alert the error message to the user
 				alert("An error occured while setting the Timeline change notification: " + result);
-				// Checkbox's status needs to be reset
-				chbox.checked = !chbox.checked;
-				// And finally, enable the checkbox
-				chbox.disabled = false;
 			}
 		);
 	}
 </script>
+
 </head>
 
 <body>
@@ -77,7 +83,7 @@
 		<tr valign="top">
 			<!-- Left Column Begins -->
 			<td width="180">
-				<jsp:include page="/includes/global_left.jsp" />
+				<jsp:include page="/includes/inc_leftnav.jsp" />
 			</td>
 			<!-- Left Column Ends -->
 
