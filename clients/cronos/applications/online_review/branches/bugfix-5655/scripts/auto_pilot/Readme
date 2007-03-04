@@ -1,0 +1,23 @@
+. Configure correct DBConnectionFactoryImpl, email settting, log settting in OnlineReview.xml
+
+Notes: Most namespaces of this OnlineReview.xml are the same as OnlineReview.xml of OR application. except web app specific namespace as below
+
+	Changed namespaces
+	. Configuration for DB Connection Factory component
+	. com.topcoder.util.log
+	
+	Non-exsiting namespaces
+	. com.cronos.onlinereview.login.LoginActions
+	. Configuration for Authentication Factory component
+	. Configuration for Online Review Ajax Support component
+	. Configuration for IP Server component
+	. Configuration for File Upload component
+	. Configuration for the Online Review Application itself
+		
+. ant dist
+. copy build.xml and auto_pilot_app.jar to the deploy dir
+. ant deploy
+. ant auto_pilot (auto_pilot_background)
+
+
+Notes: empty com\topcoder\util\config\ConfigManager.properties is just used to avoid configuration exception stacktrace display, is optional
