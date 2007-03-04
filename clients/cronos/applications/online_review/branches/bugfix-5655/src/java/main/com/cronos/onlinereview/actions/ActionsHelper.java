@@ -2810,7 +2810,8 @@ public class ActionsHelper {
     static void setProjectCompletionDate(Project project, ProjectStatus newProjectStatus, Format format)
     throws BaseException {
     	String name = newProjectStatus.getName();
-    	if ("Completed".equals(name) || "Cancelled - Failed Review".equals(name) || "Deleted".equals(name)) {
+    	if ("Completed".equals(name) || "Cancelled - Failed Review".equals(name) || "Deleted".equals(name)
+    			 || "Cancelled - Failed Screening".equals(name)  || "Cancelled - Zero Submissions".equals(name)) {
             if (format == null) {
                 format = new SimpleDateFormat(ConfigHelper.getDateFormat());
             }
