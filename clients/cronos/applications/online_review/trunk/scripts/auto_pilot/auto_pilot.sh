@@ -67,7 +67,7 @@ if [[ $1 != "" ]] ; then
 fi
 
 if [ "$CMD" = "start" ] ; then
-    nohup $JAVACMD $OPTIONS $MAIN -config auto_pilot.xml -namespace AutoPilotJob -autopilot com.topcoder.management.phase.autopilot.AutoPilot -poll 1 >$LOGFILE 2>&1 &
+    nohup $JAVACMD $OPTIONS $MAIN -config auto_pilot.xml -namespace AutoPilotJob -autopilot com.topcoder.management.phase.autopilot.AutoPilot -poll 5 >$LOGFILE 2>&1 &
     echo $! > autopilot.pid
 elif [ "$CMD" = "stop" ] ; then
     kill `cat autopilot.pid`
@@ -75,7 +75,7 @@ elif [ "$CMD" = "stop" ] ; then
 elif [ "$CMD" = "restart" ] ; then
     kill `cat autopilot.pid`
     rm -f autopilot.pid
-    nohup $JAVACMD $OPTIONS $MAIN -config auto_pilot.xml -namespace AutoPilotJob -autopilot com.topcoder.management.phase.autopilot.AutoPilot -poll 1 >$LOGFILE 2>&1 &
+    nohup $JAVACMD $OPTIONS $MAIN -config auto_pilot.xml -namespace AutoPilotJob -autopilot com.topcoder.management.phase.autopilot.AutoPilot -poll 5 >$LOGFILE 2>&1 &
     echo $! > autopilot.pid
 elif [ "$CMD" = "test" ] ; then
 	$JAVACMD $OPTIONS $MAIN -config auto_pilot.xml -namespace AutoPilotJob -autopilot com.topcoder.management.phase.autopilot.AutoPilot -poll 1

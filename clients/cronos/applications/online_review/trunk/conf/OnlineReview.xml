@@ -2752,7 +2752,7 @@
                 <Value>-1</Value>
             </Property>
             <Property name="RequiredSubmissions">
-                <Value>0</Value>
+                <Value>1</Value>
             </Property>
             <Property name="RequiredReviewers">
                 <Value>3</Value>

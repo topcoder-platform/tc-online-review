@@ -5,7 +5,6 @@
     <classpathentry kind="con" path="org.eclipse.jst.server.core.container/org.eclipse.jst.server.tomcat.runtimeTarget/Apache Tomcat v5.5"/>
     <classpathentry kind="con" path="org.eclipse.jst.server.core.container/org.eclipse.jst.server.generic.runtimeTarget/JBoss v4.0"/>
     <classpathentry kind="con" path="org.eclipse.jst.j2ee.internal.web.container"/>
-    <classpathentry exported="true" kind="lib" path="lib/shared/shared.jar"/>
     <classpathentry exported="true" kind="lib" path="lib/tcs/authentication_factory/2.0/authentication_factory.jar"/>
     <classpathentry exported="true" kind="lib" path="lib/tcs/auto_screening_management/1.0/auto_screening_management.jar"/>
     <classpathentry exported="true" kind="lib" path="lib/tcs/base_exception/1.0/base_exception.jar"/>
@@ -67,6 +66,7 @@
     <classpathentry exported="true" kind="lib" path="lib/third_party/jakarta-oro.jar"/>
     <classpathentry exported="true" kind="lib" path="lib/third_party/jstl.jar"/>
     <classpathentry exported="true" kind="lib" path="lib/third_party/log4j.jar"/>
+    <classpathentry exported="true" kind="lib" path="lib/third_party/shared.jar"/>
     <classpathentry exported="true" kind="lib" path="lib/third_party/standard.jar"/>
     <classpathentry exported="true" kind="lib" path="lib/third_party/struts-1.2.9.jar"/>
     <classpathentry exported="true" kind="lib" path="lib/third_party/struts-el.jar"/>
