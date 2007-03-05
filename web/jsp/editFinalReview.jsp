@@ -23,15 +23,6 @@
 	<link type="text/css" rel="stylesheet" href="<html:rewrite href='/css/or/new_styles.css' />" />
 	<script language="JavaScript" type="text/javascript"
 		src="<html:rewrite href='/js/or/rollovers2.js' />"><!-- @ --></script>
-
-	<script language="JavaScript" type="text/javascript">
-function OnCompleteScorecardClick() {
-	var approveCheckBox = document.getElementById("approveFixes");
-	var isRejected = (approveCheckBox.checked != true);
-
-	return (isRejected) ? confirm("<bean:message key='editFinalReview.BeforeReject' />") : true;
-}
-	</script>
 </head>
 
 <body>
@@ -211,7 +202,7 @@ function OnCompleteScorecardClick() {
 							</tr>
 							<tr class="highlighted">
 								<td class="value">
-									<html:checkbox styleId="approveFixes" property="approve_fixes" />
+									<html:checkbox property="approve_fixes" />
 									<b><bean:message key="editFinalReview.ApproveFinalFixes" /></b></td>
 							</tr>
 							<tr>
@@ -221,7 +212,7 @@ function OnCompleteScorecardClick() {
 
 						<div align="right">
 							<html:hidden property="save" value="" />
-							<html:image onclick="javascript:this.form.save.value='submit';return OnCompleteScorecardClick();" srcKey="editReview.Button.SaveAndCommit.img" altKey="editReview.Button.SaveAndCommit.alt" border="0" />&#160;
+							<html:image onclick="javascript:this.form.save.value='submit';" srcKey="editReview.Button.SaveAndCommit.img" altKey="editReview.Button.SaveAndCommit.alt" border="0" />&#160;
 							<html:image onclick="javascript:this.form.save.value='save';" srcKey="editReview.Button.SaveForLater.img" altKey="editReview.Button.SaveForLater.alt" border="0" />&#160;
 							<html:image onclick="javascript:this.form.save.value='preview';" srcKey="editReview.Button.Preview.img" altKey="editReview.Button.Preview.alt" border="0" />
 						</div>

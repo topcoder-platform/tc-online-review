@@ -301,7 +301,7 @@
                         <Value>String</Value>
                     </Property>
                     <Property name="value">
-                        <Value>.txt:.xml</Value>
+                        <Value>.log</Value>
                     </Property>
                 </Property>
                 <Property name="param2">
@@ -310,75 +310,6 @@
                     </Property>
                     <Property name="value">
                         <Value>log</Value>
-                    </Property>
-                </Property>
-            </Property>
-        </Property>
-        <Property name="FileExtensionRule:csharpCoverage">
-            <Property name="type">
-                <Value>com.cronos.onlinereview.autoscreening.tool.rules.FileExtensionRule</Value>
-            </Property>
-            <Property name="params">
-                <Property name="param1">
-                    <Property name="type">
-                        <Value>String</Value>
-                    </Property>
-                    <Property name="value">
-                        <Value>-coverage.xml</Value>
-                    </Property>
-                </Property>
-                <Property name="param2">
-                    <Property name="type">
-                        <Value>String</Value>
-                    </Property>
-                    <Property name="value">
-                        <Value>log</Value>
-                    </Property>
-                </Property>
-            </Property>
-        </Property>
-        <Property name="FileExtensionRule:csharpCoverageUnit">
-            <Property name="type">
-                <Value>com.cronos.onlinereview.autoscreening.tool.rules.FileExtensionRule</Value>
-            </Property>
-            <Property name="params">
-                <Property name="param1">
-                    <Property name="type">
-                        <Value>String</Value>
-                    </Property>
-                    <Property name="value">
-                        <Value>-coverage-unit.xml</Value>
-                    </Property>
-                </Property>
-                <Property name="param2">
-                    <Property name="type">
-                        <Value>String</Value>
-                    </Property>
-                    <Property name="value">
-                        <Value>log</Value>
-                    </Property>
-                </Property>
-            </Property>
-        </Property>
-        <Property name="CoveragePercentageRule:javaCoveragePercentage">
-            <Property name="type">
-                <Value>com.cronos.onlinereview.autoscreening.tool.rules.CoveragePercentageRule</Value>
-            </Property>
-            <Property name="params">
-                <Property name="param1">
-                    <Property name="type">
-                        <Value>String</Value>
-                    </Property>
-                    <Property name="value">
-                        <Value>log/coverage/frame-summary.html</Value>
-                    </Property>
-                </Property>
-                <Property name="param2">
-                    <Property name="type">
-                        <Value>String</Value>
-                    </Property>
-                    <Property name="value">
-                        <Value>85</Value>
                     </Property>
                 </Property>
             </Property>
