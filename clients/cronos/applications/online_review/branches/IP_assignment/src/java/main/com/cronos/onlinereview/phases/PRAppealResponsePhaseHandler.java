@@ -7,6 +7,8 @@ import java.sql.Connection;
 import java.sql.SQLException;
 
 import com.topcoder.management.phase.PhaseHandlingException;
+import com.topcoder.management.project.PersistenceException;
+import com.topcoder.management.project.Project;
 import com.topcoder.project.phases.Phase;
 
 /**
@@ -57,12 +59,24 @@ public class PRAppealResponsePhaseHandler extends AppealsResponsePhaseHandler {
     	Connection conn = this.createConnection();
     	try {
     		processPR(phase.getProject().getId(), conn, toStart);
-    	} finally {
+    		if (!toStart) {
+    			createAssignmentDocuments(phase.getProject().getId());
+    		}
+    	} catch (Exception e) {
+			throw new PhaseHandlingException(e.getMessage(), e);
+		} finally {
     		PRHelper.close(conn);
     	}
     }
 
-    /**
+    private void createAssignmentDocuments(long projectId) throws PersistenceException, 
+    	PactsServicesException, PactsServicesCreationException {
+    	
+    	Project project = getManagerHelper().getProjectManager().getProject(projectId);
+    	new PactsServicesDelegate().createAssignmentDocuments(project);
+	}
+
+	/**
      * Pull data to project_result.
      * 
      * @param projectId the projectId
