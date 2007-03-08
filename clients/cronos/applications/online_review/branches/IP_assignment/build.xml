@@ -316,6 +316,10 @@
 
     <property name="tcwebcommon.jar.name" value="tcwebcommon.jar" />
     <property name="tcwebcommon.jar" value="${tcs_libdir}/${tcwebcommon.jar.name}" />
+	
+	<property name="pactsServices.path" value="pacts_services" />
+	<property name="pactsServices.jar.name" value="PactsServices.jar" />
+	<property name="pactsServices.jar" value="${tcs_libdir}/${pactsServices.path}/${pactsServices.jar.name}" />
 
     <!-- 3rd Party Dependencies  -->
     <property name="ifx-jdbc.jar" value="${ext_libdir}/ifx-jdbc.jar" />
@@ -324,7 +328,7 @@
     <property name="servlet.jsp.jar" value="${cactus.home.tomcat5x}/common/lib/jsp-api.jar" />
     <property name="mail.jar" value="${cactus.home.tomcat5x}/common/lib/mail.jar" />
     <property name="struts.jar" value="${ext_libdir}/struts-1.2.9.jar" />
-
+	<property name="ejb-2_0.jar" value="${ext_libdir}/ejb-2_0.jar" />	
     <property name="commons.beanutils.jar" value="${ext_libdir}/commons-beanutils.jar" />
 
     <property name="aspectjrt.jar" value="${ext_libdir}/testing/aspectjrt-1.2.1.jar" />
@@ -350,6 +354,7 @@
         <pathelement location="${servlet.jsp.jar}" />
         <pathelement location="${mail.jar}" />
         <pathelement location="${struts.jar}" />
+    	<pathelement location="${ejb-2_0.jar}" />
 
         <pathelement location="${authentication_factory.jar}" />
         <pathelement location="${auto_screening_management.jar}" />
@@ -401,6 +406,7 @@
         <pathelement location="${workdays.jar}" />
         <pathelement location="${tcsUtil.jar}" />
         <pathelement location="${tcwebcommon.jar}" />
+    	<pathelement location="${pactsServices.jar}" />
     </path>
 
     <path id="cactus.classpath">
@@ -580,7 +586,7 @@ packaged. If needed, however, uncomment this.
             <lib dir="${jar_tcs_libdir}/${user_project_data_store.path}" includes="*.jar" />
             <lib dir="${jar_tcs_libdir}/${weighted_calculator.path}" includes="*.jar" />
             <lib dir="${jar_tcs_libdir}/${workdays.path}" includes="*.jar" />
-
+            <lib dir="${jar_tcs_libdir}/${pactsServices.path}" includes="*.jar" />
             <lib dir="${jar_tcs_libdir}" includes="*.jar" />
             <lib dir="${jar_ext_libdir}" includes="*.jar" excludes="mail.jar, ejb-2_0.jar" />
             <fileset dir="${webdir}" includes="**" excludes="i/**, js/**, css/**" />
