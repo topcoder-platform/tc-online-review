@@ -89,7 +89,7 @@ public class PactsServicesDelegate {
 		userAD.setSubmissionTitle(submissionTitle);
 		try {
 			pactsServices.addAssignmentDocument(userAD);
-		} catch (RemoteException e) {
+		} catch (Exception e) {
 			throw new PactsServicesException(e);
 		}
 	}

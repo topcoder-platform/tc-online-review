@@ -19,7 +19,7 @@ import com.topcoder.project.phases.Phase;
  */
 public class PRAppealResponsePhaseHandler extends AppealsResponsePhaseHandler {
 
-    /**
+	/**
      * Create a new instance of AppealsResponsePhaseHandler using the default namespace for loading configuration settings.
      *
      * @throws ConfigurationException if errors occurred while loading configuration settings.
@@ -53,22 +53,30 @@ public class PRAppealResponsePhaseHandler extends AppealsResponsePhaseHandler {
      */
     public void perform(Phase phase, String operator) throws PhaseHandlingException {
     	super.perform(phase, operator);
+    	long projectId = phase.getProject().getId();
         boolean toStart = PhasesHelper.checkPhaseStatus(phase.getPhaseStatus());
-
     	// Only will perform while submission phase is ended
     	Connection conn = this.createConnection();
     	try {
-    		processPR(phase.getProject().getId(), conn, toStart);
+    		processPR(projectId, conn, toStart);
     		if (!toStart) {
-    			createAssignmentDocuments(phase.getProject().getId());
+    			createAssignmentDocuments(projectId);
     		}
-    	} catch (Exception e) {
+    	} catch (Throwable e) {
 			throw new PhaseHandlingException(e.getMessage(), e);
 		} finally {
     		PRHelper.close(conn);
     	}
     }
 
+    /**
+     * Creates the Assigment Documents for the winners of the project if there are any.
+     * 
+     * @param projectId the project id.
+     * @throws PersistenceException if error occurs while accessing the database.
+     * @throws PactsServicesException if a error ocurrs while invoking the Pacts Services Session Bean. 
+     * @throws PactsServicesCreationException if an error ocurrs while creating the the Pacts Services Session Bean.
+     */
     private void createAssignmentDocuments(long projectId) throws PersistenceException, 
     	PactsServicesException, PactsServicesCreationException {
     	

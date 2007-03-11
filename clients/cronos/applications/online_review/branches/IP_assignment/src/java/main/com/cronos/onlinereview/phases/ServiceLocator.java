@@ -37,9 +37,7 @@ public class ServiceLocator {
 			props.put(Context.INITIAL_CONTEXT_FACTORY, "org.jnp.interfaces.NamingContextFactory");
 			props.put(Context.PROVIDER_URL, PhasesHelper.getPropertyValue(DEFAULT_NAMESPACE, "pacts_jndi_address", true));
 			props.put(Context.URL_PKG_PREFIXES, "org.jboss.naming:org.jnp.interfaces");
-			if (log.isEnabled(Level.INFO)) {
-				log.log(Level.INFO, "Pacts JNDI Address: " + props.get(Context.PROVIDER_URL));
-			}
+			log.log(Level.INFO, "Pacts JNDI Address: " + props.get(Context.PROVIDER_URL));
 			try {
 				context = new InitialContext(props);
 			} catch (NamingException e) {
