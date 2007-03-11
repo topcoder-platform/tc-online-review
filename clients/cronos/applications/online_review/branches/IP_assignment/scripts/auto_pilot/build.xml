@@ -490,6 +490,8 @@
         <delete file="${component_test.war}" failonerror="false" />
     </target>
 
-    <target name="main" depends="dist">
-    </target>
+    <target name="main" depends="dist"/>
+
+	<target name="all" depends="clean, main" description="--> cleans and rebuilds the project"/>
+
 </project>
