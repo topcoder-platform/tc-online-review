@@ -53,25 +53,34 @@ public class PactsServicesDelegate {
 				project.getProperty("Project Version")});
 	}
 	
-	public void createAssignmentDocuments(Project project) throws PactsServicesException {
+	/**
+	 * Create the AssigmentDocument for the winner and the runner up if they exists. 
+	 * 
+	 * @param project the project to create the AssignmentDocuments
+	 * @return the AssignmentDocuments created
+	 * @throws PactsServicesException
+	 */
+	public AssignmentDocumentResult createAssignmentDocuments(Project project) throws PactsServicesException {
 		long projectId = project.getId();
 		String winnerId = (String) project.getProperty("Winner External Reference ID");
 		String runnerUpId = (String) project.getProperty("Runner-up External Reference ID");
 
 		try {
+			AssignmentDocumentResult result = new AssignmentDocumentResult();
 			deleteAssignmentDocumentsForProject(projectId);
 			if (winnerId != null) {
-				createNewAssignmentDocument(projectId, winnerId, generateSubmissionTitle(project, "first"));
+				result.setWinnerAssignmentDocument(createNewAssignmentDocument(projectId, winnerId, generateSubmissionTitle(project, "first")));
 			}
 			if (runnerUpId != null) {
-				createNewAssignmentDocument(projectId, runnerUpId, generateSubmissionTitle(project, "second"));
+				result.setRunnerUpAssignmentDocument(createNewAssignmentDocument(projectId, runnerUpId, generateSubmissionTitle(project, "second")));
 			}
+			return result;
 		} catch (Exception e) {
 			throw new PactsServicesException(e);
 		}
 	}
 		
-	public void createNewAssignmentDocument(long projectId, String userId, String submissionTitle) throws PactsServicesException {
+	public AssignmentDocument createNewAssignmentDocument(long projectId, String userId, String submissionTitle) throws PactsServicesException {
 		log.log(Level.INFO, "Creating AD for User: " + userId + " Project: " + projectId);
 		log.log(Level.DEBUG, "Submission Title: " + submissionTitle);
 		AssignmentDocument userAD = new AssignmentDocument();
@@ -88,7 +97,7 @@ public class PactsServicesDelegate {
 
 		userAD.setSubmissionTitle(submissionTitle);
 		try {
-			pactsServices.addAssignmentDocument(userAD);
+			return pactsServices.addAssignmentDocument(userAD);
 		} catch (Exception e) {
 			throw new PactsServicesException(e);
 		}

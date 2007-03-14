@@ -181,8 +181,8 @@ public class OnlineReviewProjectPilot extends DefaultProjectPilot {
 				Date runDate = (runDateValue == null) ? null : RUN_DATE_FORMATTER.parse(runDateValue);
 				log.log(Level.DEBUG, "projectId: " + project.getId() + " Autopilot date: " + runDateValue
 						+ " ad modify date: " + RUN_DATE_FORMATTER.format(ad.getModifyDate()));
-				if ((runDate == null || runDate.compareTo(ad.getModifyDate()) < 0) && !ad.getStatus().getDescription().equals(AD_AFFIRMED_STATUS.getDescription())
-						 && !ad.getStatus().getDescription().equals(AD_PENDING_STATUS.getDescription())) {
+				if ((runDate == null || runDate.compareTo(ad.getModifyDate()) < 0) && !ad.getStatus().equals(AD_AFFIRMED_STATUS)
+						 && !ad.getStatus().equals(AD_PENDING_STATUS)) {
 					informAssignmentDocumentStatusChange(project, ad);
 					project.setProperty(AUTO_PILOT_AD_CHANGE, RUN_DATE_FORMATTER.format(new Date()));
 					managerHelper.getProjectManager().updateProject(project, AUTO_PILOT_AD_CHANGE, operator);
