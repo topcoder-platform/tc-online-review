@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2005 TopCoder Inc., All Rights Reserved.
+ * Copyright (C) 2006-2007 TopCoder Inc., All Rights Reserved.
  */
 package com.cronos.onlinereview.phases;
 
@@ -19,30 +19,66 @@ import java.util.List;
  * The AutoPaymentUtil is used to auto-fill for payments of reviewers and submitters.
  *
  * @author brain_cn
+ * @author George1
  * @version 1.0
  */
 public class AutoPaymentUtil {
     /** Retrieve the price from comp_version_date. */
-    private static final String SELECT_PRICE_CVD = "select price " + 
+    private static final String SELECT_PRICE_CVD = "select price " +
     	"	from comp_version_dates, " +
-        "	project_info pi, " + 
-        "	project p" + 
-        "	where p.project_id = pi.project_id" + 
+        "	project_info pi, " +
+        "	project p" +
+        "	where p.project_id = pi.project_id" +
         "	and comp_vers_id = pi.value" +
         "	and ((p.project_category_id = 1 and phase_id = 112)" +
-        "		or (p.project_category_id = 2 and phase_id = 113))" + 
+        "		or (p.project_category_id = 2 and phase_id = 113))" +
         "	and pi.project_info_type_id = 1 " +
         "	and pi.project_id = ? ";
 
     /** Retrieve the price from project_info. */
-    private static final String SELECT_PRICE_PROJECT_INFO = 
-    	"select value " + 
+    private static final String SELECT_PRICE_PROJECT_INFO =
+    	"select value " +
     	"	from project_info " +
-        "	where project_info_type_id = 16 " + 
+        "	where project_info_type_id = 16 " +
         "	and project_id = ? ";
+
+    /**
+     * This is a string constant that specifies a <code>SELECT</code> statement for retrieving the
+     * ID of the resource who passed the review (when project is in after Appeals Response state)
+     * and took some certain place as a result of the competition. This <code>SELECT</code>
+     * statement takes two parameters: the first is the ID of the project which the resource should
+     * be retrieved for, and the second parameter is the number of place of ineterst (places
+     * numbering start from 1). The result of the executing of this statement will be either one ID
+     * of the resource, or empty result set if either the resource did not pass review (or
+     * screening), or there is not such resulting place for the project.
+     * <p>
+     * This constant is used by <code>getPassingSubmitterIdByPlace(long, long, Connection)</code>
+     * method.
+     * </p>
+     *
+     * @see #getPassingSubmitterIdByPlace(long, long, Connection)
+     */
+    private static final String SELECT_PASSED_REVIEW_RESOURCE_ID_FOR_PLACE =
+        "SELECT DISTINCT resource.resource_id " +
+        "  FROM resource, " +
+        "       resource_info, " +
+        "       resource_info_type_lu, " +
+        "       upload, " +
+        "       submission, " +
+        "       submission_status_lu " +
+        " WHERE resource.resource_id = resource_info.resource_id " +
+        "   AND upload.resource_id = resource.resource_id " +
+        "   AND submission.upload_id = upload.upload_id " +
+        "   AND submission.submission_status_id = submission_status_lu.submission_status_id " +
+        "   AND submission_status_lu.name = 'Active' " +
+        "   AND resource_info_type_lu.resource_info_type_id = resource_info.resource_info_type_id " +
+        "   AND resource_info_type_lu.name = 'Placement' " +
+        "   AND resource.project_id = ? " +
+        "   AND resource_info.value = ? ";
+
     private static final String USER_ID = "phase_handler";
 
-    public static final int SCREENING_PHASE = 3; 
+    public static final int SCREENING_PHASE = 3;
     public static final int REVIEW_PHASE = 4;
     public static final int AGGREGATION_PHASE = 7;
     public static final int FINAL_REVIEW_PHASE = 10;
@@ -52,7 +88,7 @@ public class AutoPaymentUtil {
      */
     private AutoPaymentUtil() {
     }
-    
+
     static void resetProjectPrice(long projectId, Connection conn) throws SQLException {
         PreparedStatement pstmt = null;
         ResultSet rs = null;
@@ -71,7 +107,7 @@ public class AutoPaymentUtil {
             PRHelper.close(rs);
             PRHelper.close(pstmt);
         }
-    	
+
         if (price > 0) {
         	updateProjectInfo(projectId, 16, String.valueOf(price), conn);
         }
@@ -88,6 +124,12 @@ public class AutoPaymentUtil {
     public static void populateReviewerPayments(long projectId, Connection conn, int phaseId)
         throws SQLException {
         long projectCategoryId = getProjectCategoryId(projectId, conn);
+
+        if (projectCategoryId != 1 && projectCategoryId != 2) {
+        	// Logic only apply to component
+        	return;
+        }
+
         int levelId = FixedPriceComponent.LEVEL1;
         int count = getCount(projectId, conn);
         int passedCount = getScreenPassedCount(projectId, conn);
@@ -117,7 +159,7 @@ public class AutoPaymentUtil {
 
     /**
      * Return submission count for given project.
-     * 
+     *
      * @param projectId project id
      * @param conn the connection
      * @return screening passed count
@@ -125,7 +167,7 @@ public class AutoPaymentUtil {
      */
     private static int getCount(long projectId, Connection conn)
         throws SQLException {
-        String SELECT_SQL = 
+        String SELECT_SQL =
         	"select count(s.submission_id) " +
 	        "	from submission s, upload u " +
 	        "	where u.upload_id = s.upload_id " +
@@ -149,7 +191,7 @@ public class AutoPaymentUtil {
 
     /**
      * Return screening passed count for given project.
-     * 
+     *
      * @param projectId project id
      * @param conn the connection
      * @return screening passed count
@@ -157,7 +199,7 @@ public class AutoPaymentUtil {
      */
     private static int getScreenPassedCount(long projectId, Connection conn)
         throws SQLException {
-        String SELECT_SQL = 
+        String SELECT_SQL =
         	"select count(s.submission_id) " +
 	        "	from submission s, upload u " +
 	        "	where u.upload_id = s.upload_id " +
@@ -191,15 +233,15 @@ public class AutoPaymentUtil {
      */
     private static List getReviewers(long projectId, Connection conn)
         throws SQLException {
-        String SELECT_SQL = 
-        	"select r.resource_id, " + 
-        	"	resource_role_id, " + 
-        	"	value " + 
+        String SELECT_SQL =
+        	"select r.resource_id, " +
+        	"	resource_role_id, " +
+        	"	value " +
         	"	from resource r, " +
-            "	resource_info ri" + 
-            "	where r.resource_id = ri.resource_id" + 
+            "	resource_info ri" +
+            "	where r.resource_id = ri.resource_id" +
             "	and ri.resource_info_type_id = 1" +
-            "	and r.resource_role_id in (2, 3, 4, 5, 6, 7, 8, 9)" + 
+            "	and r.resource_role_id in (2, 3, 4, 5, 6, 7, 8, 9)" +
             "	and r.project_id = ? order by resource_role_id";
         PreparedStatement pstmt = null;
         ResultSet rs = null;
@@ -270,7 +312,7 @@ public class AutoPaymentUtil {
 
     /**
      * Return project category id for given project id
-     * 
+     *
      * @param projectId project id
      * @param conn the connection
      * @return project category id
@@ -315,7 +357,7 @@ public class AutoPaymentUtil {
             return;
         }
 
-        String clearPayment = "update resource_info set value = 0 " + 
+        String clearPayment = "update resource_info set value = 0 " +
         					  " where resource_info_type_id = 7 " +
         					  " and resource_id in (select resource_id from resource where resource_role_id = 1 and project_id = ?)";
 
@@ -324,19 +366,17 @@ public class AutoPaymentUtil {
         pstmt.executeUpdate();
         PRHelper.close(pstmt);
 
-        // prepare price for differnt placed
-        double[] prices = new double[] { price, 0 };
-        prices[1] = Math.round(price * .5);
+        // Prepare prices for differnt places
+        double[] prices = new double[] { price, Math.round(price * 0.5) };
+        long[] places = new long[] { 1, 2 };
 
         // Update the payment resource_info and paid resource_info
-        long[] placeds = new long[] { 1, 2 };
+        for (int i = 0; i < places.length; ++i) {
+            long submitterId = getPassingSubmitterIdByPlace(projectId, places[i], conn);
 
-        for (int i = 0; i < placeds.length; i++) {
-            long submitter = getResourceIdByPlaced(projectId, placeds[i], conn);
-
-            if (submitter > 0) {
-                // Update the payment for given submitter which has placed    
-                updateResourcePayment(submitter, prices[i], conn);
+            if (submitterId != 0) {
+                // Update the payment for given submitter which has placed
+                updateResourcePayment(submitterId, prices[i], conn);
             }
         }
     }
@@ -486,38 +526,36 @@ public class AutoPaymentUtil {
     }
 
     /**
-     * Retrieve the resourceId with placed, projectid.
+     * This static method retrieves the ID of the submitter (resource) that passed review and took
+     * up the placement specifid by the <code>place</code> parameter for project specified by the
+     * <code>projectId</code> parameter.
      *
-     * @param projectId the project id
-     * @param placed the placed
-     * @param conn connection
-     *
-     * @return the resourceId
-     *
-     * @throws SQLException if error occurs
+     * @return an ID of the resource, or 0 if no resource matching the search criteria was found.
+     * @param projectId
+     *            the ID of the project to search the passing submitter (resource) with placement
+     *            for.
+     * @param place
+     *            the place that the submitter must have for the current search.
+     * @param connection
+     *            SQL connection to use for information retrieving.
+     * @throws SQLException
+     *             if any error occurs accessing the data store or reading the result set.
      */
-    private static long getResourceIdByPlaced(long projectId, long placed, Connection conn)
+    private static long getPassingSubmitterIdByPlace(long projectId, long place, Connection connection)
         throws SQLException {
-        String selectResourceId = "select r.resource_id " + "	from resource_info ri, " + "	resource r " +
-            "	where r.resource_id = ri.resource_id " + "	and ri.resource_info_type_id = 12 " +
-            "	and r.project_id = ? " + "	and ri.value = ? ";
-        PreparedStatement pstmt = null;
+        PreparedStatement statement = null;
         ResultSet rs = null;
 
         try {
-            pstmt = conn.prepareStatement(selectResourceId);
-            pstmt.setLong(1, projectId);
-            pstmt.setLong(2, placed);
-            rs = pstmt.executeQuery();
+            statement = connection.prepareStatement(SELECT_PASSED_REVIEW_RESOURCE_ID_FOR_PLACE);
+            statement.setLong(1, projectId);
+            statement.setLong(2, place);
+            rs = statement.executeQuery();
 
-            if (rs.next()) {
-                return rs.getLong(1);
-            } else {
-                return 0;
-            }
+            return (rs.next()) ? rs.getLong(1) : 0L;
         } finally {
             PRHelper.close(rs);
-            PRHelper.close(pstmt);
+            PRHelper.close(statement);
         }
     }
 }
