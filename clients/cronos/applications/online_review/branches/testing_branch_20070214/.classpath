@@ -54,8 +54,10 @@
     <classpathentry exported="true" kind="lib" path="lib/tcs/user_project_data_store/1.0.1/user_project_data_store.jar"/>
     <classpathentry exported="true" kind="lib" path="lib/tcs/weighted_calculator/1.0/weighted_calculator.jar"/>
     <classpathentry exported="true" kind="lib" path="lib/tcs/workdays/1.0/workdays.jar"/>
+    <classpathentry exported="true" kind="lib" path="lib/tcs/shared.jar"/>
     <classpathentry exported="true" kind="lib" path="lib/tcs/tcsUtil.jar"/>
     <classpathentry exported="true" kind="lib" path="lib/tcs/tcwebcommon.jar"/>
+    <classpathentry exported="true" kind="lib" path="lib/third_party/activation.jar"/>
     <classpathentry exported="true" kind="lib" path="lib/third_party/antlr.jar"/>
     <classpathentry exported="true" kind="lib" path="lib/third_party/commons-beanutils.jar"/>
     <classpathentry exported="true" kind="lib" path="lib/third_party/commons-digester.jar"/>
@@ -67,6 +69,7 @@
     <classpathentry exported="true" kind="lib" path="lib/third_party/jakarta-oro.jar"/>
     <classpathentry exported="true" kind="lib" path="lib/third_party/jstl.jar"/>
     <classpathentry exported="true" kind="lib" path="lib/third_party/log4j.jar"/>
+    <classpathentry exported="true" kind="lib" path="lib/third_party/mail.jar"/>
     <classpathentry exported="true" kind="lib" path="lib/third_party/standard.jar"/>
     <classpathentry exported="true" kind="lib" path="lib/third_party/struts-1.2.9.jar"/>
     <classpathentry exported="true" kind="lib" path="lib/third_party/struts-el.jar"/>

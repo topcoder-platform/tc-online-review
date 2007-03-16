@@ -122,7 +122,8 @@
 											<c:if test="${not empty submitter}">
 												<c:set var="placement" value='${submitter.allProperties["Placement"]}' />
 											</c:if>
-											<c:if test="${not empty placement}">
+											<c:set var="failedReview" value="${(submissionStatusName == 'Failed Screening') or (submissionStatusName == 'Failed Review')}" />
+											<c:if test="${(not empty placement) and (not failedReview)}">
 												<c:choose>
 													<c:when test="${placement == 1}">
 														<html:img srcKey="viewProjectDetails.Submitter.icoWinner.img" altKey="viewProjectDetails.Submitter.icoWinner.alt" styleClass="Outline" border="0" />
@@ -135,9 +136,14 @@
 													</c:otherwise>
 												</c:choose>
 											</c:if>
-											<c:if test="${empty placement}">
-												<c:if test='${(submissionStatusName == "Failed Screening") or (submissionStatusName == "Failed Review")}'>
-													<html:img srcKey="viewProjectDetails.box.Submission.icoFailed.img" altKey='SubmissionStatus.${fn:replace(submissionStatusName, " ", "")}' border="0" />
+											<c:if test="${failedReview}">
+												<c:set var="failureKeyName" value='SubmissionStatus.${fn:replace(submissionStatusName, " ", "")}' />
+												<c:if test="${empty placement}">
+													<html:img srcKey="viewProjectDetails.box.Submission.icoFailed.img" altKey="${failureKeyName}" border="0" />
+												</c:if>
+												<c:if test="${not empty placement}">
+													<c:set var="placeStr" value="${orfn:getMessage(pageContext, failureKeyName)} (Place ${placement})" />
+													<html:img srcKey="viewProjectDetails.box.Submission.icoFailed.img" alt="${placeStr}" border="0" />
 												</c:if>
 											</c:if>
 											<html:link page="/actions/DownloadSubmission.do?method=downloadSubmission&uid=${submission.upload.id}" titleKey="viewProjectDetails.box.Submission.Download">${submission.id}</html:link>
@@ -371,7 +377,8 @@
 												<c:if test="${not empty submitter}">
 													<c:set var="placement" value='${submitter.allProperties["Placement"]}' />
 												</c:if>
-												<c:if test="${not empty placement}">
+												<c:set var="failedReview" value="${(submissionStatusName == 'Failed Screening') or (submissionStatusName == 'Failed Review')}" />
+												<c:if test="${(not empty placement) and (not failedReview)}">
 													<c:choose>
 														<c:when test="${placement == 1}">
 															<html:img srcKey="viewProjectDetails.Submitter.icoWinner.img" altKey="viewProjectDetails.Submitter.icoWinner.alt" styleClass="Outline" border="0" />
@@ -384,9 +391,14 @@
 														</c:otherwise>
 													</c:choose>
 												</c:if>
-												<c:if test="${empty placement}">
-													<c:if test='${submissionStatusName == "Failed Review"}'>
-														<html:img srcKey="viewProjectDetails.box.Submission.icoFailed.img" altKey='SubmissionStatus.${fn:replace(submissionStatusName, " ", "")}' border="0" />
+												<c:if test="${failedReview}">
+													<c:set var="failureKeyName" value='SubmissionStatus.${fn:replace(submissionStatusName, " ", "")}' />
+													<c:if test="${empty placement}">
+														<html:img srcKey="viewProjectDetails.box.Submission.icoFailed.img" altKey="${failureKeyName}" border="0" />
+													</c:if>
+													<c:if test="${not empty placement}">
+														<c:set var="placeStr" value="${orfn:getMessage(pageContext, failureKeyName)} (Place ${placement})" />
+														<html:img srcKey="viewProjectDetails.box.Submission.icoFailed.img" alt="${placeStr}" border="0" />
 													</c:if>
 												</c:if>
 												<html:link page="/actions/DownloadSubmission.do?method=downloadSubmission&uid=${submission.upload.id}"
@@ -481,11 +493,11 @@
 								</tr>
 								<c:set var="winningSubmission" value="" />
 								<c:forEach items="${group.submissions}" var="submission">
-									<c:if test="${!(empty group.winner) && (group.winner.id == submission.upload.owner)}">
+									<c:if test="${(not empty group.winner) and (group.winner.id == submission.upload.owner)}">
 										<c:set var="winningSubmission" value="${submission}" />
 									</c:if>
 								</c:forEach>
-								<c:if test="${!(empty winningSubmission)}">
+								<c:if test="${not empty winningSubmission}">
 									<tr class="light">
 										<td class="value" nowrap="nowrap">
 											<html:img srcKey="viewProjectDetails.Submitter.icoWinner.img" altKey="viewProjectDetails.Submitter.icoWinner.alt" border="0" styleClass="Outline" />
@@ -641,11 +653,11 @@
 								</tr>
 								<c:set var="winningSubmission" value="" />
 								<c:forEach items="${group.submissions}" var="submission">
-									<c:if test="${!(empty group.winner) && (group.winner.id == submission.upload.owner)}">
+									<c:if test="${(not empty group.winner) and (group.winner.id == submission.upload.owner)}">
 										<c:set var="winningSubmission" value="${submission}" />
 									</c:if>
 								</c:forEach>
-								<c:if test="${!(empty winningSubmission)}">
+								<c:if test="${not empty winningSubmission}">
 									<tr class="light">
 										<td class="value" nowrap="nowrap">
 											<html:img srcKey="viewProjectDetails.Submitter.icoWinner.img" altKey="viewProjectDetails.Submitter.icoWinner.alt" border="0" styleClass="Outline" />
@@ -674,12 +686,12 @@
 										</c:if>
 										<c:if test="${empty group.approval}">
 											<td class="value"><!-- @ --></td>
-											<c:if test="${isAllowedToPerformApproval == true}">
+											<c:if test="${isAllowedToPerformApproval}">
 												<td class="valueC" nowrap="nowrap">
 													<html:link page="/actions/CreateApproval.do?method=createApproval&sid=${winningSubmission.id}"><bean:message
 														key="viewProjectDetails.box.Approval.Submit" /></html:link></td>
 											</c:if>
-											<c:if test="${isAllowedToPerformApproval != true}">
+											<c:if test="${not isAllowedToPerformApproval}">
 												<td class="valueC" nowrap="nowrap"><bean:message key="Pending" /></td>
 											</c:if>
 										</c:if>
