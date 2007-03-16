@@ -549,7 +549,7 @@ public class AutoPaymentUtil {
         try {
             statement = connection.prepareStatement(SELECT_PASSED_REVIEW_RESOURCE_ID_FOR_PLACE);
             statement.setLong(1, projectId);
-            statement.setLong(2, place);
+            statement.setString(2, String.valueOf(place));
             rs = statement.executeQuery();
 
             return (rs.next()) ? rs.getLong(1) : 0L;
