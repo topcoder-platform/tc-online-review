@@ -274,16 +274,20 @@ final class Comparators {
          *
          * @param submitters
          *            an array of resources, each element of which has Submitter role. This
-         *            parameter cannot be <code>null</code> or contain <code>null</code>
-         *            elements, and cannot contain resources that are not Submitters.
+         *            parameter can be <code>null</code>, but if it is not <code>null</code>,
+         *            it must not contain <code>null</code> elements or contain resources that are
+         *            not Submitters.
          * @throws IllegalArgumentException
-         *             if parameter <code>submitters</code> is <code>null</code>, contains
-         *             <code>null</code> elements, or any of the resources stored in it do not
-         *             have a Submitter role.
+         *             if parameter <code>submitters</code> is not <code>null</code> and
+         *             contains <code>null</code> elements or any of the resources stored in it do
+         *             not have a Submitter role.
          */
         public void assignSubmitters(Resource[] submitters) {
-            ActionsHelper.validateParameterNotNull(submitters, "submitters");
             this.submitters = new HashMap();
+
+            if (submitters == null) {
+                return;
+            }
 
             for (int i = 0; i < submitters.length; ++i) {
                 Resource submitter = submitters[i];
