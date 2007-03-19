@@ -1,6 +1,8 @@
 @echo off
 set classpath=.
 set LIB=E:/tcs/app/online_review/lib
+set classpath=%classpath%;%JBOSS_HOME%/client/jbossall-client.jar
+set classpath=%classpath%;%JBOSS_HOME%/client/jboss-j2ee.jar
 set classpath=%classpath%;%LIB%/tcs/auto_pilot/1.0/auto_pilot.jar 
 set classpath=%classpath%;%LIB%/tcs/base_exception/1.0/base_exception.jar
 set classpath=%classpath%;%LIB%/tcs/class_associations/1.0/class_associations.jar
