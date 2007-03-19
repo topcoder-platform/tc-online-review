@@ -12,7 +12,7 @@
     <Config name="com.topcoder.management.phase.autopilot.AutoPilotJob.factory">
         <Property name="com/topcoder/management/phase/autopilot/AutoPilotJob">
             <Property name="type">
-                <Value>com.cronos.onlinereview.phases.AutoPilotJob</Value>
+                <Value>com.topcoder.management.phase.autopilot.AutoPilotJob</Value>
             </Property>
             <Property name="params">
             </Property>
@@ -38,27 +38,12 @@
         </Property>
         <Property name="com/topcoder/management/phase/autopilot/ProjectPilot">
             <Property name="type">
-                <Value>com.cronos.onlinereview.phases.autopilot.OnlineReviewProjectPilot</Value>
+                <Value>com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot</Value>
             </Property>
             <Property name="params">
             </Property>
         </Property>
     </Config>
-    
-    <Config name="com.cronos.onlinereview.phases.OnlineReviewProjectPilot">
-        <Property name="AssigmentDocumentEmail">
-            <Property name="EmailTemplateSource">
-                <Value>file</Value>
-            </Property>
-            <Property name="EmailTemplateName">
-                <Value>ad_email_template.txt</Value>
-            </Property>
-            <Property name="EmailFromAddress">
-                <Value>service@topcodersoftware.com</Value>
-            </Property>
-        </Property>
-    </Config>
-    
     <Config name="com.topcoder.management.phase.autopilot.impl.ActiveAutoPilotSource">
         <Property name="com/topcoder/management/project/ProjectManager">
             <Property name="type">

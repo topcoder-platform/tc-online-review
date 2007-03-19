@@ -292,15 +292,6 @@
     </Config>
 
     <!--
-        ===== Configuration for Pacts Services =====
-    -->
-	<Config name="com.cronos.onlinereview.phases.pacts.services">
-		<Property name="pacts_jndi_address">
-			<Value>jnp://63.118.154.181:2099</Value>
-		</Property>
-	</Config>
-
-    <!--
         ===== Configuration for Phase Handlers from Oline Review Phases component =====
     -->
     <!-- Default namespace for Registration handler -->
@@ -542,24 +533,6 @@
             </Property>
             <Property name="EmailSubject">
                 <Value>Phase End</Value>
-            </Property>
-            <Property name="EmailFromAddress">
-                <Value>service@topcodersoftware.com</Value>
-            </Property>
-        </Property>
-        <Property name="WinnersEmail">
-            <Property name="EmailTemplateSource">
-                <Value>file</Value>
-            </Property>
-            <Property name="EmailTemplateName">
-                <Value>/home/onlinereview/winners_email_template.txt</Value>
-            </Property>
-            <Property name="EmailSubject">
-                <Value>[{0}] {1} place </Value>
-            </Property>
-            <Property name="AssignmentDocumentLink">
-            	<!-- The ampersand must be scaped twice, one for this xml and the second time for the DocumentGenerator  -->
-                <Value>http://server/PactsMemberServlet?module=AssignmentDocumentDetails&amp;amp;assignment_document_id={0}</Value>
             </Property>
             <Property name="EmailFromAddress">
                 <Value>service@topcodersoftware.com</Value>
