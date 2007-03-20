@@ -505,6 +505,9 @@ public class ProjectDetailsActions extends DispatchAction {
                     submissions = upMgr.searchSubmissions(filter);
                 }
 
+                if (submissions == null) {
+                	submissions = new Submission[0]; 
+                }
                 // Use comparator to sort submissions either by placement
                 // or by the time when they were uploaded
                 SubmissionComparer comparator = new SubmissionComparer();
