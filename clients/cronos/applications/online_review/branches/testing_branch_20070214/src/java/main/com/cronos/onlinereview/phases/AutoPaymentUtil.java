@@ -70,7 +70,7 @@ public class AutoPaymentUtil {
         "   AND upload.resource_id = resource.resource_id " +
         "   AND submission.upload_id = upload.upload_id " +
         "   AND submission.submission_status_id = submission_status_lu.submission_status_id " +
-        "   AND submission_status_lu.name = 'Active' " +
+        "   AND submission_status_lu.name in ('Active', 'Completed Without Win') " +
         "   AND resource_info_type_lu.resource_info_type_id = resource_info.resource_info_type_id " +
         "   AND resource_info_type_lu.name = 'Placement' " +
         "   AND resource.project_id = ? " +
