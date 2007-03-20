@@ -1,13 +1,17 @@
 /*
- * Copyright (C) 2006 TopCoder Inc.  All Rights Reserved.
+ * Copyright (C) 2006-2007 TopCoder Inc.  All Rights Reserved.
  */
 package com.cronos.onlinereview.actions;
 
 import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Map;
 
+import com.topcoder.management.deliverable.Submission;
 import com.topcoder.management.deliverable.Upload;
 import com.topcoder.management.project.Project;
 import com.topcoder.management.project.ProjectType;
+import com.topcoder.management.resource.Resource;
 import com.topcoder.management.review.data.Review;
 import com.topcoder.project.phases.Phase;
 import com.topcoder.project.phases.PhaseDateComparator;
@@ -205,6 +209,97 @@ final class Comparators {
 
             // Versions can have different number of parts (subversions)
             return (versions1.length - versions2.length);
+        }
+    }
+
+    /**
+     * This class implements <code>Comparator</code> interface and is used to sort Submissions in
+     * array. It sorts Submissions either by the time they were submitted (starting from the most
+     * recent ones), or by the place submission took up.
+     */
+    static class SubmissionComparer implements Comparator {
+
+        /**
+         * This member variable contains resources (submitters) assigned to this comprator class.
+         * They are stored in the map data structure, where each submitter's ID is matched to that
+         * submitter's record, to speed up the access operation.
+         */
+        private Map submitters = null;
+
+        /**
+         * This method compares its two arguments for order. This method expects that type of
+         * the objects passed as arguments is <code>Submission</code>.
+         * <p>
+         * This method implements the <code>compare</code> method from the
+         * <code>Comparator</code> interface.
+         * </p>
+         *
+         * @return a negative integer, zero, or a positive integer as the first argument is less
+         *         than, equal to, or greater than the second respectively.
+         * @param o1
+         *            the first object to be compared.
+         * @param o2
+         *            the second object to be compared.
+         */
+        public int compare(Object o1, Object o2) {
+            if (submitters == null) {
+                throw new IllegalStateException("Submitters must be assigned before sorting operation.");
+            }
+
+            // Cast the passed parameters to the appropriate type
+            Submission submission1 = (Submission)o1;
+            Submission submission2 = (Submission)o2;
+
+            // Get submitters that own the submissions
+            Resource submitter1 = (Resource) submitters.get(new Long(submission1.getUpload().getOwner()));
+            Resource submitter2 = (Resource) submitters.get(new Long(submission2.getUpload().getOwner()));
+
+            // Get placement values from properties
+            String placeStr1 = (submitter1 != null) ? (String) submitter1.getProperty("Placement") : null;
+            String placeStr2 = (submitter2 != null) ? (String) submitter2.getProperty("Placement") : null;
+
+            // Convert placement value to numbers
+            int place1 = (placeStr1 != null) ? Integer.parseInt(placeStr1, 10) : Integer.MAX_VALUE;
+            int place2 = (placeStr2 != null) ? Integer.parseInt(placeStr2, 10) : Integer.MAX_VALUE;
+
+            // Compare submissions by their places,
+            // or by their upload times, which are the creation times of their respective uploads
+            return (place1 != place2) ? (place1 - place2) : submission2.getUpload().getCreationTimestamp().compareTo(
+                    submission1.getUpload().getCreationTimestamp());
+        }
+
+        /**
+         * This method assigns submitters to this comparator class for their use in later comparison
+         * operation.
+         *
+         * @param submitters
+         *            an array of resources, each element of which has Submitter role. This
+         *            parameter can be <code>null</code>, but if it is not <code>null</code>,
+         *            it must not contain <code>null</code> elements or contain resources that are
+         *            not Submitters.
+         * @throws IllegalArgumentException
+         *             if parameter <code>submitters</code> is not <code>null</code> and
+         *             contains <code>null</code> elements or any of the resources stored in it do
+         *             not have a Submitter role.
+         */
+        public void assignSubmitters(Resource[] submitters) {
+            this.submitters = new HashMap();
+
+            if (submitters == null) {
+                return;
+            }
+
+            for (int i = 0; i < submitters.length; ++i) {
+                Resource submitter = submitters[i];
+
+                if (submitter == null) {
+                    throw new IllegalArgumentException("Parameter 'submitters' must not contain null elements.");
+                }
+                if (!submitter.getResourceRole().getName().equalsIgnoreCase(Constants.SUBMITTER_ROLE_NAME)) {
+                    throw new IllegalArgumentException("Parameter 'submitters' must contain Submitters only.");
+                }
+                this.submitters.put(new Long(submitter.getId()), submitter);
+            }
         }
     }
 

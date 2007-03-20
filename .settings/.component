@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project-modules id="moduleCoreId">
+<project-modules id="moduleCoreId" project-version="1.5.0">
     <wb-module deploy-name="review">
         <wb-resource deploy-path="/" source-path="/web"/>
         <wb-resource deploy-path="/WEB-INF" source-path="/conf/WEB-INF"/>
@@ -11,6 +11,10 @@
         <wb-resource deploy-path="/WEB-INF/classes/OnlineReview.xml" source-path="/conf/OnlineReview.xml"/>
         <wb-resource deploy-path="/WEB-INF/classes/xml_phase_template.xsd" source-path="/conf/xml_phase_template.xsd"/>
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/java/main"/>
+        <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/java/tests"/>
+        <dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/review/lib/shared/shared.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
         <dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/review/lib/tcs/authentication_factory/2.0/authentication_factory.jar">
             <dependency-type>uses</dependency-type>
         </dependent-module>
@@ -192,9 +196,6 @@
             <dependency-type>uses</dependency-type>
         </dependent-module>
         <dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/review/lib/third_party/log4j.jar">
-            <dependency-type>uses</dependency-type>
-        </dependent-module>
-        <dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/review/lib/third_party/shared.jar">
             <dependency-type>uses</dependency-type>
         </dependent-module>
         <dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/review/lib/third_party/standard.jar">

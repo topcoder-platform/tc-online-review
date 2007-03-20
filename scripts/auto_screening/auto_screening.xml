@@ -754,6 +754,7 @@
                     <Value>testLogCheck</Value>
                     <Value>componentSpecCheck</Value>
                     <Value>personalInfoCheck</Value>
+                    <Value>coveragePercentageCheck</Value>
                 </Property>
                 <Property name="screeningLogic">
                     <Property name="unzip">
@@ -990,6 +991,32 @@
                             <Value>14</Value>
                         </Property>
                     </Property>
+                    <Property name="coveragePercentageCheck">
+                        <Property name="ruleClass">
+                            <Value>CoveragePercentageRule</Value>
+                        </Property>
+                        <Property name="ruleIdentifier">
+                            <Value>javaCoveragePercentage</Value>
+                        </Property>
+                        <Property name="succeedSeverity">
+                            <Value>PASS</Value>
+                        </Property>
+                        <Property name="failSeverity">
+                            <Value>FAIL</Value>
+                        </Property>
+                        <Property name="errorSeverity">
+                            <Value>FAIL</Value>
+                        </Property>
+                        <Property name="succeedCode">
+                            <Value>15</Value>
+                        </Property>
+                        <Property name="failCode">
+                            <Value>17</Value>
+                        </Property>
+                        <Property name="errorCode">
+                            <Value>17</Value>
+                        </Property>
+                    </Property>
                 </Property>
             </Property>
             <Property name="dotNet Development">
@@ -1007,6 +1034,8 @@
                     <Value>testLogCheck</Value>
                     <Value>componentSpecCheck</Value>
                     <Value>personalInfoCheck</Value>
+                    <Value>csharpCoverageCheck</Value>
+                    <Value>csharpCoverageUnitCheck</Value>
                 </Property>
                 <Property name="screeningLogic">
                     <Property name="unzip">
@@ -1189,6 +1218,58 @@
                         </Property>
                         <Property name="errorCode">
                             <Value>14</Value>
+                        </Property>
+                    </Property>
+                    <Property name="csharpCoverageCheck">
+                        <Property name="ruleClass">
+                            <Value>FileExtensionRule</Value>
+                        </Property>
+                        <Property name="ruleIdentifier">
+                            <Value>csharpCoverage</Value>
+                        </Property>
+                        <Property name="succeedSeverity">
+                            <Value>PASS</Value>
+                        </Property>
+                        <Property name="failSeverity">
+                            <Value>FAIL</Value>
+                        </Property>
+                        <Property name="errorSeverity">
+                            <Value>FAIL</Value>
+                        </Property>
+                        <Property name="succeedCode">
+                            <Value>15</Value>
+                        </Property>
+                        <Property name="failCode">
+                            <Value>16</Value>
+                        </Property>
+                        <Property name="errorCode">
+                            <Value>16</Value>
+                        </Property>
+                    </Property>
+                    <Property name="csharpCoverageUnitCheck">
+                        <Property name="ruleClass">
+                            <Value>FileExtensionRule</Value>
+                        </Property>
+                        <Property name="ruleIdentifier">
+                            <Value>csharpCoverageUnit</Value>
+                        </Property>
+                        <Property name="succeedSeverity">
+                            <Value>PASS</Value>
+                        </Property>
+                        <Property name="failSeverity">
+                            <Value>FAIL</Value>
+                        </Property>
+                        <Property name="errorSeverity">
+                            <Value>FAIL</Value>
+                        </Property>
+                        <Property name="succeedCode">
+                            <Value>15</Value>
+                        </Property>
+                        <Property name="failCode">
+                            <Value>16</Value>
+                        </Property>
+                        <Property name="errorCode">
+                            <Value>16</Value>
                         </Property>
                     </Property>
                 </Property>
@@ -1210,6 +1291,7 @@
                     <Value>testLogCheck</Value>
                     <Value>componentSpecCheck</Value>
                     <Value>personalInfoCheck</Value>
+                    <Value>coveragePercentageCheck</Value>
                 </Property>
                 <Property name="screeningLogic">
                     <Property name="unzip">
@@ -1446,6 +1528,32 @@
                             <Value>14</Value>
                         </Property>
                     </Property>
+                    <Property name="coveragePercentageCheck">
+                        <Property name="ruleClass">
+                            <Value>CoveragePercentageRule</Value>
+                        </Property>
+                        <Property name="ruleIdentifier">
+                            <Value>javaCoveragePercentage</Value>
+                        </Property>
+                        <Property name="succeedSeverity">
+                            <Value>PASS</Value>
+                        </Property>
+                        <Property name="failSeverity">
+                            <Value>FAIL</Value>
+                        </Property>
+                        <Property name="errorSeverity">
+                            <Value>FAIL</Value>
+                        </Property>
+                        <Property name="succeedCode">
+                            <Value>15</Value>
+                        </Property>
+                        <Property name="failCode">
+                            <Value>17</Value>
+                        </Property>
+                        <Property name="errorCode">
+                            <Value>17</Value>
+                        </Property>
+                    </Property>
                 </Property>
             </Property>
             <Property name="CustomNET Development">
@@ -1463,6 +1571,8 @@
                     <Value>testLogCheck</Value>
                     <Value>componentSpecCheck</Value>
                     <Value>personalInfoCheck</Value>
+                    <Value>csharpCoverageCheck</Value>
+                    <Value>csharpCoverageUnitCheck</Value>
                 </Property>
                 <Property name="screeningLogic">
                     <Property name="unzip">
@@ -1645,6 +1755,58 @@
                         </Property>
                         <Property name="errorCode">
                             <Value>14</Value>
+                        </Property>
+                    </Property>
+                    <Property name="csharpCoverageCheck">
+                        <Property name="ruleClass">
+                            <Value>FileExtensionRule</Value>
+                        </Property>
+                        <Property name="ruleIdentifier">
+                            <Value>csharpCoverage</Value>
+                        </Property>
+                        <Property name="succeedSeverity">
+                            <Value>PASS</Value>
+                        </Property>
+                        <Property name="failSeverity">
+                            <Value>FAIL</Value>
+                        </Property>
+                        <Property name="errorSeverity">
+                            <Value>FAIL</Value>
+                        </Property>
+                        <Property name="succeedCode">
+                            <Value>15</Value>
+                        </Property>
+                        <Property name="failCode">
+                            <Value>16</Value>
+                        </Property>
+                        <Property name="errorCode">
+                            <Value>16</Value>
+                        </Property>
+                    </Property>
+                    <Property name="csharpCoverageUnitCheck">
+                        <Property name="ruleClass">
+                            <Value>FileExtensionRule</Value>
+                        </Property>
+                        <Property name="ruleIdentifier">
+                            <Value>csharpCoverageUnit</Value>
+                        </Property>
+                        <Property name="succeedSeverity">
+                            <Value>PASS</Value>
+                        </Property>
+                        <Property name="failSeverity">
+                            <Value>FAIL</Value>
+                        </Property>
+                        <Property name="errorSeverity">
+                            <Value>FAIL</Value>
+                        </Property>
+                        <Property name="succeedCode">
+                            <Value>15</Value>
+                        </Property>
+                        <Property name="failCode">
+                            <Value>16</Value>
+                        </Property>
+                        <Property name="errorCode">
+                            <Value>16</Value>
                         </Property>
                     </Property>
                 </Property>

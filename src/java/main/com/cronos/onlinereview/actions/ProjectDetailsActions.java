@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 TopCoder Inc.  All Rights Reserved.
+ * Copyright (C) 2006-2007 TopCoder Inc.  All Rights Reserved.
  */
 package com.cronos.onlinereview.actions;
 
@@ -28,6 +28,7 @@ import org.apache.struts.upload.FormFile;
 import org.apache.struts.util.MessageResources;
 import org.apache.struts.validator.DynaValidatorForm;
 
+import com.cronos.onlinereview.actions.Comparators.SubmissionComparer;
 import com.cronos.onlinereview.autoscreening.management.ResponseSeverity;
 import com.cronos.onlinereview.autoscreening.management.ScreeningManager;
 import com.cronos.onlinereview.autoscreening.management.ScreeningResult;
@@ -504,6 +505,13 @@ public class ProjectDetailsActions extends DispatchAction {
                     submissions = upMgr.searchSubmissions(filter);
                 }
 
+                // Use comparator to sort submissions either by placement
+                // or by the time when they were uploaded
+                SubmissionComparer comparator = new SubmissionComparer();
+
+                comparator.assignSubmitters(submitters);
+                Arrays.sort(submissions, comparator);
+
                 phaseGroup.setSubmissions(submissions);
 
                 if (submissions != null && submissions.length != 0) {
@@ -623,6 +631,13 @@ public class ProjectDetailsActions extends DispatchAction {
                 if (submissions == null) {
                     submissions = new Submission[0];
                 }
+
+                // Use comparator to sort submissions either by placement
+                // or by the time when they were uploaded
+                SubmissionComparer comparator = new SubmissionComparer();
+
+                comparator.assignSubmitters(submitters);
+                Arrays.sort(submissions, comparator);
 
                 phaseGroup.setSubmissions(submissions);
 
