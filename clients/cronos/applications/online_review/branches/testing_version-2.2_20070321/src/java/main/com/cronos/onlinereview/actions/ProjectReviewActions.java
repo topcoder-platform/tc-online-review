@@ -2819,6 +2819,9 @@ public class ProjectReviewActions extends DispatchAction {
         if (myResource == null) {
             myResource = ActionsHelper.getMyResourceForPhase(request, null);
         }
+        if (myResource == null) {
+        	myResource = (Resource) request.getAttribute("global_resource");
+        }
 
         // Retrieve the review to edit (if any)
         Review review = verification.getReview();
@@ -2895,7 +2898,7 @@ public class ProjectReviewActions extends DispatchAction {
         if (review != null && review.isCommitted()) {
             // If user has a Manager role, put special flag to the request,
             // indicating that we need "Manager Edit"
-            if(AuthorizationHelper.hasUserRole(request, Constants.MANAGER_ROLE_NAME)) {
+            if(AuthorizationHelper.hasUserRole(request, Constants.MANAGER_ROLE_NAMES)) {
                 request.setAttribute("managerEdit", Boolean.TRUE);
                 managerEdit = true;
             } else {
@@ -3498,7 +3501,7 @@ public class ProjectReviewActions extends DispatchAction {
          *  Verify that user has the permission to view the review
          */
         boolean isAllowed = false;
-        if (AuthorizationHelper.hasUserRole(request, Constants.MANAGER_ROLE_NAME) ||
+        if (AuthorizationHelper.hasUserRole(request, Constants.MANAGER_ROLE_NAMES) ||
                 AuthorizationHelper.hasUserRole(request, Constants.GLOBAL_MANAGER_ROLE_NAME) ||
                 AuthorizationHelper.hasUserRole(request, Constants.OBSERVER_ROLE_NAME)) {
             // User is manager or observer
@@ -3548,7 +3551,7 @@ public class ProjectReviewActions extends DispatchAction {
         } else {
             // If user has a Manager role, put special flag to the request,
             // indicating that we can edit the review
-            if (AuthorizationHelper.hasUserRole(request, Constants.MANAGER_ROLE_NAME)) {
+            if (AuthorizationHelper.hasUserRole(request, Constants.MANAGER_ROLE_NAMES)) {
                 request.setAttribute("canEditScorecard", Boolean.TRUE);
             }
         }

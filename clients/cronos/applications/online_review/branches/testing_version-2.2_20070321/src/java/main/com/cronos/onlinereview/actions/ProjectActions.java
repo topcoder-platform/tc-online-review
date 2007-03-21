@@ -238,6 +238,7 @@ public class ProjectActions extends DispatchAction {
         request.setAttribute("screeningScorecards", screeningScorecards);
         request.setAttribute("reviewScorecards", reviewScorecards);
         request.setAttribute("approvalScorecards", approvalScorecards);
+        request.setAttribute("defaultScorecards", ActionsHelper.getDefautlScorecards());
 
         // Load phase template names
         String[] phaseTemplateNames = ActionsHelper.createPhaseTemplate(null).getAllTemplateNames();
@@ -1471,7 +1472,12 @@ public class ProjectActions extends DispatchAction {
         	}
         }
 
-        // TODO: we assume timelineNotifictionId exists here, need to do the check
+        // need to do the check timelineNotifictionId exists here
+        if (timelineNotificationId == Long.MIN_VALUE) {
+            ActionsHelper.addErrorToRequest(request, 
+            "error.com.cronos.onlinereview.actions.editProject.TimelineNotification.NotFound");
+            return;
+        }
 
         // Get the array of resource names
         String[] resourceNames = (String[]) lazyForm.get("resources_name");
@@ -1622,10 +1628,18 @@ public class ProjectActions extends DispatchAction {
         ActionsHelper.populateProjectResult(project, newSubmitters);
 
         // Update all the timeline notifications
-        if (project.getProperty("Timeline Notification").equals("On")) {
-        	long[] userIds = new long[newUsers.size()];
+        if (project.getProperty("Timeline Notification").equals("On") && !newUsers.isEmpty()) {
+        	// Remove duplicated user ids
+        	long[] existUserIds = resourceManager.getNotifications(project.getId(), timelineNotificationId);        	
+        	Set finalUsers = new HashSet(newUsers);
+        	
+        	for (int i = 0; i < existUserIds.length; i++) {
+        		finalUsers.remove(new Long(existUserIds[i]));
+        	}
+
+        	long[] userIds = new long[finalUsers.size()];
         	int i = 0;
-        	for (Iterator itr = newUsers.iterator(); itr.hasNext();) {
+        	for (Iterator itr = finalUsers.iterator(); itr.hasNext();) {
         		userIds[i++] = ((Long) itr.next()).longValue();
         	}
 
