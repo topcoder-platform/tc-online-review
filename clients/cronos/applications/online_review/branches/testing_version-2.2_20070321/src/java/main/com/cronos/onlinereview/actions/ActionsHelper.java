@@ -44,6 +44,7 @@ import com.cronos.onlinereview.deliverables.IndividualReviewDeliverableChecker;
 import com.cronos.onlinereview.deliverables.SubmissionDeliverableChecker;
 import com.cronos.onlinereview.deliverables.SubmitterCommentDeliverableChecker;
 import com.cronos.onlinereview.deliverables.TestCasesDeliverableChecker;
+import com.cronos.onlinereview.external.ExternalUser;
 import com.cronos.onlinereview.external.UserRetrieval;
 import com.cronos.onlinereview.external.impl.DBUserRetrieval;
 import com.cronos.onlinereview.phases.AppealsPhaseHandler;
@@ -1202,11 +1203,26 @@ public class ActionsHelper {
         ResourceManager resMgr = ActionsHelper.createResourceManager(request);
         // Get submitter's resource
         Resource submitter = resMgr.getResource(upload.getOwner());
+        populateEmailProperty(request, submitter);
 
         // Place submitter's user ID into the request
         request.setAttribute("submitterId", submitter.getProperty("External Reference ID"));
         // Place submitter's resource into the request
         request.setAttribute("submitterResource", submitter);
+    }
+
+    /**
+     * Populate resource email resource info to resource.
+     *
+     * @param request the request to retrieve manager instance
+     * @param resource resource instance
+     * @throws BaseException if error occurs
+     */
+    static void populateEmailProperty(HttpServletRequest request, Resource resource) throws BaseException {
+        UserRetrieval userRetrieval = ActionsHelper.createUserRetrieval(request);
+        String handle = (String) resource.getProperty("Handle");
+        ExternalUser user = userRetrieval.retrieveUser(handle);
+    	resource.setProperty("Email", user.getEmail());
     }
 
     /**

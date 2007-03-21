@@ -237,6 +237,9 @@ public class AuthorizationHelper {
         ResourceManager resMgr = ActionsHelper.createResourceManager(request);
         // Perform search for resources
         Resource[] resources = resMgr.searchResources(filter);
+        for (int i = 0; i < resources.length; i++) {
+            ActionsHelper.populateEmailProperty(request, resources[i]);
+        }
         // Plase resources for currently logged in user into the request
         request.setAttribute("myResources", resources);
 

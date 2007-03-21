@@ -163,6 +163,9 @@ public class ProjectDetailsActions extends DispatchAction {
         ResourceManager resMgr = ActionsHelper.createResourceManager(request);
         // Get an array of all resources for the project
         Resource[] allProjectResources = ActionsHelper.getAllResourcesForProject(resMgr, project);
+        for (int i = 0; i < allProjectResources.length; i++) {
+            ActionsHelper.populateEmailProperty(request, allProjectResources[i]);
+        }
 
         // Obtain an instance of Phase Manager
         PhaseManager phaseMgr = ActionsHelper.createPhaseManager(request, false);
