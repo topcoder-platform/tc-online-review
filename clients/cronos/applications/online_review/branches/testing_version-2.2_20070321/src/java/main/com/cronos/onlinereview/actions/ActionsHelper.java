@@ -49,13 +49,12 @@ import com.cronos.onlinereview.external.impl.DBUserRetrieval;
 import com.cronos.onlinereview.phases.AppealsPhaseHandler;
 import com.cronos.onlinereview.phases.ApprovalPhaseHandler;
 import com.cronos.onlinereview.phases.AutoPaymentUtil;
-import com.cronos.onlinereview.phases.FinalFixPhaseHandler;
-import com.cronos.onlinereview.phases.FinalReviewPhaseHandler;
 import com.cronos.onlinereview.phases.PRAggregationPhaseHandler;
 import com.cronos.onlinereview.phases.PRAggregationReviewPhaseHandler;
 import com.cronos.onlinereview.phases.PRAppealResponsePhaseHandler;
 import com.cronos.onlinereview.phases.PRFinalFixPhaseHandler;
 import com.cronos.onlinereview.phases.PRFinalReviewPhaseHandler;
+import com.cronos.onlinereview.phases.PRHelper;
 import com.cronos.onlinereview.phases.PRRegistrationPhaseHandler;
 import com.cronos.onlinereview.phases.PRReviewPhaseHandler;
 import com.cronos.onlinereview.phases.PRScreeningPhaseHandler;
@@ -81,12 +80,14 @@ import com.topcoder.management.deliverable.persistence.DeliverableCheckingExcept
 import com.topcoder.management.deliverable.persistence.DeliverablePersistence;
 import com.topcoder.management.deliverable.persistence.DeliverablePersistenceException;
 import com.topcoder.management.deliverable.persistence.UploadPersistence;
+import com.topcoder.management.deliverable.persistence.UploadPersistenceException;
 import com.topcoder.management.deliverable.persistence.sql.SqlDeliverablePersistence;
 import com.topcoder.management.deliverable.persistence.sql.SqlUploadPersistence;
 import com.topcoder.management.deliverable.search.DeliverableFilterBuilder;
 import com.topcoder.management.deliverable.search.SubmissionFilterBuilder;
 import com.topcoder.management.phase.DefaultPhaseManager;
 import com.topcoder.management.phase.PhaseHandler;
+import com.topcoder.management.phase.PhaseHandlingException;
 import com.topcoder.management.phase.PhaseManagementException;
 import com.topcoder.management.phase.PhaseManager;
 import com.topcoder.management.phase.PhaseOperationEnum;
@@ -110,6 +111,7 @@ import com.topcoder.management.review.DefaultReviewManager;
 import com.topcoder.management.review.ReviewManager;
 import com.topcoder.management.review.data.Comment;
 import com.topcoder.management.review.data.CommentType;
+import com.topcoder.management.review.data.Review;
 import com.topcoder.management.review.scoreaggregator.ReviewScoreAggregator;
 import com.topcoder.management.review.scoreaggregator.ReviewScoreAggregatorConfigException;
 import com.topcoder.management.scorecard.PersistenceException;
@@ -3242,6 +3244,114 @@ public class ActionsHelper {
 			close(ps);
 			close(conn);
 		}
+    }
+
+    /**
+     * Reset ProjectResult With ChangedScores.
+     *
+     * @param projectId project id
+     * @param userId userId
+     *
+     * @throws Exception if error occurs
+     */
+    public static void resetProjectResultWithChangedScores(long projectId, Object userId) throws BaseException {
+    	Connection conn = null;
+		try {
+	        DBConnectionFactory dbconn = new DBConnectionFactoryImpl(DB_CONNECTION_NAMESPACE);
+	        conn = dbconn.createConnection();
+	        PRHelper.resetProjectResultWithChangedScores(projectId, userId, conn);
+		} catch (DBConnectionException e) {
+			throw new BaseException("Failed to return DBConnection", e);
+		} catch (SQLException e) {
+			throw new BaseException("Failed to resetProjectResultWithChangedScores for project " + projectId, e);
+		} finally {
+			close(conn);
+		}
+    }
+
+    /**
+     * Gets the scorecard minimum score from the given review.
+     *
+     * @param scorecardManager ScorecardManager instance.
+     * @param review Review instance.
+     *
+     * @return the scorecard minimum score from the given review.
+     *
+     * @throws Exception if error occurs
+     */
+    static float getScorecardMinimumScore(ScorecardManager scorecardManager, Review review)
+        throws BaseException {
+        long scorecardId = review.getScorecard();
+
+        try {
+            Scorecard[] scoreCards = scorecardManager.getScorecards(new long[]{scorecardId}, false);
+            if (scoreCards.length == 0) {
+                throw new BaseException("No scorecards found for scorecard id: " + scorecardId);
+            }
+            Scorecard scoreCard = scoreCards[0];
+
+            return scoreCard.getMinScore();
+        } catch (PersistenceException e) {
+            throw new BaseException("Problem with scorecard retrieval", e);
+        }
+    }
+
+    /**
+     * utility method to get a SubmissionStatus object for the given status name.
+     *
+     * @param request request instance to use for searching.
+     * @param statusName submission status name.
+     *
+     * @return a SubmissionStatus object for the given status name.
+     *
+     * @throws BaseException if submission status could not be found.
+     */
+    static SubmissionStatus getSubmissionStatus(HttpServletRequest request, String statusName)
+        throws BaseException {
+    	UploadManager upMgr = ActionsHelper.createUploadManager(request);
+        SubmissionStatus[] statuses = null;
+        try {
+            statuses = upMgr.getAllSubmissionStatuses();
+        } catch (UploadPersistenceException e) {
+            throw new PhaseHandlingException("Error finding submission status with name: " + statusName, e);
+        }
+        for (int i = 0; i < statuses.length; i++) {
+            if (statusName.equals(statuses[i].getName())) {
+                return statuses[i];
+            }
+        }
+        throw new BaseException("Could not find submission status with name: " + statusName);
+    }
+
+    /**
+     * retrieves all Reviewed submissions for the given project id.
+     *
+     * @param request request instance to use for searching.
+     * @param projectId project id.
+     *
+     * @return all active submissions for the given project id.
+     *
+     * @throws Exception if error occurs
+     */
+    static Submission[] searchReviewedSubmissions(HttpServletRequest request, Project project)
+        throws BaseException {
+    	UploadManager upMgr = ActionsHelper.createUploadManager(request);
+    	
+        //first get submission status id for "Active" status
+        Filter filterSubmissionStatuss = new InFilter("submission_status_id", 
+        		Arrays.asList(new Long[] {new Long(1), new Long(3), new Long(4)}));
+
+        //then search for submissions
+        Filter projectIdFilter = SubmissionFilterBuilder.createProjectIdFilter(project.getId());
+        Filter fullFilter = new AndFilter(projectIdFilter, filterSubmissionStatuss);
+
+        try {
+            return upMgr.searchSubmissions(fullFilter);
+        } catch (UploadPersistenceException e) {
+            throw new PhaseHandlingException("There was a submission retrieval error", e);
+        } catch (SearchBuilderException e) {
+            throw new PhaseHandlingException("There was a search builder error", e);
+        }
     }
 
     /**
