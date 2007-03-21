@@ -53,29 +53,14 @@ body {
 	<br /><br />
 
 <%
-	// Try to print stack trace into a String object
-
-    String stackTrace;
+	org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger("com.cronos.onlinereview");
     if (exception == null) {
-        stackTrace = "exception is null";
+        log.error("exception is null");
     } else {
-        StringWriter sw = new StringWriter();
-
-        PrintWriter pw = new PrintWriter(sw);
-        exception.printStackTrace(pw);
-        pw.close();
-
-        stackTrace = sw.toString();
-        stackTrace = stackTrace.replaceAll("\n", "<br />");
-        stackTrace = stackTrace.replaceAll("\t", "&#160;&#160;&#160;&#160; ");
-    }
+    	log.error(exception, exception);
+	}
 %>
 
-<%--
-	<div align="left" class="homeText">
-		Exception Info (for debugging): <%= stackTrace %>
-	</div>
---%>
 	<div class="centerer">
 		<div style="padding:25px">
 			<b><span style="font-size:18px;color:#990000;">Error</span>
