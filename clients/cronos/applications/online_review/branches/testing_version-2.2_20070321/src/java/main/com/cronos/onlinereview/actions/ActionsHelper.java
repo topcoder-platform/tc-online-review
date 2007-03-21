@@ -3125,6 +3125,42 @@ public class ActionsHelper {
 		} finally {
 			close(conn);
 		}
+    }    
+
+    /**
+     * Recaculate Screening reviewers payment.
+     *
+     * @param projectId project id
+     *
+     * @throws Exception if error occurs
+     */
+    public static String getRootCategoryIdByComponentId(Object componentId) throws BaseException {
+    	Connection conn = null;
+    	PreparedStatement ps = null;
+    	ResultSet rs = null;
+		try {
+	        DBConnectionFactory dbconn = new DBConnectionFactoryImpl(DB_CONNECTION_NAMESPACE);
+	        conn = dbconn.createConnection();
+	        String sqlStr = "select root_category_id " +
+	        				"	from comp_catalog cc," +
+	        				"		 categories pcat " +
+	        				"	where cc.component_id = ? " +
+	        				"	and cc.status_id = 102 " +
+	        				"	and pcat.category_id = cc.root_category_id";
+	        ps = conn.prepareStatement(sqlStr);
+	        ps.setString(1, componentId.toString());
+	        rs = ps.executeQuery();
+	        if (rs.next()) {
+	        	return rs.getString("root_category_id");
+	        }
+		} catch (Exception e) {
+			// Ignore if no corresponding root_category_id exist
+		} finally {
+			close(rs);
+			close(ps);
+			close(conn);
+		}
+    	return "9926572";
     }
 
 	/**
