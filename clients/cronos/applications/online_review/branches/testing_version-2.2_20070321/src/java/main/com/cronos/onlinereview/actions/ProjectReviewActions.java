@@ -21,6 +21,7 @@ import org.apache.struts.util.MessageResources;
 import org.apache.struts.validator.LazyValidatorForm;
 
 import com.topcoder.management.deliverable.Submission;
+import com.topcoder.management.deliverable.SubmissionStatus;
 import com.topcoder.management.deliverable.Upload;
 import com.topcoder.management.deliverable.UploadManager;
 import com.topcoder.management.deliverable.UploadStatus;
@@ -3095,6 +3096,7 @@ public class ProjectReviewActions extends DispatchAction {
         // For Manager Edits this variable indicates whether recomputation of
         // final aggregated score for the submitter may be required
         boolean possibleFinalScoreUpdate = false;
+        boolean possibleSubmissionStatusUpdate = false;
 
         // If the user has requested to complete the review
         if (validationSucceeded && (commitRequested || managerEdit)) {
@@ -3106,6 +3108,10 @@ public class ProjectReviewActions extends DispatchAction {
             if ("Review".equals(reviewType) && managerEdit &&
                     (review.getScore() == null || review.getScore().floatValue() != newScore)) {
                 possibleFinalScoreUpdate = true;
+            }
+            if ("Screening".equals(reviewType) && managerEdit &&
+                    (review.getScore() == null || review.getScore().floatValue() != newScore)) {
+            	possibleSubmissionStatusUpdate = true;
             }
             // Update scorecard's score
             review.setScore(new Float(newScore));
@@ -3140,6 +3146,11 @@ public class ProjectReviewActions extends DispatchAction {
         // This operation will possibly update final aggregated score for the submitter
         if (possibleFinalScoreUpdate) {
             updateFinalAggregatedScore(request, project, phase, verification.getSubmission());
+        }
+
+        // This operation will possibly update submission status for the submitter
+        if (possibleSubmissionStatusUpdate) {
+        	updateSubmissionStatusScreeningScoreChanged(request, project, phases, review, verification.getSubmission());
         }
 
         if (validationSucceeded && commitRequested) {
@@ -3271,6 +3282,88 @@ public class ProjectReviewActions extends DispatchAction {
         submitter.setProperty("Final Score", String.valueOf(aggrSubm[0].getAggregatedScore()));
         // Store updated information in the database
         resMgr.updateResource(submitter, String.valueOf(AuthorizationHelper.getLoggedInUserId(request)));
+    }
+
+    /**
+     * This static method submission status for the particular submitter. 
+     *
+     * @param request
+     *            the http request. Used internally by some helper functions.
+     * @param project
+     *            a project the submission was originally made for.
+     * @param phases
+     *            phases of project.
+     * @param submission
+     *            a submission in question, i.e. the one that needs its final score updated.
+     * @throws IllegalArgumentException
+     *             if any of the parameters are <code>null</code>.
+     * @throws BaseException
+     *             if any unexpected error occurs during final score update.
+     */
+    private static void updateSubmissionStatusScreeningScoreChanged(
+            HttpServletRequest request, Project project, Phase[] phases, Review review, Submission submission)
+        throws BaseException {
+        // Check if current open phase is Review
+        boolean isReviewPhase = false;
+        for (int i = 0; i < phases.length; i++) {
+        	if ("Review".equals(phases[i].getPhaseType().getName())) {
+        		isReviewPhase = "Open".equals(phases[i].getPhaseStatus().getName());
+        		break;
+        	}
+
+        	// If screening phase is open, then needn't change anything
+        	if ("Screening".equals(phases[i].getPhaseType().getName())) {
+        		if ("Open".equals(phases[i].getPhaseStatus().getName())) {
+        			return;
+        		}
+        	}
+        }
+
+        if (!isReviewPhase) {
+        	// Current we only process while review phase is open
+        	return;
+        }
+
+        UploadManager upMgr = ActionsHelper.createUploadManager(request);
+        ScorecardManager scorecardManager = ActionsHelper.createScorecardManager(request);
+
+        // Get minimum score
+        float minimumScore = 75;        
+        Scorecard[] scoreCards = scorecardManager.getScorecards(new long[]{review.getScorecard()}, false);
+        
+        if (scoreCards.length > 0) {
+        	minimumScore = scoreCards[0].getMinScore();
+        }
+
+        boolean passScreening = review.getScore().floatValue() >= minimumScore;
+
+        // Retrieve submission status
+        SubmissionStatus failedScreening = null;
+        SubmissionStatus active = null;
+        SubmissionStatus failedReview = null;
+        SubmissionStatus[] statuses = upMgr.getAllSubmissionStatuses();
+
+        for (int i = 0; i < statuses.length; i++) {
+        	if ("Failed Screening".equals(statuses[i].getName())) {
+        		failedScreening = statuses[i];
+        	} else if ("Failed Review".equals(statuses[i].getName())) {
+        		failedReview = statuses[i];
+        	} else if ("Active".equals(statuses[i].getName())) {
+        		active = statuses[i];
+        	}
+        }
+
+        if (!passScreening) {
+        	submission.setSubmissionStatus(failedScreening);
+        } else {
+        	// pass screening
+        	if (isReviewPhase) {
+        		submission.setSubmissionStatus(active);
+        	} else {
+        		submission.setSubmissionStatus(failedReview);
+        	}
+        }
+        upMgr.updateSubmission(submission, String.valueOf(AuthorizationHelper.getLoggedInUserId(request)));
     }
 
     /**
