@@ -126,7 +126,9 @@ INSERT INTO project_info_type_lu(project_info_type_id, name, description, create
   VALUES(25, 'Event Flag', 'Event Flag', 'System', CURRENT, 'System', CURRENT);
 INSERT INTO project_info_type_lu(project_info_type_id, name, description, create_user, create_date, modify_user, modify_date)
   VALUES(26, 'Digital Run Flag', 'Digital Run Flag', 'System', CURRENT, 'System', CURRENT);
-
+INSERT INTO project_info_type_lu(project_info_type_id, name, description, create_user, create_date, modify_user, modify_date)
+  VALUES(27, 'AutoPilot AD Change', 'AutoPilot AD Change', 'System', CURRENT, 'System', CURRENT);
+  
 INSERT INTO phase_type_lu(phase_type_id, name, description, create_user, create_date, modify_user, modify_date)
   VALUES(1, 'Registration', 'Registration', 'System', CURRENT, 'System', CURRENT);
 INSERT INTO phase_type_lu(phase_type_id, name, description, create_user, create_date, modify_user, modify_date)

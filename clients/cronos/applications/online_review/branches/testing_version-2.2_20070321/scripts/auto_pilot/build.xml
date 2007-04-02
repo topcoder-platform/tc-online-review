@@ -15,7 +15,7 @@
     <!-- DIRECTORY SETUP -->
     <property name="srcdir" value="../../src" />
     <property name="tcs_libdir" value="../../lib/tcs" />
-    <property name="ext_libdir" value="../../lib/" />
+    <property name="ext_libdir" value="../../lib" />
     <property name="jar_tcs_libdir" value="lib/tcs" />
     <property name="jar_ext_libdir" value="lib/third_party" />
     <property name="docsdir" value="docs" />
@@ -304,6 +304,10 @@
 	<property name="tcwebcommon.jar" value="${tcs_libdir}/tcwebcommon.jar" />
 	<property name="tcsUtil.jar" value="${tcs_libdir}/tcsUtil.jar" />
 	<property name="shared.jar" value="${tcs_libdir}/shared.jar" />
+	
+	<property name="pactsServices.path" value="pacts_services" />
+	<property name="pactsServices.jar.name" value="PactsServices.jar" />
+	<property name="pactsServices.jar" value="${tcs_libdir}/${pactsServices.path}/${pactsServices.jar.name}" />
 
     <!-- 3rd Party Dependencies  -->
 	<property name="activation.jar" value="${ext_libdir}/third_party/activation.jar" />
@@ -311,14 +315,16 @@
 	<property name="mail.jar" value="${ext_libdir}/third_party/mail.jar" />
 	<property name="log4j.jar" value="${ext_libdir}/third_party/log4j.jar" />
 	<property name="xerces.jar" value="${ext_libdir}/third_party/xerces.jar" />
+	<property name="ejb-2_0.jar" value="${ext_libdir}/third_party/ejb-2_0.jar" />
 		
     <path id="buildlibs">
         <pathelement location="${ifx-jdbc.jar}" />
         <pathelement location="${mail.jar}" />		 
         <pathelement location="${log4j.jar}" />
         <pathelement location="${activation.jar}" />	 
-        <pathelement location="${xerces.jar}" />	
-
+        <pathelement location="${xerces.jar}" />
+    	<pathelement location="${ejb-2_0.jar}" />
+    	
         <pathelement location="${auto_pilot.jar}" />
         <pathelement location="${auto_screening_management.jar}" />
         <pathelement location="${base_exception.jar}" />
@@ -365,6 +371,7 @@
         <pathelement location="${user_project_data_store.jar}" />
         <pathelement location="${weighted_calculator.jar}" />
         <pathelement location="${workdays.jar}" />
+    	<pathelement location="${pactsServices.jar}" />
         <pathelement location="${tcwebcommon.jar}" />
         <pathelement location="${tcsUtil.jar}" />
         <pathelement location="${shared.jar}" />
@@ -440,7 +447,8 @@
 	    	<fileset file="${mail.jar}"/> 
 	    	<fileset file="${log4j.jar}" />
 	    	<fileset file="${activation.jar}" />
-	    	<fileset file="${xerces.jar}"/> 
+	    	<fileset file="${xerces.jar}"/>
+			<fileset file="${pactsServices.jar}"/> 
 	    	<fileset file="${tcwebcommon.jar}"/>
 	    	<fileset file="${tcsUtil.jar}"/>
 	    	<fileset file="${shared.jar}"/>
@@ -482,6 +490,8 @@
         <delete file="${component_test.war}" failonerror="false" />
     </target>
 
-    <target name="main" depends="dist">
-    </target>
+    <target name="main" depends="dist"/>
+
+	<target name="all" depends="clean, main" description="--> cleans and rebuilds the project"/>
+
 </project>
