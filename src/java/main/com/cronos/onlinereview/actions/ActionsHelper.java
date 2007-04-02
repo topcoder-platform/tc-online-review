@@ -144,6 +144,7 @@ import com.topcoder.util.datavalidator.StringValidator;
 import com.topcoder.util.errorhandling.BaseException;
 import com.topcoder.util.idgenerator.IDGenerator;
 import com.topcoder.util.idgenerator.IDGeneratorFactory;
+import com.topcoder.util.log.Level;
 
 /**
  * This class contains handy helper-methods that perform frequently needed operations.
@@ -153,7 +154,9 @@ import com.topcoder.util.idgenerator.IDGeneratorFactory;
  * @version 1.0
  */
 public class ActionsHelper {
-
+	private static final com.topcoder.util.log.Log log = com.topcoder.util.log.LogFactory.getLog(ActionsHelper.class
+			.getName());
+	
     /**
      * This member variable is a string constant that defines the name of the configurtaion
      * namespace which the parameters for database connection factory are stored under.
@@ -2983,6 +2986,7 @@ public class ActionsHelper {
 	        long componentInquiryId = getNextComponentInquiryId(conn, newSubmitters.size());
 	    	long componentId = getProjectLongValue(project, "Component ID");
 	    	long phaseId = 111 + project.getProjectCategory().getId();
+	    	log.log(Level.DEBUG, "calculated phaseId for Project: " + projectId + " phaseId: " + phaseId);
 	    	long version = getProjectLongValue(project, "Version ID");
 
 	        // add reliability_ind and old_reliability
