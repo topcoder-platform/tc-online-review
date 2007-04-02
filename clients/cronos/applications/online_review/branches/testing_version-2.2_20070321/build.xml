@@ -76,6 +76,11 @@
     <property name="authentication_factory.path" value="authentication_factory/${authentication_factory.version}" />
     <property name="authentication_factory.jar" value="${tcs_libdir}/${authentication_factory.path}/${authentication_factory.jar.name}" />
 
+	<property name="auto_pilot.version" value="1.0" />
+    <property name="auto_pilot.jar.name" value="auto_pilot.jar" />
+    <property name="auto_pilot.path" value="auto_pilot/${auto_pilot.version}" />
+    <property name="auto_pilot.jar" value="${tcs_libdir}/${auto_pilot.path}/${auto_pilot.jar.name}" />
+	
     <property name="auto_screening_management.version" value="1.0" />
     <property name="auto_screening_management.jar.name" value="auto_screening_management.jar" />
     <property name="auto_screening_management.path" value="auto_screening_management/${auto_screening_management.version}" />
@@ -357,6 +362,7 @@
     	<pathelement location="${ejb-2_0.jar}" />
 
         <pathelement location="${authentication_factory.jar}" />
+    	<pathelement location="${auto_pilot.jar}" />
         <pathelement location="${auto_screening_management.jar}" />
         <pathelement location="${base_exception.jar}" />
         <pathelement location="${class_associations.jar}" />
