@@ -446,7 +446,7 @@
     -->
     <Config name="com.topcoder.message.email.EmailEngine">
         <Property name="smtp_host_addr">
-            <Value>63.118.154.162</Value>
+            <Value>192.168.10.51</Value>
         </Property>
         <Property name="smtp_host_port">
             <Value>25</Value>
