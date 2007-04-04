@@ -2990,8 +2990,8 @@ public class ActionsHelper {
     	PreparedStatement reliabilityStmt = null;
     	PreparedStatement componentInquiryStmt = null;
     	long categoryId = project.getProjectCategory().getId();
-    	if (categoryId != 1 && categoryId != 2) {
-    		// design/development project need project_result
+    	if (categoryId != 1 && categoryId != 2 && categoryId != 14) {
+    		// design/development/assembly project need project_result
     		return;
     	}
 
@@ -3003,8 +3003,7 @@ public class ActionsHelper {
 	        // retrieve and update component_inquiry_id
 	        long componentInquiryId = getNextComponentInquiryId(conn, newSubmitters.size());
 	    	long componentId = getProjectLongValue(project, "Component ID");
-	    	long projectCategory = project.getProjectCategory().getId(); 
-	    	long phaseId = 111 + projectCategory;
+	    	long phaseId = 111 + categoryId;
 	    	log.log(Level.DEBUG, "calculated phaseId for Project: " + projectId + " phaseId: " + phaseId);
 	    	long version = getProjectLongValue(project, "Version ID");
 
@@ -3093,15 +3092,14 @@ public class ActionsHelper {
 
 	            // add component_inquiry
 	            // only design, development and assembly contests needs a component_inquiry entry
-	            if (!existCI && (projectCategory == 1 || projectCategory == 2 || projectCategory == 14) 
-	            		&& componentId > 0) {
+	            if (!existCI && componentId > 0) {
 	            	log.log(Level.INFO, "adding component_inquiry for projectId: " + projectId + " userId: " + userId);
 	            	componentInquiryStmt.setLong(1, componentInquiryId++);
 	            	componentInquiryStmt.setLong(2, componentId);
 	            	componentInquiryStmt.setString(3, userId);
 	            	componentInquiryStmt.setLong(4, projectId);
 	            	// assembly contest must have phaseId set to null
-	            	if (projectCategory == 14) {
+	            	if (categoryId == 14) {
 	            		componentInquiryStmt.setNull(5, Types.INTEGER);
 	            	} else {
 	            		componentInquiryStmt.setLong(5, phaseId);
