@@ -139,12 +139,14 @@ public class OnlineReviewProjectPilot extends DefaultProjectPilot {
 	}
 
 	public AutoPilotResult advancePhases(long projectId, String operator) {
-		AutoPilotResult result = super.advancePhases(projectId, operator);
+		AutoPilotResult result = null;
 		try {
+			getLogger().log(Level.DEBUG, "before super.advancePhases");
+			result = super.advancePhases(projectId, operator);
+			getLogger().log(Level.DEBUG, "after super.advancePhases");
 			Project project = managerHelper.getProjectManager().getProject(projectId);
 			log.log(Level.DEBUG, "check AD for projectId: " + projectId);
 			checkAssignmentDocumentStatusChange(project, operator);
-
 		} catch (Throwable e) {
 			ByteArrayOutputStream s = new ByteArrayOutputStream();
 			e.printStackTrace(new PrintStream(s));
