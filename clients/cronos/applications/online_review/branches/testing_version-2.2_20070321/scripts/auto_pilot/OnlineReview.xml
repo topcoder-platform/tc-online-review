@@ -296,7 +296,7 @@
     -->
 	<Config name="com.cronos.onlinereview.phases.pacts.services">
 		<Property name="pacts_jndi_address">
-			<Value>jnp://63.118.154.181:2099</Value>
+			<Value>jnp://63.118.154.181:1099</Value>
 		</Property>
 	</Config>
 
