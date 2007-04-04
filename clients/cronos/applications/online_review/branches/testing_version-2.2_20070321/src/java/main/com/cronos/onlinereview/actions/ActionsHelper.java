@@ -3095,6 +3095,7 @@ public class ActionsHelper {
 	            // only design, development and assembly contests needs a component_inquiry entry
 	            if (!existCI && (projectCategory == 1 || projectCategory == 2 || projectCategory == 14) 
 	            		&& componentId > 0) {
+	            	log.log(Level.INFO, "adding component_inquiry for projectId: " + projectId + " userId: " + userId);
 	            	componentInquiryStmt.setLong(1, componentInquiryId++);
 	            	componentInquiryStmt.setLong(2, componentId);
 	            	componentInquiryStmt.setString(3, userId);
