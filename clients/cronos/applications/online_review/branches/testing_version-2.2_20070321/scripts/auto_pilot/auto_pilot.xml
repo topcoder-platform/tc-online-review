@@ -38,7 +38,7 @@
         </Property>
         <Property name="com/topcoder/management/phase/autopilot/ProjectPilot">
             <Property name="type">
-                <Value>com.cronos.onlinereview.phases.autopilot.OnlineReviewProjectPilot</Value>
+                <Value>com.cronos.onlinereview.phases.OnlineReviewProjectPilot</Value>
             </Property>
             <Property name="params">
             </Property>
