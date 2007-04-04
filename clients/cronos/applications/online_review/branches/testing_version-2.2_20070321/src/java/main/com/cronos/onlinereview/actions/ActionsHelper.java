@@ -3003,7 +3003,8 @@ public class ActionsHelper {
 	        // retrieve and update component_inquiry_id
 	        long componentInquiryId = getNextComponentInquiryId(conn, newSubmitters.size());
 	    	long componentId = getProjectLongValue(project, "Component ID");
-	    	long phaseId = 111 + project.getProjectCategory().getId();
+	    	long projectCategory = project.getProjectCategory().getId(); 
+	    	long phaseId = 111 + projectCategory;
 	    	log.log(Level.DEBUG, "calculated phaseId for Project: " + projectId + " phaseId: " + phaseId);
 	    	long version = getProjectLongValue(project, "Version ID");
 
@@ -3056,9 +3057,10 @@ public class ActionsHelper {
 					close(rs);
 	            }
 
-	            // Retrieve Reliability
+	            
 	            double oldReliability = 0;
 	            if (!existPR) {
+	            	//Retrieve Reliability
 		            reliabilityStmt.clearParameters();
 		            reliabilityStmt.setString(1, userId);
 		            reliabilityStmt.setLong(2, projectId);
@@ -3068,11 +3070,9 @@ public class ActionsHelper {
 		                oldReliability = rs.getDouble(1);
 		            }
 					close(rs);
-	            }
-
-	            // add project_result
-	            if (!existPR) {
-			        ps.setLong(1, projectId);
+					
+					//add project_result
+					ps.setLong(1, projectId);
 			        ps.setString(2, userId);
 			        ps.setLong(3, 0);
 			        ps.setLong(4, 0);
@@ -3092,12 +3092,19 @@ public class ActionsHelper {
 	            }
 
 	            // add component_inquiry
-	            if (!existCI && phaseId < 114 && componentId > 0) {
+	            // only design, development and assembly contests needs a component_inquiry entry
+	            if (!existCI && (projectCategory == 1 || projectCategory == 2 || projectCategory == 14) 
+	            		&& componentId > 0) {
 	            	componentInquiryStmt.setLong(1, componentInquiryId++);
 	            	componentInquiryStmt.setLong(2, componentId);
 	            	componentInquiryStmt.setString(3, userId);
 	            	componentInquiryStmt.setLong(4, projectId);
-	            	componentInquiryStmt.setLong(5, phaseId);
+	            	// assembly contest must have phaseId set to null
+	            	if (projectCategory == 14) {
+	            		componentInquiryStmt.setNull(5, Types.INTEGER);
+	            	} else {
+	            		componentInquiryStmt.setLong(5, phaseId);
+	            	}
 	            	componentInquiryStmt.setString(6, userId);
 	            	componentInquiryStmt.setDouble(7, oldRating);
 	            	componentInquiryStmt.setLong(8, version);
