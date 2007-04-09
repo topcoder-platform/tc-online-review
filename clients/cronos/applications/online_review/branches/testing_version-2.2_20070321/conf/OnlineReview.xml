@@ -947,6 +947,9 @@
                 <Value>service@topcodersoftware.com</Value>
             </Property>
         </Property>
+        <Property name="CreateAssignmentDocuments">
+    		<Value>false</Value>
+    	</Property>
         <Property name="WinnersEmail">
             <Property name="EmailTemplateSource">
                 <Value>file</Value>

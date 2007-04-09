@@ -42,18 +42,32 @@ public class OnlineReviewProjectPilot extends DefaultProjectPilot {
 
 	/** constant for "Project Version" project info. */
 	private static final String PROJECT_VERSION = "Project Version";
-
+ 
 	private static final AssignmentDocumentStatus AD_PENDING_STATUS = new AssignmentDocumentStatus(
 			AssignmentDocumentStatus.PENDING_STATUS_ID);
 	private static final AssignmentDocumentStatus AD_AFFIRMED_STATUS = new AssignmentDocumentStatus(
 			AssignmentDocumentStatus.AFFIRMED_STATUS_ID);
 	private static final String AUTO_PILOT_AD_CHANGE = "AutoPilot AD Change";
 	private static final SimpleDateFormat RUN_DATE_FORMATTER = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss.SSS");
+	
+	/** default namespace to read configuration parameters from  */
 	private static final String DEFAULT_NAMESPACE = OnlineReviewProjectPilot.class.getName();
 
 	/** format for the email timestamp. Will format as "Fri, Jul 28, 2006 01:34 PM EST". */
 	private static final SimpleDateFormat EMAIL_TIMESTAMP_FORMAT = new SimpleDateFormat("EEE, MMM d, yyyy hh:mm a z");
 
+	/** Assignment Document status change email template source for managers */
+	private String managersEmailTemplateSource = null;
+	
+	/** Assignment Document status change email template name for managers */
+	private String managersEmailTemplateName = null;
+	
+	/** Sender of the Assignment Document status change email for managers */
+	private String managersEmailFromAddress = null;
+	
+	/** Switch that indicates if AP should check AD status changes */
+	private boolean checkAssignmentDocumentsStatus = false;
+	
 	/**
 	 * Represents the <code>PactsServices</code> instance.
 	 */
@@ -62,7 +76,7 @@ public class OnlineReviewProjectPilot extends DefaultProjectPilot {
 
 	/**
 	 * <p>
-	 * Constructs a new instance of DefaultProjectPilot class. This will initialize the phase manager instance using
+	 * Constructs a new instance of OnlineReviewProjectPilot class. This will initialize the phase manager instance using
 	 * object factory. The object factory is initialized with this class' full name as its configuration namespace.
 	 * Inside this namespace, a property with the key of PhaseManager's full name is used to retrieve phase manager
 	 * instance.<br>
@@ -75,12 +89,12 @@ public class OnlineReviewProjectPilot extends DefaultProjectPilot {
 	 */
 	public OnlineReviewProjectPilot() throws ConfigurationException {
 		super();
-		createManagerHelper();
+		configure(DEFAULT_NAMESPACE);
 	}
 
 	/**
 	 * <p>
-	 * Constructs a new instance of DefaultProjectPilot class using the given namespace/phaseManagerKey to get
+	 * Constructs a new instance of OnlineReviewProjectPilot class using the given namespace/phaseManagerKey to get
 	 * PhaseManager instance with object factory, the given scheduled/open status name, and the given log name. This
 	 * will initialize the phase manager instance using object factory. The object factory is initialized with
 	 * namespace. Inside this namespace, a property with the key of phaseManagerKey is used to retrieve phase manager
@@ -105,7 +119,7 @@ public class OnlineReviewProjectPilot extends DefaultProjectPilot {
 	public OnlineReviewProjectPilot(String namespace, String phaseManagerKey, String scheduledStatusName,
 			String openStatusName, String logName) throws ConfigurationException {
 		super(namespace, phaseManagerKey, scheduledStatusName, openStatusName, logName);
-		createManagerHelper();
+		configure(namespace);
 	}
 
 	/**
@@ -127,9 +141,31 @@ public class OnlineReviewProjectPilot extends DefaultProjectPilot {
 	public OnlineReviewProjectPilot(PhaseManager phaseManager, String scheduledStatusName, String openStatusName,
 			Log logger) {
 		super(phaseManager, scheduledStatusName, openStatusName, logger);
-		createManagerHelper();
+		configure(DEFAULT_NAMESPACE);		
 	}
-
+	
+	private void configure(String namespace) {		
+		createManagerHelper();
+		try {
+			checkAssignmentDocumentsStatus = "true".equals(PhasesHelper.getPropertyValue(namespace, "CheckAssignmentDocumentsStatus", "false").trim());
+			if (!checkAssignmentDocumentsStatus) {
+				log.log(Level.INFO, "The status check of the Assignment Documents is disabled");
+			} else {
+				managersEmailTemplateSource = PhasesHelper.getPropertyValue(namespace,
+						"AssigmentDocumentEmail.EmailTemplateSource", true);
+				managersEmailTemplateName = PhasesHelper.getPropertyValue(namespace,
+						"AssigmentDocumentEmail.EmailTemplateName", true);
+				managersEmailFromAddress = PhasesHelper.getPropertyValue(namespace,
+						"AssigmentDocumentEmail.EmailFromAddress", true);
+			}
+		} catch (com.cronos.onlinereview.phases.ConfigurationException e) {
+			ByteArrayOutputStream s = new ByteArrayOutputStream();
+			e.printStackTrace(new PrintStream(s));
+			log.log(Level.ERROR, "configuration problem: " + e.getMessage() + 
+					"\nstacktrace: " + s.toString());
+		}
+	}
+	
 	private void createManagerHelper() {
 		try {
 			managerHelper = new ManagerHelper();
@@ -144,9 +180,13 @@ public class OnlineReviewProjectPilot extends DefaultProjectPilot {
 			getLogger().log(Level.DEBUG, "before super.advancePhases");
 			result = super.advancePhases(projectId, operator);
 			getLogger().log(Level.DEBUG, "after super.advancePhases");
-			Project project = managerHelper.getProjectManager().getProject(projectId);
-			log.log(Level.DEBUG, "check AD for projectId: " + projectId);
-			checkAssignmentDocumentStatusChange(project, operator);
+			if (isCheckAssignmentDocumentsStatus()) {
+				Project project = managerHelper.getProjectManager().getProject(projectId);
+				log.log(Level.DEBUG, "check AD for projectId: " + projectId);
+				checkAssignmentDocumentStatusChange(project, operator);
+			} else if (log.isEnabled(Level.DEBUG)) {
+				log.log(Level.DEBUG, "skiping AD status check: " + projectId);
+			}
 		} catch (Throwable e) {
 			ByteArrayOutputStream s = new ByteArrayOutputStream();
 			e.printStackTrace(new PrintStream(s));
@@ -230,13 +270,7 @@ public class OnlineReviewProjectPilot extends DefaultProjectPilot {
 	}
 
 	private Template getEmailTemplate() throws Exception {
-
-		String templateSource = PhasesHelper.getPropertyValue(DEFAULT_NAMESPACE,
-				"AssigmentDocumentEmail.EmailTemplateSource", true);
-		String templateName = PhasesHelper.getPropertyValue(DEFAULT_NAMESPACE,
-				"AssigmentDocumentEmail.EmailTemplateName", true);
-
-		return DocumentGenerator.getInstance().getTemplate(templateSource, templateName);
+		return DocumentGenerator.getInstance().getTemplate(getManagersEmailTemplateSource(), getManagersEmailTemplateName());
 	}
 
 	private void informAssignmentDocumentStatusChange(Project project, AssignmentDocument ad)
@@ -249,8 +283,6 @@ public class OnlineReviewProjectPilot extends DefaultProjectPilot {
 
 			DocumentGenerator docGenerator = DocumentGenerator.getInstance();
 			Template template = getEmailTemplate();
-			String fromAddress = PhasesHelper.getPropertyValue(DEFAULT_NAMESPACE,
-					"AssigmentDocumentEmail.EmailFromAddress", true);
 			ExternalUser[] users = managerHelper.getUserRetrieval().retrieveUsers(usersId);
 			for (int i = 0; i < users.length; i++) {
 				ExternalUser user = users[i];
@@ -263,7 +295,7 @@ public class OnlineReviewProjectPilot extends DefaultProjectPilot {
 				TCSEmailMessage message = new TCSEmailMessage();
 				message.setSubject("[Assignment Document] - " + project.getProperty(PROJECT_NAME));
 				message.setBody(emailContent);
-				message.setFromAddress(fromAddress);
+				message.setFromAddress(getManagersEmailFromAddress());
 				message.setToAddress(user.getEmail(), TCSEmailMessage.TO);
 				EmailEngine.send(message);
 			}
@@ -315,6 +347,22 @@ public class OnlineReviewProjectPilot extends DefaultProjectPilot {
 		}
 
 		return root;
+	}
+
+	public String getManagersEmailTemplateName() {
+		return managersEmailTemplateName;
+	}
+
+	public String getManagersEmailTemplateSource() {
+		return managersEmailTemplateSource;
+	}
+
+	public String getManagersEmailFromAddress() {
+		return managersEmailFromAddress;
+	}
+
+	public boolean isCheckAssignmentDocumentsStatus() {
+		return checkAssignmentDocumentsStatus;
 	}
 
 }

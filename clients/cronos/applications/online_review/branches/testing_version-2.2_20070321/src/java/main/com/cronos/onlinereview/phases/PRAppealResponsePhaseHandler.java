@@ -58,6 +58,9 @@ public class PRAppealResponsePhaseHandler extends AppealsResponsePhaseHandler {
 	/** helper class for obtaining several managers */
 	private ManagerHelper managerHelper;
 
+	/** switch that indicates if OR have to create Assignment Documents in PACTs*/
+	private boolean createAssignmentDocuments = false;
+	
 	/**
      * Create a new instance of AppealsResponsePhaseHandler using the default namespace for loading configuration settings.
      *
@@ -80,13 +83,18 @@ public class PRAppealResponsePhaseHandler extends AppealsResponsePhaseHandler {
 		obtainWinnnersEmailConfigProperties(namespace);
 		managerHelper = new ManagerHelper();
 	}
-
+	
     private void obtainWinnnersEmailConfigProperties(String namespace) throws ConfigurationException {
-		this.winnersEmailTemplateSource = PhasesHelper.getPropertyValue(namespace, "WinnersEmail.EmailTemplateSource", true);
-        this.winnersEmailTemplateName = PhasesHelper.getPropertyValue(namespace, "WinnersEmail.EmailTemplateName",  true);
-        this.winnersEmailSubject = PhasesHelper.getPropertyValue(namespace, "WinnersEmail.EmailSubject", true);
-        this.winnersEmailAssignmentDocumentLink = PhasesHelper.getPropertyValue(namespace, "WinnersEmail.AssignmentDocumentLink", true);
-        this.winnersEmailFromAddress = PhasesHelper.getPropertyValue(namespace, "WinnersEmail.EmailFromAddress", true);		
+    	this.createAssignmentDocuments = "true".equals(PhasesHelper.getPropertyValue(namespace, "CheckAssignmentDocumentsStatus", "false").trim());
+    	if (createAssignmentDocuments) {
+    		this.winnersEmailTemplateSource = PhasesHelper.getPropertyValue(namespace, "WinnersEmail.EmailTemplateSource", true);
+    		this.winnersEmailTemplateName = PhasesHelper.getPropertyValue(namespace, "WinnersEmail.EmailTemplateName",  true);
+    		this.winnersEmailSubject = PhasesHelper.getPropertyValue(namespace, "WinnersEmail.EmailSubject", true);
+    		this.winnersEmailAssignmentDocumentLink = PhasesHelper.getPropertyValue(namespace, "WinnersEmail.AssignmentDocumentLink", true);
+    		this.winnersEmailFromAddress = PhasesHelper.getPropertyValue(namespace, "WinnersEmail.EmailFromAddress", true);	
+    	} else {
+    		log.log(Level.INFO, "Create Assignment Documents is disabled"); 
+    	}
 	}
 
 	/**
@@ -108,7 +116,7 @@ public class PRAppealResponsePhaseHandler extends AppealsResponsePhaseHandler {
     	Connection conn = this.createConnection();
     	try {
     		processPR(projectId, conn, toStart);
-    		if (!toStart) {
+    		if (!toStart && isCreateAssignmentDocuments()) {
     			createAssignmentDocuments(projectId);
     		}
     	} catch (Throwable e) {
@@ -236,4 +244,8 @@ public class PRAppealResponsePhaseHandler extends AppealsResponsePhaseHandler {
     		throw new PhaseHandlingException("Failed to push data to project_result", e);
     	}
     }
+
+	public boolean isCreateAssignmentDocuments() {
+		return createAssignmentDocuments;
+	}
 }
