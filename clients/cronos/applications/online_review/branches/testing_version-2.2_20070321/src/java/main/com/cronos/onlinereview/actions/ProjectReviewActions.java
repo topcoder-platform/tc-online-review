@@ -3317,7 +3317,7 @@ public class ProjectReviewActions extends DispatchAction {
         }
 
         Filter filterSubmissions = new InFilter("submission", submissionIds);
-        filter = new AndFilter(Arrays.asList(new Filter[] {filterReviewers, filterSubmission, filterCommitted}));
+        filter = new AndFilter(Arrays.asList(new Filter[] {filterReviewers, filterSubmissions, filterCommitted}));
         reviews = revMgr.searchReviews(filter, true);
         
         // Retrieve minScore
