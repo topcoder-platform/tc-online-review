@@ -85,7 +85,7 @@ public class PRAppealResponsePhaseHandler extends AppealsResponsePhaseHandler {
 	}
 	
     private void obtainWinnnersEmailConfigProperties(String namespace) throws ConfigurationException {
-    	this.createAssignmentDocuments = "true".equals(PhasesHelper.getPropertyValue(namespace, "CheckAssignmentDocumentsStatus", "false").trim());
+    	this.createAssignmentDocuments = "true".equals(PhasesHelper.getPropertyValue(namespace, "CreateAssignmentDocuments", "false").trim());
     	if (createAssignmentDocuments) {
     		this.winnersEmailTemplateSource = PhasesHelper.getPropertyValue(namespace, "WinnersEmail.EmailTemplateSource", true);
     		this.winnersEmailTemplateName = PhasesHelper.getPropertyValue(namespace, "WinnersEmail.EmailTemplateName",  true);
