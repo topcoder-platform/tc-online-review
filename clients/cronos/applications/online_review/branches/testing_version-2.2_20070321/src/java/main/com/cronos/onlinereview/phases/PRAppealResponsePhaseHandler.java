@@ -93,7 +93,7 @@ public class PRAppealResponsePhaseHandler extends AppealsResponsePhaseHandler {
     		this.winnersEmailAssignmentDocumentLink = PhasesHelper.getPropertyValue(namespace, "WinnersEmail.AssignmentDocumentLink", true);
     		this.winnersEmailFromAddress = PhasesHelper.getPropertyValue(namespace, "WinnersEmail.EmailFromAddress", true);	
     	} else {
-    		log.log(Level.INFO, "Create Assignment Documents is disabled"); 
+    		log.log(Level.INFO, "Creation of Assignment Documents is disabled"); 
     	}
 	}
 
