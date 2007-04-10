@@ -1,8 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ page language="java" session="true" isErrorPage="true" %>
 <%@ page import="java.util.Date"%>
-<%@ page import="java.io.PrintWriter" %>
-<%@ page import="java.io.StringWriter" %>
 <%@ taglib uri="/tags/struts-html" prefix="html" %>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html:html xhtml="true">

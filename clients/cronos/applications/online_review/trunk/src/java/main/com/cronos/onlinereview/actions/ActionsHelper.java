@@ -44,18 +44,18 @@ import com.cronos.onlinereview.deliverables.IndividualReviewDeliverableChecker;
 import com.cronos.onlinereview.deliverables.SubmissionDeliverableChecker;
 import com.cronos.onlinereview.deliverables.SubmitterCommentDeliverableChecker;
 import com.cronos.onlinereview.deliverables.TestCasesDeliverableChecker;
+import com.cronos.onlinereview.external.ExternalUser;
 import com.cronos.onlinereview.external.UserRetrieval;
 import com.cronos.onlinereview.external.impl.DBUserRetrieval;
 import com.cronos.onlinereview.phases.AppealsPhaseHandler;
 import com.cronos.onlinereview.phases.ApprovalPhaseHandler;
 import com.cronos.onlinereview.phases.AutoPaymentUtil;
-import com.cronos.onlinereview.phases.FinalFixPhaseHandler;
-import com.cronos.onlinereview.phases.FinalReviewPhaseHandler;
 import com.cronos.onlinereview.phases.PRAggregationPhaseHandler;
 import com.cronos.onlinereview.phases.PRAggregationReviewPhaseHandler;
 import com.cronos.onlinereview.phases.PRAppealResponsePhaseHandler;
 import com.cronos.onlinereview.phases.PRFinalFixPhaseHandler;
 import com.cronos.onlinereview.phases.PRFinalReviewPhaseHandler;
+import com.cronos.onlinereview.phases.PRHelper;
 import com.cronos.onlinereview.phases.PRRegistrationPhaseHandler;
 import com.cronos.onlinereview.phases.PRReviewPhaseHandler;
 import com.cronos.onlinereview.phases.PRScreeningPhaseHandler;
@@ -81,12 +81,14 @@ import com.topcoder.management.deliverable.persistence.DeliverableCheckingExcept
 import com.topcoder.management.deliverable.persistence.DeliverablePersistence;
 import com.topcoder.management.deliverable.persistence.DeliverablePersistenceException;
 import com.topcoder.management.deliverable.persistence.UploadPersistence;
+import com.topcoder.management.deliverable.persistence.UploadPersistenceException;
 import com.topcoder.management.deliverable.persistence.sql.SqlDeliverablePersistence;
 import com.topcoder.management.deliverable.persistence.sql.SqlUploadPersistence;
 import com.topcoder.management.deliverable.search.DeliverableFilterBuilder;
 import com.topcoder.management.deliverable.search.SubmissionFilterBuilder;
 import com.topcoder.management.phase.DefaultPhaseManager;
 import com.topcoder.management.phase.PhaseHandler;
+import com.topcoder.management.phase.PhaseHandlingException;
 import com.topcoder.management.phase.PhaseManagementException;
 import com.topcoder.management.phase.PhaseManager;
 import com.topcoder.management.phase.PhaseOperationEnum;
@@ -110,6 +112,7 @@ import com.topcoder.management.review.DefaultReviewManager;
 import com.topcoder.management.review.ReviewManager;
 import com.topcoder.management.review.data.Comment;
 import com.topcoder.management.review.data.CommentType;
+import com.topcoder.management.review.data.Review;
 import com.topcoder.management.review.scoreaggregator.ReviewScoreAggregator;
 import com.topcoder.management.review.scoreaggregator.ReviewScoreAggregatorConfigException;
 import com.topcoder.management.scorecard.PersistenceException;
@@ -154,8 +157,7 @@ import com.topcoder.util.log.Level;
  * @version 1.0
  */
 public class ActionsHelper {
-	private static final com.topcoder.util.log.Log log = com.topcoder.util.log.LogFactory.getLog(ActionsHelper.class
-			.getName());
+	private static final com.topcoder.util.log.Log log = com.topcoder.util.log.LogFactory.getLog(ActionsHelper.class.getName());
 	
     /**
      * This member variable is a string constant that defines the name of the configurtaion
@@ -1203,11 +1205,26 @@ public class ActionsHelper {
         ResourceManager resMgr = ActionsHelper.createResourceManager(request);
         // Get submitter's resource
         Resource submitter = resMgr.getResource(upload.getOwner());
+        populateEmailProperty(request, submitter);
 
         // Place submitter's user ID into the request
         request.setAttribute("submitterId", submitter.getProperty("External Reference ID"));
         // Place submitter's resource into the request
         request.setAttribute("submitterResource", submitter);
+    }
+
+    /**
+     * Populate resource email resource info to resource.
+     *
+     * @param request the request to retrieve manager instance
+     * @param resource resource instance
+     * @throws BaseException if error occurs
+     */
+    static void populateEmailProperty(HttpServletRequest request, Resource resource) throws BaseException {
+        UserRetrieval userRetrieval = ActionsHelper.createUserRetrieval(request);
+        String handle = (String) resource.getProperty("Handle");
+        ExternalUser user = userRetrieval.retrieveUser(handle);
+    	resource.setProperty("Email", user.getEmail());
     }
 
     /**
@@ -2813,7 +2830,8 @@ public class ActionsHelper {
     static void setProjectCompletionDate(Project project, ProjectStatus newProjectStatus, Format format)
     throws BaseException {
     	String name = newProjectStatus.getName();
-    	if ("Completed".equals(name) || "Cancelled - Failed Review".equals(name) || "Deleted".equals(name)) {
+    	if ("Completed".equals(name) || "Cancelled - Failed Review".equals(name) || "Deleted".equals(name)
+    			 || "Cancelled - Failed Screening".equals(name)  || "Cancelled - Zero Submissions".equals(name)) {
             if (format == null) {
                 format = new SimpleDateFormat(ConfigHelper.getDateFormat());
             }
@@ -2972,8 +2990,8 @@ public class ActionsHelper {
     	PreparedStatement reliabilityStmt = null;
     	PreparedStatement componentInquiryStmt = null;
     	long categoryId = project.getProjectCategory().getId();
-    	if (categoryId != 1 && categoryId != 2) {
-    		// design/development project need project_result
+    	if (categoryId != 1 && categoryId != 2 && categoryId != 14) {
+    		// design/development/assembly project need project_result
     		return;
     	}
 
@@ -3038,9 +3056,10 @@ public class ActionsHelper {
 					close(rs);
 	            }
 
-	            // Retrieve Reliability
+	            
 	            double oldReliability = 0;
 	            if (!existPR) {
+	            	//Retrieve Reliability
 		            reliabilityStmt.clearParameters();
 		            reliabilityStmt.setString(1, userId);
 		            reliabilityStmt.setLong(2, projectId);
@@ -3050,11 +3069,9 @@ public class ActionsHelper {
 		                oldReliability = rs.getDouble(1);
 		            }
 					close(rs);
-	            }
-
-	            // add project_result
-	            if (!existPR) {
-			        ps.setLong(1, projectId);
+					
+					//add project_result
+					ps.setLong(1, projectId);
 			        ps.setString(2, userId);
 			        ps.setLong(3, 0);
 			        ps.setLong(4, 0);
@@ -3074,12 +3091,19 @@ public class ActionsHelper {
 	            }
 
 	            // add component_inquiry
-	            if (!existCI && phaseId < 114 && componentId > 0) {
+	            // only design, development and assembly contests needs a component_inquiry entry
+	            if (!existCI && componentId > 0) {
+	            	log.log(Level.INFO, "adding component_inquiry for projectId: " + projectId + " userId: " + userId);
 	            	componentInquiryStmt.setLong(1, componentInquiryId++);
 	            	componentInquiryStmt.setLong(2, componentId);
 	            	componentInquiryStmt.setString(3, userId);
 	            	componentInquiryStmt.setLong(4, projectId);
-	            	componentInquiryStmt.setLong(5, phaseId);
+	            	// assembly contest must have phaseId set to null
+	            	if (categoryId == 14) {
+	            		componentInquiryStmt.setNull(5, Types.INTEGER);
+	            	} else {
+	            		componentInquiryStmt.setLong(5, phaseId);
+	            	}
 	            	componentInquiryStmt.setString(6, userId);
 	            	componentInquiryStmt.setDouble(7, oldRating);
 	            	componentInquiryStmt.setLong(8, version);
@@ -3125,6 +3149,80 @@ public class ActionsHelper {
 		} catch (SQLException e) {
 			throw new BaseException("Failed to recaculateScreeningReviewerPayments for project " + projectId, e);
 		} finally {
+			close(conn);
+		}
+    }    
+
+    /**
+     * Recaculate Screening reviewers payment.
+     *
+     * @param projectId project id
+     *
+     * @throws Exception if error occurs
+     */
+    public static String getRootCategoryIdByComponentId(Object componentId) throws BaseException {
+    	Connection conn = null;
+    	PreparedStatement ps = null;
+    	ResultSet rs = null;
+		try {
+	        DBConnectionFactory dbconn = new DBConnectionFactoryImpl(DB_CONNECTION_NAMESPACE);
+	        conn = dbconn.createConnection();
+	        String sqlStr = "select root_category_id " +
+	        				"	from comp_catalog cc," +
+	        				"		 categories pcat " +
+	        				"	where cc.component_id = ? " +
+	        				"	and cc.status_id = 102 " +
+	        				"	and pcat.category_id = cc.root_category_id";
+	        ps = conn.prepareStatement(sqlStr);
+	        ps.setString(1, componentId.toString());
+	        rs = ps.executeQuery();
+	        if (rs.next()) {
+	        	return rs.getString("root_category_id");
+	        }
+		} catch (Exception e) {
+			// Ignore if no corresponding root_category_id exist
+		} finally {
+			close(rs);
+			close(ps);
+			close(conn);
+		}
+    	return "9926572";
+    }
+
+	/**
+     * Retrieve all default scorecards.
+     *
+     * @throws Exception if error occurs
+     */
+    public static List getDefautlScorecards() throws BaseException {
+    	Connection conn = null;
+    	Statement stmt = null;
+    	ResultSet rs = null;
+		try {
+	        DBConnectionFactory dbconn = new DBConnectionFactoryImpl(DB_CONNECTION_NAMESPACE);
+	        conn = dbconn.createConnection();
+	        String sqlString = "select ds.*, st.name from default_scorecard ds, scorecard_type_lu st " +
+	        		"where ds.scorecard_type_id = st.scorecard_type_id";
+	        
+	        stmt = conn.createStatement();
+	        rs = stmt.executeQuery(sqlString);
+	        List list = new ArrayList();
+	        while (rs.next()) {
+	        	DefaultScorecard scorecard = new DefaultScorecard();
+	        	scorecard.setCategory(rs.getInt("project_category_id"));
+	        	scorecard.setScorecardType(rs.getInt("scorecard_type_id"));
+	        	scorecard.setScorecardId(rs.getLong("scorecard_id"));
+	        	scorecard.setName(rs.getString("name"));
+	        	list.add(scorecard);
+	        }
+	        return list;
+		} catch (DBConnectionException e) {
+			throw new BaseException("Failed to return DBConnection", e);
+		} catch (SQLException e) {
+			throw new BaseException("Failed to retrieve default scorecard ", e);
+		} finally {
+			close(rs);
+			close(stmt);
 			close(conn);
 		}
     }
@@ -3208,6 +3306,114 @@ public class ActionsHelper {
 			close(ps);
 			close(conn);
 		}
+    }
+
+    /**
+     * Reset ProjectResult With ChangedScores.
+     *
+     * @param projectId project id
+     * @param userId userId
+     *
+     * @throws Exception if error occurs
+     */
+    public static void resetProjectResultWithChangedScores(long projectId, Object userId) throws BaseException {
+    	Connection conn = null;
+		try {
+	        DBConnectionFactory dbconn = new DBConnectionFactoryImpl(DB_CONNECTION_NAMESPACE);
+	        conn = dbconn.createConnection();
+	        PRHelper.resetProjectResultWithChangedScores(projectId, userId, conn);
+		} catch (DBConnectionException e) {
+			throw new BaseException("Failed to return DBConnection", e);
+		} catch (SQLException e) {
+			throw new BaseException("Failed to resetProjectResultWithChangedScores for project " + projectId, e);
+		} finally {
+			close(conn);
+		}
+    }
+
+    /**
+     * Gets the scorecard minimum score from the given review.
+     *
+     * @param scorecardManager ScorecardManager instance.
+     * @param review Review instance.
+     *
+     * @return the scorecard minimum score from the given review.
+     *
+     * @throws Exception if error occurs
+     */
+    static float getScorecardMinimumScore(ScorecardManager scorecardManager, Review review)
+        throws BaseException {
+        long scorecardId = review.getScorecard();
+
+        try {
+            Scorecard[] scoreCards = scorecardManager.getScorecards(new long[]{scorecardId}, false);
+            if (scoreCards.length == 0) {
+                throw new BaseException("No scorecards found for scorecard id: " + scorecardId);
+            }
+            Scorecard scoreCard = scoreCards[0];
+
+            return scoreCard.getMinScore();
+        } catch (PersistenceException e) {
+            throw new BaseException("Problem with scorecard retrieval", e);
+        }
+    }
+
+    /**
+     * utility method to get a SubmissionStatus object for the given status name.
+     *
+     * @param request request instance to use for searching.
+     * @param statusName submission status name.
+     *
+     * @return a SubmissionStatus object for the given status name.
+     *
+     * @throws BaseException if submission status could not be found.
+     */
+    static SubmissionStatus getSubmissionStatus(HttpServletRequest request, String statusName)
+        throws BaseException {
+    	UploadManager upMgr = ActionsHelper.createUploadManager(request);
+        SubmissionStatus[] statuses = null;
+        try {
+            statuses = upMgr.getAllSubmissionStatuses();
+        } catch (UploadPersistenceException e) {
+            throw new PhaseHandlingException("Error finding submission status with name: " + statusName, e);
+        }
+        for (int i = 0; i < statuses.length; i++) {
+            if (statusName.equals(statuses[i].getName())) {
+                return statuses[i];
+            }
+        }
+        throw new BaseException("Could not find submission status with name: " + statusName);
+    }
+
+    /**
+     * retrieves all Reviewed submissions for the given project id.
+     *
+     * @param request request instance to use for searching.
+     * @param projectId project id.
+     *
+     * @return all active submissions for the given project id.
+     *
+     * @throws Exception if error occurs
+     */
+    static Submission[] searchReviewedSubmissions(HttpServletRequest request, Project project)
+        throws BaseException {
+    	UploadManager upMgr = ActionsHelper.createUploadManager(request);
+    	
+        //first get submission status id for "Active" status
+        Filter filterSubmissionStatuss = new InFilter("submission_status_id", 
+        		Arrays.asList(new Long[] {new Long(1), new Long(3), new Long(4)}));
+
+        //then search for submissions
+        Filter projectIdFilter = SubmissionFilterBuilder.createProjectIdFilter(project.getId());
+        Filter fullFilter = new AndFilter(projectIdFilter, filterSubmissionStatuss);
+
+        try {
+            return upMgr.searchSubmissions(fullFilter);
+        } catch (UploadPersistenceException e) {
+            throw new PhaseHandlingException("There was a submission retrieval error", e);
+        } catch (SearchBuilderException e) {
+            throw new PhaseHandlingException("There was a search builder error", e);
+        }
     }
 
     /**

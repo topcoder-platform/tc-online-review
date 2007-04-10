@@ -3,8 +3,10 @@
  */
 package com.cronos.onlinereview.actions;
 
+import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,11 +23,14 @@ import org.apache.struts.util.MessageResources;
 import org.apache.struts.validator.LazyValidatorForm;
 
 import com.topcoder.management.deliverable.Submission;
+import com.topcoder.management.deliverable.SubmissionStatus;
 import com.topcoder.management.deliverable.Upload;
 import com.topcoder.management.deliverable.UploadManager;
 import com.topcoder.management.deliverable.UploadStatus;
 import com.topcoder.management.deliverable.UploadType;
+import com.topcoder.management.phase.PhaseHandlingException;
 import com.topcoder.management.project.Project;
+import com.topcoder.management.project.ProjectManager;
 import com.topcoder.management.resource.Resource;
 import com.topcoder.management.resource.ResourceManager;
 import com.topcoder.management.resource.ResourceRole;
@@ -38,6 +43,7 @@ import com.topcoder.management.review.data.Item;
 import com.topcoder.management.review.data.Review;
 import com.topcoder.management.review.data.ReviewEditor;
 import com.topcoder.management.review.scoreaggregator.AggregatedSubmission;
+import com.topcoder.management.review.scoreaggregator.RankedSubmission;
 import com.topcoder.management.review.scoreaggregator.ReviewScoreAggregator;
 import com.topcoder.management.review.scorecalculator.CalculationManager;
 import com.topcoder.management.review.scorecalculator.ScoreCalculator;
@@ -1986,6 +1992,9 @@ public class ProjectReviewActions extends DispatchAction {
         ResourceManager resMgr = ActionsHelper.createResourceManager(request);
         // Retrieve reviewers that did the reviews
         Resource[] reviewers = resMgr.searchResources(filterPhase);
+        for (int i = 0; i < reviewers.length; i++) {
+            ActionsHelper.populateEmailProperty(request, reviewers[i]);
+        }
 
         if (reviewers.length == 0) {
             return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
@@ -2336,6 +2345,9 @@ public class ProjectReviewActions extends DispatchAction {
         // Retrieve all resources (reviewers) for that phase
         Resource[] reviewResources = ActionsHelper.getAllResourcesForPhase(
                 ActionsHelper.createResourceManager(request), reviewPhase);
+        for (int i = 0; i < reviewResources.length; i++) {
+            ActionsHelper.populateEmailProperty(request, reviewResources[i]);
+        }
         // Place information about reviews into the request
         request.setAttribute("reviewResources", reviewResources);
 
@@ -2421,6 +2433,7 @@ public class ProjectReviewActions extends DispatchAction {
         ResourceManager resMgr = ActionsHelper.createResourceManager(request);
         // Get review author's resource
         Resource author = resMgr.getResource(review.getAuthor());
+        ActionsHelper.populateEmailProperty(request, author);
 
         // Place submitter's user ID into the request
         request.setAttribute("authorId", author.getProperty("External Reference ID"));
@@ -2819,6 +2832,9 @@ public class ProjectReviewActions extends DispatchAction {
         if (myResource == null) {
             myResource = ActionsHelper.getMyResourceForPhase(request, null);
         }
+        if (myResource == null) {
+        	myResource = (Resource) request.getAttribute("global_resource");
+        }
 
         // Retrieve the review to edit (if any)
         Review review = verification.getReview();
@@ -2895,7 +2911,7 @@ public class ProjectReviewActions extends DispatchAction {
         if (review != null && review.isCommitted()) {
             // If user has a Manager role, put special flag to the request,
             // indicating that we need "Manager Edit"
-            if(AuthorizationHelper.hasUserRole(request, Constants.MANAGER_ROLE_NAME)) {
+            if(AuthorizationHelper.hasUserRole(request, Constants.MANAGER_ROLE_NAMES)) {
                 request.setAttribute("managerEdit", Boolean.TRUE);
                 managerEdit = true;
             } else {
@@ -3092,6 +3108,7 @@ public class ProjectReviewActions extends DispatchAction {
         // For Manager Edits this variable indicates whether recomputation of
         // final aggregated score for the submitter may be required
         boolean possibleFinalScoreUpdate = false;
+        boolean possibleSubmissionStatusUpdate = false;
 
         // If the user has requested to complete the review
         if (validationSucceeded && (commitRequested || managerEdit)) {
@@ -3103,6 +3120,10 @@ public class ProjectReviewActions extends DispatchAction {
             if ("Review".equals(reviewType) && managerEdit &&
                     (review.getScore() == null || review.getScore().floatValue() != newScore)) {
                 possibleFinalScoreUpdate = true;
+            }
+            if ("Screening".equals(reviewType) && managerEdit &&
+                    (review.getScore() == null || review.getScore().floatValue() != newScore)) {
+            	possibleSubmissionStatusUpdate = true;
             }
             // Update scorecard's score
             review.setScore(new Float(newScore));
@@ -3137,6 +3158,11 @@ public class ProjectReviewActions extends DispatchAction {
         // This operation will possibly update final aggregated score for the submitter
         if (possibleFinalScoreUpdate) {
             updateFinalAggregatedScore(request, project, phase, verification.getSubmission());
+        }
+
+        // This operation will possibly update submission status for the submitter
+        if (possibleSubmissionStatusUpdate) {
+        	updateSubmissionStatusScreeningScoreChanged(request, project, phases, review, verification.getSubmission());
         }
 
         if (validationSucceeded && commitRequested) {
@@ -3190,7 +3216,7 @@ public class ProjectReviewActions extends DispatchAction {
      *            a project the submission was originally made for.
      * @param reviewPhase
      *            phase of type &quot;Review&quot; used internally to retrieve reviewers' resources.
-     * @param submission
+     * @param sub
      *            a submission in question, i.e. the one that needs its final score updated.
      * @throws IllegalArgumentException
      *             if any of the parameters are <code>null</code>.
@@ -3198,18 +3224,18 @@ public class ProjectReviewActions extends DispatchAction {
      *             if any unexpected error occurs during final score update.
      */
     private static void updateFinalAggregatedScore(
-            HttpServletRequest request, Project project, Phase reviewPhase, Submission submission)
+            HttpServletRequest request, Project project, Phase reviewPhase, Submission sub)
         throws BaseException {
         // Validate parameters
         ActionsHelper.validateParameterNotNull(request, "request");
         ActionsHelper.validateParameterNotNull(project, "project");
         ActionsHelper.validateParameterNotNull(reviewPhase, "reviewPhase");
-        ActionsHelper.validateParameterNotNull(submission, "submission");
+        ActionsHelper.validateParameterNotNull(sub, "submission");
 
         // Obtain an instance of Resource Manager
         ResourceManager resMgr = ActionsHelper.createResourceManager(request);
         // Get a resource identificating the submitter for this review
-        Resource submitter = resMgr.getResource(submission.getUpload().getOwner());
+        Resource submitter = resMgr.getResource(sub.getUpload().getOwner());
 
         // Get final aggregated score for this submitter, if any
         String finalScore = (String) submitter.getProperty("Final Score");
@@ -3238,7 +3264,7 @@ public class ProjectReviewActions extends DispatchAction {
 
         // Prepare filters
         Filter filterReviewers = new InFilter("reviewer", reviewerIds);
-        Filter filterSubmission = new EqualToFilter("submission", new Long(submission.getId()));
+        Filter filterSubmission = new EqualToFilter("submission", new Long(sub.getId()));
         Filter filterCommitted = new EqualToFilter("committed", new Integer(1));
 
         // Prepare final combined filter
@@ -3263,11 +3289,297 @@ public class ProjectReviewActions extends DispatchAction {
         ReviewScoreAggregator aggregator = ActionsHelper.createScoreAggregator(request);
         // Aggregate scores for the current submission
         AggregatedSubmission[] aggrSubm = aggregator.aggregateScores(new float[][] {scores});
+        float newScore = aggrSubm[0].getAggregatedScore();
 
+        Object temp = submitter.getProperty("Final Score");
+        float oldScore = temp == null ? -1 : Float.parseFloat(temp.toString());
+       
+        if (newScore == oldScore) {
+        	// score is not changed
+        	return;
+        }
+
+        temp = submitter.getProperty("Placement");
+        long oldPlacement = temp == null ? -1 : Long.parseLong(temp.toString());
+        Object userId = submitter.getProperty("External Reference ID");
+        
         // Update this submitter's final score with aggregated one
-        submitter.setProperty("Final Score", String.valueOf(aggrSubm[0].getAggregatedScore()));
+        submitter.setProperty("Final Score", String.valueOf(newScore));
         // Store updated information in the database
         resMgr.updateResource(submitter, String.valueOf(AuthorizationHelper.getLoggedInUserId(request)));
+
+        // Retrieve all reviewed submissions to reset placement/submission status if need
+        Submission[] submissions = ActionsHelper.searchReviewedSubmissions(request, project);
+        List submissionIds = new ArrayList();
+
+        for (int i = 0; i < submissions.length; ++i) {
+        	submissionIds.add(new Long(submissions[i].getId()));
+        }
+
+        Filter filterSubmissions = new InFilter("submission", submissionIds);
+        filter = new AndFilter(Arrays.asList(new Filter[] {filterReviewers, filterSubmissions, filterCommitted}));
+        reviews = revMgr.searchReviews(filter, true);
+        
+        // Retrieve minScore
+        ScorecardManager scMgr = ActionsHelper.createScorecardManager(request);
+        float minScore =  ActionsHelper.getScorecardMinimumScore(scMgr, reviews[0]);
+
+        //create array to hold scores from all reviewers for all submissions
+        com.topcoder.management.review.scoreaggregator.Submission[] submissionScores =
+            new com.topcoder.management.review.scoreaggregator.Submission[submissions.length];
+
+        // for each submission, populate scores array to use with review score aggregator.
+        for (int iSub = 0; iSub < submissions.length; iSub++) {
+            long subId = submissions[iSub].getId();
+            List scoresList = new ArrayList();
+
+            //Match the submission with its reviews
+            for (int j = 0; j < reviews.length; j++) {
+                if (subId == reviews[j].getSubmission()) {
+                    //get review score
+                    scoresList.add(reviews[j].getScore());
+                }
+            }
+
+            //create float array
+            scores = new float[scoresList.size()];
+
+            for (int iScore = 0; iScore < scores.length; iScore++) {
+                scores[iScore] = ((Float) scoresList.get(iScore)).floatValue();
+            }
+
+            submissionScores[iSub] = new com.topcoder.management.review.scoreaggregator.Submission(subId, scores);
+        }
+
+        //this will hold as many elements as submissions
+        AggregatedSubmission[] aggregations = aggregator.aggregateScores(submissionScores);
+        RankedSubmission[] placements = aggregator.calcPlacements(aggregations);
+
+        // check if placement is changed
+        long newPlacement = -1;
+        for (int i = 0; i < placements.length; i++) {
+        	if (placements[i].getId() == sub.getId()) {
+        		newPlacement = placements[i].getRank();
+        	}
+        }
+
+        if (newPlacement != -1 && newPlacement == oldPlacement) {
+        	// placement is not changed
+
+            // Check if submission status is changed
+            if ((oldScore < minScore && newScore < minScore) ||
+            		(oldScore >= minScore && newScore >= minScore)) {
+            	// the submission status is not changed
+            	return;
+            }
+        }
+
+        //status objects
+        SubmissionStatus failedStatus = ActionsHelper.getSubmissionStatus(request,
+                "Failed Review");
+        SubmissionStatus noWinStatus = ActionsHelper.getSubmissionStatus(request,
+                "Completed Without Win");
+        SubmissionStatus activeStatus = ActionsHelper.getSubmissionStatus(request,
+        		"Active");
+
+        Resource winningSubmitter = null;
+        Resource runnerUpSubmitter = null;
+    	UploadManager upMgr = ActionsHelper.createUploadManager(request);
+
+        //again iterate over submissions to set the initial score and placement
+        for (int iSub = 0; iSub < placements.length; iSub++) {
+            RankedSubmission rankedSubmission = placements[iSub];
+            rankedSubmission = breakTies(rankedSubmission, submissions, placements);
+            Submission submission = getSubmissionById(submissions, rankedSubmission.getId());
+            float aggScore = rankedSubmission.getAggregatedScore();
+            int placement = rankedSubmission.getRank();
+
+            //update submitter's Placement
+            long submitterId = submission.getUpload().getOwner();
+            submitter = resMgr.getResource(submitterId);
+            submitter.setProperty("Placement", String.valueOf(placement));
+
+            SubmissionStatus newStatus = null; 
+            	
+            //if failed review, then update the status
+            if (aggScore < minScore) {
+            	newStatus = failedStatus;
+            } else {
+                //if not winner, update submission status
+                if (placement != 1) {
+                	newStatus = noWinStatus;
+                } else {
+                	newStatus = activeStatus;
+                }
+            }
+
+            // submission status is changed
+            if (!newStatus.equals(submission.getSubmissionStatus())) {
+                submission.setSubmissionStatus(newStatus);
+                upMgr.updateSubmission(submission, String.valueOf(AuthorizationHelper.getLoggedInUserId(request)));            	
+            }
+
+            //cache winning and runner up submitter.
+            if (placement == 1 && aggScore >= minScore) {
+                winningSubmitter = submitter;
+            } else if (placement == 2 && aggScore >= minScore) {
+                runnerUpSubmitter = submitter;
+            }
+
+            //persist the change
+            resMgr.updateResource(submitter, String.valueOf(AuthorizationHelper.getLoggedInUserId(request)));
+        } //end for
+
+        ProjectManager projectManager = ActionsHelper.createProjectManager(request);
+
+        // if there is a winner
+        if (winningSubmitter != null) {
+            //Set project properties to store the winner and the runner up
+            //Get the project instance
+            Object winnerExtId = winningSubmitter.getProperty("External Reference ID");
+            project.setProperty("Winner External Reference ID", winnerExtId);
+        } else {
+            project.setProperty("Winner External Reference ID", null);
+        }
+
+        //if there is a runner up
+        if (runnerUpSubmitter != null) {
+            Object runnerExtId = runnerUpSubmitter.getProperty("External Reference ID");
+            project.setProperty("Runner-up External Reference ID", runnerExtId);
+        }else {
+            project.setProperty("Runner-up External Reference ID", null);
+        }
+
+        //update the project
+        projectManager.updateProject(project, "Update the winner and runner up.",
+        		String.valueOf(AuthorizationHelper.getLoggedInUserId(request)));
+
+        ActionsHelper.resetProjectResultWithChangedScores(project.getId(), userId);
+    }
+
+    /**
+     * Return suitable submission for given submissionId.
+     * 
+     * @param submissions the submission array
+     * @param submissionId the submissionId
+     * @return submission
+     * @throws BaseException
+     */
+    private static Submission getSubmissionById(Submission[] submissions, long submissionId)
+        throws BaseException {
+        for (int i = 0; i < submissions.length; i++) {
+            if (submissions[i].getId() == submissionId) {
+                return submissions[i];
+            }
+        }
+        throw new PhaseHandlingException("submissions not found for submissionId: " + submissionId);
+    }
+
+    /**
+     * Break ties by submission timestamp
+     * @param submission the submission to calculate
+     * @param submissions all the submission records
+     * @param placements all the ranked submission records
+     * @return the submission with fixed placement
+     * @throws BaseException
+     */
+    private static RankedSubmission breakTies(RankedSubmission submission,
+            Submission[] submissions, RankedSubmission[] placements) throws BaseException {
+        int rank = submission.getRank();
+        Date timestamp = getSubmissionById(submissions, submission.getId())
+                .getUpload().getCreationTimestamp();
+        for (int i = 0; i < placements.length; ++i) {
+            if (placements[i].getRank() == submission.getRank()) {
+                Submission tie = getSubmissionById(submissions, placements[i].getId());
+                if (tie.getUpload().getCreationTimestamp().before(timestamp)) {
+                    ++rank;
+                }
+            }
+        }
+
+        return new RankedSubmission(submission, rank);
+    }
+
+    /**
+     * This static method submission status for the particular submitter. 
+     *
+     * @param request
+     *            the http request. Used internally by some helper functions.
+     * @param project
+     *            a project the submission was originally made for.
+     * @param phases
+     *            phases of project.
+     * @param submission
+     *            a submission in question, i.e. the one that needs its final score updated.
+     * @throws IllegalArgumentException
+     *             if any of the parameters are <code>null</code>.
+     * @throws BaseException
+     *             if any unexpected error occurs during final score update.
+     */
+    private static void updateSubmissionStatusScreeningScoreChanged(
+            HttpServletRequest request, Project project, Phase[] phases, Review review, Submission submission)
+        throws BaseException {
+        // Check if current open phase is Review
+        boolean isReviewPhase = false;
+        for (int i = 0; i < phases.length; i++) {
+        	if ("Review".equals(phases[i].getPhaseType().getName())) {
+        		isReviewPhase = "Open".equals(phases[i].getPhaseStatus().getName());
+        		break;
+        	}
+
+        	// If screening phase is open, then needn't change anything
+        	if ("Screening".equals(phases[i].getPhaseType().getName())) {
+        		if ("Open".equals(phases[i].getPhaseStatus().getName())) {
+        			return;
+        		}
+        	}
+        }
+
+        if (!isReviewPhase) {
+        	// Current we only process while review phase is open
+        	return;
+        }
+
+        UploadManager upMgr = ActionsHelper.createUploadManager(request);
+        ScorecardManager scorecardManager = ActionsHelper.createScorecardManager(request);
+
+        // Get minimum score
+        float minimumScore = 75;        
+        Scorecard[] scoreCards = scorecardManager.getScorecards(new long[]{review.getScorecard()}, false);
+        
+        if (scoreCards.length > 0) {
+        	minimumScore = scoreCards[0].getMinScore();
+        }
+
+        boolean passScreening = review.getScore().floatValue() >= minimumScore;
+
+        // Retrieve submission status
+        SubmissionStatus failedScreening = null;
+        SubmissionStatus active = null;
+        SubmissionStatus failedReview = null;
+        SubmissionStatus[] statuses = upMgr.getAllSubmissionStatuses();
+
+        for (int i = 0; i < statuses.length; i++) {
+        	if ("Failed Screening".equals(statuses[i].getName())) {
+        		failedScreening = statuses[i];
+        	} else if ("Failed Review".equals(statuses[i].getName())) {
+        		failedReview = statuses[i];
+        	} else if ("Active".equals(statuses[i].getName())) {
+        		active = statuses[i];
+        	}
+        }
+
+        if (!passScreening) {
+        	submission.setSubmissionStatus(failedScreening);
+        } else {
+        	// pass screening
+        	if (isReviewPhase) {
+        		submission.setSubmissionStatus(active);
+        	} else {
+        		submission.setSubmissionStatus(failedReview);
+        	}
+        }
+        upMgr.updateSubmission(submission, String.valueOf(AuthorizationHelper.getLoggedInUserId(request)));
     }
 
     /**
@@ -3498,7 +3810,7 @@ public class ProjectReviewActions extends DispatchAction {
          *  Verify that user has the permission to view the review
          */
         boolean isAllowed = false;
-        if (AuthorizationHelper.hasUserRole(request, Constants.MANAGER_ROLE_NAME) ||
+        if (AuthorizationHelper.hasUserRole(request, Constants.MANAGER_ROLE_NAMES) ||
                 AuthorizationHelper.hasUserRole(request, Constants.GLOBAL_MANAGER_ROLE_NAME) ||
                 AuthorizationHelper.hasUserRole(request, Constants.OBSERVER_ROLE_NAME)) {
             // User is manager or observer
@@ -3548,7 +3860,7 @@ public class ProjectReviewActions extends DispatchAction {
         } else {
             // If user has a Manager role, put special flag to the request,
             // indicating that we can edit the review
-            if (AuthorizationHelper.hasUserRole(request, Constants.MANAGER_ROLE_NAME)) {
+            if (AuthorizationHelper.hasUserRole(request, Constants.MANAGER_ROLE_NAMES)) {
                 request.setAttribute("canEditScorecard", Boolean.TRUE);
             }
         }

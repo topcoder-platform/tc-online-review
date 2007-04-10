@@ -6,11 +6,25 @@
 
     <display-name>Online Review</display-name>
 
-    <!-- The Usual Welcome File List -->
-    <welcome-file-list>
-        <welcome-file>index.html</welcome-file>
-        <welcome-file>index.jsp</welcome-file>
-    </welcome-file-list>
+  <filter>
+    <filter-name>set_character_encoding</filter-name>
+    <filter-class>com.cronos.onlinereview.actions.EncodeFilter</filter-class>
+	<init-param>	
+		<param-name>encoding</param-name>	
+		<param-value>UTF-8</param-value>	
+	</init-param>	
+	<init-param>	
+		<param-name>ignore</param-name>	
+		<param-value>true</param-value>	
+	</init-param>	
+  </filter>
+	
+	<!-- Filter Mapping -->
+	
+	<filter-mapping>	
+		<filter-name>set_character_encoding</filter-name>	
+		<url-pattern>*.do</url-pattern>
+	</filter-mapping>
 
     <!-- Standard Action Servlet Configuration -->
     <servlet>
@@ -46,25 +60,17 @@
       <session-timeout>120</session-timeout>
    </session-config>
 
-  <filter>
-    <filter-name>set_character_encoding</filter-name>
-    <filter-class>com.cronos.onlinereview.actions.EncodeFilter</filter-class>
-	<init-param>	
-		<param-name>encoding</param-name>	
-		<param-value>UTF-8</param-value>	
-	</init-param>	
-	<init-param>	
-		<param-name>ignore</param-name>	
-		<param-value>true</param-value>	
-	</init-param>	
-  </filter>
-	
-	<!-- Filter Mapping -->
-	
-	<filter-mapping>	
-		<filter-name>set_character_encoding</filter-name>	
-		<url-pattern>*.do</url-pattern>
-	</filter-mapping>
+    <!-- The Usual Welcome File List -->
+    <welcome-file-list>
+        <welcome-file>index.html</welcome-file>
+        <welcome-file>index.jsp</welcome-file>
+    </welcome-file-list>
+    
+    <!-- Error Page -->
+    <error-page>
+    	<exception-type>java.lang.Throwable</exception-type>
+    	<location>/jsp/errorPage.jsp</location>
+    </error-page>
 
     <!-- Struts Tag Library Descriptors -->
     <taglib>
@@ -100,10 +106,4 @@
         <home>com.topcoder.security.login.LoginRemoteHome</home>
         <remote>com.topcoder.security.login.LoginRemote</remote>
     </ejb-ref>
-    
-    <!-- Error Page -->
-    <error-page>
-    	<exception-type>java.lang.Throwable</exception-type>
-    	<location>/jsp/errorPage.jsp</location>
-    </error-page>
 </web-app>

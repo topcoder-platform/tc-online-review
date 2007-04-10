@@ -1,14 +1,5 @@
 package com.cronos.onlinereview.wrappers;
 
-import com.topcoder.db.connectionfactory.DBConnectionFactory;
-import com.topcoder.db.connectionfactory.DBConnectionFactoryImpl;
-import com.topcoder.management.deliverable.PersistenceUploadManager;
-import com.topcoder.management.deliverable.persistence.UploadPersistence;
-import com.topcoder.management.deliverable.persistence.sql.SqlUploadPersistence;
-import com.topcoder.search.builder.SearchBundle;
-import com.topcoder.search.builder.SearchBundleManager;
-import com.topcoder.util.idgenerator.IDGenerator;
-import com.topcoder.util.idgenerator.IDGeneratorFactory;
 
 /**
  * This class is a wrapper for PersistenceUploadManager class, which allows construction of it using OF.
