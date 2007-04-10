@@ -76,6 +76,11 @@
     <property name="authentication_factory.path" value="authentication_factory/${authentication_factory.version}" />
     <property name="authentication_factory.jar" value="${tcs_libdir}/${authentication_factory.path}/${authentication_factory.jar.name}" />
 
+	<property name="auto_pilot.version" value="1.0" />
+    <property name="auto_pilot.jar.name" value="auto_pilot.jar" />
+    <property name="auto_pilot.path" value="auto_pilot/${auto_pilot.version}" />
+    <property name="auto_pilot.jar" value="${tcs_libdir}/${auto_pilot.path}/${auto_pilot.jar.name}" />
+	
     <property name="auto_screening_management.version" value="1.0" />
     <property name="auto_screening_management.jar.name" value="auto_screening_management.jar" />
     <property name="auto_screening_management.path" value="auto_screening_management/${auto_screening_management.version}" />
@@ -316,6 +321,10 @@
 
     <property name="tcwebcommon.jar.name" value="tcwebcommon.jar" />
     <property name="tcwebcommon.jar" value="${tcs_libdir}/${tcwebcommon.jar.name}" />
+	
+	<property name="pactsServices.path" value="pacts_services" />
+	<property name="pactsServices.jar.name" value="PactsServices.jar" />
+	<property name="pactsServices.jar" value="${tcs_libdir}/${pactsServices.path}/${pactsServices.jar.name}" />
 
     <!-- 3rd Party Dependencies  -->
     <property name="ifx-jdbc.jar" value="${ext_libdir}/ifx-jdbc.jar" />
@@ -324,7 +333,7 @@
     <property name="servlet.jsp.jar" value="${cactus.home.tomcat5x}/common/lib/jsp-api.jar" />
     <property name="mail.jar" value="${cactus.home.tomcat5x}/common/lib/mail.jar" />
     <property name="struts.jar" value="${ext_libdir}/struts-1.2.9.jar" />
-
+	<property name="ejb-2_0.jar" value="${ext_libdir}/ejb-2_0.jar" />	
     <property name="commons.beanutils.jar" value="${ext_libdir}/commons-beanutils.jar" />
 
     <property name="aspectjrt.jar" value="${ext_libdir}/testing/aspectjrt-1.2.1.jar" />
@@ -350,8 +359,10 @@
         <pathelement location="${servlet.jsp.jar}" />
         <pathelement location="${mail.jar}" />
         <pathelement location="${struts.jar}" />
+    	<pathelement location="${ejb-2_0.jar}" />
 
         <pathelement location="${authentication_factory.jar}" />
+    	<pathelement location="${auto_pilot.jar}" />
         <pathelement location="${auto_screening_management.jar}" />
         <pathelement location="${base_exception.jar}" />
         <pathelement location="${class_associations.jar}" />
@@ -401,6 +412,7 @@
         <pathelement location="${workdays.jar}" />
         <pathelement location="${tcsUtil.jar}" />
         <pathelement location="${tcwebcommon.jar}" />
+    	<pathelement location="${pactsServices.jar}" />
     </path>
 
     <path id="cactus.classpath">
@@ -580,7 +592,7 @@ packaged. If needed, however, uncomment this.
             <lib dir="${jar_tcs_libdir}/${user_project_data_store.path}" includes="*.jar" />
             <lib dir="${jar_tcs_libdir}/${weighted_calculator.path}" includes="*.jar" />
             <lib dir="${jar_tcs_libdir}/${workdays.path}" includes="*.jar" />
-
+            <lib dir="${jar_tcs_libdir}/${pactsServices.path}" includes="*.jar" />
             <lib dir="${jar_tcs_libdir}" includes="*.jar" />
             <lib dir="${jar_ext_libdir}" includes="*.jar" excludes="mail.jar, ejb-2_0.jar" />
             <fileset dir="${webdir}" includes="**" excludes="i/**, js/**, css/**" />

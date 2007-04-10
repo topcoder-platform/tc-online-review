@@ -327,6 +327,7 @@
 		    	<include  name="**/*.dtd"/>
     		</patternset>
     	</unjar>
+		<chmod dir="." perm="u+x" includes="**/*.sh"/>
 	</target>
 	
 

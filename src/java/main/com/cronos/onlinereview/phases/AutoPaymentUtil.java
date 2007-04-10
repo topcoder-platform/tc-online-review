@@ -4,6 +4,7 @@
 package com.cronos.onlinereview.phases;
 
 import com.topcoder.web.common.model.FixedPriceComponent;
+import com.topcoder.web.common.model.SoftwareComponent;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -130,7 +131,7 @@ public class AutoPaymentUtil {
         	return;
         }
 
-        int levelId = FixedPriceComponent.LEVEL1;
+        int levelId = SoftwareComponent.LEVEL1;
         int count = getCount(projectId, conn);
         int passedCount = getScreenPassedCount(projectId, conn);
         float[] payments = getPayments(projectId, projectCategoryId, conn);
@@ -318,7 +319,7 @@ public class AutoPaymentUtil {
      * @return project category id
      * @throws SQLException if error occurs
      */
-    private static long getProjectCategoryId(long projectId, Connection conn)
+    static long getProjectCategoryId(long projectId, Connection conn)
         throws SQLException {
         PreparedStatement pstmt = null;
         ResultSet rs = null;
