@@ -9,7 +9,14 @@
 <html:html xhtml="true">
 
 <head>
-	<title><bean:message key="OnlineReviewApp.title" /></title>
+	<c:if test="${empty project}">
+		<title><bean:message key="global.title.level2"
+			arg0='${orfn:getMessage(pageContext, "OnlineReviewApp.title")}'
+			arg1='${orfn:getMessage(pageContext, "editProject.title.CreateNew")}' /></title>
+	</c:if>
+	<c:if test="${not empty project}">
+		<jsp:include page="/includes/project/project_title.jsp" />
+	</c:if>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 
 	<!-- TopCoder CSS -->
@@ -48,55 +55,55 @@
 			// TODO: Localize the catagory name
 			projectCategories[projectCategories.length - 1]["name"] = "${category.name}";
 		</c:forEach>
-		
+
 		var screeningScorecards = [];
 		<c:forEach var="scorecard" items="${screeningScorecards}">
 			screeningScorecards.push({});
 			screeningScorecards[screeningScorecards.length - 1]["id"] = ${scorecard.id};
-			screeningScorecards[screeningScorecards.length - 1]["category"] = ${scorecard.category};	
-			screeningScorecards[screeningScorecards.length - 1]["name"] = "${scorecard.name} ${scorecard.version}";	
+			screeningScorecards[screeningScorecards.length - 1]["category"] = ${scorecard.category};
+			screeningScorecards[screeningScorecards.length - 1]["name"] = "${scorecard.name} ${scorecard.version}";
 		</c:forEach>
 
 		var reviewScorecards = [];
 		<c:forEach var="scorecard" items="${reviewScorecards}">
 			reviewScorecards.push({});
 			reviewScorecards[reviewScorecards.length - 1]["id"] = ${scorecard.id};
-			reviewScorecards[reviewScorecards.length - 1]["category"] = ${scorecard.category};	
-			reviewScorecards[reviewScorecards.length - 1]["name"] = "${scorecard.name} ${scorecard.version}";	
+			reviewScorecards[reviewScorecards.length - 1]["category"] = ${scorecard.category};
+			reviewScorecards[reviewScorecards.length - 1]["name"] = "${scorecard.name} ${scorecard.version}";
 		</c:forEach>
 
 		var approvalScorecards = [];
 		<c:forEach var="scorecard" items="${approvalScorecards}">
 			approvalScorecards.push({});
 			approvalScorecards[approvalScorecards.length - 1]["id"] = ${scorecard.id};
-			approvalScorecards[approvalScorecards.length - 1]["category"] = ${scorecard.category};	
-			approvalScorecards[approvalScorecards.length - 1]["name"] = "${scorecard.name} ${scorecard.version}";		
+			approvalScorecards[approvalScorecards.length - 1]["category"] = ${scorecard.category};
+			approvalScorecards[approvalScorecards.length - 1]["name"] = "${scorecard.name} ${scorecard.version}";
 		</c:forEach>
 
 		var defaultScorecards = [];
 		<c:forEach var="scorecard" items="${defaultScorecards}">
 			defaultScorecards.push({});
 			defaultScorecards[defaultScorecards.length - 1]["id"] = ${scorecard.scorecardId};
-			defaultScorecards[defaultScorecards.length - 1]["category"] = ${scorecard.category};	
-			defaultScorecards[defaultScorecards.length - 1]["type"] = ${scorecard.scorecardType};	
-			defaultScorecards[defaultScorecards.length - 1]["name"] = "${scorecard.name}";	
+			defaultScorecards[defaultScorecards.length - 1]["category"] = ${scorecard.category};
+			defaultScorecards[defaultScorecards.length - 1]["type"] = ${scorecard.scorecardType};
+			defaultScorecards[defaultScorecards.length - 1]["name"] = "${scorecard.name}";
 		</c:forEach>
 
 		var projectTypeNamesMap = {};
 		<c:forEach var="projectType" items="${projectTypes}">
 			projectTypeNamesMap["${projectType.id}"] = "${projectType.name}";
-		</c:forEach>		
+		</c:forEach>
 
 		var phaseTypeIdsMap = {};
 		<c:forEach var="phaseType" items="${phaseTypes}">
 			phaseTypeIdsMap["${phaseType.name}"] = "${phaseType.id}";
 		</c:forEach>
-		
+
 		var screeningScorecardNodes = new Array();;
 		var reviewScorecardNodes = new Array();;
 		var approvalScorecardNodes = new Array();;
 
-		/*	
+		/*
 		 * TODO: Document it
 		 */
 		function getUniqueId() {
@@ -138,9 +145,9 @@
 						projectCategories[i]["name"], projectCategories[i]["id"]);
 				}
 			}
-		} 
+		}
 
-		function onProjectCategoryChange(projectCategoryNode) {						
+		function onProjectCategoryChange(projectCategoryNode) {
 			var templateRow = document.getElementById("screening_scorecard_row_template");
 			changeScorecardByCategory(templateRow.getElementsByTagName("select")[0], projectCategoryNode.value, screeningScorecards, 'Screening');
 
@@ -161,26 +168,46 @@
 			}
 		}
 
-		function changeScorecardByCategory(scorecardNode, category, scorecards, scorecardName) {			
+		function changeScorecardByCategory(scorecardNode, category, scorecards, scorecardName) {
 			if (scorecardNode) {
 				// Clear combo options
 				while (scorecardNode.length > 0) {
 					scorecardNode.remove(scorecardNode.length - 1);
 				}
-				// Add new combo options 
+				// Add new combo options
 				for (var i = 0; i < scorecards.length; i++) {
 					if (category == scorecards[i]["category"]) {
-							addComboOption(scorecardNode, 
+							addComboOption(scorecardNode,
 								scorecards[i]["name"], scorecards[i]["id"]);
 					}
 				}
-				
+
 				// set default scorecard id
 				for (var i = 0; i < defaultScorecards.length; i++) {
 					if (defaultScorecards[i]["category"] == category && defaultScorecards[i]["name"] == scorecardName) {
 						scorecardNode.value = defaultScorecards[i]["id"];
 					}
 				}
+			}
+		}
+		
+		function updateLabelsInCell(cellToUpdate, newIndex) {
+			var labels = cellToUpdate.getElementsByTagName("label");
+			var inputs = cellToUpdate.getElementsByTagName("input");
+
+			for (var i = 0; i < labels.length; ++i) {
+				var inputId = labels[i].htmlFor;
+				var inputField = null;
+
+				for (var j = 0; j < inputs.length; ++j)
+					if (inputs[j].id == inputId) {
+						inputField = inputs[j];
+						break;
+					}
+
+				if (inputField == null) continue;
+				inputField.id = inputField.id + "_" + newIndex;
+				labels[i].htmlFor = inputField.id;
 			}
 		}
 
@@ -206,13 +233,16 @@
 			}
 			newRow.className = (strLastRowStyle == "dark") ? "light" : "dark";
 
+			var allNewCells = newRow.getElementsByTagName("td");
+			var paymentCell = allNewCells[2];
+			var buttonsCell = allNewCells[4];
+
 			// Make delete button visible and hide add button
-			var myCell = newRow.getElementsByTagName("td")[4];
-			var images = myCell.getElementsByTagName("img");
+			var images = buttonsCell.getElementsByTagName("img");
 			images[0].style["display"] = "none";
 			images[1].style["display"] = "inline";
 			// Retrieve hidden inputs
-			var inputs = myCell.getElementsByTagName("input");
+			var inputs = buttonsCell.getElementsByTagName("input");
 			// Set hidden resources_action parameter to "add"
 			var actionInput = inputs[0];
 			actionInput.value = "add";
@@ -223,6 +253,9 @@
 			patchAllChildParamIndexes(newRow, lastResourceIndex);
 			// Insert new row into resources table
 			resourcesTable.tBodies[0].insertBefore(newRow, resourcesTable.rows[rowCount - 1]);
+
+			// Make labels correspond correct inputs (radio boxes)
+			updateLabelsInCell(paymentCell, lastResourceIndex);
 
 			// Get phase parameters input nodes
 			var phaseIdNodes = getChildrenByNamePrefix(document.documentElement, "phase_js_id");
@@ -344,12 +377,13 @@
 				criterionRow.id = getUniqueId();
 				// Remove "display: none;"
 				criterionRow.style["display"] = "";
-
+				
+				updateLabelsInCell(criterionRow.getElementsByTagName("td")[1], lastPhaseIndex);
 				// Rename all the inputs to have a new index
 				patchAllChildParamIndexes(criterionRow, lastPhaseIndex);
 				// Insert criterion row into proper position - after new phase row
 				dojo.dom.insertAfter(criterionRow, phaseRow);
-				
+
  				if (phaseName == "Screening") {
 					screeningScorecardNodes[screeningScorecardNodes.length] = criterionRow.getElementsByTagName("select")[0];
 				} else if (phaseName == "Review") {
@@ -694,7 +728,7 @@
 				phaseRows[i] = newPhaseRow;
 				timelineTable.tBodies[0].appendChild(newPhaseRow);
 
-				getChildByNamePrefix(newPhaseRow, "phase_type").value = phaseTypeId;	
+				getChildByNamePrefix(newPhaseRow, "phase_type").value = phaseTypeId;
 
 				var startDate = dojo.dom.textContent(phaseNodes[i].getElementsByTagName("start-date")[0]);
 				var startDateParts = startDate.split(" ");
@@ -830,7 +864,7 @@
 									<td class="valueB"><bean:message key="editProject.ProjectDetails.Category" /></td>
 									<td class="value" nowrap="nowrap">
 										<html:select styleClass="inputBox" property="project_category" style="width:150px;"
-												onchange="onProjectCategoryChange(this);">				
+												onchange="onProjectCategoryChange(this);">
 											<c:forEach items="${projectCategories}" var="category">
 												<c:if test="${category.projectType.id eq projectForm.map['project_type']}">
 													<html:option key='ProjectCategory.${fn:replace(category.name, " ", "")}' value="${category.id}" />
@@ -876,19 +910,22 @@
 							<tr class="light">
 								<td class="valueB" width="1%"><bean:message key="editProject.Preferences.Autopilot" /></td>
 								<td class="value">
-									<html:radio property="autopilot" value="true" />
-									<b><bean:message key="editProject.Preferences.Autopilot.Completion" /></b>
+									<html:radio styleId="autopilotOnRadioBox" property="autopilot" value="true" /><label
+										for="autopilotOnRadioBox"><b><bean:message key="editProject.Preferences.Autopilot.Completion" /></b></label>
 									<bean:message key="editProject.Preferences.Autopilot.Completion.Desc" /><br/>
-									<html:radio property="autopilot" value="false" />
-									<b><bean:message key="editProject.Preferences.Autopilot.TurnOff" /></b>
+									<html:radio styleId="autopilotOffRadioBox" property="autopilot" value="false" /><label
+										for="autopilotOffRadioBox"><b><bean:message key="editProject.Preferences.Autopilot.TurnOff" /></b></label>
 								</td>
 							</tr>
 							<tr class="dark">
 								<td class="value" colspan="2">
-									<html:checkbox property="email_notifications" /><b><bean:message key="editProject.Preferences.SendEmails" /></b>
+									<html:checkbox styleId="emailNotificationsCheckBox" property="email_notifications" /><label
+										for="emailNotificationsCheckBox"><b><bean:message key="editProject.Preferences.SendEmails" /></b></label>
 									<bean:message key="editProject.Preferences.SendEmails.Desc" /><br />
-									<html:checkbox property="no_rate_project" /><b><bean:message key="editProject.Preferences.DoNotRate" /><br />
-									<html:checkbox property="timeline_notifications" /><b><bean:message key="editProject.Preferences.ReceiveTimeline" /></b>
+									<html:checkbox styleId="noRateProjectCheckBox" property="no_rate_project" /><label
+										for="noRateProjectCheckBox"><b><bean:message key="editProject.Preferences.DoNotRate" /></b></label><br />
+									<html:checkbox styleId="timelineNotificationsCheckBox" property="timeline_notifications" /><label
+										for="timelineNotificationsCheckBox"><b><bean:message key="editProject.Preferences.ReceiveTimeline" /></b></label>
 								</td>
 							</tr>
 							<tr>

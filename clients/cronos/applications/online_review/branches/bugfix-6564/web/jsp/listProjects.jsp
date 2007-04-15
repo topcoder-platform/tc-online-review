@@ -1,12 +1,27 @@
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ page language="java" isELIgnored="false" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="html" uri="/tags/struts-html" %>
 <%@ taglib prefix="bean" uri="/tags/struts-bean" %>
+<%@ taglib prefix="orfn" uri="/tags/or-functions" %>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html:html xhtml="true">
 
 <head>
-	<title><bean:message key="OnlineReviewApp.title" /></title>
+	<c:choose>
+		<c:when test="${projectTabIndex == 1}">
+			<c:set var="listKeyName" value="listProjects.title.MyProjects" />
+		</c:when>
+		<c:when test="${projectTabIndex == 4}">
+			<c:set var="listKeyName" value="listProjects.title.InactiveProjects" />
+		</c:when>
+		<c:otherwise>
+			<c:set var="listKeyName" value="listProjects.title.AllProjects" />
+		</c:otherwise>
+	</c:choose>
+	<title><bean:message key="global.title.level2"
+		arg0='${orfn:getMessage(pageContext, "OnlineReviewApp.title")}'
+		arg1='${orfn:getMessage(pageContext, listKeyName)}' /></title>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 
 	<!-- TopCoder CSS -->

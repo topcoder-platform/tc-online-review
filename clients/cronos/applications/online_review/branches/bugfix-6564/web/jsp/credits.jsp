@@ -4,12 +4,15 @@
 <%@ taglib prefix="html" uri="/tags/struts-html" %>
 <%@ taglib prefix="bean" uri="/tags/struts-bean" %>
 <%@ taglib prefix="tc-webtag" uri="/tags/tc-webtags" %>
+<%@ taglib prefix="orfn" uri="/tags/or-functions" %>
 <%@ page import="com.topcoder.shared.util.ApplicationServer"%>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html:html xhtml="true">
 
 <head>
-	<title><bean:message key="OnlineReviewApp.Credits.title" /></title>
+	<title><bean:message key="global.title.level2.noDash"
+		arg0='${orfn:getMessage(pageContext, "OnlineReviewApp.title")}'
+		arg1='${orfn:getMessage(pageContext, "credits.title")}' /></title>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 
 	<!-- TopCoder CSS -->

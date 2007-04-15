@@ -10,7 +10,9 @@
 <html:html xhtml="true">
 
 <head>
-	<title><bean:message key="OnlineReviewApp.title" /></title>
+	<jsp:include page="/includes/project/project_title.jsp">
+		<jsp:param name="thirdLevelPageKey" value="editAggregationReview.title" />
+	</jsp:include>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 
 	<!-- TopCoder CSS -->
@@ -185,10 +187,10 @@ function OnCompleteScorecardClick() {
 																<bean:message key="editAggregationReview.EnterComment" /><br />
 															</c:when>
 															<c:otherwise>
-																<html:radio property="review_function[${globalItemIndex}]" value="Accept" />
-																<bean:message key="editAggregationReview.Function.Accept" />
-																<html:radio property="review_function[${globalItemIndex}]" value="Reject" />
-																<bean:message key="editAggregationReview.Function.Reject" /> &#160;
+																<html:radio styleId="functionAcceptCheckbox${globalItemIndex}" property="review_function[${globalItemIndex}]" value="Accept" /><label
+																	for="functionAcceptCheckbox${globalItemIndex}"><bean:message key="editAggregationReview.Function.Accept" /></label>
+																<html:radio styleId="functionRejectCheckbox${globalItemIndex}" property="review_function[${globalItemIndex}]" value="Reject" /><label
+																	for="functionRejectCheckbox${globalItemIndex}"><bean:message key="editAggregationReview.Function.Reject" /></label> &#160;
 																<span class="error"><html:errors property="reject_reason[${globalItemIndex}]" prefix="" suffix="" /></span><br />
 															</c:otherwise>
 														</c:choose>
