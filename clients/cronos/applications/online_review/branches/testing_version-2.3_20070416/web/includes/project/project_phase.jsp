@@ -59,7 +59,7 @@
 											<td class="value" nowrap="nowrap"><bean:message key="NotAvailable" /></td>
 										</c:if>
 										<c:if test="${!(empty reliability)}">
-											<td class="value" nowrap="nowrap">${reliability}%</td>
+											<td class="value" nowrap="nowrap">${reliability}</td>
 										</c:if>
 										<c:set var="rating" value='${resource.allProperties["Rating"]}' />
 										<c:choose>
