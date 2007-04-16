@@ -1,0 +1,319 @@
+<?xml version="1.0" ?>
+<CMConfig>
+	<Config name="com.cronos.onlinereview.project.UserSimulator">
+		<!-- application URL -->
+		<Property name="application_url">
+			<Value>http://127.0.0.1:9090/online_review</Value>
+		</Property>
+		
+        <!-- login  information -->
+		<Property name="login">
+			<Property name="username_input">
+				<Value>input:name:userName</Value>
+			</Property>
+			<Property name="password_input">
+                <Value>input:name:password</Value>
+            </Property>
+            <Property name="login_button">
+                <Value>input:src:../i/bttn_login.gif</Value>
+            </Property>
+
+            <!-- This is a winning submitter user. It must have the ID set to 1 -->
+            <Property name="winner">
+            	<Property name="username">
+            		<Value>competitor1</Value>
+            	</Property>
+            	<Property name="password">
+            		<Value>competitor1</Value>
+            	</Property>
+                <Property name="id">
+                    <Value>1</Value>
+                </Property>
+                <Property name="final_fix">
+                    <Value>c:/final_fix.jar</Value>
+                </Property>
+                <Property name="submission">
+                    <Value>c:/submission1.jar</Value>
+                </Property>
+            </Property>
+
+            <!-- This is a submitter finishing at 2nd place in competition. It must have the ID set to 2 -->
+            <Property name="place2submitter">
+                <Property name="username">
+                    <Value>competitor2</Value>
+                </Property>
+                <Property name="password">
+                    <Value>competitor2</Value>
+                </Property>
+                <Property name="id">
+                    <Value>2</Value>
+                </Property>
+                <Property name="submission">
+                    <Value>c:/submission2.jar</Value>
+                </Property>
+            </Property>
+
+            <!-- This is a submitter finishing at 3rd place in competition. It must have the ID set to 3 -->
+            <Property name="place3submitter">
+                <Property name="username">
+                    <Value>competitor3</Value>
+                </Property>
+                <Property name="password">
+                    <Value>competitor3</Value>
+                </Property>
+                <Property name="id">
+                    <Value>3</Value>
+                </Property>
+                <Property name="submission">
+                    <Value>c:/submission3.jar</Value>
+                </Property>
+            </Property>
+
+            <!-- This is a primary reviewer (granted the primary screener, reviewer, aggregator, final reviewer roles.
+                 Responsible for failure tests for dev competitions. It must have the ID set to 4 -->
+            <Property name="primary_reviewer">
+            	<Property name="username">
+            		<Value>primary</Value>
+            	</Property>
+            	<Property name="password">
+            		<Value>primary</Value>
+            	</Property>
+                <Property name="id">
+                    <Value>4</Value>
+                </Property>
+                <Property name="test_case">
+                    <Value>c:/testcase1.jar</Value>
+                </Property>
+            </Property>
+
+            <!-- This is a secondary reviewer. Responsible for accuracy tests for dev competitions.
+                 It must have the ID set to 5 -->
+            <Property name="reviewer1">
+            	<Property name="username">
+            		<Value>reviewer1</Value>
+            	</Property>
+            	<Property name="password">
+            		<Value>reviewer1</Value>
+            	</Property>
+                <Property name="id">
+                    <Value>5</Value>
+                </Property>
+                <Property name="test_case">
+                    <Value>c:/testcase2.jar</Value>
+                </Property>
+            </Property>
+
+            <!-- This is a secondary reviewer. Responsible for stress tests for dev competitions.
+                 It must have the ID set to 6 -->
+            <Property name="reviewer2">
+            	<Property name="username">
+            		<Value>reviewer2</Value>
+            	</Property>
+            	<Property name="password">
+            		<Value>reviewer2</Value>
+            	</Property>
+                <Property name="id">
+                    <Value>6</Value>
+                </Property>
+                <Property name="test_case">
+                    <Value>c:/testcase3.jar</Value>
+                </Property>
+            </Property>
+
+            <!-- This is a submitter finishing at 3rd place in competition. It must have the ID set to 7 -->
+            <Property name="approver">
+            	<Property name="username">
+            		<Value>approver</Value>
+            	</Property>
+            	<Property name="password">
+            		<Value>approver</Value>
+            	</Property>
+                <Property name="id">
+                    <Value>7</Value>
+                </Property>
+            </Property>
+
+            <!-- This is a manager. It must have the ID set to 8 -->
+            <Property name="manager">
+            	<Property name="username">
+            		<Value>manager</Value>
+            	</Property>
+            	<Property name="password">
+            		<Value>manager</Value>
+            	</Property>
+                <Property name="id">
+                    <Value>8</Value>
+                </Property>
+            </Property>
+
+            <!-- This is an observer. It must have the ID set to 9 -->
+            <Property name="observer">
+            	<Property name="username">
+            		<Value>observer</Value>
+            	</Property>
+            	<Property name="password">
+            		<Value>observer</Value>
+            	</Property>
+                <Property name="id">
+                    <Value>9</Value>
+                </Property>
+            </Property>
+
+            <!-- This is a designer. It must have the ID set to 10 -->
+            <Property name="designer">
+            	<Property name="username">
+            		<Value>designer</Value>
+            	</Property>
+            	<Property name="password">
+            		<Value>designer</Value>
+            	</Property>
+                <Property name="id">
+                    <Value>10</Value>
+                </Property>
+            </Property>
+
+        </Property>
+
+        <!-- Properties for "Submit Approval" page -->
+        <Property name="approval">
+            <Property name="comment_type_prefix">
+                <Value>comment_type_</Value>
+            </Property>
+            <Property name="response_text_prefix">
+                <Value>response_text_</Value>
+            </Property>
+            <Property name="score_prefix">
+                <Value>score_</Value>
+            </Property>
+        </Property>
+
+        <!-- Properties for "Submit Screening" page -->
+        <Property name="screening">
+            <Property name="comment_type_prefix">
+                <Value>comment_type_</Value>
+            </Property>
+            <Property name="response_text_prefix">
+                <Value>response_text_</Value>
+            </Property>
+            <Property name="score_prefix">
+                <Value>score_</Value>
+            </Property>
+        </Property>
+
+        <!-- Properties for "Submit Final Review" page -->
+        <Property name="final_review">
+            <Property name="fixed_selection_prefix">
+                <Value>fixed_</Value>
+            </Property>
+            <Property name="response_text_prefix">
+                <Value>response_text_</Value>
+            </Property>
+            <Property name="scorecard_approval">
+                <Value>approve</Value>
+            </Property>
+            <Property name="manager">
+                <Property name="fixed_selection_prefix">
+                    <Value>manager_fixed_</Value>
+                </Property>
+                <Property name="response_text_prefix">
+                    <Value>manager_comment_text_</Value>
+                </Property>
+            </Property>
+        </Property>
+
+        <!-- Properties for "Appeals Response" page -->
+        <Property name="appeals_response">
+            <Property name="response_text_prefix">
+                <Value>appeals_response_text_</Value>
+            </Property>
+            <Property name="response_score_prefix">
+                <Value>response_score_</Value>
+            </Property>
+        </Property>
+
+        <!-- Properties for "Review" page -->
+        <Property name="review">
+            <Property name="response_text_prefix">
+                <Value>appeals_response_text_</Value>
+            </Property>
+            <Property name="response_score_prefix">
+                <Value>response_score_</Value>
+            </Property>
+            <Property name="comment_type_prefix">
+                <Value>comment_type_</Value>
+            </Property>
+            <Property name="appeal_text_prefix_">
+                <Value>appeal_text_</Value>
+            </Property>
+        </Property>
+
+        <!-- Properties for "Aggregation Review" page -->
+        <Property name="aggregation_review">
+            <Property name="comment_text_prefix">
+                <Value>comment_text_</Value>
+            </Property>
+            <Property name="approve_box">
+                <Value>approve_checkbox</Value>
+            </Property>
+        </Property>
+
+
+        <!-- Properties for "Aggregation Review" page -->
+        <Property name="aggregation_review_by_reviewer">
+            <Property name="comment_text_prefix">
+                <Value>comment_text_</Value>
+            </Property>
+            <Property name="AR_prefix"> <!-- Accept, Reject -->
+                <Value>AR_</Value>
+            </Property>
+            <Property name="approve_box">
+                <Value>approve_checkbox</Value>
+            </Property>
+            <Property name="approve_text">
+                <Value>approve_text</Value>
+            </Property>
+        </Property>
+
+        <!-- Properties for "Aggregation" page -->
+        <Property name="aggregation">
+            <Property name="comment_text_prefix">
+                <Value>comment_text_</Value>
+            </Property>
+            <Property name="response_type_prefix">
+                <Value>response_type_</Value>
+            </Property>
+            <Property name="RAD_prefix"><!-- Rejected, Accepted, Duplicate -->
+                <Value>RAD_</Value>
+            </Property>
+        </Property>
+
+        <!-- Properties for "Edit Project" page -->
+        <Property name="edit_project">
+            <Property name="timeline_notification">
+                <Value>timeline_notifications</Value>
+            </Property>
+            <Property name="notes">
+                <Value>notes</Value>
+            </Property>
+            <Property name="status">
+                <Value>status</Value>
+            </Property>
+            <Property name="autoPilot">
+                <Value>autoPilot</Value>
+            </Property>
+            <Property name="explanation">
+                <Value>explanation</Value>
+            </Property>
+        </Property>
+
+        <!-- Properties for "Contact To Manager" page -->
+        <Property name="contact">
+            <Property name="category">
+                <Value>category</Value>
+            </Property>
+            <Property name="message">
+                <Value>message</Value>
+            </Property>
+        </Property>
+    </Config>
+</CMConfig>
