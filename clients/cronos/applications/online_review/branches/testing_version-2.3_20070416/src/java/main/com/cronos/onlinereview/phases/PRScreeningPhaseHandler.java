@@ -82,7 +82,7 @@ public class PRScreeningPhaseHandler extends ScreeningPhaseHandler {
      * @param projectId the projectId
      * @throws PhaseHandlingException if error occurs
      */
-    public static void processPR(long projectId, Connection conn, boolean toStart) throws PhaseHandlingException {
+    public void processPR(long projectId, Connection conn, boolean toStart) throws PhaseHandlingException {
     	try {
     		PRHelper.processScreeningPR(projectId, conn, toStart);
     	} catch(SQLException e) {
