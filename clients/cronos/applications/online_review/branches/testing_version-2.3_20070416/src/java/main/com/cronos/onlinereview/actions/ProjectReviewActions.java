@@ -3,7 +3,6 @@
  */
 package com.cronos.onlinereview.actions;
 
-import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -2901,7 +2900,7 @@ public class ProjectReviewActions extends DispatchAction {
         }
 
         // Verify that the scorecard template for this review is of correct type
-        if (!scorecardTemplate.getScorecardType().getName().equalsIgnoreCase(scorecardTypeName)) {
+        if (scorecardTemplate == null || !scorecardTemplate.getScorecardType().getName().equalsIgnoreCase(scorecardTypeName)) {
             return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
                     permName, "Error.ReviewTypeIncorrect");
         }
@@ -3223,9 +3222,8 @@ public class ProjectReviewActions extends DispatchAction {
      * @throws BaseException
      *             if any unexpected error occurs during final score update.
      */
-    private static void updateFinalAggregatedScore(
-            HttpServletRequest request, Project project, Phase reviewPhase, Submission sub)
-        throws BaseException {
+    private static void updateFinalAggregatedScore(HttpServletRequest request, Project project, Phase reviewPhase, Submission sub)
+        	throws BaseException {
         // Validate parameters
         ActionsHelper.validateParameterNotNull(request, "request");
         ActionsHelper.validateParameterNotNull(project, "project");
@@ -3291,15 +3289,14 @@ public class ProjectReviewActions extends DispatchAction {
         AggregatedSubmission[] aggrSubm = aggregator.aggregateScores(new float[][] {scores});
         float newScore = aggrSubm[0].getAggregatedScore();
 
-        Object temp = submitter.getProperty("Final Score");
-        float oldScore = temp == null ? -1 : Float.parseFloat(temp.toString());
+        float oldScore = Float.parseFloat(finalScore.trim().toString());
        
         if (newScore == oldScore) {
         	// score is not changed
         	return;
         }
 
-        temp = submitter.getProperty("Placement");
+        Object temp = submitter.getProperty("Placement");
         long oldPlacement = temp == null ? -1 : Long.parseLong(temp.toString());
         Object userId = submitter.getProperty("External Reference ID");
         
@@ -3663,11 +3660,12 @@ public class ProjectReviewActions extends DispatchAction {
             }
 
             // Determine if new comment must be added
-            boolean newComment = (currentComment == null);
+            boolean newComment = false;
             // If new comment needs to be added, create new Comment object
-            if (newComment) {
+            if (currentComment == null) {
                 commentIdx = Integer.MAX_VALUE;
                 currentComment = new Comment();
+                newComment = true;
             }
 
             String updatedCommentKey = itemIdx + "." + newCommentCount;
@@ -3826,7 +3824,7 @@ public class ProjectReviewActions extends DispatchAction {
                 isAllowed = true;
             }
         } else if (AuthorizationHelper.hasUserPermission(request, permName)) {
-            if (reviewType == "Review") {
+            if (reviewType == "Review" || reviewType == "Screening") {
                 // User is authorized to view all reviews (when not in Review, Appeals or Appeals Response)
                 if (!activePhases.contains(Constants.REVIEW_PHASE_NAME) &&
                         !activePhases.contains(Constants.APPEALS_PHASE_NAME) &&
@@ -3938,7 +3936,7 @@ public class ProjectReviewActions extends DispatchAction {
             return null; // No upload IDs
         }
 
-        Long[] uploadedFileIds = new Long[ActionsHelper.getScorecardUploadsCount(scorecardTemplate)];
+        Long[] uploadedFileIds = new Long[uploadsCount];
         int itemIdx = 0;
         int fileIdx = 0;
 
@@ -3947,10 +3945,9 @@ public class ProjectReviewActions extends DispatchAction {
             for (int iSection = 0; iSection < group.getNumberOfSections(); ++iSection) {
                 Section section = group.getSection(iSection);
                 for (int iQuestion = 0; iQuestion < section.getNumberOfQuestions(); ++iQuestion, ++itemIdx) {
-                    Question question = section.getQuestion(iQuestion);
-                    Item item = review.getItem(itemIdx);
+                    Question question = section.getQuestion(iQuestion);                    
                     if (question.isUploadDocument()) {
-                        uploadedFileIds[fileIdx++] = item.getDocument();
+                        uploadedFileIds[fileIdx++] = review.getItem(itemIdx).getDocument();
                     }
                 }
             }
