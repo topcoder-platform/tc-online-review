@@ -520,7 +520,7 @@ public class ProjectDetailsActions extends DispatchAction {
 
                 phaseGroup.setSubmissions(submissions);
 
-                if (submissions != null && submissions.length != 0) {
+                if (submissions.length != 0) {
                     long[] uploadIds = new long[submissions.length];
 
                     for (int j = 0; j < submissions.length; ++j) {
@@ -720,9 +720,7 @@ public class ProjectDetailsActions extends DispatchAction {
                     List reviewFilters = new ArrayList();
                     reviewFilters.add(filterReviewers);
                     reviewFilters.add(filterScorecard);
-                    if (filterSubmissions != null) {
-                        reviewFilters.add(filterSubmissions);
-                    }
+                    reviewFilters.add(filterSubmissions);
 
                     // Create final filter
                     Filter filterForReviews = new AndFilter(reviewFilters);
