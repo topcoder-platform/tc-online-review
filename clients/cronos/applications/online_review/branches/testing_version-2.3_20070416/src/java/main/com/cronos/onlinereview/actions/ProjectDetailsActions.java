@@ -509,7 +509,7 @@ public class ProjectDetailsActions extends DispatchAction {
                 }
 
                 if (submissions == null) {
-                	submissions = new Submission[0]; 
+                	submissions = new Submission[0];
                 }
                 // Use comparator to sort submissions either by placement
                 // or by the time when they were uploaded
@@ -1046,6 +1046,8 @@ public class ProjectDetailsActions extends DispatchAction {
                 Boolean.valueOf(AuthorizationHelper.hasUserPermission(request, Constants.SET_TL_NOTIFY_PERM_NAME)));
         request.setAttribute("isAllowedToViewSVNLink",
                 Boolean.valueOf(AuthorizationHelper.hasUserPermission(request, Constants.VIEW_SVN_LINK_PERM_NAME)));
+        request.setAttribute("isAllowedToViewAutopilotStatus",
+                Boolean.valueOf(AuthorizationHelper.hasUserPermission(request, Constants.VIEW_AUTOPILOT_STATUS_PERM_NAME)));
         request.setAttribute("isAllowedToViewPayment",
                 Boolean.valueOf(AuthorizationHelper.hasUserPermission(request, Constants.VIEW_MY_PAY_INFO_PERM_NAME)));
         request.setAttribute("isAllowedToViewAllPayment",

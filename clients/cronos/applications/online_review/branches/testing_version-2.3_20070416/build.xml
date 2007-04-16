@@ -43,7 +43,7 @@
     <property name="build_tcsdistdir" value="${build_distdir}/${distfilename}-${component_version}" />
 
     <!-- Server installation directories -->
-	<property name="cactus.home.tomcat5x" value="d:\tomcat" />
+    <property name="cactus.home.tomcat5x" value="d:\tomcat" />
     <property name="deploy-dir" value="d:\tomcat\webapps\${distfilename}.war" />
 
     <!-- EXECUTION TAGS -->
@@ -76,11 +76,11 @@
     <property name="authentication_factory.path" value="authentication_factory/${authentication_factory.version}" />
     <property name="authentication_factory.jar" value="${tcs_libdir}/${authentication_factory.path}/${authentication_factory.jar.name}" />
 
-	<property name="auto_pilot.version" value="1.0" />
+    <property name="auto_pilot.version" value="1.0" />
     <property name="auto_pilot.jar.name" value="auto_pilot.jar" />
     <property name="auto_pilot.path" value="auto_pilot/${auto_pilot.version}" />
     <property name="auto_pilot.jar" value="${tcs_libdir}/${auto_pilot.path}/${auto_pilot.jar.name}" />
-	
+
     <property name="auto_screening_management.version" value="1.0" />
     <property name="auto_screening_management.jar.name" value="auto_screening_management.jar" />
     <property name="auto_screening_management.path" value="auto_screening_management/${auto_screening_management.version}" />
@@ -316,15 +316,18 @@
     <property name="workdays.path" value="workdays/${workdays.version}" />
     <property name="workdays.jar" value="${tcs_libdir}/${workdays.path}/${workdays.jar.name}" />
 
+    <property name="pactsServices.path" value="pacts_services" />
+    <property name="pactsServices.jar.name" value="PactsServices.jar" />
+    <property name="pactsServices.jar" value="${tcs_libdir}/${pactsServices.path}/${pactsServices.jar.name}" />
+
+    <property name="shared.jar.name" value="shared.jar" />
+    <property name="shared.jar" value="${tcs_libdir}/${shared.jar.name}" />
+
     <property name="tcsUtil.jar.name" value="tcsUtil.jar" />
     <property name="tcsUtil.jar" value="${tcs_libdir}/${tcsUtil.jar.name}" />
 
     <property name="tcwebcommon.jar.name" value="tcwebcommon.jar" />
     <property name="tcwebcommon.jar" value="${tcs_libdir}/${tcwebcommon.jar.name}" />
-	
-	<property name="pactsServices.path" value="pacts_services" />
-	<property name="pactsServices.jar.name" value="PactsServices.jar" />
-	<property name="pactsServices.jar" value="${tcs_libdir}/${pactsServices.path}/${pactsServices.jar.name}" />
 
     <!-- 3rd Party Dependencies  -->
     <property name="ifx-jdbc.jar" value="${ext_libdir}/ifx-jdbc.jar" />
@@ -333,7 +336,7 @@
     <property name="servlet.jsp.jar" value="${cactus.home.tomcat5x}/common/lib/jsp-api.jar" />
     <property name="mail.jar" value="${cactus.home.tomcat5x}/common/lib/mail.jar" />
     <property name="struts.jar" value="${ext_libdir}/struts-1.2.9.jar" />
-	<property name="ejb-2_0.jar" value="${ext_libdir}/ejb-2_0.jar" />	
+    <property name="ejb-2_0.jar" value="${ext_libdir}/ejb-2_0.jar" />
     <property name="commons.beanutils.jar" value="${ext_libdir}/commons-beanutils.jar" />
 
     <property name="aspectjrt.jar" value="${ext_libdir}/testing/aspectjrt-1.2.1.jar" />
@@ -359,10 +362,10 @@
         <pathelement location="${servlet.jsp.jar}" />
         <pathelement location="${mail.jar}" />
         <pathelement location="${struts.jar}" />
-    	<pathelement location="${ejb-2_0.jar}" />
+        <pathelement location="${ejb-2_0.jar}" />
 
         <pathelement location="${authentication_factory.jar}" />
-    	<pathelement location="${auto_pilot.jar}" />
+        <pathelement location="${auto_pilot.jar}" />
         <pathelement location="${auto_screening_management.jar}" />
         <pathelement location="${base_exception.jar}" />
         <pathelement location="${class_associations.jar}" />
@@ -410,9 +413,9 @@
         <pathelement location="${user_project_data_store.jar}" />
         <pathelement location="${weighted_calculator.jar}" />
         <pathelement location="${workdays.jar}" />
+        <pathelement location="${pactsServices.jar}" />
         <pathelement location="${tcsUtil.jar}" />
         <pathelement location="${tcwebcommon.jar}" />
-    	<pathelement location="${pactsServices.jar}" />
     </path>
 
     <path id="cactus.classpath">
@@ -519,17 +522,16 @@
     </target>
 
     <!-- assume the user is already logged in to cvs and the env is set up. -->
-	<target name="update_left_nav">
+    <target name="update_left_nav">
         <mkdir dir="${build_distdir}" />
-		<cvs package="web/src/main/com/topcoder/web/jsp/includes/global_left.jsp"
-       		dest="${build_distdir}"/>
-        <copy file="${build_distdir}/web/src/main/com/topcoder/web/jsp/includes/global_left.jsp" 
-        	tofile="${webdir}/includes/global_left.jsp" overwrite="true"/>
+        <cvs package="web/src/main/com/topcoder/web/jsp/includes/global_left.jsp" dest="${build_distdir}"/>
+        <copy file="${build_distdir}/web/src/main/com/topcoder/web/jsp/includes/global_left.jsp"
+            tofile="${webdir}/includes/global_left.jsp" overwrite="true" />
 
-		<cvs package="web/resources/taglib/nav.tld" dest="${build_distdir}"/>
-        <copy file="${build_distdir}/web/resources/taglib/nav.tld" 
-        	tofile="${configdir}/WEB-INF/nav.tld" overwrite="true"/>
-	</target>
+        <cvs package="web/resources/taglib/nav.tld" dest="${build_distdir}" />
+        <copy file="${build_distdir}/web/resources/taglib/nav.tld"
+            tofile="${configdir}/WEB-INF/nav.tld" overwrite="true" />
+    </target>
 
     <target name="dist" depends="clean, update_left_nav, compile">
         <mkdir dir="${build_distdir}" />
@@ -541,10 +543,11 @@
             <classes dir="${build_classdir}" includes="**" />
             <classes dir="${configdir}" includes="**" excludes="WEB-INF/**" />
             <lib dir="${jar_tcs_libdir}/${authentication_factory.path}" includes="*.jar" />
+            <lib dir="${jar_tcs_libdir}/${auto_pilot.path}" includes="*.jar" />
             <lib dir="${jar_tcs_libdir}/${auto_screening_management.path}" includes="*.jar" />
             <lib dir="${jar_tcs_libdir}/${base_exception.path}" includes="*.jar" />
             <lib dir="${jar_tcs_libdir}/${class_associations.path}" includes="*.jar" />
-						<lib dir="${jar_tcs_libdir}/${command_line_utility.path}" includes="*.jar" />
+            <lib dir="${jar_tcs_libdir}/${command_line_utility.path}" includes="*.jar" />
             <lib dir="${jar_tcs_libdir}/${configuration_manager.path}" includes="*.jar" />
             <lib dir="${jar_tcs_libdir}/${data_validation.path}" includes="*.jar" />
             <lib dir="${jar_tcs_libdir}/${database_abstraction.path}" includes="*.jar" />
@@ -583,8 +586,8 @@
             <lib dir="${jar_tcs_libdir}/${scorecard_management_persistence.path}" includes="*.jar" />
             <lib dir="${jar_tcs_libdir}/${search_builder.path}" includes="*.jar" />
 <!--
-Note: The security manager that comes with the app may not be compatible with the server it's deployed on (security is already deployed, but different version), so this is not being
-packaged. If needed, however, uncomment this.
+Note: The security manager that comes with the app may not be compatible with the server it's deployed on (security is already deployed, but different version),
+      so this is not being packaged. If needed, however, uncomment this.
             <lib dir="${jar_tcs_libdir}/${security_manager.path}" includes="*.jar" />
 -->
             <lib dir="${jar_tcs_libdir}/${simple_cache.path}" includes="*.jar" />

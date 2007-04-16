@@ -54,6 +54,7 @@
 	<classpathentry exported="true" kind="lib" path="lib/tcs/user_project_data_store/1.0.1/user_project_data_store.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/tcs/weighted_calculator/1.0/weighted_calculator.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/tcs/workdays/1.0/workdays.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/tcs/shared.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/tcs/tcsUtil.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/tcs/tcwebcommon.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/third_party/antlr.jar"/>
@@ -70,7 +71,6 @@
 	<classpathentry exported="true" kind="lib" path="lib/third_party/standard.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/third_party/struts-1.2.9.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/third_party/struts-el.jar"/>
-	<classpathentry kind="lib" path="lib/tcs/shared.jar"/>
 	<classpathentry kind="lib" path="lib/third_party/testing/aspectjrt-1.2.1.jar"/>
 	<classpathentry kind="lib" path="lib/third_party/testing/cactus-1.7.2.jar"/>
 	<classpathentry kind="lib" path="lib/third_party/testing/cactus-ant-1.7.2.jar"/>
@@ -82,7 +82,5 @@
 	<classpathentry kind="lib" path="lib/third_party/testing/junit-3.8.1.jar"/>
 	<classpathentry kind="lib" path="lib/third_party/testing/nekohtml-0.9.1.jar"/>
 	<classpathentry kind="lib" path="lib/third_party/testing/strutstest-2.1.3.jar"/>
-	<classpathentry kind="lib" path="lib/tcs/auto_pilot/1.0/auto_pilot.jar"/>
-	<classpathentry kind="lib" path="lib/tcs/pacts_services/PactsServices.jar"/>
 	<classpathentry kind="output" path="build/classes"/>
 </classpath>
