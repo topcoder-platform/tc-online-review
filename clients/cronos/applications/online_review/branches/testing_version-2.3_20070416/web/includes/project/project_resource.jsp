@@ -35,7 +35,7 @@
 						</c:otherwise>
 					</c:choose>
 					<c:choose>
-						<c:when test='${(not empty resource.allProperties["Payment"]) && (not empty resource.allProperties["Payment Status"])}'>
+						<c:when test='${(not empty resource.allProperties["Payment Status"])}'>
 							<c:if var="isPaymentStatusNA" test='${resource.allProperties["Payment Status"] == "N/A"}'>
 								<td class="value" nowrap="nowrap"><bean:message key='NotApplicable'/></td>
 							</c:if>
