@@ -1568,10 +1568,7 @@ public class ProjectActions extends DispatchAction {
             } else {
                 resource.setProperty("Payment", null);
             }
-            String paid = (String) lazyForm.get("resources_paid", i);
-            if ("Yes".equals(paid) || "No".equals(paid)) {
-                resource.setProperty("Payment Status", paid);
-            }
+            resource.setProperty("Payment Status", lazyForm.get("resources_paid", i));
             // Set resource phase id, if needed
             Long phaseTypeId = resource.getResourceRole().getPhaseType();
             if (phaseTypeId != null) {
