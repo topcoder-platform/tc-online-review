@@ -243,7 +243,12 @@ public class AutoPaymentUtil {
             "	where r.resource_id = ri.resource_id" +
             "	and ri.resource_info_type_id = 1" +
             "	and r.resource_role_id in (2, 3, 4, 5, 6, 7, 8, 9)" +
-            "	and r.project_id = ? order by resource_role_id";
+            "	and r.project_id = ? " +
+            "	and not exists (select ri1.resource_id from resource_info ri1 " +
+            "		where r.resource_id = ri1.resource_id" +
+            "		and ri1.resource_info_type = 8" +
+            "		and ri1.value = 'N/A')" +
+            "order by resource_role_id";
         PreparedStatement pstmt = null;
         ResultSet rs = null;
         List reviewers = new ArrayList();
