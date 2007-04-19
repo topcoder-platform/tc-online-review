@@ -56,7 +56,7 @@
 	<classpathentry exported="true" kind="lib" path="lib/tcs/workdays/1.0/workdays.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/tcs/shared.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/tcs/tcsUtil.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/tcs/tcwebcommon.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/tcs/tcwebcommon.jar" sourcepath="/web/src/main"/>
 	<classpathentry exported="true" kind="lib" path="lib/third_party/antlr.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/third_party/commons-beanutils.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/third_party/commons-digester.jar"/>
