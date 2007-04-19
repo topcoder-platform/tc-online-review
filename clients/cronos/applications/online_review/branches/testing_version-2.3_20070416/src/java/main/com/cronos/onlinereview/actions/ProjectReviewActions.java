@@ -63,6 +63,7 @@ import com.topcoder.servlet.request.FileUpload;
 import com.topcoder.servlet.request.FileUploadResult;
 import com.topcoder.servlet.request.UploadedFile;
 import com.topcoder.util.errorhandling.BaseException;
+import com.topcoder.util.log.Level;
 
 /**
  * This class contains Struts Actions that are meant to deal with Project's Reviews. There are
@@ -109,7 +110,8 @@ import com.topcoder.util.errorhandling.BaseException;
  * @version 1.0
  */
 public class ProjectReviewActions extends DispatchAction {
-
+	private static final com.topcoder.util.log.Log log = com.topcoder.util.log.LogFactory
+			.getLog(ProjectReviewActions.class.getName());
     /**
      * This member variable is a constant that specifies the count of comments displayed for each
      * item by default on Edit Screening, Edit Review, and Edit Approval pages.
@@ -887,19 +889,21 @@ public class ProjectReviewActions extends DispatchAction {
      *             if any error occurs.
      */
     public ActionForward editAggregationReview(ActionMapping mapping, ActionForm form,
-            HttpServletRequest request, HttpServletResponse response)
-        throws BaseException {
+            HttpServletRequest request, HttpServletResponse response) throws BaseException {
     	LoggingHelper.logAction(request);
+
         // Verify that certain requirements are met before proceeding with the Action
         CorrectnessCheckResult verification =
                 checkForCorrectReviewId(mapping, request, Constants.PERFORM_AGGREG_REVIEW_PERM_NAME);
         // If any error has occured, return action forward contained in the result bean
         if (!verification.isSuccessful()) {
+        	log.log(Level.DEBUG, "failed checkForCorrectReviewId");
             return verification.getForward();
         }
 
         // Verify that user has the permission to perform aggregation review
         if (!AuthorizationHelper.hasUserPermission(request, Constants.PERFORM_AGGREG_REVIEW_PERM_NAME)) {
+        	log.log(Level.DEBUG, "the user doesn't the permission: " + Constants.PERFORM_AGGREG_REVIEW_PERM_NAME);
             return ActionsHelper.produceErrorReport(
                     mapping, getResources(request), request, Constants.PERFORM_AGGREG_REVIEW_PERM_NAME, "Error.NoPermission");
         }
@@ -914,11 +918,13 @@ public class ProjectReviewActions extends DispatchAction {
 
         // Verify that the scorecard template for this review is of correct type
         if (!scorecardTemplate.getScorecardType().getName().equalsIgnoreCase("Review")) {
+        	log.log(Level.DEBUG, "failed Verify that the scorecard template for this review is of correct type");
             return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
                     Constants.PERFORM_AGGREG_REVIEW_PERM_NAME, "Error.ReviewTypeIncorrect");
         }
         // Verify that Aggregation has been committed
         if (!review.isCommitted()) {
+        	log.log(Level.DEBUG, "failed isCommited");
             return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
                     Constants.PERFORM_AGGREG_REVIEW_PERM_NAME, "Error.AggregationNotCommitted");
         }
@@ -958,10 +964,12 @@ public class ProjectReviewActions extends DispatchAction {
         // If "my" comment has not been found, then the user is probably an Aggregator
         if (myReviewComment == null) {
             if (AuthorizationHelper.hasUserRole(request, Constants.AGGREGATOR_ROLE_NAME)) {
+            	log.log(Level.DEBUG, "failed If \"my\" comment has not been found, then the user is probably an Aggregator");
                 return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
                         Constants.PERFORM_AGGREG_REVIEW_PERM_NAME, "Error.CannotReviewOwnAggregation");
             } else {
                 // Otherwise, the user does not have permission to edit this review
+            	log.log(Level.DEBUG, "failed Otherwise, the user does not have permission to edit this review");
                 return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
                         Constants.PERFORM_AGGREG_REVIEW_PERM_NAME, "Error.NoPermission");
             }
@@ -970,6 +978,7 @@ public class ProjectReviewActions extends DispatchAction {
         // Do actual verificartion. Values "Approved" and "Rejected" denote committed Aggregation Review
         String myExtaInfo = (String) myReviewComment.getExtraInfo();
         if ("Approved".equalsIgnoreCase(myExtaInfo) || "Rejected".equalsIgnoreCase(myExtaInfo)) {
+        	log.log(Level.DEBUG, "failed Do actual verificartion. Values \"Approved\" and \"Rejected\" denote committed Aggregation Review");
             return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
                     Constants.PERFORM_AGGREG_REVIEW_PERM_NAME, "Error.ReviewCommitted");
         }
