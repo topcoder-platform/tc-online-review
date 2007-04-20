@@ -204,3 +204,22 @@ function htmlEncode(textToEncode) {
 	}
 	return resultingText;
 }
+
+function isWhitespace(ch) {
+	return (ch == ' ' || ch == '\t' || ch == '\n' || ch == '\r' || ch == '\xA0');
+}
+
+function trimString(textToTrim) {
+	var iBegin = 0;
+	var iEnd = textToTrim.length;
+	
+	for (; iBegin < iEnd; ++iBegin)
+		if (!isWhitespace(textToTrim.charAt(iBegin)))
+			break;
+	for (; iEnd > iBegin; --iEnd)
+		if (!isWhitespace(textToTrim.charAt(iEnd-1)))
+			break;
+	if (iBegin == iEnd)
+		return "";
+	return textToTrim.slice(iBegin, iEnd);
+}

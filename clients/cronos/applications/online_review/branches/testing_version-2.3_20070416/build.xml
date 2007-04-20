@@ -628,6 +628,14 @@ Note: The security manager that comes with the app may not be compatible with th
     <target name="deploy" depends="dist">
         <mkdir dir="${deploy-dir}" />
         <unwar src="${component.war}" dest="${deploy-dir}" />
+    	<delete>
+			<fileset dir="${deploy-dir}/WEB-INF/lib">
+	    		<include name="${tcsUtil.jar.name}"/>
+				<include name="${tcwebcommon.jar.name}"/>
+				<include name="${shared.jar.name}"/>
+				<include name="log4j.jar"/>
+			</fileset>
+		</delete>
     </target>
 
     <target name="deploy-prod">
