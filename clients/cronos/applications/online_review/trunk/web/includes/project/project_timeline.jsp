@@ -9,13 +9,13 @@
 			<td class="title" width="392"><bean:message key="viewProjectDetails.box.Timeline" /></td>
 			<c:if test="${isAllowedToSetTL}">
 				<td class="title" style="text-align:right;">
-					<input type="checkbox" onclick="setTimelineNotification(${project.id}, this)"
+					<input id="notifCheckbox" type="checkbox" onclick="setTimelineNotification(${project.id}, this)"
 						${(sendTLNotifications == 'On') ? 'value="On" checked="checked"' : 'value="Off"' } />
-					<bean:message key="viewProjectDetails.ReceiveTLNotifications" />
+					<label for="notifCheckbox"><bean:message key="viewProjectDetails.ReceiveTLNotifications" /></label>
 				</td>
 			</c:if>
 			<c:if test="${not isAllowedToSetTL}">
-				<td class="title">&nbsp;</td>
+				<td class="title">&#160;</td>
 			</c:if>
 		</tr>
 		<tr>

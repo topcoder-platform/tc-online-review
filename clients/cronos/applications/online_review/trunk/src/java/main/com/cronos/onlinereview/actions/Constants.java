@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 TopCoder Inc.  All Rights Reserved.
+ * Copyright (C) 2006-2007 TopCoder Inc.  All Rights Reserved.
  */
 package com.cronos.onlinereview.actions;
 
@@ -230,6 +230,12 @@ public class Constants {
      * permission.
      */
     public static final String VIEW_SVN_LINK_PERM_NAME = "View SVN Link";
+
+    /**
+     * This member variable is a string constant that defines the name of the View Autopilot Status
+     * permission.
+     */
+    public static final String VIEW_AUTOPILOT_STATUS_PERM_NAME = "View Autopilot Status";
 
     /**
      * This member variable is a string constant that defines the name of the

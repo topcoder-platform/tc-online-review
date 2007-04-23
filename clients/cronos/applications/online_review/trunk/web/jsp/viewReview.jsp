@@ -10,7 +10,9 @@
 <html:html xhtml="true">
 
 <head>
-	<title><bean:message key="OnlineReviewApp.title" /></title>
+	<jsp:include page="/includes/project/project_title.jsp">
+		<jsp:param name="thirdLevelPageKey" value="viewReview.title.${reviewType}" />
+	</jsp:include>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 
 	<!-- TopCoder CSS -->
@@ -37,7 +39,9 @@
 			// Find appeal text input node
 			appealTextNode = document.getElementsByName("appeal_text[" + itemIdx + "]")[0];
 			// Get html-encoded Appeal text
-			var appealText = htmlEncode(appealTextNode.value);
+			var appealText = htmlEncode(appealTextNode.value).replace(/\r\n/g, "\n");
+			appealText = trimString(appealText);
+			var appealTextLength = appealText.length;
 
 			// assemble the request XML
 			var content =
@@ -53,6 +57,9 @@
 				'<parameter name="Text">' +
 				appealText +
 				"</parameter>" +
+				'<parameter name="TextLength">' +
+				appealTextLength +
+				"</parameter>" +
 				"</parameters>" +
 				"</request>";
 
@@ -65,7 +72,9 @@
 				},
 				function (result, respXML) {
 					// operation failed, alert the error message to the user
-					alert("An error occured while placing the appeal: " + result);
+					if (result.toLowerCase() == "possible text cutoff error") {
+						alert("<bean:message key='viewReview.appealCutoffWarning' />");
+					} else alert("An error occured while placing the appeal: " + result);
 				}
 			);
 		}

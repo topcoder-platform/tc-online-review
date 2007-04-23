@@ -531,7 +531,7 @@ public class ProjectActions extends DispatchAction {
         // Check if the user has the permission to perform this action
         if(!AuthorizationHelper.hasUserPermission(request, Constants.EDIT_PROJECT_DETAILS_PERM_NAME)) {
             // If he doesn't have, forward to login page
-            return mapping.findForward(Constants.NOT_AUTHORIZED_FORWARD_NAME);
+        	return ActionsHelper.findForwardNotAuthorized(mapping, new Long(projectId));
         }
 
         // Place the flag, indicating that we are editing the existing project, into request
@@ -581,7 +581,6 @@ public class ProjectActions extends DispatchAction {
 
         // Check whether user is creating new project or editing existing one
         boolean newProject = (lazyForm.get("pid") == null);
-
         // Gather the roles the user has for current request
         AuthorizationHelper.gatherUserRoles(request);
 
@@ -589,12 +588,12 @@ public class ProjectActions extends DispatchAction {
         if (newProject) {
             if(!AuthorizationHelper.hasUserPermission(request, Constants.CREATE_PROJECT_PERM_NAME)) {
                 // If he doesn't, redirect the request to login page
-                return mapping.findForward(Constants.NOT_AUTHORIZED_FORWARD_NAME);
+            	return ActionsHelper.findForwardNotAuthorized(mapping, new Long((String) lazyForm.get("pid")));
             }
         } else {
             if(!AuthorizationHelper.hasUserPermission(request, Constants.EDIT_PROJECT_DETAILS_PERM_NAME)) {
                 // If he doesn't, redirect the request to login page
-                return mapping.findForward(Constants.NOT_AUTHORIZED_FORWARD_NAME);
+            	return ActionsHelper.findForwardNotAuthorized(mapping, new Long((String) lazyForm.get("pid")));
             }
         }
 
@@ -1569,10 +1568,7 @@ public class ProjectActions extends DispatchAction {
             } else {
                 resource.setProperty("Payment", null);
             }
-            String paid = (String) lazyForm.get("resources_paid", i);
-            if ("Yes".equals(paid) || "No".equals(paid)) {
-                resource.setProperty("Payment Status", paid);
-            }
+            resource.setProperty("Payment Status", lazyForm.get("resources_paid", i));
             // Set resource phase id, if needed
             Long phaseTypeId = resource.getResourceRole().getPhaseType();
             if (phaseTypeId != null) {
@@ -2042,7 +2038,7 @@ public class ProjectActions extends DispatchAction {
                 // Get an array of "my" resources for the active phases
                 Resource[] myResources = resources[i][j];
                 // If there are no "my" resources, skip the rest of the loop
-                if (resources == null) {
+                if (myResources == null) {
                     continue;
                 }
 

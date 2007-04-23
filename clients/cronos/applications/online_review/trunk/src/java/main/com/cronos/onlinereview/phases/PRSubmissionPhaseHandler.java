@@ -82,7 +82,7 @@ public class PRSubmissionPhaseHandler extends SubmissionPhaseHandler {
      * @param projectId the projectId
      * @throws PhaseHandlingException if error occurs
      */
-    public static void processPR(long projectId, Connection conn, boolean toStart) throws PhaseHandlingException {
+    public void processPR(long projectId, Connection conn, boolean toStart) throws PhaseHandlingException {
     	try {
         	PRHelper.processSubmissionPR(projectId, conn, toStart);
     	} catch(SQLException e) {

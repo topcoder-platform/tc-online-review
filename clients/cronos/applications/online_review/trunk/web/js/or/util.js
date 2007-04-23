@@ -1,10 +1,10 @@
 
-/* 
+/*
  * This function returns the first child Element of the specified node, which has the specified name.
  * Note, that the processing is done recursively.
  */
 function getChildByName(node, name) {
-	for (var element = dojo.dom.firstElement(node); element != null; 
+	for (var element = dojo.dom.firstElement(node); element != null;
 			element = dojo.dom.nextElement(element)) {
 		// Check if current child has the specified name
 		if (element.getAttribute("name") == name) {
@@ -24,13 +24,13 @@ function getChildByName(node, name) {
 }
 
 
-/* 
+/*
  * This function returns all the child Elements of the specified node, which have the specified name.
  * Note, that the processing is done recursively.
  */
 function getChildrenByName(node, name) {
 	var compoundResult = [];
-	for (var element = dojo.dom.firstElement(node); element != null; 
+	for (var element = dojo.dom.firstElement(node); element != null;
 			element = dojo.dom.nextElement(element)) {
 		// Check if current child has the specified name
 		if (element.getAttribute("name") == name) {
@@ -39,7 +39,7 @@ function getChildrenByName(node, name) {
 		} else {
 			// Process the element recursively
 			var result = getChildrenByName(element, name);
-			// Append the found elements to compound result 
+			// Append the found elements to compound result
 			// TODO: Note that this is not the most efficient way to do it
 			compoundResult = compoundResult.concat(result);
 		}
@@ -49,12 +49,12 @@ function getChildrenByName(node, name) {
 }
 
 
-/* 
+/*
  * This function returns the first child Element of the specified node, which has the specified name prefix.
  * Note, that the processing is done recursively.
  */
 function getChildByNamePrefix(node, namePrefix) {
-	for (var element = dojo.dom.firstElement(node); element != null; 
+	for (var element = dojo.dom.firstElement(node); element != null;
 			element = dojo.dom.nextElement(element)) {
 		// Check if current child has the specified name prefix
 		if (element.getAttribute("name") && element.getAttribute("name").indexOf(namePrefix) == 0) {
@@ -74,13 +74,13 @@ function getChildByNamePrefix(node, namePrefix) {
 }
 
 
-/* 
+/*
  * This function returns all the child Elements of the specified node, which have the specified name prefix.
  * Note, that the processing is done recursively.
  */
 function getChildrenByNamePrefix(node, namePrefix) {
 	var compoundResult = [];
-	for (var element = dojo.dom.firstElement(node); element != null; 
+	for (var element = dojo.dom.firstElement(node); element != null;
 			element = dojo.dom.nextElement(element)) {
 		// Check if current child has the specified name prefix
 		if (element.getAttribute("name") && element.getAttribute("name").indexOf(namePrefix) == 0) {
@@ -89,7 +89,7 @@ function getChildrenByNamePrefix(node, namePrefix) {
 		} else {
 			// Process the element recursively
 			var result = getChildrenByNamePrefix(element, namePrefix);
-			// Append the found elements to compound result 
+			// Append the found elements to compound result
 			// TODO: Note that this is not the most efficient way to do it
 			compoundResult = compoundResult.concat(result);
 		}
@@ -120,8 +120,7 @@ function patchParamIndex(paramNode, newIndex) {
 			}
 			paramNode.parentNode.replaceChild(pNode, paramNode);
 		}
-	} 
-	
+	}
 }
 
 /*
@@ -150,19 +149,22 @@ function patchAllChildParamIndexes(node, newIndex) {
  */
 function cloneInputRow(rowNode) {
 	var clonedNode = rowNode.cloneNode(true);
+
 	var oldSelectNodes = rowNode.getElementsByTagName("select");
 	var newSelectNodes = clonedNode.getElementsByTagName("select");
 	for (var i = 0; i < oldSelectNodes.length; i++) {
 		newSelectNodes[i].value = oldSelectNodes[i].value;
 	}
-			var oldInputNodes = rowNode.getElementsByTagName("input");
-			var newInputNodes = clonedNode.getElementsByTagName("input");
-			for (var i = 0; i < oldInputNodes.length; i++) {
-				if (oldInputNodes[i].type == "radio") {
-					newInputNodes[i].checked = oldInputNodes[i].checked;
-					newInputNodes[i].defaultChecked = oldInputNodes[i].checked;
-				}
-			}
+
+	var oldInputNodes = rowNode.getElementsByTagName("input");
+	var newInputNodes = clonedNode.getElementsByTagName("input");
+	for (var i = 0; i < oldInputNodes.length; i++) {
+		if (oldInputNodes[i].type == "radio") {
+			newInputNodes[i].checked = oldInputNodes[i].checked;
+			newInputNodes[i].defaultChecked = oldInputNodes[i].checked;
+		}
+	}
+
 	return clonedNode;
 }
 
@@ -179,7 +181,7 @@ function populateTestCaseAnswer(itemIdx) {
 }
 
 /*
- * This function ancodes chanracters used to form HTML/XML/XHTML
+ * This function encodes characters used to form HTML/XML/XHTML
  * code replacing them with their corresponding entities
  */
 function htmlEncode(textToEncode) {
@@ -201,4 +203,23 @@ function htmlEncode(textToEncode) {
 		}
 	}
 	return resultingText;
+}
+
+function isWhitespace(ch) {
+	return (ch == ' ' || ch == '\t' || ch == '\n' || ch == '\r' || ch == '\xA0');
+}
+
+function trimString(textToTrim) {
+	var iBegin = 0;
+	var iEnd = textToTrim.length;
+	
+	for (; iBegin < iEnd; ++iBegin)
+		if (!isWhitespace(textToTrim.charAt(iBegin)))
+			break;
+	for (; iEnd > iBegin; --iEnd)
+		if (!isWhitespace(textToTrim.charAt(iEnd-1)))
+			break;
+	if (iBegin == iEnd)
+		return "";
+	return textToTrim.slice(iBegin, iEnd);
 }

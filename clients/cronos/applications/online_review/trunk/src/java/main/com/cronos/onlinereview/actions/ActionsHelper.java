@@ -30,6 +30,8 @@ import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
+import org.apache.struts.action.ActionMessages;
+import org.apache.struts.action.ActionRedirect;
 import org.apache.struts.util.MessageResources;
 
 import com.cronos.onlinereview.autoscreening.management.ScreeningManager;
@@ -930,7 +932,7 @@ public class ActionsHelper {
         // Validate the errorKey parameter. Other parameters will be validated in overloaded method
         validateParameterStringNotEmpty(errorKey, "errorKey");
         // Call overload to do the actual job
-        addErrorToRequest(request, ActionErrors.GLOBAL_MESSAGE, new ActionMessage(errorKey));
+        addErrorToRequest(request, ActionMessages.GLOBAL_MESSAGE, new ActionMessage(errorKey));
     }
 
     /**
@@ -943,7 +945,7 @@ public class ActionsHelper {
      */
     public static void addErrorToRequest(HttpServletRequest request, ActionMessage errorMessage) {
         // Call overload to do the actual job
-        addErrorToRequest(request, ActionErrors.GLOBAL_MESSAGE, errorMessage);
+        addErrorToRequest(request, ActionMessages.GLOBAL_MESSAGE, errorMessage);
     }
 
     /**
@@ -3236,8 +3238,6 @@ public class ActionsHelper {
      * @throws BaseException if error occurs
      */
     public static void changeResourceRole(Project project, long userId, long oldRoleId, long newRoleId) throws BaseException {
-    	Connection conn = null;
-    	PreparedStatement ps = null;
     	long categoryId = project.getProjectCategory().getId();
     	if (categoryId != 1 && categoryId != 2) {
     		// design/development project need project_result
@@ -3503,4 +3503,15 @@ public class ActionsHelper {
 			}
 		}
     }
+    
+    public static ActionForward findForwardNotAuthorized(ActionMapping mapping, Long projectId) {
+		if (projectId != null && projectId.longValue() > 0) {
+			ActionRedirect redirect = new ActionRedirect(mapping.findForward(Constants.NOT_AUTHORIZED_FORWARD_NAME));
+			redirect.addParameter("pid", projectId);
+			redirect.addParameter("redirectToProjectID", projectId);
+			return redirect;
+		} else {
+			return mapping.findForward(Constants.NOT_AUTHORIZED_FORWARD_NAME);
+		}
+	}
 }

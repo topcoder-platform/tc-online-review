@@ -509,7 +509,7 @@ public class ProjectDetailsActions extends DispatchAction {
                 }
 
                 if (submissions == null) {
-                	submissions = new Submission[0]; 
+                	submissions = new Submission[0];
                 }
                 // Use comparator to sort submissions either by placement
                 // or by the time when they were uploaded
@@ -520,7 +520,7 @@ public class ProjectDetailsActions extends DispatchAction {
 
                 phaseGroup.setSubmissions(submissions);
 
-                if (submissions != null && submissions.length != 0) {
+                if (submissions.length != 0) {
                     long[] uploadIds = new long[submissions.length];
 
                     for (int j = 0; j < submissions.length; ++j) {
@@ -720,9 +720,7 @@ public class ProjectDetailsActions extends DispatchAction {
                     List reviewFilters = new ArrayList();
                     reviewFilters.add(filterReviewers);
                     reviewFilters.add(filterScorecard);
-                    if (filterSubmissions != null) {
-                        reviewFilters.add(filterSubmissions);
-                    }
+                    reviewFilters.add(filterSubmissions);
 
                     // Create final filter
                     Filter filterForReviews = new AndFilter(reviewFilters);
@@ -1048,6 +1046,8 @@ public class ProjectDetailsActions extends DispatchAction {
                 Boolean.valueOf(AuthorizationHelper.hasUserPermission(request, Constants.SET_TL_NOTIFY_PERM_NAME)));
         request.setAttribute("isAllowedToViewSVNLink",
                 Boolean.valueOf(AuthorizationHelper.hasUserPermission(request, Constants.VIEW_SVN_LINK_PERM_NAME)));
+        request.setAttribute("isAllowedToViewAutopilotStatus",
+                Boolean.valueOf(AuthorizationHelper.hasUserPermission(request, Constants.VIEW_AUTOPILOT_STATUS_PERM_NAME)));
         request.setAttribute("isAllowedToViewPayment",
                 Boolean.valueOf(AuthorizationHelper.hasUserPermission(request, Constants.VIEW_MY_PAY_INFO_PERM_NAME)));
         request.setAttribute("isAllowedToViewAllPayment",

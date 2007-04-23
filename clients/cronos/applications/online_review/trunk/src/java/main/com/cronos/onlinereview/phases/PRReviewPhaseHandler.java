@@ -83,7 +83,7 @@ public class PRReviewPhaseHandler extends ReviewPhaseHandler {
      * @param phaseId the phase id
      * @throws PhaseHandlingException if error occurs
      */
-    public static void processPR(long projectId, Connection conn, boolean toStart) throws PhaseHandlingException {
+    public void processPR(long projectId, Connection conn, boolean toStart) throws PhaseHandlingException {
     	try {
         	PRHelper.processReviewPR(projectId, conn, toStart);
     	} catch(SQLException e) {

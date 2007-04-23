@@ -7,7 +7,9 @@
 <html:html xhtml="true">
 
 <head>
-	<title><bean:message key="OnlineReviewApp.title" /></title>
+	<jsp:include page="/includes/project/project_title.jsp">
+		<jsp:param name="thirdLevelPageKey" value="uploadTestCase.title" />
+	</jsp:include>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 
 	<!-- TopCoder CSS -->

@@ -35,8 +35,13 @@
 						</c:otherwise>
 					</c:choose>
 					<c:choose>
-						<c:when test='${(not empty resource.allProperties["Payment"]) && (not empty resource.allProperties["Payment Status"])}'>
-							<td class="value" nowrap="nowrap"><bean:message key='viewProjectDetails.Resource.Paid.${(resource.allProperties["Payment Status"] == "Yes") ? "yes" : "no"}' /></td>
+						<c:when test='${(not empty resource.allProperties["Payment Status"])}'>
+							<c:if var="isPaymentStatusNA" test='${resource.allProperties["Payment Status"] == "N/A"}'>
+								<td class="value" nowrap="nowrap"><bean:message key='NotApplicable'/></td>
+							</c:if>
+							<c:if test="${!isPaymentStatusNA}">
+								<td class="value" nowrap="nowrap"><bean:message key='viewProjectDetails.Resource.Paid.${(resource.allProperties["Payment Status"] == "Yes") ? "yes" : "no"}' /></td>
+							</c:if>
 						</c:when>
 						<c:otherwise>
 							<td class="value" nowrap="nowrap"><bean:message key="NotAvailable" /></td>
