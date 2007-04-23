@@ -66,7 +66,7 @@ public class PRRegistrationPhaseHandler extends RegistrationPhaseHandler {
      * @param phaseId the phase id
      * @throws PhaseHandlingException if error occurs
      */
-    public static void processPR(long projectId, Connection conn, boolean toStart) throws PhaseHandlingException {
+    public void processPR(long projectId, Connection conn, boolean toStart) throws PhaseHandlingException {
     	try {
         	PRHelper.processRegistrationPR(projectId, conn, toStart);
     	} catch(SQLException e) {

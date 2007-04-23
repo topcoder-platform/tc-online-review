@@ -59,7 +59,7 @@
 											<td class="value" nowrap="nowrap"><bean:message key="NotAvailable" /></td>
 										</c:if>
 										<c:if test="${!(empty reliability)}">
-											<td class="value" nowrap="nowrap">${reliability}%</td>
+											<td class="value" nowrap="nowrap">${reliability}</td>
 										</c:if>
 										<c:set var="rating" value='${resource.allProperties["Rating"]}' />
 										<c:choose>
@@ -502,7 +502,7 @@
 										<td class="value" nowrap="nowrap">
 											<html:img srcKey="viewProjectDetails.Submitter.icoWinner.img" altKey="viewProjectDetails.Submitter.icoWinner.alt" border="0" styleClass="Outline" />
 											<html:link page="/actions/DownloadSubmission.do?method=downloadSubmission&uid=${winningSubmission.upload.id}"
-												titleKey="viewProjectDetails.box.Submission.Download">${winningSubmission.upload.id}</html:link>
+												titleKey="viewProjectDetails.box.Submission.Download">${winningSubmission.id}</html:link>
 											(<tc-webtag:handle coderId='${group.winner.allProperties["External Reference ID"]}' context="${orfn:getHandlerContext(pageContext.request)}" />)
 										</td>
 										<c:if test="${not empty group.aggregation}">
@@ -589,7 +589,7 @@
 										<td class="value" nowrap="nowrap">
 											<html:img srcKey="viewProjectDetails.Submitter.icoWinner.img" altKey="viewProjectDetails.Submitter.icoWinner.alt" border="0" styleClass="Outline" />
 											<html:link page="/actions/DownloadSubmission.do?method=downloadSubmission&uid=${winningSubmission.upload.id}"
-												titleKey="viewProjectDetails.box.Submission.Download">${winningSubmission.upload.id}</html:link>
+												titleKey="viewProjectDetails.box.Submission.Download">${winningSubmission.id}</html:link>
 											(<tc-webtag:handle coderId='${group.winner.allProperties["External Reference ID"]}' context="${orfn:getHandlerContext(pageContext.request)}" />)
 										</td>
 										<c:if test="${not empty group.finalFix}">
@@ -662,7 +662,7 @@
 										<td class="value" nowrap="nowrap">
 											<html:img srcKey="viewProjectDetails.Submitter.icoWinner.img" altKey="viewProjectDetails.Submitter.icoWinner.alt" border="0" styleClass="Outline" />
 											<html:link page="/actions/DownloadSubmission.do?method=downloadSubmission&uid=${winningSubmission.upload.id}"
-												titleKey="viewProjectDetails.box.Submission.Download">${winningSubmission.upload.id}</html:link>
+												titleKey="viewProjectDetails.box.Submission.Download">${winningSubmission.id}</html:link>
 											(<tc-webtag:handle coderId='${group.winner.allProperties["External Reference ID"]}' context="${orfn:getHandlerContext(pageContext.request)}" />)
 										</td>
 										<c:if test="${not empty group.approval}">

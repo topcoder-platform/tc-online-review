@@ -251,7 +251,7 @@
                 </Property>
             </Property>
         </Property>
-        -
+
         <!-- defining the upload manager concrete implementation -->
         <!-- wrapper class is used due to inability of OF to create Maps -->
         <Property name="com/topcoder/management/deliverable/UploadManager">
@@ -1170,7 +1170,7 @@
                 <Value>Phase End</Value>
             </Property>
             <Property name="EmailFromAddress">
-                <Value>top_code@mail.ru</Value>
+                <Value>service@topcodersoftware.com</Value>
             </Property>
         </Property>
     </Config>
@@ -1422,7 +1422,7 @@
     <Config name="com.topcoder.project.phases.template.persistence.XmlPhaseTemplatePersistence">
         <!-- XML files from which the templates will be loaded. -->
         <Property name="template_files">
-<!--            <Value>/home/onlinereview/ComponentTimeline.xml</Value>-->
+<!--            <Value>/home/onlinereview/ComponentTimeline.xml</Value> -->
             <Value>/home/onlinereview/TCSTemplate_Design.xml</Value>
             <Value>/home/onlinereview/TCSTemplate_Development.xml</Value>
             <Value>/home/onlinereview/TCSTemplate_Application.xml</Value>
@@ -2569,15 +2569,17 @@
 
     <Config name="com.topcoder.search.builder.database.factory"></Config>
 
-	<!--
+
+    <!--
         ===== Configuration for Pacts Services =====
     -->
-	<Config name="com.cronos.onlinereview.phases.pacts.services">
-		<Property name="pacts_jndi_address">
-			<Value>jnp://63.118.154.181:2099</Value>
-		</Property>
-	</Config>
-	
+    <Config name="com.cronos.onlinereview.phases.pacts.services">
+        <Property name="pacts_jndi_address">
+            <Value>jnp://63.118.154.181:2099</Value>
+        </Property>
+    </Config>
+
+
     <!--
         =====  Configuration for the Online Review Application itself  =====
     -->
@@ -2912,6 +2914,23 @@
                 <Value>Aggregator</Value>
                 <Value>Final Reviewer</Value>
             </Property>
+            <Property name="View Autopilot Status">
+                <Value>Global Manager</Value>
+                <Value>Manager</Value>
+                <Value>Observer</Value>
+                <Value>Submitter</Value>
+                <Value>Screener</Value>
+                <Value>Primary Screener</Value>
+                <Value>Reviewer</Value>
+                <Value>Accuracy Reviewer</Value>
+                <Value>Failure Reviewer</Value>
+                <Value>Stress Reviewer</Value>
+                <Value>Aggregator</Value>
+                <Value>Final Reviewer</Value>
+                <Value>Approver</Value>
+                <Value>Public</Value>
+                <Value>Designer</Value>
+            </Property>
             <Property name="View All Payment Information">
                 <Value>Global Manager</Value>
                 <Value>Manager</Value>
@@ -3131,7 +3150,7 @@
             <Property name="Perform Aggregation">
                 <!-- Note: Originally this permission had been granted
                     to Reviewers (and all Testcase Reviewers as well),
-                    but this waas changed later on after this issue was raised on forum -->
+                    but this was changed later on after this issue was raised on forum -->
                 <Value>Aggregator</Value>
             </Property>
             <Property name="View Aggregation">

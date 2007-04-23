@@ -3,8 +3,8 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="bean" uri="/tags/struts-bean" %>
-<%@ taglib prefix="orfn" uri="/tags/or-functions" %>
 <%@ taglib prefix="html" uri="/tags/struts-html" %>
+<%@ taglib prefix="orfn" uri="/tags/or-functions" %>
 	<table border="0" width="100%" id="table12" cellspacing="0" cellpadding="0">
 		<tr>
 			<td valign="top"><html:img alt="" src="/i/${categoryIconName}" /></td>

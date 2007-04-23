@@ -44,9 +44,11 @@
 				<div class="error"><html:errors property="resources_name[${resourceIdx}]" prefix="" suffix="" /></div>
 			</td>
 			<td class="value" nowrap="nowrap">
-				<html:radio property="resources_payment[${resourceIdx}]" value="true" />${"$"}
+				<html:radio styleId="resourcePaymentOnRadio${resourceIdx}" property="resources_payment[${resourceIdx}]" value="true" /><label
+					for="resourcePaymentOnRadio${resourceIdx}">${"$"}</label>
 				<html:text styleClass="inputBoxDuration" property="resources_payment_amount[${resourceIdx}]" />
-				<html:radio property="resources_payment[${resourceIdx}]" value="false" /><bean:message key="NotAvailable" />
+				<html:radio styleId="resourcePaymentOffRadio${resourceIdx}" property="resources_payment[${resourceIdx}]" value="false" /><label
+					for="resourcePaymentOffRadio${resourceIdx}"><bean:message key="NotAvailable" /></label>
 				<div name="payment_validation_msg" class="error" style="display:none"></div>
 			</td>
 			<td class="value" nowrap="nowrap">

@@ -10,7 +10,9 @@
 <html:html xhtml="true">
 
 <head>
-	<title><bean:message key="OnlineReviewApp.title" /></title>
+	<jsp:include page="/includes/project/project_title.jsp">
+		<jsp:param name="thirdLevelPageKey" value="editFinalReview.title" />
+	</jsp:include>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 
 	<!-- TopCoder CSS -->
@@ -207,7 +209,7 @@ function OnCompleteScorecardClick() {
 
 						<table class="scorecard" cellpadding="0" cellspacing="0" width="100%" style="border-collapse:collapse;">
 							<tr>
-								<td class="title"><bean:message key="editFinalReview.box.Approval" /></td>
+								<td class="title"><label for="approveFixes"><bean:message key="editFinalReview.box.Approval" /></label></td>
 							</tr>
 							<tr class="highlighted">
 								<td class="value">

@@ -10,7 +10,9 @@
 <html:html xhtml="true">
 
 <head>
-	<title><bean:message key="OnlineReviewApp.title" /></title>
+	<jsp:include page="/includes/project/project_title.jsp">
+		<jsp:param name="thirdLevelPageKey" value="editReview.title.${reviewType}" />
+	</jsp:include>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 
 	<!-- TopCoder CSS -->
@@ -202,7 +204,6 @@
 															<b><bean:message key="editReview.Question.ManagerComment.title"/>:</b>
 														</c:if>
 														<span class="error"><html:errors property="comment(${itemIdx}.${commentIdx})" prefix="" suffix="" /></span>
-<%-- TODO: Delete this commented piece														<html:img srcKey="btnDelete.img" altKey="btnDelete.alt" onclick="removeReviewResponse(${itemIdx}, this.parentNode)" style="cursor:hand;vertical-align:bottom;"/> --%>
 														<html:textarea rows="2" property="comment(${itemIdx}.${commentIdx})" cols="20" styleClass="inputTextBox" />
 													</div>
 												</c:forEach>

@@ -5,11 +5,12 @@
 <%@ taglib prefix="html" uri="/tags/struts-html" %>
 <%@ taglib prefix="bean" uri="/tags/struts-bean" %>
 <%@ taglib prefix="tc-webtag" uri="/tags/tc-webtags" %>
+<%@ taglib prefix="orfn" uri="/tags/or-functions" %>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html:html xhtml="true">
 
 <head>
-	<title><bean:message key="OnlineReviewApp.title" /></title>
+	<jsp:include page="/includes/project/project_title.jsp" />
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 
 	<!-- TopCoder CSS -->

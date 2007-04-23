@@ -9,7 +9,9 @@
 <html:html xhtml="true">
 
 <head>
-	<title><bean:message key="login.title" /></title>
+	<title><bean:message key="global.title.level2"
+		arg0='${orfn:getMessage(pageContext, "OnlineReviewApp.title")}'
+		arg1='${orfn:getMessage(pageContext, "login.title")}' /></title>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 
 	<!-- TopCoder CSS -->
@@ -61,7 +63,7 @@
 								<td class="title" colspan="2"><bean:message key="login.formLogin.title" /></td>
 							</tr>
 							<tr>
-								<td class="value" colspan="2"><div align="right">&nbsp;</div></td>
+								<td class="value" colspan="2">&#160;</td>
 							</tr>
 							<tr>
 								<td class="value"><div align="right"><bean:message key="login.formLogin.userName" /> </div></td>
@@ -72,7 +74,7 @@
 								<td class="value"><input type="password" name="password" /></td>
 							</tr>
 							<tr>
-								<td class="valueLast"><div align="right">&nbsp; </div></td>
+								<td class="valueLast">&#160;</td>
 								<td class="valueLast"><html:image altKey="login.formLogin.btnLogin.alt"
 										srcKey="login.formLogin.btnLogin.img" border="0" styleClass="imgLogin" /></td>
 							</tr>
