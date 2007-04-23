@@ -454,14 +454,18 @@
 
     <target name="compile">
         <mkdir dir="${build_classdir}" />
-        <javac srcdir="${javamain}" destdir="${build_classdir}" includes="**/*.java" debug="true" verbose="${verbose}">
+        <javac srcdir="${javamain}" destdir="${build_classdir}" includes="**/*.java" 
+        		debug="true" verbose="${verbose}"
+	        	source="1.5" target="1.5">
             <classpath refid="buildlibs" />
         </javac>
     </target>
 
     <target name="compile_tests" depends="compile">
         <mkdir dir="${build_testclassdir}" />
-        <javac srcdir="${javatests}" destdir="${build_testclassdir}" includes="**/*.java" debug="true" verbose="${verbose}">
+        <javac srcdir="${javatests}" destdir="${build_testclassdir}" includes="**/*.java" 
+        	debug="true" verbose="${verbose}"
+        	source="1.5" target="1.5">
             <classpath refid="test.build.classpath" />
         </javac>
     </target>
