@@ -1224,8 +1224,20 @@ public class ActionsHelper {
      */
     static void populateEmailProperty(HttpServletRequest request, Resource resource) throws BaseException {
         UserRetrieval userRetrieval = ActionsHelper.createUserRetrieval(request);
-        String handle = (String) resource.getProperty("Handle");
-        ExternalUser user = userRetrieval.retrieveUser(handle);
+        ExternalUser user = null;
+        String externalUserID = (String) resource.getProperty("External Reference ID");
+        if (externalUserID != null) {
+        	user = userRetrieval.retrieveUser(Long.parseLong(externalUserID));
+        }
+        if (user == null) {
+        	String handle = (String) resource.getProperty("Handle");
+        	if (handle != null) {
+        		user = userRetrieval.retrieveUser(handle);
+        	}
+        }
+        if (user == null) {
+        	throw new BaseException("the resourceId: " + resource.getId() + " doesn't refer a valid user");
+        }
     	resource.setProperty("Email", user.getEmail());
     }
 
