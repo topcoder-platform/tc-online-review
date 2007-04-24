@@ -667,16 +667,16 @@
 			// Find template name input node
 			templateNameNode = document.getElementsByName("template_name")[0];
 			// Get html-encoded template name
-			var templateName = htmlEncode(templateNameNode.value);
+			var templateName = templateNameNode.value;
 
 			// assemble the request XML
 			var content =
 				'<?xml version="1.0" ?>' +
 				'<request type="LoadTimelineTemplate">' +
 				'<parameters>' +
-				'<parameter name="TemplateName">' +
+				'<parameter name="TemplateName"><![CDATA[' +
 				templateName +
-				'</parameter>' +
+				']]></parameter>' +
 				'<parameter name="ProjectTypeName">' +
 				projectTypeNamesMap[document.getElementsByName("project_type")[0].value] +
 				'</parameter>' + '</parameters>' +
