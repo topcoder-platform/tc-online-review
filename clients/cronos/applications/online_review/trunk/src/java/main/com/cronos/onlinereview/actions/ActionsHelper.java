@@ -1230,10 +1230,13 @@ public class ActionsHelper {
         	user = userRetrieval.retrieveUser(Long.parseLong(externalUserID));
         }
         if (user == null) {
+        	log.log(Level.DEBUG, "using 'Handle' for retrieving the user for resource: " + resource.getId());
         	String handle = (String) resource.getProperty("Handle");
         	if (handle != null) {
         		user = userRetrieval.retrieveUser(handle);
         	}
+        } else {
+        	log.log(Level.DEBUG, "using 'External Reference ID' for retrieving the user for resource: " + resource.getId());
         }
         if (user == null) {
         	throw new BaseException("the resourceId: " + resource.getId() + " doesn't refer a valid user");
