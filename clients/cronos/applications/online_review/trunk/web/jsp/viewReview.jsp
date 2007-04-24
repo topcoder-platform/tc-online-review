@@ -39,7 +39,7 @@
 			// Find appeal text input node
 			appealTextNode = document.getElementsByName("appeal_text[" + itemIdx + "]")[0];
 			// Get html-encoded Appeal text
-			var appealText = htmlEncode(appealTextNode.value).replace(/\r\n/g, "\n");
+			var appealText = appealTextNode.value.replace(/\r\n/g, "\n");
 			appealText = trimString(appealText);
 			var appealTextLength = appealText.length;
 
@@ -54,9 +54,9 @@
 				'<parameter name="ItemId">' +
 				itemId +
 				"</parameter>" +
-				'<parameter name="Text">' +
+				'<parameter name="Text"><![CDATA[' +
 				appealText +
-				"</parameter>" +
+				"]]></parameter>" +
 				'<parameter name="TextLength">' +
 				appealTextLength +
 				"</parameter>" +
@@ -86,7 +86,7 @@
 			// Find appeal response text input node
 			responseTextNode = document.getElementsByName("appeal_response_text[" + itemIdx + "]")[0];
 			// Get appeal response text
-			var responseText = htmlEncode(responseTextNode.value);
+			var responseText = responseTextNode.value;
 
 			// Find appeal response modified answer node
 			answerNode = document.getElementsByName("answer[" + itemIdx + "]")[0];
@@ -107,9 +107,9 @@
 				'<parameter name="ItemId">' +
 				itemId +
 				'</parameter>' +
-				'<parameter name="Text">' +
+				'<parameter name="Text"><![CDATA[' +
 				responseText +
-				'</parameter>' +
+				']]></parameter>' +
 				'<parameter name="Answer">' +
 				modifiedAnswer +
 				'</parameter>' +
