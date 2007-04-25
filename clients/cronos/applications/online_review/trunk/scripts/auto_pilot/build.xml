@@ -384,7 +384,10 @@
         <delete failonerror="false">
             <fileset dir="${build_classdir}" includes="com/cronos/onlinereview/phases/*.class"/>
         </delete>
-        <javac srcdir="${javamain}" destdir="${build_classdir}" includes="com/cronos/onlinereview/phases/*.java" debug="true" verbose="${verbose}">
+        <javac srcdir="${javamain}" destdir="${build_classdir}" includes="com/cronos/onlinereview/phases/*.java" 
+        		debug="true" verbose="${verbose}"
+	        	source="1.5" target="1.5"
+        >
             <classpath refid="buildlibs" />
         </javac>
     </target>
