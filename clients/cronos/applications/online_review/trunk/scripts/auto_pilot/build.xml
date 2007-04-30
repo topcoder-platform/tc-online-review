@@ -181,7 +181,7 @@
     <property name="online_review_deliverables.path" value="online_review_deliverables/${online_review_deliverables.version}" />
     <property name="online_review_deliverables.jar" value="${tcs_libdir}/${online_review_deliverables.path}/${online_review_deliverables.jar.name}" />
 
-    <property name="online_review_phases.version" value="1.0.2" />
+    <property name="online_review_phases.version" value="1.0.3" />
     <property name="online_review_phases.jar.name" value="online_review_phases.jar" />
     <property name="online_review_phases.path" value="online_review_phases/${online_review_phases.version}" />
     <property name="online_review_phases.jar" value="${tcs_libdir}/${online_review_phases.path}/${online_review_phases.jar.name}" />
