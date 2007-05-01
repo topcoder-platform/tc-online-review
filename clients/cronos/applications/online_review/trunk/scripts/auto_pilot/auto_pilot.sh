@@ -1,7 +1,8 @@
 JAVACMD=${JAVA_HOME}/bin/java
-#if [ "x$JBOSS_HOME" = "x" ]; then
-    JBOSS_HOME="/home/tcsdev1/jboss-4.0.2"
-#fi
+if [ "x$JBOSS_HOME" = "x" ]; then
+    JBOSS_HOME="/home/$USER/jboss-4.0.2"
+    echo "WARNING: The JBOSS_HOME environment variable is not defined. setting to: $JBOSS_HOME"
+fi
 MAIN=com.topcoder.management.phase.autopilot.AutoPilotJob
 LOGFILE=auto_pilot-`date +%Y-%m-%d-%H-%M-%S`.log
 
@@ -90,9 +91,10 @@ elif [ "$CMD" = "test" ] ; then
 	$JAVACMD $OPTIONS $MAIN -config auto_pilot.xml -namespace AutoPilotJob -autopilot com.topcoder.management.phase.autopilot.AutoPilot -poll 1
 else
     echo "Usage:"
-    echo "auto_pilot.sh (start|stop|restart)"
+    echo "auto_pilot.sh (start|stop|restart|test)"
     echo "      start - start auto_pilot"
     echo "      stop  - stop auto_pilot"
     echo "      restart  - restart auto_pilot"
+    echo "      test - start auto_pilot without without sending the process to background"
 fi
 
