@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 TopCoder Inc.  All Rights Reserved.
+ * Copyright (C) 2006-2007 TopCoder Inc.  All Rights Reserved.
  */
 package com.cronos.onlinereview.actions;
 
@@ -47,6 +47,7 @@ import com.cronos.onlinereview.deliverables.SubmissionDeliverableChecker;
 import com.cronos.onlinereview.deliverables.SubmitterCommentDeliverableChecker;
 import com.cronos.onlinereview.deliverables.TestCasesDeliverableChecker;
 import com.cronos.onlinereview.external.ExternalUser;
+import com.cronos.onlinereview.external.RetrievalException;
 import com.cronos.onlinereview.external.UserRetrieval;
 import com.cronos.onlinereview.external.impl.DBUserRetrieval;
 import com.cronos.onlinereview.phases.AppealsPhaseHandler;
@@ -160,7 +161,7 @@ import com.topcoder.util.log.Level;
  */
 public class ActionsHelper {
 	private static final com.topcoder.util.log.Log log = com.topcoder.util.log.LogFactory.getLog(ActionsHelper.class.getName());
-	
+
     /**
      * This member variable is a string constant that defines the name of the configurtaion
      * namespace which the parameters for database connection factory are stored under.
@@ -2021,6 +2022,61 @@ public class ActionsHelper {
     }
 
     /**
+     * This static method retrieves an array of external user objects for the specified array of
+     * resources. Each entry in the resulting array will correspond to the corresponding entry in
+     * the input <code>resources</code> array. If there are no matches found for some resource,
+     * the corresponding item in the resulting array will contain <code>null</code>.
+     *
+     * @return an array of external user objects for the specified resources.
+     * @param retrieval
+     *            a <code>UserRetrieval</code> object used to retrieve external user objects.
+     * @param resources
+     *            an array of resources to retrieve corresponding external user objects for.
+     * @throws IllegalArgumentException
+     *             if any of the parameters are <code>null</code>.
+     * @throws RetrievalException
+     *             if some error happend during external user retrieval.
+     */
+    public static ExternalUser[] getExternalUsersForResources(UserRetrieval retrieval, Resource[] resources)
+        throws RetrievalException {
+        // Validate parameters
+        ActionsHelper.validateParameterNotNull(retrieval, "retrieval");
+        ActionsHelper.validateParameterNotNull(resources, "resources");
+
+        // If there are no resource for this project defined, there will be no external users
+        if (resources.length == 0) {
+            return new ExternalUser[0];
+        }
+
+        // Prepare an array to store External User IDs
+        long[] extUserIds = new long[resources.length];
+        // Fill the array with user IDs retrieved from resource properties
+        for (int i = 0; i < resources.length; ++i) {
+            String userID = (String) resources[i].getProperty("External Reference ID");
+            extUserIds[i] = Long.parseLong(userID, 10);
+        }
+
+        // Retrieve external users to the temporary array
+        ExternalUser[] extUsers = retrieval.retrieveUsers(extUserIds);
+
+        // This is final array for External User objects. It is needed because the previous
+        // operation may return shorter array than there are resources for the project
+        // (sometimes several resources can be associated with one external user)
+        ExternalUser[] allExtUsers = new ExternalUser[resources.length];
+
+        for (int i = 0; i < extUserIds.length; ++i) {
+            for (int j = 0; j < extUsers.length; ++j) {
+                if (extUsers[j].getId() == extUserIds[i]) {
+                    allExtUsers[i] = extUsers[j];
+                    break;
+                }
+            }
+        }
+
+        return allExtUsers;
+    }
+
+    /**
      * TODO: Write documentation for this method.
      *
      * @return
@@ -3073,7 +3129,7 @@ public class ActionsHelper {
 					close(rs);
 	            }
 
-	            
+
 	            double oldReliability = 0;
 	            if (!existPR) {
 	            	//Retrieve Reliability
@@ -3086,7 +3142,7 @@ public class ActionsHelper {
 		                oldReliability = rs.getDouble(1);
 		            }
 					close(rs);
-					
+
 					//add project_result
 					ps.setLong(1, projectId);
 			        ps.setString(2, userId);
@@ -3168,7 +3224,7 @@ public class ActionsHelper {
 		} finally {
 			close(conn);
 		}
-    }    
+    }
 
     /**
      * Recaculate Screening reviewers payment.
@@ -3220,7 +3276,7 @@ public class ActionsHelper {
 	        conn = dbconn.createConnection();
 	        String sqlString = "select ds.*, st.name from default_scorecard ds, scorecard_type_lu st " +
 	        		"where ds.scorecard_type_id = st.scorecard_type_id";
-	        
+
 	        stmt = conn.createStatement();
 	        rs = stmt.executeQuery(sqlString);
 	        List list = new ArrayList();
@@ -3246,7 +3302,7 @@ public class ActionsHelper {
 
     /**
      * Delete project_result and component_inquiry for new submitters if oldRole is submitter, added otherwise.
-     * 
+     *
      * @param project the project
      * @param userId userId
      * @param roleId roleId
@@ -3263,7 +3319,7 @@ public class ActionsHelper {
     		// Delete project_result if the old role is submitter
     		deleteProjectResult(project, userId, oldRoleId);
     	}
-    	
+
     	if (newRoleId == 1) {
     		// added otherwise
     		populateProjectResult(project, Arrays.asList(new String[] {String.valueOf(userId)}));
@@ -3296,7 +3352,7 @@ public class ActionsHelper {
 	        DBConnectionFactory dbconn;
 				dbconn = new DBConnectionFactoryImpl(DB_CONNECTION_NAMESPACE);
 	        conn = dbconn.createConnection();
-	        
+
 	        // delete from project_result
 	        ps = conn.prepareStatement("delete from project_result where project_id = ? and user_id = ?");
 	        ps.setLong(1, project.getId());
@@ -3413,9 +3469,9 @@ public class ActionsHelper {
     static Submission[] searchReviewedSubmissions(HttpServletRequest request, Project project)
         throws BaseException {
     	UploadManager upMgr = ActionsHelper.createUploadManager(request);
-    	
+
         //first get submission status id for "Active" status
-        Filter filterSubmissionStatuss = new InFilter("submission_status_id", 
+        Filter filterSubmissionStatuss = new InFilter("submission_status_id",
         		Arrays.asList(new Long[] {new Long(1), new Long(3), new Long(4)}));
 
         //then search for submissions
@@ -3518,7 +3574,7 @@ public class ActionsHelper {
 			}
 		}
     }
-    
+
     public static ActionForward findForwardNotAuthorized(ActionMapping mapping, Long projectId) {
 		if (projectId != null && projectId.longValue() > 0) {
 			ActionRedirect redirect = new ActionRedirect(mapping.findForward(Constants.NOT_AUTHORIZED_FORWARD_NAME));
