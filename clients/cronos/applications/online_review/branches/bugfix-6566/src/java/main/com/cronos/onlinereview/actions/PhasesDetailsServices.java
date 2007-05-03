@@ -73,8 +73,7 @@ final class PhasesDetailsServices {
         int phaseGroupIdx = -1;
         int activeTabIdx = -1;
         Resource[] submitters = null;
-        Upload[] finalFixes = null;
-        int finalFixIdx = -1;
+        FinalFixesInfo finalFixes = new FinalFixesInfo();
 
         for (int phaseIdx = 0; phaseIdx < phases.length; ++phaseIdx) {
             // Get a phase for the current iteration
@@ -143,602 +142,21 @@ final class PhasesDetailsServices {
 
             if (phaseGroup.getAppFunc().equals(Constants.VIEW_REGISTRANTS_APP_FUNC)) {
                 serviceRegistrantsAppFunc(request, phaseGroup, submitters, allProjectExternalUsers);
-                continue;
-            }
-
-            if (phaseGroup.getAppFunc().equals(Constants.VIEW_SUBMISSIONS_APP_FUNC) &&
-                    phaseName.equalsIgnoreCase(Constants.SUBMISSION_PHASE_NAME)) {
-                Submission[] submissions = null;
-
-                if (AuthorizationHelper.hasUserPermission(request, Constants.VIEW_ALL_SUBM_PERM_NAME)) {
-                    submissions =
-                        ActionsHelper.getMostRecentSubmissions(ActionsHelper.createUploadManager(request), project);
-
-                    // Obtain an instance of Upload Manager
-                    UploadManager upMgr = ActionsHelper.createUploadManager(request);
-                    // Get all upload types
-                    UploadType[] allUploadTypes = upMgr.getAllUploadTypes();
-                    // Get all upload statuses
-                    UploadStatus[] allUploadStatuses = upMgr.getAllUploadStatuses();
-
-                    Filter filterProject = UploadFilterBuilder.createProjectIdFilter(project.getId());
-                    Filter filterUploadType = UploadFilterBuilder.createUploadTypeIdFilter(
-                            ActionsHelper.findUploadTypeByName(allUploadTypes, "Submission").getId());
-                    Filter filterUploadStatus = UploadFilterBuilder.createUploadStatusIdFilter(
-                            ActionsHelper.findUploadStatusByName(allUploadStatuses, "Deleted").getId());
-
-                    Filter filter =
-                        new AndFilter(Arrays.asList(new Filter[] {filterProject, filterUploadType, filterUploadStatus}));
-                    Upload[] ungroupedUploads = upMgr.searchUploads(filter);
-                    Upload[][] pastSubmissions = new Upload[submissions.length][];
-
-                    for (int j = 0; j < pastSubmissions.length; ++j) {
-                        List temp = new ArrayList();
-                        long currentUploadOwnerId = submissions[j].getUpload().getOwner();
-
-                        for (int k = 0; k < ungroupedUploads.length; ++k) {
-                            if (currentUploadOwnerId == ungroupedUploads[k].getOwner()) {
-                                temp.add(ungroupedUploads[k]);
-                            }
-                        }
-
-                        if (!temp.isEmpty()) {
-                            pastSubmissions[j] = (Upload[]) temp.toArray(new Upload[temp.size()]);
-                        }
-                    }
-
-                    if (pastSubmissions.length != 0) {
-                        phaseGroup.setPastSubmissions(pastSubmissions);
-                    }
-                }
-
-                boolean mayViewMostRecentAfterAppealsResponse =
-                    AuthorizationHelper.hasUserPermission(request, Constants.VIEW_RECENT_SUBM_AAR_PERM_NAME);
-
-                if (submissions == null &&
-                        ((mayViewMostRecentAfterAppealsResponse && isAfterAppealsResponse))) {
-                    submissions =
-                        ActionsHelper.getMostRecentSubmissions(ActionsHelper.createUploadManager(request), project);
-                }
-                if (submissions == null &&
-                        AuthorizationHelper.hasUserPermission(request, Constants.VIEW_RECENT_SUBM_PERM_NAME) &&
-                        !AuthorizationHelper.hasUserRole(request, Constants.REVIEWER_ROLE_NAMES)) {
-                    submissions =
-                        ActionsHelper.getMostRecentSubmissions(ActionsHelper.createUploadManager(request), project);
-                }
-                if (submissions == null &&
-                        AuthorizationHelper.hasUserPermission(request, Constants.VIEW_RECENT_SUBM_PERM_NAME) &&
-                        AuthorizationHelper.hasUserRole(request, Constants.REVIEWER_ROLE_NAMES) &&
-                        ActionsHelper.isInOrAfterPhase(phases, phaseIdx, Constants.REVIEW_PHASE_NAME)) {
-                    submissions =
-                        ActionsHelper.getMostRecentSubmissions(ActionsHelper.createUploadManager(request), project);
-                }
-                if (submissions == null &&
-                        AuthorizationHelper.hasUserPermission(request, Constants.VIEW_SCREENER_SUBM_PERM_NAME) &&
-                        ActionsHelper.isInOrAfterPhase(phases, phaseIdx, Constants.SCREENING_PHASE_NAME)) {
-                    submissions =
-                        ActionsHelper.getMostRecentSubmissions(ActionsHelper.createUploadManager(request), project);
-                }
-                if (submissions == null &&
-                        AuthorizationHelper.hasUserPermission(request, Constants.VIEW_MY_SUBM_PERM_NAME)) {
-                    // Obtain an instance of Upload Manager
-                    UploadManager upMgr = ActionsHelper.createUploadManager(request);
-                    SubmissionStatus[] allSubmissionStatuses = upMgr.getAllSubmissionStatuses();
-
-                    // Get "my" (submitter's) resource
-                    Resource myResource = ActionsHelper.getMyResourceForPhase(request, null);
-
-                    Filter filterProject = SubmissionFilterBuilder.createProjectIdFilter(project.getId());
-                    Filter filterStatus = ActionsHelper.createSubmissionStatusFilter(allSubmissionStatuses);
-                    Filter filterResource = SubmissionFilterBuilder.createResourceIdFilter(myResource.getId());
-
-                    Filter filter =
-                        new AndFilter(Arrays.asList(new Filter[] {filterProject, filterStatus, filterResource}));
-
-                    submissions = upMgr.searchSubmissions(filter);
-                }
-
-                if (submissions == null) {
-                        submissions = new Submission[0];
-                }
-                // Use comparator to sort submissions either by placement
-                // or by the time when they were uploaded
-                SubmissionComparer comparator = new SubmissionComparer();
-
-                comparator.assignSubmitters(submitters);
-                Arrays.sort(submissions, comparator);
-
-                phaseGroup.setSubmissions(submissions);
-
-                if (submissions.length != 0) {
-                    long[] uploadIds = new long[submissions.length];
-
-                    for (int j = 0; j < submissions.length; ++j) {
-                        uploadIds[j] = submissions[j].getUpload().getId();
-                    }
-
-                    ScreeningManager scrMgr = ActionsHelper.createScreeningManager(request);
-                    ScreeningTask[] tasks = scrMgr.getScreeningTasks(uploadIds, true);
-
-                    phaseGroup.setScreeningTasks(tasks);
-                }
-            }
-
-            if (phaseGroup.getAppFunc().equals(Constants.VIEW_SUBMISSIONS_APP_FUNC) &&
-                    phaseName.equalsIgnoreCase(Constants.SCREENING_PHASE_NAME) &&
-                    phaseGroup.getSubmissions() != null) {
-                Submission[] submissions = phaseGroup.getSubmissions();
-
-                if (AuthorizationHelper.hasUserPermission(request, Constants.VIEW_SCREENER_SUBM_PERM_NAME) &&
-                        !AuthorizationHelper.hasUserRole(request, Constants.PRIMARY_SCREENER_ROLE_NAME)) {
-                    Resource[] my = ActionsHelper.getMyResourcesForPhase(request, phase);
-                    ScreeningTask[] allTasks = phaseGroup.getScreeningTasks();
-                    List tempSubs = new ArrayList();
-                    List tasks = new ArrayList();
-
-                    for (int j = 0; j < submissions.length; ++j) {
-                        for (int k = 0; k < my.length; ++k) {
-                            if (my[k].getSubmission() != null &&
-                                    my[k].getSubmission().longValue() == submissions[j].getId()) {
-                                tempSubs.add(submissions[j]);
-                                tasks.add(allTasks[j]);
-                            }
-                        }
-                    }
-
-                    submissions = (Submission[]) tempSubs.toArray(new Submission[tempSubs.size()]);
-                    phaseGroup.setSubmissions(submissions);
-                    phaseGroup.setScreeningTasks((ScreeningTask[]) tasks.toArray(new ScreeningTask[tasks.size()]));
-                }
-
-                Resource[] screeners = ActionsHelper.getResourcesForPhase(allProjectResources, phase);
-
-                phaseGroup.setReviewers(screeners);
-
-                // No need to fetch auto screening results if there are no submissions
-                if (submissions.length == 0) {
-                    continue;
-                }
-
-                // Obtain an instance of Scorecard Manager
-                ScorecardManager scrMgr = ActionsHelper.createScorecardManager(request);
-                ScorecardType[] allScorecardTypes = scrMgr.getAllScorecardTypes();
-
-                List submissionIds = new ArrayList();
-
-                for (int j = 0; j < submissions.length; ++j) {
-                    submissionIds.add(new Long(submissions[j].getId()));
-                }
-
-                Filter filterSubmissions = new InFilter("submission", submissionIds);
-                Filter filterScorecard = new EqualToFilter("scorecardType",
-                        new Long(ActionsHelper.findScorecardTypeByName(allScorecardTypes, "Screening").getId()));
-
-                Filter filter = new AndFilter(filterSubmissions, filterScorecard);
-
-                // Obtain an instance of Review Manager
-                ReviewManager revMgr = ActionsHelper.createReviewManager(request);
-                Review[] reviews = revMgr.searchReviews(filter, false);
-
-                phaseGroup.setScreenings(reviews);
-            }
-
-            if (phaseGroup.getAppFunc().equalsIgnoreCase(Constants.VIEW_REVIEWS_APP_FUNC) &&
-                    phaseName.equalsIgnoreCase(Constants.REVIEW_PHASE_NAME)) {
-                // If the project is not in the after appeals response state, allow uploading of testcases
-                phaseGroup.setUploadingTestcasesAllowed(!isAfterAppealsResponse);
-
-                Submission[] submissions = null;
-
-                if (AuthorizationHelper.hasUserPermission(request, Constants.VIEW_ALL_SUBM_PERM_NAME)) {
-                    submissions =
-                        ActionsHelper.getMostRecentSubmissions(ActionsHelper.createUploadManager(request), project);
-                }
-
-                boolean mayViewMostRecentAfterAppealsResponse =
-                    AuthorizationHelper.hasUserPermission(request, Constants.VIEW_RECENT_SUBM_AAR_PERM_NAME);
-
-                if (submissions == null &&
-                        ((mayViewMostRecentAfterAppealsResponse && isAfterAppealsResponse) ||
-                        AuthorizationHelper.hasUserPermission(request, Constants.VIEW_RECENT_SUBM_PERM_NAME))) {
-                    submissions =
-                        ActionsHelper.getMostRecentSubmissions(ActionsHelper.createUploadManager(request), project);
-                }
-                if (submissions == null &&
-                        AuthorizationHelper.hasUserPermission(request, Constants.VIEW_MY_SUBM_PERM_NAME)) {
-                    // Obtain an instance of Upload Manager
-                    UploadManager upMgr = ActionsHelper.createUploadManager(request);
-                    SubmissionStatus[] allSubmissionStatuses = upMgr.getAllSubmissionStatuses();
-
-                    // Get "my" (submitter's) resource
-                    Resource myResource = ActionsHelper.getMyResourceForPhase(request, null);
-
-                    Filter filterProject = SubmissionFilterBuilder.createProjectIdFilter(project.getId());
-                    Filter filterStatus = ActionsHelper.createSubmissionStatusFilter(allSubmissionStatuses);
-                    Filter filterResource = SubmissionFilterBuilder.createResourceIdFilter(myResource.getId());
-
-                    Filter filter =
-                        new AndFilter(Arrays.asList(new Filter[] {filterProject, filterStatus, filterResource}));
-
-                    submissions = upMgr.searchSubmissions(filter);
-                }
-                // No submissions -- nothing to review,
-                // but the list of submissions must not be null in this case
-                if (submissions == null) {
-                    submissions = new Submission[0];
-                }
-
-                // Use comparator to sort submissions either by placement
-                // or by the time when they were uploaded
-                SubmissionComparer comparator = new SubmissionComparer();
-
-                comparator.assignSubmitters(submitters);
-                Arrays.sort(submissions, comparator);
-
-                phaseGroup.setSubmissions(submissions);
-
-                // Some resource roles can always see links to reviews (if there are any).
-                // There is no corresponding permission, so the list of roles is hard-coded
-                boolean allowedToSeeReviewLink =
-                    AuthorizationHelper.hasUserRole(request, new String[] {
-                        Constants.MANAGER_ROLE_NAME, Constants.GLOBAL_MANAGER_ROLE_NAME,
-                        Constants.REVIEWER_ROLE_NAME, Constants.ACCURACY_REVIEWER_ROLE_NAME,
-                        Constants.FAILURE_REVIEWER_ROLE_NAME, Constants.STRESS_REVIEWER_ROLE_NAME,
-                        Constants.OBSERVER_ROLE_NAME});
-                // Determine if the Review phase is closed
-                boolean isReviewClosed =
-                    phase.getPhaseStatus().getName().equalsIgnoreCase(Constants.CLOSED_PH_STATUS_NAME);
-                // Determine if the Appeals phase is open
-                boolean isAppealsOpen = (nextPhase != null &&
-                        nextPhase.getPhaseType().getName().equalsIgnoreCase(Constants.APPEALS_PHASE_NAME) &&
-                        nextPhase.getPhaseStatus().getName().equalsIgnoreCase(Constants.OPEN_PH_STATUS_NAME));
-
-                if (!allowedToSeeReviewLink) {
-                    // Determine if the user is allowed to place appeals and Appeals phase is open
-                    if (isReviewClosed || (isAppealsOpen &&
-                            AuthorizationHelper.hasUserPermission(request, Constants.PERFORM_APPEAL_PERM_NAME))) {
-                        allowedToSeeReviewLink = true;
-                    }
-                }
-
-                phaseGroup.setDisplayReviewLinks(allowedToSeeReviewLink);
-
-                Resource[] reviewers = null;
-
-                if (!isAfterAppealsResponse &&
-                        AuthorizationHelper.hasUserPermission(request, Constants.VIEW_REVIEWER_REVIEWS_PERM_NAME) &&
-                        AuthorizationHelper.hasUserRole(request, Constants.REVIEWER_ROLE_NAMES)) {
-                    // Get "my" (reviewer's) resource
-                    reviewers = ActionsHelper.getMyResourcesForPhase(request, phase);
-                }
-
-                if (reviewers == null) {
-                    reviewers = ActionsHelper.getResourcesForPhase(allProjectResources, phase);
-                }
-
-                // Put collected reviewers into the phase group
-                phaseGroup.setReviewers(reviewers);
-                // A safety check: create an empty array in case reviewers is null
-                if (reviewers == null) {
-                    reviewers = new Resource[0];
-                }
-
-                // Obtain an instance of Scorecard Manager
-                ScorecardManager scrMgr = ActionsHelper.createScorecardManager(request);
-                ScorecardType[] allScorecardTypes = scrMgr.getAllScorecardTypes();
-
-                List submissionIds = new ArrayList();
-
-                for (int j = 0; j < submissions.length; ++j) {
-                    submissionIds.add(new Long(submissions[j].getId()));
-                }
-
-                List reviewerIds = new ArrayList();
-
-                for (int j = 0; j < reviewers.length; ++j) {
-                    reviewerIds.add(new Long(reviewers[j].getId()));
-                }
-
-                Review[] ungroupedReviews = null;
-
-                if (!(submissionIds.isEmpty() || reviewerIds.isEmpty())) {
-                    Filter filterSubmissions = new InFilter("submission", submissionIds);
-                    Filter filterReviewers = new InFilter("reviewer", reviewerIds);
-                    Filter filterScorecard = new EqualToFilter("scorecardType",
-                            new Long(ActionsHelper.findScorecardTypeByName(allScorecardTypes, "Review").getId()));
-
-                    List reviewFilters = new ArrayList();
-                    reviewFilters.add(filterReviewers);
-                    reviewFilters.add(filterScorecard);
-                    reviewFilters.add(filterSubmissions);
-
-                    // Create final filter
-                    Filter filterForReviews = new AndFilter(reviewFilters);
-
-                    boolean needFullReviews = false;
-
-                    // If next phase is Appeals and that phase is not scheduled, ...
-                    if (nextPhase != null &&
-                            nextPhase.getPhaseType().getName().equalsIgnoreCase(Constants.APPEALS_PHASE_NAME)) {
-                        // ... indicate that full review (with all comments) must be retrieved
-                        if (!nextPhase.getPhaseStatus().getName().equalsIgnoreCase("Scheduled")) {
-                            needFullReviews = true;
-                        }
-                    }
-
-                    // Obtain an instance of Review Manager
-                    ReviewManager revMgr = ActionsHelper.createReviewManager(request);
-                    // Get the reviews from every individual reviewer
-                    ungroupedReviews = revMgr.searchReviews(filterForReviews, needFullReviews);
-                }
-                if (ungroupedReviews == null) {
-                    ungroupedReviews = new Review[0];
-                }
-
-                boolean canDownloadTestCases =
-                    (isReviewClosed &&
-                            AuthorizationHelper.hasUserPermission(request, Constants.DOWNLOAD_TEST_CASES_PERM_NAME)) ||
-                    (!isReviewClosed &&
-                            AuthorizationHelper.hasUserPermission(request, Constants.DOWNLOAD_TC_DUR_REVIEW_PERM_NAME)) ||
-                    (!isReviewClosed && isAppealsOpen &&
-                            AuthorizationHelper.hasUserPermission(request, Constants.PERFORM_APPEAL_PERM_NAME) &&
-                            AuthorizationHelper.hasUserPermission(request, Constants.DOWNLOAD_TEST_CASES_PERM_NAME));
-
-                if (!reviewerIds.isEmpty() && canDownloadTestCases) {
-                    // Obtain an instance of Upload Manager
-                    UploadManager upMgr = ActionsHelper.createUploadManager(request);
-                    UploadStatus[] allUploadStatuses = upMgr.getAllUploadStatuses();
-                    UploadType[] allUploadTypes = upMgr.getAllUploadTypes();
-
-                    Filter filterResource = new InFilter("resource_id", reviewerIds);
-                    Filter filterStatus = UploadFilterBuilder.createUploadStatusIdFilter(
-                            ActionsHelper.findUploadStatusByName(allUploadStatuses, "Active").getId());
-                    Filter filterType = UploadFilterBuilder.createUploadTypeIdFilter(
-                            ActionsHelper.findUploadTypeByName(allUploadTypes, "Test Case").getId());
-
-                    Filter filterForUploads =
-                        new AndFilter(Arrays.asList(new Filter[] {filterResource, filterStatus, filterType}));
-
-                    Upload[] testCases = upMgr.searchUploads(filterForUploads);
-
-                    phaseGroup.setTestCases(testCases);
-                }
-
-                Review[][] reviews = new Review[submissions.length][];
-                Date[] reviewDates = new Date[submissions.length];
-
-                for (int j = 0; j < submissions.length; ++j) {
-                    Date latestDate = null;
-                    Review[] innerReviews = new Review[reviewers.length];
-                    Arrays.fill(innerReviews, null);
-
-                    for (int k = 0; k < reviewers.length; ++k) {
-                        for (int l = 0; l < ungroupedReviews.length; ++l) {
-                            Review ungrouped = ungroupedReviews[l];
-                            if (ungrouped.getAuthor() == reviewers[k].getId() &&
-                                    ungrouped.getSubmission() == submissions[j].getId()) {
-                                innerReviews[k] = ungrouped;
-                                if (!ungrouped.isCommitted()) {
-                                    continue;
-                                }
-                                if (latestDate == null || latestDate.before(ungrouped.getModificationTimestamp())) {
-                                    latestDate = ungrouped.getModificationTimestamp();
-                                }
-                            }
-                        }
-                    }
-
-                    reviews[j] = innerReviews;
-                    reviewDates[j] = latestDate;
-                }
-                phaseGroup.setReviews(reviews);
-                phaseGroup.setReviewDates(reviewDates);
-            }
-
-            if (phaseGroup.getAppFunc().equalsIgnoreCase(Constants.VIEW_REVIEWS_APP_FUNC) &&
-                    phaseName.equalsIgnoreCase(Constants.APPEALS_PHASE_NAME) && phaseGroup.getReviews() != null) {
-                // set the Appeals phase status to indicate
-                // if the appeals information should be available
-                if (!phase.getPhaseStatus().getName().equalsIgnoreCase("Scheduled")) {
-                    phaseGroup.setAppealsPhaseOpened(true);
-                } else {
-                    continue;
-                }
-
-                Review[][] reviews = phaseGroup.getReviews();
-                int[][] totalAppeals = new int[reviews.length][];
-                int[][] unresolvedAppeals = new int[reviews.length][];
-
-                countAppeals(reviews, totalAppeals, unresolvedAppeals);
-
-                phaseGroup.setTotalAppealsCounts(totalAppeals);
-                phaseGroup.setUnresolvedAppealsCounts(unresolvedAppeals);
-            }
-
-            if ((phaseGroup.getAppFunc().equalsIgnoreCase(Constants.AGGREGATION_APP_FUNC) ||
-                    phaseGroup.getAppFunc().equalsIgnoreCase(Constants.FINAL_FIX_APP_FUNC) ||
-                    phaseGroup.getAppFunc().equalsIgnoreCase(Constants.APPROVAL_APP_FUNC)) &&
-                    phaseGroup.getSubmitters() != null && phaseGroup.getSubmissions() == null) {
-                Submission[] submissions = null;
-
-                boolean mayViewMostRecentAfterAppealsResponse =
-                    AuthorizationHelper.hasUserPermission(request, Constants.VIEW_RECENT_SUBM_AAR_PERM_NAME);
-
-                if ((mayViewMostRecentAfterAppealsResponse && isAfterAppealsResponse) ||
-                        AuthorizationHelper.hasUserPermission(request, Constants.VIEW_ALL_SUBM_PERM_NAME) ||
-                        AuthorizationHelper.hasUserPermission(request, Constants.VIEW_RECENT_SUBM_PERM_NAME) ||
-                        AuthorizationHelper.hasUserPermission(request, Constants.VIEW_WINNING_SUBM_PERM_NAME)) {
-                    submissions =
-                        ActionsHelper.getMostRecentSubmissions(ActionsHelper.createUploadManager(request), project);
-                }
-                if (submissions == null &&
-                        AuthorizationHelper.hasUserPermission(request, Constants.VIEW_MY_SUBM_PERM_NAME)) {
-                    // Obtain an instance of Upload Manager
-                    UploadManager upMgr = ActionsHelper.createUploadManager(request);
-                    SubmissionStatus[] allSubmissionStatuses = upMgr.getAllSubmissionStatuses();
-
-                    // Get "my" (submitter's) resource
-                    Resource myResource = ActionsHelper.getMyResourceForPhase(request, null);
-
-                    Filter filterProject = SubmissionFilterBuilder.createProjectIdFilter(project.getId());
-                    Filter filterStatus = SubmissionFilterBuilder.createSubmissionStatusIdFilter(
-                            ActionsHelper.findSubmissionStatusByName(allSubmissionStatuses, "Active").getId());
-                    Filter filterResource = SubmissionFilterBuilder.createResourceIdFilter(myResource.getId());
-
-                    Filter filter =
-                        new AndFilter(Arrays.asList(new Filter[] {filterProject, filterStatus, filterResource}));
-
-                    submissions = upMgr.searchSubmissions(filter);
-                }
-                if (submissions != null) {
-                    phaseGroup.setSubmissions(submissions);
-                }
-            }
-
-            if (phaseGroup.getAppFunc().equalsIgnoreCase(Constants.AGGREGATION_APP_FUNC) &&
-                    phaseName.equalsIgnoreCase(Constants.AGGREGATION_PHASE_NAME) &&
-                    phaseGroup.getSubmitters() != null) {
-                Resource winner = ActionsHelper.getWinner(phaseGroup.getSubmitters());
-                phaseGroup.setWinner(winner);
-
-                Resource[] aggregator = ActionsHelper.getResourcesForPhase(allProjectResources, phase);
-
-                if (aggregator == null || aggregator.length == 0) {
-                    continue;
-                }
-
-                Filter filterResource = new EqualToFilter("reviewer", new Long(aggregator[0].getId()));
-                Filter filterProject = new EqualToFilter("project", new Long(project.getId()));
-
-                Filter filter = new AndFilter(filterResource, filterProject);
-
-                // Obtain an instance of Review Manager
-                ReviewManager revMgr = ActionsHelper.createReviewManager(request);
-                Review[] reviews = revMgr.searchReviews(filter, true);
-
-                if (reviews.length != 0) {
-                    phaseGroup.setAggregation(reviews[0]);
-                }
-            }
-
-            if (phaseGroup.getAppFunc().equalsIgnoreCase(Constants.AGGREGATION_APP_FUNC) &&
-                    phaseName.equalsIgnoreCase(Constants.AGGREGATION_REVIEW_PHASE_NAME) &&
-                    phaseGroup.getAggregation() != null && phaseGroup.getAggregation().isCommitted()) {
-                Review aggregation = phaseGroup.getAggregation();
-
-                boolean reviewCommitted = true;
-
-                for (int j = 0; j < aggregation.getNumberOfComments(); ++j) {
-                        // Get a comment for the current iteration
-                        Comment comment = aggregation.getComment(j);
-
-                    if (ActionsHelper.isAggregationReviewComment(comment)) {
-                            String extraInfo = (String) comment.getExtraInfo();
-                            if (!("Approved".equalsIgnoreCase(extraInfo) ||
-                                    "Rejected".equalsIgnoreCase(extraInfo))) {
-                                reviewCommitted = false;
-                                break;
-                            }
-                        }
-                    }
-
-                phaseGroup.setDisplayAggregationReviewLink(!phaseStatus.equalsIgnoreCase(Constants.SCHEDULED_PH_STATUS_NAME));
-                phaseGroup.setAggregationReviewCommitted(reviewCommitted);
-            }
-
-            if (phaseGroup.getAppFunc().equalsIgnoreCase(Constants.FINAL_FIX_APP_FUNC) &&
-                    phaseGroup.getSubmitters() != null) {
-                Resource winner = phaseGroup.getWinner();
-                if (winner == null) {
-                    winner = ActionsHelper.getWinner(phaseGroup.getSubmitters());
-                    phaseGroup.setWinner(winner);
-                }
-                if (winner == null) {
-                    continue;
-                }
-
-                if (finalFixes == null) {
-                    // Obtain an instance of Upload Manager
-                    UploadManager upMgr = ActionsHelper.createUploadManager(request);
-                    UploadStatus[] allUploadStatuses = upMgr.getAllUploadStatuses();
-                    UploadType[] allUploadTypes = upMgr.getAllUploadTypes();
-
-                    Filter filterStatus = UploadFilterBuilder.createUploadStatusIdFilter(
-                            ActionsHelper.findUploadStatusByName(allUploadStatuses, "Active").getId());
-                    Filter filterType = UploadFilterBuilder.createUploadTypeIdFilter(
-                            ActionsHelper.findUploadTypeByName(allUploadTypes, "Final Fix").getId());
-                    Filter filterResource = UploadFilterBuilder.createResourceIdFilter(winner.getId());
-
-                    Filter filter = new AndFilter(Arrays.asList(
-                            new Filter[] {/*filterStatus, */filterType, filterResource}));
-                    finalFixes = upMgr.searchUploads(filter);
-
-                    Arrays.sort(finalFixes, new Comparators.UploadComparer());
-
-                    finalFixIdx = 0;
-                }
-            }
-
-            if (phaseGroup.getAppFunc().equalsIgnoreCase(Constants.FINAL_FIX_APP_FUNC) &&
-                    phaseName.equalsIgnoreCase(Constants.FINAL_FIX_PHASE_NAME) && finalFixes != null) {
-                if (finalFixIdx < finalFixes.length) {
-                    phaseGroup.setFinalFix(finalFixes[finalFixIdx++]);
-                }
-            }
-
-            if (phaseGroup.getAppFunc().equalsIgnoreCase(Constants.FINAL_FIX_APP_FUNC) &&
-                    phaseName.equalsIgnoreCase(Constants.FINAL_REVIEW_PHASE_NAME) &&
-                    phaseGroup.getSubmitters() != null) {
-                Resource[] reviewer = ActionsHelper.getResourcesForPhase(allProjectResources, phase);
-
-                if (reviewer == null || reviewer.length == 0) {
-                    continue;
-                }
-
-                Filter filterResource = new EqualToFilter("reviewer", new Long(reviewer[0].getId()));
-                Filter filterProject = new EqualToFilter("project", new Long(project.getId()));
-
-                Filter filter = new AndFilter(filterResource, filterProject);
-
-                // Obtain an instance of Review Manager
-                ReviewManager revMgr = ActionsHelper.createReviewManager(request);
-                Review[] reviews = revMgr.searchReviews(filter, true);
-
-                if (reviews.length != 0) {
-                    phaseGroup.setFinalReview(reviews[0]);
-                }
-            }
-
-            if (phaseGroup.getAppFunc().equalsIgnoreCase(Constants.APPROVAL_APP_FUNC) &&
-                    phaseGroup.getSubmitters() != null) {
-                Resource winner = ActionsHelper.getWinner(phaseGroup.getSubmitters());
-                phaseGroup.setWinner(winner);
-
-                Resource[] approver = ActionsHelper.getResourcesForPhase(allProjectResources, phase);
-
-                if (approver == null || approver.length == 0) {
-                    continue;
-                }
-
-                // Obtain an instance of Scorecard Manager
-                ScorecardManager scrMgr = ActionsHelper.createScorecardManager(request);
-                ScorecardType[] allScorecardTypes = scrMgr.getAllScorecardTypes();
-
-                Filter filterResource = new EqualToFilter("reviewer", new Long(approver[0].getId()));
-                Filter filterProject = new EqualToFilter("project", new Long(project.getId()));
-                Filter filterScorecard = new EqualToFilter("scorecardType",
-                        new Long(ActionsHelper.findScorecardTypeByName(allScorecardTypes, "Client Review").getId()));
-
-                Filter filter = new AndFilter(Arrays.asList(
-                        new Filter[] {filterResource, filterProject, filterScorecard}));
-
-                // Obtain an instance of Review Manager
-                ReviewManager revMgr = ActionsHelper.createReviewManager(request);
-                Review[] reviews = revMgr.searchReviews(filter, true);
-
-                if (reviews.length != 0) {
-                    phaseGroup.setApproval(reviews[0]);
-                }
+            } else if (phaseGroup.getAppFunc().equals(Constants.VIEW_SUBMISSIONS_APP_FUNC)) {
+                serviceSubmissionsAppFunc(request, phaseGroup, project, phases, phaseIdx,
+                        allProjectResources, submitters, isAfterAppealsResponse);
+            } else if (phaseGroup.getAppFunc().equalsIgnoreCase(Constants.VIEW_REVIEWS_APP_FUNC)) {
+                serviceReviewsAppFunc(request, phaseGroup, project, phase, nextPhase,
+                        allProjectResources, submitters, isAfterAppealsResponse);
+            } else if (phaseGroup.getAppFunc().equalsIgnoreCase(Constants.AGGREGATION_APP_FUNC)) {
+                serviceAggregationAppFunc(request, phaseGroup, project, phase,
+                        allProjectResources, isAfterAppealsResponse);
+            } else if (phaseGroup.getAppFunc().equalsIgnoreCase(Constants.FINAL_FIX_APP_FUNC)) {
+                serviceFinalFixAppFunc(request, phaseGroup, project, phase,
+                        allProjectResources, finalFixes, isAfterAppealsResponse);
+            } else if (phaseGroup.getAppFunc().equalsIgnoreCase(Constants.APPROVAL_APP_FUNC)) {
+                serviceApprovalAppFunc(request, phaseGroup, project, phase,
+                        allProjectResources, isAfterAppealsResponse);
             }
         }
 
@@ -750,7 +168,17 @@ final class PhasesDetailsServices {
 
         return details;
     }
-    
+
+    /**
+     * TODO: Write documentation for this method.
+     *
+     * @param request
+     * @param phaseGroup
+     * @param submitters
+     * @param allProjectExternalUsers
+     * @throws RetrievalException
+     * @throws ConfigException
+     */
     private static void serviceRegistrantsAppFunc(HttpServletRequest request, PhaseGroup phaseGroup,
             Resource[] submitters, ExternalUser[] allProjectExternalUsers) throws RetrievalException, ConfigException {
         if (submitters == null || submitters.length == 0) {
@@ -775,7 +203,712 @@ final class PhasesDetailsServices {
 
         phaseGroup.setRegistantsEmails(userEmails);
     }
-    
+
+    /**
+     * TODO: Write documentation for this method.
+     *
+     * @param request
+     * @param phaseGroup
+     * @param project
+     * @param phases
+     * @param phaseIdx
+     * @param allProjectResources
+     * @param submitters
+     * @param isAfterAppealsResponse
+     * @throws BaseException
+     */
+    private static void serviceSubmissionsAppFunc(HttpServletRequest request,
+            PhaseGroup phaseGroup, Project project, Phase[] phases, int phaseIdx,
+            Resource[] allProjectResources, Resource[] submitters, boolean isAfterAppealsResponse)
+        throws BaseException {
+        String phaseName = phases[phaseIdx].getPhaseType().getName();
+
+        if (phaseName.equalsIgnoreCase(Constants.SUBMISSION_PHASE_NAME)) {
+            Submission[] submissions = null;
+
+            if (AuthorizationHelper.hasUserPermission(request, Constants.VIEW_ALL_SUBM_PERM_NAME)) {
+                submissions =
+                    ActionsHelper.getMostRecentSubmissions(ActionsHelper.createUploadManager(request), project);
+
+                // Obtain an instance of Upload Manager
+                UploadManager upMgr = ActionsHelper.createUploadManager(request);
+                // Get all upload types
+                UploadType[] allUploadTypes = upMgr.getAllUploadTypes();
+                // Get all upload statuses
+                UploadStatus[] allUploadStatuses = upMgr.getAllUploadStatuses();
+
+                Filter filterProject = UploadFilterBuilder.createProjectIdFilter(project.getId());
+                Filter filterUploadType = UploadFilterBuilder.createUploadTypeIdFilter(
+                        ActionsHelper.findUploadTypeByName(allUploadTypes, "Submission").getId());
+                Filter filterUploadStatus = UploadFilterBuilder.createUploadStatusIdFilter(
+                        ActionsHelper.findUploadStatusByName(allUploadStatuses, "Deleted").getId());
+
+                Filter filter =
+                    new AndFilter(Arrays.asList(new Filter[] {filterProject, filterUploadType, filterUploadStatus}));
+                Upload[] ungroupedUploads = upMgr.searchUploads(filter);
+                Upload[][] pastSubmissions = new Upload[submissions.length][];
+
+                for (int j = 0; j < pastSubmissions.length; ++j) {
+                    List temp = new ArrayList();
+                    long currentUploadOwnerId = submissions[j].getUpload().getOwner();
+
+                    for (int k = 0; k < ungroupedUploads.length; ++k) {
+                        if (currentUploadOwnerId == ungroupedUploads[k].getOwner()) {
+                            temp.add(ungroupedUploads[k]);
+                        }
+                    }
+
+                    if (!temp.isEmpty()) {
+                        pastSubmissions[j] = (Upload[]) temp.toArray(new Upload[temp.size()]);
+                    }
+                }
+
+                if (pastSubmissions.length != 0) {
+                    phaseGroup.setPastSubmissions(pastSubmissions);
+                }
+            }
+
+            boolean mayViewMostRecentAfterAppealsResponse =
+                AuthorizationHelper.hasUserPermission(request, Constants.VIEW_RECENT_SUBM_AAR_PERM_NAME);
+
+            if (submissions == null &&
+                    ((mayViewMostRecentAfterAppealsResponse && isAfterAppealsResponse))) {
+                submissions =
+                    ActionsHelper.getMostRecentSubmissions(ActionsHelper.createUploadManager(request), project);
+            }
+            if (submissions == null &&
+                    AuthorizationHelper.hasUserPermission(request, Constants.VIEW_RECENT_SUBM_PERM_NAME) &&
+                    !AuthorizationHelper.hasUserRole(request, Constants.REVIEWER_ROLE_NAMES)) {
+                submissions =
+                    ActionsHelper.getMostRecentSubmissions(ActionsHelper.createUploadManager(request), project);
+            }
+            if (submissions == null &&
+                    AuthorizationHelper.hasUserPermission(request, Constants.VIEW_RECENT_SUBM_PERM_NAME) &&
+                    AuthorizationHelper.hasUserRole(request, Constants.REVIEWER_ROLE_NAMES) &&
+                    ActionsHelper.isInOrAfterPhase(phases, phaseIdx, Constants.REVIEW_PHASE_NAME)) {
+                submissions =
+                    ActionsHelper.getMostRecentSubmissions(ActionsHelper.createUploadManager(request), project);
+            }
+            if (submissions == null &&
+                    AuthorizationHelper.hasUserPermission(request, Constants.VIEW_SCREENER_SUBM_PERM_NAME) &&
+                    ActionsHelper.isInOrAfterPhase(phases, phaseIdx, Constants.SCREENING_PHASE_NAME)) {
+                submissions =
+                    ActionsHelper.getMostRecentSubmissions(ActionsHelper.createUploadManager(request), project);
+            }
+            if (submissions == null &&
+                    AuthorizationHelper.hasUserPermission(request, Constants.VIEW_MY_SUBM_PERM_NAME)) {
+                // Obtain an instance of Upload Manager
+                UploadManager upMgr = ActionsHelper.createUploadManager(request);
+                SubmissionStatus[] allSubmissionStatuses = upMgr.getAllSubmissionStatuses();
+
+                // Get "my" (submitter's) resource
+                Resource myResource = ActionsHelper.getMyResourceForPhase(request, null);
+
+                Filter filterProject = SubmissionFilterBuilder.createProjectIdFilter(project.getId());
+                Filter filterStatus = ActionsHelper.createSubmissionStatusFilter(allSubmissionStatuses);
+                Filter filterResource = SubmissionFilterBuilder.createResourceIdFilter(myResource.getId());
+
+                Filter filter =
+                    new AndFilter(Arrays.asList(new Filter[] {filterProject, filterStatus, filterResource}));
+
+                submissions = upMgr.searchSubmissions(filter);
+            }
+
+            if (submissions == null) {
+                    submissions = new Submission[0];
+            }
+            // Use comparator to sort submissions either by placement
+            // or by the time when they were uploaded
+            SubmissionComparer comparator = new SubmissionComparer();
+
+            comparator.assignSubmitters(submitters);
+            Arrays.sort(submissions, comparator);
+
+            phaseGroup.setSubmissions(submissions);
+
+            if (submissions.length != 0) {
+                long[] uploadIds = new long[submissions.length];
+
+                for (int j = 0; j < submissions.length; ++j) {
+                    uploadIds[j] = submissions[j].getUpload().getId();
+                }
+
+                ScreeningManager scrMgr = ActionsHelper.createScreeningManager(request);
+                ScreeningTask[] tasks = scrMgr.getScreeningTasks(uploadIds, true);
+
+                phaseGroup.setScreeningTasks(tasks);
+            }
+        }
+
+        if (phaseName.equalsIgnoreCase(Constants.SCREENING_PHASE_NAME) &&
+                phaseGroup.getSubmissions() != null) {
+            Submission[] submissions = phaseGroup.getSubmissions();
+
+            if (AuthorizationHelper.hasUserPermission(request, Constants.VIEW_SCREENER_SUBM_PERM_NAME) &&
+                    !AuthorizationHelper.hasUserRole(request, Constants.PRIMARY_SCREENER_ROLE_NAME)) {
+                Resource[] my = ActionsHelper.getMyResourcesForPhase(request, phases[phaseIdx]);
+                ScreeningTask[] allTasks = phaseGroup.getScreeningTasks();
+                List tempSubs = new ArrayList();
+                List tasks = new ArrayList();
+
+                for (int j = 0; j < submissions.length; ++j) {
+                    for (int k = 0; k < my.length; ++k) {
+                        if (my[k].getSubmission() != null &&
+                                my[k].getSubmission().longValue() == submissions[j].getId()) {
+                            tempSubs.add(submissions[j]);
+                            tasks.add(allTasks[j]);
+                        }
+                    }
+                }
+
+                submissions = (Submission[]) tempSubs.toArray(new Submission[tempSubs.size()]);
+                phaseGroup.setSubmissions(submissions);
+                phaseGroup.setScreeningTasks((ScreeningTask[]) tasks.toArray(new ScreeningTask[tasks.size()]));
+            }
+
+            Resource[] screeners = ActionsHelper.getResourcesForPhase(allProjectResources, phases[phaseIdx]);
+
+            phaseGroup.setReviewers(screeners);
+
+            // No need to fetch auto screening results if there are no submissions
+            if (submissions.length == 0) {
+                return;
+            }
+
+            // Obtain an instance of Scorecard Manager
+            ScorecardManager scrMgr = ActionsHelper.createScorecardManager(request);
+            ScorecardType[] allScorecardTypes = scrMgr.getAllScorecardTypes();
+
+            List submissionIds = new ArrayList();
+
+            for (int j = 0; j < submissions.length; ++j) {
+                submissionIds.add(new Long(submissions[j].getId()));
+            }
+
+            Filter filterSubmissions = new InFilter("submission", submissionIds);
+            Filter filterScorecard = new EqualToFilter("scorecardType",
+                    new Long(ActionsHelper.findScorecardTypeByName(allScorecardTypes, "Screening").getId()));
+
+            Filter filter = new AndFilter(filterSubmissions, filterScorecard);
+
+            // Obtain an instance of Review Manager
+            ReviewManager revMgr = ActionsHelper.createReviewManager(request);
+            Review[] reviews = revMgr.searchReviews(filter, false);
+
+            phaseGroup.setScreenings(reviews);
+        }
+    }
+
+    /**
+     * TODO: Write documentation for this method.
+     *
+     * @param request
+     * @param phaseGroup
+     * @param project
+     * @param phase
+     * @param nextPhase
+     * @param allProjectResources
+     * @param submitters
+     * @param isAfterAppealsResponse
+     * @throws BaseException
+     */
+    private static void serviceReviewsAppFunc(HttpServletRequest request,
+            PhaseGroup phaseGroup, Project project, Phase phase, Phase nextPhase,
+            Resource[] allProjectResources, Resource[] submitters, boolean isAfterAppealsResponse)
+        throws BaseException {
+        String phaseName = phase.getPhaseType().getName();
+
+        if (phaseName.equalsIgnoreCase(Constants.REVIEW_PHASE_NAME)) {
+            // If the project is not in the after appeals response state, allow uploading of testcases
+            phaseGroup.setUploadingTestcasesAllowed(!isAfterAppealsResponse);
+
+            Submission[] submissions = null;
+
+            if (AuthorizationHelper.hasUserPermission(request, Constants.VIEW_ALL_SUBM_PERM_NAME)) {
+                submissions =
+                    ActionsHelper.getMostRecentSubmissions(ActionsHelper.createUploadManager(request), project);
+            }
+
+            boolean mayViewMostRecentAfterAppealsResponse =
+                AuthorizationHelper.hasUserPermission(request, Constants.VIEW_RECENT_SUBM_AAR_PERM_NAME);
+
+            if (submissions == null &&
+                    ((mayViewMostRecentAfterAppealsResponse && isAfterAppealsResponse) ||
+                    AuthorizationHelper.hasUserPermission(request, Constants.VIEW_RECENT_SUBM_PERM_NAME))) {
+                submissions =
+                    ActionsHelper.getMostRecentSubmissions(ActionsHelper.createUploadManager(request), project);
+            }
+            if (submissions == null &&
+                    AuthorizationHelper.hasUserPermission(request, Constants.VIEW_MY_SUBM_PERM_NAME)) {
+                // Obtain an instance of Upload Manager
+                UploadManager upMgr = ActionsHelper.createUploadManager(request);
+                SubmissionStatus[] allSubmissionStatuses = upMgr.getAllSubmissionStatuses();
+
+                // Get "my" (submitter's) resource
+                Resource myResource = ActionsHelper.getMyResourceForPhase(request, null);
+
+                Filter filterProject = SubmissionFilterBuilder.createProjectIdFilter(project.getId());
+                Filter filterStatus = ActionsHelper.createSubmissionStatusFilter(allSubmissionStatuses);
+                Filter filterResource = SubmissionFilterBuilder.createResourceIdFilter(myResource.getId());
+
+                Filter filter =
+                    new AndFilter(Arrays.asList(new Filter[] {filterProject, filterStatus, filterResource}));
+
+                submissions = upMgr.searchSubmissions(filter);
+            }
+            // No submissions -- nothing to review,
+            // but the list of submissions must not be null in this case
+            if (submissions == null) {
+                submissions = new Submission[0];
+            }
+
+            // Use comparator to sort submissions either by placement
+            // or by the time when they were uploaded
+            SubmissionComparer comparator = new SubmissionComparer();
+
+            comparator.assignSubmitters(submitters);
+            Arrays.sort(submissions, comparator);
+
+            phaseGroup.setSubmissions(submissions);
+
+            // Some resource roles can always see links to reviews (if there are any).
+            // There is no corresponding permission, so the list of roles is hard-coded
+            boolean allowedToSeeReviewLink =
+                AuthorizationHelper.hasUserRole(request, new String[] {
+                    Constants.MANAGER_ROLE_NAME, Constants.GLOBAL_MANAGER_ROLE_NAME,
+                    Constants.REVIEWER_ROLE_NAME, Constants.ACCURACY_REVIEWER_ROLE_NAME,
+                    Constants.FAILURE_REVIEWER_ROLE_NAME, Constants.STRESS_REVIEWER_ROLE_NAME,
+                    Constants.OBSERVER_ROLE_NAME});
+            // Determine if the Review phase is closed
+            boolean isReviewClosed =
+                phase.getPhaseStatus().getName().equalsIgnoreCase(Constants.CLOSED_PH_STATUS_NAME);
+            // Determine if the Appeals phase is open
+            boolean isAppealsOpen = (nextPhase != null &&
+                    nextPhase.getPhaseType().getName().equalsIgnoreCase(Constants.APPEALS_PHASE_NAME) &&
+                    nextPhase.getPhaseStatus().getName().equalsIgnoreCase(Constants.OPEN_PH_STATUS_NAME));
+
+            if (!allowedToSeeReviewLink) {
+                // Determine if the user is allowed to place appeals and Appeals phase is open
+                if (isReviewClosed || (isAppealsOpen &&
+                        AuthorizationHelper.hasUserPermission(request, Constants.PERFORM_APPEAL_PERM_NAME))) {
+                    allowedToSeeReviewLink = true;
+                }
+            }
+
+            phaseGroup.setDisplayReviewLinks(allowedToSeeReviewLink);
+
+            Resource[] reviewers = null;
+
+            if (!isAfterAppealsResponse &&
+                    AuthorizationHelper.hasUserPermission(request, Constants.VIEW_REVIEWER_REVIEWS_PERM_NAME) &&
+                    AuthorizationHelper.hasUserRole(request, Constants.REVIEWER_ROLE_NAMES)) {
+                // Get "my" (reviewer's) resource
+                reviewers = ActionsHelper.getMyResourcesForPhase(request, phase);
+            }
+
+            if (reviewers == null) {
+                reviewers = ActionsHelper.getResourcesForPhase(allProjectResources, phase);
+            }
+
+            // Put collected reviewers into the phase group
+            phaseGroup.setReviewers(reviewers);
+            // A safety check: create an empty array in case reviewers is null
+            if (reviewers == null) {
+                reviewers = new Resource[0];
+            }
+
+            // Obtain an instance of Scorecard Manager
+            ScorecardManager scrMgr = ActionsHelper.createScorecardManager(request);
+            ScorecardType[] allScorecardTypes = scrMgr.getAllScorecardTypes();
+
+            List submissionIds = new ArrayList();
+
+            for (int j = 0; j < submissions.length; ++j) {
+                submissionIds.add(new Long(submissions[j].getId()));
+            }
+
+            List reviewerIds = new ArrayList();
+
+            for (int j = 0; j < reviewers.length; ++j) {
+                reviewerIds.add(new Long(reviewers[j].getId()));
+            }
+
+            Review[] ungroupedReviews = null;
+
+            if (!(submissionIds.isEmpty() || reviewerIds.isEmpty())) {
+                Filter filterSubmissions = new InFilter("submission", submissionIds);
+                Filter filterReviewers = new InFilter("reviewer", reviewerIds);
+                Filter filterScorecard = new EqualToFilter("scorecardType",
+                        new Long(ActionsHelper.findScorecardTypeByName(allScorecardTypes, "Review").getId()));
+
+                List reviewFilters = new ArrayList();
+                reviewFilters.add(filterReviewers);
+                reviewFilters.add(filterScorecard);
+                reviewFilters.add(filterSubmissions);
+
+                // Create final filter
+                Filter filterForReviews = new AndFilter(reviewFilters);
+
+                boolean needFullReviews = false;
+
+                // If next phase is Appeals and that phase is not scheduled, ...
+                if (nextPhase != null &&
+                        nextPhase.getPhaseType().getName().equalsIgnoreCase(Constants.APPEALS_PHASE_NAME)) {
+                    // ... indicate that full review (with all comments) must be retrieved
+                    if (!nextPhase.getPhaseStatus().getName().equalsIgnoreCase("Scheduled")) {
+                        needFullReviews = true;
+                    }
+                }
+
+                // Obtain an instance of Review Manager
+                ReviewManager revMgr = ActionsHelper.createReviewManager(request);
+                // Get the reviews from every individual reviewer
+                ungroupedReviews = revMgr.searchReviews(filterForReviews, needFullReviews);
+            }
+            if (ungroupedReviews == null) {
+                ungroupedReviews = new Review[0];
+            }
+
+            boolean canDownloadTestCases =
+                (isReviewClosed &&
+                        AuthorizationHelper.hasUserPermission(request, Constants.DOWNLOAD_TEST_CASES_PERM_NAME)) ||
+                (!isReviewClosed &&
+                        AuthorizationHelper.hasUserPermission(request, Constants.DOWNLOAD_TC_DUR_REVIEW_PERM_NAME)) ||
+                (!isReviewClosed && isAppealsOpen &&
+                        AuthorizationHelper.hasUserPermission(request, Constants.PERFORM_APPEAL_PERM_NAME) &&
+                        AuthorizationHelper.hasUserPermission(request, Constants.DOWNLOAD_TEST_CASES_PERM_NAME));
+
+            if (!reviewerIds.isEmpty() && canDownloadTestCases) {
+                // Obtain an instance of Upload Manager
+                UploadManager upMgr = ActionsHelper.createUploadManager(request);
+                UploadStatus[] allUploadStatuses = upMgr.getAllUploadStatuses();
+                UploadType[] allUploadTypes = upMgr.getAllUploadTypes();
+
+                Filter filterResource = new InFilter("resource_id", reviewerIds);
+                Filter filterStatus = UploadFilterBuilder.createUploadStatusIdFilter(
+                        ActionsHelper.findUploadStatusByName(allUploadStatuses, "Active").getId());
+                Filter filterType = UploadFilterBuilder.createUploadTypeIdFilter(
+                        ActionsHelper.findUploadTypeByName(allUploadTypes, "Test Case").getId());
+
+                Filter filterForUploads =
+                    new AndFilter(Arrays.asList(new Filter[] {filterResource, filterStatus, filterType}));
+
+                Upload[] testCases = upMgr.searchUploads(filterForUploads);
+
+                phaseGroup.setTestCases(testCases);
+            }
+
+            Review[][] reviews = new Review[submissions.length][];
+            Date[] reviewDates = new Date[submissions.length];
+
+            for (int j = 0; j < submissions.length; ++j) {
+                Date latestDate = null;
+                Review[] innerReviews = new Review[reviewers.length];
+                Arrays.fill(innerReviews, null);
+
+                for (int k = 0; k < reviewers.length; ++k) {
+                    for (int l = 0; l < ungroupedReviews.length; ++l) {
+                        Review ungrouped = ungroupedReviews[l];
+                        if (ungrouped.getAuthor() == reviewers[k].getId() &&
+                                ungrouped.getSubmission() == submissions[j].getId()) {
+                            innerReviews[k] = ungrouped;
+                            if (!ungrouped.isCommitted()) {
+                                continue;
+                            }
+                            if (latestDate == null || latestDate.before(ungrouped.getModificationTimestamp())) {
+                                latestDate = ungrouped.getModificationTimestamp();
+                            }
+                        }
+                    }
+                }
+
+                reviews[j] = innerReviews;
+                reviewDates[j] = latestDate;
+            }
+            phaseGroup.setReviews(reviews);
+            phaseGroup.setReviewDates(reviewDates);
+        }
+
+        if (phaseName.equalsIgnoreCase(Constants.APPEALS_PHASE_NAME) && phaseGroup.getReviews() != null) {
+            // set the Appeals phase status to indicate
+            // if the appeals information should be available
+            if (phase.getPhaseStatus().getName().equalsIgnoreCase("Scheduled")) {
+                return;
+            }
+
+            phaseGroup.setAppealsPhaseOpened(true);
+
+            Review[][] reviews = phaseGroup.getReviews();
+            int[][] totalAppeals = new int[reviews.length][];
+            int[][] unresolvedAppeals = new int[reviews.length][];
+
+            countAppeals(reviews, totalAppeals, unresolvedAppeals);
+
+            phaseGroup.setTotalAppealsCounts(totalAppeals);
+            phaseGroup.setUnresolvedAppealsCounts(unresolvedAppeals);
+        }
+    }
+
+    /**
+     * TODO: Write documentation for this method.
+     *
+     * @param request
+     * @param phaseGroup
+     * @param project
+     * @param phase
+     * @param allProjectResources
+     * @param isAfterAppealsResponse
+     * @throws BaseException
+     */
+    private static void serviceAggregationAppFunc(HttpServletRequest request, PhaseGroup phaseGroup,
+            Project project, Phase phase, Resource[] allProjectResources, boolean isAfterAppealsResponse)
+        throws BaseException {
+        retrieveSubmissions(request, phaseGroup, project, isAfterAppealsResponse);
+
+        String phaseName = phase.getPhaseType().getName();
+
+        if (phaseName.equalsIgnoreCase(Constants.AGGREGATION_PHASE_NAME) &&
+                phaseGroup.getSubmitters() != null) {
+            Resource winner = ActionsHelper.getWinner(phaseGroup.getSubmitters());
+            phaseGroup.setWinner(winner);
+
+            Resource[] aggregator = ActionsHelper.getResourcesForPhase(allProjectResources, phase);
+
+            if (aggregator == null || aggregator.length == 0) {
+                return;
+            }
+
+            Filter filterResource = new EqualToFilter("reviewer", new Long(aggregator[0].getId()));
+            Filter filterProject = new EqualToFilter("project", new Long(project.getId()));
+
+            Filter filter = new AndFilter(filterResource, filterProject);
+
+            // Obtain an instance of Review Manager
+            ReviewManager revMgr = ActionsHelper.createReviewManager(request);
+            Review[] reviews = revMgr.searchReviews(filter, true);
+
+            if (reviews.length != 0) {
+                phaseGroup.setAggregation(reviews[0]);
+            }
+        }
+
+        if (phaseName.equalsIgnoreCase(Constants.AGGREGATION_REVIEW_PHASE_NAME) &&
+                phaseGroup.getAggregation() != null && phaseGroup.getAggregation().isCommitted()) {
+            Review aggregation = phaseGroup.getAggregation();
+
+            boolean reviewCommitted = true;
+
+            for (int j = 0; j < aggregation.getNumberOfComments(); ++j) {
+                    // Get a comment for the current iteration
+                    Comment comment = aggregation.getComment(j);
+
+                if (ActionsHelper.isAggregationReviewComment(comment)) {
+                        String extraInfo = (String) comment.getExtraInfo();
+                        if (!("Approved".equalsIgnoreCase(extraInfo) ||
+                                "Rejected".equalsIgnoreCase(extraInfo))) {
+                            reviewCommitted = false;
+                            break;
+                        }
+                    }
+                }
+
+            final String phaseStatus = phase.getPhaseStatus().getName();
+
+            phaseGroup.setDisplayAggregationReviewLink(!phaseStatus.equalsIgnoreCase(Constants.SCHEDULED_PH_STATUS_NAME));
+            phaseGroup.setAggregationReviewCommitted(reviewCommitted);
+        }
+    }
+
+    /**
+     * TODO: Write documentation for this method.
+     *
+     * @param request
+     * @param phaseGroup
+     * @param project
+     * @param phase
+     * @param allProjectResources
+     * @param finalFixes
+     * @param isAfterAppealsResponse
+     * @throws BaseException
+     */
+    private static void serviceFinalFixAppFunc(HttpServletRequest request, PhaseGroup phaseGroup, Project project,
+            Phase phase, Resource[] allProjectResources, FinalFixesInfo finalFixes, boolean isAfterAppealsResponse)
+        throws BaseException {
+        retrieveSubmissions(request, phaseGroup, project, isAfterAppealsResponse);
+
+        String phaseName = phase.getPhaseType().getName();
+
+        if (phaseGroup.getSubmitters() != null) {
+            Resource winner = phaseGroup.getWinner();
+            if (winner == null) {
+                winner = ActionsHelper.getWinner(phaseGroup.getSubmitters());
+                phaseGroup.setWinner(winner);
+            }
+            if (winner == null) {
+                return;
+            }
+
+            if (finalFixes.finalFixes == null) {
+                // Obtain an instance of Upload Manager
+                UploadManager upMgr = ActionsHelper.createUploadManager(request);
+                UploadStatus[] allUploadStatuses = upMgr.getAllUploadStatuses();
+                UploadType[] allUploadTypes = upMgr.getAllUploadTypes();
+
+                Filter filterStatus = UploadFilterBuilder.createUploadStatusIdFilter(
+                        ActionsHelper.findUploadStatusByName(allUploadStatuses, "Active").getId());
+                Filter filterType = UploadFilterBuilder.createUploadTypeIdFilter(
+                        ActionsHelper.findUploadTypeByName(allUploadTypes, "Final Fix").getId());
+                Filter filterResource = UploadFilterBuilder.createResourceIdFilter(winner.getId());
+
+                Filter filter = new AndFilter(Arrays.asList(
+                        new Filter[] {/*filterStatus, */filterType, filterResource}));
+                finalFixes.finalFixes = upMgr.searchUploads(filter);
+
+                Arrays.sort(finalFixes.finalFixes, new Comparators.UploadComparer());
+
+                finalFixes.finalFixIdx = 0;
+            }
+        }
+
+        if (phaseName.equalsIgnoreCase(Constants.FINAL_FIX_PHASE_NAME) && finalFixes.finalFixes != null) {
+            if (finalFixes.finalFixIdx < finalFixes.finalFixes.length) {
+                phaseGroup.setFinalFix(finalFixes.finalFixes[finalFixes.finalFixIdx++]);
+            }
+        }
+
+        if (phaseName.equalsIgnoreCase(Constants.FINAL_REVIEW_PHASE_NAME) &&
+                phaseGroup.getSubmitters() != null) {
+            Resource[] reviewer = ActionsHelper.getResourcesForPhase(allProjectResources, phase);
+
+            if (reviewer == null || reviewer.length == 0) {
+                return;
+            }
+
+            Filter filterResource = new EqualToFilter("reviewer", new Long(reviewer[0].getId()));
+            Filter filterProject = new EqualToFilter("project", new Long(project.getId()));
+
+            Filter filter = new AndFilter(filterResource, filterProject);
+
+            // Obtain an instance of Review Manager
+            ReviewManager revMgr = ActionsHelper.createReviewManager(request);
+            Review[] reviews = revMgr.searchReviews(filter, true);
+
+            if (reviews.length != 0) {
+                phaseGroup.setFinalReview(reviews[0]);
+            }
+        }
+    }
+
+    /**
+     * TODO: Write documentation for this method.
+     *
+     * @param request
+     * @param phaseGroup
+     * @param project
+     * @param thisPhase
+     * @param allProjectResources
+     * @param isAfterAppealsResponse
+     * @throws BaseException
+     */
+    private static void serviceApprovalAppFunc(HttpServletRequest request, PhaseGroup phaseGroup,
+            Project project, Phase thisPhase, Resource[] allProjectResources, boolean isAfterAppealsResponse)
+        throws BaseException {
+        if (phaseGroup.getSubmitters() == null) {
+            return;
+        }
+        retrieveSubmissions(request, phaseGroup, project, isAfterAppealsResponse);
+
+        Resource winner = ActionsHelper.getWinner(phaseGroup.getSubmitters());
+        phaseGroup.setWinner(winner);
+
+        Resource[] approver = ActionsHelper.getResourcesForPhase(allProjectResources, thisPhase);
+
+        if (approver == null || approver.length == 0) {
+            return;
+        }
+
+        // Obtain an instance of Scorecard Manager
+        ScorecardManager scrMgr = ActionsHelper.createScorecardManager(request);
+        ScorecardType[] allScorecardTypes = scrMgr.getAllScorecardTypes();
+
+        Filter filterResource = new EqualToFilter("reviewer", new Long(approver[0].getId()));
+        Filter filterProject = new EqualToFilter("project", new Long(project.getId()));
+        Filter filterScorecard = new EqualToFilter("scorecardType",
+                new Long(ActionsHelper.findScorecardTypeByName(allScorecardTypes, "Client Review").getId()));
+
+        Filter filter = new AndFilter(Arrays.asList(
+                new Filter[] {filterResource, filterProject, filterScorecard}));
+
+        // Obtain an instance of Review Manager
+        ReviewManager revMgr = ActionsHelper.createReviewManager(request);
+        Review[] reviews = revMgr.searchReviews(filter, true);
+
+        if (reviews.length != 0) {
+            phaseGroup.setApproval(reviews[0]);
+        }
+    }
+
+    /**
+     * TODO: Write documentation for this method.
+     *
+     * @param request
+     * @param phaseGroup
+     * @param project
+     * @param isAfterAppealsResponse
+     * @throws BaseException
+     */
+    private static void retrieveSubmissions(HttpServletRequest request,
+            PhaseGroup phaseGroup, Project project, boolean isAfterAppealsResponse)
+        throws BaseException {
+        if (phaseGroup.getSubmitters() == null || phaseGroup.getSubmissions() != null) {
+            return;
+        }
+
+        Submission[] submissions = null;
+
+        boolean mayViewMostRecentAfterAppealsResponse =
+            AuthorizationHelper.hasUserPermission(request, Constants.VIEW_RECENT_SUBM_AAR_PERM_NAME);
+
+        if ((mayViewMostRecentAfterAppealsResponse && isAfterAppealsResponse) ||
+                AuthorizationHelper.hasUserPermission(request, Constants.VIEW_ALL_SUBM_PERM_NAME) ||
+                AuthorizationHelper.hasUserPermission(request, Constants.VIEW_RECENT_SUBM_PERM_NAME) ||
+                AuthorizationHelper.hasUserPermission(request, Constants.VIEW_WINNING_SUBM_PERM_NAME)) {
+            submissions =
+                ActionsHelper.getMostRecentSubmissions(ActionsHelper.createUploadManager(request), project);
+        }
+        if (submissions == null &&
+                AuthorizationHelper.hasUserPermission(request, Constants.VIEW_MY_SUBM_PERM_NAME)) {
+            // Obtain an instance of Upload Manager
+            UploadManager upMgr = ActionsHelper.createUploadManager(request);
+            SubmissionStatus[] allSubmissionStatuses = upMgr.getAllSubmissionStatuses();
+
+            // Get "my" (submitter's) resource
+            Resource myResource = ActionsHelper.getMyResourceForPhase(request, null);
+
+            Filter filterProject = SubmissionFilterBuilder.createProjectIdFilter(project.getId());
+            Filter filterStatus = SubmissionFilterBuilder.createSubmissionStatusIdFilter(
+                    ActionsHelper.findSubmissionStatusByName(allSubmissionStatuses, "Active").getId());
+            Filter filterResource = SubmissionFilterBuilder.createResourceIdFilter(myResource.getId());
+
+            Filter filter =
+                new AndFilter(Arrays.asList(new Filter[] {filterProject, filterStatus, filterResource}));
+
+            submissions = upMgr.searchSubmissions(filter);
+        }
+        if (submissions != null) {
+            phaseGroup.setSubmissions(submissions);
+        }
+    }
+
+    /**
+     * TODO: Write documentation for this method.
+     *
+     * @param request
+     * @param allProjectResources
+     * @param isAfterAppealsResponse
+     * @param prevSubmitters
+     * @return
+     */
     private static Resource[] getSubmitters(HttpServletRequest request,
             Resource[] allProjectResources, boolean isAfterAppealsResponse, Resource[] prevSubmitters) {
         final boolean canSeeSubmitters = (isAfterAppealsResponse ||
@@ -784,7 +917,7 @@ final class PhasesDetailsServices {
         if (!canSeeSubmitters) {
             return null;
         }
-        
+
         return (prevSubmitters != null) ? prevSubmitters : ActionsHelper.getAllSubmitters(allProjectResources);
     }
 
@@ -867,6 +1000,23 @@ final class PhasesDetailsServices {
 
             totalAppeals[i] = innerTotalAppeals;
             unresolvedAppeals[i] = innerUnresolvedAppeals;
+        }
+    }
+
+    /**
+     * TODO: Document this helper class.
+     *
+     * @author George1
+     * @version 1.0
+     */
+    static class FinalFixesInfo {
+
+        public Upload[] finalFixes = null;
+
+        public int finalFixIdx = -1;
+
+        public FinalFixesInfo() {
+            // empty constructor
         }
     }
 }
