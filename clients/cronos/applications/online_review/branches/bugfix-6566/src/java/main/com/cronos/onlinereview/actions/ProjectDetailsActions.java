@@ -313,6 +313,7 @@ public class ProjectDetailsActions extends DispatchAction {
         request.setAttribute("phaseGroupIndexes", phasesDetails.getPhaseGroupIndexes());
         request.setAttribute("phaseGroups", phasesDetails.getPhaseGroups());
         request.setAttribute("activeTabIdx", phasesDetails.getActiveTabIndex());
+        request.setAttribute("passingMinimum", new Float(75.0)); // TODO: Take this value from scorecard template
 
         boolean sendTLNotifications = false;
 
@@ -328,7 +329,6 @@ public class ProjectDetailsActions extends DispatchAction {
         }
 
         request.setAttribute("sendTLNotifications", (sendTLNotifications) ? "On" : "Off");
-        request.setAttribute("passingMinimum", new Float(75.0)); // TODO: Take this value from scorecard template
 
         // Check resource roles
         request.setAttribute("isManager",
