@@ -444,6 +444,29 @@ public class ProjectActions extends DispatchAction {
         request.setAttribute("phaseGroups", phasesDetails.getPhaseGroups());
         request.setAttribute("activeTabIdx", phasesDetails.getActiveTabIndex());
         request.setAttribute("passingMinimum", new Float(75.0)); // TODO: Take this value from scorecard template
+
+        request.setAttribute("isManager",
+                Boolean.valueOf(AuthorizationHelper.hasUserRole(request, Constants.MANAGER_ROLE_NAMES)));
+        request.setAttribute("isAllowedToPerformScreening",
+                Boolean.valueOf(AuthorizationHelper.hasUserPermission(request, Constants.PERFORM_SCREENING_PERM_NAME) &&
+                        ActionsHelper.getPhase(phases, true, Constants.SCREENING_PHASE_NAME) != null));
+        request.setAttribute("isAllowedToViewScreening",
+                Boolean.valueOf(AuthorizationHelper.hasUserPermission(request, Constants.VIEW_SCREENING_PERM_NAME)));
+        request.setAttribute("isAllowedToUploadTC",
+                Boolean.valueOf(AuthorizationHelper.hasUserPermission(request, Constants.UPLOAD_TEST_CASES_PERM_NAME)));
+        request.setAttribute("isAllowedToPerformAggregation",
+                Boolean.valueOf(AuthorizationHelper.hasUserPermission(request, Constants.PERFORM_AGGREGATION_PERM_NAME)));
+        request.setAttribute("isAllowedToPerformAggregationReview",
+                Boolean.valueOf(AuthorizationHelper.hasUserPermission(request, Constants.PERFORM_AGGREG_REVIEW_PERM_NAME) &&
+                        !AuthorizationHelper.hasUserPermission(request, Constants.PERFORM_AGGREGATION_PERM_NAME)));
+        request.setAttribute("isAllowedToUploadFF",
+                Boolean.valueOf(AuthorizationHelper.hasUserPermission(request, Constants.PERFORM_FINAL_FIX_PERM_NAME)));
+        request.setAttribute("isAllowedToPerformFinalReview",
+                Boolean.valueOf(ActionsHelper.getPhase(phases, true, Constants.FINAL_REVIEW_PHASE_NAME) != null &&
+                        AuthorizationHelper.hasUserPermission(request, Constants.PERFORM_FINAL_REVIEW_PERM_NAME)));
+        request.setAttribute("isAllowedToPerformApproval",
+                Boolean.valueOf(ActionsHelper.getPhase(phases, true, Constants.APPROVAL_PHASE_NAME) != null &&
+                        AuthorizationHelper.hasUserPermission(request, Constants.PERFORM_APPROVAL_PERM_NAME)));
     }
 
     /**
