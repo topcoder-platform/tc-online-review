@@ -948,7 +948,7 @@
             </Property>
         </Property>
         <Property name="CreateAssignmentDocuments">
-    		<Value>false</Value>
+    		<Value>true</Value>
     	</Property>
         <Property name="WinnersEmail">
             <Property name="EmailTemplateSource">
@@ -962,7 +962,7 @@
             </Property>
             <Property name="AssignmentDocumentLink">
             	<!-- The ampersand must be scaped twice, one for this xml and the second time for the DocumentGenerator  -->
-                <Value>http://server/PactsMemberServlet?module=AssignmentDocumentDetails&amp;amp;assignment_document_id={0}</Value>
+                <Value>http://www.topcoder.com/PactsMemberServlet?module=AssignmentDocumentDetails&amp;amp;assignment_document_id={0}</Value>
             </Property>
             <Property name="EmailFromAddress">
                 <Value>service@topcodersoftware.com</Value>
