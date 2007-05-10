@@ -548,7 +548,7 @@
             </Property>
         </Property>
         <Property name="CreateAssignmentDocuments">
-    		<Value>true</Value>
+    		<Value>false</Value>
     	</Property>
         <Property name="WinnersEmail">
             <Property name="EmailTemplateSource">
