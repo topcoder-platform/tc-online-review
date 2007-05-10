@@ -47,7 +47,7 @@
     
     <Config name="com.cronos.onlinereview.phases.OnlineReviewProjectPilot">
     	<Property name="CheckAssignmentDocumentsStatus">
-    		<Value>true</Value>
+    		<Value>false</Value>
     	</Property>
         <Property name="AssigmentDocumentEmail">
             <Property name="EmailTemplateSource">
