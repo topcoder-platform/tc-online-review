@@ -113,7 +113,7 @@ public class ProjectDetailsActions extends DispatchAction {
     }
 
     private void getPreviousUploadsForSubmissions(HttpServletRequest request, Project project, PhaseGroup phaseGroup, Submission[] submissions) throws BaseException {
-    	if (submissions.length > 0) {
+    	if (submissions.length > 0 && AuthorizationHelper.hasUserPermission(request, Constants.VIEW_ALL_SUBM_PERM_NAME)) {
             // Obtain an instance of Upload Manager
             UploadManager upMgr = ActionsHelper.createUploadManager(request);
             // Get all upload types
@@ -460,6 +460,10 @@ public class ProjectDetailsActions extends DispatchAction {
             if (Constants.VIEW_SUBMISSIONS_APP_FUNC.equals(phaseGroup.getAppFunc()) &&
             		Constants.SUBMISSION_PHASE_NAME.equalsIgnoreCase(phaseName)) {
                 Submission[] submissions = null;
+                
+                if (AuthorizationHelper.hasUserPermission(request, Constants.VIEW_ALL_SUBM_PERM_NAME)) {
+                    submissions = ActionsHelper.getMostRecentSubmissions(ActionsHelper.createUploadManager(request), project);
+                }
                 
                 boolean mayViewMostRecentAfterAppealsResponse =
                     AuthorizationHelper.hasUserPermission(request, Constants.VIEW_RECENT_SUBM_AAR_PERM_NAME);
