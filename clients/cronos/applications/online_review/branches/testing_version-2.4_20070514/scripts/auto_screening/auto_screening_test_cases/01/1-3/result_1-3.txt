@@ -1,0 +1,23 @@
+TCS-001: Your submission distribution is not a jar file.
+
+The submission file [1-3.jar] is not a zip archive. 
+
+TCS-003: Your submission does not conform to the directory standard.
+
+The property [unzipped_submission_directory] does not exist in the screening context or its value is null. 
+
+TCS-004: Your submission does not contain a component specification document in rich text format (rtf).
+
+The property [unzipped_submission_directory] does not exist in the screening context or its value is null. 
+
+TCS-007: Your submission does not contain a zargo or zuml file.
+
+The property [unzipped_submission_directory] does not exist in the screening context or its value is null. 
+
+TCS-008: Your submission does not contain one or more use cases.
+
+The property [extracted_xmi_file] does not exist in the screening context or its value is null. 
+
+TCS-014: Your submission contains personal information.
+
+The property [unzipped_submission_directory] does not exist in the screening context or its value is null. 
