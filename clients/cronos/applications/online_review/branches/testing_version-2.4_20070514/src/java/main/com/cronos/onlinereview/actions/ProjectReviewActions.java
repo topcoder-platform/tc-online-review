@@ -3833,15 +3833,22 @@ public class ProjectReviewActions extends DispatchAction {
                 isAllowed = true;
             }
         } else if (AuthorizationHelper.hasUserPermission(request, permName)) {
-            if (reviewType == "Review" || reviewType == "Screening") {
+            if (reviewType == "Review") {
                 // User is authorized to view all reviews (when not in Review, Appeals or Appeals Response)
                 if (!activePhases.contains(Constants.REVIEW_PHASE_NAME) &&
                         !activePhases.contains(Constants.APPEALS_PHASE_NAME) &&
                         !activePhases.contains(Constants.APPEALS_RESPONSE_PHASE_NAME)) {
                     isAllowed = true;
                 }
+            } else if (reviewType == "Screening") {
+            	if (!activePhases.contains(Constants.REVIEW_PHASE_NAME) &&
+                        !activePhases.contains(Constants.APPEALS_PHASE_NAME) &&
+                        !activePhases.contains(Constants.APPEALS_RESPONSE_PHASE_NAME)) {
+                    isAllowed = true;
+                } 
+                isAllowed = !AuthorizationHelper.hasUserRole(request, Constants.SUBMITTER_ROLE_NAME);
             } else {
-                isAllowed = true;
+            	isAllowed = true;
             }
         }
 
