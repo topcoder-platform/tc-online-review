@@ -113,7 +113,7 @@ public class ProjectDetailsActions extends DispatchAction {
     }
 
     private void getPreviousUploadsForSubmissions(HttpServletRequest request, Project project, PhaseGroup phaseGroup, Submission[] submissions) throws BaseException {
-    	if (submissions.length > 0 && AuthorizationHelper.hasUserPermission(request, Constants.VIEW_ALL_SUBM_PERM_NAME)) {
+    	if (submissions.length > 0) {
             // Obtain an instance of Upload Manager
             UploadManager upMgr = ActionsHelper.createUploadManager(request);
             // Get all upload types
