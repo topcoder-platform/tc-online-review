@@ -3845,8 +3845,10 @@ public class ProjectReviewActions extends DispatchAction {
                         !activePhases.contains(Constants.APPEALS_PHASE_NAME) &&
                         !activePhases.contains(Constants.APPEALS_RESPONSE_PHASE_NAME)) {
                     isAllowed = true;
-                } 
-                isAllowed = !AuthorizationHelper.hasUserRole(request, Constants.SUBMITTER_ROLE_NAME);
+                } else {
+                	//if any of those phases are open only, a user can see the screening if he is not a submitter 
+                	isAllowed = !AuthorizationHelper.hasUserRole(request, Constants.SUBMITTER_ROLE_NAME);
+                }
             } else {
             	isAllowed = true;
             }
