@@ -112,6 +112,47 @@ public class ProjectDetailsActions extends DispatchAction {
     public ProjectDetailsActions() {
     }
 
+    private void getPreviousUploadsForSubmissions(HttpServletRequest request, Project project, PhaseGroup phaseGroup, Submission[] submissions) throws BaseException {
+    	if (submissions.length > 0 && AuthorizationHelper.hasUserPermission(request, Constants.VIEW_ALL_SUBM_PERM_NAME)) {
+            // Obtain an instance of Upload Manager
+            UploadManager upMgr = ActionsHelper.createUploadManager(request);
+            // Get all upload types
+            UploadType[] allUploadTypes = upMgr.getAllUploadTypes();
+            // Get all upload statuses
+            UploadStatus[] allUploadStatuses = upMgr.getAllUploadStatuses();
+
+            Filter filterProject = UploadFilterBuilder.createProjectIdFilter(project.getId());
+            Filter filterUploadType = UploadFilterBuilder.createUploadTypeIdFilter(
+                    ActionsHelper.findUploadTypeByName(allUploadTypes, "Submission").getId());
+            Filter filterUploadStatus = UploadFilterBuilder.createUploadStatusIdFilter(
+                    ActionsHelper.findUploadStatusByName(allUploadStatuses, "Deleted").getId());
+
+            Filter filter =
+                new AndFilter(Arrays.asList(new Filter[] {filterProject, filterUploadType, filterUploadStatus}));
+            Upload[] ungroupedUploads = upMgr.searchUploads(filter);
+            Upload[][] pastSubmissions = new Upload[submissions.length][];
+
+            for (int j = 0; j < pastSubmissions.length; ++j) {
+                List temp = new ArrayList();
+                long currentUploadOwnerId = submissions[j].getUpload().getOwner();
+
+                for (int k = 0; k < ungroupedUploads.length; k++) {
+                    if (currentUploadOwnerId == ungroupedUploads[k].getOwner()) {
+                        temp.add(ungroupedUploads[k]);
+                    }
+                }
+
+                if (!temp.isEmpty()) {
+                    pastSubmissions[j] = (Upload[]) temp.toArray(new Upload[temp.size()]);
+                }
+            }
+
+            if (pastSubmissions.length != 0) {
+                phaseGroup.setPastSubmissions(pastSubmissions);
+            }
+        }
+    }
+    
     /**
      * This method is an implementation of &quot;View project Details&quot; Struts Action defined
      * for this assembly, which is supposed to gather all possible information about the project and
@@ -416,59 +457,19 @@ public class ProjectDetailsActions extends DispatchAction {
                 phaseGroup.setRegistantsEmails(userEmails);
             }
 
-            if (phaseGroup.getAppFunc().equals(Constants.VIEW_SUBMISSIONS_APP_FUNC) &&
-                    phaseName.equalsIgnoreCase(Constants.SUBMISSION_PHASE_NAME)) {
+            if (Constants.VIEW_SUBMISSIONS_APP_FUNC.equals(phaseGroup.getAppFunc()) &&
+            		Constants.SUBMISSION_PHASE_NAME.equalsIgnoreCase(phaseName)) {
                 Submission[] submissions = null;
-
+                
                 if (AuthorizationHelper.hasUserPermission(request, Constants.VIEW_ALL_SUBM_PERM_NAME)) {
-                    submissions =
-                        ActionsHelper.getMostRecentSubmissions(ActionsHelper.createUploadManager(request), project);
-
-                    // Obtain an instance of Upload Manager
-                    UploadManager upMgr = ActionsHelper.createUploadManager(request);
-                    // Get all upload types
-                    UploadType[] allUploadTypes = upMgr.getAllUploadTypes();
-                    // Get all upload statuses
-                    UploadStatus[] allUploadStatuses = upMgr.getAllUploadStatuses();
-
-                    Filter filterProject = UploadFilterBuilder.createProjectIdFilter(project.getId());
-                    Filter filterUploadType = UploadFilterBuilder.createUploadTypeIdFilter(
-                            ActionsHelper.findUploadTypeByName(allUploadTypes, "Submission").getId());
-                    Filter filterUploadStatus = UploadFilterBuilder.createUploadStatusIdFilter(
-                            ActionsHelper.findUploadStatusByName(allUploadStatuses, "Deleted").getId());
-
-                    Filter filter =
-                        new AndFilter(Arrays.asList(new Filter[] {filterProject, filterUploadType, filterUploadStatus}));
-                    Upload[] ungroupedUploads = upMgr.searchUploads(filter);
-                    Upload[][] pastSubmissions = new Upload[submissions.length][];
-
-                    for (int j = 0; j < pastSubmissions.length; ++j) {
-                        List temp = new ArrayList();
-                        long currentUploadOwnerId = submissions[j].getUpload().getOwner();
-
-                        for (int k = 0; k < ungroupedUploads.length; ++k) {
-                            if (currentUploadOwnerId == ungroupedUploads[k].getOwner()) {
-                                temp.add(ungroupedUploads[k]);
-                            }
-                        }
-
-                        if (!temp.isEmpty()) {
-                            pastSubmissions[j] = (Upload[]) temp.toArray(new Upload[temp.size()]);
-                        }
-                    }
-
-                    if (pastSubmissions.length != 0) {
-                        phaseGroup.setPastSubmissions(pastSubmissions);
-                    }
+                    submissions = ActionsHelper.getMostRecentSubmissions(ActionsHelper.createUploadManager(request), project);
                 }
-
+                
                 boolean mayViewMostRecentAfterAppealsResponse =
                     AuthorizationHelper.hasUserPermission(request, Constants.VIEW_RECENT_SUBM_AAR_PERM_NAME);
 
-                if (submissions == null &&
-                        ((mayViewMostRecentAfterAppealsResponse && isAfterAppealsResponse))) {
-                    submissions =
-                        ActionsHelper.getMostRecentSubmissions(ActionsHelper.createUploadManager(request), project);
+                if (mayViewMostRecentAfterAppealsResponse && isAfterAppealsResponse) {
+                    submissions = ActionsHelper.getMostRecentSubmissions(ActionsHelper.createUploadManager(request), project);
                 }
                 if (submissions == null &&
                         AuthorizationHelper.hasUserPermission(request, Constants.VIEW_RECENT_SUBM_PERM_NAME) &&
@@ -520,6 +521,8 @@ public class ProjectDetailsActions extends DispatchAction {
 
                 phaseGroup.setSubmissions(submissions);
 
+                getPreviousUploadsForSubmissions(request, project, phaseGroup, submissions);
+                
                 if (submissions.length != 0) {
                     long[] uploadIds = new long[submissions.length];
 

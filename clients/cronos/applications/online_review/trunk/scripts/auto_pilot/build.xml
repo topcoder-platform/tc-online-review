@@ -181,7 +181,7 @@
     <property name="online_review_deliverables.path" value="online_review_deliverables/${online_review_deliverables.version}" />
     <property name="online_review_deliverables.jar" value="${tcs_libdir}/${online_review_deliverables.path}/${online_review_deliverables.jar.name}" />
 
-    <property name="online_review_phases.version" value="1.0.3" />
+    <property name="online_review_phases.version" value="1.0.4" />
     <property name="online_review_phases.jar.name" value="online_review_phases.jar" />
     <property name="online_review_phases.path" value="online_review_phases/${online_review_phases.version}" />
     <property name="online_review_phases.jar" value="${tcs_libdir}/${online_review_phases.path}/${online_review_phases.jar.name}" />
@@ -251,7 +251,7 @@
     <property name="review_score_aggregator.path" value="review_score_aggregator/${review_score_aggregator.version}" />
     <property name="review_score_aggregator.jar" value="${tcs_libdir}/${review_score_aggregator.path}/${review_score_aggregator.jar.name}" />
 
-    <property name="review_score_calculator.version" value="1.0.1" />
+    <property name="review_score_calculator.version" value="1.0.3" />
     <property name="review_score_calculator.jar.name" value="review_score_calculator.jar" />
     <property name="review_score_calculator.path" value="review_score_calculator/${review_score_calculator.version}" />
     <property name="review_score_calculator.jar" value="${tcs_libdir}/${review_score_calculator.path}/${review_score_calculator.jar.name}" />

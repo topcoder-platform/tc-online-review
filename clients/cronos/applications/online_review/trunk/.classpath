@@ -30,11 +30,11 @@
 	<classpathentry exported="true" kind="lib" path="lib/tcs/online_review_ajax_support/1.0.1/online_review_ajax_support.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/tcs/online_review_deliverables/1.0/online_review_deliverables.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/tcs/online_review_login/1.0/online_review_login.jar"/>
-	<classpathentry kind="lib" path="lib/tcs/online_review_phases/1.0.3/online_review_phases.jar"/>
+	<classpathentry kind="lib" path="lib/tcs/online_review_phases/1.0.4/online_review_phases.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/tcs/phase_management/1.0.3/phase_management.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/tcs/phase_management_persistence/1.0/phase_management_persistence.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/tcs/project_management/1.0/project_management.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/tcs/project_management_persistence/1.0/project_management_persistence.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/tcs/project_management/1.0/project_management.jar" sourcepath="/project_management/src/java/main"/>
+	<classpathentry exported="true" kind="lib" path="lib/tcs/project_management_persistence/1.0/project_management_persistence.jar" sourcepath="/project_management_persistence/src/java/main"/>
 	<classpathentry exported="true" kind="lib" path="lib/tcs/project_phases/2.0/project_phases.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/tcs/project_phase_template/1.0/project_phase_template.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/tcs/resource_management/1.0.1/resource_management.jar"/>
@@ -43,7 +43,7 @@
 	<classpathentry exported="true" kind="lib" path="lib/tcs/review_management/1.0/review_management.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/tcs/review_management_persistence/1.0/review_management_persistence.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/tcs/review_score_aggregator/1.0/review_score_aggregator.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/tcs/review_score_calculator/1.0.1/review_score_calculator.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/tcs/review_score_calculator/1.0.3/review_score_calculator.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/tcs/scorecard_data_structure/1.0/scorecard_data_structure.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/tcs/scorecard_management/1.0/scorecard_management.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/tcs/scorecard_management_persistence/1.0.1/scorecard_management_persistence.jar"/>
