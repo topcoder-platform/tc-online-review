@@ -632,7 +632,7 @@ Note: The security manager that comes with the app may not be compatible with th
     <target name="deploy-common">
     	<mkdir dir="${deploy-dir}" />
         <unwar src="${component.war}" dest="${deploy-dir}" />
-    	<move todir="${deploy-dir}/../lib" overwrite="true" verbose="true">
+    	<move todir="${deploy-dir}/../../lib" overwrite="true" verbose="true">
     		<fileset dir="${deploy-dir}/WEB-INF/lib">
 				<include name="${tcsUtil.jar.name}"/>
 				<include name="${tcwebcommon.jar.name}"/>
