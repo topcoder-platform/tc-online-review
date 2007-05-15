@@ -1,0 +1,6 @@
+<?xml version="1.0" ?>
+<CMConfig>
+	<Property name="default_magic_lists">
+		<Value>com/topcoder/file/type/magic.xml</Value>
+	</Property>
+</CMConfig>

@@ -1,0 +1,90 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- FINISHED -->
+<!--
+    Adds the data for registered competitors (submitters);
+    Advances to Submission phase;
+-->
+<dataset>
+    <!-- *** phase *** -->
+    <!-- Phases for Ajax Timed Survey 1.0 -->
+    <project_phase project_phase_id="1" project_id="1" phase_type_id="1" phase_status_id="3"
+           scheduled_start_time="2006-07-29 00:00:00.0" scheduled_end_time="2006-07-29 23:59:59.0"
+           duration="1440" create_user="System" create_date="2006-07-29 02:45:11.0" modify_user="System"
+           modify_date="2006-07-29 02:45:11.0"/><!-- Registration phase -->
+    <project_phase project_phase_id="2" project_id="1" phase_type_id="2" phase_status_id="2"
+           scheduled_start_time="2006-07-30 00:00:00.0" scheduled_end_time="2006-07-30 23:59:59.0"
+           duration="1440" create_user="System" create_date="2006-07-29 02:45:11.0" modify_user="System"
+           modify_date="2006-07-29 02:45:11.0"/><!-- Submission phase -->
+
+    <!-- *** resource *** -->
+    <!-- Ajax Timed Survey -->
+    <resource resource_id="1" resource_role_id="1" project_id="1" project_phase_id="2"
+              create_user="System" create_date="2006-07-29 02:45:11.0"
+              modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Winning Submitter, Submission phase -->
+    <resource resource_id="2" resource_role_id="1" project_id="1" project_phase_id="2"
+              create_user="System" create_date="2006-07-29 02:45:11.0"
+              modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- 2nd Place Submitter, Submission phase -->
+    <resource resource_id="3" resource_role_id="1" project_id="1" project_phase_id="2"
+              create_user="System" create_date="2006-07-29 02:45:11.0"
+              modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- 3rd Place Submitter, Submission phase -->
+
+    <!-- *** resource_info *** -->
+    <!-- Ajax Timed Survey -->
+    <!--   Winning Submitter, Submission phase -->
+    <resource_info resource_info_type_id="1" resource_id="1" value="1"
+                   create_user="System" create_date="2006-07-29 02:45:11.0"
+                   modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- External Reference ID -->
+    <resource_info resource_info_type_id="2" resource_id="1" value="competitor1"
+                   create_user="System" create_date="2006-07-29 02:45:11.0"
+                   modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Handle -->
+    <resource_info resource_info_type_id="3" resource_id="1" value="competitor1@competitor1.ru"
+                   create_user="System" create_date="2006-07-29 02:45:11.0"
+                   modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Email -->
+    <resource_info resource_info_type_id="4" resource_id="1" value="1000"
+                   create_user="System" create_date="2006-07-29 02:45:11.0"
+                   modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Rating -->
+    <resource_info resource_info_type_id="5" resource_id="1" value="90"
+                   create_user="System" create_date="2006-07-29 02:45:11.0"
+                   modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Reliability -->
+    <resource_info resource_info_type_id="6" resource_id="1" value="2006-07-22 02:45:11.0"
+                   create_user="System" create_date="2006-07-29 02:45:11.0"
+                   modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Registration Date -->
+    <!--   2nd Place Submitter, Submission phase -->
+    <resource_info resource_info_type_id="1" resource_id="2" value="2"
+                   create_user="System" create_date="2006-07-29 02:45:11.0"
+                   modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- External Reference ID -->
+    <resource_info resource_info_type_id="2" resource_id="2" value="competitor2"
+                   create_user="System" create_date="2006-07-29 02:45:11.0"
+                   modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Handle -->
+    <resource_info resource_info_type_id="3" resource_id="2" value="competitor2@competitor2.ru"
+                   create_user="System" create_date="2006-07-29 02:45:11.0"
+                   modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Email -->
+    <resource_info resource_info_type_id="4" resource_id="2" value="900"
+                   create_user="System" create_date="2006-07-29 02:45:11.0"
+                   modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Rating -->
+    <resource_info resource_info_type_id="5" resource_id="2" value="80"
+                   create_user="System" create_date="2006-07-29 02:45:11.0"
+                   modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Reliability -->
+    <resource_info resource_info_type_id="6" resource_id="2" value="2006-07-22 03:45:11.0"
+                   create_user="System" create_date="2006-07-29 02:45:11.0"
+                   modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Registration Date -->
+    <!--   3rd Place Submitter, Submission phase -->
+    <resource_info resource_info_type_id="1" resource_id="3" value="3"
+                   create_user="System" create_date="2006-07-29 02:45:11.0"
+                   modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- External Reference ID -->
+    <resource_info resource_info_type_id="2" resource_id="3" value="competitor3"
+                   create_user="System" create_date="2006-07-29 02:45:11.0"
+                   modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Handle -->
+    <resource_info resource_info_type_id="3" resource_id="3" value="competitor3@competitor3.ru"
+                   create_user="System" create_date="2006-07-29 02:45:11.0"
+                   modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Email -->
+    <resource_info resource_info_type_id="4" resource_id="3" value="800"
+                   create_user="System" create_date="2006-07-29 02:45:11.0"
+                   modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Rating -->
+    <resource_info resource_info_type_id="5" resource_id="3" value="70"
+                   create_user="System" create_date="2006-07-29 02:45:11.0"
+                   modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Reliability -->
+    <resource_info resource_info_type_id="6" resource_id="3" value="2006-07-22 04:45:11.0"
+                   create_user="System" create_date="2006-07-29 02:45:11.0"
+                   modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Registration Date -->
+</dataset>
