@@ -196,7 +196,7 @@
     <property name="online_review_login.path" value="online_review_login/${online_review_login.version}" />
     <property name="online_review_login.jar" value="${tcs_libdir}/${online_review_login.path}/${online_review_login.jar.name}" />
 
-    <property name="online_review_phases.version" value="1.0.3" />
+    <property name="online_review_phases.version" value="1.0.4" />
     <property name="online_review_phases.jar.name" value="online_review_phases.jar" />
     <property name="online_review_phases.path" value="online_review_phases/${online_review_phases.version}" />
     <property name="online_review_phases.jar" value="${tcs_libdir}/${online_review_phases.path}/${online_review_phases.jar.name}" />
@@ -261,7 +261,7 @@
     <property name="review_score_aggregator.path" value="review_score_aggregator/${review_score_aggregator.version}" />
     <property name="review_score_aggregator.jar" value="${tcs_libdir}/${review_score_aggregator.path}/${review_score_aggregator.jar.name}" />
 
-    <property name="review_score_calculator.version" value="1.0.1" />
+    <property name="review_score_calculator.version" value="1.0.3" />
     <property name="review_score_calculator.jar.name" value="review_score_calculator.jar" />
     <property name="review_score_calculator.path" value="review_score_calculator/${review_score_calculator.version}" />
     <property name="review_score_calculator.jar" value="${tcs_libdir}/${review_score_calculator.path}/${review_score_calculator.jar.name}" />
@@ -629,28 +629,28 @@ Note: The security manager that comes with the app may not be compatible with th
         <delete file="${component_test.war}" failonerror="false" />
     </target>
 
-    <target name="deploy" depends="dist">
-        <mkdir dir="${deploy-dir}" />
+    <target name="deploy-common">
+    	<mkdir dir="${deploy-dir}" />
         <unwar src="${component.war}" dest="${deploy-dir}" />
-    	<!-- delete>
-			<fileset dir="${deploy-dir}/WEB-INF/lib">
-	    		<include name="${tcsUtil.jar.name}"/>
+    	<move todir="${deploy-dir}/../../lib" overwrite="true" verbose="true">
+    		<fileset dir="${deploy-dir}/WEB-INF/lib">
+				<include name="${tcsUtil.jar.name}"/>
 				<include name="${tcwebcommon.jar.name}"/>
 				<include name="${shared.jar.name}"/>
+			</fileset>
+    	</move>
+    	<delete verbose="true">
+			<fileset dir="${deploy-dir}/WEB-INF/lib">
 				<include name="log4j.jar"/>
 			</fileset>
-		</delete -->
+		</delete>
     </target>
+	
+    <target name="deploy" depends="dist, deploy-common"/>
 
-    <target name="deploy-prod">
-        <mkdir dir="${deploy-dir}" />
-        <unwar src="${distfilename}.war" dest="${deploy-dir}" />
-    </target>
+    <target name="deploy-prod" depends="deploy-common"/>
 
-    <target name="main" depends="deploy,test">
-    </target>
-
-
+    <target name="main" depends="deploy,test"/>
 
     <!-- ************************************************************************** -->
     <!-- ************ REMOVE EVERYTHING BELOW HERE FOR THE DISTRIBUTION ************* -->
