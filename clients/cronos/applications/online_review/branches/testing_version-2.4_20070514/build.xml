@@ -634,7 +634,7 @@ Note: The security manager that comes with the app may not be compatible with th
         <unwar src="${component.war}" dest="${deploy-dir}" />
     	<move todir="${deploy-dir}/../lib" overwrite="true" verbose="true">
     		<fileset dir="${deploy-dir}/WEB-INF/lib">
-	    		<include name="${tcsUtil.jar.name}"/>
+				<include name="${tcsUtil.jar.name}"/>
 				<include name="${tcwebcommon.jar.name}"/>
 				<include name="${shared.jar.name}"/>
 			</fileset>
@@ -645,7 +645,6 @@ Note: The security manager that comes with the app may not be compatible with th
 			</fileset>
 		</delete>
     </target>
-
 	
     <target name="deploy" depends="dist, deploy-common"/>
 
