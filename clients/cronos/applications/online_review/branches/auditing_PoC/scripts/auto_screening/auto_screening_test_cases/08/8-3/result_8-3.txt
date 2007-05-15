@@ -1,3 +1,0 @@
-TCS-014: Your submission contains personal information.
-
-File [component specification.rtf] contains submitter's first name [Fisrt1]. 
