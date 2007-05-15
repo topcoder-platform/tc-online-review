@@ -629,28 +629,29 @@ Note: The security manager that comes with the app may not be compatible with th
         <delete file="${component_test.war}" failonerror="false" />
     </target>
 
-    <target name="deploy" depends="dist">
-        <mkdir dir="${deploy-dir}" />
+    <target name="deploy-common">
+    	<mkdir dir="${deploy-dir}" />
         <unwar src="${component.war}" dest="${deploy-dir}" />
-    	<!-- delete>
-			<fileset dir="${deploy-dir}/WEB-INF/lib">
+    	<move todir="${deploy-dir}/../lib" overwrite="true" verbose="true">
+    		<fileset dir="${deploy-dir}/WEB-INF/lib">
 	    		<include name="${tcsUtil.jar.name}"/>
 				<include name="${tcwebcommon.jar.name}"/>
 				<include name="${shared.jar.name}"/>
+			</fileset>
+    	</move>
+    	<delete verbose="true">
+			<fileset dir="${deploy-dir}/WEB-INF/lib">
 				<include name="log4j.jar"/>
 			</fileset>
-		</delete -->
+		</delete>
     </target>
 
-    <target name="deploy-prod">
-        <mkdir dir="${deploy-dir}" />
-        <unwar src="${distfilename}.war" dest="${deploy-dir}" />
-    </target>
+	
+    <target name="deploy" depends="dist, deploy-common"/>
 
-    <target name="main" depends="deploy,test">
-    </target>
+    <target name="deploy-prod" depends="deploy-common"/>
 
-
+    <target name="main" depends="deploy,test"/>
 
     <!-- ************************************************************************** -->
     <!-- ************ REMOVE EVERYTHING BELOW HERE FOR THE DISTRIBUTION ************* -->
