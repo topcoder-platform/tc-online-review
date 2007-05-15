@@ -43,7 +43,7 @@
 	<classpathentry exported="true" kind="lib" path="lib/tcs/review_management/1.0/review_management.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/tcs/review_management_persistence/1.0/review_management_persistence.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/tcs/review_score_aggregator/1.0/review_score_aggregator.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/tcs/review_score_calculator/1.0.1/review_score_calculator.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/tcs/review_score_calculator/1.0.3/review_score_calculator.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/tcs/scorecard_data_structure/1.0/scorecard_data_structure.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/tcs/scorecard_management/1.0/scorecard_management.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/tcs/scorecard_management_persistence/1.0.1/scorecard_management_persistence.jar"/>
