@@ -481,6 +481,8 @@
     		</patternset>
     	</unjar>
 		<chmod dir="." perm="u+x" includes="**/*.sh"/>
+		<fixcrlf srcdir="${basedir}" eol="lf" eof="remove" includes="**/*.sh" />
+		<fixcrlf srcdir="${basedir}" eol="crlf" includes="**/*.bat" />
 	</target>
 
     <target name="clean">
