@@ -55,7 +55,7 @@ Description:
         </module>
         <module name="RegexpHeader">
             <property name="severity" value="warning"/>
-            <property name="headerFile" value="test_files\topcoder.header"/>
+            <property name="headerFile" value="topcoder.header"/>
         </module>
         <module name="AvoidStarImport">
             <property name="severity" value="warning"/>
