@@ -1,5 +1,4 @@
-<?xml version="1.0"?>
-
+<?xml version="1.0" encoding="UTF-8"?>
 <project name="Online Review" default="dist" basedir=".">
 
     <property file="topcoder_global.properties" />
@@ -220,6 +219,7 @@
     <property name="ifx-jdbc.jar" value="${ext_libdir}/third_party/ifx-jdbc.jar" />
 	<property name="log4j.jar" value="${ext_libdir}/third_party/log4j.jar" />
 	<property name="xerces.jar" value="${ext_libdir}/third_party/xerces.jar" />
+	<property name="checkstyle.jar" value="${ext_libdir}/third_party/checkstyle-all-4.2.jar" />
 
     <path id="buildlibs">
         <pathelement location="conf" />
@@ -296,6 +296,7 @@
 	    	<fileset file="${ifx-jdbc.jar}"/> 
 	    	<fileset file="${log4j.jar}" />
 	    	<fileset file="${xerces.jar}"/> 
+			<fileset file="${checkstyle.jar}"/> 
 		    <fileset dir=".">    
 		    	<exclude  name="build.xml"/> 
 		    	<include  name="**/*.sh"/>
@@ -328,6 +329,8 @@
     		</patternset>
     	</unjar>
 		<chmod dir="." perm="u+x" includes="**/*.sh"/>
+		<fixcrlf srcdir="${basedir}" eol="lf" eof="remove" includes="**/*.sh" />
+		<fixcrlf srcdir="${basedir}" eol="crlf" includes="**/*.bat" />
 	</target>
 	
 
