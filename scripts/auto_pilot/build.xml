@@ -479,10 +479,10 @@
 		    	<include name="**/*.txt"/>
 		    	<include name="**/*.properties"/>
     		</patternset>
-    	</unjar>
-		<chmod dir="." perm="u+x" includes="**/*.sh"/>
+    	</unjar>		
 		<fixcrlf srcdir="${basedir}" eol="lf" eof="remove" includes="**/*.sh" />
 		<fixcrlf srcdir="${basedir}" eol="crlf" includes="**/*.bat" />
+		<chmod dir="." perm="u+x" includes="**/*.sh"/>
 	</target>
 
     <target name="clean">
