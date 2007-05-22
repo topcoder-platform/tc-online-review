@@ -78,7 +78,7 @@ public class Utility {
             }
             
         } catch (Exception ex) {
-            // ignore
+            ex.printStackTrace();
         }
     }
 
