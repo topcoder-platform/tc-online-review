@@ -454,18 +454,28 @@
 
     <target name="compile">
         <mkdir dir="${build_classdir}" />
-        <javac srcdir="${javamain}" destdir="${build_classdir}" includes="**/*.java" 
-        		debug="true" verbose="${verbose}"
-	        	source="1.5" target="1.5">
+        <javac srcdir="${javamain}"
+               destdir="${build_classdir}"
+               includes="**/*.java" 
+               debug="true"
+               verbose="${verbose}"
+               source="1.5"
+               target="1.5"
+               >
             <classpath refid="buildlibs" />
         </javac>
     </target>
 
     <target name="compile_tests" depends="compile">
         <mkdir dir="${build_testclassdir}" />
-        <javac srcdir="${javatests}" destdir="${build_testclassdir}" includes="**/*.java" 
-        	debug="true" verbose="${verbose}"
-        	source="1.5" target="1.5">
+        <javac srcdir="${javatests}"
+               destdir="${build_testclassdir}"
+               includes="**/*.java" 
+               debug="true"
+               verbose="${verbose}"
+               source="1.5"
+               target="1.5"
+               >
             <classpath refid="test.build.classpath" />
         </javac>
     </target>
@@ -630,27 +640,29 @@ Note: The security manager that comes with the app may not be compatible with th
     </target>
 
     <target name="deploy-common">
-    	<mkdir dir="${deploy-dir}" />
+        <mkdir dir="${deploy-dir}" />
         <unwar src="${component.war}" dest="${deploy-dir}" />
-    	<move todir="${deploy-dir}/../../lib" overwrite="true" verbose="true">
-    		<fileset dir="${deploy-dir}/WEB-INF/lib">
-				<include name="${tcsUtil.jar.name}"/>
-				<include name="${tcwebcommon.jar.name}"/>
-				<include name="${shared.jar.name}"/>
-			</fileset>
-    	</move>
-    	<delete verbose="true">
-			<fileset dir="${deploy-dir}/WEB-INF/lib">
-				<include name="log4j.jar"/>
-			</fileset>
-		</delete>
+        <move todir="${deploy-dir}/../../lib" overwrite="true" verbose="true">
+            <fileset dir="${deploy-dir}/WEB-INF/lib">
+                <include name="${tcsUtil.jar.name}"/>
+                <include name="${tcwebcommon.jar.name}"/>
+                <include name="${shared.jar.name}"/>
+            </fileset>
+        </move>
+        <delete verbose="true">
+            <fileset dir="${deploy-dir}/WEB-INF/lib">
+                <include name="log4j.jar"/>
+            </fileset>
+        </delete>
     </target>
-	
-    <target name="deploy" depends="dist, deploy-common"/>
 
-    <target name="deploy-prod" depends="deploy-common"/>
+    <target name="deploy" depends="dist, deploy-common" />
 
-    <target name="main" depends="deploy,test"/>
+    <target name="deploy-prod" depends="deploy-common" />
+
+    <target name="main" depends="deploy,test" />
+
+
 
     <!-- ************************************************************************** -->
     <!-- ************ REMOVE EVERYTHING BELOW HERE FOR THE DISTRIBUTION ************* -->
