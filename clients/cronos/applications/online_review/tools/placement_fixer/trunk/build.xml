@@ -2,7 +2,7 @@
 <project name="OR score fixer" default="dist" basedir=".">
     <!-- any property set in topcoder_global.properties will take precedence
          over properties set in this file -->
-    <property file="../topcoder_global.properties"/>
+    <property file="topcoder_global.properties"/>
 
     <!-- COMPONENT PARAMETERS -->
     <property name="component" value="OR_score_fixer" />
