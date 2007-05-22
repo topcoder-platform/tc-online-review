@@ -1,7 +1,5 @@
 <?xml version="1.0"?>
-
 <project name="OR score fixer" default="dist" basedir=".">
-
     <!-- any property set in topcoder_global.properties will take precedence
          over properties set in this file -->
     <property file="../topcoder_global.properties"/>
@@ -45,14 +43,30 @@
     <property name="verbose" value="no" />
 
     <!-- NAME FOR .JAR FILES -->
+	<property name="dist_lib" value="${build_lib}"/>
+
     <property name="component.jar" value="${build_lib}/${distfilename}.jar"/>
     <property name="component.tests.jar" value="${build_lib}/${distfilename}_tests.jar"/>
     <property name="component.dist.jar" value="${build_distdir}/${distfilename}-${component_version}.jar"/>
 
     <!-- TCS Dependencies -->
-    <property name="config_manager" value="${tcs_libdir}/configuration_manager.jar" />
-    <property name="db_connection_factory" value="${tcs_libdir}/db_connection_factory.jar" />
-    <property name="base_exception" value="${tcs_libdir}/base_exception.jar" />
+	<property name="configuration_manager.version" value="2.1.5" />
+	<property name="configuration_manager.jar.name" value="configuration_manager.jar" />
+	<property name="configuration_manager.path" value="configuration_manager/${configuration_manager.version}" />
+	<property name="configuration_manager.jar" value="${tcs_libdir}/${configuration_manager.path}/${configuration_manager.jar.name}" />
+    <property name="config_manager" value="${configuration_manager.jar}" />
+	
+	<property name="db_connection_factory.version" value="1.0" />
+    <property name="db_connection_factory.jar.name" value="db_connection_factory.jar" />
+    <property name="db_connection_factory.path" value="db_connection_factory/${db_connection_factory.version}" />
+    <property name="db_connection_factory.jar" value="${tcs_libdir}/${db_connection_factory.path}/${db_connection_factory.jar.name}" />
+    <property name="db_connection_factory" value="${db_connection_factory.jar}" />
+	
+    <property name="base_exception.version" value="1.0" />
+    <property name="base_exception.jar.name" value="base_exception.jar" />
+    <property name="base_exception.path" value="base_exception/${base_exception.version}" />
+    <property name="base_exception.jar" value="${tcs_libdir}/${base_exception.path}/${base_exception.jar.name}" />
+    <property name="base_exception" value="${base_exception.jar}" />
 
     <!-- 3rd Party Dependencies  -->
     <property name="ifxjdbc.jar" value="${ext_libdir}/ifxjdbc.jar"/>
@@ -146,7 +160,7 @@
     </target>
 
     <target name="dist" depends="compile">
-        <mkdir dir="${dist_lib}/${component_path}"/>
+        <mkdir dir="${dist_lib}"/>
         <jar jarfile="${component.jar}" basedir="${build_classdir}" />
     </target>
 
