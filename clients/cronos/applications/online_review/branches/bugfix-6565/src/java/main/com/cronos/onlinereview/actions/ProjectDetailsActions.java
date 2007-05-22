@@ -152,7 +152,7 @@ public class ProjectDetailsActions extends DispatchAction {
             }
         }
     }
-    
+
     /**
      * This method is an implementation of &quot;View project Details&quot; Struts Action defined
      * for this assembly, which is supposed to gather all possible information about the project and
@@ -176,8 +176,8 @@ public class ProjectDetailsActions extends DispatchAction {
         throws BaseException {
     	LoggingHelper.logAction(request);
         // Verify that certain requirements are met before processing with the Action
-        CorrectnessCheckResult verification =
-            ActionsHelper.checkForCorrectProjectId(mapping, getResources(request), request, Constants.VIEW_PROJECT_DETAIL_PERM_NAME);
+        CorrectnessCheckResult verification = ActionsHelper.checkForCorrectProjectId(
+                mapping, getResources(request), request, Constants.VIEW_PROJECT_DETAIL_PERM_NAME, false);
         // If any error has occured, return action forward contained in the result bean
         if (!verification.isSuccessful()) {
             return verification.getForward();
@@ -460,11 +460,11 @@ public class ProjectDetailsActions extends DispatchAction {
             if (Constants.VIEW_SUBMISSIONS_APP_FUNC.equals(phaseGroup.getAppFunc()) &&
             		Constants.SUBMISSION_PHASE_NAME.equalsIgnoreCase(phaseName)) {
                 Submission[] submissions = null;
-                
+
                 if (AuthorizationHelper.hasUserPermission(request, Constants.VIEW_ALL_SUBM_PERM_NAME)) {
                     submissions = ActionsHelper.getMostRecentSubmissions(ActionsHelper.createUploadManager(request), project);
                 }
-                
+
                 boolean mayViewMostRecentAfterAppealsResponse =
                     AuthorizationHelper.hasUserPermission(request, Constants.VIEW_RECENT_SUBM_AAR_PERM_NAME);
 
@@ -522,7 +522,7 @@ public class ProjectDetailsActions extends DispatchAction {
                 phaseGroup.setSubmissions(submissions);
 
                 getPreviousUploadsForSubmissions(request, project, phaseGroup, submissions);
-                
+
                 if (submissions.length != 0) {
                     long[] uploadIds = new long[submissions.length];
 
@@ -1149,16 +1149,17 @@ public class ProjectDetailsActions extends DispatchAction {
             HttpServletRequest request, HttpServletResponse response)
         throws BaseException, ConfigManagerException {
     	LoggingHelper.logAction(request);
+
+        // Determine if this request is a post back
+        boolean postBack = (request.getParameter("postBack") != null);
+
         // Verify that certain requirements are met before processing with the Action
-        CorrectnessCheckResult verification =
-            ActionsHelper.checkForCorrectProjectId(mapping, getResources(request), request, Constants.CONTACT_PM_PERM_NAME);
+        CorrectnessCheckResult verification = ActionsHelper.checkForCorrectProjectId(
+                mapping, getResources(request), request, Constants.CONTACT_PM_PERM_NAME, postBack);
         // If any error has occured, return action forward contained in the result bean
         if (!verification.isSuccessful()) {
             return verification.getForward();
         }
-
-        // Determine if this request is a post back
-        boolean postBack = (request.getParameter("postBack") != null);
 
         if (!postBack) {
             // Retrieve some basic project info (such as icons' names) and place it into request
@@ -1300,9 +1301,13 @@ public class ProjectDetailsActions extends DispatchAction {
             HttpServletRequest request, HttpServletResponse response)
         throws BaseException {
     	LoggingHelper.logAction(request);
+
+        // Determine if this request is a post back
+        final boolean postBack = (request.getParameter("postBack") != null);
+
         // Verify that certain requirements are met before processing with the Action
-        CorrectnessCheckResult verification =
-            ActionsHelper.checkForCorrectProjectId(mapping, getResources(request), request, Constants.PERFORM_SUBM_PERM_NAME);
+        CorrectnessCheckResult verification = ActionsHelper.checkForCorrectProjectId(
+                mapping, getResources(request), request, Constants.PERFORM_SUBM_PERM_NAME, postBack);
         // If any error has occured, return action forward contained in the result bean
         if (!verification.isSuccessful()) {
             return verification.getForward();
@@ -1315,13 +1320,10 @@ public class ProjectDetailsActions extends DispatchAction {
 
         if (ActionsHelper.getPhase(phases, true, Constants.SUBMISSION_PHASE_NAME) == null) {
             return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
-                    Constants.PERFORM_SUBM_PERM_NAME, "Error.IncorrectPhase");
+                    Constants.PERFORM_SUBM_PERM_NAME, "Error.IncorrectPhase", null);
         }
 
-        // Determine if this request is a post back
-        boolean postBack = (request.getParameter("postBack") != null);
-
-        if (postBack != true) {
+        if (!postBack) {
             // Retrieve some basic project info (such as icons' names) and place it into request
             ActionsHelper.retrieveAndStoreBasicProjectInfo(request, verification.getProject(), getResources(request));
             return mapping.findForward(Constants.DISPLAY_PAGE_FORWARD_NAME);
@@ -1333,7 +1335,7 @@ public class ProjectDetailsActions extends DispatchAction {
         // Disallow uploading of empty files
         if (file.getFileSize() == 0) {
             return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
-                    Constants.PERFORM_SUBM_PERM_NAME, "Error.EmptyFileUploaded");
+                    Constants.PERFORM_SUBM_PERM_NAME, "Error.EmptyFileUploaded", null);
         }
 
         StrutsRequestParser parser = new StrutsRequestParser();
@@ -1454,14 +1456,14 @@ public class ProjectDetailsActions extends DispatchAction {
         // Verify that upload is a submission
         if (!upload.getUploadType().getName().equalsIgnoreCase("Submission")) {
             return ActionsHelper.produceErrorReport(
-                    mapping, getResources(request), request, "ViewSubmission", "Error.NotASubmission");
+                    mapping, getResources(request), request, "ViewSubmission", "Error.NotASubmission", null);
         }
 
         // Verify the status of upload and check whether the user has permission to download old uploads
         if (upload.getUploadStatus().getName().equalsIgnoreCase("Deleted") &&
                 !AuthorizationHelper.hasUserPermission(request, Constants.VIEW_ALL_SUBM_PERM_NAME)) {
             return ActionsHelper.produceErrorReport(
-                    mapping, getResources(request), request, "ViewSubmission", "Error.UploadDeleted");
+                    mapping, getResources(request), request, "ViewSubmission", "Error.UploadDeleted", null);
         }
 
         // Get all phases for the current project (needed to do permission checks)
@@ -1492,7 +1494,7 @@ public class ProjectDetailsActions extends DispatchAction {
             // notify him about this wrong-doing and do not let perform the action
             if (AuthorizationHelper.hasUserRole(request, Constants.SCREENER_ROLE_NAMES) && !isScreeningOpen) {
                 return ActionsHelper.produceErrorReport(
-                        mapping, getResources(request), request, "ViewSubmission", "Error.IncorrectPhase");
+                        mapping, getResources(request), request, "ViewSubmission", "Error.IncorrectPhase", null);
             }
             noRights = false; // TODO: Check if screener can download this submission
         }
@@ -1504,7 +1506,7 @@ public class ProjectDetailsActions extends DispatchAction {
             // notify him about this wrong-doing and do not let perform the action
             if (AuthorizationHelper.hasUserRole(request, Constants.REVIEWER_ROLE_NAMES) && !isReviewOpen) {
                 return ActionsHelper.produceErrorReport(
-                        mapping, getResources(request), request, "ViewSubmission", "Error.IncorrectPhase");
+                        mapping, getResources(request), request, "ViewSubmission", "Error.IncorrectPhase", null);
             }
             noRights = false;
         }
@@ -1531,9 +1533,11 @@ public class ProjectDetailsActions extends DispatchAction {
         }
 
         if (noRights) {
-            return ActionsHelper.produceErrorReport(
-                    mapping, getResources(request), request, "ViewSubmission", "Error.NoPermission");
+            return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
+                    "ViewSubmission", "Error.NoPermission", Boolean.TRUE);
         }
+        // At this point, redirect-after-login attribute should be removed (if it exists)
+        AuthorizationHelper.removeLoginRedirect(request);
 
         Filter filterProject = SubmissionFilterBuilder.createProjectIdFilter(upload.getProject());
         Filter filterResource = SubmissionFilterBuilder.createResourceIdFilter(upload.getOwner());
@@ -1617,16 +1621,17 @@ public class ProjectDetailsActions extends DispatchAction {
             HttpServletRequest request, HttpServletResponse response)
         throws BaseException {
     	LoggingHelper.logAction(request);
+
+        // Determine if this request is a post back
+        boolean postBack = (request.getParameter("postBack") != null);
+
         // Verify that certain requirements are met before processing with the Action
-        CorrectnessCheckResult verification =
-            ActionsHelper.checkForCorrectProjectId(mapping, getResources(request), request, Constants.PERFORM_FINAL_FIX_PERM_NAME);
+        CorrectnessCheckResult verification = ActionsHelper.checkForCorrectProjectId(
+                mapping, getResources(request), request, Constants.PERFORM_FINAL_FIX_PERM_NAME, postBack);
         // If any error has occured, return action forward contained in the result bean
         if (!verification.isSuccessful()) {
             return verification.getForward();
         }
-
-        // Determine if this request is a post back
-        boolean postBack = (request.getParameter("postBack") != null);
 
         if (postBack != true) {
             // Retrieve some basic project info (such as icons' names) and place it into request
@@ -1644,7 +1649,7 @@ public class ProjectDetailsActions extends DispatchAction {
         // Check that active phase is Final Fix
         if (currentPhase == null) {
             return ActionsHelper.produceErrorReport(mapping, getResources(request),
-                    request, Constants.PERFORM_FINAL_FIX_PERM_NAME, "Error.IncorrectPhase");
+                    request, Constants.PERFORM_FINAL_FIX_PERM_NAME, "Error.IncorrectPhase", null);
         }
 
         int finalFixCount = 0;
@@ -1665,7 +1670,7 @@ public class ProjectDetailsActions extends DispatchAction {
         // Disallow uploading of empty files
         if (file.getFileSize() == 0) {
             return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
-                    Constants.PERFORM_FINAL_FIX_PERM_NAME, "Error.EmptyFileUploaded");
+                    Constants.PERFORM_FINAL_FIX_PERM_NAME, "Error.EmptyFileUploaded", null);
         }
 
         StrutsRequestParser parser = new StrutsRequestParser();
@@ -1698,7 +1703,7 @@ public class ProjectDetailsActions extends DispatchAction {
 
         if (uploads.length >= finalFixCount) {
             return ActionsHelper.produceErrorReport(mapping, getResources(request),
-                    request, Constants.PERFORM_FINAL_FIX_PERM_NAME, "Error.OnlyOneFinalFix");
+                    request, Constants.PERFORM_FINAL_FIX_PERM_NAME, "Error.OnlyOneFinalFix", null);
         }
 
         Arrays.sort(uploads, new Comparators.UploadComparer());
@@ -1757,8 +1762,10 @@ public class ProjectDetailsActions extends DispatchAction {
         // Check that user has permissions to download Final Fixes
         if (!AuthorizationHelper.hasUserPermission(request, Constants.DOWNLOAD_FINAL_FIX_PERM_NAME)) {
             return ActionsHelper.produceErrorReport(mapping, getResources(request),
-                    request, Constants.DOWNLOAD_FINAL_FIX_PERM_NAME, "Error.NoPermission");
+                    request, Constants.DOWNLOAD_FINAL_FIX_PERM_NAME, "Error.NoPermission", Boolean.TRUE);
         }
+        // At this point, redirect-after-login attribute should be removed (if it exists)
+        AuthorizationHelper.removeLoginRedirect(request);
 
         // Get an upload the user wants to download
         Upload upload = verification.getUpload();
@@ -1766,7 +1773,7 @@ public class ProjectDetailsActions extends DispatchAction {
         // Verify that upload is a Final Fix
         if (!upload.getUploadType().getName().equalsIgnoreCase("Final Fix")) {
             return ActionsHelper.produceErrorReport(mapping, getResources(request),
-                    request, Constants.DOWNLOAD_FINAL_FIX_PERM_NAME, "Error.NotAFinalFix");
+                    request, Constants.DOWNLOAD_FINAL_FIX_PERM_NAME, "Error.NotAFinalFix", null);
         }
 /* TODO: Remove this commented block when everything works ok
         // Verify the status of upload
@@ -1840,16 +1847,17 @@ public class ProjectDetailsActions extends DispatchAction {
             HttpServletRequest request, HttpServletResponse response)
         throws BaseException {
     	LoggingHelper.logAction(request);
+
+        // Determine if this request is a post back
+        boolean postBack = (request.getParameter("postBack") != null);
+
         // Verify that certain requirements are met before processing with the Action
-        CorrectnessCheckResult verification =
-            ActionsHelper.checkForCorrectProjectId(mapping, getResources(request), request, Constants.UPLOAD_TEST_CASES_PERM_NAME);
+        CorrectnessCheckResult verification = ActionsHelper.checkForCorrectProjectId(
+                mapping, getResources(request), request, Constants.UPLOAD_TEST_CASES_PERM_NAME, postBack);
         // If any error has occured, return action forward contained in the result bean
         if (!verification.isSuccessful()) {
             return verification.getForward();
         }
-
-        // Determine if this request is a post back
-        boolean postBack = (request.getParameter("postBack") != null);
 
         if (postBack != true) {
             // Retrieve some basic project info (such as icons' names) and place it into request
@@ -1867,7 +1875,7 @@ public class ProjectDetailsActions extends DispatchAction {
 
         if (currentPhase == null) {
             return ActionsHelper.produceErrorReport(mapping, getResources(request),
-                    request, Constants.UPLOAD_TEST_CASES_PERM_NAME, "Error.IncorrectPhase");
+                    request, Constants.UPLOAD_TEST_CASES_PERM_NAME, "Error.IncorrectPhase", null);
         }
 
         DynaValidatorForm uploadSubmissionForm = (DynaValidatorForm) form;
@@ -1876,7 +1884,7 @@ public class ProjectDetailsActions extends DispatchAction {
         // Disallow uploading of empty files
         if (file.getFileSize() == 0) {
             return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
-                    Constants.UPLOAD_TEST_CASES_PERM_NAME, "Error.EmptyFileUploaded");
+                    Constants.UPLOAD_TEST_CASES_PERM_NAME, "Error.EmptyFileUploaded", null);
         }
 
         StrutsRequestParser parser = new StrutsRequestParser();
@@ -2008,18 +2016,20 @@ public class ProjectDetailsActions extends DispatchAction {
         // attempting to download test cases is a Submitter and an Appeals phase is open
         if (canDownload && canPlaceAppeals && !isReviewClosed && !canDownloadDuringReview && !isAppealsOpen) {
             return ActionsHelper.produceErrorReport(mapping, getResources(request),
-                    request, Constants.DOWNLOAD_TEST_CASES_PERM_NAME, "Error.IncorrectPhase");
+                    request, Constants.DOWNLOAD_TEST_CASES_PERM_NAME, "Error.IncorrectPhase", null);
         }
         // Verify that user can download test cases during Review
         if (canDownload && !isReviewClosed && !canDownloadDuringReview) {
             return ActionsHelper.produceErrorReport(mapping, getResources(request),
-                    request, Constants.DOWNLOAD_TEST_CASES_PERM_NAME, "Error.IncorrectPhase");
+                    request, Constants.DOWNLOAD_TEST_CASES_PERM_NAME, "Error.IncorrectPhase", null);
         }
         // Check that the user is allowed to download test cases in general
         if (!canDownload) {
             return ActionsHelper.produceErrorReport(mapping, getResources(request),
-                    request, Constants.DOWNLOAD_TEST_CASES_PERM_NAME, "Error.NoPermission");
+                    request, Constants.DOWNLOAD_TEST_CASES_PERM_NAME, "Error.NoPermission", Boolean.TRUE);
         }
+        // At this point, redirect-after-login attribute should be removed (if it exists)
+        AuthorizationHelper.removeLoginRedirect(request);
 
         // Get an upload the user wants to download
         Upload upload = verification.getUpload();
@@ -2027,12 +2037,12 @@ public class ProjectDetailsActions extends DispatchAction {
         // Verify that upload is Test Cases
         if (!upload.getUploadType().getName().equalsIgnoreCase("Test Case")) {
             return ActionsHelper.produceErrorReport(mapping, getResources(request),
-                    request, Constants.DOWNLOAD_TEST_CASES_PERM_NAME, "Error.NotTestCases");
+                    request, Constants.DOWNLOAD_TEST_CASES_PERM_NAME, "Error.NotTestCases", null);
         }
         // Verify the status of upload
         if (upload.getUploadStatus().getName().equalsIgnoreCase("Deleted")) {
             return ActionsHelper.produceErrorReport(mapping, getResources(request),
-                    request, Constants.DOWNLOAD_TEST_CASES_PERM_NAME, "Error.UploadDeleted");
+                    request, Constants.DOWNLOAD_TEST_CASES_PERM_NAME, "Error.UploadDeleted", null);
         }
 
         FileUpload fileUpload = ActionsHelper.createFileUploadManager(request);
@@ -2114,12 +2124,15 @@ public class ProjectDetailsActions extends DispatchAction {
         // Check that user has permissions to delete submission
         if (!AuthorizationHelper.hasUserPermission(request, Constants.REMOVE_SUBM_PERM_NAME)) {
             return ActionsHelper.produceErrorReport(mapping, getResources(request),
-                    request, Constants.REMOVE_SUBM_PERM_NAME, "Error.NoPermission");
+                    request, Constants.REMOVE_SUBM_PERM_NAME, "Error.NoPermission", Boolean.TRUE);
         }
+        // At this point, redirect-after-login attribute should be removed (if it exists)
+        AuthorizationHelper.removeLoginRedirect(request);
+
         // Verify that the user is attempting to delete submission
         if (!upload.getUploadType().getName().equalsIgnoreCase("Submission")) {
             return ActionsHelper.produceErrorReport(mapping, getResources(request),
-                    request, Constants.REMOVE_SUBM_PERM_NAME, "Error.NotASubmission2");
+                    request, Constants.REMOVE_SUBM_PERM_NAME, "Error.NotASubmission2", null);
         }
 
         Filter filter = SubmissionFilterBuilder.createUploadIdFilter(upload.getId());
@@ -2130,7 +2143,7 @@ public class ProjectDetailsActions extends DispatchAction {
 
         if (submission == null || submission.getSubmissionStatus().getName().equalsIgnoreCase("Deleted")) {
             return ActionsHelper.produceErrorReport(mapping, getResources(request),
-                    request, Constants.REMOVE_SUBM_PERM_NAME, "Error.SubmissionDeleted");
+                    request, Constants.REMOVE_SUBM_PERM_NAME, "Error.SubmissionDeleted", null);
         }
 
         // Determine if this request is a post back
@@ -2195,8 +2208,10 @@ public class ProjectDetailsActions extends DispatchAction {
         // Check that user has permissions to download a Document
         if (!AuthorizationHelper.hasUserPermission(request, Constants.DOWNLOAD_DOCUMENT_PERM_NAME)) {
             return ActionsHelper.produceErrorReport(mapping, getResources(request),
-                    request, Constants.DOWNLOAD_DOCUMENT_PERM_NAME, "Error.NoPermission");
+                    request, Constants.DOWNLOAD_DOCUMENT_PERM_NAME, "Error.NoPermission", Boolean.TRUE);
         }
+        // At this point, redirect-after-login attribute should be removed (if it exists)
+        AuthorizationHelper.removeLoginRedirect(request);
 
         // Get an upload the user wants to download
         Upload upload = verification.getUpload();
@@ -2204,12 +2219,12 @@ public class ProjectDetailsActions extends DispatchAction {
         // Verify that upload is a Review Document
         if (!upload.getUploadType().getName().equalsIgnoreCase("Review Document")) {
             return ActionsHelper.produceErrorReport(mapping, getResources(request),
-                    request, Constants.DOWNLOAD_DOCUMENT_PERM_NAME, "Error.NotADocument");
+                    request, Constants.DOWNLOAD_DOCUMENT_PERM_NAME, "Error.NotADocument", null);
         }
         // Verify the status of upload
         if (upload.getUploadStatus().getName().equalsIgnoreCase("Deleted")) {
             return ActionsHelper.produceErrorReport(mapping, getResources(request),
-                    request, Constants.DOWNLOAD_DOCUMENT_PERM_NAME, "Error.UploadDeleted");
+                    request, Constants.DOWNLOAD_DOCUMENT_PERM_NAME, "Error.UploadDeleted", null);
         }
 
         FileUpload fileUpload = ActionsHelper.createFileUploadManager(request);
@@ -2287,14 +2302,14 @@ public class ProjectDetailsActions extends DispatchAction {
         // Verify that upload is a submission
         if (!upload.getUploadType().getName().equalsIgnoreCase("Submission")) {
             return ActionsHelper.produceErrorReport(
-                    mapping, getResources(request), request, "ViewAutoScreening", "Error.NotASubmission");
+                    mapping, getResources(request), request, "ViewAutoScreening", "Error.NotASubmission", null);
         }
 
         // Verify the status of upload and check whether the user has permission to download old uploads
         if (upload.getUploadStatus().getName().equalsIgnoreCase("Deleted") &&
                 !AuthorizationHelper.hasUserPermission(request, Constants.VIEW_ALL_SUBM_PERM_NAME)) {
             return ActionsHelper.produceErrorReport(
-                    mapping, getResources(request), request, "ViewAutoScreening", "Error.UploadDeleted");
+                    mapping, getResources(request), request, "ViewAutoScreening", "Error.UploadDeleted", null);
         }
 
         boolean noRights = true;
@@ -2318,8 +2333,10 @@ public class ProjectDetailsActions extends DispatchAction {
 
         if (noRights) {
             return ActionsHelper.produceErrorReport(
-                    mapping, getResources(request), request, "ViewAutoScreening", "Error.NoPermission");
+                    mapping, getResources(request), request, "ViewAutoScreening", "Error.NoPermission", Boolean.FALSE);
         }
+        // At this point, redirect-after-login attribute should be removed (if it exists)
+        AuthorizationHelper.removeLoginRedirect(request);
 
         // Retrieve some basic project info (such as icons' names) and place it into request
         ActionsHelper.retrieveAndStoreBasicProjectInfo(request, verification.getProject(), messages);
@@ -2414,7 +2431,7 @@ public class ProjectDetailsActions extends DispatchAction {
         String uidParam = request.getParameter("uid");
         if (uidParam == null || uidParam.trim().length() == 0) {
             result.setForward(ActionsHelper.produceErrorReport(
-                    mapping, getResources(request), request, errorMessageKey, "Error.UploadIdNotSpecified"));
+                    mapping, getResources(request), request, errorMessageKey, "Error.UploadIdNotSpecified", null));
             // Return the result of the check
             return result;
         }
@@ -2426,7 +2443,7 @@ public class ProjectDetailsActions extends DispatchAction {
             uid = Long.parseLong(uidParam, 10);
         } catch (NumberFormatException nfe) {
             result.setForward(ActionsHelper.produceErrorReport(
-                    mapping, getResources(request), request, errorMessageKey, "Error.UploadNotFound"));
+                    mapping, getResources(request), request, errorMessageKey, "Error.UploadNotFound", null));
             // Return the result of the check
             return result;
         }
@@ -2438,7 +2455,7 @@ public class ProjectDetailsActions extends DispatchAction {
         // Verify that upload with given ID exists
         if (upload == null) {
             result.setForward(ActionsHelper.produceErrorReport(
-                    mapping, getResources(request), request, errorMessageKey, "Error.UploadNotFound"));
+                    mapping, getResources(request), request, errorMessageKey, "Error.UploadNotFound", null));
             // Return the result of the check
             return result;
         }

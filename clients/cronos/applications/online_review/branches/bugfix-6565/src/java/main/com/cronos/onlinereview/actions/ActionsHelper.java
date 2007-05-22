@@ -883,7 +883,7 @@ public class ActionsHelper {
     /**
      * This static method places certain attributes into the request and returns a forward to the
      * error page.
-     *
+     * 
      * @return an action forward to the appropriate error page.
      * @param mapping
      *            action mapping.
@@ -895,12 +895,23 @@ public class ActionsHelper {
      *            permission to check against, or <code>null</code> if no check is required.
      * @param reasonKey
      *            a key in Message resources which the reason of the error is stored under.
+     * @param getRedirectUrlFromReferer
+     *            determines whether redirect link should be obtained from Referer request header.
+     *            If this parameter is <code>null</code>, no redirect is needed at all (some
+     *            other error happened, not denial of access).
      * @throws BaseException
      *             if any error occurs.
      */
     public static ActionForward produceErrorReport(ActionMapping mapping, MessageResources messages,
-            HttpServletRequest request, String permission, String reasonKey)
+            HttpServletRequest request, String permission, String reasonKey, Boolean getRedirectUrlFromReferer)
         throws BaseException{
+        // If the user is not logged in, this is the reason
+        // why they don't have permissions to do the job. Let the user login first
+        if (getRedirectUrlFromReferer != null && !AuthorizationHelper.isUserLoggedIn(request)) {
+            AuthorizationHelper.setLoginRedirect(request, getRedirectUrlFromReferer.booleanValue());
+            return mapping.findForward(Constants.NOT_AUTHORIZED_FORWARD_NAME);
+        }
+        
         // Gather roles, so tabs will be displayed,
         // but only do this if roles haven't been gathered yet
         if (request.getAttribute("roles") == null) {
@@ -2927,7 +2938,7 @@ public class ActionsHelper {
      *             if any error occurs.
      */
     public static CorrectnessCheckResult checkForCorrectProjectId(ActionMapping mapping, MessageResources resources,
-            HttpServletRequest request, String permission)
+            HttpServletRequest request, String permission, boolean getRedirectUrlFromReferer)
         throws BaseException {
         // Prepare bean that will be returned as the result
         CorrectnessCheckResult result = new CorrectnessCheckResult();
@@ -2940,7 +2951,7 @@ public class ActionsHelper {
         String pidParam = request.getParameter("pid");
         if (pidParam == null || pidParam.trim().length() == 0) {
             result.setForward(produceErrorReport(
-                    mapping, resources, request, permission, "Error.ProjectIdNotSpecified"));
+                    mapping, resources, request, permission, "Error.ProjectIdNotSpecified", null));
             // Return the result of the check
             return result;
         }
@@ -2952,7 +2963,7 @@ public class ActionsHelper {
             pid = Long.parseLong(pidParam, 10);
         } catch (NumberFormatException nfe) {
             result.setForward(produceErrorReport(
-                    mapping, resources, request, permission, "Error.ProjectNotFound"));
+                    mapping, resources, request, permission, "Error.ProjectNotFound", null));
             // Return the result of the check
             return result;
         }
@@ -2964,7 +2975,7 @@ public class ActionsHelper {
         // Verify that project with given ID exists
         if (project == null) {
             result.setForward(produceErrorReport(
-                    mapping, resources, request, permission, "Error.ProjectNotFound"));
+                    mapping, resources, request, permission, "Error.ProjectNotFound", null));
             // Return the result of the check
             return result;
         }
@@ -2981,12 +2992,16 @@ public class ActionsHelper {
         if (permission != null) {
             // ... verify that this permission is granted for currently logged in user
             if (!AuthorizationHelper.hasUserPermission(request, permission)) {
-                result.setForward(produceErrorReport(
-                        mapping, resources, request, permission, "Error.NoPermission"));
+                // If it does not, and the user is logged in, display a message about the lack of
+                // permissions, otherwise redirect the request to the Login page
+                result.setForward(produceErrorReport(mapping, resources, request,
+                        permission, "Error.NoPermission", Boolean.valueOf(getRedirectUrlFromReferer)));
                 // Return the result of the check
                 return result;
             }
         }
+        // At this point, redirect-after-login attribute should be removed (if it exists)
+        AuthorizationHelper.removeLoginRedirect(request);
 
         return result;
     }

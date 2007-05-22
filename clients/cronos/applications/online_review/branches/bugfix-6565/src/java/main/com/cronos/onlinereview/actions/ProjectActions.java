@@ -128,9 +128,12 @@ public class ProjectActions extends DispatchAction {
 
         // Check if the user has the permission to perform this action
         if (!AuthorizationHelper.hasUserPermission(request, Constants.CREATE_PROJECT_PERM_NAME)) {
-            // If he doesn't, redirect the request to login page
-            return mapping.findForward(Constants.NOT_AUTHORIZED_FORWARD_NAME);
+            // If he doesn't, redirect the request to login page or report about the lack of permissions
+            return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
+                    Constants.CREATE_PROJECT_PERM_NAME, "Error.NoPermission", Boolean.FALSE);
         }
+        // At this point, redirect-after-login attribute should be removed (if it exists)
+        AuthorizationHelper.removeLoginRedirect(request);
 
         // Place the index of the active tab into the request
         request.setAttribute("projectTabIndex", new Integer(3));
@@ -529,10 +532,13 @@ public class ProjectActions extends DispatchAction {
         AuthorizationHelper.gatherUserRoles(request, projectId);
 
         // Check if the user has the permission to perform this action
-        if(!AuthorizationHelper.hasUserPermission(request, Constants.EDIT_PROJECT_DETAILS_PERM_NAME)) {
-            // If he doesn't have, forward to login page
-        	return ActionsHelper.findForwardNotAuthorized(mapping, new Long(projectId));
+        if (!AuthorizationHelper.hasUserPermission(request, Constants.EDIT_PROJECT_DETAILS_PERM_NAME)) {
+            // If he doesn't, redirect the request to login page or report about the lack of permissions
+            return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
+                    Constants.EDIT_PROJECT_DETAILS_PERM_NAME, "Error.NoPermission", Boolean.FALSE);
         }
+        // At this point, redirect-after-login attribute should be removed (if it exists)
+        AuthorizationHelper.removeLoginRedirect(request);
 
         // Place the flag, indicating that we are editing the existing project, into request
         request.setAttribute("newProject", Boolean.FALSE);
@@ -583,19 +589,23 @@ public class ProjectActions extends DispatchAction {
         boolean newProject = (lazyForm.get("pid") == null);
         // Gather the roles the user has for current request
         AuthorizationHelper.gatherUserRoles(request);
-
+        
         // Check if the user has the permission to perform this action
         if (newProject) {
-            if(!AuthorizationHelper.hasUserPermission(request, Constants.CREATE_PROJECT_PERM_NAME)) {
-                // If he doesn't, redirect the request to login page
-            	return ActionsHelper.findForwardNotAuthorized(mapping, new Long((String) lazyForm.get("pid")));
+            if (!AuthorizationHelper.hasUserPermission(request, Constants.CREATE_PROJECT_PERM_NAME)) {
+                // If he doesn't, redirect the request to login page or report about the lack of permissions
+                return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
+                        Constants.CREATE_PROJECT_PERM_NAME, "Error.NoPermission", Boolean.TRUE);
             }
         } else {
-            if(!AuthorizationHelper.hasUserPermission(request, Constants.EDIT_PROJECT_DETAILS_PERM_NAME)) {
-                // If he doesn't, redirect the request to login page
-            	return ActionsHelper.findForwardNotAuthorized(mapping, new Long((String) lazyForm.get("pid")));
+            if (!AuthorizationHelper.hasUserPermission(request, Constants.EDIT_PROJECT_DETAILS_PERM_NAME)) {
+                // If he doesn't, redirect the request to login page or report about the lack of permissions
+                return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
+                        Constants.EDIT_PROJECT_DETAILS_PERM_NAME, "Error.NoPermission", Boolean.TRUE);
             }
         }
+        // At this point, redirect-after-login attribute should be removed (if it exists)
+        AuthorizationHelper.removeLoginRedirect(request);
 
         // Obtain an instance of Project Manager
         ProjectManager manager = ActionsHelper.createProjectManager(request);
@@ -1664,6 +1674,9 @@ public class ProjectActions extends DispatchAction {
     public ActionForward listProjects(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response)
         throws BaseException {
+        // Remove redirect-after-login attribute (if it exists)
+        AuthorizationHelper.removeLoginRedirect(request);
+        
     	LoggingHelper.logAction(request);
 
 /* TODO: Remove all these logging entries from this method
