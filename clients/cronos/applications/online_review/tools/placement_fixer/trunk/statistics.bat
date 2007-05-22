@@ -1,0 +1,1 @@
+java -classpath lib/base_exception.jar;lib/configuration_manager.jar;lib/db_connection_factory.jar;lib/ifxjdbc.jar;./conf;./bin;build/classes com.topcoder.onlinereview.fixer.OnlineReviewScoreRankFixer > report.txt
