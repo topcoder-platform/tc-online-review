@@ -2,9 +2,9 @@
 <classpath>
 	<classpathentry kind="src" path="src/java/main"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="lib" path="lib/base_exception.jar"/>
-	<classpathentry kind="lib" path="lib/configuration_manager.jar"/>
-	<classpathentry kind="lib" path="lib/db_connection_factory.jar"/>
-	<classpathentry kind="lib" path="lib/ifxjdbc.jar"/>
+	<classpathentry kind="lib" path="lib/ext/ifxjdbc.jar"/>
+	<classpathentry kind="lib" path="lib/tcs/base_exception/1.0/base_exception.jar"/>
+	<classpathentry kind="lib" path="lib/tcs/configuration_manager/2.1.5/configuration_manager.jar"/>
+	<classpathentry kind="lib" path="lib/tcs/db_connection_factory/1.0/db_connection_factory.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
