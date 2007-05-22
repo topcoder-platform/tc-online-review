@@ -1,8 +1,10 @@
 /*
- * Copyright (C) 2006 TopCoder Inc.  All Rights Reserved.
+ * Copyright (C) 2006-2007 TopCoder Inc.  All Rights Reserved.
  */
 package com.cronos.onlinereview.functions;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.text.DecimalFormat;
 import java.text.Format;
 import java.text.NumberFormat;
@@ -145,7 +147,7 @@ public final class Functions {
 
     /**
      * This static method returns context of handler base projectCategory.
-     * 
+     *
      * <p>
      * This method is an implementeation of <code>getLoggedInUserId</code> function used from EL
      * expressions in JSP pages.
@@ -505,5 +507,67 @@ public final class Functions {
 
         // Return converted value
         return buffer.toString();
+    }
+
+    /**
+     * This static method returns referer for the page calling the method. The method returns only
+     * "safe" referer, i.e. it returns an address if the host part matches exactly to the host of
+     * the current request, otherwise the return value is <code>null</code>.
+     * <p>
+     * This method is an implementeation of <code>getSafeRedirect</code> function used from EL
+     * expressions in JSP pages.
+     * </p>
+     *
+     * @return an URL of the page to return to after successful login, or <code>null</code> if
+     *         there is no page to return to.
+     * @param request
+     *            an <code>HttpServletRequest</code> object used to actually obtain a referer
+     *            from. Normally, you should write the following: &quot;<code>pageContext.request</code>&quot;
+     *            in a JSP page when you call this method to pass a valid object to it.
+     */
+    public static String getSafeRedirect(HttpServletRequest request) {
+        if (request.getSession(false) == null || request.getSession(false).isNew()) {
+            return null;
+        }
+
+        String referer = (String) request.getSession().getAttribute(AuthorizationHelper.REDIRECT_BACK_URL_ATTRIBUTE);
+
+        if (referer == null || referer.trim().length() == 0) {
+            referer = request.getHeader("Referer");
+        }
+
+        if (referer == null || referer.trim().length() == 0) {
+            return null;
+        }
+
+        URL refererURL;
+
+        try {
+            refererURL = new URL(referer);
+        } catch (MalformedURLException mue) {
+            // eat the exception and return null, since no valid address is specified in Referer header
+            return null;
+        }
+
+        final String requestedUri = request.getRequestURI();
+        final int servelPathPos = requestedUri.indexOf(request.getServletPath());
+        final String moduleName = requestedUri.substring(0, servelPathPos);
+
+        if (refererURL.getHost().compareToIgnoreCase(request.getServerName()) != 0 ||
+                refererURL.getPath().indexOf(moduleName) != 0 ||
+                (refererURL.getPort() != 443 && request.getServerPort() != 443 &&
+                        refererURL.getPort() != request.getServerPort())) {
+            // The Referer is not safe, return null
+            return null;
+        }
+
+        if (refererURL.getPath().indexOf("/jsp/login.jsp") == servelPathPos ||
+                refererURL.getPath().indexOf("/actions/Login.do") == servelPathPos) {
+            // Don't allow redirects to the Login form
+            return null;
+        }
+
+        request.getSession().setAttribute(AuthorizationHelper.REDIRECT_BACK_URL_ATTRIBUTE, referer);
+        return referer;
     }
 }
