@@ -194,7 +194,7 @@ public class OnlineReviewScoreRankFixer {
 
 			temp /= scores.length;
 
-			if (Math.abs(temp - sResult.getFinalScore()) > 0.001) {
+			if (Math.abs(temp - sResult.getFinalScore()) > 0.006) {
 
 				if (dataCorrect) {
 					dataCorrect = false;
