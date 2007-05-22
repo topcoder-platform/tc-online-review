@@ -14,8 +14,8 @@
 
     <!-- DIRECTORY SETUP -->
     <property name="srcdir" value="src" />
-    <property name="tcs_libdir" value="lib" />
-    <property name="ext_libdir" value="lib" />
+    <property name="tcs_libdir" value="lib/tcs" />
+    <property name="ext_libdir" value="lib/ext" />
     <property name="docsdir" value="docs" />
     <property name="configdir" value="conf" />
     <property name="testlogdir" value="log" />
@@ -55,13 +55,13 @@
 	<property name="configuration_manager.path" value="configuration_manager/${configuration_manager.version}" />
 	<property name="configuration_manager.jar" value="${tcs_libdir}/${configuration_manager.path}/${configuration_manager.jar.name}" />
     <property name="config_manager" value="${configuration_manager.jar}" />
-	
+
 	<property name="db_connection_factory.version" value="1.0" />
     <property name="db_connection_factory.jar.name" value="db_connection_factory.jar" />
     <property name="db_connection_factory.path" value="db_connection_factory/${db_connection_factory.version}" />
     <property name="db_connection_factory.jar" value="${tcs_libdir}/${db_connection_factory.path}/${db_connection_factory.jar.name}" />
     <property name="db_connection_factory" value="${db_connection_factory.jar}" />
-	
+
     <property name="base_exception.version" value="1.0" />
     <property name="base_exception.jar.name" value="base_exception.jar" />
     <property name="base_exception.path" value="base_exception/${base_exception.version}" />
