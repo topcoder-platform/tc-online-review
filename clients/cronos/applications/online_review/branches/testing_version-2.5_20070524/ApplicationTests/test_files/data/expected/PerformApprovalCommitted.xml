@@ -1,0 +1,30 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<dataset>
+    <!-- *** review *** -->
+    <!-- Approval (generated on the fly), Ajax Timed Survey 1.0 -->
+    <review review_id="15" resource_id="17" submission_id="1" scorecard_id="3" committed="1" score="75.00"/>
+
+    <!-- *** review_item *** -->
+    <!-- Ajax Timed Survey, Winning Submitter Approval, Approver -->
+    <review_item review_item_id="197" review_id="15" scorecard_question_id="29" answer="3" sort="1"/>
+    <review_item review_item_id="198" review_id="15" scorecard_question_id="30" answer="3" sort="2"/>
+    <review_item review_item_id="199" review_id="15" scorecard_question_id="31" answer="3" sort="3"/>
+    <review_item review_item_id="200" review_id="15" scorecard_question_id="32" answer="3" sort="4"/>
+    <review_item review_item_id="201" review_id="15" scorecard_question_id="33" answer="3" sort="5"/>
+    <review_item review_item_id="202" review_id="15" scorecard_question_id="34" answer="3" sort="6"/>
+
+    <!-- Ajax Timed Survey, Winning Submitter Approval, Comments collected from Approver -->
+    <review_item_comment resource_id="16" review_item_id="197" comment_type_id="10"
+                         content="test_approvalresponsetext01" sort="1"/>
+    <review_item_comment resource_id="16" review_item_id="198" comment_type_id="10"
+                         content="test_approvalresponsetext01" sort="1"/>
+    <review_item_comment resource_id="16" review_item_id="199" comment_type_id="10"
+                         content="test_approvalresponsetext01" sort="1"/>
+    <review_item_comment resource_id="16" review_item_id="200" comment_type_id="10"
+                         content="test_approvalresponsetext01" sort="1"/>
+    <review_item_comment resource_id="16" review_item_id="201" comment_type_id="10"
+                         content="test_approvalresponsetext01" sort="1"/>
+    <review_item_comment resource_id="16" review_item_id="202" comment_type_id="10"
+                         content="test_approvalresponsetext01" sort="1"/>
+</dataset>
+
