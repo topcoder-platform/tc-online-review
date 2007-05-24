@@ -42,11 +42,69 @@ public class AuthorizationHelper {
      */
     public static final long NO_USER_LOGGED_IN_ID = -1;
 
+    public static final String REDIRECT_BACK_URL_ATTRIBUTE = "redirectBackUrl";
+
     /**
      * Private construcor, just to prevent instantiation of the class.
      */
     private AuthorizationHelper() {
         // Just do nothing
+    }
+
+    /**
+     * This static method puts into session an attribute which specifies the address of the page to
+     * return to after successful login.
+     *
+     * @param request
+     *            an <code>HttpServletRequest</code> object containing additional information, and
+     *            which session will receive the newly set attribute (if the address can be
+     *            determined).
+     * @param getFromReferer
+     *            determines whether the method should use Referer request header, or record current
+     *            URI the user is trying to access. This is required for save type of actions, since
+     *            these actions often contain additional information passed as form's fields in
+     *            request, and so returning to such kind of page by just its URI will lead to error.
+     */
+    public static void setLoginRedirect(HttpServletRequest request, boolean getFromReferer) {
+        if (getFromReferer) {
+            final String referer = request.getHeader("Referer");
+
+            if (referer != null && referer.trim().length() != 0) {
+                request.getSession().setAttribute(REDIRECT_BACK_URL_ATTRIBUTE, referer);
+            }
+            return;
+        }
+
+        StringBuffer redirectBackUrl = new StringBuffer();
+
+        redirectBackUrl.append(request.getScheme());
+        redirectBackUrl.append("://");
+        redirectBackUrl.append(request.getServerName());
+        redirectBackUrl.append(':');
+        redirectBackUrl.append(request.getServerPort());
+        redirectBackUrl.append(request.getRequestURI());
+        if (request.getQueryString() != null && request.getQueryString().trim().length() != 0) {
+            redirectBackUrl.append('?');
+            redirectBackUrl.append(request.getQueryString());
+        }
+
+        request.getSession().setAttribute(REDIRECT_BACK_URL_ATTRIBUTE, redirectBackUrl.toString());
+    }
+    
+    /**
+     * This static method removes the attribute that specifies the address of the page to return to.
+     * This is needed in case the user did not use the Login page he was redirected to, but went to
+     * some page which he was allowed to see. Then, (possibly after some time) they decide to login
+     * and click on Login link. In this case, after logging in, they get redirected to the previous
+     * page of failure, since redirect attribute is already in the session. This method needs to be
+     * called by every action that gets past the check whether the user is logged in.
+     * 
+     * @param request
+     *            an <code>HttpServletRequest</code> object that possibly contains redirect
+     *            attribute to be removed.
+     */
+    public static void removeLoginRedirect(HttpServletRequest request) {
+        request.getSession().removeAttribute(REDIRECT_BACK_URL_ATTRIBUTE);
     }
 
     /**
