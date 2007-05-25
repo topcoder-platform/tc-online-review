@@ -68,14 +68,30 @@
     <property name="base_exception.jar" value="${tcs_libdir}/${base_exception.path}/${base_exception.jar.name}" />
     <property name="base_exception" value="${base_exception.jar}" />
 
+    <property name="logging_wrapper.version" value="1.2" />
+    <property name="logging_wrapper.jar.name" value="logging_wrapper.jar" />
+    <property name="logging_wrapper.path" value="logging_wrapper/${logging_wrapper.version}" />
+    <property name="logging_wrapper.jar" value="${tcs_libdir}/${logging_wrapper.path}/${logging_wrapper.jar.name}" />
+    <property name="logging_wrapper" value="${logging_wrapper.jar}" />
+
+    <property name="typesafe_enum.version" value="1.0" />
+    <property name="typesafe_enum.jar.name" value="typesafe_enum.jar" />
+    <property name="typesafe_enum.path" value="typesafe_enum/${typesafe_enum.version}" />
+    <property name="typesafe_enum.jar" value="${tcs_libdir}/${typesafe_enum.path}/${typesafe_enum.jar.name}" />
+    <property name="typesafe_enum" value="${typesafe_enum.jar}" />
+
     <!-- 3rd Party Dependencies  -->
     <property name="ifxjdbc.jar" value="${ext_libdir}/ifxjdbc.jar"/>
+    <property name="log4j.jar" value="${ext_libdir}/log4j.jar"/>
 
     <path id="buildlibs">
         <pathelement location="${config_manager}" />
         <pathelement location="${db_connection_factory}" />
         <pathelement location="${base_exception}" />
+        <pathelement location="${logging_wrapper.jar}" />
+        <pathelement location="${typesafe_enum.jar}" />
         <pathelement location="${ifxjdbc.jar}" />
+        <pathelement location="${log4j.jar}" />
     </path>
 
     <path id="test.build.classpath">
