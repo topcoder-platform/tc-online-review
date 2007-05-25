@@ -1031,8 +1031,8 @@ public class ProjectDetailsActions extends DispatchAction {
 
         Filter filterProject = UploadFilterBuilder.createProjectIdFilter(project.getId());
         Filter filterResource = UploadFilterBuilder.createResourceIdFilter(resource.getId());
-        Filter filterStatus = UploadFilterBuilder.createUploadStatusIdFilter(
-                ActionsHelper.findUploadStatusByName(allUploadStatuses, "Active").getId());
+//        Filter filterStatus = UploadFilterBuilder.createUploadStatusIdFilter(
+//                ActionsHelper.findUploadStatusByName(allUploadStatuses, "Active").getId());
         Filter filterType = UploadFilterBuilder.createUploadTypeIdFilter(
                 ActionsHelper.findUploadTypeByName(allUploadTypes, "Final Fix").getId());
 

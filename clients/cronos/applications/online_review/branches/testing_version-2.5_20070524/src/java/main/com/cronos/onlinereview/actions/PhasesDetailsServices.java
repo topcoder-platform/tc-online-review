@@ -751,11 +751,11 @@ final class PhasesDetailsServices {
             if (finalFixes.finalFixes == null) {
                 // Obtain an instance of Upload Manager
                 UploadManager upMgr = ActionsHelper.createUploadManager(request);
-                UploadStatus[] allUploadStatuses = upMgr.getAllUploadStatuses();
+//                UploadStatus[] allUploadStatuses = upMgr.getAllUploadStatuses();
                 UploadType[] allUploadTypes = upMgr.getAllUploadTypes();
 
-                Filter filterStatus = UploadFilterBuilder.createUploadStatusIdFilter(
-                        ActionsHelper.findUploadStatusByName(allUploadStatuses, "Active").getId());
+//                Filter filterStatus = UploadFilterBuilder.createUploadStatusIdFilter(
+//                        ActionsHelper.findUploadStatusByName(allUploadStatuses, "Active").getId());
                 Filter filterType = UploadFilterBuilder.createUploadTypeIdFilter(
                         ActionsHelper.findUploadTypeByName(allUploadTypes, "Final Fix").getId());
                 Filter filterResource = UploadFilterBuilder.createResourceIdFilter(winner.getId());

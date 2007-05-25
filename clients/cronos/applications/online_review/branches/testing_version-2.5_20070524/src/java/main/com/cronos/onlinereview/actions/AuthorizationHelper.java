@@ -195,9 +195,9 @@ public class AuthorizationHelper {
                 String.valueOf(getLoggedInUserId(request)));
         Filter filterExtID = new AndFilter(filterExtIDname, filterExtIDvalue);
         // Prepare filter to select resources that do not have any project assigned
-        Filter filterNoProject = ResourceFilterBuilder.createNoProjectFilter();
+//        Filter filterNoProject = ResourceFilterBuilder.createNoProjectFilter();
         // Prepare filterr to select resources that do not have any phase assigned
-        Filter filterNoPhase = ResourceFilterBuilder.createNoPhaseFilter();
+//        Filter filterNoPhase = ResourceFilterBuilder.createNoPhaseFilter();
 
         // The list that will contain all the individual
         // filters that will later be combined by the AndFilter
