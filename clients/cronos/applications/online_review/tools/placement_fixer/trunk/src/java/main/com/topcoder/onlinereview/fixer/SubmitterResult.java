@@ -8,7 +8,7 @@ public class SubmitterResult {
     
     private String submissionId;
 
-    private double[] reviewScores = new double[3];
+    private double[] reviewScores = new double[8];
 
     private int reviewScoresIndex = 0;
 
@@ -48,10 +48,10 @@ public class SubmitterResult {
         reviewScores[reviewScoresIndex] = score;
 
         reviewScoresIndex++;
-
-        if (reviewScoresIndex > 3) {
-            throw new IllegalStateException("There should be only 3 review scores.");
-        }
+    }
+    
+    public int getReviewScoresLength() {
+        return reviewScoresIndex;
     }
 
     public double[] getReviewScores() {
@@ -94,7 +94,7 @@ public class SubmitterResult {
         String str = "handle:" + getHandle() + " finalScore:" + getFinalScore() + " rank:"
                         + getRank() + "\n";
 
-        for (int i = 0; i < 3; ++i) {
+        for (int i = 0; i < this.reviewScoresIndex; ++i) {
             str = str + "score#" + (i + 1) + ": " + getReviewScores()[i] + "\n";
         }
 

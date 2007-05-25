@@ -8,6 +8,9 @@ import com.topcoder.db.connectionfactory.DBConnectionFactory;
 import com.topcoder.db.connectionfactory.DBConnectionFactoryImpl;
 import com.topcoder.util.config.ConfigManager;
 import com.topcoder.util.config.ConfigManagerException;
+import com.topcoder.util.log.Level;
+import com.topcoder.util.log.Log;
+import com.topcoder.util.log.LogFactory;
 
 /**
  * Utility class for the OR fixer.
@@ -19,6 +22,11 @@ public class Utility {
      * DB connection to the online review database.
      */
     private static Connection connection;
+    
+    /**
+     * Log intance for the app.
+     */
+    private static Log log;
 
     /**
      * Config file of the fixer, which contains the configuration for DB
@@ -78,8 +86,21 @@ public class Utility {
             }
             
         } catch (Exception ex) {
-            ex.printStackTrace();
+            // ignore
         }
     }
-
+    
+    /**
+     * Method to log the statistic message into report.
+     * 
+     * @param level
+     * @param object
+     */
+    public static void log(Level level, Object object) {
+        if (log == null) {
+            log = LogFactory.getLog();
+        }
+        
+        log.log(level, object);
+    }
 }
