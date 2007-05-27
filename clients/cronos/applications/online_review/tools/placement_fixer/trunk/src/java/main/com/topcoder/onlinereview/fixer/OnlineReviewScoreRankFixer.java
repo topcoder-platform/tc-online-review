@@ -77,8 +77,11 @@ public class OnlineReviewScoreRankFixer {
     private static final String GET_SUBMISSION_PLACEMENT = "SELECT resource_info.value rank "
                     + "FROM  resource, resource_info, resource_submission "
                     + "WHERE resource.resource_id = resource_submission.resource_id "
-                    + "AND   resource.resource_id = resource_info.resource_id "
-                    + "AND   resource_info.resource_info_type_id = 12 " + "AND   resource_submission.submission_id = ?";
+                    + "AND resource.resource_id = resource_info.resource_id "
+                    + "AND resource_info.resource_info_type_id = 12 " 
+                    + "AND resource_submission.submission_id = ?";
+
+	private static final double MINIMUN_PASSING_SCORE = 75;
     
     /**
      * SQL statement for updating the final score of the submission in project_result table.
@@ -286,7 +289,6 @@ public class OnlineReviewScoreRankFixer {
             if (missingData) {
                 return false;
             }
-            
 
             if (Math.abs(temp - sResult.getFinalScore()) > 0.006) {
 
@@ -299,9 +301,9 @@ public class OnlineReviewScoreRankFixer {
 
                 Utility.log(Level.INFO, sResult.getHandle() + ": " + sResult.getFinalScore() + "--->" + temp);
 
-                if (sResult.getFinalScore() >= 80 && temp < 80) {
+                if (sResult.getFinalScore() >= MINIMUN_PASSING_SCORE && temp < MINIMUN_PASSING_SCORE) {
                     Utility.log(Level.ERROR, sResult.getHandle() + ": passing to non-passing.");
-                } else if (sResult.getFinalScore() < 80 && temp >= 80) {
+                } else if (sResult.getFinalScore() < MINIMUN_PASSING_SCORE && temp >= MINIMUN_PASSING_SCORE) {
                     Utility.log(Level.ERROR, sResult.getHandle() + ": non-passing to passing.");
                 }
 
@@ -343,16 +345,6 @@ public class OnlineReviewScoreRankFixer {
 
         return dataCorrect;
     }
-
-    /**
-     * Round the double value to the 2 decimal double.
-     * 
-     * @param originalScore
-     * @return
-     * 
-     * private double normalizeScore(double originalScore) { return ((int) ((originalScore +
-     * 0.005000000001) * 100)) / (double) 100.0; }
-     */
 
     /**
      * Entry point of the online review score and rank fixer app.
