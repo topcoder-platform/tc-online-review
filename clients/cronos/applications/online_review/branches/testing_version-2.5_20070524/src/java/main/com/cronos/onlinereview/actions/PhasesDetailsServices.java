@@ -204,6 +204,47 @@ final class PhasesDetailsServices {
         phaseGroup.setRegistantsEmails(userEmails);
     }
 
+    private static void getPreviousUploadsForSubmissions(HttpServletRequest request, Project project, PhaseGroup phaseGroup, Submission[] submissions) throws BaseException {
+	if (submissions.length > 0 && AuthorizationHelper.hasUserPermission(request, Constants.VIEW_ALL_SUBM_PERM_NAME)) {
+        // Obtain an instance of Upload Manager
+        UploadManager upMgr = ActionsHelper.createUploadManager(request);
+        // Get all upload types
+        UploadType[] allUploadTypes = upMgr.getAllUploadTypes();
+        // Get all upload statuses
+        UploadStatus[] allUploadStatuses = upMgr.getAllUploadStatuses();
+
+        Filter filterProject = UploadFilterBuilder.createProjectIdFilter(project.getId());
+        Filter filterUploadType = UploadFilterBuilder.createUploadTypeIdFilter(
+                ActionsHelper.findUploadTypeByName(allUploadTypes, "Submission").getId());
+        Filter filterUploadStatus = UploadFilterBuilder.createUploadStatusIdFilter(
+                ActionsHelper.findUploadStatusByName(allUploadStatuses, "Deleted").getId());
+
+        Filter filter =
+            new AndFilter(Arrays.asList(new Filter[] {filterProject, filterUploadType, filterUploadStatus}));
+        Upload[] ungroupedUploads = upMgr.searchUploads(filter);
+        Upload[][] pastSubmissions = new Upload[submissions.length][];
+
+        for (int j = 0; j < pastSubmissions.length; ++j) {
+            List temp = new ArrayList();
+            long currentUploadOwnerId = submissions[j].getUpload().getOwner();
+
+            for (int k = 0; k < ungroupedUploads.length; k++) {
+                if (currentUploadOwnerId == ungroupedUploads[k].getOwner()) {
+                    temp.add(ungroupedUploads[k]);
+                }
+            }
+
+            if (!temp.isEmpty()) {
+                pastSubmissions[j] = (Upload[]) temp.toArray(new Upload[temp.size()]);
+            }
+        }
+
+        if (pastSubmissions.length != 0) {
+            phaseGroup.setPastSubmissions(pastSubmissions);
+        }
+    }
+	}
+    
     /**
      * TODO: Write documentation for this method.
      *
@@ -225,47 +266,9 @@ final class PhasesDetailsServices {
 
         if (phaseName.equalsIgnoreCase(Constants.SUBMISSION_PHASE_NAME)) {
             Submission[] submissions = null;
-
+            
             if (AuthorizationHelper.hasUserPermission(request, Constants.VIEW_ALL_SUBM_PERM_NAME)) {
-                submissions =
-                    ActionsHelper.getMostRecentSubmissions(ActionsHelper.createUploadManager(request), project);
-
-                // Obtain an instance of Upload Manager
-                UploadManager upMgr = ActionsHelper.createUploadManager(request);
-                // Get all upload types
-                UploadType[] allUploadTypes = upMgr.getAllUploadTypes();
-                // Get all upload statuses
-                UploadStatus[] allUploadStatuses = upMgr.getAllUploadStatuses();
-
-                Filter filterProject = UploadFilterBuilder.createProjectIdFilter(project.getId());
-                Filter filterUploadType = UploadFilterBuilder.createUploadTypeIdFilter(
-                        ActionsHelper.findUploadTypeByName(allUploadTypes, "Submission").getId());
-                Filter filterUploadStatus = UploadFilterBuilder.createUploadStatusIdFilter(
-                        ActionsHelper.findUploadStatusByName(allUploadStatuses, "Deleted").getId());
-
-                Filter filter =
-                    new AndFilter(Arrays.asList(new Filter[] {filterProject, filterUploadType, filterUploadStatus}));
-                Upload[] ungroupedUploads = upMgr.searchUploads(filter);
-                Upload[][] pastSubmissions = new Upload[submissions.length][];
-
-                for (int j = 0; j < pastSubmissions.length; ++j) {
-                    List temp = new ArrayList();
-                    long currentUploadOwnerId = submissions[j].getUpload().getOwner();
-
-                    for (int k = 0; k < ungroupedUploads.length; ++k) {
-                        if (currentUploadOwnerId == ungroupedUploads[k].getOwner()) {
-                            temp.add(ungroupedUploads[k]);
-                        }
-                    }
-
-                    if (!temp.isEmpty()) {
-                        pastSubmissions[j] = (Upload[]) temp.toArray(new Upload[temp.size()]);
-                    }
-                }
-
-                if (pastSubmissions.length != 0) {
-                    phaseGroup.setPastSubmissions(pastSubmissions);
-                }
+            	submissions = ActionsHelper.getMostRecentSubmissions(ActionsHelper.createUploadManager(request), project);
             }
 
             boolean mayViewMostRecentAfterAppealsResponse =
@@ -324,6 +327,8 @@ final class PhasesDetailsServices {
             comparator.assignSubmitters(submitters);
             Arrays.sort(submissions, comparator);
 
+            getPreviousUploadsForSubmissions(request, project, phaseGroup, submissions);
+            
             phaseGroup.setSubmissions(submissions);
 
             if (submissions.length != 0) {
