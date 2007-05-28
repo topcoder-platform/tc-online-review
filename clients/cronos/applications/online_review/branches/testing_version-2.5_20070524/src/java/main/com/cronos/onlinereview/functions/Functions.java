@@ -552,11 +552,12 @@ public final class Functions {
         final String requestedUri = request.getRequestURI();
         final int servelPathPos = requestedUri.indexOf(request.getServletPath());
         final String moduleName = requestedUri.substring(0, servelPathPos);
+        final int refererPort = (refererURL.getPort() >= 0) ? refererURL.getPort() : request.getServerPort();
 
         if (refererURL.getHost().compareToIgnoreCase(request.getServerName()) != 0 ||
                 refererURL.getPath().indexOf(moduleName) != 0 ||
-                (refererURL.getPort() != 443 && request.getServerPort() != 443 &&
-                        refererURL.getPort() != request.getServerPort())) {
+                (refererPort != 443 && request.getServerPort() != 443 &&
+                        refererPort != request.getServerPort())) {
             // The Referer is not safe, return null
             return null;
         }
