@@ -667,8 +667,7 @@ Note: The security manager that comes with the app may not be compatible with th
 
     <target name="deploy-prod" depends="prod-init, deploy-common" />
 
-    <target name="main" depends="deploy,test" />
-
+    <target name="main" depends="deploy, test"/>
 
 
     <!-- ************************************************************************** -->
