@@ -62,7 +62,6 @@
     <property name="component.jar" value="${dist_lib}/${component_path}/${distfilename}.jar" />
     <property name="javadoc.jar" value="${builddir}/javadocs.jar" />
     <property name="component.tests.jar" value="${dist_lib}/${distfilename}_tests.jar" />
-    <property name="component.war" value="${build_distdir}/${distfilename}.war" />
     <property name="component_test.war" value="${build_distdir}/${distfilename}_test.war" />
     <property name="component.dist.jar" value="${build_distdir}/${distfilename}-${component_version}.jar" />
     <property name="dev_submission.jar" value="${component}_${component_version}_dev_submission.jar" />
@@ -640,6 +639,7 @@ Note: The security manager that comes with the app may not be compatible with th
     </target>
 
     <target name="deploy-common">
+    	<property name="component.war" value="${build_distdir}/${distfilename}.war" />
         <mkdir dir="${deploy-dir}" />
         <unwar src="${component.war}" dest="${deploy-dir}" />
         <move todir="${deploy-dir}/../../lib" overwrite="true" verbose="true">
@@ -658,7 +658,14 @@ Note: The security manager that comes with the app may not be compatible with th
 
     <target name="deploy" depends="dist, deploy-common" />
 
-    <target name="deploy-prod" depends="deploy-common" />
+	<!-- - - - - - - - - - - - - - - - - - 
+          target: prod-init
+         - - - - - - - - - - - - - - - - - -->
+    <target name="prod-init">
+    	<property name="component.war" value="${distfilename}.war" />
+    </target>
+
+    <target name="deploy-prod" depends="prod-init, deploy-common" />
 
     <target name="main" depends="deploy,test" />
 
