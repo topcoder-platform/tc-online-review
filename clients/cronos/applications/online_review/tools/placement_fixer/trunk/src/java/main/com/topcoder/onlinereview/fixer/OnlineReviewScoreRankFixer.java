@@ -56,12 +56,6 @@ public class OnlineReviewScoreRankFixer {
     /**
      * SQL statement for retrieving a submission's handle.
      */
-//    private static final String GET_SUBMISSION_HANDLE = "SELECT resource_info.value handle "
-//                    + "FROM  resource, resource_info, resource_submission "
-//                    + "WHERE resource.resource_id = resource_submission.resource_id "
-//                    + "AND   resource.resource_id = resource_info.resource_id "
-//                    + "AND   resource_info.resource_info_type_id = 2 " + " AND   resource_submission.submission_id = ?";
-
     private static final String GET_SUBMISSION_HANDLE = "SELECT s.submission_id, ri.value handle from submission s, upload u, resource_info ri"
     		+ " where s.upload_id = u.upload_id"
     		+ " and u.resource_id = ri.resource_id"
@@ -70,21 +64,20 @@ public class OnlineReviewScoreRankFixer {
     /**
      * SQL statement for retrieving a submission's final score from resource_info table.
      */
-    private static final String GET_SUBMISSION_FINAL_SCORE = "SELECT resource_info.value finalScore "
-                    + "FROM  resource, resource_info, resource_submission "
-                    + "WHERE resource.resource_id = resource_submission.resource_id "
-                    + "AND   resource.resource_id = resource_info.resource_id "
-                    + "AND   resource_info.resource_info_type_id = 11 " + "AND   resource_submission.submission_id = ?";
+    private static final String GET_SUBMISSION_FINAL_SCORE = "SELECT ri.value finalScore from submission s, upload u, resource_info ri"
+		+ " where s.upload_id = u.upload_id"
+		+ " and u.resource_id = ri.resource_id"
+		+ " and ri.resource_info_type_id = 11"
+		+ " and s.submission_id = ?";
 
     /**
      * SQL statement for retrieving a submission's placement from resource_info table.
      */
-    private static final String GET_SUBMISSION_PLACEMENT = "SELECT resource_info.value rank "
-                    + "FROM  resource, resource_info, resource_submission "
-                    + "WHERE resource.resource_id = resource_submission.resource_id "
-                    + "AND resource.resource_id = resource_info.resource_id "
-                    + "AND resource_info.resource_info_type_id = 12 " 
-                    + "AND resource_submission.submission_id = ?";
+    private static final String GET_SUBMISSION_PLACEMENT = "SELECT ri.value rank from submission s, upload u, resource_info ri"
+		+ " where s.upload_id = u.upload_id"
+		+ " and u.resource_id = ri.resource_id"
+		+ " and ri.resource_info_type_id = 12"
+		+ " and s.submission_id = ?";
 
 	private static final double MINIMUN_PASSING_SCORE = 75;
     
