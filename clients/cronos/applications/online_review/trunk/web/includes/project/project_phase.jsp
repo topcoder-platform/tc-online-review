@@ -227,7 +227,7 @@
 														<html:link page="/actions/ViewScreening.do?method=viewScreening&rid=${review.id}">${orfn:displayScore(pageContext.request, review.score)}</html:link></td>
 												</c:if>
 												<c:if test="${not isAllowedToViewScreening}">
-													<td class="valueC" width="14%">${orfn:displayScore(review.score)}</td>
+													<td class="valueC" width="14%">${orfn:displayScore(pageContext.request, review.score)}</td>
 												</c:if>
 												<c:if test="${review.score >= passingMinimum}">
 													<td class="valueC" width="15%"><bean:message key="viewProjectDetails.box.Screening.Passed" /></td>
@@ -312,7 +312,7 @@
 						<c:when test='${group.appFunc == "VIEW_REVIEWS"}'>
 							<table class="scorecard" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;">
 								<c:set var="colSpan" value="${(fn:length(group.reviewers) * 2) + 2}" />
-								<c:if test="${isAllowedToEditHisReviews != true}">
+								<c:if test="${not isAllowedToEditHisReviews}">
 									<c:set var="colSpan" value="${colSpan + 1}" />
 								</c:if>
 								<tr>
@@ -403,12 +403,12 @@
 												</c:if>
 												<html:link page="/actions/DownloadSubmission.do?method=downloadSubmission&uid=${submission.upload.id}"
 													titleKey="viewProjectDetails.box.Submission.Download">${submission.id}</html:link>
-												<c:if test="${!(empty submitter)}">
+												<c:if test="${not empty submitter}">
 													(<tc-webtag:handle coderId='${submitter.allProperties["External Reference ID"]}' context="${orfn:getHandlerContext(pageContext.request)}" />)
 												</c:if>
 											</td>
 											<td class="valueC" width="12%">${orfn:displayDateBr(pageContext.request, group.reviewDates[submissionStatus.index])}</td>
-											<c:if test="${isAllowedToEditHisReviews != true}">
+											<c:if test="${not isAllowedToEditHisReviews}">
 												<c:if test="${not empty submitter}">
 													<c:set var="finalScore" value='${submitter.allProperties["Final Score"]}' />
 												</c:if>
@@ -430,7 +430,7 @@
 												</c:otherwise>
 											</c:choose>
 											<c:forEach items="${group.reviews[submissionStatus.index]}" var="review" varStatus="reviewStatus">
-												<c:if test="${(empty review) || (not group.displayReviewLinks)}">
+												<c:if test="${(empty review) or (not group.displayReviewLinks)}">
 													<c:if test="${isAllowedToEditHisReviews && group.displayReviewLinks}">
 														<td class="valueC" width="8%" nowrap="nowrap"><html:link
 															page="/actions/CreateReview.do?method=createReview&sid=${submission.id}"><b><bean:message
@@ -620,7 +620,7 @@
 											</c:if>
 											<c:if test="${not group.finalReview.committed}">
 												<td class="value"><!-- @ --></td>
-												<c:if test="${isAllowedToPerformFinalReview == true}">
+												<c:if test="${isAllowedToPerformFinalReview}">
 													<td class="valueC" nowrap="nowrap"><html:link
 														page="/actions/EditFinalReview.do?method=editFinalReview&rid=${group.finalReview.id}"><b><bean:message
 														key="viewProjectDetails.box.FinalReview.Submit" /></b></html:link></td>

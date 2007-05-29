@@ -9,7 +9,6 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -28,13 +27,15 @@ import org.apache.struts.upload.FormFile;
 import org.apache.struts.util.MessageResources;
 import org.apache.struts.validator.DynaValidatorForm;
 
-import com.cronos.onlinereview.actions.Comparators.SubmissionComparer;
+import com.cronos.onlinereview.actions.ActionsHelper;
+import com.cronos.onlinereview.actions.AuthorizationHelper;
+import com.cronos.onlinereview.actions.ConfigHelper;
+import com.cronos.onlinereview.actions.Constants;
 import com.cronos.onlinereview.autoscreening.management.ResponseSeverity;
 import com.cronos.onlinereview.autoscreening.management.ScreeningManager;
 import com.cronos.onlinereview.autoscreening.management.ScreeningResult;
 import com.cronos.onlinereview.autoscreening.management.ScreeningTask;
 import com.cronos.onlinereview.external.ExternalUser;
-import com.cronos.onlinereview.external.RetrievalException;
 import com.cronos.onlinereview.external.UserRetrieval;
 import com.topcoder.management.deliverable.Deliverable;
 import com.topcoder.management.deliverable.Submission;
@@ -57,9 +58,7 @@ import com.topcoder.management.resource.search.ResourceFilterBuilder;
 import com.topcoder.management.review.ReviewManagementException;
 import com.topcoder.management.review.ReviewManager;
 import com.topcoder.management.review.data.Comment;
-import com.topcoder.management.review.data.Item;
 import com.topcoder.management.review.data.Review;
-import com.topcoder.management.scorecard.ScorecardManager;
 import com.topcoder.management.scorecard.data.Scorecard;
 import com.topcoder.management.scorecard.data.ScorecardType;
 import com.topcoder.message.email.EmailEngine;
@@ -112,7 +111,7 @@ public class ProjectDetailsActions extends DispatchAction {
     public ProjectDetailsActions() {
     }
 
-    private void getPreviousUploadsForSubmissions(HttpServletRequest request, Project project, PhaseGroup phaseGroup, Submission[] submissions) throws BaseException {
+    /*private void getPreviousUploadsForSubmissions(HttpServletRequest request, Project project, PhaseGroup phaseGroup, Submission[] submissions) throws BaseException {
     	if (submissions.length > 0 && AuthorizationHelper.hasUserPermission(request, Constants.VIEW_ALL_SUBM_PERM_NAME)) {
             // Obtain an instance of Upload Manager
             UploadManager upMgr = ActionsHelper.createUploadManager(request);
@@ -151,8 +150,8 @@ public class ProjectDetailsActions extends DispatchAction {
                 phaseGroup.setPastSubmissions(pastSubmissions);
             }
         }
-    }
-    
+    }*/
+
     /**
      * This method is an implementation of &quot;View project Details&quot; Struts Action defined
      * for this assembly, which is supposed to gather all possible information about the project and
@@ -176,8 +175,8 @@ public class ProjectDetailsActions extends DispatchAction {
         throws BaseException {
     	LoggingHelper.logAction(request);
         // Verify that certain requirements are met before processing with the Action
-        CorrectnessCheckResult verification =
-            ActionsHelper.checkForCorrectProjectId(mapping, getResources(request), request, Constants.VIEW_PROJECT_DETAIL_PERM_NAME);
+        CorrectnessCheckResult verification = ActionsHelper.checkForCorrectProjectId(
+                mapping, getResources(request), request, Constants.VIEW_PROJECT_DETAIL_PERM_NAME, false);
         // If any error has occured, return action forward contained in the result bean
         if (!verification.isSuccessful()) {
             return verification.getForward();
@@ -345,7 +344,7 @@ public class ProjectDetailsActions extends DispatchAction {
         // Determine if the user has permission to view a list of resources for the project
         if (AuthorizationHelper.hasUserPermission(request, Constants.VIEW_PROJECT_RESOURCES_PERM_NAME)) {
             // Get an array of external users for the corresponding resources
-            allProjectExtUsers = getExternalUsersForResources(
+            allProjectExtUsers = ActionsHelper.getExternalUsersForResources(
                     ActionsHelper.createUserRetrieval(request), allProjectResources);
 
             // Place resources and external users into the request
@@ -353,672 +352,14 @@ public class ProjectDetailsActions extends DispatchAction {
             request.setAttribute("users", allProjectExtUsers);
         }
 
-        int[] phaseGroupIndexes = new int[phases.length];
-        List phaseGroups = new ArrayList();
-        Map similarPhaseGroupIndexes = new HashMap();
-        int activeTabIdx = -1;
-        int phaseGroupIdx = -1;
-        PhaseGroup phaseGroup = null;
-        Resource[] submitters = null;
-        Upload[] finalFixes = null;
-        int finalFixIdx = -1;
-
-        for (int phaseIdx = 0; phaseIdx < phases.length; ++phaseIdx) {
-            // Get a phase for the current iteration
-            Phase phase = phases[phaseIdx];
-            String phaseName = phase.getPhaseType().getName();
-            // Take next phase (if the current one is not the last)
-            Phase nextPhase = (phaseIdx + 1 != phases.length) ? phases[phaseIdx + 1] : null;
-
-            if (phaseGroup == null || !ConfigHelper.isPhaseGroupContainsPhase(phaseGroupIdx, phaseName) ||
-                    phaseGroup.isPhaseInThisGroup(phase)) {
-                // Get an index of this potential phase group in the configuration
-                phaseGroupIdx = ConfigHelper.findPhaseGroupForPhaseName(phaseName);
-
-                String appFuncName = ConfigHelper.getPhaseGroupAppFunction(phaseGroupIdx);
-
-                if (!appFuncName.equals(Constants.VIEW_REGISTRANTS_APP_FUNC) ||
-                        AuthorizationHelper.hasUserPermission(request, Constants.VIEW_REGISTRATIONS_PERM_NAME)) {
-                    phaseGroup = new PhaseGroup();
-                    phaseGroups.add(phaseGroup);
-
-                    Integer groupIndexObj = (Integer) similarPhaseGroupIndexes.get(appFuncName);
-                    int groupIndex = (groupIndexObj != null) ? groupIndexObj.intValue() : 0;
-
-                    similarPhaseGroupIndexes.put(appFuncName, new Integer(groupIndex + 1));
-
-                    String groupIndexStr = (groupIndex != 0) ? ("&#160;" + (groupIndex + 1)) : "";
-
-                    phaseGroup.setName(messages.getMessage(
-                            ConfigHelper.getPhaseGroupNameKey(phaseGroupIdx), groupIndexStr));
-                    phaseGroup.setTableName(messages.getMessage(
-                            ConfigHelper.getPhaseGroupTableNameKey(phaseGroupIdx), groupIndexStr));
-                    phaseGroup.setGroupIndex(groupIndexStr);
-                    phaseGroup.setAppFunc(appFuncName);
-                } else {
-                    phaseGroup = null;
-                }
-            }
-
-            if (phaseGroup == null) {
-                phaseGroupIndexes[phaseIdx] = -1;
-                continue;
-            }
-
-            phaseGroup.addPhase(phase);
-
-            String phaseStatus = phase.getPhaseStatus().getName();
-
-            if (phaseStatus.equalsIgnoreCase("Closed") || phaseStatus.equalsIgnoreCase("Open")) {
-                if (activeTabIdx == -1 && phaseStatus.equalsIgnoreCase("Open") && phaseGroupIdx != -1) {
-                    activeTabIdx = phaseGroups.size() - 1;
-                }
-                phaseGroup.setPhaseOpen(true);
-            }
-
-            boolean isAfterAppealsResponse = ActionsHelper.isAfterAppealsResponse(phases, phaseIdx);
-            boolean canSeeSubmitters = (isAfterAppealsResponse ||
-                    AuthorizationHelper.hasUserPermission(request, Constants.VIEW_ALL_SUBM_PERM_NAME));
-
-            if (canSeeSubmitters) {
-                if (submitters == null) {
-                    submitters = ActionsHelper.getAllSubmitters(allProjectResources);
-                }
-            } else {
-                submitters = null;
-            }
-
-            phaseGroup.setSubmitters(submitters);
-
-            // Determine an index of the current phase group (needed for timeline phases list)
-            phaseGroupIndexes[phaseIdx] = phaseGroups.size() - 1;
-
-            if (!phaseGroup.isPhaseOpen()) {
-                continue;
-            }
-
-            if (phaseGroup.getAppFunc().equals(Constants.VIEW_REGISTRANTS_APP_FUNC) && submitters != null) {
-                // Get corresponding external users for the array of submitters
-                ExternalUser[] extUsers = (allProjectExtUsers != null) ? allProjectExtUsers :
-                    getExternalUsersForResources(ActionsHelper.createUserRetrieval(request), submitters);
-                String[] userEmails = new String[submitters.length];
-
-                for (int j = 0; j < submitters.length; ++j) {
-                    // Get external ID for the current submitter's resource
-                    long extUserId = Long.parseLong((String) submitters[j].getProperty("External Reference ID"), 10);
-                    for (int k = 0; k < extUsers.length; ++k) {
-                        if (extUserId == extUsers[k].getId()) {
-                            userEmails[j] = extUsers[k].getEmail();
-                            break;
-                        }
-                    }
-                }
-
-                phaseGroup.setRegistantsEmails(userEmails);
-            }
-
-            if (Constants.VIEW_SUBMISSIONS_APP_FUNC.equals(phaseGroup.getAppFunc()) &&
-            		Constants.SUBMISSION_PHASE_NAME.equalsIgnoreCase(phaseName)) {
-                Submission[] submissions = null;
-                
-                if (AuthorizationHelper.hasUserPermission(request, Constants.VIEW_ALL_SUBM_PERM_NAME)) {
-                    submissions = ActionsHelper.getMostRecentSubmissions(ActionsHelper.createUploadManager(request), project);
-                }
-                
-                boolean mayViewMostRecentAfterAppealsResponse =
-                    AuthorizationHelper.hasUserPermission(request, Constants.VIEW_RECENT_SUBM_AAR_PERM_NAME);
-
-                if (mayViewMostRecentAfterAppealsResponse && isAfterAppealsResponse) {
-                    submissions = ActionsHelper.getMostRecentSubmissions(ActionsHelper.createUploadManager(request), project);
-                }
-                if (submissions == null &&
-                        AuthorizationHelper.hasUserPermission(request, Constants.VIEW_RECENT_SUBM_PERM_NAME) &&
-                        !AuthorizationHelper.hasUserRole(request, Constants.REVIEWER_ROLE_NAMES)) {
-                    submissions =
-                        ActionsHelper.getMostRecentSubmissions(ActionsHelper.createUploadManager(request), project);
-                }
-                if (submissions == null &&
-                        AuthorizationHelper.hasUserPermission(request, Constants.VIEW_RECENT_SUBM_PERM_NAME) &&
-                        AuthorizationHelper.hasUserRole(request, Constants.REVIEWER_ROLE_NAMES) &&
-                        ActionsHelper.isInOrAfterPhase(phases, phaseIdx, Constants.REVIEW_PHASE_NAME)) {
-                    submissions =
-                        ActionsHelper.getMostRecentSubmissions(ActionsHelper.createUploadManager(request), project);
-                }
-                if (submissions == null &&
-                        AuthorizationHelper.hasUserPermission(request, Constants.VIEW_SCREENER_SUBM_PERM_NAME) &&
-                        ActionsHelper.isInOrAfterPhase(phases, phaseIdx, Constants.SCREENING_PHASE_NAME)) {
-                    submissions =
-                        ActionsHelper.getMostRecentSubmissions(ActionsHelper.createUploadManager(request), project);
-                }
-                if (submissions == null &&
-                        AuthorizationHelper.hasUserPermission(request, Constants.VIEW_MY_SUBM_PERM_NAME)) {
-                    // Obtain an instance of Upload Manager
-                    UploadManager upMgr = ActionsHelper.createUploadManager(request);
-                    SubmissionStatus[] allSubmissionStatuses = upMgr.getAllSubmissionStatuses();
-
-                    // Get "my" (submitter's) resource
-                    Resource myResource = ActionsHelper.getMyResourceForPhase(request, null);
-
-                    Filter filterProject = SubmissionFilterBuilder.createProjectIdFilter(project.getId());
-                    Filter filterStatus = ActionsHelper.createSubmissionStatusFilter(allSubmissionStatuses);
-                    Filter filterResource = SubmissionFilterBuilder.createResourceIdFilter(myResource.getId());
-
-                    Filter filter =
-                        new AndFilter(Arrays.asList(new Filter[] {filterProject, filterStatus, filterResource}));
-
-                    submissions = upMgr.searchSubmissions(filter);
-                }
-
-                if (submissions == null) {
-                	submissions = new Submission[0];
-                }
-                // Use comparator to sort submissions either by placement
-                // or by the time when they were uploaded
-                SubmissionComparer comparator = new SubmissionComparer();
-
-                comparator.assignSubmitters(submitters);
-                Arrays.sort(submissions, comparator);
-
-                phaseGroup.setSubmissions(submissions);
-
-                getPreviousUploadsForSubmissions(request, project, phaseGroup, submissions);
-                
-                if (submissions.length != 0) {
-                    long[] uploadIds = new long[submissions.length];
-
-                    for (int j = 0; j < submissions.length; ++j) {
-                        uploadIds[j] = submissions[j].getUpload().getId();
-                    }
-
-                    ScreeningManager scrMgr = ActionsHelper.createScreeningManager(request);
-                    ScreeningTask[] tasks = scrMgr.getScreeningTasks(uploadIds, true);
-
-                    phaseGroup.setScreeningTasks(tasks);
-                }
-            }
-
-            if (phaseGroup.getAppFunc().equals(Constants.VIEW_SUBMISSIONS_APP_FUNC) &&
-                    phaseName.equalsIgnoreCase(Constants.SCREENING_PHASE_NAME) &&
-                    phaseGroup.getSubmissions() != null) {
-                Submission[] submissions = phaseGroup.getSubmissions();
-
-                if (AuthorizationHelper.hasUserPermission(request, Constants.VIEW_SCREENER_SUBM_PERM_NAME) &&
-                        !AuthorizationHelper.hasUserRole(request, Constants.PRIMARY_SCREENER_ROLE_NAME)) {
-                    Resource[] my = ActionsHelper.getMyResourcesForPhase(request, phase);
-                    ScreeningTask[] allTasks = phaseGroup.getScreeningTasks();
-                    List tempSubs = new ArrayList();
-                    List tasks = new ArrayList();
-
-                    for (int j = 0; j < submissions.length; ++j) {
-                        for (int k = 0; k < my.length; ++k) {
-                            if (my[k].getSubmission() != null &&
-                                    my[k].getSubmission().longValue() == submissions[j].getId()) {
-                                tempSubs.add(submissions[j]);
-                                tasks.add(allTasks[j]);
-                            }
-                        }
-                    }
-
-                    submissions = (Submission[]) tempSubs.toArray(new Submission[tempSubs.size()]);
-                    phaseGroup.setSubmissions(submissions);
-                    phaseGroup.setScreeningTasks((ScreeningTask[]) tasks.toArray(new ScreeningTask[tasks.size()]));
-                }
-
-                Resource[] screeners = ActionsHelper.getResourcesForPhase(allProjectResources, phase);
-
-                phaseGroup.setReviewers(screeners);
-
-                // No need to fetch auto screening results if there are no submissions
-                if (submissions.length == 0) {
-                    continue;
-                }
-
-                // Obtain an instance of Scorecard Manager
-                ScorecardManager scrMgr = ActionsHelper.createScorecardManager(request);
-                ScorecardType[] allScorecardTypes = scrMgr.getAllScorecardTypes();
-
-                List submissionIds = new ArrayList();
-
-                for (int j = 0; j < submissions.length; ++j) {
-                    submissionIds.add(new Long(submissions[j].getId()));
-                }
-
-                Filter filterSubmissions = new InFilter("submission", submissionIds);
-                Filter filterScorecard = new EqualToFilter("scorecardType",
-                        new Long(ActionsHelper.findScorecardTypeByName(allScorecardTypes, "Screening").getId()));
-
-                Filter filter = new AndFilter(filterSubmissions, filterScorecard);
-
-                // Obtain an instance of Review Manager
-                ReviewManager revMgr = ActionsHelper.createReviewManager(request);
-                Review[] reviews = revMgr.searchReviews(filter, false);
-
-                phaseGroup.setScreenings(reviews);
-            }
-
-            if (phaseGroup.getAppFunc().equalsIgnoreCase(Constants.VIEW_REVIEWS_APP_FUNC) &&
-                    phaseName.equalsIgnoreCase(Constants.REVIEW_PHASE_NAME)) {
-            	// If the project is not in the after appeals response state, allow uploading of testcases
-            	phaseGroup.setUploadingTestcasesAllowed(!isAfterAppealsResponse);
-
-                Submission[] submissions = null;
-
-                if (AuthorizationHelper.hasUserPermission(request, Constants.VIEW_ALL_SUBM_PERM_NAME)) {
-                    submissions =
-                        ActionsHelper.getMostRecentSubmissions(ActionsHelper.createUploadManager(request), project);
-                }
-
-                boolean mayViewMostRecentAfterAppealsResponse =
-                    AuthorizationHelper.hasUserPermission(request, Constants.VIEW_RECENT_SUBM_AAR_PERM_NAME);
-
-                if (submissions == null &&
-                        ((mayViewMostRecentAfterAppealsResponse && isAfterAppealsResponse) ||
-                        AuthorizationHelper.hasUserPermission(request, Constants.VIEW_RECENT_SUBM_PERM_NAME))) {
-                    submissions =
-                        ActionsHelper.getMostRecentSubmissions(ActionsHelper.createUploadManager(request), project);
-                }
-                if (submissions == null &&
-                        AuthorizationHelper.hasUserPermission(request, Constants.VIEW_MY_SUBM_PERM_NAME)) {
-                    // Obtain an instance of Upload Manager
-                    UploadManager upMgr = ActionsHelper.createUploadManager(request);
-                    SubmissionStatus[] allSubmissionStatuses = upMgr.getAllSubmissionStatuses();
-
-                    // Get "my" (submitter's) resource
-                    Resource myResource = ActionsHelper.getMyResourceForPhase(request, null);
-
-                    Filter filterProject = SubmissionFilterBuilder.createProjectIdFilter(project.getId());
-                    Filter filterStatus = ActionsHelper.createSubmissionStatusFilter(allSubmissionStatuses);
-                    Filter filterResource = SubmissionFilterBuilder.createResourceIdFilter(myResource.getId());
-
-                    Filter filter =
-                        new AndFilter(Arrays.asList(new Filter[] {filterProject, filterStatus, filterResource}));
-
-                    submissions = upMgr.searchSubmissions(filter);
-                }
-                // No submissions -- nothing to review,
-                // but the list of submissions must not be null in this case
-                if (submissions == null) {
-                    submissions = new Submission[0];
-                }
-
-                // Use comparator to sort submissions either by placement
-                // or by the time when they were uploaded
-                SubmissionComparer comparator = new SubmissionComparer();
-
-                comparator.assignSubmitters(submitters);
-                Arrays.sort(submissions, comparator);
-
-                phaseGroup.setSubmissions(submissions);
-
-                // Some resource roles can always see links to reviews (if there are any).
-                // There is no corresponding permission, so the list of roles is hard-coded
-                boolean allowedToSeeReviewLink =
-                    AuthorizationHelper.hasUserRole(request, new String[] {
-                        Constants.MANAGER_ROLE_NAME, Constants.GLOBAL_MANAGER_ROLE_NAME,
-                        Constants.REVIEWER_ROLE_NAME, Constants.ACCURACY_REVIEWER_ROLE_NAME,
-                        Constants.FAILURE_REVIEWER_ROLE_NAME, Constants.STRESS_REVIEWER_ROLE_NAME,
-                        Constants.OBSERVER_ROLE_NAME});
-                // Determine if the Review phase is closed
-                boolean isReviewClosed =
-                    phase.getPhaseStatus().getName().equalsIgnoreCase(Constants.CLOSED_PH_STATUS_NAME);
-                // Determine if the Appeals phase is open
-                boolean isAppealsOpen = (nextPhase != null &&
-                        nextPhase.getPhaseType().getName().equalsIgnoreCase(Constants.APPEALS_PHASE_NAME) &&
-                        nextPhase.getPhaseStatus().getName().equalsIgnoreCase(Constants.OPEN_PH_STATUS_NAME));
-
-                if (!allowedToSeeReviewLink) {
-                    // Determine if the user is allowed to place appeals and Appeals phase is open
-                    if (isReviewClosed || (isAppealsOpen &&
-                            AuthorizationHelper.hasUserPermission(request, Constants.PERFORM_APPEAL_PERM_NAME))) {
-                        allowedToSeeReviewLink = true;
-                    }
-                }
-
-                phaseGroup.setDisplayReviewLinks(allowedToSeeReviewLink);
-
-                Resource[] reviewers = null;
-
-                if (!isAfterAppealsResponse &&
-                        AuthorizationHelper.hasUserPermission(request, Constants.VIEW_REVIEWER_REVIEWS_PERM_NAME) &&
-                        AuthorizationHelper.hasUserRole(request, Constants.REVIEWER_ROLE_NAMES)) {
-                    // Get "my" (reviewer's) resource
-                    reviewers = ActionsHelper.getMyResourcesForPhase(request, phase);
-                }
-
-                if (reviewers == null) {
-                    reviewers = ActionsHelper.getResourcesForPhase(allProjectResources, phase);
-                }
-
-                // Put collected reviewers into the phase group
-                phaseGroup.setReviewers(reviewers);
-                // A safety check: create an empty array in case reviewers is null
-                if (reviewers == null) {
-                    reviewers = new Resource[0];
-                }
-
-                // Obtain an instance of Scorecard Manager
-                ScorecardManager scrMgr = ActionsHelper.createScorecardManager(request);
-                ScorecardType[] allScorecardTypes = scrMgr.getAllScorecardTypes();
-
-                List submissionIds = new ArrayList();
-
-                for (int j = 0; j < submissions.length; ++j) {
-                    submissionIds.add(new Long(submissions[j].getId()));
-                }
-
-                List reviewerIds = new ArrayList();
-
-                for (int j = 0; j < reviewers.length; ++j) {
-                    reviewerIds.add(new Long(reviewers[j].getId()));
-                }
-
-                Review[] ungroupedReviews = null;
-
-                if (!(submissionIds.isEmpty() || reviewerIds.isEmpty())) {
-                    Filter filterSubmissions = new InFilter("submission", submissionIds);
-                    Filter filterReviewers = new InFilter("reviewer", reviewerIds);
-                    Filter filterScorecard = new EqualToFilter("scorecardType",
-                            new Long(ActionsHelper.findScorecardTypeByName(allScorecardTypes, "Review").getId()));
-
-                    List reviewFilters = new ArrayList();
-                    reviewFilters.add(filterReviewers);
-                    reviewFilters.add(filterScorecard);
-                    reviewFilters.add(filterSubmissions);
-
-                    // Create final filter
-                    Filter filterForReviews = new AndFilter(reviewFilters);
-
-                    boolean needFullReviews = false;
-
-                    // If next phase is Appeals and that phase is not scheduled, ...
-                    if (nextPhase != null &&
-                            nextPhase.getPhaseType().getName().equalsIgnoreCase(Constants.APPEALS_PHASE_NAME)) {
-                        // ... indicate that full review (with all comments) must be retrieved
-                        if (!nextPhase.getPhaseStatus().getName().equalsIgnoreCase("Scheduled")) {
-                            needFullReviews = true;
-                        }
-                    }
-
-                    // Obtain an instance of Review Manager
-                    ReviewManager revMgr = ActionsHelper.createReviewManager(request);
-                    // Get the reviews from every individual reviewer
-                    ungroupedReviews = revMgr.searchReviews(filterForReviews, needFullReviews);
-                }
-                if (ungroupedReviews == null) {
-                    ungroupedReviews = new Review[0];
-                }
-
-                boolean canDownloadTestCases =
-                    (isReviewClosed &&
-                            AuthorizationHelper.hasUserPermission(request, Constants.DOWNLOAD_TEST_CASES_PERM_NAME)) ||
-                    (!isReviewClosed &&
-                            AuthorizationHelper.hasUserPermission(request, Constants.DOWNLOAD_TC_DUR_REVIEW_PERM_NAME)) ||
-                    (!isReviewClosed && isAppealsOpen &&
-                            AuthorizationHelper.hasUserPermission(request, Constants.PERFORM_APPEAL_PERM_NAME) &&
-                            AuthorizationHelper.hasUserPermission(request, Constants.DOWNLOAD_TEST_CASES_PERM_NAME));
-
-                if (!reviewerIds.isEmpty() && canDownloadTestCases) {
-                    // Obtain an instance of Upload Manager
-                    UploadManager upMgr = ActionsHelper.createUploadManager(request);
-                    UploadStatus[] allUploadStatuses = upMgr.getAllUploadStatuses();
-                    UploadType[] allUploadTypes = upMgr.getAllUploadTypes();
-
-                    Filter filterResource = new InFilter("resource_id", reviewerIds);
-                    Filter filterStatus = UploadFilterBuilder.createUploadStatusIdFilter(
-                            ActionsHelper.findUploadStatusByName(allUploadStatuses, "Active").getId());
-                    Filter filterType = UploadFilterBuilder.createUploadTypeIdFilter(
-                            ActionsHelper.findUploadTypeByName(allUploadTypes, "Test Case").getId());
-
-                    Filter filterForUploads =
-                        new AndFilter(Arrays.asList(new Filter[] {filterResource, filterStatus, filterType}));
-
-                    Upload[] testCases = upMgr.searchUploads(filterForUploads);
-
-                    phaseGroup.setTestCases(testCases);
-                }
-
-                Review[][] reviews = new Review[submissions.length][];
-                Date[] reviewDates = new Date[submissions.length];
-
-                for (int j = 0; j < submissions.length; ++j) {
-                    Date latestDate = null;
-                    Review[] innerReviews = new Review[reviewers.length];
-                    Arrays.fill(innerReviews, null);
-
-                    for (int k = 0; k < reviewers.length; ++k) {
-                        for (int l = 0; l < ungroupedReviews.length; ++l) {
-                            Review ungrouped = ungroupedReviews[l];
-                            if (ungrouped.getAuthor() == reviewers[k].getId() &&
-                                    ungrouped.getSubmission() == submissions[j].getId()) {
-                                innerReviews[k] = ungrouped;
-                                if (!ungrouped.isCommitted()) {
-                                    continue;
-                                }
-                                if (latestDate == null || latestDate.before(ungrouped.getModificationTimestamp())) {
-                                    latestDate = ungrouped.getModificationTimestamp();
-                                }
-                            }
-                        }
-                    }
-
-                    reviews[j] = innerReviews;
-                    reviewDates[j] = latestDate;
-                }
-                phaseGroup.setReviews(reviews);
-                phaseGroup.setReviewDates(reviewDates);
-            }
-
-            if (phaseGroup.getAppFunc().equalsIgnoreCase(Constants.VIEW_REVIEWS_APP_FUNC) &&
-                    phaseName.equalsIgnoreCase(Constants.APPEALS_PHASE_NAME) && phaseGroup.getReviews() != null) {
-                // set the Appeals phase status to indicate
-                // if the appeals information should be available
-                if (!phase.getPhaseStatus().getName().equalsIgnoreCase("Scheduled")) {
-                    phaseGroup.setAppealsPhaseOpened(true);
-                } else {
-                    continue;
-                }
-
-                Review[][] reviews = phaseGroup.getReviews();
-                int[][] totalAppeals = new int[reviews.length][];
-                int[][] unresolvedAppeals = new int[reviews.length][];
-
-                countAppeals(reviews, totalAppeals, unresolvedAppeals);
-
-                phaseGroup.setTotalAppealsCounts(totalAppeals);
-                phaseGroup.setUnresolvedAppealsCounts(unresolvedAppeals);
-            }
-
-            if ((phaseGroup.getAppFunc().equalsIgnoreCase(Constants.AGGREGATION_APP_FUNC) ||
-                    phaseGroup.getAppFunc().equalsIgnoreCase(Constants.FINAL_FIX_APP_FUNC) ||
-                    phaseGroup.getAppFunc().equalsIgnoreCase(Constants.APPROVAL_APP_FUNC)) &&
-                    phaseGroup.getSubmitters() != null && phaseGroup.getSubmissions() == null) {
-                Submission[] submissions = null;
-
-                boolean mayViewMostRecentAfterAppealsResponse =
-                    AuthorizationHelper.hasUserPermission(request, Constants.VIEW_RECENT_SUBM_AAR_PERM_NAME);
-
-                if ((mayViewMostRecentAfterAppealsResponse && isAfterAppealsResponse) ||
-                        AuthorizationHelper.hasUserPermission(request, Constants.VIEW_ALL_SUBM_PERM_NAME) ||
-                        AuthorizationHelper.hasUserPermission(request, Constants.VIEW_RECENT_SUBM_PERM_NAME) ||
-                        AuthorizationHelper.hasUserPermission(request, Constants.VIEW_WINNING_SUBM_PERM_NAME)) {
-                    submissions =
-                        ActionsHelper.getMostRecentSubmissions(ActionsHelper.createUploadManager(request), project);
-                }
-                if (submissions == null &&
-                        AuthorizationHelper.hasUserPermission(request, Constants.VIEW_MY_SUBM_PERM_NAME)) {
-                    // Obtain an instance of Upload Manager
-                    UploadManager upMgr = ActionsHelper.createUploadManager(request);
-                    SubmissionStatus[] allSubmissionStatuses = upMgr.getAllSubmissionStatuses();
-
-                    // Get "my" (submitter's) resource
-                    Resource myResource = ActionsHelper.getMyResourceForPhase(request, null);
-
-                    Filter filterProject = SubmissionFilterBuilder.createProjectIdFilter(project.getId());
-                    Filter filterStatus = SubmissionFilterBuilder.createSubmissionStatusIdFilter(
-                            ActionsHelper.findSubmissionStatusByName(allSubmissionStatuses, "Active").getId());
-                    Filter filterResource = SubmissionFilterBuilder.createResourceIdFilter(myResource.getId());
-
-                    Filter filter =
-                        new AndFilter(Arrays.asList(new Filter[] {filterProject, filterStatus, filterResource}));
-
-                    submissions = upMgr.searchSubmissions(filter);
-                }
-                if (submissions != null) {
-                    phaseGroup.setSubmissions(submissions);
-                }
-            }
-
-            if (phaseGroup.getAppFunc().equalsIgnoreCase(Constants.AGGREGATION_APP_FUNC) &&
-                    phaseName.equalsIgnoreCase(Constants.AGGREGATION_PHASE_NAME) &&
-                    phaseGroup.getSubmitters() != null) {
-                Resource winner = ActionsHelper.getWinner(phaseGroup.getSubmitters());
-                phaseGroup.setWinner(winner);
-
-                Resource[] aggregator = ActionsHelper.getResourcesForPhase(allProjectResources, phase);
-
-                if (aggregator == null || aggregator.length == 0) {
-                    continue;
-                }
-
-                Filter filterResource = new EqualToFilter("reviewer", new Long(aggregator[0].getId()));
-                Filter filterProject = new EqualToFilter("project", new Long(project.getId()));
-
-                Filter filter = new AndFilter(filterResource, filterProject);
-
-                // Obtain an instance of Review Manager
-                ReviewManager revMgr = ActionsHelper.createReviewManager(request);
-                Review[] reviews = revMgr.searchReviews(filter, true);
-
-                if (reviews.length != 0) {
-                    phaseGroup.setAggregation(reviews[0]);
-                }
-            }
-
-            if (phaseGroup.getAppFunc().equalsIgnoreCase(Constants.AGGREGATION_APP_FUNC) &&
-                    phaseName.equalsIgnoreCase(Constants.AGGREGATION_REVIEW_PHASE_NAME) &&
-                    phaseGroup.getAggregation() != null && phaseGroup.getAggregation().isCommitted()) {
-                Review aggregation = phaseGroup.getAggregation();
-
-                boolean reviewCommitted = true;
-
-                for (int j = 0; j < aggregation.getNumberOfComments(); ++j) {
-                        // Get a comment for the current iteration
-                        Comment comment = aggregation.getComment(j);
-
-                    if (ActionsHelper.isAggregationReviewComment(comment)) {
-                            String extraInfo = (String) comment.getExtraInfo();
-                            if (!("Approved".equalsIgnoreCase(extraInfo) ||
-                                    "Rejected".equalsIgnoreCase(extraInfo))) {
-                                reviewCommitted = false;
-                                break;
-                            }
-                        }
-                    }
-
-                phaseGroup.setDisplayAggregationReviewLink(!phaseStatus.equalsIgnoreCase(Constants.SCHEDULED_PH_STATUS_NAME));
-                phaseGroup.setAggregationReviewCommitted(reviewCommitted);
-            }
-
-            if (phaseGroup.getAppFunc().equalsIgnoreCase(Constants.FINAL_FIX_APP_FUNC) &&
-                    phaseGroup.getSubmitters() != null) {
-                Resource winner = phaseGroup.getWinner();
-                if (winner == null) {
-                    winner = ActionsHelper.getWinner(phaseGroup.getSubmitters());
-                    phaseGroup.setWinner(winner);
-                }
-                if (winner == null) {
-                    continue;
-                }
-
-                if (finalFixes == null) {
-                    // Obtain an instance of Upload Manager
-                    UploadManager upMgr = ActionsHelper.createUploadManager(request);
-                    UploadStatus[] allUploadStatuses = upMgr.getAllUploadStatuses();
-                    UploadType[] allUploadTypes = upMgr.getAllUploadTypes();
-
-                    Filter filterStatus = UploadFilterBuilder.createUploadStatusIdFilter(
-                            ActionsHelper.findUploadStatusByName(allUploadStatuses, "Active").getId());
-                    Filter filterType = UploadFilterBuilder.createUploadTypeIdFilter(
-                            ActionsHelper.findUploadTypeByName(allUploadTypes, "Final Fix").getId());
-                    Filter filterResource = UploadFilterBuilder.createResourceIdFilter(winner.getId());
-
-                    Filter filter = new AndFilter(Arrays.asList(
-                            new Filter[] {/*filterStatus, */filterType, filterResource}));
-                    finalFixes = upMgr.searchUploads(filter);
-
-                    Arrays.sort(finalFixes, new Comparators.UploadComparer());
-
-                    finalFixIdx = 0;
-                }
-            }
-
-            if (phaseGroup.getAppFunc().equalsIgnoreCase(Constants.FINAL_FIX_APP_FUNC) &&
-                    phaseName.equalsIgnoreCase(Constants.FINAL_FIX_PHASE_NAME) && finalFixes != null) {
-                if (finalFixIdx < finalFixes.length) {
-                    phaseGroup.setFinalFix(finalFixes[finalFixIdx++]);
-                }
-            }
-
-            if (phaseGroup.getAppFunc().equalsIgnoreCase(Constants.FINAL_FIX_APP_FUNC) &&
-                    phaseName.equalsIgnoreCase(Constants.FINAL_REVIEW_PHASE_NAME) &&
-                    phaseGroup.getSubmitters() != null) {
-                Resource[] reviewer = ActionsHelper.getResourcesForPhase(allProjectResources, phase);
-
-                if (reviewer == null || reviewer.length == 0) {
-                    continue;
-                }
-
-                Filter filterResource = new EqualToFilter("reviewer", new Long(reviewer[0].getId()));
-                Filter filterProject = new EqualToFilter("project", new Long(project.getId()));
-
-                Filter filter = new AndFilter(filterResource, filterProject);
-
-                // Obtain an instance of Review Manager
-                ReviewManager revMgr = ActionsHelper.createReviewManager(request);
-                Review[] reviews = revMgr.searchReviews(filter, true);
-
-                if (reviews.length != 0) {
-                    phaseGroup.setFinalReview(reviews[0]);
-                }
-            }
-
-            if (phaseGroup.getAppFunc().equalsIgnoreCase(Constants.APPROVAL_APP_FUNC) &&
-                    phaseGroup.getSubmitters() != null) {
-                Resource winner = ActionsHelper.getWinner(phaseGroup.getSubmitters());
-                phaseGroup.setWinner(winner);
-
-                Resource[] approver = ActionsHelper.getResourcesForPhase(allProjectResources, phase);
-
-                if (approver == null || approver.length == 0) {
-                    continue;
-                }
-
-                // Obtain an instance of Scorecard Manager
-                ScorecardManager scrMgr = ActionsHelper.createScorecardManager(request);
-                ScorecardType[] allScorecardTypes = scrMgr.getAllScorecardTypes();
-
-                Filter filterResource = new EqualToFilter("reviewer", new Long(approver[0].getId()));
-                Filter filterProject = new EqualToFilter("project", new Long(project.getId()));
-                Filter filterScorecard = new EqualToFilter("scorecardType",
-                        new Long(ActionsHelper.findScorecardTypeByName(allScorecardTypes, "Client Review").getId()));
-
-                Filter filter = new AndFilter(Arrays.asList(
-                        new Filter[] {filterResource, filterProject, filterScorecard}));
-
-                // Obtain an instance of Review Manager
-                ReviewManager revMgr = ActionsHelper.createReviewManager(request);
-                Review[] reviews = revMgr.searchReviews(filter, true);
-
-                if (reviews.length != 0) {
-                    phaseGroup.setApproval(reviews[0]);
-                }
-            }
-        }
-
-        request.setAttribute("phaseGroupIndexes", phaseGroupIndexes);
-        request.setAttribute("phaseGroups", phaseGroups);
-        request.setAttribute("activeTabIdx", new Integer((activeTabIdx != -1) ? activeTabIdx : 0));
-
+        PhasesDetails phasesDetails = PhasesDetailsServices.getPhasesDetails(
+                request, messages, project, phases, allProjectResources, allProjectExtUsers);
+
+        request.setAttribute("phaseGroupIndexes", phasesDetails.getPhaseGroupIndexes());
+        request.setAttribute("phaseGroups", phasesDetails.getPhaseGroups());
+        request.setAttribute("activeTabIdx", phasesDetails.getActiveTabIndex());
+        request.setAttribute("passingMinimum", new Float(75.0)); // TODO: Take this value from scorecard template
+		
         boolean sendTLNotifications = false;
 
         if (AuthorizationHelper.isUserLoggedIn(request)) {
@@ -1033,7 +374,6 @@ public class ProjectDetailsActions extends DispatchAction {
         }
 
         request.setAttribute("sendTLNotifications", (sendTLNotifications) ? "On" : "Off");
-        request.setAttribute("passingMinimum", new Float(75.0)); // TODO: Take this value from scorecard template
 
         // Check resource roles
         request.setAttribute("isManager",
@@ -1149,16 +489,17 @@ public class ProjectDetailsActions extends DispatchAction {
             HttpServletRequest request, HttpServletResponse response)
         throws BaseException, ConfigManagerException {
     	LoggingHelper.logAction(request);
+
+        // Determine if this request is a post back
+        boolean postBack = (request.getParameter("postBack") != null);
+
         // Verify that certain requirements are met before processing with the Action
-        CorrectnessCheckResult verification =
-            ActionsHelper.checkForCorrectProjectId(mapping, getResources(request), request, Constants.CONTACT_PM_PERM_NAME);
+        CorrectnessCheckResult verification = ActionsHelper.checkForCorrectProjectId(
+                mapping, getResources(request), request, Constants.CONTACT_PM_PERM_NAME, postBack);
         // If any error has occured, return action forward contained in the result bean
         if (!verification.isSuccessful()) {
             return verification.getForward();
         }
-
-        // Determine if this request is a post back
-        boolean postBack = (request.getParameter("postBack") != null);
 
         if (!postBack) {
             // Retrieve some basic project info (such as icons' names) and place it into request
@@ -1300,9 +641,13 @@ public class ProjectDetailsActions extends DispatchAction {
             HttpServletRequest request, HttpServletResponse response)
         throws BaseException {
     	LoggingHelper.logAction(request);
+
+        // Determine if this request is a post back
+        final boolean postBack = (request.getParameter("postBack") != null);
+
         // Verify that certain requirements are met before processing with the Action
-        CorrectnessCheckResult verification =
-            ActionsHelper.checkForCorrectProjectId(mapping, getResources(request), request, Constants.PERFORM_SUBM_PERM_NAME);
+        CorrectnessCheckResult verification = ActionsHelper.checkForCorrectProjectId(
+                mapping, getResources(request), request, Constants.PERFORM_SUBM_PERM_NAME, postBack);
         // If any error has occured, return action forward contained in the result bean
         if (!verification.isSuccessful()) {
             return verification.getForward();
@@ -1315,13 +660,10 @@ public class ProjectDetailsActions extends DispatchAction {
 
         if (ActionsHelper.getPhase(phases, true, Constants.SUBMISSION_PHASE_NAME) == null) {
             return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
-                    Constants.PERFORM_SUBM_PERM_NAME, "Error.IncorrectPhase");
+                    Constants.PERFORM_SUBM_PERM_NAME, "Error.IncorrectPhase", null);
         }
 
-        // Determine if this request is a post back
-        boolean postBack = (request.getParameter("postBack") != null);
-
-        if (postBack != true) {
+        if (!postBack) {
             // Retrieve some basic project info (such as icons' names) and place it into request
             ActionsHelper.retrieveAndStoreBasicProjectInfo(request, verification.getProject(), getResources(request));
             return mapping.findForward(Constants.DISPLAY_PAGE_FORWARD_NAME);
@@ -1333,7 +675,7 @@ public class ProjectDetailsActions extends DispatchAction {
         // Disallow uploading of empty files
         if (file.getFileSize() == 0) {
             return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
-                    Constants.PERFORM_SUBM_PERM_NAME, "Error.EmptyFileUploaded");
+                    Constants.PERFORM_SUBM_PERM_NAME, "Error.EmptyFileUploaded", null);
         }
 
         StrutsRequestParser parser = new StrutsRequestParser();
@@ -1454,14 +796,14 @@ public class ProjectDetailsActions extends DispatchAction {
         // Verify that upload is a submission
         if (!upload.getUploadType().getName().equalsIgnoreCase("Submission")) {
             return ActionsHelper.produceErrorReport(
-                    mapping, getResources(request), request, "ViewSubmission", "Error.NotASubmission");
+                    mapping, getResources(request), request, "ViewSubmission", "Error.NotASubmission", null);
         }
 
         // Verify the status of upload and check whether the user has permission to download old uploads
         if (upload.getUploadStatus().getName().equalsIgnoreCase("Deleted") &&
                 !AuthorizationHelper.hasUserPermission(request, Constants.VIEW_ALL_SUBM_PERM_NAME)) {
             return ActionsHelper.produceErrorReport(
-                    mapping, getResources(request), request, "ViewSubmission", "Error.UploadDeleted");
+                    mapping, getResources(request), request, "ViewSubmission", "Error.UploadDeleted", null);
         }
 
         // Get all phases for the current project (needed to do permission checks)
@@ -1492,7 +834,7 @@ public class ProjectDetailsActions extends DispatchAction {
             // notify him about this wrong-doing and do not let perform the action
             if (AuthorizationHelper.hasUserRole(request, Constants.SCREENER_ROLE_NAMES) && !isScreeningOpen) {
                 return ActionsHelper.produceErrorReport(
-                        mapping, getResources(request), request, "ViewSubmission", "Error.IncorrectPhase");
+                        mapping, getResources(request), request, "ViewSubmission", "Error.IncorrectPhase", null);
             }
             noRights = false; // TODO: Check if screener can download this submission
         }
@@ -1504,7 +846,7 @@ public class ProjectDetailsActions extends DispatchAction {
             // notify him about this wrong-doing and do not let perform the action
             if (AuthorizationHelper.hasUserRole(request, Constants.REVIEWER_ROLE_NAMES) && !isReviewOpen) {
                 return ActionsHelper.produceErrorReport(
-                        mapping, getResources(request), request, "ViewSubmission", "Error.IncorrectPhase");
+                        mapping, getResources(request), request, "ViewSubmission", "Error.IncorrectPhase", null);
             }
             noRights = false;
         }
@@ -1531,9 +873,11 @@ public class ProjectDetailsActions extends DispatchAction {
         }
 
         if (noRights) {
-            return ActionsHelper.produceErrorReport(
-                    mapping, getResources(request), request, "ViewSubmission", "Error.NoPermission");
+            return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
+                    "ViewSubmission", "Error.NoPermission", Boolean.TRUE);
         }
+        // At this point, redirect-after-login attribute should be removed (if it exists)
+        AuthorizationHelper.removeLoginRedirect(request);
 
         Filter filterProject = SubmissionFilterBuilder.createProjectIdFilter(upload.getProject());
         Filter filterResource = SubmissionFilterBuilder.createResourceIdFilter(upload.getOwner());
@@ -1617,16 +961,17 @@ public class ProjectDetailsActions extends DispatchAction {
             HttpServletRequest request, HttpServletResponse response)
         throws BaseException {
     	LoggingHelper.logAction(request);
+
+        // Determine if this request is a post back
+        boolean postBack = (request.getParameter("postBack") != null);
+
         // Verify that certain requirements are met before processing with the Action
-        CorrectnessCheckResult verification =
-            ActionsHelper.checkForCorrectProjectId(mapping, getResources(request), request, Constants.PERFORM_FINAL_FIX_PERM_NAME);
+        CorrectnessCheckResult verification = ActionsHelper.checkForCorrectProjectId(
+                mapping, getResources(request), request, Constants.PERFORM_FINAL_FIX_PERM_NAME, postBack);
         // If any error has occured, return action forward contained in the result bean
         if (!verification.isSuccessful()) {
             return verification.getForward();
         }
-
-        // Determine if this request is a post back
-        boolean postBack = (request.getParameter("postBack") != null);
 
         if (postBack != true) {
             // Retrieve some basic project info (such as icons' names) and place it into request
@@ -1644,7 +989,7 @@ public class ProjectDetailsActions extends DispatchAction {
         // Check that active phase is Final Fix
         if (currentPhase == null) {
             return ActionsHelper.produceErrorReport(mapping, getResources(request),
-                    request, Constants.PERFORM_FINAL_FIX_PERM_NAME, "Error.IncorrectPhase");
+                    request, Constants.PERFORM_FINAL_FIX_PERM_NAME, "Error.IncorrectPhase", null);
         }
 
         int finalFixCount = 0;
@@ -1665,7 +1010,7 @@ public class ProjectDetailsActions extends DispatchAction {
         // Disallow uploading of empty files
         if (file.getFileSize() == 0) {
             return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
-                    Constants.PERFORM_FINAL_FIX_PERM_NAME, "Error.EmptyFileUploaded");
+                    Constants.PERFORM_FINAL_FIX_PERM_NAME, "Error.EmptyFileUploaded", null);
         }
 
         StrutsRequestParser parser = new StrutsRequestParser();
@@ -1686,8 +1031,8 @@ public class ProjectDetailsActions extends DispatchAction {
 
         Filter filterProject = UploadFilterBuilder.createProjectIdFilter(project.getId());
         Filter filterResource = UploadFilterBuilder.createResourceIdFilter(resource.getId());
-        Filter filterStatus = UploadFilterBuilder.createUploadStatusIdFilter(
-                ActionsHelper.findUploadStatusByName(allUploadStatuses, "Active").getId());
+//        Filter filterStatus = UploadFilterBuilder.createUploadStatusIdFilter(
+//                ActionsHelper.findUploadStatusByName(allUploadStatuses, "Active").getId());
         Filter filterType = UploadFilterBuilder.createUploadTypeIdFilter(
                 ActionsHelper.findUploadTypeByName(allUploadTypes, "Final Fix").getId());
 
@@ -1698,7 +1043,7 @@ public class ProjectDetailsActions extends DispatchAction {
 
         if (uploads.length >= finalFixCount) {
             return ActionsHelper.produceErrorReport(mapping, getResources(request),
-                    request, Constants.PERFORM_FINAL_FIX_PERM_NAME, "Error.OnlyOneFinalFix");
+                    request, Constants.PERFORM_FINAL_FIX_PERM_NAME, "Error.OnlyOneFinalFix", null);
         }
 
         Arrays.sort(uploads, new Comparators.UploadComparer());
@@ -1757,8 +1102,10 @@ public class ProjectDetailsActions extends DispatchAction {
         // Check that user has permissions to download Final Fixes
         if (!AuthorizationHelper.hasUserPermission(request, Constants.DOWNLOAD_FINAL_FIX_PERM_NAME)) {
             return ActionsHelper.produceErrorReport(mapping, getResources(request),
-                    request, Constants.DOWNLOAD_FINAL_FIX_PERM_NAME, "Error.NoPermission");
+                    request, Constants.DOWNLOAD_FINAL_FIX_PERM_NAME, "Error.NoPermission", Boolean.TRUE);
         }
+        // At this point, redirect-after-login attribute should be removed (if it exists)
+        AuthorizationHelper.removeLoginRedirect(request);
 
         // Get an upload the user wants to download
         Upload upload = verification.getUpload();
@@ -1766,7 +1113,7 @@ public class ProjectDetailsActions extends DispatchAction {
         // Verify that upload is a Final Fix
         if (!upload.getUploadType().getName().equalsIgnoreCase("Final Fix")) {
             return ActionsHelper.produceErrorReport(mapping, getResources(request),
-                    request, Constants.DOWNLOAD_FINAL_FIX_PERM_NAME, "Error.NotAFinalFix");
+                    request, Constants.DOWNLOAD_FINAL_FIX_PERM_NAME, "Error.NotAFinalFix", null);
         }
 /* TODO: Remove this commented block when everything works ok
         // Verify the status of upload
@@ -1840,16 +1187,17 @@ public class ProjectDetailsActions extends DispatchAction {
             HttpServletRequest request, HttpServletResponse response)
         throws BaseException {
     	LoggingHelper.logAction(request);
+
+        // Determine if this request is a post back
+        boolean postBack = (request.getParameter("postBack") != null);
+
         // Verify that certain requirements are met before processing with the Action
-        CorrectnessCheckResult verification =
-            ActionsHelper.checkForCorrectProjectId(mapping, getResources(request), request, Constants.UPLOAD_TEST_CASES_PERM_NAME);
+        CorrectnessCheckResult verification = ActionsHelper.checkForCorrectProjectId(
+                mapping, getResources(request), request, Constants.UPLOAD_TEST_CASES_PERM_NAME, postBack);
         // If any error has occured, return action forward contained in the result bean
         if (!verification.isSuccessful()) {
             return verification.getForward();
         }
-
-        // Determine if this request is a post back
-        boolean postBack = (request.getParameter("postBack") != null);
 
         if (postBack != true) {
             // Retrieve some basic project info (such as icons' names) and place it into request
@@ -1867,7 +1215,7 @@ public class ProjectDetailsActions extends DispatchAction {
 
         if (currentPhase == null) {
             return ActionsHelper.produceErrorReport(mapping, getResources(request),
-                    request, Constants.UPLOAD_TEST_CASES_PERM_NAME, "Error.IncorrectPhase");
+                    request, Constants.UPLOAD_TEST_CASES_PERM_NAME, "Error.IncorrectPhase", null);
         }
 
         DynaValidatorForm uploadSubmissionForm = (DynaValidatorForm) form;
@@ -1876,7 +1224,7 @@ public class ProjectDetailsActions extends DispatchAction {
         // Disallow uploading of empty files
         if (file.getFileSize() == 0) {
             return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
-                    Constants.UPLOAD_TEST_CASES_PERM_NAME, "Error.EmptyFileUploaded");
+                    Constants.UPLOAD_TEST_CASES_PERM_NAME, "Error.EmptyFileUploaded", null);
         }
 
         StrutsRequestParser parser = new StrutsRequestParser();
@@ -2008,18 +1356,20 @@ public class ProjectDetailsActions extends DispatchAction {
         // attempting to download test cases is a Submitter and an Appeals phase is open
         if (canDownload && canPlaceAppeals && !isReviewClosed && !canDownloadDuringReview && !isAppealsOpen) {
             return ActionsHelper.produceErrorReport(mapping, getResources(request),
-                    request, Constants.DOWNLOAD_TEST_CASES_PERM_NAME, "Error.IncorrectPhase");
+                    request, Constants.DOWNLOAD_TEST_CASES_PERM_NAME, "Error.IncorrectPhase", null);
         }
         // Verify that user can download test cases during Review
         if (canDownload && !isReviewClosed && !canDownloadDuringReview) {
             return ActionsHelper.produceErrorReport(mapping, getResources(request),
-                    request, Constants.DOWNLOAD_TEST_CASES_PERM_NAME, "Error.IncorrectPhase");
+                    request, Constants.DOWNLOAD_TEST_CASES_PERM_NAME, "Error.IncorrectPhase", null);
         }
         // Check that the user is allowed to download test cases in general
         if (!canDownload) {
             return ActionsHelper.produceErrorReport(mapping, getResources(request),
-                    request, Constants.DOWNLOAD_TEST_CASES_PERM_NAME, "Error.NoPermission");
+                    request, Constants.DOWNLOAD_TEST_CASES_PERM_NAME, "Error.NoPermission", Boolean.TRUE);
         }
+        // At this point, redirect-after-login attribute should be removed (if it exists)
+        AuthorizationHelper.removeLoginRedirect(request);
 
         // Get an upload the user wants to download
         Upload upload = verification.getUpload();
@@ -2027,12 +1377,12 @@ public class ProjectDetailsActions extends DispatchAction {
         // Verify that upload is Test Cases
         if (!upload.getUploadType().getName().equalsIgnoreCase("Test Case")) {
             return ActionsHelper.produceErrorReport(mapping, getResources(request),
-                    request, Constants.DOWNLOAD_TEST_CASES_PERM_NAME, "Error.NotTestCases");
+                    request, Constants.DOWNLOAD_TEST_CASES_PERM_NAME, "Error.NotTestCases", null);
         }
         // Verify the status of upload
         if (upload.getUploadStatus().getName().equalsIgnoreCase("Deleted")) {
             return ActionsHelper.produceErrorReport(mapping, getResources(request),
-                    request, Constants.DOWNLOAD_TEST_CASES_PERM_NAME, "Error.UploadDeleted");
+                    request, Constants.DOWNLOAD_TEST_CASES_PERM_NAME, "Error.UploadDeleted", null);
         }
 
         FileUpload fileUpload = ActionsHelper.createFileUploadManager(request);
@@ -2114,12 +1464,15 @@ public class ProjectDetailsActions extends DispatchAction {
         // Check that user has permissions to delete submission
         if (!AuthorizationHelper.hasUserPermission(request, Constants.REMOVE_SUBM_PERM_NAME)) {
             return ActionsHelper.produceErrorReport(mapping, getResources(request),
-                    request, Constants.REMOVE_SUBM_PERM_NAME, "Error.NoPermission");
+                    request, Constants.REMOVE_SUBM_PERM_NAME, "Error.NoPermission", Boolean.TRUE);
         }
+        // At this point, redirect-after-login attribute should be removed (if it exists)
+        AuthorizationHelper.removeLoginRedirect(request);
+
         // Verify that the user is attempting to delete submission
         if (!upload.getUploadType().getName().equalsIgnoreCase("Submission")) {
             return ActionsHelper.produceErrorReport(mapping, getResources(request),
-                    request, Constants.REMOVE_SUBM_PERM_NAME, "Error.NotASubmission2");
+                    request, Constants.REMOVE_SUBM_PERM_NAME, "Error.NotASubmission2", null);
         }
 
         Filter filter = SubmissionFilterBuilder.createUploadIdFilter(upload.getId());
@@ -2130,7 +1483,7 @@ public class ProjectDetailsActions extends DispatchAction {
 
         if (submission == null || submission.getSubmissionStatus().getName().equalsIgnoreCase("Deleted")) {
             return ActionsHelper.produceErrorReport(mapping, getResources(request),
-                    request, Constants.REMOVE_SUBM_PERM_NAME, "Error.SubmissionDeleted");
+                    request, Constants.REMOVE_SUBM_PERM_NAME, "Error.SubmissionDeleted", null);
         }
 
         // Determine if this request is a post back
@@ -2195,8 +1548,10 @@ public class ProjectDetailsActions extends DispatchAction {
         // Check that user has permissions to download a Document
         if (!AuthorizationHelper.hasUserPermission(request, Constants.DOWNLOAD_DOCUMENT_PERM_NAME)) {
             return ActionsHelper.produceErrorReport(mapping, getResources(request),
-                    request, Constants.DOWNLOAD_DOCUMENT_PERM_NAME, "Error.NoPermission");
+                    request, Constants.DOWNLOAD_DOCUMENT_PERM_NAME, "Error.NoPermission", Boolean.TRUE);
         }
+        // At this point, redirect-after-login attribute should be removed (if it exists)
+        AuthorizationHelper.removeLoginRedirect(request);
 
         // Get an upload the user wants to download
         Upload upload = verification.getUpload();
@@ -2204,12 +1559,12 @@ public class ProjectDetailsActions extends DispatchAction {
         // Verify that upload is a Review Document
         if (!upload.getUploadType().getName().equalsIgnoreCase("Review Document")) {
             return ActionsHelper.produceErrorReport(mapping, getResources(request),
-                    request, Constants.DOWNLOAD_DOCUMENT_PERM_NAME, "Error.NotADocument");
+                    request, Constants.DOWNLOAD_DOCUMENT_PERM_NAME, "Error.NotADocument", null);
         }
         // Verify the status of upload
         if (upload.getUploadStatus().getName().equalsIgnoreCase("Deleted")) {
             return ActionsHelper.produceErrorReport(mapping, getResources(request),
-                    request, Constants.DOWNLOAD_DOCUMENT_PERM_NAME, "Error.UploadDeleted");
+                    request, Constants.DOWNLOAD_DOCUMENT_PERM_NAME, "Error.UploadDeleted", null);
         }
 
         FileUpload fileUpload = ActionsHelper.createFileUploadManager(request);
@@ -2287,14 +1642,14 @@ public class ProjectDetailsActions extends DispatchAction {
         // Verify that upload is a submission
         if (!upload.getUploadType().getName().equalsIgnoreCase("Submission")) {
             return ActionsHelper.produceErrorReport(
-                    mapping, getResources(request), request, "ViewAutoScreening", "Error.NotASubmission");
+                    mapping, getResources(request), request, "ViewAutoScreening", "Error.NotASubmission", null);
         }
 
         // Verify the status of upload and check whether the user has permission to download old uploads
         if (upload.getUploadStatus().getName().equalsIgnoreCase("Deleted") &&
                 !AuthorizationHelper.hasUserPermission(request, Constants.VIEW_ALL_SUBM_PERM_NAME)) {
             return ActionsHelper.produceErrorReport(
-                    mapping, getResources(request), request, "ViewAutoScreening", "Error.UploadDeleted");
+                    mapping, getResources(request), request, "ViewAutoScreening", "Error.UploadDeleted", null);
         }
 
         boolean noRights = true;
@@ -2318,8 +1673,10 @@ public class ProjectDetailsActions extends DispatchAction {
 
         if (noRights) {
             return ActionsHelper.produceErrorReport(
-                    mapping, getResources(request), request, "ViewAutoScreening", "Error.NoPermission");
+                    mapping, getResources(request), request, "ViewAutoScreening", "Error.NoPermission", Boolean.FALSE);
         }
+        // At this point, redirect-after-login attribute should be removed (if it exists)
+        AuthorizationHelper.removeLoginRedirect(request);
 
         // Retrieve some basic project info (such as icons' names) and place it into request
         ActionsHelper.retrieveAndStoreBasicProjectInfo(request, verification.getProject(), messages);
@@ -2414,7 +1771,7 @@ public class ProjectDetailsActions extends DispatchAction {
         String uidParam = request.getParameter("uid");
         if (uidParam == null || uidParam.trim().length() == 0) {
             result.setForward(ActionsHelper.produceErrorReport(
-                    mapping, getResources(request), request, errorMessageKey, "Error.UploadIdNotSpecified"));
+                    mapping, getResources(request), request, errorMessageKey, "Error.UploadIdNotSpecified", null));
             // Return the result of the check
             return result;
         }
@@ -2426,7 +1783,7 @@ public class ProjectDetailsActions extends DispatchAction {
             uid = Long.parseLong(uidParam, 10);
         } catch (NumberFormatException nfe) {
             result.setForward(ActionsHelper.produceErrorReport(
-                    mapping, getResources(request), request, errorMessageKey, "Error.UploadNotFound"));
+                    mapping, getResources(request), request, errorMessageKey, "Error.UploadNotFound", null));
             // Return the result of the check
             return result;
         }
@@ -2438,7 +1795,7 @@ public class ProjectDetailsActions extends DispatchAction {
         // Verify that upload with given ID exists
         if (upload == null) {
             result.setForward(ActionsHelper.produceErrorReport(
-                    mapping, getResources(request), request, errorMessageKey, "Error.UploadNotFound"));
+                    mapping, getResources(request), request, errorMessageKey, "Error.UploadNotFound", null));
             // Return the result of the check
             return result;
         }
@@ -2770,8 +2127,7 @@ public class ProjectDetailsActions extends DispatchAction {
      * @param resources
      * @throws BaseException
      */
-    private static String[] getDeliverableUserIds(Deliverable[] deliverables, Resource[] resources)
-        throws BaseException {
+    private static String[] getDeliverableUserIds(Deliverable[] deliverables, Resource[] resources) {
         // Validate parameters
         ActionsHelper.validateParameterNotNull(deliverables, "deliverables");
         ActionsHelper.validateParameterNotNull(resources, "resources");
@@ -2854,143 +2210,6 @@ public class ProjectDetailsActions extends DispatchAction {
         }
 
         return ids;
-    }
-
-    /**
-     * This static method retrieves an array of external user objects for the specified array of
-     * resources. Each entry in the resulting array will correspond to the corresponding entry in
-     * the input <code>resources</code> array. If there are no matches found for some resource,
-     * the corresponding item in the resulting array will contain <code>null</code>.
-     *
-     * @return an array of external user objects for the specified resources.
-     * @param retrieval
-     *            a <code>UserRetrieval</code> object used to retrieve external user objects.
-     * @param resources
-     *            an array of resources to retrieve corresponding external user objects for.
-     * @throws IllegalArgumentException
-     *             if any of the parameters are <code>null</code>.
-     * @throws RetrievalException
-     *             if some error happend during external user retrieval.
-     */
-    private static ExternalUser[] getExternalUsersForResources(UserRetrieval retrieval, Resource[] resources)
-        throws RetrievalException {
-        // Validate parameters
-        ActionsHelper.validateParameterNotNull(retrieval, "retrieval");
-        ActionsHelper.validateParameterNotNull(resources, "resources");
-
-        // If there are no resource for this project defined, there will be no external users
-        if (resources.length == 0) {
-            return new ExternalUser[0];
-        }
-
-        // Prepare an array to store External User IDs
-        long[] extUserIds = new long[resources.length];
-        // Fill the array with user IDs retrieved from resource properties
-        for (int i = 0; i < resources.length; ++i) {
-            String userID = (String) resources[i].getProperty("External Reference ID");
-            extUserIds[i] = Long.parseLong(userID, 10);
-        }
-
-        // Retrieve external users to the temporary array
-        ExternalUser[] extUsers = retrieval.retrieveUsers(extUserIds);
-
-        // This is final array for External User objects. It is needed because the previous
-        // operation may return shorter array than there are resources for the project
-        // (sometimes several resources can be associated with one external user)
-        ExternalUser[] allExtUsers = new ExternalUser[resources.length];
-
-        for (int i = 0; i < extUserIds.length; ++i) {
-            for (int j = 0; j < extUsers.length; ++j) {
-                if (extUsers[j].getId() == extUserIds[i]) {
-                    allExtUsers[i] = extUsers[j];
-                    break;
-                }
-            }
-        }
-
-        return allExtUsers;
-    }
-
-    /**
-     * This static method counts the number of total and unresolved appeals for every review in the
-     * provided array of reviews. The other two arrays (specified by parameters
-     * <code>totalAppeals</code> and <code>unresolvedAppeals</code>) must be of the same length
-     * as the array specified by <code>reviews<code> parameter.
-     *
-     * @param reviews
-     *            a two-dimensional array of reviews to count appeals counts in.
-     * @param totalAppeals
-     *            specifies an array that on output will receive the amount of total appeals per
-     *            every review in <code>reviews</code> input array.
-     * @param unresolvedAppeals
-     *            specifies an array that on output will receive the amount of unresolved appeals
-     *            per every review in <code>reviews</code> input array.
-     * @throws IllegalArgumentException
-     *             if any of the parameters are <code>null</code>, or if the number of items in
-     *             <code>totalAppeals</code> or <code>unresolvedAppeals</code> arrays does not match
-     *             the number of items in the <code>reviews</code> array.
-     */
-    private static void countAppeals(Review[][] reviews, int[][] totalAppeals, int[][] unresolvedAppeals) {
-        // Validate parameters
-        ActionsHelper.validateParameterNotNull(reviews, "reviews");
-        ActionsHelper.validateParameterNotNull(totalAppeals, "totalAppeals");
-        ActionsHelper.validateParameterNotNull(unresolvedAppeals, "unresolvedAppeals");
-
-        // Validate array lengths
-        if (reviews.length != totalAppeals.length) {
-            throw new IllegalArgumentException("The number of items in 'reviews' array (" + reviews.length + ")" +
-                    " does not match the number of items in 'totalAppeals' array (" + totalAppeals.length + ").");
-        }
-        if (reviews.length != unresolvedAppeals.length) {
-            throw new IllegalArgumentException("The number of items in 'reviews' array (" + reviews.length + ")" +
-                    " does not match the number of items in 'unresolvedAppeals' array (" + unresolvedAppeals.length +
-                    ").");
-        }
-
-        for (int i = 0; i < reviews.length; ++i) {
-            Review[] innerReviews = reviews[i];
-            int[] innerTotalAppeals = new int[innerReviews.length];
-            int[] innerUnresolvedAppeals = new int[innerReviews.length];
-
-            for (int j = 0; j < innerReviews.length; ++j) {
-                Review review = innerReviews[j];
-
-                if (review == null) {
-                    continue;
-                }
-
-                for (int itemIdx = 0; itemIdx < review.getNumberOfItems(); ++itemIdx) {
-                    Item item = review.getItem(itemIdx);
-                    boolean appealFound = false;
-                    boolean appealResolved = false;
-
-                    for (int commentIdx = 0;
-                            commentIdx < item.getNumberOfComments() && !(appealFound && appealResolved);
-                            ++commentIdx) {
-                        String commentType = item.getComment(commentIdx).getCommentType().getName();
-
-                        if (!appealFound && commentType.equalsIgnoreCase("Appeal")) {
-                            appealFound = true;
-                            continue;
-                        }
-                        if (!appealResolved && commentType.equalsIgnoreCase("Appeal Response")) {
-                            appealResolved = true;
-                            continue;
-                        }
-                    }
-
-                    if (appealFound) {
-                        ++innerTotalAppeals[j];
-                        if (!appealResolved) {
-                            ++innerUnresolvedAppeals[j];
-                        }
-                    }
-                }
-            }
-
-            totalAppeals[i] = innerTotalAppeals;
-            unresolvedAppeals[i] = innerUnresolvedAppeals;
-        }
     }
 
     /**

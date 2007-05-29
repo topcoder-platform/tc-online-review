@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 TopCoder Inc.  All Rights Reserved.
+ * Copyright (C) 2006-2007 TopCoder Inc.  All Rights Reserved.
  */
 package com.cronos.onlinereview.actions;
 
@@ -84,19 +84,10 @@ import com.topcoder.util.errorhandling.BaseException;
  */
 public class ProjectActions extends DispatchAction {
 
-/* TODO: Remove all these logging-related entries
-    private final Log logger;
-
-    private static java.text.DateFormat dateFormat = new java.text.SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-*/
-
     /**
      * Creates a new instance of the <code>ProjectActions</code> class.
      */
     public ProjectActions() {
-
-//        logger = LogFactory.getLog("ProjectActions");
-
     }
 
     /**
@@ -128,9 +119,12 @@ public class ProjectActions extends DispatchAction {
 
         // Check if the user has the permission to perform this action
         if (!AuthorizationHelper.hasUserPermission(request, Constants.CREATE_PROJECT_PERM_NAME)) {
-            // If he doesn't, redirect the request to login page
-            return mapping.findForward(Constants.NOT_AUTHORIZED_FORWARD_NAME);
+            // If he doesn't, redirect the request to login page or report about the lack of permissions
+            return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
+                    Constants.CREATE_PROJECT_PERM_NAME, "Error.NoPermission", Boolean.FALSE);
         }
+        // At this point, redirect-after-login attribute should be removed (if it exists)
+        AuthorizationHelper.removeLoginRedirect(request);
 
         // Place the index of the active tab into the request
         request.setAttribute("projectTabIndex", new Integer(3));
@@ -328,6 +322,9 @@ public class ProjectActions extends DispatchAction {
         // Retreive the list of the resources associated with the project
         Resource[] resources =
             resourceManager.searchResources(ResourceFilterBuilder.createProjectIdFilter(project.getId()));
+        // Get an array of external users for the corresponding resources
+        ExternalUser[] externalUsers =
+            ActionsHelper.getExternalUsersForResources(ActionsHelper.createUserRetrieval(request), resources);
 
         // Populate form with resources data
         for (int i = 0; i < resources.length; ++i) {
@@ -336,7 +333,7 @@ public class ProjectActions extends DispatchAction {
 
             form.set("resources_role", i + 1, new Long(resources[i].getResourceRole().getId()));
             form.set("resources_phase", i + 1, "loaded_" + resources[i].getPhase());
-            form.set("resources_name", i + 1, resources[i].getProperty("Handle"));
+            form.set("resources_name", i + 1, externalUsers[i].getHandle());
 
             if (resources[i].getProperty("Payment") != null) {
                 form.set("resources_payment", i + 1, Boolean.TRUE);
@@ -442,6 +439,37 @@ public class ProjectActions extends DispatchAction {
                         Boolean.valueOf("Yes".equals(phases[i].getAttribute("View Response During Appeals"))));
             }
         }
+
+        PhasesDetails phasesDetails = PhasesDetailsServices.getPhasesDetails(
+                request, getResources(request), project, phases, resources, externalUsers);
+
+        request.setAttribute("phaseGroupIndexes", phasesDetails.getPhaseGroupIndexes());
+        request.setAttribute("phaseGroups", phasesDetails.getPhaseGroups());
+        request.setAttribute("activeTabIdx", phasesDetails.getActiveTabIndex());
+        request.setAttribute("passingMinimum", new Float(75.0)); // TODO: Take this value from scorecard template
+
+        request.setAttribute("isManager",
+                Boolean.valueOf(AuthorizationHelper.hasUserRole(request, Constants.MANAGER_ROLE_NAMES)));
+        request.setAttribute("isAllowedToPerformScreening",
+                Boolean.valueOf(AuthorizationHelper.hasUserPermission(request, Constants.PERFORM_SCREENING_PERM_NAME) &&
+                        ActionsHelper.getPhase(phases, true, Constants.SCREENING_PHASE_NAME) != null));
+        request.setAttribute("isAllowedToViewScreening",
+                Boolean.valueOf(AuthorizationHelper.hasUserPermission(request, Constants.VIEW_SCREENING_PERM_NAME)));
+        request.setAttribute("isAllowedToUploadTC",
+                Boolean.valueOf(AuthorizationHelper.hasUserPermission(request, Constants.UPLOAD_TEST_CASES_PERM_NAME)));
+        request.setAttribute("isAllowedToPerformAggregation",
+                Boolean.valueOf(AuthorizationHelper.hasUserPermission(request, Constants.PERFORM_AGGREGATION_PERM_NAME)));
+        request.setAttribute("isAllowedToPerformAggregationReview",
+                Boolean.valueOf(AuthorizationHelper.hasUserPermission(request, Constants.PERFORM_AGGREG_REVIEW_PERM_NAME) &&
+                        !AuthorizationHelper.hasUserPermission(request, Constants.PERFORM_AGGREGATION_PERM_NAME)));
+        request.setAttribute("isAllowedToUploadFF",
+                Boolean.valueOf(AuthorizationHelper.hasUserPermission(request, Constants.PERFORM_FINAL_FIX_PERM_NAME)));
+        request.setAttribute("isAllowedToPerformFinalReview",
+                Boolean.valueOf(ActionsHelper.getPhase(phases, true, Constants.FINAL_REVIEW_PHASE_NAME) != null &&
+                        AuthorizationHelper.hasUserPermission(request, Constants.PERFORM_FINAL_REVIEW_PERM_NAME)));
+        request.setAttribute("isAllowedToPerformApproval",
+                Boolean.valueOf(ActionsHelper.getPhase(phases, true, Constants.APPROVAL_PHASE_NAME) != null &&
+                        AuthorizationHelper.hasUserPermission(request, Constants.PERFORM_APPROVAL_PERM_NAME)));
     }
 
     /**
@@ -529,10 +557,13 @@ public class ProjectActions extends DispatchAction {
         AuthorizationHelper.gatherUserRoles(request, projectId);
 
         // Check if the user has the permission to perform this action
-        if(!AuthorizationHelper.hasUserPermission(request, Constants.EDIT_PROJECT_DETAILS_PERM_NAME)) {
-            // If he doesn't have, forward to login page
-        	return ActionsHelper.findForwardNotAuthorized(mapping, new Long(projectId));
+        if (!AuthorizationHelper.hasUserPermission(request, Constants.EDIT_PROJECT_DETAILS_PERM_NAME)) {
+            // If he doesn't, redirect the request to login page or report about the lack of permissions
+            return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
+                    Constants.EDIT_PROJECT_DETAILS_PERM_NAME, "Error.NoPermission", Boolean.FALSE);
         }
+        // At this point, redirect-after-login attribute should be removed (if it exists)
+        AuthorizationHelper.removeLoginRedirect(request);
 
         // Place the flag, indicating that we are editing the existing project, into request
         request.setAttribute("newProject", Boolean.FALSE);
@@ -552,7 +583,7 @@ public class ProjectActions extends DispatchAction {
         Project project = manager.getProject(projectId);
         // Store the retieved project in the request
         request.setAttribute("project", project);
-        
+
         // Populate the form with project properties
         populateProjectForm(request, (LazyValidatorForm) form, project);
 
@@ -583,19 +614,23 @@ public class ProjectActions extends DispatchAction {
         boolean newProject = (lazyForm.get("pid") == null);
         // Gather the roles the user has for current request
         AuthorizationHelper.gatherUserRoles(request);
-
+        
         // Check if the user has the permission to perform this action
         if (newProject) {
-            if(!AuthorizationHelper.hasUserPermission(request, Constants.CREATE_PROJECT_PERM_NAME)) {
-                // If he doesn't, redirect the request to login page
-            	return ActionsHelper.findForwardNotAuthorized(mapping, new Long((String) lazyForm.get("pid")));
+            if (!AuthorizationHelper.hasUserPermission(request, Constants.CREATE_PROJECT_PERM_NAME)) {
+                // If he doesn't, redirect the request to login page or report about the lack of permissions
+                return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
+                        Constants.CREATE_PROJECT_PERM_NAME, "Error.NoPermission", Boolean.TRUE);
             }
         } else {
-            if(!AuthorizationHelper.hasUserPermission(request, Constants.EDIT_PROJECT_DETAILS_PERM_NAME)) {
-                // If he doesn't, redirect the request to login page
-            	return ActionsHelper.findForwardNotAuthorized(mapping, new Long((String) lazyForm.get("pid")));
+            if (!AuthorizationHelper.hasUserPermission(request, Constants.EDIT_PROJECT_DETAILS_PERM_NAME)) {
+                // If he doesn't, redirect the request to login page or report about the lack of permissions
+                return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
+                        Constants.EDIT_PROJECT_DETAILS_PERM_NAME, "Error.NoPermission", Boolean.TRUE);
             }
         }
+        // At this point, redirect-after-login attribute should be removed (if it exists)
+        AuthorizationHelper.removeLoginRedirect(request);
 
         // Obtain an instance of Project Manager
         ProjectManager manager = ActionsHelper.createProjectManager(request);
@@ -1237,26 +1272,18 @@ public class ProjectActions extends DispatchAction {
             PhaseManager phaseManager = ActionsHelper.createPhaseManager(request, true);
 
             if ("close_phase".equals(action)) {
-                //logger.log(Level.INFO, "switchProjectPhase: " + phaseType.getName() +
-                //        " is in " + phaseStatus.getName() + " state");
                 if (phaseStatus.getName().equals(PhaseStatus.OPEN.getName()) && phaseManager.canEnd(phase)) {
-                    //logger.log(Level.INFO, "switchProjectPhase: " + phaseType.getName() + " is being closed");
                     // Close the phase
                     phaseManager.end(phase, Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
                 } else {
-                    //logger.log(Level.INFO, "switchProjectPhase: " + phaseType.getName() + " cannot be closed");
                     ActionsHelper.addErrorToRequest(request, new ActionMessage(
                             "error.com.cronos.onlinereview.actions.editProject.CannotClosePhase", phaseType.getName()));
                 }
             } else if ("open_phase".equals(action)) {
-                //logger.log(Level.INFO, "switchProjectPhase: " + phaseType.getName() +
-                //        " is in " + phaseStatus.getName() + " state");
                 if (phaseStatus.getName().equals(PhaseStatus.SCHEDULED.getName()) && phaseManager.canStart(phase)) {
-                    //logger.log(Level.INFO, "switchProjectPhase: " + phaseType.getName() + " is being started");
                     // Open the phase
                     phaseManager.start(phase, Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
                 } else {
-                    //logger.log(Level.INFO, "switchProjectPhase: " + phaseType.getName() + " cannot be started");
                     ActionsHelper.addErrorToRequest(request, new ActionMessage(
                             "error.com.cronos.onlinereview.actions.editProject.CannotOpenPhase", phaseType.getName()));
                 }
@@ -1267,7 +1294,6 @@ public class ProjectActions extends DispatchAction {
     /**
      * TODO: Document it
      * Note, that this method assumes that phases are already sorted by the start date, etc.
-     *
      *
      * @param request
      * @param project
@@ -1472,7 +1498,7 @@ public class ProjectActions extends DispatchAction {
 
         // need to do the check timelineNotifictionId exists here
         if (timelineNotificationId == Long.MIN_VALUE) {
-            ActionsHelper.addErrorToRequest(request, 
+            ActionsHelper.addErrorToRequest(request,
             "error.com.cronos.onlinereview.actions.editProject.TimelineNotification.NotFound");
             return;
         }
@@ -1625,9 +1651,9 @@ public class ProjectActions extends DispatchAction {
         // Update all the timeline notifications
         if (project.getProperty("Timeline Notification").equals("On") && !newUsers.isEmpty()) {
         	// Remove duplicated user ids
-        	long[] existUserIds = resourceManager.getNotifications(project.getId(), timelineNotificationId);        	
+        	long[] existUserIds = resourceManager.getNotifications(project.getId(), timelineNotificationId);
         	Set finalUsers = new HashSet(newUsers);
-        	
+
         	for (int i = 0; i < existUserIds.length; i++) {
         		finalUsers.remove(new Long(existUserIds[i]));
         	}
@@ -1664,16 +1690,13 @@ public class ProjectActions extends DispatchAction {
     public ActionForward listProjects(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response)
         throws BaseException {
+        // Remove redirect-after-login attribute (if it exists)
+        AuthorizationHelper.removeLoginRedirect(request);
+        
     	LoggingHelper.logAction(request);
 
-/* TODO: Remove all these logging entries from this method
-        Date currentDate = new Date();
-*/
-        //logger.log(Level.ERROR, "entering listProjects" + dateFormat.format(currentDate));
-        //logger.log(Level.ERROR, "gathering user roles" + dateFormat.format(new Date()));
         // Gather the roles the user has for current request
         AuthorizationHelper.gatherUserRoles(request);
-        //logger.log(Level.ERROR, "got user roles" + dateFormat.format(new Date()));
 
         // Retrieve the value of "scope" parameter
         String scope = request.getParameter("scope");
@@ -1693,16 +1716,11 @@ public class ProjectActions extends DispatchAction {
             return mapping.findForward("all");
         }
 
-        //currentDate = new Date();
-        //logger.log(Level.ERROR, "obtaining projectmanager " + dateFormat.format(currentDate));
-
         // Obtain an instance of Project Manager
         ProjectManager manager = ActionsHelper.createProjectManager(request);
         // This variable will specify the index of active tab on the JSP page
         int activeTab;
         Filter projectsFilter = null;
-        //currentDate = new Date();
-        //logger.log(Level.ERROR, "got projectmanager " + dateFormat.format(currentDate));
 
         // Determine projects displayed and index of the active tab
         // based on the value of the "scope" parameter
@@ -1764,17 +1782,14 @@ public class ProjectActions extends DispatchAction {
         String[][] myRoles = (myProjects) ? new String[projectCategories.length][] : null;
         String[][] myDeliverables = (myProjects) ? new String[projectCategories.length][] : null;
 
-        //currentDate = new Date();
-        //logger.log(Level.ERROR, "fetching listProjects" + dateFormat.format(currentDate));
         // Fetch projects from the database. These projects will require further grouping
         Project[] ungroupedProjects = (projectsFilter != null) ? manager.searchProjects(projectsFilter) :
                 manager.getUserProjects(AuthorizationHelper.getLoggedInUserId(request));
         // Sort fetched projects. Currently sorting is done by projects' names only, in ascending order
         Arrays.sort(ungroupedProjects, new Comparators.ProjectNameComparer());
-        //currentDate = new Date();
-        //logger.log(Level.ERROR, "done fetching listProjects" + dateFormat.format(currentDate));
+
         Resource[] allMyResources = null;
-/*****************************************************************************************************************************************/
+
         if (ungroupedProjects.length != 0 && AuthorizationHelper.isUserLoggedIn(request) && myProjects) {
             Filter filterExtIDname = ResourceFilterBuilder.createExtensionPropertyNameFilter("External Reference ID");
             Filter filterExtIDvalue = ResourceFilterBuilder.createExtensionPropertyValueFilter(
@@ -1785,27 +1800,18 @@ public class ProjectActions extends DispatchAction {
             for (int i = 0; i < ungroupedProjects.length; ++i) {
                 projectFilters.add(new Long(ungroupedProjects[i].getId()));
             }
-        //currentDate = new Date();
-        //logger.log(Level.ERROR, "got project filters: " +  ungroupedProjects.length +" - " + dateFormat.format(currentDate));
 
             Filter filterProjects = new InFilter(ResourceFilterBuilder.PROJECT_ID_FIELD_NAME, projectFilters);
 
             Filter filter = new AndFilter(Arrays.asList(
                     new Filter[] {filterExtIDname, filterExtIDvalue, filterProjects}));
 
-        //currentDate = new Date();
-        //logger.log(Level.ERROR, "begin searchResources" + dateFormat.format(currentDate));
-
             // Obtain an instance of Resource Manager
             ResourceManager resMgr = ActionsHelper.createResourceManager(request);
             // Get all "My" resources for the list of projects
             allMyResources = resMgr.searchResources(filter);
-        //currentDate = new Date();
-        //logger.log(Level.ERROR, "end searchResources" + dateFormat.format(currentDate));
-
         }
-        //currentDate = new Date();
-//logger.log(Level.ERROR, "get phase manager" + dateFormat.format(currentDate));
+
         // Obtain an instance of Phase Manager
         PhaseManager phMgr = ActionsHelper.createPhaseManager(request, false);
 
@@ -1814,18 +1820,10 @@ public class ProjectActions extends DispatchAction {
         for (int i = 0; i < ungroupedProjects.length; ++i) {
             allProjectIds[i] = ungroupedProjects[i].getId();
         }
-        //currentDate = new Date();
-        //logger.log(Level.ERROR, "getting phases phase manager" + dateFormat.format(currentDate));
         com.topcoder.project.phases.Project[] phProjects = phMgr.getPhases(allProjectIds);
-        //currentDate = new Date();
-        //logger.log(Level.ERROR, "got phases phase manager" + dateFormat.format(currentDate));
-/*****************************************************************************************************************************************/
-        //currentDate = new Date();
-        //logger.log(Level.ERROR, "get message resources" + dateFormat.format(currentDate));
+
         // Message Resources to be used for this request
         MessageResources messages = getResources(request);
-        //currentDate = new Date();
-        //logger.log(Level.ERROR, "got message resources" + dateFormat.format(currentDate));
 
         for (int i = 0; i < projectCategories.length; ++i) {
             // Count number of projects in this category
@@ -1918,8 +1916,6 @@ public class ProjectActions extends DispatchAction {
             categoryIconNames[i] = ConfigHelper.getProjectCategoryIconNameSm(projectCategories[i].getName());
         }
 
-        //currentDate = new Date();
-        //logger.log(Level.ERROR, "before ungrouped " + dateFormat.format(currentDate));
         if (ungroupedProjects.length != 0 && myProjects) {
             Deliverable[] allMyDeliverables = getDeliverables(
                     ActionsHelper.createDeliverableManager(request), projects, phases, myResources);
@@ -1951,8 +1947,6 @@ public class ProjectActions extends DispatchAction {
             }
             totalProjectsCount += typeCounts[i];
         }
-        //currentDate = new Date();
-        //logger.log(Level.ERROR, "after count " + dateFormat.format(currentDate));
 
         // Place all collected data into the request as attributes
         request.setAttribute("projects", projects);
@@ -1972,9 +1966,6 @@ public class ProjectActions extends DispatchAction {
             request.setAttribute("myRoles", myRoles);
             request.setAttribute("myDeliverables", myDeliverables);
         }
-
-        //currentDate = new Date();
-        //logger.log(Level.ERROR, "leaving list projects " + dateFormat.format(currentDate));
 
         // Signal about successfull execution of the Action
         return mapping.findForward(Constants.SUCCESS_FORWARD_NAME);

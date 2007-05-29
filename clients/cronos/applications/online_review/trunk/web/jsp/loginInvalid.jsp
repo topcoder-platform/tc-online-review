@@ -1,5 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ page language="java" isELIgnored="false" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page import="com.topcoder.shared.util.ApplicationServer" %>
 <%@ taglib prefix="html" uri="/tags/struts-html" %>
 <%@ taglib prefix="bean" uri="/tags/struts-bean" %>
@@ -58,6 +59,12 @@
 
 					<html:form action="/actions/Login" focus="userName">
 						<html:hidden property="method" value="login" />
+
+						<c:set var="referer" value="${orfn:getSafeRedirect(pageContext.request)}" />
+						<c:if test="${not empty referer}">
+							<html:hidden property="forwardUrl" value="${referer}" />
+						</c:if>
+
 						<table class="stat" cellpadding="0" cellspacing="0" width="50%">
 							<tr>
 								<td class="title" colspan="2"><bean:message key="login.formLogin.title" /></td>

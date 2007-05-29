@@ -15,8 +15,8 @@
 	<classpathentry exported="true" kind="lib" path="lib/tcs/database_abstraction/1.1/database_abstraction.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/tcs/data_validation/1.0/data_validation.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/tcs/db_connection_factory/1.0/db_connection_factory.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/tcs/deliverable_management/1.0.1/deliverable_management.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/tcs/deliverable_management_persistence/1.0.1/deliverable_management_persistence.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/tcs/deliverable_management/1.0.1/deliverable_management.jar" sourcepath="/deliverable_management/src/java/main"/>
+	<classpathentry exported="true" kind="lib" path="lib/tcs/deliverable_management_persistence/1.0.1/deliverable_management_persistence.jar" sourcepath="/deliverables_management_persistence/src/java/main"/>
 	<classpathentry exported="true" kind="lib" path="lib/tcs/document_generator/2.0/document_generator.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/tcs/email_engine/3.0/email_engine.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/tcs/file_system_server/1.0/file_system_server.jar"/>
@@ -29,12 +29,12 @@
 	<classpathentry exported="true" kind="lib" path="lib/tcs/object_factory/2.0.1/object_factory.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/tcs/online_review_ajax_support/1.0.1/online_review_ajax_support.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/tcs/online_review_deliverables/1.0/online_review_deliverables.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/tcs/online_review_login/1.0/online_review_login.jar"/>
-	<classpathentry kind="lib" path="lib/tcs/online_review_phases/1.0.4/online_review_phases.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/tcs/online_review_login/1.0.1/online_review_login.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/tcs/online_review_phases/1.0.4/online_review_phases.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/tcs/phase_management/1.0.3/phase_management.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/tcs/phase_management_persistence/1.0/phase_management_persistence.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/tcs/project_management/1.0/project_management.jar" sourcepath="/project_management/src/java/main"/>
-	<classpathentry exported="true" kind="lib" path="lib/tcs/project_management_persistence/1.0/project_management_persistence.jar" sourcepath="/project_management_persistence/src/java/main"/>
+	<classpathentry exported="true" kind="lib" path="lib/tcs/project_management/1.0/project_management.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/tcs/project_management_persistence/1.0/project_management_persistence.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/tcs/project_phases/2.0/project_phases.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/tcs/project_phase_template/1.0/project_phase_template.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/tcs/resource_management/1.0.1/resource_management.jar"/>
@@ -51,7 +51,7 @@
 	<classpathentry exported="true" kind="lib" path="lib/tcs/security_manager/1.1/security_manager.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/tcs/simple_cache/2.0/simple_cache.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/tcs/typesafe_enum/1.0/typesafe_enum.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/tcs/user_project_data_store/1.0.1/user_project_data_store.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/tcs/user_project_data_store/1.0.1/user_project_data_store.jar" sourcepath="/user_project_data_store/src/java/main"/>
 	<classpathentry exported="true" kind="lib" path="lib/tcs/weighted_calculator/1.0/weighted_calculator.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/tcs/workdays/1.0/workdays.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/tcs/shared.jar"/>
