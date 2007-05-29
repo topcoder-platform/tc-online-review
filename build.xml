@@ -548,7 +548,7 @@
 
     <target name="dist" depends="clean, update_left_nav, compile">
         <mkdir dir="${build_distdir}" />
-
+    	<property name="component.war" value="${build_distdir}/${distfilename}.war" />
         <delete file="${component.war}" failonerror="false" />
 
         <war destfile="${component.war}" webxml="${configdir}/WEB-INF/web.xml" duplicate="fail">
@@ -639,7 +639,6 @@ Note: The security manager that comes with the app may not be compatible with th
     </target>
 
     <target name="deploy-common">
-    	<property name="component.war" value="${build_distdir}/${distfilename}.war" />
         <mkdir dir="${deploy-dir}" />
         <unwar src="${component.war}" dest="${deploy-dir}" />
         <move todir="${deploy-dir}/../../lib" overwrite="true" verbose="true">
