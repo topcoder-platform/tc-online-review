@@ -443,11 +443,9 @@ public class ProjectReviewActions extends DispatchAction {
 
         // Verify that user has the permission to perform aggregation
         if (!AuthorizationHelper.hasUserPermission(request, Constants.PERFORM_AGGREGATION_PERM_NAME)) {
-            return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
-                    Constants.PERFORM_AGGREGATION_PERM_NAME, "Error.NoPermission", Boolean.FALSE);
+            return ActionsHelper.produceErrorReport(
+                    mapping, getResources(request), request, Constants.PERFORM_AGGREGATION_PERM_NAME, "Error.NoPermission");
         }
-        // At this point, redirect-after-login attribute should be removed (if it exists)
-        AuthorizationHelper.removeLoginRedirect(request);
 
         // Retrieve a review to edit
         Review review = verification.getReview();
@@ -460,12 +458,12 @@ public class ProjectReviewActions extends DispatchAction {
         // Verify that the scorecard template for this review is of correct type
         if (!scorecardTemplate.getScorecardType().getName().equalsIgnoreCase("Review")) {
             return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
-                    Constants.PERFORM_AGGREGATION_PERM_NAME, "Error.ReviewTypeIncorrect", null);
+                    Constants.PERFORM_AGGREGATION_PERM_NAME, "Error.ReviewTypeIncorrect");
         }
         // Verify that review has not been committed yet
         if (review.isCommitted()) {
             return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
-                    Constants.PERFORM_AGGREGATION_PERM_NAME, "Error.ReviewCommitted", null);
+                    Constants.PERFORM_AGGREGATION_PERM_NAME, "Error.ReviewCommitted");
         }
 
         // Retrieve some basic aggregation info and store it into the request
@@ -589,11 +587,9 @@ public class ProjectReviewActions extends DispatchAction {
 
         // Verify that user has the permission to perform aggregation
         if (!AuthorizationHelper.hasUserPermission(request, Constants.PERFORM_AGGREGATION_PERM_NAME)) {
-            return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
-                    Constants.PERFORM_AGGREGATION_PERM_NAME, "Error.NoPermission", Boolean.TRUE);
+            return ActionsHelper.produceErrorReport(
+                    mapping, getResources(request), request, Constants.PERFORM_AGGREGATION_PERM_NAME, "Error.NoPermission");
         }
-        // At this point, redirect-after-login attribute should be removed (if it exists)
-        AuthorizationHelper.removeLoginRedirect(request);
 
         // Retrieve a review to save
         Review review = verification.getReview();
@@ -606,12 +602,12 @@ public class ProjectReviewActions extends DispatchAction {
         // Verify that the scorecard template for this review is of correct type
         if (!scorecardTemplate.getScorecardType().getName().equalsIgnoreCase("Review")) {
             return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
-                    Constants.PERFORM_AGGREGATION_PERM_NAME, "Error.ReviewTypeIncorrect", null);
+                    Constants.PERFORM_AGGREGATION_PERM_NAME, "Error.ReviewTypeIncorrect");
         }
         // Verify that review has not been committed yet
         if (review.isCommitted()) {
             return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
-                    Constants.PERFORM_AGGREGATION_PERM_NAME, "Error.ReviewCommitted", null);
+                    Constants.PERFORM_AGGREGATION_PERM_NAME, "Error.ReviewCommitted");
         }
 
         // Get an array of all phases for current project
@@ -622,7 +618,7 @@ public class ProjectReviewActions extends DispatchAction {
         // Check that Aggregation phase is really active (open)
         if (phase == null) {
             return ActionsHelper.produceErrorReport(mapping, getResources(request),
-                    request, Constants.PERFORM_AGGREGATION_PERM_NAME, "Error.IncorrectPhase", null);
+                    request, Constants.PERFORM_AGGREGATION_PERM_NAME, "Error.IncorrectPhase");
         }
 
         // This variable determines if 'Save and Mark Complete' button has been clicked
@@ -770,80 +766,77 @@ public class ProjectReviewActions extends DispatchAction {
         // If any error has occured, return action forward contained in the result bean
         if (!verification.isSuccessful()) {
             // Need to support view aggregation just by specifying the project id
-            verification = ActionsHelper.checkForCorrectProjectId(
-                    mapping, getResources(request), request, Constants.VIEW_AGGREGATION_PERM_NAME, false);
+            verification = ActionsHelper.checkForCorrectProjectId(mapping, getResources(request), request, Constants.VIEW_AGGREGATION_PERM_NAME);
             if (!verification.isSuccessful()) {
                 return verification.getForward();
+            } else {
+                // Obtain an instance of Resource Manager
+                ResourceManager resMgr = ActionsHelper.createResourceManager(request);
+                // Get the list of all possible resource roles
+                ResourceRole[] allResourceRoles = resMgr.getAllResourceRoles();
+
+                // Create filters to select Aggregators for the project
+                Filter filterProject = ResourceFilterBuilder.createProjectIdFilter(verification.getProject().getId());
+                Filter filterRole = ResourceFilterBuilder.createResourceRoleIdFilter(
+                        ActionsHelper.findResourceRoleByName(allResourceRoles, Constants.AGGREGATOR_ROLE_NAME).getId());
+                // Combine the upper two filter
+                Filter filterAggregators = new AndFilter(filterProject, filterRole);
+                // Fetch all Aggregators for the project
+                Resource[] aggregators = resMgr.searchResources(filterAggregators);
+
+                // If the project does not have any Aggregators,
+                // there cannot be any Aggregation worksheets. Signal about the error to the user
+                if (aggregators.length == 0) {
+                    return ActionsHelper.produceErrorReport(mapping, messages, request,
+                            Constants.VIEW_AGGREGATION_PERM_NAME, "Error.NoAggregations");
+                }
+
+                List resourceIds = new ArrayList();
+
+                for (int i = 0; i < aggregators.length; ++i) {
+                    resourceIds.add(new Long(aggregators[i].getId()));
+                }
+
+                Filter filterReviewers = new InFilter("reviewer", resourceIds);
+                Filter filterCommitted = new EqualToFilter("committed", new Integer(1));
+                // Build final combined filter
+                Filter filter = new AndFilter(filterReviewers, filterCommitted);
+                // Obtain an instance of Review Manager
+                ReviewManager reviewMgr = ActionsHelper.createReviewManager(request);
+                // Fetch all reviews (Aggregations only) for the project
+                Review[] reviews = reviewMgr.searchReviews(filter, true);
+
+                if (reviews.length == 0) {
+                    return ActionsHelper.produceErrorReport(mapping, messages, request,
+                            Constants.VIEW_AGGREGATION_PERM_NAME, "Error.NoAggregations");
+                }
+
+                // Sort reviews in array to find the latest Aggregation worksheet for the project
+                Arrays.sort(reviews, new Comparators.ReviewComparer());
+                // Fetch the most recent review from the array
+                Review review = reviews[reviews.length - 1];
+
+                verification.setReview(review);
+                // Place the review object as attribute in the request
+                request.setAttribute("review", review);
+
+                // Obtain an instance of Deliverable Manager
+                UploadManager upMgr = ActionsHelper.createUploadManager(request);
+                // Get Submission by its id
+                Submission submission = upMgr.getSubmission(review.getSubmission());
+
+                // Store Submission object in the result bean
+                verification.setSubmission(submission);
+                // Place the id of the submission as attribute in the request
+                request.setAttribute("sid", new Long(submission.getId()));
             }
-
-            // Obtain an instance of Resource Manager
-            ResourceManager resMgr = ActionsHelper.createResourceManager(request);
-            // Get the list of all possible resource roles
-            ResourceRole[] allResourceRoles = resMgr.getAllResourceRoles();
-
-            // Create filters to select Aggregators for the project
-            Filter filterProject = ResourceFilterBuilder.createProjectIdFilter(verification.getProject().getId());
-            Filter filterRole = ResourceFilterBuilder.createResourceRoleIdFilter(
-                    ActionsHelper.findResourceRoleByName(allResourceRoles, Constants.AGGREGATOR_ROLE_NAME).getId());
-            // Combine the upper two filter
-            Filter filterAggregators = new AndFilter(filterProject, filterRole);
-            // Fetch all Aggregators for the project
-            Resource[] aggregators = resMgr.searchResources(filterAggregators);
-
-            // If the project does not have any Aggregators,
-            // there cannot be any Aggregation worksheets. Signal about the error to the user
-            if (aggregators.length == 0) {
-                return ActionsHelper.produceErrorReport(mapping, messages, request,
-                        Constants.VIEW_AGGREGATION_PERM_NAME, "Error.NoAggregations", null);
-            }
-
-            List resourceIds = new ArrayList();
-
-            for (int i = 0; i < aggregators.length; ++i) {
-                resourceIds.add(new Long(aggregators[i].getId()));
-            }
-
-            Filter filterReviewers = new InFilter("reviewer", resourceIds);
-            Filter filterCommitted = new EqualToFilter("committed", new Integer(1));
-            // Build final combined filter
-            Filter filter = new AndFilter(filterReviewers, filterCommitted);
-            // Obtain an instance of Review Manager
-            ReviewManager reviewMgr = ActionsHelper.createReviewManager(request);
-            // Fetch all reviews (Aggregations only) for the project
-            Review[] reviews = reviewMgr.searchReviews(filter, true);
-
-            if (reviews.length == 0) {
-                return ActionsHelper.produceErrorReport(mapping, messages, request,
-                        Constants.VIEW_AGGREGATION_PERM_NAME, "Error.NoAggregations", null);
-            }
-
-            // Sort reviews in array to find the latest Aggregation worksheet for the project
-            Arrays.sort(reviews, new Comparators.ReviewComparer());
-            // Fetch the most recent review from the array
-            Review review = reviews[reviews.length - 1];
-
-            verification.setReview(review);
-            // Place the review object as attribute in the request
-            request.setAttribute("review", review);
-
-            // Obtain an instance of Deliverable Manager
-            UploadManager upMgr = ActionsHelper.createUploadManager(request);
-            // Get Submission by its id
-            Submission submission = upMgr.getSubmission(review.getSubmission());
-
-            // Store Submission object in the result bean
-            verification.setSubmission(submission);
-            // Place the id of the submission as attribute in the request
-            request.setAttribute("sid", new Long(submission.getId()));
         }
 
         // Verify that user has the permission to view aggregation
         if (!AuthorizationHelper.hasUserPermission(request, Constants.VIEW_AGGREGATION_PERM_NAME)) {
-            return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
-                    Constants.VIEW_AGGREGATION_PERM_NAME, "Error.NoPermission", Boolean.FALSE);
+            return ActionsHelper.produceErrorReport(
+                    mapping, getResources(request), request, Constants.VIEW_AGGREGATION_PERM_NAME, "Error.NoPermission");
         }
-        // At this point, redirect-after-login attribute should be removed (if it exists)
-        AuthorizationHelper.removeLoginRedirect(request);
 
         // Retrieve a review (aggregation) to view
         Review review = verification.getReview();
@@ -856,12 +849,12 @@ public class ProjectReviewActions extends DispatchAction {
         // Verify that the scorecard template for this review is of correct type
         if (!scorecardTemplate.getScorecardType().getName().equalsIgnoreCase("Review")) {
             return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
-                    Constants.VIEW_AGGREGATION_PERM_NAME, "Error.ReviewTypeIncorrect", null);
+                    Constants.VIEW_AGGREGATION_PERM_NAME, "Error.ReviewTypeIncorrect");
         }
         // Make sure that the user is trying to view Aggregation Review, not Aggregation
         if (!review.isCommitted()) {
             return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
-                    Constants.VIEW_AGGREGATION_PERM_NAME, "Error.ReviewNotCommitted", null);
+                    Constants.VIEW_AGGREGATION_PERM_NAME, "Error.ReviewNotCommitted");
         }
 
         // Retrieve some basic aggregation info and store it into the request
@@ -911,11 +904,9 @@ public class ProjectReviewActions extends DispatchAction {
         // Verify that user has the permission to perform aggregation review
         if (!AuthorizationHelper.hasUserPermission(request, Constants.PERFORM_AGGREG_REVIEW_PERM_NAME)) {
         	log.log(Level.DEBUG, "the user doesn't the permission: " + Constants.PERFORM_AGGREG_REVIEW_PERM_NAME);
-            return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
-                    Constants.PERFORM_AGGREG_REVIEW_PERM_NAME, "Error.NoPermission", Boolean.TRUE);
+            return ActionsHelper.produceErrorReport(
+                    mapping, getResources(request), request, Constants.PERFORM_AGGREG_REVIEW_PERM_NAME, "Error.NoPermission");
         }
-        // At this point, redirect-after-login attribute should be removed (if it exists)
-        AuthorizationHelper.removeLoginRedirect(request);
 
         // Retrieve a review to edit
         Review review = verification.getReview();
@@ -929,13 +920,13 @@ public class ProjectReviewActions extends DispatchAction {
         if (!scorecardTemplate.getScorecardType().getName().equalsIgnoreCase("Review")) {
         	log.log(Level.DEBUG, "failed Verify that the scorecard template for this review is of correct type");
             return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
-                    Constants.PERFORM_AGGREG_REVIEW_PERM_NAME, "Error.ReviewTypeIncorrect", null);
+                    Constants.PERFORM_AGGREG_REVIEW_PERM_NAME, "Error.ReviewTypeIncorrect");
         }
         // Verify that Aggregation has been committed
         if (!review.isCommitted()) {
         	log.log(Level.DEBUG, "failed isCommited");
             return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
-                    Constants.PERFORM_AGGREG_REVIEW_PERM_NAME, "Error.AggregationNotCommitted", null);
+                    Constants.PERFORM_AGGREG_REVIEW_PERM_NAME, "Error.AggregationNotCommitted");
         }
 
         /*
@@ -975,12 +966,12 @@ public class ProjectReviewActions extends DispatchAction {
             if (AuthorizationHelper.hasUserRole(request, Constants.AGGREGATOR_ROLE_NAME)) {
             	log.log(Level.DEBUG, "failed If \"my\" comment has not been found, then the user is probably an Aggregator");
                 return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
-                        Constants.PERFORM_AGGREG_REVIEW_PERM_NAME, "Error.CannotReviewOwnAggregation", null);
+                        Constants.PERFORM_AGGREG_REVIEW_PERM_NAME, "Error.CannotReviewOwnAggregation");
             } else {
                 // Otherwise, the user does not have permission to edit this review
             	log.log(Level.DEBUG, "failed Otherwise, the user does not have permission to edit this review");
                 return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
-                        Constants.PERFORM_AGGREG_REVIEW_PERM_NAME, "Error.NoPermission", Boolean.FALSE);
+                        Constants.PERFORM_AGGREG_REVIEW_PERM_NAME, "Error.NoPermission");
             }
         }
 
@@ -989,7 +980,7 @@ public class ProjectReviewActions extends DispatchAction {
         if ("Approved".equalsIgnoreCase(myExtaInfo) || "Rejected".equalsIgnoreCase(myExtaInfo)) {
         	log.log(Level.DEBUG, "failed Do actual verificartion. Values \"Approved\" and \"Rejected\" denote committed Aggregation Review");
             return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
-                    Constants.PERFORM_AGGREG_REVIEW_PERM_NAME, "Error.ReviewCommitted", null);
+                    Constants.PERFORM_AGGREG_REVIEW_PERM_NAME, "Error.ReviewCommitted");
         }
 
         boolean isSubmitter = false;
@@ -1105,11 +1096,9 @@ public class ProjectReviewActions extends DispatchAction {
 
         // Verify that user has the permission to perform aggregation review
         if (!AuthorizationHelper.hasUserPermission(request, Constants.PERFORM_AGGREG_REVIEW_PERM_NAME)) {
-            return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
-                    Constants.PERFORM_AGGREG_REVIEW_PERM_NAME, "Error.NoPermission", Boolean.TRUE);
+            return ActionsHelper.produceErrorReport(
+                    mapping, getResources(request), request, Constants.PERFORM_AGGREG_REVIEW_PERM_NAME, "Error.NoPermission");
         }
-        // At this point, redirect-after-login attribute should be removed (if it exists)
-        AuthorizationHelper.removeLoginRedirect(request);
 
         // Retrieve a review to save
         Review review = verification.getReview();
@@ -1122,12 +1111,12 @@ public class ProjectReviewActions extends DispatchAction {
         // Verify that the scorecard template for this review is of correct type
         if (!scorecardTemplate.getScorecardType().getName().equalsIgnoreCase("Review")) {
             return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
-                    Constants.PERFORM_AGGREG_REVIEW_PERM_NAME, "Error.ReviewTypeIncorrect", null);
+                    Constants.PERFORM_AGGREG_REVIEW_PERM_NAME, "Error.ReviewTypeIncorrect");
         }
         // Verify that the user is attempting to save Aggregation Review, not Aggregation
         if (!review.isCommitted()) {
             return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
-                    Constants.PERFORM_AGGREG_REVIEW_PERM_NAME, "Error.AggregationNotCommitted", null);
+                    Constants.PERFORM_AGGREG_REVIEW_PERM_NAME, "Error.AggregationNotCommitted");
         }
 
         /*
@@ -1157,10 +1146,10 @@ public class ProjectReviewActions extends DispatchAction {
         if (myReviewComment == null) {
             if (AuthorizationHelper.hasUserRole(request, Constants.AGGREGATOR_ROLE_NAME)) {
                 return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
-                        Constants.PERFORM_AGGREG_REVIEW_PERM_NAME, "Error.CannotReviewOwnAggregation", null);
+                        Constants.PERFORM_AGGREG_REVIEW_PERM_NAME, "Error.CannotReviewOwnAggregation");
             } else {
                 return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
-                        Constants.PERFORM_AGGREG_REVIEW_PERM_NAME, "Error.NoPermission", Boolean.TRUE);
+                        Constants.PERFORM_AGGREG_REVIEW_PERM_NAME, "Error.NoPermission");
             }
         }
 
@@ -1168,7 +1157,7 @@ public class ProjectReviewActions extends DispatchAction {
         String myExtaInfo = (String) myReviewComment.getExtraInfo();
         if ("Approved".equalsIgnoreCase(myExtaInfo) || "Rejected".equalsIgnoreCase(myExtaInfo)) {
             return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
-                    Constants.PERFORM_AGGREG_REVIEW_PERM_NAME, "Error.ReviewCommitted", null);
+                    Constants.PERFORM_AGGREG_REVIEW_PERM_NAME, "Error.ReviewCommitted");
         }
 
         // This variable determines if 'Save and Mark Complete' button has been clicked
@@ -1323,11 +1312,9 @@ public class ProjectReviewActions extends DispatchAction {
 
         // Verify that user has the permission to view aggregation review
         if (!AuthorizationHelper.hasUserPermission(request, Constants.VIEW_AGGREG_REVIEW_PERM_NAME)) {
-            return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
-                    Constants.VIEW_AGGREG_REVIEW_PERM_NAME, "Error.NoPermission", Boolean.FALSE);
+            return ActionsHelper.produceErrorReport(
+                    mapping, getResources(request), request, Constants.VIEW_AGGREG_REVIEW_PERM_NAME, "Error.NoPermission");
         }
-        // At this point, redirect-after-login attribute should be removed (if it exists)
-        AuthorizationHelper.removeLoginRedirect(request);
 
         // Retrieve a review (aggregation) to view
         Review review = verification.getReview();
@@ -1340,12 +1327,12 @@ public class ProjectReviewActions extends DispatchAction {
         // Verify that the scorecard template for this review is of correct type
         if (!scorecardTemplate.getScorecardType().getName().equalsIgnoreCase("Review")) {
             return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
-                    Constants.VIEW_AGGREG_REVIEW_PERM_NAME, "Error.ReviewTypeIncorrect", null);
+                    Constants.VIEW_AGGREG_REVIEW_PERM_NAME, "Error.ReviewTypeIncorrect");
         }
         // Make sure that the user is not trying to view unfinished review
         if (!review.isCommitted()) {
             return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
-                    Constants.VIEW_AGGREG_REVIEW_PERM_NAME, "Error.AggregationNotCommitted", null);
+                    Constants.VIEW_AGGREG_REVIEW_PERM_NAME, "Error.AggregationNotCommitted");
         }
 
         // Verify that Aggregation Review has been committed by all users who should have done that
@@ -1354,7 +1341,7 @@ public class ProjectReviewActions extends DispatchAction {
             String status = (String) comment.getExtraInfo();
             if (!("Approved".equalsIgnoreCase(status) || "Rejected".equalsIgnoreCase(status))) {
                 return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
-                        Constants.VIEW_AGGREG_REVIEW_PERM_NAME, "Error.AggregationReviewNotCommitted", null);
+                        Constants.VIEW_AGGREG_REVIEW_PERM_NAME, "Error.AggregationReviewNotCommitted");
             }
         }
 
@@ -1427,11 +1414,9 @@ public class ProjectReviewActions extends DispatchAction {
 
         // Verify that user has the permission to perform final review
         if (!AuthorizationHelper.hasUserPermission(request, Constants.PERFORM_FINAL_REVIEW_PERM_NAME)) {
-            return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
-                    Constants.PERFORM_FINAL_REVIEW_PERM_NAME, "Error.NoPermission", Boolean.FALSE);
+            return ActionsHelper.produceErrorReport(
+                    mapping, getResources(request), request, Constants.PERFORM_FINAL_REVIEW_PERM_NAME, "Error.NoPermission");
         }
-        // At this point, redirect-after-login attribute should be removed (if it exists)
-        AuthorizationHelper.removeLoginRedirect(request);
 
         // Retrieve a review to edit
         Review review = verification.getReview();
@@ -1444,12 +1429,12 @@ public class ProjectReviewActions extends DispatchAction {
         // Verify that the scorecard template for this review is of correct type
         if (!scorecardTemplate.getScorecardType().getName().equalsIgnoreCase("Review")) {
             return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
-                    Constants.PERFORM_FINAL_REVIEW_PERM_NAME, "Error.ReviewTypeIncorrect", null);
+                    Constants.PERFORM_FINAL_REVIEW_PERM_NAME, "Error.ReviewTypeIncorrect");
         }
         // Verify that review has not been committed yet
         if (review.isCommitted()) {
             return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
-                    Constants.PERFORM_FINAL_REVIEW_PERM_NAME, "Error.ReviewCommitted", null);
+                    Constants.PERFORM_FINAL_REVIEW_PERM_NAME, "Error.ReviewCommitted");
         }
 
         // Retrieve some basic aggregation info and store it into the request
@@ -1586,11 +1571,9 @@ public class ProjectReviewActions extends DispatchAction {
 
         // Verify that user has the permission to perform final review
         if (!AuthorizationHelper.hasUserPermission(request, Constants.PERFORM_FINAL_REVIEW_PERM_NAME)) {
-            return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
-                    Constants.PERFORM_FINAL_REVIEW_PERM_NAME, "Error.NoPermission", Boolean.TRUE);
+            return ActionsHelper.produceErrorReport(
+                    mapping, getResources(request), request, Constants.PERFORM_FINAL_REVIEW_PERM_NAME, "Error.NoPermission");
         }
-        // At this point, redirect-after-login attribute should be removed (if it exists)
-        AuthorizationHelper.removeLoginRedirect(request);
 
         // Retrieve a review to save
         Review review = verification.getReview();
@@ -1603,12 +1586,12 @@ public class ProjectReviewActions extends DispatchAction {
         // Verify that the scorecard template for this review is of correct type
         if (!scorecardTemplate.getScorecardType().getName().equalsIgnoreCase("Review")) {
             return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
-                    Constants.PERFORM_FINAL_REVIEW_PERM_NAME, "Error.ReviewTypeIncorrect", null);
+                    Constants.PERFORM_FINAL_REVIEW_PERM_NAME, "Error.ReviewTypeIncorrect");
         }
         // Verify that review has not been committed yet
         if (review.isCommitted()) {
             return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
-                    Constants.PERFORM_FINAL_REVIEW_PERM_NAME, "Error.ReviewCommitted", null);
+                    Constants.PERFORM_FINAL_REVIEW_PERM_NAME, "Error.ReviewCommitted");
         }
 
         // Get an array of all phases for current project
@@ -1619,7 +1602,7 @@ public class ProjectReviewActions extends DispatchAction {
         // Check that Final Review Phase is really active (open)
         if (phase == null) {
             return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
-                    Constants.PERFORM_FINAL_REVIEW_PERM_NAME, "Error.IncorrectPhase", null);
+                    Constants.PERFORM_FINAL_REVIEW_PERM_NAME, "Error.IncorrectPhase");
         }
 
         // This variable determines if 'Save and Mark Complete' button has been clicked
@@ -1783,11 +1766,9 @@ public class ProjectReviewActions extends DispatchAction {
 
         // Verify that user has the permission to view final review
         if (!AuthorizationHelper.hasUserPermission(request, Constants.VIEW_FINAL_REVIEW_PERM_NAME)) {
-            return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
-                    Constants.VIEW_FINAL_REVIEW_PERM_NAME, "Error.NoPermission", Boolean.FALSE);
+            return ActionsHelper.produceErrorReport(
+                    mapping, getResources(request), request, Constants.VIEW_FINAL_REVIEW_PERM_NAME, "Error.NoPermission");
         }
-        // At this point, redirect-after-login attribute should be removed (if it exists)
-        AuthorizationHelper.removeLoginRedirect(request);
 
         // Retrieve a review to view
         Review review = verification.getReview();
@@ -1800,12 +1781,12 @@ public class ProjectReviewActions extends DispatchAction {
         // Verify that the scorecard template for this review is of correct type
         if (!scorecardTemplate.getScorecardType().getName().equalsIgnoreCase("Review")) {
             return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
-                    Constants.VIEW_FINAL_REVIEW_PERM_NAME, "Error.ReviewTypeIncorrect", null);
+                    Constants.VIEW_FINAL_REVIEW_PERM_NAME, "Error.ReviewTypeIncorrect");
         }
         // Make sure that the user is not trying to view unfinished review
         if (!review.isCommitted()) {
             return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
-                    Constants.VIEW_FINAL_REVIEW_PERM_NAME, "Error.ReviewNotCommitted", null);
+                    Constants.VIEW_FINAL_REVIEW_PERM_NAME, "Error.ReviewNotCommitted");
         }
 
         // Retrieve some basic aggregation info and store it into the request
@@ -1990,10 +1971,8 @@ public class ProjectReviewActions extends DispatchAction {
         // Verify that currently logged in user has enough rights to proceed with the action
         if (!AuthorizationHelper.hasUserPermission(request, Constants.VIEW_COMPOS_SCORECARD_PERM_NAME)) {
             return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
-                    Constants.VIEW_COMPOS_SCORECARD_PERM_NAME, "Error.NoPermission", Boolean.FALSE);
+                    Constants.VIEW_COMPOS_SCORECARD_PERM_NAME, "Error.NoPermission");
         }
-        // At this point, redirect-after-login attribute should be removed (if it exists)
-        AuthorizationHelper.removeLoginRedirect(request);
 
         // Get current project
         Project project = verification.getProject();
@@ -2003,7 +1982,7 @@ public class ProjectReviewActions extends DispatchAction {
 
         if (!ActionsHelper.isAfterAppealsResponse(phases)) {
             return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
-                    Constants.VIEW_COMPOS_SCORECARD_PERM_NAME, "Error.CompositeScorecardWrongStage", null);
+                    Constants.VIEW_COMPOS_SCORECARD_PERM_NAME, "Error.CompositeScorecardWrongStage");
         }
 
         // Get the Review phase
@@ -2027,7 +2006,7 @@ public class ProjectReviewActions extends DispatchAction {
 
         if (reviewers.length == 0) {
             return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
-                    Constants.VIEW_COMPOS_SCORECARD_PERM_NAME, "Error.InternalError", null);
+                    Constants.VIEW_COMPOS_SCORECARD_PERM_NAME, "Error.InternalError");
         }
 
         List reviewerIds = new ArrayList();
@@ -2053,7 +2032,7 @@ public class ProjectReviewActions extends DispatchAction {
 
         if (reviews.length != reviewers.length) {
             return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
-                    Constants.VIEW_COMPOS_SCORECARD_PERM_NAME, "Error.CompositeScorecardIsNotReady", null);
+                    Constants.VIEW_COMPOS_SCORECARD_PERM_NAME, "Error.CompositeScorecardIsNotReady");
         }
 
         // Verify that number of items in every review scorecard
@@ -2061,7 +2040,7 @@ public class ProjectReviewActions extends DispatchAction {
         for (int i = 0; i < reviews.length; ++i) {
             if (reviews[i].getNumberOfItems() != questionsCount) {
                 return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
-                        Constants.VIEW_COMPOS_SCORECARD_PERM_NAME, "Error.InternalError", null);
+                        Constants.VIEW_COMPOS_SCORECARD_PERM_NAME, "Error.InternalError");
             }
         }
 
@@ -2093,7 +2072,7 @@ public class ProjectReviewActions extends DispatchAction {
 
             if (reviewer == null) {
                 return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
-                        Constants.VIEW_COMPOS_SCORECARD_PERM_NAME, "Error.InternalError", null);
+                        Constants.VIEW_COMPOS_SCORECARD_PERM_NAME, "Error.InternalError");
             }
 
             authors[i] = Long.parseLong((String) reviewer.getProperty("External Reference ID"));
@@ -2179,7 +2158,7 @@ public class ProjectReviewActions extends DispatchAction {
         String sidParam = request.getParameter("sid");
         if (sidParam == null || sidParam.trim().length() == 0) {
             result.setForward(ActionsHelper.produceErrorReport(
-                    mapping, getResources(request), request, permission, "Error.SubmissionIdNotSpecified", null));
+                    mapping, getResources(request), request, permission, "Error.SubmissionIdNotSpecified"));
             // Return the result of the check
             return result;
         }
@@ -2191,7 +2170,7 @@ public class ProjectReviewActions extends DispatchAction {
             sid = Long.parseLong(sidParam, 10);
         } catch (NumberFormatException e) {
             result.setForward(ActionsHelper.produceErrorReport(
-                    mapping, getResources(request), request, permission, "Error.SubmissionNotFound", null));
+                    mapping, getResources(request), request, permission, "Error.SubmissionNotFound"));
             // Return the result of the check
             return result;
         }
@@ -2203,7 +2182,7 @@ public class ProjectReviewActions extends DispatchAction {
         // Verify that submission with specified ID exists
         if (submission == null) {
             result.setForward(ActionsHelper.produceErrorReport(
-                    mapping, getResources(request), request, permission, "Error.SubmissionNotFound", null));
+                    mapping, getResources(request), request, permission, "Error.SubmissionNotFound"));
             // Return the result of the check
             return result;
         }
@@ -2261,7 +2240,7 @@ public class ProjectReviewActions extends DispatchAction {
         String ridParam = request.getParameter("rid");
         if (ridParam == null || ridParam.trim().length() == 0) {
             result.setForward(ActionsHelper.produceErrorReport(
-                    mapping, getResources(request), request, permission, "Error.ReviewIdNotSpecified", null));
+                    mapping, getResources(request), request, permission, "Error.ReviewIdNotSpecified"));
             // Return the result of the check
             return result;
         }
@@ -2273,7 +2252,7 @@ public class ProjectReviewActions extends DispatchAction {
             rid = Long.parseLong(ridParam, 10);
         } catch (NumberFormatException e) {
             result.setForward(ActionsHelper.produceErrorReport(
-                    mapping, getResources(request), request, permission, "Error.ReviewNotFound", null));
+                    mapping, getResources(request), request, permission, "Error.ReviewNotFound"));
             // Return the result of the check
             return result;
         }
@@ -2298,7 +2277,7 @@ public class ProjectReviewActions extends DispatchAction {
         // Verify that review with specified ID exists
         if (review == null) {
             result.setForward(ActionsHelper.produceErrorReport(
-                    mapping, getResources(request), request, permission, "Error.ReviewNotFound", null));
+                    mapping, getResources(request), request, permission, "Error.ReviewNotFound"));
             // Return the result of the check
             return result;
         }
@@ -2534,10 +2513,8 @@ public class ProjectReviewActions extends DispatchAction {
         // Verify that user has the permission to perform review
         if (!AuthorizationHelper.hasUserPermission(request, permName)) {
             return ActionsHelper.produceErrorReport(
-                    mapping, getResources(request), request, permName, "Error.NoPermission", Boolean.FALSE);
+                    mapping, getResources(request), request, permName, "Error.NoPermission");
         }
-        // At this point, redirect-after-login attribute should be removed (if it exists)
-        AuthorizationHelper.removeLoginRedirect(request);
 
         // Get current project
         Project project = verification.getProject();
@@ -2550,7 +2527,7 @@ public class ProjectReviewActions extends DispatchAction {
         // Check that the phase in question is really active (open)
         if (phase == null) {
             return ActionsHelper.produceErrorReport(
-                    mapping, getResources(request), request, permName, "Error.IncorrectPhase", null);
+                    mapping, getResources(request), request, permName, "Error.IncorrectPhase");
         }
 
         // Get "My" resource for the appropriate phase
@@ -2663,7 +2640,7 @@ public class ProjectReviewActions extends DispatchAction {
         // Verify that the scorecard template for this review is of correct type
         if (!scorecardTemplate.getScorecardType().getName().equalsIgnoreCase(scorecardTypeName)) {
             return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
-                    Constants.EDIT_MY_REVIEW_PERM_NAME, "Error.ReviewTypeIncorrect", null);
+                    Constants.EDIT_MY_REVIEW_PERM_NAME, "Error.ReviewTypeIncorrect");
         }
 
         boolean managerEdit = false;
@@ -2676,7 +2653,7 @@ public class ProjectReviewActions extends DispatchAction {
                 managerEdit = true;
             } else {
                 return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
-                            Constants.EDIT_ANY_SCORECARD_PERM_NAME, "Error.ReviewCommitted", null);
+                            Constants.EDIT_ANY_SCORECARD_PERM_NAME, "Error.ReviewCommitted");
             }
         }
 
@@ -2687,15 +2664,13 @@ public class ProjectReviewActions extends DispatchAction {
         if (!AuthorizationHelper.hasUserPermission(request, Constants.EDIT_ANY_SCORECARD_PERM_NAME)) {
             if (!AuthorizationHelper.hasUserPermission(request, Constants.EDIT_MY_REVIEW_PERM_NAME)) {
                 return ActionsHelper.produceErrorReport(mapping, getResources(request),
-                    request, Constants.EDIT_MY_REVIEW_PERM_NAME, "Error.NoPermission", Boolean.FALSE);
+                    request, Constants.EDIT_MY_REVIEW_PERM_NAME, "Error.NoPermission");
             } else if(verification.getReview().getAuthor() !=
                     ((Resource) request.getAttribute("authorResource")).getId()) {
                 return ActionsHelper.produceErrorReport(mapping, getResources(request),
-                        request, Constants.EDIT_MY_REVIEW_PERM_NAME, "Error.NoPermission", Boolean.FALSE);
+                        request, Constants.EDIT_MY_REVIEW_PERM_NAME, "Error.NoPermission");
             }
         }
-        // At this point, redirect-after-login attribute should be removed (if it exists)
-        AuthorizationHelper.removeLoginRedirect(request);
 
         // Retrive some look-up data and store it into the request
         CommentType[] commentTypes = retreiveAndStoreReviewLookUpData(request);
@@ -2833,7 +2808,7 @@ public class ProjectReviewActions extends DispatchAction {
         // If neither "sid" nor "rid" was specified, return an action forward to the error page
         if (verification == null) {
             return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
-                    permName, "Error.SubmissionAndReviewIdNotSpecified", null);
+                    permName, "Error.SubmissionAndReviewIdNotSpecified");
         }
 
         // If check was not successful, return an appropriate action forward
@@ -2855,7 +2830,7 @@ public class ProjectReviewActions extends DispatchAction {
                 phase = ActionsHelper.getPhase(phases, false, phaseName);
             } else {
                 return ActionsHelper.produceErrorReport(
-                        mapping, getResources(request), request, permName, "Error.IncorrectPhase", null);
+                        mapping, getResources(request), request, permName, "Error.IncorrectPhase");
             }
         }
 
@@ -2877,10 +2852,8 @@ public class ProjectReviewActions extends DispatchAction {
             // Verify that user has the permission to perform the review
             if (!AuthorizationHelper.hasUserPermission(request, permName)) {
                 return ActionsHelper.produceErrorReport(
-                        mapping, getResources(request), request, permName, "Error.NoPermission", Boolean.TRUE);
+                        mapping, getResources(request), request, permName, "Error.NoPermission");
             }
-            // At this point, redirect-after-login attribute should be removed (if it exists)
-            AuthorizationHelper.removeLoginRedirect(request);
 
             /*
              * Verify that the user is not trying to create review that already exists
@@ -2922,14 +2895,12 @@ public class ProjectReviewActions extends DispatchAction {
             if (!AuthorizationHelper.hasUserPermission(request, Constants.EDIT_ANY_SCORECARD_PERM_NAME)) {
                 if (!AuthorizationHelper.hasUserPermission(request, Constants.EDIT_MY_REVIEW_PERM_NAME)) {
                     return ActionsHelper.produceErrorReport(mapping, getResources(request),
-                        request, Constants.EDIT_MY_REVIEW_PERM_NAME, "Error.NoPermission", Boolean.TRUE);
+                        request, Constants.EDIT_MY_REVIEW_PERM_NAME, "Error.NoPermission");
                 } else if(verification.getReview().getAuthor() != myResource.getId()) {
                     return ActionsHelper.produceErrorReport(mapping, getResources(request),
-                            request, Constants.EDIT_MY_REVIEW_PERM_NAME, "Error.NoPermission", Boolean.TRUE);
+                            request, Constants.EDIT_MY_REVIEW_PERM_NAME, "Error.NoPermission");
                 }
             }
-            // At this point, redirect-after-login attribute should be removed (if it exists)
-            AuthorizationHelper.removeLoginRedirect(request);
 
             // Obtain an instance of Scorecard Manager
             ScorecardManager scrMgr = ActionsHelper.createScorecardManager(request);
@@ -2940,7 +2911,7 @@ public class ProjectReviewActions extends DispatchAction {
         // Verify that the scorecard template for this review is of correct type
         if (scorecardTemplate == null || !scorecardTemplate.getScorecardType().getName().equalsIgnoreCase(scorecardTypeName)) {
             return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
-                    permName, "Error.ReviewTypeIncorrect", null);
+                    permName, "Error.ReviewTypeIncorrect");
         }
 
         boolean managerEdit = false;
@@ -2953,7 +2924,7 @@ public class ProjectReviewActions extends DispatchAction {
                 managerEdit = true;
             } else {
                 return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
-                            Constants.EDIT_MY_REVIEW_PERM_NAME, "Error.ReviewCommitted", null);
+                            Constants.EDIT_MY_REVIEW_PERM_NAME, "Error.ReviewCommitted");
             }
         }
 
@@ -3885,10 +3856,8 @@ public class ProjectReviewActions extends DispatchAction {
 
         if (!isAllowed) {
             return ActionsHelper.produceErrorReport(
-                    mapping, getResources(request), request, permName, "Error.NoPermission", Boolean.FALSE);
+                    mapping, getResources(request), request, permName, "Error.NoPermission");
         }
-        // At this point, redirect-after-login attribute should be removed (if it exists)
-        AuthorizationHelper.removeLoginRedirect(request);
 
         // Obtain an instance of Scorecard Manager
         ScorecardManager scrMgr = ActionsHelper.createScorecardManager(request);
@@ -3898,12 +3867,12 @@ public class ProjectReviewActions extends DispatchAction {
         // Verify that the scorecard template for this review is of correct type
         if (!scorecardTemplate.getScorecardType().getName().equalsIgnoreCase(scorecardTypeName)) {
             return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
-                    permName, "Error.ReviewTypeIncorrect", null);
+                    permName, "Error.ReviewTypeIncorrect");
         }
         // Make sure that the user is not trying to view unfinished review
         if (!verification.getReview().isCommitted()) {
             return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
-                    permName, "Error.ReviewNotCommitted", null);
+                    permName, "Error.ReviewNotCommitted");
         } else {
             // If user has a Manager role, put special flag to the request,
             // indicating that we can edit the review
