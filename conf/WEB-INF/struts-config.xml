@@ -181,7 +181,6 @@
                 key="exception.com.cronos.onlinereview.login.LoginActions.login.AuthResponseParserException"
                 path="/jsp/login.jsp" />
             <forward name="success" path="/actions/ListProjects.do?method=listProjects" redirect="true" />
-            <forward name="redirectToProject" path="/actions/ViewProjectDetails.do?method=viewProjectDetails" redirect="true" />
             <forward name="failure" path="/jsp/loginInvalid.jsp" redirect="false" />
         </action>
 

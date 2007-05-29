@@ -111,7 +111,7 @@ div.launchPopUp {
 			&#160;&#160;|&#160;&#160;<html:link styleClass="gMetal" action="/actions/Logout.do?method=logout">Logout</html:link>
 		</c:if>
 		<c:if test="${not orfn:isUserLoggedIn(pageContext.request)}">
-			<html:link styleClass="gMetal" page="/jsp/login.jsp?redirectToProjectID=${param['pid']}">Login</html:link>
+			<html:link styleClass="gMetal" page="/jsp/login.jsp">Login</html:link>
 			&#160;&#160;|&#160;&#160;<a class="gMetal" href="http://<%=ApplicationServer.SERVER_NAME%>/reg/">Register</a>
 			&#160;&#160;|&#160;&#160;<a class="gMetal" href="http://<%=ApplicationServer.SERVER_NAME%>/">Home</a>
 		</c:if>

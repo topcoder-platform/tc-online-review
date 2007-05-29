@@ -26,6 +26,7 @@
 
 	<!-- CSS and JS by Petar -->
 	<link type="text/css" rel="stylesheet" href="<html:rewrite href='/css/or/new_styles.css' />" />
+	<link type="text/css" rel="stylesheet" href="<html:rewrite href='/css/or/phasetabs.css' />" />
 	<script language="JavaScript" type="text/javascript" src="<html:rewrite href='/js/or/rollovers2.js' />"><!-- @ --></script>
 	<script language="JavaScript" type="text/javascript" src="<html:rewrite href='/js/or/dojo.js' />"><!-- @ --></script>
 	<script language="JavaScript" type="text/javascript" src="<html:rewrite href='/js/or/util.js' />"><!-- @ --></script>
@@ -190,7 +191,7 @@
 				}
 			}
 		}
-		
+
 		function updateLabelsInCell(cellToUpdate, newIndex) {
 			var labels = cellToUpdate.getElementsByTagName("label");
 			var inputs = cellToUpdate.getElementsByTagName("input");
@@ -377,7 +378,7 @@
 				criterionRow.id = getUniqueId();
 				// Remove "display: none;"
 				criterionRow.style["display"] = "";
-				
+
 				updateLabelsInCell(criterionRow.getElementsByTagName("td")[1], lastPhaseIndex);
 				// Rename all the inputs to have a new index
 				patchAllChildParamIndexes(criterionRow, lastPhaseIndex);
@@ -898,9 +899,14 @@
 							<html:hidden property="project_category" />
 						</c:if>
 
-						<%-- If editing the exsiting project, include timeline editor here --%>
+						<%-- If editing the existing project, include timeline editor here --%>
 						<c:if test="${not newProject}">
 							<jsp:include page="/includes/project/project_edit_timeline.jsp" />
+						</c:if>
+
+						<%-- If editing the existing project, include phases details tabs here --%>
+						<c:if test="${not newProject}">
+							<jsp:include page="/includes/project/project_phase.jsp" />
 						</c:if>
 
 						<table class="scorecard" id="preferences">
