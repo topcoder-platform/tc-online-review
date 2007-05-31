@@ -1,0 +1,22 @@
+TCS-003: Your submission does not conform to the directory standard.
+
+File or directory [E:\tcs\app\online_review\scripts\auto_screening\temp\6-3.zip.contents\.\conf] failed to pass the validation: The directory does not exist 
+File or directory [E:\tcs\app\online_review\scripts\auto_screening\temp\6-3.zip.contents\.\test_files] failed to pass the validation: The directory does not exist 
+
+TCS-006: Your submission is missing the appropriate unit test log files.
+
+No files with extension [.log] are found under directory [E:\tcs\app\online_review\scripts\auto_screening\temp\6-3.zip.contents\log]. 
+
+TCS-011: Your submission does not contain source code under /src.
+
+No files with extension [.cs] are found under directory [E:\tcs\app\online_review\scripts\auto_screening\temp\6-3.zip.contents\src\csharp\main]. 
+
+TCS-012: Your submission does not contain test source code under /src.
+
+No files with extension [.cs] are found under directory [E:\tcs\app\online_review\scripts\auto_screening\temp\6-3.zip.contents\src\csharp\tests]. 
+
+TCS-015: Your submission has passed the auto screening process.
+
+OK. The submission archive was successfully unzipped to [E:\tcs\app\online_review\scripts\auto_screening\temp\6-3.zip.contents]. 
+OK. Component specification files are found in directory [E:\tcs\app\online_review\scripts\auto_screening\temp\6-3.zip.contents\docs]. 
+OK. There are no personal info in the submission. 
