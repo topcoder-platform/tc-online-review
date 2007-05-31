@@ -1714,22 +1714,22 @@
 
                 <Property name="alias">
                     <Property name="ProjectTypeID">
-                        <Value>project_type_lu.project_type_id</Value>
+                        <Value>ptype.project_type_id</Value>
                     </Property>
                     <Property name="ProjectTypeName">
-                        <Value>project_type_lu.name</Value>
+                        <Value>ptype.name</Value>
                     </Property>
                     <Property name="ProjectCategoryID">
-                        <Value>project_category_lu.project_category_id</Value>
+                        <Value>pcat.project_category_id</Value>
                     </Property>
                     <Property name="ProjectCategoryName">
-                        <Value>project_category_lu.name</Value>
+                        <Value>pcat.name</Value>
                     </Property>
                     <Property name="ProjectStatusID">
-                        <Value>project_status_lu.project_type_id</Value>
+                        <Value>pstatus.project_type_id</Value>
                     </Property>
                     <Property name="ProjectStatusName">
-                        <Value>project_status_lu.name</Value>
+                        <Value>pstatus.name</Value>
                     </Property>
                     <Property name="ProjectPropertyName">
                         <Value>project_info_type_lu.name</Value>
