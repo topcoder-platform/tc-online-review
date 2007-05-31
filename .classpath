@@ -31,10 +31,10 @@
 	<classpathentry exported="true" kind="lib" path="lib/tcs/online_review_deliverables/1.0/online_review_deliverables.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/tcs/online_review_login/1.0.1/online_review_login.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/tcs/online_review_phases/1.0.4/online_review_phases.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/tcs/phase_management/1.0.3/phase_management.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/tcs/phase_management/1.0.3/phase_management.jar" sourcepath="/phase_management/src/java/main"/>
 	<classpathentry exported="true" kind="lib" path="lib/tcs/phase_management_persistence/1.0/phase_management_persistence.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/tcs/project_management/1.0/project_management.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/tcs/project_management_persistence/1.0/project_management_persistence.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/tcs/project_management/1.0/project_management.jar" sourcepath="/project_management/src/java/main"/>
+	<classpathentry exported="true" kind="lib" path="lib/tcs/project_management_persistence/1.0/project_management_persistence.jar" sourcepath="/project_management_persistence/src/java/main"/>
 	<classpathentry exported="true" kind="lib" path="lib/tcs/project_phases/2.0/project_phases.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/tcs/project_phase_template/1.0/project_phase_template.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/tcs/resource_management/1.0.1/resource_management.jar"/>
