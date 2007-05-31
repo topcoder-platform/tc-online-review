@@ -1688,24 +1688,26 @@
 
                 <Property name="context">
                     <Value>
-                        SELECT DISTINCT project.project_id
-                          FROM project,
-                               project_category_lu,
-                               project_status_lu,
-                               project_type_lu,
-                               project_info,
-                               project_info_type_lu,
-                               resource,
-                               resource_info,
-                               resource_info_type_lu
-                         WHERE project.project_category_id = project_category_lu.project_category_id
-                           AND project.project_status_id = project_status_lu.project_status_id
-                           AND project_category_lu.project_type_id = project_type_lu.project_type_id
-                           AND project.project_id = project_info.project_id
-                           AND project_info.project_info_type_id = project_info_type_lu.project_info_type_id
-                           AND project.project_id = resource.project_id
-                           AND resource.resource_id = resource_info.resource_id
-                           AND resource_info.resource_info_type_id = resource_info_type_lu.resource_info_type_id
+						SELECT DISTINCT project.project_id, pstatus.project_status_id, pstatus.name,
+								pcat.project_category_id, pcat.name, ptype.project_type_id, ptype.name,
+								project.create_user, project.create_date, project.modify_user, project.modify_date
+						  FROM project,
+						       project_category_lu pcat,
+						       project_status_lu pstatus,
+						       project_type_lu ptype,
+						       project_info,
+						       project_info_type_lu,
+						       resource,
+						       resource_info,
+						       resource_info_type_lu
+						 WHERE project.project_category_id = pcat.project_category_id
+						   AND project.project_status_id = pstatus.project_status_id
+						   AND pcat.project_type_id = ptype.project_type_id
+						   AND project.project_id = project_info.project_id
+						   AND project_info.project_info_type_id = project_info_type_lu.project_info_type_id
+						   AND project.project_id = resource.project_id
+						   AND resource.resource_id = resource_info.resource_id
+						   AND resource_info.resource_info_type_id = resource_info_type_lu.resource_info_type_id
                            AND
                     </Value>
                 </Property>
