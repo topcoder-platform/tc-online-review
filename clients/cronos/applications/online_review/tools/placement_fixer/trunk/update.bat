@@ -1,1 +1,1 @@
-java -classpath lib/base_exception.jar;lib/configuration_manager.jar;lib/db_connection_factory.jar;lib/ifxjdbc.jar;./conf;./bin;build/classes com.topcoder.onlinereview.fixer.OnlineReviewScoreRankFixer update > report.txt
+java -classpath lib/base_exception.jar;lib/configuration_manager.jar;lib/db_connection_factory.jar;lib/ifxjdbc.jar;lib/typesafe_enum.jar;lib/logging_wrapper.jar;lib/log4j.jar;./conf;./bin;build/classes com.topcoder.onlinereview.fixer.OnlineReviewScoreRankFixer update
