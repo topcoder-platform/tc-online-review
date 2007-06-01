@@ -57,57 +57,128 @@ public class OnlineReviewScoreRankFixer {
      * SQL statement for retrieving a submission's handle.
      */
     private static final String GET_SUBMISSION_HANDLE = "SELECT s.submission_id, ri.value handle from submission s, upload u, resource_info ri"
-    		+ " where s.upload_id = u.upload_id"
-    		+ " and u.resource_id = ri.resource_id"
-    		+ " and ri.resource_info_type_id = 2"
-    		+ " and s.submission_id = ?";	
+                    + " where s.upload_id = u.upload_id"
+                    + " and u.resource_id = ri.resource_id"
+                    + " and ri.resource_info_type_id = 2" + " and s.submission_id = ?";
+
+    /**
+     * SQL statement for retrieving a submission's user ID.
+     */
+    private static final String GET_SUBMISSION_USER_ID = "SELECT s.submission_id, ri.value handle from submission s, upload u, resource_info ri"
+                    + " where s.upload_id = u.upload_id"
+                    + " and u.resource_id = ri.resource_id"
+                    + " and ri.resource_info_type_id = 1" + " and s.submission_id = ?";
+
     /**
      * SQL statement for retrieving a submission's final score from resource_info table.
      */
     private static final String GET_SUBMISSION_FINAL_SCORE = "SELECT ri.value finalScore from submission s, upload u, resource_info ri"
-		+ " where s.upload_id = u.upload_id"
-		+ " and u.resource_id = ri.resource_id"
-		+ " and ri.resource_info_type_id = 11"
-		+ " and s.submission_id = ?";
+                    + " where s.upload_id = u.upload_id"
+                    + " and u.resource_id = ri.resource_id"
+                    + " and ri.resource_info_type_id = 11" + " and s.submission_id = ?";
 
     /**
      * SQL statement for retrieving a submission's placement from resource_info table.
      */
     private static final String GET_SUBMISSION_PLACEMENT = "SELECT ri.value rank from submission s, upload u, resource_info ri"
-		+ " where s.upload_id = u.upload_id"
-		+ " and u.resource_id = ri.resource_id"
-		+ " and ri.resource_info_type_id = 12"
-		+ " and s.submission_id = ?";
+                    + " where s.upload_id = u.upload_id"
+                    + " and u.resource_id = ri.resource_id"
+                    + " and ri.resource_info_type_id = 12" + " and s.submission_id = ?";
 
-	private static final double MINIMUN_PASSING_SCORE = 75;
-    
-    /**
-     * SQL statement for updating the final score of the submission in project_result table.
-     */
-    
     /**
      * SQL statement for updating the final score of the submission in the resource_info table.
      */
-    
-    /**
-     * SQL statement for updating the rank of the submission in project_result table.
-     */
-    
+    private static final String UPDATE_RI_FINAL_SCORE = "UPDATE ri.value = ? FROM submission s, upload u, resource_info ri"
+                    + " WHERE s.upload_id = u.upload_id"
+                    + " and u.resource_id = ri.resource_id"
+                    + " and ri.resource_info_type_id = 11" + " and s.submission_id = ?";
+
     /**
      * SQL statement for updating the rank of the submission in the resource_info table.
      */
-    
+    private static final String UPDATE_RI_PLACEMENT = "UPDATE ri.value = ? FROM submission s, upload u, resource_info ri"
+                    + " WHERE s.upload_id = u.upload_id"
+                    + " AND u.resource_id = ri.resource_id"
+                    + " AND ri.resource_info_type_id = 12" + " AND s.submission_id = ?";
+
     /**
-     * SQL statement for updating the passed_review_ind in project_result table.
+     * SQL statement for updating the final score of the submission in project_result table.
      */
-    
+    private static final String UPDATE_PR_FINAL_SCORE = "UPDATE pr.final_score = ? FROM project_result pr, submission s, upload u, resource_info ri"
+                    + " where s.upload_id = u.upload_id"
+                    + " and u.resource_id = ri.resource_id"
+                    + " and ri.resource_info_type_id = 1"
+                    + " and pr.project_id = u.project_id"
+                    + " and pr.user_id = ri.value and s.submission_id = ?";
+
     /**
-     * SQL statement for updating submission_status.
+     * SQL statement for updating the rank of the submission in project_result table.
      */
-    
+    private static final String UPDATE_PR_PLACEMENT = "UPDATE pr.placed = ? FROM project_result pr, submission s, upload u, resource_info ri"
+                    + " where s.upload_id = u.upload_id"
+                    + " and u.resource_id = ri.resource_id"
+                    + " and ri.resource_info_type_id = 1"
+                    + " and pr.project_id = u.project_id"
+                    + " and pr.user_id = ri.value and s.submission_id = ?";
+
     /**
-     * SQL statement for updating the project_info for certain project.
+     * SQL statement for updating the passed_review_ind in project_result table. (1 for passing, 0
+     * for non-passing).
      */
+    private static final String UPDATE_PR_PASSED_REVIEW = "UPDATE pr.passed_review_ind = ? FROM project_result pr, submission s, upload u, resource_info ri"
+                    + " where s.upload_id = u.upload_id"
+                    + " and u.resource_id = ri.resource_id"
+                    + " and ri.resource_info_type_id = 1"
+                    + " and pr.project_id = u.project_id"
+                    + " and pr.user_id = ri.value and s.submission_id = ?";
+
+    /**
+     * SQL statement for updating submission_status. (1 for winner, 3 from non-passed review, 4 for
+     * passed review without win)
+     */
+    private static final String UPDATE_SUBMISSION_STATUS = "UPDATE s.submission_status_id = ? FROM submission s"
+                    + " where s.submission_id = ?";
+
+    /**
+     * SQL statement for updating the project_info for the given project.
+     */
+    private static final String UPDATE_PROJECT_INFO = "UPDATE pi.value = ? FROM project_info pi"
+                    + " where pi.project_id = ? and pi.project_info_type_id = ?";
+
+    /**
+     * The minimum score to pass the review.
+     */
+    private static final double MINIMUN_PASSING_SCORE = 75;
+
+    /**
+     * Passed Review Flag.
+     */
+    private static final int PASSED_REVIEW = 1;
+
+    /**
+     * Non-passed review flag.
+     */
+    private static final int NON_PASSED_REVIEW = 0;
+
+    /**
+     * Winner submission status.
+     */
+    private static final int WINNER_SUBMISSION = 1;
+
+    /**
+     * Failed review status.
+     */
+    private static final int FAILED_REVIEW_SUBMISSION = 3;
+
+    /**
+     * Passed review without win status.
+     */
+    private static final int PASSED_WITHOUT_WIN_SUBMISSION = 4;
+
+    /**
+     * Flag indicate whether the fixer performs update.
+     */
+    private boolean update = false;
 
     /**
      * private constructor.
@@ -116,6 +187,12 @@ public class OnlineReviewScoreRankFixer {
 
     }
 
+    /**
+     * Builds the Projects specified by the projectResults list
+     * 
+     * 
+     * @param projectResults
+     */
     private void buildProjectResults(List projectResults) {
         // get all the component project list
         Connection connection = Utility.getConnection();
@@ -173,11 +250,11 @@ public class OnlineReviewScoreRankFixer {
                     while (result.next()) {
                         sResult.setFinalScore(result.getDouble("finalScore"));
                     }
-                    
+
                     // get the submission's rank from resource_info table
                     getSubmissionRank.setString(1, id);
                     result = getSubmissionRank.executeQuery();
-                    
+
                     while (result.next()) {
                         sResult.setRank(result.getInt("rank"));
                     }
@@ -192,7 +269,7 @@ public class OnlineReviewScoreRankFixer {
                 }
 
                 boolean success = validateProjectResult(projectResult, false);
-                
+
                 if (!success) {
                     Utility.log(Level.INFO, "-------------------");
                 }
@@ -245,9 +322,9 @@ public class OnlineReviewScoreRankFixer {
         List submitterResults = projectResult.getSubmitterResults();
 
         boolean dataCorrect = true;
-        
+
         Utility.log(Level.DEBUG, projectResult);
-        
+
         // validate all the submission's final score
         for (int i = 0, n = submitterResults.size(); i < n; ++i) {
 
@@ -266,23 +343,23 @@ public class OnlineReviewScoreRankFixer {
             }
 
             temp /= sResult.getReviewScoresLength();
-            
+
             boolean missingData = false;
-            
+
             // if there is no final score for the submission
             if (sResult.getFinalScore() == 0) {
                 Utility.log(Level.ERROR, projectResult.getProjectInfo());
                 Utility.log(Level.ERROR, "No final score for " + sResult.getHandle());
                 missingData = true;
             }
-            
+
             // if there is no rank info for the submission
             if (sResult.getRank() == 0) {
                 Utility.log(Level.ERROR, projectResult.getProjectInfo());
                 Utility.log(Level.ERROR, "No rank info for " + sResult.getHandle());
                 missingData = true;
             }
-            
+
             // ignore this project due to the missing data.
             if (missingData) {
                 return false;
@@ -299,10 +376,37 @@ public class OnlineReviewScoreRankFixer {
 
                 Utility.log(Level.INFO, sResult.getHandle() + ": " + sResult.getFinalScore() + "--->" + temp);
 
+                // update the final score
+                if (update) {
+                    updateFinalScore(sResult.getSubmissionId(), temp);
+                }
+
                 if (sResult.getFinalScore() >= MINIMUN_PASSING_SCORE && temp < MINIMUN_PASSING_SCORE) {
                     Utility.log(Level.ERROR, sResult.getHandle() + ": passing to non-passing.");
+
+                    if (update) {
+                        // update the passed review flag to 0
+                        updatePassedReview(sResult.getSubmissionId(), NON_PASSED_REVIEW);
+
+                        // update the submission status
+                        updateSubmissionStatus(sResult.getSubmissionId(), FAILED_REVIEW_SUBMISSION);
+                    }
+
                 } else if (sResult.getFinalScore() < MINIMUN_PASSING_SCORE && temp >= MINIMUN_PASSING_SCORE) {
                     Utility.log(Level.ERROR, sResult.getHandle() + ": non-passing to passing.");
+
+                    if (update) {
+                        // update the passed review flag to 1
+                        updatePassedReview(sResult.getSubmissionId(), PASSED_REVIEW);
+
+                        // update the submission status
+                        if (sResult.getRank() == 1) {
+                            updateSubmissionStatus(sResult.getSubmissionId(), WINNER_SUBMISSION);
+                        } else {
+                            updateSubmissionStatus(sResult.getSubmissionId(), PASSED_WITHOUT_WIN_SUBMISSION);
+                        }
+
+                    }
                 }
 
                 sResult.setFixedScore(temp);
@@ -311,8 +415,7 @@ public class OnlineReviewScoreRankFixer {
                 sResult.setFixedScore(sResult.getFinalScore());
             }
         }
-        
-        
+
         // validates all the submissions' rank
         Map ranks = new TreeMap();
         Map handleData = new HashMap();
@@ -320,7 +423,7 @@ public class OnlineReviewScoreRankFixer {
         for (int i = 0, n = submitterResults.size(); i < n; ++i) {
             SubmitterResult sResult = (SubmitterResult) submitterResults.get(i);
             ranks.put(new Double(sResult.getFixedScore()), new Integer(sResult.getRank()));
-            handleData.put(new Integer(sResult.getRank()), sResult.getHandle());
+            handleData.put(new Integer(sResult.getRank()), sResult);
         }
 
         int newRank = submitterResults.size();
@@ -329,12 +432,34 @@ public class OnlineReviewScoreRankFixer {
             int oldRank = ((Integer) itr.next()).intValue();
 
             if (oldRank != newRank) {
-                String handle = (String) handleData.get(new Integer(oldRank));
-                
+                String handle = ((SubmitterResult) handleData.get(new Integer(oldRank))).getHandle();
+                String submissionId = ((SubmitterResult) handleData.get(new Integer(oldRank))).getSubmissionId();
+
                 if (newRank == 1 || newRank == 2) {
                     Utility.log(Level.ERROR, handle + ": rank#" + oldRank + "--> rank#" + newRank);
+
                 } else {
-                    Utility.log(Level.INFO,handle + ": rank#" + oldRank + "--> rank#" + newRank);
+                    Utility.log(Level.INFO, handle + ": rank#" + oldRank + "--> rank#" + newRank);
+                }
+
+                if (update) {
+                    // update the placement first
+                    this.updatePlacement(submissionId, newRank);
+                    long userId = getUserId(submissionId);
+                    
+                    if (newRank == 1) {
+                        updateSubmissionStatus(submissionId, WINNER_SUBMISSION);
+                        updateProjectInfo(projectResult.getProjectId(), 23, userId + "");
+                    }
+                    
+                    if (newRank == 2) {
+                        updateProjectInfo(projectResult.getProjectId(), 24, userId + "");
+                    }
+                    
+                    if (oldRank == 1) {
+                        updateSubmissionStatus(submissionId, PASSED_WITHOUT_WIN_SUBMISSION);
+                    }
+                    
                 }
             }
 
@@ -345,13 +470,239 @@ public class OnlineReviewScoreRankFixer {
     }
 
     /**
+     * Update the final score for specified submission. This method will update two tables,
+     * resource_info and project_result.
+     * 
+     * @param submissionId the id of the submission.
+     * @param newScore the new score of the submission.
+     */
+    private void updateFinalScore(String submissionId, double newScore) {
+        Connection connection = Utility.getConnection();
+
+        PreparedStatement updateRI = null;
+        PreparedStatement updatePR = null;
+
+        try {
+            updateRI = connection.prepareStatement(UPDATE_RI_FINAL_SCORE);
+            updatePR = connection.prepareStatement(UPDATE_PR_FINAL_SCORE);
+
+            // update resource_info
+            updateRI.setDouble(1, newScore);
+            updateRI.setString(2, submissionId);
+
+            updateRI.executeUpdate();
+
+            // update project_result
+            updatePR.setDouble(1, newScore);
+            updatePR.setString(2, submissionId);
+
+            updatePR.executeUpdate();
+
+        } catch (Exception ex) {
+            throw new OnlineReviewScoreRankFixerException("update final score failed.", ex);
+        } finally {
+            Utility.releaseResource(updateRI, null, null);
+            Utility.releaseResource(updatePR, null, null);
+        }
+    }
+
+    /**
+     * Update the placement for specified submission. This method will update two tables,
+     * resource_info and project_result.
+     * 
+     * @param submissionId the id of the submission.
+     * @param newPlacement the new placement of the submission.
+     */
+    private void updatePlacement(String submissionId, int newPlacement) {
+        Connection connection = Utility.getConnection();
+
+        PreparedStatement updateRI = null;
+        PreparedStatement updatePR = null;
+
+        try {
+            updateRI = connection.prepareStatement(UPDATE_RI_PLACEMENT);
+            updatePR = connection.prepareStatement(UPDATE_PR_PLACEMENT);
+
+            // update resource_info
+            updateRI.setDouble(1, newPlacement);
+            updateRI.setString(2, submissionId);
+
+            updateRI.executeUpdate();
+
+            // update project_result
+            updatePR.setDouble(1, newPlacement);
+            updatePR.setString(2, submissionId);
+
+            updatePR.executeUpdate();
+
+        } catch (Exception ex) {
+            throw new OnlineReviewScoreRankFixerException("update placement failed.", ex);
+        } finally {
+            Utility.releaseResource(updateRI, null, null);
+            Utility.releaseResource(updatePR, null, null);
+        }
+    }
+
+    /**
+     * Update the passed_review_ind flag in project_result table.
+     * 
+     * @param submissionId the id of the submission.
+     * @param isPassed 1 for passed review, 0 for non-passed review.
+     */
+    private void updatePassedReview(String submissionId, int isPassed) {
+        if (isPassed != 0 && isPassed != 1) {
+            throw new IllegalArgumentException("isPassed should be either 0 or 1.");
+        }
+
+        Connection connection = Utility.getConnection();
+
+        PreparedStatement updatePassedReview = null;
+
+        try {
+            updatePassedReview = connection.prepareStatement(UPDATE_PR_PASSED_REVIEW);
+
+            updatePassedReview.setInt(1, isPassed);
+            updatePassedReview.setString(2, submissionId);
+
+            updatePassedReview.executeUpdate();
+
+        } catch (Exception ex) {
+            throw new OnlineReviewScoreRankFixerException("Fail to update passed review flag.", ex);
+        } finally {
+            Utility.releaseResource(updatePassedReview, null, null);
+        }
+    }
+
+    /**
+     * Update the submission_status of the submission.
+     * 
+     * @param submissionId the id of the submission.
+     * @param status the status of the submission.
+     */
+    private void updateSubmissionStatus(String submissionId, int status) {
+        if (status != 1 && status != 3 && status != 4) {
+            throw new IllegalArgumentException("status should be 1 or 3 or 4");
+        }
+
+        Connection connection = Utility.getConnection();
+
+        PreparedStatement updateSubmissionStatus = null;
+
+        try {
+            updateSubmissionStatus = connection.prepareStatement(UPDATE_SUBMISSION_STATUS);
+
+            updateSubmissionStatus.setInt(1, status);
+            updateSubmissionStatus.setString(2, submissionId);
+
+            updateSubmissionStatus.executeUpdate();
+
+        } catch (Exception ex) {
+            throw new OnlineReviewScoreRankFixerException("Fail to update submission status.", ex);
+        } finally {
+            Utility.releaseResource(updateSubmissionStatus, null, null);
+        }
+    }
+
+    /**
+     * Update the projectInfo of the specified project.
+     * 
+     * @param projectId the id of the project.
+     * @param projectInfoTypeId the project info type id.
+     * @param value the value of project info.
+     */
+    private void updateProjectInfo(String projectId, int projectInfoTypeId, String value) {
+        Connection connection = Utility.getConnection();
+
+        PreparedStatement updateProjectInfo = null;
+
+        try {
+            updateProjectInfo = connection.prepareStatement(UPDATE_PROJECT_INFO);
+
+            updateProjectInfo.setString(1, value);
+            updateProjectInfo.setString(2, projectId);
+            updateProjectInfo.setInt(3, projectInfoTypeId);
+
+            updateProjectInfo.executeUpdate();
+
+        } catch (Exception ex) {
+            throw new OnlineReviewScoreRankFixerException("Fail to update passed review flag.", ex);
+        } finally {
+            Utility.releaseResource(updateProjectInfo, null, null);
+        }
+    }
+
+    /**
+     * Gets the user id of the given submitter.
+     * 
+     * @param submitterId the id of the submitter.
+     * @return the user id.
+     */
+    private long getUserId(String submitterId) {
+        Connection connection = Utility.getConnection();
+
+        PreparedStatement getUserId = null;
+
+        try {
+            getUserId = connection.prepareStatement(GET_SUBMISSION_USER_ID);
+
+            getUserId.setString(1, submitterId);
+
+            ResultSet result = getUserId.executeQuery();
+
+            while (result.next()) {
+                return result.getLong(1);
+            }
+
+            return -1;
+
+        } catch (Exception ex) {
+            throw new OnlineReviewScoreRankFixerException("Fail to get user id.", ex);
+        } finally {
+            Utility.releaseResource(getUserId, null, null);
+        }
+    }
+    
+    /**
+     * Set the update flag.
+     * 
+     * @param isUpdate the update flag, true for update, false for not update.
+     */
+    private void setUpdateFlag(boolean isUpdate) {
+        update = isUpdate;
+    }
+
+    /**
      * Entry point of the online review score and rank fixer app.
      * 
      * @param args the arguments passed in.
      */
     public static void main(String[] args) {
         OnlineReviewScoreRankFixer fixer = new OnlineReviewScoreRankFixer();
+        
+        if (args.length == 1) {
+            if (args[0].equalsIgnoreCase("update")) {
+                fixer.setUpdateFlag(true);
+            } else {
+                printHelp();
+                return;
+            }
+        } else if (args.length == 0) {
+            fixer.setUpdateFlag(false);
+        } else {
+            printHelp();
+            return;
+        }
+        
         List projectResults = fixer.getAllProjectResults();
         fixer.buildProjectResults(projectResults);
+    }
+    
+    /**
+     * Print the command help message.
+     */
+    private static void printHelp() {
+        System.err.println("====Usage notes====");
+        System.err.println("1.no parameter for statistics");
+        System.err.println("2.add parameter update for statistics and updating.");
     }
 }
