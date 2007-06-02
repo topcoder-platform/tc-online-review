@@ -111,47 +111,6 @@ public class ProjectDetailsActions extends DispatchAction {
     public ProjectDetailsActions() {
     }
 
-    /*private void getPreviousUploadsForSubmissions(HttpServletRequest request, Project project, PhaseGroup phaseGroup, Submission[] submissions) throws BaseException {
-    	if (submissions.length > 0 && AuthorizationHelper.hasUserPermission(request, Constants.VIEW_ALL_SUBM_PERM_NAME)) {
-            // Obtain an instance of Upload Manager
-            UploadManager upMgr = ActionsHelper.createUploadManager(request);
-            // Get all upload types
-            UploadType[] allUploadTypes = upMgr.getAllUploadTypes();
-            // Get all upload statuses
-            UploadStatus[] allUploadStatuses = upMgr.getAllUploadStatuses();
-
-            Filter filterProject = UploadFilterBuilder.createProjectIdFilter(project.getId());
-            Filter filterUploadType = UploadFilterBuilder.createUploadTypeIdFilter(
-                    ActionsHelper.findUploadTypeByName(allUploadTypes, "Submission").getId());
-            Filter filterUploadStatus = UploadFilterBuilder.createUploadStatusIdFilter(
-                    ActionsHelper.findUploadStatusByName(allUploadStatuses, "Deleted").getId());
-
-            Filter filter =
-                new AndFilter(Arrays.asList(new Filter[] {filterProject, filterUploadType, filterUploadStatus}));
-            Upload[] ungroupedUploads = upMgr.searchUploads(filter);
-            Upload[][] pastSubmissions = new Upload[submissions.length][];
-
-            for (int j = 0; j < pastSubmissions.length; ++j) {
-                List temp = new ArrayList();
-                long currentUploadOwnerId = submissions[j].getUpload().getOwner();
-
-                for (int k = 0; k < ungroupedUploads.length; k++) {
-                    if (currentUploadOwnerId == ungroupedUploads[k].getOwner()) {
-                        temp.add(ungroupedUploads[k]);
-                    }
-                }
-
-                if (!temp.isEmpty()) {
-                    pastSubmissions[j] = (Upload[]) temp.toArray(new Upload[temp.size()]);
-                }
-            }
-
-            if (pastSubmissions.length != 0) {
-                phaseGroup.setPastSubmissions(pastSubmissions);
-            }
-        }
-    }*/
-
     /**
      * This method is an implementation of &quot;View project Details&quot; Struts Action defined
      * for this assembly, which is supposed to gather all possible information about the project and
