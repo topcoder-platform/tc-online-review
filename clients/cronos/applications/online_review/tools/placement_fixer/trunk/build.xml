@@ -107,7 +107,12 @@
 
     <target name="compile">
         <mkdir dir="${build_classdir}"/>
-        <javac srcdir="${javamain}" destdir="${build_classdir}" includes="${packagedir}/**" verbose="${verbose}">
+        <javac srcdir="${javamain}" 
+        	destdir="${build_classdir}" 
+        	includes="${packagedir}/**" 
+        	verbose="${verbose}"
+        	debug="${debug}"
+        >
             <classpath refid="buildlibs" />
         </javac>
         <echo>Class files have been compiled to /${build_classdir}</echo>
