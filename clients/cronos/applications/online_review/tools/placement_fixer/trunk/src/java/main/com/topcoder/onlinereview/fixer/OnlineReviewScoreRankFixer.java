@@ -6,9 +6,11 @@ import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 
 import com.topcoder.util.log.Level;
@@ -176,9 +178,9 @@ public class OnlineReviewScoreRankFixer {
     private static final int PASSED_WITHOUT_WIN_SUBMISSION = 4;
 
     /**
-     * Flag indicate whether the fixer performs update.
+     * The set of project id for fix.
      */
-    private boolean update = false;
+    private Set<String> updateProjects = new HashSet<String>();
 
     /**
      * private constructor.
@@ -294,7 +296,7 @@ public class OnlineReviewScoreRankFixer {
 
         Statement statement = null;
 
-        List projectResults = new ArrayList();
+        List<ProjectResult> projectResults = new ArrayList<ProjectResult>();
 
         try {
             statement = connection.createStatement();
@@ -377,14 +379,14 @@ public class OnlineReviewScoreRankFixer {
                 Utility.log(Level.INFO, sResult.getHandle() + ": " + sResult.getFinalScore() + "--->" + temp);
 
                 // update the final score
-                if (update) {
+                if (getUpdateProjects().contains(projectResult.getProjectId())) {
                     updateFinalScore(sResult.getSubmissionId(), temp);
                 }
 
                 if (sResult.getFinalScore() >= MINIMUN_PASSING_SCORE && temp < MINIMUN_PASSING_SCORE) {
                     Utility.log(Level.ERROR, sResult.getHandle() + ": passing to non-passing.");
 
-                    if (update) {
+                    if (getUpdateProjects().contains(projectResult.getProjectId())) {
                         // update the passed review flag to 0
                         updatePassedReview(sResult.getSubmissionId(), NON_PASSED_REVIEW);
 
@@ -395,7 +397,7 @@ public class OnlineReviewScoreRankFixer {
                 } else if (sResult.getFinalScore() < MINIMUN_PASSING_SCORE && temp >= MINIMUN_PASSING_SCORE) {
                     Utility.log(Level.ERROR, sResult.getHandle() + ": non-passing to passing.");
 
-                    if (update) {
+                    if (getUpdateProjects().contains(projectResult.getProjectId())) {
                         // update the passed review flag to 1
                         updatePassedReview(sResult.getSubmissionId(), PASSED_REVIEW);
 
@@ -417,8 +419,8 @@ public class OnlineReviewScoreRankFixer {
         }
 
         // validates all the submissions' rank
-        Map ranks = new TreeMap();
-        Map handleData = new HashMap();
+        Map<Double, Integer> ranks = new TreeMap<Double, Integer>();
+        Map<Integer, SubmitterResult> handleData = new HashMap<Integer, SubmitterResult>();
 
         for (int i = 0, n = submitterResults.size(); i < n; ++i) {
             SubmitterResult sResult = (SubmitterResult) submitterResults.get(i);
@@ -432,8 +434,8 @@ public class OnlineReviewScoreRankFixer {
             int oldRank = ((Integer) itr.next()).intValue();
 
             if (oldRank != newRank) {
-                String handle = ((SubmitterResult) handleData.get(new Integer(oldRank))).getHandle();
-                String submissionId = ((SubmitterResult) handleData.get(new Integer(oldRank))).getSubmissionId();
+                String handle = handleData.get(oldRank).getHandle();
+                String submissionId = handleData.get(oldRank).getSubmissionId();
 
                 if (newRank == 1 || newRank == 2) {
                     Utility.log(Level.ERROR, handle + ": rank#" + oldRank + "--> rank#" + newRank);
@@ -442,7 +444,7 @@ public class OnlineReviewScoreRankFixer {
                     Utility.log(Level.INFO, handle + ": rank#" + oldRank + "--> rank#" + newRank);
                 }
 
-                if (update) {
+                if (getUpdateProjects().contains(projectResult.getProjectId())) {
                     // update the placement first
                     this.updatePlacement(submissionId, newRank);
                     long userId = getUserId(submissionId);
@@ -661,15 +663,6 @@ public class OnlineReviewScoreRankFixer {
             Utility.releaseResource(getUserId, null, null);
         }
     }
-    
-    /**
-     * Set the update flag.
-     * 
-     * @param isUpdate the update flag, true for update, false for not update.
-     */
-    private void setUpdateFlag(boolean isUpdate) {
-        update = isUpdate;
-    }
 
     /**
      * Entry point of the online review score and rank fixer app.
@@ -679,25 +672,32 @@ public class OnlineReviewScoreRankFixer {
     public static void main(String[] args) {
         OnlineReviewScoreRankFixer fixer = new OnlineReviewScoreRankFixer();
         
-        if (args.length == 1) {
-            if (args[0].equalsIgnoreCase("update")) {
-                fixer.setUpdateFlag(true);
-            } else {
-                printHelp();
-                return;
-            }
-        } else if (args.length == 0) {
-            fixer.setUpdateFlag(false);
-        } else {
-            printHelp();
-            return;
-        }
+        if (args.length > 0) {
+        	for (int i = 0; i < args.length; i++) {
+        		String stringId = args[i];
+        		try {
+        			Long projectId = Long.parseLong(stringId);
+        			fixer.addProjectIdForUpdate(stringId);
+        		} catch (NumberFormatException e) {
+        			printHelp();
+        			return;
+        		}
+        	}
+        }        
         
         List projectResults = fixer.getAllProjectResults();
         fixer.buildProjectResults(projectResults);
     }
     
-    /**
+    private void addProjectIdForUpdate(String projectId) {
+		getUpdateProjects().add(projectId);
+	}
+
+	private Set<String> getUpdateProjects() {
+		return updateProjects;
+	}
+
+	/**
      * Print the command help message.
      */
     private static void printHelp() {
