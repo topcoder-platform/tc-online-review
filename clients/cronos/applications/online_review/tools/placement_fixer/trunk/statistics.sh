@@ -8,4 +8,4 @@ CP="conf$CP"
 MAIN="com.topcoder.onlinereview.fixer.OnlineReviewScoreRankFixer"
 
 echo "classpath: $CP"
-java -classpath $CP $MAIN > report.txt
+java -classpath $CP $MAIN $@ > report.txt
