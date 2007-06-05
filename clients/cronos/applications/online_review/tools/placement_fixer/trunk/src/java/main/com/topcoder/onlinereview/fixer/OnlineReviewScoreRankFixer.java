@@ -90,10 +90,11 @@ public class OnlineReviewScoreRankFixer {
     /**
      * SQL statement for updating the final score of the submission in the resource_info table.
      */
-    private static final String UPDATE_RI_FINAL_SCORE = "UPDATE ri.value = ? FROM submission s, upload u, resource_info ri"
-                    + " WHERE s.upload_id = u.upload_id"
-                    + " and u.resource_id = ri.resource_id"
-                    + " and ri.resource_info_type_id = 11" + " and s.submission_id = ?";
+    private static final String UPDATE_RI_FINAL_SCORE = "UPDATE resource_info set value = ?" 
+    	+ " WHERE resource_info_type_id = 11"
+    	+ " and resource_id = (select u.resource_id from upload u, submission s" 
+    	+ "     where s.upload_id = u.upload_id"
+    	+ "     and s.submission_id = ?)";
 
     /**
      * SQL statement for updating the rank of the submission in the resource_info table.
