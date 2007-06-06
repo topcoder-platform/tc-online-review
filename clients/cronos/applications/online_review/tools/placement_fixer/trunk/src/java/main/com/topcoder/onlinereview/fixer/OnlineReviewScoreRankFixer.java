@@ -269,7 +269,7 @@ public class OnlineReviewScoreRankFixer {
                     }
                 }
 
-                boolean success = validateProjectResult(projectResult, false);
+                boolean success = validateProjectResult(connection, projectResult, false);
 
                 if (!success) {
                     Utility.log(Level.INFO, "-------------------");
@@ -327,7 +327,7 @@ public class OnlineReviewScoreRankFixer {
         return projectResults;
     }
 
-    private boolean validateProjectResult(ProjectResult projectResult, boolean doUpdate) {
+    private boolean validateProjectResult(Connection connection, ProjectResult projectResult, boolean doUpdate) {
         List submitterResults = projectResult.getSubmitterResults();
 
         boolean dataCorrect = true;
@@ -387,7 +387,7 @@ public class OnlineReviewScoreRankFixer {
 
                 // update the final score
                 if (getUpdateProjects().contains(projectResult.getProjectId())) {
-                    updateFinalScore(sResult.getSubmissionId(), temp);
+                    updateFinalScore(connection, sResult.getSubmissionId(), temp);
                 }
 
                 if (sResult.getFinalScore() >= MINIMUN_PASSING_SCORE && temp < MINIMUN_PASSING_SCORE) {
@@ -395,10 +395,10 @@ public class OnlineReviewScoreRankFixer {
 
                     if (getUpdateProjects().contains(projectResult.getProjectId())) {
                         // update the passed review flag to 0
-                        updatePassedReview(sResult.getSubmissionId(), NON_PASSED_REVIEW);
+                        updatePassedReview(connection, sResult.getSubmissionId(), NON_PASSED_REVIEW);
 
                         // update the submission status
-                        updateSubmissionStatus(sResult.getSubmissionId(), FAILED_REVIEW_SUBMISSION);
+                        updateSubmissionStatus(connection, sResult.getSubmissionId(), FAILED_REVIEW_SUBMISSION);
                     }
 
                 } else if (sResult.getFinalScore() < MINIMUN_PASSING_SCORE && temp >= MINIMUN_PASSING_SCORE) {
@@ -406,13 +406,13 @@ public class OnlineReviewScoreRankFixer {
 
                     if (getUpdateProjects().contains(projectResult.getProjectId())) {
                         // update the passed review flag to 1
-                        updatePassedReview(sResult.getSubmissionId(), PASSED_REVIEW);
+                        updatePassedReview(connection, sResult.getSubmissionId(), PASSED_REVIEW);
 
                         // update the submission status
                         if (sResult.getRank() == 1) {
-                            updateSubmissionStatus(sResult.getSubmissionId(), WINNER_SUBMISSION);
+                            updateSubmissionStatus(connection, sResult.getSubmissionId(), WINNER_SUBMISSION);
                         } else {
-                            updateSubmissionStatus(sResult.getSubmissionId(), PASSED_WITHOUT_WIN_SUBMISSION);
+                            updateSubmissionStatus(connection, sResult.getSubmissionId(), PASSED_WITHOUT_WIN_SUBMISSION);
                         }
 
                     }
@@ -453,20 +453,20 @@ public class OnlineReviewScoreRankFixer {
 
                 if (getUpdateProjects().contains(projectResult.getProjectId())) {
                     // update the placement first
-                    this.updatePlacement(submissionId, newRank);
+                    this.updatePlacement(connection, submissionId, newRank);
                     long userId = getUserId(submissionId);
 
                     if (newRank == 1) {
-                        updateSubmissionStatus(submissionId, WINNER_SUBMISSION);
-                        updateProjectInfo(projectResult.getProjectId(), 23, userId + "");
+                        updateSubmissionStatus(connection, submissionId, WINNER_SUBMISSION);
+                        updateProjectInfo(connection, projectResult.getProjectId(), 23, userId + "");
                     }
 
                     if (newRank == 2) {
-                        updateProjectInfo(projectResult.getProjectId(), 24, userId + "");
+                        updateProjectInfo(connection, projectResult.getProjectId(), 24, userId + "");
                     }
 
                     if (oldRank == 1) {
-                        updateSubmissionStatus(submissionId, PASSED_WITHOUT_WIN_SUBMISSION);
+                        updateSubmissionStatus(connection, submissionId, PASSED_WITHOUT_WIN_SUBMISSION);
                     }
 
                 }
@@ -485,9 +485,7 @@ public class OnlineReviewScoreRankFixer {
      * @param submissionId the id of the submission.
      * @param newScore the new score of the submission.
      */
-    private void updateFinalScore(String submissionId, double newScore) {
-        Connection connection = Utility.getConnection();
-
+    private void updateFinalScore(Connection connection, String submissionId, double newScore) {
         PreparedStatement updateRI = null;
         PreparedStatement updatePR = null;
 
@@ -522,8 +520,7 @@ public class OnlineReviewScoreRankFixer {
      * @param submissionId the id of the submission.
      * @param newPlacement the new placement of the submission.
      */
-    private void updatePlacement(String submissionId, int newPlacement) {
-        Connection connection = Utility.getConnection();
+    private void updatePlacement(Connection connection, String submissionId, int newPlacement) {
 
         PreparedStatement updateRI = null;
         PreparedStatement updatePR = null;
@@ -558,12 +555,10 @@ public class OnlineReviewScoreRankFixer {
      * @param submissionId the id of the submission.
      * @param isPassed 1 for passed review, 0 for non-passed review.
      */
-    private void updatePassedReview(String submissionId, int isPassed) {
+    private void updatePassedReview(Connection connection, String submissionId, int isPassed) {
         if (isPassed != 0 && isPassed != 1) {
             throw new IllegalArgumentException("isPassed should be either 0 or 1.");
         }
-
-        Connection connection = Utility.getConnection();
 
         PreparedStatement updatePassedReview = null;
 
@@ -588,12 +583,10 @@ public class OnlineReviewScoreRankFixer {
      * @param submissionId the id of the submission.
      * @param status the status of the submission.
      */
-    private void updateSubmissionStatus(String submissionId, int status) {
+    private void updateSubmissionStatus(Connection connection, String submissionId, int status) {
         if (status != 1 && status != 3 && status != 4) {
             throw new IllegalArgumentException("status should be 1 or 3 or 4");
         }
-
-        Connection connection = Utility.getConnection();
 
         PreparedStatement updateSubmissionStatus = null;
 
@@ -619,8 +612,7 @@ public class OnlineReviewScoreRankFixer {
      * @param projectInfoTypeId the project info type id.
      * @param value the value of project info.
      */
-    private void updateProjectInfo(String projectId, int projectInfoTypeId, String value) {
-        Connection connection = Utility.getConnection();
+    private void updateProjectInfo(Connection connection, String projectId, int projectInfoTypeId, String value) {
 
         PreparedStatement updateProjectInfo = null;
 
