@@ -3,6 +3,7 @@ package com.topcoder.onlinereview.fixer;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -106,26 +107,29 @@ public class OnlineReviewScoreRankFixer {
     /**
      * SQL statement for updating the final score of the submission in project_result table.
      */
-    private static final String UPDATE_PR_FINAL_SCORE = "UPDATE project_result SET final_score = ?, modify_date = CURRENT"
-                    + " WHERE (user_id, project_id) = (SELECT ri.value, u.project_id FROM submission s, upload u, resource_info ri"
-                    + "    WHERE s.upload_id = u.upload_id AND u.resource_id = ri.resource_id"
-                    + " 	AND ri.resource_info_type_id = 1 AND s.submission_id = ?)";
+    private static final String UPDATE_PR_FINAL_SCORE = "UPDATE project_result SET final_score = ?, modify_date = CURRENT " +
+    		"	WHERE exists (SELECT ri.value FROM submission s, upload u, resource_info ri " +
+    		"		WHERE project_result.user_id = ri.value and project_result.project_id = u.project_id " +
+    		"		AND s.upload_id = u.upload_id AND u.resource_id = ri.resource_id " +
+    		"		AND ri.resource_info_type_id = 1 AND s.submission_id = ?)";
 
     /**
      * SQL statement for updating the rank of the submission in project_result table.
      */
     private static final String UPDATE_PR_PLACEMENT = "UPDATE project_result SET placed = ?, modify_date = CURRENT"
-                    + " WHERE (user_id, project_id) = (SELECT ri.value, u.project_id FROM submission s, upload u, resource_info ri"
-                    + "    WHERE s.upload_id = u.upload_id" + " AND u.resource_id = ri.resource_id"
-                    + " AND ri.resource_info_type_id = 1 AND s.submission_id = ?)";
+                    + " WHERE exists (SELECT ri.value, u.project_id FROM submission s, upload u, resource_info ri"
+                    + "    WHERE project_result.user_id = ri.value and project_result.project_id = u.project_id " 
+                    + "		AND s.upload_id = u.upload_id AND u.resource_id = ri.resource_id"
+                    + " 	AND ri.resource_info_type_id = 1 AND s.submission_id = ?)";
 
     /**
      * SQL statement for updating the passed_review_ind in project_result table. (1 for passing, 0
      * for non-passing).
      */
     private static final String UPDATE_PR_PASSED_REVIEW = "UPDATE project_result SET passed_review_ind = ?, modify_date = CURRENT"
-                    + " WHERE (user_id, project_id) = (SELECT ri.value, u.project_id FROM submission s, upload u, resource_info ri"
-                    + "    WHERE s.upload_id = u.upload_id AND u.resource_id = ri.resource_id"
+                    + " WHERE EXISTS (SELECT ri.value, u.project_id FROM submission s, upload u, resource_info ri"
+                    + "    WHERE project_result.user_id = ri.value and project_result.project_id = u.project_id" 
+                    + " 	AND s.upload_id = u.upload_id AND u.resource_id = ri.resource_id"
                     + " AND ri.resource_info_type_id = 1 AND s.submission_id = ?)";
 
     /**
@@ -200,6 +204,7 @@ public class OnlineReviewScoreRankFixer {
         PreparedStatement getSubmissionRank = null;
 
         try {
+        	connection.setAutoCommit(false);
             getReviewScores = connection.prepareStatement(GET_REVIEW_SCORES);
             getSubmissionFinalResult = connection.prepareStatement(GET_SUBMISSION_FINAL_RESULT);
             getSubmissionHandle = connection.prepareStatement(GET_SUBMISSION_HANDLE);
@@ -270,7 +275,15 @@ public class OnlineReviewScoreRankFixer {
                     Utility.log(Level.INFO, "-------------------");
                 }
             }
+            connection.commit();
         } catch (Exception ex) {
+        	if (connection != null) {
+        		try {
+					connection.rollback();
+				} catch (SQLException e) {
+					throw new OnlineReviewScoreRankFixerException("error during rollback", e);
+				}
+        	}
             throw new OnlineReviewScoreRankFixerException("Fail to query data from DB.", ex);
         } finally {
             Utility.releaseResource(getReviewScores, null, null);
