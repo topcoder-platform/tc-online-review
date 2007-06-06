@@ -696,7 +696,7 @@ public class OnlineReviewScoreRankFixer {
      */
     private static void printHelp() {
         System.err.println("====Usage notes====");
-        System.err.println("1.no parameter for statistics");
-        System.err.println("2.add parameter update for statistics and updating.");
+        System.err.println("- no parameters for statistics");
+        System.err.println("- List of projects ids for fixing its data.");
     }
 }
