@@ -487,14 +487,14 @@ public class OnlineReviewScoreRankFixer {
             // update resource_info
             updateRI.setDouble(1, newScore);
             updateRI.setString(2, sResult.getSubmissionId());
-
+            Utility.log(Level.ERROR, "update Resource_Info final score submissionId: " + sResult.getSubmissionId() + ", score: " + newScore);
             updateRI.executeUpdate();
 
             // update project_result
             updatePR.setDouble(1, newScore);
             updatePR.setString(2, projectId);
             updatePR.setString(3, sResult.getUserId());
-
+            Utility.log(Level.ERROR, "update Project_Result final score projectId: " + projectId + ", userId: " + sResult.getUserId() + ", score: " + newScore);
             updatePR.executeUpdate();
 
         } catch (Exception ex) {
