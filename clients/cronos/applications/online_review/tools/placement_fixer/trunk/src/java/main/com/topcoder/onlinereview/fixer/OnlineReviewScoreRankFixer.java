@@ -109,20 +109,20 @@ public class OnlineReviewScoreRankFixer {
     /**
      * SQL statement for updating the final score of the submission in project_result table.
      */
-    private static final String UPDATE_PR_FINAL_SCORE = "UPDATE project_result SET final_score = ?, modify_date = CURRENT" 
+    private static final String UPDATE_PR_FINAL_SCORE = "UPDATE project_result SET final_score = ?" 
     	+ " where project_id = ? and user_id = ?";
 
     /**
      * SQL statement for updating the rank of the submission in project_result table.
      */
-    private static final String UPDATE_PR_PLACEMENT = "UPDATE project_result SET placed = ?, modify_date = CURRENT"
+    private static final String UPDATE_PR_PLACEMENT = "UPDATE project_result SET placed = ?"
     	+ " where project_id = ? and user_id = ?";
 
     /**
      * SQL statement for updating the passed_review_ind in project_result table. (1 for passing, 0
      * for non-passing).
      */
-    private static final String UPDATE_PR_PASSED_REVIEW = "UPDATE project_result SET passed_review_ind = ?, modify_date = CURRENT"
+    private static final String UPDATE_PR_PASSED_REVIEW = "UPDATE project_result SET passed_review_ind = ?"
     	+ " where project_id = ? and user_id = ?";
 
     /**
