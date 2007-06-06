@@ -654,7 +654,7 @@ public class OnlineReviewScoreRankFixer {
             ResultSet result = getUserId.executeQuery();
 
             while (result.next()) {
-                return result.getString(1);
+                return result.getString("user_id");
             }
 
             return null;
