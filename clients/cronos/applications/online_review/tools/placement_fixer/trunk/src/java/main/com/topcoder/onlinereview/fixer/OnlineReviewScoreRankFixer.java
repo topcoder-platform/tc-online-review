@@ -69,10 +69,10 @@ public class OnlineReviewScoreRankFixer {
     /**
      * SQL statement for retrieving a submission's user ID.
      */
-    private static final String GET_SUBMISSION_USER_ID = "SELECT s.submission_id, ri.value handle from submission s, upload u, resource_info ri"
+    private static final String GET_SUBMISSION_USER_ID = "SELECT s.submission_id, ri.value user_id from submission s, upload u, resource_info ri"
                     + " where s.upload_id = u.upload_id"
                     + " and u.resource_id = ri.resource_id"
-                    + " and ri.resource_info_type_id = 1" + " and s.submission_id = ?";
+                    + " and ri.resource_info_type_id = 1 and s.submission_id = ?";
 
     /**
      * SQL statement for retrieving a submission's final score from resource_info table.
@@ -259,6 +259,8 @@ public class OnlineReviewScoreRankFixer {
                     while (result.next()) {
                         sResult.setHandle(result.getString("handle"));
                     }
+                    
+                    sResult.setUserId(getUserId(connection, lastSubmissionId));
                 }
 
                 boolean success = validateProjectResult(connection, projectResult, false);
@@ -441,15 +443,15 @@ public class OnlineReviewScoreRankFixer {
                 if (getUpdateProjects().contains(projectResult.getProjectId())) {
                     // update the placement first
                     this.updatePlacement(connection, projectResult.getProjectId(), submitter, newRank);
-                    long userId = getUserId(submissionId);
+                    String userId = getUserId(connection, submissionId);
 
                     if (newRank == 1) {
                         updateSubmissionStatus(connection, submissionId, WINNER_SUBMISSION);
-                        updateProjectInfo(connection, projectResult.getProjectId(), 23, userId + "");
+                        updateProjectInfo(connection, projectResult.getProjectId(), 23, userId);
                     }
 
                     if (newRank == 2) {
-                        updateProjectInfo(connection, projectResult.getProjectId(), 24, userId + "");
+                        updateProjectInfo(connection, projectResult.getProjectId(), 24, userId);
                     }
 
                     if (oldRank == 1) {
@@ -638,26 +640,24 @@ public class OnlineReviewScoreRankFixer {
     /**
      * Gets the user id of the given submitter.
      * 
-     * @param submitterId the id of the submitter.
+     * @param submissionId the id of the submitter.
      * @return the user id.
      */
-    private long getUserId(String submitterId) {
-        Connection connection = Utility.getConnection();
-
+    private String getUserId(Connection connection, String submissionId) {
         PreparedStatement getUserId = null;
 
         try {
             getUserId = connection.prepareStatement(GET_SUBMISSION_USER_ID);
 
-            getUserId.setString(1, submitterId);
+            getUserId.setString(1, submissionId);
 
             ResultSet result = getUserId.executeQuery();
 
             while (result.next()) {
-                return result.getLong(1);
+                return result.getString(1);
             }
 
-            return -1;
+            return null;
 
         } catch (Exception ex) {
             throw new OnlineReviewScoreRankFixerException("Fail to get user id.", ex);
