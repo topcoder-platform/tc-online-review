@@ -468,7 +468,7 @@ public class OnlineReviewScoreRankFixer {
     
     private DecimalFormat getScoreFormatter() {
     	if (SCORE_FORMATTER == null) {
-    		SCORE_FORMATTER = new DecimalFormat("#.00");
+    		SCORE_FORMATTER = new DecimalFormat("#.##");
     		SCORE_FORMATTER.setDecimalSeparatorAlwaysShown(false);
         	DecimalFormatSymbols formatSymbols = SCORE_FORMATTER.getDecimalFormatSymbols();
         	formatSymbols.setDecimalSeparator('.');
@@ -672,13 +672,13 @@ public class OnlineReviewScoreRankFixer {
      * @param args the arguments passed in.
      */
     public static void main(String[] args) {
-        OnlineReviewScoreRankFixer fixer = new OnlineReviewScoreRankFixer();
+		OnlineReviewScoreRankFixer fixer = new OnlineReviewScoreRankFixer();
 
         if (args.length > 0) {
             for (int i = 0; i < args.length; i++) {
                 String stringId = args[i];
                 try {
-                    Long projectId = Long.parseLong(stringId);
+                    Long.parseLong(stringId);
                     fixer.addProjectIdForUpdate(stringId);
                 } catch (NumberFormatException e) {
                     printHelp();
