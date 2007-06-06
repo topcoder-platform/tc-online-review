@@ -77,7 +77,7 @@ public class OnlineReviewScoreRankFixer {
     private static final String GET_SUBMISSION_FINAL_SCORE = "SELECT ri.value finalScore from submission s, upload u, resource_info ri"
                     + " where s.upload_id = u.upload_id"
                     + " and u.resource_id = ri.resource_id"
-                    + " and ri.resource_info_type_id = 11" + " and s.submission_id = ?";
+                    + " and ri.resource_info_type_id = 11 and s.submission_id = ?";
 
     /**
      * SQL statement for retrieving a submission's placement from resource_info table.
@@ -85,7 +85,7 @@ public class OnlineReviewScoreRankFixer {
     private static final String GET_SUBMISSION_PLACEMENT = "SELECT ri.value rank from submission s, upload u, resource_info ri"
                     + " where s.upload_id = u.upload_id"
                     + " and u.resource_id = ri.resource_id"
-                    + " and ri.resource_info_type_id = 12" + " and s.submission_id = ?";
+                    + " and ri.resource_info_type_id = 12 and s.submission_id = ?";
 
     /**
      * SQL statement for updating the final score of the submission in the resource_info table.
@@ -93,7 +93,7 @@ public class OnlineReviewScoreRankFixer {
     private static final String UPDATE_RI_FINAL_SCORE = "UPDATE resource_info SET value = ?"
                     + " WHERE resource_info_type_id = 11"
                     + " AND resource_id = (SELECT u.resource_id FROM upload u, submission s"
-                    + " WHERE s.upload_id = u.upload_id" + " AND s.submission_id = ?)";
+                    + " WHERE s.upload_id = u.upload_id AND s.submission_id = ?)";
 
     /**
      * SQL statement for updating the rank of the submission in the resource_info table.
@@ -101,7 +101,7 @@ public class OnlineReviewScoreRankFixer {
     private static final String UPDATE_RI_PLACEMENT = "UPDATE resource_info SET value = ?"
                     + " WHERE resource_info_type_id = 12"
                     + " AND resource_id = (SELECT u.resource_id FROM upload u, submission s"
-                    + " WHERE s.upload_id = u.upload_id" + " AND s.submission_id = ?)";
+                    + " WHERE s.upload_id = u.upload_id AND s.submission_id = ?)";
 
     /**
      * SQL statement for updating the final score of the submission in project_result table.
@@ -125,7 +125,7 @@ public class OnlineReviewScoreRankFixer {
      */
     private static final String UPDATE_PR_PASSED_REVIEW = "UPDATE project_result SET passed_review_ind = ?"
                     + " WHERE (user_id, project_id) = (SELECT ri.value, u.project_id FROM submission s, upload u, resource_info ri"
-                    + "    WHERE s.upload_id = u.upload_id" + " AND u.resource_id = ri.resource_id"
+                    + "    WHERE s.upload_id = u.upload_id AND u.resource_id = ri.resource_id"
                     + " AND ri.resource_info_type_id = 1 AND s.submission_id = ?)";
 
     /**
