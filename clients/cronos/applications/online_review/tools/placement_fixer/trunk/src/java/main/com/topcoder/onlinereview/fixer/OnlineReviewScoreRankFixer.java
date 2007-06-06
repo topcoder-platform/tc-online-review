@@ -5,6 +5,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -462,6 +464,20 @@ public class OnlineReviewScoreRankFixer {
         return dataCorrect;
     }
 
+    private static DecimalFormat SCORE_FORMATTER = null;
+    
+    private DecimalFormat getScoreFormatter() {
+    	if (SCORE_FORMATTER == null) {
+    		SCORE_FORMATTER = new DecimalFormat("#.00");
+    		SCORE_FORMATTER.setDecimalSeparatorAlwaysShown(false);
+        	DecimalFormatSymbols formatSymbols = SCORE_FORMATTER.getDecimalFormatSymbols();
+        	formatSymbols.setDecimalSeparator('.');
+        	SCORE_FORMATTER.setDecimalFormatSymbols(formatSymbols);	
+    	}
+    	
+    	return SCORE_FORMATTER;
+    }
+    
     /**
      * Update the final score for specified submission. This method will update two tables,
      * resource_info and project_result.
@@ -478,7 +494,7 @@ public class OnlineReviewScoreRankFixer {
             updatePR = connection.prepareStatement(UPDATE_PR_FINAL_SCORE);
 
             // update resource_info
-            updateRI.setDouble(1, newScore);
+            updateRI.setString(1, getScoreFormatter().format(newScore));
             updateRI.setString(2, sResult.getSubmissionId());
             Utility.log(Level.ERROR, "update Resource_Info final score submissionId: " + sResult.getSubmissionId() + ", score: " + newScore);
             updateRI.executeUpdate();
