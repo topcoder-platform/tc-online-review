@@ -1,20 +1,13 @@
 package com.topcoder.onlinereview.fixer;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 public class ProjectResult {
     private String projectId;
-
     private String projectName;
-
     private String projectType;
-
-    private List submitterResults = new ArrayList();
-
-    private Set duplicateResultChecker = new HashSet();
+    private Set<SubmitterResult> submitterResults = new LinkedHashSet<SubmitterResult>();
 
     public void setProjectId(String projectId) {
         if (projectId == null) {
@@ -55,17 +48,10 @@ public class ProjectResult {
         if (sResult == null) {
             throw new IllegalArgumentException("sResult cannot be null.");
         }
-
-        if (duplicateResultChecker.contains(new Integer(sResult.getSubmissionId()))) {
-            return;
-        } else {
-            duplicateResultChecker.add(new Integer(sResult.getSubmissionId()));
-        }
-
         submitterResults.add(sResult);
     }
 
-    public List getSubmitterResults() {
+    public Set<SubmitterResult> getSubmitterResults() {
         return submitterResults;
     }
 
@@ -74,24 +60,19 @@ public class ProjectResult {
     }
 
     public String getSubmissionsResult() {
-        String result = "";
-        
-        List sResults = getSubmitterResults();
+        StringBuilder result = new StringBuilder();
 
-        for (int i = 0; i < sResults.size(); ++i) {
-            result += sResults.get(i).toString();
-        }
+        for (SubmitterResult sResult : getSubmitterResults()) {
+			result.append(sResult);
+		}
 
-        return result;
+        return result.toString();
     }
 
     public String toString() {
-        String result = getProjectInfo() + "\n";
-
-        result += "---------------------------\n";
-
-        result += getSubmissionsResult();
-
-        return result;
+        return new StringBuilder(getProjectInfo())
+        	.append("\n---------------------------\n")
+        	.append(getSubmissionsResult())
+        	.toString();
     }
 }

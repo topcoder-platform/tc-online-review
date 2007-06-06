@@ -20,7 +20,11 @@ public class SubmitterResult {
 
     private int rank;
 
-    public void setUserId(String userId) {
+    public SubmitterResult(String submissionId) {
+		setSubmissionId(submissionId);
+	}
+
+	public void setUserId(String userId) {
         this.userId = userId;
     }
 
@@ -90,7 +94,24 @@ public class SubmitterResult {
         return fixedRank;
     }
 
-    public String toString() {
+    @Override
+	public int hashCode() {
+		return submissionId.hashCode();
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		return submissionId.equals(((SubmitterResult) obj).submissionId);
+	}
+
+	@Override
+	public String toString() {
         String str = "handle:" + getHandle() + " finalScore:" + getFinalScore() + " rank:"
                         + getRank() + "\n";
 

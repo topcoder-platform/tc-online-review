@@ -202,7 +202,7 @@ public class OnlineReviewScoreRankFixer {
             getSubmissionFinalScore = connection.prepareStatement(GET_SUBMISSION_FINAL_SCORE);
             getSubmissionRank = connection.prepareStatement(GET_SUBMISSION_PLACEMENT);
 
-            for (int i = 0, n = projectResults.size(); i < n; ++i) {
+            for (int i = 0; i < projectResults.size(); ++i) {
 
                 ProjectResult projectResult = (ProjectResult) projectResults.get(i);
 
@@ -221,8 +221,7 @@ public class OnlineReviewScoreRankFixer {
                     submissionId = result.getString("id");
 
                     if (lastSubmissionId == null || !lastSubmissionId.equals(submissionId)) {
-                        sResult = new SubmitterResult();
-                        sResult.setSubmissionId(submissionId);
+                        sResult = new SubmitterResult(submissionId);
                         projectResult.addSubmitterResult(sResult);
                         lastSubmissionId = submissionId;
                     }
@@ -319,16 +318,11 @@ public class OnlineReviewScoreRankFixer {
     }
 
     private boolean validateProjectResult(Connection connection, ProjectResult projectResult, boolean doUpdate) {
-        List submitterResults = projectResult.getSubmitterResults();
-
         boolean dataCorrect = true;
-
         Utility.log(Level.DEBUG, projectResult);
 
         // validate all the submission's final score
-        for (int i = 0, n = submitterResults.size(); i < n; ++i) {
-
-            SubmitterResult sResult = (SubmitterResult) submitterResults.get(i);
+        for (SubmitterResult sResult: projectResult.getSubmitterResults()) {
             double[] scores = sResult.getReviewScores();
             double temp = 0;
 
@@ -420,13 +414,12 @@ public class OnlineReviewScoreRankFixer {
         Map<Double, Integer> ranks = new TreeMap<Double, Integer>();
         Map<Integer, SubmitterResult> handleData = new HashMap<Integer, SubmitterResult>();
 
-        for (int i = 0, n = submitterResults.size(); i < n; ++i) {
-            SubmitterResult sResult = (SubmitterResult) submitterResults.get(i);
+        for (SubmitterResult sResult: projectResult.getSubmitterResults()) {
             ranks.put(sResult.getFixedScore(), sResult.getRank());
             handleData.put(sResult.getRank(), sResult);
         }
 
-        int newRank = submitterResults.size();
+        int newRank = projectResult.getSubmitterResults().size();
 
         for (Iterator itr = ranks.values().iterator(); itr.hasNext();) {
             int oldRank = ((Integer) itr.next()).intValue();
