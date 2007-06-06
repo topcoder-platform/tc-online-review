@@ -90,63 +90,56 @@ public class OnlineReviewScoreRankFixer {
     /**
      * SQL statement for updating the final score of the submission in the resource_info table.
      */
-    private static final String UPDATE_RI_FINAL_SCORE = "UPDATE resource_info set value = ?" 
-    	+ " WHERE resource_info_type_id = 11"
-    	+ " and resource_id = (select u.resource_id from upload u, submission s" 
-    	+ "     where s.upload_id = u.upload_id"
-    	+ "     and s.submission_id = ?)";
+    private static final String UPDATE_RI_FINAL_SCORE = "UPDATE resource_info SET value = ?"
+                    + " WHERE resource_info_type_id = 11"
+                    + " AND resource_id = (SELECT u.resource_id FROM upload u, submission s"
+                    + " WHERE s.upload_id = u.upload_id" + " AND s.submission_id = ?)";
 
     /**
      * SQL statement for updating the rank of the submission in the resource_info table.
      */
-    private static final String UPDATE_RI_PLACEMENT = "UPDATE ri.value = ? FROM submission s, upload u, resource_info ri"
-                    + " WHERE s.upload_id = u.upload_id"
-                    + " AND u.resource_id = ri.resource_id"
-                    + " AND ri.resource_info_type_id = 12" + " AND s.submission_id = ?";
+    private static final String UPDATE_RI_PLACEMENT = "UPDATE resource_info SET value = ?"
+                    + " WHERE resource_info_type_id = 12"
+                    + " AND resource_id = (SELECT u.resource_id FROM upload u, submission s"
+                    + " WHERE s.upload_id = u.upload_id" + " AND s.submission_id = ?)";
 
     /**
      * SQL statement for updating the final score of the submission in project_result table.
      */
-    private static final String UPDATE_PR_FINAL_SCORE = "UPDATE pr.final_score = ? FROM project_result pr, submission s, upload u, resource_info ri"
-                    + " where s.upload_id = u.upload_id"
-                    + " and u.resource_id = ri.resource_id"
-                    + " and ri.resource_info_type_id = 1"
-                    + " and pr.project_id = u.project_id"
-                    + " and pr.user_id = ri.value and s.submission_id = ?";
+    private static final String UPDATE_PR_FINAL_SCORE = "UPDATE project_result SET final_score = ?"
+                    + " WHERE (user_id, project_id) = (SELECT ri.value, u.project_id FROM submission s, upload u, resource_info ri"
+                    + "    WHERE s.upload_id = u.upload_id" + " AND u.resource_id = ri.resource_id"
+                    + " AND ri.resource_info_type_id = 1 AND s.submission_id = ?)";
 
     /**
      * SQL statement for updating the rank of the submission in project_result table.
      */
-    private static final String UPDATE_PR_PLACEMENT = "UPDATE pr.placed = ? FROM project_result pr, submission s, upload u, resource_info ri"
-                    + " where s.upload_id = u.upload_id"
-                    + " and u.resource_id = ri.resource_id"
-                    + " and ri.resource_info_type_id = 1"
-                    + " and pr.project_id = u.project_id"
-                    + " and pr.user_id = ri.value and s.submission_id = ?";
+    private static final String UPDATE_PR_PLACEMENT = "UPDATE project_result SET placed = ?"
+                    + " WHERE (user_id, project_id) = (SELECT ri.value, u.project_id FROM submission s, upload u, resource_info ri"
+                    + "    WHERE s.upload_id = u.upload_id" + " AND u.resource_id = ri.resource_id"
+                    + " AND ri.resource_info_type_id = 1 AND s.submission_id = ?)";
 
     /**
      * SQL statement for updating the passed_review_ind in project_result table. (1 for passing, 0
      * for non-passing).
      */
-    private static final String UPDATE_PR_PASSED_REVIEW = "UPDATE pr.passed_review_ind = ? FROM project_result pr, submission s, upload u, resource_info ri"
-                    + " where s.upload_id = u.upload_id"
-                    + " and u.resource_id = ri.resource_id"
-                    + " and ri.resource_info_type_id = 1"
-                    + " and pr.project_id = u.project_id"
-                    + " and pr.user_id = ri.value and s.submission_id = ?";
+    private static final String UPDATE_PR_PASSED_REVIEW = "UPDATE project_result SET passed_review_ind = ?"
+                    + " WHERE (user_id, project_id) = (SELECT ri.value, u.project_id FROM submission s, upload u, resource_info ri"
+                    + "    WHERE s.upload_id = u.upload_id" + " AND u.resource_id = ri.resource_id"
+                    + " AND ri.resource_info_type_id = 1 AND s.submission_id = ?)";
 
     /**
      * SQL statement for updating submission_status. (1 for winner, 3 from non-passed review, 4 for
      * passed review without win)
      */
-    private static final String UPDATE_SUBMISSION_STATUS = "UPDATE s.submission_status_id = ? FROM submission s"
-                    + " where s.submission_id = ?";
+    private static final String UPDATE_SUBMISSION_STATUS = "UPDATE submission SET submission_status_id = ?"
+                    + " WHERE submission_id = ?";
 
     /**
      * SQL statement for updating the project_info for the given project.
      */
-    private static final String UPDATE_PROJECT_INFO = "UPDATE pi.value = ? FROM project_info pi"
-                    + " where pi.project_id = ? and pi.project_info_type_id = ?";
+    private static final String UPDATE_PROJECT_INFO = "UPDATE project_info SET value = ?"
+                    + " WHERE project_id = ? AND project_info_type_id = ?";
 
     /**
      * The minimum score to pass the review.
@@ -449,20 +442,20 @@ public class OnlineReviewScoreRankFixer {
                     // update the placement first
                     this.updatePlacement(submissionId, newRank);
                     long userId = getUserId(submissionId);
-                    
+
                     if (newRank == 1) {
                         updateSubmissionStatus(submissionId, WINNER_SUBMISSION);
                         updateProjectInfo(projectResult.getProjectId(), 23, userId + "");
                     }
-                    
+
                     if (newRank == 2) {
                         updateProjectInfo(projectResult.getProjectId(), 24, userId + "");
                     }
-                    
+
                     if (oldRank == 1) {
                         updateSubmissionStatus(submissionId, PASSED_WITHOUT_WIN_SUBMISSION);
                     }
-                    
+
                 }
             }
 
@@ -672,33 +665,33 @@ public class OnlineReviewScoreRankFixer {
      */
     public static void main(String[] args) {
         OnlineReviewScoreRankFixer fixer = new OnlineReviewScoreRankFixer();
-        
+
         if (args.length > 0) {
-        	for (int i = 0; i < args.length; i++) {
-        		String stringId = args[i];
-        		try {
-        			Long projectId = Long.parseLong(stringId);
-        			fixer.addProjectIdForUpdate(stringId);
-        		} catch (NumberFormatException e) {
-        			printHelp();
-        			return;
-        		}
-        	}
-        }        
-        
+            for (int i = 0; i < args.length; i++) {
+                String stringId = args[i];
+                try {
+                    Long projectId = Long.parseLong(stringId);
+                    fixer.addProjectIdForUpdate(stringId);
+                } catch (NumberFormatException e) {
+                    printHelp();
+                    return;
+                }
+            }
+        }
+
         List projectResults = fixer.getAllProjectResults();
         fixer.buildProjectResults(projectResults);
     }
-    
+
     private void addProjectIdForUpdate(String projectId) {
-		getUpdateProjects().add(projectId);
-	}
+        getUpdateProjects().add(projectId);
+    }
 
-	private Set<String> getUpdateProjects() {
-		return updateProjects;
-	}
+    private Set<String> getUpdateProjects() {
+        return updateProjects;
+    }
 
-	/**
+    /**
      * Print the command help message.
      */
     private static void printHelp() {
