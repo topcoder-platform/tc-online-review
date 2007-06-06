@@ -90,7 +90,7 @@ public class OnlineReviewScoreRankFixer {
     /**
      * SQL statement for updating the final score of the submission in the resource_info table.
      */
-    private static final String UPDATE_RI_FINAL_SCORE = "UPDATE resource_info SET value = ?"
+    private static final String UPDATE_RI_FINAL_SCORE = "UPDATE resource_info SET value = ?, modify_user = 'FixerApp', modify_date = CURRENT"
                     + " WHERE resource_info_type_id = 11"
                     + " AND resource_id = (SELECT u.resource_id FROM upload u, submission s"
                     + " WHERE s.upload_id = u.upload_id AND s.submission_id = ?)";
@@ -98,7 +98,7 @@ public class OnlineReviewScoreRankFixer {
     /**
      * SQL statement for updating the rank of the submission in the resource_info table.
      */
-    private static final String UPDATE_RI_PLACEMENT = "UPDATE resource_info SET value = ?"
+    private static final String UPDATE_RI_PLACEMENT = "UPDATE resource_info SET value = ?, modify_user = 'FixerApp', modify_date = CURRENT"
                     + " WHERE resource_info_type_id = 12"
                     + " AND resource_id = (SELECT u.resource_id FROM upload u, submission s"
                     + " WHERE s.upload_id = u.upload_id AND s.submission_id = ?)";
@@ -106,15 +106,15 @@ public class OnlineReviewScoreRankFixer {
     /**
      * SQL statement for updating the final score of the submission in project_result table.
      */
-    private static final String UPDATE_PR_FINAL_SCORE = "UPDATE project_result SET final_score = ?"
+    private static final String UPDATE_PR_FINAL_SCORE = "UPDATE project_result SET final_score = ?, modify_date = CURRENT"
                     + " WHERE (user_id, project_id) = (SELECT ri.value, u.project_id FROM submission s, upload u, resource_info ri"
-                    + "    WHERE s.upload_id = u.upload_id" + " AND u.resource_id = ri.resource_id"
-                    + " AND ri.resource_info_type_id = 1 AND s.submission_id = ?)";
+                    + "    WHERE s.upload_id = u.upload_id AND u.resource_id = ri.resource_id"
+                    + " 	AND ri.resource_info_type_id = 1 AND s.submission_id = ?)";
 
     /**
      * SQL statement for updating the rank of the submission in project_result table.
      */
-    private static final String UPDATE_PR_PLACEMENT = "UPDATE project_result SET placed = ?"
+    private static final String UPDATE_PR_PLACEMENT = "UPDATE project_result SET placed = ?, modify_date = CURRENT"
                     + " WHERE (user_id, project_id) = (SELECT ri.value, u.project_id FROM submission s, upload u, resource_info ri"
                     + "    WHERE s.upload_id = u.upload_id" + " AND u.resource_id = ri.resource_id"
                     + " AND ri.resource_info_type_id = 1 AND s.submission_id = ?)";
@@ -123,7 +123,7 @@ public class OnlineReviewScoreRankFixer {
      * SQL statement for updating the passed_review_ind in project_result table. (1 for passing, 0
      * for non-passing).
      */
-    private static final String UPDATE_PR_PASSED_REVIEW = "UPDATE project_result SET passed_review_ind = ?"
+    private static final String UPDATE_PR_PASSED_REVIEW = "UPDATE project_result SET passed_review_ind = ?, modify_date = CURRENT"
                     + " WHERE (user_id, project_id) = (SELECT ri.value, u.project_id FROM submission s, upload u, resource_info ri"
                     + "    WHERE s.upload_id = u.upload_id AND u.resource_id = ri.resource_id"
                     + " AND ri.resource_info_type_id = 1 AND s.submission_id = ?)";
@@ -132,13 +132,13 @@ public class OnlineReviewScoreRankFixer {
      * SQL statement for updating submission_status. (1 for winner, 3 from non-passed review, 4 for
      * passed review without win)
      */
-    private static final String UPDATE_SUBMISSION_STATUS = "UPDATE submission SET submission_status_id = ?"
+    private static final String UPDATE_SUBMISSION_STATUS = "UPDATE submission SET submission_status_id = ?, modify_user = 'FixerApp', modify_date = CURRENT"
                     + " WHERE submission_id = ?";
 
     /**
      * SQL statement for updating the project_info for the given project.
      */
-    private static final String UPDATE_PROJECT_INFO = "UPDATE project_info SET value = ?"
+    private static final String UPDATE_PROJECT_INFO = "UPDATE project_info SET value = ?, modify_user = 'FixerApp', modify_date = CURRENT"
                     + " WHERE project_id = ? AND project_info_type_id = ?";
 
     /**
