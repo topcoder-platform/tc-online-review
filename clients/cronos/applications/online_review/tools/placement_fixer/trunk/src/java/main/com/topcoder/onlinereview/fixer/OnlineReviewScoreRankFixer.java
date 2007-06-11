@@ -294,7 +294,6 @@ public class OnlineReviewScoreRankFixer {
     private List getAllProjectResults() {
         // get all the component project list
         Connection connection = Utility.getConnection();
-
         Statement statement = null;
 
         List<ProjectResult> projectResults = new ArrayList<ProjectResult>();
@@ -539,14 +538,14 @@ public class OnlineReviewScoreRankFixer {
             // update resource_info
             updateRI.setDouble(1, newPlacement);
             updateRI.setString(2, sResult.getSubmissionId());
-
+            Utility.log(Level.ERROR, "update placement in resource_info for submission: " + sResult.getSubmissionId() + ", new place: " + newPlacement);
             updateRI.executeUpdate();
 
             // update project_result
             updatePR.setDouble(1, newPlacement);
             updatePR.setString(2, projectId);
             updatePR.setString(3, sResult.getUserId());
-
+            Utility.log(Level.ERROR, "update placement in project_result for projectId: " + projectId + ", userId: " + sResult.getUserId() + ", new place: " + newPlacement);
             updatePR.executeUpdate();
 
         } catch (Exception ex) {
@@ -576,7 +575,7 @@ public class OnlineReviewScoreRankFixer {
             updatePassedReview.setInt(1, isPassed);
             updatePassedReview.setString(2, projectId);
             updatePassedReview.setString(3, sResult.getUserId());
-
+            Utility.log(Level.ERROR, "update passed_review_id in project_result for projectId: " + projectId + ", userId: " + sResult.getUserId() + ", value: " + isPassed);
             updatePassedReview.executeUpdate();
 
         } catch (Exception ex) {
@@ -604,7 +603,7 @@ public class OnlineReviewScoreRankFixer {
 
             updateSubmissionStatus.setInt(1, status);
             updateSubmissionStatus.setString(2, submissionId);
-
+            Utility.log(Level.ERROR, "update submission status for submissionId: " + submissionId + ", status: " + status);
             updateSubmissionStatus.executeUpdate();
 
         } catch (Exception ex) {
@@ -631,7 +630,9 @@ public class OnlineReviewScoreRankFixer {
             updateProjectInfo.setString(1, value);
             updateProjectInfo.setString(2, projectId);
             updateProjectInfo.setInt(3, projectInfoTypeId);
-
+            Utility.log(Level.ERROR, "update placement in project_result for projectId: " + projectId 
+            		+ ", project_info_type_id: " + projectInfoTypeId 
+            		+ ", value: " + value);
             updateProjectInfo.executeUpdate();
 
         } catch (Exception ex) {
@@ -652,9 +653,7 @@ public class OnlineReviewScoreRankFixer {
 
         try {
             getUserId = connection.prepareStatement(GET_SUBMISSION_USER_ID);
-
             getUserId.setString(1, submissionId);
-
             ResultSet result = getUserId.executeQuery();
 
             while (result.next()) {
@@ -662,7 +661,6 @@ public class OnlineReviewScoreRankFixer {
             }
 
             return null;
-
         } catch (Exception ex) {
             throw new OnlineReviewScoreRankFixerException("Fail to get user id.", ex);
         } finally {
