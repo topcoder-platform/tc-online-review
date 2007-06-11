@@ -305,11 +305,15 @@ public class OnlineReviewScoreRankFixer {
             ResultSet result = statement.executeQuery(GET_ALL_COMPONENT_PROJECT_ID);
 
             while (result.next()) {
-                ProjectResult pResult = new ProjectResult();
-                pResult.setProjectId(result.getString("id"));
-                pResult.setProjectName(result.getString("name"));
-                pResult.setProjectType(result.getInt("type") == 1 ? "Design" : "Development");
-                projectResults.add(pResult);
+            	String projectId = result.getString("id");
+            	if (getUpdateProjects().isEmpty() || getUpdateProjects().contains(projectId)) {
+            		ProjectResult pResult = new ProjectResult();
+
+            		pResult.setProjectId(projectId);
+            		pResult.setProjectName(result.getString("name"));
+            		pResult.setProjectType(result.getInt("type") == 1 ? "Design" : "Development");
+            		projectResults.add(pResult);
+            	}
             }
 
         } catch (Exception ex) {
