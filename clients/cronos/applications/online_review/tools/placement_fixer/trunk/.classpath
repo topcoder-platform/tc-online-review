@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="src/java/main"/>
+	<classpathentry kind="src" path="conf"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="lib/ext/ifxjdbc.jar"/>
 	<classpathentry kind="lib" path="lib/tcs/base_exception/1.0/base_exception.jar"/>
@@ -8,5 +9,6 @@
 	<classpathentry kind="lib" path="lib/tcs/db_connection_factory/1.0/db_connection_factory.jar"/>
 	<classpathentry kind="lib" path="lib/tcs/logging_wrapper/1.2/logging_wrapper.jar"/>
 	<classpathentry kind="lib" path="lib/tcs/typesafe_enum/1.0/typesafe_enum.jar"/>
+	<classpathentry kind="lib" path="lib/ext/log4j.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
