@@ -5,6 +5,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.Types;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
@@ -557,8 +558,10 @@ public class OnlineReviewScoreRankFixer {
             //update resource_info payment
             if (newPlacement <= 2) {
             	updateRIpayment.setDouble(1, projectResult.getPaymentForPlace(newPlacement));
+            	updatePR.setDouble(2, projectResult.getPaymentForPlace(newPlacement));
             } else {
             	updateRIpayment.setDouble(1, 0);
+            	updatePR.setNull(2, Types.DOUBLE);
             }
             updateRIpayment.setString(2, sResult.getSubmissionId());
             Utility.log(Level.ERROR, "update payment in resource_info for submission: " + sResult.getSubmissionId() + ", new payment: " + projectResult.getPaymentForPlace(newPlacement));
@@ -566,7 +569,6 @@ public class OnlineReviewScoreRankFixer {
 
             // update project_result
             updatePR.setInt(1, newPlacement);
-            updatePR.setDouble(2, projectResult.getPaymentForPlace(newPlacement));
             updatePR.setString(3, projectResult.getProjectId());
             updatePR.setString(4, sResult.getUserId());
             Utility.log(Level.ERROR, "update placement & payment in project_result for projectId: " + projectResult.getProjectId() 
