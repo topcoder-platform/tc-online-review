@@ -27,11 +27,14 @@ public class OnlineReviewScoreRankFixer {
     /**
      * SQL statement for getting all the completed component (Design or Development)'s project id.
      */
-    private static final String GET_ALL_COMPONENT_PROJECT_ID = "SELECT project.project_id id, project.project_category_id type"
-                    + ", project_info.value name FROM project, project_info "
-                    + "WHERE project_status_id = 7 AND project_category_id in (1,2) "
-                    + " AND project_info.project_id = project.project_id "
-                    + "AND project_info.project_info_type_id = 6";
+    private static final String GET_ALL_COMPONENT_PROJECT_ID = "SELECT p.project_id id, p.project_category_id type, piName.value name, piPrice.value price"
+    	+ " FROM project p, outer project_info piName, outer project_info piPrice"
+    	+ " WHERE p.project_category_id in (1,2)"
+    	+ " AND piName.project_id = p.project_id"
+    	+ " AND piPrice.project_id = p.project_id"
+    	+ " AND piName.project_info_type_id = 6"
+    	+ " AND piPrice.project_info_type_id = 16"
+    	+ " AND p.project_status_id = 7";
 
     /**
      * SQL statement for retrieving all review scores for a project's submissions. project.
@@ -105,6 +108,14 @@ public class OnlineReviewScoreRankFixer {
                     + " WHERE resource_info_type_id = 12"
                     + " AND resource_id = (SELECT u.resource_id FROM upload u, submission s"
                     + " WHERE s.upload_id = u.upload_id AND s.submission_id = ?)";
+    
+    /**
+     * SQL statement for updating the payment of the submission in the resource_info table.
+     */
+    private static final String UPDATE_RI_PAYMENT = "UPDATE resource_info SET value = ?, modify_user = 'FixerApp', modify_date = CURRENT"
+                    + " WHERE resource_info_type_id = 7"
+                    + " AND resource_id = (SELECT u.resource_id FROM upload u, submission s"
+                    + " WHERE s.upload_id = u.upload_id AND s.submission_id = ?)";
 
     /**
      * SQL statement for updating the final score of the submission in project_result table.
@@ -115,7 +126,7 @@ public class OnlineReviewScoreRankFixer {
     /**
      * SQL statement for updating the rank of the submission in project_result table.
      */
-    private static final String UPDATE_PR_PLACEMENT = "UPDATE project_result SET placed = ?"
+    private static final String UPDATE_PR_PLACEMENT = "UPDATE project_result SET placed = ?, payment = ?"
     	+ " where project_id = ? and user_id = ?";
 
     /**
@@ -260,7 +271,7 @@ public class OnlineReviewScoreRankFixer {
                         sResult.setHandle(result.getString("handle"));
                     }
                     
-                    sResult.setUserId(getUserId(connection, lastSubmissionId));
+                    sResult.setUserId(getUserId(connection, sResult.getSubmissionId()));
                 }
 
                 boolean success = validateProjectResult(connection, projectResult, false);
@@ -311,6 +322,7 @@ public class OnlineReviewScoreRankFixer {
             		pResult.setProjectId(projectId);
             		pResult.setProjectName(result.getString("name"));
             		pResult.setProjectType(result.getInt("type") == 1 ? "Design" : "Development");
+            		pResult.setPayment(result.getString("price"));
             		projectResults.add(pResult);
             	}
             }
@@ -445,7 +457,7 @@ public class OnlineReviewScoreRankFixer {
 
                 if (getUpdateProjects().contains(projectResult.getProjectId())) {
                     // update the placement first
-                    this.updatePlacement(connection, projectResult.getProjectId(), submitter, newRank);
+                    this.updatePlacement(connection, projectResult, submitter, newRank);
                     String userId = getUserId(connection, submissionId);
 
                     if (newRank == 1) {
@@ -526,32 +538,47 @@ public class OnlineReviewScoreRankFixer {
      * @param submissionId the id of the submission.
      * @param newPlacement the new placement of the submission.
      */
-    private void updatePlacement(Connection connection, String projectId, SubmitterResult sResult, int newPlacement) {
+    private void updatePlacement(Connection connection, ProjectResult projectResult, SubmitterResult sResult, int newPlacement) {
 
-        PreparedStatement updateRI = null;
+        PreparedStatement updateRIplacement = null;
+        PreparedStatement updateRIpayment = null;
         PreparedStatement updatePR = null;
 
         try {
-            updateRI = connection.prepareStatement(UPDATE_RI_PLACEMENT);
+            updateRIplacement = connection.prepareStatement(UPDATE_RI_PLACEMENT);
+            updateRIpayment = connection.prepareStatement(UPDATE_RI_PAYMENT);
             updatePR = connection.prepareStatement(UPDATE_PR_PLACEMENT);
 
-            // update resource_info
-            updateRI.setDouble(1, newPlacement);
-            updateRI.setString(2, sResult.getSubmissionId());
+            // update resource_info placement
+            updateRIplacement.setInt(1, newPlacement);
+            updateRIplacement.setString(2, sResult.getSubmissionId());
             Utility.log(Level.ERROR, "update placement in resource_info for submission: " + sResult.getSubmissionId() + ", new place: " + newPlacement);
-            updateRI.executeUpdate();
+            updateRIplacement.executeUpdate();
+            //update resource_info payment
+            if (newPlacement <= 2) {
+            	updateRIpayment.setDouble(1, projectResult.getPaymentForPlace(newPlacement));
+            } else {
+            	updateRIpayment.setDouble(1, 0);
+            }
+            updateRIpayment.setString(2, sResult.getSubmissionId());
+            Utility.log(Level.ERROR, "update payment in resource_info for submission: " + sResult.getSubmissionId() + ", new payment: " + projectResult.getPaymentForPlace(newPlacement));
+            updateRIpayment.executeUpdate();
 
             // update project_result
-            updatePR.setDouble(1, newPlacement);
-            updatePR.setString(2, projectId);
-            updatePR.setString(3, sResult.getUserId());
-            Utility.log(Level.ERROR, "update placement in project_result for projectId: " + projectId + ", userId: " + sResult.getUserId() + ", new place: " + newPlacement);
+            updatePR.setInt(1, newPlacement);
+            updatePR.setDouble(2, projectResult.getPaymentForPlace(newPlacement));
+            updatePR.setString(3, projectResult.getProjectId());
+            updatePR.setString(4, sResult.getUserId());
+            Utility.log(Level.ERROR, "update placement & payment in project_result for projectId: " + projectResult.getProjectId() 
+            		+ ", userId: " + sResult.getUserId() 
+            		+ ", new place: " + newPlacement
+            		+ ", new payment: " + projectResult.getPaymentForPlace(newPlacement));
             updatePR.executeUpdate();
-
         } catch (Exception ex) {
             throw new OnlineReviewScoreRankFixerException("update placement failed.", ex);
         } finally {
-            Utility.releaseResource(updateRI, null, null);
+        	Utility.releaseResource(updateRIplacement, null, null);
+            Utility.releaseResource(updateRIpayment, null, null);
             Utility.releaseResource(updatePR, null, null);
         }
     }
