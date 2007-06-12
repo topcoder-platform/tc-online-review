@@ -8,6 +8,7 @@ public class ProjectResult {
     private String projectName;
     private String projectType;
     private Set<SubmitterResult> submitterResults = new LinkedHashSet<SubmitterResult>();
+    private Double payment;
 
     public void setProjectId(String projectId) {
         if (projectId == null) {
@@ -51,7 +52,28 @@ public class ProjectResult {
         submitterResults.add(sResult);
     }
 
-    public Set<SubmitterResult> getSubmitterResults() {
+    public Double getPayment() {
+		return payment;
+	}
+
+	public void setPayment(Double payment) {
+		this.payment = payment;
+	}
+	
+	public void setPayment(String payment) {
+		this.payment = new Double(payment);
+	}
+	
+	public Double getPaymentForPlace(int place) {
+		if (place == 1) {
+			return getPayment();
+		} else if (place == 2) {
+			return getPayment() / 2;
+		} 
+		return null;
+	}
+
+	public Set<SubmitterResult> getSubmitterResults() {
         return submitterResults;
     }
 
