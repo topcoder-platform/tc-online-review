@@ -10,10 +10,12 @@ Thanks,
 
 ===============================================================================
 
-1) modify the config.xml in conf directory, the config file only cotains the configuration of 
-DB connection factory.
+1) modify the config.xml in conf directory for configuring the database connection string.
 
-2) run statistics.bat to generate the report into report.txt
+2) configure the log4j.properties. By default it will print the output to the console and to fixer_app.log file.
 
-3) run update.bat to generate the report and fix the incorrect data in DB.
+3) execute run.bat or run.sh without parameters to generate the report.
+
+3) execute run.bat or run.sh with a list of project's id as paramters to fix them.
+
 
