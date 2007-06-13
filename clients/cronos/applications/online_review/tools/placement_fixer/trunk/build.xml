@@ -112,6 +112,8 @@
         	includes="${packagedir}/**" 
         	verbose="${verbose}"
         	debug="${debug}"
+        	source="1.5"
+        	target="1.5"
         >
             <classpath refid="buildlibs" />
         </javac>
