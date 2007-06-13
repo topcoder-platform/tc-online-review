@@ -309,27 +309,32 @@ public class OnlineReviewScoreRankFixer {
         Statement statement = null;
 
         List<ProjectResult> projectResults = new ArrayList<ProjectResult>();
-
+        String projectId = null;
         try {
             statement = connection.createStatement();
 
             ResultSet result = statement.executeQuery(GET_ALL_COMPONENT_PROJECT_ID);
 
             while (result.next()) {
-            	String projectId = result.getString("id");
+            	projectId = result.getString("id");
             	if (getUpdateProjects().isEmpty() || getUpdateProjects().contains(projectId)) {
-            		ProjectResult pResult = new ProjectResult();
+            		String name = result.getString("name");
+            		if (name == null) {
+            			Utility.log(Level.WARN, "ignoring projectId: " + projectId + " has a null name");
+            		} else {
+            			ProjectResult pResult = new ProjectResult();
 
-            		pResult.setProjectId(projectId);
-            		pResult.setProjectName(result.getString("name"));
-            		pResult.setProjectType(result.getInt("type") == 1 ? "Design" : "Development");
-            		pResult.setPayment(result.getString("price"));
-            		projectResults.add(pResult);
+            			pResult.setProjectId(projectId);
+            			pResult.setProjectName(name);
+            			pResult.setProjectType(result.getInt("type") == 1 ? "Design" : "Development");
+            			pResult.setPayment(result.getString("price"));
+            			projectResults.add(pResult);
+            		}
             	}
             }
 
         } catch (Exception ex) {
-            throw new OnlineReviewScoreRankFixerException("Fail to query data from DB.", ex);
+            throw new OnlineReviewScoreRankFixerException("Fail to query data from DB. projectId: " + projectId, ex);
         } finally {
             Utility.releaseResource(statement, null, null);
         }
