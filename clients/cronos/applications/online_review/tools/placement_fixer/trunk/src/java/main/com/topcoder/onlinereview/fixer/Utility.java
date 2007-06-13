@@ -18,6 +18,15 @@ import com.topcoder.util.log.LogFactory;
  * @author hohosky
  */
 public class Utility {
+	
+	static {
+		String CONFIG_FILE = "config.xml";
+		try {
+			ConfigManager.getInstance().add(CONFIG_FILE);
+		} catch (ConfigManagerException e) {
+			throw new IllegalStateException(e.getMessage(), e);
+		}
+	}
     /**
      * Log intance for the app.
      */
@@ -27,7 +36,7 @@ public class Utility {
      * Config file of the fixer, which contains the configuration for DB
      * connection factory.
      */
-    private static final String CONFIG_FILE = "config.xml";
+    
 
     /**
      * Config namespace for DB connection factory.
@@ -40,16 +49,15 @@ public class Utility {
      * @return the database connection to OR database.
      */
     public static Connection getConnection() {
-    	try {
-    		ConfigManager.getInstance().add(CONFIG_FILE);
+    	try {    		
     		DBConnectionFactory factory = new DBConnectionFactoryImpl(DB_CONNECTION_FACTORY_NS);
     		return factory.createConnection();
-    	} catch (ConfigManagerException cme) {
-    		throw new OnlineReviewScoreRankFixerException("Fail to load the configuration of Fixer.", cme);
     	} catch (Exception ex) {
     		throw new OnlineReviewScoreRankFixerException("Fail to get Database Connection.", ex);
     	}
     }
+    
+    
     
     /**
      * Realse all the resources.
