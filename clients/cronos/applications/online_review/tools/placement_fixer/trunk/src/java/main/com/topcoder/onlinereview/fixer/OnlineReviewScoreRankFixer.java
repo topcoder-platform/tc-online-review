@@ -299,7 +299,7 @@ public class OnlineReviewScoreRankFixer {
         } finally {
             Utility.releaseResource(getReviewScores, null, null);
             Utility.releaseResource(getSubmissionFinalResult, null, null);
-            Utility.releaseResource(getSubmissionHandle, null, null);
+            Utility.releaseResource(getSubmissionHandle, null, connection);
         }
     }
 
@@ -341,7 +341,7 @@ public class OnlineReviewScoreRankFixer {
         } catch (Exception ex) {
             throw new OnlineReviewScoreRankFixerException("Fail to query data from DB. projectId: " + projectId, ex);
         } finally {
-            Utility.releaseResource(statement, null, null);
+            Utility.releaseResource(statement, null, connection);
         }
 
         return projectResults;
