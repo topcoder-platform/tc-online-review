@@ -19,11 +19,6 @@ import com.topcoder.util.log.LogFactory;
  */
 public class Utility {
     /**
-     * DB connection to the online review database.
-     */
-    private static Connection connection;
-    
-    /**
      * Log intance for the app.
      */
     private static Log log;
@@ -45,23 +40,15 @@ public class Utility {
      * @return the database connection to OR database.
      */
     public static Connection getConnection() {
-        if (connection == null) {
-            
-            try {
-                ConfigManager.getInstance().add(CONFIG_FILE);
-            } catch (ConfigManagerException cme) {
-                throw new OnlineReviewScoreRankFixerException("Fail to load the configuration of Fixer.");
-            }
-            
-            try {
-                DBConnectionFactory factory = new DBConnectionFactoryImpl(DB_CONNECTION_FACTORY_NS);
-                connection = factory.createConnection();
-            } catch (Exception ex) {
-                throw new OnlineReviewScoreRankFixerException("Fail to get Database Connection.", ex);
-            }
-        }
-
-        return connection;
+    	try {
+    		ConfigManager.getInstance().add(CONFIG_FILE);
+    		DBConnectionFactory factory = new DBConnectionFactoryImpl(DB_CONNECTION_FACTORY_NS);
+    		return factory.createConnection();
+    	} catch (ConfigManagerException cme) {
+    		throw new OnlineReviewScoreRankFixerException("Fail to load the configuration of Fixer.", cme);
+    	} catch (Exception ex) {
+    		throw new OnlineReviewScoreRankFixerException("Fail to get Database Connection.", ex);
+    	}
     }
     
     /**

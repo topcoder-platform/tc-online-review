@@ -209,7 +209,10 @@ public class OnlineReviewScoreRankFixer {
         PreparedStatement getSubmissionRank = null;
 
         try {
-        	connection.setAutoCommit(false);
+        	if (!getUpdateProjects().isEmpty()) {
+        		connection.setAutoCommit(false);
+        	}
+        	
             getReviewScores = connection.prepareStatement(GET_REVIEW_SCORES);
             getSubmissionFinalResult = connection.prepareStatement(GET_SUBMISSION_FINAL_RESULT);
             getSubmissionHandle = connection.prepareStatement(GET_SUBMISSION_HANDLE);
@@ -281,9 +284,11 @@ public class OnlineReviewScoreRankFixer {
                     Utility.log(Level.INFO, "-------------------");
                 }
             }
-            connection.commit();
+            if (!getUpdateProjects().isEmpty()) {
+            	connection.commit();
+            }
         } catch (Exception ex) {
-        	if (connection != null) {
+        	if (connection != null && !getUpdateProjects().isEmpty()) {
         		try {
 					connection.rollback();
 				} catch (SQLException e) {
