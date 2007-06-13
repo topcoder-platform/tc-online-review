@@ -381,6 +381,7 @@ public class OnlineReviewScoreRankFixer {
 
             // ignore this project due to the missing data.
             if (missingData) {
+            	Utility.log(Level.ERROR, "ignoring this project due to the missing data");
                 return false;
             }
 
