@@ -61,7 +61,11 @@ public class ProjectResult {
 	}
 	
 	public void setPayment(String payment) {
-		this.payment = new Double(payment);
+		try {
+			setPayment(new Double(payment));
+		} catch (Exception e) {
+			setPayment(new Double(0));
+		}
 	}
 	
 	public Double getPaymentForPlace(int place) {
