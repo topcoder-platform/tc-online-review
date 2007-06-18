@@ -6,11 +6,15 @@ package com.cronos.onlinereview.phases;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.text.MessageFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import com.cronos.onlinereview.external.ExternalUser;
 import com.topcoder.management.phase.PhaseHandlingException;
 import com.topcoder.management.phase.PhaseManagementException;
 import com.topcoder.management.project.Project;
+import com.topcoder.management.project.ProjectCategory;
 import com.topcoder.management.resource.Resource;
 import com.topcoder.management.resource.ResourceRole;
 import com.topcoder.management.resource.search.ResourceFilterBuilder;
@@ -61,6 +65,9 @@ public class PRAppealResponsePhaseHandler extends AppealsResponsePhaseHandler {
 	/** switch that indicates if OR have to create Assignment Documents in PACTs*/
 	private boolean createAssignmentDocuments = false;
 	
+	/** start date to check or create assigments documents*/
+	private Date assignmentDocumentsStartDate;
+	
 	/**
      * Create a new instance of AppealsResponsePhaseHandler using the default namespace for loading configuration settings.
      *
@@ -87,6 +94,13 @@ public class PRAppealResponsePhaseHandler extends AppealsResponsePhaseHandler {
     private void obtainWinnnersEmailConfigProperties(String namespace) throws ConfigurationException {
     	this.createAssignmentDocuments = "true".equals(PhasesHelper.getPropertyValue(namespace, "CreateAssignmentDocuments", "false").trim());
     	if (createAssignmentDocuments) {
+    		try {
+    			SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy");
+    			sdf.setLenient(false);
+    			this.assignmentDocumentsStartDate = sdf.parse(PhasesHelper.getPropertyValue(namespace, "AssignmentDocumentsStartDate", "06/18/2007"));
+    		} catch (ParseException e) {
+    			throw new ConfigurationException("can not read AssignmentDocumentsStartDate from configuration", e);
+    		}
     		this.winnersEmailTemplateSource = PhasesHelper.getPropertyValue(namespace, "WinnersEmail.EmailTemplateSource", true);
     		this.winnersEmailTemplateName = PhasesHelper.getPropertyValue(namespace, "WinnersEmail.EmailTemplateName",  true);
     		this.winnersEmailSubject = PhasesHelper.getPropertyValue(namespace, "WinnersEmail.EmailSubject", true);
@@ -127,17 +141,32 @@ public class PRAppealResponsePhaseHandler extends AppealsResponsePhaseHandler {
     }
 
     /**
+     * Verifies if assignment documents need to be created for a project.
+     * 
+     * @param project the project
+     * @return true if assignment documents must to be created.
+     */
+    private boolean verifyCreateAssignmentDocument(Project project) {
+    	ProjectCategory category = project.getProjectCategory();
+    
+        return project.getCreationTimestamp().after(assignmentDocumentsStartDate)
+        		&& (category.getId() == 1 || category.getId() == 2);
+    }
+    
+    /**
      * Creates the Assigment Documents for the winners of the project if there are any.
      * 
      * @param projectId the project id.
      * @throws Exception 
      */
     private void createAssignmentDocuments(long projectId) throws Exception {
-    	
     	Project project = getManagerHelper().getProjectManager().getProject(projectId);
-    	AssignmentDocumentResult adResult = new PactsServicesDelegate().createAssignmentDocuments(project);
-    	
-    	sendMailForWinners(project, adResult);
+    	if (verifyCreateAssignmentDocument(project)) {
+    		AssignmentDocumentResult adResult = new PactsServicesDelegate().createAssignmentDocuments(project); 	
+    		sendMailForWinners(project, adResult);
+    	} else {
+    		log.log(Level.INFO, "Don't creating AD for project: " + projectId + " because it's creation date is: " + project.getCreationTimestamp());
+    	}
 	}
 
 	private void sendMailForWinners(Project project, AssignmentDocumentResult adResult) throws Exception {
