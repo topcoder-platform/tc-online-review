@@ -550,6 +550,10 @@
         <Property name="CreateAssignmentDocuments">
     		<Value>false</Value>
     	</Property>
+    	<!-- Date Format: MM/dd/yyyy  -->
+    	<Property name="AssignmentDocumentsStartDate">
+    		<Value>06/18/2007</Value>
+    	</Property>
         <Property name="WinnersEmail">
             <Property name="EmailTemplateSource">
                 <Value>file</Value>
