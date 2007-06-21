@@ -10,7 +10,7 @@
         <a href="http://<%=ApplicationServer.STUDIO_SERVER_NAME%>/"><img src="/i/or/studioLogo.png" alt="TopCoder Studio" /></a>
     </div>
     <div style="float: right; margin-left: 6px;">
-        <a href="http://<%=ApplicationServer.SERVER_NAME%>/"><img src="/i/or/topcoderLogo.png" alt="TopCoder Competitions" /></a>
+        <a href="http://<%=ApplicationServer.SERVER_NAME%>/tc"><img src="/i/or/topcoderLogo.png" alt="TopCoder Competitions" /></a>
     </div>
 
     <div style="float: left;">
