@@ -1,0 +1,529 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CMConfig>
+    <Config name="com.cronos.onlinereview.autoscreening.tool.ObjectFactory">
+        <Property name="ConnectionFactory:default">
+            <Property name="type">
+                <Value>com.topcoder.db.connectionfactory.DBConnectionFactoryImpl</Value>
+            </Property>
+            <Property name="params">
+                <Property name="param1">
+                    <Property name="type">
+                        <Value>String</Value>
+                    </Property>
+                    <Property name="value">
+                        <Value>com.topcoder.db.connectionfactory.DBConnectionFactoryImpl</Value>
+                    </Property>
+                </Property>
+            </Property>
+        </Property>
+        <Property name="IDGenerator:default">
+            <Property name="type">
+                <Value>com.topcoder.util.idgenerator.IDGeneratorImpl</Value>
+            </Property>
+            <Property name="params">
+                <Property name="param1">
+                    <Property name="type">
+                        <Value>String</Value>
+                    </Property>
+                    <Property name="value">
+                        <Value>screening_result_id_seq</Value>
+                    </Property>
+                </Property>
+            </Property>
+        </Property>
+        <Property name="UserRetrieval:default">
+            <Property name="type">
+                <Value>com.cronos.onlinereview.external.impl.DBUserRetrieval</Value>
+            </Property>
+            <Property name="params">
+                <Property name="param1">
+                    <Property name="name">
+                        <Value>ConnectionFactory:default</Value>
+                    </Property>
+                </Property>
+                <Property name="param2">
+                    <Property name="type">
+                        <Value>String</Value>
+                    </Property>
+                    <Property name="value">
+                        <Value>tcs</Value>
+                    </Property>
+                </Property>
+            </Property>
+        </Property>
+        <Property name="ScreeningTaskDAO:default">
+            <Property name="type">
+                <Value>com.cronos.onlinereview.autoscreening.tool.persistence.informix.InformixTaskDAO</Value>
+            </Property>
+            <Property name="params">
+                <Property name="param1">
+                    <Property name="name">
+                        <Value>ConnectionFactory:default</Value>
+                    </Property>
+                </Property>
+                <Property name="param2">
+                    <Property name="type">
+                        <Value>String</Value>
+                    </Property>
+                    <Property name="value">
+                        <Value>tcs</Value>
+                    </Property>
+                </Property>
+                <Property name="param3">
+                    <Property name="name">
+                        <Value>UserRetrieval:default</Value>
+                    </Property>
+                </Property>
+            </Property>
+        </Property>
+        <Property name="ScreeningResponseDAO:default">
+            <Property name="type">
+                <Value>com.cronos.onlinereview.autoscreening.tool.persistence.informix.InformixResponseDAO</Value>
+            </Property>
+            <Property name="params">
+                <Property name="param1">
+                    <Property name="name">
+                        <Value>ConnectionFactory:default</Value>
+                    </Property>
+                </Property>
+                <Property name="param2">
+                    <Property name="type">
+                        <Value>String</Value>
+                    </Property>
+                    <Property name="value">
+                        <Value>tcs</Value>
+                    </Property>
+                </Property>
+                <Property name="param3">
+                    <Property name="name">
+                        <Value>IDGenerator:default</Value>
+                    </Property>
+                </Property>
+            </Property>
+        </Property>
+        <Property name="ScreeningResponseLogger:default">
+            <Property name="type">
+                <Value>com.cronos.onlinereview.autoscreening.tool.logger.DAOLogger</Value>
+            </Property>
+            <Property name="params">
+                <Property name="param1">
+                    <Property name="name">
+                        <Value>ScreeningResponseDAO:default</Value>
+                    </Property>
+                </Property>
+            </Property>
+        </Property>
+        <Property name="ScreeningTaskChooser:default">
+            <Property name="type">
+                <Value>com.cronos.onlinereview.autoscreening.tool.chooser.EarliestTaskChooser</Value>
+            </Property>
+        </Property>
+        <Property name="FileUpload:local">
+            <Property name="type">
+                <Value>com.topcoder.servlet.request.LocalFileUpload</Value>
+            </Property>
+            <Property name="params">
+                <Property name="param1">
+                    <Property name="type">
+                        <Value>String</Value>
+                    </Property>
+                    <Property name="value">
+                        <Value>com.topcoder.servlet.request.LocalFileUpload</Value>
+                    </Property>
+                </Property>
+            </Property>
+        </Property>
+        <Property name="FileUpload:remote">
+            <Property name="type">
+                <Value>com.topcoder.servlet.request.RemoteFileUpload</Value>
+            </Property>
+            <Property name="params">
+                <Property name="param1">
+                    <Property name="type">
+                        <Value>String</Value>
+                    </Property>
+                    <Property name="value">
+                        <Value>com.topcoder.servlet.request.RemoteFileUpload</Value>
+                    </Property>
+                </Property>
+            </Property>
+        </Property>
+        <Property name="ArchiveFileRule:jarFile">
+            <Property name="type">
+                <Value>com.cronos.onlinereview.autoscreening.tool.rules.ArchiveFileRule</Value>
+            </Property>
+            <Property name="params">
+                <Property name="param1">
+                    <Property name="type">
+                        <Value>String</Value>
+                    </Property>
+                    <Property name="value">
+                        <Value>.jar</Value>
+                    </Property>
+                </Property>
+                <Property name="param2">
+                    <Property name="type">
+                        <Value>String</Value>
+                    </Property>
+                    <Property name="value">
+                        <Value>temp</Value>
+                    </Property>
+                </Property>
+            </Property>
+        </Property>
+        <Property name="ArchiveFileRule:zipFile">
+            <Property name="type">
+                <Value>com.cronos.onlinereview.autoscreening.tool.rules.ArchiveFileRule</Value>
+            </Property>
+            <Property name="params">
+                <Property name="param1">
+                    <Property name="type">
+                        <Value>String</Value>
+                    </Property>
+                    <Property name="value">
+                        <Value>.zip</Value>
+                    </Property>
+                </Property>
+                <Property name="param2">
+                    <Property name="type">
+                        <Value>String</Value>
+                    </Property>
+                    <Property name="value">
+                        <Value>temp</Value>
+                    </Property>
+                </Property>
+            </Property>
+        </Property>
+        <Property name="ComponentSpecificationRule:default">
+            <Property name="type">
+                <Value>com.cronos.onlinereview.autoscreening.tool.rules.ComponentSpecificationRule</Value>
+            </Property>
+        </Property>
+        <Property name="FileExtensionRule:javaMainSource">
+            <Property name="type">
+                <Value>com.cronos.onlinereview.autoscreening.tool.rules.FileExtensionRule</Value>
+            </Property>
+            <Property name="params">
+                <Property name="param1">
+                    <Property name="type">
+                        <Value>String</Value>
+                    </Property>
+                    <Property name="value">
+                        <Value>.java</Value>
+                    </Property>
+                </Property>
+                <Property name="param2">
+                    <Property name="type">
+                        <Value>String</Value>
+                    </Property>
+                    <Property name="value">
+                        <Value>src/java/main</Value>
+                    </Property>
+                </Property>
+            </Property>
+        </Property>
+        <Property name="FileExtensionRule:javaTestsSource">
+            <Property name="type">
+                <Value>com.cronos.onlinereview.autoscreening.tool.rules.FileExtensionRule</Value>
+            </Property>
+            <Property name="params">
+                <Property name="param1">
+                    <Property name="type">
+                        <Value>String</Value>
+                    </Property>
+                    <Property name="value">
+                        <Value>.java</Value>
+                    </Property>
+                </Property>
+                <Property name="param2">
+                    <Property name="type">
+                        <Value>String</Value>
+                    </Property>
+                    <Property name="value">
+                        <Value>src/java/tests</Value>
+                    </Property>
+                </Property>
+            </Property>
+        </Property>
+        <Property name="FileExtensionRule:csharpMainSource">
+            <Property name="type">
+                <Value>com.cronos.onlinereview.autoscreening.tool.rules.FileExtensionRule</Value>
+            </Property>
+            <Property name="params">
+                <Property name="param1">
+                    <Property name="type">
+                        <Value>String</Value>
+                    </Property>
+                    <Property name="value">
+                        <Value>.cs</Value>
+                    </Property>
+                </Property>
+                <Property name="param2">
+                    <Property name="type">
+                        <Value>String</Value>
+                    </Property>
+                    <Property name="value">
+                        <Value>src/csharp/main</Value>
+                    </Property>
+                </Property>
+            </Property>
+        </Property>
+        <Property name="FileExtensionRule:csharpTestsSource">
+            <Property name="type">
+                <Value>com.cronos.onlinereview.autoscreening.tool.rules.FileExtensionRule</Value>
+            </Property>
+            <Property name="params">
+                <Property name="param1">
+                    <Property name="type">
+                        <Value>String</Value>
+                    </Property>
+                    <Property name="value">
+                        <Value>.cs</Value>
+                    </Property>
+                </Property>
+                <Property name="param2">
+                    <Property name="type">
+                        <Value>String</Value>
+                    </Property>
+                    <Property name="value">
+                        <Value>src/csharp/tests</Value>
+                    </Property>
+                </Property>
+            </Property>
+        </Property>
+        <Property name="FileExtensionRule:testLog">
+            <Property name="type">
+                <Value>com.cronos.onlinereview.autoscreening.tool.rules.FileExtensionRule</Value>
+            </Property>
+            <Property name="params">
+                <Property name="param1">
+                    <Property name="type">
+                        <Value>String</Value>
+                    </Property>
+                    <Property name="value">
+                        <Value>.txt:.xml</Value>
+                    </Property>
+                </Property>
+                <Property name="param2">
+                    <Property name="type">
+                        <Value>String</Value>
+                    </Property>
+                    <Property name="value">
+                        <Value>log</Value>
+                    </Property>
+                </Property>
+            </Property>
+        </Property>
+        <Property name="FileExtensionRule:csharpCoverage">
+            <Property name="type">
+                <Value>com.cronos.onlinereview.autoscreening.tool.rules.FileExtensionRule</Value>
+            </Property>
+            <Property name="params">
+                <Property name="param1">
+                    <Property name="type">
+                        <Value>String</Value>
+                    </Property>
+                    <Property name="value">
+                        <Value>-coverage.xml</Value>
+                    </Property>
+                </Property>
+                <Property name="param2">
+                    <Property name="type">
+                        <Value>String</Value>
+                    </Property>
+                    <Property name="value">
+                        <Value>log</Value>
+                    </Property>
+                </Property>
+            </Property>
+        </Property>
+        <Property name="FileExtensionRule:csharpCoverageUnit">
+            <Property name="type">
+                <Value>com.cronos.onlinereview.autoscreening.tool.rules.FileExtensionRule</Value>
+            </Property>
+            <Property name="params">
+                <Property name="param1">
+                    <Property name="type">
+                        <Value>String</Value>
+                    </Property>
+                    <Property name="value">
+                        <Value>-coverage-unit.xml</Value>
+                    </Property>
+                </Property>
+                <Property name="param2">
+                    <Property name="type">
+                        <Value>String</Value>
+                    </Property>
+                    <Property name="value">
+                        <Value>log</Value>
+                    </Property>
+                </Property>
+            </Property>
+        </Property>
+        <Property name="CoveragePercentageRule:javaCoveragePercentage">
+            <Property name="type">
+                <Value>com.cronos.onlinereview.autoscreening.tool.rules.CoveragePercentageRule</Value>
+            </Property>
+            <Property name="params">
+                <Property name="param1">
+                    <Property name="type">
+                        <Value>String</Value>
+                    </Property>
+                    <Property name="value">
+                        <Value>log/coverage/frame-summary.html</Value>
+                    </Property>
+                </Property>
+                <Property name="param2">
+                    <Property name="type">
+                        <Value>String</Value>
+                    </Property>
+                    <Property name="value">
+                        <Value>85</Value>
+                    </Property>
+                </Property>
+            </Property>
+        </Property>
+        <Property name="DirectoryStructureRule:csharpDevSubmission">
+            <Property name="type">
+                <Value>com.cronos.onlinereview.autoscreening.tool.rules.DirectoryStructureRule</Value>
+            </Property>
+            <Property name="params">
+                <Property name="param1">
+                    <Property name="type">
+                        <Value>String</Value>
+                    </Property>
+                    <Property name="value">
+                        <Value>directory_validation_csharp_dev.xml</Value>
+                    </Property>
+                </Property>
+            </Property>
+        </Property>
+        <Property name="DirectoryStructureRule:javaDevSubmission">
+            <Property name="type">
+                <Value>com.cronos.onlinereview.autoscreening.tool.rules.DirectoryStructureRule</Value>
+            </Property>
+            <Property name="params">
+                <Property name="param1">
+                    <Property name="type">
+                        <Value>String</Value>
+                    </Property>
+                    <Property name="value">
+                        <Value>directory_validation_java_dev.xml</Value>
+                    </Property>
+                </Property>
+            </Property>
+        </Property>
+        <Property name="DirectoryStructureRule:designSubmission">
+            <Property name="type">
+                <Value>com.cronos.onlinereview.autoscreening.tool.rules.DirectoryStructureRule</Value>
+            </Property>
+            <Property name="params">
+                <Property name="param1">
+                    <Property name="type">
+                        <Value>String</Value>
+                    </Property>
+                    <Property name="value">
+                        <Value>directory_validation_design.xml</Value>
+                    </Property>
+                </Property>
+            </Property>
+        </Property>
+        <Property name="PersonalInfoRule:default">
+            <Property name="type">
+                <Value>com.cronos.onlinereview.autoscreening.tool.rules.PersonalInfoRule</Value>
+            </Property>
+        </Property>
+        <Property name="PoseidonExtractRule:default">
+            <Property name="type">
+                <Value>com.cronos.onlinereview.autoscreening.tool.rules.PoseidonExtractRule</Value>
+            </Property>
+            <Property name="params">
+                <Property name="param1">
+                    <Property name="type">
+                        <Value>String</Value>
+                    </Property>
+                    <Property name="value">
+                        <Value>temp</Value>
+                    </Property>
+                </Property>
+            </Property>
+        </Property>
+        <Property name="PoseidonDiagramRule:default">
+            <Property name="type">
+                <Value>com.cronos.onlinereview.autoscreening.tool.rules.PoseidonDiagramRule</Value>
+            </Property>
+            <Property name="params">
+                <Property name="param1">
+                    <Property name="type">
+                        <Value>int</Value>
+                    </Property>
+                    <Property name="value">
+                        <Value>1</Value>
+                    </Property>
+                </Property>
+                <Property name="param2">
+                    <Property name="type">
+                        <Value>int</Value>
+                    </Property>
+                    <Property name="value">
+                        <Value>1</Value>
+                    </Property>
+                </Property>
+                <Property name="param3">
+                    <Property name="type">
+                        <Value>int</Value>
+                    </Property>
+                    <Property name="value">
+                        <Value>1</Value>
+                    </Property>
+                </Property>
+            </Property>
+        </Property>
+        <Property name="CheckStyleRule:javaMainSource">
+            <Property name="type">
+                <Value>com.cronos.onlinereview.autoscreening.tool.rules.CheckStyleRule</Value>
+            </Property>
+            <Property name="params">
+                <Property name="param1">
+                    <Property name="type">
+                        <Value>String</Value>
+                    </Property>
+                    <Property name="value">
+                        <Value>/home/apps/auto_screening/checkstyle.sh</Value>
+                    </Property>
+                </Property>
+                <Property name="param2">
+                    <Property name="type">
+                        <Value>String</Value>
+                    </Property>
+                    <Property name="value">
+                        <Value>src/java/main</Value>
+                    </Property>
+                </Property>
+            </Property>
+        </Property>
+        <Property name="CheckStyleRule:javaTestSource">
+            <Property name="type">
+                <Value>com.cronos.onlinereview.autoscreening.tool.rules.CheckStyleRule</Value>
+            </Property>
+            <Property name="params">
+                <Property name="param1">
+                    <Property name="type">
+                        <Value>String</Value>
+                    </Property>
+                    <Property name="value">
+                        <Value>/home/apps/auto_screening/checkstyle_test.sh</Value>
+                    </Property>
+                </Property>
+                <Property name="param2">
+                    <Property name="type">
+                        <Value>String</Value>
+                    </Property>
+                    <Property name="value">
+                        <Value>src/java/tests</Value>
+                    </Property>
+                </Property>
+            </Property>
+        </Property>
+    </Config>
+</CMConfig>
