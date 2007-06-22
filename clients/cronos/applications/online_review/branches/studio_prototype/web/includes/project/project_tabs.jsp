@@ -6,13 +6,6 @@
 
 <%-- We need to have no spaces between tabs, that's why the formatting is weird --%>
 <div id="mainTabs">
-    <div style="float: right; margin-left: 6px;">
-        <a href="http://<%=ApplicationServer.STUDIO_SERVER_NAME%>/"><img src="/i/or/studioLogo.png" alt="TopCoder Studio" /></a>
-    </div>
-    <div style="float: right; margin-left: 6px;">
-        <a href="http://<%=ApplicationServer.SERVER_NAME%>/tc"><img src="/i/or/topcoderLogo.png" alt="TopCoder Competitions" /></a>
-    </div>
-
     <div style="float: left;">
     <c:if test="${orfn:isUserLoggedIn(pageContext.request)}">
         <c:if test="${(not empty projectTabIndex) and (projectTabIndex == 1)}">
