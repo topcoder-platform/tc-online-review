@@ -7,8 +7,16 @@
 <jsp:useBean id="sessionInfo" class="com.topcoder.web.common.SessionInfo" scope="request" />
 <script language="JavaScript" type="text/javascript" src="/js/tcscript.js"><!-- @ --></script>
 
-<div style="margin: 10px 0px;">
-    <div style="float: right;">
+<div style="margin: 10px 0px 40px 0px;">
+
+    <div style="float: right; margin-left: 6px;">
+        <a href="http://<%=ApplicationServer.SERVER_NAME%>/tc"><img src="/i/or/topcoderLogo.png" alt="TopCoder Competitions" /></a>
+    </div>
+    <div style="float: right; margin-left: 6px;">
+        <a href="http://<%=ApplicationServer.STUDIO_SERVER_NAME%>/"><img src="/i/or/studioLogo.png" alt="TopCoder Studio" /></a>
+    </div>
+
+    <div style="float: right; clear: right; margin-left: 6px;">
         <c:if test="${orfn:isUserLoggedIn(pageContext.request)}">
             Hello, <tc-webtag:handle coderId="${orfn:getLoggedInUserId(pageContext.request)}" context="component" />
              | <html:link action="/actions/Logout.do?method=logout">Logout</html:link>
@@ -20,5 +28,5 @@
         </c:if>
     </div>
 
-    <a href="/"><img src="/i/or/brandingLogo.png" alt="TopCoder Online Review" /></a>
+    <a href="/review"><img src="/i/or/brandingLogo.png" alt="TopCoder Online Review" /></a>
 </div>
