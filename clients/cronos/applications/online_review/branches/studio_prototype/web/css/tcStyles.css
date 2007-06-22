@@ -106,6 +106,14 @@ padding: 0px;
 margin: 0px auto 0px auto;
 text-align: left;
 }
+div.maxWidthBody {
+max-width: 950px;
+min-width: 735px;
+/* only recognized by IE, unfortunately it invalidates CSS */
+/* if the body is wider than 1000, this div is 950, otherwise auto */
+width: expression( document . body . clientWidth > 1000 ? "950px": "auto" );
+margin: 0px 10px 20px 10px;
+}
 div.sectionHeader{
 text-align: left;
 background: #999999 url(../i/stats/headerBG.gif) top center;
