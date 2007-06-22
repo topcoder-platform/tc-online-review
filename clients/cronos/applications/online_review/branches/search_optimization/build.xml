@@ -270,7 +270,7 @@
     <property name="scorecard_data_structure.path" value="scorecard_data_structure/${scorecard_data_structure.version}" />
     <property name="scorecard_data_structure.jar" value="${tcs_libdir}/${scorecard_data_structure.path}/${scorecard_data_structure.jar.name}" />
 
-    <property name="scorecard_management.version" value="1.0" />
+    <property name="scorecard_management.version" value="1.0.1" />
     <property name="scorecard_management.jar.name" value="scorecard_management.jar" />
     <property name="scorecard_management.path" value="scorecard_management/${scorecard_management.version}" />
     <property name="scorecard_management.jar" value="${tcs_libdir}/${scorecard_management.path}/${scorecard_management.jar.name}" />
