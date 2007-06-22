@@ -81,6 +81,7 @@
                 <bean:message key="global.Timezone.EST" /><br />
                 <html:radio property="phase_start_by_phase[${phaseIdx}]" value="true" />
                 <bean:message key="editProject.Phases.When" />
+                <div style="margin-left: 20px;">
                 <html:select styleClass="inputBox" property="phase_start_phase[${phaseIdx}]" style="width:120px;">
                     <html:option key="editProject.Phases.SelectPhase" value="" />
                     <c:forEach var="i" begin="1" end="${fn:length(projectForm.map['phase_id']) - 1}">
@@ -89,19 +90,24 @@
                         </c:if>
                     </c:forEach>
                 </html:select>
+                <br />
                 <html:select styleClass="inputBox" property="phase_start_when[${phaseIdx}]">
                     <html:option key="editProject.Phases.Starts" value="starts" />
                     <html:option key="editProject.Phases.Ends" value="ends" />
                 </html:select>
+                <br />
                 <html:select styleClass="inputBox" property="phase_start_plusminus[${phaseIdx}]">
                     <html:option value="plus">+</html:option>
                     <html:option value="minus">-</html:option>
                 </html:select>
+                <br />
                 <html:text styleClass="inputBox" property="phase_start_amount[${phaseIdx}]" style="width:30px;" />
+                <br />
                 <html:select styleClass="inputBox" property="phase_start_dayshrs[${phaseIdx}]">
                     <html:option key="editProject.Phases.Days" value="days" />
                     <html:option key="editProject.Phases.Hrs" value="hrs" />
                 </html:select>
+                </div>
                 <div name="start_date_validation_msg" class="error" style="display:none"></div>
             </td>
             <td class="value" nowrap="nowrap">
@@ -227,32 +233,32 @@
 
 <table class="scorecard" id="addphase_tbl" width="100%">
     <tr class="highlighted">
-        <td class="valueB" colspan="2"><bean:message key="editProject.Phases.AddNewPhase" /></td>
-<%--
-        <td class="valueB" colspan="2"><bean:message key="editProject.Phases.PhaseStart" /></td>
+        <td class="valueB"><bean:message key="editProject.Phases.AddNewPhase" /></td>
+        <td class="valueB"><bean:message key="editProject.Phases.PhaseStart" /></td>
         <td class="valueB"><bean:message key="editProject.Phases.PhaseEnd" /></td>
         <td class="valueB"><bean:message key="editProject.Phases.Duration" /></td>
-        <td class="valueB" colspan="2"><!-- @ --></td>
---%>
+        <td class="valueB"><!-- @ --></td>
     </tr>
 
     <!-- ADD PHASE FORM BEGINS -->
     <tr class="light">
         <td class="value" nowrap="nowrap">
             <bean:message key="editProject.Phases.NewPhase" />
-        </td>
-        <td class="value" width="100%">
-            <html:select styleClass="inputBox" property="addphase_type" style="width:197px;margin-bottom:2px;">
+            <br />
+            <html:select styleClass="inputBox" property="addphase_type">
                 <html:option key="editProject.Phases.Select" value="" />
                 <c:forEach items="${requestScope.phaseTypes}" var="phaseType">
                     <html:option key="ProjectPhase.${fn:replace(phaseType.name, ' ', '')}" value="${phaseType.id}" />
                 </c:forEach>
-            </html:select><br />
+            </html:select>
+            <br />
             <bean:message key="editProject.Phases.Placement" />
-            <html:select styleClass="inputBox" property="addphase_when" style="margin-left:7px;">
+            <br />
+            <html:select styleClass="inputBox" property="addphase_when">
                 <html:option key="editProject.Phases.Before" value="before" />
                 <html:option key="editProject.Phases.After" value="after" />
             </html:select>
+            <br />
             <html:select styleClass="inputBox" property="addphase_where">
                 <html:option key="editProject.Phases.SelectPhase" value="" />
                 <c:forEach var="i" begin="1" end="${fn:length(projectForm.map['phase_id']) - 1}">
@@ -260,12 +266,8 @@
                 </c:forEach>
             </html:select>
         </td>
-    </tr>
-    <tr class="light">
         <td class="value" nowrap="nowrap">
-            <bean:message key="editProject.Phases.PhaseStart" />
-        </td>
-        <td class="value">
+            <%--<bean:message key="editProject.Phases.PhaseStart" />--%>
             <html:radio property="addphase_start_by_phase" value="false" />
             <html:text onblur="JavaScript:this.value=getDateString(this.value);" styleClass="inputBoxDate" property="addphase_start_date" />
             <html:text onblur="JavaScript:this.value=getTimeString(this.value, this.parentNode);" styleClass="inputBoxTime" property="addphase_start_time" />
@@ -276,32 +278,34 @@
             <bean:message key="global.Timezone.EST" /><br />
             <html:radio property="addphase_start_by_phase" value="true" />
             <bean:message key="editProject.Phases.When" />
+            <div style="margin-left: 20px;">
             <html:select styleClass="inputBox" property="addphase_start_phase" style="width:120px;">
                 <html:option key="editProject.Phases.SelectPhase" value="" />
                 <c:forEach var="i" begin="1" end="${fn:length(projectForm.map['phase_id']) - 1}">
                     <html:option value="${projectForm.map['phase_js_id'][i]}">${projectForm.map['phase_name'][i]}</html:option>
                 </c:forEach>
             </html:select>
+            <br />
             <html:select styleClass="inputBox" property="addphase_start_when">
                 <html:option key="editProject.Phases.Starts" value="starts" />
                 <html:option key="editProject.Phases.Ends" value="ends" />
             </html:select>
+            <br />
             <html:select styleClass="inputBox" property="addphase_start_plusminus">
                 <html:option value="plus">+</html:option>
                 <html:option value="minus">-</html:option>
             </html:select>
+            <br />
             <html:text styleClass="inputBox" property="addphase_start_amount" style="width:30px;" />
+            <br />
             <html:select styleClass="inputBox" property="addphase_start_dayshrs">
                 <html:option key="editProject.Phases.Days" value="days" />
                 <html:option key="editProject.Phases.Hrs" value="hrs" />
             </html:select>
+            </div>
         </td>
-    </tr>
-    <tr class="light">
         <td class="value" nowrap="nowrap">
-            <bean:message key="editProject.Phases.PhaseEnd" />
-        </td>
-        <td class="value">
+            <%--<bean:message key="editProject.Phases.PhaseEnd" />--%>
               <html:radio property="addphase_use_duration" value="false" />
             <html:text onblur="JavaScript:this.value=getDateString(this.value);" styleClass="inputBoxDate" property="addphase_end_date" />
             <html:text onblur="JavaScript:this.value=getTimeString(this.value, this.parentNode);" styleClass="inputBoxTime" property="addphase_end_time" />
@@ -311,17 +315,11 @@
             </html:select>
             <bean:message key="global.Timezone.EST" />
         </td>
-    </tr>
-    <tr class="light">
         <td class="value" nowrap="nowrap">
-            <bean:message key="editProject.Phases.Duration" />
-        </td>
-        <td class="value">
+            <%--<bean:message key="editProject.Phases.Duration" />--%>
             <html:radio property="addphase_use_duration" value="true" />
             <html:text styleClass="inputBoxDuration" property="addphase_duration" />
         </td>
-    </tr>
-    <tr class="light">
         <td class="value" colspan="2">
             <html:img srcKey="editProject.Phases.AddPhase.img" altKey="editProject.Phases.AddPhase.alt" onclick="addNewPhase();" style="cursor:hand;" />
         </td>
@@ -329,6 +327,6 @@
     <!-- ADD PHASE FORM ENDS -->
 
     <tr>
-        <td class="lastRowTD" colspan="2"><!-- @ --></td>
+        <td class="lastRowTD" colspan="5"><!-- @ --></td>
     </tr>
 </table><br />
