@@ -2379,7 +2379,16 @@
 
                 <Property name="context">
                     <Value>
-                        SELECT DISTINCT review_id
+                        SELECT DISTINCT review_id,
+                               review.resource_id AS resource_id,
+                               review.submission_id AS submission_id,
+                               review.scorecard_id AS scorecard_id,
+                               committed,
+                               score,
+                               review.create_user AS create_user,
+                               review.create_date AS create_date,
+                               review.modify_user AS modify_user,
+                               review.modify_date AS modify_date
                           FROM review,
                                scorecard,
                                resource
