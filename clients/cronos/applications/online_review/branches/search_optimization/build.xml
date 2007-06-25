@@ -548,7 +548,7 @@
 
     <target name="dist" depends="clean, update_left_nav, compile">
         <mkdir dir="${build_distdir}" />
-    	<property name="component.war" value="${build_distdir}/${distfilename}.war" />
+        <property name="component.war" value="${build_distdir}/${distfilename}.war" />
         <delete file="${component.war}" failonerror="false" />
 
         <war destfile="${component.war}" webxml="${configdir}/WEB-INF/web.xml" duplicate="fail">
