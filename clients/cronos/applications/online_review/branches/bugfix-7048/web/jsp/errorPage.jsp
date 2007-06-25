@@ -57,6 +57,12 @@ body {
     } else {
     	log.error(exception, exception);
 	}
+	//This maybe used according to bugfix-7048
+	//com.topcoder.util.log.Log logger = com.topcoder.util.log.LogFactory.getLog("com.cronos.onlinereview");
+	//if ( exception != null) {
+	//	logger.log(com.topcoder.util.log.Level.ERROR, 
+	//		com.cronos.onlinereview.phases.logging.LogMessage.getExceptionStackTrace(exception));
+	//} 
 %>
 
 	<div class="centerer">
