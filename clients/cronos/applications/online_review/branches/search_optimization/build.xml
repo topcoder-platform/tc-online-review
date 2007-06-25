@@ -120,12 +120,12 @@
     <property name="db_connection_factory.path" value="db_connection_factory/${db_connection_factory.version}" />
     <property name="db_connection_factory.jar" value="${tcs_libdir}/${db_connection_factory.path}/${db_connection_factory.jar.name}" />
 
-    <property name="deliverable_management.version" value="1.0.1" />
+    <property name="deliverable_management.version" value="1.0.2" />
     <property name="deliverable_management.jar.name" value="deliverable_management.jar" />
     <property name="deliverable_management.path" value="deliverable_management/${deliverable_management.version}" />
     <property name="deliverable_management.jar" value="${tcs_libdir}/${deliverable_management.path}/${deliverable_management.jar.name}" />
 
-    <property name="deliverable_management_persistence.version" value="1.0.1" />
+    <property name="deliverable_management_persistence.version" value="1.0.2" />
     <property name="deliverable_management_persistence.jar.name" value="deliverable_management_persistence.jar" />
     <property name="deliverable_management_persistence.path" value="deliverable_management_persistence/${deliverable_management_persistence.version}" />
     <property name="deliverable_management_persistence.jar" value="${tcs_libdir}/${deliverable_management_persistence.path}/${deliverable_management_persistence.jar.name}" />
