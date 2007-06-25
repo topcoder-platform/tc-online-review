@@ -657,9 +657,9 @@ Note: The security manager that comes with the app may not be compatible with th
 
     <target name="deploy" depends="dist, deploy-common" />
 
-	<!-- - - - - - - - - - - - - - - - - - 
-          target: prod-init
-         - - - - - - - - - - - - - - - - - -->
+    <!-- - - - - - - - - - - - - - - - - - 
+      target: prod-init
+    - - - - - - - - - - - - - - - - - -->
     <target name="prod-init">
     	<property name="component.war" value="${distfilename}.war" />
     </target>
