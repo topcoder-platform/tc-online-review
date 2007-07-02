@@ -37,7 +37,7 @@
         <jsp:include page="/includes/inc_header.jsp" />
         
             <div id="mainMiddleContent">
-                <div style="position: relative; width: 100%; margin-bottom: 40px;" align="center">
+                <div style="position: relative; width: 100%; padding-bottom: 40px;" align="center">
 
                     <c:if test="${orfn:isErrorsPresent(pageContext.request)}">
                         <div align="center">
@@ -81,16 +81,12 @@
                             </tr>
                         </table><br />
                     </html:form>
-                    <table cellpadding="0" cellspacing="0" width="400">
-                        <tr>
-                            <td class="value" colspan="2">
-                                <strong><bean:message key="login.forgotPassword" /></strong><br/>
-                                <bean:message key="login.cannotRememberPassword1" /> <a href="http://<%=ApplicationServer.SERVER_NAME%>/tc?&module=RecoverPassword"><bean:message key="clickHere" /></a> <bean:message key="login.cannotRememberPassword2" /><br /><br />
-                                <strong><bean:message key="login.newToTopCoder" /></strong><br/>
-                                <a href="https://<%=ApplicationServer.SERVER_NAME%>/reg/"><bean:message key="login.registerNow" /></a> <bean:message key="login.afterYouCompleteTheRegProcess" />
-                            </td>
-                        </tr>
-                    </table>
+                    <p align="left" style="width: 400px;">
+                    <strong><bean:message key="login.forgotPassword" /></strong><br/>
+                    <bean:message key="login.cannotRememberPassword1" /> <a href="http://<%=ApplicationServer.SERVER_NAME%>/tc?&module=RecoverPassword"><bean:message key="clickHere" /></a> <bean:message key="login.cannotRememberPassword2" /><br /><br />
+                    <strong><bean:message key="login.newToTopCoder" /></strong><br/>
+                    <a href="https://<%=ApplicationServer.SERVER_NAME%>/reg/"><bean:message key="login.registerNow" /></a> <bean:message key="login.afterYouCompleteTheRegProcess" />
+                    </p>
 
                 </div>
             </div>
