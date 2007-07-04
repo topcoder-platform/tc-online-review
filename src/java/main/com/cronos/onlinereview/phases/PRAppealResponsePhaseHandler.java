@@ -176,7 +176,7 @@ public class PRAppealResponsePhaseHandler extends AppealsResponsePhaseHandler {
 					winnerAD.getUser().getId().longValue()), "1st");
 		}
 		if (adResult.hasRunnerUp()) {
-			AssignmentDocument runnerUpAD = adResult.getWinnerAssignmentDocument();
+			AssignmentDocument runnerUpAD = adResult.getRunnerUpAssignmentDocument();
 			sendWinnersEmailForUser(project, runnerUpAD, managerHelper.getUserRetrieval().retrieveUser(
 					runnerUpAD.getUser().getId().longValue()), "2nd");
 		}
