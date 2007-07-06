@@ -1,0 +1,23 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!--
+    Adds upload for final fix submitted by Winning Submitter;
+    Advances to Final Review phase;
+-->
+<dataset>
+    <!-- *** phase *** -->
+    <!-- Phases for Ajax Timed Survey 1.0 -->
+    <project_phase project_phase_id="9" project_id="1" phase_type_id="9" phase_status_id="3"
+           scheduled_start_time="2006-08-06 00:00:00.0" scheduled_end_time="2006-08-06 23:59:59.0"
+           duration="1440" create_user="System" create_date="2006-07-29 02:45:11.0" modify_user="System"
+           modify_date="2006-07-29 02:45:11.0"/><!-- Final Fix phase -->
+    <project_phase project_phase_id="10" project_id="1" phase_type_id="10" phase_status_id="2"
+           scheduled_start_time="2006-08-07 00:00:00.0" scheduled_end_time="2006-08-07 23:59:59.0"
+           duration="1440" create_user="System" create_date="2006-07-29 02:45:11.0" modify_user="System"
+           modify_date="2006-07-29 02:45:11.0"/><!-- Final Review phase -->
+
+    <!-- *** upload *** -->
+    <!-- Upload for Final Fix from Winning Submitter -->
+    <upload upload_id="4" project_id="1" resource_id="1" upload_type_id="3" upload_status_id="1" parameter="Path?"
+            create_user="System" create_date="2006-07-29 02:45:11.0"
+            modify_user="System" modify_date="2006-07-29 02:45:11.0"/>
+</dataset>
