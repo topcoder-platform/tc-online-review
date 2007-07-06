@@ -1778,7 +1778,20 @@
 
                 <Property name="context">
                     <Value>
-                        SELECT DISTINCT scorecard.scorecard_id
+                        SELECT DISTINCT scorecard_id,
+                               scorecard.scorecard_status_id AS status_id,
+                               scorecard.scorecard_type_id AS type_id,
+                               scorecard.project_category_id AS project_category_id,
+                               scorecard.name AS scorecard_name,
+                               version,
+                               min_score,
+                               max_score,
+                               scorecard.create_user AS create_user,
+                               scorecard.create_date AS create_date,
+                               scorecard.modify_user AS modify_user,
+                               scorecard.modify_date AS modify_date,
+                               scorecard_status_lu.name AS status_name,
+                               scorecard_type_lu.name AS type_name
                           FROM scorecard,
                                scorecard_status_lu,
                                scorecard_type_lu,
@@ -1973,10 +1986,49 @@
                 </Property>
                 <Property name="context">
                     <Value>
-                        SELECT submission_id
+                        SELECT DISTINCT submission.submission_id AS submission_id,
+                               submission.create_user AS submission_create_user,
+                               submission.create_date AS submission_create_date,
+                               submission.modify_user AS submission_modify_user,
+                               submission.modify_date AS submission_modify_date,
+                               submission_status_lu.submission_status_id AS submission_status_id,
+                               submission_status_lu.create_user AS submission_status_create_user,
+                               submission_status_lu.create_date AS submission_status_create_date,
+                               submission_status_lu.modify_user AS submission_status_modify_user,
+                               submission_status_lu.modify_date AS submission_status_modify_date,
+                               submission_status_lu.name AS submission_status_name,
+                               submission_status_lu.description AS submission_status_description,
+                               upload.upload_id AS upload_id,
+                               upload.create_user AS upload_create_user,
+                               upload.create_date AS upload_create_date,
+                               upload.modify_user AS upload_modify_user,
+                               upload.modify_date AS upload_modify_date,
+                               upload.project_id AS project_id,
+                               upload.resource_id AS resource_id,
+                               upload.parameter AS upload_parameter,
+                               upload_type_lu.upload_type_id AS upload_type_id,
+                               upload_type_lu.create_user AS upload_type_create_user,
+                               upload_type_lu.create_date AS upload_type_create_date,
+                               upload_type_lu.modify_user AS upload_type_modify_user,
+                               upload_type_lu.modify_date AS upload_type_modify_date,
+                               upload_type_lu.name AS upload_type_name,
+                               upload_type_lu.description AS upload_type_description,
+                               upload_status_lu.upload_status_id AS upload_status_id,
+                               upload_status_lu.create_user AS upload_status_create_user,
+                               upload_status_lu.create_date AS upload_status_create_date,
+                               upload_status_lu.modify_user AS upload_status_modify_user,
+                               upload_status_lu.modify_date AS upload_status_modify_date,
+                               upload_status_lu.name AS upload_status_name,
+                               upload_status_lu.description AS upload_status_description
                           FROM submission,
-                               upload
+                               upload,
+                               submission_status_lu,
+                               upload_type_lu,
+                               upload_status_lu
                          WHERE submission.upload_id = upload.upload_id
+                           AND submission.submission_status_id = submission_status_lu.submission_status_id
+                           AND upload.upload_type_id = upload_type_lu.upload_type_id
+                           AND upload.upload_status_id = upload_status_lu.upload_status_id
                            AND
                     </Value>
                 </Property>
@@ -2025,9 +2077,34 @@
                 </Property>
                 <Property name="context">
                     <Value>
-                        SELECT upload_id
-                          FROM upload
-                         WHERE
+                        SELECT DISTINCT upload.upload_id AS upload_id,
+                               upload.create_user AS upload_create_user,
+                               upload.create_date AS upload_create_date,
+                               upload.modify_user AS upload_modify_user,
+                               upload.modify_date AS upload_modify_date,
+                               upload.project_id AS project_id,
+                               upload.resource_id AS resource_id,
+                               upload.parameter AS upload_parameter,
+                               upload_type_lu.upload_type_id AS upload_type_id,
+                               upload_type_lu.create_user AS upload_type_create_user,
+                               upload_type_lu.create_date AS upload_type_create_date,
+                               upload_type_lu.modify_user AS upload_type_modify_user,
+                               upload_type_lu.modify_date AS upload_type_modify_date,
+                               upload_type_lu.name AS upload_type_name,
+                               upload_type_lu.description AS upload_type_description,
+                               upload_status_lu.upload_status_id AS upload_status_id,
+                               upload_status_lu.create_user AS upload_status_create_user,
+                               upload_status_lu.create_date AS upload_status_create_date,
+                               upload_status_lu.modify_user AS upload_status_modify_user,
+                               upload_status_lu.modify_date AS upload_status_modify_date,
+                               upload_status_lu.name AS upload_status_name,
+                               upload_status_lu.description AS upload_status_description
+                          FROM upload,
+                               upload_type_lu,
+                               upload_status_lu
+                         WHERE upload.upload_type_id = upload_type_lu.upload_type_id
+                           AND upload.upload_status_id = upload_status_lu.upload_status_id
+                           AND
                     </Value>
                 </Property>
                 <Property name="alias">
@@ -2366,7 +2443,16 @@
 
                 <Property name="context">
                     <Value>
-                        SELECT DISTINCT review_id
+                        SELECT DISTINCT review_id,
+                               review.resource_id AS resource_id,
+                               review.submission_id AS submission_id,
+                               review.scorecard_id AS scorecard_id,
+                               committed,
+                               score,
+                               review.create_user AS create_user,
+                               review.create_date AS create_date,
+                               review.modify_user AS modify_user,
+                               review.modify_date AS modify_date
                           FROM review,
                                scorecard,
                                resource

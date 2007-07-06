@@ -120,12 +120,12 @@
     <property name="db_connection_factory.path" value="db_connection_factory/${db_connection_factory.version}" />
     <property name="db_connection_factory.jar" value="${tcs_libdir}/${db_connection_factory.path}/${db_connection_factory.jar.name}" />
 
-    <property name="deliverable_management.version" value="1.0.1" />
+    <property name="deliverable_management.version" value="1.0.2" />
     <property name="deliverable_management.jar.name" value="deliverable_management.jar" />
     <property name="deliverable_management.path" value="deliverable_management/${deliverable_management.version}" />
     <property name="deliverable_management.jar" value="${tcs_libdir}/${deliverable_management.path}/${deliverable_management.jar.name}" />
 
-    <property name="deliverable_management_persistence.version" value="1.0.1" />
+    <property name="deliverable_management_persistence.version" value="1.0.2" />
     <property name="deliverable_management_persistence.jar.name" value="deliverable_management_persistence.jar" />
     <property name="deliverable_management_persistence.path" value="deliverable_management_persistence/${deliverable_management_persistence.version}" />
     <property name="deliverable_management_persistence.jar" value="${tcs_libdir}/${deliverable_management_persistence.path}/${deliverable_management_persistence.jar.name}" />
@@ -250,7 +250,7 @@
     <property name="review_management.path" value="review_management/${review_management.version}" />
     <property name="review_management.jar" value="${tcs_libdir}/${review_management.path}/${review_management.jar.name}" />
 
-    <property name="review_management_persistence.version" value="1.0" />
+    <property name="review_management_persistence.version" value="1.0.1" />
     <property name="review_management_persistence.jar.name" value="review_management_persistence.jar" />
     <property name="review_management_persistence.path" value="review_management_persistence/${review_management_persistence.version}" />
     <property name="review_management_persistence.jar" value="${tcs_libdir}/${review_management_persistence.path}/${review_management_persistence.jar.name}" />
@@ -270,7 +270,7 @@
     <property name="scorecard_data_structure.path" value="scorecard_data_structure/${scorecard_data_structure.version}" />
     <property name="scorecard_data_structure.jar" value="${tcs_libdir}/${scorecard_data_structure.path}/${scorecard_data_structure.jar.name}" />
 
-    <property name="scorecard_management.version" value="1.0" />
+    <property name="scorecard_management.version" value="1.0.1" />
     <property name="scorecard_management.jar.name" value="scorecard_management.jar" />
     <property name="scorecard_management.path" value="scorecard_management/${scorecard_management.version}" />
     <property name="scorecard_management.jar" value="${tcs_libdir}/${scorecard_management.path}/${scorecard_management.jar.name}" />
@@ -548,7 +548,7 @@
 
     <target name="dist" depends="clean, update_left_nav, compile">
         <mkdir dir="${build_distdir}" />
-    	<property name="component.war" value="${build_distdir}/${distfilename}.war" />
+        <property name="component.war" value="${build_distdir}/${distfilename}.war" />
         <delete file="${component.war}" failonerror="false" />
 
         <war destfile="${component.war}" webxml="${configdir}/WEB-INF/web.xml" duplicate="fail">
@@ -657,9 +657,9 @@ Note: The security manager that comes with the app may not be compatible with th
 
     <target name="deploy" depends="dist, deploy-common" />
 
-	<!-- - - - - - - - - - - - - - - - - - 
-          target: prod-init
-         - - - - - - - - - - - - - - - - - -->
+    <!-- - - - - - - - - - - - - - - - - - 
+      target: prod-init
+    - - - - - - - - - - - - - - - - - -->
     <target name="prod-init">
     	<property name="component.war" value="${distfilename}.war" />
     </target>
