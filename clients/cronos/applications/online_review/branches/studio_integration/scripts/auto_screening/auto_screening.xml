@@ -1930,10 +1930,10 @@
                         <Value>jdbc:informix-sqli://63.118.154.218:1526/tcs_catalog:INFORMIXSERVER=devinformix10_shm;</Value>
                     </Property>
                     <Property name="user">
-                        <Value>informix</Value>
+                        <Value>coder</Value>
                     </Property>
                     <Property name="password">
-                        <Value>lansing</Value>
+                        <Value>altec</Value>
                     </Property>
                 </Property>
             </Property>
