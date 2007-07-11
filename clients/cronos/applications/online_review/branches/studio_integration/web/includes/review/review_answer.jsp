@@ -27,6 +27,23 @@
 					</c:forEach>
 				</html:select>
 			</c:when>
+			<c:when test="${question.questionType.name eq 'Scale (0-3)'}">
+				<html:select property="answer[${itemIdx}]" styleClass="inputBox">
+					<html:option value=""><bean:message key="Answer.Select" /></html:option>
+					<html:option value="0/3"><bean:message key="Answer.Score3.ans0" /></html:option>
+					<html:option value="1/3"><bean:message key="Answer.Score3.ans1" /></html:option>
+					<html:option value="2/3"><bean:message key="Answer.Score3.ans2" /></html:option>
+					<html:option value="3/3"><bean:message key="Answer.Score3.ans3" /></html:option>
+				</html:select>
+			</c:when>
+			<c:when test="${question.questionType.name eq 'Scale (0-9)'}">
+				<html:select property="answer[${itemIdx}]" styleClass="inputBox">
+					<html:option value=""><bean:message key="Answer.Select" /></html:option>
+					<c:forEach var="rating" begin="0" end="9">
+						<html:option value="${rating}/9"><bean:message key="Answer.Score9.Rating.title" /> ${rating}</html:option>
+					</c:forEach>
+				</html:select>
+			</c:when>
 			<c:when test="${question.questionType.name eq 'Test Case'}">
 				<html:text property="passed_tests" value="" styleClass="inputBox" style="width:25;" onchange="populateTestCaseAnswer(${itemIdx});"/>
 				<bean:message key="editReview.Question.Response.TestCase.of" />
