@@ -144,7 +144,7 @@ public class ProjectReviewActions extends DispatchAction {
                 correctAnswers.put(i + "/4", scale1_4);
             }
             if (i >= 1 && i <= 10) {
-                correctAnswers.put(i + "/4", scale1_10);
+                correctAnswers.put(i + "/10", scale1_10);
             }
             if (i <= 9) {
             	correctAnswers.put(i + "/9", scale0_9);
