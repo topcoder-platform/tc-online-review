@@ -134,11 +134,21 @@ public class ProjectReviewActions extends DispatchAction {
     static {
         String scale1_4 = "Scale (1-4)";
         String scale1_10 = "Scale (1-10)";
-        for (int i = 1; i <= 10; ++i) {
-            if (i <= 4) {
+        String scale0_3 = "Scale (0-3)";
+        String scale0_9 = "Scale (0-9)";
+        for (int i = 0; i <= 10; i++) {
+        	if (i <= 3) {
+                correctAnswers.put(i + "/3", scale0_3);
+            }
+        	if (i >= 1 && i <= 4) {
                 correctAnswers.put(i + "/4", scale1_4);
             }
-            correctAnswers.put(i + "/10", scale1_10);
+            if (i >= 1 && i <= 10) {
+                correctAnswers.put(i + "/4", scale1_10);
+            }
+            if (i <= 9) {
+            	correctAnswers.put(i + "/9", scale0_9);
+            }
         }
     }
 
@@ -4345,7 +4355,8 @@ public class ProjectReviewActions extends DispatchAction {
         // Get a type of the question for the current answer
         String questionType = question.getQuestionType().getName();
 
-        if (questionType.equalsIgnoreCase("Scale (1-4)") || questionType.equalsIgnoreCase("Scale (1-10)")) {
+        if (questionType.equalsIgnoreCase("Scale (1-4)") || questionType.equalsIgnoreCase("Scale (1-10)") || 
+        		questionType.equalsIgnoreCase("Scale (0-9)") || questionType.equalsIgnoreCase("Scale (0-3)")) {
             if (!(correctAnswers.containsKey(answer) && correctAnswers.get(answer).equals(questionType))) {
                 ActionsHelper.addErrorToRequest(request, errorKey, "Error.saveReview.Answer.Incorrect");
                 success = false;
