@@ -497,7 +497,30 @@
                     <Value>com.topcoder.management.review.scorecalculator.calculators.Scale10</Value>
                 </Property>
             </Property>
-
+			<!-- Configuration for Scale (0-3) question type -->
+            <Property name="Scale3">
+                <Property name="question_type">
+                    <Value>5</Value>
+                </Property>
+                <Property name="class">
+                    <Value>com.topcoder.management.review.scorecalculator.calculators.ScaledScoreCalculator</Value>
+                </Property>
+                <Property name="namespace">
+                    <Value>com.topcoder.management.review.scorecalculator.calculators.Scale3</Value>
+                </Property>
+            </Property>
+            <!-- Configuration for Scale (0-9) question type -->
+            <Property name="Scale9">
+                <Property name="question_type">
+                    <Value>6</Value>
+                </Property>
+                <Property name="class">
+                    <Value>com.topcoder.management.review.scorecalculator.calculators.ScaledScoreCalculator</Value>
+                </Property>
+                <Property name="namespace">
+                    <Value>com.topcoder.management.review.scorecalculator.calculators.Scale9</Value>
+                </Property>
+            </Property>
             <!-- Configuration for Test Case question type -->
             <Property name="dynamicCalculator">
                 <Property name="question_type">
@@ -546,7 +569,17 @@
         </Property>
     </Config>
 
-
+	<Config name="com.topcoder.management.review.scorecalculator.calculators.Scale3">
+        <Property name="default_scale">
+            <Value>3</Value>
+        </Property>
+    </Config>
+    
+    <Config name="com.topcoder.management.review.scorecalculator.calculators.Scale9">
+        <Property name="default_scale">
+            <Value>9</Value>
+        </Property>
+    </Config>
     <!--
         =============== Configuration for Workdays component ===============
     -->
