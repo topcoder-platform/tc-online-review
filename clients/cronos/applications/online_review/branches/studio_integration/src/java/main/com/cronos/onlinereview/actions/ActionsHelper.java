@@ -1797,6 +1797,37 @@ public class ActionsHelper {
     }
 
     /**
+     * This static method returns the resource for role for the currently logged in user. 
+     * The list of all resources for the currently logged in user is
+     * retrieved from the <code>HttpServletRequest</code> object specified by <code>request</code>
+     * parameter. Method <code>gatherUserRoles(HttpServletRequest, long)</code> should be called
+     * prior making a call to this method.
+     *
+     * @return the resource, or null if the current user doesn't have a resource with the role.
+     * @param request
+     *            an <code>HttpServletRequest</code> object containing additional information.
+     * @param resourceRole the name of the resource role
+     * @throws IllegalArgumentException
+     *             if <code>request</code> parameter is <code>null</code>.
+     *             if <code>resourceRole</code> parameter is <code>null</code>.
+     *             
+     */
+    public static Resource getMyResourceForRole(HttpServletRequest request, String resourceRole) {
+        // Validate parameters
+        validateParameterNotNull(request, "request");
+        validateParameterNotNull(resourceRole, "resourceRole");
+        // Retrieve the list of "my" resources from the request's attribute
+        Resource[] myResources = (Resource[]) validateAttributeNotNull(request, "myResources");
+        for (Resource resource : myResources) {
+			if (resource.getResourceRole().getName().equalsIgnoreCase(resourceRole)) {
+				return resource;
+			}
+		}
+        // Return the resources using another helper-method
+        return null;
+    }    
+    
+    /**
      * This static method retrieves the resource for the currently logged in user associated with
      * the specified phase. The list of all resources for the currently logged in user is retrieved
      * from the <code>HttpServletRequest</code> object specified by <code>request</code>
