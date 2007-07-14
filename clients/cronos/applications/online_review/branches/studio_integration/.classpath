@@ -111,7 +111,7 @@
 			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry exported="true" kind="lib" path="lib/tcs/online_review_phases/1.0.4/online_review_phases.jar">
+	<classpathentry exported="true" kind="lib" path="lib/tcs/online_review_phases/1.0.4/online_review_phases.jar" sourcepath="/online_review_phases/src/java/main">
 		<attributes>
 			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
 		</attributes>
@@ -141,12 +141,12 @@
 			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry exported="true" kind="lib" path="lib/tcs/resource_management/1.0.1/resource_management.jar" sourcepath="/resource_management/src/java/main">
+	<classpathentry kind="lib" path="lib/tcs/resource_management/1.1/resource_management.jar" sourcepath="/resource_management/src/java/main">
 		<attributes>
 			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry exported="true" kind="lib" path="lib/tcs/resource_management_persistence/1.0/resource_management_persistence.jar">
+	<classpathentry kind="lib" path="lib/tcs/resource_management_persistence/1.2/resource_management_persistence.jar">
 		<attributes>
 			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
 		</attributes>
@@ -376,12 +376,7 @@
 			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="lib/tcs/deliverable_management/1.0.2/deliverable_management.jar">
-		<attributes>
-			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="lib/tcs/deliverable_management_persistence/1.0.2/deliverable_management_persistence.jar">
+	<classpathentry kind="lib" path="lib/tcs/deliverable_management/1.0.3/deliverable_management.jar">
 		<attributes>
 			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
 		</attributes>
@@ -396,5 +391,6 @@
 			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
 		</attributes>
 	</classpathentry>
+	<classpathentry kind="lib" path="lib/tcs/deliverable_management_persistence/1.0.3/deliverable_management_persistence.jar"/>
 	<classpathentry kind="output" path="build/classes"/>
 </classpath>
