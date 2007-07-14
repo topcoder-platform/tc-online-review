@@ -6,7 +6,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -18,6 +17,8 @@ import com.topcoder.db.connectionfactory.DBConnectionFactory;
 import com.topcoder.db.connectionfactory.DBConnectionFactoryImpl;
 import com.topcoder.util.config.ConfigManager;
 import com.topcoder.util.config.ConfigManagerException;
+import com.topcoder.util.idgenerator.IDGenerator;
+import com.topcoder.util.idgenerator.IDGeneratorFactory;
 
 /**
  * <p>
@@ -41,8 +42,7 @@ public class ORMigration {
     private static final String[] ALTER_STAMENTS = new String[] {
             "ALTER TABLE submission ADD screening_score DECIMAL(5,2)",
             "ALTER TABLE submission ADD initial_score DECIMAL(5,2)",
-            "ALTER TABLE submission ADD final_score DECIMAL(5,2)", 
-						"ALTER TABLE submission ADD placement DECIMAL(3,0)" };
+            "ALTER TABLE submission ADD final_score DECIMAL(5,2)", "ALTER TABLE submission ADD placement DECIMAL(3,0)" };
 
     /**
      * Selects the required columns from the resource info table.
@@ -55,11 +55,33 @@ public class ORMigration {
             + "and resource_info.value is not null order by 1, 2";
 
     /**
+     * Selects the data from the upload based on the upload status as deleted and the upload id not present in the
+     * submission table.
+     */
+    private static final String SELECT_UPLOAD = "select upload_id from upload where upload_status_id = 2 "
+            + "and upload_id not in (select upload_id from submission)";
+
+    /**
+     * Represents the sql statement to insert submission.
+     */
+    private static final String INSERT_SUBMISSION = "INSERT INTO submission "
+            + "(submission_id, upload_id, submission_status_id, create_user, create_date, modify_user, modify_date, "
+            + " screening_score, initial_score, final_score, placement)" + " VALUES (";
+
+    /**
+     * The operator name for the created_user and modified_user.
+     */
+    private static final String operator = "Converter";
+
+    /**
      * Final deletion of the resource info.
      */
     private static final String DELETE_RESOURCE_INFO = "delete from resource_info where resource_info.resource_info_type_id in (9, 10, 11, 12)";
 
-    private Map columnNameToResourceTypeId = new HashMap();
+    /**
+     * The column Name to resource info type id map.
+     */
+    private Map<Long, String> columnNameToResourceTypeId = new HashMap<Long, String>();
 
     /**
      * Constructor. Initializes the columnNameToResourceTypeId Map.
@@ -104,11 +126,11 @@ public class ORMigration {
      */
     public void modifyAndLoadSubmissionTable() {
         Connection connection = null;
+        PreparedStatement preparedStatement = null;
         try {
-            Map submissionIdMap = new HashMap();
+            Map<Long, String> submissionIdMap = new HashMap<Long, String>();
             connection = getConnection();
             connection.setAutoCommit(false);
-            PreparedStatement preparedStatement = null;
 
             // Depending on the DB Change can be commented out.
             // alter the table
@@ -122,21 +144,20 @@ public class ORMigration {
             // from the result set, construct a map
             while (resultSet.next()) {
                 long subId = resultSet.getLong(1);
-                submissionIdMap.put(new Long(subId), getString(resultSet.getLong(2), resultSet.getString(3),
+                submissionIdMap.put(subId, getString(resultSet.getLong(2), resultSet.getString(3),
                         (String) submissionIdMap.get(new Long(subId))));
             }
 
-            Set set = submissionIdMap.entrySet();
+            Set<Entry<Long, String>> set = submissionIdMap.entrySet();
             StringBuffer update = new StringBuffer();
-            List batchStatements = new ArrayList();
+            List<String> batchStatements = new ArrayList<String>();
 
             // prepare batch statements from the map
-            for (Iterator iter = set.iterator(); iter.hasNext();) {
-                Entry element = (Entry) iter.next();
+            for (Entry entry : set) {
                 update.append("Update submission set");
-                update.append(element.getValue());
+                update.append(entry.getValue());
                 update.append(" where submission_id = ");
-                update.append(element.getKey());
+                update.append(entry.getKey());
                 update.append(";\n");
                 // batch statement limit size is 65535
                 if (update.length() >= 65000) {
@@ -144,16 +165,11 @@ public class ORMigration {
                     update = new StringBuffer();
                 }
             }
-            
 
             // add the final update statement
             batchStatements.add(update.toString());
 
-            // execute each batch statement
-            for (Iterator iter = batchStatements.iterator(); iter.hasNext();) {
-                preparedStatement = connection.prepareStatement((String) iter.next());
-                preparedStatement.executeUpdate();
-            }
+            execBatchStatements(batchStatements, connection, preparedStatement);
 
             // verify db
             verifyDB(connection);
@@ -174,7 +190,93 @@ public class ORMigration {
                     e1.printStackTrace();
                 }
             }
+            if (preparedStatement != null) {
+                try {
+                    preparedStatement.close();
+                } catch (SQLException e1) {
+                    // ignore
+                }
+            }
         }
+    }
+
+    /**
+     * Executes the given List of batch statements.
+     * 
+     * @param batchStatements
+     *            the statements
+     * @param connection
+     *            the connection to be used
+     * @param preparedStatement
+     *            the prepared statment to be used
+     * @throws Exception
+     *             if any.
+     */
+    private void execBatchStatements(List<String> batchStatements, Connection connection,
+            PreparedStatement preparedStatement) throws Exception {
+        // execute each batch statement
+        for (String string : batchStatements) {
+            preparedStatement = connection.prepareStatement(string);
+            preparedStatement.executeUpdate();
+        }
+    }
+
+    /**
+     * It takes all the uploads from the upload table with status as deleted, and load them to the submission table
+     * with submission status as deleted.
+     */
+    public void loadSubmissionTableWithUploads() {
+
+        Connection connection = null;
+        PreparedStatement preparedStatement = null;
+        try {
+            connection = getConnection();
+            connection.setAutoCommit(false);
+            IDGenerator generator = IDGeneratorFactory.getIDGenerator("submission_id_seq");
+
+            preparedStatement = connection.prepareStatement(SELECT_UPLOAD);
+            ResultSet rs = preparedStatement.executeQuery();
+            String insertEnd = ", 5, '" + operator + "', CURRENT, '" + operator + "', CURRENT, -1, -1, -1, -1);\n";
+            StringBuffer insert = new StringBuffer();
+            List<String> batchStatements = new ArrayList<String>();
+            while (rs.next()) {
+                insert.append(INSERT_SUBMISSION);
+                insert.append(generator.getNextID());
+                insert.append(", ");
+                insert.append(rs.getLong(1));
+                insert.append(insertEnd);
+                // batch statement limit size is 65535
+                if (insert.length() >= 65000) {
+                    batchStatements.add(insert.toString());
+                    insert = new StringBuffer();
+                }
+            }
+            batchStatements.add(insert.toString());
+            System.out.println(insert.toString());
+
+            execBatchStatements(batchStatements, connection, preparedStatement);
+
+            // everything is fine commit now
+            connection.commit();
+        } catch (Exception e) {
+            e.printStackTrace();
+            if (connection != null) {
+                try {
+                    connection.rollback();
+                } catch (SQLException e1) {
+                    System.out.println("Roll back trace.");
+                    e1.printStackTrace();
+                }
+            }
+            if (preparedStatement != null) {
+                try {
+                    preparedStatement.close();
+                } catch (SQLException e1) {
+                    // ignore
+                }
+            }
+        }
+
     }
 
     /**
@@ -188,7 +290,7 @@ public class ORMigration {
      * @throws ConfigurationException
      *             if any.
      */
-    private Connection getConnection() throws ConfigManagerException, ConfigurationException, DBConnectionException {
+    private Connection getConnection() throws DBConnectionException, ConfigManagerException, ConfigurationException {
         ConfigManager configManager = ConfigManager.getInstance();
         configManager.add(CONFIG_PATH);
         DBConnectionFactory connectionFactory = new DBConnectionFactoryImpl(
@@ -229,6 +331,8 @@ public class ORMigration {
      *            not used.
      */
     public static void main(String args[]) {
-        new ORMigration().modifyAndLoadSubmissionTable();
+        ORMigration migration = new ORMigration();
+        migration.modifyAndLoadSubmissionTable();
+        migration.loadSubmissionTableWithUploads();
     }
 }
