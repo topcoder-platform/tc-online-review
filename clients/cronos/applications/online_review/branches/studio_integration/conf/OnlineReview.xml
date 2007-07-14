@@ -2052,7 +2052,11 @@
                                upload_status_lu.modify_user AS upload_status_modify_user,
                                upload_status_lu.modify_date AS upload_status_modify_date,
                                upload_status_lu.name AS upload_status_name,
-                               upload_status_lu.description AS upload_status_description
+                               upload_status_lu.description AS upload_status_description,
+                               submission.screening_score,
+                        	   submission.intial_score,
+                        	   submission.final_score,
+                        	   submission.placement,
                           FROM submission,
                                upload,
                                submission_status_lu,
