@@ -8,5 +8,6 @@
 	<classpathentry kind="lib" path="lib/third_party/log4j.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="lib/tcs/base_exception/1.0/base_exception.jar"/>
+	<classpathentry kind="lib" path="lib/tcs/id_generator/3.0/id_generator.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
