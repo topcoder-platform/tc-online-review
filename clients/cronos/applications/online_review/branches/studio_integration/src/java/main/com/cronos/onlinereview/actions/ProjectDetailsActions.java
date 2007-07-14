@@ -647,7 +647,7 @@ public class ProjectDetailsActions extends DispatchAction {
         UploadedFile uploadedFile = uploadResult.getUploadedFile("file");
 
         // Get my resource
-        Resource resource = ActionsHelper.getMyResourceForPhase(request, null);
+        Resource resource = ActionsHelper.getMyResourceForRole(request, "Submitter");
 
         // Obtain an instance of Upload Manager
         UploadManager upMgr = ActionsHelper.createUploadManager(request);
@@ -694,13 +694,17 @@ public class ProjectDetailsActions extends DispatchAction {
         
         upMgr.createUpload(upload, operator);
         upMgr.createSubmission(submission, operator);
-
+        resource.addSubmission(submission.getId());
+        ActionsHelper.createResourceManager(request).updateResource(resource, operator);
+        
         // Now depending on whether the project allows multiple submissions or not mark the old submission
         // and the upload as deleted.
         if (oldSubmissions.length != 0 && !allowOldSubmissions) {
+        	SubmissionStatus deleteSubmissionStatus = ActionsHelper.findSubmissionStatusByName(submissionStatuses, "Deleted");
+            UploadStatus deleteUploadStatus = ActionsHelper.findUploadStatusByName(uploadStatuses, "Deleted");
             for (Submission oldSubmission : oldSubmissions) {
-                oldSubmission.setSubmissionStatus(ActionsHelper.findSubmissionStatusByName(submissionStatuses, "Deleted"));
-                oldSubmission.getUpload().setUploadStatus(ActionsHelper.findUploadStatusByName(uploadStatuses, "Deleted"));
+                oldSubmission.setSubmissionStatus(deleteSubmissionStatus);
+                oldSubmission.getUpload().setUploadStatus(deleteUploadStatus);
                 upMgr.updateSubmission(oldSubmission, operator);
             }
         }
