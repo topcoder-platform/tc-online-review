@@ -16,26 +16,21 @@ import java.sql.Types;
  * @version 1.0
  */
 public class PRHelper {
+    // OrChange : Modified the statement to take the placed and final score from submission table 
 	private static final String APPEAL_RESPONSE_SELECT_STMT =
-		"select ri_s.value as final_score, " +
+		"select s.final_score as final_score, " +
 		"	ri_u.value as user_id, " +
-		"	ri_p.value as placed, " +
+		"	s.placement as placed, " +
 		"	ri1.value payment, " +
 		"	r.project_id, " +
 		"	s.submission_status_id " +
 		"from resource r, " +
 		"	resource_info ri_u," +
-		"	resource_info ri_s," +
-		"	outer resource_info ri_p," +
 		"	outer resource_info ri1," +
 		"	upload u," +
 		"	submission s " +
 		"where  r.resource_id = ri_u.resource_id " +
 		"and ri_u.resource_info_type_id = 1 " +
-		"and r.resource_id = ri_s.resource_id " +
-		"and ri_s.resource_info_type_id = 11 " +
-		"and r.resource_id = ri_p.resource_id " +
-		"and ri_p.resource_info_type_id = 12 " +
 		"and r.resource_id = ri1.resource_id " +
 		"and ri1.resource_info_type_id = 7 " +
 		"and u.project_id = r.project_id " +
@@ -49,11 +44,18 @@ public class PRHelper {
 				"update project_result set final_score = ?, placed = ?, passed_review_ind = ?, payment = ? " +
 				"where project_id = ? and user_id = ? ";
 
+    // OrChange : Modified to take the raw score from the Submission table
 	private static final String REVIEW_SELECT_STMT =
-				"select ri_s.value as raw_score, ri_u.value as user_id, r.project_id " +
-				"from resource r, resource_info ri_u,resource_info ri_s  " +
-				"where r.resource_id = ri_s.resource_id and ri_s.resource_info_type_id = 10 " +
-				" and r.resource_id = ri_u.resource_id and ri_u.resource_info_type_id = 1 and r.project_id = ? ";
+				"select s.initial_score as raw_score, ri_u.value as user_id, r.project_id " +
+				"from resource r, resource_info ri_u, " +
+                "   upload u," +
+                "   submission s " +
+				"where r.resource_id = ri_u.resource_id and ri_u.resource_info_type_id = 1 " +
+                "and u.project_id = r.project_id " +
+                "and u.resource_id = r.resource_id " +
+                "and upload_type_id = 1 " +
+                "and u.upload_id = s.upload_id " +
+				" and r.project_id = ? ";
 
 	private static final String REVIEW_UPDATE_PROJECT_RESULT_STMT =
 				"update project_result set raw_score = ?  " +
