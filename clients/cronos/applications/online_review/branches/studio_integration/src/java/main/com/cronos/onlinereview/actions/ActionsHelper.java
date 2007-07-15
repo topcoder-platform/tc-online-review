@@ -3119,6 +3119,7 @@ public class ActionsHelper {
     	PreparedStatement reliabilityStmt = null;
     	PreparedStatement componentInquiryStmt = null;
     	long categoryId = project.getProjectCategory().getId();
+//       OrChange - No modification needed as only design/development/assembly will modify the project result table.
     	if (categoryId != 1 && categoryId != 2 && categoryId != 14) {
     		// design/development/assembly project need project_result
     		return;
@@ -3366,6 +3367,7 @@ public class ActionsHelper {
      */
     public static void changeResourceRole(Project project, long userId, long oldRoleId, long newRoleId) throws BaseException {
     	long categoryId = project.getProjectCategory().getId();
+        // OrChange - No modification needed as only design/development will modify the project result table.
     	if (categoryId != 1 && categoryId != 2) {
     		// design/development project need project_result
     		return;
@@ -3394,6 +3396,7 @@ public class ActionsHelper {
     	Connection conn = null;
     	PreparedStatement ps = null;
     	long categoryId = project.getProjectCategory().getId();
+//       OrChange - No modification needed as only design/development will modify the project result table.
     	if (categoryId != 1 && categoryId != 2) {
     		// design/development project need project_result
     		return;
@@ -3641,4 +3644,15 @@ public class ActionsHelper {
 			return mapping.findForward(Constants.NOT_AUTHORIZED_FORWARD_NAME);
 		}
 	}
+
+    /**
+     * Returns true if the given project is of category studio.
+     * 
+     * @param project
+     *            the project to be be checked.
+     * @return true, if the project is of type studio.
+     */
+    public static boolean isStudioProject(Project project) {
+        return project.getProjectCategory().getDescription().equals("Studio");
+    }
 }

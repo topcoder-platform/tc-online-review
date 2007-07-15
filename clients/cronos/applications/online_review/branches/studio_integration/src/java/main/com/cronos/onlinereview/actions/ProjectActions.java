@@ -684,7 +684,9 @@ public class ProjectActions extends DispatchAction {
             // Determine if status has changed
             statusHasChanged = !oldStatusName.equalsIgnoreCase(newStatusName);
             // If status has changed, update the project
-            if (statusHasChanged) {
+            
+            // OrChange - Do not update if the project type is studio
+            if (statusHasChanged && !ActionsHelper.isStudioProject(project)) {
                 // Populate project status
                 project.setProjectStatus(newProjectStatus);
 

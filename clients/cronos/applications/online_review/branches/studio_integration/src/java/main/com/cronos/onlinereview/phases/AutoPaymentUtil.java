@@ -122,6 +122,7 @@ public class AutoPaymentUtil {
         throws SQLException {
         long projectCategoryId = getProjectCategoryId(projectId, conn);
 
+        // OrChange - no modification needed as the current logic is applied only to design and development.
         if (projectCategoryId != 1 && projectCategoryId != 2) {
         	// Logic only apply to component
         	return;
@@ -351,6 +352,10 @@ public class AutoPaymentUtil {
      */
     static void populateSubmitterPayments(long projectId, Connection conn)
         throws SQLException {
+        // OrChange - Do not modify the payment if the project is a studio
+        if(PRHelper.isStudioProject(projectId)) {
+            return;
+        }
         // Retrieve the price
         double price = getPriceByProjectId(projectId, conn);
 
