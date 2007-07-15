@@ -6,6 +6,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -47,19 +48,20 @@ public class ORMigration {
     /**
      * Selects the required columns from the resource info table.
      */
-    private static final String SELECT_RESOURCE_INFO = "select submission.submission_id, resource_info.resource_info_type_id, "
-            + "resource_info.value from resource_submission inner join submission on "
-            + "resource_submission.submission_id = submission.submission_id inner join resource_info "
-            + "on resource_info.resource_id = resource_submission.resource_id "
-            + "where resource_info.resource_info_type_id in (9, 10, 11, 12) "
-            + "and resource_info.value is not null order by 1, 2";
+    private static final String SELECT_RESOURCE_INFO = "select s.submission_id, ri.resource_info_type_id, "
+            + "ri.value from resource_info ri inner join upload u on "
+            + "u.resource_id = ri.resource_id inner join submission s "
+            + "on s.upload_id = u.upload_id  where ri.resource_info_type_id "
+            + "in (9, 10, 11, 12) and u.upload_type_id = 1 and ri.value is not null "
+            + "order by s.submission_id, ri.resource_info_type_id";
 
     /**
      * Selects the data from the upload based on the upload status as deleted and the upload id not present in the
      * submission table.
      */
-    private static final String SELECT_UPLOAD = "select upload_id from upload where upload_status_id = 2 "
-            + "and upload_id not in (select upload_id from submission)";
+    private static final String SELECT_UPLOAD = "select u.upload_id from upload u where "
+            + "u.upload_type_id = 1 and not exists (select s.submission_id from "
+            + "submission s where s.upload_id = u.upload_id)";
 
     /**
      * Represents the sql statement to insert submission.
@@ -67,6 +69,21 @@ public class ORMigration {
     private static final String INSERT_SUBMISSION = "INSERT INTO submission "
             + "(submission_id, upload_id, submission_status_id, create_user, create_date, modify_user, modify_date, "
             + " screening_score, initial_score, final_score, placement)" + " VALUES (";
+
+    /**
+     * Select query for getting all the missed rows in the resource_submission table.
+     */
+    private static final String RESOURCE_SUBMISSION_QUERY = "select s.submission_id, u.resource_id from submission s, "
+            + "upload u where s.upload_id = u.upload_id and u.upload_type_id = 1 "
+            + "and not exists (select * from resource_submission rs where "
+            + "s.submission_id = rs.submission_id and rs.resource_id = u.resource_id)";
+
+    /**
+     * Represents the sql statement to insert resource submission.
+     */
+    private static final String INSERT_RESOURCE_SUBMISSION = "INSERT INTO resource_submission "
+            + "(submission_id, resource_id, create_user, create_date, modify_user, modify_date"
+            + ")" + " VALUES (";
 
     /**
      * The operator name for the created_user and modified_user.
@@ -128,7 +145,7 @@ public class ORMigration {
         Connection connection = null;
         PreparedStatement preparedStatement = null;
         try {
-            Map<Long, String> submissionIdMap = new HashMap<Long, String>();
+            Map<Long, String> submissionIdMap = new LinkedHashMap<Long, String>();
             connection = getConnection();
             connection.setAutoCommit(false);
 
@@ -145,7 +162,7 @@ public class ORMigration {
             while (resultSet.next()) {
                 long subId = resultSet.getLong(1);
                 submissionIdMap.put(subId, getString(resultSet.getLong(2), resultSet.getString(3),
-                        (String) submissionIdMap.get(new Long(subId))));
+                        (String) submissionIdMap.get(subId)));
             }
 
             Set<Entry<Long, String>> set = submissionIdMap.entrySet();
@@ -189,10 +206,19 @@ public class ORMigration {
                     System.out.println("Roll back trace.");
                     e1.printStackTrace();
                 }
+
             }
             if (preparedStatement != null) {
                 try {
                     preparedStatement.close();
+                } catch (SQLException e1) {
+                    // ignore
+                }
+            }
+        } finally {
+            if (connection != null) {
+                try {
+                    connection.close();
                 } catch (SQLException e1) {
                     // ignore
                 }
@@ -223,7 +249,8 @@ public class ORMigration {
 
     /**
      * It takes all the uploads from the upload table with status as deleted, and load them to the submission table
-     * with submission status as deleted.
+     * with submission status as deleted. <br>
+     * It also inserts the missing rows in the resource_submission table.
      */
     public void loadSubmissionTableWithUploads() {
 
@@ -232,30 +259,53 @@ public class ORMigration {
         try {
             connection = getConnection();
             connection.setAutoCommit(false);
-            IDGenerator generator = IDGeneratorFactory.getIDGenerator("submission_id_seq");
+            IDGenerator submissionIdGenerator = IDGeneratorFactory.getIDGenerator("submission_id_seq");
 
             preparedStatement = connection.prepareStatement(SELECT_UPLOAD);
             ResultSet rs = preparedStatement.executeQuery();
             String insertEnd = ", 5, '" + operator + "', CURRENT, '" + operator + "', CURRENT, -1, -1, -1, -1);\n";
             StringBuffer insert = new StringBuffer();
             List<String> batchStatements = new ArrayList<String>();
+//            while (rs.next()) {
+//                insert.append(INSERT_SUBMISSION);
+//                insert.append(submissionIdGenerator.getNextID());
+//                insert.append(", ");
+//                insert.append(rs.getLong(1));
+//                insert.append(insertEnd);
+//                // batch statement limit size is 65535
+//                if (insert.length() >= 65000) {
+//                    batchStatements.add(insert.toString());
+//                    insert = new StringBuffer();
+//                    System.out.println("In here "+batchStatements.size());
+//                }
+//            }
+            batchStatements.add(insert.toString());
+            System.out.println(insert.toString());
+
+//            execBatchStatements(batchStatements, connection, preparedStatement);
+
+            preparedStatement = connection.prepareStatement(RESOURCE_SUBMISSION_QUERY);
+            rs = preparedStatement.executeQuery();
+            insertEnd = ", '" + operator + "', CURRENT, '" + operator + "', CURRENT);\n";
+            insert = new StringBuffer();
+            batchStatements.clear();
             while (rs.next()) {
-                insert.append(INSERT_SUBMISSION);
-                insert.append(generator.getNextID());
-                insert.append(", ");
+                insert.append(INSERT_RESOURCE_SUBMISSION);
                 insert.append(rs.getLong(1));
+                insert.append(", ");
+                insert.append(rs.getLong(2));
                 insert.append(insertEnd);
                 // batch statement limit size is 65535
                 if (insert.length() >= 65000) {
                     batchStatements.add(insert.toString());
                     insert = new StringBuffer();
+                    System.out.println("In here "+batchStatements.size());
                 }
             }
             batchStatements.add(insert.toString());
             System.out.println(insert.toString());
 
-            execBatchStatements(batchStatements, connection, preparedStatement);
-
+//            execBatchStatements(batchStatements, connection, preparedStatement);
             // everything is fine commit now
             connection.commit();
         } catch (Exception e) {
@@ -271,6 +321,14 @@ public class ORMigration {
             if (preparedStatement != null) {
                 try {
                     preparedStatement.close();
+                } catch (SQLException e1) {
+                    // ignore
+                }
+            }
+        } finally {
+            if (connection != null) {
+                try {
+                    connection.close();
                 } catch (SQLException e1) {
                     // ignore
                 }
@@ -332,7 +390,7 @@ public class ORMigration {
      */
     public static void main(String args[]) {
         ORMigration migration = new ORMigration();
-        migration.modifyAndLoadSubmissionTable();
+//        migration.modifyAndLoadSubmissionTable();
         migration.loadSubmissionTableWithUploads();
     }
 }
