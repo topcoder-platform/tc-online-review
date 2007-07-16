@@ -2054,9 +2054,9 @@
                                upload_status_lu.name AS upload_status_name,
                                upload_status_lu.description AS upload_status_description,
                                submission.screening_score,
-                        	   submission.intial_score,
+                        	   submission.initial_score,
                         	   submission.final_score,
-                        	   submission.placement,
+                        	   submission.placement
                           FROM submission,
                                upload,
                                submission_status_lu,
