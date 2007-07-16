@@ -111,11 +111,6 @@
 			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry exported="true" kind="lib" path="lib/tcs/online_review_phases/1.0.4/online_review_phases.jar" sourcepath="/online_review_phases/src/java/main">
-		<attributes>
-			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
-		</attributes>
-	</classpathentry>
 	<classpathentry exported="true" kind="lib" path="lib/tcs/phase_management/1.0.3/phase_management.jar" sourcepath="/phase_management/src/java/main">
 		<attributes>
 			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
@@ -392,5 +387,6 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="lib" path="lib/tcs/deliverable_management_persistence/1.0.3/deliverable_management_persistence.jar"/>
+	<classpathentry kind="lib" path="lib/tcs/online_review_phases/1.0.5/online_review_phases.jar"/>
 	<classpathentry kind="output" path="build/classes"/>
 </classpath>
