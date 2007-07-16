@@ -1951,7 +1951,11 @@
                         SELECT     deliverable_id,
                                    resource.resource_id,
                                    project_phase.project_phase_id
-                                   submission_id
+                                   submission.submission_id,
+                                   submission.screening_score,
+                                   submission.initial_score,
+                                   submission.final_score,
+                                   submission.placement
                               FROM deliverable_lu,
                                    resource,
                                    project_phase
