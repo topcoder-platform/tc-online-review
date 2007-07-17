@@ -91,10 +91,10 @@
 							<tc-webtag:handle coderId="${outstandingDeliverableUserIds[deliverableStatus.index]}" context="${orfn:getHandlerContext(pageContext.request)}" /><b>:</b>
 						</c:if>
 						<b><bean:message key='Deliverable.${fn:replace(deliverable.name, " ", "")}' /></b>
-						<c:if test="${not empty deliverable.submission}">
-							${deliverable.submission}
+						<c:if test="${not empty deliverable.submissions}">
+							${deliverable.submissions}
 							<c:if test="${(isManager) && (not empty outstandingDeliverableSubmissionUserIds[deliverableStatus.index])}">
-								(<tc-webtag:handle coderId="${outstandingDeliverableSubmissionUserIds[deliverableStatus.index]}" context="${orfn:getHandlerContext(pageContext.request)}" />)
+								<tc-webtag:handle  coderId="${outstandingDeliverableSubmissionUserIds[deliverableStatus.index]}" context="${orfn:getHandlerContext(pageContext.request)}" />
 							</c:if>
 						</c:if><br />
 					</c:forEach>
