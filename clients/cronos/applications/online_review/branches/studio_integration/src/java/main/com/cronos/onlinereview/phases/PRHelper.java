@@ -9,7 +9,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
 
-import com.cronos.onlinereview.actions.ActionsHelper;
 import com.topcoder.management.phase.PhaseHandlingException;
 import com.topcoder.management.project.ProjectManager;
 import com.topcoder.management.project.ProjectManagerImpl;
@@ -482,7 +481,7 @@ public class PRHelper {
     static boolean isStudioProject(long projectId) {
         try {
             ProjectManager projectManager = new ProjectManagerImpl();
-            return ActionsHelper.isStudioProject(projectManager.getProject(projectId));
+            return "Studio".equals(projectManager.getProject(projectId).getProjectCategory().getDescription());
         } catch (BaseException e) {
             return false;
         }
