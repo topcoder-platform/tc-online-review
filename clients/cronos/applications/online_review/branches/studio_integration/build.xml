@@ -200,6 +200,11 @@
     <property name="online_review_phases.path" value="online_review_phases/${online_review_phases.version}" />
     <property name="online_review_phases.jar" value="${tcs_libdir}/${online_review_phases.path}/${online_review_phases.jar.name}" />
 
+	<property name="online_review_upload_services.version" value="1.0" />
+	<property name="online_review_upload_services.jar.name" value="online_review_upload_services.jar" />
+	<property name="online_review_upload_services.path" value="online_review_upload_services/${online_review_upload_services.version}" />
+	<property name="online_review_upload_services.jar" value="${tcs_libdir}/${online_review_upload_services.path}/${online_review_upload_services.jar.name}" />
+	
     <property name="phase_management.version" value="1.0.3" />
     <property name="phase_management.jar.name" value="phase_management.jar" />
     <property name="phase_management.path" value="phase_management/${phase_management.version}" />
@@ -389,6 +394,7 @@
         <pathelement location="${online_review_deliverables.jar}" />
         <pathelement location="${online_review_login.jar}" />
         <pathelement location="${online_review_phases.jar}" />
+    	<pathelement location="${online_review_upload_services.jar}" />
         <pathelement location="${phase_management.jar}" />
         <pathelement location="${phase_management_persistence.jar}" />
         <pathelement location="${project_management.jar}" />
@@ -580,6 +586,7 @@
             <lib dir="${jar_tcs_libdir}/${online_review_deliverables.path}" includes="*.jar" />
             <lib dir="${jar_tcs_libdir}/${online_review_login.path}" includes="*.jar" />
             <lib dir="${jar_tcs_libdir}/${online_review_phases.path}" includes="*.jar" />
+        	<lib dir="${jar_tcs_libdir}/${online_review_upload_services.path}" includes="*.jar" />
             <lib dir="${jar_tcs_libdir}/${phase_management.path}" includes="*.jar" />
             <lib dir="${jar_tcs_libdir}/${phase_management_persistence.path}" includes="*.jar" />
             <lib dir="${jar_tcs_libdir}/${project_management.path}" includes="*.jar" />

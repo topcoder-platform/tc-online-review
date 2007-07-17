@@ -388,5 +388,6 @@
 	</classpathentry>
 	<classpathentry kind="lib" path="lib/tcs/deliverable_management_persistence/1.0.3/deliverable_management_persistence.jar"/>
 	<classpathentry kind="lib" path="lib/tcs/online_review_phases/1.0.5/online_review_phases.jar"/>
+	<classpathentry kind="lib" path="lib/tcs/online_review_upload_services/1.0/online_review_upload_services.jar"/>
 	<classpathentry kind="output" path="build/classes"/>
 </classpath>
