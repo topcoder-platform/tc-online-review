@@ -103,7 +103,7 @@ public class ManagerCreationHelper implements ManagersProvider {
         } catch (Exception e) {
             throw new ManagerCreationException("Exception occurred while creating the PhaseManager.", e);
         }
-        return null;
+        return manager;
     }
 
     /**
