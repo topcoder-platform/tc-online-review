@@ -2425,8 +2425,9 @@ public class ActionsHelper {
         // If this is the first time this method is called for the request,
         // create a new instance of the object
         if (manager == null) {
+            manager  = managerCreationHelper.getProjectManager();
             // Place newly-created object into the request as attribute
-            request.setAttribute("projectManager", managerCreationHelper.getProjectManager());
+            request.setAttribute("projectManager", manager);
         }
 
         // Return the Project Manager object
@@ -2455,8 +2456,9 @@ public class ActionsHelper {
         // If this is the first time this method is called for the request,
         // create a new instance of the object
         if (manager == null) {
+            manager = managerCreationHelper.getResourceManager();
             // Place newly-created object into the request as attribute
-            request.setAttribute("resourceManager", managerCreationHelper.getPhaseManager());
+            request.setAttribute("resourceManager", manager);
         }
 
         // Return the Resource Manager object
@@ -2658,9 +2660,9 @@ public class ActionsHelper {
         // If this is the first time this method is called for the request,
         // create a new instance of the object
         if (manager == null) {
-            
+            manager = managerCreationHelper.getUploadManager();
             // Place newly-created object into the request as attribute
-            request.setAttribute("uploadManager", managerCreationHelper.getUploadManager());
+            request.setAttribute("uploadManager", manager);
         }
 
         // Return the Upload Manager object
@@ -2689,8 +2691,9 @@ public class ActionsHelper {
         // If this is the first time this method is called for the request,
         // create a new instance of the object
         if (manager == null) {
+            manager = managerCreationHelper.getScreeningManager();
             // Place newly-created object into the request as attribute
-            request.setAttribute("screeningManager", managerCreationHelper.getScreeningManager());
+            request.setAttribute("screeningManager", manager);
         }
 
         // Return the Screening Manager object
