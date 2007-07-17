@@ -2816,6 +2816,15 @@
                     <Value>icon_development.gif</Value>
                 </Property>
             </Property>
+            <!--  TODO : Change the studio icon, currently using dev icon for testing. -->
+            <Property name="Studio">
+                <Property name="IconSmall">
+                    <Value>iconStatusDevSm.gif</Value>
+                </Property>
+                <Property name="Icon">
+                    <Value>icon_development.gif</Value>
+                </Property>
+            </Property>
             <Property name="Security">
                 <Property name="IconSmall">
                     <Value>IconSecuritySm.gif</Value>
