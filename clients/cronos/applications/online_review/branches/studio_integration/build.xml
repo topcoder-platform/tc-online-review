@@ -562,6 +562,7 @@
             <webinf dir="${configdir}/WEB-INF" includes="*.tld,*.xml, server-config.wsdd" excludes="web.xml" />
             <classes dir="${build_classdir}" includes="**" />
             <classes dir="${configdir}" includes="**" excludes="WEB-INF/**" />
+        	<classes dir="${configdir}/WEB-INF/classes" />
             <lib dir="${jar_tcs_libdir}/${authentication_factory.path}" includes="*.jar" />
             <lib dir="${jar_tcs_libdir}/${auto_pilot.path}" includes="*.jar" />
             <lib dir="${jar_tcs_libdir}/${auto_screening_management.path}" includes="*.jar" />
