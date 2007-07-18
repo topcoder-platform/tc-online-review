@@ -696,7 +696,7 @@ public class ProjectDetailsActions extends DispatchAction {
         upMgr.createSubmission(submission, operator);
         resource.addSubmission(submission.getId());
         ActionsHelper.createResourceManager(request).updateResource(resource, operator);
-        
+        log.debug("Allow Multiple Submissions : "+allowOldSubmissions);
         // Now depending on whether the project allows multiple submissions or not mark the old submission
         // and the upload as deleted.
         if (oldSubmissions.length != 0 && !allowOldSubmissions) {
