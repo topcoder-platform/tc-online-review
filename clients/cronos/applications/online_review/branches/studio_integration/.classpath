@@ -371,7 +371,7 @@
 			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="lib/tcs/deliverable_management/1.0.3/deliverable_management.jar">
+	<classpathentry kind="lib" path="lib/tcs/deliverable_management/1.0.3/deliverable_management.jar" sourcepath="/deliverable_management/src/java/main">
 		<attributes>
 			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
 		</attributes>
