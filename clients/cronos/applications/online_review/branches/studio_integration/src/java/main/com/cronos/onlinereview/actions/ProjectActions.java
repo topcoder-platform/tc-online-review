@@ -675,8 +675,12 @@ public class ProjectActions extends DispatchAction {
             project.setProperty("Eligibility", lazyForm.get("eligibility"));
             // Populate project public flag
             project.setProperty("Public", Boolean.TRUE.equals(lazyForm.get("public")) ? "Yes" : "No");
+            
             // OrChange - If the project category is Studio set the property to allow multiple submissions.
-            project.setProperty("Allow multiple submissions", true);
+            if (ActionsHelper.isStudioProject(project)) {
+                log.debug("Allowing multiple submissions for this project.");
+                project.setProperty("Allow multiple submissions", true);
+            }
         } else {
             ProjectStatus newProjectStatus =
                 ActionsHelper.findProjectStatusById(projectStatuses, ((Long) lazyForm.get("status")).longValue());
