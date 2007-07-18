@@ -3486,4 +3486,45 @@
             </Property>
         </Property>
     </Config>
+    <!-- 
+    Configuration for the Online Web services component.
+     -->
+     <Config name="com.cronos.onlinereview.services.uploads.impl.DefaultUploadServices">
+		<Property name="objectFactoryNamespace">
+			<Value>com.cronos.onlinereview.services.uploads.impl.DefaultUploadServices.ObjectFactory</Value>
+		</Property>
+		<Property name="managersProviderIdentifier">
+			<Value>managersProvider</Value>
+		</Property>
+	</Config>
+	
+	<Config name="com.cronos.onlinereview.services.uploads.impl.DefaultUploadExternalServices">
+		<Property name="objectFactoryNamespace">
+			<Value>com.cronos.onlinereview.services.uploads.impl.DefaultUploadServices.ObjectFactory</Value>
+		</Property>
+		<Property name="uploadServicesIdentifier">
+			<Value>uploadServices</Value>
+		</Property>
+		<Property name="filenamePattern">
+			<Value>submission-{0}-{1}</Value>
+		</Property>
+		<!-- Needs to be updated correctly -->
+		<Property name="fileStorageLocation">
+			<Value></Value>
+		</Property>
+	</Config>
+	
+	<Config name="com.cronos.onlinereview.services.uploads.impl.DefaultUploadServices.ObjectFactory">
+      	<Property name="managersProvider">
+      		<Property name="type">
+        		<Value>com.cronos.onlinereview.actions.ManagerCreationHelper</Value>
+      		</Property>
+      	</Property>
+      	<Property name="uploadServices">
+      		<Property name="type">
+        		<Value>com.cronos.onlinereview.services.uploads.impl.DefaultUploadServices</Value>
+      		</Property>
+      	</Property>
+	</Config>
+	
 </CMConfig>
