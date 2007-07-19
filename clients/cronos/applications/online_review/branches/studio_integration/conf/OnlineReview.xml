@@ -3510,7 +3510,7 @@
 		</Property>
 		<!-- Needs to be updated correctly -->
 		<Property name="fileStorageLocation">
-			<Value>test</Value>
+			<Value>/home/onlinereview/downloads</Value>
 		</Property>
 	</Config>
 	
