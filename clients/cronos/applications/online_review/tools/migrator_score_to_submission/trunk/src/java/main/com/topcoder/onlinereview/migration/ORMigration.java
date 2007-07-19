@@ -40,7 +40,7 @@ public class ORMigration {
     /**
      * Alter statements for the subimission table.
      */
-    private static final String[] ALTER_STAMENTS = new String[] {
+    private static final String[] ALTER_STATEMENTS = new String[] {
             "ALTER TABLE submission ADD screening_score DECIMAL(5,2) BEFORE create_user",
             "ALTER TABLE submission ADD initial_score DECIMAL(5,2) BEFORE create_user",
             "ALTER TABLE submission ADD final_score DECIMAL(5,2) BEFORE create_user", 
@@ -152,10 +152,10 @@ public class ORMigration {
 
             // Depending on the DB Change can be commented out.
             // alter the table
-            // for (int i = 0; i < ALTER_STAMENTS.length; i++) {
-            // preparedStatement = connection.prepareStatement(ALTER_STAMENTS[i]);
-            // preparedStatement.execute();
-            // }
+//            for (int i = 0; i < ALTER_STATEMENTS.length; i++) {
+//            	preparedStatement = connection.prepareStatement(ALTER_STATEMENTS[i]);
+//            	preparedStatement.execute();
+//            }
             preparedStatement = connection.prepareStatement(SELECT_RESOURCE_INFO);
             ResultSet resultSet = preparedStatement.executeQuery();
 
