@@ -41,9 +41,10 @@ public class ORMigration {
      * Alter statements for the subimission table.
      */
     private static final String[] ALTER_STAMENTS = new String[] {
-            "ALTER TABLE submission ADD screening_score DECIMAL(5,2)",
-            "ALTER TABLE submission ADD initial_score DECIMAL(5,2)",
-            "ALTER TABLE submission ADD final_score DECIMAL(5,2)", "ALTER TABLE submission ADD placement DECIMAL(3,0)" };
+            "ALTER TABLE submission ADD screening_score DECIMAL(5,2) BEFORE create_user",
+            "ALTER TABLE submission ADD initial_score DECIMAL(5,2) BEFORE create_user",
+            "ALTER TABLE submission ADD final_score DECIMAL(5,2) BEFORE create_user", 
+            "ALTER TABLE submission ADD placement DECIMAL(3,0) BEFORE create_user" };
 
     /**
      * Selects the required columns from the resource info table.
