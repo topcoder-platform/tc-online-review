@@ -3505,8 +3505,9 @@
 		<Property name="uploadServicesIdentifier">
 			<Value>uploadServices</Value>
 		</Property>
+		<!-- file name should have "_" in it. -->
 		<Property name="filenamePattern">
-			<Value>submission-{0}-{1}</Value>
+			<Value>submission_{0}_{1}</Value>
 		</Property>
 		<!-- Needs to be updated correctly -->
 		<Property name="fileStorageLocation">
