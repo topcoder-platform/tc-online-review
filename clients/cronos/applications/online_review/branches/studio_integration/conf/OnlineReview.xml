@@ -3530,7 +3530,7 @@
                         <Value>String</Value>
                     </Property>
                     <Property name="value">
-                        <Value>com.topcoder.management.phase</Value>
+                        <Value>com.cronos.onlinereview.services.uploads.impl.DefaultUploadServices</Value>
                     </Property>
                 </Property>
             </Property>
