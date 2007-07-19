@@ -3510,7 +3510,7 @@
 		</Property>
 		<!-- Needs to be updated correctly -->
 		<Property name="fileStorageLocation">
-			<Value></Value>
+			<Value>test</Value>
 		</Property>
 	</Config>
 	
@@ -3524,6 +3524,16 @@
       		<Property name="type">
         		<Value>com.cronos.onlinereview.services.uploads.impl.DefaultUploadServices</Value>
       		</Property>
+      		<Property name="params">
+                <Property name="param1">
+                    <Property name="type">
+                        <Value>String</Value>
+                    </Property>
+                    <Property name="value">
+                        <Value>com.topcoder.management.phase</Value>
+                    </Property>
+                </Property>
+            </Property>
       	</Property>
 	</Config>
 	
