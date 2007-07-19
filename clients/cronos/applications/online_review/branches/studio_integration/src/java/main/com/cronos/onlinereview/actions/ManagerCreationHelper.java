@@ -58,10 +58,31 @@ import com.topcoder.util.idgenerator.IDGeneratorFactory;
 public class ManagerCreationHelper implements ManagersProvider {
 
     /**
-     * This member variable is a string constant that defines the name of the configurtaion namespace which the
+     * This member variable is a string constant that defines the name of the configuration namespace which the
      * parameters for database connection factory are stored under.
      */
     private static final String DB_CONNECTION_NAMESPACE = "com.topcoder.db.connectionfactory.DBConnectionFactoryImpl";
+
+    /**
+     * Used for caching the created the manager.
+     */
+    private PhaseManager phaseManager = null;
+    /**
+     * Used for caching the created the manager.
+     */
+    private UploadManager uploadManager = null;
+    /**
+     * Used for caching the created the manager.
+     */
+    private ProjectManager projectManager = null;
+    /**
+     * Used for caching the created the manager.
+     */
+    private ResourceManager resourceManager = null;
+    /**
+     * Used for caching the created the manager.
+     */
+    private ScreeningManager screeningManager = null;
 
     /**
      * <p>
@@ -73,37 +94,39 @@ public class ManagerCreationHelper implements ManagersProvider {
      * @see ManagersProvider#getPhaseManager()
      */
     public PhaseManager getPhaseManager() {
-        PhaseManager manager;
+        if(phaseManager != null) {
+            return phaseManager;
+        }
         try {
-            manager = new DefaultPhaseManager("com.topcoder.management.phase");
-            PhaseType[] phaseTypes = manager.getAllPhaseTypes();
+            phaseManager = new DefaultPhaseManager("com.topcoder.management.phase");
+            PhaseType[] phaseTypes = phaseManager.getAllPhaseTypes();
             // Register all the handles.
-            registerPhaseHandlerForOperation(manager, phaseTypes, new PRRegistrationPhaseHandler(),
+            registerPhaseHandlerForOperation(phaseManager, phaseTypes, new PRRegistrationPhaseHandler(),
                     Constants.REGISTRATION_PHASE_NAME);
-            registerPhaseHandlerForOperation(manager, phaseTypes, new PRSubmissionPhaseHandler(),
+            registerPhaseHandlerForOperation(phaseManager, phaseTypes, new PRSubmissionPhaseHandler(),
                     Constants.SUBMISSION_PHASE_NAME);
-            registerPhaseHandlerForOperation(manager, phaseTypes, new PRScreeningPhaseHandler(),
+            registerPhaseHandlerForOperation(phaseManager, phaseTypes, new PRScreeningPhaseHandler(),
                     Constants.SCREENING_PHASE_NAME);
-            registerPhaseHandlerForOperation(manager, phaseTypes, new PRReviewPhaseHandler(),
+            registerPhaseHandlerForOperation(phaseManager, phaseTypes, new PRReviewPhaseHandler(),
                     Constants.REVIEW_PHASE_NAME);
-            registerPhaseHandlerForOperation(manager, phaseTypes, new AppealsPhaseHandler(),
+            registerPhaseHandlerForOperation(phaseManager, phaseTypes, new AppealsPhaseHandler(),
                     Constants.APPEALS_PHASE_NAME);
-            registerPhaseHandlerForOperation(manager, phaseTypes, new PRAppealResponsePhaseHandler(),
+            registerPhaseHandlerForOperation(phaseManager, phaseTypes, new PRAppealResponsePhaseHandler(),
                     Constants.APPEALS_RESPONSE_PHASE_NAME);
-            registerPhaseHandlerForOperation(manager, phaseTypes, new PRAggregationPhaseHandler(),
+            registerPhaseHandlerForOperation(phaseManager, phaseTypes, new PRAggregationPhaseHandler(),
                     Constants.AGGREGATION_PHASE_NAME);
-            registerPhaseHandlerForOperation(manager, phaseTypes, new PRAggregationReviewPhaseHandler(),
+            registerPhaseHandlerForOperation(phaseManager, phaseTypes, new PRAggregationReviewPhaseHandler(),
                     Constants.AGGREGATION_REVIEW_PHASE_NAME);
-            registerPhaseHandlerForOperation(manager, phaseTypes, new PRFinalFixPhaseHandler(),
+            registerPhaseHandlerForOperation(phaseManager, phaseTypes, new PRFinalFixPhaseHandler(),
                     Constants.FINAL_FIX_PHASE_NAME);
-            registerPhaseHandlerForOperation(manager, phaseTypes, new PRFinalReviewPhaseHandler(),
+            registerPhaseHandlerForOperation(phaseManager, phaseTypes, new PRFinalReviewPhaseHandler(),
                     Constants.FINAL_REVIEW_PHASE_NAME);
-            registerPhaseHandlerForOperation(manager, phaseTypes, new ApprovalPhaseHandler(),
+            registerPhaseHandlerForOperation(phaseManager, phaseTypes, new ApprovalPhaseHandler(),
                     Constants.APPROVAL_PHASE_NAME);
+            return phaseManager;
         } catch (Exception e) {
             throw new ManagerCreationException("Exception occurred while creating the PhaseManager.", e);
         }
-        return manager;
     }
 
     /**
@@ -117,10 +140,13 @@ public class ManagerCreationHelper implements ManagersProvider {
      */
     public ProjectManager getProjectManager() {
         try {
-            return new ProjectManagerImpl();
+            if(projectManager == null) {
+                projectManager = new ProjectManagerImpl();
+            }
+            return projectManager;
         } catch (Exception e) {
             throw new ManagerCreationException("Exception occurred while creating the ProjectManager.", e);
-        }        
+        }
     }
 
     /**
@@ -133,7 +159,9 @@ public class ManagerCreationHelper implements ManagersProvider {
      * @see ManagersProvider#getResourceManager
      */
     public ResourceManager getResourceManager() {
-        ResourceManager manager = null;
+        if(resourceManager != null) {
+            return resourceManager;
+        }
         try {
             // get connection factory
             DBConnectionFactory dbconn = new DBConnectionFactoryImpl(DB_CONNECTION_NAMESPACE);
@@ -165,13 +193,13 @@ public class ManagerCreationHelper implements ManagersProvider {
             // set it searchable
             setAllFieldsSearchable(notificationTypeSearchBundle);
             // initialize the PersistenceResourceManager
-            manager = new PersistenceResourceManager(persistence, resourceSearchBundle, resourceRoleSearchBundle,
+            resourceManager = new PersistenceResourceManager(persistence, resourceSearchBundle, resourceRoleSearchBundle,
                     notificationSearchBundle, notificationTypeSearchBundle, resourceIdGenerator,
                     resourceRoleIdGenerator, notificationTypeIdGenerator);
+            return resourceManager;
         } catch (Exception e) {
             throw new ManagerCreationException("Exception occurred while creating the resource manager.", e);
         }
-        return manager;
     }
 
     /**
@@ -185,8 +213,10 @@ public class ManagerCreationHelper implements ManagersProvider {
      */
     public ScreeningManager getScreeningManager() {
         try {
-
-            return ScreeningManagerFactory.createScreeningManager();
+            if(screeningManager == null) {
+                screeningManager = ScreeningManagerFactory.createScreeningManager();
+            }
+            return screeningManager;
         } catch (ConfigurationException e) {
             throw new ManagerCreationException("Exception occurred while creating the ScreeningManager.", e);
         }
@@ -202,7 +232,9 @@ public class ManagerCreationHelper implements ManagersProvider {
      * @see ManagersProvider#getUploadManager()
      */
     public UploadManager getUploadManager() {
-        UploadManager manager;
+        if(uploadManager != null) {
+            return uploadManager;
+        }
         try {
             // Get connection factory
             DBConnectionFactory dbconn = new DBConnectionFactoryImpl(DB_CONNECTION_NAMESPACE);
@@ -226,13 +258,13 @@ public class ManagerCreationHelper implements ManagersProvider {
             SearchBundle submissionSearchBundle = searchBundleManager
                     .getSearchBundle(PersistenceUploadManager.SUBMISSION_SEARCH_BUNDLE_NAME);
             // Initialize the PersistenceUploadManager
-            manager = new PersistenceUploadManager(persistence, uploadSearchBundle, submissionSearchBundle,
+            uploadManager = new PersistenceUploadManager(persistence, uploadSearchBundle, submissionSearchBundle,
                     uploadIdGenerator, uploadTypeIdGenerator, uploadStatusIdGenerator, submissionIdGenerator,
                     submissionStatusIdGenerator);
+            return uploadManager;
         } catch (Exception e) {
             throw new ManagerCreationException("Exception occurred while creating the upload manager.", e);
         }
-        return manager;
     }
 
     /**
