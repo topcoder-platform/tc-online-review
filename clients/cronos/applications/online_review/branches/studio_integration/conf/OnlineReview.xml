@@ -2817,7 +2817,7 @@
                 </Property>
             </Property>
             <!--  TODO : Change the studio icon, currently using dev icon for testing. -->
-            <Property name="Studio">
+            <Property name="Icon Set">
                 <Property name="IconSmall">
                     <Value>iconStatusDevSm.gif</Value>
                 </Property>
@@ -2825,7 +2825,7 @@
                     <Value>icon_development.gif</Value>
                 </Property>
             </Property>
-            <Property name="Security">
+            <Property name="Storyboards">
                 <Property name="IconSmall">
                     <Value>IconSecuritySm.gif</Value>
                 </Property>
@@ -2833,7 +2833,7 @@
                     <Value>IconSecurity.gif</Value>
                 </Property>
             </Property>
-            <Property name="Process">
+            <Property name="Wireframes">
                 <Property name="IconSmall">
                     <Value>IconProcessSm.gif</Value>
                 </Property>
@@ -2841,7 +2841,7 @@
                     <Value>IconProcss.gif</Value>
                 </Property>
             </Property>
-            <Property name="Testing Competition">
+            <Property name="Prototypes">
                 <Property name="IconSmall">
                     <Value>IconTestingSm.gif</Value>
                 </Property>
@@ -2849,7 +2849,7 @@
                     <Value>IconTesting.gif</Value>
                 </Property>
             </Property>
-            <Property name="Specification">
+            <Property name="Logos">
                 <Property name="IconSmall">
                     <Value>IconSpecSm.gif</Value>
                 </Property>
@@ -2857,52 +2857,12 @@
                     <Value>IconSpec.gif</Value>
                 </Property>
             </Property>
-            <Property name="Architecture">
+            <Property name="Print">
                 <Property name="IconSmall">
                     <Value>IconArchSm.gif</Value>
                 </Property>
                 <Property name="Icon">
                     <Value>IconArch.gif</Value>
-                </Property>
-            </Property>
-            <Property name="Component Production">
-                <Property name="IconSmall">
-                    <Value>IconComponentSm.gif</Value>
-                </Property>
-                <Property name="Icon">
-                    <Value>IconComponent.gif</Value>
-                </Property>
-            </Property>
-            <Property name="Quality Assurance">
-                <Property name="IconSmall">
-                    <Value>IconQASm.gif</Value>
-                </Property>
-                <Property name="Icon">
-                    <Value>IconQA.gif</Value>
-                </Property>
-            </Property>
-            <Property name="Deployment">
-                <Property name="IconSmall">
-                    <Value>IconDeploySm.gif</Value>
-                </Property>
-                <Property name="Icon">
-                    <Value>IconDeploy.gif</Value>
-                </Property>
-            </Property>
-            <Property name="Assembly Competition">
-                <Property name="IconSmall">
-                    <Value>IconAssemblySm.gif</Value>
-                </Property>
-                <Property name="Icon">
-                    <Value>IconAssembly.gif</Value>
-                </Property>
-            </Property>
-            <Property name="Legacy">
-                <Property name="IconSmall">
-                    <Value>IconLegacySm.gif</Value>
-                </Property>
-                <Property name="Icon">
-                    <Value>IconLegacy.gif</Value>
                 </Property>
             </Property>
         </Property>
