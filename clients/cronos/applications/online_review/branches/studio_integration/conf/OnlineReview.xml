@@ -2897,52 +2897,52 @@
                 </Property>
             </Property>
             <!--  TODO : Change the studio icon, currently using dev icon for testing. -->
-            <Property name="Icon Set">
+            <Property name="Icon Sets">
                 <Property name="IconSmall">
-                    <Value>iconStatusDevSm.gif</Value>
+                    <Value>iconBlankSm.png</Value>
                 </Property>
                 <Property name="Icon">
-                    <Value>icon_development.gif</Value>
+                    <Value>iconBlank.png</Value>
                 </Property>
             </Property>
             <Property name="Storyboards">
                 <Property name="IconSmall">
-                    <Value>IconSecuritySm.gif</Value>
+                    <Value>iconBlankSm.png</Value>
                 </Property>
                 <Property name="Icon">
-                    <Value>IconSecurity.gif</Value>
+                    <Value>iconBlank.png</Value>
                 </Property>
             </Property>
             <Property name="Wireframes">
                 <Property name="IconSmall">
-                    <Value>IconProcessSm.gif</Value>
+                    <Value>iconBlankSm.png</Value>
                 </Property>
                 <Property name="Icon">
-                    <Value>IconProcss.gif</Value>
+                    <Value>iconBlank.png</Value>
                 </Property>
             </Property>
             <Property name="Prototypes">
                 <Property name="IconSmall">
-                    <Value>IconTestingSm.gif</Value>
+                    <Value>iconBlankSm.png</Value>
                 </Property>
                 <Property name="Icon">
-                    <Value>IconTesting.gif</Value>
+                    <Value>iconBlank.png</Value>
                 </Property>
             </Property>
             <Property name="Logos">
                 <Property name="IconSmall">
-                    <Value>IconSpecSm.gif</Value>
+                    <Value>iconBlankSm.png</Value>
                 </Property>
                 <Property name="Icon">
-                    <Value>IconSpec.gif</Value>
+                    <Value>iconBlank.png</Value>
                 </Property>
             </Property>
             <Property name="Print">
                 <Property name="IconSmall">
-                    <Value>IconArchSm.gif</Value>
+                    <Value>iconBlankSm.png</Value>
                 </Property>
                 <Property name="Icon">
-                    <Value>IconArch.gif</Value>
+                    <Value>iconBlank.png</Value>
                 </Property>
             </Property>
         </Property>
