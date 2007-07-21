@@ -105,6 +105,12 @@ public class ORMigration {
      * Constructor. Initializes the columnNameToResourceTypeId Map.
      */
     public ORMigration() {
+    	ConfigManager configManager = ConfigManager.getInstance();
+        try {
+			configManager.add(CONFIG_PATH);
+		} catch (ConfigManagerException e) {
+			throw new RuntimeException(e.getMessage(), e);
+		}
         columnNameToResourceTypeId.put(new Long(9), " screening_score = ");
         columnNameToResourceTypeId.put(new Long(10), " initial_score = ");
         columnNameToResourceTypeId.put(new Long(11), " final_score = ");
@@ -162,8 +168,9 @@ public class ORMigration {
             // from the result set, construct a map
             while (resultSet.next()) {
                 long subId = resultSet.getLong(1);
-                submissionIdMap.put(subId, getString(resultSet.getLong(2), resultSet.getString(3),
-                        (String) submissionIdMap.get(subId)));
+                submissionIdMap.put(subId, 
+                		getString(resultSet.getLong(2), resultSet.getString(3),
+                				submissionIdMap.get(subId)));
             }
 
             Set<Entry<Long, String>> set = submissionIdMap.entrySet();
@@ -171,7 +178,7 @@ public class ORMigration {
             List<String> batchStatements = new ArrayList<String>();
 
             // prepare batch statements from the map
-            for (Entry entry : set) {
+            for (Entry<Long, String> entry : set) {
                 update.append("Update submission set");
                 update.append(entry.getValue());
                 update.append(" where submission_id = ");
@@ -267,23 +274,23 @@ public class ORMigration {
             String insertEnd = ", 5, '" + operator + "', CURRENT, '" + operator + "', CURRENT, -1, -1, -1, -1);\n";
             StringBuffer insert = new StringBuffer();
             List<String> batchStatements = new ArrayList<String>();
-//            while (rs.next()) {
-//                insert.append(INSERT_SUBMISSION);
-//                insert.append(submissionIdGenerator.getNextID());
-//                insert.append(", ");
-//                insert.append(rs.getLong(1));
-//                insert.append(insertEnd);
-//                // batch statement limit size is 65535
-//                if (insert.length() >= 65000) {
-//                    batchStatements.add(insert.toString());
-//                    insert = new StringBuffer();
-//                    System.out.println("In here "+batchStatements.size());
-//                }
-//            }
+            while (rs.next()) {
+                insert.append(INSERT_SUBMISSION);
+                insert.append(submissionIdGenerator.getNextID());
+                insert.append(", ");
+                insert.append(rs.getLong(1));
+                insert.append(insertEnd);
+                // batch statement limit size is 65535
+                if (insert.length() >= 65000) {
+                    batchStatements.add(insert.toString());
+                    insert = new StringBuffer();
+                    System.out.println("In here "+batchStatements.size());
+                }
+            }
             batchStatements.add(insert.toString());
             System.out.println(insert.toString());
 
-//            execBatchStatements(batchStatements, connection, preparedStatement);
+            execBatchStatements(batchStatements, connection, preparedStatement);
 
             preparedStatement = connection.prepareStatement(RESOURCE_SUBMISSION_QUERY);
             rs = preparedStatement.executeQuery();
@@ -306,7 +313,7 @@ public class ORMigration {
             batchStatements.add(insert.toString());
             System.out.println(insert.toString());
 
-//            execBatchStatements(batchStatements, connection, preparedStatement);
+            execBatchStatements(batchStatements, connection, preparedStatement);
             // everything is fine commit now
             connection.commit();
         } catch (Exception e) {
@@ -350,8 +357,7 @@ public class ORMigration {
      *             if any.
      */
     private Connection getConnection() throws DBConnectionException, ConfigManagerException, ConfigurationException {
-        ConfigManager configManager = ConfigManager.getInstance();
-        configManager.add(CONFIG_PATH);
+        
         DBConnectionFactory connectionFactory = new DBConnectionFactoryImpl(
                 "com.topcoder.db.connectionfactory.DBConnectionFactoryImpl");
         return connectionFactory.createConnection();
@@ -391,7 +397,7 @@ public class ORMigration {
      */
     public static void main(String args[]) {
         ORMigration migration = new ORMigration();
-//        migration.modifyAndLoadSubmissionTable();
+        migration.modifyAndLoadSubmissionTable();
         migration.loadSubmissionTableWithUploads();
     }
 }
