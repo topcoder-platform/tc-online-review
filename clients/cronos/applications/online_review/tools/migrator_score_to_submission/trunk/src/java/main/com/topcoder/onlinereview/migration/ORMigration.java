@@ -200,8 +200,9 @@ public class ORMigration {
             verifyDB(connection);
 
             // remove the rows
-            preparedStatement = connection.prepareStatement(DELETE_RESOURCE_INFO);
-            preparedStatement.execute();
+            // It will be maintained for a while
+            //preparedStatement = connection.prepareStatement(DELETE_RESOURCE_INFO);
+            //preparedStatement.execute();
 
             // everything is fine commit now
             connection.commit();
