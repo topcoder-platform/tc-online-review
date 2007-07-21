@@ -89,7 +89,7 @@ public class ORMigration {
     /**
      * The operator name for the created_user and modified_user.
      */
-    private static final String operator = "Converter";
+    private static final String OPERATOR = "Converter";
 
     /**
      * Final deletion of the resource info.
@@ -276,7 +276,7 @@ public class ORMigration {
 
             preparedStatement = connection.prepareStatement(SELECT_UPLOAD);
             ResultSet rs = preparedStatement.executeQuery();
-            String insertEnd = ", 5, '" + operator + "', CURRENT, '" + operator + "', CURRENT, -1, -1, -1, -1);\n";
+            String insertEnd = ", 5, '" + OPERATOR + "', CURRENT, '" + OPERATOR + "', CURRENT, -1, -1, -1, -1);\n";
             StringBuffer insert = new StringBuffer();
             List<String> batchStatements = new ArrayList<String>();
             while (rs.next()) {
@@ -296,7 +296,16 @@ public class ORMigration {
             System.out.println(insert.toString());
             System.out.println("inserts submissions");
             execBatchStatements(batchStatements, connection, preparedStatement);
-
+            
+            int resource_submission_quantity = connection.createStatement().executeUpdate("insert into resource_submission (resource_id, submission_id, create_user, create_date, modify_user, modify_date)"
+            		+ " select u.resource_id, s.submission_id, '" + OPERATOR + "_1', CURRENT,  '" + OPERATOR + "_1', CURRENT"
+            		+ " from submission s, upload u"
+            		+ " where s.upload_id = u.upload_id and u.upload_type_id = 1"
+            		+ " and not exists (select * from resource_submission rs where" 
+            		+ " s.submission_id = rs.submission_id and rs.resource_id = u.resource_id)");
+            System.out.println("resource_submission_quantity: " + resource_submission_quantity);
+            
+            /*
             preparedStatement = connection.prepareStatement(RESOURCE_SUBMISSION_QUERY);
             rs = preparedStatement.executeQuery();
             insertEnd = ", '" + operator + "', CURRENT, '" + operator + "', CURRENT);\n";
@@ -319,6 +328,7 @@ public class ORMigration {
             System.out.println(insert.toString());
             System.out.println("inserts resource_submission");
             execBatchStatements(batchStatements, connection, preparedStatement);
+            */
             // everything is fine commit now
             System.out.println("commit");
             connection.commit();
