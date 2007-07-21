@@ -206,11 +206,13 @@ public class ORMigration {
 
             // everything is fine commit now
             connection.commit();
+            System.out.println("commit");
         } catch (Exception e) {
             e.printStackTrace();
             if (connection != null) {
                 try {
                     connection.rollback();
+                    System.out.println("rollback");
                 } catch (SQLException e1) {
                     System.out.println("Roll back trace.");
                     e1.printStackTrace();
@@ -282,7 +284,7 @@ public class ORMigration {
                 insert.append(rs.getLong(1));
                 insert.append(insertEnd);
                 // batch statement limit size is 65535
-                if (insert.length() >= 65000) {
+                if (insert.length() >= 30000) {
                     batchStatements.add(insert.toString());
                     insert = new StringBuffer();
                     System.out.println("In here "+batchStatements.size());
@@ -305,7 +307,7 @@ public class ORMigration {
                 insert.append(rs.getLong(2));
                 insert.append(insertEnd);
                 // batch statement limit size is 65535
-                if (insert.length() >= 65000) {
+                if (insert.length() >= 30000) {
                     batchStatements.add(insert.toString());
                     insert = new StringBuffer();
                     System.out.println("In here "+batchStatements.size());
@@ -316,12 +318,14 @@ public class ORMigration {
 
             execBatchStatements(batchStatements, connection, preparedStatement);
             // everything is fine commit now
+            System.out.println("commit");
             connection.commit();
         } catch (Exception e) {
             e.printStackTrace();
             if (connection != null) {
                 try {
                     connection.rollback();
+                    System.out.println("Rollback");
                 } catch (SQLException e1) {
                     System.out.println("Roll back trace.");
                     e1.printStackTrace();
