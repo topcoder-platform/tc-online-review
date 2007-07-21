@@ -149,6 +149,7 @@ public class ORMigration {
      * transaction is committed.<br>
      */
     public void modifyAndLoadSubmissionTable() {
+    	System.out.println("start modifyAndLoadSubmissionTable");
         Connection connection = null;
         PreparedStatement preparedStatement = null;
         try {
@@ -235,6 +236,7 @@ public class ORMigration {
                 }
             }
         }
+        System.out.println("end modifyAndLoadSubmissionTable");
     }
 
     /**
@@ -264,7 +266,7 @@ public class ORMigration {
      * It also inserts the missing rows in the resource_submission table.
      */
     public void loadSubmissionTableWithUploads() {
-
+    	System.out.println("start loadSubmissionTableWithUploads");
         Connection connection = null;
         PreparedStatement preparedStatement = null;
         try {
@@ -292,7 +294,7 @@ public class ORMigration {
             }
             batchStatements.add(insert.toString());
             System.out.println(insert.toString());
-
+            System.out.println("inserts submissions");
             execBatchStatements(batchStatements, connection, preparedStatement);
 
             preparedStatement = connection.prepareStatement(RESOURCE_SUBMISSION_QUERY);
@@ -315,7 +317,7 @@ public class ORMigration {
             }
             batchStatements.add(insert.toString());
             System.out.println(insert.toString());
-
+            System.out.println("inserts resource_submission");
             execBatchStatements(batchStatements, connection, preparedStatement);
             // everything is fine commit now
             System.out.println("commit");
@@ -347,7 +349,7 @@ public class ORMigration {
                 }
             }
         }
-
+        System.out.println("start loadSubmissionTableWithUploads");
     }
 
     /**
