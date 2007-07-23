@@ -1,0 +1,5 @@
+Jave Dev - Missing a method comment.
+
+Warnings: 
+ TCS-013: Checkstyle has produced the following warnings. 
+src/java/main/Hold.java:12:5: Missing a Javadoc comment.  
