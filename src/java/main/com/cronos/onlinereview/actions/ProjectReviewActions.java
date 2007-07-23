@@ -134,11 +134,21 @@ public class ProjectReviewActions extends DispatchAction {
     static {
         String scale1_4 = "Scale (1-4)";
         String scale1_10 = "Scale (1-10)";
-        for (int i = 1; i <= 10; ++i) {
-            if (i <= 4) {
+        String scale0_3 = "Scale (0-3)";
+        String scale0_9 = "Scale (0-9)";
+        for (int i = 0; i <= 10; i++) {
+        	if (i <= 3) {
+                correctAnswers.put(i + "/3", scale0_3);
+            }
+        	if (i >= 1 && i <= 4) {
                 correctAnswers.put(i + "/4", scale1_4);
             }
-            correctAnswers.put(i + "/10", scale1_10);
+            if (i >= 1 && i <= 10) {
+                correctAnswers.put(i + "/10", scale1_10);
+            }
+            if (i <= 9) {
+            	correctAnswers.put(i + "/9", scale0_9);
+            }
         }
     }
 
@@ -3273,14 +3283,25 @@ public class ProjectReviewActions extends DispatchAction {
         // Get a resource identificating the submitter for this review
         Resource submitter = resMgr.getResource(sub.getUpload().getOwner());
 
+        // OrChange - Get the final score from the submission instead of the Resource
         // Get final aggregated score for this submitter, if any
-        String finalScore = (String) submitter.getProperty("Final Score");
+        double finalScore = sub.getFinalScore();
 
         // If there is no final (post Appeals Response) score for the submitter yet,
         // there is nothing to do anymore
-        if (finalScore == null || finalScore.trim().length() == 0) {
+        if (finalScore == -1) {
             return;
         }
+
+        // Old Code
+        // String finalScore = (String) submitter.getProperty("Final Score");
+
+        // If there is no final (post Appeals Response) score for the submitter yet,
+        // there is nothing to do anymore
+        // if (finalScore == null || finalScore.trim().length() == 0) {
+        // return;
+        // }
+        // Old Code ends
 
         // Build a filter to select resources (i.e. reviewers) for Review phase
         Filter filterPhase = ResourceFilterBuilder.createPhaseIdFilter(reviewPhase.getId());
@@ -3327,21 +3348,39 @@ public class ProjectReviewActions extends DispatchAction {
         AggregatedSubmission[] aggrSubm = aggregator.aggregateScores(new float[][] {scores});
         float newScore = aggrSubm[0].getAggregatedScore();
 
-        float oldScore = Float.parseFloat(finalScore.trim().toString());
+        float oldScore = Float.parseFloat(String.valueOf(finalScore));
        
         if (newScore == oldScore) {
         	// score is not changed
         	return;
         }
-
-        Object temp = submitter.getProperty("Placement");
-        long oldPlacement = temp == null ? -1 : Long.parseLong(temp.toString());
+        
+        // OrChange - Get the placement from the submission instead of the Resource
+        long oldPlacement = sub.getPlacement();
+        
+        // Old Code
+        // Object temp = submitter.getProperty("Placement");
+        // long oldPlacement = temp == null ? -1 : Long.parseLong(temp.toString());
+        // Old Code Ends
+        
         Object userId = submitter.getProperty("External Reference ID");
         
-        // Update this submitter's final score with aggregated one
-        submitter.setProperty("Final Score", String.valueOf(newScore));
-        // Store updated information in the database
-        resMgr.updateResource(submitter, String.valueOf(AuthorizationHelper.getLoggedInUserId(request)));
+        UploadManager upMgr = ActionsHelper.createUploadManager(request);
+
+        // OrChange - Update the final score in the Submission table.
+        sub.setFinalScore(newScore);
+        
+        // update the final score
+        upMgr.updateSubmission(sub, String.valueOf(AuthorizationHelper.getLoggedInUserId(request)));
+        
+        // Old Code
+        // // Update this submitter's final score with aggregated one
+        // submitter.setProperty("Final Score", String.valueOf(newScore));
+        //        
+        //        
+        // // Store updated information in the database
+        // resMgr.updateResource(submitter, String.valueOf(AuthorizationHelper.getLoggedInUserId(request)));
+        // Old Code Ends
 
         // Retrieve all reviewed submissions to reset placement/submission status if need
         Submission[] submissions = ActionsHelper.searchReviewedSubmissions(request, project);
@@ -3419,7 +3458,7 @@ public class ProjectReviewActions extends DispatchAction {
 
         Resource winningSubmitter = null;
         Resource runnerUpSubmitter = null;
-    	UploadManager upMgr = ActionsHelper.createUploadManager(request);
+    	
 
         //again iterate over submissions to set the initial score and placement
         for (int iSub = 0; iSub < placements.length; iSub++) {
@@ -3429,10 +3468,15 @@ public class ProjectReviewActions extends DispatchAction {
             float aggScore = rankedSubmission.getAggregatedScore();
             int placement = rankedSubmission.getRank();
 
-            //update submitter's Placement
+            // OrChange - Update placement
+            // update submitter's Placement
+            submission.setPlacement(placement);
+
             long submitterId = submission.getUpload().getOwner();
             submitter = resMgr.getResource(submitterId);
-            submitter.setProperty("Placement", String.valueOf(placement));
+            // Old Code
+            // submitter.setProperty("Placement", String.valueOf(placement));
+            // Old Code Ends
 
             SubmissionStatus newStatus = null; 
             	
@@ -4345,7 +4389,8 @@ public class ProjectReviewActions extends DispatchAction {
         // Get a type of the question for the current answer
         String questionType = question.getQuestionType().getName();
 
-        if (questionType.equalsIgnoreCase("Scale (1-4)") || questionType.equalsIgnoreCase("Scale (1-10)")) {
+        if (questionType.equalsIgnoreCase("Scale (1-4)") || questionType.equalsIgnoreCase("Scale (1-10)") || 
+        		questionType.equalsIgnoreCase("Scale (0-9)") || questionType.equalsIgnoreCase("Scale (0-3)")) {
             if (!(correctAnswers.containsKey(answer) && correctAnswers.get(answer).equals(questionType))) {
                 ActionsHelper.addErrorToRequest(request, errorKey, "Error.saveReview.Answer.Incorrect");
                 success = false;

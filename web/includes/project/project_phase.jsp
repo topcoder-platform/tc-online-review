@@ -190,10 +190,10 @@
 										</c:if>
 										<c:set var="screener" value="" />
 										<c:forEach items="${group.reviewers}" var="reviewer">
-											<c:if test="${(empty reviewer.submission) and (empty screener)}">
+											<c:if test="${(empty reviewer.submissions) and (empty screener)}">
 												<c:set var="screener" value="${reviewer}" />
 											</c:if>
-											<c:if test="${(not empty reviewer.submission) and (reviewer.submission == submission.id)}">
+											<c:if test="${(not empty reviewer.submissions) and (reviewer.submissions[0] == submission.id)}">
 												<c:set var="screener" value="${reviewer}" />
 											</c:if>
 										</c:forEach>

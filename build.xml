@@ -120,12 +120,12 @@
     <property name="db_connection_factory.path" value="db_connection_factory/${db_connection_factory.version}" />
     <property name="db_connection_factory.jar" value="${tcs_libdir}/${db_connection_factory.path}/${db_connection_factory.jar.name}" />
 
-    <property name="deliverable_management.version" value="1.0.1" />
+    <property name="deliverable_management.version" value="1.0.3" />
     <property name="deliverable_management.jar.name" value="deliverable_management.jar" />
     <property name="deliverable_management.path" value="deliverable_management/${deliverable_management.version}" />
     <property name="deliverable_management.jar" value="${tcs_libdir}/${deliverable_management.path}/${deliverable_management.jar.name}" />
 
-    <property name="deliverable_management_persistence.version" value="1.0.1" />
+    <property name="deliverable_management_persistence.version" value="1.0.3" />
     <property name="deliverable_management_persistence.jar.name" value="deliverable_management_persistence.jar" />
     <property name="deliverable_management_persistence.path" value="deliverable_management_persistence/${deliverable_management_persistence.version}" />
     <property name="deliverable_management_persistence.jar" value="${tcs_libdir}/${deliverable_management_persistence.path}/${deliverable_management_persistence.jar.name}" />
@@ -195,11 +195,16 @@
     <property name="online_review_login.path" value="online_review_login/${online_review_login.version}" />
     <property name="online_review_login.jar" value="${tcs_libdir}/${online_review_login.path}/${online_review_login.jar.name}" />
 
-    <property name="online_review_phases.version" value="1.0.4" />
+    <property name="online_review_phases.version" value="1.0.5" />
     <property name="online_review_phases.jar.name" value="online_review_phases.jar" />
     <property name="online_review_phases.path" value="online_review_phases/${online_review_phases.version}" />
     <property name="online_review_phases.jar" value="${tcs_libdir}/${online_review_phases.path}/${online_review_phases.jar.name}" />
 
+	<property name="online_review_upload_services.version" value="1.0" />
+	<property name="online_review_upload_services.jar.name" value="online_review_upload_services.jar" />
+	<property name="online_review_upload_services.path" value="online_review_upload_services/${online_review_upload_services.version}" />
+	<property name="online_review_upload_services.jar" value="${tcs_libdir}/${online_review_upload_services.path}/${online_review_upload_services.jar.name}" />
+	
     <property name="phase_management.version" value="1.0.3" />
     <property name="phase_management.jar.name" value="phase_management.jar" />
     <property name="phase_management.path" value="phase_management/${phase_management.version}" />
@@ -230,12 +235,12 @@
     <property name="project_phase_template.path" value="project_phase_template/${project_phase_template.version}" />
     <property name="project_phase_template.jar" value="${tcs_libdir}/${project_phase_template.path}/${project_phase_template.jar.name}" />
 
-    <property name="resource_management.version" value="1.0.1" />
+    <property name="resource_management.version" value="1.1" />
     <property name="resource_management.jar.name" value="resource_management.jar" />
     <property name="resource_management.path" value="resource_management/${resource_management.version}" />
     <property name="resource_management.jar" value="${tcs_libdir}/${resource_management.path}/${resource_management.jar.name}" />
 
-    <property name="resource_management_persistence.version" value="1.0" />
+    <property name="resource_management_persistence.version" value="1.2" />
     <property name="resource_management_persistence.jar.name" value="resource_management_persistence.jar" />
     <property name="resource_management_persistence.path" value="resource_management_persistence/${resource_management_persistence.version}" />
     <property name="resource_management_persistence.jar" value="${tcs_libdir}/${resource_management_persistence.path}/${resource_management_persistence.jar.name}" />
@@ -250,7 +255,7 @@
     <property name="review_management.path" value="review_management/${review_management.version}" />
     <property name="review_management.jar" value="${tcs_libdir}/${review_management.path}/${review_management.jar.name}" />
 
-    <property name="review_management_persistence.version" value="1.0" />
+    <property name="review_management_persistence.version" value="1.0.1" />
     <property name="review_management_persistence.jar.name" value="review_management_persistence.jar" />
     <property name="review_management_persistence.path" value="review_management_persistence/${review_management_persistence.version}" />
     <property name="review_management_persistence.jar" value="${tcs_libdir}/${review_management_persistence.path}/${review_management_persistence.jar.name}" />
@@ -270,7 +275,7 @@
     <property name="scorecard_data_structure.path" value="scorecard_data_structure/${scorecard_data_structure.version}" />
     <property name="scorecard_data_structure.jar" value="${tcs_libdir}/${scorecard_data_structure.path}/${scorecard_data_structure.jar.name}" />
 
-    <property name="scorecard_management.version" value="1.0" />
+    <property name="scorecard_management.version" value="1.0.1" />
     <property name="scorecard_management.jar.name" value="scorecard_management.jar" />
     <property name="scorecard_management.path" value="scorecard_management/${scorecard_management.version}" />
     <property name="scorecard_management.jar" value="${tcs_libdir}/${scorecard_management.path}/${scorecard_management.jar.name}" />
@@ -335,6 +340,7 @@
     <property name="servlet.jsp.jar" value="${cactus.home.tomcat5x}/common/lib/jsp-api.jar" />
     <property name="mail.jar" value="${cactus.home.tomcat5x}/common/lib/mail.jar" />
     <property name="struts.jar" value="${ext_libdir}/struts-1.2.9.jar" />
+	<property name="axis.jar" value="${ext_libdir}/axis-dok.jar" />
     <property name="ejb-2_0.jar" value="${ext_libdir}/ejb-2_0.jar" />
     <property name="commons.beanutils.jar" value="${ext_libdir}/commons-beanutils.jar" />
 
@@ -361,6 +367,7 @@
         <pathelement location="${servlet.jsp.jar}" />
         <pathelement location="${mail.jar}" />
         <pathelement location="${struts.jar}" />
+    	<pathelement location="${axis.jar}" />
         <pathelement location="${ejb-2_0.jar}" />
 
         <pathelement location="${authentication_factory.jar}" />
@@ -389,6 +396,7 @@
         <pathelement location="${online_review_deliverables.jar}" />
         <pathelement location="${online_review_login.jar}" />
         <pathelement location="${online_review_phases.jar}" />
+    	<pathelement location="${online_review_upload_services.jar}" />
         <pathelement location="${phase_management.jar}" />
         <pathelement location="${phase_management_persistence.jar}" />
         <pathelement location="${project_management.jar}" />
@@ -429,7 +437,6 @@
         <pathelement location="${httpunit.jar}" />
         <pathelement location="${nekohtml.jar}" />
         <pathelement location="${strutstest.jar}" />
-
         <pathelement location="${cargo.jar}" />
 
         <pathelement location="${build_testclassdir}" />
@@ -548,13 +555,14 @@
 
     <target name="dist" depends="clean, update_left_nav, compile">
         <mkdir dir="${build_distdir}" />
-    	<property name="component.war" value="${build_distdir}/${distfilename}.war" />
+        <property name="component.war" value="${build_distdir}/${distfilename}.war" />
         <delete file="${component.war}" failonerror="false" />
 
         <war destfile="${component.war}" webxml="${configdir}/WEB-INF/web.xml" duplicate="fail">
-            <webinf dir="${configdir}/WEB-INF" includes="*.tld,*.xml" excludes="web.xml" />
+            <webinf dir="${configdir}/WEB-INF" includes="*.tld,*.xml, server-config.wsdd" excludes="web.xml" />
             <classes dir="${build_classdir}" includes="**" />
             <classes dir="${configdir}" includes="**" excludes="WEB-INF/**" />
+        	<classes dir="${configdir}/WEB-INF/classes" />
             <lib dir="${jar_tcs_libdir}/${authentication_factory.path}" includes="*.jar" />
             <lib dir="${jar_tcs_libdir}/${auto_pilot.path}" includes="*.jar" />
             <lib dir="${jar_tcs_libdir}/${auto_screening_management.path}" includes="*.jar" />
@@ -581,6 +589,7 @@
             <lib dir="${jar_tcs_libdir}/${online_review_deliverables.path}" includes="*.jar" />
             <lib dir="${jar_tcs_libdir}/${online_review_login.path}" includes="*.jar" />
             <lib dir="${jar_tcs_libdir}/${online_review_phases.path}" includes="*.jar" />
+        	<lib dir="${jar_tcs_libdir}/${online_review_upload_services.path}" includes="*.jar" />
             <lib dir="${jar_tcs_libdir}/${phase_management.path}" includes="*.jar" />
             <lib dir="${jar_tcs_libdir}/${phase_management_persistence.path}" includes="*.jar" />
             <lib dir="${jar_tcs_libdir}/${project_management.path}" includes="*.jar" />
@@ -657,9 +666,9 @@ Note: The security manager that comes with the app may not be compatible with th
 
     <target name="deploy" depends="dist, deploy-common" />
 
-	<!-- - - - - - - - - - - - - - - - - - 
-          target: prod-init
-         - - - - - - - - - - - - - - - - - -->
+    <!-- - - - - - - - - - - - - - - - - - 
+      target: prod-init
+    - - - - - - - - - - - - - - - - - -->
     <target name="prod-init">
     	<property name="component.war" value="${distfilename}.war" />
     </target>

@@ -17,10 +17,10 @@
                         <Value>jdbc:informix-sqli://tcsdesigner:1526/ortest:INFORMIXSERVER=tcs;</Value>
                     </Property>
                     <Property name="user">
-                        <Value>informix</Value>
+                        <Value>coder</Value>
                     </Property>
                     <Property name="password">
-                        <Value>topcoder</Value>
+                        <Value>altec</Value>
                     </Property>
                 </Property>
             </Property>
