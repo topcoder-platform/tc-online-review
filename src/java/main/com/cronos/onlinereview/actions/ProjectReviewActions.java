@@ -582,7 +582,7 @@ public class ProjectReviewActions extends DispatchAction {
         // Verify that certain requirements are met before proceeding with the Action
         CorrectnessCheckResult verification =
             checkForCorrectReviewId(mapping, request, Constants.PERFORM_AGGREGATION_PERM_NAME);
-        // If any error has occured, return action forward contained in the result bean
+        // If any error has occurred, return action forward contained in the result bean
         if (!verification.isSuccessful()) {
             return verification.getForward();
         }
@@ -725,7 +725,7 @@ public class ProjectReviewActions extends DispatchAction {
             request.setAttribute("review", review);
             // Retrieve some basic review info and store it in the request
             retrieveAndStoreBasicAggregationInfo(request, verification, scorecardTemplate, "Aggregation");
-            // Retrive some look-up data and store it into the request
+            // Retrieve some look-up data and store it into the request
             retreiveAndStoreReviewLookUpData(request);
 
             return mapping.getInputForward();
@@ -1098,7 +1098,7 @@ public class ProjectReviewActions extends DispatchAction {
         // Verify that certain requirements are met before proceeding with the Action
         CorrectnessCheckResult verification =
             checkForCorrectReviewId(mapping, request, Constants.PERFORM_AGGREG_REVIEW_PERM_NAME);
-        // If any error has occured, return action forward contained in the result bean
+        // If any error has occurred, return action forward contained in the result bean
         if (!verification.isSuccessful()) {
             return verification.getForward();
         }
@@ -1114,7 +1114,7 @@ public class ProjectReviewActions extends DispatchAction {
         // Retrieve a review to save
         Review review = verification.getReview();
 
-        // Obtain an instance of Scorecad Manager
+        // Obtain an instance of Scorecard Manager
         ScorecardManager scrMgr = ActionsHelper.createScorecardManager(request);
         // Retrieve a scorecard template for the review
         Scorecard scorecardTemplate = scrMgr.getScorecard(review.getScorecard());
@@ -1579,7 +1579,7 @@ public class ProjectReviewActions extends DispatchAction {
         // Verify that certain requirements are met before proceeding with the Action
         CorrectnessCheckResult verification =
             checkForCorrectReviewId(mapping, request, Constants.PERFORM_FINAL_REVIEW_PERM_NAME);
-        // If any error has occured, return action forward contained in the result bean
+        // If any error has occurred, return action forward contained in the result bean
         if (!verification.isSuccessful()) {
             return verification.getForward();
         }
@@ -1776,7 +1776,7 @@ public class ProjectReviewActions extends DispatchAction {
         // Verify that certain requirements are met before proceeding with the Action
         CorrectnessCheckResult verification =
             checkForCorrectReviewId(mapping, request, Constants.VIEW_FINAL_REVIEW_PERM_NAME);
-        // If any error has occured, return action forward contained in the result bean
+        // If any error has occurred, return action forward contained in the result bean
         if (!verification.isSuccessful()) {
             return verification.getForward();
         }
@@ -2229,7 +2229,7 @@ public class ProjectReviewActions extends DispatchAction {
     }
 
     /**
-     * This method verifies the request for ceratins conditions to be met. This includes verifying
+     * This method verifies the request for certains conditions to be met. This includes verifying
      * if the user has specified an ID of the review he wants to perform an operation on, if the
      * ID of the review specified by user denotes an existing review, and whether the user
      * has enough rights to perform the operation specified by <code>permission</code> parameter.
@@ -3814,7 +3814,7 @@ public class ProjectReviewActions extends DispatchAction {
 
         // Verify that certain requirements are met before proceeding with the Action
         CorrectnessCheckResult verification = checkForCorrectReviewId(mapping, request, permName);
-        // If any error has occured, return action forward contained in the result bean
+        // If any error has occurred, return action forward contained in the result bean
         if (!verification.isSuccessful()) {
             return verification.getForward();
         }
@@ -3913,7 +3913,7 @@ public class ProjectReviewActions extends DispatchAction {
         }
 
         // Check that the type of the review is Review,
-        // as appeals and responses to them can ony be placed to that type of scorecard
+        // as appeals and responses to them can only be placed to that type of scorecard
         if (scorecardTypeName.equals("Review")) {
             boolean canPlaceAppeal = false;
             boolean canPlaceAppealResponse = false;
@@ -3955,7 +3955,7 @@ public class ProjectReviewActions extends DispatchAction {
                 // Place appeal statuses to request
                 request.setAttribute("appealStatuses", appealStatuses);
 
-                // Retrive some look-up data and store it into the request
+                // Retrieve some look-up data and store it into the request
                 retreiveAndStoreReviewLookUpData(request);
             }
         }
