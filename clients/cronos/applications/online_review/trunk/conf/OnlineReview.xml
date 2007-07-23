@@ -1,6 +1,14 @@
 <?xml version="1.0" ?>
+<!DOCTYPE CMConfig [
+       <!ENTITY localFileUploadDir "/home/onlinereview/downloads">
+       <!ENTITY phasesEmailTemplate "/home/onlinereview/email_template.txt">
+       <!ENTITY winnersEmailTemplate "/home/onlinereview/winners_email_template.txt">
+       <!ENTITY timelineTemplateDir "/home/onlinereview">
+       <!ENTITY contactManagersTemplate "/home/onlinereview/contact_manager_template.txt">
+       <!ENTITY pactJNDIAddress "jnp://63.118.154.207:1099">
+       <!ENTITY assignmentDocumentsFlag "false">
+]>
 <CMConfig>
-
     <!--
         ==========  Configuration for DB Connection Factory component ==========
     -->
@@ -391,10 +399,10 @@
             <Value>-1</Value>
         </Property>
         <Property name="allowed_dirs">
-            <Value>/home/onlinereview/downloads</Value>
+            <Value>&localFileUploadDir;</Value>
         </Property>
         <Property name="default_dir">
-            <Value>/home/onlinereview/downloads</Value>
+            <Value>&localFileUploadDir;</Value>
         </Property>
         <Property name="overwrite">
             <Value>false</Value>
@@ -752,7 +760,7 @@
                 <Value>file</Value>
             </Property>
             <Property name="EmailTemplateName">
-                <Value>/home/onlinereview/email_template.txt</Value>
+                <Value>&phasesEmailTemplate;</Value>
             </Property>
             <Property name="EmailSubject">
                 <Value>Phase Start</Value>
@@ -766,7 +774,7 @@
                 <Value>file</Value>
             </Property>
             <Property name="EmailTemplateName">
-                <Value>/home/onlinereview/email_template.txt</Value>
+                <Value>&phasesEmailTemplate;</Value>
             </Property>
             <Property name="EmailSubject">
                 <Value>Phase End</Value>
@@ -793,7 +801,7 @@
                 <Value>file</Value>
             </Property>
             <Property name="EmailTemplateName">
-                <Value>/home/onlinereview/email_template.txt</Value>
+                <Value>&phasesEmailTemplate;</Value>
             </Property>
             <Property name="EmailSubject">
                 <Value>Phase Start</Value>
@@ -807,7 +815,7 @@
                 <Value>file</Value>
             </Property>
             <Property name="EmailTemplateName">
-                <Value>/home/onlinereview/email_template.txt</Value>
+                <Value>&phasesEmailTemplate;</Value>
             </Property>
             <Property name="EmailSubject">
                 <Value>Phase End</Value>
@@ -834,7 +842,7 @@
                 <Value>file</Value>
             </Property>
             <Property name="EmailTemplateName">
-                <Value>/home/onlinereview/email_template.txt</Value>
+                <Value>&phasesEmailTemplate;</Value>
             </Property>
             <Property name="EmailSubject">
                 <Value>Phase Start</Value>
@@ -848,7 +856,7 @@
                 <Value>file</Value>
             </Property>
             <Property name="EmailTemplateName">
-                <Value>/home/onlinereview/email_template.txt</Value>
+                <Value>&phasesEmailTemplate;</Value>
             </Property>
             <Property name="EmailSubject">
                 <Value>Phase End</Value>
@@ -875,7 +883,7 @@
                 <Value>file</Value>
             </Property>
             <Property name="EmailTemplateName">
-                <Value>/home/onlinereview/email_template.txt</Value>
+                <Value>&phasesEmailTemplate;</Value>
             </Property>
             <Property name="EmailSubject">
                 <Value>Phase Start</Value>
@@ -889,7 +897,7 @@
                 <Value>file</Value>
             </Property>
             <Property name="EmailTemplateName">
-                <Value>/home/onlinereview/email_template.txt</Value>
+                <Value>&phasesEmailTemplate;</Value>
             </Property>
             <Property name="EmailSubject">
                 <Value>Phase End</Value>
@@ -916,7 +924,7 @@
                 <Value>file</Value>
             </Property>
             <Property name="EmailTemplateName">
-                <Value>/home/onlinereview/email_template.txt</Value>
+                <Value>&phasesEmailTemplate;</Value>
             </Property>
             <Property name="EmailSubject">
                 <Value>Phase Start</Value>
@@ -930,7 +938,7 @@
                 <Value>file</Value>
             </Property>
             <Property name="EmailTemplateName">
-                <Value>/home/onlinereview/email_template.txt</Value>
+                <Value>&phasesEmailTemplate;</Value>
             </Property>
             <Property name="EmailSubject">
                 <Value>Phase End</Value>
@@ -957,7 +965,7 @@
                 <Value>file</Value>
             </Property>
             <Property name="EmailTemplateName">
-                <Value>/home/onlinereview/email_template.txt</Value>
+                <Value>&phasesEmailTemplate;</Value>
             </Property>
             <Property name="EmailSubject">
                 <Value>Phase Start</Value>
@@ -971,7 +979,7 @@
                 <Value>file</Value>
             </Property>
             <Property name="EmailTemplateName">
-                <Value>/home/onlinereview/email_template.txt</Value>
+                <Value>&phasesEmailTemplate;</Value>
             </Property>
             <Property name="EmailSubject">
                 <Value>Phase End</Value>
@@ -981,7 +989,7 @@
             </Property>
         </Property>
         <Property name="CreateAssignmentDocuments">
-    		<Value>false</Value>
+    		<Value>&assignmentDocumentsFlag;</Value>
     	</Property>
     	<!-- Date Format: MM/dd/yyyy  -->
     	<Property name="AssignmentDocumentsStartDate">
@@ -992,7 +1000,7 @@
                 <Value>file</Value>
             </Property>
             <Property name="EmailTemplateName">
-                <Value>/home/onlinereview/winners_email_template.txt</Value>
+                <Value>&winnersEmailTemplate;</Value>
             </Property>
             <Property name="EmailSubject">
                 <Value>[{0}] {1} place </Value>
@@ -1023,7 +1031,7 @@
                 <Value>file</Value>
             </Property>
             <Property name="EmailTemplateName">
-                <Value>/home/onlinereview/email_template.txt</Value>
+                <Value>&phasesEmailTemplate;</Value>
             </Property>
             <Property name="EmailSubject">
                 <Value>Phase Start</Value>
@@ -1037,7 +1045,7 @@
                 <Value>file</Value>
             </Property>
             <Property name="EmailTemplateName">
-                <Value>/home/onlinereview/email_template.txt</Value>
+                <Value>&phasesEmailTemplate;</Value>
             </Property>
             <Property name="EmailSubject">
                 <Value>Phase End</Value>
@@ -1064,7 +1072,7 @@
                 <Value>file</Value>
             </Property>
             <Property name="EmailTemplateName">
-                <Value>/home/onlinereview/email_template.txt</Value>
+                <Value>&phasesEmailTemplate;</Value>
             </Property>
             <Property name="EmailSubject">
                 <Value>Phase Start</Value>
@@ -1078,7 +1086,7 @@
                 <Value>file</Value>
             </Property>
             <Property name="EmailTemplateName">
-                <Value>/home/onlinereview/email_template.txt</Value>
+                <Value>&phasesEmailTemplate;</Value>
             </Property>
             <Property name="EmailSubject">
                 <Value>Phase End</Value>
@@ -1105,7 +1113,7 @@
                 <Value>file</Value>
             </Property>
             <Property name="EmailTemplateName">
-                <Value>/home/onlinereview/email_template.txt</Value>
+                <Value>&phasesEmailTemplate;</Value>
             </Property>
             <Property name="EmailSubject">
                 <Value>Phase Start</Value>
@@ -1119,7 +1127,7 @@
                 <Value>file</Value>
             </Property>
             <Property name="EmailTemplateName">
-                <Value>/home/onlinereview/email_template.txt</Value>
+                <Value>&phasesEmailTemplate;</Value>
             </Property>
             <Property name="EmailSubject">
                 <Value>Phase End</Value>
@@ -1146,7 +1154,7 @@
                 <Value>file</Value>
             </Property>
             <Property name="EmailTemplateName">
-                <Value>/home/onlinereview/email_template.txt</Value>
+                <Value>&phasesEmailTemplate;</Value>
             </Property>
             <Property name="EmailSubject">
                 <Value>Phase Start</Value>
@@ -1160,7 +1168,7 @@
                 <Value>file</Value>
             </Property>
             <Property name="EmailTemplateName">
-                <Value>/home/onlinereview/email_template.txt</Value>
+                <Value>&phasesEmailTemplate;</Value>
             </Property>
             <Property name="EmailSubject">
                 <Value>Phase End</Value>
@@ -1187,7 +1195,7 @@
                 <Value>file</Value>
             </Property>
             <Property name="EmailTemplateName">
-                <Value>/home/onlinereview/email_template.txt</Value>
+                <Value>&phasesEmailTemplate;</Value>
             </Property>
             <Property name="EmailSubject">
                 <Value>Phase Start</Value>
@@ -1201,7 +1209,7 @@
                 <Value>file</Value>
             </Property>
             <Property name="EmailTemplateName">
-                <Value>/home/onlinereview/email_template.txt</Value>
+                <Value>&phasesEmailTemplate;</Value>
             </Property>
             <Property name="EmailSubject">
                 <Value>Phase End</Value>
@@ -1459,11 +1467,11 @@
     <Config name="com.topcoder.project.phases.template.persistence.XmlPhaseTemplatePersistence">
         <!-- XML files from which the templates will be loaded. -->
         <Property name="template_files">
-<!--            <Value>/home/onlinereview/ComponentTimeline.xml</Value> -->
-            <Value>/home/onlinereview/TCSTemplate_Design.xml</Value>
-            <Value>/home/onlinereview/TCSTemplate_Development.xml</Value>
-            <Value>/home/onlinereview/TCSTemplate_Application.xml</Value>
-            <Value>/home/onlinereview/TCSTemplate_Studio.xml</Value>
+<!--            <Value>&timelineTemplateDir;/ComponentTimeline.xml</Value> -->
+            <Value>&timelineTemplateDir;/TCSTemplate_Design.xml</Value>
+            <Value>&timelineTemplateDir;/TCSTemplate_Development.xml</Value>
+            <Value>&timelineTemplateDir;/TCSTemplate_Application.xml</Value>
+            <Value>&timelineTemplateDir;/TCSTemplate_Studio.xml</Value>
         </Property>
     </Config>
 
@@ -2701,16 +2709,14 @@
 
     <Config name="com.topcoder.search.builder.database.factory"></Config>
 
-
     <!--
         ===== Configuration for Pacts Services =====
     -->
     <Config name="com.cronos.onlinereview.phases.pacts.services">
         <Property name="pacts_jndi_address">
-            <Value>jnp://63.118.154.181:2099</Value>
+            <Value>&pactJNDIAddress;</Value>
         </Property>
     </Config>
-
 
     <!--
         =====  Configuration for the Online Review Application itself  =====
@@ -3517,7 +3523,7 @@
                 <Value>file</Value>
             </Property>
             <Property name="EmailTemplateName">
-                <Value>/home/onlinereview/contact_manager_template.txt</Value>
+                <Value>&contactManagersTemplate;</Value>
             </Property>
             <Property name="EmailSubject">
                 <Value>Contact Manager Message</Value>
@@ -3552,7 +3558,7 @@
 		</Property>
 		<!-- Needs to be updated correctly -->
 		<Property name="fileStorageLocation">
-			<Value>/home/onlinereview/downloads</Value>
+			<Value>&localFileUploadDir;</Value>
 		</Property>
 	</Config>
 	
@@ -3578,5 +3584,4 @@
             </Property>
       	</Property>
 	</Config>
-	
 </CMConfig>

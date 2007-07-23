@@ -1,4 +1,13 @@
 <?xml version="1.0" ?>
+<!DOCTYPE CMConfig [
+       <!ENTITY localFileUploadDir "/home/onlinereview/downloads">
+       <!ENTITY phasesEmailTemplate "/home/onlinereview/email_template.txt">
+       <!ENTITY winnersEmailTemplate "/home/onlinereview/winners_email_template.txt">
+       <!ENTITY timelineTemplateDir "/home/onlinereview">
+       <!ENTITY contactManagersTemplate "/home/onlinereview/contact_manager_template.txt">
+       <!ENTITY pactJNDIAddress "jnp://63.118.154.207:1099">
+       <!ENTITY assignmentDocumentsFlag "false">
+]>
 <CMConfig>	
     <Config name="com.topcoder.util.log">
         <Property name="logClass">
@@ -333,7 +342,7 @@
     -->
 	<Config name="com.cronos.onlinereview.phases.pacts.services">
 		<Property name="pacts_jndi_address">
-			<Value>jnp://63.118.154.181:1099</Value>
+			<Value>&pactJNDIAddress;</Value>
 		</Property>
 	</Config>
 
@@ -585,7 +594,7 @@
             </Property>
         </Property>
         <Property name="CreateAssignmentDocuments">
-    		<Value>false</Value>
+    		<Value>&assignmentDocumentsFlag;</Value>
     	</Property>
     	<!-- Date Format: MM/dd/yyyy  -->
     	<Property name="AssignmentDocumentsStartDate">
@@ -596,7 +605,7 @@
                 <Value>file</Value>
             </Property>
             <Property name="EmailTemplateName">
-                <Value>/home/onlinereview/winners_email_template.txt</Value>
+                <Value>&winnersEmailTemplate;</Value>
             </Property>
             <Property name="EmailSubject">
                 <Value>[{0}] {1} place </Value>
