@@ -136,7 +136,7 @@ public class ProjectDetailsActions extends DispatchAction {
         // Verify that certain requirements are met before processing with the Action
         CorrectnessCheckResult verification = ActionsHelper.checkForCorrectProjectId(
                 mapping, getResources(request), request, Constants.VIEW_PROJECT_DETAIL_PERM_NAME, false);
-        // If any error has occured, return action forward contained in the result bean
+        // If any error has occurred, return action forward contained in the result bean
         if (!verification.isSuccessful()) {
             return verification.getForward();
         }
