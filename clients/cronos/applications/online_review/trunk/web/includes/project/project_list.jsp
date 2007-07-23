@@ -13,6 +13,7 @@
 				(${typeCounts[idxrType.index]})</span></div>
 			<c:forEach items="${projectCategories}" var="category" varStatus="idxrCategory">
 				<c:if test="${category.projectType.id == type.id}">
+                    <div style="position: relative; width: 100%;">
 					<table class="scorecard" width="100%" cellpadding="0" cellspacing="0">
 						<tr>
     					<td class="title" colspan='${(isMyProjects) ? "7" : "5"}'>
@@ -81,6 +82,7 @@
 							</tr>
 						</tbody>
 					</table>
+                    </div>
 				</c:if>
 			</c:forEach>
 		</c:if>

@@ -146,6 +146,7 @@ import com.topcoder.servlet.request.LocalFileUpload;
 import com.topcoder.util.datavalidator.LongValidator;
 import com.topcoder.util.datavalidator.StringValidator;
 import com.topcoder.util.errorhandling.BaseException;
+import com.topcoder.util.errorhandling.BaseRuntimeException;
 import com.topcoder.util.idgenerator.IDGenerator;
 import com.topcoder.util.idgenerator.IDGeneratorFactory;
 import com.topcoder.util.log.Level;
@@ -173,8 +174,12 @@ public class ActionsHelper {
     private static final String PHASES_TEMPLATE_PERSISTENCE_NAMESPACE = "com.topcoder.project.phases.template.persistence.XmlPhaseTemplatePersistence";
 
     /**
-     * This constructor is declared private to prohibit instantiation of the
-     * <code>ActionsHelper</code> class.
+     * This helper class is used for creating the managers.
+     */
+    private static final ManagerCreationHelper managerCreationHelper = new ManagerCreationHelper();
+
+    /**
+     * This constructor is declared private to prohibit instantiation of the <code>ActionsHelper</code> class.
      */
     private ActionsHelper() {
     }
@@ -1797,6 +1802,37 @@ public class ActionsHelper {
     }
 
     /**
+     * This static method returns the resource for role for the currently logged in user. 
+     * The list of all resources for the currently logged in user is
+     * retrieved from the <code>HttpServletRequest</code> object specified by <code>request</code>
+     * parameter. Method <code>gatherUserRoles(HttpServletRequest, long)</code> should be called
+     * prior making a call to this method.
+     *
+     * @return the resource, or null if the current user doesn't have a resource with the role.
+     * @param request
+     *            an <code>HttpServletRequest</code> object containing additional information.
+     * @param resourceRole the name of the resource role
+     * @throws IllegalArgumentException
+     *             if <code>request</code> parameter is <code>null</code>.
+     *             if <code>resourceRole</code> parameter is <code>null</code>.
+     *             
+     */
+    public static Resource getMyResourceForRole(HttpServletRequest request, String resourceRole) {
+        // Validate parameters
+        validateParameterNotNull(request, "request");
+        validateParameterNotNull(resourceRole, "resourceRole");
+        // Retrieve the list of "my" resources from the request's attribute
+        Resource[] myResources = (Resource[]) validateAttributeNotNull(request, "myResources");
+        for (Resource resource : myResources) {
+			if (resource.getResourceRole().getName().equalsIgnoreCase(resourceRole)) {
+				return resource;
+			}
+		}
+        // Return the resources using another helper-method
+        return null;
+    }    
+    
+    /**
      * This static method retrieves the resource for the currently logged in user associated with
      * the specified phase. The list of all resources for the currently logged in user is retrieved
      * from the <code>HttpServletRequest</code> object specified by <code>request</code>
@@ -2323,7 +2359,7 @@ public class ActionsHelper {
      *
      * @return a newly created instance of the class.
      * @param request
-     *            an <code>HttpServletRequest</code> obejct, where created
+     *            an <code>HttpServletRequest</code> object, where created
      *            <code>PhaseManager</code> object can be stored to let reusing it later for the
      *            same request.
      * @param registerPhaseHandlers
@@ -2357,30 +2393,8 @@ public class ActionsHelper {
 
             // Register phase handlers if this was requested
             if (registerPhaseHandlers) {
-                PhaseType[] phaseTypes = manager.getAllPhaseTypes();
-
-                registerPhaseHandlerForOperation(manager, phaseTypes,
-                        new PRRegistrationPhaseHandler(), Constants.REGISTRATION_PHASE_NAME);
-                registerPhaseHandlerForOperation(manager, phaseTypes,
-                        new PRSubmissionPhaseHandler(), Constants.SUBMISSION_PHASE_NAME);
-                registerPhaseHandlerForOperation(manager, phaseTypes,
-                        new PRScreeningPhaseHandler(), Constants.SCREENING_PHASE_NAME);
-                registerPhaseHandlerForOperation(manager, phaseTypes,
-                        new PRReviewPhaseHandler(), Constants.REVIEW_PHASE_NAME);
-                registerPhaseHandlerForOperation(manager, phaseTypes,
-                        new AppealsPhaseHandler(), Constants.APPEALS_PHASE_NAME);
-                registerPhaseHandlerForOperation(manager, phaseTypes,
-                        new PRAppealResponsePhaseHandler(), Constants.APPEALS_RESPONSE_PHASE_NAME);
-                registerPhaseHandlerForOperation(manager, phaseTypes,
-                        new PRAggregationPhaseHandler(), Constants.AGGREGATION_PHASE_NAME);
-                registerPhaseHandlerForOperation(manager, phaseTypes,
-                        new PRAggregationReviewPhaseHandler(), Constants.AGGREGATION_REVIEW_PHASE_NAME);
-                registerPhaseHandlerForOperation(manager, phaseTypes,
-                        new PRFinalFixPhaseHandler(), Constants.FINAL_FIX_PHASE_NAME);
-                registerPhaseHandlerForOperation(manager, phaseTypes,
-                        new PRFinalReviewPhaseHandler(), Constants.FINAL_REVIEW_PHASE_NAME);
-                registerPhaseHandlerForOperation(manager, phaseTypes,
-                        new ApprovalPhaseHandler(), Constants.APPROVAL_PHASE_NAME);
+                // create a fresh manager with the handlers set.
+                manager = managerCreationHelper.getPhaseManager();
             }
 
             // Place newly-created object into the request as attribute
@@ -2392,35 +2406,17 @@ public class ActionsHelper {
     }
 
     /**
-     * TODO: Document it!
-     *
-     * @param manager
-     * @param phaseTypes
-     * @param handler
-     * @param phaseName
-     */
-    private static void registerPhaseHandlerForOperation(PhaseManager manager, PhaseType[] phaseTypes, PhaseHandler handler, String phaseName) {
-        manager.registerHandler(handler, findPhaseTypeByName(phaseTypes, phaseName), PhaseOperationEnum.START);
-        manager.registerHandler(handler, findPhaseTypeByName(phaseTypes, phaseName), PhaseOperationEnum.END);
-        manager.registerHandler(handler, findPhaseTypeByName(phaseTypes, phaseName), PhaseOperationEnum.CANCEL);
-    }
-
-    /**
      * This static method helps to create an object of the <code>ProjectManager</code> class.
      *
      * @return a newly created instance of the class.
      * @param request
-     *            an <code>HttpServletRequest</code> obejct, where created
+     *            an <code>HttpServletRequest</code> object, where created
      *            <code>ProjectManager</code> object can be stored to let reusing it later for the
      *            same request.
      * @throws IllegalArgumentException
      *             if <code>request</code> parameter is <code>null</code>.
-     * @throws com.topcoder.management.project.ConfigurationException
-     *             if error occurs while loading configuration settings, or any of the required
-     *             configuration parameters are missing.
      */
-    public static ProjectManager createProjectManager(HttpServletRequest request)
-        throws com.topcoder.management.project.ConfigurationException {
+    public static ProjectManager createProjectManager(HttpServletRequest request) {
         // Validate parameter
         validateParameterNotNull(request, "request");
 
@@ -2429,7 +2425,7 @@ public class ActionsHelper {
         // If this is the first time this method is called for the request,
         // create a new instance of the object
         if (manager == null) {
-            manager = new ProjectManagerImpl();
+            manager  = managerCreationHelper.getProjectManager();
             // Place newly-created object into the request as attribute
             request.setAttribute("projectManager", manager);
         }
@@ -2443,15 +2439,15 @@ public class ActionsHelper {
      *
      * @return a newly created instance of the class.
      * @param request
-     *            an <code>HttpServletRequest</code> obejct, where created
+     *            an <code>HttpServletRequest</code> object, where created
      *            <code>ResourceManager</code> object can be stored to let reusing it later for
      *            the same request.
      * @throws IllegalArgumentException
      *             if <code>request</code> parameter is <code>null</code>.
-     * @throws BaseException
+     * @throws BaseRuntimeException
      *             if any error occurs.
      */
-    public static ResourceManager createResourceManager(HttpServletRequest request) throws BaseException {
+    public static ResourceManager createResourceManager(HttpServletRequest request) {
         // Validate parameter
         validateParameterNotNull(request, "request");
 
@@ -2460,48 +2456,7 @@ public class ActionsHelper {
         // If this is the first time this method is called for the request,
         // create a new instance of the object
         if (manager == null) {
-            // get connection factory
-            DBConnectionFactory dbconn = new DBConnectionFactoryImpl(DB_CONNECTION_NAMESPACE);
-            // get the persistence
-            ResourcePersistence persistence = new SqlResourcePersistence(dbconn);
-
-            // get the id generators
-            IDGenerator resourceIdGenerator =
-                    IDGeneratorFactory.getIDGenerator(PersistenceResourceManager.RESOURCE_ID_GENERATOR_NAME);
-            IDGenerator resourceRoleIdGenerator =
-                    IDGeneratorFactory.getIDGenerator(PersistenceResourceManager.RESOURCE_ROLE_ID_GENERATOR_NAME);
-            IDGenerator notificationTypeIdGenerator =
-                    IDGeneratorFactory.getIDGenerator(PersistenceResourceManager.NOTIFICATION_TYPE_ID_GENERATOR_NAME);
-
-            // get the search bundles
-            SearchBundleManager searchBundleManager =
-                    new SearchBundleManager("com.topcoder.searchbuilder.common");
-
-            SearchBundle resourceSearchBundle = searchBundleManager.getSearchBundle(
-                    PersistenceResourceManager.RESOURCE_SEARCH_BUNDLE_NAME);
-            // set it searchable
-            setAllFieldsSearchable(resourceSearchBundle);
-
-            SearchBundle resourceRoleSearchBundle = searchBundleManager.getSearchBundle(
-                    PersistenceResourceManager.RESOURCE_ROLE_SEARCH_BUNDLE_NAME);
-            // set it searchable
-            setAllFieldsSearchable(resourceRoleSearchBundle);
-
-            SearchBundle notificationSearchBundle = searchBundleManager.getSearchBundle(
-                    PersistenceResourceManager.NOTIFICATION_SEARCH_BUNDLE_NAME);
-            // set it searchable
-            setAllFieldsSearchable(notificationSearchBundle);
-
-            SearchBundle notificationTypeSearchBundle = searchBundleManager.getSearchBundle(
-                    PersistenceResourceManager.NOTIFICATION_TYPE_SEARCH_BUNDLE_NAME);
-            // set it searchable
-            setAllFieldsSearchable(notificationTypeSearchBundle);
-
-            // initialize the PersistenceResourceManager
-            manager = new PersistenceResourceManager(persistence, resourceSearchBundle,
-                    resourceRoleSearchBundle, notificationSearchBundle,
-                    notificationTypeSearchBundle, resourceIdGenerator,
-                    resourceRoleIdGenerator, notificationTypeIdGenerator);
+            manager = managerCreationHelper.getResourceManager();
             // Place newly-created object into the request as attribute
             request.setAttribute("resourceManager", manager);
         }
@@ -2515,7 +2470,7 @@ public class ActionsHelper {
      *
      * @return a newly created instance of the class.
      * @param request
-     *            an <code>HttpServletRequest</code> obejct, where created
+     *            an <code>HttpServletRequest</code> object, where created
      *            <code>ReviewManager</code> object can be stored to let reusing it later for the
      *            same request.
      * @throws IllegalArgumentException
@@ -2549,7 +2504,7 @@ public class ActionsHelper {
      *
      * @return a newly created instance of the class.
      * @param request
-     *            an <code>HttpServletRequest</code> obejct, where created
+     *            an <code>HttpServletRequest</code> object, where created
      *            <code>ReviewScoreAggregator</code> object can be stored to let reusing it later
      *            for the same request.
      * @throws IllegalArgumentException
@@ -2582,7 +2537,7 @@ public class ActionsHelper {
      *
      * @return a newly created instance of the class.
      * @param request
-     *            an <code>HttpServletRequest</code> obejct, where created
+     *            an <code>HttpServletRequest</code> object, where created
      *            <code>ScorecardManager</code> object can be stored to let reusing it later for
      *            the same request.
      * @throws IllegalArgumentException
@@ -2615,7 +2570,7 @@ public class ActionsHelper {
      *
      * @return a newly created instance of the class.
      * @param request
-     *            an <code>HttpServletRequest</code> obejct, where created
+     *            an <code>HttpServletRequest</code> object, where created
      *            <code>DeliverableManager</code> object can be stored to let reusing it later for
      *            the same request.
      * @throws ConfigurationException
@@ -2688,15 +2643,15 @@ public class ActionsHelper {
      *
      * @return a newly created instance of the class.
      * @param request
-     *            an <code>HttpServletRequest</code> obejct, where created
+     *            an <code>HttpServletRequest</code> object, where created
      *            <code>UploadManager</code> object can be stored to let reusing it later for the
      *            same request.
      * @throws IllegalArgumentException
      *             if <code>request</code> parameter is <code>null</code>.
-     * @throws BaseException
+     * @throws BaseRuntimeException
      *             if any error occurs.
      */
-    public static UploadManager createUploadManager(HttpServletRequest request) throws BaseException {
+    public static UploadManager createUploadManager(HttpServletRequest request) {
         // Validate parameter
         validateParameterNotNull(request, "request");
 
@@ -2705,37 +2660,7 @@ public class ActionsHelper {
         // If this is the first time this method is called for the request,
         // create a new instance of the object
         if (manager == null) {
-            // Get connection factory
-            DBConnectionFactory dbconn = new DBConnectionFactoryImpl(DB_CONNECTION_NAMESPACE);
-            // Get the persistence
-            UploadPersistence persistence = new SqlUploadPersistence(dbconn);
-
-            // Get the ID generators
-            IDGenerator uploadIdGenerator =
-                    IDGeneratorFactory.getIDGenerator(PersistenceUploadManager.UPLOAD_ID_GENERATOR_NAME);
-            IDGenerator uploadTypeIdGenerator =
-                    IDGeneratorFactory.getIDGenerator(PersistenceUploadManager.UPLOAD_TYPE_ID_GENERATOR_NAME);
-            IDGenerator uploadStatusIdGenerator =
-                    IDGeneratorFactory.getIDGenerator(PersistenceUploadManager.UPLOAD_STATUS_ID_GENERATOR_NAME);
-            IDGenerator submissionIdGenerator =
-                    IDGeneratorFactory.getIDGenerator(PersistenceUploadManager.SUBMISSION_ID_GENERATOR_NAME);
-            IDGenerator submissionStatusIdGenerator =
-                    IDGeneratorFactory.getIDGenerator(PersistenceUploadManager.SUBMISSION_STATUS_ID_GENERATOR_NAME);
-
-            // Get the search bundles
-            SearchBundleManager searchBundleManager =
-                    new SearchBundleManager("com.topcoder.searchbuilder.common");
-
-            SearchBundle uploadSearchBundle = searchBundleManager.getSearchBundle(
-                    PersistenceUploadManager.UPLOAD_SEARCH_BUNDLE_NAME);
-            SearchBundle submissionSearchBundle = searchBundleManager.getSearchBundle(
-                    PersistenceUploadManager.SUBMISSION_SEARCH_BUNDLE_NAME);
-
-            // Initialize the PersistenceUploadManager
-            manager = new PersistenceUploadManager(persistence,
-                    uploadSearchBundle, submissionSearchBundle,
-                    uploadIdGenerator, uploadTypeIdGenerator, uploadStatusIdGenerator,
-                    submissionIdGenerator, submissionStatusIdGenerator);
+            manager = managerCreationHelper.getUploadManager();
             // Place newly-created object into the request as attribute
             request.setAttribute("uploadManager", manager);
         }
@@ -2749,15 +2674,15 @@ public class ActionsHelper {
      *
      * @return a newly created instance of the class.
      * @param request
-     *            an <code>HttpServletRequest</code> obejct, where created
+     *            an <code>HttpServletRequest</code> object, where created
      *            <code>ScreeningManager</code> object can be stored to let reusing it later for
      *            the same request.
      * @throws IllegalArgumentException
      *             if <code>request</code> parameter is <code>null</code>.
-     * @throws BaseException
+     * @throws BaseRuntimeException
      *             if any error occurs.
      */
-    public static ScreeningManager createScreeningManager(HttpServletRequest request) throws BaseException {
+    public static ScreeningManager createScreeningManager(HttpServletRequest request) {
         // Validate parameter
         validateParameterNotNull(request, "request");
 
@@ -2766,7 +2691,7 @@ public class ActionsHelper {
         // If this is the first time this method is called for the request,
         // create a new instance of the object
         if (manager == null) {
-            manager = ScreeningManagerFactory.createScreeningManager();
+            manager = managerCreationHelper.getScreeningManager();
             // Place newly-created object into the request as attribute
             request.setAttribute("screeningManager", manager);
         }
@@ -2780,7 +2705,7 @@ public class ActionsHelper {
      *
      * @return a newly created instance of the class.
      * @param request
-     *            an <code>HttpServletRequest</code> obejct, where created
+     *            an <code>HttpServletRequest</code> object, where created
      *            <code>UserRetrieval</code> object can be stored to let reusing it later for the
      *            same request.
      * @throws IllegalArgumentException
@@ -2813,7 +2738,7 @@ public class ActionsHelper {
      *
      * @return a newly created instance of the class.
      * @param request
-     *            an <code>HttpServletRequest</code> obejct, where created
+     *            an <code>HttpServletRequest</code> object, where created
      *            <code>UserRetrieval</code> object can be stored to let reusing it later for the
      *            same request.
      * @throws com.topcoder.servlet.request.ConfigurationException
@@ -2880,46 +2805,12 @@ public class ActionsHelper {
     }
 
     /**
-     * Sets the searchable fields to the search bundle.
-     *
-     * @param searchBundle
-     *            the search bundle to set.
-     */
-    private static void setAllFieldsSearchable(SearchBundle searchBundle) {
-        Map fields = new HashMap();
-
-        // set the resource filter fields
-        fields.put(ResourceFilterBuilder.RESOURCE_ID_FIELD_NAME, LongValidator.isPositive());
-        fields.put(ResourceFilterBuilder.PHASE_ID_FIELD_NAME, LongValidator.isPositive());
-        fields.put(ResourceFilterBuilder.PROJECT_ID_FIELD_NAME, LongValidator.isPositive());
-        fields.put(ResourceFilterBuilder.SUBMISSION_ID_FIELD_NAME, LongValidator.isPositive());
-        fields.put(ResourceFilterBuilder.RESOURCE_ROLE_ID_FIELD_NAME, LongValidator.isPositive());
-        fields.put(ResourceFilterBuilder.EXTENSION_PROPERTY_NAME_FIELD_NAME, StringValidator.startsWith(""));
-        fields.put(ResourceFilterBuilder.EXTENSION_PROPERTY_VALUE_FIELD_NAME, StringValidator.startsWith(""));
-
-        // set the resource role filter fields
-        fields.put(ResourceRoleFilterBuilder.NAME_FIELD_NAME, StringValidator.startsWith(""));
-        fields.put(ResourceRoleFilterBuilder.PHASE_TYPE_ID_FIELD_NAME, LongValidator.isPositive());
-        fields.put(ResourceRoleFilterBuilder.RESOURCE_ROLE_ID_FIELD_NAME, LongValidator.isPositive());
-
-        // set the notification filter fields
-        fields.put(NotificationFilterBuilder.EXTERNAL_REF_ID_FIELD_NAME, LongValidator.isPositive());
-        fields.put(NotificationFilterBuilder.NOTIFICATION_TYPE_ID_FIELD_NAME, LongValidator.isPositive());
-        fields.put(NotificationFilterBuilder.PROJECT_ID_FIELD_NAME, LongValidator.isPositive());
-
-        // set the notification type filter fields
-        fields.put(NotificationTypeFilterBuilder.NOTIFICATION_TYPE_ID_FIELD_NAME, LongValidator.isPositive());
-        fields.put(NotificationTypeFilterBuilder.NAME_FIELD_NAME, StringValidator.startsWith(""));
-
-        searchBundle.setSearchableFields(fields);
-    }
-
-    /**
      * Set Completion Timestamp while the project turn to completed, Cancelled - Failed Review or Deleted status.
      *
      * @param project the project instance
      * @param newProjectStatus new project status
      * @param format the date format
+     * @throws BaseException if any
      */
     static void setProjectCompletionDate(Project project, ProjectStatus newProjectStatus, Format format)
     throws BaseException {
@@ -3088,6 +2979,7 @@ public class ActionsHelper {
     	PreparedStatement reliabilityStmt = null;
     	PreparedStatement componentInquiryStmt = null;
     	long categoryId = project.getProjectCategory().getId();
+//       OrChange - No modification needed as only design/development/assembly will modify the project result table.
     	if (categoryId != 1 && categoryId != 2 && categoryId != 14) {
     		// design/development/assembly project need project_result
     		return;
@@ -3363,6 +3255,7 @@ public class ActionsHelper {
     	Connection conn = null;
     	PreparedStatement ps = null;
     	long categoryId = project.getProjectCategory().getId();
+//       OrChange - No modification needed as only design/development will modify the project result table.
     	if (categoryId != 1 && categoryId != 2) {
     		// design/development project need project_result
     		return;
@@ -3610,4 +3503,15 @@ public class ActionsHelper {
 			return mapping.findForward(Constants.NOT_AUTHORIZED_FORWARD_NAME);
 		}
 	}
+
+    /**
+     * Returns true if the given project is of category studio.
+     * 
+     * @param project
+     *            the project to be be checked.
+     * @return true, if the project is of type studio.
+     */
+    public static boolean isStudioProject(Project project) {
+        return project.getProjectCategory().getDescription().equals("Studio");
+    }
 }

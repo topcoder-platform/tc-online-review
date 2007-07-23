@@ -59,23 +59,19 @@ public class AutoPaymentUtil {
      *
      * @see #getPassingSubmitterIdByPlace(long, long, Connection)
      */
+    // OrChange - Modified to take the placement from the submission table
     private static final String SELECT_PASSED_REVIEW_RESOURCE_ID_FOR_PLACE =
         "SELECT DISTINCT resource.resource_id " +
         "  FROM resource, " +
-        "       resource_info, " +
-        "       resource_info_type_lu, " +
         "       upload, " +
         "       submission, " +
         "       submission_status_lu " +
-        " WHERE resource.resource_id = resource_info.resource_id " +
-        "   AND upload.resource_id = resource.resource_id " +
+        " WHERE upload.resource_id = resource.resource_id " +
         "   AND submission.upload_id = upload.upload_id " +
         "   AND submission.submission_status_id = submission_status_lu.submission_status_id " +
         "   AND submission_status_lu.name in ('Active', 'Completed Without Win') " +
-        "   AND resource_info_type_lu.resource_info_type_id = resource_info.resource_info_type_id " +
-        "   AND resource_info_type_lu.name = 'Placement' " +
         "   AND resource.project_id = ? " +
-        "   AND resource_info.value = ? ";
+        "   AND submission.placement = ? ";
 
     private static final String USER_ID = "phase_handler";
 
@@ -126,6 +122,7 @@ public class AutoPaymentUtil {
         throws SQLException {
         long projectCategoryId = getProjectCategoryId(projectId, conn);
 
+        // OrChange - no modification needed as the current logic is applied only to design and development.
         if (projectCategoryId != 1 && projectCategoryId != 2) {
         	// Logic only apply to component
         	return;
@@ -355,6 +352,10 @@ public class AutoPaymentUtil {
      */
     static void populateSubmitterPayments(long projectId, Connection conn)
         throws SQLException {
+        // OrChange - Do not modify the payment if the project is a studio
+        if(PRHelper.isStudioProject(projectId)) {
+            return;
+        }
         // Retrieve the price
         double price = getPriceByProjectId(projectId, conn);
 

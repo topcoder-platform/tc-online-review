@@ -43,6 +43,19 @@
         <servlet-class>com.cronos.onlinereview.ajax.AjaxSupportServlet</servlet-class>
     </servlet>
 
+	<!-- Axis HTTP transport Servlet -->
+	<servlet>
+		<servlet-name>AxisServlet</servlet-name>
+		<display-name>Apache-Axis Servlet</display-name>
+		<servlet-class>
+			org.apache.axis.transport.http.AxisServlet
+		</servlet-class>
+		<!--  init-param>
+			<param-name>use-servlet-security</param-name>
+			<param-value>true</param-value>
+			</init-param -->
+	</servlet>
+
     <!-- Standard Action Servlet Mapping -->
     <servlet-mapping>
         <servlet-name>action</servlet-name>
@@ -55,6 +68,21 @@
         <url-pattern>/ajaxSupport</url-pattern>
     </servlet-mapping>
 
+  <!-- Axis HTTP transport Servlet Mappings -->
+	<servlet-mapping>
+		<servlet-name>AxisServlet</servlet-name>
+		<url-pattern>/servlet/AxisServlet</url-pattern>
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>AxisServlet</servlet-name>
+		<url-pattern>*.jws</url-pattern>
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>AxisServlet</servlet-name>
+		<url-pattern>/services/*</url-pattern>
+	</servlet-mapping>
 
    <session-config>
       <session-timeout>120</session-timeout>
@@ -65,7 +93,7 @@
         <welcome-file>index.html</welcome-file>
         <welcome-file>index.jsp</welcome-file>
     </welcome-file-list>
-    
+
     <!-- Error Page -->
     <error-page>
     	<exception-type>java.lang.Throwable</exception-type>

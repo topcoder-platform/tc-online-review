@@ -358,8 +358,7 @@ final class PhasesDetailsServices {
 
                 for (int j = 0; j < submissions.length; ++j) {
                     for (int k = 0; k < my.length; ++k) {
-                        if (my[k].getSubmission() != null &&
-                                my[k].getSubmission().longValue() == submissions[j].getId()) {
+                        if (my[k].containsSubmission(submissions[j].getId())) {
                             tempSubs.add(submissions[j]);
                             tasks.add(allTasks[j]);
                         }

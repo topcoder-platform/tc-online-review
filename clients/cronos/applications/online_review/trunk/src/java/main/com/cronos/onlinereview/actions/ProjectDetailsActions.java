@@ -647,7 +647,7 @@ public class ProjectDetailsActions extends DispatchAction {
         UploadedFile uploadedFile = uploadResult.getUploadedFile("file");
 
         // Get my resource
-        Resource resource = ActionsHelper.getMyResourceForPhase(request, null);
+        Resource resource = ActionsHelper.getMyResourceForRole(request, "Submitter");
 
         // Obtain an instance of Upload Manager
         UploadManager upMgr = ActionsHelper.createUploadManager(request);
@@ -660,58 +660,56 @@ public class ProjectDetailsActions extends DispatchAction {
 
         Filter filter = new AndFilter(Arrays.asList(new Filter[] {filterProject, filterResource, filterStatus}));
 
-        Submission[] submissions = upMgr.searchSubmissions(filter);
-        Submission submission = (submissions.length != 0) ? submissions[0] : null;
-        Upload upload = (submission != null) ? submission.getUpload() : null;
-        Upload deletedUpload = null;
+        Submission[] oldSubmissions = upMgr.searchSubmissions(filter);
+        
+        // Modification for the new requirement - uploading new submission/upload every time.
+        
+        // Begins - OrChange - Modified to create upload/submission pair always
+        // Always create a new submission/ upload
+        Submission submission = new Submission();
+        Upload upload = new Upload();
 
         UploadStatus[] uploadStatuses = upMgr.getAllUploadStatuses();
 
-        if (upload == null) {
-            upload = new Upload();
+        UploadType[] uploadTypes = upMgr.getAllUploadTypes();
 
-            UploadType[] uploadTypes = upMgr.getAllUploadTypes();
+        upload.setProject(project.getId());
+        upload.setOwner(resource.getId());
+        upload.setUploadStatus(ActionsHelper.findUploadStatusByName(uploadStatuses, "Active"));
+        upload.setUploadType(ActionsHelper.findUploadTypeByName(uploadTypes, "Submission"));
+        upload.setParameter(uploadedFile.getFileId());
 
-            upload.setProject(project.getId());
-            upload.setOwner(resource.getId());
-            upload.setUploadStatus(ActionsHelper.findUploadStatusByName(uploadStatuses, "Active"));
-            upload.setUploadType(ActionsHelper.findUploadTypeByName(uploadTypes, "Submission"));
-            upload.setParameter(uploadedFile.getFileId());
-
-            submission = new Submission();
-            submission.setUpload(upload);
-            submission.setSubmissionStatus(ActionsHelper.findSubmissionStatusByName(submissionStatuses, "Active"));
-        } else {
-            deletedUpload = upload;
-
-            upload = new Upload();
-            upload.setProject(deletedUpload.getProject());
-            upload.setOwner(deletedUpload.getOwner());
-            upload.setUploadStatus(deletedUpload.getUploadStatus());
-            upload.setUploadType(deletedUpload.getUploadType());
-            upload.setParameter(uploadedFile.getFileId());
-
-            submission.setUpload(upload);
-
-            deletedUpload.setUploadStatus(ActionsHelper.findUploadStatusByName(uploadStatuses, "Deleted"));
-        }
+        submission.setUpload(upload);
+        submission.setSubmissionStatus(ActionsHelper.findSubmissionStatusByName(submissionStatuses, "Active"));
 
         // Obtain an instance of Screening Manager
         ScreeningManager scrMgr = ActionsHelper.createScreeningManager(request);
         // Get the name (id) of the user performing the operations
         String operator = Long.toString(AuthorizationHelper.getLoggedInUserId(request));
 
-        if (deletedUpload != null) {
-            upMgr.updateUpload(deletedUpload, operator);
-        }
+        // If the project DOESN'T allow multiple submissions hence its property "Allow
+        // multiple submissions" will be false
+        Boolean allowOldSubmissions = Boolean.parseBoolean((String) project
+                .getProperty("Allow multiple submissions"));
+        
         upMgr.createUpload(upload, operator);
-
-        if (submissions.length == 0) {
-            upMgr.createSubmission(submission, operator);
-        } else {
-            upMgr.updateSubmission(submission, operator);
+        upMgr.createSubmission(submission, operator);
+        resource.addSubmission(submission.getId());
+        ActionsHelper.createResourceManager(request).updateResource(resource, operator);
+        log.debug("Allow Multiple Submissions : "+allowOldSubmissions);
+        // Now depending on whether the project allows multiple submissions or not mark the old submission
+        // and the upload as deleted.
+        if (oldSubmissions.length != 0 && !allowOldSubmissions) {
+        	SubmissionStatus deleteSubmissionStatus = ActionsHelper.findSubmissionStatusByName(submissionStatuses, "Deleted");
+            UploadStatus deleteUploadStatus = ActionsHelper.findUploadStatusByName(uploadStatuses, "Deleted");
+            for (Submission oldSubmission : oldSubmissions) {
+                oldSubmission.setSubmissionStatus(deleteSubmissionStatus);
+                oldSubmission.getUpload().setUploadStatus(deleteUploadStatus);
+                upMgr.updateSubmission(oldSubmission, operator);
+            }
         }
-
+        
+        //  ends
         scrMgr.initiateScreening(upload.getId(), operator);
 
         return ActionsHelper.cloneForwardAndAppendToPath(

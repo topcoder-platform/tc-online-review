@@ -497,7 +497,30 @@
                     <Value>com.topcoder.management.review.scorecalculator.calculators.Scale10</Value>
                 </Property>
             </Property>
-
+			<!-- Configuration for Scale (0-3) question type -->
+            <Property name="Scale3">
+                <Property name="question_type">
+                    <Value>5</Value>
+                </Property>
+                <Property name="class">
+                    <Value>com.topcoder.management.review.scorecalculator.calculators.ScaledScoreCalculator</Value>
+                </Property>
+                <Property name="namespace">
+                    <Value>com.topcoder.management.review.scorecalculator.calculators.Scale3</Value>
+                </Property>
+            </Property>
+            <!-- Configuration for Scale (0-9) question type -->
+            <Property name="Scale9">
+                <Property name="question_type">
+                    <Value>6</Value>
+                </Property>
+                <Property name="class">
+                    <Value>com.topcoder.management.review.scorecalculator.calculators.ScaledScoreCalculator</Value>
+                </Property>
+                <Property name="namespace">
+                    <Value>com.topcoder.management.review.scorecalculator.calculators.Scale9</Value>
+                </Property>
+            </Property>
             <!-- Configuration for Test Case question type -->
             <Property name="dynamicCalculator">
                 <Property name="question_type">
@@ -546,7 +569,17 @@
         </Property>
     </Config>
 
-
+	<Config name="com.topcoder.management.review.scorecalculator.calculators.Scale3">
+        <Property name="default_scale">
+            <Value>3</Value>
+        </Property>
+    </Config>
+    
+    <Config name="com.topcoder.management.review.scorecalculator.calculators.Scale9">
+        <Property name="default_scale">
+            <Value>9</Value>
+        </Property>
+    </Config>
     <!--
         =============== Configuration for Workdays component ===============
     -->
@@ -1430,6 +1463,7 @@
             <Value>/home/onlinereview/TCSTemplate_Design.xml</Value>
             <Value>/home/onlinereview/TCSTemplate_Development.xml</Value>
             <Value>/home/onlinereview/TCSTemplate_Application.xml</Value>
+            <Value>/home/onlinereview/TCSTemplate_Studio.xml</Value>
         </Property>
     </Config>
 
@@ -1778,7 +1812,20 @@
 
                 <Property name="context">
                     <Value>
-                        SELECT DISTINCT scorecard.scorecard_id
+                        SELECT DISTINCT scorecard_id,
+                               scorecard.scorecard_status_id AS status_id,
+                               scorecard.scorecard_type_id AS type_id,
+                               scorecard.project_category_id AS project_category_id,
+                               scorecard.name AS scorecard_name,
+                               version,
+                               min_score,
+                               max_score,
+                               scorecard.create_user AS create_user,
+                               scorecard.create_date AS create_date,
+                               scorecard.modify_user AS modify_user,
+                               scorecard.modify_date AS modify_date,
+                               scorecard_status_lu.name AS status_name,
+                               scorecard_type_lu.name AS type_name
                           FROM scorecard,
                                scorecard_status_lu,
                                scorecard_type_lu,
@@ -1905,7 +1952,11 @@
                         SELECT     deliverable_id,
                                    resource.resource_id,
                                    project_phase.project_phase_id
-                                   submission_id
+                                   submission.submission_id,
+                                   submission.screening_score,
+                                   submission.initial_score,
+                                   submission.final_score,
+                                   submission.placement
                               FROM deliverable_lu,
                                    resource,
                                    project_phase
@@ -1973,10 +2024,53 @@
                 </Property>
                 <Property name="context">
                     <Value>
-                        SELECT submission_id
+                        SELECT DISTINCT submission.submission_id AS submission_id,
+                               submission.create_user AS submission_create_user,
+                               submission.create_date AS submission_create_date,
+                               submission.modify_user AS submission_modify_user,
+                               submission.modify_date AS submission_modify_date,
+                               submission_status_lu.submission_status_id AS submission_status_id,
+                               submission_status_lu.create_user AS submission_status_create_user,
+                               submission_status_lu.create_date AS submission_status_create_date,
+                               submission_status_lu.modify_user AS submission_status_modify_user,
+                               submission_status_lu.modify_date AS submission_status_modify_date,
+                               submission_status_lu.name AS submission_status_name,
+                               submission_status_lu.description AS submission_status_description,
+                               upload.upload_id AS upload_id,
+                               upload.create_user AS upload_create_user,
+                               upload.create_date AS upload_create_date,
+                               upload.modify_user AS upload_modify_user,
+                               upload.modify_date AS upload_modify_date,
+                               upload.project_id AS project_id,
+                               upload.resource_id AS resource_id,
+                               upload.parameter AS upload_parameter,
+                               upload_type_lu.upload_type_id AS upload_type_id,
+                               upload_type_lu.create_user AS upload_type_create_user,
+                               upload_type_lu.create_date AS upload_type_create_date,
+                               upload_type_lu.modify_user AS upload_type_modify_user,
+                               upload_type_lu.modify_date AS upload_type_modify_date,
+                               upload_type_lu.name AS upload_type_name,
+                               upload_type_lu.description AS upload_type_description,
+                               upload_status_lu.upload_status_id AS upload_status_id,
+                               upload_status_lu.create_user AS upload_status_create_user,
+                               upload_status_lu.create_date AS upload_status_create_date,
+                               upload_status_lu.modify_user AS upload_status_modify_user,
+                               upload_status_lu.modify_date AS upload_status_modify_date,
+                               upload_status_lu.name AS upload_status_name,
+                               upload_status_lu.description AS upload_status_description,
+                               submission.screening_score,
+                        	   submission.initial_score,
+                        	   submission.final_score,
+                        	   submission.placement
                           FROM submission,
-                               upload
+                               upload,
+                               submission_status_lu,
+                               upload_type_lu,
+                               upload_status_lu
                          WHERE submission.upload_id = upload.upload_id
+                           AND submission.submission_status_id = submission_status_lu.submission_status_id
+                           AND upload.upload_type_id = upload_type_lu.upload_type_id
+                           AND upload.upload_status_id = upload_status_lu.upload_status_id
                            AND
                     </Value>
                 </Property>
@@ -2025,9 +2119,34 @@
                 </Property>
                 <Property name="context">
                     <Value>
-                        SELECT upload_id
-                          FROM upload
-                         WHERE
+                        SELECT DISTINCT upload.upload_id AS upload_id,
+                               upload.create_user AS upload_create_user,
+                               upload.create_date AS upload_create_date,
+                               upload.modify_user AS upload_modify_user,
+                               upload.modify_date AS upload_modify_date,
+                               upload.project_id AS project_id,
+                               upload.resource_id AS resource_id,
+                               upload.parameter AS upload_parameter,
+                               upload_type_lu.upload_type_id AS upload_type_id,
+                               upload_type_lu.create_user AS upload_type_create_user,
+                               upload_type_lu.create_date AS upload_type_create_date,
+                               upload_type_lu.modify_user AS upload_type_modify_user,
+                               upload_type_lu.modify_date AS upload_type_modify_date,
+                               upload_type_lu.name AS upload_type_name,
+                               upload_type_lu.description AS upload_type_description,
+                               upload_status_lu.upload_status_id AS upload_status_id,
+                               upload_status_lu.create_user AS upload_status_create_user,
+                               upload_status_lu.create_date AS upload_status_create_date,
+                               upload_status_lu.modify_user AS upload_status_modify_user,
+                               upload_status_lu.modify_date AS upload_status_modify_date,
+                               upload_status_lu.name AS upload_status_name,
+                               upload_status_lu.description AS upload_status_description
+                          FROM upload,
+                               upload_type_lu,
+                               upload_status_lu
+                         WHERE upload.upload_type_id = upload_type_lu.upload_type_id
+                           AND upload.upload_status_id = upload_status_lu.upload_status_id
+                           AND
                     </Value>
                 </Property>
                 <Property name="alias">
@@ -2366,7 +2485,16 @@
 
                 <Property name="context">
                     <Value>
-                        SELECT DISTINCT review_id
+                        SELECT DISTINCT review_id,
+                               review.resource_id AS resource_id,
+                               review.submission_id AS submission_id,
+                               review.scorecard_id AS scorecard_id,
+                               committed,
+                               score,
+                               review.create_user AS create_user,
+                               review.create_date AS create_date,
+                               review.modify_user AS modify_user,
+                               review.modify_date AS modify_date
                           FROM review,
                                scorecard,
                                resource
@@ -2767,6 +2895,55 @@
                 </Property>
                 <Property name="Icon">
                     <Value>IconLegacy.gif</Value>
+                </Property>
+            </Property>
+            <!--  TODO : Change the studio icon, currently using dev icon for testing. -->
+            <Property name="Icon Sets">
+                <Property name="IconSmall">
+                    <Value>iconBlankSm.png</Value>
+                </Property>
+                <Property name="Icon">
+                    <Value>iconBlank.png</Value>
+                </Property>
+            </Property>
+            <Property name="Storyboards">
+                <Property name="IconSmall">
+                    <Value>iconBlankSm.png</Value>
+                </Property>
+                <Property name="Icon">
+                    <Value>iconBlank.png</Value>
+                </Property>
+            </Property>
+            <Property name="Wireframes">
+                <Property name="IconSmall">
+                    <Value>iconBlankSm.png</Value>
+                </Property>
+                <Property name="Icon">
+                    <Value>iconBlank.png</Value>
+                </Property>
+            </Property>
+            <Property name="Prototypes">
+                <Property name="IconSmall">
+                    <Value>iconBlankSm.png</Value>
+                </Property>
+                <Property name="Icon">
+                    <Value>iconBlank.png</Value>
+                </Property>
+            </Property>
+            <Property name="Logos">
+                <Property name="IconSmall">
+                    <Value>iconBlankSm.png</Value>
+                </Property>
+                <Property name="Icon">
+                    <Value>iconBlank.png</Value>
+                </Property>
+            </Property>
+            <Property name="Print">
+                <Property name="IconSmall">
+                    <Value>iconBlankSm.png</Value>
+                </Property>
+                <Property name="Icon">
+                    <Value>iconBlank.png</Value>
                 </Property>
             </Property>
         </Property>
@@ -3350,4 +3527,56 @@
             </Property>
         </Property>
     </Config>
+    <!-- 
+    Configuration for the Online Web services component.
+     -->
+     <Config name="com.cronos.onlinereview.services.uploads.impl.DefaultUploadServices">
+		<Property name="objectFactoryNamespace">
+			<Value>com.cronos.onlinereview.services.uploads.impl.DefaultUploadServices.ObjectFactory</Value>
+		</Property>
+		<Property name="managersProviderIdentifier">
+			<Value>managersProvider</Value>
+		</Property>
+	</Config>
+	
+	<Config name="com.cronos.onlinereview.services.uploads.impl.DefaultUploadExternalServices">
+		<Property name="objectFactoryNamespace">
+			<Value>com.cronos.onlinereview.services.uploads.impl.DefaultUploadServices.ObjectFactory</Value>
+		</Property>
+		<Property name="uploadServicesIdentifier">
+			<Value>uploadServices</Value>
+		</Property>
+		<!-- file name should have "_" in it. -->
+		<Property name="filenamePattern">
+			<Value>submission_{0}_{1}</Value>
+		</Property>
+		<!-- Needs to be updated correctly -->
+		<Property name="fileStorageLocation">
+			<Value>/home/onlinereview/downloads</Value>
+		</Property>
+	</Config>
+	
+	<Config name="com.cronos.onlinereview.services.uploads.impl.DefaultUploadServices.ObjectFactory">
+      	<Property name="managersProvider">
+      		<Property name="type">
+        		<Value>com.cronos.onlinereview.actions.ManagerCreationHelper</Value>
+      		</Property>
+      	</Property>
+      	<Property name="uploadServices">
+      		<Property name="type">
+        		<Value>com.cronos.onlinereview.services.uploads.impl.DefaultUploadServices</Value>
+      		</Property>
+      		<Property name="params">
+                <Property name="param1">
+                    <Property name="type">
+                        <Value>String</Value>
+                    </Property>
+                    <Property name="value">
+                        <Value>com.cronos.onlinereview.services.uploads.impl.DefaultUploadServices</Value>
+                    </Property>
+                </Property>
+            </Property>
+      	</Property>
+	</Config>
+	
 </CMConfig>
