@@ -89,7 +89,7 @@ public class ORMigration {
     /**
      * The operator name for the created_user and modified_user.
      */
-    private static final String OPERATOR = "Converter";
+    private static final String OPERATOR = "StudioConv";
 
     /**
      * Final deletion of the resource info.
@@ -298,7 +298,7 @@ public class ORMigration {
             execBatchStatements(batchStatements, connection, preparedStatement);
             
             int resource_submission_quantity = connection.createStatement().executeUpdate("insert into resource_submission (resource_id, submission_id, create_user, create_date, modify_user, modify_date)"
-            		+ " select u.resource_id, s.submission_id, '" + OPERATOR + "_1', CURRENT,  '" + OPERATOR + "_1', CURRENT"
+            		+ " select u.resource_id, s.submission_id, '" + OPERATOR + "', CURRENT,  '" + OPERATOR + "', CURRENT"
             		+ " from submission s, upload u"
             		+ " where s.upload_id = u.upload_id and u.upload_type_id = 1"
             		+ " and not exists (select * from resource_submission rs where" 
