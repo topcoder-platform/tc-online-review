@@ -1463,6 +1463,7 @@
             <Value>/home/onlinereview/TCSTemplate_Design.xml</Value>
             <Value>/home/onlinereview/TCSTemplate_Development.xml</Value>
             <Value>/home/onlinereview/TCSTemplate_Application.xml</Value>
+            <Value>/home/onlinereview/TCSTemplate_Studio.xml</Value>
         </Property>
     </Config>
 
