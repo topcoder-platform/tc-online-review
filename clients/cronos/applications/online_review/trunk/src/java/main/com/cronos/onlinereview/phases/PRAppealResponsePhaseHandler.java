@@ -10,7 +10,10 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import com.cronos.onlinereview.actions.ManagerCreationHelper;
 import com.cronos.onlinereview.external.ExternalUser;
+import com.topcoder.management.deliverable.Submission;
+import com.topcoder.management.deliverable.UploadManager;
 import com.topcoder.management.phase.PhaseHandlingException;
 import com.topcoder.management.phase.PhaseManagementException;
 import com.topcoder.management.project.Project;
@@ -243,8 +246,19 @@ public class PRAppealResponsePhaseHandler extends AppealsResponsePhaseHandler {
 				} else if ("PROJECT_NAME".equals(field.getName())) {
 					field.setValue((String) project.getProperty(PROJECT_NAME));
 				} else if ("SCORE".equals(field.getName())) {
-					field.setValue((String) getResourceForProjectAndUser(project, 
-							String.valueOf(user.getId())).getProperty("Final Score")); 
+					// get all the submissions for the user in the project
+                    Long[] submissions = getResourceForProjectAndUser(project, 
+                            String.valueOf(user.getId())).getSubmissions();
+                    int placement = position.equals("1st") ? 1 : 2;
+                    UploadManager uploadManager = new ManagerCreationHelper().getUploadManager();
+                    for (Long submissionId : submissions) {
+                        // get the score for the placement depending on the position
+                        Submission submission = uploadManager.getSubmission(submissionId);
+                        if(submission.getPlacement() == placement) {
+                            field.setValue(submission.getFinalScore()+"");
+                            break;
+                        }
+                    }
 				} else if ("PLACE".equals(field.getName())) {
 					field.setValue(position);
 				} else if ("ASSIGNMET_DOCUMENT_LINK".equals(field.getName())) {
