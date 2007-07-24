@@ -250,7 +250,7 @@ public class PRAppealResponsePhaseHandler extends AppealsResponsePhaseHandler {
                     Long[] submissions = getResourceForProjectAndUser(project, 
                             String.valueOf(user.getId())).getSubmissions();
                     int placement = position.equals("1st") ? 1 : 2;
-                    UploadManager uploadManager = new ManagerCreationHelper().getUploadManager();
+                    UploadManager uploadManager = managerHelper.getUploadManager();
                     for (Long submissionId : submissions) {
                         // get the score for the placement depending on the position
                         Submission submission = uploadManager.getSubmission(submissionId);
