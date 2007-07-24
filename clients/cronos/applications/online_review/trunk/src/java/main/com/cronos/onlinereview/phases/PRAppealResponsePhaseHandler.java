@@ -10,7 +10,6 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import com.cronos.onlinereview.actions.ManagerCreationHelper;
 import com.cronos.onlinereview.external.ExternalUser;
 import com.topcoder.management.deliverable.Submission;
 import com.topcoder.management.deliverable.UploadManager;
