@@ -3368,7 +3368,7 @@ public class ProjectReviewActions extends DispatchAction {
         UploadManager upMgr = ActionsHelper.createUploadManager(request);
 
         // OrChange - Update the final score in the Submission table.
-        sub.setFinalScore(newScore);
+        sub.setFinalScore(new Double(newScore));
         
         // update the final score
         upMgr.updateSubmission(sub, String.valueOf(AuthorizationHelper.getLoggedInUserId(request)));
@@ -3470,7 +3470,7 @@ public class ProjectReviewActions extends DispatchAction {
 
             // OrChange - Update placement
             // update submitter's Placement
-            submission.setPlacement(placement);
+            submission.setPlacement(new Long(placement));
 
             long submitterId = submission.getUpload().getOwner();
             submitter = resMgr.getResource(submitterId);
