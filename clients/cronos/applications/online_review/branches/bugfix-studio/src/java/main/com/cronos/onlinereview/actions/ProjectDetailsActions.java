@@ -823,7 +823,7 @@ public class ProjectDetailsActions extends DispatchAction {
             }
 
             // OrChange - Placement is retrieved from submission instead of resource
-            if (submission.getPlacement() == 1) {
+            if (submission.getPlacement() != null && submission.getPlacement() == 1) {
                 noRights = false;
             }
         }
@@ -842,7 +842,7 @@ public class ProjectDetailsActions extends DispatchAction {
                 }
             }
 //          OrChange - Placement is retrieved from submission instead of resource
-            if (submission.getPlacement() > 0) {
+            if (submission.getPlacement() != null && submission.getPlacement() > 0) {
                 noRights = false;
             }
         }

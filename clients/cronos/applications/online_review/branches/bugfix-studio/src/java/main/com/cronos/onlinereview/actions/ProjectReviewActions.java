@@ -3285,11 +3285,11 @@ public class ProjectReviewActions extends DispatchAction {
 
         // OrChange - Get the final score from the submission instead of the Resource
         // Get final aggregated score for this submitter, if any
-        double finalScore = sub.getFinalScore();
+        Double finalScore = sub.getFinalScore();
 
         // If there is no final (post Appeals Response) score for the submitter yet,
         // there is nothing to do anymore
-        if (finalScore == -1) {
+        if (finalScore == null) {
             return;
         }
 
@@ -3356,7 +3356,8 @@ public class ProjectReviewActions extends DispatchAction {
         }
         
         // OrChange - Get the placement from the submission instead of the Resource
-        long oldPlacement = sub.getPlacement();
+        Long oldPlacement = sub.getPlacement() == null ? -1 : sub.getPlacement();
+        
         
         // Old Code
         // Object temp = submitter.getProperty("Placement");
