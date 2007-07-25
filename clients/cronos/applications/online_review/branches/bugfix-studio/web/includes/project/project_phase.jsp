@@ -410,7 +410,7 @@
 											<td class="valueC" width="12%">${orfn:displayDateBr(pageContext.request, group.reviewDates[submissionStatus.index])}</td>
 											<c:if test="${not isAllowedToEditHisReviews}">
 												<c:if test="${not empty submission}">
-													<c:set var="finalScore" value='${submission.finalScore' />
+													<c:set var="finalScore" value='${submission.finalScore}' />
 												</c:if>
 												<c:if test="${not empty finalScore}">
 													<td class="valueC" width="8%"><html:link page="/actions/ViewCompositeScorecard.do?method=viewCompositeScorecard&sid=${submission.id}">${orfn:displayScore(pageContext.request, finalScore)}</html:link></td>
