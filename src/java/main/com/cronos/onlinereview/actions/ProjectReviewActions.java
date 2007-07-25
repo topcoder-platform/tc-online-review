@@ -3285,11 +3285,11 @@ public class ProjectReviewActions extends DispatchAction {
 
         // OrChange - Get the final score from the submission instead of the Resource
         // Get final aggregated score for this submitter, if any
-        double finalScore = sub.getFinalScore();
+        Double finalScore = sub.getFinalScore();
 
         // If there is no final (post Appeals Response) score for the submitter yet,
         // there is nothing to do anymore
-        if (finalScore == -1) {
+        if (finalScore == null) {
             return;
         }
 
@@ -3356,7 +3356,8 @@ public class ProjectReviewActions extends DispatchAction {
         }
         
         // OrChange - Get the placement from the submission instead of the Resource
-        long oldPlacement = sub.getPlacement();
+        Long oldPlacement = sub.getPlacement() == null ? -1 : sub.getPlacement();
+        
         
         // Old Code
         // Object temp = submitter.getProperty("Placement");
@@ -3368,7 +3369,7 @@ public class ProjectReviewActions extends DispatchAction {
         UploadManager upMgr = ActionsHelper.createUploadManager(request);
 
         // OrChange - Update the final score in the Submission table.
-        sub.setFinalScore(newScore);
+        sub.setFinalScore(new Double(newScore));
         
         // update the final score
         upMgr.updateSubmission(sub, String.valueOf(AuthorizationHelper.getLoggedInUserId(request)));
@@ -3470,7 +3471,7 @@ public class ProjectReviewActions extends DispatchAction {
 
             // OrChange - Update placement
             // update submitter's Placement
-            submission.setPlacement(placement);
+            submission.setPlacement(new Long(placement));
 
             long submitterId = submission.getUpload().getOwner();
             submitter = resMgr.getResource(submitterId);
