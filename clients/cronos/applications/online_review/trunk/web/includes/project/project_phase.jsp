@@ -119,8 +119,8 @@
 												<html:img styleClass="Outline" border="0" srcKey="viewProjectDetails.box.Submission.icoShowMore.img" style="visibility:hidden;" />
 											</c:if>
 											<c:set var="placement" value="" />
-											<c:if test="${not empty submitter}">
-												<c:set var="placement" value='${submitter.allProperties["Placement"]}' />
+											<c:if test="${not empty submission}">
+												<c:set var="placement" value='${submission.placement}' />
 											</c:if>
 											<c:set var="failedReview" value="${(submissionStatusName == 'Failed Screening') or (submissionStatusName == 'Failed Review')}" />
 											<c:if test="${(not empty placement) and (not failedReview)}">
@@ -374,8 +374,8 @@
 											</c:forEach>
 											<td class="value" nowrap="nowrap">
 												<c:set var="placement" value="" />
-												<c:if test="${not empty submitter}">
-													<c:set var="placement" value='${submitter.allProperties["Placement"]}' />
+												<c:if test="${not empty submission}">
+													<c:set var="placement" value='${submission.placement}' />
 												</c:if>
 												<c:set var="failedReview" value="${(submissionStatusName == 'Failed Screening') or (submissionStatusName == 'Failed Review')}" />
 												<c:if test="${(not empty placement) and (not failedReview)}">
@@ -409,8 +409,8 @@
 											</td>
 											<td class="valueC" width="12%">${orfn:displayDateBr(pageContext.request, group.reviewDates[submissionStatus.index])}</td>
 											<c:if test="${not isAllowedToEditHisReviews}">
-												<c:if test="${not empty submitter}">
-													<c:set var="finalScore" value='${submitter.allProperties["Final Score"]}' />
+												<c:if test="${not empty submission}">
+													<c:set var="finalScore" value='${submission.finalScore}' />
 												</c:if>
 												<c:if test="${not empty finalScore}">
 													<td class="valueC" width="8%"><html:link page="/actions/ViewCompositeScorecard.do?method=viewCompositeScorecard&sid=${submission.id}">${orfn:displayScore(pageContext.request, finalScore)}</html:link></td>

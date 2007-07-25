@@ -253,7 +253,7 @@ public class PRAppealResponsePhaseHandler extends AppealsResponsePhaseHandler {
                     for (Long submissionId : submissions) {
                         // get the score for the placement depending on the position
                         Submission submission = uploadManager.getSubmission(submissionId);
-                        if(submission.getPlacement() == placement) {
+                        if(submission.getPlacement() != null && submission.getPlacement() == placement) {
                             field.setValue(submission.getFinalScore()+"");
                             break;
                         }

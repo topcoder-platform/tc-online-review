@@ -812,8 +812,18 @@ public class ProjectDetailsActions extends DispatchAction {
             // Obtain an instance of Resource Manager
             ResourceManager resMgr = ActionsHelper.createResourceManager(request);
             Resource submitter = resMgr.getResource(upload.getOwner());
+            UploadManager upMgr = ActionsHelper.createUploadManager(request);
+            Long[] subIds = submitter.getSubmissions();
+            Submission submission = null;
+            for (int i = 0; i < subIds.length; i++) {
+                submission = upMgr.getSubmission(subIds[i]);
+                if(submission.getUpload().getId() == upload.getId()) {
+                    break;
+                }
+            }
 
-            if ("1".equals(submitter.getProperty("Placement"))) {
+            // OrChange - Placement is retrieved from submission instead of resource
+            if (submission.getPlacement() != null && submission.getPlacement() == 1) {
                 noRights = false;
             }
         }
@@ -822,9 +832,17 @@ public class ProjectDetailsActions extends DispatchAction {
             // Obtain an instance of Resource Manager
             ResourceManager resMgr = ActionsHelper.createResourceManager(request);
             Resource submitter = resMgr.getResource(upload.getOwner());
-            String placement = (String) submitter.getProperty("Placement");
-
-            if (placement != null && placement.trim().length() != 0) {
+            UploadManager upMgr = ActionsHelper.createUploadManager(request);
+            Long[] subIds = submitter.getSubmissions();
+            Submission submission = null;
+            for (int i = 0; i < subIds.length; i++) {
+                submission = upMgr.getSubmission(subIds[i]);
+                if(submission.getUpload().getId() == upload.getId()) {
+                    break;
+                }
+            }
+//          OrChange - Placement is retrieved from submission instead of resource
+            if (submission.getPlacement() != null && submission.getPlacement() > 0) {
                 noRights = false;
             }
         }

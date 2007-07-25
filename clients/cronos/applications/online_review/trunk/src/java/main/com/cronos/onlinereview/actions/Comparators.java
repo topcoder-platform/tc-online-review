@@ -250,22 +250,13 @@ final class Comparators {
             Submission submission1 = (Submission)o1;
             Submission submission2 = (Submission)o2;
 
-            // Get submitters that own the submissions
-            Resource submitter1 = (Resource) submitters.get(new Long(submission1.getUpload().getOwner()));
-            Resource submitter2 = (Resource) submitters.get(new Long(submission2.getUpload().getOwner()));
+            Double finalScore1 = submission1.getFinalScore() == null ? 0 : submission1.getFinalScore(); 
+            Double finalScore2 = submission2.getFinalScore() == null ? 0 : submission2.getFinalScore();
 
-            // Get placement values from properties
-            String placeStr1 = (submitter1 != null) ? (String) submitter1.getProperty("Placement") : null;
-            String placeStr2 = (submitter2 != null) ? (String) submitter2.getProperty("Placement") : null;
-
-            // Convert placement value to numbers
-            int place1 = (placeStr1 != null) ? Integer.parseInt(placeStr1, 10) : Integer.MAX_VALUE;
-            int place2 = (placeStr2 != null) ? Integer.parseInt(placeStr2, 10) : Integer.MAX_VALUE;
-
-            // Compare submissions by their places,
+            // Compare submissions by their final scores,
             // or by their upload times, which are the creation times of their respective uploads
-            return (place1 != place2) ? (place1 - place2) : submission2.getUpload().getCreationTimestamp().compareTo(
-                    submission1.getUpload().getCreationTimestamp());
+            return ((finalScore1 != finalScore2) ? finalScore2.compareTo(finalScore1) : submission2.getUpload().getCreationTimestamp().compareTo(
+                    submission1.getUpload().getCreationTimestamp()));
         }
 
         /**
