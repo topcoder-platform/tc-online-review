@@ -2,6 +2,8 @@ INSERT INTO project_type_lu(project_type_id, name, description, create_user, cre
   VALUES(1, 'Component', 'Component', 'System', CURRENT, 'System', CURRENT);
 INSERT INTO project_type_lu(project_type_id, name, description, create_user, create_date, modify_user, modify_date)
   VALUES(2, 'Application', 'Application', 'System', CURRENT, 'System', CURRENT);
+INSERT INTO project_type_lu (project_type_id, name, description, create_user, create_date, modify_user, modify_date)
+  VALUES(3, 'Studio', 'Studio', 'System', CURRENT, 'System', CURRENT);
 
 INSERT INTO project_category_lu(project_category_id, project_type_id, name, description, create_user, create_date, modify_user, modify_date)
   VALUES(1, 1, 'Design', 'Design', 'System', CURRENT, 'System', CURRENT);
@@ -33,6 +35,18 @@ INSERT INTO project_category_lu(project_category_id, project_type_id, name, desc
   VALUES(14, 2, 'Assembly Competition', 'Assembly Competition', 'System', CURRENT, 'System', CURRENT);
 INSERT INTO project_category_lu(project_category_id, project_type_id, name, description, create_user, create_date, modify_user, modify_date)
   VALUES(15, 2, 'Legacy', 'Legacy', 'System', CURRENT, 'System', CURRENT);
+INSERT INTO project_category_lu (project_category_id, project_type_id, name, description, create_user, create_date, modify_user, modify_date)
+  VALUES(16, 3, 'Icon Set', 'Icon Set', 'System', CURRENT, 'System', CURRENT);
+INSERT INTO project_category_lu (project_category_id, project_type_id, name, description, create_user, create_date, modify_user, modify_date)
+  VALUES(17, 3, 'Storyboards', 'Storyboards', 'System', CURRENT, 'System', CURRENT);
+INSERT INTO project_category_lu (project_category_id, project_type_id, name, description, create_user, create_date, modify_user, modify_date)
+  VALUES(18, 3, 'Wireframes', 'Wireframes', 'System', CURRENT, 'System', CURRENT);
+INSERT INTO project_category_lu (project_category_id, project_type_id, name, description, create_user, create_date, modify_user, modify_date)
+  VALUES(19, 3, 'Prototypes', 'Prototypes', 'System', CURRENT, 'System', CURRENT);
+INSERT INTO project_category_lu (project_category_id, project_type_id, name, description, create_user, create_date, modify_user, modify_date)
+  VALUES(20, 3, 'Logos', 'Logos', 'System', CURRENT, 'System', CURRENT);
+INSERT INTO project_category_lu (project_category_id, project_type_id, name, description, create_user, create_date, modify_user, modify_date)
+  VALUES(21, 3, 'Print', 'Print', 'System', CURRENT, 'System', CURRENT);
 
 INSERT INTO scorecard_type_lu(scorecard_type_id, name, description, create_user, create_date, modify_user, modify_date)
   VALUES(1, 'Screening', 'Screening', 'System', CURRENT, 'System', CURRENT);
@@ -128,7 +142,9 @@ INSERT INTO project_info_type_lu(project_info_type_id, name, description, create
   VALUES(26, 'Digital Run Flag', 'Digital Run Flag', 'System', CURRENT, 'System', CURRENT);
 INSERT INTO project_info_type_lu(project_info_type_id, name, description, create_user, create_date, modify_user, modify_date)
   VALUES(27, 'AutoPilot AD Change', 'AutoPilot AD Change', 'System', CURRENT, 'System', CURRENT);
-  
+INSERT INTO project_info_type_lu (project_info_type_id, name, description, create_user, create_date, modify_user, modify_date)
+  VALUES (28, 'Allow multiple submissions', 'Allow multiple submissions', 'System', CURRENT, 'System', CURRENT);
+
 INSERT INTO phase_type_lu(phase_type_id, name, description, create_user, create_date, modify_user, modify_date)
   VALUES(1, 'Registration', 'Registration', 'System', CURRENT, 'System', CURRENT);
 INSERT INTO phase_type_lu(phase_type_id, name, description, create_user, create_date, modify_user, modify_date)
@@ -215,14 +231,14 @@ INSERT INTO resource_info_type_lu(resource_info_type_id, name, description, crea
   VALUES(7, 'Payment', 'Payment', 'System', CURRENT, 'System', CURRENT);
 INSERT INTO resource_info_type_lu(resource_info_type_id, name, description, create_user, create_date, modify_user, modify_date)
   VALUES(8, 'Payment Status', 'Payment Status', 'System', CURRENT, 'System', CURRENT);
-INSERT INTO resource_info_type_lu(resource_info_type_id, name, description, create_user, create_date, modify_user, modify_date)
-  VALUES(9, 'Screening Score', 'Screening Score', 'System', CURRENT, 'System', CURRENT);
-INSERT INTO resource_info_type_lu(resource_info_type_id, name, description, create_user, create_date, modify_user, modify_date)
-  VALUES(10, 'Initial Score', 'Initial Score', 'System', CURRENT, 'System', CURRENT);
-INSERT INTO resource_info_type_lu(resource_info_type_id, name, description, create_user, create_date, modify_user, modify_date)
-  VALUES(11, 'Final Score', 'Final Score', 'System', CURRENT, 'System', CURRENT);
-INSERT INTO resource_info_type_lu(resource_info_type_id, name, description, create_user, create_date, modify_user, modify_date)
-  VALUES(12, 'Placement', 'Placement', 'System', CURRENT, 'System', CURRENT);
+-- INSERT INTO resource_info_type_lu(resource_info_type_id, name, description, create_user, create_date, modify_user, modify_date)
+--  VALUES(9, 'Screening Score', 'Screening Score', 'System', CURRENT, 'System', CURRENT);
+-- INSERT INTO resource_info_type_lu(resource_info_type_id, name, description, create_user, create_date, modify_user, modify_date)
+--  VALUES(10, 'Initial Score', 'Initial Score', 'System', CURRENT, 'System', CURRENT);
+-- INSERT INTO resource_info_type_lu(resource_info_type_id, name, description, create_user, create_date, modify_user, modify_date)
+--  VALUES(11, 'Final Score', 'Final Score', 'System', CURRENT, 'System', CURRENT);
+-- INSERT INTO resource_info_type_lu(resource_info_type_id, name, description, create_user, create_date, modify_user, modify_date)
+--  VALUES(12, 'Placement', 'Placement', 'System', CURRENT, 'System', CURRENT);
 
 INSERT INTO upload_type_lu(upload_type_id, name, description, create_user, create_date, modify_user, modify_date)
   VALUES(1, 'Submission', 'Submission', 'System', CURRENT, 'System', CURRENT);
