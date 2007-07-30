@@ -2822,7 +2822,7 @@ public class ActionsHelper {
             }
     		project.setProperty("Completion Timestamp", format.format(new Date()));
 
-    		if (!"Deleted".equals(name)) {
+    		if (!"Deleted".equals(name) && !ActionsHelper.isStudioProject(project)) {
     			Connection conn = null;
 	        	PreparedStatement ps = null;
 	    		try {
