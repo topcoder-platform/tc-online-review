@@ -3,33 +3,23 @@
 <Template name="Studio">
 	<!-- An enumeration of project phase types defined in this template -->
 	<PhaseTypes>
-		<PhaseType id="registration" typeId="1" typeName="Registration"/>
-		<PhaseType id="submission" typeId="2" typeName="Submission"/>
-		<PhaseType id="screening" typeId="3" typeName="Screening"/>
-		<PhaseType id="review" typeId="4" typeName="Review"/>
-		<PhaseType id="appeals" typeId="5" typeName="Appeals"/>
-		<PhaseType id="appeals_response" typeId="6" typeName="Appeals Response"/>
-		<PhaseType id="aggregation" typeId="7" typeName="Aggregation"/>
-		<PhaseType id="aggregation_review" typeId="8" typeName="Aggregation Review"/>
-		<PhaseType id="final_fixes" typeId="9" typeName="Final Fix"/>
-		<PhaseType id="final_review" typeId="10" typeName="Final Review"/>
+		<PhaseType id="submission" typeId="1" typeName="Submission"/>
+		<PhaseType id="review" typeId="2" typeName="Review"/>
+		<PhaseType id="appeals" typeId="3" typeName="Appeals"/>
+		<PhaseType id="appeals_response" typeId="4" typeName="Appeals Response"/>
+		<PhaseType id="aggregation" typeId="5" typeName="Aggregation"/>
+		<PhaseType id="aggregation_review" typeId="6" typeName="Aggregation Review"/>
+		<PhaseType id="final_fixes" typeId="7" typeName="Final Fix"/>
+		<PhaseType id="final_review" typeId="8" typeName="Final Review"/>
 	</PhaseTypes>
 	<!-- A set of project phases defined in this template. -->
 	<Phases>
 		<!-- A definition of a single phase. -->
-		<Phase id="registrationPhase" length="259200000" type="registration"/>
-
-		<Phase id="submissionPhase" length="604800000" type="submission">
-			<Dependency id="registrationPhase" isDependencyStart="true" isDependentStart="true" lagTime="0"/>
-		</Phase>
-
-		<Phase id="screeningPhase" length="86400000" type="screening">
-			<Dependency id="submissionPhase" isDependencyStart="false" isDependentStart="true" lagTime="0"/>
-		</Phase>
+		<Phase id="submissionPhase" length="604800000" type="submission"/>
 
 		<Phase id="reviewPhase" length="345600000" type="review">
 			<!-- "isDependencyStart" is optional attribute(default to "false"), here it is omitted -->
-			<Dependency id="screeningPhase" isDependentStart="true" lagTime="0"/>
+			<Dependency id="submissionPhase" isDependentStart="true" lagTime="0"/>
 		</Phase>
 
 		<Phase id="appealsPhase" length="86400000" type="appeals">
