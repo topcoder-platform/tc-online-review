@@ -89,6 +89,7 @@ public class OnlineReviewProjectPilot extends DefaultProjectPilot {
 	 */
 	public OnlineReviewProjectPilot() throws ConfigurationException {
 		super();
+		log.log(Level.INFO, "Create OnlineReviewProjectPilot instance with namespace:" + DEFAULT_NAMESPACE);
 		configure(DEFAULT_NAMESPACE);
 	}
 
@@ -119,6 +120,7 @@ public class OnlineReviewProjectPilot extends DefaultProjectPilot {
 	public OnlineReviewProjectPilot(String namespace, String phaseManagerKey, String scheduledStatusName,
 			String openStatusName, String logName) throws ConfigurationException {
 		super(namespace, phaseManagerKey, scheduledStatusName, openStatusName, logName);
+		log.log(Level.INFO, "Create OnlineReviewProjectPilot instance with namespace:" + namespace);
 		configure(namespace);
 	}
 
@@ -141,6 +143,7 @@ public class OnlineReviewProjectPilot extends DefaultProjectPilot {
 	public OnlineReviewProjectPilot(PhaseManager phaseManager, String scheduledStatusName, String openStatusName,
 			Log logger) {
 		super(phaseManager, scheduledStatusName, openStatusName, logger);
+		log.log(Level.INFO, "Create OnlineReviewProjectPilot instance with namespace:" + DEFAULT_NAMESPACE);
 		configure(DEFAULT_NAMESPACE);		
 	}
 	
