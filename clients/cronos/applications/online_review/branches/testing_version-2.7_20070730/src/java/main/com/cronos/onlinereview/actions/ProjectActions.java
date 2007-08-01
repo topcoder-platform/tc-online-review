@@ -670,7 +670,12 @@ public class ProjectActions extends DispatchAction {
             // TODO: Fix the version of the project
             project.setProperty("Project Version", "1.0");
             // Populate project root catalog id
-            project.setProperty("Root Catalog ID", ActionsHelper.getRootCategoryIdByComponentId(lazyForm.get("component_id")));
+            if (ActionsHelper.isStudioProject(project)) {
+            	//TODO retrieve it from the configuration
+            	project.setProperty("Root Catalog ID", "26887152");
+            } else {
+            	project.setProperty("Root Catalog ID", ActionsHelper.getRootCategoryIdByComponentId(lazyForm.get("component_id")));
+            }
             // Populate project eligibility
             project.setProperty("Eligibility", lazyForm.get("eligibility"));
             // Populate project public flag
