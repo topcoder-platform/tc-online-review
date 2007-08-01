@@ -672,6 +672,7 @@ public class ProjectActions extends DispatchAction {
             // Populate project root catalog id
             if (ActionsHelper.isStudioProject(project)) {
             	//TODO retrieve it from the configuration
+            	log.debug("setting 'Root Catalog ID' to 26887152"); 
             	project.setProperty("Root Catalog ID", "26887152");
             } else {
             	project.setProperty("Root Catalog ID", ActionsHelper.getRootCategoryIdByComponentId(lazyForm.get("component_id")));
