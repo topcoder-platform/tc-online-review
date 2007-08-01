@@ -481,7 +481,7 @@ public class PRHelper {
     static boolean isStudioProject(long projectId) {
         try {
             ProjectManager projectManager = new ProjectManagerImpl();
-            return "Studio".equals(projectManager.getProject(projectId).getProjectCategory().getDescription());
+            return "Studio".equals(projectManager.getProject(projectId).getProjectCategory().getName());
         } catch (BaseException e) {
             return false;
         }
