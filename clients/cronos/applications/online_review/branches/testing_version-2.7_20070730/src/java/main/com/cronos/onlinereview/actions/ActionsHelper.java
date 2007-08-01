@@ -3512,6 +3512,6 @@ public class ActionsHelper {
      * @return true, if the project is of type studio.
      */
     public static boolean isStudioProject(Project project) {
-        return "Studio".equals(project.getProjectCategory().getName());
+        return "Studio".equals(project.getProjectCategory().getProjectType().getName());
     }
 }
