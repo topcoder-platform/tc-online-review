@@ -136,12 +136,12 @@
 			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="lib/tcs/resource_management/1.1/resource_management.jar" sourcepath="/resource_management/src/java/main">
+	<classpathentry kind="lib" path="lib/tcs/resource_management/1.1.1/resource_management.jar" sourcepath="/resource_management/src/java/main">
 		<attributes>
 			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="lib/tcs/resource_management_persistence/1.2/resource_management_persistence.jar">
+	<classpathentry kind="lib" path="lib/tcs/resource_management_persistence/1.2.1/resource_management_persistence.jar">
 		<attributes>
 			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
 		</attributes>
