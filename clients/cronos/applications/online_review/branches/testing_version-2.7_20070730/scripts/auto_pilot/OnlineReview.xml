@@ -1772,7 +1772,14 @@
 
                 <Property name="context">
                     <Value>
-                        SELECT DISTINCT resource.resource_id
+                        SELECT DISTINCT resource.resource_id AS resource_id,
+                               resource_role_id,
+                               project_id,
+                               project_phase_id,
+                               resource.create_user AS create_user,
+                               resource.create_date AS create_date,
+                               resource.modify_user AS modify_user,
+                               resource.modify_date AS modify_date
                           FROM resource,
                                resource_info,
                                resource_info_type_lu,
