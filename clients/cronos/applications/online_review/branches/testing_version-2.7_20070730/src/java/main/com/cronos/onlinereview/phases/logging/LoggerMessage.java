@@ -10,7 +10,7 @@ import java.io.PrintStream;
 /**
  * Encapsulates the entry log data and generates consistent log messages.
  */
-public class LogMessage {
+public class LoggerMessage {
     /** id for the log message */
     private Long id;
 
@@ -38,7 +38,7 @@ public class LogMessage {
      * @param message a free text message.
      * @param error an exception to append to the log message.
      */
-    public LogMessage(String type, Long id, String operator, String message, Throwable error) {
+    public LoggerMessage(String type, Long id, String operator, String message, Throwable error) {
         this.id = id;
 
         this.type = type;
@@ -58,7 +58,7 @@ public class LogMessage {
      * @param operator DOCUMENT ME!
      * @param message a free text message.
      */
-    public LogMessage(String type, Long id, String operator, String message) {
+    public LoggerMessage(String type, Long id, String operator, String message) {
         this(type, id, operator, message, null);
     }
 
