@@ -2946,7 +2946,7 @@
                     <Value>IconLegacy.gif</Value>
                 </Property>
             </Property>
-            <!--  TODO : Change the studio icon, currently using dev icon for testing. -->
+            <!-- TODO: Change the studio icon, currently using dev icon for testing -->
             <Property name="Icon Sets">
                 <Property name="IconSmall">
                     <Value>iconBlankSm.png</Value>
@@ -2994,6 +2994,30 @@
                 <Property name="Icon">
                     <Value>iconBlank.png</Value>
                 </Property>
+            </Property>
+        </Property>
+
+        <Property name="ProjectTypeDescriptionLinks">
+            <Property name="Application">
+                <Value>https://software.topcoder.com/catalog/c_component.jsp?comp=&lt;COMPONENT_ID&gt;&amp;ver=&lt;VERSION_ID&gt;</Value>
+            </Property>
+            <Property name="Component">
+                <Value>https://software.topcoder.com/catalog/c_component.jsp?comp=&lt;COMPONENT_ID&gt;&amp;ver=&lt;VERSION_ID&gt;</Value>
+            </Property>
+            <Property name="Studio">
+                <Value>http://studio.topcoder.com/?module=ViewContestDetails&amp;ct=&lt;COMPONENT_ID&gt;</Value>
+            </Property>
+        </Property>
+
+        <Property name="ProjectTypeForumLinks">
+            <Property name="Application">
+                <Value>http://forums.topcoder.com/?module=Category&amp;categoryID=&lt;FORUM_ID&gt;</Value>
+            </Property>
+            <Property name="Component">
+                <Value>http://forums.topcoder.com/?module=Category&amp;categoryID=&lt;FORUM_ID&gt;</Value>
+            </Property>
+            <Property name="Studio">
+                <Value>http://studio.topcoder.com/forums?module=ThreadList&amp;forumID=&lt;FORUM_ID&gt;</Value>
             </Property>
         </Property>
 

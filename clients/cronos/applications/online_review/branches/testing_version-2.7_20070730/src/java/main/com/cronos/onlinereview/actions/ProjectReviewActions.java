@@ -3293,16 +3293,6 @@ public class ProjectReviewActions extends DispatchAction {
             return;
         }
 
-        // Old Code
-        // String finalScore = (String) submitter.getProperty("Final Score");
-
-        // If there is no final (post Appeals Response) score for the submitter yet,
-        // there is nothing to do anymore
-        // if (finalScore == null || finalScore.trim().length() == 0) {
-        // return;
-        // }
-        // Old Code ends
-
         // Build a filter to select resources (i.e. reviewers) for Review phase
         Filter filterPhase = ResourceFilterBuilder.createPhaseIdFilter(reviewPhase.getId());
         // Retrieve reviewers that did the reviews

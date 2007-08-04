@@ -27,10 +27,6 @@ import org.apache.struts.upload.FormFile;
 import org.apache.struts.util.MessageResources;
 import org.apache.struts.validator.DynaValidatorForm;
 
-import com.cronos.onlinereview.actions.ActionsHelper;
-import com.cronos.onlinereview.actions.AuthorizationHelper;
-import com.cronos.onlinereview.actions.ConfigHelper;
-import com.cronos.onlinereview.actions.Constants;
 import com.cronos.onlinereview.autoscreening.management.ResponseSeverity;
 import com.cronos.onlinereview.autoscreening.management.ScreeningManager;
 import com.cronos.onlinereview.autoscreening.management.ScreeningResult;
@@ -148,6 +144,32 @@ public class ProjectDetailsActions extends DispatchAction {
 
         // Retrieve some basic project info (such as icons' names) and place it into request
         ActionsHelper.retrieveAndStoreBasicProjectInfo(request, project, messages);
+
+        final String projectTypeName = project.getProjectCategory().getProjectType().getName();
+
+        long componentId = -1;
+        long versionId = -1;
+        long forumId = -1;
+        String tempStr;
+
+        tempStr = (String) project.getProperty("Component ID");
+        if (tempStr != null && tempStr.trim().length() != 0) {
+            componentId = Long.parseLong(tempStr, 10);
+        }
+
+        tempStr = (String) project.getProperty("Version ID");
+        if (tempStr != null && tempStr.trim().length() != 0) {
+            versionId = Long.parseLong(tempStr, 10);
+        }
+
+        tempStr = (String) project.getProperty("Developer Forum ID");
+        if (tempStr != null && tempStr.trim().length() != 0) {
+            forumId = Long.parseLong(tempStr, 10);
+        }
+
+        request.setAttribute("descriptionLink",
+                ConfigHelper.getProjectTypeDescriptionLink(projectTypeName, componentId, versionId));
+        request.setAttribute("forumLink", ConfigHelper.getProjectTypeForumLink(projectTypeName, forumId));
 
         // Place a string that represents "my" current role(s) into the request
         ActionsHelper.retrieveAndStoreMyRole(request, getResources(request));
@@ -318,7 +340,7 @@ public class ProjectDetailsActions extends DispatchAction {
         request.setAttribute("phaseGroups", phasesDetails.getPhaseGroups());
         request.setAttribute("activeTabIdx", phasesDetails.getActiveTabIndex());
         request.setAttribute("passingMinimum", new Float(75.0)); // TODO: Take this value from scorecard template
-		
+
         boolean sendTLNotifications = false;
 
         if (AuthorizationHelper.isUserLoggedIn(request)) {
@@ -661,9 +683,9 @@ public class ProjectDetailsActions extends DispatchAction {
         Filter filter = new AndFilter(Arrays.asList(new Filter[] {filterProject, filterResource, filterStatus}));
 
         Submission[] oldSubmissions = upMgr.searchSubmissions(filter);
-        
+
         // Modification for the new requirement - uploading new submission/upload every time.
-        
+
         // Begins - OrChange - Modified to create upload/submission pair always
         // Always create a new submission/ upload
         Submission submission = new Submission();
@@ -691,7 +713,7 @@ public class ProjectDetailsActions extends DispatchAction {
         // multiple submissions" will be false
         Boolean allowOldSubmissions = Boolean.parseBoolean((String) project
                 .getProperty("Allow multiple submissions"));
-        
+
         upMgr.createUpload(upload, operator);
         upMgr.createSubmission(submission, operator);
         resource.addSubmission(submission.getId());
@@ -708,7 +730,7 @@ public class ProjectDetailsActions extends DispatchAction {
                 upMgr.updateSubmission(oldSubmission, operator);
             }
         }
-        
+
         //  ends
         scrMgr.initiateScreening(upload.getId(), operator);
 
