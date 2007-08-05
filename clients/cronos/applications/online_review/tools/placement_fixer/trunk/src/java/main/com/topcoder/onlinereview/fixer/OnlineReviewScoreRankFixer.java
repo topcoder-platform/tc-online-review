@@ -81,34 +81,49 @@ public class OnlineReviewScoreRankFixer {
     /**
      * SQL statement for retrieving a submission's final score from resource_info table.
      */
-    private static final String GET_SUBMISSION_FINAL_SCORE = "SELECT ri.value finalScore from submission s, upload u, resource_info ri"
-                    + " where s.upload_id = u.upload_id"
-                    + " and u.resource_id = ri.resource_id"
-                    + " and ri.resource_info_type_id = 11 and s.submission_id = ?";
+    private static final String GET_SUBMISSION_FINAL_SCORE = "SELECT final_score finalScore from submission where submission_id = ?";
+                   // for resource_info_type_id = 11, the score data is moved from resource_info table to submission table, below is the
+                   // old sql before this change. Changed by waits@08-04-2007
+                   //    "SELECT ri.value finalScore from submission s, upload u, resource_info ri"
+                   //    + " where s.upload_id = u.upload_id"
+                   //    + " and u.resource_id = ri.resource_id"
+                   //    + " and ri.resource_info_type_id = 11 and s.submission_id = ?";
 
+    
     /**
      * SQL statement for retrieving a submission's placement from resource_info table.
      */
-    private static final String GET_SUBMISSION_PLACEMENT = "SELECT ri.value rank from submission s, upload u, resource_info ri"
-                    + " where s.upload_id = u.upload_id"
-                    + " and u.resource_id = ri.resource_id"
-                    + " and ri.resource_info_type_id = 12 and s.submission_id = ?";
+    private static final String GET_SUBMISSION_PLACEMENT = "SELECT placement rank from submission where submission_id = ?";
+                   // for resource_info_type_id = 12, the score data is moved from resource_info table to submission table, below is the
+                   // old sql before this change. Changed by waits@08-04-2007
+                   //    "SELECT ri.value rank from submission s, upload u, resource_info ri"
+                   //    + " where s.upload_id = u.upload_id"
+                   //    + " and u.resource_id = ri.resource_id"
+                   //    + " and ri.resource_info_type_id = 12 and s.submission_id = ?";
 
     /**
      * SQL statement for updating the final score of the submission in the resource_info table.
      */
-    private static final String UPDATE_RI_FINAL_SCORE = "UPDATE resource_info SET value = ?, modify_user = 'FixerApp', modify_date = CURRENT"
-                    + " WHERE resource_info_type_id = 11"
-                    + " AND resource_id = (SELECT u.resource_id FROM upload u, submission s"
-                    + " WHERE s.upload_id = u.upload_id AND s.submission_id = ?)";
+    private static final String UPDATE_RI_FINAL_SCORE = "UPDATE submission SET final_score = ?, modify_user = 'FixerApp', modify_date = CURRENT"
+                    + " WHERE submission_id = ?";
+    // for resource_info_type_id = 11, the score data is moved from resource_info table to submission table, below is the
+    // old sql before this change. Changed by waits@08-04-2007
+    //    "UPDATE resource_info SET value = ?, modify_user = 'FixerApp', modify_date = CURRENT"
+    //    + " WHERE resource_info_type_id = 11"
+    //    + " AND resource_id = (SELECT u.resource_id FROM upload u, submission s"
+    //    + " WHERE s.upload_id = u.upload_id AND s.submission_id = ?)";
 
     /**
      * SQL statement for updating the rank of the submission in the resource_info table.
      */
-    private static final String UPDATE_RI_PLACEMENT = "UPDATE resource_info SET value = ?, modify_user = 'FixerApp', modify_date = CURRENT"
-                    + " WHERE resource_info_type_id = 12"
-                    + " AND resource_id = (SELECT u.resource_id FROM upload u, submission s"
-                    + " WHERE s.upload_id = u.upload_id AND s.submission_id = ?)";
+    private static final String UPDATE_RI_PLACEMENT = "UPDATE submission SET placement = ?, modify_user = 'FixerApp', modify_date = CURRENT"
+    	            + " WHERE submission_id = ?";
+         // for resource_info_type_id = 12, the score data is moved from resource_info table to submission table, below is the
+         // old sql before this change. Changed by waits@08-04-2007
+         // "UPDATE resource_info SET value = ?, modify_user = 'FixerApp', modify_date = CURRENT"
+         // + " WHERE resource_info_type_id = 12"
+         // + " AND resource_id = (SELECT u.resource_id FROM upload u, submission s"
+         // + " WHERE s.upload_id = u.upload_id AND s.submission_id = ?)";
     
     /**
      * SQL statement for updating the payment of the submission in the resource_info table.
