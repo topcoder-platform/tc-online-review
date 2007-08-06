@@ -203,8 +203,10 @@ public class PRAppealResponsePhaseHandler extends AppealsResponsePhaseHandler {
 		try {
 			ResourceRole submitterRole = null;
 			ResourceRole[] roles = managerHelper.getResourceManager().getAllResourceRoles();
+			log.log(Level.DEBUG, "roles size: " + roles.length);
 			for (int i = 0; i < roles.length; i++) {
 				ResourceRole role = roles[i];
+				log.log(Level.DEBUG, "roles id: " + roles[i].getId() + ", name: " + roles[i].getName());
 				if ("Submitter".equals(role.getName())) {
 					submitterRole = role;
 					break;
