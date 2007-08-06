@@ -114,6 +114,18 @@ public class ConfigHelper {
 
     /**
      * This member variable is a string constant that specifies the name of the property which
+     * contains definitions of Project Type links to full description for the project.
+     */
+    private static final String PROJECT_TYPE_DESCRIPTION_LINKS_PROP = "ProjectTypeDescriptionLinks";
+
+    /**
+     * This member variable is a string constant that specifies the name of the property which
+     * contains definitions of Project Type links to forum for the project.
+     */
+    private static final String PROJECT_TYPE_FORUM_LINKS_PROP = "ProjectTypeForumLinks";
+
+    /**
+     * This member variable is a string constant that specifies the name of the property which
      * contains default values used in the application, such as default phase length, default note
      * length, etc.
      *
@@ -390,6 +402,16 @@ public class ConfigHelper {
     private static final Map projectCategoryIcons = new HashMap();
 
     /**
+     * This member variable holds the links to full project's descriptions per project type.
+     */
+    private static final Map projectTypeDescriptionLinks = new HashMap();
+
+    /**
+     * This member variable holds the links to forums per project type.
+     */
+    private static final Map projectTypeForumLinks = new HashMap();
+
+    /**
      * This member variable holds the amount of pixels displayed in the Gantt Chart per every hour.
      * The default value of this varibale is 5.
      */
@@ -586,6 +608,44 @@ public class ConfigHelper {
                 if (strFilename != null && strFilename.trim().length() != 0) {
                     // ... store the Project Category name/icon's filename for later use
                     projectCategoryIcons.put(strPropName, strFilename);
+                }
+            }
+
+            // Retrieve property that contains definitions of Project Type description links
+            Property propProjTypeDesc = cfgMgr.getPropertyObject(ONLINE_REVIEW_CFG_NS, PROJECT_TYPE_DESCRIPTION_LINKS_PROP);
+            // Prepare to enumerate all the nested properties
+            Enumeration propsLinks = propProjTypeDesc.propertyNames();
+
+            while (propsLinks.hasMoreElements()) {
+                // Get the name of the next property in the list.
+                // The property name retrieved is also the name of a Project Type
+                String strPropName = (String) propsLinks.nextElement();
+                // Retrieve link to full description
+                String strLink = propProjTypeDesc.getValue(strPropName);
+
+                // If the link has been read fine ...
+                if (strLink != null && strLink.trim().length() != 0) {
+                    // ... store it into the appropriate map for later use
+                    projectTypeDescriptionLinks.put(strPropName, strLink);
+                }
+            }
+
+            // Retrieve property that contains definitions of Project Type forum links
+            Property propProjTypeForum = cfgMgr.getPropertyObject(ONLINE_REVIEW_CFG_NS, PROJECT_TYPE_FORUM_LINKS_PROP);
+            // Prepare to enumerate all the nested properties
+            propsLinks = propProjTypeForum.propertyNames();
+
+            while (propsLinks.hasMoreElements()) {
+                // Get the name of the next property in the list.
+                // The property name retrieved is also the name of a Project Type
+                String strPropName = (String) propsLinks.nextElement();
+                // Retrieve link to forum
+                String strLink = propProjTypeForum.getValue(strPropName);
+
+                // If the link has been read fine ...
+                if (strLink != null && strLink.trim().length() != 0) {
+                    // ... store it into the appropriate map for later use
+                    projectTypeForumLinks.put(strPropName, strLink);
                 }
             }
 
@@ -822,6 +882,53 @@ public class ConfigHelper {
      */
     public static String getProjectCategoryIconName(String projectCategoryName) {
         return (String) projectCategoryIcons.get(projectCategoryName);
+    }
+
+    /**
+     * This static method returns the link to the full description for project based on the type of
+     * project passed as parameter.
+     * 
+     * @return the link to full description of the project.
+     * @param projectTypeName
+     *            Project Type name which link to full description should be looked up for.
+     * @param componentId
+     *            ID of the component (numeric value) that should be substituded instead of
+     *            &quot;<code>&lt;COMPONENT_ID&gt;</code>&quot; substring in the template link read
+     *            from the configuration. If this value is zero or negative, the aforementioned
+     *            substring will be simply removed from the template link.
+     * @param versionId
+     *            ID of the component version (numeric value) that should be substituded instead of
+     *            &quot;<code>&lt;VERSION_ID&gt;</code>&quot; substring in the template link
+     *            read from the configuration. If this value is zero or negative, the aforementioned
+     *            substring will be simply removed from the template link.
+     */
+    public static String getProjectTypeDescriptionLink(String projectTypeName, long componentId, long versionId) {
+        String templateLink = (String) projectTypeDescriptionLinks.get(projectTypeName);
+
+        templateLink = templateLink.replaceFirst("\\<COMPONENT_ID\\>", (componentId > 0) ? String.valueOf(componentId) : "");
+        templateLink = templateLink.replaceFirst("\\<VERSION_ID\\>", (versionId > 0) ? String.valueOf(versionId) : "");
+
+        return templateLink;
+    }
+
+    /**
+     * This static method returns the link to the forum for project based on the type of project
+     * passed as parameter.
+     *
+     * @return the link to forum for the project.
+     * @param projectTypeName
+     *            Project Type name which link to full description should be looked up for.
+     * @param forumId
+     *            ID of the forum (numeric value) that should be substituded instead of
+     *            &quot;<code>&lt;FORUM_ID&gt;</code>&quot; substring in the template link read from
+     *            the configuration. If this value is zero or negative, the aforementioned substring
+     *            will be simply removed from the template link.
+     */
+    public static String getProjectTypeForumLink(String projectTypeName, long forumId) {
+        String templateLink = (String) projectTypeForumLinks.get(projectTypeName);
+
+        templateLink = templateLink.replaceFirst("\\<FORUM_ID\\>", (forumId > 0) ? String.valueOf(forumId) : "");
+        return templateLink;
     }
 
     /**
@@ -1074,12 +1181,12 @@ public class ConfigHelper {
 
     /**
      * Return the property value of online_review namespace.
-     *  
+     *
      * @param name the property name
      * @param defaultValue the default value
      * @return property value
      */
-    public static String getPropertyValue(String name, String defaultValue) {    	
+    public static String getPropertyValue(String name, String defaultValue) {
 		try {
 			String value = ConfigManager.getInstance().getString(ONLINE_REVIEW_CFG_NS, name);
 	    	if (value != null && value.trim().length() > 0) {

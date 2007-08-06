@@ -150,6 +150,8 @@ import com.topcoder.util.errorhandling.BaseRuntimeException;
 import com.topcoder.util.idgenerator.IDGenerator;
 import com.topcoder.util.idgenerator.IDGeneratorFactory;
 import com.topcoder.util.log.Level;
+import com.topcoder.util.log.Log;
+import com.topcoder.util.log.LogFactory;
 
 /**
  * This class contains handy helper-methods that perform frequently needed operations.
@@ -159,7 +161,10 @@ import com.topcoder.util.log.Level;
  * @version 1.0
  */
 public class ActionsHelper {
-	private static final com.topcoder.util.log.Log log = com.topcoder.util.log.LogFactory.getLog(ActionsHelper.class.getName());
+	/**
+	 * The logger instance.
+	 */
+	private static final Log log = LogFactory.getLog(ActionsHelper.class.getName());
 
     /**
      * This member variable is a string constant that defines the name of the configurtaion
@@ -926,6 +931,10 @@ public class ActionsHelper {
         if (permission == null) {
             request.setAttribute("errorTitle", messages.getMessage("Error.Title.General"));
         } else {
+        	if ("Error.NoPermission".equalsIgnoreCase(reasonKey)){
+	        	log.log(Level.WARN, "Authorization failures.User tried to perform "
+	        			+ permission + " which he/she doesn’t have permission.");
+        	}
             request.setAttribute("errorTitle", messages.getMessage("Error.Title." + permission.replaceAll(" ", "")));
         }
         // Place error message (reason) into request
@@ -2822,7 +2831,7 @@ public class ActionsHelper {
             }
     		project.setProperty("Completion Timestamp", format.format(new Date()));
 
-    		if (!"Deleted".equals(name)) {
+    		if (!"Deleted".equals(name) && !ActionsHelper.isStudioProject(project)) {
     			Connection conn = null;
 	        	PreparedStatement ps = null;
 	    		try {
@@ -2989,6 +2998,8 @@ public class ActionsHelper {
 	        DBConnectionFactory dbconn;
 				dbconn = new DBConnectionFactoryImpl(DB_CONNECTION_NAMESPACE);
 	        conn = dbconn.createConnection();
+	        log.log(Level.INFO,
+	        		"create db connection with default connection name from DBConnectionFactoryImpl with namespace:" + DB_CONNECTION_NAMESPACE);
 	        long projectId = project.getId();
 	        // retrieve and update component_inquiry_id
 	        long componentInquiryId = getNextComponentInquiryId(conn, newSubmitters.size());
@@ -3133,6 +3144,8 @@ public class ActionsHelper {
 		try {
 	        DBConnectionFactory dbconn = new DBConnectionFactoryImpl(DB_CONNECTION_NAMESPACE);
 	        conn = dbconn.createConnection();
+	        log.log(Level.INFO,
+	        		"create db connection with default connection name from DBConnectionFactoryImpl with namespace:" + DB_CONNECTION_NAMESPACE);
 	        AutoPaymentUtil.populateReviewerPayments(projectId, conn, AutoPaymentUtil.SCREENING_PHASE);
 		} catch (DBConnectionException e) {
 			throw new BaseException("Failed to return DBConnection", e);
@@ -3157,6 +3170,8 @@ public class ActionsHelper {
 		try {
 	        DBConnectionFactory dbconn = new DBConnectionFactoryImpl(DB_CONNECTION_NAMESPACE);
 	        conn = dbconn.createConnection();
+	        log.log(Level.INFO,
+	        		"create db connection with default connection name from DBConnectionFactoryImpl with namespace:" + DB_CONNECTION_NAMESPACE);
 	        String sqlStr = "select root_category_id " +
 	        				"	from comp_catalog cc," +
 	        				"		 categories pcat " +
@@ -3191,6 +3206,8 @@ public class ActionsHelper {
 		try {
 	        DBConnectionFactory dbconn = new DBConnectionFactoryImpl(DB_CONNECTION_NAMESPACE);
 	        conn = dbconn.createConnection();
+	        log.log(Level.INFO,
+	        		"create db connection with default connection name from DBConnectionFactoryImpl with namespace:" + DB_CONNECTION_NAMESPACE);
 	        String sqlString = "select ds.*, st.name from default_scorecard ds, scorecard_type_lu st " +
 	        		"where ds.scorecard_type_id = st.scorecard_type_id";
 
@@ -3271,6 +3288,9 @@ public class ActionsHelper {
 				dbconn = new DBConnectionFactoryImpl(DB_CONNECTION_NAMESPACE);
 	        conn = dbconn.createConnection();
 
+	        log.log(Level.INFO,
+	        		"create db connection with default connection name from DBConnectionFactoryImpl with namespace:" + DB_CONNECTION_NAMESPACE);
+	        
 	        // delete from project_result
 	        ps = conn.prepareStatement("delete from project_result where project_id = ? and user_id = ?");
 	        ps.setLong(1, project.getId());
@@ -3310,6 +3330,8 @@ public class ActionsHelper {
 		try {
 	        DBConnectionFactory dbconn = new DBConnectionFactoryImpl(DB_CONNECTION_NAMESPACE);
 	        conn = dbconn.createConnection();
+	        log.log(Level.INFO,
+	        		"create db connection with default connection name from DBConnectionFactoryImpl with namespace:" + DB_CONNECTION_NAMESPACE);
 	        PRHelper.resetProjectResultWithChangedScores(projectId, userId, conn);
 		} catch (DBConnectionException e) {
 			throw new BaseException("Failed to return DBConnection", e);
@@ -3475,6 +3497,7 @@ public class ActionsHelper {
 		if (obj instanceof Connection) {
 			try {
 				((Connection) obj).close();
+				log.log(Level.INFO, "close the connection.");
 			} catch (SQLException e) {
 				// Ignore
 			}
@@ -3512,6 +3535,6 @@ public class ActionsHelper {
      * @return true, if the project is of type studio.
      */
     public static boolean isStudioProject(Project project) {
-        return project.getProjectCategory().getDescription().equals("Studio");
+        return "Studio".equals(project.getProjectCategory().getProjectType().getName());
     }
 }

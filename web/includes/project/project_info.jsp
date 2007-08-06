@@ -1,5 +1,4 @@
 <%@ page language="java" isELIgnored="false" %>
-<%@ page import="com.topcoder.shared.util.ApplicationServer" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="bean" uri="/tags/struts-bean" %>
@@ -19,12 +18,9 @@
 					<html:link page="/actions/ContactManager.do?method=contactManager&amp;pid=${project.id}"><bean:message key="viewProjectDetails.ContactPM" /></html:link> |
 				</c:if>
 				<a class="breadcrumbLinks"
-					href='https://<%=ApplicationServer.SOFTWARE_SERVER_NAME %>/catalog/c_component.jsp?comp=${project.allProperties["Component ID"]}&ver=${project.allProperties["Version ID"]}'><bean:message
-						key="viewProjectDetails.FullDescription" /></a> |
+					href="${descriptionLink}"><bean:message key="viewProjectDetails.FullDescription" /></a> |
 				<a class="breadcrumbLinks"
-					href='http://<%=ApplicationServer.FORUMS_SERVER_NAME %>/?module=Category&categoryID=${project.allProperties["Developer Forum ID"]}'><bean:message
-						key="viewProjectDetails.DevelopmentForum" /></a>
-			</td>
+					href="${forumLink}"><bean:message key="viewProjectDetails.DevelopmentForum" /></a></td>
 		</tr>
 	</table>
 
