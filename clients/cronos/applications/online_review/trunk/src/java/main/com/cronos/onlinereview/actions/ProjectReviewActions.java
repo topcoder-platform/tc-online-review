@@ -116,7 +116,7 @@ public class ProjectReviewActions extends DispatchAction {
      * This member variable is a constant that specifies the count of comments displayed for each
      * item by default on Edit Screening, Edit Review, and Edit Approval pages.
      */
-    private static final int DEFAULT_COMMENTS_NUMBER = 3;
+    private static final int DEFAULT_COMMENTS_NUMBER = 1;
 
     /**
      * This member variable is a constant that specifies the count of comments displayed for each
@@ -3292,16 +3292,6 @@ public class ProjectReviewActions extends DispatchAction {
         if (finalScore == null) {
             return;
         }
-
-        // Old Code
-        // String finalScore = (String) submitter.getProperty("Final Score");
-
-        // If there is no final (post Appeals Response) score for the submitter yet,
-        // there is nothing to do anymore
-        // if (finalScore == null || finalScore.trim().length() == 0) {
-        // return;
-        // }
-        // Old Code ends
 
         // Build a filter to select resources (i.e. reviewers) for Review phase
         Filter filterPhase = ResourceFilterBuilder.createPhaseIdFilter(reviewPhase.getId());

@@ -670,17 +670,20 @@ public class ProjectActions extends DispatchAction {
             // TODO: Fix the version of the project
             project.setProperty("Project Version", "1.0");
             // Populate project root catalog id
-            project.setProperty("Root Catalog ID", ActionsHelper.getRootCategoryIdByComponentId(lazyForm.get("component_id")));
+            // OrChange - If the project category is Studio set the property to allow multiple submissions.
+            if (ActionsHelper.isStudioProject(project)) {
+            	//TODO retrieve it from the configuration
+            	log.debug("setting 'Root Catalog ID' to 26887152"); 
+            	project.setProperty("Root Catalog ID", "26887152");
+            	log.debug("Allowing multiple submissions for this project.");
+                project.setProperty("Allow multiple submissions", true);
+            } else {
+            	project.setProperty("Root Catalog ID", ActionsHelper.getRootCategoryIdByComponentId(lazyForm.get("component_id")));
+            }
             // Populate project eligibility
             project.setProperty("Eligibility", lazyForm.get("eligibility"));
             // Populate project public flag
             project.setProperty("Public", Boolean.TRUE.equals(lazyForm.get("public")) ? "Yes" : "No");
-            
-            // OrChange - If the project category is Studio set the property to allow multiple submissions.
-            if (ActionsHelper.isStudioProject(project)) {
-                log.debug("Allowing multiple submissions for this project.");
-                project.setProperty("Allow multiple submissions", true);
-            }
         } else {
             ProjectStatus newProjectStatus =
                 ActionsHelper.findProjectStatusById(projectStatuses, ((Long) lazyForm.get("status")).longValue());
@@ -692,7 +695,7 @@ public class ProjectActions extends DispatchAction {
             // If status has changed, update the project
             
             // OrChange - Do not update if the project type is studio
-            if (statusHasChanged && !ActionsHelper.isStudioProject(project)) {
+            if (statusHasChanged) {
                 // Populate project status
                 project.setProjectStatus(newProjectStatus);
 

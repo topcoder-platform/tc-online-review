@@ -201,12 +201,12 @@
     <property name="phase_management_persistence.path" value="phase_management_persistence/${phase_management_persistence.version}" />
     <property name="phase_management_persistence.jar" value="${tcs_libdir}/${phase_management_persistence.path}/${phase_management_persistence.jar.name}" />
 
-    <property name="project_management.version" value="1.0" />
+    <property name="project_management.version" value="1.0.1" />
     <property name="project_management.jar.name" value="project_management.jar" />
     <property name="project_management.path" value="project_management/${project_management.version}" />
     <property name="project_management.jar" value="${tcs_libdir}/${project_management.path}/${project_management.jar.name}" />
 
-    <property name="project_management_persistence.version" value="1.0" />
+    <property name="project_management_persistence.version" value="1.1.1" />
     <property name="project_management_persistence.jar.name" value="project_management_persistence.jar" />
     <property name="project_management_persistence.path" value="project_management_persistence/${project_management_persistence.version}" />
     <property name="project_management_persistence.jar" value="${tcs_libdir}/${project_management_persistence.path}/${project_management_persistence.jar.name}" />
@@ -221,12 +221,12 @@
     <property name="project_phase_template.path" value="project_phase_template/${project_phase_template.version}" />
     <property name="project_phase_template.jar" value="${tcs_libdir}/${project_phase_template.path}/${project_phase_template.jar.name}" />
 
-    <property name="resource_management.version" value="1.1" />
+    <property name="resource_management.version" value="1.1.1" />
     <property name="resource_management.jar.name" value="resource_management.jar" />
     <property name="resource_management.path" value="resource_management/${resource_management.version}" />
     <property name="resource_management.jar" value="${tcs_libdir}/${resource_management.path}/${resource_management.jar.name}" />
 
-    <property name="resource_management_persistence.version" value="1.2" />
+    <property name="resource_management_persistence.version" value="1.2.1" />
     <property name="resource_management_persistence.jar.name" value="resource_management_persistence.jar" />
     <property name="resource_management_persistence.path" value="resource_management_persistence/${resource_management_persistence.version}" />
     <property name="resource_management_persistence.jar" value="${tcs_libdir}/${resource_management_persistence.path}/${resource_management_persistence.jar.name}" />
@@ -384,7 +384,7 @@
         <delete failonerror="false">
             <fileset dir="${build_classdir}" includes="com/cronos/onlinereview/phases/*.class"/>
         </delete>
-        <javac srcdir="${javamain}" destdir="${build_classdir}" includes="com/cronos/onlinereview/phases/*.java" 
+        <javac srcdir="${javamain}" destdir="${build_classdir}" includes="com/cronos/onlinereview/phases/**/*.java" 
         		debug="true" verbose="${verbose}"
 	        	source="1.5" target="1.5"
         >

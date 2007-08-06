@@ -9,6 +9,7 @@
        <!ENTITY assignmentDocumentsFlag "false">
 ]>
 <CMConfig>
+
     <!--
         ==========  Configuration for DB Connection Factory component ==========
     -->
@@ -505,7 +506,8 @@
                     <Value>com.topcoder.management.review.scorecalculator.calculators.Scale10</Value>
                 </Property>
             </Property>
-			<!-- Configuration for Scale (0-3) question type -->
+
+            <!-- Configuration for Scale (0-3) question type -->
             <Property name="Scale3">
                 <Property name="question_type">
                     <Value>5</Value>
@@ -517,6 +519,7 @@
                     <Value>com.topcoder.management.review.scorecalculator.calculators.Scale3</Value>
                 </Property>
             </Property>
+
             <!-- Configuration for Scale (0-9) question type -->
             <Property name="Scale9">
                 <Property name="question_type">
@@ -529,6 +532,7 @@
                     <Value>com.topcoder.management.review.scorecalculator.calculators.Scale9</Value>
                 </Property>
             </Property>
+
             <!-- Configuration for Test Case question type -->
             <Property name="dynamicCalculator">
                 <Property name="question_type">
@@ -577,12 +581,12 @@
         </Property>
     </Config>
 
-	<Config name="com.topcoder.management.review.scorecalculator.calculators.Scale3">
+    <Config name="com.topcoder.management.review.scorecalculator.calculators.Scale3">
         <Property name="default_scale">
             <Value>3</Value>
         </Property>
     </Config>
-    
+
     <Config name="com.topcoder.management.review.scorecalculator.calculators.Scale9">
         <Property name="default_scale">
             <Value>9</Value>
@@ -1734,7 +1738,9 @@
 
                 <Property name="context">
                     <Value>
-                        SELECT DISTINCT project.project_id
+                        SELECT DISTINCT project.project_id, project_status_lu.project_status_id, project_status_lu.name,
+								project_category_lu.project_category_id, project_category_lu.name, project_type_lu.project_type_id, project_type_lu.name,
+								project.create_user, project.create_date, project.modify_user, project.modify_date
                           FROM project,
                                project_category_lu,
                                project_status_lu,
@@ -2067,9 +2073,9 @@
                                upload_status_lu.name AS upload_status_name,
                                upload_status_lu.description AS upload_status_description,
                                submission.screening_score,
-                        	   submission.initial_score,
-                        	   submission.final_score,
-                        	   submission.placement
+                               submission.initial_score,
+                               submission.final_score,
+                               submission.placement
                           FROM submission,
                                upload,
                                submission_status_lu,
@@ -2266,7 +2272,14 @@
 
                 <Property name="context">
                     <Value>
-                        SELECT DISTINCT resource.resource_id
+                        SELECT DISTINCT resource.resource_id AS resource_id,
+                               resource_role_id,
+                               project_id,
+                               project_phase_id,
+                               resource.create_user AS create_user,
+                               resource.create_date AS create_date,
+                               resource.modify_user AS modify_user,
+                               resource.modify_date AS modify_date
                           FROM resource,
                                resource_info,
                                resource_info_type_lu,
@@ -2334,7 +2347,14 @@
 
                 <Property name="context">
                     <Value>
-                        SELECT DISTINCT resource_role_id
+                        SELECT DISTINCT resource_role_id,
+                               phase_type_id,
+                               name,
+                               description,
+                               create_user,
+                               create_date,
+                               modify_user,
+                               modify_date
                           FROM resource_role_lu
                          WHERE
                     </Value>
@@ -2396,9 +2416,13 @@
 
                 <Property name="context">
                     <Value>
-                        SELECT DISTINCT external_ref_id,
-                               project_id,
-                               notification_type_id
+                        SELECT DISTINCT project_id,
+                               external_ref_id,
+                               notification_type_id,
+                               create_user,
+                               create_date,
+                               modify_user,
+                               modify_date
                           FROM notification
                          WHERE
                     </Value>
@@ -2450,7 +2474,13 @@
 
                 <Property name="context">
                     <Value>
-                        SELECT DISTINCT notification_type_id
+                        SELECT DISTINCT notification_type_id,
+                               name,
+                               description,
+                               create_user,
+                               create_date,
+                               modify_user,
+                               modify_date
                           FROM notification_type_lu
                          WHERE
                     </Value>
@@ -2709,6 +2739,7 @@
 
     <Config name="com.topcoder.search.builder.database.factory"></Config>
 
+
     <!--
         ===== Configuration for Pacts Services =====
     -->
@@ -2717,6 +2748,7 @@
             <Value>&pactJNDIAddress;</Value>
         </Property>
     </Config>
+
 
     <!--
         =====  Configuration for the Online Review Application itself  =====
@@ -2802,6 +2834,17 @@
                 </Property>
                 <Property name="AltTextKey">
                     <Value>RootCatalog.Application</Value>
+                </Property>
+            </Property>
+            <Property name="Studio">
+                <Property name="id">
+                    <Value>26887152</Value>
+                </Property>
+                <Property name="IconSmall">
+                    <Value>iconBlankSm.png</Value>
+                </Property>
+                <Property name="AltTextKey">
+                    <Value>RootCatalog.Studio</Value>
                 </Property>
             </Property>
         </Property>
@@ -2903,7 +2946,6 @@
                     <Value>IconLegacy.gif</Value>
                 </Property>
             </Property>
-            <!--  TODO : Change the studio icon, currently using dev icon for testing. -->
             <Property name="Icon Sets">
                 <Property name="IconSmall">
                     <Value>iconBlankSm.png</Value>
@@ -2951,6 +2993,30 @@
                 <Property name="Icon">
                     <Value>iconBlank.png</Value>
                 </Property>
+            </Property>
+        </Property>
+
+        <Property name="ProjectTypeDescriptionLinks">
+            <Property name="Application">
+                <Value>https://software.topcoder.com/catalog/c_component.jsp?comp=&lt;COMPONENT_ID&gt;&amp;ver=&lt;VERSION_ID&gt;</Value>
+            </Property>
+            <Property name="Component">
+                <Value>https://software.topcoder.com/catalog/c_component.jsp?comp=&lt;COMPONENT_ID&gt;&amp;ver=&lt;VERSION_ID&gt;</Value>
+            </Property>
+            <Property name="Studio">
+                <Value>http://studio.topcoder.com/?module=ViewContestDetails&amp;ct=&lt;COMPONENT_ID&gt;</Value>
+            </Property>
+        </Property>
+
+        <Property name="ProjectTypeForumLinks">
+            <Property name="Application">
+                <Value>http://forums.topcoder.com/?module=Category&amp;categoryID=&lt;FORUM_ID&gt;</Value>
+            </Property>
+            <Property name="Component">
+                <Value>http://forums.topcoder.com/?module=Category&amp;categoryID=&lt;FORUM_ID&gt;</Value>
+            </Property>
+            <Property name="Studio">
+                <Value>http://studio.topcoder.com/forums?module=ThreadList&amp;forumID=&lt;FORUM_ID&gt;</Value>
             </Property>
         </Property>
 
@@ -3533,46 +3599,47 @@
             </Property>
         </Property>
     </Config>
-    <!-- 
-    Configuration for the Online Web services component.
+
+    <!--
+        Configuration for the Online Web services component.
      -->
-     <Config name="com.cronos.onlinereview.services.uploads.impl.DefaultUploadServices">
-		<Property name="objectFactoryNamespace">
-			<Value>com.cronos.onlinereview.services.uploads.impl.DefaultUploadServices.ObjectFactory</Value>
-		</Property>
-		<Property name="managersProviderIdentifier">
-			<Value>managersProvider</Value>
-		</Property>
-	</Config>
-	
-	<Config name="com.cronos.onlinereview.services.uploads.impl.DefaultUploadExternalServices">
-		<Property name="objectFactoryNamespace">
-			<Value>com.cronos.onlinereview.services.uploads.impl.DefaultUploadServices.ObjectFactory</Value>
-		</Property>
-		<Property name="uploadServicesIdentifier">
-			<Value>uploadServices</Value>
-		</Property>
-		<!-- file name should have "_" in it. -->
-		<Property name="filenamePattern">
-			<Value>submission_{0}_{1}</Value>
-		</Property>
-		<!-- Needs to be updated correctly -->
-		<Property name="fileStorageLocation">
-			<Value>&localFileUploadDir;</Value>
-		</Property>
-	</Config>
-	
-	<Config name="com.cronos.onlinereview.services.uploads.impl.DefaultUploadServices.ObjectFactory">
-      	<Property name="managersProvider">
-      		<Property name="type">
-        		<Value>com.cronos.onlinereview.actions.ManagerCreationHelper</Value>
-      		</Property>
-      	</Property>
-      	<Property name="uploadServices">
-      		<Property name="type">
-        		<Value>com.cronos.onlinereview.services.uploads.impl.DefaultUploadServices</Value>
-      		</Property>
-      		<Property name="params">
+    <Config name="com.cronos.onlinereview.services.uploads.impl.DefaultUploadServices">
+        <Property name="objectFactoryNamespace">
+            <Value>com.cronos.onlinereview.services.uploads.impl.DefaultUploadServices.ObjectFactory</Value>
+        </Property>
+        <Property name="managersProviderIdentifier">
+            <Value>managersProvider</Value>
+        </Property>
+    </Config>
+
+    <Config name="com.cronos.onlinereview.services.uploads.impl.DefaultUploadExternalServices">
+        <Property name="objectFactoryNamespace">
+            <Value>com.cronos.onlinereview.services.uploads.impl.DefaultUploadServices.ObjectFactory</Value>
+        </Property>
+        <Property name="uploadServicesIdentifier">
+            <Value>uploadServices</Value>
+        </Property>
+        <!-- file name should have "_" in it. -->
+        <Property name="filenamePattern">
+            <Value>submission_{0}_{1}</Value>
+        </Property>
+        <!-- Needs to be updated correctly -->
+        <Property name="fileStorageLocation">
+            <Value>&localFileUploadDir;</Value>
+        </Property>
+    </Config>
+
+    <Config name="com.cronos.onlinereview.services.uploads.impl.DefaultUploadServices.ObjectFactory">
+        <Property name="managersProvider">
+            <Property name="type">
+                <Value>com.cronos.onlinereview.actions.ManagerCreationHelper</Value>
+            </Property>
+        </Property>
+        <Property name="uploadServices">
+            <Property name="type">
+                <Value>com.cronos.onlinereview.services.uploads.impl.DefaultUploadServices</Value>
+            </Property>
+            <Property name="params">
                 <Property name="param1">
                     <Property name="type">
                         <Value>String</Value>
@@ -3582,6 +3649,6 @@
                     </Property>
                 </Property>
             </Property>
-      	</Property>
-	</Config>
+        </Property>
+    </Config>
 </CMConfig>
