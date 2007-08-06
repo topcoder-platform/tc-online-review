@@ -1856,7 +1856,14 @@
 
                 <Property name="context">
                     <Value>
-                        SELECT DISTINCT resource_role_id
+                        SELECT DISTINCT resource_role_id,
+                               phase_type_id,
+                               name,
+                               description,
+                               create_user,
+                               create_date,
+                               modify_user,
+                               modify_date
                           FROM resource_role_lu
                          WHERE
                     </Value>
