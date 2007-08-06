@@ -3,6 +3,9 @@
  */
 package com.cronos.onlinereview.phases;
 
+import com.topcoder.util.log.Level;
+import com.topcoder.util.log.Log;
+import com.topcoder.util.log.LogFactory;
 import com.topcoder.web.common.model.FixedPriceComponent;
 import com.topcoder.web.common.model.SoftwareComponent;
 
@@ -24,6 +27,11 @@ import java.util.List;
  * @version 1.0
  */
 public class AutoPaymentUtil {
+	/**
+	 * The logger instance.
+	 */
+	private static final Log logger = LogFactory.getLog(AutoPaymentUtil.class.getName());
+	
     /** Retrieve the price from comp_version_date. */
     private static final String SELECT_PRICE_CVD = "select price " +
     	"	from comp_version_dates, " +
@@ -128,6 +136,8 @@ public class AutoPaymentUtil {
         	return;
         }
 
+        logger.log(Level.INFO,
+        		"Populate reviewer payments for the projectId:" + projectId + " in the phase:" + phaseId);
         int levelId = SoftwareComponent.LEVEL1;
         int count = getCount(projectId, conn);
         int passedCount = getScreenPassedCount(projectId, conn);
@@ -373,6 +383,8 @@ public class AutoPaymentUtil {
         pstmt.executeUpdate();
         PRHelper.close(pstmt);
 
+        logger.log(Level.INFO, "Clear submitter payment for the project :" + projectId);
+        
         // Prepare prices for differnt places
         double[] prices = new double[] { price, Math.round(price * 0.5) };
         long[] places = new long[] { 1, 2 };
@@ -432,6 +444,8 @@ public class AutoPaymentUtil {
         int result = pstmt.executeUpdate();
 
         if (result == 0) {
+        	logger.log(Level.INFO, "insert record into resource_info for the resource_id:"
+        			+ resourceId + " and resource_info_type_id:" + resourceInfoTypeId + " and value:" + value);
             // No given resource_info exists, insert instead
             PRHelper.close(pstmt);
             pstmt = conn.prepareStatement(INSERT_SQL);
@@ -441,6 +455,9 @@ public class AutoPaymentUtil {
             pstmt.setString(4, USER_ID);
             pstmt.setString(5, USER_ID);
             pstmt.execute();
+        } else {
+        	logger.log(Level.INFO, "update record in resource_info for the resource_id:"
+        			+ resourceId + ", resource_info_type_id:" + resourceInfoTypeId + " and with new value:" + value);
         }
 
         PRHelper.close(pstmt);
@@ -472,6 +489,8 @@ public class AutoPaymentUtil {
         int result = pstmt.executeUpdate();
 
         if (result == 0) {
+        	logger.log(Level.INFO, "insert record into project_info for the project_id:"
+        			+ projectId + " and project_info_type_id:" + projectInfoTypeId + " and value:" + value);
             // No given ProjectInfo exists, insert instead
             PRHelper.close(pstmt);
             pstmt = conn.prepareStatement(INSERT_SQL);
@@ -481,6 +500,9 @@ public class AutoPaymentUtil {
             pstmt.setString(4, USER_ID);
             pstmt.setString(5, USER_ID);
             pstmt.execute();
+        } else {
+        	logger.log(Level.INFO, "update record in project_info for the project_id:"
+        			+ projectId + " and project_info_type_id:" + projectInfoTypeId + " with new value:" + value);
         }
 
         PRHelper.close(pstmt);

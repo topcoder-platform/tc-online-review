@@ -9,6 +9,7 @@ import java.text.MessageFormat;
 import java.util.Iterator;
 import java.util.List;
 
+import com.cronos.onlinereview.phases.logging.LoggerMessage;
 import com.topcoder.management.project.Project;
 import com.topcoder.util.log.Level;
 import com.topcoder.web.common.model.AssignmentDocument;
@@ -61,6 +62,8 @@ public class PactsServicesDelegate {
 	 * @throws PactsServicesException
 	 */
 	public AssignmentDocumentResult createAssignmentDocuments(Project project) throws PactsServicesException {
+		log.log(Level.INFO, new LoggerMessage("Project", new Long(project.getId()), null, "Create assignment documents."));
+		
 		long projectId = project.getId();
 		String winnerId = (String) project.getProperty("Winner External Reference ID");
 		String runnerUpId = (String) project.getProperty("Runner-up External Reference ID");
@@ -76,6 +79,8 @@ public class PactsServicesDelegate {
 			}
 			return result;
 		} catch (Exception e) {
+			log.log(Level.ERROR,
+					new LoggerMessage("Project", new Long(project.getId()), null,"Fail to create Assignment Documents", e));
 			throw new PactsServicesException(e);
 		}
 	}
@@ -99,6 +104,8 @@ public class PactsServicesDelegate {
 		try {
 			return pactsServices.addAssignmentDocument(userAD);
 		} catch (Exception e) {
+			log.log(Level.ERROR, new LoggerMessage("Project", new Long(projectId), null,
+					"Fail to create new Assignment Document for the userId:" + userId + " and submissionTitle:" + submissionTitle, e));
 			throw new PactsServicesException(e);
 		}
 	}
@@ -111,7 +118,8 @@ public class PactsServicesDelegate {
 			try {
 				getPactsServices().deleteAssignmentDocument(ad);
 			} catch (DeleteAffirmedAssignmentDocumentException e) {
-				log.log(Level.WARN, "");
+				log.log(Level.ERROR,
+						new LoggerMessage("Project", new Long(projectId), null, "Fail to delete assignment documents.", e));
 			}
 		}
 	}
