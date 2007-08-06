@@ -9,10 +9,12 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
 
+import com.cronos.onlinereview.phases.logging.LoggerMessage;
 import com.topcoder.management.phase.PhaseHandlingException;
 import com.topcoder.management.project.ProjectManager;
 import com.topcoder.management.project.ProjectManagerImpl;
 import com.topcoder.util.errorhandling.BaseException;
+import com.topcoder.util.log.Level;
 
 /**
  * The PRHelper which is used to provide helper method for Phase Handler.
@@ -21,6 +23,8 @@ import com.topcoder.util.errorhandling.BaseException;
  * @version 1.0
  */
 public class PRHelper {
+	private static final com.topcoder.util.log.Log logger = com.topcoder.util.log.LogFactory.getLog(PRHelper.class
+			.getName());
     // OrChange : Modified the statement to take the placed and final score from submission table
     private static final String APPEAL_RESPONSE_SELECT_STMT = "select s.final_score as final_score, "
             + "	ri_u.value as user_id, " + "	s.placement as placed, " + "	ri1.value payment, " + "	r.project_id, "
@@ -96,6 +100,9 @@ public class PRHelper {
         PreparedStatement pstmt = null;
         try {
             if (toStart) {
+            	logger.log(Level.INFO,
+					new LoggerMessage("project", new Long(projectId), null, "start registration process."));
+            
                 // Reset price of project
                 AutoPaymentUtil.resetProjectPrice(projectId, conn);
             }
@@ -120,6 +127,9 @@ public class PRHelper {
         }
         try {
             if (!toStart) {
+            	logger.log(Level.INFO,
+    				new LoggerMessage("project", new Long(projectId), null, "process submission phase."));
+            
                 // Update all users who submit submission
                 pstmt = conn.prepareStatement(UPDATE_PROJECT_RESULT_STMT);
                 pstmt.setLong(1, projectId);
@@ -146,6 +156,8 @@ public class PRHelper {
         }
         try {
             if (!toStart) {
+            	logger.log(Level.INFO,
+    				new LoggerMessage("project", new Long(projectId), null, "process screening phase."));
                 // Update all users who failed to pass screen, set valid_submission_ind = 0
                 pstmt = conn.prepareStatement(FAILED_PASS_SCREENING_STMT);
                 pstmt.setLong(1, projectId);
@@ -184,6 +196,8 @@ public class PRHelper {
         ResultSet rs = null;
         try {
             if (!toStart) {
+            	logger.log(Level.INFO,
+            		new LoggerMessage("project", new Long(projectId), null, "process review phase."));
                 // Retrieve all
                 pstmt = conn.prepareStatement(REVIEW_SELECT_STMT);
                 pstmt.setLong(1, projectId);
@@ -223,6 +237,8 @@ public class PRHelper {
             return;
         }
         if (!toStart) {
+        	logger.log(Level.INFO,
+				new LoggerMessage("project", new Long(projectId), null, "process Appeal Response phase."));
             // Reset price of project
             AutoPaymentUtil.resetProjectPrice(projectId, conn);
             populateProjectResult(projectId, conn);
@@ -243,6 +259,8 @@ public class PRHelper {
             return;
         }
         if (!toStart) {
+    		logger.log(Level.INFO,
+					new LoggerMessage("project", new Long(projectId), null, "process Aggregation phase."));
             // Reset price of project
             AutoPaymentUtil.resetProjectPrice(projectId, conn);
             populateProjectResult(projectId, conn);
@@ -266,6 +284,8 @@ public class PRHelper {
             return;
         }
         if (!toStart) {
+    		logger.log(Level.INFO,
+					new LoggerMessage("project", new Long(projectId), null, "Process Aggregation Review phase."));
             // Reset price of project
             AutoPaymentUtil.resetProjectPrice(projectId, conn);
             populateProjectResult(projectId, conn);
@@ -286,6 +306,8 @@ public class PRHelper {
             return;
         }
         if (!toStart) {
+    		logger.log(Level.INFO,
+					new LoggerMessage("project", new Long(projectId), null, "Process final fix phase."));
             // Reset price of project
             AutoPaymentUtil.resetProjectPrice(projectId, conn);
             populateProjectResult(projectId, conn);
@@ -306,10 +328,14 @@ public class PRHelper {
             return;
         }
         if (!toStart) {
+    		logger.log(Level.INFO,
+					new LoggerMessage("project", new Long(projectId), null, "Process final review phase."));
             // Reset price of project
             AutoPaymentUtil.resetProjectPrice(projectId, conn);
             populateProjectResult(projectId, conn);
         } else {
+    		logger.log(Level.INFO,
+					new LoggerMessage("project", new Long(projectId), null, "start final review phase."));
             // start this phase
             AutoPaymentUtil.populateReviewerPayments(projectId, conn, AutoPaymentUtil.FINAL_REVIEW_PHASE);
         }
@@ -331,6 +357,8 @@ public class PRHelper {
         if (isStudioProject(projectId)) {
             return;
         }
+        logger.log(Level.INFO,
+				new LoggerMessage("project", new Long(projectId), null, "reset update_result and user_reliability."));
         // reset old_reliability, new_reliability, current_reliability_ind, reliable_submission_ind,
         // reliability_ind
         String sqlStr = "update project_result set old_reliability = null, new_reliability = null, current_reliability_ind = null,"
@@ -396,6 +424,8 @@ public class PRHelper {
             pstmt.setLong(1, projectId);
             rs = pstmt.executeQuery();
 
+        	logger.log(Level.INFO, new LoggerMessage("Project", new Long(projectId), null,
+        			"update project_result with final scores, placed and passed_review_ind."));
             updateStmt = conn.prepareStatement(APPEAL_RESPONSE_UPDATE_PROJECT_RESULT_STMT);
             while (rs.next()) {
                 double finalScore = rs.getDouble("final_score");
@@ -459,6 +489,7 @@ public class PRHelper {
         if (obj instanceof Connection) {
             try {
                 ((Connection) obj).close();
+    			logger.log(Level.INFO, "close the connection");
             } catch (Exception e) {
                 // Just ignore
             }
@@ -481,7 +512,7 @@ public class PRHelper {
     static boolean isStudioProject(long projectId) {
         try {
             ProjectManager projectManager = new ProjectManagerImpl();
-            return "Studio".equals(projectManager.getProject(projectId).getProjectCategory().getDescription());
+            return "Studio".equals(projectManager.getProject(projectId).getProjectCategory().getProjectType().getName());
         } catch (BaseException e) {
             return false;
         }

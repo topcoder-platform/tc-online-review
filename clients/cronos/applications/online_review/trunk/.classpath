@@ -31,7 +31,7 @@
 			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry exported="true" kind="lib" path="lib/tcs/configuration_manager/2.1.5/configuration_manager.jar">
+	<classpathentry exported="true" kind="lib" path="lib/tcs/configuration_manager/2.1.5/configuration_manager.jar" sourcepath="/configuration_manager/src/java/main">
 		<attributes>
 			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
 		</attributes>
@@ -121,27 +121,17 @@
 			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry exported="true" kind="lib" path="lib/tcs/project_management/1.0/project_management.jar" sourcepath="/project_management/src/java/main">
-		<attributes>
-			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry exported="true" kind="lib" path="lib/tcs/project_management_persistence/1.0/project_management_persistence.jar" sourcepath="/project_management_persistence/src/java/main">
-		<attributes>
-			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
-		</attributes>
-	</classpathentry>
 	<classpathentry exported="true" kind="lib" path="lib/tcs/project_phases/2.0/project_phases.jar">
 		<attributes>
 			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="lib/tcs/resource_management/1.1/resource_management.jar" sourcepath="/resource_management/src/java/main">
+	<classpathentry kind="lib" path="lib/tcs/resource_management/1.1.1/resource_management.jar" sourcepath="/resource_management/src/java/main">
 		<attributes>
 			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="lib/tcs/resource_management_persistence/1.2/resource_management_persistence.jar">
+	<classpathentry kind="lib" path="lib/tcs/resource_management_persistence/1.2.1/resource_management_persistence.jar">
 		<attributes>
 			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
 		</attributes>
@@ -166,7 +156,7 @@
 			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry exported="true" kind="lib" path="lib/tcs/scorecard_data_structure/1.0/scorecard_data_structure.jar">
+	<classpathentry exported="true" kind="lib" path="lib/tcs/scorecard_data_structure/1.0/scorecard_data_structure.jar" sourcepath="/scorecard_data_structure/src/java/main">
 		<attributes>
 			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
 		</attributes>
@@ -394,5 +384,7 @@
 	<classpathentry kind="lib" path="lib/third_party/saaj.jar"/>
 	<classpathentry kind="lib" path="lib/third_party/wsdl4j-1.5.1.jar"/>
 	<classpathentry kind="lib" path="lib/tcs/online_review_phases/1.0.5/online_review_phases.jar"/>
+	<classpathentry kind="lib" path="lib/tcs/project_management/1.0.1/project_management.jar" sourcepath="/project_management/src/java/main"/>
+	<classpathentry kind="lib" path="lib/tcs/project_management_persistence/1.1.1/project_management_persistence.jar"/>
 	<classpathentry kind="output" path="build/classes"/>
 </classpath>

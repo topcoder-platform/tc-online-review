@@ -9,6 +9,7 @@ import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.rmi.PortableRemoteObject;
 
+import com.cronos.onlinereview.phases.logging.LoggerMessage;
 import com.topcoder.util.log.Level;
 import com.topcoder.web.ejb.pacts.PactsServices;
 import com.topcoder.web.ejb.pacts.PactsServicesHome;
@@ -40,6 +41,7 @@ public class ServiceLocator {
 			try {
 				context = new InitialContext(props);
 			} catch (NamingException e) {
+				log.log(Level.FATAL, "Fail to find the PactsServicesHome." + LoggerMessage.getExceptionStackTrace(e));
 				throw new ServiceLocatorNamingException(e);
 			}
 		}
@@ -56,6 +58,7 @@ public class ServiceLocator {
 					getInitialContext().lookup("com.topcoder.web.ejb.pacts.PactsServicesHome"),
 					PactsServicesHome.class);
 		} catch (NamingException e) {
+			log.log(Level.FATAL, "Fail to find the PactsServicesHome." + LoggerMessage.getExceptionStackTrace(e));
 			throw new ServiceLocatorNamingException(e);
 		}
 	}
@@ -64,27 +67,11 @@ public class ServiceLocator {
     	try {
 			return getPactsServicesHome().create();
 		} catch (RemoteException e) {
+			log.log(Level.FATAL, "Fail to find the PactsServicesHome." + LoggerMessage.getExceptionStackTrace(e));
 			throw new ServiceLocatorCreateException("error creating PactsServices",e);
 		} catch (CreateException e) {
+			log.log(Level.FATAL, "Fail to find the PactsServicesHome." + LoggerMessage.getExceptionStackTrace(e));
 			throw new ServiceLocatorCreateException("error creating PactsServices", e);
 		}
-//    	PactsServicesHome home = (PactsServicesHome) PortableRemoteObject.narrow(
-//    			getInitialContext().lookup("com.topcoder.web.ejb.pacts.PactsServicesHome"),
-//    			PactsServicesHome.class);
-//    	try {
-//    		PactsServices pactsServices = home.create();
-//    		List l =  pactsServices.getAssignmentDocumentByProjectId(23308946);
-//    		for (Iterator i = l.iterator(); i.hasNext();) {
-//				AssignmentDocument ad = (AssignmentDocument) i.next();
-//				System.out.println("ad: " + ad.getComponentProjectId() + 
-//						", " + ad.getStatus().getDescription());
-//			}
-//			System.out.println("pactsServices.getUserTypes(): " + pactsServices.getAssignmentDocumentByProjectId(23308946));
-//			return pactsServices;
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//			throw new RuntimeException(e);
-//		} 
-    	
     }
 }
