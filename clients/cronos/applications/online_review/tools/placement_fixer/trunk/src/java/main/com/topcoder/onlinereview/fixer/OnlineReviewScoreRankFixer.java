@@ -79,7 +79,7 @@ public class OnlineReviewScoreRankFixer {
                     + " and ri.resource_info_type_id = 1 and s.submission_id = ?";
 
     /**
-     * SQL statement for retrieving a submission's final score from resource_info table.
+     * SQL statement for retrieving a submission's final score from submission table.
      */
     private static final String GET_SUBMISSION_FINAL_SCORE = "SELECT final_score finalScore from submission where submission_id = ?";
                    // for resource_info_type_id = 11, the score data is moved from resource_info table to submission table, below is the
@@ -91,7 +91,7 @@ public class OnlineReviewScoreRankFixer {
 
     
     /**
-     * SQL statement for retrieving a submission's placement from resource_info table.
+     * SQL statement for retrieving a submission's placement from submission table.
      */
     private static final String GET_SUBMISSION_PLACEMENT = "SELECT placement rank from submission where submission_id = ?";
                    // for resource_info_type_id = 12, the score data is moved from resource_info table to submission table, below is the
@@ -102,7 +102,7 @@ public class OnlineReviewScoreRankFixer {
                    //    + " and ri.resource_info_type_id = 12 and s.submission_id = ?";
 
     /**
-     * SQL statement for updating the final score of the submission in the resource_info table.
+     * SQL statement for updating the final score of the submission in the submission table.
      */
     private static final String UPDATE_RI_FINAL_SCORE = "UPDATE submission SET final_score = ?, modify_user = 'FixerApp', modify_date = CURRENT"
                     + " WHERE submission_id = ?";
@@ -114,7 +114,7 @@ public class OnlineReviewScoreRankFixer {
     //    + " WHERE s.upload_id = u.upload_id AND s.submission_id = ?)";
 
     /**
-     * SQL statement for updating the rank of the submission in the resource_info table.
+     * SQL statement for updating the rank of the submission in the submission table.
      */
     private static final String UPDATE_RI_PLACEMENT = "UPDATE submission SET placement = ?, modify_user = 'FixerApp', modify_date = CURRENT"
     	            + " WHERE submission_id = ?";
@@ -383,6 +383,9 @@ public class OnlineReviewScoreRankFixer {
 
             temp /= sResult.getReviewScoresLength();
 
+/*
+ * For move the placement/final score data to the submission table, the update will always performed.
+ * No need to skip now.         
             boolean missingData = false;
 
             // if there is no final score for the submission
@@ -404,7 +407,7 @@ public class OnlineReviewScoreRankFixer {
             	Utility.log(Level.ERROR, "ignoring this project due to the missing data");
                 return false;
             }
-
+*/
             if (Math.abs(temp - sResult.getFinalScore()) > 0.006) {
 
                 if (dataCorrect) {
