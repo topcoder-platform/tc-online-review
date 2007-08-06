@@ -116,7 +116,7 @@ public class ProjectReviewActions extends DispatchAction {
      * This member variable is a constant that specifies the count of comments displayed for each
      * item by default on Edit Screening, Edit Review, and Edit Approval pages.
      */
-    private static final int DEFAULT_COMMENTS_NUMBER = 3;
+    private static final int DEFAULT_COMMENTS_NUMBER = 1;
 
     /**
      * This member variable is a constant that specifies the count of comments displayed for each
