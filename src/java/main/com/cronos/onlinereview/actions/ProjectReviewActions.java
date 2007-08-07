@@ -3289,6 +3289,7 @@ public class ProjectReviewActions extends DispatchAction {
 
         // If there is no final (post Appeals Response) score for the submitter yet,
         // there is nothing to do anymore
+        log.log(Level.INFO, "Final Score: " + finalScore);
         if (finalScore == null) {
             return;
         }
