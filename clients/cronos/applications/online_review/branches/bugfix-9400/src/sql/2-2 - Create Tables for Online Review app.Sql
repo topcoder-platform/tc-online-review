@@ -404,6 +404,7 @@ CREATE TABLE review (
   scorecard_id                  INTEGER                         NOT NULL,
   committed                     DECIMAL(1, 0)                   NOT NULL,
   score                         FLOAT,
+  initial_score                 FLOAT,
   create_user                   VARCHAR(64)                     NOT NULL,
   create_date                   DATETIME YEAR TO FRACTION(3)    NOT NULL,
   modify_user                   VARCHAR(64)                     NOT NULL,

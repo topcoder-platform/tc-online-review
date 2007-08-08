@@ -2958,7 +2958,7 @@ public class ProjectReviewActions extends DispatchAction {
         if (review != null && review.isCommitted()) {
             // If user has a Manager role, put special flag to the request,
             // indicating that we need "Manager Edit"
-            if(AuthorizationHelper.hasUserRole(request, Constants.MANAGER_ROLE_NAMES)) {
+            if (AuthorizationHelper.hasUserRole(request, Constants.MANAGER_ROLE_NAMES)) {
                 request.setAttribute("managerEdit", Boolean.TRUE);
                 managerEdit = true;
             } else {
@@ -3176,6 +3176,10 @@ public class ProjectReviewActions extends DispatchAction {
             review.setScore(new Float(newScore));
             // Set the completed status of the review
             if (commitRequested) {
+                // Set initial score of the review if hasn't been set yet
+                if ("Review".equals(reviewType) && review.getInitialScore() == null) {
+                    review.setInitialScore(review.getScore());
+                }
                 review.setCommitted(true);
             }
         } else if (previewRequested) {
@@ -3337,39 +3341,37 @@ public class ProjectReviewActions extends DispatchAction {
         ReviewScoreAggregator aggregator = ActionsHelper.createScoreAggregator(request);
         // Aggregate scores for the current submission
         AggregatedSubmission[] aggrSubm = aggregator.aggregateScores(new float[][] {scores});
-        float newScore = aggrSubm[0].getAggregatedScore();
+        final float newScore = aggrSubm[0].getAggregatedScore();
+        final float oldScore = finalScore.floatValue();
 
-        float oldScore = Float.parseFloat(String.valueOf(finalScore));
-       
         if (newScore == oldScore) {
-        	// score is not changed
-        	return;
+            // score is not changed
+            return;
         }
-        
+
         // OrChange - Get the placement from the submission instead of the Resource
         Long oldPlacement = sub.getPlacement() == null ? -1 : sub.getPlacement();
-        
-        
+
         // Old Code
         // Object temp = submitter.getProperty("Placement");
         // long oldPlacement = temp == null ? -1 : Long.parseLong(temp.toString());
         // Old Code Ends
-        
+
         Object userId = submitter.getProperty("External Reference ID");
-        
+
         UploadManager upMgr = ActionsHelper.createUploadManager(request);
 
         // OrChange - Update the final score in the Submission table.
         sub.setFinalScore(new Double(newScore));
-        
+
         // update the final score
         upMgr.updateSubmission(sub, String.valueOf(AuthorizationHelper.getLoggedInUserId(request)));
-        
+
         // Old Code
         // // Update this submitter's final score with aggregated one
         // submitter.setProperty("Final Score", String.valueOf(newScore));
-        //        
-        //        
+        //
+        //
         // // Store updated information in the database
         // resMgr.updateResource(submitter, String.valueOf(AuthorizationHelper.getLoggedInUserId(request)));
         // Old Code Ends
@@ -3385,7 +3387,7 @@ public class ProjectReviewActions extends DispatchAction {
         Filter filterSubmissions = new InFilter("submission", submissionIds);
         filter = new AndFilter(Arrays.asList(new Filter[] {filterReviewers, filterSubmissions, filterCommitted}));
         reviews = revMgr.searchReviews(filter, true);
-        
+
         // Retrieve minScore
         ScorecardManager scMgr = ActionsHelper.createScorecardManager(request);
         float minScore =  ActionsHelper.getScorecardMinimumScore(scMgr, reviews[0]);
@@ -3450,7 +3452,7 @@ public class ProjectReviewActions extends DispatchAction {
 
         Resource winningSubmitter = null;
         Resource runnerUpSubmitter = null;
-    	
+
 
         //again iterate over submissions to set the initial score and placement
         for (int iSub = 0; iSub < placements.length; iSub++) {
@@ -3470,8 +3472,8 @@ public class ProjectReviewActions extends DispatchAction {
             // submitter.setProperty("Placement", String.valueOf(placement));
             // Old Code Ends
 
-            SubmissionStatus newStatus = null; 
-            	
+            SubmissionStatus newStatus = null;
+
             //if failed review, then update the status
             if (aggScore < minScore) {
             	newStatus = failedStatus;
@@ -3487,7 +3489,7 @@ public class ProjectReviewActions extends DispatchAction {
             // submission status is changed
             if (!newStatus.equals(submission.getSubmissionStatus())) {
                 submission.setSubmissionStatus(newStatus);
-                upMgr.updateSubmission(submission, String.valueOf(AuthorizationHelper.getLoggedInUserId(request)));            	
+                upMgr.updateSubmission(submission, String.valueOf(AuthorizationHelper.getLoggedInUserId(request)));
             }
 
             //cache winning and runner up submitter.
@@ -3530,7 +3532,7 @@ public class ProjectReviewActions extends DispatchAction {
 
     /**
      * Return suitable submission for given submissionId.
-     * 
+     *
      * @param submissions the submission array
      * @param submissionId the submissionId
      * @return submission
@@ -3572,7 +3574,7 @@ public class ProjectReviewActions extends DispatchAction {
     }
 
     /**
-     * This static method submission status for the particular submitter. 
+     * This static method submission status for the particular submitter.
      *
      * @param request
      *            the http request. Used internally by some helper functions.
@@ -3615,9 +3617,9 @@ public class ProjectReviewActions extends DispatchAction {
         ScorecardManager scorecardManager = ActionsHelper.createScorecardManager(request);
 
         // Get minimum score
-        float minimumScore = 75;        
+        float minimumScore = 75;
         Scorecard[] scoreCards = scorecardManager.getScorecards(new long[]{review.getScorecard()}, false);
-        
+
         if (scoreCards.length > 0) {
         	minimumScore = scoreCards[0].getMinScore();
         }
@@ -3911,7 +3913,7 @@ public class ProjectReviewActions extends DispatchAction {
                         !activePhases.contains(Constants.APPEALS_RESPONSE_PHASE_NAME)) {
                     isAllowed = true;
                 } else {
-                	//if any of those phases are open only, a user can see the screening if he is not a submitter 
+                	//if any of those phases are open only, a user can see the screening if he is not a submitter
                 	isAllowed = !AuthorizationHelper.hasUserRole(request, Constants.SUBMITTER_ROLE_NAME);
                 }
             } else {
@@ -4030,7 +4032,7 @@ public class ProjectReviewActions extends DispatchAction {
             for (int iSection = 0; iSection < group.getNumberOfSections(); ++iSection) {
                 Section section = group.getSection(iSection);
                 for (int iQuestion = 0; iQuestion < section.getNumberOfQuestions(); ++iQuestion, ++itemIdx) {
-                    Question question = section.getQuestion(iQuestion);                    
+                    Question question = section.getQuestion(iQuestion);
                     if (question.isUploadDocument()) {
                         uploadedFileIds[fileIdx++] = review.getItem(itemIdx).getDocument();
                     }
@@ -4381,7 +4383,7 @@ public class ProjectReviewActions extends DispatchAction {
         // Get a type of the question for the current answer
         String questionType = question.getQuestionType().getName();
 
-        if (questionType.equalsIgnoreCase("Scale (1-4)") || questionType.equalsIgnoreCase("Scale (1-10)") || 
+        if (questionType.equalsIgnoreCase("Scale (1-4)") || questionType.equalsIgnoreCase("Scale (1-10)") ||
         		questionType.equalsIgnoreCase("Scale (0-9)") || questionType.equalsIgnoreCase("Scale (0-3)")) {
             if (!(correctAnswers.containsKey(answer) && correctAnswers.get(answer).equals(questionType))) {
                 ActionsHelper.addErrorToRequest(request, errorKey, "Error.saveReview.Answer.Incorrect");
