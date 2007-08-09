@@ -9,6 +9,7 @@ import java.sql.Types;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -732,6 +733,7 @@ public class OnlineReviewScoreRankFixer {
      * @param args the arguments passed in.
      */
     public static void main(String[] args) {
+    	Utility.log(Level.ALL, "Start : " + new Date());
 		OnlineReviewScoreRankFixer fixer = new OnlineReviewScoreRankFixer();
 
         if (args.length > 0) {
@@ -749,6 +751,7 @@ public class OnlineReviewScoreRankFixer {
 
         List projectResults = fixer.getAllProjectResults();
         fixer.buildProjectResults(projectResults);
+        Utility.log(Level.ALL, "End : " + new Date());
     }
 
     private void addProjectIdForUpdate(String projectId) {
