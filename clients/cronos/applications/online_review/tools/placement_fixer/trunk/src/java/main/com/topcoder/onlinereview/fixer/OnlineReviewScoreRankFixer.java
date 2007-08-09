@@ -503,6 +503,11 @@ public class OnlineReviewScoreRankFixer {
                     if (oldRank == 1) {
                         updateSubmissionStatus(connection, submissionId, PASSED_WITHOUT_WIN_SUBMISSION);
                     }
+                    
+                    if (oldRank == 1 && oldRank == newRank) {
+                    	setAllActiveSubmissionToPassingWithoutWinning(connection, projectResult.getProjectId());
+                    	updateSubmissionStatus(connection, submissionId, WINNER_SUBMISSION);
+                    }
                 }
             }
 
@@ -512,7 +517,16 @@ public class OnlineReviewScoreRankFixer {
         return dataCorrect;
     }
 
-    private static DecimalFormat SCORE_FORMATTER = null;
+    private void setAllActiveSubmissionToPassingWithoutWinning(Connection connection, String projectId) {
+		try {
+			connection.createStatement().executeUpdate("UPDATE submission SET submission_status_id = 4 WHERE submission_status_id = 1 " + 
+					"AND upload_id IN (SELECT u.upload_id FROM upload u where u.project_id = " + projectId);
+		} catch (SQLException e) {
+			throw new OnlineReviewScoreRankFixerException("Fail to change submissions status", e);
+		}
+	}
+
+	private static DecimalFormat SCORE_FORMATTER = null;
     
     private DecimalFormat getScoreFormatter() {
     	if (SCORE_FORMATTER == null) {
