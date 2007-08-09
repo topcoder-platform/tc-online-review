@@ -105,7 +105,7 @@ public class OnlineReviewScoreRankFixer {
     /**
      * SQL statement for updating the final score of the submission in the submission table.
      */
-    private static final String UPDATE_RI_FINAL_SCORE = "UPDATE submission SET final_score = ?, modify_user = 'FixerApp', modify_date = CURRENT"
+    private static final String UPDATE_SUBMISSION_FINAL_SCORE = "UPDATE submission SET final_score = ?, modify_user = 'FixerApp', modify_date = CURRENT"
                     + " WHERE submission_id = ?";
     // for resource_info_type_id = 11, the score data is moved from resource_info table to submission table, below is the
     // old sql before this change. Changed by waits@08-04-2007
@@ -117,7 +117,7 @@ public class OnlineReviewScoreRankFixer {
     /**
      * SQL statement for updating the rank of the submission in the submission table.
      */
-    private static final String UPDATE_RI_PLACEMENT = "UPDATE submission SET placement = ?, modify_user = 'FixerApp', modify_date = CURRENT"
+    private static final String UPDATE_SUBMISSION_PLACEMENT = "UPDATE submission SET placement = ?, modify_user = 'FixerApp', modify_date = CURRENT"
     	            + " WHERE submission_id = ?";
          // for resource_info_type_id = 12, the score data is moved from resource_info table to submission table, below is the
          // old sql before this change. Changed by waits@08-04-2007
@@ -275,7 +275,7 @@ public class OnlineReviewScoreRankFixer {
                         sResult.setFinalScore(result.getDouble("finalScore"));
                     }
 
-                    // get the submission's rank from resource_info table
+                    // get the submission's rank from submission table
                     getSubmissionRank.setString(1, id);
                     result = getSubmissionRank.executeQuery();
 
@@ -542,7 +542,7 @@ public class OnlineReviewScoreRankFixer {
     
     /**
      * Update the final score for specified submission. This method will update two tables,
-     * resource_info and project_result.
+     * submission and project_result.
      * 
      * @param submissionId the id of the submission.
      * @param newScore the new score of the submission.
@@ -552,13 +552,13 @@ public class OnlineReviewScoreRankFixer {
         PreparedStatement updatePR = null;
 
         try {
-            updateRI = connection.prepareStatement(UPDATE_RI_FINAL_SCORE);
+            updateRI = connection.prepareStatement(UPDATE_SUBMISSION_FINAL_SCORE);
             updatePR = connection.prepareStatement(UPDATE_PR_FINAL_SCORE);
 
             // update resource_info
             updateRI.setString(1, getScoreFormatter().format(newScore));
             updateRI.setString(2, sResult.getSubmissionId());
-            Utility.log(Level.ERROR, "update Resource_Info final score submissionId: " + sResult.getSubmissionId() + ", score: " + newScore);
+            Utility.log(Level.ERROR, "update submission final_score submissionId: " + sResult.getSubmissionId() + ", score: " + newScore);
             updateRI.executeUpdate();
 
             // update project_result
@@ -578,7 +578,7 @@ public class OnlineReviewScoreRankFixer {
 
     /**
      * Update the placement for specified submission. This method will update two tables,
-     * resource_info and project_result.
+     * submission, resource_info and project_result.
      * 
      * @param submissionId the id of the submission.
      * @param newPlacement the new placement of the submission.
@@ -590,26 +590,29 @@ public class OnlineReviewScoreRankFixer {
         PreparedStatement updatePR = null;
 
         try {
-            updateRIplacement = connection.prepareStatement(UPDATE_RI_PLACEMENT);
+            updateRIplacement = connection.prepareStatement(UPDATE_SUBMISSION_PLACEMENT);
             updateRIpayment = connection.prepareStatement(UPDATE_RI_PAYMENT);
             updatePR = connection.prepareStatement(UPDATE_PR_PLACEMENT);
 
-            // update resource_info placement
+            // update submission placement
             updateRIplacement.setInt(1, newPlacement);
             updateRIplacement.setString(2, sResult.getSubmissionId());
-            Utility.log(Level.ERROR, "update placement in resource_info for submission: " + sResult.getSubmissionId() + ", new place: " + newPlacement);
+            Utility.log(Level.ERROR, "update placement in submission for submission: " + sResult.getSubmissionId() + ", new place: " + newPlacement);
             updateRIplacement.executeUpdate();
             //update resource_info payment
+            double payment = 0; 
             if (newPlacement <= 2) {
-            	updateRIpayment.setDouble(1, projectResult.getPaymentForPlace(newPlacement));
+            	payment = projectResult.getPaymentForPlace(newPlacement);
             	updatePR.setDouble(2, projectResult.getPaymentForPlace(newPlacement));
             } else {
-            	updateRIpayment.setDouble(1, 0);
             	updatePR.setNull(2, Types.DOUBLE);
             }
+            updateRIpayment.setDouble(1, payment);
             updateRIpayment.setString(2, sResult.getSubmissionId());
             Utility.log(Level.ERROR, "update payment in resource_info for submission: " + sResult.getSubmissionId() + ", new payment: " + projectResult.getPaymentForPlace(newPlacement));
-            updateRIpayment.executeUpdate();
+            if (updateRIpayment.executeUpdate() == 0 && payment > 0) {
+            	Utility.log(Level.ERROR, "could not update payment for: " + sResult.getHandle() + " in project: " + projectResult.getProjectId());
+            }
 
             // update project_result
             updatePR.setInt(1, newPlacement);
