@@ -185,8 +185,10 @@ public class OnlineReviewProjectPilot extends DefaultProjectPilot {
 			getLogger().log(Level.DEBUG, "after super.advancePhases");
 			if (isCheckAssignmentDocumentsStatus()) {
 				Project project = managerHelper.getProjectManager().getProject(projectId);
-				log.log(Level.DEBUG, "check AD for projectId: " + projectId);
-				checkAssignmentDocumentStatusChange(project, operator);
+				if ("Component".equals(project.getProjectCategory().getProjectType().getName())) {
+					log.log(Level.DEBUG, "check AD for projectId: " + projectId);
+					checkAssignmentDocumentStatusChange(project, operator);
+				}
 			} else if (log.isEnabled(Level.DEBUG)) {
 				log.log(Level.DEBUG, "skiping AD status check: " + projectId);
 			}
