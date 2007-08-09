@@ -1,0 +1,24 @@
+configuration file: file_server.xml
+
+. com.topcoder.processor.ipserver
+	fileserver_address: the ipserver address
+	fileserver_port: the ipserver port 
+
+Notes: 
+	a. make sure auto_screening tool use the same server address and port
+	b. make sure the port is available and won't be used by others app
+
+. com.topcoder.onlinereview.SubmissionFileSystemServerTool	
+	idGenerator_name : the upload file handler id generator name
+	server_dir : the file server dir to store upload file
+	
+. com.topcoder.db.connectionfactory.DBConnectionFactoryImpl
+	used for file_system_id_seq only
+
+. create id_seq script
+	file_system_id_seq.sql
+
+. ant dist
+. copy build.xml and file_server_app.jar to the deployed file server dir
+. ant deploy
+. ant file_server (file_server_background)	
