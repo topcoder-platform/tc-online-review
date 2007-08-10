@@ -3,21 +3,14 @@ package com.topcoder.onlinereview.fixer;
 public class SubmitterResult {
     
     private String userId;
-
     private String handle;
-    
+    private long resourceId;
     private String submissionId;
-
     private double[] reviewScores = new double[8];
-
     private int reviewScoresIndex = 0;
-
     private double finalScore;
-    
     private double fixedScore;
-    
     private int fixedRank;
-
     private int rank;
 
     public SubmitterResult(String submissionId) {
@@ -48,6 +41,14 @@ public class SubmitterResult {
         return handle;
     }
 
+    public long getResourceId() {
+		return resourceId;
+	}
+
+	public void setResourceId(long resourceId) {
+		this.resourceId = resourceId;
+	}
+    
     public void addReviewScore(double score) {
         reviewScores[reviewScoresIndex] = score;
 
