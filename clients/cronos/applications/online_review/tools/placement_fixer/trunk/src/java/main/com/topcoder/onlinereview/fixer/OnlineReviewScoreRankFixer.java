@@ -26,7 +26,13 @@ import com.topcoder.util.log.Level;
  * @author hohosky
  */
 public class OnlineReviewScoreRankFixer {
-    /**
+    
+	/** SQL to insert a new resource_info */
+	private static final String INSERT_RESOURCE_INFO = "INSERT INTO resource_info" +
+			" (resource_id, resource_info_type_id, value, create_user, create_date, modify_user, modify_date)" +
+			" values (?, ?, ?, 'FixerApp', CURRENT,  'FixerApp', CURRENT)";
+
+	/**
      * SQL statement for getting all the completed component (Design or Development)'s project id.
      */
     private static final String GET_ALL_COMPONENT_PROJECT_ID = "SELECT p.project_id id, p.project_category_id type, piName.value name, piPrice.value price"
@@ -66,7 +72,7 @@ public class OnlineReviewScoreRankFixer {
     /**
      * SQL statement for retrieving a submission's handle.
      */
-    private static final String GET_SUBMISSION_HANDLE = "SELECT s.submission_id, ri.value handle from submission s, upload u, resource_info ri"
+    private static final String GET_SUBMISSION_HANDLE = "SELECT s.submission_id, ri.value handle, ri.resource_id from submission s, upload u, resource_info ri"
                     + " where s.upload_id = u.upload_id"
                     + " and u.resource_id = ri.resource_id"
                     + " and ri.resource_info_type_id = 2" + " and s.submission_id = ?";
@@ -83,48 +89,23 @@ public class OnlineReviewScoreRankFixer {
      * SQL statement for retrieving a submission's final score from submission table.
      */
     private static final String GET_SUBMISSION_FINAL_SCORE = "SELECT final_score finalScore from submission where submission_id = ?";
-                   // for resource_info_type_id = 11, the score data is moved from resource_info table to submission table, below is the
-                   // old sql before this change. Changed by waits@08-04-2007
-                   //    "SELECT ri.value finalScore from submission s, upload u, resource_info ri"
-                   //    + " where s.upload_id = u.upload_id"
-                   //    + " and u.resource_id = ri.resource_id"
-                   //    + " and ri.resource_info_type_id = 11 and s.submission_id = ?";
-
     
     /**
      * SQL statement for retrieving a submission's placement from submission table.
      */
     private static final String GET_SUBMISSION_PLACEMENT = "SELECT placement rank from submission where submission_id = ?";
-                   // for resource_info_type_id = 12, the score data is moved from resource_info table to submission table, below is the
-                   // old sql before this change. Changed by waits@08-04-2007
-                   //    "SELECT ri.value rank from submission s, upload u, resource_info ri"
-                   //    + " where s.upload_id = u.upload_id"
-                   //    + " and u.resource_id = ri.resource_id"
-                   //    + " and ri.resource_info_type_id = 12 and s.submission_id = ?";
 
     /**
      * SQL statement for updating the final score of the submission in the submission table.
      */
     private static final String UPDATE_SUBMISSION_FINAL_SCORE = "UPDATE submission SET final_score = ?, modify_user = 'FixerApp', modify_date = CURRENT"
                     + " WHERE submission_id = ?";
-    // for resource_info_type_id = 11, the score data is moved from resource_info table to submission table, below is the
-    // old sql before this change. Changed by waits@08-04-2007
-    //    "UPDATE resource_info SET value = ?, modify_user = 'FixerApp', modify_date = CURRENT"
-    //    + " WHERE resource_info_type_id = 11"
-    //    + " AND resource_id = (SELECT u.resource_id FROM upload u, submission s"
-    //    + " WHERE s.upload_id = u.upload_id AND s.submission_id = ?)";
 
     /**
      * SQL statement for updating the rank of the submission in the submission table.
      */
     private static final String UPDATE_SUBMISSION_PLACEMENT = "UPDATE submission SET placement = ?, modify_user = 'FixerApp', modify_date = CURRENT"
     	            + " WHERE submission_id = ?";
-         // for resource_info_type_id = 12, the score data is moved from resource_info table to submission table, below is the
-         // old sql before this change. Changed by waits@08-04-2007
-         // "UPDATE resource_info SET value = ?, modify_user = 'FixerApp', modify_date = CURRENT"
-         // + " WHERE resource_info_type_id = 12"
-         // + " AND resource_id = (SELECT u.resource_id FROM upload u, submission s"
-         // + " WHERE s.upload_id = u.upload_id AND s.submission_id = ?)";
     
     /**
      * SQL statement for updating the payment of the submission in the resource_info table.
@@ -289,6 +270,7 @@ public class OnlineReviewScoreRankFixer {
 
                     while (result.next()) {
                         sResult.setHandle(result.getString("handle"));
+                        sResult.setResourceId(result.getLong("resource_id"));
                     }
                     
                     sResult.setUserId(getUserId(connection, sResult.getSubmissionId()));
@@ -384,31 +366,6 @@ public class OnlineReviewScoreRankFixer {
 
             temp /= sResult.getReviewScoresLength();
 
-/*
- * For move the placement/final score data to the submission table, the update will always performed.
- * No need to skip now.         
-            boolean missingData = false;
-
-            // if there is no final score for the submission
-            if (sResult.getFinalScore() == 0) {
-                Utility.log(Level.ERROR, projectResult.getProjectInfo());
-                Utility.log(Level.ERROR, "No final score for " + sResult.getHandle());
-                missingData = true;
-            }
-
-            // if there is no rank info for the submission
-            if (sResult.getRank() == 0) {
-                Utility.log(Level.ERROR, projectResult.getProjectInfo());
-                Utility.log(Level.ERROR, "No rank info for " + sResult.getHandle());
-                missingData = true;
-            }
-
-            // ignore this project due to the missing data.
-            if (missingData) {
-            	Utility.log(Level.ERROR, "ignoring this project due to the missing data");
-                return false;
-            }
-*/
             if (Math.abs(temp - sResult.getFinalScore()) > 0.006) {
 
                 if (dataCorrect) {
@@ -611,7 +568,11 @@ public class OnlineReviewScoreRankFixer {
             updateRIpayment.setString(2, sResult.getSubmissionId());
             Utility.log(Level.ERROR, "update payment in resource_info for submission: " + sResult.getSubmissionId() + ", new payment: " + projectResult.getPaymentForPlace(newPlacement));
             if (updateRIpayment.executeUpdate() == 0 && payment > 0) {
-            	Utility.log(Level.ERROR, "could not update payment for: " + sResult.getHandle() + " in project: " + projectResult.getProjectId());
+            	DecimalFormat fmt = new DecimalFormat("0.##");
+            	DecimalFormatSymbols dfs = fmt.getDecimalFormatSymbols();
+            	dfs.setDecimalSeparator('.');
+            	fmt.setDecimalFormatSymbols(dfs);
+            	insertResourceInfo(connection, sResult.getResourceId(), 7, fmt.format(payment));
             }
 
             // update project_result
@@ -632,6 +593,23 @@ public class OnlineReviewScoreRankFixer {
         }
     }
 
+    private void insertResourceInfo(Connection connection, long resourceId, int resourceInfoTypeId, String value) {
+    	PreparedStatement pstm = null;
+    	try {
+			pstm = connection.prepareStatement(INSERT_RESOURCE_INFO);
+			int i = 1;
+			pstm.setLong(i++, resourceId);
+			pstm.setInt(i++, resourceInfoTypeId);
+			pstm.setString(i++, value);
+			pstm.executeUpdate();
+		} catch (SQLException e) {
+			throw new OnlineReviewScoreRankFixerException("cannot insert into resource_info: resourceId: " + resourceId + 
+					", type: " + resourceInfoTypeId + ", value:" + value, e);
+		} finally {
+			Utility.releaseResource(pstm, null, null);
+		}
+    }
+    
     /**
      * Update the passed_review_ind flag in project_result table.
      * 
