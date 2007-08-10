@@ -96,8 +96,8 @@ public class ProjectResult {
     }
 
     public String toString() {
-        return new StringBuilder(getProjectInfo())
-        	.append("\n---------------------------\n")
+        return new StringBuilder("\n---------------------------\n")
+        	.append(getProjectInfo())
         	.append(getSubmissionsResult())
         	.toString();
     }
