@@ -2509,19 +2509,6 @@
                     </Property>
                 </Property>
 
-                <Property name="searchableFields">
-                    <Property name="dummy">
-                        <Property name="validator">
-                            <Property name="class">
-                                <Value>validator</Value>
-                            </Property>
-                            <Property name="identifier">
-                                <Value>default</Value>
-                            </Property>
-                        </Property>
-                    </Property>
-                </Property>
-
                 <Property name="type">
                     <Value>Database</Value>
                 </Property>
@@ -2566,6 +2553,51 @@
                     </Property>
                     <Property name="project">
                         <Value>resource.project_id</Value>
+                    </Property>
+                </Property>
+
+                <Property name="searchableFields">
+                    <Property name="scorecardType">
+                        <Property name="validator">
+                            <Property name="class"><Value>validator</Value></Property>
+                            <Property name="identifier"><Value>default</Value></Property>
+                        </Property>
+                    </Property>
+                    <Property name="reviewer">
+                        <Property name="validator">
+                            <Property name="class"><Value>validator</Value></Property>
+                            <Property name="identifier"><Value>default</Value></Property>
+                        </Property>
+                    </Property>
+                    <Property name="submission">
+                        <Property name="validator">
+                            <Property name="class"><Value>validator</Value></Property>
+                            <Property name="identifier"><Value>default</Value></Property>
+                        </Property>
+                    </Property>
+                    <Property name="committed">
+                        <Property name="validator">
+                            <Property name="class"><Value>validator</Value></Property>
+                            <Property name="identifier"><Value>default</Value></Property>
+                        </Property>
+                    </Property>
+                    <Property name="initial_score">
+                        <Property name="validator">
+                            <Property name="class"><Value>validator</Value></Property>
+                            <Property name="identifier"><Value>default</Value></Property>
+                        </Property>
+                    </Property>
+                    <Property name="project">
+                        <Property name="validator">
+                            <Property name="class"><Value>validator</Value></Property>
+                            <Property name="identifier"><Value>default</Value></Property>
+                        </Property>
+                    </Property>
+                    <Property name="creation_date">
+                        <Property name="validator">
+                            <Property name="class"><Value>validator</Value></Property>
+                            <Property name="identifier"><Value>default</Value></Property>
+                        </Property>
                     </Property>
                 </Property>
             </Property>
