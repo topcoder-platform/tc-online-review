@@ -580,10 +580,11 @@ public class ProjectDetailsActions extends DispatchAction {
         TCSEmailMessage message = new TCSEmailMessage();
 
         // Add 'To' addresses to message
-        for (int i = 0; i < extUsrManagers.length; ++i) {
+        for (int i = 0; i < extUsrManagers.length - 1; ++i) {
             message.addToAddress(extUsrManagers[i].getEmail(), TCSEmailMessage.TO);
         }
-
+        //The last one is the sender that is CC'd in the mail
+        message.addToAddress(extUsrManagers[extUsrManagers.length - 1].getEmail(), TCSEmailMessage.CC);
         // Add 'From' address
         message.setFromAddress(sender.getEmail());
         // Set message's subject
