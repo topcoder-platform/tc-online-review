@@ -530,14 +530,17 @@ public class ProjectDetailsActions extends DispatchAction {
             }
         }
 
-        long[] extUsrManagerIds = new long[existingManagers.size()];
+        long[] extUsrManagerIds = new long[existingManagers.size() + 1];
         int managerIdx = 0;
 
         // This inefficient operation, but going over all resources' properties is even more inefficient
         for (Iterator iter = existingManagers.iterator(); iter.hasNext(); ) {
             extUsrManagerIds[managerIdx++] = Long.parseLong((String) iter.next());
         }
-
+        
+        //send a copy to the sender
+        extUsrManagerIds[managerIdx++] = senderId;
+        
         // Retrieve all external resources for managers in a single batch operation
         ExternalUser[] extUsrManagers = userMgr.retrieveUsers(extUsrManagerIds);
 
@@ -561,7 +564,7 @@ public class ProjectDetailsActions extends DispatchAction {
                 } else if ("USER_HANDLE".equals(field.getName())) {
                     field.setValue(sender.getHandle());
                 } else if ("PROJECT_NAME".equals(field.getName())) {
-                    field.setValue("" + project.getProperty("Project Name"));
+                    field.setValue(project.getProjectCategory().getDescription() + " - " + project.getProperty("Project Name"));
                 } else if ("PROJECT_VERSION".equals(field.getName())) {
                     field.setValue("" + project.getProperty("Project Version"));
                 } else if ("QUESTION_TYPE".equals(field.getName())) {
