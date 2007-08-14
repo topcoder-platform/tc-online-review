@@ -2516,6 +2516,7 @@
                                review.scorecard_id AS scorecard_id,
                                committed,
                                score,
+                               initial_score,
                                review.create_user AS create_user,
                                review.create_date AS create_date,
                                review.modify_user AS modify_user,
