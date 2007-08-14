@@ -3174,6 +3174,9 @@ public class ProjectReviewActions extends DispatchAction {
             }
             // Update scorecard's score
             review.setScore(new Float(newScore));
+            if (review.getInitialScore() == null) {
+            	review.setInitialScore(review.getScore());
+            }
             // Set the completed status of the review
             if (commitRequested) {
                 review.setCommitted(true);
