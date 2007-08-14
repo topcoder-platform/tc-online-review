@@ -147,6 +147,7 @@
         <forward name="notAuthorized" path="/jsp/login.jsp" redirect="true"/>
         <forward name="userError" path="/jsp/userError.jsp" redirect="false"/>
         <forward name="reviewCommitted" path="/jsp/reviewCommitted.jsp" redirect="false"/>
+        <forward name="listMyProjects" path="/actions/ListProjects.do?method=listProjects" redirect="true" />
     </global-forwards>
 
 
