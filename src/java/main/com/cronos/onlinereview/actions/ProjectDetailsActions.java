@@ -564,7 +564,8 @@ public class ProjectDetailsActions extends DispatchAction {
                 } else if ("USER_HANDLE".equals(field.getName())) {
                     field.setValue(sender.getHandle());
                 } else if ("PROJECT_NAME".equals(field.getName())) {
-                    field.setValue(project.getProjectCategory().getDescription() + " - " + project.getProperty("Project Name"));
+                    field.setValue("<![CDATA[" + project.getProjectCategory().getDescription() + " - " + 
+                    		project.getProperty("Project Name") + "]]>");
                 } else if ("PROJECT_VERSION".equals(field.getName())) {
                     field.setValue("" + project.getProperty("Project Version"));
                 } else if ("QUESTION_TYPE".equals(field.getName())) {
