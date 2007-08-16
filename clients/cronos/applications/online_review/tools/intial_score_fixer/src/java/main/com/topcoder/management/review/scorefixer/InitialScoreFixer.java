@@ -3,9 +3,6 @@
  */
 package com.topcoder.management.review.scorefixer;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
@@ -32,11 +29,6 @@ import com.topcoder.search.builder.filter.EqualToFilter;
 import com.topcoder.search.builder.filter.Filter;
 import com.topcoder.search.builder.filter.NotFilter;
 import com.topcoder.search.builder.filter.NullFilter;
-import com.topcoder.util.commandline.ArgumentValidationException;
-import com.topcoder.util.commandline.CommandLineUtility;
-import com.topcoder.util.commandline.IllegalSwitchException;
-import com.topcoder.util.commandline.Switch;
-import com.topcoder.util.commandline.UsageException;
 import com.topcoder.util.config.ConfigManager;
 import com.topcoder.util.config.ConfigManagerException;
 import com.topcoder.util.log.Level;
@@ -85,43 +77,15 @@ public class InitialScoreFixer {
             throw new IllegalArgumentException("args cannot be null");
         }
 
-        showUsage();
-
-        // Build command line parser
-        CommandLineUtility clu = new CommandLineUtility();
-
         try {
-            clu.addSwitch(new Switch("config", false, 1, 1, null, "The configuration file to load"));
-
-            clu.parse(args);
-
-            // Get config file. Assume pre-loaded if not specified.
-            String configFile = clu.getSwitch("config").getValue();
-            if (configFile != null) {
-                ConfigManager cfg = ConfigManager.getInstance();
-                cfg.add(configFile);
-            }
+        	ConfigManager cfg = ConfigManager.getInstance();
+        	cfg.add(InitialScoreFixer.class.getResource("/conf/ScoreFixer.xml"));
 
             computeScores();
-        } catch (IllegalSwitchException ise) {
-            logger.log(Level.ERROR,
-                    "fail to build command line cause of illegal switch:\n" + LogMessage.getExceptionStackTrace(ise));
-            throw createIAE("fail to build command line cause of illegal switch:" + ise, ise);
-        } catch (ArgumentValidationException ave) {
-            logger.log(Level.ERROR, "fail to parse command line cause of argument validation:\n" +
-                    LogMessage.getExceptionStackTrace(ave));
-            throw createIAE("fail to parse command line cause of argument validation:" + ave, ave);
-        } catch (UsageException ue) {
-            logger.log(Level.ERROR, "fail to parse command line cause of usage exception:\n" +
-                    LogMessage.getExceptionStackTrace(ue));
-            throw createIAE("fail to parse command line cause of usage exception:" + ue, ue);
-        } catch (ConfigManagerException cme) {
-            logger.log(Level.ERROR, "fail to load namespace cause of config manager exception:\n" +
-                    LogMessage.getExceptionStackTrace(cme));
-            showUsage();
-            throw new com.topcoder.management.review.scorefixer.ConfigurationException(
-                    "fail to load namespace cause of config manager exception", cme);
-        } catch (ReviewManagementException rme) {
+        } catch (ConfigManagerException e) {
+        	logger.log(Level.ERROR, "fail to load configuration:\n" +
+                    LogMessage.getExceptionStackTrace(e));
+		} catch (ReviewManagementException rme) {
             logger.log(Level.ERROR, "fail to load one of reviews:\n" + LogMessage.getExceptionStackTrace(rme));
             throw new ScoreFixerException("fail to load one of reviews", rme);
         } catch (com.topcoder.management.scorecard.ConfigurationException ce) {
@@ -138,7 +102,6 @@ public class InitialScoreFixer {
         } catch (RuntimeException t) {
         	logger.log(Level.ERROR, "fail to build command line cause of illegal switch:"
         			+ "\n" + LogMessage.getExceptionStackTrace(t));
-            showUsage();
             throw t;
         }
     }
@@ -296,41 +259,6 @@ public class InitialScoreFixer {
         System.out.println("New score is: " + newScore + "; updating...");
         revMgr.updateReview(review, "InitialScoreFixer");
         System.out.println("===== Updated!");
-    }
-
-    /**
-     * Create IAE with the message, and init the cause.
-     *
-     * @param message
-     *            the message.
-     * @param t
-     *            the cause.
-     * @return the IllegalArgumentException.
-     */
-    private static IllegalArgumentException createIAE(String message, Throwable t) {
-        showUsage();
-
-        IllegalArgumentException ex = new IllegalArgumentException(message);
-        ex.initCause(t);
-        return ex;
-    }
-
-    /**
-     * Show usage of this command line tool.
-     */
-    private static void showUsage() {
-        try {
-            BufferedReader br = new BufferedReader(new InputStreamReader(
-                InitialScoreFixer.class.getResourceAsStream("usage")));
-            String ln = br.readLine();
-            while (ln != null) {
-                System.err.println(ln);
-                ln = br.readLine();
-            }
-            br.close();
-        } catch (IOException ioe) {
-            System.err.println("Cannot find usage file!");
-        }
     }
 
     /**

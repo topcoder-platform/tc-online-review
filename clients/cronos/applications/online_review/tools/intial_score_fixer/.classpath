@@ -2,7 +2,6 @@
 <classpath>
 	<classpathentry kind="src" path="src/java/main"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="lib" path="dist/command_line_utility.jar"/>
 	<classpathentry kind="lib" path="dist/base_exception.jar"/>
 	<classpathentry kind="lib" path="dist/class_associations.jar"/>
 	<classpathentry kind="lib" path="dist/configuration_manager.jar"/>
