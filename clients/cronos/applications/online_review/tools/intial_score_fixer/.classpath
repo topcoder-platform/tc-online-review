@@ -2,29 +2,27 @@
 <classpath>
 	<classpathentry kind="src" path="src/java/main"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/base_exception"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/configuration_manager"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/data_validation"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/database_abstraction"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/db_connection_factory"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/deliverable_management"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/id_generator"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/logging_wrapper"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/object_factory"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/online_review_deliverables"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/online_review_phases"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/phase_management"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/project_management"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/project_phase_template"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/resource_management"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/review_data_structure"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/review_management"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/review_score_aggregator"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/review_score_calculator"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/scorecard_data_structure"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/scorecard_management"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/search_builder"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/user_project_data_store"/>
 	<classpathentry kind="lib" path="dist/command_line_utility.jar"/>
+	<classpathentry kind="lib" path="dist/base_exception.jar"/>
+	<classpathentry kind="lib" path="dist/class_associations.jar"/>
+	<classpathentry kind="lib" path="dist/configuration_manager.jar"/>
+	<classpathentry kind="lib" path="dist/data_validation.jar"/>
+	<classpathentry kind="lib" path="dist/database_abstraction.jar"/>
+	<classpathentry kind="lib" path="dist/db_connection_factory.jar"/>
+	<classpathentry kind="lib" path="dist/id_generator.jar"/>
+	<classpathentry kind="lib" path="dist/ifx-jdbc.jar"/>
+	<classpathentry kind="lib" path="dist/logging_wrapper.jar"/>
+	<classpathentry kind="lib" path="dist/object_factory.jar"/>
+	<classpathentry kind="lib" path="dist/review_data_structure.jar"/>
+	<classpathentry kind="lib" path="dist/review_management_persistence.jar"/>
+	<classpathentry kind="lib" path="dist/review_management.jar"/>
+	<classpathentry kind="lib" path="dist/review_score_calculator.jar"/>
+	<classpathentry kind="lib" path="dist/scorecard_data_structure.jar"/>
+	<classpathentry kind="lib" path="dist/scorecard_management_persistence.jar"/>
+	<classpathentry kind="lib" path="dist/scorecard_management.jar"/>
+	<classpathentry kind="lib" path="dist/search_builder.jar"/>
+	<classpathentry kind="lib" path="dist/simple_cache.jar"/>
+	<classpathentry kind="lib" path="dist/typesafe_enum.jar"/>
+	<classpathentry kind="lib" path="dist/weighted_calculator.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
