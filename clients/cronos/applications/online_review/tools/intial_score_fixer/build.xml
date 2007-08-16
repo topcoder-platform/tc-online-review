@@ -68,7 +68,7 @@
     <property name="dist_docpackage" value="${builddir}/doc_package" />
     <property name="docpackage.jar" value="${distfilename}_docs.jar" />
 
-    <!-- TCS Dependencies -->
+    <!-- TCS Dependencies >
 
     <property name="base_exception.version" value="1.0"/>
     <property name="base_exception.jar.name" value="base_exception.jar"/>
@@ -119,7 +119,7 @@
     <property name="scorecard_management.jar.name" value="scorecard_management.jar" />
     <property name="scorecard_management.path" value="scorecard_management/${scorecard_management.version}" />
     <property name="scorecard_management.jar" value="${tcs_libdir}/${scorecard_management.path}/${scorecard_management.jar.name}" />
-
+	-->
     <!-- 3rd Party Dependencies  -->
     <property name="junit.jar" value="${ext_libdir}/junit/3.8.2/junit.jar"/>
     <property name="xerces.jar" value="${ext_libdir}/xerces/1.4.4/xerces.jar"/>
@@ -156,7 +156,11 @@
     <target name="compile">
         <mkdir dir="${build_classdir}"/>
         <javac srcdir="${javamain}" destdir="${build_classdir}" includes="**/*.java" debug="true" verbose="${verbose}">
-            <classpath refid="buildlibs" />
+            <classpath >
+            	<fileset dir="${basedir}/dist" id="id">
+    				<include name="**/*.jar"/>
+				</fileset>
+            </classpath>
         </javac>
     	<copy todir="${build_classdir}/${packagedir}" file="${javamain}/${packagedir}/usage"/>
     </target>
