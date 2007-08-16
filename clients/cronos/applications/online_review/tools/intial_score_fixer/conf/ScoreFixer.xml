@@ -570,4 +570,14 @@
 
     <Config name="com.topcoder.search.builder.database.factory" />
 
+    <!--
+        ===============  Configuration for Log Factory component  ===============
+    -->
+    <Config name="com.topcoder.util.log">
+        <Property name="logClass">
+            <Value>com.topcoder.util.log.log4j.Log4jLog</Value>
+        </Property>
+    </Config>
+
+
 </CMConfig>
