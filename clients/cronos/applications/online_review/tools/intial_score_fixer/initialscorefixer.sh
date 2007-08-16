@@ -12,4 +12,4 @@ CP=dist/base_exception.jar:dist/class_associations.jar:dist/command_line_utility
 
 MAIN_CLASS=com.topcoder.management.review.scorefixer.InitialScoreFixer
 
-java -CP $CP $MAIN_CLASS $*
+java -cp $CP $MAIN_CLASS $*
