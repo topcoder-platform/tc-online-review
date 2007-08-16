@@ -79,7 +79,7 @@ public class InitialScoreFixer {
 
         try {
         	ConfigManager cfg = ConfigManager.getInstance();
-        	cfg.add(InitialScoreFixer.class.getResource("/conf/ScoreFixer.xml"));
+        	cfg.add(InitialScoreFixer.class.getResource("/ScoreFixer.xml"));
 
             computeScores();
         } catch (ConfigManagerException e) {
