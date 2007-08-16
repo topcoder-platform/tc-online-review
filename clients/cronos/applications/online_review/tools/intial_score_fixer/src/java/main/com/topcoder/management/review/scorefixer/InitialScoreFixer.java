@@ -3,11 +3,17 @@
  */
 package com.topcoder.management.review.scorefixer;
 
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
+import com.topcoder.db.connectionfactory.DBConnectionException;
+import com.topcoder.db.connectionfactory.DBConnectionFactory;
+import com.topcoder.db.connectionfactory.DBConnectionFactoryImpl;
+import com.topcoder.db.connectionfactory.UnknownConnectionException;
 import com.topcoder.management.review.ConfigurationException;
 import com.topcoder.management.review.DefaultReviewManager;
 import com.topcoder.management.review.ReviewManagementException;
@@ -22,13 +28,6 @@ import com.topcoder.management.scorecard.PersistenceException;
 import com.topcoder.management.scorecard.ScorecardManager;
 import com.topcoder.management.scorecard.ScorecardManagerImpl;
 import com.topcoder.management.scorecard.data.Scorecard;
-import com.topcoder.management.scorecard.data.ScorecardType;
-import com.topcoder.search.builder.filter.AndFilter;
-import com.topcoder.search.builder.filter.BetweenFilter;
-import com.topcoder.search.builder.filter.EqualToFilter;
-import com.topcoder.search.builder.filter.Filter;
-import com.topcoder.search.builder.filter.NotFilter;
-import com.topcoder.search.builder.filter.NullFilter;
 import com.topcoder.util.config.ConfigManager;
 import com.topcoder.util.config.ConfigManagerException;
 import com.topcoder.util.log.Level;
@@ -46,9 +45,18 @@ import com.topcoder.util.log.LogFactory;
 public class InitialScoreFixer {
 
     /**
-     * Specifies a year to start searching the reviews from.
+     * Represents an SQL statement to query for IDs of all reviews whose Initial Score needs to be
+     * computed.
      */
-    private static int YEAR_TO_START = 1995;
+    private static String QUERY_REVIEW_IDS_SQL =
+        "SELECT review.review_id " +
+        "  FROM review, scorecard, scorecard_type_lu " +
+        " WHERE review.scorecard_id = scorecard.scorecard_id " +
+        "   AND scorecard.scorecard_type_id = scorecard_type_lu.scorecard_type_id " +
+        "   AND LOWER(scorecard_type_lu.name) = 'review' " +
+        "   AND review.committed = 1 " +
+        "   AND review.score IS NOT NULL " +
+        "   AND review.initial_score IS NULL;";
 
     /** Logger instance using the class name as category */
     private static final Log logger = LogFactory.getLog(InitialScoreFixer.class.getName());
@@ -78,14 +86,13 @@ public class InitialScoreFixer {
         }
 
         try {
-        	ConfigManager cfg = ConfigManager.getInstance();
-        	cfg.add(InitialScoreFixer.class.getResource("/ScoreFixer.xml"));
+            ConfigManager cfg = ConfigManager.getInstance();
+            cfg.add(InitialScoreFixer.class.getResource("/ScoreFixer.xml"));
 
             computeScores();
         } catch (ConfigManagerException e) {
-        	logger.log(Level.ERROR, "fail to load configuration:\n" +
-                    LogMessage.getExceptionStackTrace(e));
-		} catch (ReviewManagementException rme) {
+            logger.log(Level.ERROR, "fail to load configuration:\n" + LogMessage.getExceptionStackTrace(e));
+        } catch (ReviewManagementException rme) {
             logger.log(Level.ERROR, "fail to load one of reviews:\n" + LogMessage.getExceptionStackTrace(rme));
             throw new ScoreFixerException("fail to load one of reviews", rme);
         } catch (com.topcoder.management.scorecard.ConfigurationException ce) {
@@ -100,8 +107,8 @@ public class InitialScoreFixer {
             logger.log(Level.ERROR, "fail to calculate a score:\n" + LogMessage.getExceptionStackTrace(ce));
             throw new ScoreFixerException("fail to calculate a score", ce);
         } catch (RuntimeException t) {
-        	logger.log(Level.ERROR, "fail to build command line cause of illegal switch:"
-        			+ "\n" + LogMessage.getExceptionStackTrace(t));
+            logger.log(Level.ERROR, "fail to build command line cause of illegal switch:\n" +
+                    LogMessage.getExceptionStackTrace(t));
             throw t;
         }
     }
@@ -118,79 +125,24 @@ public class InitialScoreFixer {
      *             if an error occurred while recalculating the score.
      * @throws com.topcoder.management.scorecard.ConfigurationException
      *             if an error occurred creating a Scorecard Manager instance.
+     * @throws ScoreFixerException
+     *             if any other unexpected error occurred.
      */
     private static void computeScores() throws ReviewManagementException, PersistenceException, CalculationException,
-            com.topcoder.management.scorecard.ConfigurationException {
-        final Calendar today = new GregorianCalendar();
-        Calendar gc = new GregorianCalendar(YEAR_TO_START, 1, 1);
+            com.topcoder.management.scorecard.ConfigurationException, ScoreFixerException {
+        Long[] reviewIds = getAllReviewsIds();
 
-        ReviewManager reviewMgr = createReviewManager();
+        logger.log(Level.INFO, "There are " + reviewIds.length + " Review(s) to compute Initial Scores for.");
+
         ScorecardManager scrMgr = createScorecardManager();
+        ReviewManager reviewMgr = createReviewManager();
 
-        ScorecardType[] allTypes = scrMgr.getAllScorecardTypes();
-        ScorecardType reviewType = null;
+        for (int i = 0; i < reviewIds.length; ++i) {
+            Review review = reviewMgr.getReview(reviewIds[i]);
 
-        for (int i = 0; i < allTypes.length; ++i) {
-            if (allTypes[i].getName().equalsIgnoreCase("Review")) {
-                reviewType = allTypes[i];
-                break;
-            }
-        }
-
-        if (reviewType == null) {
-            return;
-        }
-
-        while (gc.before(today)) {
-            Calendar anotherDate = (Calendar) gc.clone();
-            anotherDate.add(Calendar.MONTH, 1);
-
-            computeScoresForDateRange(scrMgr, reviewMgr, gc.getTime(), anotherDate.getTime(), reviewType);
-
-            gc = anotherDate;
-        }
-    }
-
-    /**
-     * Retrieves and updates (recomputes their initial scores) the reviews created in the specified
-     * date range. Date range is used to lighten memory requirements for this tool.
-     *
-     * @param scrMgr
-     *            an instance of Scorecard Manager. Used to load scorecard templates for the
-     *            reviews.
-     * @param revMgr
-     *            an instance of Review Manager. Used to load reviews from the database and update
-     *            them back there.
-     * @param start
-     *            Specifies a start date reviews should be retrieved from. Only reviews created
-     *            after the specified date will be retrieved.
-     * @param end
-     *            Specifies an end date reviews should be retrieved to. Only reviews created before
-     *            the specified date will be retrieved.
-     * @param reviewType
-     *            Specifies a type of the review to retrieve and update. Only reviews of type
-     *            &quot;Review&quot; need to be updated.
-     * @throws ReviewManagementException
-     *             if an error occurred retrieving or updating review(s).
-     * @throws PersistenceException
-     *             if an error occurred retrieving a scorecard template for one of the reviews.
-     * @throws CalculationException
-     *             if an error occurred while recalculating the score.
-     */
-    private static void computeScoresForDateRange(ScorecardManager scrMgr, ReviewManager revMgr, Date start, Date end, ScorecardType reviewType)
-            throws ReviewManagementException, PersistenceException, CalculationException {
-        Filter dateFilter = new BetweenFilter("creation_date", new java.sql.Date(end.getTime()), new java.sql.Date(start.getTime()));
-        Filter typeFilter = new EqualToFilter("scorecardType", new Long(reviewType.getId()));
-        Filter committedFilter = new EqualToFilter("committed", new Integer(1));
-        Filter scoreFilter = new NotFilter(new NullFilter("score"));
-        Filter initialScoreFilter = new NullFilter("initial_score");
-        Filter combinedFilter = new AndFilter(Arrays.asList(new Filter[] {
-                dateFilter, typeFilter, committedFilter, scoreFilter, initialScoreFilter }));
-
-        Review[] reviews = revMgr.searchReviews(combinedFilter, true);
-
-        for (int i = 0; i < reviews.length; ++i) {
-            computeScoreForReview(scrMgr, revMgr, reviews[i]);
+            computeScoreForReview(scrMgr, reviewMgr, review);
+            reviewMgr.updateReview(review, "InitialScoreFixer");
+            System.out.println("====== Updated!");
         }
     }
 
@@ -257,8 +209,35 @@ public class InitialScoreFixer {
 
         review.setInitialScore(new Float(newScore));
         System.out.println("New score is: " + newScore + "; updating...");
-        revMgr.updateReview(review, "InitialScoreFixer");
-        System.out.println("===== Updated!");
+    }
+
+    /**
+     * Returns IDs of all reviews whose Initial Score needs to be computed.
+     *
+     * @return an array of IDs.
+     * @throws ScoreFixerException
+     *             if any error occurs while accessing the database.
+     */
+    private static Long[] getAllReviewsIds() throws ScoreFixerException {
+        Connection conn = createConnection();
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+
+        try {
+            pstmt = conn.prepareStatement(QUERY_REVIEW_IDS_SQL);
+            rs = pstmt.executeQuery();
+
+            List<Long> allIds = new ArrayList<Long>();
+
+            while (rs.next()) {
+                allIds.add(rs.getLong(1));
+            }
+
+            return allIds.toArray(new Long[allIds.size()]);
+        } catch (SQLException e) {
+            closeResources(conn, pstmt, rs);
+            throw new ScoreFixerException("An error occurred while retrieving IDs of the reviews." , e);
+        }
     }
 
     /**
@@ -284,9 +263,76 @@ public class InitialScoreFixer {
      *             if error occurs while loading configuration settings, or any of the required
      *             configuration parameters are missing.
      */
-    public static ScorecardManager createScorecardManager()
+    private static ScorecardManager createScorecardManager()
         throws com.topcoder.management.scorecard.ConfigurationException {
         // Return the newly-created Scorecard Manager object
         return new ScorecardManagerImpl();
+    }
+
+    /**
+     * Creates an SQL connection.
+     *
+     * @return the connection created.
+     * @throws ScoreFixerException
+     *             if any error occurs while creating the connection.
+     */
+    private static Connection createConnection() throws ScoreFixerException {
+        try {
+            DBConnectionFactory dbFactory = new DBConnectionFactoryImpl(
+                    "com.topcoder.db.connectionfactory.DBConnectionFactoryImpl");
+            return dbFactory.createConnection();
+        } catch (UnknownConnectionException uce) {
+            throw new com.topcoder.management.review.scorefixer.ConfigurationException(
+                    "An error occurs while creating connection factory or connection.", uce);
+        } catch (com.topcoder.db.connectionfactory.ConfigurationException ce) {
+            throw new com.topcoder.management.review.scorefixer.ConfigurationException(
+                    "An error occurs while creating connection factory or connection.", ce);
+        } catch (DBConnectionException dce) {
+            throw new com.topcoder.management.review.scorefixer.ConfigurationException(
+                    "An error occurs while creating connection.", dce);
+        }
+    }
+
+    /**
+     * Closes passed in SQL resources as necessary. If a resource does not need to be closed, the
+     * appropriate parameter should be <code>null</code>. This method closes resources in the
+     * following order (provided none of them are <code>null</code>): result set is closed first,
+     * then prepared statement, and connection is closed the last. No exceptions leave the
+     * boundaries of this method.
+     *
+     * @param conn
+     *            a connection to close. If it is not <code>null</code> and is not already closed,
+     *            it will be closed in the very end, after all other resources have been closed.
+     * @param pstmt
+     *            a prepared statement to close. If it is not <code>null</code>, it will be
+     *            closed after result set has been closed, but before connection.
+     * @param rs
+     *            a result set to close. It it is not <code>null</code>, it will be closed in the
+     *            first place.
+     */
+    private static void closeResources(Connection conn, PreparedStatement pstmt, ResultSet rs) {
+        if (rs != null) {
+            try {
+                rs.close();
+            } catch (SQLException e) {
+                // eat
+            }
+        }
+
+        if (pstmt != null) {
+            try {
+                pstmt.close();
+            } catch (SQLException e) {
+                // eat
+            }
+        }
+
+        try {
+            if (conn != null && !conn.isClosed()) {
+                conn.close();
+            }
+        } catch (SQLException e) {
+            // eat
+        }
     }
 }
