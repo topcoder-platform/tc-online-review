@@ -1,7 +1,0 @@
-
- The command line syntax is:
- java InitialScoreFixer [-config configFile]
-
-    - configFile specifies the path to config files to be loaded into
-      configuration manager. if not specified it's assumed the config
-      file is preloaded.
