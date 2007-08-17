@@ -136,6 +136,6 @@ public class LogMessage {
      * @return logged message
      */
     public String toString() {
-        return logMessage;
+        return getLogMessage();
     }
 }
