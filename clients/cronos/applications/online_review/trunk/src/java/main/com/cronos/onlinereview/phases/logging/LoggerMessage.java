@@ -145,6 +145,6 @@ public class LoggerMessage {
      * @return logged message
      */
     public String toString() {
-        return logMessage;
+        return getLogMessage();
     }
 }
