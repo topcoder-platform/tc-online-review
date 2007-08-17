@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="src/java/main"/>
+	<classpathentry kind="src" path="conf"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="dist/base_exception.jar"/>
 	<classpathentry kind="lib" path="dist/class_associations.jar"/>
-	<classpathentry kind="lib" path="dist/configuration_manager.jar"/>
+	<classpathentry kind="lib" path="dist/configuration_manager.jar" sourcepath="/configuration_manager/src/java/main"/>
 	<classpathentry kind="lib" path="dist/data_validation.jar"/>
 	<classpathentry kind="lib" path="dist/database_abstraction.jar"/>
 	<classpathentry kind="lib" path="dist/db_connection_factory.jar"/>
@@ -12,7 +13,7 @@
 	<classpathentry kind="lib" path="dist/ifx-jdbc.jar"/>
 	<classpathentry kind="lib" path="dist/logging_wrapper.jar"/>
 	<classpathentry kind="lib" path="dist/object_factory.jar"/>
-	<classpathentry kind="lib" path="dist/review_data_structure.jar"/>
+	<classpathentry kind="lib" path="dist/review_data_structure.jar" sourcepath="/review_data_structure/src/java/main"/>
 	<classpathentry kind="lib" path="dist/review_management_persistence.jar"/>
 	<classpathentry kind="lib" path="dist/review_management.jar"/>
 	<classpathentry kind="lib" path="dist/review_score_calculator.jar"/>
@@ -23,5 +24,6 @@
 	<classpathentry kind="lib" path="dist/simple_cache.jar"/>
 	<classpathentry kind="lib" path="dist/typesafe_enum.jar"/>
 	<classpathentry kind="lib" path="dist/weighted_calculator.jar"/>
+	<classpathentry kind="lib" path="dist/log4j.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
