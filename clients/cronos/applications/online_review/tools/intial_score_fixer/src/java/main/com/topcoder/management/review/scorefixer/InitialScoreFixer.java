@@ -43,6 +43,15 @@ import com.topcoder.util.log.LogFactory;
  * @version 1.0
  */
 public class InitialScoreFixer {
+	
+	static {
+		try {
+			ConfigManager cfg = ConfigManager.getInstance();
+			cfg.add(InitialScoreFixer.class.getResource("/ScoreFixer.xml"));
+		} catch (ConfigManagerException e) {
+			throw new IllegalStateException("fail to load configuration", e);
+		}
+	}
 
     /**
      * Represents an SQL statement to query for IDs of all reviews whose Initial Score needs to be
@@ -86,12 +95,7 @@ public class InitialScoreFixer {
         }
 
         try {
-            ConfigManager cfg = ConfigManager.getInstance();
-            cfg.add(InitialScoreFixer.class.getResource("/ScoreFixer.xml"));
-
             computeScores();
-        } catch (ConfigManagerException e) {
-            logger.log(Level.ERROR, "fail to load configuration:\n" + LogMessage.getExceptionStackTrace(e));
         } catch (ReviewManagementException rme) {
             logger.log(Level.ERROR, "fail to load one of reviews:\n" + LogMessage.getExceptionStackTrace(rme));
             throw new ScoreFixerException("fail to load one of reviews", rme);
@@ -165,7 +169,7 @@ public class InitialScoreFixer {
      *             if an error occurred while recalculating the score.
      */
     private static void computeScoreForReview(ScorecardManager scrMgr, ReviewManager revMgr, Review review)
-            throws PersistenceException, CalculationException, ReviewManagementException {
+            throws PersistenceException, CalculationException {
         Review anotherCopy = new Review();
         Item[] originalItems = review.getAllItems();
         Item[] dupeItems = new Item[originalItems.length];
