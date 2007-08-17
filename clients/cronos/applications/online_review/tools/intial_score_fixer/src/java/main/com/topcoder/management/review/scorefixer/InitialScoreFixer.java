@@ -146,7 +146,7 @@ public class InitialScoreFixer {
 
             computeScoreForReview(scrMgr, reviewMgr, review);
             reviewMgr.updateReview(review, "InitialScoreFixer");
-            System.out.println("====== Updated!");
+            logger.log(Level.INFO, "====== Updated!");
         }
     }
 
@@ -204,7 +204,7 @@ public class InitialScoreFixer {
         // Retrieve a scorecard template for the review
         Scorecard scorecardTemplate = scrMgr.getScorecard(review.getScorecard());
 
-        System.out.println("Recomputing score for review ID: " + review.getId());
+        logger.log(Level.INFO, "Recomputing score for review ID: " + review.getId());
 
         // Obtain an instance of CalculationManager
         CalculationManager scoreCalculator = new CalculationManager();
@@ -212,7 +212,7 @@ public class InitialScoreFixer {
         float newScore = scoreCalculator.getScore(scorecardTemplate, anotherCopy);
 
         review.setInitialScore(new Float(newScore));
-        System.out.println("New score is: " + newScore + "; updating...");
+        logger.log(Level.INFO, "New score is: " + newScore + "; updating...");
     }
 
     /**
