@@ -104,12 +104,6 @@ public class InitialScoreFixer {
                     LogMessage.getExceptionStackTrace(ce));
             throw new com.topcoder.management.review.scorefixer.ConfigurationException(
                     "fail to create scorecard manager instance", ce);
-        } catch (PersistenceException pe) {
-            logger.log(Level.ERROR, "fail to load one of scorecard templates:\n" + LogMessage.getExceptionStackTrace(pe));
-            throw new ScoreFixerException("fail to load one of scorecard templates", pe);
-        } catch (CalculationException ce) {
-            logger.log(Level.ERROR, "fail to calculate a score:\n" + LogMessage.getExceptionStackTrace(ce));
-            throw new ScoreFixerException("fail to calculate a score", ce);
         } catch (RuntimeException t) {
             logger.log(Level.ERROR, "fail to build command line cause of illegal switch:\n" +
                     LogMessage.getExceptionStackTrace(t));
@@ -121,19 +115,15 @@ public class InitialScoreFixer {
      * Recomputes initial scorecards' scores based on the values stored in the Appeal's Response
      * extra info.
      *
-     * @throws ReviewManagementException
-     *             if an error occurred retrieving or updating a review.
-     * @throws PersistenceException
-     *             if an error occurred retrieving a scorecard template for one of the reviews.
-     * @throws CalculationException
-     *             if an error occurred while recalculating the score.
      * @throws com.topcoder.management.scorecard.ConfigurationException
      *             if an error occurred creating a Scorecard Manager instance.
+     * @throws ConfigurationException
+     *             if an error occurred creating a Review Manager instance.
      * @throws ScoreFixerException
      *             if any other unexpected error occurred.
      */
-    private static void computeScores() throws ReviewManagementException, PersistenceException, CalculationException,
-            com.topcoder.management.scorecard.ConfigurationException, ScoreFixerException {
+    private static void computeScores() throws ScoreFixerException,
+            com.topcoder.management.scorecard.ConfigurationException, ConfigurationException {
         Long[] reviewIds = getAllReviewsIds();
 
         logger.log(Level.INFO, "There are " + reviewIds.length + " Review(s) to compute Initial Scores for.");
@@ -142,10 +132,26 @@ public class InitialScoreFixer {
         ReviewManager reviewMgr = createReviewManager();
 
         for (int i = 0; i < reviewIds.length; ++i) {
-            Review review = reviewMgr.getReview(reviewIds[i]);
+            Review review = null;
 
-            computeScoreForReview(scrMgr, reviewMgr, review);
-            reviewMgr.updateReview(review, "InitialScoreFixer");
+            try {
+                review = reviewMgr.getReview(reviewIds[i]);
+                computeScoreForReview(scrMgr, reviewMgr, review);
+                reviewMgr.updateReview(review, "InitialScoreFixer");
+            } catch (ReviewManagementException rme) {
+                logger.log(Level.ERROR, "An error occurred while " +
+                        ((review != null) ? "updating" : "retrieving") + " the review with ID " + reviewIds[i]);
+                logger.log(Level.ERROR, rme);
+            } catch (PersistenceException pe) {
+                logger.log(Level.ERROR, "An error occurred while retrieving scorecard tempalte for review with ID " +
+                        reviewIds[i] + ". Scorecard's template ID: " + review.getScorecard());
+                logger.log(Level.ERROR, pe);
+            } catch (CalculationException ce) {
+                logger.log(Level.ERROR,
+                        "An error occurred while calculating Initial Score for review with ID " + reviewIds[i]);
+                logger.log(Level.ERROR, ce);
+            }
+
             logger.log(Level.INFO, "====== Updated!");
         }
     }
@@ -161,8 +167,6 @@ public class InitialScoreFixer {
      *            them back there.
      * @param review
      *            a review to compute initial score for.
-     * @throws ReviewManagementException
-     *             if an error occurred updating the review.
      * @throws PersistenceException
      *             if an error occurred retrieving a scorecard template for one of the reviews.
      * @throws CalculationException
