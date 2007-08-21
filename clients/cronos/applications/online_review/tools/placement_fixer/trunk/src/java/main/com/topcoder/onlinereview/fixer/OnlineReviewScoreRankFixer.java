@@ -276,7 +276,7 @@ public class OnlineReviewScoreRankFixer {
                     sResult.setUserId(getUserId(connection, sResult.getSubmissionId()));
                 }
 
-                boolean success = validateProjectResult(connection, projectResult, false);
+                boolean success = validateProjectResult(connection, projectResult);
 
                 if (!success) {
                     Utility.log(Level.INFO, "-------------------");
@@ -345,7 +345,7 @@ public class OnlineReviewScoreRankFixer {
         return projectResults;
     }
 
-    private boolean validateProjectResult(Connection connection, ProjectResult projectResult, boolean doUpdate) {
+    private boolean validateProjectResult(Connection connection, ProjectResult projectResult) {
         boolean dataCorrect = true;
         Utility.log(Level.DEBUG, projectResult);
 
