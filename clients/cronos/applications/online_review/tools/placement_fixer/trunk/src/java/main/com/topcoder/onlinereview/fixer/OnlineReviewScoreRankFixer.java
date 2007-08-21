@@ -10,13 +10,11 @@ import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
-import java.util.TreeMap;
+import java.util.TreeSet;
 
 import com.topcoder.util.log.Level;
 
@@ -195,7 +193,7 @@ public class OnlineReviewScoreRankFixer {
      * 
      * @param projectResults
      */
-    private void buildProjectResults(List projectResults) {
+    private void buildProjectResults(List<ProjectResult> projectResults) {
         // get all the component project list
         Connection connection = Utility.getConnection();
 
@@ -218,7 +216,7 @@ public class OnlineReviewScoreRankFixer {
 
             for (int i = 0; i < projectResults.size(); ++i) {
 
-                ProjectResult projectResult = (ProjectResult) projectResults.get(i);
+                ProjectResult projectResult = projectResults.get(i);
 
                 String projectId = projectResult.getProjectId();
 
@@ -244,8 +242,8 @@ public class OnlineReviewScoreRankFixer {
                 }
 
                 // get all the submissions' final review score and rank, and the handles
-                for (Iterator itr = projectResult.getSubmitterResults().iterator(); itr.hasNext();) {
-                    sResult = (SubmitterResult) itr.next();
+                for (Iterator<SubmitterResult> itr = projectResult.getSubmitterResults().iterator(); itr.hasNext();) {
+                    sResult = itr.next();
                     String id = sResult.getSubmissionId();
 
                     // get the submission's final score from resource_info table
@@ -306,7 +304,7 @@ public class OnlineReviewScoreRankFixer {
      * 
      * @return a list of projectResult.
      */
-    private List getAllProjectResults() {
+    private List<ProjectResult> getAllProjectResults() {
         // get all the component project list
         Connection connection = Utility.getConnection();
         Statement statement = null;
@@ -418,27 +416,17 @@ public class OnlineReviewScoreRankFixer {
         }
 
         // validates all the submissions' rank
-        Map<Double, Integer> ranks = new TreeMap<Double, Integer>();
-        Map<Integer, SubmitterResult> handleData = new HashMap<Integer, SubmitterResult>();
-
-        for (SubmitterResult sResult: projectResult.getSubmitterResults()) {
-            ranks.put(sResult.getFixedScore(), sResult.getRank());
-            handleData.put(sResult.getRank(), sResult);
-        }
-
-        int newRank = projectResult.getSubmitterResults().size();
-
-        for (Iterator itr = ranks.values().iterator(); itr.hasNext();) {
-            int oldRank = ((Integer) itr.next()).intValue();
-
+        Set<SubmitterResult> results = new TreeSet<SubmitterResult>(projectResult.getSubmitterResults());
+        int newRank = 0;
+        for (Iterator<SubmitterResult> i = results.iterator(); i.hasNext(); newRank++) {
+			SubmitterResult submitter = i.next();
+            int oldRank = submitter.getRank();
             if (oldRank != newRank) {
-            	SubmitterResult submitter = handleData.get(oldRank);
                 String handle = submitter.getHandle();
                 String submissionId = submitter.getSubmissionId();
 
                 if (newRank == 1 || newRank == 2) {
                     Utility.log(Level.ERROR, handle + ": rank#" + oldRank + "--> rank#" + newRank);
-
                 } else {
                     Utility.log(Level.INFO, handle + ": rank#" + oldRank + "--> rank#" + newRank);
                 }

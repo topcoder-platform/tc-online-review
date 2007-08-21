@@ -1,6 +1,6 @@
 package com.topcoder.onlinereview.fixer;
 
-public class SubmitterResult {
+public class SubmitterResult implements Comparable<SubmitterResult> {
     
     private String userId;
     private String handle;
@@ -122,4 +122,10 @@ public class SubmitterResult {
 
         return str;
     }
+
+	public int compareTo(SubmitterResult o) {
+		Double s1 = getFixedScore();
+		Double s2 = o.getFixedScore();
+		return s1.compareTo(s2);
+	}
 }
