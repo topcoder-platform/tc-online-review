@@ -105,8 +105,7 @@ public class InitialScoreFixer {
             throw new com.topcoder.management.review.scorefixer.ConfigurationException(
                     "fail to create scorecard manager instance", ce);
         } catch (RuntimeException t) {
-            logger.log(Level.ERROR, "fail to build command line cause of illegal switch:\n" +
-                    LogMessage.getExceptionStackTrace(t));
+            logger.log(Level.ERROR, "fail to build command line cause of illegal switch:\n" + LogMessage.getExceptionStackTrace(t));
             throw t;
         }
     }
@@ -133,26 +132,27 @@ public class InitialScoreFixer {
 
         for (int i = 0; i < reviewIds.length; ++i) {
             Review review = null;
-
+            
             try {
                 review = reviewMgr.getReview(reviewIds[i]);
+                logger.log(Level.INFO, "start review: " + review.getId());
                 computeScoreForReview(scrMgr, reviewMgr, review);
                 reviewMgr.updateReview(review, "InitialScoreFixer");
+                logger.log(Level.INFO, "====== Updated!");
             } catch (ReviewManagementException rme) {
-                logger.log(Level.ERROR, "An error occurred while " +
-                        ((review != null) ? "updating" : "retrieving") + " the review with ID " + reviewIds[i]);
-                logger.log(Level.ERROR, rme);
-            } catch (PersistenceException pe) {
-                logger.log(Level.ERROR, "An error occurred while retrieving scorecard tempalte for review with ID " +
-                        reviewIds[i] + ". Scorecard's template ID: " + review.getScorecard());
-                logger.log(Level.ERROR, pe);
-            } catch (CalculationException ce) {
-                logger.log(Level.ERROR,
-                        "An error occurred while calculating Initial Score for review with ID " + reviewIds[i]);
-                logger.log(Level.ERROR, ce);
-            }
-
-            logger.log(Level.INFO, "====== Updated!");
+				logger.log(Level.ERROR, "An error occurred while " + ((review != null) ? "updating" : "retrieving")
+						+ " the review with ID " + reviewIds[i] + "\n" + LogMessage.getExceptionStackTrace(rme));
+			} catch (PersistenceException pe) {
+				logger.log(Level.ERROR, "An error occurred while retrieving scorecard tempalte for review with ID "
+						+ reviewIds[i] + ". Scorecard's template ID: "
+						+ (review == null ? "n/a" : review.getScorecard()) + "\n"
+						+ LogMessage.getExceptionStackTrace(pe));
+			} catch (CalculationException ce) {
+				logger.log(Level.ERROR, "An error occurred while calculating Initial Score for review with ID "
+						+ reviewIds[i] + "\n" + LogMessage.getExceptionStackTrace(ce));
+				logger.log(Level.ERROR, ce);
+			}
+            logger.log(Level.INFO, "finish review: " + (review == null? "n/a": review.getId()));
         }
     }
 
