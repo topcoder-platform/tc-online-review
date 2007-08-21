@@ -65,7 +65,8 @@ public class InitialScoreFixer {
         "   AND LOWER(scorecard_type_lu.name) = 'review' " +
         "   AND review.committed = 1 " +
         "   AND review.score IS NOT NULL " +
-        "   AND review.initial_score IS NULL;";
+        "   AND review.initial_score IS NULL" +
+        " ORDER BY review.create_date desc;";
 
     /** Logger instance using the class name as category */
     private static final Log logger = LogFactory.getLog(InitialScoreFixer.class.getName());
