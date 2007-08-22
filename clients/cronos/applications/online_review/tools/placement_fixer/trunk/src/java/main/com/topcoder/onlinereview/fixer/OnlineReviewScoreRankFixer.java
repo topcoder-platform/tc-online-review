@@ -417,7 +417,7 @@ public class OnlineReviewScoreRankFixer {
 
         // validates all the submissions' rank
         Set<SubmitterResult> results = new TreeSet<SubmitterResult>(projectResult.getSubmitterResults());
-        int newRank = 0;
+        int newRank = 1;
         for (Iterator<SubmitterResult> i = results.iterator(); i.hasNext(); newRank++) {
 			SubmitterResult submitter = i.next();
             int oldRank = submitter.getRank();
