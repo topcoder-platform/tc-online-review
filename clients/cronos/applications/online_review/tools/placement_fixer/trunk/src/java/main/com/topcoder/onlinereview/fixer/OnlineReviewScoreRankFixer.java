@@ -455,8 +455,6 @@ public class OnlineReviewScoreRankFixer {
                     }
                 }
             }
-
-            newRank--;
         }
 
         return dataCorrect;
@@ -731,8 +729,10 @@ public class OnlineReviewScoreRankFixer {
                 }
             }
         }
-
-        List projectResults = fixer.getAllProjectResults();
+        if (!fixer.getUpdateProjects().isEmpty()) {
+        	Utility.log(Level.INFO, "Projects for fixing: " + fixer.getUpdateProjects());
+        }
+        List<ProjectResult> projectResults = fixer.getAllProjectResults();
         fixer.buildProjectResults(projectResults);
         Utility.log(Level.ALL, "End : " + new Date());
     }
