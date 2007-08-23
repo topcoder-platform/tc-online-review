@@ -126,6 +126,6 @@ public class SubmitterResult implements Comparable<SubmitterResult> {
 	public int compareTo(SubmitterResult o) {
 		Double s1 = getFixedScore();
 		Double s2 = o.getFixedScore();
-		return s1.compareTo(s2);
+		return s1.compareTo(s2) * -1;
 	}
 }
