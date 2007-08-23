@@ -51,7 +51,8 @@ public class OnlineReviewScoreRankFixer {
                     + "AND   review.submission_id = submission.submission_id "
                     + "AND   upload.upload_id = submission.upload_id "
                     + "AND   resource.resource_role_id NOT IN (8,9) "
-                    + "AND   review.scorecard_id = scorecard.scorecard_id " + " AND scorecard.scorecard_type_id = 2 "
+                    + "AND   review.scorecard_id = scorecard.scorecard_id " 
+                    + "AND scorecard.scorecard_type_id = 2 "
                     + "AND   upload.project_id = ? ORDER BY submission.submission_id";
 
     /**
@@ -424,7 +425,14 @@ public class OnlineReviewScoreRankFixer {
             if (oldRank != newRank) {
                 String handle = submitter.getHandle();
                 String submissionId = submitter.getSubmissionId();
-
+                
+                if (dataCorrect) {
+                    dataCorrect = false;
+                    Utility.log(Level.ERROR, projectResult.getProjectInfo());
+                    Utility.log(Level.INFO, projectResult.getSubmissionsResult());
+                    Utility.log(Level.ERROR, "ERRORS:");
+                }
+                
                 if (newRank == 1 || newRank == 2) {
                     Utility.log(Level.ERROR, handle + ": rank#" + oldRank + "--> rank#" + newRank);
                 } else {
