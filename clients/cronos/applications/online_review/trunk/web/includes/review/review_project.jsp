@@ -11,8 +11,8 @@
 			<td>
 				<table cellspacing="0" cellpadding="0" border="0">
 					<tr valign="middle">
-						<td><html:img src="/i/${categoryIconName}" border="0" /></td>
-						<td><html:img src="/i/${rootCatalogIcon}" alt="${rootCatalogName}" border="0" /></td>
+						<td><img src="/i/${categoryIconName}" border="0" /></td>
+						<td><img src="/i/${rootCatalogIcon}" alt="${rootCatalogName}" border="0" /></td>
 						<td>
 							<span class="bodyTitle">${orfn:htmlEncode(project.allProperties['Project Name'])}</span>
 							<c:if test="${!(empty project.allProperties['Project Version'])}">

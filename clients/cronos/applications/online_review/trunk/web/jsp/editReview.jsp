@@ -204,23 +204,23 @@
                                                     onclick="addReviewResponse(${itemIdx}, this.parentNode);" style="cursor:hand;" /><br />
                                                 <c:if test="${(not managerEdit) and question.uploadDocument}">
                                                     <c:if test="${empty uploadedFileIds[fileIdx]}">
-                                                        <b><bean:message key="editReview.Document.Upload" />
+                                                        <b><bean:message key="editReview.Document.Upload"/>
                                                         <c:if test="${question.uploadRequired}">
-                                                            <font color="#CC0000"><bean:message key="global.required.paren" /></font>:
+                                                            <font color="#CC0000"><bean:message key="global.required.paren"/></font>:
                                                         </c:if>
                                                         <c:if test="${not question.uploadRequired}">
-                                                            <span style="font-weight:normal;"><bean:message key="global.optional.paren" /></span>:
+                                                            <span style="font-weight:normal;"><bean:message key="global.optional.paren"/></span>:
                                                         </c:if></b>
                                                     </c:if>
                                                     <c:if test="${not empty uploadedFileIds[fileIdx]}">
-                                                        <html:link page="/actions/DownloadDocument.do?method=downloadDocument&uid=${uploadedFileIds[fileIdx]}"><bean:message key="editReview.Document.Download" /></html:link>
-                                                        <b>&#160; <bean:message key="editReview.Document.Update" />
-                                                        <span style="font-weight:normal;"><bean:message key="global.optional.paren" /></span>:</b>
+                                                        <html:link page="/actions/DownloadDocument.do?method=downloadDocument&uid=${uploadedFileIds[fileIdx]}"><bean:message key="editReview.Document.Download"/></html:link>
+                                                        <b>&#160; <bean:message key="editReview.Document.Update"/>
+                                                        <span style="font-weight:normal;"><bean:message key="global.optional.paren"/></span>:</b>
                                                     </c:if>
-                                                    &#160;<html:file property="file[${fileIdx}]" size="20" styleClass="inputBox" style="width:350px;vertical-align:middle;" />
-                                                    &#160; <span class="error"><html:errors property="file[${fileIdx}]" prefix="" suffix="" /></span>
+                                                    &#160;<html:file property="file[${fileIdx}]" size="20" styleClass="inputBox" style="width:350px;vertical-align:middle;"/>
+                                                    &#160; <span class="error"><html:errors property="file[${fileIdx}]" prefix="" suffix=""/></span>
                                                     <c:set var="fileIdx" value="${fileIdx + 1}" />
-                                                </c:if><br />
+                                                </c:if><br/>
                                             </td>
                                             <c:if test="${managerEdit}">
                                                 <td class="valueC" nowrap="nowrap">
@@ -242,13 +242,13 @@
                         <div align="right">
                             <html:hidden property="save" value="" />
                             <c:if test="${not managerEdit}">
-                                <html:image onclick="javascript:this.form.save.value='submit'; this.parentNode.parentNode.target='_self';" srcKey="editReview.Button.SaveAndCommit.img" altKey="editReview.Button.SaveAndCommit.alt" border="0" />&#160;
-                                <html:image onclick="javascript:this.form.save.value='save'; this.parentNode.parentNode.target='_self';" srcKey="editReview.Button.SaveForLater.img" altKey="editReview.Button.SaveForLater.alt" border="0" />&#160;
+                                <html:image onclick="javascript:this.form.save.value='submit'; this.parentNode.parentNode.target='_self';" srcKey="editReview.Button.SaveAndCommit.img" altKey="editReview.Button.SaveAndCommit.alt" border="0"/>&#160;
+                                <html:image onclick="javascript:this.form.save.value='save'; this.parentNode.parentNode.target='_self';" srcKey="editReview.Button.SaveForLater.img" altKey="editReview.Button.SaveForLater.alt" border="0"/>&#160;
                             </c:if>
                             <c:if test="${managerEdit}">
-                                <html:image onclick="javascript:this.form.save.value='save'; this.parentNode.parentNode.target='_self';" srcKey="btnSaveChanges.img" altKey="btnSaveChanges.alt" border="0" />&#160;
+                                <html:image onclick="javascript:this.form.save.value='save'; this.parentNode.parentNode.target='_self';" srcKey="btnSaveChanges.img" altKey="btnSaveChanges.alt" border="0"/>&#160;
                             </c:if>
-                            <html:image onclick="javascript:this.form.save.value='preview'; this.parentNode.parentNode.target='_blank';" srcKey="editReview.Button.Preview.img" altKey="editReview.Button.Preview.alt" border="0" />
+                            <html:image onclick="javascript:this.form.save.value='preview'; this.parentNode.parentNode.target='_blank';" srcKey="editReview.Button.Preview.img" altKey="editReview.Button.Preview.alt" border="0"/>
                         </div>
                     </html:form>
 
