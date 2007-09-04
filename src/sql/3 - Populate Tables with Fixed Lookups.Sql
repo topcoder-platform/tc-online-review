@@ -70,8 +70,16 @@ INSERT INTO scorecard_question_type_lu(scorecard_question_type_id, name, descrip
   VALUES(3, 'Test Case', 'Test Case', 'System', CURRENT, 'System', CURRENT);
 INSERT INTO scorecard_question_type_lu(scorecard_question_type_id, name, description, create_user, create_date, modify_user, modify_date)
   VALUES(4, 'Yes/No', 'Yes/No', 'System', CURRENT, 'System', CURRENT);
-INSERT INTO scorecard_question_type_lu(scorecard_question_type_id, name, description, create_user, create_date, modify_user, modify_date)
-  VALUES(5, 'Dynamic', 'Dynamic', 'System', CURRENT, 'System', CURRENT);
+INSERT INTO scorecard_question_type_lu (scorecard_question_type_id, name, description, create_user, create_date, modify_user, modify_date)
+  VALUES(5, 'Scale (0-3)', 'Scale (0-3)', 'System', CURRENT,  'System', CURRENT);
+INSERT INTO scorecard_question_type_lu (scorecard_question_type_id, name, description, create_user, create_date, modify_user, modify_date)
+  VALUES(6, 'Scale (0-9)', 'Scale (0-9)', 'System', CURRENT,  'System', CURRENT);
+INSERT INTO  scorecard_question_type_lu (scorecard_question_type_id, name, description, create_user, create_date, modify_user, modify_date)
+  VALUES(7, 'Scale (0-4)', 'Scale (0-4)', 'System', CURRENT,  'System', CURRENT);
+
+-- INSERT INTO scorecard_question_type_lu(scorecard_question_type_id, name, description, create_user, create_date, modify_user, modify_date)
+--  VALUES(5, 'Dynamic', 'Dynamic', 'System', CURRENT, 'System', CURRENT);
+
 
 INSERT INTO project_status_lu(project_status_id, name, description, create_user, create_date, modify_user, modify_date)
   VALUES(1, 'Active', 'Active', 'System', CURRENT, 'System', CURRENT);
