@@ -12,13 +12,13 @@ import java.util.List;
 import com.cronos.onlinereview.phases.logging.LoggerMessage;
 import com.topcoder.management.project.Project;
 import com.topcoder.util.log.Level;
-import com.topcoder.web.common.model.AssignmentDocument;
-import com.topcoder.web.common.model.AssignmentDocumentStatus;
-import com.topcoder.web.common.model.AssignmentDocumentType;
-import com.topcoder.web.common.model.ComponentProject;
-import com.topcoder.web.common.model.User;
 import com.topcoder.web.ejb.pacts.DeleteAffirmedAssignmentDocumentException;
 import com.topcoder.web.ejb.pacts.PactsClientServices;
+import com.topcoder.web.ejb.pacts.assignmentdocuments.AssignmentDocument;
+import com.topcoder.web.ejb.pacts.assignmentdocuments.AssignmentDocumentStatus;
+import com.topcoder.web.ejb.pacts.assignmentdocuments.AssignmentDocumentType;
+import com.topcoder.web.ejb.pacts.assignmentdocuments.ComponentProject;
+import com.topcoder.web.ejb.pacts.assignmentdocuments.User;
 
 /**
  * 
