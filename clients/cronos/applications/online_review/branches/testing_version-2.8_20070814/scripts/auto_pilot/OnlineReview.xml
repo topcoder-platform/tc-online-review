@@ -109,6 +109,30 @@
                     <Value>com.topcoder.management.review.scorecalculator.calculators.ScaledScoreCalculator</Value>
                 </Property>
             </Property>
+
+			<!-- Configuration for Test Case question type -->
+            <Property name="dynamicCalculator">
+                <Property name="question_type">
+                    <Value>3</Value>
+                </Property>
+                <Property name="class">
+                    <Value>com.topcoder.management.review.scorecalculator.calculators.ScaledScoreCalculator</Value>
+                </Property>
+            </Property>
+
+			<!-- Configuration for Yes/No question type -->
+            <Property name="binaryCalculator">
+                <!-- This sub-property describes the question type id -->
+                <Property name="question_type">
+                    <Value>4</Value>
+                </Property>
+                <Property name="class">
+                    <Value>com.topcoder.management.review.scorecalculator.calculators.BinaryScoreCalculator</Value>
+                </Property>
+                <Property name="namespace">
+                    <Value>com.topcoder.management.review.scorecalculator.calculators.BinaryScoreCalculator</Value>
+                </Property>
+            </Property>
 			
 			<!-- Configuration for Scale (0-3) question type -->
             <Property name="Scale3">
@@ -136,27 +160,16 @@
                 </Property>
             </Property>
             
-            <!-- Configuration for Test Case question type -->
-            <Property name="dynamicCalculator">
+            <!-- Configuration for Scale (0-4) question type -->
+            <Property name="Scale0_4">
                 <Property name="question_type">
-                    <Value>3</Value>
+                    <Value>7</Value>
                 </Property>
                 <Property name="class">
                     <Value>com.topcoder.management.review.scorecalculator.calculators.ScaledScoreCalculator</Value>
                 </Property>
-            </Property>
-
-            <!-- Configuration for Yes/No question type -->
-            <Property name="binaryCalculator">
-                <!-- This sub-property describes the question type id -->
-                <Property name="question_type">
-                    <Value>4</Value>
-                </Property>
-                <Property name="class">
-                    <Value>com.topcoder.management.review.scorecalculator.calculators.BinaryScoreCalculator</Value>
-                </Property>
                 <Property name="namespace">
-                    <Value>com.topcoder.management.review.scorecalculator.calculators.BinaryScoreCalculator</Value>
+                    <Value>com.topcoder.management.review.scorecalculator.calculators.Scale0_4</Value>
                 </Property>
             </Property>
         </Property>
@@ -181,6 +194,12 @@
     <Config name="com.topcoder.management.review.scorecalculator.calculators.Scale9">
         <Property name="default_scale">
             <Value>9</Value>
+        </Property>
+    </Config>
+    
+    <Config name="com.topcoder.management.review.scorecalculator.calculators.Scale0_4">
+        <Property name="default_scale">
+            <Value>4</Value>
         </Property>
     </Config>
 
