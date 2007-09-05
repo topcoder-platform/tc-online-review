@@ -7,8 +7,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -128,7 +130,7 @@ public class ProjectReviewActions extends DispatchAction {
      * This member variable holds the all possible values of answers to &#39;Scale&#160;(1-4)&#39;
      * and &#39;Scale&#160;(1-10)&#39; types of scorecard question.
      */
-    private static final Map<String, String> correctAnswers = new HashMap<String, String>();
+    private static final Map<String, Set<String>> correctAnswers = new HashMap<String, Set<String>>();
 
     // Initialize the above map
     static {
@@ -137,21 +139,26 @@ public class ProjectReviewActions extends DispatchAction {
         String scale0_3 = "Scale (0-3)";
         String scale0_9 = "Scale (0-9)";
         String scale0_4 = "Scale (0-4)";
+        correctAnswers.put(scale1_4, new HashSet<String>());
+        correctAnswers.put(scale1_10, new HashSet<String>());
+        correctAnswers.put(scale0_3, new HashSet<String>());
+        correctAnswers.put(scale0_9, new HashSet<String>());
+        correctAnswers.put(scale0_4, new HashSet<String>());
         for (int i = 0; i <= 10; i++) {
         	if (i <= 3) {
-                correctAnswers.put(i + "/3", scale0_3);
+                correctAnswers.get(scale0_3).add(i + "/3");
             }
         	if (i >= 1 && i <= 4) {
-                correctAnswers.put(i + "/4", scale1_4);
+                correctAnswers.get(scale1_4).add(i + "/4");
             }
         	if (i >= 0 && i <= 4) {
-                correctAnswers.put(i + "/4", scale0_4);
+                correctAnswers.get(scale0_4).add(i + "/4");
             }
             if (i >= 1 && i <= 10) {
-                correctAnswers.put(i + "/10", scale1_10);
+                correctAnswers.get(scale1_10).add(i + "/10");
             }
             if (i <= 9) {
-            	correctAnswers.put(i + "/9", scale0_9);
+            	correctAnswers.get(scale0_9).add(i + "/9");
             }
         }
     }
@@ -4388,13 +4395,18 @@ public class ProjectReviewActions extends DispatchAction {
         // Get a type of the question for the current answer
         String questionType = question.getQuestionType().getName();
 
-        if (questionType.equalsIgnoreCase("Scale (1-4)") || questionType.equalsIgnoreCase("Scale (1-10)") || 
-        		questionType.equalsIgnoreCase("Scale (0-9)") || questionType.equalsIgnoreCase("Scale (0-3)") ||
-        		questionType.equalsIgnoreCase("Scale (0-4)")) {
-            if (!(correctAnswers.containsKey(answer) && correctAnswers.get(answer).equals(questionType))) {
-                ActionsHelper.addErrorToRequest(request, errorKey, "Error.saveReview.Answer.Incorrect");
-                success = false;
-            }
+//        if (questionType.equalsIgnoreCase("Scale (1-4)") || questionType.equalsIgnoreCase("Scale (1-10)") || 
+//        		questionType.equalsIgnoreCase("Scale (0-9)") || questionType.equalsIgnoreCase("Scale (0-3)") ||
+//        		questionType.equalsIgnoreCase("Scale (0-4)")) {
+//            if (!(correctAnswers.containsKey(answer) && correctAnswers.get(answer).equals(questionType))) {
+//                ActionsHelper.addErrorToRequest(request, errorKey, "Error.saveReview.Answer.Incorrect");
+//                success = false;
+//            }
+        if (correctAnswers.containsKey(questionType)) {
+			if (!(correctAnswers.get(questionType).contains(answer))) {
+				ActionsHelper.addErrorToRequest(request, errorKey, "Error.saveReview.Answer.Incorrect");
+				success = false;
+			}
         } else if (questionType.equalsIgnoreCase("Test Case")) {
             String[] answers = answer.split("/");
             // The number of answers for Testcase type of question must be exactly 2
