@@ -306,7 +306,7 @@
 	<property name="shared.jar" value="${tcs_libdir}/shared.jar" />
 	
 	<property name="pactsServices.path" value="pacts_services" />
-	<property name="pactsServices.jar.name" value="PactsServices.jar" />
+	<property name="pactsServices.jar.name" value="PactsClientServices.jar" />
 	<property name="pactsServices.jar" value="${tcs_libdir}/${pactsServices.path}/${pactsServices.jar.name}" />
 
     <!-- 3rd Party Dependencies  -->

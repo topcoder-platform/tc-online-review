@@ -12,13 +12,13 @@ import java.util.List;
 import com.cronos.onlinereview.phases.logging.LoggerMessage;
 import com.topcoder.management.project.Project;
 import com.topcoder.util.log.Level;
-import com.topcoder.web.common.model.AssignmentDocument;
-import com.topcoder.web.common.model.AssignmentDocumentStatus;
-import com.topcoder.web.common.model.AssignmentDocumentType;
-import com.topcoder.web.common.model.ComponentProject;
-import com.topcoder.web.common.model.User;
 import com.topcoder.web.ejb.pacts.DeleteAffirmedAssignmentDocumentException;
-import com.topcoder.web.ejb.pacts.PactsServices;
+import com.topcoder.web.ejb.pacts.PactsClientServices;
+import com.topcoder.web.ejb.pacts.assignmentdocuments.AssignmentDocument;
+import com.topcoder.web.ejb.pacts.assignmentdocuments.AssignmentDocumentStatus;
+import com.topcoder.web.ejb.pacts.assignmentdocuments.AssignmentDocumentType;
+import com.topcoder.web.ejb.pacts.assignmentdocuments.ComponentProject;
+import com.topcoder.web.ejb.pacts.assignmentdocuments.User;
 
 /**
  * 
@@ -32,11 +32,11 @@ public class PactsServicesDelegate {
 //	Your nth place <design|development> submission for <component name> <version>
 	private final static MessageFormat SUBMISSION_TITLE_FORMATTER = 
 		new MessageFormat("Your {0} place {1} submission for {2} v{3}");
-	private PactsServices pactsServices;
+	private PactsClientServices pactsClientServices;
 
 	public PactsServicesDelegate() throws PactsServicesCreationException {
 		try {
-			pactsServices = ServiceLocator.getInstance().getPactsServices();
+			pactsClientServices = ServiceLocator.getInstance().getPactsClientServices();
 		} catch (ServiceLocatorNamingException e) {
 			throw new PactsServicesCreationException(e);
 		} catch (ServiceLocatorCreateException e) {
@@ -102,7 +102,7 @@ public class PactsServicesDelegate {
 
 		userAD.setSubmissionTitle(submissionTitle);
 		try {
-			return pactsServices.addAssignmentDocument(userAD);
+			return pactsClientServices.addAssignmentDocument(userAD);
 		} catch (Exception e) {
 			log.log(Level.ERROR, new LoggerMessage("Project", new Long(projectId), null,
 					"Fail to create new Assignment Document for the userId:" + userId + " and submissionTitle:" + submissionTitle, e));
@@ -145,7 +145,7 @@ public class PactsServicesDelegate {
 		return winnerAccept && runnerUpAccept; 
 	}
 
-	private PactsServices getPactsServices() {
-		return pactsServices;
+	private PactsClientServices getPactsServices() {
+		return pactsClientServices;
 	}
 }

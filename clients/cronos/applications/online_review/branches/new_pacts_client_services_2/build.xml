@@ -321,7 +321,7 @@
     <property name="workdays.jar" value="${tcs_libdir}/${workdays.path}/${workdays.jar.name}" />
 
     <property name="pactsServices.path" value="pacts_services" />
-    <property name="pactsServices.jar.name" value="PactsServices.jar" />
+    <property name="pactsServices.jar.name" value="PactsClientServices.jar" />
     <property name="pactsServices.jar" value="${tcs_libdir}/${pactsServices.path}/${pactsServices.jar.name}" />
 
     <property name="shared.jar.name" value="shared.jar" />
