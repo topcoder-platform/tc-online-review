@@ -4,7 +4,7 @@
  */
 package com.cronos.onlinereview.phases;
 
-import com.topcoder.web.common.model.AssignmentDocument;
+import com.topcoder.web.ejb.pacts.assignmentdocuments.AssignmentDocument;
 
 /**
  * Holds the <code>AssignmentDocument</code>'s created

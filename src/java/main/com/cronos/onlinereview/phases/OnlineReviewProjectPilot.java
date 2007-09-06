@@ -29,9 +29,9 @@ import com.topcoder.util.file.fieldconfig.Node;
 import com.topcoder.util.file.fieldconfig.TemplateFields;
 import com.topcoder.util.log.Level;
 import com.topcoder.util.log.Log;
-import com.topcoder.web.common.model.AssignmentDocument;
-import com.topcoder.web.common.model.AssignmentDocumentStatus;
-import com.topcoder.web.ejb.pacts.PactsServices;
+import com.topcoder.web.ejb.pacts.PactsClientServices;
+import com.topcoder.web.ejb.pacts.assignmentdocuments.AssignmentDocument;
+import com.topcoder.web.ejb.pacts.assignmentdocuments.AssignmentDocumentStatus;
 
 public class OnlineReviewProjectPilot extends DefaultProjectPilot {
 	private static final com.topcoder.util.log.Log log = com.topcoder.util.log.LogFactory
@@ -71,7 +71,7 @@ public class OnlineReviewProjectPilot extends DefaultProjectPilot {
 	/**
 	 * Represents the <code>PactsServices</code> instance.
 	 */
-	private PactsServices pactsServices = null;
+	private PactsClientServices pactsClientServices = null;
 	private ManagerHelper managerHelper = null;
 
 	/**
@@ -185,8 +185,10 @@ public class OnlineReviewProjectPilot extends DefaultProjectPilot {
 			getLogger().log(Level.DEBUG, "after super.advancePhases");
 			if (isCheckAssignmentDocumentsStatus()) {
 				Project project = managerHelper.getProjectManager().getProject(projectId);
-				log.log(Level.DEBUG, "check AD for projectId: " + projectId);
-				checkAssignmentDocumentStatusChange(project, operator);
+				if ("Component".equals(project.getProjectCategory().getProjectType().getName())) {
+					log.log(Level.DEBUG, "check AD for projectId: " + projectId);
+					checkAssignmentDocumentStatusChange(project, operator);
+				}
 			} else if (log.isEnabled(Level.DEBUG)) {
 				log.log(Level.DEBUG, "skiping AD status check: " + projectId);
 			}
@@ -207,17 +209,17 @@ public class OnlineReviewProjectPilot extends DefaultProjectPilot {
 	 * @throws ServiceLocatorCreateException
 	 * @throws com.cronos.onlinereview.phases.ConfigurationException
 	 */
-	private PactsServices getPactsServices() throws ServiceLocatorNamingException, ServiceLocatorCreateException,
+	private PactsClientServices getPactsClientServices() throws ServiceLocatorNamingException, ServiceLocatorCreateException,
 			com.cronos.onlinereview.phases.ConfigurationException {
-		if (pactsServices == null) {
-			pactsServices = ServiceLocator.getInstance().getPactsServices();
+		if (pactsClientServices == null) {
+			pactsClientServices = ServiceLocator.getInstance().getPactsClientServices();
 		}
-		return pactsServices;
+		return pactsClientServices;
 	}
 
 	private void checkAssignmentDocumentStatusChange(Project project, String operator) throws PhaseManagementException {
 		try {
-			List assignmentsDocuments = getPactsServices().getAssignmentDocumentByProjectId(project.getId());
+			List assignmentsDocuments = getPactsClientServices().getAssignmentDocumentByProjectId(project.getId());
 			log.log(Level.DEBUG, "projectId: " + project.getId() + " ADs: " + assignmentsDocuments);
 			for (Iterator i = assignmentsDocuments.iterator(); i.hasNext();) {
 				AssignmentDocument ad = (AssignmentDocument) i.next();

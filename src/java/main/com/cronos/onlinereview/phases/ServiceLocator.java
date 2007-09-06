@@ -11,8 +11,8 @@ import javax.rmi.PortableRemoteObject;
 
 import com.cronos.onlinereview.phases.logging.LoggerMessage;
 import com.topcoder.util.log.Level;
-import com.topcoder.web.ejb.pacts.PactsServices;
-import com.topcoder.web.ejb.pacts.PactsServicesHome;
+import com.topcoder.web.ejb.pacts.PactsClientServices;
+import com.topcoder.web.ejb.pacts.PactsClientServicesHome;
 
 /**
  * 
@@ -52,20 +52,20 @@ public class ServiceLocator {
 		return context;
 	}
 	
-	public PactsServicesHome getPactsServicesHome() throws ServiceLocatorNamingException {
+	public PactsClientServicesHome getPactsClientServicesHome() throws ServiceLocatorNamingException {
 		try {
-			return (PactsServicesHome) PortableRemoteObject.narrow(
-					getInitialContext().lookup("com.topcoder.web.ejb.pacts.PactsServicesHome"),
-					PactsServicesHome.class);
+			return (PactsClientServicesHome) PortableRemoteObject.narrow(
+					getInitialContext().lookup("com.topcoder.web.ejb.pacts.PactsClientServicesHome"),
+					PactsClientServicesHome.class);
 		} catch (NamingException e) {
 			log.log(Level.FATAL, "Fail to find the PactsServicesHome." + LoggerMessage.getExceptionStackTrace(e));
 			throw new ServiceLocatorNamingException(e);
 		}
 	}
 	
-	public PactsServices getPactsServices() throws ServiceLocatorNamingException, ServiceLocatorCreateException {
+	public PactsClientServices getPactsClientServices() throws ServiceLocatorNamingException, ServiceLocatorCreateException {
     	try {
-			return getPactsServicesHome().create();
+			return getPactsClientServicesHome().create();
 		} catch (RemoteException e) {
 			log.log(Level.FATAL, "Fail to find the PactsServicesHome." + LoggerMessage.getExceptionStackTrace(e));
 			throw new ServiceLocatorCreateException("error creating PactsServices",e);
