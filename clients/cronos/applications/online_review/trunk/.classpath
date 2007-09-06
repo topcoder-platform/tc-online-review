@@ -341,11 +341,6 @@
 			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry exported="true" kind="lib" path="lib/tcs/pacts_services/PactsServices.jar">
-		<attributes>
-			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
-		</attributes>
-	</classpathentry>
 	<classpathentry exported="true" kind="lib" path="lib/tcs/auto_pilot/1.0/auto_pilot.jar">
 		<attributes>
 			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
@@ -377,14 +372,15 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="lib" path="lib/tcs/deliverable_management_persistence/1.0.3/deliverable_management_persistence.jar"/>
-	<classpathentry kind="lib" path="lib/tcs/online_review_upload_services/1.0/online_review_upload_services.jar"/>
+	<classpathentry kind="lib" path="lib/tcs/online_review_upload_services/1.0/online_review_upload_services.jar" sourcepath="/online_review_upload_services/src/java/main"/>
 	<classpathentry kind="lib" path="lib/third_party/activation.jar"/>
 	<classpathentry kind="lib" path="lib/third_party/axis_dok.jar"/>
 	<classpathentry kind="lib" path="lib/third_party/commons-discovery-0.2.jar"/>
 	<classpathentry kind="lib" path="lib/third_party/saaj.jar"/>
 	<classpathentry kind="lib" path="lib/third_party/wsdl4j-1.5.1.jar"/>
-	<classpathentry kind="lib" path="lib/tcs/online_review_phases/1.0.5/online_review_phases.jar"/>
+	<classpathentry kind="lib" path="lib/tcs/online_review_phases/1.0.5/online_review_phases.jar" sourcepath="/online_review_phases/src/java/main"/>
 	<classpathentry kind="lib" path="lib/tcs/project_management/1.0.1/project_management.jar" sourcepath="/project_management/src/java/main"/>
 	<classpathentry kind="lib" path="lib/tcs/project_management_persistence/1.1.1/project_management_persistence.jar"/>
+	<classpathentry kind="lib" path="lib/tcs/pacts_services/PactsClientServices.jar"/>
 	<classpathentry kind="output" path="build/classes"/>
 </classpath>
