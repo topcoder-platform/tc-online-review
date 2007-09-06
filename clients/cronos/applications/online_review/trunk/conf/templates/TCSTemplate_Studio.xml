@@ -22,12 +22,12 @@
 			<Dependency id="submissionPhase" isDependentStart="true" lagTime="0"/>
 		</Phase>
 
-		<Phase id="appealsPhase" length="86400000" type="appeals">
+		<Phase id="appealsPhase" length="0" type="appeals">
 			<!-- "isDependentStart" is optional attribute(default to "true"), here it is omitted -->
 			<Dependency id="reviewPhase" isDependencyStart="false" lagTime="0"/>
 		</Phase>
 
-		<Phase id="appealsReponsePhase" length="86400000" type="appeals_response">
+		<Phase id="appealsReponsePhase" length="0" type="appeals_response">
 			<!-- "lagTime" is optional attribute(default to "0"), here it is omitted -->
 			<Dependency id="appealsPhase" isDependencyStart="false" isDependentStart="true"/>
 		</Phase>
