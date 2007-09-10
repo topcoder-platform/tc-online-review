@@ -245,7 +245,7 @@ public class OnlineReviewScoreRankFixer {
                             sResult.setResourceId(result.getLong("resource_id"));
                             sResult.setFinalScore(result.getDouble("finalScore"));
                             sResult.setRank(result.getInt("rank"));
-                            sResult.setCreationDate(result.getDate("creationDate"));
+                            sResult.setCreationDate(result.getDate("createDate"));
                         }
                         sResult.setUserId(getUserId(connection, sResult.getSubmissionId()));
                     }
