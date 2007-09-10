@@ -40,7 +40,7 @@ public class OnlineReviewScoreRankFixer {
     	+ " AND piPrice.project_id = p.project_id"
     	+ " AND piName.project_info_type_id = 6"
     	+ " AND piPrice.project_info_type_id = 16"
-    	+ " AND p.project_status_id = 7";
+    	+ " AND p.project_status_id = 7 and p.project_id = 24083359";
 
     /**
      * SQL statement for retrieving all review scores for a project's submissions. project.
@@ -71,32 +71,14 @@ public class OnlineReviewScoreRankFixer {
     /**
      * SQL statement for retrieving a submission's handle.
      */
-    private static final String GET_SUBMISSION_DATA = "SELECT s.submission_id, ri.value handle, ri.resource_id," 
-    				+ " s.final_score finalScore, s.placement rank, s.create_date createDate" 
-    				+ " from submission s, upload u, resource_info ri"
+    private static final String GET_SUBMISSION_DATA = "SELECT s.submission_id, ri.value userId, ri.resource_id," 
+    				+ " s.final_score finalScore, s.placement rank, s.create_date createDate, us.handle handle" 
+    				+ " from submission s, upload u, resource_info ri, user us"
                     + " where s.upload_id = u.upload_id"
                     + " and u.resource_id = ri.resource_id"
-                    + " and ri.resource_info_type_id = 2" + " and s.submission_id = ?";
-
-    /**
-     * SQL statement for retrieving a submission's user ID.
-     */
-    private static final String GET_SUBMISSION_USER_ID = "SELECT s.submission_id, ri.value user_id from submission s, upload u, resource_info ri"
-                    + " where s.upload_id = u.upload_id"
-                    + " and u.resource_id = ri.resource_id"
-                    + " and ri.resource_info_type_id = 1 and s.submission_id = ?";
-
-    /**
-     * SQL statement for retrieving a submission's final score from submission table.
-     *
-    private static final String GET_SUBMISSION_FINAL_SCORE = "SELECT final_score finalScore from submission where submission_id = ?";
-   	*/
-    
-    /**
-     * SQL statement for retrieving a submission's placement from submission table.
-     *
-    private static final String GET_SUBMISSION_PLACEMENT = "SELECT placement rank from submission where submission_id = ?";
-	*/
+                    + " and ri.resource_info_type_id = 1"
+                    + "	and us.user_id = ri.value "
+                    + " and s.submission_id = ?";
     
     /**
      * SQL statement for updating the final score of the submission in the submission table.
@@ -247,7 +229,7 @@ public class OnlineReviewScoreRankFixer {
                             sResult.setFinalScore(rsData.getDouble("finalScore"));
                             sResult.setRank(rsData.getInt("rank"));
                             sResult.setCreationDate(rsData.getDate("createDate"));
-                            sResult.setUserId(getUserId(connection, sResult.getSubmissionId()));
+                            sResult.setUserId(rsData.getString("userId"));
                         } else {
                         	skipProject = true;
                         }
@@ -663,32 +645,6 @@ public class OnlineReviewScoreRankFixer {
             throw new OnlineReviewScoreRankFixerException("Fail to update passed review flag.", ex);
         } finally {
             Utility.releaseResource(updateProjectInfo, null, null);
-        }
-    }
-
-    /**
-     * Gets the user id of the given submitter.
-     * 
-     * @param submissionId the id of the submitter.
-     * @return the user id.
-     */
-    private String getUserId(Connection connection, String submissionId) {
-        PreparedStatement getUserId = null;
-
-        try {
-            getUserId = connection.prepareStatement(GET_SUBMISSION_USER_ID);
-            getUserId.setString(1, submissionId);
-            ResultSet result = getUserId.executeQuery();
-
-            while (result.next()) {
-                return result.getString("user_id");
-            }
-
-            return null;
-        } catch (Exception ex) {
-            throw new OnlineReviewScoreRankFixerException("Fail to get user id.", ex);
-        } finally {
-            Utility.releaseResource(getUserId, null, null);
         }
     }
 
