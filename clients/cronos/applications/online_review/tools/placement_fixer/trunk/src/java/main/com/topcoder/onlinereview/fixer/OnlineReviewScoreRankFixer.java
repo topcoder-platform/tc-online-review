@@ -71,7 +71,9 @@ public class OnlineReviewScoreRankFixer {
     /**
      * SQL statement for retrieving a submission's handle.
      */
-    private static final String GET_SUBMISSION_HANDLE = "SELECT s.submission_id, ri.value handle, ri.resource_id from submission s, upload u, resource_info ri"
+    private static final String GET_SUBMISSION_DATA = "SELECT s.submission_id, ri.value handle, ri.resource_id," 
+    				+ " s.final_score finalScore, s.placement rank, s.create_date createDate" 
+    				+ " from submission s, upload u, resource_info ri"
                     + " where s.upload_id = u.upload_id"
                     + " and u.resource_id = ri.resource_id"
                     + " and ri.resource_info_type_id = 2" + " and s.submission_id = ?";
@@ -86,14 +88,16 @@ public class OnlineReviewScoreRankFixer {
 
     /**
      * SQL statement for retrieving a submission's final score from submission table.
-     */
+     *
     private static final String GET_SUBMISSION_FINAL_SCORE = "SELECT final_score finalScore from submission where submission_id = ?";
+   	*/
     
     /**
      * SQL statement for retrieving a submission's placement from submission table.
-     */
+     *
     private static final String GET_SUBMISSION_PLACEMENT = "SELECT placement rank from submission where submission_id = ?";
-
+	*/
+    
     /**
      * SQL statement for updating the final score of the submission in the submission table.
      */
@@ -198,32 +202,25 @@ public class OnlineReviewScoreRankFixer {
         // get all the component project list
         Connection connection = Utility.getConnection();
 
-        PreparedStatement getReviewScores = null;
-        PreparedStatement getSubmissionFinalResult = null;
-        PreparedStatement getSubmissionHandle = null;
-        PreparedStatement getSubmissionFinalScore = null;
-        PreparedStatement getSubmissionRank = null;
+        PreparedStatement psReviewScores = null;
+        PreparedStatement psSubmissionFinalResult = null;
+        PreparedStatement psSubmissionData = null;
 
         try {
         	if (!getUpdateProjects().isEmpty()) {
         		connection.setAutoCommit(false);
         	}
         	
-            getReviewScores = connection.prepareStatement(GET_REVIEW_SCORES);
-            getSubmissionFinalResult = connection.prepareStatement(GET_SUBMISSION_FINAL_RESULT);
-            getSubmissionHandle = connection.prepareStatement(GET_SUBMISSION_HANDLE);
-            getSubmissionFinalScore = connection.prepareStatement(GET_SUBMISSION_FINAL_SCORE);
-            getSubmissionRank = connection.prepareStatement(GET_SUBMISSION_PLACEMENT);
+            psReviewScores = connection.prepareStatement(GET_REVIEW_SCORES);
+            psSubmissionFinalResult = connection.prepareStatement(GET_SUBMISSION_FINAL_RESULT);
+            psSubmissionData = connection.prepareStatement(GET_SUBMISSION_DATA);
 
-            for (int i = 0; i < projectResults.size(); ++i) {
-
-                ProjectResult projectResult = projectResults.get(i);
-
+            for (ProjectResult projectResult: projectResults) {
                 String projectId = projectResult.getProjectId();
 
                 // get all the submissions' review scores
-                getReviewScores.setLong(1, Long.parseLong(projectId));
-                ResultSet result = getReviewScores.executeQuery();
+                psReviewScores.setLong(1, Long.parseLong(projectId));
+                ResultSet result = psReviewScores.executeQuery();
 
                 SubmitterResult sResult = null;
                 String submissionId;
@@ -237,42 +234,23 @@ public class OnlineReviewScoreRankFixer {
                         sResult = new SubmitterResult(submissionId);
                         projectResult.addSubmitterResult(sResult);
                         lastSubmissionId = submissionId;
+                        
+                        // get all the submissions' final review score and rank, and the handles
+                        // retrieve the submitter's handle
+                        psSubmissionData.setString(1, submissionId);
+                        result = psSubmissionData.executeQuery();
+
+                        while (result.next()) {
+                            sResult.setHandle(result.getString("handle"));
+                            sResult.setResourceId(result.getLong("resource_id"));
+                            sResult.setFinalScore(result.getDouble("finalScore"));
+                            sResult.setRank(result.getInt("rank"));
+                            sResult.setCreationDate(result.getDate("creationDate"));
+                        }
+                        sResult.setUserId(getUserId(connection, sResult.getSubmissionId()));
                     }
 
                     sResult.addReviewScore(score);
-                }
-
-                // get all the submissions' final review score and rank, and the handles
-                for (Iterator<SubmitterResult> itr = projectResult.getSubmitterResults().iterator(); itr.hasNext();) {
-                    sResult = itr.next();
-                    String id = sResult.getSubmissionId();
-
-                    // get the submission's final score from resource_info table
-                    getSubmissionFinalScore.setString(1, id);
-                    result = getSubmissionFinalScore.executeQuery();
-
-                    while (result.next()) {
-                        sResult.setFinalScore(result.getDouble("finalScore"));
-                    }
-
-                    // get the submission's rank from submission table
-                    getSubmissionRank.setString(1, id);
-                    result = getSubmissionRank.executeQuery();
-
-                    while (result.next()) {
-                        sResult.setRank(result.getInt("rank"));
-                    }
-
-                    // retrieve the submitter's handle
-                    getSubmissionHandle.setString(1, id);
-                    result = getSubmissionHandle.executeQuery();
-
-                    while (result.next()) {
-                        sResult.setHandle(result.getString("handle"));
-                        sResult.setResourceId(result.getLong("resource_id"));
-                    }
-                    
-                    sResult.setUserId(getUserId(connection, sResult.getSubmissionId()));
                 }
 
                 boolean success = validateProjectResult(connection, projectResult);
@@ -294,9 +272,9 @@ public class OnlineReviewScoreRankFixer {
         	}
             throw new OnlineReviewScoreRankFixerException("Fail to query data from DB.", ex);
         } finally {
-            Utility.releaseResource(getReviewScores, null, null);
-            Utility.releaseResource(getSubmissionFinalResult, null, null);
-            Utility.releaseResource(getSubmissionHandle, null, connection);
+            Utility.releaseResource(psReviewScores, null, null);
+            Utility.releaseResource(psSubmissionFinalResult, null, null);
+            Utility.releaseResource(psSubmissionData, null, connection);
         }
     }
 
@@ -405,12 +383,10 @@ public class OnlineReviewScoreRankFixer {
                         } else {
                             updateSubmissionStatus(connection, sResult.getSubmissionId(), PASSED_WITHOUT_WIN_SUBMISSION);
                         }
-
                     }
                 }
 
                 sResult.setFixedScore(temp);
-
             } else {
                 sResult.setFixedScore(sResult.getFinalScore());
             }
@@ -442,24 +418,18 @@ public class OnlineReviewScoreRankFixer {
                 if (getUpdateProjects().contains(projectResult.getProjectId())) {
                     // update the placement first
                     this.updatePlacement(connection, projectResult, submitter, newRank);
-                    String userId = getUserId(connection, submissionId);
+                    String userId = submitter.getUserId();
 
                     if (newRank == 1) {
+                    	setAllActiveSubmissionToPassingWithoutWinning(connection, projectResult.getProjectId());
                         updateSubmissionStatus(connection, submissionId, WINNER_SUBMISSION);
                         updateProjectInfo(connection, projectResult.getProjectId(), 23, userId);
-                    }
-
-                    if (newRank == 2) {
+                    } else if (newRank == 2) {
                         updateProjectInfo(connection, projectResult.getProjectId(), 24, userId);
                     }
 
                     if (oldRank == 1) {
                         updateSubmissionStatus(connection, submissionId, PASSED_WITHOUT_WIN_SUBMISSION);
-                    }
-                    
-                    if (oldRank == 1 && oldRank == newRank) {
-                    	setAllActiveSubmissionToPassingWithoutWinning(connection, projectResult.getProjectId());
-                    	updateSubmissionStatus(connection, submissionId, WINNER_SUBMISSION);
                     }
                 }
             }

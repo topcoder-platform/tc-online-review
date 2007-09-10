@@ -1,5 +1,7 @@
 package com.topcoder.onlinereview.fixer;
 
+import java.util.Date;
+
 public class SubmitterResult implements Comparable<SubmitterResult> {
     
     private String userId;
@@ -12,8 +14,17 @@ public class SubmitterResult implements Comparable<SubmitterResult> {
     private double fixedScore;
     private int fixedRank;
     private int rank;
+    private Date creationDate;
 
-    public SubmitterResult(String submissionId) {
+    public Date getCreationDate() {
+		return creationDate;
+	}
+
+	public void setCreationDate(Date creationDate) {
+		this.creationDate = creationDate;
+	}
+
+	public SubmitterResult(String submissionId) {
 		setSubmissionId(submissionId);
 	}
 
@@ -126,6 +137,10 @@ public class SubmitterResult implements Comparable<SubmitterResult> {
 	public int compareTo(SubmitterResult o) {
 		Double s1 = getFixedScore();
 		Double s2 = o.getFixedScore();
-		return s1.compareTo(s2) * -1;
+		int ret = s1.compareTo(s2);
+		if (ret == 0) {
+			return getCreationDate().compareTo(o.getCreationDate()) * -1;
+		}
+		return ret * -1;
 	}
 }
