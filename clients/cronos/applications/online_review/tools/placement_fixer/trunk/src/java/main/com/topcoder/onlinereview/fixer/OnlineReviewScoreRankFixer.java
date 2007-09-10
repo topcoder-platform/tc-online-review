@@ -214,8 +214,9 @@ public class OnlineReviewScoreRankFixer {
             psReviewScores = connection.prepareStatement(GET_REVIEW_SCORES);
             psSubmissionFinalResult = connection.prepareStatement(GET_SUBMISSION_FINAL_RESULT);
             psSubmissionData = connection.prepareStatement(GET_SUBMISSION_DATA);
-
+            
             for (ProjectResult projectResult: projectResults) {
+            	boolean skipProject = false;
                 String projectId = projectResult.getProjectId();
 
                 // get all the submissions' review scores
@@ -226,7 +227,7 @@ public class OnlineReviewScoreRankFixer {
                 String submissionId;
                 String lastSubmissionId = null;
 
-                while (result.next()) {
+                while (result.next() && !skipProject) {
                     double score = result.getDouble("score");
                     submissionId = result.getString("id");
 
@@ -246,20 +247,23 @@ public class OnlineReviewScoreRankFixer {
                             sResult.setFinalScore(rsData.getDouble("finalScore"));
                             sResult.setRank(rsData.getInt("rank"));
                             sResult.setCreationDate(rsData.getDate("createDate"));
+                            sResult.setUserId(getUserId(connection, sResult.getSubmissionId()));
                         } else {
-                        	new OnlineReviewScoreRankFixerException("Cannot find submission info for submissionId: " + submissionId);
+                        	skipProject = true;
                         }
-                        sResult.setUserId(getUserId(connection, sResult.getSubmissionId()));
                     }
 
                     sResult.addReviewScore(score);
                 }
+                if (!skipProject) {
+                	boolean success = validateProjectResult(connection, projectResult);
 
-                boolean success = validateProjectResult(connection, projectResult);
-
-                if (!success) {
-                    Utility.log(Level.INFO, "-------------------");
-                }
+                	if (!success) {
+                		Utility.log(Level.INFO, "-------------------");
+                	}
+                } else {
+                	Utility.log(Level.ERROR, "Skipping project id: " + projectId + " since some data is missing");
+				}
             }
             if (!getUpdateProjects().isEmpty()) {
             	connection.commit();
