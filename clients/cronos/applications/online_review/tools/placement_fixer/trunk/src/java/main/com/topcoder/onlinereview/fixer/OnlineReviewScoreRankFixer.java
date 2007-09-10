@@ -40,7 +40,7 @@ public class OnlineReviewScoreRankFixer {
     	+ " AND piPrice.project_id = p.project_id"
     	+ " AND piName.project_info_type_id = 6"
     	+ " AND piPrice.project_info_type_id = 16"
-    	+ " AND p.project_status_id = 7";
+    	+ " AND p.project_status_id = 7" + " and p.project_id = 30002425";
 
     /**
      * SQL statement for retrieving all review scores for a project's submissions. project.
@@ -238,14 +238,16 @@ public class OnlineReviewScoreRankFixer {
                         // get all the submissions' final review score and rank, and the handles
                         // retrieve the submitter's handle
                         psSubmissionData.setString(1, submissionId);
-                        result = psSubmissionData.executeQuery();
+                        ResultSet rsData = psSubmissionData.executeQuery();
 
-                        while (result.next()) {
-                            sResult.setHandle(result.getString("handle"));
-                            sResult.setResourceId(result.getLong("resource_id"));
-                            sResult.setFinalScore(result.getDouble("finalScore"));
-                            sResult.setRank(result.getInt("rank"));
-                            sResult.setCreationDate(result.getDate("createDate"));
+                        if (rsData.next()) {
+                            sResult.setHandle(rsData.getString("handle"));
+                            sResult.setResourceId(rsData.getLong("resource_id"));
+                            sResult.setFinalScore(rsData.getDouble("finalScore"));
+                            sResult.setRank(rsData.getInt("rank"));
+                            sResult.setCreationDate(rsData.getDate("createDate"));
+                        } else {
+                        	new OnlineReviewScoreRankFixerException("Cannot find submission info for submissionId: " + submissionId);
                         }
                         sResult.setUserId(getUserId(connection, sResult.getSubmissionId()));
                     }
