@@ -40,7 +40,7 @@ public class OnlineReviewScoreRankFixer {
     	+ " AND piPrice.project_id = p.project_id"
     	+ " AND piName.project_info_type_id = 6"
     	+ " AND piPrice.project_info_type_id = 16"
-    	+ " AND p.project_status_id = 7 and p.project_id = 24083359";
+    	+ " AND p.project_status_id = 7";
 
     /**
      * SQL statement for retrieving all review scores for a project's submissions. project.
