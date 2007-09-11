@@ -23,7 +23,7 @@
 				<bean:message key="Answer.Score10.Rating.title" /> ${fn:replace(item.answer, '/10', '')}
 			</c:when>
 			<c:when test="${question.questionType.name == 'Test Case'}">
-				<c:set var="wordOf" value="${orfn:getMessage(pageContext, 'editReview.Question.Response.TestCase.of')} " />
+				<c:set var="wordOf" value=" ${orfn:getMessage(pageContext, 'editReview.Question.Response.TestCase.of')} " />
 				${fn:replace(item.answer, '/', wordOf)}
 			</c:when>
 			<c:when test="${question.questionType.name == 'Scale (0-3)'}">
