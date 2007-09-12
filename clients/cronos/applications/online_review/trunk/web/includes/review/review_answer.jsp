@@ -51,7 +51,7 @@
 					<html:option value="1/4"><bean:message key="Answer.Score0_4.ans1" /></html:option>
 					<html:option value="2/4"><bean:message key="Answer.Score0_4.ans2" /></html:option>
 					<html:option value="3/4"><bean:message key="Answer.Score0_4.ans3" /></html:option>
-					<html:option value="3/4"><bean:message key="Answer.Score0_4.ans4" /></html:option>
+					<html:option value="4/4"><bean:message key="Answer.Score0_4.ans4" /></html:option>
 				</html:select>
 			</c:when>
 			<c:when test="${question.questionType.name eq 'Test Case'}">
