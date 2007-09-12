@@ -1,8 +1,12 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE CMConfig [
-    <!ENTITY databaseUrl "jdbc:informix-sqli://ysakhno-xp:1526/review:informixserver=top_coder">
-    <!ENTITY databaseUsername "informix">
-    <!ENTITY databasePassword "informix">
+    <!ENTITY databaseUrl "jdbc:informix-sqli://ip/tcs_catalog:INFORMIXSERVER=informixoltp_tcp">
+    <!ENTITY databaseUsername "coder">
+    <!ENTITY databasePassword "xx">
+    
+    <!ENTITY oldDatabaseUrl "jdbc:informix-sqli://ip/tcs_catalog_aaa:INFORMIXSERVER=informixoltp_tcp">
+    <!ENTITY oldDatabaseUsername "coder">
+    <!ENTITY oldDatabasePassword "xx">
 ]>
 <CMConfig>
 
@@ -30,6 +34,25 @@
                     </Property>
                     <Property name="password">
                         <Value>&databasePassword;</Value>
+                    </Property>
+                </Property>
+            </Property>
+            <Property name="oldDB">
+                <Property name="producer">
+                    <Value>com.topcoder.db.connectionfactory.producers.JDBCConnectionProducer</Value>
+                </Property>
+                <Property name="parameters">
+                    <Property name="jdbc_driver">
+                        <Value>com.informix.jdbc.IfxDriver</Value>
+                    </Property>
+                    <Property name="jdbc_url">
+                        <Value>&oldDatabaseUrl;</Value>
+                    </Property>
+                    <Property name="user">
+                        <Value>&oldDatabaseUsername;</Value>
+                    </Property>
+                    <Property name="password">
+                        <Value>&oldDatabasePassword;</Value>
                     </Property>
                 </Property>
             </Property>

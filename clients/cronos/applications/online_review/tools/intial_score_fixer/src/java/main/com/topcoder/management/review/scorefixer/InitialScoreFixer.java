@@ -7,7 +7,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 import com.topcoder.db.connectionfactory.DBConnectionException;
@@ -58,15 +58,17 @@ public class InitialScoreFixer {
      * computed.
      */
     private static String QUERY_REVIEW_IDS_SQL =
-        "SELECT review.review_id " +
-        "  FROM review, scorecard, scorecard_type_lu " +
-        " WHERE review.scorecard_id = scorecard.scorecard_id " +
-        "   AND scorecard.scorecard_type_id = scorecard_type_lu.scorecard_type_id " +
-        "   AND LOWER(scorecard_type_lu.name) = 'review' " +
-        "   AND review.committed = 1 " +
-        "   AND review.score IS NOT NULL " +
-        "   AND review.initial_score IS NULL" +
-        " ORDER BY review.create_date desc;";
+    	" SELECT r.review_id, riRev.value reviewer, riSub.value submitter, u.project_id " +
+    	"  FROM review r, scorecard s, submission sub, upload u, resource rsSub, resource_info riSub, resource rsRev, resource_info riRev " +
+    	" WHERE r.scorecard_id = s.scorecard_id AND r.submission_id = sub.submission_id AND sub.upload_id = u.upload_id " +
+    	"   AND s.scorecard_type_id = 2 " +
+    	"   AND r.committed = 1 " +
+    	"   AND r.score IS NOT NULL " +
+    	"   AND r.initial_score IS NULL " +
+    	"   AND r.resource_id = riRev.resource_id and riRev.resource_info_type_id = 1 and rsRev.resource_id = riRev.resource_id and rsRev.resource_role_id in (4,5,6,7) " +
+    	"   AND u.resource_id = riSub.resource_id and riSub.resource_info_type_id = 1 and rsSub.resource_id = riSub.resource_id and rsSub.resource_role_id = 1 " +
+    	"   AND u.project_id = 9990033 " +
+    	" ORDER BY r.create_date desc ";
 
     /** Logger instance using the class name as category */
     private static final Log logger = LogFactory.getLog(InitialScoreFixer.class.getName());
@@ -124,40 +126,101 @@ public class InitialScoreFixer {
      */
     private static void computeScores() throws ScoreFixerException,
             com.topcoder.management.scorecard.ConfigurationException, ConfigurationException {
-        Long[] reviewIds = getAllReviewsIds();
+        List<ReviewData> reviewIds = getAllReviewsIds();
 
-        logger.log(Level.INFO, "There are " + reviewIds.length + " Review(s) to compute Initial Scores for.");
+        logger.log(Level.INFO, "There are " + reviewIds.size() + " Review(s) to compute Initial Scores for.");
 
         ScorecardManager scrMgr = createScorecardManager();
         ReviewManager reviewMgr = createReviewManager();
-
-        for (int i = 0; i < reviewIds.length; ++i) {
-            Review review = null;
-            
-            try {
-                review = reviewMgr.getReview(reviewIds[i]);
-                logger.log(Level.INFO, "start review: " + review.getId());
-                computeScoreForReview(scrMgr, reviewMgr, review);
-                reviewMgr.updateReview(review, "InitialScoreFixer");
-                logger.log(Level.INFO, "====== Updated!");
-            } catch (ReviewManagementException rme) {
-				logger.log(Level.ERROR, "An error occurred while " + ((review != null) ? "updating" : "retrieving")
-						+ " the review with ID " + reviewIds[i] + "\n" + LogMessage.getExceptionStackTrace(rme));
-			} catch (PersistenceException pe) {
-				logger.log(Level.ERROR, "An error occurred while retrieving scorecard tempalte for review with ID "
-						+ reviewIds[i] + ". Scorecard's template ID: "
-						+ (review == null ? "n/a" : review.getScorecard()) + "\n"
-						+ LogMessage.getExceptionStackTrace(pe));
-			} catch (CalculationException ce) {
-				logger.log(Level.ERROR, "An error occurred while calculating Initial Score for review with ID "
-						+ reviewIds[i] + "\n" + LogMessage.getExceptionStackTrace(ce));
-				logger.log(Level.ERROR, ce);
-			}
-            logger.log(Level.INFO, "finish review: " + (review == null? "n/a": review.getId()));
+        Connection conOldDB = null;
+        try {
+        	conOldDB = createConnection("oldDB");
+	        for (ReviewData rData: reviewIds) {
+	        	Review review = null;
+	            try {
+	            	review = reviewMgr.getReview(rData.getReviewId());
+	            	logger.log(Level.INFO, "start review: " + review.getId());
+	            	if (checkIsMigratedFromOldOR(conOldDB, rData.getProjectId())) {
+	            		computeScoreForReviewUsingOldDB(conOldDB, rData, review);
+	            	} else {
+	            		computeScoreForReview(scrMgr, reviewMgr, review);
+	            	}
+	            	reviewMgr.updateReview(review, "InitialScoreFixer");
+	                logger.log(Level.INFO, "====== Updated!");
+	            } catch (ReviewManagementException rme) {
+					logger.log(Level.ERROR, "An error occurred while " + ((review != null) ? "updating" : "retrieving")
+							+ " the review with ID " + rData.getReviewId() + "\n" + LogMessage.getExceptionStackTrace(rme));
+				} catch (PersistenceException pe) {
+					logger.log(Level.ERROR, "An error occurred while retrieving scorecard tempalte for review with ID "
+							+ rData.getReviewId() + ". Scorecard's template ID: "
+							+ (review == null ? "n/a" : review.getScorecard()) + "\n"
+							+ LogMessage.getExceptionStackTrace(pe));
+				} catch (CalculationException ce) {
+					logger.log(Level.ERROR, "An error occurred while calculating Initial Score for review with ID "
+							+ rData.getReviewId() + "\n" + LogMessage.getExceptionStackTrace(ce));
+				} catch (SQLException e) {
+					logger.log(Level.ERROR, "review id: " + rData.getReviewId() + "\n" + LogMessage.getExceptionStackTrace(e));
+				}
+	            logger.log(Level.INFO, "finish review: " + (review == null? "n/a": review.getId()));
+	        }
+        } finally {
+        	closeResources(conOldDB, null, null);
         }
     }
 
-    /**
+    private static void computeScoreForReviewUsingOldDB(Connection conOldDB, ReviewData data, Review review) throws SQLException {
+    	PreparedStatement ps = null;
+    	ResultSet rs = null;
+    	try {
+    		ps = conOldDB.prepareStatement("select s.score " +
+    				"from scorecard s, user sub, user rev, submission su " +
+    				"where s.submission_id = su.submission_id " +
+    				"and su.submitter_id = sub.user_id and s.author_id = rev.user_id and s.scorecard_type = 2 " +
+    				"and su.cur_version = 1 and s.is_completed = 1 " +
+    				"and s.scorecard_v_id = (select MIN(s2.scorecard_v_id) from scorecard s2 " +
+    				"    where s2.scorecard_id = s.scorecard_id and s2.cur_version = 0 " +
+    				"        and s2.is_completed = 1 and s2.score > 0) " +
+    		"and s.project_id = ? and sub.user_id = ? and rev.user_id = ?");
+
+    		ps.setLong(1, data.getProjectId());
+    		ps.setLong(2, data.getSubmitterId());
+    		ps.setLong(3, data.getReviewerId());
+
+    		rs = ps.executeQuery();
+    		if (rs.next()) {
+    			review.setInitialScore(rs.getFloat("score"));
+    		} else {
+    			logger.log(Level.INFO, "Can't find the initial score in the old db for review: " + review.getId() 
+    					+ " using final score");
+    			review.setInitialScore(review.getScore());
+    		}
+		} finally {
+			closeResources(null, ps, rs);
+		}
+	}
+
+	/**
+     * If a project was migrated from the old OR
+     * 
+     * @param conOldDB connection to the old OR db
+     * @param projectId  project id  
+     * @return true if the project was migrated from the old OR
+     * @throws SQLException
+     */
+    private static boolean checkIsMigratedFromOldOR(Connection conOldDB, long projectId) throws SQLException {
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+		try {
+			ps = conOldDB.prepareStatement("select project_id from project where project_id = ? and cur_version = 1");
+			ps.setLong(1, projectId);
+			rs = ps.executeQuery();
+			return rs.next();
+		} finally {
+			closeResources(null, ps, rs);
+		}
+	}
+
+	/**
      * Computes and stores intial score for a review.
      *
      * @param scrMgr
@@ -228,7 +291,7 @@ public class InitialScoreFixer {
      * @throws ScoreFixerException
      *             if any error occurs while accessing the database.
      */
-    private static Long[] getAllReviewsIds() throws ScoreFixerException {
+    private static List<ReviewData> getAllReviewsIds() throws ScoreFixerException {
         Connection conn = createConnection();
         PreparedStatement pstmt = null;
         ResultSet rs = null;
@@ -237,16 +300,23 @@ public class InitialScoreFixer {
             pstmt = conn.prepareStatement(QUERY_REVIEW_IDS_SQL);
             rs = pstmt.executeQuery();
 
-            List<Long> allIds = new ArrayList<Long>();
+            List<ReviewData> reviews = new LinkedList<ReviewData>();
 
             while (rs.next()) {
-                allIds.add(rs.getLong(1));
+            	ReviewData rData = new ReviewData();
+            	// r.review_id, riRev.value reviewer, riSub.value submitter, u.project_id
+            	rData.setProjectId(rs.getLong("project_id"));
+            	rData.setReviewId(rs.getLong("review_id"));
+            	rData.setReviewerId(new Long(rs.getString("reviewer")));
+            	rData.setSubmitterId(new Long(rs.getString("submitter")));
+                reviews.add(rData);
             }
 
-            return allIds.toArray(new Long[allIds.size()]);
+            return reviews;
         } catch (SQLException e) {
-            closeResources(conn, pstmt, rs);
             throw new ScoreFixerException("An error occurred while retrieving IDs of the reviews." , e);
+        } finally {
+        	closeResources(conn, pstmt, rs);
         }
     }
 
@@ -287,10 +357,24 @@ public class InitialScoreFixer {
      *             if any error occurs while creating the connection.
      */
     private static Connection createConnection() throws ScoreFixerException {
+        return createConnection(null);
+    }
+
+    /**
+     * Creates an SQL connection.
+     *
+     * @return the connection created.
+     * @throws ScoreFixerException
+     *             if any error occurs while creating the connection.
+     */
+    private static Connection createConnection(String name) throws ScoreFixerException {
         try {
             DBConnectionFactory dbFactory = new DBConnectionFactoryImpl(
                     "com.topcoder.db.connectionfactory.DBConnectionFactoryImpl");
-            return dbFactory.createConnection();
+            if (name == null) {
+            	return dbFactory.createConnection();
+            }
+            return dbFactory.createConnection(name);
         } catch (UnknownConnectionException uce) {
             throw new com.topcoder.management.review.scorefixer.ConfigurationException(
                     "An error occurs while creating connection factory or connection.", uce);
@@ -302,7 +386,7 @@ public class InitialScoreFixer {
                     "An error occurs while creating connection.", dce);
         }
     }
-
+    
     /**
      * Closes passed in SQL resources as necessary. If a resource does not need to be closed, the
      * appropriate parameter should be <code>null</code>. This method closes resources in the
