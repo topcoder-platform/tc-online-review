@@ -67,7 +67,6 @@ public class InitialScoreFixer {
     	"   AND r.initial_score IS NULL " +
     	"   AND r.resource_id = riRev.resource_id and riRev.resource_info_type_id = 1 and rsRev.resource_id = riRev.resource_id and rsRev.resource_role_id in (4,5,6,7) " +
     	"   AND u.resource_id = riSub.resource_id and riSub.resource_info_type_id = 1 and rsSub.resource_id = riSub.resource_id and rsSub.resource_role_id = 1 " +
-    	"   AND u.project_id = 9990033 " +
     	" ORDER BY r.create_date desc ";
 
     /** Logger instance using the class name as category */
