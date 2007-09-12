@@ -64,6 +64,7 @@ import com.topcoder.search.builder.filter.AndFilter;
 import com.topcoder.search.builder.filter.EqualToFilter;
 import com.topcoder.search.builder.filter.Filter;
 import com.topcoder.search.builder.filter.InFilter;
+import com.topcoder.search.builder.filter.OrFilter;
 import com.topcoder.servlet.request.FileUpload;
 import com.topcoder.servlet.request.FileUploadResult;
 import com.topcoder.servlet.request.UploadedFile;
@@ -512,8 +513,13 @@ public class ProjectDetailsActions extends DispatchAction {
 
         // Build filters
         Filter filterProject = ResourceFilterBuilder.createProjectIdFilter(project.getId());
-        Filter filterRole = ResourceFilterBuilder.createResourceRoleIdFilter(
-                ActionsHelper.findResourceRoleByName(allResourceRoles, "Manager").getId());
+        
+        Filter filterRole = new OrFilter(
+        		ResourceFilterBuilder.createResourceRoleIdFilter(
+        				ActionsHelper.findResourceRoleByName(allResourceRoles, "Manager").getId()),
+        		ResourceFilterBuilder.createResourceRoleIdFilter(
+        				ActionsHelper.findResourceRoleByName(allResourceRoles, "Observer").getId()));
+        
         // Build final filter
         Filter filter = new AndFilter(filterProject, filterRole);
         // Search for the managers of this project
