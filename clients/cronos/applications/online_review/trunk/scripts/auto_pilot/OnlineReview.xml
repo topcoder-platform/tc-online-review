@@ -5,7 +5,7 @@
        <!ENTITY winnersEmailTemplate "/home/onlinereview/winners_email_template.txt">
        <!ENTITY timelineTemplateDir "/home/onlinereview">
        <!ENTITY contactManagersTemplate "/home/onlinereview/contact_manager_template.txt">
-       <!ENTITY pactJNDIAddress "jnp://63.118.154.207:1099">
+       <!ENTITY pactJNDIAddress "jnp://63.118.154.207:1199">
        <!ENTITY assignmentDocumentsFlag "false">
 ]>
 <CMConfig>	
@@ -31,7 +31,7 @@
                         <Value>com.informix.jdbc.IfxDriver</Value>
                     </Property>
                     <Property name="jdbc_url">
-                        <Value>jdbc:informix-sqli://63.118.154.218:1526/tcs_catalog:INFORMIXSERVER=devinformix10_shm;</Value>
+                        <Value>jdbc:informix-sqli://63.118.154.218:1526/tcs_catalog:INFORMIXSERVER=devinformix10_shm;IFX_LOCK_MODE_WAIT=5</Value>
                     </Property>
                     <Property name="user">
                         <Value>coder</Value>
