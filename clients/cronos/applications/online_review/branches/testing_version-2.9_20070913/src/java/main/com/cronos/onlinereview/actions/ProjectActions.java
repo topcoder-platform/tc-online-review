@@ -300,8 +300,10 @@ public class ProjectActions extends DispatchAction {
         form.set("autopilot", new Boolean("On".equals(project.getProperty("Autopilot Option"))));
         // Populate project status notification option
         form.set("email_notifications", new Boolean("On".equals(project.getProperty("Status Notification"))));
-        // Populate project status notification option
+        // Populate project timeline notification option
         form.set("timeline_notifications", new Boolean("On".equals(project.getProperty("Timeline Notification"))));
+        // Populate project Digital Run option
+        form.set("digital_run_flag", new Boolean("On".equals(project.getProperty("Digital Run Flag"))));
         // Populate project's 'do not rate this project' option
         // Note, this property is inverse by its meaning in project and form
         form.set("no_rate_project", new Boolean(!("Yes".equals(project.getProperty("Rated")))));
@@ -703,6 +705,7 @@ public class ProjectActions extends DispatchAction {
         Boolean autopilotOnObj = (Boolean) lazyForm.get("autopilot");
         Boolean sendEmailNotificationsObj = (Boolean) lazyForm.get("email_notifications");
         Boolean sendTLChangeNotificationsObj = (Boolean) lazyForm.get("timeline_notifications");
+        Boolean digitalRunFlagObj = (Boolean) lazyForm.get("digital_run_flag");
         Boolean doNotRateProjectObj = (Boolean) lazyForm.get("no_rate_project");
 
         // Unbox the properties
@@ -711,6 +714,7 @@ public class ProjectActions extends DispatchAction {
             (sendEmailNotificationsObj != null) ? sendEmailNotificationsObj.booleanValue() : false;
         boolean sendTLChangeNotifications =
             (sendTLChangeNotificationsObj != null) ? sendTLChangeNotificationsObj.booleanValue() : false;
+        boolean digitalRunFlag = (digitalRunFlagObj != null) ? digitalRunFlagObj.booleanValue() : false;
         boolean doNotRateProject = (doNotRateProjectObj != null) ? doNotRateProjectObj.booleanValue() : false;
 
         // Populate project autopilot option
@@ -719,6 +723,8 @@ public class ProjectActions extends DispatchAction {
         project.setProperty("Status Notification", (sendEmailNotifications) ? "On" : "Off");
         // Populate project timeline notifications option
         project.setProperty("Timeline Notification", (sendTLChangeNotifications) ? "On" : "Off");
+        // Populate project Digital Run option
+        project.setProperty("Digital Run Flag", (digitalRunFlag) ? "On" : "Off");
         // Populate project rated option, note that it is inveresed
         project.setProperty("Rated", (doNotRateProject) ? "No" : "Yes");
 
