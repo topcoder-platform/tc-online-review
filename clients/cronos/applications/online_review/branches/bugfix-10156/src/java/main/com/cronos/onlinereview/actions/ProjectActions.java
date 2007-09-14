@@ -614,7 +614,7 @@ public class ProjectActions extends DispatchAction {
         boolean newProject = (lazyForm.get("pid") == null);
         // Gather the roles the user has for current request
         AuthorizationHelper.gatherUserRoles(request);
-        
+
         // Check if the user has the permission to perform this action
         if (newProject) {
             if (!AuthorizationHelper.hasUserPermission(request, Constants.CREATE_PROJECT_PERM_NAME)) {
@@ -673,7 +673,7 @@ public class ProjectActions extends DispatchAction {
             // OrChange - If the project category is Studio set the property to allow multiple submissions.
             if (ActionsHelper.isStudioProject(project)) {
             	//TODO retrieve it from the configuration
-            	log.debug("setting 'Root Catalog ID' to 26887152"); 
+            	log.debug("setting 'Root Catalog ID' to 26887152");
             	project.setProperty("Root Catalog ID", "26887152");
             	log.debug("Allowing multiple submissions for this project.");
                 project.setProperty("Allow multiple submissions", true);
@@ -693,7 +693,7 @@ public class ProjectActions extends DispatchAction {
             // Determine if status has changed
             statusHasChanged = !oldStatusName.equalsIgnoreCase(newStatusName);
             // If status has changed, update the project
-            
+
             // OrChange - Do not update if the project type is studio
             if (statusHasChanged) {
                 // Populate project status
@@ -1110,7 +1110,8 @@ public class ProjectActions extends DispatchAction {
 
                 // If the phase is scheduled to start before some other phase start/end
                 if (Boolean.TRUE.equals(lazyForm.get("phase_start_by_phase", paramIndex)) &&
-                        "minus".equals(lazyForm.get("phase_start_plusminus", paramIndex))) {
+                        "minus".equals(lazyForm.get("phase_start_plusminus", paramIndex)) &&
+                        ((Integer) lazyForm.get("phase_start_amount", i)).intValue() > 0) {
                     Dependency dependency = phase.getAllDependencies()[0];
 
                     Date dependencyDate;
@@ -1314,9 +1315,7 @@ public class ProjectActions extends DispatchAction {
     private boolean validateProjectPhases(HttpServletRequest request, Project project, Phase[] projectPhases) {
         boolean arePhasesValid = true;
 
-        // TODO: Refactor this function, make it more concise
-
-        // Check the beginning phase, it should be either Registration or submission
+        // Check the beginning phase, it should be either Registration or Submission
         if (projectPhases.length > 0 &&
                 !projectPhases[0].getPhaseType().getName().equals(Constants.REGISTRATION_PHASE_NAME) &&
                 !projectPhases[0].getPhaseType().getName().equals(Constants.SUBMISSION_PHASE_NAME)) {
@@ -1325,105 +1324,278 @@ public class ProjectActions extends DispatchAction {
             arePhasesValid = false;
         }
 
+        boolean appealsPresent = false;
+        boolean metAggregationOnce = false;
+        boolean metFinalFixOnce = false;
+
         // Check the phases as a whole
-        for (int i = 0; i < projectPhases.length; i++) {
-            if (projectPhases[i].getPhaseType().getName().equals(Constants.SUBMISSION_PHASE_NAME)) {
-                // Submission should follow registration if it exists
-                if (i > 0 && !projectPhases[i - 1].getPhaseType().getName().equals(Constants.REGISTRATION_PHASE_NAME)) {
+        for (int i = 0; i < projectPhases.length; ++i) {
+            // Get a phase for the current iteration
+            final Phase phase = projectPhases[i];
+            // Get the name of the phase for the current iteration
+            final String phaseName = phase.getPhaseType().getName();
+            // Get the name of the phase for the previous iteration (if there was any)
+            final String prevPhaseName = (i > 0) ? projectPhases[i - 1].getPhaseType().getName() : null;
+            // Get the name of the phase for the next iteration (if there will be any)
+            final String nextPhaseName = (i < projectPhases.length - 1) ? projectPhases[i + 1].getPhaseType().getName() : null;
+
+            if (phaseName.equals(Constants.SUBMISSION_PHASE_NAME)) {
+                // Submission should follow Registration if it exists
+                if (prevPhaseName != null && !prevPhaseName.equals(Constants.REGISTRATION_PHASE_NAME)) {
                     ActionsHelper.addErrorToRequest(request,
                             "error.com.cronos.onlinereview.actions.editProject.SubmissionMustFollow");
                     arePhasesValid = false;
                 }
-            } else if (projectPhases[i].getPhaseType().getName().equals(Constants.REGISTRATION_PHASE_NAME)) {
-                // Registration should be followed by submission
-                if (i == projectPhases.length - 1 || !projectPhases[i + 1].getPhaseType().getName().equals(Constants.SUBMISSION_PHASE_NAME)) {
+            } else if (phaseName.equals(Constants.REGISTRATION_PHASE_NAME)) {
+                // Registration should be followed by Submission
+                if (!Constants.SUBMISSION_PHASE_NAME.equals(nextPhaseName)) {
                     ActionsHelper.addErrorToRequest(request,
                             "error.com.cronos.onlinereview.actions.editProject.RegistrationMustBeFollowed");
                     arePhasesValid = false;
                 }
-            } else if (projectPhases[i].getPhaseType().getName().equals(Constants.REVIEW_PHASE_NAME)) {
-                // Review should follow submission or screening
-                if (i == 0 || (!projectPhases[i - 1].getPhaseType().getName().equals(Constants.SUBMISSION_PHASE_NAME) &&
-                        !projectPhases[i - 1].getPhaseType().getName().equals(Constants.SCREENING_PHASE_NAME))) {
+            } else if (phaseName.equals(Constants.SCREENING_PHASE_NAME)) {
+                // Screening must depend on Submission (start when Submission starts or ends)
+                if (!checkDependency(phase, Constants.SUBMISSION_PHASE_NAME, true, true)) {
+                    ActionsHelper.addErrorToRequest(request, "Error.saveProject.Phases.ScreeningDependency");
+                    arePhasesValid = false;
+                }
+            } else if (phaseName.equals(Constants.REVIEW_PHASE_NAME)) {
+                // Review should follow Submission or Screening
+                if (!Constants.SUBMISSION_PHASE_NAME.equals(prevPhaseName) &&
+                        !Constants.SCREENING_PHASE_NAME.equals(prevPhaseName)) {
                     ActionsHelper.addErrorToRequest(request,
                             "error.com.cronos.onlinereview.actions.editProject.ReviewMustFollow");
                     arePhasesValid = false;
                 }
-            } else if (projectPhases[i].getPhaseType().getName().equals(Constants.APPEALS_PHASE_NAME)) {
-                // Appeals should follow review
-                if (i == 0 || !projectPhases[i - 1].getPhaseType().getName().equals(Constants.REVIEW_PHASE_NAME)) {
+                // Check phase's dependecies
+                if (Constants.SCREENING_PHASE_NAME.equals(prevPhaseName)) {
+                    // If there is a Screening phase, Review must start when Screening ends
+                    if (!checkDependency(phase, Constants.SCREENING_PHASE_NAME, false, true)) {
+                        ActionsHelper.addErrorToRequest(request, "Error.saveProject.Phases.ReviewDependencyScreening");
+                        arePhasesValid = false;
+                    }
+                } else {
+                    // If there is no Screening phase, Review must start when Submission ends
+                    if (!checkDependency(phase, Constants.SUBMISSION_PHASE_NAME, false, true)) {
+                        ActionsHelper.addErrorToRequest(request, "Error.saveProject.Phases.ReviewDependencySubmission");
+                        arePhasesValid = false;
+                    }
+                }
+            } else if (phaseName.equals(Constants.APPEALS_PHASE_NAME)) {
+                // Appeals should follow Review
+                if (!Constants.REVIEW_PHASE_NAME.equals(prevPhaseName)) {
                     ActionsHelper.addErrorToRequest(request,
                             "error.com.cronos.onlinereview.actions.editProject.AppealsMustFollow");
                     arePhasesValid = false;
                 }
-                // Appeals should be followed by the appeals response
-                if (i == projectPhases.length - 1 ||
-                        !projectPhases[i + 1].getPhaseType().getName().equals(Constants.APPEALS_RESPONSE_PHASE_NAME)) {
+                // Appeals should be followed by the Appeals Response
+                if (!Constants.APPEALS_RESPONSE_PHASE_NAME.equals(nextPhaseName)) {
                     ActionsHelper.addErrorToRequest(request,
                             "error.com.cronos.onlinereview.actions.editProject.AppealsMustBeFollowed");
                     arePhasesValid = false;
                 }
-            } else if (projectPhases[i].getPhaseType().getName().equals(Constants.APPEALS_RESPONSE_PHASE_NAME)) {
-                // Appeal response should follow appeals
-                if (i == 0 || !projectPhases[i - 1].getPhaseType().getName().equals(Constants.APPEALS_PHASE_NAME)) {
+                // Appeals must depend on Review (start when Review ends)
+                if (!checkDependency(phase, Constants.REVIEW_PHASE_NAME, false, true)) {
+                    ActionsHelper.addErrorToRequest(request, "Error.saveProject.Phases.AppealsDependency");
+                    arePhasesValid = false;
+                }
+                // Indicate that Appeals phase is present in the timeline
+                appealsPresent = true;
+            } else if (phaseName.equals(Constants.APPEALS_RESPONSE_PHASE_NAME)) {
+                // Appeal Response should follow Appeals
+                if (!Constants.APPEALS_PHASE_NAME.equals(prevPhaseName)) {
                     ActionsHelper.addErrorToRequest(request,
                             "error.com.cronos.onlinereview.actions.editProject.AppealsResponseMustFollow");
                     arePhasesValid = false;
                 }
-            } else if (projectPhases[i].getPhaseType().getName().equals(Constants.AGGREGATION_PHASE_NAME)) {
-                // Aggregation should follow appeals response or review, or aggregation review
-                if (i == 0 ||
-                        (!projectPhases[i - 1].getPhaseType().getName().equals(Constants.APPEALS_RESPONSE_PHASE_NAME) &&
-                        !projectPhases[i - 1].getPhaseType().getName().equals(Constants.REVIEW_PHASE_NAME) &&
-                        !projectPhases[i - 1].getPhaseType().getName().equals(Constants.AGGREGATION_REVIEW_PHASE_NAME))) {
+                // Appeals Response must depend on Appeals (start when Appeals starts or ends)
+                if (!checkDependency(phase, Constants.APPEALS_PHASE_NAME, true, true)) {
+                    ActionsHelper.addErrorToRequest(request, "Error.saveProject.Phases.AppealsResponseDependency");
+                    arePhasesValid = false;
+                }
+            } else if (phaseName.equals(Constants.AGGREGATION_PHASE_NAME)) {
+                // Aggregation should follow Appeals Response, Review, or Aggregation Review
+                if (!Constants.APPEALS_RESPONSE_PHASE_NAME.equals(prevPhaseName) &&
+                        !Constants.REVIEW_PHASE_NAME.equals(prevPhaseName) &&
+                        !Constants.AGGREGATION_REVIEW_PHASE_NAME.equals(prevPhaseName)) {
                     ActionsHelper.addErrorToRequest(request,
                             "error.com.cronos.onlinereview.actions.editProject.AggregationMustFollow");
                     arePhasesValid = false;
                 }
                 // Aggregation should be followed by the aggregation review
-                if (i == projectPhases.length - 1 ||
-                        !projectPhases[i + 1].getPhaseType().getName().equals(Constants.AGGREGATION_REVIEW_PHASE_NAME)) {
+                if (!Constants.AGGREGATION_REVIEW_PHASE_NAME.equals(nextPhaseName)) {
                     ActionsHelper.addErrorToRequest(request,
                             "error.com.cronos.onlinereview.actions.editProject.AggregationMustBeFollowed");
                     arePhasesValid = false;
                 }
-            } else if (projectPhases[i].getPhaseType().getName().equals(Constants.AGGREGATION_REVIEW_PHASE_NAME)) {
+                // Check phase's dependencies
+                if (metAggregationOnce) {
+                    if (!checkDependency(phase, Constants.AGGREGATION_REVIEW_PHASE_NAME, false, true)) {
+                        ActionsHelper.addErrorToRequest(request, "Error.saveProject.Phases.AggregationDependencyAggReview");
+                        arePhasesValid = false;
+                    }
+                } else if (appealsPresent) {
+                    if (!checkDependency(phase, Constants.APPEALS_RESPONSE_PHASE_NAME, false, true)) {
+                        ActionsHelper.addErrorToRequest(request, "Error.saveProject.Phases.AggregationDependencyAppeals");
+                        arePhasesValid = false;
+                    }
+                } else {
+                    if (!checkDependency(phase, Constants.REVIEW_PHASE_NAME, false, true)) {
+                        ActionsHelper.addErrorToRequest(request, "Error.saveProject.Phases.AggregationDependencyReview");
+                        arePhasesValid = false;
+                    }
+                }
+                // Indicate that Aggregation has been encountered at least once
+                metAggregationOnce = true;
+            } else if (phaseName.equals(Constants.AGGREGATION_REVIEW_PHASE_NAME)) {
                 // Aggregation review should follow aggregation
-                if (i == 0 ||
-                        !projectPhases[i - 1].getPhaseType().getName().equals(Constants.AGGREGATION_PHASE_NAME)) {
+                if (!Constants.AGGREGATION_PHASE_NAME.equals(prevPhaseName)) {
                     ActionsHelper.addErrorToRequest(request,
                             "error.com.cronos.onlinereview.actions.editProject.AggregationReviewMustFollow");
                     arePhasesValid = false;
                 }
-            } else if (projectPhases[i].getPhaseType().getName().equals(Constants.FINAL_FIX_PHASE_NAME)) {
+                // Aggregation Review must depend on Aggregation (start when Aggregation ends)
+                if (!checkDependency(phase, Constants.AGGREGATION_PHASE_NAME, true, true)) {
+                    ActionsHelper.addErrorToRequest(request, "Error.saveProject.Phases.AggregationReviewDependency");
+                    arePhasesValid = false;
+                }
+            } else if (phaseName.equals(Constants.FINAL_FIX_PHASE_NAME)) {
                 // Final fix should follow either appeals response or aggregation review, or final review
-                if (i == 0 ||
-                        (!projectPhases[i - 1].getPhaseType().getName().equals(Constants.APPEALS_RESPONSE_PHASE_NAME) &&
-                        !projectPhases[i - 1].getPhaseType().getName().equals(Constants.AGGREGATION_REVIEW_PHASE_NAME) &&
-                        !projectPhases[i - 1].getPhaseType().getName().equals(Constants.FINAL_REVIEW_PHASE_NAME))) {
+                if (!Constants.APPEALS_RESPONSE_PHASE_NAME.equals(prevPhaseName) &&
+                        !Constants.AGGREGATION_REVIEW_PHASE_NAME.equals(prevPhaseName) &&
+                        !Constants.FINAL_REVIEW_PHASE_NAME.equals(prevPhaseName)) {
                     ActionsHelper.addErrorToRequest(request,
                             "error.com.cronos.onlinereview.actions.editProject.FinalFixMustFollow");
                     arePhasesValid = false;
                 }
                 // Final fix should be followed by the final review
-                if (i == projectPhases.length - 1 ||
-                        !projectPhases[i + 1].getPhaseType().getName().equals(Constants.FINAL_REVIEW_PHASE_NAME)) {
+                if (!Constants.FINAL_REVIEW_PHASE_NAME.equals(nextPhaseName)) {
                     ActionsHelper.addErrorToRequest(request,
                             "error.com.cronos.onlinereview.actions.editProject.FinalFixMustBeFollowed");
                     arePhasesValid = false;
                 }
-            }  else if (projectPhases[i].getPhaseType().getName().equals(Constants.FINAL_REVIEW_PHASE_NAME)) {
+                // Check phase's dependencies
+                if (metFinalFixOnce) {
+                    if (!checkDependency(phase, Constants.FINAL_REVIEW_PHASE_NAME, false, true)) {
+                        ActionsHelper.addErrorToRequest(request, "Error.saveProject.Phases.FinalFixDependencyFinReview");
+                        arePhasesValid = false;
+                    }
+                } else if (metAggregationOnce) {
+                    if (!checkDependency(phase, Constants.AGGREGATION_REVIEW_PHASE_NAME, false, true)) {
+                        ActionsHelper.addErrorToRequest(request, "Error.saveProject.Phases.FinalFixDependencyAggReview");
+                        arePhasesValid = false;
+                    }
+                } else if (appealsPresent) {
+                    if (!checkDependency(phase, Constants.APPEALS_RESPONSE_PHASE_NAME, false, true)) {
+                        ActionsHelper.addErrorToRequest(request, "Error.saveProject.Phases.FinalFixDependencyAppeals");
+                        arePhasesValid = false;
+                    }
+                } else {
+                    if (!checkDependency(phase, Constants.REVIEW_PHASE_NAME, false, true)) {
+                        ActionsHelper.addErrorToRequest(request, "Error.saveProject.Phases.FinalFixDependencyReview");
+                        arePhasesValid = false;
+                    }
+                }
+                // Indicate that Fixnal Fix has been encountered at least once
+                metFinalFixOnce = true;
+            } else if (phaseName.equals(Constants.FINAL_REVIEW_PHASE_NAME)) {
                 // Final review should follow final fix
-                if (i == 0 ||
-                        !projectPhases[i - 1].getPhaseType().getName().equals(Constants.FINAL_FIX_PHASE_NAME)) {
+                if (!Constants.FINAL_FIX_PHASE_NAME.equals(prevPhaseName)) {
                     ActionsHelper.addErrorToRequest(request,
                             "error.com.cronos.onlinereview.actions.editProject.FinalReviewMustFollow");
+                    arePhasesValid = false;
+                }
+                // Final Review must depend on Final Fix (start when Final Fix ends)
+                if (!checkDependency(phase, Constants.FINAL_FIX_PHASE_NAME, false, true)) {
+                    ActionsHelper.addErrorToRequest(request, "Error.saveProject.Phases.FinalReviewDependency");
                     arePhasesValid = false;
                 }
             }
         }
 
         return arePhasesValid;
+    }
+
+    /**
+     * This static method verifies a phase's dependency. It verifies that the phase in question has
+     * at least one dependency (in fact, if it has more, only the first one will be analyzed). Then,
+     * the type of the dependency is checked based on the parameters passed. This includes:
+     * <ol>
+     * <li>Checking the name of the phase that the phase in question depends on.</li>
+     * <li>Checking that the dependency phase should start for the phase in question to start, and
+     * this is the expected behavior; or</li>
+     * <li>Checking that the dependency phase should end for the phase in question to start, and
+     * this is the expected behaviour</li>
+     * </ol>
+     * Whether starting/ending of the dependency phase is expected behavior is determined by the
+     * <code>atStart</code> and <code>atEnd</code> parameters.
+     *
+     * @return <code>true</code> if phase specified by <code>phase</code> parameter has passed
+     *         validation, <code>false</code> if it has not.
+     * @param phase
+     *            a phase to be checked. This parameter cannot be <code>null</code>.
+     * @param allowedPhase
+     *            the name the phase that this phase depends on should have for the validation to
+     *            complete successfully. Name comparison is done case-insensitively. This parameter
+     *            cannot be <code>null</code> or empty (after trimming) string.
+     * @param atStart
+     *            a <code>boolean</code> value that specifies that the dependency phase may be
+     *            configured to start in order for its dependent phase (the one specified by
+     *            <code>phase</code> parameter) to start. If this value is <code>true</code>,
+     *            the dependency phase may be configured to start to trigger the starting of the
+     *            phase in question; if this parameter is <code>false</code>, and the dependency
+     *            phase is configured to start, the validation will fail. This parameter cannot be
+     *            <code>false</code> if parameter <code>atEnd</code> is also <code>false</code>.
+     * @param atEnd
+     *            a <code>boolean</code> value that specifies that the dependency phase may be
+     *            configured to end in order for its dependent phase (the one specified by
+     *            <code>phase</code> parameter) to start. If this value is <code>true</code>,
+     *            the dependency phase may be configured to end to trigger the starting of the phase
+     *            in question; if this parameter is <code>false</code>, and the dependency phase
+     *            is configured to end, the validation will fail. This parameter cannot be
+     *            <code>false</code> if parameter <code>atStart</code> is also
+     *            <code>false</code>.
+     * @throws IllegalArgumentException
+     *             if parameter <code>phase</code> is <code>null</code>, or parameter
+     *             <code>allowedPhase</code> is <code>null</code> or empty (trimmed) string, or
+     *             both parameters <code>atStart</code> and <code>atEnd</code> are
+     *             <code>false</code>.
+     */
+    private static boolean checkDependency(Phase phase, String allowedPhase, boolean atStart, boolean atEnd) {
+        // Validate parameters
+        ActionsHelper.validateParameterNotNull(phase, "phase");
+        ActionsHelper.validateParameterStringNotEmpty(allowedPhase, "allowedPhase");
+        if (!atStart && !atEnd) {
+            throw new IllegalArgumentException(
+                    "Either one (or both) of the 'atStart' and 'atEnd' parameters must be true.");
+        }
+
+        // Extract dendency(ies) for the phase being validated. Only the first dependency will be regarded
+        final Dependency[] dependencies = phase.getAllDependencies();
+
+        // If the phase being checked has no phase it depends on, fail validation for the phase
+        if (dependencies == null || dependencies.length == 0) {
+            return false;
+        }
+
+        // Get the dependency for the phase
+        final Dependency dependency = dependencies[0];
+
+        // Check that the phase current phase depends on is the right one
+        if (!allowedPhase.equalsIgnoreCase(dependency.getDependency().getPhaseType().getName())) {
+            return false;
+        }
+
+        // Determine if the phase starts when dependency starts or ends
+        final boolean whenStarts = dependency.isDependencyStart();
+
+        if (whenStarts) {
+            // Current phase is valid if it is configured to start when the phase it depends on starts
+            return atStart;
+        } else {
+            // Current phase is valid if it is configured to start when the phase it depends on ends
+            return atEnd;
+        }
     }
 
     /**
@@ -1703,7 +1875,7 @@ public class ProjectActions extends DispatchAction {
         throws BaseException {
         // Remove redirect-after-login attribute (if it exists)
         AuthorizationHelper.removeLoginRedirect(request);
-        
+
     	LoggingHelper.logAction(request);
 
         // Gather the roles the user has for current request
