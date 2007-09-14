@@ -614,7 +614,7 @@ public class ProjectActions extends DispatchAction {
         boolean newProject = (lazyForm.get("pid") == null);
         // Gather the roles the user has for current request
         AuthorizationHelper.gatherUserRoles(request);
-        
+
         // Check if the user has the permission to perform this action
         if (newProject) {
             if (!AuthorizationHelper.hasUserPermission(request, Constants.CREATE_PROJECT_PERM_NAME)) {
@@ -673,7 +673,7 @@ public class ProjectActions extends DispatchAction {
             // OrChange - If the project category is Studio set the property to allow multiple submissions.
             if (ActionsHelper.isStudioProject(project)) {
             	//TODO retrieve it from the configuration
-            	log.debug("setting 'Root Catalog ID' to 26887152"); 
+            	log.debug("setting 'Root Catalog ID' to 26887152");
             	project.setProperty("Root Catalog ID", "26887152");
             	log.debug("Allowing multiple submissions for this project.");
                 project.setProperty("Allow multiple submissions", true);
@@ -693,7 +693,7 @@ public class ProjectActions extends DispatchAction {
             // Determine if status has changed
             statusHasChanged = !oldStatusName.equalsIgnoreCase(newStatusName);
             // If status has changed, update the project
-            
+
             // OrChange - Do not update if the project type is studio
             if (statusHasChanged) {
                 // Populate project status
@@ -1703,7 +1703,7 @@ public class ProjectActions extends DispatchAction {
         throws BaseException {
         // Remove redirect-after-login attribute (if it exists)
         AuthorizationHelper.removeLoginRedirect(request);
-        
+
     	LoggingHelper.logAction(request);
 
         // Gather the roles the user has for current request
@@ -1785,6 +1785,7 @@ public class ProjectActions extends DispatchAction {
         String[][] rootCatalogIcons = new String[projectCategories.length][];
         String[][] rootCatalogNames = new String[projectCategories.length][];
         Phase[][][] phases = new Phase[projectCategories.length][][];
+        int[][][] phaseStatusCodes = new int[projectCategories.length][][];
         Date[][] phaseEndDates = new Date[projectCategories.length][];
         Date[][] projectEndDates = new Date[projectCategories.length][];
 
@@ -1835,6 +1836,8 @@ public class ProjectActions extends DispatchAction {
 
         // Message Resources to be used for this request
         MessageResources messages = getResources(request);
+        // Current time converted to long (needed to determine phase's status later on)
+        final long currentTime = (new Date()).getTime();
 
         for (int i = 0; i < projectCategories.length; ++i) {
             // Count number of projects in this category
@@ -1852,6 +1855,7 @@ public class ProjectActions extends DispatchAction {
             String[] rcIcons = new String[categoryCounts[i]]; // Root Catalog Icons
             String[] rcNames = new String[categoryCounts[i]]; // Root Catalog Names (shown in tooltip)
             Phase[][] phass = new Phase[categoryCounts[i]][]; // Projects' active Phases
+            int[][] phstcds = new int[categoryCounts[i]][]; // Phase status codes (Open / Closing / Late / etc.)
             Date[] pheds = new Date[categoryCounts[i]]; // End date of every first active phase
             Date[] preds = new Date[categoryCounts[i]]; // Projects' end dates
 
@@ -1892,6 +1896,7 @@ public class ProjectActions extends DispatchAction {
 
                     // Get currently open phase end calculate its end date
                     if (activePhases != null && activePhases.length != 0) {
+                        phstcds[counter] = ProjectDetailsActions.getPhaseStatusCodes(activePhases, currentTime);
                         phass[counter] = activePhases;
                         pheds[counter] = activePhases[0].getScheduledEndDate();
                     }
@@ -1914,6 +1919,7 @@ public class ProjectActions extends DispatchAction {
             rootCatalogIcons[i] = rcIcons;
             rootCatalogNames[i] = rcNames;
             phases[i] = phass;
+            phaseStatusCodes[i] = phstcds;
             phaseEndDates[i] = pheds;
             projectEndDates[i] = preds;
 
@@ -1964,6 +1970,7 @@ public class ProjectActions extends DispatchAction {
         request.setAttribute("rootCatalogIcons", rootCatalogIcons);
         request.setAttribute("rootCatalogNames", rootCatalogNames);
         request.setAttribute("phases", phases);
+        request.setAttribute("phaseStatusCodes", phaseStatusCodes);
         request.setAttribute("phaseEndDates", phaseEndDates);
         request.setAttribute("projectEndDates", projectEndDates);
         request.setAttribute("typeCounts", typeCounts);

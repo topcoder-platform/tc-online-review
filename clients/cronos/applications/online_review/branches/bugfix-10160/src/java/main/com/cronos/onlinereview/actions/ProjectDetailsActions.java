@@ -224,7 +224,7 @@ public class ProjectDetailsActions extends DispatchAction {
         request.setAttribute("myDeliverables", myDeliverables);
         request.setAttribute("outstandingDeliverables", outstandingDeliverables);
 
-        long currentTime = (new Date()).getTime();
+        final long currentTime = (new Date()).getTime();
 
         // These two arrays will contain Deadline near / Late / Completed codes for deliverables
         int[] myDeliverableStatuses = getDeliverableStatusCodes(myDeliverables, activePhases, currentTime);
@@ -513,13 +513,13 @@ public class ProjectDetailsActions extends DispatchAction {
 
         // Build filters
         Filter filterProject = ResourceFilterBuilder.createProjectIdFilter(project.getId());
-        
+
         Filter filterRole = new OrFilter(
         		ResourceFilterBuilder.createResourceRoleIdFilter(
         				ActionsHelper.findResourceRoleByName(allResourceRoles, "Manager").getId()),
         		ResourceFilterBuilder.createResourceRoleIdFilter(
         				ActionsHelper.findResourceRoleByName(allResourceRoles, "Observer").getId()));
-        
+
         // Build final filter
         Filter filter = new AndFilter(filterProject, filterRole);
         // Search for the managers of this project
@@ -543,10 +543,10 @@ public class ProjectDetailsActions extends DispatchAction {
         for (Iterator iter = existingManagers.iterator(); iter.hasNext(); ) {
             extUsrManagerIds[managerIdx++] = Long.parseLong((String) iter.next());
         }
-        
+
         //send a copy to the sender
         extUsrManagerIds[managerIdx++] = senderId;
-        
+
         // Retrieve all external resources for managers in a single batch operation
         ExternalUser[] extUsrManagers = userMgr.retrieveUsers(extUsrManagerIds);
 
@@ -570,7 +570,7 @@ public class ProjectDetailsActions extends DispatchAction {
                 } else if ("USER_HANDLE".equals(field.getName())) {
                     field.setValue(sender.getHandle());
                 } else if ("PROJECT_NAME".equals(field.getName())) {
-                    field.setValue("<![CDATA[" + project.getProjectCategory().getDescription() + " - " + 
+                    field.setValue("<![CDATA[" + project.getProjectCategory().getDescription() + " - " +
                     		project.getProperty("Project Name") + "]]>");
                 } else if ("PROJECT_VERSION".equals(field.getName())) {
                     field.setValue("" + project.getProperty("Project Version"));
@@ -1836,7 +1836,7 @@ public class ProjectDetailsActions extends DispatchAction {
      * @throws IllegalArgumentException
      *             if <code>phases</code> parameter is <code>null</code>.
      */
-    private static int[] getPhaseStatusCodes(Phase[] phases, long currentTime) {
+    static int[] getPhaseStatusCodes(Phase[] phases, long currentTime) {
         // Validate parameters
         ActionsHelper.validateParameterNotNull(phases, "phases");
 

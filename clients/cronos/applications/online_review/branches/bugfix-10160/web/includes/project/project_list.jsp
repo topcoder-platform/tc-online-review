@@ -54,16 +54,32 @@
 									<c:if test="${isMyProjects}">
 										<td class="valueC">${myRoles[idxrCategory.index][idxrProject.index]}</td>
 									</c:if>
-									<c:set var="phase" value="${phases[idxrCategory.index][idxrProject.index]}" />
-									<c:if test="${!(empty phase)}">
-										<td class="value" nowrap="nowrap"><bean:message key="ProjectPhase.${fn:replace(phase[0].phaseType.name, ' ', '')}" /></td>
+									<c:set var="phases2" value="${phases[idxrCategory.index][idxrProject.index]}" />
+									<c:set var="phaseStatuseCodes" value="${phaseStatusCodes[idxrCategory.index][idxrProject.index]}" />
+									<c:if test="${not empty phases2}">
+										<td class="value" nowrap="nowrap">
+											<c:forEach items="${phases2}" var="phase" varStatus="phaseStatus">
+												<c:if test="${phaseStatus.index != 0}"><br /></c:if>
+												<c:choose>
+													<c:when test="${phaseStatuseCodes[phaseStatus.index] == 3}">
+														<span style="color:cccc00;font-weight:bold;"><bean:message key="ProjectPhase.${fn:replace(phase.phaseType.name, ' ', '')}" />
+															(<bean:message key="ProjectPhaseStatus.Closing" />)</span>
+													</c:when>
+													<c:when test="${phaseStatuseCodes[phaseStatus.index] == 4}">
+														<span style="color:#cc0000;font-weight:bold;"><bean:message key="ProjectPhase.${fn:replace(phase.phaseType.name, ' ', '')}" />
+															(<bean:message key="ProjectPhaseStatus.Late" />)</span>
+													</c:when>
+													<c:otherwise>
+														<bean:message key="ProjectPhase.${fn:replace(phase.phaseType.name, ' ', '')}" />
+													</c:otherwise>
+												</c:choose></c:forEach></td>
 										<td class="valueC" nowrap="nowrap">${orfn:displayDateBr(pageContext.request, phaseEndDates[idxrCategory.index][idxrProject.index])}</td>
 										<td class="valueC" nowrap="nowrap">${orfn:displayDateBr(pageContext.request, projectEndDates[idxrCategory.index][idxrProject.index])}</td>
 										<c:if test="${isMyProjects}">
 											<td class="value" nowrap="nowrap">${myDeliverables[idxrCategory.index][idxrProject.index]}</td>
 										</c:if>
 									</c:if>
-									<c:if test="${empty phase}">
+									<c:if test="${empty phases2}">
 										<td class="value" colspan="3"><!-- @ --></td>
 										<c:if test="${isMyProjects}">
 											<td class="value"><!-- @ --></td>
