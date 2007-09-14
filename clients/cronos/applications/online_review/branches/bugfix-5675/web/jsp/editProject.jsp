@@ -33,9 +33,10 @@
     <script language="JavaScript" type="text/javascript" src="<html:rewrite href='/js/or/validation_util2.js' />"><!-- @ --></script>
     <script language="JavaScript" type="text/javascript" src="<html:rewrite href='/js/or/validation_edit_project3.js' />"><!-- @ --></script>
     <script language="JavaScript" type="text/javascript" src="<html:rewrite href='/js/or/parseDate.js' />"><!-- @ --></script>
-    <script language="JavaScript" type="text/javascript">
+
+    <script language="JavaScript" type="text/javascript"><!--
         var ajaxSupportUrl = "<html:rewrite page='/ajaxSupport' />";
-    </script>
+    //--></script>
     <script language="JavaScript" type="text/javascript" src="<html:rewrite href='/js/or/ajax1.js' />"><!-- @ --></script>
     <script language="JavaScript" type="text/javascript"><!--
         // TODO: Write docs for following vars
@@ -109,25 +110,9 @@
          */
         function getUniqueId() {
             var idNode = document.getElementsByName("js_current_id")[0];
-            var currentId = parseInt(idNode.value, 10);
-            currentId++;
-            idNode.value = currentId + "";
+            var currentId = parseInt(idNode.value, 10) + 1;
+            idNode.value = currentId.toString();
             return "js_id_" + currentId;
-        }
-
-        /*
-         * TODO: Document it
-         */
-        function addComboOption(comboNode, optionText, optionValue) {
-            var option = document.createElement('option');
-            option.text = optionText;
-            option.value = optionValue;
-            try {
-                comboNode.add(option, null);
-            } catch (ex) {
-                // TODO: Check if really selected index should be used
-                comboNode.add(option, option.selectedIndex);
-            }
         }
 
         /*
@@ -402,9 +387,9 @@
             var phaseTypeNodes = getChildrenByNamePrefix(document.documentElement, "phase_type");
             var phaseActionNodes = getChildrenByNamePrefix(document.documentElement, "phase_action");
             var result = 0;
-            for (var i = 1; i < phaseTypeNodes.length; i++) {
+            for (var i = 1; i < phaseTypeNodes.length; ++i) {
                 if (phaseTypeNodes[i].value == phaseTypeId && phaseActionNodes[i].value != "delete") {
-                    result++;
+                    ++result;
                 }
             }
             return result;
@@ -413,22 +398,28 @@
         /*
          * TODO: Document it.
          */
-        function createNewPhaseRow(phaseName, phaseTypeId, _phaseId) {
+        function createNewPhaseRow(phaseName, phaseTypeId, phaseId) {
             // Retrieve timeline table
             var timelineTable = document.getElementById("timeline_tbl");
             // Retrieve add phase table
             var addPhaseTable = document.getElementById("addphase_tbl");
 
-            // Generate phase id (for use in the DOM)
-            var phaseId = _phaseId ? _phaseId : getUniqueId();
+            // Generate phase ID (for use in the DOM) if it has not been specified
+            if (phaseId == undefined || phaseId == null) {
+                phaseId = getUniqueId();
+            }
 
             // Create a new row to represent the phase
             var newRow = cloneInputRow(document.getElementById("phase_row_template"));
 
+            var allNewCells = newRow.getElementsByTagName("td");
+            var startTimeCell = allNewCells[1];
+            var endTimeCell = allNewCells[2];
+
             // Assign the id
             newRow.id = phaseId;
-            // Remove "display: none;"
-            newRow.style["display"] = "";
+            // Remove "display:none;" style
+            newRow.style.display = "";
 
             // Populate phase name
             var phaseNameNode = getChildByNamePrefix(newRow, "phase_name_text");
@@ -438,25 +429,27 @@
             // Populate phase number
             var phaseNumber = getNumberOfPhasesWithType(phaseTypeId) + 1;
             var phaseNumberNode = getChildByNamePrefix(newRow, "phase_number_text");
-            dojo.dom.textContent(phaseNumberNode, phaseNumber + "");
+            dojo.dom.textContent(phaseNumberNode, (phaseNumber > 1) ? phaseNumber.toString() : "");
             getChildByNamePrefix(newRow, "phase_number[").value = phaseNumber;
 
             // Add the name of the added phase to the select options for add phase form
+            var fullPhaseName = phaseName + ((phaseNumber > 1) ? " " + phaseNumber : "");
             var whereCombo = getChildByName(addPhaseTable, "addphase_where");
-            addComboOption(whereCombo, phaseName, phaseId);
             var startPhaseCombo = getChildByName(addPhaseTable, "addphase_start_phase");
-                addComboOption(startPhaseCombo, phaseName, phaseId);
+
+            addComboOption(whereCombo, fullPhaseName, phaseId);
+            addComboOption(startPhaseCombo, fullPhaseName, phaseId);
 
             // Also add it to the phase rows
             var startPhaseCombos = getChildrenByNamePrefix(document.documentElement, "phase_start_phase");
-            for (var i = 0; i < startPhaseCombos.length; i++) {
-                            addComboOption(startPhaseCombos[i], phaseName, phaseId);
+            for (var i = 0; i < startPhaseCombos.length; ++i) {
+                addComboOption(startPhaseCombos[i], fullPhaseName, phaseId);
             }
 
             // Add phase to resource phase combos
             var resourceRoleNodes = getChildrenByNamePrefix(document.documentElement, "resources_role");
             var resourcePhaseNodes = getChildrenByNamePrefix(document.documentElement, "resources_phase");
-            for (var i = 0; i < resourceRoleNodes.length; i++) {
+            for (var i = 0; i < resourceRoleNodes.length; ++i) {
                 var curPhaseTypeId = resourceRoleToPhaseTypeMap[resourceRoleNodes[i].value];
                 if (curPhaseTypeId == phaseTypeId) {
                     addComboOption(resourcePhaseNodes[i], phaseNumber, phaseId);
@@ -467,11 +460,11 @@
             var jsIdNode = getChildByNamePrefix(newRow, "phase_js_id");
             jsIdNode.value = phaseId;
 
-            // Increase phase index
-            lastPhaseIndex++;
-
-            // Rename all the inputs to have a new index
-            patchAllChildParamIndexes(newRow, lastPhaseIndex);
+            // Rename all the inputs to have a new (increased) index
+            patchAllChildParamIndexes(newRow, ++lastPhaseIndex);
+            // Make labels correspond correct inputs (radio boxes)
+            updateLabelsInCell(startTimeCell, lastPhaseIndex);
+            updateLabelsInCell(endTimeCell, lastPhaseIndex);
 
             return newRow;
         }
@@ -532,19 +525,6 @@
             addPhaseCriterion(phaseName, newRow);
         }
 
-
-        /*
-         * This function deletes the option from select input which has the specified value.
-         */
-        function deleteOptionWithValue(selectNode, optionValue) {
-            for (var i = 0; i < selectNode.options.length; i++) {
-                if (selectNode.options[i].value == optionValue) {
-                    selectNode.remove(i);
-                    break;
-                }
-            }
-        }
-
         /*
          * TODO: Document it
          */
@@ -571,7 +551,23 @@
                     }
                 }
             }
-            // phaseCombo.value = lastValue;
+    //        phaseCombo.value = lastValue;
+        }
+
+        function renumberRemainingPhaseOptions(comboNode) {
+            for (var i = 0; i < comboNode.options.length; ++i) {
+                var phaseRow = document.getElementById(comboNode.options[i].value);
+                if (phaseRow == null) continue;
+
+                var phaseNameNode = getChildByNamePrefix(phaseRow, "phase_name");
+                var phaseNumberNode = getChildByNamePrefix(phaseRow, "phase_number");
+
+                var phaseName = dojo.dom.textContent(phaseNameNode);
+                var phaseNumber = parseInt(dojo.dom.textContent(phaseNumberNode));
+                var phaseFullName = phaseName + ((phaseNumber > 1) ? " " + phaseNumber.toString() : "");
+
+                dojo.dom.textContent(comboNode.options[i], phaseFullName);
+            }
         }
 
         /*
@@ -581,7 +577,7 @@
         function deletePhase(phaseRowNode) {
             // Hide the row, don't delete it as the phase
             // should be deleted from DB on submit
-            phaseRowNode.style["display"] = "none";
+            phaseRowNode.style.display = "none";
 
             // Set hidden phase_action parameter to "delete"
             var actionInput = getChildByNamePrefix(phaseRowNode, "phase_action");
@@ -589,46 +585,51 @@
 
             // Get phase JS id
             var phaseId = phaseRowNode.id;
-
             // Get phase type id
             var phaseTypeId = getChildByNamePrefix(phaseRowNode, "phase_type").value;
 
-            // Delete phase from addphase form select options
+            // Delete phase from add phase form select options
             var addPhaseTable = document.getElementById("addphase_tbl");
             var whereCombo = getChildByName(addPhaseTable, "addphase_where");
-            deleteOptionWithValue(whereCombo, phaseId);
             var startPhaseCombo = getChildByName(addPhaseTable, "addphase_start_phase");
+
+            deleteOptionWithValue(whereCombo, phaseId);
             deleteOptionWithValue(startPhaseCombo, phaseId);
 
             // Also delete it from the phase rows
             var startPhaseCombos = getChildrenByNamePrefix(document.documentElement, "phase_start_phase");
-            for (var i = 0; i < startPhaseCombos.length; i++) {
+            for (var i = 0; i < startPhaseCombos.length; ++i) {
                 deleteOptionWithValue(startPhaseCombos[i], phaseId)
             }
-
-            // Get resources table node
-            var resourcesTable = document.getElementById("resources_tbl");
 
             // Get phase parameters input nodes
             var phaseIdNodes = getChildrenByNamePrefix(document.documentElement, "phase_js_id");
             var phaseActionNodes = getChildrenByNamePrefix(document.documentElement, "phase_action");
             var phaseTypeNodes = getChildrenByNamePrefix(document.documentElement, "phase_type[");
             var phaseNumberNodes = getChildrenByNamePrefix(document.documentElement, "phase_number[");
-
-            // Renumber the phases left
             var phaseNumberTextNodes = getChildrenByNamePrefix(document.documentElement, "phase_number_text");
 
+            // Renumber the phases left
             var phaseNumber = 1;
-            for (var i = 1; i < phaseActionNodes.length; i++) {
+            for (var i = 1; i < phaseActionNodes.length; ++i) {
                 if (phaseActionNodes[i].value != "delete" && phaseTypeNodes[i].value == phaseTypeId) {
-                    phaseNumberNodes[i].value = phaseNumber + "";
-                    dojo.dom.textContent(phaseNumberTextNodes[i], phaseNumber + "");
-                    phaseNumber++;
+                    phaseNumberNodes[i].value = phaseNumber.toString();
+                    dojo.dom.textContent(phaseNumberTextNodes[i], (phaseNumber > 1) ? phaseNumber.toString() : "\xA0");
+                    ++phaseNumber;
                 }
             }
 
+            renumberRemainingPhaseOptions(whereCombo);
+            renumberRemainingPhaseOptions(startPhaseCombo);
+
+            for (var i = 0; i < startPhaseCombos.length; ++i) {
+                renumberRemainingPhaseOptions(startPhaseCombos[i]);
+            }
+
+            // Get resources table node
+            var resourcesTable = document.getElementById("resources_tbl");
             // Update resource phase combos
-            var resourceNodes = resourcesTable.getElementsByTagName("TR");
+            var resourceNodes = resourcesTable.getElementsByTagName("tr");
 
             // Note, that first two rows represent just table header,
             // so we start loop from third row
