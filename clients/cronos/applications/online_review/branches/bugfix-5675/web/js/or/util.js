@@ -1,4 +1,44 @@
 
+/**
+ * This function adds a combo-box option into specified combo-box. The option added will have
+ * specified text and value. This function can add an option at a predetermined position if
+ * specified, or at the end of the list of options if opsition has not been specified.
+ *
+ * @param comboNode
+ *            A combo-box node to add newly-created option into. If this combobox already contains
+ *            some options, old options will be preserved.
+ * @param optionText
+ *            A text that will be displayed in the combo-box to match with this option's selection.
+ * @param optionValue
+ *            A value that the newly-added option will have. This value will be transmitted over
+ *            Internet if the option created by this function call is selected by a user.
+ * @param index
+ *            An index position in the list of combo-box's options to place the newly-created option
+ *            at. This parameter is optional. If not specified, the newly-created option will be
+ *            placed at the end of the already existing options in the combo-box.
+ */
+function addComboOption(comboNode, optionText, optionValue, index) {
+	var option = document.createElement("option");
+	option.text = optionText;
+	option.value = optionValue;
+	if (index != undefined && index != null) {
+		comboNode.options.add(option);
+	} else {
+		comboNode.options.add(option, index);
+	}
+}
+
+/*
+ * This function deletes option with the specified value from a combo-box.
+ */
+function deleteOptionWithValue(comboNode, optionValue) {
+	for (var i = 0; i < comboNode.options.length; ++i)
+		if (comboNode.options[i].value == optionValue) {
+			comboNode.options.remove(i);
+			return;
+		}
+}
+
 /*
  * This function returns the first child Element of the specified node, which has the specified name.
  * Note, that the processing is done recursively.
@@ -212,7 +252,7 @@ function isWhitespace(ch) {
 function trimString(textToTrim) {
 	var iBegin = 0;
 	var iEnd = textToTrim.length;
-	
+
 	for (; iBegin < iEnd; ++iBegin)
 		if (!isWhitespace(textToTrim.charAt(iBegin)))
 			break;
