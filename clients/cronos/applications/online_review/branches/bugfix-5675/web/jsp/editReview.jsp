@@ -201,7 +201,7 @@
                                                     </div>
                                                 </c:forEach>
                                                 <html:img srcKey="editReview.Button.AddResponse.img" altKey="editReview.Button.AddResponse.alt"
-                                                    onclick="addReviewResponse(${itemIdx}, this.parentNode);" style="cursor:hand;" /><br />
+                                                    onclick="addReviewResponse(${itemIdx}, this.parentNode);" style="cursor:pointer;" /><br />
                                                 <c:if test="${(not managerEdit) and question.uploadDocument}">
                                                     <c:if test="${empty uploadedFileIds[fileIdx]}">
                                                         <b><bean:message key="editReview.Document.Upload"/>

@@ -63,9 +63,9 @@
 			</td>
 			<td class="valueC" nowrap="nowrap">
 				<c:if test="${resourceIdx eq 0}">
-					<html:img srcKey="editProject.Resources.AddResource.img" altKey="editProject.Resources.AddResource.alt" onclick="addNewResource();" style="cursor:hand;" />
+					<html:img srcKey="editProject.Resources.AddResource.img" altKey="editProject.Resources.AddResource.alt" onclick="addNewResource();" style="cursor:pointer;" />
 				</c:if>
-				<html:img style="cursor:hand;${(resourceIdx eq 0) ? 'display: none;' : ''}" srcKey="editProject.Resources.DeleteResource.img" altKey="editProject.Resources.DeleteResource.alt" onclick="deleteResource(this.parentNode.parentNode);" />
+				<html:img style="cursor:pointer;${(resourceIdx eq 0) ? 'display: none;' : ''}" srcKey="editProject.Resources.DeleteResource.img" altKey="editProject.Resources.DeleteResource.alt" onclick="deleteResource(this.parentNode.parentNode);" />
 				<html:hidden property="resources_action[${resourceIdx}]" />
 				<html:hidden property="resources_id[${resourceIdx}]" />
 			</td>
