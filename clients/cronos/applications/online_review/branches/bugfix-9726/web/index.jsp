@@ -1,7 +1,7 @@
 <%@ page language="java" isELIgnored="false" %>
 <%@ taglib prefix="logic" uri="/tags/struts-logic" %>
 <%@ taglib prefix="orfn" uri="/tags/or-functions" %>
-<logic:redirect forward="${(not orfn:isUserLoggedIn(pageContext.request)) ? 'Login' : 'listMyProjects'}" />
+<logic:forward name="${(not orfn:isUserLoggedIn(pageContext.request)) ? 'Login' : 'listMyProjects'}" />
 
 <%--
 
