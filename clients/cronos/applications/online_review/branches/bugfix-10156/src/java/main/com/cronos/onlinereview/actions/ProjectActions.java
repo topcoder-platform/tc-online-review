@@ -235,6 +235,9 @@ public class ProjectActions extends DispatchAction {
         request.setAttribute("approvalScorecards", approvalScorecards);
         request.setAttribute("defaultScorecards", ActionsHelper.getDefautlScorecards());
 
+        // Store names of phases that require a dependency phase
+        request.setAttribute("phasesWithDep", ConfigHelper.getPhasesThatRequireDependency());
+
         // Load phase template names
         String[] phaseTemplateNames = ActionsHelper.createPhaseTemplate(null).getAllTemplateNames();
         request.setAttribute("phaseTemplateNames", phaseTemplateNames);
