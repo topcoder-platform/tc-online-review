@@ -51,6 +51,7 @@ import com.topcoder.management.resource.Resource;
 import com.topcoder.management.resource.ResourceManager;
 import com.topcoder.management.resource.ResourceRole;
 import com.topcoder.management.resource.search.ResourceFilterBuilder;
+import com.topcoder.management.scorecard.PersistenceException;
 import com.topcoder.management.scorecard.ScorecardManager;
 import com.topcoder.management.scorecard.ScorecardSearchBundle;
 import com.topcoder.management.scorecard.data.Scorecard;
@@ -82,6 +83,7 @@ import com.topcoder.util.errorhandling.BaseException;
  * @author real_vg
  * @version 1.0
  */
+@SuppressWarnings("unchecked")
 public class ProjectActions extends DispatchAction {
 
     /**
@@ -222,7 +224,6 @@ public class ProjectActions extends DispatchAction {
         // Obtain an instance of Scorecard Manager
         ScorecardManager scorecardManager = ActionsHelper.createScorecardManager(request);
 
-        // TODO: Check if we need to filter by the project category
         // Retrieve the scorecard lists
         Scorecard[] screeningScorecards = searchActiveScorecards(scorecardManager, "Screening");
         Scorecard[] reviewScorecards = searchActiveScorecards(scorecardManager, "Review");
@@ -240,34 +241,48 @@ public class ProjectActions extends DispatchAction {
     }
 
     /**
-     * TODO: Document it
-     * Note, that the scorecard data(items) is not fully retrieved
+     * This static method retrieves active scorecards based on the type that is passed as a
+     * parameter. This method does not retrieve complete scorecards to speed up operation.
      *
-     * @param scorecardManager
-     * @param scorecardTypeName
-     * @return
-     * @throws BaseException
+     * @return an array of scorecards found that have the specified type name. If no scorecards have
+     *         been found that match search criteria, the return value is empty array.
+     * @param manager
+     *            an instance of Scorecard Manager that is used to search the database for
+     *            scorecards.
+     * @param typeName
+     *            the name of the type that the returned scorecards should have.
+     * @throws PersistenceException
+     *             if any error occurs during retrieval of scorecards from the database.
      */
-    private Scorecard[] searchActiveScorecards(ScorecardManager scorecardManager, String scorecardTypeName) throws BaseException {
-        Filter filter = ScorecardSearchBundle.buildAndFilter(
-                ScorecardSearchBundle.buildTypeNameEqualFilter(scorecardTypeName),
-                ScorecardSearchBundle.buildStatusNameEqualFilter("Active"));
-        return scorecardManager.searchScorecards(filter, false);
+    private static Scorecard[] searchActiveScorecards(ScorecardManager manager, String typeName)
+            throws PersistenceException {
+        // Build a filter to select scorecards by their type
+        Filter typeFilter = ScorecardSearchBundle.buildTypeNameEqualFilter(typeName);
+        // Build a filter to select only active scorecards
+        Filter activeFilter = ScorecardSearchBundle.buildStatusNameEqualFilter("Active");
+        // Build final combined filter
+        Filter filter = new AndFilter(typeFilter, activeFilter);
+        // Perform a search for scorecards according to the built filters
+        return manager.searchScorecards(filter, false);
     }
 
     /**
-     * This method populates the specified LazyValidatorForm with the values
-     * taken from the specified Project.
+     * This method populates the specified <code>LazyValidatorForm</code> with the values taken
+     * from the specified <code>Project</code>.
+     *
      * @param request
-     *            the request to be processed
+     *            the request to be processed.
      * @param form
-     *            the form to be populated with data
+     *            the form to be populated with data.
      * @param project
-     *            the project to take the data from
+     *            the project to take the data from.
      * @throws BaseException
+     *             if any error occurs while retrieving user information from the database, or an
+     *             error occurs while retrieving phase information for the project from the
+     *             database.
      */
     private void populateProjectForm(HttpServletRequest request, LazyValidatorForm form, Project project)
-        throws BaseException {
+            throws BaseException {
         // TODO: Possibly use string constants instead of hardcoded strings
 
         // Populate project id
@@ -384,8 +399,6 @@ public class ProjectActions extends DispatchAction {
             form.set("phase_js_id", i + 1, "loaded_" + phases[i].getId());
             if (phases[i].getAllDependencies().length > 0) {
                 form.set("phase_start_by_phase", i + 1, Boolean.TRUE);
-                // TODO: Probably will need to rewrite all those dependency stuff
-                // TODO: It is very incomplete actually
                 Dependency dependency = phases[i].getAllDependencies()[0];
                 form.set("phase_start_phase", i + 1, "loaded_" + dependency.getDependency().getId());
                 form.set("phase_start_amount", i + 1, new Integer((int) (dependency.getLagTime() / 3600 / 1000)));
@@ -473,22 +486,38 @@ public class ProjectActions extends DispatchAction {
     }
 
     /**
-     * TODO: Document it
+     * This static method formats the specified date to its textual representation using the
+     * following format string: MM.dd.yy&nbsp;hh:mm&nbsp;aa. It then sets the date, time, and AM/PM
+     * properties of the specified form to the respective textual representations of date.
      *
      * @param form
+     *            a form whose properties will receive converted textual representations of date.
      * @param dateProperty
+     *            name of the property that will receive textual representation of the date (month,
+     *            day of month, and year) part of the full date.
      * @param timeProperty
+     *            name of the property that will receive textual representation of the time (12-hour
+     *            based hour, and minutes) part of the full date.
      * @param ampmProperty
+     *            name of the property that will receive either &quot;<code>am</code>&quot; or
+     *            &quot;<code>pm</code>&quot; string.
      * @param index
+     *            an index to be used to set the properties (the properties are actually have to be
+     *            arrays).
      * @param date
+     *            the date to convert to string and set to form's properties.
      */
-    private void populateDatetimeFormProperties(LazyValidatorForm form, String dateProperty, String timeProperty,
-            String ampmProperty, int index, Date date) {
-        // TODO: Reuse the DateFormat instance
-        DateFormat dateFormat = new SimpleDateFormat("MM.dd.yy hh:mm aa", Locale.US);
+    private static void populateDatetimeFormProperties(LazyValidatorForm form,
+            String dateProperty, String timeProperty, String ampmProperty, int index, Date date) {
+        // Prepare a formatter to format a date to a string
+        final DateFormat dateFormat = new SimpleDateFormat("MM.dd.yy hh:mm aa", Locale.US);
+        // Format the date to a string and split it to three different parts at every space posisition 
         String[] parts = dateFormat.format(date).split("[ ]");
+        // Set the date property of the form
         form.set(dateProperty, index, parts[0]);
+        // Set the time property of the form
         form.set(timeProperty, index, parts[1]);
+        // Set the AM/PM property of the form
         form.set(ampmProperty, index, parts[2].toLowerCase());
     }
 
@@ -672,7 +701,7 @@ public class ProjectActions extends DispatchAction {
             // Populate project root catalog id
             // OrChange - If the project category is Studio set the property to allow multiple submissions.
             if (ActionsHelper.isStudioProject(project)) {
-            	//TODO retrieve it from the configuration
+            	// TODO: retrieve it from the configuration
             	log.debug("setting 'Root Catalog ID' to 26887152");
             	project.setProperty("Root Catalog ID", "26887152");
             	log.debug("Allowing multiple submissions for this project.");
@@ -1094,8 +1123,7 @@ public class ProjectActions extends DispatchAction {
                 } else {
                     phase = dependencies[0].getDependency();
                     if (visited.contains(phase)) {
-                        // There is circular dependency, report it and stop processing
-                        // TODO: Report the particular phases
+                        // There is a circular dependency, report it and stop processing
                         ActionsHelper.addErrorToRequest(request,
                                 "error.com.cronos.onlinereview.actions.editProject.CircularDependency");
                         hasCircularDependencies = true;
@@ -1181,7 +1209,6 @@ public class ProjectActions extends DispatchAction {
                     phase.setScheduledEndDate(phase.calcEndDate());
                 } catch (CyclicDependencyException e) {
                     // There is circular dependency, report it and stop processing
-                    // TODO: Report the particular phases
                     ActionsHelper.addErrorToRequest(request,
                             "error.com.cronos.onlinereview.actions.editProject.CircularDependency");
                     hasCircularDependencies = true;
@@ -1195,7 +1222,6 @@ public class ProjectActions extends DispatchAction {
         }
 
         if (hasCircularDependencies) {
-            // TODO: Return null or so
             return oldPhases;
         }
 
@@ -1225,9 +1251,8 @@ public class ProjectActions extends DispatchAction {
             return projectPhases;
         }
 
-        // FIXME: Refactor it
+        // Obtain an instance of Project Manager object
         ProjectManager projectManager = ActionsHelper.createProjectManager(request);
-
         // Set project rating date
         ActionsHelper.setProjectRatingDate(project, projectPhases, (Format) request.getAttribute("date_format"));
 
@@ -1244,7 +1269,7 @@ public class ProjectActions extends DispatchAction {
 
         // Save the phases at the persistence level
         phaseManager.updatePhases(phProject, Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
-        // TODO: The following line was added just to be safe. May be unneeded as well as another one
+        // This line was added just to be safe. May be unneeded as well as the line that follows
         projectPhases = phProject.getAllPhases();
         // Sort project phases
         Arrays.sort(projectPhases, new Comparators.ProjectPhaseComparer());
@@ -1525,7 +1550,7 @@ public class ProjectActions extends DispatchAction {
      * <li>Checking that the dependency phase should start for the phase in question to start, and
      * this is the expected behavior; or</li>
      * <li>Checking that the dependency phase should end for the phase in question to start, and
-     * this is the expected behaviour</li>
+     * this is the expected behavior</li>
      * </ol>
      * Whether starting/ending of the dependency phase is expected behavior is determined by the
      * <code>atStart</code> and <code>atEnd</code> parameters.
