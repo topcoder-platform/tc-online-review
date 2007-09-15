@@ -101,9 +101,12 @@
             phaseTypeIdsMap["${phaseType.name}"] = "${phaseType.id}";
         </c:forEach>
 
-        var screeningScorecardNodes = new Array();;
-        var reviewScorecardNodes = new Array();;
-        var approvalScorecardNodes = new Array();;
+        var screeningScorecardNodes = new Array();
+        var reviewScorecardNodes = new Array();
+        var approvalScorecardNodes = new Array();
+
+        var dependentPhases = new Array();<c:forEach items="${phasesWithDep}" var="phase">
+        dependentPhases["${phase}"] = 1;</c:forEach>
 
         /*
          * TODO: Document it
@@ -195,6 +198,23 @@
                 inputField.id = inputField.id + "_" + newIndex;
                 labels[i].htmlFor = inputField.id;
             }
+        }
+
+        function onPhaseTypeChange(src) {
+            var rowAffected = src.parentNode.parentNode;
+            var phaseType = dojo.dom.textContent(src.options[src.selectedIndex]);
+            var disableControls = (dependentPhases[phaseType] == 1);
+            var radios = getChildrenByNamePrefix(rowAffected, "addphase_start_by_phase");
+
+            if (disableControls && radios[0].checked) {
+                radios[1].checked = true;
+                radios[0].checked = false;
+            }
+
+            radios[0].disabled = disableControls;
+            getChildByNamePrefix(rowAffected, "addphase_start_date").disabled = disableControls;
+            getChildByNamePrefix(rowAffected, "addphase_start_time").disabled = disableControls;
+            getChildByNamePrefix(rowAffected, "addphase_start_AMPM").disabled = disableControls;
         }
 
         /*
