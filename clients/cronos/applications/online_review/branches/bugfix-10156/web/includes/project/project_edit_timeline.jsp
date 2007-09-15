@@ -28,7 +28,7 @@
     </table><br />
 </c:if>
 
-<table class="scorecard" id="timeline_tbl" cellpadding="0" width="100%" style="border-collapse: collapse;">
+<table class="scorecard" id="timeline_tbl" cellpadding="0" width="100%" style="border-collapse:collapse;">
     <tr>
         <c:if test="${not newProject}">
             <td class="headerC"><bean:message key="editProject.Phases.CurrentPhase" /></td>
@@ -62,7 +62,9 @@
                     style="${projectForm.map['phase_can_close'][phaseIdx] ? 'cursor:pointer;' : 'display:none;'}" /></td>
         </c:if>
             <td class="valueB" nowrap="nowrap">
-                <span name="phase_name_text">${projectForm.map['phase_name'][phaseIdx]}</span>&#xA0;<span
+                <c:set var="encodedPhaseName" value="${fn:replace(projectForm.map['phase_name'][phaseIdx], ' ', '')}" />
+                <c:if test="${empty encodedPhaseName}"><c:set var="encodedPhaseName" value="Registration" /></c:if>
+                <span name="phase_name_text"><bean:message key="ProjectPhase.${encodedPhaseName}" /></span>&#xA0;<span
                     name="phase_number_text">${(projectForm.map['phase_number'][phaseIdx] > 1) ? projectForm.map['phase_number'][phaseIdx] : ""}</span></td>
             <td class="value" nowrap="nowrap">
                 <html:hidden property="phase_type[${phaseIdx}]" />
@@ -76,7 +78,7 @@
                     test="${projectForm.map['phase_name'][phaseIdx] == phDep}"><c:set
                         var="canStartAtAFixedTime" value="${false}" /></c:if></c:forEach>
                 <c:if test="${canStartAtAFixedTime}">
-                    <html:radio styleId="phaseStartAtRadio${phaseIdx}" property="phase_start_by_phase[${phaseIdx}]" value="false" /><label
+                    <span name="phase_fixed_start_time"><html:radio styleId="phaseStartAtRadio${phaseIdx}" property="phase_start_by_phase[${phaseIdx}]" value="false" /><label
                         for="phaseStartAtRadio${phaseIdx}"><bean:message key="editProject.Phases.At" /></label>
                     <html:text onblur="JavaScript:this.value=getDateString(this.value);" styleClass="inputBoxDate" property="phase_start_date[${phaseIdx}]" />
                     <html:text onblur="JavaScript:this.value=getTimeString(this.value, this.parentNode);" styleClass="inputBoxTime" property="phase_start_time[${phaseIdx}]" />
@@ -84,7 +86,7 @@
                         <html:option key="editProject.Phases.AM" value="am" />
                         <html:option key="editProject.Phases.PM" value="pm" />
                     </html:select>
-                    <bean:message key="global.Timezone.EST" /><br />
+                    <bean:message key="global.Timezone.EST" /><br /></span>
                 </c:if>
                 <html:radio styleId="phaseStartWhenRadio${phaseIdx}" property="phase_start_by_phase[${phaseIdx}]" value="true" /><label
                     for="phaseStartWhenRadio${phaseIdx}"><bean:message key="editProject.Phases.When" /></label>
@@ -95,11 +97,10 @@
                             <c:choose>
                                 <c:when test="${projectForm.map['phase_number'][i] > 1}">
                                     <html:option value="${projectForm.map['phase_js_id'][i]}">
-                                        ${projectForm.map["phase_name"][i]}
+                                        <bean:message key="ProjectPhase.${fn:replace(projectForm.map['phase_name'][i], ' ', '')}" />
                                         ${projectForm.map["phase_number"][i]}</html:option></c:when>
-                                <c:otherwise>
-                                    <html:option value="${projectForm.map['phase_js_id'][i]}">
-                                        ${projectForm.map["phase_name"][i]}</html:option></c:otherwise>
+                                <c:otherwise><html:option value="${projectForm.map['phase_js_id'][i]}"
+                                    key="ProjectPhase.${fn:replace(projectForm.map['phase_name'][i], ' ', '')}" /></c:otherwise>
                             </c:choose>
                         </c:if>
                     </c:forEach>
@@ -189,7 +190,6 @@
                     &#160;<bean:message key="editProject.Phases.Criteria.ReviewNumber.afterInput" /><br />
                     <bean:message key="editProject.Phases.Criteria.Scorecard" />
                     <html:select style="width:350px;" styleClass="inputBox" property="phase_scorecard[${phaseIdx}]" >
-
                         <c:forEach items="${reviewScorecards}" var="scorecard">
                             <c:if test="${(newProject && scorecard.category == 1) or (not newProject && project.projectCategory.id == scorecard.category)}">
                             <html:option value="${scorecard.id}">${scorecard.name} ${scorecard.version}</html:option>
@@ -251,7 +251,7 @@
             <html:select styleClass="inputBox" property="addphase_where" style="width:120px;">
                 <html:option key="editProject.Phases.SelectPhase" value="" />
                 <c:forEach var="i" begin="1" end="${fn:length(projectForm.map['phase_id']) - 1}">
-                    <html:option value="${projectForm.map['phase_js_id'][i]}">${projectForm.map['phase_name'][i]}</html:option>
+                    <html:option value="${projectForm.map['phase_js_id'][i]}" key="ProjectPhase.${fn:replace(projectForm.map['phase_name'][i], ' ', '')}" />
                 </c:forEach>
             </html:select></td>
         <td class="value" nowrap="nowrap">
@@ -269,7 +269,14 @@
             <html:select styleClass="inputBox" property="addphase_start_phase" style="width:120px;">
                 <html:option key="editProject.Phases.SelectPhase" value="" />
                 <c:forEach var="i" begin="1" end="${fn:length(projectForm.map['phase_id']) - 1}">
-                    <html:option value="${projectForm.map['phase_js_id'][i]}">${projectForm.map['phase_name'][i]}</html:option>
+                    <c:choose>
+                        <c:when test="${projectForm.map['phase_number'][i] > 1}">
+                            <html:option value="${projectForm.map['phase_js_id'][i]}">
+                                <bean:message key="ProjectPhase.${fn:replace(projectForm.map['phase_name'][i], ' ', '')}" />
+                                ${projectForm.map["phase_number"][i]}</html:option></c:when>
+                        <c:otherwise><html:option value="${projectForm.map['phase_js_id'][i]}"
+                            key="ProjectPhase.${fn:replace(projectForm.map['phase_name'][i], ' ', '')}" /></c:otherwise>
+                    </c:choose>
                 </c:forEach>
             </html:select>
             <div style="margin-left:21px;">
