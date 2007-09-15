@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 TopCoder Inc.  All Rights Reserved.
+ * Copyright (C) 2006-2007 TopCoder Inc.  All Rights Reserved.
  */
 package com.cronos.onlinereview.actions;
 
@@ -18,31 +18,31 @@ import com.topcoder.util.log.LogFactory;
  * <p>
  * This class is thread safe as it contains only static methods and no inner state.
  * </p>
- * 
+ *
  * @author George1
  * @author real_vg
  * @version 1.0
  */
 final class LoggingHelper {
+
     private static Log logger = LogFactory.getLog("OnlineReview");
     private static java.text.DateFormat dateFormat = new java.text.SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
 
-    // Hidden constructor
-    
     /**
-     * This constructor is declared private to prohibit instantiation of the
-     * <code>LoggingHelper</code> class.
+     * This constructor is declared private to prohibit instantiation of the {@link LoggingHelper}
+     * class.
      */
     private LoggingHelper() {
+        // do nothing
     }
-    
-    
-    // Static methods
-    
+
     /**
-     * Log All incoming requests.
-     * 
-     * Logging must comprise user ID, timestamp, action taken, and entity IDs effected
+     * Log All incoming requests. Logging comprises user ID, timestamp, action taken, and entity IDs
+     * effected.
+     *
+     * @param request
+     *            an <code>HttpServletRequest</code> object containing additional information to
+     *            be logged.
      */
     public static void logAction(HttpServletRequest request) {
     	String action = request.getParameter("method");
@@ -75,13 +75,12 @@ final class LoggingHelper {
     	}
     	logger.log(Level.INFO, sb.toString());
     }
-    
+
     /**
      * This static method logs the information about the exception.
-     * TODO: detarmine is the exception should be rethrown from logException static method
-     * 
+     *
      * @param e
-     *            exception containing the information to be logged
+     *            exception containing the information to be logged.
      */
     public static void logException(Exception e) {
     	logger.log(Level.ERROR, e);
