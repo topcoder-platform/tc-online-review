@@ -46,16 +46,14 @@
 
         var resourceRoleToPhaseTypeMap = {};
         <c:forEach var="resourceRole" items="${resourceRoles}">
-            resourceRoleToPhaseTypeMap[${resourceRole.id}] = "${empty resourceRole.phaseType ? 'null' : resourceRole.phaseType}";
-        </c:forEach>
+            resourceRoleToPhaseTypeMap[${resourceRole.id}] = "${empty resourceRole.phaseType ? 'null' : resourceRole.phaseType}";</c:forEach>
 
         var projectCategories = [];
         <c:forEach var="category" items="${projectCategories}">
             projectCategories.push({});
             projectCategories[projectCategories.length - 1]["id"] = ${category.id};
             projectCategories[projectCategories.length - 1]["projectType"] = ${category.projectType.id};
-            // TODO: Localize the catagory name
-            projectCategories[projectCategories.length - 1]["name"] = "${category.name}";
+            projectCategories[projectCategories.length - 1]["name"] = "${category.name}";<%-- TODO: Localize the category name --%>
         </c:forEach>
 
         var screeningScorecards = [];
@@ -93,20 +91,18 @@
 
         var projectTypeNamesMap = {};
         <c:forEach var="projectType" items="${projectTypes}">
-            projectTypeNamesMap["${projectType.id}"] = "${projectType.name}";
-        </c:forEach>
+            projectTypeNamesMap["${projectType.id}"] = "${projectType.name}";</c:forEach>
 
         var phaseTypeIdsMap = {};
         <c:forEach var="phaseType" items="${phaseTypes}">
-            phaseTypeIdsMap["${phaseType.name}"] = "${phaseType.id}";
-        </c:forEach>
+            phaseTypeIdsMap["${phaseType.name}"] = "${phaseType.id}";</c:forEach>
 
         var screeningScorecardNodes = new Array();
         var reviewScorecardNodes = new Array();
         var approvalScorecardNodes = new Array();
 
         var dependentPhases = new Array();<c:forEach items="${phasesWithDep}" var="phase">
-        dependentPhases["${phase}"] = 1;</c:forEach>
+        dependentPhases['<bean:message key="ProjectPhase.${fn:replace(phase, ' ', '')}" />'] = 1;</c:forEach>
 
         /*
          * TODO: Document it
@@ -313,7 +309,6 @@
                 phaseTypeNodes, phaseNumberNodes);
         }
 
-
         /*
          * This function populates the specified parameter of the newly added phase row.
          */
@@ -359,7 +354,7 @@
         function addPhaseCriterion(phaseName, phaseRow) {
             var criterionRow = null;
             // TODO: Should be done in locale-independent way
-            // Check if the phase should have a criterion row and at it if it is needed
+            // Check if the phase should have a criterion row and at if it is needed
             if (phaseName == "Screening" || phaseName == "Review" || phaseName == "Approval" ||
                     phaseName == "Registration" || phaseName == "Submission" || phaseName == "Appeals") {
                 var templateRow;
@@ -441,6 +436,11 @@
             // Remove "display:none;" style
             newRow.style.display = "";
 
+            // Hide the irrelevant controls if phase is of specific type
+            if (dependentPhases[phaseName] == 1) {
+                getChildByName(newRow, "phase_fixed_start_time").style.display = "none";
+            }
+
             // Populate phase name
             var phaseNameNode = getChildByNamePrefix(newRow, "phase_name_text");
             dojo.dom.textContent(phaseNameNode, phaseName);
@@ -488,7 +488,6 @@
 
             return newRow;
         }
-
 
         /*
          * This function adds new phase to phases table, it includes addition of several rows.
@@ -571,7 +570,7 @@
                     }
                 }
             }
-    //        phaseCombo.value = lastValue;
+//            phaseCombo.value = lastValue;
         }
 
         function renumberRemainingPhaseOptions(comboNode) {
@@ -664,7 +663,7 @@
             }
 
             // Remove phase criterion row if needed
-            nextRowNode = dojo.dom.nextElement(phaseRowNode);
+            var nextRowNode = dojo.dom.nextElement(phaseRowNode);
             if (nextRowNode != null && nextRowNode.className == "highlighted") {
                 nextRowNode.parentNode.removeChild(nextRowNode);
             }
@@ -724,12 +723,12 @@
         function populateTimeLineFromTemplate(templateXML) {
             // Clear all the project phases
             var phaseActionNodes = getChildrenByNamePrefix(document, "phase_action");
-            for (var i = 1; i < phaseActionNodes.length; i++) {
+            for (var i = 1; i < phaseActionNodes.length; ++i) {
                 phaseActionNodes[i].value = "delete";
                 var phaseRowNode = phaseActionNodes[i].parentNode.parentNode;
-                phaseRowNode.style["display"] = "none";
+                phaseRowNode.style.display = "none";
                 // Remove phase criterion row if needed
-                nextRowNode = dojo.dom.nextElement(phaseRowNode);
+                var nextRowNode = dojo.dom.nextElement(phaseRowNode);
                 if (nextRowNode != null && nextRowNode.className == "highlighted") {
                     nextRowNode.parentNode.removeChild(nextRowNode);
                 }
