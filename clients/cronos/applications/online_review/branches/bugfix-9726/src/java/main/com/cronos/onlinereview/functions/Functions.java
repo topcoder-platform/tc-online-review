@@ -550,8 +550,8 @@ public final class Functions {
         }
 
         final String requestedUri = request.getRequestURI();
-        final int servelPathPos = requestedUri.indexOf(request.getServletPath());
-        final String moduleName = requestedUri.substring(0, servelPathPos);
+        final int servletPathPos = requestedUri.indexOf(request.getServletPath());
+        final String moduleName = requestedUri.substring(0, servletPathPos);
         final int refererPort = (refererURL.getPort() >= 0) ? refererURL.getPort() : request.getServerPort();
 
         if (refererURL.getHost().compareToIgnoreCase(request.getServerName()) != 0 ||
@@ -562,8 +562,8 @@ public final class Functions {
             return null;
         }
 
-        if (refererURL.getPath().indexOf("/jsp/login.jsp") == servelPathPos ||
-                refererURL.getPath().indexOf("/actions/Login.do") == servelPathPos) {
+        if (refererURL.getPath().indexOf("/jsp/login.jsp") == servletPathPos ||
+                refererURL.getPath().indexOf("/actions/Login.do") == servletPathPos) {
             // Don't allow redirects to the Login form
             return null;
         }
