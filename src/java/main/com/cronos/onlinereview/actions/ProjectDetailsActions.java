@@ -543,10 +543,10 @@ public class ProjectDetailsActions extends DispatchAction {
         for (Iterator iter = existingManagers.iterator(); iter.hasNext(); ) {
             extUsrManagerIds[managerIdx++] = Long.parseLong((String) iter.next());
         }
-        
+
         //send a copy to the sender
         extUsrManagerIds[managerIdx++] = senderId;
-        
+
         // Retrieve all external resources for managers in a single batch operation
         ExternalUser[] extUsrManagers = userMgr.retrieveUsers(extUsrManagerIds);
 
@@ -570,7 +570,7 @@ public class ProjectDetailsActions extends DispatchAction {
                 } else if ("USER_HANDLE".equals(field.getName())) {
                     field.setValue(sender.getHandle());
                 } else if ("PROJECT_NAME".equals(field.getName())) {
-                    field.setValue("<![CDATA[" + project.getProjectCategory().getDescription() + " - " + 
+                    field.setValue("<![CDATA[" + project.getProjectCategory().getDescription() + " - " +
                     		project.getProperty("Project Name") + "]]>");
                 } else if ("PROJECT_VERSION".equals(field.getName())) {
                     field.setValue("" + project.getProperty("Project Version"));
@@ -703,7 +703,6 @@ public class ProjectDetailsActions extends DispatchAction {
         Upload upload = new Upload();
 
         UploadStatus[] uploadStatuses = upMgr.getAllUploadStatuses();
-
         UploadType[] uploadTypes = upMgr.getAllUploadTypes();
 
         upload.setProject(project.getId());
@@ -715,34 +714,33 @@ public class ProjectDetailsActions extends DispatchAction {
         submission.setUpload(upload);
         submission.setSubmissionStatus(ActionsHelper.findSubmissionStatusByName(submissionStatuses, "Active"));
 
-        // Obtain an instance of Screening Manager
-        ScreeningManager scrMgr = ActionsHelper.createScreeningManager(request);
         // Get the name (id) of the user performing the operations
         String operator = Long.toString(AuthorizationHelper.getLoggedInUserId(request));
 
         // If the project DOESN'T allow multiple submissions hence its property "Allow
         // multiple submissions" will be false
-        Boolean allowOldSubmissions = Boolean.parseBoolean((String) project
-                .getProperty("Allow multiple submissions"));
+        Boolean allowOldSubmissions = Boolean.parseBoolean((String) project.getProperty("Allow multiple submissions"));
 
         upMgr.createUpload(upload, operator);
         upMgr.createSubmission(submission, operator);
         resource.addSubmission(submission.getId());
         ActionsHelper.createResourceManager(request).updateResource(resource, operator);
-        log.debug("Allow Multiple Submissions : "+allowOldSubmissions);
+        log.debug("Allow Multiple Submissions : " + allowOldSubmissions);
         // Now depending on whether the project allows multiple submissions or not mark the old submission
         // and the upload as deleted.
         if (oldSubmissions.length != 0 && !allowOldSubmissions) {
-        	SubmissionStatus deleteSubmissionStatus = ActionsHelper.findSubmissionStatusByName(submissionStatuses, "Deleted");
+            SubmissionStatus deleteSubmissionStatus = ActionsHelper.findSubmissionStatusByName(submissionStatuses, "Deleted");
             UploadStatus deleteUploadStatus = ActionsHelper.findUploadStatusByName(uploadStatuses, "Deleted");
             for (Submission oldSubmission : oldSubmissions) {
-                oldSubmission.setSubmissionStatus(deleteSubmissionStatus);
                 oldSubmission.getUpload().setUploadStatus(deleteUploadStatus);
+                oldSubmission.setSubmissionStatus(deleteSubmissionStatus);
+                upMgr.updateUpload(oldSubmission.getUpload(), operator);
                 upMgr.updateSubmission(oldSubmission, operator);
             }
         }
 
-        //  ends
+        // Obtain an instance of Screening Manager
+        ScreeningManager scrMgr = ActionsHelper.createScreeningManager(request);
         scrMgr.initiateScreening(upload.getId(), operator);
 
         return ActionsHelper.cloneForwardAndAppendToPath(
@@ -1025,7 +1023,6 @@ public class ProjectDetailsActions extends DispatchAction {
         parser.AddFile(file);
 
         FileUpload fileUpload = ActionsHelper.createFileUploadManager(request);
-
         FileUploadResult uploadResult = fileUpload.uploadFiles(request, parser);
         UploadedFile uploadedFile = uploadResult.getUploadedFile("file");
 
@@ -1035,19 +1032,16 @@ public class ProjectDetailsActions extends DispatchAction {
         UploadType[] allUploadTypes = upMgr.getAllUploadTypes();
 
         // Get my resource
-        Resource resource = ActionsHelper.getMyResourceForPhase(request, null);
+        Resource resource = ActionsHelper.getMyResourceForRole(request, "Submitter");
 
-        Filter filterProject = UploadFilterBuilder.createProjectIdFilter(project.getId());
-        Filter filterResource = UploadFilterBuilder.createResourceIdFilter(resource.getId());
-//        Filter filterStatus = UploadFilterBuilder.createUploadStatusIdFilter(
-//                ActionsHelper.findUploadStatusByName(allUploadStatuses, "Active").getId());
-        Filter filterType = UploadFilterBuilder.createUploadTypeIdFilter(
+        Filter projectFilter = UploadFilterBuilder.createProjectIdFilter(project.getId());
+        Filter resourceFilter = UploadFilterBuilder.createResourceIdFilter(resource.getId());
+        Filter typeFilter = UploadFilterBuilder.createUploadTypeIdFilter(
                 ActionsHelper.findUploadTypeByName(allUploadTypes, "Final Fix").getId());
+        Filter combinedFilter = new AndFilter(
+                Arrays.asList(new Filter[] { projectFilter, resourceFilter, typeFilter }));
 
-        Filter filter = new AndFilter(
-                Arrays.asList(new Filter[] {filterProject, filterResource, /*filterStatus, */filterType}));
-
-        Upload[] uploads = upMgr.searchUploads(filter);
+        Upload[] uploads = upMgr.searchUploads(combinedFilter);
 
         if (uploads.length >= finalFixCount) {
             return ActionsHelper.produceErrorReport(mapping, getResources(request),

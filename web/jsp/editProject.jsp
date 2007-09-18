@@ -44,12 +44,12 @@
         var nameCellIndex = ${newProject ? 0 : 1};
 
         var resourceRoleToPhaseTypeMap = {};
-        <c:forEach var="resourceRole" items="${resourceRoles}">
+        <c:forEach items="${resourceRoles}" var="resourceRole">
             resourceRoleToPhaseTypeMap[${resourceRole.id}] = "${empty resourceRole.phaseType ? 'null' : resourceRole.phaseType}";
         </c:forEach>
 
         var projectCategories = [];
-        <c:forEach var="category" items="${projectCategories}">
+        <c:forEach items="${projectCategories}" var="category">
             projectCategories.push({});
             projectCategories[projectCategories.length - 1]["id"] = ${category.id};
             projectCategories[projectCategories.length - 1]["projectType"] = ${category.projectType.id};
@@ -58,7 +58,7 @@
         </c:forEach>
 
         var screeningScorecards = [];
-        <c:forEach var="scorecard" items="${screeningScorecards}">
+        <c:forEach items="${screeningScorecards}" var="scorecard">
             screeningScorecards.push({});
             screeningScorecards[screeningScorecards.length - 1]["id"] = ${scorecard.id};
             screeningScorecards[screeningScorecards.length - 1]["category"] = ${scorecard.category};
@@ -66,7 +66,7 @@
         </c:forEach>
 
         var reviewScorecards = [];
-        <c:forEach var="scorecard" items="${reviewScorecards}">
+        <c:forEach items="${reviewScorecards}" var="scorecard">
             reviewScorecards.push({});
             reviewScorecards[reviewScorecards.length - 1]["id"] = ${scorecard.id};
             reviewScorecards[reviewScorecards.length - 1]["category"] = ${scorecard.category};
@@ -74,7 +74,7 @@
         </c:forEach>
 
         var approvalScorecards = [];
-        <c:forEach var="scorecard" items="${approvalScorecards}">
+        <c:forEach items="${approvalScorecards}" var="scorecard">
             approvalScorecards.push({});
             approvalScorecards[approvalScorecards.length - 1]["id"] = ${scorecard.id};
             approvalScorecards[approvalScorecards.length - 1]["category"] = ${scorecard.category};
@@ -82,7 +82,7 @@
         </c:forEach>
 
         var defaultScorecards = [];
-        <c:forEach var="scorecard" items="${defaultScorecards}">
+        <c:forEach items="${defaultScorecards}" var="scorecard">
             defaultScorecards.push({});
             defaultScorecards[defaultScorecards.length - 1]["id"] = ${scorecard.scorecardId};
             defaultScorecards[defaultScorecards.length - 1]["category"] = ${scorecard.category};
@@ -91,12 +91,27 @@
         </c:forEach>
 
         var projectTypeNamesMap = {};
-        <c:forEach var="projectType" items="${projectTypes}">
+        <c:forEach items="${projectTypes}" var="projectType">
             projectTypeNamesMap["${projectType.id}"] = "${projectType.name}";
+
+            <c:if test="${projectType.name == 'Component'}">
+                <c:forEach items="${projectCategories}" var="category">
+                    <c:if test="${category.name == 'Development'}">
+                        var developmentCatId = "${category.id}";</c:if>
+                    <c:if test="${category.name == 'Design'}">
+                        var designCatId = "${category.id}";</c:if>
+                </c:forEach>
+            </c:if>
+            <c:if test="${projectType.name == 'Application'}">
+                <c:forEach items="${projectCategories}" var="category">
+                    <c:if test="${category.name == 'Assembly Competition'}">
+                        var assemblyCatId = "${category.id}";</c:if>
+                </c:forEach>
+            </c:if>
         </c:forEach>
 
         var phaseTypeIdsMap = {};
-        <c:forEach var="phaseType" items="${phaseTypes}">
+        <c:forEach items="${phaseTypes}" var="phaseType">
             phaseTypeIdsMap["${phaseType.name}"] = "${phaseType.id}";
         </c:forEach>
 
@@ -146,6 +161,7 @@
                         projectCategories[i]["name"], projectCategories[i]["id"]);
                 }
             }
+            onProjectCategoryChange(projectCategoryNode);
         }
 
         function onProjectCategoryChange(projectCategoryNode) {
@@ -167,6 +183,14 @@
             for (var i = 0; i < approvalScorecardNodes.length; i++) {
                 changeScorecardByCategory(approvalScorecardNodes[i], projectCategoryNode.value, approvalScorecards, 'Client Review');
             }
+
+            var digitalRunChecked = false;
+
+            if (projectCategoryNode.value == developmentCatId) digitalRunChecked = true;
+            if (projectCategoryNode.value == designCatId) digitalRunChecked = true;
+            if (projectCategoryNode.value == assemblyCatId) digitalRunChecked = true;
+
+            document.getElementById("digitalRunCheckBox").checked = digitalRunChecked;
         }
 
         function changeScorecardByCategory(scorecardNode, category, scorecards, scorecardName) {
@@ -795,16 +819,14 @@
 </head>
 
 <body onload="onLoad();">
-<body>
+<%-- <body> --%>
 
 <div align="center">
-    
     <div class="maxWidthBody" align="left">
 
         <jsp:include page="/includes/inc_header.jsp" />
-        
         <jsp:include page="/includes/project/project_tabs.jsp" />
-        
+
             <div id="mainMiddleContent">
                 <div style="position: relative; width: 100%;">
                     <html:form action="/actions/SaveProject" onsubmit="return validate_form(this, true);">
@@ -832,21 +854,21 @@
 
                         <%-- If creating a new project, show project details table --%>
                         <c:if test="${newProject}">
-                            <table class="scorecard" cellpadding="0" width="100%" style="border-collapse: collapse;">
+                            <table class="scorecard" cellpadding="0" width="100%" style="border-collapse:collapse;">
                                     <tr>
                                     <td class="title" colspan="2"><bean:message key="editProject.ProjectDetails.title" /></td>
                                 </tr>
                                 <tr>
                                     <td class="valueB"><bean:message key="editProject.ProjectDetails.Name" /></td>
                                     <td class="value" nowrap="nowrap">
-                                        <html:text styleClass="inputBox" property="project_name" style="width: 350px;" />
+                                        <html:text styleClass="inputBox" property="project_name" style="width:350px;" />
                                         <span id="project_name_validation_msg" style="display:none;" class="error"></span>
                                     </td>
                                 </tr>
                                 <tr class="dark">
                                     <td width="9%" class="valueB"><bean:message key="editProject.ProjectDetails.Type" /></td>
                                     <td width="91%" class="value" nowrap="nowrap">
-                                        <html:select styleClass="inputBox" property="project_type" style="width:150px"
+                                        <html:select styleClass="inputBox" property="project_type" style="width:150px;"
                                                 onchange="onProjectTypeChange(this);">
                                             <c:forEach items="${projectTypes}" var="type">
                                                 <html:option key='ProjectType.${fn:replace(type.name, " ", "")}.plural' value="${type.id}" />
@@ -913,8 +935,7 @@
                                         for="autopilotOnRadioBox"><b><bean:message key="editProject.Preferences.Autopilot.Completion" /></b></label>
                                     <bean:message key="editProject.Preferences.Autopilot.Completion.Desc" /><br/>
                                     <html:radio styleId="autopilotOffRadioBox" property="autopilot" value="false" /><label
-                                        for="autopilotOffRadioBox"><b><bean:message key="editProject.Preferences.Autopilot.TurnOff" /></b></label>
-                                </td>
+                                        for="autopilotOffRadioBox"><b><bean:message key="editProject.Preferences.Autopilot.TurnOff" /></b></label></td>
                             </tr>
                             <tr class="dark">
                                 <td class="value" colspan="2">
@@ -924,8 +945,9 @@
                                     <html:checkbox styleId="noRateProjectCheckBox" property="no_rate_project" /><label
                                         for="noRateProjectCheckBox"><b><bean:message key="editProject.Preferences.DoNotRate" /></b></label><br />
                                     <html:checkbox styleId="timelineNotificationsCheckBox" property="timeline_notifications" /><label
-                                        for="timelineNotificationsCheckBox"><b><bean:message key="editProject.Preferences.ReceiveTimeline" /></b></label>
-                                </td>
+                                        for="timelineNotificationsCheckBox"><b><bean:message key="editProject.Preferences.ReceiveTimeline" /></b></label><br />
+                                    <html:checkbox styleId="digitalRunCheckBox" property="digital_run_flag" /><label
+                                        for="digitalRunCheckBox"><b><bean:message key="editProject.Preferences.DigitalRun" /></b></label></td>
                             </tr>
                             <tr>
                                 <td class="lastRowTD" colspan="2"><!-- @ --></td>

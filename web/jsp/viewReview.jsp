@@ -245,11 +245,15 @@
                     <table class="scorecard" cellpadding="0" width="100%" style="border-collapse: collapse;" id="table2">
                         <c:forEach items="${scorecardTemplate.allGroups}" var="group" varStatus="groupStatus">
                             <tr>
-                                <td class="title" colspan="${canPlaceAppeal ? 5 : (canPlaceAppealResponse ? 4 : 3)}">${orfn:htmlEncode(group.name)}</td>
+                                <td class="title" colspan="${canPlaceAppeal ? 5 : (canPlaceAppealResponse ? 4 : 3)}">
+                                    ${orfn:htmlEncode(group.name)} &#xA0;
+                                    (${orfn:displayScore(pageContext.request, group.weight)})</td>
                             </tr>
                             <c:forEach items="${group.allSections}" var="section" varStatus="sectionStatus">
                                 <tr>
-                                    <td class="subheader" width="100%">${orfn:htmlEncode(section.name)}</td>
+                                    <td class="subheader" width="100%">
+                                        ${orfn:htmlEncode(section.name)} &#xA0;
+                                        (${orfn:displayScore(pageContext.request, section.weight)})</td>
                                     <td class="subheader" align="center" width="49%"><bean:message key="editReview.SectionHeader.Weight" /></td>
                                     <td class="subheader" align="center" width="1%"><bean:message key="editReview.SectionHeader.Response" /></td>
                                     <c:if test="${canPlaceAppeal or canPlaceAppealResponse}">

@@ -150,11 +150,15 @@
                         <c:forEach items="${scorecardTemplate.allGroups}" var="group" varStatus="groupStatus">
                             <table cellpadding="0" cellspacing="0" width="100%" class="scorecard" style="border-collapse:collapse;">
                                 <tr>
-                                    <td class="title" colspan="3">${orfn:htmlEncode(group.name)}</td>
+                                    <td class="title" colspan="3">
+                                        ${orfn:htmlEncode(group.name)} &#xA0;
+                                        (${orfn:displayScore(pageContext.request, group.weight)})</td>
                                 </tr>
                                 <c:forEach items="${group.allSections}" var="section" varStatus="sectionStatus">
                                     <tr>
-                                        <td class="subheader" width="100%">${orfn:htmlEncode(section.name)}</td>
+                                        <td class="subheader" width="100%">
+                                            ${orfn:htmlEncode(section.name)} &#xA0;
+                                            (${orfn:displayScore(pageContext.request, section.weight)})</td>
                                         <td class="subheader" width="49%" align="center"><bean:message key="editReview.SectionHeader.Weight" /></td>
                                         <td class="subheader" width="1%" align="center"><bean:message key="editReview.SectionHeader.Response" /></td>
                                     </tr>
