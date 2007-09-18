@@ -32,6 +32,7 @@
             <form-property name="email_notifications" type="java.lang.Boolean" />
             <form-property name="no_rate_project" type="java.lang.Boolean" />
             <form-property name="timeline_notifications" type="java.lang.Boolean" />
+            <form-property name="digital_run_flag" type="java.lang.Boolean" />
             <form-property name="scorecard_screening" type="java.lang.Long" />
             <form-property name="scorecard_review" type="java.lang.Long" />
             <form-property name="scorecard_approval" type="java.lang.Long" />

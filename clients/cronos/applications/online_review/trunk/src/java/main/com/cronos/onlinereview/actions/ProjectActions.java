@@ -300,8 +300,10 @@ public class ProjectActions extends DispatchAction {
         form.set("autopilot", new Boolean("On".equals(project.getProperty("Autopilot Option"))));
         // Populate project status notification option
         form.set("email_notifications", new Boolean("On".equals(project.getProperty("Status Notification"))));
-        // Populate project status notification option
+        // Populate project timeline notification option
         form.set("timeline_notifications", new Boolean("On".equals(project.getProperty("Timeline Notification"))));
+        // Populate project Digital Run option
+        form.set("digital_run_flag", new Boolean("On".equals(project.getProperty("Digital Run Flag"))));
         // Populate project's 'do not rate this project' option
         // Note, this property is inverse by its meaning in project and form
         form.set("no_rate_project", new Boolean(!("Yes".equals(project.getProperty("Rated")))));
@@ -547,23 +549,16 @@ public class ProjectActions extends DispatchAction {
      *             when any error happens while processing in TCS components.
      */
     public ActionForward editProject(ActionMapping mapping, ActionForm form,
-            HttpServletRequest request, HttpServletResponse response)
-        throws BaseException {
+            HttpServletRequest request, HttpServletResponse response) throws BaseException {
     	LoggingHelper.logAction(request);
-        // Retrieve the id of project to be edited
-        long projectId = Long.parseLong(request.getParameter("pid"));
 
-        // Gather the roles the user has for current request
-        AuthorizationHelper.gatherUserRoles(request, projectId);
-
-        // Check if the user has the permission to perform this action
-        if (!AuthorizationHelper.hasUserPermission(request, Constants.EDIT_PROJECT_DETAILS_PERM_NAME)) {
-            // If he doesn't, redirect the request to login page or report about the lack of permissions
-            return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
-                    Constants.EDIT_PROJECT_DETAILS_PERM_NAME, "Error.NoPermission", Boolean.FALSE);
+        // Verify that certain requirements are met before processing with the Action
+        CorrectnessCheckResult verification = ActionsHelper.checkForCorrectProjectId(
+                mapping, getResources(request), request, Constants.EDIT_PROJECT_DETAILS_PERM_NAME, false);
+        // If any error has occurred, return action forward contained in the result bean
+        if (!verification.isSuccessful()) {
+            return verification.getForward();
         }
-        // At this point, redirect-after-login attribute should be removed (if it exists)
-        AuthorizationHelper.removeLoginRedirect(request);
 
         // Place the flag, indicating that we are editing the existing project, into request
         request.setAttribute("newProject", Boolean.FALSE);
@@ -573,19 +568,13 @@ public class ProjectActions extends DispatchAction {
 
         // Obtain an instance of Project Manager
         ProjectManager manager = ActionsHelper.createProjectManager(request);
-
         // Retrieve the list of all project statuses
         ProjectStatus[] projectStatuses = manager.getAllProjectStatuses();
         // Store it in the request
         request.setAttribute("projectStatuses", projectStatuses);
 
-        // Retrieve the project to be edited
-        Project project = manager.getProject(projectId);
-        // Store the retieved project in the request
-        request.setAttribute("project", project);
-
         // Populate the form with project properties
-        populateProjectForm(request, (LazyValidatorForm) form, project);
+        populateProjectForm(request, (LazyValidatorForm) form, verification.getProject());
 
         return mapping.findForward(Constants.SUCCESS_FORWARD_NAME);
     }
@@ -611,30 +600,36 @@ public class ProjectActions extends DispatchAction {
         LazyValidatorForm lazyForm = (LazyValidatorForm) form;
 
         // Check whether user is creating new project or editing existing one
-        boolean newProject = (lazyForm.get("pid") == null);
-        // Gather the roles the user has for current request
-        AuthorizationHelper.gatherUserRoles(request);
-        
+        final boolean newProject = (lazyForm.get("pid") == null);
+        Project project = null;
+
         // Check if the user has the permission to perform this action
         if (newProject) {
+            // Gather the roles the user has for current request
+            AuthorizationHelper.gatherUserRoles(request);
+
             if (!AuthorizationHelper.hasUserPermission(request, Constants.CREATE_PROJECT_PERM_NAME)) {
                 // If he doesn't, redirect the request to login page or report about the lack of permissions
                 return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
                         Constants.CREATE_PROJECT_PERM_NAME, "Error.NoPermission", Boolean.TRUE);
             }
+
+            // At this point, redirect-after-login attribute should be removed (if it exists)
+            AuthorizationHelper.removeLoginRedirect(request);
         } else {
-            if (!AuthorizationHelper.hasUserPermission(request, Constants.EDIT_PROJECT_DETAILS_PERM_NAME)) {
-                // If he doesn't, redirect the request to login page or report about the lack of permissions
-                return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
-                        Constants.EDIT_PROJECT_DETAILS_PERM_NAME, "Error.NoPermission", Boolean.TRUE);
+            // Verify that certain requirements are met before processing with the Action
+            CorrectnessCheckResult verification = ActionsHelper.checkForCorrectProjectId(
+                    mapping, getResources(request), request, Constants.EDIT_PROJECT_DETAILS_PERM_NAME, true);
+            // If any error has occurred, return action forward contained in the result bean
+            if (!verification.isSuccessful()) {
+                return verification.getForward();
             }
+
+            project = verification.getProject();
         }
-        // At this point, redirect-after-login attribute should be removed (if it exists)
-        AuthorizationHelper.removeLoginRedirect(request);
 
         // Obtain an instance of Project Manager
         ProjectManager manager = ActionsHelper.createProjectManager(request);
-
         // Retrieve project types, categories and statuses
         ProjectCategory[] projectCategories = manager.getAllProjectCategories();
         ProjectStatus[] projectStatuses = manager.getAllProjectStatuses();
@@ -643,7 +638,6 @@ public class ProjectActions extends DispatchAction {
         // operation. This is usefule to determine whether Explanation is a rquired field or not
         boolean statusHasChanged = false;
 
-        Project project;
         if (newProject) {
             // Find "Active" project status
             ProjectStatus activeStatus = ActionsHelper.findProjectStatusByName(projectStatuses, "Active");
@@ -653,10 +647,6 @@ public class ProjectActions extends DispatchAction {
             // Create Project instance
             project = new Project(category, activeStatus);
             statusHasChanged = true; // Status is always considered to be changed for new projects
-        } else {
-            // Retrieve Project instance to be edited
-            // TODO: Probably check it for null, and issue the error, etc.
-            project = manager.getProject(((Long) lazyForm.get("pid")).longValue());
         }
 
         /*
@@ -673,7 +663,7 @@ public class ProjectActions extends DispatchAction {
             // OrChange - If the project category is Studio set the property to allow multiple submissions.
             if (ActionsHelper.isStudioProject(project)) {
             	//TODO retrieve it from the configuration
-            	log.debug("setting 'Root Catalog ID' to 26887152"); 
+            	log.debug("setting 'Root Catalog ID' to 26887152");
             	project.setProperty("Root Catalog ID", "26887152");
             	log.debug("Allowing multiple submissions for this project.");
                 project.setProperty("Allow multiple submissions", true);
@@ -693,7 +683,7 @@ public class ProjectActions extends DispatchAction {
             // Determine if status has changed
             statusHasChanged = !oldStatusName.equalsIgnoreCase(newStatusName);
             // If status has changed, update the project
-            
+
             // OrChange - Do not update if the project type is studio
             if (statusHasChanged) {
                 // Populate project status
@@ -715,6 +705,7 @@ public class ProjectActions extends DispatchAction {
         Boolean autopilotOnObj = (Boolean) lazyForm.get("autopilot");
         Boolean sendEmailNotificationsObj = (Boolean) lazyForm.get("email_notifications");
         Boolean sendTLChangeNotificationsObj = (Boolean) lazyForm.get("timeline_notifications");
+        Boolean digitalRunFlagObj = (Boolean) lazyForm.get("digital_run_flag");
         Boolean doNotRateProjectObj = (Boolean) lazyForm.get("no_rate_project");
 
         // Unbox the properties
@@ -723,6 +714,7 @@ public class ProjectActions extends DispatchAction {
             (sendEmailNotificationsObj != null) ? sendEmailNotificationsObj.booleanValue() : false;
         boolean sendTLChangeNotifications =
             (sendTLChangeNotificationsObj != null) ? sendTLChangeNotificationsObj.booleanValue() : false;
+        boolean digitalRunFlag = (digitalRunFlagObj != null) ? digitalRunFlagObj.booleanValue() : false;
         boolean doNotRateProject = (doNotRateProjectObj != null) ? doNotRateProjectObj.booleanValue() : false;
 
         // Populate project autopilot option
@@ -731,6 +723,8 @@ public class ProjectActions extends DispatchAction {
         project.setProperty("Status Notification", (sendEmailNotifications) ? "On" : "Off");
         // Populate project timeline notifications option
         project.setProperty("Timeline Notification", (sendTLChangeNotifications) ? "On" : "Off");
+        // Populate project Digital Run option
+        project.setProperty("Digital Run Flag", (digitalRunFlag) ? "On" : "Off");
         // Populate project rated option, note that it is inveresed
         project.setProperty("Rated", (doNotRateProject) ? "No" : "Yes");
 
@@ -776,7 +770,7 @@ public class ProjectActions extends DispatchAction {
             if (!newProject) {
                 // Store project statuses in the request
                 request.setAttribute("projectStatuses", projectStatuses);
-                // Store the retieved project in the request
+                // Store the retrieved project in the request
                 request.setAttribute("project", project);
             }
 
@@ -1699,11 +1693,10 @@ public class ProjectActions extends DispatchAction {
      *             if any error occurs.
      */
     public ActionForward listProjects(ActionMapping mapping, ActionForm form,
-            HttpServletRequest request, HttpServletResponse response)
-        throws BaseException {
+            HttpServletRequest request, HttpServletResponse response) throws BaseException {
         // Remove redirect-after-login attribute (if it exists)
         AuthorizationHelper.removeLoginRedirect(request);
-        
+
     	LoggingHelper.logAction(request);
 
         // Gather the roles the user has for current request
