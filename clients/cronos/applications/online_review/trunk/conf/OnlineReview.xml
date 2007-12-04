@@ -72,7 +72,7 @@
         </Property>
 
         <Property name="login_bean_name">
-            <Value>security/Login</Value>
+            <Value>com.topcoder.security.login.LoginRemoteHome</Value>
         </Property>
     </Config>
 
