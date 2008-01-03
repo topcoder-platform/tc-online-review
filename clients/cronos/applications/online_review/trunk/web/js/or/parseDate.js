@@ -211,7 +211,7 @@ function getDayIndex(name){
 }
 
 function checkDateValues(day, month, year){
-	var intYear = parseInt(year);
+	var intYear = parseInt(year, 10);
 	if (intYear >= 0 && intYear <= 99) {
 		intYear = intYear + 2000;
 	}
