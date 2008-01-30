@@ -514,11 +514,8 @@ public class ProjectDetailsActions extends DispatchAction {
         // Build filters
         Filter filterProject = ResourceFilterBuilder.createProjectIdFilter(project.getId());
         
-        Filter filterRole = new OrFilter(
-        		ResourceFilterBuilder.createResourceRoleIdFilter(
-        				ActionsHelper.findResourceRoleByName(allResourceRoles, "Manager").getId()),
-        		ResourceFilterBuilder.createResourceRoleIdFilter(
-        				ActionsHelper.findResourceRoleByName(allResourceRoles, "Observer").getId()));
+        Filter filterRole = ResourceFilterBuilder.createResourceRoleIdFilter(
+        		ActionsHelper.findResourceRoleByName(allResourceRoles, "Manager").getId());
         
         // Build final filter
         Filter filter = new AndFilter(filterProject, filterRole);
