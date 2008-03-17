@@ -68,6 +68,7 @@ import com.topcoder.servlet.request.FileUploadResult;
 import com.topcoder.servlet.request.UploadedFile;
 import com.topcoder.util.errorhandling.BaseException;
 import com.topcoder.util.log.Level;
+import com.topcoder.util.weightedcalculator.LineItem;
 
 /**
  * This class contains Struts Actions that are meant to deal with Project's Reviews. There are
@@ -2134,8 +2135,15 @@ public class ProjectReviewActions extends DispatchAction {
 
                         ScoreCalculator scoreCalculator =
                             calculationManager.getScoreCalculator(question.getQuestionType().getId());
-                        scores[i][itemIdx] = (float) (matrix.getLineItem(question.getId()).getWeight() *
-                            scoreCalculator.evaluateItem(review.getItem(itemIdx), question));
+                        LineItem lineItem = matrix.getLineItem(question.getId());
+                        double weight = 0;
+                        if (lineItem != null) {
+                        	weight = lineItem.getWeight();
+                        } else {
+                        	log.log(Level.WARN, "line item for question id: " + question.getId() + 
+                        			" for review: " + review.getId());
+                        }
+                        scores[i][itemIdx] = (float) (weight * scoreCalculator.evaluateItem(review.getItem(itemIdx), question));
                         ++itemIdx;
                     }
                 }
