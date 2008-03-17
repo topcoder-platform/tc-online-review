@@ -7,7 +7,7 @@
 <%@ taglib prefix="orfn" uri="/tags/or-functions" %>
 <%@ taglib prefix="tc-webtag" uri="/tags/tc-webtags" %>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-
+<% try { %>
 <html:html xhtml="true">
 <head>
     <jsp:include page="/includes/project/project_title.jsp">
@@ -152,3 +152,10 @@
 
 </body>
 </html:html>
+<% } catch (Throwable e) {
+	org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger("com.cronos.onlinereview");
+    log.error(e, e);
+	throw new RuntimeException(e);
+}
+%>
+
