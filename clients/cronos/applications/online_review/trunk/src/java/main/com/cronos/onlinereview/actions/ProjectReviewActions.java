@@ -3,6 +3,8 @@
  */
 package com.cronos.onlinereview.actions;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -1999,6 +2001,7 @@ public class ProjectReviewActions extends DispatchAction {
     public ActionForward viewCompositeScorecard(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response)
         throws BaseException {
+    	try {
     	LoggingHelper.logAction(request);
         // Verify that certain requirements are met before proceeding with the Action
         CorrectnessCheckResult verification =
@@ -2165,6 +2168,12 @@ public class ProjectReviewActions extends DispatchAction {
         request.setAttribute("reviews", reviews);
 
         return mapping.findForward(Constants.SUCCESS_FORWARD_NAME);
+    	} catch (Throwable e) {
+    		StringWriter buf = new StringWriter();
+    		e.printStackTrace(new PrintWriter(buf));
+    		log.log(Level.ERROR, buf);
+    		throw new BaseException(e);
+    	}
     }
 
     /**
