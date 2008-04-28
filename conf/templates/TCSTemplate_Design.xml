@@ -19,7 +19,7 @@
 		<!-- A definition of a single phase. -->
 		<Phase id="registrationPhase" length="172800000" type="registration"/>
 
-		<Phase id="submissionPhase" length="604800000" type="submission">
+		<Phase id="submissionPhase" length="518400000" type="submission">
 			<Dependency id="registrationPhase" isDependencyStart="true" isDependentStart="true" lagTime="0"/>
 		</Phase>
 
