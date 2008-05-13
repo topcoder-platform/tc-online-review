@@ -38,6 +38,9 @@
             <form-property name="scorecard_approval" type="java.lang.Long" />
             <form-property name="forum_id" type="java.lang.Long" />
             <form-property name="component_id" type="java.lang.Long" />
+            <form-property name="external_reference_id" type="java.lang.Long" />
+            <form-property name="payments" type="java.lang.Double" />
+            <form-property name="dr_points" type="java.lang.Double" />
             <form-property name="SVN_module" type="java.lang.String" />
             <form-property name="notes" type="java.lang.String" />
             <form-property name="explanation" type="java.lang.String" />

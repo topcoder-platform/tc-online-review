@@ -293,7 +293,13 @@ public class ProjectActions extends DispatchAction {
 
         // Populate project component id
         populateProjectFormProperty(form, Long.class, "component_id", project, "Component ID");
-
+        // Populate project external reference id
+        populateProjectFormProperty(form, Long.class, "external_reference_id", project, "External Reference ID");
+        // Populate project price
+        populateProjectFormProperty(form, Double.class, "payments", project, "Payments");
+        // Populate project dr points
+        populateProjectFormProperty(form, Double.class, "dr_points", project, "DR points");
+        
         // Populate project public option
         form.set("public", new Boolean("Yes".equals(project.getProperty("Public"))));
         // Populate project autopilot option
@@ -522,6 +528,8 @@ public class ProjectActions extends DispatchAction {
                 form.set(formProperty, Long.valueOf(value));
             } else if (type == Integer.class) {
                 form.set(formProperty, Integer.valueOf(value));
+            } else if (type == Double.class) {
+                form.set(formProperty, Double.valueOf(value));
             }
         }
     }
@@ -647,6 +655,13 @@ public class ProjectActions extends DispatchAction {
             // Create Project instance
             project = new Project(category, activeStatus);
             statusHasChanged = true; // Status is always considered to be changed for new projects
+        } else {
+            // Find the project category by the specified id
+            ProjectCategory category = ActionsHelper.findProjectCategoryById(projectCategories,
+                    ((Long) lazyForm.get("project_category")).longValue());
+            // Sets Project category
+        	project.setProjectCategory(ActionsHelper.findProjectCategoryById(projectCategories,
+                    ((Long) lazyForm.get("project_category")).longValue()));
         }
 
         /*
@@ -698,6 +713,12 @@ public class ProjectActions extends DispatchAction {
         project.setProperty("Developer Forum ID", lazyForm.get("forum_id"));
         // Populate project component id
         project.setProperty("Component ID", lazyForm.get("component_id"));
+        // Populate project External Reference ID
+        project.setProperty("External Reference ID", lazyForm.get("external_reference_id"));
+        // Populate project price
+        project.setProperty("Payments", lazyForm.get("payments"));
+        // Populate project dr points
+        project.setProperty("DR points", lazyForm.get("dr_points"));
         // Populate project SVN module
         project.setProperty("SVN Module", lazyForm.get("SVN_module"));
 
