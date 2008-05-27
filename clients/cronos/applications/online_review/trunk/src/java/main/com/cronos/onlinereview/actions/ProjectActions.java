@@ -718,7 +718,8 @@ public class ProjectActions extends DispatchAction {
         // Populate project price
         project.setProperty("Payments", lazyForm.get("payments"));
         // Populate project dr points
-        project.setProperty("DR points", lazyForm.get("dr_points"));
+        Double drPoints = (Double)lazyForm.get("dr_points");
+        project.setProperty("DR points", drPoints.equals(0d) ? null : drPoints);
         // Populate project SVN module
         project.setProperty("SVN Module", lazyForm.get("SVN_module"));
 
