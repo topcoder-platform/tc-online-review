@@ -904,15 +904,36 @@
                                         <html:checkbox property="public" />
                                     </td>
                                 </tr>
+	                            <tr class="light">
+	                                <td class="value" nowrap="nowrap">
+	                                    <b><bean:message key="editProject.ProjectDetails.Payments" /></b><br />
+	                                </td>
+	                                <td class="value" nowrap="nowrap">
+	                                    <html:text styleClass="inputBox" property="payments" style="width: 350px;" />
+	                                    <span id="payments_validation_msg" style="display:none;" class="error"></span>
+	                                </td>
+	                            </tr>
+	                            <tr class="light">
+	                                <td class="value" nowrap="nowrap">
+	                                    <b><bean:message key="editProject.ProjectDetails.DRPoints" /></b><br />
+	                                </td>
+	                                <td class="value" nowrap="nowrap">
+	                                    <html:text styleClass="inputBox" property="dr_points" style="width: 350px;" />
+	                                    <b><bean:message key="editProject.ProjectDetails.DRPointsMessage" /></b>
+	                                    <span id="dr_points_validation_msg" style="display:none;" class="error"></span>
+	                                </td>
+	                            </tr>
                                 <tr>
                                     <td class="lastRowTD" colspan="2"><!-- @ --></td>
                                 </tr>
                             </table><br />
                         </c:if>
+                        <%-- 
                         <c:if test="${not newProject}">
                             <html:hidden property="project_type" />
                             <html:hidden property="project_category" />
                         </c:if>
+                        --%>
 
                         <%-- If editing the existing project, include timeline editor here --%>
                         <c:if test="${not newProject}">
@@ -975,6 +996,49 @@
                                         <span id="project_name_validation_msg" style="display:none;" class="error"></span>
                                     </td>
                                 </tr><c:set var="projDetRowCount" value="${projDetRowCount + 1}" />
+	                            <tr class="${(projDetRowCount % 2 == 0) ? 'light' : 'dark'}">
+                                    <td width="9%" class="valueB"><bean:message key="editProject.ProjectDetails.Type" /></td>
+                                    <td width="91%" class="value" nowrap="nowrap">
+                                        <html:select styleClass="inputBox" property="project_type" style="width:150px;"
+                                                onchange="onProjectTypeChange(this);">
+                                            <c:forEach items="${projectTypes}" var="type">
+                                                <html:option key='ProjectType.${fn:replace(type.name, " ", "")}.plural' value="${type.id}" />
+                                            </c:forEach>
+                                        </html:select>
+                                    </td>
+                                </tr><c:set var="projDetRowCount" value="${projDetRowCount + 1}" />
+	                            <tr class="${(projDetRowCount % 2 == 0) ? 'light' : 'dark'}">
+                                    <td class="valueB"><bean:message key="editProject.ProjectDetails.Category" /></td>
+                                    <td class="value" nowrap="nowrap">
+                                        <html:select styleClass="inputBox" property="project_category" style="width:150px;"
+                                                onchange="onProjectCategoryChange(this);">
+                                            <c:forEach items="${projectCategories}" var="category">
+                                                <c:if test="${category.projectType.id eq projectForm.map['project_type']}">
+                                                    <html:option key='ProjectCategory.${fn:replace(category.name, " ", "")}' value="${category.id}" />
+                                                </c:if>
+                                            </c:forEach>
+                                        </html:select>
+                                    </td>
+                                </tr><c:set var="projDetRowCount" value="${projDetRowCount + 1}" />
+	                            <tr class="${(projDetRowCount % 2 == 0) ? 'light' : 'dark'}">
+	                                <td class="value" nowrap="nowrap">
+	                                    <b><bean:message key="editProject.ProjectDetails.Payments" /></b><br />
+	                                </td>
+	                                <td class="value" nowrap="nowrap">
+	                                    <html:text styleClass="inputBox" property="payments" style="width: 350px;" />
+	                                    <span id="payments_validation_msg" style="display:none;" class="error"></span>
+	                                </td>
+	                            </tr><c:set var="projDetRowCount" value="${projDetRowCount + 1}" />
+	                            <tr class="${(projDetRowCount % 2 == 0) ? 'light' : 'dark'}">
+	                                <td class="value" nowrap="nowrap">
+	                                    <b><bean:message key="editProject.ProjectDetails.DRPoints" /></b><br />
+	                                </td>
+	                                <td class="value" nowrap="nowrap">
+	                                    <html:text styleClass="inputBox" property="dr_points" style="width: 350px;" />
+										<b><bean:message key="editProject.ProjectDetails.DRPointsMessage" /></b>
+	                                    <span id="dr_points_validation_msg" style="display:none;" class="error"></span>
+	                                </td>
+	                            </tr><c:set var="projDetRowCount" value="${projDetRowCount + 1}" />
                             </c:if>
 
                             <tr class="${(projDetRowCount % 2 == 0) ? 'light' : 'dark'}">
@@ -993,6 +1057,15 @@
                                 <td class="value" nowrap="nowrap">
                                     <html:text styleClass="inputBox" property="component_id" style="width: 350px;" />
                                     <span id="component_id_validation_msg" style="display:none;" class="error"></span>
+                                </td>
+                            </tr><c:set var="projDetRowCount" value="${projDetRowCount + 1}" />
+                            <tr class="${(projDetRowCount % 2 == 0) ? 'light' : 'dark'}">
+                                <td class="value" nowrap="nowrap">
+                                    <b><bean:message key="editProject.References.ExternalReferenceId" /></b><br />
+                                </td>
+                                <td class="value" nowrap="nowrap">
+                                    <html:text styleClass="inputBox" property="external_reference_id" style="width: 350px;" />
+                                    <span id="external_reference_id_validation_msg" style="display:none;" class="error"></span>
                                 </td>
                             </tr><c:set var="projDetRowCount" value="${projDetRowCount + 1}" />
                             <tr class="${(projDetRowCount % 2 == 0) ? 'light' : 'dark'}">
