@@ -588,7 +588,7 @@ don't need this anymore.  OR doesn't use it.
     </target>
 -->
 
-    <target name="dist" depends="clean, update_left_nav, compile">
+    <target name="dist" depends="clean, compile">
         <mkdir dir="${build_distdir}" />
         <property name="component.war" value="${build_distdir}/${distfilename}.war" />
         <delete file="${component.war}" failonerror="false" />
