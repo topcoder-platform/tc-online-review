@@ -574,6 +574,8 @@
     </target>
 
     <!-- assume the user is already logged in to cvs and the env is set up. -->
+<!--
+don't need this anymore.  OR doesn't use it.
     <target name="update_left_nav">
         <mkdir dir="${build_distdir}" />
         <cvs package="web/src/main/com/topcoder/web/jsp/includes/global_left.jsp" dest="${build_distdir}"/>
@@ -584,6 +586,7 @@
         <copy file="${build_distdir}/web/resources/taglib/nav.tld"
             tofile="${configdir}/WEB-INF/nav.tld" overwrite="true" />
     </target>
+-->
 
     <target name="dist" depends="clean, update_left_nav, compile">
         <mkdir dir="${build_distdir}" />
