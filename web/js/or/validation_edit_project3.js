@@ -94,6 +94,81 @@ function validate_component_id(thisForm, msgList) {
 }
 
 /**
+ * Validates the external reference id.
+ */
+function validate_external_reference_id(thisForm, msgList) {
+    var msg = null;
+    var msgDiv = document.getElementById("external_reference_id_validation_msg");
+
+    msgDiv.innerHTML = "";
+    msgDiv.style.display = "none";
+
+    var external_reference_id = thisForm["external_reference_id"].value;
+    if (external_reference_id.length > 0) {
+        if (!isAllDigits(external_reference_id) || !isInteger(external_reference_id)) {
+            msg = "Component Version Id should be an integer [0, 2147483647]";
+            add_error_message(msg, "", msgDiv, msgList);
+        }
+    } else {
+        var project_type = thisForm["project_type"].value;
+        if (project_type == "1") {
+            msg = "If project type is Component, Component Version Id field is required";
+            add_error_message(msg, "", msgDiv, msgList);
+        }
+    }
+
+    return msg == null;
+}
+
+/**
+ * Validates the price.
+ */
+function validate_price(thisForm, msgList) {
+    var msg = null;
+    var msgDiv = document.getElementById("payments_validation_msg");
+
+    msgDiv.innerHTML = "";
+    msgDiv.style.display = "none";
+
+    var price = thisForm["payments"].value;
+    if (price.length > 0) {
+        if (!isFloat(price)) {
+            msg = "Invalid Price";
+            add_error_message(msg, "", msgDiv, msgList);
+        }
+    } else {
+        var project_type = thisForm["project_type"].value;
+        if (project_type == "1") {
+            msg = "If project type is Component, Price field is required";
+            add_error_message(msg, "", msgDiv, msgList);
+        }
+    }
+
+    return msg == null;
+}
+
+/**
+ * Validates the dr points.
+ */
+function validate_dr_points(thisForm, msgList) {
+    var msg = null;
+    var msgDiv = document.getElementById("dr_points_validation_msg");
+
+    msgDiv.innerHTML = "";
+    msgDiv.style.display = "none";
+
+    var points = thisForm["dr_points"].value;
+    if (points.length > 0) {
+        if (!isFloat(points)) {
+            msg = "Invalid Points";
+            add_error_message(msg, "", msgDiv, msgList);
+        }
+    }
+
+    return msg == null;
+}
+
+/**
  * Validates the SVN Module field.
  */
 function validate_svn_module(thisForm, msgList) {
@@ -374,21 +449,24 @@ function validate_explanation(thisForm, msgList) {
  * @return true if no validation failures
  */
 function validate_form(thisForm, popup) {
-	// the list of validation error messages
-	var msgList = new Array();
+    // the list of validation error messages
+    var msgList = new Array();
 
-	validate_project_name(thisForm, msgList);
-	validate_forum_id(thisForm, msgList);
-	validate_component_id(thisForm, msgList);
-	validate_svn_module(thisForm, msgList);
-	validate_timeline(thisForm, msgList);
-	validate_resources(thisForm, msgList);
-	validate_notes(thisForm, msgList);
-	validate_explanation(thisForm, msgList);
+    validate_project_name(thisForm, msgList);
+    validate_forum_id(thisForm, msgList);
+    validate_component_id(thisForm, msgList);
+    validate_external_reference_id(thisForm, msgList);
+    validate_price(thisForm, msgList);
+    validate_dr_points(thisForm, msgList);
+    validate_svn_module(thisForm, msgList);
+    validate_timeline(thisForm, msgList);
+    validate_resources(thisForm, msgList);
+    validate_notes(thisForm, msgList);
+    validate_explanation(thisForm, msgList);
 
-	// try to show an alert window
-	if (popup && msgList.length != 0)
-	    alert("There have been validation errors:\n\n* " + msgList.join(';\n* ') + ".");
+    // try to show an alert window
+    if (popup && msgList.length != 0)
+        alert("There have been validation errors:\n\n* " + msgList.join(';\n* ') + ".");
 
-	return msgList.length == 0;
+    return msgList.length == 0;
 }
