@@ -94,30 +94,6 @@ public class AutoPaymentUtil {
     private AutoPaymentUtil() {
     }
 
-    static void resetProjectPrice(long projectId, Connection conn) throws SQLException {
-        PreparedStatement pstmt = null;
-        ResultSet rs = null;
-
-        double price = 0.0;
-
-        try {
-            pstmt = conn.prepareStatement(SELECT_PRICE_CVD);
-            pstmt.setLong(1, projectId);
-            rs = pstmt.executeQuery();
-
-            if (rs.next()) {
-            	price = rs.getDouble(1);
-            }
-        } finally {
-            PRHelper.close(rs);
-            PRHelper.close(pstmt);
-        }
-
-        if (price > 0) {
-        	updateProjectInfo(projectId, 16, String.valueOf(price), conn);
-        }
-    }
-
     /**
      * Populate reviewers payment.
      *

@@ -102,9 +102,6 @@ public class PRHelper {
             if (toStart) {
             	logger.log(Level.INFO,
 					new LoggerMessage("project", new Long(projectId), null, "start registration process."));
-            
-                // Reset price of project
-                AutoPaymentUtil.resetProjectPrice(projectId, conn);
             }
         } finally {
             close(pstmt);
@@ -239,8 +236,6 @@ public class PRHelper {
         if (!toStart) {
         	logger.log(Level.INFO,
 				new LoggerMessage("project", new Long(projectId), null, "process Appeal Response phase."));
-            // Reset price of project
-            AutoPaymentUtil.resetProjectPrice(projectId, conn);
             populateProjectResult(projectId, conn);
         }
     }
@@ -261,8 +256,6 @@ public class PRHelper {
         if (!toStart) {
     		logger.log(Level.INFO,
 					new LoggerMessage("project", new Long(projectId), null, "process Aggregation phase."));
-            // Reset price of project
-            AutoPaymentUtil.resetProjectPrice(projectId, conn);
             populateProjectResult(projectId, conn);
         } else {
             // start this phase
@@ -286,8 +279,6 @@ public class PRHelper {
         if (!toStart) {
     		logger.log(Level.INFO,
 					new LoggerMessage("project", new Long(projectId), null, "Process Aggregation Review phase."));
-            // Reset price of project
-            AutoPaymentUtil.resetProjectPrice(projectId, conn);
             populateProjectResult(projectId, conn);
         }
     }
@@ -308,8 +299,6 @@ public class PRHelper {
         if (!toStart) {
     		logger.log(Level.INFO,
 					new LoggerMessage("project", new Long(projectId), null, "Process final fix phase."));
-            // Reset price of project
-            AutoPaymentUtil.resetProjectPrice(projectId, conn);
             populateProjectResult(projectId, conn);
         }
     }
@@ -330,8 +319,6 @@ public class PRHelper {
         if (!toStart) {
     		logger.log(Level.INFO,
 					new LoggerMessage("project", new Long(projectId), null, "Process final review phase."));
-            // Reset price of project
-            AutoPaymentUtil.resetProjectPrice(projectId, conn);
             populateProjectResult(projectId, conn);
         } else {
     		logger.log(Level.INFO,
