@@ -166,15 +166,17 @@ public final class Functions {
 
         Project project = (Project) request.getAttribute("project");
         if (project == null) {
-        	return "";
+            return "";
         }
 
         if (project.getProjectCategory().getId() == 1) {
-        	return "design";
+            return "design";
         } else if (project.getProjectCategory().getId() == 2) {
-        	return "development";
+            return "development";
+        } else if (project.getProjectCategory().getId() == 5) {
+            return "development";
         } else {
-        	return "";
+            return "";
         }
     }
 

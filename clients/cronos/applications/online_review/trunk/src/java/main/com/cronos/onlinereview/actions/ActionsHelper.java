@@ -161,10 +161,10 @@ import com.topcoder.util.log.LogFactory;
  * @version 1.0
  */
 public class ActionsHelper {
-	/**
-	 * The logger instance.
-	 */
-	private static final Log log = LogFactory.getLog(ActionsHelper.class.getName());
+    /**
+     * The logger instance.
+     */
+    private static final Log log = LogFactory.getLog(ActionsHelper.class.getName());
 
     /**
      * This member variable is a string constant that defines the name of the configurtaion
@@ -931,10 +931,10 @@ public class ActionsHelper {
         if (permission == null) {
             request.setAttribute("errorTitle", messages.getMessage("Error.Title.General"));
         } else {
-        	if ("Error.NoPermission".equalsIgnoreCase(reasonKey)){
-	        	log.log(Level.WARN, "Authorization failures.User tried to perform "
-	        			+ permission + " which he/she doesn’t have permission.");
-        	}
+            if ("Error.NoPermission".equalsIgnoreCase(reasonKey)){
+                log.log(Level.WARN, "Authorization failures.User tried to perform "
+                        + permission + " which he/she doesn’t have permission.");
+            }
             request.setAttribute("errorTitle", messages.getMessage("Error.Title." + permission.replaceAll(" ", "")));
         }
         // Place error message (reason) into request
@@ -1251,21 +1251,21 @@ public class ActionsHelper {
         ExternalUser user = null;
         String externalUserID = (String) resource.getProperty("External Reference ID");
         if (externalUserID != null) {
-        	user = userRetrieval.retrieveUser(Long.parseLong(externalUserID));
+            user = userRetrieval.retrieveUser(Long.parseLong(externalUserID));
         }
         if (user == null) {
-        	log.log(Level.DEBUG, "using 'Handle' for retrieving the user for resource: " + resource.getId());
-        	String handle = (String) resource.getProperty("Handle");
-        	if (handle != null) {
-        		user = userRetrieval.retrieveUser(handle);
-        	}
+            log.log(Level.DEBUG, "using 'Handle' for retrieving the user for resource: " + resource.getId());
+            String handle = (String) resource.getProperty("Handle");
+            if (handle != null) {
+                user = userRetrieval.retrieveUser(handle);
+            }
         } else {
-        	log.log(Level.DEBUG, "using 'External Reference ID' for retrieving the user for resource: " + resource.getId());
+            log.log(Level.DEBUG, "using 'External Reference ID' for retrieving the user for resource: " + resource.getId());
         }
         if (user == null) {
-        	throw new BaseException("the resourceId: " + resource.getId() + " doesn't refer a valid user");
+            throw new BaseException("the resourceId: " + resource.getId() + " doesn't refer a valid user");
         }
-    	resource.setProperty("Email", user.getEmail());
+        resource.setProperty("Email", user.getEmail());
     }
 
     /**
@@ -1681,31 +1681,31 @@ public class ActionsHelper {
      * @param projectId
      */
     public static Resource getWinner(HttpServletRequest request, long projectId) throws BaseException {
-    	ProjectManager projectManager = createProjectManager(request);
-    	ResourceManager resourceManager = createResourceManager(request);
+        ProjectManager projectManager = createProjectManager(request);
+        ResourceManager resourceManager = createResourceManager(request);
 
-    	Project project = projectManager.getProject(projectId);
-    	String winnerId = (String) project.getProperty("Winner External Reference ID");
-    	if (winnerId != null) {
+        Project project = projectManager.getProject(projectId);
+        String winnerId = (String) project.getProperty("Winner External Reference ID");
+        if (winnerId != null) {
 
-    		long submitterRoleId = findResourceRoleByName(resourceManager.getAllResourceRoles(), "Submitter").getId();
-    		ResourceFilterBuilder.createExtensionPropertyNameFilter("External Reference ID");
+            long submitterRoleId = findResourceRoleByName(resourceManager.getAllResourceRoles(), "Submitter").getId();
+            ResourceFilterBuilder.createExtensionPropertyNameFilter("External Reference ID");
 
-    		AndFilter fullFilter = new AndFilter(Arrays.asList(new Filter[] {
-    				ResourceFilterBuilder.createResourceRoleIdFilter(submitterRoleId), 
-    				ResourceFilterBuilder.createProjectIdFilter(projectId),
-    				ResourceFilterBuilder.createExtensionPropertyNameFilter("External Reference ID"),
-    				ResourceFilterBuilder.createExtensionPropertyValueFilter(winnerId)
-    		}));
+            AndFilter fullFilter = new AndFilter(Arrays.asList(new Filter[] {
+                    ResourceFilterBuilder.createResourceRoleIdFilter(submitterRoleId), 
+                    ResourceFilterBuilder.createProjectIdFilter(projectId),
+                    ResourceFilterBuilder.createExtensionPropertyNameFilter("External Reference ID"),
+                    ResourceFilterBuilder.createExtensionPropertyValueFilter(winnerId)
+            }));
 
 
-    		Resource[] submitters = resourceManager.searchResources(fullFilter);
-    		if (submitters.length > 0) {
-    			return submitters[0];
-    		}
-    		return null;
-    	}
-    	return null;
+            Resource[] submitters = resourceManager.searchResources(fullFilter);
+            if (submitters.length > 0) {
+                return submitters[0];
+            }
+            return null;
+        }
+        return null;
     }
 
     /**
@@ -1833,10 +1833,10 @@ public class ActionsHelper {
         // Retrieve the list of "my" resources from the request's attribute
         Resource[] myResources = (Resource[]) validateAttributeNotNull(request, "myResources");
         for (Resource resource : myResources) {
-			if (resource.getResourceRole().getName().equalsIgnoreCase(resourceRole)) {
-				return resource;
-			}
-		}
+            if (resource.getResourceRole().getName().equalsIgnoreCase(resourceRole)) {
+                return resource;
+            }
+        }
         // Return the resources using another helper-method
         return null;
     }    
@@ -2823,36 +2823,36 @@ public class ActionsHelper {
      */
     static void setProjectCompletionDate(Project project, ProjectStatus newProjectStatus, Format format)
     throws BaseException {
-    	String name = newProjectStatus.getName();
-    	if ("Completed".equals(name) || "Cancelled - Failed Review".equals(name) || "Deleted".equals(name)
-    			 || "Cancelled - Failed Screening".equals(name)  || "Cancelled - Zero Submissions".equals(name)) {
+        String name = newProjectStatus.getName();
+        if ("Completed".equals(name) || "Cancelled - Failed Review".equals(name) || "Deleted".equals(name)
+                 || "Cancelled - Failed Screening".equals(name)  || "Cancelled - Zero Submissions".equals(name)) {
             if (format == null) {
                 format = new SimpleDateFormat(ConfigHelper.getDateFormat());
             }
-    		project.setProperty("Completion Timestamp", format.format(new Date()));
+            project.setProperty("Completion Timestamp", format.format(new Date()));
 
-    		if (!"Deleted".equals(name) && !ActionsHelper.isStudioProject(project)) {
-    			Connection conn = null;
-	        	PreparedStatement ps = null;
-	    		try {
-	    	        DBConnectionFactory dbconn;
-	    				dbconn = new DBConnectionFactoryImpl(DB_CONNECTION_NAMESPACE);
-	    	        conn = dbconn.createConnection();
-	    	    	ps = conn.prepareStatement("update project_result set rating_ind = 1 where project_id = ? and valid_submission_ind = 1");
-	    	    	ps.setLong(1, project.getId());
-	    	    	ps.execute();
-	    		} catch(SQLException e) {
-	    			throw new BaseException("Failed to update project result for rating_ind", e);
-	    		} catch (UnknownConnectionException e) {
-	    			throw new BaseException("Failed to return DBConnection", e);
-				} catch (ConfigurationException e) {
-	    			throw new BaseException("Failed to return DBConnection", e);
-				} finally {
-	    			close(ps);
-	    			close(conn);
-	    		}
-    		}
-    	}
+            if (!"Deleted".equals(name) && !ActionsHelper.isStudioProject(project)) {
+                Connection conn = null;
+                PreparedStatement ps = null;
+                try {
+                    DBConnectionFactory dbconn;
+                        dbconn = new DBConnectionFactoryImpl(DB_CONNECTION_NAMESPACE);
+                    conn = dbconn.createConnection();
+                    ps = conn.prepareStatement("update project_result set rating_ind = 1 where project_id = ? and valid_submission_ind = 1");
+                    ps.setLong(1, project.getId());
+                    ps.execute();
+                } catch(SQLException e) {
+                    throw new BaseException("Failed to update project result for rating_ind", e);
+                } catch (UnknownConnectionException e) {
+                    throw new BaseException("Failed to return DBConnection", e);
+                } catch (ConfigurationException e) {
+                    throw new BaseException("Failed to return DBConnection", e);
+                } finally {
+                    close(ps);
+                    close(conn);
+                }
+            }
+        }
     }
 
     /**
@@ -2862,26 +2862,26 @@ public class ActionsHelper {
      * @param format the date format
      */
     static void setProjectRatingDate(Project project, Phase[] projectPhases, Format format) {
-    	Date endDate = null;
-    	for (int i = 0; projectPhases != null && i < projectPhases.length; i++) {
-    		if ("Submission".equals(projectPhases[i].getPhaseType().getName())) {
-    			endDate = projectPhases[i].getActualEndDate();
-    			if (endDate == null) {
-    				endDate = projectPhases[i].getScheduledEndDate();
-    			}
-    			break;
-    		}
-    	}
+        Date endDate = null;
+        for (int i = 0; projectPhases != null && i < projectPhases.length; i++) {
+            if ("Submission".equals(projectPhases[i].getPhaseType().getName())) {
+                endDate = projectPhases[i].getActualEndDate();
+                if (endDate == null) {
+                    endDate = projectPhases[i].getScheduledEndDate();
+                }
+                break;
+            }
+        }
 
-    	if (endDate == null) {
-    		return;
-    	}
+        if (endDate == null) {
+            return;
+        }
 
         if (format == null) {
             format = new SimpleDateFormat(ConfigHelper.getDateFormat());
         }
 
-		project.setProperty("Rated Timestamp", format.format(endDate));
+        project.setProperty("Rated Timestamp", format.format(endDate));
     }
 
     /**
@@ -2980,156 +2980,181 @@ public class ActionsHelper {
      * @throws BaseException if error occurs
      */
     public static void populateProjectResult(Project project, Collection newSubmitters) throws BaseException {
-    	Connection conn = null;
-    	PreparedStatement ps = null;
-    	PreparedStatement existStmt = null;
-    	PreparedStatement existCIStmt = null;
-    	PreparedStatement ratingStmt = null;
-    	PreparedStatement reliabilityStmt = null;
-    	PreparedStatement componentInquiryStmt = null;
-    	long categoryId = project.getProjectCategory().getId();
+        Connection conn = null;
+        PreparedStatement ps = null;
+        PreparedStatement existStmt = null;
+        PreparedStatement existCIStmt = null;
+        PreparedStatement ratingStmt = null;
+        PreparedStatement reliabilityStmt = null;
+        PreparedStatement componentInquiryStmt = null;
+        long categoryId = project.getProjectCategory().getId();
 //       OrChange - No modification needed as only design/development/assembly will modify the project result table.
-    	if (categoryId != 1 && categoryId != 2 && categoryId != 14) {
-    		// design/development/assembly project need project_result
-    		return;
-    	}
+        if (categoryId != 1 && categoryId != 2 && categoryId != 14 &&
+                categoryId != 5 && categoryId != 7 && categoryId != 13) {
+            // design/development/assembly project need project_result
+            // component testing/architecture/app testing project need project_result
+            return;
+        }
 
-		try {
-	        DBConnectionFactory dbconn;
-				dbconn = new DBConnectionFactoryImpl(DB_CONNECTION_NAMESPACE);
-	        conn = dbconn.createConnection();
-	        log.log(Level.INFO,
-	        		"create db connection with default connection name from DBConnectionFactoryImpl with namespace:" + DB_CONNECTION_NAMESPACE);
-	        long projectId = project.getId();
-	        // retrieve and update component_inquiry_id
-	        long componentInquiryId = getNextComponentInquiryId(conn, newSubmitters.size());
-	    	long componentId = getProjectLongValue(project, "Component ID");
-	    	long phaseId = 111 + project.getProjectCategory().getId();
-	    	log.log(Level.DEBUG, "calculated phaseId for Project: " + projectId + " phaseId: " + phaseId);
-	    	long version = getProjectLongValue(project, "Version ID");
+        try {
+            DBConnectionFactory dbconn;
+                dbconn = new DBConnectionFactoryImpl(DB_CONNECTION_NAMESPACE);
+            conn = dbconn.createConnection();
+            log.log(Level.INFO,
+                    "create db connection with default connection name from DBConnectionFactoryImpl with namespace:" + DB_CONNECTION_NAMESPACE);
+            long projectId = project.getId();
+            // retrieve and update component_inquiry_id
+            long componentInquiryId = getNextComponentInquiryId(conn, newSubmitters.size());
+            long componentId = getProjectLongValue(project, "Component ID");
+            long phaseId = 111 + project.getProjectCategory().getId();
+            log.log(Level.DEBUG, "calculated phaseId for Project: " + projectId + " phaseId: " + phaseId);
+            long version = getProjectLongValue(project, "Version ID");
 
-	        // add reliability_ind and old_reliability
-	    	ps = conn.prepareStatement("INSERT INTO project_result " +
-	                "(project_id, user_id, rating_ind, valid_submission_ind, old_rating, old_reliability) " +
-	                "values (?, ?, ?, ?, ?, ?)");
+            // add reliability_ind and old_reliability
+            ps = conn.prepareStatement("INSERT INTO project_result " +
+                    "(project_id, user_id, rating_ind, valid_submission_ind, old_rating, old_reliability) " +
+                    "values (?, ?, ?, ?, ?, ?)");
 
-	    	componentInquiryStmt = conn.prepareStatement("INSERT INTO component_inquiry " +
-	                "(component_inquiry_id, component_id, user_id, project_id, phase, tc_user_id, agreed_to_terms, rating, version, create_time) " +
-	                "values (?, ?, ?, ?, ?, ?, 1, ?, ?, current)");
+            componentInquiryStmt = conn.prepareStatement("INSERT INTO component_inquiry " +
+                    "(component_inquiry_id, component_id, user_id, project_id, phase, tc_user_id, agreed_to_terms, rating, version, create_time) " +
+                    "values (?, ?, ?, ?, ?, ?, 1, ?, ?, current)");
 
-	        existStmt = conn.prepareStatement("SELECT 1 FROM PROJECT_RESULT WHERE user_id = ? and project_id = ?");
+            existStmt = conn.prepareStatement("SELECT 1 FROM PROJECT_RESULT WHERE user_id = ? and project_id = ?");
 
-	        existCIStmt = conn.prepareStatement("SELECT 1 FROM component_inquiry WHERE user_id = ? and project_id = ?");
+            existCIStmt = conn.prepareStatement("SELECT 1 FROM component_inquiry WHERE user_id = ? and project_id = ?");
 
-	        ratingStmt = conn.prepareStatement("SELECT rating from user_rating where user_id = ? and phase_id = " +
-	                "(select 111+project_category_id from project where project_id = ?)");
+            //ratingStmt = conn.prepareStatement("SELECT rating from user_rating where user_id = ? and phase_id = " +
+            //        "(select 111+project_category_id from project where project_id = ?)");
 
-	        reliabilityStmt = conn.prepareStatement("SELECT rating from user_reliability where user_id = ? and phase_id = " +
-	                "(select 111+project_category_id from project where project_id = ?)");
+            ratingStmt = conn.prepareStatement("SELECT rating, phase_id, (select project_category_id from project where project_id = ?) as project_category_id from user_rating where user_id = ? ");
 
-	    	for (Iterator iter = newSubmitters.iterator(); iter.hasNext();) {
-	    		String userId = iter.next().toString();
+            reliabilityStmt = conn.prepareStatement("SELECT rating from user_reliability where user_id = ? and phase_id = " +
+                    "(select 111+project_category_id from project where project_id = ?)");
 
-	    		// Check if projectResult exist
-	    		existStmt.clearParameters();
-	            existStmt.setString(1, userId);
-	            existStmt.setLong(2, projectId);
-	            boolean existPR = existStmt.executeQuery().next();
+            for (Iterator iter = newSubmitters.iterator(); iter.hasNext();) {
+                String userId = iter.next().toString();
 
-	    		// Check if component_inquiry exist
-	            existCIStmt.clearParameters();
-	            existCIStmt.setString(1, userId);
-	            existCIStmt.setLong(2, projectId);
-	            boolean existCI = existCIStmt.executeQuery().next();
+                // Check if projectResult exist
+                existStmt.clearParameters();
+                existStmt.setString(1, userId);
+                existStmt.setLong(2, projectId);
+                boolean existPR = existStmt.executeQuery().next();
 
-	            // Retrieve oldRating
-	            double oldRating = 0;
-	            ResultSet rs = null;
-	            if (!existPR || !existCI) {
-		            ratingStmt.clearParameters();
-		            ratingStmt.setString(1, userId);
-		            ratingStmt.setLong(2, projectId);
-		            rs = ratingStmt.executeQuery();
+                // Check if component_inquiry exist
+                existCIStmt.clearParameters();
+                existCIStmt.setString(1, userId);
+                existCIStmt.setLong(2, projectId);
+                boolean existCI = existCIStmt.executeQuery().next();
 
-		            if (rs.next()) {
-		                oldRating = rs.getLong(1);
-		            }
-					close(rs);
-	            }
+                // Retrieve oldRating
+                double oldRating = 0;
+                ResultSet rs = null;
+                if (!existPR || !existCI) {
+                    ratingStmt.clearParameters();
+//                    ratingStmt.setString(1, userId);
+//                    ratingStmt.setLong(2, projectId);
+                    ratingStmt.setLong(1, projectId);
+                    ratingStmt.setString(2, userId);
+                    rs = ratingStmt.executeQuery();
+
+                    // in case the project is an assembly/architecure/app testing project, the rating should be the max between design and development
+                    // while if the project is a regular component project, the rating should correspond to either design or development
+                    // component testing gets dev rating
+                    while (rs.next()) {
+//                        oldRating = rs.getLong(1);
+                        if (rs.getLong(3) == 14 || rs.getLong(3) == 7 || 
+                                rs.getLong(3) == 13) {
+
+                            if (oldRating < rs.getLong(1)) {
+                                oldRating = rs.getLong(1);                    
+                            }                                
+                        } else {
+                            if (rs.getLong(3) == 5) {
+                                // component testing gets dev rating
+                                if (rs.getLong(2) == 113) {
+                                    oldRating = rs.getLong(1);
+                                }
+                            } else if (rs.getLong(3)+111 == rs.getLong(2)) {
+                                oldRating = rs.getLong(1);                    
+                            }                
+                        }
+                    }
+                    close(rs);
+                }
 
 
-	            double oldReliability = 0;
-	            if (!existPR) {
-	            	//Retrieve Reliability
-		            reliabilityStmt.clearParameters();
-		            reliabilityStmt.setString(1, userId);
-		            reliabilityStmt.setLong(2, projectId);
-		            rs = reliabilityStmt.executeQuery();
+                double oldReliability = 0;
+                if (!existPR) {
+                    //Retrieve Reliability
+                    reliabilityStmt.clearParameters();
+                    reliabilityStmt.setString(1, userId);
+                    reliabilityStmt.setLong(2, projectId);
+                    rs = reliabilityStmt.executeQuery();
 
-		            if (rs.next()) {
-		                oldReliability = rs.getDouble(1);
-		            }
-					close(rs);
+                    if (rs.next()) {
+                        oldReliability = rs.getDouble(1);
+                    }
+                    close(rs);
 
-					//add project_result
-					ps.setLong(1, projectId);
-			        ps.setString(2, userId);
-			        ps.setLong(3, 0);
-			        ps.setLong(4, 0);
+                    //add project_result
+                    ps.setLong(1, projectId);
+                    ps.setString(2, userId);
+                    ps.setLong(3, 0);
+                    ps.setLong(4, 0);
 
-			        if (oldRating == 0) {
-			            ps.setNull(5, Types.DOUBLE);
-			        } else {
-			            ps.setDouble(5, oldRating);
-			        }
+                    if (oldRating == 0) {
+                        ps.setNull(5, Types.DOUBLE);
+                    } else {
+                        ps.setDouble(5, oldRating);
+                    }
 
-			        if (oldReliability == 0) {
-			            ps.setNull(6, Types.DOUBLE);
-			        } else {
-			            ps.setDouble(6, oldReliability);
-			        }
-			        ps.addBatch();
-	            }
+                    if (oldReliability == 0) {
+                        ps.setNull(6, Types.DOUBLE);
+                    } else {
+                        ps.setDouble(6, oldReliability);
+                    }
+                    ps.addBatch();
+                }
 
-	            // add component_inquiry
-	            // only design, development and assembly contests needs a component_inquiry entry
-	            if (!existCI && componentId > 0) {
-	            	log.log(Level.INFO, "adding component_inquiry for projectId: " + projectId + " userId: " + userId);
-	            	componentInquiryStmt.setLong(1, componentInquiryId++);
-	            	componentInquiryStmt.setLong(2, componentId);
-	            	componentInquiryStmt.setString(3, userId);
-	            	componentInquiryStmt.setLong(4, projectId);
-	            	// assembly contest must have phaseId set to null
-	            	if (categoryId == 14) {
-	            		componentInquiryStmt.setNull(5, Types.INTEGER);
-	            	} else {
-	            		componentInquiryStmt.setLong(5, phaseId);
-	            	}
-	            	componentInquiryStmt.setString(6, userId);
-	            	componentInquiryStmt.setDouble(7, oldRating);
-	            	componentInquiryStmt.setLong(8, version);
-	            	componentInquiryStmt.addBatch();
-	            }
-	    	}
-	    	ps.executeBatch();
-	    	componentInquiryStmt.executeBatch();
-		} catch (UnknownConnectionException e) {
-			throw new BaseException("Failed to create connection", e);
-		} catch (ConfigurationException e) {
-			throw new BaseException("Failed to config for DBNamespace", e);
-		} catch (SQLException e) {
-			throw new BaseException("Failed to populate project_result", e);
-		} catch (DBConnectionException e) {
-			throw new BaseException("Failed to return DBConnection", e);
-		} finally {
-			close(componentInquiryStmt);
-			close(ps);
-			close(existStmt);
-			close(existCIStmt);
-			close(ratingStmt);
-			close(reliabilityStmt);
-			close(conn);
-		}
+                // add component_inquiry
+                // only design, development and assembly contests needs a component_inquiry entry
+                if (!existCI && componentId > 0) {
+                    log.log(Level.INFO, "adding component_inquiry for projectId: " + projectId + " userId: " + userId);
+                    componentInquiryStmt.setLong(1, componentInquiryId++);
+                    componentInquiryStmt.setLong(2, componentId);
+                    componentInquiryStmt.setString(3, userId);
+                    componentInquiryStmt.setLong(4, projectId);
+                    // assembly/component testing/architecture/app testing contests must have phaseId set to null
+                    if (categoryId == 14 || categoryId == 5 || categoryId == 7 || categoryId == 13) {
+                        componentInquiryStmt.setNull(5, Types.INTEGER);
+                    } else {
+                        componentInquiryStmt.setLong(5, phaseId);
+                    }
+                    componentInquiryStmt.setString(6, userId);
+                    componentInquiryStmt.setDouble(7, oldRating);
+                    componentInquiryStmt.setLong(8, version);
+                    componentInquiryStmt.addBatch();
+                }
+            }
+            ps.executeBatch();
+            componentInquiryStmt.executeBatch();
+        } catch (UnknownConnectionException e) {
+            throw new BaseException("Failed to create connection", e);
+        } catch (ConfigurationException e) {
+            throw new BaseException("Failed to config for DBNamespace", e);
+        } catch (SQLException e) {
+            throw new BaseException("Failed to populate project_result", e);
+        } catch (DBConnectionException e) {
+            throw new BaseException("Failed to return DBConnection", e);
+        } finally {
+            close(componentInquiryStmt);
+            close(ps);
+            close(existStmt);
+            close(existCIStmt);
+            close(ratingStmt);
+            close(reliabilityStmt);
+            close(conn);
+        }
     }
 
     /**
@@ -3140,20 +3165,20 @@ public class ActionsHelper {
      * @throws Exception if error occurs
      */
     public static void recaculateScreeningReviewerPayments(long projectId) throws BaseException {
-    	Connection conn = null;
-		try {
-	        DBConnectionFactory dbconn = new DBConnectionFactoryImpl(DB_CONNECTION_NAMESPACE);
-	        conn = dbconn.createConnection();
-	        log.log(Level.INFO,
-	        		"create db connection with default connection name from DBConnectionFactoryImpl with namespace:" + DB_CONNECTION_NAMESPACE);
-	        AutoPaymentUtil.populateReviewerPayments(projectId, conn, AutoPaymentUtil.SCREENING_PHASE);
-		} catch (DBConnectionException e) {
-			throw new BaseException("Failed to return DBConnection", e);
-		} catch (SQLException e) {
-			throw new BaseException("Failed to recaculateScreeningReviewerPayments for project " + projectId, e);
-		} finally {
-			close(conn);
-		}
+        Connection conn = null;
+        try {
+            DBConnectionFactory dbconn = new DBConnectionFactoryImpl(DB_CONNECTION_NAMESPACE);
+            conn = dbconn.createConnection();
+            log.log(Level.INFO,
+                    "create db connection with default connection name from DBConnectionFactoryImpl with namespace:" + DB_CONNECTION_NAMESPACE);
+            AutoPaymentUtil.populateReviewerPayments(projectId, conn, AutoPaymentUtil.SCREENING_PHASE);
+        } catch (DBConnectionException e) {
+            throw new BaseException("Failed to return DBConnection", e);
+        } catch (SQLException e) {
+            throw new BaseException("Failed to recaculateScreeningReviewerPayments for project " + projectId, e);
+        } finally {
+            close(conn);
+        }
     }
 
     /**
@@ -3164,74 +3189,74 @@ public class ActionsHelper {
      * @throws Exception if error occurs
      */
     public static String getRootCategoryIdByComponentId(Object componentId) {
-    	Connection conn = null;
-    	PreparedStatement ps = null;
-    	ResultSet rs = null;
-		try {
-	        DBConnectionFactory dbconn = new DBConnectionFactoryImpl(DB_CONNECTION_NAMESPACE);
-	        conn = dbconn.createConnection();
-	        log.log(Level.INFO,
-	        		"create db connection with default connection name from DBConnectionFactoryImpl with namespace:" + DB_CONNECTION_NAMESPACE);
-	        String sqlStr = "select root_category_id " +
-	        				"	from comp_catalog cc," +
-	        				"		 categories pcat " +
-	        				"	where cc.component_id = ? " +
-	        				"	and cc.status_id = 102 " +
-	        				"	and pcat.category_id = cc.root_category_id";
-	        ps = conn.prepareStatement(sqlStr);
-	        ps.setString(1, componentId.toString());
-	        rs = ps.executeQuery();
-	        if (rs.next()) {
-	        	return rs.getString("root_category_id");
-	        }
-		} catch (Exception e) {
-			// Ignore if no corresponding root_category_id exist
-		} finally {
-			close(rs);
-			close(ps);
-			close(conn);
-		}
-    	return "9926572";
+        Connection conn = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        try {
+            DBConnectionFactory dbconn = new DBConnectionFactoryImpl(DB_CONNECTION_NAMESPACE);
+            conn = dbconn.createConnection();
+            log.log(Level.INFO,
+                    "create db connection with default connection name from DBConnectionFactoryImpl with namespace:" + DB_CONNECTION_NAMESPACE);
+            String sqlStr = "select root_category_id " +
+                            "    from comp_catalog cc," +
+                            "         categories pcat " +
+                            "    where cc.component_id = ? " +
+                            "    and cc.status_id = 102 " +
+                            "    and pcat.category_id = cc.root_category_id";
+            ps = conn.prepareStatement(sqlStr);
+            ps.setString(1, componentId.toString());
+            rs = ps.executeQuery();
+            if (rs.next()) {
+                return rs.getString("root_category_id");
+            }
+        } catch (Exception e) {
+            // Ignore if no corresponding root_category_id exist
+        } finally {
+            close(rs);
+            close(ps);
+            close(conn);
+        }
+        return "9926572";
     }
 
-	/**
+    /**
      * Retrieve all default scorecards.
      *
      * @throws Exception if error occurs
      */
     public static List getDefautlScorecards() throws BaseException {
-    	Connection conn = null;
-    	Statement stmt = null;
-    	ResultSet rs = null;
-		try {
-	        DBConnectionFactory dbconn = new DBConnectionFactoryImpl(DB_CONNECTION_NAMESPACE);
-	        conn = dbconn.createConnection();
-	        log.log(Level.INFO,
-	        		"create db connection with default connection name from DBConnectionFactoryImpl with namespace:" + DB_CONNECTION_NAMESPACE);
-	        String sqlString = "select ds.*, st.name from default_scorecard ds, scorecard_type_lu st " +
-	        		"where ds.scorecard_type_id = st.scorecard_type_id";
+        Connection conn = null;
+        Statement stmt = null;
+        ResultSet rs = null;
+        try {
+            DBConnectionFactory dbconn = new DBConnectionFactoryImpl(DB_CONNECTION_NAMESPACE);
+            conn = dbconn.createConnection();
+            log.log(Level.INFO,
+                    "create db connection with default connection name from DBConnectionFactoryImpl with namespace:" + DB_CONNECTION_NAMESPACE);
+            String sqlString = "select ds.*, st.name from default_scorecard ds, scorecard_type_lu st " +
+                    "where ds.scorecard_type_id = st.scorecard_type_id";
 
-	        stmt = conn.createStatement();
-	        rs = stmt.executeQuery(sqlString);
-	        List list = new ArrayList();
-	        while (rs.next()) {
-	        	DefaultScorecard scorecard = new DefaultScorecard();
-	        	scorecard.setCategory(rs.getInt("project_category_id"));
-	        	scorecard.setScorecardType(rs.getInt("scorecard_type_id"));
-	        	scorecard.setScorecardId(rs.getLong("scorecard_id"));
-	        	scorecard.setName(rs.getString("name"));
-	        	list.add(scorecard);
-	        }
-	        return list;
-		} catch (DBConnectionException e) {
-			throw new BaseException("Failed to return DBConnection", e);
-		} catch (SQLException e) {
-			throw new BaseException("Failed to retrieve default scorecard ", e);
-		} finally {
-			close(rs);
-			close(stmt);
-			close(conn);
-		}
+            stmt = conn.createStatement();
+            rs = stmt.executeQuery(sqlString);
+            List list = new ArrayList();
+            while (rs.next()) {
+                DefaultScorecard scorecard = new DefaultScorecard();
+                scorecard.setCategory(rs.getInt("project_category_id"));
+                scorecard.setScorecardType(rs.getInt("scorecard_type_id"));
+                scorecard.setScorecardId(rs.getLong("scorecard_id"));
+                scorecard.setName(rs.getString("name"));
+                list.add(scorecard);
+            }
+            return list;
+        } catch (DBConnectionException e) {
+            throw new BaseException("Failed to return DBConnection", e);
+        } catch (SQLException e) {
+            throw new BaseException("Failed to retrieve default scorecard ", e);
+        } finally {
+            close(rs);
+            close(stmt);
+            close(conn);
+        }
     }
 
     /**
@@ -3243,21 +3268,21 @@ public class ActionsHelper {
      * @throws BaseException if error occurs
      */
     public static void changeResourceRole(Project project, long userId, long oldRoleId, long newRoleId) throws BaseException {
-    	long categoryId = project.getProjectCategory().getId();
-    	if (categoryId != 1 && categoryId != 2) {
-    		// design/development project need project_result
-    		return;
-    	}
+        long categoryId = project.getProjectCategory().getId();
+        if (categoryId != 1 && categoryId != 2) {
+            // design/development project need project_result
+            return;
+        }
 
-    	if (oldRoleId == 1) {
-    		// Delete project_result if the old role is submitter
-    		deleteProjectResult(project, userId, oldRoleId);
-    	}
+        if (oldRoleId == 1) {
+            // Delete project_result if the old role is submitter
+            deleteProjectResult(project, userId, oldRoleId);
+        }
 
-    	if (newRoleId == 1) {
-    		// added otherwise
-    		populateProjectResult(project, Arrays.asList(new String[] {String.valueOf(userId)}));
-    	}
+        if (newRoleId == 1) {
+            // added otherwise
+            populateProjectResult(project, Arrays.asList(new String[] {String.valueOf(userId)}));
+        }
     }
 
     /**
@@ -3269,52 +3294,52 @@ public class ActionsHelper {
      * @throws BaseException if error occurs
      */
     public static void deleteProjectResult(Project project, long userId, long roleId) throws BaseException {
-    	Connection conn = null;
-    	PreparedStatement ps = null;
-    	long categoryId = project.getProjectCategory().getId();
+        Connection conn = null;
+        PreparedStatement ps = null;
+        long categoryId = project.getProjectCategory().getId();
 //       OrChange - No modification needed as only design/development will modify the project result table.
-    	if (categoryId != 1 && categoryId != 2) {
-    		// design/development project need project_result
-    		return;
-    	}
+        if (categoryId != 1 && categoryId != 2) {
+            // design/development project need project_result
+            return;
+        }
 
-    	if (roleId != 1) {
-    		// Only deal with submitters
-    		return;
-    	}
+        if (roleId != 1) {
+            // Only deal with submitters
+            return;
+        }
 
-		try {
-	        DBConnectionFactory dbconn;
-				dbconn = new DBConnectionFactoryImpl(DB_CONNECTION_NAMESPACE);
-	        conn = dbconn.createConnection();
+        try {
+            DBConnectionFactory dbconn;
+                dbconn = new DBConnectionFactoryImpl(DB_CONNECTION_NAMESPACE);
+            conn = dbconn.createConnection();
 
-	        log.log(Level.INFO,
-	        		"create db connection with default connection name from DBConnectionFactoryImpl with namespace:" + DB_CONNECTION_NAMESPACE);
-	        
-	        // delete from project_result
-	        ps = conn.prepareStatement("delete from project_result where project_id = ? and user_id = ?");
-	        ps.setLong(1, project.getId());
-	        ps.setLong(2, userId);
-	        ps.executeUpdate();
-	        close(ps);
+            log.log(Level.INFO,
+                    "create db connection with default connection name from DBConnectionFactoryImpl with namespace:" + DB_CONNECTION_NAMESPACE);
+            
+            // delete from project_result
+            ps = conn.prepareStatement("delete from project_result where project_id = ? and user_id = ?");
+            ps.setLong(1, project.getId());
+            ps.setLong(2, userId);
+            ps.executeUpdate();
+            close(ps);
 
-	        // delete from component_inquiry
-	        ps = conn.prepareStatement("delete from component_inquiry where project_id = ? and user_id = ?");
-	        ps.setLong(1, project.getId());
-	        ps.setLong(2, userId);
-	        ps.executeUpdate();
-		} catch (UnknownConnectionException e) {
-			throw new BaseException("Failed to create connection", e);
-		} catch (ConfigurationException e) {
-			throw new BaseException("Failed to config for DBNamespace", e);
-		} catch (SQLException e) {
-			throw new BaseException("Failed to populate project_result", e);
-		} catch (DBConnectionException e) {
-			throw new BaseException("Failed to return DBConnection", e);
-		} finally {
-			close(ps);
-			close(conn);
-		}
+            // delete from component_inquiry
+            ps = conn.prepareStatement("delete from component_inquiry where project_id = ? and user_id = ?");
+            ps.setLong(1, project.getId());
+            ps.setLong(2, userId);
+            ps.executeUpdate();
+        } catch (UnknownConnectionException e) {
+            throw new BaseException("Failed to create connection", e);
+        } catch (ConfigurationException e) {
+            throw new BaseException("Failed to config for DBNamespace", e);
+        } catch (SQLException e) {
+            throw new BaseException("Failed to populate project_result", e);
+        } catch (DBConnectionException e) {
+            throw new BaseException("Failed to return DBConnection", e);
+        } finally {
+            close(ps);
+            close(conn);
+        }
     }
 
     /**
@@ -3326,20 +3351,20 @@ public class ActionsHelper {
      * @throws Exception if error occurs
      */
     public static void resetProjectResultWithChangedScores(long projectId, Object userId) throws BaseException {
-    	Connection conn = null;
-		try {
-	        DBConnectionFactory dbconn = new DBConnectionFactoryImpl(DB_CONNECTION_NAMESPACE);
-	        conn = dbconn.createConnection();
-	        log.log(Level.INFO,
-	        		"create db connection with default connection name from DBConnectionFactoryImpl with namespace:" + DB_CONNECTION_NAMESPACE);
-	        PRHelper.resetProjectResultWithChangedScores(projectId, userId, conn);
-		} catch (DBConnectionException e) {
-			throw new BaseException("Failed to return DBConnection", e);
-		} catch (SQLException e) {
-			throw new BaseException("Failed to resetProjectResultWithChangedScores for project " + projectId, e);
-		} finally {
-			close(conn);
-		}
+        Connection conn = null;
+        try {
+            DBConnectionFactory dbconn = new DBConnectionFactoryImpl(DB_CONNECTION_NAMESPACE);
+            conn = dbconn.createConnection();
+            log.log(Level.INFO,
+                    "create db connection with default connection name from DBConnectionFactoryImpl with namespace:" + DB_CONNECTION_NAMESPACE);
+            PRHelper.resetProjectResultWithChangedScores(projectId, userId, conn);
+        } catch (DBConnectionException e) {
+            throw new BaseException("Failed to return DBConnection", e);
+        } catch (SQLException e) {
+            throw new BaseException("Failed to resetProjectResultWithChangedScores for project " + projectId, e);
+        } finally {
+            close(conn);
+        }
     }
 
     /**
@@ -3381,7 +3406,7 @@ public class ActionsHelper {
      */
     static SubmissionStatus getSubmissionStatus(HttpServletRequest request, String statusName)
         throws BaseException {
-    	UploadManager upMgr = ActionsHelper.createUploadManager(request);
+        UploadManager upMgr = ActionsHelper.createUploadManager(request);
         SubmissionStatus[] statuses = null;
         try {
             statuses = upMgr.getAllSubmissionStatuses();
@@ -3408,11 +3433,11 @@ public class ActionsHelper {
      */
     static Submission[] searchReviewedSubmissions(HttpServletRequest request, Project project)
         throws BaseException {
-    	UploadManager upMgr = ActionsHelper.createUploadManager(request);
+        UploadManager upMgr = ActionsHelper.createUploadManager(request);
 
         //first get submission status id for "Active" status
         Filter filterSubmissionStatuss = new InFilter("submission_status_id",
-        		Arrays.asList(new Long[] {new Long(1), new Long(3), new Long(4)}));
+                Arrays.asList(new Long[] {new Long(1), new Long(3), new Long(4)}));
 
         //then search for submissions
         Filter projectIdFilter = SubmissionFilterBuilder.createProjectIdFilter(project.getId());
@@ -3435,41 +3460,41 @@ public class ActionsHelper {
      * @return next component_inquiry_id
      */
     private static long getNextComponentInquiryId(Connection conn, int count) throws BaseException {
-    	String tableName = ConfigHelper.getPropertyValue("component_inquiry.tablename", "sequence_object");
-    	String nameField = ConfigHelper.getPropertyValue("component_inquiry.name", "name");
-    	String currentValueField = ConfigHelper.getPropertyValue("component_inquiry.current_value", "current_value");
-    	String getNextID = "SELECT max(" + currentValueField + ") FROM " + tableName +
-    				" WHERE " + nameField + " = 'main_sequence'";
-    	String updateNextID = "UPDATE " + tableName + " SET " + currentValueField + " = ? " +
-    				" WHERE " + nameField + " = 'main_sequence'" + " AND " + currentValueField + " = ? ";
-    	PreparedStatement getNextIDStmt = null;
-    	PreparedStatement updateNextIDStmt = null;
-    	ResultSet rs = null;
+        String tableName = ConfigHelper.getPropertyValue("component_inquiry.tablename", "sequence_object");
+        String nameField = ConfigHelper.getPropertyValue("component_inquiry.name", "name");
+        String currentValueField = ConfigHelper.getPropertyValue("component_inquiry.current_value", "current_value");
+        String getNextID = "SELECT max(" + currentValueField + ") FROM " + tableName +
+                    " WHERE " + nameField + " = 'main_sequence'";
+        String updateNextID = "UPDATE " + tableName + " SET " + currentValueField + " = ? " +
+                    " WHERE " + nameField + " = 'main_sequence'" + " AND " + currentValueField + " = ? ";
+        PreparedStatement getNextIDStmt = null;
+        PreparedStatement updateNextIDStmt = null;
+        ResultSet rs = null;
 
-    	try {
-	    	getNextIDStmt = conn.prepareStatement(getNextID);
-	    	updateNextIDStmt = conn.prepareStatement(updateNextID);
-	    	while (true) {
-	    		rs = getNextIDStmt.executeQuery();
-	    		rs.next();
-	    		long currentValue = rs.getLong(1);
+        try {
+            getNextIDStmt = conn.prepareStatement(getNextID);
+            updateNextIDStmt = conn.prepareStatement(updateNextID);
+            while (true) {
+                rs = getNextIDStmt.executeQuery();
+                rs.next();
+                long currentValue = rs.getLong(1);
 
-	    		// Update the next value
-	    		updateNextIDStmt.clearParameters();
-	    		updateNextIDStmt.setLong(1, currentValue + count);
-	    		updateNextIDStmt.setLong(2, currentValue);
-	    		int ret = updateNextIDStmt.executeUpdate();
-	    		if (ret > 0) {
-	    			return currentValue;
-	    		}
-	    	}
-    	} catch (SQLException e) {
-    		throw new BaseException("Failed to retrieve next component_inquiry_id", e);
-    	} finally {
-    		close(rs);
-    		close(getNextIDStmt);
-    		close(updateNextIDStmt);
-    	}
+                // Update the next value
+                updateNextIDStmt.clearParameters();
+                updateNextIDStmt.setLong(1, currentValue + count);
+                updateNextIDStmt.setLong(2, currentValue);
+                int ret = updateNextIDStmt.executeUpdate();
+                if (ret > 0) {
+                    return currentValue;
+                }
+            }
+        } catch (SQLException e) {
+            throw new BaseException("Failed to retrieve next component_inquiry_id", e);
+        } finally {
+            close(rs);
+            close(getNextIDStmt);
+            close(updateNextIDStmt);
+        }
     }
 
     /**
@@ -3480,12 +3505,12 @@ public class ActionsHelper {
      * @return the long value, 0 if it does not exist
      */
     private static long getProjectLongValue(Project project, String name) {
-    	Object obj = project.getProperty(name);
-    	if (obj == null) {
-    		return 0;
-    	} else {
-    		return Long.parseLong(obj.toString());
-    	}
+        Object obj = project.getProperty(name);
+        if (obj == null) {
+            return 0;
+        } else {
+            return Long.parseLong(obj.toString());
+        }
     }
 
     /**
@@ -3494,38 +3519,38 @@ public class ActionsHelper {
      * @param obj jdbc resource
      */
     private static void close(Object obj) {
-		if (obj instanceof Connection) {
-			try {
-				((Connection) obj).close();
-				log.log(Level.INFO, "close the connection.");
-			} catch (SQLException e) {
-				// Ignore
-			}
-		} else if (obj instanceof Statement) {
-			try {
-				((Statement) obj).close();
-			} catch (SQLException e) {
-				// Ignore
-			}
-		} else if (obj instanceof ResultSet) {
-			try {
-				((ResultSet) obj).close();
-			} catch (SQLException e) {
-				// Ignore
-			}
-		}
+        if (obj instanceof Connection) {
+            try {
+                ((Connection) obj).close();
+                log.log(Level.INFO, "close the connection.");
+            } catch (SQLException e) {
+                // Ignore
+            }
+        } else if (obj instanceof Statement) {
+            try {
+                ((Statement) obj).close();
+            } catch (SQLException e) {
+                // Ignore
+            }
+        } else if (obj instanceof ResultSet) {
+            try {
+                ((ResultSet) obj).close();
+            } catch (SQLException e) {
+                // Ignore
+            }
+        }
     }
 
     public static ActionForward findForwardNotAuthorized(ActionMapping mapping, Long projectId) {
-		if (projectId != null && projectId.longValue() > 0) {
-			ActionRedirect redirect = new ActionRedirect(mapping.findForward(Constants.NOT_AUTHORIZED_FORWARD_NAME));
-			redirect.addParameter("pid", projectId);
-			redirect.addParameter("redirectToProjectID", projectId);
-			return redirect;
-		} else {
-			return mapping.findForward(Constants.NOT_AUTHORIZED_FORWARD_NAME);
-		}
-	}
+        if (projectId != null && projectId.longValue() > 0) {
+            ActionRedirect redirect = new ActionRedirect(mapping.findForward(Constants.NOT_AUTHORIZED_FORWARD_NAME));
+            redirect.addParameter("pid", projectId);
+            redirect.addParameter("redirectToProjectID", projectId);
+            return redirect;
+        } else {
+            return mapping.findForward(Constants.NOT_AUTHORIZED_FORWARD_NAME);
+        }
+    }
 
     /**
      * Returns true if the given project is of category studio.

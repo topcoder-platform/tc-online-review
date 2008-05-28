@@ -113,7 +113,7 @@ public class ProjectActions extends DispatchAction {
     public ActionForward newProject(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response)
         throws BaseException {
-    	LoggingHelper.logAction(request);
+        LoggingHelper.logAction(request);
         // Gather the roles the user has for current request
         AuthorizationHelper.gatherUserRoles(request);
 
@@ -415,11 +415,11 @@ public class ProjectActions extends DispatchAction {
             long phaseLength = phases[i].getLength();
             String phaseDuration = "";
             if (phaseLength % (3600*1000) == 0) {
-            	phaseDuration = "" + phaseLength / (3600 * 1000);
+                phaseDuration = "" + phaseLength / (3600 * 1000);
             } else {
-            	long hour = phaseLength / 3600 / 1000;
-            	long min = (phaseLength % (3600 * 1000)) / 1000 / 60;
-            	phaseDuration = hour + ":" + (min >= 10 ? "" + min : "0" + min);
+                long hour = phaseLength / 3600 / 1000;
+                long min = (phaseLength % (3600 * 1000)) / 1000 / 60;
+                phaseDuration = hour + ":" + (min >= 10 ? "" + min : "0" + min);
             }
 
             form.set("phase_duration", i + 1, phaseDuration);
@@ -439,8 +439,8 @@ public class ProjectActions extends DispatchAction {
                         Boolean.valueOf("Yes".equals(phases[i].getAttribute("Manual Screening"))));
             }
             if (phases[i].getAttribute("Reviewer Number") != null) {
-            	form.set("phase_required_reviewers", i + 1,
-            			Integer.valueOf((String) phases[i].getAttribute("Reviewer Number")));
+                form.set("phase_required_reviewers", i + 1,
+                        Integer.valueOf((String) phases[i].getAttribute("Reviewer Number")));
             }
             if (phases[i].getAttribute("View Response During Appeals") != null) {
                 form.set("phase_view_appeal_responses", i + 1,
@@ -558,7 +558,7 @@ public class ProjectActions extends DispatchAction {
      */
     public ActionForward editProject(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response) throws BaseException {
-    	LoggingHelper.logAction(request);
+        LoggingHelper.logAction(request);
 
         // Verify that certain requirements are met before processing with the Action
         CorrectnessCheckResult verification = ActionsHelper.checkForCorrectProjectId(
@@ -603,7 +603,7 @@ public class ProjectActions extends DispatchAction {
      */
     public ActionForward saveProject(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response) throws BaseException {
-    	LoggingHelper.logAction(request);
+        LoggingHelper.logAction(request);
         // Cast the form to its actual type
         LazyValidatorForm lazyForm = (LazyValidatorForm) form;
 
@@ -660,7 +660,7 @@ public class ProjectActions extends DispatchAction {
             ProjectCategory category = ActionsHelper.findProjectCategoryById(projectCategories,
                     ((Long) lazyForm.get("project_category")).longValue());
             // Sets Project category
-        	project.setProjectCategory(ActionsHelper.findProjectCategoryById(projectCategories,
+            project.setProjectCategory(ActionsHelper.findProjectCategoryById(projectCategories,
                     ((Long) lazyForm.get("project_category")).longValue()));
         }
 
@@ -677,13 +677,13 @@ public class ProjectActions extends DispatchAction {
             // Populate project root catalog id
             // OrChange - If the project category is Studio set the property to allow multiple submissions.
             if (ActionsHelper.isStudioProject(project)) {
-            	//TODO retrieve it from the configuration
-            	log.debug("setting 'Root Catalog ID' to 26887152");
-            	project.setProperty("Root Catalog ID", "26887152");
-            	log.debug("Allowing multiple submissions for this project.");
+                //TODO retrieve it from the configuration
+                log.debug("setting 'Root Catalog ID' to 26887152");
+                project.setProperty("Root Catalog ID", "26887152");
+                log.debug("Allowing multiple submissions for this project.");
                 project.setProperty("Allow multiple submissions", true);
             } else {
-            	project.setProperty("Root Catalog ID", ActionsHelper.getRootCategoryIdByComponentId(lazyForm.get("component_id")));
+                project.setProperty("Root Catalog ID", ActionsHelper.getRootCategoryIdByComponentId(lazyForm.get("component_id")));
             }
             // Populate project eligibility
             project.setProperty("Eligibility", lazyForm.get("eligibility"));
@@ -1055,7 +1055,7 @@ public class ProjectActions extends DispatchAction {
             // If the number of required reviewers is specified, set it
             Integer requiredReviewer = (Integer) lazyForm.get("phase_required_reviewers", i);
             if (requiredReviewer != null) {
-            	phase.setAttribute("Reviewer Number", requiredReviewer.toString());
+                phase.setAttribute("Reviewer Number", requiredReviewer.toString());
             }
 
             Boolean manualScreening = (Boolean) lazyForm.get("phase_manual_screening", i);
@@ -1063,7 +1063,7 @@ public class ProjectActions extends DispatchAction {
             if (manualScreening != null) {
                 phase.setAttribute("Manual Screening", manualScreening.booleanValue() ? "Yes" : "No");
             } else {
-            	phase.setAttribute("Manual Screening", "No");
+                phase.setAttribute("Manual Screening", "No");
             }
             Boolean viewAppealResponses = (Boolean) lazyForm.get("phase_view_appeal_responses", i);
             // If the view appeal response during appeals flag is specified, set it
@@ -1517,10 +1517,10 @@ public class ProjectActions extends DispatchAction {
 
         // get the id for the timelineNotification
         for (int i = 0; i < types.length; ++i) {
-        	if (types[i].getName().equals("Timeline Notification")) {
-        		timelineNotificationId = types[i].getId();
-        		break;
-        	}
+            if (types[i].getName().equals("Timeline Notification")) {
+                timelineNotificationId = types[i].getId();
+                break;
+            }
         }
 
         // need to do the check timelineNotifictionId exists here
@@ -1582,20 +1582,20 @@ public class ProjectActions extends DispatchAction {
                 } else {
                     // -1 value as id marks the resources that were't persisted in DB yet
                     // and so should be skipped for actions other then "add"
-                	oldUsers.add(new Long(user.getId()));
-                	//System.out.println("REMOVE:" + user.getId());
+                    oldUsers.add(new Long(user.getId()));
+                    //System.out.println("REMOVE:" + user.getId());
                     continue;
                 }
             }
 
             // If action is "delete", delete the resource and proceed to the next one
             if ("delete".equals(resourceAction)) {
-            	// delete project_result
-            	ActionsHelper.deleteProjectResult(project, user.getId(), ((Long) lazyForm.get("resources_role", i)).longValue());
+                // delete project_result
+                ActionsHelper.deleteProjectResult(project, user.getId(), ((Long) lazyForm.get("resources_role", i)).longValue());
                 resourceManager.removeResource(resource,
                         Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
                 resourceManager.removeNotifications(new long[] {user.getId()}, project.getId(),
-                		timelineNotificationId, Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
+                        timelineNotificationId, Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
                 continue;
             }
 
@@ -1606,11 +1606,11 @@ public class ProjectActions extends DispatchAction {
             ResourceRole role = ActionsHelper.findResourceRoleById(
                     resourceRoles, ((Long) lazyForm.get("resources_role", i)).longValue());
             if (role != null && role != resource.getResourceRole()) {
-            	// delete project_result if old role is submitter
+                // delete project_result if old role is submitter
                 // populate project_result if new role is submitter and project is component
-            	if (resource.getResourceRole() != null && resource.getResourceRole().getId() != role.getId()) {
-            		ActionsHelper.changeResourceRole(project, user.getId(), resource.getResourceRole().getId(), role.getId());
-            	}
+                if (resource.getResourceRole() != null && resource.getResourceRole().getId() != role.getId()) {
+                    ActionsHelper.changeResourceRole(project, user.getId(), resource.getResourceRole().getId(), role.getId());
+                }
                 resource.setResourceRole(role);
                 resourceRoleChanged = true;
             }
@@ -1666,9 +1666,9 @@ public class ProjectActions extends DispatchAction {
         }
 
         for (Iterator itr = oldUsers.iterator(); itr.hasNext();) {
-        	Object obj = itr.next();
-        	newUsers.remove(obj);
-        	newSubmitters.remove(obj);
+            Object obj = itr.next();
+            newUsers.remove(obj);
+            newSubmitters.remove(obj);
         }
 
 
@@ -1677,22 +1677,22 @@ public class ProjectActions extends DispatchAction {
 
         // Update all the timeline notifications
         if (project.getProperty("Timeline Notification").equals("On") && !newUsers.isEmpty()) {
-        	// Remove duplicated user ids
-        	long[] existUserIds = resourceManager.getNotifications(project.getId(), timelineNotificationId);
-        	Set finalUsers = new HashSet(newUsers);
+            // Remove duplicated user ids
+            long[] existUserIds = resourceManager.getNotifications(project.getId(), timelineNotificationId);
+            Set finalUsers = new HashSet(newUsers);
 
-        	for (int i = 0; i < existUserIds.length; i++) {
-        		finalUsers.remove(new Long(existUserIds[i]));
-        	}
+            for (int i = 0; i < existUserIds.length; i++) {
+                finalUsers.remove(new Long(existUserIds[i]));
+            }
 
-        	long[] userIds = new long[finalUsers.size()];
-        	int i = 0;
-        	for (Iterator itr = finalUsers.iterator(); itr.hasNext();) {
-        		userIds[i++] = ((Long) itr.next()).longValue();
-        	}
+            long[] userIds = new long[finalUsers.size()];
+            int i = 0;
+            for (Iterator itr = finalUsers.iterator(); itr.hasNext();) {
+                userIds[i++] = ((Long) itr.next()).longValue();
+            }
 
-        	resourceManager.addNotifications(userIds, project.getId(),
-        			timelineNotificationId, Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
+            resourceManager.addNotifications(userIds, project.getId(),
+                    timelineNotificationId, Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
         }
     }
 
@@ -1719,7 +1719,7 @@ public class ProjectActions extends DispatchAction {
         // Remove redirect-after-login attribute (if it exists)
         AuthorizationHelper.removeLoginRedirect(request);
 
-    	LoggingHelper.logAction(request);
+        LoggingHelper.logAction(request);
 
         // Gather the roles the user has for current request
         AuthorizationHelper.gatherUserRoles(request);
@@ -2197,10 +2197,10 @@ public class ProjectActions extends DispatchAction {
 
             // Some additional special checking is need for Aggregation Review type of deliverables
             if (deliverable.getName().equalsIgnoreCase(Constants.AGGREGATION_REV_DELIVERABLE_NAME)) {
-            	// Get the name of the resource's role
-            	final String resourceRole = forResource.getResourceRole().getName();
-            	// Check that this deliverable is for one of the reviewers
-            	if (resourceRole.equalsIgnoreCase(Constants.REVIEWER_ROLE_NAME) ||
+                // Get the name of the resource's role
+                final String resourceRole = forResource.getResourceRole().getName();
+                // Check that this deliverable is for one of the reviewers
+                if (resourceRole.equalsIgnoreCase(Constants.REVIEWER_ROLE_NAME) ||
                         resourceRole.equalsIgnoreCase(Constants.ACCURACY_REVIEWER_ROLE_NAME) ||
                         resourceRole.equalsIgnoreCase(Constants.FAILURE_REVIEWER_ROLE_NAME) ||
                         resourceRole.equalsIgnoreCase(Constants.STRESS_REVIEWER_ROLE_NAME)) {
@@ -2231,7 +2231,7 @@ public class ProjectActions extends DispatchAction {
                     if (j != resources.length) {
                         continue;
                     }
-            	}
+                }
             }
 
             // Skip deliverables that are not for winning submitter

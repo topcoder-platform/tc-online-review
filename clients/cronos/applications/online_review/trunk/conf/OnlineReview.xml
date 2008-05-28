@@ -1492,6 +1492,7 @@
 <!--            <Value>&timelineTemplateDir;/ComponentTimeline.xml</Value> -->
             <Value>&timelineTemplateDir;/TCSTemplate_Design.xml</Value>
             <Value>&timelineTemplateDir;/TCSTemplate_Development.xml</Value>
+            <Value>&timelineTemplateDir;/TCSTemplate_Component_Testing.xml</Value>
             <Value>&timelineTemplateDir;/TCSTemplate_Application.xml</Value>
             <Value>&timelineTemplateDir;/TCSTemplate_Studio.xml</Value>
         </Property>
