@@ -836,7 +836,16 @@ public class ProjectDetailsActions extends DispatchAction {
             noRights = false;
         }
 
-        if (noRights && AuthorizationHelper.hasUserPermission(request, Constants.VIEW_WINNING_SUBM_PERM_NAME)) {
+        // the download validation for custom components is different
+        String rootCatalogId = (String)((verification.getProject()).getProperty("Root Catalog ID"));
+        //TODO: get the custom root catalog ids from configuration 
+        boolean custom = "5801778".equals(rootCatalogId) || "5801779".equals(rootCatalogId);
+
+        boolean mayDownload = (custom ?
+            AuthorizationHelper.hasUserPermission(request, Constants.DOWNLOAD_CUSTOM_SUBM_PERM_NAME) :
+            AuthorizationHelper.hasUserPermission(request, Constants.VIEW_WINNING_SUBM_PERM_NAME));
+
+        if (noRights && mayDownload) {
             // Obtain an instance of Resource Manager
             ResourceManager resMgr = ActionsHelper.createResourceManager(request);
             Resource submitter = resMgr.getResource(upload.getOwner());
@@ -856,7 +865,11 @@ public class ProjectDetailsActions extends DispatchAction {
             }
         }
 
-        if (noRights && AuthorizationHelper.hasUserPermission(request, Constants.VIEW_RECENT_SUBM_AAR_PERM_NAME)) {
+        mayDownload = (custom ?
+                AuthorizationHelper.hasUserPermission(request, Constants.DOWNLOAD_CUSTOM_SUBM_PERM_NAME) :
+                AuthorizationHelper.hasUserPermission(request, Constants.VIEW_RECENT_SUBM_AAR_PERM_NAME));
+
+        if (noRights && mayDownload) {
             // Obtain an instance of Resource Manager
             ResourceManager resMgr = ActionsHelper.createResourceManager(request);
             Resource submitter = resMgr.getResource(upload.getOwner());
