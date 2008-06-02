@@ -2821,6 +2821,9 @@
                 <Property name="AltTextKey">
                     <Value>RootCatalog.Java</Value>
                 </Property>
+                <Property name="Custom">
+                    <Value>False</Value>
+                </Property>
             </Property>
             <Property name="dotNET">
                 <Property name="id">
@@ -2831,6 +2834,9 @@
                 </Property>
                 <Property name="AltTextKey">
                     <Value>RootCatalog.dotNET</Value>
+                </Property>
+                <Property name="Custom">
+                    <Value>False</Value>
                 </Property>
             </Property>
             <Property name="CustomJava">
@@ -2843,6 +2849,9 @@
                 <Property name="AltTextKey">
                     <Value>RootCatalog.CustomJava</Value>
                 </Property>
+                <Property name="Custom">
+                    <Value>True</Value>
+                </Property>
             </Property>
             <Property name="CustomNET">
                 <Property name="id">
@@ -2853,6 +2862,9 @@
                 </Property>
                 <Property name="AltTextKey">
                     <Value>RootCatalog.CustomNET</Value>
+                </Property>
+                <Property name="Custom">
+                    <Value>True</Value>
                 </Property>
             </Property>
             <Property name="Flash">
@@ -2865,6 +2877,9 @@
                 <Property name="AltTextKey">
                     <Value>RootCatalog.Flash</Value>
                 </Property>
+                <Property name="Custom">
+                    <Value>False</Value>
+                </Property>
             </Property>
             <Property name="AOL">
                 <Property name="id">
@@ -2875,6 +2890,9 @@
                 </Property>
                 <Property name="AltTextKey">
                     <Value>RootCatalog.AOL</Value>
+                </Property>
+                <Property name="Custom">
+                    <Value>False</Value>
                 </Property>
             </Property>
             <Property name="Application">
@@ -2887,6 +2905,9 @@
                 <Property name="AltTextKey">
                     <Value>RootCatalog.Application</Value>
                 </Property>
+                <Property name="Custom">
+                    <Value>False</Value>
+                </Property>
             </Property>
             <Property name="Studio">
                 <Property name="id">
@@ -2897,6 +2918,9 @@
                 </Property>
                 <Property name="AltTextKey">
                     <Value>RootCatalog.Studio</Value>
+                </Property>
+                <Property name="Custom">
+                    <Value>False</Value>
                 </Property>
             </Property>
         </Property>
