@@ -86,6 +86,16 @@ public class ConfigHelper {
 
     /**
      * This member variable is a string constant that specifies the name of the property which
+     * contains name of the key in Resource Messages file.  This key will be used to retrieve
+     * a flag showing if the catalog is custom.  
+     *
+     * @see #ROOT_CATALOGS_PROP
+     * @see #ROOT_CATALOG_ID_PROP
+     */
+    private static final String ROOT_CATALOG_CUSTOM_KEY_PROP = "Custom";
+    
+    /**
+     * This member variable is a string constant that specifies the name of the property which
      * contains definitions of Project Category name/icon filename pairs for icons that should
      * be matched to certain Project Categories.
      *
@@ -390,6 +400,11 @@ public class ConfigHelper {
     private static final Map rootCatalogAltTextKeys = new HashMap();
 
     /**
+     * This member variable holds the custom root catalogs ids 
+     */
+    private static final Set customRootCatalogs = new HashSet();
+    
+    /**
      * This member variable holds the names of small icons (.gif) files that should be displayed
      * on the JSP pages for different Project Categories.
      */
@@ -582,6 +597,12 @@ public class ConfigHelper {
                 if (strAltTextKey != null && strAltTextKey.trim().length() != 0) {
                     // ... store the ID/message-key pair for later use
                     rootCatalogAltTextKeys.put(strID, strAltTextKey);
+                }
+                
+                // Retrieve custom catalog flag 
+                String custom = propRootCatIcons.getValue(strPropName + "." + ROOT_CATALOG_CUSTOM_KEY_PROP);
+                if (custom != null && custom.trim().length() != 0 && custom.trim().equalsIgnoreCase("true")) {
+                    customRootCatalogs.add(strID);
                 }
             }
 
@@ -857,6 +878,17 @@ public class ConfigHelper {
      */
     public static String getRootCatalogAltTextKey(String rootCatalogId) {
         return (String) rootCatalogAltTextKeys.get(rootCatalogId);
+    }
+
+    /**
+     * This static method returns true if the specified root catalog id is custom
+     *
+     * @return true if the specified root catalog id is custom
+     * @param rootCatalogId
+     *            Root Catalog ID which to look for.
+     */
+    public static boolean isCustomRootCatalog(String rootCatalogId) {
+        return customRootCatalogs.contains(rootCatalogId);
     }
 
     /**

@@ -838,9 +838,8 @@ public class ProjectDetailsActions extends DispatchAction {
 
         // the download validation for custom components is different
         String rootCatalogId = (String)((verification.getProject()).getProperty("Root Catalog ID"));
-        //TODO: get the custom root catalog ids from configuration 
-        boolean custom = "5801778".equals(rootCatalogId) || "5801779".equals(rootCatalogId);
-
+        boolean custom = ConfigHelper.isCustomRootCatalog(rootCatalogId);
+        
         boolean mayDownload = (custom ?
             AuthorizationHelper.hasUserPermission(request, Constants.DOWNLOAD_CUSTOM_SUBM_PERM_NAME) :
             AuthorizationHelper.hasUserPermission(request, Constants.VIEW_WINNING_SUBM_PERM_NAME));
