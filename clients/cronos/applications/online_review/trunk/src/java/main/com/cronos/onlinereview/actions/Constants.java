@@ -299,6 +299,12 @@ public class Constants {
 
     /**
      * This member variable is a string constant that defines the name of the
+     * Download Custom Submission permission.
+     */
+    public static final String DOWNLOAD_CUSTOM_SUBM_PERM_NAME = "Download Custom Submission";
+
+    /**
+     * This member variable is a string constant that defines the name of the
      * View Most Recent after Appeals Response permission.
      */
     public static final String VIEW_RECENT_SUBM_AAR_PERM_NAME = "View Most Recent after Appeals Response";
