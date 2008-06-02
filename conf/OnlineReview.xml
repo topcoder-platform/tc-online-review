@@ -3296,6 +3296,9 @@
                 <Value>Public</Value>
                 <Value>Designer</Value>
             </Property>
+            <Property name="Download Custom Submission">
+                <Value>Submitter</Value>
+            </Property>
             <Property name="Remove Submission">
                 <Value>Global Manager</Value>
                 <Value>Manager</Value>
