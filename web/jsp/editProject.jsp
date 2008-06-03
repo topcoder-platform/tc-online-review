@@ -93,21 +93,21 @@
         var projectTypeNamesMap = {};
         <c:forEach items="${projectTypes}" var="projectType">
             projectTypeNamesMap["${projectType.id}"] = "${projectType.name}";
+        </c:forEach>
 
-            <c:if test="${projectType.name == 'Component'}">
-                <c:forEach items="${projectCategories}" var="category">
-                    <c:if test="${category.name == 'Development'}">
-                        var developmentCatId = "${category.id}";</c:if>
-                    <c:if test="${category.name == 'Design'}">
-                        var designCatId = "${category.id}";</c:if>
-                </c:forEach>
-            </c:if>
-            <c:if test="${projectType.name == 'Application'}">
-                <c:forEach items="${projectCategories}" var="category">
-                    <c:if test="${category.name == 'Assembly Competition'}">
-                        var assemblyCatId = "${category.id}";</c:if>
-                </c:forEach>
-            </c:if>
+        <c:forEach items="${projectCategories}" var="category">
+	        <c:if test="${category.projectType.name == 'Component'}">
+	            <c:if test="${category.name == 'Development'}">
+	                var developmentCatId = "${category.id}";</c:if>
+	            <c:if test="${category.name == 'Design'}">
+	                var designCatId = "${category.id}";</c:if>
+	            <c:if test="${category.name == 'Testing Competition'}">
+	                var compTestingCatId = "${category.id}";</c:if>
+	        </c:if>
+	        <c:if test="${category.projectType.name == 'Application'}">
+                <c:if test="${category.name == 'Assembly Competition'}">
+                    var assemblyCatId = "${category.id}";</c:if>
+	        </c:if>
         </c:forEach>
 
         var phaseTypeIdsMap = {};
@@ -185,12 +185,22 @@
             }
 
             var digitalRunChecked = false;
+            var publicChecked = false;
 
-            if (projectCategoryNode.value == developmentCatId) digitalRunChecked = true;
-            if (projectCategoryNode.value == designCatId) digitalRunChecked = true;
-            if (projectCategoryNode.value == assemblyCatId) digitalRunChecked = true;
+            if (projectCategoryNode.value == developmentCatId ||
+                projectCategoryNode.value == designCatId ||
+                projectCategoryNode.value == assemblyCatId ||
+                projectCategoryNode.value == compTestingCatId) {
+                
+                digitalRunChecked = true;
+                
+                if (projectCategoryNode.value != assemblyCatId) {
+                    publicChecked = true;
+                }
+            }
 
             document.getElementById("digitalRunCheckBox").checked = digitalRunChecked;
+            document.getElementById("public").checked = publicChecked;
         }
 
         function changeScorecardByCategory(scorecardNode, category, scorecards, scorecardName) {
@@ -901,7 +911,7 @@
                                 <tr>
                                     <td class="valueB"><bean:message key="editProject.ProjectDetails.Public" /></td>
                                     <td class="value" nowrap="nowrap">
-                                        <html:checkbox property="public" />
+                                        <html:checkbox property="public" styleId="public"/>
                                     </td>
                                 </tr>
                                 <tr class="light">
