@@ -723,6 +723,13 @@ public class ProjectActions extends DispatchAction {
         // Populate project SVN module
         project.setProperty("SVN Module", lazyForm.get("SVN_module"));
 
+        if (newProject && lazyForm.get("external_reference_id") != null) {
+            // Retrieve and populate version
+            project.setProperty("Version ID", 
+            		ActionsHelper.getVersionUsingComponentVersionId(
+        			((Long) lazyForm.get("external_reference_id")).longValue()));
+        }
+        
         // Extract project's properties from the form
         Boolean autopilotOnObj = (Boolean) lazyForm.get("autopilot");
         Boolean sendEmailNotificationsObj = (Boolean) lazyForm.get("email_notifications");

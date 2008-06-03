@@ -3368,6 +3368,45 @@ public class ActionsHelper {
     }
 
     /**
+     * Gets version from comp_versions table
+     *
+     * @param componentVersionId the component version id
+     *
+     * @throws Exception if error occurs
+     */
+    public static int getVersionUsingComponentVersionId(long componentVersionId) throws BaseException {
+        Connection conn = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        try {
+            DBConnectionFactory dbconn = new DBConnectionFactoryImpl(DB_CONNECTION_NAMESPACE);
+            conn = dbconn.createConnection();
+            log.log(Level.INFO,
+                    "create db connection with default connection name from DBConnectionFactoryImpl with namespace:" + DB_CONNECTION_NAMESPACE);
+
+            String sqlString = "select version from comp_versions where comp_vers_id = ?";
+		
+            ps = conn.prepareStatement(sqlString);
+            ps.setLong(1, componentVersionId);
+		    rs = ps.executeQuery();
+		    
+		    if (rs.next()) {
+		    	return rs.getInt("version");
+		    }
+		    
+		    return 0;
+        } catch (DBConnectionException e) {
+            throw new BaseException("Failed to return DBConnection", e);
+        } catch (SQLException e) {
+            throw new BaseException("Failed to retrieve version for " + componentVersionId, e);
+        } finally {
+            close(rs);
+            close(ps);
+            close(conn);
+        }
+    }
+
+    /**
      * Gets the scorecard minimum score from the given review.
      *
      * @param scorecardManager ScorecardManager instance.
