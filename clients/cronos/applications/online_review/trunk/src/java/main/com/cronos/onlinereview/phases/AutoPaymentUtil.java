@@ -32,17 +32,17 @@ public class AutoPaymentUtil {
 	 */
 	private static final Log logger = LogFactory.getLog(AutoPaymentUtil.class.getName());
 	
-    /** Retrieve the price from comp_version_date. */
-    private static final String SELECT_PRICE_CVD = "select price " +
-    	"	from comp_version_dates, " +
-        "	project_info pi, " +
-        "	project p" +
-        "	where p.project_id = pi.project_id" +
-        "	and comp_vers_id = pi.value" +
-        "	and ((p.project_category_id = 1 and phase_id = 112)" +
-        "		or (p.project_category_id = 2 and phase_id = 113))" +
-        "	and pi.project_info_type_id = 1 " +
-        "	and pi.project_id = ? ";
+//    /** Retrieve the price from comp_version_date. */
+//    private static final String SELECT_PRICE_CVD = "select price " +
+//    	"	from comp_version_dates, " +
+//        "	project_info pi, " +
+//        "	project p" +
+//        "	where p.project_id = pi.project_id" +
+//        "	and comp_vers_id = pi.value" +
+//        "	and ((p.project_category_id = 1 and phase_id = 112)" +
+//        "		or (p.project_category_id = 2 and phase_id = 113))" +
+//        "	and pi.project_info_type_id = 1 " +
+//        "	and pi.project_id = ? ";
 
     /** Retrieve the price from project_info. */
     private static final String SELECT_PRICE_PROJECT_INFO =
@@ -106,8 +106,8 @@ public class AutoPaymentUtil {
         throws SQLException {
         long projectCategoryId = getProjectCategoryId(projectId, conn);
 
-        // OrChange - no modification needed as the current logic is applied only to design and development.
-        if (projectCategoryId != 1 && projectCategoryId != 2) {
+        // OrChange - no modification needed as the current logic is applied only to design and development. (and component testing)
+        if (projectCategoryId != 1 && projectCategoryId != 2 && projectCategoryId != 5) {
         	// Logic only apply to component
         	return;
         }
@@ -118,8 +118,9 @@ public class AutoPaymentUtil {
         int count = getCount(projectId, conn);
         int passedCount = getScreenPassedCount(projectId, conn);
         float[] payments = getPayments(projectId, projectCategoryId, conn);
+        
         FixedPriceComponent fpc = new FixedPriceComponent(levelId, count, passedCount,
-                (projectCategoryId == 1) ? 112 : 113, payments[0], payments[1]);
+                (int)(projectCategoryId + 111), payments[0], payments[1]);
         List reviewers = getReviewers(projectId, conn);
 
         for (Iterator iter = reviewers.iterator(); iter.hasNext();) {
@@ -514,18 +515,18 @@ public class AutoPaymentUtil {
             PRHelper.close(pstmt);
         }
 
-        try {
-            pstmt = conn.prepareStatement(SELECT_PRICE_CVD);
-            pstmt.setLong(1, projectId);
-            rs = pstmt.executeQuery();
-
-            if (rs.next()) {
-                return rs.getDouble(1);
-            }
-        } finally {
-            PRHelper.close(rs);
-            PRHelper.close(pstmt);
-        }
+//        try {
+//            pstmt = conn.prepareStatement(SELECT_PRICE_CVD);
+//            pstmt.setLong(1, projectId);
+//            rs = pstmt.executeQuery();
+//
+//            if (rs.next()) {
+//                return rs.getDouble(1);
+//            }
+//        } finally {
+//            PRHelper.close(rs);
+//            PRHelper.close(pstmt);
+//        }
 
         return 0;
     }
