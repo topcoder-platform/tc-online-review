@@ -68,6 +68,8 @@
     <property name="design_submission.jar" value="${component}_${component_version}_design_submission.jar" />
     <property name="dev_dist.jar" value="${component}_${component_version}_dev_dist.jar" />
     <property name="design_dist.jar" value="${component}_${component_version}_design_dist.jar" />
+    <property name="component.war" value="${build_distdir}/${distfilename}.war" />
+    
 
     <!-- TCS Dependencies -->
     <property name="authentication_factory.version" value="2.0" />
@@ -590,7 +592,6 @@ don't need this anymore.  OR doesn't use it.
 
     <target name="dist" depends="clean, compile">
         <mkdir dir="${build_distdir}" />
-        <property name="component.war" value="${build_distdir}/${distfilename}.war" />
         <delete file="${component.war}" failonerror="false" />
 
         <war destfile="${component.war}" webxml="${configdir}/WEB-INF/web.xml" duplicate="fail">
