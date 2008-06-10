@@ -4,25 +4,15 @@
  */
 package com.cronos.onlinereview.phases;
 
-import java.rmi.RemoteException;
-import java.text.MessageFormat;
-import java.util.Iterator;
-import java.util.List;
-
-import com.cronos.onlinereview.phases.logging.LoggerMessage;
-import com.topcoder.management.project.Project;
-import com.topcoder.util.log.Level;
-import com.topcoder.web.ejb.pacts.DeleteAffirmedAssignmentDocumentException;
 import com.topcoder.web.ejb.pacts.PactsClientServices;
-import com.topcoder.web.ejb.pacts.assignmentdocuments.AssignmentDocument;
-import com.topcoder.web.ejb.pacts.assignmentdocuments.AssignmentDocumentStatus;
-import com.topcoder.web.ejb.pacts.assignmentdocuments.AssignmentDocumentType;
-import com.topcoder.web.ejb.pacts.assignmentdocuments.ComponentProject;
-import com.topcoder.web.ejb.pacts.assignmentdocuments.User;
 
 /**
- * 
- * @author Bauna
+ * This class's primary focus was the version 1 assignment document calls.  Since we have
+ * moved on to assignment v2 business rules, we don't need to make these calls anymore.  However
+ * it's quite likely that we'll need more interaction between online review and PACTS in the future
+ * so, i've left the this delegate class for enhancement in the future rather than delete it. 
+ *
+ * @author Bauna,dok
  * @version 1.0
  */
 public class PactsServicesDelegate {
@@ -30,8 +20,10 @@ public class PactsServicesDelegate {
 			.getLog(PactsServicesDelegate.class.getName());
 	
 //	Your nth place <design|development> submission for <component name> <version>
-	private final static MessageFormat SUBMISSION_TITLE_FORMATTER = 
+/*
+	private final static MessageFormat SUBMISSION_TITLE_FORMATTER =
 		new MessageFormat("Your {0} place {1} submission for {2} v{3}");
+*/
 	private PactsClientServices pactsClientServices;
 
 	public PactsServicesDelegate() throws PactsServicesCreationException {
@@ -46,6 +38,7 @@ public class PactsServicesDelegate {
 		}
 	}
 	
+/*
 	private String generateSubmissionTitle(Project project, String position) {
 		
 		return SUBMISSION_TITLE_FORMATTER.format(new Object[] {position, 
@@ -53,14 +46,19 @@ public class PactsServicesDelegate {
 				project.getProperty("Project Name"),
 				project.getProperty("Project Version")});
 	}
-	
-	/**
+*/
+
+
+    
+
+    /**
 	 * Create the AssigmentDocument for the winner and the runner up if they exists. 
 	 * 
 	 * @param project the project to create the AssignmentDocuments
 	 * @return the AssignmentDocuments created
 	 * @throws PactsServicesException
 	 */
+/* [OR-584] we don't do this style of assignment any more
 	public AssignmentDocumentResult createAssignmentDocuments(Project project) throws PactsServicesException {
 		log.log(Level.INFO, new LoggerMessage("Project", new Long(project.getId()), null, "Create assignment documents."));
 		
@@ -84,8 +82,10 @@ public class PactsServicesDelegate {
 			throw new PactsServicesException(e);
 		}
 	}
-		
-	public AssignmentDocument createNewAssignmentDocument(long projectId, String userId, String submissionTitle) throws PactsServicesException {
+*/
+
+/*	[OR-584] we don't do this style of assignment any more
+public AssignmentDocument createNewAssignmentDocument(long projectId, String userId, String submissionTitle) throws PactsServicesException {
 		log.log(Level.INFO, "Creating AD for User: " + userId + " Project: " + projectId);
 		log.log(Level.DEBUG, "Submission Title: " + submissionTitle);
 		AssignmentDocument userAD = new AssignmentDocument();
@@ -108,8 +108,9 @@ public class PactsServicesDelegate {
 					"Fail to create new Assignment Document for the userId:" + userId + " and submissionTitle:" + submissionTitle, e));
 			throw new PactsServicesException(e);
 		}
-	}
+	}*/
 
+	/*[OR-584] we don't do this style of assignment any more
 	public void deleteAssignmentDocumentsForProject(long projectId) throws RemoteException {
 		List assignmentDocs = getPactsServices().getAssignmentDocumentByProjectId(projectId);
 		for (Iterator i = assignmentDocs.iterator(); i.hasNext();) {
@@ -122,8 +123,9 @@ public class PactsServicesDelegate {
 						new LoggerMessage("Project", new Long(projectId), null, "Fail to delete assignment documents.", e));
 			}
 		}
-	}
+	}*/
 
+/*[OR-584] we don't do this style of assignment any more
 	public boolean getAllWinnersAcceptedAssignmentDocuments(Project project) throws RemoteException {
 		
 		Long winnerId = (project.getProperty("Winner External Reference ID") != null) ? 
@@ -144,6 +146,7 @@ public class PactsServicesDelegate {
 		}
 		return winnerAccept && runnerUpAccept; 
 	}
+*/
 
 	private PactsClientServices getPactsServices() {
 		return pactsClientServices;

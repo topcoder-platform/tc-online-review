@@ -28,7 +28,7 @@
             <Value>JobCmd:com.topcoder.management.phase.autopilot.AutoPilotJob</Value>
         </Property>
     </Config>
-    <Config name="com.topcoder.management.phase.autopilot.AutoPilot">
+<!-- [OR-584] go back to the default implementation, we don't need the custom one because we don't do this for assignment v2
         <Property name="com/topcoder/management/phase/autopilot/AutoPilotSource">
             <Property name="type">
                 <Value>com.topcoder.management.phase.autopilot.impl.ActiveAutoPilotSource</Value>
@@ -44,7 +44,25 @@
             </Property>
         </Property>
     </Config>
-    
+-->
+    <Config name="com.topcoder.management.phase.autopilot.AutoPilot">
+        <Property name="com/topcoder/management/phase/autopilot/AutoPilotSource">
+            <Property name="type">
+                <Value>com.topcoder.management.phase.autopilot.impl.ActiveAutoPilotSource</Value>
+            </Property>
+            <Property name="params">
+            </Property>
+        </Property>
+        <Property name="com/topcoder/management/phase/autopilot/ProjectPilot">
+            <Property name="type">
+                <Value>com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot</Value>
+            </Property>
+            <Property name="params">
+            </Property>
+        </Property>
+    </Config>
+
+<!--[OR-584] we only do assignment v2 now, so we don't need this
     <Config name="com.cronos.onlinereview.phases.OnlineReviewProjectPilot">
     	<Property name="CheckAssignmentDocumentsStatus">
     		<Value>false</Value>
@@ -60,7 +78,7 @@
                 <Value>service@topcodersoftware.com</Value>
             </Property>
         </Property>
-    </Config>
+    </Config>-->
     
     <Config name="com.topcoder.management.phase.autopilot.impl.ActiveAutoPilotSource">
         <Property name="com/topcoder/management/project/ProjectManager">
