@@ -1,14 +1,16 @@
 <?xml version="1.0" ?>
 <!DOCTYPE CMConfig [
-       <!ENTITY localFileUploadDir "/home/onlinereview/downloads">
-       <!ENTITY phasesEmailTemplate "/home/onlinereview/email_template.txt">
-       <!ENTITY winnersEmailTemplate "/home/onlinereview/winners_email_template.txt">
-       <!ENTITY timelineTemplateDir "/home/onlinereview">
-       <!ENTITY contactManagersTemplate "/home/onlinereview/contact_manager_template.txt">
-       <!ENTITY pactJNDIAddress "jnp://63.118.154.207:1099">
-       <!ENTITY assignmentDocumentsFlag "false">
+       <!ENTITY localFileUploadDir "/home/tcs/downloads">
+       <!ENTITY phasesEmailTemplate "/home/tcs/web/conf/templates/email_template.txt">
+       <!ENTITY winnersEmailTemplate "/home/tcs/web/conf/templates/winners_email_template.txt">
+       <!ENTITY timelineTemplateDir "/home/tcs/web/conf/templates">
+       <!ENTITY contactManagersTemplate "/home/tcs/web/conf/templates/contact_manager_template.txt">
+       <!ENTITY pactJNDIAddress "jnp://63.118.154.181:1199">
 ]>
 <CMConfig>
+<!-- [OR-584] don't need this anymore
+    <!ENTITY assignmentDocumentsFlag "false">
+-->
     <!--
         ==========  Configuration for DB Connection Factory component ==========
     -->
@@ -1010,13 +1012,17 @@
                 <Value>service@topcodersoftware.com</Value>
             </Property>
         </Property>
+<!-- [OR-584] don't need this flag anymore, assignment v2 business logic doesn't require it
         <Property name="CreateAssignmentDocuments">
     		<Value>&assignmentDocumentsFlag;</Value>
     	</Property>
+-->
     	<!-- Date Format: MM/dd/yyyy  -->
+<!--[OR-584] don't need this anymore, assignment v2 business logic doesn't require it
     	<Property name="AssignmentDocumentsStartDate">
     		<Value>06/18/2007</Value>
     	</Property>
+-->
         <Property name="WinnersEmail">
             <Property name="EmailTemplateSource">
                 <Value>file</Value>

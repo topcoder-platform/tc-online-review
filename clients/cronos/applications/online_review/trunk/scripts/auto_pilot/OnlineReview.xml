@@ -5,9 +5,12 @@
        <!ENTITY winnersEmailTemplate "/home/onlinereview/winners_email_template.txt">
        <!ENTITY timelineTemplateDir "/home/onlinereview">
        <!ENTITY contactManagersTemplate "/home/onlinereview/contact_manager_template.txt">
-       <!ENTITY pactJNDIAddress "jnp://63.118.154.207:1199">
-       <!ENTITY assignmentDocumentsFlag "false">
+       <!ENTITY pactJNDIAddress "jnp://63.118.154.181:1199">
 ]>
+<!--[OR-584] this flag is no longer necessary, we only do v2 assignment now
+<!ENTITY assignmentDocumentsFlag "false">
+-->
+
 <CMConfig>	
     <Config name="com.topcoder.util.log">
         <Property name="logClass">
@@ -31,7 +34,7 @@
                         <Value>com.informix.jdbc.IfxDriver</Value>
                     </Property>
                     <Property name="jdbc_url">
-                        <Value>jdbc:informix-sqli://63.118.154.218:1526/tcs_catalog:INFORMIXSERVER=devinformix10_shm;IFX_LOCK_MODE_WAIT=5</Value>
+                        <Value>jdbc:informix-sqli://63.118.154.190:1526/tcs_catalog:INFORMIXSERVER=devinformix10_shm;IFX_LOCK_MODE_WAIT=5</Value>
                     </Property>
                     <Property name="user">
                         <Value>coder</Value>
@@ -612,13 +615,17 @@
                 <Value>service@topcodersoftware.com</Value>
             </Property>
         </Property>
-        <Property name="CreateAssignmentDocuments">
-    		<Value>&assignmentDocumentsFlag;</Value>
-    	</Property>
-    	<!-- Date Format: MM/dd/yyyy  -->
-    	<Property name="AssignmentDocumentsStartDate">
-    		<Value>06/18/2007</Value>
-    	</Property>
+        <!-- [OR-584] don't need this flag anymore, assignment v2 business logic doesn't require it
+                <Property name="CreateAssignmentDocuments">
+                    <Value>&assignmentDocumentsFlag;</Value>
+                </Property>
+        -->
+                <!-- Date Format: MM/dd/yyyy  -->
+        <!--[OR-584] don't need this anymore, assignment v2 business logic doesn't require it
+                <Property name="AssignmentDocumentsStartDate">
+                    <Value>06/18/2007</Value>
+                </Property>
+        -->
         <Property name="WinnersEmail">
             <Property name="EmailTemplateSource">
                 <Value>file</Value>
