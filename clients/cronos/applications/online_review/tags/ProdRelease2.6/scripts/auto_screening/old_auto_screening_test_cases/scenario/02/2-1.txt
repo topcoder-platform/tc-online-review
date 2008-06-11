@@ -1,0 +1,21 @@
+Java Dev - Empty jar.
+
+Fatal Errors: 
+ TCS-003: Your submission does not conform to the directory standard. 
+The directory does not exist (src) 
+The directory does not exist (java) 
+The directory does not exist (main) 
+The directory does not exist (tests) 
+ 
+ TCS-004: Your submission does not contain a component specification document in rich text format (rtf).  
+ TCS-005: Your submission does not contain a /log directory from the successful execution of the unit tests.  
+ TCS-011: Your submission does not contain source code under /src. 
+Does not contain Java source code. 
+ 
+ TCS-012: Your submission does not contain test source code under /src. 
+Does not contain Java test source code. 
+ 
+ Warnings: 
+ TCS-013: Checkstyle has produced the following warnings. 
+Unable to run checkstyle. 
+Unable to run checkstyle.  
