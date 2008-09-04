@@ -171,6 +171,34 @@ public class ProjectDetailsActions extends DispatchAction {
         request.setAttribute("descriptionLink",
                 ConfigHelper.getProjectTypeDescriptionLink(projectTypeName, componentId, versionId));
         request.setAttribute("forumLink", ConfigHelper.getProjectTypeForumLink(projectTypeName, forumId));
+		request.setAttribute("projectType", projectTypeName);
+		request.setAttribute("projectCategory", project.getProjectCategory().getName());
+		String paymentStr = project.getProperty("Payments") == null ? "0": project.getProperty("Payments").toString();
+		request.setAttribute("projectPayment", Double.valueOf(paymentStr));
+
+		boolean digitalRunFlag = "On".equals(project.getProperty("Digital Run Flag"));
+
+		request.setAttribute("projectDRFlag", digitalRunFlag?"Yes":"No");
+
+		String drpointStr = project.getProperty("DR points") == null ? "0" : project.getProperty("DR points").toString();
+		if (digitalRunFlag)
+		{
+			double drpoint = 0;
+			if (drpointStr != null)
+			{
+				drpoint = Double.parseDouble(drpointStr);
+			}
+			if (drpoint < 0.5)
+			{
+				request.setAttribute("projectDRP", Double.valueOf(paymentStr));
+			}
+			else
+			{
+				request.setAttribute("projectDRP", Double.valueOf(drpointStr));
+			}
+		}
+		
+		
 
         // Place a string that represents "my" current role(s) into the request
         ActionsHelper.retrieveAndStoreMyRole(request, getResources(request));
