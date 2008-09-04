@@ -15,8 +15,28 @@
 				<td class="value" width="100%">
 					<a href='${fn:escapeXml(project.allProperties["SVN Module"])}'>${orfn:htmlEncode(project.allProperties["SVN Module"])}</a></td>
 			</tr>
-			<c:set var="rowIndex" value="1" />
+			<c:set var="rowIndex" value="0" />
 		</c:if>
+		<tr class="dark">
+				<td class="value" width="15%" nowrap="nowrap"><b>Type:</b></td>
+				<td class="value" width="100%">${projectType}</td>
+		</tr>
+		<tr class="light">
+				<td class="value" width="15%" nowrap="nowrap"><b>Category:</b></td>
+				<td class="value" width="100%">${projectCategory}</td>
+		</tr>
+		<tr class="dark">
+				<td class="value" width="15%" nowrap="nowrap"><b>Price:</b></td>
+				<td class="value" width="100%">${"$"}${orfn:displayPaymentAmt(pageContext.request, projectPayment)}</td>
+		</tr>
+		<tr class="light">
+				<td class="value" width="15%" nowrap="nowrap"><b>This contest is part of the Digital Run:</b></td>
+				<td class="value" width="100%">${projectDRFlag}</td>
+		</tr>
+		<tr class="dark">
+				<td class="value" width="15%" nowrap="nowrap"><b>DR Points:</b></td>
+				<td class="value" width="100%">${projectDRFlag=="Yes"?orfn:displayPaymentAmt(pageContext.request, projectDRP):""}</td>
+		</tr>
 		<c:if test="${isAllowedToViewAutopilotStatus}">
 			<c:set var="autopilotStatus" value="${project.allProperties['Autopilot Option']}" />
 			<c:if test='${autopilotStatus != "On" and autopilotStatus != "Off"}'>
