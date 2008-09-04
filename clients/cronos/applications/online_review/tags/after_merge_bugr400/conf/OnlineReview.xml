@@ -1,0 +1,3739 @@
+<?xml version="1.0" ?>
+<!DOCTYPE CMConfig [
+       <!ENTITY localFileUploadDir "/home/tcs/downloads">
+       <!ENTITY phasesEmailTemplate "/home/tcs/web/conf/templates/email_template.txt">
+       <!ENTITY winnersEmailTemplate "/home/tcs/web/conf/templates/winners_email_template.txt">
+       <!ENTITY timelineTemplateDir "/home/tcs/web/conf/templates">
+       <!ENTITY contactManagersTemplate "/home/tcs/web/conf/templates/contact_manager_template.txt">
+       <!ENTITY pactJNDIAddress "jnp://63.118.154.181:1199">
+]>
+<CMConfig>
+<!-- [OR-584] don't need this anymore
+    <!ENTITY assignmentDocumentsFlag "false">
+-->
+    <!--
+        ==========  Configuration for DB Connection Factory component ==========
+    -->
+    <Config name="com.topcoder.db.connectionfactory.DBConnectionFactoryImpl">
+        <Property name="connections">
+            <Property name="default">
+                <Value>tcs</Value>
+            </Property>
+            <Property name="tcs">
+                <Property name="producer">
+                    <Value>com.topcoder.db.connectionfactory.producers.JNDIConnectionProducer</Value>
+                </Property>
+                <Property name="parameters">
+                    <Property name="jndi_name">
+                        <Value>java:JTS_TCS_CATALOG</Value>
+                    </Property>
+                </Property>
+            </Property>
+            <Property name="DefaultSequence">
+                <Property name="producer">
+                    <Value>com.topcoder.db.connectionfactory.producers.JNDIConnectionProducer</Value>
+                </Property>
+                <Property name="parameters">
+                    <Property name="jndi_name">
+                        <Value>java:JTS_TCS_CATALOG_IDGEN</Value>
+                    </Property>
+                </Property>
+            </Property>
+        </Property>
+    </Config>
+
+
+    <!--
+        ==========  Configuration for Online Review Login component ==========
+    -->
+    <Config name="com.cronos.onlinereview.login.LoginActions">
+        <Property name="auth_response_parser">
+            <Property name="class">
+                <Value>com.cronos.onlinereview.login.authenticator.SecurityManagerAuthResponseParser</Value>
+            </Property>
+            <Property name="namespace">
+                <Value>com.cronos.OnlineReview</Value>
+            </Property>
+            <Property name="logger_name">
+                <Value>LoginActions</Value>
+            </Property>
+        </Property>
+
+        <Property name="authenticator_name">
+            <Value>ORAuthenticator</Value>
+        </Property>
+
+        <Property name="logger_name">
+            <Value>LoginActions</Value>
+        </Property>
+    </Config>
+
+    <Config name="com.cronos.onlinereview.login.authenticator.SecurityManagerAuthenticator">
+        <Property name="context_name">
+            <Value>security</Value>
+        </Property>
+
+        <Property name="login_bean_name">
+            <Value>com.topcoder.security.login.LoginRemoteHome</Value>
+        </Property>
+    </Config>
+
+
+    <!--
+        ==========  Configuration for Authentication Factory component  ==========
+    -->
+    <Config name="com.topcoder.security.authenticationfactory.AuthenticationFactory">
+        <Property name="authenticators">
+            <!-- SecurityManagerAuthenticator -->
+            <Property name="MockAuthenticator">
+                <Property name="class">
+                    <Value>com.cronos.onlinereview.mockups.MockAuthenticator</Value>
+                </Property>
+                <Property name="namespace">
+                    <Value>com.cronos.onlinereview.login.authenticator.SecurityManagerAuthenticator</Value>
+                </Property>
+            </Property>
+
+            <Property name="ORAuthenticator">
+                <Property name="class">
+                    <Value>com.cronos.onlinereview.login.authenticator.SecurityManagerAuthenticator</Value>
+                </Property>
+                <Property name="namespace">
+                    <Value>com.cronos.onlinereview.login.authenticator.SecurityManagerAuthenticator</Value>
+                </Property>
+            </Property>
+        </Property>
+    </Config>
+
+
+    <!--
+        ===============  Configuration for Log Factory component  ===============
+    -->
+    <Config name="com.topcoder.util.log">
+        <Property name="logClass">
+            <Value>com.topcoder.util.log.log4j.Log4jLog</Value>
+        </Property>
+    </Config>
+
+
+    <!--
+        ==========  Configuration for Online Review Ajax Support component  ==========
+    -->
+    <Config name="com.cronos.onlinereview.ajax">
+        <!-- User ID attribute name -->
+        <Property name="UserIdAttributeName">
+            <Value>userId</Value>
+        </Property>
+
+        <!-- The names of the Ajax request handlers -->
+        <Property name="Handlers">
+            <Value>SetScorecardStatus</Value>
+            <Value>LoadTimelineTemplate</Value>
+            <Value>SetTimelineNotification</Value>
+            <Value>PlaceAppeal</Value>
+            <Value>ResolveAppeal</Value>
+        </Property>
+    </Config>
+
+    <Config name="com.cronos.onlinereview.ajax.factory">
+        <!-- Defining the "SetScorecardStatus" handler concrete implementation -->
+        <Property name="SetScorecardStatus">
+            <Property name="type">
+                <Value>com.cronos.onlinereview.ajax.handlers.SetScorecardStatusHandler</Value>
+            </Property>
+        </Property>
+
+        <!-- Defining the "LoadTimelineTemplate" handler concrete implementation -->
+        <Property name="LoadTimelineTemplate">
+            <Property name="type">
+                <Value>com.cronos.onlinereview.ajax.handlers.LoadTimelineTemplateHandler</Value>
+            </Property>
+        </Property>
+
+        <!-- Defining the "SetTimelineNotification" handler concrete implementation -->
+        <Property name="SetTimelineNotification">
+            <Property name="type">
+                <Value>com.cronos.onlinereview.ajax.handlers.SetTimelineNotificationHandler</Value>
+            </Property>
+        </Property>
+
+        <!-- Defining the "PlaceAppeal" handler concrete implementation -->
+        <Property name="PlaceAppeal">
+            <Property name="type">
+                <Value>com.cronos.onlinereview.ajax.handlers.PlaceAppealHandler</Value>
+            </Property>
+        </Property>
+
+        <!-- Defining the "ResolveAppeal" handler concrete implementation -->
+        <Property name="ResolveAppeal">
+            <Property name="type">
+                <Value>com.cronos.onlinereview.ajax.handlers.ResolveAppealHandler</Value>
+            </Property>
+        </Property>
+
+
+        <Property name="com/topcoder/search/builder/SearchBundleManager">
+            <Property name="type">
+                <Value>com.topcoder.search.builder.SearchBundleManager</Value>
+            </Property>
+            <Property name="params">
+                <Property name="param1">
+                    <Property name="type">
+                        <Value>String</Value>
+                    </Property>
+                    <Property name="value">
+                        <Value>com.topcoder.searchbuilder.common</Value>
+                    </Property>
+                </Property>
+            </Property>
+        </Property>
+
+
+        <Property name="com/topcoder/management/resource/persistence/sql/ResourcePersistence">
+            <Property name="type">
+                <Value>com.topcoder.management.resource.persistence.sql.SqlResourcePersistence</Value>
+            </Property>
+            <Property name="params">
+                <Property name="param1">
+                    <Property name="name">
+                        <Value>com/topcoder/db/connectionfactory/DBConnectionFactory</Value>
+                    </Property>
+                </Property>
+            </Property>
+        </Property>
+
+
+        <Property name="com/topcoder/db/connectionfactory/DBConnectionFactory">
+            <Property name="type">
+                <Value>com.topcoder.db.connectionfactory.DBConnectionFactoryImpl</Value>
+            </Property>
+            <Property name="params">
+                <Property name="param1">
+                    <Property name="type">
+                        <Value>String</Value>
+                    </Property>
+                    <Property name="value">
+                        <Value>com.topcoder.db.connectionfactory.DBConnectionFactoryImpl</Value>
+                    </Property>
+                </Property>
+            </Property>
+        </Property>
+
+        <!-- defining the resource manager concrete implementation -->
+        <Property name="com/topcoder/management/resource/ResourceManager">
+            <Property name="type">
+                <Value>com.topcoder.management.resource.persistence.PersistenceResourceManager</Value>
+            </Property>
+            <Property name="params">
+                <Property name="param1">
+                    <Property name="name">
+                        <Value>com/topcoder/management/resource/persistence/sql/ResourcePersistence</Value>
+                    </Property>
+                </Property>
+                <Property name="param2">
+                    <Property name="name">
+                        <Value>com/topcoder/search/builder/SearchBundleManager</Value>
+                    </Property>
+                </Property>
+            </Property>
+        </Property>
+
+        <!-- defining the review manager concrete implementation -->
+        <Property name="com/topcoder/management/review/ReviewManager">
+            <Property name="type">
+                <Value>com.topcoder.management.review.DefaultReviewManager</Value>
+            </Property>
+        </Property>
+
+        <!-- defining the phase template concrete implementation -->
+        <Property name="com/topcoder/project/phases/template/PhaseTemplate">
+            <Property name="type">
+                <Value>com.topcoder.project.phases.template.DefaultPhaseTemplate</Value>
+            </Property>
+            <Property name="params">
+                <Property name="param1">
+                    <Property name="type">
+                        <Value>String</Value>
+                    </Property>
+                    <Property name="value">
+                        <Value>com.topcoder.project.phases.template.DefaultPhaseTemplate</Value>
+                    </Property>
+                </Property>
+            </Property>
+        </Property>
+
+        <!-- defining the upload manager concrete implementation -->
+        <!-- wrapper class is used due to inability of OF to create Maps -->
+        <Property name="com/topcoder/management/deliverable/UploadManager">
+            <Property name="type">
+                <Value>com.topcoder.management.deliverable.PersistenceUploadManager</Value>
+            </Property>
+            <Property name="params">
+                <Property name="param1">
+                    <Property name="name">
+                        <Value>com/topcoder/management/deliverable/UploadPersistence</Value>
+                    </Property>
+                </Property>
+                <Property name="param2">
+                    <Property name="name">
+                        <Value>com/topcoder/search/builder/SearchBundleManager</Value>
+                    </Property>
+                </Property>
+            </Property>
+        </Property>
+        <Property name="com/topcoder/management/deliverable/UploadPersistence">
+            <Property name="type">
+                <Value>com.topcoder.management.deliverable.persistence.sql.SqlUploadPersistence</Value>
+            </Property>
+            <Property name="params">
+                <Property name="param1">
+                    <Property name="name">
+                        <Value>com/topcoder/db/connectionfactory/DBConnectionFactory</Value>
+                    </Property>
+                </Property>
+            </Property>
+        </Property>
+
+        <!-- defining the phase manager concrete implementation -->
+        <Property name="com/topcoder/management/phase/PhaseManager">
+            <Property name="type">
+                <Value>com.topcoder.management.phase.DefaultPhaseManager</Value>
+            </Property>
+            <Property name="params">
+                <Property name="param1">
+                    <Property name="type">
+                        <Value>String</Value>
+                    </Property>
+                    <Property name="value">
+                        <Value>com.topcoder.management.phase</Value>
+                    </Property>
+                </Property>
+            </Property>
+        </Property>
+
+        <!-- defining the calculation manager concrete implementation -->
+        <Property name="com/topcoder/management/review/scorecalculator/CalculationManager">
+            <Property name="type">
+                <Value>com.topcoder.management.review.scorecalculator.CalculationManager</Value>
+            </Property>
+        </Property>
+
+        <Property name="com/topcoder/management/scorecard/ScorecardManager">
+            <Property name="type">
+                <Value>com.topcoder.management.scorecard.ScorecardManagerImpl</Value>
+            </Property>
+        </Property>
+
+        <Property name="com/topcoder/management/project/ProjectManager">
+            <Property name="type">
+                <Value>com.topcoder.management.project.ProjectManagerImpl</Value>
+            </Property>
+        </Property>
+
+        <!-- the rest of the manager classes must be defined here -->
+
+    </Config>
+
+
+    <!--
+        ========== Configuration for IP Server component ==========
+    -->
+    <Config name="com.topcoder.processor.ipserver">
+        <!-- Names of the servers -->
+        <Property name="servers">
+            <Value>server1</Value>
+        </Property>
+
+        <!-- Listen IP-address -->
+        <Property name="server1_address">
+            <Value>127.0.0.1</Value>
+        </Property>
+        <!-- Listen port -->
+        <Property name="server1_port">
+            <Value>9998</Value>
+        </Property>
+        <!-- Maximum connections (optional parameter) -->
+        <Property name="server1_max_connections">
+            <Value>100</Value>
+        </Property>
+        <!-- Namespace used to create message factory -->
+        <Property name="server1_message_factory_namespace">
+            <Value>com.topcoder.processor.ipserver.message</Value>
+        </Property>
+        <!-- Start upon startup (optional parameter) -->
+        <Property name="server1_started">
+            <Value>false</Value>
+        </Property>
+        <!-- Number of backlog (optional parameter)-->
+        <Property name="server1_backlog">
+            <Value>100</Value>
+        </Property>
+        <!-- Names of handlers -->
+        <Property name="server1_handlers">
+            <Value>handler1</Value>
+        </Property>
+        <!-- Class name of handler -->
+        <Property name="server1_handler1_class">
+            <Value>com.topcoder.processor.ipserver.keepalive.KeepAliveHandler</Value>
+        </Property>
+    </Config>
+
+    <Config name="com.topcoder.processor.ipserver.message">
+        <Property name="MessageTypes">
+            <Property name="simple">
+                <Value>com.topcoder.processor.ipserver.message.serializable.SimpleSerializableMessage</Value>
+            </Property>
+            <Property name="KeepAlive">
+                <Value>com.topcoder.processor.ipserver.message.serializable.SimpleSerializableMessage</Value>
+            </Property>
+        </Property>
+    </Config>
+
+
+    <!--
+        =============== Configuration for File Upload component ===============
+    -->
+    <Config name="com.topcoder.servlet.request.LocalFileUpload">
+        <Property name="single_file_limit">
+            <Value>-1</Value>
+        </Property>
+        <Property name="total_file_limit">
+            <Value>-1</Value>
+        </Property>
+        <Property name="allowed_dirs">
+            <Value>&localFileUploadDir;</Value>
+        </Property>
+        <Property name="default_dir">
+            <Value>&localFileUploadDir;</Value>
+        </Property>
+        <Property name="overwrite">
+            <Value>false</Value>
+        </Property>
+    </Config>
+
+    <Config name="com.topcoder.servlet.request.RemoteFileUpload">
+        <Property name="single_file_limit">
+            <Value>-1</Value>
+        </Property>
+        <Property name="total_file_limit">
+            <Value>-1</Value>
+        </Property>
+        <Property name="temp_dir">
+            <Value>E:\\Temp\\System\\</Value>
+        </Property>
+        <Property name="ip_address">
+            <Value>127.0.0.1</Value>
+        </Property>
+        <Property name="port">
+            <Value>9998</Value>
+        </Property>
+        <Property name="message_namespace">
+            <Value>com.topcoder.processor.ipserver.message</Value>
+        </Property>
+        <Property name="handler_id">
+            <Value>HanderId</Value>
+        </Property>
+    </Config>
+
+
+    <!--
+        ========== Configuration for Document Generator component ==========
+    -->
+    <Config name="com.topcoder.util.file">
+        <Property name="sources">
+            <Value>file</Value>
+        </Property>
+
+        <!-- file template source properties -->
+        <Property name="file_class">
+            <Value>com.topcoder.util.file.templatesource.FileTemplateSource</Value>
+        </Property>
+    </Config>
+
+
+    <!--
+        =============== Configuration for Email Engine component ===============
+    -->
+    <Config name="com.topcoder.message.email.EmailEngine">
+        <Property name="smtp_host_addr">
+            <Value>63.118.154.162</Value>
+        </Property>
+        <Property name="smtp_host_port">
+            <Value>25</Value>
+        </Property>
+        <Property name="username">
+            <Value>service@topcodersoftware.com</Value>
+        </Property>
+        <Property name="password">
+            <Value>top_coder</Value>
+        </Property>
+    </Config>
+
+
+    <!--
+        ========== Configuration for Review Score Calculator component ==========
+    -->
+    <Config name="com.topcoder.management.review.scorecalculator.CalculationManager">
+        <Property name="use_caching">
+            <Value>false</Value>
+        </Property>
+        <Property name="builder_class">
+            <Value>com.topcoder.management.review.scorecalculator.builders.DefaultScorecardMatrixBuilder</Value>
+        </Property>
+
+        <Property name="calculators">
+            <!-- Configuration for Scale (1-4) question type -->
+            <Property name="Scale4">
+                <Property name="question_type">
+                    <Value>1</Value>
+                </Property>
+                <Property name="class">
+                    <Value>com.topcoder.management.review.scorecalculator.calculators.ScaledScoreCalculator</Value>
+                </Property>
+                <Property name="namespace">
+                    <Value>com.topcoder.management.review.scorecalculator.calculators.Scale4</Value>
+                </Property>
+            </Property>
+
+            <!-- Configuration for Scale (1-10) question type -->
+            <Property name="Scale10">
+                <Property name="question_type">
+                    <Value>2</Value>
+                </Property>
+                <Property name="class">
+                    <Value>com.topcoder.management.review.scorecalculator.calculators.ScaledScoreCalculator</Value>
+                </Property>
+                <Property name="namespace">
+                    <Value>com.topcoder.management.review.scorecalculator.calculators.Scale10</Value>
+                </Property>
+            </Property>
+			
+			<!-- Configuration for Test Case question type -->
+            <Property name="dynamicCalculator">
+                <Property name="question_type">
+                    <Value>3</Value>
+                </Property>
+                <Property name="class">
+                    <Value>com.topcoder.management.review.scorecalculator.calculators.ScaledScoreCalculator</Value>
+                </Property>
+            </Property>
+            
+            <!-- Configuration for Yes/No question type -->
+            <Property name="binaryCalculator">
+                <!-- This sub-property describes the question type id -->
+                <Property name="question_type">
+                    <Value>4</Value>
+                </Property>
+                <Property name="class">
+                    <Value>com.topcoder.management.review.scorecalculator.calculators.BinaryScoreCalculator</Value>
+                </Property>
+                <Property name="namespace">
+                    <Value>com.topcoder.management.review.scorecalculator.calculators.BinaryScoreCalculator</Value>
+                </Property>
+            </Property>
+
+            <!-- Configuration for Scale (0-3) question type -->
+            <Property name="Scale3">
+                <Property name="question_type">
+                    <Value>5</Value>
+                </Property>
+                <Property name="class">
+                    <Value>com.topcoder.management.review.scorecalculator.calculators.ScaledScoreCalculator</Value>
+                </Property>
+                <Property name="namespace">
+                    <Value>com.topcoder.management.review.scorecalculator.calculators.Scale3</Value>
+                </Property>
+            </Property>
+
+            <!-- Configuration for Scale (0-9) question type -->
+            <Property name="Scale9">
+                <Property name="question_type">
+                    <Value>6</Value>
+                </Property>
+                <Property name="class">
+                    <Value>com.topcoder.management.review.scorecalculator.calculators.ScaledScoreCalculator</Value>
+                </Property>
+                <Property name="namespace">
+                    <Value>com.topcoder.management.review.scorecalculator.calculators.Scale9</Value>
+                </Property>
+            </Property>
+
+			<!-- Configuration for Scale (0-4) question type -->
+            <Property name="Scale0_4">
+                <Property name="question_type">
+                    <Value>7</Value>
+                </Property>
+                <Property name="class">
+                    <Value>com.topcoder.management.review.scorecalculator.calculators.ScaledScoreCalculator</Value>
+                </Property>
+                <Property name="namespace">
+                    <Value>com.topcoder.management.review.scorecalculator.calculators.Scale0_4</Value>
+                </Property>
+            </Property>
+        </Property>
+    </Config>
+
+    <!-- Configuration for binary calculator -->
+    <Config name="com.topcoder.management.review.scorecalculator.calculators.BinaryScoreCalculator">
+        <Property name="positive_answer">
+            <Value>1</Value>
+        </Property>
+        <Property name="negative_answer">
+            <Value>0</Value>
+        </Property>
+    </Config>
+
+    <Config name="com.topcoder.management.review.scorecalculator.calculators.Scale4">
+        <Property name="default_scale">
+            <Value>4</Value>
+        </Property>
+    </Config>
+
+    <Config name="com.topcoder.management.review.scorecalculator.calculators.Scale10">
+        <Property name="default_scale">
+            <Value>10</Value>
+        </Property>
+    </Config>
+
+    <Config name="com.topcoder.management.review.scorecalculator.calculators.Scale3">
+        <Property name="default_scale">
+            <Value>3</Value>
+        </Property>
+    </Config>
+
+    <Config name="com.topcoder.management.review.scorecalculator.calculators.Scale9">
+        <Property name="default_scale">
+            <Value>9</Value>
+        </Property>
+    </Config>
+    
+    <Config name="com.topcoder.management.review.scorecalculator.calculators.Scale0_4">
+        <Property name="default_scale">
+            <Value>4</Value>
+        </Property>
+    </Config>
+    <!--
+        =============== Configuration for Workdays component ===============
+    -->
+    <Config name="com.topcoder.date.workdays">
+        <Property name="file_name">
+            <Value>com/topcoder/date/workdays/defaultWorkdaysFactory.properties</Value>
+        </Property>
+        <Property name="file_format">
+            <Value>properties</Value>
+        </Property>
+    </Config>
+
+
+    <!--
+        ========== Configuration for Online Review Phases component ==========
+    -->
+    <Config name="com.cronos.onlinereview.phases.ManagerHelper">
+        <Property name="ProjectManager">
+            <Property name="ClassName">
+                <Value>com.topcoder.management.project.ProjectManagerImpl</Value>
+            </Property>
+            <Property name="Namespace">
+                <Value>com.topcoder.management.project</Value>
+            </Property>
+        </Property>
+
+        <Property name="PhaseManager">
+            <Property name="ClassName">
+                <Value>com.topcoder.management.phase.DefaultPhaseManager</Value>
+            </Property>
+            <Property name="Namespace">
+                <Value>com.topcoder.management.phase</Value>
+            </Property>
+        </Property>
+
+        <Property name="ReviewManager">
+            <Property name="ClassName">
+                <Value>com.topcoder.management.review.DefaultReviewManager</Value>
+            </Property>
+            <Property name="Namespace">
+                <Value>com.topcoder.management.review.DefaultReviewManager</Value>
+            </Property>
+        </Property>
+
+        <Property name="ScorecardManager">
+            <Property name="ClassName">
+                <Value>com.topcoder.management.scorecard.ScorecardManagerImpl</Value>
+            </Property>
+            <Property name="Namespace">
+                <Value>com.topcoder.management.scorecard</Value>
+            </Property>
+        </Property>
+
+        <Property name="ScreeningManager">
+            <Property name="Namespace">
+                <Value>com.cronos.onlinereview.autoscreening.management</Value>
+            </Property>
+        </Property>
+
+        <Property name="ConnectionFactoryNS">
+            <Value>com.topcoder.db.connectionfactory.DBConnectionFactoryImpl</Value>
+        </Property>
+
+        <Property name="ConnectionName">
+            <Value>tcs</Value>
+        </Property>
+
+        <Property name="SearchBundleManagerNS">
+            <Value>com.topcoder.searchbuilder.common</Value>
+        </Property>
+
+        <Property name="ResourceManager">
+            <Property name="ClassName">
+                <Value>com.topcoder.management.resource.persistence.PersistenceResourceManager</Value>
+            </Property>
+            <Property name="ResourceSearchBundleName">
+                <Value>Resource Search Bundle</Value>
+            </Property>
+            <Property name="ResourceRoleSearchBundleName">
+                <Value>Resource Role Search Bundle</Value>
+            </Property>
+            <Property name="NotificationSearchBundleName">
+                <Value>Notification Search Bundle</Value>
+            </Property>
+            <Property name="NotificationTypeSearchBundleName">
+                <Value>Notification Type Search Bundle</Value>
+            </Property>
+            <Property name="ResourceIdGeneratorName">
+                <Value>resource_id_seq</Value>
+            </Property>
+            <Property name="ResourceRoleIdGeneratorName">
+                <Value>resource_role_id_seq</Value>
+            </Property>
+            <Property name="NotificationTypeIdGeneratorName">
+                <Value>notification_type_id_seq</Value>
+            </Property>
+            <Property name="PersistenceClassName">
+                <Value>com.topcoder.management.resource.persistence.sql.SqlResourcePersistence</Value>
+            </Property>
+        </Property>
+
+        <Property name="UploadManager">
+            <Property name="ClassName">
+                <Value>com.topcoder.management.deliverable.PersistenceUploadManager</Value>
+            </Property>
+            <Property name="UploadSearchBundleName">
+                <Value>Upload Search Bundle</Value>
+            </Property>
+            <Property name="SubmissionSearchBundleName">
+                <Value>Submission Search Bundle</Value>
+            </Property>
+            <Property name="UploadIdGeneratorName">
+                <Value>upload_id_seq</Value>
+            </Property>
+            <Property name="UploadTypeIdGeneratorName">
+                <Value>upload_type_id_seq</Value>
+            </Property>
+            <Property name="UploadStatusIdGeneratorName">
+                <Value>upload_status_id_seq</Value>
+            </Property>
+            <Property name="SubmissionIdGeneratorName">
+                <Value>submission_id_seq</Value>
+            </Property>
+            <Property name="SubmissionStatusIdGeneratorName">
+                <Value>submission_status_id_seq</Value>
+            </Property>
+            <Property name="PersistenceClassName">
+                <Value>com.topcoder.management.deliverable.persistence.sql.SqlUploadPersistence</Value>
+            </Property>
+        </Property>
+
+        <Property name="UserProjectDataStore">
+            <Property name="UserRetrievalClassName">
+                <Value>com.cronos.onlinereview.external.impl.DBUserRetrieval</Value>
+            </Property>
+            <Property name="UserRetrievalNamespace">
+                <Value>com.topcoder.db.connectionfactory.DBConnectionFactoryImpl</Value>
+            </Property>
+            <Property name="ProjectRetrievalClassName">
+                <Value>com.cronos.onlinereview.external.impl.DBProjectRetrieval</Value>
+            </Property>
+            <Property name="ProjectRetrievalNamespace">
+                <Value>com.topcoder.db.connectionfactory.DBConnectionFactoryImpl</Value>
+            </Property>
+        </Property>
+
+        <Property name="ScorecardAggregator">
+            <Property name="Namespace">
+                <Value>com.topcoder.management.review.scoreaggregator</Value>
+            </Property>
+        </Property>
+    </Config>
+
+    <!--
+        ===== Configuration for Phase Handlers from Oline Review Phases component =====
+    -->
+    <!-- Default namespace for Registration handler -->
+    <Config name="com.cronos.onlinereview.phases.RegistrationPhaseHandler">
+        <Property name="ConnectionFactoryNS">
+            <Value>com.topcoder.db.connectionfactory.DBConnectionFactoryImpl</Value>
+        </Property>
+        <Property name="ConnectionName">
+            <Value>tcs</Value>
+        </Property>
+        <Property name="ManagerHelperNamespace">
+            <Value>com.cronos.onlinereview.phases.ManagerHelper</Value>
+        </Property>
+        <Property name="StartPhaseEmail">
+            <Property name="EmailTemplateSource">
+                <Value>file</Value>
+            </Property>
+            <Property name="EmailTemplateName">
+                <Value>&phasesEmailTemplate;</Value>
+            </Property>
+            <Property name="EmailSubject">
+                <Value>Phase Start</Value>
+            </Property>
+            <Property name="EmailFromAddress">
+                <Value>service@topcodersoftware.com</Value>
+            </Property>
+        </Property>
+        <Property name="EndPhaseEmail">
+            <Property name="EmailTemplateSource">
+                <Value>file</Value>
+            </Property>
+            <Property name="EmailTemplateName">
+                <Value>&phasesEmailTemplate;</Value>
+            </Property>
+            <Property name="EmailSubject">
+                <Value>Phase End</Value>
+            </Property>
+            <Property name="EmailFromAddress">
+                <Value>service@topcodersoftware.com</Value>
+            </Property>
+        </Property>
+    </Config>
+
+    <!-- Default namespace for Submission handler -->
+    <Config name="com.cronos.onlinereview.phases.SubmissionPhaseHandler">
+        <Property name="ConnectionFactoryNS">
+            <Value>com.topcoder.db.connectionfactory.DBConnectionFactoryImpl</Value>
+        </Property>
+        <Property name="ConnectionName">
+            <Value>tcs</Value>
+        </Property>
+        <Property name="ManagerHelperNamespace">
+            <Value>com.cronos.onlinereview.phases.ManagerHelper</Value>
+        </Property>
+        <Property name="StartPhaseEmail">
+            <Property name="EmailTemplateSource">
+                <Value>file</Value>
+            </Property>
+            <Property name="EmailTemplateName">
+                <Value>&phasesEmailTemplate;</Value>
+            </Property>
+            <Property name="EmailSubject">
+                <Value>Phase Start</Value>
+            </Property>
+            <Property name="EmailFromAddress">
+                <Value>service@topcodersoftware.com</Value>
+            </Property>
+        </Property>
+        <Property name="EndPhaseEmail">
+            <Property name="EmailTemplateSource">
+                <Value>file</Value>
+            </Property>
+            <Property name="EmailTemplateName">
+                <Value>&phasesEmailTemplate;</Value>
+            </Property>
+            <Property name="EmailSubject">
+                <Value>Phase End</Value>
+            </Property>
+            <Property name="EmailFromAddress">
+                <Value>service@topcodersoftware.com</Value>
+            </Property>
+        </Property>
+    </Config>
+
+    <!-- Default namespace for Screening handler -->
+    <Config name="com.cronos.onlinereview.phases.ScreeningPhaseHandler">
+        <Property name="ConnectionFactoryNS">
+            <Value>com.topcoder.db.connectionfactory.DBConnectionFactoryImpl</Value>
+        </Property>
+        <Property name="ConnectionName">
+            <Value>tcs</Value>
+        </Property>
+        <Property name="ManagerHelperNamespace">
+            <Value>com.cronos.onlinereview.phases.ManagerHelper</Value>
+        </Property>
+        <Property name="StartPhaseEmail">
+            <Property name="EmailTemplateSource">
+                <Value>file</Value>
+            </Property>
+            <Property name="EmailTemplateName">
+                <Value>&phasesEmailTemplate;</Value>
+            </Property>
+            <Property name="EmailSubject">
+                <Value>Phase Start</Value>
+            </Property>
+            <Property name="EmailFromAddress">
+                <Value>service@topcodersoftware.com</Value>
+            </Property>
+        </Property>
+        <Property name="EndPhaseEmail">
+            <Property name="EmailTemplateSource">
+                <Value>file</Value>
+            </Property>
+            <Property name="EmailTemplateName">
+                <Value>&phasesEmailTemplate;</Value>
+            </Property>
+            <Property name="EmailSubject">
+                <Value>Phase End</Value>
+            </Property>
+            <Property name="EmailFromAddress">
+                <Value>service@topcodersoftware.com</Value>
+            </Property>
+        </Property>
+    </Config>
+
+    <!-- Default namespace for Review handler -->
+    <Config name="com.cronos.onlinereview.phases.ReviewPhaseHandler">
+        <Property name="ConnectionFactoryNS">
+            <Value>com.topcoder.db.connectionfactory.DBConnectionFactoryImpl</Value>
+        </Property>
+        <Property name="ConnectionName">
+            <Value>tcs</Value>
+        </Property>
+        <Property name="ManagerHelperNamespace">
+            <Value>com.cronos.onlinereview.phases.ManagerHelper</Value>
+        </Property>
+        <Property name="StartPhaseEmail">
+            <Property name="EmailTemplateSource">
+                <Value>file</Value>
+            </Property>
+            <Property name="EmailTemplateName">
+                <Value>&phasesEmailTemplate;</Value>
+            </Property>
+            <Property name="EmailSubject">
+                <Value>Phase Start</Value>
+            </Property>
+            <Property name="EmailFromAddress">
+                <Value>service@topcodersoftware.com</Value>
+            </Property>
+        </Property>
+        <Property name="EndPhaseEmail">
+            <Property name="EmailTemplateSource">
+                <Value>file</Value>
+            </Property>
+            <Property name="EmailTemplateName">
+                <Value>&phasesEmailTemplate;</Value>
+            </Property>
+            <Property name="EmailSubject">
+                <Value>Phase End</Value>
+            </Property>
+            <Property name="EmailFromAddress">
+                <Value>service@topcodersoftware.com</Value>
+            </Property>
+        </Property>
+    </Config>
+
+    <!-- Default namespace for Appeals handler -->
+    <Config name="com.cronos.onlinereview.phases.AppealsPhaseHandler">
+        <Property name="ConnectionFactoryNS">
+            <Value>com.topcoder.db.connectionfactory.DBConnectionFactoryImpl</Value>
+        </Property>
+        <Property name="ConnectionName">
+            <Value>tcs</Value>
+        </Property>
+        <Property name="ManagerHelperNamespace">
+            <Value>com.cronos.onlinereview.phases.ManagerHelper</Value>
+        </Property>
+        <Property name="StartPhaseEmail">
+            <Property name="EmailTemplateSource">
+                <Value>file</Value>
+            </Property>
+            <Property name="EmailTemplateName">
+                <Value>&phasesEmailTemplate;</Value>
+            </Property>
+            <Property name="EmailSubject">
+                <Value>Phase Start</Value>
+            </Property>
+            <Property name="EmailFromAddress">
+                <Value>service@topcodersoftware.com</Value>
+            </Property>
+        </Property>
+        <Property name="EndPhaseEmail">
+            <Property name="EmailTemplateSource">
+                <Value>file</Value>
+            </Property>
+            <Property name="EmailTemplateName">
+                <Value>&phasesEmailTemplate;</Value>
+            </Property>
+            <Property name="EmailSubject">
+                <Value>Phase End</Value>
+            </Property>
+            <Property name="EmailFromAddress">
+                <Value>service@topcodersoftware.com</Value>
+            </Property>
+        </Property>
+    </Config>
+
+    <!-- Default namespace for Appeals Response handler -->
+    <Config name="com.cronos.onlinereview.phases.AppealsResponsePhaseHandler">
+        <Property name="ConnectionFactoryNS">
+            <Value>com.topcoder.db.connectionfactory.DBConnectionFactoryImpl</Value>
+        </Property>
+        <Property name="ConnectionName">
+            <Value>tcs</Value>
+        </Property>
+        <Property name="ManagerHelperNamespace">
+            <Value>com.cronos.onlinereview.phases.ManagerHelper</Value>
+        </Property>
+        <Property name="StartPhaseEmail">
+            <Property name="EmailTemplateSource">
+                <Value>file</Value>
+            </Property>
+            <Property name="EmailTemplateName">
+                <Value>&phasesEmailTemplate;</Value>
+            </Property>
+            <Property name="EmailSubject">
+                <Value>Phase Start</Value>
+            </Property>
+            <Property name="EmailFromAddress">
+                <Value>service@topcodersoftware.com</Value>
+            </Property>
+        </Property>
+        <Property name="EndPhaseEmail">
+            <Property name="EmailTemplateSource">
+                <Value>file</Value>
+            </Property>
+            <Property name="EmailTemplateName">
+                <Value>&phasesEmailTemplate;</Value>
+            </Property>
+            <Property name="EmailSubject">
+                <Value>Phase End</Value>
+            </Property>
+            <Property name="EmailFromAddress">
+                <Value>service@topcodersoftware.com</Value>
+            </Property>
+        </Property>
+<!-- [OR-584] don't need this flag anymore, assignment v2 business logic doesn't require it
+        <Property name="CreateAssignmentDocuments">
+    		<Value>&assignmentDocumentsFlag;</Value>
+    	</Property>
+-->
+    	<!-- Date Format: MM/dd/yyyy  -->
+<!--[OR-584] don't need this anymore, assignment v2 business logic doesn't require it
+    	<Property name="AssignmentDocumentsStartDate">
+    		<Value>06/18/2007</Value>
+    	</Property>
+-->
+        <Property name="WinnersEmail">
+            <Property name="EmailTemplateSource">
+                <Value>file</Value>
+            </Property>
+            <Property name="EmailTemplateName">
+                <Value>&winnersEmailTemplate;</Value>
+            </Property>
+            <Property name="EmailSubject">
+                <Value>[{0}] {1} place </Value>
+            </Property>
+            <Property name="AssignmentDocumentLink">
+            	<!-- The ampersand must be scaped twice, one for this xml and the second time for the DocumentGenerator  -->
+                <Value>http://www.topcoder.com/PactsMemberServlet?module=AssignmentDocumentDetails&amp;amp;assignment_document_id={0}</Value>
+            </Property>
+            <Property name="EmailFromAddress">
+                <Value>service@topcodersoftware.com</Value>
+            </Property>
+        </Property>
+    </Config>
+
+    <!-- Default namespace for Aggregation handler -->
+    <Config name="com.cronos.onlinereview.phases.AggregationPhaseHandler">
+        <Property name="ConnectionFactoryNS">
+            <Value>com.topcoder.db.connectionfactory.DBConnectionFactoryImpl</Value>
+        </Property>
+        <Property name="ConnectionName">
+            <Value>tcs</Value>
+        </Property>
+        <Property name="ManagerHelperNamespace">
+            <Value>com.cronos.onlinereview.phases.ManagerHelper</Value>
+        </Property>
+        <Property name="StartPhaseEmail">
+            <Property name="EmailTemplateSource">
+                <Value>file</Value>
+            </Property>
+            <Property name="EmailTemplateName">
+                <Value>&phasesEmailTemplate;</Value>
+            </Property>
+            <Property name="EmailSubject">
+                <Value>Phase Start</Value>
+            </Property>
+            <Property name="EmailFromAddress">
+                <Value>service@topcodersoftware.com</Value>
+            </Property>
+        </Property>
+        <Property name="EndPhaseEmail">
+            <Property name="EmailTemplateSource">
+                <Value>file</Value>
+            </Property>
+            <Property name="EmailTemplateName">
+                <Value>&phasesEmailTemplate;</Value>
+            </Property>
+            <Property name="EmailSubject">
+                <Value>Phase End</Value>
+            </Property>
+            <Property name="EmailFromAddress">
+                <Value>service@topcodersoftware.com</Value>
+            </Property>
+        </Property>
+    </Config>
+
+    <!-- Default namespace for Aggregation Review handler -->
+    <Config name="com.cronos.onlinereview.phases.AggregationReviewPhaseHandler">
+        <Property name="ConnectionFactoryNS">
+            <Value>com.topcoder.db.connectionfactory.DBConnectionFactoryImpl</Value>
+        </Property>
+        <Property name="ConnectionName">
+            <Value>tcs</Value>
+        </Property>
+        <Property name="ManagerHelperNamespace">
+            <Value>com.cronos.onlinereview.phases.ManagerHelper</Value>
+        </Property>
+        <Property name="StartPhaseEmail">
+            <Property name="EmailTemplateSource">
+                <Value>file</Value>
+            </Property>
+            <Property name="EmailTemplateName">
+                <Value>&phasesEmailTemplate;</Value>
+            </Property>
+            <Property name="EmailSubject">
+                <Value>Phase Start</Value>
+            </Property>
+            <Property name="EmailFromAddress">
+                <Value>service@topcodersoftware.com</Value>
+            </Property>
+        </Property>
+        <Property name="EndPhaseEmail">
+            <Property name="EmailTemplateSource">
+                <Value>file</Value>
+            </Property>
+            <Property name="EmailTemplateName">
+                <Value>&phasesEmailTemplate;</Value>
+            </Property>
+            <Property name="EmailSubject">
+                <Value>Phase End</Value>
+            </Property>
+            <Property name="EmailFromAddress">
+                <Value>service@topcodersoftware.com</Value>
+            </Property>
+        </Property>
+    </Config>
+
+    <!-- Default namespace for Final Fix handler -->
+    <Config name="com.cronos.onlinereview.phases.FinalFixPhaseHandler">
+        <Property name="ConnectionFactoryNS">
+            <Value>com.topcoder.db.connectionfactory.DBConnectionFactoryImpl</Value>
+        </Property>
+        <Property name="ConnectionName">
+            <Value>tcs</Value>
+        </Property>
+        <Property name="ManagerHelperNamespace">
+            <Value>com.cronos.onlinereview.phases.ManagerHelper</Value>
+        </Property>
+        <Property name="StartPhaseEmail">
+            <Property name="EmailTemplateSource">
+                <Value>file</Value>
+            </Property>
+            <Property name="EmailTemplateName">
+                <Value>&phasesEmailTemplate;</Value>
+            </Property>
+            <Property name="EmailSubject">
+                <Value>Phase Start</Value>
+            </Property>
+            <Property name="EmailFromAddress">
+                <Value>service@topcodersoftware.com</Value>
+            </Property>
+        </Property>
+        <Property name="EndPhaseEmail">
+            <Property name="EmailTemplateSource">
+                <Value>file</Value>
+            </Property>
+            <Property name="EmailTemplateName">
+                <Value>&phasesEmailTemplate;</Value>
+            </Property>
+            <Property name="EmailSubject">
+                <Value>Phase End</Value>
+            </Property>
+            <Property name="EmailFromAddress">
+                <Value>service@topcodersoftware.com</Value>
+            </Property>
+        </Property>
+    </Config>
+
+    <!-- Default namespace for Final Review handler -->
+    <Config name="com.cronos.onlinereview.phases.FinalReviewPhaseHandler">
+        <Property name="ConnectionFactoryNS">
+            <Value>com.topcoder.db.connectionfactory.DBConnectionFactoryImpl</Value>
+        </Property>
+        <Property name="ConnectionName">
+            <Value>tcs</Value>
+        </Property>
+        <Property name="ManagerHelperNamespace">
+            <Value>com.cronos.onlinereview.phases.ManagerHelper</Value>
+        </Property>
+        <Property name="StartPhaseEmail">
+            <Property name="EmailTemplateSource">
+                <Value>file</Value>
+            </Property>
+            <Property name="EmailTemplateName">
+                <Value>&phasesEmailTemplate;</Value>
+            </Property>
+            <Property name="EmailSubject">
+                <Value>Phase Start</Value>
+            </Property>
+            <Property name="EmailFromAddress">
+                <Value>service@topcodersoftware.com</Value>
+            </Property>
+        </Property>
+        <Property name="EndPhaseEmail">
+            <Property name="EmailTemplateSource">
+                <Value>file</Value>
+            </Property>
+            <Property name="EmailTemplateName">
+                <Value>&phasesEmailTemplate;</Value>
+            </Property>
+            <Property name="EmailSubject">
+                <Value>Phase End</Value>
+            </Property>
+            <Property name="EmailFromAddress">
+                <Value>service@topcodersoftware.com</Value>
+            </Property>
+        </Property>
+    </Config>
+
+    <!-- Default namespace for Approval handler -->
+    <Config name="com.cronos.onlinereview.phases.ApprovalPhaseHandler">
+        <Property name="ConnectionFactoryNS">
+            <Value>com.topcoder.db.connectionfactory.DBConnectionFactoryImpl</Value>
+        </Property>
+        <Property name="ConnectionName">
+            <Value>tcs</Value>
+        </Property>
+        <Property name="ManagerHelperNamespace">
+            <Value>com.cronos.onlinereview.phases.ManagerHelper</Value>
+        </Property>
+        <Property name="StartPhaseEmail">
+            <Property name="EmailTemplateSource">
+                <Value>file</Value>
+            </Property>
+            <Property name="EmailTemplateName">
+                <Value>&phasesEmailTemplate;</Value>
+            </Property>
+            <Property name="EmailSubject">
+                <Value>Phase Start</Value>
+            </Property>
+            <Property name="EmailFromAddress">
+                <Value>service@topcodersoftware.com</Value>
+            </Property>
+        </Property>
+        <Property name="EndPhaseEmail">
+            <Property name="EmailTemplateSource">
+                <Value>file</Value>
+            </Property>
+            <Property name="EmailTemplateName">
+                <Value>&phasesEmailTemplate;</Value>
+            </Property>
+            <Property name="EmailSubject">
+                <Value>Phase End</Value>
+            </Property>
+            <Property name="EmailFromAddress">
+                <Value>service@topcodersoftware.com</Value>
+            </Property>
+        </Property>
+    </Config>
+
+
+    <!--
+        ===== Configuration for Auto Screening Management component =====
+    -->
+    <Config name="com.cronos.onlinereview.autoscreening.management">
+        <!-- Construct the DefaultDbScreeningManager with two arguments -->
+        <Property name="com/cronos/onlinereview/autoscreening/management/ScreeningManager">
+            <Property name="type">
+                <Value>com.cronos.onlinereview.autoscreening.management.db.DefaultDbScreeningManager</Value>
+            </Property>
+            <Property name="params">
+                <Property name="param1">
+                    <Property name="name">
+                        <Value>connectionFactory</Value>
+                    </Property>
+                </Property>
+                <Property name="param2">
+                    <Property name="name">
+                        <Value>idGenerator</Value>
+                    </Property>
+                </Property>
+            </Property>
+        </Property>
+
+        <!-- Construct the connectionFactory argument of the DefaultDbScreeningManager -->
+        <Property name="connectionFactory">
+            <Property name="type">
+                <Value>com.topcoder.db.connectionfactory.DBConnectionFactoryImpl</Value>
+            </Property>
+            <Property name="params">
+                <Property name="param1">
+                    <Property name="type">
+                        <Value>String</Value>
+                    </Property>
+                    <Property name="value">
+                        <Value>com.topcoder.db.connectionfactory.DBConnectionFactoryImpl</Value>
+                    </Property>
+                </Property>
+            </Property>
+        </Property>
+
+        <!-- Construct the idGenerator argument of the DefaultDbScreeningManager -->
+        <Property name="idGenerator">
+            <Property name="type">
+                <Value>com.topcoder.util.idgenerator.IDGeneratorImpl</Value>
+            </Property>
+            <Property name="params">
+                <Property name="param1">
+                    <Property name="type">
+                        <Value>String</Value>
+                    </Property>
+                    <Property name="value">
+                        <Value>screening_task_id_seq</Value>
+                    </Property>
+                </Property>
+            </Property>
+        </Property>
+    </Config>
+
+
+    <!--
+        ========== Configuration for Review Score Aggregator component ==========
+    -->
+    <Config name="com.topcoder.management.review.scoreaggregator">
+        <Property name="ScoreAggregationAlgorithm:default">
+            <Property name="type">
+                <Value>com.topcoder.management.review.scoreaggregator.impl.AveragingAggregationAlgorithm</Value>
+            </Property>
+        </Property>
+        <Property name="TieDetector:default">
+            <Property name="type">
+                <Value>com.topcoder.management.review.scoreaggregator.impl.StandardTieDetector</Value>
+            </Property>
+        </Property>
+        <Property name="TieBreaker:default">
+            <Property name="type">
+                <Value>com.topcoder.management.review.scoreaggregator.impl.StandardTieBreaker</Value>
+            </Property>
+        </Property>
+        <Property name="PlaceAssignmentAlgorithm:default">
+            <Property name="type">
+                <Value>com.topcoder.management.review.scoreaggregator.impl.StandardPlaceAssignment</Value>
+            </Property>
+        </Property>
+    </Config>
+
+
+    <!--
+        =====  Configuration for User Project Data Store component  =====
+    -->
+    <Config name="com.cronos.onlinereview.external">
+        <Property name="connName">
+            <Value>tcs</Value>
+        </Property>
+
+        <!-- the forum type to match in the comp_forum_xref table -->
+        <Property name="forumType">
+            <Value>5</Value>
+        </Property>
+    </Config>
+
+    <!-- Definition of the values for RatingType enum -->
+    <Config name="com.cronos.onlinereview.external.RatingType">
+        <Property name="Design">
+            <Value>112</Value>
+        </Property>
+        <Property name="Development">
+            <Value>113</Value>
+        </Property>
+
+        <!-- this is fictional (i.e., not in the database at this time) -->
+        <Property name="Assembly">
+            <Value>114</Value>
+        </Property>
+    </Config>
+
+
+    <!--
+        ==========  Configuration for Project Management component  ==========
+    -->
+    <Config name="com.topcoder.management.project">
+        <Property name="SearchBuilderNamespace">
+            <Value>com.topcoder.searchbuilder.common</Value>
+        </Property>
+        <Property name="PersistenceClass">
+            <Value>com.topcoder.management.project.persistence.InformixProjectPersistence</Value>
+        </Property>
+        <Property name="PersistenceNamespace">
+            <Value>com.topcoder.management.project.persistence.InformixProjectPersistence</Value>
+        </Property>
+        <Property name="ValidatorClass">
+            <Value>com.topcoder.management.project.validation.DefaultProjectValidator</Value>
+        </Property>
+        <Property name="ValidatorNamespace">
+            <Value>com.topcoder.management.project.validation.DefaultProjectValidator</Value>
+        </Property>
+    </Config>
+
+
+    <!--
+        =====  Configuration for Project Management Persistence component  =====
+    -->
+    <Config name="com.topcoder.management.project.persistence.InformixProjectPersistence">
+        <!-- The DBConnectionFactory class name used to create DB Connection Factory, required -->
+        <Property name="ConnectionFactoryNS">
+            <Value>com.topcoder.db.connectionfactory.DBConnectionFactoryImpl</Value>
+        </Property>
+        <!-- the connection name to retrieve connection in DB Connection Factory, required -->
+        <Property name="ConnectionName">
+            <Value>tcs</Value>
+        </Property>
+        <Property name="ProjectIdSequenceName">
+            <Value>project_id_seq</Value>
+        </Property>
+        <Property name="ProjectAuditIdSequenceName">
+            <Value>project_audit_id_seq</Value>
+        </Property>
+    </Config>
+
+
+    <!--
+        =====  Configuration for Phase Management component  =====
+    -->
+    <Config name="com.topcoder.management.phase">
+        <Property name="PhasePersistence">
+            <Property name="className">
+                <Value>com.topcoder.management.phase.db.InformixPhasePersistence</Value>
+            </Property>
+        </Property>
+        <Property name="Idgenerator">
+            <Property name="sequenceName">
+                <Value>project_phase_id_seq</Value>
+            </Property>
+            <Property name="className">
+                <Value>com.topcoder.util.idgenerator.IDGeneratorImpl</Value>
+            </Property>
+        </Property>
+        <Property name="connectionName">
+            <Value>tcs</Value>
+        </Property>
+        <Property name="ConnectionFactory">
+            <Property name="className">
+                <Value>com.topcoder.db.connectionfactory.DBConnectionFactoryImpl</Value>
+            </Property>
+            <Property name="namespace">
+                <Value>com.topcoder.db.connectionfactory.DBConnectionFactoryImpl</Value>
+            </Property>
+        </Property>
+        <Property name="ObjectFactoryNamespace">
+            <Value>com.topcoder.management.phase.ObjectFactory</Value>
+        </Property>
+        <Property name="Handlers">
+            <!-- All handlers are registered directly from application's code -->
+        </Property>
+    </Config>
+
+    <Config name="com.topcoder.management.phase.ObjectFactory">
+        <!-- All handlers are registered directly from application's code -->
+    </Config>
+
+    
+    <!--
+        =====  Configuration for Phase Template component  =====
+    -->
+    <Config name="com.topcoder.project.phases.template.DefaultPhaseTemplate">
+        <!-- configuration for persistence -->
+        <Property name="persistence">
+            <!-- class of the PhaseTemplatePersistence -->
+            <Property name="class">
+                <Value>com.topcoder.project.phases.template.persistence.XmlPhaseTemplatePersistence</Value>
+            </Property>
+            <!-- namespace from which the PhaseTemplatePersistence will be created, optional, if not provided, no arg ctor will be used to create the persistence. -->
+            <Property name="namespace">
+                <Value>com.topcoder.project.phases.template.persistence.XmlPhaseTemplatePersistence</Value>
+            </Property>
+        </Property>
+        <!-- configuration for start date generator -->
+        <Property name="start_date_generator">
+            <!-- class of the StartDateGenerator -->
+            <Property name="class">
+                <Value>com.topcoder.project.phases.template.startdategenerator.RelativeWeekTimeStartDateGenerator</Value>
+            </Property>
+            <!-- namespace from which the StartDateGenerator will be created, optional, if not provided, no arg ctor will be used to create the startDateGenerator. -->
+            <Property name="namespace">
+                <Value>com.topcoder.project.phases.template.startdategenerator.RelativeWeekTimeStartDateGenerator</Value>
+            </Property>
+        </Property>
+        <!-- configuration for workdays, the workdays will be created with Object Factory -->
+        <Property name="workdays">
+            <!-- namespace of the object specification configuration of the workdays, required -->
+            <Property name="object_specification_namespace">
+                <Value>com.topcoder.project.phases.template.DefaultPhaseTemplate.workdays</Value>
+            </Property>
+            <!-- key of the workdays object, required -->
+            <Property name="object_key">
+                <Value>workdays</Value>
+            </Property>
+            <!-- identifier of the workdays object, optional -->
+            <Property name="object_identifier">
+                <Value>default</Value>
+            </Property>
+        </Property>
+    </Config>
+
+    <Config name="com.topcoder.project.phases.template.persistence.XmlPhaseTemplatePersistence">
+        <!-- XML files from which the templates will be loaded. -->
+        <Property name="template_files">
+<!--            <Value>&timelineTemplateDir;/ComponentTimeline.xml</Value> -->
+            <Value>&timelineTemplateDir;/TCSTemplate_Design.xml</Value>
+            <Value>&timelineTemplateDir;/TCSTemplate_Development.xml</Value>
+            <Value>&timelineTemplateDir;/TCSTemplate_Component_Testing.xml</Value>
+            <Value>&timelineTemplateDir;/TCSTemplate_Application.xml</Value>
+            <Value>&timelineTemplateDir;/TCSTemplate_Studio.xml</Value>
+        </Property>
+    </Config>
+
+    <Config name="com.topcoder.project.phases.template.startdategenerator.RelativeWeekTimeStartDateGenerator">
+        <!-- 9:00 AM next Thursday will be generated -->
+        <!-- the week offset from current week, here 1 means the next week -->
+        <Property name="week_offset">
+            <Value>1</Value>
+        </Property>
+        <!-- the day of the week, values will be 1 to 7, representing SUNDAY to SATURDAY respectively. -->
+        <Property name="day_of_week">
+            <Value>5</Value>
+        </Property>
+        <!-- hour in 24-hour clock -->
+        <Property name="hour">
+            <Value>9</Value>
+        </Property>
+        <!-- minute value -->
+        <Property name="minute">
+            <Value>0</Value>
+        </Property>
+        <!-- second value -->
+        <Property name="second">
+            <Value>0</Value>
+        </Property>
+    </Config>
+    
+    <Config name="com.topcoder.project.phases.template.DefaultPhaseTemplate.workdays">
+        <Property name="workdays:default">
+            <Property name="type">
+                <Value>com.topcoder.date.workdays.DefaultWorkdays</Value>
+            </Property>
+            <Property name="params">
+                <Property name="param1">
+                    <Property name="type">
+                        <Value>String</Value>
+                    </Property>
+                    <Property name="value">
+                        <Value>com/topcoder/date/workdays/defaultWorkdaysFactory.properties</Value>
+                    </Property>
+                </Property>
+                <Property name="param2">
+                    <Property name="type">
+                        <Value>String</Value>
+                    </Property>
+                    <Property name="value">
+                        <Value>properties</Value>
+                    </Property>
+                </Property>
+            </Property>
+        </Property>
+    </Config>
+
+    <!--
+        ==========  Configuration for Scorecard Management component  ==========
+    -->
+    <Config name="com.topcoder.management.scorecard">
+        <Property name="SearchBuilderNamespace">
+            <Value>com.topcoder.searchbuilder.common</Value>
+        </Property>
+        <Property name="PersistenceClass">
+            <Value>com.topcoder.management.scorecard.persistence.InformixScorecardPersistence</Value>
+        </Property>
+        <Property name="PersistenceNamespace">
+            <Value>com.topcoder.management.scorecard.persistence.InformixScorecardPersistence</Value>
+        </Property>
+        <Property name="ValidatorClass">
+            <Value>com.topcoder.management.scorecard.validation.DefaultScorecardValidator</Value>
+        </Property>
+        <Property name="ValidatorNamespace">
+            <Value>com.topcoder.management.scorecard.validation.DefaultScorecardValidator</Value>
+        </Property>
+    </Config>
+
+
+    <!--
+        =====  Configuration for Scorecard Management Persistence component  =====
+    -->
+    <Config name="com.topcoder.management.scorecard.persistence.InformixScorecardPersistence">
+        <Property name="ConnectionFactoryNS">
+            <Value>com.topcoder.db.connectionfactory.DBConnectionFactoryImpl</Value>
+        </Property>
+        <Property name="ConnectionName">
+            <Value>tcs</Value>
+        </Property>
+    </Config>
+
+
+    <!--
+        ========== Configuration for Review Management component ==========
+    -->
+    <Config name="com.topcoder.management.review.DefaultReviewManager">
+        <Property name="persistence">
+            <Property name="persistence_namespace">
+                <Value>com.topcoder.management.review.persistence.InformixReviewPersistence</Value>
+            </Property>
+            <Property name="persistence_class">
+                <Value>com.topcoder.management.review.persistence.InformixReviewPersistence</Value>
+            </Property>
+        </Property>
+    </Config>
+
+
+    <!--
+        ===== Configuration for Review Management Persistence component =====
+    -->
+    <Config name="com.topcoder.management.review.persistence.InformixReviewPersistence">
+        <Property name="connection">
+            <!-- the connection name to retrieve connection in DB Connection Factory, required -->
+            <Property name="name">
+                <Value>tcs</Value>
+            </Property>
+            <!-- The DBConnectionFactory class name used to create DB Connection Factory, required -->
+            <Property name="factory_namespace">
+                <Value>com.topcoder.db.connectionfactory.DBConnectionFactoryImpl</Value>
+            </Property>
+            <Property name="factory_class">
+                <Value>com.topcoder.db.connectionfactory.DBConnectionFactoryImpl</Value>
+            </Property>
+        </Property>
+
+        <Property name="search_bundle_manager_namespace">
+            <Value>com.topcoder.searchbuilder.common</Value>
+        </Property>
+        <Property name="search_bundle_name">
+            <Value>Review Search Bundle</Value>
+        </Property>
+    </Config>
+
+
+    <!--
+        ==========  Configuration for Search Builder component  ==========
+    -->
+    <Config name="com.topcoder.searchbuilder.common">
+        <Property name="searchStrategyFactoryNamespace">
+            <Value>com.topcoder.search.builder.strategy.factory</Value>
+        </Property>
+        <Property name="fieldValidatorFactoryNamespace">
+            <Value>com.topcoder.search.builder.validator.factory</Value>
+        </Property>
+
+        <Property name="searchBundles">
+            <!-- Project-searching logic -->
+            <Property name="ProjectSearchBundle">
+                <Property name="type">
+                    <Value>Database</Value>
+                </Property>
+                <Property name="name">
+                    <Value>ProjectSearchBundle</Value>
+                </Property>
+
+                <Property name="searchStrategy">
+                    <Property name="class">
+                        <Value>dbStrategy</Value>
+                    </Property>
+                </Property>
+
+                <Property name="searchableFields">
+                    <Property name="project_type_lu.project_type_id">
+                        <Property name="validator">
+                            <Property name="class">
+                                <Value>validator</Value>
+                            </Property>
+                            <Property name="identifier">
+                                <Value>default</Value>
+                            </Property>
+                        </Property>
+                    </Property>
+                    <Property name="project_type_lu.name">
+                        <Property name="validator">
+                            <Property name="class">
+                                <Value>validator</Value>
+                            </Property>
+                            <Property name="identifier">
+                                <Value>default</Value>
+                            </Property>
+                        </Property>
+                    </Property>
+                    <Property name="project_category_lu.project_category_id">
+                        <Property name="validator">
+                            <Property name="class">
+                                <Value>validator</Value>
+                            </Property>
+                            <Property name="identifier">
+                                <Value>default</Value>
+                            </Property>
+                        </Property>
+                    </Property>
+                    <Property name="project_category_lu.name">
+                        <Property name="validator">
+                            <Property name="class">
+                                <Value>validator</Value>
+                            </Property>
+                            <Property name="identifier">
+                                <Value>default</Value>
+                            </Property>
+                        </Property>
+                    </Property>
+                    <Property name="project_status_lu.project_type_id">
+                        <Property name="validator">
+                            <Property name="class">
+                                <Value>validator</Value>
+                            </Property>
+                            <Property name="identifier">
+                                <Value>default</Value>
+                            </Property>
+                        </Property>
+                    </Property>
+                    <Property name="project_status_lu.name">
+                        <Property name="validator">
+                            <Property name="class">
+                                <Value>validator</Value>
+                            </Property>
+                            <Property name="identifier">
+                                <Value>default</Value>
+                            </Property>
+                        </Property>
+                    </Property>
+                    <Property name="project_info_type_lu.name">
+                        <Property name="validator">
+                            <Property name="class">
+                                <Value>validator</Value>
+                            </Property>
+                            <Property name="identifier">
+                                <Value>default</Value>
+                            </Property>
+                        </Property>
+                    </Property>
+                    <Property name="project_info.value">
+                        <Property name="validator">
+                            <Property name="class">
+                                <Value>validator</Value>
+                            </Property>
+                            <Property name="identifier">
+                                <Value>default</Value>
+                            </Property>
+                        </Property>
+                    </Property>
+                    <Property name="resource_info_type_lu.name">
+                        <Property name="validator">
+                            <Property name="class">
+                                <Value>validator</Value>
+                            </Property>
+                            <Property name="identifier">
+                                <Value>default</Value>
+                            </Property>
+                        </Property>
+                    </Property>
+                    <Property name="resource_info.value">
+                        <Property name="validator">
+                            <Property name="class">
+                                <Value>validator</Value>
+                            </Property>
+                            <Property name="identifier">
+                                <Value>default</Value>
+                            </Property>
+                        </Property>
+                    </Property>
+                </Property>
+
+                <Property name="context">
+                    <Value>
+                        SELECT DISTINCT project.project_id, project_status_lu.project_status_id, project_status_lu.name,
+								project_category_lu.project_category_id, project_category_lu.name, project_type_lu.project_type_id, project_type_lu.name,
+								project.create_user, project.create_date, project.modify_user, project.modify_date
+                          FROM project,
+                               project_category_lu,
+                               project_status_lu,
+                               project_type_lu,
+                               project_info,
+                               project_info_type_lu,
+                               resource,
+                               resource_info,
+                               resource_info_type_lu
+                         WHERE project.project_category_id = project_category_lu.project_category_id
+                           AND project.project_status_id = project_status_lu.project_status_id
+                           AND project_category_lu.project_type_id = project_type_lu.project_type_id
+                           AND project.project_id = project_info.project_id
+                           AND project_info.project_info_type_id = project_info_type_lu.project_info_type_id
+                           AND project.project_id = resource.project_id
+                           AND resource.resource_id = resource_info.resource_id
+                           AND resource_info.resource_info_type_id = resource_info_type_lu.resource_info_type_id
+                           AND
+                    </Value>
+                </Property>
+
+                <Property name="alias">
+                    <Property name="ProjectTypeID">
+                        <Value>project_type_lu.project_type_id</Value>
+                    </Property>
+                    <Property name="ProjectTypeName">
+                        <Value>project_type_lu.name</Value>
+                    </Property>
+                    <Property name="ProjectCategoryID">
+                        <Value>project_category_lu.project_category_id</Value>
+                    </Property>
+                    <Property name="ProjectCategoryName">
+                        <Value>project_category_lu.name</Value>
+                    </Property>
+                    <Property name="ProjectStatusID">
+                        <Value>project_status_lu.project_type_id</Value>
+                    </Property>
+                    <Property name="ProjectStatusName">
+                        <Value>project_status_lu.name</Value>
+                    </Property>
+                    <Property name="ProjectPropertyName">
+                        <Value>project_info_type_lu.name</Value>
+                    </Property>
+                    <Property name="ProjectPropertyValue">
+                        <Value>project_info.value</Value>
+                    </Property>
+                    <Property name="ProjectResourcePropertyName">
+                        <Value>resource_info_type_lu.name</Value>
+                    </Property>
+                    <Property name="ProjectResourcePropertyValue">
+                        <Value>resource_info.value</Value>
+                    </Property>
+                </Property>
+            </Property>
+
+            <!-- Scorecard-searching logic -->
+            <Property name="ScorecardSearchBundle">
+                <Property name="type">
+                    <Value>Database</Value>
+                </Property>
+                <Property name="name">
+                    <Value>ScorecardSearchBundle</Value>
+                </Property>
+
+                <Property name="searchStrategy">
+                    <Property name="class">
+                        <Value>dbStrategy</Value>
+                    </Property>
+                </Property>
+
+                <Property name="searchableFields">
+                    <Property name="dummy">
+                        <Property name="validator">
+                            <Property name="class">
+                                <Value>validator</Value>
+                            </Property>
+                            <Property name="identifier">
+                                <Value>default</Value>
+                            </Property>
+                        </Property>
+                    </Property>
+                </Property>
+
+                <Property name="context">
+                    <Value>
+                        SELECT DISTINCT scorecard_id,
+                               scorecard.scorecard_status_id AS status_id,
+                               scorecard.scorecard_type_id AS type_id,
+                               scorecard.project_category_id AS project_category_id,
+                               scorecard.name AS scorecard_name,
+                               version,
+                               min_score,
+                               max_score,
+                               scorecard.create_user AS create_user,
+                               scorecard.create_date AS create_date,
+                               scorecard.modify_user AS modify_user,
+                               scorecard.modify_date AS modify_date,
+                               scorecard_status_lu.name AS status_name,
+                               scorecard_type_lu.name AS type_name
+                          FROM scorecard,
+                               scorecard_status_lu,
+                               scorecard_type_lu,
+                               project_category_lu
+                         WHERE scorecard.scorecard_status_id = scorecard_status_lu.scorecard_status_id
+                           AND scorecard.scorecard_type_id = scorecard_type_lu.scorecard_type_id
+                           AND scorecard.project_category_id = project_category_lu.project_category_id
+                           AND
+                    </Value>
+                </Property>
+
+                <Property name="alias">
+                    <Property name="ScorecardStatusID">
+                        <Value>scorecard_status_lu.scorecard_status_id</Value>
+                    </Property>
+                    <Property name="ScorecardStatusName">
+                        <Value>scorecard_status_lu.name</Value>
+                    </Property>
+                    <Property name="ScorecardTypeID">
+                        <Value>scorecard_type_lu.scorecard_type_id</Value>
+                    </Property>
+                    <Property name="ScorecardTypeName">
+                        <Value>scorecard_type_lu.name</Value>
+                    </Property>
+                    <Property name="ProjectCategoryID">
+                        <Value>project_category_lu.project_category_id</Value>
+                    </Property>
+                    <Property name="ScorecardName">
+                        <Value>scorecard.name</Value>
+                    </Property>
+                    <Property name="ScorecardVersion">
+                        <Value>scorecard.version</Value>
+                    </Property>
+                </Property>
+            </Property>
+
+            <!-- Deliverable-searching logic -->
+            <Property name="Deliverable Search Bundle">
+                <Property name="type">
+                    <Value>Database</Value>
+                </Property>
+                <Property name="name">
+                    <Value>Deliverable Search Bundle</Value>
+                </Property>
+                <Property name="searchStrategy">
+                    <Property name="class">
+                        <Value>dbStrategy</Value>
+                    </Property>
+                </Property>
+                <Property name="searchableFields">
+                    <Property name="dummy">
+                        <Property name="validator">
+                            <Property name="class">
+                                <Value>validator</Value>
+                            </Property>
+                            <Property name="identifier">
+                                <Value>default</Value>
+                            </Property>
+                        </Property>
+                    </Property>
+                </Property>
+                <Property name="context">
+                    <Value>
+                        SELECT UNIQUE deliverable_id,
+                               resource_id,
+                               project_phase.project_phase_id
+                          FROM deliverable_lu,
+                               resource,
+                               project_phase
+                         WHERE deliverable_lu.resource_role_id = resource.resource_role_id
+                           AND deliverable_lu.phase_type_id = project_phase.phase_type_id
+                           AND resource.project_id = project_phase.project_id
+                           AND
+                    </Value>
+                </Property>
+                <Property name="alias">
+                    <Property name="deliverable_id">
+                        <Value>deliverable_lu.deliverable_id</Value>
+                    </Property>
+                    <Property name="name">
+                        <Value>deliverable_lu.name</Value>
+                    </Property>
+                    <Property name="project_id">
+                        <Value>resource.project_id</Value>
+                    </Property>
+                    <Property name="phase_id">
+                        <Value>project_phase.project_phase_id</Value>
+                    </Property>
+                    <Property name="resource_id">
+                        <Value>resource.resource_id</Value>
+                    </Property>
+                    <Property name="required">
+                        <Value>deliverable_lu.required</Value>
+                    </Property>
+                </Property>
+            </Property>
+
+            <Property name="Deliverable With Submission Search Bundle">
+                <Property name="type">
+                    <Value>Database</Value>
+                </Property>
+                <Property name="name">
+                    <Value>Deliverable With Submission Search Bundle</Value>
+                </Property>
+                <Property name="searchStrategy">
+                    <Property name="class">
+                        <Value>dbStrategy</Value>
+                    </Property>
+                </Property>
+                <Property name="searchableFields">
+                    <Property name="dummy">
+                        <Property name="validator">
+                            <Property name="class">
+                                <Value>validator</Value>
+                            </Property>
+                            <Property name="identifier">
+                                <Value>default</Value>
+                            </Property>
+                        </Property>
+                    </Property>
+                </Property>
+                <Property name="context">
+                    <Value>
+                        SELECT     deliverable_id,
+                                   resource.resource_id,
+                                   project_phase.project_phase_id
+                                   submission.submission_id,
+                                   submission.screening_score,
+                                   submission.initial_score,
+                                   submission.final_score,
+                                   submission.placement
+                              FROM deliverable_lu,
+                                   resource,
+                                   project_phase
+                        CROSS JOIN submission
+                        INNER JOIN submission_status_lu
+                                ON submission.submission_status_id = submission_status_lu.submission_status_id
+                        INNER JOIN upload
+                                ON submission.upload_id = upload.upload_id
+                             WHERE submission_status_lu.name = 'Active'
+                               AND deliverable_lu.per_submission = 1
+                               AND upload.project_id = resource.project_id
+                               AND deliverable_lu.resource_role_id = resource.resource_role_id
+                               AND deliverable_lu.phase_type_id = project_phase.phase_type_id
+                               AND
+                    </Value>
+                </Property>
+                <Property name="alias">
+                    <Property name="deliverable_id">
+                        <Value>deliverable_lu.deliverable_id</Value>
+                    </Property>
+                    <Property name="name">
+                        <Value>deliverable_lu.name</Value>
+                    </Property>
+                    <Property name="project_id">
+                        <Value>resource.project_id</Value>
+                    </Property>
+                    <Property name="phase_id">
+                        <Value>project_phase.project_phase_id</Value>
+                    </Property>
+                    <Property name="resource_id">
+                        <Value>resource.resource_id</Value>
+                    </Property>
+                    <Property name="required">
+                        <Value>deliverable_lu.required</Value>
+                    </Property>
+                    <Property name="submission_id">
+                        <Value>submission.submission_id</Value>
+                    </Property>
+                </Property>
+            </Property>
+
+            <Property name="Submission Search Bundle">
+                <Property name="type">
+                    <Value>Database</Value>
+                </Property>
+                <Property name="name">
+                    <Value>Submission Search Bundle</Value>
+                </Property>
+                <Property name="searchStrategy">
+                    <Property name="class">
+                        <Value>dbStrategy</Value>
+                    </Property>
+                </Property>
+                <Property name="searchableFields">
+                    <Property name="dummy">
+                        <Property name="validator">
+                            <Property name="class">
+                                <Value>validator</Value>
+                            </Property>
+                            <Property name="identifier">
+                                <Value>default</Value>
+                            </Property>
+                        </Property>
+                    </Property>
+                </Property>
+                <Property name="context">
+                    <Value>
+                        SELECT DISTINCT submission.submission_id AS submission_id,
+                               submission.create_user AS submission_create_user,
+                               submission.create_date AS submission_create_date,
+                               submission.modify_user AS submission_modify_user,
+                               submission.modify_date AS submission_modify_date,
+                               submission_status_lu.submission_status_id AS submission_status_id,
+                               submission_status_lu.create_user AS submission_status_create_user,
+                               submission_status_lu.create_date AS submission_status_create_date,
+                               submission_status_lu.modify_user AS submission_status_modify_user,
+                               submission_status_lu.modify_date AS submission_status_modify_date,
+                               submission_status_lu.name AS submission_status_name,
+                               submission_status_lu.description AS submission_status_description,
+                               upload.upload_id AS upload_id,
+                               upload.create_user AS upload_create_user,
+                               upload.create_date AS upload_create_date,
+                               upload.modify_user AS upload_modify_user,
+                               upload.modify_date AS upload_modify_date,
+                               upload.project_id AS project_id,
+                               upload.resource_id AS resource_id,
+                               upload.parameter AS upload_parameter,
+                               upload_type_lu.upload_type_id AS upload_type_id,
+                               upload_type_lu.create_user AS upload_type_create_user,
+                               upload_type_lu.create_date AS upload_type_create_date,
+                               upload_type_lu.modify_user AS upload_type_modify_user,
+                               upload_type_lu.modify_date AS upload_type_modify_date,
+                               upload_type_lu.name AS upload_type_name,
+                               upload_type_lu.description AS upload_type_description,
+                               upload_status_lu.upload_status_id AS upload_status_id,
+                               upload_status_lu.create_user AS upload_status_create_user,
+                               upload_status_lu.create_date AS upload_status_create_date,
+                               upload_status_lu.modify_user AS upload_status_modify_user,
+                               upload_status_lu.modify_date AS upload_status_modify_date,
+                               upload_status_lu.name AS upload_status_name,
+                               upload_status_lu.description AS upload_status_description,
+                               submission.screening_score,
+                               submission.initial_score,
+                               submission.final_score,
+                               submission.placement
+                          FROM submission,
+                               upload,
+                               submission_status_lu,
+                               upload_type_lu,
+                               upload_status_lu
+                         WHERE submission.upload_id = upload.upload_id
+                           AND submission.submission_status_id = submission_status_lu.submission_status_id
+                           AND upload.upload_type_id = upload_type_lu.upload_type_id
+                           AND upload.upload_status_id = upload_status_lu.upload_status_id
+                           AND
+                    </Value>
+                </Property>
+                <Property name="alias">
+                    <Property name="submission_id">
+                        <Value>submission.submission_id</Value>
+                    </Property>
+                    <Property name="upload_id">
+                        <Value>submission.upload_id</Value>
+                    </Property>
+                    <Property name="submission_status_id">
+                        <Value>submission.submission_status_id</Value>
+                    </Property>
+                    <Property name="project_id">
+                        <Value>upload.project_id</Value>
+                    </Property>
+                    <Property name="resource_id">
+                        <Value>upload.resource_id</Value>
+                    </Property>
+                </Property>
+            </Property>
+
+            <Property name="Upload Search Bundle">
+                <Property name="type">
+                    <Value>Database</Value>
+                </Property>
+                <Property name="name">
+                    <Value>Upload Search Bundle</Value>
+                </Property>
+                <Property name="searchStrategy">
+                    <Property name="class">
+                        <Value>dbStrategy</Value>
+                    </Property>
+                </Property>
+                <Property name="searchableFields">
+                    <Property name="dummy">
+                        <Property name="validator">
+                            <Property name="class">
+                                <Value>validator</Value>
+                            </Property>
+                            <Property name="identifier">
+                                <Value>default</Value>
+                            </Property>
+                        </Property>
+                    </Property>
+                </Property>
+                <Property name="context">
+                    <Value>
+                        SELECT DISTINCT upload.upload_id AS upload_id,
+                               upload.create_user AS upload_create_user,
+                               upload.create_date AS upload_create_date,
+                               upload.modify_user AS upload_modify_user,
+                               upload.modify_date AS upload_modify_date,
+                               upload.project_id AS project_id,
+                               upload.resource_id AS resource_id,
+                               upload.parameter AS upload_parameter,
+                               upload_type_lu.upload_type_id AS upload_type_id,
+                               upload_type_lu.create_user AS upload_type_create_user,
+                               upload_type_lu.create_date AS upload_type_create_date,
+                               upload_type_lu.modify_user AS upload_type_modify_user,
+                               upload_type_lu.modify_date AS upload_type_modify_date,
+                               upload_type_lu.name AS upload_type_name,
+                               upload_type_lu.description AS upload_type_description,
+                               upload_status_lu.upload_status_id AS upload_status_id,
+                               upload_status_lu.create_user AS upload_status_create_user,
+                               upload_status_lu.create_date AS upload_status_create_date,
+                               upload_status_lu.modify_user AS upload_status_modify_user,
+                               upload_status_lu.modify_date AS upload_status_modify_date,
+                               upload_status_lu.name AS upload_status_name,
+                               upload_status_lu.description AS upload_status_description
+                          FROM upload,
+                               upload_type_lu,
+                               upload_status_lu
+                         WHERE upload.upload_type_id = upload_type_lu.upload_type_id
+                           AND upload.upload_status_id = upload_status_lu.upload_status_id
+                           AND
+                    </Value>
+                </Property>
+                <Property name="alias">
+                    <Property name="upload_id">
+                        <Value>upload.upload_id</Value>
+                    </Property>
+                    <Property name="upload_type_id">
+                        <Value>upload.upload_type_id</Value>
+                    </Property>
+                    <Property name="upload_status_id">
+                        <Value>upload.upload_status_id</Value>
+                    </Property>
+                    <Property name="project_id">
+                        <Value>upload.project_id</Value>
+                    </Property>
+                    <Property name="resource_id">
+                        <Value>upload.resource_id</Value>
+                    </Property>
+                </Property>
+            </Property>
+
+            <!-- Resource-searching logic -->
+            <Property name="Resource Search Bundle">
+                <Property name="searchStrategy">
+                    <Property name="class">
+                        <Value>dbStrategy</Value>
+                    </Property>
+                </Property>
+
+                <Property name="searchableFields">
+                    <Property name="resource.resource_id">
+                        <Property name="validator">
+                            <Property name="class">
+                                <Value>validator</Value>
+                            </Property>
+                            <Property name="identifier">
+                                <Value>default</Value>
+                            </Property>
+                        </Property>
+                    </Property>
+                    <Property name="project_phase_id">
+                        <Property name="validator">
+                            <Property name="class">
+                                <Value>validator</Value>
+                            </Property>
+                            <Property name="identifier">
+                                <Value>default</Value>
+                            </Property>
+                        </Property>
+                    </Property>
+                    <Property name="project_id">
+                        <Property name="validator">
+                            <Property name="class">
+                                <Value>validator</Value>
+                            </Property>
+                            <Property name="identifier">
+                                <Value>default</Value>
+                            </Property>
+                        </Property>
+                    </Property>
+                    <Property name="submission_id">
+                        <Property name="validator">
+                            <Property name="class">
+                                <Value>validator</Value>
+                            </Property>
+                            <Property name="identifier">
+                                <Value>default</Value>
+                            </Property>
+                        </Property>
+                    </Property>
+                    <Property name="resource_role_id">
+                        <Property name="validator">
+                            <Property name="class">
+                                <Value>validator</Value>
+                            </Property>
+                            <Property name="identifier">
+                                <Value>default</Value>
+                            </Property>
+                        </Property>
+                    </Property>
+                    <Property name="name">
+                        <Property name="validator">
+                            <Property name="class">
+                                <Value>validator</Value>
+                            </Property>
+                            <Property name="identifier">
+                                <Value>default</Value>
+                            </Property>
+                        </Property>
+                    </Property>
+                    <Property name="value">
+                        <Property name="validator">
+                            <Property name="class">
+                                <Value>validator</Value>
+                            </Property>
+                            <Property name="identifier">
+                                <Value>default</Value>
+                            </Property>
+                        </Property>
+                    </Property>
+                </Property>
+
+                <Property name="type">
+                    <Value>Database</Value>
+                </Property>
+                <Property name="name">
+                    <Value>Resource Search Bundle</Value>
+                </Property>
+
+                <Property name="context">
+                    <Value>
+                        SELECT DISTINCT resource.resource_id AS resource_id,
+                               resource_role_id,
+                               project_id,
+                               project_phase_id,
+                               resource.create_user AS create_user,
+                               resource.create_date AS create_date,
+                               resource.modify_user AS modify_user,
+                               resource.modify_date AS modify_date
+                          FROM resource,
+                               resource_info,
+                               resource_info_type_lu,
+                         OUTER resource_submission
+                         WHERE resource.resource_id = resource_info.resource_id
+                           AND resource_info.resource_info_type_id = resource_info_type_lu.resource_info_type_id
+                           AND resource.resource_id = resource_submission.resource_id
+                           AND
+                    </Value>
+                </Property>
+
+                <Property name="alias">
+                    <Property name="resource_id">
+                        <Value>resource.resource_id</Value>
+                    </Property>
+                </Property>
+            </Property>
+
+            <Property name="Resource Role Search Bundle">
+                <Property name="searchStrategy">
+                    <Property name="class">
+                        <Value>dbStrategy</Value>
+                    </Property>
+                </Property>
+
+                <Property name="searchableFields">
+                    <Property name="name">
+                        <Property name="validator">
+                            <Property name="class">
+                                <Value>validator</Value>
+                            </Property>
+                            <Property name="identifier">
+                                <Value>default</Value>
+                            </Property>
+                        </Property>
+                    </Property>
+                    <Property name="phase_type_id">
+                        <Property name="validator">
+                            <Property name="class">
+                                <Value>validator</Value>
+                            </Property>
+                            <Property name="identifier">
+                                <Value>default</Value>
+                            </Property>
+                        </Property>
+                    </Property>
+                    <Property name="resource_role_id">
+                        <Property name="validator">
+                            <Property name="class">
+                                <Value>validator</Value>
+                            </Property>
+                            <Property name="identifier">
+                                <Value>default</Value>
+                            </Property>
+                        </Property>
+                    </Property>
+                </Property>
+
+                <Property name="type">
+                    <Value>Database</Value>
+                </Property>
+                <Property name="name">
+                    <Value>Resource Role Search Bundle</Value>
+                </Property>
+
+                <Property name="context">
+                    <Value>
+                        SELECT DISTINCT resource_role_id,
+                               phase_type_id,
+                               name,
+                               description,
+                               create_user,
+                               create_date,
+                               modify_user,
+                               modify_date
+                          FROM resource_role_lu
+                         WHERE
+                    </Value>
+                </Property>
+
+                <Property name="alias">
+                    <Property name="resource_role_id">
+                        <Value>resource_role_id</Value>
+                    </Property>
+                </Property>
+            </Property>
+
+            <Property name="Notification Search Bundle">
+                <Property name="searchStrategy">
+                    <Property name="class">
+                        <Value>dbStrategy</Value>
+                    </Property>
+                </Property>
+
+                <Property name="searchableFields">
+                    <Property name="external_ref_id">
+                        <Property name="validator">
+                            <Property name="class">
+                                <Value>validator</Value>
+                            </Property>
+                            <Property name="identifier">
+                                <Value>default</Value>
+                            </Property>
+                        </Property>
+                    </Property>
+                    <Property name="notification_type_id">
+                        <Property name="validator">
+                            <Property name="class">
+                                <Value>validator</Value>
+                            </Property>
+                            <Property name="identifier">
+                                <Value>default</Value>
+                            </Property>
+                        </Property>
+                    </Property>
+                    <Property name="project_id">
+                        <Property name="validator">
+                            <Property name="class">
+                                <Value>validator</Value>
+                            </Property>
+                            <Property name="identifier">
+                                <Value>default</Value>
+                            </Property>
+                        </Property>
+                    </Property>
+                </Property>
+
+                <Property name="type">
+                    <Value>Database</Value>
+                </Property>
+                <Property name="name">
+                    <Value>Notification Search Bundle</Value>
+                </Property>
+
+                <Property name="context">
+                    <Value>
+                        SELECT DISTINCT project_id,
+                               external_ref_id,
+                               notification_type_id,
+                               create_user,
+                               create_date,
+                               modify_user,
+                               modify_date
+                          FROM notification
+                         WHERE
+                    </Value>
+                </Property>
+
+                <Property name="alias">
+                    <Property name="The ID">
+                        <Value>peopleID</Value>
+                    </Property>
+                </Property>
+            </Property>
+
+            <Property name="Notification Type Search Bundle">
+                <Property name="searchStrategy">
+                    <Property name="class">
+                        <Value>dbStrategy</Value>
+                    </Property>
+                </Property>
+
+                <Property name="searchableFields">
+                    <Property name="notification_type_id">
+                        <Property name="validator">
+                            <Property name="class">
+                                <Value>validator</Value>
+                            </Property>
+                            <Property name="identifier">
+                                <Value>default</Value>
+                            </Property>
+                        </Property>
+                    </Property>
+                    <Property name="name">
+                        <Property name="validator">
+                            <Property name="class">
+                                <Value>validator</Value>
+                            </Property>
+                            <Property name="identifier">
+                                <Value>default</Value>
+                            </Property>
+                        </Property>
+                    </Property>
+                </Property>
+
+                <Property name="type">
+                    <Value>Database</Value>
+                </Property>
+                <Property name="name">
+                    <Value>Notification Type Search Bundle</Value>
+                </Property>
+
+                <Property name="context">
+                    <Value>
+                        SELECT DISTINCT notification_type_id,
+                               name,
+                               description,
+                               create_user,
+                               create_date,
+                               modify_user,
+                               modify_date
+                          FROM notification_type_lu
+                         WHERE
+                    </Value>
+                </Property>
+
+                <Property name="alias">
+                    <Property name="notification_type_id">
+                        <Value>notification_type_id</Value>
+                    </Property>
+                </Property>
+            </Property>
+
+            <!-- Review-searching logic -->
+            <Property name="Review Search Bundle">
+                <Property name="searchStrategy">
+                    <Property name="class">
+                        <Value>dbStrategy</Value>
+                    </Property>
+                </Property>
+
+                <Property name="type">
+                    <Value>Database</Value>
+                </Property>
+                <Property name="name">
+                    <Value>Review Search Bundle</Value>
+                </Property>
+
+                <Property name="context">
+                    <Value>
+                        SELECT DISTINCT review_id,
+                               review.resource_id AS resource_id,
+                               review.submission_id AS submission_id,
+                               review.scorecard_id AS scorecard_id,
+                               committed,
+                               score,
+                               initial_score,
+                               review.create_user AS create_user,
+                               review.create_date AS create_date,
+                               review.modify_user AS modify_user,
+                               review.modify_date AS modify_date
+                          FROM review,
+                               scorecard,
+                               resource
+                         WHERE review.scorecard_id = scorecard.scorecard_id
+                           AND review.resource_id = resource.resource_id
+                           AND
+                    </Value>
+                </Property>
+
+                <Property name="alias">
+                    <Property name="scorecardType">
+                        <Value>scorecard.scorecard_type_id</Value>
+                    </Property>
+                    <Property name="reviewer">
+                        <Value>review.resource_id</Value>
+                    </Property>
+                    <Property name="submission">
+                        <Value>review.submission_id</Value>
+                    </Property>
+                    <Property name="committed">
+                        <Value>review.committed</Value>
+                    </Property>
+                    <Property name="project">
+                        <Value>resource.project_id</Value>
+                    </Property>
+                </Property>
+
+                <Property name="searchableFields">
+                    <Property name="scorecardType">
+                        <Property name="validator">
+                            <Property name="class"><Value>validator</Value></Property>
+                            <Property name="identifier"><Value>default</Value></Property>
+                        </Property>
+                    </Property>
+                    <Property name="reviewer">
+                        <Property name="validator">
+                            <Property name="class"><Value>validator</Value></Property>
+                            <Property name="identifier"><Value>default</Value></Property>
+                        </Property>
+                    </Property>
+                    <Property name="submission">
+                        <Property name="validator">
+                            <Property name="class"><Value>validator</Value></Property>
+                            <Property name="identifier"><Value>default</Value></Property>
+                        </Property>
+                    </Property>
+                    <Property name="committed">
+                        <Property name="validator">
+                            <Property name="class"><Value>validator</Value></Property>
+                            <Property name="identifier"><Value>default</Value></Property>
+                        </Property>
+                    </Property>
+                    <Property name="initial_score">
+                        <Property name="validator">
+                            <Property name="class"><Value>validator</Value></Property>
+                            <Property name="identifier"><Value>default</Value></Property>
+                        </Property>
+                    </Property>
+                    <Property name="project">
+                        <Property name="validator">
+                            <Property name="class"><Value>validator</Value></Property>
+                            <Property name="identifier"><Value>default</Value></Property>
+                        </Property>
+                    </Property>
+                    <Property name="creation_date">
+                        <Property name="validator">
+                            <Property name="class"><Value>validator</Value></Property>
+                            <Property name="identifier"><Value>default</Value></Property>
+                        </Property>
+                    </Property>
+                </Property>
+            </Property>
+        </Property>
+    </Config>
+
+    <!-- Object factory configuration for DBStrategy -->
+    <Config name="com.topcoder.search.builder.strategy.factory">
+        <Property name="dbStrategy">
+            <Property name="type">
+                <Value>com.topcoder.search.builder.database.DatabaseSearchStrategy</Value>
+            </Property>
+            <Property name="params">
+                <Property name="param1">
+                    <Property name="type">
+                        <Value>String</Value>
+                    </Property>
+                    <Property name="value">
+                        <Value>com.topcoder.search.builder.database.DBSearchStrategy</Value>
+                    </Property>
+                </Property>
+            </Property>
+        </Property>
+    </Config>
+
+    <!-- Object Factory configuration for validator -->
+    <Config name="com.topcoder.search.builder.validator.factory">
+        <Property name="validator:default">
+            <Property name="type">
+                <Value>com.topcoder.util.datavalidator.NotValidator</Value>
+            </Property>
+            <Property name="params">
+                <Property name="param1">
+                    <Property name="name">
+                        <Value>validator:null</Value>
+                    </Property>
+                </Property>
+            </Property>
+        </Property>
+        <Property name="validator:null">
+            <Property name="type">
+                <Value>com.topcoder.util.datavalidator.NullValidator</Value>
+            </Property>
+        </Property>
+    </Config>
+
+    <!-- Configuration for DBSearchStrategy -->
+    <Config name="com.topcoder.search.builder.database.DBSearchStrategy">
+        <!-- Property defining a specification for constructing the dbConnectionFactory to use. -->
+        <Property name="connectionFactory">
+
+            <!-- The namespace of the ConnectionFactory -->
+            <Property name="name">
+                <Value>com.topcoder.db.connectionfactory.DBConnectionFactoryImpl</Value>
+            </Property>
+        </Property>
+
+        <!--
+            The name to request from the connection factory when acquiring a connection.
+            If not present, then the default connection is used.
+        -->
+        <Property name="connectionName">
+            <Value>tcs</Value>
+        </Property>
+
+        <Property name="searchFragmentFactoryNamespace">
+            <Value>com.topcoder.search.builder.database.factory</Value>
+        </Property>
+
+        <Property name="searchFragmentBuilders">
+            <Property name="first">
+                <Property name="targetFilter">
+                    <Value>com.topcoder.search.builder.filter.AndFilter</Value>
+                </Property>
+                <Property name="className">
+                    <Value>com.topcoder.search.builder.database.AndFragmentBuilder</Value>
+                </Property>
+            </Property>
+
+            <Property name="second">
+                <Property name="targetFilter">
+                    <Value>com.topcoder.search.builder.filter.OrFilter</Value>
+                </Property>
+                <Property name="className">
+                    <Value>com.topcoder.search.builder.database.OrFragmentBuilder</Value>
+                </Property>
+            </Property>
+
+            <Property name="third">
+                <Property name="targetFilter">
+                    <Value>com.topcoder.search.builder.filter.LikeFilter</Value>
+                </Property>
+                <Property name="className">
+                    <Value>com.topcoder.search.builder.database.LikeFragmentBuilder</Value>
+                </Property>
+            </Property>
+
+            <Property name="fourth">
+                <Property name="targetFilter">
+                    <Value>com.topcoder.search.builder.filter.NotFilter</Value>
+                </Property>
+                <Property name="className">
+                    <Value>com.topcoder.search.builder.database.NotFragmentBuilder</Value>
+                </Property>
+            </Property>
+
+            <Property name="fifth">
+                <Property name="targetFilter">
+                    <Value>com.topcoder.search.builder.filter.EqualToFilter</Value>
+                </Property>
+                <Property name="className">
+                    <Value>com.topcoder.search.builder.database.EqualsFragmentBuilder</Value>
+                </Property>
+            </Property>
+
+            <Property name="sixth">
+                <Property name="targetFilter">
+                    <Value>com.topcoder.search.builder.filter.InFilter</Value>
+                </Property>
+                <Property name="className">
+                    <Value>com.topcoder.search.builder.database.InFragmentBuilder</Value>
+                </Property>
+            </Property>
+
+            <Property name="eighth">
+                <Property name="targetFilter">
+                    <Value>com.topcoder.search.builder.filter.NullFilter</Value>
+                </Property>
+                <Property name="className">
+                    <Value>com.topcoder.search.builder.database.NullFragmentBuilder</Value>
+                </Property>
+            </Property>
+
+            <Property name="ninth">
+                <Property name="targetFilter">
+                    <Value>com.topcoder.search.builder.filter.GreaterThanFilter</Value>
+                </Property>
+                <Property name="className">
+                    <Value>com.topcoder.search.builder.database.RangeFragmentBuilder</Value>
+                </Property>
+            </Property>
+
+            <Property name="tenth">
+                <Property name="targetFilter">
+                    <Value>com.topcoder.search.builder.filter.GreaterThanOrEqualToFilter</Value>
+                </Property>
+                <Property name="className">
+                    <Value>com.topcoder.search.builder.database.RangeFragmentBuilder</Value>
+                </Property>
+            </Property>
+
+            <Property name="eleventh">
+                <Property name="targetFilter">
+                    <Value>com.topcoder.search.builder.filter.BetweenFilter</Value>
+                </Property>
+                <Property name="className">
+                    <Value>com.topcoder.search.builder.database.RangeFragmentBuilder</Value>
+                </Property>
+            </Property>
+
+            <Property name="twelvth">
+                <Property name="targetFilter">
+                    <Value>com.topcoder.search.builder.filter.LessThanOrEqualToFilter</Value>
+                </Property>
+                <Property name="className">
+                    <Value>com.topcoder.search.builder.database.RangeFragmentBuilder</Value>
+                </Property>
+            </Property>
+
+            <Property name="thirteenth">
+                <Property name="targetFilter">
+                    <Value>com.topcoder.search.builder.filter.LessThanFilter</Value>
+                </Property>
+                <Property name="className">
+                    <Value>com.topcoder.search.builder.database.RangeFragmentBuilder</Value>
+                </Property>
+            </Property>
+        </Property>
+    </Config>
+
+    <Config name="com.topcoder.search.builder.database.factory"></Config>
+
+
+    <!--
+        ===== Configuration for Pacts Services =====
+    -->
+    <Config name="com.cronos.onlinereview.phases.pacts.services">
+        <Property name="pacts_jndi_address">
+            <Value>&pactJNDIAddress;</Value>
+        </Property>
+    </Config>
+
+
+    <!--
+        =====  Configuration for the Online Review Application itself  =====
+    -->
+    <Config name="com.cronos.OnlineReview">
+        <Property name="user_identifer_key">
+            <Value>userId</Value>
+        </Property>
+
+        <Property name="RootCatalogs">
+            <Property name="Java">
+                <Property name="id">
+                    <Value>5801776</Value>
+                </Property>
+                <Property name="IconSmall">
+                    <Value>javaSm.gif</Value>
+                </Property>
+                <Property name="AltTextKey">
+                    <Value>RootCatalog.Java</Value>
+                </Property>
+                <Property name="Custom">
+                    <Value>False</Value>
+                </Property>
+            </Property>
+            <Property name="dotNET">
+                <Property name="id">
+                    <Value>5801777</Value>
+                </Property>
+                <Property name="IconSmall">
+                    <Value>dotnetSm.gif</Value>
+                </Property>
+                <Property name="AltTextKey">
+                    <Value>RootCatalog.dotNET</Value>
+                </Property>
+                <Property name="Custom">
+                    <Value>False</Value>
+                </Property>
+            </Property>
+            <Property name="CustomJava">
+                <Property name="id">
+                    <Value>5801778</Value>
+                </Property>
+                <Property name="IconSmall">
+                    <Value>javaCustomSm.gif</Value>
+                </Property>
+                <Property name="AltTextKey">
+                    <Value>RootCatalog.CustomJava</Value>
+                </Property>
+                <Property name="Custom">
+                    <Value>True</Value>
+                </Property>
+            </Property>
+            <Property name="CustomNET">
+                <Property name="id">
+                    <Value>5801779</Value>
+                </Property>
+                <Property name="IconSmall">
+                    <Value>smNetCustom.gif</Value>
+                </Property>
+                <Property name="AltTextKey">
+                    <Value>RootCatalog.CustomNET</Value>
+                </Property>
+                <Property name="Custom">
+                    <Value>True</Value>
+                </Property>
+            </Property>
+            <Property name="Flash">
+                <Property name="id">
+                    <Value>8459260</Value>
+                </Property>
+                <Property name="IconSmall">
+                    <Value>flashSm.gif</Value>
+                </Property>
+                <Property name="AltTextKey">
+                    <Value>RootCatalog.Flash</Value>
+                </Property>
+                <Property name="Custom">
+                    <Value>False</Value>
+                </Property>
+            </Property>
+            <Property name="AOL">
+                <Property name="id">
+                    <Value>22774808</Value>
+                </Property>
+                <Property name="IconSmall">
+                    <Value>smAOL.gif</Value>
+                </Property>
+                <Property name="AltTextKey">
+                    <Value>RootCatalog.AOL</Value>
+                </Property>
+                <Property name="Custom">
+                    <Value>False</Value>
+                </Property>
+            </Property>
+            <Property name="Application">
+                <Property name="id">
+                    <Value>9926572</Value>
+                </Property>
+                <Property name="IconSmall">
+                    <Value>appSm.gif</Value>
+                </Property>
+                <Property name="AltTextKey">
+                    <Value>RootCatalog.Application</Value>
+                </Property>
+                <Property name="Custom">
+                    <Value>False</Value>
+                </Property>
+            </Property>
+            <Property name="Studio">
+                <Property name="id">
+                    <Value>26887152</Value>
+                </Property>
+                <Property name="IconSmall">
+                    <Value>iconBlankSm.png</Value>
+                </Property>
+                <Property name="AltTextKey">
+                    <Value>RootCatalog.Studio</Value>
+                </Property>
+                <Property name="Custom">
+                    <Value>False</Value>
+                </Property>
+            </Property>
+        </Property>
+
+        <Property name="ProjectCategoryIcons">
+            <Property name="Design">
+                <Property name="IconSmall">
+                    <Value>iconStatusSpecSm.gif</Value>
+                </Property>
+                <Property name="Icon">
+                    <Value>icon_design.gif</Value>
+                </Property>
+            </Property>
+            <Property name="Development">
+                <Property name="IconSmall">
+                    <Value>iconStatusDevSm.gif</Value>
+                </Property>
+                <Property name="Icon">
+                    <Value>icon_development.gif</Value>
+                </Property>
+            </Property>
+            <Property name="Security">
+                <Property name="IconSmall">
+                    <Value>IconSecuritySm.gif</Value>
+                </Property>
+                <Property name="Icon">
+                    <Value>IconSecurity.gif</Value>
+                </Property>
+            </Property>
+            <Property name="Process">
+                <Property name="IconSmall">
+                    <Value>IconProcessSm.gif</Value>
+                </Property>
+                <Property name="Icon">
+                    <Value>IconProcss.gif</Value>
+                </Property>
+            </Property>
+            <Property name="Testing Competition">
+                <Property name="IconSmall">
+                    <Value>IconTestingSm.gif</Value>
+                </Property>
+                <Property name="Icon">
+                    <Value>IconTesting.gif</Value>
+                </Property>
+            </Property>
+            <Property name="Specification">
+                <Property name="IconSmall">
+                    <Value>IconSpecSm.gif</Value>
+                </Property>
+                <Property name="Icon">
+                    <Value>IconSpec.gif</Value>
+                </Property>
+            </Property>
+            <Property name="Architecture">
+                <Property name="IconSmall">
+                    <Value>IconArchSm.gif</Value>
+                </Property>
+                <Property name="Icon">
+                    <Value>IconArch.gif</Value>
+                </Property>
+            </Property>
+            <Property name="Component Production">
+                <Property name="IconSmall">
+                    <Value>IconComponentSm.gif</Value>
+                </Property>
+                <Property name="Icon">
+                    <Value>IconComponent.gif</Value>
+                </Property>
+            </Property>
+            <Property name="Quality Assurance">
+                <Property name="IconSmall">
+                    <Value>IconQASm.gif</Value>
+                </Property>
+                <Property name="Icon">
+                    <Value>IconQA.gif</Value>
+                </Property>
+            </Property>
+            <Property name="Deployment">
+                <Property name="IconSmall">
+                    <Value>IconDeploySm.gif</Value>
+                </Property>
+                <Property name="Icon">
+                    <Value>IconDeploy.gif</Value>
+                </Property>
+            </Property>
+            <Property name="Assembly Competition">
+                <Property name="IconSmall">
+                    <Value>IconAssemblySm.gif</Value>
+                </Property>
+                <Property name="Icon">
+                    <Value>IconAssembly.gif</Value>
+                </Property>
+            </Property>
+            <Property name="Legacy">
+                <Property name="IconSmall">
+                    <Value>IconLegacySm.gif</Value>
+                </Property>
+                <Property name="Icon">
+                    <Value>IconLegacy.gif</Value>
+                </Property>
+            </Property>
+            <Property name="Icon Sets">
+                <Property name="IconSmall">
+                    <Value>iconBlankSm.png</Value>
+                </Property>
+                <Property name="Icon">
+                    <Value>iconBlank.png</Value>
+                </Property>
+            </Property>
+            <Property name="Storyboards">
+                <Property name="IconSmall">
+                    <Value>iconBlankSm.png</Value>
+                </Property>
+                <Property name="Icon">
+                    <Value>iconBlank.png</Value>
+                </Property>
+            </Property>
+            <Property name="Wireframes">
+                <Property name="IconSmall">
+                    <Value>iconBlankSm.png</Value>
+                </Property>
+                <Property name="Icon">
+                    <Value>iconBlank.png</Value>
+                </Property>
+            </Property>
+            <Property name="Prototypes">
+                <Property name="IconSmall">
+                    <Value>iconBlankSm.png</Value>
+                </Property>
+                <Property name="Icon">
+                    <Value>iconBlank.png</Value>
+                </Property>
+            </Property>
+            <Property name="Logos">
+                <Property name="IconSmall">
+                    <Value>iconBlankSm.png</Value>
+                </Property>
+                <Property name="Icon">
+                    <Value>iconBlank.png</Value>
+                </Property>
+            </Property>
+            <Property name="Print">
+                <Property name="IconSmall">
+                    <Value>iconBlankSm.png</Value>
+                </Property>
+                <Property name="Icon">
+                    <Value>iconBlank.png</Value>
+                </Property>
+            </Property>
+        </Property>
+
+        <Property name="ProjectTypeDescriptionLinks">
+            <Property name="Application">
+                <Value>https://software.topcoder.com/catalog/c_component.jsp?comp=&lt;COMPONENT_ID&gt;&amp;ver=&lt;VERSION_ID&gt;</Value>
+            </Property>
+            <Property name="Component">
+                <Value>https://software.topcoder.com/catalog/c_component.jsp?comp=&lt;COMPONENT_ID&gt;&amp;ver=&lt;VERSION_ID&gt;</Value>
+            </Property>
+            <Property name="Studio">
+                <Value>http://studio.topcoder.com/?module=ViewContestDetails&amp;ct=&lt;COMPONENT_ID&gt;</Value>
+            </Property>
+        </Property>
+
+        <Property name="ProjectTypeForumLinks">
+            <Property name="Application">
+                <Value>http://forums.topcoder.com/?module=Category&amp;categoryID=&lt;FORUM_ID&gt;</Value>
+            </Property>
+            <Property name="Component">
+                <Value>http://forums.topcoder.com/?module=Category&amp;categoryID=&lt;FORUM_ID&gt;</Value>
+            </Property>
+            <Property name="Studio">
+                <Value>http://studio.topcoder.com/forums?module=ThreadList&amp;forumID=&lt;FORUM_ID&gt;</Value>
+            </Property>
+        </Property>
+
+        <Property name="Defaults">
+            <Property name="PixelsPerHour">
+                <Value>5</Value>
+            </Property>
+            <Property name="PhaseDuration">
+                <Value>168</Value>
+            </Property>
+            <Property name="NoteLength">
+                <Value>1</Value>
+            </Property>
+            <!-- Negative value in any of the three following fields means that there
+                 will be no default value displayed on the page (text field will be left empty) -->
+            <Property name="RequiredRegistrants">
+                <Value>-1</Value>
+            </Property>
+            <Property name="RequiredSubmissions">
+                <Value>0</Value>
+            </Property>
+            <Property name="RequiredReviewers">
+                <Value>3</Value>
+            </Property>
+            <Property name="DeadlineNearDuration">
+                <Value>2</Value>
+            </Property>
+        </Property>
+
+        <Property name="Formats">
+            <Property name="ScorecardScore">
+                <Value>0.0#</Value>
+            </Property>
+            <Property name="MonetaryValueFull">
+                <Value>#,###.00</Value>
+            </Property>
+            <Property name="MonetaryValueNoFrac">
+                <Value>#,###</Value>
+            </Property>
+            <Property name="Date">
+                <Value>MM.dd.yyyy hh:mm a</Value>
+            </Property>
+            <Property name="DateOnly">
+                <Value>MM.dd.yyyy</Value>
+            </Property>
+            <Property name="TimeOnly">
+                <Value>hh:mm a</Value>
+            </Property>
+        </Property>
+
+        <!-- Definition of the Permissions Matrix.  Each property inside the main one denotes one
+            certain permission, while the name attribute for that property specifies the name of
+            the permission.  The values contained inside each property specify the names of the
+            Resource Roles that have that permission granted. -->
+        <!--  NOTE!  All names (either for permissions or for resource roles) are case sensitive!  -->
+        <Property name="Permissions Matrix">
+            <Property name="Create Scorecard">
+                <Value>Global Manager</Value>
+                <Value>Manager</Value>
+            </Property>
+            <Property name="Edit Scorecard">
+                <Value>Global Manager</Value>
+                <Value>Manager</Value>
+            </Property>
+            <Property name="View Scorecard">
+                <Value>Global Manager</Value>
+                <Value>Manager</Value>
+            </Property>
+            <Property name="Create Project">
+                <Value>Global Manager</Value>
+                <Value>Manager</Value>
+            </Property>
+            <Property name="Edit Project Details">
+                <Value>Global Manager</Value>
+                <Value>Manager</Value>
+            </Property>
+            <Property name="Set Timeline Notifications">
+                <Value>Global Manager</Value>
+                <Value>Manager</Value>
+                <Value>Observer</Value>
+                <Value>Submitter</Value>
+                <Value>Screener</Value>
+                <Value>Primary Screener</Value>
+                <Value>Reviewer</Value>
+                <Value>Accuracy Reviewer</Value>
+                <Value>Failure Reviewer</Value>
+                <Value>Stress Reviewer</Value>
+                <Value>Aggregator</Value>
+                <Value>Final Reviewer</Value>
+                <Value>Approver</Value>
+                <Value>Designer</Value>
+            </Property>
+            <Property name="View Projects">
+                <Value>Global Manager</Value>
+                <Value>Manager</Value>
+                <Value>Public</Value>
+            </Property>
+            <Property name="View My Projects">
+                <Value>Global Manager</Value>
+                <Value>Manager</Value>
+                <Value>Observer</Value>
+                <Value>Submitter</Value>
+                <Value>Screener</Value>
+                <Value>Primary Screener</Value>
+                <Value>Reviewer</Value>
+                <Value>Accuracy Reviewer</Value>
+                <Value>Failure Reviewer</Value>
+                <Value>Stress Reviewer</Value>
+                <Value>Aggregator</Value>
+                <Value>Final Reviewer</Value>
+                <Value>Approver</Value>
+                <Value>Designer</Value>
+            </Property>
+            <Property name="View Projects Inactive">
+                <Value>Global Manager</Value>
+                <Value>Manager</Value>
+            </Property>
+            <Property name="View Project Detail">
+                <Value>Global Manager</Value>
+                <Value>Manager</Value>
+                <Value>Observer</Value>
+                <Value>Submitter</Value>
+                <Value>Screener</Value>
+                <Value>Primary Screener</Value>
+                <Value>Reviewer</Value>
+                <Value>Accuracy Reviewer</Value>
+                <Value>Failure Reviewer</Value>
+                <Value>Stress Reviewer</Value>
+                <Value>Aggregator</Value>
+                <Value>Final Reviewer</Value>
+                <Value>Approver</Value>
+                <Value>Public</Value>
+                <Value>Designer</Value>
+            </Property>
+            <Property name="View Project Resources">
+                <Value>Global Manager</Value>
+                <Value>Manager</Value>
+                <Value>Observer</Value>
+            </Property>
+            <Property name="View SVN Link">
+                <Value>Global Manager</Value>
+                <Value>Manager</Value>
+                <Value>Observer</Value>
+                <Value>Reviewer</Value>
+                <Value>Accuracy Reviewer</Value>
+                <Value>Failure Reviewer</Value>
+                <Value>Stress Reviewer</Value>
+                <Value>Aggregator</Value>
+                <Value>Final Reviewer</Value>
+            </Property>
+            <Property name="View Autopilot Status">
+                <Value>Global Manager</Value>
+                <Value>Manager</Value>
+                <Value>Observer</Value>
+            </Property>
+            <Property name="View All Payment Information">
+                <Value>Global Manager</Value>
+                <Value>Manager</Value>
+                <Value>Observer</Value>
+            </Property>
+            <Property name="View My Payment Information">
+                <Value>Submitter</Value>
+                <Value>Screener</Value>
+                <Value>Primary Screener</Value>
+                <Value>Reviewer</Value>
+                <Value>Accuracy Reviewer</Value>
+                <Value>Failure Reviewer</Value>
+                <Value>Stress Reviewer</Value>
+                <Value>Aggregator</Value>
+                <Value>Final Reviewer</Value>
+                <Value>Approver</Value>
+                <Value>Public</Value>
+            </Property>
+            <Property name="Contact Project Managers">
+                <Value>Global Manager</Value>
+                <Value>Manager</Value>
+                <Value>Observer</Value>
+                <Value>Submitter</Value>
+                <Value>Screener</Value>
+                <Value>Primary Screener</Value>
+                <Value>Reviewer</Value>
+                <Value>Accuracy Reviewer</Value>
+                <Value>Failure Reviewer</Value>
+                <Value>Stress Reviewer</Value>
+                <Value>Aggregator</Value>
+                <Value>Final Reviewer</Value>
+                <Value>Approver</Value>
+                <Value>Public</Value>
+                <Value>Designer</Value>
+            </Property>
+            <Property name="View Registrations">
+                <Value>Global Manager</Value>
+                <Value>Manager</Value>
+                <Value>Observer</Value>
+            </Property>
+            <Property name="Perform Submission">
+                <Value>Submitter</Value>
+            </Property>
+            <Property name="View All Submissions">
+                <Value>Global Manager</Value>
+                <Value>Manager</Value>
+                <Value>Approver</Value>
+            </Property>
+            <Property name="View My Submissions">
+                <Value>Submitter</Value>
+            </Property>
+            <Property name="View Screener Submission">
+                <Value>Screener</Value>
+                <Value>Primary Screener</Value>
+            </Property>
+            <Property name="View Most Recent Submissions">
+                <Value>Observer</Value>
+                <Value>Reviewer</Value>
+                <Value>Accuracy Reviewer</Value>
+                <Value>Failure Reviewer</Value>
+                <Value>Stress Reviewer</Value>
+            </Property>
+            <Property name="View Winning Submission">
+                <Value>Aggregator</Value>
+                <Value>Final Reviewer</Value>
+                <Value>Public</Value>
+                <Value>Designer</Value>
+            </Property>
+            <Property name="View Most Recent after Appeals Response">
+                <Value>Public</Value>
+                <Value>Designer</Value>
+            </Property>
+            <Property name="Download Custom Submission">
+                <Value>Submitter</Value>
+            </Property>
+            <Property name="Remove Submission">
+                <Value>Global Manager</Value>
+                <Value>Manager</Value>
+            </Property>
+            <Property name="Perform Screening">
+                <Value>Screener</Value>
+                <Value>Primary Screener</Value>
+            </Property>
+            <Property name="View Screening">
+                <Value>Global Manager</Value>
+                <Value>Manager</Value>
+                <Value>Observer</Value>
+                <Value>Submitter</Value>
+                <Value>Screener</Value>
+                <Value>Primary Screener</Value>
+                <!-- Note: Reviewers weren't originally allowed to see screenings, but
+                    after this issue was raised on forum, they were granted a permission to do so -->
+                <Value>Reviewer</Value>
+                <Value>Accuracy Reviewer</Value>
+                <Value>Failure Reviewer</Value>
+                <Value>Stress Reviewer</Value>
+                <Value>Aggregator</Value>
+                <Value>Final Reviewer</Value>
+                <Value>Approver</Value>
+                <Value>Public</Value>
+                <Value>Designer</Value>
+            </Property>
+            <Property name="Perform Review">
+                <Value>Reviewer</Value>
+                <Value>Accuracy Reviewer</Value>
+                <Value>Failure Reviewer</Value>
+                <Value>Stress Reviewer</Value>
+            </Property>
+            <Property name="Upload Test Cases">
+                <Value>Accuracy Reviewer</Value>
+                <Value>Failure Reviewer</Value>
+                <Value>Stress Reviewer</Value>
+            </Property>
+            <Property name="Download Test Cases">
+                <Value>Global Manager</Value>
+                <Value>Manager</Value>
+                <Value>Observer</Value>
+                <Value>Submitter</Value>
+                <Value>Reviewer</Value>
+                <Value>Accuracy Reviewer</Value>
+                <Value>Failure Reviewer</Value>
+                <Value>Stress Reviewer</Value>
+                <!-- The following two roles were added to the permissions matrix
+                    by Lorie after the issue had been raised on forum -->
+                <Value>Aggregator</Value>
+                <Value>Final Reviewer</Value>
+                <Value>Approver</Value>
+            </Property>
+            <!-- Note, the following permission was not originally present in the Permission Matrix -->
+            <Property name="Download Test Cases during Review">
+                <Value>Global Manager</Value>
+                <Value>Manager</Value>
+                <Value>Observer</Value>
+                <Value>Reviewer</Value>
+                <Value>Accuracy Reviewer</Value>
+                <Value>Failure Reviewer</Value>
+                <Value>Stress Reviewer</Value>
+            </Property>
+            <Property name="View All Reviews">
+                <Value>Global Manager</Value>
+                <Value>Manager</Value>
+                <Value>Observer</Value>
+                <Value>Submitter</Value>
+                <Value>Reviewer</Value>
+                <Value>Accuracy Reviewer</Value>
+                <Value>Failure Reviewer</Value>
+                <Value>Stress Reviewer</Value>
+                <Value>Aggregator</Value>
+                <Value>Final Reviewer</Value>
+                <Value>Approver</Value>
+                <Value>Public</Value>
+                <Value>Designer</Value>
+            </Property>
+            <Property name="View Reviewer Reviews">
+                <Value>Reviewer</Value>
+                <Value>Accuracy Reviewer</Value>
+                <Value>Failure Reviewer</Value>
+                <Value>Stress Reviewer</Value>
+            </Property>
+            <Property name="View Composite Scorecard">
+                <Value>Global Manager</Value>
+                <Value>Manager</Value>
+                <Value>Observer</Value>
+                <Value>Submitter</Value>
+                <Value>Aggregator</Value>
+                <Value>Public</Value>
+            </Property>
+            <Property name="Edit My Review during Review">
+                <Value>Screener</Value>
+                <Value>Primary Screener</Value>
+                <Value>Reviewer</Value>
+                <Value>Accuracy Reviewer</Value>
+                <Value>Failure Reviewer</Value>
+                <Value>Stress Reviewer</Value>
+                <Value>Approver</Value>
+            </Property>
+            <Property name="Perform Appeal">
+                <Value>Submitter</Value>
+            </Property>
+            <Property name="View Appeals">
+                <Value>Global Manager</Value>
+                <Value>Manager</Value>
+                <Value>Observer</Value>
+                <Value>Submitter</Value>
+                <Value>Reviewer</Value>
+                <Value>Accuracy Reviewer</Value>
+                <Value>Failure Reviewer</Value>
+                <Value>Stress Reviewer</Value>
+                <Value>Approver</Value>
+                <Value>Public</Value>
+                <Value>Designer</Value>
+            </Property>
+            <Property name="Perform Appeals Response">
+                <Value>Reviewer</Value>
+                <Value>Accuracy Reviewer</Value>
+                <Value>Failure Reviewer</Value>
+                <Value>Stress Reviewer</Value>
+            </Property>
+            <Property name="View Appeal Responses">
+                <Value>Global Manager</Value>
+                <Value>Manager</Value>
+                <Value>Observer</Value>
+                <Value>Submitter</Value>
+                <Value>Reviewer</Value>
+                <Value>Accuracy Reviewer</Value>
+                <Value>Failure Reviewer</Value>
+                <Value>Stress Reviewer</Value>
+                <Value>Approver</Value>
+                <Value>Public</Value>
+                <Value>Designer</Value>
+            </Property>
+            <Property name="Edit My Appeal during Appeals Response">
+                <!-- Note: Origianlly this permission had been granted to Screners (and Primary Screeners
+                    as well), but this was changed later on after this issue was rased on forum -->
+                <Value>Reviewer</Value>
+                <Value>Accuracy Reviewer</Value>
+                <Value>Failure Reviewer</Value>
+                <Value>Stress Reviewer</Value>
+            </Property>
+            <Property name="Perform Aggregation">
+                <!-- Note: Originally this permission had been granted
+                    to Reviewers (and all Testcase Reviewers as well),
+                    but this was changed later on after this issue was raised on forum -->
+                <Value>Aggregator</Value>
+            </Property>
+            <Property name="View Aggregation">
+                <Value>Global Manager</Value>
+                <Value>Manager</Value>
+                <Value>Observer</Value>
+                <Value>Submitter</Value>
+                <Value>Reviewer</Value>
+                <Value>Accuracy Reviewer</Value>
+                <Value>Failure Reviewer</Value>
+                <Value>Stress Reviewer</Value>
+                <!-- Aggregator must be allowed to see Aggregation (especially, if it is its own one) -->
+                <Value>Aggregator</Value>
+                <Value>Approver</Value>
+                <Value>Public</Value>
+                <Value>Designer</Value>
+            </Property>
+            <Property name="Perform Aggregation Review">
+                <!-- Note: originally this permission had been granted to Aggregator, but it
+                    was changed later to match the logic of the application -->
+                <Value>Submitter</Value>
+                <Value>Reviewer</Value>
+                <Value>Accuracy Reviewer</Value>
+                <Value>Failure Reviewer</Value>
+                <Value>Stress Reviewer</Value>
+            </Property>
+            <Property name="View Aggregation Review">
+                <Value>Global Manager</Value>
+                <Value>Manager</Value>
+                <Value>Observer</Value>
+                <Value>Submitter</Value>
+                <Value>Reviewer</Value>
+                <Value>Accuracy Reviewer</Value>
+                <Value>Failure Reviewer</Value>
+                <Value>Stress Reviewer</Value>
+                <Value>Approver</Value>
+                <Value>Public</Value>
+                <Value>Designer</Value>
+            </Property>
+            <Property name="Perform Final Fix">
+                <Value>Submitter</Value>
+            </Property>
+            <Property name="Download Final Fix">
+                <Value>Global Manager</Value>
+                <Value>Manager</Value>
+                <Value>Observer</Value>
+                <Value>Submitter</Value>
+                <Value>Final Reviewer</Value>
+                <Value>Approver</Value>
+            </Property>
+            <Property name="Perform Final Review">
+                <Value>Final Reviewer</Value>
+            </Property>
+            <Property name="View Final Review">
+                <Value>Global Manager</Value>
+                <Value>Manager</Value>
+                <Value>Observer</Value>
+                <Value>Submitter</Value>
+                <Value>Final Reviewer</Value>
+                <Value>Approver</Value>
+                <Value>Public</Value>
+                <Value>Designer</Value>
+            </Property>
+            <Property name="Submit Scorecard Comment">
+                <Value>Submitter</Value>
+            </Property>
+            <Property name="Perform Approval">
+                <Value>Global Manager</Value>
+                <Value>Manager</Value>
+                <Value>Approver</Value>
+            </Property>
+            <Property name="View Approval">
+                <Value>Global Manager</Value>
+                <Value>Manager</Value>
+                <Value>Observer</Value>
+                <Value>Submitter</Value>
+                <Value>Approver</Value>
+            </Property>
+            <Property name="Edit Any Scorecard">
+                <Value>Global Manager</Value>
+                <Value>Manager</Value>
+            </Property>
+            <!-- Note: The following permission wasn't originally defined
+                in the Requirements Specification's permission matrix -->
+            <Property name="Download Review Document">
+                <Value>Global Manager</Value>
+                <Value>Manager</Value>
+                <Value>Observer</Value>
+                <Value>Submitter</Value>
+                <Value>Reviewer</Value>
+                <Value>Accuracy Reviewer</Value>
+                <Value>Failure Reviewer</Value>
+                <Value>Stress Reviewer</Value>
+                <Value>Aggregator</Value>
+                <Value>Final Reviewer</Value>
+                <Value>Approver</Value>
+                <Value>Public</Value>
+            </Property>
+        </Property>
+
+        <Property name="PhaseGrouping">
+            <Property name="Registration">
+                <Property name="NameKey">
+                    <Value>ProjectPhaseGroup.Registration</Value>
+                </Property>
+                <Property name="TableNameKey">
+                    <Value>ProjectPhaseGroup.Registration.table</Value>
+                </Property>
+                <Property name="Phases">
+                    <Value>Registration</Value>
+                </Property>
+                <Property name="AppFunction">
+                    <Value>VIEW_REGISTRANTS</Value>
+                </Property>
+            </Property>
+            <Property name="Submission_Screening">
+                <Property name="NameKey">
+                    <Value>ProjectPhaseGroup.Submission_Screening</Value>
+                </Property>
+                <Property name="TableNameKey">
+                    <Value>ProjectPhaseGroup.Submission_Screening.table</Value>
+                </Property>
+                <Property name="Phases">
+                    <Value>Submission</Value>
+                    <Value>Screening</Value>
+                </Property>
+                <Property name="AppFunction">
+                    <Value>VIEW_SUBMISSIONS</Value>
+                </Property>
+            </Property>
+            <Property name="Review_Appeals">
+                <Property name="NameKey">
+                    <Value>ProjectPhaseGroup.Review_Appeals</Value>
+                </Property>
+                <Property name="TableNameKey">
+                    <Value>ProjectPhaseGroup.Review_Appeals.table</Value>
+                </Property>
+                <Property name="Phases">
+                    <Value>Review</Value>
+                    <Value>Appeals</Value>
+                    <Value>Appeals Response</Value>
+                </Property>
+                <Property name="AppFunction">
+                    <Value>VIEW_REVIEWS</Value>
+                </Property>
+            </Property>
+            <Property name="Aggregation_Review">
+                <Property name="NameKey">
+                    <Value>ProjectPhaseGroup.Aggregation_Review</Value>
+                </Property>
+                <Property name="TableNameKey">
+                    <Value>ProjectPhaseGroup.Aggregation_Review.table</Value>
+                </Property>
+                <Property name="Phases">
+                    <Value>Aggregation</Value>
+                    <Value>Aggregation Review</Value>
+                </Property>
+                <Property name="AppFunction">
+                    <Value>AGGREGATION</Value>
+                </Property>
+            </Property>
+            <Property name="FinalFix_Review">
+                <Property name="NameKey">
+                    <Value>ProjectPhaseGroup.FinalFix_Review</Value>
+                </Property>
+                <Property name="TableNameKey">
+                    <Value>ProjectPhaseGroup.FinalFix_Review.table</Value>
+                </Property>
+                <Property name="Phases">
+                    <Value>Final Fix</Value>
+                    <Value>Final Review</Value>
+                </Property>
+                <Property name="AppFunction">
+                    <Value>FINAL_FIX</Value>
+                </Property>
+            </Property>
+            <Property name="Approval">
+                <Property name="NameKey">
+                    <Value>ProjectPhaseGroup.Approval</Value>
+                </Property>
+                <Property name="TableNameKey">
+                    <Value>ProjectPhaseGroup.Approval.table</Value>
+                </Property>
+                <Property name="Phases">
+                    <Value>Approval</Value>
+                </Property>
+                <Property name="AppFunction">
+                    <Value>APPROVAL</Value>
+                </Property>
+            </Property>
+        </Property>
+
+        <Property name="ContactManagerEmail">
+            <Property name="EmailTemplateSource">
+                <Value>file</Value>
+            </Property>
+            <Property name="EmailTemplateName">
+                <Value>&contactManagersTemplate;</Value>
+            </Property>
+            <Property name="EmailSubject">
+                <Value>Contact Manager Message</Value>
+            </Property>
+            <Property name="EmailFromAddress">
+                <Value>service@topcodersoftware.com</Value>
+            </Property>
+        </Property>
+    </Config>
+
+    <!--
+        Configuration for the Online Web services component.
+     -->
+    <Config name="com.cronos.onlinereview.services.uploads.impl.DefaultUploadServices">
+        <Property name="objectFactoryNamespace">
+            <Value>com.cronos.onlinereview.services.uploads.impl.DefaultUploadServices.ObjectFactory</Value>
+        </Property>
+        <Property name="managersProviderIdentifier">
+            <Value>managersProvider</Value>
+        </Property>
+    </Config>
+
+    <Config name="com.cronos.onlinereview.services.uploads.impl.DefaultUploadExternalServices">
+        <Property name="objectFactoryNamespace">
+            <Value>com.cronos.onlinereview.services.uploads.impl.DefaultUploadServices.ObjectFactory</Value>
+        </Property>
+        <Property name="uploadServicesIdentifier">
+            <Value>uploadServices</Value>
+        </Property>
+        <!-- file name should have "_" in it. -->
+        <Property name="filenamePattern">
+            <Value>submission_{0}_{1}</Value>
+        </Property>
+        <!-- Needs to be updated correctly -->
+        <Property name="fileStorageLocation">
+            <Value>&localFileUploadDir;</Value>
+        </Property>
+    </Config>
+
+    <Config name="com.cronos.onlinereview.services.uploads.impl.DefaultUploadServices.ObjectFactory">
+        <Property name="managersProvider">
+            <Property name="type">
+                <Value>com.cronos.onlinereview.actions.ManagerCreationHelper</Value>
+            </Property>
+        </Property>
+        <Property name="uploadServices">
+            <Property name="type">
+                <Value>com.cronos.onlinereview.services.uploads.impl.DefaultUploadServices</Value>
+            </Property>
+            <Property name="params">
+                <Property name="param1">
+                    <Property name="type">
+                        <Value>String</Value>
+                    </Property>
+                    <Property name="value">
+                        <Value>com.cronos.onlinereview.services.uploads.impl.DefaultUploadServices</Value>
+                    </Property>
+                </Property>
+            </Property>
+        </Property>
+    </Config>
+</CMConfig>
