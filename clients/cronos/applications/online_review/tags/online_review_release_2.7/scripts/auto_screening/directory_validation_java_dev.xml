@@ -1,0 +1,70 @@
+<?xml version="1.0" ?>
+<DirectoryValidation>
+  <BaseValidators>
+    <BaseValidator name="DirectoryExistsValidator">
+      <Class>com.topcoder.file.directoryvalidator.validators.DirectoryExistsValidator</Class>
+      <FailureMessage>The directory does not exist</FailureMessage>
+      <SuccessMessage>The directory exists</SuccessMessage>
+    </BaseValidator>
+    <BaseValidator name="FileExistsValidator">
+      <Class>com.topcoder.file.directoryvalidator.validators.FileExistsValidator</Class>
+      <FailureMessage>The file does not exist.</FailureMessage>
+      <SuccessMessage>The file exists</SuccessMessage>
+    </BaseValidator>
+  </BaseValidators>
+
+  <ValidatorDefs>
+    <ValidatorDef name="DirectoryExistsValidator">
+      <Validator>DirectoryExistsValidator</Validator>
+    </ValidatorDef>
+
+    <ValidatorDef name="FileExistsValidator">
+      <Validator>FileExistsValidator</Validator>
+    </ValidatorDef>
+  </ValidatorDefs>
+
+  <Directory>
+    <Name>.</Name>
+    <Validator>DirectoryExistsValidator</Validator>
+    <SubDirectory>
+      <Name>src</Name>
+      <Validator>DirectoryExistsValidator</Validator>
+      <SubDirectory>
+        <Name>java</Name>
+        <Validator>DirectoryExistsValidator</Validator>
+        <SubDirectory>
+          <Name>main</Name>
+          <Validator>DirectoryExistsValidator</Validator>
+        </SubDirectory>
+        <SubDirectory>
+          <Name>tests</Name>
+          <Validator>DirectoryExistsValidator</Validator>
+        </SubDirectory>
+      </SubDirectory>
+    </SubDirectory>
+    <SubDirectory>
+      <Name>docs</Name>
+      <Validator>DirectoryExistsValidator</Validator>
+    </SubDirectory>
+    <SubDirectory>
+      <Name>log</Name>
+      <Validator>DirectoryExistsValidator</Validator>
+      <SubDirectory>
+        <Name>coverage</Name>
+        <Validator>DirectoryExistsValidator</Validator>
+	    <File>
+	      <Name>frame-summary.html</Name>
+	      <Validator>FileExistsValidator</Validator>
+		</File>
+      </SubDirectory>
+    </SubDirectory>
+    <SubDirectory>
+      <Name>conf</Name>
+      <Validator>DirectoryExistsValidator</Validator>
+    </SubDirectory>
+    <SubDirectory>
+      <Name>test_files</Name>
+      <Validator>DirectoryExistsValidator</Validator>
+    </SubDirectory>
+  </Directory>
+</DirectoryValidation>
