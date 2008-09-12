@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CMConfig>
+    <Property name="screening">
+        <Value>StartDTG:August 14, 2006 8:24:53 PM</Value>
+        <Value>EndDTG:</Value>
+        <Value>IntervalValue:1</Value>
+        <Value>IntervalUnit:SECOND</Value>
+        <Value>JobType:JOB_TYPE_JAVA_CLASS</Value>
+        <Value>JobCmd:com.cronos.onlinereview.autoscreening.tool.ScreeningTool$ScreeningJob</Value>
+    </Property>
+</CMConfig>

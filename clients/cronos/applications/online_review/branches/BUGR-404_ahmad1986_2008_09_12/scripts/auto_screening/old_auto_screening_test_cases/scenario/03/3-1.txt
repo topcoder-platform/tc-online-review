@@ -1,0 +1,4 @@
+Java Design - CS not named with component specification.
+
+Fatal Errors: 
+ TCS-004: Your submission does not contain a component specification document in rich text format (rtf).  
