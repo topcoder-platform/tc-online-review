@@ -1,3 +1,5 @@
+<!-- changed by ahmad1986 - 5/9/2008 - BUGR-404 -->
+
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ page language="java" isELIgnored="false" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
@@ -68,6 +70,9 @@
                             </tr>
                             <tr class="light">
                                 <td class="Value"><br>
+<!-- BUGR-404 -->
+					 <b><bean:message key="contactManager.Subject" /></b>
+					 <html:text property="subj" maxlength="25"/>
                                     <b><bean:message key="contactManager.Category" /></b>
                                     <html:select property="cat" size="1" style="width:150px;" styleClass="inputBox">
                                         <html:option key="contactManager.Category.no" value="" />

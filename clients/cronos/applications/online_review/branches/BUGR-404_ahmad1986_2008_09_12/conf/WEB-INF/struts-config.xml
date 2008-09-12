@@ -5,7 +5,7 @@
           "http://jakarta.apache.org/struts/dtds/struts-config_1_2.dtd">
 
 <struts-config>
-
+<!-- changed by ahmad1986 - 5/9/2008 - BUGR-404 -->
 <!-- ================================================ Form Bean Definitions -->
 
     <form-beans>
@@ -89,6 +89,8 @@
 
         <form-bean name="contactManagerForm" dynamic="true"
             type="org.apache.struts.validator.DynaValidatorForm">
+<!-- BUGR-404 -->
+	     <form-property name="msg" type="java.lang.String" /> 
             <form-property name="cat" type="java.lang.String" />
             <form-property name="msg" type="java.lang.String" />
         </form-bean>

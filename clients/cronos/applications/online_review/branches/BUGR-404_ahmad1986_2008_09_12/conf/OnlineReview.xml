@@ -8,6 +8,7 @@
        <!ENTITY pactJNDIAddress "jnp://63.118.154.181:1199">
 ]>
 <CMConfig>
+<!-- changed by ahmad1986 - 5/9/2008 - BUGR-404 -->
 <!-- [OR-584] don't need this anymore
     <!ENTITY assignmentDocumentsFlag "false">
 -->
@@ -3676,9 +3677,11 @@
             <Property name="EmailTemplateName">
                 <Value>&contactManagersTemplate;</Value>
             </Property>
+<!-- BUGR-404
             <Property name="EmailSubject">
                 <Value>Contact Manager Message</Value>
             </Property>
+-->
             <Property name="EmailFromAddress">
                 <Value>service@topcodersoftware.com</Value>
             </Property>

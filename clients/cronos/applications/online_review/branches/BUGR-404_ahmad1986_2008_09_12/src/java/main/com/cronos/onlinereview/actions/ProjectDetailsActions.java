@@ -96,6 +96,7 @@ import com.topcoder.util.file.fieldconfig.TemplateFields;
  * This class is thread-safe as it does not contain any mutable inner state.
  * </p>
  *
+ * changed by ahmad1986 - 5/9/2008 - BUGR-404
  * @author George1
  * @author real_vg
  * @version 1.0
@@ -175,30 +176,8 @@ public class ProjectDetailsActions extends DispatchAction {
 		request.setAttribute("projectCategory", project.getProjectCategory().getName());
 		String paymentStr = project.getProperty("Payments") == null ? "0": project.getProperty("Payments").toString();
 		request.setAttribute("projectPayment", Double.valueOf(paymentStr));
-
-		boolean digitalRunFlag = "On".equals(project.getProperty("Digital Run Flag"));
-
-		request.setAttribute("projectDRFlag", digitalRunFlag?"Yes":"No");
-
 		String drpointStr = project.getProperty("DR points") == null ? "0" : project.getProperty("DR points").toString();
-		if (digitalRunFlag)
-		{
-			double drpoint = 0;
-			if (drpointStr != null)
-			{
-				drpoint = Double.parseDouble(drpointStr);
-			}
-			if (drpoint < 0.5)
-			{
-				request.setAttribute("projectDRP", Double.valueOf(paymentStr));
-			}
-			else
-			{
-				request.setAttribute("projectDRP", Double.valueOf(drpointStr));
-			}
-		}
-		
-		
+		request.setAttribute("projectDRP", Double.valueOf(drpointStr));
 
         // Place a string that represents "my" current role(s) into the request
         ActionsHelper.retrieveAndStoreMyRole(request, getResources(request));
@@ -541,10 +520,10 @@ public class ProjectDetailsActions extends DispatchAction {
 
         // Build filters
         Filter filterProject = ResourceFilterBuilder.createProjectIdFilter(project.getId());
-        
+
         Filter filterRole = ResourceFilterBuilder.createResourceRoleIdFilter(
         		ActionsHelper.findResourceRoleByName(allResourceRoles, "Manager").getId());
-        
+
         // Build final filter
         Filter filter = new AndFilter(filterProject, filterRole);
         // Search for the managers of this project
@@ -619,7 +598,8 @@ public class ProjectDetailsActions extends DispatchAction {
         // Add 'From' address
         message.setFromAddress(sender.getEmail());
         // Set message's subject
-        message.setSubject(ConfigHelper.getContactManagerEmailSubject());
+	 // BUGR-404
+        message.setSubject(ConfigHelper.getContactManagerEmailSubject((String)project.getProperty("Project Name"),sender.getHandle(),request.getParameter("subj"))); 
         // Insert a body into the message
         message.setBody(docGenerator.applyTemplate(fields));
 
@@ -867,7 +847,7 @@ public class ProjectDetailsActions extends DispatchAction {
         // the download validation for custom components is different
         String rootCatalogId = (String)((verification.getProject()).getProperty("Root Catalog ID"));
         boolean custom = ConfigHelper.isCustomRootCatalog(rootCatalogId);
-        
+
         boolean mayDownload = (custom ?
             AuthorizationHelper.hasUserPermission(request, Constants.DOWNLOAD_CUSTOM_SUBM_PERM_NAME) :
             AuthorizationHelper.hasUserPermission(request, Constants.VIEW_WINNING_SUBM_PERM_NAME));

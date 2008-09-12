@@ -24,6 +24,7 @@ import com.topcoder.util.config.UnknownNamespaceException;
  * is not changed afterwards.
  * </p>
  *
+ * changed by ahmad1986 - 5/9/2008 - BUGR-404
  * @author George1
  * @author real_vg
  * @version 1.0
@@ -551,8 +552,9 @@ public class ConfigHelper {
     /**
      * This member variable holds the subject of email message that will be used when sending
      * messages to project's manager.
+     * BUGR-404
      */
-    private static String contactManagerEmailSubject = "";
+    //private static String contactManagerEmailSubject = "";
 
     static {
         // Obtaining the instance of Configurtaion Manager
@@ -835,7 +837,8 @@ public class ConfigHelper {
             if (propContactManagerEmail != null) {
                 contactManagerEmailSrcType = propContactManagerEmail.getValue(EMAIL_TEMPLATE_SOURCE_TYPE_PROP);
                 contactManagerEmailTemplate = propContactManagerEmail.getValue(EMAIL_TEMPLATE_NAME_PROP);
-                contactManagerEmailSubject = propContactManagerEmail.getValue(EMAIL_SUBJECT_PROP);
+		  // BUGR-404
+                // contactManagerEmailSubject = propContactManagerEmail.getValue(EMAIL_SUBJECT_PROP);
             }
         } catch (UnknownNamespaceException une) {
             // TODO: Add proper logging here
@@ -1205,11 +1208,16 @@ public class ConfigHelper {
     /**
      * This method returns the subject of the email message that will be sent to project's manager.
      *
+     * @param component the component name
+     * @param handle the handle who sends the email
+     * @param subject the subject value
      * @return a string containing the subject.
+     *
+     * BUGR-404
      */
-    public static String getContactManagerEmailSubject() {
-        return contactManagerEmailSubject;
-    }
+    public static String getContactManagerEmailSubject(String component,String handle,String subject) {
+        return component+"-"+handle+"-"+subject;
+    } 
 
     /**
      * Return the property value of online_review namespace.
