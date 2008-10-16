@@ -1,0 +1,40 @@
+ArchiveFileRule INFO - Perform screening task with id [100321] by screener with id [100].
+ArchiveFileRule INFO - Success: OK. The submission archive was successfully unzipped to [E:\tcs\app\online_review\scripts\auto_screening\temp\2-1.jar.contents].
+DirectoryStructureRule INFO - Perform screening task with id [100321] by screener with id [100].
+DirectoryStructureRule WARN - Failure: File or directory [E:\tcs\app\online_review\scripts\auto_screening\temp\2-1.jar.contents\.\docs] failed to pass the validation: The directory does not exist
+DirectoryStructureRule WARN - Failure: File or directory [E:\tcs\app\online_review\scripts\auto_screening\temp\2-1.jar.contents\.\conf] failed to pass the validation: The directory does not exist
+DirectoryStructureRule WARN - Failure: File or directory [E:\tcs\app\online_review\scripts\auto_screening\temp\2-1.jar.contents\.\test_files] failed to pass the validation: The directory does not exist
+ComponentSpecificationRule INFO - Perform screening task with id [100321] by screener with id [100].
+ComponentSpecificationRule WARN - Failure: No component specification files are found in directory [E:\tcs\app\online_review\scripts\auto_screening\temp\2-1.jar.contents\docs], or they are not of rtf type.
+PersonalInfoRule INFO - Perform screening task with id [100321] by screener with id [100].
+PersonalInfoRule INFO - Success: OK. There are no personal info in the submission.
+PoseidonExtractRule INFO - Perform screening task with id [100321] by screener with id [100].
+PoseidonExtractRule FATAL - Error: java.lang.NullPointerException
+	at com.cronos.onlinereview.autoscreening.tool.rules.PoseidonExtractRule.screenWithoutLog(PoseidonExtractRule.java:194)
+	at com.cronos.onlinereview.autoscreening.tool.rules.PoseidonExtractRule.screen(PoseidonExtractRule.java:161)
+	at com.cronos.onlinereview.autoscreening.tool.ScreeningLogic.screen(ScreeningLogic.java:270)
+	at com.cronos.onlinereview.autoscreening.tool.Screener.screen(Screener.java:651)
+	at com.cronos.onlinereview.autoscreening.tool.ScreeningTool$ScreeningJob.run(ScreeningTool.java:87)
+	at java.lang.Thread.run(Thread.java:534)
+
+PoseidonDiagramRule INFO - Perform screening task with id [100321] by screener with id [100].
+PoseidonDiagramRule FATAL - Error: com.cronos.onlinereview.autoscreening.tool.ScreeningException: The property [extracted_xmi_file] does not exist in the screening context or its value is null.
+	at com.cronos.onlinereview.autoscreening.tool.rules.RuleUtils.getContextProperty(RuleUtils.java:262)
+	at com.cronos.onlinereview.autoscreening.tool.rules.PoseidonDiagramRule.screenWithoutLog(PoseidonDiagramRule.java:157)
+	at com.cronos.onlinereview.autoscreening.tool.rules.PoseidonDiagramRule.screen(PoseidonDiagramRule.java:137)
+	at com.cronos.onlinereview.autoscreening.tool.ScreeningLogic.screen(ScreeningLogic.java:270)
+	at com.cronos.onlinereview.autoscreening.tool.Screener.screen(Screener.java:651)
+	at com.cronos.onlinereview.autoscreening.tool.ScreeningTool$ScreeningJob.run(ScreeningTool.java:87)
+	at java.lang.Thread.run(Thread.java:534)
+
+PoseidonExtractRule INFO - Cleanup screening task with id [100321] by screener with id [100].
+PoseidonExtractRule FATAL - com.cronos.onlinereview.autoscreening.tool.ScreeningException: The property [extracted_zuml_file] does not exist in the screening context or its value is null.
+	at com.cronos.onlinereview.autoscreening.tool.rules.RuleUtils.getContextProperty(RuleUtils.java:262)
+	at com.cronos.onlinereview.autoscreening.tool.rules.PoseidonExtractRule.cleanup(PoseidonExtractRule.java:285)
+	at com.cronos.onlinereview.autoscreening.tool.ScreeningLogic.cleanup(ScreeningLogic.java:287)
+	at com.cronos.onlinereview.autoscreening.tool.Screener.screen(Screener.java:662)
+	at com.cronos.onlinereview.autoscreening.tool.ScreeningTool$ScreeningJob.run(ScreeningTool.java:87)
+	at java.lang.Thread.run(Thread.java:534)
+
+ArchiveFileRule INFO - Cleanup screening task with id [100321] by screener with id [100].
+ArchiveFileRule INFO - OK. The temporary unzipped submission directory [E:\tcs\app\online_review\scripts\auto_screening\temp\2-1.jar.contents] was deleted successfully.
