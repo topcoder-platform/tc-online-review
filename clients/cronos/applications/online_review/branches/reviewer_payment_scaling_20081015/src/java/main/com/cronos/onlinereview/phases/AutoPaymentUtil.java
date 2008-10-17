@@ -130,7 +130,8 @@ public class AutoPaymentUtil {
 
         FixedPriceComponent fpc = new FixedPriceComponent(levelId, count, passedCount,
                                                           (int) (projectCategoryId + 111),
-                                                          payments[0], payments[1]);
+                                                          payments[0], payments[1],
+                                                          prize, drPoints);
         List reviewers = getReviewers(projectId, conn);
 
         for (Iterator iter = reviewers.iterator(); iter.hasNext();) {
