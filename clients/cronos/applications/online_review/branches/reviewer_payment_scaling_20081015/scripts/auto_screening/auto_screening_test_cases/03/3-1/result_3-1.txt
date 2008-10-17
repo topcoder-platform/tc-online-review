@@ -1,0 +1,14 @@
+TCS-003: Your submission does not conform to the directory standard.
+
+File or directory [E:\tcs\app\online_review\scripts\auto_screening\temp\3-1.jar.contents\.\conf] failed to pass the validation: The directory does not exist 
+File or directory [E:\tcs\app\online_review\scripts\auto_screening\temp\3-1.jar.contents\.\test_files] failed to pass the validation: The directory does not exist 
+
+TCS-004: Your submission does not contain a component specification document in rich text format (rtf).
+
+No component specification files are found in directory [E:\tcs\app\online_review\scripts\auto_screening\temp\3-1.jar.contents\docs], or they are not of rtf type. 
+TCS-015: Your submission has passed the auto screening process.
+
+OK. The submission archive was successfully unzipped to [E:\tcs\app\online_review\scripts\auto_screening\temp\3-1.jar.contents]. 
+OK. There are no personal info in the submission. 
+OK. The 'zuml' or 'zargo' file is unzipped successfully. 
+Ok. The numbers of use case diagram, class diagram and sequence diagram [1, 1, 1] all meet the expected counts [1, 1, 1]. 
