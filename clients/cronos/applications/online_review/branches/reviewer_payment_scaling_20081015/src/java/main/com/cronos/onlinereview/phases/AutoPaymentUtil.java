@@ -125,8 +125,8 @@ public class AutoPaymentUtil {
         int passedCount = getScreenPassedCount(projectId, conn);
         float[] payments = getPayments(projectId, projectCategoryId, conn);
 
-        float prize = getPriceByProjectId(projectId, conn);
-        float drPoints = getDrPointsByProjectId(projectId, conn);
+        float prize = (float) getPriceByProjectId(projectId, conn);
+        float drPoints = (float) getDrPointsByProjectId(projectId, conn);
 
         FixedPriceComponent fpc = new FixedPriceComponent(levelId, count, passedCount,
                                                           (int) (projectCategoryId + 111),
