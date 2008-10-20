@@ -53,10 +53,16 @@ public class AutoPaymentUtil {
 
     /** Retrieve the DR points from project info. */
     private static final String SELECT_DR_PROJECT_INFO =
-        "select value " +
-        "  from project_info " +
-        " where project_info_type_id = 30 " +
-        "   and project_id = ? ";
+        "select (case when pi_is_dr.value = 'On' then nvl(pi_dr_points.value, pi_prize.value) else '0' end) as value " +
+        "  from project_info pi_prize " +
+        "     , project_info pi_is_dr " +
+        "     , outer project_info pi_dr_points " +
+        " where pi_prize.project_id = ? " +
+        "   and pi_prize.project_info_type_id = 16 " +
+        "   and pi_prize.project_id = pi_is_dr.project_id " +
+        "   and pi_is_dr.project_info_type_id = 26 " +
+        "   and pi_prize.project_id = pi_dr_points.project_id " +
+        "   and pi_dr_points.project_info_type_id = 30 ";
 
     /**
      * This is a string constant that specifies a <code>SELECT</code> statement for retrieving the
