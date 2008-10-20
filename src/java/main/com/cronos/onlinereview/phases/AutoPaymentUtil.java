@@ -27,29 +27,36 @@ import java.util.List;
  * @version 1.0
  */
 public class AutoPaymentUtil {
-	/**
-	 * The logger instance.
-	 */
-	private static final Log logger = LogFactory.getLog(AutoPaymentUtil.class.getName());
-	
+        /**
+         * The logger instance.
+         */
+        private static final Log logger = LogFactory.getLog(AutoPaymentUtil.class.getName());
+
 //    /** Retrieve the price from comp_version_date. */
 //    private static final String SELECT_PRICE_CVD = "select price " +
-//    	"	from comp_version_dates, " +
-//        "	project_info pi, " +
-//        "	project p" +
-//        "	where p.project_id = pi.project_id" +
-//        "	and comp_vers_id = pi.value" +
-//        "	and ((p.project_category_id = 1 and phase_id = 112)" +
-//        "		or (p.project_category_id = 2 and phase_id = 113))" +
-//        "	and pi.project_info_type_id = 1 " +
-//        "	and pi.project_id = ? ";
+//      "       from comp_version_dates, " +
+//        "     project_info pi, " +
+//        "     project p" +
+//        "     where p.project_id = pi.project_id" +
+//        "     and comp_vers_id = pi.value" +
+//        "     and ((p.project_category_id = 1 and phase_id = 112)" +
+//        "             or (p.project_category_id = 2 and phase_id = 113))" +
+//        "     and pi.project_info_type_id = 1 " +
+//        "     and pi.project_id = ? ";
 
     /** Retrieve the price from project_info. */
     private static final String SELECT_PRICE_PROJECT_INFO =
-    	"select value " +
-    	"	from project_info " +
-        "	where project_info_type_id = 16 " +
-        "	and project_id = ? ";
+        "select value " +
+        "  from project_info " +
+        " where project_info_type_id = 16 " +
+        "   and project_id = ? ";
+
+    /** Retrieve the DR points from project info. */
+    private static final String SELECT_DR_PROJECT_INFO =
+        "select value " +
+        "  from project_info " +
+        " where project_info_type_id = 30 " +
+        "   and project_id = ? ";
 
     /**
      * This is a string constant that specifies a <code>SELECT</code> statement for retrieving the
@@ -102,25 +109,29 @@ public class AutoPaymentUtil {
      *
      * @throws Exception if error occurs
      */
-    public static void populateReviewerPayments(long projectId, Connection conn, int phaseId)
-        throws SQLException {
+    public static void populateReviewerPayments(long projectId, Connection conn, int phaseId) throws SQLException {
         long projectCategoryId = getProjectCategoryId(projectId, conn);
 
         // OrChange - no modification needed as the current logic is applied only to design and development. (and component testing)
         if (projectCategoryId != 1 && projectCategoryId != 2 && projectCategoryId != 5) {
-        	// Logic only apply to component
-        	return;
+                // Logic only apply to component
+                return;
         }
 
         logger.log(Level.INFO,
-        		"Populate reviewer payments for the projectId:" + projectId + " in the phase:" + phaseId);
+                   "Populate reviewer payments for the projectId:" + projectId + " in the phase:" + phaseId);
         int levelId = SoftwareComponent.LEVEL1;
         int count = getCount(projectId, conn);
         int passedCount = getScreenPassedCount(projectId, conn);
         float[] payments = getPayments(projectId, projectCategoryId, conn);
-        
+
+        float prize = (float) getPriceByProjectId(projectId, conn);
+        float drPoints = (float) getDrPointsByProjectId(projectId, conn);
+
         FixedPriceComponent fpc = new FixedPriceComponent(levelId, count, passedCount,
-                (int)(projectCategoryId + 111), payments[0], payments[1]);
+                                                          (int) (projectCategoryId + 111),
+                                                          payments[0], payments[1],
+                                                          prize, drPoints);
         List reviewers = getReviewers(projectId, conn);
 
         for (Iterator iter = reviewers.iterator(); iter.hasNext();) {
@@ -153,12 +164,12 @@ public class AutoPaymentUtil {
     private static int getCount(long projectId, Connection conn)
         throws SQLException {
         String SELECT_SQL =
-        	"select count(s.submission_id) " +
-	        "	from submission s, upload u " +
-	        "	where u.upload_id = s.upload_id " +
-	        "	and s.submission_status_id <> 5 " +
-	        "	and upload_type_id = 1 " +
-	        "	and u.project_id = ?";
+                "select count(s.submission_id) " +
+                "       from submission s, upload u " +
+                "       where u.upload_id = s.upload_id " +
+                "       and s.submission_status_id <> 5 " +
+                "       and upload_type_id = 1 " +
+                "       and u.project_id = ?";
         PreparedStatement pstmt = null;
         ResultSet rs = null;
 
@@ -185,12 +196,12 @@ public class AutoPaymentUtil {
     private static int getScreenPassedCount(long projectId, Connection conn)
         throws SQLException {
         String SELECT_SQL =
-        	"select count(s.submission_id) " +
-	        "	from submission s, upload u " +
-	        "	where u.upload_id = s.upload_id " +
-	        "	and s.submission_status_id in (1, 3, 4) " +
-	        "	and upload_type_id = 1 " +
-	        "	and u.project_id = ?";
+                "select count(s.submission_id) " +
+                "       from submission s, upload u " +
+                "       where u.upload_id = s.upload_id " +
+                "       and s.submission_status_id in (1, 3, 4) " +
+                "       and upload_type_id = 1 " +
+                "       and u.project_id = ?";
         PreparedStatement pstmt = null;
         ResultSet rs = null;
 
@@ -219,19 +230,19 @@ public class AutoPaymentUtil {
     private static List getReviewers(long projectId, Connection conn)
         throws SQLException {
         String SELECT_SQL =
-        	"select r.resource_id, " +
-        	"	resource_role_id, " +
-        	"	value " +
-        	"	from resource r, " +
-            "	resource_info ri" +
-            "	where r.resource_id = ri.resource_id" +
-            "	and ri.resource_info_type_id = 1" +
-            "	and r.resource_role_id in (2, 3, 4, 5, 6, 7, 8, 9)" +
-            "	and r.project_id = ? " +
-            "	and not exists (select ri1.resource_id from resource_info ri1 " +
-            "		where r.resource_id = ri1.resource_id" +
-            "		and ri1.resource_info_type_id = 8" +
-            "		and ri1.value = 'N/A')" +
+                "select r.resource_id, " +
+                "       resource_role_id, " +
+                "       value " +
+                "       from resource r, " +
+            "   resource_info ri" +
+            "   where r.resource_id = ri.resource_id" +
+            "   and ri.resource_info_type_id = 1" +
+            "   and r.resource_role_id in (2, 3, 4, 5, 6, 7, 8, 9)" +
+            "   and r.project_id = ? " +
+            "   and not exists (select ri1.resource_id from resource_info ri1 " +
+            "           where r.resource_id = ri1.resource_id" +
+            "           and ri1.resource_info_type_id = 8" +
+            "           and ri1.value = 'N/A')" +
             "order by resource_role_id";
         PreparedStatement pstmt = null;
         ResultSet rs = null;
@@ -352,8 +363,8 @@ public class AutoPaymentUtil {
         }
 
         String clearPayment = "update resource_info set value = 0 " +
-        					  " where resource_info_type_id = 7 " +
-        					  " and resource_id in (select resource_id from resource where resource_role_id = 1 and project_id = ?)";
+                              " where resource_info_type_id = 7 " +
+                              " and resource_id in (select resource_id from resource where resource_role_id = 1 and project_id = ?)";
 
         PreparedStatement pstmt = conn.prepareStatement(clearPayment);
         pstmt.setLong(1, projectId);
@@ -361,7 +372,7 @@ public class AutoPaymentUtil {
         PRHelper.close(pstmt);
 
         logger.log(Level.INFO, "Clear submitter payment for the project :" + projectId);
-        
+
         // Prepare prices for differnt places
         double[] prices = new double[] { price, Math.round(price * 0.5) };
         long[] places = new long[] { 1, 2 };
@@ -421,8 +432,8 @@ public class AutoPaymentUtil {
         int result = pstmt.executeUpdate();
 
         if (result == 0) {
-        	logger.log(Level.INFO, "insert record into resource_info for the resource_id:"
-        			+ resourceId + " and resource_info_type_id:" + resourceInfoTypeId + " and value:" + value);
+                logger.log(Level.INFO, "insert record into resource_info for the resource_id:"
+                                + resourceId + " and resource_info_type_id:" + resourceInfoTypeId + " and value:" + value);
             // No given resource_info exists, insert instead
             PRHelper.close(pstmt);
             pstmt = conn.prepareStatement(INSERT_SQL);
@@ -433,8 +444,8 @@ public class AutoPaymentUtil {
             pstmt.setString(5, USER_ID);
             pstmt.execute();
         } else {
-        	logger.log(Level.INFO, "update record in resource_info for the resource_id:"
-        			+ resourceId + ", resource_info_type_id:" + resourceInfoTypeId + " and with new value:" + value);
+                logger.log(Level.INFO, "update record in resource_info for the resource_id:"
+                                + resourceId + ", resource_info_type_id:" + resourceInfoTypeId + " and with new value:" + value);
         }
 
         PRHelper.close(pstmt);
@@ -466,8 +477,8 @@ public class AutoPaymentUtil {
         int result = pstmt.executeUpdate();
 
         if (result == 0) {
-        	logger.log(Level.INFO, "insert record into project_info for the project_id:"
-        			+ projectId + " and project_info_type_id:" + projectInfoTypeId + " and value:" + value);
+                logger.log(Level.INFO, "insert record into project_info for the project_id:"
+                                + projectId + " and project_info_type_id:" + projectInfoTypeId + " and value:" + value);
             // No given ProjectInfo exists, insert instead
             PRHelper.close(pstmt);
             pstmt = conn.prepareStatement(INSERT_SQL);
@@ -478,8 +489,8 @@ public class AutoPaymentUtil {
             pstmt.setString(5, USER_ID);
             pstmt.execute();
         } else {
-        	logger.log(Level.INFO, "update record in project_info for the project_id:"
-        			+ projectId + " and project_info_type_id:" + projectInfoTypeId + " with new value:" + value);
+                logger.log(Level.INFO, "update record in project_info for the project_id:"
+                                + projectId + " and project_info_type_id:" + projectInfoTypeId + " with new value:" + value);
         }
 
         PRHelper.close(pstmt);
@@ -506,27 +517,47 @@ public class AutoPaymentUtil {
             rs = pstmt.executeQuery();
 
             if (rs.next()) {
-            	if (rs.getDouble(1) > 0) {
-            		return rs.getDouble(1);
-            	}
+                if (rs.getDouble(1) > 0) {
+                        return rs.getDouble(1);
+                }
             }
         } finally {
             PRHelper.close(rs);
             PRHelper.close(pstmt);
         }
 
-//        try {
-//            pstmt = conn.prepareStatement(SELECT_PRICE_CVD);
-//            pstmt.setLong(1, projectId);
-//            rs = pstmt.executeQuery();
-//
-//            if (rs.next()) {
-//                return rs.getDouble(1);
-//            }
-//        } finally {
-//            PRHelper.close(rs);
-//            PRHelper.close(pstmt);
-//        }
+        return 0;
+    }
+
+    /**
+     * Retrieve Digital Run points for given project.
+     *
+     * @param projectId project id
+     * @param conn the connection
+     *
+     * @return the DR points
+     *
+     * @throws SQLException if error occurs
+     */
+    private static double getDrPointsByProjectId(long projectId, Connection conn)
+        throws SQLException {
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+
+        try {
+            pstmt = conn.prepareStatement(SELECT_DR_PROJECT_INFO);
+            pstmt.setLong(1, projectId);
+            rs = pstmt.executeQuery();
+
+            if (rs.next()) {
+                if (rs.getDouble(1) > 0) {
+                        return rs.getDouble(1);
+                }
+            }
+        } finally {
+            PRHelper.close(rs);
+            PRHelper.close(pstmt);
+        }
 
         return 0;
     }
