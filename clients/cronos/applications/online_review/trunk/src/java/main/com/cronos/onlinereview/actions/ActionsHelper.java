@@ -2990,9 +2990,9 @@ public class ActionsHelper {
         long categoryId = project.getProjectCategory().getId();
 //       OrChange - No modification needed as only design/development/assembly will modify the project result table.
         if (categoryId != 1 && categoryId != 2 && categoryId != 14 &&
-                categoryId != 5 && categoryId != 7 && categoryId != 13) {
+                categoryId != 5 && categoryId != 6 && categoryId != 7 && categoryId != 13) {
             // design/development/assembly project need project_result
-            // component testing/architecture/app testing project need project_result
+            // component testing/specification/architecture/app testing project need project_result
             return;
         }
 
@@ -3057,12 +3057,12 @@ public class ActionsHelper {
                     ratingStmt.setString(2, userId);
                     rs = ratingStmt.executeQuery();
 
-                    // in case the project is an assembly/architecure/app testing project, the rating should be the max between design and development
+                    // in case the project is an assembly/specification/architecure/app testing project, the rating should be the max between design and development
                     // while if the project is a regular component project, the rating should correspond to either design or development
                     // component testing gets dev rating
                     while (rs.next()) {
 //                        oldRating = rs.getLong(1);
-                        if (rs.getLong(3) == 14 || rs.getLong(3) == 7 || 
+                        if (rs.getLong(3) == 14 || rs.getLong(3) == 6 || rs.getLong(3) == 7 || 
                                 rs.getLong(3) == 13) {
 
                             if (oldRating < rs.getLong(1)) {
@@ -3124,8 +3124,8 @@ public class ActionsHelper {
                     componentInquiryStmt.setLong(2, componentId);
                     componentInquiryStmt.setString(3, userId);
                     componentInquiryStmt.setLong(4, projectId);
-                    // assembly/component testing/architecture/app testing contests must have phaseId set to null
-                    if (categoryId == 14 || categoryId == 5 || categoryId == 7 || categoryId == 13) {
+                    // assembly/component testing/specification/architecture/app testing contests must have phaseId set to null
+                    if (categoryId == 14 || categoryId == 5 || categoryId == 6 || categoryId == 7 || categoryId == 13) {
                         componentInquiryStmt.setNull(5, Types.INTEGER);
                     } else {
                         componentInquiryStmt.setLong(5, phaseId);
