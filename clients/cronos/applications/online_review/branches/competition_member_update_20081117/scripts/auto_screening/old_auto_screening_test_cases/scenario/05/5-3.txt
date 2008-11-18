@@ -1,0 +1,5 @@
+Jave Design - Corrupted ZUML.
+
+ Fatal Errors: 
+ TCS-007: Your submission does not contain a zargo or zuml file. 
+Failed to validate poseidon file.  
