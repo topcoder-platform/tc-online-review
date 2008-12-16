@@ -1,0 +1,9 @@
+<?xml version="1.0" ?>
+<CMConfig>
+    <Config name="com.cronos.onlinereview.project.BrowserSupport">
+        <!-- Internet Explorer 6.0, Mozilla 1.0, Netscape 4.7.9, Netscape 6.2.3, Full Featured -->
+        <Property name="target_browser">
+            <Value>Full Featured</Value>
+        </Property>
+    </Config>
+</CMConfig>

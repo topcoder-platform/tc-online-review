@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE taglib PUBLIC "-//Sun Microsystems, Inc.//DTD JSP Tag Library 1.1//EN" "http://java.sun.com/j2ee/dtds/web-jsptaglibrary_1_1.dtd">
+
+<taglib>
+    <tlibversion>1.0</tlibversion>
+    <jspversion>1.1</jspversion>
+    <shortname>orfn</shortname>
+    <uri>http://www.topcoder.com/taglibs/online_review/functions-1.0</uri>
+    <info>
+    </info>
+
+    <function>
+        <name>htmlEncode</name>
+        <function-class>com.cronos.onlinereview.functions.Functions</function-class>
+        <function-signature>java.lang.String htmlEncode(java.lang.String)</function-signature>
+    </function>
+    <function>
+        <name>isUserLoggedIn</name>
+        <function-class>com.cronos.onlinereview.functions.Functions</function-class>
+        <function-signature>java.lang.Boolean isUserLoggedIn(javax.servlet.http.HttpServletRequest)</function-signature>
+    </function>
+    <function>
+        <name>getLoggedInUserId</name>
+        <function-class>com.cronos.onlinereview.functions.Functions</function-class>
+        <function-signature>java.lang.String getLoggedInUserId(javax.servlet.http.HttpServletRequest)</function-signature>
+    </function>
+    <function>
+        <name>getHandlerContext</name>
+        <function-class>com.cronos.onlinereview.functions.Functions</function-class>
+        <function-signature>java.lang.String getHandlerContext(javax.servlet.http.HttpServletRequest)</function-signature>
+    </function>
+    <function>
+        <name>isErrorsPresent</name>
+        <function-class>com.cronos.onlinereview.functions.Functions</function-class>
+        <function-signature>java.lang.Boolean isErrorsPresent(javax.servlet.http.HttpServletRequest)</function-signature>
+    </function>
+    <function>
+        <name>getMessage</name>
+        <function-class>com.cronos.onlinereview.functions.Functions</function-class>
+        <function-signature>java.lang.String getMessage(javax.servlet.jsp.PageContext, java.lang.String)</function-signature>
+    </function>
+    <function>
+        <name>getGanttLen</name>
+        <function-class>com.cronos.onlinereview.functions.Functions</function-class>
+        <function-signature>java.lang.Integer getGanttLen(java.lang.Integer)</function-signature>
+    </function>
+    <function>
+        <name>getGanttHours</name>
+        <function-class>com.cronos.onlinereview.functions.Functions</function-class>
+        <function-signature>java.lang.String getGanttHours(javax.servlet.jsp.PageContext, java.lang.Integer)</function-signature>
+    </function>
+    <function>
+        <name>displayPaymentAmt</name>
+        <function-class>com.cronos.onlinereview.functions.Functions</function-class>
+        <function-signature>java.lang.String displayPaymentAmt(javax.servlet.http.HttpServletRequest, java.lang.Double)</function-signature>
+    </function>
+    <function>
+        <name>displayScore</name>
+        <function-class>com.cronos.onlinereview.functions.Functions</function-class>
+        <function-signature>java.lang.String displayScore(javax.servlet.http.HttpServletRequest, java.lang.Double)</function-signature>
+    </function>
+    <function>
+        <name>displayDate</name>
+        <function-class>com.cronos.onlinereview.functions.Functions</function-class>
+        <function-signature>java.lang.String displayDate(javax.servlet.http.HttpServletRequest, java.util.Date)</function-signature>
+    </function>
+    <function>
+        <name>displayDateBr</name>
+        <function-class>com.cronos.onlinereview.functions.Functions</function-class>
+        <function-signature>java.lang.String displayDateBr(javax.servlet.http.HttpServletRequest, java.util.Date)</function-signature>
+    </function>
+    <function>
+        <name>getSafeRedirect</name>
+        <function-class>com.cronos.onlinereview.functions.Functions</function-class>
+        <function-signature>java.lang.String getSafeRedirect(javax.servlet.http.HttpServletRequest)</function-signature>
+    </function>
+</taglib>

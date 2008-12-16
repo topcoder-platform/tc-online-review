@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jboss-web>
+    <ejb-ref>
+        <ejb-ref-name>security/Login</ejb-ref-name>
+        <jndi-name>com.topcoder.security.login.LoginRemoteHome</jndi-name>
+    </ejb-ref>
+</jboss-web>
