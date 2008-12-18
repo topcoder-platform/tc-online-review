@@ -1,0 +1,464 @@
+#mainTabs
+{
+display: block;
+margin-bottom: -1px;
+position: relative;
+width: auto;
+z-index: +1;
+height: 36px;
+}
+
+#mainTabs img
+{
+display: block;
+}
+
+#mainTabs a
+{
+}
+
+#mainMiddleContent
+{
+background: white;
+border: 1px solid #666666;
+padding: 7px;
+}
+
+.bodyTitle
+{
+font-size: 18px;
+font-weight: bold;
+line-height: 1.2;
+}
+
+
+/* FORM FIELDS */
+
+.inputBox
+{
+font-family: Arial, Helvetica, sans-serif;
+font-size: 11px;
+}
+
+.inputBoxDate
+{
+font-family: Arial, Helvetica, sans-serif;
+font-size: 11px;
+width: 65px;
+}
+
+.inputBoxDuration
+{
+font-family: Arial, Helvetica, sans-serif;
+font-size: 11px;
+text-align: right;
+width: 50px;
+}
+
+.inputBoxTime
+{
+font-family: Arial, Helvetica, sans-serif;
+font-size: 11px;
+text-align: right;
+width: 35px;
+}
+
+.inputBoxName
+{
+font-family: Arial, Helvetica, sans-serif;
+font-size: 11px;
+width: 100px;
+}
+
+.inputTextBox
+{
+border: 1px solid #cccccc;
+font-family: sans-serif;
+font-size: 10px;
+width: 100%;
+}
+
+.bttnBottom
+{
+float: right;
+margin-bottom: 11px;
+margin-left: 8px;
+margin-top: 11px;
+}
+
+/* scorecard TABLE -- Changes:modified bottom-border + New "table.scorecard td.lastRowTD" class to look like bottom border when ON
+few new TD and TR classes
+*/
+
+table.scorecard
+{
+border: 1px solid #999999;
+border-bottom: none; /* MODIFIED LINE HERE */
+border-collapse: collapse;
+padding: 0px;
+vertical-align: top;
+}
+
+table.scorecard td.title
+{
+background-color: #999999;
+background-image: url(../../i/stats/headerBG.gif);
+border-bottom: 1px solid #999999;
+font-size: 12px;
+font-weight: bold;
+padding: 3px 5px 3px 5px;
+text-align: left;
+text-decoration: none;
+white-space: nowrap;
+}
+
+/* NEW CLASS */
+table.scorecard td.titleRlink
+{
+background-color: #999999;
+background-image: url(../../i/scorecards/headerBG.gif);
+border-bottom: 1px solid #999999;
+font-size: 11px;
+padding: 3px 5px 3px 5px;
+text-align: right;
+text-decoration: none;
+white-space: nowrap;
+}
+
+table.stat
+{
+border: 1px solid #999999;
+border-bottom: none;
+border-collapse: collapse;
+padding: 0px;
+vertical-align: top;
+}
+
+table.stat td.lastRowTD
+{
+background-color: #dddddd;
+border-bottom: 1px solid #999999;
+height: 7px;
+}
+
+table.stat tr.light
+{
+background-color: white;
+}
+
+table.stat tr.dark
+{
+background-color: #f7f7f7;
+}
+
+table.stat td.value, table.stat td.valueLast
+{
+font-size: 11px;
+padding: 1px 5px 1px 5px;
+vertical-align: top;
+}
+
+table.stat td.valueLast
+{
+border-bottom: 1px solid #999999;
+}
+
+table.stat td.ganttRow
+{
+font-size: 11px;
+margin: 0px;
+padding: 0px;
+vertical-align: middle;
+white-space: nowrap;
+}
+
+td.ganttRow table
+{
+border: 0px none;
+border-collapse: collapse;
+}
+
+td.ganttRow table tr td
+{
+font-size: 11px;
+margin: 0px;
+padding: 0px;
+vertical-align: middle;
+white-space: nowrap;
+}
+
+td.ganttRow table tr td.phase
+{
+background-color: #818181;
+color: white;
+font-weight: bold;
+text-align: center;
+}
+
+td.ganttRow table tr td.phase div
+{
+height: 100%;
+overflow: hidden;
+}
+
+td.ganttRow table tr td.length
+{
+padding: 1px 5px 1px 5px;
+}
+
+table.stat td.valueC
+{
+text-align: center;
+}
+
+table.stat td.valueR
+{
+text-align: right;
+}
+
+table.stat td.header
+{
+}
+
+table.scorecard td.header, table.scorecard td.headerC, table.scorecard td.headerCN, table.scorecard td.headerR, td.subheader
+{
+background-color: #cccccc;
+border-bottom: 1px solid #999999;
+color: #333333;
+font-size: 11px;
+line-height: 14px;
+padding: 2px 5px 2px 5px;
+vertical-align: top;
+}
+
+table.scorecard td.headerC
+{
+font-weight: bold;
+text-align: center;
+}
+
+table.scorecard td.header
+{
+font-weight: bold;
+}
+
+table.scorecard td.headerCN
+{
+text-align: center;
+}
+
+table.scorecard td.headerR
+{
+font-weight: bold;
+text-align: right;
+}
+
+table.scorecard td.subheader
+{
+background-color: #eeeeee;
+font-weight: bold;
+}
+
+table.scorecard td.headerB
+{
+font-weight: bold;
+vertical-align: middle;
+}
+
+table.scorecard tr.light
+{
+background-color: white;
+}
+
+table.scorecard tr.dark
+{
+background-color: #f7f7f7;
+}
+
+/* NEW CLASS */
+table.scorecard tr.highlighted
+{
+background-color: #FFFFCC;
+}
+
+table.socrecard tr.tabs
+{
+border: 0px;
+}
+
+/* NEW CLASS HERE */
+table.stat td.darkInvert, table.scorecard td.darkInvertC
+{
+background-color: #666666;
+color: white;
+font-size: 11px;
+line-height: 14px;
+padding: 2px 5px 2px 5px;
+vertical-align: top;
+}
+
+input.imgLogin
+{
+margin-bottom: 16px;
+margin-top: 16px;
+}
+
+table.scorecard td.darkInvertC
+{
+text-align: center;
+}
+
+table.scorecard td.field
+{
+color: black;
+font-weight: bold;
+font-size: 11px;
+padding: 1px 5px 1px 5px;
+vertical-align: top;
+}
+
+table.scorecard td.value, table.scorecard td.valueC, table.scorecard, td.valueR, td.valueB
+{
+border-bottom: 1px solid #999999;
+font-size: 11px;
+padding: 5px;
+vertical-align: top;
+}
+
+table.scorecard td.valueNotLast, table.scorecard td.valueNotLastC, table.scorecard, td.valueNotLastR, td.valueNotLastB
+{
+border-bottom: 0px none white;
+font-size: 11px;
+padding: 5px 5px 0px 5px;
+vertical-align: top;
+}
+
+table.scorecard td.valueC, table.scorecard td.valueNotLastC
+{
+text-align: center;
+}
+
+table.scorecard td.valueR, table.scorecard td.valueNotLastR
+{
+text-align: right;
+}
+
+table.scorecard td.valueB, table.scorecard td.valueNotLastB
+{
+font-weight: bold;
+white-space: nowrap;
+}
+
+/* NEW CLASS HERE */
+table.scorecard td.lastRowTD
+{
+background-color: #DDDDDD;
+border-bottom: 1px solid #666666;
+height: 7px;
+}
+
+table.scorecard td a:link
+{
+text-decoration: none;
+}
+
+table.scorecard td a:visited
+{
+text-decoration: none;
+}
+
+table.scorecard td a:hover
+{
+text-decoration: none;
+}
+
+table.scorecard td a:active
+{
+text-decoration: none;
+}
+
+.showText
+{
+display: block;
+}
+
+.hideText
+{
+display: none;
+}
+
+.star
+{
+margin-right: 5px;
+}
+
+/* Footer styles from TC */
+.footer
+{
+background: #EEEEEE;
+color: #666666;
+font-size: 11px;
+font-style: normal;
+font-weight: normal;
+padding-bottom: 5px;
+padding-top: 5px;
+text-align: center;
+white-space: nowrap;
+}
+
+.footerStripe
+{
+background: #CCCCCC;
+}
+
+A.footerLinks:link
+{
+color: blue;
+text-decoration: none;
+}
+
+A.footerLinks:visited
+{
+color: #000066;
+text-decoration: none;
+}
+
+A.footerLinks:hover
+{
+color: red;
+text-decoration: underline;
+}
+
+A.footerLinks:active
+{
+color: red;
+text-decoration: underline;
+}
+
+.copyright
+{
+background: white;
+color: black;
+font-size: 10px;
+font-style: normal;
+font-weight: normal;
+padding-bottom: 15px;
+padding-top: 4px;
+text-align: center;
+white-space: nowrap;
+}
+
+.error
+{
+color: #CC0000;
+font-size: 11px;
+font-weight: bold;
+}
+div.error
+{
+padding: 2px 0 0 0;
+}
+span.error
+{
+vertical-align: top;
+}
