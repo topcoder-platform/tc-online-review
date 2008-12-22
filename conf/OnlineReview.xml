@@ -3170,10 +3170,10 @@
             </Property>
             <Property name="Specification">
                 <Property name="IconSmall">
-                    <Value>IconSpecSm.gif</Value>
+                    <Value>specificationSm.gif</Value>
                 </Property>
                 <Property name="Icon">
-                    <Value>IconSpec.gif</Value>
+                    <Value>specification.gif</Value>
                 </Property>
             </Property>
             <Property name="Architecture">
@@ -3272,6 +3272,14 @@
                     <Value>iconBlank.png</Value>
                 </Property>
             </Property>
+            <Property name="Conceptualization">
+                <Property name="IconSmall">
+                    <Value>conceptSm.gif</Value>
+                </Property>
+                <Property name="Icon">
+                    <Value>concept.gif</Value>
+                </Property>
+            </Property>			
         </Property>
 
         <Property name="ProjectTypeDescriptionLinks">
