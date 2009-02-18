@@ -300,7 +300,7 @@ public class AutoPaymentUtil {
             pstmt = conn.prepareStatement(
                     "SELECT primary_ind, amount FROM rboard_payment WHERE project_id = ? AND phase_id = ?");
             pstmt.setLong(1, projectId);
-            pstmt.setLong(2, (projectCategoryId == 1) ? 112 : 113);
+            pstmt.setLong(2, projectCategoryId + 111);
             rs = pstmt.executeQuery();
 
             while (rs.next()) {
