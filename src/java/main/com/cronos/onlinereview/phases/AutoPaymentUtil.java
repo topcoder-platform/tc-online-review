@@ -119,8 +119,9 @@ public class AutoPaymentUtil {
         long projectCategoryId = getProjectCategoryId(projectId, conn);
 
         // OrChange - no modification needed as the current logic is applied only to design and development. (and component testing)
-        if (projectCategoryId != 1 && projectCategoryId != 2 && projectCategoryId != 5) {
-                // Logic only apply to component
+        if (projectCategoryId != 1 && projectCategoryId != 2 && projectCategoryId != 5
+	    && projectCategoryId != 7 && projectCategoryId != 14) {
+                // Logic only apply to components, assemblies, and architectures
                 return;
         }
 
