@@ -189,6 +189,36 @@ public class ActionsHelper {
     private ActionsHelper() {
     }
 
+    // ------------------------------------------------------------ Hardcoded validations ---------
+
+    /**
+     * Lookup function for project categories that should have a project_result row.  These rows are used
+     * for ratings, reliability, and the Digital Run.
+     *
+     * @param categoryId the category id to look up.
+     * @return whether the provided category id should have a project_result row.
+     */
+    private static boolean categoryUsesProjectResult(long categoryId) {
+        return (categoryId == 1       // Component Design
+                || categoryId == 2    // Component Development
+                || categoryId == 5    // Component Testing
+                || categoryId == 6    // Application Specification
+                || categoryId == 7    // Application Architecture
+                || categoryId == 13   // Application Testing
+                || categoryId == 14   // Application Assembly
+                || categoryId == 23); // Application Conceptualization
+    }
+
+    /**
+     * Lookup function for project categories that are rated.
+     *
+     * @param categoryId the category id to look up.
+     * @return whether the provided category id is rated.
+     */
+    private static boolean categoryIsRated(long categoryId) {
+        return (categoryId == 1       // Component Design
+                || categoryId == 2);  // Component Development
+    }
 
     // ------------------------------------------------------------ Validator type of methods -----
 
@@ -892,7 +922,7 @@ public class ActionsHelper {
     /**
      * This static method places certain attributes into the request and returns a forward to the
      * error page.
-     * 
+     *
      * @return an action forward to the appropriate error page.
      * @param mapping
      *            action mapping.
@@ -920,7 +950,7 @@ public class ActionsHelper {
             AuthorizationHelper.setLoginRedirect(request, getRedirectUrlFromReferer.booleanValue());
             return mapping.findForward(Constants.NOT_AUTHORIZED_FORWARD_NAME);
         }
-        
+
         // Gather roles, so tabs will be displayed,
         // but only do this if roles haven't been gathered yet
         if (request.getAttribute("roles") == null) {
@@ -1692,7 +1722,7 @@ public class ActionsHelper {
             ResourceFilterBuilder.createExtensionPropertyNameFilter("External Reference ID");
 
             AndFilter fullFilter = new AndFilter(Arrays.asList(new Filter[] {
-                    ResourceFilterBuilder.createResourceRoleIdFilter(submitterRoleId), 
+                    ResourceFilterBuilder.createResourceRoleIdFilter(submitterRoleId),
                     ResourceFilterBuilder.createProjectIdFilter(projectId),
                     ResourceFilterBuilder.createExtensionPropertyNameFilter("External Reference ID"),
                     ResourceFilterBuilder.createExtensionPropertyValueFilter(winnerId)
@@ -1811,7 +1841,7 @@ public class ActionsHelper {
     }
 
     /**
-     * This static method returns the resource for role for the currently logged in user. 
+     * This static method returns the resource for role for the currently logged in user.
      * The list of all resources for the currently logged in user is
      * retrieved from the <code>HttpServletRequest</code> object specified by <code>request</code>
      * parameter. Method <code>gatherUserRoles(HttpServletRequest, long)</code> should be called
@@ -1824,7 +1854,7 @@ public class ActionsHelper {
      * @throws IllegalArgumentException
      *             if <code>request</code> parameter is <code>null</code>.
      *             if <code>resourceRole</code> parameter is <code>null</code>.
-     *             
+     *
      */
     public static Resource getMyResourceForRole(HttpServletRequest request, String resourceRole) {
         // Validate parameters
@@ -1839,8 +1869,8 @@ public class ActionsHelper {
         }
         // Return the resources using another helper-method
         return null;
-    }    
-    
+    }
+
     /**
      * This static method retrieves the resource for the currently logged in user associated with
      * the specified phase. The list of all resources for the currently logged in user is retrieved
@@ -2988,11 +3018,8 @@ public class ActionsHelper {
         PreparedStatement reliabilityStmt = null;
         PreparedStatement componentInquiryStmt = null;
         long categoryId = project.getProjectCategory().getId();
-//       OrChange - No modification needed as only design/development/assembly will modify the project result table.
-        if (categoryId != 1 && categoryId != 2 && categoryId != 14 &&
-                categoryId != 5 && categoryId != 6 && categoryId != 7 && categoryId != 13) {
-            // design/development/assembly project need project_result
-            // component testing/specification/architecture/app testing project need project_result
+
+        if (!categoryUsesProjectResult(categoryId)) {
             return;
         }
 
@@ -3059,24 +3086,13 @@ public class ActionsHelper {
 
                     // in case the project is an assembly/specification/architecure/app testing project, the rating should be the max between design and development
                     // while if the project is a regular component project, the rating should correspond to either design or development
-                    // component testing gets dev rating
                     while (rs.next()) {
-//                        oldRating = rs.getLong(1);
-                        if (rs.getLong(3) == 14 || rs.getLong(3) == 6 || rs.getLong(3) == 7 || 
-                                rs.getLong(3) == 13) {
-
+                        if (!categoryIsRated(rs.getLong(3))) {
                             if (oldRating < rs.getLong(1)) {
-                                oldRating = rs.getLong(1);                    
-                            }                                
-                        } else {
-                            if (rs.getLong(3) == 5) {
-                                // component testing gets dev rating
-                                if (rs.getLong(2) == 113) {
-                                    oldRating = rs.getLong(1);
-                                }
-                            } else if (rs.getLong(3)+111 == rs.getLong(2)) {
-                                oldRating = rs.getLong(1);                    
-                            }                
+                                oldRating = rs.getLong(1);
+                            }
+                        } else if (rs.getLong(3) + 111 == rs.getLong(2)) {
+                            oldRating = rs.getLong(1);
                         }
                     }
                     close(rs);
@@ -3117,18 +3133,17 @@ public class ActionsHelper {
                 }
 
                 // add component_inquiry
-                // only design, development and assembly contests needs a component_inquiry entry
                 if (!existCI && componentId > 0) {
                     log.log(Level.INFO, "adding component_inquiry for projectId: " + projectId + " userId: " + userId);
                     componentInquiryStmt.setLong(1, componentInquiryId++);
                     componentInquiryStmt.setLong(2, componentId);
                     componentInquiryStmt.setString(3, userId);
                     componentInquiryStmt.setLong(4, projectId);
-                    // assembly/component testing/specification/architecture/app testing contests must have phaseId set to null
-                    if (categoryId == 14 || categoryId == 5 || categoryId == 6 || categoryId == 7 || categoryId == 13) {
-                        componentInquiryStmt.setNull(5, Types.INTEGER);
-                    } else {
+                    // All competition types except for design and development should have null phase id.
+                    if (categoryId == 1 || categoryId == 2)  {
                         componentInquiryStmt.setLong(5, phaseId);
+                    } else {
+                        componentInquiryStmt.setNull(5, Types.INTEGER);
                     }
                     componentInquiryStmt.setString(6, userId);
                     componentInquiryStmt.setDouble(7, oldRating);
@@ -3269,19 +3284,17 @@ public class ActionsHelper {
      */
     public static void changeResourceRole(Project project, long userId, long oldRoleId, long newRoleId) throws BaseException {
         long categoryId = project.getProjectCategory().getId();
-        if (categoryId != 1 && categoryId != 2) {
-            // design/development project need project_result
-            return;
-        }
 
-        if (oldRoleId == 1) {
-            // Delete project_result if the old role is submitter
-            deleteProjectResult(project, userId, oldRoleId);
-        }
+        if (categoryUsesProjectResult(categoryId)) {
+            if (oldRoleId == 1) {
+                // Delete project_result if the old role is submitter
+                deleteProjectResult(project, userId, oldRoleId);
+            }
 
-        if (newRoleId == 1) {
-            // added otherwise
-            populateProjectResult(project, Arrays.asList(new String[] {String.valueOf(userId)}));
+            if (newRoleId == 1) {
+                // added otherwise
+                populateProjectResult(project, Arrays.asList(new String[] {String.valueOf(userId)}));
+            }
         }
     }
 
@@ -3297,9 +3310,8 @@ public class ActionsHelper {
         Connection conn = null;
         PreparedStatement ps = null;
         long categoryId = project.getProjectCategory().getId();
-//       OrChange - No modification needed as only design/development will modify the project result table.
-        if (categoryId != 1 && categoryId != 2) {
-            // design/development project need project_result
+
+        if (!categoryUsesProjectResult(categoryId)) {
             return;
         }
 
@@ -3315,7 +3327,7 @@ public class ActionsHelper {
 
             log.log(Level.INFO,
                     "create db connection with default connection name from DBConnectionFactoryImpl with namespace:" + DB_CONNECTION_NAMESPACE);
-            
+
             // delete from project_result
             ps = conn.prepareStatement("delete from project_result where project_id = ? and user_id = ?");
             ps.setLong(1, project.getId());
@@ -3385,16 +3397,16 @@ public class ActionsHelper {
                     "create db connection with default connection name from DBConnectionFactoryImpl with namespace:" + DB_CONNECTION_NAMESPACE);
 
             String sqlString = "select version from comp_versions where comp_vers_id = ?";
-		
+
             ps = conn.prepareStatement(sqlString);
             ps.setLong(1, componentVersionId);
-		    rs = ps.executeQuery();
-		    
-		    if (rs.next()) {
-		    	return rs.getInt("version");
-		    }
-		    
-		    return 0;
+                    rs = ps.executeQuery();
+
+                    if (rs.next()) {
+                        return rs.getInt("version");
+                    }
+
+                    return 0;
         } catch (DBConnectionException e) {
             throw new BaseException("Failed to return DBConnection", e);
         } catch (SQLException e) {
@@ -3593,7 +3605,7 @@ public class ActionsHelper {
 
     /**
      * Returns true if the given project is of category studio.
-     * 
+     *
      * @param project
      *            the project to be be checked.
      * @return true, if the project is of type studio.
