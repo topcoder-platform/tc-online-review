@@ -118,10 +118,14 @@ public class AutoPaymentUtil {
     public static void populateReviewerPayments(long projectId, Connection conn, int phaseId) throws SQLException {
         long projectCategoryId = getProjectCategoryId(projectId, conn);
 
-        // OrChange - no modification needed as the current logic is applied only to design and development. (and component testing)
-        if (projectCategoryId != 1 && projectCategoryId != 2 && projectCategoryId != 5
-	    && projectCategoryId != 7 && projectCategoryId != 14) {
-                // Logic only apply to components, assemblies, and architectures
+        if (projectCategoryId != 1        // Component Design
+	    && projectCategoryId != 2     // Component Development
+	    && projectCategoryId != 5     // Component Testing
+	    && projectCategoryId != 7     // Architecture
+	    && projectCategoryId != 14    // Assembly
+	    && projectCategoryId != 6     // Specification
+	    && projectCategoryId != 13    // Application Testing
+	    && projectCategoryId != 23) { // Conceptualization
                 return;
         }
 
