@@ -963,7 +963,7 @@ public class ActionsHelper {
         } else {
             if ("Error.NoPermission".equalsIgnoreCase(reasonKey)){
                 log.log(Level.WARN, "Authorization failures.User tried to perform "
-                        + permission + " which he/she doesn’t have permission.");
+                        + permission + " which he/she doesn't have permission.");
             }
             request.setAttribute("errorTitle", messages.getMessage("Error.Title." + permission.replaceAll(" ", "")));
         }
