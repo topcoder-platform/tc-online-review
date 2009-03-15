@@ -1,0 +1,32 @@
+TCS-001: Your submission distribution is not a jar file.
+
+The submission file [1-2.txt] does not have .jar as its extension. 
+
+TCS-003: Your submission does not conform to the directory standard.
+
+The property [unzipped_submission_directory] does not exist in the screening context or its value is null. 
+
+TCS-004: Your submission does not contain a component specification document in rich text format (rtf).
+
+The property [unzipped_submission_directory] does not exist in the screening context or its value is null. 
+
+TCS-006: Your submission is missing the appropriate unit test log files.
+
+The property [unzipped_submission_directory] does not exist in the screening context or its value is null. 
+
+TCS-011: Your submission does not contain source code under /src.
+
+The property [unzipped_submission_directory] does not exist in the screening context or its value is null. 
+
+TCS-012: Your submission does not contain test source code under /src.
+
+The property [unzipped_submission_directory] does not exist in the screening context or its value is null. 
+
+TCS-013: Checkstyle has produced the following warnings.
+
+The property [unzipped_submission_directory] does not exist in the screening context or its value is null. 
+The property [unzipped_submission_directory] does not exist in the screening context or its value is null. 
+
+TCS-014: Your submission contains personal information.
+
+The property [unzipped_submission_directory] does not exist in the screening context or its value is null. 
