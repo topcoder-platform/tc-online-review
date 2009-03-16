@@ -90,6 +90,9 @@
                     <jsp:include page="/includes/project/project_detail.jsp" />
                     <jsp:include page="/includes/project/project_resource.jsp" />
                     <div align="right">
+                        <c:if test="${isAllowedToPay}">
+                            <a href="http://www.topcoder.com/PactsInternalServlet?module=ViewGenerateComponentPayments&project_id=${project.id}&projts=${project.projectStatus.id}">Pay Project</a>&#160;
+                        </c:if>
                         <c:if test="${isAllowedToEditProjects}">
                             <a href="EditProject.do?method=editProject&pid=${project.id}"><html:img srcKey="viewProjectDetails.btnEdit.img" border="0" altKey="viewProjectDetails.btnEdit.alt" /></a>&#160;
                         </c:if>

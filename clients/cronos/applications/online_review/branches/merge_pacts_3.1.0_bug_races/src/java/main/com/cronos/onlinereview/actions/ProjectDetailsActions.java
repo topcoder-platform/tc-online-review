@@ -129,7 +129,7 @@ public class ProjectDetailsActions extends DispatchAction {
     public ActionForward viewProjectDetails(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response)
         throws BaseException {
-    	LoggingHelper.logAction(request);
+        LoggingHelper.logAction(request);
         // Verify that certain requirements are met before processing with the Action
         CorrectnessCheckResult verification = ActionsHelper.checkForCorrectProjectId(
                 mapping, getResources(request), request, Constants.VIEW_PROJECT_DETAIL_PERM_NAME, false);
@@ -171,34 +171,34 @@ public class ProjectDetailsActions extends DispatchAction {
         request.setAttribute("descriptionLink",
                 ConfigHelper.getProjectTypeDescriptionLink(projectTypeName, componentId, versionId));
         request.setAttribute("forumLink", ConfigHelper.getProjectTypeForumLink(projectTypeName, forumId));
-		request.setAttribute("projectType", projectTypeName);
-		request.setAttribute("projectCategory", project.getProjectCategory().getName());
-		String paymentStr = project.getProperty("Payments") == null ? "0": project.getProperty("Payments").toString();
-		request.setAttribute("projectPayment", Double.valueOf(paymentStr));
+        request.setAttribute("projectType", projectTypeName);
+        request.setAttribute("projectCategory", project.getProjectCategory().getName());
+        String paymentStr = project.getProperty("Payments") == null ? "0": project.getProperty("Payments").toString();
+        request.setAttribute("projectPayment", Double.valueOf(paymentStr));
 
-		boolean digitalRunFlag = "On".equals(project.getProperty("Digital Run Flag"));
+        boolean digitalRunFlag = "On".equals(project.getProperty("Digital Run Flag"));
 
-		request.setAttribute("projectDRFlag", digitalRunFlag?"Yes":"No");
+        request.setAttribute("projectDRFlag", digitalRunFlag?"Yes":"No");
 
-		String drpointStr = project.getProperty("DR points") == null ? "0" : project.getProperty("DR points").toString();
-		if (digitalRunFlag)
-		{
-			double drpoint = 0;
-			if (drpointStr != null)
-			{
-				drpoint = Double.parseDouble(drpointStr);
-			}
-			if (drpoint < 0.5)
-			{
-				request.setAttribute("projectDRP", Double.valueOf(paymentStr));
-			}
-			else
-			{
-				request.setAttribute("projectDRP", Double.valueOf(drpointStr));
-			}
-		}
-		
-		
+        String drpointStr = project.getProperty("DR points") == null ? "0" : project.getProperty("DR points").toString();
+        if (digitalRunFlag)
+        {
+            double drpoint = 0;
+            if (drpointStr != null)
+            {
+                drpoint = Double.parseDouble(drpointStr);
+            }
+            if (drpoint < 0.5)
+            {
+                request.setAttribute("projectDRP", Double.valueOf(paymentStr));
+            }
+            else
+            {
+                request.setAttribute("projectDRP", Double.valueOf(drpointStr));
+            }
+        }
+
+
 
         // Place a string that represents "my" current role(s) into the request
         ActionsHelper.retrieveAndStoreMyRole(request, getResources(request));
@@ -389,7 +389,7 @@ public class ProjectDetailsActions extends DispatchAction {
         request.setAttribute("isManager",
                 Boolean.valueOf(AuthorizationHelper.hasUserRole(request, Constants.MANAGER_ROLE_NAMES)));
         request.setAttribute("isSubmitter",
-        		Boolean.valueOf(AuthorizationHelper.hasUserRole(request, Constants.SUBMITTER_ROLE_NAME)));
+                Boolean.valueOf(AuthorizationHelper.hasUserRole(request, Constants.SUBMITTER_ROLE_NAME)));
         // Check permissions
         request.setAttribute("isAllowedToEditProjects",
                 Boolean.valueOf(AuthorizationHelper.hasUserPermission(request, Constants.EDIT_PROJECT_DETAILS_PERM_NAME)));
@@ -431,6 +431,13 @@ public class ProjectDetailsActions extends DispatchAction {
         request.setAttribute("isAllowedToPerformApproval",
                 Boolean.valueOf(ActionsHelper.getPhase(phases, true, Constants.APPROVAL_PHASE_NAME) != null &&
                         AuthorizationHelper.hasUserPermission(request, Constants.PERFORM_APPROVAL_PERM_NAME)));
+
+
+        String status = project.getProjectStatus().getName();
+        request.setAttribute("isAllowedToPay",
+            Boolean.valueOf(AuthorizationHelper.hasUserPermission(request, Constants.CREATE_PAYMENT_PERM_NAME))
+            && ("Completed".equals(status) || "Cancelled - Failed Review".equals(status)
+                 || "Cancelled - Failed Screening".equals(status)  || "Cancelled - Zero Submissions".equals(status)));
 
         // Checking whether some user is allowed to submit his approval or comments for the
         // Aggregation worksheet needs more robust verification since this check includes a test
@@ -498,7 +505,7 @@ public class ProjectDetailsActions extends DispatchAction {
     public ActionForward contactManager(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response)
         throws BaseException, ConfigManagerException {
-    	LoggingHelper.logAction(request);
+        LoggingHelper.logAction(request);
 
         // Determine if this request is a post back
         boolean postBack = (request.getParameter("postBack") != null);
@@ -541,10 +548,10 @@ public class ProjectDetailsActions extends DispatchAction {
 
         // Build filters
         Filter filterProject = ResourceFilterBuilder.createProjectIdFilter(project.getId());
-        
+
         Filter filterRole = ResourceFilterBuilder.createResourceRoleIdFilter(
-        		ActionsHelper.findResourceRoleByName(allResourceRoles, "Manager").getId());
-        
+                ActionsHelper.findResourceRoleByName(allResourceRoles, "Manager").getId());
+
         // Build final filter
         Filter filter = new AndFilter(filterProject, filterRole);
         // Search for the managers of this project
@@ -596,13 +603,13 @@ public class ProjectDetailsActions extends DispatchAction {
                     field.setValue(sender.getHandle());
                 } else if ("PROJECT_NAME".equals(field.getName())) {
                     field.setValue("<![CDATA[" + project.getProjectCategory().getDescription() + " - " +
-                    		project.getProperty("Project Name") + "]]>");
+                            project.getProperty("Project Name") + "]]>");
                 } else if ("PROJECT_VERSION".equals(field.getName())) {
                     field.setValue("" + project.getProperty("Project Version"));
                 } else if ("QUESTION_TYPE".equals(field.getName())) {
-                	field.setValue(questionType);
+                    field.setValue(questionType);
                 } else if ("TEXT".equals(field.getName())) {
-                	field.setValue(text);
+                    field.setValue(text);
                 }
             }
         }
@@ -657,7 +664,7 @@ public class ProjectDetailsActions extends DispatchAction {
     public ActionForward uploadSubmission(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response)
         throws BaseException {
-    	LoggingHelper.logAction(request);
+        LoggingHelper.logAction(request);
 
         // Determine if this request is a post back
         final boolean postBack = (request.getParameter("postBack") != null);
@@ -794,7 +801,7 @@ public class ProjectDetailsActions extends DispatchAction {
     public ActionForward downloadSubmission(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response)
         throws BaseException, IOException {
-    	LoggingHelper.logAction(request);
+        LoggingHelper.logAction(request);
         // Verify that certain requirements are met before processing with the Action
         CorrectnessCheckResult verification =
             checkForCorrectUploadId(mapping, request, "ViewSubmission");
@@ -867,7 +874,7 @@ public class ProjectDetailsActions extends DispatchAction {
         // the download validation for custom components is different
         String rootCatalogId = (String)((verification.getProject()).getProperty("Root Catalog ID"));
         boolean custom = ConfigHelper.isCustomRootCatalog(rootCatalogId);
-        
+
         boolean mayDownload = (custom ?
             AuthorizationHelper.hasUserPermission(request, Constants.DOWNLOAD_CUSTOM_SUBM_PERM_NAME) :
             AuthorizationHelper.hasUserPermission(request, Constants.VIEW_WINNING_SUBM_PERM_NAME));
@@ -1003,7 +1010,7 @@ public class ProjectDetailsActions extends DispatchAction {
     public ActionForward uploadFinalFix(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response)
         throws BaseException {
-    	LoggingHelper.logAction(request);
+        LoggingHelper.logAction(request);
 
         // Determine if this request is a post back
         boolean postBack = (request.getParameter("postBack") != null);
@@ -1129,7 +1136,7 @@ public class ProjectDetailsActions extends DispatchAction {
     public ActionForward downloadFinalFix(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response)
         throws BaseException, IOException {
-    	LoggingHelper.logAction(request);
+        LoggingHelper.logAction(request);
         // Verify that certain requirements are met before processing with the Action
         CorrectnessCheckResult verification =
             checkForCorrectUploadId(mapping, request, Constants.DOWNLOAD_FINAL_FIX_PERM_NAME);
@@ -1225,7 +1232,7 @@ public class ProjectDetailsActions extends DispatchAction {
     public ActionForward uploadTestCase(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response)
         throws BaseException {
-    	LoggingHelper.logAction(request);
+        LoggingHelper.logAction(request);
 
         // Determine if this request is a post back
         boolean postBack = (request.getParameter("postBack") != null);
@@ -1341,7 +1348,7 @@ public class ProjectDetailsActions extends DispatchAction {
     public ActionForward downloadTestCase(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response)
         throws BaseException, IOException {
-    	LoggingHelper.logAction(request);
+        LoggingHelper.logAction(request);
         // Verify that certain requirements are met before processing with the Action
         CorrectnessCheckResult verification =
             checkForCorrectUploadId(mapping, request, Constants.DOWNLOAD_TEST_CASES_PERM_NAME);
@@ -1488,7 +1495,7 @@ public class ProjectDetailsActions extends DispatchAction {
     public ActionForward deleteSubmission(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response)
         throws BaseException {
-    	LoggingHelper.logAction(request);
+        LoggingHelper.logAction(request);
         // Verify that certain requirements are met before processing with the Action
         CorrectnessCheckResult verification =
             checkForCorrectUploadId(mapping, request, Constants.REMOVE_SUBM_PERM_NAME);
@@ -1575,7 +1582,7 @@ public class ProjectDetailsActions extends DispatchAction {
     public ActionForward downloadDocument(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response)
         throws BaseException, IOException {
-    	LoggingHelper.logAction(request);
+        LoggingHelper.logAction(request);
         // Verify that certain requirements are met before processing with the Action
         CorrectnessCheckResult verification =
             checkForCorrectUploadId(mapping, request, Constants.DOWNLOAD_DOCUMENT_PERM_NAME);
@@ -1664,7 +1671,7 @@ public class ProjectDetailsActions extends DispatchAction {
      */
     public ActionForward viewAutoScreening(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response) throws BaseException {
-    	LoggingHelper.logAction(request);
+        LoggingHelper.logAction(request);
         // Verify that certain requirements are met before processing with the Action
         CorrectnessCheckResult verification =
             checkForCorrectUploadId(mapping, request, "ViewAutoScreening");
@@ -1747,7 +1754,7 @@ public class ProjectDetailsActions extends DispatchAction {
             ResponseSeverity responseSeverity = screeningResults[i].getScreeningResponse().getResponseSeverity();
             // ignore response with "Success" severity
             if (Constants.SUCCESS_SCREENING_SEVERITY_NAME.equalsIgnoreCase(responseSeverity.getName())) {
-            	continue;
+                continue;
             }
             Long responseSeverityId = new Long(responseSeverity.getId());
             Long screeningResponseId = new Long(screeningResults[i].getScreeningResponse().getId());
