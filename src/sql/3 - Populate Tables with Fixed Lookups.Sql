@@ -222,6 +222,9 @@ INSERT INTO resource_role_lu(resource_role_id, phase_type_id, name, description,
   VALUES(12, NULL, 'Observer', 'Observer', 'System', CURRENT, 'System', CURRENT);
 INSERT INTO resource_role_lu(resource_role_id, phase_type_id, name, description, create_user, create_date, modify_user, modify_date)
   VALUES(13, NULL, 'Manager', 'Manager', 'System', CURRENT, 'System', CURRENT);
+INSERT INTO resource_role_lu(resource_role_id, phase_type_id, name, description, create_user, create_date, modify_user, modify_date)
+  VALUES(1003, NULL, "Payment Manager", "Payment Manager", "System", CURRENT, "System", CURRENT);
+
 
 INSERT INTO resource_info_type_lu(resource_info_type_id, name, description, create_user, create_date, modify_user, modify_date)
   VALUES(1, 'External Reference ID', 'External Reference ID', 'System', CURRENT, 'System', CURRENT);

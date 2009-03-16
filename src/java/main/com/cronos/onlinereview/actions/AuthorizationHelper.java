@@ -90,7 +90,7 @@ public class AuthorizationHelper {
 
         request.getSession().setAttribute(REDIRECT_BACK_URL_ATTRIBUTE, redirectBackUrl.toString());
     }
-    
+
     /**
      * This static method removes the attribute that specifies the address of the page to return to.
      * This is needed in case the user did not use the Login page he was redirected to, but went to
@@ -98,7 +98,7 @@ public class AuthorizationHelper {
      * and click on Login link. In this case, after logging in, they get redirected to the previous
      * page of failure, since redirect attribute is already in the session. This method needs to be
      * called by every action that gets past the check whether the user is logged in.
-     * 
+     *
      * @param request
      *            an <code>HttpServletRequest</code> object that possibly contains redirect
      *            attribute to be removed.
@@ -231,9 +231,15 @@ public class AuthorizationHelper {
                 // Add Global Manager role to the roles set
                 roles.add(Constants.GLOBAL_MANAGER_ROLE_NAME);
                 request.setAttribute("global_resource", resources[i]);
-                // No need to iterate any further
-                break;
             }
+
+            // If this resource has the Payment Manager role and no projects associated with it,
+            // add the global payment manager role
+            if (role.getName().equalsIgnoreCase(Constants.PAYMENT_MANAGER_ROLE_NAME)) {
+                // Add Global PAYMENT Manager role to the roles set
+                roles.add(Constants.GLOBAL_PAYMENT_MANAGER_ROLE_NAME);
+            }
+
         }
 
         // Determine some common permissions
