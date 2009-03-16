@@ -167,6 +167,21 @@ public class Constants {
     public static final String GLOBAL_MANAGER_ROLE_NAME = "Global Manager";
 
     /**
+     * This member variable is a string constant that defines the name of the Payment Manager role.
+     * Payment Manager role can either be assigned on a project basis or as on the global level.
+     * Payment Managers have permission to create payments.
+     */
+    public static final String PAYMENT_MANAGER_ROLE_NAME = "Payment Manager";
+
+    /**
+     * This member variable is a string constant that defines the name of the Global Payment Manager
+     * role.  This role is a logical one, i.e. there is no such role defined in the database.
+     * This role will be assigned to users that have their own resources with role Payment Manager and
+     * no project assigned to that resource.
+     */
+    public static final String GLOBAL_PAYMENT_MANAGER_ROLE_NAME = "Global Payment Manager";
+
+    /**
      * This member variable is a constant array that holds names of different manager roles.
      *
      * @see #MANAGER_ROLE_NAME
@@ -484,6 +499,11 @@ public class Constants {
      */
     public static final String DOWNLOAD_DOCUMENT_PERM_NAME = "Download Review Document";
 
+    /**
+     * This member variable is a string constant that defines the name of the
+     * Create Payment permission.
+     */
+    public static final String CREATE_PAYMENT_PERM_NAME = "Create Payment";
 
     // -------------------------------------------------------------------------- Phase names -----
 
