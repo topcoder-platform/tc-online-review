@@ -11,7 +11,7 @@
 			<div style="padding: 9px 6px 6px 3px;"><span class="subTitle"><bean:message key="ProjectType.${fn:replace(type.name, ' ', '')}.plural"/>
 				(${typeCounts[idxrType.index]})</span></div>
 			<c:forEach items="${projectCategories}" var="category" varStatus="idxrCategory">
-				<c:if test="${category.projectType.id == type.id}">
+				<c:if test="${category.projectType.id == type.id && categoryCounts[idxrCategory.index] != 0}">
                     <div>
 					<table class="scorecard" width="100%" cellpadding="0" cellspacing="0">
 						<tr>
