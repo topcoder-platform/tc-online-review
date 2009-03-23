@@ -929,7 +929,7 @@
                                     </td>
                                     <td class="value" nowrap="nowrap">
                                         <html:text styleClass="inputBox" property="dr_points" style="width: 350px;" />
-                                        <b><bean:message key="editProject.ProjectDetails.DRPointsMessage" /></b>
+                                        <!-- <b><bean:message key="editProject.ProjectDetails.DRPointsMessage" /></b> -->
                                         <span id="dr_points_validation_msg" style="display:none;" class="error"></span>
                                     </td>
                                 </tr>
