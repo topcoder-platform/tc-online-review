@@ -690,7 +690,7 @@ public class ProjectActions extends DispatchAction {
             // Populate project public flag
             project.setProperty("Public", Boolean.TRUE.equals(lazyForm.get("public")) ? "Yes" : "No");
             // Populate contest indicator flag
-            project.setProperty("Contest Indicator", true);
+            project.setProperty("Contest Indicator", "On");
         } else {
             ProjectStatus newProjectStatus =
                 ActionsHelper.findProjectStatusById(projectStatuses, ((Long) lazyForm.get("status")).longValue());
