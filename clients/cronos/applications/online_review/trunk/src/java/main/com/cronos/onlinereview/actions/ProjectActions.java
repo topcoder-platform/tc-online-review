@@ -689,6 +689,8 @@ public class ProjectActions extends DispatchAction {
             project.setProperty("Eligibility", lazyForm.get("eligibility"));
             // Populate project public flag
             project.setProperty("Public", Boolean.TRUE.equals(lazyForm.get("public")) ? "Yes" : "No");
+            // Populate contest indicator flag
+            project.setProperty("Contest Indicator", true);
         } else {
             ProjectStatus newProjectStatus =
                 ActionsHelper.findProjectStatusById(projectStatuses, ((Long) lazyForm.get("status")).longValue());
@@ -704,7 +706,7 @@ public class ProjectActions extends DispatchAction {
                 // Populate project status
                 project.setProjectStatus(newProjectStatus);
 
-                // Set Completion Timestamp once the status is changed to completed, Cancelled - Failed Review or Deleted
+                // Set Completion Timestamp once the status is changed to completed, Cancelled - *, or Deleted
                 ActionsHelper.setProjectCompletionDate(project, newProjectStatus, (Format) request.getAttribute("date_format"));
             }
         }
