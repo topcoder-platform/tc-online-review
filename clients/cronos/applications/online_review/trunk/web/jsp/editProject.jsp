@@ -184,23 +184,23 @@
                 changeScorecardByCategory(approvalScorecardNodes[i], projectCategoryNode.value, approvalScorecards, 'Client Review');
             }
 
-            var digitalRunChecked = false;
-            var publicChecked = false;
+            //var digitalRunChecked = false;
+            //var publicChecked = false;
 
-            if (projectCategoryNode.value == developmentCatId ||
-                projectCategoryNode.value == designCatId ||
-                projectCategoryNode.value == assemblyCatId ||
-                projectCategoryNode.value == compTestingCatId) {
+            //if (projectCategoryNode.value == developmentCatId ||
+            //    projectCategoryNode.value == designCatId ||
+            //    projectCategoryNode.value == assemblyCatId ||
+            //    projectCategoryNode.value == compTestingCatId) {
                 
-                digitalRunChecked = true;
+            //    digitalRunChecked = true;
                 
-                if (projectCategoryNode.value != assemblyCatId) {
-                    publicChecked = true;
-                }
-            }
+            //    if (projectCategoryNode.value != assemblyCatId) {
+            //        publicChecked = true;
+            //    }
+            //}
 
-            document.getElementById("digitalRunCheckBox").checked = digitalRunChecked;
-            document.getElementById("public").checked = publicChecked;
+            //document.getElementById("digitalRunCheckBox").checked = digitalRunChecked;
+            //document.getElementById("public").checked = publicChecked;
         }
 
         function changeScorecardByCategory(scorecardNode, category, scorecards, scorecardName) {
