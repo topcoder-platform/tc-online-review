@@ -1357,10 +1357,20 @@
         <Property name="Development">
             <Value>113</Value>
         </Property>
-
-        <!-- this is fictional (i.e., not in the database at this time) -->
+        <Property name="Conceptualization">
+            <Value>134</Value>
+        </Property>
+        <Property name="Specification">
+            <Value>117</Value>
+        </Property>
+        <Property name="Architecture">
+            <Value>118</Value>
+        </Property>
         <Property name="Assembly">
-            <Value>114</Value>
+            <Value>125</Value>
+        </Property>
+        <Property name="Application Testing">
+            <Value>124</Value>
         </Property>
     </Config>
 
