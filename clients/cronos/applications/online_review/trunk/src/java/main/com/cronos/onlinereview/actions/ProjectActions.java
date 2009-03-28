@@ -1840,10 +1840,10 @@ public class ProjectActions extends DispatchAction {
             Filter filterExtIDvalue = ResourceFilterBuilder.createExtensionPropertyValueFilter(
                     String.valueOf(AuthorizationHelper.getLoggedInUserId(request)));
 
-            List projectFilters = new ArrayList();
+            List<Long> projectFilters = new ArrayList<Long>();
 
             for (int i = 0; i < ungroupedProjects.length; ++i) {
-                projectFilters.add(new Long(ungroupedProjects[i].getId()));
+                projectFilters.add(ungroupedProjects[i].getId());
             }
 
             Filter filterProjects = new InFilter(ResourceFilterBuilder.PROJECT_ID_FIELD_NAME, projectFilters);
