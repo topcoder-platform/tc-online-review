@@ -3240,7 +3240,7 @@ public class ActionsHelper {
      *
      * @throws Exception if error occurs
      */
-    public static List getDefautlScorecards() throws BaseException {
+    public static List getDefaultScorecards() throws BaseException {
         Connection conn = null;
         Statement stmt = null;
         ResultSet rs = null;
@@ -3297,9 +3297,36 @@ public class ActionsHelper {
                 populateProjectResult(project, Arrays.asList(new String[] {String.valueOf(userId)}));
             }
         }
+        
+        if (isReviewerRole(oldRoleId)) {
+        	deleteReviewerApplication(project, userId, oldRoleId);
+        }
+        if (isReviewerRole(newRoleId)) {
+        	populateReviewerApplications(project, Arrays.asList(new Long[] { userId }));
+        }
     }
 
-    /**
+    static void populateReviewerApplications(Project project, Collection<Long> newReviewers) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	static void deleteReviewerApplication(Project project, long userId, long roleId) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	static boolean isReviewerRole(long roleId) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+	
+	static boolean isReviewerRole(String roleId) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	/**
      * Delete project_result and component_inquiry for new submitters.
      *
      * @param project the project
