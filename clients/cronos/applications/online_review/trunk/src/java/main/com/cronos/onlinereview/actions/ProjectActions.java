@@ -1543,9 +1543,9 @@ public class ProjectActions extends DispatchAction {
         String[] resourceNames = (String[]) lazyForm.get("resources_name");
 
         // HashSet used to identify resource of new user
-        Set newUsers = new HashSet();
-        Set oldUsers = new HashSet();
-        Set newSubmitters = new HashSet();
+        Set<Long> newUsers = new HashSet<Long>();
+        Set<Long> oldUsers = new HashSet<Long>();
+        Set<Long> newSubmitters = new HashSet<Long>();
 
         // 0-index resource is skipped as it is a "dummy" one
         for (int i = 1; i < resourceNames.length; i++) {
