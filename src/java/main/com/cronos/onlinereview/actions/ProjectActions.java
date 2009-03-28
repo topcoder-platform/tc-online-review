@@ -232,7 +232,7 @@ public class ProjectActions extends DispatchAction {
         request.setAttribute("screeningScorecards", screeningScorecards);
         request.setAttribute("reviewScorecards", reviewScorecards);
         request.setAttribute("approvalScorecards", approvalScorecards);
-        request.setAttribute("defaultScorecards", ActionsHelper.getDefautlScorecards());
+        request.setAttribute("defaultScorecards", ActionsHelper.getDefaultScorecards());
 
         // Load phase template names
         String[] phaseTemplateNames = ActionsHelper.createPhaseTemplate(null).getAllTemplateNames();
@@ -1546,6 +1546,7 @@ public class ProjectActions extends DispatchAction {
         Set<Long> newUsers = new HashSet<Long>();
         Set<Long> oldUsers = new HashSet<Long>();
         Set<Long> newSubmitters = new HashSet<Long>();
+        Set<Long> newReviewers = new HashSet<Long>();
 
         // 0-index resource is skipped as it is a "dummy" one
         for (int i = 1; i < resourceNames.length; i++) {
@@ -1577,7 +1578,7 @@ public class ProjectActions extends DispatchAction {
                 // Create new resource
                 resource = new Resource();
 
-                newUsers.add(new Long(user.getId()));
+                newUsers.add(user.getId());
 
                 //System.out.println("ADD:" + user.getId());
             }  else {
@@ -1586,12 +1587,12 @@ public class ProjectActions extends DispatchAction {
                 if (resourceId.longValue() != -1) {
                     // Retrieve the resource with the specified id
                     resource = resourceManager.getResource(resourceId.longValue());
-                    oldUsers.add(new Long(user.getId()));
+                    oldUsers.add(user.getId());
                     //System.out.println("REMOVE:" + user.getId());
                 } else {
                     // -1 value as id marks the resources that were't persisted in DB yet
                     // and so should be skipped for actions other then "add"
-                    oldUsers.add(new Long(user.getId()));
+                    oldUsers.add(user.getId());
                     //System.out.println("REMOVE:" + user.getId());
                     continue;
                 }
@@ -1600,7 +1601,10 @@ public class ProjectActions extends DispatchAction {
             // If action is "delete", delete the resource and proceed to the next one
             if ("delete".equals(resourceAction)) {
                 // delete project_result
-                ActionsHelper.deleteProjectResult(project, user.getId(), ((Long) lazyForm.get("resources_role", i)).longValue());
+                ActionsHelper.deleteProjectResult(project, user.getId(),
+                		((Long) lazyForm.get("resources_role", i)).longValue());
+                ActionsHelper.deleteReviewerApplication(project, user.getId(),
+                		((Long) lazyForm.get("resources_role", i)).longValue());
                 resourceManager.removeResource(resource,
                         Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
                 resourceManager.removeNotifications(new long[] {user.getId()}, project.getId(),
@@ -1670,34 +1674,40 @@ public class ProjectActions extends DispatchAction {
             resourceManager.updateResource(resource, Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
 
             if ("add".equals(resourceAction) && resourceRole.equals("Submitter")) {
-                newSubmitters.add(new Long(user.getId()));
+                newSubmitters.add(user.getId());
+            }
+            
+            if ("add".equals(resourceAction) && ActionsHelper.isReviewerRole(resourceRole)) {
+            	newReviewers.add(user.getId());
             }
         }
 
-        for (Iterator itr = oldUsers.iterator(); itr.hasNext();) {
+        for (Iterator<Long> itr = oldUsers.iterator(); itr.hasNext();) {
             Object obj = itr.next();
             newUsers.remove(obj);
             newSubmitters.remove(obj);
         }
 
-
         // Populate project_result and component_inquiry for new submitters
         ActionsHelper.populateProjectResult(project, newSubmitters);
+        
+        // Populate rboard_application for new reviewers
+        ActionsHelper.populateReviewerApplications(project, newReviewers);
 
         // Update all the timeline notifications
         if (project.getProperty("Timeline Notification").equals("On") && !newUsers.isEmpty()) {
             // Remove duplicated user ids
             long[] existUserIds = resourceManager.getNotifications(project.getId(), timelineNotificationId);
-            Set finalUsers = new HashSet(newUsers);
+            Set<Long> finalUsers = new HashSet<Long>(newUsers);
 
             for (int i = 0; i < existUserIds.length; i++) {
-                finalUsers.remove(new Long(existUserIds[i]));
+                finalUsers.remove(existUserIds[i]);
             }
 
             long[] userIds = new long[finalUsers.size()];
             int i = 0;
-            for (Iterator itr = finalUsers.iterator(); itr.hasNext();) {
-                userIds[i++] = ((Long) itr.next()).longValue();
+            for (Iterator<Long> itr = finalUsers.iterator(); itr.hasNext();) {
+                userIds[i++] = itr.next().longValue();
             }
 
             resourceManager.addNotifications(userIds, project.getId(),
