@@ -1,4 +1,4 @@
-<%@page import="org.apache.cactus.server.*,org.apache.cactus.internal.server.*" session="true" %><%
+<%@page import="javax.servlet.*,org.apache.cactus.server.*,org.apache.cactus.internal.server.*" session="true" %><%
 
     /**                                                
      * Note:
