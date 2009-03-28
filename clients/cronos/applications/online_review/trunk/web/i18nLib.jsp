@@ -1,4 +1,4 @@
-<%@ page import="java.util.*" %>
+<%@ page import="java.util.*,javax.servlet.http.*" %>
 <%
 /*
  * Copyright 2005 The Apache Software Foundation.
