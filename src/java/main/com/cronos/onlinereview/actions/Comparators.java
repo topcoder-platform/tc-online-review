@@ -28,7 +28,7 @@ import com.topcoder.project.phases.PhaseDateComparator;
 final class Comparators {
 
     /**
-     * Emtpy private constructor of the class to prevent class's instantiation (thus making this
+     * Empty private constructor of the class to prevent class's instantiation (thus making this
      * class 'static').
      */
     private Comparators() {
@@ -114,11 +114,11 @@ final class Comparators {
      * This class implements <code>Comparator</code> interface and is used to sort ProjectTypes
      * in array. It orders Project Types by their name, in ascending order.
      */
-    static public class ProjectTypeComparer implements Comparator {
+    static public class ProjectTypeComparer implements Comparator<ProjectType> {
 
         /**
          * This method compares its two arguments for order. This method expects that type of
-         * the objects passed as arguments is <code>ProjectType</code>. It then detemines which of
+         * the objects passed as arguments is <code>ProjectType</code>. It then determines which of
          * the objects is smaller taking their names and comparing them using natural alphabetical
          * order.
          * <p>
@@ -133,10 +133,7 @@ final class Comparators {
          * @param o2
          *            the second object to be compared.
          */
-        public int compare(Object o1, Object o2) {
-            // Cast the passed parameters to the appropriate type
-            ProjectType pt1 = (ProjectType)o1;
-            ProjectType pt2 = (ProjectType)o2;
+        public int compare(ProjectType pt1, ProjectType pt2) {
             // Compare project types by their name using natural alphabetic order
             return pt1.getName().compareTo(pt2.getName());
         }
@@ -146,7 +143,7 @@ final class Comparators {
      * This class implements <code>Comparator</code> interface and is used to sort projects by
      * their names in ascending order.
      */
-    static public class ProjectNameComparer implements Comparator {
+    static public class ProjectNameComparer implements Comparator<Project> {
 
         /**
          * This method compares its two arguments for order. This method expects that type of the
@@ -166,10 +163,7 @@ final class Comparators {
          * @param o2
          *            the second object to be compared.
          */
-        public int compare(Object o1, Object o2) {
-            // Cast the passed parameters to the appropriate type
-            Project project1 = (Project)o1;
-            Project project2 = (Project)o2;
+        public int compare(Project project1, Project project2) {
             // Get the names of the projects
             final String strName1 = (String) project1.getProperty("Project Name");
             final String strName2 = (String) project2.getProperty("Project Name");
@@ -186,7 +180,7 @@ final class Comparators {
             // Get versions of the projects
             final String strVersion1 = (String) project1.getProperty("Project Version");
             final String strVersion2 = (String) project2.getProperty("Project Version");
-            // Split version strings into array of subversions (assuming that separator is a dot)
+            // Split version strings into array of sub-versions (assuming that separator is a dot)
             final String[] versions1 = strVersion1.split("\\.");
             final String[] versions2 = strVersion2.split("\\.");
 
@@ -197,7 +191,7 @@ final class Comparators {
                     final int subVer1 = Integer.parseInt(versions1[i], 10);
                     final int subVer2 = Integer.parseInt(versions2[i], 10);
 
-                    // If subversions differ, that's how order is determined
+                    // If sub-versions differ, that's how order is determined
                     if (subVer1 != subVer2) {
                         return (subVer1 - subVer2);
                     }
@@ -217,14 +211,14 @@ final class Comparators {
      * array. It sorts Submissions either by the time they were submitted (starting from the most
      * recent ones), or by the place submission took up.
      */
-    static class SubmissionComparer implements Comparator {
+    static class SubmissionComparer implements Comparator<Submission> {
 
         /**
          * This member variable contains resources (submitters) assigned to this comprator class.
          * They are stored in the map data structure, where each submitter's ID is matched to that
          * submitter's record, to speed up the access operation.
          */
-        private Map submitters = null;
+        private Map<Long, Resource> submitters = null;
 
         /**
          * This method compares its two arguments for order. This method expects that type of
@@ -241,22 +235,20 @@ final class Comparators {
          * @param o2
          *            the second object to be compared.
          */
-        public int compare(Object o1, Object o2) {
+        public int compare(Submission submission1, Submission submission2) {
             if (submitters == null) {
                 throw new IllegalStateException("Submitters must be assigned before sorting operation.");
             }
-
-            // Cast the passed parameters to the appropriate type
-            Submission submission1 = (Submission)o1;
-            Submission submission2 = (Submission)o2;
 
             Double finalScore1 = submission1.getFinalScore() == null ? 0 : submission1.getFinalScore(); 
             Double finalScore2 = submission2.getFinalScore() == null ? 0 : submission2.getFinalScore();
 
             // Compare submissions by their final scores,
             // or by their upload times, which are the creation times of their respective uploads
-            return ((finalScore1 != finalScore2) ? finalScore2.compareTo(finalScore1) : submission2.getUpload().getCreationTimestamp().compareTo(
-                    submission1.getUpload().getCreationTimestamp()));
+            return ((finalScore1 != finalScore2)
+            		? finalScore2.compareTo(finalScore1)
+            		: submission2.getUpload().getCreationTimestamp().compareTo(
+            				submission1.getUpload().getCreationTimestamp()));
         }
 
         /**
@@ -274,7 +266,7 @@ final class Comparators {
          *             not have a Submitter role.
          */
         public void assignSubmitters(Resource[] submitters) {
-            this.submitters = new HashMap();
+            this.submitters = new HashMap<Long, Resource>();
 
             if (submitters == null) {
                 return;
@@ -289,7 +281,7 @@ final class Comparators {
                 if (!submitter.getResourceRole().getName().equalsIgnoreCase(Constants.SUBMITTER_ROLE_NAME)) {
                     throw new IllegalArgumentException("Parameter 'submitters' must contain Submitters only.");
                 }
-                this.submitters.put(new Long(submitter.getId()), submitter);
+                this.submitters.put(submitter.getId(), submitter);
             }
         }
     }
@@ -299,7 +291,7 @@ final class Comparators {
      * array. It sorts Uploads by their creation time, from the least recent to the most recent
      * ones.
      */
-    static class UploadComparer implements Comparator {
+    static class UploadComparer implements Comparator<Upload> {
 
         /**
          * This method compares its two arguments for order. This method expects that type of
@@ -316,10 +308,7 @@ final class Comparators {
          * @param o2
          *            the second object to be compared.
          */
-        public int compare(Object o1, Object o2) {
-            // Cast the passed parameters to the appropriate type
-            Upload up1 = (Upload)o1;
-            Upload up2 = (Upload)o2;
+        public int compare(Upload up1, Upload up2) {
             // Compare uploads by their creation times
             return up1.getCreationTimestamp().compareTo(up2.getCreationTimestamp());
         }
@@ -330,7 +319,7 @@ final class Comparators {
      * array. It sorts reviews by their creation time, from the least recent to the most recent
      * ones.
      */
-    static class ReviewComparer implements Comparator {
+    static class ReviewComparer implements Comparator<Review> {
 
         /**
          * This method compares its two arguments for order. This method expects that type of
@@ -347,10 +336,7 @@ final class Comparators {
          * @param o2
          *            the second object to be compared.
          */
-        public int compare(Object o1, Object o2) {
-            // Cast the passed parameters to the appropriate type
-            Review review1 = (Review)o1;
-            Review review2 = (Review)o2;
+        public int compare(Review review1, Review review2) {
             // Compare reviews by their creation times
             return review1.getCreationTimestamp().compareTo(review2.getCreationTimestamp());
         }
