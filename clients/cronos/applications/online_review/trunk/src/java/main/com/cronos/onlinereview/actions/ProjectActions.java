@@ -865,7 +865,7 @@ public class ProjectActions extends DispatchAction {
             phProject = new com.topcoder.project.phases.Project(
                     new Date(), (new DefaultWorkdaysFactory()).createWorkdaysInstance());
         } else {
-            // Retrive the Phases Project with the id equal to the id of specified Project
+            // Retrieve the Phases Project with the id equal to the id of specified Project
             phProject = phaseManager.getPhases(project.getId());
             // Sometimes the call to the above method returns null. Guard against this situation
             if (phProject == null) {
@@ -885,7 +885,7 @@ public class ProjectActions extends DispatchAction {
         Long[] phaseTypes = (Long[]) lazyForm.get("phase_type");
 
         // This will be a Map from phases to their indexes in form
-        Map phasesToForm = new HashMap();
+        Map<Phase, Integer> phasesToForm = new HashMap<Phase, Integer>();
 
         // FIRST PASS
         // 0-index phase is skipped since it is a "dummy" one
@@ -964,7 +964,7 @@ public class ProjectActions extends DispatchAction {
             // Put the phase to the map from phase JS ids to phases
             phasesJsMap.put(lazyForm.get("phase_js_id", i), phase);
             // Put the phase to the map from phases to the indexes of form inputs
-            phasesToForm.put(phase, new Integer(i));
+            phasesToForm.put(phase, i);
         }
 
         // Minimal date will be the project start date
@@ -1088,7 +1088,7 @@ public class ProjectActions extends DispatchAction {
 
         // THIRD PASS
         boolean hasCircularDependencies = false;
-        Set processed = new HashSet();
+        Set<Phase> processed = new HashSet<Phase>();
         for (int i = 1; i < phaseTypes.length; i++) {
             Object phaseObj = phasesJsMap.get(lazyForm.get("phase_js_id", i));
             // If phase is not found in map, it was deleted and should not be processed
@@ -1103,8 +1103,8 @@ public class ProjectActions extends DispatchAction {
                 continue;
             }
 
-            Set visited = new HashSet();
-            Stack stack = new Stack();
+            Set<Phase> visited = new HashSet<Phase>();
+            Stack<Phase> stack = new Stack<Phase>();
 
             for (;;) {
                 processed.add(phase);
@@ -1112,9 +1112,9 @@ public class ProjectActions extends DispatchAction {
                 stack.push(phase);
 
                 Dependency[] dependencies = phase.getAllDependencies();
-                // Actually there should be either zero or one dependecy, we'll assume it
+                // Actually there should be either zero or one dependency, we'll assume it
                 if (dependencies.length == 0) {
-                    // If there is no dependency, stop proceessing
+                    // If there is no dependency, stop processing
                     break;
                 } else {
                     phase = dependencies[0].getDependency();
@@ -1201,7 +1201,7 @@ public class ProjectActions extends DispatchAction {
                         phase.setLength(length);
                     }
 
-                    // Set sheduled phase end date to calculated end datehase
+                    // Set scheduled phase end date to calculated phase end date
                     phase.setScheduledEndDate(phase.calcEndDate());
                 } catch (CyclicDependencyException e) {
                     // There is circular dependency, report it and stop processing
@@ -2012,7 +2012,7 @@ public class ProjectActions extends DispatchAction {
             request.setAttribute("myDeliverables", myDeliverables);
         }
 
-        // Signal about successfull execution of the Action
+        // Signal about successful execution of the Action
         return mapping.findForward(Constants.SUCCESS_FORWARD_NAME);
     }
 
