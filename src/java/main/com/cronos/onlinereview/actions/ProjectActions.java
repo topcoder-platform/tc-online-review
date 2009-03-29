@@ -360,12 +360,12 @@ public class ProjectActions extends DispatchAction {
         // Obtain Phase Manager instance
         PhaseManager phaseManager = ActionsHelper.createPhaseManager(request, false);
 
-        // Retrive project phases
+        // Retrieve project phases
         Phase[] phases = ActionsHelper.getPhasesForProject(phaseManager, project);
         // Sort project phases
         Arrays.sort(phases, new Comparators.ProjectPhaseComparer());
 
-        Map phaseNumberMap = new HashMap();
+        Map<Long, Integer> phaseNumberMap = new HashMap<Long, Integer>();
 
         // Populate form with phases data
         for (int i = 0; i < phases.length; ++i) {
@@ -603,6 +603,7 @@ public class ProjectActions extends DispatchAction {
      */
     public ActionForward saveProject(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response) throws BaseException {
+    	
         LoggingHelper.logAction(request);
         // Cast the form to its actual type
         LazyValidatorForm lazyForm = (LazyValidatorForm) form;
@@ -643,7 +644,7 @@ public class ProjectActions extends DispatchAction {
         ProjectStatus[] projectStatuses = manager.getAllProjectStatuses();
 
         // This variable determines whether status of the project has been changed by this save
-        // operation. This is usefule to determine whether Explanation is a rquired field or not
+        // operation. This is useful to determine whether Explanation is a required field or not
         boolean statusHasChanged = false;
 
         if (newProject) {
@@ -656,9 +657,6 @@ public class ProjectActions extends DispatchAction {
             project = new Project(category, activeStatus);
             statusHasChanged = true; // Status is always considered to be changed for new projects
         } else {
-            // Find the project category by the specified id
-            ProjectCategory category = ActionsHelper.findProjectCategoryById(projectCategories,
-                    ((Long) lazyForm.get("project_category")).longValue());
             // Sets Project category
             project.setProjectCategory(ActionsHelper.findProjectCategoryById(projectCategories,
                     ((Long) lazyForm.get("project_category")).longValue()));
@@ -756,7 +754,7 @@ public class ProjectActions extends DispatchAction {
         project.setProperty("Timeline Notification", (sendTLChangeNotifications) ? "On" : "Off");
         // Populate project Digital Run option
         project.setProperty("Digital Run Flag", (digitalRunFlag) ? "On" : "Off");
-        // Populate project rated option, note that it is inveresed
+        // Populate project rated option, note that it is inverted
         project.setProperty("Rated", (doNotRateProject) ? "No" : "Yes");
 
         // Populate project notes
@@ -1508,9 +1506,9 @@ public class ProjectActions extends DispatchAction {
      * @param phasesJsMap
      * @throws BaseException
      */
-    private void saveResources(boolean newProject, HttpServletRequest request,
-            LazyValidatorForm lazyForm, Project project, Phase[] projectPhases, Map phasesJsMap)
-        throws BaseException {
+    private void saveResources(boolean newProject, HttpServletRequest request, LazyValidatorForm lazyForm,
+    		Project project, Phase[] projectPhases, Map phasesJsMap) throws BaseException {
+    	
         // Obtain the instance of the User Retrieval
         UserRetrieval userRetrieval = ActionsHelper.createUserRetrieval(request);
 
@@ -1546,7 +1544,6 @@ public class ProjectActions extends DispatchAction {
         Set<Long> newUsers = new HashSet<Long>();
         Set<Long> oldUsers = new HashSet<Long>();
         Set<Long> newSubmitters = new HashSet<Long>();
-        Set<Long> newReviewers = new HashSet<Long>();
 
         // 0-index resource is skipped as it is a "dummy" one
         for (int i = 1; i < resourceNames.length; i++) {
@@ -1602,8 +1599,6 @@ public class ProjectActions extends DispatchAction {
             if ("delete".equals(resourceAction)) {
                 // delete project_result
                 ActionsHelper.deleteProjectResult(project, user.getId(),
-                		((Long) lazyForm.get("resources_role", i)).longValue());
-                ActionsHelper.deleteReviewerApplication(project, user.getId(),
                 		((Long) lazyForm.get("resources_role", i)).longValue());
                 resourceManager.removeResource(resource,
                         Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
@@ -1664,6 +1659,7 @@ public class ProjectActions extends DispatchAction {
             }
             // If resource is a submitter, screener or reviewer, store registration date
             // Note, that it is updated here only if it was not set previously
+            // TODO: Why not primary screener, other reviewers, etc?
             if (resource.getProperty("Registration Date") == null  && (
                     resourceRole.equals("Submitter") || resourceRole.equals("Screener") ||
                     resourceRole.equals("Reviewer"))) {
@@ -1676,23 +1672,16 @@ public class ProjectActions extends DispatchAction {
             if ("add".equals(resourceAction) && resourceRole.equals("Submitter")) {
                 newSubmitters.add(user.getId());
             }
-            
-            if ("add".equals(resourceAction) && ActionsHelper.isReviewerRole(resourceRole)) {
-            	newReviewers.add(user.getId());
-            }
         }
 
         for (Iterator<Long> itr = oldUsers.iterator(); itr.hasNext();) {
-            Object obj = itr.next();
-            newUsers.remove(obj);
-            newSubmitters.remove(obj);
+            Long id = itr.next();
+            newUsers.remove(id);
+            newSubmitters.remove(id);
         }
 
         // Populate project_result and component_inquiry for new submitters
         ActionsHelper.populateProjectResult(project, newSubmitters);
-        
-        // Populate rboard_application for new reviewers
-        ActionsHelper.populateReviewerApplications(project, newReviewers);
 
         // Update all the timeline notifications
         if (project.getProperty("Timeline Notification").equals("On") && !newUsers.isEmpty()) {
@@ -1727,9 +1716,9 @@ public class ProjectActions extends DispatchAction {
      * @param form
      *            action form.
      * @param request
-     *            the http request.
+     *            the HTTP request.
      * @param response
-     *            the http response.
+     *            the HTTP response.
      * @throws BaseException
      *             if any error occurs.
      */
@@ -2043,22 +2032,22 @@ public class ProjectActions extends DispatchAction {
      *             if there is an error determining whether some Deliverable has been completed or
      *             not.
      */
-    private static Deliverable[] getDeliverables(
-            DeliverableManager manager, Project[][] projects, Phase[][][] phases, Resource[][][] resources)
-        throws DeliverablePersistenceException, SearchBuilderException, DeliverableCheckingException {
+    private static Deliverable[] getDeliverables(DeliverableManager manager, Project[][] projects, Phase[][][] phases,
+    		Resource[][][] resources)
+        	throws DeliverablePersistenceException, SearchBuilderException, DeliverableCheckingException {
         // Validate parameters
         ActionsHelper.validateParameterNotNull(manager, "manager");
         ActionsHelper.validateParameterNotNull(projects, "projects");
         ActionsHelper.validateParameterNotNull(phases, "phases");
         ActionsHelper.validateParameterNotNull(resources, "resources");
 
-        List projectIds = new ArrayList();
-        List phaseTypeIds = new ArrayList();
-        List resourceIds = new ArrayList();
+        List<Long> projectIds = new ArrayList<Long>();
+        List<Long> phaseTypeIds = new ArrayList<Long>();
+        List<Long> resourceIds = new ArrayList<Long>();
 
         for (int i = 0; i < projects.length; ++i) {
             for (int j = 0; j < projects[i].length; ++j) {
-                projectIds.add(new Long(projects[i][j].getId()));
+                projectIds.add(projects[i][j].getId());
 
                 // Get an array of active phases for the project
                 Phase[] activePhases = phases[i][j];
@@ -2068,7 +2057,7 @@ public class ProjectActions extends DispatchAction {
                 }
 
                 for (int k = 0; k < activePhases.length; ++k) {
-                    phaseTypeIds.add(new Long(activePhases[k].getId()));
+                    phaseTypeIds.add(activePhases[k].getId());
                 }
 
                 // Get an array of "my" resources for the active phases
@@ -2079,7 +2068,7 @@ public class ProjectActions extends DispatchAction {
                 }
 
                 for (int k = 0; k < myResources.length; ++k) {
-                    resourceIds.add(new Long(myResources[k].getId()));
+                    resourceIds.add(myResources[k].getId());
                 }
             }
         }
@@ -2097,13 +2086,13 @@ public class ProjectActions extends DispatchAction {
         Filter filter = new AndFilter(Arrays.asList(new Filter[] {filterProjects, filterPhases, filterResources}));
 
         // Get and return an array of my incomplete deliverables for all active phases.
-        // These deliverables will require furter grouping
+        // These deliverables will require further grouping
         return manager.searchDeliverables(filter, Boolean.FALSE);
     }
 
     /**
      * This static method returns a string that lists all the different roles the resources
-     * specified by <code>resources</code> array have. The roles will be delimeted by
+     * specified by <code>resources</code> array have. The roles will be delimited by
      * line-breaking tag (<code>&lt;br&#160;/&gt;</code>). If there are no resources in
      * <code>resources</code> array or no roles have been found, this method returns a string that
      * denotes Public role (usually this string just says &quot;Public&quot;).
@@ -2127,7 +2116,7 @@ public class ProjectActions extends DispatchAction {
         }
 
         StringBuffer buffer = new StringBuffer();
-        Set rolesSet = new HashSet();
+        Set<String> rolesSet = new HashSet<String>();
 
         for (int i = 0; i < resources.length; ++i) {
             // Get the name for a resource in the current iteration
@@ -2150,8 +2139,8 @@ public class ProjectActions extends DispatchAction {
     /**
      * This static method returns a string that lists all the different outstanding (i.e.
      * incomplete) deliverables the resources specified by <code>resources</code> array have. The
-     * deliverables will be delimeted by line-breaking tag (<code>&lt;br&#160;/&gt;</code>). If
-     * any of the arrays passed to this method is <code>null</code> or emtpy, or no deliverables
+     * deliverables will be delimited by line-breaking tag (<code>&lt;br&#160;/&gt;</code>). If
+     * any of the arrays passed to this method is <code>null</code> or empty, or no deliverables
      * have been found, this method returns empty string.
      *
      * @return a human-readable list of deliverables.
@@ -2182,7 +2171,7 @@ public class ProjectActions extends DispatchAction {
         }
 
         StringBuffer buffer = new StringBuffer();
-        Set deliverablesSet = new HashSet();
+        Set<String> deliverablesSet = new HashSet<String>();
 
         for (int i = 0; i < deliverables.length; ++i) {
             // Get a deliverable for the current iteration
