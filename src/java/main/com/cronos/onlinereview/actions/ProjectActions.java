@@ -819,17 +819,17 @@ public class ProjectActions extends DispatchAction {
      * @param phasesToDelete
      * @throws BaseException
      */
-    private void deletePhases(HttpServletRequest request, Project project, List phasesToDelete) throws BaseException {
-        if (phasesToDelete.isEmpty()) {
+    private void deletePhases(HttpServletRequest request, Project project, List<Phase> phasesToDelete)
+    		throws BaseException {
+
+    	if (phasesToDelete.isEmpty()) {
             return;
         }
 
-        Phase phase = (Phase) phasesToDelete.get(0);
-        com.topcoder.project.phases.Project phProject = phase.getProject();
+        com.topcoder.project.phases.Project phProject = phasesToDelete.get(0).getProject();
 
         for (int i = 0; i < phasesToDelete.size(); i++) {
-            phase = (Phase) phasesToDelete.get(i);
-            phProject.removePhase(phase);
+            phProject.removePhase(phasesToDelete.get(i));
         }
 
         PhaseManager phaseManager = ActionsHelper.createPhaseManager(request, false);
