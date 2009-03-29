@@ -3174,7 +3174,7 @@ public class ActionsHelper {
     }
 
     /**
-     * Recaculate Screening reviewers payment.
+     * Recalculate Screening reviewers payment.
      *
      * @param projectId project id
      *
@@ -3186,7 +3186,8 @@ public class ActionsHelper {
             DBConnectionFactory dbconn = new DBConnectionFactoryImpl(DB_CONNECTION_NAMESPACE);
             conn = dbconn.createConnection();
             log.log(Level.INFO,
-                    "create db connection with default connection name from DBConnectionFactoryImpl with namespace:" + DB_CONNECTION_NAMESPACE);
+                    "create db connection with default connection name from DBConnectionFactoryImpl with namespace:"
+            		+ DB_CONNECTION_NAMESPACE);
             AutoPaymentUtil.populateReviewerPayments(projectId, conn, AutoPaymentUtil.SCREENING_PHASE);
         } catch (DBConnectionException e) {
             throw new BaseException("Failed to return DBConnection", e);
@@ -3198,7 +3199,7 @@ public class ActionsHelper {
     }
 
     /**
-     * Recaculate Screening reviewers payment.
+     * Get the catalog for a component.
      *
      * @param projectId project id
      *
@@ -3212,7 +3213,8 @@ public class ActionsHelper {
             DBConnectionFactory dbconn = new DBConnectionFactoryImpl(DB_CONNECTION_NAMESPACE);
             conn = dbconn.createConnection();
             log.log(Level.INFO,
-                    "create db connection with default connection name from DBConnectionFactoryImpl with namespace:" + DB_CONNECTION_NAMESPACE);
+                    "create db connection with default connection name from DBConnectionFactoryImpl with namespace:"
+            		+ DB_CONNECTION_NAMESPACE);
             String sqlStr = "select root_category_id " +
                             "    from comp_catalog cc," +
                             "         categories pcat " +
@@ -3232,7 +3234,8 @@ public class ActionsHelper {
             close(ps);
             close(conn);
         }
-        return "9926572";
+        
+        return "9926572"; // If we can't find a catalog, assume it's an Application
     }
 
     /**
@@ -3240,7 +3243,7 @@ public class ActionsHelper {
      *
      * @throws Exception if error occurs
      */
-    public static List getDefaultScorecards() throws BaseException {
+    public static List<DefaultScorecard> getDefaultScorecards() throws BaseException {
         Connection conn = null;
         Statement stmt = null;
         ResultSet rs = null;
@@ -3248,13 +3251,14 @@ public class ActionsHelper {
             DBConnectionFactory dbconn = new DBConnectionFactoryImpl(DB_CONNECTION_NAMESPACE);
             conn = dbconn.createConnection();
             log.log(Level.INFO,
-                    "create db connection with default connection name from DBConnectionFactoryImpl with namespace:" + DB_CONNECTION_NAMESPACE);
+                    "create db connection with default connection name from DBConnectionFactoryImpl with namespace:"
+            		+ DB_CONNECTION_NAMESPACE);
             String sqlString = "select ds.*, st.name from default_scorecard ds, scorecard_type_lu st " +
                     "where ds.scorecard_type_id = st.scorecard_type_id";
 
             stmt = conn.createStatement();
             rs = stmt.executeQuery(sqlString);
-            List list = new ArrayList();
+            List<DefaultScorecard> list = new ArrayList<DefaultScorecard>();
             while (rs.next()) {
                 DefaultScorecard scorecard = new DefaultScorecard();
                 scorecard.setCategory(rs.getInt("project_category_id"));
@@ -3267,7 +3271,7 @@ public class ActionsHelper {
         } catch (DBConnectionException e) {
             throw new BaseException("Failed to return DBConnection", e);
         } catch (SQLException e) {
-            throw new BaseException("Failed to retrieve default scorecard ", e);
+            throw new BaseException("Failed to retrieve default scorecard", e);
         } finally {
             close(rs);
             close(stmt);
@@ -3297,34 +3301,7 @@ public class ActionsHelper {
                 populateProjectResult(project, Arrays.asList(new String[] {String.valueOf(userId)}));
             }
         }
-        
-        if (isReviewerRole(oldRoleId)) {
-        	deleteReviewerApplication(project, userId, oldRoleId);
-        }
-        if (isReviewerRole(newRoleId)) {
-        	populateReviewerApplications(project, Arrays.asList(new Long[] { userId }));
-        }
     }
-
-    static void populateReviewerApplications(Project project, Collection<Long> newReviewers) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	static void deleteReviewerApplication(Project project, long userId, long roleId) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	static boolean isReviewerRole(long roleId) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-	
-	static boolean isReviewerRole(String roleId) {
-		// TODO Auto-generated method stub
-		return false;
-	}
 
 	/**
      * Delete project_result and component_inquiry for new submitters.
@@ -3373,7 +3350,7 @@ public class ActionsHelper {
         } catch (ConfigurationException e) {
             throw new BaseException("Failed to config for DBNamespace", e);
         } catch (SQLException e) {
-            throw new BaseException("Failed to populate project_result", e);
+            throw new BaseException("Failed to delete from project_result or component_inquiry", e);
         } catch (DBConnectionException e) {
             throw new BaseException("Failed to return DBConnection", e);
         } finally {
@@ -3580,7 +3557,7 @@ public class ActionsHelper {
      * Return project property long value.
      *
      * @param project the project object
-     * @param name the proeprty name
+     * @param name the property name
      * @return the long value, 0 if it does not exist
      */
     private static long getProjectLongValue(Project project, String name) {
@@ -3593,31 +3570,49 @@ public class ActionsHelper {
     }
 
     /**
-     * Close jdbc resource.
+     * Close a JDBC Connection.
      *
-     * @param obj jdbc resource
+     * @param connection JDBC Connection to close.
      */
-    private static void close(Object obj) {
-        if (obj instanceof Connection) {
-            try {
-                ((Connection) obj).close();
-                log.log(Level.INFO, "close the connection.");
-            } catch (SQLException e) {
-                // Ignore
-            }
-        } else if (obj instanceof Statement) {
-            try {
-                ((Statement) obj).close();
-            } catch (SQLException e) {
-                // Ignore
-            }
-        } else if (obj instanceof ResultSet) {
-            try {
-                ((ResultSet) obj).close();
-            } catch (SQLException e) {
-                // Ignore
-            }
-        }
+    private static void close(Connection connection) {
+    	if (connection != null) {
+    		try {
+    			connection.close();
+    			log.log(Level.INFO, "close the connection.");
+    		} catch (SQLException e) {
+    			log.log(Level.ERROR, "Error closing JDBC Connection: " + e.getMessage());
+    		}
+    	}
+    }
+    
+    /**
+     * Close a JDBC Statement.
+     *
+     * @param statement JDBC Statement to close.
+     */
+    private static void close(Statement statement) {
+    	if (statement != null) {
+    		try {
+    			statement.close();
+    		} catch (SQLException e) {
+    			log.log(Level.ERROR, "Error closing JDBC Statement: " + e.getMessage());
+    		}
+    	}
+    }
+    
+    /**
+     * Close a JDBC ResultSet.
+     *
+     * @param resultSet JDBC ResultSet to close.
+     */
+    private static void close(ResultSet resultSet) {
+    	if (resultSet != null) {
+    		try {
+    			resultSet.close();
+    		} catch (SQLException e) {
+    			log.log(Level.ERROR, "Error closing JDBC ResultSet: " + e.getMessage());
+    		}
+    	}
     }
 
     public static ActionForward findForwardNotAuthorized(ActionMapping mapping, Long projectId) {
