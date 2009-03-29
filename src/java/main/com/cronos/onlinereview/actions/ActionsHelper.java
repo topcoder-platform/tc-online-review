@@ -32,7 +32,6 @@ import org.apache.struts.action.ActionRedirect;
 import org.apache.struts.util.MessageResources;
 
 import com.cronos.onlinereview.autoscreening.management.ScreeningManager;
-import com.cronos.onlinereview.autoscreening.management.ScreeningManagerFactory;
 import com.cronos.onlinereview.deliverables.AggregationDeliverableChecker;
 import com.cronos.onlinereview.deliverables.AggregationReviewDeliverableChecker;
 import com.cronos.onlinereview.deliverables.AppealResponsesDeliverableChecker;
@@ -47,19 +46,8 @@ import com.cronos.onlinereview.external.ExternalUser;
 import com.cronos.onlinereview.external.RetrievalException;
 import com.cronos.onlinereview.external.UserRetrieval;
 import com.cronos.onlinereview.external.impl.DBUserRetrieval;
-import com.cronos.onlinereview.phases.AppealsPhaseHandler;
-import com.cronos.onlinereview.phases.ApprovalPhaseHandler;
 import com.cronos.onlinereview.phases.AutoPaymentUtil;
-import com.cronos.onlinereview.phases.PRAggregationPhaseHandler;
-import com.cronos.onlinereview.phases.PRAggregationReviewPhaseHandler;
-import com.cronos.onlinereview.phases.PRAppealResponsePhaseHandler;
-import com.cronos.onlinereview.phases.PRFinalFixPhaseHandler;
-import com.cronos.onlinereview.phases.PRFinalReviewPhaseHandler;
 import com.cronos.onlinereview.phases.PRHelper;
-import com.cronos.onlinereview.phases.PRRegistrationPhaseHandler;
-import com.cronos.onlinereview.phases.PRReviewPhaseHandler;
-import com.cronos.onlinereview.phases.PRScreeningPhaseHandler;
-import com.cronos.onlinereview.phases.PRSubmissionPhaseHandler;
 import com.topcoder.date.workdays.DefaultWorkdaysFactory;
 import com.topcoder.date.workdays.Workdays;
 import com.topcoder.db.connectionfactory.ConfigurationException;
@@ -71,7 +59,6 @@ import com.topcoder.management.deliverable.Deliverable;
 import com.topcoder.management.deliverable.DeliverableChecker;
 import com.topcoder.management.deliverable.DeliverableManager;
 import com.topcoder.management.deliverable.PersistenceDeliverableManager;
-import com.topcoder.management.deliverable.PersistenceUploadManager;
 import com.topcoder.management.deliverable.Submission;
 import com.topcoder.management.deliverable.SubmissionStatus;
 import com.topcoder.management.deliverable.Upload;
@@ -81,34 +68,23 @@ import com.topcoder.management.deliverable.UploadType;
 import com.topcoder.management.deliverable.persistence.DeliverableCheckingException;
 import com.topcoder.management.deliverable.persistence.DeliverablePersistence;
 import com.topcoder.management.deliverable.persistence.DeliverablePersistenceException;
-import com.topcoder.management.deliverable.persistence.UploadPersistence;
 import com.topcoder.management.deliverable.persistence.UploadPersistenceException;
 import com.topcoder.management.deliverable.persistence.sql.SqlDeliverablePersistence;
-import com.topcoder.management.deliverable.persistence.sql.SqlUploadPersistence;
 import com.topcoder.management.deliverable.search.DeliverableFilterBuilder;
 import com.topcoder.management.deliverable.search.SubmissionFilterBuilder;
 import com.topcoder.management.phase.DefaultPhaseManager;
-import com.topcoder.management.phase.PhaseHandler;
 import com.topcoder.management.phase.PhaseHandlingException;
 import com.topcoder.management.phase.PhaseManagementException;
 import com.topcoder.management.phase.PhaseManager;
-import com.topcoder.management.phase.PhaseOperationEnum;
 import com.topcoder.management.project.Project;
 import com.topcoder.management.project.ProjectCategory;
 import com.topcoder.management.project.ProjectManager;
-import com.topcoder.management.project.ProjectManagerImpl;
 import com.topcoder.management.project.ProjectStatus;
 import com.topcoder.management.project.ProjectType;
 import com.topcoder.management.resource.Resource;
 import com.topcoder.management.resource.ResourceManager;
 import com.topcoder.management.resource.ResourceRole;
-import com.topcoder.management.resource.persistence.PersistenceResourceManager;
-import com.topcoder.management.resource.persistence.ResourcePersistence;
-import com.topcoder.management.resource.persistence.sql.SqlResourcePersistence;
-import com.topcoder.management.resource.search.NotificationFilterBuilder;
-import com.topcoder.management.resource.search.NotificationTypeFilterBuilder;
 import com.topcoder.management.resource.search.ResourceFilterBuilder;
-import com.topcoder.management.resource.search.ResourceRoleFilterBuilder;
 import com.topcoder.management.review.DefaultReviewManager;
 import com.topcoder.management.review.ReviewManager;
 import com.topcoder.management.review.data.Comment;
@@ -143,12 +119,8 @@ import com.topcoder.search.builder.filter.OrFilter;
 import com.topcoder.servlet.request.DisallowedDirectoryException;
 import com.topcoder.servlet.request.FileUpload;
 import com.topcoder.servlet.request.LocalFileUpload;
-import com.topcoder.util.datavalidator.LongValidator;
-import com.topcoder.util.datavalidator.StringValidator;
 import com.topcoder.util.errorhandling.BaseException;
 import com.topcoder.util.errorhandling.BaseRuntimeException;
-import com.topcoder.util.idgenerator.IDGenerator;
-import com.topcoder.util.idgenerator.IDGeneratorFactory;
 import com.topcoder.util.log.Level;
 import com.topcoder.util.log.Log;
 import com.topcoder.util.log.LogFactory;
@@ -167,13 +139,13 @@ public class ActionsHelper {
     private static final Log log = LogFactory.getLog(ActionsHelper.class.getName());
 
     /**
-     * This member variable is a string constant that defines the name of the configurtaion
+     * This member variable is a string constant that defines the name of the configuration
      * namespace which the parameters for database connection factory are stored under.
      */
     private static final String DB_CONNECTION_NAMESPACE = "com.topcoder.db.connectionfactory.DBConnectionFactoryImpl";
 
     /**
-     * This member variable is a string constant that defines the name of the configurtaion
+     * This member variable is a string constant that defines the name of the configuration
      * namespace which the parameters for Phases Template persistence are stored under.
      */
     private static final String PHASES_TEMPLATE_PERSISTENCE_NAMESPACE = "com.topcoder.project.phases.template.persistence.XmlPhaseTemplatePersistence";
@@ -217,7 +189,12 @@ public class ActionsHelper {
      */
     private static boolean categoryIsRated(long categoryId) {
         return (categoryId == 1       // Component Design
-                || categoryId == 2);  // Component Development
+                || categoryId == 2    // Component Development
+                || categoryId == 23   // Conceptualization
+                || categoryId == 6    // Specification
+                || categoryId == 7    // Architecture
+                || categoryId == 14   // Assembly
+                || categoryId == 13); // Application Testing
     }
 
     // ------------------------------------------------------------ Validator type of methods -----
@@ -1326,8 +1303,8 @@ public class ActionsHelper {
             return messages.getMessage("ResourceRole." + Constants.MANAGER_ROLE_NAME.replaceAll(" ", ""));
         }
 
-        List roleNames = new ArrayList();
-        // Add induvidual roles to the list
+        List<String> roleNames = new ArrayList<String>();
+        // Add individual roles to the list
         for (int i = 0; i < resources.length; ++i) {
             String roleName = resources[i].getResourceRole().getName();
             // Do not add the same role twice
@@ -1444,7 +1421,7 @@ public class ActionsHelper {
         // Validate parameter
         validateParameterNotNull(phases, "phases");
 
-        List activePhases = new ArrayList();
+        List<Phase> activePhases = new ArrayList<Phase>();
 
         for (int i = 0; i < phases.length; ++i) {
             // Get a phase for the current iteration
@@ -1456,7 +1433,7 @@ public class ActionsHelper {
         }
 
         // Convert the list to array and return it
-        return (Phase[]) activePhases.toArray(new Phase[activePhases.size()]);
+        return activePhases.toArray(new Phase[activePhases.size()]);
     }
 
     /**
@@ -1657,7 +1634,7 @@ public class ActionsHelper {
         // Validate parameters
         validateParameterNotNull(resources, "resources");
 
-        List foundResources = new ArrayList();
+        List<Resource> foundResources = new ArrayList<Resource>();
 
         for (int i = 0; i < resources.length; ++i) {
             // Get a resource for the current iteration
@@ -1675,7 +1652,7 @@ public class ActionsHelper {
         }
 
         // Convert the list of resources to an array and return it
-        return (Resource[]) foundResources.toArray(new Resource[foundResources.size()]);
+        return foundResources.toArray(new Resource[foundResources.size()]);
     }
 
     /**
@@ -1689,10 +1666,10 @@ public class ActionsHelper {
      *             if parameter <code>resources</code> is <code>null</code>.
      */
     public static Resource[] getAllSubmitters(Resource[] resources) {
-        // Validate parmaeter
+        // Validate parameter
         validateParameterNotNull(resources, "resources");
 
-        List submitters = new ArrayList();
+        List<Resource> submitters = new ArrayList<Resource>();
         // Search for the appropriate resources and add them to the list
         for (int j = 0; j < resources.length; ++j) {
             if (resources[j].getResourceRole().getName().equalsIgnoreCase(Constants.SUBMITTER_ROLE_NAME)) {
@@ -1701,11 +1678,11 @@ public class ActionsHelper {
         }
 
         // Convert the list of found submitters to array and return it
-        return (Resource[]) submitters.toArray(new Resource[submitters.size()]);
+        return submitters.toArray(new Resource[submitters.size()]);
     }
 
     /**
-     * TODO: Doccument this method.
+     * TODO: Document this method.
      *
      * @return
      * @param projectId
@@ -1798,7 +1775,7 @@ public class ActionsHelper {
             return new Resource[0];
         }
 
-        List myResources = new ArrayList();
+        List<Resource> myResources = new ArrayList<Resource>();
 
         for (int i = 0; i < allResources.length; ++i) {
             // Get a resource for the current iteration
@@ -1810,7 +1787,7 @@ public class ActionsHelper {
         }
 
         // Convert the list to array and return it
-        return (Resource[]) myResources.toArray(new Resource[myResources.size()]);
+        return myResources.toArray(new Resource[myResources.size()]);
     }
 
     /**
@@ -1883,7 +1860,7 @@ public class ActionsHelper {
      * @param request
      *            an <code>HttpServletRequest</code> object containing additional information.
      * @param phase
-     *            a phase to search the resouce for. This parameter can be <code>null</code>, in
+     *            a phase to search the resource for. This parameter can be <code>null</code>, in
      *            which case the search is made for resources with no phase assigned.
      * @throws IllegalArgumentException
      *             if <code>request</code> parameter is <code>null</code>.
@@ -1901,7 +1878,7 @@ public class ActionsHelper {
      * @param manager
      *            an instance of the <code>DeliverableManager</code> class.
      * @param phases
-     *            an array of pahses to search deliverables for.
+     *            an array of phases to search deliverables for.
      * @param resources
      *            an array of all resources for the current project.
      * @param winnerExtUserId
@@ -1920,7 +1897,8 @@ public class ActionsHelper {
      */
     public static Deliverable[] getAllDeliverablesForPhases(
             DeliverableManager manager, Phase[] phases, Resource[] resources, long winnerExtUserId)
-        throws DeliverablePersistenceException, SearchBuilderException, DeliverableCheckingException {
+        	throws DeliverablePersistenceException, SearchBuilderException, DeliverableCheckingException {
+    	
         // Validate parameters
         validateParameterNotNull(manager, "manager");
         validateParameterNotNull(phases, "phases");
@@ -1940,7 +1918,7 @@ public class ActionsHelper {
             break;
 
         default:
-            List phaseFilters = new ArrayList();
+            List<Filter> phaseFilters = new ArrayList<Filter>();
             // Prepare a list of filters for each phase in the array of phases
             for (int i = 0; i < phases.length; ++i) {
                 phaseFilters.add(DeliverableFilterBuilder.createPhaseIdFilter(phases[i].getId()));
@@ -1952,7 +1930,7 @@ public class ActionsHelper {
         // Perform a search for the deliverables
         Deliverable[] allDeliverables = manager.searchDeliverables(filter, null);
 
-        List deliverables = new ArrayList();
+        List<Deliverable> deliverables = new ArrayList<Deliverable>();
 
         // Additionally filter deliverables because sometimes deliverables
         // for another phases get though the above filter
@@ -2049,7 +2027,7 @@ public class ActionsHelper {
         }
 
         // Convert the list of deliverables into array and return it
-        return (Deliverable[]) deliverables.toArray(new Deliverable[deliverables.size()]);
+        return deliverables.toArray(new Deliverable[deliverables.size()]);
     }
 
     /**
@@ -2066,7 +2044,7 @@ public class ActionsHelper {
         // Validate parameter
         validateParameterNotNull(allDeliverables, "allDeliverables");
 
-        List deliverables = new ArrayList();
+        List<Deliverable> deliverables = new ArrayList<Deliverable>();
         // Perform a search for outstanding deliverables
         for (int i = 0; i < allDeliverables.length; ++i) {
             if (!allDeliverables[i].isComplete()) {
@@ -2074,7 +2052,7 @@ public class ActionsHelper {
             }
         }
         // Return a list of outstanding deliverables converted to array
-        return (Deliverable[]) deliverables.toArray(new Deliverable[deliverables.size()]);
+        return deliverables.toArray(new Deliverable[deliverables.size()]);
     }
 
     /**
@@ -2094,7 +2072,7 @@ public class ActionsHelper {
         validateParameterNotNull(allDeliverables, "allDeliverables");
         validateParameterNotNull(myResources, "myResources");
 
-        List deliverables = new ArrayList();
+        List<Deliverable> deliverables = new ArrayList<Deliverable>();
         // Perform a search for "my" deliverables
         for (int i = 0; i < allDeliverables.length; ++i) {
             // Get a deliverable for current iteration
@@ -2114,7 +2092,7 @@ public class ActionsHelper {
             }
         }
         // Return a list of "my" deliverables converted to array
-        return (Deliverable[]) deliverables.toArray(new Deliverable[deliverables.size()]);
+        return deliverables.toArray(new Deliverable[deliverables.size()]);
     }
 
     /**
@@ -2210,11 +2188,11 @@ public class ActionsHelper {
         // Validate parameter
         validateParameterNotNull(allSubmissionStatuses, "allSubmissionStatuses");
 
-        List statusIds = new ArrayList();
+        List<Long> statusIds = new ArrayList<Long>();
 
         for (int i = 0; i < allSubmissionStatuses.length; ++i) {
             if (!allSubmissionStatuses[i].getName().equalsIgnoreCase("Deleted")) {
-                statusIds.add(new Long(allSubmissionStatuses[i].getId()));
+                statusIds.add(allSubmissionStatuses[i].getId());
             }
         }
 
@@ -2645,7 +2623,7 @@ public class ActionsHelper {
                     PersistenceDeliverableManager.DELIVERABLE_WITH_SUBMISSIONS_SEARCH_BUNDLE_NAME);
 
             // The checkers are used when deliverable instances are retrieved
-            Map checkers = new HashMap();
+            Map<String, DeliverableChecker> checkers = new HashMap<String, DeliverableChecker>();
 
             // Some checkers are used more than once
             DeliverableChecker committedChecker = new CommittedReviewDeliverableChecker(dbconn);
@@ -3010,7 +2988,7 @@ public class ActionsHelper {
      * @param newSubmitters new submitters external ids.
      * @throws BaseException if error occurs
      */
-    public static void populateProjectResult(Project project, Collection newSubmitters) throws BaseException {
+    public static void populateProjectResult(Project project, Collection<Long> newSubmitters) throws BaseException {
         Connection conn = null;
         PreparedStatement ps = null;
         PreparedStatement existStmt = null;
@@ -3051,15 +3029,12 @@ public class ActionsHelper {
 
             existCIStmt = conn.prepareStatement("SELECT 1 FROM component_inquiry WHERE user_id = ? and project_id = ?");
 
-            //ratingStmt = conn.prepareStatement("SELECT rating from user_rating where user_id = ? and phase_id = " +
-            //        "(select 111+project_category_id from project where project_id = ?)");
-
             ratingStmt = conn.prepareStatement("SELECT rating, phase_id, (select project_category_id from project where project_id = ?) as project_category_id from user_rating where user_id = ? ");
 
             reliabilityStmt = conn.prepareStatement("SELECT rating from user_reliability where user_id = ? and phase_id = " +
                     "(select 111+project_category_id from project where project_id = ?)");
 
-            for (Iterator iter = newSubmitters.iterator(); iter.hasNext();) {
+            for (Iterator<Long> iter = newSubmitters.iterator(); iter.hasNext();) {
                 String userId = iter.next().toString();
 
                 // Check if projectResult exist
@@ -3079,14 +3054,12 @@ public class ActionsHelper {
                 ResultSet rs = null;
                 if (!existPR || !existCI) {
                     ratingStmt.clearParameters();
-//                    ratingStmt.setString(1, userId);
-//                    ratingStmt.setLong(2, projectId);
                     ratingStmt.setLong(1, projectId);
                     ratingStmt.setString(2, userId);
                     rs = ratingStmt.executeQuery();
 
-                    // in case the project is an assembly/specification/architecure/app testing project, the rating should be the max between design and development
-                    // while if the project is a regular component project, the rating should correspond to either design or development
+                    // If the project belongs to a rated category, the user gets the rating that belongs to the
+                    // category.  Otherwise, the highest available rating is used.
                     while (rs.next()) {
                         if (!categoryIsRated(rs.getLong(3))) {
                             if (oldRating < rs.getLong(1)) {
@@ -3298,7 +3271,7 @@ public class ActionsHelper {
 
             if (newRoleId == 1) {
                 // added otherwise
-                populateProjectResult(project, Arrays.asList(new String[] {String.valueOf(userId)}));
+                populateProjectResult(project, Arrays.asList(new Long[] { userId }));
             }
         }
     }
