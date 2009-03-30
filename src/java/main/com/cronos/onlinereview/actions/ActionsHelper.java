@@ -170,7 +170,7 @@ public class ActionsHelper {
      * @param categoryId the category id to look up.
      * @return whether the provided category id should have a project_result row.
      */
-    private static boolean categoryUsesProjectResult(long categoryId) {
+    private static boolean isProjectResultCategory(long categoryId) {
         return (categoryId == 1       // Component Design
                 || categoryId == 2    // Component Development
                 || categoryId == 5    // Component Testing
@@ -187,7 +187,7 @@ public class ActionsHelper {
      * @param categoryId the category id to look up.
      * @return whether the provided category id is rated.
      */
-    private static boolean categoryIsRated(long categoryId) {
+    private static boolean isRatedCategory(long categoryId) {
         return (categoryId == 1       // Component Design
                 || categoryId == 2    // Component Development
                 || categoryId == 23   // Conceptualization
@@ -2998,7 +2998,7 @@ public class ActionsHelper {
         PreparedStatement componentInquiryStmt = null;
         long categoryId = project.getProjectCategory().getId();
 
-        if (!categoryUsesProjectResult(categoryId)) {
+        if (!isProjectResultCategory(categoryId)) {
             return;
         }
 
@@ -3061,7 +3061,7 @@ public class ActionsHelper {
                     // If the project belongs to a rated category, the user gets the rating that belongs to the
                     // category.  Otherwise, the highest available rating is used.
                     while (rs.next()) {
-                        if (!categoryIsRated(rs.getLong(3))) {
+                        if (!isRatedCategory(rs.getLong(3))) {
                             if (oldRating < rs.getLong(1)) {
                                 oldRating = rs.getLong(1);
                             }
@@ -3263,7 +3263,7 @@ public class ActionsHelper {
     public static void changeResourceRole(Project project, long userId, long oldRoleId, long newRoleId) throws BaseException {
         long categoryId = project.getProjectCategory().getId();
 
-        if (categoryUsesProjectResult(categoryId)) {
+        if (isProjectResultCategory(categoryId)) {
             if (oldRoleId == 1) {
                 // Delete project_result if the old role is submitter
                 deleteProjectResult(project, userId, oldRoleId);
@@ -3289,7 +3289,7 @@ public class ActionsHelper {
         PreparedStatement ps = null;
         long categoryId = project.getProjectCategory().getId();
 
-        if (!categoryUsesProjectResult(categoryId)) {
+        if (!isProjectResultCategory(categoryId)) {
             return;
         }
 
