@@ -472,7 +472,6 @@ public class AutoPaymentUtil {
      *
      * @throws SQLException if error occurs
      */
-    /*
     private static void updateProjectInfo(long projectId, long projectInfoTypeId, String value, Connection conn)
         	throws SQLException {
     	
@@ -508,7 +507,6 @@ public class AutoPaymentUtil {
 
         PRHelper.close(pstmt);
     }
-    */
 
     /**
      * Retrieve price for given project.
