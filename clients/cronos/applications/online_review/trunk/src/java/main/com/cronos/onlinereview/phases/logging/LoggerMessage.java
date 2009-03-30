@@ -129,7 +129,7 @@ public class LoggerMessage {
      *
      * @param cause the exception to be recorded
      *
-     * @return stack strace
+     * @return stack trace
      */
     public static String getExceptionStackTrace(Throwable cause) {
         ByteArrayOutputStream out = new ByteArrayOutputStream();

@@ -143,10 +143,10 @@ public class AutoPaymentUtil {
                                                           (int) (projectCategoryId + 111),
                                                           payments[0], payments[1],
                                                           prize, drPoints);
-        List reviewers = getReviewers(projectId, conn);
+        List<Reviewer> reviewers = getReviewers(projectId, conn);
 
-        for (Iterator iter = reviewers.iterator(); iter.hasNext();) {
-            Reviewer reviewer = (Reviewer) iter.next();
+        for (Iterator<Reviewer> iter = reviewers.iterator(); iter.hasNext();) {
+            Reviewer reviewer = iter.next();
 
             if (reviewer.isPrimaryScreener() && phaseId == SCREENING_PHASE) {
                 updateResourcePayment(reviewer.getResourceId(), fpc.getScreeningCost(), conn);
@@ -238,7 +238,7 @@ public class AutoPaymentUtil {
      *
      * @throws SQLException if error occurs
      */
-    private static List getReviewers(long projectId, Connection conn)
+    private static List<Reviewer> getReviewers(long projectId, Connection conn)
         throws SQLException {
         String SELECT_SQL =
                 "select r.resource_id, " +
@@ -257,7 +257,7 @@ public class AutoPaymentUtil {
             "order by resource_role_id";
         PreparedStatement pstmt = null;
         ResultSet rs = null;
-        List reviewers = new ArrayList();
+        List<Reviewer> reviewers = new ArrayList<Reviewer>();
         long primaryScreener = 0;
 
         try {
@@ -472,8 +472,10 @@ public class AutoPaymentUtil {
      *
      * @throws SQLException if error occurs
      */
+    /*
     private static void updateProjectInfo(long projectId, long projectInfoTypeId, String value, Connection conn)
-        throws SQLException {
+        	throws SQLException {
+    	
         String UPDATE_SQL = "update project_info set value = ? where project_id = ? and project_info_type_id = ? ";
         String INSERT_SQL = "INSERT INTO project_info " +
             "(project_id, project_info_type_id, value, create_user, create_date, modify_user, modify_date) " +
@@ -506,6 +508,7 @@ public class AutoPaymentUtil {
 
         PRHelper.close(pstmt);
     }
+    */
 
     /**
      * Retrieve price for given project.
