@@ -12,7 +12,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -1674,8 +1673,7 @@ public class ProjectActions extends DispatchAction {
             }
         }
 
-        for (Iterator<Long> itr = oldUsers.iterator(); itr.hasNext();) {
-            Long id = itr.next();
+        for (Long id : oldUsers) {
             newUsers.remove(id);
             newSubmitters.remove(id);
         }
@@ -1695,8 +1693,8 @@ public class ProjectActions extends DispatchAction {
 
             long[] userIds = new long[finalUsers.size()];
             int i = 0;
-            for (Iterator<Long> itr = finalUsers.iterator(); itr.hasNext();) {
-                userIds[i++] = itr.next().longValue();
+            for (Long id : finalUsers) {
+                userIds[i++] = id;
             }
 
             resourceManager.addNotifications(userIds, project.getId(),

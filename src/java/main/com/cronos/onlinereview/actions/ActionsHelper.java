@@ -16,7 +16,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -3034,18 +3033,16 @@ public class ActionsHelper {
             reliabilityStmt = conn.prepareStatement("SELECT rating from user_reliability where user_id = ? and phase_id = " +
                     "(select 111+project_category_id from project where project_id = ?)");
 
-            for (Iterator<Long> iter = newSubmitters.iterator(); iter.hasNext();) {
-                String userId = iter.next().toString();
-
+            for (Long userId : newSubmitters) {
                 // Check if projectResult exist
                 existStmt.clearParameters();
-                existStmt.setString(1, userId);
+                existStmt.setLong(1, userId);
                 existStmt.setLong(2, projectId);
                 boolean existPR = existStmt.executeQuery().next();
 
                 // Check if component_inquiry exist
                 existCIStmt.clearParameters();
-                existCIStmt.setString(1, userId);
+                existCIStmt.setLong(1, userId);
                 existCIStmt.setLong(2, projectId);
                 boolean existCI = existCIStmt.executeQuery().next();
 
@@ -3055,7 +3052,7 @@ public class ActionsHelper {
                 if (!existPR || !existCI) {
                     ratingStmt.clearParameters();
                     ratingStmt.setLong(1, projectId);
-                    ratingStmt.setString(2, userId);
+                    ratingStmt.setLong(2, userId);
                     rs = ratingStmt.executeQuery();
 
                     // If the project belongs to a rated category, the user gets the rating that belongs to the
@@ -3077,7 +3074,7 @@ public class ActionsHelper {
                 if (!existPR) {
                     //Retrieve Reliability
                     reliabilityStmt.clearParameters();
-                    reliabilityStmt.setString(1, userId);
+                    reliabilityStmt.setLong(1, userId);
                     reliabilityStmt.setLong(2, projectId);
                     rs = reliabilityStmt.executeQuery();
 
@@ -3088,7 +3085,7 @@ public class ActionsHelper {
 
                     //add project_result
                     ps.setLong(1, projectId);
-                    ps.setString(2, userId);
+                    ps.setLong(2, userId);
                     ps.setLong(3, 0);
                     ps.setLong(4, 0);
 
@@ -3111,7 +3108,7 @@ public class ActionsHelper {
                     log.log(Level.INFO, "adding component_inquiry for projectId: " + projectId + " userId: " + userId);
                     componentInquiryStmt.setLong(1, componentInquiryId++);
                     componentInquiryStmt.setLong(2, componentId);
-                    componentInquiryStmt.setString(3, userId);
+                    componentInquiryStmt.setLong(3, userId);
                     componentInquiryStmt.setLong(4, projectId);
                     // All competition types except for design and development should have null phase id.
                     if (categoryId == 1 || categoryId == 2)  {
@@ -3119,7 +3116,7 @@ public class ActionsHelper {
                     } else {
                         componentInquiryStmt.setNull(5, Types.INTEGER);
                     }
-                    componentInquiryStmt.setString(6, userId);
+                    componentInquiryStmt.setLong(6, userId);
                     componentInquiryStmt.setDouble(7, oldRating);
                     componentInquiryStmt.setLong(8, version);
                     componentInquiryStmt.addBatch();
