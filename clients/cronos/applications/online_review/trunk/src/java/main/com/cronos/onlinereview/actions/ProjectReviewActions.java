@@ -821,10 +821,10 @@ public class ProjectReviewActions extends DispatchAction {
                         Constants.VIEW_AGGREGATION_PERM_NAME, "Error.NoAggregations", null);
             }
 
-            List resourceIds = new ArrayList();
+            List<Long> resourceIds = new ArrayList<Long>();
 
             for (int i = 0; i < aggregators.length; ++i) {
-                resourceIds.add(new Long(aggregators[i].getId()));
+                resourceIds.add(aggregators[i].getId());
             }
 
             Filter filterReviewers = new InFilter("reviewer", resourceIds);
@@ -2055,10 +2055,10 @@ public class ProjectReviewActions extends DispatchAction {
                     Constants.VIEW_COMPOS_SCORECARD_PERM_NAME, "Error.InternalError", null);
         }
 
-        List reviewerIds = new ArrayList();
+        List<Long> reviewerIds = new ArrayList<Long>();
 
         for (int i = 0; i < reviewers.length; ++i) {
-            reviewerIds.add(new Long(reviewers[i].getId()));
+            reviewerIds.add(reviewers[i].getId());
         }
 
         // Prepare filters
@@ -2419,9 +2419,9 @@ public class ProjectReviewActions extends DispatchAction {
         request.setAttribute("reviewResources", reviewResources);
 
         // Prepare a list of reviewer IDs. This list will later be used to build filter
-        List reviewerIds = new ArrayList();
+        List<Long> reviewerIds = new ArrayList<Long>();
         for (int i = 0; i < reviewResources.length; ++i) {
-            reviewerIds.add(new Long(reviewResources[i].getId()));
+            reviewerIds.add(reviewResources[i].getId());
         }
 
         // Build filters to fetch the reviews that were used to form current Aggregation
@@ -2798,14 +2798,14 @@ public class ProjectReviewActions extends DispatchAction {
      * @return
      */
     private static Comment[] getItemManagerComments(Item item) {
-        List result = new ArrayList();
+        List<Comment> result = new ArrayList<Comment>();
         for (int i = 0; i < item.getNumberOfComments(); i++) {
             Comment comment = item.getComment(i);
             if (ActionsHelper.isManagerComment(comment)) {
                 result.add(comment);
             }
         }
-        return (Comment[]) result.toArray(new Comment[result.size()]);
+        return result.toArray(new Comment[result.size()]);
     }
 
     /**
@@ -2815,14 +2815,14 @@ public class ProjectReviewActions extends DispatchAction {
      * @return
      */
     private static Comment[] getItemReviewerComments(Item item) {
-        List result = new ArrayList();
+        List<Comment> result = new ArrayList<Comment>();
         for (int i = 0; i < item.getNumberOfComments(); i++) {
             Comment comment = item.getComment(i);
             if (ActionsHelper.isReviewerComment(comment)) {
                 result.add(comment);
             }
         }
-        return (Comment[]) result.toArray(new Comment[result.size()]);
+        return result.toArray(new Comment[result.size()]);
     }
 
     /**
@@ -2835,7 +2835,8 @@ public class ProjectReviewActions extends DispatchAction {
      * @return
      * @throws BaseException
      */
-    private ActionForward saveGenericReview(ActionMapping mapping, ActionForm form, HttpServletRequest request, String reviewType) throws BaseException {
+    @SuppressWarnings("unchecked")
+	private ActionForward saveGenericReview(ActionMapping mapping, ActionForm form, HttpServletRequest request, String reviewType) throws BaseException {
         // FIXME: IMPORTANT!!!!!!!!!!!!!!!!!!!!!!!
         // FIXME: Check the permissions here and everywhere,
         // as they where dropped from checkForCorrectReviewId(ActionMapping, HttpServletRequest, String)
@@ -2935,7 +2936,7 @@ public class ProjectReviewActions extends DispatchAction {
                     new Long(scorecardTemplate.getScorecardType().getId()));
 
             // Build the list of all filters that should be joined using AND operator
-            List filters = new ArrayList();
+            List<Filter> filters = new ArrayList<Filter>();
             filters.add(filterResource);
             filters.add(filterSubmission);
             filters.add(filterScorecard);
@@ -3006,8 +3007,8 @@ public class ProjectReviewActions extends DispatchAction {
         // Get form's fields
         String[] answers = (String[]) reviewForm.get("answer");
         Integer[] commentCounts = (Integer[]) reviewForm.get("comment_count");
-        Map replies = (Map) reviewForm.get("comment");
-        Map commentTypeIds = (Map) reviewForm.get("comment_type");
+        Map<String, String> replies = (Map<String, String>) reviewForm.get("comment");
+        Map<String, String> commentTypeIds = (Map<String, String>) reviewForm.get("comment_type");
         FormFile[] files = (FormFile[]) reviewForm.get("file");
 
         // Uploaded files will be held here
@@ -3335,10 +3336,10 @@ public class ProjectReviewActions extends DispatchAction {
             return;
         }
 
-        List reviewerIds = new ArrayList();
+        List<Long> reviewerIds = new ArrayList<Long>();
 
         for (int i = 0; i < reviewers.length; ++i) {
-            reviewerIds.add(new Long(reviewers[i].getId()));
+            reviewerIds.add(reviewers[i].getId());
         }
 
         // Prepare filters
@@ -3407,10 +3408,10 @@ public class ProjectReviewActions extends DispatchAction {
 
         // Retrieve all reviewed submissions to reset placement/submission status if need
         Submission[] submissions = ActionsHelper.searchReviewedSubmissions(request, project);
-        List submissionIds = new ArrayList();
+        List<Long> submissionIds = new ArrayList<Long>();
 
         for (int i = 0; i < submissions.length; ++i) {
-        	submissionIds.add(new Long(submissions[i].getId()));
+        	submissionIds.add(submissions[i].getId());
         }
 
         Filter filterSubmissions = new InFilter("submission", submissionIds);
@@ -3428,7 +3429,7 @@ public class ProjectReviewActions extends DispatchAction {
         // for each submission, populate scores array to use with review score aggregator.
         for (int iSub = 0; iSub < submissions.length; iSub++) {
             long subId = submissions[iSub].getId();
-            List scoresList = new ArrayList();
+            List<Float> scoresList = new ArrayList<Float>();
 
             //Match the submission with its reviews
             for (int j = 0; j < reviews.length; j++) {
@@ -3442,7 +3443,7 @@ public class ProjectReviewActions extends DispatchAction {
             scores = new float[scoresList.size()];
 
             for (int iScore = 0; iScore < scores.length; iScore++) {
-                scores[iScore] = ((Float) scoresList.get(iScore)).floatValue();
+                scores[iScore] = scoresList.get(iScore);
             }
 
             submissionScores[iSub] = new com.topcoder.management.review.scoreaggregator.Submission(subId, scores);
@@ -3702,8 +3703,10 @@ public class ProjectReviewActions extends DispatchAction {
      *             <code>myResource</code> is <code>null</code>, or if parameters
      *             <code>itemIdx</code> or <code>commentCount</code> are negative.
      */
-    private static int populateItemComments(Item item, int itemIdx, Map replies, Map commentTypeIds,
-            int commentCount, CommentType[] commentTypes, Resource myResource, boolean managerEdit) {
+    private static int populateItemComments(Item item, int itemIdx, Map<String, String> replies,
+    		Map<String, String> commentTypeIds, int commentCount, CommentType[] commentTypes, Resource myResource,
+    		boolean managerEdit) {
+    	
         // Validate parameters
         ActionsHelper.validateParameterNotNull(item, "item");
         ActionsHelper.validateParameterInRange(itemIdx, "itemIdx", 0, Integer.MAX_VALUE);
@@ -3739,8 +3742,7 @@ public class ProjectReviewActions extends DispatchAction {
             if (managerEdit) {
                 commentType = ActionsHelper.findCommentTypeByName(commentTypes, "Manager Comment");
             } else {
-                commentType = ActionsHelper.findCommentTypeById(
-                        commentTypes, Long.parseLong((String) commentTypeIds.get(commentKey)));
+                commentType = ActionsHelper.findCommentTypeById(commentTypes, Long.parseLong(commentTypeIds.get(commentKey)));
             }
             // Check that correct comment type ID has been specified
             // (user may intentionally submit malformed form data)
@@ -3751,7 +3753,7 @@ public class ProjectReviewActions extends DispatchAction {
             }
 
             // Get user's reply, i.e. comment's text
-            String reply = (String) replies.get(commentKey);
+            String reply = replies.get(commentKey);
             // Do not let user's reply to be null
             if (reply == null) {
                 reply = "";
@@ -3778,7 +3780,7 @@ public class ProjectReviewActions extends DispatchAction {
             // Update form's fields (so they will be up to date in case scorecard fails validation)
             replies.put(updatedCommentKey, reply);
             if (!managerEdit) {
-                commentTypeIds.put(updatedCommentKey, new Long(commentType.getId()));
+                commentTypeIds.put(updatedCommentKey, new Long(commentType.getId()).toString());
             }
             // Increase the counter of the processed comments
             ++newCommentCount;
@@ -3831,7 +3833,7 @@ public class ProjectReviewActions extends DispatchAction {
             String emptyCommentKey = itemIdx + "." + newCommentCount;
             replies.put(emptyCommentKey, "");
             commentTypeIds.put(emptyCommentKey,
-                    new Long(ActionsHelper.findCommentTypeByName(commentTypes, "Comment").getId()));
+                    new Long(ActionsHelper.findCommentTypeByName(commentTypes, "Comment").getId()).toString());
         }
 
         return newCommentCount - 1;
@@ -3892,7 +3894,7 @@ public class ProjectReviewActions extends DispatchAction {
         // Get an array of all phases for the project
         Phase[] phases = ActionsHelper.getPhasesForProject(ActionsHelper.createPhaseManager(request, false), project);
         // Get active (opened) phases names
-        List activePhases = new ArrayList();
+        List<String> activePhases = new ArrayList<String>();
         for (int i = 0; i < phases.length; i++) {
             if (phases[i].getPhaseStatus().getName().equals(PhaseStatus.OPEN.getName())) {
                 activePhases.add(phases[i].getPhaseType().getName());

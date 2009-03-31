@@ -12,7 +12,7 @@ import com.topcoder.util.log.Log;
 import com.topcoder.util.log.LogFactory;
 
 /**
- * This class prvides helper methods for logging some ceratin application's activity. This might
+ * This class provides helper methods for logging some certain application's activity. This might
  * include writing to log informational messages, warnings, error reports as well as thrown
  * exceptions (the message and stack trace).
  * <p>

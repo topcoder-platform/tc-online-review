@@ -28,6 +28,7 @@ import com.topcoder.util.config.UnknownNamespaceException;
  * @author real_vg
  * @version 1.0
  */
+@SuppressWarnings("unchecked")
 public class ConfigHelper {
 
     /**
@@ -391,44 +392,44 @@ public class ConfigHelper {
      * This member variable holds the names of small icons (.gif) files that should be displayed
      * on the JSP pages for different Root Catalog IDs.
      */
-    private static final Map rootCatalogIconsSm = new HashMap();
+    private static final Map<String, String> rootCatalogIconsSm = new HashMap<String, String>();
 
     /**
      * This member variable holds the keys of Message Resources that should be used to match
      * Root Catalog ID with the name of that same Root Catalog.
      */
-    private static final Map rootCatalogAltTextKeys = new HashMap();
+    private static final Map<String, String> rootCatalogAltTextKeys = new HashMap<String, String>();
 
     /**
      * This member variable holds the custom root catalogs ids 
      */
-    private static final Set customRootCatalogs = new HashSet();
+    private static final Set<String> customRootCatalogs = new HashSet<String>();
     
     /**
      * This member variable holds the names of small icons (.gif) files that should be displayed
      * on the JSP pages for different Project Categories.
      */
-    private static final Map projectCategoryIconsSm = new HashMap();
+    private static final Map<String, String> projectCategoryIconsSm = new HashMap<String, String>();
 
     /**
      * This member variable holds the names of icons (.gif) files that should be displayed
      * on the JSP pages for different Project Categories.
      */
-    private static final Map projectCategoryIcons = new HashMap();
+    private static final Map<String, String> projectCategoryIcons = new HashMap<String, String>();
 
     /**
      * This member variable holds the links to full project's descriptions per project type.
      */
-    private static final Map projectTypeDescriptionLinks = new HashMap();
+    private static final Map<String, String> projectTypeDescriptionLinks = new HashMap<String, String>();
 
     /**
      * This member variable holds the links to forums per project type.
      */
-    private static final Map projectTypeForumLinks = new HashMap();
+    private static final Map<String, String> projectTypeForumLinks = new HashMap<String, String>();
 
     /**
      * This member variable holds the amount of pixels displayed in the Gantt Chart per every hour.
-     * The default value of this varibale is 5.
+     * The default value of this variable is 5.
      */
     private static int pixelsPerHour = 5;
 
@@ -456,7 +457,7 @@ public class ConfigHelper {
     private static int reqSubmissions = -1;
 
     /**
-     * This member variable holds the default minimum amount of registred reviewers required for
+     * This member variable holds the default minimum amount of registered reviewers required for
      * ending Review phase.
      */
     private static int reqReviewers = -1;
@@ -505,7 +506,7 @@ public class ConfigHelper {
      * This member variable holds the names of all permissions for the application (as keys), and
      * lists of roles that have every of the permissions (as values for the corresponding keys).
      */
-    private static final Map permissionsMatrix = new HashMap();
+    private static final Map<String, String[]> permissionsMatrix = new HashMap<String, String[]>();
 
     /**
      * This member variable holds the list of names of the phase groups. The names are represented
@@ -513,7 +514,7 @@ public class ConfigHelper {
      * Every item in this list should be of type <code>String</code> and cannot be
      * <code>null</code>.
      */
-    private static final List phaseGroupNames = new ArrayList();
+    private static final List<String> phaseGroupNames = new ArrayList<String>();
 
     /**
      * This member variable holds the list of names of tables for the phase groups. The names are
@@ -521,20 +522,20 @@ public class ConfigHelper {
      * file. Every item in this list should be of type <code>String</code> and cannot be
      * <code>null</code>.
      */
-    private static final List phaseGroupTableNames = new ArrayList();
+    private static final List<String> phaseGroupTableNames = new ArrayList<String>();
 
     /**
      * This member variable holds the list of sets. Every set in this list denotes a single phase
      * group and defines the phases included in that group.
      */
-    private static final List phaseGroupPhases = new ArrayList();
+    private static final List<Set<String>> phaseGroupPhases = new ArrayList<Set<String>>();
 
     /**
      * This member variable holds the list of names of application's functionalities that should be
      * executed for the corresponding phase group. Every item in this list
      * should be of type <code>String</code> and cannot be <code>null</code>.
      */
-    private static final List phaseGroupFunctions = new ArrayList();
+    private static final List<String> phaseGroupFunctions = new ArrayList<String>();
 
     /**
      * This member variable holds the type of the source that will be used to load email template to
@@ -555,7 +556,7 @@ public class ConfigHelper {
     private static String contactManagerEmailSubject = "";
 
     static {
-        // Obtaining the instance of Configurtaion Manager
+        // Obtaining the instance of Configuration Manager
         ConfigManager cfgMgr = ConfigManager.getInstance();
 
         try {
@@ -779,7 +780,7 @@ public class ConfigHelper {
                 // Get the name of the next property in the list.
                 // This will be the name of the Permission at the same time.
                 String permissionName = (String) permissionNames.nextElement();
-                // Retrive the names of roles which that permission is granted to
+                // Retrieve the names of roles which that permission is granted to
                 String[] roles = propPermissionsMatrix.getValues(permissionName);
 
                 // If everything has been read fine ...
@@ -789,7 +790,7 @@ public class ConfigHelper {
                 }
             }
 
-            // Retrieve property that cantains definitions of phase groups
+            // Retrieve property that contains definitions of phase groups
             Property propPhaseGrouping = cfgMgr.getPropertyObject(ONLINE_REVIEW_CFG_NS, PHASE_GROUPING_PROP);
             // Prepare to enumerate all group definition properties
             Enumeration phaseGroups = propPhaseGrouping.propertyNames();
@@ -820,7 +821,7 @@ public class ConfigHelper {
                         phaseGroupTableNames.add(phaseGroupNames.get(phaseGroupNames.size() - 1));
                     }
 
-                    Set phasesSet = new HashSet();
+                    Set<String> phasesSet = new HashSet<String>();
                     phaseGroupPhases.add(phasesSet);
 
                     for (int i = 0; i < strPhases.length; ++i) {
@@ -924,12 +925,12 @@ public class ConfigHelper {
      * @param projectTypeName
      *            Project Type name which link to full description should be looked up for.
      * @param componentId
-     *            ID of the component (numeric value) that should be substituded instead of
+     *            ID of the component (numeric value) that should be substituted instead of
      *            &quot;<code>&lt;COMPONENT_ID&gt;</code>&quot; substring in the template link read
      *            from the configuration. If this value is zero or negative, the aforementioned
      *            substring will be simply removed from the template link.
      * @param versionId
-     *            ID of the component version (numeric value) that should be substituded instead of
+     *            ID of the component version (numeric value) that should be substituted instead of
      *            &quot;<code>&lt;VERSION_ID&gt;</code>&quot; substring in the template link
      *            read from the configuration. If this value is zero or negative, the aforementioned
      *            substring will be simply removed from the template link.
@@ -951,7 +952,7 @@ public class ConfigHelper {
      * @param projectTypeName
      *            Project Type name which link to full description should be looked up for.
      * @param forumId
-     *            ID of the forum (numeric value) that should be substituded instead of
+     *            ID of the forum (numeric value) that should be substituted instead of
      *            &quot;<code>&lt;FORUM_ID&gt;</code>&quot; substring in the template link read from
      *            the configuration. If this value is zero or negative, the aforementioned substring
      *            will be simply removed from the template link.
@@ -965,9 +966,9 @@ public class ConfigHelper {
 
     /**
      * This static method returns the amount of pixels that should be displayed for each hour in
-     * the project's Gantt chart.
+     * the project's GANTT chart.
      *
-     * @return a value that reporesent the amount of pixels per each hour.
+     * @return a value that represent the amount of pixels per each hour.
      */
     public static int getPixelsPerHour() {
         return pixelsPerHour;
@@ -1101,7 +1102,7 @@ public class ConfigHelper {
      *            name of the permission which list of role names should be retrieved for.
      */
     public static String[] getRolesForPermission(String permissionName) {
-        String[] roles = (String[]) permissionsMatrix.get(permissionName);
+        String[] roles = permissionsMatrix.get(permissionName);
         return (roles != null) ? roles : new String[0];
     }
 
@@ -1124,7 +1125,7 @@ public class ConfigHelper {
      */
     public static int findPhaseGroupForPhaseName(String phaseName) {
         for (int i = 0; i < phaseGroupPhases.size(); ++i) {
-            if (((Set) phaseGroupPhases.get(i)).contains(phaseName)) {
+            if (phaseGroupPhases.get(i).contains(phaseName)) {
                 return i;
             }
         }
@@ -1140,7 +1141,7 @@ public class ConfigHelper {
      *            an index of a phase group to retrieve the name of a key for.
      */
     public static String getPhaseGroupNameKey(int index) {
-        return (String) phaseGroupNames.get(index);
+        return phaseGroupNames.get(index);
     }
 
     /**
@@ -1152,7 +1153,7 @@ public class ConfigHelper {
      *            an index of a phase group to retrieve the name of a key for.
      */
     public static String getPhaseGroupTableNameKey(int index) {
-        return (String) phaseGroupTableNames.get(index);
+        return phaseGroupTableNames.get(index);
     }
 
     /**
@@ -1164,10 +1165,10 @@ public class ConfigHelper {
      * @param index
      *            an index of a phase group.
      * @param phaseName
-     *            a name of the phase which presense in the phase group is to be tested.
+     *            a name of the phase which presence in the phase group is to be tested.
      */
     public static boolean isPhaseGroupContainsPhase(int index, String phaseName) {
-        return ((Set) phaseGroupPhases.get(index)).contains(phaseName);
+        return phaseGroupPhases.get(index).contains(phaseName);
     }
 
     /**
@@ -1179,7 +1180,7 @@ public class ConfigHelper {
      *            an index of a phase group.
      */
     public static String getPhaseGroupAppFunction(int index) {
-        return (String) phaseGroupFunctions.get(index);
+        return phaseGroupFunctions.get(index);
     }
 
     /**
