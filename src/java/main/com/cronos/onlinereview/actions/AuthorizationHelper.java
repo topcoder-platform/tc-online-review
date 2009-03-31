@@ -264,7 +264,6 @@ public class AuthorizationHelper {
      * @throws BaseException
      *             if any error occurs.
      */
-    @SuppressWarnings("unchecked")
 	public static void gatherUserRoles(HttpServletRequest request, long projectId) throws BaseException {
         // Call shorter version of this function first
         gatherUserRoles(request);
@@ -335,7 +334,6 @@ public class AuthorizationHelper {
      * @see #gatherUserRoles(HttpServletRequest)
      * @see #gatherUserRoles(HttpServletRequest, long)
      */
-    @SuppressWarnings("unchecked")
 	public static boolean hasUserRole(HttpServletRequest request, String role) {
         // Retrieve set with roles that the user has in the current context from the request
         Set roles = (Set) request.getAttribute("roles");

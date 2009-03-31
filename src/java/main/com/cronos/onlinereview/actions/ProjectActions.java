@@ -265,7 +265,6 @@ public class ProjectActions extends DispatchAction {
      *            the project to take the data from
      * @throws BaseException
      */
-    @SuppressWarnings("unchecked")
 	private void populateProjectForm(HttpServletRequest request, LazyValidatorForm form, Project project)
         throws BaseException {
         // TODO: Possibly use string constants instead of hardcoded strings
@@ -515,7 +514,6 @@ public class ProjectActions extends DispatchAction {
      * @param projectProperty
      *            the name of project property to take the value of
      */
-    @SuppressWarnings("unchecked")
 	private void populateProjectFormProperty(LazyValidatorForm form, Class type, String formProperty,
             Project project, String projectProperty) {
 
@@ -851,7 +849,6 @@ public class ProjectActions extends DispatchAction {
      * @param phasesToDelete TODO
      * @throws BaseException
      */
-    @SuppressWarnings("unchecked")
 	private Phase[] saveProjectPhases(boolean newProject, HttpServletRequest request, LazyValidatorForm lazyForm,
             Project project, Map<Object, Phase> phasesJsMap, List<Phase> phasesToDelete, boolean statusHasChanged)
         throws BaseException {
