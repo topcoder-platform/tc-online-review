@@ -45,6 +45,7 @@ import com.topcoder.project.phases.PhaseType;
 import com.topcoder.search.builder.SearchBundle;
 import com.topcoder.search.builder.SearchBundleManager;
 import com.topcoder.util.datavalidator.LongValidator;
+import com.topcoder.util.datavalidator.ObjectValidator;
 import com.topcoder.util.datavalidator.StringValidator;
 import com.topcoder.util.idgenerator.IDGenerator;
 import com.topcoder.util.idgenerator.IDGeneratorFactory;
@@ -274,7 +275,7 @@ public class ManagerCreationHelper implements ManagersProvider {
      *            the search bundle to set.
      */
     private static void setAllFieldsSearchable(SearchBundle searchBundle) {
-        Map fields = new HashMap();
+        Map<String, ObjectValidator> fields = new HashMap<String, ObjectValidator>();
 
         // set the resource filter fields
         fields.put(ResourceFilterBuilder.RESOURCE_ID_FIELD_NAME, LongValidator.isPositive());

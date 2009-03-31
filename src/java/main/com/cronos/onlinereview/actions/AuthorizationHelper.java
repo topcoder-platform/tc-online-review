@@ -164,7 +164,7 @@ public class AuthorizationHelper {
      */
     public static void gatherUserRoles(HttpServletRequest request) throws BaseException {
         // Prepare the set which will contain all the roles the user has
-        Set roles = new HashSet();
+        Set<String> roles = new HashSet<String>();
 
         // Place the set into the request.
         // It will be populated with the roles a little bit later in this method
@@ -196,12 +196,12 @@ public class AuthorizationHelper {
         Filter filterExtID = new AndFilter(filterExtIDname, filterExtIDvalue);
         // Prepare filter to select resources that do not have any project assigned
 //        Filter filterNoProject = ResourceFilterBuilder.createNoProjectFilter();
-        // Prepare filterr to select resources that do not have any phase assigned
+        // Prepare filter to select resources that do not have any phase assigned
 //        Filter filterNoPhase = ResourceFilterBuilder.createNoPhaseFilter();
 
         // The list that will contain all the individual
         // filters that will later be combined by the AndFilter
-        List filters = new ArrayList();
+        List<Filter> filters = new ArrayList<Filter>();
 
         // Add individual filters to list
         filters.add(filterExtID);
@@ -209,7 +209,7 @@ public class AuthorizationHelper {
         filters.add(filterNoProject);
         filters.add(filterNoPhase);*/
 
-        // Create the main filter for this role-gathering operaion
+        // Create the main filter for this role-gathering operation
         Filter filter = new AndFilter(filters);
         // Obtain an instance of Resource Manager
         ResourceManager resMgr = ActionsHelper.createResourceManager(request);
@@ -264,12 +264,13 @@ public class AuthorizationHelper {
      * @throws BaseException
      *             if any error occurs.
      */
-    public static void gatherUserRoles(HttpServletRequest request, long projectId) throws BaseException {
+    @SuppressWarnings("unchecked")
+	public static void gatherUserRoles(HttpServletRequest request, long projectId) throws BaseException {
         // Call shorter version of this function first
         gatherUserRoles(request);
 
         // At this moment the request should have "roles" attribute
-        Set roles = (Set)request.getAttribute("roles");
+        Set roles = (Set) request.getAttribute("roles");
 
         // Create an instance of Project Manager
         ProjectManager projMgr = ActionsHelper.createProjectManager(request);
@@ -304,7 +305,7 @@ public class AuthorizationHelper {
         for (int i = 0; i < resources.length; i++) {
             ActionsHelper.populateEmailProperty(request, resources[i]);
         }
-        // Plase resources for currently logged in user into the request
+        // Place resources for currently logged in user into the request
         request.setAttribute("myResources", resources);
 
         // Iterate over all resources and retrieve their roles
@@ -334,9 +335,10 @@ public class AuthorizationHelper {
      * @see #gatherUserRoles(HttpServletRequest)
      * @see #gatherUserRoles(HttpServletRequest, long)
      */
-    public static boolean hasUserRole(HttpServletRequest request, String role) {
+    @SuppressWarnings("unchecked")
+	public static boolean hasUserRole(HttpServletRequest request, String role) {
         // Retrieve set with roles that the user has in the current context from the request
-        Set roles = (Set)request.getAttribute("roles");
+        Set roles = (Set) request.getAttribute("roles");
 
         // If nothing has been retrieved, or the set is empty
         // (no permissions, how sad), return false immediately

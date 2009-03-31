@@ -74,7 +74,7 @@ public class PhaseGroup {
      * @see #isPhaseInThisGroup(Phase)
      * @see #addPhase(Phase)
      */
-    private final Set accumulatedPhases = new HashSet();
+    private final Set<String> accumulatedPhases = new HashSet<String>();
 
     /**
      * This member variable holds an array of registrants' emails that might have been assigned to

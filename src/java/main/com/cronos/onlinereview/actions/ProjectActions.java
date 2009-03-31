@@ -265,7 +265,8 @@ public class ProjectActions extends DispatchAction {
      *            the project to take the data from
      * @throws BaseException
      */
-    private void populateProjectForm(HttpServletRequest request, LazyValidatorForm form, Project project)
+    @SuppressWarnings("unchecked")
+	private void populateProjectForm(HttpServletRequest request, LazyValidatorForm form, Project project)
         throws BaseException {
         // TODO: Possibly use string constants instead of hardcoded strings
 
@@ -514,7 +515,8 @@ public class ProjectActions extends DispatchAction {
      * @param projectProperty
      *            the name of project property to take the value of
      */
-    private void populateProjectFormProperty(LazyValidatorForm form, Class type, String formProperty,
+    @SuppressWarnings("unchecked")
+	private void populateProjectFormProperty(LazyValidatorForm form, Class type, String formProperty,
             Project project, String projectProperty) {
 
         String value = (String) project.getProperty(projectProperty);
@@ -762,10 +764,10 @@ public class ProjectActions extends DispatchAction {
         // TODO: Project status change, includes additional explanation to be concatenated
 
         // Create the map to store the mapping from phase JS ids to phases
-        Map phasesJsMap = new HashMap();
+        Map<Object, Phase> phasesJsMap = new HashMap<Object, Phase>();
 
         // Create the list to store the phases to be deleted
-        List phasesToDelete = new ArrayList();
+        List<Phase> phasesToDelete = new ArrayList<Phase>();
 
         // Save the project phases
         // FIXME: the project itself is also saved by the following call. Needs to be refactored
@@ -849,8 +851,9 @@ public class ProjectActions extends DispatchAction {
      * @param phasesToDelete TODO
      * @throws BaseException
      */
-    private Phase[] saveProjectPhases(boolean newProject, HttpServletRequest request, LazyValidatorForm lazyForm,
-            Project project, Map phasesJsMap, List phasesToDelete, boolean statusHasChanged)
+    @SuppressWarnings("unchecked")
+	private Phase[] saveProjectPhases(boolean newProject, HttpServletRequest request, LazyValidatorForm lazyForm,
+            Project project, Map<Object, Phase> phasesJsMap, List<Phase> phasesToDelete, boolean statusHasChanged)
         throws BaseException {
         // Obtain an instance of Phase Manager
         PhaseManager phaseManager = ActionsHelper.createPhaseManager(request, false);
@@ -1284,7 +1287,7 @@ public class ProjectActions extends DispatchAction {
      * @throws BaseException
      */
     private void switchProjectPhase(HttpServletRequest request, LazyValidatorForm lazyForm,
-            Phase[] projectPhases, Map phasesJsMap) throws BaseException {
+            Phase[] projectPhases, Map<Object, Phase> phasesJsMap) throws BaseException {
 
         // Get name of action to be performed
         String action = (String) lazyForm.get("action");
@@ -1506,7 +1509,7 @@ public class ProjectActions extends DispatchAction {
      * @throws BaseException
      */
     private void saveResources(boolean newProject, HttpServletRequest request, LazyValidatorForm lazyForm,
-    		Project project, Phase[] projectPhases, Map phasesJsMap) throws BaseException {
+    		Project project, Phase[] projectPhases, Map<Object, Phase> phasesJsMap) throws BaseException {
     	
         // Obtain the instance of the User Retrieval
         UserRetrieval userRetrieval = ActionsHelper.createUserRetrieval(request);
@@ -1632,9 +1635,9 @@ public class ProjectActions extends DispatchAction {
             // Set resource phase id, if needed
             Long phaseTypeId = resource.getResourceRole().getPhaseType();
             if (phaseTypeId != null) {
-                Phase phase = (Phase) phasesJsMap.get(lazyForm.get("resources_phase", i));
+                Phase phase = phasesJsMap.get(lazyForm.get("resources_phase", i));
                 if (phase != null) {
-                    resource.setPhase(new Long(phase.getId()));
+                    resource.setPhase(phase.getId());
                 } else {
                     // TODO: Probably issue validation error here
                 }

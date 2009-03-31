@@ -10,7 +10,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -64,7 +63,6 @@ import com.topcoder.search.builder.filter.AndFilter;
 import com.topcoder.search.builder.filter.EqualToFilter;
 import com.topcoder.search.builder.filter.Filter;
 import com.topcoder.search.builder.filter.InFilter;
-import com.topcoder.search.builder.filter.OrFilter;
 import com.topcoder.servlet.request.FileUpload;
 import com.topcoder.servlet.request.FileUploadResult;
 import com.topcoder.servlet.request.UploadedFile;
@@ -301,7 +299,7 @@ public class ProjectDetailsActions extends DispatchAction {
         long[] ganttOffsets = new long[phases.length];
         long[] ganttLengths = new long[phases.length];
         // List of scorecard templates used for this project
-        List scorecardTemplates = new ArrayList();
+        List<Scorecard> scorecardTemplates = new ArrayList<Scorecard>();
 
         // Iterate over all phases determining dates, durations and assigned scorecards
         for (int i = 0; i < phases.length; ++i) {
@@ -557,7 +555,7 @@ public class ProjectDetailsActions extends DispatchAction {
         // Search for the managers of this project
         Resource[] managers = resMgr.searchResources(filter);
 
-        Set existingManagers = new HashSet();
+        Set<String> existingManagers = new HashSet<String>();
 
         // Collect unique external user IDs first,
         // as there may exist multiple manager resources for the same user
@@ -572,8 +570,8 @@ public class ProjectDetailsActions extends DispatchAction {
         int managerIdx = 0;
 
         // This inefficient operation, but going over all resources' properties is even more inefficient
-        for (Iterator iter = existingManagers.iterator(); iter.hasNext(); ) {
-            extUsrManagerIds[managerIdx++] = Long.parseLong((String) iter.next());
+        for (String mgr : existingManagers) {
+            extUsrManagerIds[managerIdx++] = Long.parseLong(mgr);
         }
 
         //send a copy to the sender
@@ -1749,7 +1747,8 @@ public class ProjectDetailsActions extends DispatchAction {
         // Finally the results are grouped into the map where
         // the keys are the ids of severity statuses and the values are another maps,
         // in which keys are ids of screening responses and the values are screening results.
-        Map screeningResultsMap = new TreeMap();
+        Map<Long, Map<Long, List<ScreeningResult>>> screeningResultsMap =
+        		new TreeMap<Long, Map<Long, List<ScreeningResult>>>();
         for (int i = 0; i < screeningResults.length; i++) {
             ResponseSeverity responseSeverity = screeningResults[i].getScreeningResponse().getResponseSeverity();
             // ignore response with "Success" severity
@@ -1758,17 +1757,17 @@ public class ProjectDetailsActions extends DispatchAction {
             }
             Long responseSeverityId = new Long(responseSeverity.getId());
             Long screeningResponseId = new Long(screeningResults[i].getScreeningResponse().getId());
-            Map innerMap;
+            Map<Long, List<ScreeningResult>> innerMap;
             if (screeningResultsMap.containsKey(responseSeverityId)) {
-                innerMap = (Map) screeningResultsMap.get(responseSeverityId);
+                innerMap = screeningResultsMap.get(responseSeverityId);
             } else {
-                innerMap = new TreeMap();
+                innerMap = new TreeMap<Long, List<ScreeningResult>>();
                 screeningResultsMap.put(responseSeverityId, innerMap);
             }
             if (innerMap.containsKey(screeningResponseId)) {
-                ((List) innerMap.get(screeningResponseId)).add(screeningResults[i]);
+                innerMap.get(screeningResponseId).add(screeningResults[i]);
             } else {
-                List list = new ArrayList();
+                List<ScreeningResult> list = new ArrayList<ScreeningResult>();
                 innerMap.put(screeningResponseId, list);
                 list.add(screeningResults[i]);
             }
@@ -1781,7 +1780,7 @@ public class ProjectDetailsActions extends DispatchAction {
     }
 
     /**
-     * This method verifies the request for ceratin conditions to be met. This includes verifying if
+     * This method verifies the request for certain conditions to be met. This includes verifying if
      * the user has specified an ID of the upload he wants to perform an operation on (most often
      * &#x96; to download), and whether the ID of the upload specified by user denotes existing
      * upload.
@@ -2202,8 +2201,9 @@ public class ProjectDetailsActions extends DispatchAction {
      * @throws BaseException
      */
     private static String[] getDeliverableSubmissionUserIds(HttpServletRequest request, Deliverable[] deliverables)
-        throws BaseException {
-        List submissionIds = new ArrayList();
+        	throws BaseException {
+    	
+        List<Long> submissionIds = new ArrayList<Long>();
 
         for (int i = 0; i < deliverables.length; ++i) {
             if (deliverables[i].getSubmission() != null) {
@@ -2221,10 +2221,10 @@ public class ProjectDetailsActions extends DispatchAction {
         UploadManager upMgr = ActionsHelper.createUploadManager(request);
         Submission[] submissions = upMgr.searchSubmissions(filterSubmissions);
 
-        List resourceIds = new ArrayList();
+        List<Long> resourceIds = new ArrayList<Long>();
 
         for (int i = 0; i < submissions.length; ++i) {
-            resourceIds.add(new Long(submissions[i].getUpload().getOwner()));
+            resourceIds.add(submissions[i].getUpload().getOwner());
         }
 
         Filter filterResources = new InFilter("resource.resource_id", resourceIds);
