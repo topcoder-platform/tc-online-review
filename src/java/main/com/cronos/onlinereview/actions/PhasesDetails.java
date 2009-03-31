@@ -35,8 +35,8 @@ final class PhasesDetails {
         this.phaseGroups = phaseGroups;
     }
 
-    public void setPhaseGroup(List phaseGroups) {
-        this.phaseGroups = (PhaseGroup[]) phaseGroups.toArray(new PhaseGroup[phaseGroups.size()]);
+    public void setPhaseGroup(List<PhaseGroup> phaseGroups) {
+        this.phaseGroups = phaseGroups.toArray(new PhaseGroup[phaseGroups.size()]);
     }
 
     public int[] getPhaseGroupIndexes() {
