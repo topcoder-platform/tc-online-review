@@ -37,7 +37,7 @@ class StrutsRequestParser implements RequestParser {
      * @see #AddFiles(FormFile[])
      * @see #AddFiles(List)
      */
-    private final List files = new ArrayList();
+    private final List<FormFile> files = new ArrayList<FormFile>();
 
     /**
      * This member variable references to the instance of <code>FormFile</code> class that denotes
@@ -59,7 +59,7 @@ class StrutsRequestParser implements RequestParser {
 
 
     /**
-     * This is the default constructor of the class which constucts a new instance of the
+     * This is the default constructor of the class which constructs a new instance of the
      * <code>StrutsRequestParser</code> class.
      */
     public StrutsRequestParser() {
@@ -107,7 +107,7 @@ class StrutsRequestParser implements RequestParser {
      * @throws IllegalArgumentException
      *             if parameter <code>files</code> is <code>null</code>.
      */
-    public void AddFiles(List files) {
+    public void AddFiles(List<FormFile> files) {
         // Validate parameter
         ActionsHelper.validateParameterNotNull(files, "files");
 
@@ -241,7 +241,8 @@ class StrutsRequestParser implements RequestParser {
      *
      * @return empty <code>HashMap</code> object.
      */
-    public Map getParameters() {
+    @SuppressWarnings("unchecked")
+	public Map getParameters() {
         return new HashMap();
     }
 

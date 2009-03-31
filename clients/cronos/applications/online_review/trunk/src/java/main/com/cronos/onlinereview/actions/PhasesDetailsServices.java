@@ -60,14 +60,15 @@ final class PhasesDetailsServices {
 
     public static PhasesDetails getPhasesDetails(HttpServletRequest request, MessageResources messages, Project project,
             Phase[] phases, Resource[] allProjectResources, ExternalUser[] allProjectExternalUsers)
-        throws BaseException {
+        	throws BaseException {
+    	
         // Validate parameters first
         ActionsHelper.validateParameterNotNull(request, "request");
         ActionsHelper.validateParameterNotNull(messages, "messages");
         ActionsHelper.validateParameterNotNull(phases, "phases");
 
-        List phaseGroups = new ArrayList();
-        Map similarPhaseGroupIndexes = new HashMap();
+        List<PhaseGroup> phaseGroups = new ArrayList<PhaseGroup>();
+        Map<String, Integer> similarPhaseGroupIndexes = new HashMap<String, Integer>();
         PhaseGroup phaseGroup = null;
         int[] phaseGroupIndexes = new int[phases.length];
         int phaseGroupIdx = -1;
@@ -97,7 +98,7 @@ final class PhasesDetailsServices {
                     Integer groupIndexObj = (Integer) similarPhaseGroupIndexes.get(appFuncName);
                     int groupIndex = (groupIndexObj != null) ? groupIndexObj.intValue() : 0;
 
-                    similarPhaseGroupIndexes.put(appFuncName, new Integer(groupIndex + 1));
+                    similarPhaseGroupIndexes.put(appFuncName, groupIndex + 1);
 
                     String groupIndexStr = (groupIndex != 0) ? ("&#160;" + (groupIndex + 1)) : "";
 
@@ -162,7 +163,7 @@ final class PhasesDetailsServices {
 
         PhasesDetails details = new PhasesDetails();
 
-        details.setPhaseGroup((PhaseGroup[]) phaseGroups.toArray(new PhaseGroup[phaseGroups.size()]));
+        details.setPhaseGroup(phaseGroups.toArray(new PhaseGroup[phaseGroups.size()]));
         details.setPhaseGroupIndexes(phaseGroupIndexes);
         details.setActiveTabIndex(activeTabIdx);
 
@@ -225,7 +226,7 @@ final class PhasesDetailsServices {
         Upload[][] pastSubmissions = new Upload[submissions.length][];
 
         for (int j = 0; j < pastSubmissions.length; ++j) {
-            List temp = new ArrayList();
+            List<Upload> temp = new ArrayList<Upload>();
             long currentUploadOwnerId = submissions[j].getUpload().getOwner();
 
             for (int k = 0; k < ungroupedUploads.length; k++) {
@@ -353,8 +354,8 @@ final class PhasesDetailsServices {
                     !AuthorizationHelper.hasUserRole(request, Constants.PRIMARY_SCREENER_ROLE_NAME)) {
                 Resource[] my = ActionsHelper.getMyResourcesForPhase(request, phases[phaseIdx]);
                 ScreeningTask[] allTasks = phaseGroup.getScreeningTasks();
-                List tempSubs = new ArrayList();
-                List tasks = new ArrayList();
+                List<Submission> tempSubs = new ArrayList<Submission>();
+                List<ScreeningTask> tasks = new ArrayList<ScreeningTask>();
 
                 for (int j = 0; j < submissions.length; ++j) {
                     for (int k = 0; k < my.length; ++k) {
@@ -383,10 +384,10 @@ final class PhasesDetailsServices {
             ScorecardManager scrMgr = ActionsHelper.createScorecardManager(request);
             ScorecardType[] allScorecardTypes = scrMgr.getAllScorecardTypes();
 
-            List submissionIds = new ArrayList();
+            List<Long> submissionIds = new ArrayList<Long>();
 
             for (int j = 0; j < submissions.length; ++j) {
-                submissionIds.add(new Long(submissions[j].getId()));
+                submissionIds.add(submissions[j].getId());
             }
 
             Filter filterSubmissions = new InFilter("submission", submissionIds);
@@ -525,16 +526,16 @@ final class PhasesDetailsServices {
             ScorecardManager scrMgr = ActionsHelper.createScorecardManager(request);
             ScorecardType[] allScorecardTypes = scrMgr.getAllScorecardTypes();
 
-            List submissionIds = new ArrayList();
+            List<Long> submissionIds = new ArrayList<Long>();
 
             for (int j = 0; j < submissions.length; ++j) {
-                submissionIds.add(new Long(submissions[j].getId()));
+                submissionIds.add(submissions[j].getId());
             }
 
-            List reviewerIds = new ArrayList();
+            List<Long> reviewerIds = new ArrayList<Long>();
 
             for (int j = 0; j < reviewers.length; ++j) {
-                reviewerIds.add(new Long(reviewers[j].getId()));
+                reviewerIds.add(reviewers[j].getId());
             }
 
             Review[] ungroupedReviews = null;
@@ -545,7 +546,7 @@ final class PhasesDetailsServices {
                 Filter filterScorecard = new EqualToFilter("scorecardType",
                         new Long(ActionsHelper.findScorecardTypeByName(allScorecardTypes, "Review").getId()));
 
-                List reviewFilters = new ArrayList();
+                List<Filter> reviewFilters = new ArrayList<Filter>();
                 reviewFilters.add(filterReviewers);
                 reviewFilters.add(filterScorecard);
                 reviewFilters.add(filterSubmissions);
