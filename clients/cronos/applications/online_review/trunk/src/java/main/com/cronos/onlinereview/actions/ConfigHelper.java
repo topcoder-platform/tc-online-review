@@ -28,11 +28,10 @@ import com.topcoder.util.config.UnknownNamespaceException;
  * @author real_vg
  * @version 1.0
  */
-@SuppressWarnings("unchecked")
 public class ConfigHelper {
 
     /**
-     * This member variable is a string constant that specifies the configurtaion namespace under
+     * This member variable is a string constant that specifies the configuration namespace under
      * which all configuration parameters for the application itself are stored.
      */
     private static final String ONLINE_REVIEW_CFG_NS = "com.cronos.OnlineReview";

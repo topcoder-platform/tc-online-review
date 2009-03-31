@@ -2835,7 +2835,6 @@ public class ProjectReviewActions extends DispatchAction {
      * @return
      * @throws BaseException
      */
-    @SuppressWarnings("unchecked")
 	private ActionForward saveGenericReview(ActionMapping mapping, ActionForm form, HttpServletRequest request, String reviewType) throws BaseException {
         // FIXME: IMPORTANT!!!!!!!!!!!!!!!!!!!!!!!
         // FIXME: Check the permissions here and everywhere,
