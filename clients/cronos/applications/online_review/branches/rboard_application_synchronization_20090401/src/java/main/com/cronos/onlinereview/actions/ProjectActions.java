@@ -1627,13 +1627,11 @@ public class ProjectActions extends DispatchAction {
                     ActionsHelper.changeResourceRole(project, user.getId(), resource.getResourceRole().getId(), role.getId());
                 }
                 
-                boolean wasReviewer = resource.getResourceRole() != null && isReviewer(resource.getResourceRole().getName());
-                boolean isReviewerNow =  isReviewer(role.getName());
-                if (wasReviewer && !isReviewerNow) {
+                if (resource.getResourceRole() != null && isReviewer(resource.getResourceRole().getName())) {
                     ActionsHelper.deleteRBoardApplication(project, user.getId(), resource);                	
                 }
                 
-                if (!wasReviewer && isReviewerNow) {
+                if (isReviewer(role.getName())) {
                 	newReviewers.add(resource);
                 }
                 	
