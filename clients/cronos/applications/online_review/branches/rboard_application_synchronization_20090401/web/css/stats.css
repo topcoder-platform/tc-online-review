@@ -1,0 +1,271 @@
+.memberProfileBody
+{
+width: 100%;
+margin:10px 10px 0px 10px;
+padding: 5px;
+border: 0px solid #000000; 
+}
+.bottomSpacer{ margin-bottom: 10px; }
+.statTableSpacer
+{ 
+color: #333333;
+font-size: 11px;
+line-height: 1.4;
+padding: 0px 15px 15px 15px; 
+}
+.statTable{ margin-bottom: 10px; }
+.divider{ width: 25%; vertical-align: top; border-right: 1px solid #999999; }
+.statTableHolder
+{
+border-left: 1px solid #999999; 
+border-right: 1px solid #999999; 
+border-bottom: 7px solid #CCCCCC; 
+background-color: #EEEEEE;
+vertical-align: top;
+}
+.pagingBox
+{
+width: 100%;
+font-size: 11px;
+padding: 10px 5px 10px 5px;
+text-align: center;
+clear:both;
+}
+
+.photoCell{ padding: 5px; vertical-align: top}
+.bigHandle
+{
+font-size: 18px;
+font-weight: bold;
+white-space: nowrap;
+}
+.handleCell
+{
+font-size: 18px;
+font-weight: bold;
+padding: 2px 5px 2px 5px;
+background-color: #EEEEEE;
+vertical-align: top;
+white-space: nowrap;
+}
+.quoteCell
+{
+width: 100%;
+background-color: #EEEEEE;
+vertical-align: middle;
+}
+.quoteBox
+{
+color: #666666;
+font-size: 15px;
+font-weight: bold;
+font-style: italic;
+margin: 10px 20px 10px 20px;
+padding: 5px 8px 15px 8px;
+border-left: 3px solid #999999; 
+border-right: 3px solid #999999; 
+border-top: 1px solid #CCCCCC; 
+border-bottom: 1px solid #CCCCCC; 
+}
+.quoteTitle
+{
+color: #000000;
+font-size: 11px;
+font-weight: bold;
+font-style: normal;
+}
+.ratingBox
+{
+color: #000000;
+font-size: 24px;
+line-height: 24px;
+font-weight: bold;
+padding: 5px;
+background-color: #EEEEEE;
+text-align: center;
+vertical-align: middle;
+white-space: nowrap;
+}
+.graphHolder
+{
+text-align: center;
+background-color: #EEEEEE;
+}
+.tableTitle
+{
+text-align: left;
+background-color: #999999;
+background-image: url(../i/stats/headerBG.gif);
+border-style: hidden;
+border-collapse: collapse;
+border-top: 1px solid #999999; 
+border-bottom: 1px solid #999999; 
+color: #333333;
+font-size: 12px;
+font-weight: bold;
+text-decoration: none;
+padding: 3px 5px 3px 5px;
+white-space: nowrap;
+}
+.tableHeader
+{
+color: #000000;
+font-size: 11px;
+font-weight: bold;
+line-height: 14px;
+padding: 2px 5px 2px 5px;
+background-color: #DDDDDD;
+vertical-align: top;
+}
+.cat, .catNW, .stat, .statNW, .statR, .statRNW
+{
+font-size: 11px;
+line-height: 14px;
+padding: 0px 5px 0px 5px;
+background-color: #EEEEEE;
+vertical-align: top;
+}
+.cat, .catNW
+{
+color: #000000;
+font-weight: bold;
+}
+.stat, .statNW, .statR, .statRNW
+{
+color: #333333;
+font-weight: normal;
+}
+.statR, .statRNW{ text-align: right; }
+.catNW, .statNW, .statRNW{ white-space: nowrap; }
+.statR{ text-align: right }
+.catLt, .catDk
+{
+color: #000000;
+font-weight: bold;
+font-size: 11px;
+padding: 1px 5px 1px 5px;
+vertical-align: top;
+}
+.catLt{ background-color: #FFFFFF; }
+.catDk{ background-color: #EEEEEE; }
+.statLt, .statDk
+{
+font-size: 11px;
+padding: 2px 5px 2px 5px;
+vertical-align: top;
+}
+.statLt{ background-color: #FFFFFF; }
+.statDk{ background-color: #EEEEEE; }
+.statHighlight
+{
+font-size: 11px;
+font-weight: bold;
+padding: 2px 10px 2px 10px;
+vertical-align: top;
+background-color: #DDDDFF;
+/*
+border-top: 3px solid #FF0000;
+border-bottom: 3px solid #FF0000;
+*/
+}
+.statLink
+{
+color: #0000FF;
+text-decoration: none;
+}
+A.statLink:link{ color: #0000FF; text-decoration: none; }
+A.statLink:visited{ color: #000066; text-decoration: none; }
+A.statLink:hover{ color: #FF0000; text-decoration: none; }
+A.statLink:active{ color: #FF0000; text-decoration: none;}
+
+.tabIconOn, .tabIconOff, .tabIconNA
+{
+padding: 0px 5px 0px 5px;
+background-repeat: repeat-x;
+background-position: top center;
+background-image: url(../i/stats/border.gif);
+}
+.tabTextOn, .tabTextOff, .tabTextNA
+{
+font-size: 11px;
+line-height: 14px;
+padding-left: 10px;
+padding-right: 0px;
+white-space: nowrap;
+background-repeat: repeat-x;
+background-position: top center;
+background-image: url(../i/stats/border.gif);
+}
+
+.tabLeftOff{ border-left: 1px solid #999999; border-top: 1px solid #999999; background-color: #CCCCCC; }
+.tabLeftOn{ border-left: 1px solid #999999; border-top: 1px solid #999999; background-color: #EEEEEE; }
+.tabLeftNA{ border-left: 1px solid #CCCCCC; border-top: 1px solid #CCCCCC; background-color: #DDDDDD; }
+
+.tabMidOnOff, .tabMidOffOn, .tabMidOffOff
+{
+background-repeat: no-repeat;
+background-position: top center;
+/*border-top: 1px solid #999999; */
+padding: 0px 20px 0px 20px;
+}
+.tabMidOnOff{ background-image: url(../i/stats/tabMidOnOff.gif); }
+.tabMidOffOn{ background-image: url(../i/stats/tabMidOffOn.gif); }
+.tabMidOffOff{ background-image: url(../i/stats/tabMidOffOff.gif); }
+
+.tabRightOn, .tabRightOff
+{ 
+background-repeat: no-repeat;
+background-position: top right;
+padding: 0px 30px 0px 0px;
+ }
+.tabRightOff{ background-image: url(../i/stats/tabRightOff.gif); }
+.tabRightOn{ background-image: url(../i/stats/tabRightOn.gif); }
+
+.tabIconOn, .tabTextOn { background-color: #EEEEEE; }
+.tabIconOff, .tabTextOff { background-color: #CCCCCC; }
+.tabIconNA, .tabTextNA { background-color: #DDDDDD; color: #999999; background-image: url(../i/stats/borderNA.gif);}
+
+.bc
+{
+font-size: 11px;
+font-style: normal;
+color: #333333;
+}
+
+A.bcLink:link { color: #0000FF; text-decoration: none; }
+A.bcLink:visited { color: #0000FF; text-decoration: none; }
+A.bcLink:hover { color: #FF0000; text-decoration: none; }
+A.bcLink:active { color: #0000FF; text-decoration: none; }
+
+table.tabTable{ 
+border-collapse: collapse;
+border-left: 1px solid #999999; 
+}
+A.tabLinkOn, A.tabLinkOn:link, A.tabLinkOff, A.tabLinkOff:link{
+color: #0000FF;
+display: block;
+width:100%;
+text-decoration: none;
+}
+
+A.tabLinkOn, A.tabLinkOn:link{ background: #EEEEEE; }
+A.tabLinkOff, A.tabLinkOff:link{ background: #CCCCCC url(../i/interface/tab_off.gif) bottom center repeat-x; }
+
+A.tabLinkOn:visited, A.tabLinkOff:visited { color: #0000FF;text-decoration: none; }
+A.tabLinkOn:hover, A.tabLinkOff:hover { color: #FF0000;background:#FFFFFF;text-decoration: none; }
+A.tabLinkOn:active, A.tabLinkOff:hover { color: #FF0000;background:#FFFFFF;text-decoration: none; }
+
+A.tabLinkOn div, A.tabLinkOff div, div.tabLinkNA{
+padding: 8px 10px 8px 10px;
+font-size: 11px;
+line-height: 100%; 
+border-top: 1px solid #999999; 
+border-right: 1px solid #999999; 
+white-space: nowrap;
+}
+A.tabLinkOn div{ font-weight:bold; }
+div.tabLinkNA{
+font-size: 11px;
+color: #666666;
+background: #999999 url(../i/interface/tab_na.gif) bottom center repeat-x;
+}
