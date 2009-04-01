@@ -18,6 +18,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -3143,6 +3144,117 @@ public class ActionsHelper {
         }
     }
 
+    public static void deleteRBoardApplication(Project project, long userId, Resource resource) throws BaseException {
+        Connection conn = null;
+        PreparedStatement deleteStmt = null;
+        try {
+            DBConnectionFactory dbconn = new DBConnectionFactoryImpl(DB_CONNECTION_NAMESPACE);
+            conn = dbconn.createConnection();
+            log.log(Level.INFO,
+                    "create db connection with default connection name from DBConnectionFactoryImpl with namespace:"
+            		+ DB_CONNECTION_NAMESPACE);
+    		long projectId = project.getId();
+            long phaseId = 111 + project.getProjectCategory().getId();
+
+            deleteStmt = conn.prepareStatement(
+            		"DELETE FROM rboard_application where user_id = ? and project_id = ? and phase_id = ? and review_resp_id = ?");
+
+            deleteStmt.setLong(1, userId);
+			deleteStmt.setLong(2, projectId);
+			deleteStmt.setLong(3, phaseId);
+			deleteStmt.setLong(4, resource.getResourceRole().getId());
+			deleteStmt.executeUpdate();
+        } catch (UnknownConnectionException e) {
+            throw new BaseException("Failed to create connection", e);
+        } catch (ConfigurationException e) {
+            throw new BaseException("Failed to config for DBNamespace", e);
+        } catch (SQLException e) {
+            throw new BaseException("Failed to populate project_result", e);
+        } catch (DBConnectionException e) {
+            throw new BaseException("Failed to return DBConnection", e);
+        } finally {
+            close(deleteStmt);
+            close(conn);
+        }
+	}
+	public static void populateRBoardApplication(Project project, Set<Resource> newReviewers,
+			Set<Long> potentialPrimaryReviewer) throws BaseException {
+		
+		log.log(Level.INFO,"populateRBoardApplication with " + newReviewers.size() + " new reviewers");
+
+        Connection conn = null;
+        PreparedStatement insertStmt = null;
+        PreparedStatement existPrimaryStmt = null;
+        ResultSet rs = null;
+        try {
+            DBConnectionFactory dbconn;
+                dbconn = new DBConnectionFactoryImpl(DB_CONNECTION_NAMESPACE);
+            conn = dbconn.createConnection();
+            log.log(Level.INFO,
+                    "create db connection with default connection name from DBConnectionFactoryImpl with namespace:" + DB_CONNECTION_NAMESPACE);
+    		long projectId = project.getId();
+            long phaseId = 111 + project.getProjectCategory().getId();
+
+            insertStmt = conn.prepareStatement(
+            		"INSERT INTO rboard_application( user_id, project_id, phase_id, review_resp_id, primary_ind, create_date, modify_date) " +
+            		" VALUES(?, ?, ?, ?, ?, current, current);");
+
+            existPrimaryStmt = conn.prepareStatement(
+            		"select 1 from rboard_application " +
+            		" where project_id = ? and phase_id = ? and primary_ind = 1");		
+
+            existPrimaryStmt.clearParameters();
+			existPrimaryStmt.setLong(1, projectId);
+			existPrimaryStmt.setLong(2, phaseId);
+			rs = existPrimaryStmt.executeQuery();
+			boolean existPrimary = rs.next();
+			log.log(Level.INFO, "Exists Primary: " + existPrimary);
+			
+			// Add
+			for (Resource r : newReviewers) {
+				long userId = (Long) r.getProperty("External Reference ID");
+				log.log(Level.INFO, "Add resource " + r.getId() + "(user_id=" + userId + ") with role_id = "
+						+ r.getResourceRole().getId());
+
+				int primary = 0;
+				//if there is already a primary, don't add another
+				if (existPrimary) {
+					primary = 0;
+				} else {
+					// there's no primary
+					if (potentialPrimaryReviewer.contains(userId)) {
+						// the user is already Primary Screener, Aggregator, and/or Final Reviewer
+						primary = 1;
+					} else {
+						if (r.getResourceRole().getName().equals("Failure Reviewer")) {
+							primary = 1;
+						}
+					}
+				}
+				
+				insertStmt.setLong(1, userId);
+				insertStmt.setLong(2, projectId);
+				insertStmt.setLong(3, phaseId);
+				insertStmt.setLong(4, r.getResourceRole().getId());
+				insertStmt.setInt(5, primary);
+				insertStmt.addBatch();
+			}
+			insertStmt.executeBatch();
+        } catch (UnknownConnectionException e) {
+            throw new BaseException("Failed to create connection", e);
+        } catch (ConfigurationException e) {
+            throw new BaseException("Failed to config for DBNamespace", e);
+        } catch (SQLException e) {
+            throw new BaseException("Failed to populate project_result", e);
+        } catch (DBConnectionException e) {
+            throw new BaseException("Failed to return DBConnection", e);
+        } finally {
+            close(insertStmt);
+            close(existPrimaryStmt);
+            close(conn);
+        }
+	}
+	
     /**
      * Recalculate Screening reviewers payment.
      *
@@ -3606,4 +3718,8 @@ public class ActionsHelper {
     public static boolean isStudioProject(Project project) {
         return "Studio".equals(project.getProjectCategory().getProjectType().getName());
     }
+
+	
+
+
 }

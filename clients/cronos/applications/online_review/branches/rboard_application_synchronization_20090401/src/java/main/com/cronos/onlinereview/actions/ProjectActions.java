@@ -1494,6 +1494,11 @@ public class ProjectActions extends DispatchAction {
         return calendar.getTime();
     }
 
+    private boolean isReviewer(String resourceRole) {
+    	return resourceRole.equals("Reviewer") || resourceRole.equals("Accuracy Reviewer") ||
+				resourceRole.equals("Failure Reviewer") || resourceRole.equals("Stress Reviewer");
+    }
+    
     /**
      * TODO: Document it
      *
@@ -1543,6 +1548,8 @@ public class ProjectActions extends DispatchAction {
         Set<Long> newUsers = new HashSet<Long>();
         Set<Long> oldUsers = new HashSet<Long>();
         Set<Long> newSubmitters = new HashSet<Long>();
+        Set<Long> potentialPrimaryReviewer = new HashSet<Long>();
+        Set<Resource> newReviewers = new HashSet<Resource>();
 
         // 0-index resource is skipped as it is a "dummy" one
         for (int i = 1; i < resourceNames.length; i++) {
@@ -1599,6 +1606,7 @@ public class ProjectActions extends DispatchAction {
                 // delete project_result
                 ActionsHelper.deleteProjectResult(project, user.getId(),
                 		((Long) lazyForm.get("resources_role", i)).longValue());
+                ActionsHelper.deleteRBoardApplication(project, user.getId(), resource);
                 resourceManager.removeResource(resource,
                         Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
                 resourceManager.removeNotifications(new long[] {user.getId()}, project.getId(),
@@ -1618,6 +1626,17 @@ public class ProjectActions extends DispatchAction {
                 if (resource.getResourceRole() != null && resource.getResourceRole().getId() != role.getId()) {
                     ActionsHelper.changeResourceRole(project, user.getId(), resource.getResourceRole().getId(), role.getId());
                 }
+                
+                boolean wasReviewer = resource.getResourceRole() != null && isReviewer(resource.getResourceRole().getName());
+                boolean isReviewerNow =  isReviewer(role.getName());
+                if (wasReviewer && !isReviewerNow) {
+                    ActionsHelper.deleteRBoardApplication(project, user.getId(), resource);                	
+                }
+                
+                if (!wasReviewer && isReviewerNow) {
+                	newReviewers.add(resource);
+                }
+                	
                 resource.setResourceRole(role);
                 resourceRoleChanged = true;
             }
@@ -1671,6 +1690,13 @@ public class ProjectActions extends DispatchAction {
             if ("add".equals(resourceAction) && resourceRole.equals("Submitter")) {
                 newSubmitters.add(user.getId());
             }
+            
+            if ("add".equals(resourceAction) && isReviewer(resourceRole)) {
+            	newReviewers.add(resource);            	
+            }
+            if (resourceRole.equals("Primary Screener") || resourceRole.equals("Aggregator") || resourceRole.equals("Final Reviewer")) {
+            	potentialPrimaryReviewer.add(user.getId());
+            }
         }
 
         for (Long id : oldUsers) {
@@ -1680,6 +1706,7 @@ public class ProjectActions extends DispatchAction {
 
         // Populate project_result and component_inquiry for new submitters
         ActionsHelper.populateProjectResult(project, newSubmitters);
+        ActionsHelper.populateRBoardApplication(project, newReviewers, potentialPrimaryReviewer);
 
         // Update all the timeline notifications
         if (project.getProperty("Timeline Notification").equals("On") && !newUsers.isEmpty()) {
