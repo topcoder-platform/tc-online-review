@@ -3157,12 +3157,11 @@ public class ActionsHelper {
             long phaseId = 111 + project.getProjectCategory().getId();
 
             deleteStmt = conn.prepareStatement(
-            		"DELETE FROM rboard_application where user_id = ? and project_id = ? and phase_id = ? and review_resp_id = ?");
+            		"DELETE FROM rboard_application where user_id = ? and project_id = ? and phase_id = ?");
 
             deleteStmt.setLong(1, userId);
 			deleteStmt.setLong(2, projectId);
 			deleteStmt.setLong(3, phaseId);
-			deleteStmt.setLong(4, getRespIdFromRoleId(conn, resource.getResourceRole().getId(), projectId, phaseId));
 			deleteStmt.executeUpdate();
         } catch (UnknownConnectionException e) {
             throw new BaseException("Failed to create connection", e);
