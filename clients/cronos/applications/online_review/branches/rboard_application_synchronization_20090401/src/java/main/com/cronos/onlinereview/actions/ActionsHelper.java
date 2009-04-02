@@ -3144,7 +3144,7 @@ public class ActionsHelper {
         }
     }
 
-    public static void deleteRBoardApplication(Project project, long userId, Resource resource) throws BaseException {
+    public static void deleteRBoardApplication(Project project, long userId) throws BaseException {
         Connection conn = null;
         PreparedStatement deleteStmt = null;
         try {
