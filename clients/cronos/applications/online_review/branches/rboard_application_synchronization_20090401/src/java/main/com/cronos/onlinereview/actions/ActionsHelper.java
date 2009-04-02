@@ -3162,7 +3162,7 @@ public class ActionsHelper {
             deleteStmt.setLong(1, userId);
 			deleteStmt.setLong(2, projectId);
 			deleteStmt.setLong(3, phaseId);
-			deleteStmt.setLong(4, resource.getResourceRole().getId());
+			deleteStmt.setLong(4, getRespIdFromRoleId(conn, resource.getResourceRole().getId(), projectId, phaseId));
 			deleteStmt.executeUpdate();
         } catch (UnknownConnectionException e) {
             throw new BaseException("Failed to create connection", e);
@@ -3177,6 +3177,54 @@ public class ActionsHelper {
             close(conn);
         }
 	}
+    
+    private static long getRespIdFromRoleId(Connection conn, long roleId, long projectId, long phaseId)
+    		throws BaseException {
+    	
+    	// Accuracy
+    	if (roleId == 5) return 3;
+    	// Failure
+    	if (roleId == 6) return 2;
+    	// Stress
+    	if (roleId == 7) return 1;
+
+    	// Other, determine the first available
+    	PreparedStatement ps = null;
+    	ResultSet rs = null;
+    	
+    	try {
+    		log.log(Level.INFO,
+    				"create db connection with default connection name from DBConnectionFactoryImpl with namespace:"
+    				+ DB_CONNECTION_NAMESPACE);
+
+    		ps = conn.prepareStatement(
+    				"select review_resp_id from review_resp where phase_id = ? and review_resp_id not in " +
+    				" (select review_resp_id from rboard_application where project_id = ? and phase_id = ?) ");
+
+    		ps.setLong(1, phaseId);
+    		ps.setLong(2, projectId);
+    		ps.setLong(3, phaseId);
+
+    		rs = ps.executeQuery();
+    		
+    		if (!rs.next()) {
+    			throw new BaseException("No available review position");
+    		}
+    		return rs.getInt("review_resp_id");
+    	} catch (UnknownConnectionException e) {
+    		throw new BaseException("Failed to create connection", e);
+    	} catch (ConfigurationException e) {
+    		throw new BaseException("Failed to config for DBNamespace", e);
+    	} catch (SQLException e) {
+    		throw new BaseException("Failed to populate project_result", e);
+    	} catch (DBConnectionException e) {
+    		throw new BaseException("Failed to return DBConnection", e);
+    	} finally {
+    		close(ps);
+    		close(rs);
+    	}
+    }
+    
 	public static void populateRBoardApplication(Project project, Set<Resource> newReviewers,
 			Set<Long> potentialPrimaryReviewer) throws BaseException {
 		
@@ -3232,14 +3280,14 @@ public class ActionsHelper {
 					}
 				}
 				
+				insertStmt.clearParameters();
 				insertStmt.setLong(1, userId);
 				insertStmt.setLong(2, projectId);
 				insertStmt.setLong(3, phaseId);
-				insertStmt.setLong(4, r.getResourceRole().getId());
+				insertStmt.setLong(4, getRespIdFromRoleId(conn, r.getResourceRole().getId(), projectId, phaseId));
 				insertStmt.setInt(5, primary);
-				insertStmt.addBatch();
+				insertStmt.executeUpdate();
 			}
-			insertStmt.executeBatch();
         } catch (UnknownConnectionException e) {
             throw new BaseException("Failed to create connection", e);
         } catch (ConfigurationException e) {
