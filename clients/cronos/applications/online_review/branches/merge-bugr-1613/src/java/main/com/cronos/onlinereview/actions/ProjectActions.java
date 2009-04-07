@@ -1599,12 +1599,22 @@ public class ProjectActions extends DispatchAction {
                 }
             }
 
+            // Set resource properties
+            resource.setProject(new Long(project.getId()));
+
+            boolean resourceRoleChanged = false;
+            ResourceRole role = ActionsHelper.findResourceRoleById(
+                    resourceRoles, ((Long) lazyForm.get("resources_role", i)).longValue());
+
             // If action is "delete", delete the resource and proceed to the next one
             if ("delete".equals(resourceAction)) {
                 // delete project_result
                 ActionsHelper.deleteProjectResult(project, user.getId(),
                 		((Long) lazyForm.get("resources_role", i)).longValue());
-                ActionsHelper.deleteRBoardApplication(project, user.getId());
+                if (isReviewer(role.getName())) {
+                	ActionsHelper.deleteRBoardApplication(project, user.getId());
+                }
+                
                 resourceManager.removeResource(resource,
                         Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
                 resourceManager.removeNotifications(new long[] {user.getId()}, project.getId(),
@@ -1612,12 +1622,6 @@ public class ProjectActions extends DispatchAction {
                 continue;
             }
 
-            // Set resource properties
-            resource.setProject(new Long(project.getId()));
-
-            boolean resourceRoleChanged = false;
-            ResourceRole role = ActionsHelper.findResourceRoleById(
-                    resourceRoles, ((Long) lazyForm.get("resources_role", i)).longValue());
             if (role != null && role != resource.getResourceRole()) {
             	boolean wasReviewer = resource.getResourceRole() != null && isReviewer(resource.getResourceRole().getName());
                 boolean isReviewerNow =  isReviewer(role.getName());
