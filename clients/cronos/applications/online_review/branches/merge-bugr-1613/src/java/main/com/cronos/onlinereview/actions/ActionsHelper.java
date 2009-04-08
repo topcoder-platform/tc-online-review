@@ -16,6 +16,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -1898,7 +1899,7 @@ public class ActionsHelper {
     public static Deliverable[] getAllDeliverablesForPhases(
             DeliverableManager manager, Phase[] phases, Resource[] resources, long winnerExtUserId)
         	throws DeliverablePersistenceException, SearchBuilderException, DeliverableCheckingException {
-    	
+
         // Validate parameters
         validateParameterNotNull(manager, "manager");
         validateParameterNotNull(phases, "phases");
@@ -3187,7 +3188,7 @@ public class ActionsHelper {
             close(updateStmt);
             close(conn);
         }
-		
+
 	}
 
     public static void deleteRBoardApplication(Project project, long userId) throws BaseException {
@@ -3231,24 +3232,24 @@ public class ActionsHelper {
 
     	// Failure
     	if (roleId == 6) return 2;
-    	
+
     	// Stress
     	if (roleId == 7) return 1;
-    	
+
     	// Other, determine the first available
         PreparedStatement ps = null;
         ResultSet rs =null;
         try {
             log.log(Level.INFO,
                     "create db connection with default connection name from DBConnectionFactoryImpl with namespace:" + DB_CONNECTION_NAMESPACE);
-            
+
             ps = conn.prepareStatement("select review_resp_id from review_resp where phase_id = ? and review_resp_id not in " +
             				" (select review_resp_id from rboard_application where project_id = ? and phase_id = ?) ");
-            
+
             ps.setLong(1, phaseId);
             ps.setLong(2, projectId);
             ps.setLong(3, phaseId);
-            
+
             rs = ps.executeQuery();
             if (!rs.next()) {
             	log.log(Level.WARN, "No availabe review_resp position availables!");
@@ -3262,16 +3263,17 @@ public class ActionsHelper {
             close(rs);
         }
 
-    	
+
     }
 	public static void populateRBoardApplication(Project project,
 			Set<Resource> newReviewers, Set<Long> potentialPrimaryReviewer) throws BaseException {
 		log.log(Level.INFO,"populateRBoardApplication with " + newReviewers.size() + " new reviewers");
-		
+
 
         Connection conn = null;
         PreparedStatement insertStmt = null;
         PreparedStatement existPrimaryStmt = null;
+        PreparedStatement usersInDBStmt = null;
         ResultSet rs =null;
         try {
             DBConnectionFactory dbconn;
@@ -3282,14 +3284,14 @@ public class ActionsHelper {
     		long projectId = project.getId();
             long phaseId = 111 + project.getProjectCategory().getId();
 
-            
+
             insertStmt = conn.prepareStatement(
             		"INSERT INTO rboard_application(user_id, project_id, phase_id, review_resp_id,primary_ind,create_date,modify_date) " +
             		" VALUES(?,?, ?, ?, ?, current, current);");
 
             existPrimaryStmt = conn.prepareStatement(
             		"select 1 from rboard_application " +
-            		" where project_id = ? and phase_id = ? and primary_ind = 1");		
+            		" where project_id = ? and phase_id = ? and primary_ind = 1");
 
             existPrimaryStmt.clearParameters();
 			existPrimaryStmt.setLong(1, projectId);
@@ -3297,17 +3299,40 @@ public class ActionsHelper {
 			rs = existPrimaryStmt.executeQuery();
 			boolean existPrimary = rs.next();
 			log.log(Level.INFO, "Exists Primary: " + existPrimary);
-			
+
+			Set<Long> usersInDb = new HashSet<Long>();
+			Set<Long> respsInDb = new HashSet<Long>();
+			usersInDBStmt = conn.prepareStatement("select user_id, review_resp_id from rboard_application " +
+												" where project_id = ? " +
+												" and phase_id = ? ");
+			usersInDBStmt.setLong(1, projectId);
+			usersInDBStmt.setLong(2, phaseId);
+			rs = usersInDBStmt.executeQuery();
+			while (rs.next()) {
+				usersInDb.add(rs.getLong(1));
+				respsInDb.add(rs.getLong(2));
+			}
 			// Add
 			for (Resource r : newReviewers) {
+				long userId = (Long) r.getProperty("External Reference ID");
+
+				// Don't try to add repeated users.
+				if (usersInDb.contains(userId)) {
+					log.log(Level.INFO, "User " + userId + " already in DB");
+					continue;
+				}
 
 				long respId = getRespIdFromRoleId(conn, r.getResourceRole().getId(), projectId, phaseId);
 				// If there's no room for a new reviewer with that role, ignore it.
 				if (respId < 0) {
 					continue;
 				}
-				
-				long userId = (Long) r.getProperty("External Reference ID");
+
+				if (respsInDb.contains(respId)) {
+					log.log(Level.INFO, "Resp Id " + respId + " already in DB");
+					continue;
+				}
+
 				log.log(Level.INFO, "Add resource " + r.getId() + "(user_id=" + userId + ") with role_id = " + r.getResourceRole().getId());
 
 				int primary = 0;
@@ -3327,7 +3352,7 @@ public class ActionsHelper {
 						}
 					}
 				}
-			
+
 				insertStmt.clearParameters();
 				insertStmt.setLong(1, userId);
 				insertStmt.setLong(2, projectId);
@@ -3335,26 +3360,29 @@ public class ActionsHelper {
 				insertStmt.setLong(4, respId);
 				insertStmt.setInt(5, primary);
 				insertStmt.executeUpdate();
+
+				usersInDb.add(userId);
+				respsInDb.add(respId);
 			}
-			
+
+        } catch (SQLException e) {
+            throw new BaseException("SQL Exception", e);
         } catch (UnknownConnectionException e) {
             throw new BaseException("Failed to create connection", e);
         } catch (ConfigurationException e) {
             throw new BaseException("Failed to config for DBNamespace", e);
-        } catch (SQLException e) {
-        	// If the reviewer was already in the table, it will throw SQLException.  It shouldn't happen but just in case.
-        	log.log(Level.WARN, e);
         } catch (DBConnectionException e) {
             throw new BaseException("Failed to return DBConnection", e);
         } finally {
             close(insertStmt);
             close(existPrimaryStmt);
+            close(usersInDBStmt);
             close(conn);
         }
-						
+
 	}
-	
-	
+
+
     /**
      * Recalculate Screening reviewers payment.
      *
@@ -3416,7 +3444,7 @@ public class ActionsHelper {
             close(ps);
             close(conn);
         }
-        
+
         return "9926572"; // If we can't find a catalog, assume it's an Application
     }
 
@@ -3766,7 +3794,7 @@ public class ActionsHelper {
     		}
     	}
     }
-    
+
     /**
      * Close a JDBC Statement.
      *
@@ -3781,7 +3809,7 @@ public class ActionsHelper {
     		}
     	}
     }
-    
+
     /**
      * Close a JDBC ResultSet.
      *
@@ -3820,7 +3848,7 @@ public class ActionsHelper {
     }
 
 
-	
+
 
 
 }
