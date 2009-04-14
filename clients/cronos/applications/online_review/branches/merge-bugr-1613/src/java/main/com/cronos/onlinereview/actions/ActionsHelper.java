@@ -3235,8 +3235,8 @@ public class ActionsHelper {
             resourceSelectStmt = conn.createStatement();
             log.log(Level.INFO,"point 1 ");
             resourceResultSet = resourceSelectStmt.executeQuery(
-                    "SELECT resource_info.value, resource.resource_role_id, resource.create_date FROM resource, resource_info WHERE" +
-                            "resource.project_id = "+projectId+" AND resource.resource_id = resource_info.resource_id AND" +
+                    "SELECT resource_info.value, resource.resource_role_id, resource.create_date FROM resource, resource_info WHERE " +
+                            "resource.project_id = "+projectId+" AND resource.resource_id = resource_info.resource_id AND " +
                             "resource.resource_role_id in (2,4,5,6,7,8,9) AND resource_info.resource_info_type_id=1");
             log.log(Level.INFO,"point 2 ");
             Map<Long,Long> roles = new HashMap<Long,Long>();
