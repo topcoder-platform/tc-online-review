@@ -1891,7 +1891,7 @@ public class ActionsHelper {
     public static Deliverable[] getAllDeliverablesForPhases(
             DeliverableManager manager, Phase[] phases, Resource[] resources, long winnerExtUserId)
         	throws DeliverablePersistenceException, SearchBuilderException, DeliverableCheckingException {
-    	
+
         // Validate parameters
         validateParameterNotNull(manager, "manager");
         validateParameterNotNull(phases, "phases");
@@ -3182,19 +3182,21 @@ public class ActionsHelper {
 
         PreparedStatement addStmt = null;
         try {
-            //addStmt = conn.prepareStatement("INSERT INTO rboard_application VALUES (?, ?, ?, ?, ?, ?, current)");
+            addStmt = conn.prepareStatement("INSERT INTO rboard_application VALUES (?, ?, ?, ?, ?, ?, current)");
 
             for (int i=0; i < reviewerIDs.size(); ++i) {
-                addStmt = conn.prepareStatement("INSERT INTO rboard_application VALUES ("+reviewerIDs.get(i)+", "+projectId+", "+
-                        phaseId+", "+responseIDs.get(i)+", "+primaries.get(i)+", ?, current)");
-                addStmt.setTimestamp(1,createDates.get(i));
+                addStmt.setLong(1, reviewerIDs.get(i));
+                addStmt.setLong(2, projectId);
+                addStmt.setLong(3, phaseId);
+                addStmt.setLong(4, responseIDs.get(i));
+                addStmt.setLong(5, primaries.get(i));
+                addStmt.setTimestamp(6,createDates.get(i));
                 addStmt.executeUpdate();
-                close(addStmt);
             }
         } catch (SQLException e) {
             throw new BaseException("Failed to populate rboard_application", e);
         } finally {
-
+            close(addStmt);
         }
     }
 
@@ -3224,17 +3226,17 @@ public class ActionsHelper {
         long projectId = project.getId();
         long phaseID = 111 + project.getProjectCategory().getId();
 
-        PreparedStatement resourceSelectStmt = null;
+        log.log(Level.INFO,"getNewReviewers projectId= " + projectId);
+
+        Statement resourceSelectStmt = null;
         ResultSet resourceResultSet = null;
         try {
 
-            resourceSelectStmt = conn.prepareStatement(
+            resourceSelectStmt = conn.createStatement();
+            resourceResultSet = resourceSelectStmt.executeQuery(
                     "SELECT resource_info.value, resource.resource_role_id, resource.create_date FROM resource, resource_info WHERE" +
-                            "resource.project_id = ? AND resource.resource_id = resource_info.resource_id AND" +
+                            "resource.project_id = "+projectId+" AND resource.resource_id = resource_info.resource_id AND" +
                             "resource.resource_role_id in (2,4,5,6,7,8,9) AND resource_info.resource_info_type_id=1");
-
-            resourceSelectStmt.setLong(1, projectId);
-            resourceResultSet = resourceSelectStmt.executeQuery();
 
             Map<Long,Long> roles = new HashMap<Long,Long>();
             Set<Long> primaries = new HashSet<Long>();
@@ -3287,7 +3289,7 @@ public class ActionsHelper {
             newResponseIDs = getRespIdFromRoleId(conn, newRoles, phaseID);
 
         } catch (SQLException e) {
-            log.log(Level.WARN, "Failed to read from resource and resource_info" + e);
+            log.log(Level.WARN, "Failed to read from resource and resource_info " + e);
         } finally {
             close(resourceResultSet);
             close(resourceSelectStmt);
@@ -3297,6 +3299,8 @@ public class ActionsHelper {
 
     private static List<Long> getRespIdFromRoleId(Connection conn, List<Long> roles, long phaseID) throws BaseException {
         List<Long> responseIDs = new ArrayList<Long>();
+
+        log.log(Level.INFO,"getRespIdFromRoleId phaseID= " + phaseID);
 
         if (phaseID == 113) {
             for(long roleID : roles) {
@@ -3399,7 +3403,7 @@ public class ActionsHelper {
             close(ps);
             close(conn);
         }
-        
+
         return "9926572"; // If we can't find a catalog, assume it's an Application
     }
 
@@ -3749,7 +3753,7 @@ public class ActionsHelper {
     		}
     	}
     }
-    
+
     /**
      * Close a JDBC Statement.
      *
@@ -3764,7 +3768,7 @@ public class ActionsHelper {
     		}
     	}
     }
-    
+
     /**
      * Close a JDBC ResultSet.
      *
