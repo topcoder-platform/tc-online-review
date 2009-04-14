@@ -3182,21 +3182,19 @@ public class ActionsHelper {
 
         PreparedStatement addStmt = null;
         try {
-            addStmt = conn.prepareStatement("INSERT INTO rboard_application VALUES (?, ?, ?, ?, ?, ?, current)");
+            //addStmt = conn.prepareStatement("INSERT INTO rboard_application VALUES (?, ?, ?, ?, ?, ?, current)");
 
             for (int i=0; i < reviewerIDs.size(); ++i) {
-                addStmt.setLong(1, reviewerIDs.get(i));
-                addStmt.setLong(2, projectId);
-                addStmt.setLong(3, phaseId);
-                addStmt.setLong(4, responseIDs.get(i));
-                addStmt.setLong(5, primaries.get(i));
-                addStmt.setTimestamp(6,createDates.get(i));
+                addStmt = conn.prepareStatement("INSERT INTO rboard_application VALUES ("+reviewerIDs.get(i)+", "+projectId+", "+
+                        phaseId+", "+responseIDs.get(i)+", "+primaries.get(i)+", ?, current)");
+                addStmt.setTimestamp(1,createDates.get(i));
                 addStmt.executeUpdate();
+                close(addStmt);
             }
         } catch (SQLException e) {
             throw new BaseException("Failed to populate rboard_application", e);
         } finally {
-            close(addStmt);
+
         }
     }
 
