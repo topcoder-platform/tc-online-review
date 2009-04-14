@@ -3144,21 +3144,81 @@ public class ActionsHelper {
     	log.log(Level.INFO,"synchronizeRBoardApplications projectId= " + projectId);
 
     	Connection conn = null;
+        Statement resourceSelectStmt = null;
+        ResultSet resourceResultSet = null;
         try {
 
             DBConnectionFactory dbconn = new DBConnectionFactoryImpl(DB_CONNECTION_NAMESPACE);
             conn = dbconn.createConnection();
             log.log(Level.INFO, "create db connection with default connection name from DBConnectionFactoryImpl with namespace:" + DB_CONNECTION_NAMESPACE);
 
-            List<Long> newReviewers = null;
-            List<Long> newResponseIDs = null;
-            List<Long> newPrimaries = null;
-            List<java.sql.Timestamp> newCreateDates = null;
-            getNewReviewers(conn, project, newReviewers, newResponseIDs, newPrimaries, newCreateDates);
+            resourceSelectStmt = conn.createStatement();
+            log.log(Level.INFO,"point 1 ");
+            resourceResultSet = resourceSelectStmt.executeQuery(
+                    "SELECT resource_info.value, resource.resource_role_id, resource.create_date FROM resource, resource_info WHERE " +
+                            "resource.project_id = "+projectId+" AND resource.resource_id = resource_info.resource_id AND " +
+                            "resource.resource_role_id in (2,4,5,6,7,8,9) AND resource_info.resource_info_type_id=1");
+            log.log(Level.INFO,"point 2 ");
+            Map<Long,Long> roles = new HashMap<Long,Long>();
+            Set<Long> primaries = new HashSet<Long>();
+            Map<Long,java.sql.Timestamp> createDates = new HashMap<Long,java.sql.Timestamp>();
+            log.log(Level.INFO,"point 3 ");
+            while (resourceResultSet.next()) {
+                log.log(Level.INFO,"point 4 ");
+                long userID = resourceResultSet.getLong(1);
+                log.log(Level.INFO,"point 5 ");
+                long role = resourceResultSet.getLong(2);
+                log.log(Level.INFO,"point 6 ");
+                java.sql.Timestamp create_date = resourceResultSet.getTimestamp(3);
+                log.log(Level.INFO,"point 7 ");
+
+                // Role 4 for Reviewer, 5 for Accuracy Reviewer, 6 for Failure Reviewer and 7 for Stress Reviewer
+                if (role==4 || role==5 || role==6 || role==7) {
+                    roles.put(userID,role);
+                    createDates.put(userID,create_date);
+                }
+                else
+                    // Other roles could be 2 for Primary Screener, 8 for Aggregator and 9 for Final Reviewer
+                    primaries.add(userID);
+            }
+
+            List<Long> newReviewers = new ArrayList<Long>();
+            List<Long> newPrimaries = new ArrayList<Long>();
+            List<java.sql.Timestamp> newCreateDates = new ArrayList<java.sql.Timestamp>();
+
+            long primaryID = -1;
+            for (Long reviewerID : roles.keySet()) {
+                if (primaries.contains(reviewerID)) {
+                    primaryID = reviewerID;
+                    newReviewers.add(reviewerID);
+                    break;
+                }
+            }
+
+            for (Long reviewerID : roles.keySet()) {
+                if (reviewerID != primaryID)
+                    newReviewers.add(reviewerID);
+                if (newReviewers.size()==3)
+                    break;
+            }
+
+            List<Long> newRoles = new ArrayList<Long>();
+            for (Long reviewerID : newReviewers) {
+                newRoles.add(roles.get(reviewerID));
+                newCreateDates.add(createDates.get(reviewerID));
+                if (reviewerID == primaryID)
+                    newPrimaries.add(1L);
+                else
+                    newPrimaries.add(0L);
+            }
+            log.log(Level.INFO,"point 8 ");
+            List<Long> newResponseIDs = getRespIdFromRoleId(conn, newRoles, phaseID);
+            log.log(Level.INFO,"point 9 ");
 
             clearRBoardApplication(conn,project);
-
+            log.log(Level.INFO,"point 10 ");
             addRBoardApplications(conn, project, newReviewers, newResponseIDs, newPrimaries, newCreateDates);
+            log.log(Level.INFO,"point 11 ");
 
         } catch (UnknownConnectionException e) {
             throw new BaseException("Failed to create connection", e);
@@ -3166,7 +3226,11 @@ public class ActionsHelper {
             throw new BaseException("Failed to config for DBNamespace", e);
         } catch (DBConnectionException e) {
             throw new BaseException("Failed to return DBConnection", e);
+        } catch (SQLException e) {
+            log.log(Level.WARN, "Failed to read from resource and resource_info " + e);
         } finally {
+            close(resourceResultSet);
+            close(resourceSelectStmt);
             close(conn);
         }
 
@@ -3216,91 +3280,6 @@ public class ActionsHelper {
         } finally {
             close(deleteStmt);
         }
-    }
-
-    private static void getNewReviewers(Connection conn, Project project,
-                                              List<Long> newReviewers,
-                                              List<Long> newResponseIDs,
-                                              List<Long> newPrimaries,
-                                              List<java.sql.Timestamp> newCreateDates) throws BaseException {
-        long projectId = project.getId();
-        long phaseID = 111 + project.getProjectCategory().getId();
-
-        log.log(Level.INFO,"getNewReviewers projectId= " + projectId);
-
-        Statement resourceSelectStmt = null;
-        ResultSet resourceResultSet = null;
-        try {
-
-            resourceSelectStmt = conn.createStatement();
-            log.log(Level.INFO,"point 1 ");
-            resourceResultSet = resourceSelectStmt.executeQuery(
-                    "SELECT resource_info.value, resource.resource_role_id, resource.create_date FROM resource, resource_info WHERE " +
-                            "resource.project_id = "+projectId+" AND resource.resource_id = resource_info.resource_id AND " +
-                            "resource.resource_role_id in (2,4,5,6,7,8,9) AND resource_info.resource_info_type_id=1");
-            log.log(Level.INFO,"point 2 ");
-            Map<Long,Long> roles = new HashMap<Long,Long>();
-            Set<Long> primaries = new HashSet<Long>();
-            Map<Long,java.sql.Timestamp> createDates = new HashMap<Long,java.sql.Timestamp>();
-            log.log(Level.INFO,"point 3 ");
-            while (resourceResultSet.next()) {
-                log.log(Level.INFO,"point 4 ");
-                long userID = resourceResultSet.getLong(1);
-                log.log(Level.INFO,"point 5 ");
-                long role = resourceResultSet.getLong(2);
-                log.log(Level.INFO,"point 6 ");
-                java.sql.Timestamp create_date = resourceResultSet.getTimestamp(3);
-                log.log(Level.INFO,"point 7 ");
-
-                // Role 4 for Reviewer, 5 for Accuracy Reviewer, 6 for Failure Reviewer and 7 for Stress Reviewer
-                if (role==4 || role==5 || role==6 || role==7) {
-                    roles.put(userID,role);
-                    createDates.put(userID,create_date);
-                }
-                else
-                    // Other roles could be 2 for Primary Screener, 8 for Aggregator and 9 for Final Reviewer
-                    primaries.add(userID);
-            }
-
-            newReviewers = new ArrayList<Long>();
-            newPrimaries = new ArrayList<Long>();
-            newCreateDates = new ArrayList<java.sql.Timestamp>();
-
-            long primaryID = -1;
-            for (Long reviewerID : roles.keySet()) {
-                if (primaries.contains(reviewerID)) {
-                    primaryID = reviewerID;
-                    newReviewers.add(reviewerID);
-                    break;
-                }
-            }
-
-            for (Long reviewerID : roles.keySet()) {
-                if (reviewerID != primaryID)
-                    newReviewers.add(reviewerID);
-                if (newReviewers.size()==3)
-                    break;
-            }
-
-            List<Long> newRoles = new ArrayList<Long>();
-            for (Long reviewerID : newReviewers) {
-                newRoles.add(roles.get(reviewerID));
-                newCreateDates.add(createDates.get(reviewerID));
-                if (reviewerID == primaryID)
-                    newPrimaries.add(1L);
-                else
-                    newPrimaries.add(0L);
-            }
-            log.log(Level.INFO,"point 8 ");
-            newResponseIDs = getRespIdFromRoleId(conn, newRoles, phaseID);
-            log.log(Level.INFO,"point 9 ");
-        } catch (SQLException e) {
-            log.log(Level.WARN, "Failed to read from resource and resource_info " + e);
-        } finally {
-            close(resourceResultSet);
-            close(resourceSelectStmt);
-        }
-
     }
 
     private static List<Long> getRespIdFromRoleId(Connection conn, List<Long> roles, long phaseID) throws BaseException {
