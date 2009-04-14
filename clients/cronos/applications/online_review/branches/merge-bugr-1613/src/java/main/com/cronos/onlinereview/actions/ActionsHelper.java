@@ -3233,19 +3233,24 @@ public class ActionsHelper {
         try {
 
             resourceSelectStmt = conn.createStatement();
+            log.log(Level.INFO,"point 1 ");
             resourceResultSet = resourceSelectStmt.executeQuery(
                     "SELECT resource_info.value, resource.resource_role_id, resource.create_date FROM resource, resource_info WHERE" +
                             "resource.project_id = "+projectId+" AND resource.resource_id = resource_info.resource_id AND" +
                             "resource.resource_role_id in (2,4,5,6,7,8,9) AND resource_info.resource_info_type_id=1");
-
+            log.log(Level.INFO,"point 2 ");
             Map<Long,Long> roles = new HashMap<Long,Long>();
             Set<Long> primaries = new HashSet<Long>();
             Map<Long,java.sql.Timestamp> createDates = new HashMap<Long,java.sql.Timestamp>();
-
+            log.log(Level.INFO,"point 3 ");
             while (resourceResultSet.next()) {
+                log.log(Level.INFO,"point 4 ");
                 long userID = resourceResultSet.getLong(1);
+                log.log(Level.INFO,"point 5 ");
                 long role = resourceResultSet.getLong(2);
+                log.log(Level.INFO,"point 6 ");
                 java.sql.Timestamp create_date = resourceResultSet.getTimestamp(3);
+                log.log(Level.INFO,"point 7 ");
 
                 // Role 4 for Reviewer, 5 for Accuracy Reviewer, 6 for Failure Reviewer and 7 for Stress Reviewer
                 if (role==4 || role==5 || role==6 || role==7) {
@@ -3286,8 +3291,9 @@ public class ActionsHelper {
                 else
                     newPrimaries.add(0L);
             }
+            log.log(Level.INFO,"point 8 ");
             newResponseIDs = getRespIdFromRoleId(conn, newRoles, phaseID);
-
+            log.log(Level.INFO,"point 9 ");
         } catch (SQLException e) {
             log.log(Level.WARN, "Failed to read from resource and resource_info " + e);
         } finally {
