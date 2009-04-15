@@ -3236,20 +3236,20 @@ public class ActionsHelper {
         }
 
         for (Long reviewerID : roles.keySet()) {
+            if (result.size()==3) break;
+
             Long role = roles.get(reviewerID);
             if (!result.contains(reviewerID) && !selectedRoles.contains(role)) {
                 result.add(reviewerID);
                 selectedRoles.add(role);
             }
-            if (result.size()==3)
-                break;
+
         }
 
         for (Long reviewerID : roles.keySet()) {
+            if (result.size()==3) break;
             if (!result.contains(reviewerID))
                 result.add(reviewerID);
-            if (result.size()==3)
-                break;
         }
 
         return Arrays.asList(result.toArray(new Long[0]));
