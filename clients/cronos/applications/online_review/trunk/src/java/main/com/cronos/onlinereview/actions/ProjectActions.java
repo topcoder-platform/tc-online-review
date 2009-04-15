@@ -82,6 +82,8 @@ import com.topcoder.util.errorhandling.BaseException;
  * @version 1.0
  */
 public class ProjectActions extends DispatchAction {
+	
+	private static final DateFormat DATE_FORMAT = new SimpleDateFormat("MM/dd/yyyy hh:mm a", Locale.US);
 
     /**
      * Creates a new instance of the <code>ProjectActions</code> class.
@@ -1662,7 +1664,8 @@ public class ProjectActions extends DispatchAction {
             if (resource.getProperty("Registration Date") == null  && (
                     resourceRole.equals("Submitter") || resourceRole.equals("Screener") ||
                     resourceRole.equals("Reviewer"))) {
-                resource.setProperty("Registration Date", new Date());
+            	// FIXME: Format this date properly.
+                resource.setProperty("Registration Date", DATE_FORMAT.format(new Date()));
             }
 
             // Save the resource in the persistence level
