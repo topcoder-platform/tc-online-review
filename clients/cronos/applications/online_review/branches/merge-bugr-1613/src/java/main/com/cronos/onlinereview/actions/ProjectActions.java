@@ -1545,12 +1545,14 @@ public class ProjectActions extends DispatchAction {
         Set<Long> newSubmitters = new HashSet<Long>();
 
         // 0-index resource is skipped as it is a "dummy" one
+        boolean allResourcesValid=true;
         for (int i = 1; i < resourceNames.length; i++) {
 
             // TODO: Actually no updates should be done at all in the case validation fails!!!
             if (resourceNames[i] == null || resourceNames[i].trim().length() == 0) {
                 ActionsHelper.addErrorToRequest(request, "resources_name[" + i + "]",
                         "error.com.cronos.onlinereview.actions.editProject.Resource.Empty");
+                allResourcesValid=false;
                 continue;
             }
 
@@ -1562,8 +1564,19 @@ public class ProjectActions extends DispatchAction {
             if (user == null) {
                 ActionsHelper.addErrorToRequest(request, "resources_name[" + i + "]",
                         "error.com.cronos.onlinereview.actions.editProject.Resource.NotFound");
+                allResourcesValid=false;
                 continue;
             }
+        }
+
+        if (!allResourcesValid)
+            return;
+
+        // 0-index resource is skipped as it is a "dummy" one
+        for (int i = 1; i < resourceNames.length; i++) {
+
+            // Get info about user with the specified handle
+            ExternalUser user = userRetrieval.retrieveUser(resourceNames[i]);
 
             Resource resource;
 
@@ -1701,7 +1714,7 @@ public class ProjectActions extends DispatchAction {
                     timelineNotificationId, Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
         }
 
-        // Update rboard_application table with the reviewers
+        // Update rboard_application table with the reviewers set in the resources.
         ActionsHelper.synchronizeRBoardApplications(project);
     }
 
