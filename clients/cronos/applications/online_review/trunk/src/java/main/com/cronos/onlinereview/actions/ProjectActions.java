@@ -83,7 +83,7 @@ import com.topcoder.util.errorhandling.BaseException;
  */
 public class ProjectActions extends DispatchAction {
 	
-	private static final DateFormat DATE_FORMAT = new SimpleDateFormat("MM/dd/yyyy hh:mm a", Locale.US);
+	private static final DateFormat DATE_FORMAT = new SimpleDateFormat("MM.dd.yyyy hh:mm a", Locale.US);
 
     /**
      * Creates a new instance of the <code>ProjectActions</code> class.
