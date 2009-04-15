@@ -3309,16 +3309,19 @@ public class ActionsHelper {
         if (phaseID == 113) {
             for(long roleID : roles) {
                 // Accuracy
-                if (roleID == 5) responseIDs.add(3L); else
+                if (roleID == 5)
+                    responseIDs.add(3L); else
 
                 // Failure
-                if (roleID == 6) responseIDs.add(2L); else
+                    if (roleID == 6)
+                    responseIDs.add(2L); else
 
                 // Stress
-                if (roleID == 7) responseIDs.add(1L); else
+                if (roleID == 7)
+                    responseIDs.add(1L); else
 
-                // Otherwise (should not normally happen)
-                responseIDs.add(1L);
+                // Otherwise add him as Accuracy (should not normally happen)
+                responseIDs.add(3L);
             }
         }
 
