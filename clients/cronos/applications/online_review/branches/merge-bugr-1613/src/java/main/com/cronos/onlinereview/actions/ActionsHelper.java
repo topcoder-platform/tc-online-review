@@ -3182,32 +3182,19 @@ public class ActionsHelper {
                     primaries.add(userID);
             }
 
-            List<Long> newReviewers = new ArrayList<Long>();
+            List<Long> newReviewers = selectReviewers(roles, primaries);
             List<Long> newPrimaries = new ArrayList<Long>();
             List<java.sql.Timestamp> newCreateDates = new ArrayList<java.sql.Timestamp>();
 
-            long primaryID = -1;
-            for (Long reviewerID : roles.keySet()) {
-                if (primaries.contains(reviewerID)) {
-                    primaryID = reviewerID;
-                    newReviewers.add(reviewerID);
-                    break;
-                }
-            }
-
-            for (Long reviewerID : roles.keySet()) {
-                if (reviewerID != primaryID)
-                    newReviewers.add(reviewerID);
-                if (newReviewers.size()==3)
-                    break;
-            }
-
+            boolean primarySelected=false;
             List<Long> newRoles = new ArrayList<Long>();
             for (Long reviewerID : newReviewers) {
                 newRoles.add(roles.get(reviewerID));
                 newCreateDates.add(createDates.get(reviewerID));
-                if (reviewerID == primaryID)
+                if (!primarySelected && primaries.contains(reviewerID)) {
                     newPrimaries.add(1L);
+                    primarySelected=true;
+                }
                 else
                     newPrimaries.add(0L);
             }
@@ -3236,6 +3223,56 @@ public class ActionsHelper {
 
     }
 
+    private static List<Long> selectReviewers(Map<Long,Long> roles, Set<Long> primaries) {
+        Set<Long> result = new HashSet<Long>();
+        Set<Long> selectedRoles = new HashSet<Long>();
+
+        for (Long reviewerID : roles.keySet()) {
+            if (primaries.contains(reviewerID)) {
+                result.add(reviewerID);
+                selectedRoles.add(roles.get(reviewerID));
+                break;
+            }
+        }
+
+        for (Long reviewerID : roles.keySet()) {
+            Long role = roles.get(reviewerID);
+            if (!result.contains(reviewerID) && !selectedRoles.contains(role)) {
+                result.add(reviewerID);
+                selectedRoles.add(role);
+            }
+            if (result.size()==3)
+                break;
+        }
+
+        for (Long reviewerID : roles.keySet()) {
+            if (!result.contains(reviewerID))
+                result.add(reviewerID);
+            if (result.size()==3)
+                break;
+        }
+
+        return Arrays.asList(result.toArray(new Long[0]));
+    }
+
+    private static void clearRBoardApplication(Connection conn, Project project) throws BaseException {
+		long projectId = project.getId();
+
+    	log.log(Level.INFO,"clearRBoardApplication projectId= " + projectId);
+
+        PreparedStatement deleteStmt = null;
+        try {
+            deleteStmt = conn.prepareStatement("DELETE FROM rboard_application WHERE project_id=?");
+
+			deleteStmt.setLong(1, projectId);
+            deleteStmt.executeUpdate();
+        } catch (SQLException e) {
+            throw new BaseException("Failed to clear rboard_application", e);
+        } finally {
+            close(deleteStmt);
+        }
+    }
+
     private static void addRBoardApplications(Connection conn, Project project,
                                              List<Long> reviewerIDs, List<Long> responseIDs,
                                              List<Long> primaries, List<java.sql.Timestamp> createDates) throws BaseException {
@@ -3261,24 +3298,6 @@ public class ActionsHelper {
             throw new BaseException("Failed to populate rboard_application", e);
         } finally {
             close(addStmt);
-        }
-    }
-
-    private static void clearRBoardApplication(Connection conn, Project project) throws BaseException {
-		long projectId = project.getId();
-
-    	log.log(Level.INFO,"clearRBoardApplication projectId= " + projectId);
-
-        PreparedStatement deleteStmt = null;
-        try {
-            deleteStmt = conn.prepareStatement("DELETE FROM rboard_application WHERE project_id=?");
-
-			deleteStmt.setLong(1, projectId);
-            deleteStmt.executeUpdate();
-        } catch (SQLException e) {
-            throw new BaseException("Failed to clear rboard_application", e);
-        } finally {
-            close(deleteStmt);
         }
     }
 
