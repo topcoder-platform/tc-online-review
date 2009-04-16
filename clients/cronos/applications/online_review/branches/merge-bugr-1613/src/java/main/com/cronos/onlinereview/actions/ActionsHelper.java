@@ -3161,6 +3161,8 @@ public class ActionsHelper {
 
             resourceSelectStmt = conn.createStatement();
 
+            // The query to select all reviewer roles from the resources.
+            // Actually, only the following roles get selected: Primary Screener, Reviewer, Accuracy, Failure, Stress, Aggregator, Final Reviewer
             resourceResultSet = resourceSelectStmt.executeQuery(
                     "SELECT resource_info.value, resource.resource_role_id, resource.create_date FROM resource, resource_info WHERE " +
                             "resource.project_id = "+projectId+" AND resource.resource_id = resource_info.resource_id AND " +
@@ -3184,17 +3186,19 @@ public class ActionsHelper {
                     primaries.add(userID);
             }
 
+            // Select at most three reviewers to be added into the rboard_application table.
             List<Long> newReviewers = selectReviewers(roles, primaries);
+
             List<Long> newPrimaries = new ArrayList<Long>();
             List<java.sql.Timestamp> newCreateDates = new ArrayList<java.sql.Timestamp>();
+            List<Long> newRoles = new ArrayList<Long>();
 
             boolean primarySelected=false;
-            List<Long> newRoles = new ArrayList<Long>();
             for (Long reviewerID : newReviewers) {
                 newRoles.add(roles.get(reviewerID));
                 newCreateDates.add(createDates.get(reviewerID));
 
-                // The first reviewer with a primary flag will be selected as a primary, other reviewers won't
+                // The first reviewer with a primary flag will be selected as a primary, other reviewers won't.
                 if (!primarySelected && primaries.contains(reviewerID)) {
                     newPrimaries.add(1L);
                     primarySelected=true;
@@ -3204,10 +3208,10 @@ public class ActionsHelper {
             }
             List<Long> newResponseIDs = getRespIdFromRoleId(conn, newRoles, phaseID);
 
-            // Completely clear all entries from the rboard_application for the project
-            clearRBoardApplication(conn,project);
+            // Clear all entries from the rboard_application for the project.
+            clearRBoardApplication(conn, project);
 
-            // Add reviewers to the rboard_application
+            // Add reviewers to the rboard_application.
             addRBoardApplications(conn, project, newReviewers, newResponseIDs, newPrimaries, newCreateDates);
 
         } catch (UnknownConnectionException e) {
@@ -3239,7 +3243,7 @@ public class ActionsHelper {
         Set<Long> result = new HashSet<Long>();
         Set<Long> selectedRoles = new HashSet<Long>();
 
-        // First we add a primary(any) if present.
+        // First we add a primary if present.
         for (Long reviewerID : roles.keySet()) {
             if (primaries.contains(reviewerID)) {
                 result.add(reviewerID);
@@ -3350,7 +3354,7 @@ public class ActionsHelper {
 
         log.log(Level.INFO,"getRespIdFromRoleId phaseID= " + phaseID);
 
-        // For component development projects, response ids correspond to accuracy, stress and failure reviewer roles
+        // For component development projects, response ids correspond to accuracy, stress and failure reviewer roles.
         if (phaseID == 113) {
             for(long roleID : roles) {
                 // Accuracy
@@ -3366,12 +3370,12 @@ public class ActionsHelper {
                     responseIDs.add(1L); else
 
                 // Otherwise add him as Accuracy.
-                // Should not normally happen, but is possible if a Reviewer is added to dev project.
+                // Should not normally happen, but is possible if a Reviewer is added to a dev project.
                 responseIDs.add(3L);
             }
         }
 
-        // For other projects, response ids all correspond to Reviewer role
+        // For other projects, response ids all correspond to Reviewer role.
         if (phaseID != 113) {
             PreparedStatement ps = null;
             ResultSet rs = null;
@@ -3389,6 +3393,12 @@ public class ActionsHelper {
             } finally {
                 close(ps);
                 close(rs);
+            }
+
+            // If there are less response ids in the review_resp_id than we need, throw an exception.
+            // This can only mean that review_resp_id has wrong data as it needs to have at least three response ids. 
+            if (responseIDs.size() < roles.size()) {
+                throw new BaseException("Not enough response ids for reviewers. Needed "+roles.size()+", present "+responseIDs.size());
             }
         }
 

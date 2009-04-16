@@ -83,6 +83,8 @@ import com.topcoder.util.errorhandling.BaseException;
  */
 public class ProjectActions extends DispatchAction {
 
+	private static final DateFormat DATE_FORMAT = new SimpleDateFormat("MM.dd.yyyy hh:mm a", Locale.US);
+
     /**
      * Creates a new instance of the <code>ProjectActions</code> class.
      */
@@ -298,7 +300,7 @@ public class ProjectActions extends DispatchAction {
         populateProjectFormProperty(form, Double.class, "payments", project, "Payments");
         // Populate project dr points
         populateProjectFormProperty(form, Double.class, "dr_points", project, "DR points");
-        
+
         // Populate project public option
         form.set("public", new Boolean("Yes".equals(project.getProperty("Public"))));
         // Populate project autopilot option
@@ -602,7 +604,7 @@ public class ProjectActions extends DispatchAction {
      */
     public ActionForward saveProject(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response) throws BaseException {
-    	
+
         LoggingHelper.logAction(request);
         // Cast the form to its actual type
         LazyValidatorForm lazyForm = (LazyValidatorForm) form;
@@ -724,11 +726,11 @@ public class ProjectActions extends DispatchAction {
 
         if (newProject && lazyForm.get("external_reference_id") != null) {
             // Retrieve and populate version
-            project.setProperty("Version ID", 
+            project.setProperty("Version ID",
             		ActionsHelper.getVersionUsingComponentVersionId(
         			((Long) lazyForm.get("external_reference_id")).longValue()));
         }
-        
+
         // Extract project's properties from the form
         Boolean autopilotOnObj = (Boolean) lazyForm.get("autopilot");
         Boolean sendEmailNotificationsObj = (Boolean) lazyForm.get("email_notifications");
@@ -1507,7 +1509,7 @@ public class ProjectActions extends DispatchAction {
      */
     private void saveResources(boolean newProject, HttpServletRequest request, LazyValidatorForm lazyForm,
     		Project project, Phase[] projectPhases, Map<Object, Phase> phasesJsMap) throws BaseException {
-    	
+
         // Obtain the instance of the User Retrieval
         UserRetrieval userRetrieval = ActionsHelper.createUserRetrieval(request);
 
@@ -1548,7 +1550,6 @@ public class ProjectActions extends DispatchAction {
         boolean allResourcesValid=true;
         for (int i = 1; i < resourceNames.length; i++) {
 
-            // TODO: Actually no updates should be done at all in the case validation fails!!!
             if (resourceNames[i] == null || resourceNames[i].trim().length() == 0) {
                 ActionsHelper.addErrorToRequest(request, "resources_name[" + i + "]",
                         "error.com.cronos.onlinereview.actions.editProject.Resource.Empty");
@@ -1559,16 +1560,15 @@ public class ProjectActions extends DispatchAction {
             // Get info about user with the specified handle
             ExternalUser user = userRetrieval.retrieveUser(resourceNames[i]);
 
-            // TODO: Actually no updates should be done at all in the case validation fails!!!
             // If there is no user with such handle, indicate an error
             if (user == null) {
                 ActionsHelper.addErrorToRequest(request, "resources_name[" + i + "]",
                         "error.com.cronos.onlinereview.actions.editProject.Resource.NotFound");
                 allResourcesValid=false;
-                continue;
             }
         }
 
+        // No resources are updated if at least one of them is incorrect.
         if (!allResourcesValid)
             return;
 
@@ -1675,7 +1675,8 @@ public class ProjectActions extends DispatchAction {
             if (resource.getProperty("Registration Date") == null  && (
                     resourceRole.equals("Submitter") || resourceRole.equals("Screener") ||
                     resourceRole.equals("Reviewer"))) {
-                resource.setProperty("Registration Date", new Date());
+            	// FIXME: Format this date properly.
+                resource.setProperty("Registration Date", DATE_FORMAT.format(new Date()));
             }
 
             // Save the resource in the persistence level
