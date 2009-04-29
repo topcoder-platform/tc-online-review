@@ -1,5 +1,5 @@
-/**
- * Copyright (C) 2006-2007 TopCoder Inc., All Rights Reserved.
+/*
+ * Copyright (C) 2004 - 2009 TopCoder Inc., All Rights Reserved.
  */
 package com.cronos.onlinereview.phases;
 
@@ -20,11 +20,14 @@ import java.util.List;
 
 
 /**
- * The AutoPaymentUtil is used to auto-fill for payments of reviewers and submitters.
+ * <p>The AutoPaymentUtil is used to auto-fill for payments of reviewers and submitters.</p>
  *
- * @author brain_cn
- * @author George1
- * @version 1.0
+ * <p>Version 1.1 (Studio Coding In Online Review) Change notes:
+ *  Added support for new Studio prototype, Studio Build and Studio Component competitions so that 
+ *  reviewer payment is populated automatically</p>
+ *
+ * @author George1, brain_cn, TCSDEVELOPER
+ * @version 1.1
  */
 public class AutoPaymentUtil {
         /**
@@ -112,20 +115,24 @@ public class AutoPaymentUtil {
      *
      * @param projectId project id
      * @param conn the connection
+     * @param phaseId the phase id
      *
-     * @throws Exception if error occurs
+     * @throws SQLException if an error occurs in the persistence layer
      */
     public static void populateReviewerPayments(long projectId, Connection conn, int phaseId) throws SQLException {
         long projectCategoryId = getProjectCategoryId(projectId, conn);
 
-        if (projectCategoryId != 1        // Component Design
-	    && projectCategoryId != 2     // Component Development
-	    && projectCategoryId != 5     // Component Testing
-	    && projectCategoryId != 7     // Architecture
-	    && projectCategoryId != 14    // Assembly
-	    && projectCategoryId != 6     // Specification
-	    && projectCategoryId != 13    // Application Testing
-	    && projectCategoryId != 23) { // Conceptualization
+        if (projectCategoryId != 1    // Component Design
+        && projectCategoryId != 2     // Component Development
+        && projectCategoryId != 5     // Component Testing
+        && projectCategoryId != 7     // Architecture
+        && projectCategoryId != 14    // Assembly
+        && projectCategoryId != 6     // Specification
+        && projectCategoryId != 13    // Application Testing
+        && projectCategoryId != 23    // Conceptualization
+        && projectCategoryId != 19    // Studio Prototype
+        && projectCategoryId != 24    // Studio Build
+        && projectCategoryId != 25) { // Studio Component
                 return;
         }
 
@@ -473,8 +480,8 @@ public class AutoPaymentUtil {
      * @throws SQLException if error occurs
      */
     private static void updateProjectInfo(long projectId, long projectInfoTypeId, String value, Connection conn)
-        	throws SQLException {
-    	
+            throws SQLException {
+        
         String UPDATE_SQL = "update project_info set value = ? where project_id = ? and project_info_type_id = ? ";
         String INSERT_SQL = "INSERT INTO project_info " +
             "(project_id, project_info_type_id, value, create_user, create_date, modify_user, modify_date) " +
