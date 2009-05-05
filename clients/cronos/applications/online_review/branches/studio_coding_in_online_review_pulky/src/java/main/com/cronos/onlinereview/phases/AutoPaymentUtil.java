@@ -26,7 +26,7 @@ import java.util.List;
  *  Added support for new Studio prototype, Studio Build and Studio Component competitions so that 
  *  reviewer payment is populated automatically</p>
  *
- * @author George1, brain_cn, TCSDEVELOPER
+ * @author George1, brain_cn, pulky
  * @version 1.1
  */
 public class AutoPaymentUtil {
