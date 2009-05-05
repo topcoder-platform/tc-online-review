@@ -1,0 +1,588 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+
+<!DOCTYPE struts-config PUBLIC
+          "-//Apache Software Foundation//DTD Struts Configuration 1.2//EN"
+          "http://jakarta.apache.org/struts/dtds/struts-config_1_2.dtd">
+
+<struts-config>
+
+<!-- ================================================ Form Bean Definitions -->
+
+    <form-beans>
+
+        <form-bean name="loginForm" dynamic="true" type="org.apache.struts.validator.DynaValidatorForm">
+            <form-property name="userName" type="java.lang.String" />
+            <form-property name="password" type="java.lang.String" />
+        </form-bean>
+
+        <form-bean name="projectForm" dynamic="true"
+            type="org.apache.struts.validator.LazyValidatorForm">
+            <form-property name="js_current_id" type="java.lang.Long" />
+    
+            <form-property name="action" type="java.lang.String" />
+            <form-property name="action_phase" type="java.lang.String" />           
+
+            <form-property name="pid" type="java.lang.Long" />
+            <form-property name="project_name" type="java.lang.String" />
+            <form-property name="project_type" type="java.lang.Long" />
+            <form-property name="project_category" type="java.lang.Long" />
+            <form-property name="eligibility" type="java.lang.String" />
+            <form-property name="public" type="java.lang.Boolean" />
+            <form-property name="autopilot" type="java.lang.Boolean" initial="true" />
+            <form-property name="email_notifications" type="java.lang.Boolean" />
+            <form-property name="no_rate_project" type="java.lang.Boolean" />
+            <form-property name="timeline_notifications" type="java.lang.Boolean" />
+            <form-property name="digital_run_flag" type="java.lang.Boolean" />
+            <form-property name="scorecard_screening" type="java.lang.Long" />
+            <form-property name="scorecard_review" type="java.lang.Long" />
+            <form-property name="scorecard_approval" type="java.lang.Long" />
+            <form-property name="forum_id" type="java.lang.Long" />
+            <form-property name="component_id" type="java.lang.Long" />
+            <form-property name="external_reference_id" type="java.lang.Long" />
+            <form-property name="payments" type="java.lang.Double" />
+            <form-property name="dr_points" type="java.lang.Double" />
+            <form-property name="SVN_module" type="java.lang.String" />
+            <form-property name="notes" type="java.lang.String" />
+            <form-property name="explanation" type="java.lang.String" />
+            <form-property name="status" type="java.lang.Long" />
+            <form-property name="status_explanation" type="java.lang.String" />
+            
+            <form-property name="resources_role" type="java.lang.Long[]" />
+            <form-property name="resources_phase" type="java.lang.String[]" />
+            <form-property name="resources_name" type="java.lang.String[]" />
+            <form-property name="resources_payment" type="java.lang.Boolean[]" />
+            <form-property name="resources_payment_amount" type="java.lang.Double[]" />
+            <form-property name="resources_paid" type="java.lang.String[]" />
+            <form-property name="resources_action" type="java.lang.String[]" />
+            <form-property name="resources_id" type="java.lang.Long[]" />
+
+            <form-property name="phase_can_open" type="java.lang.Boolean[]" />
+            <form-property name="phase_can_close" type="java.lang.Boolean[]" />
+            <form-property name="phase_type" type="java.lang.Long[]" />
+            <form-property name="phase_id" type="java.lang.Long[]" />
+            <form-property name="phase_name" type="java.lang.String[]" />
+            <form-property name="phase_number" type="java.lang.Integer[]" />
+            <form-property name="phase_js_id" type="java.lang.String[]" />
+            <form-property name="phase_action" type="java.lang.String[]" />
+            <form-property name="phase_start_by_phase" type="java.lang.Boolean[]" />
+            <form-property name="phase_start_date" type="java.lang.String[]" />
+            <form-property name="phase_start_time" type="java.lang.String[]" />
+            <form-property name="phase_start_AMPM" type="java.lang.String[]" />
+            <form-property name="phase_start_phase" type="java.lang.String[]" />
+            <form-property name="phase_start_when" type="java.lang.String[]" />
+            <form-property name="phase_start_plusminus" type="java.lang.String[]" />
+            <form-property name="phase_start_amount" type="java.lang.Integer[]" />
+            <form-property name="phase_start_dayshrs" type="java.lang.String[]" />
+            <form-property name="phase_end_date" type="java.lang.String[]" />
+            <form-property name="phase_end_time" type="java.lang.String[]" />
+            <form-property name="phase_end_AMPM" type="java.lang.String[]" />
+            <form-property name="phase_use_duration" type="java.lang.Boolean[]" />
+            <form-property name="phase_duration" type="java.lang.String[]" />
+
+            <form-property name="phase_required_registrations" type="java.lang.Integer[]" />
+            <form-property name="phase_required_submissions" type="java.lang.Integer[]" />
+            <form-property name="phase_required_reviewers" type="java.lang.Integer[]" />
+            <form-property name="phase_manual_screening" type="java.lang.Boolean[]" />
+            <form-property name="phase_view_appeal_responses" type="java.lang.Boolean[]" />
+            <form-property name="phase_scorecard" type="java.lang.Long[]" />
+        </form-bean>
+
+        <form-bean name="contactManagerForm" dynamic="true"
+            type="org.apache.struts.validator.DynaValidatorForm">
+            <form-property name="cat" type="java.lang.String" />
+            <form-property name="msg" type="java.lang.String" />
+        </form-bean>
+
+        <form-bean name="fileUploadForm" dynamic="true"
+            type="org.apache.struts.validator.DynaValidatorForm">
+            <form-property name="file" type="org.apache.struts.upload.FormFile" />
+        </form-bean>
+
+        <form-bean name="reviewForm" dynamic="true"
+            type="org.apache.struts.validator.LazyValidatorForm">
+            <form-property name="rid" type="java.lang.Long" />
+            <form-property name="sid" type="java.lang.Long" />
+            <form-property name="save" type="java.lang.String" />
+            <form-property name="answer" type="java.lang.String[]" />
+            <form-property name="comment_count" type="java.lang.Integer[]" />
+            <form-property name="comment_type" type="java.util.HashMap" />
+            <form-property name="comment" type="java.util.HashMap" />
+            <form-property name="file" type="org.apache.struts.upload.FormFile[]" />
+        </form-bean>
+
+        <form-bean name="aggregationForm" dynamic="true"
+            type="org.apache.struts.validator.LazyValidatorForm">
+            <form-property name="rid" type="java.lang.Long" />
+            <form-property name="save" type="java.lang.String" />
+            <form-property name="aggregator_response" type="java.lang.String[]" />
+            <form-property name="aggregator_response_type" type="java.lang.Long[]" />
+            <form-property name="aggregate_function" type="java.lang.String[]" />
+        </form-bean>
+
+        <form-bean name="aggregationReviewForm" dynamic="true"
+            type="org.apache.struts.validator.LazyValidatorForm">
+            <form-property name="rid" type="java.lang.Long" />
+            <form-property name="save" type="java.lang.String" />
+            <form-property name="review_function" type="java.lang.String[]" />
+            <form-property name="reject_reason" type="java.lang.String[]" />
+        </form-bean>
+
+        <form-bean name="finalReviewForm" dynamic="true"
+            type="org.apache.struts.validator.LazyValidatorForm">
+            <form-property name="rid" type="java.lang.Long" />
+            <form-property name="save" type="java.lang.String" />
+            <form-property name="fix_status" type="java.lang.String[]" />
+            <form-property name="final_comment" type="java.lang.String[]" />
+            <form-property name="approve_fixes" type="java.lang.Boolean" />
+        </form-bean>
+    </form-beans>
+
+
+<!-- ========================================= Global Exception Definitions -->
+
+    <global-exceptions />
+
+
+<!-- =========================================== Global Forward Definitions -->
+
+    <global-forwards>
+        <!-- Default forward to login page action -->
+        <forward name="Login" path="/jsp/login.jsp" redirect="true"/>
+        <forward name="notAuthorized" path="/jsp/login.jsp" redirect="true"/>
+        <forward name="userError" path="/jsp/userError.jsp" redirect="false"/>
+        <forward name="reviewCommitted" path="/jsp/reviewCommitted.jsp" redirect="false"/>
+        <forward name="listMyProjects" path="/actions/ListProjects.do?method=listProjects" redirect="true" />
+    </global-forwards>
+
+
+<!-- =========================================== Action Mapping Definitions -->
+
+    <action-mappings>
+
+    <!--
+        =====  Login Actions  =====
+    -->
+
+        <!-- "Login" action -->
+        <action path="/actions/Login" unknown="false"
+            type="com.cronos.onlinereview.login.LoginActions"
+            name="loginForm" scope="request"
+            parameter="method"
+            input="/jsp/login.jsp" >
+            <exception
+                type="com.topcoder.security.authenicationfactory.AuthenticateException"
+                key="exception.com.cronos.onlinereview.login.LoginActions.login.AuthenticateException"
+                path="/jsp/login.jsp" />
+            <exception
+                type="com.topcoder.security.authenicationfactory.MissingPrincipalKeyException"
+                key="exception.com.cronos.onlinereview.login.LoginActions.login.MissingPrincipalException"
+                path="/jsp/login.jsp" />
+            <exception
+                type="com.topcoder.security.authenicationfactory.InvalidPrincipalException"
+                key="exception.com.cronos.onlinereview.login.LoginActions.login.InvalidPrincipalException"
+                path="/jsp/login.jsp" />
+            <exception
+                type="com.cronos.onlinereview.login.LoginActions.AuthResponseParserException"
+                key="exception.com.cronos.onlinereview.login.LoginActions.login.AuthResponseParserException"
+                path="/jsp/login.jsp" />
+            <forward name="success" path="/actions/ListProjects.do?method=listProjects" redirect="true" />
+            <forward name="failure" path="/jsp/loginInvalid.jsp" redirect="false" />
+        </action>
+
+        <!-- "Logout" action -->
+        <action path="/actions/Logout" unknown="false"
+            type="com.cronos.onlinereview.login.LoginActions"
+            validate="false" scope="request"
+            parameter="method"
+            input="/jsp/login.jsp">
+            <exception
+                type="com.cronos.onlinereview.login.LoginActions.AuthResponseParserException"
+                key="exception.com.cronos.onlinereview.login.LoginActions.logout.AuthResponseParserException"
+                path="/jsp/login.jsp" />
+            <forward name="logout" path="/jsp/login.jsp" redirect="true" />
+        </action>
+
+
+    <!--
+        =====  Scorecard Actions will go here  =====
+    -->
+
+
+    <!--
+        =====  Project Actions  =====
+    -->
+
+        <!-- "New Project" action -->
+        <action path="/actions/NewProject" unknown="false"
+            type="com.cronos.onlinereview.actions.ProjectActions"
+            parameter="method" scope="request"
+            name="projectForm"
+            input="/jsp/editProject.jsp">
+            <forward name="success" path="/jsp/editProject.jsp" redirect="false" />
+        </action>
+
+        <!-- "Edit Project" action -->
+        <action path="/actions/EditProject" unknown="false"
+            type="com.cronos.onlinereview.actions.ProjectActions"
+            parameter="method" scope="request"
+            name="projectForm"
+            input="/jsp/editProject.jsp">
+            <forward name="success" path="/jsp/editProject.jsp" redirect="false" />
+        </action>
+
+        <!-- "Save Project" action -->
+        <action path="/actions/SaveProject" unknown="false"
+            type="com.cronos.onlinereview.actions.ProjectActions"
+            parameter="method" scope="request"
+            name="projectForm"
+            input="/jsp/editProject.jsp">
+            <forward name="success" path="/actions/ViewProjectDetails.do?method=viewProjectDetails" redirect="true" />
+        </action>
+
+        <!-- "List Projects" action -->
+        <action path="/actions/ListProjects" unknown="false"
+            type="com.cronos.onlinereview.actions.ProjectActions"
+            parameter="method" scope="request"
+            input="/jsp/listProjects.jsp">
+            <forward name="success" path="/jsp/listProjects.jsp" redirect="false" />
+            <forward name="all" path="/actions/ListProjects.do?method=listProjects&amp;scope=all" redirect="true" />
+        </action>
+
+
+    <!--
+        =====  Project Details Actions  =====
+    -->
+
+        <!-- "View Project Details" action -->
+        <action path="/actions/ViewProjectDetails" unknown="false"
+            type="com.cronos.onlinereview.actions.ProjectDetailsActions"
+            parameter="method" scope="request"
+            input="/jsp/viewProjectDetails.jsp">
+            <forward name="success" path="/jsp/viewProjectDetails.jsp" redirect="false" />
+        </action>
+
+        <!-- "Contact Manager" action -->
+        <action path="/actions/ContactManager" unknown="false"
+            type="com.cronos.onlinereview.actions.ProjectDetailsActions"
+            parameter="method" scope="request"
+            name="contactManagerForm"
+            input="/jsp/contactManager.jsp">
+            <forward name="displayPage" path="/jsp/contactManager.jsp" redirect="false" />
+            <forward name="success" path="/actions/ViewProjectDetails.do?method=viewProjectDetails" redirect="true" />
+        </action>
+
+        <!-- "Upload Submission" action -->
+        <action path="/actions/UploadSubmission" unknown="false"
+            type="com.cronos.onlinereview.actions.ProjectDetailsActions"
+            parameter="method" scope="request"
+            name="fileUploadForm"
+            input="/jsp/uploadSubmission.jsp">
+            <forward name="displayPage" path="/jsp/uploadSubmission.jsp" redirect="false" />
+            <forward name="success" path="/actions/ViewProjectDetails.do?method=viewProjectDetails" redirect="true" />
+        </action>
+
+        <!-- "Download Submission" action -->
+        <action path="/actions/DownloadSubmission" unknown="false"
+            type="com.cronos.onlinereview.actions.ProjectDetailsActions"
+            parameter="method" scope="request"
+            input="/jsp/viewProjectDetails.jsp">
+        </action>
+
+        <!-- "Upload Final Fix" action -->
+        <action path="/actions/UploadFinalFix" unknown="false"
+            type="com.cronos.onlinereview.actions.ProjectDetailsActions"
+            parameter="method" scope="request"
+            name="fileUploadForm"
+            input="/jsp/uploadFinalFix.jsp">
+            <forward name="displayPage" path="/jsp/uploadFinalFix.jsp" redirect="false" />
+            <forward name="success" path="/actions/ViewProjectDetails.do?method=viewProjectDetails" redirect="true" />
+        </action>
+
+        <!-- "Download Final Fix" action -->
+        <action path="/actions/DownloadFinalFix" unknown="false"
+            type="com.cronos.onlinereview.actions.ProjectDetailsActions"
+            parameter="method" scope="request"
+            input="/jsp/viewProjectDetails.jsp">
+        </action>
+
+        <!-- "Upload Test Case" action -->
+        <action path="/actions/UploadTestCase" unknown="false"
+            type="com.cronos.onlinereview.actions.ProjectDetailsActions"
+            parameter="method" scope="request"
+            name="fileUploadForm"
+            input="/jsp/uploadTestCase.jsp">
+            <forward name="displayPage" path="/jsp/uploadTestCase.jsp" redirect="false" />
+            <forward name="success" path="/actions/ViewProjectDetails.do?method=viewProjectDetails" redirect="true" />
+        </action>
+
+        <!-- "Download Test Case" action -->
+        <action path="/actions/DownloadTestCase" unknown="false"
+            type="com.cronos.onlinereview.actions.ProjectDetailsActions"
+            parameter="method" scope="request"
+            input="/jsp/viewProjectDetails.jsp">
+        </action>
+
+        <!-- "Download Document" action -->
+        <action path="/actions/DownloadDocument" unknown="false"
+            type="com.cronos.onlinereview.actions.ProjectDetailsActions"
+            parameter="method" scope="request">
+        </action>
+
+        <!-- "Delete Submission" action -->
+        <action path="/actions/DeleteSubmission" unknown="false"
+            type="com.cronos.onlinereview.actions.ProjectDetailsActions"
+            parameter="method" scope="request"
+            input="/jsp/confirmDeleteSubmission.jsp">
+            <forward name="displayPage" path="/jsp/confirmDeleteSubmission.jsp" redirect="false"/>
+            <forward name="success" path="/actions/ViewProjectDetails.do?method=viewProjectDetails" redirect="true"/>
+        </action>
+
+        <!-- "View Auto Screening" action -->
+        <action path="/actions/ViewAutoScreening" unknown="false"
+            type="com.cronos.onlinereview.actions.ProjectDetailsActions"
+            parameter="method" scope="request"
+            input="/jsp/viewProjectDetails.jsp">
+            <forward name="success" path="/jsp/viewAutoScreening.jsp" redirect="false"/>
+        </action>
+
+
+    <!--
+        =====  Project Review Actions  =====
+    -->
+
+        <!-- "Create Screening" action -->
+        <action path="/actions/CreateScreening" unknown="false"
+            type="com.cronos.onlinereview.actions.ProjectReviewActions"
+            parameter="method" scope="request"
+            name="reviewForm"
+            input="/jsp/viewProjectDetails.jsp">
+            <forward name="success" path="/jsp/editReview.jsp" redirect="false"/>
+            <forward name="edit" path="/actions/EditScreening.do?method=editScreening" redirect="true"/>
+        </action>
+
+        <!-- "Edit Screening" action -->
+        <action path="/actions/EditScreening" unknown="false"
+            type="com.cronos.onlinereview.actions.ProjectReviewActions"
+            parameter="method" scope="request"
+            name="reviewForm"
+            input="/jsp/viewProjectDetails.jsp">
+            <forward name="success" path="/jsp/editReview.jsp" redirect="false"/>
+        </action>
+
+        <!-- "Save Screening" action -->
+        <action path="/actions/SaveScreening" unknown="false"
+            type="com.cronos.onlinereview.actions.ProjectReviewActions"
+            parameter="method" scope="request"
+            name="reviewForm"
+            input="/jsp/editReview.jsp">
+            <forward name="preview" path="/jsp/viewReview.jsp" redirect="false"/>
+            <forward name="success" path="/actions/ViewProjectDetails.do?method=viewProjectDetails" redirect="true"/>
+        </action>
+
+        <!-- "View Screening" action -->
+        <action path="/actions/ViewScreening" unknown="false"
+            type="com.cronos.onlinereview.actions.ProjectReviewActions"
+            parameter="method" scope="request"
+            name="reviewForm"
+            input="/jsp/viewReview.jsp">
+            <forward name="success" path="/jsp/viewReview.jsp" redirect="false"/>
+        </action>
+
+        <!-- "Create Review" action -->
+        <action path="/actions/CreateReview" unknown="false"
+            type="com.cronos.onlinereview.actions.ProjectReviewActions"
+            parameter="method" scope="request"
+            name="reviewForm"
+            input="/jsp/viewProjectDetails.jsp">
+            <forward name="success" path="/jsp/editReview.jsp" redirect="false"/>
+            <forward name="edit" path="/actions/EditReview.do?method=editReview" redirect="true"/>
+        </action>
+
+        <!-- "Edit Review" action -->
+        <action path="/actions/EditReview" unknown="false"
+            type="com.cronos.onlinereview.actions.ProjectReviewActions"
+            parameter="method" scope="request"
+            name="reviewForm"
+            input="/jsp/viewProjectDetails.jsp">
+            <forward name="success" path="/jsp/editReview.jsp" redirect="false"/>
+        </action>
+
+        <!-- "Save Review" action -->
+        <action path="/actions/SaveReview" unknown="false"
+            type="com.cronos.onlinereview.actions.ProjectReviewActions"
+            parameter="method" scope="request"
+            name="reviewForm"
+            input="/jsp/editReview.jsp">
+            <forward name="preview" path="/jsp/viewReview.jsp" redirect="false"/>
+            <forward name="success" path="/actions/ViewProjectDetails.do?method=viewProjectDetails" redirect="true"/>
+        </action>
+
+        <!-- "View Review" action -->
+        <action path="/actions/ViewReview" unknown="false"
+            type="com.cronos.onlinereview.actions.ProjectReviewActions"
+            parameter="method" scope="request"
+            name="reviewForm"
+            input="/jsp/viewProjectDetails.jsp">
+            <forward name="success" path="/jsp/viewReview.jsp" redirect="false"/>
+        </action>
+
+        <!-- "Create Aggregation" action -->
+        <action path="/actions/CreateAggregation" unknown="false"
+            type="com.cronos.onlinereview.actions.ProjectReviewActions"
+            parameter="method" scope="request"
+            name="aggregationForm"
+            input="/jsp/viewProjectDetails.jsp">
+            <forward name="success" path="/jsp/editAggregation.jsp" redirect="false"/>
+        </action>
+
+        <!-- "Edit Aggregation" action -->
+        <action path="/actions/EditAggregation" unknown="false"
+            type="com.cronos.onlinereview.actions.ProjectReviewActions"
+            parameter="method" scope="request"
+            name="aggregationForm"
+            input="/jsp/viewProjectDetails.jsp">
+            <forward name="success" path="/jsp/editAggregation.jsp" redirect="false"/>
+        </action>
+
+        <!-- "Save Aggregation" action -->
+        <action path="/actions/SaveAggregation" unknown="false"
+            type="com.cronos.onlinereview.actions.ProjectReviewActions"
+            parameter="method" scope="request"
+            name="aggregationForm"
+            input="/jsp/editAggregation.jsp">
+            <forward name="preview" path="/jsp/viewAggregation.jsp" redirect="false"/>
+            <forward name="success" path="/actions/ViewProjectDetails.do?method=viewProjectDetails" redirect="true"/>
+        </action>
+
+        <!-- "View Aggregation" action -->
+        <action path="/actions/ViewAggregation" unknown="false"
+            type="com.cronos.onlinereview.actions.ProjectReviewActions"
+            parameter="method" scope="request"
+            input="/jsp/viewProjectDetails.jsp">
+            <forward name="success" path="/jsp/viewAggregation.jsp" redirect="false"/>
+        </action>
+
+        <!-- "Edit Aggregation Review" action -->
+        <action path="/actions/EditAggregationReview" unknown="false"
+            type="com.cronos.onlinereview.actions.ProjectReviewActions"
+            parameter="method" scope="request"
+            name="aggregationReviewForm"
+            input="/jsp/viewProjectDetails.jsp">
+            <forward name="success" path="/jsp/editAggregationReview.jsp" redirect="false"/>
+        </action>
+
+        <!-- "Save Aggregation Review" action -->
+        <action path="/actions/SaveAggregationReview" unknown="false"
+            type="com.cronos.onlinereview.actions.ProjectReviewActions"
+            parameter="method" scope="request"
+            name="aggregationReviewForm"
+            input="/jsp/editAggregationReview.jsp">
+            <forward name="preview" path="/jsp/viewAggregationReview.jsp" redirect="false"/>
+            <forward name="success" path="/actions/ViewProjectDetails.do?method=viewProjectDetails" redirect="true"/>
+        </action>
+
+        <!-- "View Aggregation Review" action -->
+        <action path="/actions/ViewAggregationReview" unknown="false"
+            type="com.cronos.onlinereview.actions.ProjectReviewActions"
+            parameter="method" scope="request"
+            input="/jsp/viewProjectDetails.jsp">
+            <forward name="success" path="/jsp/viewAggregationReview.jsp" redirect="false"/>
+        </action>
+
+        <!-- "Create Final Review" action -->
+        <action path="/actions/CreateFinalReview" unknown="false"
+            type="com.cronos.onlinereview.actions.ProjectReviewActions"
+            parameter="method" scope="request"
+            input="/jsp/viewProjectDetails.jsp">
+            <forward name="success" path="/jsp/editFinalReview.jsp" redirect="false"/>
+        </action>
+
+        <!-- "Edit Final Review" action -->
+        <action path="/actions/EditFinalReview" unknown="false"
+            type="com.cronos.onlinereview.actions.ProjectReviewActions"
+            parameter="method" scope="request"
+            name="finalReviewForm"
+            input="/jsp/viewProjectDetails.jsp">
+            <forward name="success" path="/jsp/editFinalReview.jsp" redirect="false"/>
+        </action>
+
+        <!-- "Save Final Review" action -->
+        <action path="/actions/SaveFinalReview" unknown="false"
+            type="com.cronos.onlinereview.actions.ProjectReviewActions"
+            parameter="method" scope="request"
+            name="finalReviewForm"
+            input="/jsp/editFinalReview.jsp">
+            <forward name="preview" path="/jsp/viewFinalReview.jsp" redirect="false"/>
+            <forward name="success" path="/actions/ViewProjectDetails.do?method=viewProjectDetails" redirect="true"/>
+        </action>
+
+        <!-- "View Final Review" action -->
+        <action path="/actions/ViewFinalReview" unknown="false"
+            type="com.cronos.onlinereview.actions.ProjectReviewActions"
+            parameter="method" scope="request"
+            input="/jsp/viewProjectDetails.jsp">
+            <forward name="success" path="/jsp/viewFinalReview.jsp" redirect="false"/>
+        </action>
+
+        <!-- "Create Approval" action -->
+        <action path="/actions/CreateApproval" unknown="false"
+            type="com.cronos.onlinereview.actions.ProjectReviewActions"
+            parameter="method" scope="request"
+            name="reviewForm"
+            input="/jsp/viewProjectDetails.jsp">
+            <forward name="success" path="/jsp/editReview.jsp" redirect="false"/>
+            <forward name="edit" path="/actions/EditApproval.do?method=editApproval" redirect="true"/>
+        </action>
+
+        <!-- "Edit Approval" action -->
+        <action path="/actions/EditApproval" unknown="false"
+            type="com.cronos.onlinereview.actions.ProjectReviewActions"
+            parameter="method" scope="request"
+            name="reviewForm"
+            input="/jsp/viewProjectDetails.jsp">
+            <forward name="success" path="/jsp/editReview.jsp" redirect="false"/>
+        </action>
+
+        <!-- "Save Approval" action -->
+        <action path="/actions/SaveApproval" unknown="false"
+            type="com.cronos.onlinereview.actions.ProjectReviewActions"
+            parameter="method" scope="request"
+            name="reviewForm"
+            input="/jsp/editReview.jsp">
+            <forward name="preview" path="/jsp/viewReview.jsp" redirect="false"/>
+            <forward name="success" path="/actions/ViewProjectDetails.do?method=viewProjectDetails" redirect="true"/>
+        </action>
+
+        <!-- "View Approval" action -->
+        <action path="/actions/ViewApproval" unknown="false"
+            type="com.cronos.onlinereview.actions.ProjectReviewActions"
+            parameter="method" scope="request"
+            name="reviewForm"
+            input="/jsp/viewProjectDetails.jsp">
+            <forward name="success" path="/jsp/viewReview.jsp" redirect="false"/>
+        </action>
+
+        <!-- "View Composite Scorecard" action -->
+        <action path="/actions/ViewCompositeScorecard" unknown="false"
+            type="com.cronos.onlinereview.actions.ProjectReviewActions"
+            parameter="method" scope="request"
+            input="/jsp/viewProjectDetails.jsp">
+            <forward name="success" path="/jsp/viewCompositeScorecard.jsp" redirect="false"/>
+        </action>
+    </action-mappings>
+
+
+<!-- ======================================== Message Resources Definitions -->
+
+    <message-resources parameter="MessageResources" />
+
+
+<!-- =============================================== Plug Ins Configuration -->
+
+    <!-- =================================================== Validator plugin -->
+
+    <plug-in className="org.apache.struts.validator.ValidatorPlugIn">
+        <set-property property="pathnames" value="/WEB-INF/validator-rules.xml,/WEB-INF/validation.xml"/>
+        <!-- set-property property="stopOnFirstError" value="false"/ -->
+    </plug-in>
+</struts-config>
