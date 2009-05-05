@@ -3258,12 +3258,12 @@
                     <Value>iconBlank.png</Value>
                 </Property>
             </Property>
-            <Property name="Prototypes">
+            <Property name="Prototype Competition">
                 <Property name="IconSmall">
-                    <Value>iconBlankSm.png</Value>
+                    <Value>iconStudioPrototypeCompetitionSm.png</Value>
                 </Property>
                 <Property name="Icon">
-                    <Value>iconBlank.png</Value>
+                    <Value>iconStudioPrototypeCompetition.png</Value>
                 </Property>
             </Property>
             <Property name="Logos">
@@ -3290,6 +3290,22 @@
                     <Value>concept.gif</Value>
                 </Property>
             </Property>         
+            <Property name="Build Competition">
+                <Property name="IconSmall">
+                    <Value>iconStudioBuildCompetitionSm.png</Value>
+                </Property>
+                <Property name="Icon">
+                    <Value>iconStudioBuildCompetition.png</Value>
+                </Property>
+            </Property>
+            <Property name="Component Competition">
+                <Property name="IconSmall">
+                    <Value>iconStudioComponentCompetitionSm.png</Value>
+                </Property>
+                <Property name="Icon">
+                    <Value>iconStudioComponentCompetition.png</Value>
+                </Property>
+            </Property>
         </Property>
 
         <Property name="ProjectTypeDescriptionLinks">
