@@ -300,7 +300,7 @@ public class ProjectActions extends DispatchAction {
         populateProjectFormProperty(form, Double.class, "payments", project, "Payments");
         // Populate project dr points
         populateProjectFormProperty(form, Double.class, "dr_points", project, "DR points");
-        
+
         // Populate project public option
         form.set("public", new Boolean("Yes".equals(project.getProperty("Public"))));
         // Populate project autopilot option
@@ -604,7 +604,7 @@ public class ProjectActions extends DispatchAction {
      */
     public ActionForward saveProject(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response) throws BaseException {
-    	
+
         LoggingHelper.logAction(request);
         // Cast the form to its actual type
         LazyValidatorForm lazyForm = (LazyValidatorForm) form;
@@ -726,11 +726,11 @@ public class ProjectActions extends DispatchAction {
 
         if (newProject && lazyForm.get("external_reference_id") != null) {
             // Retrieve and populate version
-            project.setProperty("Version ID", 
+            project.setProperty("Version ID",
             		ActionsHelper.getVersionUsingComponentVersionId(
         			((Long) lazyForm.get("external_reference_id")).longValue()));
         }
-        
+
         // Extract project's properties from the form
         Boolean autopilotOnObj = (Boolean) lazyForm.get("autopilot");
         Boolean sendEmailNotificationsObj = (Boolean) lazyForm.get("email_notifications");
@@ -1509,7 +1509,7 @@ public class ProjectActions extends DispatchAction {
      */
     private void saveResources(boolean newProject, HttpServletRequest request, LazyValidatorForm lazyForm,
     		Project project, Phase[] projectPhases, Map<Object, Phase> phasesJsMap) throws BaseException {
-    	
+
         // Obtain the instance of the User Retrieval
         UserRetrieval userRetrieval = ActionsHelper.createUserRetrieval(request);
 
@@ -1547,25 +1547,36 @@ public class ProjectActions extends DispatchAction {
         Set<Long> newSubmitters = new HashSet<Long>();
 
         // 0-index resource is skipped as it is a "dummy" one
+        boolean allResourcesValid=true;
         for (int i = 1; i < resourceNames.length; i++) {
 
-            // TODO: Actually no updates should be done at all in the case validation fails!!!
             if (resourceNames[i] == null || resourceNames[i].trim().length() == 0) {
                 ActionsHelper.addErrorToRequest(request, "resources_name[" + i + "]",
                         "error.com.cronos.onlinereview.actions.editProject.Resource.Empty");
+                allResourcesValid=false;
                 continue;
             }
 
             // Get info about user with the specified handle
             ExternalUser user = userRetrieval.retrieveUser(resourceNames[i]);
 
-            // TODO: Actually no updates should be done at all in the case validation fails!!!
             // If there is no user with such handle, indicate an error
             if (user == null) {
                 ActionsHelper.addErrorToRequest(request, "resources_name[" + i + "]",
                         "error.com.cronos.onlinereview.actions.editProject.Resource.NotFound");
-                continue;
+                allResourcesValid=false;
             }
+        }
+
+        // No resources are updated if at least one of them is incorrect.
+        if (!allResourcesValid)
+            return;
+
+        // 0-index resource is skipped as it is a "dummy" one
+        for (int i = 1; i < resourceNames.length; i++) {
+
+            // Get info about user with the specified handle
+            ExternalUser user = userRetrieval.retrieveUser(resourceNames[i]);
 
             Resource resource;
 
@@ -1703,6 +1714,9 @@ public class ProjectActions extends DispatchAction {
             resourceManager.addNotifications(userIds, project.getId(),
                     timelineNotificationId, Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
         }
+
+        // Update rboard_application table with the reviewers set in the resources.
+        ActionsHelper.synchronizeRBoardApplications(project);
     }
 
     /**

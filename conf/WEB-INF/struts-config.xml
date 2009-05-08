@@ -426,6 +426,14 @@
             <forward name="success" path="/jsp/viewReview.jsp" redirect="false"/>
         </action>
 
+        <!-- "View Scorecard" action -->
+        <action path="/actions/ViewScorecard" unknown="false"
+            type="com.cronos.onlinereview.actions.ProjectReviewActions"
+            parameter="method" scope="request"
+            input="/jsp/listProjects.jsp">
+            <forward name="success" path="/jsp/viewScorecard.jsp" redirect="false"/>
+        </action>
+
         <!-- "Create Aggregation" action -->
         <action path="/actions/CreateAggregation" unknown="false"
             type="com.cronos.onlinereview.actions.ProjectReviewActions"

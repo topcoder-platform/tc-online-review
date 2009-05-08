@@ -23,7 +23,7 @@ import java.util.List;
  * <p>The AutoPaymentUtil is used to auto-fill for payments of reviewers and submitters.</p>
  *
  * <p>Version 1.1 (Studio Coding In Online Review) Change notes:
- *  Added support for new Studio prototype, Studio Build and Studio Component competitions so that 
+ *  Added support for new UI prototype, RIA Build and RIA Component competitions so that 
  *  reviewer payment is populated automatically</p>
  *
  * @author George1, brain_cn, pulky
@@ -130,9 +130,9 @@ public class AutoPaymentUtil {
         && projectCategoryId != 6     // Specification
         && projectCategoryId != 13    // Application Testing
         && projectCategoryId != 23    // Conceptualization
-        && projectCategoryId != 19    // Studio Prototype
-        && projectCategoryId != 24    // Studio Build
-        && projectCategoryId != 25) { // Studio Component
+        && projectCategoryId != 19    // UI Prototype
+        && projectCategoryId != 24    // RIA Build
+        && projectCategoryId != 25) { // RIA Component
                 return;
         }
 

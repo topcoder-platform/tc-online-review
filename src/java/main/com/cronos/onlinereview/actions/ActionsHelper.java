@@ -11,13 +11,7 @@ import java.sql.Statement;
 import java.sql.Types;
 import java.text.Format;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -1897,7 +1891,7 @@ public class ActionsHelper {
     public static Deliverable[] getAllDeliverablesForPhases(
             DeliverableManager manager, Phase[] phases, Resource[] resources, long winnerExtUserId)
         	throws DeliverablePersistenceException, SearchBuilderException, DeliverableCheckingException {
-    	
+
         // Validate parameters
         validateParameterNotNull(manager, "manager");
         validateParameterNotNull(phases, "phases");
@@ -3143,6 +3137,268 @@ public class ActionsHelper {
         }
     }
 
+
+    /**
+     * Synchronizes rboard_application with reviewers set in the OR.
+     *
+     * @param project the project
+     * @throws BaseException if error occurs
+     */
+    public static void synchronizeRBoardApplications(Project project) throws BaseException {
+		long projectId = project.getId();
+        long phaseID = 111 + project.getProjectCategory().getId();
+
+    	log.log(Level.INFO,"synchronizeRBoardApplications projectId= " + projectId);
+
+    	Connection conn = null;
+        Statement resourceSelectStmt = null;
+        ResultSet resourceResultSet = null;
+        try {
+
+            DBConnectionFactory dbconn = new DBConnectionFactoryImpl(DB_CONNECTION_NAMESPACE);
+            conn = dbconn.createConnection();
+            log.log(Level.INFO, "create db connection with default connection name from DBConnectionFactoryImpl with namespace:" + DB_CONNECTION_NAMESPACE);
+
+            resourceSelectStmt = conn.createStatement();
+
+            // The query to select all reviewer roles from the resources.
+            // Actually, only the following roles get selected: Primary Screener, Reviewer, Accuracy, Failure, Stress, Aggregator, Final Reviewer
+            resourceResultSet = resourceSelectStmt.executeQuery(
+                    "SELECT resource_info.value, resource.resource_role_id, resource.create_date FROM resource, resource_info WHERE " +
+                            "resource.project_id = "+projectId+" AND resource.resource_id = resource_info.resource_id AND " +
+                            "resource.resource_role_id in (2,4,5,6,7,8,9) AND resource_info.resource_info_type_id=1");
+
+            Map<Long,Long> roles = new HashMap<Long,Long>();
+            Set<Long> primaries = new HashSet<Long>();
+            Map<Long,java.sql.Timestamp> createDates = new HashMap<Long,java.sql.Timestamp>();
+            while (resourceResultSet.next()) {
+                long userID = resourceResultSet.getLong(1);
+                long role = resourceResultSet.getLong(2);
+                java.sql.Timestamp create_date = resourceResultSet.getTimestamp(3);
+
+                // Role 4 for Reviewer, 5 for Accuracy Reviewer, 6 for Failure Reviewer and 7 for Stress Reviewer
+                if (role==4 || role==5 || role==6 || role==7) {
+                    roles.put(userID,role);
+                    createDates.put(userID,create_date);
+                } else {
+                    // Other roles could be 2 for Primary Screener, 8 for Aggregator and 9 for Final Reviewer
+                    primaries.add(userID);
+                }
+            }
+
+            // Select at most three reviewers to be added into the rboard_application table.
+            List<Long> newReviewers = selectReviewers(roles, primaries);
+
+            List<Long> newPrimaries = new ArrayList<Long>();
+            List<java.sql.Timestamp> newCreateDates = new ArrayList<java.sql.Timestamp>();
+            List<Long> newRoles = new ArrayList<Long>();
+
+            boolean primarySelected=false;
+            for (Long reviewerID : newReviewers) {
+                newRoles.add(roles.get(reviewerID));
+                newCreateDates.add(createDates.get(reviewerID));
+
+                // The first reviewer with a primary flag will be selected as a primary, other reviewers won't.
+                if (!primarySelected && primaries.contains(reviewerID)) {
+                    newPrimaries.add(1L);
+                    primarySelected=true;
+                } else {
+                    newPrimaries.add(0L);
+                }
+            }
+            List<Long> newResponseIDs = getRespIdFromRoleId(conn, newRoles, phaseID);
+
+            // Clear all entries from the rboard_application for the project.
+            clearRBoardApplication(conn, project);
+
+            // Add reviewers to the rboard_application.
+            addRBoardApplications(conn, project, newReviewers, newResponseIDs, newPrimaries, newCreateDates);
+
+        } catch (UnknownConnectionException e) {
+            throw new BaseException("Failed to create connection", e);
+        } catch (ConfigurationException e) {
+            throw new BaseException("Failed to config for DBNamespace", e);
+        } catch (DBConnectionException e) {
+            throw new BaseException("Failed to return DBConnection", e);
+        } catch (SQLException e) {
+            log.log(Level.WARN, "Failed to read from resource and resource_info table " + e);
+        } finally {
+            close(resourceResultSet);
+            close(resourceSelectStmt);
+            close(conn);
+        }
+
+    }
+
+    /**
+     * This private helper method selects reviewers to be inserted into rboard_application table.
+     * No more that three reviewers can be selected.
+     *
+     * @param roles Maps user id to role id.
+     * @param primaries Set of user ids that can be primaries.
+     * @return List of user ids selected to be added to the rboard_application table. Can not have more than three elements.
+     */
+    private static List<Long> selectReviewers(Map<Long,Long> roles, Set<Long> primaries) {
+
+        Set<Long> result = new HashSet<Long>();
+        Set<Long> selectedRoles = new HashSet<Long>();
+
+        // First we add a primary if present.
+        for (Long reviewerID : roles.keySet()) {
+            if (primaries.contains(reviewerID)) {
+                result.add(reviewerID);
+                selectedRoles.add(roles.get(reviewerID));
+                break;
+            }
+        }
+
+        // We try to select users with different roles (e.g. not to select two accuracy reviewers and forget about stress one).
+        // This accounts for a pathological cases when there are more than one accuracy, primary or failure reviewers.
+        for (Long reviewerID : roles.keySet()) {
+            if (result.size()==3) break;
+
+            Long role = roles.get(reviewerID);
+            if (!result.contains(reviewerID) && !selectedRoles.contains(role)) {
+                result.add(reviewerID);
+                selectedRoles.add(role);
+            }
+
+        }
+
+        // If we still don't have three reviewers, add the rest.
+        for (Long reviewerID : roles.keySet()) {
+            if (result.size()==3) break;
+            if (!result.contains(reviewerID))
+                result.add(reviewerID);
+        }
+
+        // Return the result as a list.
+        return Arrays.asList(result.toArray(new Long[0]));
+    }
+
+    /**
+     * This private helper method clears rboard_application table for the specified project.
+     *
+     * @param conn DB connection to be used.
+     * @param project the project
+     * @throws BaseException if error occurs
+     */
+    private static void clearRBoardApplication(Connection conn, Project project) throws BaseException {
+		long projectId = project.getId();
+
+    	log.log(Level.INFO,"clearRBoardApplication projectId= " + projectId);
+
+        PreparedStatement deleteStmt = null;
+        try {
+            deleteStmt = conn.prepareStatement("DELETE FROM rboard_application WHERE project_id=?");
+
+			deleteStmt.setLong(1, projectId);
+            deleteStmt.executeUpdate();
+        } catch (SQLException e) {
+            throw new BaseException("Failed to clear rboard_application", e);
+        } finally {
+            close(deleteStmt);
+        }
+    }
+
+    /**
+     * This private helper method adds entries into the rboard_application table for the specified project.
+     *
+     * @param conn DB connection to be used.
+     * @param project the project
+     * @param reviewerIDs List of user ids to be added as reviewers.
+     * @param responseIDs List of response ids.
+     * @param primaries List of flags indicating the primary reviewer. The list can not have more than one 1, other values are all 0.
+     * @param createDates List of timestamps when reviewers were added to the OR.
+     * @throws BaseException if error occurs.
+     */
+    private static void addRBoardApplications(Connection conn, Project project,
+                                             List<Long> reviewerIDs, List<Long> responseIDs,
+                                             List<Long> primaries, List<java.sql.Timestamp> createDates) throws BaseException {
+		long projectId = project.getId();
+        long phaseId = 111 + project.getProjectCategory().getId();
+
+    	log.log(Level.INFO,"addRBoardApplication projectId= " + projectId);
+
+        PreparedStatement addStmt = null;
+        try {
+            addStmt = conn.prepareStatement("INSERT INTO rboard_application VALUES (?, ?, ?, ?, ?, ?, current)");
+
+            for (int i=0; i < reviewerIDs.size(); ++i) {
+                addStmt.setLong(1, reviewerIDs.get(i));
+                addStmt.setLong(2, projectId);
+                addStmt.setLong(3, phaseId);
+                addStmt.setLong(4, responseIDs.get(i));
+                addStmt.setLong(5, primaries.get(i));
+                addStmt.setTimestamp(6,createDates.get(i));
+                addStmt.executeUpdate();
+            }
+        } catch (SQLException e) {
+            throw new BaseException("Failed to populate rboard_application", e);
+        } finally {
+            close(addStmt);
+        }
+    }
+
+    /**
+     * This private helper method convert role ids (from the OR) to response ids (from the rboard_application table).
+     *
+     * @param conn DB connection to be used.
+     * @param roles List of role ids to be converted to response ids.
+     * @param phaseID phase id.
+     * @return responseIDs List of response ids.
+     * @throws BaseException if error occurs.
+     */
+    private static List<Long> getRespIdFromRoleId(Connection conn, List<Long> roles, long phaseID) throws BaseException {
+        List<Long> responseIDs = new ArrayList<Long>();
+
+        log.log(Level.INFO,"getRespIdFromRoleId phaseID= " + phaseID);
+
+        // For component development projects, response ids correspond to accuracy, stress and failure reviewer roles.
+        if (phaseID == 113) {
+            for (long roleID : roles) {
+                if (roleID == 5) { // Accuracy
+                    responseIDs.add(3L);
+                } else if (roleID == 6) { // Failure
+                    responseIDs.add(2L);
+                } else if (roleID == 7) { // Stress
+                    responseIDs.add(1L);
+                } else {
+                    // Otherwise add him as Accuracy.
+                    // Should not normally happen, but is possible if a Reviewer is added to a dev project.
+                    responseIDs.add(3L);
+                }
+            }
+        } else {
+            // For other projects, response ids all correspond to Reviewer role.
+            PreparedStatement ps = null;
+            ResultSet rs = null;
+            try {
+                ps = conn.prepareStatement("select review_resp_id from review_resp where phase_id = ?");
+
+                ps.setLong(1, phaseID);
+
+                rs = ps.executeQuery();
+                while (rs.next() && responseIDs.size() < roles.size()) {
+                    responseIDs.add(rs.getLong(1));
+                }
+            } catch (SQLException e) {
+                throw new BaseException("Failed to getRespIdFromRoleId", e);
+            } finally {
+                close(ps);
+                close(rs);
+            }
+
+            // If there are less response ids in the review_resp_id than we need, throw an exception.
+            // This can only mean that review_resp_id has wrong data as it needs to have at least three response ids. 
+            if (responseIDs.size() < roles.size()) {
+                throw new BaseException("Not enough response ids for reviewers. Needed "+roles.size()+", present "+responseIDs.size());
+            }
+        }
+
+        return responseIDs;
+    }
+
     /**
      * Recalculate Screening reviewers payment.
      *
@@ -3204,7 +3460,7 @@ public class ActionsHelper {
             close(ps);
             close(conn);
         }
-        
+
         return "9926572"; // If we can't find a catalog, assume it's an Application
     }
 
@@ -3554,7 +3810,7 @@ public class ActionsHelper {
     		}
     	}
     }
-    
+
     /**
      * Close a JDBC Statement.
      *
@@ -3569,7 +3825,7 @@ public class ActionsHelper {
     		}
     	}
     }
-    
+
     /**
      * Close a JDBC ResultSet.
      *
