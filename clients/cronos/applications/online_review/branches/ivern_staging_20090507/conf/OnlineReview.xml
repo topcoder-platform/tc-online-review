@@ -3258,7 +3258,7 @@
                     <Value>iconBlank.png</Value>
                 </Property>
             </Property>
-            <Property name="Prototype Competition">
+            <Property name="UI Prototype Competition">
                 <Property name="IconSmall">
                     <Value>iconUIPrototypeCompetitionSm.png</Value>
                 </Property>
@@ -3290,7 +3290,7 @@
                     <Value>concept.gif</Value>
                 </Property>
             </Property>         
-            <Property name="Build Competition">
+            <Property name="RIA Build Competition">
                 <Property name="IconSmall">
                     <Value>iconRIABuildCompetitionSm.png</Value>
                 </Property>
@@ -3298,7 +3298,7 @@
                     <Value>iconRIABuildCompetition.png</Value>
                 </Property>
             </Property>
-            <Property name="Component Competition">
+            <Property name="RIA Component Competition">
                 <Property name="IconSmall">
                     <Value>iconRIAComponentCompetitionSm.png</Value>
                 </Property>
