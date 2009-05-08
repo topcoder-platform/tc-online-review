@@ -53,6 +53,7 @@ import com.topcoder.management.review.scorecalculator.ScoreCalculator;
 import com.topcoder.management.review.scorecalculator.ScorecardMatrix;
 import com.topcoder.management.review.scorecalculator.builders.DefaultScorecardMatrixBuilder;
 import com.topcoder.management.scorecard.ScorecardManager;
+import com.topcoder.management.scorecard.PersistenceException;
 import com.topcoder.management.scorecard.data.Group;
 import com.topcoder.management.scorecard.data.Question;
 import com.topcoder.management.scorecard.data.Scorecard;
@@ -2182,6 +2183,92 @@ public class ProjectReviewActions extends DispatchAction {
     		log.log(Level.ERROR, buf);
     		throw new BaseException(e);
     	}
+    }
+
+    /**
+     * This method is an implementation of &quot;View Scorecard&quot; Struts Action.
+     *
+     * @return &quot;success&quot; forward, which forwards to the /jsp/viewScorecard.jsp page (as
+     *         defined in struts-config.xml file), or &quot;userError&quot; forward, which forwards
+     *         to the /jsp/userError.jsp page, which displays information about the error).
+     * @param mapping
+     *            action mapping.
+     * @param form
+     *            action form.
+     * @param request
+     *            the http request.
+     * @param response
+     *            the http response.
+     * @throws BaseException
+     *             if any error occurs.
+     */
+	public ActionForward viewScorecard(ActionMapping mapping, ActionForm form,
+            HttpServletRequest request, HttpServletResponse response)
+        throws BaseException {
+
+    	try {
+	    	// At this point, redirect-after-login attribute should be removed (if it exists)
+	        AuthorizationHelper.removeLoginRedirect(request);
+
+	        LoggingHelper.logAction(request);
+	
+	        // Gather the roles the user has for current request
+	        AuthorizationHelper.gatherUserRoles(request);
+
+	        // Validate parameters
+	        ActionsHelper.validateParameterNotNull(mapping, "mapping");
+	        ActionsHelper.validateParameterNotNull(request, "request");
+	
+	    	// Verify that Scorecard ID was specified and denotes correct scorecard
+	        String scidParam = request.getParameter("scid");
+	        if (scidParam == null || scidParam.trim().length() == 0) {
+	            return(ActionsHelper.produceErrorReport(
+	                    mapping, getResources(request), request, null, "Error.ScorecardIdNotSpecified", null));
+	        }
+	
+	    	long scid;
+	
+	        try {
+	            // Try to convert specified scid parameter to its integer representation
+	            scid = Long.parseLong(scidParam, 10);
+	        } catch (NumberFormatException e) {
+	            return(ActionsHelper.produceErrorReport(
+	                    mapping, getResources(request), request, null, "Error.ScorecardIdInvalid", null));
+	        }
+		
+	        // Obtain an instance of Scorecard Manager
+	        ScorecardManager scrMgr = ActionsHelper.createScorecardManager(request);
+	        Scorecard scorecardTemplate = null;
+	        try {
+	            // Get Scorecard by its id
+	            scorecardTemplate = scrMgr.getScorecard(scid);
+	        } catch (PersistenceException e) {
+	            // Eat the exception
+	        }
+	
+	    	// Verify that scorecard with specified ID exists
+	        if (scorecardTemplate == null) {
+	            return(ActionsHelper.produceErrorReport(
+	                    mapping, getResources(request), request, null, "Error.ScorecardNotFound", null));
+	        }
+
+            // Verify the scorecard is active	
+	        if (!scorecardTemplate.isInUse()) {
+	            return(ActionsHelper.produceErrorReport(
+	                    mapping, getResources(request), request, null, "Error.ScorecardNotActive", null));
+	        }
+	
+	        // Place Scorecard template in the request
+	        request.setAttribute("scorecardTemplate", scorecardTemplate);
+
+	        // Signal about successful execution of the Action
+	        return mapping.findForward(Constants.SUCCESS_FORWARD_NAME);
+		} catch (Throwable e) {
+			StringWriter buf = new StringWriter();
+			e.printStackTrace(new PrintWriter(buf));
+			log.log(Level.ERROR, buf);
+			throw new BaseException(e);
+		}
     }
 
     /**
