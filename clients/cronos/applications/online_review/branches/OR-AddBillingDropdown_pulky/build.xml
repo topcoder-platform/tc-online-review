@@ -651,6 +651,9 @@ don't need this anymore.  OR doesn't use it.
             <lib dir="${jar_tcs_libdir}/${scorecard_management.path}" includes="*.jar" />
             <lib dir="${jar_tcs_libdir}/${scorecard_management_persistence.path}" includes="*.jar" />
             <lib dir="${jar_tcs_libdir}/${search_builder.path}" includes="*.jar" />
+
+            <lib dir="${jar_ext_libdir}/j2ee/1.5" includes="*.jar" />
+
 <!--
 Note: The security manager that comes with the app may not be compatible with the server it's deployed on (security is already deployed, but different version),
       so this is not being packaged. If needed, however, uncomment this.
