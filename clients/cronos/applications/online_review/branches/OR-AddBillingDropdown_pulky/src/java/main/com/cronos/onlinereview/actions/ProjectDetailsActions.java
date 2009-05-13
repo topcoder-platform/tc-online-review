@@ -168,8 +168,6 @@ public class ProjectDetailsActions extends DispatchAction {
             forumId = Long.parseLong(tempStr, 10);
         }
 
-        List<ProjectData> projects = port.getAllProjects();
-
         try {
 	        ProjectServiceFacade psf = ProjectServiceLocator.getService();
 	        tempStr = (String) project.getProperty("Billing Project");
