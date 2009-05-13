@@ -137,6 +137,8 @@ public class ProjectDetailsActions extends DispatchAction {
             return verification.getForward();
         }
 
+        System.out.println("hola!!!"); 
+        
         // Retrieve a review to view
         Project project = verification.getProject();
         // Get Message Resources used for this request
