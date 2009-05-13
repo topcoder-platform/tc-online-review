@@ -1,0 +1,68 @@
+/* Phase Tabs ---------------------------------------- */
+
+#tabcontentcontainer
+{
+	width: 100%;
+	background-color: #FFF;
+	padding: 0px;
+	margin: 0px;
+	font-size: 11px;
+}
+
+
+#tablist
+{
+	font-size: 11px;
+	line-height: normal;
+	background-color: #FFF;
+	list-style: none;
+	width:100%;
+	padding: 0px;
+	margin: 0 0 0 0;
+	display: inline;
+}
+
+#tablist ul
+{
+	float: left;
+	margin: 0px;
+	padding: 0px;
+	list-style: none;
+}
+
+#tablist li
+{
+	float: left;
+	margin: 0px;
+	display: inline;
+	padding: 0 0 0 6px;
+	background-image: url(../../i/or/tab_left_off.gif);
+	background-repeat: no-repeat;
+	background-position: left top;
+}
+
+#tablist a
+{
+	display: block;
+	padding: 3px 8px 5px 8px;
+	text-decoration: none;
+	font-weight: bold;
+	color: #333;
+	background-image: url(../../i/or/tab_right_off.gif);
+	background-repeat: no-repeat;
+	background-position: right top;
+}
+
+#tablist a:hover { color: #000; }
+#tablist #current { background-image: url(../../i/or/tab_left_on.gif); }
+
+#tablist #current a
+{
+	background-image: url(../../i/or/tab_right_on.gif);
+	color: #000;
+	padding-bottom: 5px;
+}
+
+.tabcontent{
+display:none;
+}
