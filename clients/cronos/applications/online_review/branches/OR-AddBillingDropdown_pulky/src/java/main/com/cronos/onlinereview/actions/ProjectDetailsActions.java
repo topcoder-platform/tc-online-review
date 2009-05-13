@@ -172,8 +172,8 @@ public class ProjectDetailsActions extends DispatchAction {
 	        tempStr = (String) project.getProperty("Billing Project");
 	        if (tempStr != null && tempStr.trim().length() != 0) {
 	            Long billingProjectId = Long.parseLong(tempStr, 10);
-	            com.topcoder.clients.model.Project project = psf.retrieveClientProjectByProjectId(billingProjectId);
-	            request.setAttribute("billingProject", project.getName());
+	            com.topcoder.clients.model.Project billingProject = psf.retrieveClientProjectByProjectId(billingProjectId);
+	            request.setAttribute("billingProject", billingProject.getName());
 	        }
         } catch (Exception e) {
         	// todo: pulky : handle
