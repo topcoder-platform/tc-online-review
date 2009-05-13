@@ -5,7 +5,7 @@ import java.net.URL;
 import java.net.MalformedURLException;
 import javax.xml.ws.Service;
 import com.topcoder.service.facade.project.ProjectServiceFacade;
-import org.jboss.ws.core.StubExt;
+//import org.jboss.ws.core.StubExt;
 import javax.xml.ws.BindingProvider;
 
 public class ProjectServiceLocator {
@@ -18,7 +18,7 @@ public class ProjectServiceLocator {
 	    Service service = Service.create(wsdlLocation, serviceName);
 	    ProjectServiceFacade port = service.getPort(ProjectServiceFacade.class);
 	    
-	    ((StubExt) port).setConfigName("Standard WSSecurity Client");
+	    //((StubExt) port).setConfigName("Standard WSSecurity Client");
 	    ((BindingProvider) port).getRequestContext().put(BindingProvider.USERNAME_PROPERTY,
 	                                                     "user");
 	    ((BindingProvider) port).getRequestContext().put(BindingProvider.PASSWORD_PROPERTY, "password");
