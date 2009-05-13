@@ -74,7 +74,7 @@ import com.topcoder.util.file.fieldconfig.Field;
 import com.topcoder.util.file.fieldconfig.Node;
 import com.topcoder.util.file.fieldconfig.TemplateFields;
 import com.topcoder.service.facade.project.ProjectServiceFacade;
-import com.topcoder.service.project.ProjectData;
+import com.topcoder.clients.model.Project;
 
 /**
  * This class contains Struts Actions that are meant to deal with Project's details. There are
@@ -173,7 +173,7 @@ public class ProjectDetailsActions extends DispatchAction {
 	        tempStr = (String) project.getProperty("Billing Project");
 	        if (tempStr != null && tempStr.trim().length() != 0) {
 	            Long billingProjectId = Long.parseLong(tempStr, 10);
-	            ProjectData project = psf.getProject(billingProjectId);
+	            Project project = psf.retrieveClientProjectByProjectId(billingProjectId);
 	            request.setAttribute("billingProject", project.getName());
 	        }
         } catch (Exception e) {
