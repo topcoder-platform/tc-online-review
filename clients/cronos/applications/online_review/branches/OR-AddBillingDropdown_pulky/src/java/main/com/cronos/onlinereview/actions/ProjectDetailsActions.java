@@ -168,14 +168,29 @@ public class ProjectDetailsActions extends DispatchAction {
         }
 
         try {
+        	log.debug("Before getting service");
 	        ProjectServiceFacade psf = ProjectServiceLocator.getService();
 	        tempStr = (String) project.getProperty("Billing Project");
 	        if (tempStr != null && tempStr.trim().length() != 0) {
+	        	log.debug("not null project id");
 	            Long billingProjectId = Long.parseLong(tempStr, 10);
 	            com.topcoder.clients.model.Project billingProject = psf.retrieveClientProjectByProjectId(billingProjectId);
+	        	log.debug("project retrieved: " + billingProject.getName());
+
 	            request.setAttribute("billingProject", billingProject.getName());
 	        }
+	        
+            List<com.topcoder.clients.model.Project> billingProjects = psf.retrieveClientProjects(true);
+            
+            for (com.topcoder.clients.model.Project pp : billingProjects) {
+            	log.debug("ID: " + pp.getId() + "NAME: " +  pp.getName());            	
+            }
+            
+        	log.debug("End.");
+	        
         } catch (Exception e) {
+        	log.debug("Exception: " + e);
+
         	// todo: pulky : handle
         }
 
