@@ -357,6 +357,10 @@
     <property name="junit.jar" value="${ext_libdir}/testing/junit-3.8.1.jar" />
     <property name="nekohtml.jar" value="${ext_libdir}/testing/nekohtml-0.9.1.jar" />
     <property name="javaee.jar" value="${ext_libdir}/j2ee/1.5/javaee.jar" />
+
+    <property name="project_service_facade.jar" value="${tcs_libdir}/project_service_facade.jar" />
+    <property name="client_project_entities_dao.jar" value="${tcs_libdir}/client_project_entities_dao.jar" />
+
 <!--
     <property name="servlet-api.jar" value="${ext_libdir}/servlet-api.jar" />
     <property name="javax.servlet.jsp.jar" value="${ext_libdir}/javax.servlet.jsp.jar" />
@@ -427,6 +431,8 @@
         <pathelement location="${tcsUtil.jar}" />
         <pathelement location="${tcwebcommon.jar}" />
         <pathelement location="${javaee.jar}" />
+        <pathelement location="${project_service_facade.jar}" />
+        <pathelement location="${client_project_entities_dao.jar}" />
     </path>
 
     <path id="cactus.classpath">
