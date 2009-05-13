@@ -426,6 +426,7 @@
         <pathelement location="${pactsServices.jar}" />
         <pathelement location="${tcsUtil.jar}" />
         <pathelement location="${tcwebcommon.jar}" />
+        <pathelement location="${javaee.jar}" />
     </path>
 
     <path id="cactus.classpath">
@@ -439,7 +440,6 @@
         <pathelement location="${commons.collections.jar}"/>
         <pathelement location="${httpunit.jar}" />
         <pathelement location="${nekohtml.jar}" />
-        <pathelement location="${javaee.jar}" />
         <pathelement location="${strutstest.jar}" />
         <pathelement location="${cargo.jar}" />
 
