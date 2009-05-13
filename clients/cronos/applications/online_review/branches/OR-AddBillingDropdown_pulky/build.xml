@@ -356,6 +356,7 @@
     <property name="httpunit.jar" value="${ext_libdir}/testing/httpunit-1.6.jar" />
     <property name="junit.jar" value="${ext_libdir}/testing/junit-3.8.1.jar" />
     <property name="nekohtml.jar" value="${ext_libdir}/testing/nekohtml-0.9.1.jar" />
+    <property name="javaee.jar" value="${ext_libdir}/j2ee/1.5/javaee.jar" />
 <!--
     <property name="servlet-api.jar" value="${ext_libdir}/servlet-api.jar" />
     <property name="javax.servlet.jsp.jar" value="${ext_libdir}/javax.servlet.jsp.jar" />
@@ -438,6 +439,7 @@
         <pathelement location="${commons.collections.jar}"/>
         <pathelement location="${httpunit.jar}" />
         <pathelement location="${nekohtml.jar}" />
+        <pathelement location="${javaee.jar}" />
         <pathelement location="${strutstest.jar}" />
         <pathelement location="${cargo.jar}" />
 
