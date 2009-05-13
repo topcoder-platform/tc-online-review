@@ -8,10 +8,6 @@ import com.topcoder.service.facade.project.ProjectServiceFacade;
 public class ProjectServiceLocator {
 
 	static ProjectServiceFacade getService() {
-	    // Determine the requested operation
-	    String operation = request.getParameter("operation");
-	    calledOperation = "operation";
-	
 	    // Obtain a client stub for accessing the web service
 	    URL wsdlLocation = new URL("http://174.129.88.66:8005/projectfacade/ProjectServiceFacadeBean?wsdl");
 	    QName serviceName = new QName("http://ejb.project.facade.service.topcoder.com/",
