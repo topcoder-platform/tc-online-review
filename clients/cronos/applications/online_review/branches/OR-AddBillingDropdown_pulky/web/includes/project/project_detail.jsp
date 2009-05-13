@@ -58,6 +58,13 @@
 			</tr>
 			<c:set var="rowIndex" value="${rowIndex+1}" />
 		</c:forEach>
+        <c:if test="${isManager}">
+            <tr class='${(rowIndex % 2 == 0) ? "light" : "dark"}'>
+                <td class="value" width="15%" nowrap="nowrap"><b>Billing Project:</b></td>
+                <td class="value" width="100%">${billingProject}</td>
+            </tr>
+            <c:set var="rowIndex" value="${rowIndex+1}" />
+        </c:if>
 		<tr>
 			<td class="lastRowTD" colspan="2"><!-- @ --></td>
 		</tr>

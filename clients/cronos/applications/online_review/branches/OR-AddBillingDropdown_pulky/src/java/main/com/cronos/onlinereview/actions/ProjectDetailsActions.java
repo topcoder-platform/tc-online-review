@@ -73,6 +73,8 @@ import com.topcoder.util.file.Template;
 import com.topcoder.util.file.fieldconfig.Field;
 import com.topcoder.util.file.fieldconfig.Node;
 import com.topcoder.util.file.fieldconfig.TemplateFields;
+import com.topcoder.service.facade.project.ProjectServiceFacade;
+import com.topcoder.service.project.ProjectData;
 
 /**
  * This class contains Struts Actions that are meant to deal with Project's details. There are
@@ -166,6 +168,21 @@ public class ProjectDetailsActions extends DispatchAction {
             forumId = Long.parseLong(tempStr, 10);
         }
 
+        List<ProjectData> projects = port.getAllProjects();
+
+        try {
+	        ProjectServiceFacade psf = ProjectServiceLocator.getService();
+	        tempStr = (String) project.getProperty("Billing Project");
+	        if (tempStr != null && tempStr.trim().length() != 0) {
+	            Long billingProjectId = Long.parseLong(tempStr, 10);
+	            ProjectData project = psf.getProject(billingProjectId);
+	            request.setAttribute("billingProject", project.getName());
+	        }
+        } catch (Exception e) {
+        	// todo: pulky : handle
+        }
+
+        
         request.setAttribute("descriptionLink",
                 ConfigHelper.getProjectTypeDescriptionLink(projectTypeName, componentId, versionId));
         request.setAttribute("forumLink", ConfigHelper.getProjectTypeForumLink(projectTypeName, forumId));
