@@ -1,0 +1,24 @@
+11/27/2006
+- Rating, reliability and DR release for TCS
+- Deploy correct phase management Jar
+11/18/2006
+- Download final fixes
+- View Aggregations
+- Fix Screening scorecard view
+- Autopilot fix
+- 24/7 fix for auto pilot
+11/7/2006
+- Ability to have multiple Final Fix phases
+- Error page deployment so we do not show the stack trace
+- Fix for multiple deliverables being displayed.
+- ID Generator deployed as non transactional datasource 
+- Fix for escaping code in review, appeals, contact PM and comments
+- Fix for autopilot not to move projects if reviews are not completed by 3 reviewers.
+- Appeals can be marked as accepted/rejected
+- Component Downloads are available now.
+11/6/2006
+- Email template fixed for Contact PM.
+11/3/2006
+- Allows participants to view Screening scorecard during review
+- System was displaying scheduled end times instead of actuals.  Now the system displays actual times.
+- Contact PM button will now send emails.  
