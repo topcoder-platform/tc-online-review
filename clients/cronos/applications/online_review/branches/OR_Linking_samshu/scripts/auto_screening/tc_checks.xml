@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+	This configuration file was written by the eclipse-cs plugin configuration editor
+-->
+<!--
+Checkstyle-Configuration: main
+Description:
+
+-->
+<!DOCTYPE module PUBLIC "-//Puppy Crawl//DTD Check Configuration 1.2//EN" "http://www.puppycrawl.com/dtds/configuration_1_2.dtd">
+<module name="Checker">
+    <property name="severity" value="warning"/>
+    <module name="TreeWalker">
+        <property name="severity" value="error"/>
+        <module name="JavadocType">
+            <property name="severity" value="warning"/>
+            <property name="scope" value="public"/>
+            <property name="authorFormat" value="^[a-zA-Z0-9]+, TCSDEVELOPER$"/>
+            <property name="versionFormat" value="\d+\.\d+"/>
+        </module>
+        <module name="JavadocVariable">
+            <property name="severity" value="warning"/>
+        </module>
+        <module name="JavadocMethod">
+            <property name="severity" value="warning"/>
+            <property name="allowUndeclaredRTE" value="true"/>
+            <property name="allowThrowsTagsForSubclasses" value="true"/>
+        </module>
+        <module name="JavadocStyle">
+            <property name="severity" value="warning"/>
+        </module>
+        <module name="ConstantName">
+            <property name="severity" value="warning"/>
+        </module>
+        <module name="LocalFinalVariableName">
+            <property name="severity" value="warning"/>
+        </module>
+        <module name="LocalVariableName">
+            <property name="severity" value="warning"/>
+        </module>
+        <module name="MemberName">
+            <property name="severity" value="warning"/>
+        </module>
+        <module name="LocalFinalVariableName">
+            <property name="severity" value="warning"/>
+        </module>
+        <module name="ParameterName">
+            <property name="severity" value="warning"/>
+        </module>
+        <module name="StaticVariableName">
+            <property name="severity" value="warning"/>
+        </module>
+        <module name="TypeName">
+            <property name="severity" value="warning"/>
+        </module>
+        <module name="RegexpHeader">
+            <property name="severity" value="warning"/>
+            <property name="headerFile" value="topcoder.header"/>
+        </module>
+        <module name="AvoidStarImport">
+            <property name="severity" value="warning"/>
+        </module>
+        <module name="IllegalImport">
+            <property name="severity" value="warning"/>
+        </module>
+        <module name="RedundantImport">
+            <property name="severity" value="warning"/>
+        </module>
+        <module name="UnusedImports">
+            <property name="severity" value="warning"/>
+        </module>
+        <module name="FileLength">
+            <property name="severity" value="info"/>
+        </module>
+        <module name="LineLength">
+            <property name="severity" value="warning"/>
+            <property name="max" value="120"/>
+        </module>
+        <module name="ExecutableStatementCount">
+            <property name="severity" value="info"/>
+        </module>
+        <module name="MethodLength">
+            <property name="severity" value="info"/>
+        </module>
+        <module name="AnonInnerLength">
+            <property name="severity" value="info"/>
+        </module>
+        <module name="ParameterNumber">
+            <property name="severity" value="info"/>
+        </module>
+        <module name="EmptyForIteratorPad">
+            <property name="severity" value="warning"/>
+        </module>
+        <module name="MethodParamPad">
+            <property name="severity" value="warning"/>
+        </module>
+        <module name="NoWhitespaceAfter">
+            <property name="severity" value="warning"/>
+            <property name="tokens" value="BNOT,DEC,DOT,INC,LNOT,UNARY_MINUS,UNARY_PLUS"/>
+        </module>
+        <module name="NoWhitespaceBefore">
+            <property name="severity" value="warning"/>
+        </module>
+        <module name="OperatorWrap">
+            <property name="severity" value="warning"/>
+        </module>
+        <module name="ParenPad">
+            <property name="severity" value="warning"/>
+        </module>
+        <module name="TabCharacter">
+            <property name="severity" value="warning"/>
+        </module>
+        <module name="WhitespaceAfter">
+            <property name="severity" value="warning"/>
+        </module>
+        <module name="WhitespaceAround">
+            <property name="severity" value="warning"/>
+        </module>
+        <module name="ModifierOrder">
+            <property name="severity" value="warning"/>
+        </module>
+        <module name="EmptyBlock">
+            <property name="severity" value="warning"/>
+            <property name="option" value="text"/>
+        </module>
+        <module name="LeftCurly">
+            <property name="severity" value="warning"/>
+        </module>
+        <module name="NeedBraces">
+            <property name="severity" value="warning"/>
+        </module>
+        <module name="RightCurly">
+            <property name="severity" value="warning"/>
+        </module>
+        <module name="EmptyStatement">
+            <property name="severity" value="warning"/>
+        </module>
+        <module name="CovariantEquals">
+            <property name="severity" value="info"/>
+        </module>
+        <module name="DoubleCheckedLocking">
+            <property name="severity" value="info"/>
+        </module>
+        <module name="IllegalInstantiation">
+            <property name="severity" value="info"/>
+        </module>
+        <module name="EqualsHashCode">
+            <property name="severity" value="info"/>
+        </module>
+        <module name="HiddenField">
+            <property name="severity" value="warning"/>
+            <property name="tokens" value="VARIABLE_DEF"/>
+        </module>
+        <module name="InnerAssignment">
+            <property name="severity" value="warning"/>
+        </module>
+        <module name="MagicNumber">
+            <property name="severity" value="warning"/>
+        </module>
+        <module name="MissingSwitchDefault">
+            <property name="severity" value="warning"/>
+        </module>
+        <module name="RedundantThrows">
+            <property name="severity" value="warning"/>
+        </module>
+        <module name="SimplifyBooleanExpression">
+            <property name="severity" value="warning"/>
+        </module>
+        <module name="SimplifyBooleanReturn">
+            <property name="severity" value="warning"/>
+        </module>
+        <module name="StringLiteralEquality">
+            <property name="severity" value="warning"/>
+        </module>
+        <module name="IllegalCatch">
+            <property name="severity" value="info"/>
+        </module>
+        <module name="DeclarationOrder">
+            <property name="severity" value="warning"/>
+        </module>
+        <module name="VisibilityModifier">
+            <property name="severity" value="warning"/>
+        </module>
+        <module name="InterfaceIsType">
+            <property name="severity" value="warning"/>
+        </module>
+        <module name="HideUtilityClassConstructor">
+            <property name="severity" value="warning"/>
+        </module>
+        <module name="Indentation">
+            <property name="severity" value="warning"/>
+            <property name="caseIndent" value="0"/>
+        </module>
+        <module name="GenericIllegalRegexp">
+            <property name="severity" value="warning"/>
+            <property name="format" value="\s+$"/>
+            <property name="message" value="Line has trailing spaces."/>
+        </module>
+        <module name="TypecastParenPad">
+            <property name="severity" value="warning"/>
+            <property name="tokens" value="RPAREN,TYPECAST"/>
+        </module>
+    </module>
+</module>
