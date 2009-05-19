@@ -3390,7 +3390,7 @@ public class ActionsHelper {
             }
 
             // If there are less response ids in the review_resp_id than we need, throw an exception.
-            // This can only mean that review_resp_id has wrong data as it needs to have at least three response ids. 
+            // This can only mean that review_resp_id has wrong data as it needs to have at least three response ids.
             if (responseIDs.size() < roles.size()) {
                 throw new BaseException("Not enough response ids for reviewers. Needed "+roles.size()+", present "+responseIDs.size());
             }

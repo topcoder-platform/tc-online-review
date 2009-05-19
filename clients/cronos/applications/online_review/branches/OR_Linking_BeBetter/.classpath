@@ -2,9 +2,6 @@
 <classpath>
 	<classpathentry kind="src" path="src/java/main"/>
 	<classpathentry kind="src" path="src/java/tests"/>
-	<classpathentry kind="con" path="org.eclipse.jst.server.core.container/org.eclipse.jst.server.tomcat.runtimeTarget/Apache Tomcat v5.5"/>
-	<classpathentry kind="con" path="org.eclipse.jst.server.core.container/org.eclipse.jst.server.generic.runtimeTarget/JBoss v4.0"/>
-	<classpathentry kind="con" path="org.eclipse.jst.j2ee.internal.web.container"/>
 	<classpathentry exported="true" kind="lib" path="lib/tcs/authentication_factory/2.0/authentication_factory.jar" sourcepath="/authentication_factory/src/java/main">
 		<attributes>
 			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
@@ -275,7 +272,7 @@
 			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry exported="true" kind="lib" path="lib/third_party/struts-1.2.9.jar">
+	<classpathentry exported="true" kind="lib" path="lib/third_party/struts-1.2.9.jar" sourcepath="C:/Java/apache/struts/struts-1.2.9-src/src">
 		<attributes>
 			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
 		</attributes>
@@ -378,9 +375,12 @@
 	<classpathentry kind="lib" path="lib/third_party/saaj.jar"/>
 	<classpathentry kind="lib" path="lib/third_party/wsdl4j-1.5.1.jar"/>
 	<classpathentry kind="lib" path="lib/tcs/online_review_phases/1.0.5/online_review_phases.jar" sourcepath="/online_review_phases/src/java/main"/>
-	<classpathentry kind="lib" path="lib/tcs/project_management/1.0.1/project_management.jar" sourcepath="/project_management/src/java/main"/>
-	<classpathentry kind="lib" path="lib/tcs/project_management_persistence/1.1.1/project_management_persistence.jar"/>
+	<classpathentry kind="lib" path="lib/tcs/project_management/1.0.1/project_management.jar" sourcepath="C:/TopCoder/components/project_management-1.0/src/java/main"/>
+	<classpathentry kind="lib" path="lib/tcs/project_management_persistence/1.1.1/project_management_persistence.jar" sourcepath="C:/TopCoder/Assembly/TopcoderSite/OR_Linked_Projects/components/project_management_persistence/src/java/main"/>
 	<classpathentry kind="lib" path="lib/tcs/pacts_services/PactsClientServices.jar"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/jdk1.5.0_18"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="C:/Java/tomcat/5.5.26/common/lib/servlet-api.jar"/>
+	<classpathentry kind="lib" path="C:/Java/tomcat/5.5.26/common/lib/jsp-api.jar"/>
+	<classpathentry kind="lib" path="C:/Java/jboss/jboss-4.2.3.GA/server/default/lib/jboss-jaxrpc.jar"/>
 	<classpathentry kind="output" path="build/classes"/>
 </classpath>
