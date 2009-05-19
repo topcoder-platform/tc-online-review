@@ -89,6 +89,7 @@
                     <jsp:include page="/includes/project/project_phase.jsp" />
                     <jsp:include page="/includes/project/project_detail.jsp" />
                     <jsp:include page="/includes/project/project_resource.jsp" />
+                    <jsp:include page="/includes/project/project_link.jsp" />
                     <div align="right">
                         <c:if test="${isAllowedToPay}">
                             <a href="http://www.topcoder.com/PactsInternalServlet?module=ViewGenerateComponentPayments&project_id=${project.id}&projts=${project.projectStatus.id}"><html:img srcKey="viewProjectDetails.btnPay.img" border="0" altKey="viewProjectDetails.btnPay.alt" /></a>&#160;
