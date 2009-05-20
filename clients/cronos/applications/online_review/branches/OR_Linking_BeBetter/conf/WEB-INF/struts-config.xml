@@ -18,9 +18,9 @@
         <form-bean name="projectForm" dynamic="true"
             type="org.apache.struts.validator.LazyValidatorForm">
             <form-property name="js_current_id" type="java.lang.Long" />
-    
+
             <form-property name="action" type="java.lang.String" />
-            <form-property name="action_phase" type="java.lang.String" />           
+            <form-property name="action_phase" type="java.lang.String" />
 
             <form-property name="pid" type="java.lang.Long" />
             <form-property name="project_name" type="java.lang.String" />
@@ -46,7 +46,7 @@
             <form-property name="explanation" type="java.lang.String" />
             <form-property name="status" type="java.lang.Long" />
             <form-property name="status_explanation" type="java.lang.String" />
-            
+
             <form-property name="resources_role" type="java.lang.Long[]" />
             <form-property name="resources_phase" type="java.lang.String[]" />
             <form-property name="resources_name" type="java.lang.String[]" />
@@ -248,6 +248,16 @@
             <forward name="all" path="/actions/ListProjects.do?method=listProjects&amp;scope=all" redirect="true" />
         </action>
 
+    <!--
+        =====  Project Links Actions  =====
+    -->
+        <!-- "Edit Project Links" action -->
+        <action path="/actions/EditProjectLinks" unknown="false"
+            type="com.cronos.onlinereview.actions.ProjectLinksActions"
+            parameter="method" scope="request"
+            input="/jsp/viewProjectDetails.jsp">            
+            <forward name="success" path="/jsp/editProjectLinks.jsp" redirect="false" />
+        </action>
 
     <!--
         =====  Project Details Actions  =====
