@@ -117,7 +117,7 @@
 			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry exported="true" kind="lib" path="lib/tcs/project_phases/2.0/project_phases.jar">
+	<classpathentry exported="true" kind="lib" path="lib/tcs/project_phases/2.0/project_phases.jar" sourcepath="C:/TopCoder/components/project_phases-2.0/src/java">
 		<attributes>
 			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
 		</attributes>

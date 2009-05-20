@@ -31,7 +31,7 @@
     <script language="JavaScript" type="text/javascript" src="<html:rewrite href='/js/or/dojo.js' />"><!-- @ --></script>
     <script language="JavaScript" type="text/javascript" src="<html:rewrite href='/js/or/util.js' />"><!-- @ --></script>
     <script language="JavaScript" type="text/javascript" src="<html:rewrite href='/js/or/validation_util2.js' />"><!-- @ --></script>
-    <script language="JavaScript" type="text/javascript" src="<html:rewrite href='/js/or/validation_edit_project3.js' />"><!-- @ --></script>
+    <script language="JavaScript" type="text/javascript" src="<html:rewrite href='/js/or/validation_edit_project_links.js' />"><!-- @ --></script>
     <script language="JavaScript" type="text/javascript" src="<html:rewrite href='/js/or/parseDate.js' />"><!-- @ --></script>
     <script language="JavaScript" type="text/javascript">
     </script>
@@ -46,93 +46,104 @@
         <div id="mainMiddleContent">
            <div class="clearfix"/>
            <div id="tabcontentcontainer"> 	
-           	
+           	 <html:form action="/actions/SaveProjectLinks" onsubmit="return validate_form(this, true);">
+           	  <html:hidden property="method" value="saveProjectLinks" />
+           	  <html:hidden property="pid" />
+           	  		
+              <c:if test="${orfn:isErrorsPresent(pageContext.request)}">
+                  <table cellpadding="0" cellspacing="0" border="0">
+                      <tr><td width="16"><!-- @ --></td><td><!-- @ --></td></tr>
+                      <tr>
+                          <td colspan="2"><span style="color:red;"><bean:message key="Error.saveReview.ValidationFailed" /></span></td>
+                      </tr>
+                      <html:errors property="org.apache.struts.action.GLOBAL_MESSAGE" />
+                  </table><br />
+              </c:if>
+           	  		
               <div id="contentTitle">
               		<h3>Project Name version 1.0 - Manage Project Links</h3>
               </div>           	
-
       
-			<div id="tabExistLinks">
-				<table cellpadding="0" id="existLinks" class="tabLinks">
-					<tbody>
-					<tr>
-						<td colspan="4" class="title">Edit Project Links</td>
-					</tr>
-					<tr>
-						<td class="header">Linked Project Name</td>
-						<td class="header">Link Type</td>
-						<td class="header">Operation</td>
-					</tr>
-					<tr class="light">
-						<td nowrap="nowrap" class="value">Test Component name 2</td>
-						<td nowrap="nowrap" class="value">
-							<select class="inputBox" name="linkType">
-									<option value="-1">Select Link Type</option>
-									<option value="1">Conceptualization Spec Review</option>
-									<option selected="selected" value="2">Conceptualization Round 2</option>
-									<option value="3">Module Architecture</option>
-									<option value="4">Spawned Component</option>
-							</select>
-						</td>
-						<td nowrap="nowrap" class="value">
-							<img onclick="deleteLink()" alt="delete" style="" src="./online_review_admin_files/bttn_delete.gif"/>
-						</td>
-					</tr>
-					<tr>
-						<td colspan="5" class="lastRowTD"><!-- @ --></td>
-					</tr>
-					</tbody>
-				</table>
-			</div>
+			        <div id="tabExistLinks">
+			        	<table cellpadding="0" id="existLinks" class="tabLinks">
+			        		<tbody>
+			        		<tr>
+			        			<td colspan="4" class="title">Edit Project Links</td>
+			        		</tr>
+			        		<tr>
+			        			<td class="header">Linked Project Name</td>
+			        			<td class="header">Link Type</td>
+			        			<td class="header">Operation</td>
+			        		</tr>
+			        		<tr class="light">
+			        			<td nowrap="nowrap" class="value">Test Component name 2</td>
+			        			<td nowrap="nowrap" class="value">
+			        				<select class="inputBox" name="linkType">
+			        						<option value="-1">Select Link Type</option>
+			        						<option value="1">Conceptualization Spec Review</option>
+			        						<option selected="selected" value="2">Conceptualization Round 2</option>
+			        						<option value="3">Module Architecture</option>
+			        						<option value="4">Spawned Component</option>
+			        				</select>
+			        			</td>
+			        			<td nowrap="nowrap" class="value">
+			        				<img onclick="deleteLink()" alt="delete" style="" src="./online_review_admin_files/bttn_delete.gif"/>
+			        			</td>
+			        		</tr>
+			        		<tr>
+			        			<td colspan="5" class="lastRowTD"><!-- @ --></td>
+			        		</tr>
+			        		</tbody>
+			        	</table>
+			        </div>
+              
+			        <div id="tabNewLinks">
+			        	<table cellpadding="0" id="newLinks" class="tabLinks">
+			        		<tbody>
+			        		<tr class="dark">
+			        			<td colspan="6" class="title">Add Project Links</td>
+			        		</tr>
+			        		<tr class="light">
+			        			<td class="header">Project ID</td>
+			        			<td class="header">Select A Project </td>
+			        			<td class="header">Link Type</td>
+			        			<td class="header">Operation</td>
+			        		</tr>
+			        		<tr class="dark">
+			        			<td nowrap="nowrap" class="value"><input type="text" class="input"/></td>						
+			        			<td nowrap="nowrap" class="value">
+			        				<select onchange="changeProject(this)" class="inputBox" name="srcProject">
+			        					<option value="-1">Select Source Project</option>
+			        					<option value="1">Project Name 1</option>
+			        					<option value="2">Project Name 2</option>
+			        					<option value="3">Project Name 3</option>
+			        					<option value="4">Project Name 4</option>
+			        				</select>					</td>
+			        			<td nowrap="nowrap" class="value">
+			        				<select class="inputBox" name="linkType">
+			        				</select><select class="inputBox" name="linkType">
+			        						<option selected="selected" value="-1">Select Link Type</option>
+			        						<option value="1">Conceptualization Spec Review</option>
+			        						<option value="2">Conceptualization Round 2</option>
+			        						<option value="3">Module Architecture</option>
+			        						<option value="4">Spawned Component</option>
+			        				</select></td>
+			        			<td nowrap="nowrap" class="value">
+			        			<img onclick="addLink()" alt="update" style="" src="./online_review_admin_files/bttn_add.gif"/>  <img onclick="deleteLink(this)" alt="delete" style="" src="./online_review_admin_files/bttn_delete.gif"/>					
+			        			</td>
+			        		</tr>
+			        		<tr>
+			        			<td colspan="4" class="lastRowTD"><!-- @ --></td>
+			        		</tr>
+			        		</tbody>
+			        	</table>
+			        </div>
 
-			<div id="tabNewLinks">
-				<table cellpadding="0" id="newLinks" class="tabLinks">
-					<tbody>
-					<tr class="dark">
-						<td colspan="6" class="title">Add Project Links</td>
-					</tr>
-					<tr class="light">
-						<td class="header">Project ID</td>
-						<td class="header">Select A Project </td>
-						<td class="header">Link Type</td>
-						<td class="header">Operation</td>
-					</tr>
-					<tr class="dark">
-						<td nowrap="nowrap" class="value"><input type="text" class="input"/></td>						
-						<td nowrap="nowrap" class="value">
-							<select onchange="changeProject(this)" class="inputBox" name="srcProject">
-								<option value="-1">Select Source Project</option>
-								<option value="1">Project Name 1</option>
-								<option value="2">Project Name 2</option>
-								<option value="3">Project Name 3</option>
-								<option value="4">Project Name 4</option>
-							</select>					</td>
-						<td nowrap="nowrap" class="value">
-							<select class="inputBox" name="linkType">
-							</select><select class="inputBox" name="linkType">
-									<option selected="selected" value="-1">Select Link Type</option>
-									<option value="1">Conceptualization Spec Review</option>
-									<option value="2">Conceptualization Round 2</option>
-									<option value="3">Module Architecture</option>
-									<option value="4">Spawned Component</option>
-							</select></td>
-						<td nowrap="nowrap" class="value">
-						<img onclick="addLink()" alt="update" style="" src="./online_review_admin_files/bttn_add.gif"/>  <img onclick="deleteLink(this)" alt="delete" style="" src="./online_review_admin_files/bttn_delete.gif"/>					
-						</td>
-					</tr>
-					<tr>
-						<td colspan="4" class="lastRowTD"><!-- @ --></td>
-					</tr>
-					</tbody>
-				</table>
-			</div>
-
-       <div class="bottomButtonBar">
-				<input border="0" type="image" alt="Save Changes" src="./online_review_admin_files/bttn_save_changes.gif" name=""/> 
-				<a href="online_review_project_detail.htm"><img border="0" alt="Cancel" src="./online_review_admin_files/bttn_cancel.gif"/></a>
-                            
-            </div>
-			         
+             <div class="bottomButtonBar">
+                  <html:image srcKey="btnSaveChanges.img" altKey="btnSaveChanges.alt" border="0"/>&#160;
+                  <html:link page="/actions/ViewProjectDetails.do?method=viewProjectDetails&pid=${project.id}"><html:img srcKey="btnCancel.img" altKey="btnCancel.alt" border="0"/></html:link>                            
+             </div>
+			     </html:form>    
            </div> <!-- //tabconentcontainer -->
         </div><!-- //mainMiddleContent -->
             
