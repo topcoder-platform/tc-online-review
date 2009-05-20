@@ -453,6 +453,7 @@ function validate_form(thisForm, popup) {
     // the list of validation error messages
     var msgList = new Array();
 
+
     // try to show an alert window
     if (popup && msgList.length != 0)
         alert("There have been validation errors:\n\n* " + msgList.join(';\n* ') + ".");

@@ -87,7 +87,7 @@
 			        				</select>
 			        			</td>
 			        			<td nowrap="nowrap" class="value">
-			        				<img onclick="deleteLink()" alt="delete" style="" src="./online_review_admin_files/bttn_delete.gif"/>
+			        				  <html:img srcKey="editProjectLinks.btnDelete.img" border="0" altKey="editProjectLinks.btnDelete.alt" />
 			        			</td>
 			        		</tr>
 			        		<tr>
@@ -110,7 +110,6 @@
 			        			<td class="header">Operation</td>
 			        		</tr>
 			        		<tr class="dark">
-			        			<td nowrap="nowrap" class="value"><input type="text" class="input"/></td>						
 			        			<td nowrap="nowrap" class="value">
 			        				<select onchange="changeProject(this)" class="inputBox" name="srcProject">
 			        					<option value="-1">Select Source Project</option>
@@ -129,7 +128,8 @@
 			        						<option value="4">Spawned Component</option>
 			        				</select></td>
 			        			<td nowrap="nowrap" class="value">
-			        			<img onclick="addLink()" alt="update" style="" src="./online_review_admin_files/bttn_add.gif"/>  <img onclick="deleteLink(this)" alt="delete" style="" src="./online_review_admin_files/bttn_delete.gif"/>					
+			        				  <html:img srcKey="editProjectLinks.btnAdd.img" border="0" altKey="editProjectLinks.btnAdd.alt" />&#160;
+			        				  <html:img srcKey="editProjectLinks.btnDelete.img" border="0" altKey="editProjectLinks.btnDelete.alt" />
 			        			</td>
 			        		</tr>
 			        		<tr>
@@ -137,6 +137,7 @@
 			        		</tr>
 			        		</tbody>
 			        	</table>
+			        	<br/>
 			        </div>
 
              <div class="bottomButtonBar">
