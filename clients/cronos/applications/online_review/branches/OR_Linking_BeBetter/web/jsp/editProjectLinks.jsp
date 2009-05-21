@@ -34,6 +34,36 @@
     <script language="JavaScript" type="text/javascript" src="<html:rewrite href='/js/or/validation_edit_project_links.js' />"><!-- @ --></script>
     <script language="JavaScript" type="text/javascript" src="<html:rewrite href='/js/or/parseDate.js' />"><!-- @ --></script>
     <script language="JavaScript" type="text/javascript">
+    	var lastLinkIndex = ${fn:length(projectForm.map['new_link_dest_id']) - 1};
+    	
+    	function newProjectLink() {
+    		//Get add link table node
+    		var newLinksTable = document.getElementById("newLinks");
+        // Get the number of rows in table
+        var rowCount = newLinksTable.rows.length;
+        // Create a new row into resources table
+        var newRow = cloneInputRow(newLinksTable.rows[2]);
+    		
+        // Rows should vary colors
+        var rows = newLinksTable.rows;
+        var strLastRowStyle = "dark"; // This variable will remember the style of the last row
+        // Find first non-hidden row, starting from the bottom of the table
+        for (var i = rows.length - 2; i >= 0; --i) {
+            if (rows[i].style["display"] == "none") continue;
+            strLastRowStyle = rows[i].className;
+            break;
+        }
+        newRow.className = (strLastRowStyle == "dark") ? "light" : "dark";
+    		
+    		
+        // Increase resource index
+        lastLinkIndex++;
+        // Rename all the inputs to have a new index
+        patchAllChildParamIndexes(newRow, lastLinkIndex);
+        // Insert new row into links table
+        newLinksTable.tBodies[0].insertBefore(newRow, newLinksTable.rows[rowCount - 1]);    		
+    	}
+    	
     </script>
 
 <body>
@@ -61,7 +91,7 @@
               </c:if>
            	  		
               <div id="contentTitle">
-              		<h3>Project Name version 1.0 - Manage Project Links</h3>
+              		<h3>Project Name version 1.0 - Manage Project Links</h3> 
               </div>           	
       
 			        <div id="tabExistLinks">
@@ -94,7 +124,7 @@
 			        			<td colspan="5" class="lastRowTD"><!-- @ --></td>
 			        		</tr>
 			        		</tbody>
-			        	</table>
+			        	</table>   
 			        </div>
               
 			        <div id="tabNewLinks">
@@ -109,29 +139,42 @@
 			        			<td class="header">Link Type</td>
 			        			<td class="header">Operation</td>
 			        		</tr>
+			        		<c:forEach var="linkIdx" varStatus="linkStatus" begin="0" end="${fn:length(projectLinkForm.map['new_link_dest_id']) - 1}">
 			        		<tr class="dark">
 			        			<td nowrap="nowrap" class="value">
-			        				<select onchange="changeProject(this)" class="inputBox" name="srcProject">
-			        					<option value="-1">Select Source Project</option>
-			        					<option value="1">Project Name 1</option>
-			        					<option value="2">Project Name 2</option>
-			        					<option value="3">Project Name 3</option>
-			        					<option value="4">Project Name 4</option>
-			        				</select>					</td>
+			        				<html:text property="new_link_dest_id_text[${linkIdx}]" />
+				              <div name="project_link_validation_msg" class="error" style="display:none"></div>			        					
+			        			</td>				
 			        			<td nowrap="nowrap" class="value">
-			        				<select class="inputBox" name="linkType">
-			        				</select><select class="inputBox" name="linkType">
-			        						<option selected="selected" value="-1">Select Link Type</option>
-			        						<option value="1">Conceptualization Spec Review</option>
-			        						<option value="2">Conceptualization Round 2</option>
-			        						<option value="3">Module Architecture</option>
-			        						<option value="4">Spawned Component</option>
-			        				</select></td>
+				               <html:select styleClass="inputBox" property="new_link_dest_id[${linkIdx}]" style="width:120px;">
+				               	  <html:option key="editProjectLinks.projectTypes.SelectProject" value="-1" />
+                          <c:forEach items="${activeProjects}" var="activeProject">				               	                          	   
+                          	   <html:option value="${activeProject.id}">${activeProject.name}</html:option>
+                          </c:forEach>
+				               </html:select>
+				               <div name="project_link_validation_msg" class="error" style="display:none"></div>			        					
+			        			</td>
 			        			<td nowrap="nowrap" class="value">
-			        				  <html:img srcKey="editProjectLinks.btnAdd.img" border="0" altKey="editProjectLinks.btnAdd.alt" />&#160;
-			        				  <html:img srcKey="editProjectLinks.btnDelete.img" border="0" altKey="editProjectLinks.btnDelete.alt" />
+				               <html:select styleClass="inputBox" property="new_link_type_id[${linkIdx}]" style="width:120px;">
+				               	  <html:option key="editProjectLinks.projectTypes.SelectType" value="-1" />
+                          <c:forEach items="${projectLinkTypes}" var="projectLinkType">				               	                          	   
+                          	   <html:option value="${projectLinkType.id}">${projectLinkType.name}</html:option>
+                          </c:forEach>
+				               </html:select>
+                       <div name="project_link_validation_msg" class="error" style="display:none"></div>			        									               
+			        			</td>
+			        			<td nowrap="nowrap" class="value">
+			        				<c:if test="${linkIdx eq 0}">
+			        				  <html:img srcKey="editProjectLinks.btnAdd.img" border="0" 
+			        				  	        onclick="javascript:newProjectLink();"
+			        				  	     altKey="editProjectLinks.btnAdd.alt"  style="cursor:hand;" />&#160;
+			        				</c:if> 	
+			        				  <html:img srcKey="editProjectLinks.btnDelete.img" 
+			        				  	    style="cursor:hand;${(linkIdx eq 0) ? 'display: none;' : ''}" border="0" 
+			        				  	    altKey="editProjectLinks.btnDelete.alt" />
 			        			</td>
 			        		</tr>
+			        	  </forEach>
 			        		<tr>
 			        			<td colspan="4" class="lastRowTD"><!-- @ --></td>
 			        		</tr>

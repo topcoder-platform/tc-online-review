@@ -142,9 +142,17 @@
             type="org.apache.struts.validator.LazyValidatorForm">
             <form-property name="pid" type="java.lang.Long" />
             
+            <!-- existing links -->
             <form-property name="link_dest_id" type="java.lang.Long[]" />
             <form-property name="link_type_id" type="java.lang.Long[]" />
             <form-property name="link_action" type="java.lang.Long[]" />
+            
+            <!-- new links -->
+            <form-property name="new_link_dest_id_text" type="java.lang.String[]" />
+            <!-- it should be idential to new_link_dest_id_text in values -->
+            <form-property name="new_link_dest_id" type="java.lang.Long[]" />
+            <form-property name="new_link_type_id" type="java.lang.Long[]" />
+            <form-property name="new_link_action" type="java.lang.Long[]" />
         </form-bean>
     </form-beans>
 

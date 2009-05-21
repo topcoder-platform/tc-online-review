@@ -107,7 +107,7 @@
 			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry exported="true" kind="lib" path="lib/tcs/phase_management/1.0.3/phase_management.jar" sourcepath="/phase_management/src/java/main">
+	<classpathentry exported="true" kind="lib" path="lib/tcs/phase_management/1.0.3/phase_management.jar" sourcepath="C:/TopCoder/components/phase_management-1.0.4/src/java/main">
 		<attributes>
 			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
 		</attributes>

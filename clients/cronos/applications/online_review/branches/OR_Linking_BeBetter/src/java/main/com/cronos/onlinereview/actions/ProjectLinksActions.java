@@ -3,6 +3,8 @@
  */
 package com.cronos.onlinereview.actions;
 
+import java.util.Arrays;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -13,6 +15,10 @@ import org.apache.struts.actions.DispatchAction;
 import org.apache.struts.validator.LazyValidatorForm;
 
 import com.topcoder.management.project.Project;
+import com.topcoder.management.project.ProjectFilterUtility;
+import com.topcoder.management.project.ProjectManager;
+import com.topcoder.management.project.link.ProjectLinkManager;
+import com.topcoder.search.builder.filter.Filter;
 import com.topcoder.util.errorhandling.BaseException;
 
 /**
@@ -59,6 +65,24 @@ public class ProjectLinksActions extends DispatchAction {
             return verification.getForward();
         }
 
+        // obtains the project link manager
+        ProjectLinkManager linkManager = new ProjectLinkManager();
+
+        // set up project link types
+        request.setAttribute("projectLinkTypes", linkManager.getAllProjectLinkTypes());
+
+        // Obtain an instance of Project Manager
+        ProjectManager manager = ActionsHelper.createProjectManager(request);
+
+        // get all active projects
+        Filter filterStatus = ProjectFilterUtility.buildStatusNameEqualFilter("Active");
+        Project[] activeProjects = manager.searchProjects(filterStatus);
+        // Sort fetched projects. Currently sorting is done by projects' names only, in ascending order
+        Arrays.sort(activeProjects, new Comparators.ProjectNameComparer());
+
+        // set up active projects
+        request.setAttribute("activeProjects", linkManager.getAllProjectLinkTypes());
+
         // Populate the form with project and project link properties
         populateProjectLinkForm(request, (LazyValidatorForm) form, verification.getProject());
 
@@ -75,10 +99,13 @@ public class ProjectLinksActions extends DispatchAction {
      * @param project the project to take the data from
      */
     private void populateProjectLinkForm(HttpServletRequest request, LazyValidatorForm form, Project project) {
-
         // Populate project id
         form.set("pid", new Long(project.getId()));
 
+        form.set("new_link_dest_id_text",0, "");
+        form.set("new_link_dest_id",0, new Long(-1));
+        form.set("new_link_type_id",0, new Long(-1));
+        form.set("new_link_action",0, "add");
     }
 
     /**

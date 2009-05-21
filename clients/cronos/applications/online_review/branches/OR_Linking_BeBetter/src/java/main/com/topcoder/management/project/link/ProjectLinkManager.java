@@ -13,7 +13,7 @@ package com.topcoder.management.project.link;
  */
 public class ProjectLinkManager {
     public ProjectLinkType[] getAllProjectLinkTypes() {
-        return new ProjectLinkType[] {};
+        return new ProjectLinkType[] {new ProjectLinkType(1L, "type1"), new ProjectLinkType(2L, "type2")};
     }
 
     public ProjectLink[] getDestProjectLinks() {

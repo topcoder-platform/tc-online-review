@@ -23,10 +23,32 @@ public class ProjectLinkType implements Serializable {
 
     /**
      * <p>
+     * The default constructor.
+     * </p>
+     */
+    public ProjectLinkType() {
+        // do nothing
+    }
+
+    /**
+     * <p>
+     * The constructor.
+     * </p>
+     *
+     * @param id the id
+     * @param name the name
+     */
+    public ProjectLinkType(long id, String name) {
+        this.id = id;
+        this.name = name;
+    }
+
+    /**
+     * <p>
      * The id field.
      * </p>
      */
-    private String id;
+    private long id;
 
     /**
      * <p>
@@ -42,7 +64,7 @@ public class ProjectLinkType implements Serializable {
      *
      * @param id the value to set
      */
-    public void setId(String id) {
+    public void setId(long id) {
         this.id = id;
     }
 
@@ -53,7 +75,7 @@ public class ProjectLinkType implements Serializable {
      *
      * @return the <code>id</code> field value
      */
-    public String getId() {
+    public long getId() {
         return this.id;
     }
 
