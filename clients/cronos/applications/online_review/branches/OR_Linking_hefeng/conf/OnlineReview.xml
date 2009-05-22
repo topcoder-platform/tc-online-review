@@ -1,10 +1,10 @@
 <?xml version="1.0" ?>
 <!DOCTYPE CMConfig [
        <!ENTITY localFileUploadDir "/home/tcs/downloads">
-       <!ENTITY phasesEmailTemplate "/home/tcs/web/conf/templates/email_template.txt">
-       <!ENTITY winnersEmailTemplate "/home/tcs/web/conf/templates/winners_email_template.txt">
-       <!ENTITY timelineTemplateDir "/home/tcs/web/conf/templates">
-       <!ENTITY contactManagersTemplate "/home/tcs/web/conf/templates/contact_manager_template.txt">
+       <!ENTITY phasesEmailTemplate "/home/tcs/onlinereview/templates/email_template.txt">
+       <!ENTITY winnersEmailTemplate "/home/tcs/onlinereview/templates/winners_email_template.txt">
+       <!ENTITY timelineTemplateDir "/home/tcs/onlinereview/templates">
+       <!ENTITY contactManagersTemplate "/home/tcs/onlinereview/templates/contact_manager_template.txt">
        <!ENTITY pactJNDIAddress "jnp://localhost:1199">
 ]>
 <CMConfig>
@@ -456,7 +456,7 @@
     -->
     <Config name="com.topcoder.message.email.EmailEngine">
         <Property name="smtp_host_addr">
-            <Value>63.118.154.162</Value>
+            <Value>localhost</Value>
         </Property>
         <Property name="smtp_host_port">
             <Value>25</Value>
@@ -507,8 +507,8 @@
                     <Value>com.topcoder.management.review.scorecalculator.calculators.Scale10</Value>
                 </Property>
             </Property>
-            
-            <!-- Configuration for Test Case question type -->
+			
+			<!-- Configuration for Test Case question type -->
             <Property name="dynamicCalculator">
                 <Property name="question_type">
                     <Value>3</Value>
@@ -558,7 +558,7 @@
                 </Property>
             </Property>
 
-            <!-- Configuration for Scale (0-4) question type -->
+			<!-- Configuration for Scale (0-4) question type -->
             <Property name="Scale0_4">
                 <Property name="question_type">
                     <Value>7</Value>
@@ -1014,14 +1014,14 @@
         </Property>
 <!-- [OR-584] don't need this flag anymore, assignment v2 business logic doesn't require it
         <Property name="CreateAssignmentDocuments">
-            <Value>&assignmentDocumentsFlag;</Value>
-        </Property>
+    		<Value>&assignmentDocumentsFlag;</Value>
+    	</Property>
 -->
-        <!-- Date Format: MM/dd/yyyy  -->
+    	<!-- Date Format: MM/dd/yyyy  -->
 <!--[OR-584] don't need this anymore, assignment v2 business logic doesn't require it
-        <Property name="AssignmentDocumentsStartDate">
-            <Value>06/18/2007</Value>
-        </Property>
+    	<Property name="AssignmentDocumentsStartDate">
+    		<Value>06/18/2007</Value>
+    	</Property>
 -->
         <Property name="WinnersEmail">
             <Property name="EmailTemplateSource">
@@ -1034,7 +1034,7 @@
                 <Value>[{0}] {1} place </Value>
             </Property>
             <Property name="AssignmentDocumentLink">
-                <!-- The ampersand must be scaped twice, one for this xml and the second time for the DocumentGenerator  -->
+            	<!-- The ampersand must be scaped twice, one for this xml and the second time for the DocumentGenerator  -->
                 <Value>http://www.topcoder.com/PactsMemberServlet?module=AssignmentDocumentDetails&amp;amp;assignment_document_id={0}</Value>
             </Property>
             <Property name="EmailFromAddress">
@@ -1357,20 +1357,10 @@
         <Property name="Development">
             <Value>113</Value>
         </Property>
-        <Property name="Conceptualization">
-            <Value>134</Value>
-        </Property>
-        <Property name="Specification">
-            <Value>117</Value>
-        </Property>
-        <Property name="Architecture">
-            <Value>118</Value>
-        </Property>
+
+        <!-- this is fictional (i.e., not in the database at this time) -->
         <Property name="Assembly">
-            <Value>125</Value>
-        </Property>
-        <Property name="Application Testing">
-            <Value>124</Value>
+            <Value>114</Value>
         </Property>
     </Config>
 
@@ -1774,8 +1764,8 @@
                 <Property name="context">
                     <Value>
                         SELECT DISTINCT project.project_id, project_status_lu.project_status_id, project_status_lu.name,
-                                project_category_lu.project_category_id, project_category_lu.name, project_type_lu.project_type_id, project_type_lu.name,
-                                project.create_user, project.create_date, project.modify_user, project.modify_date
+								project_category_lu.project_category_id, project_category_lu.name, project_type_lu.project_type_id, project_type_lu.name,
+								project.create_user, project.create_date, project.modify_user, project.modify_date
                           FROM project,
                                project_category_lu,
                                project_status_lu,
@@ -2939,202 +2929,6 @@
                     <Value>False</Value>
                 </Property>
             </Property>
-            <Property name="FlashCustom">
-                <Property name="id">
-                    <Value>27202900</Value>
-                </Property>
-                <Property name="IconSmall">
-                    <Value>flashCustomSm.gif</Value>
-                </Property>
-                <Property name="AltTextKey">
-                    <Value>RootCatalog.CustomFlash</Value>
-                </Property>
-                <Property name="Custom">
-                    <Value>True</Value>
-                </Property>
-            </Property>
-            <Property name="CppCustom">
-                <Property name="id">
-                    <Value>27202902</Value>
-                </Property>
-                <Property name="IconSmall">
-                    <Value>smCustomCpp.gif</Value>
-                </Property>
-                <Property name="AltTextKey">
-                    <Value>RootCatalog.CustomCPP</Value>
-                </Property>
-                <Property name="Custom">
-                    <Value>True</Value>
-                </Property>
-            </Property>
-            <Property name="ActionScript">
-                <Property name="id">
-                    <Value>27202905</Value>
-                </Property>
-                <Property name="IconSmall">
-                    <Value>actionScriptSm.gif</Value>
-                </Property>
-                <Property name="AltTextKey">
-                    <Value>RootCatalog.ActionScript</Value>
-                </Property>
-                <Property name="Custom">
-                    <Value>False</Value>
-                </Property>
-            </Property>
-            <Property name="CustomActionScript">
-                <Property name="id">
-                    <Value>27202906</Value>
-                </Property>
-                <Property name="IconSmall">
-                    <Value>actionScriptCustomSm.gif</Value>
-                </Property>
-                <Property name="AltTextKey">
-                    <Value>RootCatalog.CustomActionScript</Value>
-                </Property>
-                <Property name="Custom">
-                    <Value>True</Value>
-                </Property>
-            </Property>
-            <Property name="PHP">
-                <Property name="id">
-                    <Value>27202903</Value>
-                </Property>
-                <Property name="IconSmall">
-                    <Value>PHPSm.gif</Value>
-                </Property>
-                <Property name="AltTextKey">
-                    <Value>RootCatalog.PHP</Value>
-                </Property>
-                <Property name="Custom">
-                    <Value>False</Value>
-                </Property>
-            </Property>
-            <Property name="CustomPHP">
-                <Property name="id">
-                    <Value>27202904</Value>
-                </Property>
-                <Property name="IconSmall">
-                    <Value>PHPCustomSm.gif</Value>
-                </Property>
-                <Property name="AltTextKey">
-                    <Value>RootCatalog.CustomPHP</Value>
-                </Property>
-                <Property name="Custom">
-                    <Value>True</Value>
-                </Property>
-            </Property>
-            <Property name="Ruby">
-                <Property name="id">
-                    <Value>27202907</Value>
-                </Property>
-                <Property name="IconSmall">
-                    <Value>rubySm.gif</Value>
-                </Property>
-                <Property name="AltTextKey">
-                    <Value>RootCatalog.Ruby</Value>
-                </Property>
-                <Property name="Custom">
-                    <Value>False</Value>
-                </Property>
-            </Property>
-            <Property name="CustomRuby">
-                <Property name="id">
-                    <Value>27202908</Value>
-                </Property>
-                <Property name="IconSmall">
-                    <Value>rubyCustomSm.gif</Value>
-                </Property>
-                <Property name="AltTextKey">
-                    <Value>RootCatalog.CustomRuby</Value>
-                </Property>
-                <Property name="Custom">
-                    <Value>True</Value>
-                </Property>
-            </Property>
-            <Property name="Objectivec">
-                <Property name="id">
-                    <Value>27202909</Value>
-                </Property>
-                <Property name="IconSmall">
-                    <Value>objectivecSm.gif</Value>
-                </Property>
-                <Property name="AltTextKey">
-                    <Value>RootCatalog.Objectivec</Value>
-                </Property>
-                <Property name="Custom">
-                    <Value>False</Value>
-                </Property>
-            </Property>
-            <Property name="CustomObjectivec">
-                <Property name="id">
-                    <Value>27202910</Value>
-                </Property>
-                <Property name="IconSmall">
-                    <Value>objectivecCustomSm.gif</Value>
-                </Property>
-                <Property name="AltTextKey">
-                    <Value>RootCatalog.CustomObjectivec</Value>
-                </Property>
-                <Property name="Custom">
-                    <Value>True</Value>
-                </Property>
-            </Property>
-            <Property name="Flex">
-                <Property name="id">
-                    <Value>27202911</Value>
-                </Property>
-                <Property name="IconSmall">
-                    <Value>flexSm.gif</Value>
-                </Property>
-                <Property name="AltTextKey">
-                    <Value>RootCatalog.Flex</Value>
-                </Property>
-                <Property name="Custom">
-                    <Value>False</Value>
-                </Property>
-            </Property>
-            <Property name="CustomFlex">
-                <Property name="id">
-                    <Value>27202912</Value>
-                </Property>
-                <Property name="IconSmall">
-                    <Value>flexCustomSm.gif</Value>
-                </Property>
-                <Property name="AltTextKey">
-                    <Value>RootCatalog.CustomFlex</Value>
-                </Property>
-                <Property name="Custom">
-                    <Value>True</Value>
-                </Property>
-            </Property>
-            <Property name="Javascript">
-                <Property name="id">
-                    <Value>27202913</Value>
-                </Property>
-                <Property name="IconSmall">
-                    <Value>javascriptSm.gif</Value>
-                </Property>
-                <Property name="AltTextKey">
-                    <Value>RootCatalog.Javascript</Value>
-                </Property>
-                <Property name="Custom">
-                    <Value>False</Value>
-                </Property>
-            </Property>
-            <Property name="CustomJavascript">
-                <Property name="id">
-                    <Value>27202914</Value>
-                </Property>
-                <Property name="IconSmall">
-                    <Value>javascriptCustomSm.gif</Value>
-                </Property>
-                <Property name="AltTextKey">
-                    <Value>RootCatalog.CustomJavascript</Value>
-                </Property>
-                <Property name="Custom">
-                    <Value>True</Value>
-                </Property>
-            </Property>
         </Property>
 
         <Property name="ProjectCategoryIcons">
@@ -3180,10 +2974,10 @@
             </Property>
             <Property name="Specification">
                 <Property name="IconSmall">
-                    <Value>specificationSm.gif</Value>
+                    <Value>IconSpecSm.gif</Value>
                 </Property>
                 <Property name="Icon">
-                    <Value>specification.gif</Value>
+                    <Value>IconSpec.gif</Value>
                 </Property>
             </Property>
             <Property name="Architecture">
@@ -3258,12 +3052,12 @@
                     <Value>iconBlank.png</Value>
                 </Property>
             </Property>
-            <Property name="UI Prototype Competition">
+            <Property name="Prototypes">
                 <Property name="IconSmall">
-                    <Value>iconUIPrototypeCompetitionSm.png</Value>
+                    <Value>iconBlankSm.png</Value>
                 </Property>
                 <Property name="Icon">
-                    <Value>iconUIPrototypeCompetition.png</Value>
+                    <Value>iconBlank.png</Value>
                 </Property>
             </Property>
             <Property name="Logos">
@@ -3280,30 +3074,6 @@
                 </Property>
                 <Property name="Icon">
                     <Value>iconBlank.png</Value>
-                </Property>
-            </Property>
-            <Property name="Conceptualization">
-                <Property name="IconSmall">
-                    <Value>conceptSm.gif</Value>
-                </Property>
-                <Property name="Icon">
-                    <Value>concept.gif</Value>
-                </Property>
-            </Property>         
-            <Property name="RIA Build Competition">
-                <Property name="IconSmall">
-                    <Value>iconRIABuildCompetitionSm.png</Value>
-                </Property>
-                <Property name="Icon">
-                    <Value>iconRIABuildCompetition.png</Value>
-                </Property>
-            </Property>
-            <Property name="RIA Component Competition">
-                <Property name="IconSmall">
-                    <Value>iconRIAComponentCompetitionSm.png</Value>
-                </Property>
-                <Property name="Icon">
-                    <Value>iconRIAComponentCompetition.png</Value>
                 </Property>
             </Property>
         </Property>
@@ -3805,12 +3575,6 @@
                 <Value>Approver</Value>
                 <Value>Public</Value>
             </Property>
-           
-            <Property name="Create Payment">
-                <Value>Global Payment Manager</Value>
-                <Value>Payment Manager</Value>
-            </Property>
-            
         </Property>
 
         <Property name="PhaseGrouping">
