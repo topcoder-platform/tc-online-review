@@ -69,7 +69,7 @@
     <property name="dev_dist.jar" value="${component}_${component_version}_dev_dist.jar" />
     <property name="design_dist.jar" value="${component}_${component_version}_design_dist.jar" />
     <property name="component.war" value="${build_distdir}/${distfilename}.war" />
-    
+
 
     <!-- TCS Dependencies -->
     <property name="authentication_factory.version" value="2.0" />
@@ -172,7 +172,7 @@
     <property name="JNDI_Utility.path" value="JNDI_Utility/${JNDI_Utility.version}" />
     <property name="JNDI_Utility.jar" value="${tcs_libdir}/${JNDI_Utility.path}/${JNDI_Utility.jar.name}" />
 
-    <property name="logging_wrapper.version" value="1.2" />
+    <property name="logging_wrapper.version" value="2.0" />
     <property name="logging_wrapper.jar.name" value="logging_wrapper.jar" />
     <property name="logging_wrapper.path" value="logging_wrapper/${logging_wrapper.version}" />
     <property name="logging_wrapper.jar" value="${tcs_libdir}/${logging_wrapper.path}/${logging_wrapper.jar.name}" />
@@ -490,7 +490,7 @@
 
     <target name="compile_ws" depends="compile">
         <mkdir dir="${build_testclassdir}" />
-    	
+
     	<echo>${axis.jar}</echo>
     	<echo>${jboss-client.jar}</echo>
         <javac srcdir="${javatests}"
@@ -506,20 +506,20 @@
         		<fileset dir="${JBOSS_HOME}" includes="client/jbossall-client.jar"/>
         	</classpath>
         </javac>
-    	
-    	<java classname="com.cronos.onlinereview.uploadservices.UploadServiceClient" 
+
+    	<java classname="com.cronos.onlinereview.uploadservices.UploadServiceClient"
     			fork="true" maxmemory="512m">
 	    	<classpath >
 	    		<fileset dir="${ext_libdir}" includes="**/*.jar"/>
 	    		<fileset dir="${JBOSS_HOME}" includes="client/jbossall-client.jar"/>
 	    		<path path="${build_testclassdir}"/>
-	    	</classpath>	
+	    	</classpath>
 		</java>
     </target>
-	
-	
-	
-	
+
+
+
+
     <target name="prepare_tests_war" depends="dist, compile_tests">
 
         <!-- Cactify the web-app archive -->
@@ -643,11 +643,7 @@ don't need this anymore.  OR doesn't use it.
             <lib dir="${jar_tcs_libdir}/${scorecard_management.path}" includes="*.jar" />
             <lib dir="${jar_tcs_libdir}/${scorecard_management_persistence.path}" includes="*.jar" />
             <lib dir="${jar_tcs_libdir}/${search_builder.path}" includes="*.jar" />
-<!--
-Note: The security manager that comes with the app may not be compatible with the server it's deployed on (security is already deployed, but different version),
-      so this is not being packaged. If needed, however, uncomment this.
             <lib dir="${jar_tcs_libdir}/${security_manager.path}" includes="*.jar" />
--->
             <lib dir="${jar_tcs_libdir}/${simple_cache.path}" includes="*.jar" />
             <lib dir="${jar_tcs_libdir}/${typesafe_enum.path}" includes="*.jar" />
             <lib dir="${jar_tcs_libdir}/${user_project_data_store.path}" includes="*.jar" />
