@@ -5,7 +5,7 @@
        <!ENTITY winnersEmailTemplate "/home/tcs/web/conf/templates/winners_email_template.txt">
        <!ENTITY timelineTemplateDir "/home/tcs/web/conf/templates">
        <!ENTITY contactManagersTemplate "/home/tcs/web/conf/templates/contact_manager_template.txt">
-       <!ENTITY pactJNDIAddress "jnp://63.118.154.181:1199">
+       <!ENTITY pactJNDIAddress "jnp://localhost:1199">
 ]>
 <CMConfig>
 <!-- [OR-584] don't need this anymore
