@@ -30,10 +30,10 @@
     <script language="JavaScript" type="text/javascript" src="<html:rewrite href='/js/or/jquery.js' />"><!-- @ --></script>
     <script type="text/javascript">
 
-    var ERR_LAST_ROW_CANT_DELETE = '<bean:message key="LastRow"/>';
-    var ERR_PRJ_NOT_SELECTED = '<bean:message key="ProjectNotSelected"/>';
-    var ERR_DUPLICATED_PRJ_SELECTED = '<bean:message key="DuplicatedProjectsSelected"/>';
-    var ERR_LINK_TYPE_NOT_SELECTED = '<bean:message key="LinkTypeNotSelected"/>';
+    var ERR_LAST_ROW_CANT_DELETE = '<bean:message key="editProjectLinks.error.LastRow"/>';
+    var ERR_PRJ_NOT_SELECTED = '<bean:message key="editProjectLinks.error.ProjectNotSelected"/>';
+    var ERR_DUPLICATED_PRJ_SELECTED = '<bean:message key="editProjectLinks.error.DuplicatedProjectsSelected"/>';
+    var ERR_LINK_TYPE_NOT_SELECTED = '<bean:message key="editProjectLinks.error.LinkTypeNotSelected"/>';
 
 	function deleteExistLink(obj){
 		$(obj).parents("tr").remove();
@@ -168,7 +168,7 @@
 	
 		<DIV id="tabcontentcontainer">
 			<div id="contentTitle">
-				<h3>${projectName} - ${orfn:getMessage(pageContext, "editProjectLinks.title")}</h3>
+				<h3>${project.allProperties["Project Name"]} - ${orfn:getMessage(pageContext, "editProjectLinks.title")}</h3>
 			</div>
 				
 			<html:form action="/actions/EditProjectLink.do?method=saveProjectLinks" onsubmit="return validateForm()">
@@ -180,10 +180,10 @@
 						<TD class="title" colspan="4">Edit Project Links</TD>
 					</TR>
 					<TR>
-						<TD class="header">Linked Project Id</TD>
-						<TD class="header">Linked Project Name</TD>
-						<TD class="header">Link Type</TD>
-						<TD class="header">Operation</TD>
+						<TD class="header" width="15%">Linked Project Id</TD>
+						<TD class="header" width="35%">Linked Project Name</TD>
+						<TD class="header" width="35%">Link Type</TD>
+						<TD class="header" width="15%">Operation</TD>
 					</TR>
 					
 					<c:forEach items="${linkInfos}" var="linkInfo" varStatus="idxLinkInfo">
@@ -197,10 +197,14 @@
 							</html:select>
 							</TD>
 							<TD class="value" nowrap="nowrap">
-								<IMG src="./online_review_admin_files/bttn_delete.gif" style="cursor:hand;" alt="delete" onClick="deleteExistLink(this)" />
+								<IMG src="/images/or/bttn_delete.gif" style="cursor:hand;" alt="delete" onClick="deleteExistLink(this)" />
 							</TD>
 						</TR>
 					</c:forEach>
+					<TR>
+						<TD class="lastRowTD" colspan="4"><!-- @ --></TD>
+					</TR>
+
 					</TBODY>
 				</TABLE>
 			</div>
@@ -208,20 +212,20 @@
 				<TABLE class="tabLinks" id="newLinks" cellpadding="0">
 					<TBODY>
 					<TR>
-						<TD class="title" colspan="6">Add Project Links</TD>
+						<TD class="title" colspan="4">Add Project Links</TD>
 					</TR>
 					<TR>
-						<TD class="header">Project ID</TD>
-						<TD class="header">Select A Project </TD>
-						<TD class="header">Link Type</TD>
-						<TD class="header">Operation</TD>
+						<TD class="header"  width="15%">Project ID</TD>
+						<TD class="header"  width="35%">Select A Project </TD>
+						<TD class="header"  width="35%">Link Type</TD>
+						<TD class="header"  width="15%">Operation</TD>
 					</TR>
 					<TR class="light dataline">
 						<td class="value" nowrap="nowrap"><input type="text" class="input" onkeyup="changeProjectSel(this)"/></td>						
 						<td class="value" nowrap="nowrap">
 							<html:select property="prjIds[${fn:length(linkInfos)}]"  value="-1" onchange="changeProjectText(this)">
 								<option value="-1">Select Project</option>
-								<html:options  collection="activeProjects" property="id" labelProperty='allProperties.Project Name'/>
+								<html:options  collection="selectableProjects" property="id" labelProperty='allProperties.Project Name'/>
 							</html:select>
 						</td>
 						<td class="value" nowrap="nowrap">
@@ -231,13 +235,13 @@
 							</html:select>
 						</td>
 						<TD class="value" nowrap="nowrap">
-						<IMG src="./online_review_admin_files/bttn_add.gif" style="cursor:hand;" alt="add" onClick="addLink(this)" />&nbsp;&nbsp;<IMG src="./online_review_admin_files/bttn_delete.gif" style="cursor:hand;" alt="delete" onClick="deleteNewLink(this)" />					</TD>
+						<IMG src="/images/or/bttn_add.gif" style="cursor:hand;" alt="add" onClick="addLink(this)" />&nbsp;&nbsp;<IMG src="/images/or/bttn_delete.gif" style="cursor:hand;" alt="delete" onClick="deleteNewLink(this)" />					</TD>
 					</TR>
 					
 					
 					
 					<TR>
-						<TD class="lastRowTD" colspan="6"><!-- @ --></TD>
+						<TD class="lastRowTD" colspan="4"><!-- @ --></TD>
 					</TR>
 					</TBODY>
 				</TABLE>
@@ -245,8 +249,8 @@
 			</div>
 			
 		 	<DIV class="bottomButtonBar">
-				<INPUT type="image" name="" src="./online_review_admin_files/bttn_save_changes.gif" border="0" alt="Save Changes">&nbsp;
-				<A href="online_review_project_detail.htm"><IMG src="./online_review_admin_files/bttn_cancel.gif" border="0" alt="Cancel"></A>
+				<INPUT type="image" name="" src="/images/or/bttn_save_changes.gif" border="0" alt="Save Changes">&nbsp;
+				<html:link page="/actions/ViewProjectDetails.do?method=viewProjectDetails&pid=${project.id}"><IMG src="/images/or/bttn_cancel.gif" border="0" alt="Cancel"></html:link>
 		          </DIV>
 		    </div>
     		</html:form>

@@ -1801,7 +1801,7 @@
                         <Value>project_category_lu.name</Value>
                     </Property>
                     <Property name="ProjectStatusID">
-                        <Value>project_status_lu.project_type_id</Value>
+                        <Value>project_status_lu.project_status_id</Value>
                     </Property>
                     <Property name="ProjectStatusName">
                         <Value>project_status_lu.name</Value>

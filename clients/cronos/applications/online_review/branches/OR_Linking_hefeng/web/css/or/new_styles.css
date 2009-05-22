@@ -462,3 +462,63 @@ span.error
 {
 vertical-align: top;
 }
+
+/* Edit project links */
+.clearfix{
+	clear:both;
+}
+#createRelatedProject {
+	text-align:left;
+	display:block;
+}
+table.tabLinks
+{
+border: 1px solid #999999;
+border-bottom: none; 
+border-collapse: collapse;
+padding: 0px;
+vertical-align: top;
+width: 80%;
+}
+
+table.tabLinks td.title
+{
+background-color: #999999;
+background-image: url(../../i/stats/headerBG.gif);
+border-bottom: 1px solid #999999;
+font-size: 12px;
+font-weight: bold;
+padding: 3px 5px 3px 5px;
+text-align: left;
+text-decoration: none;
+white-space: nowrap;
+}
+table.tabLinks td.header {
+background-color: #cccccc;
+border-bottom: 1px solid #999999;
+color: #333333;
+font-size: 11px;
+line-height: 14px;
+padding: 2px 5px 2px 5px;
+vertical-align: top;
+}
+table.tabLinks td.value {
+border-bottom: 1px solid #999999;
+border-right: 1px solid #999999;
+font-size: 11px;
+padding: 5px;
+vertical-align: top;
+}
+table.tabLinks td.lastRowTD{
+background-color: #DDDDDD;
+border-bottom: 1px solid #666666;
+height: 7px;
+}
+table.tabLinks tr.dark
+{
+background-color: #f7f7f7;
+}
+
+table.tabLinks .input {
+	width: 80px;
+}
