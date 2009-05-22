@@ -12,6 +12,8 @@
         <wb-resource deploy-path="/WEB-INF/classes/xml_phase_template.xsd" source-path="/conf/xml_phase_template.xsd"/>
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/java/main"/>
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/java/tests"/>
+<wb-resource deploy-path="/WEB-INF/classes" source-path="/acton/src"/>
+<wb-resource deploy-path="/WEB-INF/classes" source-path="/acton/conf"/>
         <dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/review/lib/tcs/authentication_factory/2.0/authentication_factory.jar">
             <dependency-type>uses</dependency-type>
         </dependent-module>

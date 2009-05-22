@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2007 TopCoder Inc.  All Rights Reserved.
+ * Copyright (C) 2006-2009 TopCoder Inc., All Rights Reserved.
  */
 package com.cronos.onlinereview.actions;
 
@@ -124,7 +124,8 @@ import com.topcoder.util.log.LogFactory;
  * This class contains handy helper-methods that perform frequently needed operations.
  * </p>
  * <p>
- * Change note for 1.1: add method to create <code>ProjectLinkManager</code>
+ * Change note for 1.1: add method to create <code>ProjectLinkManager</code>. This is for
+ * "OR Project Linking Assembly".
  * </p>
  *
  * @author George1
@@ -2726,7 +2727,7 @@ public class ActionsHelper {
      *            be stored to let reusing it later for the same request.
      * @throws IllegalArgumentException if <code>request</code> parameter is <code>null</code>.
      * @throws BaseRuntimeException if any error occurs.
-     * @since OR Project Linking Assembly
+     * @since 1.1 OR Project Linking Assembly
      */
     public static ProjectLinkManager createProjectLinkManager(HttpServletRequest request) {
         // Validate parameter
@@ -2738,7 +2739,7 @@ public class ActionsHelper {
         // create a new instance of the object
         if (manager == null) {
             // manager = managerCreationHelper.getResourceManager();
-            manager = new ProjectLinkManager();
+            manager = managerCreationHelper.getProjectLinkManager();
             // Place newly-created object into the request as attribute
             request.setAttribute("projectLinkManager", manager);
         }

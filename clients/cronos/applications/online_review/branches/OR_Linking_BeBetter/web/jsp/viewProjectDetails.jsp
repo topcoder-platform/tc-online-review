@@ -89,6 +89,7 @@
                     <jsp:include page="/includes/project/project_phase.jsp" />
                     <jsp:include page="/includes/project/project_detail.jsp" />
                     <jsp:include page="/includes/project/project_resource.jsp" />
+                    <!-- OR Project Linking Assembly -->
                     <jsp:include page="/includes/project/project_link.jsp" />
                     <div align="right">
                         <c:if test="${isAllowedToPay}">

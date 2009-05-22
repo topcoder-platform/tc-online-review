@@ -9,14 +9,7 @@
 <html:html xhtml="true">
 
 <head>
-    <c:if test="${empty project}">
-        <title><bean:message key="global.title.level2"
-            arg0='${orfn:getMessage(pageContext, "OnlineReviewApp.title")}'
-            arg1='${orfn:getMessage(pageContext, "editProject.title.CreateNew")}' /></title>
-    </c:if>
-    <c:if test="${not empty project}">
-        <jsp:include page="/includes/project/project_title.jsp" />
-    </c:if>
+    <jsp:include page="/includes/project/project_title.jsp" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 
     <!-- TopCoder CSS -->
@@ -32,41 +25,37 @@
     <script language="JavaScript" type="text/javascript" src="<html:rewrite href='/js/or/util.js' />"><!-- @ --></script>
     <script language="JavaScript" type="text/javascript" src="<html:rewrite href='/js/or/validation_util2.js' />"><!-- @ --></script>
     <script language="JavaScript" type="text/javascript" src="<html:rewrite href='/js/or/validation_edit_project_links.js' />"><!-- @ --></script>
-    <script language="JavaScript" type="text/javascript" src="<html:rewrite href='/js/or/parseDate.js' />"><!-- @ --></script>
     <script language="JavaScript" type="text/javascript">
-    	var lastLinkIndex = ${fn:length(projectForm.map['new_link_dest_id']) - 1};
-    	
-    	function newProjectLink() {
-    		//Get add link table node
-    		var newLinksTable = document.getElementById("newLinks");
-        // Get the number of rows in table
-        var rowCount = newLinksTable.rows.length;
-        // Create a new row into resources table
-        var newRow = cloneInputRow(newLinksTable.rows[2]);
-    		
-        // Rows should vary colors
-        var rows = newLinksTable.rows;
-        var strLastRowStyle = "dark"; // This variable will remember the style of the last row
-        // Find first non-hidden row, starting from the bottom of the table
-        for (var i = rows.length - 2; i >= 0; --i) {
-            if (rows[i].style["display"] == "none") continue;
-            strLastRowStyle = rows[i].className;
-            break;
-        }
-        newRow.className = (strLastRowStyle == "dark") ? "light" : "dark";
-    		
-    		
-        // Increase resource index
-        lastLinkIndex++;
-        // Rename all the inputs to have a new index
-        patchAllChildParamIndexes(newRow, lastLinkIndex);
-        // Insert new row into links table
-        newLinksTable.tBodies[0].insertBefore(newRow, newLinksTable.rows[rowCount - 1]);    		
+    	/**
+    	 * Initializes some parameters.
+    	 */
+    	function initParameters() {
+    		 // Initiates the lastLinkIndex
+    	   lastLinkIndex = ${fn:length(projectLinkForm.map['link_dest_id']) - 1};
+    	   
+    	   // Initiates all possible options
+    	   projectOptions = new Array();    	
+    	   // Initiates option values
+    	   projectOptions.push(new Option('${orfn:getMessage(pageContext, "editProjectLinks.projectTypes.SelectProject")}','-1'));
+         <c:forEach items="${allProjects}" var="projectElement">			
+            <c:if test="${projectElement.id ne project.id}">
+         projectOptions.push(new Option('${projectElement.allProperties["Project Name"]} v${projectElement.allProperties["Project Version"]}','${projectElement.id}'));
+            </c:if>                          	   	               	                          	   
+         </c:forEach>
+      }    	
+
+      /**
+       * Callback function. It is called after page loading.
+       */
+    	function onLoad() {
+    		   initParameters();
+
+    	     // reset drop downs
+    	     resetDropDowns();    	
     	}
-    	
     </script>
 
-<body>
+<body onload="onLoad();">
 <div align="center">
     <div class="maxWidthBody" align="left">
 
@@ -91,71 +80,42 @@
               </c:if>
            	  		
               <div id="contentTitle">
-              		<h3>Project Name version 1.0 - Manage Project Links</h3> 
+              		<h3>${project.allProperties["Project Name"]} version ${project.allProperties["Project Version"]} - Manage Project Links</h3> 
               </div>           	
-      
-			        <div id="tabExistLinks">
-			        	<table cellpadding="0" id="existLinks" class="tabLinks">
-			        		<tbody>
-			        		<tr>
-			        			<td colspan="4" class="title">Edit Project Links</td>
-			        		</tr>
-			        		<tr>
-			        			<td class="header">Linked Project Name</td>
-			        			<td class="header">Link Type</td>
-			        			<td class="header">Operation</td>
-			        		</tr>
-			        		<tr class="light">
-			        			<td nowrap="nowrap" class="value">Test Component name 2</td>
-			        			<td nowrap="nowrap" class="value">
-			        				<select class="inputBox" name="linkType">
-			        						<option value="-1">Select Link Type</option>
-			        						<option value="1">Conceptualization Spec Review</option>
-			        						<option selected="selected" value="2">Conceptualization Round 2</option>
-			        						<option value="3">Module Architecture</option>
-			        						<option value="4">Spawned Component</option>
-			        				</select>
-			        			</td>
-			        			<td nowrap="nowrap" class="value">
-			        				  <html:img srcKey="editProjectLinks.btnDelete.img" border="0" altKey="editProjectLinks.btnDelete.alt" />
-			        			</td>
-			        		</tr>
-			        		<tr>
-			        			<td colspan="5" class="lastRowTD"><!-- @ --></td>
-			        		</tr>
-			        		</tbody>
-			        	</table>   
-			        </div>
-              
+                    
 			        <div id="tabNewLinks">
 			        	<table cellpadding="0" id="newLinks" class="tabLinks">
 			        		<tbody>
 			        		<tr class="dark">
-			        			<td colspan="6" class="title">Add Project Links</td>
+			        			<td colspan="6" class="title"><bean:message key="editProjectLinks.box.editLinks" /></td>
 			        		</tr>
-			        		<tr class="light">
-			        			<td class="header">Project ID</td>
-			        			<td class="header">Select A Project </td>
-			        			<td class="header">Link Type</td>
-			        			<td class="header">Operation</td>
+			        		<tr>
+			        			<td class="header"><bean:message key="editProjectLinks.editLink.ProjectID" /></td>
+			        			<td class="header"><bean:message key="editProjectLinks.editLink.SelectProject" /></td>
+			        			<td class="header"><bean:message key="editProjectLinks.editLink.LinkType" /></td>
+			        			<td class="header"><bean:message key="editProjectLinks.editLink.Operation" /></td>
 			        		</tr>
-			        		<c:forEach var="linkIdx" varStatus="linkStatus" begin="0" end="${fn:length(projectLinkForm.map['new_link_dest_id']) - 1}">
-			        		<tr class="dark">
+			        		<c:forEach var="linkIdx" varStatus="linkStatus" begin="0" end="${fn:length(projectLinkForm.map['link_dest_id']) - 1}">
+			        		<tr class='${(linkStatus.index % 2 == 0) ? "light" : "dark"}'>
 			        			<td nowrap="nowrap" class="value">
-			        				<html:text property="new_link_dest_id_text[${linkIdx}]" />
+			        				<html:text property="link_dest_id_text[${linkIdx}]" onchange="onProjectInputChange(this);"/>
 				              <div name="project_link_validation_msg" class="error" style="display:none"></div>			        					
 			        			</td>				
 			        			<td nowrap="nowrap" class="value">
-				               <html:select styleClass="inputBox" property="new_link_dest_id[${linkIdx}]" style="width:120px;">
+				               <html:select styleClass="inputBox" property="link_dest_id[${linkIdx}]" 
+				               	            onchange="onProjectDropDownChange(this);">
 				               	  <html:option key="editProjectLinks.projectTypes.SelectProject" value="-1" />
-                          <c:forEach items="${activeProjects}" var="activeProject">				               	                          	   
-                          	   <html:option value="${activeProject.id}">${activeProject.name}</html:option>
+                          <c:forEach items="${allProjects}" var="projectElement">			
+             	               <c:if test="${projectElement.id ne project.id}">
+                          	   <html:option value="${projectElement.id}">${projectElement.allProperties["Project Name"]} v${projectElement.allProperties["Project Version"]}</html:option>
+             	               </c:if>                          	   	               	                          	   
                           </c:forEach>
 				               </html:select>
 				               <div name="project_link_validation_msg" class="error" style="display:none"></div>			        					
 			        			</td>
 			        			<td nowrap="nowrap" class="value">
-				               <html:select styleClass="inputBox" property="new_link_type_id[${linkIdx}]" style="width:120px;">
+				               <html:select styleClass="inputBox" property="link_type_id[${linkIdx}]" 
+				               	            onchange="onLinkTypeDropDownChange(this);">
 				               	  <html:option key="editProjectLinks.projectTypes.SelectType" value="-1" />
                           <c:forEach items="${projectLinkTypes}" var="projectLinkType">				               	                          	   
                           	   <html:option value="${projectLinkType.id}">${projectLinkType.name}</html:option>
@@ -167,14 +127,16 @@
 			        				<c:if test="${linkIdx eq 0}">
 			        				  <html:img srcKey="editProjectLinks.btnAdd.img" border="0" 
 			        				  	        onclick="javascript:newProjectLink();"
-			        				  	     altKey="editProjectLinks.btnAdd.alt"  style="cursor:hand;" />&#160;
+			        				  	     altKey="editProjectLinks.btnAdd.alt"  style="cursor:hand;" />
 			        				</c:if> 	
 			        				  <html:img srcKey="editProjectLinks.btnDelete.img" 
 			        				  	    style="cursor:hand;${(linkIdx eq 0) ? 'display: none;' : ''}" border="0" 
+			        				  	    onclick="deleteProjectLink(this.parentNode.parentNode);"
 			        				  	    altKey="editProjectLinks.btnDelete.alt" />
+			        				  <html:hidden property="link_action[${linkIdx}]" />	    
 			        			</td>
 			        		</tr>
-			        	  </forEach>
+			        	  </c:forEach>
 			        		<tr>
 			        			<td colspan="4" class="lastRowTD"><!-- @ --></td>
 			        		</tr>
@@ -185,7 +147,7 @@
 
              <div class="bottomButtonBar">
                   <html:image srcKey="btnSaveChanges.img" altKey="btnSaveChanges.alt" border="0"/>&#160;
-                  <html:link page="/actions/ViewProjectDetails.do?method=viewProjectDetails&pid=${project.id}"><html:img srcKey="btnCancel.img" altKey="btnCancel.alt" border="0"/></html:link>                            
+                  <html:link page="/actions/ViewProjectDetails.do?method=viewProjectDetails&pid=${project.id}"><html:img srcKey="btnCancel.img" altKey="btnCancel.alt" border="0"/></html:link>
              </div>
 			     </html:form>    
            </div> <!-- //tabconentcontainer -->
@@ -197,172 +159,4 @@
 </div>      
 </body>     
             
-</html:html>	      
-<            
-             
-             
-             
-             
-             
-             
-             
-             
-             
-             
-             
-             
-             
-             
-             
-             
-             
-             
-             
-             
-             
-             
-             
-             
-             
-             
-             
-             
-             
-             
-             
-             
-             
-             
-             
-             
-             
-             
-             
-             
-             
-             
-             
-             
-             
-             
-             
-             
-             
-             
-             
-             
-             
-             
-             
-             
-             
-             
-             
-             
-             
-             
-             
-             
-             
-             
-             
-             
-             
-             
-             
-             
-             
-             
-             
-             
-             
-             
-             
-             
-             
-             
-             
-             
-             
-             
-             
-             
-             
-             
-             
-             
-             
-             
-             
-             
-             
-             
-             
-             
-             
-             
-             
-             
-             
-             
-             
-             
-             
-             
-             
-             
-             
-             
-             
-             
-             
-             
-             
-             
-             
-             
-             
-             
-             
-             
-             
-             
-             
-             
-             
-             
-             
-             
-             
-             
-             
-             
-             
-             
-             
-             
-             
-             
-             
-             
-             
-             
-             
-             
-             
-             
-             
-             
-             
-             
-             
-             
-             
-             
-             
-             
-             
-             
-             
-             
-             
+</html:html> 

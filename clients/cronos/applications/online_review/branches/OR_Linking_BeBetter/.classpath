@@ -2,6 +2,8 @@
 <classpath>
 	<classpathentry kind="src" path="src/java/main"/>
 	<classpathentry kind="src" path="src/java/tests"/>
+	<classpathentry kind="src" path="acton/src"/>
+	<classpathentry kind="src" path="acton/conf"/>
 	<classpathentry exported="true" kind="lib" path="lib/tcs/authentication_factory/2.0/authentication_factory.jar" sourcepath="/authentication_factory/src/java/main">
 		<attributes>
 			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 TopCoder Inc., All Rights Reserved.
+ * Copyright (C) 2007-2009 TopCoder Inc., All Rights Reserved.
  */
 package com.cronos.onlinereview.actions;
 
@@ -33,6 +33,8 @@ import com.topcoder.management.phase.PhaseManager;
 import com.topcoder.management.phase.PhaseOperationEnum;
 import com.topcoder.management.project.ProjectManager;
 import com.topcoder.management.project.ProjectManagerImpl;
+import com.topcoder.management.project.link.ProjectLinkManager;
+import com.topcoder.management.project.link.ProjectLinkManagerImpl;
 import com.topcoder.management.resource.ResourceManager;
 import com.topcoder.management.resource.persistence.PersistenceResourceManager;
 import com.topcoder.management.resource.persistence.ResourcePersistence;
@@ -51,13 +53,19 @@ import com.topcoder.util.idgenerator.IDGenerator;
 import com.topcoder.util.idgenerator.IDGeneratorFactory;
 
 /**
+ * <p>
  * This class implements {@link ManagersProvider} and provides the implementation for creating the managers.
- * 
+ * </p>
+ * <p>
+ * Change note for 1.1: adds a new manager : <code>ProjectLinkManager</code>. It is for "OR Linking Assembly".
+ * </p>
+ *
  * @author evilisneo
- * @version 1.0
+ * @author TCSDEVELOPER
+ * @version 1.1
+ * @since 1.0
  */
 public class ManagerCreationHelper implements ManagersProvider {
-
     /**
      * This member variable is a string constant that defines the name of the configuration namespace which the
      * parameters for database connection factory are stored under.
@@ -68,34 +76,45 @@ public class ManagerCreationHelper implements ManagersProvider {
      * Used for caching the created the manager.
      */
     private PhaseManager phaseManager = null;
+
     /**
      * Used for caching the created the manager.
      */
     private UploadManager uploadManager = null;
+
     /**
      * Used for caching the created the manager.
      */
     private ProjectManager projectManager = null;
+
     /**
      * Used for caching the created the manager.
      */
     private ResourceManager resourceManager = null;
+
     /**
      * Used for caching the created the manager.
      */
     private ScreeningManager screeningManager = null;
 
     /**
+     * Used for caching the created the manager.
+     *
+     * @since 1.1
+     */
+    private ProjectLinkManager projectLinkManager = null;
+
+    /**
      * <p>
-     * Returns a <code>PhaseManager</code> instance. This is used in <code>UploadServices</code> to retrieve
-     * this manager and perform all its operations.
+     * Returns a <code>PhaseManager</code> instance. This is used in <code>UploadServices</code> to retrieve this
+     * manager and perform all its operations.
      * </p>
-     * 
+     *
      * @return a <code>PhaseManager</code> instance
      * @see ManagersProvider#getPhaseManager()
      */
     public PhaseManager getPhaseManager() {
-        if(phaseManager != null) {
+        if (phaseManager != null) {
             return phaseManager;
         }
         try {
@@ -103,27 +122,27 @@ public class ManagerCreationHelper implements ManagersProvider {
             PhaseType[] phaseTypes = phaseManager.getAllPhaseTypes();
             // Register all the handles.
             registerPhaseHandlerForOperation(phaseManager, phaseTypes, new PRRegistrationPhaseHandler(),
-                    Constants.REGISTRATION_PHASE_NAME);
+                Constants.REGISTRATION_PHASE_NAME);
             registerPhaseHandlerForOperation(phaseManager, phaseTypes, new PRSubmissionPhaseHandler(),
-                    Constants.SUBMISSION_PHASE_NAME);
+                Constants.SUBMISSION_PHASE_NAME);
             registerPhaseHandlerForOperation(phaseManager, phaseTypes, new PRScreeningPhaseHandler(),
-                    Constants.SCREENING_PHASE_NAME);
+                Constants.SCREENING_PHASE_NAME);
             registerPhaseHandlerForOperation(phaseManager, phaseTypes, new PRReviewPhaseHandler(),
-                    Constants.REVIEW_PHASE_NAME);
+                Constants.REVIEW_PHASE_NAME);
             registerPhaseHandlerForOperation(phaseManager, phaseTypes, new AppealsPhaseHandler(),
-                    Constants.APPEALS_PHASE_NAME);
+                Constants.APPEALS_PHASE_NAME);
             registerPhaseHandlerForOperation(phaseManager, phaseTypes, new PRAppealResponsePhaseHandler(),
-                    Constants.APPEALS_RESPONSE_PHASE_NAME);
+                Constants.APPEALS_RESPONSE_PHASE_NAME);
             registerPhaseHandlerForOperation(phaseManager, phaseTypes, new PRAggregationPhaseHandler(),
-                    Constants.AGGREGATION_PHASE_NAME);
+                Constants.AGGREGATION_PHASE_NAME);
             registerPhaseHandlerForOperation(phaseManager, phaseTypes, new PRAggregationReviewPhaseHandler(),
-                    Constants.AGGREGATION_REVIEW_PHASE_NAME);
+                Constants.AGGREGATION_REVIEW_PHASE_NAME);
             registerPhaseHandlerForOperation(phaseManager, phaseTypes, new PRFinalFixPhaseHandler(),
-                    Constants.FINAL_FIX_PHASE_NAME);
+                Constants.FINAL_FIX_PHASE_NAME);
             registerPhaseHandlerForOperation(phaseManager, phaseTypes, new PRFinalReviewPhaseHandler(),
-                    Constants.FINAL_REVIEW_PHASE_NAME);
+                Constants.FINAL_REVIEW_PHASE_NAME);
             registerPhaseHandlerForOperation(phaseManager, phaseTypes, new ApprovalPhaseHandler(),
-                    Constants.APPROVAL_PHASE_NAME);
+                Constants.APPROVAL_PHASE_NAME);
             return phaseManager;
         } catch (Exception e) {
             throw new ManagerCreationException("Exception occurred while creating the PhaseManager.", e);
@@ -132,16 +151,16 @@ public class ManagerCreationHelper implements ManagersProvider {
 
     /**
      * <p>
-     * Returns a <code>ProjectManager</code> instance. This is used in <code>UploadServices</code> to retrieve
-     * this manager and perform all its operations.
+     * Returns a <code>ProjectManager</code> instance. This is used in <code>UploadServices</code> to retrieve this
+     * manager and perform all its operations.
      * </p>
-     * 
+     *
      * @return a <code>ProjectManager</code> instance
      * @see ManagersProvider#getProjectManager()
      */
     public ProjectManager getProjectManager() {
         try {
-            if(projectManager == null) {
+            if (projectManager == null) {
                 projectManager = new ProjectManagerImpl();
             }
             return projectManager;
@@ -152,15 +171,34 @@ public class ManagerCreationHelper implements ManagersProvider {
 
     /**
      * <p>
-     * Returns a <code>ResourceManager</code> instance. This is used in <code>UploadServices</code> to retrieve
-     * this manager and perform all its operations.
+     * Returns a <code>ProjectLinkManager</code> instance.
      * </p>
-     * 
+     *
+     * @return a <code>ProjectLinkManager</code> instance
+     * @since 1.1
+     */
+    public ProjectLinkManager getProjectLinkManager() {
+        try {
+            if (projectLinkManager == null) {
+                projectLinkManager = new ProjectLinkManagerImpl(getProjectManager());
+            }
+            return projectLinkManager;
+        } catch (Exception e) {
+            throw new ManagerCreationException("Exception occurred while creating the ProjectLinkManager.", e);
+        }
+    }
+
+    /**
+     * <p>
+     * Returns a <code>ResourceManager</code> instance. This is used in <code>UploadServices</code> to retrieve this
+     * manager and perform all its operations.
+     * </p>
+     *
      * @return a <code>ResourceManager</code> instance
      * @see ManagersProvider#getResourceManager
      */
     public ResourceManager getResourceManager() {
-        if(resourceManager != null) {
+        if (resourceManager != null) {
             return resourceManager;
         }
         try {
@@ -170,33 +208,33 @@ public class ManagerCreationHelper implements ManagersProvider {
             ResourcePersistence persistence = new SqlResourcePersistence(dbconn);
             // get the id generators
             IDGenerator resourceIdGenerator = IDGeneratorFactory
-                    .getIDGenerator(PersistenceResourceManager.RESOURCE_ID_GENERATOR_NAME);
+                .getIDGenerator(PersistenceResourceManager.RESOURCE_ID_GENERATOR_NAME);
             IDGenerator resourceRoleIdGenerator = IDGeneratorFactory
-                    .getIDGenerator(PersistenceResourceManager.RESOURCE_ROLE_ID_GENERATOR_NAME);
+                .getIDGenerator(PersistenceResourceManager.RESOURCE_ROLE_ID_GENERATOR_NAME);
             IDGenerator notificationTypeIdGenerator = IDGeneratorFactory
-                    .getIDGenerator(PersistenceResourceManager.NOTIFICATION_TYPE_ID_GENERATOR_NAME);
+                .getIDGenerator(PersistenceResourceManager.NOTIFICATION_TYPE_ID_GENERATOR_NAME);
             // get the search bundles
             SearchBundleManager searchBundleManager = new SearchBundleManager("com.topcoder.searchbuilder.common");
             SearchBundle resourceSearchBundle = searchBundleManager
-                    .getSearchBundle(PersistenceResourceManager.RESOURCE_SEARCH_BUNDLE_NAME);
+                .getSearchBundle(PersistenceResourceManager.RESOURCE_SEARCH_BUNDLE_NAME);
             // set it searchable
             setAllFieldsSearchable(resourceSearchBundle);
             SearchBundle resourceRoleSearchBundle = searchBundleManager
-                    .getSearchBundle(PersistenceResourceManager.RESOURCE_ROLE_SEARCH_BUNDLE_NAME);
+                .getSearchBundle(PersistenceResourceManager.RESOURCE_ROLE_SEARCH_BUNDLE_NAME);
             // set it searchable
             setAllFieldsSearchable(resourceRoleSearchBundle);
             SearchBundle notificationSearchBundle = searchBundleManager
-                    .getSearchBundle(PersistenceResourceManager.NOTIFICATION_SEARCH_BUNDLE_NAME);
+                .getSearchBundle(PersistenceResourceManager.NOTIFICATION_SEARCH_BUNDLE_NAME);
             // set it searchable
             setAllFieldsSearchable(notificationSearchBundle);
             SearchBundle notificationTypeSearchBundle = searchBundleManager
-                    .getSearchBundle(PersistenceResourceManager.NOTIFICATION_TYPE_SEARCH_BUNDLE_NAME);
+                .getSearchBundle(PersistenceResourceManager.NOTIFICATION_TYPE_SEARCH_BUNDLE_NAME);
             // set it searchable
             setAllFieldsSearchable(notificationTypeSearchBundle);
             // initialize the PersistenceResourceManager
-            resourceManager = new PersistenceResourceManager(persistence, resourceSearchBundle, resourceRoleSearchBundle,
-                    notificationSearchBundle, notificationTypeSearchBundle, resourceIdGenerator,
-                    resourceRoleIdGenerator, notificationTypeIdGenerator);
+            resourceManager = new PersistenceResourceManager(persistence, resourceSearchBundle,
+                resourceRoleSearchBundle, notificationSearchBundle, notificationTypeSearchBundle,
+                resourceIdGenerator, resourceRoleIdGenerator, notificationTypeIdGenerator);
             return resourceManager;
         } catch (Exception e) {
             throw new ManagerCreationException("Exception occurred while creating the resource manager.", e);
@@ -205,16 +243,16 @@ public class ManagerCreationHelper implements ManagersProvider {
 
     /**
      * <p>
-     * Returns a <code>ScreeningManager</code> instance. This is used in <code>UploadServices</code> to
-     * retrieve this manager and perform all its operations.
+     * Returns a <code>ScreeningManager</code> instance. This is used in <code>UploadServices</code> to retrieve this
+     * manager and perform all its operations.
      * </p>
-     * 
+     *
      * @return a <code>ScreeningManager</code> instance
      * @see ManagersProvider#getScreeningManager()
      */
     public ScreeningManager getScreeningManager() {
         try {
-            if(screeningManager == null) {
+            if (screeningManager == null) {
                 screeningManager = ScreeningManagerFactory.createScreeningManager();
             }
             return screeningManager;
@@ -225,15 +263,15 @@ public class ManagerCreationHelper implements ManagersProvider {
 
     /**
      * <p>
-     * Returns a <code>UploadManager</code> instance. This is used in <code>UploadServices</code> to retrieve
-     * this manager and perform all its operations.
+     * Returns a <code>UploadManager</code> instance. This is used in <code>UploadServices</code> to retrieve this
+     * manager and perform all its operations.
      * </p>
-     * 
+     *
      * @return a <code>UploadManager</code> instance
      * @see ManagersProvider#getUploadManager()
      */
     public UploadManager getUploadManager() {
-        if(uploadManager != null) {
+        if (uploadManager != null) {
             return uploadManager;
         }
         try {
@@ -243,25 +281,25 @@ public class ManagerCreationHelper implements ManagersProvider {
             UploadPersistence persistence = new SqlUploadPersistence(dbconn);
             // Get the ID generators
             IDGenerator uploadIdGenerator = IDGeneratorFactory
-                    .getIDGenerator(PersistenceUploadManager.UPLOAD_ID_GENERATOR_NAME);
+                .getIDGenerator(PersistenceUploadManager.UPLOAD_ID_GENERATOR_NAME);
             IDGenerator uploadTypeIdGenerator = IDGeneratorFactory
-                    .getIDGenerator(PersistenceUploadManager.UPLOAD_TYPE_ID_GENERATOR_NAME);
+                .getIDGenerator(PersistenceUploadManager.UPLOAD_TYPE_ID_GENERATOR_NAME);
             IDGenerator uploadStatusIdGenerator = IDGeneratorFactory
-                    .getIDGenerator(PersistenceUploadManager.UPLOAD_STATUS_ID_GENERATOR_NAME);
+                .getIDGenerator(PersistenceUploadManager.UPLOAD_STATUS_ID_GENERATOR_NAME);
             IDGenerator submissionIdGenerator = IDGeneratorFactory
-                    .getIDGenerator(PersistenceUploadManager.SUBMISSION_ID_GENERATOR_NAME);
+                .getIDGenerator(PersistenceUploadManager.SUBMISSION_ID_GENERATOR_NAME);
             IDGenerator submissionStatusIdGenerator = IDGeneratorFactory
-                    .getIDGenerator(PersistenceUploadManager.SUBMISSION_STATUS_ID_GENERATOR_NAME);
+                .getIDGenerator(PersistenceUploadManager.SUBMISSION_STATUS_ID_GENERATOR_NAME);
             // Get the search bundles
             SearchBundleManager searchBundleManager = new SearchBundleManager("com.topcoder.searchbuilder.common");
             SearchBundle uploadSearchBundle = searchBundleManager
-                    .getSearchBundle(PersistenceUploadManager.UPLOAD_SEARCH_BUNDLE_NAME);
+                .getSearchBundle(PersistenceUploadManager.UPLOAD_SEARCH_BUNDLE_NAME);
             SearchBundle submissionSearchBundle = searchBundleManager
-                    .getSearchBundle(PersistenceUploadManager.SUBMISSION_SEARCH_BUNDLE_NAME);
+                .getSearchBundle(PersistenceUploadManager.SUBMISSION_SEARCH_BUNDLE_NAME);
             // Initialize the PersistenceUploadManager
             uploadManager = new PersistenceUploadManager(persistence, uploadSearchBundle, submissionSearchBundle,
-                    uploadIdGenerator, uploadTypeIdGenerator, uploadStatusIdGenerator, submissionIdGenerator,
-                    submissionStatusIdGenerator);
+                uploadIdGenerator, uploadTypeIdGenerator, uploadStatusIdGenerator, submissionIdGenerator,
+                submissionStatusIdGenerator);
             return uploadManager;
         } catch (Exception e) {
             throw new ManagerCreationException("Exception occurred while creating the upload manager.", e);
@@ -270,9 +308,8 @@ public class ManagerCreationHelper implements ManagersProvider {
 
     /**
      * Sets the searchable fields to the search bundle.
-     * 
-     * @param searchBundle
-     *            the search bundle to set.
+     *
+     * @param searchBundle the search bundle to set.
      */
     private static void setAllFieldsSearchable(SearchBundle searchBundle) {
         Map<String, ObjectValidator> fields = new HashMap<String, ObjectValidator>();
@@ -305,23 +342,19 @@ public class ManagerCreationHelper implements ManagersProvider {
 
     /**
      * Sets the phase operation with the handler to the given phase manager.
-     * 
-     * @param manager
-     *            the phase manager
-     * @param phaseTypes
-     *            the phase types
-     * @param handler
-     *            the handler to be registered
-     * @param phaseName
-     *            the current phase name.
+     *
+     * @param manager the phase manager
+     * @param phaseTypes the phase types
+     * @param handler the handler to be registered
+     * @param phaseName the current phase name.
      */
     private static void registerPhaseHandlerForOperation(PhaseManager manager, PhaseType[] phaseTypes,
-            PhaseHandler handler, String phaseName) {
+        PhaseHandler handler, String phaseName) {
         manager.registerHandler(handler, ActionsHelper.findPhaseTypeByName(phaseTypes, phaseName),
-                PhaseOperationEnum.START);
+            PhaseOperationEnum.START);
         manager.registerHandler(handler, ActionsHelper.findPhaseTypeByName(phaseTypes, phaseName),
-                PhaseOperationEnum.END);
+            PhaseOperationEnum.END);
         manager.registerHandler(handler, ActionsHelper.findPhaseTypeByName(phaseTypes, phaseName),
-                PhaseOperationEnum.CANCEL);
+            PhaseOperationEnum.CANCEL);
     }
 }

@@ -1,9 +1,11 @@
 /*
- * Copyright (C) 2006-2007 TopCoder Inc.  All Rights Reserved.
+ * Copyright (C) 2009 TopCoder Inc., All Rights Reserved.
  */
 package com.cronos.onlinereview.actions;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -17,8 +19,10 @@ import org.apache.struts.validator.LazyValidatorForm;
 import com.topcoder.management.project.Project;
 import com.topcoder.management.project.ProjectFilterUtility;
 import com.topcoder.management.project.ProjectManager;
+import com.topcoder.management.project.link.ProjectLink;
 import com.topcoder.management.project.link.ProjectLinkManager;
 import com.topcoder.search.builder.filter.Filter;
+import com.topcoder.search.builder.filter.NotFilter;
 import com.topcoder.util.errorhandling.BaseException;
 
 /**
@@ -40,6 +44,26 @@ import com.topcoder.util.errorhandling.BaseException;
  * @since OR Project Linking Assembly
  */
 public class ProjectLinksActions extends DispatchAction {
+    /**
+     * <p>
+     * Constant for "Deleted" status.
+     * </p>
+     */
+    private static final String STATUS_NAME_DELETED = "Deleted";
+
+    /**
+     * <p>
+     * Constant for link action of "add".
+     * </p>
+     */
+    private static final String LINK_ACTION_ADD = "add";
+
+    /**
+     * <p>
+     * Constant for link action of "delete".
+     * </p>
+     */
+    private static final String LINK_ACTION_DELETE = "delete";
 
     /**
      * <p>
@@ -51,7 +75,7 @@ public class ProjectLinksActions extends DispatchAction {
      * @param request the http request.
      * @param response the http response.
      * @return the action forward
-     * @throws BaseException when any error happens while processing in TCS components.
+     * @throws BaseException when any error happens while processing.
      */
     public ActionForward editProjectLinks(ActionMapping mapping, ActionForm form, HttpServletRequest request,
         HttpServletResponse response) throws BaseException {
@@ -66,7 +90,7 @@ public class ProjectLinksActions extends DispatchAction {
         }
 
         // obtains the project link manager
-        ProjectLinkManager linkManager = new ProjectLinkManager();
+        ProjectLinkManager linkManager = ActionsHelper.createProjectLinkManager(request);
 
         // set up project link types
         request.setAttribute("projectLinkTypes", linkManager.getAllProjectLinkTypes());
@@ -75,13 +99,13 @@ public class ProjectLinksActions extends DispatchAction {
         ProjectManager manager = ActionsHelper.createProjectManager(request);
 
         // get all active projects
-        Filter filterStatus = ProjectFilterUtility.buildStatusNameEqualFilter("Active");
-        Project[] activeProjects = manager.searchProjects(filterStatus);
+        Filter filterStatus = new NotFilter(ProjectFilterUtility.buildStatusNameEqualFilter(STATUS_NAME_DELETED));
+        Project[] allProjects = manager.searchProjects(filterStatus);
         // Sort fetched projects. Currently sorting is done by projects' names only, in ascending order
-        Arrays.sort(activeProjects, new Comparators.ProjectNameComparer());
+        Arrays.sort(allProjects, new Comparators.ProjectNameComparer());
 
-        // set up active projects
-        request.setAttribute("activeProjects", linkManager.getAllProjectLinkTypes());
+        // set up projects except for deleted ones
+        request.setAttribute("allProjects", allProjects);
 
         // Populate the form with project and project link properties
         populateProjectLinkForm(request, (LazyValidatorForm) form, verification.getProject());
@@ -97,15 +121,29 @@ public class ProjectLinksActions extends DispatchAction {
      * @param request the request to be processed
      * @param form the form to be populated with data
      * @param project the project to take the data from
+     *
+     * @throws BaseException if any error occurs during the population
      */
-    private void populateProjectLinkForm(HttpServletRequest request, LazyValidatorForm form, Project project) {
+    private void populateProjectLinkForm(HttpServletRequest request, LazyValidatorForm form, Project project)
+        throws BaseException {
         // Populate project id
         form.set("pid", new Long(project.getId()));
 
-        form.set("new_link_dest_id_text",0, "");
-        form.set("new_link_dest_id",0, new Long(-1));
-        form.set("new_link_type_id",0, new Long(-1));
-        form.set("new_link_action",0, "add");
+        // template row
+        form.set("link_dest_id_text", 0, "");
+        form.set("link_dest_id", 0, new Long(-1));
+        form.set("link_type_id", 0, new Long(-1));
+        form.set("link_action", 0, LINK_ACTION_ADD);
+
+        ProjectLinkManager linkManager = ActionsHelper.createProjectLinkManager(request);
+        ProjectLink[] links = linkManager.getDestProjectLinks(project.getId());
+        for (int i = 0; i < links.length; i++) {
+            ProjectLink link = links[i];
+            form.set("link_dest_id_text", i + 1, "" + link.getDestProject().getId());
+            form.set("link_dest_id", i + 1, new Long(link.getDestProject().getId()));
+            form.set("link_type_id", i + 1, new Long(link.getType().getId()));
+            form.set("link_action", i + 1, LINK_ACTION_ADD);
+        }
     }
 
     /**
@@ -133,6 +171,31 @@ public class ProjectLinksActions extends DispatchAction {
         }
 
         Project project = verification.getProject();
+
+        // save links
+        LazyValidatorForm dynaForm = (LazyValidatorForm) form;
+        Long[] destIds = (Long[]) dynaForm.get("link_dest_id");
+        Long[] typeIds = (Long[]) dynaForm.get("link_type_id");
+        String[] actions = (String[]) dynaForm.get("link_action");
+
+        List<Long> destList = new ArrayList<Long>();
+        List<Long> typeList = new ArrayList<Long>();
+        for (int i = 1; i < destIds.length; i++) {
+            if (!LINK_ACTION_DELETE.equals(actions[i])) {
+                destList.add(destIds[i]);
+                typeList.add(typeIds[i]);
+            }
+        }
+
+        ProjectLinkManager linkManager = ActionsHelper.createProjectLinkManager(request);
+
+        long[] paramDestProjectIds = new long[destList.size()];
+        long[] paramTypeIds = new long[typeList.size()];
+        for (int i = 0; i < paramDestProjectIds.length; i++) {
+            paramDestProjectIds[i] = destList.get(i);
+            paramTypeIds[i] = typeList.get(i);
+        }
+        linkManager.updateProjectLinks(project.getId(), paramDestProjectIds, paramTypeIds);
 
         // Return success forward
         return ActionsHelper.cloneForwardAndAppendToPath(mapping.findForward(Constants.SUCCESS_FORWARD_NAME), "&pid="

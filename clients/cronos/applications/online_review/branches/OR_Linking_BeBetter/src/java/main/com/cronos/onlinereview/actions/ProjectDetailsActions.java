@@ -44,6 +44,8 @@ import com.topcoder.management.deliverable.search.UploadFilterBuilder;
 import com.topcoder.management.phase.PhaseManager;
 import com.topcoder.management.project.Project;
 import com.topcoder.management.project.ProjectManager;
+import com.topcoder.management.project.link.ProjectLink;
+import com.topcoder.management.project.link.ProjectLinkManager;
 import com.topcoder.management.resource.Notification;
 import com.topcoder.management.resource.Resource;
 import com.topcoder.management.resource.ResourceManager;
@@ -471,6 +473,11 @@ public class ProjectDetailsActions extends DispatchAction {
             }
         }
         request.setAttribute("isAllowedToPerformAggregationReview", Boolean.valueOf(allowedToReviewAggregation));
+
+        //OR Project Linking Assembly
+        ProjectLinkManager linkManager = ActionsHelper.createProjectLinkManager(request);
+        request.setAttribute("destProjectLinks", linkManager.getDestProjectLinks(project.getId()));
+        request.setAttribute("srcProjectLinks", linkManager.getSourceProjectLinks(project.getId()));
 
         return mapping.findForward(Constants.SUCCESS_FORWARD_NAME);
     }
@@ -2202,7 +2209,7 @@ public class ProjectDetailsActions extends DispatchAction {
      */
     private static String[] getDeliverableSubmissionUserIds(HttpServletRequest request, Deliverable[] deliverables)
         	throws BaseException {
-    	
+
         List<Long> submissionIds = new ArrayList<Long>();
 
         for (int i = 0; i < deliverables.length; ++i) {
