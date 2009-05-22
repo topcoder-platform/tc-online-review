@@ -172,7 +172,7 @@
     <property name="JNDI_Utility.path" value="JNDI_Utility/${JNDI_Utility.version}" />
     <property name="JNDI_Utility.jar" value="${tcs_libdir}/${JNDI_Utility.path}/${JNDI_Utility.jar.name}" />
 
-    <property name="logging_wrapper.version" value="2.0" />
+    <property name="logging_wrapper.version" value="1.2" />
     <property name="logging_wrapper.jar.name" value="logging_wrapper.jar" />
     <property name="logging_wrapper.path" value="logging_wrapper/${logging_wrapper.version}" />
     <property name="logging_wrapper.jar" value="${tcs_libdir}/${logging_wrapper.path}/${logging_wrapper.jar.name}" />
