@@ -135,6 +135,13 @@
             <form-property name="final_comment" type="java.lang.String[]" />
             <form-property name="approve_fixes" type="java.lang.Boolean" />
         </form-bean>
+        
+ 		<form-bean name="projectLinksForm"
+        	type="org.apache.struts.validator.LazyValidatorForm">
+        	<form-property name="pId" type="java.lang.Long" />
+        	<form-property name="prjIds" type="java.lang.Long[]" />
+        	<form-property name="lnkTypes" type="java.lang.Long[]" />
+        </form-bean>        
     </form-beans>
 
 
@@ -577,6 +584,15 @@
             input="/jsp/viewProjectDetails.jsp">
             <forward name="success" path="/jsp/viewCompositeScorecard.jsp" redirect="false"/>
         </action>
+        
+        <!--  "Edit Project Links" action -->
+        <action path="/actions/EditProjectLink" unknown="false"
+            type="com.cronos.onlinereview.actions.EditProjectLinksActions"
+            parameter="method" scope="request"
+            name="projectLinksForm">
+            <forward name="displayPage" path="/jsp/editProjectLinks.jsp" redirect="false" />
+            <forward name="success" path="/actions/ViewProjectDetails.do?method=viewProjectDetails" redirect="true" />
+        </action>        
     </action-mappings>
 
 
