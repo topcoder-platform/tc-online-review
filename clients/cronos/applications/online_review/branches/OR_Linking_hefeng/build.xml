@@ -501,6 +501,7 @@
                source="1.5"
                target="1.5"
                >
+        	
         	<classpath >
         		<fileset dir="${ext_libdir}" includes="**/*.jar"/>
         		<fileset dir="${JBOSS_HOME}" includes="client/jbossall-client.jar"/>
