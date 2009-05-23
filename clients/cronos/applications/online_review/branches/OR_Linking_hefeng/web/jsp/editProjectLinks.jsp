@@ -76,7 +76,11 @@
 		
 		if (prjIdCtrl.value == -1){
 			alert(ERR_PRJ_NOT_SELECTED);
-			prjIdCtrl.focus();
+			try{
+				prjIdCtrl.focus();
+			}catch(e){
+				//hidden input may not be focused
+			}
 			return false;
 		}
 
@@ -143,7 +147,7 @@
 	
 	function validateForm() {
 		var newLinksRows = $("tr.dataline");
-		for (var i=0; i<newLinksRows.length; i++){
+		for (var i=newLinksRows.length - 1; i>=0; i--){
 			if (!validateRow($(newLinksRows[i]), true)){
 				return false;
 			}
