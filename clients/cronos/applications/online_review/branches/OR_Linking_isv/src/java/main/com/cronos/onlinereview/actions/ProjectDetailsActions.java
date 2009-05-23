@@ -96,7 +96,8 @@ import com.topcoder.util.file.fieldconfig.TemplateFields;
  *
  * @author George1
  * @author real_vg
- * @version 1.0
+ * @author TCSDEVELOPER
+ * @version 1.1
  */
 public class ProjectDetailsActions extends DispatchAction {
 
@@ -382,6 +383,12 @@ public class ProjectDetailsActions extends DispatchAction {
         }
 
         request.setAttribute("sendTLNotifications", (sendTLNotifications) ? "On" : "Off");
+
+        // Get the project links
+        List<ProjectLink> toLinks = ActionsHelper.getProjectLinks(project.getId(), true);
+        List<ProjectLink> fromLinks = ActionsHelper.getProjectLinks(project.getId(), false);
+        request.setAttribute("projectToLinks", toLinks);
+        request.setAttribute("projectFromLinks", fromLinks);
 
         // Check resource roles
         request.setAttribute("isManager",

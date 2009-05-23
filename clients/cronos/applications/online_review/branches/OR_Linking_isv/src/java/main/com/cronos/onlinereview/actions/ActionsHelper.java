@@ -123,7 +123,8 @@ import com.topcoder.util.log.LogFactory;
  *
  * @author George1
  * @author real_vg
- * @version 1.0
+ * @author TCSDEVELOPER
+ * @version 1.1
  */
 public class ActionsHelper {
     /**
@@ -3861,5 +3862,174 @@ public class ActionsHelper {
      */
     public static boolean isStudioProject(Project project) {
         return "Studio".equals(project.getProjectCategory().getProjectType().getName());
+    }
+
+    /**
+     * <p>Gets the list of project links which have the project matching the specified ID as a source/referring project
+     * or destination/referred project depending on the specified flag.</p>
+     *
+     * @param projectId a <code>long</code> providing the ID of a project to get referred project for.
+     * @param asSource <code>true</code> if the specified project must be a source of a link; <code>false</code> if it
+     *        must be a destination of a link.
+     * @return a <code>List</code> providing the project links for the specified project.
+     * @throws BaseException if an unexpected error occurs.
+     * @since 1.1
+     */
+    public static List<ProjectLink> getProjectLinks(long projectId, boolean asSource) throws BaseException {
+        Connection conn = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        try {
+            DBConnectionFactory dbconn = new DBConnectionFactoryImpl(DB_CONNECTION_NAMESPACE);
+            conn = dbconn.createConnection();
+
+            String columnName;
+            if (asSource) {
+                columnName = "p.source_project_id";
+            } else {
+                columnName = "p.dest_project_id";
+            }
+            ps = conn.prepareStatement("SELECT t.link_type_id, t.link_type_name, "
+                                       + "p.source_project_id, i1.value AS source_project_name, "
+                                       + "i3.value AS source_project_version, p.dest_project_id, "
+                                       + "i2.value AS dest_project_name, i4.value AS dest_project_version "
+                                       + "FROM linked_project_xref p "
+                                       + "INNER JOIN link_type_lu t ON p.link_type_id = t.link_type_id "
+                                       + "INNER JOIN project_info i1 ON p.source_project_id = i1.project_id "
+                                       + "      AND i1.project_info_type_id = 6"
+                                       + "INNER JOIN project_info i2 ON p.dest_project_id = i2.project_id "
+                                       + "      AND i2.project_info_type_id = 6"
+                                       + "INNER JOIN project_info i3 ON p.source_project_id = i3.project_id "
+                                       + "      AND i3.project_info_type_id = 7"
+                                       + "INNER JOIN project_info i4 ON p.dest_project_id = i4.project_id "
+                                       + "      AND i4.project_info_type_id = 7"
+                                       + "WHERE " + columnName + " = ? ORDER BY "
+                                       + (asSource ? "i2.value" : "i1.value"));
+            ps.setLong(1, projectId);
+            rs  = ps.executeQuery();
+
+            List<ProjectLink> links = new ArrayList<ProjectLink>();
+            while (rs.next()) {
+                ProjectLinkType type = new ProjectLinkType(rs.getLong("link_type_id"), rs.getString("link_type_name"));
+                ProjectLink link = new ProjectLink(type,
+                                                   rs.getLong("source_project_id"),
+                                                   rs.getString("source_project_name"),
+                                                   rs.getString("source_project_version"),
+                                                   rs.getLong("dest_project_id"),
+                                                   rs.getString("dest_project_name"),
+                                                   rs.getString("dest_project_version"));
+                links.add(link);
+            }
+            return links;
+        } catch(SQLException e) {
+            throw new BaseException("Failed to load the list of project links for project: " + projectId, e);
+        } catch (UnknownConnectionException e) {
+            throw new BaseException("Failed to return DBConnection", e);
+        } catch (ConfigurationException e) {
+            throw new BaseException("Failed to return DBConnection", e);
+        } finally {
+            close(rs);
+            close(ps);
+            close(conn);
+        }
+    }
+
+    /**
+     * <p>Gets the list of existing project link types.</p>
+     *
+     * @return a <code>List</code> providing the available project link types.
+     * @throws BaseException if an unexpected error occurs.
+     * @since 1.1
+     */
+    public static List<ProjectLinkType> getProjectLinkTypes() throws BaseException {
+        Connection conn = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        try {
+            DBConnectionFactory dbconn = new DBConnectionFactoryImpl(DB_CONNECTION_NAMESPACE);
+            conn = dbconn.createConnection();
+
+            ps = conn.prepareStatement("SELECT link_type_id, link_type_name FROM link_type_lu ORDER BY link_type_name");
+            rs  = ps.executeQuery();
+
+            List<ProjectLinkType> types = new ArrayList<ProjectLinkType>();
+            while (rs.next()) {
+                ProjectLinkType type = new ProjectLinkType(rs.getLong("link_type_id"), rs.getString("link_type_name"));
+                types.add(type);
+            }
+            return types;
+        } catch(SQLException e) {
+            throw new BaseException("Failed to load the list of project link types", e);
+        } catch (UnknownConnectionException e) {
+            throw new BaseException("Failed to return DBConnection", e);
+        } catch (ConfigurationException e) {
+            throw new BaseException("Failed to return DBConnection", e);
+        } finally {
+            close(rs);
+            close(ps);
+            close(conn);
+        }
+    }
+
+    /**
+     * <p>Persists the specified project links for the specified project in DB.</p>
+     *
+     * @param projectId a <code>long</code> providing the ID of a project to save links for.
+     * @param links a <code>List</code> providing the project links to be associated with the specified project.
+     * @throws BaseException if an unexpected error occurs.
+     * @throws IllegalArgumentException if specified list contains at least 1 link which is not related to specified
+     *         project.
+     * @since 1.1
+     */
+    public static void setProjectLinks(long projectId, List<ProjectLink> links) throws BaseException {
+        for (int i = 0; i < links.size(); i++) {
+            ProjectLink link = links.get(i);
+            if (link.getSourceProjectId() != projectId) {
+                throw new IllegalArgumentException("Link at index " + i + " has a different source project ID set "
+                                                   + " to " + link.getSourceProjectId() + " instead of " + projectId);
+            }
+        }
+
+        boolean success = false;
+        Connection conn = null;
+        PreparedStatement ps = null;
+        try {
+            DBConnectionFactory dbconn = new DBConnectionFactoryImpl(DB_CONNECTION_NAMESPACE);
+            conn = dbconn.createConnection();
+            conn.setAutoCommit(false);
+
+            ps = conn.prepareStatement("DELETE FROM linked_project_xref WHERE source_project_id = ?");
+            ps.setLong(1, projectId);
+            ps.executeUpdate();
+            ps.close();
+
+            ps = conn.prepareStatement(
+                "INSERT INTO linked_project_xref (source_project_id, dest_project_id, link_type_id) VALUES (?, ?, ?)");
+            ps.setLong(1, projectId);
+            for (ProjectLink link : links) {
+                ps.setLong(2, link.getTargetProjectId());
+                ps.setLong(3, link.getType().getId());
+                ps.executeUpdate();
+            }
+
+            conn.commit();
+            success = true;
+        } catch(SQLException e) {
+            throw new BaseException("Failed to save the list of project links for project: " + projectId, e);
+        } catch (UnknownConnectionException e) {
+            throw new BaseException("Failed to return DBConnection", e);
+        } catch (ConfigurationException e) {
+            throw new BaseException("Failed to return DBConnection", e);
+        } finally {
+            if (!success) {
+                try {
+                    conn.rollback();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+            close(ps);
+            close(conn);
+        }
     }
 }

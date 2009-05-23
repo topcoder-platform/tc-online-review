@@ -135,6 +135,13 @@
             <form-property name="final_comment" type="java.lang.String[]" />
             <form-property name="approve_fixes" type="java.lang.Boolean" />
         </form-bean>
+
+        <form-bean name="projectLinksForm" dynamic="true"
+            type="org.apache.struts.validator.LazyValidatorForm">
+            <form-property name="pid" type="java.lang.Long" />
+            <form-property name="targetProjectId" type="java.lang.Long[]" />
+            <form-property name="linkTypeId" type="java.lang.Long[]" />
+        </form-bean>
     </form-beans>
 
 
@@ -230,12 +237,30 @@
             <forward name="success" path="/jsp/editProject.jsp" redirect="false" />
         </action>
 
+        <!-- "Edit Project Links" action -->
+        <action path="/actions/EditProjectLinks" unknown="false"
+            type="com.cronos.onlinereview.actions.ProjectLinksActions"
+            parameter="method" scope="request"
+            name="projectLinksForm"
+            input="/jsp/editProjectLinks.jsp">
+            <forward name="success" path="/jsp/editProjectLinks.jsp" redirect="false" />
+        </action>
+
         <!-- "Save Project" action -->
         <action path="/actions/SaveProject" unknown="false"
             type="com.cronos.onlinereview.actions.ProjectActions"
             parameter="method" scope="request"
             name="projectForm"
             input="/jsp/editProject.jsp">
+            <forward name="success" path="/actions/ViewProjectDetails.do?method=viewProjectDetails" redirect="true" />
+        </action>
+
+        <!-- "Save Project Links" action -->
+        <action path="/actions/SaveProjectLinks" unknown="false"
+            type="com.cronos.onlinereview.actions.ProjectLinksActions"
+            parameter="method" scope="request"
+            name="projectLinksForm"
+            input="/jsp/editProjectLinks.jsp">
             <forward name="success" path="/actions/ViewProjectDetails.do?method=viewProjectDetails" redirect="true" />
         </action>
 
