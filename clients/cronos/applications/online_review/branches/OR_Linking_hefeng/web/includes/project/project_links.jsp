@@ -46,7 +46,7 @@
 		<c:forEach items="${projectsLinkedTo}" var="linkInfo" varStatus="idxLinkInfo">
 			<TR class='${(idxLinkInfo.index % 2 == 0) ? "light" : "dark"}'>
 				<TD class="value" nowrap="nowrap">
-					<html:link page="/actions/ViewProjectDetails.do?method=viewProjectDetails&pid=${linkInfo.id}">${linkInfo.name} v ${linkInfo.version}</html:link>
+					<html:link page="/actions/ViewProjectDetails.do?method=viewProjectDetails&pid=${linkInfo.id}">${linkInfo.name} v${linkInfo.version}</html:link>
 				</TD>
 				<TD class="value" nowrap="nowrap">
 				 ${linkInfo.typeName}

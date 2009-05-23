@@ -43,6 +43,11 @@
 	function deleteNewLink(obj) {
 		if ($("#newLinks tr.dataline").length == 1) {
 			alert(ERR_LAST_ROW_CANT_DELETE);
+
+			var row = $("#newLinks tr.dataline");
+			$(row.children()[0]).children()[0].value = "";
+			$(row.children()[1]).children()[0].value = "-1";
+			$(row.children()[2]).children()[0].value = "-1";
 			return;
 		}
 		$(obj).parents("tr").remove();
