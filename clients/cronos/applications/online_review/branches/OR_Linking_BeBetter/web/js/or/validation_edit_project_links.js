@@ -94,6 +94,9 @@ function deleteProjectLink(linkRowNode) {
  * Call back function. It is invoked when project input box is changed.
  */    	
 function onProjectInputChange(projectInput) {   
+	    //trim the value first
+	    projectInput.value = trimString(projectInput.value);
+	    
 	    var projectDropDown = getProjectDropDown(projectInput.parentNode.parentNode);
 	    
 	    // Sets the drop down value
