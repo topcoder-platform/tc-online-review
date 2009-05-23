@@ -138,7 +138,7 @@
         
  		<form-bean name="projectLinksForm"
         	type="org.apache.struts.validator.LazyValidatorForm">
-        	<form-property name="pId" type="java.lang.Long" />
+        	<form-property name="pid" type="java.lang.Long" />
         	<form-property name="prjIds" type="java.lang.Long[]" />
         	<form-property name="lnkTypes" type="java.lang.Long[]" />
         </form-bean>        
