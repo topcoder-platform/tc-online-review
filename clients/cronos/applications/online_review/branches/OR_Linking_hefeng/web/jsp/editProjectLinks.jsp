@@ -172,7 +172,7 @@
 			</div>
 				
 			<html:form action="/actions/EditProjectLink.do?method=saveProjectLinks" onsubmit="return validateForm()">
-		    <html:hidden property="pId" value="${project.id}"/>
+		    <html:hidden property="pid" value="${project.id}"/>
 		    <div id="tabExistLinks">
 				<TABLE class="tabLinks" id="existLinks" cellpadding="0">
 					<TBODY>
@@ -182,8 +182,8 @@
 					<TR>
 						<TD class="header" width="15%"><bean:message key="editProjectLinks.caption.LinkedProjectId" /></TD>
 						<TD class="header" width="35%"><bean:message key="editProjectLinks.caption.LinkedProjectName" /></TD>
-						<TD class="header" width="35%"><bean:message key="editProjectLinks.caption.LinkType" /></TD>
-						<TD class="header" width="15%"><bean:message key="editProjectLinks.caption.Operation" /></TD>
+						<TD class="header" width="30%"><bean:message key="editProjectLinks.caption.LinkType" /></TD>
+						<TD class="header" width="20%"><bean:message key="editProjectLinks.caption.Operation" /></TD>
 					</TR>
 					
 					<c:forEach items="${linkInfos}" var="linkInfo" varStatus="idxLinkInfo">
@@ -191,13 +191,13 @@
 							<td class="value" nowrap="nowrap">${linkInfo.id}</td>
 							<td class="value" nowrap="nowrap">${linkInfo.name}<html:hidden property="prjIds[${idxLinkInfo.index}]" value="${linkInfo.id}"/></td>
 							<TD class="value" nowrap="nowrap">
-							<html:select property="lnkTypes[${idxLinkInfo.index}]" value="${linkInfo.linkType}">
+							<html:select property="lnkTypes[${idxLinkInfo.index}]" value="${linkInfo.linkType}" styleClass="inputBox">
 								<OPTION value="-1"><bean:message key="editProjectLinks.option.SelectLinkType" /></OPTION>
 								<html:options  collection="linkTypes" property="id" labelProperty="type"/>
 							</html:select>
 							</TD>
-							<TD class="value" nowrap="nowrap">
-							<html:img srcKey="btnDelete.img" style="cursor:hand;" altKey="btnDelete.alt" onclick="deleteExistLink(this)"/>
+							<TD class="value" nowrap="nowrap" align="right">
+							<html:img srcKey="btnDelete.img" style="cursor:pointer;" altKey="btnDelete.alt" onclick="deleteExistLink(this)"/>
 							</TD>
 						</TR>
 					</c:forEach>
@@ -217,13 +217,13 @@
 					<TR>
 						<TD class="header"  width="15%"><bean:message key="editProjectLinks.caption.ProjectId" /></TD>
 						<TD class="header"  width="35%"><bean:message key="editProjectLinks.caption.SelectTgtProject" /></TD>
-						<TD class="header"  width="35%"><bean:message key="editProjectLinks.caption.LinkType" /></TD>
-						<TD class="header"  width="15%"><bean:message key="editProjectLinks.caption.Operation" /></TD>
+						<TD class="header"  width="30%"><bean:message key="editProjectLinks.caption.LinkType" /></TD>
+						<TD class="header"  width="20%"><bean:message key="editProjectLinks.caption.Operation" /></TD>
 					</TR>
 					<TR class="light dataline">
 						<td class="value" nowrap="nowrap"><input type="text" class="input" onkeyup="changeProjectSel(this)"/></td>						
 						<td class="value" nowrap="nowrap">
-							<html:select property="prjIds[${fn:length(linkInfos)}]"  value="-1" onchange="changeProjectText(this)">
+							<html:select property="prjIds[${fn:length(linkInfos)}]"  value="-1" onchange="changeProjectText(this)" styleClass="inputBox">
 								<option value="-1"><bean:message key="editProjectLinks.option.SelectTgtProject" /></option>
 								<html:options  collection="selectableProjects" property="id" labelProperty='allProperties.Project Name'/>
 							</html:select>
@@ -234,10 +234,10 @@
 								<html:options  collection="linkTypes" property="id" labelProperty="type"/>	
 							</html:select>
 						</td>
-						<TD class="value" nowrap="nowrap">
-						<html:img srcKey="btnAdd.img" style="cursor:hand;" altKey="btnAdd.alt" onclick="addLink(this)"/>
+						<TD class="value" nowrap="nowrap" align="right">
+						<html:img srcKey="btnAdd.img" style="cursor:pointer;" altKey="btnAdd.alt" onclick="addLink(this)"/>
 						&nbsp;&nbsp;
-						<html:img srcKey="btnDelete.img" style="cursor:hand;" altKey="btnDelete.alt" onclick="deleteNewLink(this)"/>
+						<html:img srcKey="btnDelete.img" style="cursor:pointer;" altKey="btnDelete.alt" onclick="deleteNewLink(this)"/>
 						</TD>
 					</TR>
 					
@@ -255,7 +255,7 @@
 		 		<html:image srcKey="btnSave.img" border="0" altKey="btnSave.img"/>
 				&nbsp;
 				<html:link page="/actions/ViewProjectDetails.do?method=viewProjectDetails&pid=${project.id}">
-				 <html:img srcKey="btnCancel.img" style="cursor:hand;" border="0" altKey="btnCancel.img"/>
+				 <html:img srcKey="btnCancel.img" style="cursor:pointer;" border="0" altKey="btnCancel.img"/>
 				</html:link>
 		          </DIV>
 		    </div>

@@ -9,8 +9,8 @@
 			<TD class="title" colspan="2"><bean:message key="viewProjectDetails.ProjectLinks" /></TD>
 		</TR>
 		<TR>
-			<TD class="header"><B><bean:message key="viewProjectDetails.Project" /></B></TD>
-			<TD class="header"><B><bean:message key="viewProjectDetails.LinkType" /></B></TD>
+			<TD class="header" width="70%"><B><bean:message key="viewProjectDetails.Project" /></B></TD>
+			<TD class="header" width="30%"><B><bean:message key="viewProjectDetails.ProjectLinkType" /></B></TD>
 		</TR>
 		
 		<c:forEach items="${projectLinks}" var="linkInfo" varStatus="idxLinkInfo">
@@ -20,7 +20,7 @@
 				</TD>
 				<TD class="value" nowrap="nowrap">
 				 <c:choose>
-				 	<c:when test="${isAllowedToEditProjects}"><html:link page="/actions/EditProjectLink.do?method=viewProjectLinks&pid=${linkInfo.id}">${linkInfo.typeName}</html:link></c:when>
+					<c:when test="${isAllowedToEditProjects}"><html:link page="/actions/EditProjectLink.do?method=viewProjectLinks&pid=${project.id}">${linkInfo.typeName}</html:link></c:when>
 				 	<c:otherwise>${linkInfo.typeName}</c:otherwise>
 				 </c:choose>
 				</TD>
@@ -39,8 +39,8 @@
 			<TD class="title" colspan="2"><bean:message key="viewProjectDetails.ProjectsLinkToThis" /></TD>
 		</TR>
 		<TR>
-			<TD class="header"><B><bean:message key="viewProjectDetails.Project" /></B></TD>
-			<TD class="header"><B><bean:message key="viewProjectDetails.LinkType" /></B></TD>
+			<TD class="header" width="70%"><B><bean:message key="viewProjectDetails.Project" /></B></TD>
+			<TD class="header" width="30%"><B><bean:message key="viewProjectDetails.ProjectLinkType" /></B></TD>
 		</TR>
 		
 		<c:forEach items="${projectsLinkedTo}" var="linkInfo" varStatus="idxLinkInfo">
