@@ -168,7 +168,7 @@
 	
 		<DIV id="tabcontentcontainer">
 			<div id="contentTitle">
-				<h3>${project.allProperties["Project Name"]} - ${orfn:getMessage(pageContext, "editProjectLinks.title")}</h3>
+				<h3>${project.allProperties["Project Name"]} <bean:message key="global.version" /> ${project.allProperties["Project Version"]} - ${orfn:getMessage(pageContext, "editProjectLinks.title")}</h3>
 			</div>
 				
 			<html:form action="/actions/EditProjectLink.do?method=saveProjectLinks" onsubmit="return validateForm()">
@@ -177,13 +177,13 @@
 				<TABLE class="tabLinks" id="existLinks" cellpadding="0">
 					<TBODY>
 					<TR>
-						<TD class="title" colspan="4">Edit Project Links</TD>
+						<TD class="title" colspan="4"><bean:message key="editProjectLinks.caption.EditProjectLinks" /></TD>
 					</TR>
 					<TR>
-						<TD class="header" width="15%">Linked Project Id</TD>
-						<TD class="header" width="35%">Linked Project Name</TD>
-						<TD class="header" width="35%">Link Type</TD>
-						<TD class="header" width="15%">Operation</TD>
+						<TD class="header" width="15%"><bean:message key="editProjectLinks.caption.LinkedProjectId" /></TD>
+						<TD class="header" width="35%"><bean:message key="editProjectLinks.caption.LinkedProjectName" /></TD>
+						<TD class="header" width="35%"><bean:message key="editProjectLinks.caption.LinkType" /></TD>
+						<TD class="header" width="15%"><bean:message key="editProjectLinks.caption.Operation" /></TD>
 					</TR>
 					
 					<c:forEach items="${linkInfos}" var="linkInfo" varStatus="idxLinkInfo">
@@ -192,12 +192,12 @@
 							<td class="value" nowrap="nowrap">${linkInfo.name}<html:hidden property="prjIds[${idxLinkInfo.index}]" value="${linkInfo.id}"/></td>
 							<TD class="value" nowrap="nowrap">
 							<html:select property="lnkTypes[${idxLinkInfo.index}]" value="${linkInfo.linkType}">
-								<OPTION value="-1">Select Link Type</OPTION>
+								<OPTION value="-1"><bean:message key="editProjectLinks.option.SelectLinkType" /></OPTION>
 								<html:options  collection="linkTypes" property="id" labelProperty="type"/>
 							</html:select>
 							</TD>
 							<TD class="value" nowrap="nowrap">
-								<IMG src="/images/or/bttn_delete.gif" style="cursor:hand;" alt="delete" onClick="deleteExistLink(this)" />
+							<html:img srcKey="btnDelete.img" style="cursor:hand;" altKey="btnDelete.alt" onclick="deleteExistLink(this)"/>
 							</TD>
 						</TR>
 					</c:forEach>
@@ -212,30 +212,33 @@
 				<TABLE class="tabLinks" id="newLinks" cellpadding="0">
 					<TBODY>
 					<TR>
-						<TD class="title" colspan="4">Add Project Links</TD>
+						<TD class="title" colspan="4"><bean:message key="editProjectLinks.caption.AddProjectLinks" /></TD>
 					</TR>
 					<TR>
-						<TD class="header"  width="15%">Project ID</TD>
-						<TD class="header"  width="35%">Select A Project </TD>
-						<TD class="header"  width="35%">Link Type</TD>
-						<TD class="header"  width="15%">Operation</TD>
+						<TD class="header"  width="15%"><bean:message key="editProjectLinks.caption.ProjectId" /></TD>
+						<TD class="header"  width="35%"><bean:message key="editProjectLinks.caption.SelectTgtProject" /></TD>
+						<TD class="header"  width="35%"><bean:message key="editProjectLinks.caption.LinkType" /></TD>
+						<TD class="header"  width="15%"><bean:message key="editProjectLinks.caption.Operation" /></TD>
 					</TR>
 					<TR class="light dataline">
 						<td class="value" nowrap="nowrap"><input type="text" class="input" onkeyup="changeProjectSel(this)"/></td>						
 						<td class="value" nowrap="nowrap">
 							<html:select property="prjIds[${fn:length(linkInfos)}]"  value="-1" onchange="changeProjectText(this)">
-								<option value="-1">Select Project</option>
+								<option value="-1"><bean:message key="editProjectLinks.option.SelectTgtProject" /></option>
 								<html:options  collection="selectableProjects" property="id" labelProperty='allProperties.Project Name'/>
 							</html:select>
 						</td>
 						<td class="value" nowrap="nowrap">
 							<html:select property="lnkTypes[${fn:length(linkInfos)}]" styleClass="inputBox" value="-1">
-								<OPTION value="-1" selected="selected">Select Link Type</OPTION>
+								<OPTION value="-1" selected="selected"><bean:message key="editProjectLinks.option.SelectLinkType" /></OPTION>
 								<html:options  collection="linkTypes" property="id" labelProperty="type"/>	
 							</html:select>
 						</td>
 						<TD class="value" nowrap="nowrap">
-						<IMG src="/images/or/bttn_add.gif" style="cursor:hand;" alt="add" onClick="addLink(this)" />&nbsp;&nbsp;<IMG src="/images/or/bttn_delete.gif" style="cursor:hand;" alt="delete" onClick="deleteNewLink(this)" />					</TD>
+						<html:img srcKey="btnAdd.img" style="cursor:hand;" altKey="btnAdd.alt" onclick="addLink(this)"/>
+						&nbsp;&nbsp;
+						<html:img srcKey="btnDelete.img" style="cursor:hand;" altKey="btnDelete.alt" onclick="deleteNewLink(this)"/>
+						</TD>
 					</TR>
 					
 					
@@ -249,8 +252,11 @@
 			</div>
 			
 		 	<DIV class="bottomButtonBar">
-				<INPUT type="image" name="" src="/images/or/bttn_save_changes.gif" border="0" alt="Save Changes">&nbsp;
-				<html:link page="/actions/ViewProjectDetails.do?method=viewProjectDetails&pid=${project.id}"><IMG src="/images/or/bttn_cancel.gif" border="0" alt="Cancel"></html:link>
+		 		<html:image srcKey="btnSave.img" border="0" altKey="btnSave.img"/>
+				&nbsp;
+				<html:link page="/actions/ViewProjectDetails.do?method=viewProjectDetails&pid=${project.id}">
+				 <html:img srcKey="btnCancel.img" style="cursor:hand;" border="0" altKey="btnCancel.img"/>
+				</html:link>
 		          </DIV>
 		    </div>
     		</html:form>

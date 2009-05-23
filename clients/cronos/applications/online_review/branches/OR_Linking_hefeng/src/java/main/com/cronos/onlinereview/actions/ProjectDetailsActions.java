@@ -43,6 +43,7 @@ import com.topcoder.management.deliverable.search.SubmissionFilterBuilder;
 import com.topcoder.management.deliverable.search.UploadFilterBuilder;
 import com.topcoder.management.phase.PhaseManager;
 import com.topcoder.management.project.Project;
+import com.topcoder.management.project.ProjectLinkInfo;
 import com.topcoder.management.project.ProjectManager;
 import com.topcoder.management.resource.Notification;
 import com.topcoder.management.resource.Resource;
@@ -346,6 +347,14 @@ public class ProjectDetailsActions extends DispatchAction {
         request.setAttribute("ganttLengths", ganttLengths);
         // Place information about used scorecard templates
         request.setAttribute("scorecardTemplates", scorecardTemplates);
+        
+        ProjectManager prjMgr = ActionsHelper.createProjectManager(request);
+        
+        //Loads project links and projects linked to this project
+        ProjectLinkInfo[] prjLinks = prjMgr.getLinkedProjects(project.getId());
+        ProjectLinkInfo[] prjsLinkedTo = prjMgr.getProjectsLinkedTo(project.getId());
+        request.setAttribute("projectLinks", prjLinks);
+        request.setAttribute("projectsLinkedTo", prjsLinkedTo);
 
         ExternalUser[] allProjectExtUsers = null;
 
