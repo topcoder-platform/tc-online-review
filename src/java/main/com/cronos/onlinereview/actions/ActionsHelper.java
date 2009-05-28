@@ -39,6 +39,7 @@ import com.cronos.onlinereview.external.ExternalUser;
 import com.cronos.onlinereview.external.RetrievalException;
 import com.cronos.onlinereview.external.UserRetrieval;
 import com.cronos.onlinereview.external.impl.DBUserRetrieval;
+import com.cronos.onlinereview.model.ClientProject;
 import com.cronos.onlinereview.phases.AutoPaymentUtil;
 import com.cronos.onlinereview.phases.PRHelper;
 import com.topcoder.date.workdays.DefaultWorkdaysFactory;
@@ -136,6 +137,13 @@ public class ActionsHelper {
      * namespace which the parameters for database connection factory are stored under.
      */
     private static final String DB_CONNECTION_NAMESPACE = "com.topcoder.db.connectionfactory.DBConnectionFactoryImpl";
+    
+    /**
+     * The connection name for retrieving billing projects.
+     * 
+     * @since Online Review Update - Add Billing Project Drop Down v1.0
+     */
+    private static final String DB_CONNECTION_TIMEDS = "timeDS";
 
     /**
      * This member variable is a string constant that defines the name of the configuration
@@ -2774,6 +2782,74 @@ public class ActionsHelper {
 
         // Return the File Upload object
         return fileUpload;
+    }
+    
+    /**
+     * This static method helps to get a list of <code>ClientProject</code>
+     * 
+     * @return a list of <code>ClientProject</code>
+     * @param request
+     *            an <code>HttpServletRequest</code> object, where created list of <code>ClientProject</code> can be
+     *            stored to let reusing it later for the same request.
+     * @throws IllegalArgumentException
+     *             if <code>request</code> parameter is <code>null</code>.
+     * @throws BaseException
+     *             if any error occurs.
+     * @since Online Review Update - Add Project Dropdown v1.0
+     */
+    @SuppressWarnings("unchecked")
+    public static List<ClientProject> getClientProjects(HttpServletRequest request) throws ManagerCreationException,
+            BaseException {
+        validateParameterNotNull(request, "request");
+
+        List<ClientProject> clientProjects = (List<ClientProject>) request.getAttribute("clientProjectsList");
+        if (clientProjects == null) {
+
+            Connection conn = null;
+            Statement selectStmt = null;
+            ResultSet resultSet = null;
+            try {
+
+                clientProjects = new LinkedList<ClientProject>();
+
+                DBConnectionFactory dbconn = new DBConnectionFactoryImpl(DB_CONNECTION_NAMESPACE);
+                conn = dbconn.createConnection(DB_CONNECTION_TIMEDS);
+                log.log(Level.INFO, "create db connection with timeDS from DBConnectionFactoryImpl with namespace:"
+                        + DB_CONNECTION_NAMESPACE);
+
+                selectStmt = conn.createStatement();
+                resultSet = selectStmt.executeQuery("SELECT project_id, name FROM project WHERE is_deleted = 0");
+
+                while (resultSet.next()) {
+                    long projectID = resultSet.getLong(1);
+                    String projectName = resultSet.getString(2);
+                    
+                    ClientProject clientProject = new ClientProject();
+                    clientProject.setId(projectID);
+                    clientProject.setName(projectName);
+                    
+                    clientProjects.add(clientProject);
+                }
+            } catch (UnknownConnectionException e) {
+                throw new BaseException("Failed to create connection", e);
+            } catch (ConfigurationException e) {
+                throw new BaseException("Failed to config for DBNamespace", e);
+            } catch (DBConnectionException e) {
+                throw new BaseException("Failed to return DBConnection", e);
+            } catch (SQLException e) {
+                log.log(Level.WARN, "Failed to read from project table in time_oltp" + e);
+            } finally {
+                close(resultSet);
+                close(selectStmt);
+                close(conn);
+            }
+
+            // Place newly-created client projects into the request as attribute
+            request.setAttribute("clientProjectsList", clientProjects);
+        }
+
+        // Return the client projects
+        return clientProjects;
     }
 
     /**

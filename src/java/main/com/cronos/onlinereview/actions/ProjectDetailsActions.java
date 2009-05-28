@@ -32,6 +32,7 @@ import com.cronos.onlinereview.autoscreening.management.ScreeningResult;
 import com.cronos.onlinereview.autoscreening.management.ScreeningTask;
 import com.cronos.onlinereview.external.ExternalUser;
 import com.cronos.onlinereview.external.UserRetrieval;
+import com.cronos.onlinereview.model.ClientProject;
 import com.topcoder.management.deliverable.Deliverable;
 import com.topcoder.management.deliverable.Submission;
 import com.topcoder.management.deliverable.SubmissionStatus;
@@ -110,6 +111,12 @@ public class ProjectDetailsActions extends DispatchAction {
      * This method is an implementation of &quot;View project Details&quot; Struts Action defined
      * for this assembly, which is supposed to gather all possible information about the project and
      * display it to user.
+     * 
+     * <p>
+     * Updated for Online Review Update - Add Project Dropdown v1.0
+     *      - added isAdmin value to the request.
+     *      - if user is admin, then billing project value is set to the request. 
+     * </p>
      *
      * @return an action forward to the appropriate page. If no error has occured, the forward will
      *         be to viewProjectDetails.jsp page.
@@ -196,7 +203,27 @@ public class ProjectDetailsActions extends DispatchAction {
             }
         }
 
-
+        // since Online Review Update - Add Project Dropdown v1.0
+        // Retrieve the billing project id from property.
+        // And retrieve the list of all client projects, find billing project name by matching on id
+        // set billing project name in request.
+        if (AuthorizationHelper.hasUserRole(request, Constants.MANAGER_ROLE_NAME)) {
+            long billingProjectId = 0L;
+            tempStr = (String) project.getProperty("Billing Project");
+            if (tempStr != null && tempStr.trim().length() != 0) {
+                billingProjectId = Long.parseLong(tempStr, 10);
+            }
+            
+            if (billingProjectId > 0) {
+                List<ClientProject> clientProjects = ActionsHelper.getClientProjects(request);
+                for (ClientProject cp : clientProjects) {
+                    if (cp.getId() == billingProjectId) {
+                        request.setAttribute("billingProject", cp.getName());
+                        break;
+                    }
+                }
+            }
+        }
 
         // Place a string that represents "my" current role(s) into the request
         ActionsHelper.retrieveAndStoreMyRole(request, getResources(request));
@@ -471,6 +498,10 @@ public class ProjectDetailsActions extends DispatchAction {
             }
         }
         request.setAttribute("isAllowedToPerformAggregationReview", Boolean.valueOf(allowedToReviewAggregation));
+        
+        // since Online Review Update - Add Project Dropdown v1.0
+        request.setAttribute("isAdmin",
+                Boolean.valueOf(AuthorizationHelper.hasUserRole(request, Constants.MANAGER_ROLE_NAME)));
 
         return mapping.findForward(Constants.SUCCESS_FORWARD_NAME);
     }

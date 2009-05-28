@@ -10,33 +10,33 @@
 		</tr>
 		<c:set var="rowIndex" value="0" />
 		<c:if test="${isAllowedToViewSVNLink}">
-			<tr class="light">
+			<tr class='${(rowIndex % 2 == 0) ? "light" : "dark"}'>
 				<td class="value" width="15%" nowrap="nowrap"><b><bean:message key="viewProjectDetails.SVNModule" /></b></td>
 				<td class="value" width="100%">
 					<a href='${fn:escapeXml(project.allProperties["SVN Module"])}'>${orfn:htmlEncode(project.allProperties["SVN Module"])}</a></td>
 			</tr>
-			<c:set var="rowIndex" value="0" />
+			<c:set var="rowIndex" value="${rowIndex+1}" />
 		</c:if>
-		<tr class="dark">
+		<tr class='${(rowIndex % 2 == 0) ? "light" : "dark"}'>
 				<td class="value" width="15%" nowrap="nowrap"><b>Type:</b></td>
 				<td class="value" width="100%">${projectType}</td>
-		</tr>
-		<tr class="light">
+		</tr><c:set var="rowIndex" value="${rowIndex+1}" />
+		<tr class='${(rowIndex % 2 == 0) ? "light" : "dark"}'>
 				<td class="value" width="15%" nowrap="nowrap"><b>Category:</b></td>
 				<td class="value" width="100%">${projectCategory}</td>
-		</tr>
-		<tr class="dark">
+		</tr><c:set var="rowIndex" value="${rowIndex+1}" />
+		<tr class='${(rowIndex % 2 == 0) ? "light" : "dark"}'>
 				<td class="value" width="15%" nowrap="nowrap"><b>Price:</b></td>
 				<td class="value" width="100%">${"$"}${orfn:displayPaymentAmt(pageContext.request, projectPayment)}</td>
-		</tr>
-		<tr class="light">
+		</tr><c:set var="rowIndex" value="${rowIndex+1}" />
+		<tr class='${(rowIndex % 2 == 0) ? "light" : "dark"}'>
 				<td class="value" width="15%" nowrap="nowrap"><b>This contest is part of the Digital Run:</b></td>
 				<td class="value" width="100%">${projectDRFlag}</td>
-		</tr>
-		<tr class="dark">
+		</tr><c:set var="rowIndex" value="${rowIndex+1}" />
+		<tr class='${(rowIndex % 2 == 0) ? "light" : "dark"}'>
 				<td class="value" width="15%" nowrap="nowrap"><b>DR Points:</b></td>
 				<td class="value" width="100%">${projectDRFlag=="Yes"?orfn:displayPaymentAmt(pageContext.request, projectDRP):""}</td>
-		</tr>
+		</tr><c:set var="rowIndex" value="${rowIndex+1}" />
 		<c:if test="${isAllowedToViewAutopilotStatus}">
 			<c:set var="autopilotStatus" value="${project.allProperties['Autopilot Option']}" />
 			<c:if test='${autopilotStatus != "On" and autopilotStatus != "Off"}'>
@@ -58,6 +58,12 @@
 			</tr>
 			<c:set var="rowIndex" value="${rowIndex+1}" />
 		</c:forEach>
+		<c:if test="${isAdmin}">
+			<tr class='${(rowIndex % 2 == 0) ? "light" : "dark"}'>
+					<td class="value" width="15%" nowrap="nowrap"><b><bean:message key="viewProjectDetails.BillingProject" /></b></td>
+					<td class="value" width="100%">${billingProject}</td>
+			</tr><c:set var="rowIndex" value="${rowIndex+1}" />
+		</c:if>
 		<tr>
 			<td class="lastRowTD" colspan="2"><!-- @ --></td>
 		</tr>

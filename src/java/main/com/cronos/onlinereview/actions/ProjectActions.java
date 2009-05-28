@@ -190,6 +190,11 @@ public class ProjectActions extends DispatchAction {
     /**
      * This method loads the lookup data needed for rendering the Create Project/New Project pages.
      * The loaded data is stored in the request attributes.
+     * 
+     * <p>
+     * Updated for Online Review Update - Add Project Dropdown v1.0
+     *      Added retrieval of billing projects.
+     * </p>
      *
      * @param request the request to load the lookup data into
      * @throws BaseException if any error occurs while loading the lookup data
@@ -238,6 +243,13 @@ public class ProjectActions extends DispatchAction {
         // Load phase template names
         String[] phaseTemplateNames = ActionsHelper.createPhaseTemplate(null).getAllTemplateNames();
         request.setAttribute("phaseTemplateNames", phaseTemplateNames);
+        
+        // since Online Review Update - Add Project Dropdown v1.0
+        // Retrieve the list of all client projects and store it in the request
+        // this need to be retrieved only for admin user.
+        if (AuthorizationHelper.hasUserRole(request, Constants.MANAGER_ROLE_NAME)) {
+            request.setAttribute("billingProjects", ActionsHelper.getClientProjects(request));
+        }
     }
 
     /**
@@ -259,6 +271,13 @@ public class ProjectActions extends DispatchAction {
     /**
      * This method populates the specified LazyValidatorForm with the values
      * taken from the specified Project.
+     * 
+     * <p>
+     * Updated for Online Review Update - Add Project Dropdown v1.0
+     *      - Set the 'Billing Project' value to form's billing_project property.
+     *      - Set the isAdmin property.
+     * </p>
+     * 
      * @param request
      *            the request to be processed
      * @param form
@@ -300,6 +319,10 @@ public class ProjectActions extends DispatchAction {
         populateProjectFormProperty(form, Double.class, "payments", project, "Payments");
         // Populate project dr points
         populateProjectFormProperty(form, Double.class, "dr_points", project, "DR points");
+        
+        // since Online Review Update - Add Project Dropdown v1.0
+        // Populate project billing project
+        populateProjectFormProperty(form, Long.class, "billing_project", project, "Billing Project");
 
         // Populate project public option
         form.set("public", new Boolean("Yes".equals(project.getProperty("Public"))));
@@ -479,6 +502,10 @@ public class ProjectActions extends DispatchAction {
         request.setAttribute("isAllowedToPerformApproval",
                 Boolean.valueOf(ActionsHelper.getPhase(phases, true, Constants.APPROVAL_PHASE_NAME) != null &&
                         AuthorizationHelper.hasUserPermission(request, Constants.PERFORM_APPROVAL_PERM_NAME)));
+        
+        // since Online Review Update - Add Project Dropdown v1.0
+        request.setAttribute("isAdmin",
+                Boolean.valueOf(AuthorizationHelper.hasUserRole(request, Constants.MANAGER_ROLE_NAME)));
     }
 
     /**
@@ -581,7 +608,7 @@ public class ProjectActions extends DispatchAction {
         ProjectStatus[] projectStatuses = manager.getAllProjectStatuses();
         // Store it in the request
         request.setAttribute("projectStatuses", projectStatuses);
-
+        
         // Populate the form with project properties
         populateProjectForm(request, (LazyValidatorForm) form, verification.getProject());
 
@@ -590,6 +617,11 @@ public class ProjectActions extends DispatchAction {
 
     /**
      * TODO: Write sensible description for method saveProject here
+     * 
+     * <p>
+     * Updated for Online Review Update - Add Project Dropdown v1.0:
+     *      Added set of 'Billing Project' property.
+     * </p>
      *
      * @return TODO: Write sensible description of return value for method saveProject
      * @param mapping
@@ -760,6 +792,10 @@ public class ProjectActions extends DispatchAction {
 
         // Populate project notes
         project.setProperty("Notes", lazyForm.get("notes"));
+        
+        // since Online Review Update - Add Project Dropdown v1.0
+        // Populate project notes
+        project.setProperty("Billing Project", lazyForm.get("billing_project"));
 
         // TODO: Project status change, includes additional explanation to be concatenated
 
