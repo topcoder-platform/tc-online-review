@@ -29,6 +29,16 @@
                     </Property>
                 </Property>
             </Property>
+            <Property name="timeDS">
+                <Property name="producer">
+                    <Value>com.topcoder.db.connectionfactory.producers.JNDIConnectionProducer</Value>
+                </Property>
+                <Property name="parameters">
+                    <Property name="jndi_name">
+                        <Value>java:TimeDS</Value>
+                    </Property>
+                </Property>
+            </Property>
             <Property name="DefaultSequence">
                 <Property name="producer">
                     <Value>com.topcoder.db.connectionfactory.producers.JNDIConnectionProducer</Value>

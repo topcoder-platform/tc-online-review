@@ -1087,6 +1087,22 @@
                                     <span id="SVN_module_validation_msg" style="display:none;" class="error"></span>
                                 </td>
                             </tr><c:set var="projDetRowCount" value="${projDetRowCount + 1}" />
+                            <!-- since: Online Review Update - Add Project Dropdown v1.0 -->
+                            <c:if test="${isAdmin}">
+	                            <tr class="${(projDetRowCount % 2 == 0) ? 'light' : 'dark'}">
+	                                <td class="value" nowrap="nowrap">
+	                                    <b><bean:message key="editProject.ProjectDetails.BillingProject" /></b><br />
+	                                </td>
+	                                <td class="value" nowrap="nowrap">
+	                                	<html:select styleClass="inputBox" property="billing_project" style="width:150px;">
+	                                        <c:forEach var="billingProject" items="${billingProjects}">
+	                                            <html:option key='BillingProject.${fn:replace(billingProject.name, " ", "")}' value="${billingProject.id}">${billingProject.name}</html:option>
+	                                        </c:forEach>
+	                                    </html:select>
+	                                    <span id="billing_project_validation_msg" style="display:none;" class="error"></span>
+	                                </td>
+	                            </tr><c:set var="projDetRowCount" value="${projDetRowCount + 1}" />
+                            </c:if>
                             <tr>
                                 <td class="lastRowTD" colspan="2"><!-- @ --></td>
                             </tr>
@@ -1152,7 +1168,7 @@
                                 </tr>
                             </table><br />
                         </c:if>
-
+                        
                         <div align="right">
                             <c:if test="${newProject}">
                                 <html:image srcKey="btnSave.img" altKey="btnSave.alt" border="0"/>&#160;
