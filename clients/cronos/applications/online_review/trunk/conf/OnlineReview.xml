@@ -3325,8 +3325,8 @@
             <Property name="Component">
                 <Value>https://software.topcoder.com/catalog/c_component.jsp?comp=&lt;COMPONENT_ID&gt;&amp;ver=&lt;VERSION_ID&gt;</Value>
             </Property>
-            <Property name="Studio">
-                <Value>http://studio.topcoder.com/?module=ViewContestDetails&amp;ct=&lt;COMPONENT_ID&gt;</Value>
+	    <Property name="Studio">
+		<Value>https://software.topcoder.com/catalog/c_component.jsp?comp=&lt;COMPONENT_ID&gt;&amp;ver=&lt;VERSION_ID&gt;</Value>
             </Property>
         </Property>
 
@@ -3337,8 +3337,8 @@
             <Property name="Component">
                 <Value>http://forums.topcoder.com/?module=Category&amp;categoryID=&lt;FORUM_ID&gt;</Value>
             </Property>
-            <Property name="Studio">
-                <Value>http://studio.topcoder.com/forums?module=ThreadList&amp;forumID=&lt;FORUM_ID&gt;</Value>
+	    <Property name="Studio">
+		<Value>http://forums.topcoder.com/?module=Category&amp;categoryID=&lt;FORUM_ID&gt;</Value>
             </Property>
         </Property>
 
