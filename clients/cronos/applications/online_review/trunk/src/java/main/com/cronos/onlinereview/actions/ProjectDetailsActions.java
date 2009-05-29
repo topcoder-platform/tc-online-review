@@ -214,13 +214,18 @@ public class ProjectDetailsActions extends DispatchAction {
                 billingProjectId = Long.parseLong(tempStr, 10);
             }
             
-            List<ClientProject> clientProjects = ActionsHelper.getClientProjects(request);
-            for (ClientProject cp : clientProjects) {
-                if (cp.getId() == billingProjectId) {
-                    request.setAttribute("billingProject", cp.getName());
-                    break;
-                }
-            }
+            
+			if (billingProjectId > 0) {
+				 List<ClientProject> clientProjects = ActionsHelper.getClientProjects(request);
+				 for (ClientProject cp : clientProjects) {
+					 if (cp.getId() == billingProjectId) {
+						request.setAttribute("billingProject", cp.getName());
+						break;
+					 }	
+				 }
+			 } else {
+						request.setAttribute("billingProject", "");
+			 }
         }
 
         // Place a string that represents "my" current role(s) into the request
