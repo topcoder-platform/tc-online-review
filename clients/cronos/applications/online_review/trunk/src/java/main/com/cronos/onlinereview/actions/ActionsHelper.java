@@ -2811,14 +2811,21 @@ public class ActionsHelper {
             try {
 
                 clientProjects = new LinkedList<ClientProject>();
+                
+                // we first add the empty client project for a default selection.
+                ClientProject cp = new ClientProject();
+                // set the default id to 0.
+                cp.setId(0);
+                cp.setName("-------------");
+                clientProjects.add(cp);
 
                 DBConnectionFactory dbconn = new DBConnectionFactoryImpl(DB_CONNECTION_NAMESPACE);
                 conn = dbconn.createConnection(DB_CONNECTION_TIMEDS);
-                log.log(Level.INFO, "create db connection with timeDS from DBConnectionFactoryImpl with namespace:"
+                log.log(Level.DEBUG, "create db connection with timeDS from DBConnectionFactoryImpl with namespace:"
                         + DB_CONNECTION_NAMESPACE);
 
                 selectStmt = conn.createStatement();
-                resultSet = selectStmt.executeQuery("SELECT project_id, name FROM project WHERE is_deleted = 0");
+                resultSet = selectStmt.executeQuery("SELECT project_id, name FROM project WHERE is_deleted = 0 or is_deleted IS NULL ORDER BY UPPER(name)");
 
                 while (resultSet.next()) {
                     long projectID = resultSet.getLong(1);
