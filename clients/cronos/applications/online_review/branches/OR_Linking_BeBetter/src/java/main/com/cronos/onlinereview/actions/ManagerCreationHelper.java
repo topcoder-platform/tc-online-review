@@ -61,7 +61,7 @@ import com.topcoder.util.idgenerator.IDGeneratorFactory;
  * </p>
  *
  * @author evilisneo
- * @author TCSDEVELOPER
+ * @author BeBetter
  * @version 1.1
  * @since 1.0
  */

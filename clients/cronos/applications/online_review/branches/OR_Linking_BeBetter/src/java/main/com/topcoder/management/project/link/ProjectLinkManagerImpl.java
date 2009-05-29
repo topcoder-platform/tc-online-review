@@ -31,7 +31,7 @@ import com.topcoder.util.log.LogFactory;
  * It is created for "OR Project Linking" assembly.
  * </p>
  *
- * @author TCSDEVELOPER
+ * @author BeBetter
  * @version 1.0
  */
 public class ProjectLinkManagerImpl implements ProjectLinkManager {
@@ -182,7 +182,7 @@ public class ProjectLinkManagerImpl implements ProjectLinkManager {
 
         // get db connection factory namespace
         String factoryNamespace = Helper.getConfigurationParameterValue(cm, namespace,
-            CONNECTION_FACTORY_NAMESPACE_PARAMETER, true, getLogger());
+            CONNECTION_FACTORY_NAMESPACE_PARAMETER, true, LOGGER);
 
         // try to create a DBConnectionFactoryImpl instance from
         // factoryNamespace
@@ -195,7 +195,7 @@ public class ProjectLinkManagerImpl implements ProjectLinkManager {
 
         // get the connection name
         connectionName = Helper.getConfigurationParameterValue(cm, namespace, CONNECTION_NAME_PARAMETER, false,
-            getLogger());
+            LOGGER);
 
     }
 
@@ -210,7 +210,7 @@ public class ProjectLinkManagerImpl implements ProjectLinkManager {
     public ProjectLinkType[] getAllProjectLinkTypes() throws PersistenceException {
         Connection conn = null;
 
-        getLogger().log(Level.INFO, new LogMessage(null, null, "Enter getAllProjectLinkTypes method."));
+        LOGGER.log(Level.INFO, new LogMessage(null, null, "Enter getAllProjectLinkTypes method."));
         try {
             // create the connection
             conn = openConnection();
@@ -220,7 +220,7 @@ public class ProjectLinkManagerImpl implements ProjectLinkManager {
             closeConnection(conn);
             return projectLinkTypes;
         } catch (PersistenceException e) {
-            getLogger().log(Level.ERROR, new LogMessage(null, null, "Fail to getAllProjectLinkTypes.", e));
+            LOGGER.log(Level.ERROR, new LogMessage(null, null, "Fail to getAllProjectLinkTypes.", e));
             if (conn != null) {
                 closeConnectionOnError(conn);
             }
@@ -267,7 +267,7 @@ public class ProjectLinkManagerImpl implements ProjectLinkManager {
     public ProjectLink[] getDestProjectLinks(long sourceProjectId) throws PersistenceException {
         Connection conn = null;
 
-        getLogger().log(Level.INFO, new LogMessage(null, null, "Enter getDestProjectLinks method."));
+        LOGGER.log(Level.INFO, new LogMessage(null, null, "Enter getDestProjectLinks method."));
         try {
             // create the connection
             conn = openConnection();
@@ -277,7 +277,7 @@ public class ProjectLinkManagerImpl implements ProjectLinkManager {
             closeConnection(conn);
             return projectLinks;
         } catch (PersistenceException e) {
-            getLogger().log(Level.ERROR, new LogMessage(null, null, "Fail to getDestProjectLinks.", e));
+            LOGGER.log(Level.ERROR, new LogMessage(null, null, "Fail to getDestProjectLinks.", e));
             if (conn != null) {
                 closeConnectionOnError(conn);
             }
@@ -339,7 +339,7 @@ public class ProjectLinkManagerImpl implements ProjectLinkManager {
     public ProjectLink[] getSourceProjectLinks(long destProjectId) throws PersistenceException {
         Connection conn = null;
 
-        getLogger().log(Level.INFO, new LogMessage(null, null, "Enter getSourceProjectLinks method."));
+        LOGGER.log(Level.INFO, new LogMessage(null, null, "Enter getSourceProjectLinks method."));
         try {
             // create the connection
             conn = openConnection();
@@ -349,7 +349,7 @@ public class ProjectLinkManagerImpl implements ProjectLinkManager {
             closeConnection(conn);
             return projectLinks;
         } catch (PersistenceException e) {
-            getLogger().log(Level.ERROR, new LogMessage(null, null, "Fail to getSourceProjectLinks.", e));
+            LOGGER.log(Level.ERROR, new LogMessage(null, null, "Fail to getSourceProjectLinks.", e));
             if (conn != null) {
                 closeConnectionOnError(conn);
             }
@@ -437,6 +437,7 @@ public class ProjectLinkManagerImpl implements ProjectLinkManager {
      */
     public void updateProjectLinks(long sourceProjectId, long[] destProjectIds, long[] linkTypeIds)
         throws PersistenceException {
+        LOGGER.log(Level.INFO, new LogMessage(null, null, "Enter updateProjectLinks method."));
         Helper.assertObjectNotNull(destProjectIds, "destProjectIds");
         Helper.assertObjectNotNull(linkTypeIds, "linkTypeIds");
         if (destProjectIds.length != linkTypeIds.length) {
@@ -444,7 +445,6 @@ public class ProjectLinkManagerImpl implements ProjectLinkManager {
         }
         Connection conn = null;
 
-        getLogger().log(Level.INFO, new LogMessage(null, null, "Enter updateProjectLinks method."));
         try {
             // create the connection
             conn = openConnection();
@@ -453,7 +453,7 @@ public class ProjectLinkManagerImpl implements ProjectLinkManager {
             updateProjectLinks(sourceProjectId, destProjectIds, linkTypeIds, conn);
             closeConnection(conn);
         } catch (PersistenceException e) {
-            getLogger().log(Level.ERROR, new LogMessage(null, null, "Fail to updateProjectLinks.", e));
+            LOGGER.log(Level.ERROR, new LogMessage(null, null, "Fail to updateProjectLinks.", e));
             if (conn != null) {
                 closeConnectionOnError(conn);
             }
@@ -530,10 +530,10 @@ public class ProjectLinkManagerImpl implements ProjectLinkManager {
      */
     private Connection openConnection() throws PersistenceException {
         if (connectionName == null) {
-            getLogger()
+            LOGGER
                 .log(Level.INFO, new LogMessage(null, null, "creating db connection using default connection"));
         } else {
-            getLogger().log(Level.INFO,
+            LOGGER.log(Level.INFO,
                 new LogMessage(null, null, "creating db connection using connection name: " + connectionName));
         }
         Connection conn = Helper.createConnection(getConnectionFactory(), connectionName);
@@ -560,7 +560,7 @@ public class ProjectLinkManagerImpl implements ProjectLinkManager {
     protected void closeConnection(Connection connection) throws PersistenceException {
         Helper.assertObjectNotNull(connection, "connection");
         try {
-            getLogger().log(Level.INFO, "committing transaction");
+            LOGGER.log(Level.INFO, "committing transaction");
             Helper.commitTransaction(connection);
         } finally {
             Helper.closeConnection(connection);
@@ -580,22 +580,10 @@ public class ProjectLinkManagerImpl implements ProjectLinkManager {
     protected void closeConnectionOnError(Connection connection) throws PersistenceException {
         Helper.assertObjectNotNull(connection, "connection");
         try {
-            getLogger().log(Level.INFO, "rollback transaction");
+            LOGGER.log(Level.INFO, "rollback transaction");
             Helper.rollBackTransaction(connection);
         } finally {
             Helper.closeConnection(connection);
         }
     }
-
-    /**
-     * <p>
-     * Returns the logger.
-     * </p>
-     *
-     * @return the <code>Log</code> instance used to take the log message
-     */
-    private Log getLogger() {
-        return LOGGER;
-    }
-
 }

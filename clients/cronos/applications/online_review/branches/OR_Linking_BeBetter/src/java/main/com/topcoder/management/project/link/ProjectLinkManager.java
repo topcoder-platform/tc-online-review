@@ -14,7 +14,7 @@ import com.topcoder.management.project.PersistenceException;
  * It is created for "OR Project Linking" assembly.
  * </p>
  *
- * @author TCSDEVELOPER
+ * @author BeBetter
  * @version 1.0
  */
 public interface ProjectLinkManager {
