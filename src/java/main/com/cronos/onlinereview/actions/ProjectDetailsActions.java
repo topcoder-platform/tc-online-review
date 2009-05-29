@@ -214,13 +214,11 @@ public class ProjectDetailsActions extends DispatchAction {
                 billingProjectId = Long.parseLong(tempStr, 10);
             }
             
-            if (billingProjectId > 0) {
-                List<ClientProject> clientProjects = ActionsHelper.getClientProjects(request);
-                for (ClientProject cp : clientProjects) {
-                    if (cp.getId() == billingProjectId) {
-                        request.setAttribute("billingProject", cp.getName());
-                        break;
-                    }
+            List<ClientProject> clientProjects = ActionsHelper.getClientProjects(request);
+            for (ClientProject cp : clientProjects) {
+                if (cp.getId() == billingProjectId) {
+                    request.setAttribute("billingProject", cp.getName());
+                    break;
                 }
             }
         }
