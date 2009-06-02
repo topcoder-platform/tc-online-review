@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2007 TopCoder Inc.  All Rights Reserved.
+ * Copyright (C) 2006-2009 TopCoder Inc., All Rights Reserved.
  */
 package com.cronos.onlinereview.actions;
 
@@ -75,6 +75,7 @@ import com.topcoder.management.project.ProjectCategory;
 import com.topcoder.management.project.ProjectManager;
 import com.topcoder.management.project.ProjectStatus;
 import com.topcoder.management.project.ProjectType;
+import com.topcoder.management.project.link.ProjectLinkManager;
 import com.topcoder.management.resource.Resource;
 import com.topcoder.management.resource.ResourceManager;
 import com.topcoder.management.resource.ResourceRole;
@@ -120,11 +121,19 @@ import com.topcoder.util.log.Log;
 import com.topcoder.util.log.LogFactory;
 
 /**
+ * <p>
  * This class contains handy helper-methods that perform frequently needed operations.
+ * </p>
+ * <p>
+ * Change note for 1.1: add method to create <code>ProjectLinkManager</code>. This is for
+ * "OR Project Linking Assembly".
+ * </p>
  *
  * @author George1
  * @author real_vg
- * @version 1.0
+ * @author TCSDEVELOPER
+ * @version 1.1
+ * @since 1.0
  */
 public class ActionsHelper {
     /**
@@ -2715,6 +2724,35 @@ public class ActionsHelper {
         }
 
         // Return the Screening Manager object
+        return manager;
+    }
+
+    /**
+     * This static method helps to create an object of the <code>ProjectLinkManager</code> class.
+     *
+     * @return a newly created instance of the class.
+     * @param request an <code>HttpServletRequest</code> object, where created <code>ResourceManager</code> object can
+     *            be stored to let reusing it later for the same request.
+     * @throws IllegalArgumentException if <code>request</code> parameter is <code>null</code>.
+     * @throws BaseRuntimeException if any error occurs.
+     * @since 1.1 OR Project Linking Assembly
+     */
+    public static ProjectLinkManager createProjectLinkManager(HttpServletRequest request) {
+        // Validate parameter
+        validateParameterNotNull(request, "request");
+
+        // Try retrieving Project Link Manager from the request's attribute first
+        ProjectLinkManager manager = (ProjectLinkManager) request.getAttribute("projectLinkManager");
+        // If this is the first time this method is called for the request,
+        // create a new instance of the object
+        if (manager == null) {
+            // manager = managerCreationHelper.getResourceManager();
+            manager = managerCreationHelper.getProjectLinkManager();
+            // Place newly-created object into the request as attribute
+            request.setAttribute("projectLinkManager", manager);
+        }
+
+        // Return the Resource Manager object
         return manager;
     }
 
