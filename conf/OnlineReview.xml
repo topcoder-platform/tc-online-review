@@ -1406,6 +1406,19 @@
         </Property>
     </Config>
 
+    <!--
+        ==========  Configuration for Project Link Manager :: OR Project Linking Assembly ==========
+    -->
+    <Config name="com.topcoder.management.project.persistence.link.ProjectLinkManagerImpl">
+        <!-- The DBConnectionFactory class name used to create DB Connection Factory, required -->
+        <Property name="ConnectionFactoryNS">
+            <Value>com.topcoder.db.connectionfactory.DBConnectionFactoryImpl</Value>
+        </Property>
+        <!-- the connection name to retrieve connection in DB Connection Factory, required -->
+        <Property name="ConnectionName">
+            <Value>tcs</Value>
+        </Property>
+    </Config>
 
     <!--
         =====  Configuration for Project Management Persistence component  =====
