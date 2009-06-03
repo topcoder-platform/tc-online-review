@@ -26,33 +26,33 @@
     <script language="JavaScript" type="text/javascript" src="<html:rewrite href='/js/or/validation_util2.js' />"><!-- @ --></script>
     <script language="JavaScript" type="text/javascript" src="<html:rewrite href='/js/or/validation_edit_project_links.js' />"><!-- @ --></script>
     <script language="JavaScript" type="text/javascript">
-    	/**
-    	 * Initializes some parameters.
-    	 */
-    	function initParameters() {
-    		 // Initiates the lastLinkIndex
-    	   lastLinkIndex = ${fn:length(projectLinkForm.map['link_dest_id']) - 1};
-    	   
-    	   // Initiates all possible options
-    	   projectOptions = new Array();    	
-    	   // Initiates option values
-    	   projectOptions.push(new Option('${orfn:getMessage(pageContext, "editProjectLinks.projectTypes.SelectProject")}','-1'));
-         <c:forEach items="${allProjects}" var="projectElement">			
+        /**
+        * Initializes some parameters.
+        */
+        function initParameters() {
+            // Initiates the lastLinkIndex
+        lastLinkIndex = ${fn:length(projectLinkForm.map['link_dest_id']) - 1};
+
+        // Initiates all possible options
+        projectOptions = new Array();
+        // Initiates option values
+        projectOptions.push(new Option('${orfn:getMessage(pageContext, "editProjectLinks.projectTypes.SelectProject")}','-1'));
+         <c:forEach items="${allProjects}" var="projectElement">
             <c:if test="${projectElement.id ne project.id}">
          projectOptions.push(new Option('${projectElement.allProperties["Project Name"]} v${projectElement.allProperties["Project Version"]}','${projectElement.id}'));
-            </c:if>                          	   	               	                          	   
+            </c:if>
          </c:forEach>
-      }    	
+      }
 
       /**
        * Callback function. It is called after page loading.
        */
-    	function onLoad() {
-    		   initParameters();
+        function onLoad() {
+            initParameters();
 
-    	     // reset drop downs
-    	     resetDropDowns();    	
-    	}
+            // reset drop downs
+            resetDropDowns();
+        }
     </script>
 
 <body onload="onLoad();">
@@ -64,11 +64,11 @@
 
         <div id="mainMiddleContent">
            <div class="clearfix"/>
-           <div id="tabcontentcontainer"> 	
-           	 <html:form action="/actions/SaveProjectLinks" onsubmit="return validate_form(this, true);">
-           	  <html:hidden property="method" value="saveProjectLinks" />
-           	  <html:hidden property="pid" />
-           	  		
+           <div id="tabcontentcontainer">
+                <html:form action="/actions/SaveProjectLinks" onsubmit="return validate_form(this, true);">
+                <html:hidden property="method" value="saveProjectLinks" />
+                <html:hidden property="pid" />
+
               <c:if test="${orfn:isErrorsPresent(pageContext.request)}">
                   <table cellpadding="0" cellspacing="0" border="0">
                       <tr><td width="16"><!-- @ --></td><td><!-- @ --></td></tr>
@@ -78,85 +78,79 @@
                       <html:errors property="org.apache.struts.action.GLOBAL_MESSAGE" />
                   </table><br />
               </c:if>
-           	  		
+
               <div id="contentTitle">
-              		<h3>${project.allProperties["Project Name"]} version ${project.allProperties["Project Version"]} - Manage Project Links</h3> 
-              </div>           	
-                    
-			        <div id="tabNewLinks">
-			        	<table cellpadding="0" id="newLinks" class="tabLinks">
-			        		<tbody>
-			        		<tr class="dark">
-			        			<td colspan="6" class="title"><bean:message key="editProjectLinks.box.editLinks" /></td>
-			        		</tr>
-			        		<tr>
-			        			<td class="header"><bean:message key="editProjectLinks.editLink.ProjectID" /></td>
-			        			<td class="header"><bean:message key="editProjectLinks.editLink.SelectProject" /></td>
-			        			<td class="header"><bean:message key="editProjectLinks.editLink.LinkType" /></td>
-			        			<td class="header"><bean:message key="editProjectLinks.editLink.Operation" /></td>
-			        		</tr>
-			        		<c:forEach var="linkIdx" varStatus="linkStatus" begin="0" end="${fn:length(projectLinkForm.map['link_dest_id']) - 1}">
-			        		<tr class='${(linkStatus.index % 2 == 0) ? "light" : "dark"}'>
-			        			<td nowrap="nowrap" class="value">
-			        				<html:text property="link_dest_id_text[${linkIdx}]" onchange="onProjectInputChange(this);"/>
-				              <div name="project_link_validation_msg" class="error" style="display:none"></div>			        					
-			        			</td>				
-			        			<td nowrap="nowrap" class="value">
-				               <html:select styleClass="inputBox" property="link_dest_id[${linkIdx}]" 
-				               	            onchange="onProjectDropDownChange(this);">
-				               	  <html:option key="editProjectLinks.projectTypes.SelectProject" value="-1" />
-                          <c:forEach items="${allProjects}" var="projectElement">			
-             	               <c:if test="${projectElement.id ne project.id}">
-                          	   <html:option value="${projectElement.id}">${projectElement.allProperties["Project Name"]} v${projectElement.allProperties["Project Version"]}</html:option>
-             	               </c:if>                          	   	               	                          	   
+                    <h3>${project.allProperties["Project Name"]} version ${project.allProperties["Project Version"]} - Manage Project Links</h3>
+              </div>
+
+                    <div id="tabNewLinks">
+                        <table cellpadding="0" id="newLinks" class="tabLinks">
+                            <tbody>
+                            <tr class="dark">
+                                <td colspan="6" class="title"><bean:message key="editProjectLinks.box.editLinks" /></td>
+                            </tr>
+                            <tr>
+                                <td class="header"><bean:message key="editProjectLinks.editLink.SelectProject" /></td>
+                                <td class="header"><bean:message key="editProjectLinks.editLink.LinkType" /></td>
+                                <td class="header"><bean:message key="editProjectLinks.editLink.Operation" /></td>
+                            </tr>
+                            <c:forEach var="linkIdx" varStatus="linkStatus" begin="0" end="${fn:length(projectLinkForm.map['link_dest_id']) - 1}">
+                            <tr class='${(linkStatus.index % 2 == 0) ? "light" : "dark"}'>
+                                <td nowrap="nowrap" class="value">
+                            <html:select styleClass="inputBox" property="link_dest_id[${linkIdx}]">
+                                    <html:option key="editProjectLinks.projectTypes.SelectProject" value="-1" />
+                          <c:forEach items="${allProjects}" var="projectElement">
+                                <c:if test="${projectElement.id ne project.id}">
+                                <html:option value="${projectElement.id}">${projectElement.allProperties["Project Name"]} v${projectElement.allProperties["Project Version"]}</html:option>
+                                </c:if>
                           </c:forEach>
-				               </html:select>
-				               <div name="project_link_validation_msg" class="error" style="display:none"></div>			        					
-			        			</td>
-			        			<td nowrap="nowrap" class="value">
-				               <html:select styleClass="inputBox" property="link_type_id[${linkIdx}]" 
-				               	            onchange="onLinkTypeDropDownChange(this);">
-				               	  <html:option key="editProjectLinks.projectTypes.SelectType" value="-1" />
-                          <c:forEach items="${projectLinkTypes}" var="projectLinkType">				               	                          	   
-                          	   <html:option value="${projectLinkType.id}">${projectLinkType.name}</html:option>
+                            </html:select>
+                            <div name="project_link_validation_msg" class="error" style="display:none"></div>
+                                </td>
+                                <td nowrap="nowrap" class="value">
+                            <html:select styleClass="inputBox" property="link_type_id[${linkIdx}]"
+                                            onchange="onLinkTypeDropDownChange(this);">
+                                    <html:option key="editProjectLinks.projectTypes.SelectType" value="-1" />
+                          <c:forEach items="${projectLinkTypes}" var="projectLinkType">
+                                <html:option value="${projectLinkType.id}">${projectLinkType.name}</html:option>
                           </c:forEach>
-				               </html:select>
-                       <div name="project_link_validation_msg" class="error" style="display:none"></div>			        									               
-			        			</td>
-			        			<td nowrap="nowrap" class="value">
-			        				<c:if test="${linkIdx eq 0}">
-			        				  <html:img srcKey="editProjectLinks.btnAdd.img" border="0" 
-			        				  	        onclick="javascript:newProjectLink();"
-			        				  	     altKey="editProjectLinks.btnAdd.alt"  style="cursor:hand;" />
-			        				</c:if> 	
-			        				  <html:img srcKey="editProjectLinks.btnDelete.img" 
-			        				  	    style="cursor:hand;${(linkIdx eq 0) ? 'display: none;' : ''}" border="0" 
-			        				  	    onclick="deleteProjectLink(this.parentNode.parentNode);"
-			        				  	    altKey="editProjectLinks.btnDelete.alt" />
-			        				  <html:hidden property="link_action[${linkIdx}]" />	    
-			        			</td>
-			        		</tr>
-			        	  </c:forEach>
-			        		<tr>
-			        			<td colspan="4" class="lastRowTD"><!-- @ --></td>
-			        		</tr>
-			        		</tbody>
-			        	</table>
-			        	<br/>
-			        </div>
+                            </html:select>
+                       <div name="project_link_validation_msg" class="error" style="display:none"></div>
+                                </td>
+                                <td nowrap="nowrap" class="value">
+                                    <c:if test="${linkIdx eq 0}">
+                                    <html:img srcKey="editProjectLinks.btnAdd.img" border="0"
+                                                onclick="javascript:newProjectLink();"
+                                            altKey="editProjectLinks.btnAdd.alt"  style="cursor:hand;" />
+                                    </c:if>
+                                    <html:img srcKey="editProjectLinks.btnDelete.img"
+                                            style="cursor:hand;${(linkIdx eq 0) ? 'display: none;' : ''}" border="0"
+                                            onclick="deleteProjectLink(this.parentNode.parentNode);"
+                                            altKey="editProjectLinks.btnDelete.alt" />
+                                    <html:hidden property="link_action[${linkIdx}]" />
+                                </td>
+                            </tr>
+                        </c:forEach>
+                            <tr>
+                                <td colspan="3" class="lastRowTD"><!-- @ --></td>
+                            </tr>
+                            </tbody>
+                        </table>
+                        <br/>
+                    </div>
 
              <div class="bottomButtonBar">
                   <html:image srcKey="btnSaveChanges.img" altKey="btnSaveChanges.alt" border="0"/>&#160;
                   <html:link page="/actions/ViewProjectDetails.do?method=viewProjectDetails&pid=${project.id}"><html:img srcKey="btnCancel.img" altKey="btnCancel.alt" border="0"/></html:link>
              </div>
-			     </html:form>    
+                </html:form>
            </div> <!-- //tabconentcontainer -->
         </div><!-- //mainMiddleContent -->
-            
-        <jsp:include page="/includes/inc_footer.jsp" />  
-        	  
+
+        <jsp:include page="/includes/inc_footer.jsp" />
+
      </div><!-- //maxWidthBody -->
-</div>      
-</body>     
-            
-</html:html> 
+</div>
+</body>
+
+</html:html>
