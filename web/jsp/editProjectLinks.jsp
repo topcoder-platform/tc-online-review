@@ -80,35 +80,29 @@
               </c:if>
            	  		
               <div id="contentTitle">
-              		<h3>${project.allProperties["Project Name"]} version ${project.allProperties["Project Version"]} - Manage Project Links</h3> 
-              </div>           	
-                    
-			        <div id="tabNewLinks">
-			        	<table cellpadding="0" id="newLinks" class="tabLinks">
-			        		<tbody>
-			        		<tr class="dark">
-			        			<td colspan="6" class="title"><bean:message key="editProjectLinks.box.editLinks" /></td>
-			        		</tr>
-			        		<tr>
-			        			<td class="header"><bean:message key="editProjectLinks.editLink.ProjectID" /></td>
-			        			<td class="header"><bean:message key="editProjectLinks.editLink.SelectProject" /></td>
-			        			<td class="header"><bean:message key="editProjectLinks.editLink.LinkType" /></td>
-			        			<td class="header"><bean:message key="editProjectLinks.editLink.Operation" /></td>
-			        		</tr>
-			        		<c:forEach var="linkIdx" varStatus="linkStatus" begin="0" end="${fn:length(projectLinkForm.map['link_dest_id']) - 1}">
-			        		<tr class='${(linkStatus.index % 2 == 0) ? "light" : "dark"}'>
-			        			<td nowrap="nowrap" class="value">
-			        				<html:text property="link_dest_id_text[${linkIdx}]" onchange="onProjectInputChange(this);"/>
-				              <div name="project_link_validation_msg" class="error" style="display:none"></div>			        					
-			        			</td>				
-			        			<td nowrap="nowrap" class="value">
-				               <html:select styleClass="inputBox" property="link_dest_id[${linkIdx}]" 
-				               	            onchange="onProjectDropDownChange(this);">
-				               	  <html:option key="editProjectLinks.projectTypes.SelectProject" value="-1" />
-                          <c:forEach items="${allProjects}" var="projectElement">			
-             	               <c:if test="${projectElement.id ne project.id}">
-                          	   <html:option value="${projectElement.id}">${projectElement.allProperties["Project Name"]} v${projectElement.allProperties["Project Version"]}</html:option>
-             	               </c:if>                          	   	               	                          	   
+                    <h3>${project.allProperties["Project Name"]} version ${project.allProperties["Project Version"]} - Manage Project Links</h3>
+              </div>
+
+                    <div id="tabNewLinks">
+                        <table cellpadding="0" id="newLinks" class="tabLinks">
+                            <tbody>
+                            <tr class="dark">
+                                <td colspan="6" class="title"><bean:message key="editProjectLinks.box.editLinks" /></td>
+                            </tr>
+                            <tr>
+                                <td class="header"><bean:message key="editProjectLinks.editLink.SelectProject" /></td>
+                                <td class="header"><bean:message key="editProjectLinks.editLink.LinkType" /></td>
+                                <td class="header"><bean:message key="editProjectLinks.editLink.Operation" /></td>
+                            </tr>
+                            <c:forEach var="linkIdx" varStatus="linkStatus" begin="0" end="${fn:length(projectLinkForm.map['link_dest_id']) - 1}">
+                            <tr class='${(linkStatus.index % 2 == 0) ? "light" : "dark"}'>
+                                <td nowrap="nowrap" class="value">
+                            <html:select styleClass="inputBox" property="link_dest_id[${linkIdx}]">
+                                    <html:option key="editProjectLinks.projectTypes.SelectProject" value="-1" />
+                          <c:forEach items="${allProjects}" var="projectElement">
+                                <c:if test="${projectElement.id ne project.id}">
+                                <html:option value="${projectElement.id}">${projectElement.allProperties["Project Name"]} v${projectElement.allProperties["Project Version"]}</html:option>
+                                </c:if>
                           </c:forEach>
 				               </html:select>
 				               <div name="project_link_validation_msg" class="error" style="display:none"></div>			        					
@@ -120,30 +114,30 @@
                           <c:forEach items="${projectLinkTypes}" var="projectLinkType">				               	                          	   
                           	   <html:option value="${projectLinkType.id}">${projectLinkType.name}</html:option>
                           </c:forEach>
-				               </html:select>
-                       <div name="project_link_validation_msg" class="error" style="display:none"></div>			        									               
-			        			</td>
-			        			<td nowrap="nowrap" class="value">
-			        				<c:if test="${linkIdx eq 0}">
-			        				  <html:img srcKey="editProjectLinks.btnAdd.img" border="0" 
-			        				  	        onclick="javascript:newProjectLink();"
-			        				  	     altKey="editProjectLinks.btnAdd.alt"  style="cursor:hand;" />
-			        				</c:if> 	
-			        				  <html:img srcKey="editProjectLinks.btnDelete.img" 
-			        				  	    style="cursor:hand;${(linkIdx eq 0) ? 'display: none;' : ''}" border="0" 
-			        				  	    onclick="deleteProjectLink(this.parentNode.parentNode);"
-			        				  	    altKey="editProjectLinks.btnDelete.alt" />
-			        				  <html:hidden property="link_action[${linkIdx}]" />	    
-			        			</td>
-			        		</tr>
-			        	  </c:forEach>
-			        		<tr>
-			        			<td colspan="4" class="lastRowTD"><!-- @ --></td>
-			        		</tr>
-			        		</tbody>
-			        	</table>
-			        	<br/>
-			        </div>
+                            </html:select>
+                       <div name="project_link_validation_msg" class="error" style="display:none"></div>
+                                </td>
+                                <td nowrap="nowrap" class="value">
+                                    <c:if test="${linkIdx eq 0}">
+                                    <html:img srcKey="editProjectLinks.btnAdd.img" border="0"
+                                                onclick="javascript:newProjectLink();"
+                                            altKey="editProjectLinks.btnAdd.alt"  style="cursor:hand;" />
+                                    </c:if>
+                                    <html:img srcKey="editProjectLinks.btnDelete.img"
+                                            style="cursor:hand;${(linkIdx eq 0) ? 'display: none;' : ''}" border="0"
+                                            onclick="deleteProjectLink(this.parentNode.parentNode);"
+                                            altKey="editProjectLinks.btnDelete.alt" />
+                                    <html:hidden property="link_action[${linkIdx}]" />
+                                </td>
+                            </tr>
+                        </c:forEach>
+                            <tr>
+                                <td colspan="3" class="lastRowTD"><!-- @ --></td>
+                            </tr>
+                            </tbody>
+                        </table>
+                        <br/>
+                    </div>
 
              <div class="bottomButtonBar">
                   <html:image srcKey="btnSaveChanges.img" altKey="btnSaveChanges.alt" border="0"/>&#160;

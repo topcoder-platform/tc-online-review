@@ -45,7 +45,7 @@ function newProjectLink() {
     newRow.className = (strLastRowStyle == "dark") ? "light" : "dark";
 
     var allNewCells = newRow.getElementsByTagName("td");
-    var buttonsCell = allNewCells[3];
+    var buttonsCell = allNewCells[2];
 
     // Make delete button visible and hide add button
     var images = buttonsCell.getElementsByTagName("img");
@@ -61,8 +61,6 @@ function newProjectLink() {
             newLinksTable.rows[rowCount - 1]);
 
     // Resets template row
-    getInputBox(templateRow).value = "";
-    resetMsgDiv(getInputBox(templateRow));
     getProjectDropDown(templateRow).selectedIndex = 0;
 
     // Resets drop downs
@@ -126,27 +124,6 @@ function onProjectInputChange(projectInput) {
     resetDropDowns();
 }
 
-/**
- * Call back function. It is invoked when project drop down is selected different value.
- */
-function onProjectDropDownChange(projectDropDown) {
-    // Find the input box.
-    var inputBox = getInputBox(projectDropDown.parentNode.parentNode);
-
-    // Sets the value
-    inputBox.value = (projectDropDown.value == '-1') ? ''
-            : projectDropDown.value;
-
-    // update msg div
-    resetMsgDiv(inputBox);
-
-    if (projectDropDown.selectedIndex != 0) {
-        resetMsgDiv(projectDropDown);
-    }
-
-    // reset drop downs
-    resetDropDowns();
-}
 
 /**
  * Call back function. It is invoked when link type drop down is selected different value.
@@ -170,7 +147,6 @@ function resetDropDowns() {
     // Goes over all rows except header/footer
     for ( var i = 2; i < newLinksTable.rows.length - 1; i++) {
         var linkRowNode = newLinksTable.rows[i];
-        var inputBox = getInputBox(linkRowNode);
         var projectDropDown = getProjectDropDown(linkRowNode);
         var inputAction = getInputAction(linkRowNode);
 
@@ -195,12 +171,6 @@ function resetDropDowns() {
                     || (option.value == selectedValue && i != 2)
                     || !valueMap[option.value]) {
                 projectDropDown.options[projectDropDown.options.length] = option;
-            }
-
-            // if the template already selects the value other link selects, reset text box as well
-            if (option.value == selectedValue && i == 2
-                    && valueMap[option.value]) {
-                inputBox.value = "";
             }
         }
 
@@ -353,15 +323,6 @@ function resetMsgDiv(inputElement) {
     return msgDiv;
 }
 
-/**
- * Gets input box for typing project id.
- *
- * @param linkRowNode the row node which is the containing ancestor of this element
- */
-function getInputBox(linkRowNode) {
-    var inputBoxCell = linkRowNode.cells[0];
-    return getChildrenByNamePrefix(inputBoxCell, "link_dest_id_text")[0];
-}
 
 /**
  * Gets project drop down.
@@ -369,7 +330,7 @@ function getInputBox(linkRowNode) {
  * @param linkRowNode the row node which is the containing ancestor of this element
  */
 function getProjectDropDown(linkRowNode) {
-    var dropdownCell = linkRowNode.cells[1];
+    var dropdownCell = linkRowNode.cells[0];
     return getChildrenByNamePrefix(dropdownCell, "link_dest_id")[0];
 }
 
@@ -379,7 +340,7 @@ function getProjectDropDown(linkRowNode) {
  * @param linkRowNode the row node which is the containing ancestor of this element
  */
 function getLinkTypeDropDown(linkRowNode) {
-    var dropdownCell = linkRowNode.cells[2];
+    var dropdownCell = linkRowNode.cells[1];
     return getChildrenByNamePrefix(dropdownCell, "link_type_id")[0];
 }
 
@@ -389,5 +350,5 @@ function getLinkTypeDropDown(linkRowNode) {
  * @param linkRowNode the row node which is the containing ancestor of this element
  */
 function getInputAction(linkRowNode) {
-    return linkRowNode.cells[3].getElementsByTagName("input")[0];
+    return linkRowNode.cells[2].getElementsByTagName("input")[0];
 }
