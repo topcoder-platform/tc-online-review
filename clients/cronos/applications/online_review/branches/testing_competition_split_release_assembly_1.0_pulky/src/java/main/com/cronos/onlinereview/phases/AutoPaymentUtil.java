@@ -26,8 +26,11 @@ import java.util.List;
  *  Added support for new UI prototype, RIA Build and RIA Component competitions so that 
  *  reviewer payment is populated automatically</p>
  *
+ * <p>Version 1.2 (Testing Competition Split Release Assembly 1.0) Change notes:
+ *  Updated Application Testing to Test Suites and added support for new Test Scenarios competitions.</p> 
+ *
  * @author George1, brain_cn, pulky
- * @version 1.1
+ * @version 1.2
  */
 public class AutoPaymentUtil {
         /**
@@ -128,7 +131,8 @@ public class AutoPaymentUtil {
         && projectCategoryId != 7     // Architecture
         && projectCategoryId != 14    // Assembly
         && projectCategoryId != 6     // Specification
-        && projectCategoryId != 13    // Application Testing
+        && projectCategoryId != 13    // Test Suites
+        && projectCategoryId != 26    // Test Scenarios
         && projectCategoryId != 23    // Conceptualization
         && projectCategoryId != 19    // UI Prototype
         && projectCategoryId != 24    // RIA Build

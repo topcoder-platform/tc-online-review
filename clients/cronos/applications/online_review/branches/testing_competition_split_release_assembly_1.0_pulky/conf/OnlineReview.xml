@@ -1379,8 +1379,11 @@
         <Property name="Assembly">
             <Value>125</Value>
         </Property>
-        <Property name="Application Testing">
+        <Property name="Test Suites">
             <Value>124</Value>
+        </Property>
+        <Property name="Test Scenarios">
+            <Value>137</Value>
         </Property>
     </Config>
 
@@ -3180,12 +3183,20 @@
                     <Value>IconProcss.gif</Value>
                 </Property>
             </Property>
-            <Property name="Testing Competition">
+            <Property name="Test Suites">
                 <Property name="IconSmall">
-                    <Value>IconTestingSm.gif</Value>
+                    <Value>IconTestSuitesSm.gif</Value>
                 </Property>
                 <Property name="Icon">
-                    <Value>IconTesting.gif</Value>
+                    <Value>IconTestSuites.gif</Value>
+                </Property>
+            </Property>
+            <Property name="Test Scenarios">
+                <Property name="IconSmall">
+                    <Value>IconTestScenariosSm.gif</Value>
+                </Property>
+                <Property name="Icon">
+                    <Value>IconTestScenarios.gif</Value>
                 </Property>
             </Property>
             <Property name="Specification">
