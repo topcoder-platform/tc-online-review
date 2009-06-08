@@ -2,8 +2,7 @@ create table 'informix'.link_type_lu (
     link_type_id INT not null,
     link_type_name VARCHAR(64) not null
 )
-extent size 16 next size 16
-lock mode row;
+
 
 alter table 'informix'.link_type_lu add constraint primary key 
 	(link_type_id)
@@ -14,8 +13,7 @@ create table 'informix'.linked_project_xref (
     dest_project_id INT,
     link_type_id INT
 )
-extent size 16 next size 16
-lock mode row;
+
 
 alter table 'informix'.linked_project_xref add constraint primary key 
 	(source_project_id, dest_project_id)

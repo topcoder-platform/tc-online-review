@@ -117,7 +117,7 @@
                             </html:select>
                        <div name="project_link_validation_msg" class="error" style="display:none"></div>
                                 </td>
-                                <td nowrap="nowrap" class="value">
+                                <td nowrap="nowrap" class="value" align="center">
                                     <c:if test="${linkIdx eq 0}">
                                     <html:img srcKey="editProjectLinks.btnAdd.img" border="0"
                                                 onclick="javascript:newProjectLink();"
