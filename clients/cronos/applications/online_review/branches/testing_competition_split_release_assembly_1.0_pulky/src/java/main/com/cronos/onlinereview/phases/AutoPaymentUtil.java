@@ -23,11 +23,11 @@ import java.util.List;
  * <p>The AutoPaymentUtil is used to auto-fill for payments of reviewers and submitters.</p>
  *
  * <p>Version 1.1 (Studio Coding In Online Review) Change notes:
- *  Added support for new UI prototype, RIA Build and RIA Component competitions so that 
+ *  Added support for new UI prototype, RIA Build and RIA Component competitions so that
  *  reviewer payment is populated automatically</p>
  *
  * <p>Version 1.2 (Testing Competition Split Release Assembly 1.0) Change notes:
- *  Updated Application Testing to Test Suites and added support for new Test Scenarios competitions.</p> 
+ *  Updated Application Testing to Test Suites and added support for new Test Scenarios competitions.</p>
  *
  * @author George1, brain_cn, pulky
  * @version 1.2
@@ -485,7 +485,7 @@ public class AutoPaymentUtil {
      */
     private static void updateProjectInfo(long projectId, long projectInfoTypeId, String value, Connection conn)
             throws SQLException {
-        
+
         String UPDATE_SQL = "update project_info set value = ? where project_id = ? and project_info_type_id = ? ";
         String INSERT_SQL = "INSERT INTO project_info " +
             "(project_id, project_info_type_id, value, create_user, create_date, modify_user, modify_date) " +
