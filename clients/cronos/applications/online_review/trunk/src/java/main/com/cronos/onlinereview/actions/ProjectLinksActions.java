@@ -100,7 +100,10 @@ public class ProjectLinksActions extends DispatchAction {
 
         // get all active projects
         Filter filterStatus = new NotFilter(ProjectFilterUtility.buildStatusNameEqualFilter(STATUS_NAME_DELETED));
-        Project[] allProjects = manager.searchProjects(filterStatus);
+
+        //Project[] allProjects = manager.searchProjects(filterStatus);
+
+		Project[] allProjects = manager.getProjectsByCreateDate(90);
         // Sort fetched projects. Currently sorting is done by projects' names only, in ascending order
         Arrays.sort(allProjects, new Comparators.ProjectNameComparer());
 

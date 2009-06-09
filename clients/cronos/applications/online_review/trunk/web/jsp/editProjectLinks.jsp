@@ -39,7 +39,7 @@
     	   projectOptions.push(new Option('${orfn:getMessage(pageContext, "editProjectLinks.projectTypes.SelectProject")}','-1'));
          <c:forEach items="${allProjects}" var="projectElement">			
             <c:if test="${projectElement.id ne project.id}">
-         projectOptions.push(new Option('${projectElement.allProperties["Project Name"]} v${projectElement.allProperties["Project Version"]}','${projectElement.id}'));
+         projectOptions.push(new Option('${projectElement.allProperties["Project Name"]} v${projectElement.allProperties["Project Version"]} (${projectElement.projectCategory.name})','${projectElement.id}'));
             </c:if>                          	   	               	                          	   
          </c:forEach>
       }    	
@@ -101,7 +101,7 @@
                                     <html:option key="editProjectLinks.projectTypes.SelectProject" value="-1" />
                           <c:forEach items="${allProjects}" var="projectElement">
                                 <c:if test="${projectElement.id ne project.id}">
-                                <html:option value="${projectElement.id}">${projectElement.allProperties["Project Name"]} v${projectElement.allProperties["Project Version"]}</html:option>
+                                <html:option value="${projectElement.id}">${projectElement.allProperties["Project Name"]} v${projectElement.allProperties["Project Version"]} (${projectElement.projectCategory.name})</html:option>
                                 </c:if>
                           </c:forEach>
 				               </html:select>
