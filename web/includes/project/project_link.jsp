@@ -18,7 +18,7 @@
     <tr class='${(linkStatus.index % 2 == 0) ? "light" : "dark"}'>
         <c:set var="projectElement" value="${projectLink.destProject}" />    	  
         <c:set var="linkTypeElement" value="${projectLink.type}" />    	  
-    	  <td class="value" nowrap="nowrap"><html:link page="/actions/ViewProjectDetails.do?method=viewProjectDetails&pid=${projectElement.id}">${projectElement.allProperties["Project Name"]} v${projectElement.allProperties["Project Version"]}</html:link></td>    	  
+    	  <td class="value" nowrap="nowrap"><html:link page="/actions/ViewProjectDetails.do?method=viewProjectDetails&pid=${projectElement.id}">${projectElement.allProperties["Project Name"]} v${projectElement.allProperties["Project Version"]} (${projectElement.projectCategory.name})</html:link></td>    	  
     	  <td class="value" nowrap="nowrap">    	  	
         <c:choose>
            <c:when test="${isAllowedToEditProjects}">
@@ -49,7 +49,7 @@
     <tr class='${(linkStatus.index % 2 == 0) ? "light" : "dark"}'>
         <c:set var="projectElement" value="${projectLink.sourceProject}" />
         <c:set var="linkTypeElement" value="${projectLink.type}" />    	  
-    	  <td class="value" nowrap="nowrap"><html:link page="/actions/ViewProjectDetails.do?method=viewProjectDetails&pid=${projectElement.id}">${projectElement.allProperties["Project Name"]} v${projectElement.allProperties["Project Version"]}</html:link></td>
+    	  <td class="value" nowrap="nowrap"><html:link page="/actions/ViewProjectDetails.do?method=viewProjectDetails&pid=${projectElement.id}">${projectElement.allProperties["Project Name"]} v${projectElement.allProperties["Project Version"]} (${projectElement.projectCategory.name})</html:link></td>
     	  <td class="value" nowrap="nowrap">${linkTypeElement.name}</td>
     </tr>
     </c:forEach>    
