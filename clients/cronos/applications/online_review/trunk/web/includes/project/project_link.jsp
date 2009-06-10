@@ -11,15 +11,16 @@
 			<td class="title" colspan="2"><bean:message key="viewProjectDetails.box.Links" /></td>
 		</tr>
 		<tr>
-			<td class="header"><b><bean:message key="viewProjectDetails.Link.Project" /></b></td>
 			<td class="header"><b><bean:message key="viewProjectDetails.Link.LinkType" /></b></td>
+			<td class="header"><b><bean:message key="viewProjectDetails.Link.Project" /></b></td>
+			
     </tr>
     <c:forEach var="projectLink" items="${destProjectLinks}" varStatus="linkStatus">
     <tr class='${(linkStatus.index % 2 == 0) ? "light" : "dark"}'>
+		<c:set var="linkTypeElement" value="${projectLink.type}" />    	
         <c:set var="projectElement" value="${projectLink.destProject}" />    	  
-        <c:set var="linkTypeElement" value="${projectLink.type}" />    	  
-    	  <td class="value" nowrap="nowrap"><html:link page="/actions/ViewProjectDetails.do?method=viewProjectDetails&pid=${projectElement.id}">${projectElement.allProperties["Project Name"]} v${projectElement.allProperties["Project Version"]} (${projectElement.projectCategory.name})</html:link></td>    	  
-    	  <td class="value" nowrap="nowrap">    	  	
+          
+		  <td class="value" nowrap="nowrap">    	  	
         <c:choose>
            <c:when test="${isAllowedToEditProjects}">
            	  <a href="EditProjectLinks.do?method=editProjectLinks&pid=${project.id}">${linkTypeElement.name}</a>
@@ -29,6 +30,8 @@
            </c:otherwise>
         </c:choose>    	  
     	  </td>
+    	  <td class="value" nowrap="nowrap"><html:link page="/actions/ViewProjectDetails.do?method=viewProjectDetails&pid=${projectElement.id}">${projectElement.allProperties["Project Name"]} v${projectElement.allProperties["Project Version"]} (${projectElement.projectCategory.name})</html:link></td>    	  
+    	  
     </tr>
     </c:forEach>    
 		<tr>

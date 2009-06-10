@@ -90,12 +90,24 @@
                                 <td colspan="6" class="title"><bean:message key="editProjectLinks.box.editLinks" /></td>
                             </tr>
                             <tr>
+								<td class="header"><bean:message key="editProjectLinks.editLink.LinkType" /></td>
                                 <td class="header"><bean:message key="editProjectLinks.editLink.SelectProject" /></td>
-                                <td class="header"><bean:message key="editProjectLinks.editLink.LinkType" /></td>
+                                
                                 <td class="header"><bean:message key="editProjectLinks.editLink.Operation" /></td>
                             </tr>
                             <c:forEach var="linkIdx" varStatus="linkStatus" begin="0" end="${fn:length(projectLinkForm.map['link_dest_id']) - 1}">
                             <tr class='${(linkStatus.index % 2 == 0) ? "light" : "dark"}'>
+								<td nowrap="nowrap" class="value">
+				               <html:select styleClass="inputBox" property="link_type_id[${linkIdx}]" 
+				               	            onchange="onLinkTypeDropDownChange(this);">
+				               	  <html:option key="editProjectLinks.projectTypes.SelectType" value="-1" />
+                          <c:forEach items="${projectLinkTypes}" var="projectLinkType">				               	                          	   
+                          	   <html:option value="${projectLinkType.id}">${projectLinkType.name}</html:option>
+                          </c:forEach>
+                            </html:select>
+							<div name="project_link_validation_msg" class="error" style="display:none"></div>
+                                </td>
+
                                 <td nowrap="nowrap" class="value">
                             <html:select styleClass="inputBox" property="link_dest_id[${linkIdx}]">
                                     <html:option key="editProjectLinks.projectTypes.SelectProject" value="-1" />
@@ -107,16 +119,7 @@
 				               </html:select>
 				               <div name="project_link_validation_msg" class="error" style="display:none"></div>			        					
 			        			</td>
-			        			<td nowrap="nowrap" class="value">
-				               <html:select styleClass="inputBox" property="link_type_id[${linkIdx}]" 
-				               	            onchange="onLinkTypeDropDownChange(this);">
-				               	  <html:option key="editProjectLinks.projectTypes.SelectType" value="-1" />
-                          <c:forEach items="${projectLinkTypes}" var="projectLinkType">				               	                          	   
-                          	   <html:option value="${projectLinkType.id}">${projectLinkType.name}</html:option>
-                          </c:forEach>
-                            </html:select>
-                       <div name="project_link_validation_msg" class="error" style="display:none"></div>
-                                </td>
+			        			
                                 <td nowrap="nowrap" class="value" align="center">
                                     <c:if test="${linkIdx eq 0}">
                                     <html:img srcKey="editProjectLinks.btnAdd.img" border="0"

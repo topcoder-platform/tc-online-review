@@ -330,7 +330,7 @@ function resetMsgDiv(inputElement) {
  * @param linkRowNode the row node which is the containing ancestor of this element
  */
 function getProjectDropDown(linkRowNode) {
-    var dropdownCell = linkRowNode.cells[0];
+    var dropdownCell = linkRowNode.cells[1];
     return getChildrenByNamePrefix(dropdownCell, "link_dest_id")[0];
 }
 
@@ -340,7 +340,7 @@ function getProjectDropDown(linkRowNode) {
  * @param linkRowNode the row node which is the containing ancestor of this element
  */
 function getLinkTypeDropDown(linkRowNode) {
-    var dropdownCell = linkRowNode.cells[1];
+    var dropdownCell = linkRowNode.cells[0];
     return getChildrenByNamePrefix(dropdownCell, "link_type_id")[0];
 }
 
