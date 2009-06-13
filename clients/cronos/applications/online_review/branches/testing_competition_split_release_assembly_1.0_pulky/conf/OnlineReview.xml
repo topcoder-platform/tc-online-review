@@ -3183,6 +3183,14 @@
                     <Value>IconProcss.gif</Value>
                 </Property>
             </Property>
+            <Property name="Testing Competition">
+                <Property name="IconSmall">
+                    <Value>IconTestingSm.gif</Value>
+                </Property>
+                <Property name="Icon">
+                    <Value>IconTesting.gif</Value>
+                </Property>
+            </Property>            
             <Property name="Test Suites">
                 <Property name="IconSmall">
                     <Value>IconTestSuitesSm.gif</Value>
