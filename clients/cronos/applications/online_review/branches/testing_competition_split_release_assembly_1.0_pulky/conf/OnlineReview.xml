@@ -517,7 +517,7 @@
                     <Value>com.topcoder.management.review.scorecalculator.calculators.Scale10</Value>
                 </Property>
             </Property>
-            
+
             <!-- Configuration for Test Case question type -->
             <Property name="dynamicCalculator">
                 <Property name="question_type">
@@ -527,7 +527,7 @@
                     <Value>com.topcoder.management.review.scorecalculator.calculators.ScaledScoreCalculator</Value>
                 </Property>
             </Property>
-            
+
             <!-- Configuration for Yes/No question type -->
             <Property name="binaryCalculator">
                 <!-- This sub-property describes the question type id -->
@@ -616,7 +616,7 @@
             <Value>9</Value>
         </Property>
     </Config>
-    
+
     <Config name="com.topcoder.management.review.scorecalculator.calculators.Scale0_4">
         <Property name="default_scale">
             <Value>4</Value>
@@ -1471,7 +1471,7 @@
         <!-- All handlers are registered directly from application's code -->
     </Config>
 
-    
+
     <!--
         =====  Configuration for Phase Template component  =====
     -->
@@ -1550,7 +1550,7 @@
             <Value>0</Value>
         </Property>
     </Config>
-    
+
     <Config name="com.topcoder.project.phases.template.DefaultPhaseTemplate.workdays">
         <Property name="workdays:default">
             <Property name="type">
@@ -3310,7 +3310,7 @@
                 <Property name="Icon">
                     <Value>concept.gif</Value>
                 </Property>
-            </Property>         
+            </Property>
             <Property name="RIA Build Competition">
                 <Property name="IconSmall">
                     <Value>iconRIABuildCompetitionSm.png</Value>
@@ -3336,8 +3336,8 @@
             <Property name="Component">
                 <Value>https://software.topcoder.com/catalog/c_component.jsp?comp=&lt;COMPONENT_ID&gt;&amp;ver=&lt;VERSION_ID&gt;</Value>
             </Property>
-	    <Property name="Studio">
-		<Value>https://software.topcoder.com/catalog/c_component.jsp?comp=&lt;COMPONENT_ID&gt;&amp;ver=&lt;VERSION_ID&gt;</Value>
+        <Property name="Studio">
+        <Value>https://software.topcoder.com/catalog/c_component.jsp?comp=&lt;COMPONENT_ID&gt;&amp;ver=&lt;VERSION_ID&gt;</Value>
             </Property>
         </Property>
 
@@ -3348,8 +3348,8 @@
             <Property name="Component">
                 <Value>http://forums.topcoder.com/?module=Category&amp;categoryID=&lt;FORUM_ID&gt;</Value>
             </Property>
-	    <Property name="Studio">
-		<Value>http://forums.topcoder.com/?module=Category&amp;categoryID=&lt;FORUM_ID&gt;</Value>
+        <Property name="Studio">
+        <Value>http://forums.topcoder.com/?module=Category&amp;categoryID=&lt;FORUM_ID&gt;</Value>
             </Property>
         </Property>
 
@@ -3826,12 +3826,12 @@
                 <Value>Approver</Value>
                 <Value>Public</Value>
             </Property>
-           
+
             <Property name="Create Payment">
                 <Value>Global Payment Manager</Value>
                 <Value>Payment Manager</Value>
             </Property>
-            
+
         </Property>
 
         <Property name="PhaseGrouping">
