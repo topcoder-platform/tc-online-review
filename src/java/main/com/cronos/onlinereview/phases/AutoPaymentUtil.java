@@ -122,18 +122,18 @@ public class AutoPaymentUtil {
     public static void populateReviewerPayments(long projectId, Connection conn, int phaseId) throws SQLException {
         long projectCategoryId = getProjectCategoryId(projectId, conn);
 
-        if (projectCategoryId != 1    // Component Design
-        && projectCategoryId != 2     // Component Development
-        && projectCategoryId != 5     // Component Testing
-        && projectCategoryId != 7     // Architecture
-        && projectCategoryId != 14    // Assembly
-        && projectCategoryId != 6     // Specification
-        && projectCategoryId != 13    // Application Testing
-        && projectCategoryId != 23    // Conceptualization
-        && projectCategoryId != 19    // UI Prototype
-        && projectCategoryId != 24    // RIA Build
-        && projectCategoryId != 25) { // RIA Component
-                return;
+        if (projectCategoryId != 1            // Component Design
+                && projectCategoryId != 2     // Component Development
+                && projectCategoryId != 5     // Component Testing
+                && projectCategoryId != 7     // Architecture
+                && projectCategoryId != 14    // Assembly
+                && projectCategoryId != 6     // Specification
+                && projectCategoryId != 13    // Application Testing
+                && projectCategoryId != 23    // Conceptualization
+                && projectCategoryId != 19    // UI Prototype
+                && projectCategoryId != 24    // RIA Build
+                && projectCategoryId != 25) { // RIA Component
+            return;
         }
 
         logger.log(Level.INFO,
