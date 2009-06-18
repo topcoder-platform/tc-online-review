@@ -2945,7 +2945,7 @@
                     <Value>RootCatalog.Application</Value>
                 </Property>
                 <Property name="Custom">
-                    <Value>False</Value>
+                    <Value>True</Value>
                 </Property>
             </Property>
             <Property name="Studio">
@@ -2959,7 +2959,7 @@
                     <Value>RootCatalog.Studio</Value>
                 </Property>
                 <Property name="Custom">
-                    <Value>False</Value>
+                    <Value>True</Value>
                 </Property>
             </Property>
             <Property name="FlashCustom">
