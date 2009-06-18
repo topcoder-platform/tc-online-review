@@ -45,7 +45,7 @@ public class AuthorizationHelper {
     public static final String REDIRECT_BACK_URL_ATTRIBUTE = "redirectBackUrl";
 
     /**
-     * Private construcor, just to prevent instantiation of the class.
+     * Private constructor, just to prevent instantiation of the class.
      */
     private AuthorizationHelper() {
         // Just do nothing

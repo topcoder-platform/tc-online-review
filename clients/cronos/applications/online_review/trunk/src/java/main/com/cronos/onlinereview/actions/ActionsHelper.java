@@ -188,7 +188,10 @@ public class ActionsHelper {
                 || categoryId == 7    // Application Architecture
                 || categoryId == 13   // Application Testing
                 || categoryId == 14   // Application Assembly
-                || categoryId == 23); // Application Conceptualization
+                || categoryId == 23   // Application Conceptualization
+                || categoryId == 19   // UI Prototype
+                || categoryId == 24   // RIA Build
+                || categoryId == 25); // RIA Component
     }
 
     /**
