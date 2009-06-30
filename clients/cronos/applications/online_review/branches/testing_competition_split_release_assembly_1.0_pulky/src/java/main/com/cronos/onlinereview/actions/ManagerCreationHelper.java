@@ -33,6 +33,8 @@ import com.topcoder.management.phase.PhaseManager;
 import com.topcoder.management.phase.PhaseOperationEnum;
 import com.topcoder.management.project.ProjectManager;
 import com.topcoder.management.project.ProjectManagerImpl;
+import com.topcoder.management.project.link.ProjectLinkManager;
+import com.topcoder.management.project.persistence.link.ProjectLinkManagerImpl;
 import com.topcoder.management.resource.ResourceManager;
 import com.topcoder.management.resource.persistence.PersistenceResourceManager;
 import com.topcoder.management.resource.persistence.ResourcePersistence;
@@ -51,10 +53,18 @@ import com.topcoder.util.idgenerator.IDGenerator;
 import com.topcoder.util.idgenerator.IDGeneratorFactory;
 
 /**
+ * <p>
  * This class implements {@link ManagersProvider} and provides the implementation for creating the managers.
+ * </p>
+ * <p>
+ * Change note for 1.1: adds a new manager : <code>ProjectLinkManager</code>. It is for "OR Linking Assembly".
+ * </p>
+ *
  * 
  * @author evilisneo
- * @version 1.0
+ * @author BeBetter
+ * @version 1.1
+ * @since 1.0
  */
 public class ManagerCreationHelper implements ManagersProvider {
 
@@ -84,6 +94,13 @@ public class ManagerCreationHelper implements ManagersProvider {
      * Used for caching the created the manager.
      */
     private ScreeningManager screeningManager = null;
+
+    /**
+     * Used for caching the created the manager.
+     *
+     * @since 1.1
+     */
+    private ProjectLinkManager projectLinkManager = null;
 
     /**
      * <p>
@@ -152,8 +169,27 @@ public class ManagerCreationHelper implements ManagersProvider {
 
     /**
      * <p>
-     * Returns a <code>ResourceManager</code> instance. This is used in <code>UploadServices</code> to retrieve
-     * this manager and perform all its operations.
+     * Returns a <code>ProjectLinkManager</code> instance.
+     * </p>
+     *
+     * @return a <code>ProjectLinkManager</code> instance
+     * @since 1.1
+     */
+    public ProjectLinkManager getProjectLinkManager() {
+        try {
+            if (projectLinkManager == null) {
+                projectLinkManager = new ProjectLinkManagerImpl(getProjectManager());
+            }
+            return projectLinkManager;
+        } catch (Exception e) {
+            throw new ManagerCreationException("Exception occurred while creating the ProjectLinkManager.", e);
+        }
+    }
+
+    /**
+     * <p>
+     * Returns a <code>ResourceManager</code> instance. This is used in <code>UploadServices</code> to retrieve this
+     * manager and perform all its operations.
      * </p>
      * 
      * @return a <code>ResourceManager</code> instance

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2007 TopCoder Inc.  All Rights Reserved.
+ * Copyright (C) 2006-2009 TopCoder Inc., All Rights Reserved.
  */
 package com.cronos.onlinereview.actions;
 
@@ -75,6 +75,7 @@ import com.topcoder.management.project.ProjectCategory;
 import com.topcoder.management.project.ProjectManager;
 import com.topcoder.management.project.ProjectStatus;
 import com.topcoder.management.project.ProjectType;
+import com.topcoder.management.project.link.ProjectLinkManager;
 import com.topcoder.management.resource.Resource;
 import com.topcoder.management.resource.ResourceManager;
 import com.topcoder.management.resource.ResourceRole;
@@ -120,11 +121,19 @@ import com.topcoder.util.log.Log;
 import com.topcoder.util.log.LogFactory;
 
 /**
+ * <p>
  * This class contains handy helper-methods that perform frequently needed operations.
+ * </p>
+ * <p>
+ * Change note for 1.1: add method to create <code>ProjectLinkManager</code>. This is for
+ * "OR Project Linking Assembly".
+ * </p>
  *
  * @author George1
  * @author real_vg
- * @version 1.0
+ * @author TCSDEVELOPER
+ * @version 1.1
+ * @since 1.0
  */
 public class ActionsHelper {
     /**
@@ -137,10 +146,10 @@ public class ActionsHelper {
      * namespace which the parameters for database connection factory are stored under.
      */
     private static final String DB_CONNECTION_NAMESPACE = "com.topcoder.db.connectionfactory.DBConnectionFactoryImpl";
-    
+
     /**
      * The connection name for retrieving billing projects.
-     * 
+     *
      * @since Online Review Update - Add Billing Project Drop Down v1.0
      */
     private static final String DB_CONNECTION_TIMEDS = "timeDS";
@@ -179,7 +188,10 @@ public class ActionsHelper {
                 || categoryId == 7    // Application Architecture
                 || categoryId == 13   // Application Testing
                 || categoryId == 14   // Application Assembly
-                || categoryId == 23); // Application Conceptualization
+                || categoryId == 23   // Application Conceptualization
+                || categoryId == 19   // UI Prototype
+                || categoryId == 24   // RIA Build
+                || categoryId == 25); // RIA Component
     }
 
     /**
@@ -2719,6 +2731,35 @@ public class ActionsHelper {
     }
 
     /**
+     * This static method helps to create an object of the <code>ProjectLinkManager</code> class.
+     *
+     * @return a newly created instance of the class.
+     * @param request an <code>HttpServletRequest</code> object, where created <code>ResourceManager</code> object can
+     *            be stored to let reusing it later for the same request.
+     * @throws IllegalArgumentException if <code>request</code> parameter is <code>null</code>.
+     * @throws BaseRuntimeException if any error occurs.
+     * @since 1.1 OR Project Linking Assembly
+     */
+    public static ProjectLinkManager createProjectLinkManager(HttpServletRequest request) {
+        // Validate parameter
+        validateParameterNotNull(request, "request");
+
+        // Try retrieving Project Link Manager from the request's attribute first
+        ProjectLinkManager manager = (ProjectLinkManager) request.getAttribute("projectLinkManager");
+        // If this is the first time this method is called for the request,
+        // create a new instance of the object
+        if (manager == null) {
+            // manager = managerCreationHelper.getResourceManager();
+            manager = managerCreationHelper.getProjectLinkManager();
+            // Place newly-created object into the request as attribute
+            request.setAttribute("projectLinkManager", manager);
+        }
+
+        // Return the Resource Manager object
+        return manager;
+    }
+
+    /**
      * This static method helps to create an object of the <code>UserRetrieval</code> class.
      *
      * @return a newly created instance of the class.
@@ -2783,10 +2824,10 @@ public class ActionsHelper {
         // Return the File Upload object
         return fileUpload;
     }
-    
+
     /**
      * This static method helps to get a list of <code>ClientProject</code>
-     * 
+     *
      * @return a list of <code>ClientProject</code>
      * @param request
      *            an <code>HttpServletRequest</code> object, where created list of <code>ClientProject</code> can be
@@ -2811,7 +2852,7 @@ public class ActionsHelper {
             try {
 
                 clientProjects = new LinkedList<ClientProject>();
-                
+
                 // we first add the empty client project for a default selection.
                 ClientProject cp = new ClientProject();
                 // set the default id to 0.
@@ -2830,11 +2871,11 @@ public class ActionsHelper {
                 while (resultSet.next()) {
                     long projectID = resultSet.getLong(1);
                     String projectName = resultSet.getString(2);
-                    
+
                     ClientProject clientProject = new ClientProject();
                     clientProject.setId(projectID);
                     clientProject.setName(projectName);
-                    
+
                     clientProjects.add(clientProject);
                 }
             } catch (UnknownConnectionException e) {
@@ -3263,10 +3304,10 @@ public class ActionsHelper {
                 if (role==4 || role==5 || role==6 || role==7) {
                     roles.put(userID,role);
                     createDates.put(userID,create_date);
-                } else {
+                }
+                else
                     // Other roles could be 2 for Primary Screener, 8 for Aggregator and 9 for Final Reviewer
                     primaries.add(userID);
-                }
             }
 
             // Select at most three reviewers to be added into the rboard_application table.
@@ -3285,11 +3326,11 @@ public class ActionsHelper {
                 if (!primarySelected && primaries.contains(reviewerID)) {
                     newPrimaries.add(1L);
                     primarySelected=true;
-                } else {
-                    newPrimaries.add(0L);
                 }
+                else
+                    newPrimaries.add(0L);
             }
-            List<Long> newResponseIDs = getRespIdFromRoleId(conn, newRoles, phaseID);
+            List<Long> newResponseIDs = getRespIdFromRoleId(conn, newRoles, newPrimaries, phaseID);
 
             // Clear all entries from the rboard_application for the project.
             clearRBoardApplication(conn, project);
@@ -3336,7 +3377,7 @@ public class ActionsHelper {
         }
 
         // We try to select users with different roles (e.g. not to select two accuracy reviewers and forget about stress one).
-        // This accounts for a pathological cases when there are more than one accuracy, primary or failure reviewers.
+        // This accounts for a pathological cases when there are more than one accuracy, stress or failure reviewers.
         for (Long reviewerID : roles.keySet()) {
             if (result.size()==3) break;
 
@@ -3432,39 +3473,76 @@ public class ActionsHelper {
      * @return responseIDs List of response ids.
      * @throws BaseException if error occurs.
      */
-    private static List<Long> getRespIdFromRoleId(Connection conn, List<Long> roles, long phaseID) throws BaseException {
+    private static List<Long> getRespIdFromRoleId(Connection conn, List<Long> roles, List<Long> primaries, long phaseID) throws BaseException {
         List<Long> responseIDs = new ArrayList<Long>();
 
         log.log(Level.INFO,"getRespIdFromRoleId phaseID= " + phaseID);
 
         // For component development projects, response ids correspond to accuracy, stress and failure reviewer roles.
         if (phaseID == 113) {
-            for (long roleID : roles) {
-                if (roleID == 5) { // Accuracy
-                    responseIDs.add(3L);
-                } else if (roleID == 6) { // Failure
-                    responseIDs.add(2L);
-                } else if (roleID == 7) { // Stress
-                    responseIDs.add(1L);
-                } else {
-                    // Otherwise add him as Accuracy.
-                    // Should not normally happen, but is possible if a Reviewer is added to a dev project.
-                    responseIDs.add(3L);
-                }
+            for(long roleID : roles) {
+                // Accuracy
+                if (roleID == 5)
+                    responseIDs.add(3L); else
+
+                // Failure
+                    if (roleID == 6)
+                    responseIDs.add(2L); else
+
+                // Stress
+                if (roleID == 7)
+                    responseIDs.add(1L); else
+
+                // Otherwise add him as Accuracy.
+                // Should not normally happen, but is possible if a Reviewer is added to a dev project.
+                responseIDs.add(3L);
             }
-        } else {
-            // For other projects, response ids all correspond to Reviewer role.
+        }
+
+        // For other projects, response ids all correspond to Reviewer role.
+        if (phaseID != 113) {
             PreparedStatement ps = null;
             ResultSet rs = null;
             try {
-                ps = conn.prepareStatement("select review_resp_id from review_resp where phase_id = ?");
-
+                // Due to a strange behavior of the review signup page the primary reviewer should always get a specific response id.
+                // For all tracks we have so far, the primary response id is the smallest response id (except for
+                // component development track for which it corresponds to the failure reviewer).
+                // So, we retrieve all response ids for the specified track ordered by its value.
+                // The first one will be the primary then.
+                ps = conn.prepareStatement("select review_resp_id from review_resp where phase_id = ? order by review_resp_id");
                 ps.setLong(1, phaseID);
 
+                long primaryResponseId=-1L;
+                List<Long> secondaryResponseIDs = new ArrayList<Long>();
+
                 rs = ps.executeQuery();
-                while (rs.next() && responseIDs.size() < roles.size()) {
-                    responseIDs.add(rs.getLong(1));
+                while (rs.next()) {
+                    if (primaryResponseId == -1L)
+                        primaryResponseId = rs.getLong(1);
+                    else
+                        secondaryResponseIDs.add(rs.getLong(1));
                 }
+
+                // Iterate by all input reviewers and set the response id for each.
+                for(long primary : primaries) {
+
+                    // Assign the primary response id only to the primary reviewer or if all the secondary response ids are already assigned.
+                    if (primary == 1L || (primary == 0L && secondaryResponseIDs.size() == 0))
+                        if (primaryResponseId != -1L) {
+                            responseIDs.add(primaryResponseId);
+                            primaryResponseId = -1L;
+                            continue;
+                        }
+
+                    // Assign the secondary response id only to a secondary reviewer or if the primary response id is already assigned.
+                    if (primary == 0L || (primary == 1L && primaryResponseId == -1L))
+                        if (secondaryResponseIDs.size() > 0) {
+                            responseIDs.add(secondaryResponseIDs.get(secondaryResponseIDs.size()-1));
+                            secondaryResponseIDs.remove(secondaryResponseIDs.size()-1);
+                            continue;
+                        }
+                }
+
             } catch (SQLException e) {
                 throw new BaseException("Failed to getRespIdFromRoleId", e);
             } finally {
@@ -3473,7 +3551,7 @@ public class ActionsHelper {
             }
 
             // If there are less response ids in the review_resp_id than we need, throw an exception.
-            // This can only mean that review_resp_id has wrong data as it needs to have at least three response ids. 
+            // This can only mean that review_resp_id has wrong data as it needs to have at least three response ids.
             if (responseIDs.size() < roles.size()) {
                 throw new BaseException("Not enough response ids for reviewers. Needed "+roles.size()+", present "+responseIDs.size());
             }

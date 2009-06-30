@@ -45,6 +45,8 @@ import com.topcoder.management.deliverable.search.UploadFilterBuilder;
 import com.topcoder.management.phase.PhaseManager;
 import com.topcoder.management.project.Project;
 import com.topcoder.management.project.ProjectManager;
+import com.topcoder.management.project.link.ProjectLink;
+import com.topcoder.management.project.link.ProjectLinkManager;
 import com.topcoder.management.resource.Notification;
 import com.topcoder.management.resource.Resource;
 import com.topcoder.management.resource.ResourceManager;
@@ -505,6 +507,11 @@ public class ProjectDetailsActions extends DispatchAction {
         // since Online Review Update - Add Project Dropdown v1.0
         request.setAttribute("isAdmin",
                 Boolean.valueOf(AuthorizationHelper.hasUserRole(request, Constants.MANAGER_ROLE_NAME)));
+
+        //OR Project Linking Assembly
+        ProjectLinkManager linkManager = ActionsHelper.createProjectLinkManager(request);
+        request.setAttribute("destProjectLinks", linkManager.getDestProjectLinks(project.getId()));
+        request.setAttribute("srcProjectLinks", linkManager.getSourceProjectLinks(project.getId()));
 
         return mapping.findForward(Constants.SUCCESS_FORWARD_NAME);
     }
