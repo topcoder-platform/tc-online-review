@@ -1,11 +1,11 @@
 <?xml version="1.0" ?>
 <!DOCTYPE CMConfig [
-       <!ENTITY localFileUploadDir "/tcssubmissions">
-       <!ENTITY phasesEmailTemplate "/home/apps/web/conf/templates/email_template.txt">
-       <!ENTITY winnersEmailTemplate "/home/apps/web/conf/templates/winners_email_template.txt">
-       <!ENTITY timelineTemplateDir "/home/apps/web/conf/templates">
-       <!ENTITY contactManagersTemplate "/home/apps/web/conf/templates/contact_manager_template.txt">
-       <!ENTITY pactJNDIAddress "jnp://192.168.12.72:1099">
+       <!ENTITY localFileUploadDir "/home/onlinereview/downloads">
+       <!ENTITY phasesEmailTemplate "/home/onlinereview/email_template.txt">
+       <!ENTITY winnersEmailTemplate "/home/onlinereview/winners_email_template.txt">
+       <!ENTITY timelineTemplateDir "/home/onlinereview">
+       <!ENTITY contactManagersTemplate "/home/onlinereview/contact_manager_template.txt">
+       <!ENTITY pactJNDIAddress "jnp://63.118.154.181:1199">
 ]>
 <!--[OR-584] this flag is no longer necessary, we only do v2 assignment now
 <!ENTITY assignmentDocumentsFlag "false">
@@ -34,13 +34,13 @@
                         <Value>com.informix.jdbc.IfxDriver</Value>
                     </Property>
                     <Property name="jdbc_url">
-                        <Value>jdbc:informix-sqli://192.168.14.53:2020/tcs_catalog:INFORMIXSERVER=informixoltp_tcp;IFX_LOCK_MODE_WAIT=5</Value>
+                        <Value>jdbc:informix-sqli://63.118.154.190:1526/tcs_catalog:INFORMIXSERVER=devinformix10_shm;IFX_LOCK_MODE_WAIT=5</Value>
                     </Property>
                     <Property name="user">
                         <Value>coder</Value>
                     </Property>
                     <Property name="password">
-                        <Value>bre3burn</Value>
+                        <Value>altec</Value>
                     </Property>
                 </Property>
             </Property>
@@ -67,7 +67,7 @@
     -->
     <Config name="com.topcoder.message.email.EmailEngine">
         <Property name="smtp_host_addr">
-            <Value>192.168.10.51</Value>
+            <Value>63.118.154.162</Value>
         </Property>
         <Property name="smtp_host_port">
             <Value>25</Value>
