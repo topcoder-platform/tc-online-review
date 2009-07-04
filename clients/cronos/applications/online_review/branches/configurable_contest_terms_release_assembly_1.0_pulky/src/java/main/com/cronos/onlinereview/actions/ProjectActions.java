@@ -68,6 +68,10 @@ import com.topcoder.web.ejb.project.ProjectRoleTermsOfUse;
 import com.topcoder.web.ejb.project.ProjectRoleTermsOfUseLocator;
 import com.topcoder.shared.util.DBMS;
 import com.topcoder.shared.util.ApplicationServer;
+import javax.naming.NamingException;
+import java.rmi.RemoteException;
+import javax.ejb.CreateException;
+import javax.ejb.EJBException;
 
 /**
  * This class contains Struts Actions that are meant to deal with Projects. There are following
@@ -835,7 +839,13 @@ public class ProjectActions extends DispatchAction {
             // generate new project role terms of use associations for the recently created project.
         	try {
         		generateProjectRoleTermsOfUseAssociations(project.getId(), project.getProjectCategory().getId());
-        	} catch (Exception e) {
+        	} catch (NamingException ne) {
+        		throw new BaseException(ne);
+        	} catch (RemoteException re) {
+        		throw new BaseException(re);
+        	} catch (CreateException ce) {
+        		throw new BaseException(ce);
+        	} catch (EJBException e) {
         		throw new BaseException(e);
         	}
         }
@@ -867,45 +877,32 @@ public class ProjectActions extends DispatchAction {
      * 
      * @param projectId the project id for the associations
      * @param projectTypeId the project type id of the provided project id
-     * @throws NumberFormatException if configurations have wrong format
-     * @throws ConfigManagerException if Configuration Manager fails to retrieve the configurations
      * @throws NamingException if any errors occur during EJB lookup
      * @throws RemoteException if any errors occur during EJB remote invocation
      * @throws CreateException if any errors occur during EJB creation
      * @throws EJBException if any other errors occur while invoking EJB services
-     * @since 1.0.3 
+     * @since 1.1 
      */
     private void generateProjectRoleTermsOfUseAssociations(long projectId, long projectTypeId)
-    	throws Exception {
-//            throws NumberFormatException, ConfigManagerException,
-//            NamingException, RemoteException, CreateException, EJBException {
-        
-        // get ProjectRoleTermsOfUse entries configurations
-//        int submitterRoleId = Integer.parseInt(getConfigValue("submitter_role_id"));
-//        long submitterTermsId = Long.parseLong(getConfigValue("submitter_terms_id"));
-//        int reviewerRoleId = Integer.parseInt(getConfigValue("reviewer_role_id"));
-//        int accuracyReviewerRoleId = Integer.parseInt(getConfigValue("accuracy_reviewer_role_id"));
-//        int failureReviewerRoleId = Integer.parseInt(getConfigValue("failure_reviewer_role_id"));
-//        int stressReviewerRoleId = Integer.parseInt(getConfigValue("stress_reviewer_role_id"));
-//        long reviewerTermsId = Long.parseLong(getConfigValue("reviewer_terms_id"));
+    	throws NamingException, RemoteException, CreateException, EJBException {
 
-        int submitterRoleId = 1;
-        long submitterTermsId = 20623;
-        int reviewerRoleId = 4;
-        int accuracyReviewerRoleId = 5;
-        int failureReviewerRoleId = 6;
-        int stressReviewerRoleId = 7;
-        long reviewerTermsId = 17;
+        // get configurations to create the associations
+        int submitterRoleId = getSubmitterRoleId();
+        long submitterTermsId = getSubmitterTermsId();
+        long reviewerTermsId = getReviewerTermsId();
 
         // create ProjectRoleTermsOfUse default associations
         ProjectRoleTermsOfUse projectRoleTermsOfUse = ProjectRoleTermsOfUseLocator.getService();
         projectRoleTermsOfUse.createProjectRoleTermsOfUse(new Long(projectId).intValue(), 
                 submitterRoleId, submitterTermsId, DBMS.COMMON_OLTP_DATASOURCE_NAME);
 
-        System.out.println("DBMS.COMMON_OLTP_DATASOURCE_NAME: " + DBMS.COMMON_OLTP_DATASOURCE_NAME);
-        System.out.println("ApplicationServer.PROJECT_ROLE_TERMS_OF_USE_HOST_URL: " + ApplicationServer.PROJECT_ROLE_TERMS_OF_USE_HOST_URL);
+        System.out.println("projectTypeId: " + projectTypeId);
         
         if (projectTypeId == 2) {
+            int accuracyReviewerRoleId = getAccuracyReviewerRoleId();
+            int failureReviewerRoleId = getFailureReviewerRoleId();
+            int stressReviewerRoleId = getStressReviewerRoleId();
+
             // if it's a development project there are several reviewer roles
             projectRoleTermsOfUse.createProjectRoleTermsOfUse(new Long(projectId).intValue(), 
                     accuracyReviewerRoleId, reviewerTermsId, DBMS.COMMON_OLTP_DATASOURCE_NAME);
@@ -916,6 +913,8 @@ public class ProjectActions extends DispatchAction {
             projectRoleTermsOfUse.createProjectRoleTermsOfUse(new Long(projectId).intValue(), 
                     stressReviewerRoleId, reviewerTermsId, DBMS.COMMON_OLTP_DATASOURCE_NAME);
         } else {
+            int reviewerRoleId = getReviewerRoleId();
+
             // if it's not development there is a single reviewer role
             projectRoleTermsOfUse.createProjectRoleTermsOfUse(new Long(projectId).intValue(), 
                     reviewerRoleId, reviewerTermsId, DBMS.COMMON_OLTP_DATASOURCE_NAME);

@@ -26,7 +26,7 @@ import com.topcoder.util.config.UnknownNamespaceException;
  *
  * @author George1
  * @author real_vg
- * @version 1.0
+ * @version 1.1
  */
 public class ConfigHelper {
 
@@ -42,6 +42,62 @@ public class ConfigHelper {
      * will be stored in.
      */
     private static final String USER_ID_ATTR_NAME_PROP = "user_identifer_key";
+
+    /**
+     * This member variable is a string constant that specifies the name of the property which
+     * contains the submitter role id.
+     *
+     * @since 1.1
+     */
+    private static final String SUBMITTER_ROLE_ID_NAME_PROP = "submitter_role_id";
+
+    /**
+     * This member variable is a string constant that specifies the name of the property which
+     * contains the submitter_terms_id.
+     *
+     * @since 1.1
+     */
+    private static final String SUBMITTER_TERMS_ID_NAME_PROP = "submitter_terms_id";
+
+    /**
+     * This member variable is a string constant that specifies the name of the property which
+     * contains the reviewer role id.
+     *
+     * @since 1.1
+     */
+    private static final String REVIEWER_ROLE_ID_NAME_PROP = "reviewer_role_id";
+
+    /**
+     * This member variable is a string constant that specifies the name of the property which
+     * contains the accuracy reviewer role id.
+     *
+     * @since 1.1
+     */
+    private static final String ACCURACY_REVIEWER_ROLE_ID_NAME_PROP = "accuracy_reviewer_role_id";
+
+    /**
+     * This member variable is a string constant that specifies the name of the property which
+     * contains the failure reviewer role id.
+     *
+     * @since 1.1
+     */
+    private static final String FAILURE_REVIEWER_ROLE_ID_NAME_PROP = "failure_reviewer_role_id";
+
+    /**
+     * This member variable is a string constant that specifies the name of the property which
+     * contains the stress reviewer role id.
+     *
+     * @since 1.1
+     */
+    private static final String STRESS_REVIEWER_ROLE_ID_NAME_PROP = "stress_reviewer_role_id";
+
+    /**
+     * This member variable is a string constant that specifies the name of the property which
+     * contains the reviewer terms id.
+     *
+     * @since 1.1
+     */
+    private static final String REVIEWER_TERMS_ID_NAME_PROP = "reviewer_terms_id";
 
     /**
      * This member variable is a string constant that specifies the name of the property which
@@ -388,6 +444,55 @@ public class ConfigHelper {
     private static String userIdAttributeName = "";
 
     /**
+     * This member variable holds the submitter role id.
+     *
+     * @since 1.1
+     */
+    private static int submitterRoleId = 1;
+ 	
+    /**
+     * This member variable holds the submitter terms id.
+     *
+     * @since 1.1
+     */
+    private static long submitterTermsId = 20623l;
+ 	
+    /**
+     * This member variable holds the reviewer role id.
+     *
+     * @since 1.1
+     */
+    private static int reviewerRoleId = 4;
+ 	
+    /**
+     * This member variable holds the accuracy reviewer role id.
+     *
+     * @since 1.1
+     */
+    private static int accuracyReviewerRoleId = 5;
+ 	
+    /**
+     * This member variable holds the failure reviewer role id.
+     *
+     * @since 1.1
+     */
+    private static int failureReviewerRoleId = 6;
+ 	
+    /**
+     * This member variable holds the stress reviewer role id.
+     *
+     * @since 1.1
+     */
+    private static int stressReviewerRoleId = 7;
+ 	
+    /**
+     * This member variable holds the reviewer terms id.
+     *
+     * @since 1.1
+     */
+    private static long reviewerTermsId = 17l;
+
+    /**
      * This member variable holds the names of small icons (.gif) files that should be displayed
      * on the JSP pages for different Root Catalog IDs.
      */
@@ -565,6 +670,90 @@ public class ConfigHelper {
             if (userIdAttr != null && userIdAttr.trim().length() != 0) {
                 // ... store it for later use
                 userIdAttributeName = userIdAttr;
+            }
+
+            // Retrieve the value of the property that contains the submitter_role_id
+            String value = cfgMgr.getString(ONLINE_REVIEW_CFG_NS, SUBMITTER_ROLE_ID_NAME_PROP);
+            // If the value has been retrieved successfully ...
+            if (value != null && value.trim().length() != 0) {
+                // ... store it for later use
+            	try {
+            		submitterRoleId = Integer.parseInt(value);
+            	} catch (NumberFormatException nfe) {
+            		// don't do anything, keep the default
+            	}
+            }
+
+            // Retrieve the value of the property that contains the submitter_terms_id
+            String value = cfgMgr.getString(ONLINE_REVIEW_CFG_NS, SUBMITTER_TERMS_ID_NAME_PROP);
+            // If the value has been retrieved successfully ...
+            if (value != null && value.trim().length() != 0) {
+                // ... store it for later use
+            	try {
+            		submitterTermsId = Long.parseLong(value);
+            	} catch (NumberFormatException nfe) {
+            		// don't do anything, keep the default
+            	}
+            }
+
+            // Retrieve the value of the property that contains the reviewer_role_id
+            String value = cfgMgr.getString(ONLINE_REVIEW_CFG_NS, REVIEWER_ROLE_ID_NAME_PROP);
+            // If the value has been retrieved successfully ...
+            if (value != null && value.trim().length() != 0) {
+                // ... store it for later use
+            	try {
+            		reviewerRoleId = Integer.parseInt(value);
+            	} catch (NumberFormatException nfe) {
+            		// don't do anything, keep the default
+            	}
+            }
+
+            // Retrieve the value of the property that contains the accuracy_reviewer_role_id
+            String value = cfgMgr.getString(ONLINE_REVIEW_CFG_NS, ACCURACY_REVIEWER_ROLE_ID_NAME_PROP);
+            // If the value has been retrieved successfully ...
+            if (value != null && value.trim().length() != 0) {
+                // ... store it for later use
+            	try {
+            		accuracyReviewerRoleId = Integer.parseInt(value);
+            	} catch (NumberFormatException nfe) {
+            		// don't do anything, keep the default
+            	}
+            }
+
+            // Retrieve the value of the property that contains the failure_reviewer_role_id
+            String value = cfgMgr.getString(ONLINE_REVIEW_CFG_NS, FAILURE_REVIEWER_ROLE_ID_NAME_PROP);
+            // If the value has been retrieved successfully ...
+            if (value != null && value.trim().length() != 0) {
+                // ... store it for later use
+            	try {
+            		failureReviewerRoleId = Integer.parseInt(value);
+            	} catch (NumberFormatException nfe) {
+            		// don't do anything, keep the default
+            	}
+            }
+
+            // Retrieve the value of the property that contains the stress_reviewer_role_id
+            String value = cfgMgr.getString(ONLINE_REVIEW_CFG_NS, STRESS_REVIEWER_ROLE_ID_NAME_PROP);
+            // If the value has been retrieved successfully ...
+            if (value != null && value.trim().length() != 0) {
+                // ... store it for later use
+            	try {
+            		stressReviewerRoleId = Integer.parseInt(value);
+            	} catch (NumberFormatException nfe) {
+            		// don't do anything, keep the default
+            	}
+            }
+
+            // Retrieve the value of the property that contains the reviewer_terms_id
+            String value = cfgMgr.getString(ONLINE_REVIEW_CFG_NS, REVIEWER_TERMS_ID_NAME_PROP);
+            // If the value has been retrieved successfully ...
+            if (value != null && value.trim().length() != 0) {
+                // ... store it for later use
+            	try {
+            		reviewerTermsId = Integer.parseInt(value);
+            	} catch (NumberFormatException nfe) {
+            		// don't do anything, keep the default
+            	}
             }
 
             // Retrieve property that contains definitions of ID/filename pairs
@@ -852,6 +1041,76 @@ public class ConfigHelper {
      */
     public static String getUserIdAttributeName() {
         return userIdAttributeName;
+    }
+
+    /**
+     * This static method returns the submitter role id.
+     *
+     * @return the submitter role id.
+     * @since 1.1
+     */
+    public static int getSubmitterRoleId() {
+        return submitterRoleId;
+    }
+ 	
+    /**
+     * This static method returns the submitter terms id.
+     *
+     * @return the name of the submitter terms id.
+     * @since 1.1
+     */
+    public static long getSubmitterTermsId() {
+        return submitterTermsId;
+    }
+ 	
+    /**
+     * This static method returns the reviewer role id.
+     *
+     * @return the reviewer role id.
+     * @since 1.1
+     */
+    public static int getReviewerRoleId() {
+        return reviewerRoleId;
+    }
+ 	
+    /**
+     * This static method returns the accuracy reviewer role id.
+     *
+     * @return the accuracy reviewer role id.
+     * @since 1.1
+     */
+    public static int getAccuracyReviewerRoleId() {
+        return accuracyReviewerRoleId;
+    }
+ 	
+    /**
+     * This static method returns the failure reviewer role id.
+     *
+     * @return the failure reviewer role id.
+     * @since 1.1
+     */
+    public static int getFailureReviewerRoleId() {
+        return failureReviewerRoleId;
+    }
+ 	
+    /**
+     * This static method returns the stress reviewer role id.
+     *
+     * @return the stress reviewer role id.
+     * @since 1.1
+     */
+    public static int getStressReviewerRoleId() {
+        return stressReviewerRoleId;
+    }
+ 	
+    /**
+     * This static method returns the reviewer terms id.
+     *
+     * @return the reviewer terms id.
+     * @since 1.1
+     */
+    public static long getReviewerTermsId() {
+        return reviewerTermsId;
     }
 
     /**
