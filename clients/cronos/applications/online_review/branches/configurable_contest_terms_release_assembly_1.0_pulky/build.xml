@@ -428,8 +428,9 @@
         <pathelement location="${workdays.jar}" />
         <pathelement location="${pactsServices.jar}" />
         <pathelement location="${projectEJB.jar}" />
-        <pathelement location="${tcsUtil.jar}" />
+    	<pathelement location="${tcsUtil.jar}" />
         <pathelement location="${tcwebcommon.jar}" />
+        <pathelement location="${shared.jar}" />
     </path>
 
     <path id="cactus.classpath">
