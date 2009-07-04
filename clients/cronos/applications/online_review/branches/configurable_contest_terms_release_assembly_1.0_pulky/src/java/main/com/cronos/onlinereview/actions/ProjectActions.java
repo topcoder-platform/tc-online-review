@@ -887,9 +887,9 @@ public class ProjectActions extends DispatchAction {
     	throws NamingException, RemoteException, CreateException, EJBException {
 
         // get configurations to create the associations
-        int submitterRoleId = getSubmitterRoleId();
-        long submitterTermsId = getSubmitterTermsId();
-        long reviewerTermsId = getReviewerTermsId();
+        int submitterRoleId = ConfigHelper.getSubmitterRoleId();
+        long submitterTermsId = ConfigHelper.getSubmitterTermsId();
+        long reviewerTermsId = ConfigHelper.getReviewerTermsId();
 
         // create ProjectRoleTermsOfUse default associations
         ProjectRoleTermsOfUse projectRoleTermsOfUse = ProjectRoleTermsOfUseLocator.getService();
@@ -899,9 +899,9 @@ public class ProjectActions extends DispatchAction {
         System.out.println("projectTypeId: " + projectTypeId);
         
         if (projectTypeId == 2) {
-            int accuracyReviewerRoleId = getAccuracyReviewerRoleId();
-            int failureReviewerRoleId = getFailureReviewerRoleId();
-            int stressReviewerRoleId = getStressReviewerRoleId();
+            int accuracyReviewerRoleId = ConfigHelper.getAccuracyReviewerRoleId();
+            int failureReviewerRoleId = ConfigHelper.getFailureReviewerRoleId();
+            int stressReviewerRoleId = ConfigHelper.getStressReviewerRoleId();
 
             // if it's a development project there are several reviewer roles
             projectRoleTermsOfUse.createProjectRoleTermsOfUse(new Long(projectId).intValue(), 
@@ -913,7 +913,7 @@ public class ProjectActions extends DispatchAction {
             projectRoleTermsOfUse.createProjectRoleTermsOfUse(new Long(projectId).intValue(), 
                     stressReviewerRoleId, reviewerTermsId, DBMS.COMMON_OLTP_DATASOURCE_NAME);
         } else {
-            int reviewerRoleId = getReviewerRoleId();
+            int reviewerRoleId = ConfigHelper.getReviewerRoleId();
 
             // if it's not development there is a single reviewer role
             projectRoleTermsOfUse.createProjectRoleTermsOfUse(new Long(projectId).intValue(), 
