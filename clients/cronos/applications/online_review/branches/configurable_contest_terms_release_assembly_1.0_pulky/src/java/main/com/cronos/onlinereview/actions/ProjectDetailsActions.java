@@ -1706,10 +1706,10 @@ public class ProjectDetailsActions extends DispatchAction {
         Resource[] allProjectResources = ActionsHelper.getAllResourcesForProject(resourceManager, verification.getProject());
         
         boolean found = false;
-        for (int i = 0; i < allProjectResources && !found; i++) {
+        for (int i = 0; i < allProjectResources.length && !found; i++) {
         	long userId = Long.parseLong(((String) allProjectResources[i].getProperty("External Reference ID")).trim());
         	
-        	if (resource.getResourceRole().getName().equalsIgnoreCase(Constants.SUBMITTER_ROLE_NAME) &&
+        	if (allProjectResources[i].getResourceRole().getName().equalsIgnoreCase(Constants.SUBMITTER_ROLE_NAME) &&
         			userId == AuthorizationHelper.getLoggedInUserId(request)) {
                 ActionsHelper.deleteProjectResult(verification.getProject(), userId, allProjectResources[i].getResourceRole().getId());
                 resourceManager.removeResource(allProjectResources[i],
