@@ -836,7 +836,7 @@ public class ProjectActions extends DispatchAction {
         	try {
         		generateProjectRoleTermsOfUseAssociations(project.getId(), project.getProjectCategory().getId());
         	} catch (Exception e) {
-        		e.printStackTrace();
+        		throw new BaseException(e);
         	}
         }
         
