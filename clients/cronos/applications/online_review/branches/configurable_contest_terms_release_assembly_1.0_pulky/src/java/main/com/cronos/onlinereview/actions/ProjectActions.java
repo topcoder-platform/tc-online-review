@@ -832,7 +832,11 @@ public class ProjectActions extends DispatchAction {
 
         if (newProject) {
             // generate new project role terms of use associations for the recently created project.
-            generateProjectRoleTermsOfUseAssociations(project.getId(), project.getProjectCategory().getId());
+        	try {
+        		generateProjectRoleTermsOfUseAssociations(project.getId(), project.getProjectCategory().getId());
+        	} catch (Exception e) {
+        		e.printStackTrace();
+        	}
         }
         
         // Check if there are any validation errors and return appropriate forward
@@ -897,6 +901,9 @@ public class ProjectActions extends DispatchAction {
         projectRoleTermsOfUse.createProjectRoleTermsOfUse(new Long(projectId).intValue(), 
                 submitterRoleId, submitterTermsId, DBMS.COMMON_OLTP_DATASOURCE_NAME);
 
+        System.out.println("DBMS.COMMON_OLTP_DATASOURCE_NAME: " + DBMS.COMMON_OLTP_DATASOURCE_NAME);
+        System.out.println("ApplicationServer.PROJECT_ROLE_TERMS_OF_USE_HOST_URL: " + ApplicationServer.PROJECT_ROLE_TERMS_OF_USE_HOST_URL);
+        
         if (projectTypeId == 2) {
             // if it's a development project there are several reviewer roles
             projectRoleTermsOfUse.createProjectRoleTermsOfUse(new Long(projectId).intValue(), 
