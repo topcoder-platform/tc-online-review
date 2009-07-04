@@ -67,6 +67,7 @@ import com.topcoder.util.errorhandling.BaseException;
 import com.topcoder.web.ejb.project.ProjectRoleTermsOfUse;
 import com.topcoder.web.ejb.project.ProjectRoleTermsOfUseLocator;
 import com.topcoder.shared.util.DBMS;
+import com.topcoder.shared.util.ApplicationServer;
 
 /**
  * This class contains Struts Actions that are meant to deal with Projects. There are following
