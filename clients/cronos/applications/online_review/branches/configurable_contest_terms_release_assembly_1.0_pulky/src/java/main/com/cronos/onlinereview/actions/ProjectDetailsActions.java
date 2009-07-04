@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2007 TopCoder Inc.  All Rights Reserved.
+ * Copyright (C) 2004 - 2009 TopCoder Inc., All Rights Reserved.
  */
 package com.cronos.onlinereview.actions;
 
@@ -97,9 +97,15 @@ import com.topcoder.util.file.fieldconfig.TemplateFields;
  * This class is thread-safe as it does not contain any mutable inner state.
  * </p>
  *
- * @author George1
- * @author real_vg
- * @version 1.0
+ * <p>
+ * Version 1.1 (Configurable Contest Terms Release Assembly v1.0) Change notes:
+ *   <ol>
+ *     <li>Added flag to allow a submitter to see unregistration link.</li>
+ *   </ol>
+ * </p>
+ *
+ * @author George1, real_vg, TCSDEVELOPER
+ * @version 1.1
  */
 public class ProjectDetailsActions extends DispatchAction {
 
@@ -118,6 +124,12 @@ public class ProjectDetailsActions extends DispatchAction {
      * Updated for Online Review Update - Add Project Dropdown v1.0
      *      - added isAdmin value to the request.
      *      - if user is admin, then billing project value is set to the request. 
+     * </p>
+     *
+     * <p>
+     * Updated for Configurable Contest Terms Release Assembly v1.0
+     *      - added isAllowedToUnregister value to the request.
+     *      - if user is a submitter and registration is open, he can unregister. 
      * </p>
      *
      * @return an action forward to the appropriate page. If no error has occured, the forward will
@@ -420,6 +432,18 @@ public class ProjectDetailsActions extends DispatchAction {
                 Boolean.valueOf(AuthorizationHelper.hasUserRole(request, Constants.MANAGER_ROLE_NAMES)));
         request.setAttribute("isSubmitter",
                 Boolean.valueOf(AuthorizationHelper.hasUserRole(request, Constants.SUBMITTER_ROLE_NAME)));
+
+        // check if registration phase is open
+        boolean registrationOpen = false;
+        for (int i = 0; i < activePhases.length && !registrationOpen; i++) {
+        	if (activePhases[i].getPhaseType().getName().equalsIgnoreCase(Constants.REGISTRATION_PHASE_NAME)) {
+        		registrationOpen = true;
+        	}
+        }
+        
+        request.setAttribute("isAllowedToUnregister",
+                Boolean.valueOf(AuthorizationHelper.hasUserRole(request, Constants.SUBMITTER_ROLE_NAME)) && registrationOpen);
+
         // Check permissions
         request.setAttribute("isAllowedToEditProjects",
                 Boolean.valueOf(AuthorizationHelper.hasUserPermission(request, Constants.EDIT_PROJECT_DETAILS_PERM_NAME)));
