@@ -101,6 +101,7 @@ import com.topcoder.util.file.fieldconfig.TemplateFields;
  * Version 1.1 (Configurable Contest Terms Release Assembly v1.0) Change notes:
  *   <ol>
  *     <li>Added flag to allow a submitter to see unregistration link.</li>
+ *     <li>Added unregistration action.</li>
  *   </ol>
  * </p>
  *
@@ -1618,6 +1619,106 @@ public class ProjectDetailsActions extends DispatchAction {
         // recaculate screening reviewer payments
         ActionsHelper.recaculateScreeningReviewerPayments(upload.getProject());
 
+        return ActionsHelper.cloneForwardAndAppendToPath(
+                mapping.findForward(Constants.SUCCESS_FORWARD_NAME), "&pid=" + verification.getProject().getId());
+    }
+
+    /**
+     * This method is an implementation of &quot;Unregister&quot; Struts Action defined for
+     * this assembly, which is supposed to unregister the logged in submitter from a project
+     * (denoted by <code>pid</code> parameter). This action gets executed twice &#x96; once to
+     * display the page with the confirmation, and once to process the confiremed request to
+     * actually perform the unregistration.
+     *
+     * @return an action forward to the appropriate page. If no error has occured and this action
+     *         was called the first time, the forward will be to /jsp/confirmUnregistration.jsp
+     *         If this action was called during the post back (the second time), then this method 
+     *         verifies if everything is correct, and proceeds with the unregisration.
+     *         After this it returns a forward to the View Project Details page.
+     * @param mapping
+     *            action mapping.
+     * @param form
+     *            action form.
+     * @param request
+     *            the http request.
+     * @param response
+     *            the http response.
+     * @throws BaseException
+     *             if any error occurs.
+     * @since 1.1
+     */
+    public ActionForward unregister(ActionMapping mapping, ActionForm form,
+            HttpServletRequest request, HttpServletResponse response)
+        throws BaseException {
+        LoggingHelper.logAction(request);
+        // Verify that certain requirements are met before processing with the Action
+        CorrectnessCheckResult verification = ActionsHelper.checkForCorrectProjectId(
+                mapping, getResources(request), request, Constants.VIEW_PROJECT_DETAIL_PERM_NAME, false);
+        // If any error has occured, return action forward contained in the result bean
+        if (!verification.isSuccessful()) {
+            return verification.getForward();
+        }
+
+        // Check the user has submitter role and registration phase is open
+        boolean isSubmitter = Boolean.valueOf(AuthorizationHelper.hasUserRole(request, Constants.SUBMITTER_ROLE_NAME));
+
+        if (!isSubmitter) {
+            return ActionsHelper.produceErrorReport(mapping, getResources(request),
+                    request, "Unregistration", "Error.NoPermission", Boolean.TRUE);
+        }
+
+        PhaseManager phaseMgr = ActionsHelper.createPhaseManager(request, false);
+        com.topcoder.project.phases.Project phProj = phaseMgr.getPhases(verification.getProject().getId());
+        Phase[] phases = phProj.getAllPhases(new Comparators.ProjectPhaseComparer());
+
+        // Obtain an array of all active phases of the project
+        Phase[] activePhases = ActionsHelper.getActivePhases(phases);
+
+        // check if registration phase is open
+        boolean registrationOpen = false;
+        for (int i = 0; i < activePhases.length && !registrationOpen; i++) {
+        	if (activePhases[i].getPhaseType().getName().equalsIgnoreCase(Constants.REGISTRATION_PHASE_NAME)) {
+        		registrationOpen = true;
+        	}
+        }
+                
+        if (!registrationOpen) {
+            return ActionsHelper.produceErrorReport(mapping, getResources(request),
+                    request, "Unregistration", "Error.RegistrationClosed", Boolean.TRUE);
+        }
+        
+        // At this point, redirect-after-login attribute should be removed (if it exists)
+        AuthorizationHelper.removeLoginRedirect(request);
+
+        // Determine if this request is a post back
+        boolean postBack = (request.getParameter("unregister") != null);
+
+        if (postBack != true) {
+            // Retrieve some basic project info (such as icons' names) and place it into request
+            ActionsHelper.retrieveAndStoreBasicProjectInfo(request, verification.getProject(), getResources(request));
+            // Place upload ID into the request as attribute
+            request.setAttribute("pid", verification.getProject().getId());
+            return mapping.findForward(Constants.DISPLAY_PAGE_FORWARD_NAME);
+        }
+
+        // Obtain the instance of the Resource Manager
+        ResourceManager resourceManager = ActionsHelper.createResourceManager(request);
+        Resource[] allProjectResources = ActionsHelper.getAllResourcesForProject(resourceManager, verification.getProject());
+        
+        boolean found = false;
+        for (int i = 0; i < allProjectResources && !found; i++) {
+        	long userId = Long.parseLong(((String) allProjectResources[i].getProperty("External Reference ID")).trim());
+        	
+        	if (resource.getResourceRole().getName().equalsIgnoreCase(Constants.SUBMITTER_ROLE_NAME) &&
+        			userId == AuthorizationHelper.getLoggedInUserId(request)) {
+                ActionsHelper.deleteProjectResult(verification.getProject(), userId, allProjectResources[i].getResourceRole().getId());
+                resourceManager.removeResource(allProjectResources[i],
+                        Long.toString(AuthorizationHelper.getLoggedInUserId(request)));        
+
+                found = true;
+        	}
+        }
+        
         return ActionsHelper.cloneForwardAndAppendToPath(
                 mapping.findForward(Constants.SUCCESS_FORWARD_NAME), "&pid=" + verification.getProject().getId());
     }
