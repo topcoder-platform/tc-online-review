@@ -64,6 +64,10 @@ import com.topcoder.search.builder.filter.Filter;
 import com.topcoder.search.builder.filter.InFilter;
 import com.topcoder.util.errorhandling.BaseException;
 
+import com.topcoder.web.ejb.project.ProjectRoleTermsOfUse;
+import com.topcoder.web.ejb.project.ProjectRoleTermsOfUseLocator;
+import com.topcoder.shared.util.DBMS;
+
 /**
  * This class contains Struts Actions that are meant to deal with Projects. There are following
  * Actions defined in this class:
@@ -852,6 +856,64 @@ public class ProjectActions extends DispatchAction {
         return ActionsHelper.cloneForwardAndAppendToPath(
                 mapping.findForward(Constants.SUCCESS_FORWARD_NAME),"&pid=" + project.getId());
     }
+
+    /**
+     * Private helper method to generate default Project Role Terms of Use associations for a given project.
+     * 
+     * @param projectId the project id for the associations
+     * @param projectTypeId the project type id of the provided project id
+     * @throws NumberFormatException if configurations have wrong format
+     * @throws ConfigManagerException if Configuration Manager fails to retrieve the configurations
+     * @throws NamingException if any errors occur during EJB lookup
+     * @throws RemoteException if any errors occur during EJB remote invocation
+     * @throws CreateException if any errors occur during EJB creation
+     * @throws EJBException if any other errors occur while invoking EJB services
+     * @since 1.0.3 
+     */
+    private void generateProjectRoleTermsOfUseAssociations(long projectId, long projectTypeId)
+    	throws Exception {
+//            throws NumberFormatException, ConfigManagerException,
+//            NamingException, RemoteException, CreateException, EJBException {
+        
+        // get ProjectRoleTermsOfUse entries configurations
+//        int submitterRoleId = Integer.parseInt(getConfigValue("submitter_role_id"));
+//        long submitterTermsId = Long.parseLong(getConfigValue("submitter_terms_id"));
+//        int reviewerRoleId = Integer.parseInt(getConfigValue("reviewer_role_id"));
+//        int accuracyReviewerRoleId = Integer.parseInt(getConfigValue("accuracy_reviewer_role_id"));
+//        int failureReviewerRoleId = Integer.parseInt(getConfigValue("failure_reviewer_role_id"));
+//        int stressReviewerRoleId = Integer.parseInt(getConfigValue("stress_reviewer_role_id"));
+//        long reviewerTermsId = Long.parseLong(getConfigValue("reviewer_terms_id"));
+
+        int submitterRoleId = 1;
+        long submitterTermsId = 1;
+        int reviewerRoleId = 1;
+        int accuracyReviewerRoleId = 1;
+        int failureReviewerRoleId = 1;
+        int stressReviewerRoleId = 1;
+        long reviewerTermsId = 1;
+
+        // create ProjectRoleTermsOfUse default associations
+        ProjectRoleTermsOfUse projectRoleTermsOfUse = ProjectRoleTermsOfUseLocator.getService();
+        projectRoleTermsOfUse.createProjectRoleTermsOfUse(new Long(projectId).intValue(), 
+                submitterRoleId, submitterTermsId, DBMS.COMMON_OLTP_DATASOURCE_NAME);
+
+        if (projectTypeId == 2) {
+            // if it's a development project there are several reviewer roles
+            projectRoleTermsOfUse.createProjectRoleTermsOfUse(new Long(projectId).intValue(), 
+                    accuracyReviewerRoleId, reviewerTermsId, DBMS.COMMON_OLTP_DATASOURCE_NAME);
+    
+            projectRoleTermsOfUse.createProjectRoleTermsOfUse(new Long(projectId).intValue(), 
+                    failureReviewerRoleId, reviewerTermsId, DBMS.COMMON_OLTP_DATASOURCE_NAME);
+    
+            projectRoleTermsOfUse.createProjectRoleTermsOfUse(new Long(projectId).intValue(), 
+                    stressReviewerRoleId, reviewerTermsId, DBMS.COMMON_OLTP_DATASOURCE_NAME);
+        } else {
+            // if it's not development there is a single reviewer role
+            projectRoleTermsOfUse.createProjectRoleTermsOfUse(new Long(projectId).intValue(), 
+                    reviewerRoleId, reviewerTermsId, DBMS.COMMON_OLTP_DATASOURCE_NAME);
+        }
+    }
+
 
     /**
      * TODO: Document it
