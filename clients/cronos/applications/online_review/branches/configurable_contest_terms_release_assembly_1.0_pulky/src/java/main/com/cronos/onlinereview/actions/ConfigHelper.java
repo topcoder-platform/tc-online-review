@@ -685,7 +685,7 @@ public class ConfigHelper {
             }
 
             // Retrieve the value of the property that contains the submitter_terms_id
-            String value = cfgMgr.getString(ONLINE_REVIEW_CFG_NS, SUBMITTER_TERMS_ID_NAME_PROP);
+            value = cfgMgr.getString(ONLINE_REVIEW_CFG_NS, SUBMITTER_TERMS_ID_NAME_PROP);
             // If the value has been retrieved successfully ...
             if (value != null && value.trim().length() != 0) {
                 // ... store it for later use
@@ -697,7 +697,7 @@ public class ConfigHelper {
             }
 
             // Retrieve the value of the property that contains the reviewer_role_id
-            String value = cfgMgr.getString(ONLINE_REVIEW_CFG_NS, REVIEWER_ROLE_ID_NAME_PROP);
+            value = cfgMgr.getString(ONLINE_REVIEW_CFG_NS, REVIEWER_ROLE_ID_NAME_PROP);
             // If the value has been retrieved successfully ...
             if (value != null && value.trim().length() != 0) {
                 // ... store it for later use
@@ -709,7 +709,7 @@ public class ConfigHelper {
             }
 
             // Retrieve the value of the property that contains the accuracy_reviewer_role_id
-            String value = cfgMgr.getString(ONLINE_REVIEW_CFG_NS, ACCURACY_REVIEWER_ROLE_ID_NAME_PROP);
+            value = cfgMgr.getString(ONLINE_REVIEW_CFG_NS, ACCURACY_REVIEWER_ROLE_ID_NAME_PROP);
             // If the value has been retrieved successfully ...
             if (value != null && value.trim().length() != 0) {
                 // ... store it for later use
@@ -721,7 +721,7 @@ public class ConfigHelper {
             }
 
             // Retrieve the value of the property that contains the failure_reviewer_role_id
-            String value = cfgMgr.getString(ONLINE_REVIEW_CFG_NS, FAILURE_REVIEWER_ROLE_ID_NAME_PROP);
+            value = cfgMgr.getString(ONLINE_REVIEW_CFG_NS, FAILURE_REVIEWER_ROLE_ID_NAME_PROP);
             // If the value has been retrieved successfully ...
             if (value != null && value.trim().length() != 0) {
                 // ... store it for later use
@@ -733,7 +733,7 @@ public class ConfigHelper {
             }
 
             // Retrieve the value of the property that contains the stress_reviewer_role_id
-            String value = cfgMgr.getString(ONLINE_REVIEW_CFG_NS, STRESS_REVIEWER_ROLE_ID_NAME_PROP);
+            value = cfgMgr.getString(ONLINE_REVIEW_CFG_NS, STRESS_REVIEWER_ROLE_ID_NAME_PROP);
             // If the value has been retrieved successfully ...
             if (value != null && value.trim().length() != 0) {
                 // ... store it for later use
@@ -745,7 +745,7 @@ public class ConfigHelper {
             }
 
             // Retrieve the value of the property that contains the reviewer_terms_id
-            String value = cfgMgr.getString(ONLINE_REVIEW_CFG_NS, REVIEWER_TERMS_ID_NAME_PROP);
+            value = cfgMgr.getString(ONLINE_REVIEW_CFG_NS, REVIEWER_TERMS_ID_NAME_PROP);
             // If the value has been retrieved successfully ...
             if (value != null && value.trim().length() != 0) {
                 // ... store it for later use
