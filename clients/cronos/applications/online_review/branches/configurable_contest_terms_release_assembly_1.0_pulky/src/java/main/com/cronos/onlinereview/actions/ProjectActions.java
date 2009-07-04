@@ -890,12 +890,12 @@ public class ProjectActions extends DispatchAction {
 //        long reviewerTermsId = Long.parseLong(getConfigValue("reviewer_terms_id"));
 
         int submitterRoleId = 1;
-        long submitterTermsId = 1;
-        int reviewerRoleId = 1;
-        int accuracyReviewerRoleId = 1;
-        int failureReviewerRoleId = 1;
-        int stressReviewerRoleId = 1;
-        long reviewerTermsId = 1;
+        long submitterTermsId = 20623;
+        int reviewerRoleId = 4;
+        int accuracyReviewerRoleId = 5;
+        int failureReviewerRoleId = 6;
+        int stressReviewerRoleId = 7;
+        long reviewerTermsId = 17;
 
         // create ProjectRoleTermsOfUse default associations
         ProjectRoleTermsOfUse projectRoleTermsOfUse = ProjectRoleTermsOfUseLocator.getService();
