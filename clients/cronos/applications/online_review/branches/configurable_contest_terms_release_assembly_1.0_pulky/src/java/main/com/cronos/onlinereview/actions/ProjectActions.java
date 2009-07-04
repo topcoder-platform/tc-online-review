@@ -826,6 +826,11 @@ public class ProjectActions extends DispatchAction {
             switchProjectPhase(request, lazyForm, projectPhases, phasesJsMap);
         }
 
+        if (newProject) {
+            // generate new project role terms of use associations for the recently created project.
+            generateProjectRoleTermsOfUseAssociations(project.getId(), project.getProjectCategory().getId());
+        }
+        
         // Check if there are any validation errors and return appropriate forward
         if (ActionsHelper.isErrorsPresent(request)) {
             // TODO: Check if the form is really for new project

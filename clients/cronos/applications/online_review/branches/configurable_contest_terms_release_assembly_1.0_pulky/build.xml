@@ -326,6 +326,10 @@
     <property name="pactsServices.jar.name" value="PactsClientServices.jar" />
     <property name="pactsServices.jar" value="${tcs_libdir}/${pactsServices.path}/${pactsServices.jar.name}" />
 
+	<property name="projectEJB.path" value="project_ejb" />
+    <property name="projectEJB.jar.name" value="Project.jar" />
+    <property name="projectEJB.jar" value="${tcs_libdir}/${projectEJB.path}/${projectEJB.jar.name}" />
+
     <property name="shared.jar.name" value="shared.jar" />
     <property name="shared.jar" value="${tcs_libdir}/${shared.jar.name}" />
 
@@ -423,6 +427,7 @@
         <pathelement location="${weighted_calculator.jar}" />
         <pathelement location="${workdays.jar}" />
         <pathelement location="${pactsServices.jar}" />
+        <pathelement location="${projectEJB.jar}" />
         <pathelement location="${tcsUtil.jar}" />
         <pathelement location="${tcwebcommon.jar}" />
     </path>
@@ -654,6 +659,7 @@ Note: The security manager that comes with the app may not be compatible with th
             <lib dir="${jar_tcs_libdir}/${weighted_calculator.path}" includes="*.jar" />
             <lib dir="${jar_tcs_libdir}/${workdays.path}" includes="*.jar" />
             <lib dir="${jar_tcs_libdir}/${pactsServices.path}" includes="*.jar" />
+            <lib dir="${jar_tcs_libdir}/${projectEJB.path}" includes="*.jar" />
             <lib dir="${jar_tcs_libdir}" includes="*.jar" />
             <lib dir="${jar_ext_libdir}" includes="*.jar" excludes="mail.jar, ejb-2_0.jar" />
             <fileset dir="${webdir}" includes="**" excludes="i/**, js/**, css/**" />

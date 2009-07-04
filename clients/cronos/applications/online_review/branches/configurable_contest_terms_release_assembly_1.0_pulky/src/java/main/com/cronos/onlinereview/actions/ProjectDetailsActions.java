@@ -1651,6 +1651,7 @@ public class ProjectDetailsActions extends DispatchAction {
             HttpServletRequest request, HttpServletResponse response)
         throws BaseException {
         LoggingHelper.logAction(request);
+
         // Verify that certain requirements are met before processing with the Action
         CorrectnessCheckResult verification = ActionsHelper.checkForCorrectProjectId(
                 mapping, getResources(request), request, Constants.VIEW_PROJECT_DETAIL_PERM_NAME, false);
@@ -1696,8 +1697,7 @@ public class ProjectDetailsActions extends DispatchAction {
         if (postBack != true) {
             // Retrieve some basic project info (such as icons' names) and place it into request
             ActionsHelper.retrieveAndStoreBasicProjectInfo(request, verification.getProject(), getResources(request));
-            // Place upload ID into the request as attribute
-            request.setAttribute("pid", verification.getProject().getId());
+
             return mapping.findForward(Constants.DISPLAY_PAGE_FORWARD_NAME);
         }
 
