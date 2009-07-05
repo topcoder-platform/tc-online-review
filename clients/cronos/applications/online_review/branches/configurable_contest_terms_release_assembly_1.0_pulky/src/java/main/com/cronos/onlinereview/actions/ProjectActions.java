@@ -1907,7 +1907,8 @@ public class ProjectActions extends DispatchAction {
         System.out.println("resourceNames.length: " + resourceNames.length);
         
         // validate that new resources have agreed to the necessary terms of use 
-        for (int i = 0; i < resourceNames.length; i++) {
+        // 0-index resource is skipped as it is a "dummy" one
+        for (int i = 1; i < resourceNames.length; i++) {
         	if (resourceNames[i] != null && resourceNames[i].trim().length() > 0) { 
                 System.out.println("resourceNames[i]: " + resourceNames[i]);
 	            ExternalUser user = userRetrieval.retrieveUser(resourceNames[i]);
@@ -1929,7 +1930,9 @@ public class ProjectActions extends DispatchAction {
 	                	if (!userTermsOfUse.hasTermsOfUse(userId, termsId, DBMS.COMMON_OLTP_DATASOURCE_NAME)) {
 	                		// get missing terms of use title
 	                		TermsOfUseEntity terms =  termsOfUse.getEntity(termsId, DBMS.COMMON_OLTP_DATASOURCE_NAME);
-	                		                			
+
+	        	            System.out.println("Error: terms.getTitle(): " + terms.getTitle());
+
 	                		// add the error
 	                        ActionsHelper.addErrorToRequest(request, "resources_name[" + i + "]",
 	                    		new ActionMessage("error.com.cronos.onlinereview.actions.editProject.Resource.MissingTerms",
@@ -1942,6 +1945,7 @@ public class ProjectActions extends DispatchAction {
         	}
         }
         
+        System.out.println("allResourcesValid: " + allResourcesValid);
         return allResourcesValid;
 	}
 
