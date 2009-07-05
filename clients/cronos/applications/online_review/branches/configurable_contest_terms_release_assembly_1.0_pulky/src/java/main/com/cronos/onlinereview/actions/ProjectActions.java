@@ -1701,7 +1701,7 @@ public class ProjectActions extends DispatchAction {
 
         // validate resources have correct terms of use
     	try {
-            allResourcesValid = allResourcesValid && validateResourceTermsOfUse(lazyform, project, resourceNames);
+            allResourcesValid = allResourcesValid && validateResourceTermsOfUse(request, lazyForm, project, userRetrieval, resourceNames);
     	} catch (NamingException ne) {
     		throw new BaseException(ne);
     	} catch (RemoteException re) {
@@ -1874,9 +1874,9 @@ public class ProjectActions extends DispatchAction {
      * @return false if any resource is invalid
 	 * @since 1.1
 	 */
-	private boolean validateResourceTermsOfUse(LazyValidatorForm lazyForm,
-    		Project project, String[] resourceNames) throws NamingException, RemoteException, 
-		CreateException, EJBException {
+	private boolean validateResourceTermsOfUse(HttpServletRequest request, LazyValidatorForm lazyForm, 
+			Project project, UserRetrieval userRetrieval, String[] resourceNames) 
+			throws NamingException, RemoteException, CreateException, EJBException {
     	
 		boolean allResourcesValid = true;
 		
@@ -1902,7 +1902,7 @@ public class ProjectActions extends DispatchAction {
                 	// check if the user has this terms
                 	if (!userTermsOfUse.hasTermsOfUse(userId, termsId, DBMS.COMMON_OLTP_DATASOURCE_NAME)) {
                 		// get missing terms of use title
-                		TermsOfUseEntity terms =  TermsOfUse.getEntity(termsId, DBMS.COMMON_OLTP_DATASOURCE_NAME);
+                		TermsOfUseEntity terms =  termsOfUse.getEntity(termsId, DBMS.COMMON_OLTP_DATASOURCE_NAME);
                 		                			
                 		// add the error
                         ActionsHelper.addErrorToRequest(request, "resources_name[" + i + "]",
