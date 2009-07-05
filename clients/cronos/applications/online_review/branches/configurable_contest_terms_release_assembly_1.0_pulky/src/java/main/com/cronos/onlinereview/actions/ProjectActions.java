@@ -67,7 +67,7 @@ import com.topcoder.util.errorhandling.BaseException;
 import com.topcoder.web.ejb.project.ProjectRoleTermsOfUse;
 import com.topcoder.web.ejb.project.ProjectRoleTermsOfUseLocator;
 import com.topcoder.web.ejb.user.UserTermsOfUse;
-import com.topcoder.web.ejb.user.USERTermsOfUseLocator;
+import com.topcoder.web.ejb.user.UserTermsOfUseLocator;
 import com.topcoder.web.ejb.termsofuse.TermsOfUse;
 import com.topcoder.web.ejb.termsofuse.TermsOfUseEntity;
 import com.topcoder.web.ejb.termsofuse.TermsOfUseLocator;
@@ -1701,7 +1701,7 @@ public class ProjectActions extends DispatchAction {
 
         // validate resources have correct terms of use
     	try {
-            allResourcesValid = allResourcesValid && validateResourceTermsOfUse();
+            allResourcesValid = allResourcesValid && validateResourceTermsOfUse(lazyform, project, resourceNames);
     	} catch (NamingException ne) {
     		throw new BaseException(ne);
     	} catch (RemoteException re) {
@@ -1874,7 +1874,8 @@ public class ProjectActions extends DispatchAction {
      * @return false if any resource is invalid
 	 * @since 1.1
 	 */
-	private boolean validateResourceTermsOfUse() throws NamingException, RemoteException, 
+	private boolean validateResourceTermsOfUse(LazyValidatorForm lazyForm,
+    		Project project, String[] resourceNames) throws NamingException, RemoteException, 
 		CreateException, EJBException {
     	
 		boolean allResourcesValid = true;
@@ -1895,7 +1896,7 @@ public class ProjectActions extends DispatchAction {
                 long userId = user.getId();
                 
                 List<Long> necessaryTerms = projectRoleTermsOfUse.getTermsOfUse(new Long(project.getId()).intValue(), 
-                        new int[] {roleId}, DBMS.COMMON_OLTP_DATASOURCE_NAME);
+                        new int[] {new Long(roleId).intValue()}, DBMS.COMMON_OLTP_DATASOURCE_NAME);
                 
                 for (Long termsId : necessaryTerms) {
                 	// check if the user has this terms
