@@ -1902,16 +1902,24 @@ public class ProjectActions extends DispatchAction {
         ProjectRoleTermsOfUse projectRoleTermsOfUse = ProjectRoleTermsOfUseLocator.getService();
         UserTermsOfUse userTermsOfUse = UserTermsOfUseLocator.getService();
         TermsOfUse termsOfUse = TermsOfUseLocator.getService();
+
+        System.out.println("project.getId():" + project.getId());
+        System.out.println("resourceNames.length: " + resourceNames.length);
         
         // validate that new resources have agreed to the necessary terms of use 
         for (int i = 0; i < resourceNames.length; i++) {
         	if (resourceNames[i] != null && resourceNames[i].trim().length() > 0) { 
+                System.out.println("resourceNames[i]: " + resourceNames[i]);
 	            ExternalUser user = userRetrieval.retrieveUser(resourceNames[i]);
 	            String resourceAction = (String) lazyForm.get("resources_action", i);
 	            // check for additions or modifications
+	            System.out.println("resourceAction: " + resourceAction);
 	            if (!"delete".equals(resourceAction)) { 
 	                long roleId = ((Long) lazyForm.get("resources_role", i)).longValue();
 	                long userId = user.getId();
+
+	                System.out.println("roleId: " + roleId);
+		            System.out.println("userId: " + userId);
 	                
 	                List<Long> necessaryTerms = projectRoleTermsOfUse.getTermsOfUse(new Long(project.getId()).intValue(), 
 	                        new int[] {new Long(roleId).intValue()}, DBMS.COMMON_OLTP_DATASOURCE_NAME);
