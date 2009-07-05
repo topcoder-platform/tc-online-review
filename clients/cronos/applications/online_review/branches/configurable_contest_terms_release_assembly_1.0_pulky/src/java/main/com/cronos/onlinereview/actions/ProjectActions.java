@@ -1895,7 +1895,7 @@ public class ProjectActions extends DispatchAction {
                 long userId = user.getId();
                 
                 List<Long> necessaryTerms = projectRoleTermsOfUse.getTermsOfUse(new Long(project.getId()).intValue(), 
-                        new int[1] {roleId}, DBMS.COMMON_OLTP_DATASOURCE_NAME);
+                        new int[] {roleId}, DBMS.COMMON_OLTP_DATASOURCE_NAME);
                 
                 for (Long termsId : necessaryTerms) {
                 	// check if the user has this terms
