@@ -96,6 +96,7 @@ import javax.ejb.EJBException;
  * Version 1.1 (Configurable Contest Terms Release Assembly v1.0) Change notes:
  *   <ol>
  *     <li>Added Project Role User Terms Of Use association generation to project creation.</li>
+ *     <li>Added Project Role User Terms Of Use verification when adding/updating project resources.</li>
  *   </ol>
  * </p>
  *
@@ -649,6 +650,11 @@ public class ProjectActions extends DispatchAction {
      * <p>
      * Updated for Online Review Update - Add Project Dropdown v1.0:
      *      Added set of 'Billing Project' property.
+     * </p>
+     *
+     * <p>
+     * Updated for Configurable Contest Terms Release Assembly v1.0:
+     *      Added Project Role User Terms Of Use association generation 
      * </p>
      *
      * @return TODO: Write sensible description of return value for method saveProject
@@ -1628,7 +1634,12 @@ public class ProjectActions extends DispatchAction {
     }
 
     /**
-     * TODO: Document it
+     * Private helper method to save resources
+     *
+     * <p>
+     * Updated for Configurable Contest Terms Release Assembly v1.0:
+     *      Added Project Role User Terms Of Use verification when adding/updating project resources 
+     * </p>
      *
      * @param newProject
      * @param request
@@ -1865,6 +1876,12 @@ public class ProjectActions extends DispatchAction {
 
     /**
 	 * Helper method to validate if resources in the request have the required terms of use
+	 *
+	 * @param request the current <code>HttpServletRequest</code>.
+	 * @param lazyForm the edition <code>LazyValidatorForm</code>.
+	 * @param project the edited <code>Project</code>.
+	 * @param userRetrieval a <code>UserRetrieval</code> instance to obtain the user id. 
+	 * @param resourceNames a <code>String[]</code> containing edited resource names.
 	 * 
      * @throws NamingException if any errors occur during EJB lookup
      * @throws RemoteException if any errors occur during EJB remote invocation
@@ -1872,7 +1889,7 @@ public class ProjectActions extends DispatchAction {
      * @throws EJBException if any other errors occur while invoking EJB services
      * @throws BaseException if any other errors occur while retrieving user
      *
-     * @return false if any resource is invalid
+     * @return true if all resources are valid
 	 * @since 1.1
 	 */
 	private boolean validateResourceTermsOfUse(HttpServletRequest request, LazyValidatorForm lazyForm, 
