@@ -1887,8 +1887,7 @@ public class ProjectActions extends DispatchAction {
         TermsOfUse termsOfUse = TermsOfUseLocator.getService();
         
         // validate that new resources have agreed to the necessary terms of use 
-        // 0-index resource is skipped as it is a "dummy" one
-        for (int i = 1; i < resourceNames.length; i++) {
+        for (int i = 0; i < resourceNames.length; i++) {
             ExternalUser user = userRetrieval.retrieveUser(resourceNames[i]);
             String resourceAction = (String) lazyForm.get("resources_action", i);
             // check for additions or modifications
