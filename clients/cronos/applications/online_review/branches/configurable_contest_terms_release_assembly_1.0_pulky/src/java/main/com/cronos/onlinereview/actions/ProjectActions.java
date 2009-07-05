@@ -1888,7 +1888,7 @@ public class ProjectActions extends DispatchAction {
         
         // validate that new resources have agreed to the necessary terms of use 
         for (int i = 0; i < resourceNames.length; i++) {
-        	if (resourceNames[i] != null && resourceNames[i].trim().length() == 0) { 
+        	if (resourceNames[i] != null && resourceNames[i].trim().length() > 0) { 
 	            ExternalUser user = userRetrieval.retrieveUser(resourceNames[i]);
 	            String resourceAction = (String) lazyForm.get("resources_action", i);
 	            // check for additions or modifications
