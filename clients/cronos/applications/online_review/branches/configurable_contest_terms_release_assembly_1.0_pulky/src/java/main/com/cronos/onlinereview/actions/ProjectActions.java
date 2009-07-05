@@ -66,6 +66,12 @@ import com.topcoder.util.errorhandling.BaseException;
 
 import com.topcoder.web.ejb.project.ProjectRoleTermsOfUse;
 import com.topcoder.web.ejb.project.ProjectRoleTermsOfUseLocator;
+import com.topcoder.web.ejb.user.UserTermsOfUse;
+import com.topcoder.web.ejb.user.USERTermsOfUseLocator;
+import com.topcoder.web.ejb.termsofuse.TermsOfUse;
+import com.topcoder.web.ejb.termsofuse.TermsOfUseEntity;
+import com.topcoder.web.ejb.termsofuse.TermsOfUseLocator;
+
 import com.topcoder.shared.util.DBMS;
 import com.topcoder.shared.util.ApplicationServer;
 import javax.naming.NamingException;
@@ -1693,6 +1699,19 @@ public class ProjectActions extends DispatchAction {
             }
         }
 
+        // validate resources have correct terms of use
+    	try {
+            allResourcesValid = allResourcesValid && validateResourceTermsOfUse();
+    	} catch (NamingException ne) {
+    		throw new BaseException(ne);
+    	} catch (RemoteException re) {
+    		throw new BaseException(re);
+    	} catch (CreateException ce) {
+    		throw new BaseException(ce);
+    	} catch (EJBException e) {
+    		throw new BaseException(e);
+    	}
+
         // No resources are updated if at least one of them is incorrect.
         if (!allResourcesValid)
             return;
@@ -1843,6 +1862,60 @@ public class ProjectActions extends DispatchAction {
         // Update rboard_application table with the reviewers set in the resources.
         ActionsHelper.synchronizeRBoardApplications(project);
     }
+
+    /**
+	 * Helper method to validate if resources in the request have the required terms of use
+	 * 
+     * @throws NamingException if any errors occur during EJB lookup
+     * @throws RemoteException if any errors occur during EJB remote invocation
+     * @throws CreateException if any errors occur during EJB creation
+     * @throws EJBException if any other errors occur while invoking EJB services
+     *
+     * @return false if any resource is invalid
+	 * @since 1.1
+	 */
+	private boolean validateResourceTermsOfUse() throws NamingException, RemoteException, 
+		CreateException, EJBException {
+    	
+		boolean allResourcesValid = true;
+		
+		// get remote services
+        ProjectRoleTermsOfUse projectRoleTermsOfUse = ProjectRoleTermsOfUseLocator.getService();
+        UserTermsOfUse userTermsOfUse = UserTermsOfUseLocator.getService();
+        TermsOfUse termsOfUse = TermsOfUseLocator.getService();
+        
+        // validate that new resources have agreed to the necessary terms of use 
+        // 0-index resource is skipped as it is a "dummy" one
+        for (int i = 1; i < resourceNames.length; i++) {
+            ExternalUser user = userRetrieval.retrieveUser(resourceNames[i]);
+            String resourceAction = (String) lazyForm.get("resources_action", i);
+            // check for additions or modifications
+            if (!"delete".equals(resourceAction)) { 
+                long roleId = ((Long) lazyForm.get("resources_role", i)).longValue();
+                long userId = user.getId();
+                
+                List<Long> necessaryTerms = projectRoleTermsOfUse.getTermsOfUse(new Long(project.getId()).intValue(), 
+                        new int[1] {roleId}, DBMS.COMMON_OLTP_DATASOURCE_NAME);
+                
+                for (Long termsId : necessaryTerms) {
+                	// check if the user has this terms
+                	if (!userTermsOfUse.hasTermsOfUse(userId, termsId, DBMS.COMMON_OLTP_DATASOURCE_NAME)) {
+                		// get missing terms of use title
+                		TermsOfUseEntity terms =  TermsOfUse.getEntity(termsId, DBMS.COMMON_OLTP_DATASOURCE_NAME);
+                		                			
+                		// add the error
+                        ActionsHelper.addErrorToRequest(request, "resources_name[" + i + "]",
+                    		new ActionMessage("error.com.cronos.onlinereview.actions.editProject.Resource.MissingTerms",
+                    		terms.getTitle()));
+                        
+                        allResourcesValid=false;
+                	}
+                }
+            }
+        }
+        
+        return allResourcesValid;
+	}
 
     /**
      * This method is an implementation of &quot;List Projects&quot; Struts Action defined for this
