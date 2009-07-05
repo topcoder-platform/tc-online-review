@@ -1902,25 +1902,17 @@ public class ProjectActions extends DispatchAction {
         ProjectRoleTermsOfUse projectRoleTermsOfUse = ProjectRoleTermsOfUseLocator.getService();
         UserTermsOfUse userTermsOfUse = UserTermsOfUseLocator.getService();
         TermsOfUse termsOfUse = TermsOfUseLocator.getService();
-
-        System.out.println("project.getId():" + project.getId());
-        System.out.println("resourceNames.length: " + resourceNames.length);
         
         // validate that new resources have agreed to the necessary terms of use 
         // 0-index resource is skipped as it is a "dummy" one
         for (int i = 1; i < resourceNames.length; i++) {
         	if (resourceNames[i] != null && resourceNames[i].trim().length() > 0) { 
-                System.out.println("resourceNames[i]: " + resourceNames[i]);
 	            ExternalUser user = userRetrieval.retrieveUser(resourceNames[i]);
 	            String resourceAction = (String) lazyForm.get("resources_action", i);
 	            // check for additions or modifications
-	            System.out.println("resourceAction: " + resourceAction);
 	            if (!"delete".equals(resourceAction)) { 
 	                long roleId = ((Long) lazyForm.get("resources_role", i)).longValue();
 	                long userId = user.getId();
-
-	                System.out.println("roleId: " + roleId);
-		            System.out.println("userId: " + userId);
 	                
 	                List<Long> necessaryTerms = projectRoleTermsOfUse.getTermsOfUse(new Long(project.getId()).intValue(), 
 	                        new int[] {new Long(roleId).intValue()}, DBMS.COMMON_OLTP_DATASOURCE_NAME);
@@ -1930,8 +1922,6 @@ public class ProjectActions extends DispatchAction {
 	                	if (!userTermsOfUse.hasTermsOfUse(userId, termsId, DBMS.COMMON_OLTP_DATASOURCE_NAME)) {
 	                		// get missing terms of use title
 	                		TermsOfUseEntity terms =  termsOfUse.getEntity(termsId, DBMS.COMMON_OLTP_DATASOURCE_NAME);
-
-	        	            System.out.println("Error: terms.getTitle(): " + terms.getTitle());
 
 	                		// add the error
 	                        ActionsHelper.addErrorToRequest(request, "resources_name[" + i + "]",
@@ -1945,7 +1935,6 @@ public class ProjectActions extends DispatchAction {
         	}
         }
         
-        System.out.println("allResourcesValid: " + allResourcesValid);
         return allResourcesValid;
 	}
 
