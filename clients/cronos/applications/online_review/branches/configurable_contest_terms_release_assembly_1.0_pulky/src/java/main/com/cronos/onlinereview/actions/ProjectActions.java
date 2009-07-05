@@ -1870,13 +1870,14 @@ public class ProjectActions extends DispatchAction {
      * @throws RemoteException if any errors occur during EJB remote invocation
      * @throws CreateException if any errors occur during EJB creation
      * @throws EJBException if any other errors occur while invoking EJB services
+     * @throws RetrievalException if any other errors occur while retrieving user
      *
      * @return false if any resource is invalid
 	 * @since 1.1
 	 */
 	private boolean validateResourceTermsOfUse(HttpServletRequest request, LazyValidatorForm lazyForm, 
 			Project project, UserRetrieval userRetrieval, String[] resourceNames) 
-			throws NamingException, RemoteException, CreateException, EJBException {
+			throws NamingException, RemoteException, CreateException, EJBException, RetrievalException {
     	
 		boolean allResourcesValid = true;
 		
