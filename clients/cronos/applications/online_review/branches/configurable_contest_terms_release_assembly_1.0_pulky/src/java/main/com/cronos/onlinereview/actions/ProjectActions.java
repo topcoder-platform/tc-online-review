@@ -844,22 +844,6 @@ public class ProjectActions extends DispatchAction {
         Phase[] projectPhases =
             saveProjectPhases(newProject, request, lazyForm, project, phasesJsMap, phasesToDelete, statusHasChanged);
 
-        // FIXME: resources must be saved even if there are validation errors to validate resources
-        if (!ActionsHelper.isErrorsPresent(request)) {
-            // Save the project resources
-            saveResources(newProject, request, lazyForm, project, projectPhases, phasesJsMap);
-        }
-
-        if (!ActionsHelper.isErrorsPresent(request)) {
-            // Delete the phases to be deleted
-            deletePhases(request, project, phasesToDelete);
-        }
-
-        // If needed switch project current phase
-        if (!newProject && !ActionsHelper.isErrorsPresent(request)) {
-            switchProjectPhase(request, lazyForm, projectPhases, phasesJsMap);
-        }
-
         if (newProject) {
             // generate new project role terms of use associations for the recently created project.
         	try {
@@ -874,6 +858,22 @@ public class ProjectActions extends DispatchAction {
         	} catch (EJBException e) {
         		throw new BaseException(e);
         	}
+        }
+
+        // FIXME: resources must be saved even if there are validation errors to validate resources
+        if (!ActionsHelper.isErrorsPresent(request)) {
+            // Save the project resources
+            saveResources(newProject, request, lazyForm, project, projectPhases, phasesJsMap);
+        }
+
+        if (!ActionsHelper.isErrorsPresent(request)) {
+            // Delete the phases to be deleted
+            deletePhases(request, project, phasesToDelete);
+        }
+
+        // If needed switch project current phase
+        if (!newProject && !ActionsHelper.isErrorsPresent(request)) {
+            switchProjectPhase(request, lazyForm, projectPhases, phasesJsMap);
         }
         
         // Check if there are any validation errors and return appropriate forward
