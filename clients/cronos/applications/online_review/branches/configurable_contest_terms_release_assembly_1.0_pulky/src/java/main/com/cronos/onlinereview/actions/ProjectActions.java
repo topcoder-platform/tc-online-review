@@ -86,11 +86,24 @@ import javax.ejb.EJBException;
  * This class is thread-safe as it does not contain any mutable inner state.
  * </p>
  *
- * @author George1
- * @author real_vg
- * @version 1.0
+ * <p>
+ * Version 1.1 (Configurable Contest Terms Release Assembly v1.0) Change notes:
+ *   <ol>
+ *     <li>Added Project Role User Terms Of Use association generation to project creation.</li>
+ *   </ol>
+ * </p>
+ *
+ * @author George1, real_vg, TCSDEVELOPER
+ * @version 1.1
  */
 public class ProjectActions extends DispatchAction {
+	
+	/**
+	 * This constant stores development project type id
+	 * 
+	 * @since 1.1
+	 */
+	private static final int DEVELOPMENT_PROJECT_TYPE_ID = 2;
 	
 	private static final DateFormat DATE_FORMAT = new SimpleDateFormat("MM.dd.yyyy hh:mm a", Locale.US);
 
@@ -838,7 +851,8 @@ public class ProjectActions extends DispatchAction {
         if (newProject) {
             // generate new project role terms of use associations for the recently created project.
         	try {
-        		generateProjectRoleTermsOfUseAssociations(project.getId(), project.getProjectCategory().getId());
+        		generateProjectRoleTermsOfUseAssociations(project.getId(), 
+        				project.getProjectCategory().getId());
         	} catch (NamingException ne) {
         		throw new BaseException(ne);
         	} catch (RemoteException re) {
@@ -881,6 +895,7 @@ public class ProjectActions extends DispatchAction {
      * @throws RemoteException if any errors occur during EJB remote invocation
      * @throws CreateException if any errors occur during EJB creation
      * @throws EJBException if any other errors occur while invoking EJB services
+     * 
      * @since 1.1 
      */
     private void generateProjectRoleTermsOfUseAssociations(long projectId, long projectTypeId)
@@ -896,14 +911,13 @@ public class ProjectActions extends DispatchAction {
         projectRoleTermsOfUse.createProjectRoleTermsOfUse(new Long(projectId).intValue(), 
                 submitterRoleId, submitterTermsId, DBMS.COMMON_OLTP_DATASOURCE_NAME);
 
-        System.out.println("projectTypeId: " + projectTypeId);
-        
-        if (projectTypeId == 2) {
-            int accuracyReviewerRoleId = ConfigHelper.getAccuracyReviewerRoleId();
+        if (projectTypeId == DEVELOPMENT_PROJECT_TYPE_ID) {
+            // if it's a development project there are several reviewer roles
+
+        	int accuracyReviewerRoleId = ConfigHelper.getAccuracyReviewerRoleId();
             int failureReviewerRoleId = ConfigHelper.getFailureReviewerRoleId();
             int stressReviewerRoleId = ConfigHelper.getStressReviewerRoleId();
 
-            // if it's a development project there are several reviewer roles
             projectRoleTermsOfUse.createProjectRoleTermsOfUse(new Long(projectId).intValue(), 
                     accuracyReviewerRoleId, reviewerTermsId, DBMS.COMMON_OLTP_DATASOURCE_NAME);
     
@@ -913,9 +927,10 @@ public class ProjectActions extends DispatchAction {
             projectRoleTermsOfUse.createProjectRoleTermsOfUse(new Long(projectId).intValue(), 
                     stressReviewerRoleId, reviewerTermsId, DBMS.COMMON_OLTP_DATASOURCE_NAME);
         } else {
-            int reviewerRoleId = ConfigHelper.getReviewerRoleId();
-
             // if it's not development there is a single reviewer role
+
+        	int reviewerRoleId = ConfigHelper.getReviewerRoleId();
+
             projectRoleTermsOfUse.createProjectRoleTermsOfUse(new Long(projectId).intValue(), 
                     reviewerRoleId, reviewerTermsId, DBMS.COMMON_OLTP_DATASOURCE_NAME);
         }

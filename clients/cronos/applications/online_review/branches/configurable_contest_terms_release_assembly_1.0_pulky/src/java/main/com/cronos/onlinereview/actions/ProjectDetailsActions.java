@@ -1661,7 +1661,8 @@ public class ProjectDetailsActions extends DispatchAction {
         }
 
         // Check the user has submitter role and registration phase is open
-        boolean isSubmitter = Boolean.valueOf(AuthorizationHelper.hasUserRole(request, Constants.SUBMITTER_ROLE_NAME));
+        boolean isSubmitter = Boolean.valueOf(AuthorizationHelper.hasUserRole(request, 
+        		Constants.SUBMITTER_ROLE_NAME));
 
         if (!isSubmitter) {
             return ActionsHelper.produceErrorReport(mapping, getResources(request),
@@ -1696,14 +1697,16 @@ public class ProjectDetailsActions extends DispatchAction {
 
         if (postBack != true) {
             // Retrieve some basic project info (such as icons' names) and place it into request
-            ActionsHelper.retrieveAndStoreBasicProjectInfo(request, verification.getProject(), getResources(request));
+            ActionsHelper.retrieveAndStoreBasicProjectInfo(request, verification.getProject(), 
+            		getResources(request));
 
             return mapping.findForward(Constants.DISPLAY_PAGE_FORWARD_NAME);
         }
 
         // Obtain the instance of the Resource Manager
         ResourceManager resourceManager = ActionsHelper.createResourceManager(request);
-        Resource[] allProjectResources = ActionsHelper.getAllResourcesForProject(resourceManager, verification.getProject());
+        Resource[] allProjectResources = ActionsHelper.getAllResourcesForProject(resourceManager, 
+        		verification.getProject());
         
         boolean found = false;
         for (int i = 0; i < allProjectResources.length && !found; i++) {

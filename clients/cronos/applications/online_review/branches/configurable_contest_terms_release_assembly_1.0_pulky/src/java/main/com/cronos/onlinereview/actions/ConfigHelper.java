@@ -23,9 +23,15 @@ import com.topcoder.util.config.UnknownNamespaceException;
  * This class is thread-safe as its inner state is initialized only once and
  * is not changed afterwards.
  * </p>
+ * 
+ * <p>
+ * Version 1.1 (Configurable Contest Terms Release Assembly v1.0) Change notes:
+ *   <ol>
+ *     <li>Added configurations for Project Role Terms of Use associations.</li>
+ *   </ol>
+ * </p>
  *
- * @author George1
- * @author real_vg
+ * @author George1, real_vg, TCSDEVELOPER
  * @version 1.1
  */
 public class ConfigHelper {
