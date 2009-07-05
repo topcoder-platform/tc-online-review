@@ -1888,31 +1888,33 @@ public class ProjectActions extends DispatchAction {
         
         // validate that new resources have agreed to the necessary terms of use 
         for (int i = 0; i < resourceNames.length; i++) {
-            ExternalUser user = userRetrieval.retrieveUser(resourceNames[i]);
-            String resourceAction = (String) lazyForm.get("resources_action", i);
-            // check for additions or modifications
-            if (!"delete".equals(resourceAction)) { 
-                long roleId = ((Long) lazyForm.get("resources_role", i)).longValue();
-                long userId = user.getId();
-                
-                List<Long> necessaryTerms = projectRoleTermsOfUse.getTermsOfUse(new Long(project.getId()).intValue(), 
-                        new int[] {new Long(roleId).intValue()}, DBMS.COMMON_OLTP_DATASOURCE_NAME);
-                
-                for (Long termsId : necessaryTerms) {
-                	// check if the user has this terms
-                	if (!userTermsOfUse.hasTermsOfUse(userId, termsId, DBMS.COMMON_OLTP_DATASOURCE_NAME)) {
-                		// get missing terms of use title
-                		TermsOfUseEntity terms =  termsOfUse.getEntity(termsId, DBMS.COMMON_OLTP_DATASOURCE_NAME);
-                		                			
-                		// add the error
-                        ActionsHelper.addErrorToRequest(request, "resources_name[" + i + "]",
-                    		new ActionMessage("error.com.cronos.onlinereview.actions.editProject.Resource.MissingTerms",
-                    		terms.getTitle()));
-                        
-                        allResourcesValid=false;
-                	}
-                }
-            }
+        	if (resourceNames[i] != null && resourceNames[i].trim().length() == 0) { 
+	            ExternalUser user = userRetrieval.retrieveUser(resourceNames[i]);
+	            String resourceAction = (String) lazyForm.get("resources_action", i);
+	            // check for additions or modifications
+	            if (!"delete".equals(resourceAction)) { 
+	                long roleId = ((Long) lazyForm.get("resources_role", i)).longValue();
+	                long userId = user.getId();
+	                
+	                List<Long> necessaryTerms = projectRoleTermsOfUse.getTermsOfUse(new Long(project.getId()).intValue(), 
+	                        new int[] {new Long(roleId).intValue()}, DBMS.COMMON_OLTP_DATASOURCE_NAME);
+	                
+	                for (Long termsId : necessaryTerms) {
+	                	// check if the user has this terms
+	                	if (!userTermsOfUse.hasTermsOfUse(userId, termsId, DBMS.COMMON_OLTP_DATASOURCE_NAME)) {
+	                		// get missing terms of use title
+	                		TermsOfUseEntity terms =  termsOfUse.getEntity(termsId, DBMS.COMMON_OLTP_DATASOURCE_NAME);
+	                		                			
+	                		// add the error
+	                        ActionsHelper.addErrorToRequest(request, "resources_name[" + i + "]",
+	                    		new ActionMessage("error.com.cronos.onlinereview.actions.editProject.Resource.MissingTerms",
+	                    		terms.getTitle()));
+	                        
+	                        allResourcesValid=false;
+	                	}
+	                }
+	            }
+        	}
         }
         
         return allResourcesValid;
