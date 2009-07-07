@@ -33,13 +33,13 @@
 
 <body>
 <div align="center">
-    
+
     <div class="maxWidthBody" align="left">
 
         <jsp:include page="/includes/inc_header.jsp" />
-        
+
         <jsp:include page="/includes/project/project_tabs.jsp" />
-        
+
             <div id="mainMiddleContent">
                 <div style="position: relative; width: 100%;">
 
@@ -81,7 +81,7 @@
 
                 </div>
             </div>
-        
+
         <jsp:include page="/includes/inc_footer.jsp" />
 
     </div>

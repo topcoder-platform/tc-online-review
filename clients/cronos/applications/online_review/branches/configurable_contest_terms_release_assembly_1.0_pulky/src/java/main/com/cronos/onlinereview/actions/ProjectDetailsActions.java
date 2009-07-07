@@ -120,17 +120,17 @@ public class ProjectDetailsActions extends DispatchAction {
      * This method is an implementation of &quot;View project Details&quot; Struts Action defined
      * for this assembly, which is supposed to gather all possible information about the project and
      * display it to user.
-     * 
+     *
      * <p>
      * Updated for Online Review Update - Add Project Dropdown v1.0
      *      - added isAdmin value to the request.
-     *      - if user is admin, then billing project value is set to the request. 
+     *      - if user is admin, then billing project value is set to the request.
      * </p>
      *
      * <p>
      * Updated for Configurable Contest Terms Release Assembly v1.0
      *      - added isAllowedToUnregister value to the request.
-     *      - if user is a submitter and registration is open, he can unregister. 
+     *      - if user is a submitter and registration is open, he can unregister.
      * </p>
      *
      * @return an action forward to the appropriate page. If no error has occured, the forward will
@@ -228,19 +228,19 @@ public class ProjectDetailsActions extends DispatchAction {
             if (tempStr != null && tempStr.trim().length() != 0) {
                 billingProjectId = Long.parseLong(tempStr, 10);
             }
-            
-            
-			if (billingProjectId > 0) {
-				 List<ClientProject> clientProjects = ActionsHelper.getClientProjects(request);
-				 for (ClientProject cp : clientProjects) {
-					 if (cp.getId() == billingProjectId) {
-						request.setAttribute("billingProject", cp.getName());
-						break;
-					 }	
-				 }
-			 } else {
-						request.setAttribute("billingProject", "");
-			 }
+
+
+            if (billingProjectId > 0) {
+                 List<ClientProject> clientProjects = ActionsHelper.getClientProjects(request);
+                 for (ClientProject cp : clientProjects) {
+                     if (cp.getId() == billingProjectId) {
+                        request.setAttribute("billingProject", cp.getName());
+                        break;
+                     }
+                 }
+             } else {
+                        request.setAttribute("billingProject", "");
+             }
         }
 
         // Place a string that represents "my" current role(s) into the request
@@ -437,11 +437,11 @@ public class ProjectDetailsActions extends DispatchAction {
         // check if registration phase is open
         boolean registrationOpen = false;
         for (int i = 0; i < activePhases.length && !registrationOpen; i++) {
-        	if (activePhases[i].getPhaseType().getName().equalsIgnoreCase(Constants.REGISTRATION_PHASE_NAME)) {
-        		registrationOpen = true;
-        	}
+            if (activePhases[i].getPhaseType().getName().equalsIgnoreCase(Constants.REGISTRATION_PHASE_NAME)) {
+                registrationOpen = true;
+            }
         }
-        
+
         request.setAttribute("isAllowedToUnregister",
                 Boolean.valueOf(AuthorizationHelper.hasUserRole(request, Constants.SUBMITTER_ROLE_NAME)) && registrationOpen);
 
@@ -528,7 +528,7 @@ public class ProjectDetailsActions extends DispatchAction {
             }
         }
         request.setAttribute("isAllowedToPerformAggregationReview", Boolean.valueOf(allowedToReviewAggregation));
-        
+
         // since Online Review Update - Add Project Dropdown v1.0
         request.setAttribute("isAdmin",
                 Boolean.valueOf(AuthorizationHelper.hasUserRole(request, Constants.MANAGER_ROLE_NAME)));
@@ -1632,7 +1632,7 @@ public class ProjectDetailsActions extends DispatchAction {
      *
      * @return an action forward to the appropriate page. If no error has occured and this action
      *         was called the first time, the forward will be to /jsp/confirmUnregistration.jsp
-     *         If this action was called during the post back (the second time), then this method 
+     *         If this action was called during the post back (the second time), then this method
      *         verifies if everything is correct, and proceeds with the unregisration.
      *         After this it returns a forward to the View Project Details page.
      * @param mapping
@@ -1661,8 +1661,8 @@ public class ProjectDetailsActions extends DispatchAction {
         }
 
         // Check the user has submitter role and registration phase is open
-        boolean isSubmitter = Boolean.valueOf(AuthorizationHelper.hasUserRole(request, 
-        		Constants.SUBMITTER_ROLE_NAME));
+        boolean isSubmitter = Boolean.valueOf(AuthorizationHelper.hasUserRole(request,
+                Constants.SUBMITTER_ROLE_NAME));
 
         if (!isSubmitter) {
             return ActionsHelper.produceErrorReport(mapping, getResources(request),
@@ -1679,16 +1679,16 @@ public class ProjectDetailsActions extends DispatchAction {
         // check if registration phase is open
         boolean registrationOpen = false;
         for (int i = 0; i < activePhases.length && !registrationOpen; i++) {
-        	if (activePhases[i].getPhaseType().getName().equalsIgnoreCase(Constants.REGISTRATION_PHASE_NAME)) {
-        		registrationOpen = true;
-        	}
+            if (activePhases[i].getPhaseType().getName().equalsIgnoreCase(Constants.REGISTRATION_PHASE_NAME)) {
+                registrationOpen = true;
+            }
         }
-                
+
         if (!registrationOpen) {
             return ActionsHelper.produceErrorReport(mapping, getResources(request),
                     request, "Unregistration", "Error.RegistrationClosed", Boolean.TRUE);
         }
-        
+
         // At this point, redirect-after-login attribute should be removed (if it exists)
         AuthorizationHelper.removeLoginRedirect(request);
 
@@ -1697,31 +1697,31 @@ public class ProjectDetailsActions extends DispatchAction {
 
         if (postBack != true) {
             // Retrieve some basic project info (such as icons' names) and place it into request
-            ActionsHelper.retrieveAndStoreBasicProjectInfo(request, verification.getProject(), 
-            		getResources(request));
+            ActionsHelper.retrieveAndStoreBasicProjectInfo(request, verification.getProject(),
+                    getResources(request));
 
             return mapping.findForward(Constants.DISPLAY_PAGE_FORWARD_NAME);
         }
 
         // Obtain the instance of the Resource Manager
         ResourceManager resourceManager = ActionsHelper.createResourceManager(request);
-        Resource[] allProjectResources = ActionsHelper.getAllResourcesForProject(resourceManager, 
-        		verification.getProject());
-        
+        Resource[] allProjectResources = ActionsHelper.getAllResourcesForProject(resourceManager,
+                verification.getProject());
+
         boolean found = false;
         for (int i = 0; i < allProjectResources.length && !found; i++) {
-        	long userId = Long.parseLong(((String) allProjectResources[i].getProperty("External Reference ID")).trim());
-        	
-        	if (allProjectResources[i].getResourceRole().getName().equalsIgnoreCase(Constants.SUBMITTER_ROLE_NAME) &&
-        			userId == AuthorizationHelper.getLoggedInUserId(request)) {
+            long userId = Long.parseLong(((String) allProjectResources[i].getProperty("External Reference ID")).trim());
+
+            if (allProjectResources[i].getResourceRole().getName().equalsIgnoreCase(Constants.SUBMITTER_ROLE_NAME) &&
+                    userId == AuthorizationHelper.getLoggedInUserId(request)) {
                 ActionsHelper.deleteProjectResult(verification.getProject(), userId, allProjectResources[i].getResourceRole().getId());
                 resourceManager.removeResource(allProjectResources[i],
-                        Long.toString(AuthorizationHelper.getLoggedInUserId(request)));        
+                        Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
 
                 found = true;
-        	}
+            }
         }
-        
+
         return ActionsHelper.cloneForwardAndAppendToPath(
                 mapping.findForward(Constants.SUCCESS_FORWARD_NAME), "&pid=" + verification.getProject().getId());
     }
@@ -1917,7 +1917,7 @@ public class ProjectDetailsActions extends DispatchAction {
         // the keys are the ids of severity statuses and the values are another maps,
         // in which keys are ids of screening responses and the values are screening results.
         Map<Long, Map<Long, List<ScreeningResult>>> screeningResultsMap =
-        		new TreeMap<Long, Map<Long, List<ScreeningResult>>>();
+                new TreeMap<Long, Map<Long, List<ScreeningResult>>>();
         for (int i = 0; i < screeningResults.length; i++) {
             ResponseSeverity responseSeverity = screeningResults[i].getScreeningResponse().getResponseSeverity();
             // ignore response with "Success" severity
@@ -2370,8 +2370,8 @@ public class ProjectDetailsActions extends DispatchAction {
      * @throws BaseException
      */
     private static String[] getDeliverableSubmissionUserIds(HttpServletRequest request, Deliverable[] deliverables)
-        	throws BaseException {
-    	
+            throws BaseException {
+
         List<Long> submissionIds = new ArrayList<Long>();
 
         for (int i = 0; i < deliverables.length; ++i) {

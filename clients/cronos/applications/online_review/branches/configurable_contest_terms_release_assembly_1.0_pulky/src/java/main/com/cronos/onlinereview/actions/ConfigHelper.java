@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 TopCoder Inc.  All Rights Reserved.
+ * Copyright (C) 2004 - 2009 TopCoder Inc., All Rights Reserved.
  */
 package com.cronos.onlinereview.actions;
 
@@ -23,7 +23,7 @@ import com.topcoder.util.config.UnknownNamespaceException;
  * This class is thread-safe as its inner state is initialized only once and
  * is not changed afterwards.
  * </p>
- * 
+ *
  * <p>
  * Version 1.1 (Configurable Contest Terms Release Assembly v1.0) Change notes:
  *   <ol>
@@ -149,13 +149,13 @@ public class ConfigHelper {
     /**
      * This member variable is a string constant that specifies the name of the property which
      * contains name of the key in Resource Messages file.  This key will be used to retrieve
-     * a flag showing if the catalog is custom.  
+     * a flag showing if the catalog is custom.
      *
      * @see #ROOT_CATALOGS_PROP
      * @see #ROOT_CATALOG_ID_PROP
      */
     private static final String ROOT_CATALOG_CUSTOM_KEY_PROP = "Custom";
-    
+
     /**
      * This member variable is a string constant that specifies the name of the property which
      * contains definitions of Project Category name/icon filename pairs for icons that should
@@ -455,42 +455,42 @@ public class ConfigHelper {
      * @since 1.1
      */
     private static int submitterRoleId = 1;
- 	
+
     /**
      * This member variable holds the submitter terms id.
      *
      * @since 1.1
      */
     private static long submitterTermsId = 20623l;
- 	
+
     /**
      * This member variable holds the reviewer role id.
      *
      * @since 1.1
      */
     private static int reviewerRoleId = 4;
- 	
+
     /**
      * This member variable holds the accuracy reviewer role id.
      *
      * @since 1.1
      */
     private static int accuracyReviewerRoleId = 5;
- 	
+
     /**
      * This member variable holds the failure reviewer role id.
      *
      * @since 1.1
      */
     private static int failureReviewerRoleId = 6;
- 	
+
     /**
      * This member variable holds the stress reviewer role id.
      *
      * @since 1.1
      */
     private static int stressReviewerRoleId = 7;
- 	
+
     /**
      * This member variable holds the reviewer terms id.
      *
@@ -511,10 +511,10 @@ public class ConfigHelper {
     private static final Map<String, String> rootCatalogAltTextKeys = new HashMap<String, String>();
 
     /**
-     * This member variable holds the custom root catalogs ids 
+     * This member variable holds the custom root catalogs ids
      */
     private static final Set<String> customRootCatalogs = new HashSet<String>();
-    
+
     /**
      * This member variable holds the names of small icons (.gif) files that should be displayed
      * on the JSP pages for different Project Categories.
@@ -683,11 +683,11 @@ public class ConfigHelper {
             // If the value has been retrieved successfully ...
             if (value != null && value.trim().length() != 0) {
                 // ... store it for later use
-            	try {
-            		submitterRoleId = Integer.parseInt(value);
-            	} catch (NumberFormatException nfe) {
-            		// don't do anything, keep the default
-            	}
+                try {
+                    submitterRoleId = Integer.parseInt(value);
+                } catch (NumberFormatException nfe) {
+                    // don't do anything, keep the default
+                }
             }
 
             // Retrieve the value of the property that contains the submitter_terms_id
@@ -695,11 +695,11 @@ public class ConfigHelper {
             // If the value has been retrieved successfully ...
             if (value != null && value.trim().length() != 0) {
                 // ... store it for later use
-            	try {
-            		submitterTermsId = Long.parseLong(value);
-            	} catch (NumberFormatException nfe) {
-            		// don't do anything, keep the default
-            	}
+                try {
+                    submitterTermsId = Long.parseLong(value);
+                } catch (NumberFormatException nfe) {
+                    // don't do anything, keep the default
+                }
             }
 
             // Retrieve the value of the property that contains the reviewer_role_id
@@ -707,11 +707,11 @@ public class ConfigHelper {
             // If the value has been retrieved successfully ...
             if (value != null && value.trim().length() != 0) {
                 // ... store it for later use
-            	try {
-            		reviewerRoleId = Integer.parseInt(value);
-            	} catch (NumberFormatException nfe) {
-            		// don't do anything, keep the default
-            	}
+                try {
+                    reviewerRoleId = Integer.parseInt(value);
+                } catch (NumberFormatException nfe) {
+                    // don't do anything, keep the default
+                }
             }
 
             // Retrieve the value of the property that contains the accuracy_reviewer_role_id
@@ -719,11 +719,11 @@ public class ConfigHelper {
             // If the value has been retrieved successfully ...
             if (value != null && value.trim().length() != 0) {
                 // ... store it for later use
-            	try {
-            		accuracyReviewerRoleId = Integer.parseInt(value);
-            	} catch (NumberFormatException nfe) {
-            		// don't do anything, keep the default
-            	}
+                try {
+                    accuracyReviewerRoleId = Integer.parseInt(value);
+                } catch (NumberFormatException nfe) {
+                    // don't do anything, keep the default
+                }
             }
 
             // Retrieve the value of the property that contains the failure_reviewer_role_id
@@ -731,11 +731,11 @@ public class ConfigHelper {
             // If the value has been retrieved successfully ...
             if (value != null && value.trim().length() != 0) {
                 // ... store it for later use
-            	try {
-            		failureReviewerRoleId = Integer.parseInt(value);
-            	} catch (NumberFormatException nfe) {
-            		// don't do anything, keep the default
-            	}
+                try {
+                    failureReviewerRoleId = Integer.parseInt(value);
+                } catch (NumberFormatException nfe) {
+                    // don't do anything, keep the default
+                }
             }
 
             // Retrieve the value of the property that contains the stress_reviewer_role_id
@@ -743,11 +743,11 @@ public class ConfigHelper {
             // If the value has been retrieved successfully ...
             if (value != null && value.trim().length() != 0) {
                 // ... store it for later use
-            	try {
-            		stressReviewerRoleId = Integer.parseInt(value);
-            	} catch (NumberFormatException nfe) {
-            		// don't do anything, keep the default
-            	}
+                try {
+                    stressReviewerRoleId = Integer.parseInt(value);
+                } catch (NumberFormatException nfe) {
+                    // don't do anything, keep the default
+                }
             }
 
             // Retrieve the value of the property that contains the reviewer_terms_id
@@ -755,11 +755,11 @@ public class ConfigHelper {
             // If the value has been retrieved successfully ...
             if (value != null && value.trim().length() != 0) {
                 // ... store it for later use
-            	try {
-            		reviewerTermsId = Integer.parseInt(value);
-            	} catch (NumberFormatException nfe) {
-            		// don't do anything, keep the default
-            	}
+                try {
+                    reviewerTermsId = Integer.parseInt(value);
+                } catch (NumberFormatException nfe) {
+                    // don't do anything, keep the default
+                }
             }
 
             // Retrieve property that contains definitions of ID/filename pairs
@@ -793,8 +793,8 @@ public class ConfigHelper {
                     // ... store the ID/message-key pair for later use
                     rootCatalogAltTextKeys.put(strID, strAltTextKey);
                 }
-                
-                // Retrieve custom catalog flag 
+
+                // Retrieve custom catalog flag
                 String custom = propRootCatIcons.getValue(strPropName + "." + ROOT_CATALOG_CUSTOM_KEY_PROP);
                 if (custom != null && custom.trim().length() != 0 && custom.trim().equalsIgnoreCase("true")) {
                     customRootCatalogs.add(strID);
@@ -1058,7 +1058,7 @@ public class ConfigHelper {
     public static int getSubmitterRoleId() {
         return submitterRoleId;
     }
- 	
+
     /**
      * This static method returns the submitter terms id.
      *
@@ -1068,7 +1068,7 @@ public class ConfigHelper {
     public static long getSubmitterTermsId() {
         return submitterTermsId;
     }
- 	
+
     /**
      * This static method returns the reviewer role id.
      *
@@ -1078,7 +1078,7 @@ public class ConfigHelper {
     public static int getReviewerRoleId() {
         return reviewerRoleId;
     }
- 	
+
     /**
      * This static method returns the accuracy reviewer role id.
      *
@@ -1088,7 +1088,7 @@ public class ConfigHelper {
     public static int getAccuracyReviewerRoleId() {
         return accuracyReviewerRoleId;
     }
- 	
+
     /**
      * This static method returns the failure reviewer role id.
      *
@@ -1098,7 +1098,7 @@ public class ConfigHelper {
     public static int getFailureReviewerRoleId() {
         return failureReviewerRoleId;
     }
- 	
+
     /**
      * This static method returns the stress reviewer role id.
      *
@@ -1108,7 +1108,7 @@ public class ConfigHelper {
     public static int getStressReviewerRoleId() {
         return stressReviewerRoleId;
     }
- 	
+
     /**
      * This static method returns the reviewer terms id.
      *
@@ -1184,7 +1184,7 @@ public class ConfigHelper {
     /**
      * This static method returns the link to the full description for project based on the type of
      * project passed as parameter.
-     * 
+     *
      * @return the link to full description of the project.
      * @param projectTypeName
      *            Project Type name which link to full description should be looked up for.
@@ -1484,14 +1484,14 @@ public class ConfigHelper {
      * @return property value
      */
     public static String getPropertyValue(String name, String defaultValue) {
-		try {
-			String value = ConfigManager.getInstance().getString(ONLINE_REVIEW_CFG_NS, name);
-	    	if (value != null && value.trim().length() > 0) {
-	    		return value;
-	    	}
-		} catch (UnknownNamespaceException e) {
-			// Ignore
-		}
-		return defaultValue;
-	}
+        try {
+            String value = ConfigManager.getInstance().getString(ONLINE_REVIEW_CFG_NS, name);
+            if (value != null && value.trim().length() > 0) {
+                return value;
+            }
+        } catch (UnknownNamespaceException e) {
+            // Ignore
+        }
+        return defaultValue;
+    }
 }
