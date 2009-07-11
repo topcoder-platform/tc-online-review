@@ -75,7 +75,7 @@
                     </table><br />
 
                     <div align="right">
-                        <html:link page="/actions/Unregister.do?method=unregister&amp;pid=${project.id}&unregister=y"><html:img srcKey="confirmUnregistration.btnDelete.img" altKey="confirmUnregistration.btnDelete.alt" border="0" /></html:link>&#160;
+                        <html:link page="/actions/Unregister.do?method=unregister&amp;pid=${project.id}&unregister=y"><html:img srcKey="confirmUnregistration.btnConfirm.img" altKey="confirmUnregistration.btnConfirm.alt" border="0" /></html:link>&#160;
                         <a href="javascript:history.go(-1)"><html:img srcKey="btnCancel.img" altKey="btnCancel.alt" border="0" /></a>
                     </div><br />
 
