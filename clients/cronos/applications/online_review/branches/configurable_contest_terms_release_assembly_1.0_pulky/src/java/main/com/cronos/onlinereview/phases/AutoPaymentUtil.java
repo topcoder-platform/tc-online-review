@@ -23,11 +23,14 @@ import java.util.List;
  * <p>The AutoPaymentUtil is used to auto-fill for payments of reviewers and submitters.</p>
  *
  * <p>Version 1.1 (Studio Coding In Online Review) Change notes:
- *  Added support for new UI prototype, RIA Build and RIA Component competitions so that 
+ *  Added support for new UI prototype, RIA Build and RIA Component competitions so that
  *  reviewer payment is populated automatically</p>
  *
+ * <p>Version 1.2 (Testing Competition Split Release Assembly 1.0) Change notes:
+ *  Updated Application Testing to Test Suites and added support for new Test Scenarios competitions.</p>
+ *
  * @author George1, brain_cn, pulky
- * @version 1.1
+ * @version 1.2
  */
 public class AutoPaymentUtil {
         /**
@@ -122,18 +125,19 @@ public class AutoPaymentUtil {
     public static void populateReviewerPayments(long projectId, Connection conn, int phaseId) throws SQLException {
         long projectCategoryId = getProjectCategoryId(projectId, conn);
 
-        if (projectCategoryId != 1            // Component Design
-                && projectCategoryId != 2     // Component Development
-                && projectCategoryId != 5     // Component Testing
-                && projectCategoryId != 7     // Architecture
-                && projectCategoryId != 14    // Assembly
-                && projectCategoryId != 6     // Specification
-                && projectCategoryId != 13    // Application Testing
-                && projectCategoryId != 23    // Conceptualization
-                && projectCategoryId != 19    // UI Prototype
-                && projectCategoryId != 24    // RIA Build
-                && projectCategoryId != 25) { // RIA Component
-            return;
+        if (projectCategoryId != 1    // Component Design
+        && projectCategoryId != 2     // Component Development
+        && projectCategoryId != 5     // Component Testing
+        && projectCategoryId != 7     // Architecture
+        && projectCategoryId != 14    // Assembly
+        && projectCategoryId != 6     // Specification
+        && projectCategoryId != 13    // Test Suites
+        && projectCategoryId != 26    // Test Scenarios
+        && projectCategoryId != 23    // Conceptualization
+        && projectCategoryId != 19    // UI Prototype
+        && projectCategoryId != 24    // RIA Build
+        && projectCategoryId != 25) { // RIA Component
+                return;
         }
 
         logger.log(Level.INFO,
@@ -367,11 +371,8 @@ public class AutoPaymentUtil {
      * @throws SQLException if error occurs
      */
     static void populateSubmitterPayments(long projectId, Connection conn)
-        throws SQLException {
-        // OrChange - Do not modify the payment if the project is a studio
-        if(PRHelper.isStudioProject(projectId)) {
-            return;
-        }
+            throws SQLException {
+        
         // Retrieve the price
         double price = getPriceByProjectId(projectId, conn);
 
@@ -481,7 +482,7 @@ public class AutoPaymentUtil {
      */
     private static void updateProjectInfo(long projectId, long projectInfoTypeId, String value, Connection conn)
             throws SQLException {
-        
+
         String UPDATE_SQL = "update project_info set value = ? where project_id = ? and project_info_type_id = ? ";
         String INSERT_SQL = "INSERT INTO project_info " +
             "(project_id, project_info_type_id, value, create_user, create_date, modify_user, modify_date) " +

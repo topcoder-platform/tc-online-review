@@ -186,7 +186,8 @@ public class ActionsHelper {
                 || categoryId == 5    // Component Testing
                 || categoryId == 6    // Application Specification
                 || categoryId == 7    // Application Architecture
-                || categoryId == 13   // Application Testing
+                || categoryId == 13   // Test Scenarios
+                || categoryId == 26   // Test Suites
                 || categoryId == 14   // Application Assembly
                 || categoryId == 23   // Application Conceptualization
                 || categoryId == 19   // UI Prototype
@@ -207,7 +208,8 @@ public class ActionsHelper {
                 || categoryId == 6    // Specification
                 || categoryId == 7    // Architecture
                 || categoryId == 14   // Assembly
-                || categoryId == 13); // Application Testing
+	            || categoryId == 13   // Test Scenarios
+                || categoryId == 26); // Test Suites
     }
 
     // ------------------------------------------------------------ Validator type of methods -----
