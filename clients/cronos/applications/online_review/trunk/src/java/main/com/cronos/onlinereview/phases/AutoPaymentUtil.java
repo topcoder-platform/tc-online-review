@@ -371,11 +371,8 @@ public class AutoPaymentUtil {
      * @throws SQLException if error occurs
      */
     static void populateSubmitterPayments(long projectId, Connection conn)
-        throws SQLException {
-        // OrChange - Do not modify the payment if the project is a studio
-        if(PRHelper.isStudioProject(projectId)) {
-            return;
-        }
+            throws SQLException {
+        
         // Retrieve the price
         double price = getPriceByProjectId(projectId, conn);
 
