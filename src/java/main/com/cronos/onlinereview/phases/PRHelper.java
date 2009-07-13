@@ -93,10 +93,6 @@ public class PRHelper {
      *             if error occurs
      */
     static void processRegistrationPR(long projectId, Connection conn, boolean toStart) throws SQLException {
-        // OrChange - If studio project return
-        if (isStudioProject(projectId)) {
-            return;
-        }
         PreparedStatement pstmt = null;
         try {
             if (toStart) {
@@ -118,10 +114,6 @@ public class PRHelper {
      */
     static void processSubmissionPR(long projectId, Connection conn, boolean toStart) throws SQLException {
         PreparedStatement pstmt = null;
-        // OrChange - If studio project return
-        if (isStudioProject(projectId)) {
-            return;
-        }
         try {
             if (!toStart) {
             	logger.log(Level.INFO,
@@ -147,10 +139,6 @@ public class PRHelper {
      */
     static void processScreeningPR(long projectId, Connection conn, boolean toStart) throws SQLException {
         PreparedStatement pstmt = null;
-        // OrChange - If studio project return
-        if (isStudioProject(projectId)) {
-            return;
-        }
         try {
             if (!toStart) {
             	logger.log(Level.INFO,
@@ -184,10 +172,6 @@ public class PRHelper {
      *             if error occurs
      */
     static void processReviewPR(long projectId, Connection conn, boolean toStart) throws SQLException {
-        // OrChange - If studio project return
-        if (isStudioProject(projectId)) {
-            return;
-        }
         PreparedStatement pstmt = null;
         PreparedStatement updateStmt = null;
         ResultSet rs = null;
@@ -229,10 +213,6 @@ public class PRHelper {
      *             if error occurs
      */
     static void processAppealResponsePR(long projectId, Connection conn, boolean toStart) throws SQLException {
-        // OrChange - If studio project return
-        if (isStudioProject(projectId)) {
-            return;
-        }
         if (!toStart) {
         	logger.log(Level.INFO,
 				new LoggerMessage("project", new Long(projectId), null, "process Appeal Response phase."));
@@ -249,10 +229,6 @@ public class PRHelper {
      *             if error occurs
      */
     static void processAggregationPR(long projectId, Connection conn, boolean toStart) throws SQLException {
-        // OrChange - If studio project return
-        if (isStudioProject(projectId)) {
-            return;
-        }
         if (!toStart) {
     		logger.log(Level.INFO,
 					new LoggerMessage("project", new Long(projectId), null, "process Aggregation phase."));
@@ -272,10 +248,6 @@ public class PRHelper {
      *             if error occurs
      */
     static void processAggregationReviewPR(long projectId, Connection conn, boolean toStart) throws SQLException {
-        // OrChange - If studio project return
-        if (isStudioProject(projectId)) {
-            return;
-        }
         if (!toStart) {
     		logger.log(Level.INFO,
 					new LoggerMessage("project", new Long(projectId), null, "Process Aggregation Review phase."));
@@ -292,10 +264,6 @@ public class PRHelper {
      *             if error occurs
      */
     static void processFinalFixPR(long projectId, Connection conn, boolean toStart) throws SQLException {
-        // OrChange - If studio project return
-        if (isStudioProject(projectId)) {
-            return;
-        }
         if (!toStart) {
     		logger.log(Level.INFO,
 					new LoggerMessage("project", new Long(projectId), null, "Process final fix phase."));
@@ -312,10 +280,6 @@ public class PRHelper {
      *             if error occurs
      */
     static void processFinalReviewPR(long projectId, Connection conn, boolean toStart) throws SQLException {
-        // OrChange - If studio project return
-        if (isStudioProject(projectId)) {
-            return;
-        }
         if (!toStart) {
     		logger.log(Level.INFO,
 					new LoggerMessage("project", new Long(projectId), null, "Process final review phase."));
@@ -340,10 +304,6 @@ public class PRHelper {
      */
     public static void resetProjectResultWithChangedScores(long projectId, Object userID, Connection conn)
             throws SQLException {
-        // OrChange - If studio project return
-        if (isStudioProject(projectId)) {
-            return;
-        }
         logger.log(Level.INFO,
 				new LoggerMessage("project", new Long(projectId), null, "reset update_result and user_reliability."));
         // reset old_reliability, new_reliability, current_reliability_ind, reliable_submission_ind,
@@ -395,10 +355,6 @@ public class PRHelper {
      *             if error occurs
      */
     public static void populateProjectResult(long projectId, Connection conn) throws SQLException {
-        // OrChange - If studio project return
-        if (isStudioProject(projectId)) {
-            return;
-        }
         // Payment should be set before populate to project_result table
         AutoPaymentUtil.populateSubmitterPayments(projectId, conn);
 
@@ -490,7 +446,7 @@ public class PRHelper {
     }
 
     /**
-     * Finds whether the project id belongs to a studion project or not.
+     * Finds whether the project id belongs to a studio project or not.
      * 
      * @param projectId
      *            the project d.
