@@ -326,7 +326,19 @@
     <property name="pactsServices.jar.name" value="PactsClientServices.jar" />
     <property name="pactsServices.jar" value="${tcs_libdir}/${pactsServices.path}/${pactsServices.jar.name}" />
 
-    <property name="shared.jar.name" value="shared.jar" />
+	<property name="projectEJB.path" value="project_ejb" />
+    <property name="projectEJB.jar.name" value="Project.jar" />
+    <property name="projectEJB.jar" value="${tcs_libdir}/${projectEJB.path}/${projectEJB.jar.name}" />
+
+    <property name="termsOfUseEJB.path" value="terms_of_use_ejb" />
+    <property name="termsOfUseEJB.jar.name" value="TermsOfUse.jar" />
+    <property name="termsOfUseEJB.jar" value="${tcs_libdir}/${termsOfUseEJB.path}/${termsOfUseEJB.jar.name}" />
+
+    <property name="userEJB.path" value="user_ejb" />
+    <property name="userEJB.jar.name" value="User.jar" />
+    <property name="userEJB.jar" value="${tcs_libdir}/${userEJB.path}/${userEJB.jar.name}" />
+
+	<property name="shared.jar.name" value="shared.jar" />
     <property name="shared.jar" value="${tcs_libdir}/${shared.jar.name}" />
 
     <property name="tcsUtil.jar.name" value="tcsUtil.jar" />
@@ -423,8 +435,12 @@
         <pathelement location="${weighted_calculator.jar}" />
         <pathelement location="${workdays.jar}" />
         <pathelement location="${pactsServices.jar}" />
-        <pathelement location="${tcsUtil.jar}" />
+        <pathelement location="${projectEJB.jar}" />
+        <pathelement location="${userEJB.jar}" />
+        <pathelement location="${termsOfUseEJB.jar}" />
+    	<pathelement location="${tcsUtil.jar}" />
         <pathelement location="${tcwebcommon.jar}" />
+        <pathelement location="${shared.jar}" />
     </path>
 
     <path id="cactus.classpath">
@@ -654,7 +670,10 @@ Note: The security manager that comes with the app may not be compatible with th
             <lib dir="${jar_tcs_libdir}/${weighted_calculator.path}" includes="*.jar" />
             <lib dir="${jar_tcs_libdir}/${workdays.path}" includes="*.jar" />
             <lib dir="${jar_tcs_libdir}/${pactsServices.path}" includes="*.jar" />
-            <lib dir="${jar_tcs_libdir}" includes="*.jar" />
+            <lib dir="${jar_tcs_libdir}/${projectEJB.path}" includes="*.jar" />
+            <lib dir="${jar_tcs_libdir}/${userEJB.path}" includes="*.jar" />
+            <lib dir="${jar_tcs_libdir}/${termsOfUseEJB.path}" includes="*.jar" />
+        	<lib dir="${jar_tcs_libdir}" includes="*.jar" />
             <lib dir="${jar_ext_libdir}" includes="*.jar" excludes="mail.jar, ejb-2_0.jar" />
             <fileset dir="${webdir}" includes="**" excludes="i/**, js/**, css/**" />
         </war>

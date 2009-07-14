@@ -369,6 +369,15 @@
             <forward name="success" path="/actions/ViewProjectDetails.do?method=viewProjectDetails" redirect="true"/>
         </action>
 
+        <!-- "Unregister" action -->
+        <action path="/actions/Unregister" unknown="false"
+            type="com.cronos.onlinereview.actions.ProjectDetailsActions"
+            parameter="method" scope="request"
+            input="/jsp/confirmUnregistration.jsp">
+            <forward name="displayPage" path="/jsp/confirmUnregistration.jsp" redirect="false"/>
+            <forward name="success" path="/actions/ViewProjectDetails.do?method=viewProjectDetails" redirect="true"/>
+        </action>
+
         <!-- "View Auto Screening" action -->
         <action path="/actions/ViewAutoScreening" unknown="false"
             type="com.cronos.onlinereview.actions.ProjectDetailsActions"
