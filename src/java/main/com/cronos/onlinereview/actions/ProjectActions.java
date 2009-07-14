@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2007 TopCoder Inc.  All Rights Reserved.
+ * Copyright (C) 2004 - 2009 TopCoder Inc., All Rights Reserved.
  */
 package com.cronos.onlinereview.actions;
 
@@ -64,6 +64,21 @@ import com.topcoder.search.builder.filter.Filter;
 import com.topcoder.search.builder.filter.InFilter;
 import com.topcoder.util.errorhandling.BaseException;
 
+import com.topcoder.web.ejb.project.ProjectRoleTermsOfUse;
+import com.topcoder.web.ejb.project.ProjectRoleTermsOfUseLocator;
+import com.topcoder.web.ejb.user.UserTermsOfUse;
+import com.topcoder.web.ejb.user.UserTermsOfUseLocator;
+import com.topcoder.web.ejb.termsofuse.TermsOfUse;
+import com.topcoder.web.ejb.termsofuse.TermsOfUseEntity;
+import com.topcoder.web.ejb.termsofuse.TermsOfUseLocator;
+
+import com.topcoder.shared.util.DBMS;
+import com.topcoder.shared.util.ApplicationServer;
+import javax.naming.NamingException;
+import java.rmi.RemoteException;
+import javax.ejb.CreateException;
+import javax.ejb.EJBException;
+
 /**
  * This class contains Struts Actions that are meant to deal with Projects. There are following
  * Actions defined in this class:
@@ -77,13 +92,27 @@ import com.topcoder.util.errorhandling.BaseException;
  * This class is thread-safe as it does not contain any mutable inner state.
  * </p>
  *
- * @author George1
- * @author real_vg
- * @version 1.0
+ * <p>
+ * Version 1.1 (Configurable Contest Terms Release Assembly v1.0) Change notes:
+ *   <ol>
+ *     <li>Added Project Role User Terms Of Use association generation to project creation.</li>
+ *     <li>Added Project Role User Terms Of Use verification when adding/updating project resources.</li>
+ *   </ol>
+ * </p>
+ *
+ * @author George1, real_vg, pulky
+ * @version 1.1
  */
 public class ProjectActions extends DispatchAction {
-	
-	private static final DateFormat DATE_FORMAT = new SimpleDateFormat("MM.dd.yyyy hh:mm a", Locale.US);
+
+    /**
+     * This constant stores development project type id
+     *
+     * @since 1.1
+     */
+    private static final int DEVELOPMENT_PROJECT_TYPE_ID = 2;
+
+    private static final DateFormat DATE_FORMAT = new SimpleDateFormat("MM.dd.yyyy hh:mm a", Locale.US);
 
     /**
      * Creates a new instance of the <code>ProjectActions</code> class.
@@ -190,7 +219,7 @@ public class ProjectActions extends DispatchAction {
     /**
      * This method loads the lookup data needed for rendering the Create Project/New Project pages.
      * The loaded data is stored in the request attributes.
-     * 
+     *
      * <p>
      * Updated for Online Review Update - Add Project Dropdown v1.0
      *      Added retrieval of billing projects.
@@ -243,7 +272,7 @@ public class ProjectActions extends DispatchAction {
         // Load phase template names
         String[] phaseTemplateNames = ActionsHelper.createPhaseTemplate(null).getAllTemplateNames();
         request.setAttribute("phaseTemplateNames", phaseTemplateNames);
-        
+
         // since Online Review Update - Add Project Dropdown v1.0
         // Retrieve the list of all client projects and store it in the request
         // this need to be retrieved only for admin user.
@@ -271,13 +300,13 @@ public class ProjectActions extends DispatchAction {
     /**
      * This method populates the specified LazyValidatorForm with the values
      * taken from the specified Project.
-     * 
+     *
      * <p>
      * Updated for Online Review Update - Add Project Dropdown v1.0
      *      - Set the 'Billing Project' value to form's billing_project property.
      *      - Set the isAdmin property.
      * </p>
-     * 
+     *
      * @param request
      *            the request to be processed
      * @param form
@@ -286,7 +315,7 @@ public class ProjectActions extends DispatchAction {
      *            the project to take the data from
      * @throws BaseException
      */
-	private void populateProjectForm(HttpServletRequest request, LazyValidatorForm form, Project project)
+    private void populateProjectForm(HttpServletRequest request, LazyValidatorForm form, Project project)
         throws BaseException {
         // TODO: Possibly use string constants instead of hardcoded strings
 
@@ -319,7 +348,7 @@ public class ProjectActions extends DispatchAction {
         populateProjectFormProperty(form, Double.class, "payments", project, "Payments");
         // Populate project dr points
         populateProjectFormProperty(form, Double.class, "dr_points", project, "DR points");
-        
+
         // since Online Review Update - Add Project Dropdown v1.0
         // Populate project billing project
         populateProjectFormProperty(form, Long.class, "billing_project", project, "Billing Project");
@@ -502,7 +531,7 @@ public class ProjectActions extends DispatchAction {
         request.setAttribute("isAllowedToPerformApproval",
                 Boolean.valueOf(ActionsHelper.getPhase(phases, true, Constants.APPROVAL_PHASE_NAME) != null &&
                         AuthorizationHelper.hasUserPermission(request, Constants.PERFORM_APPROVAL_PERM_NAME)));
-        
+
         // since Online Review Update - Add Project Dropdown v1.0
         request.setAttribute("isAdmin",
                 Boolean.valueOf(AuthorizationHelper.hasUserRole(request, Constants.MANAGER_ROLE_NAME)));
@@ -543,7 +572,7 @@ public class ProjectActions extends DispatchAction {
      * @param projectProperty
      *            the name of project property to take the value of
      */
-	private void populateProjectFormProperty(LazyValidatorForm form, Class type, String formProperty,
+    private void populateProjectFormProperty(LazyValidatorForm form, Class type, String formProperty,
             Project project, String projectProperty) {
 
         String value = (String) project.getProperty(projectProperty);
@@ -608,7 +637,7 @@ public class ProjectActions extends DispatchAction {
         ProjectStatus[] projectStatuses = manager.getAllProjectStatuses();
         // Store it in the request
         request.setAttribute("projectStatuses", projectStatuses);
-        
+
         // Populate the form with project properties
         populateProjectForm(request, (LazyValidatorForm) form, verification.getProject());
 
@@ -617,10 +646,15 @@ public class ProjectActions extends DispatchAction {
 
     /**
      * TODO: Write sensible description for method saveProject here
-     * 
+     *
      * <p>
      * Updated for Online Review Update - Add Project Dropdown v1.0:
      *      Added set of 'Billing Project' property.
+     * </p>
+     *
+     * <p>
+     * Updated for Configurable Contest Terms Release Assembly v1.0:
+     *      Added Project Role User Terms Of Use association generation
      * </p>
      *
      * @return TODO: Write sensible description of return value for method saveProject
@@ -759,8 +793,8 @@ public class ProjectActions extends DispatchAction {
         if (newProject && lazyForm.get("external_reference_id") != null) {
             // Retrieve and populate version
             project.setProperty("Version ID",
-            		ActionsHelper.getVersionUsingComponentVersionId(
-        			((Long) lazyForm.get("external_reference_id")).longValue()));
+                    ActionsHelper.getVersionUsingComponentVersionId(
+                    ((Long) lazyForm.get("external_reference_id")).longValue()));
         }
 
         // Extract project's properties from the form
@@ -792,7 +826,7 @@ public class ProjectActions extends DispatchAction {
 
         // Populate project notes
         project.setProperty("Notes", lazyForm.get("notes"));
-        
+
         // since Online Review Update - Add Project Dropdown v1.0
         // Populate project notes
         project.setProperty("Billing Project", lazyForm.get("billing_project"));
@@ -809,6 +843,22 @@ public class ProjectActions extends DispatchAction {
         // FIXME: the project itself is also saved by the following call. Needs to be refactored
         Phase[] projectPhases =
             saveProjectPhases(newProject, request, lazyForm, project, phasesJsMap, phasesToDelete, statusHasChanged);
+
+        if (newProject) {
+            // generate new project role terms of use associations for the recently created project.
+            try {
+                generateProjectRoleTermsOfUseAssociations(project.getId(),
+                        project.getProjectCategory().getId());
+            } catch (NamingException ne) {
+                throw new BaseException(ne);
+            } catch (RemoteException re) {
+                throw new BaseException(re);
+            } catch (CreateException ce) {
+                throw new BaseException(ce);
+            } catch (EJBException e) {
+                throw new BaseException(e);
+            }
+        }
 
         // FIXME: resources must be saved even if there are validation errors to validate resources
         if (!ActionsHelper.isErrorsPresent(request)) {
@@ -849,6 +899,57 @@ public class ProjectActions extends DispatchAction {
     }
 
     /**
+     * Private helper method to generate default Project Role Terms of Use associations for a given project.
+     *
+     * @param projectId the project id for the associations
+     * @param projectTypeId the project type id of the provided project id
+     * @throws NamingException if any errors occur during EJB lookup
+     * @throws RemoteException if any errors occur during EJB remote invocation
+     * @throws CreateException if any errors occur during EJB creation
+     * @throws EJBException if any other errors occur while invoking EJB services
+     *
+     * @since 1.1
+     */
+    private void generateProjectRoleTermsOfUseAssociations(long projectId, long projectTypeId)
+        throws NamingException, RemoteException, CreateException, EJBException {
+
+        // get configurations to create the associations
+        int submitterRoleId = ConfigHelper.getSubmitterRoleId();
+        long submitterTermsId = ConfigHelper.getSubmitterTermsId();
+        long reviewerTermsId = ConfigHelper.getReviewerTermsId();
+
+        // create ProjectRoleTermsOfUse default associations
+        ProjectRoleTermsOfUse projectRoleTermsOfUse = ProjectRoleTermsOfUseLocator.getService();
+        projectRoleTermsOfUse.createProjectRoleTermsOfUse(new Long(projectId).intValue(),
+                submitterRoleId, submitterTermsId, DBMS.COMMON_OLTP_DATASOURCE_NAME);
+
+        if (projectTypeId == DEVELOPMENT_PROJECT_TYPE_ID) {
+            // if it's a development project there are several reviewer roles
+
+            int accuracyReviewerRoleId = ConfigHelper.getAccuracyReviewerRoleId();
+            int failureReviewerRoleId = ConfigHelper.getFailureReviewerRoleId();
+            int stressReviewerRoleId = ConfigHelper.getStressReviewerRoleId();
+
+            projectRoleTermsOfUse.createProjectRoleTermsOfUse(new Long(projectId).intValue(),
+                    accuracyReviewerRoleId, reviewerTermsId, DBMS.COMMON_OLTP_DATASOURCE_NAME);
+
+            projectRoleTermsOfUse.createProjectRoleTermsOfUse(new Long(projectId).intValue(),
+                    failureReviewerRoleId, reviewerTermsId, DBMS.COMMON_OLTP_DATASOURCE_NAME);
+
+            projectRoleTermsOfUse.createProjectRoleTermsOfUse(new Long(projectId).intValue(),
+                    stressReviewerRoleId, reviewerTermsId, DBMS.COMMON_OLTP_DATASOURCE_NAME);
+        } else {
+            // if it's not development there is a single reviewer role
+
+            int reviewerRoleId = ConfigHelper.getReviewerRoleId();
+
+            projectRoleTermsOfUse.createProjectRoleTermsOfUse(new Long(projectId).intValue(),
+                    reviewerRoleId, reviewerTermsId, DBMS.COMMON_OLTP_DATASOURCE_NAME);
+        }
+    }
+
+
+    /**
      * TODO: Document it
      *
      * @param request
@@ -857,9 +958,9 @@ public class ProjectActions extends DispatchAction {
      * @throws BaseException
      */
     private void deletePhases(HttpServletRequest request, Project project, List<Phase> phasesToDelete)
-    		throws BaseException {
+            throws BaseException {
 
-    	if (phasesToDelete.isEmpty()) {
+        if (phasesToDelete.isEmpty()) {
             return;
         }
 
@@ -887,7 +988,7 @@ public class ProjectActions extends DispatchAction {
      * @param phasesToDelete TODO
      * @throws BaseException
      */
-	private Phase[] saveProjectPhases(boolean newProject, HttpServletRequest request, LazyValidatorForm lazyForm,
+    private Phase[] saveProjectPhases(boolean newProject, HttpServletRequest request, LazyValidatorForm lazyForm,
             Project project, Map<Object, Phase> phasesJsMap, List<Phase> phasesToDelete, boolean statusHasChanged)
         throws BaseException {
         // Obtain an instance of Phase Manager
@@ -1533,7 +1634,12 @@ public class ProjectActions extends DispatchAction {
     }
 
     /**
-     * TODO: Document it
+     * Private helper method to save resources
+     *
+     * <p>
+     * Updated for Configurable Contest Terms Release Assembly v1.0:
+     *      Added Project Role User Terms Of Use verification when adding/updating project resources
+     * </p>
      *
      * @param newProject
      * @param request
@@ -1544,7 +1650,7 @@ public class ProjectActions extends DispatchAction {
      * @throws BaseException
      */
     private void saveResources(boolean newProject, HttpServletRequest request, LazyValidatorForm lazyForm,
-    		Project project, Phase[] projectPhases, Map<Object, Phase> phasesJsMap) throws BaseException {
+            Project project, Phase[] projectPhases, Map<Object, Phase> phasesJsMap) throws BaseException {
 
         // Obtain the instance of the User Retrieval
         UserRetrieval userRetrieval = ActionsHelper.createUserRetrieval(request);
@@ -1604,6 +1710,19 @@ public class ProjectActions extends DispatchAction {
             }
         }
 
+        // validate resources have correct terms of use
+        try {
+            allResourcesValid = allResourcesValid && validateResourceTermsOfUse(request, lazyForm, project, userRetrieval, resourceNames);
+        } catch (NamingException ne) {
+            throw new BaseException(ne);
+        } catch (RemoteException re) {
+            throw new BaseException(re);
+        } catch (CreateException ce) {
+            throw new BaseException(ce);
+        } catch (EJBException e) {
+            throw new BaseException(e);
+        }
+
         // No resources are updated if at least one of them is incorrect.
         if (!allResourcesValid)
             return;
@@ -1647,7 +1766,7 @@ public class ProjectActions extends DispatchAction {
             if ("delete".equals(resourceAction)) {
                 // delete project_result
                 ActionsHelper.deleteProjectResult(project, user.getId(),
-                		((Long) lazyForm.get("resources_role", i)).longValue());
+                        ((Long) lazyForm.get("resources_role", i)).longValue());
                 resourceManager.removeResource(resource,
                         Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
                 resourceManager.removeNotifications(new long[] {user.getId()}, project.getId(),
@@ -1711,7 +1830,7 @@ public class ProjectActions extends DispatchAction {
             if (resource.getProperty("Registration Date") == null  && (
                     resourceRole.equals("Submitter") || resourceRole.equals("Screener") ||
                     resourceRole.equals("Reviewer"))) {
-            	// FIXME: Format this date properly.
+                // FIXME: Format this date properly.
                 resource.setProperty("Registration Date", DATE_FORMAT.format(new Date()));
             }
 
@@ -1753,6 +1872,70 @@ public class ProjectActions extends DispatchAction {
 
         // Update rboard_application table with the reviewers set in the resources.
         ActionsHelper.synchronizeRBoardApplications(project);
+    }
+
+    /**
+     * Helper method to validate if resources in the request have the required terms of use
+     *
+     * @param request the current <code>HttpServletRequest</code>.
+     * @param lazyForm the edition <code>LazyValidatorForm</code>.
+     * @param project the edited <code>Project</code>.
+     * @param userRetrieval a <code>UserRetrieval</code> instance to obtain the user id.
+     * @param resourceNames a <code>String[]</code> containing edited resource names.
+     *
+     * @throws NamingException if any errors occur during EJB lookup
+     * @throws RemoteException if any errors occur during EJB remote invocation
+     * @throws CreateException if any errors occur during EJB creation
+     * @throws EJBException if any other errors occur while invoking EJB services
+     * @throws BaseException if any other errors occur while retrieving user
+     *
+     * @return true if all resources are valid
+     * @since 1.1
+     */
+    private boolean validateResourceTermsOfUse(HttpServletRequest request, LazyValidatorForm lazyForm,
+            Project project, UserRetrieval userRetrieval, String[] resourceNames)
+            throws NamingException, RemoteException, CreateException, EJBException, BaseException {
+
+        boolean allResourcesValid = true;
+
+        // get remote services
+        ProjectRoleTermsOfUse projectRoleTermsOfUse = ProjectRoleTermsOfUseLocator.getService();
+        UserTermsOfUse userTermsOfUse = UserTermsOfUseLocator.getService();
+        TermsOfUse termsOfUse = TermsOfUseLocator.getService();
+
+        // validate that new resources have agreed to the necessary terms of use
+        // 0-index resource is skipped as it is a "dummy" one
+        for (int i = 1; i < resourceNames.length; i++) {
+            if (resourceNames[i] != null && resourceNames[i].trim().length() > 0) {
+                ExternalUser user = userRetrieval.retrieveUser(resourceNames[i]);
+                String resourceAction = (String) lazyForm.get("resources_action", i);
+                // check for additions or modifications
+                if (!"delete".equals(resourceAction)) {
+                    long roleId = ((Long) lazyForm.get("resources_role", i)).longValue();
+                    long userId = user.getId();
+
+                    List<Long> necessaryTerms = projectRoleTermsOfUse.getTermsOfUse(new Long(project.getId()).intValue(),
+                            new int[] {new Long(roleId).intValue()}, DBMS.COMMON_OLTP_DATASOURCE_NAME);
+
+                    for (Long termsId : necessaryTerms) {
+                        // check if the user has this terms
+                        if (!userTermsOfUse.hasTermsOfUse(userId, termsId, DBMS.COMMON_OLTP_DATASOURCE_NAME)) {
+                            // get missing terms of use title
+                            TermsOfUseEntity terms =  termsOfUse.getEntity(termsId, DBMS.COMMON_OLTP_DATASOURCE_NAME);
+
+                            // add the error
+                            ActionsHelper.addErrorToRequest(request, "resources_name[" + i + "]",
+                                new ActionMessage("error.com.cronos.onlinereview.actions.editProject.Resource.MissingTerms",
+                                terms.getTitle()));
+
+                            allResourcesValid=false;
+                        }
+                    }
+                }
+            }
+        }
+
+        return allResourcesValid;
     }
 
     /**
@@ -2084,8 +2267,8 @@ public class ProjectActions extends DispatchAction {
      *             not.
      */
     private static Deliverable[] getDeliverables(DeliverableManager manager, Project[][] projects, Phase[][][] phases,
-    		Resource[][][] resources)
-        	throws DeliverablePersistenceException, SearchBuilderException, DeliverableCheckingException {
+            Resource[][][] resources)
+            throws DeliverablePersistenceException, SearchBuilderException, DeliverableCheckingException {
         // Validate parameters
         ActionsHelper.validateParameterNotNull(manager, "manager");
         ActionsHelper.validateParameterNotNull(projects, "projects");
