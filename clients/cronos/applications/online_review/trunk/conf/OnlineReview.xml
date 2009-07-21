@@ -1385,6 +1385,12 @@
         <Property name="Test Scenarios">
             <Value>137</Value>
         </Property>
+        <Property name="UI Prototypes">
+            <Value>130</Value>
+        </Property>
+        <Property name="RIA Builds">
+            <Value>135</Value>
+        </Property>
     </Config>
 
 

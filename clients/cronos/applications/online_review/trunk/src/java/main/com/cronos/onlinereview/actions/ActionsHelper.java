@@ -209,7 +209,9 @@ public class ActionsHelper {
                 || categoryId == 7    // Architecture
                 || categoryId == 14   // Assembly
 	            || categoryId == 13   // Test Scenarios
-                || categoryId == 26); // Test Suites
+                || categoryId == 26   // Test Suites
+                || categoryId == 19   // UI Prototypes
+                || categoryId == 24); // RIA Builds
     }
 
     // ------------------------------------------------------------ Validator type of methods -----
