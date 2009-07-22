@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns="http://java.sun.com/xml/ns/j2ee"
+   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd"
+   version="2.4">
+
+    <display-name>Online Review</display-name>
+
+  <filter>
+    <filter-name>set_character_encoding</filter-name>
+    <filter-class>com.cronos.onlinereview.actions.EncodeFilter</filter-class>
+	<init-param>	
+		<param-name>encoding</param-name>	
+		<param-value>UTF-8</param-value>	
+	</init-param>	
+	<init-param>	
+		<param-name>ignore</param-name>	
+		<param-value>true</param-value>	
+	</init-param>	
+  </filter>
+	
+	<!-- Filter Mapping -->
+	
+	<filter-mapping>	
+		<filter-name>set_character_encoding</filter-name>	
+		<url-pattern>*.do</url-pattern>
+	</filter-mapping>
+
+    <!-- Standard Action Servlet Configuration -->
+    <servlet>
+        <servlet-name>action</servlet-name>
+        <servlet-class>org.apache.struts.action.ActionServlet</servlet-class>
+        <init-param>
+            <param-name>config</param-name>
+            <param-value>/WEB-INF/struts-config.xml</param-value>
+        </init-param>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+
+    <!-- Online Review Ajax Support Servlet Configuration -->
+    <servlet>
+        <servlet-name>AjaxServlet</servlet-name>
+        <servlet-class>com.cronos.onlinereview.ajax.AjaxSupportServlet</servlet-class>
+    </servlet>
+
+	<!-- Axis HTTP transport Servlet -->
+	<servlet>
+		<servlet-name>AxisServlet</servlet-name>
+		<display-name>Apache-Axis Servlet</display-name>
+		<servlet-class>
+			org.apache.axis.transport.http.AxisServlet
+		</servlet-class>
+		<!--  init-param>
+			<param-name>use-servlet-security</param-name>
+			<param-value>true</param-value>
+			</init-param -->
+	</servlet>
+
+    <!-- Standard Action Servlet Mapping -->
+    <servlet-mapping>
+        <servlet-name>action</servlet-name>
+        <url-pattern>*.do</url-pattern>
+    </servlet-mapping>
+
+    <!-- Online Review Ajax Support Servlet Mapping -->
+    <servlet-mapping>
+        <servlet-name>AjaxServlet</servlet-name>
+        <url-pattern>/ajaxSupport</url-pattern>
+    </servlet-mapping>
+
+  <!-- Axis HTTP transport Servlet Mappings -->
+	<servlet-mapping>
+		<servlet-name>AxisServlet</servlet-name>
+		<url-pattern>/servlet/AxisServlet</url-pattern>
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>AxisServlet</servlet-name>
+		<url-pattern>*.jws</url-pattern>
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>AxisServlet</servlet-name>
+		<url-pattern>/services/*</url-pattern>
+	</servlet-mapping>
+
+   <session-config>
+      <session-timeout>120</session-timeout>
+   </session-config>
+
+    <!-- The Usual Welcome File List -->
+    <welcome-file-list>
+        <welcome-file>index.html</welcome-file>
+        <welcome-file>index.jsp</welcome-file>
+    </welcome-file-list>
+
+    <!-- Error Page -->
+    <error-page>
+    	<exception-type>java.lang.Throwable</exception-type>
+    	<location>/jsp/errorPage.jsp</location>
+    </error-page>
+
+    <!-- Struts Tag Library Descriptors -->
+    <taglib>
+        <taglib-uri>/tags/struts-bean</taglib-uri>
+        <taglib-location>/WEB-INF/struts-bean-el.tld</taglib-location>
+    </taglib>
+
+    <taglib>
+        <taglib-uri>/tags/struts-html</taglib-uri>
+        <taglib-location>/WEB-INF/struts-html-el.tld</taglib-location>
+    </taglib>
+
+    <taglib>
+        <taglib-uri>/tags/struts-logic</taglib-uri>
+        <taglib-location>/WEB-INF/struts-logic-el.tld</taglib-location>
+    </taglib>
+
+    <!-- Online Review Helper Functions -->
+    <taglib>
+        <taglib-uri>/tags/or-functions</taglib-uri>
+        <taglib-location>/WEB-INF/or-functions.tld</taglib-location>
+    </taglib>
+
+    <!-- TopCoder Web Tags -->
+    <taglib>
+        <taglib-uri>/tags/tc-webtags</taglib-uri>
+        <taglib-location>/WEB-INF/tc-webtags.tld</taglib-location>
+    </taglib>
+
+    <ejb-ref>
+        <ejb-ref-name>security/Login</ejb-ref-name>
+        <ejb-ref-type>Session</ejb-ref-type>
+        <home>com.topcoder.security.login.LoginRemoteHome</home>
+        <remote>com.topcoder.security.login.LoginRemote</remote>
+    </ejb-ref>
+</web-app>

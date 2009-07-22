@@ -1,0 +1,865 @@
+<?xml version="1.0"?>
+<CMConfig>
+    <Config name="com.topcoder.management.phase.autopilot.AutoPilotJob">
+        <Property name="com/topcoder/management/phase/autopilot/AutoPilotJob">
+            <Property name="type">
+                <Value>com.topcoder.management.phase.autopilot.AutoPilotJob</Value>
+            </Property>
+            <Property name="params">
+            </Property>
+        </Property>
+    </Config>
+    <Config name="com.topcoder.management.phase.autopilot.AutoPilotJob.factory">
+        <Property name="com/topcoder/management/phase/autopilot/AutoPilotJob">
+            <Property name="type">
+                <Value>com.topcoder.management.phase.autopilot.AutoPilotJob</Value>
+            </Property>
+            <Property name="params">
+            </Property>
+        </Property>
+    </Config>
+    <Config name="AutoPilotJob">
+        <Property name="AutoPilotJob">
+            <Value>StartDTG:October 5, 2006 12:00:00 AM</Value>
+            <Value>EndDTG:</Value>
+            <Value>IntervalValue:50</Value>
+            <Value>IntervalUnit:MINUTE</Value>
+            <Value>JobType:JOB_TYPE_JAVA_CLASS</Value>
+            <Value>JobCmd:com.topcoder.management.phase.autopilot.AutoPilotJob</Value>
+        </Property>
+    </Config>
+<!-- [OR-584] go back to the default implementation, we don't need the custom one because we don't do this for assignment v2
+        <Property name="com/topcoder/management/phase/autopilot/AutoPilotSource">
+            <Property name="type">
+                <Value>com.topcoder.management.phase.autopilot.impl.ActiveAutoPilotSource</Value>
+            </Property>
+            <Property name="params">
+            </Property>
+        </Property>
+        <Property name="com/topcoder/management/phase/autopilot/ProjectPilot">
+            <Property name="type">
+                <Value>com.cronos.onlinereview.phases.OnlineReviewProjectPilot</Value>
+            </Property>
+            <Property name="params">
+            </Property>
+        </Property>
+    </Config>
+-->
+    <Config name="com.topcoder.management.phase.autopilot.AutoPilot">
+        <Property name="com/topcoder/management/phase/autopilot/AutoPilotSource">
+            <Property name="type">
+                <Value>com.topcoder.management.phase.autopilot.impl.ActiveAutoPilotSource</Value>
+            </Property>
+            <Property name="params">
+            </Property>
+        </Property>
+        <Property name="com/topcoder/management/phase/autopilot/ProjectPilot">
+            <Property name="type">
+                <Value>com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot</Value>
+            </Property>
+            <Property name="params">
+            </Property>
+        </Property>
+    </Config>
+
+<!--[OR-584] we only do assignment v2 now, so we don't need this
+    <Config name="com.cronos.onlinereview.phases.OnlineReviewProjectPilot">
+    	<Property name="CheckAssignmentDocumentsStatus">
+    		<Value>false</Value>
+    	</Property>
+        <Property name="AssigmentDocumentEmail">
+            <Property name="EmailTemplateSource">
+                <Value>file</Value>
+            </Property>
+            <Property name="EmailTemplateName">
+                <Value>ad_email_template.txt</Value>
+            </Property>
+            <Property name="EmailFromAddress">
+                <Value>service@topcodersoftware.com</Value>
+            </Property>
+        </Property>
+    </Config>-->
+    
+    <Config name="com.topcoder.management.phase.autopilot.impl.ActiveAutoPilotSource">
+        <Property name="com/topcoder/management/project/ProjectManager">
+            <Property name="type">
+                <Value>com.topcoder.management.project.ProjectManagerImpl</Value>
+            </Property>
+            <Property name="params">
+            </Property>
+        </Property>
+    </Config>
+    <Config name="com.topcoder.management.phase.autopilot.impl.DefaultProjectPilot">
+        <Property name="com/topcoder/management/phase/PhaseManager">
+            <Property name="type">
+                <Value>com.topcoder.management.phase.DefaultPhaseManager</Value>
+            </Property>
+            <Property name="params">
+                <Property name="param1">
+                    <Property name="type">
+                        <Value>String</Value>
+                    </Property>
+                    <Property name="value">
+                        <Value>com.topcoder.management.phase_with_handlers</Value>
+                    </Property>
+                </Property>
+            </Property>
+        </Property>
+    </Config>
+        <!--
+        =====  Configuration for Phase Management component  =====
+    -->
+    <Config name="com.topcoder.management.phase_with_handlers">
+        <Property name="PhasePersistence">
+            <Property name="className">
+                <Value>com.topcoder.management.phase.db.InformixPhasePersistence</Value>
+            </Property>
+        </Property>
+        <Property name="Idgenerator">
+            <Property name="sequenceName">
+                <Value>project_phase_id_seq</Value>
+            </Property>
+            <Property name="className">
+                <Value>com.topcoder.util.idgenerator.IDGeneratorImpl</Value>
+            </Property>
+        </Property>
+        <Property name="connectionName">
+            <Value>tcs</Value>
+        </Property>
+        <Property name="ConnectionFactory">
+            <Property name="className">
+                <Value>com.topcoder.db.connectionfactory.DBConnectionFactoryImpl</Value>
+            </Property>
+            <Property name="namespace">
+                <Value>com.topcoder.db.connectionfactory.DBConnectionFactoryImpl</Value>
+            </Property>
+        </Property>
+		<Property name="Handlers">
+			<Value>handler_registration_start</Value>
+			<Value>handler_registration_end</Value>
+			<Value>handler_registration_cancel</Value>
+			<Value>handler_submission_start</Value>
+			<Value>handler_submission_end</Value>
+			<Value>handler_submission_cancel</Value>
+			<Value>handler_screening_start</Value>
+			<Value>handler_screening_end</Value>
+			<Value>handler_screening_cancel</Value>
+			<Value>handler_review_start</Value>
+			<Value>handler_review_end</Value>
+			<Value>handler_review_cancel</Value>
+			<Value>handler_appeals_start</Value>
+			<Value>handler_appeals_end</Value>
+			<Value>handler_appeals_cancel</Value>
+			<Value>handler_appeals_response_start</Value>
+			<Value>handler_appeals_response_end</Value>
+			<Value>handler_appeals_response_cancel</Value>
+			<Value>handler_aggregation_start</Value>
+			<Value>handler_aggregation_end</Value>
+			<Value>handler_aggregation_cancel</Value>
+			<Value>handler_aggregation_review_start</Value>
+			<Value>handler_aggregation_review_end</Value>
+			<Value>handler_aggregation_review_cancel</Value>
+			<Value>handler_final_fix_start</Value>
+			<Value>handler_final_fix_end</Value>
+			<Value>handler_final_fix_cancel</Value>
+			<Value>handler_final_review_start</Value>
+			<Value>handler_final_review_end</Value>
+			<Value>handler_final_review_cancel</Value>
+			<Value>handler_approval_start</Value>
+			<Value>handler_approval_end</Value>
+			<Value>handler_approval_cancel</Value>
+		</Property>
+
+		<!-- The details about each handler -->	
+			
+		<Property name="handler_final_review_start">
+			<Property name="phaseType">
+				<Value>final_review</Value>
+			</Property>
+			<Property name="operation">
+				<Value>start</Value>
+			</Property>
+			<Property name="handler">
+				<Value>handler_final_review_def</Value>
+			</Property>		
+		</Property>
+		<Property name="handler_final_review_end">
+			<Property name="phaseType">
+				<Value>final_review</Value>
+			</Property>
+			<Property name="operation">
+				<Value>end</Value>
+			</Property>
+			<Property name="handler">
+				<Value>handler_final_review_def</Value>
+			</Property>		
+		</Property>
+		<Property name="handler_final_review_cancel">
+			<Property name="phaseType">
+				<Value>final_review</Value>
+			</Property>
+			<Property name="operation">
+				<Value>cancel</Value>
+			</Property>
+			<Property name="handler">
+				<Value>handler_final_review_def</Value>
+			</Property>		
+		</Property>
+			
+		<Property name="handler_final_fix_start">
+			<Property name="phaseType">
+				<Value>final_fix</Value>
+			</Property>
+			<Property name="operation">
+				<Value>start</Value>
+			</Property>
+			<Property name="handler">
+				<Value>handler_final_fix_def</Value>
+			</Property>		
+		</Property>
+		<Property name="handler_final_fix_end">
+			<Property name="phaseType">
+				<Value>final_fix</Value>
+			</Property>
+			<Property name="operation">
+				<Value>end</Value>
+			</Property>
+			<Property name="handler">
+				<Value>handler_final_fix_def</Value>
+			</Property>		
+		</Property>
+		<Property name="handler_final_fix_cancel">
+			<Property name="phaseType">
+				<Value>final_fix</Value>
+			</Property>
+			<Property name="operation">
+				<Value>cancel</Value>
+			</Property>
+			<Property name="handler">
+				<Value>handler_final_fix_def</Value>
+			</Property>		
+		</Property>
+			
+		<Property name="handler_aggregation_review_start">
+			<Property name="phaseType">
+				<Value>aggregation_review</Value>
+			</Property>
+			<Property name="operation">
+				<Value>start</Value>
+			</Property>
+			<Property name="handler">
+				<Value>handler_aggregation_review_def</Value>
+			</Property>		
+		</Property>
+		<Property name="handler_aggregation_review_end">
+			<Property name="phaseType">
+				<Value>aggregation_review</Value>
+			</Property>
+			<Property name="operation">
+				<Value>end</Value>
+			</Property>
+			<Property name="handler">
+				<Value>handler_aggregation_review_def</Value>
+			</Property>		
+		</Property>
+		<Property name="handler_aggregation_review_cancel">
+			<Property name="phaseType">
+				<Value>aggregation_review</Value>
+			</Property>
+			<Property name="operation">
+				<Value>cancel</Value>
+			</Property>
+			<Property name="handler">
+				<Value>handler_aggregation_review_def</Value>
+			</Property>		
+		</Property>
+			
+		<Property name="handler_aggregation_start">
+			<Property name="phaseType">
+				<Value>aggregation</Value>
+			</Property>
+			<Property name="operation">
+				<Value>start</Value>
+			</Property>
+			<Property name="handler">
+				<Value>handler_aggregation_def</Value>
+			</Property>		
+		</Property>
+		<Property name="handler_aggregation_end">
+			<Property name="phaseType">
+				<Value>aggregation</Value>
+			</Property>
+			<Property name="operation">
+				<Value>end</Value>
+			</Property>
+			<Property name="handler">
+				<Value>handler_aggregation_def</Value>
+			</Property>		
+		</Property>
+		<Property name="handler_aggregation_cancel">
+			<Property name="phaseType">
+				<Value>aggregation</Value>
+			</Property>
+			<Property name="operation">
+				<Value>cancel</Value>
+			</Property>
+			<Property name="handler">
+				<Value>handler_aggregation_def</Value>
+			</Property>		
+		</Property>
+			
+		<Property name="handler_appeals_response_start">
+			<Property name="phaseType">
+				<Value>appeals_response</Value>
+			</Property>
+			<Property name="operation">
+				<Value>start</Value>
+			</Property>
+			<Property name="handler">
+				<Value>handler_appeals_response_def</Value>
+			</Property>		
+		</Property>
+		<Property name="handler_appeals_response_end">
+			<Property name="phaseType">
+				<Value>appeals_response</Value>
+			</Property>
+			<Property name="operation">
+				<Value>end</Value>
+			</Property>
+			<Property name="handler">
+				<Value>handler_appeals_response_def</Value>
+			</Property>		
+		</Property>
+		<Property name="handler_appeals_response_cancel">
+			<Property name="phaseType">
+				<Value>appeals_response</Value>
+			</Property>
+			<Property name="operation">
+				<Value>cancel</Value>
+			</Property>
+			<Property name="handler">
+				<Value>handler_appeals_response_def</Value>
+			</Property>		
+		</Property>
+			
+		<Property name="handler_appeals_start">
+			<Property name="phaseType">
+				<Value>appeals</Value>
+			</Property>
+			<Property name="operation">
+				<Value>start</Value>
+			</Property>
+			<Property name="handler">
+				<Value>handler_appeals_def</Value>
+			</Property>		
+		</Property>
+		<Property name="handler_appeals_end">
+			<Property name="phaseType">
+				<Value>appeals</Value>
+			</Property>
+			<Property name="operation">
+				<Value>end</Value>
+			</Property>
+			<Property name="handler">
+				<Value>handler_appeals_def</Value>
+			</Property>		
+		</Property>
+		<Property name="handler_appeals_cancel">
+			<Property name="phaseType">
+				<Value>appeals</Value>
+			</Property>
+			<Property name="operation">
+				<Value>cancel</Value>
+			</Property>
+			<Property name="handler">
+				<Value>handler_appeals_def</Value>
+			</Property>		
+		</Property>	
+			
+		<Property name="handler_review_start">
+			<Property name="phaseType">
+				<Value>review</Value>
+			</Property>
+			<Property name="operation">
+				<Value>start</Value>
+			</Property>
+			<Property name="handler">
+				<Value>handler_review_def</Value>
+			</Property>		
+		</Property>
+		<Property name="handler_review_end">
+			<Property name="phaseType">
+				<Value>review</Value>
+			</Property>
+			<Property name="operation">
+				<Value>end</Value>
+			</Property>
+			<Property name="handler">
+				<Value>handler_review_def</Value>
+			</Property>		
+		</Property>
+		<Property name="handler_review_cancel">
+			<Property name="phaseType">
+				<Value>review</Value>
+			</Property>
+			<Property name="operation">
+				<Value>cancel</Value>
+			</Property>
+			<Property name="handler">
+				<Value>handler_review_def</Value>
+			</Property>		
+		</Property>	
+		<Property name="handler_screening_start">
+			<Property name="phaseType">
+				<Value>screening</Value>
+			</Property>
+			<Property name="operation">
+				<Value>start</Value>
+			</Property>
+			<Property name="handler">
+				<Value>handler_screening_def</Value>
+			</Property>		
+		</Property>
+		<Property name="handler_screening_end">
+			<Property name="phaseType">
+				<Value>screening</Value>
+			</Property>
+			<Property name="operation">
+				<Value>end</Value>
+			</Property>
+			<Property name="handler">
+				<Value>handler_screening_def</Value>
+			</Property>		
+		</Property>
+		<Property name="handler_screening_cancel">
+			<Property name="phaseType">
+				<Value>screening</Value>
+			</Property>
+			<Property name="operation">
+				<Value>cancel</Value>
+			</Property>
+			<Property name="handler">
+				<Value>handler_screening_def</Value>
+			</Property>		
+		</Property>
+		<Property name="handler_registration_start">
+			<Property name="phaseType">
+				<Value>registration</Value>
+			</Property>
+			<Property name="operation">
+				<Value>start</Value>
+			</Property>
+			<Property name="handler">
+				<Value>handler_registration_def</Value>
+			</Property>		
+		</Property>
+		<Property name="handler_registration_end">
+			<Property name="phaseType">
+				<Value>registration</Value>
+			</Property>
+			<Property name="operation">
+				<Value>end</Value>
+			</Property>
+			<Property name="handler">
+				<Value>handler_registration_def</Value>
+			</Property>		
+		</Property>
+		<Property name="handler_registration_cancel">
+			<Property name="phaseType">
+				<Value>registration</Value>
+			</Property>
+			<Property name="operation">
+				<Value>cancel</Value>
+			</Property>
+			<Property name="handler">
+				<Value>handler_registration_def</Value>
+			</Property>		
+		</Property>
+			
+		<Property name="handler_submission_start">
+			<Property name="phaseType">
+				<Value>submission</Value>
+			</Property>
+			<Property name="operation">
+				<Value>start</Value>
+			</Property>
+			<Property name="handler">
+				<Value>handler_submission_def</Value>
+			</Property>		
+		</Property>
+		<Property name="handler_submission_end">
+			<Property name="phaseType">
+				<Value>submission</Value>
+			</Property>
+			<Property name="operation">
+				<Value>end</Value>
+			</Property>
+			<Property name="handler">
+				<Value>handler_submission_def</Value>
+			</Property>		
+		</Property>
+		<Property name="handler_submission_cancel">
+			<Property name="phaseType">
+				<Value>submission</Value>
+			</Property>
+			<Property name="operation">
+				<Value>cancel</Value>
+			</Property>
+			<Property name="handler">
+				<Value>handler_submission_def</Value>
+			</Property>		
+		</Property>
+			
+		<Property name="handler_approval_start">
+			<Property name="phaseType">
+				<Value>approval</Value>
+			</Property>
+			<Property name="operation">
+				<Value>start</Value>
+			</Property>
+			<Property name="handler">
+				<Value>handler_approval_def</Value>
+			</Property>		
+		</Property>
+		<Property name="handler_approval_end">
+			<Property name="phaseType">
+				<Value>approval</Value>
+			</Property>
+			<Property name="operation">
+				<Value>end</Value>
+			</Property>
+			<Property name="handler">
+				<Value>handler_approval_def</Value>
+			</Property>		
+		</Property>
+		<Property name="handler_approval_cancel">
+			<Property name="phaseType">
+				<Value>approval</Value>
+			</Property>
+			<Property name="operation">
+				<Value>cancel</Value>
+			</Property>
+			<Property name="handler">
+				<Value>handler_approval_def</Value>
+			</Property>		
+		</Property>
+		
+		<!-- The object factory configurations -->
+		<Property name="ObjectFactoryNamespace">
+			<Value>com.topcoder.management.phase.ObjectFactory</Value>
+		</Property>
+	</Config>
+	
+	<Config name="com.topcoder.management.phase.ObjectFactory">
+	  <!-- The definition for phase type -->
+	  <Property name="registration">
+		  <Property name="type">
+			  <Value>com.topcoder.project.phases.PhaseType</Value>
+		  </Property>
+		  <Property name="params">
+			  <Property name="param1">
+				  <Property name="type">
+					  <Value>long</Value>
+				  </Property>
+				  <Property name="value">
+					  <Value>1</Value>
+				  </Property>
+			  </Property>
+			  <Property name="param2">
+				  <Property name="type">
+					  <Value>String</Value>
+				  </Property>
+				  <Property name="value">
+					  <Value>Registration</Value>
+				  </Property>
+			  </Property>
+		  </Property>
+	  </Property>
+	  <Property name="submission">
+		  <Property name="type">
+			  <Value>com.topcoder.project.phases.PhaseType</Value>
+		  </Property>
+		  <Property name="params">
+			  <Property name="param1">
+				  <Property name="type">
+					  <Value>long</Value>
+				  </Property>
+				  <Property name="value">
+					  <Value>2</Value>
+				  </Property>
+			  </Property>
+			  <Property name="param2">
+				  <Property name="type">
+					  <Value>String</Value>
+				  </Property>
+				  <Property name="value">
+					  <Value>Submission</Value>
+				  </Property>
+			  </Property>
+		  </Property>
+	  </Property>
+	  <Property name="screening">
+		  <Property name="type">
+			  <Value>com.topcoder.project.phases.PhaseType</Value>
+		  </Property>
+		  <Property name="params">
+			  <Property name="param1">
+				  <Property name="type">
+					  <Value>long</Value>
+				  </Property>
+				  <Property name="value">
+					  <Value>3</Value>
+				  </Property>
+			  </Property>
+			  <Property name="param2">
+				  <Property name="type">
+					  <Value>String</Value>
+				  </Property>
+				  <Property name="value">
+					  <Value>Screening</Value>
+				  </Property>
+			  </Property>
+		  </Property>
+	  </Property>
+	  <Property name="review">
+		  <Property name="type">
+			  <Value>com.topcoder.project.phases.PhaseType</Value>
+		  </Property>
+		  <Property name="params">
+			  <Property name="param1">
+				  <Property name="type">
+					  <Value>long</Value>
+				  </Property>
+				  <Property name="value">
+					  <Value>4</Value>
+				  </Property>
+			  </Property>
+			  <Property name="param2">
+				  <Property name="type">
+					  <Value>String</Value>
+				  </Property>
+				  <Property name="value">
+					  <Value>Review</Value>
+				  </Property>
+			  </Property>
+		  </Property>
+	  </Property>
+	  <Property name="appeals">
+		  <Property name="type">
+			  <Value>com.topcoder.project.phases.PhaseType</Value>
+		  </Property>
+		  <Property name="params">
+			  <Property name="param1">
+				  <Property name="type">
+					  <Value>long</Value>
+				  </Property>
+				  <Property name="value">
+					  <Value>5</Value>
+				  </Property>
+			  </Property>
+			  <Property name="param2">
+				  <Property name="type">
+					  <Value>String</Value>
+				  </Property>
+				  <Property name="value">
+					  <Value>Appeals</Value>
+				  </Property>
+			  </Property>
+		  </Property>
+	  </Property>
+	  <Property name="appeals_response">
+		  <Property name="type">
+			  <Value>com.topcoder.project.phases.PhaseType</Value>
+		  </Property>
+		  <Property name="params">
+			  <Property name="param1">
+				  <Property name="type">
+					  <Value>long</Value>
+				  </Property>
+				  <Property name="value">
+					  <Value>6</Value>
+				  </Property>
+			  </Property>
+			  <Property name="param2">
+				  <Property name="type">
+					  <Value>String</Value>
+				  </Property>
+				  <Property name="value">
+					  <Value>Appeals Response</Value>
+				  </Property>
+			  </Property>
+		  </Property>
+	  </Property>
+	  <Property name="aggregation">
+		  <Property name="type">
+			  <Value>com.topcoder.project.phases.PhaseType</Value>
+		  </Property>
+		  <Property name="params">
+			  <Property name="param1">
+				  <Property name="type">
+					  <Value>long</Value>
+				  </Property>
+				  <Property name="value">
+					  <Value>7</Value>
+				  </Property>
+			  </Property>
+			  <Property name="param2">
+				  <Property name="type">
+					  <Value>String</Value>
+				  </Property>
+				  <Property name="value">
+					  <Value>aggregation</Value>
+				  </Property>
+			  </Property>
+		  </Property>
+	  </Property>
+	  <Property name="aggregation_review">
+		  <Property name="type">
+			  <Value>com.topcoder.project.phases.PhaseType</Value>
+		  </Property>
+		  <Property name="params">
+			  <Property name="param1">
+				  <Property name="type">
+					  <Value>long</Value>
+				  </Property>
+				  <Property name="value">
+					  <Value>8</Value>
+				  </Property>
+			  </Property>
+			  <Property name="param2">
+				  <Property name="type">
+					  <Value>String</Value>
+				  </Property>
+				  <Property name="value">
+					  <Value>Aggregation Review</Value>
+				  </Property>
+			  </Property>
+		  </Property>
+	  </Property>
+	  <Property name="final_fix">
+		  <Property name="type">
+			  <Value>com.topcoder.project.phases.PhaseType</Value>
+		  </Property>
+		  <Property name="params">
+			  <Property name="param1">
+				  <Property name="type">
+					  <Value>long</Value>
+				  </Property>
+				  <Property name="value">
+					  <Value>9</Value>
+				  </Property>
+			  </Property>
+			  <Property name="param2">
+				  <Property name="type">
+					  <Value>String</Value>
+				  </Property>
+				  <Property name="value">
+					  <Value>Final Fix</Value>
+				  </Property>
+			  </Property>
+		  </Property>
+	  </Property>
+	  <Property name="final_review">
+		  <Property name="type">
+			  <Value>com.topcoder.project.phases.PhaseType</Value>
+		  </Property>
+		  <Property name="params">
+			  <Property name="param1">
+				  <Property name="type">
+					  <Value>long</Value>
+				  </Property>
+				  <Property name="value">
+					  <Value>10</Value>
+				  </Property>
+			  </Property>
+			  <Property name="param2">
+				  <Property name="type">
+					  <Value>String</Value>
+				  </Property>
+				  <Property name="value">
+					  <Value>Final Review</Value>
+				  </Property>
+			  </Property>
+		  </Property>
+	  </Property>
+	  <Property name="approval">
+		  <Property name="type">
+			  <Value>com.topcoder.project.phases.PhaseType</Value>
+		  </Property>
+		  <Property name="params">
+			  <Property name="param1">
+				  <Property name="type">
+					  <Value>long</Value>
+				  </Property>
+				  <Property name="value">
+					  <Value>11</Value>
+				  </Property>
+			  </Property>
+			  <Property name="param2">
+				  <Property name="type">
+					  <Value>String</Value>
+				  </Property>
+				  <Property name="value">
+					  <Value>Approval</Value>
+				  </Property>
+			  </Property>
+		  </Property>
+	  </Property>
+	  <!-- The defination for handler -->
+	  <Property name="handler_registration_def">
+		  <Property name="type">
+			  <Value>com.cronos.onlinereview.phases.PRRegistrationPhaseHandler</Value>
+		  </Property>
+	  </Property>
+	  <Property name="handler_submission_def">
+		  <Property name="type">
+			  <Value>com.cronos.onlinereview.phases.PRSubmissionPhaseHandler</Value>
+		  </Property>
+	  </Property>
+	  <Property name="handler_screening_def">
+		  <Property name="type">
+			  <Value>com.cronos.onlinereview.phases.PRScreeningPhaseHandler</Value>
+		  </Property>
+	  </Property>
+	  <Property name="handler_review_def">
+		  <Property name="type">
+			  <Value>com.cronos.onlinereview.phases.PRReviewPhaseHandler</Value>
+		  </Property>
+	  </Property>
+	  <Property name="handler_appeals_def">
+		  <Property name="type">
+			  <Value>com.cronos.onlinereview.phases.AppealsPhaseHandler</Value>
+		  </Property>
+	  </Property>
+	  <Property name="handler_appeals_response_def">
+		  <Property name="type">
+			  <Value>com.cronos.onlinereview.phases.PRAppealResponsePhaseHandler</Value>
+		  </Property>
+	  </Property>
+	  <Property name="handler_aggregation_def">
+		  <Property name="type">
+			  <Value>com.cronos.onlinereview.phases.PRAggregationPhaseHandler</Value>
+		  </Property>
+	  </Property>
+	  <Property name="handler_aggregation_review_def">
+		  <Property name="type">
+			  <Value>com.cronos.onlinereview.phases.PRAggregationReviewPhaseHandler</Value>
+		  </Property>
+	  </Property>
+	  <Property name="handler_final_fix_def">
+		  <Property name="type">
+			  <Value>com.cronos.onlinereview.phases.PRFinalFixPhaseHandler</Value>
+		  </Property>
+	  </Property>
+	  <Property name="handler_final_review_def">
+		  <Property name="type">
+			  <Value>com.cronos.onlinereview.phases.PRFinalReviewPhaseHandler</Value>
+		  </Property>
+	  </Property>
+	  <Property name="handler_approval_def">
+		  <Property name="type">
+			  <Value>com.cronos.onlinereview.phases.ApprovalPhaseHandler</Value>
+		  </Property>
+	  </Property>
+	</Config>
+</CMConfig>
