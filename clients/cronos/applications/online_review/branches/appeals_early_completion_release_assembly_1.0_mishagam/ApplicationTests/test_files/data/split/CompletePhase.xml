@@ -1,0 +1,61 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!--
+    Updates the status (committed) of Approval Scorecard;
+    Adds comments from Approver for Approval scorecard;
+    Updates project status (closed);
+    Advances to Project Complete phase;
+-->
+<dataset>
+
+    <!-- *** project *** -->
+    <!-- Ajax Timed Survey 1.0 (Completed, Design)-->
+    <project project_id="1" project_status_id="7" project_category_id="1"
+             create_user="System" create_date="2006-07-29 02:45:11.0"
+             modify_user="System" modify_date="2006-07-29 02:45:11.0"/>
+
+    <!-- *** phase *** -->
+    <!-- Phases for Ajax Timed Survey 1.0 -->
+    <project_phase project_phase_id="11" project_id="1" phase_type_id="11" phase_status_id="3"
+           scheduled_start_time="2006-08-08 00:00:00.0" scheduled_end_time="2006-08-08 23:59:59.0"
+           duration="1440" create_user="System" create_date="2006-07-29 02:45:11.0" modify_user="System"
+           modify_date="2006-07-29 02:45:11.0"/><!-- Approval phase -->
+
+    <!-- *** review *** -->
+    <!-- Approval (generated on the fly), Ajax Timed Survey 1.0 -->
+    <review review_id="15" resource_id="17" submission_id="1" scorecard_id="3" committed="1" score="100.00"
+            create_user="System" create_date="2006-07-29 02:45:11.0"
+            modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Approval, Approver -->
+
+    <!-- *** review_comment *** -->
+    <!-- Overall Approval Comment, Approve Project -->
+    <review_comment review_comment_id="5" resource_id="17" review_id="15" comment_type_id="10"
+                    content="Approved by Approver" extra_info="Approved" sort="1"
+                    create_user="System" create_date="2006-07-29 02:45:11.0"
+                    modify_user="System" modify_date="2006-07-29 02:45:11.0"/>
+
+    <!-- Ajax Timed Survey, Winning Submitter Approval, Comments collected from Approver -->
+    <review_item_comment review_item_comment_id="397" resource_id="16" review_item_id="197" comment_type_id="10"
+                         content="Item 1 is OK" sort="1"
+                         create_user="System" create_date="2006-07-29 02:45:11.0"
+                         modify_user="System" modify_date="2006-07-29 02:45:11.0"/>
+    <review_item_comment review_item_comment_id="398" resource_id="16" review_item_id="198" comment_type_id="10"
+                         content="Item 1 is OK" sort="1"
+                         create_user="System" create_date="2006-07-29 02:45:11.0"
+                         modify_user="System" modify_date="2006-07-29 02:45:11.0"/>
+    <review_item_comment review_item_comment_id="399" resource_id="16" review_item_id="199" comment_type_id="10"
+                         content="Item 1 is OK" sort="1"
+                         create_user="System" create_date="2006-07-29 02:45:11.0"
+                         modify_user="System" modify_date="2006-07-29 02:45:11.0"/>
+    <review_item_comment review_item_comment_id="400" resource_id="16" review_item_id="200" comment_type_id="10"
+                         content="Item 1 is OK" sort="1"
+                         create_user="System" create_date="2006-07-29 02:45:11.0"
+                         modify_user="System" modify_date="2006-07-29 02:45:11.0"/>
+    <review_item_comment review_item_comment_id="401" resource_id="16" review_item_id="201" comment_type_id="10"
+                         content="Item 1 is OK" sort="1"
+                         create_user="System" create_date="2006-07-29 02:45:11.0"
+                         modify_user="System" modify_date="2006-07-29 02:45:11.0"/>
+    <review_item_comment review_item_comment_id="402" resource_id="16" review_item_id="202" comment_type_id="10"
+                         content="Item 1 is OK" sort="1"
+                         create_user="System" create_date="2006-07-29 02:45:11.0"
+                         modify_user="System" modify_date="2006-07-29 02:45:11.0"/>
+</dataset>
