@@ -99,6 +99,30 @@ public class ConfigHelper {
 
     /**
      * This member variable is a string constant that specifies the name of the property which
+     * contains the primary screener role id.
+     *
+     * @since 1.1
+     */
+    private static final String PRIMARY_SCREENER_ROLE_ID_NAME_PROP = "primary_screener_role_id";
+
+    /**
+     * This member variable is a string constant that specifies the name of the property which
+     * contains the aggregator role id.
+     *
+     * @since 1.1
+     */
+    private static final String AGGREGATOR_ROLE_ID_NAME_PROP = "aggregator_role_id";
+
+    /**
+     * This member variable is a string constant that specifies the name of the property which
+     * contains the final reviewer role id.
+     *
+     * @since 1.1
+     */
+    private static final String FINAL_REVIEWER_ROLE_ID_NAME_PROP = "final_reviewer_role_id";
+
+    /**
+     * This member variable is a string constant that specifies the name of the property which
      * contains the reviewer terms id.
      *
      * @since 1.1
@@ -492,6 +516,27 @@ public class ConfigHelper {
     private static int stressReviewerRoleId = 7;
 
     /**
+     * This member variable holds the primary screener role id.
+     *
+     * @since 1.1
+     */
+    private static int primaryScreenerRoleId = 2;
+
+    /**
+     * This member variable holds the aggregator role id.
+     *
+     * @since 1.1
+     */
+    private static int aggregatorRoleId = 8;
+
+    /**
+     * This member variable holds the final reviewer role id.
+     *
+     * @since 1.1
+     */
+    private static int finalReviewerRoleId = 9;
+
+    /**
      * This member variable holds the reviewer terms id.
      *
      * @since 1.1
@@ -745,6 +790,43 @@ public class ConfigHelper {
                 // ... store it for later use
                 try {
                     stressReviewerRoleId = Integer.parseInt(value);
+                } catch (NumberFormatException nfe) {
+                    // don't do anything, keep the default
+                }
+            }
+
+
+            // Retrieve the value of the property that contains the primary_screener_role_id
+            value = cfgMgr.getString(ONLINE_REVIEW_CFG_NS, PRIMARY_SCREENER_ROLE_ID_NAME_PROP);
+            // If the value has been retrieved successfully ...
+            if (value != null && value.trim().length() != 0) {
+                // ... store it for later use
+                try {
+                    primaryScreenerRoleId = Integer.parseInt(value);
+                } catch (NumberFormatException nfe) {
+                    // don't do anything, keep the default
+                }
+            }
+
+            // Retrieve the value of the property that contains the aggregator_role_id
+            value = cfgMgr.getString(ONLINE_REVIEW_CFG_NS, AGGREGATOR_ROLE_ID_NAME_PROP);
+            // If the value has been retrieved successfully ...
+            if (value != null && value.trim().length() != 0) {
+                // ... store it for later use
+                try {
+                    aggregatorRoleId = Integer.parseInt(value);
+                } catch (NumberFormatException nfe) {
+                    // don't do anything, keep the default
+                }
+            }
+
+            // Retrieve the value of the property that contains the final_reviewer_role_id
+            value = cfgMgr.getString(ONLINE_REVIEW_CFG_NS, FINAL_REVIEWER_ROLE_ID_NAME_PROP);
+            // If the value has been retrieved successfully ...
+            if (value != null && value.trim().length() != 0) {
+                // ... store it for later use
+                try {
+                    finalReviewerRoleId = Integer.parseInt(value);
                 } catch (NumberFormatException nfe) {
                     // don't do anything, keep the default
                 }
@@ -1117,6 +1199,36 @@ public class ConfigHelper {
      */
     public static long getReviewerTermsId() {
         return reviewerTermsId;
+    }
+
+    /**
+     * This static method returns the primary screener role id.
+     *
+     * @return the primary screener role id.
+     * @since 1.1
+     */
+    public static int getPrimaryScreenerRoleId() {
+        return primaryScreenerRoleId;
+    }
+
+    /**
+     * This static method returns the aggregator role id.
+     *
+     * @return the aggregator role id.
+     * @since 1.1
+     */
+    public static int getAggregatorRoleId() {
+        return aggregatorRoleId;
+    }
+
+    /**
+     * This static method returns the final reviewe role id.
+     *
+     * @return the final reviewer role id.
+     * @since 1.1
+     */
+    public static int getFinalReviewerRoleId() {
+        return finalReviewerRoleId;
     }
 
     /**

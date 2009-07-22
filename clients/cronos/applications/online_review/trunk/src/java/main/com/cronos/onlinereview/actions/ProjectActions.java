@@ -713,7 +713,7 @@ public class ProjectActions extends DispatchAction {
         // This variable determines whether status of the project has been changed by this save
         // operation. This is useful to determine whether Explanation is a required field or not
         boolean statusHasChanged = false;
-
+        boolean categoryChanged = false;
         if (newProject) {
             // Find "Active" project status
             ProjectStatus activeStatus = ActionsHelper.findProjectStatusByName(projectStatuses, "Active");
@@ -724,11 +724,17 @@ public class ProjectActions extends DispatchAction {
             project = new Project(category, activeStatus);
             statusHasChanged = true; // Status is always considered to be changed for new projects
         } else {
+        	long newCategoryId = ((Long) lazyForm.get("project_category")).longValue();
+            String oldStatusName = project.getProjectStatus().getName();
+            if (project.getProjectCategory().getId() != newCategoryId) {
+            	categoryChanged = true;
+            }
             // Sets Project category
             project.setProjectCategory(ActionsHelper.findProjectCategoryById(projectCategories,
-                    ((Long) lazyForm.get("project_category")).longValue()));
+                    newCategoryId));
+            
         }
-
+        
         /*
          * Populate the properties of the project
          */
@@ -844,11 +850,12 @@ public class ProjectActions extends DispatchAction {
         Phase[] projectPhases =
             saveProjectPhases(newProject, request, lazyForm, project, phasesJsMap, phasesToDelete, statusHasChanged);
 
-        if (newProject) {
+        
+        if (newProject || categoryChanged) {
             // generate new project role terms of use associations for the recently created project.
             try {
                 generateProjectRoleTermsOfUseAssociations(project.getId(),
-                        project.getProjectCategory().getId());
+                        project.getProjectCategory().getId(), categoryChanged);
             } catch (NamingException ne) {
                 throw new BaseException(ne);
             } catch (RemoteException re) {
@@ -910,8 +917,15 @@ public class ProjectActions extends DispatchAction {
      *
      * @since 1.1
      */
-    private void generateProjectRoleTermsOfUseAssociations(long projectId, long projectTypeId)
+    private void generateProjectRoleTermsOfUseAssociations(long projectId, long projectTypeId, boolean categoryChanged)
         throws NamingException, RemoteException, CreateException, EJBException {
+
+        ProjectRoleTermsOfUse projectRoleTermsOfUse = ProjectRoleTermsOfUseLocator.getService();
+
+        if (categoryChanged) {
+        	projectRoleTermsOfUse.removeAllProjectRoleTermsOfUse(new Long(projectId).intValue(), 
+        			DBMS.COMMON_OLTP_DATASOURCE_NAME);
+        }
 
         // get configurations to create the associations
         int submitterRoleId = ConfigHelper.getSubmitterRoleId();
@@ -919,7 +933,6 @@ public class ProjectActions extends DispatchAction {
         long reviewerTermsId = ConfigHelper.getReviewerTermsId();
 
         // create ProjectRoleTermsOfUse default associations
-        ProjectRoleTermsOfUse projectRoleTermsOfUse = ProjectRoleTermsOfUseLocator.getService();
         projectRoleTermsOfUse.createProjectRoleTermsOfUse(new Long(projectId).intValue(),
                 submitterRoleId, submitterTermsId, DBMS.COMMON_OLTP_DATASOURCE_NAME);
 
@@ -946,6 +959,18 @@ public class ProjectActions extends DispatchAction {
             projectRoleTermsOfUse.createProjectRoleTermsOfUse(new Long(projectId).intValue(),
                     reviewerRoleId, reviewerTermsId, DBMS.COMMON_OLTP_DATASOURCE_NAME);
         }
+
+        // also add terms for the rest of the reviewer roles
+        int primaryScreenerRoleId = ConfigHelper.getPrimaryScreenerRoleId();
+        int aggregatorRoleId = ConfigHelper.getAggregatorRoleId();
+        int finalReviewerRoleId = ConfigHelper.getFinalReviewerRoleId();
+
+        projectRoleTermsOfUse.createProjectRoleTermsOfUse(new Long(projectId).intValue(),
+        		primaryScreenerRoleId, reviewerTermsId, DBMS.COMMON_OLTP_DATASOURCE_NAME);
+        projectRoleTermsOfUse.createProjectRoleTermsOfUse(new Long(projectId).intValue(),
+        		aggregatorRoleId, reviewerTermsId, DBMS.COMMON_OLTP_DATASOURCE_NAME);
+        projectRoleTermsOfUse.createProjectRoleTermsOfUse(new Long(projectId).intValue(),
+        		finalReviewerRoleId, reviewerTermsId, DBMS.COMMON_OLTP_DATASOURCE_NAME);
     }
 
 
