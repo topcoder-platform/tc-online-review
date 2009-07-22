@@ -442,8 +442,13 @@ public class ProjectDetailsActions extends DispatchAction {
             }
         }
 
+        // check if the user already submitted
+        Resource submitter = ActionsHelper.getMyResourceForRole(request, "Submitter");
+        boolean alreadySubmitted = submitter != null && submitter.getSubmissions() != null && submitter.getSubmissions().length > 0;
+
         request.setAttribute("isAllowedToUnregister",
-                Boolean.valueOf(AuthorizationHelper.hasUserRole(request, Constants.SUBMITTER_ROLE_NAME)) && registrationOpen);
+                Boolean.valueOf(AuthorizationHelper.hasUserRole(request, Constants.SUBMITTER_ROLE_NAME)) && registrationOpen 
+                && !alreadySubmitted);
 
         // Check permissions
         request.setAttribute("isAllowedToEditProjects",
