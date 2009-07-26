@@ -32,9 +32,9 @@
                 <a class="breadcrumbLinks"
                     href="${descriptionLink}"><bean:message key="viewProjectDetails.FullDescription" /></a> |
                 <a class="breadcrumbLinks"
-                    href="${forumLink}"><bean:message key="viewProjectDetails.DevelopmentForum" /></a></td>
+                    href="${forumLink}"><bean:message key="viewProjectDetails.DevelopmentForum" /></a></td> |
                 <a class="breadcrumbLinks"
-                    href="${forumLink}"><bean:message key="viewProjectDetails.appealsCompleted" /></a></td>
+                    href="${forumLink}"><bean:message key="viewProjectDetails.DevelopmentForum" /></a></td>
         </tr>
     </table>
 
