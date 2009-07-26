@@ -7,7 +7,7 @@
 <%@ page import="com.topcoder.shared.util.ApplicationServer" %>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html:html xhtml="true">
-
+<!-this is comment-->
 <head>
     <title><bean:message key="global.title.level2"
         arg0='${orfn:getMessage(pageContext, "OnlineReviewApp.title")}'
