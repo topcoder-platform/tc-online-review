@@ -1858,6 +1858,10 @@ public class ProjectActions extends DispatchAction {
                 // FIXME: Format this date properly.
                 resource.setProperty("Registration Date", DATE_FORMAT.format(new Date()));
             }
+            // implementing appeals done link MG
+            if ("add".equals(resourceAction) && resourceRole.equals("Submitter")) {
+            	resource.setProperty("Appeals Completed Early", "No");
+            }
 
             // Save the resource in the persistence level
             resourceManager.updateResource(resource, Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
