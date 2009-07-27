@@ -718,7 +718,9 @@ public class ProjectDetailsActions extends DispatchAction {
                 } else if ("TEXT".equals(field.getName())) {
                     field.setValue(text);
                 } else if ("OR_LINK".equals(field.getName())) {
-                    field.setValue("http://software.topcoder.com/review/actions/ViewProjectDetails.do?method=viewProjectDetails&pid=" + project.getId());
+                    field.setValue("<![CDATA[" + 
+                    	"http://software.topcoder.com/review/actions/ViewProjectDetails.do?method=viewProjectDetails&pid=" + 
+                    	project.getId() + "]]>");
                 } else if ("LIST_OF_ROLES".equals(field.getName())) {
                 	String roleList = "";
                 	Resource[] myResources = (Resource[]) request.getAttribute("myResources");
