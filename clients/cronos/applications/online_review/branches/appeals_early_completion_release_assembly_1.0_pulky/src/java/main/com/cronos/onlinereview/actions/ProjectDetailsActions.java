@@ -722,10 +722,16 @@ public class ProjectDetailsActions extends DispatchAction {
                     	"http://software.topcoder.com/review/actions/ViewProjectDetails.do?method=viewProjectDetails&pid=" + 
                     	project.getId() + "]]>");
                 } else if ("LIST_OF_ROLES".equals(field.getName())) {
-                	String roleList = "";
-                	Resource[] myResources = (Resource[]) request.getAttribute("myResources");
+                    AndFilter fullFilter = new AndFilter(Arrays.asList(new Filter[] {
+                    		ResourceFilterBuilder.createProjectIdFilter(project.getId()),
+                    		ResourceFilterBuilder.createExtensionPropertyNameFilter("External Reference ID"),
+                    		ResourceFilterBuilder.createExtensionPropertyValueFilter(String.valueOf(senderId))
+                    	}));
                 	
-                	for (Resource resource : myResources) {
+                	String roleList = "";
+                    Resource[] resources = resMgr.searchResources(fullFilter);
+                	
+                	for (Resource resource : resources) {
                 		if (roleList.length() != 0) {
                 			roleList += ", "; 
                 		}
