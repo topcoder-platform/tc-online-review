@@ -1583,6 +1583,7 @@ public class ConfigHelper {
      * This method returns the subject of the email message that will be sent to project's manager.
      *
      * @return a string containing the subject.
+     * @deprecated
      */
     public static String getContactManagerEmailSubject() {
         return contactManagerEmailSubject;
