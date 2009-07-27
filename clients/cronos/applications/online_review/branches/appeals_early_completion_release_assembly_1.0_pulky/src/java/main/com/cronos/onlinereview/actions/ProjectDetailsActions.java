@@ -45,7 +45,6 @@ import com.topcoder.management.deliverable.search.UploadFilterBuilder;
 import com.topcoder.management.phase.PhaseManager;
 import com.topcoder.management.project.Project;
 import com.topcoder.management.project.ProjectManager;
-import com.topcoder.management.project.link.ProjectLink;
 import com.topcoder.management.project.link.ProjectLinkManager;
 import com.topcoder.management.resource.Notification;
 import com.topcoder.management.resource.Resource;
@@ -105,8 +104,16 @@ import com.topcoder.util.file.fieldconfig.TemplateFields;
  *   </ol>
  * </p>
  *
- * @author George1, real_vg, pulky
- * @version 1.1
+ * <p>
+ * Version 1.2 (Appeals Early Completion Release Assembly 1.0) Change notes:
+ *   <ol>
+ *     <li>Added flags to allow a submitter to see "appeals completed" / "resume appeals" links.</li>
+ *     <li>Added "appeals completed" / "resume appeals" actions.</li>
+ *   </ol>
+ * </p>
+ *
+ * @author George1, real_vg, pulky, TCSDEVELOPER
+ * @version 1.2
  */
 public class ProjectDetailsActions extends DispatchAction {
 
@@ -129,8 +136,16 @@ public class ProjectDetailsActions extends DispatchAction {
      *
      * <p>
      * Updated for Configurable Contest Terms Release Assembly v1.0
-     *      - added isAllowedToUnregister value to the request.
-     *      - if user is a submitter and registration is open, he can unregister.
+     *     - added isAllowedToUnregister value to the request.
+     *     - if user is a submitter and registration is open, he can unregister.
+     * </p>
+     *
+     * <p>
+     * Appeals Early Completion Release Assembly 1.0
+     *     - added isAllowedToCompleteAppeals, isAllowedToResumeAppeals values to the request.
+     *     - if user is a submitter and appeals phase is open, he can:
+     *         - mark appeals as complete if his "Appeals Completed Early" flag is "No" or doesn't exist. 
+     *         - resume appeals if his "Appeals Completed Early" flag is "Yes". 
      * </p>
      *
      * @return an action forward to the appropriate page. If no error has occured, the forward will
@@ -434,11 +449,15 @@ public class ProjectDetailsActions extends DispatchAction {
         request.setAttribute("isSubmitter",
                 Boolean.valueOf(AuthorizationHelper.hasUserRole(request, Constants.SUBMITTER_ROLE_NAME)));
 
-        // check if registration phase is open
+        // check if registration phase is open or appeals phase is open
         boolean registrationOpen = false;
+        boolean appealsOpen = false;
         for (int i = 0; i < activePhases.length && !registrationOpen; i++) {
             if (activePhases[i].getPhaseType().getName().equalsIgnoreCase(Constants.REGISTRATION_PHASE_NAME)) {
                 registrationOpen = true;
+            }
+            if (activePhases[i].getPhaseType().getName().equalsIgnoreCase(Constants.APPEALS_PHASE_NAME)) {
+                appealsOpen = true;
             }
         }
 
@@ -447,8 +466,27 @@ public class ProjectDetailsActions extends DispatchAction {
         boolean alreadySubmitted = submitter != null && submitter.getSubmissions() != null && submitter.getSubmissions().length > 0;
 
         request.setAttribute("isAllowedToUnregister",
-                Boolean.valueOf(AuthorizationHelper.hasUserRole(request, Constants.SUBMITTER_ROLE_NAME)) && registrationOpen 
-                && !alreadySubmitted);
+            Boolean.valueOf(AuthorizationHelper.hasUserRole(request, Constants.SUBMITTER_ROLE_NAME)) && registrationOpen 
+            && !alreadySubmitted);
+
+        // get appeals completed early property value
+        boolean appealsCompletedFlag = false;
+        if (submitter != null) { 
+        	String value = (String) submitter.getProperty(Constants.APPEALS_COMPLETED_EARLY_PROPERTY_KEY);
+        	if (value != null && value.equals(Constants.YES_VALUE)) {
+        		appealsCompletedFlag = true;
+        	}
+        }
+        
+        // check if the user can mark appeals as completed 
+        request.setAttribute("isAllowedToCompleteAppeals",
+            Boolean.valueOf(AuthorizationHelper.hasUserRole(request, Constants.SUBMITTER_ROLE_NAME)) && 
+            appealsOpen && !appealsCompletedFlag);
+
+        // check if the user can resume appeals 
+        request.setAttribute("isAllowedToResumeAppeals",
+            Boolean.valueOf(AuthorizationHelper.hasUserRole(request, Constants.SUBMITTER_ROLE_NAME)) && 
+            appealsOpen && appealsCompletedFlag);
 
         // Check permissions
         request.setAttribute("isAllowedToEditProjects",
@@ -1726,6 +1764,115 @@ public class ProjectDetailsActions extends DispatchAction {
                 found = true;
             }
         }
+
+        return ActionsHelper.cloneForwardAndAppendToPath(
+                mapping.findForward(Constants.SUCCESS_FORWARD_NAME), "&pid=" + verification.getProject().getId());
+    }
+
+    /**
+     * This method is an implementation of &quot;EarlyAppeals&quot; Struts Action defined for
+     * this assembly, which allows the logged in submitter from a project (denoted by <code>pid</code> 
+     * parameter) to mark his appeals completed or to resume appealing. This action gets executed twice &#x96; 
+     * once to display the page with the confirmation, and once to process the confiremed request to
+     * actually perform the action.
+     *
+     * @return an action forward to the appropriate page. If no error has occured and this action
+     *         was called the first time, the forward will be to /jsp/confirmEarlyAppeals.jsp
+     *         If this action was called during the post back (the second time), then this method
+     *         verifies if everything is correct, and proceeds with the unregisration.
+     *         After this it returns a forward to the View Project Details page.
+     * @param mapping
+     *            action mapping.
+     * @param form
+     *            action form.
+     * @param request
+     *            the http request.
+     * @param response
+     *            the http response.
+     * @throws BaseException
+     *             if any error occurs.
+     * @since 1.2
+     */
+    public ActionForward earlyAppeals(ActionMapping mapping, ActionForm form,
+            HttpServletRequest request, HttpServletResponse response)
+        throws BaseException {
+        LoggingHelper.logAction(request);
+
+        // Verify that certain requirements are met before processing with the Action
+        CorrectnessCheckResult verification = ActionsHelper.checkForCorrectProjectId(
+                mapping, getResources(request), request, Constants.VIEW_PROJECT_DETAIL_PERM_NAME, false);
+        // If any error has occured, return action forward contained in the result bean
+        if (!verification.isSuccessful()) {
+            return verification.getForward();
+        }
+
+        // Check the user has submitter role and appeals phase is open
+        boolean isSubmitter = Boolean.valueOf(AuthorizationHelper.hasUserRole(request,
+                Constants.SUBMITTER_ROLE_NAME));
+
+        if (!isSubmitter) {
+            return ActionsHelper.produceErrorReport(mapping, getResources(request),
+                    request, "Early Appeals", "Error.NoPermission", Boolean.TRUE);
+        }
+
+        PhaseManager phaseMgr = ActionsHelper.createPhaseManager(request, false);
+        com.topcoder.project.phases.Project phProj = phaseMgr.getPhases(verification.getProject().getId());
+        Phase[] phases = phProj.getAllPhases(new Comparators.ProjectPhaseComparer());
+
+        // Obtain an array of all active phases of the project
+        Phase[] activePhases = ActionsHelper.getActivePhases(phases);
+
+        // check if appeals phase is open
+        boolean appealsOpen = false;
+        for (int i = 0; i < activePhases.length && !appealsOpen; i++) {
+            if (activePhases[i].getPhaseType().getName().equalsIgnoreCase(Constants.APPEALS_PHASE_NAME)) {
+            	appealsOpen = true;
+            }
+        }
+
+        if (!appealsOpen) {
+            return ActionsHelper.produceErrorReport(mapping, getResources(request),
+                    request, "Early Appeals", "Error.AppealsClosed", Boolean.TRUE);
+        }
+
+        // At this point, redirect-after-login attribute should be removed (if it exists)
+        AuthorizationHelper.removeLoginRedirect(request);
+
+        Resource submitter = ActionsHelper.getMyResourceForRole(request, "Submitter");
+
+        // get appeals completed early property value
+        boolean appealsCompletedFlag = false;
+        if (submitter != null) { 
+        	String value = (String) submitter.getProperty(Constants.APPEALS_COMPLETED_EARLY_PROPERTY_KEY);
+        	if (value != null && value.equals(Constants.YES_VALUE)) {
+        		appealsCompletedFlag = true;
+        	}
+        }
+
+        // Determine if this request is a post back
+        boolean postBack = (request.getParameter("perform") != null);
+        if (postBack != true) {
+            // Retrieve some basic project info (such as icons' names) and place it into request
+            ActionsHelper.retrieveAndStoreBasicProjectInfo(request, verification.getProject(),
+                    getResources(request));
+
+            request.setAttribute("complete", !appealsCompletedFlag);
+            
+            return mapping.findForward(Constants.DISPLAY_PAGE_FORWARD_NAME);
+        }
+
+        // Get the name (id) of the user performing the operations
+        String operator = Long.toString(AuthorizationHelper.getLoggedInUserId(request));
+
+        // Obtain the instance of the Resource Manager
+        ResourceManager resourceManager = ActionsHelper.createResourceManager(request);
+         
+        // set appeasl completed early property
+        submitter.setProperty(Constants.APPEALS_COMPLETED_EARLY_PROPERTY_KEY, 
+        		appealsCompletedFlag ? Constants.NO_VALUE : Constants.YES_VALUE);
+
+        // update resource
+        resourceManager.updateResource(submitter, operator);
 
         return ActionsHelper.cloneForwardAndAppendToPath(
                 mapping.findForward(Constants.SUCCESS_FORWARD_NAME), "&pid=" + verification.getProject().getId());

@@ -3,6 +3,7 @@
  */
 package com.cronos.onlinereview.actions;
 
+import java.rmi.RemoteException;
 import java.text.DateFormat;
 import java.text.Format;
 import java.text.SimpleDateFormat;
@@ -18,6 +19,9 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
 
+import javax.ejb.CreateException;
+import javax.ejb.EJBException;
+import javax.naming.NamingException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -62,22 +66,15 @@ import com.topcoder.search.builder.SearchBuilderException;
 import com.topcoder.search.builder.filter.AndFilter;
 import com.topcoder.search.builder.filter.Filter;
 import com.topcoder.search.builder.filter.InFilter;
+import com.topcoder.shared.util.DBMS;
 import com.topcoder.util.errorhandling.BaseException;
-
 import com.topcoder.web.ejb.project.ProjectRoleTermsOfUse;
 import com.topcoder.web.ejb.project.ProjectRoleTermsOfUseLocator;
-import com.topcoder.web.ejb.user.UserTermsOfUse;
-import com.topcoder.web.ejb.user.UserTermsOfUseLocator;
 import com.topcoder.web.ejb.termsofuse.TermsOfUse;
 import com.topcoder.web.ejb.termsofuse.TermsOfUseEntity;
 import com.topcoder.web.ejb.termsofuse.TermsOfUseLocator;
-
-import com.topcoder.shared.util.DBMS;
-import com.topcoder.shared.util.ApplicationServer;
-import javax.naming.NamingException;
-import java.rmi.RemoteException;
-import javax.ejb.CreateException;
-import javax.ejb.EJBException;
+import com.topcoder.web.ejb.user.UserTermsOfUse;
+import com.topcoder.web.ejb.user.UserTermsOfUseLocator;
 
 /**
  * This class contains Struts Actions that are meant to deal with Projects. There are following
@@ -100,12 +97,19 @@ import javax.ejb.EJBException;
  *   </ol>
  * </p>
  *
- * @author George1, real_vg, pulky
- * @version 1.1
+ * <p>
+ * Version 1.2 (Appeals Early Completion Release Assembly 1.0) Change notes:
+ *   <ol>
+ *     <li>Added Appeals Completed Early flag manipulation when project is saved.</li>
+ *   </ol>
+ * </p>
+ *
+ * @author George1, real_vg, pulky, TCSDEVELOPER
+ * @version 1.2
  */
 public class ProjectActions extends DispatchAction {
 
-    /**
+	/**
      * This constant stores development project type id
      *
      * @since 1.1
@@ -1662,17 +1666,22 @@ public class ProjectActions extends DispatchAction {
      * Private helper method to save resources
      *
      * <p>
-     * Updated for Configurable Contest Terms Release Assembly v1.0:
-     *      Added Project Role User Terms Of Use verification when adding/updating project resources
+     *     Updated for Configurable Contest Terms Release Assembly v1.0:
+     *     Added Project Role User Terms Of Use verification when adding/updating project resources
      * </p>
      *
-     * @param newProject
-     * @param request
-     * @param lazyForm
-     * @param project
-     * @param projectPhases
-     * @param phasesJsMap
-     * @throws BaseException
+     * <p>
+     *     Updated for Appeals Early Completion Release Assembly 1.0:
+     *     Added Appeals Completed Early flag manipulation when project is saved
+     * </p>
+     *
+     * @param newProject true if a new project is being saved
+     * @param request the HttpServletRequest
+     * @param lazyForm the form
+     * @param project the project being saved
+     * @param projectPhases the project phases being saved
+     * @param phasesJsMap the phasesJsMap 
+     * @throws BaseException if any error occurs
      */
     private void saveResources(boolean newProject, HttpServletRequest request, LazyValidatorForm lazyForm,
             Project project, Phase[] projectPhases, Map<Object, Phase> phasesJsMap) throws BaseException {
@@ -1848,7 +1857,16 @@ public class ProjectActions extends DispatchAction {
                     resource.setProperty("Rating", user.getDevRating());
                     resource.setProperty("Reliability", user.getDevReliability());
                 }
+                
+                // add "Appeals Completed Early" flag.
+                resource.setProperty(Constants.APPEALS_COMPLETED_EARLY_PROPERTY_KEY, Constants.NO_VALUE);
             }
+            
+            // make sure "Appeals Completed Early" flag is not set if the role is not submitter.
+            if (resourceRoleChanged && !resourceRole.equals(Constants.SUBMITTER_ROLE_NAME)) {
+            	resource.setProperty(Constants.APPEALS_COMPLETED_EARLY_PROPERTY_KEY, null);
+            }
+            
             // If resource is a submitter, screener or reviewer, store registration date
             // Note, that it is updated here only if it was not set previously
             // TODO: Why not primary screener, other reviewers, etc?

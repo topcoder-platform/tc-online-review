@@ -1,11 +1,12 @@
 <%--
-  - Author: pulky
-  - Version: 1.1
+  - Author: pulky, TCSDEVELOPER
+  - Version: 1.2
   - Copyright (C) 2004 - 2009 TopCoder Inc., All Rights Reserved.
   -
   - Description: This page displays project information
   -
   - Version 1.1 (Configurable Contest Terms Release Assembly v1.0) changes: added Unregistration link.
+  - Version 1.2 (Appeals Early Completion Release Assembly 1.0) changes: added "appeals completed" / "resume appeals" links.
 --%>
 <%@ page language="java" isELIgnored="false" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
@@ -23,6 +24,12 @@
                         ${project.allProperties["Project Version"]}</font>
                 </c:if></td>
             <td width="50%" valign="top" align="right">
+                <c:if test="${isAllowedToCompleteAppeals}">
+                    <html:link page="/actions/EarlyAppeals.do?method=earlyAppeals&amp;pid=${project.id}"><bean:message key="viewProjectDetails.CompleteAppeals" /></html:link> |
+                </c:if>
+                <c:if test="${isAllowedToResumeAppeals}">
+                    <html:link page="/actions/EarlyAppeals.do?method=earlyAppeals&amp;pid=${project.id}"><bean:message key="viewProjectDetails.ResumeAppeals" /></html:link> |
+                </c:if>
                 <c:if test="${isAllowedToUnregister}">
                     <html:link page="/actions/Unregister.do?method=unregister&amp;pid=${project.id}"><bean:message key="viewProjectDetails.Unregister" /></html:link> |
                 </c:if>

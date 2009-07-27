@@ -9,9 +9,15 @@ package com.cronos.onlinereview.actions;
  * This class is thread safe as it contains only immutable data.
  * </p>
  *
- * @author George1
- * @author real_vg
- * @version 1.0
+ * <p>
+ * Version 1.1 (Appeals Early Completion Release Assembly 1.0) Change notes:
+ *   <ol>
+ *     <li>Added constants to support Appeals Completed Early flag manipulation.</li>
+ *   </ol>
+ * </p>
+ *
+ * @author George1, real_vg, TCSDEVELOPER
+ * @version 1.1
  */
 public class Constants {
 
@@ -768,6 +774,27 @@ public class Constants {
      */
     public static final String EDIT_FORWARD_NAME = "edit";
 
+
+	/**
+     * This constant stores "No" value for Appeals Completed Early flag property 
+     *
+     * @since 1.1
+     */
+	static final String NO_VALUE = "No";
+
+	/**
+     * This constant stores "Yes" value for Appeals Completed Early flag property 
+     *
+     * @since 1.1
+     */
+    static final String YES_VALUE = "Yes";
+
+	/**
+     * This constant stores Appeals Completed Early flag property key
+     *
+     * @since 1.1
+     */
+	static final String APPEALS_COMPLETED_EARLY_PROPERTY_KEY = "Appeals Completed Early";
 
     // Hidden constructor
 
