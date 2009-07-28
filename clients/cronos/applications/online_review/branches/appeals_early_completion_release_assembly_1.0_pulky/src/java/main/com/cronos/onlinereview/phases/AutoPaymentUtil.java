@@ -170,12 +170,12 @@ public class AutoPaymentUtil {
             } else if (reviewer.isScreener() && phaseId == SCREENING_PHASE) {
                 updateResourcePayment(reviewer.getResourceId(), fpc.getScreeningCost(), conn);
             } else if (reviewer.isAggregator() && phaseId == AGGREGATION_PHASE) {
-                updateResourcePayment(reviewer.getResourceId(), 
-                	alreadyPaidAggregator ? 0 : fpc.getAggregationCost(), conn);
+                updateResourcePayment(reviewer.getResourceId(),
+                    alreadyPaidAggregator ? 0 : fpc.getAggregationCost(), conn);
                 alreadyPaidAggregator = true;
             } else if (reviewer.isFinalReviewer() && phaseId == FINAL_REVIEW_PHASE) {
-                updateResourcePayment(reviewer.getResourceId(), 
-                	alreadyPaidFinalReviewer ? 0 : fpc.getFinalReviewCost(), conn);
+                updateResourcePayment(reviewer.getResourceId(),
+                    alreadyPaidFinalReviewer ? 0 : fpc.getFinalReviewCost(), conn);
                 alreadyPaidFinalReviewer = true;
             } else if (reviewer.isPrimaryReviewer() && phaseId == REVIEW_PHASE) {
                 updateResourcePayment(reviewer.getResourceId(), fpc.getCoreReviewCost(), conn);
@@ -382,7 +382,7 @@ public class AutoPaymentUtil {
      */
     static void populateSubmitterPayments(long projectId, Connection conn)
             throws SQLException {
-        
+
         // Retrieve the price
         double price = getPriceByProjectId(projectId, conn);
 

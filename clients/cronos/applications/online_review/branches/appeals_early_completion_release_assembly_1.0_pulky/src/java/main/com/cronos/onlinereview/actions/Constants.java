@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2007 TopCoder Inc.  All Rights Reserved.
+ * Copyright (C) 2004 - 2009 TopCoder Inc., All Rights Reserved.
  */
 package com.cronos.onlinereview.actions;
 
@@ -775,26 +775,34 @@ public class Constants {
     public static final String EDIT_FORWARD_NAME = "edit";
 
 
-	/**
-     * This constant stores "No" value for Appeals Completed Early flag property 
+    /**
+     * This constant stores "No" value for Appeals Completed Early flag property
      *
      * @since 1.1
      */
-	static final String NO_VALUE = "No";
+    static final String NO_VALUE = "No";
 
-	/**
-     * This constant stores "Yes" value for Appeals Completed Early flag property 
+    /**
+     * This constant stores "Yes" value for Appeals Completed Early flag property
      *
      * @since 1.1
      */
     static final String YES_VALUE = "Yes";
 
-	/**
+    /**
      * This constant stores Appeals Completed Early flag property key
      *
      * @since 1.1
      */
-	static final String APPEALS_COMPLETED_EARLY_PROPERTY_KEY = "Appeals Completed Early";
+    static final String APPEALS_COMPLETED_EARLY_PROPERTY_KEY = "Appeals Completed Early";
+
+    /**
+     * This constant stores Online Review's project details page url
+     *
+     * @since 1.1
+     */
+    static final String PROJECT_DETAILS_URL = 
+        "http://software.topcoder.com/review/actions/ViewProjectDetails.do?method=viewProjectDetails&pid=";
 
     // Hidden constructor
 

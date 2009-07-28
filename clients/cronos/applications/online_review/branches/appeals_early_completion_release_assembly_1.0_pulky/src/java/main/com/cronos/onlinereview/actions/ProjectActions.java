@@ -109,7 +109,7 @@ import com.topcoder.web.ejb.user.UserTermsOfUseLocator;
  */
 public class ProjectActions extends DispatchAction {
 
-	/**
+    /**
      * This constant stores development project type id
      *
      * @since 1.1
@@ -728,17 +728,17 @@ public class ProjectActions extends DispatchAction {
             project = new Project(category, activeStatus);
             statusHasChanged = true; // Status is always considered to be changed for new projects
         } else {
-        	long newCategoryId = ((Long) lazyForm.get("project_category")).longValue();
+            long newCategoryId = ((Long) lazyForm.get("project_category")).longValue();
             String oldStatusName = project.getProjectStatus().getName();
             if (project.getProjectCategory().getId() != newCategoryId) {
-            	categoryChanged = true;
+                categoryChanged = true;
             }
             // Sets Project category
             project.setProjectCategory(ActionsHelper.findProjectCategoryById(projectCategories,
                     newCategoryId));
-            
+
         }
-        
+
         /*
          * Populate the properties of the project
          */
@@ -854,7 +854,7 @@ public class ProjectActions extends DispatchAction {
         Phase[] projectPhases =
             saveProjectPhases(newProject, request, lazyForm, project, phasesJsMap, phasesToDelete, statusHasChanged);
 
-        
+
         if (newProject || categoryChanged) {
             // generate new project role terms of use associations for the recently created project.
             try {
@@ -927,8 +927,8 @@ public class ProjectActions extends DispatchAction {
         ProjectRoleTermsOfUse projectRoleTermsOfUse = ProjectRoleTermsOfUseLocator.getService();
 
         if (categoryChanged) {
-        	projectRoleTermsOfUse.removeAllProjectRoleTermsOfUse(new Long(projectId).intValue(), 
-        			DBMS.COMMON_OLTP_DATASOURCE_NAME);
+            projectRoleTermsOfUse.removeAllProjectRoleTermsOfUse(new Long(projectId).intValue(),
+                    DBMS.COMMON_OLTP_DATASOURCE_NAME);
         }
 
         // get configurations to create the associations
@@ -970,11 +970,11 @@ public class ProjectActions extends DispatchAction {
         int finalReviewerRoleId = ConfigHelper.getFinalReviewerRoleId();
 
         projectRoleTermsOfUse.createProjectRoleTermsOfUse(new Long(projectId).intValue(),
-        		primaryScreenerRoleId, reviewerTermsId, DBMS.COMMON_OLTP_DATASOURCE_NAME);
+                primaryScreenerRoleId, reviewerTermsId, DBMS.COMMON_OLTP_DATASOURCE_NAME);
         projectRoleTermsOfUse.createProjectRoleTermsOfUse(new Long(projectId).intValue(),
-        		aggregatorRoleId, reviewerTermsId, DBMS.COMMON_OLTP_DATASOURCE_NAME);
+                aggregatorRoleId, reviewerTermsId, DBMS.COMMON_OLTP_DATASOURCE_NAME);
         projectRoleTermsOfUse.createProjectRoleTermsOfUse(new Long(projectId).intValue(),
-        		finalReviewerRoleId, reviewerTermsId, DBMS.COMMON_OLTP_DATASOURCE_NAME);
+                finalReviewerRoleId, reviewerTermsId, DBMS.COMMON_OLTP_DATASOURCE_NAME);
     }
 
 
@@ -1680,7 +1680,7 @@ public class ProjectActions extends DispatchAction {
      * @param lazyForm the form
      * @param project the project being saved
      * @param projectPhases the project phases being saved
-     * @param phasesJsMap the phasesJsMap 
+     * @param phasesJsMap the phasesJsMap
      * @throws BaseException if any error occurs
      */
     private void saveResources(boolean newProject, HttpServletRequest request, LazyValidatorForm lazyForm,
@@ -1814,12 +1814,12 @@ public class ProjectActions extends DispatchAction {
             boolean resourceRoleChanged = false;
             ResourceRole role = ActionsHelper.findResourceRoleById(
                     resourceRoles, ((Long) lazyForm.get("resources_role", i)).longValue());
-            if (role != null && resource.getResourceRole() != null && 
-            	role.getId() != resource.getResourceRole().getId()) {
+            if (role != null && resource.getResourceRole() != null &&
+                role.getId() != resource.getResourceRole().getId()) {
                 // delete project_result if old role is submitter
                 // populate project_result if new role is submitter and project is component
-                ActionsHelper.changeResourceRole(project, user.getId(), resource.getResourceRole().getId(), 
-                	role.getId());
+                ActionsHelper.changeResourceRole(project, user.getId(), resource.getResourceRole().getId(),
+                    role.getId());
 
                 resource.setResourceRole(role);
                 resourceRoleChanged = true;
@@ -1858,16 +1858,16 @@ public class ProjectActions extends DispatchAction {
                     resource.setProperty("Rating", user.getDevRating());
                     resource.setProperty("Reliability", user.getDevReliability());
                 }
-            
+
                 // add "Appeals Completed Early" flag.
                 resource.setProperty(Constants.APPEALS_COMPLETED_EARLY_PROPERTY_KEY, Constants.NO_VALUE);
             }
-            
+
             // make sure "Appeals Completed Early" flag is not set if the role is not submitter.
             if (resourceRoleChanged && !resourceRole.equals(Constants.SUBMITTER_ROLE_NAME)) {
-            	resource.setProperty(Constants.APPEALS_COMPLETED_EARLY_PROPERTY_KEY, null);
+                resource.setProperty(Constants.APPEALS_COMPLETED_EARLY_PROPERTY_KEY, null);
             }
-            
+
             // If resource is a submitter, screener or reviewer, store registration date
             // Note, that it is updated here only if it was not set previously
             // TODO: Why not primary screener, other reviewers, etc?

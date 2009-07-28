@@ -144,8 +144,8 @@ public class ProjectDetailsActions extends DispatchAction {
      * Appeals Early Completion Release Assembly 1.0
      *     - added isAllowedToCompleteAppeals, isAllowedToResumeAppeals values to the request.
      *     - if user is a submitter and appeals phase is open, he can:
-     *         - mark appeals as complete if his "Appeals Completed Early" flag is "No" or doesn't exist. 
-     *         - resume appeals if his "Appeals Completed Early" flag is "Yes". 
+     *         - mark appeals as complete if his "Appeals Completed Early" flag is "No" or doesn't exist.
+     *         - resume appeals if his "Appeals Completed Early" flag is "Yes".
      * </p>
      *
      * @return an action forward to the appropriate page. If no error has occured, the forward will
@@ -466,26 +466,26 @@ public class ProjectDetailsActions extends DispatchAction {
         boolean alreadySubmitted = submitter != null && submitter.getSubmissions() != null && submitter.getSubmissions().length > 0;
 
         request.setAttribute("isAllowedToUnregister",
-            Boolean.valueOf(AuthorizationHelper.hasUserRole(request, Constants.SUBMITTER_ROLE_NAME)) && registrationOpen 
+            Boolean.valueOf(AuthorizationHelper.hasUserRole(request, Constants.SUBMITTER_ROLE_NAME)) && registrationOpen
             && !alreadySubmitted);
 
         // get appeals completed early property value
         boolean appealsCompletedFlag = false;
-        if (submitter != null) { 
-        	String value = (String) submitter.getProperty(Constants.APPEALS_COMPLETED_EARLY_PROPERTY_KEY);
-        	if (value != null && value.equals(Constants.YES_VALUE)) {
-        		appealsCompletedFlag = true;
-        	}
+        if (submitter != null) {
+            String value = (String) submitter.getProperty(Constants.APPEALS_COMPLETED_EARLY_PROPERTY_KEY);
+            if (value != null && value.equals(Constants.YES_VALUE)) {
+                appealsCompletedFlag = true;
+            }
         }
-        
-        // check if the user can mark appeals as completed 
+
+        // check if the user can mark appeals as completed
         request.setAttribute("isAllowedToCompleteAppeals",
-            Boolean.valueOf(AuthorizationHelper.hasUserRole(request, Constants.SUBMITTER_ROLE_NAME)) && 
+            Boolean.valueOf(AuthorizationHelper.hasUserRole(request, Constants.SUBMITTER_ROLE_NAME)) &&
             appealsOpen && !appealsCompletedFlag);
 
-        // check if the user can resume appeals 
+        // check if the user can resume appeals
         request.setAttribute("isAllowedToResumeAppeals",
-            Boolean.valueOf(AuthorizationHelper.hasUserRole(request, Constants.SUBMITTER_ROLE_NAME)) && 
+            Boolean.valueOf(AuthorizationHelper.hasUserRole(request, Constants.SUBMITTER_ROLE_NAME)) &&
             appealsOpen && appealsCompletedFlag);
 
         // Check permissions
@@ -718,19 +718,17 @@ public class ProjectDetailsActions extends DispatchAction {
                 } else if ("TEXT".equals(field.getName())) {
                     field.setValue(text);
                 } else if ("OR_LINK".equals(field.getName())) {
-                    field.setValue("<![CDATA[" + 
-                    	"http://software.topcoder.com/review/actions/ViewProjectDetails.do?method=viewProjectDetails&pid=" + 
-                    	project.getId() + "]]>");
+                    field.setValue("<![CDATA[" + Constants.PROJECT_DETAILS_URL + project.getId() + "]]>");
                 } else if ("LIST_OF_ROLES".equals(field.getName())) {
-                	String roleList = "";
-                	Resource[] myResources = (Resource[]) request.getAttribute("myResources");
+                    String roleList = "";
+                    Resource[] myResources = (Resource[]) request.getAttribute("myResources");
 
-                	for (Resource resource : myResources) {
-                		if (roleList.length() != 0) {
-                			roleList += ", "; 
-                		}
-                		roleList += resource.getResourceRole().getName();
-                	}
+                    for (Resource resource : myResources) {
+                        if (roleList.length() != 0) {
+                            roleList += ", ";
+                        }
+                        roleList += resource.getResourceRole().getName();
+                    }
                     field.setValue(roleList);
                 }
             }
@@ -1786,8 +1784,8 @@ public class ProjectDetailsActions extends DispatchAction {
 
     /**
      * This method is an implementation of &quot;EarlyAppeals&quot; Struts Action defined for
-     * this assembly, which allows the logged in submitter from a project (denoted by <code>pid</code> 
-     * parameter) to mark his appeals completed or to resume appealing. This action gets executed twice &#x96; 
+     * this assembly, which allows the logged in submitter from a project (denoted by <code>pid</code>
+     * parameter) to mark his appeals completed or to resume appealing. This action gets executed twice &#x96;
      * once to display the page with the confirmation, and once to process the confiremed request to
      * actually perform the action.
      *
@@ -1841,7 +1839,7 @@ public class ProjectDetailsActions extends DispatchAction {
         boolean appealsOpen = false;
         for (int i = 0; i < activePhases.length && !appealsOpen; i++) {
             if (activePhases[i].getPhaseType().getName().equalsIgnoreCase(Constants.APPEALS_PHASE_NAME)) {
-            	appealsOpen = true;
+                appealsOpen = true;
             }
         }
 
@@ -1857,11 +1855,11 @@ public class ProjectDetailsActions extends DispatchAction {
 
         // get appeals completed early property value
         boolean appealsCompletedFlag = false;
-        if (submitter != null) { 
-        	String value = (String) submitter.getProperty(Constants.APPEALS_COMPLETED_EARLY_PROPERTY_KEY);
-        	if (value != null && value.equals(Constants.YES_VALUE)) {
-        		appealsCompletedFlag = true;
-        	}
+        if (submitter != null) {
+            String value = (String) submitter.getProperty(Constants.APPEALS_COMPLETED_EARLY_PROPERTY_KEY);
+            if (value != null && value.equals(Constants.YES_VALUE)) {
+                appealsCompletedFlag = true;
+            }
         }
 
         // Determine if this request is a post back
@@ -1872,7 +1870,7 @@ public class ProjectDetailsActions extends DispatchAction {
                     getResources(request));
 
             request.setAttribute("complete", !appealsCompletedFlag);
-            
+
             return mapping.findForward(Constants.DISPLAY_PAGE_FORWARD_NAME);
         }
 
@@ -1881,10 +1879,10 @@ public class ProjectDetailsActions extends DispatchAction {
 
         // Obtain the instance of the Resource Manager
         ResourceManager resourceManager = ActionsHelper.createResourceManager(request);
-         
+
         // set appeasl completed early property
-        submitter.setProperty(Constants.APPEALS_COMPLETED_EARLY_PROPERTY_KEY, 
-        		appealsCompletedFlag ? Constants.NO_VALUE : Constants.YES_VALUE);
+        submitter.setProperty(Constants.APPEALS_COMPLETED_EARLY_PROPERTY_KEY,
+                appealsCompletedFlag ? Constants.NO_VALUE : Constants.YES_VALUE);
 
         // update resource
         resourceManager.updateResource(submitter, operator);

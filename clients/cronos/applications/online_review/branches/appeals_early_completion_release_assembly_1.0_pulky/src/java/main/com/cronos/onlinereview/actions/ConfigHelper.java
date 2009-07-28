@@ -30,9 +30,16 @@ import com.topcoder.util.config.UnknownNamespaceException;
  *     <li>Added configurations for Project Role Terms of Use associations.</li>
  *   </ol>
  * </p>
+ * <p>
  *
- * @author George1, real_vg, pulky
- * @version 1.1
+ * Version 1.2 (Appeals Early Completion Release Assembly 1.0) Change notes:
+ *   <ol>
+ *     <li>getContactManagerEmailSubject() was deprecated.</li>
+ *   </ol>
+ * </p>
+ *
+ * @author George1, real_vg, pulky, TCSDEVELOPER
+ * @version 1.2
  */
 public class ConfigHelper {
 
@@ -1583,7 +1590,7 @@ public class ConfigHelper {
      * This method returns the subject of the email message that will be sent to project's manager.
      *
      * @return a string containing the subject.
-     * @deprecated
+     * @deprecated since 1.2
      */
     public static String getContactManagerEmailSubject() {
         return contactManagerEmailSubject;
