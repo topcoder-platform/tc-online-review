@@ -173,12 +173,10 @@ public class AutoPaymentUtil {
                 updateResourcePayment(reviewer.getResourceId(), 
                 	alreadyPaidAggregator ? 0 : fpc.getAggregationCost(), conn);
                 alreadyPaidAggregator = true;
-                System.out.println("========================================================================>>>>>> payAggregator");
             } else if (reviewer.isFinalReviewer() && phaseId == FINAL_REVIEW_PHASE) {
                 updateResourcePayment(reviewer.getResourceId(), 
                 	alreadyPaidFinalReviewer ? 0 : fpc.getFinalReviewCost(), conn);
                 alreadyPaidFinalReviewer = true;
-                System.out.println("========================================================================>>>>>> payFinalReviewer");
             } else if (reviewer.isPrimaryReviewer() && phaseId == REVIEW_PHASE) {
                 updateResourcePayment(reviewer.getResourceId(), fpc.getCoreReviewCost(), conn);
             } else if (reviewer.isReviewer() && phaseId == REVIEW_PHASE) {
