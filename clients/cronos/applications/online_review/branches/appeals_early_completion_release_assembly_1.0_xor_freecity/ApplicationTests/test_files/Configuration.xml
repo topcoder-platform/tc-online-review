@@ -1,0 +1,11 @@
+<?xml version="1.0" ?>
+<CMConfig>
+    <Config name="com.cronos.onlinereview.project.Configuration">
+        <Property name="preloads">
+            <Value>DBConnectionFactoryImpl.xml</Value>
+<!--
+            <Value>ScorecardManager.xml</Value>
+-->
+        </Property>
+    </Config>
+</CMConfig>

@@ -1,0 +1,5 @@
+Jave Design - With class diagram only.
+
+ Fatal Errors: 
+ TCS-008: Your submission does not contain one or more use cases.  
+ TCS-010: Your submission does not contain one or more sequence diagrams.  
