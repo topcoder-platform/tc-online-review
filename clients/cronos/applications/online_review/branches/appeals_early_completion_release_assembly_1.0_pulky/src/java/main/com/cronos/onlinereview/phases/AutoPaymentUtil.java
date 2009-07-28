@@ -169,14 +169,16 @@ public class AutoPaymentUtil {
                 updateResourcePayment(reviewer.getResourceId(), fpc.getScreeningCost(), conn);
             } else if (reviewer.isScreener() && phaseId == SCREENING_PHASE) {
                 updateResourcePayment(reviewer.getResourceId(), fpc.getScreeningCost(), conn);
-            } else if (reviewer.isAggregator() && phaseId == AGGREGATION_PHASE && !alreadyPaidAggregator) {
-                updateResourcePayment(reviewer.getResourceId(), fpc.getAggregationCost(), conn);
+            } else if (reviewer.isAggregator() && phaseId == AGGREGATION_PHASE) {
+                updateResourcePayment(reviewer.getResourceId(), 
+                	alreadyPaidAggregator ? 0 : fpc.getAggregationCost(), conn);
                 alreadyPaidAggregator = true;
-                System.out.println("payAggregator");
-            } else if (reviewer.isFinalReviewer() && phaseId == FINAL_REVIEW_PHASE && !alreadyPaidFinalReviewer) {
-                updateResourcePayment(reviewer.getResourceId(), fpc.getFinalReviewCost(), conn);
+                System.out.println("========================================================================>>>>>> payAggregator");
+            } else if (reviewer.isFinalReviewer() && phaseId == FINAL_REVIEW_PHASE) {
+                updateResourcePayment(reviewer.getResourceId(), 
+                	alreadyPaidFinalReviewer ? 0 : fpc.getFinalReviewCost(), conn);
                 alreadyPaidFinalReviewer = true;
-                System.out.println("payFinalReviewer");
+                System.out.println("========================================================================>>>>>> payFinalReviewer");
             } else if (reviewer.isPrimaryReviewer() && phaseId == REVIEW_PHASE) {
                 updateResourcePayment(reviewer.getResourceId(), fpc.getCoreReviewCost(), conn);
             } else if (reviewer.isReviewer() && phaseId == REVIEW_PHASE) {
