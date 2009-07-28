@@ -1814,18 +1814,10 @@ public class ProjectActions extends DispatchAction {
             boolean resourceRoleChanged = false;
             ResourceRole role = ActionsHelper.findResourceRoleById(
                     resourceRoles, ((Long) lazyForm.get("resources_role", i)).longValue());
-            if (role != null && role != resource.getResourceRole()) {
+            if (role != null && resource.getResourceRole() != null && role.getId() != resource.getResourceRole().getId()) {
                 // delete project_result if old role is submitter
                 // populate project_result if new role is submitter and project is component
-                if (resource.getResourceRole() != null && resource.getResourceRole().getId() != role.getId()) {
-                    ActionsHelper.changeResourceRole(project, user.getId(), resource.getResourceRole().getId(), role.getId());
-                }
-
-                System.out.println("role.getName(): " + role.getName());
-                System.out.println("resource.getResourceRole(): " + resource.getResourceRole());
-                System.out.println("role != resource.getResourceRole(): " + (role != resource.getResourceRole()));
-                System.out.println("!role.equals(resource.getResourceRole()): " + !role.equals(resource.getResourceRole()));
-                System.out.println("!role.getName().equals(resource.getResourceRole().getName()): " + !role.getName().equals(resource.getResourceRole().getName()));
+                ActionsHelper.changeResourceRole(project, user.getId(), resource.getResourceRole().getId(), role.getId());
 
                 resource.setResourceRole(role);
                 resourceRoleChanged = true;
@@ -1865,10 +1857,6 @@ public class ProjectActions extends DispatchAction {
                     resource.setProperty("Reliability", user.getDevReliability());
                 }
             
-                System.out.println("resourceRoleChanged: " + resourceRoleChanged);
-                System.out.println("resourceAction.equals(add): " + resourceAction.equals("add"));
-                System.out.println("resourceRole.equals(Submitter): " + resourceRole.equals("Submitter"));
-                
                 // add "Appeals Completed Early" flag.
                 resource.setProperty(Constants.APPEALS_COMPLETED_EARLY_PROPERTY_KEY, Constants.NO_VALUE);
             }
