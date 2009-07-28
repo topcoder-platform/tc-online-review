@@ -172,9 +172,11 @@ public class AutoPaymentUtil {
             } else if (reviewer.isAggregator() && phaseId == AGGREGATION_PHASE && !alreadyPaidAggregator) {
                 updateResourcePayment(reviewer.getResourceId(), fpc.getAggregationCost(), conn);
                 alreadyPaidAggregator = true;
+                System.out.println("payAggregator");
             } else if (reviewer.isFinalReviewer() && phaseId == FINAL_REVIEW_PHASE && !alreadyPaidFinalReviewer) {
                 updateResourcePayment(reviewer.getResourceId(), fpc.getFinalReviewCost(), conn);
                 alreadyPaidFinalReviewer = true;
+                System.out.println("payFinalReviewer");
             } else if (reviewer.isPrimaryReviewer() && phaseId == REVIEW_PHASE) {
                 updateResourcePayment(reviewer.getResourceId(), fpc.getCoreReviewCost(), conn);
             } else if (reviewer.isReviewer() && phaseId == REVIEW_PHASE) {
