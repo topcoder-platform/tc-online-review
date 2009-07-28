@@ -1857,6 +1857,10 @@ public class ProjectActions extends DispatchAction {
                     resource.setProperty("Rating", user.getDevRating());
                     resource.setProperty("Reliability", user.getDevReliability());
                 }
+            
+                System.out.println("resourceRoleChanged: " + resourceRoleChanged);
+                System.out.println("resourceAction.equals(add): " + resourceAction.equals("add"));
+                System.out.println("resourceRole.equals(Submitter): " + resourceRole.equals("Submitter"));
                 
                 // add "Appeals Completed Early" flag.
                 resource.setProperty(Constants.APPEALS_COMPLETED_EARLY_PROPERTY_KEY, Constants.NO_VALUE);

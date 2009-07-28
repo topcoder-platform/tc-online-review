@@ -725,14 +725,11 @@ public class ProjectDetailsActions extends DispatchAction {
                 	String roleList = "";
                 	Resource[] myResources = (Resource[]) request.getAttribute("myResources");
 
-                	System.out.println("myResources.length: " + myResources.length);
-                	
                 	for (Resource resource : myResources) {
                 		if (roleList.length() != 0) {
                 			roleList += ", "; 
                 		}
                 		roleList += resource.getResourceRole().getName();
-                        System.out.println("resource.getResourceRole().getName(): " + resource.getResourceRole().getName());
                 	}
                     field.setValue(roleList);
                 }
