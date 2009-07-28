@@ -722,20 +722,17 @@ public class ProjectDetailsActions extends DispatchAction {
                     	"http://software.topcoder.com/review/actions/ViewProjectDetails.do?method=viewProjectDetails&pid=" + 
                     	project.getId() + "]]>");
                 } else if ("LIST_OF_ROLES".equals(field.getName())) {
-                    AndFilter fullFilter = new AndFilter(Arrays.asList(new Filter[] {
-                    		ResourceFilterBuilder.createProjectIdFilter(project.getId()),
-                    		ResourceFilterBuilder.createExtensionPropertyNameFilter("External Reference ID"),
-                    		ResourceFilterBuilder.createExtensionPropertyValueFilter(String.valueOf(senderId))
-                    	}));
-                	
                 	String roleList = "";
-                    Resource[] resources = resMgr.searchResources(fullFilter);
+                	Resource[] myResources = (Resource[]) request.getAttribute("myResources");
+
+                	System.out.println("myResources.length: " + myResources.length);
                 	
-                	for (Resource resource : resources) {
+                	for (Resource resource : myResources) {
                 		if (roleList.length() != 0) {
                 			roleList += ", "; 
                 		}
-                		resource.getResourceRole().getName();
+                		roleList += resource.getResourceRole().getName();
+                        System.out.println("resource.getResourceRole().getName(): " + resource.getResourceRole().getName());
                 	}
                     field.setValue(roleList);
                 }
