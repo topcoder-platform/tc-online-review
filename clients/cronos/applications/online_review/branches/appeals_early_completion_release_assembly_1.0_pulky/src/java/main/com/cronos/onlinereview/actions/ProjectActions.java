@@ -1820,6 +1820,13 @@ public class ProjectActions extends DispatchAction {
                 if (resource.getResourceRole() != null && resource.getResourceRole().getId() != role.getId()) {
                     ActionsHelper.changeResourceRole(project, user.getId(), resource.getResourceRole().getId(), role.getId());
                 }
+
+                System.out.println("role.getName(): " + role.getName());
+                System.out.println("resource.getResourceRole(): " + resource.getResourceRole());
+                System.out.println("role != resource.getResourceRole(): " + (role != resource.getResourceRole()));
+                System.out.println("!role.equals(resource.getResourceRole()): " + !role.equals(resource.getResourceRole()));
+                System.out.println("!role.getName().equals(resource.getResourceRole().getName()): " + !role.getName().equals(resource.getResourceRole().getName()));
+
                 resource.setResourceRole(role);
                 resourceRoleChanged = true;
             }
