@@ -1821,9 +1821,9 @@ public class ProjectActions extends DispatchAction {
                 ActionsHelper.changeResourceRole(project, user.getId(), resource.getResourceRole().getId(),
                     role.getId());
 
-                resource.setResourceRole(role);
                 resourceRoleChanged = true;
             }
+            resource.setResourceRole(role);
 
             resource.setProperty("Handle", resourceNames[i]);
             if (Boolean.TRUE.equals(lazyForm.get("resources_payment", i))) {
