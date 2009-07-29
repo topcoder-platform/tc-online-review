@@ -3960,9 +3960,6 @@
             <Property name="EmailTemplateName">
                 <Value>&contactManagersTemplate;</Value>
             </Property>
-            <Property name="EmailSubject">
-                <Value>Contact Manager Message</Value>
-            </Property>
             <Property name="EmailFromAddress">
                 <Value>service@topcodersoftware.com</Value>
             </Property>

@@ -34,7 +34,7 @@ import com.topcoder.util.config.UnknownNamespaceException;
  *
  * Version 1.2 (Appeals Early Completion Release Assembly 1.0) Change notes:
  *   <ol>
- *     <li>getContactManagerEmailSubject() was deprecated.</li>
+ *     <li>Contact Manager Email Subject configuration was removed.</li>
  *   </ol>
  * </p>
  *
@@ -465,16 +465,6 @@ public class ConfigHelper {
     private static final String EMAIL_TEMPLATE_NAME_PROP = "EmailTemplateName";
 
     /**
-     * This member variable is a string constant that specifies the name of the property which
-     * specifies the subject that will be used in outgoing email.
-     *
-     * @see #CONTACT_MANAGER_EMAIL_PROP
-     * @see #EMAIL_TEMPLATE_SOURCE_TYPE_PROP
-     * @see #EMAIL_TEMPLATE_NAME_PROP
-     */
-    private static final String EMAIL_SUBJECT_PROP = "EmailSubject";
-
-    /**
      * This member variable holds the name of the session attribute which ID of the currently logged
      * in user will be stored in.
      */
@@ -710,12 +700,6 @@ public class ConfigHelper {
      * to project's manager.
      */
     private static String contactManagerEmailTemplate = "";
-
-    /**
-     * This member variable holds the subject of email message that will be used when sending
-     * messages to project's manager.
-     */
-    private static String contactManagerEmailSubject = "";
 
     static {
         // Obtaining the instance of Configuration Manager
@@ -1119,7 +1103,6 @@ public class ConfigHelper {
             if (propContactManagerEmail != null) {
                 contactManagerEmailSrcType = propContactManagerEmail.getValue(EMAIL_TEMPLATE_SOURCE_TYPE_PROP);
                 contactManagerEmailTemplate = propContactManagerEmail.getValue(EMAIL_TEMPLATE_NAME_PROP);
-                contactManagerEmailSubject = propContactManagerEmail.getValue(EMAIL_SUBJECT_PROP);
             }
         } catch (UnknownNamespaceException une) {
             // TODO: Add proper logging here
@@ -1584,16 +1567,6 @@ public class ConfigHelper {
      */
     public static String getContactManagerEmailTemplate() {
         return contactManagerEmailTemplate;
-    }
-
-    /**
-     * This method returns the subject of the email message that will be sent to project's manager.
-     *
-     * @return a string containing the subject.
-     * @deprecated since 1.2
-     */
-    public static String getContactManagerEmailSubject() {
-        return contactManagerEmailSubject;
     }
 
     /**
