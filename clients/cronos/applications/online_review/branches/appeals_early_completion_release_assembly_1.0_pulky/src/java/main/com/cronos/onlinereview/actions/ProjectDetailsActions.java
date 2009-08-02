@@ -110,6 +110,7 @@ import com.topcoder.util.file.fieldconfig.TemplateFields;
  *     <li>Added flags to allow a submitter to see "appeals completed" / "resume appeals" links.</li>
  *     <li>Added "appeals completed" / "resume appeals" actions.</li>
  *     <li>Updated contact PM email notification with improved subject and new fields.</li>
+ *     <li>Fixed hardcoded minimum screening score for project details page.</li>
  *   </ol>
  * </p>
  *
@@ -362,6 +363,7 @@ public class ProjectDetailsActions extends DispatchAction {
         // List of scorecard templates used for this project
         List<Scorecard> scorecardTemplates = new ArrayList<Scorecard>();
 
+        Float minimumScreeningScore = 75f;
         // Iterate over all phases determining dates, durations and assigned scorecards
         for (int i = 0; i < phases.length; ++i) {
             // Get a phase for this iteration
@@ -388,6 +390,10 @@ public class ProjectDetailsActions extends DispatchAction {
             // If there is a scorecard template for the phase, store it in the list
             if (scorecardTemplate != null) {
                 scorecardTemplates.add(scorecardTemplate);
+
+                if (phase.getPhaseType().getName().equals(Constants.SCREENING_PHASE_NAME)) {
+                	minimumScreeningScore = scorecardTemplate.getMinScore(); 
+                }
             }
         }
 
@@ -427,7 +433,7 @@ public class ProjectDetailsActions extends DispatchAction {
         request.setAttribute("phaseGroupIndexes", phasesDetails.getPhaseGroupIndexes());
         request.setAttribute("phaseGroups", phasesDetails.getPhaseGroups());
         request.setAttribute("activeTabIdx", phasesDetails.getActiveTabIndex());
-        request.setAttribute("passingMinimum", new Float(75.0)); // TODO: Take this value from scorecard template
+        request.setAttribute("passingMinimum", minimumScreeningScore);
 
         boolean sendTLNotifications = false;
 
