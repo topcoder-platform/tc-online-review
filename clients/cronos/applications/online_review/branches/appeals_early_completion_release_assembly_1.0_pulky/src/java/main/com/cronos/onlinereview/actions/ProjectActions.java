@@ -104,7 +104,7 @@ import com.topcoder.web.ejb.user.UserTermsOfUseLocator;
  *   </ol>
  * </p>
  *
- * @author George1, real_vg, pulky, TCSDEVELOPER
+ * @author George1, real_vg, pulky
  * @version 1.2
  */
 public class ProjectActions extends DispatchAction {

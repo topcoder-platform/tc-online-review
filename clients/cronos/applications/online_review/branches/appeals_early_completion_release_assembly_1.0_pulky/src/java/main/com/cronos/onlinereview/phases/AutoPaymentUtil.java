@@ -32,7 +32,7 @@ import java.util.List;
  * <p>Version 1.3 (Appeals Early Completion Release Assembly 1.0) Change notes:
  *  Updated Reviewer payments to pay final review and aggregation just once.</p>
  *
- * @author George1, brain_cn, pulky, TCSDEVELOPER
+ * @author George1, brain_cn, pulky
  * @version 1.3
  */
 public class AutoPaymentUtil {

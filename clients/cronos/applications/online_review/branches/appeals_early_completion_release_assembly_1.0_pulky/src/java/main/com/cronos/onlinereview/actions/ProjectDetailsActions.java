@@ -113,7 +113,7 @@ import com.topcoder.util.file.fieldconfig.TemplateFields;
  *   </ol>
  * </p>
  *
- * @author George1, real_vg, pulky, TCSDEVELOPER
+ * @author George1, real_vg, pulky
  * @version 1.2
  */
 public class ProjectDetailsActions extends DispatchAction {
