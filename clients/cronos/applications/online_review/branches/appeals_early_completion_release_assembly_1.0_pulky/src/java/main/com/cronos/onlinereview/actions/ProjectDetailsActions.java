@@ -109,6 +109,7 @@ import com.topcoder.util.file.fieldconfig.TemplateFields;
  *   <ol>
  *     <li>Added flags to allow a submitter to see "appeals completed" / "resume appeals" links.</li>
  *     <li>Added "appeals completed" / "resume appeals" actions.</li>
+ *     <li>Updated contact PM email notification with improved subject and new fields.</li>
  *   </ol>
  * </p>
  *
@@ -449,13 +450,16 @@ public class ProjectDetailsActions extends DispatchAction {
         request.setAttribute("isSubmitter",
                 Boolean.valueOf(AuthorizationHelper.hasUserRole(request, Constants.SUBMITTER_ROLE_NAME)));
 
-        // check if registration phase is open or appeals phase is open
+        // check if registration phase is open
         boolean registrationOpen = false;
-        boolean appealsOpen = false;
         for (int i = 0; i < activePhases.length && !registrationOpen; i++) {
             if (activePhases[i].getPhaseType().getName().equalsIgnoreCase(Constants.REGISTRATION_PHASE_NAME)) {
                 registrationOpen = true;
             }
+        }
+        // check if appeals phase is open
+        boolean appealsOpen = false;
+        for (int i = 0; i < activePhases.length && !appealsOpen; i++) {
             if (activePhases[i].getPhaseType().getName().equalsIgnoreCase(Constants.APPEALS_PHASE_NAME)) {
                 appealsOpen = true;
             }
@@ -718,18 +722,18 @@ public class ProjectDetailsActions extends DispatchAction {
                 } else if ("TEXT".equals(field.getName())) {
                     field.setValue(text);
                 } else if ("OR_LINK".equals(field.getName())) {
-                    field.setValue("<![CDATA[" + Constants.PROJECT_DETAILS_URL + project.getId() + "]]>");
+                    field.setValue("<![CDATA[" + ConfigHelper.getProjectDetailsBaseURL() + project.getId() + "]]>");
                 } else if ("LIST_OF_ROLES".equals(field.getName())) {
-                    String roleList = "";
+                    StringBuilder roleList = new StringBuilder();
                     Resource[] myResources = (Resource[]) request.getAttribute("myResources");
 
                     for (Resource resource : myResources) {
                         if (roleList.length() != 0) {
-                            roleList += ", ";
+                            roleList.append(", ");
                         }
-                        roleList += resource.getResourceRole().getName();
+                        roleList.append(resource.getResourceRole().getName());
                     }
-                    field.setValue(roleList);
+                    field.setValue(roleList.toString());
                 }
             }
         }

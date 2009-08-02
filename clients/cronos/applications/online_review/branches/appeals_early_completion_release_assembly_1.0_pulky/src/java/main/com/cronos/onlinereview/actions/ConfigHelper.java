@@ -14,6 +14,7 @@ import java.util.Set;
 import com.topcoder.util.config.ConfigManager;
 import com.topcoder.util.config.Property;
 import com.topcoder.util.config.UnknownNamespaceException;
+import com.topcoder.web.ejb.pacts.ParentReferencePayment;
 
 /**
  * This class is a helper class that loads application's configuration parameters on application
@@ -135,6 +136,13 @@ public class ConfigHelper {
      * @since 1.1
      */
     private static final String REVIEWER_TERMS_ID_NAME_PROP = "reviewer_terms_id";
+
+    /**
+     * This constant stores Online Review's project details page url property name
+     *
+     * @since 1.2
+     */
+    private static final String PROP_PROJECT_DETAILS_URL = "ProjectDetailsURL";
 
     /**
      * This member variable is a string constant that specifies the name of the property which
@@ -541,6 +549,13 @@ public class ConfigHelper {
     private static long reviewerTermsId = 17l;
 
     /**
+     * This constant stores Online Review's project details page URL
+     *
+     * @since 1.2
+     */
+    private static String projectDetailsBaseURL;
+
+    /**
      * This member variable holds the names of small icons (.gif) files that should be displayed
      * on the JSP pages for different Root Catalog IDs.
      */
@@ -835,6 +850,14 @@ public class ConfigHelper {
                 }
             }
 
+            // Retrieve the value of the property that contains the project details page base URL
+            value = cfgMgr.getString(ONLINE_REVIEW_CFG_NS, PROP_PROJECT_DETAILS_URL);
+            // If the value has been retrieved successfully ...
+            if (value != null && value.trim().length() != 0) {
+                // ... store it for later use
+            	projectDetailsBaseURL = value;
+            }
+            
             // Retrieve property that contains definitions of ID/filename pairs
             Property propRootCatIcons = cfgMgr.getPropertyObject(ONLINE_REVIEW_CFG_NS, ROOT_CATALOGS_PROP);
             // Prepare to enumerate all the nested properties
@@ -1219,6 +1242,16 @@ public class ConfigHelper {
      */
     public static int getFinalReviewerRoleId() {
         return finalReviewerRoleId;
+    }
+
+    /**
+     * This static method returns the OR project detail page base URL.
+     *
+     * @return the OR project detail page base URL.
+     * @since 1.2
+     */
+    public static String getProjectDetailsBaseURL() {
+        return projectDetailsBaseURL;
     }
 
     /**

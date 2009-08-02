@@ -796,14 +796,6 @@ public class Constants {
      */
     static final String APPEALS_COMPLETED_EARLY_PROPERTY_KEY = "Appeals Completed Early";
 
-    /**
-     * This constant stores Online Review's project details page url
-     *
-     * @since 1.1
-     */
-    static final String PROJECT_DETAILS_URL = 
-        "http://software.topcoder.com/review/actions/ViewProjectDetails.do?method=viewProjectDetails&pid=";
-
     // Hidden constructor
 
     /**
