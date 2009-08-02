@@ -640,7 +640,7 @@
     -->
     <Config name="com.cronos.onlinereview.phases.ManagerHelper">
         <Property name="projectDetailsBaseURL">
-            <Value>http://software.topcoder.com/review/actions/ViewProjectDetails.do?method=viewProjectDetails&pid=</Value>
+            <Value>http://software.topcoder.com/review/actions/ViewProjectDetails.do?method=viewProjectDetails&amp;pid=</Value>
         </Property>
         <Property name="ProjectManager">
             <Property name="ClassName">
@@ -2861,7 +2861,7 @@
             <Value>userId</Value>
         </Property>
         <Property name="projectDetailsBaseURL">
-            <Value>http://software.topcoder.com/review/actions/ViewProjectDetails.do?method=viewProjectDetails&pid=</Value>
+            <Value>http://software.topcoder.com/review/actions/ViewProjectDetails.do?method=viewProjectDetails&amp;pid=</Value>
         </Property>
         <Property name="RootCatalogs">
             <Property name="Java">
