@@ -277,7 +277,7 @@ public class ProjectActions extends DispatchAction {
         // Retrieve the list of all client projects and store it in the request
         // this need to be retrieved only for admin user.
         if (AuthorizationHelper.hasUserRole(request, Constants.MANAGER_ROLE_NAME) 
-			     || AuthorizationHelper.hasUserRole(request, Constants.GLOBAL_MANAGER_ROLE_NAME)) {
+                 || AuthorizationHelper.hasUserRole(request, Constants.GLOBAL_MANAGER_ROLE_NAME)) {
             request.setAttribute("billingProjects", ActionsHelper.getClientProjects(request));
         }
     }
@@ -725,10 +725,10 @@ public class ProjectActions extends DispatchAction {
             project = new Project(category, activeStatus);
             statusHasChanged = true; // Status is always considered to be changed for new projects
         } else {
-        	long newCategoryId = ((Long) lazyForm.get("project_category")).longValue();
+            long newCategoryId = ((Long) lazyForm.get("project_category")).longValue();
             String oldStatusName = project.getProjectStatus().getName();
             if (project.getProjectCategory().getId() != newCategoryId) {
-            	categoryChanged = true;
+                categoryChanged = true;
             }
             // Sets Project category
             project.setProjectCategory(ActionsHelper.findProjectCategoryById(projectCategories,
@@ -924,8 +924,8 @@ public class ProjectActions extends DispatchAction {
         ProjectRoleTermsOfUse projectRoleTermsOfUse = ProjectRoleTermsOfUseLocator.getService();
 
         if (categoryChanged) {
-        	projectRoleTermsOfUse.removeAllProjectRoleTermsOfUse(new Long(projectId).intValue(), 
-        			DBMS.COMMON_OLTP_DATASOURCE_NAME);
+            projectRoleTermsOfUse.removeAllProjectRoleTermsOfUse(new Long(projectId).intValue(), 
+                    DBMS.COMMON_OLTP_DATASOURCE_NAME);
         }
 
         // get configurations to create the associations
@@ -967,11 +967,11 @@ public class ProjectActions extends DispatchAction {
         int finalReviewerRoleId = ConfigHelper.getFinalReviewerRoleId();
 
         projectRoleTermsOfUse.createProjectRoleTermsOfUse(new Long(projectId).intValue(),
-        		primaryScreenerRoleId, reviewerTermsId, DBMS.COMMON_OLTP_DATASOURCE_NAME);
+                primaryScreenerRoleId, reviewerTermsId, DBMS.COMMON_OLTP_DATASOURCE_NAME);
         projectRoleTermsOfUse.createProjectRoleTermsOfUse(new Long(projectId).intValue(),
-        		aggregatorRoleId, reviewerTermsId, DBMS.COMMON_OLTP_DATASOURCE_NAME);
+                aggregatorRoleId, reviewerTermsId, DBMS.COMMON_OLTP_DATASOURCE_NAME);
         projectRoleTermsOfUse.createProjectRoleTermsOfUse(new Long(projectId).intValue(),
-        		finalReviewerRoleId, reviewerTermsId, DBMS.COMMON_OLTP_DATASOURCE_NAME);
+                finalReviewerRoleId, reviewerTermsId, DBMS.COMMON_OLTP_DATASOURCE_NAME);
     }
 
 
