@@ -208,7 +208,7 @@ public class ActionsHelper {
                 || categoryId == 6    // Specification
                 || categoryId == 7    // Architecture
                 || categoryId == 14   // Assembly
-	            || categoryId == 13   // Test Scenarios
+                || categoryId == 13   // Test Scenarios
                 || categoryId == 26   // Test Suites
                 || categoryId == 19); // UI Prototypes
     }
@@ -1913,7 +1913,7 @@ public class ActionsHelper {
      */
     public static Deliverable[] getAllDeliverablesForPhases(
             DeliverableManager manager, Phase[] phases, Resource[] resources, long winnerExtUserId)
-        	throws DeliverablePersistenceException, SearchBuilderException, DeliverableCheckingException {
+            throws DeliverablePersistenceException, SearchBuilderException, DeliverableCheckingException {
 
         // Validate parameters
         validateParameterNotNull(manager, "manager");
@@ -2950,7 +2950,7 @@ public class ActionsHelper {
      * @throws BaseException if any
      */
     static void setProjectCompletionDate(Project project, ProjectStatus newProjectStatus, Format format)
-    		throws BaseException {
+            throws BaseException {
         String name = newProjectStatus.getName();
         if ("Completed".equals(name) || "Cancelled - Failed Review".equals(name) || "Deleted".equals(name)
                  || "Cancelled - Failed Screening".equals(name)  || "Cancelled - Zero Submissions".equals(name)
@@ -3272,12 +3272,12 @@ public class ActionsHelper {
      * @throws BaseException if error occurs
      */
     public static void synchronizeRBoardApplications(Project project) throws BaseException {
-		long projectId = project.getId();
+        long projectId = project.getId();
         long phaseID = 111 + project.getProjectCategory().getId();
 
-    	log.log(Level.INFO,"synchronizeRBoardApplications projectId= " + projectId);
+        log.log(Level.INFO,"synchronizeRBoardApplications projectId= " + projectId);
 
-    	Connection conn = null;
+        Connection conn = null;
         Statement resourceSelectStmt = null;
         ResultSet resourceResultSet = null;
         try {
@@ -3411,15 +3411,15 @@ public class ActionsHelper {
      * @throws BaseException if error occurs
      */
     private static void clearRBoardApplication(Connection conn, Project project) throws BaseException {
-		long projectId = project.getId();
+        long projectId = project.getId();
 
-    	log.log(Level.INFO,"clearRBoardApplication projectId= " + projectId);
+        log.log(Level.INFO,"clearRBoardApplication projectId= " + projectId);
 
         PreparedStatement deleteStmt = null;
         try {
             deleteStmt = conn.prepareStatement("DELETE FROM rboard_application WHERE project_id=?");
 
-			deleteStmt.setLong(1, projectId);
+            deleteStmt.setLong(1, projectId);
             deleteStmt.executeUpdate();
         } catch (SQLException e) {
             throw new BaseException("Failed to clear rboard_application", e);
@@ -3442,10 +3442,10 @@ public class ActionsHelper {
     private static void addRBoardApplications(Connection conn, Project project,
                                              List<Long> reviewerIDs, List<Long> responseIDs,
                                              List<Long> primaries, List<java.sql.Timestamp> createDates) throws BaseException {
-		long projectId = project.getId();
+        long projectId = project.getId();
         long phaseId = 111 + project.getProjectCategory().getId();
 
-    	log.log(Level.INFO,"addRBoardApplication projectId= " + projectId);
+        log.log(Level.INFO,"addRBoardApplication projectId= " + projectId);
 
         PreparedStatement addStmt = null;
         try {
@@ -3577,7 +3577,7 @@ public class ActionsHelper {
             conn = dbconn.createConnection();
             log.log(Level.INFO,
                     "create db connection with default connection name from DBConnectionFactoryImpl with namespace:"
-            		+ DB_CONNECTION_NAMESPACE);
+                    + DB_CONNECTION_NAMESPACE);
             AutoPaymentUtil.populateReviewerPayments(projectId, conn, AutoPaymentUtil.SCREENING_PHASE);
         } catch (DBConnectionException e) {
             throw new BaseException("Failed to return DBConnection", e);
@@ -3604,7 +3604,7 @@ public class ActionsHelper {
             conn = dbconn.createConnection();
             log.log(Level.INFO,
                     "create db connection with default connection name from DBConnectionFactoryImpl with namespace:"
-            		+ DB_CONNECTION_NAMESPACE);
+                    + DB_CONNECTION_NAMESPACE);
             String sqlStr = "select root_category_id " +
                             "    from comp_catalog cc," +
                             "         categories pcat " +
@@ -3642,7 +3642,7 @@ public class ActionsHelper {
             conn = dbconn.createConnection();
             log.log(Level.INFO,
                     "create db connection with default connection name from DBConnectionFactoryImpl with namespace:"
-            		+ DB_CONNECTION_NAMESPACE);
+                    + DB_CONNECTION_NAMESPACE);
             String sqlString = "select ds.*, st.name from default_scorecard ds, scorecard_type_lu st " +
                     "where ds.scorecard_type_id = st.scorecard_type_id";
 
@@ -3693,7 +3693,7 @@ public class ActionsHelper {
         }
     }
 
-	/**
+    /**
      * Delete project_result and component_inquiry for new submitters.
      *
      * @param project the project
@@ -3965,14 +3965,14 @@ public class ActionsHelper {
      * @param connection JDBC Connection to close.
      */
     private static void close(Connection connection) {
-    	if (connection != null) {
-    		try {
-    			connection.close();
-    			log.log(Level.INFO, "close the connection.");
-    		} catch (SQLException e) {
-    			log.log(Level.ERROR, "Error closing JDBC Connection: " + e.getMessage());
-    		}
-    	}
+        if (connection != null) {
+            try {
+                connection.close();
+                log.log(Level.INFO, "close the connection.");
+            } catch (SQLException e) {
+                log.log(Level.ERROR, "Error closing JDBC Connection: " + e.getMessage());
+            }
+        }
     }
 
     /**
@@ -3981,13 +3981,13 @@ public class ActionsHelper {
      * @param statement JDBC Statement to close.
      */
     private static void close(Statement statement) {
-    	if (statement != null) {
-    		try {
-    			statement.close();
-    		} catch (SQLException e) {
-    			log.log(Level.ERROR, "Error closing JDBC Statement: " + e.getMessage());
-    		}
-    	}
+        if (statement != null) {
+            try {
+                statement.close();
+            } catch (SQLException e) {
+                log.log(Level.ERROR, "Error closing JDBC Statement: " + e.getMessage());
+            }
+        }
     }
 
     /**
@@ -3996,13 +3996,13 @@ public class ActionsHelper {
      * @param resultSet JDBC ResultSet to close.
      */
     private static void close(ResultSet resultSet) {
-    	if (resultSet != null) {
-    		try {
-    			resultSet.close();
-    		} catch (SQLException e) {
-    			log.log(Level.ERROR, "Error closing JDBC ResultSet: " + e.getMessage());
-    		}
-    	}
+        if (resultSet != null) {
+            try {
+                resultSet.close();
+            } catch (SQLException e) {
+                log.log(Level.ERROR, "Error closing JDBC ResultSet: " + e.getMessage());
+            }
+        }
     }
 
     public static ActionForward findForwardNotAuthorized(ActionMapping mapping, Long projectId) {
