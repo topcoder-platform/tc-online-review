@@ -378,6 +378,15 @@
             <forward name="success" path="/actions/ViewProjectDetails.do?method=viewProjectDetails" redirect="true"/>
         </action>
 
+        <!-- "EarlyAppeals" action -->
+        <action path="/actions/EarlyAppeals" unknown="false"
+            type="com.cronos.onlinereview.actions.ProjectDetailsActions"
+            parameter="method" scope="request"
+            input="/jsp/confirmEarlyAppeals.jsp">
+            <forward name="displayPage" path="/jsp/confirmEarlyAppeals.jsp" redirect="false"/>
+            <forward name="success" path="/actions/ViewProjectDetails.do?method=viewProjectDetails" redirect="true"/>
+        </action>
+
         <!-- "View Auto Screening" action -->
         <action path="/actions/ViewAutoScreening" unknown="false"
             type="com.cronos.onlinereview.actions.ProjectDetailsActions"

@@ -29,8 +29,11 @@ import java.util.List;
  * <p>Version 1.2 (Testing Competition Split Release Assembly 1.0) Change notes:
  *  Updated Application Testing to Test Suites and added support for new Test Scenarios competitions.</p>
  *
+ * <p>Version 1.3 (Appeals Early Completion Release Assembly 1.0) Change notes:
+ *  Updated Reviewer payments to pay final review and aggregation just once.</p>
+ *
  * @author George1, brain_cn, pulky
- * @version 1.2
+ * @version 1.3
  */
 public class AutoPaymentUtil {
         /**
@@ -156,6 +159,9 @@ public class AutoPaymentUtil {
                                                           prize, drPoints);
         List<Reviewer> reviewers = getReviewers(projectId, conn);
 
+        // this is added to pay final review and aggregation only once.
+        boolean alreadyPaidAggregator = false;
+        boolean alreadyPaidFinalReviewer = false;
         for (Iterator<Reviewer> iter = reviewers.iterator(); iter.hasNext();) {
             Reviewer reviewer = iter.next();
 
@@ -164,9 +170,13 @@ public class AutoPaymentUtil {
             } else if (reviewer.isScreener() && phaseId == SCREENING_PHASE) {
                 updateResourcePayment(reviewer.getResourceId(), fpc.getScreeningCost(), conn);
             } else if (reviewer.isAggregator() && phaseId == AGGREGATION_PHASE) {
-                updateResourcePayment(reviewer.getResourceId(), fpc.getAggregationCost(), conn);
+                updateResourcePayment(reviewer.getResourceId(),
+                    alreadyPaidAggregator ? 0 : fpc.getAggregationCost(), conn);
+                alreadyPaidAggregator = true;
             } else if (reviewer.isFinalReviewer() && phaseId == FINAL_REVIEW_PHASE) {
-                updateResourcePayment(reviewer.getResourceId(), fpc.getFinalReviewCost(), conn);
+                updateResourcePayment(reviewer.getResourceId(),
+                    alreadyPaidFinalReviewer ? 0 : fpc.getFinalReviewCost(), conn);
+                alreadyPaidFinalReviewer = true;
             } else if (reviewer.isPrimaryReviewer() && phaseId == REVIEW_PHASE) {
                 updateResourcePayment(reviewer.getResourceId(), fpc.getCoreReviewCost(), conn);
             } else if (reviewer.isReviewer() && phaseId == REVIEW_PHASE) {
@@ -372,7 +382,7 @@ public class AutoPaymentUtil {
      */
     static void populateSubmitterPayments(long projectId, Connection conn)
             throws SQLException {
-        
+
         // Retrieve the price
         double price = getPriceByProjectId(projectId, conn);
 

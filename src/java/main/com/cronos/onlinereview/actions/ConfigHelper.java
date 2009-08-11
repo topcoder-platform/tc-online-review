@@ -14,6 +14,7 @@ import java.util.Set;
 import com.topcoder.util.config.ConfigManager;
 import com.topcoder.util.config.Property;
 import com.topcoder.util.config.UnknownNamespaceException;
+import com.topcoder.web.ejb.pacts.ParentReferencePayment;
 
 /**
  * This class is a helper class that loads application's configuration parameters on application
@@ -30,9 +31,16 @@ import com.topcoder.util.config.UnknownNamespaceException;
  *     <li>Added configurations for Project Role Terms of Use associations.</li>
  *   </ol>
  * </p>
+ * <p>
+ *
+ * Version 1.2 (Appeals Early Completion Release Assembly 1.0) Change notes:
+ *   <ol>
+ *     <li>Contact Manager Email Subject configuration was removed.</li>
+ *   </ol>
+ * </p>
  *
  * @author George1, real_vg, pulky
- * @version 1.1
+ * @version 1.2
  */
 public class ConfigHelper {
 
@@ -128,6 +136,13 @@ public class ConfigHelper {
      * @since 1.1
      */
     private static final String REVIEWER_TERMS_ID_NAME_PROP = "reviewer_terms_id";
+
+    /**
+     * This constant stores Online Review's project details page url property name
+     *
+     * @since 1.2
+     */
+    private static final String PROP_PROJECT_DETAILS_URL = "ProjectDetailsURL";
 
     /**
      * This member variable is a string constant that specifies the name of the property which
@@ -458,16 +473,6 @@ public class ConfigHelper {
     private static final String EMAIL_TEMPLATE_NAME_PROP = "EmailTemplateName";
 
     /**
-     * This member variable is a string constant that specifies the name of the property which
-     * specifies the subject that will be used in outgoing email.
-     *
-     * @see #CONTACT_MANAGER_EMAIL_PROP
-     * @see #EMAIL_TEMPLATE_SOURCE_TYPE_PROP
-     * @see #EMAIL_TEMPLATE_NAME_PROP
-     */
-    private static final String EMAIL_SUBJECT_PROP = "EmailSubject";
-
-    /**
      * This member variable holds the name of the session attribute which ID of the currently logged
      * in user will be stored in.
      */
@@ -542,6 +547,13 @@ public class ConfigHelper {
      * @since 1.1
      */
     private static long reviewerTermsId = 17l;
+
+    /**
+     * This constant stores Online Review's project details page URL
+     *
+     * @since 1.2
+     */
+    private static String projectDetailsBaseURL;
 
     /**
      * This member variable holds the names of small icons (.gif) files that should be displayed
@@ -704,12 +716,6 @@ public class ConfigHelper {
      */
     private static String contactManagerEmailTemplate = "";
 
-    /**
-     * This member variable holds the subject of email message that will be used when sending
-     * messages to project's manager.
-     */
-    private static String contactManagerEmailSubject = "";
-
     static {
         // Obtaining the instance of Configuration Manager
         ConfigManager cfgMgr = ConfigManager.getInstance();
@@ -844,6 +850,14 @@ public class ConfigHelper {
                 }
             }
 
+            // Retrieve the value of the property that contains the project details page base URL
+            value = cfgMgr.getString(ONLINE_REVIEW_CFG_NS, PROP_PROJECT_DETAILS_URL);
+            // If the value has been retrieved successfully ...
+            if (value != null && value.trim().length() != 0) {
+                // ... store it for later use
+            	projectDetailsBaseURL = value;
+            }
+            
             // Retrieve property that contains definitions of ID/filename pairs
             Property propRootCatIcons = cfgMgr.getPropertyObject(ONLINE_REVIEW_CFG_NS, ROOT_CATALOGS_PROP);
             // Prepare to enumerate all the nested properties
@@ -1112,7 +1126,6 @@ public class ConfigHelper {
             if (propContactManagerEmail != null) {
                 contactManagerEmailSrcType = propContactManagerEmail.getValue(EMAIL_TEMPLATE_SOURCE_TYPE_PROP);
                 contactManagerEmailTemplate = propContactManagerEmail.getValue(EMAIL_TEMPLATE_NAME_PROP);
-                contactManagerEmailSubject = propContactManagerEmail.getValue(EMAIL_SUBJECT_PROP);
             }
         } catch (UnknownNamespaceException une) {
             // TODO: Add proper logging here
@@ -1229,6 +1242,16 @@ public class ConfigHelper {
      */
     public static int getFinalReviewerRoleId() {
         return finalReviewerRoleId;
+    }
+
+    /**
+     * This static method returns the OR project detail page base URL.
+     *
+     * @return the OR project detail page base URL.
+     * @since 1.2
+     */
+    public static String getProjectDetailsBaseURL() {
+        return projectDetailsBaseURL;
     }
 
     /**
@@ -1577,15 +1600,6 @@ public class ConfigHelper {
      */
     public static String getContactManagerEmailTemplate() {
         return contactManagerEmailTemplate;
-    }
-
-    /**
-     * This method returns the subject of the email message that will be sent to project's manager.
-     *
-     * @return a string containing the subject.
-     */
-    public static String getContactManagerEmailSubject() {
-        return contactManagerEmailSubject;
     }
 
     /**
