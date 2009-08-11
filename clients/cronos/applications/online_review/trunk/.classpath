@@ -385,7 +385,7 @@
 	<classpathentry kind="lib" path="lib/tcs/project_ejb/Project.jar"/>
 	<classpathentry kind="lib" path="lib/tcs/user_ejb/User.jar"/>
 	<classpathentry kind="lib" path="lib/tcs/terms_of_use_ejb/TermsOfUse.jar"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/appeals_web"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/appeals_online_review_phases"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/web"/>
+	<classpathentry kind="lib" path="lib/tcs/online_review_phases/1.0.6/online_review_phases.jar"/>
 	<classpathentry kind="output" path="build/classes"/>
 </classpath>
