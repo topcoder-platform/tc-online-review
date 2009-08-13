@@ -2863,6 +2863,27 @@
         <Property name="projectDetailsURL">
             <Value>http://software.topcoder.com/review/actions/ViewProjectDetails.do?method=viewProjectDetails&amp;pid=</Value>
         </Property>
+        <Property name="submitter_terms_id">
+            <Value>20703</Value>
+        </Property>
+        <Property name="reviewer_terms_id">
+            <Value>20704</Value>
+        </Property>
+        <Property name="submitter_role_id">
+            <Value>1</Value>
+        </Property>
+        <Property name="reviewer_role_id">
+            <Value>4</Value>
+        </Property>
+        <Property name="accuracy_reviewer_role_id">
+            <Value>5</Value>
+        </Property>
+        <Property name="failure_reviewer_role_id">
+            <Value>6</Value>
+        </Property>
+        <Property name="stress_reviewer_role_id">
+            <Value>7</Value>
+        </Property>
         <Property name="RootCatalogs">
             <Property name="Java">
                 <Property name="id">
