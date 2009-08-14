@@ -2860,7 +2860,7 @@
         <Property name="user_identifer_key">
             <Value>userId</Value>
         </Property>
-        <Property name="projectDetailsURL">
+        <Property name="ProjectDetailsURL">
             <Value>http://software.topcoder.com/review/actions/ViewProjectDetails.do?method=viewProjectDetails&amp;pid=</Value>
         </Property>
         <Property name="submitter_terms_id">
