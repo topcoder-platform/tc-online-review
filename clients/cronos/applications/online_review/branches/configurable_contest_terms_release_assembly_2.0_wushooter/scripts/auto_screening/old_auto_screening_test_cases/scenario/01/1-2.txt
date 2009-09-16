@@ -1,0 +1,11 @@
+Java Design - Corrupted jar file.
+
+Fatal Errors: 
+ TCS-001: Your submission distribution is not a jar file. 
+Unable to extract from JAR file. 
+ 
+ TCS-003: Your submission does not conform to the directory standard. 
+The directory does not exist (docs) 
+ 
+ TCS-004: Your submission does not contain a component specification document in rich text format (rtf).  
+ TCS-007: Your submission does not contain a zargo or zuml file.  
