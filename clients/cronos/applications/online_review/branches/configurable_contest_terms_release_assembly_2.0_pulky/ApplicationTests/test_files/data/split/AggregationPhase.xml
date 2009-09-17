@@ -1,0 +1,448 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- FINISHED -->
+<!-- This file must be used with DatabaseOperation.REFRESH -->
+<!--
+    Adds winner and runner-up for the project;
+    Adds payments and payment status for winner and runner-up for the project;
+    Adds payments and payment status for aggregator and final reviewer;
+    Adds final review scores and placements for all submitters;
+    Adds responses from all reviewers for all appeals;
+    Adds uncommitted aggregation review generated on-the-fly;
+    Updates the status of the non-winning submissions;
+    Advances to Aggregation phase;
+-->
+<dataset>
+    <!-- *** phase *** -->
+    <!-- Phases for Ajax Timed Survey 1.0 -->
+    <project_phase project_phase_id="6" project_id="1" phase_type_id="6" phase_status_id="3"
+           scheduled_start_time="2006-08-03 00:00:00.0" scheduled_end_time="2006-08-03 23:59:59.0"
+           duration="1440" create_user="System" create_date="2006-07-29 02:45:11.0" modify_user="System"
+           modify_date="2006-07-29 02:45:11.0"/><!-- Appeal Response phase -->
+    <project_phase project_phase_id="7" project_id="1" phase_type_id="7" phase_status_id="2"
+           scheduled_start_time="2006-08-04 00:00:00.0" scheduled_end_time="2006-08-04 23:59:59.0"
+           duration="1440" create_user="System" create_date="2006-07-29 02:45:11.0" modify_user="System"
+           modify_date="2006-07-29 02:45:11.0"/><!-- Aggregation phase -->
+
+    <!-- *** project_info *** -->
+    <!-- Project Info for Ajax Timed Survey 1.0 -->
+    <project_info project_info_type_id="23" project_id="1" value="1"
+                  create_user="System" create_date="2006-07-29 02:45:11.0"
+                  modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Winner External Reference ID -->
+    <project_info project_info_type_id="24" project_id="1" value="2"
+                  create_user="System" create_date="2006-07-29 02:45:11.0"
+                  modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Runner-up External Reference ID -->
+
+    <!-- *** resource_info *** -->
+    <!-- Ajax Timed Survey -->
+    <!--   Winning Submitter, Submission phase -->
+    <resource_info resource_info_type_id="7" resource_id="1" value="1000.00"
+                   create_user="System" create_date="2006-07-29 02:45:11.0"
+                   modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Payment -->
+    <resource_info resource_info_type_id="8" resource_id="1" value="No"
+                   create_user="System" create_date="2006-07-29 02:45:11.0"
+                   modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Payment Status -->
+    <resource_info resource_info_type_id="11" resource_id="1" value="100.00"
+                   create_user="System" create_date="2006-07-29 02:45:11.0"
+                   modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Final Review Score -->
+    <resource_info resource_info_type_id="12" resource_id="1" value="1"
+                   create_user="System" create_date="2006-07-29 02:45:11.0"
+                   modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Placement -->
+    <!--   2nd Place Submitter, Submission phase -->
+    <resource_info resource_info_type_id="7" resource_id="1" value="500.00"
+                   create_user="System" create_date="2006-07-29 02:45:11.0"
+                   modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Payment -->
+    <resource_info resource_info_type_id="8" resource_id="1" value="No"
+                   create_user="System" create_date="2006-07-29 02:45:11.0"
+                   modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Payment Status -->
+    <resource_info resource_info_type_id="11" resource_id="2" value="90.00"
+                   create_user="System" create_date="2006-07-29 02:45:11.0"
+                   modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Final Review Score -->
+    <resource_info resource_info_type_id="12" resource_id="2" value="2"
+                   create_user="System" create_date="2006-07-29 02:45:11.0"
+                   modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Placement -->
+    <!--   3rd Place Submitter, Submission phase -->
+    <resource_info resource_info_type_id="11" resource_id="3" value="80.00"
+                   create_user="System" create_date="2006-07-29 02:45:11.0"
+                   modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Final Review Score -->
+    <resource_info resource_info_type_id="12" resource_id="3" value="3"
+                   create_user="System" create_date="2006-07-29 02:45:11.0"
+                   modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Placement -->
+    <!--   Aggregator, Aggregation phase -->
+    <resource_info resource_info_type_id="7" resource_id="11" value="10.00"
+                   create_user="System" create_date="2006-07-29 02:45:11.0"
+                   modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Payment -->
+    <resource_info resource_info_type_id="8" resource_id="11" value="No"
+                   create_user="System" create_date="2006-07-29 02:45:11.0"
+                   modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Payment Status -->
+    <!--   Final Reviewer, Final Review phase -->
+    <resource_info resource_info_type_id="7" resource_id="16" value="50.00"
+                   create_user="System" create_date="2006-07-29 02:45:11.0"
+                   modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Payment -->
+    <resource_info resource_info_type_id="8" resource_id="16" value="No"
+                   create_user="System" create_date="2006-07-29 02:45:11.0"
+                   modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Payment Status -->
+
+    <!-- *** submission *** -->
+    <!-- Ajax Timed Survey 1.0 -->
+    <!-- Submission from 2nd Place Submitter -->
+    <submission submission_id="2" upload_id="2" submission_status_id="4"
+                create_user="System" create_date="2006-07-29 02:45:11.0"
+                modify_user="System" modify_date="2006-07-29 02:45:11.0"/>
+    <!-- Submission from 3rd Place Submitter -->
+    <submission submission_id="3" upload_id="3" submission_status_id="4"
+                create_user="System" create_date="2006-07-29 02:45:11.0"
+                modify_user="System" modify_date="2006-07-29 02:45:11.0"/>
+
+    <!-- *** review *** -->
+    <!-- Aggregation (generated on the fly), Ajax Timed Survey 1.0 -->
+    <review review_id="13" resource_id="11" submission_id="1" scorecard_id="2" committed="0" score="100.00"
+            create_user="System" create_date="2006-07-29 02:45:11.0"
+            modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Aggregator, Winning Submitter -->
+
+    <!-- *** review_item *** -->
+    <!-- Ajax Timed Survey, Winning Submitter Aggregation, Aggregator -->
+    <review_item review_item_id="169" review_id="13" scorecard_question_id="15" answer="4" sort="1"
+                 create_user="System" create_date="2006-07-29 02:45:11.0"
+                 modify_user="System" modify_date="2006-07-29 02:45:11.0"/>
+    <review_item review_item_id="170" review_id="13" scorecard_question_id="16" answer="4" sort="2"
+                 create_user="System" create_date="2006-07-29 02:45:11.0"
+                 modify_user="System" modify_date="2006-07-29 02:45:11.0"/>
+    <review_item review_item_id="171" review_id="13" scorecard_question_id="17" answer="4" sort="3"
+                 create_user="System" create_date="2006-07-29 02:45:11.0"
+                 modify_user="System" modify_date="2006-07-29 02:45:11.0"/>
+    <review_item review_item_id="172" review_id="13" scorecard_question_id="18" answer="4" sort="4"
+                 create_user="System" create_date="2006-07-29 02:45:11.0"
+                 modify_user="System" modify_date="2006-07-29 02:45:11.0"/>
+    <review_item review_item_id="173" review_id="13" scorecard_question_id="19" answer="4" sort="5"
+                 create_user="System" create_date="2006-07-29 02:45:11.0"
+                 modify_user="System" modify_date="2006-07-29 02:45:11.0"/>
+    <review_item review_item_id="174" review_id="13" scorecard_question_id="20" answer="4" sort="6"
+                 create_user="System" create_date="2006-07-29 02:45:11.0"
+                 modify_user="System" modify_date="2006-07-29 02:45:11.0"/>
+    <review_item review_item_id="175" review_id="13" scorecard_question_id="21" answer="4" sort="7"
+                 create_user="System" create_date="2006-07-29 02:45:11.0"
+                 modify_user="System" modify_date="2006-07-29 02:45:11.0"/>
+    <review_item review_item_id="176" review_id="13" scorecard_question_id="22" answer="4" sort="8"
+                 create_user="System" create_date="2006-07-29 02:45:11.0"
+                 modify_user="System" modify_date="2006-07-29 02:45:11.0"/>
+    <review_item review_item_id="177" review_id="13" scorecard_question_id="23" answer="4" sort="9"
+                 create_user="System" create_date="2006-07-29 02:45:11.0"
+                 modify_user="System" modify_date="2006-07-29 02:45:11.0"/>
+    <review_item review_item_id="178" review_id="13" scorecard_question_id="24" answer="4" sort="10"
+                 create_user="System" create_date="2006-07-29 02:45:11.0"
+                 modify_user="System" modify_date="2006-07-29 02:45:11.0"/>
+    <review_item review_item_id="179" review_id="13" scorecard_question_id="25" answer="4" sort="11"
+                 create_user="System" create_date="2006-07-29 02:45:11.0"
+                 modify_user="System" modify_date="2006-07-29 02:45:11.0"/>
+    <review_item review_item_id="180" review_id="13" scorecard_question_id="26" answer="4" sort="12"
+                 create_user="System" create_date="2006-07-29 02:45:11.0"
+                 modify_user="System" modify_date="2006-07-29 02:45:11.0"/>
+    <review_item review_item_id="181" review_id="13" scorecard_question_id="27" answer="4" sort="13"
+                 create_user="System" create_date="2006-07-29 02:45:11.0"
+                 modify_user="System" modify_date="2006-07-29 02:45:11.0"/>
+    <review_item review_item_id="182" review_id="13" scorecard_question_id="28" answer="4" sort="14"
+                 create_user="System" create_date="2006-07-29 02:45:11.0"
+                 modify_user="System" modify_date="2006-07-29 02:45:11.0"/>
+
+    <!-- *** review_item_comment *** -->
+    <!-- Ajax Timed Survey, 1st Place Submitter Appeal, 1st Reviewer Response - No Appeals - No Response -->
+    <!-- Ajax Timed Survey, 1st Place Submitter Appeal, 2nd Reviewer Response - No Appeals - No Response -->
+    <!-- Ajax Timed Survey, 1st Place Submitter Appeal, 3rd Reviewer Response - No Appeals - No Response -->
+    <!-- Ajax Timed Survey, 2nd Place Submitter Appeal, 1st Reviewer Responses -->
+    <review_item_comment review_item_comment_id="199" resource_id="8" review_item_id="57" comment_type_id="5"
+                         content="Group 1 Section 1 Question 1. I do not agree." sort="1" extra_info="3"
+                         create_user="System" create_date="2006-07-29 02:45:11.0"
+                         modify_user="System" modify_date="2006-07-29 02:45:11.0"/>
+    <review_item_comment review_item_comment_id="200" resource_id="8" review_item_id="59" comment_type_id="5"
+                         content="Group 1 Section 2 Question 1. I do not agree." sort="2" extra_info="3"
+                         create_user="System" create_date="2006-07-29 02:45:11.0"
+                         modify_user="System" modify_date="2006-07-29 02:45:11.0"/>
+    <review_item_comment review_item_comment_id="201" resource_id="8" review_item_id="61" comment_type_id="5"
+                         content="Group 2 Section 1 Question 1. I do not agree." sort="3" extra_info="3"
+                         create_user="System" create_date="2006-07-29 02:45:11.0"
+                         modify_user="System" modify_date="2006-07-29 02:45:11.0"/>
+    <review_item_comment review_item_comment_id="202" resource_id="8" review_item_id="63" comment_type_id="5"
+                         content="Group 2 Section 2 Question 1. I do not agree." sort="4" extra_info="3"
+                         create_user="System" create_date="2006-07-29 02:45:11.0"
+                         modify_user="System" modify_date="2006-07-29 02:45:11.0"/>
+    <review_item_comment review_item_comment_id="203" resource_id="8" review_item_id="65" comment_type_id="5"
+                         content="Group 3 Section 1 Question 1. I do not agree." sort="5" extra_info="3"
+                         create_user="System" create_date="2006-07-29 02:45:11.0"
+                         modify_user="System" modify_date="2006-07-29 02:45:11.0"/>
+    <review_item_comment review_item_comment_id="204" resource_id="8" review_item_id="67" comment_type_id="5"
+                         content="Group 3 Section 2 Question 1. I do not agree." sort="6" extra_info="3"
+                         create_user="System" create_date="2006-07-29 02:45:11.0"
+                         modify_user="System" modify_date="2006-07-29 02:45:11.0"/>
+    <review_item_comment review_item_comment_id="205" resource_id="8" review_item_id="69" comment_type_id="5"
+                         content="Group 3 Section 3 Question 1. I do not agree." sort="7" extra_info="3"
+                         create_user="System" create_date="2006-07-29 02:45:11.0"
+                         modify_user="System" modify_date="2006-07-29 02:45:11.0"/>
+    <!-- Ajax Timed Survey, 2nd Place Submitter Appeal, 2nd Reviewer Responses -->
+    <review_item_comment review_item_comment_id="206" resource_id="9" review_item_id="100" comment_type_id="5"
+                         content="Group 1 Section 1 Question 2. I do agree." sort="1" extra_info="3"
+                         create_user="System" create_date="2006-07-29 02:45:11.0"
+                         modify_user="System" modify_date="2006-07-29 02:45:11.0"/>
+    <review_item_comment review_item_comment_id="207" resource_id="9" review_item_id="102" comment_type_id="5"
+                         content="Group 1 Section 2 Question 2. I do agree." sort="2" extra_info="3"
+                         create_user="System" create_date="2006-07-29 02:45:11.0"
+                         modify_user="System" modify_date="2006-07-29 02:45:11.0"/>
+    <review_item_comment review_item_comment_id="208" resource_id="9" review_item_id="104" comment_type_id="5"
+                         content="Group 2 Section 1 Question 2. I do agree." sort="3" extra_info="3"
+                         create_user="System" create_date="2006-07-29 02:45:11.0"
+                         modify_user="System" modify_date="2006-07-29 02:45:11.0"/>
+    <review_item_comment review_item_comment_id="209" resource_id="9" review_item_id="106" comment_type_id="5"
+                         content="Group 2 Section 2 Question 2. I do agree." sort="4" extra_info="3"
+                         create_user="System" create_date="2006-07-29 02:45:11.0"
+                         modify_user="System" modify_date="2006-07-29 02:45:11.0"/>
+    <review_item_comment review_item_comment_id="210" resource_id="9" review_item_id="108" comment_type_id="5"
+                         content="Group 3 Section 1 Question 2. I do not agree." sort="5" extra_info="3"
+                         create_user="System" create_date="2006-07-29 02:45:11.0"
+                         modify_user="System" modify_date="2006-07-29 02:45:11.0"/>
+    <review_item_comment review_item_comment_id="211" resource_id="9" review_item_id="110" comment_type_id="5"
+                         content="Group 3 Section 2 Question 2. I do not agree." sort="6" extra_info="3"
+                         create_user="System" create_date="2006-07-29 02:45:11.0"
+                         modify_user="System" modify_date="2006-07-29 02:45:11.0"/>
+    <review_item_comment review_item_comment_id="212" resource_id="9" review_item_id="112" comment_type_id="5"
+                         content="Group 3 Section 3 Question 2. I do not agree." sort="7" extra_info="3"
+                         create_user="System" create_date="2006-07-29 02:45:11.0"
+                         modify_user="System" modify_date="2006-07-29 02:45:11.0"/>
+    <!-- Ajax Timed Survey, 2nd Place Submitter Appeal, 3rd Reviewer Responses -->
+    <review_item_comment review_item_comment_id="213" resource_id="10" review_item_id="154" comment_type_id="5"
+                         content="Group 3 Section 3 Question 2. I do agree." sort="1" extra_info="3"
+                         create_user="System" create_date="2006-07-29 02:45:11.0"
+                         modify_user="System" modify_date="2006-07-29 02:45:11.0"/>
+    <!-- Ajax Timed Survey, 3rd Place Submitter Appeal, 1st Reviewer Responses -->
+    <review_item_comment review_item_comment_id="214" resource_id="8" review_item_id="71" comment_type_id="5"
+                         content="Group 1 Section 1 Question 1. I do not agree." sort="1" extra_info="2"
+                         create_user="System" create_date="2006-07-29 02:45:11.0"
+                         modify_user="System" modify_date="2006-07-29 02:45:11.0"/>
+    <review_item_comment review_item_comment_id="215" resource_id="8" review_item_id="73" comment_type_id="5"
+                         content="Group 1 Section 2 Question 1. I do not agree." sort="2" extra_info="2"
+                         create_user="System" create_date="2006-07-29 02:45:11.0"
+                         modify_user="System" modify_date="2006-07-29 02:45:11.0"/>
+    <review_item_comment review_item_comment_id="216" resource_id="8" review_item_id="75" comment_type_id="5"
+                         content="Group 2 Section 1 Question 1. I do not agree." sort="3" extra_info="2"
+                         create_user="System" create_date="2006-07-29 02:45:11.0"
+                         modify_user="System" modify_date="2006-07-29 02:45:11.0"/>
+    <review_item_comment review_item_comment_id="217" resource_id="8" review_item_id="77" comment_type_id="5"
+                         content="Group 2 Section 2 Question 1. I do not agree." sort="4" extra_info="2"
+                         create_user="System" create_date="2006-07-29 02:45:11.0"
+                         modify_user="System" modify_date="2006-07-29 02:45:11.0"/>
+    <review_item_comment review_item_comment_id="218" resource_id="8" review_item_id="79" comment_type_id="5"
+                         content="Group 3 Section 1 Question 1. I do not agree." sort="5" extra_info="2"
+                         create_user="System" create_date="2006-07-29 02:45:11.0"
+                         modify_user="System" modify_date="2006-07-29 02:45:11.0"/>
+    <review_item_comment review_item_comment_id="219" resource_id="8" review_item_id="81" comment_type_id="5"
+                         content="Group 3 Section 2 Question 1. I do not agree." sort="6" extra_info="2"
+                         create_user="System" create_date="2006-07-29 02:45:11.0"
+                         modify_user="System" modify_date="2006-07-29 02:45:11.0"/>
+    <review_item_comment review_item_comment_id="220" resource_id="8" review_item_id="83" comment_type_id="5"
+                         content="Group 3 Section 3 Question 1. I do not agree." sort="7" extra_info="2"
+                         create_user="System" create_date="2006-07-29 02:45:11.0"
+                         modify_user="System" modify_date="2006-07-29 02:45:11.0"/>
+    <!-- Ajax Timed Survey, 3rd Place Submitter Appeal, 2nd Reviewer Responses -->
+    <review_item_comment review_item_comment_id="221" resource_id="9" review_item_id="114" comment_type_id="5"
+                         content="Group 1 Section 1 Question 2. I do agree." sort="1" extra_info="2"
+                         create_user="System" create_date="2006-07-29 02:45:11.0"
+                         modify_user="System" modify_date="2006-07-29 02:45:11.0"/>
+    <review_item_comment review_item_comment_id="222" resource_id="9" review_item_id="116" comment_type_id="5"
+                         content="Group 1 Section 2 Question 2. I do agree." sort="2" extra_info="2"
+                         create_user="System" create_date="2006-07-29 02:45:11.0"
+                         modify_user="System" modify_date="2006-07-29 02:45:11.0"/>
+    <review_item_comment review_item_comment_id="223" resource_id="9" review_item_id="118" comment_type_id="5"
+                         content="Group 2 Section 1 Question 2. I do agree." sort="3" extra_info="2"
+                         create_user="System" create_date="2006-07-29 02:45:11.0"
+                         modify_user="System" modify_date="2006-07-29 02:45:11.0"/>
+    <review_item_comment review_item_comment_id="224" resource_id="9" review_item_id="120" comment_type_id="5"
+                         content="Group 2 Section 2 Question 2. I do agree." sort="4" extra_info="2"
+                         create_user="System" create_date="2006-07-29 02:45:11.0"
+                         modify_user="System" modify_date="2006-07-29 02:45:11.0"/>
+    <review_item_comment review_item_comment_id="225" resource_id="9" review_item_id="122" comment_type_id="5"
+                         content="Group 3 Section 1 Question 2. I do not agree." sort="5" extra_info="2"
+                         create_user="System" create_date="2006-07-29 02:45:11.0"
+                         modify_user="System" modify_date="2006-07-29 02:45:11.0"/>
+    <review_item_comment review_item_comment_id="226" resource_id="9" review_item_id="124" comment_type_id="5"
+                         content="Group 3 Section 2 Question 2. I do not agree." sort="6" extra_info="2"
+                         create_user="System" create_date="2006-07-29 02:45:11.0"
+                         modify_user="System" modify_date="2006-07-29 02:45:11.0"/>
+    <review_item_comment review_item_comment_id="227" resource_id="9" review_item_id="126" comment_type_id="5"
+                         content="Group 3 Section 3 Question 2. I do not agree." sort="7" extra_info="2"
+                         create_user="System" create_date="2006-07-29 02:45:11.0"
+                         modify_user="System" modify_date="2006-07-29 02:45:11.0"/>
+    <!-- Ajax Timed Survey, 3rd Place Submitter Appeal, 3rd Reviewer Responses -->
+    <review_item_comment review_item_comment_id="228" resource_id="10" review_item_id="168" comment_type_id="5"
+                         content="Group 3 Section 3 Question 2. I do agree." sort="1" extra_info="2"
+                         create_user="System" create_date="2006-07-29 02:45:11.0"
+                         modify_user="System" modify_date="2006-07-29 02:45:11.0"/>
+    <!-- Ajax Timed Survey, Winning Submitter Aggregation, Comments collected from 1st Reviewer -->
+    <review_item_comment review_item_comment_id="229" resource_id="11" review_item_id="169" comment_type_id="1"
+                         content="Item 1 is OK" sort="1"
+                         create_user="System" create_date="2006-07-29 02:45:11.0"
+                         modify_user="System" modify_date="2006-07-29 02:45:11.0"/>
+    <review_item_comment review_item_comment_id="230" resource_id="11" review_item_id="170" comment_type_id="1"
+                         content="Item 2 is OK" sort="1"
+                         create_user="System" create_date="2006-07-29 02:45:11.0"
+                         modify_user="System" modify_date="2006-07-29 02:45:11.0"/>
+    <review_item_comment review_item_comment_id="231" resource_id="11" review_item_id="171" comment_type_id="1"
+                         content="Item 3 is OK" sort="1"
+                         create_user="System" create_date="2006-07-29 02:45:11.0"
+                         modify_user="System" modify_date="2006-07-29 02:45:11.0"/>
+    <review_item_comment review_item_comment_id="232" resource_id="11" review_item_id="172" comment_type_id="1"
+                         content="Item 4 is OK" sort="1"
+                         create_user="System" create_date="2006-07-29 02:45:11.0"
+                         modify_user="System" modify_date="2006-07-29 02:45:11.0"/>
+    <review_item_comment review_item_comment_id="233" resource_id="11" review_item_id="173" comment_type_id="1"
+                         content="Item 5 is OK" sort="1"
+                         create_user="System" create_date="2006-07-29 02:45:11.0"
+                         modify_user="System" modify_date="2006-07-29 02:45:11.0"/>
+    <review_item_comment review_item_comment_id="234" resource_id="11" review_item_id="174" comment_type_id="1"
+                         content="Item 6 is OK" sort="1"
+                         create_user="System" create_date="2006-07-29 02:45:11.0"
+                         modify_user="System" modify_date="2006-07-29 02:45:11.0"/>
+    <review_item_comment review_item_comment_id="235" resource_id="11" review_item_id="175" comment_type_id="1"
+                         content="Item 7 is OK" sort="1"
+                         create_user="System" create_date="2006-07-29 02:45:11.0"
+                         modify_user="System" modify_date="2006-07-29 02:45:11.0"/>
+    <review_item_comment review_item_comment_id="236" resource_id="11" review_item_id="176" comment_type_id="1"
+                         content="Item 8 is OK" sort="1"
+                         create_user="System" create_date="2006-07-29 02:45:11.0"
+                         modify_user="System" modify_date="2006-07-29 02:45:11.0"/>
+    <review_item_comment review_item_comment_id="237" resource_id="11" review_item_id="177" comment_type_id="1"
+                         content="Item 9 is OK" sort="1"
+                         create_user="System" create_date="2006-07-29 02:45:11.0"
+                         modify_user="System" modify_date="2006-07-29 02:45:11.0"/>
+    <review_item_comment review_item_comment_id="238" resource_id="11" review_item_id="178" comment_type_id="1"
+                         content="Item 10 is OK" sort="1"
+                         create_user="System" create_date="2006-07-29 02:45:11.0"
+                         modify_user="System" modify_date="2006-07-29 02:45:11.0"/>
+    <review_item_comment review_item_comment_id="239" resource_id="11" review_item_id="179" comment_type_id="1"
+                         content="Item 11 is OK" sort="1"
+                         create_user="System" create_date="2006-07-29 02:45:11.0"
+                         modify_user="System" modify_date="2006-07-29 02:45:11.0"/>
+    <review_item_comment review_item_comment_id="240" resource_id="11" review_item_id="180" comment_type_id="1"
+                         content="Item 12 is OK" sort="1"
+                         create_user="System" create_date="2006-07-29 02:45:11.0"
+                         modify_user="System" modify_date="2006-07-29 02:45:11.0"/>
+    <review_item_comment review_item_comment_id="241" resource_id="11" review_item_id="181" comment_type_id="1"
+                         content="Item 13 is OK" sort="1"
+                         create_user="System" create_date="2006-07-29 02:45:11.0"
+                         modify_user="System" modify_date="2006-07-29 02:45:11.0"/>
+    <review_item_comment review_item_comment_id="242" resource_id="11" review_item_id="182" comment_type_id="1"
+                         content="Item 14 is OK" sort="1"
+                         create_user="System" create_date="2006-07-29 02:45:11.0"
+                         modify_user="System" modify_date="2006-07-29 02:45:11.0"/>
+    <!-- Ajax Timed Survey, Winning Submitter Aggregation, Comments collected from 2nd Reviewer -->
+    <review_item_comment review_item_comment_id="243" resource_id="11" review_item_id="169" comment_type_id="1"
+                         content="Item 1 is OK" sort="2"
+                         create_user="System" create_date="2006-07-29 02:45:11.0"
+                         modify_user="System" modify_date="2006-07-29 02:45:11.0"/>
+    <review_item_comment review_item_comment_id="244" resource_id="11" review_item_id="170" comment_type_id="1"
+                         content="Item 2 is OK" sort="2"
+                         create_user="System" create_date="2006-07-29 02:45:11.0"
+                         modify_user="System" modify_date="2006-07-29 02:45:11.0"/>
+    <review_item_comment review_item_comment_id="245" resource_id="11" review_item_id="171" comment_type_id="1"
+                         content="Item 3 is OK" sort="2"
+                         create_user="System" create_date="2006-07-29 02:45:11.0"
+                         modify_user="System" modify_date="2006-07-29 02:45:11.0"/>
+    <review_item_comment review_item_comment_id="246" resource_id="11" review_item_id="172" comment_type_id="1"
+                         content="Item 4 is OK" sort="2"
+                         create_user="System" create_date="2006-07-29 02:45:11.0"
+                         modify_user="System" modify_date="2006-07-29 02:45:11.0"/>
+    <review_item_comment review_item_comment_id="247" resource_id="11" review_item_id="173" comment_type_id="1"
+                         content="Item 5 is OK" sort="2"
+                         create_user="System" create_date="2006-07-29 02:45:11.0"
+                         modify_user="System" modify_date="2006-07-29 02:45:11.0"/>
+    <review_item_comment review_item_comment_id="248" resource_id="11" review_item_id="174" comment_type_id="1"
+                         content="Item 6 is OK" sort="2"
+                         create_user="System" create_date="2006-07-29 02:45:11.0"
+                         modify_user="System" modify_date="2006-07-29 02:45:11.0"/>
+    <review_item_comment review_item_comment_id="249" resource_id="11" review_item_id="175" comment_type_id="1"
+                         content="Item 7 is OK" sort="2"
+                         create_user="System" create_date="2006-07-29 02:45:11.0"
+                         modify_user="System" modify_date="2006-07-29 02:45:11.0"/>
+    <review_item_comment review_item_comment_id="250" resource_id="11" review_item_id="176" comment_type_id="1"
+                         content="Item 8 is OK" sort="2"
+                         create_user="System" create_date="2006-07-29 02:45:11.0"
+                         modify_user="System" modify_date="2006-07-29 02:45:11.0"/>
+    <review_item_comment review_item_comment_id="251" resource_id="11" review_item_id="177" comment_type_id="1"
+                         content="Item 9 is OK" sort="2"
+                         create_user="System" create_date="2006-07-29 02:45:11.0"
+                         modify_user="System" modify_date="2006-07-29 02:45:11.0"/>
+    <review_item_comment review_item_comment_id="252" resource_id="11" review_item_id="178" comment_type_id="1"
+                         content="Item 10 is OK" sort="2"
+                         create_user="System" create_date="2006-07-29 02:45:11.0"
+                         modify_user="System" modify_date="2006-07-29 02:45:11.0"/>
+    <review_item_comment review_item_comment_id="253" resource_id="11" review_item_id="179" comment_type_id="1"
+                         content="Item 11 is OK" sort="2"
+                         create_user="System" create_date="2006-07-29 02:45:11.0"
+                         modify_user="System" modify_date="2006-07-29 02:45:11.0"/>
+    <review_item_comment review_item_comment_id="254" resource_id="11" review_item_id="180" comment_type_id="1"
+                         content="Item 12 is OK" sort="2"
+                         create_user="System" create_date="2006-07-29 02:45:11.0"
+                         modify_user="System" modify_date="2006-07-29 02:45:11.0"/>
+    <review_item_comment review_item_comment_id="255" resource_id="11" review_item_id="181" comment_type_id="1"
+                         content="Item 13 is OK" sort="2"
+                         create_user="System" create_date="2006-07-29 02:45:11.0"
+                         modify_user="System" modify_date="2006-07-29 02:45:11.0"/>
+    <review_item_comment review_item_comment_id="256" resource_id="11" review_item_id="182" comment_type_id="1"
+                         content="Item 14 is OK" sort="2"
+                         create_user="System" create_date="2006-07-29 02:45:11.0"
+                         modify_user="System" modify_date="2006-07-29 02:45:11.0"/>
+    <!-- Ajax Timed Survey, Winning Submitter Review Aggregation, Comments collected from 3rd Reviewer -->
+    <review_item_comment review_item_comment_id="257" resource_id="11" review_item_id="169" comment_type_id="1"
+                         content="Item 1 is OK" sort="3"
+                         create_user="System" create_date="2006-07-29 02:45:11.0"
+                         modify_user="System" modify_date="2006-07-29 02:45:11.0"/>
+    <review_item_comment review_item_comment_id="258" resource_id="11" review_item_id="170" comment_type_id="1"
+                         content="Item 2 is OK" sort="3"
+                         create_user="System" create_date="2006-07-29 02:45:11.0"
+                         modify_user="System" modify_date="2006-07-29 02:45:11.0"/>
+    <review_item_comment review_item_comment_id="259" resource_id="11" review_item_id="171" comment_type_id="1"
+                         content="Item 3 is OK" sort="3"
+                         create_user="System" create_date="2006-07-29 02:45:11.0"
+                         modify_user="System" modify_date="2006-07-29 02:45:11.0"/>
+    <review_item_comment review_item_comment_id="260" resource_id="11" review_item_id="172" comment_type_id="1"
+                         content="Item 4 is OK" sort="3"
+                         create_user="System" create_date="2006-07-29 02:45:11.0"
+                         modify_user="System" modify_date="2006-07-29 02:45:11.0"/>
+    <review_item_comment review_item_comment_id="261" resource_id="11" review_item_id="173" comment_type_id="1"
+                         content="Item 5 is OK" sort="3"
+                         create_user="System" create_date="2006-07-29 02:45:11.0"
+                         modify_user="System" modify_date="2006-07-29 02:45:11.0"/>
+    <review_item_comment review_item_comment_id="262" resource_id="11" review_item_id="174" comment_type_id="1"
+                         content="Item 6 is OK" sort="3"
+                         create_user="System" create_date="2006-07-29 02:45:11.0"
+                         modify_user="System" modify_date="2006-07-29 02:45:11.0"/>
+    <review_item_comment review_item_comment_id="263" resource_id="11" review_item_id="175" comment_type_id="1"
+                         content="Item 7 is OK" sort="3"
+                         create_user="System" create_date="2006-07-29 02:45:11.0"
+                         modify_user="System" modify_date="2006-07-29 02:45:11.0"/>
+    <review_item_comment review_item_comment_id="264" resource_id="11" review_item_id="176" comment_type_id="1"
+                         content="Item 8 is OK" sort="3"
+                         create_user="System" create_date="2006-07-29 02:45:11.0"
+                         modify_user="System" modify_date="2006-07-29 02:45:11.0"/>
+    <review_item_comment review_item_comment_id="265" resource_id="11" review_item_id="177" comment_type_id="1"
+                         content="Item 9 is OK" sort="3"
+                         create_user="System" create_date="2006-07-29 02:45:11.0"
+                         modify_user="System" modify_date="2006-07-29 02:45:11.0"/>
+    <review_item_comment review_item_comment_id="266" resource_id="11" review_item_id="178" comment_type_id="1"
+                         content="Item 10 is OK" sort="3"
+                         create_user="System" create_date="2006-07-29 02:45:11.0"
+                         modify_user="System" modify_date="2006-07-29 02:45:11.0"/>
+    <review_item_comment review_item_comment_id="267" resource_id="11" review_item_id="179" comment_type_id="1"
+                         content="Item 11 is OK" sort="3"
+                         create_user="System" create_date="2006-07-29 02:45:11.0"
+                         modify_user="System" modify_date="2006-07-29 02:45:11.0"/>
+    <review_item_comment review_item_comment_id="268" resource_id="11" review_item_id="180" comment_type_id="1"
+                         content="Item 12 is OK" sort="3"
+                         create_user="System" create_date="2006-07-29 02:45:11.0"
+                         modify_user="System" modify_date="2006-07-29 02:45:11.0"/>
+    <review_item_comment review_item_comment_id="269" resource_id="11" review_item_id="181" comment_type_id="1"
+                         content="Item 13 is OK" sort="3"
+                         create_user="System" create_date="2006-07-29 02:45:11.0"
+                         modify_user="System" modify_date="2006-07-29 02:45:11.0"/>
+    <review_item_comment review_item_comment_id="270" resource_id="11" review_item_id="182" comment_type_id="1"
+                         content="Item 14 is OK" sort="3"
+                         create_user="System" create_date="2006-07-29 02:45:11.0"
+                         modify_user="System" modify_date="2006-07-29 02:45:11.0"/>
+</dataset>
