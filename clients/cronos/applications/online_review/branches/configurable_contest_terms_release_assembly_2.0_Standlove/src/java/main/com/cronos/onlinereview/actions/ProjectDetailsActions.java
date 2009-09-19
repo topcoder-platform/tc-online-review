@@ -1783,7 +1783,11 @@ public class ProjectDetailsActions extends DispatchAction {
                 ActionsHelper.deleteProjectResult(verification.getProject(), userId, allProjectResources[i].getResourceRole().getId());
                 resourceManager.removeResource(allProjectResources[i],
                         Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
-
+                
+                // audit unregistration
+                ActionsHelper.auditResourceRoleAction(project.getId(), userId, 
+                		allProjectResources[i].getResourceRole().getId(), userId, "DEL");
+                
                 found = true;
             }
         }

@@ -21,6 +21,7 @@ import java.util.Stack;
 
 import javax.ejb.CreateException;
 import javax.ejb.EJBException;
+import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -73,6 +74,9 @@ import com.topcoder.web.ejb.project.ProjectRoleTermsOfUseLocator;
 import com.topcoder.web.ejb.termsofuse.TermsOfUse;
 import com.topcoder.web.ejb.termsofuse.TermsOfUseEntity;
 import com.topcoder.web.ejb.termsofuse.TermsOfUseLocator;
+import com.topcoder.web.ejb.user.ProjectUser;
+import com.topcoder.web.ejb.user.ProjectUserEntity;
+import com.topcoder.web.ejb.user.ProjectUserHome;
 import com.topcoder.web.ejb.user.UserTermsOfUse;
 import com.topcoder.web.ejb.user.UserTermsOfUseLocator;
 
@@ -1686,6 +1690,9 @@ public class ProjectActions extends DispatchAction {
      */
     private void saveResources(boolean newProject, HttpServletRequest request, LazyValidatorForm lazyForm,
             Project project, Phase[] projectPhases, Map<Object, Phase> phasesJsMap) throws BaseException {
+    	
+    	long actionUserId = AuthorizationHelper.getLoggedInUserId(request);
+    	
 
         // Obtain the instance of the User Retrieval
         UserRetrieval userRetrieval = ActionsHelper.createUserRetrieval(request);
@@ -1806,8 +1813,14 @@ public class ProjectActions extends DispatchAction {
                         Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
                 resourceManager.removeNotifications(new long[] {user.getId()}, project.getId(),
                         timelineNotificationId, Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
+                
+                // audit delete operation
+                ActionsHelper.auditResourceRoleAction(project.getId(), user.getId(), 
+                		resource.getResourceRole().getId(), actionUserId, "DEL");
                 continue;
             }
+            
+            long oldResourceRoleId = 0;
 
             // Set resource properties
             resource.setProject(new Long(project.getId()));
@@ -1817,12 +1830,16 @@ public class ProjectActions extends DispatchAction {
                     resourceRoles, ((Long) lazyForm.get("resources_role", i)).longValue());
             if (role != null && resource.getResourceRole() != null &&
                 role.getId() != resource.getResourceRole().getId()) {
+            	
+            	oldResourceRoleId = resource.getResourceRole().getId();
+            	
                 // delete project_result if old role is submitter
                 // populate project_result if new role is submitter and project is component
                 ActionsHelper.changeResourceRole(project, user.getId(), resource.getResourceRole().getId(),
                     role.getId());
 
                 resourceRoleChanged = true;
+                
             }
             resource.setResourceRole(role);
 
@@ -1881,6 +1898,17 @@ public class ProjectActions extends DispatchAction {
 
             // Save the resource in the persistence level
             resourceManager.updateResource(resource, Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
+            
+            // audit resource role
+            if (resourceRoleChanged) {
+            	ActionsHelper.auditResourceRoleAction(project.getId(), user.getId(), 
+                		oldResourceRoleId, actionUserId, "DEL");
+            	ActionsHelper.auditResourceRoleAction(project.getId(), user.getId(), 
+                		resource.getResourceRole().getId(), actionUserId, "ADD");
+            } else if ("add".equals(resourceAction)) {
+            	ActionsHelper.auditResourceRoleAction(project.getId(), user.getId(), 
+                		resource.getResourceRole().getId(), actionUserId, "ADD");
+            }
 
             if ("add".equals(resourceAction) && resourceRole.equals("Submitter")) {
                 newSubmitters.add(user.getId());
@@ -2546,4 +2574,6 @@ public class ProjectActions extends DispatchAction {
 
         return (buffer.length() != 0) ? buffer.toString() : null;
     }
+    
+    
 }

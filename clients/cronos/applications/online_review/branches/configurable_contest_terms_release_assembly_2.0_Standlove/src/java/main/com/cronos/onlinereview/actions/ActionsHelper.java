@@ -3,6 +3,7 @@
  */
 package com.cronos.onlinereview.actions;
 
+import java.rmi.RemoteException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -13,6 +14,9 @@ import java.text.Format;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
+import javax.ejb.CreateException;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.struts.Globals;
@@ -114,11 +118,15 @@ import com.topcoder.search.builder.filter.OrFilter;
 import com.topcoder.servlet.request.DisallowedDirectoryException;
 import com.topcoder.servlet.request.FileUpload;
 import com.topcoder.servlet.request.LocalFileUpload;
+import com.topcoder.shared.util.DBMS;
 import com.topcoder.util.errorhandling.BaseException;
 import com.topcoder.util.errorhandling.BaseRuntimeException;
 import com.topcoder.util.log.Level;
 import com.topcoder.util.log.Log;
 import com.topcoder.util.log.LogFactory;
+import com.topcoder.web.ejb.user.ProjectUser;
+import com.topcoder.web.ejb.user.ProjectUserEntity;
+import com.topcoder.web.ejb.user.ProjectUserHome;
 
 /**
  * <p>
@@ -4025,5 +4033,37 @@ public class ActionsHelper {
      */
     public static boolean isStudioProject(Project project) {
         return "Studio".equals(project.getProjectCategory().getProjectType().getName());
+    }
+    
+    public static void auditResourceRoleAction(long projectId, long resourceUserId, long resourceRoleId, long actionUserId, String action) {
+    	ProjectUser projectUserService = null;
+
+		try {
+			ProjectUserHome projectUserHome = (ProjectUserHome) (new InitialContext()).lookup(ProjectUserHome.EJB_REF_NAME);
+			projectUserService = projectUserHome.create();
+		
+			final int CREATE_AUDIT_ACTION_TYPE_ID = 1;
+			final int DELETE_AUDIT_ACTION_TYPE_ID = 2;
+			
+			// audit 
+			ProjectUserEntity entity = new ProjectUserEntity();
+	    	entity.setActionUserId(actionUserId);
+	    	entity.setResourceUserId(resourceUserId);
+	    	entity.setProjectId(projectId);
+	    	entity.setActionDate(new Date());
+			entity.setResourceRoleId(resourceRoleId);
+	    	entity.setAuditActionTypeId("ADD".equalsIgnoreCase(action) ? 
+	    			CREATE_AUDIT_ACTION_TYPE_ID : DELETE_AUDIT_ACTION_TYPE_ID);
+			projectUserService.auditProjectUser(entity, DBMS.TCS_OLTP_DATASOURCE_NAME);
+		} catch (RemoteException e) {
+			e.printStackTrace();
+			// ignore the exception
+		} catch (CreateException e) {	
+			e.printStackTrace();
+			// ignore the exception
+	    } catch (NamingException e) {
+	    	e.printStackTrace();
+	    	// ignore the exception
+		}
     }
 }
