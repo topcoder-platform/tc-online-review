@@ -1,6 +1,6 @@
 -- This scripts deletes (drops) all the tables in the database, but it doesn't
 -- deletes the databse itself.  You'll need to recreate all the tables, and
--- repopulate them with the lookup data at least to be able to use the application.
+-- repopulate them with the lookup data at least to be able to use the application. 
 
 DROP TABLE default_scorecard;
 
