@@ -1785,7 +1785,7 @@ public class ProjectDetailsActions extends DispatchAction {
                         Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
                 
                 // audit unregistration
-                ActionsHelper.auditResourceRoleAction(project.getId(), userId, 
+                ActionsHelper.auditResourceRoleAction(verification.getProject().getId(), userId, 
                 		allProjectResources[i].getResourceRole().getId(), userId, "DEL");
                 
                 found = true;
