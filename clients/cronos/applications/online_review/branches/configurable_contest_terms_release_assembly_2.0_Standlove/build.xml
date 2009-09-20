@@ -44,7 +44,7 @@
 
     <!-- Server installation directories -->
     <property name="cactus.home.tomcat5x" value="d:\tomcat" />
-    <property name="deploy-dir" value="d:\tomcat\webapps\${distfilename}.war" />
+    <property name="deploy-dir" value="/home/tcs/jboss-4.0.2/server/default/deploy/${distfilename}.war" />
 
     <!-- EXECUTION TAGS -->
     <property name="debug" value="off" />
