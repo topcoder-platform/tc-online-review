@@ -124,9 +124,9 @@ import com.topcoder.util.errorhandling.BaseRuntimeException;
 import com.topcoder.util.log.Level;
 import com.topcoder.util.log.Log;
 import com.topcoder.util.log.LogFactory;
-import com.topcoder.web.ejb.user.ProjectUser;
-import com.topcoder.web.ejb.user.ProjectUserEntity;
-import com.topcoder.web.ejb.user.ProjectUserHome;
+import com.topcoder.web.ejb.projectuser.ProjectUser;
+import com.topcoder.web.ejb.projectuser.ProjectUserEntity;
+import com.topcoder.web.ejb.projectuser.ProjectUserHome;
 
 /**
  * <p>

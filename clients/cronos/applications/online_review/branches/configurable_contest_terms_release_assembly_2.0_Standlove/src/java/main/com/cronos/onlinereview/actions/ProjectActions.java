@@ -71,12 +71,12 @@ import com.topcoder.shared.util.DBMS;
 import com.topcoder.util.errorhandling.BaseException;
 import com.topcoder.web.ejb.project.ProjectRoleTermsOfUse;
 import com.topcoder.web.ejb.project.ProjectRoleTermsOfUseLocator;
+import com.topcoder.web.ejb.projectuser.ProjectUser;
+import com.topcoder.web.ejb.projectuser.ProjectUserEntity;
+import com.topcoder.web.ejb.projectuser.ProjectUserHome;
 import com.topcoder.web.ejb.termsofuse.TermsOfUse;
 import com.topcoder.web.ejb.termsofuse.TermsOfUseEntity;
 import com.topcoder.web.ejb.termsofuse.TermsOfUseLocator;
-import com.topcoder.web.ejb.user.ProjectUser;
-import com.topcoder.web.ejb.user.ProjectUserEntity;
-import com.topcoder.web.ejb.user.ProjectUserHome;
 import com.topcoder.web.ejb.user.UserTermsOfUse;
 import com.topcoder.web.ejb.user.UserTermsOfUseLocator;
 
