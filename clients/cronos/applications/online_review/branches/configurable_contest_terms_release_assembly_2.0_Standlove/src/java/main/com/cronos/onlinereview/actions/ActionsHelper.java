@@ -136,11 +136,16 @@ import com.topcoder.web.ejb.projectuser.ProjectUserHome;
  * Change note for 1.1: add method to create <code>ProjectLinkManager</code>. This is for
  * "OR Project Linking Assembly".
  * </p>
+ * 
+ * <p>
+ * Version 1.2 (Other Configurable Contest Terms Release Assembly 2.0 ) Change notes:
+ *   <ol>
+ *     <li>OR-679 Keep a record of all project resource additions and removals. </li>
+ *   </ol>
+ * </p>
  *
- * @author George1
- * @author real_vg
- * @author TCSDEVELOPER
- * @version 1.1
+ * @author George1, real_vg, ASSEMBLER
+ * @version 1.2
  * @since 1.0
  */
 public class ActionsHelper {
@@ -4035,11 +4040,21 @@ public class ActionsHelper {
         return "Studio".equals(project.getProjectCategory().getProjectType().getName());
     }
     
+    /**
+     * Audit the action when user change the project's resource. 
+     * 
+     * @param projectId the project id.
+     * @param resourceUserId the resource user id.
+     * @param resourceRoleId the resource role id.
+     * @param actionUserId the action user id.
+     * @param action the action to be performed. 
+     */
     public static void auditResourceRoleAction(long projectId, long resourceUserId, long resourceRoleId, long actionUserId, String action) {
     	ProjectUser projectUserService = null;
 
 		try {
-			ProjectUserHome projectUserHome = (ProjectUserHome) (new InitialContext()).lookup(ProjectUserHome.EJB_REF_NAME);
+			ProjectUserHome projectUserHome = 
+				(ProjectUserHome) (new InitialContext()).lookup(ProjectUserHome.EJB_REF_NAME);
 			projectUserService = projectUserHome.create();
 		
 			final int CREATE_AUDIT_ACTION_TYPE_ID = 1;

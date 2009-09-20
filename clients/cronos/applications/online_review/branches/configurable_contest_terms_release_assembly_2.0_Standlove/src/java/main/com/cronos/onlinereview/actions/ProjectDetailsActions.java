@@ -113,9 +113,16 @@ import com.topcoder.util.file.fieldconfig.TemplateFields;
  *     <li>Fixed hardcoded minimum screening score for project details page.</li>
  *   </ol>
  * </p>
+ * 
+ * <p>
+ * Version 1.3 (Other Configurable Contest Terms Release Assembly 2.0 ) Change notes:
+ *   <ol>
+ *     <li>OR-679 Keep a record of all project resource additions and removals. </li>
+ *   </ol>
+ * </p>
  *
- * @author George1, real_vg, pulky
- * @version 1.2
+ * @author George1, real_vg, pulky, ASSEMBLER
+ * @version 1.3
  */
 public class ProjectDetailsActions extends DispatchAction {
 
