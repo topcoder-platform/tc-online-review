@@ -1693,10 +1693,10 @@ public class ProjectDetailsActions extends DispatchAction {
      * This method is an implementation of &quot;Unregister&quot; Struts Action defined for
      * this assembly, which is supposed to unregister the logged in submitter from a project
      * (denoted by <code>pid</code> parameter). This action gets executed twice &#x96; once to
-     * display the page with the confirmation, and once to process the confiremed request to
+     * display the page with the confirmation, and once to process the confirmed request to
      * actually perform the unregistration.
      *
-     * @return an action forward to the appropriate page. If no error has occured and this action
+     * @return an action forward to the appropriate page. If no error has occurred and this action
      *         was called the first time, the forward will be to /jsp/confirmUnregistration.jsp
      *         If this action was called during the post back (the second time), then this method
      *         verifies if everything is correct, and proceeds with the unregisration.
@@ -1721,7 +1721,7 @@ public class ProjectDetailsActions extends DispatchAction {
         // Verify that certain requirements are met before processing with the Action
         CorrectnessCheckResult verification = ActionsHelper.checkForCorrectProjectId(
                 mapping, getResources(request), request, Constants.VIEW_PROJECT_DETAIL_PERM_NAME, false);
-        // If any error has occured, return action forward contained in the result bean
+        // If any error has occurred, return action forward contained in the result bean
         if (!verification.isSuccessful()) {
             return verification.getForward();
         }
@@ -1775,17 +1775,26 @@ public class ProjectDetailsActions extends DispatchAction {
                 verification.getProject());
 
         boolean found = false;
-        for (int i = 0; i < allProjectResources.length && !found; i++) {
+        boolean hasOtherRoles = false;
+        for (int i = 0; i < allProjectResources.length && (!found || !hasOtherRoles); i++) {
             long userId = Long.parseLong(((String) allProjectResources[i].getProperty("External Reference ID")).trim());
 
-            if (allProjectResources[i].getResourceRole().getName().equalsIgnoreCase(Constants.SUBMITTER_ROLE_NAME) &&
-                    userId == AuthorizationHelper.getLoggedInUserId(request)) {
-                ActionsHelper.deleteProjectResult(verification.getProject(), userId, allProjectResources[i].getResourceRole().getId());
-                resourceManager.removeResource(allProjectResources[i],
-                        Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
+            if (userId == AuthorizationHelper.getLoggedInUserId(request)) {
+                if (allProjectResources[i].getResourceRole().getName().equalsIgnoreCase(Constants.SUBMITTER_ROLE_NAME)) {
+                    ActionsHelper.deleteProjectResult(verification.getProject(), userId, allProjectResources[i].getResourceRole().getId());
+                    resourceManager.removeResource(allProjectResources[i],
+                            Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
 
-                found = true;
+                    found = true;
+                } else {
+                    hasOtherRoles = true;
+                }
             }
+        }
+        
+        // Only remove forum permissions if the user has no roles left.
+        if (!hasOtherRoles) {
+            ActionsHelper.removeForumPermissions(verification.getProject(), AuthorizationHelper.getLoggedInUserId(request));
         }
 
         return ActionsHelper.cloneForwardAndAppendToPath(
@@ -1796,13 +1805,13 @@ public class ProjectDetailsActions extends DispatchAction {
      * This method is an implementation of &quot;EarlyAppeals&quot; Struts Action defined for
      * this assembly, which allows the logged in submitter from a project (denoted by <code>pid</code>
      * parameter) to mark his appeals completed or to resume appealing. This action gets executed twice &#x96;
-     * once to display the page with the confirmation, and once to process the confiremed request to
+     * once to display the page with the confirmation, and once to process the confirmed request to
      * actually perform the action.
      *
-     * @return an action forward to the appropriate page. If no error has occured and this action
+     * @return an action forward to the appropriate page. If no error has occurred and this action
      *         was called the first time, the forward will be to /jsp/confirmEarlyAppeals.jsp
      *         If this action was called during the post back (the second time), then this method
-     *         verifies if everything is correct, and proceeds with the unregisration.
+     *         verifies if everything is correct, and proceeds with the unregistration.
      *         After this it returns a forward to the View Project Details page.
      * @param mapping
      *            action mapping.
