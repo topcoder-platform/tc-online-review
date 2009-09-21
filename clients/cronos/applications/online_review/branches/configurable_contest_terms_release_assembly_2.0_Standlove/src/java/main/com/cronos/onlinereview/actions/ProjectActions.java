@@ -1784,6 +1784,7 @@ public class ProjectActions extends DispatchAction {
             
             String oldHandle = null;
             String oldUserId = null;
+            ResourceRole oldResourceRole = null;
             boolean handleChanged = false;
 
             Resource resource;
@@ -1809,6 +1810,7 @@ public class ProjectActions extends DispatchAction {
                     
                     oldUserId = (String) resource.getProperty("External Reference ID");
                     oldHandle = (String) resource.getProperty("Handle");
+                    oldResourceRole = resource.getResourceRole();
                     handleChanged = ! resourceNames[i].equalsIgnoreCase(oldHandle);
                     
                     System.err.println(oldUserId + " : " + oldHandle + " : " + handleChanged);
@@ -1836,8 +1838,6 @@ public class ProjectActions extends DispatchAction {
                 		resource.getResourceRole().getId(), actionUserId, "DEL");
                 continue;
             }
-            
-            long oldResourceRoleId = 0;
 
             // Set resource properties
             resource.setProject(new Long(project.getId()));
@@ -1847,8 +1847,6 @@ public class ProjectActions extends DispatchAction {
                     resourceRoles, ((Long) lazyForm.get("resources_role", i)).longValue());
             if (role != null && resource.getResourceRole() != null &&
                 role.getId() != resource.getResourceRole().getId()) {
-            	
-            	oldResourceRoleId = resource.getResourceRole().getId();
             	
                 // delete project_result if old role is submitter
                 // populate project_result if new role is submitter and project is component
@@ -1917,17 +1915,17 @@ public class ProjectActions extends DispatchAction {
             resourceManager.updateResource(resource, Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
             
             // audit resource role
-            System.err.println("HERE1");
-            if (resourceRoleChanged || handleChanged) {
-            	System.err.println("HERE1");
-            	ActionsHelper.auditResourceRoleAction(project.getId(), Long.parseLong(oldUserId), 
-                		oldResourceRoleId, actionUserId, "DEL");
+            if (resourceRoleChanged || handleChanged) {            	
+            	if (oldResourceRole != null) {
+            		System.err.println("RID: " + oldResourceRole.getId());
+	            	ActionsHelper.auditResourceRoleAction(project.getId(), Long.parseLong(oldUserId), 
+	            			oldResourceRole.getId(), actionUserId, "DEL");
+            	}
             	
             	ActionsHelper.auditResourceRoleAction(project.getId(), user.getId(), 
                 		resource.getResourceRole().getId(), actionUserId, "ADD");            	
             	
             } else if ("add".equals(resourceAction)) {
-            	System.err.println("HERE2");
             	ActionsHelper.auditResourceRoleAction(project.getId(), user.getId(), 
                 		resource.getResourceRole().getId(), actionUserId, "ADD");
             }
