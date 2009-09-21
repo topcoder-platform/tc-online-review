@@ -239,7 +239,8 @@ public class ProjectDetailsActions extends DispatchAction {
         // Retrieve the billing project id from property.
         // And retrieve the list of all client projects, find billing project name by matching on id
         // set billing project name in request.
-        if (AuthorizationHelper.hasUserRole(request, Constants.MANAGER_ROLE_NAME)) {
+        if (AuthorizationHelper.hasUserRole(request, Constants.MANAGER_ROLE_NAME)
+             || AuthorizationHelper.hasUserRole(request, Constants.GLOBAL_MANAGER_ROLE_NAME)) {
             long billingProjectId = 0L;
             tempStr = (String) project.getProperty("Billing Project");
             if (tempStr != null && tempStr.trim().length() != 0) {
