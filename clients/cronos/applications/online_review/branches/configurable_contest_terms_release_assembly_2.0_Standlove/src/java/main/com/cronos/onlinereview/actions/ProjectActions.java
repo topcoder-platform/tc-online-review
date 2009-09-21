@@ -1809,7 +1809,7 @@ public class ProjectActions extends DispatchAction {
                     
                     oldUserId = (String) resource.getProperty("External Reference ID");
                     oldHandle = (String) resource.getProperty("Handle");
-                    handleChanged = resourceNames[i].equalsIgnoreCase(oldHandle);
+                    handleChanged = ! resourceNames[i].equalsIgnoreCase(oldHandle);
                 } else {
                     // -1 value as id marks the resources that were't persisted in DB yet
                     // and so should be skipped for actions other then "add"
