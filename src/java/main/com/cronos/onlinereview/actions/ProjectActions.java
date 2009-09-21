@@ -1917,6 +1917,10 @@ public class ProjectActions extends DispatchAction {
 
         // Update rboard_application table with the reviewers set in the resources.
         ActionsHelper.synchronizeRBoardApplications(project);
+        
+        // Add forum permissions for all new users and remove permissions for removed resources.
+        ActionsHelper.removeForumPermissions(project, oldUsers);
+        ActionsHelper.addForumPermissions(project, newUsers);
     }
 
     /**

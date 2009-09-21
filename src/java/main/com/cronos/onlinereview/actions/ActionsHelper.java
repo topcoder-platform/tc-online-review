@@ -3,6 +3,7 @@
  */
 package com.cronos.onlinereview.actions;
 
+import java.rmi.RemoteException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -13,6 +14,9 @@ import java.text.Format;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
+import javax.ejb.CreateException;
+import javax.naming.Context;
+import javax.naming.NamingException;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.struts.Globals;
@@ -114,11 +118,15 @@ import com.topcoder.search.builder.filter.OrFilter;
 import com.topcoder.servlet.request.DisallowedDirectoryException;
 import com.topcoder.servlet.request.FileUpload;
 import com.topcoder.servlet.request.LocalFileUpload;
+import com.topcoder.shared.util.ApplicationServer;
+import com.topcoder.shared.util.TCContext;
 import com.topcoder.util.errorhandling.BaseException;
 import com.topcoder.util.errorhandling.BaseRuntimeException;
 import com.topcoder.util.log.Level;
 import com.topcoder.util.log.Log;
 import com.topcoder.util.log.LogFactory;
+import com.topcoder.web.ejb.forums.Forums;
+import com.topcoder.web.ejb.forums.ForumsHome;
 
 /**
  * <p>
@@ -4025,5 +4033,53 @@ public class ActionsHelper {
      */
     public static boolean isStudioProject(Project project) {
         return "Studio".equals(project.getProjectCategory().getProjectType().getName());
+    }
+    
+    private static Forums getForumBean() throws RemoteException, CreateException, NamingException {
+        Context context = TCContext.getInitial(ApplicationServer.FORUMS_HOST_URL);
+        ForumsHome forumsHome = (ForumsHome) context.lookup(ForumsHome.EJB_REF_NAME);
+        return forumsHome.create();
+    }
+    
+    public static void addForumPermissions(Project project, Collection<Long> users) throws BaseException {
+        try {
+            Forums forumBean = getForumBean();
+            
+            String roleId = "Software_Users_" + (String) project.getProperty("Developer Forum ID");
+
+            for (Long userId : users) {
+                forumBean.assignRole(userId, roleId);
+            }
+        } catch (Exception e) {
+            throw new BaseException("Error adding forum permissions for project id " + project.getId(), e);
+        }
+    }
+    
+    public static void addForumPermissions(Project project, Long user) throws BaseException {
+        addForumPermissions(project, userToUsers(user));
+    }
+    
+    public static void removeForumPermissions(Project project, Collection<Long> users) throws BaseException {
+        try {
+            Forums forumBean = getForumBean();
+            
+            String roleId = "Software_Users_" + (String) project.getProperty("Developer Forum ID");
+
+            for (Long userId : users) {
+                forumBean.removeRole(userId, roleId);
+            }
+        } catch (Exception e) {
+            throw new BaseException("Error removing forum permissions for project id " + project.getId(), e);
+        }
+    }
+    
+    public static void removeForumPermissions(Project project, Long user) throws BaseException {
+        removeForumPermissions(project, userToUsers(user));
+    }
+    
+    private static Collection<Long> userToUsers(Long user) {
+        ArrayList<Long> userCollection = new ArrayList<Long>();
+        userCollection.add(user);
+        return userCollection;
     }
 }
