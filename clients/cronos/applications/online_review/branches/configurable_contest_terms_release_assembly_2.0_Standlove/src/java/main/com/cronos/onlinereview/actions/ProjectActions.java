@@ -1781,6 +1781,10 @@ public class ProjectActions extends DispatchAction {
 
             // Get info about user with the specified handle
             ExternalUser user = userRetrieval.retrieveUser(resourceNames[i]);
+            
+            String oldHandle = null;
+            Long oldUserId = null;
+            boolean handleChanged = false;
 
             Resource resource;
 
@@ -1802,6 +1806,10 @@ public class ProjectActions extends DispatchAction {
                     resource = resourceManager.getResource(resourceId.longValue());
                     oldUsers.add(user.getId());
                     //System.out.println("REMOVE:" + user.getId());
+                    
+                    oldUserId = (Long) resource.getProperty("External Reference ID");
+                    oldHandle = (String) resource.getProperty("Handle");
+                    handleChanged = resourceNames[i].equalsIgnoreCase(oldHandle);
                 } else {
                     // -1 value as id marks the resources that were't persisted in DB yet
                     // and so should be skipped for actions other then "add"
@@ -1849,6 +1857,8 @@ public class ProjectActions extends DispatchAction {
                 
             }
             resource.setResourceRole(role);
+            
+            
 
             resource.setProperty("Handle", resourceNames[i]);
             if (Boolean.TRUE.equals(lazyForm.get("resources_payment", i))) {
@@ -1907,9 +1917,10 @@ public class ProjectActions extends DispatchAction {
             resourceManager.updateResource(resource, Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
             
             // audit resource role
-            if (resourceRoleChanged) {
-            	ActionsHelper.auditResourceRoleAction(project.getId(), user.getId(), 
+            if (resourceRoleChanged || handleChanged) {
+            	ActionsHelper.auditResourceRoleAction(project.getId(), oldUserId.longValue(), 
                 		oldResourceRoleId, actionUserId, "DEL");
+            	
             	ActionsHelper.auditResourceRoleAction(project.getId(), user.getId(), 
                 		resource.getResourceRole().getId(), actionUserId, "ADD");
             } else if ("add".equals(resourceAction)) {
