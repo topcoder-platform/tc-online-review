@@ -1784,7 +1784,7 @@ public class ProjectActions extends DispatchAction {
             
             String oldHandle = null;
             String oldUserId = null;
-            ResourceRole oldResourceRole = null;
+            Long oldResourceRoleId = null;
             boolean handleChanged = false;
 
             Resource resource;
@@ -1810,10 +1810,10 @@ public class ProjectActions extends DispatchAction {
                     
                     oldUserId = (String) resource.getProperty("External Reference ID");
                     oldHandle = (String) resource.getProperty("Handle");
-                    oldResourceRole = resource.getResourceRole();
+                    oldResourceRoleId = resource.getResourceRole() == null ? 
+                    		null : new Long(resource.getResourceRole().getId());
                     handleChanged = ! resourceNames[i].equalsIgnoreCase(oldHandle);
-                    
-                    System.err.println(oldUserId + " : " + oldHandle + " : " + handleChanged);
+
                 } else {
                     // -1 value as id marks the resources that were't persisted in DB yet
                     // and so should be skipped for actions other then "add"
@@ -1916,10 +1916,9 @@ public class ProjectActions extends DispatchAction {
             
             // audit resource role
             if (resourceRoleChanged || handleChanged) {            	
-            	if (oldResourceRole != null) {
-            		System.err.println("RID: " + oldResourceRole.getId());
+            	if (oldResourceRoleId != null) {
 	            	ActionsHelper.auditResourceRoleAction(project.getId(), Long.parseLong(oldUserId), 
-	            			oldResourceRole.getId(), actionUserId, "DEL");
+	            			oldResourceRoleId.longValue(), actionUserId, "DEL");
             	}
             	
             	ActionsHelper.auditResourceRoleAction(project.getId(), user.getId(), 
