@@ -1810,6 +1810,8 @@ public class ProjectActions extends DispatchAction {
                     oldUserId = (String) resource.getProperty("External Reference ID");
                     oldHandle = (String) resource.getProperty("Handle");
                     handleChanged = ! resourceNames[i].equalsIgnoreCase(oldHandle);
+                    
+                    System.err.println(oldUserId + " : " + oldHandle + " : " + handleChanged);
                 } else {
                     // -1 value as id marks the resources that were't persisted in DB yet
                     // and so should be skipped for actions other then "add"
@@ -1857,8 +1859,6 @@ public class ProjectActions extends DispatchAction {
                 
             }
             resource.setResourceRole(role);
-            
-            
 
             resource.setProperty("Handle", resourceNames[i]);
             if (Boolean.TRUE.equals(lazyForm.get("resources_payment", i))) {
@@ -1917,13 +1917,17 @@ public class ProjectActions extends DispatchAction {
             resourceManager.updateResource(resource, Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
             
             // audit resource role
+            System.err.println("HERE1");
             if (resourceRoleChanged || handleChanged) {
+            	System.err.println("HERE1");
             	ActionsHelper.auditResourceRoleAction(project.getId(), Long.parseLong(oldUserId), 
                 		oldResourceRoleId, actionUserId, "DEL");
             	
             	ActionsHelper.auditResourceRoleAction(project.getId(), user.getId(), 
-                		resource.getResourceRole().getId(), actionUserId, "ADD");
+                		resource.getResourceRole().getId(), actionUserId, "ADD");            	
+            	
             } else if ("add".equals(resourceAction)) {
+            	System.err.println("HERE2");
             	ActionsHelper.auditResourceRoleAction(project.getId(), user.getId(), 
                 		resource.getResourceRole().getId(), actionUserId, "ADD");
             }
