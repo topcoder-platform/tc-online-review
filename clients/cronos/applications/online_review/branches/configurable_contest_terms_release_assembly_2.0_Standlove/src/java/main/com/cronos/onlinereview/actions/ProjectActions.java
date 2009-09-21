@@ -1783,7 +1783,7 @@ public class ProjectActions extends DispatchAction {
             ExternalUser user = userRetrieval.retrieveUser(resourceNames[i]);
             
             String oldHandle = null;
-            Long oldUserId = null;
+            String oldUserId = null;
             boolean handleChanged = false;
 
             Resource resource;
@@ -1807,7 +1807,7 @@ public class ProjectActions extends DispatchAction {
                     oldUsers.add(user.getId());
                     //System.out.println("REMOVE:" + user.getId());
                     
-                    oldUserId = (Long) resource.getProperty("External Reference ID");
+                    oldUserId = (String) resource.getProperty("External Reference ID");
                     oldHandle = (String) resource.getProperty("Handle");
                     handleChanged = resourceNames[i].equalsIgnoreCase(oldHandle);
                 } else {
@@ -1918,7 +1918,7 @@ public class ProjectActions extends DispatchAction {
             
             // audit resource role
             if (resourceRoleChanged || handleChanged) {
-            	ActionsHelper.auditResourceRoleAction(project.getId(), oldUserId.longValue(), 
+            	ActionsHelper.auditResourceRoleAction(project.getId(), Long.parseLong(oldUserId), 
                 		oldResourceRoleId, actionUserId, "DEL");
             	
             	ActionsHelper.auditResourceRoleAction(project.getId(), user.getId(), 
