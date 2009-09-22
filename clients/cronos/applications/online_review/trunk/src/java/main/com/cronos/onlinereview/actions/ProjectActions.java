@@ -1721,6 +1721,7 @@ public class ProjectActions extends DispatchAction {
         // HashSet used to identify resource of new user
         Set<Long> newUsers = new HashSet<Long>();
         Set<Long> oldUsers = new HashSet<Long>();
+        Set<Long> deletedUsers = new HashSet<Long>();
         Set<Long> newSubmitters = new HashSet<Long>();
 
         // 0-index resource is skipped as it is a "dummy" one
@@ -1799,6 +1800,7 @@ public class ProjectActions extends DispatchAction {
 
             // If action is "delete", delete the resource and proceed to the next one
             if ("delete".equals(resourceAction)) {
+                deletedUsers.add(user.getId());
                 // delete project_result
                 ActionsHelper.deleteProjectResult(project, user.getId(),
                         ((Long) lazyForm.get("resources_role", i)).longValue());
@@ -1919,7 +1921,7 @@ public class ProjectActions extends DispatchAction {
         ActionsHelper.synchronizeRBoardApplications(project);
         
         // Add forum permissions for all new users and remove permissions for removed resources.
-        ActionsHelper.removeForumPermissions(project, oldUsers);
+        ActionsHelper.removeForumPermissions(project, deletedUsers);
         ActionsHelper.addForumPermissions(project, newUsers);
     }
 
