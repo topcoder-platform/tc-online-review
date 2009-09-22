@@ -4045,7 +4045,7 @@ public class ActionsHelper {
         try {
             Forums forumBean = getForumBean();
             
-            String roleId = "Software_Users_" + (String) project.getProperty("Developer Forum ID");
+            String roleId = "Software_Users_" + getProjectLongValue(project, "Developer Forum ID");
 
             for (Long userId : users) {
                 forumBean.assignRole(userId, roleId);
@@ -4063,7 +4063,7 @@ public class ActionsHelper {
         try {
             Forums forumBean = getForumBean();
             
-            String roleId = "Software_Users_" + (String) project.getProperty("Developer Forum ID");
+            String roleId = "Software_Users_" + getProjectLongValue(project, "Developer Forum ID");
 
             for (Long userId : users) {
                 forumBean.removeRole(userId, roleId);
