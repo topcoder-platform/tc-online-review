@@ -539,7 +539,8 @@ public class ProjectActions extends DispatchAction {
 
         // since Online Review Update - Add Project Dropdown v1.0
         request.setAttribute("isAdmin",
-                Boolean.valueOf(AuthorizationHelper.hasUserRole(request, Constants.MANAGER_ROLE_NAME)));
+                Boolean.valueOf(AuthorizationHelper.hasUserRole(request, Constants.MANAGER_ROLE_NAME) || 
+                                    AuthorizationHelper.hasUserRole(request, Constants.GLOBAL_MANAGER_ROLE_NAME)));
     }
 
     /**
