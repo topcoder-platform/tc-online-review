@@ -38,7 +38,7 @@ public class PRFinalReviewPhaseHandler extends FinalReviewPhaseHandler {
 	}
 
     /**
-     * Provides additional logic to execute a phase. this exetension will update placed, final_score
+     * Provides additional logic to execute a phase. this extension will update placed, final_score
      * field of project_result table.</p>
      *
      * @param phase The input phase to check.
