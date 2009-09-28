@@ -1,0 +1,56 @@
+<?xml version='1.0' encoding='UTF-8'?>
+
+<dataset>
+    <!-- *** review *** -->
+    <!-- Screening, Ajax Timed Survey 1.0 -->
+    <!-- Primary Screener, Winning Submitter -->
+    <review review_id="1" resource_id="4" submission_id="1" scorecard_id="1" committed="1" score="75.00"/>
+
+    <!-- *** review_item *** -->
+    <!-- Ajax Timed Survey, Winning Submitter Screening, No uploaded documents -->
+    <review_item review_item_id="1" review_id="1" scorecard_question_id="1" answer="3" sort="1"/>
+    <review_item review_item_id="2" review_id="1" scorecard_question_id="2" answer="3" sort="2"/>
+    <review_item review_item_id="3" review_id="1" scorecard_question_id="3" answer="3" sort="3"/>
+    <review_item review_item_id="4" review_id="1" scorecard_question_id="4" answer="3" sort="4"/>
+    <review_item review_item_id="5" review_id="1" scorecard_question_id="5" answer="3" sort="5"/>
+    <review_item review_item_id="6" review_id="1" scorecard_question_id="6" answer="3" sort="6"/>
+    <review_item review_item_id="7" review_id="1" scorecard_question_id="7" answer="3" sort="7"/>
+    <review_item review_item_id="8" review_id="1" scorecard_question_id="8" answer="3" sort="8"/>
+    <review_item review_item_id="9" review_id="1" scorecard_question_id="9" answer="3" sort="9"/>
+    <review_item review_item_id="10" review_id="1" scorecard_question_id="10" answer="3" sort="10"/>
+    <review_item review_item_id="11" review_id="1" scorecard_question_id="11" answer="3" sort="11"/>
+    <review_item review_item_id="12" review_id="1" scorecard_question_id="12" answer="3" sort="12"/>
+    <review_item review_item_id="13" review_id="1" scorecard_question_id="13" answer="3" sort="13"/>
+    <review_item review_item_id="14" review_id="1" scorecard_question_id="14" answer="3" sort="14"/>
+
+    <!-- *** review_item_comment *** -->
+    <!-- Ajax Timed Survey, Winning Submitter Screening -->
+    <review_item_comment review_item_comment_id="1" resource_id="4" review_item_id="1" comment_type_id="1"
+                         content="test_screeningresponsetext01" sort="1"/>
+    <review_item_comment review_item_comment_id="2" resource_id="4" review_item_id="2" comment_type_id="1"
+                         content="test_screeningresponsetext01" sort="1"/>
+    <review_item_comment review_item_comment_id="3" resource_id="4" review_item_id="3" comment_type_id="1"
+                         content="test_screeningresponsetext01" sort="1"/>
+    <review_item_comment review_item_comment_id="4" resource_id="4" review_item_id="4" comment_type_id="1"
+                         content="test_screeningresponsetext01" sort="1"/>
+    <review_item_comment review_item_comment_id="5" resource_id="4" review_item_id="5" comment_type_id="1"
+                         content="test_screeningresponsetext01" sort="1"/>
+    <review_item_comment review_item_comment_id="6" resource_id="4" review_item_id="6" comment_type_id="1"
+                         content="test_screeningresponsetext01" sort="1"/>
+    <review_item_comment review_item_comment_id="7" resource_id="4" review_item_id="7" comment_type_id="1"
+                         content="test_screeningresponsetext01" sort="1"/>
+    <review_item_comment review_item_comment_id="8" resource_id="4" review_item_id="8" comment_type_id="1"
+                         content="test_screeningresponsetext01" sort="1"/>
+    <review_item_comment review_item_comment_id="9" resource_id="4" review_item_id="9" comment_type_id="1"
+                         content="test_screeningresponsetext01" sort="1"/>
+    <review_item_comment review_item_comment_id="10" resource_id="4" review_item_id="10" comment_type_id="1"
+                         content="test_screeningresponsetext01" sort="1"/>
+    <review_item_comment review_item_comment_id="11" resource_id="4" review_item_id="11" comment_type_id="1"
+                         content="test_screeningresponsetext01" sort="1"/>
+    <review_item_comment review_item_comment_id="12" resource_id="4" review_item_id="12" comment_type_id="1"
+                         content="test_screeningresponsetext01" sort="1"/>
+    <review_item_comment review_item_comment_id="13" resource_id="4" review_item_id="13" comment_type_id="1"
+                         content="test_screeningresponsetext01" sort="1"/>
+    <review_item_comment review_item_comment_id="14" resource_id="4" review_item_id="14" comment_type_id="1"
+                         content="test_screeningresponsetext01" sort="1"/>
+</dataset>
