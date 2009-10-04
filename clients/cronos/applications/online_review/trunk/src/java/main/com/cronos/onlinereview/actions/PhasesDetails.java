@@ -9,7 +9,7 @@ import java.util.List;
  * TODO: Add docs for this class's methods.
  *
  * @author George1
- * @verion 1.0
+ * @version 1.0
  */
 final class PhasesDetails {
 
