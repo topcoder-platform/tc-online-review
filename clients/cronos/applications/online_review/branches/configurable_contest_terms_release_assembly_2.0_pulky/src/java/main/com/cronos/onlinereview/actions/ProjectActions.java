@@ -128,7 +128,7 @@ public class ProjectActions extends DispatchAction {
      * 
      * @since 1.3
      */
-    private static final int DEFAULT_TERMS_SORT_ORDER = 5;
+    private static final int DEFAULT_TERMS_SORT_ORDER = 1;
 
     private static final DateFormat DATE_FORMAT = new SimpleDateFormat("MM.dd.yyyy hh:mm a", Locale.US);
 
