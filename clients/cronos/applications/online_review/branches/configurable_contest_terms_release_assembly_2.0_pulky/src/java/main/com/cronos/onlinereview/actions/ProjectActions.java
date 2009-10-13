@@ -1980,21 +1980,25 @@ public class ProjectActions extends DispatchAction {
                     long roleId = ((Long) lazyForm.get("resources_role", i)).longValue();
                     long userId = user.getId();
 
-                    List<Long> necessaryTerms = projectRoleTermsOfUse.getTermsOfUse(new Long(project.getId()).intValue(),
+                    List<Long>[] necessaryTerms = projectRoleTermsOfUse.getTermsOfUse(new Long(project.getId()).intValue(),
                             new int[] {new Long(roleId).intValue()}, DBMS.COMMON_OLTP_DATASOURCE_NAME);
 
-                    for (Long termsId : necessaryTerms) {
-                        // check if the user has this terms
-                        if (!userTermsOfUse.hasTermsOfUse(userId, termsId, DBMS.COMMON_OLTP_DATASOURCE_NAME)) {
-                            // get missing terms of use title
-                            TermsOfUseEntity terms =  termsOfUse.getEntity(termsId, DBMS.COMMON_OLTP_DATASOURCE_NAME);
-
-                            // add the error
-                            ActionsHelper.addErrorToRequest(request, "resources_name[" + i + "]",
-                                new ActionMessage("error.com.cronos.onlinereview.actions.editProject.Resource.MissingTerms",
-                                terms.getTitle()));
-
-                            allResourcesValid=false;
+                    for (int j = 0; j < necessaryTerms.length; j++) {
+                        if (necessaryTerms[j] != null) {
+                            for (Long termsId : necessaryTerms[j]) {
+                                // check if the user has this terms
+                                if (!userTermsOfUse.hasTermsOfUse(userId, termsId, DBMS.COMMON_OLTP_DATASOURCE_NAME)) {
+                                    // get missing terms of use title
+                                    TermsOfUseEntity terms =  termsOfUse.getEntity(termsId, DBMS.COMMON_OLTP_DATASOURCE_NAME);
+        
+                                    // add the error
+                                    ActionsHelper.addErrorToRequest(request, "resources_name[" + i + "]",
+                                        new ActionMessage("error.com.cronos.onlinereview.actions.editProject.Resource.MissingTerms",
+                                        terms.getTitle()));
+        
+                                    allResourcesValid=false;
+                                }
+                            }
                         }
                     }
                 }
