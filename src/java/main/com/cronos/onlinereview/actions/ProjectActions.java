@@ -104,8 +104,15 @@ import com.topcoder.web.ejb.user.UserTermsOfUseLocator;
  *   </ol>
  * </p>
  *
+ * <p>
+ * Version 1.3 (Appeals Early Completion Release Assembly 2.0) Change notes:
+ *   <ol>
+ *     <li>Added sort order parameter to project role terms of use service call.</li>
+ *   </ol>
+ * </p>
+ *
  * @author George1, real_vg, pulky
- * @version 1.2
+ * @version 1.3
  */
 public class ProjectActions extends DispatchAction {
 
@@ -115,6 +122,13 @@ public class ProjectActions extends DispatchAction {
      * @since 1.1
      */
     private static final int DEVELOPMENT_PROJECT_TYPE_ID = 2;
+
+    /**
+     * Default sort order for project role terms of use generation
+     * 
+     * @since 1.3
+     */
+    private static final int DEFAULT_TERMS_SORT_ORDER = 1;
 
     private static final DateFormat DATE_FORMAT = new SimpleDateFormat("MM.dd.yyyy hh:mm a", Locale.US);
 
@@ -940,7 +954,7 @@ public class ProjectActions extends DispatchAction {
 
         // create ProjectRoleTermsOfUse default associations
         projectRoleTermsOfUse.createProjectRoleTermsOfUse(new Long(projectId).intValue(),
-                submitterRoleId, submitterTermsId, DBMS.COMMON_OLTP_DATASOURCE_NAME);
+                submitterRoleId, submitterTermsId, DEFAULT_TERMS_SORT_ORDER, DBMS.COMMON_OLTP_DATASOURCE_NAME);
 
         if (projectTypeId == DEVELOPMENT_PROJECT_TYPE_ID) {
             // if it's a development project there are several reviewer roles
@@ -950,20 +964,20 @@ public class ProjectActions extends DispatchAction {
             int stressReviewerRoleId = ConfigHelper.getStressReviewerRoleId();
 
             projectRoleTermsOfUse.createProjectRoleTermsOfUse(new Long(projectId).intValue(),
-                    accuracyReviewerRoleId, reviewerTermsId, DBMS.COMMON_OLTP_DATASOURCE_NAME);
+                    accuracyReviewerRoleId, reviewerTermsId, DEFAULT_TERMS_SORT_ORDER, DBMS.COMMON_OLTP_DATASOURCE_NAME);
 
             projectRoleTermsOfUse.createProjectRoleTermsOfUse(new Long(projectId).intValue(),
-                    failureReviewerRoleId, reviewerTermsId, DBMS.COMMON_OLTP_DATASOURCE_NAME);
+                    failureReviewerRoleId, reviewerTermsId, DEFAULT_TERMS_SORT_ORDER, DBMS.COMMON_OLTP_DATASOURCE_NAME);
 
             projectRoleTermsOfUse.createProjectRoleTermsOfUse(new Long(projectId).intValue(),
-                    stressReviewerRoleId, reviewerTermsId, DBMS.COMMON_OLTP_DATASOURCE_NAME);
+                    stressReviewerRoleId, reviewerTermsId, DEFAULT_TERMS_SORT_ORDER, DBMS.COMMON_OLTP_DATASOURCE_NAME);
         } else {
             // if it's not development there is a single reviewer role
 
             int reviewerRoleId = ConfigHelper.getReviewerRoleId();
 
             projectRoleTermsOfUse.createProjectRoleTermsOfUse(new Long(projectId).intValue(),
-                    reviewerRoleId, reviewerTermsId, DBMS.COMMON_OLTP_DATASOURCE_NAME);
+                    reviewerRoleId, reviewerTermsId, DEFAULT_TERMS_SORT_ORDER, DBMS.COMMON_OLTP_DATASOURCE_NAME);
         }
 
         // also add terms for the rest of the reviewer roles
@@ -972,11 +986,11 @@ public class ProjectActions extends DispatchAction {
         int finalReviewerRoleId = ConfigHelper.getFinalReviewerRoleId();
 
         projectRoleTermsOfUse.createProjectRoleTermsOfUse(new Long(projectId).intValue(),
-                primaryScreenerRoleId, reviewerTermsId, DBMS.COMMON_OLTP_DATASOURCE_NAME);
+                primaryScreenerRoleId, reviewerTermsId, DEFAULT_TERMS_SORT_ORDER, DBMS.COMMON_OLTP_DATASOURCE_NAME);
         projectRoleTermsOfUse.createProjectRoleTermsOfUse(new Long(projectId).intValue(),
-                aggregatorRoleId, reviewerTermsId, DBMS.COMMON_OLTP_DATASOURCE_NAME);
+                aggregatorRoleId, reviewerTermsId, DEFAULT_TERMS_SORT_ORDER, DBMS.COMMON_OLTP_DATASOURCE_NAME);
         projectRoleTermsOfUse.createProjectRoleTermsOfUse(new Long(projectId).intValue(),
-                finalReviewerRoleId, reviewerTermsId, DBMS.COMMON_OLTP_DATASOURCE_NAME);
+                finalReviewerRoleId, reviewerTermsId, DEFAULT_TERMS_SORT_ORDER, DBMS.COMMON_OLTP_DATASOURCE_NAME);
     }
 
 
@@ -1966,21 +1980,25 @@ public class ProjectActions extends DispatchAction {
                     long roleId = ((Long) lazyForm.get("resources_role", i)).longValue();
                     long userId = user.getId();
 
-                    List<Long> necessaryTerms = projectRoleTermsOfUse.getTermsOfUse(new Long(project.getId()).intValue(),
+                    List<Long>[] necessaryTerms = projectRoleTermsOfUse.getTermsOfUse(new Long(project.getId()).intValue(),
                             new int[] {new Long(roleId).intValue()}, DBMS.COMMON_OLTP_DATASOURCE_NAME);
 
-                    for (Long termsId : necessaryTerms) {
-                        // check if the user has this terms
-                        if (!userTermsOfUse.hasTermsOfUse(userId, termsId, DBMS.COMMON_OLTP_DATASOURCE_NAME)) {
-                            // get missing terms of use title
-                            TermsOfUseEntity terms =  termsOfUse.getEntity(termsId, DBMS.COMMON_OLTP_DATASOURCE_NAME);
-
-                            // add the error
-                            ActionsHelper.addErrorToRequest(request, "resources_name[" + i + "]",
-                                new ActionMessage("error.com.cronos.onlinereview.actions.editProject.Resource.MissingTerms",
-                                terms.getTitle()));
-
-                            allResourcesValid=false;
+                    for (int j = 0; j < necessaryTerms.length; j++) {
+                        if (necessaryTerms[j] != null) {
+                            for (Long termsId : necessaryTerms[j]) {
+                                // check if the user has this terms
+                                if (!userTermsOfUse.hasTermsOfUse(userId, termsId, DBMS.COMMON_OLTP_DATASOURCE_NAME)) {
+                                    // get missing terms of use title
+                                    TermsOfUseEntity terms =  termsOfUse.getEntity(termsId, DBMS.COMMON_OLTP_DATASOURCE_NAME);
+        
+                                    // add the error
+                                    ActionsHelper.addErrorToRequest(request, "resources_name[" + i + "]",
+                                        new ActionMessage("error.com.cronos.onlinereview.actions.editProject.Resource.MissingTerms",
+                                        terms.getTitle()));
+        
+                                    allResourcesValid=false;
+                                }
+                            }
                         }
                     }
                 }
