@@ -8,6 +8,9 @@
             <Property name="params">
             </Property>
         </Property>
+        <Property name="Operator">
+            <Value>22841596</Value>
+        </Property>
     </Config>
     <Config name="com.topcoder.management.phase.autopilot.AutoPilotJob.factory">
         <Property name="com/topcoder/management/phase/autopilot/AutoPilotJob">
