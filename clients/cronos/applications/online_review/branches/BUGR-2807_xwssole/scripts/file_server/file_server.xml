@@ -1,0 +1,110 @@
+<?xml version="1.0"?>
+<CMConfig>
+	<Config name="com.topcoder.processor.ipserver">
+		<!--Server names, required-->
+		<Property name="servers">
+			<Value>fileserver</Value>
+		</Property>
+		<!--Listen IP address, optional-->
+		<Property name="fileserver_address">
+			<Value>127.0.0.1</Value>
+		</Property>
+		<!--Listen port, required-->
+		<Property name="fileserver_port">
+			<Value>9998</Value>
+		</Property>
+		<!--Maximum connections, optional-->
+		<Property name="fileserver_max_connections">
+			<Value>100</Value>
+		</Property>
+		<!--Namespace used to create message factory, required-->
+		<Property name="fileserver_message_factory_namespace">
+			<Value>com.topcoder.processor.ipserver.message</Value>
+		</Property>
+		<!--Start upon startup, optional-->
+		<Property name="fileserver_started">
+			<Value>false</Value>
+		</Property>
+		<!--Number of backlog, optional-->
+		<Property name="fileserver_backlog">
+			<Value>100</Value>
+		</Property>
+		<!--Names of handlers, required-->
+		<Property name="fileserver_handlers">
+			<Value>handler1</Value>
+		</Property>
+		<!--Class name of handler, required-->
+		<Property name="fileserver_handler1_class">
+			<Value>com.topcoder.processor.ipserver.keepalive.KeepAliveHandler</Value>
+		</Property>
+	</Config>
+	<Config name="com.topcoder.processor.ipserver.message">
+		<!-- The mapping between names and message class names, required -->
+		<Property name="MessageTypes">
+			<!-- Property name is the name, property value is the class name.There must be at
+         least one of this property. -->
+			<Property name="simple">
+				<Value>com.topcoder.processor.ipserver.message.serializable.SimpleSerializableMessage</Value>
+			</Property>
+			<Property name="KeepAlive">
+				<Value>com.topcoder.processor.ipserver.message.serializable.SimpleSerializableMessage</Value>
+			</Property>
+		</Property>
+	</Config>
+    <Config name="com.topcoder.util.log">
+        <Property name="logClass">
+            <Value>com.topcoder.util.log.log4j.Log4jLog</Value>
+        </Property>
+        <Property name="config.file">
+            <Value>log4j.properties</Value>
+        </Property>
+    </Config>
+	<Config name="com.topcoder.onlinereview.SubmissionFileSystemServerTool">
+		<!-- the file system server name which should be the same as corresponding one of ip server -->
+		<Property name="server_name">
+			<Value>fileserver</Value>
+		</Property>
+		<!-- the dir used for store upload file -->
+		<Property name="server_dir">
+			<Value>/home/onlinereview/file_upload</Value>
+		</Property>
+		<Property name="files_file">
+			<Value>files.xml</Value>
+		</Property>
+		<Property name="groups_file">
+			<Value>groups.xml</Value>
+		</Property>
+		<Property name="idGenerator_name">
+			<Value>file_system_id_seq</Value>
+		</Property>
+		<Property name="handler_name">
+			<Value>fss_handler</Value>
+		</Property>
+	</Config>
+    <Config name="com.topcoder.db.connectionfactory.DBConnectionFactoryImpl">
+        <Property name="connections">
+            <Property name="default">
+                <Value>tcs</Value>
+            </Property>
+            <Property name="tcs">
+                <Property name="producer">
+                    <Value>com.topcoder.db.connectionfactory.producers.JDBCConnectionProducer</Value>
+                </Property>
+                <Property name="parameters">
+                    <Property name="jdbc_driver">
+                        <Value>com.informix.jdbc.IfxDriver</Value>
+                    </Property>
+                    <Property name="jdbc_url">
+                        <Value>jdbc:informix-sqli://63.118.154.218:1526/tcs_catalog_new:INFORMIXSERVER=devinformix10_shm;</Value>
+                    </Property>
+                    <Property name="user">
+                        <Value>coder</Value>
+                    </Property>
+                    <Property name="password">
+                        <Value>altec</Value>
+                    </Property>
+                </Property>
+            </Property>
+        </Property>
+    </Config>
+</CMConfig>
