@@ -1,0 +1,556 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<dataset>
+    <!-- *** id_sequences *** -->
+    <id_sequences name="notification_type_id_seq" next_block_start="100001" block_size="20" exhausted="0"/>
+    <id_sequences name="phase_id_seq" next_block_start="100001" block_size="20" exhausted="0"/>
+    <id_sequences name="project_audit_id_seq" next_block_start="100001" block_size="20" exhausted="0"/>
+    <id_sequences name="project_id_seq" next_block_start="100001" block_size="20" exhausted="0"/>
+    <id_sequences name="resource_id_seq" next_block_start="100001" block_size="20" exhausted="0"/>
+    <id_sequences name="resource_role_id_seq" next_block_start="100001" block_size="20" exhausted="0"/>
+    <id_sequences name="review_comment_id_seq" next_block_start="100001" block_size="20" exhausted="0"/>
+    <id_sequences name="review_id_seq" next_block_start="100001" block_size="20" exhausted="0"/>
+    <id_sequences name="review_item_comment_id_seq" next_block_start="100001" block_size="20" exhausted="0"/>
+    <id_sequences name="review_item_id_seq" next_block_start="100001" block_size="20" exhausted="0"/>
+    <id_sequences name="scorecard_group_id_seq" next_block_start="100001" block_size="20" exhausted="0"/>
+    <id_sequences name="scorecard_id_seq" next_block_start="100001" block_size="20" exhausted="0"/>
+    <id_sequences name="scorecard_question_id_seq" next_block_start="100001" block_size="20" exhausted="0"/>
+    <id_sequences name="scorecard_section_id_seq" next_block_start="100001" block_size="20" exhausted="0"/>
+    <id_sequences name="screening_result_id_seq" next_block_start="100001" block_size="20" exhausted="0"/>
+    <id_sequences name="screening_task_id_seq" next_block_start="100001" block_size="20" exhausted="0"/>
+    <id_sequences name="submission_id_seq" next_block_start="100001" block_size="20" exhausted="0"/>
+    <id_sequences name="submission_status_id_seq" next_block_start="100001" block_size="20" exhausted="0"/>
+    <id_sequences name="upload_id_seq" next_block_start="100001" block_size="20" exhausted="0"/>
+    <id_sequences name="upload_status_id_seq" next_block_start="100001" block_size="20" exhausted="0"/>
+    <id_sequences name="upload_type_id_seq" next_block_start="100001" block_size="20" exhausted="0"/>
+
+    <!-- ************************ Lookup Tables ************************ -->
+
+    <!-- *** phase_type_lu *** -->
+    <phase_type_lu phase_type_id="1" name="Registration" description="Registration" create_user="System"
+                   create_date="2006-07-29 02:43:41.0" modify_user="System" modify_date="2006-07-29 02:43:41.0"/>
+    <phase_type_lu phase_type_id="2" name="Submission" description="Submission" create_user="System"
+                   create_date="2006-07-29 02:43:41.0" modify_user="System" modify_date="2006-07-29 02:43:41.0"/>
+    <phase_type_lu phase_type_id="3" name="Screening" description="Screening" create_user="System"
+                   create_date="2006-07-29 02:43:41.0" modify_user="System" modify_date="2006-07-29 02:43:41.0"/>
+    <phase_type_lu phase_type_id="4" name="Review" description="Review" create_user="System"
+                   create_date="2006-07-29 02:43:41.0" modify_user="System" modify_date="2006-07-29 02:43:41.0"/>
+    <phase_type_lu phase_type_id="5" name="Appeals" description="Appeals" create_user="System"
+                   create_date="2006-07-29 02:43:41.0" modify_user="System" modify_date="2006-07-29 02:43:41.0"/>
+    <phase_type_lu phase_type_id="6" name="Appeals Response" description="Appeals Response" create_user="System"
+                   create_date="2006-07-29 02:43:41.0" modify_user="System" modify_date="2006-07-29 02:43:41.0"/>
+    <phase_type_lu phase_type_id="7" name="Aggregation" description="Aggregation" create_user="System"
+                   create_date="2006-07-29 02:43:41.0" modify_user="System" modify_date="2006-07-29 02:43:41.0"/>
+    <phase_type_lu phase_type_id="8" name="Aggregation Review" description="Aggregation Review" create_user="System"
+                   create_date="2006-07-29 02:43:41.0" modify_user="System" modify_date="2006-07-29 02:43:41.0"/>
+    <phase_type_lu phase_type_id="9" name="Final Fix" description="Final Fix" create_user="System"
+                   create_date="2006-07-29 02:43:41.0" modify_user="System" modify_date="2006-07-29 02:43:41.0"/>
+    <phase_type_lu phase_type_id="10" name="Final Review" description="Final Review" create_user="System"
+                   create_date="2006-07-29 02:43:41.0" modify_user="System" modify_date="2006-07-29 02:43:41.0"/>
+    <phase_type_lu phase_type_id="11" name="Approval" description="Approval" create_user="System"
+                   create_date="2006-07-29 02:43:41.0" modify_user="System" modify_date="2006-07-29 02:43:41.0"/>
+
+    <!-- *** phase_criteria_type_lu *** -->
+    <phase_criteria_type_lu phase_criteria_type_id="1" name="Scorecard ID" description="Scorecard ID"
+                            create_user="System" create_date="2006-07-29 02:43:41.0" modify_user="System"
+                            modify_date="2006-07-29 02:43:41.0"/>
+    <phase_criteria_type_lu phase_criteria_type_id="2" name="Registration Number" description="Registration Number"
+                            create_user="System" create_date="2006-07-29 02:43:41.0" modify_user="System"
+                            modify_date="2006-07-29 02:43:41.0"/>
+    <phase_criteria_type_lu phase_criteria_type_id="3" name="Submission Number" description="Submission Number"
+                            create_user="System" create_date="2006-07-29 02:43:41.0" modify_user="System"
+                            modify_date="2006-07-29 02:43:41.0"/>
+    <phase_criteria_type_lu phase_criteria_type_id="4" name="View Response During Appeals"
+                            description="View Response During Appeals" create_user="System"
+                            create_date="2006-07-29 02:43:41.0" modify_user="System"
+                            modify_date="2006-07-29 02:43:41.0"/>
+    <phase_criteria_type_lu phase_criteria_type_id="5" name="Manual Screening" description="Manual Screening"
+                            create_user="System" create_date="2006-07-29 02:43:41.0" modify_user="System"
+                            modify_date="2006-07-29 02:43:41.0"/>
+
+    <!-- *** comment_type_lu *** -->
+    <comment_type_lu comment_type_id="1" name="Comment" description="Comment" create_user="System"
+                     create_date="2006-07-29 02:43:42.0" modify_user="System" modify_date="2006-07-29 02:43:42.0"/>
+    <comment_type_lu comment_type_id="2" name="Recommended" description="Recommended" create_user="System"
+                     create_date="2006-07-29 02:43:42.0" modify_user="System" modify_date="2006-07-29 02:43:42.0"/>
+    <comment_type_lu comment_type_id="3" name="Required" description="Required" create_user="System"
+                     create_date="2006-07-29 02:43:42.0" modify_user="System" modify_date="2006-07-29 02:43:42.0"/>
+    <comment_type_lu comment_type_id="4" name="Appeal" description="Appeal" create_user="System"
+                     create_date="2006-07-29 02:43:42.0" modify_user="System" modify_date="2006-07-29 02:43:42.0"/>
+    <comment_type_lu comment_type_id="5" name="Appeal Response" description="Appeal Response" create_user="System"
+                     create_date="2006-07-29 02:43:42.0" modify_user="System" modify_date="2006-07-29 02:43:42.0"/>
+    <comment_type_lu comment_type_id="6" name="Aggregation Comment" description="Aggregator Comment"
+                     create_user="System" create_date="2006-07-29 02:43:42.0" modify_user="System"
+                     modify_date="2006-07-29 02:43:42.0"/>
+    <comment_type_lu comment_type_id="7" name="Aggregation Review Comment" description="Aggregator Comment"
+                     create_user="System" create_date="2006-07-29 02:43:42.0" modify_user="System"
+                     modify_date="2006-07-29 02:43:42.0"/>
+    <comment_type_lu comment_type_id="8" name="Submitter Comment" description="Submitter Comment" create_user="System"
+                     create_date="2006-07-29 02:43:42.0" modify_user="System" modify_date="2006-07-29 02:43:42.0"/>
+    <comment_type_lu comment_type_id="9" name="Final Fix Comment" description="Final Fix Comment" create_user="System"
+                     create_date="2006-07-29 02:43:42.0" modify_user="System" modify_date="2006-07-29 02:43:42.0"/>
+    <comment_type_lu comment_type_id="10" name="Final Review Comment" description="Final Review Comment"
+                     create_user="System" create_date="2006-07-29 02:43:42.0" modify_user="System"
+                     modify_date="2006-07-29 02:43:42.0"/>
+    <comment_type_lu comment_type_id="11" name="Manager Comment" description="Manager Comment" create_user="System"
+                     create_date="2006-07-29 02:43:42.0" modify_user="System" modify_date="2006-07-29 02:43:42.0"/>
+
+    <!-- *** resource_role_lu *** -->
+    <resource_role_lu resource_role_id="1" phase_type_id="2" name="Submitter" description="Submitter"
+                      create_user="System" create_date="2006-07-29 02:43:41.0" modify_user="System"
+                      modify_date="2006-07-29 02:43:41.0"/>
+    <resource_role_lu resource_role_id="2" phase_type_id="3" name="Primary Screener" description="Primary Screener"
+                      create_user="System" create_date="2006-07-29 02:43:41.0" modify_user="System"
+                      modify_date="2006-07-29 02:43:41.0"/>
+    <resource_role_lu resource_role_id="3" phase_type_id="3" name="Screener" description="Screener" create_user="System"
+                      create_date="2006-07-29 02:43:41.0" modify_user="System" modify_date="2006-07-29 02:43:41.0"/>
+    <resource_role_lu resource_role_id="4" phase_type_id="4" name="Reviewer" description="Reviewer" create_user="System"
+                      create_date="2006-07-29 02:43:41.0" modify_user="System" modify_date="2006-07-29 02:43:41.0"/>
+    <resource_role_lu resource_role_id="5" phase_type_id="4" name="Accuracy Reviewer" description="Accuracy Reviewer"
+                      create_user="System" create_date="2006-07-29 02:43:41.0" modify_user="System"
+                      modify_date="2006-07-29 02:43:41.0"/>
+    <resource_role_lu resource_role_id="6" phase_type_id="4" name="Failure Reviewer" description="Failure Reviewer"
+                      create_user="System" create_date="2006-07-29 02:43:41.0" modify_user="System"
+                      modify_date="2006-07-29 02:43:41.0"/>
+    <resource_role_lu resource_role_id="7" phase_type_id="4" name="Stress Reviewer" description="Stress Reviewer"
+                      create_user="System" create_date="2006-07-29 02:43:41.0" modify_user="System"
+                      modify_date="2006-07-29 02:43:41.0"/>
+    <resource_role_lu resource_role_id="8" phase_type_id="7" name="Aggregator" description="Aggregator"
+                      create_user="System" create_date="2006-07-29 02:43:41.0" modify_user="System"
+                      modify_date="2006-07-29 02:43:41.0"/>
+    <resource_role_lu resource_role_id="9" phase_type_id="10" name="Final Reviewer" description="Final Reviewer"
+                      create_user="System" create_date="2006-07-29 02:43:41.0" modify_user="System"
+                      modify_date="2006-07-29 02:43:41.0"/>
+    <resource_role_lu resource_role_id="10" phase_type_id="11" name="Approver" description="Approver"
+                      create_user="System" create_date="2006-07-29 02:43:41.0" modify_user="System"
+                      modify_date="2006-07-29 02:43:41.0"/>
+    <resource_role_lu resource_role_id="11" phase_type_id="2" name="Designer" description="Designer"
+                      create_user="System" create_date="2006-07-29 02:43:41.0" modify_user="System"
+                      modify_date="2006-07-29 02:43:41.0"/>
+    <resource_role_lu resource_role_id="12" phase_type_id="2" name="Observer" description="Observer" create_user="System"
+                      create_date="2006-07-29 02:43:41.0" modify_user="System" modify_date="2006-07-29 02:43:41.0"/>
+    <resource_role_lu resource_role_id="13" phase_type_id="2" name="Manager" description="Manager" create_user="System"
+                      create_date="2006-07-29 02:43:41.0" modify_user="System" modify_date="2006-07-29 02:43:41.0"/>
+
+    <!-- *** deliverable_lu *** -->
+    <deliverable_lu deliverable_id="1" phase_type_id="2" resource_role_id="1" name="Submission" description="Submission"
+                    per_submission="0" required="0" create_user="System" create_date="2006-07-29 02:43:42.0"
+                    modify_user="System" modify_date="2006-07-29 02:43:42.0"/>
+    <deliverable_lu deliverable_id="2" phase_type_id="3" resource_role_id="2" name="Screening Scorecard"
+                    description="Screening Scorecard" per_submission="1" required="1" create_user="System"
+                    create_date="2006-07-29 02:43:42.0" modify_user="System" modify_date="2006-07-29 02:43:42.0"/>
+    <deliverable_lu deliverable_id="3" phase_type_id="3" resource_role_id="3" name="Screening Scorecard"
+                    description="Screening Scorecard" per_submission="0" required="1" create_user="System"
+                    create_date="2006-07-29 02:43:42.0" modify_user="System" modify_date="2006-07-29 02:43:42.0"/>
+    <deliverable_lu deliverable_id="4" phase_type_id="4" resource_role_id="4" name="Review Scorecard"
+                    description="Review Scorecard" per_submission="1" required="1" create_user="System"
+                    create_date="2006-07-29 02:43:42.0" modify_user="System" modify_date="2006-07-29 02:43:42.0"/>
+    <deliverable_lu deliverable_id="5" phase_type_id="4" resource_role_id="5" name="Review Scorecard"
+                    description="Review Scorecard" per_submission="1" required="1" create_user="System"
+                    create_date="2006-07-29 02:43:42.0" modify_user="System" modify_date="2006-07-29 02:43:42.0"/>
+    <deliverable_lu deliverable_id="6" phase_type_id="4" resource_role_id="6" name="Review Scorecard"
+                    description="Review Scorecard" per_submission="1" required="1" create_user="System"
+                    create_date="2006-07-29 02:43:42.0" modify_user="System" modify_date="2006-07-29 02:43:42.0"/>
+    <deliverable_lu deliverable_id="7" phase_type_id="4" resource_role_id="7" name="Review Scorecard"
+                    description="Review Scorecard" per_submission="1" required="1" create_user="System"
+                    create_date="2006-07-29 02:43:42.0" modify_user="System" modify_date="2006-07-29 02:43:42.0"/>
+    <deliverable_lu deliverable_id="8" phase_type_id="4" resource_role_id="5" name="Accuracy Test Cases"
+                    description="Accuracy Test Cases" per_submission="0" required="1" create_user="System"
+                    create_date="2006-07-29 02:43:42.0" modify_user="System" modify_date="2006-07-29 02:43:42.0"/>
+    <deliverable_lu deliverable_id="9" phase_type_id="4" resource_role_id="6" name="Failure Test Cases"
+                    description="Failure Test Cases" per_submission="0" required="1" create_user="System"
+                    create_date="2006-07-29 02:43:42.0" modify_user="System" modify_date="2006-07-29 02:43:42.0"/>
+    <deliverable_lu deliverable_id="10" phase_type_id="4" resource_role_id="7" name="Stress Test Cases"
+                    description="Stress Test Cases" per_submission="0" required="1" create_user="System"
+                    create_date="2006-07-29 02:43:42.0" modify_user="System" modify_date="2006-07-29 02:43:42.0"/>
+    <deliverable_lu deliverable_id="11" phase_type_id="6" resource_role_id="4" name="Appeal Responses"
+                    description="Appeal Responses" per_submission="0" required="1" create_user="System"
+                    create_date="2006-07-29 02:43:42.0" modify_user="System" modify_date="2006-07-29 02:43:42.0"/>
+    <deliverable_lu deliverable_id="12" phase_type_id="6" resource_role_id="5" name="Appeal Responses"
+                    description="Appeal Responses" per_submission="0" required="1" create_user="System"
+                    create_date="2006-07-29 02:43:42.0" modify_user="System" modify_date="2006-07-29 02:43:42.0"/>
+    <deliverable_lu deliverable_id="13" phase_type_id="6" resource_role_id="6" name="Appeal Responses"
+                    description="Appeal Responses" per_submission="0" required="1" create_user="System"
+                    create_date="2006-07-29 02:43:42.0" modify_user="System" modify_date="2006-07-29 02:43:42.0"/>
+    <deliverable_lu deliverable_id="14" phase_type_id="6" resource_role_id="7" name="Appeal Responses"
+                    description="Appeal Responses" per_submission="0" required="1" create_user="System"
+                    create_date="2006-07-29 02:43:42.0" modify_user="System" modify_date="2006-07-29 02:43:42.0"/>
+    <deliverable_lu deliverable_id="15" phase_type_id="7" resource_role_id="8" name="Aggregation"
+                    description="Aggregation" per_submission="0" required="1" create_user="System"
+                    create_date="2006-07-29 02:43:42.0" modify_user="System" modify_date="2006-07-29 02:43:42.0"/>
+    <deliverable_lu deliverable_id="16" phase_type_id="8" resource_role_id="4" name="Aggregation Review"
+                    description="Aggregation Review" per_submission="0" required="1" create_user="System"
+                    create_date="2006-07-29 02:43:42.0" modify_user="System" modify_date="2006-07-29 02:43:42.0"/>
+    <deliverable_lu deliverable_id="17" phase_type_id="8" resource_role_id="5" name="Aggregation Review"
+                    description="Aggregation Review" per_submission="0" required="1" create_user="System"
+                    create_date="2006-07-29 02:43:42.0" modify_user="System" modify_date="2006-07-29 02:43:42.0"/>
+    <deliverable_lu deliverable_id="18" phase_type_id="8" resource_role_id="6" name="Aggregation Review"
+                    description="Aggregation Review" per_submission="0" required="1" create_user="System"
+                    create_date="2006-07-29 02:43:42.0" modify_user="System" modify_date="2006-07-29 02:43:42.0"/>
+    <deliverable_lu deliverable_id="19" phase_type_id="8" resource_role_id="7" name="Aggregation Review"
+                    description="Aggregation Review" per_submission="0" required="1" create_user="System"
+                    create_date="2006-07-29 02:43:42.0" modify_user="System" modify_date="2006-07-29 02:43:42.0"/>
+    <deliverable_lu deliverable_id="20" phase_type_id="9" resource_role_id="1" name="Final Fix" description="Final Fix"
+                    per_submission="0" required="1" create_user="System" create_date="2006-07-29 02:43:42.0"
+                    modify_user="System" modify_date="2006-07-29 02:43:42.0"/>
+    <deliverable_lu deliverable_id="21" phase_type_id="9" resource_role_id="1" name="Scorecard Comment"
+                    description="Scorecard Comment" per_submission="0" required="1" create_user="System"
+                    create_date="2006-07-29 02:45:11.0" modify_user="System" modify_date="2006-07-29 02:45:11.0"/>
+    <deliverable_lu deliverable_id="22" phase_type_id="10" resource_role_id="9" name="Final Review"
+                    description="Final Review" per_submission="0" required="1" create_user="System"
+                    create_date="2006-07-29 02:45:11.0" modify_user="System" modify_date="2006-07-29 02:45:11.0"/>
+    <deliverable_lu deliverable_id="23" phase_type_id="11" resource_role_id="10" name="Approval" description="Approval"
+                    per_submission="1" required="1" create_user="System" create_date="2006-07-29 02:45:11.0"
+                    modify_user="System" modify_date="2006-07-29 02:45:11.0"/>
+
+    <!-- *** id_sequences *** -->
+    <id_sequences name="phase_id_seq" next_block_start="1" block_size="20" exhausted="0"/>
+    <id_sequences name="project_audit_id_seq" next_block_start="1" block_size="20" exhausted="0"/>
+    <id_sequences name="project_id_seq" next_block_start="1" block_size="20" exhausted="0"/>
+    <id_sequences name="resource_id_seq" next_block_start="1" block_size="20" exhausted="0"/>
+    <id_sequences name="review_comment_id_seq" next_block_start="1" block_size="20" exhausted="0"/>
+    <id_sequences name="review_id_seq" next_block_start="1" block_size="20" exhausted="0"/>
+    <id_sequences name="review_item_comment_id_seq" next_block_start="1" block_size="20" exhausted="0"/>
+    <id_sequences name="review_item_id_seq" next_block_start="1" block_size="20" exhausted="0"/>
+    <id_sequences name="scorecard_group_id_seq" next_block_start="1" block_size="20" exhausted="0"/>
+    <id_sequences name="scorecard_id_seq" next_block_start="1" block_size="20" exhausted="0"/>
+    <id_sequences name="scorecard_question_id_seq" next_block_start="1" block_size="20" exhausted="0"/>
+    <id_sequences name="scorecard_section_id_seq" next_block_start="1" block_size="20" exhausted="0"/>
+    <id_sequences name="screening_result_id_seq" next_block_start="1" block_size="20" exhausted="0"/>
+    <id_sequences name="screening_task_id_seq" next_block_start="1" block_size="20" exhausted="0"/>
+    <id_sequences name="submission_id_seq" next_block_start="1" block_size="20" exhausted="0"/>
+    <id_sequences name="submission_status_id_seq" next_block_start="1" block_size="20" exhausted="0"/>
+    <id_sequences name="upload_id_seq" next_block_start="1" block_size="20" exhausted="0"/>
+    <id_sequences name="upload_type_id_seq" next_block_start="1" block_size="20" exhausted="0"/>
+    <id_sequences name="upload_status_id_seq" next_block_start="1" block_size="20" exhausted="0"/>
+
+    <!-- *** upload_status_lu *** -->
+    <upload_status_lu upload_status_id="1" name="Active" description="Active" create_user="System"
+                      create_date="2006-07-29 02:43:42.0" modify_user="System" modify_date="2006-07-29 02:43:42.0"/>
+    <upload_status_lu upload_status_id="2" name="Deleted" description="Deleted" create_user="System"
+                      create_date="2006-07-29 02:43:42.0" modify_user="System" modify_date="2006-07-29 02:43:42.0"/>
+
+    <!-- *** upload_type_lu *** -->
+    <upload_type_lu upload_type_id="1" name="Submission" description="Submission" create_user="System"
+                    create_date="2006-07-29 02:43:42.0" modify_user="System" modify_date="2006-07-29 02:43:42.0"/>
+    <upload_type_lu upload_type_id="2" name="Test Case" description="Test Case" create_user="System"
+                    create_date="2006-07-29 02:43:42.0" modify_user="System" modify_date="2006-07-29 02:43:42.0"/>
+    <upload_type_lu upload_type_id="3" name="Final Fix" description="Final Fix" create_user="System"
+                    create_date="2006-07-29 02:43:42.0" modify_user="System" modify_date="2006-07-29 02:43:42.0"/>
+    <upload_type_lu upload_type_id="4" name="Review Document" description="Review Document" create_user="System"
+                    create_date="2006-07-29 02:43:42.0" modify_user="System" modify_date="2006-07-29 02:43:42.0"/>
+
+    <!-- *** submission_status_lu *** -->
+    <submission_status_lu submission_status_id="1" name="Active" description="Active" create_user="System"
+                          create_date="2006-07-29 02:43:42.0" modify_user="System" modify_date="2006-07-29 02:43:42.0"/>
+    <submission_status_lu submission_status_id="2" name="Failed Screening" description="Failed Manual Screening"
+                          create_user="System" create_date="2006-07-29 02:43:42.0" modify_user="System"
+                          modify_date="2006-07-29 02:43:42.0"/>
+    <submission_status_lu submission_status_id="3" name="Failed Review" description="Failed Review" create_user="System"
+                          create_date="2006-07-29 02:43:42.0" modify_user="System" modify_date="2006-07-29 02:43:42.0"/>
+    <submission_status_lu submission_status_id="4" name="Completed Without Win" description="Completed Without Win"
+                          create_user="System" create_date="2006-07-29 02:43:42.0" modify_user="System"
+                          modify_date="2006-07-29 02:43:42.0"/>
+    <submission_status_lu submission_status_id="5" name="Deleted" description="Deleted" create_user="System"
+                          create_date="2006-07-29 02:43:42.0" modify_user="System" modify_date="2006-07-29 02:43:42.0"/>
+
+    <!-- *** screening_status_lu *** -->
+    <screening_status_lu screening_status_id="1" name="Pending" description="Pending" create_user="System"
+                         create_date="2006-07-29 02:45:11.0" modify_user="System" modify_date="2006-07-29 02:45:11.0"/>
+    <screening_status_lu screening_status_id="2" name="Screening" description="Screening" create_user="System"
+                         create_date="2006-07-29 02:45:11.0" modify_user="System" modify_date="2006-07-29 02:45:11.0"/>
+    <screening_status_lu screening_status_id="3" name="Failed" description="Failed" create_user="System"
+                         create_date="2006-07-29 02:45:11.0" modify_user="System" modify_date="2006-07-29 02:45:11.0"/>
+    <screening_status_lu screening_status_id="4" name="Passed" description="Passed" create_user="System"
+                         create_date="2006-07-29 02:45:11.0" modify_user="System" modify_date="2006-07-29 02:45:11.0"/>
+    <screening_status_lu screening_status_id="5" name="Passed with Warning" description="Passed with Warning"
+                         create_user="System" create_date="2006-07-29 02:45:11.0" modify_user="System"
+                         modify_date="2006-07-29 02:45:11.0"/>
+
+    <!-- *** scorecard_status_lu *** -->
+    <scorecard_status_lu scorecard_status_id="1" name="Active" description="Active" create_user="System"
+                         create_date="2006-07-29 02:43:41.0" modify_user="System" modify_date="2006-07-29 02:43:41.0"/>
+    <scorecard_status_lu scorecard_status_id="2" name="Inactive" description="Inactive" create_user="System"
+                         create_date="2006-07-29 02:43:41.0" modify_user="System" modify_date="2006-07-29 02:43:41.0"/>
+    <scorecard_status_lu scorecard_status_id="3" name="Deleted" description="Deleted" create_user="System"
+                         create_date="2006-07-29 02:43:41.0" modify_user="System" modify_date="2006-07-29 02:43:41.0"/>
+
+    <!-- *** scorecard_type_lu *** -->
+    <scorecard_type_lu scorecard_type_id="1" name="Screening" description="Screening" create_user="System"
+                       create_date="2006-07-29 02:43:41.0" modify_user="System" modify_date="2006-07-29 02:43:41.0"/>
+    <scorecard_type_lu scorecard_type_id="2" name="Review" description="Review" create_user="System"
+                       create_date="2006-07-29 02:43:41.0" modify_user="System" modify_date="2006-07-29 02:43:41.0"/>
+    <scorecard_type_lu scorecard_type_id="3" name="Client Review" description="Client Review" create_user="System"
+                       create_date="2006-07-29 02:43:41.0" modify_user="System" modify_date="2006-07-29 02:43:41.0"/>
+
+    <!-- *** response_severity_lu *** -->
+    <response_severity_lu response_severity_id="1" name="Fatal Error" description="Fatal Error" create_user="System"
+                          create_date="2006-07-29 02:45:11.0" modify_user="System" modify_date="2006-07-29 02:45:11.0"/>
+    <response_severity_lu response_severity_id="2" name="Warning" description="Warning" create_user="System"
+                          create_date="2006-07-29 02:45:11.0" modify_user="System" modify_date="2006-07-29 02:45:11.0"/>
+    <response_severity_lu response_severity_id="3" name="Success" description="Success" create_user="System"
+                          create_date="2006-07-29 02:45:11.0" modify_user="System" modify_date="2006-07-29 02:45:11.0"/>
+
+    <!-- *** screening_response_lu *** -->
+    <screening_response_lu screening_response_id="1" response_severity_id="1" response_code="TCS-001"
+                           response_text="Your submission distribution is not a jar file." create_user="System"
+                           create_date="2006-07-29 02:45:11.0" modify_user="System"
+                           modify_date="2006-07-29 02:45:11.0"/>
+    <screening_response_lu screening_response_id="2" response_severity_id="1" response_code="TCS-002"
+                           response_text="Your submission distribution is not a zip file." create_user="System"
+                           create_date="2006-07-29 02:45:11.0" modify_user="System"
+                           modify_date="2006-07-29 02:45:11.0"/>
+    <screening_response_lu screening_response_id="3" response_severity_id="1" response_code="TCS-003"
+                           response_text="Your submission does not conform to the directory standard."
+                           create_user="System" create_date="2006-07-29 02:45:11.0" modify_user="System"
+                           modify_date="2006-07-29 02:45:11.0"/>
+    <screening_response_lu screening_response_id="4" response_severity_id="1" response_code="TCS-004"
+                           response_text="Your submission does not contain a component specification document in rich text format (rtf)."
+                           create_user="System" create_date="2006-07-29 02:45:11.0" modify_user="System"
+                           modify_date="2006-07-29 02:45:11.0"/>
+    <screening_response_lu screening_response_id="5" response_severity_id="1" response_code="TCS-005"
+                           response_text="Your submission does not contain a /log directory from the successful execution of the unit tests."
+                           create_user="System" create_date="2006-07-29 02:45:11.0" modify_user="System"
+                           modify_date="2006-07-29 02:45:11.0"/>
+    <screening_response_lu screening_response_id="6" response_severity_id="1" response_code="TCS-006"
+                           response_text="Your submission is missing the appropriate unit test log files."
+                           create_user="System" create_date="2006-07-29 02:45:11.0" modify_user="System"
+                           modify_date="2006-07-29 02:45:11.0"/>
+    <screening_response_lu screening_response_id="7" response_severity_id="1" response_code="TCS-007"
+                           response_text="Your submission does not contain a zargo or zuml file." create_user="System"
+                           create_date="2006-07-29 02:45:11.0" modify_user="System"
+                           modify_date="2006-07-29 02:45:11.0"/>
+    <screening_response_lu screening_response_id="8" response_severity_id="1" response_code="TCS-008"
+                           response_text="Your submission does not contain one or more use cases." create_user="System"
+                           create_date="2006-07-29 02:45:11.0" modify_user="System"
+                           modify_date="2006-07-29 02:45:11.0"/>
+    <screening_response_lu screening_response_id="9" response_severity_id="1" response_code="TCS-009"
+                           response_text="Your submission does not contain one or more class diagrams."
+                           create_user="System" create_date="2006-07-29 02:45:11.0" modify_user="System"
+                           modify_date="2006-07-29 02:45:11.0"/>
+    <screening_response_lu screening_response_id="10" response_severity_id="1" response_code="TCS-010"
+                           response_text="Your submission does not contain one or more sequence diagrams."
+                           create_user="System" create_date="2006-07-29 02:45:11.0" modify_user="System"
+                           modify_date="2006-07-29 02:45:11.0"/>
+    <screening_response_lu screening_response_id="11" response_severity_id="1" response_code="TCS-011"
+                           response_text="Your submission does not contain source code under /src." create_user="System"
+                           create_date="2006-07-29 02:45:11.0" modify_user="System"
+                           modify_date="2006-07-29 02:45:11.0"/>
+    <screening_response_lu screening_response_id="12" response_severity_id="1" response_code="TCS-012"
+                           response_text="Your submission does not contain test source code under /src."
+                           create_user="System" create_date="2006-07-29 02:45:11.0" modify_user="System"
+                           modify_date="2006-07-29 02:45:11.0"/>
+    <screening_response_lu screening_response_id="13" response_severity_id="2" response_code="TCS-013"
+                           response_text="Checkstyle has produced the following warnings." create_user="System"
+                           create_date="2006-07-29 02:45:11.0" modify_user="System"
+                           modify_date="2006-07-29 02:45:11.0"/>
+    <screening_response_lu screening_response_id="14" response_severity_id="2" response_code="TCS-014"
+                           response_text="Your submission contains personal information." create_user="System"
+                           create_date="2006-07-29 02:45:11.0" modify_user="System"
+                           modify_date="2006-07-29 02:45:11.0"/>
+    <screening_response_lu screening_response_id="15" response_severity_id="3" response_code="TCS-015"
+                           response_text="Your submission has passed the auto screening process." create_user="System"
+                           create_date="2006-07-29 02:45:11.0" modify_user="System"
+                           modify_date="2006-07-29 02:45:11.0"/>
+
+    <!-- *** scorecard_question_type_lu *** -->
+    <scorecard_question_type_lu scorecard_question_type_id="1" name="Scale (1-4)" description="Scale (1-4)"
+                                create_user="System" create_date="2006-07-29 02:43:41.0" modify_user="System"
+                                modify_date="2006-07-29 02:43:41.0"/>
+    <scorecard_question_type_lu scorecard_question_type_id="2" name="Scale (1-10)" description="Scale (1-10)"
+                                create_user="System" create_date="2006-07-29 02:43:41.0" modify_user="System"
+                                modify_date="2006-07-29 02:43:41.0"/>
+    <scorecard_question_type_lu scorecard_question_type_id="3" name="Test Case" description="Test Case"
+                                create_user="System" create_date="2006-07-29 02:43:41.0" modify_user="System"
+                                modify_date="2006-07-29 02:43:41.0"/>
+    <scorecard_question_type_lu scorecard_question_type_id="4" name="Yes/No" description="Yes/No" create_user="System"
+                                create_date="2006-07-29 02:43:41.0" modify_user="System"
+                                modify_date="2006-07-29 02:43:41.0"/>
+    <scorecard_question_type_lu scorecard_question_type_id="5" name="Dynamic" description="Dynamic" create_user="System"
+                                create_date="2006-07-29 02:43:41.0" modify_user="System"
+                                modify_date="2006-07-29 02:43:41.0"/>
+
+    <!-- *** resource_info_type_lu *** -->
+    <resource_info_type_lu resource_info_type_id="1" name="External Reference ID" description="External Reference ID"
+                           create_user="System" create_date="2006-07-29 02:43:41.0" modify_user="System"
+                           modify_date="2006-07-29 02:43:41.0"/>
+    <resource_info_type_lu resource_info_type_id="2" name="Handle" description="Handle" create_user="System"
+                           create_date="2006-07-29 02:43:41.0" modify_user="System"
+                           modify_date="2006-07-29 02:43:41.0"/>
+    <resource_info_type_lu resource_info_type_id="3" name="Email" description="Email" create_user="System"
+                           create_date="2006-07-29 02:43:41.0" modify_user="System"
+                           modify_date="2006-07-29 02:43:41.0"/>
+    <resource_info_type_lu resource_info_type_id="4" name="Rating" description="Rating" create_user="System"
+                           create_date="2006-07-29 02:43:41.0" modify_user="System"
+                           modify_date="2006-07-29 02:43:41.0"/>
+    <resource_info_type_lu resource_info_type_id="5" name="Reliability" description="Reliability" create_user="System"
+                           create_date="2006-07-29 02:43:41.0" modify_user="System"
+                           modify_date="2006-07-29 02:43:41.0"/>
+    <resource_info_type_lu resource_info_type_id="6" name="Registration Date" description="Registration Date"
+                           create_user="System" create_date="2006-07-29 02:43:41.0" modify_user="System"
+                           modify_date="2006-07-29 02:43:41.0"/>
+    <resource_info_type_lu resource_info_type_id="7" name="Payment" description="Payment" create_user="System"
+                           create_date="2006-07-29 02:43:41.0" modify_user="System"
+                           modify_date="2006-07-29 02:43:41.0"/>
+    <resource_info_type_lu resource_info_type_id="8" name="Payment Status" description="Payment Status"
+                           create_user="System" create_date="2006-07-29 02:43:42.0" modify_user="System"
+                           modify_date="2006-07-29 02:43:42.0"/>
+    <resource_info_type_lu resource_info_type_id="9" name="Screening Score" description="Screening Score"
+                           create_user="System" create_date="2006-07-29 02:43:42.0" modify_user="System"
+                           modify_date="2006-07-29 02:43:42.0"/>
+    <resource_info_type_lu resource_info_type_id="10" name="Initial Score" description="Initial Score"
+                           create_user="System" create_date="2006-07-29 02:43:42.0" modify_user="System"
+                           modify_date="2006-07-29 02:43:42.0"/>
+    <resource_info_type_lu resource_info_type_id="11" name="Final Score" description="Final Score" create_user="System"
+                           create_date="2006-07-29 02:43:42.0" modify_user="System"
+                           modify_date="2006-07-29 02:43:42.0"/>
+    <resource_info_type_lu resource_info_type_id="12" name="Placement" description="Placement" create_user="System"
+                           create_date="2006-07-29 02:43:42.0" modify_user="System"
+                           modify_date="2006-07-29 02:43:42.0"/>
+
+    <!-- *** project_info_type_lu *** -->
+    <project_info_type_lu project_info_type_id="1" name="External Reference ID" description="External Reference ID"
+                          create_user="System" create_date="2006-07-29 02:43:41.0" modify_user="System"
+                          modify_date="2006-07-29 02:43:41.0"/>
+    <project_info_type_lu project_info_type_id="2" name="Component ID" description="Component ID" create_user="System"
+                          create_date="2006-07-29 02:43:41.0" modify_user="System" modify_date="2006-07-29 02:43:41.0"/>
+    <project_info_type_lu project_info_type_id="3" name="Version ID" description="Version ID" create_user="System"
+                          create_date="2006-07-29 02:43:41.0" modify_user="System" modify_date="2006-07-29 02:43:41.0"/>
+    <project_info_type_lu project_info_type_id="4" name="Developer Forum ID" description="Developer Forum ID"
+                          create_user="System" create_date="2006-07-29 02:43:41.0" modify_user="System"
+                          modify_date="2006-07-29 02:43:41.0"/>
+    <project_info_type_lu project_info_type_id="5" name="Root Catalog ID" description="Root Catelog ID"
+                          create_user="System" create_date="2006-07-29 02:43:41.0" modify_user="System"
+                          modify_date="2006-07-29 02:43:41.0"/>
+    <project_info_type_lu project_info_type_id="6" name="Project Name" description="Project Name" create_user="System"
+                          create_date="2006-07-29 02:43:41.0" modify_user="System" modify_date="2006-07-29 02:43:41.0"/>
+    <project_info_type_lu project_info_type_id="7" name="Project Version" description="Project Version"
+                          create_user="System" create_date="2006-07-29 02:43:41.0" modify_user="System"
+                          modify_date="2006-07-29 02:43:41.0"/>
+    <project_info_type_lu project_info_type_id="8" name="SVN Module" description="SVN Module" create_user="System"
+                          create_date="2006-07-29 02:43:41.0" modify_user="System" modify_date="2006-07-29 02:43:41.0"/>
+    <project_info_type_lu project_info_type_id="9" name="Autopilot Option" description="Autopilot Option"
+                          create_user="System" create_date="2006-07-29 02:43:41.0" modify_user="System"
+                          modify_date="2006-07-29 02:43:41.0"/>
+    <project_info_type_lu project_info_type_id="10" name="Status Notification" description="Status Notification"
+                          create_user="System" create_date="2006-07-29 02:43:41.0" modify_user="System"
+                          modify_date="2006-07-29 02:43:41.0"/>
+    <project_info_type_lu project_info_type_id="11" name="Timeline Notification" description="Timeline Notification"
+                          create_user="System" create_date="2006-07-29 02:43:41.0" modify_user="System"
+                          modify_date="2006-07-29 02:43:41.0"/>
+    <project_info_type_lu project_info_type_id="12" name="Public" description="Public" create_user="System"
+                          create_date="2006-07-29 02:43:41.0" modify_user="System" modify_date="2006-07-29 02:43:41.0"/>
+    <project_info_type_lu project_info_type_id="13" name="Rated" description="Rated" create_user="System"
+                          create_date="2006-07-29 02:43:41.0" modify_user="System" modify_date="2006-07-29 02:43:41.0"/>
+    <project_info_type_lu project_info_type_id="14" name="Eligibility" description="Eligibility" create_user="System"
+                          create_date="2006-07-29 02:43:41.0" modify_user="System" modify_date="2006-07-29 02:43:41.0"/>
+    <project_info_type_lu project_info_type_id="15" name="Payments Required" description="Payments Required"
+                          create_user="System" create_date="2006-07-29 02:43:41.0" modify_user="System"
+                          modify_date="2006-07-29 02:43:41.0"/>
+    <project_info_type_lu project_info_type_id="16" name="Payments" description="Payments" create_user="System"
+                          create_date="2006-07-29 02:43:41.0" modify_user="System" modify_date="2006-07-29 02:43:41.0"/>
+    <project_info_type_lu project_info_type_id="17" name="Notes" description="Notes" create_user="System"
+                          create_date="2006-07-29 02:43:41.0" modify_user="System" modify_date="2006-07-29 02:43:41.0"/>
+    <project_info_type_lu project_info_type_id="18" name="Deactivated Timestamp" description="Deactivated Timestamp"
+                          create_user="System" create_date="2006-07-29 02:43:41.0" modify_user="System"
+                          modify_date="2006-07-29 02:43:41.0"/>
+    <project_info_type_lu project_info_type_id="19" name="Deactivated Phase" description="Deactivated Phase"
+                          create_user="System" create_date="2006-07-29 02:43:41.0" modify_user="System"
+                          modify_date="2006-07-29 02:43:41.0"/>
+    <project_info_type_lu project_info_type_id="20" name="Deactivated Reason" description="Deactivated Reason"
+                          create_user="System" create_date="2006-07-29 02:43:41.0" modify_user="System"
+                          modify_date="2006-07-29 02:43:41.0"/>
+    <project_info_type_lu project_info_type_id="21" name="Completion Timestamp" description="Completion Timestamp"
+                          create_user="System" create_date="2006-07-29 02:43:41.0" modify_user="System"
+                          modify_date="2006-07-29 02:43:41.0"/>
+    <project_info_type_lu project_info_type_id="22" name="Rated Timestamp" description="Rated Timestamp"
+                          create_user="System" create_date="2006-07-29 02:43:41.0" modify_user="System"
+                          modify_date="2006-07-29 02:43:41.0"/>
+    <project_info_type_lu project_info_type_id="23" name="Winner External Reference ID"
+                          description="Winner External Reference" create_user="System"
+                          create_date="2006-07-29 02:43:41.0" modify_user="System" modify_date="2006-07-29 02:43:41.0"/>
+    <project_info_type_lu project_info_type_id="24" name="Runner-up External Reference ID"
+                          description="Runner-up External Refere" create_user="System"
+                          create_date="2006-07-29 02:43:41.0" modify_user="System" modify_date="2006-07-29 02:43:41.0"/>
+
+    <!-- *** project_status_lu *** -->
+    <project_status_lu project_status_id="1" name="Active" description="Active" create_user="System"
+                       create_date="2006-07-29 02:43:41.0" modify_user="System" modify_date="2006-07-29 02:43:41.0"/>
+    <project_status_lu project_status_id="2" name="Inactive" description="Inactive" create_user="System"
+                       create_date="2006-07-29 02:43:41.0" modify_user="System" modify_date="2006-07-29 02:43:41.0"/>
+    <project_status_lu project_status_id="3" name="Deleted" description="Deleted" create_user="System"
+                       create_date="2006-07-29 02:43:41.0" modify_user="System" modify_date="2006-07-29 02:43:41.0"/>
+    <project_status_lu project_status_id="4" name="Cancelled - Failed Review" description="Cancelled - Failed Review"
+                       create_user="System" create_date="2006-07-29 02:43:41.0" modify_user="System"
+                       modify_date="2006-07-29 02:43:41.0"/>
+    <project_status_lu project_status_id="5" name="Cancelled - Failed Screening"
+                       description="Cancelled - Failed Screening" create_user="System"
+                       create_date="2006-07-29 02:43:41.0" modify_user="System" modify_date="2006-07-29 02:43:41.0"/>
+    <project_status_lu project_status_id="6" name="Cancelled - Zero Submissions"
+                       description="Cancelled - Zero Submissions" create_user="System"
+                       create_date="2006-07-29 02:43:41.0" modify_user="System" modify_date="2006-07-29 02:43:41.0"/>
+    <project_status_lu project_status_id="7" name="Completed" description="Completed" create_user="System"
+                       create_date="2006-07-29 02:43:41.0" modify_user="System" modify_date="2006-07-29 02:43:41.0"/>
+
+    <!-- *** project_type_lu *** -->
+    <project_type_lu project_type_id="1" name="Component" description="Component" create_user="System"
+                     create_date="2006-07-29 02:43:41.0" modify_user="System" modify_date="2006-07-29 02:43:41.0"/>
+    <project_type_lu project_type_id="2" name="Application" description="Application" create_user="System"
+                     create_date="2006-07-29 02:43:41.0" modify_user="System" modify_date="2006-07-29 02:43:41.0"/>
+
+    <!-- *** project_category_lu *** -->
+    <project_category_lu project_category_id="1" project_type_id="1" name="Design" description="Design"
+                         create_user="System" create_date="2006-07-29 02:43:41.0" modify_user="System"
+                         modify_date="2006-07-29 02:43:41.0"/>
+    <project_category_lu project_category_id="2" project_type_id="1" name="Development" description="Development"
+                         create_user="System" create_date="2006-07-29 02:43:41.0" modify_user="System"
+                         modify_date="2006-07-29 02:43:41.0"/>
+    <project_category_lu project_category_id="3" project_type_id="1" name="Security" description="Security"
+                         create_user="System" create_date="2006-07-29 02:43:41.0" modify_user="System"
+                         modify_date="2006-07-29 02:43:41.0"/>
+    <project_category_lu project_category_id="4" project_type_id="1" name="Process" description="Process"
+                         create_user="System" create_date="2006-07-29 02:43:41.0" modify_user="System"
+                         modify_date="2006-07-29 02:43:41.0"/>
+    <project_category_lu project_category_id="5" project_type_id="1" name="Testing Competition"
+                         description="Testing Competition" create_user="System" create_date="2006-07-29 02:43:41.0"
+                         modify_user="System" modify_date="2006-07-29 02:43:41.0"/>
+    <project_category_lu project_category_id="6" project_type_id="2" name="Specification" description="Specification"
+                         create_user="System" create_date="2006-07-29 02:43:41.0" modify_user="System"
+                         modify_date="2006-07-29 02:43:41.0"/>
+    <project_category_lu project_category_id="7" project_type_id="2" name="Architecture" description="Architecture"
+                         create_user="System" create_date="2006-07-29 02:43:41.0" modify_user="System"
+                         modify_date="2006-07-29 02:43:41.0"/>
+    <project_category_lu project_category_id="8" project_type_id="2" name="Component Production"
+                         description="Component Production" create_user="System" create_date="2006-07-29 02:43:41.0"
+                         modify_user="System" modify_date="2006-07-29 02:43:41.0"/>
+    <project_category_lu project_category_id="9" project_type_id="2" name="Quality Assurance"
+                         description="Quality Assurance" create_user="System" create_date="2006-07-29 02:43:41.0"
+                         modify_user="System" modify_date="2006-07-29 02:43:41.0"/>
+    <project_category_lu project_category_id="10" project_type_id="2" name="Deployment" description="Deployment"
+                         create_user="System" create_date="2006-07-29 02:43:41.0" modify_user="System"
+                         modify_date="2006-07-29 02:43:41.0"/>
+    <project_category_lu project_category_id="11" project_type_id="2" name="Security" description="Security"
+                         create_user="System" create_date="2006-07-29 02:43:41.0" modify_user="System"
+                         modify_date="2006-07-29 02:43:41.0"/>
+    <project_category_lu project_category_id="12" project_type_id="2" name="Process" description="Process"
+                         create_user="System" create_date="2006-07-29 02:43:41.0" modify_user="System"
+                         modify_date="2006-07-29 02:43:41.0"/>
+    <project_category_lu project_category_id="13" project_type_id="2" name="Testing Competition"
+                         description="Testing Competition" create_user="System" create_date="2006-07-29 02:43:41.0"
+                         modify_user="System" modify_date="2006-07-29 02:43:41.0"/>
+    <project_category_lu project_category_id="14" project_type_id="2" name="Assembly Competition"
+                         description="Assembly Competition" create_user="System" create_date="2006-07-29 02:43:41.0"
+                         modify_user="System" modify_date="2006-07-29 02:43:41.0"/>
+
+    <!-- *** phase_status_lu *** -->
+    <phase_status_lu phase_status_id="1" name="Scheduled" description="Scheduled" create_user="System"
+                     create_date="2006-07-29 02:43:41.0" modify_user="System" modify_date="2006-07-29 02:43:41.0"/>
+    <phase_status_lu phase_status_id="2" name="Open" description="Open" create_user="System"
+                     create_date="2006-07-29 02:43:41.0" modify_user="System" modify_date="2006-07-29 02:43:41.0"/>
+    <phase_status_lu phase_status_id="3" name="Closed" description="Closed" create_user="System"
+                     create_date="2006-07-29 02:43:41.0" modify_user="System" modify_date="2006-07-29 02:43:41.0"/>
+
+    <!-- *** notification_type_lu *** -->
+    <notification_type_lu notification_type_id="1" name="Timeline Notification" description="Timeline Notification"
+                          create_user="System" create_date="2006-07-29 02:45:11.0" modify_user="System"
+                          modify_date="2006-07-29 02:45:11.0"/>
+</dataset>
