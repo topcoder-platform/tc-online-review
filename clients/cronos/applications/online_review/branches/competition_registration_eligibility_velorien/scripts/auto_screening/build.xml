@@ -1,0 +1,350 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="Online Review" default="dist" basedir=".">
+
+    <property file="topcoder_global.properties" />
+
+    <!-- COMPONENT PARAMETERS -->
+    <property name="component" value="auto_screening" />
+    <property name="package" value="com.topcoder.onlinereview" />
+    <property name="packagedir" value="com/topcoder/onlinereview" />
+    <property name="distfilename" value="auto_screening" />
+    <property name="component_version" value="1.0" />
+    <property name="component_path" value="${distfilename}/${component_version}" />
+
+    <!-- DIRECTORY SETUP -->
+    <property name="srcdir" value="src" />
+    <property name="tcs_libdir" value="../../lib/tcs" />
+    <property name="ext_libdir" value="../../lib" />
+    <property name="jar_tcs_libdir" value="lib/tcs" />
+    <property name="jar_ext_libdir" value="lib/third_party" />
+    <property name="docsdir" value="docs" />
+    <property name="configdir" value="conf" />
+    <property name="testlogdir" value="log" />
+    <property name="testfiles" value="test_files" />
+    <property name="javadocsdir" value="${docsdir}/javadocs" />
+    <property name="webdir" value="web" />
+    <property name="reports" value="reports" />
+
+    <property name="javasrc" value="${srcdir}/java" />
+    <property name="javamain" value="${javasrc}/main" />
+    <property name="javatests" value="${javasrc}/tests" />
+    <property name="sqlsrc" value="${srcdir}/sql" />
+
+    <property name="builddir" value="build/ant" />
+    <property name="build_classdir" value="${builddir}/classes" />
+    <property name="build_testclassdir" value="${builddir}/testClasses" />
+    <property name="build_targetclassdir" value="${builddir}/targetclasses" />
+    <property name="build_distdir" value="${builddir}/dist" />
+    <property name="build_docsdir" value="${builddir}/${docsdir}" />
+    <property name="build_javadocsdir" value="${builddir}/${javadocsdir}" />
+    <property name="build_webdir" value="${builddir}/${webdir}" />
+    <property name="build_lib" value="${builddir}/lib" />
+    <property name="build_tcsdistdir" value="${build_distdir}/${distfilename}-${component_version}" />
+
+    <!-- Server installation directories -->
+	<property name="cactus.home.tomcat5x" value="C:\tools\tomcat5" />
+    <property name="deploy-dir" value="/home/onlinereview2/jboss-4.0.2/server/default/deploy/${distfilename}.war" />
+
+    <!-- EXECUTION TAGS -->
+    <property name="debug" value="off" />
+    <property name="verbose" value="no" />
+
+    <!-- COMPONENT DISTRIBUTION STRUCTURE -->
+    <property name="dist_conf" value="${build_tcsdistdir}/${configdir}" />
+    <property name="dist_lib" value="${build_distdir}/lib/tcs" />
+    <property name="dist_src" value="${build_tcsdistdir}/${srcdir}" />
+    <property name="dist_docs" value="${build_tcsdistdir}/${docsdir}" />
+    <property name="dist_javadocs" value="${build_tcsdistdir}/${javadocsdir}" />
+    <property name="dist_testfiles" value="${build_tcsdistdir}/${testfiles}" />
+
+    <!-- NAME FOR .JAR AND .WAR FILES -->
+    <property name="component.jar" value="${dist_lib}/${component_path}/${distfilename}.jar" />
+    <property name="javadoc.jar" value="${builddir}/javadocs.jar" />
+    <property name="component.tests.jar" value="${dist_lib}/${distfilename}_tests.jar" />
+    <property name="component.war" value="${build_distdir}/${distfilename}.war" />
+    <property name="component_test.war" value="${build_distdir}/${distfilename}_test.war" />
+    <property name="component.dist.jar" value="${build_distdir}/${distfilename}-${component_version}.jar" />
+    <property name="dev_submission.jar" value="${component}_${component_version}_dev_submission.jar" />
+    <property name="design_submission.jar" value="${component}_${component_version}_design_submission.jar" />
+    <property name="dev_dist.jar" value="${component}_${component_version}_dev_dist.jar" />
+    <property name="design_dist.jar" value="${component}_${component_version}_design_dist.jar" />
+
+    <!-- TCS Dependencies -->
+    <property name="auto_screening_management.version" value="1.0" />
+    <property name="auto_screening_management.jar.name" value="auto_screening_management.jar" />
+    <property name="auto_screening_management.path" value="auto_screening_management/${auto_screening_management.version}" />
+    <property name="auto_screening_management.jar" value="${tcs_libdir}/${auto_screening_management.path}/${auto_screening_management.jar.name}" />
+
+    <property name="auto_screening_tool.version" value="1.0"/>
+    <property name="auto_screening_tool.jar.name" value="auto_screening_tool.jar"/>
+    <property name="auto_screening_tool.path" value="auto_screening_tool/${auto_screening_tool.version}"/>
+    <property name="auto_screening_tool.jar" value="${tcs_libdir}/${auto_screening_tool.path}/${auto_screening_tool.jar.name}"/>
+        
+    <property name="auto_screening_tool_persistence.version" value="1.0" />
+    <property name="auto_screening_tool_persistence.jar.name" value="auto_screening_tool_persistence.jar" />
+    <property name="auto_screening_tool_persistence.path" value="auto_screening_tool_persistence/${auto_screening_tool_persistence.version}" />
+    <property name="auto_screening_tool_persistence.jar" value="${tcs_libdir}/${auto_screening_tool_persistence.path}/${auto_screening_tool_persistence.jar.name}" />
+
+    <property name="base_exception.version" value="1.0" />
+    <property name="base_exception.jar.name" value="base_exception.jar" />
+    <property name="base_exception.path" value="base_exception/${base_exception.version}" />
+    <property name="base_exception.jar" value="${tcs_libdir}/${base_exception.path}/${base_exception.jar.name}" />
+
+    <property name="class_associations.version" value="1.0" />
+    <property name="class_associations.jar.name" value="class_associations.jar" />
+    <property name="class_associations.path" value="class_associations/${class_associations.version}" />
+    <property name="class_associations.jar" value="${tcs_libdir}/${class_associations.path}/${class_associations.jar.name}" />
+    
+    <property name="compression_utility.version" value="2.0.1" />
+    <property name="compression_utility.jar.name" value="compression_utility.jar" />
+    <property name="compression_utility.path" value="compression_utility/${compression_utility.version}" />
+    <property name="compression_utility.jar" value="${tcs_libdir}/${compression_utility.path}/${compression_utility.jar.name}" />
+    
+    <property name="command_line_utility.version" value="1.0" />
+    <property name="command_line_utility.jar.name" value="command_line_utility.jar" />
+    <property name="command_line_utility.path" value="command_line_utility/${command_line_utility.version}" />
+    <property name="command_line_utility.jar" value="${tcs_libdir}/${command_line_utility.path}/${command_line_utility.jar.name}" />
+
+    <property name="configuration_manager.version" value="2.1.5" />
+    <property name="configuration_manager.jar.name" value="configuration_manager.jar" />
+    <property name="configuration_manager.path" value="configuration_manager/${configuration_manager.version}" />
+    <property name="configuration_manager.jar" value="${tcs_libdir}/${configuration_manager.path}/${configuration_manager.jar.name}" />
+
+    <property name="data_validation.version" value="1.0"/>
+    <property name="data_validation.jar.name" value="data_validation.jar"/>
+    <property name="data_validation.path" value="data_validation/${data_validation.version}"/>
+    <property name="data_validation.jar" value="${tcs_libdir}/${data_validation.path}/${data_validation.jar.name}"/>
+
+    <property name="database_abstraction.version" value="1.1" />
+    <property name="database_abstraction.jar.name" value="database_abstraction.jar" />
+    <property name="database_abstraction.path" value="database_abstraction/${database_abstraction.version}" />
+    <property name="database_abstraction.jar" value="${tcs_libdir}/${database_abstraction.path}/${database_abstraction.jar.name}" />
+
+    <property name="db_connection_factory.version" value="1.0" />
+    <property name="db_connection_factory.jar.name" value="db_connection_factory.jar" />
+    <property name="db_connection_factory.path" value="db_connection_factory/${db_connection_factory.version}" />
+    <property name="db_connection_factory.jar" value="${tcs_libdir}/${db_connection_factory.path}/${db_connection_factory.jar.name}" />
+
+    <property name="directory_validation.version" value="1.0"/>
+    <property name="directory_validation.jar.name" value="directory_validation.jar"/>
+    <property name="directory_validation.path" value="directory_validation/${directory_validation.version}"/>
+    <property name="directory_validation.jar" value="${tcs_libdir}/${directory_validation.path}/${directory_validation.jar.name}"/>
+    
+    <property name="executable_wrapper.version" value="1.0"/>
+    <property name="executable_wrapper.jar.name" value="executable_wrapper.jar"/>
+    <property name="executable_wrapper.path" value="executable_wrapper/${executable_wrapper.version}"/>
+    <property name="executable_wrapper.jar" value="${tcs_libdir}/${executable_wrapper.path}/${executable_wrapper.jar.name}"/>
+    
+    <property name="file_system_server.version" value="1.0" />
+    <property name="file_system_server.jar.name" value="file_system_server.jar" />
+    <property name="file_system_server.path" value="file_system_server/${file_system_server.version}" />
+    <property name="file_system_server.jar" value="${tcs_libdir}/${file_system_server.path}/${file_system_server.jar.name}" />
+
+    <property name="file_upload.version" value="2.0" />
+    <property name="file_upload.jar.name" value="file_upload.jar" />
+    <property name="file_upload.path" value="file_upload/${file_upload.version}" />
+    <property name="file_upload.jar" value="${tcs_libdir}/${file_upload.path}/${file_upload.jar.name}" />
+
+    <property name="generic_event_manager.version" value="1.0"/>
+    <property name="generic_event_manager.jar.name" value="generic_event_manager.jar"/>
+    <property name="generic_event_manager.path" value="generic_event_manager/${generic_event_manager.version}"/>
+    <property name="generic_event_manager.jar" value="${tcs_libdir}/${generic_event_manager.path}/${generic_event_manager.jar.name}"/>
+
+    <property name="guid_generator.version" value="1.0"/>
+    <property name="guid_generator.jar.name" value="guid_generator.jar"/>
+    <property name="guid_generator.path" value="guid_generator/${guid_generator.version}"/>
+    <property name="guid_generator.jar" value="${tcs_libdir}/${guid_generator.path}/${guid_generator.jar.name}"/>
+
+    <property name="heartbeat.version" value="1.0"/>
+    <property name="heartbeat.jar.name" value="heartbeat.jar"/>
+    <property name="heartbeat.path" value="heartbeat/${heartbeat.version}"/>
+    <property name="heartbeat.jar" value="${tcs_libdir}/${heartbeat.path}/${heartbeat.jar.name}"/>
+
+    <property name="id_generator.version" value="3.0" />
+    <property name="id_generator.jar.name" value="id_generator.jar" />
+    <property name="id_generator.path" value="id_generator/${id_generator.version}" />
+    <property name="id_generator.jar" value="${tcs_libdir}/${id_generator.path}/${id_generator.jar.name}" />
+
+    <property name="ip_server.version" value="2.0.1" />
+    <property name="ip_server.jar.name" value="ip_server.jar" />
+    <property name="ip_server.path" value="ip_server/${ip_server.version}" />
+    <property name="ip_server.jar" value="${tcs_libdir}/${ip_server.path}/${ip_server.jar.name}" />
+    
+    <property name="job_scheduler.version" value="1.0"/>
+    <property name="job_scheduler.jar.name" value="job_scheduler.jar"/>
+    <property name="job_scheduler.path" value="job_scheduler/${job_scheduler.version}"/>
+    <property name="job_scheduler.jar" value="${tcs_libdir}/${job_scheduler.path}/${job_scheduler.jar.name}"/>    
+
+    <property name="logging_wrapper.version" value="1.2" />
+    <property name="logging_wrapper.jar.name" value="logging_wrapper.jar" />
+    <property name="logging_wrapper.path" value="logging_wrapper/${logging_wrapper.version}" />
+    <property name="logging_wrapper.jar" value="${tcs_libdir}/${logging_wrapper.path}/${logging_wrapper.jar.name}" />
+
+    <property name="magic_numbers.version" value="1.0"/>
+    <property name="magic_numbers.jar.name" value="magic_numbers.jar"/>
+    <property name="magic_numbers.path" value="magic_numbers/${magic_numbers.version}"/>
+    <property name="magic_numbers.jar" value="${tcs_libdir}/${magic_numbers.path}/${magic_numbers.jar.name}"/>
+        
+    <property name="object_factory.version" value="2.0.1" />
+    <property name="object_factory.jar.name" value="object_factory.jar" />
+    <property name="object_factory.path" value="object_factory/${object_factory.version}" />
+    <property name="object_factory.jar" value="${tcs_libdir}/${object_factory.path}/${object_factory.jar.name}" />
+
+    <property name="search_builder.version" value="1.3.1" />
+    <property name="search_builder.jar.name" value="search_builder.jar" />
+    <property name="search_builder.path" value="search_builder/${search_builder.version}" />
+    <property name="search_builder.jar" value="${tcs_libdir}/${search_builder.path}/${search_builder.jar.name}" />
+
+    <property name="simple_cache.version" value="2.0" />
+    <property name="simple_cache.jar.name" value="simple_cache.jar" />
+    <property name="simple_cache.path" value="simple_cache/${simple_cache.version}" />
+    <property name="simple_cache.jar" value="${tcs_libdir}/${simple_cache.path}/${simple_cache.jar.name}" />
+
+    <property name="typesafe_enum.version" value="1.0" />
+    <property name="typesafe_enum.jar.name" value="typesafe_enum.jar" />
+    <property name="typesafe_enum.path" value="typesafe_enum/${typesafe_enum.version}" />
+    <property name="typesafe_enum.jar" value="${tcs_libdir}/${typesafe_enum.path}/${typesafe_enum.jar.name}" />
+
+    <property name="user_project_data_store.version" value="1.0.1" />
+    <property name="user_project_data_store.jar.name" value="user_project_data_store.jar" />
+    <property name="user_project_data_store.path" value="user_project_data_store/${user_project_data_store.version}" />
+    <property name="user_project_data_store.jar" value="${tcs_libdir}/${user_project_data_store.path}/${user_project_data_store.jar.name}" />
+
+    <property name="xmi_parser.version" value="1.1"/>
+    <property name="xmi_parser.jar.name" value="xmi_parser.jar"/>
+    <property name="xmi_parser.path" value="xmi_parser/${xmi_parser.version}"/>
+    <property name="xmi_parser.jar" value="${tcs_libdir}/${xmi_parser.path}/${xmi_parser.jar.name}"/>
+
+    <!-- 3rd Party Dependencies  -->
+    <property name="ifx-jdbc.jar" value="${ext_libdir}/third_party/ifx-jdbc.jar" />
+	<property name="log4j.jar" value="${ext_libdir}/third_party/log4j.jar" />
+	<property name="xerces.jar" value="${ext_libdir}/third_party/xerces.jar" />
+	<property name="checkstyle.jar" value="${ext_libdir}/third_party/checkstyle-all-4.2.jar" />
+
+    <path id="buildlibs">
+        <pathelement location="conf" />
+        <pathelement location="${auto_screening_management.jar}" />
+        <pathelement location="${auto_screening_tool.jar}" />
+        <pathelement location="${auto_screening_tool_persistence.jar}" />
+        <pathelement location="${base_exception.jar}" />
+        <pathelement location="${class_associations.jar}" />
+        <pathelement location="${compression_utility.jar}" />
+        <pathelement location="${command_line_utility.jar}" />
+        <pathelement location="${configuration_manager.jar}" />
+        <pathelement location="${data_validation.jar}" />
+        <pathelement location="${database_abstraction.jar}" />
+        <pathelement location="${db_connection_factory.jar}" />
+        <pathelement location="${directory_validation.jar}" />
+        <pathelement location="${executable_wrapper.jar}" />
+        <pathelement location="${file_system_server.jar}" />
+        <pathelement location="${file_upload.jar}" />
+        <pathelement location="${generic_event_manager.jar}" />
+        <pathelement location="${guid_generator.jar}" />
+        <pathelement location="${heartbeat.jar}" />
+        <pathelement location="${id_generator.jar}" />
+        <pathelement location="${ip_server.jar}" />
+        <pathelement location="${job_scheduler.jar}" />
+        <pathelement location="${logging_wrapper.jar}" />
+        <pathelement location="${magic_numbers.jar}" />
+        <pathelement location="${object_factory.jar}" />
+        <pathelement location="${search_builder.jar}" />
+        <pathelement location="${simple_cache.jar}" />
+        <pathelement location="${typesafe_enum.jar}" />
+        <pathelement location="${user_project_data_store.jar}" />
+        <pathelement location="${xmi_parser.jar}" />
+        <pathelement location="${ifx-jdbc.jar}" />
+        <pathelement location="${log4j.jar}" />
+        <pathelement location="${xerces.jar}" />
+	    <fileset dir="lib">    
+	    	<filename name="**/*.jar"/>
+	    </fileset>
+        <pathelement location="." />
+    </path>
+
+	<target name="dist">	
+        <delete file="$auto_screening_app.jar" failonerror="false" />
+		<jar destfile="auto_screening_app.jar" filesonly="true">
+	    	<fileset file="${auto_screening_management.jar}"/>
+	    	<fileset file="${auto_screening_tool.jar}"/>
+	    	<fileset file="${auto_screening_tool_persistence.jar}"/>
+	    	<fileset file="${base_exception.jar}"/>
+	    	<fileset file="${class_associations.jar}"/>
+	    	<fileset file="${compression_utility.jar}"/>
+	    	<fileset file="${command_line_utility.jar}"/>
+	    	<fileset file="${configuration_manager.jar}"/>
+	    	<fileset file="${data_validation.jar}"/>
+	    	<fileset file="${database_abstraction.jar}"/>
+	    	<fileset file="${db_connection_factory.jar}"/>
+	    	<fileset file="${directory_validation.jar}"/>
+	    	<fileset file="${executable_wrapper.jar}"/>
+	    	<fileset file="${file_system_server.jar}"/>
+	    	<fileset file="${file_upload.jar}"/>
+	    	<fileset file="${generic_event_manager.jar}"/>
+	    	<fileset file="${guid_generator.jar}"/>
+	    	<fileset file="${heartbeat.jar}"/>
+	    	<fileset file="${id_generator.jar}"/>
+	    	<fileset file="${ip_server.jar}"/>
+	    	<fileset file="${job_scheduler.jar}"/>
+	    	<fileset file="${logging_wrapper.jar}"/>
+	    	<fileset file="${magic_numbers.jar}"/>
+	    	<fileset file="${object_factory.jar}"/>
+	    	<fileset file="${search_builder.jar}"/>
+	    	<fileset file="${simple_cache.jar}"/>
+	    	<fileset file="${typesafe_enum.jar}"/>
+	    	<fileset file="${user_project_data_store.jar}"/>
+	    	<fileset file="${xmi_parser.jar}"/>
+	    	<fileset file="${ifx-jdbc.jar}"/> 
+	    	<fileset file="${log4j.jar}" />
+	    	<fileset file="${xerces.jar}"/> 
+			<fileset file="${checkstyle.jar}"/> 
+		    <fileset dir=".">    
+		    	<exclude  name="build.xml"/> 
+		    	<include  name="**/*.sh"/>
+		    	<include  name="**/*.bat"/>
+		    	<include  name="**/*.header"/>
+		    	<include  name="**/*.xml"/>
+		    	<include  name="**/*.properties"/>
+		    	<include  name="**/*.dtd"/>
+		    </fileset>
+		</jar>
+	</target>
+
+	<target name="deploy">	
+        <mkdir dir="lib" />
+        <mkdir dir="files" />
+        <mkdir dir="temp" />
+    	<unjar src="auto_screening_app.jar" dest="lib">
+    		<patternset>
+    			<include name="**/*.jar"/>
+    		</patternset>
+    	</unjar>
+    	<unjar src="auto_screening_app.jar" dest=".">
+    		<patternset>
+		    	<include  name="**/*.sh"/>
+		    	<include  name="**/*.bat"/>
+		    	<include  name="**/*.header"/>
+		    	<include  name="**/*.xml"/>
+		    	<include  name="**/*.properties"/>
+		    	<include  name="**/*.dtd"/>
+    		</patternset>
+    	</unjar>		
+		<fixcrlf srcdir="${basedir}" eol="lf" eof="remove" includes="**/*.sh" />
+		<fixcrlf srcdir="${basedir}" eol="crlf" includes="**/*.bat" />
+		<chmod dir="." perm="u+x" includes="**/*.sh"/>
+	</target>
+	
+
+    <target name="clean">
+        <delete failonerror="false">
+            <fileset dir="${build_classdir}" includes="**/*.class"/>
+        </delete>
+        <delete failonerror="false">
+            <fileset dir="${build_testclassdir}" includes="**/*.class"/>
+        </delete>
+        <delete file="${component.war}" failonerror="false" />
+        <delete file="${component_test.war}" failonerror="false" />
+    </target>
+
+    <target name="main" depends="dist">
+    </target>
+</project>
