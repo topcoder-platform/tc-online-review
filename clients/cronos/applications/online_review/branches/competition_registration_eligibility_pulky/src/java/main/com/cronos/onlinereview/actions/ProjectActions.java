@@ -18,6 +18,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
+import com.topcoder.web.common.eligibility.ContestEligibilityServiceLocator;
 
 import javax.ejb.CreateException;
 import javax.ejb.EJBException;
@@ -2068,6 +2069,11 @@ public class ProjectActions extends DispatchAction {
             projectsFilter = ProjectFilterUtility.buildStatusNameEqualFilter("Inactive");
             activeTab = 4;
         } else {
+        	
+            System.out.println("pulky: calling eligibility locator");
+            System.out.println("pulky: result: " + ContestEligibilityServiceLocator.getServices().isEligible(1, 1, false));
+            System.out.println("pulky: end calling eligibility locator");
+        	
             // Create filter to select only active projects
             Filter filterStatus = ProjectFilterUtility.buildStatusNameEqualFilter("Active");
 
