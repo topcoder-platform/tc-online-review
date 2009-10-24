@@ -67,6 +67,7 @@ import com.topcoder.search.builder.SearchBuilderException;
 import com.topcoder.search.builder.filter.AndFilter;
 import com.topcoder.search.builder.filter.Filter;
 import com.topcoder.search.builder.filter.InFilter;
+import com.topcoder.service.contest.eligibilityvalidation.ContestEligibilityValidatorException;
 import com.topcoder.shared.util.DBMS;
 import com.topcoder.util.errorhandling.BaseException;
 import com.topcoder.web.ejb.project.ProjectRoleTermsOfUse;
@@ -2070,9 +2071,24 @@ public class ProjectActions extends DispatchAction {
             activeTab = 4;
         } else {
         	
-            System.out.println("pulky: calling eligibility locator");
-            System.out.println("pulky: result: " + ContestEligibilityServiceLocator.getServices().isEligible(1, 1, false));
-            System.out.println("pulky: end calling eligibility locator");
+        	
+            try {
+				System.out.println("pulky: calling eligibility locator");
+				System.out.println("pulky: result: " + ContestEligibilityServiceLocator.getServices().isEligible(1, 1, false));
+				System.out.println("pulky: end calling eligibility locator");
+			} catch (RemoteException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (ContestEligibilityValidatorException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (CreateException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (NamingException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
         	
             // Create filter to select only active projects
             Filter filterStatus = ProjectFilterUtility.buildStatusNameEqualFilter("Active");
