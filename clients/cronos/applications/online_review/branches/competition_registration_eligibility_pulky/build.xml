@@ -322,10 +322,10 @@
     <property name="workdays.path" value="workdays/${workdays.version}" />
     <property name="workdays.jar" value="${tcs_libdir}/${workdays.path}/${workdays.jar.name}" />
 
-    <property name="contest_eligibility_validation.version" value="1.0" />
-    <property name="contest_eligibility_validation.jar.name" value="contest_eligibility_validation.jar" />
-    <property name="contest_eligibility_validation.path" value="contest_eligibility_validation/${contest_eligibility_validation.version}" />
-    <property name="contest_eligibility_validation.jar" value="${tcs_libdir}/${contest_eligibility_validation.path}/${contest_eligibility_validation.jar.name}" />
+    <property name="contest_eligibility_validation_client.version" value="1.0.0" />
+    <property name="contest_eligibility_validation_client.jar.name" value="contest_eligibility_validation_client.jar" />
+    <property name="contest_eligibility_validation_client.path" value="contest_eligibility_validation_client/${contest_eligibility_validation_client.version}" />
+    <property name="contest_eligibility_validation_client.jar" value="${tcs_libdir}/${contest_eligibility_validation_client.path}/${contest_eligibility_validation_client.jar.name}" />
 
     <property name="pactsServices.path" value="pacts_services" />
     <property name="pactsServices.jar.name" value="PactsClientServices.jar" />
@@ -442,7 +442,7 @@
         <pathelement location="${user_project_data_store.jar}" />
         <pathelement location="${weighted_calculator.jar}" />
         <pathelement location="${workdays.jar}" />
-        <pathelement location="${contest_eligibility_validation.jar}" />
+        <pathelement location="${contest_eligibility_validation_client.jar}" />
         <pathelement location="${pactsServices.jar}" />
         <pathelement location="${projectEJB.jar}" />
         <pathelement location="${userEJB.jar}" />
@@ -679,7 +679,7 @@ Note: The security manager that comes with the app may not be compatible with th
             <lib dir="${jar_tcs_libdir}/${user_project_data_store.path}" includes="*.jar" />
             <lib dir="${jar_tcs_libdir}/${weighted_calculator.path}" includes="*.jar" />
             <lib dir="${jar_tcs_libdir}/${workdays.path}" includes="*.jar" />
-            <lib dir="${jar_tcs_libdir}/${contest_eligibility_validation.path}" includes="*.jar" />
+            <lib dir="${jar_tcs_libdir}/${contest_eligibility_validation_client.path}" includes="*.jar" />
             <lib dir="${jar_tcs_libdir}/${pactsServices.path}" includes="*.jar" />
             <lib dir="${jar_tcs_libdir}/${projectEJB.path}" includes="*.jar" />
             <lib dir="${jar_tcs_libdir}/${userEJB.path}" includes="*.jar" />
