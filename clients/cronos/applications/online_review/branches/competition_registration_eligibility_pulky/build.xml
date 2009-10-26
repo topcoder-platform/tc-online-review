@@ -679,11 +679,11 @@ Note: The security manager that comes with the app may not be compatible with th
             <lib dir="${jar_tcs_libdir}/${user_project_data_store.path}" includes="*.jar" />
             <lib dir="${jar_tcs_libdir}/${weighted_calculator.path}" includes="*.jar" />
             <lib dir="${jar_tcs_libdir}/${workdays.path}" includes="*.jar" />
-            <lib dir="${jar_tcs_libdir}/${contest_eligibility_validation_client.path}" includes="*.jar" />
             <lib dir="${jar_tcs_libdir}/${pactsServices.path}" includes="*.jar" />
             <lib dir="${jar_tcs_libdir}/${projectEJB.path}" includes="*.jar" />
             <lib dir="${jar_tcs_libdir}/${userEJB.path}" includes="*.jar" />
             <lib dir="${jar_tcs_libdir}/${termsOfUseEJB.path}" includes="*.jar" />
+            <lib dir="${jar_tcs_libdir}/${contest_eligibility_validation_client.path}" includes="*.jar" />
         	<lib dir="${jar_tcs_libdir}" includes="*.jar" />
             <lib dir="${jar_ext_libdir}" includes="*.jar" excludes="mail.jar, ejb-2_0.jar" />
 
@@ -734,7 +734,8 @@ Note: The security manager that comes with the app may not be compatible with th
                 <include name="${tcsUtil.jar.name}"/>
                 <include name="${tcwebcommon.jar.name}"/>
                 <include name="${shared.jar.name}"/>
-		<include name="${forums.jar.name}"/>
+        		<include name="${forums.jar.name}"/>
+        		<include name="${contest_eligibility_validation_client.jar.name}"/>
             </fileset>
         </move>
         <delete verbose="true">
