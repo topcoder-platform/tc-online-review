@@ -686,6 +686,19 @@ Note: The security manager that comes with the app may not be compatible with th
             <lib dir="${jar_tcs_libdir}/${termsOfUseEJB.path}" includes="*.jar" />
         	<lib dir="${jar_tcs_libdir}" includes="*.jar" />
             <lib dir="${jar_ext_libdir}" includes="*.jar" excludes="mail.jar, ejb-2_0.jar" />
+
+            <!-- Added libs to support ejb3 calls -->
+            <lib dir="${jar_ext_libdir}/jboss/">
+            	<include name="jboss-saaj.jar"/>
+            	<include name="jboss-ejb3-client.jar"/>
+            	<include name="jboss-ejb3x.jar"/>            	
+            	<include name="jboss-aop-jdk50-client.jar"/>
+            	<include name="jboss-aspect-jdk50-client.jar"/>
+            	<include name="jboss-remoting.jar"/>
+            	<include name="jboss-remoting-int.jar"/>
+            	<include name="jboss-common-core.jar"/>
+            	<include name="jboss-serialization.jar"/>
+            </lib>
             <fileset dir="${webdir}" includes="**" excludes="i/**, js/**, css/**" />
         </war>
     </target>
