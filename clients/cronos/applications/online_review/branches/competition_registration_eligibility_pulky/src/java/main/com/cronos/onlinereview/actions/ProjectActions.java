@@ -2165,8 +2165,12 @@ public class ProjectActions extends DispatchAction {
             scope.equalsIgnoreCase("all") && projectArray.length > 0) {
 
         	// check which of the projects have eligibility constraints
-        	Set<Long> projectsWithEligibilityConstraints = 
-            		ContestEligibilityServiceLocator.getServices().haveEligibility(projectArray, false);
+        	Set<Long> projectsWithEligibilityConstraints;
+			try {
+				projectsWithEligibilityConstraints = ContestEligibilityServiceLocator.getServices().haveEligibility(projectArray, false);
+			} catch (Exception e) {
+	        	throw new BaseException("It was not possible to retrieve eligibility constraints", e);
+			}
 
         	// create a set of projects where the user is a resource  
         	Set<Long> resourceProjects = new HashSet<Long>();
