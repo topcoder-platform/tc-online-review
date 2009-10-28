@@ -281,10 +281,10 @@ public class AuthorizationHelper {
             return;
         }
 
-        // If this project is not public, remove "Public" role from the set
-        if (!("Yes".equalsIgnoreCase((String)project.getProperty("Public")))) {
-            roles.remove(Constants.PUBLIC_ROLE_NAME);
-        }
+//        // If this project is not public, remove "Public" role from the set
+//        if (!("Yes".equalsIgnoreCase((String)project.getProperty("Public")))) {
+//            roles.remove(Constants.PUBLIC_ROLE_NAME);
+//        }
 
         // Prepare filter to select resources by the External ID of currently logged in user
         Filter filterExtIDname = ResourceFilterBuilder.createExtensionPropertyNameFilter("External Reference ID");

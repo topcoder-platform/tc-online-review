@@ -899,7 +899,7 @@
                                         </html:select>
                                     </td>
                                 </tr>
-                                <tr class="dark">
+                                <%-- <tr class="dark">
                                     <td class="valueB"><bean:message key="editProject.ProjectDetails.Eligibility" /></td>
                                     <td class="value" nowrap="nowrap">
                                         <html:select styleClass="inputBox" property="eligibility" style="width:150px;">
@@ -913,8 +913,8 @@
                                     <td class="value" nowrap="nowrap">
                                         <html:checkbox property="public" styleId="public"/>
                                     </td>
-                                </tr>
-                                <tr class="light">
+                                </tr> --%>
+                                <tr class="dark">
                                     <td class="value" nowrap="nowrap">
                                         <b><bean:message key="editProject.ProjectDetails.Payments" /></b><br />
                                     </td>

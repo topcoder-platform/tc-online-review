@@ -375,7 +375,7 @@ public class ProjectActions extends DispatchAction {
         populateProjectFormProperty(form, Long.class, "billing_project", project, "Billing Project");
 
         // Populate project public option
-        form.set("public", new Boolean("Yes".equals(project.getProperty("Public"))));
+//        form.set("public", new Boolean("Yes".equals(project.getProperty("Public"))));
         // Populate project autopilot option
         form.set("autopilot", new Boolean("On".equals(project.getProperty("Autopilot Option"))));
         // Populate project status notification option
@@ -389,7 +389,7 @@ public class ProjectActions extends DispatchAction {
         form.set("no_rate_project", new Boolean(!("Yes".equals(project.getProperty("Rated")))));
 
         // Populate project eligibility
-        populateProjectFormProperty(form, String.class, "eligibility", project, "Eligibility");
+//        populateProjectFormProperty(form, String.class, "eligibility", project, "Eligibility");
         // Populate project SVN module
         populateProjectFormProperty(form, String.class, "SVN_module", project, "SVN Module");
         // Populate project notes
@@ -779,9 +779,9 @@ public class ProjectActions extends DispatchAction {
                 project.setProperty("Root Catalog ID", ActionsHelper.getRootCategoryIdByComponentId(lazyForm.get("component_id")));
             }
             // Populate project eligibility
-            project.setProperty("Eligibility", lazyForm.get("eligibility"));
+//            project.setProperty("Eligibility", lazyForm.get("eligibility"));
             // Populate project public flag
-            project.setProperty("Public", Boolean.TRUE.equals(lazyForm.get("public")) ? "Yes" : "No");
+//            project.setProperty("Public", Boolean.TRUE.equals(lazyForm.get("public")) ? "Yes" : "No");
             // Populate contest indicator flag
             project.setProperty("Contest Indicator", "On");
         } else {
@@ -2070,40 +2070,20 @@ public class ProjectActions extends DispatchAction {
             projectsFilter = ProjectFilterUtility.buildStatusNameEqualFilter("Inactive");
             activeTab = 4;
         } else {
-        	
-        	
-            try {
-				System.out.println("pulky: calling eligibility locator");
-				System.out.println("pulky: result: " + ContestEligibilityServiceLocator.getServices().isEligible(1, 1, false));
-				System.out.println("pulky: end calling eligibility locator");
-			} catch (RemoteException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (ContestEligibilityValidatorException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (CreateException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (NamingException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-        	
             // Create filter to select only active projects
             Filter filterStatus = ProjectFilterUtility.buildStatusNameEqualFilter("Active");
 
-            if (!AuthorizationHelper.hasUserRole(request, Constants.GLOBAL_MANAGER_ROLE_NAME)) {
-                // Create filters to select only public projects
-                Filter filterPublicName = ProjectFilterUtility.buildProjectPropertyNameEqualFilter("Public");
-                Filter filterPublicValue = ProjectFilterUtility.buildProjectPropertyValueEqualFilter("Yes");
-                // Build final filter
-                projectsFilter =
-                    new AndFilter(Arrays.asList(new Filter[] {filterPublicName, filterPublicValue, filterStatus}));
-            } else {
-                // Only Global Managers can see private projects in All Projects list
+//            if (!AuthorizationHelper.hasUserRole(request, Constants.GLOBAL_MANAGER_ROLE_NAME)) {
+//                // Create filters to select only public projects
+//                Filter filterPublicName = ProjectFilterUtility.buildProjectPropertyNameEqualFilter("Public");
+//                Filter filterPublicValue = ProjectFilterUtility.buildProjectPropertyValueEqualFilter("Yes");
+//                // Build final filter
+//                projectsFilter =
+//                    new AndFilter(Arrays.asList(new Filter[] {filterPublicName, filterPublicValue, filterStatus}));
+//            } else {
+//                // Only Global Managers can see private projects in All Projects list
                 projectsFilter = filterStatus;
-            }
+//            }
 
             // Specify the index of the active tab
             activeTab = 2;
@@ -2145,21 +2125,26 @@ public class ProjectActions extends DispatchAction {
         // Fetch projects from the database. These projects will require further grouping
         Project[] ungroupedProjects = (projectsFilter != null) ? manager.searchProjects(projectsFilter) :
                 manager.getUserProjects(AuthorizationHelper.getLoggedInUserId(request));
+        
         // Sort fetched projects. Currently sorting is done by projects' names only, in ascending order
         Arrays.sort(ungroupedProjects, new Comparators.ProjectNameComparer());
 
-        Resource[] allMyResources = null;
+        List<Long> projectFilters = new ArrayList<Long>();
+        long[] projectArray = new long[ungroupedProjects.length];
 
-        if (ungroupedProjects.length != 0 && AuthorizationHelper.isUserLoggedIn(request) && myProjects) {
+        for (int i = 0; i < ungroupedProjects.length; ++i) {
+            projectFilters.add(ungroupedProjects[i].getId());
+            projectArray[i] = ungroupedProjects[i].getId();
+        }
+
+        Resource[] allMyResources = null;
+//        if (ungroupedProjects.length != 0 && AuthorizationHelper.isUserLoggedIn(request) && myProjects) {
+        if (ungroupedProjects.length != 0 && AuthorizationHelper.isUserLoggedIn(request)) {
+        	
             Filter filterExtIDname = ResourceFilterBuilder.createExtensionPropertyNameFilter("External Reference ID");
             Filter filterExtIDvalue = ResourceFilterBuilder.createExtensionPropertyValueFilter(
                     String.valueOf(AuthorizationHelper.getLoggedInUserId(request)));
 
-            List<Long> projectFilters = new ArrayList<Long>();
-
-            for (int i = 0; i < ungroupedProjects.length; ++i) {
-                projectFilters.add(ungroupedProjects[i].getId());
-            }
 
             Filter filterProjects = new InFilter(ResourceFilterBuilder.PROJECT_ID_FIELD_NAME, projectFilters);
 
@@ -2172,6 +2157,37 @@ public class ProjectActions extends DispatchAction {
             allMyResources = resMgr.searchResources(filter);
         }
 
+        // if global manager, don't do anything
+        // if seeing all projects 
+        // if not identified, remove those who have eligibility constaints
+        // if identified remove those who have eligibility constaints but leave those where he is a resource
+        if (!AuthorizationHelper.hasUserRole(request, Constants.GLOBAL_MANAGER_ROLE_NAME) && 
+            scope.equalsIgnoreCase("all") && projectArray.length > 0) {
+
+        	// check which of the projects have eligibility constraints
+        	Set<Long> projectsWithEligibilityConstraints = 
+            		ContestEligibilityServiceLocator.getServices().haveEligibility(projectArray, false);
+
+        	// create a set of projects where the user is a resource  
+        	Set<Long> resourceProjects = new HashSet<Long>();
+        	for (Resource r: allMyResources) {
+        		resourceProjects.add(r.getProject());
+        	}        	
+
+			// user can see those projects with eligibility constraints where he is a resource 
+			projectsWithEligibilityConstraints.removeAll(resourceProjects);
+
+			// remove those projects left in projectsWithEligibilityConstraints from ungroupedProjects 
+			List<Project> visibleProjects = new ArrayList<Project>(); 
+            for (Project p : ungroupedProjects) {
+            	if (!projectsWithEligibilityConstraints.contains(p.getId())) {
+            		visibleProjects.add(p);
+            	}
+            }
+        	
+            ungroupedProjects = visibleProjects.toArray(new Project[visibleProjects.size()]);
+        }        
+        
         // Obtain an instance of Phase Manager
         PhaseManager phMgr = ActionsHelper.createPhaseManager(request, false);
 
