@@ -2130,11 +2130,8 @@ public class ProjectActions extends DispatchAction {
         Arrays.sort(ungroupedProjects, new Comparators.ProjectNameComparer());
 
         List<Long> projectFilters = new ArrayList<Long>();
-        long[] projectArray = new long[ungroupedProjects.length];
-
         for (int i = 0; i < ungroupedProjects.length; ++i) {
             projectFilters.add(ungroupedProjects[i].getId());
-            projectArray[i] = ungroupedProjects[i].getId();
         }
 
         Resource[] allMyResources = null;
@@ -2162,12 +2159,14 @@ public class ProjectActions extends DispatchAction {
         // if not identified, remove those who have eligibility constaints
         // if identified remove those who have eligibility constaints but leave those where he is a resource
         if (!AuthorizationHelper.hasUserRole(request, Constants.GLOBAL_MANAGER_ROLE_NAME) && 
-            scope.equalsIgnoreCase("all") && projectArray.length > 0) {
+            scope.equalsIgnoreCase("all") && projectFilters.size() > 0) {
 
         	// check which of the projects have eligibility constraints
         	Set<Long> projectsWithEligibilityConstraints;
 			try {
-				projectsWithEligibilityConstraints = ContestEligibilityServiceLocator.getServices().haveEligibility(projectArray, false);
+				projectsWithEligibilityConstraints = 
+					ContestEligibilityServiceLocator.getServices().haveEligibility(
+						projectFilters.toArray(new Long[projectFilters.size()]), false);
 			} catch (Exception e) {
 	        	throw new BaseException("It was not possible to retrieve eligibility constraints", e);
 			}
