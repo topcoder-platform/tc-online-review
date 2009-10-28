@@ -3106,25 +3106,29 @@ public class ActionsHelper {
         }
         
         // if the user is logged in, check eligibility
-        if (AuthorizationHelper.isUserLoggedIn(request)) {
-        	// if the user is a resource of this project, continue
-        	Resource[] myResources = (Resource[]) request.getAttribute("myResources");
-        	if (myResources == null || myResources.length == 0) {
-        		if (ContestEligibilityServiceLocator.getServices().hasEligibility(pid, false)) {
-	                result.setForward(produceErrorReport(
-	                        mapping, resources, request, permission, "Error.ProjectNotFound", null));
+        try {
+	        if (AuthorizationHelper.isUserLoggedIn(request)) {
+	        	// if the user is a resource of this project, continue
+	        	Resource[] myResources = (Resource[]) request.getAttribute("myResources");
+	        	if (myResources == null || myResources.length == 0) {
+	        		if (ContestEligibilityServiceLocator.getServices().hasEligibility(pid, false)) {
+		                result.setForward(produceErrorReport(
+		                        mapping, resources, request, permission, "Error.ProjectNotFound", null));
+		                // Return the result of the check
+		                return result;
+		            }
+	        	}
+	        } else {
+	            // otherwise, if this project has any eligibility constraint, ask for login 
+	            if (ContestEligibilityServiceLocator.getServices().hasEligibility(pid, false)) {
+	                result.setForward(produceErrorReport(mapping, resources, request,
+	                        permission, "Error.NoPermission", Boolean.valueOf(getRedirectUrlFromReferer)));
 	                // Return the result of the check
 	                return result;
 	            }
-        	}
-        } else {
-            // otherwise, if this project has any eligibility constraint, ask for login 
-            if (ContestEligibilityServiceLocator.getServices().hasEligibility(pid, false)) {
-                result.setForward(produceErrorReport(mapping, resources, request,
-                        permission, "Error.NoPermission", Boolean.valueOf(getRedirectUrlFromReferer)));
-                // Return the result of the check
-                return result;
-            }
+	        }
+        } catch (Exception e) {
+        	throw new BaseException("It was not possible to verify eligibility for project id " + pid, e);
         }
         
         // At this point, redirect-after-login attribute should be removed (if it exists)
