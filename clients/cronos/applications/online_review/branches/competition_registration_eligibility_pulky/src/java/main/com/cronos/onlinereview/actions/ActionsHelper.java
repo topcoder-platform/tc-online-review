@@ -137,11 +137,16 @@ import com.topcoder.web.ejb.forums.ForumsHome;
  * Change note for 1.1: add method to create <code>ProjectLinkManager</code>. This is for
  * "OR Project Linking Assembly".
  * </p>
+ * 
+ * <p>
+ * Version 1.2 (Competition Registration Eligibility v1.0) Change notes:
+ *   <ol>
+ *     <li>Added contest eligibility validation to <code>checkForCorrectProjectId</code> method.</li>
+ *   </ol>
+ * </p>
  *
- * @author George1
- * @author real_vg
- * @author TCSDEVELOPER
- * @version 1.1
+ * @author George1, real_vg, TCSDEVELOPER
+ * @version 1.2
  * @since 1.0
  */
 public class ActionsHelper {
@@ -3027,6 +3032,11 @@ public class ActionsHelper {
      * the user has specified an ID of the project he wants to perform an operation on, if the ID of
      * the project specified by user denotes existing project, and whether the user has rights to
      * perform the operation specified by <code>permission</code> parameter.
+     * 
+     * Eligibility checks: 
+     * - If there is no logged in user and the project has eligibility constraints, ask for login.
+     * - If the user is logged in, is not a resource of the project and the project has eligibility constraints,
+     *   don't allow him access.    
      *
      * @return an instance of the {@link CorrectnessCheckResult} class, which specifies whether the
      *         check was successful and, in the case it was, contains additional information
@@ -3105,12 +3115,13 @@ public class ActionsHelper {
             }
         }
         
-        // if the user is logged in, check eligibility
+        // new eligibility constraints checks
         try {
 	        if (AuthorizationHelper.isUserLoggedIn(request)) {
-	        	// if the user is a resource of this project, continue
+	        	// if the user is logged in and is a resource of this project, continue
 	        	Resource[] myResources = (Resource[]) request.getAttribute("myResources");
 	        	if (myResources == null || myResources.length == 0) {
+	        		// if he's not a resource, check if the project has eligibility constraints
 	        		if (ContestEligibilityServiceLocator.getServices().hasEligibility(pid, false)) {
 		                result.setForward(produceErrorReport(
 		                        mapping, resources, request, permission, "Error.ProjectNotFound", null));
@@ -3119,7 +3130,7 @@ public class ActionsHelper {
 		            }
 	        	}
 	        } else {
-	            // otherwise, if this project has any eligibility constraint, ask for login 
+	            // if the user is not logged in and the project has any eligibility constraint, ask for login 
 	            if (ContestEligibilityServiceLocator.getServices().hasEligibility(pid, false)) {
 	                result.setForward(produceErrorReport(mapping, resources, request,
 	                        permission, "Error.NoPermission", Boolean.valueOf(getRedirectUrlFromReferer)));
