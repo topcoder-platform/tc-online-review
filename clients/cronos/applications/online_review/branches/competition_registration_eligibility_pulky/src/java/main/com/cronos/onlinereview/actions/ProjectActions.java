@@ -2173,10 +2173,12 @@ public class ProjectActions extends DispatchAction {
 
         	// create a set of projects where the user is a resource  
         	Set<Long> resourceProjects = new HashSet<Long>();
-        	for (Resource r: allMyResources) {
-        		resourceProjects.add(r.getProject());
-        	}        	
-
+        	if (allMyResources != null) {
+	        	for (Resource r: allMyResources) {
+	        		resourceProjects.add(r.getProject());
+	        	}        	
+        	}
+        	
 			// user can see those projects with eligibility constraints where he is a resource 
 			projectsWithEligibilityConstraints.removeAll(resourceProjects);
 
