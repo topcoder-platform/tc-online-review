@@ -28,6 +28,7 @@ import org.apache.struts.action.ActionMessages;
 import org.apache.struts.action.ActionRedirect;
 import org.apache.struts.util.MessageResources;
 
+import com.topcoder.web.common.eligibility.ContestEligibilityServiceLocator;
 import com.cronos.onlinereview.autoscreening.management.ScreeningManager;
 import com.cronos.onlinereview.deliverables.AggregationDeliverableChecker;
 import com.cronos.onlinereview.deliverables.AggregationReviewDeliverableChecker;
