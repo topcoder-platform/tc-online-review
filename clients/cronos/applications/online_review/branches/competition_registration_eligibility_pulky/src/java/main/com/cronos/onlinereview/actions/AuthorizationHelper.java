@@ -29,11 +29,11 @@ import com.topcoder.util.errorhandling.BaseException;
  * <p>
  * This class is thread safe as it contains only static methods and no inner state.
  * </p>
- * 
+ *
  * <p>
  * Version 1.1 (Competition Registration Eligibility v1.0) Change notes:
  *   <ol>
- *     <li>Removed old "Public" project info code. Public projects are now determined by contest eligibility 
+ *     <li>Removed old "Public" project info code. Public projects are now determined by contest eligibility
  *         service.</li>
  *   </ol>
  * </p>
@@ -271,7 +271,7 @@ public class AuthorizationHelper {
      * @throws BaseException
      *             if any error occurs.
      */
-	public static void gatherUserRoles(HttpServletRequest request, long projectId) throws BaseException {
+    public static void gatherUserRoles(HttpServletRequest request, long projectId) throws BaseException {
         // Call shorter version of this function first
         gatherUserRoles(request);
 
@@ -336,7 +336,7 @@ public class AuthorizationHelper {
      * @see #gatherUserRoles(HttpServletRequest)
      * @see #gatherUserRoles(HttpServletRequest, long)
      */
-	public static boolean hasUserRole(HttpServletRequest request, String role) {
+    public static boolean hasUserRole(HttpServletRequest request, String role) {
         // Retrieve set with roles that the user has in the current context from the request
         Set roles = (Set) request.getAttribute("roles");
 

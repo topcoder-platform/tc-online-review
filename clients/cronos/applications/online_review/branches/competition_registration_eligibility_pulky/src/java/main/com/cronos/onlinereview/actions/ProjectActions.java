@@ -116,7 +116,7 @@ import com.topcoder.web.ejb.user.UserTermsOfUseLocator;
  * <p>
  * Version 1.4 (Competition Registration Eligibility v1.0) Change notes:
  *   <ol>
- *     <li>Removed old "Public" and "Eligibility" project info code. Public projects are now determined by contest 
+ *     <li>Removed old "Public" and "Eligibility" project info code. Public projects are now determined by contest
  *         eligibility service.</li>
  *     <li>Added contest eligibility validation to <code>checkForCorrectProjectId</code> method.</li>
  *   </ol>
@@ -136,7 +136,7 @@ public class ProjectActions extends DispatchAction {
 
     /**
      * Default sort order for project role terms of use generation
-     * 
+     *
      * @since 1.3
      */
     private static final int DEFAULT_TERMS_SORT_ORDER = 1;
@@ -305,7 +305,7 @@ public class ProjectActions extends DispatchAction {
         // since Online Review Update - Add Project Dropdown v1.0
         // Retrieve the list of all client projects and store it in the request
         // this need to be retrieved only for admin user.
-        if (AuthorizationHelper.hasUserRole(request, Constants.MANAGER_ROLE_NAME) 
+        if (AuthorizationHelper.hasUserRole(request, Constants.MANAGER_ROLE_NAME)
                  || AuthorizationHelper.hasUserRole(request, Constants.GLOBAL_MANAGER_ROLE_NAME)) {
             request.setAttribute("billingProjects", ActionsHelper.getClientProjects(request));
         }
@@ -560,7 +560,7 @@ public class ProjectActions extends DispatchAction {
 
         // since Online Review Update - Add Project Dropdown v1.0
         request.setAttribute("isAdmin",
-                Boolean.valueOf(AuthorizationHelper.hasUserRole(request, Constants.MANAGER_ROLE_NAME) || 
+                Boolean.valueOf(AuthorizationHelper.hasUserRole(request, Constants.MANAGER_ROLE_NAME) ||
                                     AuthorizationHelper.hasUserRole(request, Constants.GLOBAL_MANAGER_ROLE_NAME)));
     }
 
@@ -1937,7 +1937,7 @@ public class ProjectActions extends DispatchAction {
 
         // Update rboard_application table with the reviewers set in the resources.
         ActionsHelper.synchronizeRBoardApplications(project);
-        
+
         // Add forum permissions for all new users and remove permissions for removed resources.
         ActionsHelper.removeForumPermissions(project, deletedUsers);
         ActionsHelper.addForumPermissions(project, newUsers);
@@ -1993,12 +1993,12 @@ public class ProjectActions extends DispatchAction {
                                 if (!userTermsOfUse.hasTermsOfUse(userId, termsId, DBMS.COMMON_OLTP_DATASOURCE_NAME)) {
                                     // get missing terms of use title
                                     TermsOfUseEntity terms =  termsOfUse.getEntity(termsId, DBMS.COMMON_OLTP_DATASOURCE_NAME);
-        
+
                                     // add the error
                                     ActionsHelper.addErrorToRequest(request, "resources_name[" + i + "]",
                                         new ActionMessage("error.com.cronos.onlinereview.actions.editProject.Resource.MissingTerms",
                                         terms.getTitle()));
-        
+
                                     allResourcesValid=false;
                                 }
                             }
@@ -2071,7 +2071,7 @@ public class ProjectActions extends DispatchAction {
             projectsFilter = ProjectFilterUtility.buildStatusNameEqualFilter("Inactive");
             activeTab = 4;
         } else {
-        	projectsFilter = ProjectFilterUtility.buildStatusNameEqualFilter("Active");
+            projectsFilter = ProjectFilterUtility.buildStatusNameEqualFilter("Active");
 
             // Specify the index of the active tab
             activeTab = 2;
@@ -2124,7 +2124,7 @@ public class ProjectActions extends DispatchAction {
 
         Resource[] allMyResources = null;
         if (ungroupedProjects.length != 0 && AuthorizationHelper.isUserLoggedIn(request)) {
-        	
+
             Filter filterExtIDname = ResourceFilterBuilder.createExtensionPropertyNameFilter("External Reference ID");
             Filter filterExtIDvalue = ResourceFilterBuilder.createExtensionPropertyValueFilter(
                     String.valueOf(AuthorizationHelper.getLoggedInUserId(request)));
@@ -2143,14 +2143,14 @@ public class ProjectActions extends DispatchAction {
 
         // new eligibility constraints
         // if the user is not a global manager and is seeing all projects eligibility checks need to be performed
-        if (!AuthorizationHelper.hasUserRole(request, Constants.GLOBAL_MANAGER_ROLE_NAME) && 
+        if (!AuthorizationHelper.hasUserRole(request, Constants.GLOBAL_MANAGER_ROLE_NAME) &&
             scope.equalsIgnoreCase("all") && projectFilters.size() > 0) {
 
-        	// remove those projects that the user can't see
-        	ungroupedProjects = filterUsingEligibilityConstraints(
-					ungroupedProjects, projectFilters, allMyResources);
-        }        
-        
+            // remove those projects that the user can't see
+            ungroupedProjects = filterUsingEligibilityConstraints(
+                    ungroupedProjects, projectFilters, allMyResources);
+        }
+
         // Obtain an instance of Phase Manager
         PhaseManager phMgr = ActionsHelper.createPhaseManager(request, false);
 
@@ -2310,58 +2310,58 @@ public class ProjectActions extends DispatchAction {
         return mapping.findForward(Constants.SUCCESS_FORWARD_NAME);
     }
 
-	/**
-	 * This method will return an array of <code>Project</code> with those projects the user can see taking into
-	 * consideration eligibility constraints.
-	 * 
-	 * The user can see all those "public" (no eligibility constraints) projects plus those non-public projects where 
-	 * he is assigned as a resource.
-	 * 
-	 * @param ungroupedProjects all project to be displayed
-	 * @param projectFilters all project ids to be displayed
-	 * @param allMyResources all resources the user has for the projects to be displayed
-	 * 
-	 * @return a <code>Project[]</code> with those projects that the user can see.
-	 * 
-	 * @throws BaseException if any error occurs during eligibility services call
-	 * 
-	 * @since 1.4
-	 */
-	private Project[] filterUsingEligibilityConstraints(Project[] ungroupedProjects, List<Long> projectFilters,
-			Resource[] allMyResources) throws BaseException {
-		// check which projects have eligibility constraints
-		Set<Long> projectsWithEligibilityConstraints;
-		try {
-			projectsWithEligibilityConstraints = 
-				ContestEligibilityServiceLocator.getServices().haveEligibility(
-					projectFilters.toArray(new Long[projectFilters.size()]), false);
-		} catch (Exception e) {
-			throw new BaseException("It was not possible to retrieve eligibility constraints", e);
-		}
+    /**
+     * This method will return an array of <code>Project</code> with those projects the user can see taking into
+     * consideration eligibility constraints.
+     *
+     * The user can see all those "public" (no eligibility constraints) projects plus those non-public projects where
+     * he is assigned as a resource.
+     *
+     * @param ungroupedProjects all project to be displayed
+     * @param projectFilters all project ids to be displayed
+     * @param allMyResources all resources the user has for the projects to be displayed
+     *
+     * @return a <code>Project[]</code> with those projects that the user can see.
+     *
+     * @throws BaseException if any error occurs during eligibility services call
+     *
+     * @since 1.4
+     */
+    private Project[] filterUsingEligibilityConstraints(Project[] ungroupedProjects, List<Long> projectFilters,
+            Resource[] allMyResources) throws BaseException {
+        // check which projects have eligibility constraints
+        Set<Long> projectsWithEligibilityConstraints;
+        try {
+            projectsWithEligibilityConstraints =
+                ContestEligibilityServiceLocator.getServices().haveEligibility(
+                    projectFilters.toArray(new Long[projectFilters.size()]), false);
+        } catch (Exception e) {
+            throw new BaseException("It was not possible to retrieve eligibility constraints", e);
+        }
 
-		// create a set of projects where the user is a resource  
-		Set<Long> resourceProjects = new HashSet<Long>();
-		if (allMyResources != null) {
-			for (Resource r: allMyResources) {
-				resourceProjects.add(r.getProject());
-			}        	
-		}
-		
-		// user can see those projects with eligibility constraints where he is a resource, so remove these
-		// from the projectsWithEligibilityConstraints set
-		projectsWithEligibilityConstraints.removeAll(resourceProjects);
+        // create a set of projects where the user is a resource
+        Set<Long> resourceProjects = new HashSet<Long>();
+        if (allMyResources != null) {
+            for (Resource r: allMyResources) {
+                resourceProjects.add(r.getProject());
+            }
+        }
 
-		// finally remove those projects left in projectsWithEligibilityConstraints from ungroupedProjects 
-		List<Project> visibleProjects = new ArrayList<Project>(); 
-		for (Project p : ungroupedProjects) {
-			if (!projectsWithEligibilityConstraints.contains(p.getId())) {
-				visibleProjects.add(p);
-			}
-		}
-		
-		ungroupedProjects = visibleProjects.toArray(new Project[visibleProjects.size()]);
-		return ungroupedProjects;
-	}
+        // user can see those projects with eligibility constraints where he is a resource, so remove these
+        // from the projectsWithEligibilityConstraints set
+        projectsWithEligibilityConstraints.removeAll(resourceProjects);
+
+        // finally remove those projects left in projectsWithEligibilityConstraints from ungroupedProjects
+        List<Project> visibleProjects = new ArrayList<Project>();
+        for (Project p : ungroupedProjects) {
+            if (!projectsWithEligibilityConstraints.contains(p.getId())) {
+                visibleProjects.add(p);
+            }
+        }
+
+        ungroupedProjects = visibleProjects.toArray(new Project[visibleProjects.size()]);
+        return ungroupedProjects;
+    }
 
     /**
      * This static method performs a search for all outstanding deliverables. The list of these

@@ -137,7 +137,7 @@ import com.topcoder.web.ejb.forums.ForumsHome;
  * Change note for 1.1: add method to create <code>ProjectLinkManager</code>. This is for
  * "OR Project Linking Assembly".
  * </p>
- * 
+ *
  * <p>
  * Version 1.2 (Competition Registration Eligibility v1.0) Change notes:
  *   <ol>
@@ -3032,11 +3032,11 @@ public class ActionsHelper {
      * the user has specified an ID of the project he wants to perform an operation on, if the ID of
      * the project specified by user denotes existing project, and whether the user has rights to
      * perform the operation specified by <code>permission</code> parameter.
-     * 
-     * Eligibility checks: 
+     *
+     * Eligibility checks:
      * - If there is no logged in user and the project has eligibility constraints, ask for login.
      * - If the user is logged in, is not a resource of the project and the project has eligibility constraints,
-     *   don't allow him access.    
+     *   don't allow him access.
      *
      * @return an instance of the {@link CorrectnessCheckResult} class, which specifies whether the
      *         check was successful and, in the case it was, contains additional information
@@ -3114,34 +3114,34 @@ public class ActionsHelper {
                 return result;
             }
         }
-        
+
         // new eligibility constraints checks
         try {
-	        if (AuthorizationHelper.isUserLoggedIn(request)) {
-	        	// if the user is logged in and is a resource of this project, continue
-	        	Resource[] myResources = (Resource[]) request.getAttribute("myResources");
-	        	if (myResources == null || myResources.length == 0) {
-	        		// if he's not a resource, check if the project has eligibility constraints
-	        		if (ContestEligibilityServiceLocator.getServices().hasEligibility(pid, false)) {
-		                result.setForward(produceErrorReport(
-		                        mapping, resources, request, permission, "Error.ProjectNotFound", null));
-		                // Return the result of the check
-		                return result;
-		            }
-	        	}
-	        } else {
-	            // if the user is not logged in and the project has any eligibility constraint, ask for login 
-	            if (ContestEligibilityServiceLocator.getServices().hasEligibility(pid, false)) {
-	                result.setForward(produceErrorReport(mapping, resources, request,
-	                        permission, "Error.NoPermission", Boolean.valueOf(getRedirectUrlFromReferer)));
-	                // Return the result of the check
-	                return result;
-	            }
-	        }
+            if (AuthorizationHelper.isUserLoggedIn(request)) {
+                // if the user is logged in and is a resource of this project, continue
+                Resource[] myResources = (Resource[]) request.getAttribute("myResources");
+                if (myResources == null || myResources.length == 0) {
+                    // if he's not a resource, check if the project has eligibility constraints
+                    if (ContestEligibilityServiceLocator.getServices().hasEligibility(pid, false)) {
+                        result.setForward(produceErrorReport(
+                                mapping, resources, request, permission, "Error.ProjectNotFound", null));
+                        // Return the result of the check
+                        return result;
+                    }
+                }
+            } else {
+                // if the user is not logged in and the project has any eligibility constraint, ask for login
+                if (ContestEligibilityServiceLocator.getServices().hasEligibility(pid, false)) {
+                    result.setForward(produceErrorReport(mapping, resources, request,
+                            permission, "Error.NoPermission", Boolean.valueOf(getRedirectUrlFromReferer)));
+                    // Return the result of the check
+                    return result;
+                }
+            }
         } catch (Exception e) {
-        	throw new BaseException("It was not possible to verify eligibility for project id " + pid, e);
+            throw new BaseException("It was not possible to verify eligibility for project id " + pid, e);
         }
-        
+
         // At this point, redirect-after-login attribute should be removed (if it exists)
         AuthorizationHelper.removeLoginRedirect(request);
 
@@ -4073,17 +4073,17 @@ public class ActionsHelper {
     public static boolean isStudioProject(Project project) {
         return "Studio".equals(project.getProjectCategory().getProjectType().getName());
     }
-    
+
     private static Forums getForumBean() throws RemoteException, CreateException, NamingException {
         Context context = TCContext.getInitial(ApplicationServer.FORUMS_HOST_URL);
         ForumsHome forumsHome = (ForumsHome) context.lookup(ForumsHome.EJB_REF_NAME);
         return forumsHome.create();
     }
-    
+
     public static void addForumPermissions(Project project, Collection<Long> users) throws BaseException {
         try {
             Forums forumBean = getForumBean();
-            
+
             String roleId = "Software_Users_" + getProjectLongValue(project, "Developer Forum ID");
 
             for (Long userId : users) {
@@ -4093,15 +4093,15 @@ public class ActionsHelper {
             throw new BaseException("Error adding forum permissions for project id " + project.getId(), e);
         }
     }
-    
+
     public static void addForumPermissions(Project project, Long user) throws BaseException {
         addForumPermissions(project, userToUsers(user));
     }
-    
+
     public static void removeForumPermissions(Project project, Collection<Long> users) throws BaseException {
         try {
             Forums forumBean = getForumBean();
-            
+
             String roleId = "Software_Users_" + getProjectLongValue(project, "Developer Forum ID");
 
             for (Long userId : users) {
@@ -4111,11 +4111,11 @@ public class ActionsHelper {
             throw new BaseException("Error removing forum permissions for project id " + project.getId(), e);
         }
     }
-    
+
     public static void removeForumPermissions(Project project, Long user) throws BaseException {
         removeForumPermissions(project, userToUsers(user));
     }
-    
+
     private static Collection<Long> userToUsers(Long user) {
         ArrayList<Long> userCollection = new ArrayList<Long>();
         userCollection.add(user);
