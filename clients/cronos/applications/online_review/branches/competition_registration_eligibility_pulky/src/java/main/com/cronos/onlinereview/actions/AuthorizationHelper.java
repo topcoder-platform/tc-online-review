@@ -38,7 +38,7 @@ import com.topcoder.util.errorhandling.BaseException;
  *   </ol>
  * </p>
  *
- * @author George1, real_vg, TCSDEVELOPER
+ * @author George1, real_vg, pulky
  * @version 1.1
  */
 public class AuthorizationHelper {

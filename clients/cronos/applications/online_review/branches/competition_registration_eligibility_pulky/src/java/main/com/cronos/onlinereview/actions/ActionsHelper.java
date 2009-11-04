@@ -145,7 +145,7 @@ import com.topcoder.web.ejb.forums.ForumsHome;
  *   </ol>
  * </p>
  *
- * @author George1, real_vg, TCSDEVELOPER
+ * @author George1, real_vg, pulky
  * @version 1.2
  * @since 1.0
  */
