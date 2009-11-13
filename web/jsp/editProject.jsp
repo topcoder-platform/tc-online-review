@@ -1,3 +1,13 @@
+<%--
+  - Author: pulky
+  - Version: 1.1
+  - Copyright (C) 2004 - 2009 TopCoder Inc., All Rights Reserved.
+  -
+  - Description: This page displays project edition page
+  -
+  - Version 1.1 (Competition Registration Eligibility v1.0) changes: Removed old "Public" and "Eligibility" project
+  - info code. Public projects are now determined by contest eligibility service.
+--%>
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ page language="java" isELIgnored="false" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
@@ -96,18 +106,18 @@
         </c:forEach>
 
         <c:forEach items="${projectCategories}" var="category">
-	        <c:if test="${category.projectType.name == 'Component'}">
-	            <c:if test="${category.name == 'Development'}">
-	                var developmentCatId = "${category.id}";</c:if>
-	            <c:if test="${category.name == 'Design'}">
-	                var designCatId = "${category.id}";</c:if>
-	            <c:if test="${category.name == 'Testing Competition'}">
-	                var compTestingCatId = "${category.id}";</c:if>
-	        </c:if>
-	        <c:if test="${category.projectType.name == 'Application'}">
+            <c:if test="${category.projectType.name == 'Component'}">
+                <c:if test="${category.name == 'Development'}">
+                    var developmentCatId = "${category.id}";</c:if>
+                <c:if test="${category.name == 'Design'}">
+                    var designCatId = "${category.id}";</c:if>
+                <c:if test="${category.name == 'Testing Competition'}">
+                    var compTestingCatId = "${category.id}";</c:if>
+            </c:if>
+            <c:if test="${category.projectType.name == 'Application'}">
                 <c:if test="${category.name == 'Assembly Competition'}">
                     var assemblyCatId = "${category.id}";</c:if>
-	        </c:if>
+            </c:if>
         </c:forEach>
 
         var phaseTypeIdsMap = {};
@@ -191,9 +201,9 @@
             //    projectCategoryNode.value == designCatId ||
             //    projectCategoryNode.value == assemblyCatId ||
             //    projectCategoryNode.value == compTestingCatId) {
-                
+
             //    digitalRunChecked = true;
-                
+
             //    if (projectCategoryNode.value != assemblyCatId) {
             //        publicChecked = true;
             //    }
@@ -900,21 +910,6 @@
                                     </td>
                                 </tr>
                                 <tr class="dark">
-                                    <td class="valueB"><bean:message key="editProject.ProjectDetails.Eligibility" /></td>
-                                    <td class="value" nowrap="nowrap">
-                                        <html:select styleClass="inputBox" property="eligibility" style="width:150px;">
-                                            <html:option key="ProjectEligibility.Open" value="Open" />
-                                            <html:option key="ProjectEligibility.TopCoderPrivate" value="TopCoder Private" />
-                                        </html:select>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td class="valueB"><bean:message key="editProject.ProjectDetails.Public" /></td>
-                                    <td class="value" nowrap="nowrap">
-                                        <html:checkbox property="public" styleId="public"/>
-                                    </td>
-                                </tr>
-                                <tr class="light">
                                     <td class="value" nowrap="nowrap">
                                         <b><bean:message key="editProject.ProjectDetails.Payments" /></b><br />
                                     </td>
@@ -938,7 +933,7 @@
                                 </tr>
                             </table><br />
                         </c:if>
-                        <%-- 
+                        <%--
                         <c:if test="${not newProject}">
                             <html:hidden property="project_type" />
                             <html:hidden property="project_category" />
@@ -1089,19 +1084,19 @@
                             </tr><c:set var="projDetRowCount" value="${projDetRowCount + 1}" />
                             <!-- since: Online Review Update - Add Project Dropdown v1.0 -->
                             <c:if test="${isAdmin}">
-	                            <tr class="${(projDetRowCount % 2 == 0) ? 'light' : 'dark'}">
-	                                <td class="value" nowrap="nowrap">
-	                                    <b><bean:message key="editProject.ProjectDetails.BillingProject" /></b><br />
-	                                </td>
-	                                <td class="value" nowrap="nowrap">
-	                                	<html:select styleClass="inputBox" property="billing_project" style="width:150px;">
-	                                        <c:forEach var="billingProject" items="${billingProjects}">
-	                                            <html:option key='BillingProject.${fn:replace(billingProject.name, " ", "")}' value="${billingProject.id}">${billingProject.name}</html:option>
-	                                        </c:forEach>
-	                                    </html:select>
-	                                    <span id="billing_project_validation_msg" style="display:none;" class="error"></span>
-	                                </td>
-	                            </tr><c:set var="projDetRowCount" value="${projDetRowCount + 1}" />
+                                <tr class="${(projDetRowCount % 2 == 0) ? 'light' : 'dark'}">
+                                    <td class="value" nowrap="nowrap">
+                                        <b><bean:message key="editProject.ProjectDetails.BillingProject" /></b><br />
+                                    </td>
+                                    <td class="value" nowrap="nowrap">
+                                        <html:select styleClass="inputBox" property="billing_project" style="width:150px;">
+                                            <c:forEach var="billingProject" items="${billingProjects}">
+                                                <html:option key='BillingProject.${fn:replace(billingProject.name, " ", "")}' value="${billingProject.id}">${billingProject.name}</html:option>
+                                            </c:forEach>
+                                        </html:select>
+                                        <span id="billing_project_validation_msg" style="display:none;" class="error"></span>
+                                    </td>
+                                </tr><c:set var="projDetRowCount" value="${projDetRowCount + 1}" />
                             </c:if>
                             <tr>
                                 <td class="lastRowTD" colspan="2"><!-- @ --></td>
@@ -1168,7 +1163,7 @@
                                 </tr>
                             </table><br />
                         </c:if>
-                        
+
                         <div align="right">
                             <c:if test="${newProject}">
                                 <html:image srcKey="btnSave.img" altKey="btnSave.alt" border="0"/>&#160;
