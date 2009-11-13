@@ -322,6 +322,11 @@
     <property name="workdays.path" value="workdays/${workdays.version}" />
     <property name="workdays.jar" value="${tcs_libdir}/${workdays.path}/${workdays.jar.name}" />
 
+    <property name="contest_eligibility_validation_client.version" value="1.0.0" />
+    <property name="contest_eligibility_validation_client.jar.name" value="contest_eligibility_validation_client.jar" />
+    <property name="contest_eligibility_validation_client.path" value="contest_eligibility_validation_client/${contest_eligibility_validation_client.version}" />
+    <property name="contest_eligibility_validation_client.jar" value="${tcs_libdir}/${contest_eligibility_validation_client.path}/${contest_eligibility_validation_client.jar.name}" />
+
     <property name="pactsServices.path" value="pacts_services" />
     <property name="pactsServices.jar.name" value="PactsClientServices.jar" />
     <property name="pactsServices.jar" value="${tcs_libdir}/${pactsServices.path}/${pactsServices.jar.name}" />
@@ -437,6 +442,7 @@
         <pathelement location="${user_project_data_store.jar}" />
         <pathelement location="${weighted_calculator.jar}" />
         <pathelement location="${workdays.jar}" />
+        <pathelement location="${contest_eligibility_validation_client.jar}" />
         <pathelement location="${pactsServices.jar}" />
         <pathelement location="${projectEJB.jar}" />
         <pathelement location="${userEJB.jar}" />
@@ -677,8 +683,18 @@ Note: The security manager that comes with the app may not be compatible with th
             <lib dir="${jar_tcs_libdir}/${projectEJB.path}" includes="*.jar" />
             <lib dir="${jar_tcs_libdir}/${userEJB.path}" includes="*.jar" />
             <lib dir="${jar_tcs_libdir}/${termsOfUseEJB.path}" includes="*.jar" />
+            <lib dir="${jar_tcs_libdir}/${contest_eligibility_validation_client.path}" includes="*.jar" />
         	<lib dir="${jar_tcs_libdir}" includes="*.jar" />
             <lib dir="${jar_ext_libdir}" includes="*.jar" excludes="mail.jar, ejb-2_0.jar" />
+
+            <!-- Added libs to support ejb3 calls -->
+            <lib dir="${jar_ext_libdir}/jboss/">
+            	<include name="jboss-ejb3-client.jar"/>
+            	<include name="jboss-ejb3x.jar"/>            	
+            	<include name="jboss-aop-jdk50-client.jar"/>
+            	<include name="jboss-aspect-jdk50-client.jar"/>
+            	<include name="jboss-remoting.jar"/>
+            </lib>
             <fileset dir="${webdir}" includes="**" excludes="i/**, js/**, css/**" />
         </war>
     </target>
@@ -714,7 +730,8 @@ Note: The security manager that comes with the app may not be compatible with th
                 <include name="${tcsUtil.jar.name}"/>
                 <include name="${tcwebcommon.jar.name}"/>
                 <include name="${shared.jar.name}"/>
-		<include name="${forums.jar.name}"/>
+        		<include name="${forums.jar.name}"/>
+        		<include name="${contest_eligibility_validation_client.jar.name}"/>
             </fileset>
         </move>
         <delete verbose="true">
