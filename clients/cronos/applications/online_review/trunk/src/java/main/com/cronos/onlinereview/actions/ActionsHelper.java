@@ -28,6 +28,7 @@ import org.apache.struts.action.ActionMessages;
 import org.apache.struts.action.ActionRedirect;
 import org.apache.struts.util.MessageResources;
 
+import com.topcoder.web.common.eligibility.ContestEligibilityServiceLocator;
 import com.cronos.onlinereview.autoscreening.management.ScreeningManager;
 import com.cronos.onlinereview.deliverables.AggregationDeliverableChecker;
 import com.cronos.onlinereview.deliverables.AggregationReviewDeliverableChecker;
@@ -137,10 +138,15 @@ import com.topcoder.web.ejb.forums.ForumsHome;
  * "OR Project Linking Assembly".
  * </p>
  *
- * @author George1
- * @author real_vg
- * @author TCSDEVELOPER
- * @version 1.1
+ * <p>
+ * Version 1.2 (Competition Registration Eligibility v1.0) Change notes:
+ *   <ol>
+ *     <li>Added contest eligibility validation to <code>checkForCorrectProjectId</code> method.</li>
+ *   </ol>
+ * </p>
+ *
+ * @author George1, real_vg, pulky
+ * @version 1.2
  * @since 1.0
  */
 public class ActionsHelper {
@@ -220,6 +226,32 @@ public class ActionsHelper {
                 || categoryId == 26   // Test Suites
                 || categoryId == 19); // UI Prototypes
     }
+
+    /**
+	 * The query to select worker project.
+	 */
+	private static final String SELECT_WORKER_PROJECT = "SELECT distinct project_id FROM project_worker p, user_account u "
+			+ "WHERE p.start_date <= current and current <= p.end_date and p.active =1 and "
+			+ "p.user_account_id = u.user_account_id and u.user_name = ";
+
+    /**
+	 * The query string used to select projects.
+	 */
+	private static final String SELECT_MANAGER_PROJECT = "SELECT distinct project_id FROM project_manager p, user_account u "
+           + "WHERE p.user_account_id = u.user_account_id and p.active = 1 and  u.user_name = ";
+
+    /**
+	 * The query string used to select projects.
+	 * 
+	 * Updated for Cockpit Release Assembly for Receipts
+	 *     - now fetching client name too.
+	 *     
+	 * Updated for Version 1.1.1 - added fetch for is_manual_prize_setting property too.
+	 */
+	private static final String SELECT_PROJECT 	= "select p.project_id, p.name "
+			  + " from project as p left join client_project as cp on p.project_id = cp.project_id left join client c "
+              + "            on c.client_id = cp.client_id and (c.is_deleted = 0 or c.is_deleted is null) "
+			  + " where p.start_date <= current and current <= p.end_date ";
 
     // ------------------------------------------------------------ Validator type of methods -----
 
@@ -2854,8 +2886,23 @@ public class ActionsHelper {
             BaseException {
         validateParameterNotNull(request, "request");
 
+        long userId = AuthorizationHelper.getLoggedInUserId(request);
+
         List<ClientProject> clientProjects = (List<ClientProject>) request.getAttribute("clientProjectsList");
         if (clientProjects == null) {
+
+            // If this function is called the first time after the user has logged in,
+            // obtain and store in the session the handle of the user
+            if (request.getSession().getAttribute("userHandle") == null) {
+                // Obtain an instance of the User Retrieveal object
+                UserRetrieval usrMgr = ActionsHelper.createUserRetrieval(request);
+                // Get External User object for the currently logged in user
+                ExternalUser extUser = usrMgr.retrieveUser(AuthorizationHelper.getLoggedInUserId(request));
+                // Place handle of the user into session as attribute
+                request.getSession().setAttribute("userHandle", extUser.getHandle());
+            }
+
+            String username = (String)(request.getSession().getAttribute("userHandle"));
 
             Connection conn = null;
             Statement selectStmt = null;
@@ -2876,9 +2923,16 @@ public class ActionsHelper {
                 log.log(Level.DEBUG, "create db connection with timeDS from DBConnectionFactoryImpl with namespace:"
                         + DB_CONNECTION_NAMESPACE);
 
-                selectStmt = conn.createStatement();
-                resultSet = selectStmt.executeQuery("SELECT project_id, name FROM project WHERE is_deleted = 0 or is_deleted IS NULL ORDER BY UPPER(name)");
+                String queryString = SELECT_PROJECT + " and active = 1 and p.project_id in " + "("
+					+ SELECT_MANAGER_PROJECT + "'" + username + "' " + "union "
+					+ SELECT_WORKER_PROJECT + "'" + username + "')";
+			    queryString += " order by upper(name) ";
 
+
+                selectStmt = conn.createStatement();
+                //resultSet = selectStmt.executeQuery("SELECT project_id, name FROM project WHERE is_deleted = 0 or is_deleted IS NULL ORDER BY UPPER(name)");
+                resultSet = selectStmt.executeQuery(queryString);
+                
                 while (resultSet.next()) {
                     long projectID = resultSet.getLong(1);
                     String projectName = resultSet.getString(2);
@@ -3027,6 +3081,11 @@ public class ActionsHelper {
      * the project specified by user denotes existing project, and whether the user has rights to
      * perform the operation specified by <code>permission</code> parameter.
      *
+     * Eligibility checks:
+     * - If there is no logged in user and the project has eligibility constraints, ask for login.
+     * - If the user is logged in, is not a resource of the project and the project has eligibility constraints,
+     *   don't allow him access.
+     *
      * @return an instance of the {@link CorrectnessCheckResult} class, which specifies whether the
      *         check was successful and, in the case it was, contains additional information
      *         retrieved during the check operation, which might be of some use for the calling
@@ -3103,6 +3162,34 @@ public class ActionsHelper {
                 return result;
             }
         }
+
+        // new eligibility constraints checks
+        try {
+            if (AuthorizationHelper.isUserLoggedIn(request)) {
+                // if the user is logged in and is a resource of this project, continue
+                Resource[] myResources = (Resource[]) request.getAttribute("myResources");
+                if (myResources == null || myResources.length == 0) {
+                    // if he's not a resource, check if the project has eligibility constraints
+                    if (ContestEligibilityServiceLocator.getServices().hasEligibility(pid, false)) {
+                        result.setForward(produceErrorReport(
+                                mapping, resources, request, permission, "Error.ProjectNotFound", null));
+                        // Return the result of the check
+                        return result;
+                    }
+                }
+            } else {
+                // if the user is not logged in and the project has any eligibility constraint, ask for login
+                if (ContestEligibilityServiceLocator.getServices().hasEligibility(pid, false)) {
+                    result.setForward(produceErrorReport(mapping, resources, request,
+                            permission, "Error.NoPermission", Boolean.valueOf(getRedirectUrlFromReferer)));
+                    // Return the result of the check
+                    return result;
+                }
+            }
+        } catch (Exception e) {
+            throw new BaseException("It was not possible to verify eligibility for project id " + pid, e);
+        }
+
         // At this point, redirect-after-login attribute should be removed (if it exists)
         AuthorizationHelper.removeLoginRedirect(request);
 

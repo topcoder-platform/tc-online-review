@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 TopCoder Inc.  All Rights Reserved.
+ * Copyright (C) 2006-2009 TopCoder Inc., All Rights Reserved.
  */
 package com.cronos.onlinereview.actions;
 
@@ -30,9 +30,16 @@ import com.topcoder.util.errorhandling.BaseException;
  * This class is thread safe as it contains only static methods and no inner state.
  * </p>
  *
- * @author George1
- * @author real_vg
- * @version 1.0
+ * <p>
+ * Version 1.1 (Competition Registration Eligibility v1.0) Change notes:
+ *   <ol>
+ *     <li>Removed old "Public" project info code. Public projects are now determined by contest eligibility
+ *         service.</li>
+ *   </ol>
+ * </p>
+ *
+ * @author George1, real_vg, pulky
+ * @version 1.1
  */
 public class AuthorizationHelper {
 
@@ -264,7 +271,7 @@ public class AuthorizationHelper {
      * @throws BaseException
      *             if any error occurs.
      */
-	public static void gatherUserRoles(HttpServletRequest request, long projectId) throws BaseException {
+    public static void gatherUserRoles(HttpServletRequest request, long projectId) throws BaseException {
         // Call shorter version of this function first
         gatherUserRoles(request);
 
@@ -279,11 +286,6 @@ public class AuthorizationHelper {
         // If the project with specified ID does not exist, return
         if (project == null) {
             return;
-        }
-
-        // If this project is not public, remove "Public" role from the set
-        if (!("Yes".equalsIgnoreCase((String)project.getProperty("Public")))) {
-            roles.remove(Constants.PUBLIC_ROLE_NAME);
         }
 
         // Prepare filter to select resources by the External ID of currently logged in user
@@ -334,7 +336,7 @@ public class AuthorizationHelper {
      * @see #gatherUserRoles(HttpServletRequest)
      * @see #gatherUserRoles(HttpServletRequest, long)
      */
-	public static boolean hasUserRole(HttpServletRequest request, String role) {
+    public static boolean hasUserRole(HttpServletRequest request, String role) {
         // Retrieve set with roles that the user has in the current context from the request
         Set roles = (Set) request.getAttribute("roles");
 
