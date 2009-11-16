@@ -3178,9 +3178,11 @@ public class ActionsHelper {
         // new eligibility constraints checks
         try {
             if (AuthorizationHelper.isUserLoggedIn(request)) {
-                // if the user is logged in and is a resource of this project, continue
+
+                // if the user is logged in and is a resource of this project or a global manager, continue
                 Resource[] myResources = (Resource[]) request.getAttribute("myResources");
-                if (myResources == null || myResources.length == 0) {
+                if ((myResources == null || myResources.length == 0) && 
+                               !AuthorizationHelper.hasUserRole(request, Constants.GLOBAL_MANAGER_ROLE_NAME)) {
                     // if he's not a resource, check if the project has eligibility constraints
                     if (ContestEligibilityServiceLocator.getServices().hasEligibility(pid, false)) {
                         result.setForward(produceErrorReport(
