@@ -2923,14 +2923,26 @@ public class ActionsHelper {
                 log.log(Level.DEBUG, "create db connection with timeDS from DBConnectionFactoryImpl with namespace:"
                         + DB_CONNECTION_NAMESPACE);
 
-                String queryString = SELECT_PROJECT + " and active = 1 and p.project_id in " + "("
+                String queryString = "";
+
+                String nonadminQueryString = SELECT_PROJECT + " and active = 1 and p.project_id in " + "("
 					+ SELECT_MANAGER_PROJECT + "'" + username + "' " + "union "
 					+ SELECT_WORKER_PROJECT + "'" + username + "')";
-			    queryString += " order by upper(name) ";
+			    nonadminQueryString += " order by upper(name) ";
+
+                String adminQueryString = "SELECT project_id, name FROM project WHERE is_deleted = 0 or is_deleted IS NULL ORDER BY UPPER(name)";
+
+                if (AuthorizationHelper.hasUserRole(request, Constants.GLOBAL_MANAGER_ROLE_NAME))
+                {
+                    queryString = adminQueryString;
+                }
+                else
+                {
+                    queryString = nonadminQueryString;
+                }
 
 
                 selectStmt = conn.createStatement();
-                //resultSet = selectStmt.executeQuery("SELECT project_id, name FROM project WHERE is_deleted = 0 or is_deleted IS NULL ORDER BY UPPER(name)");
                 resultSet = selectStmt.executeQuery(queryString);
                 
                 while (resultSet.next()) {

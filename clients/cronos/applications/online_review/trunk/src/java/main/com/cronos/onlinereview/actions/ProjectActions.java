@@ -2336,6 +2336,7 @@ public class ProjectActions extends DispatchAction {
                 ContestEligibilityServiceLocator.getServices().haveEligibility(
                     projectFilters.toArray(new Long[projectFilters.size()]), false);
         } catch (Exception e) {
+            log.error("It was not possible to retrieve eligibility constraints: "+e);
             throw new BaseException("It was not possible to retrieve eligibility constraints", e);
         }
 
