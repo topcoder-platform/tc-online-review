@@ -1546,6 +1546,7 @@
             <Value>&timelineTemplateDir;/TCSTemplate_Component_Testing.xml</Value>
             <Value>&timelineTemplateDir;/TCSTemplate_Application.xml</Value>
             <Value>&timelineTemplateDir;/TCSTemplate_Studio.xml</Value>
+            <Value>&timelineTemplateDir;/TCSTemplate_Security.xml</Value>
         </Property>
     </Config>
 
