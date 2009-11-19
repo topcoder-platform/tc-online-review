@@ -3,6 +3,7 @@
 <Template name="Security">
     <!-- An enumeration of project phase types defined in this template -->
     <PhaseTypes>
+        <PhaseType id="registration" typeId="1" typeName="Registration"/>
         <PhaseType id="submission" typeId="2" typeName="Submission"/>
         <PhaseType id="review" typeId="4" typeName="Review"/>
         <PhaseType id="appeals" typeId="5" typeName="Appeals"/>
@@ -10,8 +11,11 @@
     </PhaseTypes>
     <!-- A set of project phases defined in this template. -->
     <Phases>
-    
-        <Phase id="submissionPhase" length="3600000" type="submission" />
+        <Phase id="registrationPhase" length="0" type="registration"/>
+        
+        <Phase id="submissionPhase" length="3600000" type="submission">
+            <Dependency id="registrationPhase" isDependencyStart="true" isDependentStart="true" lagTime="0"/>
+        </Phase>
 
         <Phase id="reviewPhase" length="172800000" type="review">
             <!-- "isDependencyStart" is optional attribute(default to "false"), here it is omitted -->
