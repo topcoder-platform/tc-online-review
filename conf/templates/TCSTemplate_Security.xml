@@ -28,4 +28,5 @@
             <Dependency id="appealsPhase" isDependencyStart="false" isDependentStart="true"/>
         </Phase>
 
+    </Phases>
 </Template>
