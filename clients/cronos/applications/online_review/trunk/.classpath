@@ -383,5 +383,6 @@
 	<classpathentry kind="lib" path="lib/tcs/online_review_phases/1.0.6/online_review_phases.jar"/>
 	<classpathentry kind="lib" path="lib/tcs/resource_management_persistence/1.2.2/resource_management_persistence.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/web_module"/>
+	<classpathentry kind="lib" path="lib/tcs/contest_eligibility_validation_client/1.0.0/contest_eligibility_validation_client.jar"/>
 	<classpathentry kind="output" path="build/classes"/>
 </classpath>
