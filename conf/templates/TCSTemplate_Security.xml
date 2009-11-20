@@ -11,25 +11,19 @@
     </PhaseTypes>
     <!-- A set of project phases defined in this template. -->
     <Phases>
-        <Phase id="registrationPhase" length="0" type="registration"/>
         
-        <Phase id="submissionPhase" length="3600000" type="submission">
-            <Dependency id="registrationPhase" isDependencyStart="true" isDependentStart="true" lagTime="0"/>
-        </Phase>
+        <Phase id="submissionPhase" length="3600000" type="submission"/>
 
         <Phase id="reviewPhase" length="172800000" type="review">
-            <!-- "isDependencyStart" is optional attribute(default to "false"), here it is omitted -->
-            <Dependency id="screeningPhase" isDependentStart="true" lagTime="0"/>
+            <Dependency id="submissionPhase" isDependentStart="true" lagTime="0"/>
         </Phase>
 
         <Phase id="appealsPhase" length="0" type="appeals">
-            <!-- "isDependentStart" is optional attribute(default to "true"), here it is omitted -->
             <Dependency id="reviewPhase" isDependencyStart="false" lagTime="0"/>
         </Phase>
 
         <Phase id="appealsReponsePhase" length="0" type="appeals_response">
-            <!-- "lagTime" is optional attribute(default to "0"), here it is omitted -->
-            <Dependency id="appealsPhase" isDependencyStart="false" isDependentStart="true"/>
+            <Dependency id="appealsPhase" isDependencyStart="false"/>
         </Phase>
 
     </Phases>
