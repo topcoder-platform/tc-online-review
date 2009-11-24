@@ -3203,6 +3203,48 @@
                     <Value>True</Value>
                 </Property>
             </Property>
+            <Property name="Python">
+                <Property name="id">
+                    <Value>27355736</Value>
+                </Property>
+                <Property name="IconSmall">
+                    <Value>transparentSm.gif</Value>
+                </Property>
+                <Property name="AltTextKey">
+                    <Value>RootCatalog.Python</Value>
+                </Property>
+                <Property name="Custom">
+                    <Value>False</Value>
+                </Property>
+            </Property>
+            <Property name="CustomPython">
+                <Property name="id">
+                    <Value>27355738</Value>
+                </Property>
+                <Property name="IconSmall">
+                    <Value>transparentSm.gif</Value>
+                </Property>
+                <Property name="AltTextKey">
+                    <Value>RootCatalog.CustomPython</Value>
+                </Property>
+                <Property name="Custom">
+                    <Value>True</Value>
+                </Property>
+            </Property>
+            <Property name="CustomOther">
+                <Property name="id">
+                    <Value>27355740</Value>
+                </Property>
+                <Property name="IconSmall">
+                    <Value>transparentSm.gif</Value>
+                </Property>
+                <Property name="AltTextKey">
+                    <Value>RootCatalog.CustomOther</Value>
+                </Property>
+                <Property name="Custom">
+                    <Value>True</Value>
+                </Property>
+            </Property>
         </Property>
 
         <Property name="ProjectCategoryIcons">
