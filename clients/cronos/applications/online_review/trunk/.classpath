@@ -116,11 +116,6 @@
 			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="C:/Users/ivern/Projects/online_review/lib/tcs/phase_management_persistence/1.0.2/phase_management_persistence.jar">
-		<attributes>
-			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
-		</attributes>
-	</classpathentry>
 	<classpathentry exported="true" kind="lib" path="lib/tcs/project_phases/2.0/project_phases.jar">
 		<attributes>
 			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
@@ -374,7 +369,6 @@
 	<classpathentry kind="lib" path="lib/third_party/saaj.jar"/>
 	<classpathentry kind="lib" path="lib/third_party/wsdl4j-1.5.1.jar"/>
 	<classpathentry kind="lib" path="lib/tcs/project_management/1.0.1/project_management.jar" sourcepath="/project_management/src/java/main"/>
-	<classpathentry kind="lib" path="C:/Users/ivern/Projects/online_review/lib/tcs/project_management_persistence/1.1.2/project_management_persistence.jar"/>
 	<classpathentry kind="lib" path="lib/tcs/pacts_services/PactsClientServices.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/jdk1.5.0_21"/>
 	<classpathentry kind="lib" path="lib/tcs/project_ejb/Project.jar"/>
@@ -384,5 +378,7 @@
 	<classpathentry kind="lib" path="lib/tcs/resource_management_persistence/1.2.2/resource_management_persistence.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/web_module"/>
 	<classpathentry kind="lib" path="lib/tcs/contest_eligibility_validation_client/1.0.0/contest_eligibility_validation_client.jar"/>
+	<classpathentry kind="lib" path="lib/tcs/phase_management_persistence/1.0.2/phase_management_persistence.jar"/>
+	<classpathentry kind="lib" path="lib/tcs/project_management_persistence/1.1.2/project_management_persistence.jar"/>
 	<classpathentry kind="output" path="build/classes"/>
 </classpath>
