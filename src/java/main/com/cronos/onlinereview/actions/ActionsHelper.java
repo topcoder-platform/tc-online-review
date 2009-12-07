@@ -4178,6 +4178,45 @@ public class ActionsHelper {
         removeForumPermissions(project, userToUsers(user));
     }
     
+    /**
+     * <p>Updates the payments for existing submitters.</p>
+     *
+     * @param projectId a <code>long</code> providing the ID for the project.
+     * @param submitterPayments a <code>Map</code> mapping submitter IDs to submitter payments. 
+     * @throws BaseException if an unexpected error occurs.
+     * @since BUGR-2807
+     */
+    static void updateSubmitterPayments(long projectId, Map<Long, Double> submitterPayments)
+        throws BaseException {
+        Connection conn = null;
+        PreparedStatement ps = null;
+        try {
+            DBConnectionFactory dbconn = new DBConnectionFactoryImpl(DB_CONNECTION_NAMESPACE);
+            conn = dbconn.createConnection();
+            ps = conn.prepareStatement("UPDATE project_result SET payment = ? WHERE project_id = ? AND user_id = ?");
+            ps.setLong(2, projectId);
+            for (Long userId : submitterPayments.keySet()) {
+                Double payment = submitterPayments.get(userId);
+                if (payment == null) {
+                    ps.setNull(1, Types.DOUBLE);
+                } else {
+                    ps.setDouble(1, payment);
+                }
+                ps.setLong(3, userId);
+                ps.executeUpdate();
+            }
+        } catch (SQLException e) {
+            throw new BaseException("Failed to update project result for payment", e);
+        } catch (UnknownConnectionException e) {
+            throw new BaseException("Failed to return DBConnection", e);
+        } catch (ConfigurationException e) {
+            throw new BaseException("Failed to return DBConnection", e);
+        } finally {
+            close(ps);
+            close(conn);
+        }
+    }
+
     private static Collection<Long> userToUsers(Long user) {
         ArrayList<Long> userCollection = new ArrayList<Long>();
         userCollection.add(user);

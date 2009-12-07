@@ -1781,6 +1781,9 @@ public class ProjectActions extends DispatchAction {
         if (!allResourcesValid)
             return;
 
+        // BUGR-2807: A map mapping the IDs for Submitters to their respective payments. Payment may be NULL
+        Map<Long, Double> submitterPayments = new HashMap<Long, Double>();
+
         // 0-index resource is skipped as it is a "dummy" one
         for (int i = 1; i < resourceNames.length; i++) {
 
@@ -1788,6 +1791,12 @@ public class ProjectActions extends DispatchAction {
             ExternalUser user = userRetrieval.retrieveUser(resourceNames[i]);
 
             Resource resource;
+            
+            // BUGR-2807: Parse resource payment
+            Double resourcePayment = null;
+            if (Boolean.TRUE.equals(lazyForm.get("resources_payment", i))) {
+                resourcePayment = (Double) lazyForm.get("resources_payment_amount", i);
+            }
 
             // Check what is the action to be performed with the resource
             // and obtain Resource instance in appropriate way
@@ -1831,6 +1840,8 @@ public class ProjectActions extends DispatchAction {
 
             // Set resource properties
             resource.setProject(new Long(project.getId()));
+            resource.setProperty("Payment", resourcePayment);
+            resource.setProperty("Payment Status", lazyForm.get("resources_paid", i));
 
             boolean resourceRoleChanged = false;
             ResourceRole role = ActionsHelper.findResourceRoleById(
@@ -1846,13 +1857,13 @@ public class ProjectActions extends DispatchAction {
             }
             resource.setResourceRole(role);
 
-            resource.setProperty("Handle", resourceNames[i]);
-            if (Boolean.TRUE.equals(lazyForm.get("resources_payment", i))) {
-                resource.setProperty("Payment", lazyForm.get("resources_payment_amount", i));
-            } else {
-                resource.setProperty("Payment", null);
+            // BUGR-2807: For submitters collect the payments to be updated in project_result table later
+            if (isSubmitter(resource)) {
+                submitterPayments.put(user.getId(), resourcePayment);
             }
-            resource.setProperty("Payment Status", lazyForm.get("resources_paid", i));
+
+            resource.setProperty("Handle", resourceNames[i]);
+
             // Set resource phase id, if needed
             Long phaseTypeId = resource.getResourceRole().getPhaseType();
             if (phaseTypeId != null) {
@@ -1914,6 +1925,9 @@ public class ProjectActions extends DispatchAction {
 
         // Populate project_result and component_inquiry for new submitters
         ActionsHelper.populateProjectResult(project, newSubmitters);
+
+        // BUGR-2807: Update project_result.payment for submitters
+        ActionsHelper.updateSubmitterPayments(project.getId(), submitterPayments);
 
         // Update all the timeline notifications
         if (project.getProperty("Timeline Notification").equals("On") && !newUsers.isEmpty()) {
@@ -2625,5 +2639,18 @@ public class ProjectActions extends DispatchAction {
         }
 
         return (buffer.length() != 0) ? buffer.toString() : null;
+    }
+
+    /**
+     * <p>Checks if specified resource is assigned <code>Submitter</code> role or not.</p>
+     *
+     * @param resource a <code>Resource</code> to be verified.
+     * @return <code>true</code> if specified resource is assigned <code>Submitter</code> role; <code>false</code>
+     *         otherwise.
+     * @since BUGR-2807
+     */
+    private static boolean isSubmitter(Resource resource) {
+        ResourceRole role = resource.getResourceRole();
+        return (role != null) && (role.getId() == 1);
     }
 }
