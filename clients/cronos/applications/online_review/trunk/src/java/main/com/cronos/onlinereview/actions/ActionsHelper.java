@@ -3028,7 +3028,8 @@ public class ActionsHelper {
         String name = newProjectStatus.getName();
         if ("Completed".equals(name) || "Cancelled - Failed Review".equals(name) || "Deleted".equals(name)
                  || "Cancelled - Failed Screening".equals(name)  || "Cancelled - Zero Submissions".equals(name)
-                 || "Cancelled - Winner Unresponsive".equals(name)) {
+                 || "Cancelled - Winner Unresponsive".equals(name) || "Cancelled - Client Request".equals(name)
+                 || "Cancelled - Requirements Infeasible".equals(name)) {
             if (format == null) {
                 format = new SimpleDateFormat(ConfigHelper.getDateFormat());
             }
