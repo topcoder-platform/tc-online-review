@@ -196,7 +196,7 @@
     <property name="phase_management.path" value="phase_management/${phase_management.version}" />
     <property name="phase_management.jar" value="${tcs_libdir}/${phase_management.path}/${phase_management.jar.name}" />
 
-    <property name="phase_management_persistence.version" value="1.0" />
+    <property name="phase_management_persistence.version" value="1.0.2" />
     <property name="phase_management_persistence.jar.name" value="phase_management_persistence.jar" />
     <property name="phase_management_persistence.path" value="phase_management_persistence/${phase_management_persistence.version}" />
     <property name="phase_management_persistence.jar" value="${tcs_libdir}/${phase_management_persistence.path}/${phase_management_persistence.jar.name}" />
@@ -206,7 +206,7 @@
     <property name="project_management.path" value="project_management/${project_management.version}" />
     <property name="project_management.jar" value="${tcs_libdir}/${project_management.path}/${project_management.jar.name}" />
 
-    <property name="project_management_persistence.version" value="1.1.1" />
+    <property name="project_management_persistence.version" value="1.1.2" />
     <property name="project_management_persistence.jar.name" value="project_management_persistence.jar" />
     <property name="project_management_persistence.path" value="project_management_persistence/${project_management_persistence.version}" />
     <property name="project_management_persistence.jar" value="${tcs_libdir}/${project_management_persistence.path}/${project_management_persistence.jar.name}" />
