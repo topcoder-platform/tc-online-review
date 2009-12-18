@@ -3025,24 +3025,31 @@ public class ActionsHelper {
      */
     static void setProjectCompletionDate(Project project, ProjectStatus newProjectStatus, Format format)
             throws BaseException {
+    	
         String name = newProjectStatus.getName();
-        if ("Completed".equals(name) || "Cancelled - Failed Review".equals(name) || "Deleted".equals(name)
-                 || "Cancelled - Failed Screening".equals(name)  || "Cancelled - Zero Submissions".equals(name)
-                 || "Cancelled - Winner Unresponsive".equals(name) || "Cancelled - Client Request".equals(name)
-                 || "Cancelled - Requirements Infeasible".equals(name)) {
+        if ("Completed".equals(name)
+        		|| "Cancelled - Failed Review".equals(name)
+        		|| "Deleted".equals(name)
+                || "Cancelled - Failed Screening".equals(name)
+                || "Cancelled - Zero Submissions".equals(name)
+                || "Cancelled - Winner Unresponsive".equals(name)
+                || "Cancelled - Client Request".equals(name)
+                || "Cancelled - Requirements Infeasible".equals(name)) {
+        	
             if (format == null) {
                 format = new SimpleDateFormat(ConfigHelper.getDateFormat());
             }
+            
             project.setProperty("Completion Timestamp", format.format(new Date()));
 
             if (!"Deleted".equals(name) && !ActionsHelper.isStudioProject(project)) {
                 Connection conn = null;
                 PreparedStatement ps = null;
                 try {
-                    DBConnectionFactory dbconn;
-                        dbconn = new DBConnectionFactoryImpl(DB_CONNECTION_NAMESPACE);
+                    DBConnectionFactory dbconn = new DBConnectionFactoryImpl(DB_CONNECTION_NAMESPACE);
                     conn = dbconn.createConnection();
-                    ps = conn.prepareStatement("update project_result set rating_ind = 1 where project_id = ? and valid_submission_ind = 1");
+                    ps = conn.prepareStatement(
+                    		"update project_result set rating_ind = 1 where project_id = ? and valid_submission_ind = 1");
                     ps.setLong(1, project.getId());
                     ps.execute();
                 } catch(SQLException e) {
@@ -3089,7 +3096,7 @@ public class ActionsHelper {
     }
 
     /**
-     * This method verifies the request for ceratin conditions to be met. This includes verifying if
+     * This method verifies the request for certain conditions to be met. This includes verifying if
      * the user has specified an ID of the project he wants to perform an operation on, if the ID of
      * the project specified by user denotes existing project, and whether the user has rights to
      * perform the operation specified by <code>permission</code> parameter.
@@ -3108,7 +3115,7 @@ public class ActionsHelper {
      * @param request
      *            the http request.
      * @param permission
-     *            permission to check against, or <code>null</code> if no check is requeired.
+     *            permission to check against, or <code>null</code> if no check is required.
      * @throws BaseException
      *             if any error occurs.
      */
@@ -3831,7 +3838,8 @@ public class ActionsHelper {
             conn = dbconn.createConnection();
 
             log.log(Level.INFO,
-                    "create db connection with default connection name from DBConnectionFactoryImpl with namespace:" + DB_CONNECTION_NAMESPACE);
+                    "create db connection with default connection name from DBConnectionFactoryImpl with namespace:"
+            		+ DB_CONNECTION_NAMESPACE);
 
             // delete from project_result
             ps = conn.prepareStatement("delete from project_result where project_id = ? and user_id = ?");
@@ -3873,7 +3881,8 @@ public class ActionsHelper {
             DBConnectionFactory dbconn = new DBConnectionFactoryImpl(DB_CONNECTION_NAMESPACE);
             conn = dbconn.createConnection();
             log.log(Level.INFO,
-                    "create db connection with default connection name from DBConnectionFactoryImpl with namespace:" + DB_CONNECTION_NAMESPACE);
+                    "create db connection with default connection name from DBConnectionFactoryImpl with namespace:"
+            		+ DB_CONNECTION_NAMESPACE);
             PRHelper.resetProjectResultWithChangedScores(projectId, userId, conn);
         } catch (DBConnectionException e) {
             throw new BaseException("Failed to return DBConnection", e);
@@ -3899,7 +3908,8 @@ public class ActionsHelper {
             DBConnectionFactory dbconn = new DBConnectionFactoryImpl(DB_CONNECTION_NAMESPACE);
             conn = dbconn.createConnection();
             log.log(Level.INFO,
-                    "create db connection with default connection name from DBConnectionFactoryImpl with namespace:" + DB_CONNECTION_NAMESPACE);
+                    "create db connection with default connection name from DBConnectionFactoryImpl with namespace:"
+            		+ DB_CONNECTION_NAMESPACE);
 
             String sqlString = "select version from comp_versions where comp_vers_id = ?";
 
