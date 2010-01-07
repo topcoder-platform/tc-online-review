@@ -64,6 +64,10 @@
 					<td class="value" width="100%">${billingProject}</td>
 			</tr><c:set var="rowIndex" value="${rowIndex+1}" />
 		</c:if>
+		<tr class='${(rowIndex % 2 == 0) ? "light" : "dark"}'>
+            <td class="value" width="15%" nowrap="nowrap"><b><bean:message key="viewProjectDetails.ProjectStatus" /></b></td>
+            <td class="value" width="100%">${projectStatus}</td>
+        </tr><c:set var="rowIndex" value="${rowIndex+1}" />
 		<tr>
 			<td class="lastRowTD" colspan="2"><!-- @ --></td>
 		</tr>

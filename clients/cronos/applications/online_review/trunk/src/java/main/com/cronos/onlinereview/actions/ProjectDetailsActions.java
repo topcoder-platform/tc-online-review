@@ -210,6 +210,7 @@ public class ProjectDetailsActions extends DispatchAction {
         request.setAttribute("forumLink", ConfigHelper.getProjectTypeForumLink(projectTypeName, forumId));
         request.setAttribute("projectType", projectTypeName);
         request.setAttribute("projectCategory", project.getProjectCategory().getName());
+        request.setAttribute("projectStatus", project.getProjectStatus().getName());
         String paymentStr = project.getProperty("Payments") == null ? "0": project.getProperty("Payments").toString();
         request.setAttribute("projectPayment", Double.valueOf(paymentStr));
 
