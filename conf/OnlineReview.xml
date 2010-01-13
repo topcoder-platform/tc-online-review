@@ -3546,6 +3546,8 @@
                 <Value>Final Reviewer</Value>
                 <Value>Approver</Value>
                 <Value>Designer</Value>
+                <Value>Copilot</Value>
+                <Value>Client Manager</Value>
             </Property>
             <Property name="View Projects">
                 <Value>Global Manager</Value>
@@ -3566,6 +3568,8 @@
                 <Value>Final Reviewer</Value>
                 <Value>Approver</Value>
                 <Value>Designer</Value>
+                <Value>Copilot</Value>
+                <Value>Client Manager</Value>
             </Property>
             <Property name="View Projects Inactive">
                 <Value>Global Manager</Value>
@@ -3586,27 +3590,37 @@
                 <Value>Final Reviewer</Value>
                 <Value>Approver</Value>
                 <Value>Designer</Value>
+                <Value>Copilot</Value>
+                <Value>Client Manager</Value>
             </Property>
             <Property name="View Project Resources">
                 <Value>Global Manager</Value>
                 <Value>Manager</Value>
                 <Value>Observer</Value>
+                <Value>Copilot</Value>
+                <Value>Client Manager</Value>
             </Property>
             <Property name="View SVN Link">
                 <Value>Global Manager</Value>
                 <Value>Manager</Value>
                 <Value>Observer</Value>
                 <Value>Final Reviewer</Value>
+                <Value>Copilot</Value>
+                <Value>Client Manager</Value>
             </Property>
             <Property name="View Autopilot Status">
                 <Value>Global Manager</Value>
                 <Value>Manager</Value>
                 <Value>Observer</Value>
+                <Value>Copilot</Value>
+                <Value>Client Manager</Value>
             </Property>
             <Property name="View All Payment Information">
                 <Value>Global Manager</Value>
                 <Value>Manager</Value>
                 <Value>Observer</Value>
+                <Value>Copilot</Value>
+                <Value>Client Manager</Value>
             </Property>
             <Property name="View My Payment Information">
                 <Value>Submitter</Value>
@@ -3635,11 +3649,15 @@
                 <Value>Final Reviewer</Value>
                 <Value>Approver</Value>
                 <Value>Designer</Value>
+                <Value>Copilot</Value>
+                <Value>Client Manager</Value>
             </Property>
             <Property name="View Registrations">
                 <Value>Global Manager</Value>
                 <Value>Manager</Value>
                 <Value>Observer</Value>
+                <Value>Copilot</Value>
+                <Value>Client Manager</Value>
             </Property>
             <Property name="Perform Submission">
                 <Value>Submitter</Value>
@@ -3648,6 +3666,8 @@
                 <Value>Global Manager</Value>
                 <Value>Manager</Value>
                 <Value>Approver</Value>
+                <Value>Copilot</Value>
+                <Value>Client Manager</Value>
             </Property>
             <Property name="View My Submissions">
                 <Value>Submitter</Value>
@@ -3662,12 +3682,16 @@
                 <Value>Accuracy Reviewer</Value>
                 <Value>Failure Reviewer</Value>
                 <Value>Stress Reviewer</Value>
+                <Value>Copilot</Value>
+                <Value>Client Manager</Value>
             </Property>
             <Property name="View Winning Submission">
                 <Value>Submitter</Value>
                 <Value>Aggregator</Value>
                 <Value>Final Reviewer</Value>
                 <Value>Designer</Value>
+                <Value>Copilot</Value>
+                <Value>Client Manager</Value>
             </Property>
             <Property name="View Most Recent after Appeals Response">
                 <Value>Submitter</Value>
@@ -3701,6 +3725,8 @@
                 <Value>Final Reviewer</Value>
                 <Value>Approver</Value>
                 <Value>Designer</Value>
+                <Value>Copilot</Value>
+                <Value>Client Manager</Value>
             </Property>
             <Property name="Perform Review">
                 <Value>Reviewer</Value>
@@ -3727,6 +3753,8 @@
                 <Value>Aggregator</Value>
                 <Value>Final Reviewer</Value>
                 <Value>Approver</Value>
+                <Value>Copilot</Value>
+                <Value>Client Manager</Value>
             </Property>
             <!-- Note, the following permission was not originally present in the Permission Matrix -->
             <Property name="Download Test Cases during Review">
@@ -3737,6 +3765,8 @@
                 <Value>Accuracy Reviewer</Value>
                 <Value>Failure Reviewer</Value>
                 <Value>Stress Reviewer</Value>
+                <Value>Copilot</Value>
+                <Value>Client Manager</Value>
             </Property>
             <Property name="View All Reviews">
                 <Value>Global Manager</Value>
@@ -3751,6 +3781,8 @@
                 <Value>Final Reviewer</Value>
                 <Value>Approver</Value>
                 <Value>Designer</Value>
+                <Value>Copilot</Value>
+                <Value>Client Manager</Value>
             </Property>
             <Property name="View Reviewer Reviews">
                 <Value>Reviewer</Value>
@@ -3764,6 +3796,8 @@
                 <Value>Observer</Value>
                 <Value>Submitter</Value>
                 <Value>Aggregator</Value>
+                <Value>Copilot</Value>
+                <Value>Client Manager</Value>
             </Property>
             <Property name="Edit My Review during Review">
                 <Value>Screener</Value>
@@ -3788,6 +3822,8 @@
                 <Value>Stress Reviewer</Value>
                 <Value>Approver</Value>
                 <Value>Designer</Value>
+                <Value>Copilot</Value>
+                <Value>Client Manager</Value>
             </Property>
             <Property name="Perform Appeals Response">
                 <Value>Reviewer</Value>
@@ -3806,6 +3842,8 @@
                 <Value>Stress Reviewer</Value>
                 <Value>Approver</Value>
                 <Value>Designer</Value>
+                <Value>Copilot</Value>
+                <Value>Client Manager</Value>
             </Property>
             <Property name="Edit My Appeal during Appeals Response">
                 <!-- Note: Origianlly this permission had been granted to Screners (and Primary Screeners
@@ -3834,6 +3872,8 @@
                 <Value>Aggregator</Value>
                 <Value>Approver</Value>
                 <Value>Designer</Value>
+                <Value>Copilot</Value>
+                <Value>Client Manager</Value>
             </Property>
             <Property name="Perform Aggregation Review">
                 <!-- Note: originally this permission had been granted to Aggregator, but it
@@ -3855,6 +3895,8 @@
                 <Value>Stress Reviewer</Value>
                 <Value>Approver</Value>
                 <Value>Designer</Value>
+                <Value>Copilot</Value>
+                <Value>Client Manager</Value>
             </Property>
             <Property name="Perform Final Fix">
                 <Value>Submitter</Value>
@@ -3866,6 +3908,8 @@
                 <Value>Submitter</Value>
                 <Value>Final Reviewer</Value>
                 <Value>Approver</Value>
+                <Value>Copilot</Value>
+                <Value>Client Manager</Value>
             </Property>
             <Property name="Perform Final Review">
                 <Value>Final Reviewer</Value>
@@ -3878,6 +3922,8 @@
                 <Value>Final Reviewer</Value>
                 <Value>Approver</Value>
                 <Value>Designer</Value>
+                <Value>Copilot</Value>
+                <Value>Client Manager</Value>
             </Property>
             <Property name="Submit Scorecard Comment">
                 <Value>Submitter</Value>
@@ -3893,6 +3939,8 @@
                 <Value>Observer</Value>
                 <Value>Submitter</Value>
                 <Value>Approver</Value>
+                <Value>Copilot</Value>
+                <Value>Client Manager</Value>
             </Property>
             <Property name="Edit Any Scorecard">
                 <Value>Global Manager</Value>
@@ -3912,6 +3960,8 @@
                 <Value>Aggregator</Value>
                 <Value>Final Reviewer</Value>
                 <Value>Approver</Value>
+                <Value>Copilot</Value>
+                <Value>Client Manager</Value>
             </Property>
 
             <Property name="Create Payment">
