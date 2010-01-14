@@ -1,9 +1,9 @@
 <?xml version="1.0"?>
 
 <project name="Online Review" default="dist" basedir=".">
-
+<!--
     <property file="topcoder_global.properties" />
-
+-->
     <!-- COMPONENT PARAMETERS -->
     <property name="component" value="online_review" />
     <property name="package" value="com.topcoder.onlinereview" />
@@ -43,8 +43,8 @@
     <property name="build_tcsdistdir" value="${build_distdir}/${distfilename}-${component_version}" />
 
     <!-- Server installation directories -->
-    <property name="cactus.home.jboss" value="/home/tc/jboss-4.0.4.GA" />
-    <property name="deploy-dir" value="${cactus.home.jboss}/server/default/deploy/${distfilename}.war" />
+    <property name="JBOSS_HOME" value="/home/tc/jboss-4.0.4.GA" />
+    <property name="deploy-dir" value="${JBOSS_HOME}/server/default/deploy/${distfilename}.war" />
 
     <!-- EXECUTION TAGS -->
     <property name="debug" value="off" />
@@ -358,9 +358,9 @@
     <!-- 3rd Party Dependencies  -->
     <property name="ifx-jdbc.jar" value="${ext_libdir}/ifx-jdbc.jar" />
     <property name="jstl.jar" value="${ext_libdir}/jstl.jar" />
-    <property name="servlet.jar" value="${cactus.home.jboss}/server/default/lib/javax.servlet.jar" />
-    <property name="servlet.jsp.jar" value="${cactus.home.jboss}/server/default/lib/javax.servlet.jsp.jar" />
-    <property name="mail.jar" value="${cactus.home.jboss}/server/default/lib/mail.jar" />
+    <property name="servlet.jar" value="${JBOSS_HOME}/server/default/lib/javax.servlet.jar" />
+    <property name="servlet.jsp.jar" value="${JBOSS_HOME}/server/default/lib/javax.servlet.jsp.jar" />
+    <property name="mail.jar" value="${JBOSS_HOME}/server/default/lib/mail.jar" />
     <property name="struts.jar" value="${ext_libdir}/struts-1.2.9.jar" />
     <property name="axis.jar" value="${ext_libdir}/axis-dok.jar" />
     <property name="ejb-2_0.jar" value="${ext_libdir}/ejb-2_0.jar" />
