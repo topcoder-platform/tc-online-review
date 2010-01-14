@@ -7,7 +7,8 @@
        <!ENTITY contactManagersTemplate "/home/tcs/web/conf/templates/contact_manager_template.txt">
        <!ENTITY pactJNDIAddress "jnp://63.118.154.181:1199">
 ]>
-<CMConfig>
+<CMConfig xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:noNamespaceSchemaLocation="file://Configuration_Manager_Schema.xsd">
 <!-- [OR-584] don't need this anymore
     <!ENTITY assignmentDocumentsFlag "false">
 -->
@@ -2841,8 +2842,8 @@
         </Property>
     </Config>
 
-    <Config name="com.topcoder.search.builder.database.factory"></Config>
-
+    <Config name="com.topcoder.search.builder.database.factory">
+    </Config>
 
     <!--
         ===== Configuration for Pacts Services =====
