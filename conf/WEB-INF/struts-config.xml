@@ -182,15 +182,15 @@
             parameter="method"
             input="/jsp/login.jsp" >
             <exception
-                type="com.topcoder.security.authenicationfactory.AuthenticateException"
+                type="com.topcoder.security.authenticationfactory.AuthenticateException"
                 key="exception.com.cronos.onlinereview.login.LoginActions.login.AuthenticateException"
                 path="/jsp/login.jsp" />
             <exception
-                type="com.topcoder.security.authenicationfactory.MissingPrincipalKeyException"
+                type="com.topcoder.security.authenticationfactory.MissingPrincipalKeyException"
                 key="exception.com.cronos.onlinereview.login.LoginActions.login.MissingPrincipalException"
                 path="/jsp/login.jsp" />
             <exception
-                type="com.topcoder.security.authenicationfactory.InvalidPrincipalException"
+                type="com.topcoder.security.authenticationfactory.InvalidPrincipalException"
                 key="exception.com.cronos.onlinereview.login.LoginActions.login.InvalidPrincipalException"
                 path="/jsp/login.jsp" />
             <exception
