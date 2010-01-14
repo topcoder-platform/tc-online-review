@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
+
 <web-app xmlns="http://java.sun.com/xml/ns/j2ee"
    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
    xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd"
@@ -45,8 +46,8 @@
 
 	<!-- Axis HTTP transport Servlet -->
 	<servlet>
+        <display-name>Apache-Axis Servlet</display-name>
 		<servlet-name>AxisServlet</servlet-name>
-		<display-name>Apache-Axis Servlet</display-name>
 		<servlet-class>
 			org.apache.axis.transport.http.AxisServlet
 		</servlet-class>
@@ -100,33 +101,35 @@
     	<location>/jsp/errorPage.jsp</location>
     </error-page>
 
-    <!-- Struts Tag Library Descriptors -->
-    <taglib>
-        <taglib-uri>/tags/struts-bean</taglib-uri>
-        <taglib-location>/WEB-INF/struts-bean-el.tld</taglib-location>
-    </taglib>
+    <jsp-config>
+        <!-- Struts Tag Library Descriptors -->
+        <taglib>
+            <taglib-uri>/tags/struts-bean</taglib-uri>
+            <taglib-location>/WEB-INF/struts-bean-el.tld</taglib-location>
+        </taglib>
 
-    <taglib>
-        <taglib-uri>/tags/struts-html</taglib-uri>
-        <taglib-location>/WEB-INF/struts-html-el.tld</taglib-location>
-    </taglib>
+        <taglib>
+            <taglib-uri>/tags/struts-html</taglib-uri>
+            <taglib-location>/WEB-INF/struts-html-el.tld</taglib-location>
+        </taglib>
 
-    <taglib>
-        <taglib-uri>/tags/struts-logic</taglib-uri>
-        <taglib-location>/WEB-INF/struts-logic-el.tld</taglib-location>
-    </taglib>
+        <taglib>
+            <taglib-uri>/tags/struts-logic</taglib-uri>
+            <taglib-location>/WEB-INF/struts-logic-el.tld</taglib-location>
+        </taglib>
 
-    <!-- Online Review Helper Functions -->
-    <taglib>
-        <taglib-uri>/tags/or-functions</taglib-uri>
-        <taglib-location>/WEB-INF/or-functions.tld</taglib-location>
-    </taglib>
+        <!-- Online Review Helper Functions -->
+        <taglib>
+            <taglib-uri>/tags/or-functions</taglib-uri>
+            <taglib-location>/WEB-INF/or-functions.tld</taglib-location>
+        </taglib>
 
-    <!-- TopCoder Web Tags -->
-    <taglib>
-        <taglib-uri>/tags/tc-webtags</taglib-uri>
-        <taglib-location>/WEB-INF/tc-webtags.tld</taglib-location>
-    </taglib>
+        <!-- TopCoder Web Tags -->
+        <taglib>
+            <taglib-uri>/tags/tc-webtags</taglib-uri>
+            <taglib-location>/WEB-INF/tc-webtags.tld</taglib-location>
+        </taglib>
+    </jsp-config>
 
     <ejb-ref>
         <ejb-ref-name>security/Login</ejb-ref-name>
