@@ -69,7 +69,7 @@
     <property name="dev_dist.jar" value="${component}_${component_version}_dev_dist.jar" />
     <property name="design_dist.jar" value="${component}_${component_version}_design_dist.jar" />
     <property name="component.war" value="${build_distdir}/${distfilename}.war" />
-    
+
 
     <!-- TCS Dependencies -->
     <property name="authentication_factory.version" value="2.0" />
@@ -450,7 +450,7 @@
     	<pathelement location="${tcsUtil.jar}" />
         <pathelement location="${tcwebcommon.jar}" />
         <pathelement location="${shared.jar}" />
-	<pathelement location="${forums.jar}" />
+	    <pathelement location="${forums.jar}" />
     </path>
 
     <path id="cactus.classpath">
@@ -516,7 +516,7 @@
 
     <target name="compile_ws" depends="compile">
         <mkdir dir="${build_testclassdir}" />
-    	
+
     	<echo>${axis.jar}</echo>
     	<echo>${jboss-client.jar}</echo>
         <javac srcdir="${javatests}"
@@ -532,20 +532,20 @@
         		<fileset dir="${JBOSS_HOME}" includes="client/jbossall-client.jar"/>
         	</classpath>
         </javac>
-    	
-    	<java classname="com.cronos.onlinereview.uploadservices.UploadServiceClient" 
+
+    	<java classname="com.cronos.onlinereview.uploadservices.UploadServiceClient"
     			fork="true" maxmemory="512m">
 	    	<classpath >
 	    		<fileset dir="${ext_libdir}" includes="**/*.jar"/>
 	    		<fileset dir="${JBOSS_HOME}" includes="client/jbossall-client.jar"/>
 	    		<path path="${build_testclassdir}"/>
-	    	</classpath>	
+	    	</classpath>
 		</java>
     </target>
-	
-	
-	
-	
+
+
+
+
     <target name="prepare_tests_war" depends="dist, compile_tests">
 
         <!-- Cactify the web-app archive -->
@@ -690,7 +690,7 @@ Note: The security manager that comes with the app may not be compatible with th
             <!-- Added libs to support ejb3 calls -->
             <lib dir="${jar_ext_libdir}/jboss/">
             	<include name="jboss-ejb3-client.jar"/>
-            	<include name="jboss-ejb3x.jar"/>            	
+            	<include name="jboss-ejb3x.jar"/>
             	<include name="jboss-aop-jdk50-client.jar"/>
             	<include name="jboss-aspect-jdk50-client.jar"/>
             	<include name="jboss-remoting.jar"/>
