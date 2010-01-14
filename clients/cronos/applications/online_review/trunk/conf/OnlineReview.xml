@@ -3531,6 +3531,7 @@
             <Property name="Edit Project Details">
                 <Value>Global Manager</Value>
                 <Value>Manager</Value>
+                <Value>Client Manager</Value>
             </Property>
             <Property name="Set Timeline Notifications">
                 <Value>Global Manager</Value>
