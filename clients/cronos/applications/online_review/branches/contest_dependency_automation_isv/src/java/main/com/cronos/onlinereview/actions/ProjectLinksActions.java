@@ -10,6 +10,7 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.topcoder.management.project.persistence.link.CyclicDependencyException;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
@@ -38,9 +39,14 @@ import com.topcoder.util.errorhandling.BaseException;
  * This class is thread-safe as it does not contain any mutable inner state.
  * </p>
  *
+ * <p>
+ * Change log for version 1.1: updated
+ * {@link #saveProjectLinks(ActionMapping, ActionForm, HttpServletRequest, HttpServletResponse)} method to handle the
+ * CyclicDependencyError.
+ * </p>
  *
  * @author TCSDEVELOPER
- * @version 1.0
+ * @version 1.1
  * @since OR Project Linking Assembly
  */
 public class ProjectLinksActions extends DispatchAction {
@@ -198,7 +204,14 @@ public class ProjectLinksActions extends DispatchAction {
             paramDestProjectIds[i] = destList.get(i);
             paramTypeIds[i] = typeList.get(i);
         }
-        linkManager.updateProjectLinks(project.getId(), paramDestProjectIds, paramTypeIds);
+        try {
+            linkManager.updateProjectLinks(project.getId(), paramDestProjectIds, paramTypeIds);
+        } catch (CyclicDependencyException e) {
+            LoggingHelper.logException(e);
+            request.setAttribute("errorTitle", messages.getMessage("Error.Title.General"));
+            request.setAttribute("errorMessage", e.getMessage());
+            return mapping.findForward(Constants.USER_ERRROR_FORWARD_NAME);
+        }
 
         // Return success forward
         return ActionsHelper.cloneForwardAndAppendToPath(mapping.findForward(Constants.SUCCESS_FORWARD_NAME), "&pid="

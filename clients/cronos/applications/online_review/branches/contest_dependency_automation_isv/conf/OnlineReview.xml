@@ -1,11 +1,11 @@
 <?xml version="1.0" ?>
 <!DOCTYPE CMConfig [
        <!ENTITY localFileUploadDir "/home/tcs/downloads">
-       <!ENTITY phasesEmailTemplate "/home/tcs/web/conf/templates/email_template.txt">
-       <!ENTITY winnersEmailTemplate "/home/tcs/web/conf/templates/winners_email_template.txt">
-       <!ENTITY timelineTemplateDir "/home/tcs/web/conf/templates">
-       <!ENTITY contactManagersTemplate "/home/tcs/web/conf/templates/contact_manager_template.txt">
-       <!ENTITY pactJNDIAddress "jnp://63.118.154.181:1199">
+       <!ENTITY phasesEmailTemplate "/home/tcs/onlinereview/templates/email_template.txt">
+       <!ENTITY winnersEmailTemplate "/home/tcs/onlinereview/templates/winners_email_template.txt">
+       <!ENTITY timelineTemplateDir "/home/tcs/onlinereview/templates">
+       <!ENTITY contactManagersTemplate "/home/tcs/onlinereview/templates/contact_manager_template.txt">
+       <!ENTITY pactJNDIAddress "jnp://localhost:1199">
 ]>
 <CMConfig>
 <!-- [OR-584] don't need this anymore
@@ -466,7 +466,7 @@
     -->
     <Config name="com.topcoder.message.email.EmailEngine">
         <Property name="smtp_host_addr">
-            <Value>63.118.154.162</Value>
+            <Value>localhost</Value>
         </Property>
         <Property name="smtp_host_port">
             <Value>25</Value>
@@ -517,7 +517,7 @@
                     <Value>com.topcoder.management.review.scorecalculator.calculators.Scale10</Value>
                 </Property>
             </Property>
-
+            
             <!-- Configuration for Test Case question type -->
             <Property name="dynamicCalculator">
                 <Property name="question_type">
@@ -527,7 +527,7 @@
                     <Value>com.topcoder.management.review.scorecalculator.calculators.ScaledScoreCalculator</Value>
                 </Property>
             </Property>
-
+            
             <!-- Configuration for Yes/No question type -->
             <Property name="binaryCalculator">
                 <!-- This sub-property describes the question type id -->
@@ -616,7 +616,7 @@
             <Value>9</Value>
         </Property>
     </Config>
-
+    
     <Config name="com.topcoder.management.review.scorecalculator.calculators.Scale0_4">
         <Property name="default_scale">
             <Value>4</Value>
@@ -648,6 +648,15 @@
             </Property>
             <Property name="Namespace">
                 <Value>com.topcoder.management.project</Value>
+            </Property>
+        </Property>
+
+        <Property name="ProjectLinkManager">
+            <Property name="ClassName">
+                <Value>com.topcoder.management.project.persistence.link.ProjectLinkManagerImpl</Value>
+            </Property>
+            <Property name="Namespace">
+                <Value>com.topcoder.management.project.persistence.link.ProjectLinkManagerImpl</Value>
             </Property>
         </Property>
 
@@ -1493,7 +1502,7 @@
         <!-- All handlers are registered directly from application's code -->
     </Config>
 
-
+    
     <!--
         =====  Configuration for Phase Template component  =====
     -->
@@ -1573,7 +1582,7 @@
             <Value>0</Value>
         </Property>
     </Config>
-
+    
     <Config name="com.topcoder.project.phases.template.DefaultPhaseTemplate.workdays">
         <Property name="workdays:default">
             <Property name="type">
@@ -3287,7 +3296,7 @@
                 <Property name="Icon">
                     <Value>IconTesting.gif</Value>
                 </Property>
-            </Property>            
+            </Property>
             <Property name="Test Suites">
                 <Property name="IconSmall">
                     <Value>IconTestSuitesSm.gif</Value>
@@ -3415,7 +3424,7 @@
                 <Property name="Icon">
                     <Value>concept.gif</Value>
                 </Property>
-            </Property>
+            </Property>         
             <Property name="RIA Build Competition">
                 <Property name="IconSmall">
                     <Value>iconRIABuildCompetitionSm.png</Value>
@@ -3441,8 +3450,8 @@
             <Property name="Component">
                 <Value>https://software.topcoder.com/catalog/c_component.jsp?comp=&lt;COMPONENT_ID&gt;&amp;ver=&lt;VERSION_ID&gt;</Value>
             </Property>
-        <Property name="Studio">
-        <Value>https://software.topcoder.com/catalog/c_component.jsp?comp=&lt;COMPONENT_ID&gt;&amp;ver=&lt;VERSION_ID&gt;</Value>
+	    <Property name="Studio">
+		<Value>https://software.topcoder.com/catalog/c_component.jsp?comp=&lt;COMPONENT_ID&gt;&amp;ver=&lt;VERSION_ID&gt;</Value>
             </Property>
         </Property>
 
@@ -3453,8 +3462,8 @@
             <Property name="Component">
                 <Value>http://forums.topcoder.com/?module=Category&amp;categoryID=&lt;FORUM_ID&gt;</Value>
             </Property>
-        <Property name="Studio">
-        <Value>http://forums.topcoder.com/?module=Category&amp;categoryID=&lt;FORUM_ID&gt;</Value>
+	    <Property name="Studio">
+		<Value>http://forums.topcoder.com/?module=Category&amp;categoryID=&lt;FORUM_ID&gt;</Value>
             </Property>
         </Property>
 
@@ -3546,8 +3555,6 @@
                 <Value>Final Reviewer</Value>
                 <Value>Approver</Value>
                 <Value>Designer</Value>
-                <Value>Copilot</Value>
-                <Value>Client Manager</Value>
             </Property>
             <Property name="View Projects">
                 <Value>Global Manager</Value>
@@ -3568,8 +3575,6 @@
                 <Value>Final Reviewer</Value>
                 <Value>Approver</Value>
                 <Value>Designer</Value>
-                <Value>Copilot</Value>
-                <Value>Client Manager</Value>
             </Property>
             <Property name="View Projects Inactive">
                 <Value>Global Manager</Value>
@@ -3590,37 +3595,27 @@
                 <Value>Final Reviewer</Value>
                 <Value>Approver</Value>
                 <Value>Designer</Value>
-                <Value>Copilot</Value>
-                <Value>Client Manager</Value>
             </Property>
             <Property name="View Project Resources">
                 <Value>Global Manager</Value>
                 <Value>Manager</Value>
                 <Value>Observer</Value>
-                <Value>Copilot</Value>
-                <Value>Client Manager</Value>
             </Property>
             <Property name="View SVN Link">
                 <Value>Global Manager</Value>
                 <Value>Manager</Value>
                 <Value>Observer</Value>
                 <Value>Final Reviewer</Value>
-                <Value>Copilot</Value>
-                <Value>Client Manager</Value>
             </Property>
             <Property name="View Autopilot Status">
                 <Value>Global Manager</Value>
                 <Value>Manager</Value>
                 <Value>Observer</Value>
-                <Value>Copilot</Value>
-                <Value>Client Manager</Value>
             </Property>
             <Property name="View All Payment Information">
                 <Value>Global Manager</Value>
                 <Value>Manager</Value>
                 <Value>Observer</Value>
-                <Value>Copilot</Value>
-                <Value>Client Manager</Value>
             </Property>
             <Property name="View My Payment Information">
                 <Value>Submitter</Value>
@@ -3649,15 +3644,11 @@
                 <Value>Final Reviewer</Value>
                 <Value>Approver</Value>
                 <Value>Designer</Value>
-                <Value>Copilot</Value>
-                <Value>Client Manager</Value>
             </Property>
             <Property name="View Registrations">
                 <Value>Global Manager</Value>
                 <Value>Manager</Value>
                 <Value>Observer</Value>
-                <Value>Copilot</Value>
-                <Value>Client Manager</Value>
             </Property>
             <Property name="Perform Submission">
                 <Value>Submitter</Value>
@@ -3666,8 +3657,6 @@
                 <Value>Global Manager</Value>
                 <Value>Manager</Value>
                 <Value>Approver</Value>
-                <Value>Copilot</Value>
-                <Value>Client Manager</Value>
             </Property>
             <Property name="View My Submissions">
                 <Value>Submitter</Value>
@@ -3682,16 +3671,12 @@
                 <Value>Accuracy Reviewer</Value>
                 <Value>Failure Reviewer</Value>
                 <Value>Stress Reviewer</Value>
-                <Value>Copilot</Value>
-                <Value>Client Manager</Value>
             </Property>
             <Property name="View Winning Submission">
                 <Value>Submitter</Value>
                 <Value>Aggregator</Value>
                 <Value>Final Reviewer</Value>
                 <Value>Designer</Value>
-                <Value>Copilot</Value>
-                <Value>Client Manager</Value>
             </Property>
             <Property name="View Most Recent after Appeals Response">
                 <Value>Submitter</Value>
@@ -3725,8 +3710,6 @@
                 <Value>Final Reviewer</Value>
                 <Value>Approver</Value>
                 <Value>Designer</Value>
-                <Value>Copilot</Value>
-                <Value>Client Manager</Value>
             </Property>
             <Property name="Perform Review">
                 <Value>Reviewer</Value>
@@ -3753,8 +3736,6 @@
                 <Value>Aggregator</Value>
                 <Value>Final Reviewer</Value>
                 <Value>Approver</Value>
-                <Value>Copilot</Value>
-                <Value>Client Manager</Value>
             </Property>
             <!-- Note, the following permission was not originally present in the Permission Matrix -->
             <Property name="Download Test Cases during Review">
@@ -3765,8 +3746,6 @@
                 <Value>Accuracy Reviewer</Value>
                 <Value>Failure Reviewer</Value>
                 <Value>Stress Reviewer</Value>
-                <Value>Copilot</Value>
-                <Value>Client Manager</Value>
             </Property>
             <Property name="View All Reviews">
                 <Value>Global Manager</Value>
@@ -3781,8 +3760,6 @@
                 <Value>Final Reviewer</Value>
                 <Value>Approver</Value>
                 <Value>Designer</Value>
-                <Value>Copilot</Value>
-                <Value>Client Manager</Value>
             </Property>
             <Property name="View Reviewer Reviews">
                 <Value>Reviewer</Value>
@@ -3796,8 +3773,6 @@
                 <Value>Observer</Value>
                 <Value>Submitter</Value>
                 <Value>Aggregator</Value>
-                <Value>Copilot</Value>
-                <Value>Client Manager</Value>
             </Property>
             <Property name="Edit My Review during Review">
                 <Value>Screener</Value>
@@ -3822,8 +3797,6 @@
                 <Value>Stress Reviewer</Value>
                 <Value>Approver</Value>
                 <Value>Designer</Value>
-                <Value>Copilot</Value>
-                <Value>Client Manager</Value>
             </Property>
             <Property name="Perform Appeals Response">
                 <Value>Reviewer</Value>
@@ -3842,8 +3815,6 @@
                 <Value>Stress Reviewer</Value>
                 <Value>Approver</Value>
                 <Value>Designer</Value>
-                <Value>Copilot</Value>
-                <Value>Client Manager</Value>
             </Property>
             <Property name="Edit My Appeal during Appeals Response">
                 <!-- Note: Origianlly this permission had been granted to Screners (and Primary Screeners
@@ -3872,8 +3843,6 @@
                 <Value>Aggregator</Value>
                 <Value>Approver</Value>
                 <Value>Designer</Value>
-                <Value>Copilot</Value>
-                <Value>Client Manager</Value>
             </Property>
             <Property name="Perform Aggregation Review">
                 <!-- Note: originally this permission had been granted to Aggregator, but it
@@ -3895,8 +3864,6 @@
                 <Value>Stress Reviewer</Value>
                 <Value>Approver</Value>
                 <Value>Designer</Value>
-                <Value>Copilot</Value>
-                <Value>Client Manager</Value>
             </Property>
             <Property name="Perform Final Fix">
                 <Value>Submitter</Value>
@@ -3908,8 +3875,6 @@
                 <Value>Submitter</Value>
                 <Value>Final Reviewer</Value>
                 <Value>Approver</Value>
-                <Value>Copilot</Value>
-                <Value>Client Manager</Value>
             </Property>
             <Property name="Perform Final Review">
                 <Value>Final Reviewer</Value>
@@ -3922,8 +3887,6 @@
                 <Value>Final Reviewer</Value>
                 <Value>Approver</Value>
                 <Value>Designer</Value>
-                <Value>Copilot</Value>
-                <Value>Client Manager</Value>
             </Property>
             <Property name="Submit Scorecard Comment">
                 <Value>Submitter</Value>
@@ -3939,8 +3902,6 @@
                 <Value>Observer</Value>
                 <Value>Submitter</Value>
                 <Value>Approver</Value>
-                <Value>Copilot</Value>
-                <Value>Client Manager</Value>
             </Property>
             <Property name="Edit Any Scorecard">
                 <Value>Global Manager</Value>
@@ -3960,15 +3921,13 @@
                 <Value>Aggregator</Value>
                 <Value>Final Reviewer</Value>
                 <Value>Approver</Value>
-                <Value>Copilot</Value>
-                <Value>Client Manager</Value>
             </Property>
-
+           
             <Property name="Create Payment">
                 <Value>Global Payment Manager</Value>
                 <Value>Payment Manager</Value>
             </Property>
-
+            
         </Property>
 
         <Property name="PhaseGrouping">

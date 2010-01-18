@@ -18,6 +18,10 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
+
+import com.cronos.onlinereview.phases.ContestDependencyAutomation;
+import com.topcoder.management.phase.PhaseManagementException;
+import com.topcoder.management.project.PersistenceException;
 import com.topcoder.web.common.eligibility.ContestEligibilityServiceLocator;
 
 import javax.ejb.CreateException;
@@ -67,7 +71,6 @@ import com.topcoder.search.builder.SearchBuilderException;
 import com.topcoder.search.builder.filter.AndFilter;
 import com.topcoder.search.builder.filter.Filter;
 import com.topcoder.search.builder.filter.InFilter;
-import com.topcoder.service.contest.eligibilityvalidation.ContestEligibilityValidatorException;
 import com.topcoder.shared.util.DBMS;
 import com.topcoder.util.errorhandling.BaseException;
 import com.topcoder.web.ejb.project.ProjectRoleTermsOfUse;
@@ -122,8 +125,18 @@ import com.topcoder.web.ejb.user.UserTermsOfUseLocator;
  *   </ol>
  * </p>
  *
- * @author George1, real_vg, pulky
- * @version 1.4
+ * <p>
+ * Version 1.5 (Contest Dependency Automation v1.0) Change notes:
+ *   <ol>
+ *     <li>
+ *       Updated {@link #saveProjectPhases(boolean, HttpServletRequest, LazyValidatorForm, Project, Map, List, boolean)} 
+ *       method to adjust the start times (if necessary) for projects which depend on current project being updated.
+ *     </li>
+ *   </ol>
+ * </p>
+ *
+ * @author George1, real_vg, pulky, TCSDEVELOPER
+ * @version 1.5
  */
 public class ProjectActions extends DispatchAction {
 
@@ -1450,14 +1463,51 @@ public class ProjectActions extends DispatchAction {
                     Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
         }
 
+        // Adjust the depending projects timelines if necessary
+        String operator = Long.toString(AuthorizationHelper.getLoggedInUserId(request));
+        ContestDependencyAutomation auto = new ContestDependencyAutomation();
+        Set<Long> visited = new HashSet<Long>();
+        adjustDependentProjects(phProject, phaseManager, auto, visited, operator);
+
         // Save the phases at the persistence level
-        phaseManager.updatePhases(phProject, Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
+        phaseManager.updatePhases(phProject, operator);
         // TODO: The following line was added just to be safe. May be unneeded as well as another one
         projectPhases = phProject.getAllPhases();
         // Sort project phases
         Arrays.sort(projectPhases, new Comparators.ProjectPhaseComparer());
 
         return projectPhases;
+    }
+
+    /**
+     * <p>Adjusts the timelines for projects depending on specified project if necessary.</p>
+     *
+     * @param mainProject a <code>Project</code> providing the project details.
+     * @param phaseManager a <code>PhaseManager</code> to be used for managing phases.
+     * @param auto a <code>ContestDependencyAutomation</code> to be used for processing dependencies.
+     * @param visited a <code>Set</code> collecing the IDs for visited projects.
+     * @param operator a <code>String</code> providing the operator for audit.
+     * @throws PhaseManagementException if an unexpected error occurs.
+     * @throws PersistenceException if an unexpected error occurs.
+     */
+    private void adjustDependentProjects(com.topcoder.project.phases.Project mainProject, PhaseManager phaseManager,
+                                         ContestDependencyAutomation auto, Set<Long> visited, String operator)
+        throws PhaseManagementException, PersistenceException {
+        long mainProjectId = mainProject.getId();
+        if (!visited.contains(mainProjectId)) {
+            visited.add(mainProjectId);
+            List<Phase[]> phases = auto.adjustDependingProjectPhases(mainProject.getAllPhases());
+            for (Phase[] p : phases) {
+                if (p.length > 0) {
+                    phaseManager.updatePhases(p[0].getProject(), operator);
+                }
+            }
+            for (Phase[] p : phases) {
+                if (p.length > 0) {
+                    adjustDependentProjects(p[0].getProject(), phaseManager, auto, visited, operator);
+                }
+            }
+        }
     }
 
     /**
