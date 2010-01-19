@@ -380,5 +380,7 @@
 	<classpathentry kind="lib" path="lib/tcs/contest_eligibility_validation_client/1.0.0/contest_eligibility_validation_client.jar"/>
 	<classpathentry kind="lib" path="lib/tcs/phase_management_persistence/1.0.2/phase_management_persistence.jar"/>
 	<classpathentry kind="lib" path="lib/tcs/project_management_persistence/1.1.2/project_management_persistence.jar"/>
+    <classpathentry kind="lib" path="lib/third_party/jivebase.jar"/>
+    <classpathentry kind="lib" path="lib/third_party/jiveforums.jar"/>
 	<classpathentry kind="output" path="build/classes"/>
 </classpath>

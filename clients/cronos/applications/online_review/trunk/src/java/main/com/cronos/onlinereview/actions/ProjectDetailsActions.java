@@ -1794,10 +1794,17 @@ public class ProjectDetailsActions extends DispatchAction {
                 }
             }
         }
+
+        String tempStr = (String) verification.getProject().getProperty("Developer Forum ID");
+        long forumId = 0;
+        if (tempStr != null && tempStr.trim().length() != 0) {
+            forumId = Long.parseLong(tempStr, 10);
+        }
         
         // Only remove forum permissions if the user has no roles left.
         if (!hasOtherRoles) {
             ActionsHelper.removeForumPermissions(verification.getProject(), AuthorizationHelper.getLoggedInUserId(request));
+            ActionsHelper.removeForumWatch(verification.getProject(), AuthorizationHelper.getLoggedInUserId(request), forumId);
         }
 
         return ActionsHelper.cloneForwardAndAppendToPath(

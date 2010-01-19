@@ -858,7 +858,11 @@ public class ProjectActions extends DispatchAction {
 
         // since Online Review Update - Add Project Dropdown v1.0
         // Populate project notes
-        project.setProperty("Billing Project", lazyForm.get("billing_project"));
+        if (AuthorizationHelper.hasUserRole(request, Constants.MANAGER_ROLE_NAME)
+                 || AuthorizationHelper.hasUserRole(request, Constants.GLOBAL_MANAGER_ROLE_NAME)) {
+                project.setProperty("Billing Project", lazyForm.get("billing_project"));
+        }
+        
 
         // TODO: Project status change, includes additional explanation to be concatenated
 
@@ -1741,6 +1745,7 @@ public class ProjectActions extends DispatchAction {
         Set<Long> oldUsers = new HashSet<Long>();
         Set<Long> deletedUsers = new HashSet<Long>();
         Set<Long> newSubmitters = new HashSet<Long>();
+        Set<Long> newUsersForumWatch = new HashSet<Long>();
 
         // 0-index resource is skipped as it is a "dummy" one
         boolean allResourcesValid=true;
@@ -1895,6 +1900,12 @@ public class ProjectActions extends DispatchAction {
                 resource.setProperty(Constants.APPEALS_COMPLETED_EARLY_PROPERTY_KEY, Constants.NO_VALUE);
             }
 
+            if (resourceRole.equals("Manager") || resourceRole.equals("Observer") 
+                     || resourceRole.equals("Designer")  || resourceRole.equals("Client Manager")  || resourceRole.equals("Copilot"))
+            {   
+                newUsersForumWatch.add(user.getId());
+            }
+
             // make sure "Appeals Completed Early" flag is not set if the role is not submitter.
             if (resourceRoleChanged && !resourceRole.equals(Constants.SUBMITTER_ROLE_NAME)) {
                 resource.setProperty(Constants.APPEALS_COMPLETED_EARLY_PROPERTY_KEY, null);
@@ -1955,6 +1966,16 @@ public class ProjectActions extends DispatchAction {
         // Add forum permissions for all new users and remove permissions for removed resources.
         ActionsHelper.removeForumPermissions(project, deletedUsers);
         ActionsHelper.addForumPermissions(project, newUsers);
+
+        long forumId = 0;
+        if (project.getProperty("Developer Forum ID") != null 
+              && ((Long)project.getProperty("Developer Forum ID")).longValue() != 0)
+        {
+            forumId = ((Long)project.getProperty("Developer Forum ID")).longValue();
+        }
+
+        ActionsHelper.removeForumWatch(project, deletedUsers, forumId);
+        ActionsHelper.addForumWatch(project, newUsersForumWatch, forumId);
     }
 
     /**
