@@ -18,6 +18,7 @@ import java.util.TreeMap;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.topcoder.search.builder.filter.*;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
@@ -61,10 +62,6 @@ import com.topcoder.management.scorecard.data.ScorecardType;
 import com.topcoder.message.email.EmailEngine;
 import com.topcoder.message.email.TCSEmailMessage;
 import com.topcoder.project.phases.Phase;
-import com.topcoder.search.builder.filter.AndFilter;
-import com.topcoder.search.builder.filter.EqualToFilter;
-import com.topcoder.search.builder.filter.Filter;
-import com.topcoder.search.builder.filter.InFilter;
 import com.topcoder.servlet.request.FileUpload;
 import com.topcoder.servlet.request.FileUploadResult;
 import com.topcoder.servlet.request.UploadedFile;
@@ -669,8 +666,14 @@ public class ProjectDetailsActions extends DispatchAction {
         // Build filters
         Filter filterProject = ResourceFilterBuilder.createProjectIdFilter(project.getId());
 
-        Filter filterRole = ResourceFilterBuilder.createResourceRoleIdFilter(
-                ActionsHelper.findResourceRoleByName(allResourceRoles, "Manager").getId());
+        Filter filterRole = new OrFilter(
+                new OrFilter(
+                        ResourceFilterBuilder.createResourceRoleIdFilter(
+                            ActionsHelper.findResourceRoleByName(allResourceRoles, "Manager").getId()),
+                        ResourceFilterBuilder.createResourceRoleIdFilter(
+                            ActionsHelper.findResourceRoleByName(allResourceRoles, "Client Manager").getId())),
+                ResourceFilterBuilder.createResourceRoleIdFilter(
+                        ActionsHelper.findResourceRoleByName(allResourceRoles, "Copilot").getId()));
 
         // Build final filter
         Filter filter = new AndFilter(filterProject, filterRole);
