@@ -1,11 +1,11 @@
 <?xml version="1.0" ?>
 <!DOCTYPE CMConfig [
        <!ENTITY localFileUploadDir "/home/tcs/downloads">
-       <!ENTITY phasesEmailTemplate "/home/tcs/web/conf/templates/email_template.txt">
-       <!ENTITY winnersEmailTemplate "/home/tcs/web/conf/templates/winners_email_template.txt">
-       <!ENTITY timelineTemplateDir "/home/tcs/web/conf/templates">
-       <!ENTITY contactManagersTemplate "/home/tcs/web/conf/templates/contact_manager_template.txt">
-       <!ENTITY pactJNDIAddress "jnp://63.118.154.181:1199">
+       <!ENTITY phasesEmailTemplate "/home/tcs/onlinereview/templates/email_template.txt">
+       <!ENTITY winnersEmailTemplate "/home/tcs/onlinereview/templates/winners_email_template.txt">
+       <!ENTITY timelineTemplateDir "/home/tcs/onlinereview/templates">
+       <!ENTITY contactManagersTemplate "/home/tcs/onlinereview/templates/contact_manager_template.txt">
+       <!ENTITY pactJNDIAddress "jnp://localhost:1199">
 ]>
 <CMConfig xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
           xsi:noNamespaceSchemaLocation="file://Configuration_Manager_Schema.xsd">
@@ -467,7 +467,7 @@
     -->
     <Config name="com.topcoder.message.email.EmailEngine">
         <Property name="smtp_host_addr">
-            <Value>63.118.154.162</Value>
+            <Value>localhost</Value>
         </Property>
         <Property name="smtp_host_port">
             <Value>25</Value>

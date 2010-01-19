@@ -355,6 +355,8 @@
     <property name="forums.jar.name" value="forums.jar" />
     <property name="forums.jar" value="${tcs_libdir}/${forums.jar.name}" />
 
+
+
     <!-- 3rd Party Dependencies  -->
     <property name="ifx-jdbc.jar" value="${ext_libdir}/ifx-jdbc.jar" />
     <property name="jstl.jar" value="${ext_libdir}/jstl.jar" />
@@ -376,6 +378,12 @@
     <property name="httpunit.jar" value="${ext_libdir}/testing/httpunit-1.6.jar" />
     <property name="junit.jar" value="${ext_libdir}/testing/junit-3.8.1.jar" />
     <property name="nekohtml.jar" value="${ext_libdir}/testing/nekohtml-0.9.1.jar" />
+
+    <property name="jiveforums.jar.name" value="jiveforums.jar" />
+    <property name="jiveforums.jar" value="${ext_libdir}/${jiveforums.jar.name}" />
+
+    <property name="jivebase.jar.name" value="jivebase.jar" />
+    <property name="jivebase.jar" value="${ext_libdir}/${jivebase.jar.name}" />
 <!--
     <property name="servlet-api.jar" value="${ext_libdir}/servlet-api.jar" />
     <property name="javax.servlet.jsp.jar" value="${ext_libdir}/javax.servlet.jsp.jar" />
@@ -450,7 +458,9 @@
     	<pathelement location="${tcsUtil.jar}" />
         <pathelement location="${tcwebcommon.jar}" />
         <pathelement location="${shared.jar}" />
-	<pathelement location="${forums.jar}" />
+	    <pathelement location="${forums.jar}" />
+        <pathelement location="${jiveforums.jar}" />
+        <pathelement location="${jivebase.jar}" />
     </path>
 
     <path id="cactus.classpath">
@@ -683,7 +693,7 @@ Note: The security manager that comes with the app may not be compatible with th
             <lib dir="${jar_tcs_libdir}/${projectEJB.path}" includes="*.jar" />
             <lib dir="${jar_tcs_libdir}/${userEJB.path}" includes="*.jar" />
             <lib dir="${jar_tcs_libdir}/${termsOfUseEJB.path}" includes="*.jar" />
-            <lib dir="${jar_tcs_libdir}/${contest_eligibility_validation_client.path}" includes="*.jar" />
+       <!--     <lib dir="${jar_tcs_libdir}/${contest_eligibility_validation_client.path}" includes="*.jar" />  -->
         	<lib dir="${jar_tcs_libdir}" includes="*.jar" />
             <lib dir="${jar_ext_libdir}" includes="*.jar" excludes="mail.jar, ejb-2_0.jar" />
 

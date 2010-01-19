@@ -3170,6 +3170,10 @@ public class ActionsHelper {
         // Gather the roles the user has for current request
         AuthorizationHelper.gatherUserRoles(request, pid);
 
+        request.setAttribute("isAdmin",
+                Boolean.valueOf(AuthorizationHelper.hasUserRole(request, Constants.MANAGER_ROLE_NAME) || 
+                                    AuthorizationHelper.hasUserRole(request, Constants.GLOBAL_MANAGER_ROLE_NAME)));
+
         // If permission parameter was not null or empty string ...
         if (permission != null) {
             // ... verify that this permission is granted for currently logged in user
@@ -4188,6 +4192,45 @@ public class ActionsHelper {
     public static void removeForumPermissions(Project project, Long user) throws BaseException {
         removeForumPermissions(project, userToUsers(user));
     }
+
+    public static void addForumWatch(Project project, Collection<Long> users, long forumId) throws BaseException {
+        try {
+            Forums forumBean = getForumBean();
+            
+            if (forumId != 0) {
+                for (Long userId : users) {
+                      forumBean.createCategoryWatch(userId, forumId);
+                }
+            }
+        } catch (Exception e) {
+            throw new BaseException("Error adding forum permissions for project id " + project.getId(), e);
+        }
+    }
+
+    public static void addForumWatch(Project project, Long user, long forumId) throws BaseException {
+        addForumWatch(project, userToUsers(user), forumId);
+    }
+
+    public static void removeForumWatch(Project project, Collection<Long> users, long forumId) throws BaseException {
+        try {
+            Forums forumBean = getForumBean();
+
+            if (forumId != 0) {
+                for (Long userId : users) {
+                    forumBean.deleteCategoryWatch(userId, forumId);
+                }
+            }
+        } catch (Exception e) {
+            throw new BaseException("Error removing forum permissions for project id " + project.getId(), e);
+        }
+    }
+
+    public static void removeForumWatch(Project project, Long user, long forumId) throws BaseException {
+        removeForumWatch(project, userToUsers(user), forumId);
+    }
+
+
+    
     
     /**
      * <p>Updates the payments for existing submitters.</p>

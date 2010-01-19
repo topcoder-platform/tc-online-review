@@ -44,6 +44,7 @@
             <form-property name="explanation" type="java.lang.String" />
             <form-property name="status" type="java.lang.Long" />
             <form-property name="status_explanation" type="java.lang.String" />
+            <form-property name="billing_project" type="java.lang.Long" />
             
             <form-property name="resources_role" type="java.lang.Long[]" />
             <form-property name="resources_phase" type="java.lang.String[]" />
