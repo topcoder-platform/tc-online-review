@@ -1903,7 +1903,12 @@ public class ProjectActions extends DispatchAction {
             if (resourceRole.equals("Manager") || resourceRole.equals("Observer") 
                      || resourceRole.equals("Designer")  || resourceRole.equals("Client Manager")  || resourceRole.equals("Copilot"))
             {   
-                newUsersForumWatch.add(user.getId());
+                // no need for Applications/Components
+                if (!resource.getProperty("Handle").equals("Applications") && !resource.getProperty("Handle").equals("Components"))
+                {
+                    newUsersForumWatch.add(user.getId());
+                }
+                
             }
 
             // make sure "Appeals Completed Early" flag is not set if the role is not submitter.
