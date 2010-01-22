@@ -10,7 +10,7 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.topcoder.management.project.persistence.link.CyclicDependencyException;
+import com.topcoder.management.project.persistence.link.ProjectLinkCycleException;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
@@ -206,7 +206,7 @@ public class ProjectLinksActions extends DispatchAction {
         }
         try {
             linkManager.updateProjectLinks(project.getId(), paramDestProjectIds, paramTypeIds);
-        } catch (CyclicDependencyException e) {
+        } catch (ProjectLinkCycleException e) {
             LoggingHelper.logException(e);
             request.setAttribute("errorTitle", messages.getMessage("Error.Title.General"));
             request.setAttribute("errorMessage", e.getMessage());

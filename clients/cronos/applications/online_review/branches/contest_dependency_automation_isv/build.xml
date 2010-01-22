@@ -985,11 +985,11 @@ Note: The security manager that comes with the app may not be compatible with th
         <compile_component component="online_review_phases" version="1.0.6" path="../Components/online_review_phases"/>
     </target>
     <target name="compile_component_3">
-        <compile_component component="project_management" version="1.0.1" path="../Components/project_management"/>
-    </target>
-    <target name="compile_component_4">
         <compile_component component="project_management_persistence" version="1.1.2"
                            path="../Components/project_manager_persistence"/>
+    </target>
+    <target name="compile_component_4">
+        <compile_component component="project_management" version="1.0.1" path="../Components/project_management"/>
     </target>
     <target name="compile_component_5">
         <compile_component component="phase_management" version="1.0.3"
