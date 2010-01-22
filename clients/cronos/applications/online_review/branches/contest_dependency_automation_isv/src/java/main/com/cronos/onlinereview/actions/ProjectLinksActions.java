@@ -45,7 +45,7 @@ import com.topcoder.util.errorhandling.BaseException;
  * CyclicDependencyError.
  * </p>
  *
- * @author TCSDEVELOPER
+ * @author BeBetter, isv
  * @version 1.1
  * @since OR Project Linking Assembly
  */

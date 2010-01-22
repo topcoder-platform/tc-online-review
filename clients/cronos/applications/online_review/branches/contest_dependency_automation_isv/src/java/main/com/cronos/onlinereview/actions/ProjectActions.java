@@ -135,7 +135,7 @@ import com.topcoder.web.ejb.user.UserTermsOfUseLocator;
  *   </ol>
  * </p>
  *
- * @author George1, real_vg, pulky, TCSDEVELOPER
+ * @author George1, real_vg, pulky, isv
  * @version 1.5
  */
 public class ProjectActions extends DispatchAction {
@@ -1038,16 +1038,25 @@ public class ProjectActions extends DispatchAction {
 
 
     /**
-     * TODO: Document it
+     * <p>Updates the list of phases associated with the specified project. Optionally the method accepts the list of
+     * project's phases which are to be deleted.</p>
      *
-     * @return
-     * @param newProject
-     * @param request
-     * @param lazyForm
-     * @param project
-     * @param phasesJsMap TODO
-     * @param phasesToDelete TODO
-     * @throws BaseException
+     * <p>This method has the following side-effect: if the end time for <code>Final Review</code> phase for specified
+     * project is extended then start times for <code>Registration</code> and <code>Submission</code> phases for
+     * projects which depend on this project (directly or indirectly) are also extended by the same amount of time.
+     * However nothing happens to depending projects if end time for <code>Final Review</code> phase for specified
+     * project is shrinked.</p>
+     *
+     * @param newProject <code>true</code> if project is new project; <code>false</code> if project is existing project
+     *        which is updated.
+     * @param request an <code>HttpServletRequest</code> representing current incoming request from the client.
+     * @param lazyForm a <code>LazyValidatorForm</code> providing the submitted form mapped to specified request.
+     * @param project a <code>Project</code> providing details for project associated with the phases.
+     * @param phasesJsMap a <code>Map</code> mapping phase IDs to phases.
+     * @param phasesToDelete a <code>List</code> listing the existing phases for specified project which are to be
+     *        deleted.
+     * @return a <code>Phase</code> array listing the updated phases associated with the specified project. 
+     * @throws BaseException if an unexpected error occurs.
      */
     private Phase[] saveProjectPhases(boolean newProject, HttpServletRequest request, LazyValidatorForm lazyForm,
             Project project, Map<Object, Phase> phasesJsMap, List<Phase> phasesToDelete, boolean statusHasChanged)
