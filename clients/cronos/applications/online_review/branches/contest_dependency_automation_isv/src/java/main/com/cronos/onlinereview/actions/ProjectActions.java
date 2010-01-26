@@ -19,9 +19,10 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
 
-import com.cronos.onlinereview.phases.ContestDependencyAutomation;
+import com.topcoder.management.phase.ContestDependencyAutomation;
 import com.topcoder.management.phase.PhaseManagementException;
 import com.topcoder.management.project.PersistenceException;
+import com.topcoder.management.project.link.ProjectLinkManager;
 import com.topcoder.web.common.eligibility.ContestEligibilityServiceLocator;
 
 import javax.ejb.CreateException;
@@ -1457,6 +1458,7 @@ public class ProjectActions extends DispatchAction {
 
         // FIXME: Refactor it
         ProjectManager projectManager = ActionsHelper.createProjectManager(request);
+        ProjectLinkManager projectLinkManager = ActionsHelper.createProjectLinkManager(request);
 
         // Set project rating date
         ActionsHelper.setProjectRatingDate(project, projectPhases, (Format) request.getAttribute("date_format"));
@@ -1474,7 +1476,8 @@ public class ProjectActions extends DispatchAction {
 
         // Adjust the depending projects timelines if necessary
         String operator = Long.toString(AuthorizationHelper.getLoggedInUserId(request));
-        ContestDependencyAutomation auto = new ContestDependencyAutomation();
+        ContestDependencyAutomation auto
+            = new ContestDependencyAutomation(phaseManager, projectManager, projectLinkManager);
         Set<Long> visited = new HashSet<Long>();
         adjustDependentProjects(phProject, phaseManager, auto, operator);
 
@@ -1494,7 +1497,6 @@ public class ProjectActions extends DispatchAction {
      * @param mainProject a <code>Project</code> providing the project details.
      * @param phaseManager a <code>PhaseManager</code> to be used for managing phases.
      * @param auto a <code>ContestDependencyAutomation</code> to be used for processing dependencies.
-     * @param visited a <code>Set</code> collecing the IDs for visited projects.
      * @param operator a <code>String</code> providing the operator for audit.
      * @throws PhaseManagementException if an unexpected error occurs.
      * @throws PersistenceException if an unexpected error occurs.

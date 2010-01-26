@@ -1,4 +1,5 @@
 <?xml version="1.0" ?>
+<!--
 <!DOCTYPE CMConfig [
        <!ENTITY localFileUploadDir "/home/tcs/downloads">
        <!ENTITY phasesEmailTemplate "/home/tcs/onlinereview/templates/email_template.txt">
@@ -7,6 +8,7 @@
        <!ENTITY contactManagersTemplate "/home/tcs/onlinereview/templates/contact_manager_template.txt">
        <!ENTITY pactJNDIAddress "jnp://localhost:1199">
 ]>
+-->
 <CMConfig>
 <!-- [OR-584] don't need this anymore
     <!ENTITY assignmentDocumentsFlag "false">
@@ -1495,6 +1497,23 @@
         </Property>
         <Property name="Handlers">
             <!-- All handlers are registered directly from application's code -->
+        </Property>
+        <Property name="ProjectManager">
+            <Property name="className">
+                <Value>com.topcoder.management.project.ProjectManagerImpl</Value>
+            </Property>
+            <Property name="namespace">
+                <Value>com.topcoder.management.project</Value>
+            </Property>
+        </Property>
+
+        <Property name="ProjectLinkManager">
+            <Property name="className">
+                <Value>com.topcoder.management.project.persistence.link.ProjectLinkManagerImpl</Value>
+            </Property>
+            <Property name="namespace">
+                <Value>com.topcoder.management.project.persistence.link.ProjectLinkManagerImpl</Value>
+            </Property>
         </Property>
     </Config>
 

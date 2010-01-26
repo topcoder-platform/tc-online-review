@@ -126,6 +126,23 @@
                 <Value>com.topcoder.util.idgenerator.IDGeneratorImpl</Value>
             </Property>
         </Property>
+        <Property name="ProjectManager">
+            <Property name="className">
+                <Value>com.topcoder.management.project.ProjectManagerImpl</Value>
+            </Property>
+            <Property name="namespace">
+                <Value>com.topcoder.management.project</Value>
+            </Property>
+        </Property>
+
+        <Property name="ProjectLinkManager">
+            <Property name="className">
+                <Value>com.topcoder.management.project.persistence.link.ProjectLinkManagerImpl</Value>
+            </Property>
+            <Property name="namespace">
+                <Value>com.topcoder.management.project.persistence.link.ProjectLinkManagerImpl</Value>
+            </Property>
+        </Property>
         <Property name="connectionName">
             <Value>tcs</Value>
         </Property>
