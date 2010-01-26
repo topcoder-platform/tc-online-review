@@ -909,6 +909,13 @@ Note: The security manager that comes with the app may not be compatible with th
         -->
     </target>
 
+     <target name="package-phase-handler-extend" depends="compile">
+        <jar jarfile="${build_distdir}/phase_handler_extend.jar">
+            <zipfileset dir="${build_classdir}" includes="com/cronos/onlinereview/phases/**/*.class"/>
+            <metainf dir="${javamain}/com/cronos/onlinereview/phases/" includes="*.xml"/>
+        </jar>
+    </target>
+
     <!-- ************************************************************************** -->
     <!-- ************************ END REMOVE EVERYTHING ***************************** -->
     <!-- ************************************************************************** -->
