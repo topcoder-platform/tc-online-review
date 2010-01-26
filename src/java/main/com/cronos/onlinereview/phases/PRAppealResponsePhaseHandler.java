@@ -40,6 +40,9 @@ public class PRAppealResponsePhaseHandler extends AppealsResponsePhaseHandler {
 			.getLog(PRAppealResponsePhaseHandler.class.getName());
 	/** constant for "Project Name" project info. */
 	private static final String PROJECT_NAME = "Project Name";
+
+    /** constant for spec reivew project category. */
+	private static final long PROJECT_CATEGORY_SPEC_REVIEW = 27;
 	
 	/** winners email template source type */
 	private String winnersEmailTemplateSource;
@@ -193,6 +196,12 @@ public class PRAppealResponsePhaseHandler extends AppealsResponsePhaseHandler {
         log.log(Level.DEBUG, "we're in the send email method");
        String winnerId = (String) project.getProperty("Winner External Reference ID");
        String runnerUpId = (String) project.getProperty("Runner-up External Reference ID");
+
+        // dont send out for spec review
+       if (project.getProjectCategory().getId() == PROJECT_CATEGORY_SPEC_REVIEW)
+       {
+           return;
+       }
 
         if (winnerId!=null) {
 			sendWinnersEmailForUser(project,
