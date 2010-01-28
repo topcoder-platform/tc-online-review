@@ -16,6 +16,7 @@
     <property name="srcdir" value="src" />
     <property name="tcs_libdir" value="lib/tcs" />
     <property name="ext_libdir" location="lib/third_party" />
+    <property name="shared_libdir" value="lib/shared" />
     <property name="jar_tcs_libdir" value="lib/tcs" />
     <property name="jar_ext_libdir" location="lib/third_party" />
     <property name="docsdir" value="docs" />
@@ -344,16 +345,16 @@
     <property name="userEJB.jar" value="${tcs_libdir}/${userEJB.path}/${userEJB.jar.name}" />
 
     <property name="shared.jar.name" value="shared.jar" />
-    <property name="shared.jar" value="${tcs_libdir}/${shared.jar.name}" />
+    <property name="shared.jar" value="${shared_libdir}/${shared.jar.name}" />
 
     <property name="tcsUtil.jar.name" value="tcsUtil.jar" />
     <property name="tcsUtil.jar" value="${tcs_libdir}/${tcsUtil.jar.name}" />
 
     <property name="tcwebcommon.jar.name" value="tcwebcommon.jar" />
-    <property name="tcwebcommon.jar" value="${tcs_libdir}/${tcwebcommon.jar.name}" />
+    <property name="tcwebcommon.jar" value="${shared_libdir}/${tcwebcommon.jar.name}" />
 
     <property name="forums.jar.name" value="forums.jar" />
-    <property name="forums.jar" value="${tcs_libdir}/${forums.jar.name}" />
+    <property name="forums.jar" value="${shared_libdir}/${forums.jar.name}" />
 
 
 
