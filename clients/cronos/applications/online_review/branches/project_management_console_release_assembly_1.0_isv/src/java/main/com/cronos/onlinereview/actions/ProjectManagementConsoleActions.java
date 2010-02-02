@@ -1,0 +1,758 @@
+/*
+ * Copyright (C) 2010 TopCoder Inc., All Rights Reserved.
+ */
+package com.cronos.onlinereview.actions;
+
+import com.cronos.onlinereview.external.ConfigException;
+import com.cronos.onlinereview.external.ExternalUser;
+import com.cronos.onlinereview.external.RetrievalException;
+import com.cronos.onlinereview.external.UserRetrieval;
+import com.topcoder.management.phase.PhaseManager;
+import com.topcoder.management.phase.PhaseStatusEnum;
+import com.topcoder.management.project.Project;
+import com.topcoder.management.resource.Resource;
+import com.topcoder.management.resource.ResourceManager;
+import com.topcoder.management.resource.ResourceRole;
+import com.topcoder.management.resource.persistence.ResourcePersistenceException;
+import com.topcoder.project.phases.Phase;
+import com.topcoder.project.phases.PhaseStatus;
+import com.topcoder.util.errorhandling.BaseException;
+import org.apache.struts.action.ActionForm;
+import org.apache.struts.action.ActionForward;
+import org.apache.struts.action.ActionMapping;
+import org.apache.struts.action.ActionMessage;
+import org.apache.struts.actions.DispatchAction;
+import org.apache.struts.validator.LazyValidatorForm;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import static com.cronos.onlinereview.actions.Constants.GLOBAL_MANAGER_ROLE_NAME;
+import static com.cronos.onlinereview.actions.Constants.MANAGER_ROLE_NAME;
+import static com.cronos.onlinereview.actions.Constants.OBSERVER_ROLE_NAME;
+import static com.cronos.onlinereview.actions.Constants.DESIGNER_ROLE_NAME;
+import static com.cronos.onlinereview.actions.Constants.COPILOT_ROLE_NAME;
+import static com.cronos.onlinereview.actions.Constants.CLIENT_MANAGER_ROLE_NAME;
+import static com.cronos.onlinereview.actions.Constants.VIEW_PROJECT_MANAGEMENT_CONSOLE_PERM_NAME;
+import static com.cronos.onlinereview.actions.Constants.PROJECT_MANAGEMENT_PERM_NAME;
+import static com.cronos.onlinereview.actions.Constants.REGISTRATION_PHASE_NAME;
+import static com.cronos.onlinereview.actions.Constants.SUBMISSION_PHASE_NAME;
+import static com.cronos.onlinereview.actions.Constants.SUCCESS_FORWARD_NAME;
+
+/**
+ * <p>A <code>Struts</code> action to be used for handling requests related to <code>Project Management Console</code>
+ * in <code>Online Review</code> application.</p>
+ *
+ * <p>As of current version such requests may require adding new resources to designated projects, extend
+ * <code>Registration</code> or <code>Submission</code> phases for projects.</p>
+ *
+ * @author TCSDEVELOPER
+ * @version 1.0 (Online Review Project Management Console assembly v1.0)
+ */
+public class ProjectManagementConsoleActions extends DispatchAction {
+
+    /**
+     * <p>A <code>String</code> array listing the names for roles for resources which can be added to project by users
+     * with <code>Global Manager</code> role granted.</p>
+     */
+    private static String[] GLOBAL_MANAGER_ALLOWED_RESOURCE_ROLES
+        = new String[] {CLIENT_MANAGER_ROLE_NAME, COPILOT_ROLE_NAME, DESIGNER_ROLE_NAME, OBSERVER_ROLE_NAME};
+
+    /**
+     * <p>A <code>String</code> array listing the names for roles for resources which can be added to project by users
+     * with <code>Manager</code> role granted.</p>
+     */
+    private static String[] MANAGER_ALLOWED_RESOURCE_ROLES
+        = new String[] {CLIENT_MANAGER_ROLE_NAME, COPILOT_ROLE_NAME, DESIGNER_ROLE_NAME, OBSERVER_ROLE_NAME};
+
+    /**
+     * <p>A <code>String</code> array listing the names for roles for resources which can be added to project by users
+     * with <code>Client Manager</code> role granted.</p>
+     */
+    private static String[] CLIENT_MANAGER_ALLOWED_RESOURCE_ROLES
+        = new String[] {COPILOT_ROLE_NAME, DESIGNER_ROLE_NAME, OBSERVER_ROLE_NAME};
+
+    /**
+     * <p>A <code>String</code> array listing the names for roles for resources which can be added to project by users
+     * with <code>Copilot</code> role granted.</p>
+     */
+    private static String[] COPILOT_ALLOWED_RESOURCE_ROLES = new String[] {DESIGNER_ROLE_NAME, OBSERVER_ROLE_NAME};
+
+    /**
+     * <p>An <code>int</code> providing the minimum time (in hours) to be left before project's submission deadline in
+     * order to allow the extension of desired project phase. If less than specified time is left then phase extension
+     * must be prohibited.</p>
+     */
+    private static final int MINIMUM_HOURS_LEFT = 48;
+
+    /**
+     * <p>A <code>long</code> providing the constant value for single hour duration in milliseconds.</p>
+     */
+    private static final long HOUR_DURATION_IN_MILLIS = 60 * 60 * 1000L;
+
+    /**
+     * <p>Constructs new <code>ProjectManagementConsoleActions</code> instance. This implementation does nothing.</p>
+     */
+    public ProjectManagementConsoleActions() {
+    }
+
+    /**
+     * <p>Processes the incoming request which is a request for viewing the <code>Project Management Console</code> view
+     * for requested project.</p>
+     *
+     * <p>Verifies that current user is granted access to this functionality and is granted a permission to access the
+     * requested project details.</p>
+     *
+     * @param mapping an <code>ActionMapping</code> used for mapping the specified request to this action. 
+     * @param form an <code>ActionForm</code> providing the form parameters mapped to specified request.
+     * @param request an <code>HttpServletRequest</code> representing incoming request from the client.
+     * @param response an <code>HttpServletResponse</code> representing response outgoing to client.
+     * @return an <code>ActionForward</code> referencing the next view to be displayed to user.
+     * @throws BaseException if an unexpected error occurs.
+     */
+    public ActionForward viewConsole(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+                                     HttpServletResponse response) throws BaseException {
+        LoggingHelper.logAction(request);
+
+        // Gather the roles the user has for current request
+        AuthorizationHelper.gatherUserRoles(request);
+
+        // Check whether the user has the permission to perform this action. Also check that current user is granted a
+        // permission to access the details for requested project
+        CorrectnessCheckResult verification
+            = ActionsHelper.checkForCorrectProjectId(mapping, getResources(request), request,
+                                                     VIEW_PROJECT_MANAGEMENT_CONSOLE_PERM_NAME, false);
+
+        if (!verification.isSuccessful()) {
+            // If not then redirect the request to log-in page or report about the lack of permissions.
+            return verification.getForward();
+        } else {
+            // User is granted appropriate permissions - set the list of available roles for resources and flags
+            // affecting the Extend Registration/Submission Phase functionality
+            Project project = verification.getProject();
+            initProjectManagementConsole(request, project);
+            
+            return mapping.findForward(SUCCESS_FORWARD_NAME);
+        }
+    }
+
+    /**
+     * <p>Processes the incoming request which is a request for viewing the <code>Project Management Console</code> view
+     * for requested project.</p>
+     *
+     * <p>Verifies that current user is granted access to this functionality and is granted a permission to access the
+     * requested project details.</p>
+     *
+     * @param mapping an <code>ActionMapping</code> used for mapping the specified request to this action.
+     * @param form an <code>ActionForm</code> providing the form parameters mapped to specified request.
+     * @param request an <code>HttpServletRequest</code> representing incoming request from the client.
+     * @param response an <code>HttpServletResponse</code> representing response outgoing to client.
+     * @return an <code>ActionForward</code> referencing the next view to be displayed to user.
+     * @throws BaseException if an unexpected error occurs.
+     */
+    @SuppressWarnings("unchecked")
+    public ActionForward manageProject(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+                                       HttpServletResponse response) throws BaseException {
+        LoggingHelper.logAction(request);
+
+        // Gather the roles the user has for current request
+        AuthorizationHelper.gatherUserRoles(request);
+
+        // Check whether the user has the permission to perform this action. If not then redirect the request
+        // to log-in page or report about the lack of permissions. Also check that current user is granted a
+        // permission to access the details for requested project
+        CorrectnessCheckResult verification
+            = ActionsHelper.checkForCorrectProjectId(mapping, getResources(request), request,
+                                                     PROJECT_MANAGEMENT_PERM_NAME, false);
+        if (!verification.isSuccessful()) {
+            return verification.getForward();
+        } else {
+            // Validate the forms
+            final Project project = verification.getProject();
+            final Phase[] phases = getProjectPhases(request, project);
+
+            // Validate that Registration phase indeed exists and can be extended based on current state of the project
+            // and that valid positive amount of hours to extend is provided
+            final Phase registrationPhase = getRegistrationPhaseForExtension(phases);
+            int registrationExtensionHours = validatePhaseExtensionRequest(request, form, registrationPhase,
+                "registration_phase_extension", REGISTRATION_PHASE_NAME,
+                ConfigHelper.getRegistrationPhaseMaxExtensionHours());
+
+            // Validate that Submission phase indeed exists and can be extended based on current state of the project
+            // and that valid positive amount of hours to extend is provided
+            final Phase submissionPhase = getSubmissionPhaseForExtension(phases);
+            int submissionExtensionHours = validatePhaseExtensionRequest(request, form, submissionPhase,
+                "submission_phase_extension", SUBMISSION_PHASE_NAME,
+                ConfigHelper.getRegistrationPhaseMaxExtensionHours());
+
+            // Verify that new registration phase end time (if phase is going to be extended) will not exceed the
+            // end time for submission phase (despite whether it is also going to be extended or not)
+            if ((registrationPhase != null) && (registrationExtensionHours > 0)) {
+                Phase submissionPhaseCurrent = ActionsHelper.findPhaseByTypeName(phases, SUBMISSION_PHASE_NAME);
+                Date expectedSubmissionPhaseEndDate;
+                if ((submissionPhase != null) && (submissionExtensionHours > 0)) {
+                    expectedSubmissionPhaseEndDate = new Date(submissionPhase.getScheduledEndDate().getTime()
+                                                              + submissionExtensionHours * HOUR_DURATION_IN_MILLIS);
+                } else {
+                    expectedSubmissionPhaseEndDate = submissionPhaseCurrent.getScheduledEndDate();
+                }
+                Date expectedRegistrationEndDate = new Date(registrationPhase.getScheduledEndDate().getTime()
+                                                            + registrationExtensionHours * HOUR_DURATION_IN_MILLIS);
+                if (expectedRegistrationEndDate.after(expectedSubmissionPhaseEndDate)) {
+                    ActionsHelper.addErrorToRequest(request, "registration_phase_extension",
+                        new ActionMessage("error.com.cronos.onlinereview.actions.manageProject." 
+                                          + REGISTRATION_PHASE_NAME + ".AfterSubmission"));
+                }
+            }
+
+            // Validate the Add Resources form
+            Object[] caches = validateAddResourcesRequest(request, form);
+
+            // Check if there were any validation errors identified and return appropriate forward
+            if (ActionsHelper.isErrorsPresent(request)) {
+                initProjectManagementConsole(request, project);
+                return mapping.getInputForward();
+            } else {
+                handleRegistrationPhaseExtension(registrationPhase, registrationExtensionHours, request);
+                handleSubmissionPhaseExtension(submissionPhase, submissionExtensionHours, request);
+                handleResourceAddition(project, request, form, (Map<Long, ResourceRole>) caches[0],
+                                       (Map<String, ExternalUser>) caches[1]);
+                return ActionsHelper.cloneForwardAndAppendToPath(
+                    mapping.findForward(SUCCESS_FORWARD_NAME), "&pid=" + project.getId());
+            }
+        }
+    }
+
+    /**
+     * <p>Initializes the <code>Project Management Console</code> view. Binds necessary objects to current request. Such
+     * objects include: list of available roles for resources which can be added by current user to specified project;
+     * registration/submission phase durations and object presentations; flags indicating whether
+     * registration/submission phase can be exteneded or not.</p>
+     *
+     * @param request an <code>HttpServletRequest</code> representing incoming request from the client.
+     * @param project a <code>Project</code> providing the details for current project being managed by current user.
+     * @throws BaseException if an unexpected error occurs.
+     */
+    private static void initProjectManagementConsole(HttpServletRequest request, Project project) throws BaseException {
+        Phase[] phases = getProjectPhases(request, project);
+        setAvailableResourceRoles(request);
+        setRegistrationPhaseExtensionParameters(request, phases);
+        setSubmissionPhaseExtensionParameters(request, phases);
+    }
+
+    /**
+     * <p>Gets the phases for the specified project.</p>
+     *
+     * @param request an <code>HttpServletRequest</code> representing incoming request from the client.
+     * @param project a <code>Project</code> providing the details for current project being managed by current user.
+     * @return a <code>Phase</code> array listing the phases for specified project.
+     * @throws BaseException if an unexpected error occurs.
+     */
+    private static Phase[] getProjectPhases(HttpServletRequest request, Project project) throws BaseException {
+        // Get details for requested project
+        PhaseManager phaseManager = ActionsHelper.createPhaseManager(request, false);
+        com.topcoder.project.phases.Project phasesProject = phaseManager.getPhases(project.getId());
+        return phasesProject.getAllPhases();
+    }
+
+    /**
+     * <p>Validates the specified request which is expected to be a possible request for extending the specified phase.
+     * </p>
+     *
+     * <p>Verifies that if phase extension was requested then requested phase should exist and should be allowed to be
+     * extended and that valid number of hours for extension is provided. If either validation fails then respective
+     * validation error is bound to request.</p>
+     *
+     * @param request an <code>HttpServletRequest</code> representing incoming request from the client.
+     * @param form an <code>ActionForm</code> providing parameters mapped to this request.
+     * @param phase a <code>Phase</code> providing details for phase requested for extension.
+     * @param extensionHoursRequestParamName a <code>String</code> providing the name of form parameter which provides
+     *        the number of hours to extend specified phase for as set by current user.
+     * @param phaseTypeName a <code>String</code> providing the name of phase type.
+     * @param limit an <code>Integer</code> providing the maximum allowed number of hours to extend phase for.
+     *        <code>null</code> value indicates that there is no such limit set.
+     * @return an <code>int</code> providing the number of hours to extend the specified phase for or 0 if there were
+     *         validation errors encountered or if there were no request for extending the specified phase at all.
+     */
+    private static int validatePhaseExtensionRequest(HttpServletRequest request, ActionForm form, Phase phase,
+                                                     String extensionHoursRequestParamName, String phaseTypeName,
+                                                     Integer limit) {
+        int extensionHours = 0;
+        LazyValidatorForm lazyForm = (LazyValidatorForm) form;
+        String extensionHoursString = (String) lazyForm.get(extensionHoursRequestParamName);
+        if ((extensionHoursString != null) && (extensionHoursString.trim().length() > 0)) {
+            // If phase extension was requested then verify that phase exists and can be extended and that
+            // valid number of hours for extension was specified
+            if (phase == null) {
+                ActionsHelper.addErrorToRequest(request, extensionHoursRequestParamName,
+                    new ActionMessage("error.com.cronos.onlinereview.actions.manageProject." + phaseTypeName
+                                      + ".NotExtendable", MINIMUM_HOURS_LEFT));
+            } else {
+                try {
+                    extensionHours = Integer.parseInt(extensionHoursString);
+                    if ((extensionHours < 1) || ((limit != null) && (extensionHours > limit))) {
+                        ActionsHelper.addErrorToRequest(request, extensionHoursRequestParamName,
+                                new ActionMessage("error.com.cronos.onlinereview.actions."
+                                        + "manageProject." + phaseTypeName
+                                        + ".LimitExceeded",
+                                        1, limit == null ? "" : limit));
+                    }
+                } catch (NumberFormatException e) {
+                    ActionsHelper.addErrorToRequest(request, extensionHoursRequestParamName,
+                            new ActionMessage("error.com.cronos.onlinereview.actions.manageProject." + phaseTypeName
+                                    + ".NotNumeric"));
+                }
+            }
+        }
+        return extensionHours;
+    }
+
+    /**
+     * <p>Handles the specified request which may require the <code>Registration</code> phase to be extended by number
+     * of hours specified by current user.</p>
+     *
+     * @param registrationPhase a <code>Phase</code> representing <code>Registration</code> phase to be extended.
+     * @param extensionHours an <code>int</code> providing the number of hours to extend phase for.
+     * @param request an <code>HttpServletRequest</code> representing incoming request from the client.
+     * @throws BaseException if an unexpected error occurs.
+     */
+    private static void handleRegistrationPhaseExtension(Phase registrationPhase, int extensionHours,
+                                                         HttpServletRequest request) throws BaseException {
+        // Adjust registration phase end-time and status only if extension was indeed requested by user
+        if (extensionHours > 0) {
+            PhaseManager phaseManager = ActionsHelper.createPhaseManager(request, false);
+            if (isClosed(registrationPhase)) {
+                // Re-open closed Registration phase if necessary
+                PhaseStatus[] statuses = phaseManager.getAllPhaseStatuses();
+                PhaseStatus openPhaseStatus = ActionsHelper.findPhaseStatusById(statuses, PhaseStatusEnum.OPEN.getId());
+                registrationPhase.setPhaseStatus(openPhaseStatus);
+                registrationPhase.setActualEndDate(null);
+            }
+            long durationExtension = extensionHours * HOUR_DURATION_IN_MILLIS;
+            Date currentScheduledEndDate = registrationPhase.getScheduledEndDate();
+            Date newScheduledEndDate = new Date(currentScheduledEndDate.getTime() + durationExtension);
+            registrationPhase.setScheduledEndDate(newScheduledEndDate);
+            registrationPhase.setLength(registrationPhase.getLength() + durationExtension);
+            
+            com.topcoder.project.phases.Project phasesProject = registrationPhase.getProject();
+            recalculateScheduledDates(phasesProject.getAllPhases());
+            phaseManager.updatePhases(phasesProject, Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
+        }
+    }
+
+    /**
+     * <p>Handles the specified request which may require the <code>Submission</code> phase to be extended by number
+     * of hours specified by current user.</p>
+     *
+     * @param submissionPhase a <code>Phase</code> representing <code>Submission</code> phase to be extended.
+     * @param extensionHours an <code>int</code> providing the number of hours to extend phase for.
+     * @param request an <code>HttpServletRequest</code> representing incoming request from the client.
+     * @throws BaseException if an unexpected error occurs.
+     */
+    private static void handleSubmissionPhaseExtension(Phase submissionPhase, int extensionHours,
+                                                       HttpServletRequest request) throws BaseException {
+        // Adjust submission phase end-time only if Submission phase extension was indeed requested by user
+        if (extensionHours > 0) {
+            PhaseManager phaseManager = ActionsHelper.createPhaseManager(request, false);
+            long durationExtension = extensionHours * HOUR_DURATION_IN_MILLIS;
+            Date currentScheduledEndDate = submissionPhase.getScheduledEndDate();
+            Date newScheduledEndDate = new Date(currentScheduledEndDate.getTime() + durationExtension);
+            submissionPhase.setScheduledEndDate(newScheduledEndDate);
+            submissionPhase.setLength(submissionPhase.getLength() + durationExtension);
+            recalculateScheduledDates(submissionPhase.getProject().getAllPhases());
+            phaseManager.updatePhases(submissionPhase.getProject(),
+                                      Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
+        }
+    }
+
+    /**
+     * <p>Validates the specified request which is expected to be a possible request for assigning new resources to
+     * project being edited by current user.</p>
+     *
+     * <p>Verifies that current user indeed can add resources of requested roles and that all requested roles exist and
+     * that all requested users exist also. If any verification fails then respective error is bound to request.</p>
+     *
+     * @param request an <code>HttpServletRequest</code> representing incoming request from the client.
+     * @param form an <code>ActionForm</code> providing the form parameters mapped to specified request.
+     * @return an <code>Object</code> array of two elements. The first element provides mapping from role IDs to
+     *         <code>ResourceRole</code> objects. The second element provides the mapping from user handles to
+     *         <code>ExternalUser</code> objects.  
+     * @throws ResourcePersistenceException if an unexpected error occurs while accessing user project data store.
+     * @throws ConfigException if a configuration error is encountered while initializing user project data store.
+     */
+    private static Object[] validateAddResourcesRequest(HttpServletRequest request, ActionForm form)
+            throws ResourcePersistenceException, ConfigException {
+
+        ResourceManager resourceManager = ActionsHelper.createResourceManager(request);
+        LazyValidatorForm lazyForm = (LazyValidatorForm) form;
+        Long[] resourceRoleIds = (Long[]) lazyForm.get("resource_role_id");
+        String[] resourceHandles = (String[]) lazyForm.get("resource_handles");
+
+        // Validate that current user is indeed granted permission to add resources of requested roles and that
+        // requested roles exist and collect mapping from role IDs to ResourceRole objects to be used further if
+        // validation succeeds
+        Map<Long, ResourceRole> roleMapping = new HashMap<Long, ResourceRole>();
+        Map<String, ExternalUser> users = new HashMap<String, ExternalUser>();
+        ResourceRole[] availableRolesList = getAvailableResourceRoles(request);
+        UserRetrieval userRetrieval = ActionsHelper.createUserRetrieval(request);
+        ResourceRole[] existingResourceRoles = resourceManager.getAllResourceRoles();
+        for (int i = 0; i < resourceRoleIds.length; i++) {
+            Long requestedRoleId = resourceRoleIds[i];
+            ResourceRole existingRole = ActionsHelper.findResourceRoleById(existingResourceRoles, requestedRoleId);
+            if (existingRole == null) {
+                ActionsHelper.addErrorToRequest(request, "resource_role_id[" + i + "]",
+                    new ActionMessage("error.com.cronos.onlinereview.actions.manageProject.ResourceRole.InvalidId",
+                                      requestedRoleId));
+            } else {
+                ResourceRole role = ActionsHelper.findResourceRoleById(availableRolesList, requestedRoleId);
+                if (role == null) {
+                    ActionsHelper.addErrorToRequest(request, "resource_role_id[" + i + "]",
+                        new ActionMessage("error.com.cronos.onlinereview.actions.manageProject.ResourceRole.Denied",
+                                          existingRole.getName()));
+                } else {
+                    roleMapping.put(role.getId(), role);
+
+                    // Verify users
+                    String handlesParam = resourceHandles[i];
+                    if ((handlesParam != null) && (handlesParam.trim().length() > 0)) {
+                        String[] handles = handlesParam.split(",");
+                        for (String handle : handles) {
+                            handle = handle.trim();
+                            if (!users.containsKey(handle)) {
+                                try {
+                                    ExternalUser user = userRetrieval.retrieveUser(handle);
+                                    if (user != null) {
+                                        users.put(handle, user);
+                                    } else {
+                                        ActionsHelper.addErrorToRequest(request, "resource_handles[" + i + "]",
+                                            new ActionMessage("error.com.cronos.onlinereview.actions.manageProject."
+                                                              + "Resource.Unknown", handle));
+                                    }
+                                } catch (RetrievalException e) {
+                                    e.printStackTrace();
+                                    ActionsHelper.addErrorToRequest(request, "resource_handles[" + i + "]",
+                                        new ActionMessage("error.com.cronos.onlinereview.actions.manageProject."
+                                                          + "Resource.Unknown", handle));
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        return new Object[] {roleMapping, users};
+    }
+
+    /**
+     * <p>Handles the specified request which may require the new resources to be added to specified project by current
+     * user.</p>
+     *
+     * @param project a <code>Project</code> providing the details for current project to add new resources to.
+     * @param request an <code>HttpServletRequest</code> representing incoming request from the client.
+     * @param form an <code>ActionForm</code> providing the form parameters mapped to specified request.
+     * @param roleMapping a <code>Map</code> mapping resource role IDs to role details.
+     * @param users a <code>Map</code> mapping user handlers to user account details. 
+     * @throws ConfigException if a configuration error occurs while instantiating the the user data store.
+     * @throws RetrievalException if an error occurs while attempting to get the details for user account for requested
+     *         resource from persistent data store.
+     * @throws BaseException if an unexpected error occurs.
+     */
+    private static void handleResourceAddition(Project project, HttpServletRequest request, ActionForm form,
+                                               Map<Long, ResourceRole> roleMapping, Map<String, ExternalUser> users)
+            throws BaseException {
+        
+        LazyValidatorForm lazyForm = (LazyValidatorForm) form;
+        Long[] resourceRoleIds = (Long[]) lazyForm.get("resource_role_id");
+        String[] resourceHandles = (String[]) lazyForm.get("resource_handles");
+
+        ResourceManager resourceManager = ActionsHelper.createResourceManager(request);
+
+        // Now add resources for selected roles only if there were no validation errors
+        Set<Long> newUsersForumWatch = new HashSet<Long>();
+
+        for (int i = 0; i < resourceRoleIds.length; i++) {
+            Long resourceRoleId = resourceRoleIds[i];
+            String handlesParam = resourceHandles[i];
+            if ((handlesParam != null) && (handlesParam.trim().length() > 0)) {
+                String[] handles = handlesParam.split(",");
+                for (String handle : handles) {
+                    handle = handle.trim();
+                    Long userId = users.get(handle).getId();
+
+                    Resource resource = new Resource();
+                    resource.setProject(project.getId());
+                    resource.setProperty("Payment", null);
+                    resource.setProperty("Payment Status", "N/A");
+                    resource.setResourceRole(roleMapping.get(resourceRoleId));
+                    resource.setProperty("Handle", handle);
+                    resource.setProperty("External Reference ID", userId);
+
+                    newUsersForumWatch.add(userId);
+
+                    resourceManager.updateResource(resource,
+                            Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
+                }
+            }
+        }
+
+        // Add all assigned resources as watchers for forum associated with project
+        String forumId = (String) project.getProperty("Developer Forum ID");
+        if (forumId == null) {
+            forumId = "0";
+        }
+        ActionsHelper.addForumWatch(project, newUsersForumWatch, Long.parseLong(forumId));
+    }
+
+    /**
+     * <p>Gets the list of roles available for resources which current user can add to project. Analyzes the assigned
+     * roles for current user and returns appropriate list of available resource roles to specified request.</p>
+     *
+     * @param request an <code>HttpServletRequest</code> representing incoming request from the client to bind the list
+     *        of available roles to.
+     * @return a <code>ResourceRole</code> array listing the roles available for resources which current user can add to
+     *         project.
+     * @throws ResourcePersistenceException if an unexpected error occurs while instantiating resource manager.
+     */
+    private static ResourceRole[] getAvailableResourceRoles(HttpServletRequest request)
+        throws ResourcePersistenceException {
+        
+        ResourceManager resourceManager = ActionsHelper.createResourceManager(request);
+        ResourceRole[] existingResourceRoles = resourceManager.getAllResourceRoles();
+
+        if (AuthorizationHelper.hasUserRole(request, GLOBAL_MANAGER_ROLE_NAME)) {
+            return getAvailableRoles(GLOBAL_MANAGER_ALLOWED_RESOURCE_ROLES, existingResourceRoles);
+        } else if (AuthorizationHelper.hasUserRole(request, MANAGER_ROLE_NAME)) {
+            return getAvailableRoles(MANAGER_ALLOWED_RESOURCE_ROLES, existingResourceRoles);
+        } else if (AuthorizationHelper.hasUserRole(request, CLIENT_MANAGER_ROLE_NAME)) {
+            return getAvailableRoles(CLIENT_MANAGER_ALLOWED_RESOURCE_ROLES, existingResourceRoles);
+        } else if (AuthorizationHelper.hasUserRole(request, COPILOT_ROLE_NAME)) {
+            return getAvailableRoles(COPILOT_ALLOWED_RESOURCE_ROLES, existingResourceRoles);
+        }
+        return new ResourceRole[0];
+    }
+
+    /**
+     * <p>Gets the list of roles available for resources which current user can add to project.</p>
+     *
+     * @param allowedRoleNames a <code>String</code> array listing the names for roles for resources which can be added
+     *        by current user to project.
+     * @param existingResourceRoles a <code>ResourceRole</code> array listing all existing resource roles.
+     * @return a <code>ResourceRole</code> array listing the roles available for resources which current user can add to
+     *         project.
+     */
+    private static ResourceRole[] getAvailableRoles(String[] allowedRoleNames, ResourceRole[] existingResourceRoles) {
+        List<ResourceRole> availableRoles = new ArrayList<ResourceRole>();
+        for (String allowedRoleName : allowedRoleNames) {
+            ResourceRole role = ActionsHelper.findResourceRoleByName(existingResourceRoles, allowedRoleName);
+            if (role != null) {
+                availableRoles.add(role);
+            }
+        }
+        return availableRoles.toArray(new ResourceRole[availableRoles.size()]);
+    }
+
+    /**
+     * <p>Binds to specified request the list of roles available for resources which current user can add to project.
+     * Analyzes the assigned roles for current user and binds appropriate list of available resource roles to specified
+     * request.</p>
+     *
+     * @param request an <code>HttpServletRequest</code> representing incoming request from the client to bind the list
+     *        of available roles to.
+     * @throws ResourcePersistenceException if an unexpected error occurs while instantiating resource manager.
+     */
+    private static void setAvailableResourceRoles(HttpServletRequest request) throws ResourcePersistenceException {
+        ResourceManager resourceManager = ActionsHelper.createResourceManager(request);
+        ResourceRole[] existingResourceRoles = resourceManager.getAllResourceRoles();
+
+        if (AuthorizationHelper.hasUserRole(request, GLOBAL_MANAGER_ROLE_NAME)) {
+            setAvailableRoles(GLOBAL_MANAGER_ALLOWED_RESOURCE_ROLES, existingResourceRoles, request);
+        } else if (AuthorizationHelper.hasUserRole(request, MANAGER_ROLE_NAME)) {
+            setAvailableRoles(MANAGER_ALLOWED_RESOURCE_ROLES, existingResourceRoles, request);
+        } else if (AuthorizationHelper.hasUserRole(request, CLIENT_MANAGER_ROLE_NAME)) {
+            setAvailableRoles(CLIENT_MANAGER_ALLOWED_RESOURCE_ROLES, existingResourceRoles, request);
+        } else if (AuthorizationHelper.hasUserRole(request, COPILOT_ROLE_NAME)) {
+            setAvailableRoles(COPILOT_ALLOWED_RESOURCE_ROLES, existingResourceRoles, request);
+        }
+    }
+
+    /**
+     * <p>Binds to specified request the list of roles available for resources which current user can add to project.
+     * </p>
+     *
+     * @param allowedRoleNames a <code>String</code> array listing the names for roles for resources which can be added
+     *        by current user to project.
+     * @param existingResourceRoles a <code>ResourceRole</code> array listing all existing resource roles. 
+     * @param request an <code>HttpServletRequest</code> representing incoming request from the client to bind the list
+     *        of available roles to.
+     */
+    private static void setAvailableRoles(String[] allowedRoleNames, ResourceRole[] existingResourceRoles,
+                                   HttpServletRequest request) {
+        List<ResourceRole> availableRoles = new ArrayList<ResourceRole>();
+        for (String allowedRoleName : allowedRoleNames) {
+            ResourceRole role = ActionsHelper.findResourceRoleByName(existingResourceRoles, allowedRoleName);
+            if (role != null) {
+                availableRoles.add(role);
+            }
+        }
+        request.setAttribute("availableRoles", availableRoles);
+    }
+
+    /**
+     * <p>Checks if specified phase is closed by analyzing current phase status.</p>
+     *
+     * @param phase a <code>Phase</code> representing the phase to be verified.
+     * @return <code>true</code> if specified phase is closed; <code>false</code> otherwise.
+     */
+    private static boolean isClosed(Phase phase) {
+        long phaseStatusId = phase.getPhaseStatus().getId();
+        return phaseStatusId == PhaseStatusEnum.CLOSED.getId();
+    }
+
+    /**
+     * <p>Gets the number of hours left before the specified time is reached.</p>
+     *
+     * @param time a <code>Date</code> providing the date and time to calculate time left to.
+     * @return a <code>long</code> providing the number of hours left from current time before the specified date and
+     *         time is reached.
+     */
+    private static long getHoursLeft(Date time) {
+        Date now = new Date();
+        long diff = time.getTime() - now.getTime();
+        return diff / HOUR_DURATION_IN_MILLIS;
+    }
+
+    /**
+     * <p>Gets the <code>Registration</code> phase for specified project if such a phase exists and if it can be
+     * extended based on current project's state.</p>
+     *
+     * @param phases a <code>Phase</code> array listing the current project phases.
+     * @return a <code>Phase</code> providing the <code>Registration</code> phase for current project which can be
+     *         extended or <code>null</code> if there is no <code>Registration</code> phase for project or such a phase
+     *         can not be extended since there is less than 48 hours left before <code>Submission</code> phase deadline
+     *         or <code>Submission</code> phase is already closed.
+     */
+    private static Phase getRegistrationPhaseForExtension(Phase[] phases) {
+        Phase registrationPhase = ActionsHelper.findPhaseByTypeName(phases, REGISTRATION_PHASE_NAME);
+        if ((registrationPhase != null)) {
+            Phase submissionPhase = ActionsHelper.findPhaseByTypeName(phases, SUBMISSION_PHASE_NAME);
+            if (submissionPhaseAllowsExtension(submissionPhase)) {
+                return registrationPhase;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * <p>Gets the <code>Submission</code> phase for specified project if such a phase exists and if it can be
+     * extended based on current project's state.</p>
+     *
+     * @param phases a <code>Phase</code> array listing the current project phases.
+     * @return a <code>Phase</code> providing the <code>Submission</code> phase for current project which can be
+     *         extended or <code>null</code> if there is no <code>Submission</code> phase for project or such a phase
+     *         can not be extended since there is less than 48 hours left before <code>Submission</code> phase deadline
+     *         or <code>Submission</code> phase is already closed.
+     */
+    private static Phase getSubmissionPhaseForExtension(Phase[] phases) {
+        Phase submissionPhase = ActionsHelper.findPhaseByTypeName(phases, SUBMISSION_PHASE_NAME);
+        if (submissionPhaseAllowsExtension(submissionPhase)) {
+            return submissionPhase;
+        }
+        return null;
+    }
+
+    /**
+     * <p>Binds the attributes to specified request which affect the <code>Extend Registration Phase</code>
+     * functionality like indicating whether the <code>Registration</code> phase extension is allowed or not.</p>
+     *
+     * @param request an <code>HttpServletRequest</code> representing incoming request from the client to bind the flags
+     *        related to phase extension to.
+     * @param phases a <code>Phase</code> array listing the current project phases.
+     * @throws BaseException if an unexpected error occurs.
+     */
+    private static void setRegistrationPhaseExtensionParameters(HttpServletRequest request, Phase[] phases)
+        throws BaseException {
+        Phase registrationPhase = getRegistrationPhaseForExtension(phases);
+        if ((registrationPhase != null)) {
+            // Registration phase can be extended
+            request.setAttribute("allowRegistrationPhaseExtension", Boolean.TRUE);
+        } else {
+            // Registration phase can NOT be extended
+            registrationPhase = ActionsHelper.findPhaseByTypeName(phases, REGISTRATION_PHASE_NAME);
+            request.setAttribute("allowRegistrationPhaseExtension", Boolean.FALSE);
+        }
+        if (registrationPhase != null) {
+            request.setAttribute("registrationPhaseClosed", isClosed(registrationPhase));
+            request.setAttribute("registrationPhase", registrationPhase);
+            request.setAttribute("registrationPhaseDuration", registrationPhase.getLength() / HOUR_DURATION_IN_MILLIS);
+        }
+    }
+
+    /**
+     * <p>Binds the attributes to specified request which affect the <code>Extend Submission Phase</code> functionality
+     * like indicating whether the <code>Submission</code> phase extension is allowed or not.</p>
+     *
+     * @param request an <code>HttpServletRequest</code> representing incoming request from the client to bind the flags
+     *        related to phase extension to.
+     * @param phases a <code>Phase</code> array listing the current project phases.
+     * @throws BaseException if an unexpected error occurs.
+     */
+    private static void setSubmissionPhaseExtensionParameters(HttpServletRequest request, Phase[] phases)
+        throws BaseException {
+        Phase submissionPhase = ActionsHelper.findPhaseByTypeName(phases, SUBMISSION_PHASE_NAME);
+        if (submissionPhase != null) {
+            if (submissionPhaseAllowsExtension(submissionPhase)) {
+                request.setAttribute("allowSubmissionPhaseExtension", Boolean.TRUE);
+            }
+            request.setAttribute("submissionPhase", submissionPhase);
+            request.setAttribute("submissionPhaseDuration",
+                                 submissionPhase.getLength() / HOUR_DURATION_IN_MILLIS);
+            return;
+        }
+        request.setAttribute("allowSubmissionPhaseExtension", Boolean.FALSE);
+    }
+
+    /**
+     * <p>Checks if specified <code>Submission</code> phase allows phase extension or not. The method returns
+     * <code>true</code> if specified phase is not <code>null</code> and is not closed and there are at least 48 hours
+     * left before submission phase deadline.</p>
+     *
+     * @param submissionPhase a <code>Phase</code> providing details for <code>Submission</code> phase.
+     * @return <code>true</code> if specified phase allows phase extension; <code>false</code> otherwise.
+     * @throws IllegalArgumentException if specified <code>submissionPhase</code> is not of <code>Submission</code>
+     *         phase type.
+     */
+    private static boolean submissionPhaseAllowsExtension(Phase submissionPhase) {
+        if (submissionPhase != null) {
+            String phaseTypeName = submissionPhase.getPhaseType().getName();
+            if (!SUBMISSION_PHASE_NAME.equals(phaseTypeName)) {
+                throw new IllegalArgumentException("Wrong phase. Expected Submission phase but provide phase is: "
+                                                   + phaseTypeName);
+            }
+            Date submissionScheduledEndDate = submissionPhase.getScheduledEndDate();
+            if ((!isClosed(submissionPhase)) && (getHoursLeft(submissionScheduledEndDate) >= MINIMUM_HOURS_LEFT)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * <p>Recalculates scheduled start date and end date for all phases when a phase is extended.</p>
+     *
+     * @param allPhases all the phases for the project.
+     */
+    private static void recalculateScheduledDates(Phase[] allPhases) {
+        for (Phase phase : allPhases) {
+            phase.setScheduledStartDate(phase.calcStartDate());
+            phase.setScheduledEndDate(phase.calcEndDate());
+        }
+    }
+}

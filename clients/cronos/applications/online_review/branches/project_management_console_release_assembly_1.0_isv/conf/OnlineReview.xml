@@ -2895,6 +2895,12 @@
         <Property name="final_reviewer_role_id">
             <Value>9</Value>
         </Property>
+        <Property name="registration_phase_extension_hours_maximum">
+            <Value>48</Value>
+        </Property>
+        <Property name="submission_phase_extension_hours_maximum">
+            <Value>48</Value>
+        </Property>
         <Property name="RootCatalogs">
             <Property name="Java">
                 <Property name="id">
@@ -3971,6 +3977,19 @@
                 <Value>Payment Manager</Value>
             </Property>
 
+            <Property name="View Project Management Console">
+                <Value>Global Manager</Value>
+                <Value>Manager</Value>
+                <Value>Copilot</Value>
+                <Value>Client Manager</Value>
+            </Property>
+
+            <Property name="Manage Project">
+                <Value>Global Manager</Value>
+                <Value>Manager</Value>
+                <Value>Copilot</Value>
+                <Value>Client Manager</Value>
+            </Property>
         </Property>
 
         <Property name="PhaseGrouping">

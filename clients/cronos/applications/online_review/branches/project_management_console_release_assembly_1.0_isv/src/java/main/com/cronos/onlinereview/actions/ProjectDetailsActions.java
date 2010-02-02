@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004 - 2009 TopCoder Inc., All Rights Reserved.
+ * Copyright (C) 2004 - 2010 TopCoder Inc., All Rights Reserved.
  */
 package com.cronos.onlinereview.actions;
 
@@ -498,6 +498,9 @@ public class ProjectDetailsActions extends DispatchAction {
             appealsOpen && appealsCompletedFlag);
 
         // Check permissions
+        request.setAttribute("isAllowedToManageProjects",
+                Boolean.valueOf(AuthorizationHelper.hasUserPermission(request,
+                                Constants.VIEW_PROJECT_MANAGEMENT_CONSOLE_PERM_NAME)));
         request.setAttribute("isAllowedToEditProjects",
                 Boolean.valueOf(AuthorizationHelper.hasUserPermission(request, Constants.EDIT_PROJECT_DETAILS_PERM_NAME)));
         request.setAttribute("isAllowedToContactPM",

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004 - 2009 TopCoder Inc., All Rights Reserved.
+ * Copyright (C) 2004 - 2010 TopCoder Inc., All Rights Reserved.
  */
 package com.cronos.onlinereview.actions;
 
@@ -16,8 +16,17 @@ package com.cronos.onlinereview.actions;
  *   </ol>
  * </p>
  *
- * @author George1, real_vg, pulky
- * @version 1.1
+ * <p>
+ * Version 1.2 (Online Review Project Management Console Assembly 1.0) Change notes:
+ *   <ol>
+ *     <li>Added constants for <code>Client Manager</code>, <code>Co-Pilot</code> roles and a group of roles granted
+ *     access to <code>Project Management Console</code> functionalities as well as name for the respective permission.
+ *     </li>
+ *   </ol>
+ * </p>
+ *
+ * @author George1, real_vg, pulky, TCSDEVELOPER
+ * @version 1.2
  */
 public class Constants {
 
@@ -195,6 +204,36 @@ public class Constants {
      */
     public static final String[] MANAGER_ROLE_NAMES = new String[] {MANAGER_ROLE_NAME, GLOBAL_MANAGER_ROLE_NAME};
 
+    /**
+     * <p>This member variable is a string constant that defines the name of the <code>Client Manager</code>
+     * role. This role is a logical one, i.e. there is no such role defined in the database. This role will be assigned
+     * to users that have their own resources with role <code>Client Manager</code> and project assigned to that
+     * resource.</p>
+     *
+     * @since 1.2
+     */
+    public static final String CLIENT_MANAGER_ROLE_NAME = "Client Manager";
+
+    /**
+     * <p>This member variable is a string constant that defines the name of the <code>Co-Pilot</code> role. This role
+     * is a logical one, i.e. there is no such role defined in the database. This role will be assigned to users that
+     * have their own resources with role <code>Co-Pilot</code> and project assigned to that resource.</p>
+     *
+     * @since 1.2
+     */
+    public static final String COPILOT_ROLE_NAME = "Copilot";
+
+    /**
+     * <p>This member variable is a constant array that holds names of different roles which are granted access to
+     * <code>Project Management Console</code> functionalities.</p>
+     *
+     * @see #MANAGER_ROLE_NAME
+     * @see #CLIENT_MANAGER_ROLE_NAME
+     * @see #COPILOT_ROLE_NAME
+     * @since 1.2
+     */
+    public static final String[] PROJECT_MANAGEMENT_CONSOLE_ROLE_NAMES
+        = new String[] {MANAGER_ROLE_NAME, CLIENT_MANAGER_ROLE_NAME, COPILOT_ROLE_NAME};
 
     // --------------------------------------------------------------------- Permission names -----
 
@@ -510,6 +549,23 @@ public class Constants {
      * Create Payment permission.
      */
     public static final String CREATE_PAYMENT_PERM_NAME = "Create Payment";
+
+    /**
+     * <p>This member variable is a string constant that defines the name of the <code>View Project Management Console
+     * </code>  permission. Such a permission grants access to <code>Project Management Console</code> view.</p> 
+     *
+     * @since 1.2
+     */
+    public static final String VIEW_PROJECT_MANAGEMENT_CONSOLE_PERM_NAME = "View Project Management Console";
+
+    /**
+     * <p>This member variable is a string constant that defines the name of the <code>Project Management</code>
+     * permission. Such a permission grants access to submitting form from <code>Project Management Console</code> view.
+     * </p>
+     *
+     * @since 1.2
+     */
+    public static final String PROJECT_MANAGEMENT_PERM_NAME = "Manage Project";
 
     // -------------------------------------------------------------------------- Phase names -----
 
