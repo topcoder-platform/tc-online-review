@@ -1,5 +1,5 @@
 <%--
-  - Author: George1, real_vg, TCSDEVELOPER
+  - Author: George1, real_vg, isv
   - Version: 1.1 (Online Review Project Management Console assembly v1.0)
   - Copyright (C) 2006 - 2010 TopCoder Inc., All Rights Reserved.
   -

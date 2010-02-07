@@ -41,12 +41,12 @@ import com.topcoder.web.ejb.pacts.ParentReferencePayment;
  *
  * Version 1.3 (Online Review Project Management Console Release Assembly 1.0) Change notes:
  *   <ol>
- *     <li>Added <code>registrationPhaseMaxExtensionHours</code> and <code>submissionPhaseMaxExtensionHours</code>
- *     configuration parameters.</li>
+ *     <li>Added <code>registrationPhaseMaxExtensionDays</code>, <code>submissionPhaseMaxExtensionDays</code> and
+ *     <code>minimumHoursBeforeSubmissionDeadlineForExtension</code> configuration parameters.</li>
  *   </ol>
  * </p>
  *
- * @author George1, real_vg, pulky, TCSDEVELOPER
+ * @author George1, real_vg, pulky, isv
  * @version 1.3
  */
 public class ConfigHelper {
@@ -481,19 +481,38 @@ public class ConfigHelper {
 
     /**
      * <p>This member variable is a string constant that specifies the name of the property which contains the
-     * maximum number of hours to extend the <code>Registration</code> phase.</p>
+     * maximum number of days to extend the <code>Registration</code> phase.</p>
      *
      * @since 1.3
      */
-    private static final String REGISTRATION_PHASE_MAX_EXTENSION_PROP = "registration_phase_extension_hours_maximum";
+    private static final String REGISTRATION_PHASE_MAX_EXTENSION_PROP = "registration_phase_extension_days_maximum";
 
     /**
      * <p>This member variable is a string constant that specifies the name of the property which contains the
-     * maximum number of hours to extend the <code>Submission</code> phase.</p>
+     * maximum number of days to extend the <code>Submission</code> phase.</p>
      *
      * @since 1.3
      */
-    private static final String SUBMISSION_PHASE_MAX_EXTENSION_PROP = "submission_phase_extension_hours_maximum";
+    private static final String SUBMISSION_PHASE_MAX_EXTENSION_PROP = "submission_phase_extension_days_maximum";
+
+    /**
+     * <p>This member variable is a string constant that specifies the name of the property which contains the
+     * minimum number of hours before <code>Submission</code> phase deadline to allow the extension of
+     * <code>Registration</code> or <code>Submission</code> phases.</p>
+     *
+     * @since 1.3
+     */
+    private static final String MINIMUM_HOURS_BEFORE_SUBMISSION_DEADLINE_FOR_EXTENSION_PROP
+        = "minimum_hours_before_submission_deadline_for_phase_extension";
+
+    /**
+     * <p>An <code>int</code> providing the minimum time (in hours) to be left before project's submission deadline in
+     * order to allow the extension of desired project phase. If less than specified time is left then phase extension
+     * must be prohibited.</p>
+     * 
+     * @since 1.3
+     */
+    private static final int DEFAULT_MINIMUM_HOURS_LEFT = 48;
 
     /**
      * This member variable holds the name of the session attribute which ID of the currently logged
@@ -740,20 +759,28 @@ public class ConfigHelper {
     private static String contactManagerEmailTemplate = "";
 
     /**
-     * <p>An <code>Integer</code> providing the maximum number of hours which <code>Registration</code> phase can be
+     * <p>An <code>Integer</code> providing the maximum number of days which <code>Registration</code> phase can be
      * extended for. <code>null</code> value means that such a limit is not specified.</p>
      *
      * @since 1.3
      */
-    private static Integer registrationPhaseMaxExtensionHours = null;
+    private static Integer registrationPhaseMaxExtensionDays = null;
 
     /**
-     * <p>An <code>Integer</code> providing the maximum number of hours which <code>Submission</code> phase can be
+     * <p>An <code>Integer</code> providing the maximum number of days which <code>Submission</code> phase can be
      * extended for. <code>null</code> value means that such a limit is not specified.</p>
      *
      * @since 1.3
      */
-    private static Integer submissionPhaseMaxExtensionHours = null;
+    private static Integer submissionPhaseMaxExtensionDays = null;
+
+    /**
+     * <p>An <code>Integer</code> providing the minimum number of hours before <code>Submission</code> phase deadline
+     * to allow extension for <code>Registration</code> and <code>Submission</code> phases.</p>
+     *
+     * @since 1.3
+     */
+    private static Integer minimumHoursBeforeSubmissionDeadlineForExtension = DEFAULT_MINIMUM_HOURS_LEFT;
 
     static {
         // Obtaining the instance of Configuration Manager
@@ -1167,22 +1194,38 @@ public class ConfigHelper {
                 contactManagerEmailTemplate = propContactManagerEmail.getValue(EMAIL_TEMPLATE_NAME_PROP);
             }
 
-            // Get the configurable maximum values for extension hours for registration and submission phases
+            // Get the configurable maximum values for extension days for registration and submission phases
             value = cfgMgr.getString(ONLINE_REVIEW_CFG_NS, REGISTRATION_PHASE_MAX_EXTENSION_PROP);
             if (value != null && value.trim().length() != 0) {
                 try {
-                    registrationPhaseMaxExtensionHours = new Integer(value);
+                    registrationPhaseMaxExtensionDays = new Integer(value);
                 } catch (NumberFormatException nfe) {
-                    // don't do anything, keep the default
+                    System.err.println("The value of " + REGISTRATION_PHASE_MAX_EXTENSION_PROP
+                                       + " configuration property is not numeric: " + value
+                                       + ". This value will be ignored.");
                 }
             }
 
             value = cfgMgr.getString(ONLINE_REVIEW_CFG_NS, SUBMISSION_PHASE_MAX_EXTENSION_PROP);
             if (value != null && value.trim().length() != 0) {
                 try {
-                    submissionPhaseMaxExtensionHours = new Integer(value);
+                    submissionPhaseMaxExtensionDays = new Integer(value);
                 } catch (NumberFormatException nfe) {
-                    // don't do anything, keep the default
+                    System.err.println("The value of " + SUBMISSION_PHASE_MAX_EXTENSION_PROP
+                                       + " configuration property is not numeric: " + value
+                                       + ". This value will be ignored.");
+                }
+            }
+
+            value = cfgMgr.getString(ONLINE_REVIEW_CFG_NS, MINIMUM_HOURS_BEFORE_SUBMISSION_DEADLINE_FOR_EXTENSION_PROP);
+            if (value != null && value.trim().length() != 0) {
+                try {
+                    minimumHoursBeforeSubmissionDeadlineForExtension = new Integer(value);
+                } catch (NumberFormatException nfe) {
+                    System.err.println("The value of " + MINIMUM_HOURS_BEFORE_SUBMISSION_DEADLINE_FOR_EXTENSION_PROP
+                                       + " configuration property is not numeric: " + value
+                                       + ". This value will be ignored and value of " + DEFAULT_MINIMUM_HOURS_LEFT
+                                       + " will be used instead");
                 }
             }
 
@@ -1681,24 +1724,35 @@ public class ConfigHelper {
     }
 
     /**
-     * <p>Gets the maximum allowed number of hours to extend <code>Registration</code> phase for.</p>
+     * <p>Gets the maximum allowed number of days to extend <code>Registration</code> phase for.</p>
      *
-     * @return an <code>Integer</code> providing the maximum aloowed number of hours to extend <code>Registration</code>
+     * @return an <code>Integer</code> providing the maximum allowed number of days to extend <code>Registration</code>
      *         phase or <code>null</code> if there is no such limit specified.
      * @since 1.3
      */
-    public static Integer getRegistrationPhaseMaxExtensionHours() {
-        return registrationPhaseMaxExtensionHours;
+    public static Integer getRegistrationPhaseMaxExtensionDays() {
+        return registrationPhaseMaxExtensionDays;
     }
 
     /**
-     * <p>Gets the maximum allowed number of hours to extend <code>Submission</code> phase for.</p>
+     * <p>Gets the maximum allowed number of days to extend <code>Submission</code> phase for.</p>
      *
-     * @return an <code>Integer</code> providing the maximum aloowed number of hours to extend <code>Submission</code>
+     * @return an <code>Integer</code> providing the maximum allowed number of days to extend <code>Submission</code>
      *         phase or <code>null</code> if there is no such limit specified.
      * @since 1.3
      */
-    public static Integer getSubmissionPhaseMaxExtensionHours() {
-        return submissionPhaseMaxExtensionHours;
+    public static Integer getSubmissionPhaseMaxExtensionDays() {
+        return submissionPhaseMaxExtensionDays;
+    }
+
+    /**
+     * <p>Gets the maximum allowed number of days to extend <code>Submission</code> phase for.</p>
+     *
+     * @return an <code>Integer</code> providing the maximum allowed number of days to extend <code>Submission</code>
+     *         phase or <code>null</code> if there is no such limit specified.
+     * @since 1.3
+     */
+    public static Integer getMinimumHoursBeforeSubmissionDeadlineForExtension() {
+        return minimumHoursBeforeSubmissionDeadlineForExtension;
     }
 }

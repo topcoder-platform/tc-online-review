@@ -152,7 +152,7 @@ import com.topcoder.web.ejb.forums.ForumsHome;
  *   </ol>
  * </p>
  *
- * @author George1, real_vg, pulky, TCSDEVELOPER
+ * @author George1, real_vg, pulky, isv
  * @version 1.3
  * @since 1.0
  */

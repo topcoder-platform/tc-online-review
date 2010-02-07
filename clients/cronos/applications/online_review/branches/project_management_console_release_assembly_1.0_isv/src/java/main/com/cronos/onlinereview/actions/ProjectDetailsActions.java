@@ -111,8 +111,15 @@ import com.topcoder.util.file.fieldconfig.TemplateFields;
  *   </ol>
  * </p>
  *
- * @author George1, real_vg, pulky
- * @version 1.2
+ * <p>
+ * Version 1.3 (Online Review Prject Management Console Release Assembly 1.0) Change notes:
+ *   <ol>
+ *     <li>Added flags to allow a user to see "Manage Project" links.</li>
+ *   </ol>
+ * </p>
+ *
+ * @author George1, real_vg, pulky, isv
+ * @version 1.3
  */
 public class ProjectDetailsActions extends DispatchAction {
 

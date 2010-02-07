@@ -1,5 +1,5 @@
 <%--
-  - Author: TCSDEVELOPER
+  - Author: isv
   - Version: 1.0 (Online Review Project Management Console assembly v1.0)
   - Copyright (C) 2010 TopCoder Inc., All Rights Reserved.
   -
@@ -40,6 +40,7 @@
                 src="<html:rewrite href='/js/or/validation_util2.js' />"><!-- @ --></script>
         <script language="JavaScript" type="text/javascript"
                 src="<html:rewrite href='/js/or/validation_edit_project_links.js' />"><!-- @ --></script>
+    </head>
     <body>
     <div align="center">
         <div class="maxWidthBody" align="left">
