@@ -1,3 +1,13 @@
+<%--
+  - Author: George1, real_vg, isv
+  - Version: 1.1 (Online Review Project Management Console assembly v1.0)
+  - Copyright (C) 2006 - 2010 TopCoder Inc., All Rights Reserved.
+  -
+  - Description: This page provides the view for details for requested project.
+  -
+  - Version 1.1 (Online Review Project Management Console assembly v1.0) changes: added Manage Project button
+  - linked to Project Management Console view.
+--%>
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ page language="java" isELIgnored="false" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
@@ -94,6 +104,9 @@
                     <div align="right">
                         <c:if test="${isAllowedToPay}">
                             <a href="http://www.topcoder.com/PactsInternalServlet?module=ViewGenerateComponentPayments&project_id=${project.id}&projts=${project.projectStatus.id}"><html:img srcKey="viewProjectDetails.btnPay.img" border="0" altKey="viewProjectDetails.btnPay.alt" /></a>&#160;
+                        </c:if>
+                        <c:if test="${requestScope.isAllowedToManageProjects}">
+                            <a href="ViewManagementConsole.do?method=viewConsole&pid=${project.id}"><html:img srcKey="viewProjectDetails.btnManagementConsoleLink.img" border="0" altKey="viewProjectDetails.btnManagementConsoleLink.alt" /></a>&#160;
                         </c:if>
                         <c:if test="${isAllowedToEditProjects}">
                             <a href="EditProjectLinks.do?method=editProjectLinks&pid=${project.id}"><html:img srcKey="viewProjectDetails.btnEditLink.img" border="0" altKey="viewProjectDetails.btnEditLink.alt" /></a>&#160;
