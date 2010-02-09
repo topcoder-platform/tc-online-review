@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2009 TopCoder Inc., All Rights Reserved.
+ * Copyright (C) 2006-2010 TopCoder Inc., All Rights Reserved.
  */
 package com.cronos.onlinereview.actions;
 
@@ -145,8 +145,15 @@ import com.topcoder.web.ejb.forums.ForumsHome;
  *   </ol>
  * </p>
  *
- * @author George1, real_vg, pulky
- * @version 1.2
+ * <p>
+ * Version 1.3 (Online Review Project Management Console Assembly v1.0) Change notes:
+ *   <ol>
+ *     <li>Added {@link #findPhaseByTypeName(com.topcoder.project.phases.Phase[], String)} method.</li>
+ *   </ol>
+ * </p>
+ *
+ * @author George1, real_vg, pulky, isv
+ * @version 1.3
  * @since 1.0
  */
 public class ActionsHelper {
@@ -640,6 +647,31 @@ public class ActionsHelper {
 
         for (int i = 0; i < phases.length; ++i) {
             if (phases[i].getId() == phaseId) {
+                return phases[i];
+            }
+        }
+        return null;
+    }
+
+    /**
+     * <p>This static method searches for the project phase with the specified phase type name in a provided array of
+     * project phases.</p>
+     *
+     * @param phases an array of project phases to search for wanted project phase among.
+     * @param phaseTypeName the name of type of the needed project phase.
+     * @return found project phase or <code>null</code> if a phase with the specified ID has not been found in the
+     *         provided array of project phases.
+     * @throws IllegalArgumentException if <code>phases</code> parameter is <code>null</code> or
+     *         <code>phaseTypeName</code> parameter is <code>null</code> or empty.
+     * @since 1.3
+     */
+    public static Phase findPhaseByTypeName(Phase[] phases, String phaseTypeName) {
+        // Validate parameters
+        validateParameterNotNull(phases, "phases");
+        validateParameterStringNotEmpty(phaseTypeName, "phaseTypeName");
+
+        for (int i = 0; i < phases.length; ++i) {
+            if (phases[i].getPhaseType().getName().equalsIgnoreCase(phaseTypeName)) {
                 return phases[i];
             }
         }

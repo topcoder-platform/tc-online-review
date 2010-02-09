@@ -148,6 +148,18 @@
             <form-property name="link_type_id" type="java.lang.Long[]" />
             <form-property name="link_action" type="java.lang.String[]" />
         </form-bean>
+
+        <!-- Online Review Project Management Console Assembly v1.0 -->
+        <!-- Project ID form -->
+        <form-bean name="projectManagementConsoleForm" dynamic="true"
+                   type="org.apache.struts.validator.LazyValidatorForm">
+            <form-property name="pid" type="java.lang.Long" />
+            <form-property name="resource_role_id" type="java.lang.Long[]" />
+            <form-property name="resource_handles" type="java.lang.String[]" />
+            <form-property name="registration_phase_extension" type="java.lang.String" />
+            <form-property name="submission_phase_extension" type="java.lang.String" />
+        </form-bean>
+
     </form-beans>
 
 
@@ -626,6 +638,24 @@
             input="/jsp/viewProjectDetails.jsp">
             <forward name="success" path="/jsp/viewCompositeScorecard.jsp" redirect="false"/>
         </action>
+
+        <!--
+            =====  Project Management Console Actions  =====
+        -->
+        <!-- "View Console" action -->
+        <action path="/actions/ViewManagementConsole" unknown="false"
+                type="com.cronos.onlinereview.actions.ProjectManagementConsoleActions"
+                parameter="method" scope="request" name="projectManagementConsoleForm"
+                input="/jsp/viewProjectDetails.jsp">
+            <forward name="success" path="/jsp/viewProjectManagementConsole.jsp" redirect="false"/>
+        </action>
+        <action path="/actions/ManageProject" unknown="false"
+                type="com.cronos.onlinereview.actions.ProjectManagementConsoleActions"
+                parameter="method" scope="request" name="projectManagementConsoleForm"
+                input="/jsp/viewProjectManagementConsole.jsp">
+            <forward name="success" path="/actions/ViewProjectDetails.do?method=viewProjectDetails" redirect="true"/>
+        </action>
+
     </action-mappings>
 
 
