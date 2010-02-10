@@ -3993,6 +3993,31 @@
                 <Value>Copilot</Value>
                 <Value>Client Manager</Value>
             </Property>
+
+            <Property name="Can Add Resource Role Client Manager">
+                <Value>Global Manager</Value>
+                <Value>Manager</Value>
+            </Property>
+
+            <Property name="Can Add Resource Role Copilot">
+                <Value>Global Manager</Value>
+                <Value>Manager</Value>
+                <Value>Client Manager</Value>
+            </Property>
+
+            <Property name="Can Add Resource Role Designer">
+                <Value>Global Manager</Value>
+                <Value>Manager</Value>
+                <Value>Client Manager</Value>
+                <Value>Copilot</Value>
+            </Property>
+
+            <Property name="Can Add Resource Role Observer">
+                <Value>Global Manager</Value>
+                <Value>Manager</Value>
+                <Value>Client Manager</Value>
+                <Value>Copilot</Value>
+            </Property>
         </Property>
 
         <Property name="PhaseGrouping">
