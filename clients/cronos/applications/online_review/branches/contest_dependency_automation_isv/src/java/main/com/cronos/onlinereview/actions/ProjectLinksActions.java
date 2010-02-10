@@ -216,16 +216,6 @@ public class ProjectLinksActions extends DispatchAction {
             linkTypesMap.put(type.getId(), type);
         }
 
-        // Build the list of IDs for parent projects which are currently linked to this project. Those projects
-        // will be ignored when determining the current project's timeline is to be adjusted based on added links or not
-        Set<Long> existingParentProjectIds = new HashSet<Long>();
-        ProjectLink[] existingParentProjectLinks = linkManager.getDestProjectLinks(project.getId());
-        for (ProjectLink link : existingParentProjectLinks) {
-            if (!link.getType().isAllowOverlap()) {
-                existingParentProjectIds.add(link.getDestProject().getId());
-            }
-        }
-
         // Analyze the list of links, find the links to new parent projects and determine the most
         // recent end time for Final Review phase for those new projects. Only for parent projects linked with
         // allow_overlap flag set to false
@@ -235,23 +225,20 @@ public class ProjectLinksActions extends DispatchAction {
             long linkTypeId = paramTypeIds[i];
             ProjectLinkType linkType = linkTypesMap.get(linkTypeId);
             if (!linkType.isAllowOverlap()) {
-                long newParentProjectId = paramDestProjectIds[i];
-                if (!existingParentProjectIds.contains(newParentProjectId)) {
-                    com.topcoder.project.phases.Project parentProject = phaseManager.getPhases(newParentProjectId);
-                    Phase lastPhase = ActionsHelper.getLastPhase(parentProject.getAllPhases());
-                    Date lastPhaseEndDate;
-                    if (lastPhase.getPhaseStatus().getId() == PhaseStatusEnum.SCHEDULED.getId()) {
-                        lastPhaseEndDate = lastPhase.getScheduledEndDate();
-                    } else if (lastPhase.getPhaseStatus().getId() == PhaseStatusEnum.OPEN.getId()) {
-                        lastPhaseEndDate = lastPhase.getScheduledEndDate();
-                    } else {
-                        lastPhaseEndDate = lastPhase.getActualEndDate();
-                    }
-                    if (maxNewParentFinalReviewEndDate == null) {
-                        maxNewParentFinalReviewEndDate = lastPhaseEndDate;
-                    } else if (maxNewParentFinalReviewEndDate.compareTo(lastPhaseEndDate) < 0) {
-                        maxNewParentFinalReviewEndDate = lastPhaseEndDate;
-                    }
+                long parentProjectId = paramDestProjectIds[i];
+                com.topcoder.project.phases.Project parentProject = phaseManager.getPhases(parentProjectId);
+                Phase lastPhase = ActionsHelper.getLastPhase(parentProject.getAllPhases());
+                Date lastPhaseEndDate;
+                if (lastPhase.getPhaseStatus().getId() == PhaseStatusEnum.SCHEDULED.getId()) {
+                    lastPhaseEndDate = lastPhase.getScheduledEndDate();
+                } else if (lastPhase.getPhaseStatus().getId() == PhaseStatusEnum.OPEN.getId()) {
+                    lastPhaseEndDate = lastPhase.getScheduledEndDate();
+                } else {
+                    lastPhaseEndDate = lastPhase.getActualEndDate();
+                }
+                if ((maxNewParentFinalReviewEndDate == null)
+                    || (maxNewParentFinalReviewEndDate.compareTo(lastPhaseEndDate) < 0)) {
+                    maxNewParentFinalReviewEndDate = lastPhaseEndDate;
                 }
             }
         }
@@ -269,10 +256,12 @@ public class ProjectLinksActions extends DispatchAction {
                 Phase[] initialPhases = phasesProject.getInitialPhases();
                 for (Phase phase : initialPhases) {
                     if (phase.getPhaseStatus().getId() == PhaseStatusEnum.SCHEDULED.getId()) {
-                        thereAreAffectedPhases = true;
-                        phase.setScheduledStartDate(newStartDate);
-                        phase.setScheduledEndDate(new Date(newStartDate.getTime() + phase.getLength()));
-                        phase.getProject().setStartDate(newStartDate);
+                        if (phase.getScheduledStartDate().compareTo(maxNewParentFinalReviewEndDate) <= 0) {
+                            thereAreAffectedPhases = true;
+                            phase.setScheduledStartDate(newStartDate);
+                            phase.setScheduledEndDate(new Date(newStartDate.getTime() + phase.getLength()));
+                            phase.getProject().setStartDate(newStartDate);
+                        }
                     }
                 }
 
