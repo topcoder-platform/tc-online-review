@@ -19,6 +19,7 @@ import javax.naming.Context;
 import javax.naming.NamingException;
 import javax.servlet.http.HttpServletRequest;
 
+import com.topcoder.management.phase.*;
 import org.apache.struts.Globals;
 import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionForward;
@@ -71,10 +72,6 @@ import com.topcoder.management.deliverable.persistence.UploadPersistenceExceptio
 import com.topcoder.management.deliverable.persistence.sql.SqlDeliverablePersistence;
 import com.topcoder.management.deliverable.search.DeliverableFilterBuilder;
 import com.topcoder.management.deliverable.search.SubmissionFilterBuilder;
-import com.topcoder.management.phase.DefaultPhaseManager;
-import com.topcoder.management.phase.PhaseHandlingException;
-import com.topcoder.management.phase.PhaseManagementException;
-import com.topcoder.management.phase.PhaseManager;
 import com.topcoder.management.project.Project;
 import com.topcoder.management.project.ProjectCategory;
 import com.topcoder.management.project.ProjectManager;
@@ -145,8 +142,17 @@ import com.topcoder.web.ejb.forums.ForumsHome;
  *   </ol>
  * </p>
  *
- * @author George1, real_vg, pulky
- * @version 1.2
+ * <p>
+ * Version 1.3 (Contest Dependency Automation Assembly v1.0) Change notes:
+ *   <ol>
+ *     <li>Added {@link #adjustDependentProjects(com.topcoder.project.phases.Project,
+ *     com.topcoder.management.phase.PhaseManager, com.topcoder.management.phase.ContestDependencyAutomation, String)}
+ *     and {@link #recalculateScheduledDates(com.topcoder.project.phases.Phase[])} methods.</li>
+ *   </ol>
+ * </p>
+ *
+ * @author George1, real_vg, pulky, isv
+ * @version 1.3
  * @since 1.0
  */
 public class ActionsHelper {
@@ -4226,6 +4232,64 @@ public class ActionsHelper {
             close(ps);
             close(conn);
         }
+    }
+
+    /**
+     * <p>Adjusts the timelines for projects depending on specified project if necessary.</p>
+     *
+     * @param mainProject a <code>Project</code> providing the project details.
+     * @param phaseManager a <code>PhaseManager</code> to be used for managing phases.
+     * @param auto a <code>ContestDependencyAutomation</code> to be used for processing dependencies.
+     * @param operator a <code>String</code> providing the operator for audit.
+     * @throws PhaseManagementException if an unexpected error occurs.
+     * @throws com.topcoder.management.project.PersistenceException if an unexpected error occurs.
+     * @since 1.3
+     */
+    static void adjustDependentProjects(com.topcoder.project.phases.Project mainProject, PhaseManager phaseManager,
+                                        ContestDependencyAutomation auto, String operator)
+        throws PhaseManagementException, com.topcoder.management.project.PersistenceException {
+        List<Phase[]> phases = auto.adjustDependingProjectPhases(mainProject.getAllPhases());
+        for (Phase[] p : phases) {
+            if (p.length > 0) {
+                phaseManager.updatePhases(p[0].getProject(), operator);
+            }
+        }
+    }
+
+    /**
+     * <p>Recalculates scheduled start date and end date for all phases when a phase is moved.</p>
+     *
+     * @param allPhases all the phases for the project.
+     * @since 1.3
+     */
+    static void recalculateScheduledDates(Phase[] allPhases) {
+        for (int i = 0; i < allPhases.length; ++i) {
+            Phase phase = allPhases[i];
+            Date newStartDate = phase.calcStartDate();
+            Date newEndDate = phase.calcEndDate();
+            phase.setScheduledStartDate(newStartDate);
+            phase.setScheduledEndDate(newEndDate);
+        }
+    }
+
+    /**
+     * <p>Gets the last phase from specified list of project phase. Current implementation looks up for the <code>Final
+     * Review</code> phase but this may change later.</p>
+     *
+     * @param phases a <code>Phase</code> array providing current project phases.
+     * @return a <code>Phase</code> providing the last phase or <code>null</code> if there is no such phase found,
+     * @since 1.3
+     */
+    static Phase getLastPhase(Phase[] phases) {
+        Phase lastPhase = null;
+        for (int i = 0; i < phases.length; i++) {
+            Phase phase = phases[i];
+            PhaseType phaseType = phase.getPhaseType();
+            if ((phaseType != null) && phaseType.getName().equalsIgnoreCase("Final Review")) {
+                lastPhase = phase;
+            }
+        }
+        return lastPhase;
     }
 
     private static Collection<Long> userToUsers(Long user) {

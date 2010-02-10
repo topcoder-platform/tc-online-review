@@ -1478,8 +1478,7 @@ public class ProjectActions extends DispatchAction {
         String operator = Long.toString(AuthorizationHelper.getLoggedInUserId(request));
         ContestDependencyAutomation auto
             = new ContestDependencyAutomation(phaseManager, projectManager, projectLinkManager);
-        Set<Long> visited = new HashSet<Long>();
-        adjustDependentProjects(phProject, phaseManager, auto, operator);
+        ActionsHelper.adjustDependentProjects(phProject, phaseManager, auto, operator);
 
         // Save the phases at the persistence level
         phaseManager.updatePhases(phProject, operator);
@@ -1489,27 +1488,6 @@ public class ProjectActions extends DispatchAction {
         Arrays.sort(projectPhases, new Comparators.ProjectPhaseComparer());
 
         return projectPhases;
-    }
-
-    /**
-     * <p>Adjusts the timelines for projects depending on specified project if necessary.</p>
-     *
-     * @param mainProject a <code>Project</code> providing the project details.
-     * @param phaseManager a <code>PhaseManager</code> to be used for managing phases.
-     * @param auto a <code>ContestDependencyAutomation</code> to be used for processing dependencies.
-     * @param operator a <code>String</code> providing the operator for audit.
-     * @throws PhaseManagementException if an unexpected error occurs.
-     * @throws PersistenceException if an unexpected error occurs.
-     */
-    private void adjustDependentProjects(com.topcoder.project.phases.Project mainProject, PhaseManager phaseManager,
-                                         ContestDependencyAutomation auto, String operator)
-        throws PhaseManagementException, PersistenceException {
-        List<Phase[]> phases = auto.adjustDependingProjectPhases(mainProject.getAllPhases());
-        for (Phase[] p : phases) {
-            if (p.length > 0) {
-                phaseManager.updatePhases(p[0].getProject(), operator);
-            }
-        }
     }
 
     /**

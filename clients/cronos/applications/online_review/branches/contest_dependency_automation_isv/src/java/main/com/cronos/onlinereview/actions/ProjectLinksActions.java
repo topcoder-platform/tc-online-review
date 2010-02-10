@@ -3,14 +3,17 @@
  */
 package com.cronos.onlinereview.actions;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.topcoder.management.phase.ContestDependencyAutomation;
+import com.topcoder.management.phase.PhaseManager;
+import com.topcoder.management.phase.PhaseStatusEnum;
+import com.topcoder.management.project.link.ProjectLinkType;
 import com.topcoder.management.project.persistence.link.ProjectLinkCycleException;
+import com.topcoder.project.phases.Phase;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
@@ -189,6 +192,7 @@ public class ProjectLinksActions extends DispatchAction {
 
         List<Long> destList = new ArrayList<Long>();
         List<Long> typeList = new ArrayList<Long>();
+
         for (int i = 1; i < destIds.length; i++) {
             if (!LINK_ACTION_DELETE.equals(actions[i])) {
                 destList.add(destIds[i]);
@@ -204,8 +208,87 @@ public class ProjectLinksActions extends DispatchAction {
             paramDestProjectIds[i] = destList.get(i);
             paramTypeIds[i] = typeList.get(i);
         }
+
+        // Build the mapping from ID to ProjectLinkType for all existing project link types
+        ProjectLinkType[] linkTypes = linkManager.getAllProjectLinkTypes();
+        Map<Long, ProjectLinkType> linkTypesMap = new HashMap<Long, ProjectLinkType>();
+        for (ProjectLinkType type : linkTypes) {
+            linkTypesMap.put(type.getId(), type);
+        }
+
+        // Build the list of IDs for parent projects which are currently linked to this project. Those projects
+        // will be ignored when determining the current project's timeline is to be adjusted based on added links or not
+        Set<Long> existingParentProjectIds = new HashSet<Long>();
+        ProjectLink[] existingParentProjectLinks = linkManager.getDestProjectLinks(project.getId());
+        for (ProjectLink link : existingParentProjectLinks) {
+            if (!link.getType().isAllowOverlap()) {
+                existingParentProjectIds.add(link.getDestProject().getId());
+            }
+        }
+
+        // Analyze the list of links, find the links to new parent projects and determine the most
+        // recent end time for Final Review phase for those new projects. Only for parent projects linked with
+        // allow_overlap flag set to false
+        PhaseManager phaseManager = ActionsHelper.createPhaseManager(request, false);
+        Date maxNewParentFinalReviewEndDate = null;
+        for (int i = 0; i < paramTypeIds.length; i++) {
+            long linkTypeId = paramTypeIds[i];
+            ProjectLinkType linkType = linkTypesMap.get(linkTypeId);
+            if (!linkType.isAllowOverlap()) {
+                long newParentProjectId = paramDestProjectIds[i];
+                if (!existingParentProjectIds.contains(newParentProjectId)) {
+                    com.topcoder.project.phases.Project parentProject = phaseManager.getPhases(newParentProjectId);
+                    Phase lastPhase = ActionsHelper.getLastPhase(parentProject.getAllPhases());
+                    Date lastPhaseEndDate;
+                    if (lastPhase.getPhaseStatus().getId() == PhaseStatusEnum.SCHEDULED.getId()) {
+                        lastPhaseEndDate = lastPhase.getScheduledEndDate();
+                    } else if (lastPhase.getPhaseStatus().getId() == PhaseStatusEnum.OPEN.getId()) {
+                        lastPhaseEndDate = lastPhase.getScheduledEndDate();
+                    } else {
+                        lastPhaseEndDate = lastPhase.getActualEndDate();
+                    }
+                    if (maxNewParentFinalReviewEndDate == null) {
+                        maxNewParentFinalReviewEndDate = lastPhaseEndDate;
+                    } else if (maxNewParentFinalReviewEndDate.compareTo(lastPhaseEndDate) < 0) {
+                        maxNewParentFinalReviewEndDate = lastPhaseEndDate;
+                    }
+                }
+            }
+        }
+
         try {
             linkManager.updateProjectLinks(project.getId(), paramDestProjectIds, paramTypeIds);
+
+            // Adjust this project's timelines if necessary in case there were new parent projects linked and current
+            // project is not started yet
+            if (maxNewParentFinalReviewEndDate != null) {
+                Date newStartDate = new Date(maxNewParentFinalReviewEndDate.getTime() + 24 * 60 * 60 * 1000L);
+
+                boolean thereAreAffectedPhases = false;
+                com.topcoder.project.phases.Project phasesProject = phaseManager.getPhases(project.getId());
+                Phase[] initialPhases = phasesProject.getInitialPhases();
+                for (Phase phase : initialPhases) {
+                    if (phase.getPhaseStatus().getId() == PhaseStatusEnum.SCHEDULED.getId()) {
+                        thereAreAffectedPhases = true;
+                        phase.setScheduledStartDate(newStartDate);
+                        phase.setScheduledEndDate(new Date(newStartDate.getTime() + phase.getLength()));
+                        phase.getProject().setStartDate(newStartDate);
+                    }
+                }
+
+                if (thereAreAffectedPhases) {
+                    phasesProject.setStartDate(newStartDate);
+                    ActionsHelper.recalculateScheduledDates(phasesProject.getAllPhases());
+
+                    String operator = Long.toString(AuthorizationHelper.getLoggedInUserId(request));
+                    ContestDependencyAutomation auto
+                        = new ContestDependencyAutomation(phaseManager,
+                                                          ActionsHelper.createProjectManager(request),
+                                                          linkManager);
+                    phaseManager.updatePhases(phasesProject, operator);
+                    ActionsHelper.adjustDependentProjects(phasesProject, phaseManager, auto, operator);
+                }
+            }
         } catch (ProjectLinkCycleException e) {
             LoggingHelper.logException(e);
             request.setAttribute("errorTitle", messages.getMessage("Error.Title.General"));
