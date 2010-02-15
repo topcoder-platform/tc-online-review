@@ -19,6 +19,7 @@
     <property name="shared_libdir" value="lib/shared" />
     <property name="jar_tcs_libdir" value="lib/tcs" />
     <property name="jar_ext_libdir" location="lib/third_party" />
+    <property name="jar_shared_libdir" location="lib/shared" />
     <property name="docsdir" value="docs" />
     <property name="configdir" value="conf" />
     <property name="testlogdir" value="log" />
@@ -695,8 +696,9 @@ Note: The security manager that comes with the app may not be compatible with th
             <lib dir="${jar_tcs_libdir}/${userEJB.path}" includes="*.jar" />
             <lib dir="${jar_tcs_libdir}/${termsOfUseEJB.path}" includes="*.jar" />
        <!--     <lib dir="${jar_tcs_libdir}/${contest_eligibility_validation_client.path}" includes="*.jar" />  -->
-        	<lib dir="${jar_tcs_libdir}" includes="*.jar" />
+            <lib dir="${jar_tcs_libdir}" includes="*.jar" />
             <lib dir="${jar_ext_libdir}" includes="*.jar" excludes="mail.jar, ejb-2_0.jar" />
+            <lib dir="${jar_shared_libdir}" includes="*.jar" />
 
             <!-- Added libs to support ejb3 calls -->
             <lib dir="${jar_ext_libdir}/jboss/">
@@ -741,8 +743,8 @@ Note: The security manager that comes with the app may not be compatible with th
                 <include name="${tcsUtil.jar.name}"/>
                 <include name="${tcwebcommon.jar.name}"/>
                 <include name="${shared.jar.name}"/>
-        		<include name="${forums.jar.name}"/>
-        		<include name="${contest_eligibility_validation_client.jar.name}"/>
+                <include name="${forums.jar.name}"/>
+                <include name="${contest_eligibility_validation_client.jar.name}"/>
             </fileset>
         </move>
         <delete verbose="true">
