@@ -696,17 +696,26 @@ Note: The security manager that comes with the app may not be compatible with th
             <lib dir="${jar_tcs_libdir}/${userEJB.path}" includes="*.jar" />
             <lib dir="${jar_tcs_libdir}/${termsOfUseEJB.path}" includes="*.jar" />
        <!--     <lib dir="${jar_tcs_libdir}/${contest_eligibility_validation_client.path}" includes="*.jar" />  -->
-            <lib dir="${jar_tcs_libdir}" includes="*.jar" />
+
+            <lib dir="${jar_tcs_libdir}/">
+                <include name="${tcsUtil.jar.name}"/>
+            </lib>
+
+            <lib dir="${jar_shared_libdir}/">
+                <include name="${shared.jar.name}"/>
+                <include name="${tcwebcommon.jar.name}"/>
+                <include name="${forums.jar.name}"/>
+            </lib>
+
             <lib dir="${jar_ext_libdir}" includes="*.jar" excludes="mail.jar, ejb-2_0.jar" />
-            <lib dir="${jar_shared_libdir}" includes="*.jar" />
 
             <!-- Added libs to support ejb3 calls -->
             <lib dir="${jar_ext_libdir}/jboss/">
-            	<include name="jboss-ejb3-client.jar"/>
-            	<include name="jboss-ejb3x.jar"/>            	
-            	<include name="jboss-aop-jdk50-client.jar"/>
-            	<include name="jboss-aspect-jdk50-client.jar"/>
-            	<include name="jboss-remoting.jar"/>
+                <include name="jboss-ejb3-client.jar"/>
+                <include name="jboss-ejb3x.jar"/>            	
+                <include name="jboss-aop-jdk50-client.jar"/>
+                <include name="jboss-aspect-jdk50-client.jar"/>
+                <include name="jboss-remoting.jar"/>
             </lib>
             <fileset dir="${webdir}" includes="**" excludes="i/**, js/**, css/**" />
         </war>
