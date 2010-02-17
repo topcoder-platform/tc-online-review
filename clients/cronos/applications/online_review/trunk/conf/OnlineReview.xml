@@ -652,6 +652,15 @@
             </Property>
         </Property>
 
+        <Property name="ProjectLinkManager">
+            <Property name="ClassName">
+                <Value>com.topcoder.management.project.persistence.link.ProjectLinkManagerImpl</Value>
+            </Property>
+            <Property name="Namespace">
+                <Value>com.topcoder.management.project.persistence.link.ProjectLinkManagerImpl</Value>
+            </Property>
+        </Property>
+
         <Property name="PhaseManager">
             <Property name="ClassName">
                 <Value>com.topcoder.management.phase.DefaultPhaseManager</Value>
@@ -1487,6 +1496,23 @@
         </Property>
         <Property name="Handlers">
             <!-- All handlers are registered directly from application's code -->
+        </Property>
+        <Property name="ProjectManager">
+            <Property name="className">
+                <Value>com.topcoder.management.project.ProjectManagerImpl</Value>
+            </Property>
+            <Property name="namespace">
+                <Value>com.topcoder.management.project</Value>
+            </Property>
+        </Property>
+
+        <Property name="ProjectLinkManager">
+            <Property name="className">
+                <Value>com.topcoder.management.project.persistence.link.ProjectLinkManagerImpl</Value>
+            </Property>
+            <Property name="namespace">
+                <Value>com.topcoder.management.project.persistence.link.ProjectLinkManagerImpl</Value>
+            </Property>
         </Property>
     </Config>
 
