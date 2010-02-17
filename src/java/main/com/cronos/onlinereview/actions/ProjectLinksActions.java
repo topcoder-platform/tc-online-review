@@ -3,13 +3,17 @@
  */
 package com.cronos.onlinereview.actions;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.topcoder.management.phase.ContestDependencyAutomation;
+import com.topcoder.management.phase.PhaseManager;
+import com.topcoder.management.phase.PhaseStatusEnum;
+import com.topcoder.management.project.link.ProjectLinkType;
+import com.topcoder.management.project.link.ProjectLinkCycleException;
+import com.topcoder.project.phases.Phase;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
@@ -38,9 +42,14 @@ import com.topcoder.util.errorhandling.BaseException;
  * This class is thread-safe as it does not contain any mutable inner state.
  * </p>
  *
+ * <p>
+ * Change log for version 1.1: updated
+ * {@link #saveProjectLinks(ActionMapping, ActionForm, HttpServletRequest, HttpServletResponse)} method to handle the
+ * CyclicDependencyError.
+ * </p>
  *
- * @author TCSDEVELOPER
- * @version 1.0
+ * @author BeBetter, isv
+ * @version 1.1
  * @since OR Project Linking Assembly
  */
 public class ProjectLinksActions extends DispatchAction {
@@ -198,7 +207,82 @@ public class ProjectLinksActions extends DispatchAction {
             paramDestProjectIds[i] = destList.get(i);
             paramTypeIds[i] = typeList.get(i);
         }
-        linkManager.updateProjectLinks(project.getId(), paramDestProjectIds, paramTypeIds);
+
+        // Build the mapping from ID to ProjectLinkType for all existing project link types
+        ProjectLinkType[] linkTypes = linkManager.getAllProjectLinkTypes();
+        Map<Long, ProjectLinkType> linkTypesMap = new HashMap<Long, ProjectLinkType>();
+        for (ProjectLinkType type : linkTypes) {
+            linkTypesMap.put(type.getId(), type);
+        }
+
+        // Analyze the list of links, find the links to new parent projects and determine the most
+        // recent end time for Final Review phase for those new projects. Only for parent projects linked with
+        // allow_overlap flag set to false
+        PhaseManager phaseManager = ActionsHelper.createPhaseManager(request, false);
+        Date maxNewParentFinalReviewEndDate = null;
+        for (int i = 0; i < paramTypeIds.length; i++) {
+            long linkTypeId = paramTypeIds[i];
+            ProjectLinkType linkType = linkTypesMap.get(linkTypeId);
+            if (!linkType.isAllowOverlap()) {
+                long parentProjectId = paramDestProjectIds[i];
+                com.topcoder.project.phases.Project parentProject = phaseManager.getPhases(parentProjectId);
+                Phase lastPhase = ActionsHelper.getLastPhase(parentProject.getAllPhases());
+                Date lastPhaseEndDate;
+                if (lastPhase.getPhaseStatus().getId() == PhaseStatusEnum.SCHEDULED.getId()) {
+                    lastPhaseEndDate = lastPhase.getScheduledEndDate();
+                } else if (lastPhase.getPhaseStatus().getId() == PhaseStatusEnum.OPEN.getId()) {
+                    lastPhaseEndDate = lastPhase.getScheduledEndDate();
+                } else {
+                    lastPhaseEndDate = lastPhase.getActualEndDate();
+                }
+                if ((maxNewParentFinalReviewEndDate == null)
+                    || (maxNewParentFinalReviewEndDate.compareTo(lastPhaseEndDate) < 0)) {
+                    maxNewParentFinalReviewEndDate = lastPhaseEndDate;
+                }
+            }
+        }
+
+        try {
+            linkManager.updateProjectLinks(project.getId(), paramDestProjectIds, paramTypeIds);
+
+            // Adjust this project's timelines if necessary in case there were new parent projects linked and current
+            // project is not started yet
+            if (maxNewParentFinalReviewEndDate != null) {
+                Date newStartDate = new Date(maxNewParentFinalReviewEndDate.getTime() + 24 * 60 * 60 * 1000L);
+
+                boolean thereAreAffectedPhases = false;
+                com.topcoder.project.phases.Project phasesProject = phaseManager.getPhases(project.getId());
+                Phase[] initialPhases = phasesProject.getInitialPhases();
+                for (Phase phase : initialPhases) {
+                    if (phase.getPhaseStatus().getId() == PhaseStatusEnum.SCHEDULED.getId()) {
+                        if (phase.getScheduledStartDate().compareTo(maxNewParentFinalReviewEndDate) <= 0) {
+                            thereAreAffectedPhases = true;
+                            phase.setScheduledStartDate(newStartDate);
+                            phase.setScheduledEndDate(new Date(newStartDate.getTime() + phase.getLength()));
+                            phase.getProject().setStartDate(newStartDate);
+                        }
+                    }
+                }
+
+                if (thereAreAffectedPhases) {
+                    phasesProject.setStartDate(newStartDate);
+                    ActionsHelper.recalculateScheduledDates(phasesProject.getAllPhases());
+
+                    String operator = Long.toString(AuthorizationHelper.getLoggedInUserId(request));
+                    ContestDependencyAutomation auto
+                        = new ContestDependencyAutomation(phaseManager,
+                                                          ActionsHelper.createProjectManager(request),
+                                                          linkManager);
+                    phaseManager.updatePhases(phasesProject, operator);
+                    ActionsHelper.adjustDependentProjects(phasesProject, phaseManager, auto, operator);
+                }
+            }
+        } catch (ProjectLinkCycleException e) {
+            LoggingHelper.logException(e);
+            request.setAttribute("errorTitle", messages.getMessage("Error.Title.General"));
+            request.setAttribute("errorMessage", e.getMessage());
+            return mapping.findForward(Constants.USER_ERRROR_FORWARD_NAME);
+        }
 
         // Return success forward
         return ActionsHelper.cloneForwardAndAppendToPath(mapping.findForward(Constants.SUCCESS_FORWARD_NAME), "&pid="
