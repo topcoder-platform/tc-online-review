@@ -10,7 +10,6 @@ import com.cronos.onlinereview.external.UserRetrieval;
 import com.topcoder.management.phase.PhaseManager;
 import com.topcoder.management.phase.PhaseStatusEnum;
 import com.topcoder.management.project.Project;
-import com.topcoder.management.project.ProjectManager;
 import com.topcoder.management.resource.Resource;
 import com.topcoder.management.resource.ResourceManager;
 import com.topcoder.management.resource.ResourceRole;
@@ -36,12 +35,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import static com.cronos.onlinereview.actions.Constants.GLOBAL_MANAGER_ROLE_NAME;
-import static com.cronos.onlinereview.actions.Constants.MANAGER_ROLE_NAME;
-import static com.cronos.onlinereview.actions.Constants.OBSERVER_ROLE_NAME;
-import static com.cronos.onlinereview.actions.Constants.DESIGNER_ROLE_NAME;
-import static com.cronos.onlinereview.actions.Constants.COPILOT_ROLE_NAME;
-import static com.cronos.onlinereview.actions.Constants.CLIENT_MANAGER_ROLE_NAME;
 import static com.cronos.onlinereview.actions.Constants.VIEW_PROJECT_MANAGEMENT_CONSOLE_PERM_NAME;
 import static com.cronos.onlinereview.actions.Constants.PROJECT_MANAGEMENT_PERM_NAME;
 import static com.cronos.onlinereview.actions.Constants.REGISTRATION_PHASE_NAME;
@@ -59,33 +52,6 @@ import static com.cronos.onlinereview.actions.Constants.SUCCESS_FORWARD_NAME;
  * @version 1.0 (Online Review Project Management Console assembly v1.0)
  */
 public class ProjectManagementConsoleActions extends DispatchAction {
-
-    /**
-     * <p>A <code>String</code> array listing the names for roles for resources which can be added to project by users
-     * with <code>Global Manager</code> role granted.</p>
-     */
-    private static String[] GLOBAL_MANAGER_ALLOWED_RESOURCE_ROLES
-        = new String[] {CLIENT_MANAGER_ROLE_NAME, COPILOT_ROLE_NAME, DESIGNER_ROLE_NAME, OBSERVER_ROLE_NAME};
-
-    /**
-     * <p>A <code>String</code> array listing the names for roles for resources which can be added to project by users
-     * with <code>Manager</code> role granted.</p>
-     */
-    private static String[] MANAGER_ALLOWED_RESOURCE_ROLES
-        = new String[] {CLIENT_MANAGER_ROLE_NAME, COPILOT_ROLE_NAME, DESIGNER_ROLE_NAME, OBSERVER_ROLE_NAME};
-
-    /**
-     * <p>A <code>String</code> array listing the names for roles for resources which can be added to project by users
-     * with <code>Client Manager</code> role granted.</p>
-     */
-    private static String[] CLIENT_MANAGER_ALLOWED_RESOURCE_ROLES
-        = new String[] {COPILOT_ROLE_NAME, DESIGNER_ROLE_NAME, OBSERVER_ROLE_NAME};
-
-    /**
-     * <p>A <code>String</code> array listing the names for roles for resources which can be added to project by users
-     * with <code>Copilot</code> role granted.</p>
-     */
-    private static String[] COPILOT_ALLOWED_RESOURCE_ROLES = new String[] {DESIGNER_ROLE_NAME, OBSERVER_ROLE_NAME};
 
     /**
      * <p>A <code>long</code> providing the constant value for single hour duration in milliseconds.</p>
@@ -406,7 +372,6 @@ public class ProjectManagementConsoleActions extends DispatchAction {
         // validation succeeds
         Map<Long, ResourceRole> roleMapping = new HashMap<Long, ResourceRole>();
         Map<String, ExternalUser> users = new HashMap<String, ExternalUser>();
-        ResourceRole[] availableRolesList = getAvailableResourceRoles(request);
         UserRetrieval userRetrieval = ActionsHelper.createUserRetrieval(request);
         ResourceRole[] existingResourceRoles = resourceManager.getAllResourceRoles();
         for (int i = 0; i < resourceRoleIds.length; i++) {
@@ -417,13 +382,13 @@ public class ProjectManagementConsoleActions extends DispatchAction {
                     new ActionMessage("error.com.cronos.onlinereview.actions.manageProject.ResourceRole.InvalidId",
                                       requestedRoleId));
             } else {
-                ResourceRole role = ActionsHelper.findResourceRoleById(availableRolesList, requestedRoleId);
-                if (role == null) {
+                final String permission = "Can Add Resource Role " + existingRole.getName();
+                if (!AuthorizationHelper.hasUserPermission(request, permission)) {
                     ActionsHelper.addErrorToRequest(request, "resource_role_id[" + i + "]",
                         new ActionMessage("error.com.cronos.onlinereview.actions.manageProject.ResourceRole.Denied",
                                           existingRole.getName()));
                 } else {
-                    roleMapping.put(role.getId(), role);
+                    roleMapping.put(existingRole.getId(), existingRole);
 
                     // Verify users
                     String handlesParam = resourceHandles[i];
@@ -573,34 +538,6 @@ public class ProjectManagementConsoleActions extends DispatchAction {
     }
 
     /**
-     * <p>Gets the list of roles available for resources which current user can add to project. Analyzes the assigned
-     * roles for current user and returns appropriate list of available resource roles to specified request.</p>
-     *
-     * @param request an <code>HttpServletRequest</code> representing incoming request from the client to bind the list
-     *        of available roles to.
-     * @return a <code>ResourceRole</code> array listing the roles available for resources which current user can add to
-     *         project.
-     * @throws ResourcePersistenceException if an unexpected error occurs while instantiating resource manager.
-     */
-    private ResourceRole[] getAvailableResourceRoles(HttpServletRequest request)
-        throws ResourcePersistenceException {
-        
-        ResourceManager resourceManager = ActionsHelper.createResourceManager(request);
-        ResourceRole[] existingResourceRoles = resourceManager.getAllResourceRoles();
-
-        if (AuthorizationHelper.hasUserRole(request, GLOBAL_MANAGER_ROLE_NAME)) {
-            return getAvailableRoles(GLOBAL_MANAGER_ALLOWED_RESOURCE_ROLES, existingResourceRoles);
-        } else if (AuthorizationHelper.hasUserRole(request, MANAGER_ROLE_NAME)) {
-            return getAvailableRoles(MANAGER_ALLOWED_RESOURCE_ROLES, existingResourceRoles);
-        } else if (AuthorizationHelper.hasUserRole(request, CLIENT_MANAGER_ROLE_NAME)) {
-            return getAvailableRoles(CLIENT_MANAGER_ALLOWED_RESOURCE_ROLES, existingResourceRoles);
-        } else if (AuthorizationHelper.hasUserRole(request, COPILOT_ROLE_NAME)) {
-            return getAvailableRoles(COPILOT_ALLOWED_RESOURCE_ROLES, existingResourceRoles);
-        }
-        return new ResourceRole[0];
-    }
-
-    /**
      * <p>Gets the list of roles available for resources which current user can add to project.</p>
      *
      * @param allowedRoleNames a <code>String</code> array listing the names for roles for resources which can be added
@@ -632,34 +569,10 @@ public class ProjectManagementConsoleActions extends DispatchAction {
     private void setAvailableResourceRoles(HttpServletRequest request) throws ResourcePersistenceException {
         ResourceManager resourceManager = ActionsHelper.createResourceManager(request);
         ResourceRole[] existingResourceRoles = resourceManager.getAllResourceRoles();
-
-        if (AuthorizationHelper.hasUserRole(request, GLOBAL_MANAGER_ROLE_NAME)) {
-            setAvailableRoles(GLOBAL_MANAGER_ALLOWED_RESOURCE_ROLES, existingResourceRoles, request);
-        } else if (AuthorizationHelper.hasUserRole(request, MANAGER_ROLE_NAME)) {
-            setAvailableRoles(MANAGER_ALLOWED_RESOURCE_ROLES, existingResourceRoles, request);
-        } else if (AuthorizationHelper.hasUserRole(request, CLIENT_MANAGER_ROLE_NAME)) {
-            setAvailableRoles(CLIENT_MANAGER_ALLOWED_RESOURCE_ROLES, existingResourceRoles, request);
-        } else if (AuthorizationHelper.hasUserRole(request, COPILOT_ROLE_NAME)) {
-            setAvailableRoles(COPILOT_ALLOWED_RESOURCE_ROLES, existingResourceRoles, request);
-        }
-    }
-
-    /**
-     * <p>Binds to specified request the list of roles available for resources which current user can add to project.
-     * </p>
-     *
-     * @param allowedRoleNames a <code>String</code> array listing the names for roles for resources which can be added
-     *        by current user to project.
-     * @param existingResourceRoles a <code>ResourceRole</code> array listing all existing resource roles. 
-     * @param request an <code>HttpServletRequest</code> representing incoming request from the client to bind the list
-     *        of available roles to.
-     */
-    private void setAvailableRoles(String[] allowedRoleNames, ResourceRole[] existingResourceRoles,
-                                   HttpServletRequest request) {
         List<ResourceRole> availableRoles = new ArrayList<ResourceRole>();
-        for (String allowedRoleName : allowedRoleNames) {
-            ResourceRole role = ActionsHelper.findResourceRoleByName(existingResourceRoles, allowedRoleName);
-            if (role != null) {
+        for (ResourceRole role : existingResourceRoles) {
+            final String permission = "Can Add Resource Role " + role.getName();
+            if (AuthorizationHelper.hasUserPermission(request, permission)) {
                 availableRoles.add(role);
             }
         }
