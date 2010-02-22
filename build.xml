@@ -209,7 +209,7 @@
     <property name="online_review_upload_services.path" value="online_review_upload_services/${online_review_upload_services.version}" />
     <property name="online_review_upload_services.jar" value="${tcs_libdir}/${online_review_upload_services.path}/${online_review_upload_services.jar.name}" />
 
-    <property name="phase_management.version" value="1.0.4" />
+    <property name="phase_management.version" value="1.0.3" />
     <property name="phase_management.jar.name" value="phase_management.jar" />
     <property name="phase_management.path" value="phase_management/${phase_management.version}" />
     <property name="phase_management.jar" value="${tcs_libdir}/${phase_management.path}/${phase_management.jar.name}" />
