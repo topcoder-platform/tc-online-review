@@ -18,11 +18,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
-
-import com.topcoder.management.phase.ContestDependencyAutomation;
-import com.topcoder.management.phase.PhaseManagementException;
-import com.topcoder.management.project.PersistenceException;
-import com.topcoder.management.project.link.ProjectLinkManager;
 import com.topcoder.web.common.eligibility.ContestEligibilityServiceLocator;
 
 import javax.ejb.CreateException;
@@ -127,18 +122,8 @@ import com.topcoder.web.ejb.user.UserTermsOfUseLocator;
  *   </ol>
  * </p>
  *
- * <p>
- * Version 1.5 (Contest Dependency Automation v1.0) Change notes:
- *   <ol>
- *     <li>
- *       Updated {@link #saveProjectPhases(boolean, HttpServletRequest, LazyValidatorForm, Project, Map, List, boolean)} 
- *       method to adjust the start times (if necessary) for projects which depend on current project being updated.
- *     </li>
- *   </ol>
- * </p>
- *
- * @author George1, real_vg, pulky, isv
- * @version 1.5
+ * @author George1, real_vg, pulky
+ * @version 1.4
  */
 public class ProjectActions extends DispatchAction {
 
@@ -1044,25 +1029,16 @@ public class ProjectActions extends DispatchAction {
 
 
     /**
-     * <p>Updates the list of phases associated with the specified project. Optionally the method accepts the list of
-     * project's phases which are to be deleted.</p>
+     * TODO: Document it
      *
-     * <p>This method has the following side-effect: if the end time for <code>Final Review</code> phase for specified
-     * project is extended then start times for <code>Registration</code> and <code>Submission</code> phases for
-     * projects which depend on this project (directly or indirectly) are also extended by the same amount of time.
-     * However nothing happens to depending projects if end time for <code>Final Review</code> phase for specified
-     * project is shrinked.</p>
-     *
-     * @param newProject <code>true</code> if project is new project; <code>false</code> if project is existing project
-     *        which is updated.
-     * @param request an <code>HttpServletRequest</code> representing current incoming request from the client.
-     * @param lazyForm a <code>LazyValidatorForm</code> providing the submitted form mapped to specified request.
-     * @param project a <code>Project</code> providing details for project associated with the phases.
-     * @param phasesJsMap a <code>Map</code> mapping phase IDs to phases.
-     * @param phasesToDelete a <code>List</code> listing the existing phases for specified project which are to be
-     *        deleted.
-     * @return a <code>Phase</code> array listing the updated phases associated with the specified project. 
-     * @throws BaseException if an unexpected error occurs.
+     * @return
+     * @param newProject
+     * @param request
+     * @param lazyForm
+     * @param project
+     * @param phasesJsMap TODO
+     * @param phasesToDelete TODO
+     * @throws BaseException
      */
     private Phase[] saveProjectPhases(boolean newProject, HttpServletRequest request, LazyValidatorForm lazyForm,
             Project project, Map<Object, Phase> phasesJsMap, List<Phase> phasesToDelete, boolean statusHasChanged)
@@ -1463,7 +1439,6 @@ public class ProjectActions extends DispatchAction {
 
         // FIXME: Refactor it
         ProjectManager projectManager = ActionsHelper.createProjectManager(request);
-        ProjectLinkManager projectLinkManager = ActionsHelper.createProjectLinkManager(request);
 
         // Set project rating date
         ActionsHelper.setProjectRatingDate(project, projectPhases, (Format) request.getAttribute("date_format"));
@@ -1479,14 +1454,8 @@ public class ProjectActions extends DispatchAction {
                     Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
         }
 
-        // Adjust the depending projects timelines if necessary
-        String operator = Long.toString(AuthorizationHelper.getLoggedInUserId(request));
-        ContestDependencyAutomation auto
-            = new ContestDependencyAutomation(phaseManager, projectManager, projectLinkManager);
-        ActionsHelper.adjustDependentProjects(phProject, phaseManager, auto, operator);
-
         // Save the phases at the persistence level
-        phaseManager.updatePhases(phProject, operator);
+        phaseManager.updatePhases(phProject, Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
         // TODO: The following line was added just to be safe. May be unneeded as well as another one
         projectPhases = phProject.getAllPhases();
         // Sort project phases
