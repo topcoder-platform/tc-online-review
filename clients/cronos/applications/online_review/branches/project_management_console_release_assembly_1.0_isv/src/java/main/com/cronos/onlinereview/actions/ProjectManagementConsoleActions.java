@@ -17,7 +17,15 @@ import com.topcoder.management.resource.persistence.ResourcePersistenceException
 import com.topcoder.management.resource.search.ResourceFilterBuilder;
 import com.topcoder.project.phases.Phase;
 import com.topcoder.project.phases.PhaseStatus;
+import com.topcoder.shared.util.DBMS;
 import com.topcoder.util.errorhandling.BaseException;
+import com.topcoder.web.ejb.project.ProjectRoleTermsOfUse;
+import com.topcoder.web.ejb.project.ProjectRoleTermsOfUseLocator;
+import com.topcoder.web.ejb.termsofuse.TermsOfUse;
+import com.topcoder.web.ejb.termsofuse.TermsOfUseEntity;
+import com.topcoder.web.ejb.termsofuse.TermsOfUseLocator;
+import com.topcoder.web.ejb.user.UserTermsOfUse;
+import com.topcoder.web.ejb.user.UserTermsOfUseLocator;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
@@ -25,8 +33,11 @@ import org.apache.struts.action.ActionMessage;
 import org.apache.struts.actions.DispatchAction;
 import org.apache.struts.validator.LazyValidatorForm;
 
+import javax.ejb.CreateException;
+import javax.naming.NamingException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -121,11 +132,11 @@ public class ProjectManagementConsoleActions extends DispatchAction {
      * @param request an <code>HttpServletRequest</code> representing incoming request from the client.
      * @param response an <code>HttpServletResponse</code> representing response outgoing to client.
      * @return an <code>ActionForward</code> referencing the next view to be displayed to user.
-     * @throws BaseException if an unexpected error occurs.
+     * @throws Exception if an unexpected error occurs.
      */
     @SuppressWarnings("unchecked")
     public ActionForward manageProject(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-                                       HttpServletResponse response) throws BaseException {
+                                       HttpServletResponse response) throws Exception {
         LoggingHelper.logAction(request);
 
         // Gather the roles the user has for current request
@@ -431,14 +442,14 @@ public class ProjectManagementConsoleActions extends DispatchAction {
      * @param form an <code>ActionForm</code> providing the form parameters mapped to specified request.
      * @param roleMapping a <code>Map</code> mapping resource role IDs to role details.
      * @param users a <code>Map</code> mapping user handlers to user account details. 
-     * @throws ConfigException if a configuration error occurs while instantiating the the user data store.
-     * @throws RetrievalException if an error occurs while attempting to get the details for user account for requested
-     *         resource from persistent data store.
      * @throws BaseException if an unexpected error occurs.
+     * @throws NamingException if an unexpected error occurs.
+     * @throws RemoteException if an unexpected error occurs.
+     * @throws CreateException if an unexpected error occurs.
      */
     private void handleResourceAddition(Project project, HttpServletRequest request, ActionForm form,
                                         Map<Long, ResourceRole> roleMapping, Map<String, ExternalUser> users)
-            throws BaseException {
+            throws BaseException, NamingException, CreateException, RemoteException {
         
         LazyValidatorForm lazyForm = (LazyValidatorForm) form;
         Long[] resourceRoleIds = (Long[]) lazyForm.get("resource_role_id");
@@ -483,7 +494,7 @@ public class ProjectManagementConsoleActions extends DispatchAction {
                     handle = handle.trim();
 
                     // Prior to adding resource first check if handle is already assigned the specified role or
-                    // if handle is duplciate
+                    // if handle is duplicate
                     Set<String> currentRoleResources = existingResources.get(resourceRoleId);
                     if ((currentRoleResources != null) && (currentRoleResources.contains(handle))) {
                         existingResourceHandles.get(resourceRoleId).add(handle);
@@ -492,20 +503,33 @@ public class ProjectManagementConsoleActions extends DispatchAction {
                     } else {
                         // The resource can be added - there will be no duplicate
                         processedHandles.get(resourceRoleId).add(handle);
+
+                        // Verify if resource has accepted all necessary terms of use for project
                         Long userId = users.get(handle).getId();
+                        List<TermsOfUseEntity> pendingTerms
+                            = validateResourceTermsOfUse(project.getId(), userId, resourceRoleId);
+                        if (!pendingTerms.isEmpty()) {
+                            for (TermsOfUseEntity terms : pendingTerms) {
+                                ActionsHelper.addErrorToRequest(request, "resource_handles[" + i + "]",
+                                        new ActionMessage("error.com.cronos.onlinereview.actions."
+                                                + "editProject.Resource.MissingTermsByUser",
+                                                handle, terms.getTitle()));
+                            }
+                        } else {
+                            // The resource can be added - all necessary terms of use are accepted
+                            Resource resource = new Resource();
+                            resource.setProject(project.getId());
+                            resource.setProperty("Payment", null);
+                            resource.setProperty("Payment Status", "N/A");
+                            resource.setResourceRole(roleMapping.get(resourceRoleId));
+                            resource.setProperty("Handle", handle);
+                            resource.setProperty("External Reference ID", userId);
 
-                        Resource resource = new Resource();
-                        resource.setProject(project.getId());
-                        resource.setProperty("Payment", null);
-                        resource.setProperty("Payment Status", "N/A");
-                        resource.setResourceRole(roleMapping.get(resourceRoleId));
-                        resource.setProperty("Handle", handle);
-                        resource.setProperty("External Reference ID", userId);
+                            newUsersForumWatch.add(userId);
 
-                        newUsersForumWatch.add(userId);
-
-                        resourceManager.updateResource(resource,
-                                Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
+                            resourceManager.updateResource(resource,
+                                    Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
+                        }
                     }
                 }
             }
@@ -730,5 +754,45 @@ public class ProjectManagementConsoleActions extends DispatchAction {
             phase.setScheduledStartDate(phase.calcStartDate());
             phase.setScheduledEndDate(phase.calcEndDate());
         }
+    }
+
+    /**
+     * <p>Validates that specified user which is going to be assigned specified role for specified project has accepted
+     * all terms of use set for specified role in context of the specified project.</p>
+     *
+     * @param projectId a <code>long</code> providing the project ID.
+     * @param userId a <code>long</code> providing the user ID.
+     * @param roleId a <code>long</code> providing the role ID.
+     * @return a <code>List</code> of terms of use which are not yet accepted by the specified user or empty list if all
+     *         necessary terms of use are accepted. 
+     * @throws NamingException if any errors occur during EJB lookup.
+     * @throws RemoteException if any errors occur during EJB remote invocation.
+     * @throws CreateException if any errors occur during EJB creation.
+     */
+    private List<TermsOfUseEntity> validateResourceTermsOfUse(long projectId, long userId, long roleId)
+        throws CreateException, NamingException, RemoteException {
+        
+        List<TermsOfUseEntity> unAcceptedTerms = new ArrayList<TermsOfUseEntity>();
+
+        // get remote services
+        ProjectRoleTermsOfUse projectRoleTermsOfUse = ProjectRoleTermsOfUseLocator.getService();
+        UserTermsOfUse userTermsOfUse = UserTermsOfUseLocator.getService();
+        TermsOfUse termsOfUse = TermsOfUseLocator.getService();
+
+        List<Long>[] necessaryTerms = projectRoleTermsOfUse.getTermsOfUse(
+            (int) projectId, new int[]{new Long(roleId).intValue()}, DBMS.COMMON_OLTP_DATASOURCE_NAME);
+
+        for (int j = 0; j < necessaryTerms.length; j++) {
+            if (necessaryTerms[j] != null) {
+                for (Long termsId : necessaryTerms[j]) {
+                    if (!userTermsOfUse.hasTermsOfUse(userId, termsId, DBMS.COMMON_OLTP_DATASOURCE_NAME)) {
+                        TermsOfUseEntity terms = termsOfUse.getEntity(termsId, DBMS.COMMON_OLTP_DATASOURCE_NAME);
+                        unAcceptedTerms.add(terms);
+                    }
+                }
+            }
+        }
+
+        return unAcceptedTerms;
     }
 }
