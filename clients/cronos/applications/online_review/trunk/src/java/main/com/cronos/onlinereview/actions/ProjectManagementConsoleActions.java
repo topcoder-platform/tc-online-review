@@ -550,7 +550,9 @@ public class ProjectManagementConsoleActions extends DispatchAction {
             }
         }
 
-        // Add all assigned resources as watchers for forum associated with project
+        // Add all assigned resources as watchers for forum associated with project and grant then a permission
+        // to access the forum
+        ActionsHelper.addForumPermissions(project, newUsersForumWatch);
         String forumId = (String) project.getProperty("Developer Forum ID");
         if (forumId == null) {
             forumId = "0";
