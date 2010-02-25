@@ -7,8 +7,7 @@
        <!ENTITY contactManagersTemplate "/home/tcs/onlinereview/templates/contact_manager_template.txt">
        <!ENTITY pactJNDIAddress "jnp://localhost:1199">
 ]>
-<CMConfig xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-          xsi:noNamespaceSchemaLocation="file://Configuration_Manager_Schema.xsd">
+<CMConfig>
 <!-- [OR-584] don't need this anymore
     <!ENTITY assignmentDocumentsFlag "false">
 -->
@@ -46,7 +45,7 @@
                 </Property>
                 <Property name="parameters">
                     <Property name="jndi_name">
-                        <Value>java:JTS_TCS_CATALOG_IDGEN</Value>
+                        <Value>java:OLTP</Value>
                     </Property>
                 </Property>
             </Property>
@@ -649,6 +648,15 @@
             </Property>
             <Property name="Namespace">
                 <Value>com.topcoder.management.project</Value>
+            </Property>
+        </Property>
+
+        <Property name="ProjectLinkManager">
+            <Property name="ClassName">
+                <Value>com.topcoder.management.project.persistence.link.ProjectLinkManagerImpl</Value>
+            </Property>
+            <Property name="Namespace">
+                <Value>com.topcoder.management.project.persistence.link.ProjectLinkManagerImpl</Value>
             </Property>
         </Property>
 
@@ -1487,6 +1495,23 @@
         </Property>
         <Property name="Handlers">
             <!-- All handlers are registered directly from application's code -->
+        </Property>
+        <Property name="ProjectManager">
+            <Property name="className">
+                <Value>com.topcoder.management.project.ProjectManagerImpl</Value>
+            </Property>
+            <Property name="namespace">
+                <Value>com.topcoder.management.project</Value>
+            </Property>
+        </Property>
+
+        <Property name="ProjectLinkManager">
+            <Property name="className">
+                <Value>com.topcoder.management.project.persistence.link.ProjectLinkManagerImpl</Value>
+            </Property>
+            <Property name="namespace">
+                <Value>com.topcoder.management.project.persistence.link.ProjectLinkManagerImpl</Value>
+            </Property>
         </Property>
     </Config>
 
