@@ -38,7 +38,7 @@
     	   // Initiates option values
     	   projectOptions.push(new Option('${orfn:getMessage(pageContext, "editProjectLinks.projectTypes.SelectProject")}','-1'));
          <c:forEach items="${allProjects}" var="projectElement">
-         <c:set var="str" value="${projectElement.allProperties[\"Project Name\"]} v${projectElement.allProperties[\"Project Version\"]} (${projectElement.projectCategory.name})"/>
+         <c:set var="str" value="${projectElement.allProperties[\"Project Name\"]} v${projectElement.allProperties[\"Project Version\"]} (${projectElement.projectCategory.name}) (${projectElement.projectStatus.name})"/>
          <c:set var="repl" value="${fn:replace(str, \"'\", \"\")}"/>
             <c:if test="${projectElement.id ne project.id}">
                 projectOptions.push(new Option('${repl}','${projectElement.id}'));

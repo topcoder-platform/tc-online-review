@@ -75,6 +75,18 @@ public class ProjectManagementConsoleActions extends DispatchAction {
     private static final long DAY_DURATION_IN_MILLIS = 24 * 60 * 60 * 1000L;
 
     /**
+     * <p>A <code>long</code> providing the constant value for copilot resource role id </p>
+     */
+    private static final long COPILOT_RESOURCE_ROLE_ID = 14;
+
+    /**
+     * <p>A <code>long</code> providing the constant value for client manager resource role id</p>
+     */
+    private static final long CLIENT_MANAGER_RESOURCE_ROLE_ID = 15;
+
+
+
+    /**
      * <p>Constructs new <code>ProjectManagementConsoleActions</code> instance. This implementation does nothing.</p>
      */
     public ProjectManagementConsoleActions() {
@@ -482,6 +494,8 @@ public class ProjectManagementConsoleActions extends DispatchAction {
 
         // Now add resources for selected roles only if there were no validation errors
         Set<Long> newUsersForumWatch = new HashSet<Long>();
+        Set<Long> newUsersForumRoles = new HashSet<Long>();
+        Set<Long> newModeratorsForumRoles = new HashSet<Long>();
 
         Map<Long, Set<String>> processedHandles = new HashMap<Long, Set<String>>();
         Map<Long, Set<String>> existingResourceHandles = new HashMap<Long, Set<String>>();
@@ -542,6 +556,16 @@ public class ProjectManagementConsoleActions extends DispatchAction {
 
                             newUsersForumWatch.add(userId);
 
+                            // client manager and copilot have moderator role
+                            if (resourceRoleId == COPILOT_RESOURCE_ROLE_ID  || resourceRoleId == CLIENT_MANAGER_RESOURCE_ROLE_ID)
+                            {   
+                                newModeratorsForumRoles.add(userId);                      
+                            }
+                            else
+                            {
+                                newUsersForumRoles.add(userId);
+                            }
+
                             resourceManager.updateResource(resource,
                                     Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
                         }
@@ -552,7 +576,8 @@ public class ProjectManagementConsoleActions extends DispatchAction {
 
         // Add all assigned resources as watchers for forum associated with project and grant then a permission
         // to access the forum
-        ActionsHelper.addForumPermissions(project, newUsersForumWatch);
+        ActionsHelper.addForumPermissions(project, newUsersForumRoles, false);
+        ActionsHelper.addForumPermissions(project, newModeratorsForumRoles, true);
         String forumId = (String) project.getProperty("Developer Forum ID");
         if (forumId == null) {
             forumId = "0";

@@ -1773,6 +1773,7 @@ public class ProjectActions extends DispatchAction {
 
         // HashSet used to identify resource of new user
         Set<Long> newUsers = new HashSet<Long>();
+        Set<Long> newModerators = new HashSet<Long>();
         Set<Long> oldUsers = new HashSet<Long>();
         Set<Long> deletedUsers = new HashSet<Long>();
         Set<Long> newSubmitters = new HashSet<Long>();
@@ -1942,6 +1943,14 @@ public class ProjectActions extends DispatchAction {
                 
             }
 
+            // client manager and copilot have moderator role
+            if (resourceRole.equals("Client Manager")  || resourceRole.equals("Copilot"))
+            {   
+                newUsers.remove(user.getId());
+                newModerators.add(user.getId());
+                
+            }
+
             // make sure "Appeals Completed Early" flag is not set if the role is not submitter.
             if (resourceRoleChanged && !resourceRole.equals(Constants.SUBMITTER_ROLE_NAME)) {
                 resource.setProperty(Constants.APPEALS_COMPLETED_EARLY_PROPERTY_KEY, null);
@@ -2001,7 +2010,8 @@ public class ProjectActions extends DispatchAction {
 
         // Add forum permissions for all new users and remove permissions for removed resources.
         ActionsHelper.removeForumPermissions(project, deletedUsers);
-        ActionsHelper.addForumPermissions(project, newUsers);
+        ActionsHelper.addForumPermissions(project, newUsers, false);
+        ActionsHelper.addForumPermissions(project, newModerators, true);
 
         long forumId = 0;
         if (project.getProperty("Developer Forum ID") != null 
