@@ -169,6 +169,8 @@ import com.topcoder.web.ejb.forums.ForumsHome;
  * @since 1.0
  */
 public class ActionsHelper {
+
+    
     /**
      * The logger instance.
      */
@@ -197,6 +199,18 @@ public class ActionsHelper {
      * This helper class is used for creating the managers.
      */
     private static final ManagerCreationHelper managerCreationHelper = new ManagerCreationHelper();
+
+    /**
+     * constant for software user fourm role prefix 
+     */
+    private static final String SOFTWARE_USER_FORUM_ROLE_PREFIX = "Software_Users_";
+
+    /**
+     * constant for software moderator fourm role prefix 
+     */
+    private static final String SOFTWARE_MODERATOR_FORUM_ROLE_PREFIX = "Software_Moderators_";
+
+
 
     /**
      * This constructor is declared private to prohibit instantiation of the <code>ActionsHelper</code> class.
@@ -4202,10 +4216,21 @@ public class ActionsHelper {
     }
     
     public static void addForumPermissions(Project project, Collection<Long> users) throws BaseException {
+        addForumPermissions(project, users, false);
+    }
+
+
+    public static void addForumPermissions(Project project, Collection<Long> users, boolean moderator) throws BaseException {
         try {
             Forums forumBean = getForumBean();
+
             
-            String roleId = "Software_Users_" + getProjectLongValue(project, "Developer Forum ID");
+            String roleId = SOFTWARE_USER_FORUM_ROLE_PREFIX + getProjectLongValue(project, "Developer Forum ID");
+
+            if (moderator)
+            {
+                roleId = SOFTWARE_MODERATOR_FORUM_ROLE_PREFIX + getProjectLongValue(project, "Developer Forum ID");
+            }
 
             for (Long userId : users) {
                 forumBean.assignRole(userId, roleId);
@@ -4223,11 +4248,15 @@ public class ActionsHelper {
         try {
             Forums forumBean = getForumBean();
             
-            String roleId = "Software_Users_" + getProjectLongValue(project, "Developer Forum ID");
+            // just be safe, remove both roles, since we start assigning two roles.
+            String userroleId = SOFTWARE_USER_FORUM_ROLE_PREFIX + getProjectLongValue(project, "Developer Forum ID");
+            String moderatorroleId = SOFTWARE_MODERATOR_FORUM_ROLE_PREFIX + getProjectLongValue(project, "Developer Forum ID");
 
             for (Long userId : users) {
-                forumBean.removeRole(userId, roleId);
+                forumBean.removeRole(userId, userroleId);
+                forumBean.removeRole(userId, moderatorroleId);
             }
+
         } catch (Exception e) {
             throw new BaseException("Error removing forum permissions for project id " + project.getId(), e);
         }
