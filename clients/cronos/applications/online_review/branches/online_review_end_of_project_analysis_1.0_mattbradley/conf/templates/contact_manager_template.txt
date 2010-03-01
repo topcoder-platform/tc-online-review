@@ -1,0 +1,8 @@
+I am %USER_FIRST_NAME{User first name}% %USER_LAST_NAME{User last name}%,
+TopCoder Handle\: %USER_HANDLE{User handle}%
+This is the question for project\: %PROJECT_NAME{Project name}%
+OR link\: %OR_LINK% 
+My role\: %LIST_OF_ROLES% 
+Version\: %PROJECT_VERSION{Project version}%
+Question Type\: %QUESTION_TYPE%
+TEXT\: %TEXT%
