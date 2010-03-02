@@ -273,8 +273,8 @@ public class ProjectLinksActions extends DispatchAction {
                         = new ContestDependencyAutomation(phaseManager,
                                                           ActionsHelper.createProjectManager(request),
                                                           linkManager);
-                    phaseManager.updatePhases(phasesProject, operator);
                     ActionsHelper.adjustDependentProjects(phasesProject, phaseManager, auto, operator);
+                    phaseManager.updatePhases(phasesProject, operator);
                 }
             }
         } catch (ProjectLinkCycleException e) {
