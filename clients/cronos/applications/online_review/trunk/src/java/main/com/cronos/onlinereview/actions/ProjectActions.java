@@ -1804,6 +1804,7 @@ public class ProjectActions extends DispatchAction {
         // validate resources have correct terms of use
         try {
             allResourcesValid = allResourcesValid && validateResourceTermsOfUse(request, lazyForm, project, userRetrieval, resourceNames);
+            allResourcesValid = allResourcesValid && validateResourceEligibility(request, lazyForm, project, userRetrieval, resourceNames);
         } catch (NamingException ne) {
             throw new BaseException(ne);
         } catch (RemoteException re) {
@@ -1811,6 +1812,8 @@ public class ProjectActions extends DispatchAction {
         } catch (CreateException ce) {
             throw new BaseException(ce);
         } catch (EJBException e) {
+            throw new BaseException(e);
+        } catch (ContestEligibilityValidatorException e) {
             throw new BaseException(e);
         }
 
@@ -1932,19 +1935,23 @@ public class ProjectActions extends DispatchAction {
                 resource.setProperty(Constants.APPEALS_COMPLETED_EARLY_PROPERTY_KEY, Constants.NO_VALUE);
             }
 
-            if (resourceRole.equals("Manager") || resourceRole.equals("Observer") 
-                     || resourceRole.equals("Designer")  || resourceRole.equals("Client Manager")  || resourceRole.equals("Copilot"))
-            {   
-                // no need for Applications/Components
-                if (!resource.getProperty("Handle").equals("Applications") && !resource.getProperty("Handle").equals("Components"))
-                {
-                    newUsersForumWatch.add(user.getId());
+            if ("add".equals(resourceAction)) {
+
+                if (resourceRole.equals("Manager") || resourceRole.equals("Observer") 
+                         || resourceRole.equals("Designer")  || resourceRole.equals("Client Manager")  || resourceRole.equals("Copilot"))
+                {   
+                    // no need for Applications/Components
+                    if (!resource.getProperty("Handle").equals("Applications") && !resource.getProperty("Handle").equals("Components"))
+                    {
+                        newUsersForumWatch.add(user.getId());
+                    }
+                    
                 }
-                
             }
 
             // client manager and copilot have moderator role
-            if (resourceRole.equals("Client Manager")  || resourceRole.equals("Copilot"))
+            if (resourceRole.equals("Client Manager")  || resourceRole.equals("Copilot")
+                    || resourceRole.equals("Observer") || resourceRole.equals("Designer"))
             {   
                 newUsers.remove(user.getId());
                 newModerators.add(user.getId());
@@ -2084,6 +2091,68 @@ public class ProjectActions extends DispatchAction {
                                 }
                             }
                         }
+                    }
+                }
+            }
+        }
+
+        return allResourcesValid;
+    }
+
+    /**
+     * Helper method to validate if resources in the request are eligible for the project
+     *
+     * @param request the current <code>HttpServletRequest</code>.
+     * @param lazyForm the edition <code>LazyValidatorForm</code>.
+     * @param project the edited <code>Project</code>.
+     * @param userRetrieval a <code>UserRetrieval</code> instance to obtain the user id.
+     * @param resourceNames a <code>String[]</code> containing edited resource names.
+     *
+     * @throws NamingException if any errors occur during EJB lookup
+     * @throws RemoteException if any errors occur during EJB remote invocation
+     * @throws CreateException if any errors occur during EJB creation
+     * @throws EJBException if any other errors occur while invoking EJB services
+     * @throws BaseException if any other errors occur while retrieving user
+     *
+     * @return true if all resources are valid
+     * @since 1.1
+     */
+    private boolean validateResourceEligibility(HttpServletRequest request, LazyValidatorForm lazyForm,
+            Project project, UserRetrieval userRetrieval, String[] resourceNames)
+            throws NamingException, RemoteException, CreateException, 
+                   EJBException, BaseException, ContestEligibilityValidatorException {
+
+        boolean allResourcesValid = true;
+
+
+        // validate that new resources have agreed to the necessary terms of use
+        // 0-index resource is skipped as it is a "dummy" one
+        for (int i = 1; i < resourceNames.length; i++) {
+            if (resourceNames[i] != null && resourceNames[i].trim().length() > 0) {
+                ExternalUser user = userRetrieval.retrieveUser(resourceNames[i]);
+                String resourceAction = (String) lazyForm.get("resources_action", i);
+                // check for additions or modifications
+                if (!"delete".equals(resourceAction)) {
+                    long userId = user.getId();
+
+                    // dont check Applications or Components
+                    if (resourceNames[i].equals("Applications") || resourceNames[i].equals("Components"))
+                    {
+                        continue;
+                    }
+                        
+                    // dont check project creator
+                    if (project.getCreationUser().equals(Long.toString(userId)))
+                    {
+                        continue;
+                    }
+
+                    if (!ContestEligibilityServiceLocator.getServices().isEligible(userId, project.getId(), false))
+                    {
+                        ActionsHelper.addErrorToRequest(request, "resources_name[" + i + "]",
+                                        new ActionMessage("error.com.cronos.onlinereview.actions.editProject.Resource.NotEligible"));
+
+                        allResourcesValid=false;
                     }
                 }
             }

@@ -26,6 +26,8 @@ import com.topcoder.web.ejb.termsofuse.TermsOfUseEntity;
 import com.topcoder.web.ejb.termsofuse.TermsOfUseLocator;
 import com.topcoder.web.ejb.user.UserTermsOfUse;
 import com.topcoder.web.ejb.user.UserTermsOfUseLocator;
+import com.topcoder.web.common.eligibility.ContestEligibilityServiceLocator;
+import com.topcoder.service.contest.eligibilityvalidation.ContestEligibilityValidatorException;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
@@ -83,6 +85,16 @@ public class ProjectManagementConsoleActions extends DispatchAction {
      * <p>A <code>long</code> providing the constant value for client manager resource role id</p>
      */
     private static final long CLIENT_MANAGER_RESOURCE_ROLE_ID = 15;
+
+        /**
+     * <p>A <code>long</code> providing the constant value for observer resource role id</p>
+     */
+    private static final long OBSERVER_RESOURCE_ROLE_ID = 12;
+
+    /**
+     * <p>A <code>long</code> providing the constant value for designer resource role id</p>
+     */
+    private static final long DESIGNER_RESOURCE_ROLE_ID = 11;
 
 
 
@@ -544,6 +556,10 @@ public class ProjectManagementConsoleActions extends DispatchAction {
                                                 + "editProject.Resource.MissingTermsByUser",
                                                 handle, terms.getTitle()));
                             }
+                        } else if (!validateResourceEligibility(project.getId(), userId)) {
+                                ActionsHelper.addErrorToRequest(request, "resource_handles[" + i + "]",
+                                        new ActionMessage("error.com.cronos.onlinereview.actions."
+                                                + "editProject.Resource.NotEligibleByUser", handle));
                         } else {
                             // The resource can be added - all necessary terms of use are accepted
                             Resource resource = new Resource();
@@ -557,7 +573,8 @@ public class ProjectManagementConsoleActions extends DispatchAction {
                             newUsersForumWatch.add(userId);
 
                             // client manager and copilot have moderator role
-                            if (resourceRoleId == COPILOT_RESOURCE_ROLE_ID  || resourceRoleId == CLIENT_MANAGER_RESOURCE_ROLE_ID)
+                            if (resourceRoleId == COPILOT_RESOURCE_ROLE_ID  || resourceRoleId == CLIENT_MANAGER_RESOURCE_ROLE_ID
+                                  || resourceRoleId == OBSERVER_RESOURCE_ROLE_ID || resourceRoleId == DESIGNER_RESOURCE_ROLE_ID)
                             {   
                                 newModeratorsForumRoles.add(userId);                      
                             }
@@ -866,4 +883,29 @@ public class ProjectManagementConsoleActions extends DispatchAction {
 
         return unAcceptedTerms;
     }
+
+    /**
+     * <p>Validates that specified user which is going to be assigned specified role for specified project has accepted
+     * all terms of use set for specified role in context of the specified project.</p>
+     *
+     * @param projectId a <code>long</code> providing the project ID.
+     * @param userId a <code>long</code> providing the user ID.
+     * @param roleId a <code>long</code> providing the role ID.
+     * @return a <code>List</code> of terms of use which are not yet accepted by the specified user or empty list if all
+     *         necessary terms of use are accepted. 
+     * @throws NamingException if any errors occur during EJB lookup.
+     * @throws RemoteException if any errors occur during EJB remote invocation.
+     * @throws CreateException if any errors occur during EJB creation.
+     */
+    private boolean validateResourceEligibility(long projectId, long userId)
+        throws CreateException, NamingException, RemoteException, BaseException {
+        
+        try {
+            return ContestEligibilityServiceLocator.getServices().isEligible(userId, projectId, false);
+        }catch (ContestEligibilityValidatorException e) {
+            throw new BaseException(e);
+        }
+    }
+
+
 }
