@@ -20,8 +20,6 @@ import java.util.Set;
 import java.util.Stack;
 
 import com.topcoder.management.phase.ContestDependencyAutomation;
-import com.topcoder.management.phase.PhaseManagementException;
-import com.topcoder.management.project.PersistenceException;
 import com.topcoder.management.project.link.ProjectLinkManager;
 import com.topcoder.web.common.eligibility.ContestEligibilityServiceLocator;
 
@@ -72,7 +70,6 @@ import com.topcoder.search.builder.SearchBuilderException;
 import com.topcoder.search.builder.filter.AndFilter;
 import com.topcoder.search.builder.filter.Filter;
 import com.topcoder.search.builder.filter.InFilter;
-import com.topcoder.service.contest.eligibilityvalidation.ContestEligibilityValidatorException;
 import com.topcoder.shared.util.DBMS;
 import com.topcoder.util.errorhandling.BaseException;
 import com.topcoder.web.ejb.project.ProjectRoleTermsOfUse;
@@ -82,6 +79,19 @@ import com.topcoder.web.ejb.termsofuse.TermsOfUseEntity;
 import com.topcoder.web.ejb.termsofuse.TermsOfUseLocator;
 import com.topcoder.web.ejb.user.UserTermsOfUse;
 import com.topcoder.web.ejb.user.UserTermsOfUseLocator;
+
+import static com.cronos.onlinereview.actions.Constants.REGISTRATION_PHASE_NAME;
+import static com.cronos.onlinereview.actions.Constants.SUBMISSION_PHASE_NAME;
+import static com.cronos.onlinereview.actions.Constants.SCREENING_PHASE_NAME;
+import static com.cronos.onlinereview.actions.Constants.REVIEW_PHASE_NAME;
+import static com.cronos.onlinereview.actions.Constants.APPEALS_PHASE_NAME;
+import static com.cronos.onlinereview.actions.Constants.APPEALS_RESPONSE_PHASE_NAME;
+import static com.cronos.onlinereview.actions.Constants.AGGREGATION_PHASE_NAME;
+import static com.cronos.onlinereview.actions.Constants.AGGREGATION_REVIEW_PHASE_NAME;
+import static com.cronos.onlinereview.actions.Constants.FINAL_FIX_PHASE_NAME;
+import static com.cronos.onlinereview.actions.Constants.FINAL_REVIEW_PHASE_NAME;
+import static com.cronos.onlinereview.actions.Constants.APPROVAL_PHASE_NAME;
+import static com.cronos.onlinereview.actions.Constants.POST_MORTEM_PHASE_NAME;
 
 /**
  * This class contains Struts Actions that are meant to deal with Projects. There are following
@@ -137,8 +147,22 @@ import com.topcoder.web.ejb.user.UserTermsOfUseLocator;
  *   </ol>
  * </p>
  *
- * @author George1, real_vg, pulky, isv
- * @version 1.5
+ * <p>
+ * Version 1.6 (Online Review End Of Project Analysis Assembly 1.0) Change notes:
+ *   <ol>
+ *     <li>
+ *       Updated {@link #saveProject(ActionMapping, ActionForm, HttpServletRequest, HttpServletResponse)} method to
+ *       validate that category selected for project is not generic one.
+ *     </li>
+ *     <li>
+ *       Updated {@link #validateProjectPhases(HttpServletRequest, Project, Phase[])} method to take into consideration
+ *       <code>Approval</code> and <code>Post-Mortem</code> phases.  
+ *     </li>
+ *   </ol>
+ * </p>
+ *
+ * @author George1, real_vg, pulky, isv, TCSDEVELOPER
+ * @version 1.6
  */
 public class ProjectActions extends DispatchAction {
 
@@ -283,6 +307,7 @@ public class ProjectActions extends DispatchAction {
         // Store the retrieved types and categories in request
         request.setAttribute("projectTypes", projectTypes);
         request.setAttribute("projectCategories", projectCategories);
+        request.setAttribute("projectCategoriesMap", buildProjectCategoriesLookupMap(projectCategories));
 
         // Obtain an instance of Resource Manager
         ResourceManager resourceManager = ActionsHelper.createResourceManager(request);
@@ -305,12 +330,14 @@ public class ProjectActions extends DispatchAction {
         // Retrieve the scorecard lists
         Scorecard[] screeningScorecards = searchActiveScorecards(scorecardManager, "Screening");
         Scorecard[] reviewScorecards = searchActiveScorecards(scorecardManager, "Review");
-        Scorecard[] approvalScorecards = searchActiveScorecards(scorecardManager, "Client Review");
+        Scorecard[] approvalScorecards = searchActiveScorecards(scorecardManager, "Approval");
+        Scorecard[] postMortemScorecards = searchActiveScorecards(scorecardManager, "Post-Mortem");
 
         // Store them in the request
         request.setAttribute("screeningScorecards", screeningScorecards);
         request.setAttribute("reviewScorecards", reviewScorecards);
         request.setAttribute("approvalScorecards", approvalScorecards);
+        request.setAttribute("postMortemScorecards", postMortemScorecards);
         request.setAttribute("defaultScorecards", ActionsHelper.getDefaultScorecards());
 
         // Load phase template names
@@ -572,6 +599,9 @@ public class ProjectActions extends DispatchAction {
         request.setAttribute("isAllowedToPerformApproval",
                 Boolean.valueOf(ActionsHelper.getPhase(phases, true, Constants.APPROVAL_PHASE_NAME) != null &&
                         AuthorizationHelper.hasUserPermission(request, Constants.PERFORM_APPROVAL_PERM_NAME)));
+        request.setAttribute("isAllowedToPerformPortMortemReview",
+                Boolean.valueOf(ActionsHelper.getPhase(phases, true, Constants.POST_MORTEM_PHASE_NAME) != null &&
+                        AuthorizationHelper.hasUserPermission(request, Constants.PERFORM_POST_MORTEM_REVIEW_PERM_NAME)));
 
         // since Online Review Update - Add Project Dropdown v1.0
         request.setAttribute("isAdmin",
@@ -762,6 +792,10 @@ public class ProjectActions extends DispatchAction {
             // Find the project category by the specified id
             ProjectCategory category = ActionsHelper.findProjectCategoryById(projectCategories,
                     ((Long) lazyForm.get("project_category")).longValue());
+            if (category.getProjectType().isGeneric()) {
+                return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
+                        Constants.CREATE_PROJECT_PERM_NAME, "Error.GenericProjectType", Boolean.TRUE);
+            }
             // Create Project instance
             project = new Project(category, activeStatus);
             statusHasChanged = true; // Status is always considered to be changed for new projects
@@ -772,8 +806,12 @@ public class ProjectActions extends DispatchAction {
                 categoryChanged = true;
             }
             // Sets Project category
-            project.setProjectCategory(ActionsHelper.findProjectCategoryById(projectCategories,
-                    newCategoryId));
+            ProjectCategory projectCategory = ActionsHelper.findProjectCategoryById(projectCategories, newCategoryId);
+            if (projectCategory.getProjectType().isGeneric()) {
+                return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
+                        Constants.CREATE_PROJECT_PERM_NAME, "Error.GenericProjectType", Boolean.TRUE);
+            }
+            project.setProjectCategory(projectCategory);
 
         }
 
@@ -1550,119 +1588,150 @@ public class ProjectActions extends DispatchAction {
      * TODO: Document it
      * Note, that this method assumes that phases are already sorted by the start date, etc.
      *
-     * @param request
+     * @param request an <code>HttpServletRequest</code> representing incoming request from the client. 
      * @param project
-     * @param allPhases
+     * @param projectPhases
      * @return
      */
     private boolean validateProjectPhases(HttpServletRequest request, Project project, Phase[] projectPhases) {
         boolean arePhasesValid = true;
 
         // TODO: Refactor this function, make it more concise
+        // IF there is a Post-Mortem phase in project skip the validation as that phase may appear anywhere
+        // in project timeline and actual order of the phases is not significant
+        boolean postMortemPhaseExists = false;
+        for (int i = 0; i < projectPhases.length; i++) {
+            Phase projectPhase = projectPhases[i];
+            if (projectPhase.getPhaseType().getName().equals(POST_MORTEM_PHASE_NAME)) {
+                return true;
+            }
+        }
+
 
         // Check the beginning phase, it should be either Registration or submission
         if (projectPhases.length > 0 &&
-                !projectPhases[0].getPhaseType().getName().equals(Constants.REGISTRATION_PHASE_NAME) &&
-                !projectPhases[0].getPhaseType().getName().equals(Constants.SUBMISSION_PHASE_NAME)) {
+                !projectPhases[0].getPhaseType().getName().equals(REGISTRATION_PHASE_NAME) &&
+                !projectPhases[0].getPhaseType().getName().equals(SUBMISSION_PHASE_NAME) &&
+                !projectPhases[0].getPhaseType().getName().equals(POST_MORTEM_PHASE_NAME)) {
             ActionsHelper.addErrorToRequest(request,
                     "error.com.cronos.onlinereview.actions.editProject.WrongBeginningPhase");
             arePhasesValid = false;
         }
+        
 
         // Check the phases as a whole
         for (int i = 0; i < projectPhases.length; i++) {
-            if (projectPhases[i].getPhaseType().getName().equals(Constants.SUBMISSION_PHASE_NAME)) {
-                // Submission should follow registration if it exists
-                if (i > 0 && !projectPhases[i - 1].getPhaseType().getName().equals(Constants.REGISTRATION_PHASE_NAME)) {
+            final String previousPhaseName = i > 0 ? projectPhases[i - 1].getPhaseType().getName() : "";
+            final String currentPhaseName = projectPhases[i].getPhaseType().getName();
+            if (currentPhaseName.equals(SUBMISSION_PHASE_NAME)) {
+                // Submission should follow registration or post-mortem if it exists
+                if (i > 0 && !previousPhaseName.equals(REGISTRATION_PHASE_NAME)
+                          && !postMortemPhaseExists) {
                     ActionsHelper.addErrorToRequest(request,
                             "error.com.cronos.onlinereview.actions.editProject.SubmissionMustFollow");
                     arePhasesValid = false;
                 }
-            } else if (projectPhases[i].getPhaseType().getName().equals(Constants.REGISTRATION_PHASE_NAME)) {
-                // Registration should be followed by submission
-                if (i == projectPhases.length - 1 || !projectPhases[i + 1].getPhaseType().getName().equals(Constants.SUBMISSION_PHASE_NAME)) {
-                    ActionsHelper.addErrorToRequest(request,
-                            "error.com.cronos.onlinereview.actions.editProject.RegistrationMustBeFollowed");
-                    arePhasesValid = false;
-                }
-            } else if (projectPhases[i].getPhaseType().getName().equals(Constants.REVIEW_PHASE_NAME)) {
-                // Review should follow submission or screening
-                if (i == 0 || (!projectPhases[i - 1].getPhaseType().getName().equals(Constants.SUBMISSION_PHASE_NAME) &&
-                        !projectPhases[i - 1].getPhaseType().getName().equals(Constants.SCREENING_PHASE_NAME))) {
-                    ActionsHelper.addErrorToRequest(request,
-                            "error.com.cronos.onlinereview.actions.editProject.ReviewMustFollow");
-                    arePhasesValid = false;
-                }
-            } else if (projectPhases[i].getPhaseType().getName().equals(Constants.APPEALS_PHASE_NAME)) {
-                // Appeals should follow review
-                if (i == 0 || !projectPhases[i - 1].getPhaseType().getName().equals(Constants.REVIEW_PHASE_NAME)) {
-                    ActionsHelper.addErrorToRequest(request,
-                            "error.com.cronos.onlinereview.actions.editProject.AppealsMustFollow");
-                    arePhasesValid = false;
-                }
-                // Appeals should be followed by the appeals response
-                if (i == projectPhases.length - 1 ||
-                        !projectPhases[i + 1].getPhaseType().getName().equals(Constants.APPEALS_RESPONSE_PHASE_NAME)) {
-                    ActionsHelper.addErrorToRequest(request,
-                            "error.com.cronos.onlinereview.actions.editProject.AppealsMustBeFollowed");
-                    arePhasesValid = false;
-                }
-            } else if (projectPhases[i].getPhaseType().getName().equals(Constants.APPEALS_RESPONSE_PHASE_NAME)) {
-                // Appeal response should follow appeals
-                if (i == 0 || !projectPhases[i - 1].getPhaseType().getName().equals(Constants.APPEALS_PHASE_NAME)) {
-                    ActionsHelper.addErrorToRequest(request,
-                            "error.com.cronos.onlinereview.actions.editProject.AppealsResponseMustFollow");
-                    arePhasesValid = false;
-                }
-            } else if (projectPhases[i].getPhaseType().getName().equals(Constants.AGGREGATION_PHASE_NAME)) {
-                // Aggregation should follow appeals response or review, or aggregation review
-                if (i == 0 ||
-                        (!projectPhases[i - 1].getPhaseType().getName().equals(Constants.APPEALS_RESPONSE_PHASE_NAME) &&
-                        !projectPhases[i - 1].getPhaseType().getName().equals(Constants.REVIEW_PHASE_NAME) &&
-                        !projectPhases[i - 1].getPhaseType().getName().equals(Constants.AGGREGATION_REVIEW_PHASE_NAME))) {
-                    ActionsHelper.addErrorToRequest(request,
-                            "error.com.cronos.onlinereview.actions.editProject.AggregationMustFollow");
-                    arePhasesValid = false;
-                }
-                // Aggregation should be followed by the aggregation review
-                if (i == projectPhases.length - 1 ||
-                        !projectPhases[i + 1].getPhaseType().getName().equals(Constants.AGGREGATION_REVIEW_PHASE_NAME)) {
-                    ActionsHelper.addErrorToRequest(request,
-                            "error.com.cronos.onlinereview.actions.editProject.AggregationMustBeFollowed");
-                    arePhasesValid = false;
-                }
-            } else if (projectPhases[i].getPhaseType().getName().equals(Constants.AGGREGATION_REVIEW_PHASE_NAME)) {
-                // Aggregation review should follow aggregation
-                if (i == 0 ||
-                        !projectPhases[i - 1].getPhaseType().getName().equals(Constants.AGGREGATION_PHASE_NAME)) {
-                    ActionsHelper.addErrorToRequest(request,
-                            "error.com.cronos.onlinereview.actions.editProject.AggregationReviewMustFollow");
-                    arePhasesValid = false;
-                }
-            } else if (projectPhases[i].getPhaseType().getName().equals(Constants.FINAL_FIX_PHASE_NAME)) {
-                // Final fix should follow either appeals response or aggregation review, or final review
-                if (i == 0 ||
-                        (!projectPhases[i - 1].getPhaseType().getName().equals(Constants.APPEALS_RESPONSE_PHASE_NAME) &&
-                        !projectPhases[i - 1].getPhaseType().getName().equals(Constants.AGGREGATION_REVIEW_PHASE_NAME) &&
-                        !projectPhases[i - 1].getPhaseType().getName().equals(Constants.FINAL_REVIEW_PHASE_NAME))) {
-                    ActionsHelper.addErrorToRequest(request,
-                            "error.com.cronos.onlinereview.actions.editProject.FinalFixMustFollow");
-                    arePhasesValid = false;
-                }
-                // Final fix should be followed by the final review
-                if (i == projectPhases.length - 1 ||
-                        !projectPhases[i + 1].getPhaseType().getName().equals(Constants.FINAL_REVIEW_PHASE_NAME)) {
-                    ActionsHelper.addErrorToRequest(request,
-                            "error.com.cronos.onlinereview.actions.editProject.FinalFixMustBeFollowed");
-                    arePhasesValid = false;
-                }
-            }  else if (projectPhases[i].getPhaseType().getName().equals(Constants.FINAL_REVIEW_PHASE_NAME)) {
-                // Final review should follow final fix
-                if (i == 0 ||
-                        !projectPhases[i - 1].getPhaseType().getName().equals(Constants.FINAL_FIX_PHASE_NAME)) {
-                    ActionsHelper.addErrorToRequest(request,
-                            "error.com.cronos.onlinereview.actions.editProject.FinalReviewMustFollow");
-                    arePhasesValid = false;
+            } else {
+                final String nextPhaseName = i < (projectPhases.length - 1) ? projectPhases[i + 1].getPhaseType().getName() : "";
+                if (currentPhaseName.equals(REGISTRATION_PHASE_NAME)) {
+                    // Registration should be followed by submission or post-mortem
+                    if (i == projectPhases.length - 1
+                            || !nextPhaseName.equals(SUBMISSION_PHASE_NAME)
+                            && !postMortemPhaseExists) {
+                        ActionsHelper.addErrorToRequest(request,
+                                "error.com.cronos.onlinereview.actions.editProject.RegistrationMustBeFollowed");
+                        arePhasesValid = false;
+                    }
+                } else if (currentPhaseName.equals(REVIEW_PHASE_NAME)) {
+                    // Review should follow submission or screening or post-mortem
+                    if (i == 0 || (!previousPhaseName.equals(SUBMISSION_PHASE_NAME) &&
+                            !previousPhaseName.equals(SCREENING_PHASE_NAME)
+                            && !postMortemPhaseExists)) {
+                        ActionsHelper.addErrorToRequest(request,
+                                "error.com.cronos.onlinereview.actions.editProject.ReviewMustFollow");
+                        arePhasesValid = false;
+                    }
+                } else if (currentPhaseName.equals(APPEALS_PHASE_NAME)) {
+                    // Appeals should follow review
+                    if (i == 0 || !previousPhaseName.equals(REVIEW_PHASE_NAME) &&
+                                  !postMortemPhaseExists) {
+                        ActionsHelper.addErrorToRequest(request,
+                                "error.com.cronos.onlinereview.actions.editProject.AppealsMustFollow");
+                        arePhasesValid = false;
+                    }
+                    // Appeals should be followed by the appeals response
+                    if (i == projectPhases.length - 1 ||
+                            !nextPhaseName.equals(APPEALS_RESPONSE_PHASE_NAME) &&
+                            !postMortemPhaseExists) {
+                        ActionsHelper.addErrorToRequest(request,
+                                "error.com.cronos.onlinereview.actions.editProject.AppealsMustBeFollowed");
+                        arePhasesValid = false;
+                    }
+                } else if (currentPhaseName.equals(APPEALS_RESPONSE_PHASE_NAME)) {
+                    // Appeal response should follow appeals
+                    if (i == 0 || !previousPhaseName.equals(APPEALS_PHASE_NAME) &&
+                                  !postMortemPhaseExists) {
+                        ActionsHelper.addErrorToRequest(request,
+                                "error.com.cronos.onlinereview.actions.editProject.AppealsResponseMustFollow");
+                        arePhasesValid = false;
+                    }
+                } else if (currentPhaseName.equals(AGGREGATION_PHASE_NAME)) {
+                    // Aggregation should follow appeals response or review, or aggregation review or post-mortem
+                    if (i == 0 ||
+                            (!previousPhaseName.equals(APPEALS_RESPONSE_PHASE_NAME) &&
+                            !previousPhaseName.equals(REVIEW_PHASE_NAME) &&
+                            !previousPhaseName.equals(AGGREGATION_REVIEW_PHASE_NAME) &&
+                            !postMortemPhaseExists)) {
+                        ActionsHelper.addErrorToRequest(request,
+                                "error.com.cronos.onlinereview.actions.editProject.AggregationMustFollow");
+                        arePhasesValid = false;
+                    }
+                    // Aggregation should be followed by the aggregation review
+                    if (i == projectPhases.length - 1 ||
+                            !nextPhaseName.equals(AGGREGATION_REVIEW_PHASE_NAME) &&
+                            !postMortemPhaseExists) {
+                        ActionsHelper.addErrorToRequest(request,
+                                "error.com.cronos.onlinereview.actions.editProject.AggregationMustBeFollowed");
+                        arePhasesValid = false;
+                    }
+                } else if (currentPhaseName.equals(AGGREGATION_REVIEW_PHASE_NAME)) {
+                    // Aggregation review should follow aggregation
+                    if (i == 0 ||
+                            !previousPhaseName.equals(AGGREGATION_PHASE_NAME) &&
+                            !postMortemPhaseExists) {
+                        ActionsHelper.addErrorToRequest(request,
+                                "error.com.cronos.onlinereview.actions.editProject.AggregationReviewMustFollow");
+                        arePhasesValid = false;
+                    }
+                } else if (currentPhaseName.equals(FINAL_FIX_PHASE_NAME)) {
+                    // Final fix should follow either appeals response or aggregation review, or final review
+                    if (i == 0 ||
+                            (!previousPhaseName.equals(APPEALS_RESPONSE_PHASE_NAME) &&
+                            !previousPhaseName.equals(AGGREGATION_REVIEW_PHASE_NAME) &&
+                            !previousPhaseName.equals(APPROVAL_PHASE_NAME) &&
+                            !postMortemPhaseExists &&
+                            !previousPhaseName.equals(FINAL_REVIEW_PHASE_NAME))) {
+                        ActionsHelper.addErrorToRequest(request,
+                                "error.com.cronos.onlinereview.actions.editProject.FinalFixMustFollow");
+                        arePhasesValid = false;
+                    }
+                    // Final fix should be followed by the final review
+                    if (i == projectPhases.length - 1 ||
+                            !nextPhaseName.equals(FINAL_REVIEW_PHASE_NAME) &&
+                            !postMortemPhaseExists) {
+                        ActionsHelper.addErrorToRequest(request,
+                                "error.com.cronos.onlinereview.actions.editProject.FinalFixMustBeFollowed");
+                        arePhasesValid = false;
+                    }
+                }  else if (currentPhaseName.equals(FINAL_REVIEW_PHASE_NAME)) {
+                    // Final review should follow final fix
+                    if (i == 0 ||
+                            !previousPhaseName.equals(FINAL_FIX_PHASE_NAME)
+                            && !postMortemPhaseExists) {
+                        ActionsHelper.addErrorToRequest(request,
+                                "error.com.cronos.onlinereview.actions.editProject.FinalReviewMustFollow");
+                        arePhasesValid = false;
+                    }
                 }
             }
         }
@@ -2719,5 +2788,20 @@ public class ProjectActions extends DispatchAction {
     private static boolean isSubmitter(Resource resource) {
         ResourceRole role = resource.getResourceRole();
         return (role != null) && (role.getId() == 1);
+    }
+
+    /**
+     * <p>Builds the map to be used for looking up the project categories by IDs.</p>
+     *
+     * @param categories a <code>ProjectCategory</code> array listing existing project categories. 
+     * @return a <code>Map</code> mapping the category IDs to categories.
+     * @since 1.6
+     */
+    private static Map<Long, ProjectCategory> buildProjectCategoriesLookupMap(ProjectCategory[] categories) {
+        Map<Long, ProjectCategory> map = new HashMap<Long, ProjectCategory>();
+        for (ProjectCategory category : categories) {
+            map.put(category.getId(), category);
+        }
+        return map;
     }
 }

@@ -1,12 +1,15 @@
 <%--
-  - Author: pulky
-  - Version: 1.1
-  - Copyright (C) 2004 - 2009 TopCoder Inc., All Rights Reserved.
+  - Author: pulky, TCSDEVELOPER
+  - Version: 1.2
+  - Copyright (C) 2004 - 2010 TopCoder Inc., All Rights Reserved.
   -
   - Description: This page displays project edition page
   -
   - Version 1.1 (Competition Registration Eligibility v1.0) changes: Removed old "Public" and "Eligibility" project
   - info code. Public projects are now determined by contest eligibility service.
+  -
+  - Version 1.2 (Online Review End of Project Analysis v1.0) changes: Integrated newly defined Generic project types,
+  - categories and scorecards.
 --%>
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ page language="java" isELIgnored="false" %>
@@ -59,12 +62,24 @@
         </c:forEach>
 
         var projectCategories = [];
+        var genericProjectCategories = [];
         <c:forEach items="${projectCategories}" var="category">
-            projectCategories.push({});
-            projectCategories[projectCategories.length - 1]["id"] = ${category.id};
-            projectCategories[projectCategories.length - 1]["projectType"] = ${category.projectType.id};
-            // TODO: Localize the catagory name
-            projectCategories[projectCategories.length - 1]["name"] = "${category.name}";
+            <c:choose>
+                <c:when test="${not category.projectType.generic}">
+                projectCategories.push({});
+                projectCategories[projectCategories.length - 1]["id"] = ${category.id};
+                projectCategories[projectCategories.length - 1]["projectType"] = ${category.projectType.id};
+                // TODO: Localize the catagory name
+                projectCategories[projectCategories.length - 1]["name"] = "${category.name}";
+                </c:when>
+                <c:otherwise>
+                genericProjectCategories.push({});
+                genericProjectCategories[genericProjectCategories.length - 1]["id"] = ${category.id};
+                genericProjectCategories[genericProjectCategories.length - 1]["projectType"] = ${category.projectType.id};
+                // TODO: Localize the catagory name
+                genericProjectCategories[genericProjectCategories.length - 1]["name"] = "${category.name}";
+                </c:otherwise>
+            </c:choose>
         </c:forEach>
 
         var screeningScorecards = [];
@@ -91,6 +106,14 @@
             approvalScorecards[approvalScorecards.length - 1]["name"] = "${scorecard.name} ${scorecard.version}";
         </c:forEach>
 
+        var postMortemScorecards = [];
+        <c:forEach items="${requestScope.postMortemScorecards}" var="scorecard">
+            postMortemScorecards.push({});
+            postMortemScorecards[postMortemScorecards.length - 1]["id"] = ${scorecard.id};
+            postMortemScorecards[postMortemScorecards.length - 1]["category"] = ${scorecard.category};
+            postMortemScorecards[postMortemScorecards.length - 1]["name"] = "${scorecard.name} ${scorecard.version}";
+        </c:forEach>
+
         var defaultScorecards = [];
         <c:forEach items="${defaultScorecards}" var="scorecard">
             defaultScorecards.push({});
@@ -102,7 +125,9 @@
 
         var projectTypeNamesMap = {};
         <c:forEach items="${projectTypes}" var="projectType">
+            <c:if test="${not projectType.generic}">
             projectTypeNamesMap["${projectType.id}"] = "${projectType.name}";
+            </c:if>
         </c:forEach>
 
         <c:forEach items="${projectCategories}" var="category">
@@ -128,6 +153,7 @@
         var screeningScorecardNodes = new Array();;
         var reviewScorecardNodes = new Array();;
         var approvalScorecardNodes = new Array();;
+        var postMortemScorecardNodes = new Array();;
 
         /*
          * TODO: Document it
@@ -182,7 +208,10 @@
             changeScorecardByCategory(templateRow.getElementsByTagName("select")[0], projectCategoryNode.value, reviewScorecards, 'Review');
 
             templateRow = document.getElementById("approval_scorecard_row_template");
-            changeScorecardByCategory(templateRow.getElementsByTagName("select")[0], projectCategoryNode.value, approvalScorecards, 'Client Review');
+            changeScorecardByCategory(templateRow.getElementsByTagName("select")[0], projectCategoryNode.value, approvalScorecards, 'Approval');
+
+            templateRow = document.getElementById("post_mortem_scorecard_row_template");
+            changeScorecardByCategory(templateRow.getElementsByTagName("select")[0], projectCategoryNode.value, approvalScorecards, 'Post-Mortem');
 
             for (var i = 0; i < screeningScorecardNodes.length; i++) {
                 changeScorecardByCategory(screeningScorecardNodes[i], projectCategoryNode.value, screeningScorecards, 'Screening');
@@ -191,7 +220,11 @@
                 changeScorecardByCategory(reviewScorecardNodes[i], projectCategoryNode.value, reviewScorecards, 'Review');
             }
             for (var i = 0; i < approvalScorecardNodes.length; i++) {
-                changeScorecardByCategory(approvalScorecardNodes[i], projectCategoryNode.value, approvalScorecards, 'Client Review');
+                changeScorecardByCategory(approvalScorecardNodes[i], projectCategoryNode.value, approvalScorecards, 'Approval');
+            }
+
+            for (var i = 0; i < postMortemScorecardNodes.length; i++) {
+                changeScorecardByCategory(postMortemScorecardNodes[i], projectCategoryNode.value, postMortemScorecards, 'Post-Mortem');
             }
 
             //var digitalRunChecked = false;
@@ -219,11 +252,21 @@
                 while (scorecardNode.length > 0) {
                     scorecardNode.remove(scorecardNode.length - 1);
                 }
-                // Add new combo options
+                // Add new combo options for selected project category and generic project categories
                 for (var i = 0; i < scorecards.length; i++) {
+                    var valid = false;
                     if (category == scorecards[i]["category"]) {
-                            addComboOption(scorecardNode,
-                                scorecards[i]["name"], scorecards[i]["id"]);
+                        valid = true;
+                    } else {
+                        for (var j = 0; !valid && (j < genericProjectCategories.length); j++) {
+                            var genericCategoryId = genericProjectCategories[j]["id"];
+                            if (genericCategoryId == scorecards[i]["category"]) {
+                                valid = true;
+                            }
+                        }
+                    }
+                    if (valid) {
+                        addComboOption(scorecardNode, scorecards[i]["name"], scorecards[i]["id"]);
                     }
                 }
 
@@ -435,6 +478,8 @@
                     reviewScorecardNodes[reviewScorecardNodes.length] = criterionRow.getElementsByTagName("select")[0];
                 } else if (phaseName == "Approval") {
                     approvalScorecardNodes[approvalScorecardNodes.length] = criterionRow.getElementsByTagName("select")[0];
+                 } else if (phaseName == "Post-Mortem") {
+                     postMortemScorecardNodes[postMortemScorecardNodes.length] = criterionRow.getElementsByTagName("select")[0];
                 }
             }
         }
@@ -832,7 +877,10 @@
             changeScorecardByCategory(templateRow.getElementsByTagName("select")[0], projectCategoryNode.value, reviewScorecards, 'Review');
 
             templateRow = document.getElementById("approval_scorecard_row_template");
-            changeScorecardByCategory(templateRow.getElementsByTagName("select")[0], projectCategoryNode.value, approvalScorecards, 'Client Review');
+            changeScorecardByCategory(templateRow.getElementsByTagName("select")[0], projectCategoryNode.value, approvalScorecards, 'Approval');
+
+            templateRow = document.getElementById("post_mortem_scorecard_row_template");
+            changeScorecardByCategory(templateRow.getElementsByTagName("select")[0], projectCategoryNode.value, postMortemScorecards, 'Post-Mortem');
         }
 
     //--></script>
@@ -891,7 +939,9 @@
                                         <html:select styleClass="inputBox" property="project_type" style="width:150px;"
                                                 onchange="onProjectTypeChange(this);">
                                             <c:forEach items="${projectTypes}" var="type">
-                                                <html:option key='ProjectType.${fn:replace(type.name, " ", "")}.plural' value="${type.id}" />
+                                                <c:if test="${not type.generic}">
+                                                    <html:option key='ProjectType.${fn:replace(type.name, " ", "")}.plural' value="${type.id}" />
+                                                </c:if>
                                             </c:forEach>
                                         </html:select>
                                     </td>
@@ -1007,7 +1057,9 @@
                                         <html:select styleClass="inputBox" property="project_type" style="width:150px;"
                                                 onchange="onProjectTypeChange(this);">
                                             <c:forEach items="${projectTypes}" var="type">
-                                                <html:option key='ProjectType.${fn:replace(type.name, " ", "")}.plural' value="${type.id}" />
+                                                <c:if test="${not type.generic}">
+                                                    <html:option key='ProjectType.${fn:replace(type.name, " ", "")}.plural' value="${type.id}" />
+                                                </c:if>
                                             </c:forEach>
                                         </html:select>
                                     </td>

@@ -25,8 +25,15 @@ package com.cronos.onlinereview.actions;
  *   </ol>
  * </p>
  *
- * @author George1, real_vg, pulky, isv
- * @version 1.2
+ * <p>
+ * Version 1.3 (Online Review End Of Project Analysis Assembly 1.0) Change notes:
+ *   <ol>
+ *     <li>Added constants for <code>Post-Mortem</code> phase and respective permissions.</li>
+ *   </ol>
+ * </p>
+ *
+ * @author George1, real_vg, pulky, isv, TCSDEVELOPER
+ * @version 1.3
  */
 public class Constants {
 
@@ -144,6 +151,15 @@ public class Constants {
      * the approval phase.
      */
     public static final String APPROVER_ROLE_NAME = "Approver";
+
+    /**
+     * This member variable is a string constant that defines the name of the Post-Mortem Reviewer role.
+     * Post-Mortem Reviewer role is assigned in the Post-Mortem phase. Post-Mortem Reviewers can perform review during
+     * the Post-Mortem phase.
+     *
+     * @since 1.3
+     */
+    public static final String POST_MORTEM_REVIEWER_ROLE_NAME = "Post-Mortem Reviewer";
 
     /**
      * This member variable is a string constant that defines the name of the Public role.
@@ -533,6 +549,22 @@ public class Constants {
     public static final String VIEW_APPROVAL_PERM_NAME = "View Approval";
 
     /**
+     * This member variable is a string constant that defines the name of the Perform Post-Mortem Review
+     * permission.
+     *
+     * @since 1.3
+     */
+    public static final String PERFORM_POST_MORTEM_REVIEW_PERM_NAME = "Perform Post-Mortem Review";
+
+    /**
+     * This member variable is a string constant that defines the name of the View Post-Mortem
+     * permission.
+     *
+     * @since 1.3
+     */
+    public static final String VIEW_POST_MORTEM_PERM_NAME = "View Post-Mortem Review";
+
+    /**
      * This member variable is a string constant that defines the name of the Edit Any Scorecard
      * permission.
      */
@@ -626,6 +658,13 @@ public class Constants {
      */
     public static final String APPROVAL_PHASE_NAME = "Approval";
 
+    /**
+     * This member variable is a string constant that defines the name of the Post-Mortem phase.
+     *
+     * @since 1.3
+     */
+    public static final String POST_MORTEM_PHASE_NAME = "Post-Mortem";
+
 
     // ------------------------------------------------------------------- Phase Status names -----
 
@@ -676,6 +715,13 @@ public class Constants {
      * TODO: Add reasonable description here
      */
     public static final String APPROVAL_APP_FUNC = "APPROVAL";
+
+    /**
+     * Name of application function for Post Mortem phase.
+     *
+     *  @since 1.3
+     */
+    public static final String POST_MORTEM_APP_FUNC = "POSTMORTEM";
 
 
     // -------------------------------------------------------------------- Deliverable names -----
@@ -761,6 +807,13 @@ public class Constants {
      * This member variable is a string constant that defines the name of the Approval deliverable.
      */
     public static final String APPROVAL_DELIVERABLE_NAME = "Approval";
+
+    /**
+     * This member variable is a string constant that defines the name of the Post-Mortem deliverable.
+     *
+     * @since 1.3
+     */
+    public static final String POST_MORTEM_DELIVERABLE_NAME = "Post-Mortem Review";
 
 
     // --------------------------------------------------- Auto Screening Response Severities -----

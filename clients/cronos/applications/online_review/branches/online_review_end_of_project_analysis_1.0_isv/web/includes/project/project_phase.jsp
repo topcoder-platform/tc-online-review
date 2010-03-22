@@ -1,3 +1,13 @@
+<%--
+  - Author: TCSDEVELOPER
+  - Version: 1.1
+  - Copyright (C) 2004 - 2010 TopCoder Inc., All Rights Reserved.
+  -
+  - Description: This page fragment displays the content of tab for single project phase on Project Details screen.
+  -
+  - Version 1.1 (Online Review End of Project Analysis v1.0) changes: Added logic for supporting Post-Mortem phase.
+  - Updated logic for supporting Approval phase.
+--%>
 <%@ page language="java" isELIgnored="false" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
@@ -702,6 +712,71 @@
 								</tr>
 							</table>
 						</c:when>
+                        <c:when test='${group.appFunc == "POSTMORTEM"}'>
+                            <table class="scorecard" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;">
+                                <tr>
+                                    <td class="title" colspan="3">${group.tableName}</td>
+                                </tr>
+
+                                <tr>
+                                    <td class="header" nowrap="nowrap"><bean:message key="viewProjectDetails.box.Post-Mortem.Reviewer.ID" /></td>
+                                    <td class="headerC" nowrap="nowrap"><bean:message key="viewProjectDetails.box.Post-Mortem.Date" arg0="${group.groupIndex}" /></td>
+                                    <td class="headerC" nowrap="nowrap"><bean:message key="viewProjectDetails.box.Post-Mortem.Post-Mortem" arg0="${group.groupIndex}" /></td>
+                                </tr>
+
+                                <c:forEach items="${group.postMortemReviews}" var="review" varStatus="index">
+                                    <tr class="${index.index mod 2 eq 0 ? 'light' : 'dark'}">
+                                        <td class="value" nowrap="nowrap">
+                                            <tc-webtag:handle coderId='${review.creationUser}'
+                                                              context="${orfn:getHandlerContext(pageContext.request)}"/>
+                                        </td>
+                                        <c:choose>
+                                            <c:when test="${review.committed}">
+                                                <td class="valueC" nowrap="nowrap">${orfn:displayDate(pageContext.request, review.modificationTimestamp)}</td>
+                                                <td class="valueC" nowrap="nowrap">
+                                                    <html:link page="/actions/ViewPostMortem.do?method=viewPostMortem&rid=${review.id}">
+                                                        <bean:message key="viewProjectDetails.box.Post-Mortem.ViewResults"/>
+                                                    </html:link>
+                                                </td>
+                                            </c:when>
+                                            <c:otherwise>
+                                                <td class="value"><!-- @ --></td>
+                                                <c:if test="${isAllowedToPerformPortMortemReview}">
+                                                    <td class="valueC" nowrap="nowrap">
+                                                        <html:link page="/actions/EditPostMortem.do?method=editPostMortem&rid=${review.id}">
+                                                            <bean:message key="viewProjectDetails.box.Post-Mortem.Submit"/>
+                                                        </html:link>
+                                                    </td>
+                                                </c:if>
+                                                <c:if test="${not isAllowedToPerformPortMortemReview}">
+                                                    <td class="valueC" nowrap="nowrap"><bean:message key="Pending" /></td>
+                                                </c:if>
+                                            </c:otherwise>
+                                        </c:choose>
+<%--
+                                        <c:choose>
+                                                <c:otherwise>
+                                                    <c:if test="${empty group.approval}">
+                                                        <td class="value"><!-- @ --></td>
+                                                        <c:if test="${isAllowedToPerformPortMortemReview}">
+                                                            <td class="valueC" nowrap="nowrap">
+                                                                <html:link page="/actions/CreateApproval.do?method=createApproval&sid=${winningSubmission.id}"><bean:message
+                                                                    key="viewProjectDetails.box.Approval.Submit" /></html:link></td>
+                                                        </c:if>
+                                                        <c:if test="${not isAllowedToPerformPortMortemReview}">
+                                                            <td class="valueC" nowrap="nowrap"><bean:message key="Pending" /></td>
+                                                        </c:if>
+                                                    </c:if>
+                                                </c:otherwise>
+                                        </c:choose>
+--%>
+                                    </tr>
+                                </c:forEach>
+                                <tr>
+                                    <td class="lastRowTD" colspan="3"><!-- @ --></td>
+                                </tr>
+                            </table>
+                        </c:when>
 					</c:choose>
 				</c:if>
 			</div>

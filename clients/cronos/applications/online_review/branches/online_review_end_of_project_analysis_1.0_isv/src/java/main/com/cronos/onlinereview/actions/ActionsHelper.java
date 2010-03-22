@@ -153,8 +153,6 @@ import com.topcoder.web.ejb.forums.ForumsHome;
  *   </ol>
  * </p>
  *
- * @author George1, real_vg, pulky, isv
- * @version 1.3
  * <p>
  * Version 1.4 (Contest Dependency Automation Assembly v1.0) Change notes:
  *   <ol>
@@ -164,8 +162,18 @@ import com.topcoder.web.ejb.forums.ForumsHome;
  *   </ol>
  * </p>
  *
- * @author George1, real_vg, pulky, isv
- * @version 1.4
+ * <p>
+ * Version 1.5 (Online Review End Of Project Analysis Assembly v1.0) Change notes:
+ *   <ol>
+ *     <li>Updated {@link #getResourcesForPhase(Resource[], Phase)} method to properly map resource to Post-Mortem and
+ *     Approval phases.</li>
+ *     <li>Updated {@link #createDeliverableManager(HttpServletRequest)} method to bind deliverbale checker for
+ *     <code>Post-Mortem</code> phase.</li>
+ *   </ol>
+ * </p>
+ *
+ * @author George1, real_vg, pulky, isv, TCSDEVELOPER
+ * @version 1.5
  * @since 1.0
  */
 public class ActionsHelper {
@@ -1759,8 +1767,20 @@ public class ActionsHelper {
                     foundResources.add(resource);
                 }
             } else {
-                if (resource.getPhase() != null && resource.getPhase().longValue() == phase.getId()) {
-                    foundResources.add(resource);
+                // Handle Post-Mortem and Approval phases differently. Those resources are not mapped to phase type
+                // so they must be discovered based on resource role name
+                if (phase.getPhaseType().getName().equals(Constants.POST_MORTEM_PHASE_NAME)) {
+                    if (resource.getResourceRole().getName().equals(Constants.POST_MORTEM_REVIEWER_ROLE_NAME)) {
+                        foundResources.add(resource);
+                    }
+                } else if (phase.getPhaseType().getName().equals(Constants.APPROVAL_PHASE_NAME)) {
+                    if (resource.getResourceRole().getName().equals(Constants.APPROVER_ROLE_NAME)) {
+                        foundResources.add(resource);
+                    }
+                } else {
+                    if (resource.getPhase() != null && resource.getPhase().longValue() == phase.getId()) {
+                        foundResources.add(resource);
+                    }
                 }
             }
         }
@@ -2757,6 +2777,7 @@ public class ActionsHelper {
             checkers.put(Constants.SCORECARD_COMM_DELIVERABLE_NAME, new SubmitterCommentDeliverableChecker(dbconn));
             checkers.put(Constants.FINAL_REVIEW_PHASE_NAME, new FinalReviewDeliverableChecker(dbconn));
             checkers.put(Constants.APPROVAL_DELIVERABLE_NAME, committedChecker);
+            checkers.put(Constants.POST_MORTEM_DELIVERABLE_NAME, committedChecker);
 
             // Initialize the PersistenceDeliverableManager
             manager = new PersistenceDeliverableManager(deliverablePersistence, checkers,

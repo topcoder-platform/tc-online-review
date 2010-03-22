@@ -134,7 +134,7 @@
     <property name="deliverable_management_persistence.path" value="deliverable_management_persistence/${deliverable_management_persistence.version}" />
     <property name="deliverable_management_persistence.jar" value="${tcs_libdir}/${deliverable_management_persistence.path}/${deliverable_management_persistence.jar.name}" />
 
-    <property name="document_generator.version" value="2.0"/>
+    <property name="document_generator.version" value="2.1"/>
     <property name="document_generator.jar.name" value="document_generator.jar"/>
     <property name="document_generator.path" value="document_generator/${document_generator.version}"/>
     <property name="document_generator.jar" value="${tcs_libdir}/${document_generator.path}/${document_generator.jar.name}"/>
@@ -199,7 +199,7 @@
     <property name="online_review_login.path" value="online_review_login/${online_review_login.version}" />
     <property name="online_review_login.jar" value="${tcs_libdir}/${online_review_login.path}/${online_review_login.jar.name}" />
 
-    <property name="online_review_phases.version" value="1.0.6" />
+    <property name="online_review_phases.version" value="1.3" />
     <property name="online_review_phases.jar.name" value="online_review_phases.jar" />
     <property name="online_review_phases.path" value="online_review_phases/${online_review_phases.version}" />
     <property name="online_review_phases.jar" value="${tcs_libdir}/${online_review_phases.path}/${online_review_phases.jar.name}" />
@@ -364,7 +364,7 @@
     <property name="jstl.jar" value="${ext_libdir}/jstl.jar" />
     <property name="servlet.jar" value="${cactus.home.tomcat5x}/common/lib/servlet-api.jar" />
     <property name="servlet.jsp.jar" value="${cactus.home.tomcat5x}/common/lib/jsp-api.jar" />
-    <property name="mail.jar" value="${cactus.home.tomcat5x}/common/lib/mail.jar" />
+    <property name="mail.jar" value="${ext_libdir}/mail.jar" />
     <property name="struts.jar" value="${ext_libdir}/struts-1.2.9.jar" />
     <property name="axis.jar" value="${ext_libdir}/axis-dok.jar" />
     <property name="ejb-2_0.jar" value="${ext_libdir}/ejb-2_0.jar" />
@@ -463,6 +463,7 @@
 	    <pathelement location="${forums.jar}" />
         <pathelement location="${jiveforums.jar}" />
         <pathelement location="${jivebase.jar}" />
+        <pathelement location="${mail.jar}" />
     </path>
 
     <path id="cactus.classpath">
@@ -695,7 +696,7 @@ Note: The security manager that comes with the app may not be compatible with th
             <lib dir="${jar_tcs_libdir}/${projectEJB.path}" includes="*.jar" />
             <lib dir="${jar_tcs_libdir}/${userEJB.path}" includes="*.jar" />
             <lib dir="${jar_tcs_libdir}/${termsOfUseEJB.path}" includes="*.jar" />
-       <!--     <lib dir="${jar_tcs_libdir}/${contest_eligibility_validation_client.path}" includes="*.jar" />  -->
+            <lib dir="${jar_tcs_libdir}/${contest_eligibility_validation_client.path}" includes="*.jar" />
 
             <lib dir="${jar_tcs_libdir}/">
                 <include name="${tcsUtil.jar.name}"/>
@@ -931,6 +932,65 @@ Note: The security manager that comes with the app may not be compatible with th
     <!-- ************************************************************************** -->
     <!-- ************************ END REMOVE EVERYTHING ***************************** -->
     <!-- ************************************************************************** -->
+    <!--
+        ++ =======================================================================
+        ++ Macro: compile_component
+        ++ Compiles specified component
+        ++ =======================================================================
+    -->
+    <macrodef name="compile_component" description="Compiles the component">
+        <attribute name="component"/>
+        <attribute name="version"/>
+        <attribute name="path"/>
 
+        <sequential>
+            <property name="component_base_dir" value="@{path}"/>
+            <property name="component_src_dir" value="${component_base_dir}/src/java/main"/>
+            <property name="component_build_dir" value="${component_base_dir}/build"/>
+            <property name="component_build_classes_dir" value="${component_build_dir}/classes"/>
+            <property name="component_jar_file" value="${component_build_dir}/@{component}.jar"/>
+            <property name="component_dist_dir" value="${tcs_libdir}/@{component}/@{version}"/>
 
+            <delete dir="${component_build_dir}"/>
+            <mkdir dir="${component_build_dir}"/>
+            <mkdir dir="${component_build_classes_dir}"/>
+
+            <echo message="Base: ${component_base_dir}"/>
+            <echo message="Build: ${component_build_dir}"/>
+            <echo message="Src: ${component_src_dir}"/>
+            <echo message="Dist: ${component_dist_dir}"/>
+            <echo message="Jar: ${component_jar_file}"/>
+
+            <javac srcdir="${component_src_dir}"
+                   destdir="${component_build_classes_dir}"
+                   deprecation="${deprecation}"
+                   debug="on"
+                   source="1.5" target="1.5" memoryMaximumSize="512M" memoryInitialSize="64M" fork="true">
+                <classpath refid="buildlibs"/>
+                <include name="**/*"/>
+            </javac>
+            <jar basedir="${component_build_classes_dir}" jarfile="${component_jar_file}" includes="**"/>
+            <mkdir dir="${component_dist_dir}"/>
+            <copy file="${component_jar_file}" todir="${component_dist_dir}"/>
+        </sequential>
+    </macrodef>
+
+    <!-- Compiles and builds library JARs for all custom components for End Of Project Analysis -->
+    <target name="compile_components">
+        <antcall target="compile_component_1"/>
+        <antcall target="compile_component_2"/>
+        <antcall target="compile_component_3"/>
+    </target>
+
+    <target name="compile_component_1">
+        <compile_component component="project_management" version="1.0.1" path="../../Components/project_management"/>
+    </target>
+    <target name="compile_component_2">
+        <compile_component component="project_management_persistence" version="1.1.2"
+                           path="../../Components/project_management_persistence"/>
+    </target>
+    <target name="compile_component_3">
+        <compile_component component="online_review_phases" version="1.3"
+                           path="../../Components/online_review_phases"/>
+    </target>
 </project>

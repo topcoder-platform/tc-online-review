@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 TopCoder Inc., All Rights Reserved.
+ * Copyright (C) 2007-2010 TopCoder Inc., All Rights Reserved.
  */
 package com.cronos.onlinereview.actions;
 
@@ -11,6 +11,7 @@ import com.cronos.onlinereview.autoscreening.management.ScreeningManager;
 import com.cronos.onlinereview.autoscreening.management.ScreeningManagerFactory;
 import com.cronos.onlinereview.phases.AppealsPhaseHandler;
 import com.cronos.onlinereview.phases.ApprovalPhaseHandler;
+import com.cronos.onlinereview.phases.ManagerHelper;
 import com.cronos.onlinereview.phases.PRAggregationPhaseHandler;
 import com.cronos.onlinereview.phases.PRAggregationReviewPhaseHandler;
 import com.cronos.onlinereview.phases.PRAppealResponsePhaseHandler;
@@ -20,6 +21,7 @@ import com.cronos.onlinereview.phases.PRRegistrationPhaseHandler;
 import com.cronos.onlinereview.phases.PRReviewPhaseHandler;
 import com.cronos.onlinereview.phases.PRScreeningPhaseHandler;
 import com.cronos.onlinereview.phases.PRSubmissionPhaseHandler;
+import com.cronos.onlinereview.phases.PostMortemPhaseHandler;
 import com.cronos.onlinereview.services.uploads.ManagersProvider;
 import com.topcoder.db.connectionfactory.DBConnectionFactory;
 import com.topcoder.db.connectionfactory.DBConnectionFactoryImpl;
@@ -43,7 +45,9 @@ import com.topcoder.management.resource.search.NotificationFilterBuilder;
 import com.topcoder.management.resource.search.NotificationTypeFilterBuilder;
 import com.topcoder.management.resource.search.ResourceFilterBuilder;
 import com.topcoder.management.resource.search.ResourceRoleFilterBuilder;
+import com.topcoder.project.phases.Phase;
 import com.topcoder.project.phases.PhaseType;
+import com.topcoder.project.phases.Project;
 import com.topcoder.search.builder.SearchBundle;
 import com.topcoder.search.builder.SearchBundleManager;
 import com.topcoder.util.datavalidator.LongValidator;
@@ -60,10 +64,16 @@ import com.topcoder.util.idgenerator.IDGeneratorFactory;
  * Change note for 1.1: adds a new manager : <code>ProjectLinkManager</code>. It is for "OR Linking Assembly".
  * </p>
  *
- * 
+ * <p>
+ * Version 1.2 (Online Review End Of Project Analysis Release Assembly 1.0) Change notes:
+ *   <ol>
+ *     <li>Updated {@link #getPhaseManager()} method to set handler for Post-Mortem phase.</li>
+ *   </ol>
+ * </p>
+ *
  * @author evilisneo
  * @author BeBetter
- * @version 1.1
+ * @version 1.2
  * @since 1.0
  */
 public class ManagerCreationHelper implements ManagersProvider {
@@ -141,6 +151,8 @@ public class ManagerCreationHelper implements ManagersProvider {
                     Constants.FINAL_REVIEW_PHASE_NAME);
             registerPhaseHandlerForOperation(phaseManager, phaseTypes, new ApprovalPhaseHandler(),
                     Constants.APPROVAL_PHASE_NAME);
+            registerPhaseHandlerForOperation(phaseManager, phaseTypes, new PostMortemPhaseHandler(),
+                    Constants.POST_MORTEM_PHASE_NAME);
             return phaseManager;
         } catch (Exception e) {
             throw new ManagerCreationException("Exception occurred while creating the PhaseManager.", e);

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2007 TopCoder Inc.  All Rights Reserved.
+ * Copyright (C) 2006-2010 TopCoder Inc.  All Rights Reserved.
  */
 package com.cronos.onlinereview.actions;
 
@@ -12,6 +12,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.topcoder.search.builder.filter.OrFilter;
 import org.apache.struts.util.MessageResources;
 
 import com.cronos.onlinereview.actions.Comparators.SubmissionComparer;
@@ -44,10 +45,21 @@ import com.topcoder.search.builder.filter.InFilter;
 import com.topcoder.util.errorhandling.BaseException;
 
 /**
- * TODO: Add docs here.
+ * <p>An utility class for getting the details for particular project phase.</p>
  *
- * @author George1
- * @version 1.0
+ * <p>
+ * Version 1.1 (Online Review End Of Project Analysis Assembly 1.0) Change notes:
+ *   <ol>
+ *     <li>Updated
+ *     {@link #getPhasesDetails(HttpServletRequest, MessageResources, Project, Phase[], Resource[], ExternalUser[])}
+ *     method to newly added
+ *     {@link #servicePostMortemAppFunc(HttpServletRequest, PhaseGroup, Project, Phase, Resource[], boolean)} method to
+ *      provide details for <code>Post-Mortem</code> phase.</p>
+ *   </ol>
+ * </p>
+ *
+ * @author George1, TCSDEVELOPER
+ * @version 1.1
  */
 final class PhasesDetailsServices {
 
@@ -158,6 +170,9 @@ final class PhasesDetailsServices {
             } else if (phaseGroup.getAppFunc().equalsIgnoreCase(Constants.APPROVAL_APP_FUNC)) {
                 serviceApprovalAppFunc(request, phaseGroup, project, phase,
                         allProjectResources, isAfterAppealsResponse);
+            } else if (phaseGroup.getAppFunc().equalsIgnoreCase(Constants.POST_MORTEM_APP_FUNC)) {
+                servicePostMortemAppFunc(request, phaseGroup, project, phase, allProjectResources,
+                                         isAfterAppealsResponse);
             }
         }
 
@@ -839,7 +854,7 @@ final class PhasesDetailsServices {
         Filter filterResource = new EqualToFilter("reviewer", new Long(approver[0].getId()));
         Filter filterProject = new EqualToFilter("project", new Long(project.getId()));
         Filter filterScorecard = new EqualToFilter("scorecardType",
-                new Long(ActionsHelper.findScorecardTypeByName(allScorecardTypes, "Client Review").getId()));
+                new Long(ActionsHelper.findScorecardTypeByName(allScorecardTypes, "Approval").getId()));
 
         Filter filter = new AndFilter(Arrays.asList(
                 new Filter[] {filterResource, filterProject, filterScorecard}));
@@ -850,6 +865,52 @@ final class PhasesDetailsServices {
 
         if (reviews.length != 0) {
             phaseGroup.setApproval(reviews[0]);
+        }
+    }
+
+    /**
+     * <p>Sets the specified phase group with details for <code>Post-Mortem</code> phase.</p>
+     *
+     * @param request an <code>HttpServletRequest</code> providing incoming request from the client.
+     * @param phaseGroup a <code>PhaseGroup</code> providing the details for group of phase the current phase belongs
+     *        to.
+     * @param project a <code>Project</code> providing the details for current project.
+     * @param thisPhase a <code>Phase</code> providing the details for <code>Post-Mortem</code> phase.
+     * @param allProjectResources a <code>Resource</code> array listing all existing resources for specified project.
+     * @param isAfterAppealsResponse <code>true</code> if current phase is after appeals response; <code>false</code>
+     *        otherwise.
+     * @throws BaseException if an unexpected error occurs.
+     */
+    private static void servicePostMortemAppFunc(HttpServletRequest request, PhaseGroup phaseGroup,
+                                                 Project project, Phase thisPhase, Resource[] allProjectResources,
+                                                 boolean isAfterAppealsResponse) throws BaseException {
+        // Get the list of Post-Mortem reviewers assigned to project
+        Resource[] postMortemReviewers = ActionsHelper.getResourcesForPhase(allProjectResources, thisPhase);
+        if (postMortemReviewers == null || postMortemReviewers.length == 0) {
+            return;
+        }
+
+        // Get the scorecard type for Post-Mortem scorecards
+        ScorecardManager scrMgr = ActionsHelper.createScorecardManager(request);
+        ScorecardType[] allScorecardTypes = scrMgr.getAllScorecardTypes();
+        ScorecardType postMortemScorecardType = ActionsHelper.findScorecardTypeByName(allScorecardTypes, "Post-Mortem");
+
+        // Build the filter for getting the existing Posrt-Mortem reviews
+        List<Filter> reviewersFilter = new ArrayList<Filter>();
+        for (int i = 0; i < postMortemReviewers.length; i++) {
+            Resource postMortemReviewer = postMortemReviewers[i];
+            reviewersFilter.add(new EqualToFilter("reviewer", new Long(postMortemReviewer.getId())));
+        }
+        Filter filterResource = new OrFilter(reviewersFilter);
+        Filter filterProject = new EqualToFilter("project", new Long(project.getId()));
+        Filter filterScorecard = new EqualToFilter("scorecardType", new Long(postMortemScorecardType.getId()));
+        Filter filter = new AndFilter(Arrays.asList(filterResource, filterProject, filterScorecard));
+
+        // Get existing Post-Mortem reviews and set phase group with them
+        ReviewManager revMgr = ActionsHelper.createReviewManager(request);
+        Review[] reviews = revMgr.searchReviews(filter, false);
+        if (reviews.length > 0) {
+            phaseGroup.setPostMortemReviews(reviews);
         }
     }
 

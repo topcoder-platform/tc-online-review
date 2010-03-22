@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 TopCoder Inc.  All Rights Reserved.
+ * Copyright (C) 2006-2010 TopCoder Inc.  All Rights Reserved.
  */
 package com.cronos.onlinereview.actions;
 
@@ -15,11 +15,17 @@ import com.topcoder.management.deliverable.Upload;
 import com.topcoder.project.phases.Phase;
 
 /**
- * This class defines a phase group bean.
+ * <p>This class defines a phase group bean.</p>
  *
- * @author George1
- * @author real_vg
- * @version 1.0
+ * <p>
+ * Version 1.1 (Online Review End Of Project Analysis Assembly v1.0) Change notes:
+ *   <ol>
+ *     <li>Expanded the bean with new <code>postMortemReviews</code> property.</li>
+ *   </ol>
+ * </p>
+ *
+ * @author George1, real_vg, TCSDEVELOPER
+ * @version 1.1
  */
 public class PhaseGroup {
 
@@ -298,6 +304,13 @@ public class PhaseGroup {
      * This member variable indicates if the phase represented by this phase group has been opened.
      */
     private boolean phaseOpen = false;
+
+    /**
+     * <p>A <code>Review</code> array listing the existing <code>Post-Mortem</code> reviews for project.</p>
+     *
+     * @since 1.1
+     */
+    private Review[] postMortemReviews;
 
     /**
      * Constructs a new instance of the <code>PhaseGroup</code> class setting all fields to their
@@ -922,5 +935,26 @@ public class PhaseGroup {
         ActionsHelper.validateParameterNotNull(phase, "phase");
 
         accumulatedPhases.add(phase.getPhaseType().getName().toLowerCase());
+    }
+
+    /**
+     * <p>Gets the existing <code>Post-Mortem</code> reviews for project.</p>
+     *
+     * @return a <code>Review</code> array listing the existing <code>Post-Mortem</code> reviews for project.
+     * @since 1.1
+     */
+    public Review[] getPostMortemReviews() {
+        return this.postMortemReviews;
+    }
+
+    /**
+     * <p>Sets the existing <code>Post-Mortem</code> reviews for project.</p>
+     *
+     * @param postMortemReviews a <code>Review</code> array listing the existing <code>Post-Mortem</code> reviews for
+     *        project.
+     * @since 1.1
+     */
+    public void setPostMortemReviews(Review[] postMortemReviews) {
+        this.postMortemReviews = postMortemReviews;
     }
 }
