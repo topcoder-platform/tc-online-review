@@ -1,3 +1,10 @@
+<%--
+  - Author: isv
+  - Version: 1.0 (Online Review End of Project Analysis v1.0)
+  - Copyright (C) 2010 TopCoder Inc., All Rights Reserved.
+  -
+  - Description: This page displays view page for Approval scorecard
+--%>
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ page language="java" isELIgnored="false" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>

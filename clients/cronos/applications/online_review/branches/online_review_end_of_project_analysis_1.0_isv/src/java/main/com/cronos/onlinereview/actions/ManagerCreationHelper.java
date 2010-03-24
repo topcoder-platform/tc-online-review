@@ -71,8 +71,7 @@ import com.topcoder.util.idgenerator.IDGeneratorFactory;
  *   </ol>
  * </p>
  *
- * @author evilisneo
- * @author BeBetter
+ * @author evilisneo, BeBetter, isv
  * @version 1.2
  * @since 1.0
  */

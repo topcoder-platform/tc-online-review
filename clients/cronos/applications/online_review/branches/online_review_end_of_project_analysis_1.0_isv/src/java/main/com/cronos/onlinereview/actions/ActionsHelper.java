@@ -172,7 +172,7 @@ import com.topcoder.web.ejb.forums.ForumsHome;
  *   </ol>
  * </p>
  *
- * @author George1, real_vg, pulky, isv, TCSDEVELOPER
+ * @author George1, real_vg, pulky, isv
  * @version 1.5
  * @since 1.0
  */
@@ -269,30 +269,30 @@ public class ActionsHelper {
     }
 
     /**
-	 * The query to select worker project.
-	 */
-	private static final String SELECT_WORKER_PROJECT = "SELECT distinct project_id FROM project_worker p, user_account u "
-			+ "WHERE p.start_date <= current and current <= p.end_date and p.active =1 and "
-			+ "p.user_account_id = u.user_account_id and u.user_name = ";
+     * The query to select worker project.
+     */
+    private static final String SELECT_WORKER_PROJECT = "SELECT distinct project_id FROM project_worker p, user_account u "
+            + "WHERE p.start_date <= current and current <= p.end_date and p.active =1 and "
+            + "p.user_account_id = u.user_account_id and u.user_name = ";
 
     /**
-	 * The query string used to select projects.
-	 */
-	private static final String SELECT_MANAGER_PROJECT = "SELECT distinct project_id FROM project_manager p, user_account u "
+     * The query string used to select projects.
+     */
+    private static final String SELECT_MANAGER_PROJECT = "SELECT distinct project_id FROM project_manager p, user_account u "
            + "WHERE p.user_account_id = u.user_account_id and p.active = 1 and  u.user_name = ";
 
     /**
-	 * The query string used to select projects.
-	 * 
-	 * Updated for Cockpit Release Assembly for Receipts
-	 *     - now fetching client name too.
-	 *     
-	 * Updated for Version 1.1.1 - added fetch for is_manual_prize_setting property too.
-	 */
-	private static final String SELECT_PROJECT 	= "select p.project_id, p.name "
-			  + " from project as p left join client_project as cp on p.project_id = cp.project_id left join client c "
+     * The query string used to select projects.
+     * 
+     * Updated for Cockpit Release Assembly for Receipts
+     *     - now fetching client name too.
+     *     
+     * Updated for Version 1.1.1 - added fetch for is_manual_prize_setting property too.
+     */
+    private static final String SELECT_PROJECT     = "select p.project_id, p.name "
+              + " from project as p left join client_project as cp on p.project_id = cp.project_id left join client c "
               + "            on c.client_id = cp.client_id and (c.is_deleted = 0 or c.is_deleted is null) "
-			  + " where p.start_date <= current and current <= p.end_date ";
+              + " where p.start_date <= current and current <= p.end_date ";
 
     // ------------------------------------------------------------ Validator type of methods -----
 
@@ -3005,9 +3005,9 @@ public class ActionsHelper {
                 String queryString = "";
 
                 String nonadminQueryString = SELECT_PROJECT + " and active = 1 and p.project_id in " + "("
-					+ SELECT_MANAGER_PROJECT + "'" + username + "' " + "union "
-					+ SELECT_WORKER_PROJECT + "'" + username + "')";
-			    nonadminQueryString += " order by upper(name) ";
+                    + SELECT_MANAGER_PROJECT + "'" + username + "' " + "union "
+                    + SELECT_WORKER_PROJECT + "'" + username + "')";
+                nonadminQueryString += " order by upper(name) ";
 
                 String adminQueryString = "SELECT project_id, name FROM project WHERE is_deleted = 0 or is_deleted IS NULL ORDER BY UPPER(name)";
 
@@ -3104,17 +3104,17 @@ public class ActionsHelper {
      */
     static void setProjectCompletionDate(Project project, ProjectStatus newProjectStatus, Format format)
             throws BaseException {
-    	
+        
         String name = newProjectStatus.getName();
         if ("Completed".equals(name)
-        		|| "Cancelled - Failed Review".equals(name)
-        		|| "Deleted".equals(name)
+                || "Cancelled - Failed Review".equals(name)
+                || "Deleted".equals(name)
                 || "Cancelled - Failed Screening".equals(name)
                 || "Cancelled - Zero Submissions".equals(name)
                 || "Cancelled - Winner Unresponsive".equals(name)
                 || "Cancelled - Client Request".equals(name)
                 || "Cancelled - Requirements Infeasible".equals(name)) {
-        	
+            
             if (format == null) {
                 format = new SimpleDateFormat(ConfigHelper.getDateFormat());
             }
@@ -3128,7 +3128,7 @@ public class ActionsHelper {
                     DBConnectionFactory dbconn = new DBConnectionFactoryImpl(DB_CONNECTION_NAMESPACE);
                     conn = dbconn.createConnection();
                     ps = conn.prepareStatement(
-                    		"update project_result set rating_ind = 1 where project_id = ? and valid_submission_ind = 1");
+                            "update project_result set rating_ind = 1 where project_id = ? and valid_submission_ind = 1");
                     ps.setLong(1, project.getId());
                     ps.execute();
                 } catch(SQLException e) {
@@ -3922,7 +3922,7 @@ public class ActionsHelper {
 
             log.log(Level.INFO,
                     "create db connection with default connection name from DBConnectionFactoryImpl with namespace:"
-            		+ DB_CONNECTION_NAMESPACE);
+                    + DB_CONNECTION_NAMESPACE);
 
             // delete from project_result
             ps = conn.prepareStatement("delete from project_result where project_id = ? and user_id = ?");
@@ -3965,7 +3965,7 @@ public class ActionsHelper {
             conn = dbconn.createConnection();
             log.log(Level.INFO,
                     "create db connection with default connection name from DBConnectionFactoryImpl with namespace:"
-            		+ DB_CONNECTION_NAMESPACE);
+                    + DB_CONNECTION_NAMESPACE);
             PRHelper.resetProjectResultWithChangedScores(projectId, userId, conn);
         } catch (DBConnectionException e) {
             throw new BaseException("Failed to return DBConnection", e);
@@ -3992,7 +3992,7 @@ public class ActionsHelper {
             conn = dbconn.createConnection();
             log.log(Level.INFO,
                     "create db connection with default connection name from DBConnectionFactoryImpl with namespace:"
-            		+ DB_CONNECTION_NAMESPACE);
+                    + DB_CONNECTION_NAMESPACE);
 
             String sqlString = "select version from comp_versions where comp_vers_id = ?";
 

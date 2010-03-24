@@ -24,7 +24,7 @@ import com.topcoder.project.phases.Phase;
  *   </ol>
  * </p>
  *
- * @author George1, real_vg, TCSDEVELOPER
+ * @author George1, real_vg, isv
  * @version 1.1
  */
 public class PhaseGroup {
@@ -168,12 +168,12 @@ public class PhaseGroup {
     private Upload[] testCases = null;
 
     /**
-	 * This member variable determines whether an uploading of testcases is allowed for testcases
-	 * type of reviewers.
-	 *
-	 * @see #isUploadingTestcasesAllowed()
-	 * @see #setUploadingTestcasesAllowed(boolean)
-	 */
+     * This member variable determines whether an uploading of testcases is allowed for testcases
+     * type of reviewers.
+     *
+     * @see #isUploadingTestcasesAllowed()
+     * @see #setUploadingTestcasesAllowed(boolean)
+     */
     private boolean uploadingTestcasesAllowed = false;
 
     /**
@@ -574,13 +574,13 @@ public class PhaseGroup {
     }
 
     /**
-	 * This method determines whether uploading of testcases is allowed for testcases type of
-	 * reviewers for this phase group. Usually, uploading of testcases is allowed as soon as Review
-	 * phase is open till the end of the Appeals Response phase.
-	 *
-	 * @return <code>true</code> is testcases can be uploaded, <code>false</code> if they
-	 *         cannot.
-	 */
+     * This method determines whether uploading of testcases is allowed for testcases type of
+     * reviewers for this phase group. Usually, uploading of testcases is allowed as soon as Review
+     * phase is open till the end of the Appeals Response phase.
+     *
+     * @return <code>true</code> is testcases can be uploaded, <code>false</code> if they
+     *         cannot.
+     */
     public boolean isUploadingTestcasesAllowed() {
         return this.uploadingTestcasesAllowed;
     }

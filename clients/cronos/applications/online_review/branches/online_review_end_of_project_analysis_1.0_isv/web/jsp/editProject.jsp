@@ -1,5 +1,5 @@
 <%--
-  - Author: pulky, TCSDEVELOPER
+  - Author: pulky, isv
   - Version: 1.2
   - Copyright (C) 2004 - 2010 TopCoder Inc., All Rights Reserved.
   -

@@ -1,5 +1,5 @@
 <%--
-  - Author: TCSDEVELOPER
+  - Author: isv
   - Version: 1.1
   - Copyright (C) 2004 - 2010 TopCoder Inc., All Rights Reserved.
   -
@@ -320,7 +320,9 @@
             <html:select styleClass="inputBox" property="addphase_type">
                 <html:option key="editProject.Phases.Select" value="" />
                 <c:forEach items="${requestScope.phaseTypes}" var="phaseType">
-                    <html:option key="ProjectPhase.${fn:replace(phaseType.name, ' ', '')}" value="${phaseType.id}" />
+                    <c:if test="${not (phaseType.name eq 'Approval' or phaseType.name eq 'Post-Mortem')}">
+                        <html:option key="ProjectPhase.${fn:replace(phaseType.name, ' ', '')}" value="${phaseType.id}" />
+                    </c:if>
                 </c:forEach>
             </html:select>
             <br />

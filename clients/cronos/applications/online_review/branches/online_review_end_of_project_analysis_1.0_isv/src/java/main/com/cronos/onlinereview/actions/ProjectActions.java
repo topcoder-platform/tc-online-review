@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004 - 2009 TopCoder Inc., All Rights Reserved.
+ * Copyright (C) 2004 - 2010 TopCoder Inc., All Rights Reserved.
  */
 package com.cronos.onlinereview.actions;
 
@@ -161,7 +161,7 @@ import static com.cronos.onlinereview.actions.Constants.POST_MORTEM_PHASE_NAME;
  *   </ol>
  * </p>
  *
- * @author George1, real_vg, pulky, isv, TCSDEVELOPER
+ * @author George1, real_vg, pulky, isv
  * @version 1.6
  */
 public class ProjectActions extends DispatchAction {

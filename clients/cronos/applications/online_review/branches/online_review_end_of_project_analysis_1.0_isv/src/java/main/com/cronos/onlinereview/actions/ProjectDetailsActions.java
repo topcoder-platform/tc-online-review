@@ -125,7 +125,7 @@ import com.topcoder.util.file.fieldconfig.TemplateFields;
  *   </ol>
  * </p>
  *
- * @author George1, real_vg, pulky, isv, TCSDEVELOPER
+ * @author George1, real_vg, pulky, isv
  * @version 1.4
  */
 public class ProjectDetailsActions extends DispatchAction {
@@ -405,7 +405,7 @@ public class ProjectDetailsActions extends DispatchAction {
                 scorecardTemplates.add(scorecardTemplate);
 
                 if (phase.getPhaseType().getName().equals(Constants.SCREENING_PHASE_NAME)) {
-                	minimumScreeningScore = scorecardTemplate.getMinScore(); 
+                    minimumScreeningScore = scorecardTemplate.getMinScore(); 
                 }
             }
         }

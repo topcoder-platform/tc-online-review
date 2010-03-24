@@ -12,6 +12,12 @@
 ]>
 <CMConfig>
     <!--
+    Online Review End Of Project Analysis Release assembly v1.0 change notes:
+    1) Added Psot-Mortem Reviewer and actions for doing Post-Mortem reviews to permission matrix
+    2) Updated configuration for phase handlers from Online Review Phases component to setup the separate
+       templates for emails sent to Manager and remaining roles
+    -->
+    <!--
            <!ENTITY notificationEmailFromAddress "service@topcodersoftware.com">
            <!ENTITY smtpServerAuthAddress "service@topcodersoftware.com">
     -->

@@ -58,7 +58,7 @@ import com.topcoder.util.errorhandling.BaseException;
  *   </ol>
  * </p>
  *
- * @author George1, TCSDEVELOPER
+ * @author George1, isv
  * @version 1.1
  */
 final class PhasesDetailsServices {
@@ -72,8 +72,8 @@ final class PhasesDetailsServices {
 
     public static PhasesDetails getPhasesDetails(HttpServletRequest request, MessageResources messages, Project project,
             Phase[] phases, Resource[] allProjectResources, ExternalUser[] allProjectExternalUsers)
-        	throws BaseException {
-    	
+            throws BaseException {
+        
         // Validate parameters first
         ActionsHelper.validateParameterNotNull(request, "request");
         ActionsHelper.validateParameterNotNull(messages, "messages");
@@ -221,7 +221,7 @@ final class PhasesDetailsServices {
     }
 
     private static void getPreviousUploadsForSubmissions(HttpServletRequest request, Project project, PhaseGroup phaseGroup, Submission[] submissions) throws BaseException {
-	if (submissions.length > 0 && AuthorizationHelper.hasUserPermission(request, Constants.VIEW_ALL_SUBM_PERM_NAME)) {
+    if (submissions.length > 0 && AuthorizationHelper.hasUserPermission(request, Constants.VIEW_ALL_SUBM_PERM_NAME)) {
         // Obtain an instance of Upload Manager
         UploadManager upMgr = ActionsHelper.createUploadManager(request);
         // Get all upload types
@@ -259,7 +259,7 @@ final class PhasesDetailsServices {
             phaseGroup.setPastSubmissions(pastSubmissions);
         }
     }
-	}
+    }
     
     /**
      * TODO: Write documentation for this method.
@@ -284,7 +284,7 @@ final class PhasesDetailsServices {
             Submission[] submissions = null;
             
             if (AuthorizationHelper.hasUserPermission(request, Constants.VIEW_ALL_SUBM_PERM_NAME)) {
-            	submissions = ActionsHelper.getMostRecentSubmissions(ActionsHelper.createUploadManager(request), project);
+                submissions = ActionsHelper.getMostRecentSubmissions(ActionsHelper.createUploadManager(request), project);
             }
 
             boolean mayViewMostRecentAfterAppealsResponse =
@@ -820,15 +820,17 @@ final class PhasesDetailsServices {
     }
 
     /**
-     * TODO: Write documentation for this method.
+     * <p>Sets the specified phase group with details for <code>Approval</code> phase.</p>
      *
-     * @param request
-     * @param phaseGroup
-     * @param project
-     * @param thisPhase
-     * @param allProjectResources
-     * @param isAfterAppealsResponse
-     * @throws BaseException
+     * @param request an <code>HttpServletRequest</code> providing incoming request from the client.
+     * @param phaseGroup a <code>PhaseGroup</code> providing the details for group of phase the current phase belongs
+     *        to.
+     * @param project a <code>Project</code> providing the details for current project.
+     * @param thisPhase a <code>Phase</code> providing the details for <code>Post-Mortem</code> phase.
+     * @param allProjectResources a <code>Resource</code> array listing all existing resources for specified project.
+     * @param isAfterAppealsResponse <code>true</code> if current phase is after appeals response; <code>false</code>
+     *        otherwise.
+     * @throws BaseException if an unexpected error occurs.
      */
     private static void serviceApprovalAppFunc(HttpServletRequest request, PhaseGroup phaseGroup,
             Project project, Phase thisPhase, Resource[] allProjectResources, boolean isAfterAppealsResponse)
