@@ -20,6 +20,8 @@ import javax.naming.NamingException;
 import javax.servlet.http.HttpServletRequest;
 
 import com.topcoder.management.phase.*;
+import com.topcoder.management.review.ReviewManagementException;
+import com.topcoder.search.builder.filter.EqualToFilter;
 import org.apache.struts.Globals;
 import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionForward;
@@ -169,6 +171,7 @@ import com.topcoder.web.ejb.forums.ForumsHome;
  *     Approval phases.</li>
  *     <li>Updated {@link #createDeliverableManager(HttpServletRequest)} method to bind deliverbale checker for
  *     <code>Post-Mortem</code> phase.</li>
+ *     <li>Added {@link #getApprovalPhaseReviews(Review[], Phase)} method.</li>
  *   </ol>
  * </p>
  *
@@ -4421,6 +4424,76 @@ public class ActionsHelper {
             }
         }
         return lastPhase;
+    }
+
+    /**
+     * <p>Gets the reviews (if any) for specified <code>Approval</code> phase.</p>
+     *
+     * @param reviews a <code>Review</code> array providing the <code>Apporval</code> reviews for project.
+     * @param thisPhase a <code>Phase</code> providing the <code>Approval</code> phases to get reviews for.
+     * @return a <code>Review</code> array listing the reviews (if any) for specified <code>Approval</code> phase.
+     * @since 1.3
+     */
+    static Review[] getApprovalPhaseReviews(Review[] reviews, Phase thisPhase) {
+        int count = 0;
+        List<Review> thisPhaseReviews = new ArrayList<Review>();
+        Phase[] phases = thisPhase.getProject().getAllPhases();
+        for (int i = 0; i < phases.length; i++) {
+            Phase phase = phases[i];
+            if (phase.getPhaseType().getName().equals("Approval")) {
+                int reviewerNumber = Integer.parseInt((String) phase.getAttribute("Reviewer Number"));
+                if (phase.getId() != thisPhase.getId()) {
+                    count += reviewerNumber;
+                } else {
+                    int start = count;
+                    for (int j = 0; j < reviewerNumber; j++) {
+                        if (start + j < reviews.length) {
+                            Review review = reviews[start + j];
+                            thisPhaseReviews.add(review);
+                        }
+                    }
+                    break;
+                }
+            }
+        }
+
+        return thisPhaseReviews.toArray(new Review[thisPhaseReviews.size()]);
+    }
+
+    /**
+     * <p>This static method finds and returns last review of <code>Approval</code> type and made by specified resource.
+     * </p>
+     *
+     * @param manager an instance of <code>ReviewManager</code> class that retrieves a review from the database.
+     * @param phase approval phase.
+     * @param scorecardType a scorecard template type that found review should have.
+     * @param resourceId an ID of the resource who made (created) the review.
+     * @param complete specifies whether retrieved review should have all infomration (like all items and their
+     *        comments).
+     * @return found review or <code>null</code> if no review has been found.
+     * @throws ReviewManagementException if any error occurs during review search or retrieval.
+     * @since 1.3
+     */
+    static Review findLastApprovalReview(ReviewManager manager, Phase phase, ScorecardType scorecardType,
+                                                 long resourceId, boolean complete) throws ReviewManagementException {
+
+        Filter filterProject = new EqualToFilter("project", new Long(phase.getProject().getId()));
+        Filter filterScorecard = new EqualToFilter("scorecardType", new Long(scorecardType.getId()));
+        Filter filter = new AndFilter(Arrays.asList(filterProject, filterScorecard));
+
+        // Get a review(s) that pass filter
+        Review[] reviews = manager.searchReviews(filter, complete);
+        if (phase.getPhaseType().getName().equals(Constants.APPROVAL_PHASE_NAME)) {
+            reviews = ActionsHelper.getApprovalPhaseReviews(reviews, phase);
+        }
+
+        for (int i = 0; i < reviews.length; i++) {
+            Review review = reviews[i];
+            if (review.getAuthor() == resourceId) {
+                return review;
+            }
+        }
+        return null;
     }
 
     private static Collection<Long> userToUsers(Long user) {

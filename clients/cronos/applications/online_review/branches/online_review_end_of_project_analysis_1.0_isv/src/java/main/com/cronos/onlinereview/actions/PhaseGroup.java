@@ -20,7 +20,9 @@ import com.topcoder.project.phases.Phase;
  * <p>
  * Version 1.1 (Online Review End Of Project Analysis Assembly v1.0) Change notes:
  *   <ol>
- *     <li>Expanded the bean with new <code>postMortemReviews</code> property.</li>
+ *     <li>Expanded the bean with new <code>postMortemReviews</code>, <code>postMortemReviewers</code> and
+ *         <code>approvalReviewers</code> properties.</li>
+ *     <li>Changed <code>approval</code> property to provide a list of approval reviews instead of a single review.</li>
  *   </ol>
  * </p>
  *
@@ -270,14 +272,14 @@ public class PhaseGroup {
     private boolean finalReviewCommitted = false;
 
     /**
-     * This member variable holds an approval scorecard that might have been assigned assigned to
-     * this phase group, or <code>null</code> value if no such scorecard has been assigned to the
+     * This member variable holds an approval scorecards that might have been assigned assigned to
+     * this phase group, or <code>null</code> value if no such scorecards has been assigned to the
      * phase group.
      *
      * @see #getApproval()
-     * @see #setApproval(Review)
+     * @see #setApproval(Review[])
      */
-    private Review approval = null;
+    private Review[] approval = null;
 
     /**
      * This member variable holds a reference to the winner resource that might have been assigned
@@ -311,6 +313,27 @@ public class PhaseGroup {
      * @since 1.1
      */
     private Review[] postMortemReviews;
+
+    /**
+     * <p>A <code>Resource</code> array listing the existing <code>Post-Mortem</code> reviewers for project.</p>
+     *
+     * @since 1.1
+     */
+    private Resource[] postMortemReviewers;
+
+    /**
+     * <p>A <code>Resource</code> array listing the existing <code>Approval</code> reviewers for project.</p>
+     *
+     * @since 1.1
+     */
+    private Resource[] approvalReviewers;
+
+    /**
+     * <p>A <code>Long</code> providing the ID for dummy submission for <code>Post-Mortem</code> phase.</p>
+     *
+     * @since 1.1
+     */
+    private long postMortemSubmissionId;
 
     /**
      * Constructs a new instance of the <code>PhaseGroup</code> class setting all fields to their
@@ -818,21 +841,21 @@ public class PhaseGroup {
     }
 
     /**
-     * This method returns approval scorecard.
+     * This method returns approval scorecards.
      *
-     * @return an approval scorecard.
+     * @return an approval scorecards.
      */
-    public Review getApproval() {
+    public Review[] getApproval() {
         return this.approval;
     }
 
     /**
-     * This method sets a reference to an approval scorecard.
+     * This method sets a reference to an approval scorecards.
      *
      * @param approval
-     *            a reference to approval scorecard.
+     *            a reference to approval scorecards.
      */
-    public void setApproval(Review approval) {
+    public void setApproval(Review[] approval) {
         this.approval = approval;
     }
 
@@ -956,5 +979,66 @@ public class PhaseGroup {
      */
     public void setPostMortemReviews(Review[] postMortemReviews) {
         this.postMortemReviews = postMortemReviews;
+    }
+
+    /**
+     * <p>Gets the list of <code>Post-Mortem</code> reviewers assigned to project..</p>
+     *
+     * @return a <code>Resource</code> array listing the <code>Post-Mortem</code> reviewers.
+     * @since 1.1
+     */
+    public Resource[] getPostMortemReviewers() {
+        return postMortemReviewers;
+    }
+
+    /**
+     * <p>Sets the list of <code>Post-Mortem</code> reviewers assigned to project..</p>
+     *
+     * @param postMortemReviewers a <code>Resource</code> array listing the <code>Post-Mortem</code> reviewers.  
+     * @since 1.1
+     */
+    public void setPostMortemReviewers(Resource[] postMortemReviewers) {
+        this.postMortemReviewers = postMortemReviewers;
+    }
+
+    /**
+     * <p>Gets the list of <code>Approval</code> reviewers assigned to project..</p>
+     *
+     * @return a <code>Resource</code> array listing the <code>Approval</code> reviewers.
+     * @since 1.1
+     */
+    public Resource[] getApprovalReviewers() {
+        return approvalReviewers;
+    }
+
+    /**
+     * <p>Gets the list of <code>Approval</code> reviewers assigned to project..</p>
+     *
+     * @param approvalReviewers a <code>Resource</code> array listing the <code>Approval</code> reviewers.
+     * @since 1.1
+     */
+    public void setApprovalReviewers(Resource[] approvalReviewers) {
+        this.approvalReviewers = approvalReviewers;
+    }
+
+    /**
+     * <p>Gets the ID for dummy submission for <code>Post-Mortem</code> phase.</p>
+     *
+     * @return a <code>long</code> providing the ID for dummy submission for <code>Post-Mortem</code> phase. 
+     * @since 1.1
+     */
+    public long getPostMortemSubmissionId() {
+        return postMortemSubmissionId;
+    }
+
+    /**
+     * <p>Sets the ID for dummy submission for <code>Post-Mortem</code> phase.</p>
+     *
+     * @param postMortemSubmissionId a <code>long</code> providing the ID for dummy submission for
+     *        <code>Post-Mortem</code> phase.
+     * @since 1.1
+     */
+    public void setPostMortemSubmissionId(long postMortemSubmissionId) {
+        this.postMortemSubmissionId = postMortemSubmissionId;
     }
 }

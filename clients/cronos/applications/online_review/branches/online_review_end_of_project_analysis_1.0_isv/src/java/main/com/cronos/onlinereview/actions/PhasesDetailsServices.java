@@ -3,6 +3,7 @@
  */
 package com.cronos.onlinereview.actions;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -12,6 +13,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.topcoder.management.deliverable.Deliverable;
 import com.topcoder.search.builder.filter.OrFilter;
 import org.apache.struts.util.MessageResources;
 
@@ -843,17 +845,23 @@ final class PhasesDetailsServices {
         Resource winner = ActionsHelper.getWinner(request, project.getId());
         phaseGroup.setWinner(winner);
 
-        Resource[] approver = ActionsHelper.getResourcesForPhase(allProjectResources, thisPhase);
-
-        if (approver == null || approver.length == 0) {
+        Resource[] approvers = ActionsHelper.getResourcesForPhase(allProjectResources, thisPhase);
+        if (approvers == null || approvers.length == 0) {
             return;
         }
+        phaseGroup.setApprovalReviewers(approvers);
 
         // Obtain an instance of Scorecard Manager
         ScorecardManager scrMgr = ActionsHelper.createScorecardManager(request);
         ScorecardType[] allScorecardTypes = scrMgr.getAllScorecardTypes();
 
-        Filter filterResource = new EqualToFilter("reviewer", new Long(approver[0].getId()));
+        // Build the filter for getting the existing Approval reviews
+        List<Filter> reviewersFilter = new ArrayList<Filter>();
+        for (int i = 0; i < approvers.length; i++) {
+            Resource approver = approvers[i];
+            reviewersFilter.add(new EqualToFilter("reviewer", new Long(approver.getId())));
+        }
+        Filter filterResource = new OrFilter(reviewersFilter);
         Filter filterProject = new EqualToFilter("project", new Long(project.getId()));
         Filter filterScorecard = new EqualToFilter("scorecardType",
                 new Long(ActionsHelper.findScorecardTypeByName(allScorecardTypes, "Approval").getId()));
@@ -865,9 +873,7 @@ final class PhasesDetailsServices {
         ReviewManager revMgr = ActionsHelper.createReviewManager(request);
         Review[] reviews = revMgr.searchReviews(filter, true);
 
-        if (reviews.length != 0) {
-            phaseGroup.setApproval(reviews[0]);
-        }
+        phaseGroup.setApproval(ActionsHelper.getApprovalPhaseReviews(reviews, thisPhase));
     }
 
     /**
@@ -891,6 +897,7 @@ final class PhasesDetailsServices {
         if (postMortemReviewers == null || postMortemReviewers.length == 0) {
             return;
         }
+        phaseGroup.setPostMortemReviewers(postMortemReviewers);
 
         // Get the scorecard type for Post-Mortem scorecards
         ScorecardManager scrMgr = ActionsHelper.createScorecardManager(request);
@@ -911,8 +918,12 @@ final class PhasesDetailsServices {
         // Get existing Post-Mortem reviews and set phase group with them
         ReviewManager revMgr = ActionsHelper.createReviewManager(request);
         Review[] reviews = revMgr.searchReviews(filter, false);
-        if (reviews.length > 0) {
-            phaseGroup.setPostMortemReviews(reviews);
+        phaseGroup.setPostMortemReviews(reviews);
+
+        // Get the ID for dumyy-submission for the Post-Mortem review
+        Long dummySubmissionId = (Long) request.getAttribute("postMortemSubmissionId");
+        if (dummySubmissionId != null) {
+            phaseGroup.setPostMortemSubmissionId(dummySubmissionId);
         }
     }
 

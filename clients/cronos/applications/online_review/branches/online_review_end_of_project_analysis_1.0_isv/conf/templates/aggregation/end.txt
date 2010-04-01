@@ -6,4 +6,3 @@ OR link\: %OR_LINK%
 Version\: %PROJECT_VERSION{Project version}%
 This is the %PHASE_OPERATION{The phase operation - start/end}% of the %PHASE_TYPE{Phase type}% phase.
 
-THIS IS NEW TYPE OF EMAIL TO BE SENT TO MANAGER ONLY (This line is to be removed during the Final Fix phase)

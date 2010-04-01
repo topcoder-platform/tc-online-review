@@ -2675,6 +2675,9 @@ public class ProjectReviewActions extends DispatchAction {
         ReviewManager revMgr = ActionsHelper.createReviewManager(request);
         // Retrieve an array of reviews
         Review[] reviews = revMgr.searchReviews(filter, false);
+        if (phase.getPhaseType().getName().equals(Constants.APPROVAL_PHASE_NAME)) {
+            reviews = ActionsHelper.getApprovalPhaseReviews(reviews, phase);
+        }
 
         // Non-empty array of reviews indicates that
         // user is trying to create review that already exists
@@ -3017,6 +3020,9 @@ public class ProjectReviewActions extends DispatchAction {
             ReviewManager revMgr = ActionsHelper.createReviewManager(request);
             // Retrieve an array of reviews
             Review[] reviews = revMgr.searchReviews(filter, false);
+            if (phase.getPhaseType().getName().equals(Constants.APPROVAL_PHASE_NAME)) {
+                reviews = ActionsHelper.getApprovalPhaseReviews(reviews, phase);
+            }
 
             // Non-empty array of reviews indicates that
             // user is trying to create review that already exists
@@ -3286,7 +3292,7 @@ public class ProjectReviewActions extends DispatchAction {
             reviewLevelComment1.setCommentType(
                 ActionsHelper.findCommentTypeByName(commentTypes, "Approval Review Comment"));
             reviewLevelComment1.setAuthor(resource.getId());
-            reviewLevelComment1.setExtraInfo("Approving");
+            reviewLevelComment1.setExtraInfo(rejectFixes ? "Rejected" : "Approved");
             reviewLevelComment1.setComment("");
             review.addComment(reviewLevelComment1);
 
@@ -3297,7 +3303,7 @@ public class ProjectReviewActions extends DispatchAction {
             reviewLevelComment2.setCommentType(
                 ActionsHelper.findCommentTypeByName(commentTypes, "Approval Review Comment - Other Fixes"));
             reviewLevelComment2.setAuthor(resource.getId());
-            reviewLevelComment2.setExtraInfo("Approving");
+            reviewLevelComment2.setExtraInfo(acceptButRequireOtherFixes ? "Required" : "");
             reviewLevelComment2.setComment("");
             review.addComment(reviewLevelComment2);
         }
@@ -3325,10 +3331,6 @@ public class ProjectReviewActions extends DispatchAction {
             }
             // Set the completed status of the review
             if (commitRequested) {
-                if (isApprovalPhase) {
-                    reviewLevelComment1.setExtraInfo(!rejectFixes ? "Approved" : "Rejected");
-                    reviewLevelComment2.setExtraInfo(acceptButRequireOtherFixes ? "Required" : "");
-                }
                 review.setCommitted(true);
             }
         } else if (previewRequested) {

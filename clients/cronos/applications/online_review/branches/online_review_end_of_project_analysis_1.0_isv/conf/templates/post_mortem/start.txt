@@ -10,4 +10,3 @@ This is the %PHASE_OPERATION{The phase operation - start/end}% of the %PHASE_TYP
 [The project has only %N_POST_MORTEM_REVIEWERS% of %N_REQUIRED_POST_MORTEM_REVIEWERS% required post-mortem reviewers assigned!]
 %endif%
 
-THIS IS NEW TYPE OF EMAIL TO BE SENT TO MANAGER ONLY (This line is to be removed during the Final Fix phase)

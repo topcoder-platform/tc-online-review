@@ -19,4 +19,3 @@ Handle		Reliability	Rating
 There are no registrants.
 %endif%
 
-THIS IS NEW TYPE OF EMAIL TO BE SENT TO MANAGER ONLY (This line is to be removed during the Final Fix phase)

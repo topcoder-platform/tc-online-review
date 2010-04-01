@@ -8,4 +8,3 @@ This is the %PHASE_OPERATION{The phase operation - start/end}% of the %PHASE_TYP
 
 The Final Fix is %RESULT%!
 
-THIS IS NEW TYPE OF EMAIL TO BE SENT TO MANAGER ONLY (This line is to be removed during the Final Fix phase)
