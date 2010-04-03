@@ -1730,6 +1730,9 @@
         <Property name="ApprovalPhaseDefaultReviewersNumber">
             <Value>1</Value>
         </Property>
+        <Property name="ApprovalPhaseDefaultScorecardID">
+            <Value>109</Value>
+        </Property>
         <Property name="ConnectionFactoryNS">
             <Value>com.topcoder.db.connectionfactory.DBConnectionFactoryImpl</Value>
         </Property>
@@ -1824,6 +1827,9 @@
         </Property>
         <Property name="PostMortemPhaseDefaultReviewersNumber">
             <Value>1</Value>
+        </Property>
+        <Property name="PostMortemPhaseDefaultScorecardID">
+            <Value>112</Value>
         </Property>
         <Property name="ConnectionFactoryNS">
             <Value>com.topcoder.db.connectionfactory.DBConnectionFactoryImpl</Value>

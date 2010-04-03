@@ -52,6 +52,8 @@
     </tr>
 
     <%-- PHASE ROW GOES HERE --%>
+    <c:set var="approvalPhaseMet" value="${false}"/>
+    <c:set var="disableApprovalReviewerNumberInput" value="${false}"/>
     <c:forEach var="phaseIdx" begin="0" end="${fn:length(projectForm.map['phase_id']) - 1}">
         <c:if test="${phaseIdx eq 0}">
             <tr class="dark" style="display: none;" id="phase_row_template">
@@ -231,13 +233,25 @@
                 <tr class="highlighted" id="approval_scorecard_row_template" style="display: none;">
             </c:if>
             <c:if test="${phaseIdx ne 0}">
+                <c:if test="${approvalPhaseMet}">
+                    <c:set var="disableApprovalReviewerNumberInput" value="${true}"/>
+                </c:if>
+                <c:set var="approvalPhaseMet" value="${true}"/>
                 <tr class="highlighted">
             </c:if>
                 <td class="value" colspan="${(newProject) ? 1 : 2}"><!-- @ --></td>
                 <td class="value" colspan="4">
                     <bean:message key="editProject.Phases.Criteria.ReviewNumber.beforeInput" />
-                    <html:text style="width:30px;text-align:right;" styleClass="inputBox"
-                        size="30" property="phase_required_reviewers[${phaseIdx}]" />
+                    <c:choose>
+                        <c:when test="${disableApprovalReviewerNumberInput}">
+                            <html:text style="width:30px;text-align:right;" styleClass="inputBox" disabled="true"
+                                       size="30" property="phase_required_reviewers[${phaseIdx}]"/>
+                        </c:when>
+                        <c:otherwise>
+                            <html:text style="width:30px;text-align:right;" styleClass="inputBox"
+                                       size="30" property="phase_required_reviewers[${phaseIdx}]"/>
+                        </c:otherwise>
+                    </c:choose>
                     &#160;<bean:message key="editProject.Phases.Criteria.ReviewNumber.afterInput" /><br/>
                     <bean:message key="editProject.Phases.Criteria.Scorecard" />
                     <html:select style="width:350px;" styleClass="inputBox" property="phase_scorecard[${phaseIdx}]" >
