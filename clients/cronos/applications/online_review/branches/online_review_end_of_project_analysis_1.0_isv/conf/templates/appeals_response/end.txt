@@ -1,16 +1,18 @@
-%PHASE_TIMESTAMP{Phase timestamp}%
-Hello %USER_FIRST_NAME{User first name}% %USER_LAST_NAME{User last name}%,
-Handle\: %USER_HANDLE{User handle}%
-This is the notification on project\: %PROJECT_NAME{Project name}%
-OR link\: %OR_LINK% 
-Version\: %PROJECT_VERSION{Project version}%
-This is the %PHASE_OPERATION{The phase operation - start/end}% of the %PHASE_TYPE{Phase type}% phase.
+<p>
+%PHASE_TIMESTAMP{Phase timestamp}%<br/>
+Handle\: %USER_HANDLE{User handle}%<br/>
+Project\: %PROJECT_NAME{Project name}%<br/>
+Version\: %PROJECT_VERSION{Project version}%<br/>
+Online Review link\: %OR_LINK%<br/>
+This is the notification about %PHASE_OPERATION{The phase operation - start/end}% of the %PHASE_TYPE{Phase type}% phase.<br/>
+</p>
 
-
-Review results\:
-Handle		Pre-Appeals Score	Post-Appeals Score	Result
-
+<table border\="1">
+<caption style\="white-space\: nowrap">Appeals Response results</caption>
+<tr>
+<th>Handle<th>Pre-Appeals Score<th>Post-Appeals Score<th>Placement
 %loop:SUBMITTER%
-%SUBMITTER_HANDLE%	%SUBMITTER_PRE_APPEALS_SCORE%	%SUBMITTER_POST_APPEALS_SCORE%	%SUBMITTER_RESULT%
+<tr>
+<td>%SUBMITTER_HANDLE%<td>%SUBMITTER_PRE_APPEALS_SCORE%<td>%SUBMITTER_POST_APPEALS_SCORE%<td>%SUBMITTER_RESULT%
 %endloop%
-
+</table>

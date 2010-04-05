@@ -2764,6 +2764,8 @@ public class ActionsHelper {
 
             // Some checkers are used more than once
             DeliverableChecker committedChecker = new CommittedReviewDeliverableChecker(dbconn);
+            DeliverableChecker submissionIndependentReviewChecker 
+                = new CommittedReviewDeliverableChecker(dbconn, false);
             DeliverableChecker testCasesChecker = new TestCasesDeliverableChecker(dbconn);
 
             checkers.put(Constants.SUBMISSION_DELIVERABLE_NAME, new SubmissionDeliverableChecker(dbconn));
@@ -2780,7 +2782,7 @@ public class ActionsHelper {
             checkers.put(Constants.SCORECARD_COMM_DELIVERABLE_NAME, new SubmitterCommentDeliverableChecker(dbconn));
             checkers.put(Constants.FINAL_REVIEW_PHASE_NAME, new FinalReviewDeliverableChecker(dbconn));
             checkers.put(Constants.APPROVAL_DELIVERABLE_NAME, committedChecker);
-            checkers.put(Constants.POST_MORTEM_DELIVERABLE_NAME, committedChecker);
+            checkers.put(Constants.POST_MORTEM_DELIVERABLE_NAME, submissionIndependentReviewChecker);
 
             // Initialize the PersistenceDeliverableManager
             manager = new PersistenceDeliverableManager(deliverablePersistence, checkers,

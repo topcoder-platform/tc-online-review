@@ -329,13 +329,6 @@ public class PhaseGroup {
     private Resource[] approvalReviewers;
 
     /**
-     * <p>A <code>Long</code> providing the ID for dummy submission for <code>Post-Mortem</code> phase.</p>
-     *
-     * @since 1.1
-     */
-    private long postMortemSubmissionId;
-
-    /**
      * Constructs a new instance of the <code>PhaseGroup</code> class setting all fields to their
      * default values.
      */
@@ -1019,26 +1012,5 @@ public class PhaseGroup {
      */
     public void setApprovalReviewers(Resource[] approvalReviewers) {
         this.approvalReviewers = approvalReviewers;
-    }
-
-    /**
-     * <p>Gets the ID for dummy submission for <code>Post-Mortem</code> phase.</p>
-     *
-     * @return a <code>long</code> providing the ID for dummy submission for <code>Post-Mortem</code> phase. 
-     * @since 1.1
-     */
-    public long getPostMortemSubmissionId() {
-        return postMortemSubmissionId;
-    }
-
-    /**
-     * <p>Sets the ID for dummy submission for <code>Post-Mortem</code> phase.</p>
-     *
-     * @param postMortemSubmissionId a <code>long</code> providing the ID for dummy submission for
-     *        <code>Post-Mortem</code> phase.
-     * @since 1.1
-     */
-    public void setPostMortemSubmissionId(long postMortemSubmissionId) {
-        this.postMortemSubmissionId = postMortemSubmissionId;
     }
 }

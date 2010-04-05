@@ -2583,23 +2583,17 @@ public class ProjectDetailsActions extends DispatchAction {
                     links[i] = "ViewApproval.do?method=viewApproval&rid=" + review.getId();
                 }
             } else if (delivName.equalsIgnoreCase(Constants.POST_MORTEM_DELIVERABLE_NAME)) {
-                // Skip deliverables with empty Submission ID field, as no links can be generated for such deliverables
-                if (deliverable.getSubmission() == null) {
-                    continue;
-                }
-
                 if (allScorecardTypes == null) {
                     // Get all scorecard types
                     allScorecardTypes = ActionsHelper.createScorecardManager(request).getAllScorecardTypes();
                 }
 
                 ScorecardType scorecardType = ActionsHelper.findScorecardTypeByName(allScorecardTypes, "Post-Mortem");
-                Review review = findReviewForSubmission(ActionsHelper.createReviewManager(request), scorecardType, 
-                                                        deliverable.getSubmission(), deliverable.getResource(), false);
+                Review review = findReviewForProject(ActionsHelper.createReviewManager(request), scorecardType,
+                                                     deliverable.getProject(), deliverable.getResource(), false);
                 if (review == null) {
-                    links[i] = "CreatePostMortem.do?method=createPostMortem&sid=" +
-                            deliverable.getSubmission().longValue();
-                    request.setAttribute("postMortemSubmissionId", deliverable.getSubmission().longValue());
+                    links[i] = "CreatePostMortem.do?method=createPostMortem&pid=" + deliverable.getProject();
+//                    request.setAttribute("postMortemSubmissionId", deliverable.getSubmission().longValue());
                 } else if (!review.isCommitted()) {
                     links[i] = "EditPostMortem.do?method=editPostMortem&rid=" + review.getId();
                 } else {
@@ -2748,6 +2742,53 @@ public class ProjectDetailsActions extends DispatchAction {
 
         // Get a review(s) that pass filter
         Review[] reviews = manager.searchReviews(filter, complete);
+        // Return the first found review if any, or null
+        return (reviews.length != 0) ? reviews[0] : null;
+    }
+
+    /**
+     * This static method finds and returns a review of specified scorecard template type for
+     * specified submission ID and made by specified resource.
+     *
+     * @return found review or <code>null</code> if no review has been found.
+     * @param manager
+     *            an instance of <code>ReviewManager</code> class that retrieves a review from the
+     *            database.
+     * @param scorecardType
+     *            a scorecard template type that found review should have.
+     * @param projectId
+     *            an ID of the project which the review was made for.
+     * @param resourceId
+     *            an ID of the resource who made (created) the review.
+     * @param complete
+     *            specifies whether retrieved review should have all infomration (like all items and
+     *            their comments).
+     * @throws IllegalArgumentException
+     *             if <code>scorecardType</code> or <code>submissionId</code> parameters are
+     *             <code>null</code>, or if <code>submissionId</code> or
+     *             <code>resourceId</code> parameters contain negative value or zero.
+     * @throws ReviewManagementException
+     *             if any error occurs during review search or retrieval.
+     */
+    private static Review findReviewForProject(ReviewManager manager,
+            ScorecardType scorecardType, Long projectId, long resourceId, boolean complete)
+        throws ReviewManagementException {
+        // Validate parameters
+        ActionsHelper.validateParameterNotNull(manager, "manager");
+        ActionsHelper.validateParameterNotNull(scorecardType, "scorecardType");
+        ActionsHelper.validateParameterNotNull(projectId, "projectId");
+        ActionsHelper.validateParameterPositive(projectId.longValue(), "projectId");
+        ActionsHelper.validateParameterPositive(resourceId, "resourceId");
+
+        Filter filterProject = new EqualToFilter("project", projectId);
+        Filter filterScorecard = new EqualToFilter("scorecardType", new Long(scorecardType.getId()));
+        Filter filterReviewer = new EqualToFilter("reviewer", new Long (resourceId));
+
+        Filter filter = new AndFilter(Arrays.asList(filterProject, filterScorecard, filterReviewer));
+
+        // Get a review(s) that pass filter
+        Review[] reviews = manager.searchReviews(filter, complete);
+
         // Return the first found review if any, or null
         return (reviews.length != 0) ? reviews[0] : null;
     }

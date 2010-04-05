@@ -771,7 +771,7 @@
                                                 <td class="value"><!-- @ --></td>
                                                 <c:if test="${isAllowedToPerformPortMortemReview and isReviewerCurrentUser}">
                                                     <td class="valueC" nowrap="nowrap">
-                                                        <html:link page="/actions/CreatePostMortem.do?method=createPostMortem&sid=${group.postMortemSubmissionId}">
+                                                        <html:link page="/actions/CreatePostMortem.do?method=createPostMortem&pid=${project.id}">
                                                             <bean:message key="viewProjectDetails.box.Post-Mortem.Submit"/></html:link>
                                                     </td>
                                                 </c:if>

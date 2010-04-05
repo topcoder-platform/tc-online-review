@@ -3,7 +3,6 @@
  */
 package com.cronos.onlinereview.actions;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -13,7 +12,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
-import com.topcoder.management.deliverable.Deliverable;
+import com.topcoder.project.phases.Dependency;
 import com.topcoder.search.builder.filter.OrFilter;
 import org.apache.struts.util.MessageResources;
 
@@ -55,7 +54,7 @@ import com.topcoder.util.errorhandling.BaseException;
  *     <li>Updated
  *     {@link #getPhasesDetails(HttpServletRequest, MessageResources, Project, Phase[], Resource[], ExternalUser[])}
  *     method to newly added
- *     {@link #servicePostMortemAppFunc(HttpServletRequest, PhaseGroup, Project, Phase, Resource[], boolean)} method to
+ *     {@link #servicePostMortemAppFunc(HttpServletRequest, PhaseGroup, Project, Phase, Resource[])} method to
  *      provide details for <code>Post-Mortem</code> phase.</p>
  *   </ol>
  * </p>
@@ -80,6 +79,54 @@ final class PhasesDetailsServices {
         ActionsHelper.validateParameterNotNull(request, "request");
         ActionsHelper.validateParameterNotNull(messages, "messages");
         ActionsHelper.validateParameterNotNull(phases, "phases");
+
+        // Move Post-Mortem phase to appropriate place in the list in order to prevent splitting phase group tabs into
+        // separate same-named tabs
+        Phase[] phasesCopy = new Phase[phases.length];
+        System.arraycopy(phases, 0, phasesCopy, 0, phases.length);
+        phases = phasesCopy;
+
+        // Determine the index of Post-Mortem phase in array and if it is present get the phase which Post-Mortem
+        // phase depends on
+        Phase postMortemPhasePredecessor = null;
+        Phase postMortemPhase = null;
+        for (int i = 0; i < phases.length; i++) {
+            Phase phase = phases[i];
+            if (phase.getPhaseType().getName().equals(Constants.POST_MORTEM_PHASE_NAME)) {
+                postMortemPhase = phase;
+                Dependency[] dependencies = phase.getAllDependencies();
+                for (int j = 0; j < dependencies.length; j++) {
+                    Dependency dependency = dependencies[j];
+                    postMortemPhasePredecessor = dependency.getDependency();
+                    break;
+                }
+                System.arraycopy(phases, i + 1, phases, i, phases.length - i - 1);
+            }
+        }
+
+        // If Post-Mortem phase exists and depends on some other phase then 
+        if (postMortemPhase != null) {
+            if (postMortemPhasePredecessor != null) {
+                for (int i = 0; i < phases.length; i++) {
+                    Phase phase = phases[i];
+                    if (phase.getId() == postMortemPhasePredecessor.getId()) {
+                        int phaseGroupIndex = ConfigHelper.findPhaseGroupForPhaseName(
+                            postMortemPhasePredecessor.getPhaseType().getName());
+                        for (int j = i + 1; j < phases.length; j++) {
+                            Phase nextPhase = phases[j];
+                            int phaseGroupIndexNext
+                                = ConfigHelper.findPhaseGroupForPhaseName(nextPhase.getPhaseType().getName());
+                            if (phaseGroupIndexNext != phaseGroupIndex) {
+                                System.arraycopy(phases, j, phases, j + 1, phases.length - j - 1);
+                                phases[j] = postMortemPhase;
+                                break;
+                            }
+                        }
+                        break;
+                    }
+                }
+            }
+        }
 
         List<PhaseGroup> phaseGroups = new ArrayList<PhaseGroup>();
         Map<String, Integer> similarPhaseGroupIndexes = new HashMap<String, Integer>();
@@ -173,8 +220,7 @@ final class PhasesDetailsServices {
                 serviceApprovalAppFunc(request, phaseGroup, project, phase,
                         allProjectResources, isAfterAppealsResponse);
             } else if (phaseGroup.getAppFunc().equalsIgnoreCase(Constants.POST_MORTEM_APP_FUNC)) {
-                servicePostMortemAppFunc(request, phaseGroup, project, phase, allProjectResources,
-                                         isAfterAppealsResponse);
+                servicePostMortemAppFunc(request, phaseGroup, project, phase, allProjectResources);
             }
         }
 
@@ -190,12 +236,12 @@ final class PhasesDetailsServices {
     /**
      * TODO: Write documentation for this method.
      *
-     * @param request
-     * @param phaseGroup
-     * @param submitters
-     * @param allProjectExternalUsers
-     * @throws RetrievalException
-     * @throws ConfigException
+     * @param request a
+     * @param phaseGroup a
+     * @param submitters a
+     * @param allProjectExternalUsers a
+     * @throws RetrievalException a
+     * @throws ConfigException a
      */
     private static void serviceRegistrantsAppFunc(HttpServletRequest request, PhaseGroup phaseGroup,
             Resource[] submitters, ExternalUser[] allProjectExternalUsers) throws RetrievalException, ConfigException {
@@ -237,8 +283,7 @@ final class PhasesDetailsServices {
         Filter filterUploadStatus = UploadFilterBuilder.createUploadStatusIdFilter(
                 ActionsHelper.findUploadStatusByName(allUploadStatuses, "Deleted").getId());
 
-        Filter filter =
-            new AndFilter(Arrays.asList(new Filter[] {filterProject, filterUploadType, filterUploadStatus}));
+        Filter filter = new AndFilter(Arrays.asList(filterProject, filterUploadType, filterUploadStatus));
         Upload[] ungroupedUploads = upMgr.searchUploads(filter);
         Upload[][] pastSubmissions = new Upload[submissions.length][];
 
@@ -266,15 +311,15 @@ final class PhasesDetailsServices {
     /**
      * TODO: Write documentation for this method.
      *
-     * @param request
-     * @param phaseGroup
-     * @param project
-     * @param phases
-     * @param phaseIdx
-     * @param allProjectResources
-     * @param submitters
-     * @param isAfterAppealsResponse
-     * @throws BaseException
+     * @param request a
+     * @param phaseGroup a
+     * @param project a
+     * @param phases a
+     * @param phaseIdx a
+     * @param allProjectResources a
+     * @param submitters a
+     * @param isAfterAppealsResponse a
+     * @throws BaseException if an unexpected error occurs.
      */
     private static void serviceSubmissionsAppFunc(HttpServletRequest request,
             PhaseGroup phaseGroup, Project project, Phase[] phases, int phaseIdx,
@@ -329,8 +374,7 @@ final class PhasesDetailsServices {
                 Filter filterStatus = ActionsHelper.createSubmissionStatusFilter(allSubmissionStatuses);
                 Filter filterResource = SubmissionFilterBuilder.createResourceIdFilter(myResource.getId());
 
-                Filter filter =
-                    new AndFilter(Arrays.asList(new Filter[] {filterProject, filterStatus, filterResource}));
+                Filter filter = new AndFilter(Arrays.asList(filterProject, filterStatus, filterResource));
 
                 submissions = upMgr.searchSubmissions(filter);
             }
@@ -424,15 +468,15 @@ final class PhasesDetailsServices {
     /**
      * TODO: Write documentation for this method.
      *
-     * @param request
-     * @param phaseGroup
-     * @param project
-     * @param phase
-     * @param nextPhase
-     * @param allProjectResources
-     * @param submitters
-     * @param isAfterAppealsResponse
-     * @throws BaseException
+     * @param request a
+     * @param phaseGroup a
+     * @param project a
+     * @param phase a
+     * @param nextPhase a
+     * @param allProjectResources a
+     * @param submitters a
+     * @param isAfterAppealsResponse a
+     * @throws BaseException if an unexpected error occurs.
      */
     private static void serviceReviewsAppFunc(HttpServletRequest request,
             PhaseGroup phaseGroup, Project project, Phase phase, Phase nextPhase,
@@ -473,8 +517,7 @@ final class PhasesDetailsServices {
                 Filter filterStatus = ActionsHelper.createSubmissionStatusFilter(allSubmissionStatuses);
                 Filter filterResource = SubmissionFilterBuilder.createResourceIdFilter(myResource.getId());
 
-                Filter filter =
-                    new AndFilter(Arrays.asList(new Filter[] {filterProject, filterStatus, filterResource}));
+                Filter filter = new AndFilter(Arrays.asList(filterProject, filterStatus, filterResource));
 
                 submissions = upMgr.searchSubmissions(filter);
             }
@@ -612,8 +655,7 @@ final class PhasesDetailsServices {
                 Filter filterType = UploadFilterBuilder.createUploadTypeIdFilter(
                         ActionsHelper.findUploadTypeByName(allUploadTypes, "Test Case").getId());
 
-                Filter filterForUploads =
-                    new AndFilter(Arrays.asList(new Filter[] {filterResource, filterStatus, filterType}));
+                Filter filterForUploads = new AndFilter(Arrays.asList(filterResource, filterStatus, filterType));
 
                 Upload[] testCases = upMgr.searchUploads(filterForUploads);
 
@@ -674,13 +716,13 @@ final class PhasesDetailsServices {
     /**
      * TODO: Write documentation for this method.
      *
-     * @param request
-     * @param phaseGroup
-     * @param project
-     * @param phase
-     * @param allProjectResources
-     * @param isAfterAppealsResponse
-     * @throws BaseException
+     * @param request a
+     * @param phaseGroup a
+     * @param project a
+     * @param phase a
+     * @param allProjectResources a
+     * @param isAfterAppealsResponse a
+     * @throws BaseException if an unexpected error occurs.
      */
     private static void serviceAggregationAppFunc(HttpServletRequest request, PhaseGroup phaseGroup,
             Project project, Phase phase, Resource[] allProjectResources, boolean isAfterAppealsResponse)
@@ -744,14 +786,14 @@ final class PhasesDetailsServices {
     /**
      * TODO: Write documentation for this method.
      *
-     * @param request
-     * @param phaseGroup
-     * @param project
-     * @param phase
-     * @param allProjectResources
-     * @param finalFixes
-     * @param isAfterAppealsResponse
-     * @throws BaseException
+     * @param request a
+     * @param phaseGroup a
+     * @param project a
+     * @param phase a
+     * @param allProjectResources a
+     * @param finalFixes a
+     * @param isAfterAppealsResponse a
+     * @throws BaseException if an unexpected error occurs.
      */
     private static void serviceFinalFixAppFunc(HttpServletRequest request, PhaseGroup phaseGroup, Project project,
             Phase phase, Resource[] allProjectResources, FinalFixesInfo finalFixes, boolean isAfterAppealsResponse)
@@ -773,17 +815,13 @@ final class PhasesDetailsServices {
             if (finalFixes.finalFixes == null) {
                 // Obtain an instance of Upload Manager
                 UploadManager upMgr = ActionsHelper.createUploadManager(request);
-//                UploadStatus[] allUploadStatuses = upMgr.getAllUploadStatuses();
                 UploadType[] allUploadTypes = upMgr.getAllUploadTypes();
 
-//                Filter filterStatus = UploadFilterBuilder.createUploadStatusIdFilter(
-//                        ActionsHelper.findUploadStatusByName(allUploadStatuses, "Active").getId());
                 Filter filterType = UploadFilterBuilder.createUploadTypeIdFilter(
                         ActionsHelper.findUploadTypeByName(allUploadTypes, "Final Fix").getId());
                 Filter filterResource = UploadFilterBuilder.createResourceIdFilter(winner.getId());
 
-                Filter filter = new AndFilter(Arrays.asList(
-                        new Filter[] {/*filterStatus, */filterType, filterResource}));
+                Filter filter = new AndFilter(Arrays.asList(filterType, filterResource));
                 finalFixes.finalFixes = upMgr.searchUploads(filter);
 
                 Arrays.sort(finalFixes.finalFixes, new Comparators.UploadComparer());
@@ -866,8 +904,7 @@ final class PhasesDetailsServices {
         Filter filterScorecard = new EqualToFilter("scorecardType",
                 new Long(ActionsHelper.findScorecardTypeByName(allScorecardTypes, "Approval").getId()));
 
-        Filter filter = new AndFilter(Arrays.asList(
-                new Filter[] {filterResource, filterProject, filterScorecard}));
+        Filter filter = new AndFilter(Arrays.asList(filterResource, filterProject, filterScorecard));
 
         // Obtain an instance of Review Manager
         ReviewManager revMgr = ActionsHelper.createReviewManager(request);
@@ -885,13 +922,11 @@ final class PhasesDetailsServices {
      * @param project a <code>Project</code> providing the details for current project.
      * @param thisPhase a <code>Phase</code> providing the details for <code>Post-Mortem</code> phase.
      * @param allProjectResources a <code>Resource</code> array listing all existing resources for specified project.
-     * @param isAfterAppealsResponse <code>true</code> if current phase is after appeals response; <code>false</code>
-     *        otherwise.
      * @throws BaseException if an unexpected error occurs.
      */
     private static void servicePostMortemAppFunc(HttpServletRequest request, PhaseGroup phaseGroup,
-                                                 Project project, Phase thisPhase, Resource[] allProjectResources,
-                                                 boolean isAfterAppealsResponse) throws BaseException {
+                                                 Project project, Phase thisPhase, Resource[] allProjectResources
+    ) throws BaseException {
         // Get the list of Post-Mortem reviewers assigned to project
         Resource[] postMortemReviewers = ActionsHelper.getResourcesForPhase(allProjectResources, thisPhase);
         if (postMortemReviewers == null || postMortemReviewers.length == 0) {
@@ -919,22 +954,16 @@ final class PhasesDetailsServices {
         ReviewManager revMgr = ActionsHelper.createReviewManager(request);
         Review[] reviews = revMgr.searchReviews(filter, false);
         phaseGroup.setPostMortemReviews(reviews);
-
-        // Get the ID for dumyy-submission for the Post-Mortem review
-        Long dummySubmissionId = (Long) request.getAttribute("postMortemSubmissionId");
-        if (dummySubmissionId != null) {
-            phaseGroup.setPostMortemSubmissionId(dummySubmissionId);
-        }
     }
 
     /**
      * TODO: Write documentation for this method.
      *
-     * @param request
-     * @param phaseGroup
-     * @param project
-     * @param isAfterAppealsResponse
-     * @throws BaseException
+     * @param request a
+     * @param phaseGroup a
+     * @param project a
+     * @param isAfterAppealsResponse a
+     * @throws BaseException if an unexpected error occurs.
      */
     private static void retrieveSubmissions(HttpServletRequest request,
             PhaseGroup phaseGroup, Project project, boolean isAfterAppealsResponse)
@@ -969,8 +998,7 @@ final class PhasesDetailsServices {
                     ActionsHelper.findSubmissionStatusByName(allSubmissionStatuses, "Active").getId());
             Filter filterResource = SubmissionFilterBuilder.createResourceIdFilter(myResource.getId());
 
-            Filter filter =
-                new AndFilter(Arrays.asList(new Filter[] {filterProject, filterStatus, filterResource}));
+            Filter filter = new AndFilter(Arrays.asList(filterProject, filterStatus, filterResource));
 
             submissions = upMgr.searchSubmissions(filter);
         }
@@ -982,11 +1010,11 @@ final class PhasesDetailsServices {
     /**
      * TODO: Write documentation for this method.
      *
-     * @param request
-     * @param allProjectResources
-     * @param isAfterAppealsResponse
-     * @param prevSubmitters
-     * @return
+     * @param request a
+     * @param allProjectResources a
+     * @param isAfterAppealsResponse a
+     * @param prevSubmitters a
+     * @return a
      */
     private static Resource[] getSubmitters(HttpServletRequest request,
             Resource[] allProjectResources, boolean isAfterAppealsResponse, Resource[] prevSubmitters) {

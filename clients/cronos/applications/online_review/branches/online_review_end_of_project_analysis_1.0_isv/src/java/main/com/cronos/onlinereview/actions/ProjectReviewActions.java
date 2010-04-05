@@ -2314,6 +2314,79 @@ public class ProjectReviewActions extends DispatchAction {
     }
 
     /**
+     * This method verifies the request for ceratins conditions to be met. This includes verifying
+     * if the user has specified an ID of project he wants to perform an operation on, if the
+     * ID of the project specified by user denotes an existing project, and whether the user
+     * has enough rights to perform the operation specified by <code>permission</code> parameter.
+     *
+     * @return an instance of the {@link CorrectnessCheckResult} class, which specifies whether the
+     *         check was successful and, in the case the check was successful, contains additional
+     *         information retrieved during the check operation, which might be of some use for the
+     *         calling method.
+     * @param mapping
+     *            action mapping.
+     * @param request
+     *            the http request.
+     * @param permission
+     *            permission to check against, or <code>null</code> if no check is requeired.
+     * @throws BaseException
+     *             if any error occurs.
+     * @since 1.1
+     */
+    private CorrectnessCheckResult checkForCorrectProjectId(ActionMapping mapping, HttpServletRequest request,
+                                                            String permission) throws BaseException {
+        // Prepare bean that will be returned as the result
+        CorrectnessCheckResult result = new CorrectnessCheckResult();
+
+        if (permission == null || permission.trim().length() == 0) {
+            permission = null;
+        }
+
+        // Verify that Project ID was specified and denotes correct project
+        String pidParam = request.getParameter("pid");
+        if (pidParam == null || pidParam.trim().length() == 0) {
+            result.setForward(ActionsHelper.produceErrorReport(
+                    mapping, getResources(request), request, permission, "Error.ProjectIdNotSpecified", null));
+            // Return the result of the check
+            return result;
+        }
+
+        long pid;
+
+        try {
+            // Try to convert specified pid parameter to its integer representation
+            pid = Long.parseLong(pidParam, 10);
+        } catch (NumberFormatException e) {
+            result.setForward(ActionsHelper.produceErrorReport(
+                    mapping, getResources(request), request, permission, "Error.ProjectNotFound", null));
+            // Return the result of the check
+            return result;
+        }
+
+        // Retrieve the project following submission's infromation chain
+        Project project = ActionsHelper.createProjectManager(request).getProject(pid);
+        if (project == null) {
+            result.setForward(ActionsHelper.produceErrorReport(
+                    mapping, getResources(request), request, permission, "Error.ProjectNotFound", null));
+            // Return the result of the check
+            return result;
+        }
+
+        request.setAttribute("pid", new Long(pid));
+
+        // Store Project object in the result bean
+        result.setProject(project);
+        // Place project as attribute in the request
+        request.setAttribute("project", project);
+
+        // Gather the roles the user has for current request
+        AuthorizationHelper.gatherUserRoles(request, project.getId());
+
+        // Return the result of the check
+        return result;
+    }
+
+    /**
      * This method verifies the request for certains conditions to be met. This includes verifying
      * if the user has specified an ID of the review he wants to perform an operation on, if the
      * ID of the review specified by user denotes an existing review, and whether the user
@@ -2392,20 +2465,30 @@ public class ProjectReviewActions extends DispatchAction {
         result.setReview(review);
         // Place the review object as attribute in the request
         request.setAttribute("review", review);
+        Project project;
 
-        // Obtain an instance of Deliverable Manager
-        UploadManager upMgr = ActionsHelper.createUploadManager(request);
-        // Get Submission by its id
-        Submission submission = upMgr.getSubmission(review.getSubmission());
+        // Review may not be associated to submission
+        if (review.getSubmission() > 0) {
+            // Obtain an instance of Deliverable Manager
+            UploadManager upMgr = ActionsHelper.createUploadManager(request);
+            // Get Submission by its id
+            Submission submission = upMgr.getSubmission(review.getSubmission());
 
-        // Store Submission object in the result bean
-        result.setSubmission(submission);
-        // Place the id of the submission as attribute in the request
-        request.setAttribute("sid", new Long(submission.getId()));
+            // Store Submission object in the result bean
+            result.setSubmission(submission);
+            // Place the id of the submission as attribute in the request
+            request.setAttribute("sid", new Long(submission.getId()));
 
-        // Retrieve the project following submission's infromation chain
-        Project project = ActionsHelper.getProjectForSubmission(
-                ActionsHelper.createProjectManager(request), submission);
+            // Retrieve the project following submission's infromation chain
+            project = ActionsHelper.getProjectForSubmission(
+                    ActionsHelper.createProjectManager(request), submission);
+        } else {
+            long reviewAuthorId = review.getAuthor();
+            Resource resource = ActionsHelper.createResourceManager(request).getResource(reviewAuthorId);
+            project = ActionsHelper.createProjectManager(request).getProject(resource.getProject());
+        }
+
+
         // Store Project object in the result bean
         result.setProject(project);
         // Place project as attribute in the request
@@ -2532,7 +2615,7 @@ public class ProjectReviewActions extends DispatchAction {
      * 
      *
      * @param request
-     * @param upload
+     * @param review
      * @throws BaseException
      */
     private void retrieveAndStoreReviewAuthorInfo(HttpServletRequest request, Review review)
@@ -2567,12 +2650,16 @@ public class ProjectReviewActions extends DispatchAction {
     private void retrieveAndStoreBasicReviewInfo(HttpServletRequest request,
             CorrectnessCheckResult verification, String reviewType, Scorecard scorecardTemplate)
         throws BaseException {
+        boolean isSubmissionDependentPhase = !reviewType.equals("Post-Mortem");
+        
         // Retrieve some basic project info (such as icons' names) and place it into request
         ActionsHelper.retrieveAndStoreBasicProjectInfo(request, verification.getProject(), getResources(request));
         // Retrieve an information about my role(s) and place it into the request
         ActionsHelper.retrieveAndStoreMyRole(request, getResources(request));
         // Retrieve the information about the submitter and place it into the request
-        ActionsHelper.retrieveAndStoreSubmitterInfo(request, verification.getSubmission().getUpload());
+        if (isSubmissionDependentPhase) {
+            ActionsHelper.retrieveAndStoreSubmitterInfo(request, verification.getSubmission().getUpload());
+        }
         if (verification.getReview() != null) {
             // Retrieve the information about the review author and place it into the request
             retrieveAndStoreReviewAuthorInfo(request, verification.getReview());
@@ -2601,6 +2688,7 @@ public class ProjectReviewActions extends DispatchAction {
                                               String reviewType) throws BaseException {
         String permName;
         String phaseName;
+        boolean isPostMortemPhase = false;
         // Determine permission name and phase name from the review type
         if ("Screening".equals(reviewType)) {
             permName = Constants.PERFORM_SCREENING_PERM_NAME;
@@ -2612,13 +2700,19 @@ public class ProjectReviewActions extends DispatchAction {
             permName = Constants.PERFORM_APPROVAL_PERM_NAME;
             phaseName = Constants.APPROVAL_PHASE_NAME;
         } else {
+            isPostMortemPhase = true;
             permName = Constants.PERFORM_POST_MORTEM_REVIEW_PERM_NAME;
             phaseName = Constants.POST_MORTEM_PHASE_NAME;
         }
 
         // Verify that certain requirements are met before proceeding with the Action
         // If any error has occured, return action forward contained in the result bean
-        CorrectnessCheckResult verification = checkForCorrectSubmissionId(mapping, request, permName);
+        CorrectnessCheckResult verification;
+        if (isPostMortemPhase) {
+            verification = checkForCorrectProjectId(mapping, request, permName);
+        } else {
+            verification = checkForCorrectSubmissionId(mapping, request, permName);
+        }
         if (!verification.isSuccessful()) {
             return verification.getForward();
         }
@@ -2662,15 +2756,26 @@ public class ProjectReviewActions extends DispatchAction {
         /*
          * Verify that the user is not trying to create review that already exists
          */
+        Filter filter;
 
-        // Prepare filters
-        Filter filterResource = new EqualToFilter("reviewer", new Long(myResource.getId()));
-        Filter filterSubmission = new EqualToFilter("submission", new Long(verification.getSubmission().getId()));
-        Filter filterScorecard = new EqualToFilter("scorecardType",
-                new Long(scorecardTemplate.getScorecardType().getId()));
+        if (isPostMortemPhase) {
+            // Prepare filters
+            Filter filterResource = new EqualToFilter("reviewer", new Long(myResource.getId()));
+            Filter filterScorecard = new EqualToFilter("scorecardType",
+                    new Long(scorecardTemplate.getScorecardType().getId()));
 
-        // Prepare final combined filter
-        Filter filter = new AndFilter(Arrays.asList(new Filter[] {filterResource, filterSubmission, filterScorecard}));
+            // Prepare final combined filter
+            filter = new AndFilter(Arrays.asList(new Filter[] {filterResource, filterScorecard}));
+        } else {
+            // Prepare filters
+            Filter filterResource = new EqualToFilter("reviewer", new Long(myResource.getId()));
+            Filter filterSubmission = new EqualToFilter("submission", new Long(verification.getSubmission().getId()));
+            Filter filterScorecard = new EqualToFilter("scorecardType",
+                    new Long(scorecardTemplate.getScorecardType().getId()));
+
+            // Prepare final combined filter
+            filter = new AndFilter(Arrays.asList(new Filter[] {filterResource, filterSubmission, filterScorecard}));
+        }
         // Obtain an instance of Review Manager
         ReviewManager revMgr = ActionsHelper.createReviewManager(request);
         // Retrieve an array of reviews
@@ -2913,6 +3018,7 @@ public class ProjectReviewActions extends DispatchAction {
         String phaseName;
         String scorecardTypeName;
         boolean isApprovalPhase = false;
+        boolean isSubmissionDependentPhase = true;
         // Determine permission name and phase name from the review type
         if ("Screening".equals(reviewType)) {
             permName = Constants.PERFORM_SCREENING_PERM_NAME;
@@ -2928,6 +3034,7 @@ public class ProjectReviewActions extends DispatchAction {
             phaseName = Constants.APPROVAL_PHASE_NAME;
             scorecardTypeName = "Approval";
         } else {
+            isSubmissionDependentPhase = false;
             permName = Constants.PERFORM_POST_MORTEM_REVIEW_PERM_NAME;
             phaseName = Constants.POST_MORTEM_PHASE_NAME;
             scorecardTypeName = "Post-Mortem";
@@ -2937,6 +3044,9 @@ public class ProjectReviewActions extends DispatchAction {
         CorrectnessCheckResult verification = null;
         if (request.getParameter("rid") != null) {
             verification = checkForCorrectReviewId(mapping, request, permName);
+        }
+        if (verification == null && request.getParameter("pid") != null) {
+            verification = checkForCorrectProjectId(mapping, request, permName);
         }
         if (verification == null && request.getParameter("sid") != null) {
             verification = checkForCorrectSubmissionId(mapping, request, permName);
@@ -3003,19 +3113,35 @@ public class ProjectReviewActions extends DispatchAction {
                     ActionsHelper.createScorecardManager(request), phase);
 
             // Prepare filters
-            Filter filterResource = new EqualToFilter("reviewer", new Long(myResource.getId()));
-            Filter filterSubmission = new EqualToFilter("submission", new Long(verification.getSubmission().getId()));
-            Filter filterScorecard = new EqualToFilter("scorecardType",
-                    new Long(scorecardTemplate.getScorecardType().getId()));
+            Filter filter;
+            if (isSubmissionDependentPhase) {
+                Filter filterResource = new EqualToFilter("reviewer", new Long(myResource.getId()));
+                Filter filterSubmission = new EqualToFilter("submission", new Long(verification.getSubmission().getId()));
+                Filter filterScorecard = new EqualToFilter("scorecardType",
+                        new Long(scorecardTemplate.getScorecardType().getId()));
 
-            // Build the list of all filters that should be joined using AND operator
-            List<Filter> filters = new ArrayList<Filter>();
-            filters.add(filterResource);
-            filters.add(filterSubmission);
-            filters.add(filterScorecard);
+                // Build the list of all filters that should be joined using AND operator
+                List<Filter> filters = new ArrayList<Filter>();
+                filters.add(filterResource);
+                filters.add(filterSubmission);
+                filters.add(filterScorecard);
 
-            // Prepare final combined filter
-            Filter filter = new AndFilter(filters);
+                // Prepare final combined filter
+                filter = new AndFilter(filters);
+            } else {
+                Filter filterResource = new EqualToFilter("reviewer", new Long(myResource.getId()));
+                Filter filterScorecard = new EqualToFilter("scorecardType",
+                                                           new Long(scorecardTemplate.getScorecardType().getId()));
+
+                // Build the list of all filters that should be joined using AND operator
+                List<Filter> filters = new ArrayList<Filter>();
+                filters.add(filterResource);
+                filters.add(filterScorecard);
+
+                // Prepare final combined filter
+                filter = new AndFilter(filters);
+            }
+
             // Obtain an instance of Review Manager
             ReviewManager revMgr = ActionsHelper.createReviewManager(request);
             // Retrieve an array of reviews
@@ -3188,7 +3314,10 @@ public class ProjectReviewActions extends DispatchAction {
 
             // Finally, set required fields of the review
             reviewEditor.setAuthor(myResource.getId());
-            reviewEditor.setSubmission(verification.getSubmission().getId());
+            // Skip setting submission ID for Post-Mortem phase
+            if (isSubmissionDependentPhase) {
+                reviewEditor.setSubmission(verification.getSubmission().getId());
+            }
             reviewEditor.setScorecard(scorecardTemplate.getId());
 
             review = reviewEditor.getReview();
@@ -3985,6 +4114,7 @@ public class ProjectReviewActions extends DispatchAction {
         String scorecardTypeName;
 
         // Determine permission name and phase name from the review type
+        boolean isSubmissionDependentPhase = true;
         if (reviewType.equals("Screening")) {
             permName = Constants.VIEW_SCREENING_PERM_NAME;
             phaseName = Constants.SCREENING_PHASE_NAME;
@@ -3998,6 +4128,7 @@ public class ProjectReviewActions extends DispatchAction {
             phaseName = Constants.APPROVAL_PHASE_NAME;
             scorecardTypeName = "Approval";
         } else if (reviewType.equals("Post-Mortem")) {
+            isSubmissionDependentPhase = false;
             permName = Constants.VIEW_POST_MORTEM_PERM_NAME;
             phaseName = Constants.POST_MORTEM_PHASE_NAME;
             scorecardTypeName = "Post-Mortem";
@@ -4048,7 +4179,8 @@ public class ProjectReviewActions extends DispatchAction {
                     myResource != null && verification.getReview().getAuthor() == myResource.getId()) {
             // User is authorized to view review authored by him
             isAllowed = true;
-        } else if (myResource != null && verification.getSubmission().getUpload().getOwner() == myResource.getId()) {
+        } else if (isSubmissionDependentPhase && (myResource != null)
+                   && (verification.getSubmission().getUpload().getOwner() == myResource.getId())) {
             // User is authorized to view review for his submission (when not in Review or in Appeals)
             if (reviewType != "Review" || !activePhases.contains(Constants.REVIEW_PHASE_NAME) ||
                     activePhases.contains(Constants.APPEALS_PHASE_NAME)) {

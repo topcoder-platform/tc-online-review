@@ -139,7 +139,7 @@
     <property name="document_generator.path" value="document_generator/${document_generator.version}"/>
     <property name="document_generator.jar" value="${tcs_libdir}/${document_generator.path}/${document_generator.jar.name}"/>
 
-    <property name="email_engine.version" value="3.0" />
+    <property name="email_engine.version" value="3.1.0" />
     <property name="email_engine.jar.name" value="email_engine.jar" />
     <property name="email_engine.path" value="email_engine/${email_engine.version}" />
     <property name="email_engine.jar" value="${tcs_libdir}/${email_engine.path}/${email_engine.jar.name}" />
@@ -980,6 +980,8 @@ Note: The security manager that comes with the app may not be compatible with th
         <antcall target="compile_component_1"/>
         <antcall target="compile_component_2"/>
         <antcall target="compile_component_3"/>
+        <antcall target="compile_component_4"/>
+        <antcall target="compile_component_5"/>
     </target>
 
     <target name="compile_component_1">
@@ -992,5 +994,13 @@ Note: The security manager that comes with the app may not be compatible with th
     <target name="compile_component_3">
         <compile_component component="online_review_phases" version="1.3"
                            path="../../Components/online_review_phases"/>
+    </target>
+    <target name="compile_component_4">
+        <compile_component component="review_management_persistence" version="1.0.1"
+                           path="../../Components/review_management_persistence"/>
+    </target>
+    <target name="compile_component_5">
+        <compile_component component="online_review_deliverables" version="1.0"
+                           path="../../Components/online_review_deliverables"/>
     </target>
 </project>
