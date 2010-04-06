@@ -11,6 +11,7 @@
 		<PhaseType id="aggregation_review" typeId="6" typeName="Aggregation Review"/>
 		<PhaseType id="final_fixes" typeId="7" typeName="Final Fix"/>
 		<PhaseType id="final_review" typeId="8" typeName="Final Review"/>
+		<PhaseType id="approval" typeId="11" typeName="Approval"/>
 	</PhaseTypes>
 	<!-- A set of project phases defined in this template. -->
 	<Phases>
@@ -47,6 +48,10 @@
 
 		<Phase id="finalReviewPhase" length="86400000" type="final_review">
 			<Dependency id="finalFixesPhase" isDependencyStart="false" isDependentStart="true" lagTime="0"/>
+		</Phase>
+
+		<Phase id="approval" length="86400000" type="approval">
+			<Dependency id="finalReviewPhase" isDependencyStart="false" isDependentStart="true" lagTime="0"/>
 		</Phase>
 	</Phases>
 </Template>
