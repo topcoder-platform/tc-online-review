@@ -443,7 +443,8 @@
             // TODO: Should be done in locale-independent way
             // Check if the phase should have a criterion row and at it if it is needed
             if (phaseName == "Screening" || phaseName == "Review" || phaseName == "Approval" ||
-                    phaseName == "Registration" || phaseName == "Submission" || phaseName == "Appeals") {
+                    phaseName == "Registration" || phaseName == "Submission" || phaseName == "Appeals"
+                    || phaseName == "Post-Mortem") {
                 var templateRow;
                 if (phaseName == "Screening") {
                       templateRow = document.getElementById("screening_scorecard_row_template");
@@ -457,6 +458,8 @@
                       templateRow = document.getElementById("required_submissions_row_template");
                 } else if (phaseName == "Appeals") {
                       templateRow = document.getElementById("view_appeal_responses_row_template");
+                } else if (phaseName == "Post-Mortem") {
+                      templateRow = document.getElementById("post_mortem_scorecard_row_template");
                 }
 
                  criterionRow = cloneInputRow(templateRow);

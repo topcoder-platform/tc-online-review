@@ -240,7 +240,7 @@ public class ProjectActions extends DispatchAction {
         loadProjectEditLookups(request);
 
         // Populate the default values of some project form fields
-        populateProjectFormDefaults(formNewProject);
+        populateProjectFormDefaults(formNewProject, request);
 
         // Return the success forward
         return mapping.findForward(Constants.SUCCESS_FORWARD_NAME);
@@ -250,8 +250,9 @@ public class ProjectActions extends DispatchAction {
      * TODO: Document this method.
      *
      * @param lazyForm
+     * @param request
      */
-    private void populateProjectFormDefaults(LazyValidatorForm lazyForm) {
+    private void populateProjectFormDefaults(LazyValidatorForm lazyForm, HttpServletRequest request) {
         // Set the JS id to start generation from
         lazyForm.set("js_current_id", new Long(0));
 
@@ -278,6 +279,14 @@ public class ProjectActions extends DispatchAction {
         }
         if (ConfigHelper.getDefaultRequiredReviewers() >= 0) {
             lazyForm.set("phase_required_reviewers", 0, new Integer(ConfigHelper.getDefaultRequiredReviewers()));
+        }
+        if (ConfigHelper.getDefaultRequiredApprovers() >= 0) {
+            request.setAttribute("phase_required_reviewers_approval",
+                                 new Integer(ConfigHelper.getDefaultRequiredApprovers()));
+        }
+        if (ConfigHelper.getDefaultRequiredPostMortemReviewers() >= 0) {
+            request.setAttribute("phase_required_reviewers_postmortem",
+                                 new Integer(ConfigHelper.getDefaultRequiredPostMortemReviewers()));
         }
 
         // Populate default phase duration
@@ -443,7 +452,7 @@ public class ProjectActions extends DispatchAction {
         populateProjectFormProperty(form, String.class, "notes", project, "Notes");
 
         // Populate the default values of some project form fields
-        populateProjectFormDefaults(form);
+        populateProjectFormDefaults(form, request);
 
         // Obtain Resource Manager instance
         ResourceManager resourceManager = ActionsHelper.createResourceManager(request);
