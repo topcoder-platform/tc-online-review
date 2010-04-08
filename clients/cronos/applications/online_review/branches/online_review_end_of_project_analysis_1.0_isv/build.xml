@@ -982,6 +982,7 @@ Note: The security manager that comes with the app may not be compatible with th
         <antcall target="compile_component_3"/>
         <antcall target="compile_component_4"/>
         <antcall target="compile_component_5"/>
+        <antcall target="compile_component_6"/>
     </target>
 
     <target name="compile_component_1">
@@ -1002,5 +1003,9 @@ Note: The security manager that comes with the app may not be compatible with th
     <target name="compile_component_5">
         <compile_component component="online_review_deliverables" version="1.0"
                            path="../../Components/online_review_deliverables"/>
+    </target>
+    <target name="compile_component_6">
+        <compile_component component="phase_management" version="1.0.3"
+                           path="../../Components/phase_management"/>
     </target>
 </project>
