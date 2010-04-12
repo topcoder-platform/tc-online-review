@@ -695,7 +695,7 @@ Note: The security manager that comes with the app may not be compatible with th
             <lib dir="${jar_tcs_libdir}/${projectEJB.path}" includes="*.jar" />
             <lib dir="${jar_tcs_libdir}/${userEJB.path}" includes="*.jar" />
             <lib dir="${jar_tcs_libdir}/${termsOfUseEJB.path}" includes="*.jar" />
-       <!--     <lib dir="${jar_tcs_libdir}/${contest_eligibility_validation_client.path}" includes="*.jar" />  -->
+            <lib dir="${jar_tcs_libdir}/${contest_eligibility_validation_client.path}" includes="*.jar" />
 
             <lib dir="${jar_tcs_libdir}/">
                 <include name="${tcsUtil.jar.name}"/>
