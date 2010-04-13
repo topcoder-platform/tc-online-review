@@ -1,0 +1,4 @@
+TCS-013: Checkstyle has produced the following warnings.
+
+E:\tcs\app\online_review\scripts\auto_screening\temp\7-1.jar.contents\src\java\main\Hold.java:12:5: warning: Missing a Javadoc comment. 
+The format of CheckStyle output is invalid. 
