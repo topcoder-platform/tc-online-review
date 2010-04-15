@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 TopCoder Inc.  All Rights Reserved.
+ * Copyright (C) 2006-2010 TopCoder Inc.  All Rights Reserved.
  */
 package com.cronos.onlinereview.actions;
 
@@ -96,6 +96,10 @@ import com.topcoder.util.weightedcalculator.LineItem;
  * <li>Edit Approval</li>
  * <li>Save Approval</li>
  * <li>View Approval</li>
+ * <li>Create Post-Mortem</li>
+ * <li>Edit Post-Mortem</li>
+ * <li>Save Post-Mortem</li>
+ * <li>View Post-Mortem</li>
  * <li>View Composite Scorecard</li>
  * </ul>
  * <p>
@@ -111,25 +115,39 @@ import com.topcoder.util.weightedcalculator.LineItem;
  * This class is thread-safe as it does not contain any mutable inner state.
  * </p>
  *
- * @author George1
- * @author real_vg
- * @version 1.0
+ * <p>
+ * Version 1.1 (Online Review End Of Project Analysis Release Assembly 1.0) Change notes:
+ *   <ol>
+ *     <li>Added logic for processing Post-Mortem reviews.</li>
+ *     <li>Updated {@link #saveGenericReview(ActionMapping, ActionForm, HttpServletRequest, String)} to add logic for
+ *     saving review comments for <code>Approval</code> phase.</li>
+ *     <li>Updated {@link #createGenericReview(ActionMapping, ActionForm, HttpServletRequest, String)} to add logic for
+ *     handling <code>Post-Mortem</code> phase.</li>
+ *     <li>Updated {@link #viewGenericReview(ActionMapping, ActionForm, HttpServletRequest, String)} to add logic for
+ *     handling <code>Post-Mortem</code> phase.</li>
+ *     <li>Updated {@link #editGenericReview(ActionMapping, ActionForm, HttpServletRequest, String)} to add logic for
+ *     handling <code>Post-Mortem</code> phase.</li>
+ *   </ol>
+ * </p>
+ *
+ * @author George1, real_vg, isv
+ * @version 1.1
  */
 public class ProjectReviewActions extends DispatchAction {
-	private static final com.topcoder.util.log.Log log = com.topcoder.util.log.LogFactory
-			.getLog(ProjectReviewActions.class.getName());
-			
-	private static final long ACTIVE_SCORECARD = 1;
-	
+    private static final com.topcoder.util.log.Log log = com.topcoder.util.log.LogFactory
+            .getLog(ProjectReviewActions.class.getName());
+            
+    private static final long ACTIVE_SCORECARD = 1;
+    
     /**
      * This member variable is a constant that specifies the count of comments displayed for each
-     * item by default on Edit Screening, Edit Review, and Edit Approval pages.
+     * item by default on Edit Screening, Edit Review, and Edit Approval, Edit Post-Mortem pages.
      */
     private static final int DEFAULT_COMMENTS_NUMBER = 1;
 
     /**
      * This member variable is a constant that specifies the count of comments displayed for each
-     * item when Manager opens either Edit Screening, Edit Review, or Edit Approval page.
+     * item when Manager opens either Edit Screening, Edit Review, or Edit Approval or Edit Post-Mortem page.
      */
     private static final int MANAGER_COMMENTS_NUMBER = 1;
 
@@ -152,20 +170,20 @@ public class ProjectReviewActions extends DispatchAction {
         correctAnswers.put(scale0_9, new HashSet<String>());
         correctAnswers.put(scale0_4, new HashSet<String>());
         for (int i = 0; i <= 10; i++) {
-        	if (i <= 3) {
+            if (i <= 3) {
                 correctAnswers.get(scale0_3).add(i + "/3");
             }
-        	if (i >= 1 && i <= 4) {
+            if (i >= 1 && i <= 4) {
                 correctAnswers.get(scale1_4).add(i + "/4");
             }
-        	if (i >= 0 && i <= 4) {
+            if (i >= 0 && i <= 4) {
                 correctAnswers.get(scale0_4).add(i + "/4");
             }
             if (i >= 1 && i <= 10) {
                 correctAnswers.get(scale1_10).add(i + "/10");
             }
             if (i <= 9) {
-            	correctAnswers.get(scale0_9).add(i + "/9");
+                correctAnswers.get(scale0_9).add(i + "/9");
             }
         }
     }
@@ -202,7 +220,7 @@ public class ProjectReviewActions extends DispatchAction {
     public ActionForward createScreening(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response)
         throws BaseException {
-    	LoggingHelper.logAction(request);
+        LoggingHelper.logAction(request);
         return createGenericReview(mapping, form, request, "Screening");
     }
 
@@ -233,7 +251,7 @@ public class ProjectReviewActions extends DispatchAction {
     public ActionForward editScreening(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response)
         throws BaseException {
-    	LoggingHelper.logAction(request);
+        LoggingHelper.logAction(request);
         return editGenericReview(mapping, form, request, "Screening");
     }
 
@@ -261,7 +279,7 @@ public class ProjectReviewActions extends DispatchAction {
     public ActionForward saveScreening(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response)
         throws BaseException {
-    	LoggingHelper.logAction(request);
+        LoggingHelper.logAction(request);
         return saveGenericReview(mapping, form, request, "Screening");
     }
 
@@ -288,7 +306,7 @@ public class ProjectReviewActions extends DispatchAction {
     public ActionForward viewScreening(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response)
         throws BaseException {
-    	LoggingHelper.logAction(request);
+        LoggingHelper.logAction(request);
         return viewGenericReview(mapping, form, request, "Screening");
     }
 
@@ -318,7 +336,7 @@ public class ProjectReviewActions extends DispatchAction {
     public ActionForward createReview(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response)
         throws BaseException {
-    	LoggingHelper.logAction(request);
+        LoggingHelper.logAction(request);
         return createGenericReview(mapping, form, request, "Review");
     }
 
@@ -349,7 +367,7 @@ public class ProjectReviewActions extends DispatchAction {
     public ActionForward editReview(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response)
         throws BaseException {
-    	LoggingHelper.logAction(request);
+        LoggingHelper.logAction(request);
         return editGenericReview(mapping, form, request, "Review");
     }
 
@@ -377,7 +395,7 @@ public class ProjectReviewActions extends DispatchAction {
     public ActionForward saveReview(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response)
         throws BaseException {
-    	LoggingHelper.logAction(request);
+        LoggingHelper.logAction(request);
         return saveGenericReview(mapping, form, request, "Review");
     }
 
@@ -404,7 +422,7 @@ public class ProjectReviewActions extends DispatchAction {
     public ActionForward viewReview(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response)
         throws BaseException {
-    	LoggingHelper.logAction(request);
+        LoggingHelper.logAction(request);
         return viewGenericReview(mapping, form, request, "Review");
     }
 
@@ -428,7 +446,7 @@ public class ProjectReviewActions extends DispatchAction {
      */
     public ActionForward createAggregation(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response) {
-    	LoggingHelper.logAction(request);
+        LoggingHelper.logAction(request);
         // Nothing needs to be done
         return null;
     }
@@ -460,7 +478,7 @@ public class ProjectReviewActions extends DispatchAction {
     public ActionForward editAggregation(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response)
         throws BaseException {
-    	LoggingHelper.logAction(request);
+        LoggingHelper.logAction(request);
         // Verify that certain requirements are met before proceeding with the Action
         CorrectnessCheckResult verification =
                 checkForCorrectReviewId(mapping, request, Constants.PERFORM_AGGREGATION_PERM_NAME);
@@ -606,7 +624,7 @@ public class ProjectReviewActions extends DispatchAction {
     public ActionForward saveAggregation(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response)
         throws BaseException {
-    	LoggingHelper.logAction(request);
+        LoggingHelper.logAction(request);
         // Verify that certain requirements are met before proceeding with the Action
         CorrectnessCheckResult verification =
             checkForCorrectReviewId(mapping, request, Constants.PERFORM_AGGREGATION_PERM_NAME);
@@ -787,7 +805,7 @@ public class ProjectReviewActions extends DispatchAction {
     public ActionForward viewAggregation(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response)
         throws BaseException{
-    	LoggingHelper.logAction(request);
+        LoggingHelper.logAction(request);
         // Verify that certain requirements are met before proceeding with the Action
         CorrectnessCheckResult verification =
             checkForCorrectReviewId(mapping, request, Constants.VIEW_AGGREGATION_PERM_NAME);
@@ -925,20 +943,20 @@ public class ProjectReviewActions extends DispatchAction {
      */
     public ActionForward editAggregationReview(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response) throws BaseException {
-    	LoggingHelper.logAction(request);
+        LoggingHelper.logAction(request);
 
         // Verify that certain requirements are met before proceeding with the Action
         CorrectnessCheckResult verification =
                 checkForCorrectReviewId(mapping, request, Constants.PERFORM_AGGREG_REVIEW_PERM_NAME);
         // If any error has occured, return action forward contained in the result bean
         if (!verification.isSuccessful()) {
-        	log.log(Level.DEBUG, "failed checkForCorrectReviewId");
+            log.log(Level.DEBUG, "failed checkForCorrectReviewId");
             return verification.getForward();
         }
 
         // Verify that user has the permission to perform aggregation review
         if (!AuthorizationHelper.hasUserPermission(request, Constants.PERFORM_AGGREG_REVIEW_PERM_NAME)) {
-        	log.log(Level.DEBUG, "the user doesn't the permission: " + Constants.PERFORM_AGGREG_REVIEW_PERM_NAME);
+            log.log(Level.DEBUG, "the user doesn't the permission: " + Constants.PERFORM_AGGREG_REVIEW_PERM_NAME);
             return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
                     Constants.PERFORM_AGGREG_REVIEW_PERM_NAME, "Error.NoPermission", Boolean.TRUE);
         }
@@ -955,13 +973,13 @@ public class ProjectReviewActions extends DispatchAction {
 
         // Verify that the scorecard template for this review is of correct type
         if (!scorecardTemplate.getScorecardType().getName().equalsIgnoreCase("Review")) {
-        	log.log(Level.DEBUG, "failed Verify that the scorecard template for this review is of correct type");
+            log.log(Level.DEBUG, "failed Verify that the scorecard template for this review is of correct type");
             return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
                     Constants.PERFORM_AGGREG_REVIEW_PERM_NAME, "Error.ReviewTypeIncorrect", null);
         }
         // Verify that Aggregation has been committed
         if (!review.isCommitted()) {
-        	log.log(Level.DEBUG, "failed isCommited");
+            log.log(Level.DEBUG, "failed isCommited");
             return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
                     Constants.PERFORM_AGGREG_REVIEW_PERM_NAME, "Error.AggregationNotCommitted", null);
         }
@@ -1001,12 +1019,12 @@ public class ProjectReviewActions extends DispatchAction {
         // If "my" comment has not been found, then the user is probably an Aggregator
         if (myReviewComment == null) {
             if (AuthorizationHelper.hasUserRole(request, Constants.AGGREGATOR_ROLE_NAME)) {
-            	log.log(Level.DEBUG, "failed If \"my\" comment has not been found, then the user is probably an Aggregator");
+                log.log(Level.DEBUG, "failed If \"my\" comment has not been found, then the user is probably an Aggregator");
                 return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
                         Constants.PERFORM_AGGREG_REVIEW_PERM_NAME, "Error.CannotReviewOwnAggregation", null);
             } else {
                 // Otherwise, the user does not have permission to edit this review
-            	log.log(Level.DEBUG, "failed Otherwise, the user does not have permission to edit this review");
+                log.log(Level.DEBUG, "failed Otherwise, the user does not have permission to edit this review");
                 return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
                         Constants.PERFORM_AGGREG_REVIEW_PERM_NAME, "Error.NoPermission", Boolean.FALSE);
             }
@@ -1015,7 +1033,7 @@ public class ProjectReviewActions extends DispatchAction {
         // Do actual verificartion. Values "Approved" and "Rejected" denote committed Aggregation Review
         String myExtaInfo = (String) myReviewComment.getExtraInfo();
         if ("Approved".equalsIgnoreCase(myExtaInfo) || "Rejected".equalsIgnoreCase(myExtaInfo)) {
-        	log.log(Level.DEBUG, "failed Do actual verificartion. Values \"Approved\" and \"Rejected\" denote committed Aggregation Review");
+            log.log(Level.DEBUG, "failed Do actual verificartion. Values \"Approved\" and \"Rejected\" denote committed Aggregation Review");
             return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
                     Constants.PERFORM_AGGREG_REVIEW_PERM_NAME, "Error.ReviewCommitted", null);
         }
@@ -1122,7 +1140,7 @@ public class ProjectReviewActions extends DispatchAction {
     public ActionForward saveAggregationReview(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response)
         throws BaseException {
-    	LoggingHelper.logAction(request);
+        LoggingHelper.logAction(request);
         // Verify that certain requirements are met before proceeding with the Action
         CorrectnessCheckResult verification =
             checkForCorrectReviewId(mapping, request, Constants.PERFORM_AGGREG_REVIEW_PERM_NAME);
@@ -1286,7 +1304,7 @@ public class ProjectReviewActions extends DispatchAction {
 
         // A safety check: reset 'rejected' flag if the current user is a Submitter
         if (isSubmitter) {
-        	rejected = false;
+            rejected = false;
         }
 
         boolean validationSucceeded = (commitRequested) ? validateAggregationReviewScorecard(
@@ -1340,7 +1358,7 @@ public class ProjectReviewActions extends DispatchAction {
     public ActionForward viewAggregationReview(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response)
         throws BaseException {
-    	LoggingHelper.logAction(request);
+        LoggingHelper.logAction(request);
         // Verify that certain requirements are met before proceeding with the Action
         CorrectnessCheckResult verification =
             checkForCorrectReviewId(mapping, request, Constants.VIEW_AGGREG_REVIEW_PERM_NAME);
@@ -1413,7 +1431,7 @@ public class ProjectReviewActions extends DispatchAction {
     public ActionForward createFinalReview(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response) {
         // Nothing needs to be done
-    	LoggingHelper.logAction(request);
+        LoggingHelper.logAction(request);
         return null;
     }
 
@@ -1444,7 +1462,7 @@ public class ProjectReviewActions extends DispatchAction {
     public ActionForward editFinalReview(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response)
         throws BaseException {
-    	LoggingHelper.logAction(request);
+        LoggingHelper.logAction(request);
         // Verify that certain requirements are met before proceeding with the Action
         CorrectnessCheckResult verification =
                 checkForCorrectReviewId(mapping, request, Constants.PERFORM_FINAL_REVIEW_PERM_NAME);
@@ -1603,7 +1621,7 @@ public class ProjectReviewActions extends DispatchAction {
     public ActionForward saveFinalReview(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response)
         throws BaseException {
-    	LoggingHelper.logAction(request);
+        LoggingHelper.logAction(request);
         // Verify that certain requirements are met before proceeding with the Action
         CorrectnessCheckResult verification =
             checkForCorrectReviewId(mapping, request, Constants.PERFORM_FINAL_REVIEW_PERM_NAME);
@@ -1800,7 +1818,7 @@ public class ProjectReviewActions extends DispatchAction {
     public ActionForward viewFinalReview(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response)
         throws BaseException {
-    	LoggingHelper.logAction(request);
+        LoggingHelper.logAction(request);
         // Verify that certain requirements are met before proceeding with the Action
         CorrectnessCheckResult verification =
             checkForCorrectReviewId(mapping, request, Constants.VIEW_FINAL_REVIEW_PERM_NAME);
@@ -1891,8 +1909,14 @@ public class ProjectReviewActions extends DispatchAction {
     public ActionForward createApproval(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response)
         throws BaseException{
-    	LoggingHelper.logAction(request);
-        return createGenericReview(mapping, form, request, "Approval");
+        LoggingHelper.logAction(request);
+        ActionForward genericForward = createGenericReview(mapping, form, request, "Approval");
+        if (Constants.SUCCESS_FORWARD_NAME.equals(genericForward.getName())) {
+            LazyValidatorForm approvalForm = (LazyValidatorForm) form;
+            approvalForm.set("reject_fixes", Boolean.FALSE);
+            approvalForm.set("accept_but_require_fixes", Boolean.FALSE);
+        }
+        return genericForward;
     }
 
     /**
@@ -1922,8 +1946,27 @@ public class ProjectReviewActions extends DispatchAction {
     public ActionForward editApproval(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response)
         throws BaseException{
-    	LoggingHelper.logAction(request);
-        return editGenericReview(mapping, form, request, "Approval");
+        LoggingHelper.logAction(request);
+        ActionForward genericForward = editGenericReview(mapping, form, request, "Approval");
+        if (Constants.SUCCESS_FORWARD_NAME.equals(genericForward.getName())) {
+            boolean fixesRejected = false;
+            boolean fixesAcceptedButOtherFixesRequired = false;
+            Review review = (Review) request.getAttribute("review");
+            int numberOfComments = review.getNumberOfComments();
+            for (int i = 0; i < numberOfComments; ++i) {
+                Comment comment = review.getComment(i);
+                if (comment.getCommentType().getName().equalsIgnoreCase("Approval Review Comment")) {
+                    fixesRejected = ("Rejected".equalsIgnoreCase((String) comment.getExtraInfo()));
+                } else if (comment.getCommentType().getName().equalsIgnoreCase("Approval Review Comment - Other Fixes")) {
+                    fixesAcceptedButOtherFixesRequired = ("Required".equalsIgnoreCase((String) comment.getExtraInfo()));
+                }
+            }
+
+            LazyValidatorForm approvalForm = (LazyValidatorForm) form;
+            approvalForm.set("reject_fixes", fixesRejected);
+            approvalForm.set("accept_but_require_fixes", fixesAcceptedButOtherFixesRequired);
+        }
+        return genericForward;
     }
 
     /**
@@ -1950,7 +1993,7 @@ public class ProjectReviewActions extends DispatchAction {
     public ActionForward saveApproval(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response)
         throws BaseException {
-    	LoggingHelper.logAction(request);
+        LoggingHelper.logAction(request);
         return saveGenericReview(mapping, form, request, "Approval");
     }
 
@@ -1977,7 +2020,7 @@ public class ProjectReviewActions extends DispatchAction {
     public ActionForward viewApproval(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response)
         throws BaseException {
-    	LoggingHelper.logAction(request);
+        LoggingHelper.logAction(request);
         return viewGenericReview(mapping, form, request, "Approval");
     }
 
@@ -2006,8 +2049,8 @@ public class ProjectReviewActions extends DispatchAction {
     public ActionForward viewCompositeScorecard(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response)
         throws BaseException {
-    	try {
-    	LoggingHelper.logAction(request);
+        try {
+        LoggingHelper.logAction(request);
         // Verify that certain requirements are met before proceeding with the Action
         CorrectnessCheckResult verification =
                 checkForCorrectSubmissionId(mapping, request, Constants.VIEW_COMPOS_SCORECARD_PERM_NAME);
@@ -2142,10 +2185,10 @@ public class ProjectReviewActions extends DispatchAction {
                         LineItem lineItem = matrix.getLineItem(question.getId());
                         double weight = 0;
                         if (lineItem != null) {
-                        	weight = lineItem.getWeight();
+                            weight = lineItem.getWeight();
                         } else {
-                        	log.log(Level.WARN, "line item for question id: " + question.getId() + 
-                        			" for review: " + review.getId());
+                            log.log(Level.WARN, "line item for question id: " + question.getId() + 
+                                    " for review: " + review.getId());
                         }
                         scores[i][itemIdx] = (float) (weight * scoreCalculator.evaluateItem(review.getItem(itemIdx), question));
                         ++itemIdx;
@@ -2180,12 +2223,12 @@ public class ProjectReviewActions extends DispatchAction {
         request.setAttribute("reviews", reviews);
 
         return mapping.findForward(Constants.SUCCESS_FORWARD_NAME);
-    	} catch (Throwable e) {
-    		StringWriter buf = new StringWriter();
-    		e.printStackTrace(new PrintWriter(buf));
-    		log.log(Level.ERROR, buf);
-    		throw new BaseException(e);
-    	}
+        } catch (Throwable e) {
+            StringWriter buf = new StringWriter();
+            e.printStackTrace(new PrintWriter(buf));
+            log.log(Level.ERROR, buf);
+            throw new BaseException(e);
+        }
     }
 
     /**
@@ -2258,6 +2301,79 @@ public class ProjectReviewActions extends DispatchAction {
         // Retrieve the project following submission's infromation chain
         Project project = ActionsHelper.getProjectForSubmission(
                 ActionsHelper.createProjectManager(request), submission);
+        // Store Project object in the result bean
+        result.setProject(project);
+        // Place project as attribute in the request
+        request.setAttribute("project", project);
+
+        // Gather the roles the user has for current request
+        AuthorizationHelper.gatherUserRoles(request, project.getId());
+
+        // Return the result of the check
+        return result;
+    }
+
+    /**
+     * This method verifies the request for ceratins conditions to be met. This includes verifying
+     * if the user has specified an ID of project he wants to perform an operation on, if the
+     * ID of the project specified by user denotes an existing project, and whether the user
+     * has enough rights to perform the operation specified by <code>permission</code> parameter.
+     *
+     * @return an instance of the {@link CorrectnessCheckResult} class, which specifies whether the
+     *         check was successful and, in the case the check was successful, contains additional
+     *         information retrieved during the check operation, which might be of some use for the
+     *         calling method.
+     * @param mapping
+     *            action mapping.
+     * @param request
+     *            the http request.
+     * @param permission
+     *            permission to check against, or <code>null</code> if no check is requeired.
+     * @throws BaseException
+     *             if any error occurs.
+     * @since 1.1
+     */
+    private CorrectnessCheckResult checkForCorrectProjectId(ActionMapping mapping, HttpServletRequest request,
+                                                            String permission) throws BaseException {
+        // Prepare bean that will be returned as the result
+        CorrectnessCheckResult result = new CorrectnessCheckResult();
+
+        if (permission == null || permission.trim().length() == 0) {
+            permission = null;
+        }
+
+        // Verify that Project ID was specified and denotes correct project
+        String pidParam = request.getParameter("pid");
+        if (pidParam == null || pidParam.trim().length() == 0) {
+            result.setForward(ActionsHelper.produceErrorReport(
+                    mapping, getResources(request), request, permission, "Error.ProjectIdNotSpecified", null));
+            // Return the result of the check
+            return result;
+        }
+
+        long pid;
+
+        try {
+            // Try to convert specified pid parameter to its integer representation
+            pid = Long.parseLong(pidParam, 10);
+        } catch (NumberFormatException e) {
+            result.setForward(ActionsHelper.produceErrorReport(
+                    mapping, getResources(request), request, permission, "Error.ProjectNotFound", null));
+            // Return the result of the check
+            return result;
+        }
+
+        // Retrieve the project following submission's infromation chain
+        Project project = ActionsHelper.createProjectManager(request).getProject(pid);
+        if (project == null) {
+            result.setForward(ActionsHelper.produceErrorReport(
+                    mapping, getResources(request), request, permission, "Error.ProjectNotFound", null));
+            // Return the result of the check
+            return result;
+        }
+
+        request.setAttribute("pid", new Long(pid));
+
         // Store Project object in the result bean
         result.setProject(project);
         // Place project as attribute in the request
@@ -2349,20 +2465,30 @@ public class ProjectReviewActions extends DispatchAction {
         result.setReview(review);
         // Place the review object as attribute in the request
         request.setAttribute("review", review);
+        Project project;
 
-        // Obtain an instance of Deliverable Manager
-        UploadManager upMgr = ActionsHelper.createUploadManager(request);
-        // Get Submission by its id
-        Submission submission = upMgr.getSubmission(review.getSubmission());
+        // Review may not be associated to submission
+        if (review.getSubmission() > 0) {
+            // Obtain an instance of Deliverable Manager
+            UploadManager upMgr = ActionsHelper.createUploadManager(request);
+            // Get Submission by its id
+            Submission submission = upMgr.getSubmission(review.getSubmission());
 
-        // Store Submission object in the result bean
-        result.setSubmission(submission);
-        // Place the id of the submission as attribute in the request
-        request.setAttribute("sid", new Long(submission.getId()));
+            // Store Submission object in the result bean
+            result.setSubmission(submission);
+            // Place the id of the submission as attribute in the request
+            request.setAttribute("sid", new Long(submission.getId()));
 
-        // Retrieve the project following submission's infromation chain
-        Project project = ActionsHelper.getProjectForSubmission(
-                ActionsHelper.createProjectManager(request), submission);
+            // Retrieve the project following submission's infromation chain
+            project = ActionsHelper.getProjectForSubmission(
+                    ActionsHelper.createProjectManager(request), submission);
+        } else {
+            long reviewAuthorId = review.getAuthor();
+            Resource resource = ActionsHelper.createResourceManager(request).getResource(reviewAuthorId);
+            project = ActionsHelper.createProjectManager(request).getProject(resource.getProject());
+        }
+
+
         // Store Project object in the result bean
         result.setProject(project);
         // Place project as attribute in the request
@@ -2462,7 +2588,7 @@ public class ProjectReviewActions extends DispatchAction {
     }
 
     /**
-     * TODO: Document it.
+     * .
      *
      * @param request
      * @throws BaseException
@@ -2486,10 +2612,10 @@ public class ProjectReviewActions extends DispatchAction {
     }
 
     /**
-     * TODO: Document it
+     * 
      *
      * @param request
-     * @param upload
+     * @param review
      * @throws BaseException
      */
     private void retrieveAndStoreReviewAuthorInfo(HttpServletRequest request, Review review)
@@ -2513,7 +2639,7 @@ public class ProjectReviewActions extends DispatchAction {
     }
 
     /**
-     * TODO: Document it.
+     * .
      *
      * @param request
      * @param verification
@@ -2524,12 +2650,16 @@ public class ProjectReviewActions extends DispatchAction {
     private void retrieveAndStoreBasicReviewInfo(HttpServletRequest request,
             CorrectnessCheckResult verification, String reviewType, Scorecard scorecardTemplate)
         throws BaseException {
+        boolean isSubmissionDependentPhase = !reviewType.equals("Post-Mortem");
+        
         // Retrieve some basic project info (such as icons' names) and place it into request
         ActionsHelper.retrieveAndStoreBasicProjectInfo(request, verification.getProject(), getResources(request));
         // Retrieve an information about my role(s) and place it into the request
         ActionsHelper.retrieveAndStoreMyRole(request, getResources(request));
         // Retrieve the information about the submitter and place it into the request
-        ActionsHelper.retrieveAndStoreSubmitterInfo(request, verification.getSubmission().getUpload());
+        if (isSubmissionDependentPhase) {
+            ActionsHelper.retrieveAndStoreSubmitterInfo(request, verification.getSubmission().getUpload());
+        }
         if (verification.getReview() != null) {
             // Retrieve the information about the review author and place it into the request
             retrieveAndStoreReviewAuthorInfo(request, verification.getReview());
@@ -2537,22 +2667,28 @@ public class ProjectReviewActions extends DispatchAction {
         // Place Scorecard template in the request
         request.setAttribute("scorecardTemplate", scorecardTemplate);
         // Place the type of the review into the request
-        request.setAttribute("reviewType", reviewType);
+        if (reviewType.equals("Post-Mortem")) {
+            request.setAttribute("reviewType", "PostMortem");
+        } else {
+            request.setAttribute("reviewType", reviewType);
+        }
     }
 
     /**
-     * TODO: Document it.
+     * <p>Handles the request for creating the generic review details.</p>
      *
-     * @param mapping
-     * @param form
-     * @param request
-     * @param reviewType
-     * @return
-     * @throws BaseException
+     * @param mapping an <code>ActionMapping</code> used to map the request to this method.
+     * @param form an <code>ActionForm</code> mapped to this request.
+     * @param request an <code>HttpServletRequest</code> representing the incoming request from the client.
+     * @param reviewType a <code>String</code> referencing the type of the review.
+     * @return an <code>ActionForward</code> referencing the next view to be used for processing the request.
+     * @throws BaseException if an unexpected error occurs.
      */
-    private ActionForward createGenericReview(ActionMapping mapping, ActionForm form, HttpServletRequest request, String reviewType) throws BaseException {
+    private ActionForward createGenericReview(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+                                              String reviewType) throws BaseException {
         String permName;
         String phaseName;
+        boolean isPostMortemPhase = false;
         // Determine permission name and phase name from the review type
         if ("Screening".equals(reviewType)) {
             permName = Constants.PERFORM_SCREENING_PERM_NAME;
@@ -2560,15 +2696,23 @@ public class ProjectReviewActions extends DispatchAction {
         } else if ("Review".equals(reviewType)) {
             permName = Constants.PERFORM_REVIEW_PERM_NAME;
             phaseName = Constants.REVIEW_PHASE_NAME;
-        } else {
+        } else if ("Approval".equals(reviewType)) {
             permName = Constants.PERFORM_APPROVAL_PERM_NAME;
             phaseName = Constants.APPROVAL_PHASE_NAME;
+        } else {
+            isPostMortemPhase = true;
+            permName = Constants.PERFORM_POST_MORTEM_REVIEW_PERM_NAME;
+            phaseName = Constants.POST_MORTEM_PHASE_NAME;
         }
 
         // Verify that certain requirements are met before proceeding with the Action
-        CorrectnessCheckResult verification =
-                checkForCorrectSubmissionId(mapping, request, permName);
         // If any error has occured, return action forward contained in the result bean
+        CorrectnessCheckResult verification;
+        if (isPostMortemPhase) {
+            verification = checkForCorrectProjectId(mapping, request, permName);
+        } else {
+            verification = checkForCorrectSubmissionId(mapping, request, permName);
+        }
         if (!verification.isSuccessful()) {
             return verification.getForward();
         }
@@ -2596,7 +2740,15 @@ public class ProjectReviewActions extends DispatchAction {
         }
 
         // Get "My" resource for the appropriate phase
-        Resource myResource = ActionsHelper.getMyResourceForPhase(request, phase);
+        // For Post-Mortem and Approval phases resource is retrieved by role but not by phase
+        Resource myResource;
+        if (phase.getPhaseType().getName().equals(Constants.POST_MORTEM_PHASE_NAME)) {
+            myResource = ActionsHelper.getMyResourceForRole(request, Constants.POST_MORTEM_REVIEWER_ROLE_NAME);
+        } else if (phase.getPhaseType().getName().equals(Constants.APPROVAL_PHASE_NAME)) {
+            myResource = ActionsHelper.getMyResourceForRole(request, Constants.APPROVER_ROLE_NAME);
+        } else {
+            myResource = ActionsHelper.getMyResourceForPhase(request, phase);
+        }
         // Retrieve a scorecard template for the appropriate phase
         Scorecard scorecardTemplate = ActionsHelper.getScorecardTemplateForPhase(
                 ActionsHelper.createScorecardManager(request), phase);
@@ -2604,19 +2756,33 @@ public class ProjectReviewActions extends DispatchAction {
         /*
          * Verify that the user is not trying to create review that already exists
          */
+        Filter filter;
 
-        // Prepare filters
-        Filter filterResource = new EqualToFilter("reviewer", new Long(myResource.getId()));
-        Filter filterSubmission = new EqualToFilter("submission", new Long(verification.getSubmission().getId()));
-        Filter filterScorecard = new EqualToFilter("scorecardType",
-                new Long(scorecardTemplate.getScorecardType().getId()));
+        if (isPostMortemPhase) {
+            // Prepare filters
+            Filter filterResource = new EqualToFilter("reviewer", new Long(myResource.getId()));
+            Filter filterScorecard = new EqualToFilter("scorecardType",
+                    new Long(scorecardTemplate.getScorecardType().getId()));
 
-        // Prepare final combined filter
-        Filter filter = new AndFilter(Arrays.asList(new Filter[] {filterResource, filterSubmission, filterScorecard}));
+            // Prepare final combined filter
+            filter = new AndFilter(Arrays.asList(new Filter[] {filterResource, filterScorecard}));
+        } else {
+            // Prepare filters
+            Filter filterResource = new EqualToFilter("reviewer", new Long(myResource.getId()));
+            Filter filterSubmission = new EqualToFilter("submission", new Long(verification.getSubmission().getId()));
+            Filter filterScorecard = new EqualToFilter("scorecardType",
+                    new Long(scorecardTemplate.getScorecardType().getId()));
+
+            // Prepare final combined filter
+            filter = new AndFilter(Arrays.asList(new Filter[] {filterResource, filterSubmission, filterScorecard}));
+        }
         // Obtain an instance of Review Manager
         ReviewManager revMgr = ActionsHelper.createReviewManager(request);
         // Retrieve an array of reviews
         Review[] reviews = revMgr.searchReviews(filter, false);
+        if (phase.getPhaseType().getName().equals(Constants.APPROVAL_PHASE_NAME)) {
+            reviews = ActionsHelper.getApprovalPhaseReviews(reviews, phase);
+        }
 
         // Non-empty array of reviews indicates that
         // user is trying to create review that already exists
@@ -2666,14 +2832,14 @@ public class ProjectReviewActions extends DispatchAction {
     }
 
     /**
-     * TODO: Document it
+     * <p>Handles the request for editing the generic review details.</p>
      *
-     * @param mapping
-     * @param form
-     * @param request
-     * @param reviewType
-     * @return
-     * @throws BaseException
+     * @param mapping an <code>ActionMapping</code> used to map the request to this method.
+     * @param form an <code>ActionForm</code> mapped to this request.
+     * @param request an <code>HttpServletRequest</code> representing the incoming request from the client.
+     * @param reviewType a <code>String</code> referencing the type of the review.
+     * @return an <code>ActionForward</code> referencing the next view to be used for processing the request.
+     * @throws BaseException if an unexpected error occurs.
      */
     private ActionForward editGenericReview(ActionMapping mapping, ActionForm form, HttpServletRequest request, String reviewType) throws BaseException {
         String scorecardTypeName;
@@ -2682,8 +2848,10 @@ public class ProjectReviewActions extends DispatchAction {
             scorecardTypeName = "Screening";
         } else if ("Review".equals(reviewType)) {
             scorecardTypeName = "Review";
+        } else if ("Approval".equals(reviewType)) {
+            scorecardTypeName = "Approval";
         } else {
-            scorecardTypeName = "Client Review";
+            scorecardTypeName = "Post-Mortem";
         }
 
         // Verify that certain requirements are met before proceeding with the Action
@@ -2796,7 +2964,7 @@ public class ProjectReviewActions extends DispatchAction {
     }
 
     /**
-     * TODO: Document it
+     * 
      *
      * @param item
      * @return
@@ -2813,7 +2981,7 @@ public class ProjectReviewActions extends DispatchAction {
     }
 
     /**
-     * TODO: Document it
+     * 
      *
      * @param item
      * @return
@@ -2830,16 +2998,17 @@ public class ProjectReviewActions extends DispatchAction {
     }
 
     /**
-     * TODO: Document it
+     * <p>Handles the request for saving the generic review details.</p>
      *
-     * @param mapping
-     * @param form
-     * @param request
-     * @param reviewType
-     * @return
-     * @throws BaseException
+     * @param mapping an <code>ActionMapping</code> used to map the request to this method.
+     * @param form an <code>ActionForm</code> mapped to this request.
+     * @param request an <code>HttpServletRequest</code> representing the incoming request from the client.
+     * @param reviewType a <code>String</code> referencing the type of the review.
+     * @return an <code>ActionForward</code> referencing the next view to be used for processing the request. 
+     * @throws BaseException if an unexpected error occurs.
      */
-	private ActionForward saveGenericReview(ActionMapping mapping, ActionForm form, HttpServletRequest request, String reviewType) throws BaseException {
+    private ActionForward saveGenericReview(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+                                            String reviewType) throws BaseException {
         // FIXME: IMPORTANT!!!!!!!!!!!!!!!!!!!!!!!
         // FIXME: Check the permissions here and everywhere,
         // as they where dropped from checkForCorrectReviewId(ActionMapping, HttpServletRequest, String)
@@ -2848,6 +3017,8 @@ public class ProjectReviewActions extends DispatchAction {
         String permName;
         String phaseName;
         String scorecardTypeName;
+        boolean isApprovalPhase = false;
+        boolean isSubmissionDependentPhase = true;
         // Determine permission name and phase name from the review type
         if ("Screening".equals(reviewType)) {
             permName = Constants.PERFORM_SCREENING_PERM_NAME;
@@ -2857,16 +3028,25 @@ public class ProjectReviewActions extends DispatchAction {
             permName = Constants.PERFORM_REVIEW_PERM_NAME;
             phaseName = Constants.REVIEW_PHASE_NAME;
             scorecardTypeName = "Review";
-        } else {
+        } else if ("Approval".equals(reviewType)) {
+            isApprovalPhase = true;
             permName = Constants.PERFORM_APPROVAL_PERM_NAME;
             phaseName = Constants.APPROVAL_PHASE_NAME;
-            scorecardTypeName = "Client Review";
+            scorecardTypeName = "Approval";
+        } else {
+            isSubmissionDependentPhase = false;
+            permName = Constants.PERFORM_POST_MORTEM_REVIEW_PERM_NAME;
+            phaseName = Constants.POST_MORTEM_PHASE_NAME;
+            scorecardTypeName = "Post-Mortem";
         }
 
         // Verify that certain requirements are met before proceeding with the Action
         CorrectnessCheckResult verification = null;
         if (request.getParameter("rid") != null) {
             verification = checkForCorrectReviewId(mapping, request, permName);
+        }
+        if (verification == null && request.getParameter("pid") != null) {
+            verification = checkForCorrectProjectId(mapping, request, permName);
         }
         if (verification == null && request.getParameter("sid") != null) {
             verification = checkForCorrectSubmissionId(mapping, request, permName);
@@ -2908,7 +3088,7 @@ public class ProjectReviewActions extends DispatchAction {
             myResource = ActionsHelper.getMyResourceForPhase(request, null);
         }
         if (myResource == null) {
-        	myResource = (Resource) request.getAttribute("global_resource");
+            myResource = (Resource) request.getAttribute("global_resource");
         }
 
         // Retrieve the review to edit (if any)
@@ -2933,23 +3113,42 @@ public class ProjectReviewActions extends DispatchAction {
                     ActionsHelper.createScorecardManager(request), phase);
 
             // Prepare filters
-            Filter filterResource = new EqualToFilter("reviewer", new Long(myResource.getId()));
-            Filter filterSubmission = new EqualToFilter("submission", new Long(verification.getSubmission().getId()));
-            Filter filterScorecard = new EqualToFilter("scorecardType",
-                    new Long(scorecardTemplate.getScorecardType().getId()));
+            Filter filter;
+            if (isSubmissionDependentPhase) {
+                Filter filterResource = new EqualToFilter("reviewer", new Long(myResource.getId()));
+                Filter filterSubmission = new EqualToFilter("submission", new Long(verification.getSubmission().getId()));
+                Filter filterScorecard = new EqualToFilter("scorecardType",
+                        new Long(scorecardTemplate.getScorecardType().getId()));
 
-            // Build the list of all filters that should be joined using AND operator
-            List<Filter> filters = new ArrayList<Filter>();
-            filters.add(filterResource);
-            filters.add(filterSubmission);
-            filters.add(filterScorecard);
+                // Build the list of all filters that should be joined using AND operator
+                List<Filter> filters = new ArrayList<Filter>();
+                filters.add(filterResource);
+                filters.add(filterSubmission);
+                filters.add(filterScorecard);
 
-            // Prepare final combined filter
-            Filter filter = new AndFilter(filters);
+                // Prepare final combined filter
+                filter = new AndFilter(filters);
+            } else {
+                Filter filterResource = new EqualToFilter("reviewer", new Long(myResource.getId()));
+                Filter filterScorecard = new EqualToFilter("scorecardType",
+                                                           new Long(scorecardTemplate.getScorecardType().getId()));
+
+                // Build the list of all filters that should be joined using AND operator
+                List<Filter> filters = new ArrayList<Filter>();
+                filters.add(filterResource);
+                filters.add(filterScorecard);
+
+                // Prepare final combined filter
+                filter = new AndFilter(filters);
+            }
+
             // Obtain an instance of Review Manager
             ReviewManager revMgr = ActionsHelper.createReviewManager(request);
             // Retrieve an array of reviews
             Review[] reviews = revMgr.searchReviews(filter, false);
+            if (phase.getPhaseType().getName().equals(Constants.APPROVAL_PHASE_NAME)) {
+                reviews = ActionsHelper.getApprovalPhaseReviews(reviews, phase);
+            }
 
             // Non-empty array of reviews indicates that
             // user is trying to create review that already exists
@@ -3115,7 +3314,10 @@ public class ProjectReviewActions extends DispatchAction {
 
             // Finally, set required fields of the review
             reviewEditor.setAuthor(myResource.getId());
-            reviewEditor.setSubmission(verification.getSubmission().getId());
+            // Skip setting submission ID for Post-Mortem phase
+            if (isSubmissionDependentPhase) {
+                reviewEditor.setSubmission(verification.getSubmission().getId());
+            }
             reviewEditor.setScorecard(scorecardTemplate.getId());
 
             review = reviewEditor.getReview();
@@ -3189,6 +3391,53 @@ public class ProjectReviewActions extends DispatchAction {
         boolean possibleFinalScoreUpdate = false;
         boolean possibleSubmissionStatusUpdate = false;
 
+        Comment reviewLevelComment1 = null;
+        Comment reviewLevelComment2 = null;
+        boolean rejectFixes = false;
+        boolean acceptButRequireOtherFixes = false;
+
+        if (isApprovalPhase) {
+            Resource resource = ActionsHelper.getMyResourceForRole(request, Constants.APPROVER_ROLE_NAME);
+
+            Boolean rejectFixesObj = (Boolean) reviewForm.get("reject_fixes");
+            Boolean acceptButRequireOtherFixesObj = (Boolean) reviewForm.get("accept_but_require_fixes");
+            rejectFixes = (rejectFixesObj != null && rejectFixesObj.booleanValue());
+            acceptButRequireOtherFixes
+                = (acceptButRequireOtherFixesObj != null && acceptButRequireOtherFixesObj.booleanValue());
+
+            for (int i = 0; i < review.getNumberOfComments(); ++i) {
+                Comment comment = review.getComment(i);
+                if (comment.getCommentType().getName().equalsIgnoreCase("Approval Review Comment")) {
+                    reviewLevelComment1 = comment;
+                } else if (comment.getCommentType().getName().equalsIgnoreCase("Approval Review Comment - Other Fixes")) {
+                    reviewLevelComment2 = comment;
+                }
+            }
+
+            if (reviewLevelComment1 == null) {
+                reviewLevelComment1 = new Comment();
+            }
+
+            reviewLevelComment1.setCommentType(
+                ActionsHelper.findCommentTypeByName(commentTypes, "Approval Review Comment"));
+            reviewLevelComment1.setAuthor(resource.getId());
+            reviewLevelComment1.setExtraInfo(rejectFixes ? "Rejected" : "Approved");
+            reviewLevelComment1.setComment("");
+            review.addComment(reviewLevelComment1);
+
+            if (reviewLevelComment2 == null) {
+                reviewLevelComment2 = new Comment();
+            }
+
+            reviewLevelComment2.setCommentType(
+                ActionsHelper.findCommentTypeByName(commentTypes, "Approval Review Comment - Other Fixes"));
+            reviewLevelComment2.setAuthor(resource.getId());
+            reviewLevelComment2.setExtraInfo(acceptButRequireOtherFixes ? "Required" : "");
+            reviewLevelComment2.setComment("");
+            review.addComment(reviewLevelComment2);
+        }
+
+
         // If the user has requested to complete the review
         if (validationSucceeded && (commitRequested || managerEdit)) {
             // Obtain an instance of CalculationManager
@@ -3202,12 +3451,12 @@ public class ProjectReviewActions extends DispatchAction {
             }
             if ("Screening".equals(reviewType) && managerEdit &&
                     (review.getScore() == null || review.getScore().floatValue() != newScore)) {
-            	possibleSubmissionStatusUpdate = true;
+                possibleSubmissionStatusUpdate = true;
             }
             // Update scorecard's score
             review.setScore(new Float(newScore));
             if (review.getInitialScore() == null) {
-            	review.setInitialScore(review.getScore());
+                review.setInitialScore(review.getScore());
             }
             // Set the completed status of the review
             if (commitRequested) {
@@ -3244,7 +3493,7 @@ public class ProjectReviewActions extends DispatchAction {
 
         // This operation will possibly update submission status for the submitter
         if (possibleSubmissionStatusUpdate) {
-        	updateSubmissionStatusScreeningScoreChanged(request, project, phases, review, verification.getSubmission());
+            updateSubmissionStatusScreeningScoreChanged(request, project, phases, review, verification.getSubmission());
         }
 
         if (validationSucceeded && commitRequested) {
@@ -3306,7 +3555,7 @@ public class ProjectReviewActions extends DispatchAction {
      *             if any unexpected error occurs during final score update.
      */
     private static void updateFinalAggregatedScore(HttpServletRequest request, Project project, Phase reviewPhase, Submission sub)
-        	throws BaseException {
+            throws BaseException {
         // Validate parameters
         ActionsHelper.validateParameterNotNull(request, "request");
         ActionsHelper.validateParameterNotNull(project, "project");
@@ -3377,8 +3626,8 @@ public class ProjectReviewActions extends DispatchAction {
         float oldScore = Float.parseFloat(String.valueOf(finalScore));
        
         if (newScore == oldScore) {
-        	// score is not changed
-        	return;
+            // score is not changed
+            return;
         }
         
         // OrChange - Get the placement from the submission instead of the Resource
@@ -3414,7 +3663,7 @@ public class ProjectReviewActions extends DispatchAction {
         List<Long> submissionIds = new ArrayList<Long>();
 
         for (int i = 0; i < submissions.length; ++i) {
-        	submissionIds.add(submissions[i].getId());
+            submissionIds.add(submissions[i].getId());
         }
 
         Filter filterSubmissions = new InFilter("submission", submissionIds);
@@ -3459,19 +3708,19 @@ public class ProjectReviewActions extends DispatchAction {
         // check if placement is changed
         long newPlacement = -1;
         for (int i = 0; i < placements.length; i++) {
-        	if (placements[i].getId() == sub.getId()) {
-        		newPlacement = placements[i].getRank();
-        	}
+            if (placements[i].getId() == sub.getId()) {
+                newPlacement = placements[i].getRank();
+            }
         }
 
         if (newPlacement != -1 && newPlacement == oldPlacement) {
-        	// placement is not changed
+            // placement is not changed
 
             // Check if submission status is changed
             if ((oldScore < minScore && newScore < minScore) ||
-            		(oldScore >= minScore && newScore >= minScore)) {
-            	// the submission status is not changed
-            	return;
+                    (oldScore >= minScore && newScore >= minScore)) {
+                // the submission status is not changed
+                return;
             }
         }
 
@@ -3481,11 +3730,11 @@ public class ProjectReviewActions extends DispatchAction {
         SubmissionStatus noWinStatus = ActionsHelper.getSubmissionStatus(request,
                 "Completed Without Win");
         SubmissionStatus activeStatus = ActionsHelper.getSubmissionStatus(request,
-        		"Active");
+                "Active");
 
         Resource winningSubmitter = null;
         Resource runnerUpSubmitter = null;
-    	
+        
 
         //again iterate over submissions to set the initial score and placement
         for (int iSub = 0; iSub < placements.length; iSub++) {
@@ -3506,23 +3755,23 @@ public class ProjectReviewActions extends DispatchAction {
             // Old Code Ends
 
             SubmissionStatus newStatus = null; 
-            	
+                
             //if failed review, then update the status
             if (aggScore < minScore) {
-            	newStatus = failedStatus;
+                newStatus = failedStatus;
             } else {
                 //if not winner, update submission status
                 if (placement != 1) {
-                	newStatus = noWinStatus;
+                    newStatus = noWinStatus;
                 } else {
-                	newStatus = activeStatus;
+                    newStatus = activeStatus;
                 }
             }
 
             // submission status is changed
             if (!newStatus.equals(submission.getSubmissionStatus())) {
                 submission.setSubmissionStatus(newStatus);
-                upMgr.updateSubmission(submission, String.valueOf(AuthorizationHelper.getLoggedInUserId(request)));            	
+                upMgr.updateSubmission(submission, String.valueOf(AuthorizationHelper.getLoggedInUserId(request)));                
             }
 
             //cache winning and runner up submitter.
@@ -3558,7 +3807,7 @@ public class ProjectReviewActions extends DispatchAction {
 
         //update the project
         projectManager.updateProject(project, "Update the winner and runner up.",
-        		String.valueOf(AuthorizationHelper.getLoggedInUserId(request)));
+                String.valueOf(AuthorizationHelper.getLoggedInUserId(request)));
 
         ActionsHelper.resetProjectResultWithChangedScores(project.getId(), userId);
     }
@@ -3628,22 +3877,22 @@ public class ProjectReviewActions extends DispatchAction {
         // Check if current open phase is Review
         boolean isReviewPhase = false;
         for (int i = 0; i < phases.length; i++) {
-        	if ("Review".equals(phases[i].getPhaseType().getName())) {
-        		isReviewPhase = "Open".equals(phases[i].getPhaseStatus().getName());
-        		break;
-        	}
+            if ("Review".equals(phases[i].getPhaseType().getName())) {
+                isReviewPhase = "Open".equals(phases[i].getPhaseStatus().getName());
+                break;
+            }
 
-        	// If screening phase is open, then needn't change anything
-        	if ("Screening".equals(phases[i].getPhaseType().getName())) {
-        		if ("Open".equals(phases[i].getPhaseStatus().getName())) {
-        			return;
-        		}
-        	}
+            // If screening phase is open, then needn't change anything
+            if ("Screening".equals(phases[i].getPhaseType().getName())) {
+                if ("Open".equals(phases[i].getPhaseStatus().getName())) {
+                    return;
+                }
+            }
         }
 
         if (!isReviewPhase) {
-        	// Current we only process while review phase is open
-        	return;
+            // Current we only process while review phase is open
+            return;
         }
 
         UploadManager upMgr = ActionsHelper.createUploadManager(request);
@@ -3654,7 +3903,7 @@ public class ProjectReviewActions extends DispatchAction {
         Scorecard[] scoreCards = scorecardManager.getScorecards(new long[]{review.getScorecard()}, false);
         
         if (scoreCards.length > 0) {
-        	minimumScore = scoreCards[0].getMinScore();
+            minimumScore = scoreCards[0].getMinScore();
         }
 
         boolean passScreening = review.getScore().floatValue() >= minimumScore;
@@ -3666,24 +3915,24 @@ public class ProjectReviewActions extends DispatchAction {
         SubmissionStatus[] statuses = upMgr.getAllSubmissionStatuses();
 
         for (int i = 0; i < statuses.length; i++) {
-        	if ("Failed Screening".equals(statuses[i].getName())) {
-        		failedScreening = statuses[i];
-        	} else if ("Failed Review".equals(statuses[i].getName())) {
-        		failedReview = statuses[i];
-        	} else if ("Active".equals(statuses[i].getName())) {
-        		active = statuses[i];
-        	}
+            if ("Failed Screening".equals(statuses[i].getName())) {
+                failedScreening = statuses[i];
+            } else if ("Failed Review".equals(statuses[i].getName())) {
+                failedReview = statuses[i];
+            } else if ("Active".equals(statuses[i].getName())) {
+                active = statuses[i];
+            }
         }
 
         if (!passScreening) {
-        	submission.setSubmissionStatus(failedScreening);
+            submission.setSubmissionStatus(failedScreening);
         } else {
-        	// pass screening
-        	if (isReviewPhase) {
-        		submission.setSubmissionStatus(active);
-        	} else {
-        		submission.setSubmissionStatus(failedReview);
-        	}
+            // pass screening
+            if (isReviewPhase) {
+                submission.setSubmissionStatus(active);
+            } else {
+                submission.setSubmissionStatus(failedReview);
+            }
         }
         upMgr.updateSubmission(submission, String.valueOf(AuthorizationHelper.getLoggedInUserId(request)));
     }
@@ -3707,9 +3956,9 @@ public class ProjectReviewActions extends DispatchAction {
      *             <code>itemIdx</code> or <code>commentCount</code> are negative.
      */
     private static int populateItemComments(Item item, int itemIdx, Map<String, String> replies,
-    		Map<String, String> commentTypeIds, int commentCount, CommentType[] commentTypes, Resource myResource,
-    		boolean managerEdit) {
-    	
+            Map<String, String> commentTypeIds, int commentCount, CommentType[] commentTypes, Resource myResource,
+            boolean managerEdit) {
+        
         // Validate parameters
         ActionsHelper.validateParameterNotNull(item, "item");
         ActionsHelper.validateParameterInRange(itemIdx, "itemIdx", 0, Integer.MAX_VALUE);
@@ -3842,21 +4091,18 @@ public class ProjectReviewActions extends DispatchAction {
         return newCommentCount - 1;
     }
 
-	/**
-     * TODO: Document it
+    /**
+     * <p>Handles the request for viewing the generic review details.</p>
      *
-     * @return
-     * @param mapping
-     * @param request
-     * @param reviewType
-     * @throws BaseException
-     * @throws IllegalArgumentException
-     *             if any of the parameters are <code>null</code>, or if <code>reviewType</code>
-     *             parameter is empty string, or if that parameter contains the value that does not
-     *             match either <code>&quot;Screening&quot;</code>, or
-     *             <code>&quot;Review&quot;</code>, or <code>&quot;Approval&quot;</code>.
+     * @param mapping an <code>ActionMapping</code> used to map the request to this method.
+     * @param form an <code>ActionForm</code> mapped to this request.
+     * @param request an <code>HttpServletRequest</code> representing the incoming request from the client.
+     * @param reviewType a <code>String</code> referencing the type of the review.
+     * @return an <code>ActionForward</code> referencing the next view to be used for processing the request.
+     * @throws BaseException if an unexpected error occurs.
      */
-    private ActionForward viewGenericReview(ActionMapping mapping, ActionForm form, HttpServletRequest request, String reviewType)
+    private ActionForward viewGenericReview(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+                                            String reviewType)
         throws BaseException {
         // Validate parameters
         ActionsHelper.validateParameterNotNull(mapping, "mapping");
@@ -3868,6 +4114,7 @@ public class ProjectReviewActions extends DispatchAction {
         String scorecardTypeName;
 
         // Determine permission name and phase name from the review type
+        boolean isSubmissionDependentPhase = true;
         if (reviewType.equals("Screening")) {
             permName = Constants.VIEW_SCREENING_PERM_NAME;
             phaseName = Constants.SCREENING_PHASE_NAME;
@@ -3879,7 +4126,12 @@ public class ProjectReviewActions extends DispatchAction {
         } else if (reviewType.equals("Approval")) {
             permName = Constants.VIEW_APPROVAL_PERM_NAME;
             phaseName = Constants.APPROVAL_PHASE_NAME;
-            scorecardTypeName = "Client Review";
+            scorecardTypeName = "Approval";
+        } else if (reviewType.equals("Post-Mortem")) {
+            isSubmissionDependentPhase = false;
+            permName = Constants.VIEW_POST_MORTEM_PERM_NAME;
+            phaseName = Constants.POST_MORTEM_PHASE_NAME;
+            scorecardTypeName = "Post-Mortem";
         } else {
             throw new IllegalArgumentException("Incorrect review type specified: " + reviewType + ".");
         }
@@ -3927,7 +4179,8 @@ public class ProjectReviewActions extends DispatchAction {
                     myResource != null && verification.getReview().getAuthor() == myResource.getId()) {
             // User is authorized to view review authored by him
             isAllowed = true;
-        } else if (myResource != null && verification.getSubmission().getUpload().getOwner() == myResource.getId()) {
+        } else if (isSubmissionDependentPhase && (myResource != null)
+                   && (verification.getSubmission().getUpload().getOwner() == myResource.getId())) {
             // User is authorized to view review for his submission (when not in Review or in Appeals)
             if (reviewType != "Review" || !activePhases.contains(Constants.REVIEW_PHASE_NAME) ||
                     activePhases.contains(Constants.APPEALS_PHASE_NAME)) {
@@ -3942,16 +4195,16 @@ public class ProjectReviewActions extends DispatchAction {
                     isAllowed = true;
                 }
             } else if (reviewType == "Screening") {
-            	if (!activePhases.contains(Constants.REVIEW_PHASE_NAME) &&
+                if (!activePhases.contains(Constants.REVIEW_PHASE_NAME) &&
                         !activePhases.contains(Constants.APPEALS_PHASE_NAME) &&
                         !activePhases.contains(Constants.APPEALS_RESPONSE_PHASE_NAME)) {
                     isAllowed = true;
                 } else {
-                	//if any of those phases are open only, a user can see the screening if he is not a submitter 
-                	isAllowed = !AuthorizationHelper.hasUserRole(request, Constants.SUBMITTER_ROLE_NAME);
+                    //if any of those phases are open only, a user can see the screening if he is not a submitter 
+                    isAllowed = !AuthorizationHelper.hasUserRole(request, Constants.SUBMITTER_ROLE_NAME);
                 }
             } else {
-            	isAllowed = true;
+                isAllowed = true;
             }
         }
 
@@ -4039,7 +4292,7 @@ public class ProjectReviewActions extends DispatchAction {
     }
 
     /**
-     * TODO: Write documentation for this method
+     * 
      *
      * @return
      * @param scorecardTemplate
@@ -4078,7 +4331,7 @@ public class ProjectReviewActions extends DispatchAction {
     }
 
     /**
-     * TODO: Write documentation for this method
+     * 
      *
      * @return
      * @param request
@@ -4332,10 +4585,10 @@ public class ProjectReviewActions extends DispatchAction {
 
                             if (ActionsHelper.isReviewerComment(comment)) {
                                 ++commentIdx;
-                            	// Verify that the item is marked as requiring a fix
-                            	if (comment.getCommentType().getName().equalsIgnoreCase("Required")) {
-                            		required = true;
-                            	}
+                                // Verify that the item is marked as requiring a fix
+                                if (comment.getCommentType().getName().equalsIgnoreCase("Required")) {
+                                    required = true;
+                                }
                                 String fixed = (String) comment.getExtraInfo();
                                 if (fixed == null ||
                                         !(fixed.equalsIgnoreCase("Fixed") || fixed.equalsIgnoreCase("Not Fixed"))) {
@@ -4376,7 +4629,7 @@ public class ProjectReviewActions extends DispatchAction {
     }
 
     /**
-     * TODO: Write documentation for this method
+     * 
      *
      * @return
      * @param request
@@ -4418,17 +4671,17 @@ public class ProjectReviewActions extends DispatchAction {
         String questionType = question.getQuestionType().getName();
 
 //        if (questionType.equalsIgnoreCase("Scale (1-4)") || questionType.equalsIgnoreCase("Scale (1-10)") || 
-//        		questionType.equalsIgnoreCase("Scale (0-9)") || questionType.equalsIgnoreCase("Scale (0-3)") ||
-//        		questionType.equalsIgnoreCase("Scale (0-4)")) {
+//                questionType.equalsIgnoreCase("Scale (0-9)") || questionType.equalsIgnoreCase("Scale (0-3)") ||
+//                questionType.equalsIgnoreCase("Scale (0-4)")) {
 //            if (!(correctAnswers.containsKey(answer) && correctAnswers.get(answer).equals(questionType))) {
 //                ActionsHelper.addErrorToRequest(request, errorKey, "Error.saveReview.Answer.Incorrect");
 //                success = false;
 //            }
         if (correctAnswers.containsKey(questionType)) {
-			if (!(correctAnswers.get(questionType).contains(answer))) {
-				ActionsHelper.addErrorToRequest(request, errorKey, "Error.saveReview.Answer.Incorrect");
-				success = false;
-			}
+            if (!(correctAnswers.get(questionType).contains(answer))) {
+                ActionsHelper.addErrorToRequest(request, errorKey, "Error.saveReview.Answer.Incorrect");
+                success = false;
+            }
         } else if (questionType.equalsIgnoreCase("Test Case")) {
             String[] answers = answer.split("/");
             // The number of answers for Testcase type of question must be exactly 2
@@ -4470,7 +4723,7 @@ public class ProjectReviewActions extends DispatchAction {
     }
 
     /**
-     * TODO: Write documentation for this method
+     * 
      *
      * @return
      * @param request
@@ -4607,7 +4860,7 @@ public class ProjectReviewActions extends DispatchAction {
     }
 
     /**
-     * TODO: Write documentation for this method
+     * 
      *
      * @return
      * @param request
@@ -4640,7 +4893,7 @@ public class ProjectReviewActions extends DispatchAction {
     }
 
     /**
-     * TODO: Document it
+     * 
      *
      * @return
      * @param allComments
@@ -4655,7 +4908,7 @@ public class ProjectReviewActions extends DispatchAction {
     }
 
     /**
-     * TODO: Document it
+     * 
      *
      * @return
      * @param allComments
@@ -4686,72 +4939,172 @@ public class ProjectReviewActions extends DispatchAction {
      * @throws BaseException
      *             if any error occurs.
      */
-	public ActionForward viewScorecard(ActionMapping mapping, ActionForm form,
+    public ActionForward viewScorecard(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response)
         throws BaseException {
 
-    	try {
-	   		// At this point, redirect-after-login attribute should be removed (if it exists)
-	    	AuthorizationHelper.removeLoginRedirect(request);
+        try {
+               // At this point, redirect-after-login attribute should be removed (if it exists)
+            AuthorizationHelper.removeLoginRedirect(request);
 
-	       	LoggingHelper.logAction(request);
-	
-	       	// Gather the roles the user has for current request
-	       	AuthorizationHelper.gatherUserRoles(request);
+               LoggingHelper.logAction(request);
+    
+               // Gather the roles the user has for current request
+               AuthorizationHelper.gatherUserRoles(request);
 
-	       	// Validate parameters
-	       	ActionsHelper.validateParameterNotNull(mapping, "mapping");
-	       	ActionsHelper.validateParameterNotNull(request, "request");
-	
-	   		// Verify that Scorecard ID was specified and denotes correct scorecard
-	       	String scidParam = request.getParameter("scid");
-	       	if (scidParam == null || scidParam.trim().length() == 0) {
-	           	return(ActionsHelper.produceErrorReport(
-	                   mapping, getResources(request), request, null, "Error.ScorecardIdNotSpecified", null));
-	       	}
-	
-	   		long scid;
-	
-	       	try {
-	           	// Try to convert specified scid parameter to its integer representation
-	           	scid = Long.parseLong(scidParam, 10);
-	       	} catch (NumberFormatException e) {
-	           	return(ActionsHelper.produceErrorReport(
-	                   mapping, getResources(request), request, null, "Error.ScorecardIdInvalid", null));
-	       	}
-		
-	       	// Obtain an instance of Scorecard Manager
-	       	ScorecardManager scrMgr = ActionsHelper.createScorecardManager(request);
-	       	Scorecard scorecardTemplate = null;
-	       	try {
-	           	// Get Scorecard by its id
-	           	scorecardTemplate = scrMgr.getScorecard(scid);
-	       	} catch (PersistenceException e) {
-	           	// Eat the exception
-	       	}
-	
-	   	   	// Verify that scorecard with specified ID exists
-	       	if (scorecardTemplate == null) {
-	           	return(ActionsHelper.produceErrorReport(
-	                   mapping, getResources(request), request, null, "Error.ScorecardNotFound", null));
-	       	}
+               // Validate parameters
+               ActionsHelper.validateParameterNotNull(mapping, "mapping");
+               ActionsHelper.validateParameterNotNull(request, "request");
+    
+               // Verify that Scorecard ID was specified and denotes correct scorecard
+               String scidParam = request.getParameter("scid");
+               if (scidParam == null || scidParam.trim().length() == 0) {
+                   return(ActionsHelper.produceErrorReport(
+                       mapping, getResources(request), request, null, "Error.ScorecardIdNotSpecified", null));
+               }
+    
+               long scid;
+    
+               try {
+                   // Try to convert specified scid parameter to its integer representation
+                   scid = Long.parseLong(scidParam, 10);
+               } catch (NumberFormatException e) {
+                   return(ActionsHelper.produceErrorReport(
+                       mapping, getResources(request), request, null, "Error.ScorecardIdInvalid", null));
+               }
+        
+               // Obtain an instance of Scorecard Manager
+               ScorecardManager scrMgr = ActionsHelper.createScorecardManager(request);
+               Scorecard scorecardTemplate = null;
+               try {
+                   // Get Scorecard by its id
+                   scorecardTemplate = scrMgr.getScorecard(scid);
+               } catch (PersistenceException e) {
+                   // Eat the exception
+               }
+    
+                  // Verify that scorecard with specified ID exists
+               if (scorecardTemplate == null) {
+                   return(ActionsHelper.produceErrorReport(
+                       mapping, getResources(request), request, null, "Error.ScorecardNotFound", null));
+               }
 
-            // Verify the scorecard is active	
-	       	if (scorecardTemplate.getScorecardStatus().getId() != ACTIVE_SCORECARD) {
-	           	return(ActionsHelper.produceErrorReport(
-	                   mapping, getResources(request), request, null, "Error.ScorecardNotActive", null));
-	       	}
-	
-	       	// Place Scorecard template in the request
-	       	request.setAttribute("scorecardTemplate", scorecardTemplate);
+            // Verify the scorecard is active    
+               if (scorecardTemplate.getScorecardStatus().getId() != ACTIVE_SCORECARD) {
+                   return(ActionsHelper.produceErrorReport(
+                       mapping, getResources(request), request, null, "Error.ScorecardNotActive", null));
+               }
+    
+               // Place Scorecard template in the request
+               request.setAttribute("scorecardTemplate", scorecardTemplate);
 
-	       	// Signal about successful execution of the Action
-	       	return mapping.findForward(Constants.SUCCESS_FORWARD_NAME);
-		} catch (Throwable e) {
-			StringWriter buf = new StringWriter();
-			e.printStackTrace(new PrintWriter(buf));
-			log.log(Level.ERROR, buf);
-			throw new BaseException(e);
-		}
+               // Signal about successful execution of the Action
+               return mapping.findForward(Constants.SUCCESS_FORWARD_NAME);
+        } catch (Throwable e) {
+            StringWriter buf = new StringWriter();
+            e.printStackTrace(new PrintWriter(buf));
+            log.log(Level.ERROR, buf);
+            throw new BaseException(e);
+        }
+    }
+
+    /**
+     * This method is an implementation of &quot;Create Approval&quot; Struts Action defined for
+     * this assembly, which is supposed to gather needed information (scorecard template) and
+     * present it to editReview.jsp page, which will fill the required fields and post them to the
+     * &quot;Save Approval&quot; action. The action implemented by this method is executed to edit
+     * approval that does not exist yet, and hence is supposed to be created.
+     *
+     * @return &quot;success&quot; forward, which forwards to the /jsp/editReview.jsp page (as
+     *         defined in struts-config.xml file), or &quot;userError&quot; forward, which forwards
+     *         to the /jsp/userError.jsp page, which displays information about an error that is
+     *         usually caused by incorrect user input (such as absent submission id, or the lack of
+     *         permissions, etc.).
+     * @param mapping action mapping.
+     * @param form action form.
+     * @param request the http request.
+     * @param response the http response.
+     * @throws BaseException if any error occurs.
+     * @since 1.1
+     */
+    public ActionForward createPostMortem(ActionMapping mapping, ActionForm form,
+            HttpServletRequest request, HttpServletResponse response)
+        throws BaseException{
+        LoggingHelper.logAction(request);
+        return createGenericReview(mapping, form, request, "Post-Mortem");
+    }
+
+    /**
+     * This method is an implementation of &quot;Edit Post-Mortem&quot; Struts Action defined for this
+     * assembly, which is supposed to gather needed information (post-mortem and scorecard template)
+     * and present it to editReview.jsp page, which will fill the required fields and post them to
+     * the &quot;Save Post-Mortem&quot; action. The action implemented by this method is executed to
+     * edit post-mortem that has already been created, but has not been submitted yet, and hence is
+     * supposed to be edited.
+     *
+     * @return &quot;success&quot; forward, which forwards to the /jsp/editReview.jsp page (as
+     *         defined in struts-config.xml file), or &quot;userError&quot; forward, which forwards
+     *         to the /jsp/userError.jsp page, which displays information about an error that is
+     *         usually caused by incorrect user input (such as absent review id, or the lack of
+     *         permissions, etc.).
+     * @param mapping action mapping.
+     * @param form action form.
+     * @param request the http request.
+     * @param response the http response.
+     * @throws BaseException if any error occurs.
+     * @since 1.1
+     */
+    public ActionForward editPostMortem(ActionMapping mapping, ActionForm form,
+            HttpServletRequest request, HttpServletResponse response)
+        throws BaseException{
+        LoggingHelper.logAction(request);
+        return editGenericReview(mapping, form, request, "Post-Mortem");
+    }
+
+    /**
+     * This method is an implementation of &quot;Save Post-Mortem&quot; Struts Action defined for this
+     * assembly, which is supposed to save information posted from /jsp/editReview.jsp page. This
+     * method will either create new post-mortem or update (edit) an existing one depending on which
+     * action was called to display /jsp/editReview.jsp page.
+     *
+     * @return &quot;success&quot; forward, which forwards to the &quot;View Project Details&quot;
+     *         action, or &quot;userError&quot; forward, which forwards to the /jsp/userError.jsp
+     *         page, which displays information about an error that is usually caused by incorrect
+     *         user input (such as absent submission id, or the lack of permissions, etc.).
+     * @param mapping action mapping.
+     * @param form action form.
+     * @param request the http request.
+     * @param response the http response.
+     * @throws BaseException if any error occurs.
+     * @since 1.1
+     */
+    public ActionForward savePostMortem(ActionMapping mapping, ActionForm form,
+            HttpServletRequest request, HttpServletResponse response)
+        throws BaseException {
+        LoggingHelper.logAction(request);
+        return saveGenericReview(mapping, form, request, "Post-Mortem");
+    }
+
+    /**
+     * This method is an implementation of &quot;View Post-Mortem&quot; Struts Action defined for this
+     * assembly, which is supposed to view completed post-mortem.
+     *
+     * @return &quot;success&quot; forward, which forwards to the /jsp/viewReview.jsp page (as
+     *         defined in struts-config.xml file), or &quot;userError&quot; forward, which forwards
+     *         to the /jsp/userError.jsp page, which displays information about an error that is
+     *         usually caused by incorrect user input (such as absent review id, or the lack of
+     *         permissions, etc.).
+     * @param mapping action mapping.
+     * @param form action form.
+     * @param request the http request.
+     * @param response the http response.
+     * @throws BaseException if any error occurs.
+     * @since 1.1
+     */
+    public ActionForward viewPostMortem(ActionMapping mapping, ActionForm form,
+            HttpServletRequest request, HttpServletResponse response)
+        throws BaseException {
+        LoggingHelper.logAction(request);
+        return viewGenericReview(mapping, form, request, "Post-Mortem");
     }
 }

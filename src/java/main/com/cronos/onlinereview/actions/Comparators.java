@@ -15,6 +15,7 @@ import com.topcoder.management.resource.Resource;
 import com.topcoder.management.review.data.Review;
 import com.topcoder.project.phases.Phase;
 import com.topcoder.project.phases.PhaseDateComparator;
+import com.topcoder.project.phases.PhaseStatus;
 
 /**
  * This class is used to group all comparator-classes in one file. It contains several inner-classes
@@ -75,6 +76,30 @@ final class Comparators {
          */
         public int compare(Object o1, Object o2) {
             // Try to compare objects using the method from the superclass
+            Phase phase1 = (Phase) o1;
+            Phase phase2 = (Phase) o2;
+
+            boolean isPhase1PostMortem = phase1.getPhaseType().getName().equalsIgnoreCase("Post-Mortem");
+            boolean isPhase2PostMortem = phase2.getPhaseType().getName().equalsIgnoreCase("Post-Mortem");
+
+            if (isPhase1PostMortem || isPhase2PostMortem) {
+                PhaseStatus phaseStatus1 = phase1.getPhaseStatus();
+                PhaseStatus phaseStatus2 = phase2.getPhaseStatus();
+                if (isPhase1PostMortem) {
+                    if (phaseStatus2.getId() == PhaseStatus.SCHEDULED.getId()) {
+                        return -1;
+                    } else {
+                        return 1;
+                    }
+                } else {
+                    if (phaseStatus1.getId() == PhaseStatus.SCHEDULED.getId()) {
+                        return 1;
+                    } else {
+                        return -1;
+                    }
+                }
+            }
+
             int comparison = super.compare(o1, o2);
             if (comparison != 0) {
                 return comparison;

@@ -46,8 +46,14 @@ import com.topcoder.web.ejb.pacts.ParentReferencePayment;
  *   </ol>
  * </p>
  *
+ * Version 1.4 (Online Review End Of Project Analysis Release Assembly 1.0) Change notes:
+ *   <ol>
+ *     <li>Added <code>reqPostMortemReviewers</code>, <code>reqApprovers</code> configuration parameters.</li>
+ *   </ol>
+ * </p>
+ *
  * @author George1, real_vg, pulky, isv
- * @version 1.3
+ * @version 1.4
  */
 public class ConfigHelper {
 
@@ -672,6 +678,20 @@ public class ConfigHelper {
     private static int reqReviewers = -1;
 
     /**
+     * <p>An <code>int</code> providing the default number of required approvers for Approval phase.</p>
+     *
+     * @since 1.4
+     */
+    private static int reqApprovers = -1;
+
+    /**
+     * <p>An <code>int</code> providing the default number of required reviewers for Post-Mortem phase.</p>
+     *
+     * @since 1.4
+     */
+    private static int reqPostMortemReviewers = -1;
+
+    /**
      * This member variable holds the time duration, in hours, before phase ends during which
      * outstanding deliverables are shown with &quot;Deadline&#160;Near&quot; status, and statuses
      * of open phases are shown as &quot;Closing&quot;.
@@ -1086,6 +1106,28 @@ public class ConfigHelper {
                     reqReviewers = minimum;
                 }
             }
+            // Parse the number of required reviewers for Post-Mortem phase
+            String postMortemReviewersStr
+                = cfgMgr.getPropertyObject("com.cronos.onlinereview.phases.PostMortemPhaseHandler",
+                                           "PostMortemPhaseDefaultReviewersNumber").getValue();
+            if (postMortemReviewersStr != null && postMortemReviewersStr.trim().length() != 0) {
+                int minimum = Integer.parseInt(postMortemReviewersStr, 10);
+                if (minimum >= 0) {
+                    reqPostMortemReviewers = minimum;
+                }
+            }
+            // Parse the number of required reviewers for Approval phase
+            String approversStr
+                = cfgMgr.getPropertyObject("com.cronos.onlinereview.phases.ApprovalPhaseHandler",
+                                           "ApprovalPhaseDefaultReviewersNumber").getValue();
+            if (approversStr != null && approversStr.trim().length() != 0) {
+                int minimum = Integer.parseInt(approversStr, 10);
+                if (minimum >= 0) {
+                    reqApprovers = minimum;
+                }
+            }
+
+
             // Verify that duration of "Deadline Near" status was specified, and assign it
             if (deadlineNearDurationStr != null && deadlineNearDurationStr.trim().length() != 0) {
                 long duration = Long.parseLong(deadlineNearDurationStr, 10);
@@ -1523,6 +1565,28 @@ public class ConfigHelper {
      */
     public static int getDefaultRequiredReviewers() {
         return reqReviewers;
+    }
+
+    /**
+     * This static method returns default minimum of registered approvers required before Approval
+     * phase can be closed.
+     *
+     * @return default minimum amount, or -1 if there is no default minimum value.
+     * @since 1.4
+     */
+    public static int getDefaultRequiredApprovers() {
+        return reqApprovers;
+    }
+
+    /**
+     * This static method returns default minimum of registered reviewers required before Post-Mortem
+     * phase can be closed.
+     *
+     * @return default minimum amount, or -1 if there is no default minimum value.
+     * @since 1.4
+     */
+    public static int getDefaultRequiredPostMortemReviewers() {
+        return reqPostMortemReviewers;
     }
 
     /**

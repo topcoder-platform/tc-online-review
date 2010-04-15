@@ -109,6 +109,20 @@
             <form-property name="file" type="org.apache.struts.upload.FormFile[]" />
         </form-bean>
 
+        <form-bean name="approvalForm" dynamic="true"
+            type="org.apache.struts.validator.LazyValidatorForm">
+            <form-property name="rid" type="java.lang.Long" />
+            <form-property name="sid" type="java.lang.Long" />
+            <form-property name="save" type="java.lang.String" />
+            <form-property name="answer" type="java.lang.String[]" />
+            <form-property name="comment_count" type="java.lang.Integer[]" />
+            <form-property name="comment_type" type="java.util.HashMap" />
+            <form-property name="comment" type="java.util.HashMap" />
+            <form-property name="file" type="org.apache.struts.upload.FormFile[]" />
+            <form-property name="reject_fixes" type="java.lang.Boolean" />
+            <form-property name="accept_but_require_fixes" type="java.lang.Boolean" />
+        </form-bean>
+
         <form-bean name="aggregationForm" dynamic="true"
             type="org.apache.struts.validator.LazyValidatorForm">
             <form-property name="rid" type="java.lang.Long" />
@@ -597,9 +611,9 @@
         <action path="/actions/CreateApproval" unknown="false"
             type="com.cronos.onlinereview.actions.ProjectReviewActions"
             parameter="method" scope="request"
-            name="reviewForm"
+            name="approvalForm"
             input="/jsp/viewProjectDetails.jsp">
-            <forward name="success" path="/jsp/editReview.jsp" redirect="false"/>
+            <forward name="success" path="/jsp/editApproval.jsp" redirect="false"/>
             <forward name="edit" path="/actions/EditApproval.do?method=editApproval" redirect="true"/>
         </action>
 
@@ -607,13 +621,51 @@
         <action path="/actions/EditApproval" unknown="false"
             type="com.cronos.onlinereview.actions.ProjectReviewActions"
             parameter="method" scope="request"
+            name="approvalForm"
+            input="/jsp/viewProjectDetails.jsp">
+            <forward name="success" path="/jsp/editApproval.jsp" redirect="false"/>
+        </action>
+
+        <!-- "Save Approval" action -->
+        <action path="/actions/SaveApproval" unknown="false"
+            type="com.cronos.onlinereview.actions.ProjectReviewActions"
+            parameter="method" scope="request"
+            name="approvalForm"
+            input="/jsp/editApproval.jsp">
+            <forward name="preview" path="/jsp/viewApproval.jsp" redirect="false"/>
+            <forward name="success" path="/actions/ViewProjectDetails.do?method=viewProjectDetails" redirect="true"/>
+        </action>
+
+        <!-- "View Approval" action -->
+        <action path="/actions/ViewApproval" unknown="false"
+            type="com.cronos.onlinereview.actions.ProjectReviewActions"
+            parameter="method" scope="request"
+            name="approvalForm"
+            input="/jsp/viewProjectDetails.jsp">
+            <forward name="success" path="/jsp/viewApproval.jsp" redirect="false"/>
+        </action>
+        
+        <!-- "Create PostMortem" action -->
+        <action path="/actions/CreatePostMortem" unknown="false"
+            type="com.cronos.onlinereview.actions.ProjectReviewActions"
+            parameter="method" scope="request"
+            name="reviewForm"
+            input="/jsp/viewProjectDetails.jsp">
+            <forward name="success" path="/jsp/editReview.jsp" redirect="false"/>
+            <forward name="edit" path="/actions/EditPostMortem.do?method=editPostMortem" redirect="true"/>
+        </action>
+
+        <!-- "Edit PostMortem" action -->
+        <action path="/actions/EditPostMortem" unknown="false"
+            type="com.cronos.onlinereview.actions.ProjectReviewActions"
+            parameter="method" scope="request"
             name="reviewForm"
             input="/jsp/viewProjectDetails.jsp">
             <forward name="success" path="/jsp/editReview.jsp" redirect="false"/>
         </action>
 
-        <!-- "Save Approval" action -->
-        <action path="/actions/SaveApproval" unknown="false"
+        <!-- "Save PostMortem" action -->
+        <action path="/actions/SavePostMortem" unknown="false"
             type="com.cronos.onlinereview.actions.ProjectReviewActions"
             parameter="method" scope="request"
             name="reviewForm"
@@ -622,8 +674,8 @@
             <forward name="success" path="/actions/ViewProjectDetails.do?method=viewProjectDetails" redirect="true"/>
         </action>
 
-        <!-- "View Approval" action -->
-        <action path="/actions/ViewApproval" unknown="false"
+        <!-- "View PostMortem" action -->
+        <action path="/actions/ViewPostMortem" unknown="false"
             type="com.cronos.onlinereview.actions.ProjectReviewActions"
             parameter="method" scope="request"
             name="reviewForm"

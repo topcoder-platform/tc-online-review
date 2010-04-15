@@ -1,3 +1,14 @@
+<%--
+  - Author: isv
+  - Version: 1.1
+  - Copyright (C) 2004 - 2010 TopCoder Inc., All Rights Reserved.
+  -
+  - Description: This page fragment displays the form input elements group for editing the timeline and other
+  - parameters for single project phase.
+  -
+  - Version 1.1 (Online Review End of Project Analysis v1.0) changes: Added logic for supporting Post-Mortem phase.
+  - Updated logic for supporting Approval phase.
+--%>
 <%@ page language="java" isELIgnored="false" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
@@ -41,6 +52,8 @@
     </tr>
 
     <%-- PHASE ROW GOES HERE --%>
+    <c:set var="approvalPhaseMet" value="${false}"/>
+    <c:set var="disableApprovalReviewerNumberInput" value="${false}"/>
     <c:forEach var="phaseIdx" begin="0" end="${fn:length(projectForm.map['phase_id']) - 1}">
         <c:if test="${phaseIdx eq 0}">
             <tr class="dark" style="display: none;" id="phase_row_template">
@@ -169,13 +182,21 @@
             </c:if>
                 <td class="value" colspan="${(newProject) ? 1 : 2}"><!-- @ --></td>
                 <td class="value" colspan="4"><bean:message key="editProject.Phases.Criteria.Scorecard" />
-                    <html:select style="width:350px;" styleClass="inputBox" property="phase_scorecard[${phaseIdx}]" >
+                    <html:select style="width:350px;" styleClass="inputBox" property="phase_scorecard[${phaseIdx}]">
                         <c:forEach items="${screeningScorecards}" var="scorecard">
-                            <c:if test="${(newProject && scorecard.category == 1) || (not newProject && project.projectCategory.id == scorecard.category)}">
+                            <c:if test="${(newProject && scorecard.category == 1)
+                                          || (not newProject && project.projectCategory.id == scorecard.category)
+                                          || projectCategoriesMap[scorecard.category].projectType.generic}">
                                 <html:option value="${scorecard.id}">${scorecard.name} ${scorecard.version}</html:option>
                             </c:if>
                         </c:forEach>
                     </html:select>
+                    <script type="text/javascript">
+                        <!--
+                         screeningScorecardNodes[screeningScorecardNodes.length]
+                             = document.getElementsByName("phase_scorecard[${phaseIdx}]")[0];
+                        -->
+                    </script>
                 </td>
             </tr>
         </c:if>
@@ -191,30 +212,111 @@
                     <html:select style="width:350px;" styleClass="inputBox" property="phase_scorecard[${phaseIdx}]" >
 
                         <c:forEach items="${reviewScorecards}" var="scorecard">
-                            <c:if test="${(newProject && scorecard.category == 1) or (not newProject && project.projectCategory.id == scorecard.category)}">
+                            <c:if test="${(newProject && scorecard.category == 1)
+                                          or (not newProject && project.projectCategory.id == scorecard.category)
+                                          or projectCategoriesMap[scorecard.category].projectType.generic}">
                             <html:option value="${scorecard.id}">${scorecard.name} ${scorecard.version}</html:option>
                             </c:if>
                         </c:forEach>
                     </html:select>
+                    <script type="text/javascript">
+                        <!--
+                         reviewScorecardNodes[reviewScorecardNodes.length]
+                             = document.getElementsByName("phase_scorecard[${phaseIdx}]")[0];
+                        -->
+                    </script>
                 </td>
             </tr>
         </c:if>
-        <c:if test="${(phaseIdx eq 0) or (not empty projectForm.map['phase_scorecard'][phaseIdx] and projectForm.map['phase_name'][phaseIdx] eq 'Approval')}">
+        <c:if test="${(phaseIdx eq 0) or (projectForm.map['phase_name'][phaseIdx] eq 'Approval')}">
             <c:if test="${phaseIdx eq 0}">
                 <tr class="highlighted" id="approval_scorecard_row_template" style="display: none;">
+            </c:if>
+            <c:if test="${phaseIdx ne 0}">
+                <c:if test="${approvalPhaseMet}">
+                    <c:set var="disableApprovalReviewerNumberInput" value="${true}"/>
+                </c:if>
+                <c:set var="approvalPhaseMet" value="${true}"/>
+                <tr class="highlighted">
+            </c:if>
+                <td class="value" colspan="${(newProject) ? 1 : 2}"><!-- @ --></td>
+                <td class="value" colspan="4">
+                    <bean:message key="editProject.Phases.Criteria.ReviewNumber.beforeInput" />
+                    <c:choose>
+                        <c:when test="${disableApprovalReviewerNumberInput}">
+                            <html:text style="width:30px;text-align:right;" styleClass="inputBox" disabled="true"
+                                       size="30" property="phase_required_reviewers[${phaseIdx}]"/>
+                        </c:when>
+                        <c:otherwise>
+                            <c:if test="${phaseIdx eq 0}">
+                                <html:text style="width:30px;text-align:right;" styleClass="inputBox"
+                                           size="30" property="phase_required_reviewers[${phaseIdx}]"
+                                           value="${requestScope.phase_required_reviewers_approval}"/>
+                            </c:if>
+                            <c:if test="${phaseIdx ne 0}">
+                                <html:text style="width:30px;text-align:right;" styleClass="inputBox"
+                                           size="30" property="phase_required_reviewers[${phaseIdx}]"/>
+                            </c:if>
+                        </c:otherwise>
+                    </c:choose>
+                    &#160;<bean:message key="editProject.Phases.Criteria.ReviewNumber.afterInput" /><br/>
+                    <bean:message key="editProject.Phases.Criteria.Scorecard" />
+                    <html:select style="width:350px;" styleClass="inputBox" property="phase_scorecard[${phaseIdx}]" >
+                        <c:forEach items="${approvalScorecards}" var="scorecard">
+                            <c:if test="${(newProject && scorecard.category == 1)
+                                          || (not newProject && project.projectCategory.id == scorecard.category)
+                                          || projectCategoriesMap[scorecard.category].projectType.generic}">
+                            <html:option value="${scorecard.id}">${scorecard.name} ${scorecard.version}</html:option>
+                            </c:if>
+                        </c:forEach>
+                    </html:select>
+                    <script type="text/javascript">
+                        <!--
+                         approvalScorecardNodes[approvalScorecardNodes.length]
+                             = document.getElementsByName("phase_scorecard[${phaseIdx}]")[0];
+                        -->
+                    </script>
+                </td>
+            </tr>
+        </c:if>
+        <c:if test="${(phaseIdx eq 0) or (projectForm.map['phase_name'][phaseIdx] eq 'Post-Mortem')}">
+            <c:if test="${phaseIdx eq 0}">
+                <tr class="highlighted" id="post_mortem_scorecard_row_template" style="display: none;">
             </c:if>
             <c:if test="${phaseIdx ne 0}">
                 <tr class="highlighted">
             </c:if>
                 <td class="value" colspan="${(newProject) ? 1 : 2}"><!-- @ --></td>
-                <td class="value" colspan="4"><bean:message key="editProject.Phases.Criteria.Scorecard" />
+                <td class="value" colspan="4">
+                    <bean:message key="editProject.Phases.Criteria.ReviewNumber.beforeInput" />
+
+                    <c:if test="${phaseIdx eq 0}">
+                        <html:text style="width:30px;text-align:right;" styleClass="inputBox"
+                            size="30" property="phase_required_reviewers[${phaseIdx}]"
+                            value="${requestScope.phase_required_reviewers_postmortem}"/>
+                    </c:if>
+                    <c:if test="${phaseIdx ne 0}">
+                        <html:text style="width:30px;text-align:right;" styleClass="inputBox"
+                            size="30" property="phase_required_reviewers[${phaseIdx}]" />
+                    </c:if>
+
+                    &#160;<bean:message key="editProject.Phases.Criteria.ReviewNumber.afterInput" /><br/>
+                    <bean:message key="editProject.Phases.Criteria.Scorecard" />
                     <html:select style="width:350px;" styleClass="inputBox" property="phase_scorecard[${phaseIdx}]" >
-                        <c:forEach items="${approvalScorecards}" var="scorecard">
-                            <c:if test="${(newProject && scorecard.category == 1) || (not newProject && project.projectCategory.id == scorecard.category)}">
+                        <c:forEach items="${postMortemScorecards}" var="scorecard">
+                            <c:if test="${(newProject && scorecard.category == 1)
+                                          || (not newProject && project.projectCategory.id == scorecard.category)
+                                          || projectCategoriesMap[scorecard.category].projectType.generic}">
                             <html:option value="${scorecard.id}">${scorecard.name} ${scorecard.version}</html:option>
                             </c:if>
                         </c:forEach>
                     </html:select>
+                    <script type="text/javascript">
+                        <!--
+                         postMortemScorecardNodes[postMortemScorecardNodes.length]
+                             = document.getElementsByName("phase_scorecard[${phaseIdx}]")[0];
+                        -->
+                    </script>
                 </td>
             </tr>
         </c:if>
@@ -248,7 +350,7 @@
             <html:select styleClass="inputBox" property="addphase_type">
                 <html:option key="editProject.Phases.Select" value="" />
                 <c:forEach items="${requestScope.phaseTypes}" var="phaseType">
-                    <html:option key="ProjectPhase.${fn:replace(phaseType.name, ' ', '')}" value="${phaseType.id}" />
+                    <html:option key="ProjectPhase.${fn:replace(phaseType.name, ' ', '')}" value="${phaseType.id}"/>
                 </c:forEach>
             </html:select>
             <br />

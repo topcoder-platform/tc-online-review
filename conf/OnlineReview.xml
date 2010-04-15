@@ -5,6 +5,9 @@
        <!ENTITY winnersEmailTemplate "/home/tcs/onlinereview/templates/winners_email_template.txt">
        <!ENTITY timelineTemplateDir "/home/tcs/onlinereview/templates">
        <!ENTITY contactManagersTemplate "/home/tcs/onlinereview/templates/contact_manager_template.txt">
+       <!ENTITY managerNotificationEmailTemplatesBase "/home/tcs/onlinereview/templates">
+       <!ENTITY notificationEmailFromAddress "service@topcodersoftware.com">
+       <!ENTITY smtpServerAuthAddress "service@topcodersoftware.com">
        <!ENTITY pactJNDIAddress "jnp://localhost:1199">
 ]>
 <CMConfig>
@@ -472,7 +475,7 @@
             <Value>25</Value>
         </Property>
         <Property name="username">
-            <Value>service@topcodersoftware.com</Value>
+            <Value>&smtpServerAuthAddress;</Value>
         </Property>
         <Property name="password">
             <Value>top_coder</Value>
@@ -802,6 +805,9 @@
             <Value>com.cronos.onlinereview.phases.ManagerHelper</Value>
         </Property>
         <Property name="StartPhaseEmail">
+            <Property name="SendEmail">
+                <Value>yes</Value>
+            </Property>
             <Property name="EmailTemplateSource">
                 <Value>file</Value>
             </Property>
@@ -812,10 +818,13 @@
                 <Value>Phase Start</Value>
             </Property>
             <Property name="EmailFromAddress">
-                <Value>service@topcodersoftware.com</Value>
+                <Value>&notificationEmailFromAddress;</Value>
             </Property>
         </Property>
         <Property name="EndPhaseEmail">
+            <Property name="SendEmail">
+                <Value>yes</Value>
+            </Property>
             <Property name="EmailTemplateSource">
                 <Value>file</Value>
             </Property>
@@ -826,7 +835,49 @@
                 <Value>Phase End</Value>
             </Property>
             <Property name="EmailFromAddress">
-                <Value>service@topcodersoftware.com</Value>
+                <Value>&notificationEmailFromAddress;</Value>
+            </Property>
+        </Property>
+        <Property name="Roles">
+        	<Value>Manager</Value>
+        </Property>
+        <Property name="Manager">
+            <Property name="StartPhaseEmail">
+                <Property name="SendEmail">
+                    <Value>yes</Value>
+                </Property>
+                <Property name="EmailTemplateSource">
+                    <Value>file</Value>
+                </Property>
+                <Property name="EmailTemplateName">
+                    <Value>&managerNotificationEmailTemplatesBase;/registration/start.txt</Value>
+                </Property>
+                <Property name="EmailSubject">
+                    <Value>Phase Start</Value>
+                </Property>
+                <Property name="EmailFromAddress">
+                    <Value>&notificationEmailFromAddress;</Value>
+                </Property>
+                <Property name="Priority">
+                    <Value>1</Value>
+                </Property>
+            </Property>
+            <Property name="EndPhaseEmail">
+                <Property name="SendEmail">
+                    <Value>yes</Value>
+                </Property>
+                <Property name="EmailTemplateSource">
+                    <Value>file</Value>
+                </Property>
+                <Property name="EmailTemplateName">
+                    <Value>&managerNotificationEmailTemplatesBase;/registration/end.txt</Value>
+                </Property>
+                <Property name="EmailSubject">
+                    <Value>Phase End</Value>
+                </Property>
+                <Property name="EmailFromAddress">
+                    <Value>&notificationEmailFromAddress;</Value>
+                </Property>
             </Property>
         </Property>
     </Config>
@@ -843,6 +894,9 @@
             <Value>com.cronos.onlinereview.phases.ManagerHelper</Value>
         </Property>
         <Property name="StartPhaseEmail">
+            <Property name="SendEmail">
+                <Value>yes</Value>
+            </Property>
             <Property name="EmailTemplateSource">
                 <Value>file</Value>
             </Property>
@@ -853,10 +907,13 @@
                 <Value>Phase Start</Value>
             </Property>
             <Property name="EmailFromAddress">
-                <Value>service@topcodersoftware.com</Value>
+                <Value>&notificationEmailFromAddress;</Value>
             </Property>
         </Property>
         <Property name="EndPhaseEmail">
+            <Property name="SendEmail">
+                <Value>yes</Value>
+            </Property>
             <Property name="EmailTemplateSource">
                 <Value>file</Value>
             </Property>
@@ -867,7 +924,49 @@
                 <Value>Phase End</Value>
             </Property>
             <Property name="EmailFromAddress">
-                <Value>service@topcodersoftware.com</Value>
+                <Value>&notificationEmailFromAddress;</Value>
+            </Property>
+        </Property>
+        <Property name="Roles">
+        	<Value>Manager</Value>
+        </Property>
+        <Property name="Manager">
+            <Property name="StartPhaseEmail">
+                <Property name="SendEmail">
+                    <Value>yes</Value>
+                </Property>
+                <Property name="EmailTemplateSource">
+                    <Value>file</Value>
+                </Property>
+                <Property name="EmailTemplateName">
+                    <Value>&managerNotificationEmailTemplatesBase;/submission/start.txt</Value>
+                </Property>
+                <Property name="EmailSubject">
+                    <Value>Phase Start</Value>
+                </Property>
+                <Property name="EmailFromAddress">
+                    <Value>&notificationEmailFromAddress;</Value>
+                </Property>
+                <Property name="Priority">
+                    <Value>1</Value>
+                </Property>
+            </Property>
+            <Property name="EndPhaseEmail">
+                <Property name="SendEmail">
+                    <Value>yes</Value>
+                </Property>
+                <Property name="EmailTemplateSource">
+                    <Value>file</Value>
+                </Property>
+                <Property name="EmailTemplateName">
+                    <Value>&managerNotificationEmailTemplatesBase;/submission/end.txt</Value>
+                </Property>
+                <Property name="EmailSubject">
+                    <Value>Phase End</Value>
+                </Property>
+                <Property name="EmailFromAddress">
+                    <Value>&notificationEmailFromAddress;</Value>
+                </Property>
             </Property>
         </Property>
     </Config>
@@ -884,6 +983,9 @@
             <Value>com.cronos.onlinereview.phases.ManagerHelper</Value>
         </Property>
         <Property name="StartPhaseEmail">
+            <Property name="SendEmail">
+                <Value>yes</Value>
+            </Property>
             <Property name="EmailTemplateSource">
                 <Value>file</Value>
             </Property>
@@ -894,10 +996,13 @@
                 <Value>Phase Start</Value>
             </Property>
             <Property name="EmailFromAddress">
-                <Value>service@topcodersoftware.com</Value>
+                <Value>&notificationEmailFromAddress;</Value>
             </Property>
         </Property>
         <Property name="EndPhaseEmail">
+            <Property name="SendEmail">
+                <Value>yes</Value>
+            </Property>
             <Property name="EmailTemplateSource">
                 <Value>file</Value>
             </Property>
@@ -908,7 +1013,49 @@
                 <Value>Phase End</Value>
             </Property>
             <Property name="EmailFromAddress">
-                <Value>service@topcodersoftware.com</Value>
+                <Value>&notificationEmailFromAddress;</Value>
+            </Property>
+        </Property>
+        <Property name="Roles">
+        	<Value>Manager</Value>
+        </Property>
+        <Property name="Manager">
+            <Property name="StartPhaseEmail">
+                <Property name="SendEmail">
+                    <Value>yes</Value>
+                </Property>
+                <Property name="EmailTemplateSource">
+                    <Value>file</Value>
+                </Property>
+                <Property name="EmailTemplateName">
+                    <Value>&managerNotificationEmailTemplatesBase;/screening/start.txt</Value>
+                </Property>
+                <Property name="EmailSubject">
+                    <Value>Phase Start</Value>
+                </Property>
+                <Property name="EmailFromAddress">
+                    <Value>&notificationEmailFromAddress;</Value>
+                </Property>
+                <Property name="Priority">
+                    <Value>1</Value>
+                </Property>
+            </Property>
+            <Property name="EndPhaseEmail">
+                <Property name="SendEmail">
+                    <Value>yes</Value>
+                </Property>
+                <Property name="EmailTemplateSource">
+                    <Value>file</Value>
+                </Property>
+                <Property name="EmailTemplateName">
+                    <Value>&managerNotificationEmailTemplatesBase;/screening/end.txt</Value>
+                </Property>
+                <Property name="EmailSubject">
+                    <Value>Phase End</Value>
+                </Property>
+                <Property name="EmailFromAddress">
+                    <Value>&notificationEmailFromAddress;</Value>
+                </Property>
             </Property>
         </Property>
     </Config>
@@ -925,6 +1072,9 @@
             <Value>com.cronos.onlinereview.phases.ManagerHelper</Value>
         </Property>
         <Property name="StartPhaseEmail">
+            <Property name="SendEmail">
+                <Value>yes</Value>
+            </Property>
             <Property name="EmailTemplateSource">
                 <Value>file</Value>
             </Property>
@@ -935,10 +1085,13 @@
                 <Value>Phase Start</Value>
             </Property>
             <Property name="EmailFromAddress">
-                <Value>service@topcodersoftware.com</Value>
+                <Value>&notificationEmailFromAddress;</Value>
             </Property>
         </Property>
         <Property name="EndPhaseEmail">
+            <Property name="SendEmail">
+                <Value>yes</Value>
+            </Property>
             <Property name="EmailTemplateSource">
                 <Value>file</Value>
             </Property>
@@ -949,7 +1102,49 @@
                 <Value>Phase End</Value>
             </Property>
             <Property name="EmailFromAddress">
-                <Value>service@topcodersoftware.com</Value>
+                <Value>&notificationEmailFromAddress;</Value>
+            </Property>
+        </Property>
+        <Property name="Roles">
+        	<Value>Manager</Value>
+        </Property>
+        <Property name="Manager">
+            <Property name="StartPhaseEmail">
+                <Property name="SendEmail">
+                    <Value>yes</Value>
+                </Property>
+                <Property name="EmailTemplateSource">
+                    <Value>file</Value>
+                </Property>
+                <Property name="EmailTemplateName">
+                    <Value>&managerNotificationEmailTemplatesBase;/review/start.txt</Value>
+                </Property>
+                <Property name="EmailSubject">
+                    <Value>Phase Start</Value>
+                </Property>
+                <Property name="EmailFromAddress">
+                    <Value>&notificationEmailFromAddress;</Value>
+                </Property>
+                <Property name="Priority">
+                    <Value>1</Value>
+                </Property>
+            </Property>
+            <Property name="EndPhaseEmail">
+                <Property name="SendEmail">
+                    <Value>yes</Value>
+                </Property>
+                <Property name="EmailTemplateSource">
+                    <Value>file</Value>
+                </Property>
+                <Property name="EmailTemplateName">
+                    <Value>&managerNotificationEmailTemplatesBase;/review/end.txt</Value>
+                </Property>
+                <Property name="EmailSubject">
+                    <Value>Phase End</Value>
+                </Property>
+                <Property name="EmailFromAddress">
+                    <Value>&notificationEmailFromAddress;</Value>
+                </Property>
             </Property>
         </Property>
     </Config>
@@ -966,6 +1161,9 @@
             <Value>com.cronos.onlinereview.phases.ManagerHelper</Value>
         </Property>
         <Property name="StartPhaseEmail">
+            <Property name="SendEmail">
+                <Value>yes</Value>
+            </Property>
             <Property name="EmailTemplateSource">
                 <Value>file</Value>
             </Property>
@@ -976,10 +1174,13 @@
                 <Value>Phase Start</Value>
             </Property>
             <Property name="EmailFromAddress">
-                <Value>service@topcodersoftware.com</Value>
+                <Value>&notificationEmailFromAddress;</Value>
             </Property>
         </Property>
         <Property name="EndPhaseEmail">
+            <Property name="SendEmail">
+                <Value>yes</Value>
+            </Property>
             <Property name="EmailTemplateSource">
                 <Value>file</Value>
             </Property>
@@ -990,7 +1191,49 @@
                 <Value>Phase End</Value>
             </Property>
             <Property name="EmailFromAddress">
-                <Value>service@topcodersoftware.com</Value>
+                <Value>&notificationEmailFromAddress;</Value>
+            </Property>
+        </Property>
+        <Property name="Roles">
+        	<Value>Manager</Value>
+        </Property>
+        <Property name="Manager">
+            <Property name="StartPhaseEmail">
+                <Property name="SendEmail">
+                    <Value>yes</Value>
+                </Property>
+                <Property name="EmailTemplateSource">
+                    <Value>file</Value>
+                </Property>
+                <Property name="EmailTemplateName">
+                    <Value>&managerNotificationEmailTemplatesBase;/appeals/start.txt</Value>
+                </Property>
+                <Property name="EmailSubject">
+                    <Value>Phase Start</Value>
+                </Property>
+                <Property name="EmailFromAddress">
+                    <Value>&notificationEmailFromAddress;</Value>
+                </Property>
+                <Property name="Priority">
+                    <Value>1</Value>
+                </Property>
+            </Property>
+            <Property name="EndPhaseEmail">
+                <Property name="SendEmail">
+                    <Value>yes</Value>
+                </Property>
+                <Property name="EmailTemplateSource">
+                    <Value>file</Value>
+                </Property>
+                <Property name="EmailTemplateName">
+                    <Value>&managerNotificationEmailTemplatesBase;/appeals/end.txt</Value>
+                </Property>
+                <Property name="EmailSubject">
+                    <Value>Phase End</Value>
+                </Property>
+                <Property name="EmailFromAddress">
+                    <Value>&notificationEmailFromAddress;</Value>
+                </Property>
             </Property>
         </Property>
     </Config>
@@ -1007,6 +1250,9 @@
             <Value>com.cronos.onlinereview.phases.ManagerHelper</Value>
         </Property>
         <Property name="StartPhaseEmail">
+            <Property name="SendEmail">
+                <Value>yes</Value>
+            </Property>
             <Property name="EmailTemplateSource">
                 <Value>file</Value>
             </Property>
@@ -1017,10 +1263,13 @@
                 <Value>Phase Start</Value>
             </Property>
             <Property name="EmailFromAddress">
-                <Value>service@topcodersoftware.com</Value>
+                <Value>&notificationEmailFromAddress;</Value>
             </Property>
         </Property>
         <Property name="EndPhaseEmail">
+            <Property name="SendEmail">
+                <Value>yes</Value>
+            </Property>
             <Property name="EmailTemplateSource">
                 <Value>file</Value>
             </Property>
@@ -1031,7 +1280,49 @@
                 <Value>Phase End</Value>
             </Property>
             <Property name="EmailFromAddress">
-                <Value>service@topcodersoftware.com</Value>
+                <Value>&notificationEmailFromAddress;</Value>
+            </Property>
+        </Property>
+        <Property name="Roles">
+        	<Value>Manager</Value>
+        </Property>
+        <Property name="Manager">
+            <Property name="StartPhaseEmail">
+                <Property name="SendEmail">
+                    <Value>yes</Value>
+                </Property>
+                <Property name="EmailTemplateSource">
+                    <Value>file</Value>
+                </Property>
+                <Property name="EmailTemplateName">
+                    <Value>&managerNotificationEmailTemplatesBase;/appeals_response/start.txt</Value>
+                </Property>
+                <Property name="EmailSubject">
+                    <Value>Phase Start</Value>
+                </Property>
+                <Property name="EmailFromAddress">
+                    <Value>&notificationEmailFromAddress;</Value>
+                </Property>
+                <Property name="Priority">
+                    <Value>1</Value>
+                </Property>
+            </Property>
+            <Property name="EndPhaseEmail">
+                <Property name="SendEmail">
+                    <Value>yes</Value>
+                </Property>
+                <Property name="EmailTemplateSource">
+                    <Value>file</Value>
+                </Property>
+                <Property name="EmailTemplateName">
+                    <Value>&managerNotificationEmailTemplatesBase;/appeals_response/end.txt</Value>
+                </Property>
+                <Property name="EmailSubject">
+                    <Value>Phase End</Value>
+                </Property>
+                <Property name="EmailFromAddress">
+                    <Value>&notificationEmailFromAddress;</Value>
+                </Property>
             </Property>
         </Property>
 <!-- [OR-584] don't need this flag anymore, assignment v2 business logic doesn't require it
@@ -1060,7 +1351,7 @@
                 <Value>http://www.topcoder.com/PactsMemberServlet?module=AssignmentDocumentDetails&amp;amp;assignment_document_id={0}</Value>
             </Property>
             <Property name="EmailFromAddress">
-                <Value>service@topcodersoftware.com</Value>
+                <Value>&notificationEmailFromAddress;</Value>
             </Property>
         </Property>
     </Config>
@@ -1077,6 +1368,9 @@
             <Value>com.cronos.onlinereview.phases.ManagerHelper</Value>
         </Property>
         <Property name="StartPhaseEmail">
+            <Property name="SendEmail">
+                <Value>yes</Value>
+            </Property>
             <Property name="EmailTemplateSource">
                 <Value>file</Value>
             </Property>
@@ -1087,10 +1381,13 @@
                 <Value>Phase Start</Value>
             </Property>
             <Property name="EmailFromAddress">
-                <Value>service@topcodersoftware.com</Value>
+                <Value>&notificationEmailFromAddress;</Value>
             </Property>
         </Property>
         <Property name="EndPhaseEmail">
+            <Property name="SendEmail">
+                <Value>yes</Value>
+            </Property>
             <Property name="EmailTemplateSource">
                 <Value>file</Value>
             </Property>
@@ -1101,7 +1398,49 @@
                 <Value>Phase End</Value>
             </Property>
             <Property name="EmailFromAddress">
-                <Value>service@topcodersoftware.com</Value>
+                <Value>&notificationEmailFromAddress;</Value>
+            </Property>
+        </Property>
+        <Property name="Roles">
+        	<Value>Manager</Value>
+        </Property>
+        <Property name="Manager">
+            <Property name="StartPhaseEmail">
+                <Property name="SendEmail">
+                    <Value>yes</Value>
+                </Property>
+                <Property name="EmailTemplateSource">
+                    <Value>file</Value>
+                </Property>
+                <Property name="EmailTemplateName">
+                    <Value>&managerNotificationEmailTemplatesBase;/aggregation/start.txt</Value>
+                </Property>
+                <Property name="EmailSubject">
+                    <Value>Phase Start</Value>
+                </Property>
+                <Property name="EmailFromAddress">
+                    <Value>&notificationEmailFromAddress;</Value>
+                </Property>
+                <Property name="Priority">
+                    <Value>1</Value>
+                </Property>
+            </Property>
+            <Property name="EndPhaseEmail">
+                <Property name="SendEmail">
+                    <Value>yes</Value>
+                </Property>
+                <Property name="EmailTemplateSource">
+                    <Value>file</Value>
+                </Property>
+                <Property name="EmailTemplateName">
+                    <Value>&managerNotificationEmailTemplatesBase;/aggregation/end.txt</Value>
+                </Property>
+                <Property name="EmailSubject">
+                    <Value>Phase End</Value>
+                </Property>
+                <Property name="EmailFromAddress">
+                    <Value>&notificationEmailFromAddress;</Value>
+                </Property>
             </Property>
         </Property>
     </Config>
@@ -1118,6 +1457,9 @@
             <Value>com.cronos.onlinereview.phases.ManagerHelper</Value>
         </Property>
         <Property name="StartPhaseEmail">
+            <Property name="SendEmail">
+                <Value>yes</Value>
+            </Property>
             <Property name="EmailTemplateSource">
                 <Value>file</Value>
             </Property>
@@ -1128,10 +1470,13 @@
                 <Value>Phase Start</Value>
             </Property>
             <Property name="EmailFromAddress">
-                <Value>service@topcodersoftware.com</Value>
+                <Value>&notificationEmailFromAddress;</Value>
             </Property>
         </Property>
         <Property name="EndPhaseEmail">
+            <Property name="SendEmail">
+                <Value>yes</Value>
+            </Property>
             <Property name="EmailTemplateSource">
                 <Value>file</Value>
             </Property>
@@ -1142,7 +1487,49 @@
                 <Value>Phase End</Value>
             </Property>
             <Property name="EmailFromAddress">
-                <Value>service@topcodersoftware.com</Value>
+                <Value>&notificationEmailFromAddress;</Value>
+            </Property>
+        </Property>
+        <Property name="Roles">
+        	<Value>Manager</Value>
+        </Property>
+        <Property name="Manager">
+            <Property name="StartPhaseEmail">
+                <Property name="SendEmail">
+                    <Value>yes</Value>
+                </Property>
+                <Property name="EmailTemplateSource">
+                    <Value>file</Value>
+                </Property>
+                <Property name="EmailTemplateName">
+                    <Value>&managerNotificationEmailTemplatesBase;/aggregation_review/start.txt</Value>
+                </Property>
+                <Property name="EmailSubject">
+                    <Value>Phase Start</Value>
+                </Property>
+                <Property name="EmailFromAddress">
+                    <Value>&notificationEmailFromAddress;</Value>
+                </Property>
+                <Property name="Priority">
+                    <Value>1</Value>
+                </Property>
+            </Property>
+            <Property name="EndPhaseEmail">
+                <Property name="SendEmail">
+                    <Value>yes</Value>
+                </Property>
+                <Property name="EmailTemplateSource">
+                    <Value>file</Value>
+                </Property>
+                <Property name="EmailTemplateName">
+                    <Value>&managerNotificationEmailTemplatesBase;/aggregation_review/end.txt</Value>
+                </Property>
+                <Property name="EmailSubject">
+                    <Value>Phase End</Value>
+                </Property>
+                <Property name="EmailFromAddress">
+                    <Value>&notificationEmailFromAddress;</Value>
+                </Property>
             </Property>
         </Property>
     </Config>
@@ -1159,6 +1546,9 @@
             <Value>com.cronos.onlinereview.phases.ManagerHelper</Value>
         </Property>
         <Property name="StartPhaseEmail">
+            <Property name="SendEmail">
+                <Value>yes</Value>
+            </Property>
             <Property name="EmailTemplateSource">
                 <Value>file</Value>
             </Property>
@@ -1169,10 +1559,13 @@
                 <Value>Phase Start</Value>
             </Property>
             <Property name="EmailFromAddress">
-                <Value>service@topcodersoftware.com</Value>
+                <Value>&notificationEmailFromAddress;</Value>
             </Property>
         </Property>
         <Property name="EndPhaseEmail">
+            <Property name="SendEmail">
+                <Value>yes</Value>
+            </Property>
             <Property name="EmailTemplateSource">
                 <Value>file</Value>
             </Property>
@@ -1183,7 +1576,49 @@
                 <Value>Phase End</Value>
             </Property>
             <Property name="EmailFromAddress">
-                <Value>service@topcodersoftware.com</Value>
+                <Value>&notificationEmailFromAddress;</Value>
+            </Property>
+        </Property>
+        <Property name="Roles">
+        	<Value>Manager</Value>
+        </Property>
+        <Property name="Manager">
+            <Property name="StartPhaseEmail">
+                <Property name="SendEmail">
+                    <Value>yes</Value>
+                </Property>
+                <Property name="EmailTemplateSource">
+                    <Value>file</Value>
+                </Property>
+                <Property name="EmailTemplateName">
+                    <Value>&managerNotificationEmailTemplatesBase;/final_fix/start.txt</Value>
+                </Property>
+                <Property name="EmailSubject">
+                    <Value>Phase Start</Value>
+                </Property>
+                <Property name="EmailFromAddress">
+                    <Value>&notificationEmailFromAddress;</Value>
+                </Property>
+                <Property name="Priority">
+                    <Value>1</Value>
+                </Property>
+            </Property>
+            <Property name="EndPhaseEmail">
+                <Property name="SendEmail">
+                    <Value>yes</Value>
+                </Property>
+                <Property name="EmailTemplateSource">
+                    <Value>file</Value>
+                </Property>
+                <Property name="EmailTemplateName">
+                    <Value>&managerNotificationEmailTemplatesBase;/final_fix/end.txt</Value>
+                </Property>
+                <Property name="EmailSubject">
+                    <Value>Phase End</Value>
+                </Property>
+                <Property name="EmailFromAddress">
+                    <Value>&notificationEmailFromAddress;</Value>
+                </Property>
             </Property>
         </Property>
     </Config>
@@ -1200,6 +1635,9 @@
             <Value>com.cronos.onlinereview.phases.ManagerHelper</Value>
         </Property>
         <Property name="StartPhaseEmail">
+            <Property name="SendEmail">
+                <Value>yes</Value>
+            </Property>
             <Property name="EmailTemplateSource">
                 <Value>file</Value>
             </Property>
@@ -1210,10 +1648,13 @@
                 <Value>Phase Start</Value>
             </Property>
             <Property name="EmailFromAddress">
-                <Value>service@topcodersoftware.com</Value>
+                <Value>&notificationEmailFromAddress;</Value>
             </Property>
         </Property>
         <Property name="EndPhaseEmail">
+            <Property name="SendEmail">
+                <Value>yes</Value>
+            </Property>
             <Property name="EmailTemplateSource">
                 <Value>file</Value>
             </Property>
@@ -1224,13 +1665,64 @@
                 <Value>Phase End</Value>
             </Property>
             <Property name="EmailFromAddress">
-                <Value>service@topcodersoftware.com</Value>
+                <Value>&notificationEmailFromAddress;</Value>
+            </Property>
+        </Property>
+        <Property name="Roles">
+        	<Value>Manager</Value>
+        </Property>
+        <Property name="Manager">
+            <Property name="StartPhaseEmail">
+                <Property name="SendEmail">
+                    <Value>yes</Value>
+                </Property>
+                <Property name="EmailTemplateSource">
+                    <Value>file</Value>
+                </Property>
+                <Property name="EmailTemplateName">
+                    <Value>&managerNotificationEmailTemplatesBase;/final_review/start.txt</Value>
+                </Property>
+                <Property name="EmailSubject">
+                    <Value>Phase Start</Value>
+                </Property>
+                <Property name="EmailFromAddress">
+                    <Value>&notificationEmailFromAddress;</Value>
+                </Property>
+                <Property name="Priority">
+                    <Value>1</Value>
+                </Property>
+            </Property>
+            <Property name="EndPhaseEmail">
+                <Property name="SendEmail">
+                    <Value>yes</Value>
+                </Property>
+                <Property name="EmailTemplateSource">
+                    <Value>file</Value>
+                </Property>
+                <Property name="EmailTemplateName">
+                    <Value>&managerNotificationEmailTemplatesBase;/final_review/end.txt</Value>
+                </Property>
+                <Property name="EmailSubject">
+                    <Value>Phase End</Value>
+                </Property>
+                <Property name="EmailFromAddress">
+                    <Value>&notificationEmailFromAddress;</Value>
+                </Property>
             </Property>
         </Property>
     </Config>
 
     <!-- Default namespace for Approval handler -->
     <Config name="com.cronos.onlinereview.phases.ApprovalPhaseHandler">
+        <Property name="ApprovalPhaseDuration">
+            <Value>24</Value>
+        </Property>
+        <Property name="ApprovalPhaseDefaultReviewersNumber">
+            <Value>1</Value>
+        </Property>
+        <Property name="ApprovalPhaseDefaultScorecardID">
+            <Value>30000720</Value>
+        </Property>
         <Property name="ConnectionFactoryNS">
             <Value>com.topcoder.db.connectionfactory.DBConnectionFactoryImpl</Value>
         </Property>
@@ -1241,6 +1733,9 @@
             <Value>com.cronos.onlinereview.phases.ManagerHelper</Value>
         </Property>
         <Property name="StartPhaseEmail">
+            <Property name="SendEmail">
+                <Value>yes</Value>
+            </Property>
             <Property name="EmailTemplateSource">
                 <Value>file</Value>
             </Property>
@@ -1251,10 +1746,13 @@
                 <Value>Phase Start</Value>
             </Property>
             <Property name="EmailFromAddress">
-                <Value>service@topcodersoftware.com</Value>
+                <Value>&notificationEmailFromAddress;</Value>
             </Property>
         </Property>
         <Property name="EndPhaseEmail">
+            <Property name="SendEmail">
+                <Value>yes</Value>
+            </Property>
             <Property name="EmailTemplateSource">
                 <Value>file</Value>
             </Property>
@@ -1265,7 +1763,147 @@
                 <Value>Phase End</Value>
             </Property>
             <Property name="EmailFromAddress">
-                <Value>service@topcodersoftware.com</Value>
+                <Value>&notificationEmailFromAddress;</Value>
+            </Property>
+        </Property>
+        <Property name="Roles">
+        	<Value>Manager</Value>
+        </Property>
+        <Property name="Manager">
+            <Property name="StartPhaseEmail">
+                <Property name="SendEmail">
+                    <Value>yes</Value>
+                </Property>
+                <Property name="EmailTemplateSource">
+                    <Value>file</Value>
+                </Property>
+                <Property name="EmailTemplateName">
+                    <Value>&managerNotificationEmailTemplatesBase;/approval/start.txt</Value>
+                </Property>
+                <Property name="EmailSubject">
+                    <Value>Phase Start</Value>
+                </Property>
+                <Property name="EmailFromAddress">
+                    <Value>&notificationEmailFromAddress;</Value>
+                </Property>
+                <Property name="Priority">
+                    <Value>1</Value>
+                </Property>
+            </Property>
+            <Property name="EndPhaseEmail">
+                <Property name="SendEmail">
+                    <Value>yes</Value>
+                </Property>
+                <Property name="EmailTemplateSource">
+                    <Value>file</Value>
+                </Property>
+                <Property name="EmailTemplateName">
+                    <Value>&managerNotificationEmailTemplatesBase;/approval/end.txt</Value>
+                </Property>
+                <Property name="EmailSubject">
+                    <Value>Phase End</Value>
+                </Property>
+                <Property name="EmailFromAddress">
+                    <Value>&notificationEmailFromAddress;</Value>
+                </Property>
+            </Property>
+        </Property>
+    </Config>
+
+    <!-- Default namespace for Post-Mortem handler -->
+    <Config name="com.cronos.onlinereview.phases.PostMortemPhaseHandler">
+        <Property name="PostMortemPhaseDuration">
+            <Value>24</Value>
+        </Property>
+        <Property name="PostMortemPhaseDefaultReviewersNumber">
+            <Value>1</Value>
+        </Property>
+        <Property name="PostMortemPhaseDefaultScorecardID">
+            <Value>30000721</Value>
+        </Property>
+        <Property name="ConnectionFactoryNS">
+            <Value>com.topcoder.db.connectionfactory.DBConnectionFactoryImpl</Value>
+        </Property>
+        <Property name="ConnectionName">
+            <Value>tcs</Value>
+        </Property>
+        <Property name="ManagerHelperNamespace">
+            <Value>com.cronos.onlinereview.phases.ManagerHelper</Value>
+        </Property>
+        <Property name="StartPhaseEmail">
+            <Property name="SendEmail">
+                <Value>yes</Value>
+            </Property>
+            <Property name="EmailTemplateSource">
+                <Value>file</Value>
+            </Property>
+            <Property name="EmailTemplateName">
+                <Value>&phasesEmailTemplate;</Value>
+            </Property>
+            <Property name="EmailSubject">
+                <Value>Phase Start</Value>
+            </Property>
+            <Property name="EmailFromAddress">
+                <Value>&notificationEmailFromAddress;</Value>
+            </Property>
+        </Property>
+        <Property name="EndPhaseEmail">
+            <Property name="SendEmail">
+                <Value>yes</Value>
+            </Property>
+            <Property name="EmailTemplateSource">
+                <Value>file</Value>
+            </Property>
+            <Property name="EmailTemplateName">
+                <Value>&phasesEmailTemplate;</Value>
+            </Property>
+            <Property name="EmailSubject">
+                <Value>Phase End</Value>
+            </Property>
+            <Property name="EmailFromAddress">
+                <Value>&notificationEmailFromAddress;</Value>
+            </Property>
+        </Property>
+        <Property name="Roles">
+        	<Value>Manager</Value>
+        </Property>
+        <Property name="Manager">
+            <Property name="StartPhaseEmail">
+                <Property name="SendEmail">
+                    <Value>yes</Value>
+                </Property>
+                <Property name="EmailTemplateSource">
+                    <Value>file</Value>
+                </Property>
+                <Property name="EmailTemplateName">
+                    <Value>&managerNotificationEmailTemplatesBase;/post_mortem/start.txt</Value>
+                </Property>
+                <Property name="EmailSubject">
+                    <Value>Phase Start</Value>
+                </Property>
+                <Property name="EmailFromAddress">
+                    <Value>&notificationEmailFromAddress;</Value>
+                </Property>
+                <Property name="Priority">
+                    <Value>1</Value>
+                </Property>
+            </Property>
+            <Property name="EndPhaseEmail">
+                <Property name="SendEmail">
+                    <Value>yes</Value>
+                </Property>
+                <Property name="EmailTemplateSource">
+                    <Value>file</Value>
+                </Property>
+                <Property name="EmailTemplateName">
+                    <Value>&managerNotificationEmailTemplatesBase;/post_mortem/end.txt</Value>
+                </Property>
+                <Property name="EmailSubject">
+                    <Value>Phase End</Value>
+                </Property>
+                <Property name="EmailFromAddress">
+                    <Value>&notificationEmailFromAddress;</Value>
+                </Property>
             </Property>
         </Property>
     </Config>
@@ -3581,6 +4219,7 @@
                 <Value>Aggregator</Value>
                 <Value>Final Reviewer</Value>
                 <Value>Approver</Value>
+                <Value>Post-Mortem Reviewer</Value>
                 <Value>Designer</Value>
                 <Value>Copilot</Value>
                 <Value>Client Manager</Value>
@@ -3603,6 +4242,7 @@
                 <Value>Aggregator</Value>
                 <Value>Final Reviewer</Value>
                 <Value>Approver</Value>
+                <Value>Post-Mortem Reviewer</Value>
                 <Value>Designer</Value>
                 <Value>Copilot</Value>
                 <Value>Client Manager</Value>
@@ -3625,6 +4265,7 @@
                 <Value>Aggregator</Value>
                 <Value>Final Reviewer</Value>
                 <Value>Approver</Value>
+                <Value>Post-Mortem Reviewer</Value>
                 <Value>Designer</Value>
                 <Value>Copilot</Value>
                 <Value>Client Manager</Value>
@@ -3669,6 +4310,7 @@
                 <Value>Aggregator</Value>
                 <Value>Final Reviewer</Value>
                 <Value>Approver</Value>
+                <Value>Post-Mortem Reviewer</Value>
             </Property>
             <Property name="Contact Project Managers">
                 <Value>Global Manager</Value>
@@ -3684,6 +4326,7 @@
                 <Value>Aggregator</Value>
                 <Value>Final Reviewer</Value>
                 <Value>Approver</Value>
+                <Value>Post-Mortem Reviewer</Value>
                 <Value>Designer</Value>
                 <Value>Copilot</Value>
                 <Value>Client Manager</Value>
@@ -3702,6 +4345,7 @@
                 <Value>Global Manager</Value>
                 <Value>Manager</Value>
                 <Value>Approver</Value>
+                <Value>Post-Mortem Reviewer</Value>
                 <Value>Copilot</Value>
                 <Value>Client Manager</Value>
             </Property>
@@ -3760,6 +4404,7 @@
                 <Value>Aggregator</Value>
                 <Value>Final Reviewer</Value>
                 <Value>Approver</Value>
+                <Value>Post-Mortem Reviewer</Value>
                 <Value>Designer</Value>
                 <Value>Copilot</Value>
                 <Value>Client Manager</Value>
@@ -3789,6 +4434,7 @@
                 <Value>Aggregator</Value>
                 <Value>Final Reviewer</Value>
                 <Value>Approver</Value>
+                <Value>Post-Mortem Reviewer</Value>
                 <Value>Copilot</Value>
                 <Value>Client Manager</Value>
             </Property>
@@ -3816,6 +4462,7 @@
                 <Value>Aggregator</Value>
                 <Value>Final Reviewer</Value>
                 <Value>Approver</Value>
+                <Value>Post-Mortem Reviewer</Value>
                 <Value>Designer</Value>
                 <Value>Copilot</Value>
                 <Value>Client Manager</Value>
@@ -3843,6 +4490,7 @@
                 <Value>Failure Reviewer</Value>
                 <Value>Stress Reviewer</Value>
                 <Value>Approver</Value>
+                <Value>Post-Mortem Reviewer</Value>
             </Property>
             <Property name="Perform Appeal">
                 <Value>Submitter</Value>
@@ -3857,6 +4505,7 @@
                 <Value>Failure Reviewer</Value>
                 <Value>Stress Reviewer</Value>
                 <Value>Approver</Value>
+                <Value>Post-Mortem Reviewer</Value>
                 <Value>Designer</Value>
                 <Value>Copilot</Value>
                 <Value>Client Manager</Value>
@@ -3877,6 +4526,7 @@
                 <Value>Failure Reviewer</Value>
                 <Value>Stress Reviewer</Value>
                 <Value>Approver</Value>
+                <Value>Post-Mortem Reviewer</Value>
                 <Value>Designer</Value>
                 <Value>Copilot</Value>
                 <Value>Client Manager</Value>
@@ -3907,6 +4557,7 @@
                 <!-- Aggregator must be allowed to see Aggregation (especially, if it is its own one) -->
                 <Value>Aggregator</Value>
                 <Value>Approver</Value>
+                <Value>Post-Mortem Reviewer</Value>
                 <Value>Designer</Value>
                 <Value>Copilot</Value>
                 <Value>Client Manager</Value>
@@ -3930,6 +4581,7 @@
                 <Value>Failure Reviewer</Value>
                 <Value>Stress Reviewer</Value>
                 <Value>Approver</Value>
+                <Value>Post-Mortem Reviewer</Value>
                 <Value>Designer</Value>
                 <Value>Copilot</Value>
                 <Value>Client Manager</Value>
@@ -3944,6 +4596,7 @@
                 <Value>Submitter</Value>
                 <Value>Final Reviewer</Value>
                 <Value>Approver</Value>
+                <Value>Post-Mortem Reviewer</Value>
                 <Value>Copilot</Value>
                 <Value>Client Manager</Value>
             </Property>
@@ -3957,6 +4610,7 @@
                 <Value>Submitter</Value>
                 <Value>Final Reviewer</Value>
                 <Value>Approver</Value>
+                <Value>Post-Mortem Reviewer</Value>
                 <Value>Designer</Value>
                 <Value>Copilot</Value>
                 <Value>Client Manager</Value>
@@ -3965,8 +4619,6 @@
                 <Value>Submitter</Value>
             </Property>
             <Property name="Perform Approval">
-                <Value>Global Manager</Value>
-                <Value>Manager</Value>
                 <Value>Approver</Value>
             </Property>
             <Property name="View Approval">
@@ -3975,6 +4627,19 @@
                 <Value>Observer</Value>
                 <Value>Submitter</Value>
                 <Value>Approver</Value>
+                <Value>Copilot</Value>
+                <Value>Client Manager</Value>
+                <Value>Final Reviewer</Value>		
+            </Property>
+            <Property name="Perform Post-Mortem Review">
+                <Value>Post-Mortem Reviewer</Value>
+            </Property>
+            <Property name="View Post-Mortem Review">
+                <Value>Global Manager</Value>
+                <Value>Manager</Value>
+                <Value>Observer</Value>
+                <Value>Submitter</Value>
+                <Value>Post-Mortem Reviewer</Value>
                 <Value>Copilot</Value>
                 <Value>Client Manager</Value>
             </Property>
@@ -3996,6 +4661,7 @@
                 <Value>Aggregator</Value>
                 <Value>Final Reviewer</Value>
                 <Value>Approver</Value>
+                <Value>Post-Mortem Reviewer</Value>
                 <Value>Copilot</Value>
                 <Value>Client Manager</Value>
             </Property>
@@ -4135,6 +4801,20 @@
                     <Value>APPROVAL</Value>
                 </Property>
             </Property>
+            <Property name="Post-Mortem_Review">
+                <Property name="NameKey">
+                    <Value>ProjectPhaseGroup.Post-Mortem</Value>
+                </Property>
+                <Property name="TableNameKey">
+                    <Value>ProjectPhaseGroup.Post-Mortem.table</Value>
+                </Property>
+                <Property name="Phases">
+                    <Value>Post-Mortem</Value>
+                </Property>
+                <Property name="AppFunction">
+                    <Value>POSTMORTEM</Value>
+                </Property>
+            </Property>
         </Property>
 
         <Property name="ContactManagerEmail">
@@ -4145,7 +4825,7 @@
                 <Value>&contactManagersTemplate;</Value>
             </Property>
             <Property name="EmailFromAddress">
-                <Value>service@topcodersoftware.com</Value>
+                <Value>&notificationEmailFromAddress;</Value>
             </Property>
         </Property>
     </Config>

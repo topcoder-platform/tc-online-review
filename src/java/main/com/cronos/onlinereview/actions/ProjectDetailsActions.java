@@ -118,8 +118,15 @@ import com.topcoder.util.file.fieldconfig.TemplateFields;
  *   </ol>
  * </p>
  *
+ * <p>
+ * Version 1.4 (Online Review End Of Project Analysis Release Assembly 1.0) Change notes:
+ *   <ol>
+ *     <li>Added logic for processing Post-Mortem deliverable.</li>
+ *   </ol>
+ * </p>
+ *
  * @author George1, real_vg, pulky, isv
- * @version 1.3
+ * @version 1.4
  */
 public class ProjectDetailsActions extends DispatchAction {
 
@@ -312,6 +319,40 @@ public class ProjectDetailsActions extends DispatchAction {
 
         Deliverable[] deliverables = ActionsHelper.getAllDeliverablesForPhases(
                 ActionsHelper.createDeliverableManager(request), activePhases, allProjectResources, winnerExtUserId);
+
+        // For approval phase
+        Phase approvalPhase = ActionsHelper.getPhase(phases, true, Constants.APPROVAL_PHASE_NAME);
+        if (approvalPhase != null) {
+            ReviewManager reviewManager = ActionsHelper.createReviewManager(request);
+            ScorecardType[] allScorecardTypes = ActionsHelper.createScorecardManager(request).getAllScorecardTypes();
+            ScorecardType scorecardType = ActionsHelper.findScorecardTypeByName(allScorecardTypes, "Approval");
+
+            for (int i = 0; i < deliverables.length; i++) {
+                Deliverable deliverable = deliverables[i];
+                if (deliverable.getName().equals(Constants.APPROVAL_DELIVERABLE_NAME)) {
+                    Review review = ActionsHelper.findLastApprovalReview(reviewManager, approvalPhase, scorecardType,
+                                                                         deliverable.getResource(), false);
+                    if ((review == null) || !review.isCommitted()) {
+                        Deliverable newDeliverable
+                            = new Deliverable(deliverable.getProject(), deliverable.getPhase(),
+                                              deliverable.getResource(), deliverable.getSubmission(),
+                                              deliverable.isRequired());
+                        newDeliverable.setId(deliverable.getId());
+                        newDeliverable.setName(deliverable.getName());
+                        newDeliverable.setCreationTimestamp(deliverable.getCreationTimestamp());
+                        newDeliverable.setCreationUser(deliverable.getCreationUser());
+                        newDeliverable.setDescription(deliverable.getDescription());
+                        newDeliverable.setModificationTimestamp(deliverable.getModificationTimestamp());
+                        newDeliverable.setModificationUser(deliverable.getModificationUser());
+
+                        deliverables[i] = newDeliverable;
+                    } else {
+                        deliverable.setCompletionDate(review.getModificationTimestamp());
+                    }
+                }
+            }
+        }
+
         Deliverable[] myDeliverables = ActionsHelper.getMyDeliverables(deliverables, myResources);
         Deliverable[] outstandingDeliverables = ActionsHelper.getOutstandingDeliverables(deliverables);
 
@@ -398,7 +439,7 @@ public class ProjectDetailsActions extends DispatchAction {
                 scorecardTemplates.add(scorecardTemplate);
 
                 if (phase.getPhaseType().getName().equals(Constants.SCREENING_PHASE_NAME)) {
-                	minimumScreeningScore = scorecardTemplate.getMinScore(); 
+                    minimumScreeningScore = scorecardTemplate.getMinScore(); 
                 }
             }
         }
@@ -533,6 +574,8 @@ public class ProjectDetailsActions extends DispatchAction {
                 Boolean.valueOf(AuthorizationHelper.hasUserPermission(
                         request, Constants.VIEW_REVIEWER_REVIEWS_PERM_NAME) &&
                         (ActionsHelper.getPhase(phases, true, Constants.REVIEW_PHASE_NAME) != null ||
+                                ActionsHelper.getPhase(phases, true, Constants.POST_MORTEM_PHASE_NAME) != null ||
+                                ActionsHelper.getPhase(phases, true, Constants.APPROVAL_PHASE_NAME) != null ||
                                 ActionsHelper.getPhase(phases, true, Constants.APPEALS_PHASE_NAME) != null ||
                                 ActionsHelper.getPhase(phases, true, Constants.APPEALS_RESPONSE_PHASE_NAME) != null)));
         request.setAttribute("isAllowedToUploadTC",
@@ -548,6 +591,9 @@ public class ProjectDetailsActions extends DispatchAction {
         request.setAttribute("isAllowedToPerformApproval",
                 Boolean.valueOf(ActionsHelper.getPhase(phases, true, Constants.APPROVAL_PHASE_NAME) != null &&
                         AuthorizationHelper.hasUserPermission(request, Constants.PERFORM_APPROVAL_PERM_NAME)));
+        request.setAttribute("isAllowedToPerformPortMortemReview",
+                Boolean.valueOf(ActionsHelper.getPhase(phases, true, Constants.POST_MORTEM_PHASE_NAME) != null &&
+                        AuthorizationHelper.hasUserPermission(request, Constants.PERFORM_POST_MORTEM_REVIEW_PERM_NAME)));
 
 
         String status = project.getProjectStatus().getName();
@@ -2169,7 +2215,7 @@ public class ProjectDetailsActions extends DispatchAction {
      *            action mapping.
      * @param request
      *            the http request.
-     * @param permission
+     * @param errorMessageKey
      *            permission to check against, or <code>null</code> if no check is requeired.
      * @throws IllegalArgumentException
      *             if any of the parameters are <code>null</code>, or if
@@ -2522,9 +2568,11 @@ public class ProjectDetailsActions extends DispatchAction {
                     allScorecardTypes = ActionsHelper.createScorecardManager(request).getAllScorecardTypes();
                 }
 
-                Review review = findReviewForSubmission(ActionsHelper.createReviewManager(request),
-                        ActionsHelper.findScorecardTypeByName(allScorecardTypes, "Client Review"),
-                        deliverable.getSubmission(), deliverable.getResource(), false);
+                Phase[] activePhases = ActionsHelper.getActivePhases(phases);
+                Phase phase = ActionsHelper.getPhaseForDeliverable(activePhases, deliverable);
+                Review review = ActionsHelper.findLastApprovalReview(ActionsHelper.createReviewManager(request), phase,
+                    ActionsHelper.findScorecardTypeByName(allScorecardTypes, "Approval"), deliverable.getResource(),
+                    false);
 
                 if (review == null) {
                     links[i] = "CreateApproval.do?method=createApproval&sid=" +
@@ -2533,6 +2581,23 @@ public class ProjectDetailsActions extends DispatchAction {
                     links[i] = "EditApproval.do?method=editApproval&rid=" + review.getId();
                 } else {
                     links[i] = "ViewApproval.do?method=viewApproval&rid=" + review.getId();
+                }
+            } else if (delivName.equalsIgnoreCase(Constants.POST_MORTEM_DELIVERABLE_NAME)) {
+                if (allScorecardTypes == null) {
+                    // Get all scorecard types
+                    allScorecardTypes = ActionsHelper.createScorecardManager(request).getAllScorecardTypes();
+                }
+
+                ScorecardType scorecardType = ActionsHelper.findScorecardTypeByName(allScorecardTypes, "Post-Mortem");
+                Review review = findReviewForProject(ActionsHelper.createReviewManager(request), scorecardType,
+                                                     deliverable.getProject(), deliverable.getResource(), false);
+                if (review == null) {
+                    links[i] = "CreatePostMortem.do?method=createPostMortem&pid=" + deliverable.getProject();
+//                    request.setAttribute("postMortemSubmissionId", deliverable.getSubmission().longValue());
+                } else if (!review.isCommitted()) {
+                    links[i] = "EditPostMortem.do?method=editPostMortem&rid=" + review.getId();
+                } else {
+                    links[i] = "ViewPostMortem.do?method=viewPostMortem&rid=" + review.getId();
                 }
             }
         }
@@ -2677,6 +2742,53 @@ public class ProjectDetailsActions extends DispatchAction {
 
         // Get a review(s) that pass filter
         Review[] reviews = manager.searchReviews(filter, complete);
+        // Return the first found review if any, or null
+        return (reviews.length != 0) ? reviews[0] : null;
+    }
+
+    /**
+     * This static method finds and returns a review of specified scorecard template type for
+     * specified submission ID and made by specified resource.
+     *
+     * @return found review or <code>null</code> if no review has been found.
+     * @param manager
+     *            an instance of <code>ReviewManager</code> class that retrieves a review from the
+     *            database.
+     * @param scorecardType
+     *            a scorecard template type that found review should have.
+     * @param projectId
+     *            an ID of the project which the review was made for.
+     * @param resourceId
+     *            an ID of the resource who made (created) the review.
+     * @param complete
+     *            specifies whether retrieved review should have all infomration (like all items and
+     *            their comments).
+     * @throws IllegalArgumentException
+     *             if <code>scorecardType</code> or <code>submissionId</code> parameters are
+     *             <code>null</code>, or if <code>submissionId</code> or
+     *             <code>resourceId</code> parameters contain negative value or zero.
+     * @throws ReviewManagementException
+     *             if any error occurs during review search or retrieval.
+     */
+    private static Review findReviewForProject(ReviewManager manager,
+            ScorecardType scorecardType, Long projectId, long resourceId, boolean complete)
+        throws ReviewManagementException {
+        // Validate parameters
+        ActionsHelper.validateParameterNotNull(manager, "manager");
+        ActionsHelper.validateParameterNotNull(scorecardType, "scorecardType");
+        ActionsHelper.validateParameterNotNull(projectId, "projectId");
+        ActionsHelper.validateParameterPositive(projectId.longValue(), "projectId");
+        ActionsHelper.validateParameterPositive(resourceId, "resourceId");
+
+        Filter filterProject = new EqualToFilter("project", projectId);
+        Filter filterScorecard = new EqualToFilter("scorecardType", new Long(scorecardType.getId()));
+        Filter filterReviewer = new EqualToFilter("reviewer", new Long (resourceId));
+
+        Filter filter = new AndFilter(Arrays.asList(filterProject, filterScorecard, filterReviewer));
+
+        // Get a review(s) that pass filter
+        Review[] reviews = manager.searchReviews(filter, complete);
+
         // Return the first found review if any, or null
         return (reviews.length != 0) ? reviews[0] : null;
     }
