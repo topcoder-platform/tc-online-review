@@ -50,6 +50,29 @@
 
             <div id="mainMiddleContent">
                 <div class="clearfix"></div>
+                
+                <div id="titlecontainer">
+	                <%-- Validation errors area --%>
+	                <c:if test="${orfn:isErrorsPresent(pageContext.request)}">
+	                    <table cellpadding="0" cellspacing="0" border="0">
+	                        <tr>
+	                            <td colspan="2">
+	                                <span style="color:red;">
+	                                    <bean:message key="Error.manageProject.ValidationFailed"/>
+	                                </span>
+	                            </td>
+	                        </tr>
+	                        <html:errors property="org.apache.struts.action.GLOBAL_MESSAGE"/>
+	                    </table>
+	                    <br/>
+	                </c:if>
+	
+	                <div id="contentTitle">
+	                    <h3>${project.allProperties["Project Name"]}
+	                        version ${project.allProperties["Project Version"]} - Manage Project</h3>
+	                </div>
+                </div>
+                                
                 <div id="tabcontentcontainer">
                     <div id="sc1" style='display:${((empty activeTabIdx) || (activeTabIdx == 1)) ? "block" : "none"};'>
                         <ul id="tablist">
@@ -58,6 +81,7 @@
                             <li><a href="javascript:void(0)"
                                     onClick="return activateTab('sc2', this)"><bean:message key="manageProject.Distributions.title"/></a></li>
                         </ul>
+                        <div style="clear:both;"></div>
                         <table class="scorecard" cellpadding="0" width="100%" style="border-collapse: collapse;">
                         <tr>
                         <td class="title">
@@ -69,26 +93,6 @@
                             <html:form action="/actions/ManageProject">
 		                        <html:hidden property="method" value="manageProject"/>
 		                        <html:hidden property="pid"/>
-		
-		                        <%-- Validation errors area --%>
-		                        <c:if test="${orfn:isErrorsPresent(pageContext.request)}">
-		                            <table cellpadding="0" cellspacing="0" border="0">
-		                                <tr>
-		                                    <td colspan="2">
-		                                        <span style="color:red;">
-		                                            <bean:message key="Error.manageProject.ValidationFailed"/>
-		                                        </span>
-		                                    </td>
-		                                </tr>
-		                                <html:errors property="org.apache.struts.action.GLOBAL_MESSAGE"/>
-		                            </table>
-		                            <br/>
-		                        </c:if>
-		
-		                        <div id="contentTitle">
-		                            <h3>${project.allProperties["Project Name"]}
-		                                version ${project.allProperties["Project Version"]} - Manage Project</h3>
-		                        </div>
 		
 		                        <div id="tabNewLinks">
 		                            <%-- Extend Registration Phase area --%>
@@ -238,6 +242,7 @@
                             <li id='current'><a href="javascript:void(0)"
                                     onClick="return activateTab('sc2', this)"><bean:message key="manageProject.Distributions.title"/></a></li>
                         </ul>
+                        <div style="clear:both;"></div>
                         <table class="scorecard" cellpadding="0" width="100%" style="border-collapse: collapse;">
                         <tr>
                         <td class="title">
@@ -262,17 +267,14 @@
     </body>
     
 <script language="JavaScript" type="text/javascript">
-// A reference to the previously active tab
-<c:if test="${(not empty activeTabIdx) && (activeTabIdx != -1)}">
-var previousActiveTab = document.getElementById("sc${activeTabIdx + 1}");
-</c:if>
-<c:if test="${(empty activeTabIdx) || (activeTabIdx == -1)}">
-var previousActiveTab = null;
-</c:if>
 <!--
-    // A reference to the previously active tab
-    var previousActiveTab = document.getElementById(previousActiveTab);
-
+	// A reference to the previously active tab
+	<c:if test="${(not empty activeTabIdx) && (activeTabIdx != -1)}">
+	var previousActiveTab = document.getElementById("sc${activeTabIdx + 1}");
+	</c:if>
+	<c:if test="${(empty activeTabIdx) || (activeTabIdx == -1)}">
+	var previousActiveTab = null;
+	</c:if>
     /*
      * This function will deactivate the previously active tab (if there was any),
      * and activate the new one.
@@ -288,7 +290,7 @@ var previousActiveTab = null;
         }
         // Activate the new one and update the reference to the previously active tab
         tabToActivate.style.display = "block";
-        previousSActiveTab = tabToActivate;
+        previousActiveTab = tabToActivate;
         // Remove focus from the link that triggered the activation
         if (aObject.blur) {
             aObject.blur();
