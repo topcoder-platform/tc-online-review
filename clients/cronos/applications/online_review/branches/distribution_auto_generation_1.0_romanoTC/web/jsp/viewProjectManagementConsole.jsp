@@ -51,167 +51,206 @@
             <div id="mainMiddleContent">
                 <div class="clearfix"></div>
                 <div id="tabcontentcontainer">
-                    <html:form action="/actions/ManageProject">
-                        <html:hidden property="method" value="manageProject"/>
-                        <html:hidden property="pid"/>
-
-                        <%-- Validation errors area --%>
-                        <c:if test="${orfn:isErrorsPresent(pageContext.request)}">
-                            <table cellpadding="0" cellspacing="0" border="0">
-                                <tr>
-                                    <td colspan="2">
-                                        <span style="color:red;">
-                                            <bean:message key="Error.manageProject.ValidationFailed"/>
-                                        </span>
-                                    </td>
-                                </tr>
-                                <html:errors property="org.apache.struts.action.GLOBAL_MESSAGE"/>
-                            </table>
-                            <br/>
-                        </c:if>
-
-                        <div id="contentTitle">
-                            <h3>${project.allProperties["Project Name"]}
-                                version ${project.allProperties["Project Version"]} - Manage Project</h3>
-                        </div>
-
-                        <div id="tabNewLinks">
-                            <%-- Extend Registration Phase area --%>
-                            <table class="scorecard" id="reg_phase_tbl" cellpadding="0" width="100%"
-                                   style="border-collapse: collapse;">
-                                <tr>
-                                    <td class="title" colspan="2">
-                                        <c:choose>
-                                            <c:when test="${requestScope.registrationPhaseClosed}">
-                                                <bean:message key="manageProject.RegPhase.title2"/>
-                                            </c:when>
-                                            <c:otherwise><bean:message key="manageProject.RegPhase.title"/></c:otherwise>
-                                        </c:choose>
-                                    </td>
-                                </tr>
-                                <tr class="light">
-                                    <td class="value">
-                                        <bean:message key="manageProject.RegPhase.deadline"/>
-                                    </td>
-                                    <td class="value">
-                                        <fmt:formatDate value="${requestScope.registrationPhase.scheduledEndDate}"
-                                                        pattern="MM.dd.yyyy hh:mm a"/>
-                                    </td>
-                                </tr>
-                                <tr class="dark">
-                                    <td class="value">
-                                        <bean:message key="manageProject.RegPhase.duration"/>
-                                    </td>
-                                    <td class="value">
-                                        <c:out value="${requestScope.registrationPhaseDuration}"/>
-                                    </td>
-                                </tr>
-                                <tr class="light">
-                                    <td class="value">
-                                        <bean:message key="manageProject.RegPhase.extension"/>
-                                    </td>
-                                    <td class="value">
-                                        <html:text styleClass=".inputBoxDuration"
-                                                   disabled="${not requestScope.allowRegistrationPhaseExtension}" 
-                                                   property="registration_phase_extension"/>
-                                        <div class="error">
-                                            <html:errors property="registration_phase_extension" prefix="" suffix=""/>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td class="lastRowTD" colspan="2"><!-- @ --></td>
-                                </tr>
-                            </table>
-                                <%-- Extend Submission Phase area --%>
-                                <table class="scorecard" id="submission_phase_tbl" cellpadding="0" width="100%"
-                                       style="border-collapse: collapse;">
-                                    <tr>
-                                        <td class="title" colspan="2">
-                                            <bean:message key="manageProject.SubmissionPhase.title"/>
-                                        </td>
-                                    </tr>
-                                    <tr class="light">
-                                        <td class="value">
-                                            <bean:message key="manageProject.SubmissionPhase.deadline"/>
-                                        </td>
-                                        <td class="value">
-                                            <fmt:formatDate value="${requestScope.submissionPhase.scheduledEndDate}"
-                                                            pattern="MM.dd.yyyy hh:mm a"/>
-                                        </td>
-                                    </tr>
-                                    <tr class="dark">
-                                        <td class="value">
-                                            <bean:message key="manageProject.SubmissionPhase.duration"/>
-                                        </td>
-                                        <td class="value">
-                                            <c:out value="${requestScope.submissionPhaseDuration}"/>
-                                        </td>
-                                    </tr>
-                                    <tr class="light">
-                                        <td class="value">
-                                            <bean:message key="manageProject.SubmissionPhase.extension"/>
-                                        </td>
-                                        <td class="value">
-                                            <html:text styleClass=".inputBoxDuration"
-                                                       disabled="${not requestScope.allowSubmissionPhaseExtension}"
-                                                       property="submission_phase_extension"/>
-                                            <div class="error">
-                                                <html:errors property="submission_phase_extension" prefix=""
-                                                             suffix=""/>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td class="lastRowTD" colspan="2"><!-- @ --></td>
-                                    </tr>
-                                </table>
-
-                            <%-- Add Resources area --%>
-                            <table class="scorecard" id="resources_tbl" cellpadding="0" width="100%"
-                                   style="border-collapse: collapse;">
-                                <tr>
-                                    <td class="title" colspan="5"><bean:message key="manageProject.Resources.title" /></td>
-                                </tr>
-                                <tr>
-                                    <td class="header"><bean:message key="manageProject.Resources.Role"/></td>
-                                    <td class="header"><bean:message key="manageProject.Resources.Handles"/></td>
-                                </tr>
-
-                                <c:forEach items="${requestScope.availableRoles}" var="role" varStatus="index">
-                                    <tr class="${(index.index % 2 == 0) ? 'light' : 'dark'}">
-                                        <td class="value">
-                                            <html:hidden property="resource_role_id[${index.index}]" value="${role.id}"/>
-                                            <c:out value="${role.name}"/>
-                                            <div class="error">
-                                                <html:errors property="resource_role_id[${index.index}]"
-                                                             prefix="" suffix=""/>
-                                            </div>
-                                        </td>
-                                        <td class="value">
-                                            <html:text styleClass="inputTextBox" property="resource_handles[${index.index}]"
-                                                       size=""/>
-                                            <div class="error">
-                                                <html:errors property="resource_handles[${index.index}]"
-                                                             prefix="" suffix=""/>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                </c:forEach>
-
-                                <tr>
-                                    <td class="lastRowTD" colspan="2"><!-- @ --></td>
-                                </tr>
-                            </table><br />
-                        </div>
-
-                        <div class="bottomButtonBar">
-                            <html:image srcKey="btnSaveChanges.img" altKey="btnSaveChanges.alt" border="0"/>&#160;
-                            <html:link
-                                    page="/actions/ViewProjectDetails.do?method=viewProjectDetails&pid=${project.id}"><html:img
-                                    srcKey="btnCancel.img" altKey="btnCancel.alt" border="0"/></html:link>
-                        </div>
-                    </html:form>
+                    <div id="sc1" style='display:${((empty activeTabIdx) || (activeTabIdx == 1)) ? "block" : "none"};'>
+                        <ul id="tablist">
+                            <li id='current'><a href="javascript:void(0)"
+                                onClick="return activateTab('sc1', this)"><bean:message key="manageProject.TimelineResources.title"/></a></li>
+                            <li><a href="javascript:void(0)"
+                                    onClick="return activateTab('sc2', this)"><bean:message key="manageProject.Distributions.title"/></a></li>
+                        </ul>
+                        <table class="scorecard" cellpadding="0" width="100%" style="border-collapse: collapse;">
+                        <tr>
+                        <td class="title">
+                            <bean:message key="manageProject.TimelineResources.title"/>
+                        </td>
+                        </tr>
+                        <tr class="light">
+                        <td>
+                            <html:form action="/actions/ManageProject">
+		                        <html:hidden property="method" value="manageProject"/>
+		                        <html:hidden property="pid"/>
+		
+		                        <%-- Validation errors area --%>
+		                        <c:if test="${orfn:isErrorsPresent(pageContext.request)}">
+		                            <table cellpadding="0" cellspacing="0" border="0">
+		                                <tr>
+		                                    <td colspan="2">
+		                                        <span style="color:red;">
+		                                            <bean:message key="Error.manageProject.ValidationFailed"/>
+		                                        </span>
+		                                    </td>
+		                                </tr>
+		                                <html:errors property="org.apache.struts.action.GLOBAL_MESSAGE"/>
+		                            </table>
+		                            <br/>
+		                        </c:if>
+		
+		                        <div id="contentTitle">
+		                            <h3>${project.allProperties["Project Name"]}
+		                                version ${project.allProperties["Project Version"]} - Manage Project</h3>
+		                        </div>
+		
+		                        <div id="tabNewLinks">
+		                            <%-- Extend Registration Phase area --%>
+		                            <table class="scorecard" id="reg_phase_tbl" cellpadding="0" width="100%"
+		                                   style="border-collapse: collapse;">
+		                                <tr>
+		                                    <td class="title" colspan="2">
+		                                        <c:choose>
+		                                            <c:when test="${requestScope.registrationPhaseClosed}">
+		                                                <bean:message key="manageProject.RegPhase.title2"/>
+		                                            </c:when>
+		                                            <c:otherwise><bean:message key="manageProject.RegPhase.title"/></c:otherwise>
+		                                        </c:choose>
+		                                    </td>
+		                                </tr>
+		                                <tr class="light">
+		                                    <td class="value">
+		                                        <bean:message key="manageProject.RegPhase.deadline"/>
+		                                    </td>
+		                                    <td class="value">
+		                                        <fmt:formatDate value="${requestScope.registrationPhase.scheduledEndDate}"
+		                                                        pattern="MM.dd.yyyy hh:mm a"/>
+		                                    </td>
+		                                </tr>
+		                                <tr class="dark">
+		                                    <td class="value">
+		                                        <bean:message key="manageProject.RegPhase.duration"/>
+		                                    </td>
+		                                    <td class="value">
+		                                        <c:out value="${requestScope.registrationPhaseDuration}"/>
+		                                    </td>
+		                                </tr>
+		                                <tr class="light">
+		                                    <td class="value">
+		                                        <bean:message key="manageProject.RegPhase.extension"/>
+		                                    </td>
+		                                    <td class="value">
+		                                        <html:text styleClass=".inputBoxDuration"
+		                                                   disabled="${not requestScope.allowRegistrationPhaseExtension}" 
+		                                                   property="registration_phase_extension"/>
+		                                        <div class="error">
+		                                            <html:errors property="registration_phase_extension" prefix="" suffix=""/>
+		                                        </div>
+		                                    </td>
+		                                </tr>
+		                                <tr>
+		                                    <td class="lastRowTD" colspan="2"><!-- @ --></td>
+		                                </tr>
+		                            </table>
+		                                <%-- Extend Submission Phase area --%>
+		                                <table class="scorecard" id="submission_phase_tbl" cellpadding="0" width="100%"
+		                                       style="border-collapse: collapse;">
+		                                    <tr>
+		                                        <td class="title" colspan="2">
+		                                            <bean:message key="manageProject.SubmissionPhase.title"/>
+		                                        </td>
+		                                    </tr>
+		                                    <tr class="light">
+		                                        <td class="value">
+		                                            <bean:message key="manageProject.SubmissionPhase.deadline"/>
+		                                        </td>
+		                                        <td class="value">
+		                                            <fmt:formatDate value="${requestScope.submissionPhase.scheduledEndDate}"
+		                                                            pattern="MM.dd.yyyy hh:mm a"/>
+		                                        </td>
+		                                    </tr>
+		                                    <tr class="dark">
+		                                        <td class="value">
+		                                            <bean:message key="manageProject.SubmissionPhase.duration"/>
+		                                        </td>
+		                                        <td class="value">
+		                                            <c:out value="${requestScope.submissionPhaseDuration}"/>
+		                                        </td>
+		                                    </tr>
+		                                    <tr class="light">
+		                                        <td class="value">
+		                                            <bean:message key="manageProject.SubmissionPhase.extension"/>
+		                                        </td>
+		                                        <td class="value">
+		                                            <html:text styleClass=".inputBoxDuration"
+		                                                       disabled="${not requestScope.allowSubmissionPhaseExtension}"
+		                                                       property="submission_phase_extension"/>
+		                                            <div class="error">
+		                                                <html:errors property="submission_phase_extension" prefix=""
+		                                                             suffix=""/>
+		                                            </div>
+		                                        </td>
+		                                    </tr>
+		                                    <tr>
+		                                        <td class="lastRowTD" colspan="2"><!-- @ --></td>
+		                                    </tr>
+		                                </table>
+		
+		                            <%-- Add Resources area --%>
+		                            <table class="scorecard" id="resources_tbl" cellpadding="0" width="100%"
+		                                   style="border-collapse: collapse;">
+		                                <tr>
+		                                    <td class="title" colspan="5"><bean:message key="manageProject.Resources.title" /></td>
+		                                </tr>
+		                                <tr>
+		                                    <td class="header"><bean:message key="manageProject.Resources.Role"/></td>
+		                                    <td class="header"><bean:message key="manageProject.Resources.Handles"/></td>
+		                                </tr>
+		
+		                                <c:forEach items="${requestScope.availableRoles}" var="role" varStatus="index">
+		                                    <tr class="${(index.index % 2 == 0) ? 'light' : 'dark'}">
+		                                        <td class="value">
+		                                            <html:hidden property="resource_role_id[${index.index}]" value="${role.id}"/>
+		                                            <c:out value="${role.name}"/>
+		                                            <div class="error">
+		                                                <html:errors property="resource_role_id[${index.index}]"
+		                                                             prefix="" suffix=""/>
+		                                            </div>
+		                                        </td>
+		                                        <td class="value">
+		                                            <html:text styleClass="inputTextBox" property="resource_handles[${index.index}]"
+		                                                       size=""/>
+		                                            <div class="error">
+		                                                <html:errors property="resource_handles[${index.index}]"
+		                                                             prefix="" suffix=""/>
+		                                            </div>
+		                                        </td>
+		                                    </tr>
+		                                </c:forEach>
+		
+		                                <tr>
+		                                    <td class="lastRowTD" colspan="2"><!-- @ --></td>
+		                                </tr>
+		                            </table><br />
+		                        </div>
+		
+		                        <div class="bottomButtonBar">
+		                            <html:image srcKey="btnSaveChanges.img" altKey="btnSaveChanges.alt" border="0"/>&#160;
+		                            <html:link
+		                                    page="/actions/ViewProjectDetails.do?method=viewProjectDetails&pid=${project.id}"><html:img
+		                                    srcKey="btnCancel.img" altKey="btnCancel.alt" border="0"/></html:link>
+		                        </div>
+		                    </html:form>
+                        </td>
+                        </tr>
+                        </table>
+                    </div> 
+                    <div id="sc2" style='display:${(activeTabIdx == 2) ? "block" : "none"};'>
+                        <ul id="tablist">
+                            <li><a href="javascript:void(0)"
+                                onClick="return activateTab('sc1', this)"><bean:message key="manageProject.TimelineResources.title"/></a></li>
+                            <li id='current'><a href="javascript:void(0)"
+                                    onClick="return activateTab('sc2', this)"><bean:message key="manageProject.Distributions.title"/></a></li>
+                        </ul>
+                        <table class="scorecard" cellpadding="0" width="100%" style="border-collapse: collapse;">
+                        <tr>
+                        <td class="title">
+                            <bean:message key="manageProject.Distributions.title"/>
+                        </td>
+                        </tr>
+                        <tr class="light">
+                        <td>
+                            Welcome to the show!
+                        </td>
+                        </tr>
+                        </table>
+                    </div>
                 </div>
                 <!-- //tabconentcontainer -->
             </div>
@@ -221,4 +260,41 @@
         <!-- //maxWidthBody -->
     </div>
     </body>
+    
+<script language="JavaScript" type="text/javascript">
+// A reference to the previously active tab
+<c:if test="${(not empty activeTabIdx) && (activeTabIdx != -1)}">
+var previousActiveTab = document.getElementById("sc${activeTabIdx + 1}");
+</c:if>
+<c:if test="${(empty activeTabIdx) || (activeTabIdx == -1)}">
+var previousActiveTab = null;
+</c:if>
+<!--
+    // A reference to the previously active tab
+    var previousActiveTab = document.getElementById(previousActiveTab);
+
+    /*
+     * This function will deactivate the previously active tab (if there was any),
+     * and activate the new one.
+     */
+    function activateTab(tabId, aObject) {
+        var tabToActivate = document.getElementById(tabId);
+        if (tabToActivate == null) {
+            return false;
+        }
+        // Deactivate the previously active tab
+        if (previousSActiveTab != null) {
+            previousSActiveTab.style.display = "none";
+        }
+        // Activate the new one and update the reference to the previously active tab
+        tabToActivate.style.display = "block";
+        previousSActiveTab = tabToActivate;
+        // Remove focus from the link that triggered the activation
+        if (aObject.blur) {
+            aObject.blur();
+        }
+        return false;
+    }
+//-->
+</script>
 </html:html>
