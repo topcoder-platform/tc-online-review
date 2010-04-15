@@ -186,6 +186,9 @@
             <Value>handler_approval_start</Value>
             <Value>handler_approval_end</Value>
             <Value>handler_approval_cancel</Value>
+            <Value>handler_post-mortem_start</Value>
+            <Value>handler_post-mortem_end</Value>
+            <Value>handler_post-mortem_cancel</Value>	    
         </Property>
         <!-- The details about each handler -->
         <Property name="handler_final_review_start">
@@ -551,6 +554,39 @@
                 <Value>handler_approval_def</Value>
             </Property>
         </Property>
+        <Property name="handler_post-mortem_start">
+            <Property name="phaseType">
+                <Value>post-mortem</Value>
+            </Property>
+            <Property name="operation">
+                <Value>start</Value>
+            </Property>
+            <Property name="handler">
+                <Value>handler_post-mortem_def</Value>
+            </Property>
+        </Property>
+        <Property name="handler_post-mortem_end">
+            <Property name="phaseType">
+                <Value>post-mortem</Value>
+            </Property>
+            <Property name="operation">
+                <Value>end</Value>
+            </Property>
+            <Property name="handler">
+                <Value>handler_post-mortem_def</Value>
+            </Property>
+        </Property>
+        <Property name="handler_post-mortem_cancel">
+            <Property name="phaseType">
+                <Value>post-mortem</Value>
+            </Property>
+            <Property name="operation">
+                <Value>cancel</Value>
+            </Property>
+            <Property name="handler">
+                <Value>handler_post-mortem_def</Value>
+            </Property>
+        </Property>	
         <!-- The object factory configurations -->
         <Property name="ObjectFactoryNamespace">
             <Value>com.topcoder.management.phase.ObjectFactory</Value>
@@ -811,6 +847,29 @@
                 </Property>
             </Property>
         </Property>
+        <Property name="post-mortem">
+            <Property name="type">
+                <Value>com.topcoder.project.phases.PhaseType</Value>
+            </Property>
+            <Property name="params">
+                <Property name="param1">
+                    <Property name="type">
+                        <Value>long</Value>
+                    </Property>
+                    <Property name="value">
+                        <Value>12</Value>
+                    </Property>
+                </Property>
+                <Property name="param2">
+                    <Property name="type">
+                        <Value>String</Value>
+                    </Property>
+                    <Property name="value">
+                        <Value>Post-Mortem</Value>
+                    </Property>
+                </Property>
+            </Property>
+        </Property>	
         <!-- The defination for handler -->
         <Property name="handler_registration_def">
             <Property name="type">
@@ -867,5 +926,10 @@
                 <Value>com.cronos.onlinereview.phases.ApprovalPhaseHandler</Value>
             </Property>
         </Property>
+        <Property name="handler_post-mortem_def">
+            <Property name="type">
+                <Value>com.cronos.onlinereview.phases.PostMortemPhaseHandler</Value>
+            </Property>
+        </Property>	
     </Config>
 </CMConfig>
