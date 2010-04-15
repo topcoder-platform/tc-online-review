@@ -88,6 +88,9 @@
                             <bean:message key="manageProject.TimelineResources.title"/>
                         </td>
                         </tr>
+                        <tr>
+                            <td class="lastRowTD"><!-- @ --></td>
+                        </tr>
                         <tr class="light">
                         <td>
                             <html:form action="/actions/ManageProject">
@@ -233,6 +236,9 @@
 		                    </html:form>
                         </td>
                         </tr>
+                        <tr>
+                            <td class="lastRowTD"><!-- @ --></td>
+                        </tr>
                         </table>
                     </div> 
                     <div id="sc2" style='display:${(activeTabIdx == 2) ? "block" : "none"};'>
@@ -249,10 +255,16 @@
                             <bean:message key="manageProject.Distributions.title"/>
                         </td>
                         </tr>
+                        <tr>
+                            <td class="lastRowTD"><!-- @ --></td>
+                        </tr>
                         <tr class="light">
                         <td>
                             Welcome to the show!
                         </td>
+                        </tr>
+                        <tr>
+                            <td class="lastRowTD"><!-- @ --></td>
                         </tr>
                         </table>
                     </div>
@@ -285,8 +297,8 @@
             return false;
         }
         // Deactivate the previously active tab
-        if (previousSActiveTab != null) {
-            previousSActiveTab.style.display = "none";
+        if (previousActiveTab != null) {
+            previousActiveTab.style.display = "none";
         }
         // Activate the new one and update the reference to the previously active tab
         tabToActivate.style.display = "block";
