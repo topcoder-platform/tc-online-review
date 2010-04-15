@@ -1,3 +1,13 @@
+<%--
+  - Author: isv
+  - Version: 1.1
+  - Copyright (C) 2004 - 2010 TopCoder Inc., All Rights Reserved.
+  -
+  - Description: This page fragment displays the content of tab for single project phase on Project Details screen.
+  -
+  - Version 1.1 (Online Review End of Project Analysis v1.0) changes: Added logic for supporting Post-Mortem phase.
+  - Updated logic for supporting Approval phase.
+--%>
 <%@ page language="java" isELIgnored="false" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
@@ -644,10 +654,11 @@
 						<c:when test='${group.appFunc == "APPROVAL"}'>
 							<table class="scorecard" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;">
 								<tr>
-									<td class="title" colspan="3">${group.tableName}</td>
+									<td class="title" colspan="4">${group.tableName}</td>
 								</tr>
 								<tr>
 									<td class="header" nowrap="nowrap"><bean:message key="viewProjectDetails.box.Submission.ID" /></td>
+									<td class="headerC" nowrap="nowrap"><bean:message key="viewProjectDetails.box.Approval.Reviewer" arg0="${group.groupIndex}" /></td>
 									<td class="headerC" nowrap="nowrap"><bean:message key="viewProjectDetails.box.Approval.Date" arg0="${group.groupIndex}" /></td>
 									<td class="headerC" nowrap="nowrap"><bean:message key="viewProjectDetails.box.Approval.Approval" arg0="${group.groupIndex}" /></td>
 								</tr>
@@ -658,50 +669,146 @@
 									</c:if>
 								</c:forEach>
 								<c:if test="${not empty winningSubmission}">
-									<tr class="light">
-										<td class="value" nowrap="nowrap">
-											<html:img srcKey="viewProjectDetails.Submitter.icoWinner.img" altKey="viewProjectDetails.Submitter.icoWinner.alt" border="0" styleClass="Outline" />
-											<html:link page="/actions/DownloadSubmission.do?method=downloadSubmission&uid=${winningSubmission.upload.id}"
-												titleKey="viewProjectDetails.box.Submission.Download">${winningSubmission.id}</html:link>
-											(<tc-webtag:handle coderId='${group.winner.allProperties["External Reference ID"]}' context="${orfn:getHandlerContext(pageContext.request)}" />)
-										</td>
-										<c:if test="${not empty group.approval}">
-											<c:if test="${group.approval.committed}">
-												<td class="valueC" nowrap="nowrap">${orfn:displayDate(pageContext.request, group.approval.modificationTimestamp)}</td>
-												<td class="valueC" nowrap="nowrap">
-													<html:link page="/actions/ViewApproval.do?method=viewApproval&rid=${group.approval.id}"><bean:message
-														key="viewProjectDetails.box.Approval.ViewResults" /></html:link></td>
-											</c:if>
-											<c:if test="${not group.approval.committed}">
-												<td class="value"><!-- @ --></td>
-												<c:if test="${isAllowedToPerformApproval}">
-													<td class="valueC" nowrap="nowrap">
-														<html:link page="/actions/EditApproval.do?method=editApproval&rid=${group.approval.id}"><bean:message
-															key="viewProjectDetails.box.Approval.Submit" /></html:link></td>
-												</c:if>
-												<c:if test="${not isAllowedToPerformApproval}">
-													<td class="valueC" nowrap="nowrap"><bean:message key="Pending" /></td>
-												</c:if>
-											</c:if>
-										</c:if>
-										<c:if test="${empty group.approval}">
-											<td class="value"><!-- @ --></td>
-											<c:if test="${isAllowedToPerformApproval}">
-												<td class="valueC" nowrap="nowrap">
-													<html:link page="/actions/CreateApproval.do?method=createApproval&sid=${winningSubmission.id}"><bean:message
-														key="viewProjectDetails.box.Approval.Submit" /></html:link></td>
-											</c:if>
-											<c:if test="${not isAllowedToPerformApproval}">
-												<td class="valueC" nowrap="nowrap"><bean:message key="Pending" /></td>
-											</c:if>
-										</c:if>
-									</tr>
+                                    <c:forEach items="${group.approvalReviewers}" var="reviewer">
+                                        <c:set var="isReviewerCurrentUser"
+                                               value="${reviewer.allProperties['External Reference ID'] eq orfn:getLoggedInUserId(pageContext.request)}"/>
+                                        <c:set var="approval" value="${null}"/>
+                                        <c:forEach items="${group.approval}" var="review">
+                                            <c:if test="${review.author eq reviewer.id}">
+                                                <c:set var="approval" value="${review}"/>
+                                            </c:if>
+                                        </c:forEach>
+                                        <tr class="light">
+                                            <td class="value" nowrap="nowrap">
+                                                <html:img srcKey="viewProjectDetails.Submitter.icoWinner.img"
+                                                          altKey="viewProjectDetails.Submitter.icoWinner.alt" border="0"
+                                                          styleClass="Outline"/>
+                                                <html:link
+                                                        page="/actions/DownloadSubmission.do?method=downloadSubmission&uid=${winningSubmission.upload.id}"
+                                                        titleKey="viewProjectDetails.box.Submission.Download">${winningSubmission.id}</html:link>
+                                                (<tc-webtag:handle
+                                                    coderId='${group.winner.allProperties["External Reference ID"]}'
+                                                    context="${orfn:getHandlerContext(pageContext.request)}"/>)
+                                            </td>
+                                            <td class="valueC" nowrap="nowrap">
+                                                <tc-webtag:handle
+                                                    coderId='${reviewer.allProperties["External Reference ID"]}'
+                                                    context="${orfn:getHandlerContext(pageContext.request)}"/>
+                                            </td>
+                                            <c:choose>
+                                                <c:when test="${approval eq null}">
+                                                    <td class="value"><!-- @ --></td>
+                                                    <c:if test="${isAllowedToPerformApproval and isReviewerCurrentUser}">
+                                                        <td class="valueC" nowrap="nowrap">
+                                                            <html:link page="/actions/CreateApproval.do?method=createApproval&sid=${winningSubmission.id}">
+                                                                <bean:message key="viewProjectDetails.box.Approval.Submit"/></html:link>
+                                                        </td>
+                                                    </c:if>
+                                                    <c:if test="${not isAllowedToPerformApproval or not isReviewerCurrentUser}">
+                                                        <td class="valueC" nowrap="nowrap">
+                                                            <bean:message key="Pending"/></td>
+                                                    </c:if>
+                                                </c:when>
+                                                <c:when test="${approval.committed}">
+                                                    <td class="valueC"
+                                                        nowrap="nowrap">${orfn:displayDate(pageContext.request, approval.modificationTimestamp)}</td>
+                                                    <td class="valueC" nowrap="nowrap">
+                                                        <html:link
+                                                                page="/actions/ViewApproval.do?method=viewApproval&rid=${approval.id}"><bean:message
+                                                                key="viewProjectDetails.box.Approval.ViewResults"/></html:link></td>
+                                                </c:when>
+                                                <c:when test="${not approval.committed}">
+                                                    <td class="value"><!-- @ --></td>
+                                                    <c:if test="${isAllowedToPerformApproval and isReviewerCurrentUser}">
+                                                        <td class="valueC" nowrap="nowrap">
+                                                            <html:link
+                                                                    page="/actions/EditApproval.do?method=editApproval&rid=${approval.id}"><bean:message
+                                                                    key="viewProjectDetails.box.Approval.Submit"/></html:link></td>
+                                                    </c:if>
+                                                    <c:if test="${not isAllowedToPerformApproval or not isReviewerCurrentUser}">
+                                                        <td class="valueC" nowrap="nowrap"><bean:message
+                                                                key="Pending"/></td>
+                                                    </c:if>
+                                                </c:when>
+                                            </c:choose>
+                                        </tr>
+                                    </c:forEach>
 								</c:if>
 								<tr>
-									<td class="lastRowTD" colspan="3"><!-- @ --></td>
+									<td class="lastRowTD" colspan="4"><!-- @ --></td>
 								</tr>
 							</table>
 						</c:when>
+                        <c:when test='${group.appFunc == "POSTMORTEM"}'>
+                            <table class="scorecard" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;">
+                                <tr>
+                                    <td class="title" colspan="3">${group.tableName}</td>
+                                </tr>
+
+                                <tr>
+                                    <td class="header" nowrap="nowrap"><bean:message key="viewProjectDetails.box.Post-Mortem.Reviewer.ID" /></td>
+                                    <td class="headerC" nowrap="nowrap"><bean:message key="viewProjectDetails.box.Post-Mortem.Date" arg0="${group.groupIndex}" /></td>
+                                    <td class="headerC" nowrap="nowrap"><bean:message key="viewProjectDetails.box.Post-Mortem.Post-Mortem" arg0="${group.groupIndex}" /></td>
+                                </tr>
+
+                                <c:forEach items="${group.postMortemReviewers}" var="reviewer" varStatus="index">
+                                    <c:set var="isReviewerCurrentUser"
+                                           value="${reviewer.allProperties['External Reference ID'] eq orfn:getLoggedInUserId(pageContext.request)}"/>
+                                    <c:set var="review" value="${null}"/>
+                                    <c:forEach items="${group.postMortemReviews}" var="postMortemReview">
+                                        <c:if test="${postMortemReview.author eq reviewer.id}">
+                                            <c:set var="review" value="${postMortemReview}"/>
+                                        </c:if>
+                                    </c:forEach>
+
+                                    <tr class="${index.index mod 2 eq 0 ? 'light' : 'dark'}">
+                                        <td class="value" nowrap="nowrap">
+                                            <tc-webtag:handle coderId='${reviewer.allProperties["External Reference ID"]}'
+                                                              context="${orfn:getHandlerContext(pageContext.request)}"/>
+                                        </td>
+                                        <c:choose>
+                                            <c:when test="${review eq null}">
+                                                <td class="value"><!-- @ --></td>
+                                                <c:if test="${isAllowedToPerformPortMortemReview and isReviewerCurrentUser}">
+                                                    <td class="valueC" nowrap="nowrap">
+                                                        <html:link page="/actions/CreatePostMortem.do?method=createPostMortem&pid=${project.id}">
+                                                            <bean:message key="viewProjectDetails.box.Post-Mortem.Submit"/></html:link>
+                                                    </td>
+                                                </c:if>
+                                                <c:if test="${not isAllowedToPerformPortMortemReview or not isReviewerCurrentUser}">
+                                                    <td class="valueC" nowrap="nowrap">
+                                                        <bean:message key="Pending"/></td>
+                                                </c:if>
+                                            </c:when>
+                                            <c:when test="${review.committed}">
+                                                <td class="valueC" nowrap="nowrap">${orfn:displayDate(pageContext.request, review.modificationTimestamp)}</td>
+                                                <td class="valueC" nowrap="nowrap">
+                                                    <html:link page="/actions/ViewPostMortem.do?method=viewPostMortem&rid=${review.id}">
+                                                        <bean:message key="viewProjectDetails.box.Post-Mortem.ViewResults"/>
+                                                    </html:link>
+                                                </td>
+                                            </c:when>
+                                            <c:when test="${not review.committed}">
+                                                <td class="value"><!-- @ --></td>
+                                                <c:if test="${isAllowedToPerformPortMortemReview and isReviewerCurrentUser}">
+                                                    <td class="valueC" nowrap="nowrap">
+                                                        <html:link page="/actions/EditPostMortem.do?method=editPostMortem&rid=${review.id}">
+                                                            <bean:message key="viewProjectDetails.box.Post-Mortem.Submit"/>
+                                                        </html:link>
+                                                    </td>
+                                                </c:if>
+                                                <c:if test="${not isAllowedToPerformPortMortemReview or not isReviewerCurrentUser}">
+                                                    <td class="valueC" nowrap="nowrap"><bean:message key="Pending" /></td>
+                                                </c:if>
+                                            </c:when>
+                                        </c:choose>
+                                    </tr>
+                                </c:forEach>
+                                <tr>
+                                    <td class="lastRowTD" colspan="3"><!-- @ --></td>
+                                </tr>
+                            </table>
+                        </c:when>
 					</c:choose>
 				</c:if>
 			</div>

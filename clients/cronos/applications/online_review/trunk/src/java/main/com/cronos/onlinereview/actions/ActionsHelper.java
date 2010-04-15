@@ -20,6 +20,8 @@ import javax.naming.NamingException;
 import javax.servlet.http.HttpServletRequest;
 
 import com.topcoder.management.phase.*;
+import com.topcoder.management.review.ReviewManagementException;
+import com.topcoder.search.builder.filter.EqualToFilter;
 import org.apache.struts.Globals;
 import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionForward;
@@ -153,8 +155,6 @@ import com.topcoder.web.ejb.forums.ForumsHome;
  *   </ol>
  * </p>
  *
- * @author George1, real_vg, pulky, isv
- * @version 1.3
  * <p>
  * Version 1.4 (Contest Dependency Automation Assembly v1.0) Change notes:
  *   <ol>
@@ -164,8 +164,19 @@ import com.topcoder.web.ejb.forums.ForumsHome;
  *   </ol>
  * </p>
  *
+ * <p>
+ * Version 1.5 (Online Review End Of Project Analysis Assembly v1.0) Change notes:
+ *   <ol>
+ *     <li>Updated {@link #getResourcesForPhase(Resource[], Phase)} method to properly map resource to Post-Mortem and
+ *     Approval phases.</li>
+ *     <li>Updated {@link #createDeliverableManager(HttpServletRequest)} method to bind deliverbale checker for
+ *     <code>Post-Mortem</code> phase.</li>
+ *     <li>Added {@link #getApprovalPhaseReviews(Review[], Phase)} method.</li>
+ *   </ol>
+ * </p>
+ *
  * @author George1, real_vg, pulky, isv
- * @version 1.4
+ * @version 1.5
  * @since 1.0
  */
 public class ActionsHelper {
@@ -261,30 +272,30 @@ public class ActionsHelper {
     }
 
     /**
-	 * The query to select worker project.
-	 */
-	private static final String SELECT_WORKER_PROJECT = "SELECT distinct project_id FROM project_worker p, user_account u "
-			+ "WHERE p.start_date <= current and current <= p.end_date and p.active =1 and "
-			+ "p.user_account_id = u.user_account_id and u.user_name = ";
+     * The query to select worker project.
+     */
+    private static final String SELECT_WORKER_PROJECT = "SELECT distinct project_id FROM project_worker p, user_account u "
+            + "WHERE p.start_date <= current and current <= p.end_date and p.active =1 and "
+            + "p.user_account_id = u.user_account_id and u.user_name = ";
 
     /**
-	 * The query string used to select projects.
-	 */
-	private static final String SELECT_MANAGER_PROJECT = "SELECT distinct project_id FROM project_manager p, user_account u "
+     * The query string used to select projects.
+     */
+    private static final String SELECT_MANAGER_PROJECT = "SELECT distinct project_id FROM project_manager p, user_account u "
            + "WHERE p.user_account_id = u.user_account_id and p.active = 1 and  u.user_name = ";
 
     /**
-	 * The query string used to select projects.
-	 * 
-	 * Updated for Cockpit Release Assembly for Receipts
-	 *     - now fetching client name too.
-	 *     
-	 * Updated for Version 1.1.1 - added fetch for is_manual_prize_setting property too.
-	 */
-	private static final String SELECT_PROJECT 	= "select p.project_id, p.name "
-			  + " from project as p left join client_project as cp on p.project_id = cp.project_id left join client c "
+     * The query string used to select projects.
+     * 
+     * Updated for Cockpit Release Assembly for Receipts
+     *     - now fetching client name too.
+     *     
+     * Updated for Version 1.1.1 - added fetch for is_manual_prize_setting property too.
+     */
+    private static final String SELECT_PROJECT     = "select p.project_id, p.name "
+              + " from project as p left join client_project as cp on p.project_id = cp.project_id left join client c "
               + "            on c.client_id = cp.client_id and (c.is_deleted = 0 or c.is_deleted is null) "
-			  + " where p.start_date <= current and current <= p.end_date ";
+              + " where p.start_date <= current and current <= p.end_date ";
 
     // ------------------------------------------------------------ Validator type of methods -----
 
@@ -1759,8 +1770,20 @@ public class ActionsHelper {
                     foundResources.add(resource);
                 }
             } else {
-                if (resource.getPhase() != null && resource.getPhase().longValue() == phase.getId()) {
-                    foundResources.add(resource);
+                // Handle Post-Mortem and Approval phases differently. Those resources are not mapped to phase type
+                // so they must be discovered based on resource role name
+                if (phase.getPhaseType().getName().equals(Constants.POST_MORTEM_PHASE_NAME)) {
+                    if (resource.getResourceRole().getName().equals(Constants.POST_MORTEM_REVIEWER_ROLE_NAME)) {
+                        foundResources.add(resource);
+                    }
+                } else if (phase.getPhaseType().getName().equals(Constants.APPROVAL_PHASE_NAME)) {
+                    if (resource.getResourceRole().getName().equals(Constants.APPROVER_ROLE_NAME)) {
+                        foundResources.add(resource);
+                    }
+                } else {
+                    if (resource.getPhase() != null && resource.getPhase().longValue() == phase.getId()) {
+                        foundResources.add(resource);
+                    }
                 }
             }
         }
@@ -2741,6 +2764,8 @@ public class ActionsHelper {
 
             // Some checkers are used more than once
             DeliverableChecker committedChecker = new CommittedReviewDeliverableChecker(dbconn);
+            DeliverableChecker submissionIndependentReviewChecker 
+                = new CommittedReviewDeliverableChecker(dbconn, false);
             DeliverableChecker testCasesChecker = new TestCasesDeliverableChecker(dbconn);
 
             checkers.put(Constants.SUBMISSION_DELIVERABLE_NAME, new SubmissionDeliverableChecker(dbconn));
@@ -2757,6 +2782,7 @@ public class ActionsHelper {
             checkers.put(Constants.SCORECARD_COMM_DELIVERABLE_NAME, new SubmitterCommentDeliverableChecker(dbconn));
             checkers.put(Constants.FINAL_REVIEW_PHASE_NAME, new FinalReviewDeliverableChecker(dbconn));
             checkers.put(Constants.APPROVAL_DELIVERABLE_NAME, committedChecker);
+            checkers.put(Constants.POST_MORTEM_DELIVERABLE_NAME, submissionIndependentReviewChecker);
 
             // Initialize the PersistenceDeliverableManager
             manager = new PersistenceDeliverableManager(deliverablePersistence, checkers,
@@ -2984,9 +3010,9 @@ public class ActionsHelper {
                 String queryString = "";
 
                 String nonadminQueryString = SELECT_PROJECT + " and active = 1 and p.project_id in " + "("
-					+ SELECT_MANAGER_PROJECT + "'" + username + "' " + "union "
-					+ SELECT_WORKER_PROJECT + "'" + username + "')";
-			    nonadminQueryString += " order by upper(name) ";
+                    + SELECT_MANAGER_PROJECT + "'" + username + "' " + "union "
+                    + SELECT_WORKER_PROJECT + "'" + username + "')";
+                nonadminQueryString += " order by upper(name) ";
 
                 String adminQueryString = "SELECT project_id, name FROM project WHERE is_deleted = 0 or is_deleted IS NULL ORDER BY UPPER(name)";
 
@@ -3083,17 +3109,17 @@ public class ActionsHelper {
      */
     static void setProjectCompletionDate(Project project, ProjectStatus newProjectStatus, Format format)
             throws BaseException {
-    	
+        
         String name = newProjectStatus.getName();
         if ("Completed".equals(name)
-        		|| "Cancelled - Failed Review".equals(name)
-        		|| "Deleted".equals(name)
+                || "Cancelled - Failed Review".equals(name)
+                || "Deleted".equals(name)
                 || "Cancelled - Failed Screening".equals(name)
                 || "Cancelled - Zero Submissions".equals(name)
                 || "Cancelled - Winner Unresponsive".equals(name)
                 || "Cancelled - Client Request".equals(name)
                 || "Cancelled - Requirements Infeasible".equals(name)) {
-        	
+            
             if (format == null) {
                 format = new SimpleDateFormat(ConfigHelper.getDateFormat());
             }
@@ -3107,7 +3133,7 @@ public class ActionsHelper {
                     DBConnectionFactory dbconn = new DBConnectionFactoryImpl(DB_CONNECTION_NAMESPACE);
                     conn = dbconn.createConnection();
                     ps = conn.prepareStatement(
-                    		"update project_result set rating_ind = 1 where project_id = ? and valid_submission_ind = 1");
+                            "update project_result set rating_ind = 1 where project_id = ? and valid_submission_ind = 1");
                     ps.setLong(1, project.getId());
                     ps.execute();
                 } catch(SQLException e) {
@@ -3901,7 +3927,7 @@ public class ActionsHelper {
 
             log.log(Level.INFO,
                     "create db connection with default connection name from DBConnectionFactoryImpl with namespace:"
-            		+ DB_CONNECTION_NAMESPACE);
+                    + DB_CONNECTION_NAMESPACE);
 
             // delete from project_result
             ps = conn.prepareStatement("delete from project_result where project_id = ? and user_id = ?");
@@ -3944,7 +3970,7 @@ public class ActionsHelper {
             conn = dbconn.createConnection();
             log.log(Level.INFO,
                     "create db connection with default connection name from DBConnectionFactoryImpl with namespace:"
-            		+ DB_CONNECTION_NAMESPACE);
+                    + DB_CONNECTION_NAMESPACE);
             PRHelper.resetProjectResultWithChangedScores(projectId, userId, conn);
         } catch (DBConnectionException e) {
             throw new BaseException("Failed to return DBConnection", e);
@@ -3971,7 +3997,7 @@ public class ActionsHelper {
             conn = dbconn.createConnection();
             log.log(Level.INFO,
                     "create db connection with default connection name from DBConnectionFactoryImpl with namespace:"
-            		+ DB_CONNECTION_NAMESPACE);
+                    + DB_CONNECTION_NAMESPACE);
 
             String sqlString = "select version from comp_versions where comp_vers_id = ?";
 
@@ -4395,11 +4421,84 @@ public class ActionsHelper {
         for (int i = 0; i < phases.length; i++) {
             Phase phase = phases[i];
             PhaseType phaseType = phase.getPhaseType();
-            if ((phaseType != null) && phaseType.getName().equalsIgnoreCase("Final Review")) {
+
+            if ((phaseType != null)
+                && (phaseType.getName().equalsIgnoreCase("Final Review") 
+                    || phaseType.getName().equalsIgnoreCase("Approval"))) {
                 lastPhase = phase;
             }
         }
         return lastPhase;
+    }
+
+    /**
+     * <p>Gets the reviews (if any) for specified <code>Approval</code> phase.</p>
+     *
+     * @param reviews a <code>Review</code> array providing the <code>Apporval</code> reviews for project.
+     * @param thisPhase a <code>Phase</code> providing the <code>Approval</code> phases to get reviews for.
+     * @return a <code>Review</code> array listing the reviews (if any) for specified <code>Approval</code> phase.
+     * @since 1.3
+     */
+    static Review[] getApprovalPhaseReviews(Review[] reviews, Phase thisPhase) {
+        int count = 0;
+        List<Review> thisPhaseReviews = new ArrayList<Review>();
+        Phase[] phases = thisPhase.getProject().getAllPhases();
+        for (int i = 0; i < phases.length; i++) {
+            Phase phase = phases[i];
+            if (phase.getPhaseType().getName().equals("Approval")) {
+                int reviewerNumber = Integer.parseInt((String) phase.getAttribute("Reviewer Number"));
+                if (phase.getId() != thisPhase.getId()) {
+                    count += reviewerNumber;
+                } else {
+                    int start = count;
+                    for (int j = 0; j < reviewerNumber; j++) {
+                        if (start + j < reviews.length) {
+                            Review review = reviews[start + j];
+                            thisPhaseReviews.add(review);
+                        }
+                    }
+                    break;
+                }
+            }
+        }
+
+        return thisPhaseReviews.toArray(new Review[thisPhaseReviews.size()]);
+    }
+
+    /**
+     * <p>This static method finds and returns last review of <code>Approval</code> type and made by specified resource.
+     * </p>
+     *
+     * @param manager an instance of <code>ReviewManager</code> class that retrieves a review from the database.
+     * @param phase approval phase.
+     * @param scorecardType a scorecard template type that found review should have.
+     * @param resourceId an ID of the resource who made (created) the review.
+     * @param complete specifies whether retrieved review should have all infomration (like all items and their
+     *        comments).
+     * @return found review or <code>null</code> if no review has been found.
+     * @throws ReviewManagementException if any error occurs during review search or retrieval.
+     * @since 1.3
+     */
+    static Review findLastApprovalReview(ReviewManager manager, Phase phase, ScorecardType scorecardType,
+                                                 long resourceId, boolean complete) throws ReviewManagementException {
+
+        Filter filterProject = new EqualToFilter("project", new Long(phase.getProject().getId()));
+        Filter filterScorecard = new EqualToFilter("scorecardType", new Long(scorecardType.getId()));
+        Filter filter = new AndFilter(Arrays.asList(filterProject, filterScorecard));
+
+        // Get a review(s) that pass filter
+        Review[] reviews = manager.searchReviews(filter, complete);
+        if (phase.getPhaseType().getName().equals(Constants.APPROVAL_PHASE_NAME)) {
+            reviews = ActionsHelper.getApprovalPhaseReviews(reviews, phase);
+        }
+
+        for (int i = 0; i < reviews.length; i++) {
+            Review review = reviews[i];
+            if (review.getAuthor() == resourceId) {
+                return review;
+            }
+        }
+        return null;
     }
 
     private static Collection<Long> userToUsers(Long user) {

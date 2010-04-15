@@ -133,6 +133,9 @@
                             <c:when test="${review.id > -1}">
                                 <html:hidden property="rid" value="${review.id}" />
                             </c:when>
+                            <c:when test="${not empty requestScope.pid}">
+                                <html:hidden property="pid" value="${requestScope.pid}" />
+                            </c:when>
                             <c:otherwise>
                                 <html:hidden property="sid" value="${sid}" />
                             </c:otherwise>
