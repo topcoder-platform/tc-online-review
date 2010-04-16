@@ -285,15 +285,55 @@
 	                            </tr>
 	                            <tr class="dark">
 	                                <td class="value">
-	                                    <bean:message key="manageProject.Distributions.Design.rs"/>
+	                                    <bean:message key="manageProject.Distributions.rs"/>
 	                                </td>
 	                                <td class="value">
-	                                    <html:file property="rs" size="20" styleClass="inputBox" style="width:350px;vertical-align:middle;" />
-                                        <html:image srcKey="btnUpload.img" altKey="btnUpload.alt" border="0" style="vertical-align:bottom;" /><br /><br />
-	                                    <c:out value="${requestScope.registrationPhaseDuration}"/>
+	                                    <html:file property="distribution_rs" size="20" styleClass="inputBox" style="width:500px;vertical-align:middle;" />
 	                                </td>
 	                            </tr>
-	                        </table>
+                                <tr class="light">
+                                    <td class="value">
+                                        <bean:message key="manageProject.Distributions.additional1"/>
+                                    </td>
+                                    <td class="value">
+                                        <html:file property="distribution_additional1" size="20" styleClass="inputBox" style="width:500px;vertical-align:middle;" />
+                                    </td>
+                                </tr>
+                                <tr class="dark">
+                                    <td class="value">
+                                        <bean:message key="manageProject.Distributions.additional2"/>
+                                    </td>
+                                    <td class="value">
+                                        <html:file property="distribution_additional2" size="20" styleClass="inputBox" style="width:500px;vertical-align:middle;" />
+                                    </td>
+                                </tr>
+                                <tr class="light">
+                                    <td class="value">
+                                        <bean:message key="manageProject.Distributions.additional3"/>
+                                    </td>
+                                    <td class="value">
+                                        <html:file property="distribution_additional3" size="20" styleClass="inputBox" style="width:500px;vertical-align:middle;" />
+                                    </td>
+                                </tr>                                                                	                            
+                                <tr class="dark">
+                                    <td class="value" colspan="2">
+                                        <html:checkbox styleId="uploadToServer" property="upload_to_server" /><label
+                                            for="uploadToServer"><b><bean:message key="manageProject.Distributions.Upload" /></b></label>
+                                    </td>
+                                </tr>
+                                <tr class="light">
+                                    <td class="value" colspan="2">
+                                        <html:checkbox styleId="returnDistribution" property="return_distribution" /><label
+                                            for="returnDistribution"><b><bean:message key="manageProject.Distributions.Return_distribution" /></b></label>
+                                    </td>
+                                </tr>
+	                        </table><br/>
+	                        <div class="bottomButtonBar">
+	                            <html:image srcKey="btnGenerate.img" altKey="btnGenerate.alt" border="0"/>&#160;
+	                            <html:link
+	                                    page="/actions/ViewProjectDetails.do?method=viewProjectDetails&pid=${project.id}"><html:img
+	                                    srcKey="btnCancel.img" altKey="btnCancel.alt" border="0"/></html:link>
+                            </div>
 	                        </html:form>
                         </td>
                         </tr>
