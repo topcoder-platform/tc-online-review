@@ -260,8 +260,8 @@
                         </tr>
                         <tr class="light">
                         <td>
-                            <html:form action="/actions/UploadSubmission1" method="POST" enctype="multipart/form-data">
-	                        <html:hidden property="method" value="uploadSubmission1" />
+                            <html:form action="/actions/ManageProject" method="POST" enctype="multipart/form-data">
+	                        <html:hidden property="method" value="manageDistribution" />
 	                        <html:hidden property="postBack" value="y" />
 	                        <html:hidden property="pid" value="${project.id}" />
 	                        <table class="scorecard" id="distribution_tbl" cellpadding="0" width="100%"
