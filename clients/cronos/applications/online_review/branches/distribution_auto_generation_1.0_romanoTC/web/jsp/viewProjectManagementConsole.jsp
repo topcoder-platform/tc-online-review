@@ -240,7 +240,9 @@
                             <td class="lastRowTD"><!-- @ --></td>
                         </tr>
                         </table>
-                    </div> 
+                    </div>
+                    <%-- Design or Development only --%> 
+                    <c:if test="${(project.projectCategory.id == 1) || (project.projectCategory.id == 2))">
                     <div id="sc2" style='display:${(activeTabIdx == 2) ? "block" : "none"};'>
                         <ul id="tablist">
                             <li><a href="javascript:void(0)"
@@ -273,55 +275,71 @@
 	                            </tr>
 	                            <tr class="light">
 	                                <td class="value">
-	                                    <bean:message key="manageProject.Distributions.Design.packagename"/>
+	                                    <bean:message key="manageProject.Distributions.componentname"/>
 	                                </td>
 	                                <td class="value">
 	                                    <html:text styleClass="inputTextBox"
-	                                               property="distribution_package_name"/>
+	                                               property="distribution_component_name"/>
                                         <div class="error">
-                                            <html:errors property="distribution_design_package_name" prefix=""
+                                            <html:errors property="distribution_component_name" prefix=""
                                                          suffix=""/>
                                         </div>
 	                            </tr>
-	                            <tr class="dark">
+                                <tr class="dark">
+                                    <td class="value">
+                                        <bean:message key="manageProject.Distributions.version"/>
+                                    </td>
+                                    <td class="value">
+                                        <html:text styleClass="inputTextBox"
+                                                   property="distribution_version"/>
+                                        <div class="error">
+                                            <html:errors property="distribution_version" prefix=""
+                                                         suffix=""/>
+                                        </div>
+                                </tr>	                            
+	                            <tr class="light">
 	                                <td class="value">
 	                                    <bean:message key="manageProject.Distributions.rs"/>
 	                                </td>
 	                                <td class="value">
-	                                    <html:file property="distribution_design_rs" size="20" styleClass="inputBox" style="width:500px;vertical-align:middle;" />
+	                                    <html:file property="distribution_rs" size="20" styleClass="inputBox" style="width:500px;vertical-align:middle;" />
+                                        <div class="error">
+                                            <html:errors property="distribution_rs" prefix=""
+                                                         suffix=""/>
+                                        </div>
 	                                </td>
 	                            </tr>
-                                <tr class="light">
+                                <tr class="dark">
                                     <td class="value">
                                         <bean:message key="manageProject.Distributions.additional1"/>
                                     </td>
                                     <td class="value">
-                                        <html:file property="distribution_design_additional1" size="20" styleClass="inputBox" style="width:500px;vertical-align:middle;" />
-                                    </td>
-                                </tr>
-                                <tr class="dark">
-                                    <td class="value">
-                                        <bean:message key="manageProject.Distributions.additional2"/>
-                                    </td>
-                                    <td class="value">
-                                        <html:file property="distribution_design_additional2" size="20" styleClass="inputBox" style="width:500px;vertical-align:middle;" />
+                                        <html:file property="distribution_additional1" size="20" styleClass="inputBox" style="width:500px;vertical-align:middle;" />
                                     </td>
                                 </tr>
                                 <tr class="light">
                                     <td class="value">
+                                        <bean:message key="manageProject.Distributions.additional2"/>
+                                    </td>
+                                    <td class="value">
+                                        <html:file property="distribution_additional2" size="20" styleClass="inputBox" style="width:500px;vertical-align:middle;" />
+                                    </td>
+                                </tr>
+                                <tr class="dark">
+                                    <td class="value">
                                         <bean:message key="manageProject.Distributions.additional3"/>
                                     </td>
                                     <td class="value">
-                                        <html:file property="distribution_design_additional3" size="20" styleClass="inputBox" style="width:500px;vertical-align:middle;" />
+                                        <html:file property="distribution_additional3" size="20" styleClass="inputBox" style="width:500px;vertical-align:middle;" />
                                     </td>
                                 </tr>                                                                	                            
-                                <tr class="dark">
+                                <tr class="light">
                                     <td class="value" colspan="2">
                                         <html:checkbox styleId="uploadToServer" property="upload_to_server" /><label
                                             for="uploadToServer"><b><bean:message key="manageProject.Distributions.Upload" /></b></label>
                                     </td>
                                 </tr>
-                                <tr class="light">
+                                <tr class="dark">
                                     <td class="value" colspan="2">
                                         <html:checkbox styleId="returnDistribution" property="return_distribution" /><label
                                             for="returnDistribution"><b><bean:message key="manageProject.Distributions.Return_distribution" /></b></label>
@@ -345,6 +363,7 @@
                         </tr>
                         </table>
                     </div>
+                    </c:if> <%-- // Design or Development only --%> 
                 </div>
                 <!-- //tabconentcontainer -->
             </div>

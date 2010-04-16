@@ -165,11 +165,13 @@
                    type="org.apache.struts.validator.LazyValidatorForm">
             <form-property name="pid" type="java.lang.Long" />
             
-            <form-property name="distribution_design_package_name" type="java.lang.String" />
-            <form-property name="distribution_design_rs" type="org.apache.struts.upload.FormFile" />
-            <form-property name="distribution_design_additional1" type="org.apache.struts.upload.FormFile" />
-            <form-property name="distribution_design_additional2" type="org.apache.struts.upload.FormFile" />
-            <form-property name="distribution_design_additional3" type="org.apache.struts.upload.FormFile" />
+            <form-property name="distribution_component_name" type="java.lang.String" />
+            <form-property name="distribution_package_name" type="java.lang.String" />
+            <form-property name="distribution_version" type="java.lang.String" />
+            <form-property name="distribution_rs" type="org.apache.struts.upload.FormFile" />
+            <form-property name="distribution_additional1" type="org.apache.struts.upload.FormFile" />
+            <form-property name="distribution_additional2" type="org.apache.struts.upload.FormFile" />
+            <form-property name="distribution_additional3" type="org.apache.struts.upload.FormFile" />
             
             <form-property name="upload_to_server" type="java.lang.String" initial="on" />
             <form-property name="return_distribution" type="java.lang.String" />
