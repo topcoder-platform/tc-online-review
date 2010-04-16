@@ -260,7 +260,7 @@
                         </tr>
                         <tr class="light">
                         <td>
-                            <html:form action="/actions/ManageProject" method="POST" enctype="multipart/form-data">
+                            <html:form action="/actions/UploadDistribution" method="POST" enctype="multipart/form-data">
 	                        <html:hidden property="method" value="manageDistribution" />
 	                        <html:hidden property="postBack" value="y" />
 	                        <html:hidden property="pid" value="${project.id}" />
@@ -279,7 +279,7 @@
 	                                    <html:text styleClass="inputTextBox"
 	                                               property="distribution_package_name"/>
                                         <div class="error">
-                                            <html:errors property="distribution_package_name" prefix=""
+                                            <html:errors property="distribution_design_package_name" prefix=""
                                                          suffix=""/>
                                         </div>
 	                            </tr>
@@ -288,7 +288,7 @@
 	                                    <bean:message key="manageProject.Distributions.rs"/>
 	                                </td>
 	                                <td class="value">
-	                                    <html:file property="distribution_rs" size="20" styleClass="inputBox" style="width:500px;vertical-align:middle;" />
+	                                    <html:file property="distribution_design_rs" size="20" styleClass="inputBox" style="width:500px;vertical-align:middle;" />
 	                                </td>
 	                            </tr>
                                 <tr class="light">
@@ -296,7 +296,7 @@
                                         <bean:message key="manageProject.Distributions.additional1"/>
                                     </td>
                                     <td class="value">
-                                        <html:file property="distribution_additional1" size="20" styleClass="inputBox" style="width:500px;vertical-align:middle;" />
+                                        <html:file property="distribution_design_additional1" size="20" styleClass="inputBox" style="width:500px;vertical-align:middle;" />
                                     </td>
                                 </tr>
                                 <tr class="dark">
@@ -304,7 +304,7 @@
                                         <bean:message key="manageProject.Distributions.additional2"/>
                                     </td>
                                     <td class="value">
-                                        <html:file property="distribution_additional2" size="20" styleClass="inputBox" style="width:500px;vertical-align:middle;" />
+                                        <html:file property="distribution_design_additional2" size="20" styleClass="inputBox" style="width:500px;vertical-align:middle;" />
                                     </td>
                                 </tr>
                                 <tr class="light">
@@ -312,7 +312,7 @@
                                         <bean:message key="manageProject.Distributions.additional3"/>
                                     </td>
                                     <td class="value">
-                                        <html:file property="distribution_additional3" size="20" styleClass="inputBox" style="width:500px;vertical-align:middle;" />
+                                        <html:file property="distribution_design_additional3" size="20" styleClass="inputBox" style="width:500px;vertical-align:middle;" />
                                     </td>
                                 </tr>                                                                	                            
                                 <tr class="dark">
@@ -326,6 +326,9 @@
                                         <html:checkbox styleId="returnDistribution" property="return_distribution" /><label
                                             for="returnDistribution"><b><bean:message key="manageProject.Distributions.Return_distribution" /></b></label>
                                     </td>
+                                </tr>
+                                <tr>
+                                    <td class="lastRowTD" colspan="2"><!-- @ --></td>
                                 </tr>
 	                        </table><br/>
 	                        <div class="bottomButtonBar">
