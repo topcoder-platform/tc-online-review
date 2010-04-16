@@ -140,9 +140,6 @@ public class ProjectManagementConsoleActions extends DispatchAction {
             Project project = verification.getProject();
             initProjectManagementConsole(request, project);
             
-            // Initial active tab
-            request.setAttribute("activeTabIdx", new Integer(1));
-            
             return mapping.findForward(SUCCESS_FORWARD_NAME);
         }
     }
