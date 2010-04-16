@@ -242,7 +242,7 @@
                         </table>
                     </div>
                     <%-- Design or Development only --%> 
-                    <c:if test="${(project.projectCategory.id eq 1) or (project.projectCategory.id eq 2))">
+                    <c:if test="${((project.projectCategory.id == 1) || (project.projectCategory.id == 2))">
                     <div id="sc2" style='display:${(activeTabIdx == 2) ? "block" : "none"};'>
                         <ul id="tablist">
                             <li><a href="javascript:void(0)"
