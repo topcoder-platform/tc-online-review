@@ -345,6 +345,11 @@
     <property name="userEJB.jar.name" value="User.jar" />
     <property name="userEJB.jar" value="${tcs_libdir}/${userEJB.path}/${userEJB.jar.name}" />
 
+    <property name="distribution_tool.version" value="1.0.0" />
+    <property name="distribution_tool.jar.name" value="distribution_tool.jar" />
+    <property name="distribution_tool.path" value="distribution_tool/${distribution_tool.version}" />
+    <property name="distribution_tool.jar" value="${tcs_libdir}/${distribution_tool.path}/${distribution_tool.jar.name}" />
+
     <property name="shared.jar.name" value="shared.jar" />
     <property name="shared.jar" value="${shared_libdir}/${shared.jar.name}" />
 
@@ -424,6 +429,7 @@
         <pathelement location="${JNDI_Utility.jar}" />
         <pathelement location="${logging_wrapper.jar}" />
         <pathelement location="${object_factory.jar}" />
+    	<pathelement location="${distribution_tool.jar}" />
         <pathelement location="${online_review_ajax_support.jar}" />
         <pathelement location="${online_review_deliverables.jar}" />
         <pathelement location="${online_review_login.jar}" />
@@ -664,6 +670,7 @@ don't need this anymore.  OR doesn't use it.
             <lib dir="${jar_tcs_libdir}/${online_review_login.path}" includes="*.jar" />
             <lib dir="${jar_tcs_libdir}/${online_review_phases.path}" includes="*.jar" />
             <lib dir="${jar_tcs_libdir}/${online_review_upload_services.path}" includes="*.jar" />
+            <lib dir="${jar_tcs_libdir}/${distribution_tool.path}" includes="*.jar" />
             <lib dir="${jar_tcs_libdir}/${phase_management.path}" includes="*.jar" />
             <lib dir="${jar_tcs_libdir}/${phase_management_persistence.path}" includes="*.jar" />
             <lib dir="${jar_tcs_libdir}/${project_management.path}" includes="*.jar" />
