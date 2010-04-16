@@ -260,7 +260,41 @@
                         </tr>
                         <tr class="light">
                         <td>
-                            Welcome to the show!
+                            <html:form action="/actions/UploadSubmission1" method="POST" enctype="multipart/form-data">
+	                        <html:hidden property="method" value="uploadSubmission1" />
+	                        <html:hidden property="postBack" value="y" />
+	                        <html:hidden property="pid" value="${project.id}" />
+	                        <table class="scorecard" id="distribution_tbl" cellpadding="0" width="100%"
+	                               style="border-collapse: collapse;">
+	                            <tr>
+	                                <td class="title" colspan="2">
+	                                    <bean:message key="manageProject.Distributions.Design.title"/>
+	                                </td>
+	                            </tr>
+	                            <tr class="light">
+	                                <td class="value">
+	                                    <bean:message key="manageProject.Distributions.Design.packagename"/>
+	                                </td>
+	                                <td class="value">
+	                                    <html:text styleClass="inputTextBox"
+	                                               property="distribution_package_name"/>
+                                        <div class="error">
+                                            <html:errors property="distribution_package_name" prefix=""
+                                                         suffix=""/>
+                                        </div>
+	                            </tr>
+	                            <tr class="dark">
+	                                <td class="value">
+	                                    <bean:message key="manageProject.Distributions.Design.rs"/>
+	                                </td>
+	                                <td class="value">
+	                                    <html:file property="rs" size="20" styleClass="inputBox" style="width:350px;vertical-align:middle;" />
+                                        <html:image srcKey="btnUpload.img" altKey="btnUpload.alt" border="0" style="vertical-align:bottom;" /><br /><br />
+	                                    <c:out value="${requestScope.registrationPhaseDuration}"/>
+	                                </td>
+	                            </tr>
+	                        </table>
+	                        </html:form>
                         </td>
                         </tr>
                         <tr>
@@ -285,7 +319,7 @@
 	var previousActiveTab = document.getElementById("sc${activeTabIdx + 1}");
 	</c:if>
 	<c:if test="${(empty activeTabIdx) || (activeTabIdx == -1)}">
-	var previousActiveTab = null;
+	var previousActiveTab = document.getElementById("sc1");
 	</c:if>
     /*
      * This function will deactivate the previously active tab (if there was any),
