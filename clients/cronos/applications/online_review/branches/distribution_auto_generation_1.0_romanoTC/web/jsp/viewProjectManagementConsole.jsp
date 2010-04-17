@@ -395,11 +395,6 @@
                                 </tr>
                             </table><br/>
                             </html:form>
-	                        <div class="bottomButtonBar">
-	                            <html:link
-	                                    page="/actions/ViewProjectDetails.do?method=viewProjectDetails&pid=${project.id}"><html:img
-	                                    srcKey="btnCancel.img" altKey="btnCancel.alt" border="0"/></html:link>
-	                        </div>
                         </td>
                         </tr>
                         <tr>
@@ -423,7 +418,7 @@
 	// A reference to the previously active tab
 	<c:choose>
 		<c:when test="${(not empty param.activeTabIdx) && (param.activeTabIdx != -1)}">
-		var previousActiveTab = document.getElementById("sc${param.activeTabIdx + 1}");
+		var previousActiveTab = document.getElementById("sc${param.activeTabIdx}");
 		</c:when>
 		<c:otherwise>
 	    var previousActiveTab = document.getElementById("sc1");
