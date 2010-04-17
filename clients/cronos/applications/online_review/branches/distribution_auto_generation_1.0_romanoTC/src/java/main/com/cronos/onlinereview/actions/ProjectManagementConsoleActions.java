@@ -194,6 +194,12 @@ public class ProjectManagementConsoleActions extends DispatchAction {
                     initProjectManagementConsole(request, project);
                     return mapping.getInputForward();
                 } else {
+                    
+                    
+                    
+                    
+                    
+                    
                     return ActionsHelper.cloneForwardAndAppendToPath(
                         mapping.findForward(SUCCESS_FORWARD_NAME), "&activeTabIdx=2&pid=" + project.getId());
                 }

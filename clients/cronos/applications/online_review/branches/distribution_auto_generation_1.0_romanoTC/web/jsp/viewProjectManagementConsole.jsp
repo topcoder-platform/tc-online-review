@@ -273,13 +273,13 @@
 	                               style="border-collapse: collapse;">
 	                            <tr>
 	                                <td class="title" colspan="2">
-	                                    <bean:message key="manageProject.Distributions.Create.Design.title"/>&nbsp;
-	                                    <bean:message key="global.required.paren"/>
+	                                    <bean:message key="manageProject.Distributions.Create.Design.title"/>
 	                                </td>
 	                            </tr>
 	                            <tr class="light">
 	                                <td class="value">
-	                                    <bean:message key="manageProject.Distributions.packagename"/>
+	                                    <bean:message key="manageProject.Distributions.packagename"/>&nbsp;
+                                        <bean:message key="global.required.paren"/>
 	                                </td>
 	                                <td class="value">
 	                                    <html:text styleClass="inputBox"
@@ -331,7 +331,7 @@
                                     <td class="value" colspan="2">
                                         <html:hidden property="upload_to_server" />
                                         <input type="checkbox" id="uploadToServer" value="${uploadDistributionForm.upload_to_server}" onclick="this.form.upload_to_server.value = this.checked ? 'true' : 'false' " />
-                                        <label for="uploadToServer"><b><bean:message key="manageProject.Distributions.Upload" /></b></label>
+                                        <label for="uploadToServer"><bean:message key="manageProject.Distributions.Upload" /></label>
                                         <div class="error">
                                             <html:errors property="upload_to_server" prefix=""
                                                          suffix=""/>
@@ -342,7 +342,7 @@
                                     <td class="value" colspan="2">
                                         <html:hidden property="return_distribution" />
                                         <input type="checkbox" id="returnDistribution" value="${uploadDistributionForm.return_distribution}" onclick="this.form.return_distribution.value = this.checked ? 'true' : 'false' " />
-                                        <label for="returnDistribution"><b><bean:message key="manageProject.Distributions.Return_distribution" /></b></label>
+                                        <label for="returnDistribution"><bean:message key="manageProject.Distributions.Return_distribution" /></label>
                                         <div class="error">
                                             <html:errors property="return_distribution" prefix=""
                                                          suffix=""/>
