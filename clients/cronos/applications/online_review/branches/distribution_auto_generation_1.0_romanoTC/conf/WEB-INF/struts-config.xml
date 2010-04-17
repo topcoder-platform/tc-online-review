@@ -174,8 +174,8 @@
             <form-property name="distribution_additional2" type="org.apache.struts.upload.FormFile" />
             <form-property name="distribution_additional3" type="org.apache.struts.upload.FormFile" />
 
-            <form-property name="upload_to_server_c" type="java.lang.Boolean" initial="true" />
-            <form-property name="return_distribution_c" type="java.lang.Boolean" initial="false" />
+            <form-property name="upload_to_server" type="java.lang.Boolean" initial="true" />
+            <form-property name="return_distribution" type="java.lang.Boolean" initial="false" />
 
             <form-property name="distribution_file" type="org.apache.struts.upload.FormFile" />
         </form-bean>
