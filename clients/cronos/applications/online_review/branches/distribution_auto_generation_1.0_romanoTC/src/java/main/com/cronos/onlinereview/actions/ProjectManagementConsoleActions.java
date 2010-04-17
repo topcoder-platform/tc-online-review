@@ -33,6 +33,7 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
 import org.apache.struts.actions.DispatchAction;
+import org.apache.struts.upload.FormFile;
 import org.apache.struts.validator.LazyValidatorForm;
 
 import javax.ejb.CreateException;
@@ -177,7 +178,6 @@ public class ProjectManagementConsoleActions extends DispatchAction {
             // Validate the forms
             final Project project = verification.getProject();
             
-
             // Check if there were any validation errors identified and return appropriate forward
             if (ActionsHelper.isErrorsPresent(request)) {
                 initProjectManagementConsole(request, project);
@@ -186,7 +186,7 @@ public class ProjectManagementConsoleActions extends DispatchAction {
 
                 LazyValidatorForm lazyForm = (LazyValidatorForm) form;
                 
-                System.out.println(lazyForm.get("distribution_rs"));
+                validateCreateDistributionForm(lazyForm, request);
                 
                 if (ActionsHelper.isErrorsPresent(request)) {
                     initProjectManagementConsole(request, project);
@@ -197,6 +197,38 @@ public class ProjectManagementConsoleActions extends DispatchAction {
                 }
             }
         }
+    }
+
+    /**
+     * <p>Validates the specified request which is expected to be a create distribution request.
+     * </p>
+     *
+     * <p>Verifies that the package name and the RS are provided. RS should be PDF/DOC/RTF.</p>
+     *
+     * @param lazyForm an <code>LazyValidatorForm</code> providing parameters mapped to this request.
+     * @param request an <code>HttpServletRequest</code> representing incoming request from the client.
+     * @return an <code>int</code> providing the number of days to extend the specified phase for or 0 if there were
+     *         validation errors encountered or if there were no request for extending the specified phase at all.
+     */
+    private void validateCreateDistributionForm(LazyValidatorForm lazyForm, HttpServletRequest request) {
+        
+        FormFile distributionRSFile = (FormFile) lazyForm.get("distribution_rs");
+        
+        if (distributionRSFile == null) {
+            ActionsHelper.addErrorToRequest(request, "distribution_rs",
+                new ActionMessage("error.com.cronos.onlinereview.actions.manageProject.Distributions.RS.Empty"));
+        }
+        
+        String lcFileName = distributionRSFile.getFileName().toLowerCase();
+        
+        if (!(lcFileName.endsWith("rtf") || lcFileName.endsWith("pdf") || lcFileName.endsWith("pdf"))) {
+            ActionsHelper.addErrorToRequest(request, "distribution_rs",
+                new ActionMessage("error.com.cronos.onlinereview.actions.manageProject.Distributions.RS.Invalid"));
+        }
+
+        System.out.println(lazyForm.get("distribution_rs"));
+
+        
     }
 
     /**

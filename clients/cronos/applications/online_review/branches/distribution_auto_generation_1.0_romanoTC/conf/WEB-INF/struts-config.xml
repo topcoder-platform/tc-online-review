@@ -679,7 +679,7 @@
                 type="com.cronos.onlinereview.actions.ProjectManagementConsoleActions"
                 parameter="method" scope="request" name="uploadDistributionForm"
                 input="/jsp/viewProjectManagementConsole.jsp">
-            <forward name="success" path="/actions/ViewManagementConsole.do?method=viewConsole&amp;activeTabIdx=2" redirect="true"/>
+            <forward name="success" path="/actions/ViewManagementConsole.do?method=viewConsole" redirect="true"/>
         </action>
 
     </action-mappings>

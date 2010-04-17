@@ -273,7 +273,8 @@
 	                               style="border-collapse: collapse;">
 	                            <tr>
 	                                <td class="title" colspan="2">
-	                                    <bean:message key="manageProject.Distributions.Create.Design.title"/>
+	                                    <bean:message key="manageProject.Distributions.Create.Design.title"/>&nbsp;
+	                                    <bean:message key="global.required.paren"/>
 	                                </td>
 	                            </tr>
 	                            <tr class="light">
@@ -290,7 +291,8 @@
 	                            </tr>
 	                            <tr class="dark">
 	                                <td class="value">
-	                                    <bean:message key="manageProject.Distributions.rs"/>
+	                                    <bean:message key="manageProject.Distributions.rs"/>&nbsp;
+                                        <bean:message key="global.required.paren"/>
 	                                </td>
 	                                <td class="value">
 	                                    <html:file property="distribution_rs" size="20" styleClass="inputBox" style="width:500px;vertical-align:middle;" />
