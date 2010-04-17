@@ -346,18 +346,20 @@
                                             for="returnDistribution"><b><bean:message key="manageProject.Distributions.Return_distribution" /></b></label>
                                     </td>
                                 </tr>
+                                <tr class="dark">
+                                    <td class="value" colspan="2">
+                                        <html:image srcKey="btnGenerate.img" altKey="btnGenerate.alt" border="0"/>&#160;
+                                    </td>
+                                </tr>
                                 <tr>
                                     <td class="lastRowTD" colspan="2"><!-- @ --></td>
                                 </tr>
 	                        </table><br/>
-	                        <div class="bottomButtonBar">
-	                            <html:image srcKey="btnGenerate.img" altKey="btnGenerate.alt" border="0"/>&#160;
-                            </div>
 	                        </html:form>
 	                        
 	                        <%-- Upload Distribution --%>
                             <html:form action="/actions/UploadDistribution" method="POST" enctype="multipart/form-data">
-                            <html:hidden property="method" value="uploadDesignDistribution" />
+                            <html:hidden property="method" value="uploadDistribution" />
                             <html:hidden property="postBack" value="y" />
                             <html:hidden property="pid" value="${project.id}" />
                             <table class="scorecard" id="distribution_tbl" cellpadding="0" width="100%"
@@ -366,10 +368,10 @@
                                     <td class="title" colspan="2">
                                         <c:choose>
                                             <c:when test="(project.projectCategory.id == 1)">
-                                                <bean:message key="manageProject.Distributions.Upload.Design.title"/>
+                                                <bean:message key="manageProject.Distributions.Upload.Development.title"/>
                                             </c:when>
                                             <c:otherwise>
-                                                <bean:message key="manageProject.Distributions.Upload.Development.title"/>
+                                                <bean:message key="manageProject.Distributions.Upload.Design.title"/>
                                             </c:otherwise>                                                
                                         </c:choose>
                                     </td>
@@ -384,15 +386,13 @@
                                             <html:errors property="distribution_file" prefix=""
                                                          suffix=""/>
                                         </div>
+                                        <html:image srcKey="btnUpload.img" altKey="btnUpload.alt" border="0"/>&#160;
                                     </td>
                                 </tr>
                                 <tr>
                                     <td class="lastRowTD" colspan="2"><!-- @ --></td>
                                 </tr>
                             </table><br/>
-                            <div class="bottomButtonBar">
-                                <html:image srcKey="btnUpload.img" altKey="btnUpload.alt" border="0"/>&#160;
-                            </div>
                             </html:form>
                         </td>
                         </tr>
