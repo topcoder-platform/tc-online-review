@@ -2928,7 +2928,7 @@
         </Property>
         <Property name="minimum_hours_before_submission_deadline_for_phase_extension">
             <Value>48</Value>
-        </Property>         
+        </Property>        
         <Property name="RootCatalogs">
             <Property name="Java">
                 <Property name="id">
