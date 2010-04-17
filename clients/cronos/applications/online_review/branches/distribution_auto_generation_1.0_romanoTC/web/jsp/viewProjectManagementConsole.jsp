@@ -335,7 +335,7 @@
                                         </div>
                                     </td>
                                 </tr>
-                                <tr class="dark">
+                                <tr class="light">
                                     <td class="value" colspan="2">
                                         <html:checkbox styleId="returnDistribution" property="return_distribution" /><label
                                             for="returnDistribution"><b><bean:message key="manageProject.Distributions.Return_distribution" /></b></label>
@@ -345,7 +345,7 @@
                                         </div>
                                     </td>
                                 </tr>
-                                <tr class="light">
+                                <tr class="dark">
                                     <td class="value" colspan="2">
                                         <html:image srcKey="btnGenerate.img" altKey="btnGenerate.alt" border="0"/>&#160;
                                     </td>

@@ -309,7 +309,7 @@ public class ProjectManagementConsoleActions extends DispatchAction {
         String packageName = (String) lazyForm.get("distribution_package_name");
         
         if (packageName == null || packageName.trim().length() == 0) {
-            ActionsHelper.addErrorToRequest(request, "distribution_rs", new ActionMessage(
+            ActionsHelper.addErrorToRequest(request, "distribution_package_name", new ActionMessage(
                 "error.com.cronos.onlinereview.actions.manageProject.Distributions.PackageName.Empty"));
         }
 
@@ -329,6 +329,9 @@ public class ProjectManagementConsoleActions extends DispatchAction {
         
         Boolean uploadToServerObj = (Boolean) lazyForm.get("upload_to_server");
         Boolean returnDistributionObj = (Boolean) lazyForm.get("return_distribution");
+        
+        System.out.println("uploadToServerObj: " + uploadToServerObj);
+        System.out.println("returnDistributionObj: " + uploadToServerObj);
         
         boolean uploadToServer = (uploadToServerObj == null) ? false : uploadToServerObj.booleanValue();
         boolean returnDistribution = (returnDistributionObj == null) ? false : returnDistributionObj.booleanValue();
