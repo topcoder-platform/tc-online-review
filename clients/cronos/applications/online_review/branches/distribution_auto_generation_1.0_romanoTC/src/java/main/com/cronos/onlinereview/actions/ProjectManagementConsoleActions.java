@@ -3,6 +3,32 @@
  */
 package com.cronos.onlinereview.actions;
 
+import static com.cronos.onlinereview.actions.Constants.*;
+
+import java.io.File;
+import java.rmi.RemoteException;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.regex.Pattern;
+
+import javax.ejb.CreateException;
+import javax.naming.NamingException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.apache.struts.action.ActionForm;
+import org.apache.struts.action.ActionForward;
+import org.apache.struts.action.ActionMapping;
+import org.apache.struts.action.ActionMessage;
+import org.apache.struts.actions.DispatchAction;
+import org.apache.struts.upload.FormFile;
+import org.apache.struts.validator.LazyValidatorForm;
+
 import com.cronos.onlinereview.external.ConfigException;
 import com.cronos.onlinereview.external.ExternalUser;
 import com.cronos.onlinereview.external.RetrievalException;
@@ -17,8 +43,12 @@ import com.topcoder.management.resource.persistence.ResourcePersistenceException
 import com.topcoder.management.resource.search.ResourceFilterBuilder;
 import com.topcoder.project.phases.Phase;
 import com.topcoder.project.phases.PhaseStatus;
+import com.topcoder.service.contest.eligibilityvalidation.ContestEligibilityValidatorException;
 import com.topcoder.shared.util.DBMS;
+import com.topcoder.util.distribution.DistributionTool;
+import com.topcoder.util.distribution.DistributionToolException;
 import com.topcoder.util.errorhandling.BaseException;
+import com.topcoder.web.common.eligibility.ContestEligibilityServiceLocator;
 import com.topcoder.web.ejb.project.ProjectRoleTermsOfUse;
 import com.topcoder.web.ejb.project.ProjectRoleTermsOfUseLocator;
 import com.topcoder.web.ejb.termsofuse.TermsOfUse;
@@ -26,34 +56,6 @@ import com.topcoder.web.ejb.termsofuse.TermsOfUseEntity;
 import com.topcoder.web.ejb.termsofuse.TermsOfUseLocator;
 import com.topcoder.web.ejb.user.UserTermsOfUse;
 import com.topcoder.web.ejb.user.UserTermsOfUseLocator;
-import com.topcoder.web.common.eligibility.ContestEligibilityServiceLocator;
-import com.topcoder.service.contest.eligibilityvalidation.ContestEligibilityValidatorException;
-import org.apache.struts.action.ActionForm;
-import org.apache.struts.action.ActionForward;
-import org.apache.struts.action.ActionMapping;
-import org.apache.struts.action.ActionMessage;
-import org.apache.struts.actions.DispatchAction;
-import org.apache.struts.upload.FormFile;
-import org.apache.struts.validator.LazyValidatorForm;
-
-import javax.ejb.CreateException;
-import javax.naming.NamingException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.rmi.RemoteException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import static com.cronos.onlinereview.actions.Constants.VIEW_PROJECT_MANAGEMENT_CONSOLE_PERM_NAME;
-import static com.cronos.onlinereview.actions.Constants.PROJECT_MANAGEMENT_PERM_NAME;
-import static com.cronos.onlinereview.actions.Constants.REGISTRATION_PHASE_NAME;
-import static com.cronos.onlinereview.actions.Constants.SUBMISSION_PHASE_NAME;
-import static com.cronos.onlinereview.actions.Constants.SUCCESS_FORWARD_NAME;
 
 /**
  * <p>A <code>Struts</code> action to be used for handling requests related to <code>Project Management Console</code>
@@ -97,8 +99,12 @@ public class ProjectManagementConsoleActions extends DispatchAction {
      */
     private static final long DESIGNER_RESOURCE_ROLE_ID = 11;
 
-
-
+    /**
+     * <p>Valid package names.</p>
+     */
+    private static final Pattern PACKAGE_PATTERN = Pattern
+        .compile("(([a-zA-Z])[a-zA-Z0-9_]*)(\\.([a-zA-Z])[a-zA-Z0-9_]*)*");
+    
     /**
      * <p>Constructs new <code>ProjectManagementConsoleActions</code> instance. This implementation does nothing.</p>
      */
@@ -188,14 +194,14 @@ public class ProjectManagementConsoleActions extends DispatchAction {
 
                 LazyValidatorForm lazyForm = (LazyValidatorForm) form;
                 
-                validateCreateDistributionForm(lazyForm, request);
+                validateCreateDistributionForm(project, lazyForm, request);
                 
                 if (ActionsHelper.isErrorsPresent(request)) {
                     initProjectManagementConsole(request, project);
                     return mapping.getInputForward();
                 } else {
-                    
-                    
+                    // Create the distribution file
+                    createDistributionFile(project, lazyForm, request);
                     
                     
                     
@@ -205,6 +211,49 @@ public class ProjectManagementConsoleActions extends DispatchAction {
                 }
             }
         }
+    }
+
+    /**
+     * Creates the distribution file.
+     * 
+     * @param project
+     * @param lazyForm
+     * @param request
+     * @return
+     * @throws DistributionToolException
+     */
+    private File createDistributionFile(Project project, LazyValidatorForm lazyForm, HttpServletRequest request)
+        throws DistributionToolException {
+
+        System.out.println("Project Name: " + project.getProperty("Project Name"));
+        System.out.println("Project Version: " + project.getProperty("Project Version"));
+
+        // Create an instance of DistributionTool using the configuration file and namespace
+        DistributionTool distributionTool = new DistributionTool();
+
+        // Create Java design distribution for Test Component 1.1
+        Map<String, String> parameters = new HashMap<String, String>();
+        
+        parameters.put(DistributionTool.VERSION_PARAM_NAME, (String) project.getProperty("Project Version"));
+        parameters.put(DistributionTool.COMPONENT_NAME_PARAM_NAME, (String) project.getProperty("Project Name"));
+        parameters.put(DistributionTool.PACKAGE_NAME_PARAM_NAME, (String) lazyForm.get("distribution_package_name"));
+        
+        FormFile distributionRSFile = (FormFile) lazyForm.get("distribution_rs");
+        parameters.put("rs", distributionRSFile.getFileName());
+        
+        int j = 1;
+        for (int i = 1; i <= 3; ++i) {
+            FormFile additionalFile = (FormFile) lazyForm.get("distribution_additional" + i);
+            if (additionalFile != null) {
+                parameters.put("additional_doc" + j, additionalFile.getFileName());
+                ++j;
+            }
+        }
+ 
+        // TODO - determinar a distribuição
+        distributionTool.createDistribution("java", parameters);
+
+        return null;
     }
 
     /**
@@ -307,10 +356,17 @@ public class ProjectManagementConsoleActions extends DispatchAction {
      *
      * <p>Verifies that the package name and the RS are provided. RS should be PDF/DOC/RTF.</p>
      *
+     * @param project the current project.
      * @param lazyForm an <code>LazyValidatorForm</code> providing parameters mapped to this request.
      * @param request an <code>HttpServletRequest</code> representing incoming request from the client.
      */
-    private void validateCreateDistributionForm(LazyValidatorForm lazyForm, HttpServletRequest request) {
+    private void validateCreateDistributionForm(Project project, LazyValidatorForm lazyForm, HttpServletRequest request) {
+        
+        // Validate project type - must be a Design
+        if (project.getProjectCategory().getId() != 1) {
+            ActionsHelper.addErrorToRequest(request, new ActionMessage(
+                "error.com.cronos.onlinereview.actions.manageProject.Distributions.ProjectCategory"));
+        }
         
         String packageName = (String) lazyForm.get("distribution_package_name");
         
@@ -319,6 +375,12 @@ public class ProjectManagementConsoleActions extends DispatchAction {
                 "error.com.cronos.onlinereview.actions.manageProject.Distributions.PackageName.Empty"));
         }
 
+        // Validate it is a valid package
+        if (!PACKAGE_PATTERN.matcher(packageName).matches()) {
+            ActionsHelper.addErrorToRequest(request, "distribution_package_name", new ActionMessage(
+                "error.com.cronos.onlinereview.actions.manageProject.Distributions.PackageName.Invalid"));
+        }
+        
         FormFile distributionRSFile = (FormFile) lazyForm.get("distribution_rs");
 
         if (distributionRSFile == null) {

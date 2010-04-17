@@ -89,7 +89,7 @@
     <property name="auto_screening_management.path" value="auto_screening_management/${auto_screening_management.version}" />
     <property name="auto_screening_management.jar" value="${tcs_libdir}/${auto_screening_management.path}/${auto_screening_management.jar.name}" />
 
-    <property name="base_exception.version" value="1.0" />
+    <property name="base_exception.version" value="2.0.0" />
     <property name="base_exception.jar.name" value="base_exception.jar" />
     <property name="base_exception.path" value="base_exception/${base_exception.version}" />
     <property name="base_exception.jar" value="${tcs_libdir}/${base_exception.path}/${base_exception.jar.name}" />

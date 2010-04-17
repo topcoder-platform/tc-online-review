@@ -264,101 +264,108 @@
                         </tr>
                         <tr class="light">
                         <td>
-                            <%-- Create Design Distribution --%>
-                            <html:form action="/actions/UploadDistribution?activeTabIdx=2" method="POST" enctype="multipart/form-data">
-	                        <html:hidden property="method" value="manageDistribution" />
-	                        <html:hidden property="postBack" value="y" />
-	                        <html:hidden property="pid" value="${project.id}" />
-	                        <table class="scorecard" id="distribution_tbl" cellpadding="0" width="100%"
-	                               style="border-collapse: collapse;">
-	                            <tr>
-	                                <td class="title" colspan="2">
-	                                    <bean:message key="manageProject.Distributions.Create.Design.title"/>
-	                                </td>
-	                            </tr>
-	                            <tr class="light">
-	                                <td class="value">
-	                                    <bean:message key="manageProject.Distributions.packagename"/>&nbsp;
-                                        <bean:message key="global.required.paren"/>
-	                                </td>
-	                                <td class="value">
-	                                    <html:text styleClass="inputBox"
-	                                               property="distribution_package_name"/>
-                                        <div class="error">
-                                            <html:errors property="distribution_package_name" prefix=""
-                                                         suffix=""/>
-                                        </div>
-                                    </td>
-	                            </tr>
-	                            <tr class="dark">
-	                                <td class="value">
-	                                    <bean:message key="manageProject.Distributions.rs"/>&nbsp;
-                                        <bean:message key="global.required.paren"/>
-	                                </td>
-	                                <td class="value">
-	                                    <html:file property="distribution_rs" size="20" styleClass="inputBox" style="width:500px;vertical-align:middle;" />
-                                        <div class="error">
-                                            <html:errors property="distribution_rs" prefix=""
-                                                         suffix=""/>
-                                        </div>
-	                                </td>
-	                            </tr>
-                                <tr class="light">
-                                    <td class="value">
-                                        <bean:message key="manageProject.Distributions.additional1"/>
-                                    </td>
-                                    <td class="value">
-                                        <html:file property="distribution_additional1" size="20" styleClass="inputBox" style="width:500px;vertical-align:middle;" />
-                                    </td>
-                                </tr>
-                                <tr class="dark">
-                                    <td class="value">
-                                        <bean:message key="manageProject.Distributions.additional2"/>
-                                    </td>
-                                    <td class="value">
-                                        <html:file property="distribution_additional2" size="20" styleClass="inputBox" style="width:500px;vertical-align:middle;" />
-                                    </td>
-                                </tr>
-                                <tr class="light">
-                                    <td class="value">
-                                        <bean:message key="manageProject.Distributions.additional3"/>
-                                    </td>
-                                    <td class="value">
-                                        <html:file property="distribution_additional3" size="20" styleClass="inputBox" style="width:500px;vertical-align:middle;" />
-                                    </td>
-                                </tr>                                                                	                            
-                                <tr class="dark">
-                                    <td class="value" colspan="2">
-                                        <html:hidden property="upload_to_server" />
-                                        <input type="checkbox" id="uploadToServer" value="${uploadDistributionForm.upload_to_server}" onclick="this.form.upload_to_server.value = this.checked ? 'true' : 'false' " />
-                                        <label for="uploadToServer"><bean:message key="manageProject.Distributions.Upload" /></label>
-                                        <div class="error">
-                                            <html:errors property="upload_to_server" prefix=""
-                                                         suffix=""/>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr class="light">
-                                    <td class="value" colspan="2">
-                                        <html:hidden property="return_distribution" />
-                                        <input type="checkbox" id="returnDistribution" value="${uploadDistributionForm.return_distribution}" onclick="this.form.return_distribution.value = this.checked ? 'true' : 'false' " />
-                                        <label for="returnDistribution"><bean:message key="manageProject.Distributions.Return_distribution" /></label>
-                                        <div class="error">
-                                            <html:errors property="return_distribution" prefix=""
-                                                         suffix=""/>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr class="dark">
-                                    <td class="value" colspan="2">
-                                        <html:image srcKey="btnGenerate.img" altKey="btnGenerate.alt" border="0"/>&#160;
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td class="lastRowTD" colspan="2"><!-- @ --></td>
-                                </tr>
-	                        </table><br/>
-	                        </html:form>
+                            <c:if test="(project.projectCategory.id == 2)">
+	                            <bean:message key="manageProject.Distributions.Upload.Development.title"/>
+	                                            </c:when>
+	                                            <c:otherwise>
+	                                                <bean:message key="manageProject.Distributions.Upload.Design.title"/>
+	                                            </c:otherwise>               
+	                            <%-- Create Design Distribution --%>
+	                            <html:form action="/actions/UploadDistribution?activeTabIdx=2" method="POST" enctype="multipart/form-data">
+		                        <html:hidden property="method" value="manageDistribution" />
+		                        <html:hidden property="postBack" value="y" />
+		                        <html:hidden property="pid" value="${project.id}" />
+		                        <table class="scorecard" id="distribution_tbl" cellpadding="0" width="100%"
+		                               style="border-collapse: collapse;">
+		                            <tr>
+		                                <td class="title" colspan="2">
+		                                    <bean:message key="manageProject.Distributions.Create.Design.title"/>
+		                                </td>
+		                            </tr>
+		                            <tr class="light">
+		                                <td class="value">
+		                                    <bean:message key="manageProject.Distributions.packagename"/>&nbsp;
+	                                        <bean:message key="global.required.paren"/>
+		                                </td>
+		                                <td class="value">
+		                                    <html:text styleClass="inputBox"
+		                                               property="distribution_package_name"/>
+	                                        <div class="error">
+	                                            <html:errors property="distribution_package_name" prefix=""
+	                                                         suffix=""/>
+	                                        </div>
+	                                    </td>
+		                            </tr>
+		                            <tr class="dark">
+		                                <td class="value">
+		                                    <bean:message key="manageProject.Distributions.rs"/>&nbsp;
+	                                        <bean:message key="global.required.paren"/>
+		                                </td>
+		                                <td class="value">
+		                                    <html:file property="distribution_rs" size="20" styleClass="inputBox" style="width:500px;vertical-align:middle;" />
+	                                        <div class="error">
+	                                            <html:errors property="distribution_rs" prefix=""
+	                                                         suffix=""/>
+	                                        </div>
+		                                </td>
+		                            </tr>
+	                                <tr class="light">
+	                                    <td class="value">
+	                                        <bean:message key="manageProject.Distributions.additional1"/>
+	                                    </td>
+	                                    <td class="value">
+	                                        <html:file property="distribution_additional1" size="20" styleClass="inputBox" style="width:500px;vertical-align:middle;" />
+	                                    </td>
+	                                </tr>
+	                                <tr class="dark">
+	                                    <td class="value">
+	                                        <bean:message key="manageProject.Distributions.additional2"/>
+	                                    </td>
+	                                    <td class="value">
+	                                        <html:file property="distribution_additional2" size="20" styleClass="inputBox" style="width:500px;vertical-align:middle;" />
+	                                    </td>
+	                                </tr>
+	                                <tr class="light">
+	                                    <td class="value">
+	                                        <bean:message key="manageProject.Distributions.additional3"/>
+	                                    </td>
+	                                    <td class="value">
+	                                        <html:file property="distribution_additional3" size="20" styleClass="inputBox" style="width:500px;vertical-align:middle;" />
+	                                    </td>
+	                                </tr>                                                                	                            
+	                                <tr class="dark">
+	                                    <td class="value" colspan="2">
+	                                        <html:hidden property="upload_to_server" />
+	                                        <input type="checkbox" id="uploadToServer" value="${uploadDistributionForm.upload_to_server}" onclick="this.form.upload_to_server.value = this.checked ? 'true' : 'false' " />
+	                                        <label for="uploadToServer"><bean:message key="manageProject.Distributions.Upload" /></label>
+	                                        <div class="error">
+	                                            <html:errors property="upload_to_server" prefix=""
+	                                                         suffix=""/>
+	                                        </div>
+	                                    </td>
+	                                </tr>
+	                                <tr class="light">
+	                                    <td class="value" colspan="2">
+	                                        <html:hidden property="return_distribution" />
+	                                        <input type="checkbox" id="returnDistribution" value="${uploadDistributionForm.return_distribution}" onclick="this.form.return_distribution.value = this.checked ? 'true' : 'false' " />
+	                                        <label for="returnDistribution"><bean:message key="manageProject.Distributions.Return_distribution" /></label>
+	                                        <div class="error">
+	                                            <html:errors property="return_distribution" prefix=""
+	                                                         suffix=""/>
+	                                        </div>
+	                                    </td>
+	                                </tr>
+	                                <tr class="dark">
+	                                    <td class="value" colspan="2">
+	                                        <html:image srcKey="btnGenerate.img" altKey="btnGenerate.alt" border="0"/>&#160;
+	                                    </td>
+	                                </tr>
+	                                <tr>
+	                                    <td class="lastRowTD" colspan="2"><!-- @ --></td>
+	                                </tr>
+		                        </table><br/>
+		                        </html:form>
+	                        </c:if>
 	                        
 	                        <%-- Upload Distribution --%>
                             <html:form action="/actions/UploadDistribution?activeTabIdx=2" method="POST" enctype="multipart/form-data">
