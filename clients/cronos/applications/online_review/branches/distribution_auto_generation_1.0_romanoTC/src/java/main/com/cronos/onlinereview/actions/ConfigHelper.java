@@ -201,6 +201,16 @@ public class ConfigHelper {
      * @see #ROOT_CATALOG_ID_PROP
      */
     private static final String ROOT_CATALOG_CUSTOM_KEY_PROP = "Custom";
+    
+    /**
+     * This member variable is a string constant that specifies the name of the property which
+     * contains name of the key in Resource Messages file.  This key will be used to retrieve
+     * the distribution script.
+     *
+     * @see #ROOT_CATALOGS_PROP
+     * @see #ROOT_CATALOG_ID_PROP
+     */
+    private static final String ROOT_CATALOG_DISTRIBUTION_SCRIPT_KEY_PROP = "DistributionScript";
 
     /**
      * This member variable is a string constant that specifies the name of the property which
@@ -513,6 +523,11 @@ public class ConfigHelper {
      * @since 1.3
      */
     private static final int DEFAULT_MINIMUM_HOURS_LEFT = 48;
+    
+    /**
+     * This is the distribution tool script to use when no script is defined.
+     */
+    private static final String DEFAULT_DISTRIBUTION_SCRIPT = "other";
 
     /**
      * This member variable holds the name of the session attribute which ID of the currently logged
@@ -613,7 +628,12 @@ public class ConfigHelper {
      * This member variable holds the custom root catalogs ids
      */
     private static final Set<String> customRootCatalogs = new HashSet<String>();
-
+    
+    /**
+     * This member variable holds the distribution tool script for root catalogs ids
+     */
+    private static final Map<String, String> distributionScriptRootCatalogs = new HashMap<String, String>();
+    
     /**
      * This member variable holds the names of small icons (.gif) files that should be displayed
      * on the JSP pages for different Project Categories.
@@ -960,6 +980,12 @@ public class ConfigHelper {
                 String custom = propRootCatIcons.getValue(strPropName + "." + ROOT_CATALOG_CUSTOM_KEY_PROP);
                 if (custom != null && custom.trim().length() != 0 && custom.trim().equalsIgnoreCase("true")) {
                     customRootCatalogs.add(strID);
+                }
+                
+                if (propRootCatIcons.containsValue(strPropName + "." + ROOT_CATALOG_DISTRIBUTION_SCRIPT_KEY_PROP)) {
+                    String script = propRootCatIcons.getValue(strPropName + "."
+                        + ROOT_CATALOG_DISTRIBUTION_SCRIPT_KEY_PROP);
+                    distributionScriptRootCatalogs.put(strID, script);
                 }
             }
 
@@ -1391,6 +1417,18 @@ public class ConfigHelper {
      */
     public static boolean isCustomRootCatalog(String rootCatalogId) {
         return customRootCatalogs.contains(rootCatalogId);
+    }
+    
+    /**
+     * This static method returns the distribution script for a catalog. If not defined, it will return 'other'.
+     *
+     * @return the distribution script for a catalog.
+     * @param rootCatalogId
+     *            Root Catalog ID which to look for.
+     */
+    public static String getDistributionScript(String rootCatalogId) {
+        return distributionScriptRootCatalogs.containsKey(rootCatalogId) ? distributionScriptRootCatalogs
+            .get(rootCatalogId) : DEFAULT_DISTRIBUTION_SCRIPT;
     }
 
     /**

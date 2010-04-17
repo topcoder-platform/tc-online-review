@@ -100,6 +100,11 @@ public class ProjectManagementConsoleActions extends DispatchAction {
     private static final long DESIGNER_RESOURCE_ROLE_ID = 11;
 
     /**
+     * This is the distribution tool script to use when no script is defined.
+     */
+    private static final String DEFAULT_DISTRIBUTION_SCRIPT = "other";
+    
+    /**
      * <p>Valid package names.</p>
      */
     private static final Pattern PACKAGE_PATTERN = Pattern
@@ -250,8 +255,9 @@ public class ProjectManagementConsoleActions extends DispatchAction {
             }
         }
  
-        // TODO - determinar a distribuição
-        distributionTool.createDistribution("java", parameters);
+        // Determines the script that will be used
+        String rootCatalogID = (String) project.getProperty("Root Catalog ID");
+        distributionTool.createDistribution(ConfigHelper.getDistributionScript(rootCatalogID), parameters);
 
         return null;
     }
@@ -368,17 +374,21 @@ public class ProjectManagementConsoleActions extends DispatchAction {
                 "error.com.cronos.onlinereview.actions.manageProject.Distributions.ProjectCategory"));
         }
         
-        String packageName = (String) lazyForm.get("distribution_package_name");
-        
-        if (packageName == null || packageName.trim().length() == 0) {
-            ActionsHelper.addErrorToRequest(request, "distribution_package_name", new ActionMessage(
-                "error.com.cronos.onlinereview.actions.manageProject.Distributions.PackageName.Empty"));
-        }
-
-        // Validate it is a valid package
-        if (!PACKAGE_PATTERN.matcher(packageName).matches()) {
-            ActionsHelper.addErrorToRequest(request, "distribution_package_name", new ActionMessage(
-                "error.com.cronos.onlinereview.actions.manageProject.Distributions.PackageName.Invalid"));
+        // Determines the script that will be used (if other, no package is needed)
+        String rootCatalogID = (String) project.getProperty("Root Catalog ID");
+        if (!DEFAULT_DISTRIBUTION_SCRIPT.equals(ConfigHelper.getDistributionScript(rootCatalogID))) {
+            String packageName = (String) lazyForm.get("distribution_package_name");
+            
+            if (packageName == null || packageName.trim().length() == 0) {
+                ActionsHelper.addErrorToRequest(request, "distribution_package_name", new ActionMessage(
+                    "error.com.cronos.onlinereview.actions.manageProject.Distributions.PackageName.Empty"));
+            }
+    
+            // Validate it is a valid package
+            if (!PACKAGE_PATTERN.matcher(packageName).matches()) {
+                ActionsHelper.addErrorToRequest(request, "distribution_package_name", new ActionMessage(
+                    "error.com.cronos.onlinereview.actions.manageProject.Distributions.PackageName.Invalid"));
+            }
         }
         
         FormFile distributionRSFile = (FormFile) lazyForm.get("distribution_rs");
@@ -425,6 +435,11 @@ public class ProjectManagementConsoleActions extends DispatchAction {
         setAvailableResourceRoles(request);
         setRegistrationPhaseExtensionParameters(request, phases);
         setSubmissionPhaseExtensionParameters(request, phases);
+
+        // Identifies is package name is needed
+        String rootCatalogID = (String) project.getProperty("Root Catalog ID");
+        request.setAttribute("needsPackageName", !DEFAULT_DISTRIBUTION_SCRIPT.equals(ConfigHelper
+            .getDistributionScript(rootCatalogID)));
     }
 
     /**

@@ -265,16 +265,12 @@
                         <tr class="light">
                         <td>
                             <c:if test="(project.projectCategory.id == 2)">
-	                            <bean:message key="manageProject.Distributions.Upload.Development.title"/>
-	                                            </c:when>
-	                                            <c:otherwise>
-	                                                <bean:message key="manageProject.Distributions.Upload.Design.title"/>
-	                                            </c:otherwise>               
 	                            <%-- Create Design Distribution --%>
 	                            <html:form action="/actions/UploadDistribution?activeTabIdx=2" method="POST" enctype="multipart/form-data">
 		                        <html:hidden property="method" value="manageDistribution" />
 		                        <html:hidden property="postBack" value="y" />
 		                        <html:hidden property="pid" value="${project.id}" />
+		                        
 		                        <table class="scorecard" id="distribution_tbl" cellpadding="0" width="100%"
 		                               style="border-collapse: collapse;">
 		                            <tr>
@@ -282,20 +278,22 @@
 		                                    <bean:message key="manageProject.Distributions.Create.Design.title"/>
 		                                </td>
 		                            </tr>
-		                            <tr class="light">
-		                                <td class="value">
-		                                    <bean:message key="manageProject.Distributions.packagename"/>&nbsp;
-	                                        <bean:message key="global.required.paren"/>
-		                                </td>
-		                                <td class="value">
-		                                    <html:text styleClass="inputBox"
-		                                               property="distribution_package_name"/>
-	                                        <div class="error">
-	                                            <html:errors property="distribution_package_name" prefix=""
-	                                                         suffix=""/>
-	                                        </div>
-	                                    </td>
-		                            </tr>
+                                    <c:if test="${needsPackageName == true}">
+			                            <tr class="light">
+			                                <td class="value">
+			                                    <bean:message key="manageProject.Distributions.packagename"/>&nbsp;
+	                                            <bean:message key="global.required.paren"/>
+			                                </td>
+			                                <td class="value">
+			                                    <html:text styleClass="inputBox"
+			                                               property="distribution_package_name"/>
+		                                        <div class="error">
+		                                            <html:errors property="distribution_package_name" prefix=""
+		                                                         suffix=""/>
+		                                        </div>
+		                                    </td>
+			                            </tr>
+                                    </c:if>
 		                            <tr class="dark">
 		                                <td class="value">
 		                                    <bean:message key="manageProject.Distributions.rs"/>&nbsp;

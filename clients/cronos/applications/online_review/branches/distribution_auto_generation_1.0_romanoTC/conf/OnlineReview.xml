@@ -2943,6 +2943,9 @@
                 <Property name="Custom">
                     <Value>False</Value>
                 </Property>
+                <Property name="DistributionScript">
+                    <Value>java</Value>
+                </Property>
             </Property>
             <Property name="dotNET">
                 <Property name="id">
@@ -2956,6 +2959,9 @@
                 </Property>
                 <Property name="Custom">
                     <Value>False</Value>
+                </Property>
+                <Property name="DistributionScript">
+                    <Value>dotnet</Value>
                 </Property>
             </Property>
             <Property name="CustomJava">
@@ -2971,6 +2977,9 @@
                 <Property name="Custom">
                     <Value>True</Value>
                 </Property>
+                <Property name="DistributionScript">
+                    <Value>java</Value>
+                </Property>
             </Property>
             <Property name="CustomNET">
                 <Property name="id">
@@ -2984,6 +2993,9 @@
                 </Property>
                 <Property name="Custom">
                     <Value>True</Value>
+                </Property>
+                <Property name="DistributionScript">
+                    <Value>dotnet</Value>
                 </Property>
             </Property>
             <Property name="Flash">
