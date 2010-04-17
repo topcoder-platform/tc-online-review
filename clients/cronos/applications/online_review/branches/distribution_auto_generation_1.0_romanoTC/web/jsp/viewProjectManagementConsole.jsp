@@ -264,7 +264,7 @@
                         </tr>
                         <tr class="light">
                         <td>
-                            <c:if test="(project.projectCategory.id == 2)">
+                            <c:if test="(project.projectCategory.id == 1)"> <%-- Design only --%>
 	                            <%-- Create Design Distribution --%>
 	                            <html:form action="/actions/UploadDistribution?activeTabIdx=2" method="POST" enctype="multipart/form-data">
 		                        <html:hidden property="method" value="manageDistribution" />
