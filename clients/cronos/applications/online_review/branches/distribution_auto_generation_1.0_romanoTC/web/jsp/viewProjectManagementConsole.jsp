@@ -287,6 +287,7 @@
                                             <html:errors property="distribution_package_name" prefix=""
                                                          suffix=""/>
                                         </div>
+                                    </td>
 	                            </tr>
 	                            <tr class="dark">
 	                                <td class="value">
@@ -329,12 +330,20 @@
                                     <td class="value" colspan="2">
                                         <html:checkbox styleId="uploadToServer" property="upload_to_server" /><label
                                             for="uploadToServer"><b><bean:message key="manageProject.Distributions.Upload" /></b></label>
+                                        <div class="error">
+                                            <html:errors property="upload_to_server" prefix=""
+                                                         suffix=""/>
+                                        </div>
                                     </td>
                                 </tr>
                                 <tr class="dark">
                                     <td class="value" colspan="2">
                                         <html:checkbox styleId="returnDistribution" property="return_distribution" /><label
                                             for="returnDistribution"><b><bean:message key="manageProject.Distributions.Return_distribution" /></b></label>
+                                        <div class="error">
+                                            <html:errors property="return_distribution" prefix=""
+                                                         suffix=""/>
+                                        </div>
                                     </td>
                                 </tr>
                                 <tr class="light">

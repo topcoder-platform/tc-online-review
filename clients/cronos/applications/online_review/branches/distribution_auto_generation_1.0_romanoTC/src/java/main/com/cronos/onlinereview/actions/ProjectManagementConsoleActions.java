@@ -325,6 +325,17 @@ public class ProjectManagementConsoleActions extends DispatchAction {
             ActionsHelper.addErrorToRequest(request, "distribution_rs", new ActionMessage(
                 "error.com.cronos.onlinereview.actions.manageProject.Distributions.RS.Invalid"));
         }
+        
+        Boolean uploadToServerObj = (Boolean) lazyForm.get("upload_to_server");
+        Boolean returnDistributionObj = (Boolean) lazyForm.get("return_distribution");
+        
+        boolean uploadToServer = (uploadToServerObj == null) ? false : uploadToServerObj.booleanValue();
+        boolean returnDistribution = (returnDistributionObj == null) ? false : returnDistributionObj.booleanValue();
+        
+        if (!uploadToServer && !returnDistribution) {
+            ActionsHelper.addErrorToRequest(request, "upload_to_server", new ActionMessage(
+                "error.com.cronos.onlinereview.actions.manageProject.Distributions.Upload.Unchecked"));
+        }
     }
     
     /**
