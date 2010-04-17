@@ -242,7 +242,7 @@
                         </table>
                     </div>
                     <%-- Design or Development only --%> 
-                    <c:if test="${((project.projectCategory.id == 1) || (project.projectCategory.id == 2))">
+                    <c:if test="${((project.projectCategory.id == 1) || (project.projectCategory.id == 2))}">
                     <div id="sc2" style='display:${(activeTabIdx == 2) ? "block" : "none"};'>
                         <ul id="tablist">
                             <li><a href="javascript:void(0)"
@@ -262,6 +262,7 @@
                         </tr>
                         <tr class="light">
                         <td>
+                            <%-- Create Design Distribution --%>
                             <html:form action="/actions/UploadDistribution" method="POST" enctype="multipart/form-data">
 	                        <html:hidden property="method" value="manageDistribution" />
 	                        <html:hidden property="postBack" value="y" />
@@ -270,7 +271,7 @@
 	                               style="border-collapse: collapse;">
 	                            <tr>
 	                                <td class="title" colspan="2">
-	                                    <bean:message key="manageProject.Distributions.Design.title"/>
+	                                    <bean:message key="manageProject.Distributions.Create.Design.title"/>
 	                                </td>
 	                            </tr>
 	                            <tr class="light">
@@ -351,11 +352,48 @@
 	                        </table><br/>
 	                        <div class="bottomButtonBar">
 	                            <html:image srcKey="btnGenerate.img" altKey="btnGenerate.alt" border="0"/>&#160;
-	                            <html:link
-	                                    page="/actions/ViewProjectDetails.do?method=viewProjectDetails&pid=${project.id}"><html:img
-	                                    srcKey="btnCancel.img" altKey="btnCancel.alt" border="0"/></html:link>
                             </div>
 	                        </html:form>
+	                        
+	                        <%-- Upload Distribution --%>
+                            <html:form action="/actions/UploadDistribution" method="POST" enctype="multipart/form-data">
+                            <html:hidden property="method" value="uploadDesignDistribution" />
+                            <html:hidden property="postBack" value="y" />
+                            <html:hidden property="pid" value="${project.id}" />
+                            <table class="scorecard" id="distribution_tbl" cellpadding="0" width="100%"
+                                   style="border-collapse: collapse;">
+                                <tr>
+                                    <td class="title" colspan="2">
+                                        <c:choose>
+                                            <c:when test="(project.projectCategory.id == 1)">
+                                                <bean:message key="manageProject.Distributions.Upload.Design.title"/>
+                                            </c:when>
+                                            <c:otherwise>
+                                                <bean:message key="manageProject.Distributions.Upload.Development.title"/>
+                                            </c:otherwise>                                                
+                                        </c:choose>
+                                    </td>
+                                </tr>
+                                <tr class="light">
+                                    <td class="value">
+                                        <bean:message key="manageProject.Distributions.File"/>
+                                    </td>
+                                    <td class="value">
+                                        <html:file property="distribution_file" size="20" styleClass="inputBox" style="width:500px;vertical-align:middle;" />
+                                        <div class="error">
+                                            <html:errors property="distribution_file" prefix=""
+                                                         suffix=""/>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="lastRowTD" colspan="2"><!-- @ --></td>
+                                </tr>
+                            </table><br/>
+                            <div class="bottomButtonBar">
+                                <html:image srcKey="btnUpload.img" altKey="btnUpload.alt" border="0"/>&#160;
+                            </div>
+                            </html:form>
                         </td>
                         </tr>
                         <tr>

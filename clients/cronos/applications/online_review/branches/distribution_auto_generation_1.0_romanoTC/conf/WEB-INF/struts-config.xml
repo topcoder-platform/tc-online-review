@@ -172,9 +172,10 @@
             <form-property name="distribution_additional1" type="org.apache.struts.upload.FormFile" />
             <form-property name="distribution_additional2" type="org.apache.struts.upload.FormFile" />
             <form-property name="distribution_additional3" type="org.apache.struts.upload.FormFile" />
-            
             <form-property name="upload_to_server" type="java.lang.String" initial="on" />
             <form-property name="return_distribution" type="java.lang.String" />
+
+            <form-property name="distribution_file" type="org.apache.struts.upload.FormFile" />
         </form-bean>
 
     </form-beans>
@@ -672,6 +673,8 @@
                 input="/jsp/viewProjectManagementConsole.jsp">
             <forward name="success" path="/actions/ViewProjectDetails.do?method=viewProjectDetails" redirect="true"/>
         </action>
+        
+        <!-- "Create/Upload Distribution" Action -->
         <action path="/actions/UploadDistribution" unknown="false"
                 type="com.cronos.onlinereview.actions.ProjectManagementConsoleActions"
                 parameter="method" scope="request" name="uploadDistributionForm"
