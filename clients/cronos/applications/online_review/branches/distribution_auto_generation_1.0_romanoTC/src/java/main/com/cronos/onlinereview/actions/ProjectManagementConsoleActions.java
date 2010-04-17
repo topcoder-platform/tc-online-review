@@ -6,6 +6,8 @@ package com.cronos.onlinereview.actions;
 import static com.cronos.onlinereview.actions.Constants.*;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -231,7 +233,7 @@ public class ProjectManagementConsoleActions extends DispatchAction {
      * @throws DistributionToolException
      */
     private File createDistributionFile(Project project, LazyValidatorForm lazyForm, HttpServletRequest request)
-        throws DistributionToolException {
+        throws DistributionToolException, IOException {
 
         System.out.println("Project Name: " + project.getProperty("Project Name"));
         System.out.println("Project Version: " + project.getProperty("Project Version"));
@@ -259,14 +261,22 @@ public class ProjectManagementConsoleActions extends DispatchAction {
         parameters.put(DistributionTool.PACKAGE_NAME_PARAM_NAME, packageName);
         parameters.put("output_dir", outputDir);
         
-        FormFile distributionRSFile = (FormFile) lazyForm.get("distribution_rs");
-        parameters.put("rs", distributionRSFile.getFileName());
+        List<File> filesToDelete = new ArrayList<File>();
+        
+        File distributionRSFile = createTempFile(project, (FormFile) lazyForm.get("distribution_rs"));
+        filesToDelete.add(distributionRSFile);
+        
+        parameters.put("rs", distributionRSFile.getAbsolutePath());
+
         
         int j = 1;
         for (int i = 1; i <= 3; ++i) {
-            FormFile additionalFile = (FormFile) lazyForm.get("distribution_additional" + i);
-            if (additionalFile != null) {
-                parameters.put("additional_doc" + j, additionalFile.getFileName());
+            FormFile additionalFormFile = (FormFile) lazyForm.get("distribution_additional" + i);
+            if (additionalFormFile != null && additionalFormFile.getFileSize() > 0) {
+                File additionalFile = createTempFile(project, additionalFormFile);
+                filesToDelete.add(additionalFile);
+                
+                parameters.put("additional_doc" + j, additionalFile.getAbsolutePath());
                 ++j;
             }
         }
@@ -275,7 +285,42 @@ public class ProjectManagementConsoleActions extends DispatchAction {
         String rootCatalogID = (String) project.getProperty("Root Catalog ID");
         distributionTool.createDistribution(ConfigHelper.getDistributionScript(rootCatalogID), parameters);
 
+        // Delete temporary files
+        for (File file : filesToDelete) {
+            file.delete();
+        }
+        
         return null;
+    }
+
+    /**
+     * <p>
+     * Saves the uploaded file to disk and returns its absolute path name.
+     * </p>
+     * 
+     * @param project the current project.
+     * @param formFile the uploaded file.
+     * @return the absolute path of the temporarary file.
+     */
+    private File createTempFile(Project project, FormFile formFile) throws IOException {
+
+        File output = File.createTempFile("tc" + project.getId(), formFile.getFileName());
+        FileOutputStream fos = new FileOutputStream(output);
+
+        try {
+            fos = new FileOutputStream(output);
+            fos.write(formFile.getFileData());
+        } finally {
+            if (fos != null) {
+                try {
+                    fos.close();
+                } catch (IOException ex) {
+                    // ignore
+                }
+            }
+        }
+
+        return output;
     }
 
     /**
@@ -433,7 +478,7 @@ public class ProjectManagementConsoleActions extends DispatchAction {
         
         FormFile distributionRSFile = (FormFile) lazyForm.get("distribution_rs");
 
-        if (distributionRSFile == null) {
+        if (distributionRSFile == null || distributionRSFile.getFileSize() == 0) {
             ActionsHelper.addErrorToRequest(request, "distribution_rs", new ActionMessage(
                 "error.com.cronos.onlinereview.actions.manageProject.Distributions.RS.Empty"));
         }
