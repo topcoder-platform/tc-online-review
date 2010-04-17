@@ -276,29 +276,17 @@
 	                            </tr>
 	                            <tr class="light">
 	                                <td class="value">
-	                                    <bean:message key="manageProject.Distributions.componentname"/>
+	                                    <bean:message key="manageProject.Distributions.packagename"/>
 	                                </td>
 	                                <td class="value">
-	                                    <html:text styleClass="inputTextBox"
-	                                               property="distribution_component_name"/>
+	                                    <html:text styleClass="inputBox"
+	                                               property="distribution_package_name"/>
                                         <div class="error">
-                                            <html:errors property="distribution_component_name" prefix=""
+                                            <html:errors property="distribution_package_name" prefix=""
                                                          suffix=""/>
                                         </div>
 	                            </tr>
-                                <tr class="dark">
-                                    <td class="value">
-                                        <bean:message key="manageProject.Distributions.version"/>
-                                    </td>
-                                    <td class="value">
-                                        <html:text styleClass="inputTextBox"
-                                                   property="distribution_version"/>
-                                        <div class="error">
-                                            <html:errors property="distribution_version" prefix=""
-                                                         suffix=""/>
-                                        </div>
-                                </tr>	                            
-	                            <tr class="light">
+	                            <tr class="dark">
 	                                <td class="value">
 	                                    <bean:message key="manageProject.Distributions.rs"/>
 	                                </td>
@@ -310,7 +298,7 @@
                                         </div>
 	                                </td>
 	                            </tr>
-                                <tr class="dark">
+                                <tr class="light">
                                     <td class="value">
                                         <bean:message key="manageProject.Distributions.additional1"/>
                                     </td>
@@ -318,7 +306,7 @@
                                         <html:file property="distribution_additional1" size="20" styleClass="inputBox" style="width:500px;vertical-align:middle;" />
                                     </td>
                                 </tr>
-                                <tr class="light">
+                                <tr class="dark">
                                     <td class="value">
                                         <bean:message key="manageProject.Distributions.additional2"/>
                                     </td>
@@ -326,7 +314,7 @@
                                         <html:file property="distribution_additional2" size="20" styleClass="inputBox" style="width:500px;vertical-align:middle;" />
                                     </td>
                                 </tr>
-                                <tr class="dark">
+                                <tr class="light">
                                     <td class="value">
                                         <bean:message key="manageProject.Distributions.additional3"/>
                                     </td>
@@ -334,7 +322,7 @@
                                         <html:file property="distribution_additional3" size="20" styleClass="inputBox" style="width:500px;vertical-align:middle;" />
                                     </td>
                                 </tr>                                                                	                            
-                                <tr class="light">
+                                <tr class="dark">
                                     <td class="value" colspan="2">
                                         <html:checkbox styleId="uploadToServer" property="upload_to_server" /><label
                                             for="uploadToServer"><b><bean:message key="manageProject.Distributions.Upload" /></b></label>
@@ -346,7 +334,7 @@
                                             for="returnDistribution"><b><bean:message key="manageProject.Distributions.Return_distribution" /></b></label>
                                     </td>
                                 </tr>
-                                <tr class="dark">
+                                <tr class="light">
                                     <td class="value" colspan="2">
                                         <html:image srcKey="btnGenerate.img" altKey="btnGenerate.alt" border="0"/>&#160;
                                     </td>

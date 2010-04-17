@@ -143,6 +143,59 @@ public class ProjectManagementConsoleActions extends DispatchAction {
             return mapping.findForward(SUCCESS_FORWARD_NAME);
         }
     }
+    
+    
+    /**
+     * <p>
+     * Create a project distribution file, upload it to the server or return it to the user (or both).
+     * </p>
+     * 
+     * @param mapping an <code>ActionMapping</code> used for mapping the specified request to this action.
+     * @param form an <code>ActionForm</code> providing the form parameters mapped to specified request.
+     * @param request an <code>HttpServletRequest</code> representing incoming request from the client.
+     * @param response an <code>HttpServletResponse</code> representing response outgoing to client.
+     * @return an <code>ActionForward</code> referencing the next view to be displayed to user.
+     * @throws Exception if an unexpected error occurs.
+     */
+    public ActionForward manageDistribution(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+        HttpServletResponse response) throws Exception {
+        
+        LoggingHelper.logAction(request);
+
+        // Gather the roles the user has for current request
+        AuthorizationHelper.gatherUserRoles(request);
+
+        // Check whether the user has the permission to perform this action. If not then redirect the request
+        // to log-in page or report about the lack of permissions. Also check that current user is granted a
+        // permission to access the details for requested project
+        CorrectnessCheckResult verification
+            = ActionsHelper.checkForCorrectProjectId(mapping, getResources(request), request,
+                                                     PROJECT_MANAGEMENT_PERM_NAME, false);
+        if (!verification.isSuccessful()) {
+            return verification.getForward();
+        } else {
+            // Validate the forms
+            final Project project = verification.getProject();
+            
+
+            // Check if there were any validation errors identified and return appropriate forward
+            if (ActionsHelper.isErrorsPresent(request)) {
+                initProjectManagementConsole(request, project);
+                return mapping.getInputForward();
+            } else {
+
+                
+                
+                if (ActionsHelper.isErrorsPresent(request)) {
+                    initProjectManagementConsole(request, project);
+                    return mapping.getInputForward();
+                } else {
+                    return ActionsHelper.cloneForwardAndAppendToPath(
+                        mapping.findForward(SUCCESS_FORWARD_NAME), "&pid=" + project.getId());
+                }
+            }
+        }
+    }
 
     /**
      * <p>Processes the incoming request which is a request for viewing the <code>Project Management Console</code> view
