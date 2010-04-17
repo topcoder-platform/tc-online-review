@@ -2929,6 +2929,9 @@
         <Property name="minimum_hours_before_submission_deadline_for_phase_extension">
             <Value>48</Value>
         </Property>        
+        <Property name="distribution_tool_output_dir">
+            <Value>/home/tcs/temp_files</Value>
+        </Property>        
         <Property name="RootCatalogs">
             <Property name="Java">
                 <Property name="id">
@@ -4236,14 +4239,6 @@
                 <Property name="script_path">
                     <Value>/home/tcs/distribution_scripts/scripts/java/script.txt</Value>
                 </Property>
-                <Property name="param_1">
-                    <Property name="name">
-                        <Value>output_dir</Value>
-                    </Property>
-                    <Property name="default_value">
-                        <Value>/home/tcs/temp_files</Value>
-                    </Property>
-                </Property>
             </Property>
             <Property name="script_dotnet">
                 <Property name="distribution_type">
@@ -4252,14 +4247,6 @@
                 <Property name="script_path">
                     <Value>/home/tcs/distribution_scripts/scripts/dotnet/script.txt</Value>
                 </Property>
-                <Property name="param_1">
-                    <Property name="name">
-                        <Value>output_dir</Value>
-                    </Property>
-                    <Property name="default_value">
-                        <Value>/home/tcs/temp_files</Value>
-                    </Property>
-                </Property>
             </Property>
             <Property name="script_other">
                 <Property name="distribution_type">
@@ -4267,14 +4254,6 @@
                 </Property>
                 <Property name="script_path">
                     <Value>/home/tcs/distribution_scripts/scripts/other/script.txt</Value>
-                </Property>
-                <Property name="param_1">
-                    <Property name="name">
-                        <Value>output_dir</Value>
-                    </Property>
-                    <Property name="default_value">
-                        <Value>/home/tcs/temp_files</Value>
-                    </Property>
                 </Property>
             </Property>
         </Property>

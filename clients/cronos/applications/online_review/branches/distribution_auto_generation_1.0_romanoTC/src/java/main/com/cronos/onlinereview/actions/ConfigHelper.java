@@ -14,7 +14,6 @@ import java.util.Set;
 import com.topcoder.util.config.ConfigManager;
 import com.topcoder.util.config.Property;
 import com.topcoder.util.config.UnknownNamespaceException;
-import com.topcoder.web.ejb.pacts.ParentReferencePayment;
 
 /**
  * This class is a helper class that loads application's configuration parameters on application
@@ -525,6 +524,17 @@ public class ConfigHelper {
     private static final int DEFAULT_MINIMUM_HOURS_LEFT = 48;
     
     /**
+     * <p>This member variable is a string constant that specifies the name of the property which contains the
+     * output dir for the distribution tool.</p>
+     */
+    private static final String DISTRIBUTION_TOOL_OUTPUT_DIR_PROP = "distribution_tool_output_dir";
+    
+    /**
+     * This is the default distribution tool output dir.
+     */
+    private static final String DEFAULT_DISTRIBUTION_TOOL_OUTPUT_DIR = "/tmp";
+
+    /**
      * This is the distribution tool script to use when no script is defined.
      */
     private static final String DEFAULT_DISTRIBUTION_SCRIPT = "other";
@@ -801,6 +811,13 @@ public class ConfigHelper {
      * @since 1.3
      */
     private static Integer minimumHoursBeforeSubmissionDeadlineForExtension = DEFAULT_MINIMUM_HOURS_LEFT;
+
+    /**
+     * <p>
+     * The distribution tool output dir.
+     * </p>
+     */
+    private static String distributionToolOutputDir = DEFAULT_DISTRIBUTION_TOOL_OUTPUT_DIR;
 
     static {
         // Obtaining the instance of Configuration Manager
@@ -1255,7 +1272,18 @@ public class ConfigHelper {
                                        + " will be used instead");
                 }
             }
-
+            
+            distributionToolOutputDir = cfgMgr.getString(ONLINE_REVIEW_CFG_NS, DISTRIBUTION_TOOL_OUTPUT_DIR_PROP);
+            
+            if (distributionToolOutputDir == null) {
+                System.err.println("The value of " + DISTRIBUTION_TOOL_OUTPUT_DIR_PROP
+                    + " configuration property is null. "
+                    + "This value will be ignored and value of " + DEFAULT_DISTRIBUTION_TOOL_OUTPUT_DIR
+                    + " will be used instead");
+                
+                distributionToolOutputDir = DEFAULT_DISTRIBUTION_TOOL_OUTPUT_DIR;
+            }
+            
         } catch (UnknownNamespaceException une) {
             // TODO: Add proper logging here
             System.out.println(une.getMessage());
@@ -1793,5 +1821,14 @@ public class ConfigHelper {
      */
     public static Integer getMinimumHoursBeforeSubmissionDeadlineForExtension() {
         return minimumHoursBeforeSubmissionDeadlineForExtension;
+    }
+    
+    /**
+     * <p>Gets the distribution tool output dir..</p>
+     *
+     * @return the distribution tool output dir.
+     */
+    public static String getDistributionToolOutputDir() {
+        return distributionToolOutputDir;
     }
 }

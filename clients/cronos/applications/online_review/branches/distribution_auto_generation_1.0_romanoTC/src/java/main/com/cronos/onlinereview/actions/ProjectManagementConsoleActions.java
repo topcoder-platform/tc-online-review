@@ -108,7 +108,7 @@ public class ProjectManagementConsoleActions extends DispatchAction {
      * <p>Valid package names.</p>
      */
     private static final Pattern PACKAGE_PATTERN = Pattern
-        .compile("(([a-zA-Z])[a-zA-Z0-9_]*)(\\.([a-zA-Z])[a-zA-Z0-9_]*)*");
+        .compile("\\s*(([a-zA-Z])[a-zA-Z0-9_]*)(\\.([a-zA-Z])[a-zA-Z0-9_]*)*\\s*");
     
     /**
      * <p>Constructs new <code>ProjectManagementConsoleActions</code> instance. This implementation does nothing.</p>
@@ -205,11 +205,14 @@ public class ProjectManagementConsoleActions extends DispatchAction {
                     initProjectManagementConsole(request, project);
                     return mapping.getInputForward();
                 } else {
+                    
                     // Create the distribution file
-                    createDistributionFile(project, lazyForm, request);
+                    File distributionFile = createDistributionFile(project, lazyForm, request);
                     
-                    
-                    
+                    if (ActionsHelper.isErrorsPresent(request)) {
+                        initProjectManagementConsole(request, project);
+                        return mapping.getInputForward();
+                    }
                     
                     return ActionsHelper.cloneForwardAndAppendToPath(
                         mapping.findForward(SUCCESS_FORWARD_NAME), "&activeTabIdx=2&pid=" + project.getId());
@@ -239,9 +242,22 @@ public class ProjectManagementConsoleActions extends DispatchAction {
         // Create Java design distribution for Test Component 1.1
         Map<String, String> parameters = new HashMap<String, String>();
         
-        parameters.put(DistributionTool.VERSION_PARAM_NAME, (String) project.getProperty("Project Version"));
-        parameters.put(DistributionTool.COMPONENT_NAME_PARAM_NAME, (String) project.getProperty("Project Name"));
-        parameters.put(DistributionTool.PACKAGE_NAME_PARAM_NAME, (String) lazyForm.get("distribution_package_name"));
+        String version = (String) project.getProperty("Project Version");
+        String projectName = (String) project.getProperty("Project Name");
+        String packageName = ((String) lazyForm.get("distribution_package_name")).trim();
+        String outputDir = getOutputDir(project);
+        
+        if (outputDir == null) {
+            // Problem creating the output dir
+            ActionsHelper.addErrorToRequest(request, new ActionMessage(
+                "error.com.cronos.onlinereview.actions.manageProject.Distributions.OutputDir"));
+            return null;
+        }
+        
+        parameters.put(DistributionTool.VERSION_PARAM_NAME, version);
+        parameters.put(DistributionTool.COMPONENT_NAME_PARAM_NAME, projectName);
+        parameters.put(DistributionTool.PACKAGE_NAME_PARAM_NAME, packageName);
+        parameters.put("output_dir", outputDir);
         
         FormFile distributionRSFile = (FormFile) lazyForm.get("distribution_rs");
         parameters.put("rs", distributionRSFile.getFileName());
@@ -260,6 +276,30 @@ public class ProjectManagementConsoleActions extends DispatchAction {
         distributionTool.createDistribution(ConfigHelper.getDistributionScript(rootCatalogID), parameters);
 
         return null;
+    }
+
+    /**
+     * Creates the output directory based on the project ID.
+     * 
+     * @param project the current project.
+     * @return the output directory based on the project ID (null if unable to create the directories).
+     */
+    private String getOutputDir(Project project) {
+        
+        String baseDir = ConfigHelper.getDistributionToolOutputDir() + File.separator;
+        baseDir = baseDir + project.getId() + File.separator + System.currentTimeMillis();
+        
+        File dir = new File(baseDir);
+        
+        if (dir.exists()) {
+            return null;
+        }
+        
+        if (!dir.mkdirs()) {
+            return null;
+        }
+        
+        return baseDir;
     }
 
     /**
