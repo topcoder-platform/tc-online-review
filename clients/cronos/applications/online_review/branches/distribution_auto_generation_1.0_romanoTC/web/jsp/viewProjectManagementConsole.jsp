@@ -329,8 +329,9 @@
                                 </tr>                                                                	                            
                                 <tr class="dark">
                                     <td class="value" colspan="2">
-                                        <html:checkbox styleId="uploadToServer" property="upload_to_server" /><label
-                                            for="uploadToServer"><b><bean:message key="manageProject.Distributions.Upload" /></b></label>
+                                        <html:hidden property="upload_to_server" />
+                                        <html:checkbox styleId="uploadToServer" property="upload_to_server_c" onclick="this.form.upload_to_server = this.checked ? 'true' : 'false' " />
+                                        <label for="uploadToServer"><b><bean:message key="manageProject.Distributions.Upload" /></b></label>
                                         <div class="error">
                                             <html:errors property="upload_to_server" prefix=""
                                                          suffix=""/>
@@ -339,8 +340,9 @@
                                 </tr>
                                 <tr class="light">
                                     <td class="value" colspan="2">
-                                        <html:checkbox styleId="returnDistribution" property="return_distribution" /><label
-                                            for="returnDistribution"><b><bean:message key="manageProject.Distributions.Return_distribution" /></b></label>
+                                        <html:hidden property="return_distribution" />
+                                        <html:checkbox styleId="returnDistribution" property="return_distribution_c" onclick="this.form.return_distribution = this.checked ? 'true' : 'false' " />
+                                        <label for="returnDistribution"><b><bean:message key="manageProject.Distributions.Return_distribution" /></b></label>
                                         <div class="error">
                                             <html:errors property="return_distribution" prefix=""
                                                          suffix=""/>
