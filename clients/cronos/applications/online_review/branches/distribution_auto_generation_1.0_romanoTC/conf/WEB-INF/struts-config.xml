@@ -154,6 +154,7 @@
         <form-bean name="projectManagementConsoleForm" dynamic="true"
                    type="org.apache.struts.validator.LazyValidatorForm">
             <form-property name="pid" type="java.lang.Long" />
+            
             <form-property name="resource_role_id" type="java.lang.Long[]" />
             <form-property name="resource_handles" type="java.lang.String[]" />
             <form-property name="registration_phase_extension" type="java.lang.String" />

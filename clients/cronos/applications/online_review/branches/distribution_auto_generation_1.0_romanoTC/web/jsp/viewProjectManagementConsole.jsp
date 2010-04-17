@@ -52,6 +52,7 @@
                 <div class="clearfix"></div>
                 
                 <div id="titlecontainer">
+                    ${activeTabIdx}
 	                <%-- Validation errors area --%>
 	                <c:if test="${orfn:isErrorsPresent(pageContext.request)}">
 	                    <table cellpadding="0" cellspacing="0" border="0">
@@ -95,8 +96,7 @@
                         <td>
                             <html:form action="/actions/ManageProject">
 		                        <html:hidden property="method" value="manageProject"/>
-		                        <html:hidden property="activeTabIdx" value="1" />
-		                        <html:hidden property="pid"/>
+		                        <html:hidden property="pid" value="${project.id}" />
 		
 		                        <div id="tabNewLinks">
 		                            <%-- Extend Registration Phase area --%>
@@ -266,7 +266,6 @@
                             <%-- Create Design Distribution --%>
                             <html:form action="/actions/UploadDistribution" method="POST" enctype="multipart/form-data">
 	                        <html:hidden property="method" value="manageDistribution" />
-	                        <html:hidden property="activeTabIdx" value="2" />
 	                        <html:hidden property="postBack" value="y" />
 	                        <html:hidden property="pid" value="${project.id}" />
 	                        <table class="scorecard" id="distribution_tbl" cellpadding="0" width="100%"
@@ -392,6 +391,12 @@
                             <td class="lastRowTD"><!-- @ --></td>
                         </tr>
                         </table>
+                        <div class="bottomButtonBar">
+                            <html:image srcKey="btnSaveChanges.img" altKey="btnSaveChanges.alt" border="0"/>&#160;
+                            <html:link
+                                    page="/actions/ViewProjectDetails.do?method=viewProjectDetails&pid=${project.id}"><html:img
+                                    srcKey="btnCancel.img" altKey="btnCancel.alt" border="0"/></html:link>
+                        </div>
                     </div>
                     </c:if> <%-- // Design or Development only --%> 
                 </div>
@@ -407,12 +412,15 @@
 <script language="JavaScript" type="text/javascript">
 <!--
 	// A reference to the previously active tab
-	<c:if test="${(not empty activeTabIdx) && (activeTabIdx != -1)}">
-	var previousActiveTab = document.getElementById("sc${activeTabIdx + 1}");
-	</c:if>
-	<c:if test="${(empty activeTabIdx) || (activeTabIdx == -1)}">
-	var previousActiveTab = document.getElementById("sc1");
-	</c:if>
+	<c:choose>
+		<c:when test="${(not empty activeTabIdx) && (activeTabIdx != -1)}">
+		var previousActiveTab = document.getElementById("sc${activeTabIdx + 1}");
+		</c:when>
+		<c:otherwise>
+	    var previousActiveTab = document.getElementById("sc1");
+	    </c:otherwise>
+	</c:choose>
+	
     /*
      * This function will deactivate the previously active tab (if there was any),
      * and activate the new one.

@@ -163,6 +163,8 @@ public class ProjectManagementConsoleActions extends DispatchAction {
         
         LoggingHelper.logAction(request);
 
+        request.setAttribute("activeTabIdx", new Integer(2));
+        
         // Gather the roles the user has for current request
         AuthorizationHelper.gatherUserRoles(request);
 
@@ -193,42 +195,10 @@ public class ProjectManagementConsoleActions extends DispatchAction {
                     return mapping.getInputForward();
                 } else {
                     return ActionsHelper.cloneForwardAndAppendToPath(
-                        mapping.findForward(SUCCESS_FORWARD_NAME), "&pid=" + project.getId());
+                        mapping.findForward(SUCCESS_FORWARD_NAME), "&activeTabIdx=2");
                 }
             }
         }
-    }
-
-    /**
-     * <p>Validates the specified request which is expected to be a create distribution request.
-     * </p>
-     *
-     * <p>Verifies that the package name and the RS are provided. RS should be PDF/DOC/RTF.</p>
-     *
-     * @param lazyForm an <code>LazyValidatorForm</code> providing parameters mapped to this request.
-     * @param request an <code>HttpServletRequest</code> representing incoming request from the client.
-     * @return an <code>int</code> providing the number of days to extend the specified phase for or 0 if there were
-     *         validation errors encountered or if there were no request for extending the specified phase at all.
-     */
-    private void validateCreateDistributionForm(LazyValidatorForm lazyForm, HttpServletRequest request) {
-        
-        FormFile distributionRSFile = (FormFile) lazyForm.get("distribution_rs");
-        
-        if (distributionRSFile == null) {
-            ActionsHelper.addErrorToRequest(request, "distribution_rs",
-                new ActionMessage("error.com.cronos.onlinereview.actions.manageProject.Distributions.RS.Empty"));
-        }
-        
-        String lcFileName = distributionRSFile.getFileName().toLowerCase();
-        
-        if (!(lcFileName.endsWith("rtf") || lcFileName.endsWith("pdf") || lcFileName.endsWith("pdf"))) {
-            ActionsHelper.addErrorToRequest(request, "distribution_rs",
-                new ActionMessage("error.com.cronos.onlinereview.actions.manageProject.Distributions.RS.Invalid"));
-        }
-
-        System.out.println(lazyForm.get("distribution_rs"));
-
-        
     }
 
     /**
@@ -250,9 +220,11 @@ public class ProjectManagementConsoleActions extends DispatchAction {
                                        HttpServletResponse response) throws Exception {
         LoggingHelper.logAction(request);
 
+        request.setAttribute("activeTabIdx", new Integer(2));
+        
         // Gather the roles the user has for current request
         AuthorizationHelper.gatherUserRoles(request);
-
+        
         // Check whether the user has the permission to perform this action. If not then redirect the request
         // to log-in page or report about the lack of permissions. Also check that current user is granted a
         // permission to access the details for requested project
@@ -316,13 +288,45 @@ public class ProjectManagementConsoleActions extends DispatchAction {
                     initProjectManagementConsole(request, project);
                     return mapping.getInputForward();
                 } else {
-                    return ActionsHelper.cloneForwardAndAppendToPath(
-                        mapping.findForward(SUCCESS_FORWARD_NAME), "&pid=" + project.getId());
+                    return mapping.findForward(SUCCESS_FORWARD_NAME);
                 }
             }
         }
     }
 
+    /**
+     * <p>Validates the specified request which is expected to be a create distribution request.
+     * </p>
+     *
+     * <p>Verifies that the package name and the RS are provided. RS should be PDF/DOC/RTF.</p>
+     *
+     * @param lazyForm an <code>LazyValidatorForm</code> providing parameters mapped to this request.
+     * @param request an <code>HttpServletRequest</code> representing incoming request from the client.
+     */
+    private void validateCreateDistributionForm(LazyValidatorForm lazyForm, HttpServletRequest request) {
+        
+        String packageName = (String) lazyForm.get("distribution_package_name");
+        
+        if (packageName == null || packageName.trim().length() == 0) {
+            ActionsHelper.addErrorToRequest(request, "distribution_rs", new ActionMessage(
+                "error.com.cronos.onlinereview.actions.manageProject.Distributions.PackageName.Empty"));
+        }
+
+        FormFile distributionRSFile = (FormFile) lazyForm.get("distribution_rs");
+
+        if (distributionRSFile == null) {
+            ActionsHelper.addErrorToRequest(request, "distribution_rs", new ActionMessage(
+                "error.com.cronos.onlinereview.actions.manageProject.Distributions.RS.Empty"));
+        }
+
+        String lcFileName = distributionRSFile.getFileName().toLowerCase();
+
+        if (!(lcFileName.endsWith("rtf") || lcFileName.endsWith("doc") || lcFileName.endsWith("pdf"))) {
+            ActionsHelper.addErrorToRequest(request, "distribution_rs", new ActionMessage(
+                "error.com.cronos.onlinereview.actions.manageProject.Distributions.RS.Invalid"));
+        }
+    }
+    
     /**
      * <p>Initializes the <code>Project Management Console</code> view. Binds necessary objects to current request. Such
      * objects include: list of available roles for resources which can be added by current user to specified project;
