@@ -173,7 +173,7 @@
             <form-property name="distribution_additional1" type="org.apache.struts.upload.FormFile" />
             <form-property name="distribution_additional2" type="org.apache.struts.upload.FormFile" />
             <form-property name="distribution_additional3" type="org.apache.struts.upload.FormFile" />
-            <form-property name="upload_to_server" type="java.lang.Boolean" initial="true" />
+            <form-property name="upload_to_server" type="java.lang.Boolean" />
             <form-property name="return_distribution" type="java.lang.Boolean" />
 
             <form-property name="distribution_file" type="org.apache.struts.upload.FormFile" />

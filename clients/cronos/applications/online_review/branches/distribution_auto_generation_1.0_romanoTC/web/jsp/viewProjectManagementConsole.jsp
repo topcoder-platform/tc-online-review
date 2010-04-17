@@ -78,8 +78,10 @@
                         <ul id="tablist">
                             <li id='current'><a href="javascript:void(0)"
                                 onClick="return activateTab('sc1', this)"><bean:message key="manageProject.TimelineResources.title"/></a></li>
+                            <c:if test="${((project.projectCategory.id == 1) || (project.projectCategory.id == 2))}">
                             <li><a href="javascript:void(0)"
                                     onClick="return activateTab('sc2', this)"><bean:message key="manageProject.Distributions.title"/></a></li>
+                            </c:if>
                         </ul>
                         <div style="clear:both;"></div>
                         <table class="scorecard" cellpadding="0" width="100%" style="border-collapse: collapse;">
@@ -263,7 +265,7 @@
                         <tr class="light">
                         <td>
                             <%-- Create Design Distribution --%>
-                            <html:form action="/actions/UploadDistribution" method="POST" enctype="multipart/form-data">
+                            <html:form action="/actions/UploadDistribution?activeTabIdx=2" method="POST" enctype="multipart/form-data">
 	                        <html:hidden property="method" value="manageDistribution" />
 	                        <html:hidden property="postBack" value="y" />
 	                        <html:hidden property="pid" value="${project.id}" />
@@ -357,7 +359,7 @@
 	                        </html:form>
 	                        
 	                        <%-- Upload Distribution --%>
-                            <html:form action="/actions/UploadDistribution" method="POST" enctype="multipart/form-data">
+                            <html:form action="/actions/UploadDistribution?activeTabIdx=2" method="POST" enctype="multipart/form-data">
                             <html:hidden property="method" value="uploadDistribution" />
                             <html:hidden property="postBack" value="y" />
                             <html:hidden property="pid" value="${project.id}" />
@@ -393,18 +395,17 @@
                                 </tr>
                             </table><br/>
                             </html:form>
+	                        <div class="bottomButtonBar">
+	                            <html:link
+	                                    page="/actions/ViewProjectDetails.do?method=viewProjectDetails&pid=${project.id}"><html:img
+	                                    srcKey="btnCancel.img" altKey="btnCancel.alt" border="0"/></html:link>
+	                        </div>
                         </td>
                         </tr>
                         <tr>
                             <td class="lastRowTD"><!-- @ --></td>
                         </tr>
                         </table>
-                        <div class="bottomButtonBar">
-                            <html:image srcKey="btnSaveChanges.img" altKey="btnSaveChanges.alt" border="0"/>&#160;
-                            <html:link
-                                    page="/actions/ViewProjectDetails.do?method=viewProjectDetails&pid=${project.id}"><html:img
-                                    srcKey="btnCancel.img" altKey="btnCancel.alt" border="0"/></html:link>
-                        </div>
                     </div>
                     </c:if> <%-- // Design or Development only --%> 
                 </div>
