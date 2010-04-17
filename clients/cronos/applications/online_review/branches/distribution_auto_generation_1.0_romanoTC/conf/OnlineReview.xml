@@ -2928,6 +2928,370 @@
         </Property>
         <Property name="minimum_hours_before_submission_deadline_for_phase_extension">
             <Value>48</Value>
+        </Property>         
+        <Property name="RootCatalogs">
+            <Property name="Java">
+                <Property name="id">
+                    <Value>5801776</Value>
+                </Property>
+                <Property name="IconSmall">
+                    <Value>javaSm.gif</Value>
+                </Property>
+                <Property name="AltTextKey">
+                    <Value>RootCatalog.Java</Value>
+                </Property>
+                <Property name="Custom">
+                    <Value>False</Value>
+                </Property>
+                <Property name="DistributionScript">
+                    <Value>java</Value>
+                </Property>
+            </Property>
+            <Property name="dotNET">
+                <Property name="id">
+                    <Value>5801777</Value>
+                </Property>
+                <Property name="IconSmall">
+                    <Value>dotnetSm.gif</Value>
+                </Property>
+                <Property name="AltTextKey">
+                    <Value>RootCatalog.dotNET</Value>
+                </Property>
+                <Property name="Custom">
+                    <Value>False</Value>
+                </Property>
+                <Property name="DistributionScript">
+                    <Value>dotnet</Value>
+                </Property>
+            </Property>
+            <Property name="CustomJava">
+                <Property name="id">
+                    <Value>5801778</Value>
+                </Property>
+                <Property name="IconSmall">
+                    <Value>javaCustomSm.gif</Value>
+                </Property>
+                <Property name="AltTextKey">
+                    <Value>RootCatalog.CustomJava</Value>
+                </Property>
+                <Property name="Custom">
+                    <Value>True</Value>
+                </Property>
+                <Property name="DistributionScript">
+                    <Value>java</Value>
+                </Property>
+            </Property>
+            <Property name="CustomNET">
+                <Property name="id">
+                    <Value>5801779</Value>
+                </Property>
+                <Property name="IconSmall">
+                    <Value>smNetCustom.gif</Value>
+                </Property>
+                <Property name="AltTextKey">
+                    <Value>RootCatalog.CustomNET</Value>
+                </Property>
+                <Property name="Custom">
+                    <Value>True</Value>
+                </Property>
+                <Property name="DistributionScript">
+                    <Value>dotnet</Value>
+                </Property>
+            </Property>
+            <Property name="Flash">
+                <Property name="id">
+                    <Value>8459260</Value>
+                </Property>
+                <Property name="IconSmall">
+                    <Value>flashSm.gif</Value>
+                </Property>
+                <Property name="AltTextKey">
+                    <Value>RootCatalog.Flash</Value>
+                </Property>
+                <Property name="Custom">
+                    <Value>False</Value>
+                </Property>
+            </Property>
+            <Property name="AOL">
+                <Property name="id">
+                    <Value>22774808</Value>
+                </Property>
+                <Property name="IconSmall">
+                    <Value>smAOL.gif</Value>
+                </Property>
+                <Property name="AltTextKey">
+                    <Value>RootCatalog.AOL</Value>
+                </Property>
+                <Property name="Custom">
+                    <Value>False</Value>
+                </Property>
+            </Property>
+            <Property name="Application">
+                <Property name="id">
+                    <Value>9926572</Value>
+                </Property>
+                <Property name="IconSmall">
+                    <Value>appSm.gif</Value>
+                </Property>
+                <Property name="AltTextKey">
+                    <Value>RootCatalog.Application</Value>
+                </Property>
+                <Property name="Custom">
+                    <Value>True</Value>
+                </Property>
+            </Property>
+            <Property name="Studio">
+                <Property name="id">
+                    <Value>26887152</Value>
+                </Property>
+                <Property name="IconSmall">
+                    <Value>iconBlankSm.png</Value>
+                </Property>
+                <Property name="AltTextKey">
+                    <Value>RootCatalog.Studio</Value>
+                </Property>
+                <Property name="Custom">
+                    <Value>True</Value>
+                </Property>
+            </Property>
+            <Property name="FlashCustom">
+                <Property name="id">
+                    <Value>27202900</Value>
+                </Property>
+                <Property name="IconSmall">
+                    <Value>flashCustomSm.gif</Value>
+                </Property>
+                <Property name="AltTextKey">
+                    <Value>RootCatalog.CustomFlash</Value>
+                </Property>
+                <Property name="Custom">
+                    <Value>True</Value>
+                </Property>
+            </Property>
+            <Property name="CppCustom">
+                <Property name="id">
+                    <Value>27202902</Value>
+                </Property>
+                <Property name="IconSmall">
+                    <Value>smCustomCpp.gif</Value>
+                </Property>
+                <Property name="AltTextKey">
+                    <Value>RootCatalog.CustomCPP</Value>
+                </Property>
+                <Property name="Custom">
+                    <Value>True</Value>
+                </Property>
+            </Property>
+            <Property name="ActionScript">
+                <Property name="id">
+                    <Value>27202905</Value>
+                </Property>
+                <Property name="IconSmall">
+                    <Value>actionScriptSm.gif</Value>
+                </Property>
+                <Property name="AltTextKey">
+                    <Value>RootCatalog.ActionScript</Value>
+                </Property>
+                <Property name="Custom">
+                    <Value>False</Value>
+                </Property>
+            </Property>
+            <Property name="CustomActionScript">
+                <Property name="id">
+                    <Value>27202906</Value>
+                </Property>
+                <Property name="IconSmall">
+                    <Value>actionScriptCustomSm.gif</Value>
+                </Property>
+                <Property name="AltTextKey">
+                    <Value>RootCatalog.CustomActionScript</Value>
+                </Property>
+                <Property name="Custom">
+                    <Value>True</Value>
+                </Property>
+            </Property>
+            <Property name="PHP">
+                <Property name="id">
+                    <Value>27202903</Value>
+                </Property>
+                <Property name="IconSmall">
+                    <Value>PHPSm.gif</Value>
+                </Property>
+                <Property name="AltTextKey">
+                    <Value>RootCatalog.PHP</Value>
+                </Property>
+                <Property name="Custom">
+                    <Value>False</Value>
+                </Property>
+            </Property>
+            <Property name="CustomPHP">
+                <Property name="id">
+                    <Value>27202904</Value>
+                </Property>
+                <Property name="IconSmall">
+                    <Value>PHPCustomSm.gif</Value>
+                </Property>
+                <Property name="AltTextKey">
+                    <Value>RootCatalog.CustomPHP</Value>
+                </Property>
+                <Property name="Custom">
+                    <Value>True</Value>
+                </Property>
+            </Property>
+            <Property name="Ruby">
+                <Property name="id">
+                    <Value>27202907</Value>
+                </Property>
+                <Property name="IconSmall">
+                    <Value>rubySm.gif</Value>
+                </Property>
+                <Property name="AltTextKey">
+                    <Value>RootCatalog.Ruby</Value>
+                </Property>
+                <Property name="Custom">
+                    <Value>False</Value>
+                </Property>
+            </Property>
+            <Property name="CustomRuby">
+                <Property name="id">
+                    <Value>27202908</Value>
+                </Property>
+                <Property name="IconSmall">
+                    <Value>rubyCustomSm.gif</Value>
+                </Property>
+                <Property name="AltTextKey">
+                    <Value>RootCatalog.CustomRuby</Value>
+                </Property>
+                <Property name="Custom">
+                    <Value>True</Value>
+                </Property>
+            </Property>
+            <Property name="Objectivec">
+                <Property name="id">
+                    <Value>27202909</Value>
+                </Property>
+                <Property name="IconSmall">
+                    <Value>objectivecSm.gif</Value>
+                </Property>
+                <Property name="AltTextKey">
+                    <Value>RootCatalog.Objectivec</Value>
+                </Property>
+                <Property name="Custom">
+                    <Value>False</Value>
+                </Property>
+            </Property>
+            <Property name="CustomObjectivec">
+                <Property name="id">
+                    <Value>27202910</Value>
+                </Property>
+                <Property name="IconSmall">
+                    <Value>objectivecCustomSm.gif</Value>
+                </Property>
+                <Property name="AltTextKey">
+                    <Value>RootCatalog.CustomObjectivec</Value>
+                </Property>
+                <Property name="Custom">
+                    <Value>True</Value>
+                </Property>
+            </Property>
+            <Property name="Flex">
+                <Property name="id">
+                    <Value>27202911</Value>
+                </Property>
+                <Property name="IconSmall">
+                    <Value>flexSm.gif</Value>
+                </Property>
+                <Property name="AltTextKey">
+                    <Value>RootCatalog.Flex</Value>
+                </Property>
+                <Property name="Custom">
+                    <Value>False</Value>
+                </Property>
+            </Property>
+            <Property name="CustomFlex">
+                <Property name="id">
+                    <Value>27202912</Value>
+                </Property>
+                <Property name="IconSmall">
+                    <Value>flexCustomSm.gif</Value>
+                </Property>
+                <Property name="AltTextKey">
+                    <Value>RootCatalog.CustomFlex</Value>
+                </Property>
+                <Property name="Custom">
+                    <Value>True</Value>
+                </Property>
+            </Property>
+            <Property name="Javascript">
+                <Property name="id">
+                    <Value>27202913</Value>
+                </Property>
+                <Property name="IconSmall">
+                    <Value>javascriptSm.gif</Value>
+                </Property>
+                <Property name="AltTextKey">
+                    <Value>RootCatalog.Javascript</Value>
+                </Property>
+                <Property name="Custom">
+                    <Value>False</Value>
+                </Property>
+            </Property>
+            <Property name="CustomJavascript">
+                <Property name="id">
+                    <Value>27202914</Value>
+                </Property>
+                <Property name="IconSmall">
+                    <Value>javascriptCustomSm.gif</Value>
+                </Property>
+                <Property name="AltTextKey">
+                    <Value>RootCatalog.CustomJavascript</Value>
+                </Property>
+                <Property name="Custom">
+                    <Value>True</Value>
+                </Property>
+            </Property>
+            <Property name="Python">
+                <Property name="id">
+                    <Value>27355736</Value>
+                </Property>
+                <Property name="IconSmall">
+                    <Value>transparentSm.gif</Value>
+                </Property>
+                <Property name="AltTextKey">
+                    <Value>RootCatalog.Python</Value>
+                </Property>
+                <Property name="Custom">
+                    <Value>False</Value>
+                </Property>
+            </Property>
+            <Property name="CustomPython">
+                <Property name="id">
+                    <Value>27355738</Value>
+                </Property>
+                <Property name="IconSmall">
+                    <Value>transparentSm.gif</Value>
+                </Property>
+                <Property name="AltTextKey">
+                    <Value>RootCatalog.CustomPython</Value>
+                </Property>
+                <Property name="Custom">
+                    <Value>True</Value>
+                </Property>
+            </Property>
+            <Property name="CustomOther">
+                <Property name="id">
+                    <Value>27355740</Value>
+                </Property>
+                <Property name="IconSmall">
+                    <Value>transparentSm.gif</Value>
+                </Property>
+                <Property name="AltTextKey">
+                    <Value>RootCatalog.CustomOther</Value>
+                </Property>
+                <Property name="Custom">
+                    <Value>True</Value>
+                </Property>
+            </Property>
         </Property>
 
         <Property name="ProjectCategoryIcons">
