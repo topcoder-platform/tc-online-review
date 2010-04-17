@@ -333,7 +333,7 @@
 	                                </tr>                                                                	                            
 	                                <tr class="dark">
 	                                    <td class="value" colspan="2">
-	                                        <html:checkbox property="upload_to_server" styleId="uploadToServer" "/>
+	                                        <html:checkbox property="upload_to_server" styleId="uploadToServer" />
                                             <html:hidden property="upload_to_server" value="false" />
 	                                        <label for="uploadToServer"><bean:message key="manageProject.Distributions.Upload" /></label>
 	                                        <div class="error">
