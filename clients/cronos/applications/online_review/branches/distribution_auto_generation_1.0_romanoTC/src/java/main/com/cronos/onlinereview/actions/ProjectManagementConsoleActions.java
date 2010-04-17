@@ -8,6 +8,7 @@ import static com.cronos.onlinereview.actions.Constants.*;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -235,9 +236,6 @@ public class ProjectManagementConsoleActions extends DispatchAction {
     private File createDistributionFile(Project project, LazyValidatorForm lazyForm, HttpServletRequest request)
         throws DistributionToolException, IOException {
 
-        System.out.println("Project Name: " + project.getProperty("Project Name"));
-        System.out.println("Project Version: " + project.getProperty("Project Version"));
-
         // Create an instance of DistributionTool using the configuration file and namespace
         DistributionTool distributionTool = new DistributionTool();
 
@@ -261,10 +259,8 @@ public class ProjectManagementConsoleActions extends DispatchAction {
         parameters.put(DistributionTool.PACKAGE_NAME_PARAM_NAME, packageName);
         parameters.put("output_dir", outputDir);
         
-        List<File> filesToDelete = new ArrayList<File>();
         
-        File distributionRSFile = createTempFile(project, (FormFile) lazyForm.get("distribution_rs"));
-        filesToDelete.add(distributionRSFile);
+        File distributionRSFile = createTempFile(project, outputDir, (FormFile) lazyForm.get("distribution_rs"));
         
         parameters.put("rs", distributionRSFile.getAbsolutePath());
 
@@ -273,8 +269,7 @@ public class ProjectManagementConsoleActions extends DispatchAction {
         for (int i = 1; i <= 3; ++i) {
             FormFile additionalFormFile = (FormFile) lazyForm.get("distribution_additional" + i);
             if (additionalFormFile != null && additionalFormFile.getFileSize() > 0) {
-                File additionalFile = createTempFile(project, additionalFormFile);
-                filesToDelete.add(additionalFile);
+                File additionalFile = createTempFile(project, outputDir,additionalFormFile);
                 
                 parameters.put("additional_doc" + j, additionalFile.getAbsolutePath());
                 ++j;
@@ -285,11 +280,6 @@ public class ProjectManagementConsoleActions extends DispatchAction {
         String rootCatalogID = (String) project.getProperty("Root Catalog ID");
         distributionTool.createDistribution(ConfigHelper.getDistributionScript(rootCatalogID), parameters);
 
-        // Delete temporary files
-        for (File file : filesToDelete) {
-            file.delete();
-        }
-        
         return null;
     }
 
@@ -299,27 +289,42 @@ public class ProjectManagementConsoleActions extends DispatchAction {
      * </p>
      * 
      * @param project the current project.
+     * @param outputdir the directory to save the file.
      * @param formFile the uploaded file.
-     * @return the absolute path of the temporarary file.
+     * @return the absolute path of the temporary file.
      */
-    private File createTempFile(Project project, FormFile formFile) throws IOException {
+    private File createTempFile(Project project, String outputdir, FormFile formFile) throws IOException {
 
-        File output = File.createTempFile("tc" + project.getId(), formFile.getFileName());
-        FileOutputStream fos = new FileOutputStream(output);
-
+        File output = new File(outputdir + File.separator + formFile.getFileName());
+        FileOutputStream out = new FileOutputStream(output);
+        InputStream in = formFile.getInputStream();
+        
         try {
-            fos = new FileOutputStream(output);
-            fos.write(formFile.getFileData());
+            out = new FileOutputStream(output);
+            byte[] buffer = new byte[65536];
+
+            for (;;) {
+                int numOfBytesRead = in.read(buffer);
+                if (numOfBytesRead == -1) {
+                    break;
+                }
+                out.write(buffer, 0, numOfBytesRead);
+            }
         } finally {
-            if (fos != null) {
+            try {
+                in.close();
+            } catch (IOException ex) {
+                // ignore
+            }
+
+            if (out != null) {
                 try {
-                    fos.close();
+                    out.close();
                 } catch (IOException ex) {
                     // ignore
                 }
             }
         }
-
         return output;
     }
 
@@ -493,9 +498,6 @@ public class ProjectManagementConsoleActions extends DispatchAction {
         Boolean uploadToServerObj = (Boolean) lazyForm.get("upload_to_server");
         Boolean returnDistributionObj = (Boolean) lazyForm.get("return_distribution");
 
-        System.out.println("uploadToServerObj: " + uploadToServerObj);
-        System.out.println("returnDistributionObj: " + returnDistributionObj);
-        
         boolean uploadToServer = (uploadToServerObj == null) ? false : uploadToServerObj.booleanValue();
         boolean returnDistribution = (returnDistributionObj == null) ? false : returnDistributionObj.booleanValue();
         
