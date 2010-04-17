@@ -195,7 +195,7 @@ public class ProjectManagementConsoleActions extends DispatchAction {
                     return mapping.getInputForward();
                 } else {
                     return ActionsHelper.cloneForwardAndAppendToPath(
-                        mapping.findForward(SUCCESS_FORWARD_NAME), "&activeTabIdx=2");
+                        mapping.findForward(SUCCESS_FORWARD_NAME), "&activeTabIdx=2&pid=" + project.getId());
                 }
             }
         }
@@ -288,7 +288,8 @@ public class ProjectManagementConsoleActions extends DispatchAction {
                     initProjectManagementConsole(request, project);
                     return mapping.getInputForward();
                 } else {
-                    return mapping.findForward(SUCCESS_FORWARD_NAME);
+                    return ActionsHelper.cloneForwardAndAppendToPath(
+                        mapping.findForward(SUCCESS_FORWARD_NAME), "&pid=" + project.getId());
                 }
             }
         }

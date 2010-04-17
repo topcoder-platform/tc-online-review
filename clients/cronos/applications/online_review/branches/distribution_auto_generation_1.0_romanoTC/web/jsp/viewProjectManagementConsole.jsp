@@ -52,7 +52,6 @@
                 <div class="clearfix"></div>
                 
                 <div id="titlecontainer">
-                    ${param.activeTabIdx}
 	                <%-- Validation errors area --%>
 	                <c:if test="${orfn:isErrorsPresent(pageContext.request)}">
 	                    <table cellpadding="0" cellspacing="0" border="0">
