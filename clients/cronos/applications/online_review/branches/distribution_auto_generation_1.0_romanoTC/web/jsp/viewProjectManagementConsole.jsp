@@ -278,22 +278,22 @@
 		                                    <bean:message key="manageProject.Distributions.Create.Design.title"/>
 		                                </td>
 		                            </tr>
-                                    <c:if test="${needsPackageName == true}">
-			                            <tr class="light">
-			                                <td class="value">
-			                                    <bean:message key="manageProject.Distributions.packagename"/>&nbsp;
-	                                            <bean:message key="global.required.paren"/>
-			                                </td>
-			                                <td class="value">
-			                                    <html:text styleClass="inputBox"
-			                                               property="distribution_package_name"/>
-		                                        <div class="error">
-		                                            <html:errors property="distribution_package_name" prefix=""
-		                                                         suffix=""/>
-		                                        </div>
-		                                    </td>
-			                            </tr>
-                                    </c:if>
+		                            <tr class="light">
+		                                <td class="value">
+		                                    <bean:message key="manageProject.Distributions.packagename"/>&nbsp;
+                                               <c:if test="${needsPackageName == true}">
+                                                <bean:message key="global.required.paren"/>
+                                            </c:if>   
+		                                </td>
+		                                <td class="value">
+		                                    <html:text styleClass="inputBox"
+		                                               property="distribution_package_name"/>
+	                                        <div class="error">
+	                                            <html:errors property="distribution_package_name" prefix=""
+	                                                         suffix=""/>
+	                                        </div>
+	                                    </td>
+		                            </tr>
 		                            <tr class="dark">
 		                                <td class="value">
 		                                    <bean:message key="manageProject.Distributions.rs"/>&nbsp;
