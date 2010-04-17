@@ -4219,9 +4219,6 @@
     
     <!-- Configuration for Distribution Tool -->
     <Config name="com.topcoder.util.distribution.DistributionTool">
-        <Property name="logger_name">
-            <Value>com.topcoder.util.distribution.DistributionTool</Value>
-        </Property>
         <Property name="object_factory_config">
             <!-- Put Object Factory configuration here -->
             <Property name="type">
