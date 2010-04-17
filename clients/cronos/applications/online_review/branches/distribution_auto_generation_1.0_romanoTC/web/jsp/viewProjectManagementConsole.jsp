@@ -52,7 +52,7 @@
                 <div class="clearfix"></div>
                 
                 <div id="titlecontainer">
-                    ${activeTabIdx}
+                    ${param.activeTabIdx}
 	                <%-- Validation errors area --%>
 	                <c:if test="${orfn:isErrorsPresent(pageContext.request)}">
 	                    <table cellpadding="0" cellspacing="0" border="0">
@@ -75,7 +75,7 @@
                 </div>
                                 
                 <div id="tabcontentcontainer">
-                    <div id="sc1" style='display:${((empty activeTabIdx) || (activeTabIdx == 1)) ? "block" : "none"};'>
+                    <div id="sc1" style='display:${((empty param.activeTabIdx) || (param.activeTabIdx == 1)) ? "block" : "none"};'>
                         <ul id="tablist">
                             <li id='current'><a href="javascript:void(0)"
                                 onClick="return activateTab('sc1', this)"><bean:message key="manageProject.TimelineResources.title"/></a></li>
@@ -244,7 +244,7 @@
                     </div>
                     <%-- Design or Development only --%> 
                     <c:if test="${((project.projectCategory.id == 1) || (project.projectCategory.id == 2))}">
-                    <div id="sc2" style='display:${(activeTabIdx == 2) ? "block" : "none"};'>
+                    <div id="sc2" style='display:${(param.activeTabIdx == 2) ? "block" : "none"};'>
                         <ul id="tablist">
                             <li><a href="javascript:void(0)"
                                 onClick="return activateTab('sc1', this)"><bean:message key="manageProject.TimelineResources.title"/></a></li>
@@ -413,8 +413,8 @@
 <!--
 	// A reference to the previously active tab
 	<c:choose>
-		<c:when test="${(not empty activeTabIdx) && (activeTabIdx != -1)}">
-		var previousActiveTab = document.getElementById("sc${activeTabIdx + 1}");
+		<c:when test="${(not empty param.activeTabIdx) && (param.activeTabIdx != -1)}">
+		var previousActiveTab = document.getElementById("sc${param.activeTabIdx + 1}");
 		</c:when>
 		<c:otherwise>
 	    var previousActiveTab = document.getElementById("sc1");
