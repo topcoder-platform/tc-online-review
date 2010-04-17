@@ -407,7 +407,7 @@ public class ProjectManagementConsoleActions extends DispatchAction {
         
         Boolean uploadToServerObj = (Boolean) lazyForm.get("upload_to_server");
         Boolean returnDistributionObj = (Boolean) lazyForm.get("return_distribution");
-        
+
         System.out.println("uploadToServerObj: " + uploadToServerObj);
         System.out.println("returnDistributionObj: " + returnDistributionObj);
         

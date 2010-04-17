@@ -333,7 +333,8 @@
 	                                </tr>                                                                	                            
 	                                <tr class="dark">
 	                                    <td class="value" colspan="2">
-	                                        <html:checkbox property="upload_to_server" styleId="uploadToServer" />
+	                                        <html:checkbox property="upload_to_server" styleId="uploadToServer" "/>
+                                            <html:hidden property="upload_to_server" value="false" />
 	                                        <label for="uploadToServer"><bean:message key="manageProject.Distributions.Upload" /></label>
 	                                        <div class="error">
 	                                            <html:errors property="upload_to_server" prefix=""
@@ -343,7 +344,8 @@
 	                                </tr>
 	                                <tr class="light">
 	                                    <td class="value" colspan="2">
-	                                        <html:checkbox property="return_distribution" styleId="returnDistribution" />
+	                                        <html:checkbox property="return_distribution" styleId="returnDistribution" /> 
+                                            <html:hidden property="return_distribution" value="false" />
 	                                        <label for="returnDistribution"><bean:message key="manageProject.Distributions.Return_distribution" /></label>
 	                                        <div class="error">
 	                                            <html:errors property="return_distribution" prefix=""

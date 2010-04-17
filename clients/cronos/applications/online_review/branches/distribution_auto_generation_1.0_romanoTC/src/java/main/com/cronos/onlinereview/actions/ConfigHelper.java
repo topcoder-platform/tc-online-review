@@ -982,17 +982,10 @@ public class ConfigHelper {
                     customRootCatalogs.add(strID);
                 }
                 
-                System.out.println(strID);                            
-                System.out.println(strPropName + "." + ROOT_CATALOG_DISTRIBUTION_SCRIPT_KEY_PROP);
-                System.out.println(propRootCatIcons.containsProperty(strPropName + "." + ROOT_CATALOG_DISTRIBUTION_SCRIPT_KEY_PROP));
-                
                 if (propRootCatIcons.containsProperty(strPropName + "." + ROOT_CATALOG_DISTRIBUTION_SCRIPT_KEY_PROP)) {
                     String script = propRootCatIcons.getValue(strPropName + "."
                         + ROOT_CATALOG_DISTRIBUTION_SCRIPT_KEY_PROP);
 
-                    System.out.println(strID);
-                    System.out.println(script);
-                    
                     distributionScriptRootCatalogs.put(strID, script);
                 }
             }
