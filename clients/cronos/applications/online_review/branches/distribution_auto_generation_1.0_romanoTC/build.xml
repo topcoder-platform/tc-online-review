@@ -104,10 +104,20 @@
     <property name="command_line_utility.path" value="command_line_utility/${command_line_utility.version}" />
     <property name="command_line_utility.jar" value="${tcs_libdir}/${command_line_utility.path}/${command_line_utility.jar.name}" />
 
-    <property name="configuration_manager.version" value="2.1.5" />
+    <property name="configuration_api.version" value="1.0.0" />
+    <property name="configuration_api.jar.name" value="configuration_api.jar" />
+    <property name="configuration_api.path" value="configuration_api/${configuration_api.version}" />
+    <property name="configuration_api.jar" value="${tcs_libdir}/${configuration_api.path}/${configuration_api.jar.name}" />
+
+	<property name="configuration_manager.version" value="2.1.5" />
     <property name="configuration_manager.jar.name" value="configuration_manager.jar" />
     <property name="configuration_manager.path" value="configuration_manager/${configuration_manager.version}" />
     <property name="configuration_manager.jar" value="${tcs_libdir}/${configuration_manager.path}/${configuration_manager.jar.name}" />
+
+    <property name="configuration_persistence.version" value="1.0.2" />
+    <property name="configuration_persistence.jar.name" value="configuration_persistence.jar" />
+    <property name="configuration_persistence.path" value="configuration_persistence/${configuration_persistence.version}" />
+    <property name="configuration_persistence.jar" value="${tcs_libdir}/${configuration_persistence.path}/${configuration_persistence.jar.name}" />
 
     <property name="data_validation.version" value="1.0"/>
     <property name="data_validation.jar.name" value="data_validation.jar"/>
@@ -184,7 +194,12 @@
     <property name="object_factory.path" value="object_factory/${object_factory.version}" />
     <property name="object_factory.jar" value="${tcs_libdir}/${object_factory.path}/${object_factory.jar.name}" />
 
-    <property name="online_review_ajax_support.version" value="1.0.2" />
+    <property name="object_factory_configuration_api_plugin.version" value="1.0.0" />
+    <property name="object_factory_configuration_api_plugin.jar.name" value="object_factory_configuration_api_plugin.jar" />
+    <property name="object_factory_configuration_api_plugin.path" value="object_factory_configuration_api_plugin/${object_factory_configuration_api_plugin.version}" />
+    <property name="object_factory_configuration_api_plugin.jar" value="${tcs_libdir}/${object_factory_configuration_api_plugin.path}/${object_factory_configuration_api_plugin.jar.name}" />
+
+     <property name="online_review_ajax_support.version" value="1.0.2" />
     <property name="online_review_ajax_support.jar.name" value="online_review_ajax_support.jar" />
     <property name="online_review_ajax_support.path" value="online_review_ajax_support/${online_review_ajax_support.version}" />
     <property name="online_review_ajax_support.jar" value="${tcs_libdir}/${online_review_ajax_support.path}/${online_review_ajax_support.jar.name}" />
@@ -649,7 +664,9 @@ don't need this anymore.  OR doesn't use it.
             <lib dir="${jar_tcs_libdir}/${base_exception.path}" includes="*.jar" />
             <lib dir="${jar_tcs_libdir}/${class_associations.path}" includes="*.jar" />
             <lib dir="${jar_tcs_libdir}/${command_line_utility.path}" includes="*.jar" />
+            <lib dir="${jar_tcs_libdir}/${configuration_api.path}" includes="*.jar" />
             <lib dir="${jar_tcs_libdir}/${configuration_manager.path}" includes="*.jar" />
+            <lib dir="${jar_tcs_libdir}/${configuration_persistence.path}" includes="*.jar" />
             <lib dir="${jar_tcs_libdir}/${data_validation.path}" includes="*.jar" />
             <lib dir="${jar_tcs_libdir}/${database_abstraction.path}" includes="*.jar" />
             <lib dir="${jar_tcs_libdir}/${db_connection_factory.path}" includes="*.jar" />
@@ -665,6 +682,7 @@ don't need this anymore.  OR doesn't use it.
             <lib dir="${jar_tcs_libdir}/${JNDI_Utility.path}" includes="*.jar" />
             <lib dir="${jar_tcs_libdir}/${logging_wrapper.path}" includes="*.jar" />
             <lib dir="${jar_tcs_libdir}/${object_factory.path}" includes="*.jar" />
+            <lib dir="${jar_tcs_libdir}/${object_factory_configuration_api_plugin.path}" includes="*.jar" />
             <lib dir="${jar_tcs_libdir}/${online_review_ajax_support.path}" includes="*.jar" />
             <lib dir="${jar_tcs_libdir}/${online_review_deliverables.path}" includes="*.jar" />
             <lib dir="${jar_tcs_libdir}/${online_review_login.path}" includes="*.jar" />
