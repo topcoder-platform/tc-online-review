@@ -95,6 +95,7 @@
                         <td>
                             <html:form action="/actions/ManageProject">
 		                        <html:hidden property="method" value="manageProject"/>
+		                        <html:hidden property="activeTabIdx" value="1" />
 		                        <html:hidden property="pid"/>
 		
 		                        <div id="tabNewLinks">
@@ -265,6 +266,7 @@
                             <%-- Create Design Distribution --%>
                             <html:form action="/actions/UploadDistribution" method="POST" enctype="multipart/form-data">
 	                        <html:hidden property="method" value="manageDistribution" />
+	                        <html:hidden property="activeTabIdx" value="2" />
 	                        <html:hidden property="postBack" value="y" />
 	                        <html:hidden property="pid" value="${project.id}" />
 	                        <table class="scorecard" id="distribution_tbl" cellpadding="0" width="100%"

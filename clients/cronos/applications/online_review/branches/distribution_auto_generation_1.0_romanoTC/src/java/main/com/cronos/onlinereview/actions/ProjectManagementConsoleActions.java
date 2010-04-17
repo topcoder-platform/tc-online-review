@@ -184,7 +184,9 @@ public class ProjectManagementConsoleActions extends DispatchAction {
                 return mapping.getInputForward();
             } else {
 
+                LazyValidatorForm lazyForm = (LazyValidatorForm) form;
                 
+                System.out.println(lazyForm.get("distribution_rs"));
                 
                 if (ActionsHelper.isErrorsPresent(request)) {
                     initProjectManagementConsole(request, project);
