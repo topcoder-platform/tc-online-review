@@ -681,7 +681,7 @@
                 type="com.cronos.onlinereview.actions.ProjectManagementConsoleActions"
                 parameter="method" scope="request" name="uploadDistributionForm"
                 input="/jsp/viewProjectManagementConsole.jsp">
-            <forward name="success" path="/actions/ViewManagementConsole.do?method=viewConsole" redirect="true"/>
+            <forward name="success" path="/actions/ViewProjectDetails.do?method=viewProjectDetails" redirect="true"/>
         </action>
 
     </action-mappings>
