@@ -50,11 +50,8 @@ import com.topcoder.project.phases.Phase;
 import com.topcoder.project.phases.PhaseStatus;
 import com.topcoder.service.contest.eligibilityvalidation.ContestEligibilityValidatorException;
 import com.topcoder.shared.util.DBMS;
-import com.topcoder.util.distribution.DistributionScriptCommandExecutionException;
 import com.topcoder.util.distribution.DistributionTool;
 import com.topcoder.util.distribution.DistributionToolException;
-import com.topcoder.util.distribution.MissingInputParameterException;
-import com.topcoder.util.distribution.UnknownDistributionTypeException;
 import com.topcoder.util.errorhandling.BaseException;
 import com.topcoder.web.common.eligibility.ContestEligibilityServiceLocator;
 import com.topcoder.web.ejb.project.ProjectRoleTermsOfUse;
@@ -215,35 +212,49 @@ public class ProjectManagementConsoleActions extends DispatchAction {
                 } else {
                     
                     // Create the distribution file
-                    File distributionFile = createDistributionFile(project, lazyForm, request);
-                    
-                    if (distributionFile == null) {
-                        ActionsHelper.addErrorToRequest(request, new ActionMessage(
-                            "error.com.cronos.onlinereview.actions.manageProject.Distributions.DistTool.CannotFind"));
-                    }
-                    
-                    if (ActionsHelper.isErrorsPresent(request)) {
-                        initProjectManagementConsole(request, project);
-                        return mapping.getInputForward();
-                    }
-                    
-                    // Check what to do with the file
-                    boolean uploadToServer = getBooleanFromForm(lazyForm, "upload_to_server");
-                    boolean returnDistribution = getBooleanFromForm(lazyForm, "return_distribution");
+                    File outputDirFile = createDistributionFile(project, lazyForm, request);
 
-                    
-                    if (uploadToServer) {
+                    try {
+                        File distributionFile = null;
                         
-                    }
-                    
-                    if (returnDistribution) {
-                        
-                        writeDistributionFile(response, distributionFile);
-                        return null;
-                        
-                    } else {
-                        return ActionsHelper.cloneForwardAndAppendToPath(
-                            mapping.findForward(SUCCESS_FORWARD_NAME), "&pid=" + project.getId());
+                        if (outputDirFile != null) {
+                            // Returns the distribution file from the output dir
+                            distributionFile = getDistributionFile(outputDirFile);
+                        }
+    
+                        if (distributionFile == null) {
+                            ActionsHelper.addErrorToRequest(request, new ActionMessage(
+                                "error.com.cronos.onlinereview.actions.manageProject."
+                                    + "Distributions.DistTool.CannotFind"));
+                        }
+
+                        if (ActionsHelper.isErrorsPresent(request)) {
+                            initProjectManagementConsole(request, project);
+                            return mapping.getInputForward();
+                        }
+
+                        // Check what to do with the file
+                        boolean uploadToServer = getBooleanFromForm(lazyForm, "upload_to_server");
+                        boolean returnDistribution = getBooleanFromForm(lazyForm, "return_distribution");
+
+                        if (uploadToServer) {
+                            // Upload file to server
+                        }
+
+                        if (returnDistribution) {
+                            
+                            // Return the distribution tool - write it to the response object
+                            writeDistributionFile(response, distributionFile);
+                            return null;
+
+                        } else {
+                            return ActionsHelper.cloneForwardAndAppendToPath(mapping
+                                .findForward(SUCCESS_FORWARD_NAME), "&pid=" + project.getId());
+                        }
+                    } finally {
+                        if (outputDirFile != null) {
+                            cleanDistToolTempFiles(outputDirFile);
+                        }
                     }
                 }
             }
@@ -320,18 +331,16 @@ public class ProjectManagementConsoleActions extends DispatchAction {
             return null;
         }
         
+        File outputDirFile = new File(outputDir);
+        
         parameters.put(DistributionTool.VERSION_PARAM_NAME, version.trim());
         parameters.put(DistributionTool.COMPONENT_NAME_PARAM_NAME, projectName);
         parameters.put(DistributionTool.PACKAGE_NAME_PARAM_NAME, packageName);
         parameters.put("output_dir", outputDir);
 
-        // List of files to delete after the script is finished
-        List<File> filesToDelete = new ArrayList<File>();
-        
         // Requirements Specification
         FormFile rsFormFile = (FormFile) lazyForm.get("distribution_rs");
         File rsFile = createTempFile(project, outputDir, rsFormFile);
-        filesToDelete.add(rsFile);
         
         parameters.put("rs", rsFile.getAbsolutePath());
         
@@ -340,40 +349,33 @@ public class ProjectManagementConsoleActions extends DispatchAction {
             FormFile additionalFormFile = (FormFile) lazyForm.get("distribution_additional" + i);
             if (additionalFormFile != null && additionalFormFile.getFileSize() > 0) {
                 File additionalFile = createTempFile(project, outputDir, additionalFormFile);
-                filesToDelete.add(additionalFile);
-                
+
                 parameters.put("additional_doc" + j, additionalFile.getAbsolutePath());
                 ++j;
             }
         }
 
+        // Determines the script that will be used
+        String rootCatalogID = (String) project.getProperty("Root Catalog ID");
         try {
-            // Determines the script that will be used
-            String rootCatalogID = (String) project.getProperty("Root Catalog ID");
-            try {
-                distributionTool.createDistribution(ConfigHelper.getDistributionScript(rootCatalogID), parameters);
-            } catch (DistributionToolException ex) {
-                ActionsHelper.addErrorToRequest(request, new ActionMessage(
-                    "error.com.cronos.onlinereview.actions.manageProject.Distributions.DistTool.Failure", ex.getMessage()));
-                
-                return null;
-            }
+            distributionTool.createDistribution(ConfigHelper.getDistributionScript(rootCatalogID), parameters);
+        } catch (DistributionToolException ex) {
+            ActionsHelper.addErrorToRequest(request, new ActionMessage(
+                "error.com.cronos.onlinereview.actions.manageProject.Distributions.DistTool.Failure", ex.getMessage()));
             
-            return getDistributionFile(outputDir);
-        
-        } finally {
-            cleanDistToolTempFiles(outputDir, filesToDelete);
+            return null;
         }
+        
+        return outputDirFile;
     }
 
-    private File getDistributionFile(String outputDir) {
-        File dir = new File(outputDir);
+    private File getDistributionFile(File outputDirFile) {
         File distFile = null;
         long lastModified = Long.MIN_VALUE;
 
         // Should be a single file only, but there might a problem deleting files, so, to be safe,
         // check for the latest file - which should be the distribution file
-        File[] files = dir.listFiles(); 
+        File[] files = outputDirFile.listFiles(); 
         for (File file : files) {
             if (file.isFile()) {
                 if (file.lastModified() > lastModified) {
@@ -386,12 +388,19 @@ public class ProjectManagementConsoleActions extends DispatchAction {
         return distFile;
     }
 
-    private void cleanDistToolTempFiles(String outputDir, List<File> filesToDelete) {
+    private void cleanDistToolTempFiles(File outputDirFile) {
 
-
-        for (File file : filesToDelete) {
-            file.delete();
+        for (File file : outputDirFile.listFiles()) {
+            if (file.isDirectory()) {
+                cleanDistToolTempFiles(file);
+            }
+            
+            if (file.isFile()) {
+                file.delete();
+            }
         }
+
+        outputDirFile.delete();
     }
 
     /**
