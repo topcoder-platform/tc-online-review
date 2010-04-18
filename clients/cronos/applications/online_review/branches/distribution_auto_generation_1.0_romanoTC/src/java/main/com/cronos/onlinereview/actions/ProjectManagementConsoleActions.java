@@ -391,11 +391,7 @@ public class ProjectManagementConsoleActions extends DispatchAction {
         FileUpload fileUpload = ActionsHelper.createFileUploadManager(request);
         FileUploadResult uploadResult = fileUpload.uploadFiles(request, parser);
         
-        for (String d : uploadResult.getFormFileNames()) {
-            System.out.println("D: " + d);
-        }
-        
-        UploadedFile uploadedFile = uploadResult.getUploadedFile("distribution_file");
+        UploadedFile uploadedFile = uploadResult.getUploadedFile("file");
         
         // Obtain an instance of Upload Manager
         UploadManager upMgr = ActionsHelper.createUploadManager(request);
