@@ -2879,7 +2879,6 @@
         </Property>
     </Config>
 
-
     <!--
         =====  Configuration for the Online Review Application itself  =====
     -->
@@ -2932,6 +2931,10 @@
         <Property name="distribution_tool_output_dir">
             <Value>/home/tcs/temp_files</Value>
         </Property>        
+        <!-- Configuration for Catalog Services -->
+        <Property name="catalog_jndi_address">
+            <Value>&pactJNDIAddress;</Value>
+        </Property>
         <Property name="RootCatalogs">
             <Property name="Java">
                 <Property name="id">

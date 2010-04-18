@@ -13,6 +13,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -34,13 +35,21 @@ import org.apache.struts.actions.DispatchAction;
 import org.apache.struts.upload.FormFile;
 import org.apache.struts.validator.LazyValidatorForm;
 
+import com.cronos.onlinereview.dde.ServiceLocator;
 import com.cronos.onlinereview.external.ConfigException;
 import com.cronos.onlinereview.external.ExternalUser;
 import com.cronos.onlinereview.external.RetrievalException;
 import com.cronos.onlinereview.external.UserRetrieval;
+import com.topcoder.dde.catalog.ComponentManager;
+import com.topcoder.management.deliverable.Upload;
+import com.topcoder.management.deliverable.UploadManager;
+import com.topcoder.management.deliverable.UploadStatus;
+import com.topcoder.management.deliverable.UploadType;
+import com.topcoder.management.deliverable.search.UploadFilterBuilder;
 import com.topcoder.management.phase.PhaseManager;
 import com.topcoder.management.phase.PhaseStatusEnum;
 import com.topcoder.management.project.Project;
+import com.topcoder.management.project.ProjectCategory;
 import com.topcoder.management.resource.Resource;
 import com.topcoder.management.resource.ResourceManager;
 import com.topcoder.management.resource.ResourceRole;
@@ -48,7 +57,13 @@ import com.topcoder.management.resource.persistence.ResourcePersistenceException
 import com.topcoder.management.resource.search.ResourceFilterBuilder;
 import com.topcoder.project.phases.Phase;
 import com.topcoder.project.phases.PhaseStatus;
+import com.topcoder.search.builder.filter.AndFilter;
+import com.topcoder.search.builder.filter.Filter;
 import com.topcoder.service.contest.eligibilityvalidation.ContestEligibilityValidatorException;
+import com.topcoder.servlet.request.FileUpload;
+import com.topcoder.servlet.request.FileUploadResult;
+import com.topcoder.servlet.request.LocalFileUpload;
+import com.topcoder.servlet.request.UploadedFile;
 import com.topcoder.shared.util.DBMS;
 import com.topcoder.util.distribution.DistributionTool;
 import com.topcoder.util.distribution.DistributionToolException;
@@ -108,13 +123,23 @@ public class ProjectManagementConsoleActions extends DispatchAction {
      * This is the distribution tool script to use when no script is defined.
      */
     private static final String DEFAULT_DISTRIBUTION_SCRIPT = "other";
+
+    /**
+     * The design distribution document type.
+     */
+    private static final long DESIGN_DISTRIBUTION_DOC_TYPE = 25;
     
+    /**
+     * The development distribution document type.
+     */
+    private static final long DEVELOPMENT_DISTRIBUTION_DOC_TYPE = 26;
+
     /**
      * <p>Valid package names.</p>
      */
     private static final Pattern PACKAGE_PATTERN = Pattern
         .compile("\\s*(([a-zA-Z])[a-zA-Z0-9_]*)(\\.([a-zA-Z])[a-zA-Z0-9_]*)*\\s*");
-    
+
     /**
      * <p>Constructs new <code>ProjectManagementConsoleActions</code> instance. This implementation does nothing.</p>
      */
@@ -160,7 +185,6 @@ public class ProjectManagementConsoleActions extends DispatchAction {
             return mapping.findForward(SUCCESS_FORWARD_NAME);
         }
     }
-    
     
     /**
      * <p>
@@ -238,7 +262,7 @@ public class ProjectManagementConsoleActions extends DispatchAction {
                         boolean returnDistribution = getBooleanFromForm(lazyForm, "return_distribution");
 
                         if (uploadToServer) {
-                            // Upload file to server
+                            // TODO need instructions to do this
                         }
 
                         if (returnDistribution) {
@@ -258,7 +282,151 @@ public class ProjectManagementConsoleActions extends DispatchAction {
                     }
                 }
             }
+        }    }
+    
+    /**
+     * <p>
+     * Uploads a project distribution file.
+     * </p>
+     * 
+     * @param mapping an <code>ActionMapping</code> used for mapping the specified request to this action.
+     * @param form an <code>ActionForm</code> providing the form parameters mapped to specified request.
+     * @param request an <code>HttpServletRequest</code> representing incoming request from the client.
+     * @param response an <code>HttpServletResponse</code> representing response outgoing to client.
+     * @return an <code>ActionForward</code> referencing the next view to be displayed to user.
+     * @throws Exception if an unexpected error occurs.
+     */
+    public ActionForward uploadDistribution(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+        HttpServletResponse response) throws Exception {
+        
+        LoggingHelper.logAction(request);
+
+        request.setAttribute("activeTabIdx", new Integer(2));
+        
+        // Gather the roles the user has for current request
+        AuthorizationHelper.gatherUserRoles(request);
+
+        // Check whether the user has the permission to perform this action. If not then redirect the request
+        // to log-in page or report about the lack of permissions. Also check that current user is granted a
+        // permission to access the details for requested project
+        CorrectnessCheckResult verification
+            = ActionsHelper.checkForCorrectProjectId(mapping, getResources(request), request,
+                                                     PROJECT_MANAGEMENT_PERM_NAME, false);
+        
+        if (!verification.isSuccessful()) {
+            return verification.getForward();
+        } else {
+            // Validate the forms
+            final Project project = verification.getProject();
+            
+            // Check if there were any validation errors identified and return appropriate forward
+            if (ActionsHelper.isErrorsPresent(request)) {
+                initProjectManagementConsole(request, project);
+                return mapping.getInputForward();
+            } else {
+
+                LazyValidatorForm lazyForm = (LazyValidatorForm) form;
+                
+                FormFile distributionFormFile = (FormFile) lazyForm.get("distribution_file");
+
+                if (distributionFormFile == null || distributionFormFile.getFileSize() == 0) {
+                    ActionsHelper.addErrorToRequest(request, "distribution_rs", new ActionMessage(
+                        "error.com.cronos.onlinereview.actions.manageProject.Distributions.Distribution.Empty"));
+                } else {
+
+                    String lcFileName = distributionFormFile.getFileName().toLowerCase();
+                    if (!(lcFileName.endsWith("zip") || lcFileName.endsWith("jar"))) {
+                        ActionsHelper.addErrorToRequest(request, "distribution_rs", new ActionMessage(
+                            "error.com.cronos.onlinereview.actions.manageProject.Distributions.Distribution.Invalid"));
+                    }
+                }
+                
+                if (ActionsHelper.isErrorsPresent(request)) {
+                    initProjectManagementConsole(request, project);
+                    return mapping.getInputForward();
+                } else {
+                    
+                    // Create the distribution file
+                    uploadDistributionFileToServer(project, distributionFormFile, request);
+
+                    return ActionsHelper.cloneForwardAndAppendToPath(mapping
+                        .findForward(SUCCESS_FORWARD_NAME), "&pid=" + project.getId());
+                }
+            }
         }
+    }
+
+    // private void uploadDistributionFileToServer(Project project, File distributionFile) {
+    //
+    // ComponentManager componentManager = ServiceLocator.getInstance().getComponentManager();
+    //
+    // String name;
+    //        
+    // if (project.getProjectCategory().getId() == 1) {
+    // // Design
+    // name = "Design Distribution";
+    // } else {
+    // name = "Development Distribution";
+    // }
+    //        
+    // // Add document to component
+    // com.topcoder.dde.catalog.Document document = new com.topcoder.dde.catalog.Document(name, url, 6);
+    // componentManager.addDocument(document);
+    // }
+
+    private void uploadDistributionFileToServer(Project project, FormFile distributionFormFile,
+        HttpServletRequest request) throws Exception {
+
+        Resource resource = (Resource) request.getAttribute("global_resource");
+        ProjectCategory projectCategory = project.getProjectCategory();
+
+        long documentCode = (projectCategory.getId() == 1) ? DESIGN_DISTRIBUTION_DOC_TYPE : 
+            DEVELOPMENT_DISTRIBUTION_DOC_TYPE;
+        
+        String documentType = projectCategory.getName() + " Distribution";
+
+        StrutsRequestParser parser = new StrutsRequestParser();
+        parser.AddFile(distributionFormFile);
+
+        FileUpload fileUpload = ActionsHelper.createFileUploadManager(request);
+        FileUploadResult uploadResult = fileUpload.uploadFiles(request, parser);
+        UploadedFile uploadedFile = uploadResult.getUploadedFile("distribution_file");
+        
+        // Obtain an instance of Upload Manager
+        UploadManager upMgr = ActionsHelper.createUploadManager(request);
+        UploadStatus[] allUploadStatuses = upMgr.getAllUploadStatuses();
+        UploadType[] allUploadTypes = upMgr.getAllUploadTypes();
+        
+        Filter projectFilter = UploadFilterBuilder.createProjectIdFilter(project.getId());
+        Filter typeFilter = UploadFilterBuilder.createUploadTypeIdFilter(
+                ActionsHelper.findUploadTypeByName(allUploadTypes, documentType).getId());
+        Filter combinedFilter = new AndFilter(
+                Arrays.asList(new Filter[] { projectFilter, typeFilter }));
+
+        Upload[] uploads = upMgr.searchUploads(combinedFilter);
+
+        for (Upload oldUpload : uploads) {
+            oldUpload.setUploadStatus(ActionsHelper.findUploadStatusByName(allUploadStatuses, "Deleted"));
+            upMgr.updateUpload(oldUpload, Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
+        }
+        
+        Upload upload = new Upload();
+
+        upload.setProject(project.getId());
+        upload.setOwner(resource.getId());
+        upload.setUploadStatus(ActionsHelper.findUploadStatusByName(allUploadStatuses, "Active"));
+        upload.setUploadType(ActionsHelper.findUploadTypeByName(allUploadTypes, documentType));
+        upload.setParameter(uploadedFile.getFileId());
+
+        // Get the name (id) of the user performing the operations
+        String operator = Long.toString(AuthorizationHelper.getLoggedInUserId(request));
+        upMgr.createUpload(upload, operator);
+        
+        
+        // Add document to component
+        // com.topcoder.dde.catalog.Document document = new com.topcoder.dde.catalog.Document(documentType, url,
+        // documentCode);
+        // componentManager.addDocument(document);
     }
 
     private void writeDistributionFile(HttpServletResponse response, File distributionFile) throws IOException {
