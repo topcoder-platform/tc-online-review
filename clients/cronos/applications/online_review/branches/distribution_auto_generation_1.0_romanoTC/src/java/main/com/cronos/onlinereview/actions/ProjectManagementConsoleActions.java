@@ -6,9 +6,11 @@ package com.cronos.onlinereview.actions;
 import static com.cronos.onlinereview.actions.Constants.*;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -215,13 +217,74 @@ public class ProjectManagementConsoleActions extends DispatchAction {
                     // Create the distribution file
                     File distributionFile = createDistributionFile(project, lazyForm, request);
                     
+                    if (distributionFile == null) {
+                        ActionsHelper.addErrorToRequest(request, new ActionMessage(
+                            "error.com.cronos.onlinereview.actions.manageProject.Distributions.DistTool.CannotFind"));
+                    }
+                    
                     if (ActionsHelper.isErrorsPresent(request)) {
                         initProjectManagementConsole(request, project);
                         return mapping.getInputForward();
                     }
                     
-                    return ActionsHelper.cloneForwardAndAppendToPath(
-                        mapping.findForward(SUCCESS_FORWARD_NAME), "&activeTabIdx=2&pid=" + project.getId());
+                    // Check what to do with the file
+                    boolean uploadToServer = getBooleanFromForm(lazyForm, "upload_to_server");
+                    boolean returnDistribution = getBooleanFromForm(lazyForm, "return_distribution");
+
+                    
+                    if (uploadToServer) {
+                        
+                    }
+                    
+                    if (returnDistribution) {
+                        
+                        writeDistributionFile(response, distributionFile);
+                        return null;
+                        
+                    } else {
+                        return ActionsHelper.cloneForwardAndAppendToPath(
+                            mapping.findForward(SUCCESS_FORWARD_NAME), "&pid=" + project.getId());
+                    }
+                }
+            }
+        }
+    }
+
+    private void writeDistributionFile(HttpServletResponse response, File distributionFile) throws IOException {
+        
+        InputStream in = new FileInputStream(distributionFile);
+
+        response.setHeader("Content-Type", "application/octet-stream");
+        response.setStatus(HttpServletResponse.SC_OK);
+        response.setIntHeader("Content-Length", (int) distributionFile.length());
+        response.setHeader("Content-Disposition", "attachment; filename=\"" + distributionFile.getName() + "\"");
+
+        response.flushBuffer();
+
+        OutputStream out = null;
+
+        try {
+            out = response.getOutputStream();
+            byte[] buffer = new byte[65536];
+
+            for (;;) {
+                int numOfBytesRead = in.read(buffer);
+                if (numOfBytesRead == -1) {
+                    break;
+                }
+                out.write(buffer, 0, numOfBytesRead);
+            }
+        } finally {
+            try {
+                in.close();
+            } catch (IOException ex) {
+                // ignore
+            }
+            if (out != null) {
+                try {
+                    out.close();
+                } catch (IOException ex) {
+                    // ignore
                 }
             }
         }
@@ -296,13 +359,31 @@ public class ProjectManagementConsoleActions extends DispatchAction {
                 return null;
             }
             
-            
-
-            return null;
+            return getDistributionFile(outputDir);
         
         } finally {
             cleanDistToolTempFiles(outputDir, filesToDelete);
         }
+    }
+
+    private File getDistributionFile(String outputDir) {
+        File dir = new File(outputDir);
+        File distFile = null;
+        long lastModified = Long.MIN_VALUE;
+
+        // Should be a single file only, but there might a problem deleting files, so, to be safe,
+        // check for the latest file - which should be the distribution file
+        File[] files = dir.listFiles(); 
+        for (File file : files) {
+            if (file.isFile()) {
+                if (file.lastModified() > lastModified) {
+                    distFile = file;
+                    lastModified = file.lastModified();
+                }
+            }
+        }
+        
+        return distFile;
     }
 
     private void cleanDistToolTempFiles(String outputDir, List<File> filesToDelete) {
@@ -525,16 +606,18 @@ public class ProjectManagementConsoleActions extends DispatchAction {
             }
         }
         
-        Boolean uploadToServerObj = (Boolean) lazyForm.get("upload_to_server");
-        Boolean returnDistributionObj = (Boolean) lazyForm.get("return_distribution");
-
-        boolean uploadToServer = (uploadToServerObj == null) ? false : uploadToServerObj.booleanValue();
-        boolean returnDistribution = (returnDistributionObj == null) ? false : returnDistributionObj.booleanValue();
+        boolean uploadToServer = getBooleanFromForm(lazyForm, "upload_to_server");
+        boolean returnDistribution = getBooleanFromForm(lazyForm, "return_distribution");
         
         if (!uploadToServer && !returnDistribution) {
             ActionsHelper.addErrorToRequest(request, "upload_to_server", new ActionMessage(
                 "error.com.cronos.onlinereview.actions.manageProject.Distributions.Upload.Unchecked"));
         }
+    }
+    
+    private static boolean getBooleanFromForm(LazyValidatorForm lazyForm, String attribute) {
+        Boolean value = (Boolean) lazyForm.get(attribute);
+        return (value == null) ? false : value.booleanValue();
     }
     
     /**
