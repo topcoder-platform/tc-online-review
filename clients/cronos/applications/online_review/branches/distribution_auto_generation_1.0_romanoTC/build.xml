@@ -374,7 +374,10 @@
     <property name="tcwebcommon.jar.name" value="tcwebcommon.jar" />
     <property name="tcwebcommon.jar" value="${shared_libdir}/${tcwebcommon.jar.name}" />
 
-    <property name="forums.jar.name" value="forums.jar" />
+    <property name="catalog.jar.name" value="catalog.jar" />
+    <property name="catalog.jar" value="${shared_libdir}/${catalog.jar.name}" />
+
+	<property name="forums.jar.name" value="forums.jar" />
     <property name="forums.jar" value="${shared_libdir}/${forums.jar.name}" />
 
 
@@ -480,6 +483,7 @@
         <pathelement location="${termsOfUseEJB.jar}" />
     	<pathelement location="${tcsUtil.jar}" />
         <pathelement location="${tcwebcommon.jar}" />
+    	<pathelement location="${catalog.jar}" />
         <pathelement location="${shared.jar}" />
 	    <pathelement location="${forums.jar}" />
         <pathelement location="${jiveforums.jar}" />
@@ -729,6 +733,7 @@ Note: The security manager that comes with the app may not be compatible with th
             <lib dir="${jar_shared_libdir}/">
                 <include name="${shared.jar.name}"/>
                 <include name="${tcwebcommon.jar.name}"/>
+            	<include name="${catalog.jar} "/>
                 <include name="${forums.jar.name}"/>
             </lib>
 
@@ -776,6 +781,7 @@ Note: The security manager that comes with the app may not be compatible with th
             <fileset dir="${deploy-dir}/WEB-INF/lib">
                 <include name="${tcsUtil.jar.name}"/>
                 <include name="${tcwebcommon.jar.name}"/>
+            	<include name="${catalog.jar.name}"/>
                 <include name="${shared.jar.name}"/>
                 <include name="${forums.jar.name}"/>
                 <include name="${contest_eligibility_validation_client.jar.name}"/>
