@@ -74,7 +74,7 @@ public class ServiceLocator {
      */
     public ComponentManagerHome getComponentManagerHome() throws NamingException {
         return (ComponentManagerHome) PortableRemoteObject.narrow(getInitialContext().lookup(
-            "ComponentManagerEJB"), ComponentManagerHome.class);
+            ComponentManagerHome.EJB_REF_NAME), ComponentManagerHome.class);
     }
 
     /**
