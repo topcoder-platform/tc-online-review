@@ -1920,10 +1920,19 @@ public class ConfigHelper {
                 NameClassPair ncp = childrenOfNaming.nextElement();
 
                 System.out.println(ncp.getName() + " " + ncp.getClassName());
+
+		try {
+    		    System.out.println("OK - " + ctx.lookup(ncp.getName());
+	        } catch (Exception ex) {
+                    System.out.println("NOK");
+                }
+
             }
         } catch (Exception ex) {
             ex.printStackTrace();
         }
+
+        System.out.println("------------------");
 
         try {
             InitialContext ctx = new InitialContext();
