@@ -8,7 +8,7 @@
 <c:if test="${isAllowedToViewResources}">
 	<table class="scorecard" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;">
 		<tr>
-			<td class="title" colspan='${(isAllowedToViewAllPayment) ? "4" : "2"}'><bean:message key="viewProjectDetails.box.Resources" /></td>
+			<td class="title" colspan='${(isAllowedToViewAllPayment) ? "5" : "3"}'><bean:message key="viewProjectDetails.box.Resources" /></td>
 		</tr>
 		<tr>
 			<td class="header"><b><bean:message key="viewProjectDetails.Resource.Role" /></b></td>
@@ -17,6 +17,7 @@
 				<td class="header" nowrap="nowrap"><b><bean:message key="viewProjectDetails.Resource.Payment" /></b></td>
 				<td class="header" nowrap="nowrap"><b><bean:message key="viewProjectDetails.Resource.Paid_qm" /></b></td>
 			</c:if>
+			<td class="headerC" nowrap="nowrap"><b><bean:message key="viewProjectDetails.Resource.RegistrationDate" /></b></td>
 		</tr>
 		<c:forEach items="${resources}" var="resource" varStatus="idxrResource">
 			<tr class='${(idxrResource.index % 2 == 0) ? "light" : "dark"}'>
@@ -48,10 +49,11 @@
 						</c:otherwise>
 					</c:choose>
 				</c:if>
+				<td class="valueC" nowrap="nowrap">${resource.allProperties["Registration Date"]}</td>
 			</tr>
 		</c:forEach>
 		<tr>
-			<td class="lastRowTD" colspan='${(isAllowedToViewAllPayment) ? "4" : "2"}'><!-- @ --></td>
+			<td class="lastRowTD" colspan='${(isAllowedToViewAllPayment) ? "5" : "3"}'><!-- @ --></td>
 		</tr>
 	</table><br />
 </c:if>
