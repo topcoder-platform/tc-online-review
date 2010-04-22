@@ -10,22 +10,22 @@
   <filter>
     <filter-name>set_character_encoding</filter-name>
     <filter-class>com.cronos.onlinereview.actions.EncodeFilter</filter-class>
-	<init-param>	
-		<param-name>encoding</param-name>	
-		<param-value>UTF-8</param-value>	
-	</init-param>	
-	<init-param>	
-		<param-name>ignore</param-name>	
-		<param-value>true</param-value>	
-	</init-param>	
+    <init-param>    
+        <param-name>encoding</param-name>   
+        <param-value>UTF-8</param-value>    
+    </init-param>   
+    <init-param>    
+        <param-name>ignore</param-name> 
+        <param-value>true</param-value> 
+    </init-param>   
   </filter>
-	
-	<!-- Filter Mapping -->
-	
-	<filter-mapping>	
-		<filter-name>set_character_encoding</filter-name>	
-		<url-pattern>*.do</url-pattern>
-	</filter-mapping>
+    
+    <!-- Filter Mapping -->
+    
+    <filter-mapping>    
+        <filter-name>set_character_encoding</filter-name>   
+        <url-pattern>*.do</url-pattern>
+    </filter-mapping>
 
     <!-- Standard Action Servlet Configuration -->
     <servlet>
@@ -44,18 +44,18 @@
         <servlet-class>com.cronos.onlinereview.ajax.AjaxSupportServlet</servlet-class>
     </servlet>
 
-	<!-- Axis HTTP transport Servlet -->
-	<servlet>
+    <!-- Axis HTTP transport Servlet -->
+    <servlet>
         <display-name>Apache-Axis Servlet</display-name>
-		<servlet-name>AxisServlet</servlet-name>
-		<servlet-class>
-			org.apache.axis.transport.http.AxisServlet
-		</servlet-class>
-		<!--  init-param>
-			<param-name>use-servlet-security</param-name>
-			<param-value>true</param-value>
-			</init-param -->
-	</servlet>
+        <servlet-name>AxisServlet</servlet-name>
+        <servlet-class>
+            org.apache.axis.transport.http.AxisServlet
+        </servlet-class>
+        <!--  init-param>
+            <param-name>use-servlet-security</param-name>
+            <param-value>true</param-value>
+            </init-param -->
+    </servlet>
 
     <!-- Standard Action Servlet Mapping -->
     <servlet-mapping>
@@ -70,20 +70,20 @@
     </servlet-mapping>
 
   <!-- Axis HTTP transport Servlet Mappings -->
-	<servlet-mapping>
-		<servlet-name>AxisServlet</servlet-name>
-		<url-pattern>/servlet/AxisServlet</url-pattern>
-	</servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>AxisServlet</servlet-name>
+        <url-pattern>/servlet/AxisServlet</url-pattern>
+    </servlet-mapping>
 
-	<servlet-mapping>
-		<servlet-name>AxisServlet</servlet-name>
-		<url-pattern>*.jws</url-pattern>
-	</servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>AxisServlet</servlet-name>
+        <url-pattern>*.jws</url-pattern>
+    </servlet-mapping>
 
-	<servlet-mapping>
-		<servlet-name>AxisServlet</servlet-name>
-		<url-pattern>/services/*</url-pattern>
-	</servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>AxisServlet</servlet-name>
+        <url-pattern>/services/*</url-pattern>
+    </servlet-mapping>
 
    <session-config>
       <session-timeout>120</session-timeout>
@@ -97,8 +97,8 @@
 
     <!-- Error Page -->
     <error-page>
-    	<exception-type>java.lang.Throwable</exception-type>
-    	<location>/jsp/errorPage.jsp</location>
+        <exception-type>java.lang.Throwable</exception-type>
+        <location>/jsp/errorPage.jsp</location>
     </error-page>
 
     <jsp-config>
@@ -137,12 +137,4 @@
         <home>com.topcoder.security.login.LoginRemoteHome</home>
         <remote>com.topcoder.security.login.LoginRemote</remote>
     </ejb-ref>
-    <ejb-local-ref>
-        <ejb-ref-name>ejb/ComponentManagerEJB</ejb-ref-name>
-        <ejb-ref-type>Session</ejb-ref-type>
-        <local-home>com.topcoder.dde.catalog.ComponentManagerHome</local-home>
-        <local>com.topcoder.dde.catalog.ComponentManager</local>
-        <ejb-link>ComponentManagerEJB</ejb-link>
-    </ejb-local-ref>
-        
 </web-app>
