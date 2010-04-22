@@ -149,11 +149,6 @@ public class ProjectManagementConsoleActions extends DispatchAction {
     private static final long DESIGN_PROJECT_ID = 1;
 
     /**
-     * Allowed Requirement Specification document types.
-     */
-    private static final List<String> ALLOWED_RS_DOC_TYPES = Arrays.asList("rtf", "pdf", "doc");
-    
-    /**
      * <p>Valid package names.</p>
      */
     private static final Pattern PACKAGE_PATTERN = Pattern
@@ -823,7 +818,7 @@ public class ProjectManagementConsoleActions extends DispatchAction {
             
         } else {
             String lcFileName = distributionRSFile.getFileName().toLowerCase();
-            if (!ALLOWED_RS_DOC_TYPES.contains(lcFileName)) {
+            if (!(lcFileName.endsWith("rtf") || lcFileName.endsWith("doc") || lcFileName.endsWith("pdf"))) {
                 ActionsHelper.addErrorToRequest(request, "distribution_rs", new ActionMessage(
                     "error.com.cronos.onlinereview.actions.manageProject.Distributions.RS.Invalid"));
             }
