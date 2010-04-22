@@ -1919,7 +1919,7 @@ public class ConfigHelper {
             while (childrenOfNaming.hasMoreElements()) {
                 NameClassPair ncp = childrenOfNaming.nextElement();
 
-                System.out.println(ncp.getNameInNamespace() + " " + ncp.getName() + " " + ncp.getClassName());
+                System.out.println(ncp.getName() + " " + ncp.getClassName());
             }
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -1932,7 +1932,7 @@ public class ConfigHelper {
             while (childrenOfNaming.hasMoreElements()) {
                 NameClassPair ncp = childrenOfNaming.nextElement();
 
-                System.out.println(ncp.getNameInNamespace() + " " + ncp.getName() + " " + ncp.getClassName());
+                System.out.println(ncp.getName() + " " + ncp.getClassName());
             }
         } catch (Exception ex) {
             ex.printStackTrace();
