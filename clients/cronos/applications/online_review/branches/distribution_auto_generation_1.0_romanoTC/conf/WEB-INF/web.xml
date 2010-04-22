@@ -137,4 +137,12 @@
         <home>com.topcoder.security.login.LoginRemoteHome</home>
         <remote>com.topcoder.security.login.LoginRemote</remote>
     </ejb-ref>
+    <ejb-local-ref>
+        <ejb-ref-name>ejb/ComponentManagerEJB</ejb-ref-name>
+        <ejb-ref-type>Session</ejb-ref-type>
+        <local-home>com.topcoder.dde.catalog.ComponentManagerHome</local-home>
+        <local>com.topcoder.dde.catalog.ComponentManager</local>
+        <ejb-link>ComponentManagerEJB</ejb-link>
+    </ejb-local-ref>
+        
 </web-app>

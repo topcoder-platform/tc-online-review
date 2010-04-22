@@ -74,9 +74,8 @@ public class ServiceLocator {
      */
     public ComponentManagerHome getComponentManagerHome() throws NamingException {
         return (ComponentManagerHome) PortableRemoteObject.narrow(getInitialContext().lookup(
-            ComponentManagerHome.EJB_REF_NAME), ComponentManagerHome.class);
+            "ejb/ComponentManagerEJB"), ComponentManagerHome.class);
     }
-
 
     /**
      * Returns the ComponentManager EJB.
@@ -86,11 +85,9 @@ public class ServiceLocator {
      * @throws RemoteException if any error occurs while creating the EJB.
      * @throws CreateException if any error occurs while creating the EJB
      */
-    public ComponentManager getComponentManager() throws NamingException, RemoteException,
-        CreateException {
+    public ComponentManager getComponentManager() throws NamingException, RemoteException, CreateException {
         return getComponentManagerHome().create();
     }
-    
 
     /**
      * Returns the ComponentManager EJB.
@@ -105,7 +102,7 @@ public class ServiceLocator {
         CreateException {
         return getComponentManagerHome().create(componentId);
     }
-    
+
     /**
      * Returns the ComponentManager EJB.
      * 
@@ -116,8 +113,8 @@ public class ServiceLocator {
      * @throws RemoteException if any error occurs while creating the EJB.
      * @throws CreateException if any error occurs while creating the EJB
      */
-    public ComponentManager getComponentManager(long componentId, long versionId) throws NamingException, RemoteException,
-        CreateException {
+    public ComponentManager getComponentManager(long componentId, long versionId) throws NamingException,
+        RemoteException, CreateException {
         return getComponentManagerHome().create(componentId, versionId);
     }
 }
