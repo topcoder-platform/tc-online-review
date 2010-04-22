@@ -1926,6 +1926,9 @@ public class ProjectActions extends DispatchAction {
                 // Create new resource
                 resource = new Resource();
 
+                // FIXME: Format this date properly.
+                resource.setProperty("Registration Date", DATE_FORMAT.format(new Date()));
+
                 newUsers.add(user.getId());
 
                 //System.out.println("ADD:" + user.getId());
@@ -2042,16 +2045,6 @@ public class ProjectActions extends DispatchAction {
             // make sure "Appeals Completed Early" flag is not set if the role is not submitter.
             if (resourceRoleChanged && !resourceRole.equals(Constants.SUBMITTER_ROLE_NAME)) {
                 resource.setProperty(Constants.APPEALS_COMPLETED_EARLY_PROPERTY_KEY, null);
-            }
-
-            // If resource is a submitter, screener or reviewer, store registration date
-            // Note, that it is updated here only if it was not set previously
-            // TODO: Why not primary screener, other reviewers, etc?
-            if (resource.getProperty("Registration Date") == null  && (
-                    resourceRole.equals("Submitter") || resourceRole.equals("Screener") ||
-                    resourceRole.equals("Reviewer"))) {
-                // FIXME: Format this date properly.
-                resource.setProperty("Registration Date", DATE_FORMAT.format(new Date()));
             }
 
             // Save the resource in the persistence level
