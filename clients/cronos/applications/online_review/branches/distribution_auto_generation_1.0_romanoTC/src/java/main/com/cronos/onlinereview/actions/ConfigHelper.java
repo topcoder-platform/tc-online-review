@@ -524,7 +524,7 @@ public class ConfigHelper {
     private static final int DEFAULT_MINIMUM_HOURS_LEFT = 48;
     
     /**
-     * <p>This member variable is a string constant that specifies the name of the property which contains the
+     * <p>This member variable is a string constthat specifies the name of the property which contains the
      * output dir for the distribution tool.</p>
      */
     private static final String DISTRIBUTION_TOOL_OUTPUT_DIR_PROP = "distribution_tool_output_dir";
@@ -533,6 +533,28 @@ public class ConfigHelper {
      * This is the default distribution tool output dir.
      */
     private static final String DEFAULT_DISTRIBUTION_TOOL_OUTPUT_DIR = "/tmp";
+    
+    /**
+     * <p>This member variable is a string constant that specifies the name of the property which contains the
+     * output dir for the TopCoder catalog.</p>
+     */
+    private static final String CATALOG_OUTPUT_DIR_PROP = "catalog_output_dir";
+    
+    /**
+     * This is the default catalog output dir.
+     */
+    private static final String DEFAULT_CATALOG_OUTPUT_DIR = "/tmp";
+    
+    /**
+     * <p>This member variable is a string constant that specifies the name of the property which contains the
+     * URL for JNDI look of Catalog Services.</p>
+     */
+    private static final String CATALOG_JNDI_PROP = "catalog_jndi_address";
+    
+    /**
+     * This is the default catalog JNDI URL.
+     */
+    private static final String DEFAULT_CATALOG_JNDI_PROP = "jnp://localhost:1199";
 
     /**
      * This is the distribution tool script to use when no script is defined.
@@ -819,6 +841,21 @@ public class ConfigHelper {
      */
     private static String distributionToolOutputDir = DEFAULT_DISTRIBUTION_TOOL_OUTPUT_DIR;
 
+    /**
+     * <p>
+     * The TopCoder catalog output dir.
+     * </p>
+     */
+    private static String catalogOutputDir = DEFAULT_CATALOG_OUTPUT_DIR;
+
+    /**
+     * <p>
+     * The JNDI URL to lookup for Catalog services.
+     * </p>
+     */
+    private static String catalogJndiURL = DEFAULT_CATALOG_JNDI_PROP;
+
+    
     static {
         // Obtaining the instance of Configuration Manager
         ConfigManager cfgMgr = ConfigManager.getInstance();
@@ -1282,6 +1319,28 @@ public class ConfigHelper {
                     + " will be used instead");
                 
                 distributionToolOutputDir = DEFAULT_DISTRIBUTION_TOOL_OUTPUT_DIR;
+            }
+            
+            catalogOutputDir = cfgMgr.getString(ONLINE_REVIEW_CFG_NS, CATALOG_OUTPUT_DIR_PROP);
+            
+            if (catalogOutputDir == null) {
+                System.err.println("The value of " + CATALOG_OUTPUT_DIR_PROP
+                    + " configuration property is null. "
+                    + "This value will be ignored and value of " + DEFAULT_CATALOG_OUTPUT_DIR
+                    + " will be used instead");
+                
+                catalogOutputDir = DEFAULT_CATALOG_OUTPUT_DIR;
+            }
+            
+            catalogJndiURL = cfgMgr.getString(ONLINE_REVIEW_CFG_NS, CATALOG_JNDI_PROP);
+            
+            if (catalogJndiURL == null) {
+                System.err.println("The value of " + CATALOG_JNDI_PROP
+                    + " configuration property is null. "
+                    + "This value will be ignored and value of " + DEFAULT_CATALOG_JNDI_PROP
+                    + " will be used instead");
+                
+                catalogJndiURL = DEFAULT_CATALOG_JNDI_PROP;
             }
             
         } catch (UnknownNamespaceException une) {
@@ -1824,11 +1883,29 @@ public class ConfigHelper {
     }
     
     /**
-     * <p>Gets the distribution tool output dir..</p>
+     * <p>Gets the distribution tool output dir.</p>
      *
      * @return the distribution tool output dir.
      */
     public static String getDistributionToolOutputDir() {
         return distributionToolOutputDir;
+    }
+    
+    /**
+     * <p>Gets the TopCoder Catalog output dir.</p>
+     *
+     * @return the TopCoder Catalog output dir.
+     */
+    public static String getCatalogOutputDir() {
+        return catalogOutputDir;
+    }
+    
+    /**
+     * <p>Gets the distribution tool output dir..</p>
+     *
+     * @return the distribution tool output dir.
+     */
+    public static String getCatalogJndiURL() {
+        return catalogJndiURL;
     }
 }

@@ -62,7 +62,6 @@ import com.topcoder.search.builder.filter.Filter;
 import com.topcoder.service.contest.eligibilityvalidation.ContestEligibilityValidatorException;
 import com.topcoder.servlet.request.FileUpload;
 import com.topcoder.servlet.request.FileUploadResult;
-import com.topcoder.servlet.request.LocalFileUpload;
 import com.topcoder.servlet.request.UploadedFile;
 import com.topcoder.shared.util.DBMS;
 import com.topcoder.util.distribution.DistributionTool;
@@ -85,7 +84,7 @@ import com.topcoder.web.ejb.user.UserTermsOfUseLocator;
  * <code>Registration</code> or <code>Submission</code> phases for projects.</p>
  *
  * @author isv
- * @version 1.0 (Online Review Project Management Console assembly v1.0)
+ * @version 1.1 (Distribution Auto Generation Assembly v1.0)
  */
 public class ProjectManagementConsoleActions extends DispatchAction {
 
@@ -125,15 +124,35 @@ public class ProjectManagementConsoleActions extends DispatchAction {
     private static final String DEFAULT_DISTRIBUTION_SCRIPT = "other";
 
     /**
+     * The id of the design distribution document type.
+     */
+    private static final long DESIGN_DISTRIBUTION_DOC_TYPE_ID = 25;
+    
+    /**
+     * The id of the development distribution document type.
+     */
+    private static final long DEVELOPMENT_DISTRIBUTION_DOC_TYPE_ID = 26;
+    
+    /**
      * The design distribution document type.
      */
-    private static final long DESIGN_DISTRIBUTION_DOC_TYPE = 25;
+    private static final String DESIGN_DISTRIBUTION_DOC_TYPE = "Design Distribution";
     
     /**
      * The development distribution document type.
      */
-    private static final long DEVELOPMENT_DISTRIBUTION_DOC_TYPE = 26;
+    private static final String DEVELOPMENT_DISTRIBUTION_DOC_TYPE = "Development Distribution";
 
+    /**
+     * The design project ID.
+     */
+    private static final long DESIGN_PROJECT_ID = 1;
+
+    /**
+     * Allowed Requirement Specification document types.
+     */
+    private static final List<String> ALLOWED_RS_DOC_TYPES = Arrays.asList("rtf", "pdf", "doc");
+    
     /**
      * <p>Valid package names.</p>
      */
@@ -188,7 +207,7 @@ public class ProjectManagementConsoleActions extends DispatchAction {
     
     /**
      * <p>
-     * Create a project distribution file, upload it to the server or return it to the user (or both).
+     * Create a project design distribution file, upload it to the server or return it to the user (or both).
      * </p>
      * 
      * @param mapping an <code>ActionMapping</code> used for mapping the specified request to this action.
@@ -197,12 +216,15 @@ public class ProjectManagementConsoleActions extends DispatchAction {
      * @param response an <code>HttpServletResponse</code> representing response outgoing to client.
      * @return an <code>ActionForward</code> referencing the next view to be displayed to user.
      * @throws Exception if an unexpected error occurs.
+     * @since 1.1
      */
     public ActionForward manageDistribution(ActionMapping mapping, ActionForm form, HttpServletRequest request,
         HttpServletResponse response) throws Exception {
         
         LoggingHelper.logAction(request);
 
+        // set the active tab index to able to re-render the page with the correct selected tab in 
+        // case an error occurs
         request.setAttribute("activeTabIdx", new Integer(2));
         
         // Gather the roles the user has for current request
@@ -214,79 +236,81 @@ public class ProjectManagementConsoleActions extends DispatchAction {
         CorrectnessCheckResult verification
             = ActionsHelper.checkForCorrectProjectId(mapping, getResources(request), request,
                                                      PROJECT_MANAGEMENT_PERM_NAME, false);
+        
         if (!verification.isSuccessful()) {
             return verification.getForward();
-        } else {
-            // Validate the forms
-            final Project project = verification.getProject();
+        } 
+
+        // Get the current project
+        final Project project = verification.getProject();
+        
+        // Check if there were any validation errors identified and return appropriate forward
+        if (ActionsHelper.isErrorsPresent(request)) {
+            initProjectManagementConsole(request, project);
+            return mapping.getInputForward();
+        } 
+
+        LazyValidatorForm lazyForm = (LazyValidatorForm) form;
+        
+        // Validate form data
+        validateCreateDistributionForm(project, lazyForm, request);
+        
+        if (ActionsHelper.isErrorsPresent(request)) {
+            initProjectManagementConsole(request, project);
+            return mapping.getInputForward();
+        } 
             
-            // Check if there were any validation errors identified and return appropriate forward
+        // Creates the distribution file using the distribution tool component
+        File outputDirFile = createDistributionFile(project, lazyForm, request);
+
+        try {
+            File distributionFile = null;
+            
+            if (outputDirFile != null) {
+                // Returns the distribution file from the output dir
+                distributionFile = getDistributionFile(outputDirFile);
+            }
+
+            if (distributionFile == null) {
+                ActionsHelper.addErrorToRequest(request, new ActionMessage(
+                    "error.com.cronos.onlinereview.actions.manageProject."
+                        + "Distributions.DistTool.CannotFind"));
+            }
+
             if (ActionsHelper.isErrorsPresent(request)) {
                 initProjectManagementConsole(request, project);
                 return mapping.getInputForward();
-            } else {
-
-                LazyValidatorForm lazyForm = (LazyValidatorForm) form;
-                
-                validateCreateDistributionForm(project, lazyForm, request);
-                
-                if (ActionsHelper.isErrorsPresent(request)) {
-                    initProjectManagementConsole(request, project);
-                    return mapping.getInputForward();
-                } else {
-                    
-                    // Create the distribution file
-                    File outputDirFile = createDistributionFile(project, lazyForm, request);
-
-                    try {
-                        File distributionFile = null;
-                        
-                        if (outputDirFile != null) {
-                            // Returns the distribution file from the output dir
-                            distributionFile = getDistributionFile(outputDirFile);
-                        }
-    
-                        if (distributionFile == null) {
-                            ActionsHelper.addErrorToRequest(request, new ActionMessage(
-                                "error.com.cronos.onlinereview.actions.manageProject."
-                                    + "Distributions.DistTool.CannotFind"));
-                        }
-
-                        if (ActionsHelper.isErrorsPresent(request)) {
-                            initProjectManagementConsole(request, project);
-                            return mapping.getInputForward();
-                        }
-
-                        // Check what to do with the file
-                        boolean uploadToServer = getBooleanFromForm(lazyForm, "upload_to_server");
-                        boolean returnDistribution = getBooleanFromForm(lazyForm, "return_distribution");
-
-                        if (uploadToServer) {
-                            // TODO need instructions to do this
-                        }
-
-                        if (returnDistribution) {
-                            
-                            // Return the distribution tool - write it to the response object
-                            writeDistributionFile(response, distributionFile);
-                            return null;
-
-                        } else {
-                            return ActionsHelper.cloneForwardAndAppendToPath(mapping
-                                .findForward(SUCCESS_FORWARD_NAME), "&pid=" + project.getId());
-                        }
-                    } finally {
-                        if (outputDirFile != null) {
-                            cleanDistToolTempFiles(outputDirFile);
-                        }
-                    }
-                }
             }
-        }    }
+
+            // Check what to do with the file
+            boolean uploadToServer = getBooleanFromForm(lazyForm, "upload_to_server");
+            boolean returnDistribution = getBooleanFromForm(lazyForm, "return_distribution");
+
+            if (uploadToServer) {
+                // TODO need instructions to do this
+            }
+
+            if (returnDistribution) {
+                
+                // Return the distribution tool - write it to the response object
+                writeDistributionFile(response, distributionFile);
+                return null;
+
+            } else {
+                return ActionsHelper.cloneForwardAndAppendToPath(mapping
+                    .findForward(SUCCESS_FORWARD_NAME), "&pid=" + project.getId());
+            }
+        } finally {
+            if (outputDirFile != null) {
+                // guarantee a good cleanup
+                cleanupDirectory(outputDirFile);
+            }
+        }
+    }
     
     /**
      * <p>
-     * Uploads a project distribution file.
+     * Uploads a project distribution file (design or development).
      * </p>
      * 
      * @param mapping an <code>ActionMapping</code> used for mapping the specified request to this action.
@@ -295,12 +319,15 @@ public class ProjectManagementConsoleActions extends DispatchAction {
      * @param response an <code>HttpServletResponse</code> representing response outgoing to client.
      * @return an <code>ActionForward</code> referencing the next view to be displayed to user.
      * @throws Exception if an unexpected error occurs.
+     * @since 1.1
      */
     public ActionForward uploadDistribution(ActionMapping mapping, ActionForm form, HttpServletRequest request,
         HttpServletResponse response) throws Exception {
         
         LoggingHelper.logAction(request);
 
+        // set the active tab index to able to re-render the page with the correct selected tab in 
+        // case an error occurs
         request.setAttribute("activeTabIdx", new Integer(2));
         
         // Gather the roles the user has for current request
@@ -315,121 +342,120 @@ public class ProjectManagementConsoleActions extends DispatchAction {
         
         if (!verification.isSuccessful()) {
             return verification.getForward();
-        } else {
-            // Validate the forms
-            final Project project = verification.getProject();
-            
-            // Check if there were any validation errors identified and return appropriate forward
-            if (ActionsHelper.isErrorsPresent(request)) {
-                initProjectManagementConsole(request, project);
-                return mapping.getInputForward();
-            } else {
-
-                LazyValidatorForm lazyForm = (LazyValidatorForm) form;
-                
-                FormFile distributionFormFile = (FormFile) lazyForm.get("distribution_file");
-
-                if (distributionFormFile == null || distributionFormFile.getFileSize() == 0) {
-                    ActionsHelper.addErrorToRequest(request, "distribution_rs", new ActionMessage(
-                        "error.com.cronos.onlinereview.actions.manageProject.Distributions.Distribution.Empty"));
-                } else {
-
-                    String lcFileName = distributionFormFile.getFileName().toLowerCase();
-                    if (!(lcFileName.endsWith("zip") || lcFileName.endsWith("jar"))) {
-                        ActionsHelper.addErrorToRequest(request, "distribution_rs", new ActionMessage(
-                            "error.com.cronos.onlinereview.actions.manageProject.Distributions.Distribution.Invalid"));
-                    }
-                }
-                
-                if (ActionsHelper.isErrorsPresent(request)) {
-                    initProjectManagementConsole(request, project);
-                    return mapping.getInputForward();
-                } else {
-                    
-                    // Create the distribution file
-                    uploadDistributionFileToServer(project, distributionFormFile, request);
-
-                    return ActionsHelper.cloneForwardAndAppendToPath(mapping
-                        .findForward(SUCCESS_FORWARD_NAME), "&pid=" + project.getId());
-                }
-            }
+        } 
+        
+        final Project project = verification.getProject();
+        
+        // Validate project type - must be a Design or Development
+        if ((project.getProjectCategory().getId() != DESIGN_PROJECT_ID) &&
+            (project.getProjectCategory().getId() != DEVELOPMENT_DISTRIBUTION_DOC_TYPE_ID)) {
+            ActionsHelper.addErrorToRequest(request, new ActionMessage(
+                "error.com.cronos.onlinereview.actions.manageProject.Distributions.Upload.ProjectCategory"));
         }
+
+        // Check if there were any validation errors identified and return appropriate forward
+        if (ActionsHelper.isErrorsPresent(request)) {
+            initProjectManagementConsole(request, project);
+            return mapping.getInputForward();
+        } 
+
+        LazyValidatorForm lazyForm = (LazyValidatorForm) form;
+        FormFile distributionFormFile = (FormFile) lazyForm.get("distribution_file");
+
+        if (distributionFormFile == null || distributionFormFile.getFileSize() == 0) {
+            ActionsHelper.addErrorToRequest(request, "distribution_file", new ActionMessage(
+                "error.com.cronos.onlinereview.actions.manageProject.Distributions.Distribution.Empty"));
+        }
+        
+        if (ActionsHelper.isErrorsPresent(request)) {
+            initProjectManagementConsole(request, project);
+            return mapping.getInputForward();
+        } 
+            
+        // Create the distribution file
+        if (!saveDistributionFileToServer(project, distributionFormFile, request)) {
+            initProjectManagementConsole(request, project);
+            return mapping.getInputForward();
+        }
+
+        return ActionsHelper.cloneForwardAndAppendToPath(mapping
+            .findForward(SUCCESS_FORWARD_NAME), "&pid=" + project.getId());
     }
 
-    // private void uploadDistributionFileToServer(Project project, File distributionFile) {
-    //
-    // ComponentManager componentManager = ServiceLocator.getInstance().getComponentManager();
-    //
-    // String name;
-    //        
-    // if (project.getProjectCategory().getId() == 1) {
-    // // Design
-    // name = "Design Distribution";
-    // } else {
-    // name = "Development Distribution";
-    // }
-    //        
-    // // Add document to component
-    // com.topcoder.dde.catalog.Document document = new com.topcoder.dde.catalog.Document(name, url, 6);
-    // componentManager.addDocument(document);
-    // }
-
-    private void uploadDistributionFileToServer(Project project, FormFile distributionFormFile,
+    /**
+     * 
+     * @param project
+     * @param distributionFormFile
+     * @param request
+     * @return
+     * @throws Exception
+     * @since 1.1
+     */
+    private boolean saveDistributionFileToServer(Project project, FormFile distributionFormFile,
         HttpServletRequest request) throws Exception {
 
-        Resource resource = (Resource) request.getAttribute("global_resource");
-        ProjectCategory projectCategory = project.getProjectCategory();
-
-        long documentCode = (projectCategory.getId() == 1) ? DESIGN_DISTRIBUTION_DOC_TYPE : 
-            DEVELOPMENT_DISTRIBUTION_DOC_TYPE;
+        long componentId = getProjectLongValue(project, "Component ID");
+        long versionId = getProjectLongValue(project, "Version ID");
         
-        String documentType = projectCategory.getName() + " Distribution";
+        ComponentManager componentManager = ServiceLocator.getInstance().getComponentManager(componentId, versionId);
 
-        StrutsRequestParser parser = new StrutsRequestParser();
-        parser.AddFile(distributionFormFile);
-
-        FileUpload fileUpload = ActionsHelper.createFileUploadManager(request);
-        FileUploadResult uploadResult = fileUpload.uploadFiles(request, parser);
+        String rootDir = ConfigHelper.getCatalogOutputDir() + File.separator;
+        String dir = "" + componentId + File.separator + versionId + File.separator;
         
-        UploadedFile uploadedFile = uploadResult.getUploadedFile("file");
+        File dirFile = new File(rootDir + dir);
         
-        // Obtain an instance of Upload Manager
-        UploadManager upMgr = ActionsHelper.createUploadManager(request);
-        UploadStatus[] allUploadStatuses = upMgr.getAllUploadStatuses();
-        UploadType[] allUploadTypes = upMgr.getAllUploadTypes();
-        
-        Filter projectFilter = UploadFilterBuilder.createProjectIdFilter(project.getId());
-        Filter typeFilter = UploadFilterBuilder.createUploadTypeIdFilter(
-                ActionsHelper.findUploadTypeByName(allUploadTypes, documentType).getId());
-        Filter combinedFilter = new AndFilter(
-                Arrays.asList(new Filter[] { projectFilter, typeFilter }));
-
-        Upload[] uploads = upMgr.searchUploads(combinedFilter);
-
-        for (Upload oldUpload : uploads) {
-            oldUpload.setUploadStatus(ActionsHelper.findUploadStatusByName(allUploadStatuses, "Deleted"));
-            upMgr.updateUpload(oldUpload, Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
+        // Create the directories if they do not already exist.
+        if (!dirFile.exists() && !dirFile.mkdirs()) {
+            ActionsHelper.addErrorToRequest(request, new ActionMessage(
+                "error.com.cronos.onlinereview.actions.manageProject.Distributions.Catalog.OutputDir"));
+            return false;
         }
         
-        Upload upload = new Upload();
+        String url = dir + distributionFormFile.getFileName();
 
-        upload.setProject(project.getId());
-        upload.setOwner(resource.getId());
-        upload.setUploadStatus(ActionsHelper.findUploadStatusByName(allUploadStatuses, "Active"));
-        upload.setUploadType(ActionsHelper.findUploadTypeByName(allUploadTypes, documentType));
-        upload.setParameter(uploadedFile.getFileId());
+        // Copy uploaded file to catalog folder
+        OutputStream out = new FileOutputStream(rootDir + url);
+        
+        copyStream(distributionFormFile.getInputStream(), out);
+        
+        long documentType;
+        String documentName;
+        
+        // project is either Design or Development
+        if (project.getProjectCategory().getId() == DESIGN_PROJECT_ID) {
+            documentType = DESIGN_DISTRIBUTION_DOC_TYPE_ID;
+            documentName = DESIGN_DISTRIBUTION_DOC_TYPE;
+            
+        } else {
+            documentType = DEVELOPMENT_DISTRIBUTION_DOC_TYPE_ID;
+            documentName = DEVELOPMENT_DISTRIBUTION_DOC_TYPE;
+        }
 
-        // Get the name (id) of the user performing the operations
-        String operator = Long.toString(AuthorizationHelper.getLoggedInUserId(request));
-        upMgr.createUpload(upload, operator);
-        
-        
         // Add document to component
-        // com.topcoder.dde.catalog.Document document = new com.topcoder.dde.catalog.Document(documentType, url,
-        // documentCode);
-        // componentManager.addDocument(document);
+        com.topcoder.dde.catalog.Document document = new com.topcoder.dde.catalog.Document(documentName, url,
+            documentType);
+        componentManager.addDocument(document);
+        
+        return true;
     }
 
+    /**
+     * Return project property long value.
+     * 
+     * @param project the project object
+     * @param name the property name
+     * @return the long value, 0 if it does not exist
+     * @since 1.1
+     */
+    private static long getProjectLongValue(Project project, String name) {
+        Object obj = project.getProperty(name);
+        if (obj == null) {
+            return 0;
+        } else {
+            return Long.parseLong(obj.toString());
+        }
+    }
+    
     private void writeDistributionFile(HttpServletResponse response, File distributionFile) throws IOException {
         
         InputStream in = new FileInputStream(distributionFile);
@@ -441,56 +467,24 @@ public class ProjectManagementConsoleActions extends DispatchAction {
 
         response.flushBuffer();
 
-        OutputStream out = null;
-
-        try {
-            out = response.getOutputStream();
-            byte[] buffer = new byte[65536];
-
-            for (;;) {
-                int numOfBytesRead = in.read(buffer);
-                if (numOfBytesRead == -1) {
-                    break;
-                }
-                out.write(buffer, 0, numOfBytesRead);
-            }
-        } finally {
-            try {
-                in.close();
-            } catch (IOException ex) {
-                // ignore
-            }
-            if (out != null) {
-                try {
-                    out.close();
-                } catch (IOException ex) {
-                    // ignore
-                }
-            }
-        }
+        copyStream(in, response.getOutputStream());
     }
 
     /**
-     * Creates the distribution file.
+     * <p>
+     * Creates the distribution file using the distribution tool component.
+     * </p>
      * 
      * @param project the current project.
      * @param lazyForm provides the form parameters mapped to specified request.
      * @param request an <code>HttpServletRequest</code> representing incoming request from the client.
-     * @return the distribution file.
+     * @return the distribution file (or null if unable to create the output file or find the script to use).
      * @throws IOException if any error occurs while copying uploaded files.
+     * @since 1.1
      */
     private File createDistributionFile(Project project, LazyValidatorForm lazyForm, HttpServletRequest request)
         throws IOException {
 
-        // Create an instance of DistributionTool using the configuration file and namespace
-        DistributionTool distributionTool = new DistributionTool();
-
-        // Create Java design distribution for Test Component 1.1
-        Map<String, String> parameters = new HashMap<String, String>();
-        
-        String version = (String) project.getProperty("Project Version");
-        String projectName = (String) project.getProperty("Project Name");
-        String packageName = ((String) lazyForm.get("distribution_package_name")).trim();
         String outputDir = getOutputDir(project);
         
         if (outputDir == null) {
@@ -501,23 +495,34 @@ public class ProjectManagementConsoleActions extends DispatchAction {
         }
         
         File outputDirFile = new File(outputDir);
+
+        // Create an instance of DistributionTool using the configuration file and namespace
+        DistributionTool distributionTool = new DistributionTool();
+
+        // Create Java design distribution
+        Map<String, String> parameters = new HashMap<String, String>();
         
+        String version = (String) project.getProperty("Project Version");
+        String projectName = (String) project.getProperty("Project Name");
+        String packageName = ((String) lazyForm.get("distribution_package_name")).trim();
+
         parameters.put(DistributionTool.VERSION_PARAM_NAME, version.trim());
         parameters.put(DistributionTool.COMPONENT_NAME_PARAM_NAME, projectName);
         parameters.put(DistributionTool.PACKAGE_NAME_PARAM_NAME, packageName);
         parameters.put("output_dir", outputDir);
 
-        // Requirements Specification
+        // Requirements Specification (validate already to be not null);
         FormFile rsFormFile = (FormFile) lazyForm.get("distribution_rs");
-        File rsFile = createTempFile(project, outputDir, rsFormFile);
+        File rsFile = createTempFile(outputDir, rsFormFile);
         
         parameters.put("rs", rsFile.getAbsolutePath());
         
+        // Add additional documents
         int j = 1;
         for (int i = 1; i <= 3; ++i) {
             FormFile additionalFormFile = (FormFile) lazyForm.get("distribution_additional" + i);
             if (additionalFormFile != null && additionalFormFile.getFileSize() > 0) {
-                File additionalFile = createTempFile(project, outputDir, additionalFormFile);
+                File additionalFile = createTempFile(outputDir, additionalFormFile);
 
                 parameters.put("additional_doc" + j, additionalFile.getAbsolutePath());
                 ++j;
@@ -538,13 +543,24 @@ public class ProjectManagementConsoleActions extends DispatchAction {
         return outputDirFile;
     }
 
+    /**
+     * <p>
+     * Returns the generate distribution file. Looks for the file in the output directory. A safe process will leave a
+     * single file in there. If more than one is found, return the file with the latest modified date (since the file
+     * will be the last one to be generated).
+     * </p>
+     * 
+     * @param outputDirFile the output distribution directory.
+     * @return the distribution file.
+     * @since 1.1
+     */
     private File getDistributionFile(File outputDirFile) {
         File distFile = null;
         long lastModified = Long.MIN_VALUE;
 
         // Should be a single file only, but there might a problem deleting files, so, to be safe,
         // check for the latest file - which should be the distribution file
-        File[] files = outputDirFile.listFiles(); 
+        File[] files = outputDirFile.listFiles();
         for (File file : files) {
             if (file.isFile()) {
                 if (file.lastModified() > lastModified) {
@@ -553,15 +569,23 @@ public class ProjectManagementConsoleActions extends DispatchAction {
                 }
             }
         }
-        
+
         return distFile;
     }
 
-    private void cleanDistToolTempFiles(File outputDirFile) {
+    /**
+     * <p>
+     * Deletes a directory. Traverse deleting all files and sub directories.
+     * </p>
+     * 
+     * @param dirFile the directory to clear and delete.
+     * @since 1.1
+     */
+    private void cleanupDirectory(File dirFile) {
 
-        for (File file : outputDirFile.listFiles()) {
+        for (File file : dirFile.listFiles()) {
             if (file.isDirectory()) {
-                cleanDistToolTempFiles(file);
+                cleanupDirectory(file);
             }
             
             if (file.isFile()) {
@@ -569,7 +593,7 @@ public class ProjectManagementConsoleActions extends DispatchAction {
             }
         }
 
-        outputDirFile.delete();
+        dirFile.delete();
     }
 
     /**
@@ -577,21 +601,35 @@ public class ProjectManagementConsoleActions extends DispatchAction {
      * Saves the uploaded file to disk and returns its absolute path name.
      * </p>
      * 
-     * @param project the current project.
      * @param outputdir the directory to save the file.
      * @param formFile the uploaded file.
      * @return the absolute path of the temporary file.
      * @throws IOException if any error occurs while uploading a file.
+     * @since 1.1
      */
-    private File createTempFile(Project project, String outputdir, FormFile formFile)
+    private File createTempFile(String outputdir, FormFile formFile)
         throws IOException {
 
         File output = new File(outputdir + File.separator + formFile.getFileName());
         FileOutputStream out = new FileOutputStream(output);
         InputStream in = formFile.getInputStream();
         
+        copyStream(in, out);
+        
+        return output;
+    }
+
+    /**
+     * <p>
+     * Copies data from an InputStream to an OutputStream.
+     * </p>
+     * 
+     * @param in the input stream.
+     * @param out the output stream.
+     * @throws IOException if any exception occurs.
+     */
+    private void copyStream(InputStream in, OutputStream out) throws IOException {
         try {
-            out = new FileOutputStream(output);
             byte[] buffer = new byte[65536];
 
             for (;;) {
@@ -616,14 +654,17 @@ public class ProjectManagementConsoleActions extends DispatchAction {
                 }
             }
         }
-        return output;
     }
-
+    
     /**
-     * Creates the output directory based on the project ID.
+     * <p>
+     * Creates the output directory based on the project ID. This directory will be used to generated the distribution
+     * file.
+     * </p>
      * 
      * @param project the current project.
      * @return the output directory based on the project ID (null if unable to create the directories).
+     * @since 1.1
      */
     private String getOutputDir(Project project) {
         
@@ -738,24 +779,27 @@ public class ProjectManagementConsoleActions extends DispatchAction {
     }
 
     /**
-     * <p>Validates the specified request which is expected to be a create distribution request.
+     * <p>
+     * Validates the specified request which is expected to be a create design distribution request.
      * </p>
-     *
-     * <p>Verifies that the package name and the RS are provided. RS should be PDF/DOC/RTF.</p>
+     * <p>
+     * Verifies that the package name and the RS are provided. RS should be PDF/DOC/RTF.
+     * </p>
      *
      * @param project the current project.
      * @param lazyForm an <code>LazyValidatorForm</code> providing parameters mapped to this request.
      * @param request an <code>HttpServletRequest</code> representing incoming request from the client.
+     * @since 1.1
      */
     private void validateCreateDistributionForm(Project project, LazyValidatorForm lazyForm, HttpServletRequest request) {
         
         // Validate project type - must be a Design
-        if (project.getProjectCategory().getId() != 1) {
+        if (project.getProjectCategory().getId() != DESIGN_PROJECT_ID) {
             ActionsHelper.addErrorToRequest(request, new ActionMessage(
                 "error.com.cronos.onlinereview.actions.manageProject.Distributions.ProjectCategory"));
         }
         
-        // Determines the script that will be used (if other, no package is needed)
+        // Determines the script that will be used (if other is used, package is not mandatory)
         String rootCatalogID = (String) project.getProperty("Root Catalog ID");
         if (!DEFAULT_DISTRIBUTION_SCRIPT.equals(ConfigHelper.getDistributionScript(rootCatalogID))) {
             String packageName = (String) lazyForm.get("distribution_package_name");
@@ -763,8 +807,9 @@ public class ProjectManagementConsoleActions extends DispatchAction {
             if (packageName == null || packageName.trim().length() == 0) {
                 ActionsHelper.addErrorToRequest(request, "distribution_package_name", new ActionMessage(
                     "error.com.cronos.onlinereview.actions.manageProject.Distributions.PackageName.Empty"));
+                
             } else if (!PACKAGE_PATTERN.matcher(packageName).matches()) {
-             // Validate it is a valid package
+                // Validate it is a valid package
                 ActionsHelper.addErrorToRequest(request, "distribution_package_name", new ActionMessage(
                     "error.com.cronos.onlinereview.actions.manageProject.Distributions.PackageName.Invalid"));
             }
@@ -775,10 +820,10 @@ public class ProjectManagementConsoleActions extends DispatchAction {
         if (distributionRSFile == null || distributionRSFile.getFileSize() == 0) {
             ActionsHelper.addErrorToRequest(request, "distribution_rs", new ActionMessage(
                 "error.com.cronos.onlinereview.actions.manageProject.Distributions.RS.Empty"));
+            
         } else {
-
             String lcFileName = distributionRSFile.getFileName().toLowerCase();
-            if (!(lcFileName.endsWith("rtf") || lcFileName.endsWith("doc") || lcFileName.endsWith("pdf"))) {
+            if (!ALLOWED_RS_DOC_TYPES.contains(lcFileName)) {
                 ActionsHelper.addErrorToRequest(request, "distribution_rs", new ActionMessage(
                     "error.com.cronos.onlinereview.actions.manageProject.Distributions.RS.Invalid"));
             }
@@ -787,12 +832,23 @@ public class ProjectManagementConsoleActions extends DispatchAction {
         boolean uploadToServer = getBooleanFromForm(lazyForm, "upload_to_server");
         boolean returnDistribution = getBooleanFromForm(lazyForm, "return_distribution");
         
+        // Must select at least one of these options
         if (!uploadToServer && !returnDistribution) {
             ActionsHelper.addErrorToRequest(request, "upload_to_server", new ActionMessage(
                 "error.com.cronos.onlinereview.actions.manageProject.Distributions.Upload.Unchecked"));
         }
     }
     
+    /**
+     * <p>
+     * Read a boolean value from the form.
+     * </p>
+     * 
+     * @param lazyForm the form to read the value from.
+     * @param attribute the name of the attribute of the form (which must be of type Boolean).
+     * @return <code>true</code> if the form value is Boolean.TRUE, <code>false</code> if it is Boolean.FALSE or null.
+     * @since 1.1
+     */
     private static boolean getBooleanFromForm(LazyValidatorForm lazyForm, String attribute) {
         Boolean value = (Boolean) lazyForm.get(attribute);
         return (value == null) ? false : value.booleanValue();
@@ -1473,6 +1529,4 @@ public class ProjectManagementConsoleActions extends DispatchAction {
             throw new BaseException(e);
         }
     }
-
-
 }

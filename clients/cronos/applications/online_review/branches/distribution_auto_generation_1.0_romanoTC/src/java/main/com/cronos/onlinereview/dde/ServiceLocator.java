@@ -12,6 +12,7 @@ import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.rmi.PortableRemoteObject;
 
+import com.cronos.onlinereview.actions.ConfigHelper;
 import com.topcoder.dde.catalog.ComponentManager;
 import com.topcoder.dde.catalog.ComponentManagerHome;
 
@@ -19,7 +20,7 @@ import com.topcoder.dde.catalog.ComponentManagerHome;
  * ServiceLocator for catalog ComponentManager.
  * 
  * @author TCSASSEMBLER
- * @version 1.0
+ * @version 1.0 (Distribution Auto Generation Assembly v1.0)
  */
 public class ServiceLocator {
     /**
@@ -49,7 +50,7 @@ public class ServiceLocator {
 
             Hashtable<String, String> props = new Hashtable<String, String>();
             props.put(Context.INITIAL_CONTEXT_FACTORY, "org.jnp.interfaces.NamingContextFactory");
-            props.put(Context.PROVIDER_URL, "jnp://localhost:1199"); // TODO
+            props.put(Context.PROVIDER_URL, ConfigHelper.getCatalogJndiURL());
             props.put(Context.URL_PKG_PREFIXES, "org.jboss.naming:org.jnp.interfaces");
             context = new InitialContext(props);
         }

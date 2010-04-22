@@ -1,11 +1,14 @@
 <?xml version="1.0" ?>
 <!DOCTYPE CMConfig [
        <!ENTITY localFileUploadDir "/home/tcs/downloads">
+       <!ENTITY catalogOutputDir "/home/tcs/temp_files">
+       <!ENTITY distributionToolOutputDir "/home/tcs/temp_files">
        <!ENTITY phasesEmailTemplate "/home/tcs/onlinereview/templates/email_template.txt">
        <!ENTITY winnersEmailTemplate "/home/tcs/onlinereview/templates/winners_email_template.txt">
        <!ENTITY timelineTemplateDir "/home/tcs/onlinereview/templates">
        <!ENTITY contactManagersTemplate "/home/tcs/onlinereview/templates/contact_manager_template.txt">
        <!ENTITY pactJNDIAddress "jnp://localhost:1199">
+       <!ENTITY catalogJNDIAddress "jnp://localhost:1199">
 ]>
 <CMConfig>
 <!-- [OR-584] don't need this anymore
@@ -2878,7 +2881,7 @@
             <Value>&pactJNDIAddress;</Value>
         </Property>
     </Config>
-
+    
     <!--
         =====  Configuration for the Online Review Application itself  =====
     -->
@@ -2929,13 +2932,18 @@
             <Value>48</Value>
         </Property>        
         <Property name="distribution_tool_output_dir">
-            <Value>/home/tcs/temp_files</Value>
+            <Value>&distributionToolOutputDir;</Value>
         </Property>        
         <!-- Configuration for Catalog Services -->
+        <Property name="catalog_output_dir">
+            <Value>&catalogOutputDir;</Value>
+        </Property>        
         <Property name="catalog_jndi_address">
-            <Value>&pactJNDIAddress;</Value>
+            <Value>&catalogJNDIAddress;</Value>
         </Property>
         <Property name="RootCatalogs">
+            <!-- 'DistributionScript' property is optional, if not defined 'other' will be used -->
+
             <Property name="Java">
                 <Property name="id">
                     <Value>5801776</Value>
@@ -2949,7 +2957,7 @@
                 <Property name="Custom">
                     <Value>False</Value>
                 </Property>
-                <Property name="DistributionScript">
+                <Property name="DistributionScript"> 
                     <Value>java</Value>
                 </Property>
             </Property>
