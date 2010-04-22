@@ -11,6 +11,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.naming.InitialContext;
+import javax.naming.NameClassPair;
+import javax.naming.NamingEnumeration;
+
 import com.topcoder.util.config.ConfigManager;
 import com.topcoder.util.config.Property;
 import com.topcoder.util.config.UnknownNamespaceException;
@@ -1906,6 +1910,34 @@ public class ConfigHelper {
      * @return the distribution tool output dir.
      */
     public static String getCatalogJndiURL() {
+        
+        try {
+            InitialContext ctx = new InitialContext();
+
+            NamingEnumeration<NameClassPair> childrenOfNaming = ctx.list("");
+
+            while (childrenOfNaming.hasMoreElements()) {
+                NameClassPair ncp = childrenOfNaming.nextElement();
+
+                System.out.println(ncp.getNameInNamespace() + " " + ncp.getName() + " " + ncp.getClassName());
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+
+        try {
+            InitialContext ctx = new InitialContext();
+            NamingEnumeration<NameClassPair> childrenOfNaming = ctx.list("java:comp/env");
+
+            while (childrenOfNaming.hasMoreElements()) {
+                NameClassPair ncp = childrenOfNaming.nextElement();
+
+                System.out.println(ncp.getNameInNamespace() + " " + ncp.getName() + " " + ncp.getClassName());
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+
         return catalogJndiURL;
     }
 }
