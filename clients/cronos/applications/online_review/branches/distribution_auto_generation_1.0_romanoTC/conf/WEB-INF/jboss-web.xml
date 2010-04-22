@@ -5,7 +5,7 @@
         <jndi-name>com.topcoder.security.login.LoginRemoteHome</jndi-name>
     </ejb-ref>
     <ejb-ref>
-        <ejb-ref-name>ComponentManagerEJB</ejb-ref-name>
+        <ejb-ref-name>ejb/ComponentManagerEJB</ejb-ref-name>
         <jndi-name>com.topcoder.dde.catalog.ComponentManagerHome</jndi-name>
     </ejb-ref>
 </jboss-web>
