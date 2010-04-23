@@ -383,10 +383,13 @@ public class ProjectManagementConsoleActions extends DispatchAction {
         long versionId = getProjectLongValue(project, "Version ID");
         
         ComponentManager componentManager = getComponentManager(componentId, versionId);
-
-        String rootDir = ConfigHelper.getCatalogOutputDir() + File.separator;
-        String dir = "" + componentId + File.separator + versionId + File.separator;
         
+        String rootDir = ConfigHelper.getCatalogOutputDir() + File.separator;
+        String dir = "" + componentId + File.separator + componentManager.getVersionInfo().getVersionId()
+            + File.separator;
+        
+        System.out.println(dir);
+
         File dirFile = new File(rootDir + dir);
         
         // Create the directories if they do not already exist.
