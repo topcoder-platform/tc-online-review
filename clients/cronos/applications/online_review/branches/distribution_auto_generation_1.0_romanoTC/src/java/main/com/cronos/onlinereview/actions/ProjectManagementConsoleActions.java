@@ -13,9 +13,11 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -42,6 +44,7 @@ import com.cronos.onlinereview.external.RetrievalException;
 import com.cronos.onlinereview.external.UserRetrieval;
 import com.topcoder.dde.catalog.ComponentManager;
 import com.topcoder.dde.catalog.ComponentManagerHome;
+import com.topcoder.dde.catalog.Document;
 import com.topcoder.management.phase.PhaseManager;
 import com.topcoder.management.phase.PhaseStatusEnum;
 import com.topcoder.management.project.Project;
@@ -73,8 +76,13 @@ import com.topcoder.web.ejb.user.UserTermsOfUseLocator;
  * <p>As of current version such requests may require adding new resources to designated projects, extend
  * <code>Registration</code> or <code>Submission</code> phases for projects.</p>
  *
- * @author isv
- * @version 1.1 (Distribution Auto Generation Assembly v1.0)
+ * <p>
+ * Version 1.0: Online Review Project Management Console assembly v1.0. <br>
+ * Version 1.1: Distribution Auto Generation Assembly v1.0
+ * </p>
+ *
+ * @author isv, TCSASSEMBLY
+ * @version 1.1
  */
 public class ProjectManagementConsoleActions extends DispatchAction {
 
@@ -110,39 +118,53 @@ public class ProjectManagementConsoleActions extends DispatchAction {
 
     /**
      * This is the distribution tool script to use when no script is defined.
+     * @since 1.1
      */
     private static final String DEFAULT_DISTRIBUTION_SCRIPT = "other";
 
     /**
      * The id of the design distribution document type.
+     * @since 1.1
      */
     private static final long DESIGN_DISTRIBUTION_DOC_TYPE_ID = 25;
-    
+
     /**
      * The id of the development distribution document type.
+     * @since 1.1
      */
     private static final long DEVELOPMENT_DISTRIBUTION_DOC_TYPE_ID = 26;
-    
+
     /**
      * The design distribution document type.
+     * @since 1.1
      */
     private static final String DESIGN_DISTRIBUTION_DOC_TYPE = "Design Distribution";
-    
+
     /**
      * The development distribution document type.
+     * @since 1.1
      */
     private static final String DEVELOPMENT_DISTRIBUTION_DOC_TYPE = "Development Distribution";
 
     /**
      * The design project ID.
+     * @since 1.1
      */
     private static final long DESIGN_PROJECT_ID = 1;
 
     /**
      * <p>Valid package names.</p>
+     * @since 1.1
      */
     private static final Pattern PACKAGE_PATTERN = Pattern
         .compile("\\s*(([a-zA-Z])[a-zA-Z0-9_]*)(\\.([a-zA-Z])[a-zA-Z0-9_]*)*\\s*");
+
+    /**
+     * <p>Valid version numbers.</p>
+     * @since 1.1
+     */
+    private static final Pattern VERSION_PATTERN = Pattern
+        .compile("([1-9][0-9]*)(\\.[0-9]+)");
 
     /**
      * <p>Constructs new <code>ProjectManagementConsoleActions</code> instance. This implementation does nothing.</p>
@@ -157,7 +179,7 @@ public class ProjectManagementConsoleActions extends DispatchAction {
      * <p>Verifies that current user is granted access to this functionality and is granted a permission to access the
      * requested project details.</p>
      *
-     * @param mapping an <code>ActionMapping</code> used for mapping the specified request to this action. 
+     * @param mapping an <code>ActionMapping</code> used for mapping the specified request to this action.
      * @param form an <code>ActionForm</code> providing the form parameters mapped to specified request.
      * @param request an <code>HttpServletRequest</code> representing incoming request from the client.
      * @param response an <code>HttpServletResponse</code> representing response outgoing to client.
@@ -185,16 +207,16 @@ public class ProjectManagementConsoleActions extends DispatchAction {
             // affecting the Extend Registration/Submission Phase functionality
             Project project = verification.getProject();
             initProjectManagementConsole(request, project);
-            
+
             return mapping.findForward(SUCCESS_FORWARD_NAME);
         }
     }
-    
+
     /**
      * <p>
      * Create a project design distribution file, upload it to the server or return it to the user (or both).
      * </p>
-     * 
+     *
      * @param mapping an <code>ActionMapping</code> used for mapping the specified request to this action.
      * @param form an <code>ActionForm</code> providing the form parameters mapped to specified request.
      * @param request an <code>HttpServletRequest</code> representing incoming request from the client.
@@ -205,13 +227,13 @@ public class ProjectManagementConsoleActions extends DispatchAction {
      */
     public ActionForward manageDistribution(ActionMapping mapping, ActionForm form, HttpServletRequest request,
         HttpServletResponse response) throws Exception {
-        
+
         LoggingHelper.logAction(request);
 
-        // set the active tab index to able to re-render the page with the correct selected tab in 
+        // set the active tab index to able to re-render the page with the correct selected tab in
         // case an error occurs
         request.setAttribute("activeTabIdx", new Integer(2));
-        
+
         // Gather the roles the user has for current request
         AuthorizationHelper.gatherUserRoles(request);
 
@@ -221,36 +243,36 @@ public class ProjectManagementConsoleActions extends DispatchAction {
         CorrectnessCheckResult verification
             = ActionsHelper.checkForCorrectProjectId(mapping, getResources(request), request,
                                                      PROJECT_MANAGEMENT_PERM_NAME, false);
-        
+
         if (!verification.isSuccessful()) {
             return verification.getForward();
-        } 
+        }
 
         // Get the current project
         final Project project = verification.getProject();
-        
+
         // Check if there were any validation errors identified and return appropriate forward
         if (ActionsHelper.isErrorsPresent(request)) {
             initProjectManagementConsole(request, project);
             return mapping.getInputForward();
-        } 
+        }
 
         LazyValidatorForm lazyForm = (LazyValidatorForm) form;
-        
+
         // Validate form data
         validateCreateDistributionForm(project, lazyForm, request);
-        
+
         if (ActionsHelper.isErrorsPresent(request)) {
             initProjectManagementConsole(request, project);
             return mapping.getInputForward();
-        } 
-            
+        }
+
         // Creates the distribution file using the distribution tool component
         File outputDirFile = createDistributionFile(project, lazyForm, request);
 
         try {
             File distributionFile = null;
-            
+
             if (outputDirFile != null) {
                 // Returns the distribution file from the output dir
                 distributionFile = getDistributionFile(outputDirFile);
@@ -272,13 +294,19 @@ public class ProjectManagementConsoleActions extends DispatchAction {
             boolean returnDistribution = getBooleanFromForm(lazyForm, "return_distribution");
 
             if (uploadToServer) {
-                // TODO need instructions to do this
+                // Create the distribution file
+                if (!saveDistributionFileToCatalog(project, distributionFile.getName(), new FileInputStream(
+                    distributionFile), request)) {
+
+                    initProjectManagementConsole(request, project);
+                    return mapping.getInputForward();
+                }
             }
 
             if (returnDistribution) {
-                
+
                 // Return the distribution tool - write it to the response object
-                writeDistributionFile(response, distributionFile);
+                writeDistributionFileToResponse(response, distributionFile);
                 return null;
 
             } else {
@@ -292,12 +320,12 @@ public class ProjectManagementConsoleActions extends DispatchAction {
             }
         }
     }
-    
+
     /**
      * <p>
      * Uploads a project distribution file (design or development).
      * </p>
-     * 
+     *
      * @param mapping an <code>ActionMapping</code> used for mapping the specified request to this action.
      * @param form an <code>ActionForm</code> providing the form parameters mapped to specified request.
      * @param request an <code>HttpServletRequest</code> representing incoming request from the client.
@@ -308,13 +336,13 @@ public class ProjectManagementConsoleActions extends DispatchAction {
      */
     public ActionForward uploadDistribution(ActionMapping mapping, ActionForm form, HttpServletRequest request,
         HttpServletResponse response) throws Exception {
-        
+
         LoggingHelper.logAction(request);
 
-        // set the active tab index to able to re-render the page with the correct selected tab in 
+        // set the active tab index to able to re-render the page with the correct selected tab in
         // case an error occurs
         request.setAttribute("activeTabIdx", new Integer(2));
-        
+
         // Gather the roles the user has for current request
         AuthorizationHelper.gatherUserRoles(request);
 
@@ -324,13 +352,13 @@ public class ProjectManagementConsoleActions extends DispatchAction {
         CorrectnessCheckResult verification
             = ActionsHelper.checkForCorrectProjectId(mapping, getResources(request), request,
                                                      PROJECT_MANAGEMENT_PERM_NAME, false);
-        
+
         if (!verification.isSuccessful()) {
             return verification.getForward();
-        } 
-        
+        }
+
         final Project project = verification.getProject();
-        
+
         // Validate project type - must be a Design or Development
         if ((project.getProjectCategory().getId() != DESIGN_PROJECT_ID) &&
             (project.getProjectCategory().getId() != DEVELOPMENT_DISTRIBUTION_DOC_TYPE_ID)) {
@@ -342,7 +370,7 @@ public class ProjectManagementConsoleActions extends DispatchAction {
         if (ActionsHelper.isErrorsPresent(request)) {
             initProjectManagementConsole(request, project);
             return mapping.getInputForward();
-        } 
+        }
 
         LazyValidatorForm lazyForm = (LazyValidatorForm) form;
         FormFile distributionFormFile = (FormFile) lazyForm.get("distribution_file");
@@ -351,14 +379,16 @@ public class ProjectManagementConsoleActions extends DispatchAction {
             ActionsHelper.addErrorToRequest(request, "distribution_file", new ActionMessage(
                 "error.com.cronos.onlinereview.actions.manageProject.Distributions.Distribution.Empty"));
         }
-        
+
         if (ActionsHelper.isErrorsPresent(request)) {
             initProjectManagementConsole(request, project);
             return mapping.getInputForward();
-        } 
-            
+        }
+
         // Create the distribution file
-        if (!saveDistributionFileToServer(project, distributionFormFile, request)) {
+        if (!saveDistributionFileToCatalog(project, distributionFormFile.getFileName(), distributionFormFile
+            .getInputStream(), request)) {
+
             initProjectManagementConsole(request, project);
             return mapping.getInputForward();
         }
@@ -368,68 +398,121 @@ public class ProjectManagementConsoleActions extends DispatchAction {
     }
 
     /**
+     * <p>
+     * Saves (or updates) the distribution file to the component catalog.
+     * </p>
      * 
-     * @param project
-     * @param distributionFormFile
-     * @param request
-     * @return
-     * @throws Exception
+     * @param project the current project used to get component information.
+     * @param fileName the distribution file name.
+     * @param in the input stream of the distribution file (may be the upload stream or a file stream).
+     * @param request object used to add error information in case something goes wrong.
+     * @return <code>true</code> if the file was save properly, <code>false</code> otherwise
+     * @throws Exception if any error occurs while uploading the file.
      * @since 1.1
      */
-    private boolean saveDistributionFileToServer(Project project, FormFile distributionFormFile,
+    private boolean saveDistributionFileToCatalog(Project project, String fileName, InputStream in,
         HttpServletRequest request) throws Exception {
 
-        long componentId = getProjectLongValue(project, "Component ID");
-        long versionId = getProjectLongValue(project, "Version ID");
-        
-        ComponentManager componentManager = getComponentManager(componentId, versionId);
-        
-        String rootDir = ConfigHelper.getCatalogOutputDir() + File.separator;
-        String dir = "" + componentId + File.separator + componentManager.getVersionInfo().getVersionId()
-            + File.separator;
-        
-        System.out.println(dir);
+        ComponentManager componentManager = null;
+        String rootDir = null;
+        String dir = null;
 
-        File dirFile = new File(rootDir + dir);
-        
-        // Create the directories if they do not already exist.
-        if (!dirFile.exists() && !dirFile.mkdirs()) {
-            ActionsHelper.addErrorToRequest(request, new ActionMessage(
-                "error.com.cronos.onlinereview.actions.manageProject.Distributions.Catalog.OutputDir"));
-            return false;
+        try {
+            long componentId = getProjectLongValue(project, "Component ID");
+            long versionId = getProjectLongValue(project, "Version ID");
+
+            componentManager = getComponentManager(componentId, versionId);
+
+            rootDir = ConfigHelper.getCatalogOutputDir() + File.separator;
+            dir = "" + componentId + File.separator + componentManager.getVersionInfo().getVersionId()
+                + File.separator;
+
+            File dirFile = new File(rootDir + dir);
+
+            // Create the directories if they do not already exist.
+            if (!dirFile.exists() && !dirFile.mkdirs()) {
+                ActionsHelper.addErrorToRequest(request, new ActionMessage(
+                    "error.com.cronos.onlinereview.actions.manageProject.Distributions.Catalog.OutputDir"));
+                return false;
+            }
+        } finally {
+            // this point, if an error occurs, close the input stream
+            try {
+                in.close();
+            } catch (IOException ex) {
+                // Ignore
+            }
         }
-        
-        String url = dir + distributionFormFile.getFileName();
 
-        // Copy uploaded file to catalog folder
-        OutputStream out = new FileOutputStream(rootDir + url);
-        
-        copyStream(distributionFormFile.getInputStream(), out);
-        
+        String url = dir + fileName;
+
+        // Copy distribution file to catalog folder
+        copyStream(in, new FileOutputStream(rootDir + url));
+
         long documentType;
         String documentName;
-        
+
         // project is either Design or Development
         if (project.getProjectCategory().getId() == DESIGN_PROJECT_ID) {
             documentType = DESIGN_DISTRIBUTION_DOC_TYPE_ID;
             documentName = DESIGN_DISTRIBUTION_DOC_TYPE;
-            
+
         } else {
             documentType = DEVELOPMENT_DISTRIBUTION_DOC_TYPE_ID;
             documentName = DEVELOPMENT_DISTRIBUTION_DOC_TYPE;
         }
 
-        // Add document to component
-        com.topcoder.dde.catalog.Document document = new com.topcoder.dde.catalog.Document(documentName, url,
-            documentType);
-        componentManager.addDocument(document);
-        
+        Document document = getDocumentOfType(componentManager.getDocuments(), documentType);
+
+        if (document == null) {
+            // Add document to component
+            document = new Document(documentName, url, documentType);
+            componentManager.addDocument(document);
+        } else {
+            // Update document
+            document.setURL(url);
+            componentManager.updateDocument(document);
+        }
+
         return true;
     }
-    
+
+    /**
+     * Return the document with the associated document type;
+     *
+     * @param documents the list of component documents.
+     * @param documentType document type.
+     * @return the document with the given document type, or null if not found.
+     * @since 1.1
+     */
+    private Document getDocumentOfType(Collection<?> documents, long documentType) {
+        for (Iterator<?> itr = documents.iterator(); itr.hasNext(); ) {
+            Document document = (Document) itr.next();
+            if (document.getType() == documentType) {
+                // Assume a single document of this type will exist
+                return document;
+            }
+        }
+        // Not found
+        return null;
+    }
+
+    /**
+     * <p>
+     * Returns the component manager EJB.
+     * </p>
+     *
+     * @param componentId the component ID used to create the ComponentManager remote object.
+     * @param versionId the component version ID used to create the ComponentManager remote object.
+     * @return the component manager EJB.
+     * @throws RemoteException if any error occurs while creating the remote object.
+     * @throws CreateException if any error occurs while creating the remote object.
+     * @throws NamingException if any error occurs looking up the home interface.
+     * @since 1.1
+     */
     private ComponentManager getComponentManager(long componentId, long versionId) throws RemoteException,
         CreateException, NamingException {
-        Context context = new InitialContext(); // TODO ApplicationServer.FORUMS_HOST_URL);
+        Context context = new InitialContext();
         ComponentManagerHome componentManagerHome = (ComponentManagerHome) context
             .lookup(ComponentManagerHome.EJB_REF_NAME);
         return componentManagerHome.create(componentId, versionId);
@@ -437,7 +520,7 @@ public class ProjectManagementConsoleActions extends DispatchAction {
 
     /**
      * Return project property long value.
-     * 
+     *
      * @param project the project object
      * @param name the property name
      * @return the long value, 0 if it does not exist
@@ -451,9 +534,19 @@ public class ProjectManagementConsoleActions extends DispatchAction {
             return Long.parseLong(obj.toString());
         }
     }
-    
-    private void writeDistributionFile(HttpServletResponse response, File distributionFile) throws IOException {
-        
+
+    /**
+     * <p>
+     * Writes the distribution file that was recently created to the HTTP response object.
+     * </p>
+     *
+     * @param response an <code>HttpServletResponse</code> representing response outgoing to client.
+     * @param distributionFile the distribution file.
+     * @throws IOException if any error occurs while reading from the distribution file or writing to the response.
+     * @since 1.1
+     */
+    private void writeDistributionFileToResponse(HttpServletResponse response, File distributionFile) throws IOException {
+
         InputStream in = new FileInputStream(distributionFile);
 
         response.setHeader("Content-Type", "application/octet-stream");
@@ -470,7 +563,7 @@ public class ProjectManagementConsoleActions extends DispatchAction {
      * <p>
      * Creates the distribution file using the distribution tool component.
      * </p>
-     * 
+     *
      * @param project the current project.
      * @param lazyForm provides the form parameters mapped to specified request.
      * @param request an <code>HttpServletRequest</code> representing incoming request from the client.
@@ -482,14 +575,14 @@ public class ProjectManagementConsoleActions extends DispatchAction {
         throws IOException {
 
         String outputDir = getOutputDir(project);
-        
+
         if (outputDir == null) {
             // Problem creating the output dir
             ActionsHelper.addErrorToRequest(request, new ActionMessage(
                 "error.com.cronos.onlinereview.actions.manageProject.Distributions.OutputDir"));
             return null;
         }
-        
+
         File outputDirFile = new File(outputDir);
 
         // Create an instance of DistributionTool using the configuration file and namespace
@@ -497,9 +590,9 @@ public class ProjectManagementConsoleActions extends DispatchAction {
 
         // Create Java design distribution
         Map<String, String> parameters = new HashMap<String, String>();
-        
-        String version = (String) project.getProperty("Project Version");
+
         String projectName = (String) project.getProperty("Project Name");
+        String version = (String) project.getProperty("Project Version");
         String packageName = ((String) lazyForm.get("distribution_package_name")).trim();
 
         parameters.put(DistributionTool.VERSION_PARAM_NAME, version.trim());
@@ -510,9 +603,9 @@ public class ProjectManagementConsoleActions extends DispatchAction {
         // Requirements Specification (validate already to be not null);
         FormFile rsFormFile = (FormFile) lazyForm.get("distribution_rs");
         File rsFile = createTempFile(outputDir, rsFormFile);
-        
+
         parameters.put("rs", rsFile.getAbsolutePath());
-        
+
         // Add additional documents
         int j = 1;
         for (int i = 1; i <= 3; ++i) {
@@ -532,10 +625,10 @@ public class ProjectManagementConsoleActions extends DispatchAction {
         } catch (DistributionToolException ex) {
             ActionsHelper.addErrorToRequest(request, new ActionMessage(
                 "error.com.cronos.onlinereview.actions.manageProject.Distributions.DistTool.Failure", ex.getMessage()));
-            
+
             return null;
         }
-        
+
         return outputDirFile;
     }
 
@@ -545,7 +638,7 @@ public class ProjectManagementConsoleActions extends DispatchAction {
      * single file in there. If more than one is found, return the file with the latest modified date (since the file
      * will be the last one to be generated).
      * </p>
-     * 
+     *
      * @param outputDirFile the output distribution directory.
      * @return the distribution file.
      * @since 1.1
@@ -573,7 +666,7 @@ public class ProjectManagementConsoleActions extends DispatchAction {
      * <p>
      * Deletes a directory. Traverse deleting all files and sub directories.
      * </p>
-     * 
+     *
      * @param dirFile the directory to clear and delete.
      * @since 1.1
      */
@@ -583,7 +676,7 @@ public class ProjectManagementConsoleActions extends DispatchAction {
             if (file.isDirectory()) {
                 cleanupDirectory(file);
             }
-            
+
             if (file.isFile()) {
                 file.delete();
             }
@@ -596,7 +689,7 @@ public class ProjectManagementConsoleActions extends DispatchAction {
      * <p>
      * Saves the uploaded file to disk and returns its absolute path name.
      * </p>
-     * 
+     *
      * @param outputdir the directory to save the file.
      * @param formFile the uploaded file.
      * @return the absolute path of the temporary file.
@@ -609,9 +702,9 @@ public class ProjectManagementConsoleActions extends DispatchAction {
         File output = new File(outputdir + File.separator + formFile.getFileName());
         FileOutputStream out = new FileOutputStream(output);
         InputStream in = formFile.getInputStream();
-        
+
         copyStream(in, out);
-        
+
         return output;
     }
 
@@ -619,10 +712,11 @@ public class ProjectManagementConsoleActions extends DispatchAction {
      * <p>
      * Copies data from an InputStream to an OutputStream.
      * </p>
-     * 
+     *
      * @param in the input stream.
      * @param out the output stream.
      * @throws IOException if any exception occurs.
+     * @since 1.1
      */
     private void copyStream(InputStream in, OutputStream out) throws IOException {
         try {
@@ -651,32 +745,32 @@ public class ProjectManagementConsoleActions extends DispatchAction {
             }
         }
     }
-    
+
     /**
      * <p>
      * Creates the output directory based on the project ID. This directory will be used to generated the distribution
      * file.
      * </p>
-     * 
+     *
      * @param project the current project.
      * @return the output directory based on the project ID (null if unable to create the directories).
      * @since 1.1
      */
     private String getOutputDir(Project project) {
-        
+
         String baseDir = ConfigHelper.getDistributionToolOutputDir() + File.separator;
         baseDir = baseDir + project.getId() + File.separator + System.currentTimeMillis();
-        
+
         File dir = new File(baseDir);
-        
+
         if (dir.exists()) {
             return null;
         }
-        
+
         if (!dir.mkdirs()) {
             return null;
         }
-        
+
         return baseDir;
     }
 
@@ -700,10 +794,10 @@ public class ProjectManagementConsoleActions extends DispatchAction {
         LoggingHelper.logAction(request);
 
         request.setAttribute("activeTabIdx", new Integer(2));
-        
+
         // Gather the roles the user has for current request
         AuthorizationHelper.gatherUserRoles(request);
-        
+
         // Check whether the user has the permission to perform this action. If not then redirect the request
         // to log-in page or report about the lack of permissions. Also check that current user is granted a
         // permission to access the details for requested project
@@ -746,7 +840,7 @@ public class ProjectManagementConsoleActions extends DispatchAction {
                                                             + registrationExtensionDays * DAY_DURATION_IN_MILLIS);
                 if (expectedRegistrationEndDate.after(expectedSubmissionPhaseEndDate)) {
                     ActionsHelper.addErrorToRequest(request, "registration_phase_extension",
-                        new ActionMessage("error.com.cronos.onlinereview.actions.manageProject." 
+                        new ActionMessage("error.com.cronos.onlinereview.actions.manageProject."
                                           + REGISTRATION_PHASE_NAME + ".AfterSubmission"));
                 }
             }
@@ -788,35 +882,44 @@ public class ProjectManagementConsoleActions extends DispatchAction {
      * @since 1.1
      */
     private void validateCreateDistributionForm(Project project, LazyValidatorForm lazyForm, HttpServletRequest request) {
-        
+
         // Validate project type - must be a Design
         if (project.getProjectCategory().getId() != DESIGN_PROJECT_ID) {
             ActionsHelper.addErrorToRequest(request, new ActionMessage(
                 "error.com.cronos.onlinereview.actions.manageProject.Distributions.ProjectCategory"));
         }
         
+        String version = (String) project.getProperty("Project Version");
+        
+        // validate project version
+        if ((version == null) || !VERSION_PATTERN.matcher(version).matches()) {
+            ActionsHelper.addErrorToRequest(request, new ActionMessage(
+                "error.com.cronos.onlinereview.actions.manageProject.Distributions.Version.Invalid",
+                new Object[] {version}));
+        }
+
         // Determines the script that will be used (if other is used, package is not mandatory)
         String rootCatalogID = (String) project.getProperty("Root Catalog ID");
         if (!DEFAULT_DISTRIBUTION_SCRIPT.equals(ConfigHelper.getDistributionScript(rootCatalogID))) {
             String packageName = (String) lazyForm.get("distribution_package_name");
-            
+
             if (packageName == null || packageName.trim().length() == 0) {
                 ActionsHelper.addErrorToRequest(request, "distribution_package_name", new ActionMessage(
                     "error.com.cronos.onlinereview.actions.manageProject.Distributions.PackageName.Empty"));
-                
+
             } else if (!PACKAGE_PATTERN.matcher(packageName).matches()) {
                 // Validate it is a valid package
                 ActionsHelper.addErrorToRequest(request, "distribution_package_name", new ActionMessage(
                     "error.com.cronos.onlinereview.actions.manageProject.Distributions.PackageName.Invalid"));
             }
         }
-        
+
         FormFile distributionRSFile = (FormFile) lazyForm.get("distribution_rs");
 
         if (distributionRSFile == null || distributionRSFile.getFileSize() == 0) {
             ActionsHelper.addErrorToRequest(request, "distribution_rs", new ActionMessage(
                 "error.com.cronos.onlinereview.actions.manageProject.Distributions.RS.Empty"));
-            
+
         } else {
             String lcFileName = distributionRSFile.getFileName().toLowerCase();
             if (!(lcFileName.endsWith("rtf") || lcFileName.endsWith("doc") || lcFileName.endsWith("pdf"))) {
@@ -824,22 +927,22 @@ public class ProjectManagementConsoleActions extends DispatchAction {
                     "error.com.cronos.onlinereview.actions.manageProject.Distributions.RS.Invalid"));
             }
         }
-        
+
         boolean uploadToServer = getBooleanFromForm(lazyForm, "upload_to_server");
         boolean returnDistribution = getBooleanFromForm(lazyForm, "return_distribution");
-        
+
         // Must select at least one of these options
         if (!uploadToServer && !returnDistribution) {
             ActionsHelper.addErrorToRequest(request, "upload_to_server", new ActionMessage(
                 "error.com.cronos.onlinereview.actions.manageProject.Distributions.Upload.Unchecked"));
         }
     }
-    
+
     /**
      * <p>
      * Read a boolean value from the form.
      * </p>
-     * 
+     *
      * @param lazyForm the form to read the value from.
      * @param attribute the name of the attribute of the form (which must be of type Boolean).
      * @return <code>true</code> if the form value is Boolean.TRUE, <code>false</code> if it is Boolean.FALSE or null.
@@ -849,7 +952,7 @@ public class ProjectManagementConsoleActions extends DispatchAction {
         Boolean value = (Boolean) lazyForm.get(attribute);
         return (value == null) ? false : value.booleanValue();
     }
-    
+
     /**
      * <p>Initializes the <code>Project Management Console</code> view. Binds necessary objects to current request. Such
      * objects include: list of available roles for resources which can be added by current user to specified project;
@@ -947,7 +1050,7 @@ public class ProjectManagementConsoleActions extends DispatchAction {
      * @param registrationPhase a <code>Phase</code> representing <code>Registration</code> phase to be extended.
      * @param extensionDays an <code>int</code> providing the number of days to extend phase for.
      * @param request an <code>HttpServletRequest</code> representing incoming request from the client.
-     * @param form an <code>ActionForm</code> representing the form mapped to this request. 
+     * @param form an <code>ActionForm</code> representing the form mapped to this request.
      * @throws BaseException if an unexpected error occurs.
      */
     private void handleRegistrationPhaseExtension(Phase registrationPhase, int extensionDays,
@@ -967,7 +1070,7 @@ public class ProjectManagementConsoleActions extends DispatchAction {
             Date newScheduledEndDate = new Date(currentScheduledEndDate.getTime() + durationExtension);
             registrationPhase.setScheduledEndDate(newScheduledEndDate);
             registrationPhase.setLength(registrationPhase.getLength() + durationExtension);
-            
+
             com.topcoder.project.phases.Project phasesProject = registrationPhase.getProject();
             recalculateScheduledDates(phasesProject.getAllPhases());
             phaseManager.updatePhases(phasesProject, Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
@@ -1019,7 +1122,7 @@ public class ProjectManagementConsoleActions extends DispatchAction {
      * @param form an <code>ActionForm</code> providing the form parameters mapped to specified request.
      * @return an <code>Object</code> array of two elements. The first element provides mapping from role IDs to
      *         <code>ResourceRole</code> objects. The second element provides the mapping from user handles to
-     *         <code>ExternalUser</code> objects.  
+     *         <code>ExternalUser</code> objects.
      * @throws ResourcePersistenceException if an unexpected error occurs while accessing user project data store.
      * @throws ConfigException if a configuration error is encountered while initializing user project data store.
      */
@@ -1094,7 +1197,7 @@ public class ProjectManagementConsoleActions extends DispatchAction {
      * @param request an <code>HttpServletRequest</code> representing incoming request from the client.
      * @param form an <code>ActionForm</code> providing the form parameters mapped to specified request.
      * @param roleMapping a <code>Map</code> mapping resource role IDs to role details.
-     * @param users a <code>Map</code> mapping user handlers to user account details. 
+     * @param users a <code>Map</code> mapping user handlers to user account details.
      * @throws BaseException if an unexpected error occurs.
      * @throws NamingException if an unexpected error occurs.
      * @throws RemoteException if an unexpected error occurs.
@@ -1103,7 +1206,7 @@ public class ProjectManagementConsoleActions extends DispatchAction {
     private void handleResourceAddition(Project project, HttpServletRequest request, ActionForm form,
                                         Map<Long, ResourceRole> roleMapping, Map<String, ExternalUser> users)
             throws BaseException, NamingException, CreateException, RemoteException {
-        
+
         LazyValidatorForm lazyForm = (LazyValidatorForm) form;
         Long[] resourceRoleIds = (Long[]) lazyForm.get("resource_role_id");
         String[] resourceHandles = (String[]) lazyForm.get("resource_handles");
@@ -1194,8 +1297,8 @@ public class ProjectManagementConsoleActions extends DispatchAction {
                             // client manager and copilot have moderator role
                             if (resourceRoleId == COPILOT_RESOURCE_ROLE_ID  || resourceRoleId == CLIENT_MANAGER_RESOURCE_ROLE_ID
                                   || resourceRoleId == OBSERVER_RESOURCE_ROLE_ID || resourceRoleId == DESIGNER_RESOURCE_ROLE_ID)
-                            {   
-                                newModeratorsForumRoles.add(userId);                      
+                            {
+                                newModeratorsForumRoles.add(userId);
                             }
                             else
                             {
@@ -1471,14 +1574,14 @@ public class ProjectManagementConsoleActions extends DispatchAction {
      * @param userId a <code>long</code> providing the user ID.
      * @param roleId a <code>long</code> providing the role ID.
      * @return a <code>List</code> of terms of use which are not yet accepted by the specified user or empty list if all
-     *         necessary terms of use are accepted. 
+     *         necessary terms of use are accepted.
      * @throws NamingException if any errors occur during EJB lookup.
      * @throws RemoteException if any errors occur during EJB remote invocation.
      * @throws CreateException if any errors occur during EJB creation.
      */
     private List<TermsOfUseEntity> validateResourceTermsOfUse(long projectId, long userId, long roleId)
         throws CreateException, NamingException, RemoteException {
-        
+
         List<TermsOfUseEntity> unAcceptedTerms = new ArrayList<TermsOfUseEntity>();
 
         // get remote services
@@ -1511,14 +1614,14 @@ public class ProjectManagementConsoleActions extends DispatchAction {
      * @param userId a <code>long</code> providing the user ID.
      * @param roleId a <code>long</code> providing the role ID.
      * @return a <code>List</code> of terms of use which are not yet accepted by the specified user or empty list if all
-     *         necessary terms of use are accepted. 
+     *         necessary terms of use are accepted.
      * @throws NamingException if any errors occur during EJB lookup.
      * @throws RemoteException if any errors occur during EJB remote invocation.
      * @throws CreateException if any errors occur during EJB creation.
      */
     private boolean validateResourceEligibility(long projectId, long userId)
         throws CreateException, NamingException, RemoteException, BaseException {
-        
+
         try {
             return ContestEligibilityServiceLocator.getServices().isEligible(userId, projectId, false);
         }catch (ContestEligibilityValidatorException e) {
