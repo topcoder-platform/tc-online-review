@@ -11,11 +11,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.naming.InitialContext;
-import javax.naming.NameClassPair;
-import javax.naming.NamingEnumeration;
-
-import com.cronos.onlinereview.dde.ServiceLocator;
 import com.topcoder.util.config.ConfigManager;
 import com.topcoder.util.config.Property;
 import com.topcoder.util.config.UnknownNamespaceException;
@@ -557,11 +552,6 @@ public class ConfigHelper {
     private static final String CATALOG_JNDI_PROP = "catalog_jndi_address";
     
     /**
-     * This is the default catalog JNDI URL.
-     */
-    private static final String DEFAULT_CATALOG_JNDI_PROP = "jnp://localhost:1199";
-
-    /**
      * This is the distribution tool script to use when no script is defined.
      */
     private static final String DEFAULT_DISTRIBUTION_SCRIPT = "other";
@@ -853,14 +843,6 @@ public class ConfigHelper {
      */
     private static String catalogOutputDir = DEFAULT_CATALOG_OUTPUT_DIR;
 
-    /**
-     * <p>
-     * The JNDI URL to lookup for Catalog services.
-     * </p>
-     */
-    private static String catalogJndiURL = DEFAULT_CATALOG_JNDI_PROP;
-
-    
     static {
         // Obtaining the instance of Configuration Manager
         ConfigManager cfgMgr = ConfigManager.getInstance();
@@ -1335,17 +1317,6 @@ public class ConfigHelper {
                     + " will be used instead");
                 
                 catalogOutputDir = DEFAULT_CATALOG_OUTPUT_DIR;
-            }
-            
-            catalogJndiURL = cfgMgr.getString(ONLINE_REVIEW_CFG_NS, CATALOG_JNDI_PROP);
-            
-            if (catalogJndiURL == null) {
-                System.err.println("The value of " + CATALOG_JNDI_PROP
-                    + " configuration property is null. "
-                    + "This value will be ignored and value of " + DEFAULT_CATALOG_JNDI_PROP
-                    + " will be used instead");
-                
-                catalogJndiURL = DEFAULT_CATALOG_JNDI_PROP;
             }
             
         } catch (UnknownNamespaceException une) {
@@ -1903,14 +1874,5 @@ public class ConfigHelper {
      */
     public static String getCatalogOutputDir() {
         return catalogOutputDir;
-    }
-    
-    /**
-     * <p>Gets the distribution tool output dir..</p>
-     *
-     * @return the distribution tool output dir.
-     */
-    public static String getCatalogJndiURL() {
-        return catalogJndiURL;
     }
 }

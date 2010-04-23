@@ -13,7 +13,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -23,6 +22,7 @@ import java.util.Set;
 import java.util.regex.Pattern;
 
 import javax.ejb.CreateException;
+import javax.naming.Context;
 import javax.naming.NamingException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -35,21 +35,15 @@ import org.apache.struts.actions.DispatchAction;
 import org.apache.struts.upload.FormFile;
 import org.apache.struts.validator.LazyValidatorForm;
 
-import com.cronos.onlinereview.dde.ServiceLocator;
 import com.cronos.onlinereview.external.ConfigException;
 import com.cronos.onlinereview.external.ExternalUser;
 import com.cronos.onlinereview.external.RetrievalException;
 import com.cronos.onlinereview.external.UserRetrieval;
 import com.topcoder.dde.catalog.ComponentManager;
-import com.topcoder.management.deliverable.Upload;
-import com.topcoder.management.deliverable.UploadManager;
-import com.topcoder.management.deliverable.UploadStatus;
-import com.topcoder.management.deliverable.UploadType;
-import com.topcoder.management.deliverable.search.UploadFilterBuilder;
+import com.topcoder.dde.catalog.ComponentManagerHome;
 import com.topcoder.management.phase.PhaseManager;
 import com.topcoder.management.phase.PhaseStatusEnum;
 import com.topcoder.management.project.Project;
-import com.topcoder.management.project.ProjectCategory;
 import com.topcoder.management.resource.Resource;
 import com.topcoder.management.resource.ResourceManager;
 import com.topcoder.management.resource.ResourceRole;
@@ -57,17 +51,16 @@ import com.topcoder.management.resource.persistence.ResourcePersistenceException
 import com.topcoder.management.resource.search.ResourceFilterBuilder;
 import com.topcoder.project.phases.Phase;
 import com.topcoder.project.phases.PhaseStatus;
-import com.topcoder.search.builder.filter.AndFilter;
-import com.topcoder.search.builder.filter.Filter;
 import com.topcoder.service.contest.eligibilityvalidation.ContestEligibilityValidatorException;
-import com.topcoder.servlet.request.FileUpload;
-import com.topcoder.servlet.request.FileUploadResult;
-import com.topcoder.servlet.request.UploadedFile;
+import com.topcoder.shared.util.ApplicationServer;
 import com.topcoder.shared.util.DBMS;
+import com.topcoder.shared.util.TCContext;
 import com.topcoder.util.distribution.DistributionTool;
 import com.topcoder.util.distribution.DistributionToolException;
 import com.topcoder.util.errorhandling.BaseException;
 import com.topcoder.web.common.eligibility.ContestEligibilityServiceLocator;
+import com.topcoder.web.ejb.forums.Forums;
+import com.topcoder.web.ejb.forums.ForumsHome;
 import com.topcoder.web.ejb.project.ProjectRoleTermsOfUse;
 import com.topcoder.web.ejb.project.ProjectRoleTermsOfUseLocator;
 import com.topcoder.web.ejb.termsofuse.TermsOfUse;
@@ -392,7 +385,7 @@ public class ProjectManagementConsoleActions extends DispatchAction {
         long componentId = getProjectLongValue(project, "Component ID");
         long versionId = getProjectLongValue(project, "Version ID");
         
-        ComponentManager componentManager = ServiceLocator.getInstance().getComponentManager(componentId, versionId);
+        ComponentManager componentManager = getComponentManager(componentId, versionId);
 
         String rootDir = ConfigHelper.getCatalogOutputDir() + File.separator;
         String dir = "" + componentId + File.separator + versionId + File.separator;
@@ -432,6 +425,14 @@ public class ProjectManagementConsoleActions extends DispatchAction {
         componentManager.addDocument(document);
         
         return true;
+    }
+    
+    private ComponentManager getComponentManager(long componentId, long versionId) throws RemoteException,
+        CreateException, NamingException {
+        Context context = TCContext.getInitial("localhost:1199"); // TODO ApplicationServer.FORUMS_HOST_URL);
+        ComponentManagerHome componentManagerHome = (ComponentManagerHome) context
+            .lookup(ComponentManagerHome.EJB_REF_NAME);
+        return componentManagerHome.create(componentId, versionId);
     }
 
     /**
