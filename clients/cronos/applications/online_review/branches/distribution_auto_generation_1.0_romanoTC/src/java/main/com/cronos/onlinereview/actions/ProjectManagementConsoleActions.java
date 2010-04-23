@@ -294,10 +294,23 @@ public class ProjectManagementConsoleActions extends DispatchAction {
             boolean returnDistribution = getBooleanFromForm(lazyForm, "return_distribution");
 
             if (uploadToServer) {
-                // Create the distribution file
-                if (!saveDistributionFileToCatalog(project, distributionFile.getName(), new FileInputStream(
-                    distributionFile), request)) {
+                // A temporary final variable to be used by an anonymous class.
+                final File tempFile = distributionFile;
+                
+                System.out.println("TEMP FILE: " + tempFile);
+                
+                DistributionFileDescriptor descriptor = new DistributionFileDescriptor() {
+                    public String getFileName() {
+                        return tempFile.getName();
+                    }
 
+                    public InputStream getInputStream() throws IOException {
+                        return new FileInputStream(tempFile);
+                    }
+                };
+                
+                // save the distribution file to TC Software catalog
+                if (!saveDistributionFileToCatalog(project, descriptor, request)) {
                     initProjectManagementConsole(request, project);
                     return mapping.getInputForward();
                 }
@@ -373,7 +386,7 @@ public class ProjectManagementConsoleActions extends DispatchAction {
         }
 
         LazyValidatorForm lazyForm = (LazyValidatorForm) form;
-        FormFile distributionFormFile = (FormFile) lazyForm.get("distribution_file");
+        final FormFile distributionFormFile = (FormFile) lazyForm.get("distribution_file");
 
         if (distributionFormFile == null || distributionFormFile.getFileSize() == 0) {
             ActionsHelper.addErrorToRequest(request, "distribution_file", new ActionMessage(
@@ -384,10 +397,19 @@ public class ProjectManagementConsoleActions extends DispatchAction {
             initProjectManagementConsole(request, project);
             return mapping.getInputForward();
         }
+        
+        DistributionFileDescriptor descriptor = new DistributionFileDescriptor() {
+            public String getFileName() {
+                return distributionFormFile.getFileName();
+            }
+
+            public InputStream getInputStream() throws IOException {
+                return distributionFormFile.getInputStream();
+            }
+        };
 
         // Create the distribution file
-        if (!saveDistributionFileToCatalog(project, distributionFormFile.getFileName(), distributionFormFile
-            .getInputStream(), request)) {
+        if (!saveDistributionFileToCatalog(project, descriptor, request)) {
 
             initProjectManagementConsole(request, project);
             return mapping.getInputForward();
@@ -403,51 +425,43 @@ public class ProjectManagementConsoleActions extends DispatchAction {
      * </p>
      * 
      * @param project the current project used to get component information.
-     * @param fileName the distribution file name.
-     * @param in the input stream of the distribution file (may be the upload stream or a file stream).
+     * @param descriptor an object defining the distribution file (may be the upload stream or a file stream).
      * @param request object used to add error information in case something goes wrong.
      * @return <code>true</code> if the file was save properly, <code>false</code> otherwise
      * @throws Exception if any error occurs while uploading the file.
      * @since 1.1
      */
-    private boolean saveDistributionFileToCatalog(Project project, String fileName, InputStream in,
+    private boolean saveDistributionFileToCatalog(Project project, DistributionFileDescriptor descriptor,
         HttpServletRequest request) throws Exception {
 
         ComponentManager componentManager = null;
         String rootDir = null;
         String dir = null;
 
-        try {
-            long componentId = getProjectLongValue(project, "Component ID");
-            long versionId = getProjectLongValue(project, "Version ID");
+        long componentId = getProjectLongValue(project, "Component ID");
+        long versionId = getProjectLongValue(project, "Version ID");
 
-            componentManager = getComponentManager(componentId, versionId);
+        componentManager = getComponentManager(componentId, versionId);
 
-            rootDir = ConfigHelper.getCatalogOutputDir() + File.separator;
-            dir = "" + componentId + File.separator + componentManager.getVersionInfo().getVersionId()
-                + File.separator;
+        rootDir = ConfigHelper.getCatalogOutputDir() + File.separator;
+        dir = "" + componentId + File.separator + componentManager.getVersionInfo().getVersionId()
+            + File.separator;
 
-            File dirFile = new File(rootDir + dir);
+        File dirFile = new File(rootDir + dir);
 
-            // Create the directories if they do not already exist.
-            if (!dirFile.exists() && !dirFile.mkdirs()) {
-                ActionsHelper.addErrorToRequest(request, new ActionMessage(
-                    "error.com.cronos.onlinereview.actions.manageProject.Distributions.Catalog.OutputDir"));
-                return false;
-            }
-        } finally {
-            // this point, if an error occurs, close the input stream
-            try {
-                in.close();
-            } catch (IOException ex) {
-                // Ignore
-            }
+        // Create the directories if they do not already exist.
+        if (!dirFile.exists() && !dirFile.mkdirs()) {
+            ActionsHelper.addErrorToRequest(request, new ActionMessage(
+                "error.com.cronos.onlinereview.actions.manageProject.Distributions.Catalog.OutputDir"));
+            return false;
         }
 
-        String url = dir + fileName;
+        String url = dir + descriptor.getFileName();
 
+        System.out.println("TEMP FILE 2: " + rootDir + url);
+        
         // Copy distribution file to catalog folder
-        copyStream(in, new FileOutputStream(rootDir + url));
+        copyStream(descriptor.getInputStream(), new FileOutputStream(rootDir + url));
 
         long documentType;
         String documentName;
@@ -736,12 +750,10 @@ public class ProjectManagementConsoleActions extends DispatchAction {
                 // ignore
             }
 
-            if (out != null) {
-                try {
-                    out.close();
-                } catch (IOException ex) {
-                    // ignore
-                }
+            try {
+                out.close();
+            } catch (IOException ex) {
+                // ignore
             }
         }
     }
@@ -1627,5 +1639,11 @@ public class ProjectManagementConsoleActions extends DispatchAction {
         }catch (ContestEligibilityValidatorException e) {
             throw new BaseException(e);
         }
+    }
+    
+    private static interface DistributionFileDescriptor {
+        public abstract String getFileName();
+
+        public abstract InputStream getInputStream() throws IOException;
     }
 }

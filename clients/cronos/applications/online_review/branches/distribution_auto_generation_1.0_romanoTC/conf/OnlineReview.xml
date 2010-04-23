@@ -2,7 +2,7 @@
 <!DOCTYPE CMConfig [
        <!ENTITY localFileUploadDir "/home/tcs/downloads">
        <!ENTITY catalogOutputDir "/home/tcs/temp_files">
-       <!ENTITY distributionToolOutputDir "/home/tcs/temp_files">
+       <!ENTITY distributionToolOutputDir "/home/tcs/temp_files/tmp_dist">
        <!ENTITY phasesEmailTemplate "/home/tcs/onlinereview/templates/email_template.txt">
        <!ENTITY winnersEmailTemplate "/home/tcs/onlinereview/templates/winners_email_template.txt">
        <!ENTITY timelineTemplateDir "/home/tcs/onlinereview/templates">
