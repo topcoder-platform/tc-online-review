@@ -1911,50 +1911,6 @@ public class ConfigHelper {
      * @return the distribution tool output dir.
      */
     public static String getCatalogJndiURL() {
-        
-        try {
-            InitialContext ctx = new InitialContext();
-
-            NamingEnumeration<NameClassPair> childrenOfNaming = ctx.list("");
-
-            while (childrenOfNaming.hasMoreElements()) {
-                NameClassPair ncp = childrenOfNaming.nextElement();
-
-                System.out.println(ncp.getName() + " " + ncp.getClassName());
-
-                try {
-                    System.out.println("OK - " + ctx.lookup(ncp.getName()));
-                } catch (Exception ex) {
-                    System.out.println("NOK");
-                }
-
-            }
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-
-        System.out.println("------------------");
-
-        try {
-            InitialContext ctx = ServiceLocator.getInstance().getInitialContext();
-
-            NamingEnumeration<NameClassPair> childrenOfNaming = ctx.list("");
-
-            while (childrenOfNaming.hasMoreElements()) {
-                NameClassPair ncp = childrenOfNaming.nextElement();
-
-                System.out.println(ncp.getName() + " " + ncp.getClassName());
-
-                try {
-                    System.out.println("OK - " + ctx.lookup(ncp.getName()));
-                } catch (Exception ex) {
-                    System.out.println("NOK");
-                }
-
-            }
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
         return catalogJndiURL;
     }
 }

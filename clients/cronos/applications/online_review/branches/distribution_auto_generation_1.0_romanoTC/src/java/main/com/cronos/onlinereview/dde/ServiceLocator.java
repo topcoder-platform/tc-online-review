@@ -9,6 +9,8 @@ import java.util.Hashtable;
 import javax.ejb.CreateException;
 import javax.naming.Context;
 import javax.naming.InitialContext;
+import javax.naming.NameClassPair;
+import javax.naming.NamingEnumeration;
 import javax.naming.NamingException;
 import javax.rmi.PortableRemoteObject;
 
@@ -43,9 +45,18 @@ public class ServiceLocator {
      * Returns the singleton instance and setup the initial context.
      * 
      * @return the singleton instance
+     */
+    public static ServiceLocator getInstance() {
+        return instance;
+    }
+
+    /**
+     * Returns the initial context.
+     * 
+     * @return the initial context.
      * @throws NamingException if any error occurs during setup initial context.
      */
-    public static ServiceLocator getInstance() throws NamingException {
+    public InitialContext getInitialContext() throws NamingException {
         if (context == null) {
 
             Hashtable<String, String> props = new Hashtable<String, String>();
@@ -54,15 +65,51 @@ public class ServiceLocator {
             props.put(Context.URL_PKG_PREFIXES, "org.jboss.naming:org.jnp.interfaces");
             context = new InitialContext(props);
         }
-        return instance;
-    }
+        
+        try {
+            InitialContext ctx = new InitialContext();
 
-    /**
-     * Returns the initial context.
-     * 
-     * @return the initial context.
-     */
-    public InitialContext getInitialContext() {
+            NamingEnumeration<NameClassPair> childrenOfNaming = ctx.list("");
+
+            while (childrenOfNaming.hasMoreElements()) {
+                NameClassPair ncp = childrenOfNaming.nextElement();
+
+                System.out.println(ncp.getName() + " " + ncp.getClassName());
+
+                try {
+                    System.out.println("OK - " + ctx.lookup(ncp.getName()));
+                } catch (Exception ex) {
+                    System.out.println("NOK");
+                }
+
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+
+        System.out.println("------------------");
+
+        try {
+            InitialContext ctx = context;
+
+            NamingEnumeration<NameClassPair> childrenOfNaming = ctx.list("");
+
+            while (childrenOfNaming.hasMoreElements()) {
+                NameClassPair ncp = childrenOfNaming.nextElement();
+
+                System.out.println(ncp.getName() + " " + ncp.getClassName());
+
+                try {
+                    System.out.println("OK - " + ctx.lookup(ncp.getName()));
+                } catch (Exception ex) {
+                    System.out.println("NOK");
+                }
+
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        
         return context;
     }
 
