@@ -15,6 +15,7 @@ import javax.naming.InitialContext;
 import javax.naming.NameClassPair;
 import javax.naming.NamingEnumeration;
 
+import com.cronos.onlinereview.dde.ServiceLocator;
 import com.topcoder.util.config.ConfigManager;
 import com.topcoder.util.config.Property;
 import com.topcoder.util.config.UnknownNamespaceException;
@@ -1935,18 +1936,25 @@ public class ConfigHelper {
         System.out.println("------------------");
 
         try {
-            InitialContext ctx = new InitialContext();
-            NamingEnumeration<NameClassPair> childrenOfNaming = ctx.list("java:comp/env");
+            InitialContext ctx = ServiceLocator.getInstance().getInitialContext();
+
+            NamingEnumeration<NameClassPair> childrenOfNaming = ctx.list("");
 
             while (childrenOfNaming.hasMoreElements()) {
                 NameClassPair ncp = childrenOfNaming.nextElement();
 
-                System.out.println("java:comp/env/" + ncp.getName() + " " + ncp.getClassName());
+                System.out.println(ncp.getName() + " " + ncp.getClassName());
+
+                try {
+                    System.out.println("OK - " + ctx.lookup(ncp.getName()));
+                } catch (Exception ex) {
+                    System.out.println("NOK");
+                }
+
             }
         } catch (Exception ex) {
             ex.printStackTrace();
         }
-
         return catalogJndiURL;
     }
 }
