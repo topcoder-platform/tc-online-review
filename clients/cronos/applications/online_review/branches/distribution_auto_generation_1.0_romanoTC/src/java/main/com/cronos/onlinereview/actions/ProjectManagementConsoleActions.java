@@ -23,6 +23,7 @@ import java.util.regex.Pattern;
 
 import javax.ejb.CreateException;
 import javax.naming.Context;
+import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -52,15 +53,11 @@ import com.topcoder.management.resource.search.ResourceFilterBuilder;
 import com.topcoder.project.phases.Phase;
 import com.topcoder.project.phases.PhaseStatus;
 import com.topcoder.service.contest.eligibilityvalidation.ContestEligibilityValidatorException;
-import com.topcoder.shared.util.ApplicationServer;
 import com.topcoder.shared.util.DBMS;
-import com.topcoder.shared.util.TCContext;
 import com.topcoder.util.distribution.DistributionTool;
 import com.topcoder.util.distribution.DistributionToolException;
 import com.topcoder.util.errorhandling.BaseException;
 import com.topcoder.web.common.eligibility.ContestEligibilityServiceLocator;
-import com.topcoder.web.ejb.forums.Forums;
-import com.topcoder.web.ejb.forums.ForumsHome;
 import com.topcoder.web.ejb.project.ProjectRoleTermsOfUse;
 import com.topcoder.web.ejb.project.ProjectRoleTermsOfUseLocator;
 import com.topcoder.web.ejb.termsofuse.TermsOfUse;
@@ -429,7 +426,7 @@ public class ProjectManagementConsoleActions extends DispatchAction {
     
     private ComponentManager getComponentManager(long componentId, long versionId) throws RemoteException,
         CreateException, NamingException {
-        Context context = TCContext.getInitial("localhost:1199"); // TODO ApplicationServer.FORUMS_HOST_URL);
+        Context context = new InitialContext(); // TODO ApplicationServer.FORUMS_HOST_URL);
         ComponentManagerHome componentManagerHome = (ComponentManagerHome) context
             .lookup(ComponentManagerHome.EJB_REF_NAME);
         return componentManagerHome.create(componentId, versionId);
