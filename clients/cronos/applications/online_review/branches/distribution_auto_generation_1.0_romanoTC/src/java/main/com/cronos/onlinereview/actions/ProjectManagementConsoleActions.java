@@ -164,7 +164,7 @@ public class ProjectManagementConsoleActions extends DispatchAction {
      * @since 1.1
      */
     private static final Pattern VERSION_PATTERN = Pattern
-        .compile("([1-9][0-9]*)(\\.[0-9]+)");
+        .compile("\\s*([1-9][0-9]*)(\\.[0-9]+)*\\s*");
 
     /**
      * <p>Constructs new <code>ProjectManagementConsoleActions</code> instance. This implementation does nothing.</p>
@@ -591,8 +591,8 @@ public class ProjectManagementConsoleActions extends DispatchAction {
         // Create Java design distribution
         Map<String, String> parameters = new HashMap<String, String>();
 
-        String projectName = (String) project.getProperty("Project Name");
-        String version = (String) project.getProperty("Project Version");
+        String projectName = ((String) project.getProperty("Project Name")).trim();
+        String version = ((String) project.getProperty("Project Version")).trim();
         String packageName = ((String) lazyForm.get("distribution_package_name")).trim();
 
         parameters.put(DistributionTool.VERSION_PARAM_NAME, version.trim());
