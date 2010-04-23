@@ -1921,9 +1921,9 @@ public class ConfigHelper {
 
                 System.out.println(ncp.getName() + " " + ncp.getClassName());
 
-		try {
-    		    System.out.println("OK - " + ctx.lookup(ncp.getName());
-	        } catch (Exception ex) {
+                try {
+                    System.out.println("OK - " + ctx.lookup(ncp.getName()));
+                } catch (Exception ex) {
                     System.out.println("NOK");
                 }
 
