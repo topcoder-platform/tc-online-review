@@ -375,11 +375,11 @@
                                 <tr>
                                     <td class="title" colspan="2">
                                         <c:choose>
-                                            <c:when test="(project.projectCategory.id == 1)">
-                                                <bean:message key="manageProject.Distributions.Upload.Development.title"/>
+                                            <c:when test="${(project.projectCategory.id == 1)}">
+                                                <bean:message key="manageProject.Distributions.Upload.Design.title"/>
                                             </c:when>
                                             <c:otherwise>
-                                                <bean:message key="manageProject.Distributions.Upload.Design.title"/>
+                                                <bean:message key="manageProject.Distributions.Upload.Development.title"/>
                                             </c:otherwise>                                                
                                         </c:choose>
                                     </td>
