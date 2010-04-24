@@ -146,10 +146,16 @@ public class ProjectManagementConsoleActions extends DispatchAction {
     private static final String DEVELOPMENT_DISTRIBUTION_DOC_TYPE = "Development Distribution";
 
     /**
-     * The design project ID.
+     * Design project ID.
      * @since 1.1
      */
     private static final long DESIGN_PROJECT_ID = 1;
+    
+    /**
+     * Development project ID.
+     * @since 1.1
+     */
+    private static final long DEVELOPMENT_PROJECT_ID = 2;
 
     /**
      * <p>Valid package names.</p>
@@ -213,7 +219,7 @@ public class ProjectManagementConsoleActions extends DispatchAction {
 
     /**
      * <p>
-     * Create a project design distribution file, upload it to the server or return it to the user (or both).
+     * Creates a project design distribution file, upload it to the server or return it to the user (or both).
      * </p>
      *
      * @param mapping an <code>ActionMapping</code> used for mapping the specified request to this action.
@@ -281,9 +287,7 @@ public class ProjectManagementConsoleActions extends DispatchAction {
                 ActionsHelper.addErrorToRequest(request, new ActionMessage(
                     "error.com.cronos.onlinereview.actions.manageProject."
                         + "Distributions.DistTool.CannotFind"));
-            }
-
-            if (ActionsHelper.isErrorsPresent(request)) {
+                
                 initProjectManagementConsole(request, project);
                 return mapping.getInputForward();
             }
@@ -296,8 +300,6 @@ public class ProjectManagementConsoleActions extends DispatchAction {
                 // A temporary final variable to be used by an anonymous class.
                 final File tempFile = distributionFile;
                 
-                System.out.println("TEMP FILE: " + tempFile);
-                
                 DistributionFileDescriptor descriptor = new DistributionFileDescriptor() {
                     public String getFileName() {
                         return tempFile.getName();
@@ -308,7 +310,7 @@ public class ProjectManagementConsoleActions extends DispatchAction {
                     }
                 };
                 
-                // save the distribution file to TC Software catalog
+                // Saves the distribution file into the catalog directory
                 if (!saveDistributionFileToCatalog(project, descriptor, request)) {
                     initProjectManagementConsole(request, project);
                     return mapping.getInputForward();
@@ -322,6 +324,7 @@ public class ProjectManagementConsoleActions extends DispatchAction {
                 return null;
 
             } else {
+                
                 return ActionsHelper.cloneForwardAndAppendToPath(mapping
                     .findForward(SUCCESS_FORWARD_NAME), "&pid=" + project.getId());
             }
@@ -373,13 +376,10 @@ public class ProjectManagementConsoleActions extends DispatchAction {
 
         // Validate project type - must be a Design or Development
         if ((project.getProjectCategory().getId() != DESIGN_PROJECT_ID) &&
-            (project.getProjectCategory().getId() != DEVELOPMENT_DISTRIBUTION_DOC_TYPE_ID)) {
+            (project.getProjectCategory().getId() != DEVELOPMENT_PROJECT_ID)) {
             ActionsHelper.addErrorToRequest(request, new ActionMessage(
                 "error.com.cronos.onlinereview.actions.manageProject.Distributions.Upload.ProjectCategory"));
-        }
 
-        // Check if there were any validation errors identified and return appropriate forward
-        if (ActionsHelper.isErrorsPresent(request)) {
             initProjectManagementConsole(request, project);
             return mapping.getInputForward();
         }
@@ -390,9 +390,7 @@ public class ProjectManagementConsoleActions extends DispatchAction {
         if (distributionFormFile == null || distributionFormFile.getFileSize() == 0) {
             ActionsHelper.addErrorToRequest(request, "distribution_file", new ActionMessage(
                 "error.com.cronos.onlinereview.actions.manageProject.Distributions.Distribution.Empty"));
-        }
 
-        if (ActionsHelper.isErrorsPresent(request)) {
             initProjectManagementConsole(request, project);
             return mapping.getInputForward();
         }
@@ -407,7 +405,7 @@ public class ProjectManagementConsoleActions extends DispatchAction {
             }
         };
 
-        // Create the distribution file
+        // Saves the distribution file into the catalog directory
         if (!saveDistributionFileToCatalog(project, descriptor, request)) {
 
             initProjectManagementConsole(request, project);
@@ -457,8 +455,6 @@ public class ProjectManagementConsoleActions extends DispatchAction {
 
         String url = dir + descriptor.getFileName();
 
-        System.out.println("TEMP FILE 2: " + rootDir + url);
-        
         // Copy distribution file to catalog folder
         copyStream(descriptor.getInputStream(), new FileOutputStream(rootDir + url));
 
@@ -1643,9 +1639,30 @@ public class ProjectManagementConsoleActions extends DispatchAction {
         }
     }
     
+    /**
+     * This interface provides an abstraction to the origin of the distribution file. It may be
+     * read directly from the file system, from memory or from an uploaded file.
+     * 
+     * @since 1.1
+     */
     private static interface DistributionFileDescriptor {
+        /**
+         * <p>
+         * Returns the file name.
+         * </p>
+         * 
+         * @return the file name.
+         */
         public abstract String getFileName();
 
+        /**
+         * <p>
+         * Returns an input stream that will be used read the file contents.
+         * </p>
+         * 
+         * @return the input stream that will be used read the file contents.
+         * @throws IOException if any error occurs while creating the input stream.
+         */
         public abstract InputStream getInputStream() throws IOException;
     }
 }
