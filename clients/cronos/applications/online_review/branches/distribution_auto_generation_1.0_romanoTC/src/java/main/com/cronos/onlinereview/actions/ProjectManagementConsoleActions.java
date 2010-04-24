@@ -77,8 +77,13 @@ import com.topcoder.web.ejb.user.UserTermsOfUseLocator;
  * <code>Registration</code> or <code>Submission</code> phases for projects.</p>
  *
  * <p>
- * Version 1.0: Online Review Project Management Console assembly v1.0. <br>
- * Version 1.1: Distribution Auto Generation Assembly v1.0
+ * Version 1.0: Online Review Project Management Console assembly v1.0.
+ * </p>
+ * <p>
+ * Version 1.1: Distribution Auto Generation Assembly v1.0 Change notes:
+ * <ul>
+ *     <li>Added support for managing distribution: create distribution upload distribution.</li>
+ * </ul>
  * </p>
  *
  * @author isv, TCSASSEMBLY

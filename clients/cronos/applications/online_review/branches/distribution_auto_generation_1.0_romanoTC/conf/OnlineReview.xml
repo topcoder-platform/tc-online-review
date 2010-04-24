@@ -2934,16 +2934,9 @@
         <Property name="distribution_tool_output_dir">
             <Value>&distributionToolOutputDir;</Value>
         </Property>        
-        <!-- Configuration for Catalog Services -->
         <Property name="catalog_output_dir">
             <Value>&catalogOutputDir;</Value>
         </Property>        
-        <Property name="catalog_jndi_address">
-            <Value>&catalogJNDIAddress;</Value>
-        </Property>
-        <Property name="catalog_jndi_address">
-            <Value>&catalogJNDIAddress;</Value>
-        </Property>
         <Property name="default_distribution_script">
             <Value>other</Value>
         </Property>
