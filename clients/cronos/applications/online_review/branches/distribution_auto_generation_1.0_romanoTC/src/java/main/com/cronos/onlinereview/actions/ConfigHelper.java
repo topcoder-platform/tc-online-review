@@ -46,10 +46,9 @@ import com.topcoder.util.config.UnknownNamespaceException;
  *
  * Version 1.4 (Distribution Auto Generation Assembly v1.0) Change notes:
  *   <ol>
- *     <li>Added <code>registrationPhaseMaxExtensionDays</code>, <code>submissionPhaseMaxExtensionDays</code> and
- *     <code>minimumHoursBeforeSubmissionDeadlineForExtension</code> configuration parameters.</li>
+ *     <li>Added <code>distributionScriptRootCatalogs</code>, <code>distributionToolOutputDir</code>, 
+ *     <code>catalogOutputDir</code> and <code>defaultDistributionScript</code> configuration parameters.</li>
  *   </ol>
- *
  * </p>
  *
  * @author George1, real_vg, pulky, isv, TCSASSEMBLER
