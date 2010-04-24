@@ -122,12 +122,6 @@ public class ProjectManagementConsoleActions extends DispatchAction {
     private static final long DESIGNER_RESOURCE_ROLE_ID = 11;
 
     /**
-     * This is the distribution tool script to use when no script is defined.
-     * @since 1.1
-     */
-    private static final String DEFAULT_DISTRIBUTION_SCRIPT = "other";
-
-    /**
      * The id of the design distribution document type.
      * @since 1.1
      */
@@ -917,7 +911,10 @@ public class ProjectManagementConsoleActions extends DispatchAction {
 
         // Determines the script that will be used (if other is used, package is not mandatory)
         String rootCatalogID = (String) project.getProperty("Root Catalog ID");
-        if (!DEFAULT_DISTRIBUTION_SCRIPT.equals(ConfigHelper.getDistributionScript(rootCatalogID))) {
+        String defaultScript = ConfigHelper.getDefaultDistributionScript();
+        
+        // Assume default script ('other') does not need package name
+        if (!defaultScript.equals(ConfigHelper.getDistributionScript(rootCatalogID))) {
             String packageName = (String) lazyForm.get("distribution_package_name");
 
             if (packageName == null || packageName.trim().length() == 0) {
@@ -988,7 +985,7 @@ public class ProjectManagementConsoleActions extends DispatchAction {
 
         // Identifies is package name is needed
         String rootCatalogID = (String) project.getProperty("Root Catalog ID");
-        request.setAttribute("needsPackageName", !DEFAULT_DISTRIBUTION_SCRIPT.equals(ConfigHelper
+        request.setAttribute("needsPackageName", !ConfigHelper.getDefaultDistributionScript().equals(ConfigHelper
             .getDistributionScript(rootCatalogID)));
     }
 

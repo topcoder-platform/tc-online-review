@@ -46,8 +46,8 @@ import com.topcoder.util.config.UnknownNamespaceException;
  *
  * Version 1.4 (Distribution Auto Generation Assembly v1.0) Change notes:
  *   <ol>
- *     <li>Added <code>distributionScriptRootCatalogs</code>, <code>distributionToolOutputDir</code> and 
- *     <code>catalogOutputDir</code> configuration parameters.</li>
+ *     <li>Added <code>distributionScriptRootCatalogs</code>, <code>distributionToolOutputDir</code>, 
+ *     <code>catalogOutputDir</code> and <code>defaultDistributionScript</code> configuration parameters.</li>
  *   </ol>
  * </p>
  *
@@ -859,6 +859,14 @@ public class ConfigHelper {
      */
     private static String catalogOutputDir = DEFAULT_CATALOG_OUTPUT_DIR;
     
+    /**
+     * <p>
+     * The default distribution script.
+     * </p>
+     * @since 1.4
+     */
+    private static String defaultDistributionScript = DEFAULT_DISTRIBUTION_SCRIPT;
+
     static {
         // Obtaining the instance of Configuration Manager
         ConfigManager cfgMgr = ConfigManager.getInstance();
@@ -1002,7 +1010,7 @@ public class ConfigHelper {
             }
             
             // Retrieve the value of the default distribution script
-            String defaultDistributionScript = cfgMgr.getString(ONLINE_REVIEW_CFG_NS, DEFAULT_DISTRIBUTION_SCRIPT_PROP);
+            defaultDistributionScript = cfgMgr.getString(ONLINE_REVIEW_CFG_NS, DEFAULT_DISTRIBUTION_SCRIPT_PROP);
             if (defaultDistributionScript == null || defaultDistributionScript.trim().length() == 0) {
                 System.err.println("The value of " + DEFAULT_DISTRIBUTION_SCRIPT_PROP
                     + " configuration property is null. "
@@ -1907,5 +1915,15 @@ public class ConfigHelper {
      */
     public static String getCatalogOutputDir() {
         return catalogOutputDir;
+    }
+    
+    /**
+     * <p>Gets the Distribution Tool default script.</p>
+     *
+     * @return the Distribution Tool default script.
+     * @since 1.4
+     */
+    public static String getDefaultDistributionScript() {
+        return defaultDistributionScript;
     }
 }
