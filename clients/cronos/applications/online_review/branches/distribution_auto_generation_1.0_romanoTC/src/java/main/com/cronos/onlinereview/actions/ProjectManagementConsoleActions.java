@@ -158,6 +158,14 @@ public class ProjectManagementConsoleActions extends DispatchAction {
     private static final long DEVELOPMENT_PROJECT_ID = 2;
 
     /**
+     * <p>
+     * The directory to upload files that will be used by distribution tool. It is appended to the distribution tool
+     * output dir.
+     * </p>
+     */
+    private static final String UPLOADED_ARTIFACTS_DIR = "upload_0";
+    
+    /**
      * <p>Valid package names.</p>
      * @since 1.1
      */
@@ -713,7 +721,7 @@ public class ProjectManagementConsoleActions extends DispatchAction {
      * Saves the uploaded file to disk and returns its absolute path name.
      * </p>
      *
-     * @param outputdir the directory to save the file.
+     * @param outputdir the base directory to save the file.
      * @param formFile the uploaded file.
      * @return the absolute path of the temporary file.
      * @throws IOException if any error occurs while uploading a file.
@@ -722,7 +730,8 @@ public class ProjectManagementConsoleActions extends DispatchAction {
     private File createTempFile(String outputdir, FormFile formFile)
         throws IOException {
 
-        File output = new File(outputdir + File.separator + formFile.getFileName());
+        String dir = outputdir + File.separator + UPLOADED_ARTIFACTS_DIR;
+        File output = new File(dir + File.separator + formFile.getFileName());
         FileOutputStream out = new FileOutputStream(output);
         InputStream in = formFile.getInputStream();
 
@@ -782,8 +791,10 @@ public class ProjectManagementConsoleActions extends DispatchAction {
         String baseDir = ConfigHelper.getDistributionToolOutputDir() + File.separator;
         baseDir = baseDir + project.getId() + File.separator + System.currentTimeMillis();
 
-        File dir = new File(baseDir);
+        File dir = new File(baseDir + File.separator + UPLOADED_ARTIFACTS_DIR);
 
+        // Temp directory should not exist, otherwise other files will be considered (this can happen
+        // in extremelly odd cases of two people submitting files at the same millisecond
         if (dir.exists()) {
             return null;
         }
