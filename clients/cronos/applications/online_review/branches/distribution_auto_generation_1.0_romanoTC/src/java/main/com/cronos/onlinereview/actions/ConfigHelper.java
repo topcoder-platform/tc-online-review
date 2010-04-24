@@ -43,10 +43,17 @@ import com.topcoder.util.config.UnknownNamespaceException;
  *     <li>Added <code>registrationPhaseMaxExtensionDays</code>, <code>submissionPhaseMaxExtensionDays</code> and
  *     <code>minimumHoursBeforeSubmissionDeadlineForExtension</code> configuration parameters.</li>
  *   </ol>
+ *
+ * Version 1.4 (Distribution Auto Generation Assembly v1.0) Change notes:
+ *   <ol>
+ *     <li>Added <code>registrationPhaseMaxExtensionDays</code>, <code>submissionPhaseMaxExtensionDays</code> and
+ *     <code>minimumHoursBeforeSubmissionDeadlineForExtension</code> configuration parameters.</li>
+ *   </ol>
+ *
  * </p>
  *
- * @author George1, real_vg, pulky, isv
- * @version 1.3
+ * @author George1, real_vg, pulky, isv, TCSASSEMBLER
+ * @version 1.4
  */
 public class ConfigHelper {
 
@@ -208,6 +215,7 @@ public class ConfigHelper {
      *
      * @see #ROOT_CATALOGS_PROP
      * @see #ROOT_CATALOG_ID_PROP
+     * @since 1.4
      */
     private static final String ROOT_CATALOG_DISTRIBUTION_SCRIPT_KEY_PROP = "DistributionScript";
 
@@ -526,33 +534,39 @@ public class ConfigHelper {
     /**
      * <p>This member variable is a string constthat specifies the name of the property which contains the
      * output dir for the distribution tool.</p>
+     * @since 1.4
      */
     private static final String DISTRIBUTION_TOOL_OUTPUT_DIR_PROP = "distribution_tool_output_dir";
     
     /**
      * This is the default distribution tool output dir.
+     * @since 1.4
      */
     private static final String DEFAULT_DISTRIBUTION_TOOL_OUTPUT_DIR = "/tmp";
     
     /**
      * <p>This member variable is a string constant that specifies the name of the property which contains the
      * output dir for the TopCoder catalog.</p>
+     * @since 1.4
      */
     private static final String CATALOG_OUTPUT_DIR_PROP = "catalog_output_dir";
     
     /**
      * This is the default catalog output dir.
+     * @since 1.4
      */
     private static final String DEFAULT_CATALOG_OUTPUT_DIR = "/tmp";
     
     /**
      * <p>This member variable is a string constant that specifies the name of the property which contains the
-     * URL for JNDI look of Catalog Services.</p>
+     * default distribution tool script to use when no script is defined.</p>
+     * @since 1.4
      */
-    private static final String CATALOG_JNDI_PROP = "catalog_jndi_address";
+    private static final String DEFAULT_DISTRIBUTION_SCRIPT_PROP = "default_distribution_script";
     
     /**
-     * This is the distribution tool script to use when no script is defined.
+     * This is the default distribution tool script to use when no script is defined.
+     * @since 1.4
      */
     private static final String DEFAULT_DISTRIBUTION_SCRIPT = "other";
 
@@ -658,6 +672,7 @@ public class ConfigHelper {
     
     /**
      * This member variable holds the distribution tool script for root catalogs ids
+     * @since 1.4
      */
     private static final Map<String, String> distributionScriptRootCatalogs = new HashMap<String, String>();
     
@@ -833,6 +848,7 @@ public class ConfigHelper {
      * <p>
      * The distribution tool output dir.
      * </p>
+     * @since 1.4
      */
     private static String distributionToolOutputDir = DEFAULT_DISTRIBUTION_TOOL_OUTPUT_DIR;
 
@@ -840,8 +856,17 @@ public class ConfigHelper {
      * <p>
      * The TopCoder catalog output dir.
      * </p>
+     * @since 1.4
      */
     private static String catalogOutputDir = DEFAULT_CATALOG_OUTPUT_DIR;
+    
+    /**
+     * <p>
+     * The default distribution script.
+     * </p>
+     * @since 1.4
+     */
+    private static String defaultDistributionScript = DEFAULT_DISTRIBUTION_SCRIPT;
 
     static {
         // Obtaining the instance of Configuration Manager
@@ -1299,7 +1324,7 @@ public class ConfigHelper {
             
             distributionToolOutputDir = cfgMgr.getString(ONLINE_REVIEW_CFG_NS, DISTRIBUTION_TOOL_OUTPUT_DIR_PROP);
             
-            if (distributionToolOutputDir == null) {
+            if (distributionToolOutputDir == null || distributionToolOutputDir.trim().length() == 0) {
                 System.err.println("The value of " + DISTRIBUTION_TOOL_OUTPUT_DIR_PROP
                     + " configuration property is null. "
                     + "This value will be ignored and value of " + DEFAULT_DISTRIBUTION_TOOL_OUTPUT_DIR
@@ -1310,13 +1335,23 @@ public class ConfigHelper {
             
             catalogOutputDir = cfgMgr.getString(ONLINE_REVIEW_CFG_NS, CATALOG_OUTPUT_DIR_PROP);
             
-            if (catalogOutputDir == null) {
+            if (catalogOutputDir == null || catalogOutputDir.trim().length() == 0) {
                 System.err.println("The value of " + CATALOG_OUTPUT_DIR_PROP
                     + " configuration property is null. "
                     + "This value will be ignored and value of " + DEFAULT_CATALOG_OUTPUT_DIR
                     + " will be used instead");
                 
                 catalogOutputDir = DEFAULT_CATALOG_OUTPUT_DIR;
+            }
+            
+            defaultDistributionScript = cfgMgr.getString(ONLINE_REVIEW_CFG_NS, DEFAULT_DISTRIBUTION_SCRIPT_PROP);
+            if (defaultDistributionScript == null || defaultDistributionScript.trim().length() == 0) {
+                System.err.println("The value of " + DEFAULT_DISTRIBUTION_SCRIPT_PROP
+                    + " configuration property is null. "
+                    + "This value will be ignored and value of " + DEFAULT_DISTRIBUTION_SCRIPT
+                    + " will be used instead");
+                
+                defaultDistributionScript = DEFAULT_DISTRIBUTION_SCRIPT;
             }
             
         } catch (UnknownNamespaceException une) {
@@ -1489,10 +1524,11 @@ public class ConfigHelper {
      * @return the distribution script for a catalog.
      * @param rootCatalogId
      *            Root Catalog ID which to look for.
+     * @since 1.4
      */
     public static String getDistributionScript(String rootCatalogId) {
         return distributionScriptRootCatalogs.containsKey(rootCatalogId) ? distributionScriptRootCatalogs
-            .get(rootCatalogId) : DEFAULT_DISTRIBUTION_SCRIPT;
+            .get(rootCatalogId) : getDefaultDistributionScript();
     }
 
     /**
@@ -1862,6 +1898,7 @@ public class ConfigHelper {
      * <p>Gets the distribution tool output dir.</p>
      *
      * @return the distribution tool output dir.
+     * @since 1.4
      */
     public static String getDistributionToolOutputDir() {
         return distributionToolOutputDir;
@@ -1871,8 +1908,19 @@ public class ConfigHelper {
      * <p>Gets the TopCoder Catalog output dir.</p>
      *
      * @return the TopCoder Catalog output dir.
+     * @since 1.4
      */
     public static String getCatalogOutputDir() {
         return catalogOutputDir;
+    }
+    
+    /**
+     * <p>Gets the Distribution Tool default script.</p>
+     *
+     * @return the Distribution Tool default script.
+     * @since 1.4
+     */
+    public static String getDefaultDistributionScript() {
+        return defaultDistributionScript;
     }
 }

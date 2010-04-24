@@ -2941,8 +2941,14 @@
         <Property name="catalog_jndi_address">
             <Value>&catalogJNDIAddress;</Value>
         </Property>
+        <Property name="catalog_jndi_address">
+            <Value>&catalogJNDIAddress;</Value>
+        </Property>
+        <Property name="default_distribution_script">
+            <Value>other</Value>
+        </Property>
         <Property name="RootCatalogs">
-            <!-- 'DistributionScript' property is optional, if not defined 'other' will be used -->
+            <!-- 'DistributionScript' property bellow is optional, if not defined 'default_distribution_script' will be used -->
 
             <Property name="Java">
                 <Property name="id">
