@@ -33,12 +33,14 @@ import com.topcoder.web.ejb.pacts.ParentReferencePayment;
  * </p>
  * <p>
  *
+ * <p>
  * Version 1.2 (Appeals Early Completion Release Assembly 1.0) Change notes:
  *   <ol>
  *     <li>Contact Manager Email Subject configuration was removed.</li>
  *   </ol>
  * </p>
  *
+ * <p>
  * Version 1.3 (Online Review Project Management Console Release Assembly 1.0) Change notes:
  *   <ol>
  *     <li>Added <code>registrationPhaseMaxExtensionDays</code>, <code>submissionPhaseMaxExtensionDays</code> and
@@ -46,8 +48,16 @@ import com.topcoder.web.ejb.pacts.ParentReferencePayment;
  *   </ol>
  * </p>
  *
- * @author George1, real_vg, pulky, isv
- * @version 1.3
+ * <p>
+ * Version 1.4 (Distribution Auto Generation Assembly 1.0) Change notes:
+ *   <ol>
+ *     <li>Added <code>requirementsSpecificationExts</code>, <code>distributionToolBase</code>
+ *     configuration parameters.</li>
+ *   </ol>
+ * </p>
+ *
+ * @author George1, real_vg, pulky, isv, TCSDEVELOPER
+ * @version 1.4
  */
 public class ConfigHelper {
 
@@ -497,6 +507,22 @@ public class ConfigHelper {
 
     /**
      * <p>This member variable is a string constant that specifies the name of the property which contains the
+     * accepted RS format.</p>
+     *
+     * @since 1.3
+     */
+    private static final String REQUIREMENTS_SPECIFICATION_EXTS_PROP = "requirements_specification_exts";
+
+    /**
+    * <p>This member variable is a string constant that specifies the name of the property which contains the
+    * working base directory of distribution tool.</p>
+    *
+    * @since 1.3
+    */
+    private static final String DISTRIBUTION_TOOL_BASE_PROP = "distribution_tool_base";
+
+    /**
+     * <p>This member variable is a string constant that specifies the name of the property which contains the
      * minimum number of hours before <code>Submission</code> phase deadline to allow the extension of
      * <code>Registration</code> or <code>Submission</code> phases.</p>
      *
@@ -775,6 +801,20 @@ public class ConfigHelper {
     private static Integer submissionPhaseMaxExtensionDays = null;
 
     /**
+     * <p>An <code>String</code>[] providing the accepted RS format.</p>
+     *
+     * @since 1.3
+     */
+     private static String[] requirementsSpecificationExts = new String[0]; 
+
+     /**
+      * <p>An <code>String</code> providing the base directory of distribution temp directory.</p>
+      *
+      * @since 1.3
+      */
+     private static String distributionToolBase = null;
+
+    /**
      * <p>An <code>Integer</code> providing the minimum number of hours before <code>Submission</code> phase deadline
      * to allow extension for <code>Registration</code> and <code>Submission</code> phases.</p>
      *
@@ -921,7 +961,7 @@ public class ConfigHelper {
             // If the value has been retrieved successfully ...
             if (value != null && value.trim().length() != 0) {
                 // ... store it for later use
-            	projectDetailsBaseURL = value;
+                projectDetailsBaseURL = value;
             }
             
             // Retrieve property that contains definitions of ID/filename pairs
@@ -1217,6 +1257,21 @@ public class ConfigHelper {
                 }
             }
 
+            value = cfgMgr.getString(ONLINE_REVIEW_CFG_NS, REQUIREMENTS_SPECIFICATION_EXTS_PROP);
+            if (value != null && value.trim().length() != 0) {
+                requirementsSpecificationExts = value.split(",");
+                for (int i = 0; i < requirementsSpecificationExts.length; i++) {
+                    requirementsSpecificationExts[i] = requirementsSpecificationExts[i].trim();
+                }
+            }
+
+            distributionToolBase = cfgMgr.getString(ONLINE_REVIEW_CFG_NS, DISTRIBUTION_TOOL_BASE_PROP);
+            if (distributionToolBase != null) {
+                distributionToolBase = distributionToolBase.trim();
+                if (!distributionToolBase.endsWith("/")) {
+                    distributionToolBase = distributionToolBase + "/";
+                }
+            }
             value = cfgMgr.getString(ONLINE_REVIEW_CFG_NS, MINIMUM_HOURS_BEFORE_SUBMISSION_DEADLINE_FOR_EXTENSION_PROP);
             if (value != null && value.trim().length() != 0) {
                 try {
@@ -1743,6 +1798,26 @@ public class ConfigHelper {
      */
     public static Integer getSubmissionPhaseMaxExtensionDays() {
         return submissionPhaseMaxExtensionDays;
+    }
+
+    /**
+     * <p>Gets the accepted RS format.</p>
+     *
+     * @return an <code>String</code>[] providing the accepted RS format.
+     * since 1.3
+     */
+    public static String[] getRequirementsSpecificationExts() {
+        return requirementsSpecificationExts;
+    }
+
+    /**
+    * <p>Gets the working base directory of distribution tool.</p>
+    *
+    * @return an <code>String</code> providing the working base directory of distribution tool.
+    * @since 1.3
+    */
+    public static String getDistributionToolBase() {
+        return distributionToolBase;
     }
 
     /**

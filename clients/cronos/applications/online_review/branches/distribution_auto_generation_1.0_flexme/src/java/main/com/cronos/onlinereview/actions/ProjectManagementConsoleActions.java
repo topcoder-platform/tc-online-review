@@ -15,6 +15,10 @@ import com.topcoder.management.resource.ResourceManager;
 import com.topcoder.management.resource.ResourceRole;
 import com.topcoder.management.resource.persistence.ResourcePersistenceException;
 import com.topcoder.management.resource.search.ResourceFilterBuilder;
+import com.topcoder.servlet.request.FileUpload;
+import com.topcoder.servlet.request.FileUploadResult;
+import com.topcoder.servlet.request.LocalFileUpload;
+import com.topcoder.servlet.request.UploadedFile;
 import com.topcoder.project.phases.Phase;
 import com.topcoder.project.phases.PhaseStatus;
 import com.topcoder.shared.util.DBMS;
@@ -27,18 +31,27 @@ import com.topcoder.web.ejb.termsofuse.TermsOfUseLocator;
 import com.topcoder.web.ejb.user.UserTermsOfUse;
 import com.topcoder.web.ejb.user.UserTermsOfUseLocator;
 import com.topcoder.web.common.eligibility.ContestEligibilityServiceLocator;
+import com.topcoder.web.common.WebConstants;
 import com.topcoder.service.contest.eligibilityvalidation.ContestEligibilityValidatorException;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
 import org.apache.struts.actions.DispatchAction;
+import org.apache.struts.upload.FormFile;
 import org.apache.struts.validator.LazyValidatorForm;
+import org.apache.struts.validator.DynaValidatorForm;
 
+import javax.activation.MimetypesFileTypeMap;
 import javax.ejb.CreateException;
 import javax.naming.NamingException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.ServletOutputStream;
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -61,10 +74,23 @@ import static com.cronos.onlinereview.actions.Constants.SUCCESS_FORWARD_NAME;
  * <p>As of current version such requests may require adding new resources to designated projects, extend
  * <code>Registration</code> or <code>Submission</code> phases for projects.</p>
  *
- * @author isv
+ * <p>
+ * Version 1.1 (Distribution Auto Generation Assembly 1.0) Change notes:
+ *   <ol>
+ *     <li>Added <code>MIMETYPES_FILETYPE_MAP</code> field.</li>
+ *     <li>Added <code>createDesignDistribution</code>, <code>uploadDistribution</code>,
+ *     <code>uploadDesignDistribution</code> and <code>uploadDevelopmentDistribution</code> methods.</li>
+ *   </ol>
+ * </p>
+ * @author isv, TCSDEVELOPER
  * @version 1.0 (Online Review Project Management Console assembly v1.0)
+ * @version 1.1 (Distribution Auto Generation Assembly 1.0)
  */
 public class ProjectManagementConsoleActions extends DispatchAction {
+    /**
+     * <p>A <code>int</code> providing the constant value for block size when reading file.</p>
+     */
+    private static final int BLOCK_SIZE = 65536;
 
     /**
      * <p>A <code>long</code> providing the constant value for single hour duration in milliseconds.</p>
@@ -96,7 +122,42 @@ public class ProjectManagementConsoleActions extends DispatchAction {
      */
     private static final long DESIGNER_RESOURCE_ROLE_ID = 11;
 
+    /**
+     * <p>A <code>long<code> providing the constant value for design distribution type id.</p>
+     */
+    private static final long DESIGN_DISTRIBUTION_TYPE_ID = 25;
 
+    /**
+     * <p>A <code>long</code> providing the constant value for development distribution type id.</p>
+     */
+    private static final long DEVELOPMENT_DISTRIBUTION_TYPE_ID = 26;
+
+    /**
+     * <p>
+     * This instance contains the map file extension -- MIME type. It's created in constructed and
+     * it's not null. It's used to retrieve the MIME types from the file name.
+     * </p>
+     */
+    private static final MimetypesFileTypeMap MIMETYPES_FILETYPE_MAP = new MimetypesFileTypeMap();
+
+    /**
+     * <p>
+     * It crates the MIMETYPES_FILETYPE_MAP and add to it all MIME types.
+     * </p>
+     */
+    static {
+        String[] mimeTypes = new String[] {"application/msword", "application/rtf", "text/plain", "application/pdf",
+            "application/postscript", "text/html", "text/html", "image/jpeg", "image/jpeg", "image/gif",
+            "image/png", "image/bmp", "application/vnd.ms-excel", "application/zip",
+            "application/x-zip-compressed", "audio/mpeg", "audio/mp3", "application/java-archive",
+            "application/vnd.ms-powerpoint", "application/vnd.ms-powerpoint" };
+        String[] exts = new String[] {"doc", "rtf", "txt", "pdf", "ps", "htm", "html", "jpg", "jpge", "gif", "png",
+            "bmp", "xls", "zip", "rar", "mpg", "mp3", "jar", "ppt", "pps" };
+
+        for (int i = 0; i < mimeTypes.length; i++) {
+            MIMETYPES_FILETYPE_MAP.addMimeTypes(mimeTypes[i] + " " + exts[i]);
+        }
+    }
 
     /**
      * <p>Constructs new <code>ProjectManagementConsoleActions</code> instance. This implementation does nothing.</p>
@@ -142,6 +203,366 @@ public class ProjectManagementConsoleActions extends DispatchAction {
             
             return mapping.findForward(SUCCESS_FORWARD_NAME);
         }
+    }
+
+    /**
+     * <p>Processes the incoming request which is a request for creating design distribution 
+     * for requested project.</p>
+     *
+     * <p>Verifies that current user is granted access to this functionality and is granted a permission to access the
+     * requested project details.</p>
+     *
+     * @param mapping an <code>ActionMapping</code> used for mapping the specified request to this action.
+     * @param form an <code>ActionForm</code> providing the form parameters mapped to specified request.
+     * @param request an <code>HttpServletRequest</code> representing incoming request from the client.
+     * @param response an <code>HttpServletResponse</code> representing response outgoing to client.
+     * @return an <code>ActionForward</code> referencing the next view to be displayed to user.
+     * @throws Exception if an unexpected error occurs.
+     */
+    public ActionForward createDesignDistribution(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+                                       HttpServletResponse response) throws Exception {
+        LoggingHelper.logAction(request);
+        
+        // Gather the roles the user has for current request
+        AuthorizationHelper.gatherUserRoles(request);
+        
+        // Check whether the user has the permission to perform this action. If not then redirect the request
+        // to log-in page or report about the lack of permissions. Also check that current user is granted a
+        // permission to access the details for requested project
+        CorrectnessCheckResult verification
+            = ActionsHelper.checkForCorrectProjectId(mapping, getResources(request), request,
+                                                     PROJECT_MANAGEMENT_PERM_NAME, false);
+        if (!verification.isSuccessful()) {
+            return verification.getForward();
+        }
+        
+        // Validate the forms
+        final Project project = verification.getProject();
+        long componentId = Long.parseLong((String) project.getAllProperties().get("Component ID"));
+        long versionId = Long.parseLong((String) project.getAllProperties().get("Version ID"));
+        String version = (String) project.getAllProperties().get("Project Version");
+        long rootCatalog = Long.parseLong((String) project.getAllProperties().get("Root Catalog ID"));
+        boolean isJava = ((rootCatalog == WebConstants.JAVA_CATALOG) || (rootCatalog == WebConstants.JAVA_CUSTOM_CATALOG));
+        boolean isNet = ((rootCatalog == WebConstants.NET_CATALOG) || (rootCatalog == WebConstants.NET_CUSTOM_CATALOG));
+        
+        DynaValidatorForm dform = (DynaValidatorForm) form;
+        
+        // validate the version text
+        if (!ActionsHelper.checkVersion(version)) {
+            // the version is wrong format, display the error page
+            return ActionsHelper.produceErrorReport(mapping, getResources(request), request, null,
+                "Error.VersionFormat", null);
+        }
+
+        // validate package name
+        String packageName = (String) dform.get("distribution_package_name");
+        if (isJava || isNet) {
+            // package name is required for java or dotnet component
+            if (packageName == null || packageName.trim().length() == 0) {
+                ActionsHelper.addErrorToRequest(request, "distribution_package_name",
+                        new ActionMessage("error.com.cronos.onlinereview.actions.manageProject.packageName.required"));
+            } else if (!ActionsHelper.checkPackageName(packageName.trim())) {
+                ActionsHelper.addErrorToRequest(request, "distribution_package_name",
+                        new ActionMessage("error.com.cronos.onlinereview.actions.manageProject.packageName.format"));
+            }
+        }
+
+        Boolean uploadToServer = (Boolean) dform.get("distribution_upload");
+        if (uploadToServer == null) {
+            uploadToServer = Boolean.FALSE;
+        }
+        request.setAttribute("distribution_upload", uploadToServer);
+
+        Boolean returnToUser = (Boolean) dform.get("distribution_return");
+        if (returnToUser == null) {
+            returnToUser = Boolean.FALSE;
+        }
+        request.setAttribute("distribution_return", returnToUser);
+        request.setAttribute("tab", "generate");
+
+        // validate upload to server check box and return to user check box
+        if (!uploadToServer && !returnToUser) {
+            ActionsHelper.addErrorToRequest(request, "distribution_return",
+                    new ActionMessage("error.com.cronos.onlinereview.actions.manageProject.uploadReturn.required"));
+        }
+
+        FormFile rsFile = (FormFile) dform.get("distribution_rs");
+        FormFile docFile1 = (FormFile) dform.get("distribution_document1");
+        FormFile docFile2 = (FormFile) dform.get("distribution_document2");
+        FormFile docFile3 = (FormFile) dform.get("distribution_document3");
+        // validate requirements specification
+        if (rsFile == null || rsFile.getFileSize() == 0) {
+            ActionsHelper.addErrorToRequest(request, "distribution_rs",
+                    new ActionMessage("error.com.cronos.onlinereview.actions.manageProject.RS.required"));
+        } else if (!ActionsHelper.checkFileFormat(rsFile, ConfigHelper.getRequirementsSpecificationExts())) {
+            ActionsHelper.addErrorToRequest(request, "distribution_rs",
+                    new ActionMessage("error.com.cronos.onlinereview.actions.manageProject.RS.format"));
+        }
+
+        // Check if there were any validation errors identified and return appropriate forward
+        if (ActionsHelper.isErrorsPresent(request)) {
+            initProjectManagementConsole(request, project);
+            return mapping.getInputForward();
+        }
+
+        if (packageName != null) {
+            packageName = packageName.trim();
+        }
+
+        if (project.getProjectCategory().getProjectType().getName().equals("Component")) {
+            // only generate distribution for component competition
+            // create the temp directory
+            String rootDir = ConfigHelper.getDistributionToolBase();
+            File dir = new File(rootDir, project.getId() + "_" + System.currentTimeMillis());
+            while (dir.exists()) {
+                dir = new File(rootDir, project.getId() + "_" + System.currentTimeMillis());
+            }
+            dir.mkdir();
+
+            List<String> deleteFiles = new ArrayList<String>();
+            try {
+                // additional documents
+                List<String> addDocs = new ArrayList<String>();
+                StrutsRequestParser parser = new StrutsRequestParser();
+                parser.AddFile(rsFile);
+                if (docFile1 != null && docFile1.getFileSize() != 0) {
+                    parser.AddFile(docFile1);
+                    addDocs.add(dir.getAbsolutePath() + "/"  + docFile1.getFileName());
+                }
+                if (docFile2 != null && docFile2.getFileSize() != 0) {
+                    parser.AddFile(docFile2);
+                    addDocs.add(dir.getAbsolutePath() + "/"  + docFile2.getFileName());
+                }
+                if (docFile3 != null && docFile3.getFileSize() != 0) {
+                    parser.AddFile(docFile3);
+                    addDocs.add(dir.getAbsolutePath() + "/"  + docFile3.getFileName());
+                }
+
+                // Obtain an instance of File Upload Manager
+                FileUpload fileUpload = ActionsHelper.createFileUploadManager(request);
+                FileUploadResult uploadResult = fileUpload.uploadFiles(request, parser);
+                UploadedFile[] fileUploads = uploadResult.getAllUploadedFiles();
+                String tDir = ((LocalFileUpload) fileUpload).getDir();
+                if (!tDir.endsWith("/")) {
+                    tDir += "/";
+                }
+
+                // copy files to temp directory
+                for (UploadedFile uf : fileUploads) {
+                    deleteFiles.add(tDir + uf.getFileId());
+                    ActionsHelper.copyFile(uf.getInputStream(),
+                        new File(dir.getAbsolutePath(), uf.getRemoteFileName()));
+                }
+
+                if (isJava) {
+                    // copy topcoder_global.properties file to temp directory
+                    ActionsHelper.copyFile(new FileInputStream(new File(rootDir, "topcoder_global.properties")),
+                        new File(dir.getAbsolutePath(), "topcoder_global.properties"));
+                }
+
+                String name = (String) project.getAllProperties().get("Project Name");
+                String rsFilePath = dir.getAbsolutePath() + "/" + rsFile.getFileName();
+                // the file name of the generated distribution
+                String distributionFileName;
+
+                // generate distribution
+                if (isJava) {
+                    ActionsHelper.generateJavaDistribution(dir.getAbsolutePath(), name,
+                        version, packageName, rsFilePath, addDocs);
+                    distributionFileName = ActionsHelper.getDistributionFileName(name, version, "design", "jar");
+                } else if(isNet) {
+                    ActionsHelper.generateDotNetDistribution(dir.getAbsolutePath(), name,
+                        version, packageName, rsFilePath, addDocs);
+                    distributionFileName = ActionsHelper.getDistributionFileName(name, version, "design", "zip");
+                } else {
+                    ActionsHelper.generateOtherDistribution(dir.getAbsolutePath(), name,
+                        version, rsFilePath, addDocs);
+                    distributionFileName = ActionsHelper.getDistributionFileName(name, version, "design", "zip");
+                }
+                
+                File distributionFile = new File(dir.getAbsolutePath(), distributionFileName);
+                // checks if the distribution has been generated
+                if (!distributionFile.exists()) {
+                    // the distribution was not found, display error page
+                    return ActionsHelper.produceErrorReport(mapping, getResources(request), request, null,
+                        "Error.CannotGenerateDistribution", null);
+                }
+
+                if (uploadToServer) {
+                    // upload to server
+                    ActionsHelper.uploadDocument(request, distributionFile, componentId,
+                        versionId, DESIGN_DISTRIBUTION_TYPE_ID, distributionFileName);
+                }
+                if (returnToUser) {
+                    // send distribution to user
+                    InputStream is = null;
+                    try {
+                        is = new BufferedInputStream(new FileInputStream(distributionFile));
+                        ServletOutputStream out = response.getOutputStream();
+                        // set headers
+                        response.setHeader("Content-Disposition", "inline;filename=\"" + distributionFileName + "\"");
+                        response.setContentType(MIMETYPES_FILETYPE_MAP.getContentType(distributionFileName));
+                        response.setContentLength((int) distributionFile.length());
+
+                        int numBytes = 0;
+                        byte[] inBytes = new byte[BLOCK_SIZE];
+                        numBytes = is.read(inBytes);
+                        while (numBytes > 0) {
+                            out.write(inBytes, 0, numBytes);
+                            numBytes = is.read(inBytes);
+                        }
+                        return null;
+                    } finally {
+                        if (is != null) {
+                            is.close();
+                        }
+                    }
+                }
+            } finally {
+                // remove the temp directory
+                ActionsHelper.deleteDir(dir);
+                // remove temp uploaded files
+                for (String path : deleteFiles) {
+                    new File(path).delete();
+                }
+            }
+        }
+        
+        return ActionsHelper.cloneForwardAndAppendToPath(mapping.findForward(SUCCESS_FORWARD_NAME), "&pid="
+                + project.getId());
+    }
+
+    /**
+     * <p>Processes the incoming request which is a request for uploading distribution 
+     * for requested project.</p>
+     *
+     * <p>Verifies that current user is granted access to this functionality and is granted a permission to access the
+     * requested project details.</p>
+     *
+     * @param mapping an <code>ActionMapping</code> used for mapping the specified request to this action.
+     * @param form an <code>ActionForm</code> providing the form parameters mapped to specified request.
+     * @param request an <code>HttpServletRequest</code> representing incoming request from the client.
+     * @param response an <code>HttpServletResponse</code> representing response outgoing to client.
+     * @param errorKey the key of error message when distribution fill is not provided.
+     * @param type the type of the component.
+     * @param category the category name of the component.
+     * @param typeId the type id of the component.
+     * @return an <code>ActionForward</code> referencing the next view to be displayed to user.
+     * @throws Exception if an unexpected error occurs.
+     */
+    private ActionForward uploadDistribution(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+        HttpServletResponse response, String errorKey, String type, String category, long typeId) throws Exception {
+        LoggingHelper.logAction(request);
+        
+        // Gather the roles the user has for current request
+        AuthorizationHelper.gatherUserRoles(request);
+        
+        // Check whether the user has the permission to perform this action. If not then redirect the request
+        // to log-in page or report about the lack of permissions. Also check that current user is granted a
+        // permission to access the details for requested project
+        CorrectnessCheckResult verification
+            = ActionsHelper.checkForCorrectProjectId(mapping, getResources(request), request,
+                                                     PROJECT_MANAGEMENT_PERM_NAME, false);
+        if (!verification.isSuccessful()) {
+            return verification.getForward();
+        }
+        
+        // Validate the forms
+        final Project project = verification.getProject();
+        long componentId = Long.parseLong((String) project.getAllProperties().get("Component ID"));
+        long versionId = Long.parseLong((String) project.getAllProperties().get("Version ID"));
+        String version = (String) project.getAllProperties().get("Project Version");
+        long rootCatalog = Long.parseLong((String) project.getAllProperties().get("Root Catalog ID"));
+        boolean isJava = ((rootCatalog == WebConstants.JAVA_CATALOG) || (rootCatalog == WebConstants.JAVA_CUSTOM_CATALOG));
+        request.setAttribute("tab", "generate");
+        
+        DynaValidatorForm dform = (DynaValidatorForm) form;
+        FormFile distFile = (FormFile) dform.get("file");
+        // validate design distribution file
+        if (distFile == null || distFile.getFileSize() == 0) {
+            ActionsHelper.addErrorToRequest(request, "file", new ActionMessage(errorKey));
+        }
+
+        // Check if there were any validation errors identified and return appropriate forward
+        if (ActionsHelper.isErrorsPresent(request)) {
+            initProjectManagementConsole(request, project);
+            return mapping.getInputForward();
+        }
+
+        // only upload design distribution for component design project
+        if (project.getProjectCategory().getProjectType().getName().equals("Component")
+            && project.getProjectCategory().getName().equals(category)) {
+            File tFile = null;
+            try {
+                StrutsRequestParser parser = new StrutsRequestParser();
+                parser.AddFile(distFile);
+                // Obtain an instance of File Upload Manager
+                FileUpload fileUpload = ActionsHelper.createFileUploadManager(request);
+                FileUploadResult uploadResult = fileUpload.uploadFiles(request, parser);
+                UploadedFile[] fileUploads = uploadResult.getAllUploadedFiles();
+                tFile = new File(((LocalFileUpload) fileUpload).getDir(), fileUploads[0].getFileId());
+
+                String ext;
+                int idx = distFile.getFileName().indexOf('.');
+                if (idx == -1) {
+                    ext = isJava ? "jar" : "zip";
+                } else {
+                    ext = distFile.getFileName().substring(idx + 1);
+                }
+                String distName = ActionsHelper.getDistributionFileName((String) project.getAllProperties().get("Project Name"),
+                    version, type, ext);
+                ActionsHelper.uploadDocument(request, tFile, componentId,
+                        versionId, typeId, distName);
+            } finally {
+                if (tFile != null) {
+                    tFile.delete();
+                }
+            }
+        }
+        return ActionsHelper.cloneForwardAndAppendToPath(mapping.findForward(SUCCESS_FORWARD_NAME), "&pid="
+                + project.getId());
+    }
+
+    /**
+     * <p>Processes the incoming request which is a request for uploading design distribution 
+     * for requested project.</p>
+     *
+     * <p>Verifies that current user is granted access to this functionality and is granted a permission to access the
+     * requested project details.</p>
+     *
+     * @param mapping an <code>ActionMapping</code> used for mapping the specified request to this action.
+     * @param form an <code>ActionForm</code> providing the form parameters mapped to specified request.
+     * @param request an <code>HttpServletRequest</code> representing incoming request from the client.
+     * @param response an <code>HttpServletResponse</code> representing response outgoing to client.
+     * @return an <code>ActionForward</code> referencing the next view to be displayed to user.
+     * @throws Exception if an unexpected error occurs.
+     */
+    public ActionForward uploadDesignDistribution(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+                                       HttpServletResponse response) throws Exception {
+        return uploadDistribution(mapping, form, request, response,
+            "error.com.cronos.onlinereview.actions.manageProject.DESIGNDIST.required",
+            "design", "Design", DESIGN_DISTRIBUTION_TYPE_ID);
+    }
+
+    /**
+     * <p>Processes the incoming request which is a request for uploading development distribution 
+     * for requested project.</p>
+     *
+     * <p>Verifies that current user is granted access to this functionality and is granted a permission to access the
+     * requested project details.</p>
+     *
+     * @param mapping an <code>ActionMapping</code> used for mapping the specified request to this action.
+     * @param form an <code>ActionForm</code> providing the form parameters mapped to specified request.
+     * @param request an <code>HttpServletRequest</code> representing incoming request from the client.
+     * @param response an <code>HttpServletResponse</code> representing response outgoing to client.
+     * @return an <code>ActionForward</code> referencing the next view to be displayed to user.
+     * @throws Exception if an unexpected error occurs.
+     */
+    public ActionForward uploadDevelopmentDistribution(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+                                       HttpServletResponse response) throws Exception {
+        return uploadDistribution(mapping, form, request, response,
+            "error.com.cronos.onlinereview.actions.manageProject.DEVELOPMENTDIST.required",
+            "dev", "Development", DEVELOPMENT_DISTRIBUTION_TYPE_ID);
     }
 
     /**
@@ -251,6 +672,12 @@ public class ProjectManagementConsoleActions extends DispatchAction {
         setAvailableResourceRoles(request);
         setRegistrationPhaseExtensionParameters(request, phases);
         setSubmissionPhaseExtensionParameters(request, phases);
+        if (request.getAttribute("distribution_upload") == null) {
+            request.setAttribute("distribution_upload", Boolean.TRUE);
+        }
+        if (request.getAttribute("distribution_return") == null) {
+            request.setAttribute("distribution_return", Boolean.FALSE);
+        }
     }
 
     /**

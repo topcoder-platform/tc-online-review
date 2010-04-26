@@ -12,12 +12,21 @@ import java.sql.Statement;
 import java.sql.Types;
 import java.text.Format;
 import java.text.SimpleDateFormat;
+import java.util.regex.Pattern;
 import java.util.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.io.IOException;
+import java.rmi.*;
 
 import javax.ejb.CreateException;
 import javax.naming.Context;
+import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.servlet.http.HttpServletRequest;
+import javax.rmi.*;
 
 import com.topcoder.management.phase.*;
 import org.apache.struts.Globals;
@@ -27,8 +36,11 @@ import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
 import org.apache.struts.action.ActionMessages;
 import org.apache.struts.action.ActionRedirect;
+import org.apache.struts.upload.FormFile;
 import org.apache.struts.util.MessageResources;
 
+import com.topcoder.dde.catalog.*;
+import com.topcoder.util.distribution.DistributionTool;
 import com.topcoder.web.common.eligibility.ContestEligibilityServiceLocator;
 import com.cronos.onlinereview.autoscreening.management.ScreeningManager;
 import com.cronos.onlinereview.deliverables.AggregationDeliverableChecker;
@@ -164,13 +176,33 @@ import com.topcoder.web.ejb.forums.ForumsHome;
  *   </ol>
  * </p>
  *
- * @author George1, real_vg, pulky, isv
- * @version 1.4
+ * <p>
+ * Version 1.5 (Distribution Auto Generation Assembly 1.0) Change notes:
+ *   <ol>
+ *     <li>Added {@link #checkPackageName(String)} method.</li>
+ *     <li>Added {@link #checkFileFormat(FormFile, String[])} method.</li>
+ *     <li>Added {@link #generateDistribution(String, String, String, String, String, String, List<String>)} method.</li>
+ *     <li>Added {@link #generateJavaDistribution(String, String, String, String, String, String, List<String>)} method.</li>
+ *     <li>Added {@link #generateDotNetDistribution(String, String, String, String, String, String, List<String>)} method.</li>
+ *     <li>Added {@link #generateOtherDistribution(String, String, String, String, String, List<String>)} method.</li>
+ *     <li>Added {@link #getDistributionFileName(String, String, String, String)} method.</li>
+ *     <li>Added {@link #checkVersion(String)} method.</li>
+ *     <li>Added {@link #copyFile(InputStream, File)} method.</li>
+ *     <li>Added {@link #uploadDocument(HttpServletRequest, File, long, long, long, String)} method.</li>
+ *     <li>Added {@link #deleteDir(String)} method.</li>
+ *   </ol>
+ * </p>
+ *
+ * @author George1, real_vg, pulky, isv, TCSDEVELOPER
+ * @version 1.5
  * @since 1.0
  */
 public class ActionsHelper {
+    /**
+     * Represents the block size when copy file.
+    */
+    private static final int BLOCK_SIZE = 8192;
 
-    
     /**
      * The logger instance.
      */
@@ -210,7 +242,10 @@ public class ActionsHelper {
      */
     private static final String SOFTWARE_MODERATOR_FORUM_ROLE_PREFIX = "Software_Moderators_";
 
-
+    /**
+     * the regex of package name.
+     */
+    private static final Pattern PACKAGE_NAME_PATTERN = Pattern.compile("^([a-zA-Z_\\$][a-zA-Z0-9_\\$]+)(\\.([a-zA-Z_\\$][a-zA-Z0-9_\\$]+))*$");
 
     /**
      * This constructor is declared private to prohibit instantiation of the <code>ActionsHelper</code> class.
@@ -261,30 +296,30 @@ public class ActionsHelper {
     }
 
     /**
-	 * The query to select worker project.
-	 */
-	private static final String SELECT_WORKER_PROJECT = "SELECT distinct project_id FROM project_worker p, user_account u "
-			+ "WHERE p.start_date <= current and current <= p.end_date and p.active =1 and "
-			+ "p.user_account_id = u.user_account_id and u.user_name = ";
+     * The query to select worker project.
+     */
+    private static final String SELECT_WORKER_PROJECT = "SELECT distinct project_id FROM project_worker p, user_account u "
+            + "WHERE p.start_date <= current and current <= p.end_date and p.active =1 and "
+            + "p.user_account_id = u.user_account_id and u.user_name = ";
 
     /**
-	 * The query string used to select projects.
-	 */
-	private static final String SELECT_MANAGER_PROJECT = "SELECT distinct project_id FROM project_manager p, user_account u "
+     * The query string used to select projects.
+     */
+    private static final String SELECT_MANAGER_PROJECT = "SELECT distinct project_id FROM project_manager p, user_account u "
            + "WHERE p.user_account_id = u.user_account_id and p.active = 1 and  u.user_name = ";
 
     /**
-	 * The query string used to select projects.
-	 * 
-	 * Updated for Cockpit Release Assembly for Receipts
-	 *     - now fetching client name too.
-	 *     
-	 * Updated for Version 1.1.1 - added fetch for is_manual_prize_setting property too.
-	 */
-	private static final String SELECT_PROJECT 	= "select p.project_id, p.name "
-			  + " from project as p left join client_project as cp on p.project_id = cp.project_id left join client c "
+     * The query string used to select projects.
+     * 
+     * Updated for Cockpit Release Assembly for Receipts
+     *     - now fetching client name too.
+     *     
+     * Updated for Version 1.1.1 - added fetch for is_manual_prize_setting property too.
+     */
+    private static final String SELECT_PROJECT     = "select p.project_id, p.name "
+              + " from project as p left join client_project as cp on p.project_id = cp.project_id left join client c "
               + "            on c.client_id = cp.client_id and (c.is_deleted = 0 or c.is_deleted is null) "
-			  + " where p.start_date <= current and current <= p.end_date ";
+              + " where p.start_date <= current and current <= p.end_date ";
 
     // ------------------------------------------------------------ Validator type of methods -----
 
@@ -2984,9 +3019,9 @@ public class ActionsHelper {
                 String queryString = "";
 
                 String nonadminQueryString = SELECT_PROJECT + " and active = 1 and p.project_id in " + "("
-					+ SELECT_MANAGER_PROJECT + "'" + username + "' " + "union "
-					+ SELECT_WORKER_PROJECT + "'" + username + "')";
-			    nonadminQueryString += " order by upper(name) ";
+                    + SELECT_MANAGER_PROJECT + "'" + username + "' " + "union "
+                    + SELECT_WORKER_PROJECT + "'" + username + "')";
+                nonadminQueryString += " order by upper(name) ";
 
                 String adminQueryString = "SELECT project_id, name FROM project WHERE is_deleted = 0 or is_deleted IS NULL ORDER BY UPPER(name)";
 
@@ -3083,17 +3118,17 @@ public class ActionsHelper {
      */
     static void setProjectCompletionDate(Project project, ProjectStatus newProjectStatus, Format format)
             throws BaseException {
-    	
+        
         String name = newProjectStatus.getName();
         if ("Completed".equals(name)
-        		|| "Cancelled - Failed Review".equals(name)
-        		|| "Deleted".equals(name)
+                || "Cancelled - Failed Review".equals(name)
+                || "Deleted".equals(name)
                 || "Cancelled - Failed Screening".equals(name)
                 || "Cancelled - Zero Submissions".equals(name)
                 || "Cancelled - Winner Unresponsive".equals(name)
                 || "Cancelled - Client Request".equals(name)
                 || "Cancelled - Requirements Infeasible".equals(name)) {
-        	
+            
             if (format == null) {
                 format = new SimpleDateFormat(ConfigHelper.getDateFormat());
             }
@@ -3107,7 +3142,7 @@ public class ActionsHelper {
                     DBConnectionFactory dbconn = new DBConnectionFactoryImpl(DB_CONNECTION_NAMESPACE);
                     conn = dbconn.createConnection();
                     ps = conn.prepareStatement(
-                    		"update project_result set rating_ind = 1 where project_id = ? and valid_submission_ind = 1");
+                            "update project_result set rating_ind = 1 where project_id = ? and valid_submission_ind = 1");
                     ps.setLong(1, project.getId());
                     ps.execute();
                 } catch(SQLException e) {
@@ -3901,7 +3936,7 @@ public class ActionsHelper {
 
             log.log(Level.INFO,
                     "create db connection with default connection name from DBConnectionFactoryImpl with namespace:"
-            		+ DB_CONNECTION_NAMESPACE);
+                    + DB_CONNECTION_NAMESPACE);
 
             // delete from project_result
             ps = conn.prepareStatement("delete from project_result where project_id = ? and user_id = ?");
@@ -3944,7 +3979,7 @@ public class ActionsHelper {
             conn = dbconn.createConnection();
             log.log(Level.INFO,
                     "create db connection with default connection name from DBConnectionFactoryImpl with namespace:"
-            		+ DB_CONNECTION_NAMESPACE);
+                    + DB_CONNECTION_NAMESPACE);
             PRHelper.resetProjectResultWithChangedScores(projectId, userId, conn);
         } catch (DBConnectionException e) {
             throw new BaseException("Failed to return DBConnection", e);
@@ -3971,7 +4006,7 @@ public class ActionsHelper {
             conn = dbconn.createConnection();
             log.log(Level.INFO,
                     "create db connection with default connection name from DBConnectionFactoryImpl with namespace:"
-            		+ DB_CONNECTION_NAMESPACE);
+                    + DB_CONNECTION_NAMESPACE);
 
             String sqlString = "select version from comp_versions where comp_vers_id = ?";
 
@@ -4406,5 +4441,305 @@ public class ActionsHelper {
         ArrayList<Long> userCollection = new ArrayList<Long>();
         userCollection.add(user);
         return userCollection;
+    }
+
+    /**
+     * Checks whether a package name is valid or not.
+     *
+     * @param packageName the package name
+     * @return true if the package name is valid, false otherwise
+     */
+    public static boolean checkPackageName(String packageName) {
+        return PACKAGE_NAME_PATTERN.matcher(packageName).find();
+    }
+
+    /**
+     * Checks whether a <code>FormFile</code> is an accepted format.
+     * 
+     * @param file the <code>FormFile</code>
+     * @param exts the valid fil extensions
+     * @return true if the <code>FormFile</code> is an accepted format, false otherwise
+     */
+    public static boolean checkFileFormat(FormFile file, String[] exts) {
+        String fileName = file.getFileName();
+        int index = fileName.lastIndexOf(".");
+        if (index == -1) {
+            // no extension
+            return false;
+        }
+        String ext = fileName.substring(index + 1, fileName.length());
+        for (String ve : exts) {
+            if (ext.equalsIgnoreCase(ve)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Generate a design distribution using distribution tool.
+     * 
+     * @param outputDir
+     *            the output directory of distribution
+     * @param componentName
+     *            the component name
+     * @param version
+     *            the component version
+     * @param packageName
+     *            the package name
+     * @param lang
+     *            the language of the component
+     * @param rs
+     *            the file name of requirements specification
+     * @param docs
+     *            the list of file names of additional documentations
+     * @return the generated distribution file path
+     * @throws Exception
+     *             if any error occurs
+     */
+    public static String generateDistribution(String outputDir, String componentName, String version,
+            String packageName, String lang, String rs, List<String> docs) throws Exception {
+        DistributionTool distributionTool = new DistributionTool("distribution_tool_config.properties",
+                "com.topcoder.util.distribution.DistributionTool");
+        Map<String, String> parameters = new HashMap<String, String>();
+        parameters.put("output_dir", outputDir);
+        parameters.put(DistributionTool.VERSION_PARAM_NAME, version);
+        parameters.put(DistributionTool.COMPONENT_NAME_PARAM_NAME, componentName);
+        parameters.put(DistributionTool.PACKAGE_NAME_PARAM_NAME, packageName);
+        parameters.put("rs", rs);
+        for (int i = 0; i < docs.size(); i++) {
+            parameters.put("additional_doc" + (i + 1), docs.get(i));
+        }
+        distributionTool.createDistribution(lang, parameters);
+        return "";
+    }
+
+    /**
+     * Generate a Java design distribution using distribution tool.
+     *
+     * @param outputDir
+     *            the output directory of distribution
+     * @param componentName
+     *            the component name
+     * @param version
+     *            the component version
+     * @param packageName
+     *            the package name
+     * @param rs
+     *            the file name of requirements specification
+     * @param docs
+     *            the list of file names of additional documentations
+     * @return the generated distribution file path
+     * @throws Exception
+     *             if any error occurs
+     */
+    public static String generateJavaDistribution(String outputDir, String componentName, String version,
+            String packageName, String rs, List<String> docs) throws Exception {
+        return generateDistribution(outputDir, componentName, version, packageName, "java", rs, docs);
+    }
+
+    /**
+     * Generate a DotNet design distribution using distribution tool.
+     *
+     * @param outputDir
+     *            the output directory of distribution
+     * @param componentName
+     *            the component name
+     * @param version
+     *            the component version
+     * @param packageName
+     *            the package name
+     * @param rs
+     *            the file name of requirements specification
+     * @param docs
+     *            the list of file names of additional documentations
+     * @return the generated distribution file path
+     * @throws Exception
+     *             if any error occurs
+     */
+    public static String generateDotNetDistribution(String outputDir, String componentName, String version,
+            String packageName, String rs, List<String> docs) throws Exception {
+        return generateDistribution(outputDir, componentName, version, packageName, "dotnet", rs, docs);
+    }
+
+    /**
+     * Generate a design distribution of other language using distribution tool.
+     *
+     * @param outputDir
+     *            the output directory of distribution
+     * @param componentName
+     *            the component name
+     * @param version
+     *            the component version
+     * @param rs
+     *            the file name of requirements specification
+     * @param docs
+     *            the list of file names of additional documentations
+     * @return the generated distribution file path
+     * @throws Exception
+     *             if any error occurs
+     */
+    public static String generateOtherDistribution(String outputDir, String componentName, String version,
+            String rs, List<String> docs) throws Exception {
+        return generateDistribution(outputDir, componentName, version, "", "other", rs, docs);
+    }
+
+    /**
+     * Return the file name of the generated design distribution.
+     *
+     * @param componentName the component name
+     * @param version the version of the component
+     * @type the type of the component
+     * @param ext the extension of the file
+     * @return the file name of the generated design distribution
+     */
+    public static String getDistributionFileName(String componentName, String version, String type, String ext) {
+        String[] parts = version.split("\\.");
+        String nv = parts[0];
+        int num = parts.length;
+        if (num > 3) {
+            num = 3;
+        }
+        for (int i = 1; i < num; i++) {
+            nv = nv + "." + parts[i];
+        }
+        for (int i = num; i < 3; i++) {
+            nv = nv + ".0";
+        }
+        return componentName.toLowerCase().replace(" ", "_") + "_" + nv + "_" + type + "_dist." + ext;
+    }
+
+    /**
+     * Checks whether a version number text is a valid version.
+     * Valid version nubmer format:X or X.X or X.X.X
+     *
+     * @param version the version text to be checked
+     * @return true if the version text is a valid version, false otherwise
+     */
+    public static boolean checkVersion(String version) {
+        String[] parts = version.split("\\.");
+        if (parts.length <= 0 || parts.length > 3) {
+            return false;
+        }
+        for (String num : parts) {
+            if (num.length() == 0) {
+                return false;
+            }
+            for (int i = 0; i < num.length(); i++) {
+                if (!Character.isDigit(num.charAt(i))) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Copy a input stream of file to a target file.
+     *
+     * @param is the input stream
+     * @param targetFile the target file
+     * @throws Exception
+     *           if any error occurs
+     */
+    public static void copyFile(InputStream is, File targetFile) throws IOException {
+        FileOutputStream fos = new FileOutputStream(targetFile);
+		byte[] b = new byte[BLOCK_SIZE];
+        try {
+            int len = is.read(b);
+            while (len != -1) {
+                fos.write(b, 0, len);
+                len = is.read(b);
+            }
+        } finally {
+            if (fos != null) {
+                try {
+                    fos.close();
+                } finally {
+                    if (is != null) {
+                        is.close();
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * Upload a documentation to a version of component.
+     *
+     * @param request an <code>HttpServletRequest</code> representing incoming request from the client.
+     * @param sourceFile an <code>File</code> representing the documentation to upload
+     * @param componentId the id of the component
+     * @param the version of the component
+     * @param docTypeId the type of the documentation
+     * @name the name of the documentation
+     * @throws Exception if any error occurs
+     */
+    public static void uploadDocument(HttpServletRequest request, File sourceFile, long componentId,
+        long version, long docTypeId, String name) throws Exception {
+        // get ejb interface of component manager
+        Context CONTEXT = new InitialContext();
+        Object objTechTypes = CONTEXT.lookup(ComponentManagerHome.EJB_REF_NAME);
+        ComponentManagerHome home = (ComponentManagerHome) PortableRemoteObject.narrow(objTechTypes,
+            ComponentManagerHome.class);
+        ComponentManager componentManager = home.create(componentId, version);
+        long versionId = componentManager.getVersionInfo().getVersionId();
+        
+        FileUpload fileUpload = createFileUploadManager(request);
+        String rootDir = ((LocalFileUpload) fileUpload).getDir();
+        if (!rootDir.endsWith("/")) {
+            rootDir += "/";
+        }
+        String dir = "" + componentId + "/" + versionId + "/";
+        // upload file
+        String url = dir + name;
+        new File(rootDir + dir).mkdirs();
+
+        // get existed documents
+        Collection documents = componentManager.getDocuments();
+        Document document = null;
+        if (documents != null) {
+            for (Object obj : documents) {
+                Document doc = (Document) obj;
+                if (doc.getType() == docTypeId) {
+                    document = doc;
+                    break;
+                }
+            }
+        }
+
+        if (document != null) {
+            // already have the same type document
+            new File(rootDir + document.getURL()).delete();
+            copyFile(new FileInputStream(sourceFile), new File(rootDir + url));
+            document.setURL(url);
+            document.setName(name);
+            componentManager.updateDocument(document);
+        } else {
+            copyFile(new FileInputStream(sourceFile), new File(rootDir + url));
+            document = new Document(name, url, docTypeId);
+            componentManager.addDocument(document);
+        }
+    }
+
+    /**
+     * Delete a directory.
+     *
+     * @param dir the directory to delete
+     * @throws Exception if any error occurs
+     */
+    public static void deleteDir(File dir) throws Exception {
+        if (!dir.isDirectory()) {
+            dir.delete();
+            return;
+        }
+        File[] files = dir.listFiles();
+        for (File file : files) {
+            if (file.getName().equals(".") || file.getName().equals("..")) {
+                continue;
+            }
+            deleteDir(file);
+        }
+        dir.delete();
     }
 }

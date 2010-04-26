@@ -160,6 +160,17 @@
             <form-property name="submission_phase_extension" type="java.lang.String" />
         </form-bean>
 
+        <form-bean name="projectCreateDesignDistributionForm" dynamic="true"
+            type="org.apache.struts.validator.DynaValidatorForm">
+            <form-property name="pid" type="java.lang.Long" />
+            <form-property name="distribution_package_name" type="java.lang.String" />
+            <form-property name="distribution_rs" type="org.apache.struts.upload.FormFile" />
+            <form-property name="distribution_document1" type="org.apache.struts.upload.FormFile" />
+            <form-property name="distribution_document2" type="org.apache.struts.upload.FormFile" />
+            <form-property name="distribution_document3" type="org.apache.struts.upload.FormFile" />
+            <form-property name="distribution_upload" type="java.lang.Boolean" />
+            <form-property name="distribution_return" type="java.lang.Boolean" />
+        </form-bean>
     </form-beans>
 
 
@@ -656,6 +667,27 @@
             <forward name="success" path="/actions/ViewProjectDetails.do?method=viewProjectDetails" redirect="true"/>
         </action>
 
+        <action path="/actions/CreateDesignDistribution" unknown="false"
+            type="com.cronos.onlinereview.actions.ProjectManagementConsoleActions"
+            parameter="method" scope="request"
+            name="projectCreateDesignDistributionForm"
+            input="/jsp/viewProjectManagementConsole.jsp">
+            <forward name="success" path="/actions/ViewProjectDetails.do?method=viewProjectDetails" redirect="true"/>
+        </action>
+        <action path="/actions/UploadDesignDistribution" unknown="false"
+            type="com.cronos.onlinereview.actions.ProjectManagementConsoleActions"
+            parameter="method" scope="request"
+            name="fileUploadForm"
+            input="/jsp/viewProjectManagementConsole.jsp">
+            <forward name="success" path="/actions/ViewProjectDetails.do?method=viewProjectDetails" redirect="true"/>
+        </action>
+        <action path="/actions/UploadDevelopmentDistribution" unknown="false"
+            type="com.cronos.onlinereview.actions.ProjectManagementConsoleActions"
+            parameter="method" scope="request"
+            name="fileUploadForm"
+            input="/jsp/viewProjectManagementConsole.jsp">
+            <forward name="success" path="/actions/ViewProjectDetails.do?method=viewProjectDetails" redirect="true"/>
+        </action>
     </action-mappings>
 
 

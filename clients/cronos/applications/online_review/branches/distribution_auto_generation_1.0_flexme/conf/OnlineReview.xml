@@ -1,6 +1,6 @@
 <?xml version="1.0" ?>
 <!DOCTYPE CMConfig [
-       <!ENTITY localFileUploadDir "/home/tcs/downloads">
+       <!ENTITY localFileUploadDir "/home/tcs/temp_files">
        <!ENTITY phasesEmailTemplate "/home/tcs/onlinereview/templates/email_template.txt">
        <!ENTITY winnersEmailTemplate "/home/tcs/onlinereview/templates/winners_email_template.txt">
        <!ENTITY timelineTemplateDir "/home/tcs/onlinereview/templates">
@@ -2884,6 +2884,12 @@
         =====  Configuration for the Online Review Application itself  =====
     -->
     <Config name="com.cronos.OnlineReview">
+        <Property name="requirements_specification_exts">
+            <Value>pdf,doc,rtf</Value>
+        </Property>
+        <Property name="distribution_tool_base">
+            <Value>/home/tcs/temp_files/dist_base</Value>
+        </Property>
         <Property name="user_identifer_key">
             <Value>userId</Value>
         </Property>
