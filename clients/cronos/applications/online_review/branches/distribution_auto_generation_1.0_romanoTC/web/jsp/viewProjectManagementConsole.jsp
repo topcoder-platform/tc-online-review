@@ -312,7 +312,16 @@
 		                                        <bean:message key="manageProject.Distributions.additional1"/>
 		                                    </td>
 		                                    <td class="value">
-		                                        <html:file property="distribution_additional1" size="20" styleClass="inputBox" style="width:500px;vertical-align:middle;" />
+		                                        <table>
+		                                        <tr>
+		                                        <td id="additionalFile1">
+	                                               <html:file property="distribution_additional1" size="20" styleClass="inputBox" style="width:350px;vertical-align:middle;" />
+		                                        </td>
+		                                        <td>  
+                                                    <html:img srcKey="btnClear.img" altKey="btnClear.alt" onclick="javascript:clearFileInputField('additionalFile1')" />
+                                                </td>
+                                                </tr>
+                                                </table>
 		                                    </td>
 		                                </tr>
 		                                <tr class="dark">
@@ -320,7 +329,16 @@
 		                                        <bean:message key="manageProject.Distributions.additional2"/>
 		                                    </td>
 		                                    <td class="value">
-		                                        <html:file property="distribution_additional2" size="20" styleClass="inputBox" style="width:500px;vertical-align:middle;" />
+                                                <table>
+                                                <tr>
+                                                <td id="additionalFile2">
+                                                   <html:file property="distribution_additional2" size="20" styleClass="inputBox" style="width:350px;vertical-align:middle;" />
+                                                </td>
+                                                <td>  
+                                                    <html:img srcKey="btnClear.img" altKey="btnClear.alt" onclick="javascript:clearFileInputField('additionalFile2')" />
+                                                </td>
+                                                </tr>
+                                                </table>
 		                                    </td>
 		                                </tr>
 		                                <tr class="light">
@@ -328,7 +346,16 @@
 		                                        <bean:message key="manageProject.Distributions.additional3"/>
 		                                    </td>
 		                                    <td class="value">
-		                                        <html:file property="distribution_additional3" size="20" styleClass="inputBox" style="width:500px;vertical-align:middle;" />
+                                                <table>
+                                                <tr>
+                                                <td id="additionalFile3">
+                                                   <html:file property="distribution_additional3" size="20" styleClass="inputBox" style="width:350px;vertical-align:middle;" />
+                                                </td>
+                                                <td>  
+                                                    <html:img srcKey="btnClear.img" altKey="btnClear.alt" onclick="javascript:clearFileInputField('additionalFile3')" />
+                                                </td>
+                                                </tr>
+                                                </table>
 		                                    </td>
 		                                </tr>                                                                	                            
 		                                <tr class="dark">
@@ -454,6 +481,13 @@
         }
         return false;
     }
+
+    /**
+     * Function used to clear a file input field.
+     */
+    function clearFileInputField(tagId) { 
+        document.getElementById(tagId).innerHTML = document.getElementById(tagId).innerHTML; 
+    } 
 //-->
 </script>
 </html:html>
