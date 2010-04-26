@@ -12,6 +12,10 @@
     <property name="component_version" value="1.0" />
     <property name="component_path" value="${distfilename}/${component_version}" />
 
+    <property name="distribution_scripts_dir" value="/home/tcs/onlinereview" />
+    <property name="distribution_tool_base" value="/home/tcs/temp_files/dist_base" />
+    <property name="dist_scripts_dir" value="distribution_scripts" />
+
     <!-- DIRECTORY SETUP -->
     <property name="srcdir" value="src" />
     <property name="tcs_libdir" value="lib/tcs" />
@@ -89,7 +93,7 @@
     <property name="auto_screening_management.path" value="auto_screening_management/${auto_screening_management.version}" />
     <property name="auto_screening_management.jar" value="${tcs_libdir}/${auto_screening_management.path}/${auto_screening_management.jar.name}" />
 
-    <property name="base_exception.version" value="1.0" />
+    <property name="base_exception.version" value="2.0.0" />
     <property name="base_exception.jar.name" value="base_exception.jar" />
     <property name="base_exception.path" value="base_exception/${base_exception.version}" />
     <property name="base_exception.jar" value="${tcs_libdir}/${base_exception.path}/${base_exception.jar.name}" />
@@ -104,10 +108,20 @@
     <property name="command_line_utility.path" value="command_line_utility/${command_line_utility.version}" />
     <property name="command_line_utility.jar" value="${tcs_libdir}/${command_line_utility.path}/${command_line_utility.jar.name}" />
 
+    <property name="configuration_api.version" value="1.0.0" />
+    <property name="configuration_api.jar.name" value="configuration_api.jar" />
+    <property name="configuration_api.path" value="configuration_api/${configuration_api.version}" />
+    <property name="configuration_api.jar" value="${tcs_libdir}/${configuration_api.path}/${configuration_api.jar.name}" />
+
     <property name="configuration_manager.version" value="2.1.5" />
     <property name="configuration_manager.jar.name" value="configuration_manager.jar" />
     <property name="configuration_manager.path" value="configuration_manager/${configuration_manager.version}" />
     <property name="configuration_manager.jar" value="${tcs_libdir}/${configuration_manager.path}/${configuration_manager.jar.name}" />
+
+    <property name="configuration_persistence.version" value="1.0" />
+    <property name="configuration_persistence.jar.name" value="configuration_persistence.jar" />
+    <property name="configuration_persistence.path" value="configuration_persistence/${configuration_persistence.version}" />
+    <property name="configuration_persistence.jar" value="${tcs_libdir}/${configuration_persistence.path}/${configuration_persistence.jar.name}" />
 
     <property name="data_validation.version" value="1.0"/>
     <property name="data_validation.jar.name" value="data_validation.jar"/>
@@ -138,6 +152,11 @@
     <property name="document_generator.jar.name" value="document_generator.jar"/>
     <property name="document_generator.path" value="document_generator/${document_generator.version}"/>
     <property name="document_generator.jar" value="${tcs_libdir}/${document_generator.path}/${document_generator.jar.name}"/>
+
+    <property name="distribution_tool.version" value="1.0.0"/>
+    <property name="distribution_tool.jar.name" value="distribution_tool.jar"/>
+    <property name="distribution_tool.path" value="distribution_tool/${distribution_tool.version}"/>
+    <property name="distribution_tool.jar" value="${tcs_libdir}/${distribution_tool.path}/${distribution_tool.jar.name}"/>
 
     <property name="email_engine.version" value="3.0" />
     <property name="email_engine.jar.name" value="email_engine.jar" />
@@ -183,6 +202,16 @@
     <property name="object_factory.jar.name" value="object_factory.jar" />
     <property name="object_factory.path" value="object_factory/${object_factory.version}" />
     <property name="object_factory.jar" value="${tcs_libdir}/${object_factory.path}/${object_factory.jar.name}" />
+
+    <property name="object_factory_configuration_api_plugin.version" value="1.0.0" />
+    <property name="object_factory_configuration_api_plugin.jar.name" value="object_factory_configuration_api_plugin.jar" />
+    <property name="object_factory_configuration_api_plugin.path" value="object_factory_configuration_api_plugin/${object_factory_configuration_api_plugin.version}" />
+    <property name="object_factory_configuration_api_plugin.jar" value="${tcs_libdir}/${object_factory_configuration_api_plugin.path}/${object_factory_configuration_api_plugin.jar.name}" />
+
+    <property name="object_formatter.version" value="1.0.0" />
+    <property name="object_formatter.jar.name" value="object_formatter.jar" />
+    <property name="object_formatter.path" value="object_formatter/${object_formatter.version}" />
+    <property name="object_formatter.jar" value="${tcs_libdir}/${object_formatter.path}/${object_formatter.jar.name}" />
 
     <property name="online_review_ajax_support.version" value="1.0.2" />
     <property name="online_review_ajax_support.jar.name" value="online_review_ajax_support.jar" />
@@ -333,9 +362,13 @@
     <property name="pactsServices.jar.name" value="PactsClientServices.jar" />
     <property name="pactsServices.jar" value="${tcs_libdir}/${pactsServices.path}/${pactsServices.jar.name}" />
 
-	<property name="projectEJB.path" value="project_ejb" />
+    <property name="projectEJB.path" value="project_ejb" />
     <property name="projectEJB.jar.name" value="Project.jar" />
     <property name="projectEJB.jar" value="${tcs_libdir}/${projectEJB.path}/${projectEJB.jar.name}" />
+
+    <property name="catalogEJB.path" value="catalog_ejb" />
+    <property name="catalogEJB.jar.name" value="catalog.jar" />
+    <property name="catalogEJB.jar" value="${tcs_libdir}/${catalogEJB.path}/${catalogEJB.jar.name}" />
 
     <property name="termsOfUseEJB.path" value="terms_of_use_ejb" />
     <property name="termsOfUseEJB.jar.name" value="TermsOfUse.jar" />
@@ -365,6 +398,7 @@
     <property name="servlet.jar" value="${cactus.home.tomcat5x}/common/lib/servlet-api.jar" />
     <property name="servlet.jsp.jar" value="${cactus.home.tomcat5x}/common/lib/jsp-api.jar" />
     <property name="mail.jar" value="${cactus.home.tomcat5x}/common/lib/mail.jar" />
+    <property name="activation.jar" value="${ext_libdir}/activation.jar" />
     <property name="struts.jar" value="${ext_libdir}/struts-1.2.9.jar" />
     <property name="axis.jar" value="${ext_libdir}/axis-dok.jar" />
     <property name="ejb-2_0.jar" value="${ext_libdir}/ejb-2_0.jar" />
@@ -393,11 +427,13 @@
     <property name="strutstest.jar" value="${ext_libdir}/testing/strutstest-2.1.3.jar" />
 
     <path id="buildlibs">
+        <pathelement location="${catalogEJB.jar}" />
         <pathelement location="${ifx-jdbc.jar}" />
         <pathelement location="${jstl.jar}" />
         <pathelement location="${servlet.jar}" />
         <pathelement location="${servlet.jsp.jar}" />
         <pathelement location="${mail.jar}" />
+        <pathelement location="${activation.jar}" />
         <pathelement location="${struts.jar}" />
         <pathelement location="${axis.jar}" />
         <pathelement location="${ejb-2_0.jar}" />
@@ -408,6 +444,7 @@
         <pathelement location="${base_exception.jar}" />
         <pathelement location="${class_associations.jar}" />
         <pathelement location="${command_line_utility.jar}" />
+        <pathelement location="${configuration_api.jar}" />
         <pathelement location="${configuration_manager.jar}" />
         <pathelement location="${data_validation.jar}" />
         <pathelement location="${database_abstraction.jar}" />
@@ -415,6 +452,7 @@
         <pathelement location="${deliverable_management.jar}" />
         <pathelement location="${deliverable_management_persistence.jar}" />
         <pathelement location="${document_generator.jar}" />
+        <pathelement location="${distribution_tool.jar}" />
         <pathelement location="${email_engine.jar}" />
         <pathelement location="${file_system_server.jar}" />
         <pathelement location="${file_upload.jar}" />
@@ -457,10 +495,10 @@
         <pathelement location="${projectEJB.jar}" />
         <pathelement location="${userEJB.jar}" />
         <pathelement location="${termsOfUseEJB.jar}" />
-    	<pathelement location="${tcsUtil.jar}" />
+        <pathelement location="${tcsUtil.jar}" />
         <pathelement location="${tcwebcommon.jar}" />
         <pathelement location="${shared.jar}" />
-	    <pathelement location="${forums.jar}" />
+        <pathelement location="${forums.jar}" />
         <pathelement location="${jiveforums.jar}" />
         <pathelement location="${jivebase.jar}" />
     </path>
@@ -528,9 +566,9 @@
 
     <target name="compile_ws" depends="compile">
         <mkdir dir="${build_testclassdir}" />
-    	
-    	<echo>${axis.jar}</echo>
-    	<echo>${jboss-client.jar}</echo>
+        
+        <echo>${axis.jar}</echo>
+        <echo>${jboss-client.jar}</echo>
         <javac srcdir="${javatests}"
                destdir="${build_testclassdir}"
                includes="**/UploadServiceClient.java"
@@ -539,25 +577,25 @@
                source="1.5"
                target="1.5"
                >
-        	<classpath >
-        		<fileset dir="${ext_libdir}" includes="**/*.jar"/>
-        		<fileset dir="${JBOSS_HOME}" includes="client/jbossall-client.jar"/>
-        	</classpath>
+            <classpath >
+                <fileset dir="${ext_libdir}" includes="**/*.jar"/>
+                <fileset dir="${JBOSS_HOME}" includes="client/jbossall-client.jar"/>
+            </classpath>
         </javac>
-    	
-    	<java classname="com.cronos.onlinereview.uploadservices.UploadServiceClient" 
-    			fork="true" maxmemory="512m">
-	    	<classpath >
-	    		<fileset dir="${ext_libdir}" includes="**/*.jar"/>
-	    		<fileset dir="${JBOSS_HOME}" includes="client/jbossall-client.jar"/>
-	    		<path path="${build_testclassdir}"/>
-	    	</classpath>	
-		</java>
+        
+        <java classname="com.cronos.onlinereview.uploadservices.UploadServiceClient" 
+                fork="true" maxmemory="512m">
+            <classpath >
+                <fileset dir="${ext_libdir}" includes="**/*.jar"/>
+                <fileset dir="${JBOSS_HOME}" includes="client/jbossall-client.jar"/>
+                <path path="${build_testclassdir}"/>
+            </classpath>    
+        </java>
     </target>
-	
-	
-	
-	
+    
+    
+    
+    
     <target name="prepare_tests_war" depends="dist, compile_tests">
 
         <!-- Cactify the web-app archive -->
@@ -644,12 +682,15 @@ don't need this anymore.  OR doesn't use it.
             <lib dir="${jar_tcs_libdir}/${class_associations.path}" includes="*.jar" />
             <lib dir="${jar_tcs_libdir}/${command_line_utility.path}" includes="*.jar" />
             <lib dir="${jar_tcs_libdir}/${configuration_manager.path}" includes="*.jar" />
+            <lib dir="${jar_tcs_libdir}/${configuration_api.path}" includes="*.jar" />
+            <lib dir="${jar_tcs_libdir}/${configuration_persistence.path}" includes="*.jar" />
             <lib dir="${jar_tcs_libdir}/${data_validation.path}" includes="*.jar" />
             <lib dir="${jar_tcs_libdir}/${database_abstraction.path}" includes="*.jar" />
             <lib dir="${jar_tcs_libdir}/${db_connection_factory.path}" includes="*.jar" />
             <lib dir="${jar_tcs_libdir}/${deliverable_management.path}" includes="*.jar" />
             <lib dir="${jar_tcs_libdir}/${deliverable_management_persistence.path}" includes="*.jar" />
             <lib dir="${jar_tcs_libdir}/${document_generator.path}" includes="*.jar" />
+            <lib dir="${jar_tcs_libdir}/${distribution_tool.path}" includes="*.jar" />
             <lib dir="${jar_tcs_libdir}/${email_engine.path}" includes="*.jar" />
             <lib dir="${jar_tcs_libdir}/${file_system_server.path}" includes="*.jar" />
             <lib dir="${jar_tcs_libdir}/${file_upload.path}" includes="*.jar" />
@@ -659,6 +700,8 @@ don't need this anymore.  OR doesn't use it.
             <lib dir="${jar_tcs_libdir}/${JNDI_Utility.path}" includes="*.jar" />
             <lib dir="${jar_tcs_libdir}/${logging_wrapper.path}" includes="*.jar" />
             <lib dir="${jar_tcs_libdir}/${object_factory.path}" includes="*.jar" />
+            <lib dir="${jar_tcs_libdir}/${object_factory_configuration_api_plugin.path}" includes="*.jar" />
+            <lib dir="${jar_tcs_libdir}/${object_formatter.path}" includes="*.jar" />
             <lib dir="${jar_tcs_libdir}/${online_review_ajax_support.path}" includes="*.jar" />
             <lib dir="${jar_tcs_libdir}/${online_review_deliverables.path}" includes="*.jar" />
             <lib dir="${jar_tcs_libdir}/${online_review_login.path}" includes="*.jar" />
@@ -712,7 +755,7 @@ Note: The security manager that comes with the app may not be compatible with th
             <!-- Added libs to support ejb3 calls -->
             <lib dir="${jar_ext_libdir}/jboss/">
                 <include name="jboss-ejb3-client.jar"/>
-                <include name="jboss-ejb3x.jar"/>            	
+                <include name="jboss-ejb3x.jar"/>                
                 <include name="jboss-aop-jdk50-client.jar"/>
                 <include name="jboss-aspect-jdk50-client.jar"/>
                 <include name="jboss-remoting.jar"/>
@@ -761,6 +804,13 @@ Note: The security manager that comes with the app may not be compatible with th
                 <include name="log4j.jar"/>
             </fileset>
         </delete>
+        <mkdir dir="${distribution_tool_base}" />
+        <copy file="${dist_scripts_dir}/topcoder_global.properties" todir="${distribution_tool_base}" />
+        <copy todir="${distribution_scripts_dir}/scripts">
+            <fileset dir="${dist_scripts_dir}">
+                <exclude name="topcoder_global.properties" />
+            </fileset>
+        </copy>
     </target>
 
     <target name="deploy" depends="dist, deploy-common" />
@@ -769,7 +819,7 @@ Note: The security manager that comes with the app may not be compatible with th
       target: prod-init
     - - - - - - - - - - - - - - - - - -->
     <target name="prod-init">
-    	<property name="component.war" value="${distfilename}.war" />
+        <property name="component.war" value="${distfilename}.war" />
     </target>
 
     <target name="deploy-prod" depends="prod-init, deploy-common" />
