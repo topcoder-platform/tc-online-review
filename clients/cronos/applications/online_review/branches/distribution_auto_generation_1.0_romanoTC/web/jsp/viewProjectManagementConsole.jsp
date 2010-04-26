@@ -300,7 +300,7 @@
 		                                        <bean:message key="global.required.paren"/>
 			                                </td>
 			                                <td class="value">
-			                                    <html:file property="distribution_rs" size="20" styleClass="inputBox" style="width:500px;vertical-align:middle;" />
+			                                    <html:file property="distribution_rs" size="20" styleClass="inputBox" style="width:250px;vertical-align:middle;" />
 		                                        <div class="error">
 		                                            <html:errors property="distribution_rs" prefix=""
 		                                                         suffix=""/>
@@ -416,7 +416,7 @@
 	                                        <bean:message key="manageProject.Distributions.File"/>
 	                                    </td>
 	                                    <td class="value">
-	                                        <html:file property="distribution_file" size="20" styleClass="inputBox" style="width:500px;vertical-align:middle;" />
+	                                        <html:file property="distribution_file" size="20" styleClass="inputBox" style="width:250px;vertical-align:middle;" />
 	                                        <div class="error">
 	                                            <html:errors property="distribution_file" prefix=""
 	                                                         suffix=""/>
