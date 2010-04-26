@@ -312,10 +312,10 @@
 		                                        <bean:message key="manageProject.Distributions.additional1"/>
 		                                    </td>
 		                                    <td class="value">
-		                                        <table>
+		                                        <table border="0" cellpadding="0" cellspacing="0">
 		                                        <tr>
 		                                        <td id="additionalFile1">
-	                                               <html:file property="distribution_additional1" size="20" styleClass="inputBox" style="width:350px;vertical-align:middle;" />
+	                                               <html:file property="distribution_additional1" size="20" styleClass="inputBox" style="width:250px;vertical-align:middle;" />
 		                                        </td>
 		                                        <td>  
                                                     <html:img srcKey="btnClear.img" altKey="btnClear.alt" onclick="javascript:clearFileInputField('additionalFile1')" />
@@ -329,10 +329,10 @@
 		                                        <bean:message key="manageProject.Distributions.additional2"/>
 		                                    </td>
 		                                    <td class="value">
-                                                <table>
+                                                <table border="0" cellpadding="0" cellspacing="0">
                                                 <tr>
                                                 <td id="additionalFile2">
-                                                   <html:file property="distribution_additional2" size="20" styleClass="inputBox" style="width:350px;vertical-align:middle;" />
+                                                   <html:file property="distribution_additional2" size="20" styleClass="inputBox" style="width:250px;vertical-align:middle;" />
                                                 </td>
                                                 <td>  
                                                     <html:img srcKey="btnClear.img" altKey="btnClear.alt" onclick="javascript:clearFileInputField('additionalFile2')" />
@@ -346,10 +346,10 @@
 		                                        <bean:message key="manageProject.Distributions.additional3"/>
 		                                    </td>
 		                                    <td class="value">
-                                                <table>
+                                                <table border="0" cellpadding="0" cellspacing="0">
                                                 <tr>
                                                 <td id="additionalFile3">
-                                                   <html:file property="distribution_additional3" size="20" styleClass="inputBox" style="width:350px;vertical-align:middle;" />
+                                                   <html:file property="distribution_additional3" size="20" styleClass="inputBox" style="width:250px;vertical-align:middle;" />
                                                 </td>
                                                 <td>  
                                                     <html:img srcKey="btnClear.img" altKey="btnClear.alt" onclick="javascript:clearFileInputField('additionalFile3')" />
