@@ -791,7 +791,7 @@
     </Config>
 
     <!--
-        ===== Configuration for Phase Handlers from Oline Review Phases component =====
+        ===== Configuration for Phase Handlers from Online Review Phases component =====
     -->
     <!-- Default namespace for Registration handler -->
     <Config name="com.cronos.onlinereview.phases.RegistrationPhaseHandler">
@@ -804,44 +804,60 @@
         <Property name="ManagerHelperNamespace">
             <Value>com.cronos.onlinereview.phases.ManagerHelper</Value>
         </Property>
-        <Property name="StartPhaseEmail">
-            <Property name="SendEmail">
-                <Value>yes</Value>
-            </Property>
-            <Property name="EmailTemplateSource">
-                <Value>file</Value>
-            </Property>
-            <Property name="EmailTemplateName">
-                <Value>&phasesEmailTemplate;</Value>
-            </Property>
-            <Property name="EmailSubject">
-                <Value>Phase Start</Value>
-            </Property>
-            <Property name="EmailFromAddress">
-                <Value>&notificationEmailFromAddress;</Value>
-            </Property>
+        <Property name="Schemes">
+            <Property name="DefaultScheme">
+                <Value>*</Value>		
+            </Property>	
+            <Property name="ExtendedScheme">
+                <Value>Manager</Value>
+                <Value>Observer</Value>
+                <Value>Copilot</Value>
+                <Value>Client Manager</Value>			
+            </Property>		
         </Property>
-        <Property name="EndPhaseEmail">
-            <Property name="SendEmail">
-                <Value>yes</Value>
+        <Property name="DefaultScheme">
+            <Property name="StartPhaseEmail">
+                <Property name="SendEmail">
+                    <Value>yes</Value>
+                </Property>
+                <Property name="EmailTemplateSource">
+                    <Value>file</Value>
+                </Property>
+                <Property name="EmailTemplateName">
+                    <Value>&phasesEmailTemplate;</Value>
+                </Property>
+                <Property name="EmailSubject">
+                    <Value>Phase Start</Value>
+                </Property>
+                <Property name="EmailFromAddress">
+                    <Value>&notificationEmailFromAddress;</Value>
+                </Property>
+                <Property name="Priority">
+                    <Value>0</Value>
+                </Property>		  
             </Property>
-            <Property name="EmailTemplateSource">
-                <Value>file</Value>
-            </Property>
-            <Property name="EmailTemplateName">
-                <Value>&phasesEmailTemplate;</Value>
-            </Property>
-            <Property name="EmailSubject">
-                <Value>Phase End</Value>
-            </Property>
-            <Property name="EmailFromAddress">
-                <Value>&notificationEmailFromAddress;</Value>
-            </Property>
+            <Property name="EndPhaseEmail">
+                <Property name="SendEmail">
+                    <Value>yes</Value>
+                </Property>
+                <Property name="EmailTemplateSource">
+                    <Value>file</Value>
+                </Property>
+                <Property name="EmailTemplateName">
+                    <Value>&phasesEmailTemplate;</Value>
+                </Property>
+                <Property name="EmailSubject">
+                    <Value>Phase End</Value>
+                </Property>
+                <Property name="EmailFromAddress">
+                    <Value>&notificationEmailFromAddress;</Value>
+                </Property>
+                <Property name="Priority">
+                    <Value>0</Value>
+                </Property>		  
+            </Property>	
         </Property>
-        <Property name="Roles">
-        	<Value>Manager</Value>
-        </Property>
-        <Property name="Manager">
+        <Property name="ExtendedScheme">
             <Property name="StartPhaseEmail">
                 <Property name="SendEmail">
                     <Value>yes</Value>
@@ -878,6 +894,9 @@
                 <Property name="EmailFromAddress">
                     <Value>&notificationEmailFromAddress;</Value>
                 </Property>
+                <Property name="Priority">
+                    <Value>1</Value>
+                </Property>		
             </Property>
         </Property>
     </Config>
@@ -893,44 +912,60 @@
         <Property name="ManagerHelperNamespace">
             <Value>com.cronos.onlinereview.phases.ManagerHelper</Value>
         </Property>
-        <Property name="StartPhaseEmail">
-            <Property name="SendEmail">
-                <Value>yes</Value>
-            </Property>
-            <Property name="EmailTemplateSource">
-                <Value>file</Value>
-            </Property>
-            <Property name="EmailTemplateName">
-                <Value>&phasesEmailTemplate;</Value>
-            </Property>
-            <Property name="EmailSubject">
-                <Value>Phase Start</Value>
-            </Property>
-            <Property name="EmailFromAddress">
-                <Value>&notificationEmailFromAddress;</Value>
-            </Property>
+        <Property name="Schemes">
+            <Property name="DefaultScheme">
+                <Value>*</Value>		
+            </Property>	
+            <Property name="ExtendedScheme">
+                <Value>Manager</Value>
+                <Value>Observer</Value>
+                <Value>Copilot</Value>
+                <Value>Client Manager</Value>			
+            </Property>		
         </Property>
-        <Property name="EndPhaseEmail">
-            <Property name="SendEmail">
-                <Value>yes</Value>
+        <Property name="DefaultScheme">
+            <Property name="StartPhaseEmail">
+                <Property name="SendEmail">
+                    <Value>yes</Value>
+                </Property>
+                <Property name="EmailTemplateSource">
+                    <Value>file</Value>
+                </Property>
+                <Property name="EmailTemplateName">
+                    <Value>&phasesEmailTemplate;</Value>
+                </Property>
+                <Property name="EmailSubject">
+                    <Value>Phase Start</Value>
+                </Property>
+                <Property name="EmailFromAddress">
+                    <Value>&notificationEmailFromAddress;</Value>
+                </Property>
+                <Property name="Priority">
+                    <Value>0</Value>
+                </Property>		  
             </Property>
-            <Property name="EmailTemplateSource">
-                <Value>file</Value>
-            </Property>
-            <Property name="EmailTemplateName">
-                <Value>&phasesEmailTemplate;</Value>
-            </Property>
-            <Property name="EmailSubject">
-                <Value>Phase End</Value>
-            </Property>
-            <Property name="EmailFromAddress">
-                <Value>&notificationEmailFromAddress;</Value>
-            </Property>
+            <Property name="EndPhaseEmail">
+                <Property name="SendEmail">
+                    <Value>yes</Value>
+                </Property>
+                <Property name="EmailTemplateSource">
+                    <Value>file</Value>
+                </Property>
+                <Property name="EmailTemplateName">
+                    <Value>&phasesEmailTemplate;</Value>
+                </Property>
+                <Property name="EmailSubject">
+                    <Value>Phase End</Value>
+                </Property>
+                <Property name="EmailFromAddress">
+                    <Value>&notificationEmailFromAddress;</Value>
+                </Property>
+                <Property name="Priority">
+                    <Value>0</Value>
+                </Property>		  
+            </Property>	
         </Property>
-        <Property name="Roles">
-        	<Value>Manager</Value>
-        </Property>
-        <Property name="Manager">
+        <Property name="ExtendedScheme">
             <Property name="StartPhaseEmail">
                 <Property name="SendEmail">
                     <Value>yes</Value>
@@ -967,6 +1002,9 @@
                 <Property name="EmailFromAddress">
                     <Value>&notificationEmailFromAddress;</Value>
                 </Property>
+                <Property name="Priority">
+                    <Value>1</Value>
+                </Property>		
             </Property>
         </Property>
     </Config>
@@ -982,44 +1020,60 @@
         <Property name="ManagerHelperNamespace">
             <Value>com.cronos.onlinereview.phases.ManagerHelper</Value>
         </Property>
-        <Property name="StartPhaseEmail">
-            <Property name="SendEmail">
-                <Value>yes</Value>
-            </Property>
-            <Property name="EmailTemplateSource">
-                <Value>file</Value>
-            </Property>
-            <Property name="EmailTemplateName">
-                <Value>&phasesEmailTemplate;</Value>
-            </Property>
-            <Property name="EmailSubject">
-                <Value>Phase Start</Value>
-            </Property>
-            <Property name="EmailFromAddress">
-                <Value>&notificationEmailFromAddress;</Value>
-            </Property>
+        <Property name="Schemes">
+            <Property name="DefaultScheme">
+                <Value>*</Value>		
+            </Property>	
+            <Property name="ExtendedScheme">
+                <Value>Manager</Value>
+                <Value>Observer</Value>
+                <Value>Copilot</Value>
+                <Value>Client Manager</Value>			
+            </Property>		
         </Property>
-        <Property name="EndPhaseEmail">
-            <Property name="SendEmail">
-                <Value>yes</Value>
+        <Property name="DefaultScheme">
+            <Property name="StartPhaseEmail">
+                <Property name="SendEmail">
+                    <Value>yes</Value>
+                </Property>
+                <Property name="EmailTemplateSource">
+                    <Value>file</Value>
+                </Property>
+                <Property name="EmailTemplateName">
+                    <Value>&phasesEmailTemplate;</Value>
+                </Property>
+                <Property name="EmailSubject">
+                    <Value>Phase Start</Value>
+                </Property>
+                <Property name="EmailFromAddress">
+                    <Value>&notificationEmailFromAddress;</Value>
+                </Property>
+                <Property name="Priority">
+                    <Value>0</Value>
+                </Property>		  
             </Property>
-            <Property name="EmailTemplateSource">
-                <Value>file</Value>
-            </Property>
-            <Property name="EmailTemplateName">
-                <Value>&phasesEmailTemplate;</Value>
-            </Property>
-            <Property name="EmailSubject">
-                <Value>Phase End</Value>
-            </Property>
-            <Property name="EmailFromAddress">
-                <Value>&notificationEmailFromAddress;</Value>
-            </Property>
+            <Property name="EndPhaseEmail">
+                <Property name="SendEmail">
+                    <Value>yes</Value>
+                </Property>
+                <Property name="EmailTemplateSource">
+                    <Value>file</Value>
+                </Property>
+                <Property name="EmailTemplateName">
+                    <Value>&phasesEmailTemplate;</Value>
+                </Property>
+                <Property name="EmailSubject">
+                    <Value>Phase End</Value>
+                </Property>
+                <Property name="EmailFromAddress">
+                    <Value>&notificationEmailFromAddress;</Value>
+                </Property>
+                <Property name="Priority">
+                    <Value>0</Value>
+                </Property>		  
+            </Property>	
         </Property>
-        <Property name="Roles">
-        	<Value>Manager</Value>
-        </Property>
-        <Property name="Manager">
+        <Property name="ExtendedScheme">
             <Property name="StartPhaseEmail">
                 <Property name="SendEmail">
                     <Value>yes</Value>
@@ -1056,6 +1110,9 @@
                 <Property name="EmailFromAddress">
                     <Value>&notificationEmailFromAddress;</Value>
                 </Property>
+                <Property name="Priority">
+                    <Value>1</Value>
+                </Property>		
             </Property>
         </Property>
     </Config>
@@ -1071,44 +1128,60 @@
         <Property name="ManagerHelperNamespace">
             <Value>com.cronos.onlinereview.phases.ManagerHelper</Value>
         </Property>
-        <Property name="StartPhaseEmail">
-            <Property name="SendEmail">
-                <Value>yes</Value>
-            </Property>
-            <Property name="EmailTemplateSource">
-                <Value>file</Value>
-            </Property>
-            <Property name="EmailTemplateName">
-                <Value>&phasesEmailTemplate;</Value>
-            </Property>
-            <Property name="EmailSubject">
-                <Value>Phase Start</Value>
-            </Property>
-            <Property name="EmailFromAddress">
-                <Value>&notificationEmailFromAddress;</Value>
-            </Property>
+        <Property name="Schemes">
+            <Property name="DefaultScheme">
+                <Value>*</Value>		
+            </Property>	
+            <Property name="ExtendedScheme">
+                <Value>Manager</Value>
+                <Value>Observer</Value>
+                <Value>Copilot</Value>
+                <Value>Client Manager</Value>			
+            </Property>		
         </Property>
-        <Property name="EndPhaseEmail">
-            <Property name="SendEmail">
-                <Value>yes</Value>
+        <Property name="DefaultScheme">
+            <Property name="StartPhaseEmail">
+                <Property name="SendEmail">
+                    <Value>yes</Value>
+                </Property>
+                <Property name="EmailTemplateSource">
+                    <Value>file</Value>
+                </Property>
+                <Property name="EmailTemplateName">
+                    <Value>&phasesEmailTemplate;</Value>
+                </Property>
+                <Property name="EmailSubject">
+                    <Value>Phase Start</Value>
+                </Property>
+                <Property name="EmailFromAddress">
+                    <Value>&notificationEmailFromAddress;</Value>
+                </Property>
+                <Property name="Priority">
+                    <Value>0</Value>
+                </Property>		  
             </Property>
-            <Property name="EmailTemplateSource">
-                <Value>file</Value>
-            </Property>
-            <Property name="EmailTemplateName">
-                <Value>&phasesEmailTemplate;</Value>
-            </Property>
-            <Property name="EmailSubject">
-                <Value>Phase End</Value>
-            </Property>
-            <Property name="EmailFromAddress">
-                <Value>&notificationEmailFromAddress;</Value>
-            </Property>
+            <Property name="EndPhaseEmail">
+                <Property name="SendEmail">
+                    <Value>yes</Value>
+                </Property>
+                <Property name="EmailTemplateSource">
+                    <Value>file</Value>
+                </Property>
+                <Property name="EmailTemplateName">
+                    <Value>&phasesEmailTemplate;</Value>
+                </Property>
+                <Property name="EmailSubject">
+                    <Value>Phase End</Value>
+                </Property>
+                <Property name="EmailFromAddress">
+                    <Value>&notificationEmailFromAddress;</Value>
+                </Property>
+                <Property name="Priority">
+                    <Value>0</Value>
+                </Property>		  
+            </Property>	
         </Property>
-        <Property name="Roles">
-        	<Value>Manager</Value>
-        </Property>
-        <Property name="Manager">
+        <Property name="ExtendedScheme">
             <Property name="StartPhaseEmail">
                 <Property name="SendEmail">
                     <Value>yes</Value>
@@ -1145,6 +1218,9 @@
                 <Property name="EmailFromAddress">
                     <Value>&notificationEmailFromAddress;</Value>
                 </Property>
+                <Property name="Priority">
+                    <Value>1</Value>
+                </Property>		
             </Property>
         </Property>
     </Config>
@@ -1160,44 +1236,60 @@
         <Property name="ManagerHelperNamespace">
             <Value>com.cronos.onlinereview.phases.ManagerHelper</Value>
         </Property>
-        <Property name="StartPhaseEmail">
-            <Property name="SendEmail">
-                <Value>yes</Value>
-            </Property>
-            <Property name="EmailTemplateSource">
-                <Value>file</Value>
-            </Property>
-            <Property name="EmailTemplateName">
-                <Value>&phasesEmailTemplate;</Value>
-            </Property>
-            <Property name="EmailSubject">
-                <Value>Phase Start</Value>
-            </Property>
-            <Property name="EmailFromAddress">
-                <Value>&notificationEmailFromAddress;</Value>
-            </Property>
+        <Property name="Schemes">
+            <Property name="DefaultScheme">
+                <Value>*</Value>		
+            </Property>	
+            <Property name="ExtendedScheme">
+                <Value>Manager</Value>
+                <Value>Observer</Value>
+                <Value>Copilot</Value>
+                <Value>Client Manager</Value>			
+            </Property>		
         </Property>
-        <Property name="EndPhaseEmail">
-            <Property name="SendEmail">
-                <Value>yes</Value>
+        <Property name="DefaultScheme">
+            <Property name="StartPhaseEmail">
+                <Property name="SendEmail">
+                    <Value>yes</Value>
+                </Property>
+                <Property name="EmailTemplateSource">
+                    <Value>file</Value>
+                </Property>
+                <Property name="EmailTemplateName">
+                    <Value>&phasesEmailTemplate;</Value>
+                </Property>
+                <Property name="EmailSubject">
+                    <Value>Phase Start</Value>
+                </Property>
+                <Property name="EmailFromAddress">
+                    <Value>&notificationEmailFromAddress;</Value>
+                </Property>
+                <Property name="Priority">
+                    <Value>0</Value>
+                </Property>		  
             </Property>
-            <Property name="EmailTemplateSource">
-                <Value>file</Value>
-            </Property>
-            <Property name="EmailTemplateName">
-                <Value>&phasesEmailTemplate;</Value>
-            </Property>
-            <Property name="EmailSubject">
-                <Value>Phase End</Value>
-            </Property>
-            <Property name="EmailFromAddress">
-                <Value>&notificationEmailFromAddress;</Value>
-            </Property>
+            <Property name="EndPhaseEmail">
+                <Property name="SendEmail">
+                    <Value>yes</Value>
+                </Property>
+                <Property name="EmailTemplateSource">
+                    <Value>file</Value>
+                </Property>
+                <Property name="EmailTemplateName">
+                    <Value>&phasesEmailTemplate;</Value>
+                </Property>
+                <Property name="EmailSubject">
+                    <Value>Phase End</Value>
+                </Property>
+                <Property name="EmailFromAddress">
+                    <Value>&notificationEmailFromAddress;</Value>
+                </Property>
+                <Property name="Priority">
+                    <Value>0</Value>
+                </Property>		  
+            </Property>	
         </Property>
-        <Property name="Roles">
-        	<Value>Manager</Value>
-        </Property>
-        <Property name="Manager">
+        <Property name="ExtendedScheme">
             <Property name="StartPhaseEmail">
                 <Property name="SendEmail">
                     <Value>yes</Value>
@@ -1234,6 +1326,9 @@
                 <Property name="EmailFromAddress">
                     <Value>&notificationEmailFromAddress;</Value>
                 </Property>
+                <Property name="Priority">
+                    <Value>1</Value>
+                </Property>		
             </Property>
         </Property>
     </Config>
@@ -1249,44 +1344,60 @@
         <Property name="ManagerHelperNamespace">
             <Value>com.cronos.onlinereview.phases.ManagerHelper</Value>
         </Property>
-        <Property name="StartPhaseEmail">
-            <Property name="SendEmail">
-                <Value>yes</Value>
-            </Property>
-            <Property name="EmailTemplateSource">
-                <Value>file</Value>
-            </Property>
-            <Property name="EmailTemplateName">
-                <Value>&phasesEmailTemplate;</Value>
-            </Property>
-            <Property name="EmailSubject">
-                <Value>Phase Start</Value>
-            </Property>
-            <Property name="EmailFromAddress">
-                <Value>&notificationEmailFromAddress;</Value>
-            </Property>
+        <Property name="Schemes">
+            <Property name="DefaultScheme">
+                <Value>*</Value>		
+            </Property>	
+            <Property name="ExtendedScheme">
+                <Value>Manager</Value>
+                <Value>Observer</Value>
+                <Value>Copilot</Value>
+                <Value>Client Manager</Value>			
+            </Property>		
         </Property>
-        <Property name="EndPhaseEmail">
-            <Property name="SendEmail">
-                <Value>yes</Value>
+        <Property name="DefaultScheme">
+            <Property name="StartPhaseEmail">
+                <Property name="SendEmail">
+                    <Value>yes</Value>
+                </Property>
+                <Property name="EmailTemplateSource">
+                    <Value>file</Value>
+                </Property>
+                <Property name="EmailTemplateName">
+                    <Value>&phasesEmailTemplate;</Value>
+                </Property>
+                <Property name="EmailSubject">
+                    <Value>Phase Start</Value>
+                </Property>
+                <Property name="EmailFromAddress">
+                    <Value>&notificationEmailFromAddress;</Value>
+                </Property>
+                <Property name="Priority">
+                    <Value>0</Value>
+                </Property>		  
             </Property>
-            <Property name="EmailTemplateSource">
-                <Value>file</Value>
-            </Property>
-            <Property name="EmailTemplateName">
-                <Value>&phasesEmailTemplate;</Value>
-            </Property>
-            <Property name="EmailSubject">
-                <Value>Phase End</Value>
-            </Property>
-            <Property name="EmailFromAddress">
-                <Value>&notificationEmailFromAddress;</Value>
-            </Property>
+            <Property name="EndPhaseEmail">
+                <Property name="SendEmail">
+                    <Value>yes</Value>
+                </Property>
+                <Property name="EmailTemplateSource">
+                    <Value>file</Value>
+                </Property>
+                <Property name="EmailTemplateName">
+                    <Value>&phasesEmailTemplate;</Value>
+                </Property>
+                <Property name="EmailSubject">
+                    <Value>Phase End</Value>
+                </Property>
+                <Property name="EmailFromAddress">
+                    <Value>&notificationEmailFromAddress;</Value>
+                </Property>
+                <Property name="Priority">
+                    <Value>0</Value>
+                </Property>		  
+            </Property>	
         </Property>
-        <Property name="Roles">
-        	<Value>Manager</Value>
-        </Property>
-        <Property name="Manager">
+        <Property name="ExtendedScheme">
             <Property name="StartPhaseEmail">
                 <Property name="SendEmail">
                     <Value>yes</Value>
@@ -1323,19 +1434,12 @@
                 <Property name="EmailFromAddress">
                     <Value>&notificationEmailFromAddress;</Value>
                 </Property>
+                <Property name="Priority">
+                    <Value>1</Value>
+                </Property>		
             </Property>
         </Property>
-<!-- [OR-584] don't need this flag anymore, assignment v2 business logic doesn't require it
-        <Property name="CreateAssignmentDocuments">
-            <Value>&assignmentDocumentsFlag;</Value>
-        </Property>
--->
-        <!-- Date Format: MM/dd/yyyy  -->
-<!--[OR-584] don't need this anymore, assignment v2 business logic doesn't require it
-        <Property name="AssignmentDocumentsStartDate">
-            <Value>06/18/2007</Value>
-        </Property>
--->
+
         <Property name="WinnersEmail">
             <Property name="EmailTemplateSource">
                 <Value>file</Value>
@@ -1367,44 +1471,60 @@
         <Property name="ManagerHelperNamespace">
             <Value>com.cronos.onlinereview.phases.ManagerHelper</Value>
         </Property>
-        <Property name="StartPhaseEmail">
-            <Property name="SendEmail">
-                <Value>yes</Value>
-            </Property>
-            <Property name="EmailTemplateSource">
-                <Value>file</Value>
-            </Property>
-            <Property name="EmailTemplateName">
-                <Value>&phasesEmailTemplate;</Value>
-            </Property>
-            <Property name="EmailSubject">
-                <Value>Phase Start</Value>
-            </Property>
-            <Property name="EmailFromAddress">
-                <Value>&notificationEmailFromAddress;</Value>
-            </Property>
+        <Property name="Schemes">
+            <Property name="DefaultScheme">
+                <Value>*</Value>		
+            </Property>	
+            <Property name="ExtendedScheme">
+                <Value>Manager</Value>
+                <Value>Observer</Value>
+                <Value>Copilot</Value>
+                <Value>Client Manager</Value>			
+            </Property>		
         </Property>
-        <Property name="EndPhaseEmail">
-            <Property name="SendEmail">
-                <Value>yes</Value>
+        <Property name="DefaultScheme">
+            <Property name="StartPhaseEmail">
+                <Property name="SendEmail">
+                    <Value>yes</Value>
+                </Property>
+                <Property name="EmailTemplateSource">
+                    <Value>file</Value>
+                </Property>
+                <Property name="EmailTemplateName">
+                    <Value>&phasesEmailTemplate;</Value>
+                </Property>
+                <Property name="EmailSubject">
+                    <Value>Phase Start</Value>
+                </Property>
+                <Property name="EmailFromAddress">
+                    <Value>&notificationEmailFromAddress;</Value>
+                </Property>
+                <Property name="Priority">
+                    <Value>0</Value>
+                </Property>		  
             </Property>
-            <Property name="EmailTemplateSource">
-                <Value>file</Value>
-            </Property>
-            <Property name="EmailTemplateName">
-                <Value>&phasesEmailTemplate;</Value>
-            </Property>
-            <Property name="EmailSubject">
-                <Value>Phase End</Value>
-            </Property>
-            <Property name="EmailFromAddress">
-                <Value>&notificationEmailFromAddress;</Value>
-            </Property>
+            <Property name="EndPhaseEmail">
+                <Property name="SendEmail">
+                    <Value>yes</Value>
+                </Property>
+                <Property name="EmailTemplateSource">
+                    <Value>file</Value>
+                </Property>
+                <Property name="EmailTemplateName">
+                    <Value>&phasesEmailTemplate;</Value>
+                </Property>
+                <Property name="EmailSubject">
+                    <Value>Phase End</Value>
+                </Property>
+                <Property name="EmailFromAddress">
+                    <Value>&notificationEmailFromAddress;</Value>
+                </Property>
+                <Property name="Priority">
+                    <Value>0</Value>
+                </Property>		  
+            </Property>	
         </Property>
-        <Property name="Roles">
-        	<Value>Manager</Value>
-        </Property>
-        <Property name="Manager">
+        <Property name="ExtendedScheme">
             <Property name="StartPhaseEmail">
                 <Property name="SendEmail">
                     <Value>yes</Value>
@@ -1441,6 +1561,9 @@
                 <Property name="EmailFromAddress">
                     <Value>&notificationEmailFromAddress;</Value>
                 </Property>
+                <Property name="Priority">
+                    <Value>1</Value>
+                </Property>		
             </Property>
         </Property>
     </Config>
@@ -1456,44 +1579,60 @@
         <Property name="ManagerHelperNamespace">
             <Value>com.cronos.onlinereview.phases.ManagerHelper</Value>
         </Property>
-        <Property name="StartPhaseEmail">
-            <Property name="SendEmail">
-                <Value>yes</Value>
-            </Property>
-            <Property name="EmailTemplateSource">
-                <Value>file</Value>
-            </Property>
-            <Property name="EmailTemplateName">
-                <Value>&phasesEmailTemplate;</Value>
-            </Property>
-            <Property name="EmailSubject">
-                <Value>Phase Start</Value>
-            </Property>
-            <Property name="EmailFromAddress">
-                <Value>&notificationEmailFromAddress;</Value>
-            </Property>
+        <Property name="Schemes">
+            <Property name="DefaultScheme">
+                <Value>*</Value>		
+            </Property>	
+            <Property name="ExtendedScheme">
+                <Value>Manager</Value>
+                <Value>Observer</Value>
+                <Value>Copilot</Value>
+                <Value>Client Manager</Value>			
+            </Property>		
         </Property>
-        <Property name="EndPhaseEmail">
-            <Property name="SendEmail">
-                <Value>yes</Value>
+        <Property name="DefaultScheme">
+            <Property name="StartPhaseEmail">
+                <Property name="SendEmail">
+                    <Value>yes</Value>
+                </Property>
+                <Property name="EmailTemplateSource">
+                    <Value>file</Value>
+                </Property>
+                <Property name="EmailTemplateName">
+                    <Value>&phasesEmailTemplate;</Value>
+                </Property>
+                <Property name="EmailSubject">
+                    <Value>Phase Start</Value>
+                </Property>
+                <Property name="EmailFromAddress">
+                    <Value>&notificationEmailFromAddress;</Value>
+                </Property>
+                <Property name="Priority">
+                    <Value>0</Value>
+                </Property>		  
             </Property>
-            <Property name="EmailTemplateSource">
-                <Value>file</Value>
-            </Property>
-            <Property name="EmailTemplateName">
-                <Value>&phasesEmailTemplate;</Value>
-            </Property>
-            <Property name="EmailSubject">
-                <Value>Phase End</Value>
-            </Property>
-            <Property name="EmailFromAddress">
-                <Value>&notificationEmailFromAddress;</Value>
-            </Property>
+            <Property name="EndPhaseEmail">
+                <Property name="SendEmail">
+                    <Value>yes</Value>
+                </Property>
+                <Property name="EmailTemplateSource">
+                    <Value>file</Value>
+                </Property>
+                <Property name="EmailTemplateName">
+                    <Value>&phasesEmailTemplate;</Value>
+                </Property>
+                <Property name="EmailSubject">
+                    <Value>Phase End</Value>
+                </Property>
+                <Property name="EmailFromAddress">
+                    <Value>&notificationEmailFromAddress;</Value>
+                </Property>
+                <Property name="Priority">
+                    <Value>0</Value>
+                </Property>		  
+            </Property>	
         </Property>
-        <Property name="Roles">
-        	<Value>Manager</Value>
-        </Property>
-        <Property name="Manager">
+        <Property name="ExtendedScheme">
             <Property name="StartPhaseEmail">
                 <Property name="SendEmail">
                     <Value>yes</Value>
@@ -1530,6 +1669,9 @@
                 <Property name="EmailFromAddress">
                     <Value>&notificationEmailFromAddress;</Value>
                 </Property>
+                <Property name="Priority">
+                    <Value>1</Value>
+                </Property>		
             </Property>
         </Property>
     </Config>
@@ -1545,44 +1687,60 @@
         <Property name="ManagerHelperNamespace">
             <Value>com.cronos.onlinereview.phases.ManagerHelper</Value>
         </Property>
-        <Property name="StartPhaseEmail">
-            <Property name="SendEmail">
-                <Value>yes</Value>
-            </Property>
-            <Property name="EmailTemplateSource">
-                <Value>file</Value>
-            </Property>
-            <Property name="EmailTemplateName">
-                <Value>&phasesEmailTemplate;</Value>
-            </Property>
-            <Property name="EmailSubject">
-                <Value>Phase Start</Value>
-            </Property>
-            <Property name="EmailFromAddress">
-                <Value>&notificationEmailFromAddress;</Value>
-            </Property>
+        <Property name="Schemes">
+            <Property name="DefaultScheme">
+                <Value>*</Value>		
+            </Property>	
+            <Property name="ExtendedScheme">
+                <Value>Manager</Value>
+                <Value>Observer</Value>
+                <Value>Copilot</Value>
+                <Value>Client Manager</Value>			
+            </Property>		
         </Property>
-        <Property name="EndPhaseEmail">
-            <Property name="SendEmail">
-                <Value>yes</Value>
+        <Property name="DefaultScheme">
+            <Property name="StartPhaseEmail">
+                <Property name="SendEmail">
+                    <Value>yes</Value>
+                </Property>
+                <Property name="EmailTemplateSource">
+                    <Value>file</Value>
+                </Property>
+                <Property name="EmailTemplateName">
+                    <Value>&phasesEmailTemplate;</Value>
+                </Property>
+                <Property name="EmailSubject">
+                    <Value>Phase Start</Value>
+                </Property>
+                <Property name="EmailFromAddress">
+                    <Value>&notificationEmailFromAddress;</Value>
+                </Property>
+                <Property name="Priority">
+                    <Value>0</Value>
+                </Property>		  
             </Property>
-            <Property name="EmailTemplateSource">
-                <Value>file</Value>
-            </Property>
-            <Property name="EmailTemplateName">
-                <Value>&phasesEmailTemplate;</Value>
-            </Property>
-            <Property name="EmailSubject">
-                <Value>Phase End</Value>
-            </Property>
-            <Property name="EmailFromAddress">
-                <Value>&notificationEmailFromAddress;</Value>
-            </Property>
+            <Property name="EndPhaseEmail">
+                <Property name="SendEmail">
+                    <Value>yes</Value>
+                </Property>
+                <Property name="EmailTemplateSource">
+                    <Value>file</Value>
+                </Property>
+                <Property name="EmailTemplateName">
+                    <Value>&phasesEmailTemplate;</Value>
+                </Property>
+                <Property name="EmailSubject">
+                    <Value>Phase End</Value>
+                </Property>
+                <Property name="EmailFromAddress">
+                    <Value>&notificationEmailFromAddress;</Value>
+                </Property>
+                <Property name="Priority">
+                    <Value>0</Value>
+                </Property>		  
+            </Property>	
         </Property>
-        <Property name="Roles">
-        	<Value>Manager</Value>
-        </Property>
-        <Property name="Manager">
+        <Property name="ExtendedScheme">
             <Property name="StartPhaseEmail">
                 <Property name="SendEmail">
                     <Value>yes</Value>
@@ -1619,6 +1777,9 @@
                 <Property name="EmailFromAddress">
                     <Value>&notificationEmailFromAddress;</Value>
                 </Property>
+                <Property name="Priority">
+                    <Value>1</Value>
+                </Property>		
             </Property>
         </Property>
     </Config>
@@ -1634,44 +1795,60 @@
         <Property name="ManagerHelperNamespace">
             <Value>com.cronos.onlinereview.phases.ManagerHelper</Value>
         </Property>
-        <Property name="StartPhaseEmail">
-            <Property name="SendEmail">
-                <Value>yes</Value>
-            </Property>
-            <Property name="EmailTemplateSource">
-                <Value>file</Value>
-            </Property>
-            <Property name="EmailTemplateName">
-                <Value>&phasesEmailTemplate;</Value>
-            </Property>
-            <Property name="EmailSubject">
-                <Value>Phase Start</Value>
-            </Property>
-            <Property name="EmailFromAddress">
-                <Value>&notificationEmailFromAddress;</Value>
-            </Property>
+        <Property name="Schemes">
+            <Property name="DefaultScheme">
+                <Value>*</Value>		
+            </Property>	
+            <Property name="ExtendedScheme">
+                <Value>Manager</Value>
+                <Value>Observer</Value>
+                <Value>Copilot</Value>
+                <Value>Client Manager</Value>			
+            </Property>		
         </Property>
-        <Property name="EndPhaseEmail">
-            <Property name="SendEmail">
-                <Value>yes</Value>
+        <Property name="DefaultScheme">
+            <Property name="StartPhaseEmail">
+                <Property name="SendEmail">
+                    <Value>yes</Value>
+                </Property>
+                <Property name="EmailTemplateSource">
+                    <Value>file</Value>
+                </Property>
+                <Property name="EmailTemplateName">
+                    <Value>&phasesEmailTemplate;</Value>
+                </Property>
+                <Property name="EmailSubject">
+                    <Value>Phase Start</Value>
+                </Property>
+                <Property name="EmailFromAddress">
+                    <Value>&notificationEmailFromAddress;</Value>
+                </Property>
+                <Property name="Priority">
+                    <Value>0</Value>
+                </Property>		  
             </Property>
-            <Property name="EmailTemplateSource">
-                <Value>file</Value>
-            </Property>
-            <Property name="EmailTemplateName">
-                <Value>&phasesEmailTemplate;</Value>
-            </Property>
-            <Property name="EmailSubject">
-                <Value>Phase End</Value>
-            </Property>
-            <Property name="EmailFromAddress">
-                <Value>&notificationEmailFromAddress;</Value>
-            </Property>
+            <Property name="EndPhaseEmail">
+                <Property name="SendEmail">
+                    <Value>yes</Value>
+                </Property>
+                <Property name="EmailTemplateSource">
+                    <Value>file</Value>
+                </Property>
+                <Property name="EmailTemplateName">
+                    <Value>&phasesEmailTemplate;</Value>
+                </Property>
+                <Property name="EmailSubject">
+                    <Value>Phase End</Value>
+                </Property>
+                <Property name="EmailFromAddress">
+                    <Value>&notificationEmailFromAddress;</Value>
+                </Property>
+                <Property name="Priority">
+                    <Value>0</Value>
+                </Property>		  
+            </Property>	
         </Property>
-        <Property name="Roles">
-        	<Value>Manager</Value>
-        </Property>
-        <Property name="Manager">
+        <Property name="ExtendedScheme">
             <Property name="StartPhaseEmail">
                 <Property name="SendEmail">
                     <Value>yes</Value>
@@ -1708,6 +1885,9 @@
                 <Property name="EmailFromAddress">
                     <Value>&notificationEmailFromAddress;</Value>
                 </Property>
+                <Property name="Priority">
+                    <Value>1</Value>
+                </Property>		
             </Property>
         </Property>
     </Config>
@@ -1732,44 +1912,60 @@
         <Property name="ManagerHelperNamespace">
             <Value>com.cronos.onlinereview.phases.ManagerHelper</Value>
         </Property>
-        <Property name="StartPhaseEmail">
-            <Property name="SendEmail">
-                <Value>yes</Value>
-            </Property>
-            <Property name="EmailTemplateSource">
-                <Value>file</Value>
-            </Property>
-            <Property name="EmailTemplateName">
-                <Value>&phasesEmailTemplate;</Value>
-            </Property>
-            <Property name="EmailSubject">
-                <Value>Phase Start</Value>
-            </Property>
-            <Property name="EmailFromAddress">
-                <Value>&notificationEmailFromAddress;</Value>
-            </Property>
+        <Property name="Schemes">
+            <Property name="DefaultScheme">
+                <Value>*</Value>		
+            </Property>	
+            <Property name="ExtendedScheme">
+                <Value>Manager</Value>
+                <Value>Observer</Value>
+                <Value>Copilot</Value>
+                <Value>Client Manager</Value>			
+            </Property>		
         </Property>
-        <Property name="EndPhaseEmail">
-            <Property name="SendEmail">
-                <Value>yes</Value>
+        <Property name="DefaultScheme">
+            <Property name="StartPhaseEmail">
+                <Property name="SendEmail">
+                    <Value>yes</Value>
+                </Property>
+                <Property name="EmailTemplateSource">
+                    <Value>file</Value>
+                </Property>
+                <Property name="EmailTemplateName">
+                    <Value>&phasesEmailTemplate;</Value>
+                </Property>
+                <Property name="EmailSubject">
+                    <Value>Phase Start</Value>
+                </Property>
+                <Property name="EmailFromAddress">
+                    <Value>&notificationEmailFromAddress;</Value>
+                </Property>
+                <Property name="Priority">
+                    <Value>0</Value>
+                </Property>		  
             </Property>
-            <Property name="EmailTemplateSource">
-                <Value>file</Value>
-            </Property>
-            <Property name="EmailTemplateName">
-                <Value>&phasesEmailTemplate;</Value>
-            </Property>
-            <Property name="EmailSubject">
-                <Value>Phase End</Value>
-            </Property>
-            <Property name="EmailFromAddress">
-                <Value>&notificationEmailFromAddress;</Value>
-            </Property>
+            <Property name="EndPhaseEmail">
+                <Property name="SendEmail">
+                    <Value>yes</Value>
+                </Property>
+                <Property name="EmailTemplateSource">
+                    <Value>file</Value>
+                </Property>
+                <Property name="EmailTemplateName">
+                    <Value>&phasesEmailTemplate;</Value>
+                </Property>
+                <Property name="EmailSubject">
+                    <Value>Phase End</Value>
+                </Property>
+                <Property name="EmailFromAddress">
+                    <Value>&notificationEmailFromAddress;</Value>
+                </Property>
+                <Property name="Priority">
+                    <Value>0</Value>
+                </Property>		  
+            </Property>	
         </Property>
-        <Property name="Roles">
-        	<Value>Manager</Value>
-        </Property>
-        <Property name="Manager">
+        <Property name="ExtendedScheme">
             <Property name="StartPhaseEmail">
                 <Property name="SendEmail">
                     <Value>yes</Value>
@@ -1806,6 +2002,9 @@
                 <Property name="EmailFromAddress">
                     <Value>&notificationEmailFromAddress;</Value>
                 </Property>
+                <Property name="Priority">
+                    <Value>1</Value>
+                </Property>		
             </Property>
         </Property>
     </Config>
@@ -1830,44 +2029,60 @@
         <Property name="ManagerHelperNamespace">
             <Value>com.cronos.onlinereview.phases.ManagerHelper</Value>
         </Property>
-        <Property name="StartPhaseEmail">
-            <Property name="SendEmail">
-                <Value>yes</Value>
-            </Property>
-            <Property name="EmailTemplateSource">
-                <Value>file</Value>
-            </Property>
-            <Property name="EmailTemplateName">
-                <Value>&phasesEmailTemplate;</Value>
-            </Property>
-            <Property name="EmailSubject">
-                <Value>Phase Start</Value>
-            </Property>
-            <Property name="EmailFromAddress">
-                <Value>&notificationEmailFromAddress;</Value>
-            </Property>
+        <Property name="Schemes">
+            <Property name="DefaultScheme">
+                <Value>*</Value>		
+            </Property>	
+            <Property name="ExtendedScheme">
+                <Value>Manager</Value>
+                <Value>Observer</Value>
+                <Value>Copilot</Value>
+                <Value>Client Manager</Value>			
+            </Property>		
         </Property>
-        <Property name="EndPhaseEmail">
-            <Property name="SendEmail">
-                <Value>yes</Value>
+        <Property name="DefaultScheme">
+            <Property name="StartPhaseEmail">
+                <Property name="SendEmail">
+                    <Value>yes</Value>
+                </Property>
+                <Property name="EmailTemplateSource">
+                    <Value>file</Value>
+                </Property>
+                <Property name="EmailTemplateName">
+                    <Value>&phasesEmailTemplate;</Value>
+                </Property>
+                <Property name="EmailSubject">
+                    <Value>Phase Start</Value>
+                </Property>
+                <Property name="EmailFromAddress">
+                    <Value>&notificationEmailFromAddress;</Value>
+                </Property>
+                <Property name="Priority">
+                    <Value>0</Value>
+                </Property>		  
             </Property>
-            <Property name="EmailTemplateSource">
-                <Value>file</Value>
-            </Property>
-            <Property name="EmailTemplateName">
-                <Value>&phasesEmailTemplate;</Value>
-            </Property>
-            <Property name="EmailSubject">
-                <Value>Phase End</Value>
-            </Property>
-            <Property name="EmailFromAddress">
-                <Value>&notificationEmailFromAddress;</Value>
-            </Property>
+            <Property name="EndPhaseEmail">
+                <Property name="SendEmail">
+                    <Value>yes</Value>
+                </Property>
+                <Property name="EmailTemplateSource">
+                    <Value>file</Value>
+                </Property>
+                <Property name="EmailTemplateName">
+                    <Value>&phasesEmailTemplate;</Value>
+                </Property>
+                <Property name="EmailSubject">
+                    <Value>Phase End</Value>
+                </Property>
+                <Property name="EmailFromAddress">
+                    <Value>&notificationEmailFromAddress;</Value>
+                </Property>
+                <Property name="Priority">
+                    <Value>0</Value>
+                </Property>		  
+            </Property>	
         </Property>
-        <Property name="Roles">
-        	<Value>Manager</Value>
-        </Property>
-        <Property name="Manager">
+        <Property name="ExtendedScheme">
             <Property name="StartPhaseEmail">
                 <Property name="SendEmail">
                     <Value>yes</Value>
@@ -1904,6 +2119,9 @@
                 <Property name="EmailFromAddress">
                     <Value>&notificationEmailFromAddress;</Value>
                 </Property>
+                <Property name="Priority">
+                    <Value>1</Value>
+                </Property>		
             </Property>
         </Property>
     </Config>
@@ -4348,6 +4566,7 @@
                 <Value>Post-Mortem Reviewer</Value>
                 <Value>Copilot</Value>
                 <Value>Client Manager</Value>
+                <Value>Observer</Value>		
             </Property>
             <Property name="View My Submissions">
                 <Value>Submitter</Value>
@@ -4372,6 +4591,7 @@
                 <Value>Designer</Value>
                 <Value>Copilot</Value>
                 <Value>Client Manager</Value>
+                <Value>Observer</Value>			
             </Property>
             <Property name="View Most Recent after Appeals Response">
                 <Value>Submitter</Value>
