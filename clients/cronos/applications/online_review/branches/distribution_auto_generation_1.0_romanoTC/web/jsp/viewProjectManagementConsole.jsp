@@ -279,13 +279,13 @@
 			                                </td>
 			                            </tr>
 			                            <tr class="light">
-			                                <td class="value">
+			                                <td class="value" width="25%">
 			                                    <bean:message key="manageProject.Distributions.packagename"/>&nbsp;
 	                                               <c:if test="${needsPackageName == true}">
 	                                                <bean:message key="global.required.paren"/>
 	                                            </c:if>   
 			                                </td>
-			                                <td class="value">
+			                                <td class="value" width="75%">
 			                                    <html:text styleClass="inputBox"
 			                                               property="distribution_package_name"/>
 		                                        <div class="error">
@@ -295,11 +295,11 @@
 		                                    </td>
 			                            </tr>
 			                            <tr class="dark">
-			                                <td class="value">
+			                                <td class="value" width="25%">
 			                                    <bean:message key="manageProject.Distributions.rs"/>&nbsp;
 		                                        <bean:message key="global.required.paren"/>
 			                                </td>
-			                                <td class="value">
+			                                <td class="value" width="75%">
 			                                    <html:file property="distribution_rs" size="20" styleClass="inputBox" style="width:250px;vertical-align:middle;" />
 		                                        <div class="error">
 		                                            <html:errors property="distribution_rs" prefix=""
@@ -308,14 +308,18 @@
 			                                </td>
 			                            </tr>
 		                                <tr class="light">
-		                                    <td class="value">
+		                                    <td class="value" width="25%">
 		                                        <bean:message key="manageProject.Distributions.additional1"/>
 		                                    </td>
-		                                    <td class="value">
+		                                    <td class="value" width="75%">
 		                                        <table border="0" cellpadding="0" cellspacing="0">
 		                                        <tr>
 		                                        <td id="additionalFile1">
 	                                               <html:file property="distribution_additional1" size="20" styleClass="inputBox" style="width:250px;vertical-align:middle;" />
+	                                                <div class="error">
+	                                                    <html:errors property="distribution_additional1" prefix=""
+	                                                                 suffix=""/>
+	                                                </div>
 		                                        </td>
 		                                        <td>  
                                                     <html:img srcKey="btnClear.img" altKey="btnClear.alt" onclick="javascript:clearFileInputField('additionalFile1')" />
@@ -325,14 +329,18 @@
 		                                    </td>
 		                                </tr>
 		                                <tr class="dark">
-		                                    <td class="value">
+		                                    <td class="value" width="25%">
 		                                        <bean:message key="manageProject.Distributions.additional2"/>
 		                                    </td>
-		                                    <td class="value">
+		                                    <td class="value" width="75%">
                                                 <table border="0" cellpadding="0" cellspacing="0">
                                                 <tr>
                                                 <td id="additionalFile2">
                                                    <html:file property="distribution_additional2" size="20" styleClass="inputBox" style="width:250px;vertical-align:middle;" />
+                                                    <div class="error">
+                                                        <html:errors property="distribution_additional2" prefix=""
+                                                                     suffix=""/>
+                                                    </div>
                                                 </td>
                                                 <td>  
                                                     <html:img srcKey="btnClear.img" altKey="btnClear.alt" onclick="javascript:clearFileInputField('additionalFile2')" />
@@ -342,14 +350,18 @@
 		                                    </td>
 		                                </tr>
 		                                <tr class="light">
-		                                    <td class="value">
+		                                    <td class="value" width="25%">
 		                                        <bean:message key="manageProject.Distributions.additional3"/>
 		                                    </td>
-		                                    <td class="value">
+		                                    <td class="value" width="75%">
                                                 <table border="0" cellpadding="0" cellspacing="0">
                                                 <tr>
                                                 <td id="additionalFile3">
                                                    <html:file property="distribution_additional3" size="20" styleClass="inputBox" style="width:250px;vertical-align:middle;" />
+                                                    <div class="error">
+                                                        <html:errors property="distribution_additional3" prefix=""
+                                                                     suffix=""/>
+                                                    </div>
                                                 </td>
                                                 <td>  
                                                     <html:img srcKey="btnClear.img" altKey="btnClear.alt" onclick="javascript:clearFileInputField('additionalFile3')" />
@@ -412,10 +424,10 @@
 	                                    </td>
 	                                </tr>
 	                                <tr class="light">
-	                                    <td class="value">
+	                                    <td class="value" width="25%">
 	                                        <bean:message key="manageProject.Distributions.File"/>
 	                                    </td>
-	                                    <td class="value">
+	                                    <td class="value" width="75%">
 	                                        <html:file property="distribution_file" size="20" styleClass="inputBox" style="width:250px;vertical-align:middle;" />
 	                                        <div class="error">
 	                                            <html:errors property="distribution_file" prefix=""
