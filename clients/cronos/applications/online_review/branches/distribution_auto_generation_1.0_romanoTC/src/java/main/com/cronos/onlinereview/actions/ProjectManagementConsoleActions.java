@@ -880,6 +880,7 @@ public class ProjectManagementConsoleActions extends DispatchAction {
             }
         }
 
+        Set<String> uploadedFiles = new HashSet<String>();
         FormFile distributionRSFile = (FormFile) lazyForm.get("distribution_rs");
 
         // Validate the RS form file
@@ -895,7 +896,29 @@ public class ProjectManagementConsoleActions extends DispatchAction {
                 ActionsHelper.addErrorToRequest(request, "distribution_rs", new ActionMessage(
                     "error.com.cronos.onlinereview.actions.manageProject.Distributions.RS.Invalid"));
             }
+            
+            uploadedFiles.add(lcFileName);
+
         }
+        
+        // Validate additional files - check if more than one file has the same name
+        for (int i = 1; i <= 3; ++i) {
+            FormFile additionalFormFile = (FormFile) lazyForm.get("distribution_additional" + i);
+            
+            // Only use additional file if it is uploaded and well set
+            if ((additionalFormFile != null) && (additionalFormFile.getFileSize() > 0)
+                && !isEmpty(additionalFormFile.getFileName())) {
+
+                String lcFileName = additionalFormFile.getFileName().toLowerCase();
+                if (uploadedFiles.contains(additionalFormFile.getFileName())) {
+                    ActionsHelper.addErrorToRequest(request, "distribution_additional" + i, new ActionMessage(
+                        "error.com.cronos.onlinereview.actions.manageProject.Distributions.Files.SameName"));
+                }
+                
+                uploadedFiles.add(lcFileName);
+            }
+        }
+        
 
         boolean uploadToServer = getBooleanFromForm(lazyForm, "upload_to_server");
         boolean returnDistribution = getBooleanFromForm(lazyForm, "return_distribution");
