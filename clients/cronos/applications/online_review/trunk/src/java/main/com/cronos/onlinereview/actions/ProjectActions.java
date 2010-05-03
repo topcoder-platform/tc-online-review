@@ -2024,8 +2024,10 @@ public class ProjectActions extends DispatchAction {
                 if (resourceRole.equals("Manager") || resourceRole.equals("Observer") 
                          || resourceRole.equals("Designer")  || resourceRole.equals("Client Manager")  || resourceRole.equals("Copilot"))
                 {   
-                    // no need for Applications/Components
-                    if (!resource.getProperty("Handle").equals("Applications") && !resource.getProperty("Handle").equals("Components"))
+                    // no need for Applications/Components/LCSUPPORT
+                    if (!resource.getProperty("Handle").equals("Applications") &&
+                        !resource.getProperty("Handle").equals("Components") &&
+                        !resource.getProperty("Handle").equals("LCSUPPORT"))
                     {
                         newUsersForumWatch.add(user.getId());
                     }
@@ -2210,7 +2212,9 @@ public class ProjectActions extends DispatchAction {
                     long userId = user.getId();
 
                     // dont check Applications or Components
-                    if (resourceNames[i].equals("Applications") || resourceNames[i].equals("Components"))
+                    if (resourceNames[i].equals("Applications") ||
+                        resourceNames[i].equals("Components") ||
+                        resourceNames[i].equals("LCSUPPORT"))
                     {
                         continue;
                     }
