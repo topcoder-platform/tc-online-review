@@ -47,6 +47,10 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.Locale;
+import java.text.DateFormat;
+import java.text.Format;
+import java.text.SimpleDateFormat;
 
 import static com.cronos.onlinereview.actions.Constants.VIEW_PROJECT_MANAGEMENT_CONSOLE_PERM_NAME;
 import static com.cronos.onlinereview.actions.Constants.PROJECT_MANAGEMENT_PERM_NAME;
@@ -96,6 +100,7 @@ public class ProjectManagementConsoleActions extends DispatchAction {
      */
     private static final long DESIGNER_RESOURCE_ROLE_ID = 11;
 
+    private static final DateFormat DATE_FORMAT = new SimpleDateFormat("MM.dd.yyyy hh:mm a", Locale.US);
 
 
     /**
@@ -569,6 +574,7 @@ public class ProjectManagementConsoleActions extends DispatchAction {
                             resource.setResourceRole(roleMapping.get(resourceRoleId));
                             resource.setProperty("Handle", handle);
                             resource.setProperty("External Reference ID", userId);
+                            resource.setProperty("Registration Date", DATE_FORMAT.format(new Date()));
 
                             newUsersForumWatch.add(userId);
 

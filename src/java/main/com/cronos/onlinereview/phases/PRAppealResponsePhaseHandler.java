@@ -192,14 +192,15 @@ public class PRAppealResponsePhaseHandler extends AppealsResponsePhaseHandler {
 	}
 */
 
-	private void sendMailForWinners(Project project) throws Exception {
-        log.log(Level.DEBUG, "we're in the send email method");
+    private void sendMailForWinners(Project project) throws Exception {
+       log.log(Level.DEBUG, "we're in the send email method");
+
        String winnerId = (String) project.getProperty("Winner External Reference ID");
        String runnerUpId = (String) project.getProperty("Runner-up External Reference ID");
 
-        // dont send out for spec review
-       if (project.getProjectCategory().getId() == PROJECT_CATEGORY_SPEC_REVIEW)
-       {
+       String sendWinnerEmail = (String) project.getProperty("Send Winner Emails");
+
+       if (sendWinnerEmail == null || !sendWinnerEmail.equalsIgnoreCase("true")) {
            return;
        }
 
