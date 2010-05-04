@@ -2259,6 +2259,9 @@
         <Property name="RIA Builds">
             <Value>135</Value>
         </Property>
+        <Property name="Gameplan">
+            <Value>140</Value>
+        </Property>
     </Config>
 
 
@@ -4316,6 +4319,14 @@
                 </Property>
             </Property>
             <Property name="RIA Component Competition">
+                <Property name="IconSmall">
+                    <Value>iconRIAComponentCompetitionSm.png</Value>
+                </Property>
+                <Property name="Icon">
+                    <Value>iconRIAComponentCompetition.png</Value>
+                </Property>
+            </Property>
+            <Property name="Gameplan">
                 <Property name="IconSmall">
                     <Value>iconRIAComponentCompetitionSm.png</Value>
                 </Property>
