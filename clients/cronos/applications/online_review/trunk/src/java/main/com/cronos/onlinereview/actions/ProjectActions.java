@@ -810,6 +810,7 @@ public class ProjectActions extends DispatchAction {
             project = new Project(category, activeStatus);
 
             project.setProperty("Approval Required", "true"); // All new projects by default need Approval phase.
+            project.setProperty("Send Winner Emails", "true");
             statusHasChanged = true; // Status is always considered to be changed for new projects
         } else {
             long newCategoryId = ((Long) lazyForm.get("project_category")).longValue();
