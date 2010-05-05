@@ -137,4 +137,8 @@
         <home>com.topcoder.security.login.LoginRemoteHome</home>
         <remote>com.topcoder.security.login.LoginRemote</remote>
     </ejb-ref>
+
+    <session-config>
+      <session-timeout>1440</session-timeout>
+   </session-config>
 </web-app>
