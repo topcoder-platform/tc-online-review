@@ -4249,7 +4249,7 @@
                     <Value>java</Value>
                 </Property>
                 <Property name="script_path">
-                    <Value>/home/tcs/distribution_scripts/java/script.txt</Value>
+                    <Value>/home/tcs/distribution_tool/scripts/java/script.txt</Value>
                 </Property>
             </Property>
             <Property name="script_dotnet">
@@ -4257,7 +4257,7 @@
                     <Value>dotnet</Value>
                 </Property>
                 <Property name="script_path">
-                    <Value>/home/tcs/distribution_scripts/dotnet/script.txt</Value>
+                    <Value>/home/tcs/distribution_tool/scripts/dotnet/script.txt</Value>
                 </Property>
             </Property>
             <Property name="script_other">
@@ -4265,7 +4265,7 @@
                     <Value>other</Value>
                 </Property>
                 <Property name="script_path">
-                    <Value>/home/tcs/distribution_scripts/other/script.txt</Value>
+                    <Value>/home/tcs/distribution_tool/scripts/other/script.txt</Value>
                 </Property>
             </Property>
         </Property>
