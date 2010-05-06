@@ -2028,7 +2028,7 @@ public class ProjectActions extends DispatchAction {
                     // no need for Applications/Components/LCSUPPORT
                     if (!resource.getProperty("Handle").equals("Applications") &&
                         !resource.getProperty("Handle").equals("Components") &&
-                        !resource.getProperty("Handle").equals("LC_SUPPORT"))
+                        !resource.getProperty("Handle").equals("LCSUPPORT"))
                     {
                         newUsersForumWatch.add(user.getId());
                     }
@@ -2215,7 +2215,7 @@ public class ProjectActions extends DispatchAction {
                     // dont check Applications or Components
                     if (resourceNames[i].equals("Applications") ||
                         resourceNames[i].equals("Components") ||
-                        resourceNames[i].equals("LC_SUPPORT"))
+                        resourceNames[i].equals("LCSUPPORT"))
                     {
                         continue;
                     }
