@@ -712,19 +712,17 @@ public class ProjectManagementConsoleActions extends DispatchAction {
      */
     private void cleanupDirectory(File dirFile) {
 
-        if (dirFile != null) {
-            for (File file : dirFile.listFiles()) {
-                if (file.isDirectory()) {
-                    cleanupDirectory(file);
-                }
-
-                if (file.isFile()) {
-                    file.delete();
-                }
+        for (File file : dirFile.listFiles()) {
+            if (file.isDirectory()) {
+                cleanupDirectory(file);
             }
 
-            dirFile.delete();
+            if (file.isFile()) {
+                file.delete();
+            }
         }
+
+        dirFile.delete();
     }
 
     /**
