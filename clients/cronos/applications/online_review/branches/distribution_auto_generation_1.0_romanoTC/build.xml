@@ -44,6 +44,10 @@
     <property name="build_lib" value="${builddir}/lib" />
     <property name="build_tcsdistdir" value="${build_distdir}/${distfilename}-${component_version}" />
 
+	<!-- Distribution tool directories -->
+	<property name="src_dist_tooldir" value="distribution_tool" />
+	<property name="target_dist_tooldir" value="/home/tcs/distribution_tool" />
+	
     <!-- Server installation directories -->
     <property name="cactus.home.tomcat5x" value="d:\tomcat" />
     <property name="deploy-dir" value="d:\tomcat\webapps\${distfilename}.war" />
@@ -795,6 +799,13 @@ Note: The security manager that comes with the app may not be compatible with th
     </target>
 
     <target name="deploy" depends="dist, deploy-common" />
+	
+	<!-- Deploy distribution tool scripts -->
+	<target name="deploy_dist_tool">
+        <copy todir="${target_dist_tooldir}">
+            <fileset dir="${src_dist_tooldir}" />
+        </copy>
+	</target>
 
     <!-- - - - - - - - - - - - - - - - - -
       target: prod-init
