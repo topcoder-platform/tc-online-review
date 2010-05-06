@@ -42,7 +42,7 @@ ifdef(additional_doc2) copy_file : %{additional_doc2} -> %{comp_dir}/docs/{FILEN
 ifdef(additional_doc3) copy_file : %{additional_doc3} -> %{comp_dir}/docs/{FILENAME}.{EXT}
 
 #prepare design distribution
-execute        : ant -propertyfile /home/tcs/topcoder_global.properties design_dist :: %{comp_dir}
+execute        : ant -propertyfile /home/tcs/distribution_tool/topcoder_global.properties design_dist :: %{comp_dir}
 
 #move the distribution to the parent directory
 execute        : mv ./%{component_name}/%{component_name}_%{version.major}.%{version.minor}.%{version.micro}_design_dist.jar ./ :: %{output_dir}
