@@ -316,8 +316,8 @@ public class ProjectManagementConsoleActions extends DispatchAction {
                     }
                 };
 
-                // Saves the distribution file into the catalog directory
-                if (!saveDistributionFileToCatalog(project, descriptor, request)) {
+                // Saves the distribution file into the catalog directory (it will always be a design distribution)
+                if (!saveDistributionFileToCatalog(project, descriptor, request, true)) {
                     initProjectManagementConsole(request, project);
                     return mapping.getInputForward();
                 }
@@ -411,8 +411,10 @@ public class ProjectManagementConsoleActions extends DispatchAction {
             }
         };
 
+        boolean isDesign = (projectCategoryId == DESIGN_PROJECT_ID);
+        
         // Saves the distribution file into the catalog directory
-        if (!saveDistributionFileToCatalog(project, descriptor, request)) {
+        if (!saveDistributionFileToCatalog(project, descriptor, request, isDesign)) {
 
             initProjectManagementConsole(request, project);
             return mapping.getInputForward();
@@ -430,12 +432,13 @@ public class ProjectManagementConsoleActions extends DispatchAction {
      * @param project the current project used to get component information.
      * @param descriptor an object defining the distribution file (may be the upload stream or a file stream).
      * @param request object used to add error information in case something goes wrong.
+     * @param isDesign indicates if the distribution is for design or development.
      * @return <code>true</code> if the file was save properly, <code>false</code> otherwise
      * @throws Exception if any error occurs while uploading the file.
      * @since 1.1
      */
     private boolean saveDistributionFileToCatalog(Project project, DistributionFileDescriptor descriptor,
-        HttpServletRequest request) throws Exception {
+        HttpServletRequest request, boolean isDesign) throws Exception {
 
         long componentId = getProjectLongValue(project, "Component ID");
         long versionId = getProjectLongValue(project, "Version ID");
@@ -478,7 +481,7 @@ public class ProjectManagementConsoleActions extends DispatchAction {
         String documentName;
 
         // project is either Design or Development
-        if (project.getProjectCategory().getId() == DESIGN_PROJECT_ID) {
+        if (isDesign) {
             documentType = DESIGN_DISTRIBUTION_DOC_TYPE_ID;
             documentName = DESIGN_DISTRIBUTION_DOC_TYPE;
 
