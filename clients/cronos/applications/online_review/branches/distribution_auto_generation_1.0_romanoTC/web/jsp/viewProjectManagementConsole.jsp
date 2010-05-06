@@ -1,9 +1,11 @@
 <%--
-  - Author: isv
+  - Author: isv, romanoTC
   - Version: 1.0 (Online Review Project Management Console assembly v1.0)
+  - Version: 1.1 (Distribution Auto Generation Assembly v1.0) Change notes: Added support for managing design and 
+    development distributions.
   - Copyright (C) 2010 TopCoder Inc., All Rights Reserved.
   -
-  - Description: This page provides a web form for Project Managemen Console. Such a form includes areas for extending
+  - Description: This page provides a web form for Project Management Console. Such a form includes areas for extending
   - Registration phase, extending Submission phase and adding new resources to target project.
 --%>
 <%@ page contentType="text/html;charset=UTF-8" %>

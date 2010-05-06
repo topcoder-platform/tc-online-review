@@ -90,7 +90,7 @@ import com.topcoder.web.ejb.user.UserTermsOfUseLocator;
  * </ul>
  * </p>
  *
- * @author isv, TCSASSEMBLY
+ * @author isv, romanoTC
  * @version 1.1
  */
 public class ProjectManagementConsoleActions extends DispatchAction {
@@ -181,6 +181,12 @@ public class ProjectManagementConsoleActions extends DispatchAction {
      * @since 1.1
      */
     private static final Pattern VERSION_PATTERN = Pattern.compile("\\s*([1-9][0-9]*)(\\.[0-9]+){0,3}\\s*");
+    
+    /**
+     * DistributionTool is thread-safe, so we can keep it as an instance variable. 
+     * @since 1.1
+     */
+    private static final DistributionTool DISTRIBUTION_TOOL = new DistributionTool();
 
     /**
      * <p>Constructs new <code>ProjectManagementConsoleActions</code> instance. This implementation does nothing.</p>
@@ -615,9 +621,6 @@ public class ProjectManagementConsoleActions extends DispatchAction {
 
         File outputDirFile = new File(outputDir);
 
-        // Create an instance of DistributionTool using the configuration file and namespace
-        DistributionTool distributionTool = new DistributionTool();
-
         // Create Java design distribution
         Map<String, String> parameters = new HashMap<String, String>();
 
@@ -660,7 +663,7 @@ public class ProjectManagementConsoleActions extends DispatchAction {
         // Determines the script that will be used
         String rootCatalogID = (String) project.getProperty("Root Catalog ID");
         try {
-            distributionTool.createDistribution(ConfigHelper.getDistributionScript(rootCatalogID), parameters);
+            DISTRIBUTION_TOOL.createDistribution(ConfigHelper.getDistributionScript(rootCatalogID), parameters);
         } catch (DistributionToolException ex) {
             ActionsHelper.addErrorToRequest(request, new ActionMessage(
                 "error.com.cronos.onlinereview.actions.manageProject.Distributions.DistTool.Failure", ex.getMessage()));
