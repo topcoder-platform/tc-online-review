@@ -4172,6 +4172,8 @@ public class ProjectReviewActions extends DispatchAction {
         boolean isAllowed = false;
         if (AuthorizationHelper.hasUserRole(request, Constants.MANAGER_ROLE_NAMES) ||
                 AuthorizationHelper.hasUserRole(request, Constants.GLOBAL_MANAGER_ROLE_NAME) ||
+                AuthorizationHelper.hasUserRole(request, Constants.CLIENT_MANAGER_ROLE_NAME) ||
+                AuthorizationHelper.hasUserRole(request, Constants.COPILOT_ROLE_NAME) ||
                 AuthorizationHelper.hasUserRole(request, Constants.OBSERVER_ROLE_NAME)) {
             // User is manager or observer
             isAllowed = true;
