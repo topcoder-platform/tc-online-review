@@ -543,6 +543,7 @@ final class PhasesDetailsServices {
                     Constants.MANAGER_ROLE_NAME, Constants.GLOBAL_MANAGER_ROLE_NAME,
                     Constants.REVIEWER_ROLE_NAME, Constants.ACCURACY_REVIEWER_ROLE_NAME,
                     Constants.FAILURE_REVIEWER_ROLE_NAME, Constants.STRESS_REVIEWER_ROLE_NAME,
+                    Constants.CLIENT_MANAGER_ROLE_NAME, Constants.COPILOT_ROLE_NAME,
                     Constants.OBSERVER_ROLE_NAME});
             // Determine if the Review phase is closed
             boolean isReviewClosed =
