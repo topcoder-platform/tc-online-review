@@ -1327,6 +1327,14 @@ public class ProjectActions extends DispatchAction {
             // If the number of required reviewers is specified, set it
             Integer requiredReviewer = (Integer) lazyForm.get("phase_required_reviewers", i);
             if (requiredReviewer != null) {
+
+                if (requiredReviewer < 1) {
+                    ActionsHelper.addErrorToRequest(request,
+                            new ActionMessage("error.com.cronos.onlinereview.actions.editProject.InvalidReviewersNumber",
+                                    phase.getPhaseType().getName()));
+                    break;
+                }
+
                 phase.setAttribute("Reviewer Number", requiredReviewer.toString());
             }
 
@@ -1481,7 +1489,7 @@ public class ProjectActions extends DispatchAction {
             }
         }
 
-        if (hasCircularDependencies) {
+        if (ActionsHelper.isErrorsPresent(request)) {
             // TODO: Return null or so
             return oldPhases;
         }
