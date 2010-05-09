@@ -150,7 +150,8 @@ public class OnlineReviewProjectPilot extends DefaultProjectPilot {
 	private void configure(String namespace) {		
 		createManagerHelper();
 		try {
-			checkAssignmentDocumentsStatus = "true".equals(PhasesHelper.getPropertyValue(namespace, "CheckAssignmentDocumentsStatus", "false").trim());
+		    String propertyValue = PhasesHelper.getPropertyValue(namespace, "CheckAssignmentDocumentsStatus", false);
+			checkAssignmentDocumentsStatus = propertyValue!=null && "true".equals(propertyValue.trim());
 			if (!checkAssignmentDocumentsStatus) {
 				log.log(Level.INFO, "The status check of the Assignment Documents is disabled");
 			} else {
