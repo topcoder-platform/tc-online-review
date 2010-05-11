@@ -54,21 +54,6 @@
                 <div class="clearfix"></div>
                 
                 <div id="titlecontainer">
-	                <%-- Validation errors area --%>
-	                <c:if test="${orfn:isErrorsPresent(pageContext.request)}">
-	                    <table cellpadding="0" cellspacing="0" border="0">
-	                        <tr>
-	                            <td colspan="2">
-	                                <span style="color:red;">
-	                                    <bean:message key="Error.manageProject.ValidationFailed"/>
-	                                </span>
-	                            </td>
-	                        </tr>
-	                        <html:errors property="org.apache.struts.action.GLOBAL_MESSAGE"/>
-	                    </table>
-	                    <br/>
-	                </c:if>
-	
 	                <div id="contentTitle">
 	                    <h3>${project.allProperties["Project Name"]}
 	                        version ${project.allProperties["Project Version"]} - Manage Project</h3>
@@ -97,6 +82,23 @@
                         </tr>
                         <tr class="light">
                         <td>
+                            <c:if test="${((empty param.activeTabIdx) || (param.activeTabIdx == 1))}">
+                                <%-- Validation errors area --%>
+                                <c:if test="${orfn:isErrorsPresent(pageContext.request)}">
+                                    <table cellpadding="0" cellspacing="0" border="0">
+                                        <tr>
+                                            <td colspan="2">
+                                                <span style="color:red;">
+                                                    <bean:message key="Error.manageProject.ValidationFailed"/>
+                                                </span>
+                                            </td>
+                                        </tr>
+                                        <html:errors property="org.apache.struts.action.GLOBAL_MESSAGE"/>
+                                    </table>
+                                    <br/>
+                                </c:if>
+                            </c:if>
+                                
                             <html:form action="/actions/ManageProject">
 		                        <html:hidden property="method" value="manageProject"/>
 		                        <html:hidden property="pid" value="${project.id}" />
@@ -257,15 +259,27 @@
 	                        <div style="clear:both;"></div>
 	                        <table class="scorecard" cellpadding="0" width="100%" style="border-collapse: collapse;">
 	                        <tr>
-	                        <td class="title">
-	                            <bean:message key="manageProject.Distributions.title"/>
-	                        </td>
-	                        </tr>
-	                        <tr>
 	                            <td class="lastRowTD"><!-- @ --></td>
 	                        </tr>
 	                        <tr class="light">
 	                        <td>
+	                           <c:if test="${param.activeTabIdx == 2}">
+		                            <%-- Validation errors area --%>
+				                    <c:if test="${orfn:isErrorsPresent(pageContext.request)}">
+				                        <table cellpadding="0" cellspacing="0" border="0">
+				                            <tr>
+				                                <td colspan="2">
+				                                    <span style="color:red;">
+				                                        <bean:message key="Error.manageProject.ValidationFailed"/>
+				                                    </span>
+				                                </td>
+				                            </tr>
+				                            <html:errors property="org.apache.struts.action.GLOBAL_MESSAGE"/>
+				                        </table>
+				                        <br/>
+				                    </c:if>
+	                            </c:if>
+	                        
 	                            <%-- Create Design Distribution --%>
 	                            <html:form action="/actions/UploadDistribution?activeTabIdx=2" method="POST" enctype="multipart/form-data">
 		                        <html:hidden property="method" value="manageDistribution" />
