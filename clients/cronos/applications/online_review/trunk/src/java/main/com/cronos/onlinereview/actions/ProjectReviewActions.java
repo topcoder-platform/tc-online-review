@@ -3701,6 +3701,8 @@ public class ProjectReviewActions extends DispatchAction {
             submissionScores[iSub] = new com.topcoder.management.review.scoreaggregator.Submission(subId, scores);
         }
 
+        ActionsHelper.resetProjectResultWithChangedScores(project.getId(), userId);
+
         //this will hold as many elements as submissions
         AggregatedSubmission[] aggregations = aggregator.aggregateScores(submissionScores);
         RankedSubmission[] placements = aggregator.calcPlacements(aggregations);
@@ -3808,8 +3810,6 @@ public class ProjectReviewActions extends DispatchAction {
         //update the project
         projectManager.updateProject(project, "Update the winner and runner up.",
                 String.valueOf(AuthorizationHelper.getLoggedInUserId(request)));
-
-        ActionsHelper.resetProjectResultWithChangedScores(project.getId(), userId);
     }
 
     /**
