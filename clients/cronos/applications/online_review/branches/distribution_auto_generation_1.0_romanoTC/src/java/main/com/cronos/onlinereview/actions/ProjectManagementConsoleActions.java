@@ -937,7 +937,10 @@ public class ProjectManagementConsoleActions extends DispatchAction {
 
         // Must select at least one of these options
         if (!uploadToServer && !returnDistribution) {
+            // Add the error message to both checkboxes
             ActionsHelper.addErrorToRequest(request, "upload_to_server", new ActionMessage(
+                "error.com.cronos.onlinereview.actions.manageProject.Distributions.Upload.Unchecked"));
+            ActionsHelper.addErrorToRequest(request, "return_distribution", new ActionMessage(
                 "error.com.cronos.onlinereview.actions.manageProject.Distributions.Upload.Unchecked"));
         }
     }

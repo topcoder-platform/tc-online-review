@@ -415,7 +415,7 @@
 	                                <tr>
 	                                    <td class="lastRowTD" colspan="2"><!-- @ --></td>
 	                                </tr>
-		                        </table><br/>
+		                        </table>
 		                        </html:form>
 		                        
 		                        <%-- Upload Distribution --%>
@@ -423,7 +423,7 @@
 	                            <html:hidden property="method" value="uploadDistribution" />
 	                            <html:hidden property="postBack" value="y" />
 	                            <html:hidden property="pid" value="${project.id}" />
-	                            <table class="scorecard" id="distribution_tbl" cellpadding="0" width="100%"
+	                            <table class="scorecard" id="upload_distribution_tbl" cellpadding="0" width="100%"
 	                                   style="border-collapse: collapse;">
 	                                <tr>
 	                                    <td class="title" colspan="2">
@@ -461,6 +461,12 @@
 	                            <td class="lastRowTD"><!-- @ --></td>
 	                        </tr>
 	                        </table>
+	                        <div class="bottomButtonBar">
+	                           <html:image srcKey="btnSaveChanges.img" altKey="btnSaveChanges.alt" border="0"/>&#160;
+	                           <html:link
+	                                   page="/actions/ViewProjectDetails.do?method=viewProjectDetails&pid=${project.id}"><html:img
+	                                   srcKey="btnCancel.img" altKey="btnCancel.alt" border="0"/></html:link>
+	                       </div>
 	                    </div>
                     </c:if> <%-- // Design or Development only --%> 
                 </div>
