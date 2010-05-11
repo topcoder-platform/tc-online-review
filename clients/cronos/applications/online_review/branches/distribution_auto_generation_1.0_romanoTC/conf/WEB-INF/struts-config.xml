@@ -673,7 +673,7 @@
                 type="com.cronos.onlinereview.actions.ProjectManagementConsoleActions"
                 parameter="method" scope="request" name="projectManagementConsoleForm"
                 input="/jsp/viewProjectManagementConsole.jsp">
-            <forward name="success" path="/jsp/viewProjectManagementConsole.jsp" redirect="false"/>
+            <forward name="success" path="/actions/ViewProjectDetails.do?method=viewProjectDetails" redirect="true"/>
         </action>
         
         <!-- "Create/Upload Distribution" Action -->
@@ -681,7 +681,7 @@
                 type="com.cronos.onlinereview.actions.ProjectManagementConsoleActions"
                 parameter="method" scope="request" name="uploadDistributionForm"
                 input="/jsp/viewProjectManagementConsole.jsp">
-            <forward name="success" path="/jsp/viewProjectManagementConsole.jsp" redirect="false"/>
+            <forward name="success" path="/actions/ViewProjectDetails.do?method=viewProjectDetails&amp;activeTabIdx=2" redirect="true"/>
         </action>
 
     </action-mappings>

@@ -977,7 +977,7 @@ public class ProjectManagementConsoleActions extends DispatchAction {
                                        HttpServletResponse response) throws Exception {
         LoggingHelper.logAction(request);
 
-        request.setAttribute("activeTabIdx", new Integer(2));
+        request.setAttribute("activeTabIdx", new Integer(1));
 
         // Gather the roles the user has for current request
         AuthorizationHelper.gatherUserRoles(request);
