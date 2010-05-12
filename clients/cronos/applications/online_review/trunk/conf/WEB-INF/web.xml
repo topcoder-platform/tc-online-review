@@ -86,7 +86,7 @@
 	</servlet-mapping>
 
    <session-config>
-      <session-timeout>120</session-timeout>
+      <session-timeout>1440</session-timeout>
    </session-config>
 
     <!-- The Usual Welcome File List -->
@@ -137,8 +137,4 @@
         <home>com.topcoder.security.login.LoginRemoteHome</home>
         <remote>com.topcoder.security.login.LoginRemote</remote>
     </ejb-ref>
-
-    <session-config>
-      <session-timeout>1440</session-timeout>
-   </session-config>
 </web-app>
