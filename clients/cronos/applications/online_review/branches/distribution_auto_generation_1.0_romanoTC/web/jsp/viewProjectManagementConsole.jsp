@@ -387,7 +387,14 @@
 	                                </tr>                                                                	                            
 	                                <tr class="dark">
 	                                    <td class="value" colspan="2">
-	                                        <html:checkbox property="upload_to_server" styleId="uploadToServer" />
+	                                        <c:choose>
+		                                        <c:when test="${(project.projectCategory.id == 2)}">
+		                                           <input type="checkbox" name="upload_to_server" id="uploadToServer" disabled="disabled" />
+		                                        </c:when>
+	                                            <c:otherwise>
+	                                               <html:checkbox property="upload_to_server" styleId="uploadToServer" />
+	                                            </c:otherwise>
+                                            </c:choose>
                                             <html:hidden property="upload_to_server" value="false" />
 	                                        <label for="uploadToServer"><bean:message key="manageProject.Distributions.Upload" /></label>
 	                                        <div class="error">
@@ -478,9 +485,9 @@
     </div>
     </body>
     
-<c:if test="${success_upload != null}" scope="session">
+<c:if test="${sessionScope.success_upload != null}">
 <script language="JavaScript" type="text/javascript">
-alert('<%=session.getAttribute("success_upload")%>');
+    alert('<%=session.getAttribute("success_upload")%>');
 </script>
 <%session.removeAttribute("success_upload");%>
 </c:if>
