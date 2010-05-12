@@ -478,6 +478,13 @@
     </div>
     </body>
     
+<c:if test="${success_upload != null}" scope="session">
+<script language="JavaScript" type="text/javascript">
+alert('<%=session.getAttribute("success_upload")%>');
+</script>
+<%session.removeAttribute("success_upload");%>
+</c:if>
+    
 <script language="JavaScript" type="text/javascript">
 <!--
 	// A reference to the previously active tab
@@ -519,6 +526,9 @@
     function clearFileInputField(tagId) { 
         document.getElementById(tagId).innerHTML = document.getElementById(tagId).innerHTML; 
     } 
+
+
+    
 //-->
 </script>
 </html:html>

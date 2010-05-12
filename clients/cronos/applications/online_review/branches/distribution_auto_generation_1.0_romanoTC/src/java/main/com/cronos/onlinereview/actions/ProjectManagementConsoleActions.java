@@ -337,6 +337,9 @@ public class ProjectManagementConsoleActions extends DispatchAction {
 
             } else {
 
+                request.getSession().setAttribute("success_upload",
+                    getResources(request).getMessage("manageProject.Distributions.Successful_upload"));
+                
                 return ActionsHelper.cloneForwardAndAppendToPath(mapping
                     .findForward(SUCCESS_FORWARD_NAME), "&pid=" + project.getId());
             }
@@ -425,6 +428,9 @@ public class ProjectManagementConsoleActions extends DispatchAction {
             initProjectManagementConsole(request, project);
             return mapping.getInputForward();
         }
+
+        request.getSession().setAttribute("success_upload",
+            getResources(request).getMessage("manageProject.Distributions.Successful_upload"));
 
         return ActionsHelper.cloneForwardAndAppendToPath(mapping
             .findForward(SUCCESS_FORWARD_NAME), "&pid=" + project.getId());
