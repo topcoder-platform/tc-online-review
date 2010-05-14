@@ -466,12 +466,13 @@
 	                                    <td class="lastRowTD" colspan="2"><!-- @ --></td>
 	                                </tr>
 	                            </table>
+                                <div class="bottomButtonBar">
+                                   &nbsp;&nbsp;
+                                   <html:link
+                                           page="/actions/ViewProjectDetails.do?method=viewProjectDetails&pid=${project.id}"><html:img
+                                           srcKey="btnCancel.img" altKey="btnCancel.alt" border="0"/></html:link>
+                                </div>
 	                            </html:form>
-	                            <div class="bottomButtonBar">
-	                               <html:link
-	                                       page="/actions/ViewProjectDetails.do?method=viewProjectDetails&pid=${project.id}"><html:img
-	                                       srcKey="btnCancel.img" altKey="btnCancel.alt" border="0"/></html:link>
-	                           </div>
 	                        </td>
 	                        </tr>
 	                        <tr>
