@@ -259,6 +259,11 @@
 	                        <div style="clear:both;"></div>
 	                        <table class="scorecard" cellpadding="0" width="100%" style="border-collapse: collapse;">
 	                        <tr>
+		                        <td class="title">
+	                                <bean:message key="manageProject.Distributions.title"/>
+	                            </td>
+                            </tr>
+                            <tr>
 	                            <td class="lastRowTD"><!-- @ --></td>
 	                        </tr>
 	                        <tr class="light">
@@ -460,19 +465,19 @@
 	                                <tr>
 	                                    <td class="lastRowTD" colspan="2"><!-- @ --></td>
 	                                </tr>
-	                            </table><br/>
+	                            </table>
 	                            </html:form>
+	                            <div class="bottomButtonBar">
+	                               <html:link
+	                                       page="/actions/ViewProjectDetails.do?method=viewProjectDetails&pid=${project.id}"><html:img
+	                                       srcKey="btnCancel.img" altKey="btnCancel.alt" border="0"/></html:link>
+	                           </div>
 	                        </td>
 	                        </tr>
 	                        <tr>
 	                            <td class="lastRowTD"><!-- @ --></td>
 	                        </tr>
 	                        </table>
-	                        <div class="bottomButtonBar">
-	                           <html:link
-	                                   page="/actions/ViewProjectDetails.do?method=viewProjectDetails&pid=${project.id}"><html:img
-	                                   srcKey="btnCancel.img" altKey="btnCancel.alt" border="0"/></html:link>
-	                       </div>
 	                    </div>
                     </c:if> <%-- // Design or Development only --%> 
                 </div>
