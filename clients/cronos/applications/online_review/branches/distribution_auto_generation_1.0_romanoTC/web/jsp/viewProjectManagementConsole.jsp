@@ -465,9 +465,9 @@
 	                                <tr>
 	                                    <td class="lastRowTD" colspan="2"><!-- @ --></td>
 	                                </tr>
-	                            </table>
+	                            </table><br/>
                                 <div class="bottomButtonBar">
-                                   &nbsp;&nbsp;
+                                   &nbsp;
                                    <html:link
                                            page="/actions/ViewProjectDetails.do?method=viewProjectDetails&pid=${project.id}"><html:img
                                            srcKey="btnCancel.img" altKey="btnCancel.alt" border="0"/></html:link>
