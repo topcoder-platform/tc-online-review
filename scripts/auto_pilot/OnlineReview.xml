@@ -1,6 +1,9 @@
 <?xml version="1.0" ?>
 <!DOCTYPE CMConfig [
        <!ENTITY localFileUploadDir "/home/tcs/downloads">
+       <!ENTITY catalogOutputDir "/home/tcs/temp_files">
+       <!ENTITY distributionToolOutputDir "/home/tcs/temp_files/tmp_dist">
+       <!ENTITY distributionScriptsBase "/home/tcs/onlinereview/distribution_scripts">
        <!ENTITY phasesEmailTemplate "/home/tcs/online_review/scripts/auto_pilot/email_template.txt">
        <!ENTITY winnersEmailTemplate "/home/tcs/online_review/scripts/auto_pilot/winners_email_template.txt">
        <!ENTITY timelineTemplateDir "/home/tcs">
@@ -507,8 +510,8 @@
                     <Value>com.topcoder.management.review.scorecalculator.calculators.Scale10</Value>
                 </Property>
             </Property>
-			
-			<!-- Configuration for Test Case question type -->
+
+            <!-- Configuration for Test Case question type -->
             <Property name="dynamicCalculator">
                 <Property name="question_type">
                     <Value>3</Value>
@@ -517,7 +520,7 @@
                     <Value>com.topcoder.management.review.scorecalculator.calculators.ScaledScoreCalculator</Value>
                 </Property>
             </Property>
-            
+
             <!-- Configuration for Yes/No question type -->
             <Property name="binaryCalculator">
                 <!-- This sub-property describes the question type id -->
@@ -558,7 +561,7 @@
                 </Property>
             </Property>
 
-			<!-- Configuration for Scale (0-4) question type -->
+            <!-- Configuration for Scale (0-4) question type -->
             <Property name="Scale0_4">
                 <Property name="question_type">
                     <Value>7</Value>
@@ -606,7 +609,7 @@
             <Value>9</Value>
         </Property>
     </Config>
-    
+
     <Config name="com.topcoder.management.review.scorecalculator.calculators.Scale0_4">
         <Property name="default_scale">
             <Value>4</Value>
@@ -640,6 +643,7 @@
                 <Value>com.topcoder.management.project</Value>
             </Property>
         </Property>
+
         <Property name="ProjectLinkManager">
             <Property name="ClassName">
                 <Value>com.topcoder.management.project.persistence.link.ProjectLinkManagerImpl</Value>
@@ -2361,7 +2365,7 @@
         <!-- All handlers are registered directly from application's code -->
     </Config>
 
-    
+
     <!--
         =====  Configuration for Phase Template component  =====
     -->
@@ -2441,7 +2445,7 @@
             <Value>0</Value>
         </Property>
     </Config>
-    
+
     <Config name="com.topcoder.project.phases.template.DefaultPhaseTemplate.workdays">
         <Property name="workdays:default">
             <Property name="type">
@@ -2678,8 +2682,8 @@
                 <Property name="context">
                     <Value>
                         SELECT DISTINCT project.project_id, project_status_lu.project_status_id, project_status_lu.name,
-								project_category_lu.project_category_id, project_category_lu.name, project_type_lu.project_type_id, project_type_lu.name,
-								project.create_user, project.create_date, project.modify_user, project.modify_date
+                                project_category_lu.project_category_id, project_category_lu.name, project_type_lu.project_type_id, project_type_lu.name,
+                                project.create_user, project.create_date, project.modify_user, project.modify_date
                           FROM project,
                                project_category_lu,
                                project_status_lu,
@@ -3770,8 +3774,19 @@
         </Property>
         <Property name="minimum_hours_before_submission_deadline_for_phase_extension">
             <Value>48</Value>
+        </Property>        
+        <Property name="distribution_tool_output_dir">
+            <Value>&distributionToolOutputDir;</Value>
+        </Property>        
+        <Property name="catalog_output_dir">
+            <Value>&catalogOutputDir;</Value>
+        </Property>        
+        <Property name="default_distribution_script">
+            <Value>other</Value>
         </Property>
         <Property name="RootCatalogs">
+            <!-- 'DistributionScript' property bellow is optional, if not defined 'default_distribution_script' will be used -->
+
             <Property name="Java">
                 <Property name="id">
                     <Value>5801776</Value>
@@ -3784,6 +3799,9 @@
                 </Property>
                 <Property name="Custom">
                     <Value>False</Value>
+                </Property>
+                <Property name="DistributionScript"> 
+                    <Value>java</Value>
                 </Property>
             </Property>
             <Property name="dotNET">
@@ -3799,6 +3817,9 @@
                 <Property name="Custom">
                     <Value>False</Value>
                 </Property>
+                <Property name="DistributionScript">
+                    <Value>dotnet</Value>
+                </Property>
             </Property>
             <Property name="CustomJava">
                 <Property name="id">
@@ -3813,6 +3834,9 @@
                 <Property name="Custom">
                     <Value>True</Value>
                 </Property>
+                <Property name="DistributionScript">
+                    <Value>java</Value>
+                </Property>
             </Property>
             <Property name="CustomNET">
                 <Property name="id">
@@ -3826,6 +3850,9 @@
                 </Property>
                 <Property name="Custom">
                     <Value>True</Value>
+                </Property>
+                <Property name="DistributionScript">
+                    <Value>dotnet</Value>
                 </Property>
             </Property>
             <Property name="Flash">
@@ -4080,7 +4107,7 @@
                     <Value>True</Value>
                 </Property>
             </Property>
-	    <Property name="Python">
+            <Property name="Python">
                 <Property name="id">
                     <Value>27355736</Value>
                 </Property>
@@ -4164,7 +4191,7 @@
                 <Property name="Icon">
                     <Value>IconTesting.gif</Value>
                 </Property>
-            </Property>
+            </Property>            
             <Property name="Test Suites">
                 <Property name="IconSmall">
                     <Value>IconTestSuitesSm.gif</Value>
@@ -4387,7 +4414,7 @@
             the permission.  The values contained inside each property specify the names of the
             Resource Roles that have that permission granted. -->
         <!--  NOTE!  All names (either for permissions or for resource roles) are case sensitive!  -->
-	<Property name="Permissions Matrix">
+        <Property name="Permissions Matrix">
             <Property name="Create Scorecard">
                 <Value>Global Manager</Value>
                 <Value>Manager</Value>
@@ -4407,7 +4434,7 @@
             <Property name="Edit Project Details">
                 <Value>Global Manager</Value>
                 <Value>Manager</Value>
-		<Value>Client Manager</Value>
+                <Value>Client Manager</Value>
             </Property>
             <Property name="Set Timeline Notifications">
                 <Value>Global Manager</Value>
@@ -4883,27 +4910,32 @@
                 <Value>Copilot</Value>
                 <Value>Client Manager</Value>
             </Property>
+
             <Property name="Manage Project">
                 <Value>Global Manager</Value>
                 <Value>Manager</Value>
                 <Value>Copilot</Value>
                 <Value>Client Manager</Value>
             </Property>
+
             <Property name="Can Add Resource Role Client Manager">
                 <Value>Global Manager</Value>
                 <Value>Manager</Value>
             </Property>
+
             <Property name="Can Add Resource Role Copilot">
                 <Value>Global Manager</Value>
                 <Value>Manager</Value>
                 <Value>Client Manager</Value>
             </Property>
+
             <Property name="Can Add Resource Role Designer">
                 <Value>Global Manager</Value>
                 <Value>Manager</Value>
                 <Value>Client Manager</Value>
                 <Value>Copilot</Value>
             </Property>
+
             <Property name="Can Add Resource Role Observer">
                 <Value>Global Manager</Value>
                 <Value>Manager</Value>
@@ -5078,6 +5110,51 @@
                     <Property name="value">
                         <Value>com.cronos.onlinereview.services.uploads.impl.DefaultUploadServices</Value>
                     </Property>
+                </Property>
+            </Property>
+        </Property>
+    </Config>
+    
+    <!-- Configuration for Distribution Tool -->
+    <Config name="com.topcoder.util.distribution.DistributionTool">
+        <!-- Distribution tool depends on Logging Wrapper 2.0, so disable logging -->
+        <!-- 
+        <Property name="logger_name">
+            <Value>com.topcoder.util.distribution.DistributionTool</Value>
+        </Property>
+         -->
+        <Property name="object_factory_config">
+            <!-- Put Object Factory configuration here -->
+            <Property name="type">
+                <Value>com.topcoder.util.distribution.parsers.DistributionScriptParserImpl</Value>
+            </Property>
+        </Property>
+        <Property name="script_parser_key">
+            <Value>com.topcoder.util.distribution.parsers.DistributionScriptParserImpl</Value>
+        </Property>
+        <Property name="scripts">
+            <Property name="script_java">
+                <Property name="distribution_type">
+                    <Value>java</Value>
+                </Property>
+                <Property name="script_path">
+                    <Value>&distributionScriptsBase;/java/script.txt</Value>
+                </Property>
+            </Property>
+            <Property name="script_dotnet">
+                <Property name="distribution_type">
+                    <Value>dotnet</Value>
+                </Property>
+                <Property name="script_path">
+                    <Value>&distributionScriptsBase;/dotnet/script.txt</Value>
+                </Property>
+            </Property>
+            <Property name="script_other">
+                <Property name="distribution_type">
+                    <Value>other</Value>
+                </Property>
+                <Property name="script_path">
+                    <Value>&distributionScriptsBase;/other/script.txt</Value>
                 </Property>
             </Property>
         </Property>
