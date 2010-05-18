@@ -157,7 +157,7 @@
             
             <!-- new links -->
             <form-property name="link_dest_id_text" type="java.lang.String[]" />
-            <!-- it should be idential to link_dest_id_text in values -->
+            <!-- it should be identical to link_dest_id_text in values -->
             <form-property name="link_dest_id" type="java.lang.Long[]" />
             <form-property name="link_type_id" type="java.lang.Long[]" />
             <form-property name="link_action" type="java.lang.String[]" />
@@ -172,6 +172,25 @@
             <form-property name="resource_handles" type="java.lang.String[]" />
             <form-property name="registration_phase_extension" type="java.lang.String" />
             <form-property name="submission_phase_extension" type="java.lang.String" />
+        </form-bean>
+        
+        <!-- Upload Distribution Form -->
+        <form-bean name="uploadDistributionForm" dynamic="true"
+                   type="org.apache.struts.validator.LazyValidatorForm">
+            <form-property name="pid" type="java.lang.Long" />
+            
+            <form-property name="distribution_component_name" type="java.lang.String" />
+            <form-property name="distribution_package_name" type="java.lang.String" />
+            <form-property name="distribution_version" type="java.lang.String" />
+            <form-property name="distribution_rs" type="org.apache.struts.upload.FormFile" />
+            <form-property name="distribution_additional1" type="org.apache.struts.upload.FormFile" />
+            <form-property name="distribution_additional2" type="org.apache.struts.upload.FormFile" />
+            <form-property name="distribution_additional3" type="org.apache.struts.upload.FormFile" />
+
+            <form-property name="upload_to_server" type="java.lang.Boolean" initial="true" />
+            <form-property name="return_distribution" type="java.lang.Boolean" initial="false" />
+
+            <form-property name="distribution_file" type="org.apache.struts.upload.FormFile" />
         </form-bean>
 
     </form-beans>
@@ -706,6 +725,14 @@
                 parameter="method" scope="request" name="projectManagementConsoleForm"
                 input="/jsp/viewProjectManagementConsole.jsp">
             <forward name="success" path="/actions/ViewProjectDetails.do?method=viewProjectDetails" redirect="true"/>
+        </action>
+        
+        <!-- "Create/Upload Distribution" Action -->
+        <action path="/actions/UploadDistribution" unknown="false"
+                type="com.cronos.onlinereview.actions.ProjectManagementConsoleActions"
+                parameter="method" scope="request" name="uploadDistributionForm"
+                input="/jsp/viewProjectManagementConsole.jsp">
+            <forward name="success" path="/actions/ViewManagementConsole.do?method=viewConsole&amp;activeTabIdx=2" redirect="true"/>
         </action>
 
     </action-mappings>
