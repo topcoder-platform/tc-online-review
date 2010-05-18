@@ -43,16 +43,17 @@ import com.topcoder.web.ejb.pacts.ParentReferencePayment;
  *   <ol>
  *     <li>Added <code>registrationPhaseMaxExtensionDays</code>, <code>submissionPhaseMaxExtensionDays</code> and
  *     <code>minimumHoursBeforeSubmissionDeadlineForExtension</code> configuration parameters.</li>
+*      <li>Added <code>reqPostMortemReviewers</code>, <code>reqApprovers</code> configuration parameters.</li>
  *   </ol>
- * </p>
  *
- * Version 1.4 (Online Review End Of Project Analysis Release Assembly 1.0) Change notes:
+ * Version 1.4 (Distribution Auto Generation Assembly v1.0) Change notes:
  *   <ol>
- *     <li>Added <code>reqPostMortemReviewers</code>, <code>reqApprovers</code> configuration parameters.</li>
+ *     <li>Added <code>distributionScriptRootCatalogs</code>, <code>distributionToolOutputDir</code>, 
+ *     <code>catalogOutputDir</code> and <code>defaultDistributionScript</code> configuration parameters.</li>
  *   </ol>
  * </p>
  *
- * @author George1, real_vg, pulky, isv
+ * @author George1, real_vg, pulky, isv, romanoTC
  * @version 1.4
  */
 public class ConfigHelper {
@@ -207,6 +208,17 @@ public class ConfigHelper {
      * @see #ROOT_CATALOG_ID_PROP
      */
     private static final String ROOT_CATALOG_CUSTOM_KEY_PROP = "Custom";
+    
+    /**
+     * This member variable is a string constant that specifies the name of the property which
+     * contains name of the key in Resource Messages file.  This key will be used to retrieve
+     * the distribution script.
+     *
+     * @see #ROOT_CATALOGS_PROP
+     * @see #ROOT_CATALOG_ID_PROP
+     * @since 1.4
+     */
+    private static final String ROOT_CATALOG_DISTRIBUTION_SCRIPT_KEY_PROP = "DistributionScript";
 
     /**
      * This member variable is a string constant that specifies the name of the property which
@@ -519,6 +531,45 @@ public class ConfigHelper {
      * @since 1.3
      */
     private static final int DEFAULT_MINIMUM_HOURS_LEFT = 48;
+    
+    /**
+     * <p>This member variable is a string constthat specifies the name of the property which contains the
+     * output dir for the distribution tool.</p>
+     * @since 1.4
+     */
+    private static final String DISTRIBUTION_TOOL_OUTPUT_DIR_PROP = "distribution_tool_output_dir";
+    
+    /**
+     * <p>This is the default distribution tool output dir.</p>
+     * @since 1.4
+     */
+    private static final String DEFAULT_DISTRIBUTION_TOOL_OUTPUT_DIR = "/tmp";
+    
+    /**
+     * <p>This member variable is a string constant that specifies the name of the property which contains the
+     * output dir for the TopCoder catalog.</p>
+     * @since 1.4
+     */
+    private static final String CATALOG_OUTPUT_DIR_PROP = "catalog_output_dir";
+    
+    /**
+     * <p>This is the default catalog output dir.</p>
+     * @since 1.4
+     */
+    private static final String DEFAULT_CATALOG_OUTPUT_DIR = "/tmp";
+    
+    /**
+     * <p>This member variable is a string constant that specifies the name of the property which contains the
+     * default distribution tool script to use when no script is defined.</p>
+     * @since 1.4
+     */
+    private static final String DEFAULT_DISTRIBUTION_SCRIPT_PROP = "default_distribution_script";
+    
+    /**
+     * <p>This is the default distribution tool script to use when no script is defined.</p>
+     * @since 1.4
+     */
+    private static final String DEFAULT_DISTRIBUTION_SCRIPT = "other";
 
     /**
      * This member variable holds the name of the session attribute which ID of the currently logged
@@ -619,7 +670,13 @@ public class ConfigHelper {
      * This member variable holds the custom root catalogs ids
      */
     private static final Set<String> customRootCatalogs = new HashSet<String>();
-
+    
+    /**
+     * This member variable holds the distribution tool script for root catalogs ids
+     * @since 1.4
+     */
+    private static final Map<String, String> distributionScriptRootCatalogs = new HashMap<String, String>();
+    
     /**
      * This member variable holds the names of small icons (.gif) files that should be displayed
      * on the JSP pages for different Project Categories.
@@ -802,6 +859,30 @@ public class ConfigHelper {
      */
     private static Integer minimumHoursBeforeSubmissionDeadlineForExtension = DEFAULT_MINIMUM_HOURS_LEFT;
 
+    /**
+     * <p>
+     * The distribution tool output dir.
+     * </p>
+     * @since 1.4
+     */
+    private static String distributionToolOutputDir = DEFAULT_DISTRIBUTION_TOOL_OUTPUT_DIR;
+
+    /**
+     * <p>
+     * The TopCoder catalog output dir.
+     * </p>
+     * @since 1.4
+     */
+    private static String catalogOutputDir = DEFAULT_CATALOG_OUTPUT_DIR;
+    
+    /**
+     * <p>
+     * The default distribution script.
+     * </p>
+     * @since 1.4
+     */
+    private static String defaultDistributionScript = DEFAULT_DISTRIBUTION_SCRIPT;
+
     static {
         // Obtaining the instance of Configuration Manager
         ConfigManager cfgMgr = ConfigManager.getInstance();
@@ -944,6 +1025,17 @@ public class ConfigHelper {
             	projectDetailsBaseURL = value;
             }
             
+            // Retrieve the value of the default distribution script
+            defaultDistributionScript = cfgMgr.getString(ONLINE_REVIEW_CFG_NS, DEFAULT_DISTRIBUTION_SCRIPT_PROP);
+            if (defaultDistributionScript == null || defaultDistributionScript.trim().length() == 0) {
+                System.err.println("The value of " + DEFAULT_DISTRIBUTION_SCRIPT_PROP
+                    + " configuration property is null. "
+                    + "This value will be ignored and value of " + DEFAULT_DISTRIBUTION_SCRIPT
+                    + " will be used instead");
+                
+                defaultDistributionScript = DEFAULT_DISTRIBUTION_SCRIPT;
+            }
+            
             // Retrieve property that contains definitions of ID/filename pairs
             Property propRootCatIcons = cfgMgr.getPropertyObject(ONLINE_REVIEW_CFG_NS, ROOT_CATALOGS_PROP);
             // Prepare to enumerate all the nested properties
@@ -980,6 +1072,17 @@ public class ConfigHelper {
                 String custom = propRootCatIcons.getValue(strPropName + "." + ROOT_CATALOG_CUSTOM_KEY_PROP);
                 if (custom != null && custom.trim().length() != 0 && custom.trim().equalsIgnoreCase("true")) {
                     customRootCatalogs.add(strID);
+                }
+                
+                if (propRootCatIcons.containsProperty(strPropName + "." + ROOT_CATALOG_DISTRIBUTION_SCRIPT_KEY_PROP)) {
+                    String script = propRootCatIcons.getValue(strPropName + "."
+                        + ROOT_CATALOG_DISTRIBUTION_SCRIPT_KEY_PROP);
+
+                    distributionScriptRootCatalogs.put(strID, script);
+                } else {
+                    
+                    // Use the default distribution script
+                    distributionScriptRootCatalogs.put(strID, defaultDistributionScript);
                 }
             }
 
@@ -1270,7 +1373,29 @@ public class ConfigHelper {
                                        + " will be used instead");
                 }
             }
-
+            
+            distributionToolOutputDir = cfgMgr.getString(ONLINE_REVIEW_CFG_NS, DISTRIBUTION_TOOL_OUTPUT_DIR_PROP);
+            
+            if (distributionToolOutputDir == null || distributionToolOutputDir.trim().length() == 0) {
+                System.err.println("The value of " + DISTRIBUTION_TOOL_OUTPUT_DIR_PROP
+                    + " configuration property is null. "
+                    + "This value will be ignored and value of " + DEFAULT_DISTRIBUTION_TOOL_OUTPUT_DIR
+                    + " will be used instead");
+                
+                distributionToolOutputDir = DEFAULT_DISTRIBUTION_TOOL_OUTPUT_DIR;
+            }
+            
+            catalogOutputDir = cfgMgr.getString(ONLINE_REVIEW_CFG_NS, CATALOG_OUTPUT_DIR_PROP);
+            
+            if (catalogOutputDir == null || catalogOutputDir.trim().length() == 0) {
+                System.err.println("The value of " + CATALOG_OUTPUT_DIR_PROP
+                    + " configuration property is null. "
+                    + "This value will be ignored and value of " + DEFAULT_CATALOG_OUTPUT_DIR
+                    + " will be used instead");
+                
+                catalogOutputDir = DEFAULT_CATALOG_OUTPUT_DIR;
+            }
+            
         } catch (UnknownNamespaceException une) {
             // TODO: Add proper logging here
             System.out.println(une.getMessage());
@@ -1433,6 +1558,18 @@ public class ConfigHelper {
      */
     public static boolean isCustomRootCatalog(String rootCatalogId) {
         return customRootCatalogs.contains(rootCatalogId);
+    }
+    
+    /**
+     * This static method returns the distribution script for a catalog.
+     *
+     * @return the distribution script for a catalog.
+     * @param rootCatalogId
+     *            Root Catalog ID which to look for.
+     * @since 1.4
+     */
+    public static String getDistributionScript(String rootCatalogId) {
+        return distributionScriptRootCatalogs.get(rootCatalogId);
     }
 
     /**
@@ -1818,5 +1955,35 @@ public class ConfigHelper {
      */
     public static Integer getMinimumHoursBeforeSubmissionDeadlineForExtension() {
         return minimumHoursBeforeSubmissionDeadlineForExtension;
+    }
+    
+    /**
+     * <p>Gets the distribution tool output dir.</p>
+     *
+     * @return the distribution tool output dir.
+     * @since 1.4
+     */
+    public static String getDistributionToolOutputDir() {
+        return distributionToolOutputDir;
+    }
+    
+    /**
+     * <p>Gets the TopCoder Catalog output dir.</p>
+     *
+     * @return the TopCoder Catalog output dir.
+     * @since 1.4
+     */
+    public static String getCatalogOutputDir() {
+        return catalogOutputDir;
+    }
+    
+    /**
+     * <p>Gets the Distribution Tool default script.</p>
+     *
+     * @return the Distribution Tool default script.
+     * @since 1.4
+     */
+    public static String getDefaultDistributionScript() {
+        return defaultDistributionScript;
     }
 }
