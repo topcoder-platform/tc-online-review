@@ -2266,6 +2266,14 @@ public class ProjectActions extends DispatchAction {
      * @throws BaseException
      *             if any error occurs.
      */
+    private static long ini = System.currentTimeMillis();
+
+    private static void passei(long passo) {
+        long fim = System.currentTimeMillis();
+        System.out.println("Passo " + passo + ": " + (fim - ini) + "ms - " + ((fim - ini) / 1000) + "s");
+        ini = System.currentTimeMillis();
+    }
+
     public ActionForward listProjects(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response) throws BaseException {
         // Remove redirect-after-login attribute (if it exists)
