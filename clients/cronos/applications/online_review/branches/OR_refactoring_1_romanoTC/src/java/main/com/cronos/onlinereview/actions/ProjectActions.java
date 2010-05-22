@@ -2278,6 +2278,8 @@ public class ProjectActions extends DispatchAction {
             HttpServletRequest request, HttpServletResponse response) throws BaseException {
         // Remove redirect-after-login attribute (if it exists)
         AuthorizationHelper.removeLoginRedirect(request);
+        
+        passei(0);
 
         LoggingHelper.logAction(request);
 
@@ -2325,12 +2327,22 @@ public class ProjectActions extends DispatchAction {
         // Pass the index of the active tab into request
         request.setAttribute("projectTabIndex", new Integer(activeTab));
 
+        passei(1);
+        
         // Get all project types defined in the database (e.g. Assembly, Component, etc.)
         ProjectType[] projectTypes = manager.getAllProjectTypes();
+        
+        passei(2);
+
         // Sort project types by their names in ascending order
         Arrays.sort(projectTypes, new Comparators.ProjectTypeComparer());
+        
+        passei(3);
+
         // Get all project categories defined in the database (e.g. Design, Security, etc.)
         ProjectCategory[] projectCategories = manager.getAllProjectCategories();
+
+        passei(4);
 
         request.setAttribute("projectTypes", projectTypes);
         request.setAttribute("projectCategories", projectCategories);
@@ -2355,17 +2367,25 @@ public class ProjectActions extends DispatchAction {
         String[][] myRoles = (myProjects) ? new String[projectCategories.length][] : null;
         String[][] myDeliverables = (myProjects) ? new String[projectCategories.length][] : null;
 
+        passei(5);
+
         // Fetch projects from the database. These projects will require further grouping
         Project[] ungroupedProjects = (projectsFilter != null) ? manager.searchProjects(projectsFilter) :
                 manager.getUserProjects(AuthorizationHelper.getLoggedInUserId(request));
 
+        passei(6);
+
         // Sort fetched projects. Currently sorting is done by projects' names only, in ascending order
         Arrays.sort(ungroupedProjects, new Comparators.ProjectNameComparer());
+
+        passei(7);
 
         List<Long> projectFilters = new ArrayList<Long>();
         for (int i = 0; i < ungroupedProjects.length; ++i) {
             projectFilters.add(ungroupedProjects[i].getId());
         }
+
+        passei(8);
 
         Resource[] allMyResources = null;
         if (ungroupedProjects.length != 0 && AuthorizationHelper.isUserLoggedIn(request)) {
@@ -2385,6 +2405,8 @@ public class ProjectActions extends DispatchAction {
             // Get all "My" resources for the list of projects
             allMyResources = resMgr.searchResources(filter);
         }
+        
+        passei(9);
 
         // new eligibility constraints
         // if the user is not a global manager and is seeing all projects eligibility checks need to be performed
@@ -2396,6 +2418,8 @@ public class ProjectActions extends DispatchAction {
                     ungroupedProjects, projectFilters, allMyResources);
         }
 
+        passei(10);
+        
         // Obtain an instance of Phase Manager
         PhaseManager phMgr = ActionsHelper.createPhaseManager(request, false);
 
@@ -2409,6 +2433,8 @@ public class ProjectActions extends DispatchAction {
         // Message Resources to be used for this request
         MessageResources messages = getResources(request);
 
+        passei(11);
+        
         for (int i = 0; i < projectCategories.length; ++i) {
             // Count number of projects in this category
             for (int j = 0; j < ungroupedProjects.length; ++j) {
@@ -2499,6 +2525,8 @@ public class ProjectActions extends DispatchAction {
             // Fetch Project Category icon's filename depending on the name of the current category
             categoryIconNames[i] = ConfigHelper.getProjectCategoryIconNameSm(projectCategories[i].getName());
         }
+        
+        passei(12);
 
         if (ungroupedProjects.length != 0 && myProjects) {
             Deliverable[] allMyDeliverables = getDeliverables(
@@ -2519,6 +2547,8 @@ public class ProjectActions extends DispatchAction {
                 myDeliverables[i] = deliverables;
             }
         }
+        
+        passei(13);
 
         int totalProjectsCount = 0;
 
@@ -2531,6 +2561,8 @@ public class ProjectActions extends DispatchAction {
             }
             totalProjectsCount += typeCounts[i];
         }
+        
+        passei(14);
 
         // Place all collected data into the request as attributes
         request.setAttribute("projects", projects);
@@ -2551,6 +2583,8 @@ public class ProjectActions extends DispatchAction {
             request.setAttribute("myDeliverables", myDeliverables);
         }
 
+        passei(15);
+        
         // Signal about successful execution of the Action
         return mapping.findForward(Constants.SUCCESS_FORWARD_NAME);
     }
