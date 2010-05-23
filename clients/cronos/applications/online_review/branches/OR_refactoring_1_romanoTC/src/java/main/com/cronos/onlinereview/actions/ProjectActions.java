@@ -2283,6 +2283,8 @@ public class ProjectActions extends DispatchAction {
 
         LoggingHelper.logAction(request);
 
+        passei(20);
+
         // Gather the roles the user has for current request
         AuthorizationHelper.gatherUserRoles(request);
 
@@ -2294,6 +2296,8 @@ public class ProjectActions extends DispatchAction {
             scope = "my";
         }
 
+        passei(21);
+
         // If the user is trying to access pages he doesn't have permission to view,
         // redirect him to scope-all page, where public projects are listed
         if (scope.equalsIgnoreCase("my") && !AuthorizationHelper.isUserLoggedIn(request)) {
@@ -2304,11 +2308,15 @@ public class ProjectActions extends DispatchAction {
             return mapping.findForward("all");
         }
 
+        passei(22);
+        
         // Obtain an instance of Project Manager
         ProjectManager manager = ActionsHelper.createProjectManager(request);
         // This variable will specify the index of active tab on the JSP page
         int activeTab;
         Filter projectsFilter = null;
+        
+        passei(23);
 
         // Determine projects displayed and index of the active tab
         // based on the value of the "scope" parameter
@@ -2323,6 +2331,8 @@ public class ProjectActions extends DispatchAction {
             // Specify the index of the active tab
             activeTab = 2;
         }
+        
+        passei(24);
 
         // Pass the index of the active tab into request
         request.setAttribute("projectTabIndex", new Integer(activeTab));
@@ -2390,20 +2400,29 @@ public class ProjectActions extends DispatchAction {
         Resource[] allMyResources = null;
         if (ungroupedProjects.length != 0 && AuthorizationHelper.isUserLoggedIn(request)) {
 
+            passei(88);
+            
             Filter filterExtIDname = ResourceFilterBuilder.createExtensionPropertyNameFilter("External Reference ID");
             Filter filterExtIDvalue = ResourceFilterBuilder.createExtensionPropertyValueFilter(
                     String.valueOf(AuthorizationHelper.getLoggedInUserId(request)));
 
+            passei(89);
 
             Filter filterProjects = new InFilter(ResourceFilterBuilder.PROJECT_ID_FIELD_NAME, projectFilters);
 
+            passei(90);
+            
             Filter filter = new AndFilter(Arrays.asList(
                     new Filter[] {filterExtIDname, filterExtIDvalue, filterProjects}));
 
+            passei(91);
+            
             // Obtain an instance of Resource Manager
             ResourceManager resMgr = ActionsHelper.createResourceManager(request);
             // Get all "My" resources for the list of projects
             allMyResources = resMgr.searchResources(filter);
+            
+            passei(92);
         }
         
         passei(9);
@@ -2423,13 +2442,22 @@ public class ProjectActions extends DispatchAction {
         // Obtain an instance of Phase Manager
         PhaseManager phMgr = ActionsHelper.createPhaseManager(request, false);
 
+        passei(101);
+        
         long[] allProjectIds = new long[ungroupedProjects.length];
 
+        passei(102);
+        
         for (int i = 0; i < ungroupedProjects.length; ++i) {
             allProjectIds[i] = ungroupedProjects[i].getId();
         }
+        
+        passei(103);
+        
         com.topcoder.project.phases.Project[] phProjects = phMgr.getPhases(allProjectIds);
 
+        passei(104);
+        
         // Message Resources to be used for this request
         MessageResources messages = getResources(request);
 
