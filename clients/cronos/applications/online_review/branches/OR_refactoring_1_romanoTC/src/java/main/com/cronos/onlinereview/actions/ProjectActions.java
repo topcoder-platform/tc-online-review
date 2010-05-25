@@ -2314,19 +2314,19 @@ public class ProjectActions extends DispatchAction {
         ProjectManager manager = ActionsHelper.createProjectManager(request);
         // This variable will specify the index of active tab on the JSP page
         int activeTab;
-        Filter projectsFilter = null;
         
         passei(23);
-
+        String filterStatus = null;
+        
         // Determine projects displayed and index of the active tab
         // based on the value of the "scope" parameter
         if (scope.equalsIgnoreCase("my")) {
             activeTab = 1;
         } else if (scope.equalsIgnoreCase("inactive")) {
-            projectsFilter = ProjectFilterUtility.buildStatusNameEqualFilter("Inactive");
+            filterStatus = "Inactive";
             activeTab = 4;
         } else {
-            projectsFilter = ProjectFilterUtility.buildStatusNameEqualFilter("Active");
+            filterStatus = "Active";
 
             // Specify the index of the active tab
             activeTab = 2;
@@ -2380,7 +2380,7 @@ public class ProjectActions extends DispatchAction {
         passei(5);
 
         // Fetch projects from the database. These projects will require further grouping
-        Project[] ungroupedProjects = (projectsFilter != null) ? manager.searchProjects(projectsFilter) :
+        Project[] ungroupedProjects = (filterStatus != null) ? manager.getProjectsByStatus(filterStatus) :
                 manager.getUserProjects(AuthorizationHelper.getLoggedInUserId(request));
 
         passei(6);
