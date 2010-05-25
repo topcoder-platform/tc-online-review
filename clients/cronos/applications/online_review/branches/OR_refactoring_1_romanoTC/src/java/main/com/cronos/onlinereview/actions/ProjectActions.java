@@ -2454,7 +2454,16 @@ public class ProjectActions extends DispatchAction {
         
         passei(103);
         
-        com.topcoder.project.phases.Project[] phProjects = phMgr.getPhases(allProjectIds);
+        com.topcoder.project.phases.Project[] phProjects = (filterStatus != null) ? phMgr
+            .getPhasesByProjectStatus(filterStatus) : phMgr.getPhasesByProjectUser(AuthorizationHelper
+            .getLoggedInUserId(request));
+        
+        Map<Long, com.topcoder.project.phases.Project> phProjectsMap = new HashMap<Long, com.topcoder.project.phases.Project>();
+        for (com.topcoder.project.phases.Project project : phProjects) {
+            phProjectsMap.put(project.getId(), project);
+        }
+            
+        // TOTO create map
 
         passei(104);
         
@@ -2511,9 +2520,10 @@ public class ProjectActions extends DispatchAction {
                     Phase[] activePhases = null;
 
                     // Calculate end date of the project and get all active phases (if any)
-                    if (phProjects[j] != null) {
-                        preds[counter] = phProjects[j].calcEndDate();
-                        activePhases = ActionsHelper.getActivePhases(phProjects[j].getAllPhases());
+                    com.topcoder.project.phases.Project phProject = phProjectsMap.get(project.getId());
+                    if (phProject != null) {
+                        preds[counter] = phProject.calcEndDate();
+                        activePhases = ActionsHelper.getActivePhases(phProject.getAllPhases());
                         pheds[counter] = null;
                     }
 
