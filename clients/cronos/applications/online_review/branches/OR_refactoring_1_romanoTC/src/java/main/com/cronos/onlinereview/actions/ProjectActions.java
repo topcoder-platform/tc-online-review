@@ -2266,24 +2266,12 @@ public class ProjectActions extends DispatchAction {
      * @throws BaseException
      *             if any error occurs.
      */
-    private static long ini = System.currentTimeMillis();
-
-    private static void passei(long passo) {
-        long fim = System.currentTimeMillis();
-        System.out.println("Passo " + passo + ": " + (fim - ini) + "ms - " + ((fim - ini) / 1000) + "s");
-        ini = System.currentTimeMillis();
-    }
-
     public ActionForward listProjects(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response) throws BaseException {
         // Remove redirect-after-login attribute (if it exists)
         AuthorizationHelper.removeLoginRedirect(request);
-        
-        passei(0);
 
         LoggingHelper.logAction(request);
-
-        passei(20);
 
         // Gather the roles the user has for current request
         AuthorizationHelper.gatherUserRoles(request);
@@ -2296,8 +2284,6 @@ public class ProjectActions extends DispatchAction {
             scope = "my";
         }
 
-        passei(21);
-
         // If the user is trying to access pages he doesn't have permission to view,
         // redirect him to scope-all page, where public projects are listed
         if (scope.equalsIgnoreCase("my") && !AuthorizationHelper.isUserLoggedIn(request)) {
@@ -2308,51 +2294,35 @@ public class ProjectActions extends DispatchAction {
             return mapping.findForward("all");
         }
 
-        passei(22);
-        
         // Obtain an instance of Project Manager
         ProjectManager manager = ActionsHelper.createProjectManager(request);
         // This variable will specify the index of active tab on the JSP page
         int activeTab;
-        
-        passei(23);
-        String filterStatus = null;
-        
+        Filter projectsFilter = null;
+
         // Determine projects displayed and index of the active tab
         // based on the value of the "scope" parameter
         if (scope.equalsIgnoreCase("my")) {
             activeTab = 1;
         } else if (scope.equalsIgnoreCase("inactive")) {
-            filterStatus = "Inactive";
+            projectsFilter = ProjectFilterUtility.buildStatusNameEqualFilter("Inactive");
             activeTab = 4;
         } else {
-            filterStatus = "Active";
+            projectsFilter = ProjectFilterUtility.buildStatusNameEqualFilter("Active");
 
             // Specify the index of the active tab
             activeTab = 2;
         }
-        
-        passei(24);
 
         // Pass the index of the active tab into request
         request.setAttribute("projectTabIndex", new Integer(activeTab));
 
-        passei(1);
-        
         // Get all project types defined in the database (e.g. Assembly, Component, etc.)
         ProjectType[] projectTypes = manager.getAllProjectTypes();
-        
-        passei(2);
-
         // Sort project types by their names in ascending order
         Arrays.sort(projectTypes, new Comparators.ProjectTypeComparer());
-        
-        passei(3);
-
         // Get all project categories defined in the database (e.g. Design, Security, etc.)
         ProjectCategory[] projectCategories = manager.getAllProjectCategories();
-
-        passei(4);
 
         request.setAttribute("projectTypes", projectTypes);
         request.setAttribute("projectCategories", projectCategories);
@@ -2377,55 +2347,36 @@ public class ProjectActions extends DispatchAction {
         String[][] myRoles = (myProjects) ? new String[projectCategories.length][] : null;
         String[][] myDeliverables = (myProjects) ? new String[projectCategories.length][] : null;
 
-        passei(5);
-
         // Fetch projects from the database. These projects will require further grouping
-        Project[] ungroupedProjects = (filterStatus != null) ? manager.getProjectsByStatus(filterStatus) :
+        Project[] ungroupedProjects = (projectsFilter != null) ? manager.searchProjects(projectsFilter) :
                 manager.getUserProjects(AuthorizationHelper.getLoggedInUserId(request));
-
-        passei(6);
 
         // Sort fetched projects. Currently sorting is done by projects' names only, in ascending order
         Arrays.sort(ungroupedProjects, new Comparators.ProjectNameComparer());
-
-        passei(7);
 
         List<Long> projectFilters = new ArrayList<Long>();
         for (int i = 0; i < ungroupedProjects.length; ++i) {
             projectFilters.add(ungroupedProjects[i].getId());
         }
 
-        passei(8);
-
         Resource[] allMyResources = null;
         if (ungroupedProjects.length != 0 && AuthorizationHelper.isUserLoggedIn(request)) {
 
-            passei(88);
-            
             Filter filterExtIDname = ResourceFilterBuilder.createExtensionPropertyNameFilter("External Reference ID");
             Filter filterExtIDvalue = ResourceFilterBuilder.createExtensionPropertyValueFilter(
                     String.valueOf(AuthorizationHelper.getLoggedInUserId(request)));
 
-            passei(89);
 
             Filter filterProjects = new InFilter(ResourceFilterBuilder.PROJECT_ID_FIELD_NAME, projectFilters);
 
-            passei(90);
-            
             Filter filter = new AndFilter(Arrays.asList(
                     new Filter[] {filterExtIDname, filterExtIDvalue, filterProjects}));
 
-            passei(91);
-            
             // Obtain an instance of Resource Manager
             ResourceManager resMgr = ActionsHelper.createResourceManager(request);
             // Get all "My" resources for the list of projects
             allMyResources = resMgr.searchResources(filter);
-            
-            passei(92);
         }
-        
-        passei(9);
 
         // new eligibility constraints
         // if the user is not a global manager and is seeing all projects eligibility checks need to be performed
@@ -2437,41 +2388,19 @@ public class ProjectActions extends DispatchAction {
                     ungroupedProjects, projectFilters, allMyResources);
         }
 
-        passei(10);
-        
         // Obtain an instance of Phase Manager
         PhaseManager phMgr = ActionsHelper.createPhaseManager(request, false);
 
-        passei(101);
-        
         long[] allProjectIds = new long[ungroupedProjects.length];
 
-        passei(102);
-        
         for (int i = 0; i < ungroupedProjects.length; ++i) {
             allProjectIds[i] = ungroupedProjects[i].getId();
         }
-        
-        passei(103);
-        
-        com.topcoder.project.phases.Project[] phProjects = (filterStatus != null) ? phMgr
-            .getPhasesByProjectStatus(filterStatus) : phMgr.getPhasesByProjectUser(AuthorizationHelper
-            .getLoggedInUserId(request));
-        
-        Map<Long, com.topcoder.project.phases.Project> phProjectsMap = new HashMap<Long, com.topcoder.project.phases.Project>();
-        for (com.topcoder.project.phases.Project project : phProjects) {
-            phProjectsMap.put(project.getId(), project);
-        }
-            
-        // TOTO create map
+        com.topcoder.project.phases.Project[] phProjects = phMgr.getPhases(allProjectIds);
 
-        passei(104);
-        
         // Message Resources to be used for this request
         MessageResources messages = getResources(request);
 
-        passei(11);
-        
         for (int i = 0; i < projectCategories.length; ++i) {
             // Count number of projects in this category
             for (int j = 0; j < ungroupedProjects.length; ++j) {
@@ -2520,10 +2449,9 @@ public class ProjectActions extends DispatchAction {
                     Phase[] activePhases = null;
 
                     // Calculate end date of the project and get all active phases (if any)
-                    com.topcoder.project.phases.Project phProject = phProjectsMap.get(project.getId());
-                    if (phProject != null) {
-                        preds[counter] = phProject.calcEndDate();
-                        activePhases = ActionsHelper.getActivePhases(phProject.getAllPhases());
+                    if (phProjects[j] != null) {
+                        preds[counter] = phProjects[j].calcEndDate();
+                        activePhases = ActionsHelper.getActivePhases(phProjects[j].getAllPhases());
                         pheds[counter] = null;
                     }
 
@@ -2563,8 +2491,6 @@ public class ProjectActions extends DispatchAction {
             // Fetch Project Category icon's filename depending on the name of the current category
             categoryIconNames[i] = ConfigHelper.getProjectCategoryIconNameSm(projectCategories[i].getName());
         }
-        
-        passei(12);
 
         if (ungroupedProjects.length != 0 && myProjects) {
             Deliverable[] allMyDeliverables = getDeliverables(
@@ -2585,8 +2511,6 @@ public class ProjectActions extends DispatchAction {
                 myDeliverables[i] = deliverables;
             }
         }
-        
-        passei(13);
 
         int totalProjectsCount = 0;
 
@@ -2599,8 +2523,6 @@ public class ProjectActions extends DispatchAction {
             }
             totalProjectsCount += typeCounts[i];
         }
-        
-        passei(14);
 
         // Place all collected data into the request as attributes
         request.setAttribute("projects", projects);
@@ -2621,8 +2543,6 @@ public class ProjectActions extends DispatchAction {
             request.setAttribute("myDeliverables", myDeliverables);
         }
 
-        passei(15);
-        
         // Signal about successful execution of the Action
         return mapping.findForward(Constants.SUCCESS_FORWARD_NAME);
     }

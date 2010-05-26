@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2010 TopCoder Inc., All Rights Reserved.
+ * Copyright (C) 2006-2009 TopCoder Inc., All Rights Reserved.
  */
 package com.cronos.onlinereview.actions;
 
@@ -221,7 +221,7 @@ public class AuthorizationHelper {
         // Obtain an instance of Resource Manager
         ResourceManager resMgr = ActionsHelper.createResourceManager(request);
         // Perform search for resources
-        Resource[] resources = resMgr.searchResources(filter, false);
+        Resource[] resources = resMgr.searchResources(filter);
 
         // Iterate over all resources retrieved and take into
         // consideration only those ones that have Manager role

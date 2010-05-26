@@ -2737,6 +2737,12 @@
                     <Property name="ProjectStatusName">
                         <Value>project_status_lu.name</Value>
                     </Property>
+                    <Property name="ProjectPropertyName">
+                        <Value>project_info_type_lu.name</Value>
+                    </Property>
+                    <Property name="ProjectPropertyValue">
+                        <Value>project_info.value</Value>
+                    </Property>
                     <Property name="ProjectResourcePropertyName">
                         <Value>resource_info_type_lu.name</Value>
                     </Property>
