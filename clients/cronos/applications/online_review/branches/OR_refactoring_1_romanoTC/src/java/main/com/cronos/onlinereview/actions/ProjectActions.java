@@ -4,23 +4,19 @@
 package com.cronos.onlinereview.actions;
 
 import java.rmi.RemoteException;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.Format;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
-import java.util.Stack;
+import java.util.*;
 
 import com.topcoder.management.phase.ContestDependencyAutomation;
+import com.topcoder.management.project.*;
+import com.topcoder.management.project.Project;
 import com.topcoder.management.project.link.ProjectLinkManager;
+import com.topcoder.project.phases.*;
 import com.topcoder.web.common.eligibility.ContestEligibilityServiceLocator;
 
 import javax.ejb.CreateException;
@@ -47,12 +43,6 @@ import com.topcoder.management.deliverable.DeliverableManager;
 import com.topcoder.management.deliverable.persistence.DeliverableCheckingException;
 import com.topcoder.management.deliverable.persistence.DeliverablePersistenceException;
 import com.topcoder.management.phase.PhaseManager;
-import com.topcoder.management.project.Project;
-import com.topcoder.management.project.ProjectCategory;
-import com.topcoder.management.project.ProjectFilterUtility;
-import com.topcoder.management.project.ProjectManager;
-import com.topcoder.management.project.ProjectStatus;
-import com.topcoder.management.project.ProjectType;
 import com.topcoder.management.resource.NotificationType;
 import com.topcoder.management.resource.Resource;
 import com.topcoder.management.resource.ResourceManager;
@@ -61,17 +51,15 @@ import com.topcoder.management.resource.search.ResourceFilterBuilder;
 import com.topcoder.management.scorecard.ScorecardManager;
 import com.topcoder.management.scorecard.ScorecardSearchBundle;
 import com.topcoder.management.scorecard.data.Scorecard;
-import com.topcoder.project.phases.CyclicDependencyException;
-import com.topcoder.project.phases.Dependency;
-import com.topcoder.project.phases.Phase;
-import com.topcoder.project.phases.PhaseStatus;
-import com.topcoder.project.phases.PhaseType;
 import com.topcoder.search.builder.SearchBuilderException;
 import com.topcoder.search.builder.filter.AndFilter;
 import com.topcoder.search.builder.filter.Filter;
 import com.topcoder.search.builder.filter.InFilter;
 import com.topcoder.service.contest.eligibilityvalidation.ContestEligibilityValidatorException;
 import com.topcoder.shared.util.DBMS;
+import com.topcoder.shared.dataAccess.resultSet.ResultSetContainer;
+import com.topcoder.shared.dataAccess.DataAccess;
+import com.topcoder.shared.dataAccess.Request;
 import com.topcoder.util.errorhandling.BaseException;
 import com.topcoder.web.ejb.project.ProjectRoleTermsOfUse;
 import com.topcoder.web.ejb.project.ProjectRoleTermsOfUseLocator;
@@ -162,8 +150,18 @@ import static com.cronos.onlinereview.actions.Constants.POST_MORTEM_PHASE_NAME;
  *   </ol>
  * </p>
  *
- * @author George1, real_vg, pulky, isv
- * @version 1.6
+ * <p>
+ * Version 1.7 (Online Review Performance Refactoring 1.0) Change notes:
+ *   <ol>
+ *     <li>
+ *       Updated {@link #listProjects(ActionMapping, ActionForm, HttpServletRequest, HttpServletResponse)} method to
+ *       speed up the projects data retrieval using Query Tool.
+ *     </li>
+ *   </ol>
+ * </p>
+ *
+ * @author George1, real_vg, pulky, isv, TCSDEVELOPER
+ * @version 1.7
  */
 public class ProjectActions extends DispatchAction {
 
@@ -2267,7 +2265,7 @@ public class ProjectActions extends DispatchAction {
      *             if any error occurs.
      */
     public ActionForward listProjects(ActionMapping mapping, ActionForm form,
-            HttpServletRequest request, HttpServletResponse response) throws BaseException {
+            HttpServletRequest request, HttpServletResponse response) throws Exception {
         // Remove redirect-after-login attribute (if it exists)
         AuthorizationHelper.removeLoginRedirect(request);
 
@@ -2289,6 +2287,7 @@ public class ProjectActions extends DispatchAction {
         if (scope.equalsIgnoreCase("my") && !AuthorizationHelper.isUserLoggedIn(request)) {
             return mapping.findForward("all");
         }
+
         if (scope.equalsIgnoreCase("inactive") &&
                 !AuthorizationHelper.hasUserPermission(request, Constants.VIEW_PROJECTS_INACTIVE_PERM_NAME)) {
             return mapping.findForward("all");
@@ -2298,19 +2297,14 @@ public class ProjectActions extends DispatchAction {
         ProjectManager manager = ActionsHelper.createProjectManager(request);
         // This variable will specify the index of active tab on the JSP page
         int activeTab;
-        Filter projectsFilter = null;
 
         // Determine projects displayed and index of the active tab
         // based on the value of the "scope" parameter
         if (scope.equalsIgnoreCase("my")) {
             activeTab = 1;
         } else if (scope.equalsIgnoreCase("inactive")) {
-            projectsFilter = ProjectFilterUtility.buildStatusNameEqualFilter("Inactive");
             activeTab = 4;
         } else {
-            projectsFilter = ProjectFilterUtility.buildStatusNameEqualFilter("Active");
-
-            // Specify the index of the active tab
             activeTab = 2;
         }
 
@@ -2319,13 +2313,19 @@ public class ProjectActions extends DispatchAction {
 
         // Get all project types defined in the database (e.g. Assembly, Component, etc.)
         ProjectType[] projectTypes = manager.getAllProjectTypes();
+
         // Sort project types by their names in ascending order
         Arrays.sort(projectTypes, new Comparators.ProjectTypeComparer());
+
         // Get all project categories defined in the database (e.g. Design, Security, etc.)
         ProjectCategory[] projectCategories = manager.getAllProjectCategories();
 
         request.setAttribute("projectTypes", projectTypes);
         request.setAttribute("projectCategories", projectCategories);
+
+        ProjectStatus[] projectStatuses = manager.getAllProjectStatuses();
+
+        ProjectPropertyType[] projectInfoTypes = manager.getAllProjectPropertyTypes();
 
         int[] typeCounts = new int[projectTypes.length];
         int[] categoryCounts = new int[projectCategories.length];
@@ -2348,8 +2348,27 @@ public class ProjectActions extends DispatchAction {
         String[][] myDeliverables = (myProjects) ? new String[projectCategories.length][] : null;
 
         // Fetch projects from the database. These projects will require further grouping
-        Project[] ungroupedProjects = (projectsFilter != null) ? manager.searchProjects(projectsFilter) :
-                manager.getUserProjects(AuthorizationHelper.getLoggedInUserId(request));
+        ProjectStatus inactiveStatus = ActionsHelper.findProjectStatusByName(projectStatuses, "Inactive");
+        ProjectStatus activeStatus = ActionsHelper.findProjectStatusByName(projectStatuses, "Active");
+        long userId = AuthorizationHelper.getLoggedInUserId(request);
+        Project[] ungroupedProjects;
+        if (activeTab != 1) {
+            if (activeTab == 4) {
+                ungroupedProjects = searchProjectsByQueryTool("tcs_projects_by_status", "tcs_project_infos_by_status",
+                                                              "stid", String.valueOf(inactiveStatus.getId()),
+                                                              projectStatuses, projectCategories, projectInfoTypes);
+            } else {
+                ungroupedProjects = searchProjectsByQueryTool("tcs_projects_by_status", "tcs_project_infos_by_status",
+                                                              "stid", String.valueOf(activeStatus.getId()),
+                                                              projectStatuses, projectCategories, projectInfoTypes);
+            }
+        } else {
+            // user projects
+            ungroupedProjects = searchProjectsByQueryTool("tcs_projects_by_user", "tcs_project_infos_by_user",
+                                                          "uid", String.valueOf(userId),
+                                                          projectStatuses, projectCategories, projectInfoTypes);
+        }
+
 
         // Sort fetched projects. Currently sorting is done by projects' names only, in ascending order
         Arrays.sort(ungroupedProjects, new Comparators.ProjectNameComparer());
@@ -2358,30 +2377,22 @@ public class ProjectActions extends DispatchAction {
         for (int i = 0; i < ungroupedProjects.length; ++i) {
             projectFilters.add(ungroupedProjects[i].getId());
         }
-
+        ResourceManager resourceManager = ActionsHelper.createResourceManager(request);
         Resource[] allMyResources = null;
         if (ungroupedProjects.length != 0 && AuthorizationHelper.isUserLoggedIn(request)) {
-
-            Filter filterExtIDname = ResourceFilterBuilder.createExtensionPropertyNameFilter("External Reference ID");
-            Filter filterExtIDvalue = ResourceFilterBuilder.createExtensionPropertyValueFilter(
-                    String.valueOf(AuthorizationHelper.getLoggedInUserId(request)));
-
-
-            Filter filterProjects = new InFilter(ResourceFilterBuilder.PROJECT_ID_FIELD_NAME, projectFilters);
-
-            Filter filter = new AndFilter(Arrays.asList(
-                    new Filter[] {filterExtIDname, filterExtIDvalue, filterProjects}));
-
-            // Obtain an instance of Resource Manager
-            ResourceManager resMgr = ActionsHelper.createResourceManager(request);
-            // Get all "My" resources for the list of projects
-            allMyResources = resMgr.searchResources(filter);
+            if (activeTab == 1) {  // My projects
+                allMyResources = ActionsHelper.searchUserResources(userId, activeStatus, resourceManager);
+            } else if (activeTab == 2) { // Active projects
+                allMyResources = ActionsHelper.searchUserResources(userId, activeStatus, resourceManager);
+            } else if (activeTab == 4) { // Inactive projects
+                allMyResources = ActionsHelper.searchUserResources(userId, inactiveStatus, resourceManager);
+            }
         }
 
         // new eligibility constraints
         // if the user is not a global manager and is seeing all projects eligibility checks need to be performed
         if (!AuthorizationHelper.hasUserRole(request, Constants.GLOBAL_MANAGER_ROLE_NAME) &&
-            scope.equalsIgnoreCase("all") && projectFilters.size() > 0) {
+                scope.equalsIgnoreCase("all") && projectFilters.size() > 0) {
 
             // remove those projects that the user can't see
             ungroupedProjects = filterUsingEligibilityConstraints(
@@ -2391,12 +2402,26 @@ public class ProjectActions extends DispatchAction {
         // Obtain an instance of Phase Manager
         PhaseManager phMgr = ActionsHelper.createPhaseManager(request, false);
 
-        long[] allProjectIds = new long[ungroupedProjects.length];
+        PhaseStatus[] phaseStatuses = phMgr.getAllPhaseStatuses();
 
-        for (int i = 0; i < ungroupedProjects.length; ++i) {
-            allProjectIds[i] = ungroupedProjects[i].getId();
+        PhaseType[] phaseTypes = phMgr.getAllPhaseTypes();
+
+        Map<Long, com.topcoder.project.phases.Project> phProjects;
+        if (activeTab != 1) {
+            if (activeTab == 4) {
+                phProjects = searchProjectPhasesByQueryTool("tcs_project_phases_by_status", "stid",
+                                                            String.valueOf(inactiveStatus.getId()),
+                                                            phaseStatuses, phaseTypes);
+            } else {
+                phProjects = searchProjectPhasesByQueryTool("tcs_project_phases_by_status", "stid",
+                                                            String.valueOf(activeStatus.getId()),
+                                                            phaseStatuses, phaseTypes);
+            }
+        } else {
+            // user projects
+            phProjects = searchProjectPhasesByQueryTool("tcs_project_phases_by_user", "uid",
+                                                        String.valueOf(userId), phaseStatuses, phaseTypes);
         }
-        com.topcoder.project.phases.Project[] phProjects = phMgr.getPhases(allProjectIds);
 
         // Message Resources to be used for this request
         MessageResources messages = getResources(request);
@@ -2439,7 +2464,7 @@ public class ProjectActions extends DispatchAction {
                     // Get a project to store in current group
                     Project project = ungroupedProjects[j];
                     // Get this project's Root Catalog ID
-                    String rootCatalogId = (String)project.getProperty("Root Catalog ID");
+                    String rootCatalogId = (String) project.getProperty("Root Catalog ID");
 
                     // Fetch Root Catalog icon's filename depending on ID of the Root Catalog
                     rcIcons[counter] = ConfigHelper.getRootCatalogIconNameSm(rootCatalogId);
@@ -2449,9 +2474,10 @@ public class ProjectActions extends DispatchAction {
                     Phase[] activePhases = null;
 
                     // Calculate end date of the project and get all active phases (if any)
-                    if (phProjects[j] != null) {
-                        preds[counter] = phProjects[j].calcEndDate();
-                        activePhases = ActionsHelper.getActivePhases(phProjects[j].getAllPhases());
+                    if (phProjects.containsKey(project.getId())) {
+                        com.topcoder.project.phases.Project phProject = phProjects.get(project.getId());
+                        preds[counter] = phProject.calcEndDate();
+                        activePhases = ActionsHelper.getActivePhases(phProject.getAllPhases());
                         pheds[counter] = null;
                     }
 
@@ -2890,5 +2916,197 @@ public class ProjectActions extends DispatchAction {
             map.put(category.getId(), category);
         }
         return map;
+    }
+
+    /**
+     * <p>Gets the list of projects of specified status.</p>
+     *
+     * @param status a <code>ProjectStatus</code> providing the status of the projects to get phases for.
+     * @param categories a <code>ProjectCategory</code> listing available project categories.
+     * @param projectInfoTypes a <code>ProjectPropertyType</code> lising available project info types.
+     * @return a <code>Project</code> array listing the projects of specified status.
+     * @throws Exception if an unexpected error occurs.
+     * @since 1.7
+     */
+    private Project[] searchProjectsByQueryTool(String projectQuery, String projectInfoQuery,
+                                                String paramName, String paramValue,
+                                                ProjectStatus[] statuses, ProjectCategory[] categories,
+                                                ProjectPropertyType[] projectInfoTypes) throws Exception {
+
+        // Build the cache of project categories for faster lookup by ID
+        Map<Long, ProjectCategory> cachedCategories = new HashMap<Long, ProjectCategory>();
+        for (ProjectCategory category : categories) {
+            cachedCategories.put(category.getId(), category);
+        }
+
+        // Build the cache of project statuses for faster lookup by ID
+        Map<Long, ProjectStatus> cachedStatuses = new HashMap<Long, ProjectStatus>();
+        for (ProjectStatus status : statuses) {
+            cachedStatuses.put(status.getId(), status);
+        }
+
+        // Get project details by status using Query Tool
+        DataAccess dataAccess = new DataAccess(DBMS.TCS_OLTP_DATASOURCE_NAME);
+        Request request = new Request();
+        request.setContentHandle(projectQuery);
+        request.setProperty(paramName, paramValue);
+        Map<String, ResultSetContainer> results = dataAccess.getData(request);
+
+        // Convert returned data into Project objects
+        ResultSetContainer projectsData = results.get(projectQuery);
+        Map<Long, Project> cachedProjects = new HashMap<Long, Project>();
+        int recordNum = projectsData.size();
+        Project[] projects = new Project[recordNum];
+        for (int i = 0; i < recordNum; i++) {
+            long projectId = projectsData.getLongItem(i, "project_id");
+            long projectCategoryId = projectsData.getLongItem(i, "project_category_id");
+            long projectStatusId = projectsData.getLongItem(i, "project_status_id");
+            String createUser = projectsData.getStringItem(i, "create_user");
+            Timestamp createDate = projectsData.getTimestampItem(i, "create_date");
+            String modifyUser = projectsData.getStringItem(i, "modify_user");
+            Timestamp modifyDate = projectsData.getTimestampItem(i, "modify_date");
+
+            Project project = new Project(projectId, cachedCategories.get(projectCategoryId),
+                                          cachedStatuses.get(projectStatusId));
+            project.setCreationUser(createUser);
+            project.setCreationTimestamp(createDate);
+            project.setModificationUser(modifyUser);
+            project.setModificationTimestamp(modifyDate);
+
+            projects[i] = project;
+            cachedProjects.put(projectId, project);
+        }
+
+        // Build the cache of project info types for faster lookup by ID
+        Map<Long, ProjectPropertyType> cachedInfoTypes = new HashMap<Long, ProjectPropertyType>();
+        for (ProjectPropertyType infoType : projectInfoTypes) {
+            cachedInfoTypes.put(infoType.getId(), infoType);
+        }
+
+        ResultSetContainer projectInfosData = results.get(projectInfoQuery);
+        recordNum = projectInfosData.size();
+        for (int i = 0; i < recordNum; i++) {
+            long projectId = projectInfosData.getLongItem(i, "project_id");
+            long projectInfoTypeId = projectInfosData.getLongItem(i, "project_info_type_id");
+            String value = projectInfosData.getStringItem(i, "value");
+            Project project = cachedProjects.get(projectId);
+            project.setProperty(cachedInfoTypes.get(projectInfoTypeId).getName(), value);
+        }
+
+        return projects;
+    }
+
+    /**
+     * <p>Gets the phases for projects of specified status.</p>
+     *
+     * @param status a <code>ProjectStatus</code> providing the status of the projects to get phases for.
+     * @param phaseStatuses a <code>PhaseStatus</code> array listing the available phase statuses.
+     * @param phaseTypes a <code>PhaseType</code> array listing the available phase types.
+     * @return a <code>Project</code> array listing the project phases.
+     * @throws Exception if an unexpected error occurs.
+     * @since 1.7
+     */
+    private Map<Long, com.topcoder.project.phases.Project> searchProjectPhasesByQueryTool(String queryName,
+                                                                                          String paramName,
+                                                                                          String paramValue,
+                                                                                          PhaseStatus[] phaseStatuses,
+                                                                                          PhaseType[] phaseTypes)
+        throws Exception {
+        
+        // Build the cache of phase statuses for faster lookup by ID
+        Map<Long, PhaseStatus> cachedStatuses = new HashMap<Long, PhaseStatus>();
+        for (PhaseStatus phaseStatus : phaseStatuses) {
+            cachedStatuses.put(phaseStatus.getId(), phaseStatus);
+        }
+
+        // Build the cache of phase types for faster lookup by ID
+        Map<Long, PhaseType> cachedTypes = new HashMap<Long, PhaseType>();
+        for (PhaseType type : phaseTypes) {
+            cachedTypes.put(type.getId(), type);
+        }
+
+        // Get project details by status using Query Tool
+        DataAccess dataAccess = new DataAccess(DBMS.TCS_OLTP_DATASOURCE_NAME);
+        Request request = new Request();
+        request.setContentHandle(queryName);
+        request.setProperty(paramName, paramValue);
+        Map<String, ResultSetContainer> results = dataAccess.getData(request);
+
+        // Convert returned data into Project objects
+        Map<Long, Phase> cachedPhases = new HashMap<Long, Phase>();
+        Map<Long, List<Object[]>> deferredDependencies = new HashMap<Long, List<Object[]>>();
+        Workdays workdays = new DefaultWorkdaysFactory().createWorkdaysInstance();
+        Map<Long, com.topcoder.project.phases.Project> phProjects
+            = new HashMap<Long, com.topcoder.project.phases.Project>();
+        com.topcoder.project.phases.Project currentPhProject = null;
+        Phase currentPhase = null;
+        ResultSetContainer phasesData = results.get(queryName);
+        int recordNum = phasesData.size();
+        for (int i = 0; i < recordNum; i++) {
+            long projectId = phasesData.getLongItem(i, "project_id");
+            if ((currentPhProject == null) || (currentPhProject.getId() != projectId)) {
+                currentPhProject = new com.topcoder.project.phases.Project(new Date(Long.MAX_VALUE), workdays);
+                currentPhProject.setId(projectId);
+                phProjects.put(projectId, currentPhProject);
+            }
+
+            long phaseId = phasesData.getLongItem(i, "project_phase_id");
+            if ((currentPhase == null) || (currentPhase.getId() != phaseId)) {
+                currentPhase = new Phase(currentPhProject, phasesData.getLongItem(i, "duration"));
+                currentPhase.setId(phaseId);
+                currentPhase.setActualEndDate(phasesData.getTimestampItem(i, "actual_end_time"));
+                currentPhase.setActualStartDate(phasesData.getTimestampItem(i, "actual_start_time"));
+                currentPhase.setFixedStartDate(phasesData.getTimestampItem(i, "fixed_start_time"));
+                currentPhase.setScheduledEndDate(phasesData.getTimestampItem(i, "scheduled_end_time"));
+                currentPhase.setScheduledStartDate(phasesData.getTimestampItem(i, "scheduled_start_time"));
+                currentPhase.setPhaseStatus(cachedStatuses.get(phasesData.getLongItem(i, "phase_status_id")));
+                currentPhase.setPhaseType(cachedTypes.get(phasesData.getLongItem(i, "phase_type_id")));
+                cachedPhases.put(phaseId, currentPhase);
+                currentPhProject.setStartDate(currentPhase.getScheduledStartDate());
+            }
+
+            if (phasesData.getItem(i, "dependent_phase_id").getResultData() != null) {
+                long dependencyId = phasesData.getLongItem(i, "dependency_phase_id");
+                long dependentId = phasesData.getLongItem(i, "dependent_phase_id");
+                long lagTime = phasesData.getLongItem(i, "lag_time");
+                boolean dependencyStart = (phasesData.getIntItem(i, "dependency_start") == 1);
+                boolean dependentStart = (phasesData.getIntItem(i, "dependent_start") == 1);
+                if (cachedPhases.containsKey(dependencyId)) {
+                    Dependency dependency = new Dependency(cachedPhases.get(dependencyId), currentPhase,
+                                                           dependencyStart, dependentStart, lagTime);
+                    currentPhase.addDependency(dependency);
+                } else {
+                    if (!deferredDependencies.containsKey(dependencyId)) {
+                        deferredDependencies.put(dependencyId, new ArrayList<Object[]>());
+                    }
+                    deferredDependencies.get(dependencyId).add(
+                        new Object[] {dependentId, lagTime, dependencyStart, dependentStart});
+                }
+            }
+        }
+
+        // Resolve deferred dependencies
+        Iterator<Long> iterator = deferredDependencies.keySet().iterator();
+        while (iterator.hasNext()) {
+            Long dependencyId = iterator.next();
+            List<Object[]> dependencies = deferredDependencies.get(dependencyId);
+            for (Object[] dependency : dependencies) {
+                long dependentId = (Long) dependency[0];
+                long lagTime = (Long) dependency[1];
+                boolean dependencyStart = (Boolean) dependency[2];
+                boolean dependentStart = (Boolean) dependency[3];
+                Phase dependentPhase = cachedPhases.get(dependentId);
+                Dependency dep = new Dependency(cachedPhases.get(dependencyId), dependentPhase,
+                                                dependencyStart, dependentStart, lagTime);
+                dependentPhase.addDependency(dep);
+            }
+        }
+
+        deferredDependencies.clear();
+        cachedPhases.clear();
+        cachedStatuses.clear();
+        cachedTypes.clear();
+
+        return phProjects;
     }
 }

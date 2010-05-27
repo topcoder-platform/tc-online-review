@@ -4,24 +4,25 @@
 package com.cronos.onlinereview.actions;
 
 import java.rmi.RemoteException;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.sql.Types;
+import java.sql.*;
 import java.text.Format;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.Date;
 
 import javax.ejb.CreateException;
 import javax.naming.Context;
 import javax.naming.NamingException;
 import javax.servlet.http.HttpServletRequest;
 
+import com.cronos.onlinereview.phases.lookup.ResourceRoleLookupUtility;
 import com.topcoder.management.phase.*;
 import com.topcoder.management.review.ReviewManagementException;
 import com.topcoder.search.builder.filter.EqualToFilter;
+import com.topcoder.shared.dataAccess.DataAccess;
+import com.topcoder.shared.dataAccess.Request;
+import com.topcoder.shared.dataAccess.resultSet.ResultSetContainer;
+import com.topcoder.shared.util.DBMS;
 import org.apache.struts.Globals;
 import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionForward;
@@ -175,8 +176,15 @@ import com.topcoder.web.ejb.forums.ForumsHome;
  *   </ol>
  * </p>
  *
- * @author George1, real_vg, pulky, isv
- * @version 1.5
+ * <p>
+ * Version 1.6 (Online Review Performance Refactoring 1.0) Change notes:
+ *   <ol>
+ *     <li>Added {@link #searchUserResources(long, ProjectStatus, ResourceManager)} method.</li>
+ *   </ol>
+ * </p>
+ *
+ * @author George1, real_vg, pulky, isv, TCSDEVELOPER
+ * @version 1.6
  * @since 1.0
  */
 public class ActionsHelper {
@@ -4505,5 +4513,100 @@ public class ActionsHelper {
         ArrayList<Long> userCollection = new ArrayList<Long>();
         userCollection.add(user);
         return userCollection;
+    }
+
+    /**
+     * <p>Searches the resources for specified user for projects of specified status.</p>
+     *
+     * @param status a <code>ProjectStatus</code> specifying the status of the projects.
+     * @param userId a <code>long</code> providing the user ID.
+     * @param resourceManager a <code>ResourceManager</code> to be used for searching.
+     * @return a <code>Resource</code> array providing the details for found resources.
+     */
+    static Resource[] searchUserResources(long userId, ProjectStatus status, ResourceManager resourceManager)
+        throws BaseException {
+        // Get the list of existing resource roles and build a cache
+        ResourceRole[] resourceRoles = resourceManager.getAllResourceRoles();
+        Map<Long, ResourceRole> cachedRoles = new HashMap<Long, ResourceRole>();
+        for (ResourceRole role : resourceRoles) {
+            cachedRoles.put(role.getId(), role);
+        }
+
+        // Get resources details by user ID using Query Tool
+        DataAccess dataAccess = new DataAccess(DBMS.TCS_OLTP_DATASOURCE_NAME);
+        Request request = new Request();
+
+        if (status == null) {
+            request.setContentHandle("tcs_resources_by_user");
+            request.setProperty("uid", String.valueOf(userId));
+        } else {
+            request.setContentHandle("tcs_resources_by_user_and_status");
+            request.setProperty("uid", String.valueOf(userId));
+            request.setProperty("stid", String.valueOf(status.getId()));
+        }
+
+        Map<String, ResultSetContainer> results = null;
+        try {
+            results = dataAccess.getData(request);
+        } catch (Exception e) {
+            throw new BaseException("Failed to retireve resources data from DB", e);
+        }
+
+        // Convert returned data into Resource objects
+        ResultSetContainer resourcesData;
+        if (status == null) {
+            resourcesData = results.get("tcs_resources_by_user");
+        } else {
+            resourcesData = results.get("tcs_resources_by_user_and_status");
+        }
+        Map<Long, Resource> cachedResources = new HashMap<Long, Resource>();
+        int recordNum = resourcesData.size();
+        Resource[] resources = new Resource[recordNum];
+        for (int i = 0; i < recordNum; i++) {
+            long resourceId = resourcesData.getLongItem(i, "resource_id");
+            long resourceRoleId = resourcesData.getLongItem(i, "resource_role_id");
+            Long projectId = null;
+            if (resourcesData.getItem(i, "project_id").getResultData() != null) {
+                projectId = resourcesData.getLongItem(i, "project_id");
+            }
+            Long phaseId = null;
+            if (resourcesData.getItem(i, "phase_id").getResultData() != null) {
+                phaseId = resourcesData.getLongItem(i, "phase_id");
+            }
+            String createUser = resourcesData.getStringItem(i, "create_user");
+            Timestamp createDate = resourcesData.getTimestampItem(i, "create_date");
+            String modifyUser = resourcesData.getStringItem(i, "modify_user");
+            Timestamp modifyDate = resourcesData.getTimestampItem(i, "modify_date");
+
+            Resource resource = new Resource(resourceId, cachedRoles.get(resourceRoleId));
+            resource.setProject(projectId);
+            resource.setPhase(phaseId);
+            resource.setCreationUser(createUser);
+            resource.setCreationTimestamp(createDate);
+            resource.setModificationUser(modifyUser);
+            resource.setModificationTimestamp(modifyDate);
+
+            resources[i] = resource;
+            cachedResources.put(resourceId, resource);
+        }
+
+        // Build the cache of project info types for faster lookup by ID
+        ResultSetContainer resourceInfosData;
+        if (status == null) {
+            resourceInfosData = results.get("tcs_resource_infos_by_user");
+        } else {
+            resourceInfosData = results.get("tcs_resource_infos_by_user_and_status");
+        }
+        recordNum = resourceInfosData.size();
+
+        for (int i = 0; i < recordNum; i++) {
+            long projectId = resourceInfosData.getLongItem(i, "resource_id");
+            String propName = resourceInfosData.getStringItem(i, "resource_info_type_name");
+            String value = resourceInfosData.getStringItem(i, "value");
+            Resource resource = cachedResources.get(projectId);
+            resource.setProperty(propName, value);
+        }
+
+        return resources;
     }
 }
