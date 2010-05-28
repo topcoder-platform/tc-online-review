@@ -2966,6 +2966,9 @@ public class ProjectActions extends DispatchAction {
             String modifyUser = projectsData.getStringItem(i, "modify_user");
             Timestamp modifyDate = projectsData.getTimestampItem(i, "modify_date");
 
+            System.out.println("i: " + projectCategoryId);
+            System.out.println("i: " + cachedCategories.get(projectCategoryId));
+            
             Project project = new Project(projectId, cachedCategories.get(projectCategoryId),
                                           cachedStatuses.get(projectStatusId));
             project.setCreationUser(createUser);
