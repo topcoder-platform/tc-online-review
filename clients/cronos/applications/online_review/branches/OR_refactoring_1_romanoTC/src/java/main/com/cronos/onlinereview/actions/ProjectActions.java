@@ -130,7 +130,7 @@ import static com.cronos.onlinereview.actions.Constants.POST_MORTEM_PHASE_NAME;
  * Version 1.5 (Contest Dependency Automation v1.0) Change notes:
  *   <ol>
  *     <li>
- *       Updated {@link #saveProjectPhases(boolean, HttpServletRequest, LazyValidatorForm, Project, Map, List, boolean)} 
+ *       Updated {@link #saveProjectPhases(boolean, HttpServletRequest, LazyValidatorForm, Project, Map, List, boolean)}
  *       method to adjust the start times (if necessary) for projects which depend on current project being updated.
  *     </li>
  *   </ol>
@@ -145,7 +145,7 @@ import static com.cronos.onlinereview.actions.Constants.POST_MORTEM_PHASE_NAME;
  *     </li>
  *     <li>
  *       Updated {@link #validateProjectPhases(HttpServletRequest, Project, Phase[])} method to take into consideration
- *       <code>Approval</code> and <code>Post-Mortem</code> phases.  
+ *       <code>Approval</code> and <code>Post-Mortem</code> phases.
  *     </li>
  *   </ol>
  * </p>
@@ -926,7 +926,7 @@ public class ProjectActions extends DispatchAction {
                  || AuthorizationHelper.hasUserRole(request, Constants.GLOBAL_MANAGER_ROLE_NAME)) {
                 project.setProperty("Billing Project", lazyForm.get("billing_project"));
         }
-        
+
 
         // TODO: Project status change, includes additional explanation to be concatenated
 
@@ -1110,7 +1110,7 @@ public class ProjectActions extends DispatchAction {
      * @param phasesJsMap a <code>Map</code> mapping phase IDs to phases.
      * @param phasesToDelete a <code>List</code> listing the existing phases for specified project which are to be
      *        deleted.
-     * @return a <code>Phase</code> array listing the updated phases associated with the specified project. 
+     * @return a <code>Phase</code> array listing the updated phases associated with the specified project.
      * @throws BaseException if an unexpected error occurs.
      */
     private Phase[] saveProjectPhases(boolean newProject, HttpServletRequest request, LazyValidatorForm lazyForm,
@@ -1607,7 +1607,7 @@ public class ProjectActions extends DispatchAction {
      * TODO: Document it
      * Note, that this method assumes that phases are already sorted by the start date, etc.
      *
-     * @param request an <code>HttpServletRequest</code> representing incoming request from the client. 
+     * @param request an <code>HttpServletRequest</code> representing incoming request from the client.
      * @param project
      * @param projectPhases
      * @return
@@ -1636,7 +1636,7 @@ public class ProjectActions extends DispatchAction {
                     "error.com.cronos.onlinereview.actions.editProject.WrongBeginningPhase");
             arePhasesValid = false;
         }
-        
+
 
         // Check the phases as a whole
         for (int i = 0; i < projectPhases.length; i++) {
@@ -1919,7 +1919,7 @@ public class ProjectActions extends DispatchAction {
             ExternalUser user = userRetrieval.retrieveUser(resourceNames[i]);
 
             Resource resource;
-            
+
             // BUGR-2807: Parse resource payment
             Double resourcePayment = null;
             if (Boolean.TRUE.equals(lazyForm.get("resources_payment", i))) {
@@ -2028,9 +2028,9 @@ public class ProjectActions extends DispatchAction {
 
             if ("add".equals(resourceAction)) {
 
-                if (resourceRole.equals("Manager") || resourceRole.equals("Observer") 
+                if (resourceRole.equals("Manager") || resourceRole.equals("Observer")
                          || resourceRole.equals("Designer")  || resourceRole.equals("Client Manager")  || resourceRole.equals("Copilot"))
-                {   
+                {
                     // no need for Applications/Components/LCSUPPORT
                     if (!resource.getProperty("Handle").equals("Applications") &&
                         !resource.getProperty("Handle").equals("Components") &&
@@ -2038,17 +2038,17 @@ public class ProjectActions extends DispatchAction {
                     {
                         newUsersForumWatch.add(user.getId());
                     }
-                    
+
                 }
             }
 
             // client manager and copilot have moderator role
             if (resourceRole.equals("Client Manager")  || resourceRole.equals("Copilot")
                     || resourceRole.equals("Observer") || resourceRole.equals("Designer"))
-            {   
+            {
                 newUsers.remove(user.getId());
                 newModerators.add(user.getId());
-                
+
             }
 
             // make sure "Appeals Completed Early" flag is not set if the role is not submitter.
@@ -2104,7 +2104,7 @@ public class ProjectActions extends DispatchAction {
         ActionsHelper.addForumPermissions(project, newModerators, true);
 
         long forumId = 0;
-        if (project.getProperty("Developer Forum ID") != null 
+        if (project.getProperty("Developer Forum ID") != null
               && ((Long)project.getProperty("Developer Forum ID")).longValue() != 0)
         {
             forumId = ((Long)project.getProperty("Developer Forum ID")).longValue();
@@ -2202,7 +2202,7 @@ public class ProjectActions extends DispatchAction {
      */
     private boolean validateResourceEligibility(HttpServletRequest request, LazyValidatorForm lazyForm,
             Project project, UserRetrieval userRetrieval, String[] resourceNames)
-            throws NamingException, RemoteException, CreateException, 
+            throws NamingException, RemoteException, CreateException,
                    EJBException, BaseException, ContestEligibilityValidatorException {
 
         boolean allResourcesValid = true;
@@ -2225,7 +2225,7 @@ public class ProjectActions extends DispatchAction {
                     {
                         continue;
                     }
-                        
+
                     // dont check project creator
                     if (project.getCreationUser().equals(Long.toString(userId)))
                     {
@@ -2266,15 +2266,23 @@ public class ProjectActions extends DispatchAction {
      */
     public ActionForward listProjects(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response) throws Exception {
+        startRecording("listProjects");
         // Remove redirect-after-login attribute (if it exists)
+        startRecording("removeLoginRedirect");
         AuthorizationHelper.removeLoginRedirect(request);
+        stopRecording("removeLoginRedirect");
 
+        startRecording("logAction");
         LoggingHelper.logAction(request);
+        stopRecording("logAction");
 
         // Gather the roles the user has for current request
+        startRecording("gatherUserRoles");
         AuthorizationHelper.gatherUserRoles(request);
+        stopRecording("gatherUserRoles");
 
         // Retrieve the value of "scope" parameter
+        startRecording("scope analyzing");
         String scope = request.getParameter("scope");
         // Verify that "scope" parameter is specified and is not empty
         if (scope == null || scope.trim().length() == 0) {
@@ -2285,21 +2293,29 @@ public class ProjectActions extends DispatchAction {
         // If the user is trying to access pages he doesn't have permission to view,
         // redirect him to scope-all page, where public projects are listed
         if (scope.equalsIgnoreCase("my") && !AuthorizationHelper.isUserLoggedIn(request)) {
+            stopRecording("scope analyzing");
             return mapping.findForward("all");
         }
+        stopRecording("scope analyzing");
 
+        startRecording("permission analyzing");
         if (scope.equalsIgnoreCase("inactive") &&
                 !AuthorizationHelper.hasUserPermission(request, Constants.VIEW_PROJECTS_INACTIVE_PERM_NAME)) {
+            stopRecording("permission analyzing");
             return mapping.findForward("all");
         }
+        stopRecording("permission analyzing");
 
         // Obtain an instance of Project Manager
+        startRecording("createProjectManager");
         ProjectManager manager = ActionsHelper.createProjectManager(request);
+        stopRecording("createProjectManager");
         // This variable will specify the index of active tab on the JSP page
         int activeTab;
 
         // Determine projects displayed and index of the active tab
         // based on the value of the "scope" parameter
+        startRecording("determine active tab");
         if (scope.equalsIgnoreCase("my")) {
             activeTab = 1;
         } else if (scope.equalsIgnoreCase("inactive")) {
@@ -2307,26 +2323,40 @@ public class ProjectActions extends DispatchAction {
         } else {
             activeTab = 2;
         }
+        stopRecording("determine active tab");
 
         // Pass the index of the active tab into request
         request.setAttribute("projectTabIndex", new Integer(activeTab));
 
         // Get all project types defined in the database (e.g. Assembly, Component, etc.)
+        startRecording("getAllProjectTypes");
         ProjectType[] projectTypes = manager.getAllProjectTypes();
+        stopRecording("getAllProjectTypes");
 
         // Sort project types by their names in ascending order
+        startRecording("sort(projectTypes)");
         Arrays.sort(projectTypes, new Comparators.ProjectTypeComparer());
+        stopRecording("sort(projectTypes)");
 
         // Get all project categories defined in the database (e.g. Design, Security, etc.)
+        startRecording("getAllProjectCategories");
         ProjectCategory[] projectCategories = manager.getAllProjectCategories();
+        stopRecording("getAllProjectCategories");
 
+        startRecording("set project types and categories to request");
         request.setAttribute("projectTypes", projectTypes);
         request.setAttribute("projectCategories", projectCategories);
+        stopRecording("set project types and categories to request");
 
+        startRecording("getAllProjectStatuses");
         ProjectStatus[] projectStatuses = manager.getAllProjectStatuses();
+        stopRecording("getAllProjectStatuses");
 
+        startRecording("getAllProjectPropertyTypes");
         ProjectPropertyType[] projectInfoTypes = manager.getAllProjectPropertyTypes();
+        stopRecording("getAllProjectPropertyTypes");
 
+        startRecording("initial arrays allocation");
         int[] typeCounts = new int[projectTypes.length];
         int[] categoryCounts = new int[projectCategories.length];
         String[] categoryIconNames = new String[projectCategories.length];
@@ -2346,8 +2376,10 @@ public class ProjectActions extends DispatchAction {
         Resource[][][] myResources = (myProjects) ? new Resource[projectCategories.length][][] : null;
         String[][] myRoles = (myProjects) ? new String[projectCategories.length][] : null;
         String[][] myDeliverables = (myProjects) ? new String[projectCategories.length][] : null;
+        stopRecording("initial arrays allocation");
 
         // Fetch projects from the database. These projects will require further grouping
+        startRecording("searchProjects for ungrouped projects");
         ProjectStatus inactiveStatus = ActionsHelper.findProjectStatusByName(projectStatuses, "Inactive");
         ProjectStatus activeStatus = ActionsHelper.findProjectStatusByName(projectStatuses, "Active");
         long userId = AuthorizationHelper.getLoggedInUserId(request);
@@ -2368,15 +2400,22 @@ public class ProjectActions extends DispatchAction {
                                                           "uid", String.valueOf(userId),
                                                           projectStatuses, projectCategories, projectInfoTypes);
         }
+        stopRecording("searchProjects for ungrouped projects");
 
 
         // Sort fetched projects. Currently sorting is done by projects' names only, in ascending order
+        startRecording("sort(ungroupedProjects)");
         Arrays.sort(ungroupedProjects, new Comparators.ProjectNameComparer());
+        stopRecording("sort(ungroupedProjects)");
 
+        startRecording("building the list of ungrouped project IDs");
         List<Long> projectFilters = new ArrayList<Long>();
         for (int i = 0; i < ungroupedProjects.length; ++i) {
             projectFilters.add(ungroupedProjects[i].getId());
         }
+        stopRecording("building the list of ungrouped project IDs");
+
+        startRecording("getting My resources for ungroupped projects");
         ResourceManager resourceManager = ActionsHelper.createResourceManager(request);
         Resource[] allMyResources = null;
         if (ungroupedProjects.length != 0 && AuthorizationHelper.isUserLoggedIn(request)) {
@@ -2388,9 +2427,11 @@ public class ProjectActions extends DispatchAction {
                 allMyResources = ActionsHelper.searchUserResources(userId, inactiveStatus, resourceManager);
             }
         }
+        stopRecording("getting My resources for ungroupped projects");
 
         // new eligibility constraints
         // if the user is not a global manager and is seeing all projects eligibility checks need to be performed
+        startRecording("applying eligibility constraints");
         if (!AuthorizationHelper.hasUserRole(request, Constants.GLOBAL_MANAGER_ROLE_NAME) &&
                 scope.equalsIgnoreCase("all") && projectFilters.size() > 0) {
 
@@ -2398,14 +2439,22 @@ public class ProjectActions extends DispatchAction {
             ungroupedProjects = filterUsingEligibilityConstraints(
                     ungroupedProjects, projectFilters, allMyResources);
         }
+        stopRecording("applying eligibility constraints");
 
         // Obtain an instance of Phase Manager
+        startRecording("createPhaseManager");
         PhaseManager phMgr = ActionsHelper.createPhaseManager(request, false);
+        stopRecording("createPhaseManager");
 
+        startRecording("getAllPhaseStatuses");
         PhaseStatus[] phaseStatuses = phMgr.getAllPhaseStatuses();
+        stopRecording("getAllPhaseStatuses");
 
+        startRecording("getAllPhaseTypes");
         PhaseType[] phaseTypes = phMgr.getAllPhaseTypes();
+        stopRecording("getAllPhaseTypes");
 
+        startRecording("getPhases for ungroupped projects");
         Map<Long, com.topcoder.project.phases.Project> phProjects;
         if (activeTab != 1) {
             if (activeTab == 4) {
@@ -2422,10 +2471,14 @@ public class ProjectActions extends DispatchAction {
             phProjects = searchProjectPhasesByQueryTool("tcs_project_phases_by_user", "uid",
                                                         String.valueOf(userId), phaseStatuses, phaseTypes);
         }
+        stopRecording("getPhases for ungroupped projects");
 
         // Message Resources to be used for this request
+        startRecording("getResources from request");
         MessageResources messages = getResources(request);
+        stopRecording("getResources from request");
 
+        startRecording("main cycle for processing project categories");
         for (int i = 0; i < projectCategories.length; ++i) {
             // Count number of projects in this category
             for (int j = 0; j < ungroupedProjects.length; ++j) {
@@ -2517,7 +2570,9 @@ public class ProjectActions extends DispatchAction {
             // Fetch Project Category icon's filename depending on the name of the current category
             categoryIconNames[i] = ConfigHelper.getProjectCategoryIconNameSm(projectCategories[i].getName());
         }
+        stopRecording("main cycle for processing project categories");
 
+        startRecording("building list of My Deliverables per each of ungrouped projects");
         if (ungroupedProjects.length != 0 && myProjects) {
             Deliverable[] allMyDeliverables = getDeliverables(
                     ActionsHelper.createDeliverableManager(request), projects, phases, myResources);
@@ -2537,10 +2592,12 @@ public class ProjectActions extends DispatchAction {
                 myDeliverables[i] = deliverables;
             }
         }
+        stopRecording("building list of My Deliverables per each of ungrouped projects");
 
         int totalProjectsCount = 0;
 
         // Count projects in every type group now
+        startRecording("counting projects in every group");
         for (int i = 0; i < projectTypes.length; ++i) {
             for (int j = 0; j < projectCategories.length; ++j) {
                 if (projectCategories[j].getProjectType().getId() == projectTypes[i].getId()) {
@@ -2549,8 +2606,10 @@ public class ProjectActions extends DispatchAction {
             }
             totalProjectsCount += typeCounts[i];
         }
+        stopRecording("counting projects in every group");
 
         // Place all collected data into the request as attributes
+        startRecording("placing all collected data to request");
         request.setAttribute("projects", projects);
         request.setAttribute("rootCatalogIcons", rootCatalogIcons);
         request.setAttribute("rootCatalogNames", rootCatalogNames);
@@ -2561,15 +2620,19 @@ public class ProjectActions extends DispatchAction {
         request.setAttribute("categoryCounts", categoryCounts);
         request.setAttribute("totalProjectsCount", new Integer(totalProjectsCount));
         request.setAttribute("categoryIconNames", categoryIconNames);
+        stopRecording("placing all collected data to request");
 
         // If the currently displayed list is a list of "My" Projects, add some more attributes
         if (myProjects) {
+            startRecording("placing my deliverables data to request");
             request.setAttribute("isMyProjects", new Boolean(myProjects));
             request.setAttribute("myRoles", myRoles);
             request.setAttribute("myDeliverables", myDeliverables);
+            stopRecording("placing my deliverables data to request");
         }
 
         // Signal about successful execution of the Action
+        stopRecording("listProjects");
         return mapping.findForward(Constants.SUCCESS_FORWARD_NAME);
     }
 
@@ -2906,7 +2969,7 @@ public class ProjectActions extends DispatchAction {
     /**
      * <p>Builds the map to be used for looking up the project categories by IDs.</p>
      *
-     * @param categories a <code>ProjectCategory</code> array listing existing project categories. 
+     * @param categories a <code>ProjectCategory</code> array listing existing project categories.
      * @return a <code>Map</code> mapping the category IDs to categories.
      * @since 1.6
      */
@@ -3012,7 +3075,7 @@ public class ProjectActions extends DispatchAction {
                                                                                           PhaseStatus[] phaseStatuses,
                                                                                           PhaseType[] phaseTypes)
         throws Exception {
-        
+
         // Build the cache of phase statuses for faster lookup by ID
         Map<Long, PhaseStatus> cachedStatuses = new HashMap<Long, PhaseStatus>();
         for (PhaseStatus phaseStatus : phaseStatuses) {
@@ -3026,13 +3089,16 @@ public class ProjectActions extends DispatchAction {
         }
 
         // Get project details by status using Query Tool
+        startRecording("searchProjectPhasesByStatus1");
         DataAccess dataAccess = new DataAccess(DBMS.TCS_OLTP_DATASOURCE_NAME);
         Request request = new Request();
         request.setContentHandle(queryName);
         request.setProperty(paramName, paramValue);
         Map<String, ResultSetContainer> results = dataAccess.getData(request);
+        stopRecording("searchProjectPhasesByStatus1");
 
         // Convert returned data into Project objects
+        startRecording("searchProjectPhasesByStatus2");
         Map<Long, Phase> cachedPhases = new HashMap<Long, Phase>();
         Map<Long, List<Object[]>> deferredDependencies = new HashMap<Long, List<Object[]>>();
         Workdays workdays = new DefaultWorkdaysFactory().createWorkdaysInstance();
@@ -3101,12 +3167,33 @@ public class ProjectActions extends DispatchAction {
                 dependentPhase.addDependency(dep);
             }
         }
+        stopRecording("searchProjectPhasesByStatus2");
 
+        startRecording("searchProjectPhasesByStatus3");
         deferredDependencies.clear();
         cachedPhases.clear();
         cachedStatuses.clear();
         cachedTypes.clear();
+        stopRecording("searchProjectPhasesByStatus3");
 
         return phProjects;
+    }
+
+    // TODO: Subsequent methods are to be removed during the Final Fix
+
+    private Map<String, Date> times = new HashMap<String, Date>();
+
+    private void startRecording(String action) {
+        times.put(action, new Date());
+    }
+
+    private void stopRecording(String action) {
+        Date now = new Date();
+        Date start = times.get(action);
+        if (start != null) {
+            long t1 = start.getTime();
+            long t2 = now.getTime();
+            System.out.println("ISV : " + action + " : took " + (t2 - t1) + " ms");
+        }
     }
 }
