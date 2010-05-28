@@ -2936,7 +2936,6 @@ public class ProjectActions extends DispatchAction {
         // Build the cache of project categories for faster lookup by ID
         Map<Long, ProjectCategory> cachedCategories = new HashMap<Long, ProjectCategory>();
         for (ProjectCategory category : categories) {
-            System.out.println("category: " + category.getId() + " / " + category.getDescription());
             cachedCategories.put(category.getId(), category);
         }
 
