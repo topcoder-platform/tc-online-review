@@ -3184,6 +3184,7 @@ public class ProjectActions extends DispatchAction {
     private Map<String, Date> times = new HashMap<String, Date>();
 
     private void startRecording(String action) {
+        System.out.println("ISV : " + action + " : started");
         times.put(action, new Date());
     }
 
