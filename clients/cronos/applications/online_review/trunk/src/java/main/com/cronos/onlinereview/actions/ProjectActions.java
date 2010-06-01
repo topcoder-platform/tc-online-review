@@ -19,8 +19,20 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
 
+import com.cronos.onlinereview.dataaccess.ProjectDataAccess;
+import com.cronos.onlinereview.dataaccess.ProjectPhaseDataAccess;
 import com.topcoder.management.phase.ContestDependencyAutomation;
+import com.topcoder.management.project.Project;
+import com.topcoder.management.project.ProjectCategory;
+import com.topcoder.management.project.ProjectManager;
+import com.topcoder.management.project.ProjectPropertyType;
+import com.topcoder.management.project.ProjectStatus;
+import com.topcoder.management.project.ProjectType;
 import com.topcoder.management.project.link.ProjectLinkManager;
+import com.topcoder.project.phases.Dependency;
+import com.topcoder.project.phases.Phase;
+import com.topcoder.project.phases.PhaseStatus;
+import com.topcoder.project.phases.PhaseType;
 import com.topcoder.web.common.eligibility.ContestEligibilityServiceLocator;
 
 import javax.ejb.CreateException;
@@ -47,12 +59,6 @@ import com.topcoder.management.deliverable.DeliverableManager;
 import com.topcoder.management.deliverable.persistence.DeliverableCheckingException;
 import com.topcoder.management.deliverable.persistence.DeliverablePersistenceException;
 import com.topcoder.management.phase.PhaseManager;
-import com.topcoder.management.project.Project;
-import com.topcoder.management.project.ProjectCategory;
-import com.topcoder.management.project.ProjectFilterUtility;
-import com.topcoder.management.project.ProjectManager;
-import com.topcoder.management.project.ProjectStatus;
-import com.topcoder.management.project.ProjectType;
 import com.topcoder.management.resource.NotificationType;
 import com.topcoder.management.resource.Resource;
 import com.topcoder.management.resource.ResourceManager;
@@ -62,10 +68,6 @@ import com.topcoder.management.scorecard.ScorecardManager;
 import com.topcoder.management.scorecard.ScorecardSearchBundle;
 import com.topcoder.management.scorecard.data.Scorecard;
 import com.topcoder.project.phases.CyclicDependencyException;
-import com.topcoder.project.phases.Dependency;
-import com.topcoder.project.phases.Phase;
-import com.topcoder.project.phases.PhaseStatus;
-import com.topcoder.project.phases.PhaseType;
 import com.topcoder.search.builder.SearchBuilderException;
 import com.topcoder.search.builder.filter.AndFilter;
 import com.topcoder.search.builder.filter.Filter;
@@ -142,7 +144,7 @@ import static com.cronos.onlinereview.actions.Constants.POST_MORTEM_PHASE_NAME;
  * Version 1.5 (Contest Dependency Automation v1.0) Change notes:
  *   <ol>
  *     <li>
- *       Updated {@link #saveProjectPhases(boolean, HttpServletRequest, LazyValidatorForm, Project, Map, List, boolean)} 
+ *       Updated {@link #saveProjectPhases(boolean, HttpServletRequest, LazyValidatorForm, Project, Map, List, boolean)}
  *       method to adjust the start times (if necessary) for projects which depend on current project being updated.
  *     </li>
  *   </ol>
@@ -157,13 +159,23 @@ import static com.cronos.onlinereview.actions.Constants.POST_MORTEM_PHASE_NAME;
  *     </li>
  *     <li>
  *       Updated {@link #validateProjectPhases(HttpServletRequest, Project, Phase[])} method to take into consideration
- *       <code>Approval</code> and <code>Post-Mortem</code> phases.  
+ *       <code>Approval</code> and <code>Post-Mortem</code> phases.
+ *     </li>
+ *   </ol>
+ * </p>
+ *
+ * <p>
+ * Version 1.7 (Online Review Performance Refactoring 1.0) Change notes:
+ *   <ol>
+ *     <li>
+ *       Updated {@link #listProjects(ActionMapping, ActionForm, HttpServletRequest, HttpServletResponse)} method to
+ *       speed up the projects data retrieval using Query Tool.
  *     </li>
  *   </ol>
  * </p>
  *
  * @author George1, real_vg, pulky, isv
- * @version 1.6
+ * @version 1.7
  */
 public class ProjectActions extends DispatchAction {
 
@@ -928,7 +940,7 @@ public class ProjectActions extends DispatchAction {
                  || AuthorizationHelper.hasUserRole(request, Constants.GLOBAL_MANAGER_ROLE_NAME)) {
                 project.setProperty("Billing Project", lazyForm.get("billing_project"));
         }
-        
+
 
         // TODO: Project status change, includes additional explanation to be concatenated
 
@@ -1112,7 +1124,7 @@ public class ProjectActions extends DispatchAction {
      * @param phasesJsMap a <code>Map</code> mapping phase IDs to phases.
      * @param phasesToDelete a <code>List</code> listing the existing phases for specified project which are to be
      *        deleted.
-     * @return a <code>Phase</code> array listing the updated phases associated with the specified project. 
+     * @return a <code>Phase</code> array listing the updated phases associated with the specified project.
      * @throws BaseException if an unexpected error occurs.
      */
     private Phase[] saveProjectPhases(boolean newProject, HttpServletRequest request, LazyValidatorForm lazyForm,
@@ -1609,7 +1621,7 @@ public class ProjectActions extends DispatchAction {
      * TODO: Document it
      * Note, that this method assumes that phases are already sorted by the start date, etc.
      *
-     * @param request an <code>HttpServletRequest</code> representing incoming request from the client. 
+     * @param request an <code>HttpServletRequest</code> representing incoming request from the client.
      * @param project
      * @param projectPhases
      * @return
@@ -1638,7 +1650,7 @@ public class ProjectActions extends DispatchAction {
                     "error.com.cronos.onlinereview.actions.editProject.WrongBeginningPhase");
             arePhasesValid = false;
         }
-        
+
 
         // Check the phases as a whole
         for (int i = 0; i < projectPhases.length; i++) {
@@ -2030,9 +2042,9 @@ public class ProjectActions extends DispatchAction {
 
             if ("add".equals(resourceAction)) {
 
-                if (resourceRole.equals("Manager") || resourceRole.equals("Observer") 
+                if (resourceRole.equals("Manager") || resourceRole.equals("Observer")
                          || resourceRole.equals("Designer")  || resourceRole.equals("Client Manager")  || resourceRole.equals("Copilot"))
-                {   
+                {
                     // no need for Applications/Components/LCSUPPORT
                     if (!resource.getProperty("Handle").equals("Applications") &&
                         !resource.getProperty("Handle").equals("Components") &&
@@ -2040,17 +2052,17 @@ public class ProjectActions extends DispatchAction {
                     {
                         newUsersForumWatch.add(user.getId());
                     }
-                    
+
                 }
             }
 
             // client manager and copilot have moderator role
             if (resourceRole.equals("Client Manager")  || resourceRole.equals("Copilot")
                     || resourceRole.equals("Observer") || resourceRole.equals("Designer"))
-            {   
+            {
                 newUsers.remove(user.getId());
                 newModerators.add(user.getId());
-                
+
             }
 
             // make sure "Appeals Completed Early" flag is not set if the role is not submitter.
@@ -2106,7 +2118,7 @@ public class ProjectActions extends DispatchAction {
         ActionsHelper.addForumPermissions(project, newModerators, true);
 
         long forumId = 0;
-        if (project.getProperty("Developer Forum ID") != null 
+        if (project.getProperty("Developer Forum ID") != null
               && ((Long)project.getProperty("Developer Forum ID")).longValue() != 0)
         {
             forumId = ((Long)project.getProperty("Developer Forum ID")).longValue();
@@ -2204,7 +2216,7 @@ public class ProjectActions extends DispatchAction {
      */
     private boolean validateResourceEligibility(HttpServletRequest request, LazyValidatorForm lazyForm,
             Project project, UserRetrieval userRetrieval, String[] resourceNames)
-            throws NamingException, RemoteException, CreateException, 
+            throws NamingException, RemoteException, CreateException,
                    EJBException, BaseException, ContestEligibilityValidatorException {
 
         boolean allResourcesValid = true;
@@ -2227,7 +2239,7 @@ public class ProjectActions extends DispatchAction {
                     {
                         continue;
                     }
-                        
+
                     // dont check project creator
                     if (project.getCreationUser().equals(Long.toString(userId)))
                     {
@@ -2289,6 +2301,7 @@ public class ProjectActions extends DispatchAction {
         if (scope.equalsIgnoreCase("my") && !AuthorizationHelper.isUserLoggedIn(request)) {
             return mapping.findForward("all");
         }
+
         if (scope.equalsIgnoreCase("inactive") &&
                 !AuthorizationHelper.hasUserPermission(request, Constants.VIEW_PROJECTS_INACTIVE_PERM_NAME)) {
             return mapping.findForward("all");
@@ -2298,19 +2311,14 @@ public class ProjectActions extends DispatchAction {
         ProjectManager manager = ActionsHelper.createProjectManager(request);
         // This variable will specify the index of active tab on the JSP page
         int activeTab;
-        Filter projectsFilter = null;
 
         // Determine projects displayed and index of the active tab
         // based on the value of the "scope" parameter
         if (scope.equalsIgnoreCase("my")) {
             activeTab = 1;
         } else if (scope.equalsIgnoreCase("inactive")) {
-            projectsFilter = ProjectFilterUtility.buildStatusNameEqualFilter("Inactive");
             activeTab = 4;
         } else {
-            projectsFilter = ProjectFilterUtility.buildStatusNameEqualFilter("Active");
-
-            // Specify the index of the active tab
             activeTab = 2;
         }
 
@@ -2319,13 +2327,19 @@ public class ProjectActions extends DispatchAction {
 
         // Get all project types defined in the database (e.g. Assembly, Component, etc.)
         ProjectType[] projectTypes = manager.getAllProjectTypes();
+
         // Sort project types by their names in ascending order
         Arrays.sort(projectTypes, new Comparators.ProjectTypeComparer());
+
         // Get all project categories defined in the database (e.g. Design, Security, etc.)
         ProjectCategory[] projectCategories = manager.getAllProjectCategories();
 
         request.setAttribute("projectTypes", projectTypes);
         request.setAttribute("projectCategories", projectCategories);
+
+        ProjectStatus[] projectStatuses = manager.getAllProjectStatuses();
+
+        ProjectPropertyType[] projectInfoTypes = manager.getAllProjectPropertyTypes();
 
         int[] typeCounts = new int[projectTypes.length];
         int[] categoryCounts = new int[projectCategories.length];
@@ -2348,8 +2362,24 @@ public class ProjectActions extends DispatchAction {
         String[][] myDeliverables = (myProjects) ? new String[projectCategories.length][] : null;
 
         // Fetch projects from the database. These projects will require further grouping
-        Project[] ungroupedProjects = (projectsFilter != null) ? manager.searchProjects(projectsFilter) :
-                manager.getUserProjects(AuthorizationHelper.getLoggedInUserId(request));
+        ProjectStatus inactiveStatus = ActionsHelper.findProjectStatusByName(projectStatuses, "Inactive");
+        ProjectStatus activeStatus = ActionsHelper.findProjectStatusByName(projectStatuses, "Active");
+        long userId = AuthorizationHelper.getLoggedInUserId(request);
+        Project[] ungroupedProjects;
+        ProjectDataAccess projectDataAccess = new ProjectDataAccess();
+        if (activeTab != 1) {
+            if (activeTab == 4) {
+                ungroupedProjects = projectDataAccess.searchInactiveProjects(projectStatuses, projectCategories,
+                                                                             projectInfoTypes);
+            } else {
+                ungroupedProjects = projectDataAccess.searchActiveProjects(projectStatuses, projectCategories,
+                                                                           projectInfoTypes);
+            }
+        } else {
+            // user projects
+            ungroupedProjects = projectDataAccess.searchUserActiveProjects(userId, projectStatuses, projectCategories,
+                                                                           projectInfoTypes);
+        }
 
         // Sort fetched projects. Currently sorting is done by projects' names only, in ascending order
         Arrays.sort(ungroupedProjects, new Comparators.ProjectNameComparer());
@@ -2359,29 +2389,22 @@ public class ProjectActions extends DispatchAction {
             projectFilters.add(ungroupedProjects[i].getId());
         }
 
+        ResourceManager resourceManager = ActionsHelper.createResourceManager(request);
         Resource[] allMyResources = null;
         if (ungroupedProjects.length != 0 && AuthorizationHelper.isUserLoggedIn(request)) {
-
-            Filter filterExtIDname = ResourceFilterBuilder.createExtensionPropertyNameFilter("External Reference ID");
-            Filter filterExtIDvalue = ResourceFilterBuilder.createExtensionPropertyValueFilter(
-                    String.valueOf(AuthorizationHelper.getLoggedInUserId(request)));
-
-
-            Filter filterProjects = new InFilter(ResourceFilterBuilder.PROJECT_ID_FIELD_NAME, projectFilters);
-
-            Filter filter = new AndFilter(Arrays.asList(
-                    new Filter[] {filterExtIDname, filterExtIDvalue, filterProjects}));
-
-            // Obtain an instance of Resource Manager
-            ResourceManager resMgr = ActionsHelper.createResourceManager(request);
-            // Get all "My" resources for the list of projects
-            allMyResources = resMgr.searchResources(filter);
+            if (activeTab == 1) {  // My projects
+                allMyResources = ActionsHelper.searchUserResources(userId, activeStatus, resourceManager);
+            } else if (activeTab == 2) { // Active projects
+                allMyResources = ActionsHelper.searchUserResources(userId, activeStatus, resourceManager);
+            } else if (activeTab == 4) { // Inactive projects
+                allMyResources = ActionsHelper.searchUserResources(userId, inactiveStatus, resourceManager);
+            }
         }
 
         // new eligibility constraints
         // if the user is not a global manager and is seeing all projects eligibility checks need to be performed
         if (!AuthorizationHelper.hasUserRole(request, Constants.GLOBAL_MANAGER_ROLE_NAME) &&
-            scope.equalsIgnoreCase("all") && projectFilters.size() > 0) {
+                scope.equalsIgnoreCase("all") && projectFilters.size() > 0) {
 
             // remove those projects that the user can't see
             ungroupedProjects = filterUsingEligibilityConstraints(
@@ -2391,12 +2414,22 @@ public class ProjectActions extends DispatchAction {
         // Obtain an instance of Phase Manager
         PhaseManager phMgr = ActionsHelper.createPhaseManager(request, false);
 
-        long[] allProjectIds = new long[ungroupedProjects.length];
+        PhaseStatus[] phaseStatuses = phMgr.getAllPhaseStatuses();
 
-        for (int i = 0; i < ungroupedProjects.length; ++i) {
-            allProjectIds[i] = ungroupedProjects[i].getId();
+        PhaseType[] phaseTypes = phMgr.getAllPhaseTypes();
+
+        ProjectPhaseDataAccess phasesDataAccess = new ProjectPhaseDataAccess();
+        Map<Long, com.topcoder.project.phases.Project> phProjects;
+        if (activeTab != 1) {
+            if (activeTab == 4) {
+                phProjects = phasesDataAccess.searchInactiveProjectPhases(phaseStatuses, phaseTypes);
+            } else {
+                phProjects = phasesDataAccess.searchActiveProjectPhases(phaseStatuses, phaseTypes);
+            }
+        } else {
+            // user projects
+            phProjects = phasesDataAccess.searchUserProjectPhases(userId, phaseStatuses, phaseTypes);
         }
-        com.topcoder.project.phases.Project[] phProjects = phMgr.getPhases(allProjectIds);
 
         // Message Resources to be used for this request
         MessageResources messages = getResources(request);
@@ -2439,7 +2472,7 @@ public class ProjectActions extends DispatchAction {
                     // Get a project to store in current group
                     Project project = ungroupedProjects[j];
                     // Get this project's Root Catalog ID
-                    String rootCatalogId = (String)project.getProperty("Root Catalog ID");
+                    String rootCatalogId = (String) project.getProperty("Root Catalog ID");
 
                     // Fetch Root Catalog icon's filename depending on ID of the Root Catalog
                     rcIcons[counter] = ConfigHelper.getRootCatalogIconNameSm(rootCatalogId);
@@ -2449,9 +2482,10 @@ public class ProjectActions extends DispatchAction {
                     Phase[] activePhases = null;
 
                     // Calculate end date of the project and get all active phases (if any)
-                    if (phProjects[j] != null) {
-                        preds[counter] = phProjects[j].calcEndDate();
-                        activePhases = ActionsHelper.getActivePhases(phProjects[j].getAllPhases());
+                    if (phProjects.containsKey(project.getId())) {
+                        com.topcoder.project.phases.Project phProject = phProjects.get(project.getId());
+                        preds[counter] = phProject.calcEndDate();
+                        activePhases = ActionsHelper.getActivePhases(phProject.getAllPhases());
                         pheds[counter] = null;
                     }
 
@@ -2880,12 +2914,12 @@ public class ProjectActions extends DispatchAction {
     /**
      * <p>Builds the map to be used for looking up the project categories by IDs.</p>
      *
-     * @param categories a <code>ProjectCategory</code> array listing existing project categories. 
+     * @param categories a <code>ProjectCategory</code> array listing existing project categories.
      * @return a <code>Map</code> mapping the category IDs to categories.
      * @since 1.6
      */
     private static Map<Long, ProjectCategory> buildProjectCategoriesLookupMap(ProjectCategory[] categories) {
-        Map<Long, ProjectCategory> map = new HashMap<Long, ProjectCategory>();
+        Map<Long, ProjectCategory> map = new HashMap<Long, ProjectCategory>(categories.length);
         for (ProjectCategory category : categories) {
             map.put(category.getId(), category);
         }

@@ -30,16 +30,19 @@ import com.topcoder.util.errorhandling.BaseException;
  * This class is thread safe as it contains only static methods and no inner state.
  * </p>
  *
+ *
  * <p>
- * Version 1.1 (Competition Registration Eligibility v1.0) Change notes:
+ * Version 1.2 (Online Review Performance Refactoring 1.0) Change notes:
  *   <ol>
- *     <li>Removed old "Public" project info code. Public projects are now determined by contest eligibility
- *         service.</li>
+ *     <li>
+ *       Updated {@link #gatherUserRoles(HttpServletRequest)} method to speed up the resources data retrieval using
+ *       Query Tool.
+ *     </li>
  *   </ol>
  * </p>
  *
- * @author George1, real_vg, pulky
- * @version 1.1
+ * @author George1, real_vg, pulky, isv
+ * @version 1.2
  */
 public class AuthorizationHelper {
 
@@ -221,7 +224,7 @@ public class AuthorizationHelper {
         // Obtain an instance of Resource Manager
         ResourceManager resMgr = ActionsHelper.createResourceManager(request);
         // Perform search for resources
-        Resource[] resources = resMgr.searchResources(filter);
+        Resource[] resources = ActionsHelper.searchUserResources(getLoggedInUserId(request), null, resMgr);
 
         // Iterate over all resources retrieved and take into
         // consideration only those ones that have Manager role
