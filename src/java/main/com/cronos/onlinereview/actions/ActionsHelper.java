@@ -9,17 +9,29 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.Timestamp;
 import java.sql.Types;
 import java.text.Format;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.LinkedList;
+import java.util.Map;
+import java.util.Set;
 
 import javax.ejb.CreateException;
 import javax.naming.Context;
 import javax.naming.NamingException;
 import javax.servlet.http.HttpServletRequest;
 
-import com.topcoder.management.phase.*;
+import com.cronos.onlinereview.dataaccess.ResourceDataAccess;
+import com.topcoder.management.phase.ContestDependencyAutomation;
+import com.topcoder.management.resource.persistence.ResourcePersistenceException;
 import com.topcoder.management.review.ReviewManagementException;
 import com.topcoder.search.builder.filter.EqualToFilter;
 import org.apache.struts.Globals;
@@ -175,8 +187,15 @@ import com.topcoder.web.ejb.forums.ForumsHome;
  *   </ol>
  * </p>
  *
+ * <p>
+ * Version 1.6 (Online Review Performance Refactoring 1.0) Change notes:
+ *   <ol>
+ *     <li>Added {@link #searchUserResources(long, ProjectStatus, ResourceManager)} method.</li>
+ *   </ol>
+ * </p>
+ *
  * @author George1, real_vg, pulky, isv
- * @version 1.5
+ * @version 1.6
  * @since 1.0
  */
 public class ActionsHelper {
@@ -4505,5 +4524,22 @@ public class ActionsHelper {
         ArrayList<Long> userCollection = new ArrayList<Long>();
         userCollection.add(user);
         return userCollection;
+    }
+
+    /**
+     * <p>Searches the resources for specified user for projects of specified status.</p>
+     *
+     * @param userId a <code>long</code> providing the user ID.
+     * @param status a <code>ProjectStatus</code> specifying the status of the projects.
+     * @param resourceManager a <code>ResourceManager</code> to be used for searching.
+     * @return a <code>Resource</code> array providing the details for found resources.
+     * @throws ResourcePersistenceException if an error occurs while retrieveing resource roles.
+     * @throws com.cronos.onlinereview.dataaccess.DataAccessException if an unexpected error occurs.
+     * @since 1.6
+     */
+    static Resource[] searchUserResources(long userId, ProjectStatus status, ResourceManager resourceManager)
+        throws ResourcePersistenceException {
+        ResourceDataAccess resourceDataAccess = new ResourceDataAccess();
+        return resourceDataAccess.searchUserResources(userId, status, resourceManager);
     }
 }
