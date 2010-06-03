@@ -22,5 +22,5 @@
 
             <br /><br />
 
-            <span class="copyright">Copyright &#169; 2001-2009, TopCoder, Inc. All rights reserved.</span>
+            <span class="copyright">Copyright &#169; 2001-2010, TopCoder, Inc. All rights reserved.</span>
 </div>
