@@ -360,7 +360,7 @@
     <property name="userEJB.jar.name" value="User.jar" />
     <property name="userEJB.jar" value="${tcs_libdir}/${userEJB.path}/${userEJB.jar.name}" />
 
-    <property name="distribution_tool.version" value="1.0.0" />
+    <property name="distribution_tool.version" value="1.0.1" />
     <property name="distribution_tool.jar.name" value="distribution_tool.jar" />
     <property name="distribution_tool.path" value="distribution_tool/${distribution_tool.version}" />
     <property name="distribution_tool.jar" value="${tcs_libdir}/${distribution_tool.path}/${distribution_tool.jar.name}" />
