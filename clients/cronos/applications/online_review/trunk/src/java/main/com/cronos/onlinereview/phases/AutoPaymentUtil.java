@@ -109,6 +109,7 @@ public class AutoPaymentUtil {
     public static final int REVIEW_PHASE = 4;
     public static final int AGGREGATION_PHASE = 7;
     public static final int FINAL_REVIEW_PHASE = 10;
+    public static final int POST_MORTEM_PHASE = 12;
 
     /**
      * Prevent to be created.
@@ -181,6 +182,8 @@ public class AutoPaymentUtil {
                 updateResourcePayment(reviewer.getResourceId(), fpc.getCoreReviewCost(), conn);
             } else if (reviewer.isReviewer() && phaseId == REVIEW_PHASE) {
                 updateResourcePayment(reviewer.getResourceId(), fpc.getReviewPrice(), conn);
+            } else if (reviewer.isPostMortemReviewer() && phaseId == POST_MORTEM_PHASE) {
+                updateResourcePayment(reviewer.getResourceId(), fpc.getPostMortemCost(), conn);
             }
         }
     }
@@ -269,12 +272,13 @@ public class AutoPaymentUtil {
             "   resource_info ri" +
             "   where r.resource_id = ri.resource_id" +
             "   and ri.resource_info_type_id = 1" +
-            "   and r.resource_role_id in (2, 3, 4, 5, 6, 7, 8, 9)" +
+            "   and r.resource_role_id in (2, 3, 4, 5, 6, 7, 8, 9, 16)" +
             "   and r.project_id = ? " +
             "   and not exists (select ri1.resource_id from resource_info ri1 " +
             "           where r.resource_id = ri1.resource_id" +
             "           and ri1.resource_info_type_id = 8" +
             "           and ri1.value = 'N/A')" +
+            "   and r.resource_id in (select resource_id from review where committed = 1)" +
             "order by resource_role_id";
         PreparedStatement pstmt = null;
         ResultSet rs = null;
@@ -737,6 +741,15 @@ class Reviewer {
      */
     public boolean isAggregator() {
         return this.resourceRoleId == 8;
+    }
+
+    /**
+     * isPostMortemReviewer
+     *
+     * @return isAggregator
+     */
+    public boolean isPostMortemReviewer() {
+        return this.resourceRoleId == 16;
     }
 
     /**
