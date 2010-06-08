@@ -21,7 +21,7 @@ import com.cronos.onlinereview.phases.PRRegistrationPhaseHandler;
 import com.cronos.onlinereview.phases.PRReviewPhaseHandler;
 import com.cronos.onlinereview.phases.PRScreeningPhaseHandler;
 import com.cronos.onlinereview.phases.PRSubmissionPhaseHandler;
-import com.cronos.onlinereview.phases.PostMortemPhaseHandler;
+import com.cronos.onlinereview.phases.PRPostMortemPhaseHandler;
 import com.cronos.onlinereview.services.uploads.ManagersProvider;
 import com.topcoder.db.connectionfactory.DBConnectionFactory;
 import com.topcoder.db.connectionfactory.DBConnectionFactoryImpl;
@@ -150,7 +150,7 @@ public class ManagerCreationHelper implements ManagersProvider {
                     Constants.FINAL_REVIEW_PHASE_NAME);
             registerPhaseHandlerForOperation(phaseManager, phaseTypes, new ApprovalPhaseHandler(),
                     Constants.APPROVAL_PHASE_NAME);
-            registerPhaseHandlerForOperation(phaseManager, phaseTypes, new PostMortemPhaseHandler(),
+            registerPhaseHandlerForOperation(phaseManager, phaseTypes, new PRPostMortemPhaseHandler(),
                     Constants.POST_MORTEM_PHASE_NAME);
             return phaseManager;
         } catch (Exception e) {

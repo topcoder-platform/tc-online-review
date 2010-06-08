@@ -233,10 +233,8 @@ public class PRHelper {
     		logger.log(Level.INFO,
 					new LoggerMessage("project", new Long(projectId), null, "process Aggregation phase."));
             populateProjectResult(projectId, conn);
-        } else {
-            // start this phase
-            AutoPaymentUtil.populateReviewerPayments(projectId, conn, AutoPaymentUtil.AGGREGATION_PHASE);
         }
+        AutoPaymentUtil.populateReviewerPayments(projectId, conn, AutoPaymentUtil.AGGREGATION_PHASE);
     }
 
     /**
@@ -287,9 +285,28 @@ public class PRHelper {
         } else {
     		logger.log(Level.INFO,
 					new LoggerMessage("project", new Long(projectId), null, "start final review phase."));
-            // start this phase
-            AutoPaymentUtil.populateReviewerPayments(projectId, conn, AutoPaymentUtil.FINAL_REVIEW_PHASE);
         }
+        AutoPaymentUtil.populateReviewerPayments(projectId, conn, AutoPaymentUtil.FINAL_REVIEW_PHASE);
+    }
+
+    /**
+     * Pull data to project_result.
+     * 
+     * @param projectId
+     *            the projectId
+     * @throws PhaseHandlingException
+     *             if error occurs
+     */
+    static void processPostMortemPR(long projectId, Connection conn, boolean toStart) throws SQLException {
+        if (!toStart) {
+    		logger.log(Level.INFO,
+					new LoggerMessage("project", new Long(projectId), null, "Process post mortem phase."));
+            populateProjectResult(projectId, conn);
+        } else {
+    		logger.log(Level.INFO,
+					new LoggerMessage("project", new Long(projectId), null, "start post mortem phase."));
+        }
+        AutoPaymentUtil.populateReviewerPayments(projectId, conn, AutoPaymentUtil.POST_MORTEM_PHASE);
     }
 
     /**

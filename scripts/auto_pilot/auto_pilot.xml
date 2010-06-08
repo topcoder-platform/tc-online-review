@@ -928,7 +928,7 @@
         </Property>
         <Property name="handler_post-mortem_def">
             <Property name="type">
-                <Value>com.cronos.onlinereview.phases.PostMortemPhaseHandler</Value>
+                <Value>com.cronos.onlinereview.phases.PRPostMortemPhaseHandler</Value>
             </Property>
         </Property>	
     </Config>
