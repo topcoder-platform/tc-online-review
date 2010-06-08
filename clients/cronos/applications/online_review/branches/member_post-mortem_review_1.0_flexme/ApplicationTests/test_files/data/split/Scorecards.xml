@@ -1,0 +1,356 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<dataset>
+    <!-- *** scorecard *** -->
+    <!-- Design Screening Scorecard -->
+    <scorecard scorecard_id="1" scorecard_status_id="1" scorecard_type_id="1" project_category_id="1"
+               name="Design Screening Scorecard" version="1.0"
+               min_score="50" max_score="100"
+               create_user="System" create_date="2006-07-29 02:45:11.0"
+               modify_user="System" modify_date="2006-07-29 02:45:11.0"/>
+    <!-- Design Review Scorecard -->
+    <scorecard scorecard_id="2" scorecard_status_id="1" scorecard_type_id="2" project_category_id="1"
+               name="Design Review Scorecard" version="1.0"
+               min_score="50" max_score="100"
+               create_user="System" create_date="2006-07-29 02:45:11.0"
+               modify_user="System" modify_date="2006-07-29 02:45:11.0"/>
+    <!-- Design Approval Scorecard -->
+    <scorecard scorecard_id="3" scorecard_status_id="1" scorecard_type_id="3" project_category_id="1"
+               name="Design Approval Scorecard" version="1.0"
+               min_score="50" max_score="100"
+               create_user="System" create_date="2006-07-29 02:45:11.0"
+               modify_user="System" modify_date="2006-07-29 02:45:11.0"/>
+
+    <!-- *** scorecard_group *** -->
+    <!-- Design Screening Scorecard -->
+    <scorecard_group scorecard_group_id="1" scorecard_id="1" name="Design Screening Group 1" weight="40" sort="1"
+                     create_user="System" create_date="2006-07-29 02:45:11.0"
+                     modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Design Screening, Group 1 -->
+    <scorecard_group scorecard_group_id="2" scorecard_id="1" name="Design Screening Group 2" weight="40" sort="1"
+                     create_user="System" create_date="2006-07-29 02:45:11.0"
+                     modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Design Screening, Group 2 -->
+    <scorecard_group scorecard_group_id="3" scorecard_id="1" name="Design Screening Group 3" weight="20" sort="1"
+                     create_user="System" create_date="2006-07-29 02:45:11.0"
+                     modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Design Screening, Group 3 -->
+    <!-- Design Review Scorecard -->
+    <scorecard_group scorecard_group_id="4" scorecard_id="2" name="Design Review Group 1" weight="40" sort="1"
+                     create_user="System" create_date="2006-07-29 02:45:11.0"
+                     modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Design Review, Group 1 -->
+    <scorecard_group scorecard_group_id="5" scorecard_id="2" name="Design Review Group 2" weight="40" sort="1"
+                     create_user="System" create_date="2006-07-29 02:45:11.0"
+                     modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Design Review, Group 2 -->
+    <scorecard_group scorecard_group_id="6" scorecard_id="2" name="Design Review Group 3" weight="20" sort="1"
+                     create_user="System" create_date="2006-07-29 02:45:11.0"
+                     modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Design Review, Group 3 -->
+    <!-- Design Approval Scorecard -->
+    <scorecard_group scorecard_group_id="7" scorecard_id="3" name="Design Approval Group 1" weight="40" sort="1"
+                     create_user="System" create_date="2006-07-29 02:45:11.0"
+                     modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Design Approval, Group 1 -->
+    <scorecard_group scorecard_group_id="8" scorecard_id="3" name="Design Approval Group 2" weight="40" sort="1"
+                     create_user="System" create_date="2006-07-29 02:45:11.0"
+                     modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Design Approval, Group 2 -->
+    <scorecard_group scorecard_group_id="9" scorecard_id="3" name="Design Approval Group 3" weight="20" sort="1"
+                     create_user="System" create_date="2006-07-29 02:45:11.0"
+                     modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Design Approval, Group 3 -->
+
+    <!-- *** scorecard_section *** -->
+    <!-- Design Screening Scorecard, Group 1 -->
+    <scorecard_section scorecard_section_id="1" scorecard_group_id="1" name="Design Screening Group 1 Section 1"
+                       weight="60" sort="1"
+                       create_user="System" create_date="2006-07-29 02:45:11.0"
+                       modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Section 1 -->
+    <scorecard_section scorecard_section_id="2" scorecard_group_id="1" name="Design Screening Group 1 Section 2"
+                       weight="40" sort="1"
+                       create_user="System" create_date="2006-07-29 02:45:11.0"
+                       modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Section 2 -->
+    <!-- Design Screening Scorecard, Group 2 -->
+    <scorecard_section scorecard_section_id="3" scorecard_group_id="2" name="Design Screening Group 2 Section 1"
+                       weight="30" sort="1"
+                       create_user="System" create_date="2006-07-29 02:45:11.0"
+                       modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Section 1 -->
+    <scorecard_section scorecard_section_id="4" scorecard_group_id="2" name="Design Screening Group 2 Section 2"
+                       weight="70" sort="1"
+                       create_user="System" create_date="2006-07-29 02:45:11.0"
+                       modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Section 2 -->
+    <!-- Design Screening Scorecard, Group 3 -->
+    <scorecard_section scorecard_section_id="5" scorecard_group_id="3" name="Design Screening Group 3 Section 1"
+                       weight="30" sort="1"
+                       create_user="System" create_date="2006-07-29 02:45:11.0"
+                       modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Section 1 -->
+    <scorecard_section scorecard_section_id="6" scorecard_group_id="3" name="Design Screening Group 3 Section 2"
+                       weight="40" sort="1"
+                       create_user="System" create_date="2006-07-29 02:45:11.0"
+                       modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Section 2 -->
+    <scorecard_section scorecard_section_id="7" scorecard_group_id="3" name="Design Screening Group 3 Section 3"
+                       weight="30" sort="1"
+                       create_user="System" create_date="2006-07-29 02:45:11.0"
+                       modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Section 3 -->
+    <!-- Design Review Scorecard, Group 1 -->
+    <scorecard_section scorecard_section_id="8" scorecard_group_id="4" name="Design Review Group 1 Section 1"
+                       weight="60" sort="1"
+                       create_user="System" create_date="2006-07-29 02:45:11.0"
+                       modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Section 1 -->
+    <scorecard_section scorecard_section_id="9" scorecard_group_id="4" name="Design Review Group 1 Section 2"
+                       weight="40" sort="1"
+                       create_user="System" create_date="2006-07-29 02:45:11.0"
+                       modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Section 2 -->
+    <!-- Design Review Scorecard, Group 2 -->
+    <scorecard_section scorecard_section_id="10" scorecard_group_id="5" name="Design Review Group 2 Section 1"
+                       weight="30" sort="1"
+                       create_user="System" create_date="2006-07-29 02:45:11.0"
+                       modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Section 1 -->
+    <scorecard_section scorecard_section_id="11" scorecard_group_id="5" name="Design Review Group 2 Section 2"
+                       weight="70" sort="1"
+                       create_user="System" create_date="2006-07-29 02:45:11.0"
+                       modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Section 2 -->
+    <!-- Design Review Scorecard, Group 3 -->
+    <scorecard_section scorecard_section_id="12" scorecard_group_id="6" name="Design Review Group 3 Section 1"
+                       weight="30" sort="1"
+                       create_user="System" create_date="2006-07-29 02:45:11.0"
+                       modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Section 1 -->
+    <scorecard_section scorecard_section_id="13" scorecard_group_id="6" name="Design Review Group 3 Section 2"
+                       weight="40" sort="1"
+                       create_user="System" create_date="2006-07-29 02:45:11.0"
+                       modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Section 2 -->
+    <scorecard_section scorecard_section_id="14" scorecard_group_id="6" name="Design Review Group 3 Section 3"
+                       weight="30" sort="1"
+                       create_user="System" create_date="2006-07-29 02:45:11.0"
+                       modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Section 3 -->
+    <!-- Design Approval Scorecard, Group 1 -->
+    <scorecard_section scorecard_section_id="15" scorecard_group_id="7" name="Design Approval Group 1 Section 1"
+                       weight="100" sort="1"
+                       create_user="System" create_date="2006-07-29 02:45:11.0"
+                       modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Section 1 -->
+    <!-- Design Approval Scorecard, Group 2 -->
+    <scorecard_section scorecard_section_id="16" scorecard_group_id="8" name="Design Approval Group 2 Section 1"
+                       weight="100" sort="1"
+                       create_user="System" create_date="2006-07-29 02:45:11.0"
+                       modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Section 1 -->
+    <!-- Design Approval Scorecard, Group 3 -->
+    <scorecard_section scorecard_section_id="17" scorecard_group_id="9" name="Design Approval Group 3 Section 1"
+                       weight="100" sort="1"
+                       create_user="System" create_date="2006-07-29 02:45:11.0"
+                       modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Section 1 -->
+
+    <!-- *** scorecard_question *** -->
+    <!-- Design Screening Scorecard, Group 1 Section 1 -->
+    <scorecard_question scorecard_question_id="1" scorecard_question_type_id="1" scorecard_section_id="1"
+                        description="Design Screening Group 1 Section 1 Question 1"
+                        guideline="Design Screening Group 1 Section 1 Question 1 Guideline"
+                        weight="30" sort="1" upload_document="0" upload_document_required="0"
+                        create_user="System" create_date="2006-07-29 02:45:11.0"
+                        modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Question 1 -->
+    <scorecard_question scorecard_question_id="2" scorecard_question_type_id="1" scorecard_section_id="1"
+                        description="Design Screening Group 1 Section 1 Question 2"
+                        guideline="Design Screening Group 1 Section 1 Question 2 Guideline"
+                        weight="70" sort="2" upload_document="0" upload_document_required="0"
+                        create_user="System" create_date="2006-07-29 02:45:11.0"
+                        modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Question 2 -->
+    <!-- Design Screening Scorecard, Group 1 Section 2 -->
+    <scorecard_question scorecard_question_id="3" scorecard_question_type_id="1" scorecard_section_id="2"
+                        description="Design Screening Group 1 Section 2 Question 1"
+                        guideline="Design Screening Group 1 Section 2 Question 1 Guideline"
+                        weight="40" sort="1" upload_document="0" upload_document_required="0"
+                        create_user="System" create_date="2006-07-29 02:45:11.0"
+                        modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Question 1 -->
+    <scorecard_question scorecard_question_id="4" scorecard_question_type_id="1" scorecard_section_id="2"
+                        description="Design Screening Group 1 Section 2 Question 2"
+                        guideline="Design Screening Group 1 Section 2 Question 2 Guideline"
+                        weight="60" sort="2" upload_document="0" upload_document_required="0"
+                        create_user="System" create_date="2006-07-29 02:45:11.0"
+                        modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Question 2 -->
+    <!-- Design Screening Scorecard, Group 2 Section 1 -->
+    <scorecard_question scorecard_question_id="5" scorecard_question_type_id="1" scorecard_section_id="3"
+                        description="Design Screening Group 2 Section 1 Question 1"
+                        guideline="Design Screening Group 2 Section 1 Question 1 Guideline"
+                        weight="35" sort="1" upload_document="0" upload_document_required="0"
+                        create_user="System" create_date="2006-07-29 02:45:11.0"
+                        modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Question 1 -->
+    <scorecard_question scorecard_question_id="6" scorecard_question_type_id="1" scorecard_section_id="3"
+                        description="Design Screening Group 2 Section 1 Question 2"
+                        guideline="Design Screening Group 2 Section 1 Question 2 Guideline"
+                        weight="65" sort="2" upload_document="0" upload_document_required="0"
+                        create_user="System" create_date="2006-07-29 02:45:11.0"
+                        modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Question 2 -->
+    <!-- Design Screening Scorecard, Group 2 Section 2 -->
+    <scorecard_question scorecard_question_id="7" scorecard_question_type_id="1" scorecard_section_id="4"
+                        description="Design Screening Group 2 Section 2 Question 1"
+                        guideline="Design Screening Group 2 Section 2 Question 1 Guideline"
+                        weight="45" sort="1" upload_document="0" upload_document_required="0"
+                        create_user="System" create_date="2006-07-29 02:45:11.0"
+                        modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Question 1 -->
+    <scorecard_question scorecard_question_id="8" scorecard_question_type_id="1" scorecard_section_id="4"
+                        description="Design Screening Group 2 Section 2 Question 2"
+                        guideline="Design Screening Group 2 Section 2 Question 2 Guideline"
+                        weight="55" sort="2" upload_document="0" upload_document_required="0"
+                        create_user="System" create_date="2006-07-29 02:45:11.0"
+                        modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Question 2 -->
+    <!-- Design Screening Scorecard, Group 3 Section 1 -->
+    <scorecard_question scorecard_question_id="9" scorecard_question_type_id="1" scorecard_section_id="5"
+                        description="Design Screening Group 3 Section 1 Question 1"
+                        guideline="Design Screening Group 3 Section 1 Question 1 Guideline"
+                        weight="15" sort="1" upload_document="0" upload_document_required="0"
+                        create_user="System" create_date="2006-07-29 02:45:11.0"
+                        modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Question 1 -->
+    <scorecard_question scorecard_question_id="10" scorecard_question_type_id="1" scorecard_section_id="5"
+                        description="Design Screening Group 3 Section 1 Question 2"
+                        guideline="Design Screening Group 3 Section 1 Question 2 Guideline"
+                        weight="85" sort="2" upload_document="0" upload_document_required="0"
+                        create_user="System" create_date="2006-07-29 02:45:11.0"
+                        modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Question 2 -->
+    <!-- Design Screening Scorecard, Group 3 Section 2 -->
+    <scorecard_question scorecard_question_id="11" scorecard_question_type_id="1" scorecard_section_id="6"
+                        description="Design Screening Group 3 Section 2 Question 1"
+                        guideline="Design Screening Group 3 Section 2 Question 1 Guideline"
+                        weight="90" sort="1" upload_document="0" upload_document_required="0"
+                        create_user="System" create_date="2006-07-29 02:45:11.0"
+                        modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Question 1 -->
+    <scorecard_question scorecard_question_id="12" scorecard_question_type_id="1" scorecard_section_id="6"
+                        description="Design Screening Group 3 Section 2 Question 2"
+                        guideline="Design Screening Group 3 Section 2 Question 2 Guideline"
+                        weight="10" sort="2" upload_document="0" upload_document_required="0"
+                        create_user="System" create_date="2006-07-29 02:45:11.0"
+                        modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Question 2 -->
+    <!-- Design Screening Scorecard, Group 3 Section 3 -->
+    <scorecard_question scorecard_question_id="13" scorecard_question_type_id="1" scorecard_section_id="7"
+                        description="Design Screening Group 3 Section 3 Question 1"
+                        guideline="Design Screening Group 3 Section 3 Question 1 Guideline"
+                        weight="80" sort="1" upload_document="0" upload_document_required="0"
+                        create_user="System" create_date="2006-07-29 02:45:11.0"
+                        modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Question 1 -->
+    <scorecard_question scorecard_question_id="14" scorecard_question_type_id="1" scorecard_section_id="7"
+                        description="Design Screening Group 3 Section 3 Question 2"
+                        guideline="Design Screening Group 3 Section 3 Question 2 Guideline"
+                        weight="20" sort="2" upload_document="0" upload_document_required="0"
+                        create_user="System" create_date="2006-07-29 02:45:11.0"
+                        modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Question 2 -->
+    <!-- Design Review Scorecard, Group 1 Section 1 -->
+    <scorecard_question scorecard_question_id="15" scorecard_question_type_id="1" scorecard_section_id="8"
+                        description="Design Review Group 1 Section 1 Question 1"
+                        guideline="Design Review Group 1 Section 1 Question 1 Guideline"
+                        weight="30" sort="1" upload_document="0" upload_document_required="0"
+                        create_user="System" create_date="2006-07-29 02:45:11.0"
+                        modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Question 1 -->
+    <scorecard_question scorecard_question_id="16" scorecard_question_type_id="1" scorecard_section_id="8"
+                        description="Design Review Group 1 Section 1 Question 2"
+                        guideline="Design Review Group 1 Section 1 Question 2 Guideline"
+                        weight="70" sort="2" upload_document="0" upload_document_required="0"
+                        create_user="System" create_date="2006-07-29 02:45:11.0"
+                        modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Question 2 -->
+    <!-- Design Review Scorecard, Group 1 Section 2 -->
+    <scorecard_question scorecard_question_id="17" scorecard_question_type_id="1" scorecard_section_id="9"
+                        description="Design Review Group 1 Section 2 Question 1"
+                        guideline="Design Review Group 1 Section 2 Question 1 Guideline"
+                        weight="40" sort="1" upload_document="0" upload_document_required="0"
+                        create_user="System" create_date="2006-07-29 02:45:11.0"
+                        modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Question 1 -->
+    <scorecard_question scorecard_question_id="18" scorecard_question_type_id="1" scorecard_section_id="9"
+                        description="Design Review Group 1 Section 2 Question 2"
+                        guideline="Design Review Group 1 Section 2 Question 2 Guideline"
+                        weight="60" sort="2" upload_document="0" upload_document_required="0"
+                        create_user="System" create_date="2006-07-29 02:45:11.0"
+                        modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Question 2 -->
+    <!-- Design Review Scorecard, Group 2 Section 1 -->
+    <scorecard_question scorecard_question_id="19" scorecard_question_type_id="1" scorecard_section_id="10"
+                        description="Design Review Group 2 Section 1 Question 1"
+                        guideline="Design Review Group 2 Section 1 Question 1 Guideline"
+                        weight="35" sort="1" upload_document="0" upload_document_required="0"
+                        create_user="System" create_date="2006-07-29 02:45:11.0"
+                        modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Question 1 -->
+    <scorecard_question scorecard_question_id="20" scorecard_question_type_id="1" scorecard_section_id="10"
+                        description="Design Review Group 2 Section 1 Question 2"
+                        guideline="Design Review Group 2 Section 1 Question 2 Guideline"
+                        weight="65" sort="2" upload_document="0" upload_document_required="0"
+                        create_user="System" create_date="2006-07-29 02:45:11.0"
+                        modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Question 2 -->
+    <!-- Design Review Scorecard, Group 2 Section 2 -->
+    <scorecard_question scorecard_question_id="21" scorecard_question_type_id="1" scorecard_section_id="11"
+                        description="Design Review Group 2 Section 2 Question 1"
+                        guideline="Design Review Group 2 Section 2 Question 1 Guideline"
+                        weight="45" sort="1" upload_document="0" upload_document_required="0"
+                        create_user="System" create_date="2006-07-29 02:45:11.0"
+                        modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Question 1 -->
+    <scorecard_question scorecard_question_id="22" scorecard_question_type_id="1" scorecard_section_id="11"
+                        description="Design Review Group 2 Section 2 Question 2"
+                        guideline="Design Review Group 2 Section 2 Question 2 Guideline"
+                        weight="55" sort="2" upload_document="0" upload_document_required="0"
+                        create_user="System" create_date="2006-07-29 02:45:11.0"
+                        modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Question 2 -->
+    <!-- Design Review Scorecard, Group 3 Section 1 -->
+    <scorecard_question scorecard_question_id="23" scorecard_question_type_id="1" scorecard_section_id="12"
+                        description="Design Review Group 3 Section 1 Question 1"
+                        guideline="Design Review Group 3 Section 1 Question 1 Guideline"
+                        weight="15" sort="1" upload_document="0" upload_document_required="0"
+                        create_user="System" create_date="2006-07-29 02:45:11.0"
+                        modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Question 1 -->
+    <scorecard_question scorecard_question_id="24" scorecard_question_type_id="1" scorecard_section_id="12"
+                        description="Design Review Group 3 Section 1 Question 2"
+                        guideline="Design Review Group 3 Section 1 Question 2 Guideline"
+                        weight="85" sort="2" upload_document="0" upload_document_required="0"
+                        create_user="System" create_date="2006-07-29 02:45:11.0"
+                        modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Question 2 -->
+    <!-- Design Review Scorecard, Group 3 Section 2 -->
+    <scorecard_question scorecard_question_id="25" scorecard_question_type_id="1" scorecard_section_id="13"
+                        description="Design Review Group 3 Section 2 Question 1"
+                        guideline="Design Review Group 3 Section 2 Question 1 Guideline"
+                        weight="90" sort="1" upload_document="0" upload_document_required="0"
+                        create_user="System" create_date="2006-07-29 02:45:11.0"
+                        modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Question 1 -->
+    <scorecard_question scorecard_question_id="26" scorecard_question_type_id="1" scorecard_section_id="13"
+                        description="Design Review Group 3 Section 2 Question 2"
+                        guideline="Design Review Group 3 Section 2 Question 2 Guideline"
+                        weight="10" sort="2" upload_document="0" upload_document_required="0"
+                        create_user="System" create_date="2006-07-29 02:45:11.0"
+                        modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Question 2 -->
+    <!-- Design Review Scorecard, Group 3 Section 3 -->
+    <scorecard_question scorecard_question_id="27" scorecard_question_type_id="1" scorecard_section_id="14"
+                        description="Design Review Group 3 Section 3 Question 1"
+                        guideline="Design Review Group 3 Section 3 Question 1 Guideline"
+                        weight="80" sort="1" upload_document="0" upload_document_required="0"
+                        create_user="System" create_date="2006-07-29 02:45:11.0"
+                        modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Question 1 -->
+    <scorecard_question scorecard_question_id="28" scorecard_question_type_id="1" scorecard_section_id="14"
+                        description="Design Review Group 3 Section 3 Question 2"
+                        guideline="Design Review Group 3 Section 3 Question 2 Guideline"
+                        weight="20" sort="2" upload_document="0" upload_document_required="0"
+                        create_user="System" create_date="2006-07-29 02:45:11.0"
+                        modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Question 2 -->
+    <!-- Design Approval Scorecard, Group 1 Section 1 -->
+    <scorecard_question scorecard_question_id="29" scorecard_question_type_id="1" scorecard_section_id="15"
+                        description="Design Approval Group 1 Section 1 Question 1"
+                        guideline="Design Approval Group 1 Section 1 Question 1 Guideline"
+                        weight="30" sort="1" upload_document="0" upload_document_required="0"
+                        create_user="System" create_date="2006-07-29 02:45:11.0"
+                        modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Question 1 -->
+    <scorecard_question scorecard_question_id="30" scorecard_question_type_id="1" scorecard_section_id="15"
+                        description="Design Approval Group 1 Section 1 Question 2"
+                        guideline="Design Approval Group 1 Section 1 Question 2 Guideline"
+                        weight="70" sort="2" upload_document="0" upload_document_required="0"
+                        create_user="System" create_date="2006-07-29 02:45:11.0"
+                        modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Question 2 -->
+    <!-- Design Approval Scorecard, Group 2 Section 1 -->
+    <scorecard_question scorecard_question_id="31" scorecard_question_type_id="1" scorecard_section_id="16"
+                        description="Design Approval Group 2 Section 1 Question 1"
+                        guideline="Design Approval Group 2 Section 1 Question 1 Guideline"
+                        weight="30" sort="1" upload_document="0" upload_document_required="0"
+                        create_user="System" create_date="2006-07-29 02:45:11.0"
+                        modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Question 1 -->
+    <scorecard_question scorecard_question_id="32" scorecard_question_type_id="1" scorecard_section_id="16"
+                        description="Design Approval Group 2 Section 1 Question 2"
+                        guideline="Design Approval Group 2 Section 1 Question 2 Guideline"
+                        weight="70" sort="2" upload_document="0" upload_document_required="0"
+                        create_user="System" create_date="2006-07-29 02:45:11.0"
+                        modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Question 2 -->
+    <!-- Design Approval Scorecard, Group 3 Section 1 -->
+    <scorecard_question scorecard_question_id="33" scorecard_question_type_id="1" scorecard_section_id="17"
+                        description="Design Approval Group 3 Section 1 Question 1"
+                        guideline="Design Approval Group 3 Section 1 Question 1 Guideline"
+                        weight="30" sort="1" upload_document="0" upload_document_required="0"
+                        create_user="System" create_date="2006-07-29 02:45:11.0"
+                        modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Question 1 -->
+    <scorecard_question scorecard_question_id="34" scorecard_question_type_id="1" scorecard_section_id="17"
+                        description="Design Approval Group 3 Section 1 Question 2"
+                        guideline="Design Approval Group 3 Section 1 Question 2 Guideline"
+                        weight="70" sort="2" upload_document="0" upload_document_required="0"
+                        create_user="System" create_date="2006-07-29 02:45:11.0"
+                        modify_user="System" modify_date="2006-07-29 02:45:11.0"/><!-- Question 2 -->
+</dataset>
