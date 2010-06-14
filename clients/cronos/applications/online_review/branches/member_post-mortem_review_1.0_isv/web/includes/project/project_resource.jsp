@@ -1,6 +1,7 @@
 <%@ page language="java" isELIgnored="false" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="html" uri="/tags/struts-html" %>
 <%@ taglib prefix="bean" uri="/tags/struts-bean" %>
 <%@ taglib prefix="tc-webtag" uri="/tags/tc-webtags" %>
@@ -49,7 +50,11 @@
 						</c:otherwise>
 					</c:choose>
 				</c:if>
-				<td class="valueC" nowrap="nowrap">${resource.allProperties["Registration Date"]}</td>
+				<td class="valueC" nowrap="nowrap">
+                    <fmt:parseDate pattern="MM.dd.yyyy hh:mm a" value="${resource.allProperties['Registration Date']}"
+                                   var="registrationDate"/>
+                    <fmt:formatDate pattern="MM.dd.yyyy HH:mm z" value="${registrationDate}"/>
+                </td>
 			</tr>
 		</c:forEach>
 		<tr>

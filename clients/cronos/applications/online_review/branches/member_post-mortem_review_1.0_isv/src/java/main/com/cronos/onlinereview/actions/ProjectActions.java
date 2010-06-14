@@ -21,6 +21,7 @@ import java.util.Stack;
 
 import com.cronos.onlinereview.dataaccess.ProjectDataAccess;
 import com.cronos.onlinereview.dataaccess.ProjectPhaseDataAccess;
+import com.topcoder.management.deliverable.UploadManager;
 import com.topcoder.management.phase.ContestDependencyAutomation;
 import com.topcoder.management.project.Project;
 import com.topcoder.management.project.ProjectCategory;
@@ -29,10 +30,15 @@ import com.topcoder.management.project.ProjectPropertyType;
 import com.topcoder.management.project.ProjectStatus;
 import com.topcoder.management.project.ProjectType;
 import com.topcoder.management.project.link.ProjectLinkManager;
+import com.topcoder.management.review.ReviewManagementException;
+import com.topcoder.management.review.ReviewManager;
+import com.topcoder.management.review.data.Review;
+import com.topcoder.management.scorecard.data.ScorecardType;
 import com.topcoder.project.phases.Dependency;
 import com.topcoder.project.phases.Phase;
 import com.topcoder.project.phases.PhaseStatus;
 import com.topcoder.project.phases.PhaseType;
+import com.topcoder.search.builder.filter.EqualToFilter;
 import com.topcoder.web.common.eligibility.ContestEligibilityServiceLocator;
 
 import javax.ejb.CreateException;
@@ -174,7 +180,25 @@ import static com.cronos.onlinereview.actions.Constants.POST_MORTEM_PHASE_NAME;
  *   </ol>
  * </p>
  *
- * @author George1, real_vg, pulky, isv
+ * <p>
+ * Version 1.8 (Member Post-Mortem Review Assembly 1.0) Change notes:
+ *   <ol>
+ *     <li>
+ *       Updated {@link #saveResources(boolean, HttpServletRequest, LazyValidatorForm, Project, Phase[], Map)} method to
+ *       deny removal, handle/role update for resources which have submissions or review scorecards associated with
+ *       them.
+ *     </li>
+ *     <li>
+ *       Updated {@link #populateProjectForm(HttpServletRequest, LazyValidatorForm, Project)} method to
+ *       deny removal, handle/role update for resources which have submissions or review scorecards associated with
+ *       them.
+ *     </li>
+ *     <li>Added {@link #REVIEWER_ROLE_NAMES} constant.</li>
+ *     <li>Added {@link #findResourcesWithReviewsForProject(ReviewManager, Long)} method.</li>
+ *   </ol>
+ * </p>
+ *
+ * @author George1, real_vg, pulky, isv, TCSDEVELOPER
  * @version 1.7
  */
 public class ProjectActions extends DispatchAction {
@@ -194,6 +218,31 @@ public class ProjectActions extends DispatchAction {
     private static final int DEFAULT_TERMS_SORT_ORDER = 1;
 
     private static final DateFormat DATE_FORMAT = new SimpleDateFormat("MM.dd.yyyy hh:mm a", Locale.US);
+
+    /**
+     * <p>A <code>Set</code> holding the names for all reviewer roles.</p>
+     *
+     * @since 1.8
+     */
+    private static final Set<String> REVIEWER_ROLE_NAMES = new HashSet<String>(Arrays.asList("Reviewer",
+        "Accuracy Reviewer", "Failure Reviewer", "Stress Reviewer", "Screener", "Primary Screener", "Aggregator",
+        "Final Reviewer", "Approver", "Post-Mortem Reviewer"));
+
+    /**
+     * <p>A <code>Set</code> holding the IDs for reviewer roles which do not allow duplicate users to be assigned to.
+     * </p>
+     *
+     * @since 1.8
+     */
+    private static final Set<Long> NODUPLICATE_REVIEWER_ROLE_IDS = new HashSet<Long>(Arrays.asList(4L, 5L, 6L, 7L));
+
+    /**
+     * <p>A <code>Set</code> holding the IDs for reviewer roles which do not allow more than one user to be assigned to.
+     * </p>
+     *
+     * @since 1.8
+     */
+    private static final Set<Long> SINGLE_REVIEWER_ROLE_IDS = new HashSet<Long>(Arrays.asList(2L, 8L, 9L));
 
     /**
      * Creates a new instance of the <code>ProjectActions</code> class.
@@ -477,7 +526,17 @@ public class ProjectActions extends DispatchAction {
         ExternalUser[] externalUsers =
             ActionsHelper.getExternalUsersForResources(ActionsHelper.createUserRetrieval(request), resources);
 
+        // The drop-downs for Payment Type and Payment Status for Add Resource area are set to N/A
+        form.set("resources_payment", 0, Boolean.FALSE);
+        form.set("resources_paid", 0, "N/A");
+
         // Populate form with resources data
+        ReviewManager reviewManager = ActionsHelper.createReviewManager(request);
+        Set<Long> reviewersWithScorecards = findResourcesWithReviewsForProject(reviewManager, project.getId());
+        Map<Integer, Boolean> trueSubmitters = new HashMap<Integer, Boolean>();
+        Map<Integer, Boolean> trueReviewers = new HashMap<Integer, Boolean>();
+        request.setAttribute("trueSubmitters", trueSubmitters);
+        request.setAttribute("trueReviewers", trueReviewers);
         for (int i = 0; i < resources.length; ++i) {
             form.set("resources_id", i + 1, new Long(resources[i].getId()));
             form.set("resources_action", i + 1, "update");
@@ -497,6 +556,20 @@ public class ProjectActions extends DispatchAction {
                 form.set("resources_paid", i + 1, resources[i].getProperty("Payment Status"));
             } else {
                 form.set("resources_paid", i + 1, "N/A");
+            }
+
+            // Save the flags for those Submiiters who have submitted for project and reviewers who have review
+            // scorecards associated
+            String resourceRoleName = resources[i].getResourceRole().getName();
+            if ("Submitter".equalsIgnoreCase(resourceRoleName)) {
+                Long[] submissionIds = resources[i].getSubmissions();
+                if ((submissionIds != null) && (submissionIds.length > 0)) {
+                    trueSubmitters.put(i + 1, Boolean.TRUE);
+                }
+            } else if (REVIEWER_ROLE_NAMES.contains(resourceRoleName)) {
+                if (reviewersWithScorecards.contains(resources[i].getId())) {
+                    trueReviewers.put(i + 1, Boolean.TRUE);
+                }
             }
         }
 
@@ -539,17 +612,27 @@ public class ProjectActions extends DispatchAction {
                 // TODO: It is very incomplete actually
                 Dependency dependency = phases[i].getAllDependencies()[0];
                 form.set("phase_start_phase", i + 1, "loaded_" + dependency.getDependency().getId());
-                form.set("phase_start_amount", i + 1, new Integer((int) (dependency.getLagTime() / 3600 / 1000)));
                 form.set("phase_start_when", i + 1, dependency.isDependencyStart() ? "starts" : "ends");
-                form.set("phase_start_dayshrs", i + 1, "hrs");
+                long lagTime = dependency.getLagTime();
+                if (lagTime % (24 * 3600 * 1000L) == 0) {
+                    form.set("phase_start_dayshrs", i + 1, "days");
+                    form.set("phase_start_amount", i + 1, new Integer((int) (lagTime / (24 * 3600 * 1000L))));
+                } else if (lagTime % (3600 * 1000L) == 0) {
+                    form.set("phase_start_dayshrs", i + 1, "hrs");
+                    form.set("phase_start_amount", i + 1, new Integer((int) (lagTime / (3600 * 1000L))));
+                } else {
+                    form.set("phase_start_dayshrs", i + 1, "mins");
+                    form.set("phase_start_amount", i + 1, new Integer((int) (lagTime / (60 * 1000L))));
+                }
+
             } else {
                 form.set("phase_start_by_phase", i + 1, Boolean.FALSE);
             }
 
-            populateDatetimeFormProperties(form, "phase_start_date", "phase_start_time", "phase_start_AMPM", i + 1,
+            populateDatetimeFormProperties(form, "phase_start_date", "phase_start_time", i + 1,
                     phases[i].calcStartDate());
 
-            populateDatetimeFormProperties(form, "phase_end_date", "phase_end_time", "phase_end_AMPM", i + 1,
+            populateDatetimeFormProperties(form, "phase_end_date", "phase_end_time", i + 1,
                     phases[i].calcEndDate());
             // always use duration
             form.set("phase_use_duration", i + 1, Boolean.TRUE);
@@ -637,18 +720,16 @@ public class ProjectActions extends DispatchAction {
      * @param form
      * @param dateProperty
      * @param timeProperty
-     * @param ampmProperty
      * @param index
      * @param date
      */
     private void populateDatetimeFormProperties(LazyValidatorForm form, String dateProperty, String timeProperty,
-            String ampmProperty, int index, Date date) {
+            int index, Date date) {
         // TODO: Reuse the DateFormat instance
-        DateFormat dateFormat = new SimpleDateFormat("MM.dd.yy hh:mm aa", Locale.US);
+        DateFormat dateFormat = new SimpleDateFormat("MM.dd.yy HH:mm", Locale.US);
         String[] parts = dateFormat.format(date).split("[ ]");
         form.set(dateProperty, index, parts[0]);
         form.set(timeProperty, index, parts[1]);
-        form.set(ampmProperty, index, parts[2].toLowerCase());
     }
 
     /**
@@ -1283,7 +1364,7 @@ public class ProjectActions extends DispatchAction {
             if (Boolean.FALSE.equals(lazyForm.get("phase_start_by_phase", i))) {
                 // Get phase start date from form
                 Date phaseStartDate = parseDatetimeFormProperties(lazyForm, i, "phase_start_date",
-                        "phase_start_time", "phase_start_AMPM");
+                        "phase_start_time");
                 // Set phase fixed start date
                 phase.setFixedStartDate(phaseStartDate);
 
@@ -1305,8 +1386,9 @@ public class ProjectActions extends DispatchAction {
                         dependencyStart = true;
                         dependantStart = true;
                     }
-
-                    long unitMutiplier = 1000 * 3600 * ("days".equals(lazyForm.get("phase_start_dayshrs", i)) ? 24 : 1);
+                    Object phaseLag = lazyForm.get("phase_start_dayshrs", i);
+                    long unitMutiplier
+                        = 1000 * 60 * ("days".equals(phaseLag) ? 24 * 60 : ("hrs".equals(phaseLag) ? 60 : 1));
                     long lagTime = unitMutiplier * ((Integer) lazyForm.get("phase_start_amount", i)).longValue();
 
                     // Create phase Dependency
@@ -1443,7 +1525,7 @@ public class ProjectActions extends DispatchAction {
                     if (!useDuration) {
                         // Get phase end date from form
                         Date phaseEndDate = parseDatetimeFormProperties(lazyForm, paramIndex,
-                                "phase_end_date", "phase_end_time", "phase_end_AMPM");
+                                "phase_end_date", "phase_end_time");
 
                         // Calculate phase length
                         long length = phaseEndDate.getTime() - phase.getScheduledStartDate().getTime();
@@ -1782,11 +1864,10 @@ public class ProjectActions extends DispatchAction {
      * @return
      */
     private Date parseDatetimeFormProperties(LazyValidatorForm lazyForm, int propertyIndex, String dateProperty,
-            String timeProperty, String ampmProperty) {
+            String timeProperty) {
         // Retrieve the values of form properties
         String dateString = (String) lazyForm.get(dateProperty, propertyIndex);
         String timeString = (String) lazyForm.get(timeProperty, propertyIndex);
-        String ampmString = (String) lazyForm.get(ampmProperty, propertyIndex);
 
         // Obtain calendar instance to be used to create Date instance
         Calendar calendar = Calendar.getInstance();
@@ -1800,15 +1881,12 @@ public class ProjectActions extends DispatchAction {
         // Parse time string
         String[] timeParts = timeString.trim().split("[./:-]|([ ])+");
         int hour = Integer.parseInt(timeParts[0]);
-        calendar.set(Calendar.HOUR, hour != 12 ? hour : 0);
+        calendar.set(Calendar.HOUR, hour);
         if (timeParts.length == 1) {
             calendar.set(Calendar.MINUTE, 0);
         } else {
             calendar.set(Calendar.MINUTE, Integer.parseInt(timeParts[1]));
         }
-
-        // Set am/pm property
-        calendar.set(Calendar.AM_PM, "am".equals(ampmString) ? Calendar.AM : Calendar.PM);
 
         // Set seconds, milliseconds
         calendar.set(Calendar.SECOND, 0);
@@ -1847,6 +1925,7 @@ public class ProjectActions extends DispatchAction {
 
         // Obtain the instance of the Resource Manager
         ResourceManager resourceManager = ActionsHelper.createResourceManager(request);
+        UploadManager uploadManager = ActionsHelper.createUploadManager(request);
 
         // Get all types of resource roles
         ResourceRole[] resourceRoles = resourceManager.getAllResourceRoles();
@@ -1880,9 +1959,10 @@ public class ProjectActions extends DispatchAction {
         Set<Long> deletedUsers = new HashSet<Long>();
         Set<Long> newSubmitters = new HashSet<Long>();
         Set<Long> newUsersForumWatch = new HashSet<Long>();
+        Set<Long> oldTrueSubmitters = new HashSet<Long>();
 
         // 0-index resource is skipped as it is a "dummy" one
-        boolean allResourcesValid=true;
+        boolean allResourcesValid = true;
         for (int i = 1; i < resourceNames.length; i++) {
 
             if (resourceNames[i] == null || resourceNames[i].trim().length() == 0) {
@@ -1918,6 +1998,111 @@ public class ProjectActions extends DispatchAction {
         } catch (ContestEligibilityValidatorException e) {
             throw new BaseException(e);
         }
+
+        // Check for duplicate reviewers
+        Set<String> reviewerHandles = new HashSet<String>();
+        Map<Long, String> primaryReviewerRoles = new HashMap<Long, String>();
+        for (int i = 1; i < resourceNames.length; i++) {
+            String resourceAction = (String) lazyForm.get("resources_action", i);
+            if (!"delete".equalsIgnoreCase(resourceAction)) {
+                String handle = resourceNames[i];
+                long resourceRoleId = (Long) lazyForm.get("resources_role", i);
+                if (NODUPLICATE_REVIEWER_ROLE_IDS.contains(resourceRoleId)) {
+                    if (reviewerHandles.contains(handle)) {
+                        ActionsHelper.addErrorToRequest(request, "resources_name[" + i + "]",
+                                                        "error.com.cronos.onlinereview.actions."
+                                                        + "editProject.Resource.DuplicateReviewerRole");
+                        allResourcesValid = false;
+                    } else {
+                        reviewerHandles.add(handle);
+                    }
+                } else if (SINGLE_REVIEWER_ROLE_IDS.contains(resourceRoleId)) {
+                    if (primaryReviewerRoles.containsKey(resourceRoleId)) {
+                        if (resourceRoleId != 9 || !primaryReviewerRoles.get(resourceRoleId).equals(handle)) {
+                            ActionsHelper.addErrorToRequest(request, "resources_name[" + i + "]",
+                                                            "error.com.cronos.onlinereview.actions."
+                                                            + "editProject.Resource.MoreThanOneReviewer");
+                            allResourcesValid = false;
+                        }
+                    } else {
+                        primaryReviewerRoles.put(resourceRoleId, handle);
+                    }
+                }
+            }
+        }
+
+
+        // Validate that no submitters who have submitted for project were changed (either by role or handle) or deleted
+        // 0-index resource is skipped as it is a "dummy" one
+        ReviewManager reviewManager = ActionsHelper.createReviewManager(request);
+        Set<Long> reviewersWithScorecards = findResourcesWithReviewsForProject(reviewManager, project.getId());
+        for (int i = 1; i < resourceNames.length; i++) {
+            String resourceAction = (String) lazyForm.get("resources_action", i);
+            if (!"add".equals(resourceAction)) {
+                Long resourceId = (Long) lazyForm.get("resources_id", i);
+                if (resourceId.longValue() != -1) {
+                    Resource oldResource = resourceManager.getResource(resourceId.longValue());
+                    String oldResourceRoleName = oldResource.getResourceRole().getName();
+                    boolean resourceHasSubmissions = false;
+                    boolean resourceHasReviews = false;
+
+                    if ("Submitter".equals(oldResourceRoleName)) {
+                        Long[] submissionIds = oldResource.getSubmissions();
+                        if ((submissionIds != null) && (submissionIds.length > 0)) {
+                            resourceHasSubmissions = true;
+                        }
+                    } else if (REVIEWER_ROLE_NAMES.contains(oldResourceRoleName)) {
+                        Set<Long> reviewIds = findResourcesWithReviewsForProject(reviewManager, project.getId());
+                        resourceHasReviews = (reviewIds != null && !reviewIds.isEmpty());
+                    }
+                    boolean resourceUpdateProhibited = resourceHasReviews || resourceHasSubmissions;
+
+                    if (resourceUpdateProhibited) {
+                        if ("delete".equalsIgnoreCase(resourceAction)) {
+                            if (resourceHasSubmissions) {
+                                ActionsHelper.addErrorToRequest(request, "resources_name[" + i + "]",
+                                                                "error.com.cronos.onlinereview.actions."
+                                                                + "editProject.Resource.TrueSubmitterDeleted");
+                            } else {
+                                ActionsHelper.addErrorToRequest(request, "resources_name[" + i + "]",
+                                                                "error.com.cronos.onlinereview.actions."
+                                                                + "editProject.Resource.TrueReviewerDeleted");
+                            }
+                            allResourcesValid = false;
+                        } else {
+                            String oldHandle = (String) oldResource.getProperty("Handle");
+                            String newHandle = resourceNames[i];
+                            if (!oldHandle.equals(newHandle)) {
+                                if (resourceHasSubmissions) {
+                                    ActionsHelper.addErrorToRequest(request, "resources_name[" + i + "]",
+                                                                    "error.com.cronos.onlinereview.actions."
+                                                                    + "editProject.Resource.TrueSubmitterHandleChanged");
+                                } else {
+                                    ActionsHelper.addErrorToRequest(request, "resources_name[" + i + "]",
+                                                                    "error.com.cronos.onlinereview.actions."
+                                                                    + "editProject.Resource.TrueReviewerHandleChanged");
+                                }
+                                allResourcesValid = false;
+                            }
+                            long newResourceRoleId = (Long) lazyForm.get("resources_role", i);
+                            if (oldResource.getResourceRole().getId() != newResourceRoleId) {
+                                if (resourceHasSubmissions) {
+                                    ActionsHelper.addErrorToRequest(request, "resources_name[" + i + "]",
+                                                                    "error.com.cronos.onlinereview.actions."
+                                                                    + "editProject.Resource.TrueSubmitterRoleChanged");
+                                } else {
+                                    ActionsHelper.addErrorToRequest(request, "resources_name[" + i + "]",
+                                                                    "error.com.cronos.onlinereview.actions."
+                                                                    + "editProject.Resource.TrueReviewerRoleChanged");
+                                }
+                                allResourcesValid = false;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
 
         // No resources are updated if at least one of them is incorrect.
         if (!allResourcesValid)
@@ -2924,5 +3109,26 @@ public class ProjectActions extends DispatchAction {
             map.put(category.getId(), category);
         }
         return map;
+    }
+
+    /**
+     * <p>Gets the set of project resources which have the review scorecards associated with them.</p>
+     *
+     * @param manager an instance of <code>ReviewManager</code> class that retrieves a review from the database.
+     * @param projectId an ID of the project which the review was made for.
+     * @return a <code>Set</code> providing the Ids of project resources which have review scorecards associated with
+     *         them. 
+     * @throws ReviewManagementException if any error occurs during review search or retrieval.
+     * @since 1.8
+     */
+    private static Set<Long> findResourcesWithReviewsForProject(ReviewManager manager, Long projectId)
+        throws ReviewManagementException {
+        Filter filterProject = new EqualToFilter("project", projectId);
+        Set<Long> result = new HashSet<Long>();
+        Review[] reviews = manager.searchReviews(filterProject, false);
+        for (Review review : reviews) {
+            result.add(review.getAuthor());
+        }
+        return result;
     }
 }
