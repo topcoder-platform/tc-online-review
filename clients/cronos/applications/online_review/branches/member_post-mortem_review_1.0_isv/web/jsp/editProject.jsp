@@ -828,14 +828,12 @@
 
                 getChildByNamePrefix(newPhaseRow, "phase_start_date").value = startDateParts[0];
                 getChildByNamePrefix(newPhaseRow, "phase_start_time").value = startDateParts[1];
-                getChildByNamePrefix(newPhaseRow, "phase_start_AMPM").value = startDateParts[2].toLowerCase();
 
                 var endDate = dojo.dom.textContent(phaseNodes[i].getElementsByTagName("end-date")[0]);
                 var endDateParts = endDate.split(" ");
 
                 getChildByNamePrefix(newPhaseRow, "phase_end_date").value = endDateParts[0];
                 getChildByNamePrefix(newPhaseRow, "phase_end_time").value = endDateParts[1];
-                getChildByNamePrefix(newPhaseRow, "phase_end_AMPM").value = endDateParts[2].toLowerCase();
 
                 var duration = parseInt(dojo.dom.textContent(phaseNodes[i].getElementsByTagName("length")[0])) / 3600 / 1000;
                 getChildByNamePrefix(newPhaseRow, "phase_duration").value = duration;

@@ -774,7 +774,7 @@ public class ConfigHelper {
     /**
      * This member variable holds the formatting string used to format dates.
      */
-    private static String dateFormat = "MM.dd.yyyy hh:mm a";
+    private static String dateFormat = "MM.dd.yyyy HH:mm z";
 
     /**
      * This member variable holds the formatting string used to format dates (onlt the date part of
@@ -786,7 +786,7 @@ public class ConfigHelper {
      * This member variable holds the formatting string used to format dates (onlt the time part of
      * them).
      */
-    private static String timeOnlyFormat = "hh:mm a";
+    private static String timeOnlyFormat = "HH:mm";
 
     /**
      * This member variable holds the names of all permissions for the application (as keys), and
