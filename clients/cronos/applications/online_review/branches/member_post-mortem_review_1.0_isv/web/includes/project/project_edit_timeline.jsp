@@ -87,10 +87,6 @@
                 <html:radio property="phase_start_by_phase[${phaseIdx}]" value="false" />
                 <html:text onblur="JavaScript:this.value=getDateString(this.value);" styleClass="inputBoxDate" property="phase_start_date[${phaseIdx}]" />
                 <html:text onblur="JavaScript:this.value=getTimeString(this.value, this.parentNode);" styleClass="inputBoxTime" property="phase_start_time[${phaseIdx}]" />
-                <html:select styleClass="inputBox" property="phase_start_AMPM[${phaseIdx}]">
-                    <html:option key="editProject.Phases.AM" value="am" />
-                    <html:option key="editProject.Phases.PM" value="pm" />
-                </html:select>
                 <bean:message key="global.Timezone.EST" /><br />
                 <html:radio property="phase_start_by_phase[${phaseIdx}]" value="true" />
                 <bean:message key="editProject.Phases.When" />
@@ -119,6 +115,7 @@
                 <html:select styleClass="inputBox" property="phase_start_dayshrs[${phaseIdx}]">
                     <html:option key="editProject.Phases.Days" value="days" />
                     <html:option key="editProject.Phases.Hrs" value="hrs" />
+                    <html:option key="editProject.Phases.Mins" value="mins" />
                 </html:select>
                 </div>
                 <div name="start_date_validation_msg" class="error" style="display:none"></div>
@@ -127,10 +124,6 @@
                 <html:radio property="phase_use_duration[${phaseIdx}]" value="false" />
                 <html:text onblur="JavaScript:this.value=getDateString(this.value);" styleClass="inputBoxDate" property="phase_end_date[${phaseIdx}]" />
                 <html:text onblur="JavaScript:this.value=getTimeString(this.value, this.parentNode);" styleClass="inputBoxTime" property="phase_end_time[${phaseIdx}]" />
-                <html:select styleClass="inputBox" property="phase_end_AMPM[${phaseIdx}]">
-                    <html:option key="editProject.Phases.AM" value="am" />
-                    <html:option key="editProject.Phases.PM" value="pm" />
-                </html:select>
                 <bean:message key="global.Timezone.EST" />
                 <div name="end_date_validation_msg" class="error" style="display:none"></div>
             </td>
@@ -373,10 +366,6 @@
             <html:radio property="addphase_start_by_phase" value="false" />
             <html:text onblur="JavaScript:this.value=getDateString(this.value);" styleClass="inputBoxDate" property="addphase_start_date" />
             <html:text onblur="JavaScript:this.value=getTimeString(this.value, this.parentNode);" styleClass="inputBoxTime" property="addphase_start_time" />
-            <html:select styleClass="inputBox" property="addphase_start_AMPM">
-                <html:option key="editProject.Phases.AM" value="am" />
-                <html:option key="editProject.Phases.PM" value="pm" />
-            </html:select>
             <bean:message key="global.Timezone.EST" /><br />
             <html:radio property="addphase_start_by_phase" value="true" />
             <bean:message key="editProject.Phases.When" />
@@ -403,6 +392,7 @@
             <html:select styleClass="inputBox" property="addphase_start_dayshrs">
                 <html:option key="editProject.Phases.Days" value="days" />
                 <html:option key="editProject.Phases.Hrs" value="hrs" />
+                <html:option key="editProject.Phases.Mins" value="mins" />
             </html:select>
             </div>
         </td>
@@ -411,10 +401,6 @@
               <html:radio property="addphase_use_duration" value="false" />
             <html:text onblur="JavaScript:this.value=getDateString(this.value);" styleClass="inputBoxDate" property="addphase_end_date" />
             <html:text onblur="JavaScript:this.value=getTimeString(this.value, this.parentNode);" styleClass="inputBoxTime" property="addphase_end_time" />
-            <html:select styleClass="inputBox" property="addphase_end_AMPM">
-                <html:option key="editProject.Phases.AM" value="am" />
-                <html:option key="editProject.Phases.PM" value="pm" />
-            </html:select>
             <bean:message key="global.Timezone.EST" />
         </td>
         <td class="value" nowrap="nowrap">
