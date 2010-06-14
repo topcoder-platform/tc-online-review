@@ -218,7 +218,7 @@ final class PhasesDetailsServices {
                         allProjectResources, finalFixes, isAfterAppealsResponse);
             } else if (phaseGroup.getAppFunc().equalsIgnoreCase(Constants.APPROVAL_APP_FUNC)) {
                 serviceApprovalAppFunc(request, phaseGroup, project, phase,
-                        allProjectResources, isAfterAppealsResponse);
+                        allProjectResources, isAfterAppealsResponse, finalFixes);
             } else if (phaseGroup.getAppFunc().equalsIgnoreCase(Constants.POST_MORTEM_APP_FUNC)) {
                 servicePostMortemAppFunc(request, phaseGroup, project, phase, allProjectResources);
             }
@@ -828,6 +828,7 @@ final class PhasesDetailsServices {
                 Arrays.sort(finalFixes.finalFixes, new Comparators.UploadComparer());
 
                 finalFixes.finalFixIdx = 0;
+                finalFixes.finalFixApprovalIdx = 0;
             }
         }
 
@@ -871,10 +872,12 @@ final class PhasesDetailsServices {
      * @param allProjectResources a <code>Resource</code> array listing all existing resources for specified project.
      * @param isAfterAppealsResponse <code>true</code> if current phase is after appeals response; <code>false</code>
      *        otherwise.
+     * @param finalFixes a <code>FinalFixesInfo</code> providing the final fixes details.  
      * @throws BaseException if an unexpected error occurs.
      */
     private static void serviceApprovalAppFunc(HttpServletRequest request, PhaseGroup phaseGroup,
-            Project project, Phase thisPhase, Resource[] allProjectResources, boolean isAfterAppealsResponse)
+                                               Project project, Phase thisPhase, Resource[] allProjectResources,
+                                               boolean isAfterAppealsResponse, FinalFixesInfo finalFixes)
         throws BaseException {
         if (phaseGroup.getSubmitters() == null) {
             return;
@@ -912,6 +915,12 @@ final class PhasesDetailsServices {
         Review[] reviews = revMgr.searchReviews(filter, true);
 
         phaseGroup.setApproval(ActionsHelper.getApprovalPhaseReviews(reviews, thisPhase));
+        phaseGroup.setApprovalPhaseStatus(thisPhase.getPhaseStatus().getId());
+
+        // Bind Approval phase to respective Final Fixes
+        if (finalFixes.finalFixApprovalIdx < finalFixes.finalFixes.length) {
+            phaseGroup.setFinalFix(finalFixes.finalFixes[finalFixes.finalFixApprovalIdx++]);
+        }
     }
 
     /**
@@ -955,6 +964,7 @@ final class PhasesDetailsServices {
         ReviewManager revMgr = ActionsHelper.createReviewManager(request);
         Review[] reviews = revMgr.searchReviews(filter, false);
         phaseGroup.setPostMortemReviews(reviews);
+        phaseGroup.setPostMortemPhaseStatus(thisPhase.getPhaseStatus().getId());
     }
 
     /**
@@ -1112,16 +1122,23 @@ final class PhasesDetailsServices {
     }
 
     /**
-     * TODO: Document this helper class.
+     * <p>A helper class combining the details for final fixes for project.</p>
      *
-     * @author George1
-     * @version 1.0
+     * @author George1, TCSDEVELOPER
+     * @version 1.1
      */
     static class FinalFixesInfo {
 
         public Upload[] finalFixes = null;
 
         public int finalFixIdx = -1;
+
+        /**
+         * <p>An <code>int</code> tracking the final fixes for <code>Approval</code> phase.</p>
+         *
+         * @since 1.1
+         */
+        public int finalFixApprovalIdx = -1;
 
         public FinalFixesInfo() {
             // empty constructor
