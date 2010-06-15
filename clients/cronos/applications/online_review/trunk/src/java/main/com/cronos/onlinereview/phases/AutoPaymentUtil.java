@@ -140,6 +140,7 @@ public class AutoPaymentUtil {
         && projectCategoryId != 23    // Conceptualization
         && projectCategoryId != 19    // UI Prototype
         && projectCategoryId != 24    // RIA Build
+		&& projectCategoryId != 27	  // Spec Review
         && projectCategoryId != 25) { // RIA Component
                 return;
         }
@@ -149,7 +150,7 @@ public class AutoPaymentUtil {
         int levelId = SoftwareComponent.LEVEL1;
         int count = getCount(projectId, conn);
         int passedCount = getScreenPassedCount(projectId, conn);
-        float[] payments = getPayments(projectId, projectCategoryId, conn);
+        float[] payments = projectCategoryId == 27 ? getSpecReviewPayments(projectId, conn) : getPayments(projectId, projectCategoryId, conn);
 
         float prize = (float) getPriceByProjectId(projectId, conn);
         float drPoints = (float) getDrPointsByProjectId(projectId, conn);
@@ -308,6 +309,35 @@ public class AutoPaymentUtil {
         }
     }
 
+	/**
+	 * Retrieve spec review payment from project_info type.
+	 * @param projectId the project id
+	 * @param conn the connection
+	 *
+	 * @return payments for the spec reviewer (only primary is required, the secondary is always zero)
+	 * @throws SQLException if anything is wrong with the db access
+	 */
+	private static float[] getSpecReviewPayments(long projectId, Connection conn) throws SQLException {
+
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+        float[] payments = new float[2];
+
+        try {
+			pstmt = conn.prepareStatement(
+				"SELECT value FROM project_info WHERE project_id = ? AND project_info_type_id = 33");
+			pstmt.setLong(1, projectId);
+			rs = pstmt.executeQuery();
+			if (rs.next()) {
+				payments[0] = rs.getFloat("value");
+			}
+
+            return payments;
+        } finally {
+            PRHelper.close(rs);
+            PRHelper.close(pstmt);
+        }
+	}
     /**
      * Retrieve payment from rboard_payment table.
      *
