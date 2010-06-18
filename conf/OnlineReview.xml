@@ -4351,15 +4351,15 @@
             </Property>
         </Property>
 
-        <Property name="ProjectTypeDescriptionLinks">
+        <Property name="ProjectTypeViewContestLinks">
             <Property name="Application">
-                <Value>https://software.topcoder.com/catalog/c_component.jsp?comp=&lt;COMPONENT_ID&gt;&amp;ver=&lt;VERSION_ID&gt;</Value>
+                <Value>http://www.topcoder.com/tc?module=ProjectDetail&amp;pj=&lt;PROJECT_ID&gt;</Value>
             </Property>
             <Property name="Component">
-                <Value>https://software.topcoder.com/catalog/c_component.jsp?comp=&lt;COMPONENT_ID&gt;&amp;ver=&lt;VERSION_ID&gt;</Value>
+                <Value>http://www.topcoder.com/tc?module=ProjectDetail&amp;pj=&lt;PROJECT_ID&gt;</Value>
             </Property>
-        <Property name="Studio">
-        <Value>https://software.topcoder.com/catalog/c_component.jsp?comp=&lt;COMPONENT_ID&gt;&amp;ver=&lt;VERSION_ID&gt;</Value>
+            <Property name="Studio">
+                <Value>http://www.topcoder.com/tc?module=ProjectDetail&amp;pj=&lt;PROJECT_ID&gt;</Value>
             </Property>
         </Property>
 
@@ -4370,8 +4370,8 @@
             <Property name="Component">
                 <Value>http://forums.topcoder.com/?module=Category&amp;categoryID=&lt;FORUM_ID&gt;</Value>
             </Property>
-        <Property name="Studio">
-        <Value>http://forums.topcoder.com/?module=Category&amp;categoryID=&lt;FORUM_ID&gt;</Value>
+            <Property name="Studio">
+                <Value>http://forums.topcoder.com/?module=Category&amp;categoryID=&lt;FORUM_ID&gt;</Value>
             </Property>
         </Property>
 

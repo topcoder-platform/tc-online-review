@@ -196,28 +196,17 @@ public class ProjectDetailsActions extends DispatchAction {
 
         final String projectTypeName = project.getProjectCategory().getProjectType().getName();
 
-        long componentId = -1;
-        long versionId = -1;
+        long projectId = project.getId();
         long forumId = -1;
         String tempStr;
-
-        tempStr = (String) project.getProperty("Component ID");
-        if (tempStr != null && tempStr.trim().length() != 0) {
-            componentId = Long.parseLong(tempStr, 10);
-        }
-
-        tempStr = (String) project.getProperty("Version ID");
-        if (tempStr != null && tempStr.trim().length() != 0) {
-            versionId = Long.parseLong(tempStr, 10);
-        }
 
         tempStr = (String) project.getProperty("Developer Forum ID");
         if (tempStr != null && tempStr.trim().length() != 0) {
             forumId = Long.parseLong(tempStr, 10);
         }
 
-        request.setAttribute("descriptionLink",
-                ConfigHelper.getProjectTypeDescriptionLink(projectTypeName, componentId, versionId));
+        request.setAttribute("viewContestLink",
+                ConfigHelper.getProjectTypeViewContestLink(projectTypeName, projectId));
         request.setAttribute("forumLink", ConfigHelper.getProjectTypeForumLink(projectTypeName, forumId));
         request.setAttribute("projectType", projectTypeName);
         request.setAttribute("projectCategory", project.getProjectCategory().getName());

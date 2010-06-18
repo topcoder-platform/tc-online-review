@@ -250,9 +250,9 @@ public class ConfigHelper {
 
     /**
      * This member variable is a string constant that specifies the name of the property which
-     * contains definitions of Project Type links to full description for the project.
+     * contains definitions of Project Type links to view contest page for the project.
      */
-    private static final String PROJECT_TYPE_DESCRIPTION_LINKS_PROP = "ProjectTypeDescriptionLinks";
+    private static final String PROJECT_TYPE_VIEW_CONTEST_LINKS_PROP = "ProjectTypeViewContestLinks";
 
     /**
      * This member variable is a string constant that specifies the name of the property which
@@ -690,9 +690,9 @@ public class ConfigHelper {
     private static final Map<String, String> projectCategoryIcons = new HashMap<String, String>();
 
     /**
-     * This member variable holds the links to full project's descriptions per project type.
+     * This member variable holds the links to view contes pages per project type.
      */
-    private static final Map<String, String> projectTypeDescriptionLinks = new HashMap<String, String>();
+    private static final Map<String, String> projectTypeViewContestLinks = new HashMap<String, String>();
 
     /**
      * This member variable holds the links to forums per project type.
@@ -1112,8 +1112,8 @@ public class ConfigHelper {
                 }
             }
 
-            // Retrieve property that contains definitions of Project Type description links
-            Property propProjTypeDesc = cfgMgr.getPropertyObject(ONLINE_REVIEW_CFG_NS, PROJECT_TYPE_DESCRIPTION_LINKS_PROP);
+            // Retrieve property that contains definitions of Project Type view contest links
+            Property propProjTypeDesc = cfgMgr.getPropertyObject(ONLINE_REVIEW_CFG_NS, PROJECT_TYPE_VIEW_CONTEST_LINKS_PROP);
             // Prepare to enumerate all the nested properties
             Enumeration propsLinks = propProjTypeDesc.propertyNames();
 
@@ -1121,13 +1121,13 @@ public class ConfigHelper {
                 // Get the name of the next property in the list.
                 // The property name retrieved is also the name of a Project Type
                 String strPropName = (String) propsLinks.nextElement();
-                // Retrieve link to full description
+                // Retrieve link to view contest
                 String strLink = propProjTypeDesc.getValue(strPropName);
 
                 // If the link has been read fine ...
                 if (strLink != null && strLink.trim().length() != 0) {
                     // ... store it into the appropriate map for later use
-                    projectTypeDescriptionLinks.put(strPropName, strLink);
+                    projectTypeViewContestLinks.put(strPropName, strLink);
                 }
             }
 
@@ -1598,29 +1598,22 @@ public class ConfigHelper {
     }
 
     /**
-     * This static method returns the link to the full description for project based on the type of
+     * This static method returns the link to the view contest page for project based on the type of
      * project passed as parameter.
      *
-     * @return the link to full description of the project.
+     * @return the link to view contest page of the project.
      * @param projectTypeName
-     *            Project Type name which link to full description should be looked up for.
-     * @param componentId
-     *            ID of the component (numeric value) that should be substituted instead of
-     *            &quot;<code>&lt;COMPONENT_ID&gt;</code>&quot; substring in the template link read
+     *            Project Type name which link to view contest page should be looked up for.
+     * @param projectId
+     *            ID of the project (numeric value) that should be substituted instead of
+     *            &quot;<code>&lt;PROJECT_ID&gt;</code>&quot; substring in the template link read
      *            from the configuration. If this value is zero or negative, the aforementioned
      *            substring will be simply removed from the template link.
-     * @param versionId
-     *            ID of the component version (numeric value) that should be substituted instead of
-     *            &quot;<code>&lt;VERSION_ID&gt;</code>&quot; substring in the template link
-     *            read from the configuration. If this value is zero or negative, the aforementioned
-     *            substring will be simply removed from the template link.
      */
-    public static String getProjectTypeDescriptionLink(String projectTypeName, long componentId, long versionId) {
-        String templateLink = (String) projectTypeDescriptionLinks.get(projectTypeName);
+    public static String getProjectTypeViewContestLink(String projectTypeName, long projectId) {
+        String templateLink = (String) projectTypeViewContestLinks.get(projectTypeName);
 
-        templateLink = templateLink.replaceFirst("\\<COMPONENT_ID\\>", (componentId > 0) ? String.valueOf(componentId) : "");
-        templateLink = templateLink.replaceFirst("\\<VERSION_ID\\>", (versionId > 0) ? String.valueOf(versionId) : "");
-
+        templateLink = templateLink.replaceFirst("\\<PROJECT_ID\\>", (projectId > 0) ? String.valueOf(projectId) : "");
         return templateLink;
     }
 
