@@ -37,7 +37,7 @@
                     <html:link page="/actions/ContactManager.do?method=contactManager&amp;pid=${project.id}"><bean:message key="viewProjectDetails.ContactPM" /></html:link> |
                 </c:if>
                 <a class="breadcrumbLinks"
-                    href="${descriptionLink}"><bean:message key="viewProjectDetails.FullDescription" /></a> |
+                    href="${viewContestLink}"><bean:message key="viewProjectDetails.ViewContest" /></a> |
                 <a class="breadcrumbLinks"
                     href="${forumLink}"><bean:message key="viewProjectDetails.DevelopmentForum" /></a></td>
         </tr>
