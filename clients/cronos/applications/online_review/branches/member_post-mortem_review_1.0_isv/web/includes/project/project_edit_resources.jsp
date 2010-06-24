@@ -73,27 +73,13 @@
 				<c:if test="${resourceIdx eq 0}">
 					<html:img srcKey="editProject.Resources.AddResource.img" altKey="editProject.Resources.AddResource.alt" onclick="addNewResource();" style="cursor:hand;" />
 				</c:if>
-                <c:choose>
-                    <c:when test="${requestScope.trueSubmitters[resourceIdx]}">
-                        <html:img style="cursor:hand;${(resourceIdx eq 0) ? 'display: none;' : ''}"
-                                  srcKey="editProject.Resources.DeleteResource.img"
-                                  titleKey="error.com.cronos.onlinereview.actions.editProject.Resource.TrueSubmitterDeleted"
-                                  altKey="editProject.Resources.DeleteResource.alt"/>
-                    </c:when>
-                    <c:when test="${requestScope.trueReviewers[resourceIdx]}">
-                        <html:img style="cursor:hand;${(resourceIdx eq 0) ? 'display: none;' : ''}"
-                                  srcKey="editProject.Resources.DeleteResource.img"
-                                  titleKey="error.com.cronos.onlinereview.actions.editProject.Resource.TrueReviewerDeleted"
-                                  altKey="editProject.Resources.DeleteResource.alt"/>
-                    </c:when>
-                    <c:otherwise>
-                        <html:img style="cursor:hand;${(resourceIdx eq 0) ? 'display: none;' : ''}"
-                                  srcKey="editProject.Resources.DeleteResource.img"
-                                  altKey="editProject.Resources.DeleteResource.alt"
-                                  onclick="deleteResource(this.parentNode.parentNode);"/>
-                    </c:otherwise>
-                </c:choose>
-				<html:hidden property="resources_action[${resourceIdx}]" />
+                <c:if test="${not (requestScope.trueSubmitters[resourceIdx] or requestScope.trueReviewers[resourceIdx])}">
+                    <html:img style="cursor:hand;${(resourceIdx eq 0) ? 'display: none;' : ''}"
+                              srcKey="editProject.Resources.DeleteResource.img"
+                              altKey="editProject.Resources.DeleteResource.alt"
+                              onclick="deleteResource(this.parentNode.parentNode);"/>
+                </c:if>
+                <html:hidden property="resources_action[${resourceIdx}]" />
 				<html:hidden property="resources_id[${resourceIdx}]" />
 			</td>
 

@@ -53,8 +53,15 @@ import com.topcoder.web.ejb.pacts.ParentReferencePayment;
  *   </ol>
  * </p>
  *
+ * <p>
+ * Version 1.5 (Members Post-Mortem Reviews Assembly 1.0) Change notes:
+ *   <ol>
+ *     <li>Updated {@link #dateFormat} and {@link #timeOnlyFormat} constants to use 24-hours time format.</li>
+ *   </ol>
+ * </p>
+ *
  * @author George1, real_vg, pulky, isv, romanoTC
- * @version 1.4
+ * @version 1.5
  */
 public class ConfigHelper {
 

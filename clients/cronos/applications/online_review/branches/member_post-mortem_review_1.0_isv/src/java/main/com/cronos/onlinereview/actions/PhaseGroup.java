@@ -34,7 +34,7 @@ import com.topcoder.project.phases.Phase;
  *   </ol>
  * </p>
  *
- * @author George1, real_vg, isv, TCSDEVELOPER
+ * @author George1, real_vg, isv
  * @version 1.2
  */
 public class PhaseGroup {

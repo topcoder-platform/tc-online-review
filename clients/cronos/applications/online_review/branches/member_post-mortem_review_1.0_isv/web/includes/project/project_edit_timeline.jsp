@@ -12,9 +12,12 @@
 <%@ page language="java" isELIgnored="false" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="html" uri="/tags/struts-html" %>
 <%@ taglib prefix="bean" uri="/tags/struts-bean" %>
 
+<c:set var="currentTime" value="<%=new java.util.Date()%>"/>
+<fmt:formatDate value="${currentTime}" var="currentTimezone" pattern="z"/>
 <%-- If creating a new project, show "Create Timeline" table --%>
 <c:if test="${newProject}">
     <table class="scorecard" cellpadding="0" cellspacing="0" width="100%" style="border-collapse: collapse;">
@@ -87,7 +90,7 @@
                 <html:radio property="phase_start_by_phase[${phaseIdx}]" value="false" />
                 <html:text onblur="JavaScript:this.value=getDateString(this.value);" styleClass="inputBoxDate" property="phase_start_date[${phaseIdx}]" />
                 <html:text onblur="JavaScript:this.value=getTimeString(this.value, this.parentNode);" styleClass="inputBoxTime" property="phase_start_time[${phaseIdx}]" />
-                <bean:message key="global.Timezone.EST" /><br />
+                <c:out value="${currentTimezone}"/><br />
                 <html:radio property="phase_start_by_phase[${phaseIdx}]" value="true" />
                 <bean:message key="editProject.Phases.When" />
                 <div style="margin-left: 20px;">
@@ -124,7 +127,7 @@
                 <html:radio property="phase_use_duration[${phaseIdx}]" value="false" />
                 <html:text onblur="JavaScript:this.value=getDateString(this.value);" styleClass="inputBoxDate" property="phase_end_date[${phaseIdx}]" />
                 <html:text onblur="JavaScript:this.value=getTimeString(this.value, this.parentNode);" styleClass="inputBoxTime" property="phase_end_time[${phaseIdx}]" />
-                <bean:message key="global.Timezone.EST" />
+                <c:out value="${currentTimezone}"/>
                 <div name="end_date_validation_msg" class="error" style="display:none"></div>
             </td>
             <td class="value">
@@ -366,7 +369,7 @@
             <html:radio property="addphase_start_by_phase" value="false" />
             <html:text onblur="JavaScript:this.value=getDateString(this.value);" styleClass="inputBoxDate" property="addphase_start_date" />
             <html:text onblur="JavaScript:this.value=getTimeString(this.value, this.parentNode);" styleClass="inputBoxTime" property="addphase_start_time" />
-            <bean:message key="global.Timezone.EST" /><br />
+            <c:out value="${currentTimezone}"/><br />
             <html:radio property="addphase_start_by_phase" value="true" />
             <bean:message key="editProject.Phases.When" />
             <div style="margin-left: 20px;">
@@ -401,7 +404,7 @@
               <html:radio property="addphase_use_duration" value="false" />
             <html:text onblur="JavaScript:this.value=getDateString(this.value);" styleClass="inputBoxDate" property="addphase_end_date" />
             <html:text onblur="JavaScript:this.value=getTimeString(this.value, this.parentNode);" styleClass="inputBoxTime" property="addphase_end_time" />
-            <bean:message key="global.Timezone.EST" />
+            <c:out value="${currentTimezone}"/>
         </td>
         <td class="value" nowrap="nowrap">
             <%--<bean:message key="editProject.Phases.Duration" />--%>

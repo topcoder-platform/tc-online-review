@@ -10,6 +10,7 @@
 --%>
 <%@ page language="java" isELIgnored="false" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="html" uri="/tags/struts-html" %>
 <%@ taglib prefix="bean" uri="/tags/struts-bean" %>
@@ -83,7 +84,11 @@
 										<c:if test="${!(empty rating)}">
 											<td class="value" nowrap="nowrap"><span class="${ratingColor}">${rating}</span></td>
 										</c:if>
-										<td class="valueC" nowrap="nowrap">${resource.allProperties["Registration Date"]}</td>
+										<td class="valueC" nowrap="nowrap">
+                                            <fmt:parseDate pattern="MM.dd.yyyy hh:mm a" value="${resource.allProperties['Registration Date']}"
+                                                           var="registrationDate"/>
+                                            <fmt:formatDate pattern="MM.dd.yyyy HH:mm z" value="${registrationDate}"/>
+                                        </td>
 									</tr>
 								</c:forEach>
 								<tr>
@@ -707,7 +712,7 @@
                                                 <c:when test="${approval eq null}">
                                                     <td class="value"><!-- @ --></td>
                                                     <c:choose>
-                                                        <c:when test="${isAllowedToPerformApproval and isReviewerCurrentUser}">
+                                                        <c:when test="${isAllowedToPerformApproval and isReviewerCurrentUser and group.approvalPhaseStatus == 2}">
                                                             <td class="valueC" nowrap="nowrap">
                                                                 <html:link page="/actions/CreateApproval.do?method=createApproval&sid=${winningSubmission.id}">
                                                                     <bean:message key="viewProjectDetails.box.Approval.Submit"/></html:link>
@@ -734,7 +739,7 @@
                                                 <c:when test="${not approval.committed}">
                                                     <td class="value"><!-- @ --></td>
                                                     <c:choose>
-                                                        <c:when test="${isAllowedToPerformApproval and isReviewerCurrentUser}">
+                                                        <c:when test="${isAllowedToPerformApproval and isReviewerCurrentUser and group.approvalPhaseStatus == 2}">
                                                             <td class="valueC" nowrap="nowrap">
                                                             <html:link page="/actions/EditApproval.do?method=editApproval&rid=${approval.id}">
                                                                 <bean:message key="viewProjectDetails.box.Approval.Submit"/></html:link>

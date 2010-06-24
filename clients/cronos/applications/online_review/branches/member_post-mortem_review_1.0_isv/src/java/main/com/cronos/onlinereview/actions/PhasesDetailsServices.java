@@ -55,12 +55,20 @@ import com.topcoder.util.errorhandling.BaseException;
  *     {@link #getPhasesDetails(HttpServletRequest, MessageResources, Project, Phase[], Resource[], ExternalUser[])}
  *     method to newly added
  *     {@link #servicePostMortemAppFunc(HttpServletRequest, PhaseGroup, Project, Phase, Resource[])} method to
- *      provide details for <code>Post-Mortem</code> phase.</p>
+ *      provide details for <code>Post-Mortem</code> phase.</li>
+ *   </ol>
+ * </p>
+ *
+ * <p>
+ * Version 1.2 (Members Post-Mortem Reviews Assembly 1.0) Change notes:
+ *   <ol>
+ *     <li>Updated {@link #serviceApprovalAppFunc(HttpServletRequest, PhaseGroup, Project, Phase, Resource[], boolean,
+ *     FinalFixesInfo)} method to map final fixes to <code>Approval</code> phases.</p>
  *   </ol>
  * </p>
  *
  * @author George1, isv
- * @version 1.1
+ * @version 1.2
  */
 final class PhasesDetailsServices {
 
@@ -857,6 +865,21 @@ final class PhasesDetailsServices {
 
             if (reviews.length != 0) {
                 phaseGroup.setFinalReview(reviews[0]);
+                // If final fixes are accepted then set the index of accepted final fixes to be mapped to next
+                // Approval phase
+                Comment[] comments = reviews[0].getAllComments();
+                boolean rejected = false;
+                for (int i = 0; !rejected && i < comments.length; i++) {
+                    String value = (String) comments[i].getExtraInfo();
+                    if (comments[i].getCommentType().getName().equals("Final Review Comment")) {
+                        if ("Rejected".equalsIgnoreCase(value)) {
+                            rejected = true;
+                        }
+                    }
+                }
+                if (!rejected) {
+                    finalFixes.finalFixApprovalIdx = finalFixes.finalFixIdx - 1;
+                }
             }
         }
     }
@@ -918,8 +941,8 @@ final class PhasesDetailsServices {
         phaseGroup.setApprovalPhaseStatus(thisPhase.getPhaseStatus().getId());
 
         // Bind Approval phase to respective Final Fixes
-        if (finalFixes.finalFixApprovalIdx < finalFixes.finalFixes.length) {
-            phaseGroup.setFinalFix(finalFixes.finalFixes[finalFixes.finalFixApprovalIdx++]);
+        if (finalFixes.finalFixes != null && finalFixes.finalFixApprovalIdx < finalFixes.finalFixes.length) {
+            phaseGroup.setFinalFix(finalFixes.finalFixes[finalFixes.finalFixApprovalIdx]);
         }
     }
 
@@ -1124,7 +1147,15 @@ final class PhasesDetailsServices {
     /**
      * <p>A helper class combining the details for final fixes for project.</p>
      *
-     * @author George1, TCSDEVELOPER
+     *
+     * <p>
+     * Version 1.1 (Members Post-Mortem Reviews Assembly 1.0) Change notes:
+     *   <ol>
+     *     <li>Added {@link #finalFixApprovalIdx} variable for mapping final fixes to <code>Approval</code> phases.</p> 
+     *   </ol>
+     * </p>
+     *
+     * @author George1, isv
      * @version 1.1
      */
     static class FinalFixesInfo {

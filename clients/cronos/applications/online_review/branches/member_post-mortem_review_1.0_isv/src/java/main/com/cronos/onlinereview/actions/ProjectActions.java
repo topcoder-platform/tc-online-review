@@ -198,8 +198,8 @@ import static com.cronos.onlinereview.actions.Constants.POST_MORTEM_PHASE_NAME;
  *   </ol>
  * </p>
  *
- * @author George1, real_vg, pulky, isv, TCSDEVELOPER
- * @version 1.7
+ * @author George1, real_vg, pulky, isv
+ * @version 1.8
  */
 public class ProjectActions extends DispatchAction {
 
@@ -558,7 +558,7 @@ public class ProjectActions extends DispatchAction {
                 form.set("resources_paid", i + 1, "N/A");
             }
 
-            // Save the flags for those Submiiters who have submitted for project and reviewers who have review
+            // Save the flags for those Submitters who have submitted for project and reviewers who have review
             // scorecards associated
             String resourceRoleName = resources[i].getResourceRole().getName();
             if ("Submitter".equalsIgnoreCase(resourceRoleName)) {
@@ -877,6 +877,30 @@ public class ProjectActions extends DispatchAction {
             }
 
             project = verification.getProject();
+
+            // Set the list of submitters who have already submitted and reviewers who have scorecards for project
+            ResourceManager resourceManager = ActionsHelper.createResourceManager(request);
+            ReviewManager reviewManager = ActionsHelper.createReviewManager(request);
+            Resource[] resources =
+                resourceManager.searchResources(ResourceFilterBuilder.createProjectIdFilter(project.getId()));
+            Map<Integer, Boolean> trueSubmitters = new HashMap<Integer, Boolean>();
+            Map<Integer, Boolean> trueReviewers = new HashMap<Integer, Boolean>();
+            request.setAttribute("trueSubmitters", trueSubmitters);
+            request.setAttribute("trueReviewers", trueReviewers);
+            Set<Long> reviewersWithScorecards = findResourcesWithReviewsForProject(reviewManager, project.getId());
+            for (int i = 0; i < resources.length; ++i) {
+                String resourceRoleName = resources[i].getResourceRole().getName();
+                if ("Submitter".equalsIgnoreCase(resourceRoleName)) {
+                    Long[] submissionIds = resources[i].getSubmissions();
+                    if ((submissionIds != null) && (submissionIds.length > 0)) {
+                        trueSubmitters.put(i + 1, Boolean.TRUE);
+                    }
+                } else if (REVIEWER_ROLE_NAMES.contains(resourceRoleName)) {
+                    if (reviewersWithScorecards.contains(resources[i].getId())) {
+                        trueReviewers.put(i + 1, Boolean.TRUE);
+                    }
+                }
+            }
         }
 
         // Obtain an instance of Project Manager
@@ -1881,7 +1905,7 @@ public class ProjectActions extends DispatchAction {
         // Parse time string
         String[] timeParts = timeString.trim().split("[./:-]|([ ])+");
         int hour = Integer.parseInt(timeParts[0]);
-        calendar.set(Calendar.HOUR, hour);
+        calendar.set(Calendar.HOUR_OF_DAY, hour);
         if (timeParts.length == 1) {
             calendar.set(Calendar.MINUTE, 0);
         } else {
@@ -1959,7 +1983,6 @@ public class ProjectActions extends DispatchAction {
         Set<Long> deletedUsers = new HashSet<Long>();
         Set<Long> newSubmitters = new HashSet<Long>();
         Set<Long> newUsersForumWatch = new HashSet<Long>();
-        Set<Long> oldTrueSubmitters = new HashSet<Long>();
 
         // 0-index resource is skipped as it is a "dummy" one
         boolean allResourcesValid = true;
@@ -2035,6 +2058,7 @@ public class ProjectActions extends DispatchAction {
         // Validate that no submitters who have submitted for project were changed (either by role or handle) or deleted
         // 0-index resource is skipped as it is a "dummy" one
         ReviewManager reviewManager = ActionsHelper.createReviewManager(request);
+        Set<Long> reviewResourceIds = findResourcesWithReviewsForProject(reviewManager, project.getId());
         Set<Long> reviewersWithScorecards = findResourcesWithReviewsForProject(reviewManager, project.getId());
         for (int i = 1; i < resourceNames.length; i++) {
             String resourceAction = (String) lazyForm.get("resources_action", i);
@@ -2052,8 +2076,7 @@ public class ProjectActions extends DispatchAction {
                             resourceHasSubmissions = true;
                         }
                     } else if (REVIEWER_ROLE_NAMES.contains(oldResourceRoleName)) {
-                        Set<Long> reviewIds = findResourcesWithReviewsForProject(reviewManager, project.getId());
-                        resourceHasReviews = (reviewIds != null && !reviewIds.isEmpty());
+                        resourceHasReviews = (reviewResourceIds != null && reviewResourceIds.contains(resourceId));
                     }
                     boolean resourceUpdateProhibited = resourceHasReviews || resourceHasSubmissions;
 
