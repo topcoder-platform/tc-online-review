@@ -66,7 +66,6 @@
             <form-property name="phase_start_by_phase" type="java.lang.Boolean[]" />
             <form-property name="phase_start_date" type="java.lang.String[]" />
             <form-property name="phase_start_time" type="java.lang.String[]" />
-            <form-property name="phase_start_AMPM" type="java.lang.String[]" />
             <form-property name="phase_start_phase" type="java.lang.String[]" />
             <form-property name="phase_start_when" type="java.lang.String[]" />
             <form-property name="phase_start_plusminus" type="java.lang.String[]" />
@@ -74,7 +73,6 @@
             <form-property name="phase_start_dayshrs" type="java.lang.String[]" />
             <form-property name="phase_end_date" type="java.lang.String[]" />
             <form-property name="phase_end_time" type="java.lang.String[]" />
-            <form-property name="phase_end_AMPM" type="java.lang.String[]" />
             <form-property name="phase_use_duration" type="java.lang.Boolean[]" />
             <form-property name="phase_duration" type="java.lang.String[]" />
 

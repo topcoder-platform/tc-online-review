@@ -10,6 +10,7 @@
 --%>
 <%@ page language="java" isELIgnored="false" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="html" uri="/tags/struts-html" %>
 <%@ taglib prefix="bean" uri="/tags/struts-bean" %>
@@ -83,7 +84,11 @@
 										<c:if test="${!(empty rating)}">
 											<td class="value" nowrap="nowrap"><span class="${ratingColor}">${rating}</span></td>
 										</c:if>
-										<td class="valueC" nowrap="nowrap">${resource.allProperties["Registration Date"]}</td>
+										<td class="valueC" nowrap="nowrap">
+											<fmt:parseDate pattern="MM.dd.yyyy hh:mm a" value="${resource.allProperties['Registration Date']}"
+											var="registrationDate"/>
+											<fmt:formatDate pattern="MM.dd.yyyy HH:mm z" value="${registrationDate}"/>
+										</td>
 									</tr>
 								</c:forEach>
 								<tr>
@@ -654,10 +659,12 @@
 						<c:when test='${group.appFunc == "APPROVAL"}'>
 							<table class="scorecard" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;">
 								<tr>
-									<td class="title" colspan="4">${group.tableName}</td>
+									<td class="title" colspan="6">${group.tableName}</td>
 								</tr>
 								<tr>
 									<td class="header" nowrap="nowrap"><bean:message key="viewProjectDetails.box.Submission.ID" /></td>
+									<td class="headerC" nowrap="nowrap"><bean:message key="viewProjectDetails.box.FinalFix.Date" arg0="${group.groupIndex}" /></td>
+									<td class="headerC" nowrap="nowrap"><bean:message key="viewProjectDetails.box.FinalFix.Fix" arg0="${group.groupIndex}" /></td>
 									<td class="headerC" nowrap="nowrap"><bean:message key="viewProjectDetails.box.Approval.Reviewer" arg0="${group.groupIndex}" /></td>
 									<td class="headerC" nowrap="nowrap"><bean:message key="viewProjectDetails.box.Approval.Date" arg0="${group.groupIndex}" /></td>
 									<td class="headerC" nowrap="nowrap"><bean:message key="viewProjectDetails.box.Approval.Approval" arg0="${group.groupIndex}" /></td>
@@ -690,6 +697,12 @@
                                                     coderId='${group.winner.allProperties["External Reference ID"]}'
                                                     context="${orfn:getHandlerContext(pageContext.request)}"/>)
                                             </td>
+                                            <td class="valueC" nowrap="nowrap">${orfn:displayDate(pageContext.request, group.finalFix.modificationTimestamp)}</td>
+                                            <td class="valueC" nowrap="nowrap">
+                                                <html:link page="/actions/DownloadFinalFix.do?method=downloadFinalFix&uid=${group.finalFix.id}"
+                                                        titleKey="viewProjectDetails.box.FinalFix.Download.alt"><bean:message
+                                                        key="viewProjectDetails.box.FinalFix.Download"/></html:link>
+                                            </td>
                                             <td class="valueC" nowrap="nowrap">
                                                 <tc-webtag:handle
                                                     coderId='${reviewer.allProperties["External Reference ID"]}'
@@ -698,16 +711,22 @@
                                             <c:choose>
                                                 <c:when test="${approval eq null}">
                                                     <td class="value"><!-- @ --></td>
-                                                    <c:if test="${isAllowedToPerformApproval and isReviewerCurrentUser}">
-                                                        <td class="valueC" nowrap="nowrap">
-                                                            <html:link page="/actions/CreateApproval.do?method=createApproval&sid=${winningSubmission.id}">
-                                                                <bean:message key="viewProjectDetails.box.Approval.Submit"/></html:link>
-                                                        </td>
-                                                    </c:if>
-                                                    <c:if test="${not isAllowedToPerformApproval or not isReviewerCurrentUser}">
-                                                        <td class="valueC" nowrap="nowrap">
-                                                            <bean:message key="Pending"/></td>
-                                                    </c:if>
+                                                    <c:choose>
+                                                        <c:when test="${isAllowedToPerformApproval and isReviewerCurrentUser and group.approvalPhaseStatus == 2}">
+                                                            <td class="valueC" nowrap="nowrap">
+                                                                <html:link page="/actions/CreateApproval.do?method=createApproval&sid=${winningSubmission.id}">
+                                                                    <bean:message key="viewProjectDetails.box.Approval.Submit"/></html:link>
+                                                            </td>
+                                                        </c:when>
+                                                        <c:when test="${group.approvalPhaseStatus == 2}">
+                                                            <td class="valueC" nowrap="nowrap">
+                                                                <bean:message key="Pending"/></td>
+                                                        </c:when>
+                                                        <c:otherwise>
+                                                            <td class="valueC" nowrap="nowrap">
+                                                                <bean:message key="NotAvailable"/></td>
+                                                        </c:otherwise>
+                                                    </c:choose>
                                                 </c:when>
                                                 <c:when test="${approval.committed}">
                                                     <td class="valueC"
@@ -719,23 +738,29 @@
                                                 </c:when>
                                                 <c:when test="${not approval.committed}">
                                                     <td class="value"><!-- @ --></td>
-                                                    <c:if test="${isAllowedToPerformApproval and isReviewerCurrentUser}">
-                                                        <td class="valueC" nowrap="nowrap">
-                                                            <html:link
-                                                                    page="/actions/EditApproval.do?method=editApproval&rid=${approval.id}"><bean:message
-                                                                    key="viewProjectDetails.box.Approval.Submit"/></html:link></td>
-                                                    </c:if>
-                                                    <c:if test="${not isAllowedToPerformApproval or not isReviewerCurrentUser}">
-                                                        <td class="valueC" nowrap="nowrap"><bean:message
-                                                                key="Pending"/></td>
-                                                    </c:if>
+                                                    <c:choose>
+                                                        <c:when test="${isAllowedToPerformApproval and isReviewerCurrentUser and group.approvalPhaseStatus == 2}">
+                                                            <td class="valueC" nowrap="nowrap">
+                                                            <html:link page="/actions/EditApproval.do?method=editApproval&rid=${approval.id}">
+                                                                <bean:message key="viewProjectDetails.box.Approval.Submit"/></html:link>
+                                                            </td>
+                                                        </c:when>
+                                                        <c:when test="${group.approvalPhaseStatus == 2}">
+                                                            <td class="valueC" nowrap="nowrap">
+                                                                <bean:message key="Pending"/></td>
+                                                        </c:when>
+                                                        <c:otherwise>
+                                                            <td class="valueC" nowrap="nowrap">
+                                                                <bean:message key="NotAvailable"/></td>
+                                                        </c:otherwise>
+                                                    </c:choose>
                                                 </c:when>
                                             </c:choose>
                                         </tr>
                                     </c:forEach>
 								</c:if>
 								<tr>
-									<td class="lastRowTD" colspan="4"><!-- @ --></td>
+									<td class="lastRowTD" colspan="6"><!-- @ --></td>
 								</tr>
 							</table>
 						</c:when>
@@ -769,16 +794,22 @@
                                         <c:choose>
                                             <c:when test="${review eq null}">
                                                 <td class="value"><!-- @ --></td>
-                                                <c:if test="${isAllowedToPerformPortMortemReview and isReviewerCurrentUser}">
-                                                    <td class="valueC" nowrap="nowrap">
-                                                        <html:link page="/actions/CreatePostMortem.do?method=createPostMortem&pid=${project.id}">
-                                                            <bean:message key="viewProjectDetails.box.Post-Mortem.Submit"/></html:link>
-                                                    </td>
-                                                </c:if>
-                                                <c:if test="${not isAllowedToPerformPortMortemReview or not isReviewerCurrentUser}">
-                                                    <td class="valueC" nowrap="nowrap">
-                                                        <bean:message key="Pending"/></td>
-                                                </c:if>
+                                                <c:choose>
+                                                    <c:when test="${isAllowedToPerformPortMortemReview and isReviewerCurrentUser}">
+                                                        <td class="valueC" nowrap="nowrap">
+                                                            <html:link page="/actions/CreatePostMortem.do?method=createPostMortem&pid=${project.id}">
+                                                                <bean:message key="viewProjectDetails.box.Post-Mortem.Submit"/></html:link>
+                                                        </td>
+                                                    </c:when>
+                                                    <c:when test="${group.postMortemPhaseStatus == 2}">
+                                                        <td class="valueC" nowrap="nowrap">
+                                                            <bean:message key="Pending"/></td>
+                                                    </c:when>
+                                                    <c:otherwise>
+                                                        <td class="valueC" nowrap="nowrap">
+                                                            <bean:message key="NotAvailable"/></td>
+                                                    </c:otherwise>
+                                                </c:choose>
                                             </c:when>
                                             <c:when test="${review.committed}">
                                                 <td class="valueC" nowrap="nowrap">${orfn:displayDate(pageContext.request, review.modificationTimestamp)}</td>
@@ -790,16 +821,23 @@
                                             </c:when>
                                             <c:when test="${not review.committed}">
                                                 <td class="value"><!-- @ --></td>
-                                                <c:if test="${isAllowedToPerformPortMortemReview and isReviewerCurrentUser}">
-                                                    <td class="valueC" nowrap="nowrap">
-                                                        <html:link page="/actions/EditPostMortem.do?method=editPostMortem&rid=${review.id}">
-                                                            <bean:message key="viewProjectDetails.box.Post-Mortem.Submit"/>
-                                                        </html:link>
-                                                    </td>
-                                                </c:if>
-                                                <c:if test="${not isAllowedToPerformPortMortemReview or not isReviewerCurrentUser}">
-                                                    <td class="valueC" nowrap="nowrap"><bean:message key="Pending" /></td>
-                                                </c:if>
+                                                <c:choose>
+                                                    <c:when test="${isAllowedToPerformPortMortemReview and isReviewerCurrentUser}">
+                                                        <td class="valueC" nowrap="nowrap">
+                                                            <html:link page="/actions/EditPostMortem.do?method=editPostMortem&rid=${review.id}">
+                                                                <bean:message key="viewProjectDetails.box.Post-Mortem.Submit"/>
+                                                            </html:link>
+                                                        </td>
+                                                    </c:when>
+                                                    <c:when test="${group.postMortemPhaseStatus == 2}">
+                                                        <td class="valueC" nowrap="nowrap">
+                                                            <bean:message key="Pending"/></td>
+                                                    </c:when>
+                                                    <c:otherwise>
+                                                        <td class="valueC" nowrap="nowrap">
+                                                            <bean:message key="NotAvailable"/></td>
+                                                    </c:otherwise>
+                                                </c:choose>
                                             </c:when>
                                         </c:choose>
                                     </tr>

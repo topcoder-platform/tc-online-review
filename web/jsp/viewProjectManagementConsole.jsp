@@ -123,7 +123,7 @@
 		                                    </td>
 		                                    <td class="value">
 		                                        <fmt:formatDate value="${requestScope.registrationPhase.scheduledEndDate}"
-		                                                        pattern="MM.dd.yyyy hh:mm a"/>
+		                                                        pattern="MM.dd.yyyy HH:mm z"/>
 		                                    </td>
 		                                </tr>
 		                                <tr class="dark">
@@ -165,7 +165,7 @@
 		                                        </td>
 		                                        <td class="value">
 		                                            <fmt:formatDate value="${requestScope.submissionPhase.scheduledEndDate}"
-		                                                            pattern="MM.dd.yyyy hh:mm a"/>
+		                                                            pattern="MM.dd.yyyy HH:mm z"/>
 		                                        </td>
 		                                    </tr>
 		                                    <tr class="dark">

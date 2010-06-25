@@ -53,8 +53,15 @@ import com.topcoder.web.ejb.pacts.ParentReferencePayment;
  *   </ol>
  * </p>
  *
+ * <p>
+ * Version 1.5 (Members Post-Mortem Reviews Assembly 1.0) Change notes:
+ *   <ol>
+ *     <li>Updated {@link #dateFormat} and {@link #timeOnlyFormat} constants to use 24-hours time format.</li>
+ *   </ol>
+ * </p>
+ *
  * @author George1, real_vg, pulky, isv, romanoTC
- * @version 1.4
+ * @version 1.5
  */
 public class ConfigHelper {
 
@@ -774,7 +781,7 @@ public class ConfigHelper {
     /**
      * This member variable holds the formatting string used to format dates.
      */
-    private static String dateFormat = "MM.dd.yyyy hh:mm a";
+    private static String dateFormat = "MM.dd.yyyy HH:mm z";
 
     /**
      * This member variable holds the formatting string used to format dates (onlt the date part of
@@ -786,7 +793,7 @@ public class ConfigHelper {
      * This member variable holds the formatting string used to format dates (onlt the time part of
      * them).
      */
-    private static String timeOnlyFormat = "hh:mm a";
+    private static String timeOnlyFormat = "HH:mm";
 
     /**
      * This member variable holds the names of all permissions for the application (as keys), and

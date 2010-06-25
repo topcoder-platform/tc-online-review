@@ -194,8 +194,16 @@ import com.topcoder.web.ejb.forums.ForumsHome;
  *   </ol>
  * </p>
  *
+ * <p>
+ * Version 1.7 (Members Post-Mortem Reviews Assembly 1.0) Change notes:
+ *   <ol>
+ *     <li>Updated {@link #getApprovalPhaseReviews(Review[], Phase)} method to map <code>Approval</code> reviews to
+ *     phase based on review and phase timestamps.</p>
+ *   </ol>
+ * </p>
+ *
  * @author George1, real_vg, pulky, isv
- * @version 1.6
+ * @version 1.7
  * @since 1.0
  */
 public class ActionsHelper {
@@ -4459,24 +4467,17 @@ public class ActionsHelper {
      * @since 1.3
      */
     static Review[] getApprovalPhaseReviews(Review[] reviews, Phase thisPhase) {
-        int count = 0;
         List<Review> thisPhaseReviews = new ArrayList<Review>();
-        Phase[] phases = thisPhase.getProject().getAllPhases();
-        for (int i = 0; i < phases.length; i++) {
-            Phase phase = phases[i];
-            if (phase.getPhaseType().getName().equals("Approval")) {
-                int reviewerNumber = Integer.parseInt((String) phase.getAttribute("Reviewer Number"));
-                if (phase.getId() != thisPhase.getId()) {
-                    count += reviewerNumber;
-                } else {
-                    int start = count;
-                    for (int j = 0; j < reviewerNumber; j++) {
-                        if (start + j < reviews.length) {
-                            Review review = reviews[start + j];
-                            thisPhaseReviews.add(review);
-                        }
+        for (int i = 0; i < reviews.length; i++) {
+            Review review = reviews[i];
+            Date reviewCreated = review.getCreationTimestamp();
+            Date phaseActualStart = thisPhase.getActualStartDate();
+            Date phaseActualEnd = thisPhase.getActualEndDate();
+            if (phaseActualStart != null) {
+                if (phaseActualStart.compareTo(reviewCreated) <= 0) {
+                    if ((phaseActualEnd == null) || (phaseActualEnd.compareTo(reviewCreated) >= 0)) {
+                        thisPhaseReviews.add(review);
                     }
-                    break;
                 }
             }
         }

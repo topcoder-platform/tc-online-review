@@ -4412,13 +4412,13 @@
                 <Value>#,###</Value>
             </Property>
             <Property name="Date">
-                <Value>MM.dd.yyyy hh:mm a</Value>
+                <Value>MM.dd.yyyy HH:mm z</Value>
             </Property>
             <Property name="DateOnly">
                 <Value>MM.dd.yyyy</Value>
             </Property>
             <Property name="TimeOnly">
-                <Value>hh:mm a</Value>
+                <Value>HH:mm z</Value>
             </Property>
         </Property>
 

@@ -19,13 +19,15 @@
 		<tr class="${(resourceStatus.index % 2 == 0) ? 'light' : 'dark'}" style="${projectForm.map['resources_action'][resourceIdx] eq 'delete' ? 'display:none' : ''}">
 			<td class="value" nowrap="nowrap">
 				<html:select styleClass="inputBox" property="resources_role[${resourceIdx}]"
+                             disabled="${requestScope.trueSubmitters[resourceIdx] or requestScope.trueReviewers[resourceIdx]}"
 						style="width:150px;" onchange="onResourceRoleChange(this.parentNode.parentNode);">
 					<html:option key="editProject.Resources.SelectRole" value="-1" />
 					<c:forEach items="${requestScope.resourceRoles}" var="role">
 						<html:option key="ResourceRole.${fn:replace(role.name, ' ', '')}" value="${role.id}" />
 					</c:forEach>
 				</html:select>
-				<html:select styleClass="inputBox" property="resources_phase[${resourceIdx}]" >
+				<html:select styleClass="inputBox" property="resources_phase[${resourceIdx}]"
+                             disabled="${requestScope.trueSubmitters[resourceIdx] or requestScope.trueReviewers[resourceIdx]}">
 					<c:forEach items="${requestScope.resourceRoles}" var="role">
 						<c:if test="${role.id eq projectForm.map['resources_role'][resourceIdx] and not empty role.phaseType}">
 							<c:forEach var="phaseIdx" begin="1" end="${fn:length(projectForm.map['phase_type'])}">
@@ -36,10 +38,16 @@
 						</c:if>
 					</c:forEach>
 				</html:select>
+				<c:if test="${requestScope.trueSubmitters[resourceIdx] or requestScope.trueReviewers[resourceIdx]}">
+					<html:hidden property="resources_role[${resourceIdx}]"/>
+					<html:hidden property="resources_phase[${resourceIdx}]"/>
+					<html:hidden property="resources_name[${resourceIdx}]"/>
+				</c:if>
 				<div name="role_validation_msg" class="error" style="display:none"></div>
 			</td>
 			<td class="value">
-				<html:text styleClass="inputBoxName" property="resources_name[${resourceIdx}]" />
+				<html:text styleClass="inputBoxName" property="resources_name[${resourceIdx}]"
+                           disabled="${requestScope.trueSubmitters[resourceIdx] or requestScope.trueReviewers[resourceIdx]}"/>
 				<div name="name_validation_msg" class="error" style="display:none"></div>
 				<div class="error"><html:errors property="resources_name[${resourceIdx}]" prefix="" suffix="" /></div>
 			</td>
@@ -65,7 +73,12 @@
 				<c:if test="${resourceIdx eq 0}">
 					<html:img srcKey="editProject.Resources.AddResource.img" altKey="editProject.Resources.AddResource.alt" onclick="addNewResource();" style="cursor:hand;" />
 				</c:if>
-				<html:img style="cursor:hand;${(resourceIdx eq 0) ? 'display: none;' : ''}" srcKey="editProject.Resources.DeleteResource.img" altKey="editProject.Resources.DeleteResource.alt" onclick="deleteResource(this.parentNode.parentNode);" />
+				<c:if test="${not (requestScope.trueSubmitters[resourceIdx] or requestScope.trueReviewers[resourceIdx])}">
+					<html:img style="cursor:hand;${(resourceIdx eq 0) ? 'display: none;' : ''}"
+					srcKey="editProject.Resources.DeleteResource.img"
+					altKey="editProject.Resources.DeleteResource.alt"
+					onclick="deleteResource(this.parentNode.parentNode);"/>
+				</c:if>
 				<html:hidden property="resources_action[${resourceIdx}]" />
 				<html:hidden property="resources_id[${resourceIdx}]" />
 			</td>
