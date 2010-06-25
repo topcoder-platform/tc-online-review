@@ -238,19 +238,10 @@ function getTimeString(timeString, ampmDropDown){
     
     var ampmflag = false;
 
-    // This is for hh:mm:ss a|p
+    // This is for hh:mm:ss
     var expression = /(\d{1,2}):(\d{1,2}):(\d{1,2})\s?(a|p)?/;
     if (result = expression.exec(timeString)){
         var hours = parseInt(result[1], 10);
-        if (result[4]!=null && result[4].match(/^a/i) && hours > 11) {
-            ampmflag = true;
-        }
-        else if (result[4]!=null && result[4].match(/^p/i) && hours < 12) {
-            hours+=12;
-        }
-	if (result[4]!=null && (result[4].match(/^a/i) || result[4].match(/^p/i))) {
-		ampmflag = true;
-	}        
 
         return checkTimeValues(hours, result[2], result[3], ampmDropDown, ampmflag);
     }
@@ -259,15 +250,6 @@ function getTimeString(timeString, ampmDropDown){
     var expression = /(\d{1,2}):(\d{1,2})\s?(a|p)?/;
     if (result = expression.exec(timeString)){
         var hours = parseInt(result[1], 10);
-        if (result[3]!=null && result[3].match(/^a/i) && hours > 11) {
-            hours-=12;
-        }
-        else if (result[3]!=null && result[3].match(/^p/i) && hours < 12) {
-            hours+=12;
-        }
-        if (result[4]!=null && (result[4].match(/^a/i) || result[4].match(/^p/i))) {
-                ampmflag = true;
-        }
 
         return checkTimeValues(hours, result[2], 0, ampmDropDown, ampmflag);
     }   
@@ -276,40 +258,13 @@ function getTimeString(timeString, ampmDropDown){
     var expression = /(\d{1,2})\s?(a|p)?/;
     if (result = expression.exec(timeString)){
         var hours = parseInt(result[1], 10);
-        if (result[2]!=null && result[2].match(/^a/i) && hours > 11) {
-            hours-=12;
-        }
-        else if (result[2]!=null && result[2].match(/^p/i) && hours < 12)
-            hours+=12;
-        if (result[2]!=null && (result[2].match(/^a/i) || result[2].match(/^p/i))) {
-                ampmflag = true;
-        }
-
         return checkTimeValues(hours, 0, 0, ampmDropDown, ampmflag);
     }
          
     return 'Invalid';
 }
 
-function getAMPMDropDown(parent) {
-    var child = parent.firstChild;
 
-    while (child) {
-        if (child.name && child.name.length >= "addphase_start_AMPM".length && child.name.substring(0, "addphase_start_AMPM".length) == "addphase_start_AMPM") {
-            return child;
-        }
-        if (child.name && child.name.length >= "phase_start_AMPM".length && child.name.substring(0, "phase_start_AMPM".length) == "phase_start_AMPM") {
-            return child;
-        }
-        if (child.name && child.name.length >= "phase_end_AMPM".length && child.name.substring(0, "phase_end_AMPM".length) == "phase_end_AMPM") {
-            return child;
-        }
-
-        child = child.nextSibling;
-    }
-    return null;
-
-}
 
 function checkTimeValues(hours, minutes, seconds, parent, ampmflag){
     var date = new Date();
@@ -318,38 +273,14 @@ function checkTimeValues(hours, minutes, seconds, parent, ampmflag){
     date.setSeconds(seconds);
     var returnHours = "";
     var returnMinutes = "";
-    var returnAMPM = "";
-    if (date.getHours() <= 11){
-        if (date.getHours()==0)
-            returnHours = "12";
-        else
-            returnHours = date.getHours();
-        returnAMPM = "AM";
-    }
-    else if (date.getHours() == 12){
-        returnHours = "12";
-        returnAMPM = "PM";
-    }
-    else{
-        returnHours = ""+(date.getHours()-12);
-        returnAMPM = "PM";
-    }
-    returnMinutes = ""+date.getMinutes();
+
+    returnHours = "" + date.getHours();
+    returnMinutes = "" + date.getMinutes();
     if (returnMinutes.length == 1)
-        returnMinutes = "0"+returnMinutes;
+        returnMinutes = "0" + returnMinutes;
     if (minutes == 0)
         returnMinutes = "00";
-    
-    if (ampmflag) {
-	    var ampmDropDown = getAMPMDropDown(parent);
 
-	    for (var i = 0; i < ampmDropDown.options.length; i++) {
-        	if (ampmDropDown.options[i].value.toUpperCase() == returnAMPM) {
-	            ampmDropDown.selectedIndex = i;
-        	    break;
-	        }
-	    }
-    }
     return returnHours+":"+returnMinutes;
 
 }

@@ -103,23 +103,13 @@ function getChildrenByNamePrefix(node, namePrefix) {
  */
 function patchParamIndex(paramNode, newIndex) {
 	if (paramNode.name.indexOf("[") >= 0 ) {
-		paramNode.name = paramNode.name.replace(/\[([.0-9])+\]/, "[" + newIndex + "]");
-		if (paramNode.outerHTML) {
-			var pNode = document.createElement(paramNode.outerHTML.replace(/\[([.0-9])+\]/, "[" + newIndex + "]"));
-			while (paramNode.children.length > 0) {
-				pNode.appendChild(paramNode.children[0]);
-			}
-			paramNode.parentNode.replaceChild(pNode, paramNode);
-		}
+        var newName = paramNode.name.replace(/\[([.0-9])+\]/, "[" + newIndex + "]");
+        paramNode.setAttribute("name", newName);
+
 	} else if (paramNode.name.indexOf("(") >= 0 ) {
-		paramNode.name = paramNode.name.replace(/\(([.0-9])+\)/, "(" + newIndex + ")");
-		if (paramNode.outerHTML) {
-			var pNode = document.createElement(paramNode.outerHTML.replace(/\(([.0-9])+\)/, "(" + newIndex + ")"));
-			while (paramNode.children.length > 0) {
-				pNode.appendChild(paramNode.children[0]);
-			}
-			paramNode.parentNode.replaceChild(pNode, paramNode);
-		}
+        var newName = paramNode.name.replace(/\(([.0-9])+\)/, "(" + newIndex + ")");
+        paramNode.setAttribute("name", newName);
+
 	}
 }
 

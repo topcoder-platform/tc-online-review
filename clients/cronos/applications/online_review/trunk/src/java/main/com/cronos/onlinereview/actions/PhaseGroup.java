@@ -26,8 +26,16 @@ import com.topcoder.project.phases.Phase;
  *   </ol>
  * </p>
  *
+ * <p>
+ * Version 1.2 (Member Post-Mortem Review Assembly v1.0) Change notes:
+ *   <ol>
+ *     <li>Expanded the bean with new <code>postMortemPhaseStatus</code> and <code>approvalPhaseStatus</code>
+ *     properties.</li>
+ *   </ol>
+ * </p>
+ *
  * @author George1, real_vg, isv
- * @version 1.1
+ * @version 1.2
  */
 public class PhaseGroup {
 
@@ -327,6 +335,20 @@ public class PhaseGroup {
      * @since 1.1
      */
     private Resource[] approvalReviewers;
+
+    /**
+     * <p>A <code>long</code> referencing the current status of the <code>Approval</code> phase.</p>
+     *
+     * @since 1.2
+     */
+    private long approvalPhaseStatus;
+
+    /**
+     * <p>A <code>long</code> referencing the current status of the <code>Post-Mortem</code> phase.</p>
+     *
+     * @since 1.2
+     */
+    private long postMortemPhaseStatus;
 
     /**
      * Constructs a new instance of the <code>PhaseGroup</code> class setting all fields to their
@@ -1012,5 +1034,46 @@ public class PhaseGroup {
      */
     public void setApprovalReviewers(Resource[] approvalReviewers) {
         this.approvalReviewers = approvalReviewers;
+    }
+
+    /**
+     * <p>Gets the current <code>Approval</code> phase status.</p>
+     *
+     * @return a <code>long</code> referencing the current status of the <code>Approval</code> phase.
+     * @since 1.2
+     */
+    public long getApprovalPhaseStatus() {
+        return approvalPhaseStatus;
+    }
+
+    /**
+     * <p>Sets the current <code>Approval</code> phase status.</p>
+     *
+     * @param approvalPhaseStatus a <code>long</code> referencing the current status of the <code>Approval</code> phase.
+     * @since 1.2
+     */
+    public void setApprovalPhaseStatus(long approvalPhaseStatus) {
+        this.approvalPhaseStatus = approvalPhaseStatus;
+    }
+
+    /**
+     * <p>Gets the current <code>Post-Mortem</code> phase status.</p>
+     *
+     * @return a <code>long</code> referencing the current status of the <code>Post-Mortem</code> phase.
+     * @since 1.2
+     */
+    public long getPostMortemPhaseStatus() {
+        return postMortemPhaseStatus;
+    }
+
+    /**
+     * <p>Sets the current <code>Post-Mortem</code> phase status.</p>
+     *
+     * @param postMortemPhaseStatus a <code>long</code> referencing the current status of the <code>Post-Mortem</code>
+     *        phase.
+     * @since 1.2
+     */
+    public void setPostMortemPhaseStatus(long postMortemPhaseStatus) {
+        this.postMortemPhaseStatus = postMortemPhaseStatus;
     }
 }
