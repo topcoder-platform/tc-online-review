@@ -4832,6 +4832,7 @@
                 <Value>Post-Mortem Reviewer</Value>
                 <Value>Copilot</Value>
                 <Value>Client Manager</Value>
+                <Value>Designer</Value>		
             </Property>
             <Property name="Perform Final Review">
                 <Value>Final Reviewer</Value>
