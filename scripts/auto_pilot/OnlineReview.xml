@@ -3894,7 +3894,7 @@
                     <Value>RootCatalog.Application</Value>
                 </Property>
                 <Property name="Custom">
-                    <Value>False</Value>
+                    <Value>True</Value>
                 </Property>
             </Property>
             <Property name="Studio">
@@ -3908,7 +3908,7 @@
                     <Value>RootCatalog.Studio</Value>
                 </Property>
                 <Property name="Custom">
-                    <Value>False</Value>
+                    <Value>True</Value>
                 </Property>
             </Property>
             <Property name="FlashCustom">
@@ -4358,7 +4358,7 @@
                 <Value>http://forums.topcoder.com/?module=Category&amp;categoryID=&lt;FORUM_ID&gt;</Value>
             </Property>
             <Property name="Studio">
-                <Value>http://studio.topcoder.com/forums?module=ThreadList&amp;forumID=&lt;FORUM_ID&gt;</Value>
+                <Value>http://forums.topcoder.com/?module=Category&amp;categoryID=&lt;FORUM_ID&gt;</Value>
             </Property>
         </Property>
 
