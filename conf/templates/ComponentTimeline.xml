@@ -19,7 +19,7 @@
 		<Phase id="registrationPhase" length="259200000" type="registration"/>
         
                 <Phase id="submissionPhase" length="604800000" type="submission">
-			<Dependency id="registrationPhase" isDependencyStart="true" isDependentStart="true" lagTime="0"/>
+			<Dependency id="registrationPhase" isDependencyStart="true" isDependentStart="true" lagTime="300000"/>
 		</Phase>
 		<Phase id="screeningPhase" length="86400000" type="screening">
 			<Dependency id="submissionPhase" isDependencyStart="false" isDependentStart="true" lagTime="0"/>

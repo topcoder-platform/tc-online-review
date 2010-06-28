@@ -1,7 +1,8 @@
 <?xml version="1.0"?>
 <!-- A template which defines a set of project phases -->
 <Template name="Development">
-<PhaseTypes>
+<!--	 An enumeration of project phase types defined in this template -->
+	<PhaseTypes>
 		<PhaseType id="registration" typeId="1" typeName="Registration"/>
 		<PhaseType id="submission" typeId="2" typeName="Submission"/>
 		<PhaseType id="screening" typeId="3" typeName="Screening"/>
@@ -14,16 +15,16 @@
 		<PhaseType id="final_review" typeId="10" typeName="Final Review"/>
 		<PhaseType id="approval" typeId="11" typeName="Approval"/>
 	</PhaseTypes>
-	<!-- A set of project phases defined in this template. -->
+<!--	 A set of project phases defined in this template. -->
 	<Phases>
 		<!-- A definition of a single phase. -->
 		<Phase id="registrationPhase" length="172800000" type="registration"/>
 
-		<Phase id="submissionPhase" length="604800000" type="submission">
-			<Dependency id="registrationPhase" isDependencyStart="true" isDependentStart="true" lagTime="0"/>
+		<Phase id="submissionPhase" length="345600000" type="submission">
+			<Dependency id="registrationPhase" isDependencyStart="true" isDependentStart="true" lagTime="300000"/>
 		</Phase>
 
-		<Phase id="screeningPhase" length="7200000" type="screening">
+		<Phase id="screeningPhase" length="21600000" type="screening">
 			<Dependency id="submissionPhase" isDependencyStart="false" isDependentStart="true" lagTime="0"/>
 		</Phase>
 
@@ -42,12 +43,12 @@
 			<Dependency id="appealsPhase" isDependencyStart="false" isDependentStart="true"/>
 		</Phase>
 
-		<Phase id="aggregationPhase" length="18000000" type="aggregation">
+		<Phase id="aggregationPhase" length="21600000" type="aggregation">
 			<!-- all attributes except "id" are omitted -->
 			<Dependency id="appealsReponsePhase"/>
 		</Phase>
 
-		<Phase id="aggregationReviewPhase" length="3600000" type="aggregation_review">
+		<Phase id="aggregationReviewPhase" length="7200000" type="aggregation_review">
 			<Dependency id="aggregationPhase" isDependencyStart="false" isDependentStart="true" lagTime="0"/>
 		</Phase>
 
@@ -59,8 +60,9 @@
 			<Dependency id="finalFixesPhase" isDependencyStart="false" isDependentStart="true" lagTime="0"/>
 		</Phase>
 
-		<Phase id="approval" length="86400000" type="approval">
+		<Phase id="approvalPhase" length="43200000" type="approval">
 			<Dependency id="finalReviewPhase" isDependencyStart="false" isDependentStart="true" lagTime="0"/>
 		</Phase>
+
 	</Phases>
 </Template>
