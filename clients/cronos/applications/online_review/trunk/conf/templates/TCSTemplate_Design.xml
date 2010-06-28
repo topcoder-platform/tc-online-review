@@ -20,11 +20,11 @@
 		<!-- A definition of a single phase. -->
 		<Phase id="registrationPhase" length="172800000" type="registration"/>
 
-		<Phase id="submissionPhase" length="518400000" type="submission">
-			<Dependency id="registrationPhase" isDependencyStart="true" isDependentStart="true" lagTime="0"/>
+		<Phase id="submissionPhase" length="345600000" type="submission">
+			<Dependency id="registrationPhase" isDependencyStart="true" isDependentStart="true" lagTime="300000"/>
 		</Phase>
 
-		<Phase id="screeningPhase" length="7200000" type="screening">
+		<Phase id="screeningPhase" length="21600000" type="screening">
 			<Dependency id="submissionPhase" isDependencyStart="false" isDependentStart="true" lagTime="0"/>
 		</Phase>
 
@@ -43,12 +43,12 @@
 			<Dependency id="appealsPhase" isDependencyStart="false" isDependentStart="true"/>
 		</Phase>
 
-		<Phase id="aggregationPhase" length="18000000" type="aggregation">
+		<Phase id="aggregationPhase" length="21600000" type="aggregation">
 			<!-- all attributes except "id" are omitted -->
 			<Dependency id="appealsReponsePhase"/>
 		</Phase>
 
-		<Phase id="aggregationReviewPhase" length="3600000" type="aggregation_review">
+		<Phase id="aggregationReviewPhase" length="7200000" type="aggregation_review">
 			<Dependency id="aggregationPhase" isDependencyStart="false" isDependentStart="true" lagTime="0"/>
 		</Phase>
 
@@ -60,8 +60,9 @@
 			<Dependency id="finalFixesPhase" isDependencyStart="false" isDependentStart="true" lagTime="0"/>
 		</Phase>
 
-		<Phase id="approval" length="86400000" type="approval">
+		<Phase id="approvalPhase" length="43200000" type="approval">
 			<Dependency id="finalReviewPhase" isDependencyStart="false" isDependentStart="true" lagTime="0"/>
 		</Phase>
+
 	</Phases>
 </Template>

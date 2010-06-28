@@ -21,7 +21,7 @@
 		<Phase id="registrationPhase" length="86400000" type="registration"/>
 
 		<Phase id="submissionPhase" length="259200000" type="submission">
-			<Dependency id="registrationPhase" isDependencyStart="true" isDependentStart="true" lagTime="0"/>
+			<Dependency id="registrationPhase" isDependencyStart="true" isDependentStart="true" lagTime="300000"/>
 		</Phase>
 
 		<Phase id="screeningPhase" length="7200000" type="screening">
@@ -60,7 +60,7 @@
 			<Dependency id="finalFixesPhase" isDependencyStart="false" isDependentStart="true" lagTime="0"/>
 		</Phase>
 
-		<Phase id="approval" length="86400000" type="approval">
+		<Phase id="approvalPhase" length="43200000" type="approval">
 			<Dependency id="finalReviewPhase" isDependencyStart="false" isDependentStart="true" lagTime="0"/>
 		</Phase>
 	</Phases>
