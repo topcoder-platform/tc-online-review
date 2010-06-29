@@ -1,0 +1,6 @@
+The results are in from the %PROJECT_TYPE{project type design,developmnet}% Review Board for the %PROJECT_NAME{project name}%.
+Your submission received a score of %SCORE{submission final score}% points which put you in %PLACE{1st,2nd place}% place.  
+The Review Scorecards from the Development Review Board are available in the Project Submit and Review application for your reference. If you have any questions, please feel free to send them to me. In addition, I would like to thank you for participating and hope you will continue to submit solutions for future projects.
+
+You must have an Assignment Document Version 2.0 on file in order to receive payment, please download the assignment document at\: http\://www.topcoder.com/wiki/x/MIFTAQ and submit it.  The Assignment document may be submitted by email, with a clear and legible scan or photo of the entire page (completed, signed, and dated) as an attachment to payments@topcoder.com; or by fax (cover sheet not necessary) to (US) +1 (860) 371.2165, or (China) +86 (010) 5885.0676, or (Poland) +48 (22) 485.3022; or by mail to Attention\: Member Payments, TopCoder, Inc., 95 Glastonbury Blvd., Glastonbury, CT 06033.
+
