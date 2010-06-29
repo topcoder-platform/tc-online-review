@@ -2018,7 +2018,7 @@
             <Value>24</Value>
         </Property>
         <Property name="PostMortemPhaseDefaultReviewersNumber">
-            <Value>1</Value>
+            <Value>2</Value>
         </Property>
         <Property name="PostMortemPhaseDefaultScorecardID">
             <Value>30000721</Value>
