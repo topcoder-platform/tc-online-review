@@ -71,7 +71,7 @@
     <property name="dev_dist.jar" value="${component}_${component_version}_dev_dist.jar" />
     <property name="design_dist.jar" value="${component}_${component_version}_design_dist.jar" />
     <property name="component.war" value="${build_distdir}/${distfilename}.war" />
-    
+
 
     <!-- TCS Dependencies -->
     <property name="authentication_factory.version" value="2.0" />
@@ -209,7 +209,7 @@
     <property name="online_review_deliverables.path" value="online_review_deliverables/${online_review_deliverables.version}" />
     <property name="online_review_deliverables.jar" value="${tcs_libdir}/${online_review_deliverables.path}/${online_review_deliverables.jar.name}" />
 
-    <property name="online_review_login.version" value="1.0.1" />
+    <property name="online_review_login.version" value="1.1" />
     <property name="online_review_login.jar.name" value="online_review_login.jar" />
     <property name="online_review_login.path" value="online_review_login/${online_review_login.version}" />
     <property name="online_review_login.jar" value="${tcs_libdir}/${online_review_login.path}/${online_review_login.jar.name}" />
@@ -388,6 +388,9 @@
     <property name="servlet.jar" value="${cactus.home.tomcat5x}/common/lib/servlet-api.jar" />
     <property name="servlet.jsp.jar" value="${cactus.home.tomcat5x}/common/lib/jsp-api.jar" />
     <property name="mail.jar" value="${cactus.home.tomcat5x}/common/lib/mail.jar" />
+<!--
+    <property name="mail.jar" value="${ext_libdir}/mail.jar" />
+-->
     <property name="struts.jar" value="${ext_libdir}/struts-1.2.9.jar" />
     <property name="axis.jar" value="${ext_libdir}/axis-dok.jar" />
     <property name="ejb-2_0.jar" value="${ext_libdir}/ejb-2_0.jar" />
@@ -554,7 +557,7 @@
 
     <target name="compile_ws" depends="compile">
         <mkdir dir="${build_testclassdir}" />
-    	
+
     	<echo>${axis.jar}</echo>
     	<echo>${jboss-client.jar}</echo>
         <javac srcdir="${javatests}"
@@ -570,20 +573,20 @@
         		<fileset dir="${JBOSS_HOME}" includes="client/jbossall-client.jar"/>
         	</classpath>
         </javac>
-    	
-    	<java classname="com.cronos.onlinereview.uploadservices.UploadServiceClient" 
+
+    	<java classname="com.cronos.onlinereview.uploadservices.UploadServiceClient"
     			fork="true" maxmemory="512m">
 	    	<classpath >
 	    		<fileset dir="${ext_libdir}" includes="**/*.jar"/>
 	    		<fileset dir="${JBOSS_HOME}" includes="client/jbossall-client.jar"/>
 	    		<path path="${build_testclassdir}"/>
-	    	</classpath>	
+	    	</classpath>
 		</java>
     </target>
-	
-	
-	
-	
+
+
+
+
     <target name="prepare_tests_war" depends="dist, compile_tests">
 
         <!-- Cactify the web-app archive -->
@@ -743,7 +746,7 @@ Note: The security manager that comes with the app may not be compatible with th
             <!-- Added libs to support ejb3 calls -->
             <lib dir="${jar_ext_libdir}/jboss/">
                 <include name="jboss-ejb3-client.jar"/>
-                <include name="jboss-ejb3x.jar"/>            	
+                <include name="jboss-ejb3x.jar"/>
                 <include name="jboss-aop-jdk50-client.jar"/>
                 <include name="jboss-aspect-jdk50-client.jar"/>
                 <include name="jboss-remoting.jar"/>
@@ -963,6 +966,58 @@ Note: The security manager that comes with the app may not be compatible with th
     <!-- ************************************************************************** -->
     <!-- ************************ END REMOVE EVERYTHING ***************************** -->
     <!-- ************************************************************************** -->
+
+    <!--
+        ++ =======================================================================
+        ++ Macro: compile_component
+        ++ Compiles specified component
+        ++ =======================================================================
+    -->
+    <macrodef name="compile_component" description="Compiles the component">
+        <attribute name="component"/>
+        <attribute name="version"/>
+        <attribute name="path"/>
+
+        <sequential>
+            <property name="component_base_dir" value="@{path}"/>
+            <property name="component_src_dir" value="${component_base_dir}/src/java/main"/>
+            <property name="component_build_dir" value="${component_base_dir}/build"/>
+            <property name="component_build_classes_dir" value="${component_build_dir}/classes"/>
+            <property name="component_jar_file" value="${component_build_dir}/@{component}.jar"/>
+            <property name="component_dist_dir" value="${tcs_libdir}/@{component}/@{version}"/>
+
+            <delete dir="${component_build_dir}"/>
+            <mkdir dir="${component_build_dir}"/>
+            <mkdir dir="${component_build_classes_dir}"/>
+
+            <echo message="Base: ${component_base_dir}"/>
+            <echo message="Build: ${component_build_dir}"/>
+            <echo message="Src: ${component_src_dir}"/>
+            <echo message="Dist: ${component_dist_dir}"/>
+            <echo message="Jar: ${component_jar_file}"/>
+
+            <javac srcdir="${component_src_dir}"
+                   destdir="${component_build_classes_dir}"
+                   deprecation="${deprecation}"
+                   debug="on"
+                   source="1.5" target="1.5" memoryMaximumSize="512M" memoryInitialSize="64M" fork="true">
+                <classpath refid="buildlibs"/>
+                <include name="**/*"/>
+            </javac>
+            <jar basedir="${component_build_classes_dir}" jarfile="${component_jar_file}" includes="**"/>
+            <mkdir dir="${component_dist_dir}"/>
+            <copy file="${component_jar_file}" todir="${component_dist_dir}"/>
+        </sequential>
+    </macrodef>
+
+    <target name="compile_component_1">
+        <compile_component component="online_review_phases" version="1.3"
+                           path="../../Components/online_review_phases"/>
+    </target>
+    <target name="compile_component_2">
+        <compile_component component="online_review_login" version="1.1"
+                           path="../../Components/online_review_login"/>
+    </target>
 
 
 </project>

@@ -7,7 +7,7 @@
 <%@ taglib prefix="orfn" uri="/tags/or-functions" %>
 	<table class="scorecard" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;">
 		<tr>
-			<td class="title"><bean:message key="viewProjectDetails.box.MyRole" /></td>
+			<td class="title"><bean:message key="viewProjectDetails.box.MyRoleAndPayments" /></td>
 			<c:if test="${empty myDeliverables}">
 				<td class="title"><!-- @ --></td>
 			</c:if>
@@ -18,23 +18,51 @@
 		</tr>
 		<tr class="light">
 			<td class="value" width="15%" align="left">
-				<b>${myRole}</b><br />
-				<c:if test="${isAllowedToViewPayment}">
-					<b><bean:message key="viewProjectDetails.Payment" />:</b>
-					<c:if test="${empty myPayment}">
-						<bean:message key="NotAvailable" />
-					</c:if>
-					<c:if test="${not empty myPayment}">
-						${"$"}${orfn:displayPaymentAmt(pageContext.request, myPayment)}
-						<c:if test="${wasPaid}">
-							<bean:message key="viewProjectDetails.Paid.yes" />
-						</c:if>
-						<c:if test="${not wasPaid}">
-							<bean:message key="viewProjectDetails.Paid.no" />
-						</c:if>
-					</c:if>
-				</c:if>
-			</td>
+                <table>
+                    <tr>
+                        <th class="value"><bean:message key="viewProjectDetails.Role"/></th>
+                        <c:if test="${isAllowedToViewPayment}">
+                            <th class="value"><bean:message key="viewProjectDetails.Payment"/></th>
+                            <th class="value"><bean:message key="viewProjectDetails.PaymentStatus"/></th>
+                        </c:if>
+                    </tr>
+                    <c:forEach items="${requestScope.myPayment}" var="rolePayment">
+                        <c:set var="roleName" value="${rolePayment.key.name}"/>
+                        <c:set var="paymentAmount" value="${rolePayment.value}"/>
+                        <c:set var="paid" value="${requestScope.wasPaid[rolePayment.key]}"/>
+                        <tr>
+                            <td class="value">
+                                <c:out value="${roleName}"/>
+                            </td>
+                            <c:if test="${isAllowedToViewPayment}">
+                                <td class="value">
+                                    ${"$"}${orfn:displayPaymentAmt(pageContext.request, paymentAmount)}
+                                </td>
+                                <td class="value">
+                                    <c:choose>
+                                        <c:when test="${not empty paymentAmount}">
+                                            <c:if test="${paid}">
+                                                <bean:message key="viewProjectDetails.Paid.yes"/>
+                                            </c:if>
+                                            <c:if test="${not paid}">
+                                                <bean:message key="viewProjectDetails.Paid.no"/>
+                                            </c:if>
+                                        </c:when>
+                                        <c:otherwise>&nbsp;</c:otherwise>
+                                    </c:choose>
+                                </td>
+                            </c:if>
+                        </tr>
+                    </c:forEach>
+                    <c:if test="${isAllowedToViewPayment}">
+                        <tr>
+                            <td class="value"><bean:message key="viewProjectDetails.TotalPayment"/></td>
+                            <td class="value">${"$"}${orfn:displayPaymentAmt(pageContext.request, requestScope.totalPayment)}</td>
+                            <td class="value">&nbsp;</td>
+                        </tr>
+                    </c:if>
+                </table>
+            </td>
 			<c:if test="${empty myDeliverables}">
 				<td class="value" width="45%" align="left" nowrap="nowrap"><!-- @ --></td>
 			</c:if>

@@ -13,16 +13,7 @@ import java.sql.Timestamp;
 import java.sql.Types;
 import java.text.Format;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.LinkedList;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import javax.ejb.CreateException;
 import javax.naming.Context;
@@ -33,6 +24,7 @@ import com.cronos.onlinereview.dataaccess.ResourceDataAccess;
 import com.topcoder.management.phase.ContestDependencyAutomation;
 import com.topcoder.management.resource.persistence.ResourcePersistenceException;
 import com.topcoder.management.review.ReviewManagementException;
+import com.topcoder.project.phases.Dependency;
 import com.topcoder.search.builder.filter.EqualToFilter;
 import org.apache.struts.Globals;
 import org.apache.struts.action.ActionErrors;
@@ -202,8 +194,19 @@ import com.topcoder.web.ejb.forums.ForumsHome;
  *   </ol>
  * </p>
  *
- * @author George1, real_vg, pulky, isv
- * @version 1.7
+ * <p>
+ * Version 1.8 (Impersonation Login Assembly 1.0) Change notes:
+ *   <ol>
+ *     <li>Added {@link #arePhaseDependenciesMet(Phase, boolean)}, {@link #isPhaseOpen(PhaseStatus)},
+ *     {@link #isPhaseClosed(PhaseStatus)} methods and {@link #PHASE_STATUS_OPEN} and {@link #PHASE_STATUS_CLOSED}
+ *     constants.</li>
+ *     <li>Added {@link #getMyPayments(Resource[])} method.</li>
+ *     <li>Added {@link #getMyPaymentStatuses(Resource[])} method.</li>
+ *   </ol>
+ * </p>
+ *
+ * @author George1, real_vg, pulky, isv, TCSDEVELOPER
+ * @version 1.8
  * @since 1.0
  */
 public class ActionsHelper {
@@ -248,6 +251,12 @@ public class ActionsHelper {
      */
     private static final String SOFTWARE_MODERATOR_FORUM_ROLE_PREFIX = "Software_Moderators_";
 
+
+    /** constant for "Open" phase status. */
+    private static final String PHASE_STATUS_OPEN = "Open";
+
+    /** constant for "Closed" phase status. */
+    private static final String PHASE_STATUS_CLOSED = "Closed";
 
 
     /**
@@ -1512,6 +1521,51 @@ public class ActionsHelper {
         }
 
         return (totalPayment != -1.0) ? new Double(totalPayment) : null;
+    }
+
+    /**
+     * <p>Gets the list of payments per resource roles assigned to user.</p>
+     *
+     * @param myResources a <code>Resource</code> array listing the resources associated with user.
+     * @return a <code>Map</code> mapping the resource roles to respective payments.
+     * @since 1.8
+     */
+    public static Map<ResourceRole, Double> getMyPayments(Resource[] myResources) {
+        Map<ResourceRole, Double> payments = new LinkedHashMap<ResourceRole, Double>();
+
+        for (int i = 0; i < myResources.length; ++i) {
+            Resource resource = myResources[i];
+            String paymentStr = (String) resource.getProperty("Payment");
+            if (paymentStr != null && paymentStr.trim().length() != 0) {
+                double payment = Double.parseDouble(paymentStr);
+                payments.put(resource.getResourceRole(), payment);
+            }
+        }
+
+        return payments;
+    }
+
+    /**
+     * <p>Gets the list of statuses of payments per resource roles assigned to user.</p>
+     *
+     * @param myResources a <code>Resource</code> array listing the resources associated with user.
+     * @return a <code>Map</code> mapping the resource roles to respective payment statuses.
+     * @since 1.8
+     */
+    public static Map<ResourceRole, Boolean> getMyPaymentStatuses(Resource[] myResources) {
+        Map<ResourceRole, Boolean> paymentStatuses = new LinkedHashMap<ResourceRole, Boolean>();
+
+        for (int i = 0; i < myResources.length; ++i) {
+            Resource resource = myResources[i];
+            String paid = (String) resource.getProperty("Payment Status");
+            if ("Yes".equalsIgnoreCase(paid)) {
+                paymentStatuses.put(resource.getResourceRole(), Boolean.TRUE);
+            } else {
+                paymentStatuses.put(resource.getResourceRole(), Boolean.FALSE);
+            }
+        }
+
+        return paymentStatuses;
     }
 
     /**
@@ -4542,5 +4596,71 @@ public class ActionsHelper {
         throws ResourcePersistenceException {
         ResourceDataAccess resourceDataAccess = new ResourceDataAccess();
         return resourceDataAccess.searchUserResources(userId, status, resourceManager);
+    }
+
+    /**
+     * <p>Checks if all all dependencies for specified phase (if any) are met.</p>
+     *
+     * @param phase a <code>Phase</code> providing the details for phase to check.
+     * @param phaseStarting <code>true</code> if specified phase is going to be started; <code>false</code> otherwise.
+     * @return <code>true</code> if specified phase has no dependencies or all existing dependencies have been met;
+     *         <code>false</code> otherwise.
+     * @since 1.8
+     */
+    static boolean arePhaseDependenciesMet(Phase phase, boolean phaseStarting) {
+        Dependency[] dependencies = phase.getAllDependencies();
+
+        if ((dependencies == null) || (dependencies.length == 0)) {
+            return true;
+        }
+
+        for (int i = 0; i < dependencies.length; i++) {
+            Phase dependency = dependencies[i].getDependency();
+            if (phaseStarting) {
+                if (dependencies[i].isDependencyStart() && dependencies[i].isDependentStart()) {
+                    if (!isPhaseOpen(dependency.getPhaseStatus())) {
+                        return false;
+                    }
+                } else if (!dependencies[i].isDependencyStart() && dependencies[i].isDependentStart()) {
+                    if (!isPhaseClosed(dependency.getPhaseStatus())) {
+                        return false;
+                    }
+                }
+            } else {
+                if (dependencies[i].isDependencyStart() && !dependencies[i].isDependentStart()) {
+                    if (!isPhaseOpen(dependency.getPhaseStatus())) {
+                        return false;
+                    }
+                } else if (!dependencies[i].isDependencyStart() && !dependencies[i].isDependentStart()) {
+                    if (!isPhaseClosed(dependency.getPhaseStatus())) {
+                        return false;
+                    }
+                }
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * <p>Checks if specified phase status is <code>Closed</code> status.</p>
+     *
+     * @param status a <code>PhaseStatus</code> to check.
+     * @return <code>true</code> if specified phase status is <code>Closed</code> status; <code>false</code> otherwise.
+     * @since 1.8
+     */
+    static boolean isPhaseClosed(PhaseStatus status) {
+        return (PHASE_STATUS_CLOSED.equals(status.getName()));
+    }
+
+    /**
+     * <p>Checks if specified phase status is <code>Open</code> status.</p>
+     *
+     * @param status a <code>PhaseStatus</code> to check.
+     * @return <code>true</code> if specified phase status is <code>Open</code> status; <code>false</code> otherwise.
+     * @since 1.8
+     */
+    static boolean isPhaseOpen(PhaseStatus status) {
+        return (PHASE_STATUS_OPEN.equals(status.getName()));
     }
 }

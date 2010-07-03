@@ -15,3 +15,9 @@ This is the notification about %PHASE_OPERATION{The phase operation - start/end}
 <td>%SUBMITTER_HANDLE%<td>%SUBMITTER_PRE_APPEALS_SCORE%<td>%SUBMITTER_POST_APPEALS_SCORE%<td>%SUBMITTER_RESULT%
 %endloop%
 </table>
+
+%if:N_AGGREGATOR='0'%
+<p>
+<font color\="red"><b>The project has no Aggregator assigned!</b></font>
+</p>
+%endif%

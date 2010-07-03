@@ -31,13 +31,13 @@
     </c:if>
     </div>
     <div style="float: left;">
-    <c:if test="${isAllowedToViewInactiveProjects}">
+    <c:if test="${isAllowedToViewDraftProjects}">
         <c:if test="${(not empty projectTabIndex) and (projectTabIndex == 4)}">
-            <html:img src="/i/or/tab_inactive_projects_on.gif" width="119" height="36" border="0" imageName="tab4" />
+            <html:img src="/i/or/tab_draft_projects_on.gif" width="119" height="36" border="0" imageName="tab4" />
         </c:if>
         <c:if test="${(empty projectTabIndex) or (projectTabIndex != 4)}">
-            <html:link page="/actions/ListProjects.do?method=listProjects&amp;scope=inactive" onmouseover="img_act('tab4')" onmouseout="img_inact('tab4')">
-                <html:img src="/i/or/tab_inactive_projects.gif" width="119"height="36" border="0" imageName="tab4" />
+            <html:link page="/actions/ListProjects.do?method=listProjects&amp;scope=draft" onmouseover="img_act('tab4')" onmouseout="img_inact('tab4')">
+                <html:img src="/i/or/tab_draft_projects.gif" width="119"height="36" border="0" imageName="tab4" />
             </html:link>
         </c:if>
     </c:if>

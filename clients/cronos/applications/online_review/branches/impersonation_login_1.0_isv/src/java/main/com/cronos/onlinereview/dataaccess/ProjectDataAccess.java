@@ -16,8 +16,16 @@ import java.util.Map;
 /**
  * <p>A simple DAO for projects backed up by Query Tool.</p>
  *
- * @author isv
- * @version 1.0
+ * <p>
+ * Version 1.1 (Impersonation Login Assembly 1.0) Change notes:
+ *   <ol>
+ *     <li>Added {@link #getCockpitProjectDescription(long)} method.</li>
+ *     <li>Renamed <code>searchInactiveProjects</code> method to <code>searchDraftProjects</code> method.</li>
+ *   </ol>
+ * </p>
+ *
+ * @author isv, TCSDEVELOPER
+ * @version 1.1
  */
 public class ProjectDataAccess extends BaseDataAccess {
 
@@ -44,18 +52,18 @@ public class ProjectDataAccess extends BaseDataAccess {
     }
 
     /**
-     * <p>Gets all inactive projects.</p>
+     * <p>Gets all draft projects.</p>
      *
      * @param projectStatuses a <code>ProjectStatus</code> array listing the available project statuses.
      * @param projectCategories a <code>ProjectCategory</code> array listing available project categories.
-     * @param projectInfoTypes a <code>ProjectPropertyType</code> lising available project info types.
+     * @param projectInfoTypes a <code>ProjectPropertyType</code> listing available project info types.
      * @return a <code>Project</code> array listing the projects of specified status.
      * @throws DataAccessException if an unexpected error occurs while running the query via Query Tool.
      */
-    public Project[] searchInactiveProjects(ProjectStatus[] projectStatuses, ProjectCategory[] projectCategories,
+    public Project[] searchDraftProjects(ProjectStatus[] projectStatuses, ProjectCategory[] projectCategories,
                                             ProjectPropertyType[] projectInfoTypes) {
         return searchProjectsByQueryTool("tcs_projects_by_status", "tcs_project_infos_by_status", "stid",
-                                         String.valueOf(PROJECT_STATUS_INACTIVE_ID),
+                                         String.valueOf(PROJECT_STATUS_DRAFT_ID),
                                          projectStatuses, projectCategories, projectInfoTypes);
     }
 
@@ -75,6 +83,25 @@ public class ProjectDataAccess extends BaseDataAccess {
         return searchProjectsByQueryTool("tcs_projects_by_user", "tcs_project_infos_by_user", "uid",
                                          String.valueOf(userId),
                                          projectStatuses, projectCategories, projectInfoTypes);
+    }
+
+    /**
+     * <p>Gets the description for <code>Cockpit</code> project which might have been associated with the specified
+     * project.</p>
+     *
+     * @param projectId a <code>long</code> providing the ID of a project.
+     * @return a <code>String</code> providing the description for <code>Cockpit</code> project associated with
+     *         specified project or <code>null</code> if there is no such <code>Cockpit</code> project.
+     * @since 1.1
+     */
+    public String getCockpitProjectDescription(long projectId) {
+        Map<String, ResultSetContainer> results = runQuery("cockpit_project", "pj", String.valueOf(projectId));
+        ResultSetContainer result = results.get("cockpit_project");
+        if (!result.isEmpty()) {
+            return result.getStringItem(0, "description");
+        } else {
+            return null;
+        }
     }
 
     /**

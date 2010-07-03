@@ -13,7 +13,7 @@
             <c:set var="listKeyName" value="listProjects.title.MyProjects" />
         </c:when>
         <c:when test="${projectTabIndex == 4}">
-            <c:set var="listKeyName" value="listProjects.title.InactiveProjects" />
+            <c:set var="listKeyName" value="listProjects.title.DraftProjects" />
         </c:when>
         <c:otherwise>
             <c:set var="listKeyName" value="listProjects.title.AllProjects" />

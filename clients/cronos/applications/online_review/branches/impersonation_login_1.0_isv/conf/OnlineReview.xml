@@ -75,6 +75,18 @@
             </Property>
         </Property>
 
+        <Property name="auth_cookie_manager">
+            <Property name="class">
+                <Value>com.cronos.onlinereview.login.cookies.AuthCookieManagerImpl</Value>
+            </Property>
+            <Property name="namespace">
+                <Value>com.cronos.OnlineReview</Value>
+            </Property>
+            <Property name="logger_name">
+                <Value>LoginActions</Value>
+            </Property>
+        </Property>
+
         <Property name="authenticator_name">
             <Value>ORAuthenticator</Value>
         </Property>
@@ -3746,6 +3758,23 @@
         <Property name="user_identifer_key">
             <Value>userId</Value>
         </Property>
+        <Property name="user_identifier_key">
+            <Value>userId</Value>
+        </Property>
+        <Property name="cookie_name">
+            <Value>or_user</Value>
+        </Property>
+        <Property name="connection_name">
+            <Value>tcs</Value>
+        </Property>
+        <Property name="db_connection_factory">
+            <Property name="class">
+                <Value>com.topcoder.db.connectionfactory.DBConnectionFactoryImpl</Value>
+            </Property>
+            <Property name="namespace">
+                <Value>com.topcoder.db.connectionfactory.DBConnectionFactoryImpl</Value>
+            </Property>
+        </Property>
         <Property name="ProjectDetailsURL">
             <Value>http://software.topcoder.com/review/actions/ViewProjectDetails.do?method=viewProjectDetails&amp;pid=</Value>
         </Property>
@@ -4375,6 +4404,18 @@
             </Property>
         </Property>
 
+        <Property name="ProjectTypeScorecardLinks">
+            <Property name="Application">
+                <Value>https://software.topcoder.com/review/actions/ViewScorecard.do?method=viewScorecard&amp;scid=&lt;SCORECARD_ID&gt;</Value>
+            </Property>
+            <Property name="Component">
+                <Value>https://software.topcoder.com/review/actions/ViewScorecard.do?method=viewScorecard&amp;scid=&lt;SCORECARD_ID&gt;</Value>
+            </Property>
+            <Property name="Studio">
+                <Value>https://software.topcoder.com/review/actions/ViewScorecard.do?method=viewScorecard&amp;scid=&lt;SCORECARD_ID&gt;</Value>
+            </Property>
+        </Property>
+
         <Property name="Defaults">
             <Property name="PixelsPerHour">
                 <Value>5</Value>
@@ -4420,6 +4461,13 @@
             <Property name="TimeOnly">
                 <Value>HH:mm z</Value>
             </Property>
+        </Property>
+
+        <Property name="DisabledResourceRoles">
+            <Value>1002</Value><!-- Free Agent -->
+            <Value>3</Value><!-- Screener -->
+            <Value>86</Value><!-- Deactivated -->
+            <Value>1001</Value><!-- Team Captain -->
         </Property>
 
         <!-- Definition of the Permissions Matrix.  Each property inside the main one denotes one
@@ -4491,7 +4539,7 @@
                 <Value>Copilot</Value>
                 <Value>Client Manager</Value>
             </Property>
-            <Property name="View Projects Inactive">
+            <Property name="View Projects Draft">
                 <Value>Global Manager</Value>
                 <Value>Manager</Value>
             </Property>

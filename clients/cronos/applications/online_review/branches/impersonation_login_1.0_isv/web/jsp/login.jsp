@@ -72,6 +72,10 @@
                                 <td class="value"><input type="password" name="password" /></td>
                             </tr>
                             <tr>
+                                <td class="value"><div align="right"><bean:message key="login.formLogin.rememberMe"/></div></td>
+                                <td class="value"><input type="checkbox" name="rememberMe"/></td>
+                            </tr>
+                            <tr>
                                 <td class="valueLast">&#160;</td>
                                 <td class="valueLast"><html:image altKey="login.formLogin.btnLogin.alt"
                                         srcKey="login.formLogin.btnLogin.img" border="0" styleClass="imgLogin" /></td>

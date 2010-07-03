@@ -55,6 +55,9 @@
                                 <c:when test="${phaseStatuseCodes[phaseStatus.index] == 4}">
                                     <td class="valueC" nowrap="nowrap" style="color:#cc0000;"><bean:message key="ProjectPhaseStatus.Late" /></td>
                                 </c:when>
+                                <c:when test="${phaseStatuseCodes[phaseStatus.index] == 5}">
+                                    <td class="valueC" nowrap="nowrap"><bean:message key="ProjectPhaseStatus.CantOpen" /></td>
+                                </c:when>
                                 <c:otherwise>
                                     <%-- This should never happen --%>
                                     <td class="valueC" nowrap="nowrap"><!-- @ --></td>

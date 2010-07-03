@@ -32,8 +32,16 @@ package com.cronos.onlinereview.actions;
  *   </ol>
  * </p>
  *
- * @author George1, real_vg, pulky, isv
- * @version 1.3
+ * <p>
+ * Version 1.4 (Impersonation Login Assembly 1.0) Change notes:
+ *   <ol>
+ *     <li>Renamed <code>VIEW_PROJECTS_INACTIVE_PERM_NAME</code> constant to <code>VIEW_PROJECTS_DRAFT_PERM_NAME</code>
+ *     constant.</li>
+ *   </ol>
+ * </p>
+ *
+ * @author George1, real_vg, pulky, isv, TCSDEVELOPER
+ * @version 1.4
  */
 public class Constants {
 
@@ -284,10 +292,10 @@ public class Constants {
     public static final String VIEW_MY_PROJECTS_PERM_NAME = "View My Projects";
 
     /**
-     * This member variable is a string constant that defines the name of the View Projects Inactive
+     * This member variable is a string constant that defines the name of the View Projects Draft
      * permission.
      */
-    public static final String VIEW_PROJECTS_INACTIVE_PERM_NAME = "View Projects Inactive";
+    public static final String VIEW_PROJECTS_DRAFT_PERM_NAME = "View Projects Draft";
 
     /**
      * This member variable is a string constant that defines the name of the View Project Detail

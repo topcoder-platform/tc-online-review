@@ -41,8 +41,15 @@ import com.topcoder.util.errorhandling.BaseException;
  *   </ol>
  * </p>
  *
- * @author George1, real_vg, pulky, isv
- * @version 1.2
+ * <p>
+ * Version 1.3 (Impersonation Login Assembly 1.0) Change notes:
+ *   <ol>
+ *     <li>Updated {@link #gatherUserRoles(HttpServletRequest)} method.</li>
+ *   </ol>
+ * </p>
+ *
+ * @author George1, real_vg, pulky, isv, TCSDEVELOPER
+ * @version 1.3
  */
 public class AuthorizationHelper {
 
@@ -253,8 +260,8 @@ public class AuthorizationHelper {
         }
 
         // Determine some common permissions
-        request.setAttribute("isAllowedToViewInactiveProjects",
-                new Boolean(hasUserPermission(request, Constants.VIEW_PROJECTS_INACTIVE_PERM_NAME)));
+        request.setAttribute("isAllowedToViewDraftProjects",
+                new Boolean(hasUserPermission(request, Constants.VIEW_PROJECTS_DRAFT_PERM_NAME)));
         request.setAttribute("isAllowedToCreateProject",
                 new Boolean(hasUserPermission(request, Constants.CREATE_PROJECT_PERM_NAME)));
     }

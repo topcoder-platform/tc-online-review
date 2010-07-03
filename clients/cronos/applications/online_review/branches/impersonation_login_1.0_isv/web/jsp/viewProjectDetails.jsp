@@ -114,7 +114,6 @@
                         <c:if test="${isAllowedToEditProjects}">
                             <a href="EditProject.do?method=editProject&pid=${project.id}"><html:img srcKey="viewProjectDetails.btnEdit.img" border="0" altKey="viewProjectDetails.btnEdit.alt" /></a>&#160;
                         </c:if>
-                        <a href="javascript:history.go(-1)"><html:img srcKey="btnBack.img" altKey="btnBack.alt" border="0" /></a>
                     </div>
                 </div>
             </div>

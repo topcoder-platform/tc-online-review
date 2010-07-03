@@ -58,6 +58,7 @@
     <c:set var="approvalPhaseMet" value="${false}"/>
     <c:set var="disableApprovalReviewerNumberInput" value="${false}"/>
     <c:forEach var="phaseIdx" begin="0" end="${fn:length(projectForm.map['phase_id']) - 1}">
+        <c:set var="isPhaseClosed" value="${not (projectForm.map['phase_can_open'][phaseIdx] || projectForm.map['phase_can_close'][phaseIdx])}"/>
         <c:if test="${phaseIdx eq 0}">
             <tr class="dark" style="display: none;" id="phase_row_template">
         </c:if>
@@ -67,34 +68,36 @@
         </c:if>
         <c:if test="${not newProject}">
             <td class="valueC">
-                <html:hidden property="phase_can_open[${phaseIdx}]" />
-                <html:hidden property="phase_can_close[${phaseIdx}]" />
-                <html:img onclick="javascript:openOrClosePhase(this.parentNode.parentNode, 'open_phase');" border="0"
-                    srcKey="editProject.Phases.OpenPhase.img" altKey="editProject.Phases.OpenPhase.alt" imageName="open_phase_img"
-                    style="${projectForm.map['phase_can_open'][phaseIdx] ? 'cursor:hand;' : 'display:none;'}" /><html:img
-                    onclick="javascript:openOrClosePhase(this.parentNode.parentNode, 'close_phase');" imageName="close_phase_img"
-                    srcKey="editProject.Phases.ClosePhase.img" altKey="editProject.Phases.ClosePhase.alt" border="0"
-                    style="${projectForm.map['phase_can_close'][phaseIdx] ? 'cursor:hand;' : 'display:none;'}" /></td>
+                <html:hidden property="phase_can_open[${phaseIdx}]" disabled="${isPhaseClosed}"/>
+                <html:hidden property="phase_can_close[${phaseIdx}]" disabled="${isPhaseClosed}"/>
+                <c:if test="${not isPhaseClosed}">
+                    <html:img onclick="javascript:openOrClosePhase(this.parentNode.parentNode, 'open_phase');" border="0"
+                        srcKey="editProject.Phases.OpenPhase.img" altKey="editProject.Phases.OpenPhase.alt" imageName="open_phase_img"
+                        style="${projectForm.map['phase_can_open'][phaseIdx] ? 'cursor:hand;' : 'display:none;'}" /><html:img
+                        onclick="javascript:openOrClosePhase(this.parentNode.parentNode, 'close_phase');" imageName="close_phase_img"
+                        srcKey="editProject.Phases.ClosePhase.img" altKey="editProject.Phases.ClosePhase.alt" border="0"
+                        style="${projectForm.map['phase_can_close'][phaseIdx] ? 'cursor:hand;' : 'display:none;'}" /></td>
+                </c:if>
         </c:if>
             <td class="valueB" nowrap="nowrap">
                 <span name="phase_name_text">${projectForm.map['phase_name'][phaseIdx]}</span>
                 &#160; <span name="phase_number_text">${projectForm.map['phase_number'][phaseIdx]}</span>
             </td>
             <td class="value" nowrap="nowrap">
-                <html:hidden property="phase_type[${phaseIdx}]" />
-                <html:hidden property="phase_id[${phaseIdx}]" />
+                <html:hidden property="phase_type[${phaseIdx}]" disabled="${isPhaseClosed}" />
+                <html:hidden property="phase_id[${phaseIdx}]" disabled="${isPhaseClosed}" />
                 <html:hidden property="phase_js_id[${phaseIdx}]" />
-                <html:hidden property="phase_action[${phaseIdx}]" />
-                <html:hidden property="phase_name[${phaseIdx}]" />
-                <html:hidden property="phase_number[${phaseIdx}]" />
-                <html:radio property="phase_start_by_phase[${phaseIdx}]" value="false" />
-                <html:text onblur="JavaScript:this.value=getDateString(this.value);" styleClass="inputBoxDate" property="phase_start_date[${phaseIdx}]" />
-                <html:text onblur="JavaScript:this.value=getTimeString(this.value, this.parentNode);" styleClass="inputBoxTime" property="phase_start_time[${phaseIdx}]" />
+                <html:hidden property="phase_action[${phaseIdx}]" disabled="${isPhaseClosed}" />
+                <html:hidden property="phase_name[${phaseIdx}]" disabled="${isPhaseClosed}" />
+                <html:hidden property="phase_number[${phaseIdx}]" disabled="${isPhaseClosed}" />
+                <html:radio property="phase_start_by_phase[${phaseIdx}]" value="false" disabled="${isPhaseClosed}"/>
+                <html:text onblur="JavaScript:this.value=getDateString(this.value);" styleClass="inputBoxDate" property="phase_start_date[${phaseIdx}]" disabled="${isPhaseClosed}"/>
+                <html:text onblur="JavaScript:this.value=getTimeString(this.value, this.parentNode);" styleClass="inputBoxTime" property="phase_start_time[${phaseIdx}]" disabled="${isPhaseClosed}"/>
                 <c:out value="${currentTimezone}"/><br />
-                <html:radio property="phase_start_by_phase[${phaseIdx}]" value="true" />
+                <html:radio property="phase_start_by_phase[${phaseIdx}]" value="true" disabled="${isPhaseClosed}"/>
                 <bean:message key="editProject.Phases.When" />
                 <div style="margin-left: 20px;">
-                <html:select styleClass="inputBox" property="phase_start_phase[${phaseIdx}]" style="width:120px;">
+                <html:select styleClass="inputBox" property="phase_start_phase[${phaseIdx}]" style="width:120px;" disabled="${isPhaseClosed}">
                     <html:option key="editProject.Phases.SelectPhase" value="" />
                     <c:forEach var="i" begin="1" end="${fn:length(projectForm.map['phase_id']) - 1}">
                         <c:if test="${phaseIdx ne i}">
@@ -103,19 +106,19 @@
                     </c:forEach>
                 </html:select>
                 <br />
-                <html:select styleClass="inputBox" property="phase_start_when[${phaseIdx}]">
+                <html:select styleClass="inputBox" property="phase_start_when[${phaseIdx}]" disabled="${isPhaseClosed}">
                     <html:option key="editProject.Phases.Starts" value="starts" />
                     <html:option key="editProject.Phases.Ends" value="ends" />
                 </html:select>
                 <br />
-                <html:select styleClass="inputBox" property="phase_start_plusminus[${phaseIdx}]">
+                <html:select styleClass="inputBox" property="phase_start_plusminus[${phaseIdx}]" disabled="${isPhaseClosed}">
                     <html:option value="plus">+</html:option>
                     <html:option value="minus">-</html:option>
                 </html:select>
                 <br />
-                <html:text styleClass="inputBox" property="phase_start_amount[${phaseIdx}]" style="width:30px;" />
+                <html:text styleClass="inputBox" property="phase_start_amount[${phaseIdx}]" style="width:30px;" disabled="${isPhaseClosed}"/>
                 <br />
-                <html:select styleClass="inputBox" property="phase_start_dayshrs[${phaseIdx}]">
+                <html:select styleClass="inputBox" property="phase_start_dayshrs[${phaseIdx}]" disabled="${isPhaseClosed}">
                     <html:option key="editProject.Phases.Days" value="days" />
                     <html:option key="editProject.Phases.Hrs" value="hrs" />
                     <html:option key="editProject.Phases.Mins" value="mins" />
@@ -124,22 +127,28 @@
                 <div name="start_date_validation_msg" class="error" style="display:none"></div>
             </td>
             <td class="value" nowrap="nowrap">
-                <html:radio property="phase_use_duration[${phaseIdx}]" value="false" />
-                <html:text onblur="JavaScript:this.value=getDateString(this.value);" styleClass="inputBoxDate" property="phase_end_date[${phaseIdx}]" />
-                <html:text onblur="JavaScript:this.value=getTimeString(this.value, this.parentNode);" styleClass="inputBoxTime" property="phase_end_time[${phaseIdx}]" />
+                <html:radio property="phase_use_duration[${phaseIdx}]" value="false" disabled="${isPhaseClosed}"/>
+                <html:text onblur="JavaScript:this.value=getDateString(this.value);" styleClass="inputBoxDate" property="phase_end_date[${phaseIdx}]" disabled="${isPhaseClosed}"/>
+                <html:text onblur="JavaScript:this.value=getTimeString(this.value, this.parentNode);" styleClass="inputBoxTime" property="phase_end_time[${phaseIdx}]" disabled="${isPhaseClosed}"/>
                 <c:out value="${currentTimezone}"/>
                 <div name="end_date_validation_msg" class="error" style="display:none"></div>
             </td>
             <td class="value">
-                <html:radio property="phase_use_duration[${phaseIdx}]" value="true" />
-                <html:text styleClass="inputBoxDuration" property="phase_duration[${phaseIdx}]" />
+                <html:radio property="phase_use_duration[${phaseIdx}]" value="true" disabled="${isPhaseClosed}"/>
+                <html:text styleClass="inputBoxDuration" property="phase_duration[${phaseIdx}]"
+                           disabled="${isPhaseClosed}"/>
                 <div name="duration_validation_msg" class="error" style="display:none"></div>
             </td>
 
             <td class="value">
-                <html:img srcKey="editProject.Phases.DeletePhase.img"
-                    altKey="editProject.Phases.DeletePhase.alt"
-                    onclick="deletePhase(this.parentNode.parentNode);" style="cursor:hand;" />
+                <c:choose>
+                    <c:when test="${isPhaseClosed}">&nbsp;</c:when>
+                    <c:otherwise>
+                        <html:img srcKey="editProject.Phases.DeletePhase.img"
+                            altKey="editProject.Phases.DeletePhase.alt"
+                            onclick="deletePhase(this.parentNode.parentNode);" style="cursor:hand;" />
+                    </c:otherwise>
+                </c:choose>
             </td>
         </tr>
 
@@ -150,7 +159,7 @@
                 <td class="value" colspan="4">
                     <bean:message key="editProject.Phases.Criteria.RequiredRegistrations.beforeInput" />
                     <%-- TODO: Set default value in Action --%>
-                    <html:text style="width:30px;text-align:right;" styleClass="inputBox"
+                    <html:text style="width:30px;text-align:right;" styleClass="inputBox" disabled="${isPhaseClosed}"
                         size="30" property="phase_required_registrations[${phaseIdx}]" />
                     &#160;<bean:message key="editProject.Phases.Criteria.RequiredRegistrations.afterInput" />
                     <br /><bean:message key="editProject.Phases.Criteria.RequiredRegistrations.note" /></td>
@@ -161,9 +170,9 @@
                 <td class="value" colspan="${(newProject) ? 1 : 2}"><!-- @ --></td>
                 <td class="value" colspan="4">
                     <bean:message key="editProject.Phases.Criteria.RequiredSubmissions.beforeInput" />
-                    <html:text styleClass="inputBox" property="phase_required_submissions[${phaseIdx}]" style="width:30px;text-align:right;" />
+                    <html:text styleClass="inputBox" property="phase_required_submissions[${phaseIdx}]" style="width:30px;text-align:right;" disabled="${isPhaseClosed}" />
                     <bean:message key="editProject.Phases.Criteria.RequiredSubmissions.afterInput" /><br />
-                    <html:checkbox styleId="manualScreeningCheckbox${phaseIdx}" property="phase_manual_screening[${phaseIdx}]" /><label
+                    <html:checkbox styleId="manualScreeningCheckbox${phaseIdx}" property="phase_manual_screening[${phaseIdx}]"  disabled="${isPhaseClosed}"/><label
                         for="manualScreeningCheckbox${phaseIdx}"><bean:message key="editProject.Phases.Criteria.RequiredSubmissions.ManualScreening" /></label>
                 </td>
             </tr>
@@ -178,7 +187,7 @@
             </c:if>
                 <td class="value" colspan="${(newProject) ? 1 : 2}"><!-- @ --></td>
                 <td class="value" colspan="4"><bean:message key="editProject.Phases.Criteria.Scorecard" />
-                    <html:select style="width:350px;" styleClass="inputBox" property="phase_scorecard[${phaseIdx}]">
+                    <html:select style="width:350px;" styleClass="inputBox" property="phase_scorecard[${phaseIdx}]" disabled="${isPhaseClosed}">
                         <c:forEach items="${screeningScorecards}" var="scorecard">
                             <c:if test="${(newProject && scorecard.category == 1)
                                           || (not newProject && project.projectCategory.id == scorecard.category)
@@ -201,11 +210,11 @@
                 <td class="value" colspan="${(newProject) ? 1 : 2}"><!-- @ --></td>
                 <td class="value" colspan="4">
                     <bean:message key="editProject.Phases.Criteria.ReviewNumber.beforeInput" />
-                    <html:text style="width:30px;text-align:right;" styleClass="inputBox"
+                    <html:text style="width:30px;text-align:right;" styleClass="inputBox" disabled="${isPhaseClosed}"
                         size="30" property="phase_required_reviewers[${phaseIdx}]" />
                     &#160;<bean:message key="editProject.Phases.Criteria.ReviewNumber.afterInput" /><br />
                     <bean:message key="editProject.Phases.Criteria.Scorecard" />
-                    <html:select style="width:350px;" styleClass="inputBox" property="phase_scorecard[${phaseIdx}]" >
+                    <html:select style="width:350px;" styleClass="inputBox" property="phase_scorecard[${phaseIdx}]" disabled="${isPhaseClosed}">
 
                         <c:forEach items="${reviewScorecards}" var="scorecard">
                             <c:if test="${(newProject && scorecard.category == 1)
@@ -250,14 +259,14 @@
                                            value="${requestScope.phase_required_reviewers_approval}"/>
                             </c:if>
                             <c:if test="${phaseIdx ne 0}">
-                                <html:text style="width:30px;text-align:right;" styleClass="inputBox"
+                                <html:text style="width:30px;text-align:right;" styleClass="inputBox" disabled="${isPhaseClosed}"
                                            size="30" property="phase_required_reviewers[${phaseIdx}]"/>
                             </c:if>
                         </c:otherwise>
                     </c:choose>
                     &#160;<bean:message key="editProject.Phases.Criteria.ReviewNumber.afterInput" /><br/>
                     <bean:message key="editProject.Phases.Criteria.Scorecard" />
-                    <html:select style="width:350px;" styleClass="inputBox" property="phase_scorecard[${phaseIdx}]" >
+                    <html:select style="width:350px;" styleClass="inputBox" property="phase_scorecard[${phaseIdx}]" disabled="${isPhaseClosed}">
                         <c:forEach items="${approvalScorecards}" var="scorecard">
                             <c:if test="${(newProject && scorecard.category == 1)
                                           || (not newProject && project.projectCategory.id == scorecard.category)
@@ -293,12 +302,12 @@
                     </c:if>
                     <c:if test="${phaseIdx ne 0}">
                         <html:text style="width:30px;text-align:right;" styleClass="inputBox"
-                            size="30" property="phase_required_reviewers[${phaseIdx}]" />
+                            size="30" property="phase_required_reviewers[${phaseIdx}]" disabled="${isPhaseClosed}"/>
                     </c:if>
 
                     &#160;<bean:message key="editProject.Phases.Criteria.ReviewNumber.afterInput" /><br/>
                     <bean:message key="editProject.Phases.Criteria.Scorecard" />
-                    <html:select style="width:350px;" styleClass="inputBox" property="phase_scorecard[${phaseIdx}]" >
+                    <html:select style="width:350px;" styleClass="inputBox" property="phase_scorecard[${phaseIdx}]" disabled="${isPhaseClosed}" >
                         <c:forEach items="${postMortemScorecards}" var="scorecard">
                             <c:if test="${(newProject && scorecard.category == 1)
                                           || (not newProject && project.projectCategory.id == scorecard.category)
@@ -320,9 +329,9 @@
             <tr class="highlighted" ${(phaseIdx eq 0) ? 'id="view_appeal_responses_row_template" style="display:none;"' : ''}>
                 <td class="value" colspan="${(newProject) ? 1 : 2}"><!-- @ --></td>
                 <td class="value" colspan="4">
-                    <html:radio styleId="appealResponsesOffCheckbox${phaseIdx}" value="true" property="phase_view_appeal_responses[${phaseIdx}]" /><label
+                    <html:radio styleId="appealResponsesOffCheckbox${phaseIdx}" value="true" property="phase_view_appeal_responses[${phaseIdx}]"  disabled="${isPhaseClosed}"/><label
                         for="appealResponsesOffCheckbox${phaseIdx}"><bean:message key="editProject.Phases.Criteria.ViewAppealResponses.Immediately" /></label><br />
-                    <html:radio styleId="appealResponsesOnCheckbox${phaseIdx}" value="false" property="phase_view_appeal_responses[${phaseIdx}]" /><label
+                    <html:radio styleId="appealResponsesOnCheckbox${phaseIdx}" value="false" property="phase_view_appeal_responses[${phaseIdx}]" disabled="${isPhaseClosed}" /><label
                         for="appealResponsesOnCheckbox${phaseIdx}"><bean:message key="editProject.Phases.Criteria.ViewAppealResponses.AfterEnd" /></label></td>
             </tr>
         </c:if>

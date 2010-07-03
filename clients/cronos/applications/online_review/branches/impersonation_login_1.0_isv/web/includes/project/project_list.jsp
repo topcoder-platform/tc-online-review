@@ -92,7 +92,7 @@
 	<div style="text-align:center;margin-top:16px;margin-bottom:8px;">
 		<c:choose>
 			<c:when test="${projectTabIndex == 4}">
-				<bean:message key="listProjects.NoProjects.inactive" />
+				<bean:message key="listProjects.NoProjects.draft" />
 			</c:when>
 			<c:otherwise>
 				<bean:message key="listProjects.NoProjects.open" />
