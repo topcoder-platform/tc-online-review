@@ -321,13 +321,25 @@
     <property name="workdays.path" value="workdays/${workdays.version}" />
     <property name="workdays.jar" value="${tcs_libdir}/${workdays.path}/${workdays.jar.name}" />
 
-	<property name="tcwebcommon.jar" value="${tcs_libdir}/tcwebcommon.jar" />
-	<property name="tcsUtil.jar" value="${tcs_libdir}/tcsUtil.jar" />
-	<property name="shared.jar" value="${tcs_libdir}/shared.jar" />
+    <property name="tcwebcommon.jar" value="${tcs_libdir}/tcwebcommon.jar" />
+    <property name="tcsUtil.jar" value="${tcs_libdir}/tcsUtil.jar" />
+    <property name="shared.jar" value="${tcs_libdir}/shared.jar" />
 	
-	<property name="pactsServices.path" value="pacts_services" />
-	<property name="pactsServices.jar.name" value="PactsClientServices.jar" />
-	<property name="pactsServices.jar" value="${tcs_libdir}/${pactsServices.path}/${pactsServices.jar.name}" />
+    <property name="pactsServices.path" value="pacts_services" />
+    <property name="pactsServices.jar.name" value="PactsClientServices.jar" />
+    <property name="pactsServices.jar" value="${tcs_libdir}/${pactsServices.path}/${pactsServices.jar.name}" />
+	
+    <property name="projectEJB.path" value="project_ejb" />
+    <property name="projectEJB.jar.name" value="Project.jar" />
+    <property name="projectEJB.jar" value="${tcs_libdir}/${projectEJB.path}/${projectEJB.jar.name}" />
+    
+    <property name="termsOfUseEJB.path" value="terms_of_use_ejb" />
+    <property name="termsOfUseEJB.jar.name" value="TermsOfUse.jar" />
+    <property name="termsOfUseEJB.jar" value="${tcs_libdir}/${termsOfUseEJB.path}/${termsOfUseEJB.jar.name}" />
+    
+    <property name="userEJB.path" value="user_ejb" />
+    <property name="userEJB.jar.name" value="User.jar" />
+    <property name="userEJB.jar" value="${tcs_libdir}/${userEJB.path}/${userEJB.jar.name}" />
 
     <!-- 3rd Party Dependencies  -->
 	<property name="activation.jar" value="${ext_libdir}/third_party/activation.jar" />
@@ -392,6 +404,9 @@
         <pathelement location="${weighted_calculator.jar}" />
         <pathelement location="${workdays.jar}" />
     	<pathelement location="${pactsServices.jar}" />
+        <pathelement location="${termsOfUseEJB.jar}" />
+        <pathelement location="${userEJB.jar}" />
+        <pathelement location="${projectEJB.jar}" />
         <pathelement location="${tcwebcommon.jar}" />
         <pathelement location="${tcsUtil.jar}" />
         <pathelement location="${shared.jar}" />
@@ -471,7 +486,10 @@
 	    	<fileset file="${log4j.jar}" />
 	    	<fileset file="${activation.jar}" />
 	    	<fileset file="${xerces.jar}"/>
-			<fileset file="${pactsServices.jar}"/> 
+	    	<fileset file="${pactsServices.jar}"/> 
+	    	<fileset file="${termsOfUseEJB.jar}"/>
+	    	<fileset file="${userEJB.jar}"/>
+	    	<fileset file="${projectEJB.jar}"/>
 	    	<fileset file="${tcwebcommon.jar}"/>
 	    	<fileset file="${tcsUtil.jar}"/>
 	    	<fileset file="${shared.jar}"/>
