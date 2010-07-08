@@ -53,13 +53,6 @@ public class AutoPaymentUtil {
 //        "     and pi.project_info_type_id = 1 " +
 //        "     and pi.project_id = ? ";
 
-    /** Retrieve the price from project_info. */
-    private static final String SELECT_PRICE_PROJECT_INFO =
-        "select value " +
-        "  from project_info " +
-        " where project_info_type_id = 16 " +
-        "   and project_id = ? ";
-
     /** Retrieve the DR points from project info. */
     private static final String SELECT_DR_PROJECT_INFO =
         "select (case when pi_is_dr.value = 'On' then nvl(pi_dr_points.value, pi_prize.value) else '0' end) as value " +
@@ -103,6 +96,12 @@ public class AutoPaymentUtil {
         "   AND resource.project_id = ? " +
         "   AND submission.placement = ? ";
 
+	/**
+	 * The SQL statement to retrieve a project info value.
+	 */
+	private static final String SELECT_PROJECT_INFO_VALUE =
+		"select value from project_info where project_id = ? and project_info_type_id = ?";
+
     private static final String USER_ID = "phase_handler";
 
     public static final int SCREENING_PHASE = 3;
@@ -127,6 +126,10 @@ public class AutoPaymentUtil {
      * @throws SQLException if an error occurs in the persistence layer
      */
     public static void populateReviewerPayments(long projectId, Connection conn, int phaseId) throws SQLException {
+		if (!isMemberPaymentEligible(projectId, conn)) {
+			return;
+		}
+
         long projectCategoryId = getProjectCategoryId(projectId, conn);
 
         if (projectCategoryId != 1    // Component Design
@@ -319,25 +322,16 @@ public class AutoPaymentUtil {
 	 */
 	private static float[] getSpecReviewPayments(long projectId, Connection conn) throws SQLException {
 
-        PreparedStatement pstmt = null;
-        ResultSet rs = null;
-        float[] payments = new float[2];
-
-        try {
-			pstmt = conn.prepareStatement(
-				"SELECT value FROM project_info WHERE project_id = ? AND project_info_type_id = 33");
-			pstmt.setLong(1, projectId);
-			rs = pstmt.executeQuery();
-			if (rs.next()) {
-				payments[0] = rs.getFloat("value");
-			}
-
-            return payments;
-        } finally {
-            PRHelper.close(rs);
-            PRHelper.close(pstmt);
-        }
+		float[] payments = new float[2];
+		try {
+			String str = getProjectInfo(projectId, 33, conn);
+			payments[0] = str == null ? 0.0f : Float.parseFloat(str);
+		} catch (NumberFormatException e) {
+            logger.log(Level.WARN, "can't parse the spec review payment, projectId:" + projectId);
+		}
+		return payments;
 	}
+
     /**
      * Retrieve payment from rboard_payment table.
      *
@@ -416,7 +410,9 @@ public class AutoPaymentUtil {
      */
     static void populateSubmitterPayments(long projectId, Connection conn)
             throws SQLException {
-
+		if (!isMemberPaymentEligible(projectId, conn)) {
+			return;
+		}
         // Retrieve the price
         double price = getPriceByProjectId(projectId, conn);
 
@@ -514,6 +510,45 @@ public class AutoPaymentUtil {
         PRHelper.close(pstmt);
     }
 
+	/**
+	 * Check whether the member payment is eligible.
+	 * @param projectId the project id
+	 * @param conn the db connection
+	 */
+	private static boolean isMemberPaymentEligible(long projectId, Connection conn)
+		throws SQLException {
+			String str = getProjectInfo(projectId, 46, conn);
+			return "true".equalsIgnoreCase(str);
+	}
+
+	/**
+	 * Retrieve the project info value for the given project and info type.
+	 * @param projectId the project id
+	 * @param projectInfoTypeId the project info type id
+	 * @param conn the db connection
+	 */
+	private static String getProjectInfo(long projectId, long projectInfoTypeId, Connection conn) 
+		throws SQLException {
+			PreparedStatement pstmt = null;
+			ResultSet rs = null;
+	        try {
+	            pstmt = conn.prepareStatement(SELECT_PROJECT_INFO_VALUE);
+				pstmt.setLong(1, projectId);
+				pstmt.setLong(2, projectInfoTypeId);
+
+	            rs = pstmt.executeQuery();
+
+	            if (rs.next()) {
+					return rs.getString(1);
+	            }
+	        } finally {
+	            PRHelper.close(rs);
+	            PRHelper.close(pstmt);
+	        }
+			return null;
+
+	}
+
     /**
      * Update or insert project info with given value.
      *
@@ -572,25 +607,14 @@ public class AutoPaymentUtil {
      */
     private static double getPriceByProjectId(long projectId, Connection conn)
         throws SQLException {
-        PreparedStatement pstmt = null;
-        ResultSet rs = null;
 
-        try {
-            pstmt = conn.prepareStatement(SELECT_PRICE_PROJECT_INFO);
-            pstmt.setLong(1, projectId);
-            rs = pstmt.executeQuery();
-
-            if (rs.next()) {
-                if (rs.getDouble(1) > 0) {
-                        return rs.getDouble(1);
-                }
-            }
-        } finally {
-            PRHelper.close(rs);
-            PRHelper.close(pstmt);
-        }
-
-        return 0;
+		try {
+			String str = getProjectInfo(projectId, 16, conn);
+			return str == null ? 0.0 : Double.parseDouble(str);
+		} catch (NumberFormatException e) {
+	        logger.log(Level.WARN, "can't parse the price for projectId:" + projectId);
+		}
+		return 0.0;
     }
 
     /**
