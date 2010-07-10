@@ -4846,6 +4846,10 @@
                 <Value>Copilot</Value>
                 <Value>Client Manager</Value>
                 <Value>Designer</Value>		
+                <Value>Reviewer</Value>
+                <Value>Accuracy Reviewer</Value>
+                <Value>Failure Reviewer</Value>
+                <Value>Stress Reviewer</Value>			
             </Property>
             <Property name="Perform Final Review">
                 <Value>Final Reviewer</Value>
