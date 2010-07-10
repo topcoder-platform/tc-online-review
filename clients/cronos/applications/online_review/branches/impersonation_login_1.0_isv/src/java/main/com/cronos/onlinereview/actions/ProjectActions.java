@@ -202,10 +202,12 @@ import static com.cronos.onlinereview.actions.Constants.POST_MORTEM_PHASE_NAME;
  *   <ol>
  *     <li>Updated {@link #loadProjectEditLookups(HttpServletRequest)} method to filter out resource roles which are
  *     not allowed for selection on <code>Edit Project</code> screen.</li>
+ *     <li>Updated all actions methods to attempt to authenticate user based on cookie if user is not authenticated to
+ *     application yet.</li>
  *   </ol>
  * </p>
  *
- * @author George1, real_vg, pulky, isv, TCSDEVELOPER
+ * @author George1, real_vg, pulky, isv
  * @version 1.9
  */
 public class ProjectActions extends DispatchAction {
@@ -280,7 +282,11 @@ public class ProjectActions extends DispatchAction {
     public ActionForward newProject(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response)
         throws BaseException {
+        // Check if user is authenticated (possibly based on cookie provided with request)
+        AuthorizationHelper.checkUserAuthentication(request);
+
         LoggingHelper.logAction(request);
+
         // Gather the roles the user has for current request
         AuthorizationHelper.gatherUserRoles(request);
 
@@ -805,6 +811,9 @@ public class ProjectActions extends DispatchAction {
      */
     public ActionForward editProject(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response) throws BaseException {
+        // Check if user is authenticated (possibly based on cookie provided with request)
+        AuthorizationHelper.checkUserAuthentication(request);
+
         LoggingHelper.logAction(request);
 
         // Verify that certain requirements are met before processing with the Action
@@ -860,8 +869,11 @@ public class ProjectActions extends DispatchAction {
      */
     public ActionForward saveProject(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response) throws BaseException {
+        // Check if user is authenticated (possibly based on cookie provided with request)
+        AuthorizationHelper.checkUserAuthentication(request);
 
         LoggingHelper.logAction(request);
+
         // Cast the form to its actual type
         LazyValidatorForm lazyForm = (LazyValidatorForm) form;
 
@@ -2528,6 +2540,9 @@ public class ProjectActions extends DispatchAction {
      */
     public ActionForward listProjects(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response) throws BaseException {
+        // Check if user is authenticated (possibly based on cookie provided with request)
+        AuthorizationHelper.checkUserAuthentication(request);
+
         // Remove redirect-after-login attribute (if it exists)
         AuthorizationHelper.removeLoginRedirect(request);
 

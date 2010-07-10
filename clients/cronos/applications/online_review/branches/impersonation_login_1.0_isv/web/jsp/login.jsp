@@ -1,3 +1,12 @@
+<%--
+  - Author: George1, real_vg, isv
+  - Version: 1.1
+  - Copyright (C) 2005 - 2010 TopCoder Inc., All Rights Reserved.
+  -
+  - Description: This page renders the Login form for Online Review application.
+  -
+  - Version 1.1 (Impersonation Login Release assembly) changes: Added "Remember me" checkbox.
+--%>
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ page language="java" isELIgnored="false" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
@@ -73,7 +82,9 @@
                             </tr>
                             <tr>
                                 <td class="value"><div align="right"><bean:message key="login.formLogin.rememberMe"/></div></td>
-                                <td class="value"><input type="checkbox" name="rememberMe"/></td>
+                                <td class="value">
+                                    <input type="checkbox" name="rememberMe" value="on"
+                                           <c:if test="${not empty param.rememberMe}">checked="checked"</c:if>></td>
                             </tr>
                             <tr>
                                 <td class="valueLast">&#160;</td>

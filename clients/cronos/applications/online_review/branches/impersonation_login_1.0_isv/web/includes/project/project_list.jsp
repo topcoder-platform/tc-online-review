@@ -1,3 +1,12 @@
+<%--
+  - Author: George1, real_vg, isv
+  - Version: 1.1
+  - Copyright (C) 2005 - 2010 TopCoder Inc., All Rights Reserved.
+  -
+  - Description: This page fragment renders the list of projects of selected status.
+  -
+  - Version 1.1 (Impersonation Login Release assembly) changes: Changed project status from Inactive to Draft.
+--%>
 <%@ page language="java" isELIgnored="false" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>

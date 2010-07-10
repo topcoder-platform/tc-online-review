@@ -1,12 +1,14 @@
 <%--
   - Author: George1, real_vg, isv
-  - Version: 1.1 (Online Review Project Management Console assembly v1.0)
+  - Version: 1.2 (Online Review Project Management Console assembly v1.0)
   - Copyright (C) 2006 - 2010 TopCoder Inc., All Rights Reserved.
   -
   - Description: This page provides the view for details for requested project.
   -
   - Version 1.1 (Online Review Project Management Console assembly v1.0) changes: added Manage Project button
   - linked to Project Management Console view.
+  -
+  - Version 1.2 (Impersonation Login Release assembly) changes: Removed "Back" button.
 --%>
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ page language="java" isELIgnored="false" %>

@@ -94,8 +94,16 @@ import com.topcoder.web.ejb.user.UserTermsOfUseLocator;
  * </ul>
  * </p>
  *
+ * <p>
+ * Version 1.2 (Impersonation Login Assembly 1.0) Change notes:
+ *   <ol>
+ *     <li>Updated all actions methods to attempt to authenticate user based on cookie if user is not authenticated to
+ *     application yet.</li>
+ *   </ol>
+ * </p>
+ *
  * @author isv, romanoTC
- * @version 1.1
+ * @version 1.2
  */
 public class ProjectManagementConsoleActions extends DispatchAction {
 
@@ -216,6 +224,9 @@ public class ProjectManagementConsoleActions extends DispatchAction {
      */
     public ActionForward viewConsole(ActionMapping mapping, ActionForm form, HttpServletRequest request,
                                      HttpServletResponse response) throws BaseException {
+        // Check if user is authenticated (possibly based on cookie provided with request)
+        AuthorizationHelper.checkUserAuthentication(request);
+
         LoggingHelper.logAction(request);
 
         // Gather the roles the user has for current request
@@ -255,6 +266,9 @@ public class ProjectManagementConsoleActions extends DispatchAction {
      */
     public ActionForward manageDistribution(ActionMapping mapping, ActionForm form, HttpServletRequest request,
         HttpServletResponse response) throws Exception {
+
+        // Check if user is authenticated (possibly based on cookie provided with request)
+        AuthorizationHelper.checkUserAuthentication(request);
 
         LoggingHelper.logAction(request);
 
@@ -372,6 +386,9 @@ public class ProjectManagementConsoleActions extends DispatchAction {
      */
     public ActionForward uploadDistribution(ActionMapping mapping, ActionForm form, HttpServletRequest request,
         HttpServletResponse response) throws Exception {
+
+        // Check if user is authenticated (possibly based on cookie provided with request)
+        AuthorizationHelper.checkUserAuthentication(request);
 
         LoggingHelper.logAction(request);
 
@@ -991,6 +1008,9 @@ public class ProjectManagementConsoleActions extends DispatchAction {
     @SuppressWarnings("unchecked")
     public ActionForward manageProject(ActionMapping mapping, ActionForm form, HttpServletRequest request,
                                        HttpServletResponse response) throws Exception {
+        // Check if user is authenticated (possibly based on cookie provided with request)
+        AuthorizationHelper.checkUserAuthentication(request);
+
         LoggingHelper.logAction(request);
 
         request.setAttribute("activeTabIdx", new Integer(1));

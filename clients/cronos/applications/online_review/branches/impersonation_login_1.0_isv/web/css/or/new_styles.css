@@ -325,6 +325,13 @@ padding: 5px;
 vertical-align: top;
 }
 
+table.scorecard td.valueRole
+{
+font-size: 11px;
+padding: 5px;
+vertical-align: top;
+}
+
 table.scorecard td.valueNotLast, table.scorecard td.valueNotLastC, table.scorecard, td.valueNotLastR, td.valueNotLastB
 {
 border-bottom: 0px none white;

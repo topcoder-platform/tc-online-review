@@ -387,10 +387,10 @@
     <property name="jstl.jar" value="${ext_libdir}/jstl.jar" />
     <property name="servlet.jar" value="${cactus.home.tomcat5x}/common/lib/servlet-api.jar" />
     <property name="servlet.jsp.jar" value="${cactus.home.tomcat5x}/common/lib/jsp-api.jar" />
-    <property name="mail.jar" value="${cactus.home.tomcat5x}/common/lib/mail.jar" />
 <!--
-    <property name="mail.jar" value="${ext_libdir}/mail.jar" />
+    <property name="mail.jar" value="${cactus.home.tomcat5x}/common/lib/mail.jar" />
 -->
+    <property name="mail.jar" value="${ext_libdir}/mail.jar" />
     <property name="struts.jar" value="${ext_libdir}/struts-1.2.9.jar" />
     <property name="axis.jar" value="${ext_libdir}/axis-dok.jar" />
     <property name="ejb-2_0.jar" value="${ext_libdir}/ejb-2_0.jar" />
@@ -1017,6 +1017,10 @@ Note: The security manager that comes with the app may not be compatible with th
     <target name="compile_component_2">
         <compile_component component="online_review_login" version="1.1"
                            path="../../Components/online_review_login"/>
+    </target>
+    <target name="compile_component_3">
+        <compile_component component="online_review_deliverables" version="1.0"
+                           path="../../Components/online_review_deliverables"/>
     </target>
 
 

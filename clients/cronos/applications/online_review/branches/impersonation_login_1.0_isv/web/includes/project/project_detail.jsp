@@ -1,3 +1,13 @@
+<%--
+  - Author: George1, real_vg, isv
+  - Version: 1.1
+  - Copyright (C) 2005 - 2010 TopCoder Inc., All Rights Reserved.
+  -
+  - Description: This page fragment renders the details on selected project.
+  -
+  - Version 1.1 (Impersonation Login Release assembly) changes: Turned scorecard titles into links referring to
+  - View Scorecard Template for scorecard; added details on associated Cockpit project.
+--%>
 <%@ page language="java" isELIgnored="false" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>

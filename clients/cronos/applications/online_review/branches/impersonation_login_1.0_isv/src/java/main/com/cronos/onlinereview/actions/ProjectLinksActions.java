@@ -48,8 +48,16 @@ import com.topcoder.util.errorhandling.BaseException;
  * CyclicDependencyError.
  * </p>
  *
+ * <p>
+ * Version 1.2 (Impersonation Login Assembly 1.0) Change notes:
+ *   <ol>
+ *     <li>Updated all actions methods to attempt to authenticate user based on cookie if user is not authenticated to
+ *     application yet.</li>
+ *   </ol>
+ * </p>
+ *
  * @author BeBetter, isv
- * @version 1.1
+ * @version 1.2
  * @since OR Project Linking Assembly
  */
 public class ProjectLinksActions extends DispatchAction {
@@ -88,6 +96,9 @@ public class ProjectLinksActions extends DispatchAction {
      */
     public ActionForward editProjectLinks(ActionMapping mapping, ActionForm form, HttpServletRequest request,
         HttpServletResponse response) throws BaseException {
+        // Check if user is authenticated (possibly based on cookie provided with request)
+        AuthorizationHelper.checkUserAuthentication(request);
+
         LoggingHelper.logAction(request);
 
         // Verify that certain requirements are met before processing with the Action
@@ -172,6 +183,9 @@ public class ProjectLinksActions extends DispatchAction {
      */
     public ActionForward saveProjectLinks(ActionMapping mapping, ActionForm form, HttpServletRequest request,
         HttpServletResponse response) throws BaseException {
+        // Check if user is authenticated (possibly based on cookie provided with request)
+        AuthorizationHelper.checkUserAuthentication(request);
+
         LoggingHelper.logAction(request);
 
         // Verify that certain requirements are met before processing with the Action

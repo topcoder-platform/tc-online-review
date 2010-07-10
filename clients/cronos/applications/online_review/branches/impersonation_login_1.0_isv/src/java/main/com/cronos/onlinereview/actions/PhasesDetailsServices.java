@@ -67,8 +67,17 @@ import com.topcoder.util.errorhandling.BaseException;
  *   </ol>
  * </p>
  *
+ * <p>
+ * Version 1.3 (Impersonation Login Release Assembly 1.0) Change notes:
+ *   <ol>
+ *     <li>Updated {@link #getPhasesDetails(HttpServletRequest, MessageResources, Project, Phase[], Resource[],
+ *     ExternalUser[])} method to locate Post-Mortem phase predecessor not on dependency but on latest phase start time.
+ *     </li>
+ *   </ol>
+ * </p>
+ *
  * @author George1, isv
- * @version 1.2
+ * @version 1.3
  */
 final class PhasesDetailsServices {
 
@@ -102,13 +111,11 @@ final class PhasesDetailsServices {
             Phase phase = phases[i];
             if (phase.getPhaseType().getName().equals(Constants.POST_MORTEM_PHASE_NAME)) {
                 postMortemPhase = phase;
-                Dependency[] dependencies = phase.getAllDependencies();
-                for (int j = 0; j < dependencies.length; j++) {
-                    Dependency dependency = dependencies[j];
-                    postMortemPhasePredecessor = dependency.getDependency();
-                    break;
-                }
                 System.arraycopy(phases, i + 1, phases, i, phases.length - i - 1);
+            } else {
+                if (phase.getPhaseStatus().getId() == 3) { // Closed
+                    postMortemPhasePredecessor = phase;
+                }
             }
         }
 

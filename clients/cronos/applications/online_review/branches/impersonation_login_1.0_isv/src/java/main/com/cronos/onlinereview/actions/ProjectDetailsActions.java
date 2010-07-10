@@ -131,10 +131,12 @@ import com.topcoder.util.file.fieldconfig.TemplateFields;
  *   <ol>
  *     <li>Updated {@link #getPhaseStatusCodes(Phase[], long)} method to recognize <code>Can't Open</code> phase status.
  *     </li>
+ *     <li>Updated all actions methods to attempt to authenticate user based on cookie if user is not authenticated to
+ *     application yet.</li>
  *   </ol>
  * </p>
  *
- * @author George1, real_vg, pulky, isv, TCSDEVELOPER
+ * @author George1, real_vg, pulky, isv
  * @version 1.5
  */
 public class ProjectDetailsActions extends DispatchAction {
@@ -186,7 +188,11 @@ public class ProjectDetailsActions extends DispatchAction {
     public ActionForward viewProjectDetails(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response)
         throws BaseException {
+        // Check if user is authenticated (possibly based on cookie provided with request)
+        AuthorizationHelper.checkUserAuthentication(request);
+
         LoggingHelper.logAction(request);
+
         // Verify that certain requirements are met before processing with the Action
         CorrectnessCheckResult verification = ActionsHelper.checkForCorrectProjectId(
                 mapping, getResources(request), request, Constants.VIEW_PROJECT_DETAIL_PERM_NAME, false);
@@ -279,11 +285,13 @@ public class ProjectDetailsActions extends DispatchAction {
         // Obtain an array of "my" resources
         Resource[] myResources = (Resource[]) request.getAttribute("myResources");
         // Place an information about the amount of "my" payment into the request
-        Map<ResourceRole, Double> myPayments = ActionsHelper.getMyPayments(myResources);
+        Map<ResourceRole, Double> myPayments = ActionsHelper.getMyPayments(myResources, request);
         double totalPayment = 0;
         request.setAttribute("myPayment", myPayments);
         for (Double payment : myPayments.values()) {
-            totalPayment += payment;
+            if (payment != null) {
+                totalPayment += payment;
+            }
         }
         request.setAttribute("totalPayment", totalPayment);
         // Place an information about my payment status into the request
@@ -689,6 +697,9 @@ public class ProjectDetailsActions extends DispatchAction {
     public ActionForward contactManager(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response)
         throws BaseException, ConfigManagerException {
+        // Check if user is authenticated (possibly based on cookie provided with request)
+        AuthorizationHelper.checkUserAuthentication(request);
+
         LoggingHelper.logAction(request);
 
         // Determine if this request is a post back
@@ -867,6 +878,9 @@ public class ProjectDetailsActions extends DispatchAction {
     public ActionForward uploadSubmission(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response)
         throws BaseException {
+        // Check if user is authenticated (possibly based on cookie provided with request)
+        AuthorizationHelper.checkUserAuthentication(request);
+
         LoggingHelper.logAction(request);
 
         // Determine if this request is a post back
@@ -1004,7 +1018,11 @@ public class ProjectDetailsActions extends DispatchAction {
     public ActionForward downloadSubmission(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response)
         throws BaseException, IOException {
+        // Check if user is authenticated (possibly based on cookie provided with request)
+        AuthorizationHelper.checkUserAuthentication(request);
+
         LoggingHelper.logAction(request);
+
         // Verify that certain requirements are met before processing with the Action
         CorrectnessCheckResult verification =
             checkForCorrectUploadId(mapping, request, "ViewSubmission");
@@ -1213,6 +1231,9 @@ public class ProjectDetailsActions extends DispatchAction {
     public ActionForward uploadFinalFix(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response)
         throws BaseException {
+        // Check if user is authenticated (possibly based on cookie provided with request)
+        AuthorizationHelper.checkUserAuthentication(request);
+
         LoggingHelper.logAction(request);
 
         // Determine if this request is a post back
@@ -1339,6 +1360,9 @@ public class ProjectDetailsActions extends DispatchAction {
     public ActionForward downloadFinalFix(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response)
         throws BaseException, IOException {
+        // Check if user is authenticated (possibly based on cookie provided with request)
+        AuthorizationHelper.checkUserAuthentication(request);
+
         LoggingHelper.logAction(request);
         // Verify that certain requirements are met before processing with the Action
         CorrectnessCheckResult verification =
@@ -1435,6 +1459,9 @@ public class ProjectDetailsActions extends DispatchAction {
     public ActionForward uploadTestCase(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response)
         throws BaseException {
+        // Check if user is authenticated (possibly based on cookie provided with request)
+        AuthorizationHelper.checkUserAuthentication(request);
+
         LoggingHelper.logAction(request);
 
         // Determine if this request is a post back
@@ -1551,6 +1578,9 @@ public class ProjectDetailsActions extends DispatchAction {
     public ActionForward downloadTestCase(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response)
         throws BaseException, IOException {
+        // Check if user is authenticated (possibly based on cookie provided with request)
+        AuthorizationHelper.checkUserAuthentication(request);
+
         LoggingHelper.logAction(request);
         // Verify that certain requirements are met before processing with the Action
         CorrectnessCheckResult verification =
@@ -1698,6 +1728,9 @@ public class ProjectDetailsActions extends DispatchAction {
     public ActionForward deleteSubmission(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response)
         throws BaseException {
+        // Check if user is authenticated (possibly based on cookie provided with request)
+        AuthorizationHelper.checkUserAuthentication(request);
+
         LoggingHelper.logAction(request);
         // Verify that certain requirements are met before processing with the Action
         CorrectnessCheckResult verification =
@@ -1789,6 +1822,9 @@ public class ProjectDetailsActions extends DispatchAction {
     public ActionForward unregister(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response)
         throws BaseException {
+        // Check if user is authenticated (possibly based on cookie provided with request)
+        AuthorizationHelper.checkUserAuthentication(request);
+
         LoggingHelper.logAction(request);
 
         // Verify that certain requirements are met before processing with the Action
@@ -1908,6 +1944,9 @@ public class ProjectDetailsActions extends DispatchAction {
     public ActionForward earlyAppeals(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response)
         throws BaseException {
+        // Check if user is authenticated (possibly based on cookie provided with request)
+        AuthorizationHelper.checkUserAuthentication(request);
+
         LoggingHelper.logAction(request);
 
         // Verify that certain requirements are met before processing with the Action
@@ -2013,6 +2052,9 @@ public class ProjectDetailsActions extends DispatchAction {
     public ActionForward downloadDocument(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response)
         throws BaseException, IOException {
+        // Check if user is authenticated (possibly based on cookie provided with request)
+        AuthorizationHelper.checkUserAuthentication(request);
+
         LoggingHelper.logAction(request);
         // Verify that certain requirements are met before processing with the Action
         CorrectnessCheckResult verification =
@@ -2102,6 +2144,9 @@ public class ProjectDetailsActions extends DispatchAction {
      */
     public ActionForward viewAutoScreening(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response) throws BaseException {
+        // Check if user is authenticated (possibly based on cookie provided with request)
+        AuthorizationHelper.checkUserAuthentication(request);
+
         LoggingHelper.logAction(request);
         // Verify that certain requirements are met before processing with the Action
         CorrectnessCheckResult verification =

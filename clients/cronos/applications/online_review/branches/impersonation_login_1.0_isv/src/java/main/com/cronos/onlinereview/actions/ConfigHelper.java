@@ -71,7 +71,7 @@ import com.topcoder.web.ejb.pacts.ParentReferencePayment;
  *   </ol>
  * </p>
  *
- * @author George1, real_vg, pulky, isv, romanoTC, TCSDEVELOPER
+ * @author George1, real_vg, pulky, isv, romanoTC
  * @version 1.6
  */
 public class ConfigHelper {

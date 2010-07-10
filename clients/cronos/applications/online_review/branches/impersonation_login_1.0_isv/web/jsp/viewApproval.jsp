@@ -1,9 +1,12 @@
 <%--
   - Author: isv
-  - Version: 1.0 (Online Review End of Project Analysis v1.0)
+  - Version: 1.1
   - Copyright (C) 2010 TopCoder Inc., All Rights Reserved.
   -
   - Description: This page displays view page for Approval scorecard
+  -
+  - Version 1.1 (Impersonation Login Release assembly) changes: Updated link for "Back" button to refer to
+  - "View Project Details" screen.
 --%>
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ page language="java" isELIgnored="false" %>

@@ -12,6 +12,10 @@ import javax.servlet.http.HttpServletRequest;
 
 import com.cronos.onlinereview.external.ExternalUser;
 import com.cronos.onlinereview.external.UserRetrieval;
+import com.cronos.onlinereview.login.AuthCookieManager;
+import com.cronos.onlinereview.login.ConfigurationException;
+import com.cronos.onlinereview.login.LoginActions;
+import com.cronos.onlinereview.login.Util;
 import com.topcoder.management.project.Project;
 import com.topcoder.management.project.ProjectManager;
 import com.topcoder.management.resource.Resource;
@@ -45,10 +49,11 @@ import com.topcoder.util.errorhandling.BaseException;
  * Version 1.3 (Impersonation Login Assembly 1.0) Change notes:
  *   <ol>
  *     <li>Updated {@link #gatherUserRoles(HttpServletRequest)} method.</li>
+ *     <li>Added {@link #checkUserAuthentication(HttpServletRequest)} method.</li>
  *   </ol>
  * </p>
  *
- * @author George1, real_vg, pulky, isv, TCSDEVELOPER
+ * @author George1, real_vg, pulky, isv
  * @version 1.3
  */
 public class AuthorizationHelper {
@@ -165,6 +170,25 @@ public class AuthorizationHelper {
      */
     public static boolean isUserLoggedIn(HttpServletRequest request) {
         return (getLoggedInUserId(request) != NO_USER_LOGGED_IN_ID);
+    }
+
+    /**
+     * <p>Checks if current user is already authenticated or not. If not then attempts to authenticate user based on
+     * cookie which might have been provided by the specified request.</p>
+     *
+     * @param request an <code>HttpServletRequest</code> representing the incoming request from the client.
+     * @throws BaseException if an unexpected error occurs.
+     * @since 1.3
+     */
+    public static void checkUserAuthentication(HttpServletRequest request) throws BaseException {
+        // If the user is not logged in already try to authenticate user based on cookie if such is provided by request
+        if (!isUserLoggedIn(request)) {
+            AuthCookieManager authCookieManager = getAuthCookieManager();
+            Long userId = authCookieManager.checkAuthCookie(request);
+            if (userId != null) {
+                request.getSession().setAttribute(ConfigHelper.getUserIdAttributeName(), userId);
+            }
+        }
     }
 
     /**
@@ -416,5 +440,27 @@ public class AuthorizationHelper {
             }
         }
         return false;
+    }
+
+    /**
+     * <p>Gets the cookie mamanager to be used for authenticating users based on cookie.</p>
+     *
+     * @return a <code>AuthCookieManager</code> to be used for user authentication based on cookie. 
+     * @throws ConfigurationException if an unexpected error occurs while accessing the configuration.
+     * @since 1.3
+     */
+    private static AuthCookieManager getAuthCookieManager() throws ConfigurationException {
+        // instantiate the cookie manager instance via reflection
+        String defaultNamespace = LoginActions.class.getName();
+        String className = Util.getRequiredPropertyString(defaultNamespace, "auth_cookie_manager.class");
+        String namespace = Util.getOptionalPropertyString(defaultNamespace, "auth_cookie_manager.namespace");
+
+        if ((namespace == null) || (namespace.trim().length() == 0)) {
+            return (AuthCookieManager) Util.creatObject(className, new Class[] {}, new Object[] {},
+                    AuthCookieManager.class);
+        } else {
+            return (AuthCookieManager) Util.creatObject(className, new Class[] { String.class },
+                    new Object[]{namespace }, AuthCookieManager.class);
+        }
     }
 }

@@ -40,7 +40,7 @@ package com.cronos.onlinereview.actions;
  *   </ol>
  * </p>
  *
- * @author George1, real_vg, pulky, isv, TCSDEVELOPER
+ * @author George1, real_vg, pulky, isv
  * @version 1.4
  */
 public class Constants {

@@ -1,3 +1,12 @@
+<%--
+  - Author: George1, real_vg, isv
+  - Version: 1.1
+  - Copyright (C) 2005 - 2010 TopCoder Inc., All Rights Reserved.
+  -
+  - Description: This page fragment renders the tabs for all pages from Online Review application.
+  -
+  - Version 1.1 (Impersonation Login Release assembly) changes: Changed project status from Inactive to Draft.
+--%>
 <%@ page language="java" isELIgnored="false" %>
 <%@ page import="java.text.DecimalFormat,com.topcoder.shared.util.ApplicationServer" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>

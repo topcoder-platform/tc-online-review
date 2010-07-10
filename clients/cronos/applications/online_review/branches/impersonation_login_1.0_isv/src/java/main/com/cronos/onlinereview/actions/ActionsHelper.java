@@ -9,7 +9,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.sql.Timestamp;
 import java.sql.Types;
 import java.text.Format;
 import java.text.SimpleDateFormat;
@@ -21,6 +20,7 @@ import javax.naming.NamingException;
 import javax.servlet.http.HttpServletRequest;
 
 import com.cronos.onlinereview.dataaccess.ResourceDataAccess;
+import com.cronos.onlinereview.deliverables.*;
 import com.topcoder.management.phase.ContestDependencyAutomation;
 import com.topcoder.management.resource.persistence.ResourcePersistenceException;
 import com.topcoder.management.review.ReviewManagementException;
@@ -37,16 +37,6 @@ import org.apache.struts.util.MessageResources;
 
 import com.topcoder.web.common.eligibility.ContestEligibilityServiceLocator;
 import com.cronos.onlinereview.autoscreening.management.ScreeningManager;
-import com.cronos.onlinereview.deliverables.AggregationDeliverableChecker;
-import com.cronos.onlinereview.deliverables.AggregationReviewDeliverableChecker;
-import com.cronos.onlinereview.deliverables.AppealResponsesDeliverableChecker;
-import com.cronos.onlinereview.deliverables.CommittedReviewDeliverableChecker;
-import com.cronos.onlinereview.deliverables.FinalFixesDeliverableChecker;
-import com.cronos.onlinereview.deliverables.FinalReviewDeliverableChecker;
-import com.cronos.onlinereview.deliverables.IndividualReviewDeliverableChecker;
-import com.cronos.onlinereview.deliverables.SubmissionDeliverableChecker;
-import com.cronos.onlinereview.deliverables.SubmitterCommentDeliverableChecker;
-import com.cronos.onlinereview.deliverables.TestCasesDeliverableChecker;
 import com.cronos.onlinereview.external.ExternalUser;
 import com.cronos.onlinereview.external.RetrievalException;
 import com.cronos.onlinereview.external.UserRetrieval;
@@ -200,12 +190,12 @@ import com.topcoder.web.ejb.forums.ForumsHome;
  *     <li>Added {@link #arePhaseDependenciesMet(Phase, boolean)}, {@link #isPhaseOpen(PhaseStatus)},
  *     {@link #isPhaseClosed(PhaseStatus)} methods and {@link #PHASE_STATUS_OPEN} and {@link #PHASE_STATUS_CLOSED}
  *     constants.</li>
- *     <li>Added {@link #getMyPayments(Resource[])} method.</li>
+ *     <li>Added {@link #getMyPayments(Resource[], HttpServletRequest)} method.</li>
  *     <li>Added {@link #getMyPaymentStatuses(Resource[])} method.</li>
  *   </ol>
  * </p>
  *
- * @author George1, real_vg, pulky, isv, TCSDEVELOPER
+ * @author George1, real_vg, pulky, isv
  * @version 1.8
  * @since 1.0
  */
@@ -1527,10 +1517,13 @@ public class ActionsHelper {
      * <p>Gets the list of payments per resource roles assigned to user.</p>
      *
      * @param myResources a <code>Resource</code> array listing the resources associated with user.
+     * @param request an <code>HttpServletRequest</code> representing incoming request from the client.
      * @return a <code>Map</code> mapping the resource roles to respective payments.
+     * @throws ResourcePersistenceException if an unexpected error occurs.
      * @since 1.8
      */
-    public static Map<ResourceRole, Double> getMyPayments(Resource[] myResources) {
+    public static Map<ResourceRole, Double> getMyPayments(Resource[] myResources, HttpServletRequest request)
+            throws ResourcePersistenceException {
         Map<ResourceRole, Double> payments = new LinkedHashMap<ResourceRole, Double>();
 
         for (int i = 0; i < myResources.length; ++i) {
@@ -1539,6 +1532,8 @@ public class ActionsHelper {
             if (paymentStr != null && paymentStr.trim().length() != 0) {
                 double payment = Double.parseDouble(paymentStr);
                 payments.put(resource.getResourceRole(), payment);
+            } else {
+                payments.put(resource.getResourceRole(), null);
             }
         }
 
@@ -2862,7 +2857,7 @@ public class ActionsHelper {
             checkers.put(Constants.FINAL_FIX_DELIVERABLE_NAME, new FinalFixesDeliverableChecker(dbconn));
             checkers.put(Constants.SCORECARD_COMM_DELIVERABLE_NAME, new SubmitterCommentDeliverableChecker(dbconn));
             checkers.put(Constants.FINAL_REVIEW_PHASE_NAME, new FinalReviewDeliverableChecker(dbconn));
-            checkers.put(Constants.APPROVAL_DELIVERABLE_NAME, committedChecker);
+            checkers.put(Constants.APPROVAL_DELIVERABLE_NAME, new ApprovalDeliverableChecker(dbconn));
             checkers.put(Constants.POST_MORTEM_DELIVERABLE_NAME, submissionIndependentReviewChecker);
 
             // Initialize the PersistenceDeliverableManager

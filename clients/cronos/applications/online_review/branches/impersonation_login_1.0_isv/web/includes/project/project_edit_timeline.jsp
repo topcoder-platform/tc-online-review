@@ -1,6 +1,6 @@
 <%--
   - Author: isv
-  - Version: 1.1
+  - Version: 1.2
   - Copyright (C) 2004 - 2010 TopCoder Inc., All Rights Reserved.
   -
   - Description: This page fragment displays the form input elements group for editing the timeline and other
@@ -8,6 +8,8 @@
   -
   - Version 1.1 (Online Review End of Project Analysis v1.0) changes: Added logic for supporting Post-Mortem phase.
   - Updated logic for supporting Approval phase.
+  -
+  - Version 1.2 (Impersonation Login Release assembly) changes: Disabled all input fields for phases which are closed.
 --%>
 <%@ page language="java" isELIgnored="false" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>

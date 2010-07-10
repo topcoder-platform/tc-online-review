@@ -1,3 +1,13 @@
+<%--
+  - Author: George1, real_vg, isv
+  - Version: 1.1
+  - Copyright (C) 2005 - 2010 TopCoder Inc., All Rights Reserved.
+  -
+  - Description: This page renders the Aggregation Review scorecard.
+  -
+  - Version 1.1 (Impersonation Login Release assembly) changes: Updated link for "Back" button to refer to
+  - "View Project Details" screen.
+--%>
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ page language="java" isELIgnored="false" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
