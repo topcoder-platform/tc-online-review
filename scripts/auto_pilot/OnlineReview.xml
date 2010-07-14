@@ -4435,6 +4435,7 @@
                 <Value>Global Manager</Value>
                 <Value>Manager</Value>
                 <Value>Client Manager</Value>
+                <Value>Copilot</Value>		
             </Property>
             <Property name="Set Timeline Notifications">
                 <Value>Global Manager</Value>
@@ -4833,6 +4834,10 @@
                 <Value>Copilot</Value>
                 <Value>Client Manager</Value>
                 <Value>Designer</Value>		
+                <Value>Reviewer</Value>
+                <Value>Accuracy Reviewer</Value>
+                <Value>Failure Reviewer</Value>
+                <Value>Stress Reviewer</Value>			
             </Property>
             <Property name="Perform Final Review">
                 <Value>Final Reviewer</Value>
