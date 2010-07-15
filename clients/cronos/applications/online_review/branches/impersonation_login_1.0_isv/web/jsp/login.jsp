@@ -81,10 +81,12 @@
                                 <td class="value"><input type="password" name="password" /></td>
                             </tr>
                             <tr>
-                                <td class="value"><div align="right"><bean:message key="login.formLogin.rememberMe"/></div></td>
-                                <td class="value">
-                                    <input type="checkbox" name="rememberMe" value="on"
-                                           <c:if test="${not empty param.rememberMe}">checked="checked"</c:if>></td>
+                                <td class="value" colspan="2">
+                                    <div class="rememberMe">
+                                        <html:checkbox property="rememberMe" value="on"/>
+                                        <bean:message key="login.formLogin.rememberMe"/>
+                                    </div>
+                                </td>
                             </tr>
                             <tr>
                                 <td class="valueLast">&#160;</td>

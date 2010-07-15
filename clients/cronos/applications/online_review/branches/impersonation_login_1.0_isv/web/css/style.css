@@ -1,5 +1,5 @@
 /* Body Styles ----------  */
-#tces 
+#tces
 {
 background-color: #001B35;
 padding: 0px;
@@ -1105,10 +1105,10 @@ margin: 0px;
 padding: 6px 0px 6px 0px;
 }
 
-.guideTable 
-{ 
+.guideTable
+{
  width: 100%;
- border: 1px solid #999; 
+ border: 1px solid #999;
  padding: 0px 0px 0px 0px;
 margin: 0px 0px 0px 0px;
 vertical-align: text-top;
@@ -1395,7 +1395,7 @@ background-color: #CCCCCC;
 
 .devInstrHeader
 {
- font-size: 12px; 
+ font-size: 12px;
 font-weight: bold;
 color: #333333;
 vertical-align: top;
@@ -1404,7 +1404,7 @@ padding: 4px 4px 4px 4px;
 
 .devInstr
 {
- font-size: 12px; 
+ font-size: 12px;
 font-weight: normal;
 color: #333333;
 vertical-align: top;
@@ -1510,8 +1510,8 @@ border: 2px solid #999999;
 background-color: #FFFFFF;
 }
 
-.messageBoxFrame 
-{ 
+.messageBoxFrame
+{
 border: 1px solid #999;
 width: 180px;
 }
@@ -2247,8 +2247,8 @@ color: #999999;
 text-decoration: underline;
 }
 
-.searchSpacer{ 
-width: 550px; 
+.searchSpacer{
+width: 550px;
 padding-left: 50%;
 padding-right: 50%;
 
@@ -3226,3 +3226,6 @@ background-image: url(../i/development/usdc_bv_dark.gif);
 
 
 
+.rememberMe {
+    padding-left: 48px;
+}
