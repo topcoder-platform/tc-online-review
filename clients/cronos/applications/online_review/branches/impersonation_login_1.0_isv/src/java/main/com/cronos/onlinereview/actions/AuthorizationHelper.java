@@ -293,8 +293,6 @@ public class AuthorizationHelper {
         }
 
         // Determine some common permissions
-        request.setAttribute("isAllowedToViewDraftProjects",
-                new Boolean(hasUserPermission(request, Constants.VIEW_PROJECTS_DRAFT_PERM_NAME)));
         request.setAttribute("isAllowedToCreateProject",
                 new Boolean(hasUserPermission(request, Constants.CREATE_PROJECT_PERM_NAME)));
     }

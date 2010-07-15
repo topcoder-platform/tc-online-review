@@ -2557,11 +2557,6 @@ public class ProjectActions extends DispatchAction {
             return mapping.findForward("all");
         }
 
-        if (scope.equalsIgnoreCase("draft") &&
-                !AuthorizationHelper.hasUserPermission(request, Constants.VIEW_PROJECTS_DRAFT_PERM_NAME)) {
-            return mapping.findForward("all");
-        }
-
         // Obtain an instance of Project Manager
         ProjectManager manager = ActionsHelper.createProjectManager(request);
         // This variable will specify the index of active tab on the JSP page
@@ -2659,7 +2654,7 @@ public class ProjectActions extends DispatchAction {
         // new eligibility constraints
         // if the user is not a global manager and is seeing all projects eligibility checks need to be performed
         if (!AuthorizationHelper.hasUserRole(request, Constants.GLOBAL_MANAGER_ROLE_NAME) &&
-                scope.equalsIgnoreCase("all") && projectFilters.size() > 0) {
+                (scope.equalsIgnoreCase("all") || scope.equalsIgnoreCase("draft")) && projectFilters.size() > 0) {
 
             // remove those projects that the user can't see
             ungroupedProjects = filterUsingEligibilityConstraints(
