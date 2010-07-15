@@ -41,8 +41,7 @@
 
                         <div align="center">
                             <bean:message key="error.com.cronos.onlinereview.Errors" />
-                            <html:errors />
-                            <br /><span class="bigRed"><bean:message key="error.com.cronos.onlinereview.login.invalid" />
+                            <br/><span class="bigRed"><html:errors /></span>
                         </div>
 
                     <br />
