@@ -12,6 +12,6 @@ The Final Fix is %RESULT%!
 
 %if:NEED_APPROVER='1'%
 <p>
-<font color\="red"><b>The project has only %N_APPROVERS% of %REQUIRED_APPROVERS% required approvers assigned!</b></font>
+<font color\="red"><b>The project has only %N_APPROVERS% of %N_REQUIRED_APPROVERS% required approvers assigned!</b></font>
 </p>
 %endif%
