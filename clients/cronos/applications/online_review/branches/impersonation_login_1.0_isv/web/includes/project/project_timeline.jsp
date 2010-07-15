@@ -13,9 +13,10 @@
 <%@ taglib prefix="bean" uri="/tags/struts-bean" %>
 <%@ taglib prefix="html" uri="/tags/struts-html" %>
 <%@ taglib prefix="orfn" uri="/tags/or-functions" %>
-    <table class="stat" width="100%" cellpadding="0" cellspacing="0" style="table-layout: fixed; border-bottom: 1px solid #999999;">
+    <table class="stat" width="100%" cellpadding="0" cellspacing="0"
+           style="table-layout: fixed; border-bottom: 1px solid #999999;">
         <tr>
-            <td class="title" width="392"><bean:message key="viewProjectDetails.box.Timeline" /></td>
+            <td class="title" width="400"><bean:message key="viewProjectDetails.box.Timeline" /></td>
             <c:if test="${isAllowedToSetTL}">
                 <td class="title" style="text-align:right;">
                     <input id="notifCheckbox" type="checkbox" onclick="setTimelineNotification(${project.id}, this)"
