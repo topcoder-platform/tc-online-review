@@ -4613,7 +4613,7 @@ public class ActionsHelper {
             Phase dependency = dependencies[i].getDependency();
             if (phaseStarting) {
                 if (dependencies[i].isDependencyStart() && dependencies[i].isDependentStart()) {
-                    if (!isPhaseOpen(dependency.getPhaseStatus())) {
+                    if (!(isPhaseOpen(dependency.getPhaseStatus()) || isPhaseClosed(dependency.getPhaseStatus()))) {
                         return false;
                     }
                 } else if (!dependencies[i].isDependencyStart() && dependencies[i].isDependentStart()) {
@@ -4623,7 +4623,7 @@ public class ActionsHelper {
                 }
             } else {
                 if (dependencies[i].isDependencyStart() && !dependencies[i].isDependentStart()) {
-                    if (!isPhaseOpen(dependency.getPhaseStatus())) {
+                    if (!(isPhaseOpen(dependency.getPhaseStatus()) || isPhaseClosed(dependency.getPhaseStatus()))) {
                         return false;
                     }
                 } else if (!dependencies[i].isDependencyStart() && !dependencies[i].isDependentStart()) {
@@ -4633,7 +4633,6 @@ public class ActionsHelper {
                 }
             }
         }
-
         return true;
     }
 
