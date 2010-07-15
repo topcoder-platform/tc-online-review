@@ -599,6 +599,14 @@ public class Constants {
     public static final String VIEW_PROJECT_MANAGEMENT_CONSOLE_PERM_NAME = "View Project Management Console";
 
     /**
+     * <p>A <code>String</code> providing the name for permission for viewing the <code>Cockpit</code> project
+     * description.</p>
+     *
+     * @since 1.4
+     */
+    public static final String VIEW_COCKPIT_PROJECT_DESCRIPTION_PERM_NAME = "View Cockpit Project Description";
+
+    /**
      * <p>This member variable is a string constant that defines the name of the <code>Project Management</code>
      * permission. Such a permission grants access to submitting form from <code>Project Management Console</code> view.
      * </p>

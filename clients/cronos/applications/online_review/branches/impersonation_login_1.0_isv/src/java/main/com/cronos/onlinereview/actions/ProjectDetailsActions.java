@@ -273,7 +273,12 @@ public class ProjectDetailsActions extends DispatchAction {
             } else {
                 request.setAttribute("billingProject", "");
             }
+        }
 
+        boolean isAllowedToViewCockpitProjectDescription
+                = AuthorizationHelper.hasUserPermission(request, Constants.VIEW_COCKPIT_PROJECT_DESCRIPTION_PERM_NAME);
+        request.setAttribute("isAllowedToViewCockpitProjectDescription", isAllowedToViewCockpitProjectDescription);
+        if (isAllowedToViewCockpitProjectDescription) {
             ProjectDataAccess projectDataAccess = new ProjectDataAccess();
             request.setAttribute("cockpitProject", projectDataAccess.getCockpitProjectDescription(projectId));
         }
