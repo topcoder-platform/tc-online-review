@@ -502,9 +502,9 @@ public class ActionsHelper {
      *
      * @return found comment type, or <code>null</code> if a type with the specified name has not
      *         been found in the provided array of comment types.
-     * @param projectCategories
+     * @param commentTypes
      *            an array of comment types to search for wanted comment type among.
-     * @param typeId
+     * @param typeName
      *            the name of the needed comment type.
      * @throws IllegalArgumentException
      *             if any of the parameters are <code>null</code>, or <code>typeName</code>
@@ -1488,32 +1488,6 @@ public class ActionsHelper {
     }
 
     /**
-     * TODO: Write docs for this method.
-     *
-     * @return
-     * @param myResources
-     */
-    public static Double determineMyPayment(Resource[] myResources) {
-        double totalPayment = -1.0; // -1 will mean N/A
-
-        for (int i = 0; i < myResources.length; ++i) {
-            // Get a resource for the current iteration
-            Resource resource = myResources[i];
-            String paymentStr = (String) resource.getProperty("Payment");
-            if (paymentStr != null && paymentStr.trim().length() != 0) {
-                double payment = Double.parseDouble(paymentStr);
-                if (totalPayment == -1.0) {
-                    totalPayment = payment;
-                } else {
-                    totalPayment += payment;
-                }
-            }
-        }
-
-        return (totalPayment != -1.0) ? new Double(totalPayment) : null;
-    }
-
-    /**
      * <p>Gets the list of payments per resource roles assigned to user.</p>
      *
      * @param myResources a <code>Resource</code> array listing the resources associated with user.
@@ -1561,25 +1535,6 @@ public class ActionsHelper {
         }
 
         return paymentStatuses;
-    }
-
-    /**
-     * TODO: Write docs for this method.
-     *
-     * @return
-     * @param myResources
-     */
-    public static Boolean determineMyPaymentPaid(Resource[] myResources) {
-        for (int i = 0; i < myResources.length; ++i) {
-            // Get a resource for the current iteration
-            Resource resource = myResources[i];
-            String paid = (String) resource.getProperty("Payment Status");
-            if (!("Yes".equalsIgnoreCase(paid))) {
-                return Boolean.FALSE;
-            }
-        }
-
-        return Boolean.TRUE;
     }
 
     /**
