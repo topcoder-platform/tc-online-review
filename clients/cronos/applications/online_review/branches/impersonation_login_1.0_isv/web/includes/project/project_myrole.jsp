@@ -28,7 +28,7 @@
 			<td class="title"><bean:message key="viewProjectDetails.box.OutstandingDeliverabes" /></td>
 		</tr>
 		<tr class="light">
-			<td class="value" width="30%" align="left">
+			<td class="value" width="33%" align="left">
                 <table style="cellpadding:1">
                     <tr>
                         <th class="value" width="30%"><bean:message key="viewProjectDetails.Role"/></th>
@@ -82,10 +82,10 @@
                 </table>
             </td>
 			<c:if test="${empty myDeliverables}">
-				<td class="value" width="30%" align="left" nowrap="nowrap"><!-- @ --></td>
+				<td class="value" width="27%" align="left" nowrap="nowrap"><!-- @ --></td>
 			</c:if>
 			<c:if test="${not empty myDeliverables}">
-				<td class="value" width="30%" align="left" nowrap="nowrap">
+				<td class="value" width="27%" align="left" nowrap="nowrap">
 					<c:forEach items="${myDeliverables}" var="deliverable" varStatus="deliverableStatus">
 						<c:set var="devrStatus" value="${myDeliverableStatuses[deliverableStatus.index]}" />
 						<c:choose>
