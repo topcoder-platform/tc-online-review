@@ -363,7 +363,7 @@ public class ProjectActions extends DispatchAction {
         }
 
         // Populate default phase duration
-        lazyForm.set("addphase_duration", new Integer(ConfigHelper.getDefaultPhaseDuration()));
+        lazyForm.set("addphase_duration", String.valueOf(ConfigHelper.getDefaultPhaseDuration()));
     }
 
     /**
@@ -876,6 +876,7 @@ public class ProjectActions extends DispatchAction {
         Project project = null;
 
         // Check if the user has the permission to perform this action
+        CorrectnessCheckResult verification = null;
         if (newProject) {
             // Gather the roles the user has for current request
             AuthorizationHelper.gatherUserRoles(request);
@@ -890,7 +891,7 @@ public class ProjectActions extends DispatchAction {
             AuthorizationHelper.removeLoginRedirect(request);
         } else {
             // Verify that certain requirements are met before processing with the Action
-            CorrectnessCheckResult verification = ActionsHelper.checkForCorrectProjectId(
+            verification = ActionsHelper.checkForCorrectProjectId(
                     mapping, getResources(request), request, Constants.EDIT_PROJECT_DETAILS_PERM_NAME, true);
             // If any error has occurred, return action forward contained in the result bean
             if (!verification.isSuccessful()) {
@@ -1117,17 +1118,20 @@ public class ProjectActions extends DispatchAction {
         // Check if there are any validation errors and return appropriate forward
         if (ActionsHelper.isErrorsPresent(request)) {
             // TODO: Check if the form is really for new project
+            editProject(mapping, form, request, response);
             request.setAttribute("newProject", Boolean.valueOf(newProject));
 
             // Load the lookup data
-            loadProjectEditLookups(request);
-            if (!newProject) {
-                // Store project statuses in the request
-                request.setAttribute("projectStatuses", projectStatuses);
-                // Store the retrieved project in the request
-                request.setAttribute("project", project);
-            }
-
+//            loadProjectEditLookups(request);
+//            if (!newProject) {
+//                populateProjectForm(request, (LazyValidatorForm) form, verification.getProject());
+//
+//                // Store project statuses in the request
+//                request.setAttribute("projectStatuses", projectStatuses);
+//                // Store the retrieved project in the request
+//                request.setAttribute("project", project);
+//            }
+//
             return mapping.getInputForward();
         }
 
