@@ -20,6 +20,7 @@ import java.util.Map;
  * Version 1.1 (Impersonation Login Assembly 1.0) Change notes:
  *   <ol>
  *     <li>Added {@link #getCockpitProjectDescription(long)} method.</li>
+ *     <li>Added {@link #isCockpitProjectUser(long, long)} method.</li>
  *     <li>Renamed <code>searchInactiveProjects</code> method to <code>searchDraftProjects</code> method.</li>
  *   </ol>
  * </p>
@@ -101,6 +102,27 @@ public class ProjectDataAccess extends BaseDataAccess {
             return result.getStringItem(0, "description");
         } else {
             return null;
+        }
+    }
+
+    /**
+     * <p>Gets the description for <code>Cockpit</code> project which might have been associated with the specified
+     * project.</p>
+     *
+     * @param projectId a <code>long</code> providing the ID of a project.
+     * @param userId a <code>long</code> providing the ID of a user.
+     * @return <code>true</code> if specified user is granted <code>Cockpit Project User</code> role for specified
+     *         project; <code>false</code> otherwise.
+     * @since 1.1
+     */
+    public boolean isCockpitProjectUser(long projectId, long userId) {
+        Map<String, ResultSetContainer> results = runQuery("cockpit_project_user",
+                new String[] {"pj", "uid"}, new String[] {String.valueOf(projectId), String.valueOf(userId)});
+        ResultSetContainer result = results.get("cockpit_project_user");
+        if (!result.isEmpty()) {
+            return true;
+        } else {
+            return false;
         }
     }
 

@@ -556,6 +556,7 @@ final class PhasesDetailsServices {
             boolean allowedToSeeReviewLink =
                 AuthorizationHelper.hasUserRole(request, new String[] {
                     Constants.MANAGER_ROLE_NAME, Constants.GLOBAL_MANAGER_ROLE_NAME,
+                    Constants.COCKPIT_PROJECT_USER_ROLE_NAME,
                     Constants.REVIEWER_ROLE_NAME, Constants.ACCURACY_REVIEWER_ROLE_NAME,
                     Constants.FAILURE_REVIEWER_ROLE_NAME, Constants.STRESS_REVIEWER_ROLE_NAME,
                     Constants.CLIENT_MANAGER_ROLE_NAME, Constants.COPILOT_ROLE_NAME,

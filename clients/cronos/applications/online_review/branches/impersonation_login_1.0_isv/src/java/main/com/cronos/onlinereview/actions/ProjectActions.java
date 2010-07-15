@@ -440,7 +440,8 @@ public class ProjectActions extends DispatchAction {
         // Retrieve the list of all client projects and store it in the request
         // this need to be retrieved only for admin user.
         if (AuthorizationHelper.hasUserRole(request, Constants.MANAGER_ROLE_NAME)
-                 || AuthorizationHelper.hasUserRole(request, Constants.GLOBAL_MANAGER_ROLE_NAME)) {
+                || AuthorizationHelper.hasUserRole(request, Constants.GLOBAL_MANAGER_ROLE_NAME)
+                || AuthorizationHelper.hasUserRole(request, Constants.COCKPIT_PROJECT_USER_ROLE_NAME)) {
             request.setAttribute("billingProjects", ActionsHelper.getClientProjects(request));
         }
     }
@@ -731,8 +732,9 @@ public class ProjectActions extends DispatchAction {
 
         // since Online Review Update - Add Project Dropdown v1.0
         request.setAttribute("isAdmin",
-                Boolean.valueOf(AuthorizationHelper.hasUserRole(request, Constants.MANAGER_ROLE_NAME) ||
-                                    AuthorizationHelper.hasUserRole(request, Constants.GLOBAL_MANAGER_ROLE_NAME)));
+                Boolean.valueOf(AuthorizationHelper.hasUserRole(request, Constants.MANAGER_ROLE_NAME)
+                        || AuthorizationHelper.hasUserRole(request, Constants.COCKPIT_PROJECT_USER_ROLE_NAME)
+                        || AuthorizationHelper.hasUserRole(request, Constants.GLOBAL_MANAGER_ROLE_NAME)));
     }
 
     /**
@@ -1065,7 +1067,8 @@ public class ProjectActions extends DispatchAction {
 
         // since Online Review Update - Add Project Dropdown v1.0
         // Populate project notes
-        if (AuthorizationHelper.hasUserRole(request, Constants.MANAGER_ROLE_NAME)
+        if (AuthorizationHelper.hasUserRole(request, Constants.MANAGER_ROLE_NAME) 
+                || AuthorizationHelper.hasUserRole(request, Constants.COCKPIT_PROJECT_USER_ROLE_NAME)
                  || AuthorizationHelper.hasUserRole(request, Constants.GLOBAL_MANAGER_ROLE_NAME)) {
                 project.setProperty("Billing Project", lazyForm.get("billing_project"));
         }

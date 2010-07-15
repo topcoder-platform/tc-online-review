@@ -10,6 +10,7 @@ import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.cronos.onlinereview.dataaccess.ProjectDataAccess;
 import com.cronos.onlinereview.external.ExternalUser;
 import com.cronos.onlinereview.external.UserRetrieval;
 import com.cronos.onlinereview.login.AuthCookieManagementException;
@@ -318,6 +319,12 @@ public class AuthorizationHelper {
 
         // At this moment the request should have "roles" attribute
         Set roles = (Set) request.getAttribute("roles");
+
+        // Check if user is Cockpit Project User for selected project
+        ProjectDataAccess projectDataAccess = new ProjectDataAccess();
+        if (projectDataAccess.isCockpitProjectUser(projectId, getLoggedInUserId(request))) {
+            roles.add(Constants.COCKPIT_PROJECT_USER_ROLE_NAME);
+        }
 
         // Create an instance of Project Manager
         ProjectManager projMgr = ActionsHelper.createProjectManager(request);

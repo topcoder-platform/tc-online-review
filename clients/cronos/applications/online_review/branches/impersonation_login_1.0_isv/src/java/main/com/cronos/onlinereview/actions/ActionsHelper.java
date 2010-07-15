@@ -1453,6 +1453,9 @@ public class ActionsHelper {
         if (AuthorizationHelper.hasUserRole(request, Constants.GLOBAL_MANAGER_ROLE_NAME)) {
             return messages.getMessage("ResourceRole." + Constants.MANAGER_ROLE_NAME.replaceAll(" ", ""));
         }
+        if (AuthorizationHelper.hasUserRole(request, Constants.COCKPIT_PROJECT_USER_ROLE_NAME)) {
+            return messages.getMessage("ResourceRole." + Constants.COCKPIT_PROJECT_USER_ROLE_NAME.replaceAll(" ", ""));
+        }
 
         List<String> roleNames = new ArrayList<String>();
         // Add individual roles to the list
@@ -3286,8 +3289,9 @@ public class ActionsHelper {
         AuthorizationHelper.gatherUserRoles(request, pid);
 
         request.setAttribute("isAdmin",
-                Boolean.valueOf(AuthorizationHelper.hasUserRole(request, Constants.MANAGER_ROLE_NAME) || 
-                                    AuthorizationHelper.hasUserRole(request, Constants.GLOBAL_MANAGER_ROLE_NAME)));
+                Boolean.valueOf(AuthorizationHelper.hasUserRole(request, Constants.MANAGER_ROLE_NAME)
+                        || AuthorizationHelper.hasUserRole(request, Constants.GLOBAL_MANAGER_ROLE_NAME)
+                        || AuthorizationHelper.hasUserRole(request, Constants.COCKPIT_PROJECT_USER_ROLE_NAME)));
 
         // If permission parameter was not null or empty string ...
         if (permission != null) {

@@ -255,7 +255,8 @@ public class ProjectDetailsActions extends DispatchAction {
         // set billing project name in request.
         // Retrieve Cockpit project also
         if (AuthorizationHelper.hasUserRole(request, Constants.MANAGER_ROLE_NAME)
-            || AuthorizationHelper.hasUserRole(request, Constants.GLOBAL_MANAGER_ROLE_NAME)) {
+                || AuthorizationHelper.hasUserRole(request, Constants.COCKPIT_PROJECT_USER_ROLE_NAME)
+                || AuthorizationHelper.hasUserRole(request, Constants.GLOBAL_MANAGER_ROLE_NAME)) {
             long billingProjectId = 0L;
             tempStr = (String) project.getProperty("Billing Project");
             if (tempStr != null && tempStr.trim().length() != 0) {
@@ -284,11 +285,24 @@ public class ProjectDetailsActions extends DispatchAction {
         }
 
         // Place a string that represents "my" current role(s) into the request
-        ActionsHelper.retrieveAndStoreMyRole(request, getResources(request));
+        MessageResources messageResources = getResources(request);
+        ActionsHelper.retrieveAndStoreMyRole(request, messageResources);
         // Obtain an array of "my" resources
         Resource[] myResources = (Resource[]) request.getAttribute("myResources");
         // Place an information about the amount of "my" payment into the request
         Map<ResourceRole, Double> myPayments = ActionsHelper.getMyPayments(myResources, request);
+        if (AuthorizationHelper.hasUserRole(request, Constants.COCKPIT_PROJECT_USER_ROLE_NAME)) {
+            ResourceRole cockpitProjectUserRole = new ResourceRole();
+            cockpitProjectUserRole.setName(messages.getMessage("ResourceRole."
+                    + Constants.COCKPIT_PROJECT_USER_ROLE_NAME.replaceAll(" ", "")));
+            myPayments.put(cockpitProjectUserRole, null);
+        }
+        if (AuthorizationHelper.hasUserRole(request, Constants.GLOBAL_MANAGER_ROLE_NAME)) {
+            ResourceRole globalManagerRole = new ResourceRole();
+            globalManagerRole.setName(messages.getMessage("ResourceRole."
+                    + Constants.MANAGER_ROLE_NAME.replaceAll(" ", "")));
+            myPayments.put(globalManagerRole, null);
+        }
         double totalPayment = 0;
         request.setAttribute("myPayment", myPayments);
         for (Double payment : myPayments.values()) {
@@ -661,8 +675,9 @@ public class ProjectDetailsActions extends DispatchAction {
 
         // since Online Review Update - Add Project Dropdown v1.0
         request.setAttribute("isAdmin",
-                Boolean.valueOf(AuthorizationHelper.hasUserRole(request, Constants.MANAGER_ROLE_NAME) || 
-                                    AuthorizationHelper.hasUserRole(request, Constants.GLOBAL_MANAGER_ROLE_NAME)));
+                Boolean.valueOf(AuthorizationHelper.hasUserRole(request, Constants.MANAGER_ROLE_NAME) 
+                        || AuthorizationHelper.hasUserRole(request, Constants.COCKPIT_PROJECT_USER_ROLE_NAME)
+                        || AuthorizationHelper.hasUserRole(request, Constants.GLOBAL_MANAGER_ROLE_NAME)));
 
         //OR Project Linking Assembly
         ProjectLinkManager linkManager = ActionsHelper.createProjectLinkManager(request);

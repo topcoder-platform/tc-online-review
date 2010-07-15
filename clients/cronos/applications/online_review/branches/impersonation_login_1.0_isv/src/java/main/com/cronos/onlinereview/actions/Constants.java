@@ -37,6 +37,7 @@ package com.cronos.onlinereview.actions;
  *   <ol>
  *     <li>Renamed <code>VIEW_PROJECTS_INACTIVE_PERM_NAME</code> constant to <code>VIEW_PROJECTS_DRAFT_PERM_NAME</code>
  *     constant.</li>
+ *     <li>Added {@link #COCKPIT_PROJECT_USER_ROLE_NAME} constant.</li>
  *   </ol>
  * </p>
  *
@@ -204,6 +205,13 @@ public class Constants {
      * no project assigned to that resource.
      */
     public static final String GLOBAL_MANAGER_ROLE_NAME = "Global Manager";
+
+    /**
+     * <p>A <code>String</code> providing the name for <code>Cockpit Project User</code> role.</p>
+     *
+     * @since 1.4
+     */
+    public static final String COCKPIT_PROJECT_USER_ROLE_NAME = "Cockpit Project User";
 
     /**
      * This member variable is a string constant that defines the name of the Payment Manager role.
