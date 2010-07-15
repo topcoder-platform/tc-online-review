@@ -188,8 +188,6 @@ public class ProjectDetailsActions extends DispatchAction {
     public ActionForward viewProjectDetails(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response)
         throws BaseException {
-        // Check if user is authenticated (possibly based on cookie provided with request)
-        AuthorizationHelper.checkUserAuthentication(request);
 
         LoggingHelper.logAction(request);
 
@@ -697,8 +695,6 @@ public class ProjectDetailsActions extends DispatchAction {
     public ActionForward contactManager(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response)
         throws BaseException, ConfigManagerException {
-        // Check if user is authenticated (possibly based on cookie provided with request)
-        AuthorizationHelper.checkUserAuthentication(request);
 
         LoggingHelper.logAction(request);
 
@@ -878,8 +874,6 @@ public class ProjectDetailsActions extends DispatchAction {
     public ActionForward uploadSubmission(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response)
         throws BaseException {
-        // Check if user is authenticated (possibly based on cookie provided with request)
-        AuthorizationHelper.checkUserAuthentication(request);
 
         LoggingHelper.logAction(request);
 
@@ -1018,8 +1012,6 @@ public class ProjectDetailsActions extends DispatchAction {
     public ActionForward downloadSubmission(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response)
         throws BaseException, IOException {
-        // Check if user is authenticated (possibly based on cookie provided with request)
-        AuthorizationHelper.checkUserAuthentication(request);
 
         LoggingHelper.logAction(request);
 
@@ -1231,8 +1223,6 @@ public class ProjectDetailsActions extends DispatchAction {
     public ActionForward uploadFinalFix(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response)
         throws BaseException {
-        // Check if user is authenticated (possibly based on cookie provided with request)
-        AuthorizationHelper.checkUserAuthentication(request);
 
         LoggingHelper.logAction(request);
 
@@ -1360,8 +1350,6 @@ public class ProjectDetailsActions extends DispatchAction {
     public ActionForward downloadFinalFix(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response)
         throws BaseException, IOException {
-        // Check if user is authenticated (possibly based on cookie provided with request)
-        AuthorizationHelper.checkUserAuthentication(request);
 
         LoggingHelper.logAction(request);
         // Verify that certain requirements are met before processing with the Action
@@ -1459,8 +1447,6 @@ public class ProjectDetailsActions extends DispatchAction {
     public ActionForward uploadTestCase(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response)
         throws BaseException {
-        // Check if user is authenticated (possibly based on cookie provided with request)
-        AuthorizationHelper.checkUserAuthentication(request);
 
         LoggingHelper.logAction(request);
 
@@ -1578,8 +1564,6 @@ public class ProjectDetailsActions extends DispatchAction {
     public ActionForward downloadTestCase(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response)
         throws BaseException, IOException {
-        // Check if user is authenticated (possibly based on cookie provided with request)
-        AuthorizationHelper.checkUserAuthentication(request);
 
         LoggingHelper.logAction(request);
         // Verify that certain requirements are met before processing with the Action
@@ -1728,8 +1712,6 @@ public class ProjectDetailsActions extends DispatchAction {
     public ActionForward deleteSubmission(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response)
         throws BaseException {
-        // Check if user is authenticated (possibly based on cookie provided with request)
-        AuthorizationHelper.checkUserAuthentication(request);
 
         LoggingHelper.logAction(request);
         // Verify that certain requirements are met before processing with the Action
@@ -1822,8 +1804,6 @@ public class ProjectDetailsActions extends DispatchAction {
     public ActionForward unregister(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response)
         throws BaseException {
-        // Check if user is authenticated (possibly based on cookie provided with request)
-        AuthorizationHelper.checkUserAuthentication(request);
 
         LoggingHelper.logAction(request);
 
@@ -1944,8 +1924,6 @@ public class ProjectDetailsActions extends DispatchAction {
     public ActionForward earlyAppeals(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response)
         throws BaseException {
-        // Check if user is authenticated (possibly based on cookie provided with request)
-        AuthorizationHelper.checkUserAuthentication(request);
 
         LoggingHelper.logAction(request);
 
@@ -2052,8 +2030,6 @@ public class ProjectDetailsActions extends DispatchAction {
     public ActionForward downloadDocument(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response)
         throws BaseException, IOException {
-        // Check if user is authenticated (possibly based on cookie provided with request)
-        AuthorizationHelper.checkUserAuthentication(request);
 
         LoggingHelper.logAction(request);
         // Verify that certain requirements are met before processing with the Action
@@ -2144,8 +2120,6 @@ public class ProjectDetailsActions extends DispatchAction {
      */
     public ActionForward viewAutoScreening(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response) throws BaseException {
-        // Check if user is authenticated (possibly based on cookie provided with request)
-        AuthorizationHelper.checkUserAuthentication(request);
 
         LoggingHelper.logAction(request);
         // Verify that certain requirements are met before processing with the Action

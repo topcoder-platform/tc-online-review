@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import com.cronos.onlinereview.external.ExternalUser;
 import com.cronos.onlinereview.external.UserRetrieval;
+import com.cronos.onlinereview.login.AuthCookieManagementException;
 import com.cronos.onlinereview.login.AuthCookieManager;
 import com.cronos.onlinereview.login.ConfigurationException;
 import com.cronos.onlinereview.login.LoginActions;
@@ -49,6 +50,8 @@ import com.topcoder.util.errorhandling.BaseException;
  * Version 1.3 (Impersonation Login Assembly 1.0) Change notes:
  *   <ol>
  *     <li>Updated {@link #gatherUserRoles(HttpServletRequest)} method.</li>
+ *     <li>Added {@link #authCookieManager} field.</li>
+ *     <li>Added {@link #getAuthCookieManager()} method.</li>
  *     <li>Added {@link #checkUserAuthentication(HttpServletRequest)} method.</li>
  *   </ol>
  * </p>
@@ -65,6 +68,21 @@ public class AuthorizationHelper {
     public static final long NO_USER_LOGGED_IN_ID = -1;
 
     public static final String REDIRECT_BACK_URL_ATTRIBUTE = "redirectBackUrl";
+
+    /**
+     * <p>An <code>AuthCookieManager</code> to be used for user authentication based on cookies.</p>
+     *
+     * @since 1.3
+     */
+    private static final AuthCookieManager authCookieManager;
+
+    static {
+        try {
+            authCookieManager = createAuthCookieManager();
+        } catch (ConfigurationException e) {
+            throw new ExceptionInInitializerError(e);
+        }
+    }
 
     /**
      * Private constructor, just to prevent instantiation of the class.
@@ -133,13 +151,23 @@ public class AuthorizationHelper {
      * This static method returns the ID of the user currently logged in.
      *
      * @return the ID of the currently logged in user, or <code>NO_USER_LOGGED_IN_ID</code> if no
-     * user has been logged in.
+     *         user has been logged in.
      * @param request
      *            an <code>HttpServletRequest</code> object containing the information about
      *            the user possibly logged in.
      */
     public static long getLoggedInUserId(HttpServletRequest request) {
         Long userId = (Long) request.getSession().getAttribute(ConfigHelper.getUserIdAttributeName());
+        if (userId == null) {
+            try {
+                userId = getAuthCookieManager().checkAuthCookie(request);
+                if (userId != null) {
+                    request.getSession().setAttribute(ConfigHelper.getUserIdAttributeName(), userId);
+                }
+            } catch (AuthCookieManagementException e) {
+                e.printStackTrace();
+            }
+        }
         return (userId != null) ? userId.longValue() : NO_USER_LOGGED_IN_ID;
     }
 
@@ -170,25 +198,6 @@ public class AuthorizationHelper {
      */
     public static boolean isUserLoggedIn(HttpServletRequest request) {
         return (getLoggedInUserId(request) != NO_USER_LOGGED_IN_ID);
-    }
-
-    /**
-     * <p>Checks if current user is already authenticated or not. If not then attempts to authenticate user based on
-     * cookie which might have been provided by the specified request.</p>
-     *
-     * @param request an <code>HttpServletRequest</code> representing the incoming request from the client.
-     * @throws BaseException if an unexpected error occurs.
-     * @since 1.3
-     */
-    public static void checkUserAuthentication(HttpServletRequest request) throws BaseException {
-        // If the user is not logged in already try to authenticate user based on cookie if such is provided by request
-        if (!isUserLoggedIn(request)) {
-            AuthCookieManager authCookieManager = getAuthCookieManager();
-            Long userId = authCookieManager.checkAuthCookie(request);
-            if (userId != null) {
-                request.getSession().setAttribute(ConfigHelper.getUserIdAttributeName(), userId);
-            }
-        }
     }
 
     /**
@@ -443,13 +452,23 @@ public class AuthorizationHelper {
     }
 
     /**
-     * <p>Gets the cookie mamanager to be used for authenticating users based on cookie.</p>
+     * <p>Gets the cookie manager to be used for authenticating users based on cookie.</p>
+     *
+     * @return a a <code>AuthCookieManager</code> to be used for user authentication based on cookie.
+     * @since 1.3
+     */
+    public static AuthCookieManager getAuthCookieManager() {
+        return authCookieManager;
+    }
+
+    /**
+     * <p>Gets the cookie manager to be used for authenticating users based on cookie.</p>
      *
      * @return a <code>AuthCookieManager</code> to be used for user authentication based on cookie. 
      * @throws ConfigurationException if an unexpected error occurs while accessing the configuration.
      * @since 1.3
      */
-    private static AuthCookieManager getAuthCookieManager() throws ConfigurationException {
+    private static AuthCookieManager createAuthCookieManager() throws ConfigurationException {
         // instantiate the cookie manager instance via reflection
         String defaultNamespace = LoginActions.class.getName();
         String className = Util.getRequiredPropertyString(defaultNamespace, "auth_cookie_manager.class");

@@ -282,8 +282,6 @@ public class ProjectActions extends DispatchAction {
     public ActionForward newProject(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response)
         throws BaseException {
-        // Check if user is authenticated (possibly based on cookie provided with request)
-        AuthorizationHelper.checkUserAuthentication(request);
 
         LoggingHelper.logAction(request);
 
@@ -811,8 +809,6 @@ public class ProjectActions extends DispatchAction {
      */
     public ActionForward editProject(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response) throws BaseException {
-        // Check if user is authenticated (possibly based on cookie provided with request)
-        AuthorizationHelper.checkUserAuthentication(request);
 
         LoggingHelper.logAction(request);
 
@@ -869,8 +865,6 @@ public class ProjectActions extends DispatchAction {
      */
     public ActionForward saveProject(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response) throws BaseException {
-        // Check if user is authenticated (possibly based on cookie provided with request)
-        AuthorizationHelper.checkUserAuthentication(request);
 
         LoggingHelper.logAction(request);
 
@@ -2540,8 +2534,6 @@ public class ProjectActions extends DispatchAction {
      */
     public ActionForward listProjects(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response) throws BaseException {
-        // Check if user is authenticated (possibly based on cookie provided with request)
-        AuthorizationHelper.checkUserAuthentication(request);
 
         // Remove redirect-after-login attribute (if it exists)
         AuthorizationHelper.removeLoginRedirect(request);

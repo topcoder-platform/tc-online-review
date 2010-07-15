@@ -228,8 +228,6 @@ public class ProjectReviewActions extends DispatchAction {
     public ActionForward createScreening(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response)
         throws BaseException {
-        // Check if user is authenticated (possibly based on cookie provided with request)
-        AuthorizationHelper.checkUserAuthentication(request);
 
         LoggingHelper.logAction(request);
         return createGenericReview(mapping, form, request, "Screening");
@@ -262,8 +260,6 @@ public class ProjectReviewActions extends DispatchAction {
     public ActionForward editScreening(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response)
         throws BaseException {
-        // Check if user is authenticated (possibly based on cookie provided with request)
-        AuthorizationHelper.checkUserAuthentication(request);
 
         LoggingHelper.logAction(request);
         return editGenericReview(mapping, form, request, "Screening");
@@ -293,8 +289,6 @@ public class ProjectReviewActions extends DispatchAction {
     public ActionForward saveScreening(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response)
         throws BaseException {
-        // Check if user is authenticated (possibly based on cookie provided with request)
-        AuthorizationHelper.checkUserAuthentication(request);
 
         LoggingHelper.logAction(request);
         return saveGenericReview(mapping, form, request, "Screening");
@@ -323,8 +317,6 @@ public class ProjectReviewActions extends DispatchAction {
     public ActionForward viewScreening(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response)
         throws BaseException {
-        // Check if user is authenticated (possibly based on cookie provided with request)
-        AuthorizationHelper.checkUserAuthentication(request);
 
         LoggingHelper.logAction(request);
         return viewGenericReview(mapping, form, request, "Screening");
@@ -356,8 +348,6 @@ public class ProjectReviewActions extends DispatchAction {
     public ActionForward createReview(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response)
         throws BaseException {
-        // Check if user is authenticated (possibly based on cookie provided with request)
-        AuthorizationHelper.checkUserAuthentication(request);
 
         LoggingHelper.logAction(request);
         return createGenericReview(mapping, form, request, "Review");
@@ -390,8 +380,6 @@ public class ProjectReviewActions extends DispatchAction {
     public ActionForward editReview(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response)
         throws BaseException {
-        // Check if user is authenticated (possibly based on cookie provided with request)
-        AuthorizationHelper.checkUserAuthentication(request);
 
         LoggingHelper.logAction(request);
         return editGenericReview(mapping, form, request, "Review");
@@ -421,8 +409,6 @@ public class ProjectReviewActions extends DispatchAction {
     public ActionForward saveReview(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response)
         throws BaseException {
-        // Check if user is authenticated (possibly based on cookie provided with request)
-        AuthorizationHelper.checkUserAuthentication(request);
 
         LoggingHelper.logAction(request);
         return saveGenericReview(mapping, form, request, "Review");
@@ -451,8 +437,6 @@ public class ProjectReviewActions extends DispatchAction {
     public ActionForward viewReview(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response)
         throws BaseException {
-        // Check if user is authenticated (possibly based on cookie provided with request)
-        AuthorizationHelper.checkUserAuthentication(request);
 
         LoggingHelper.logAction(request);
         return viewGenericReview(mapping, form, request, "Review");
@@ -478,8 +462,6 @@ public class ProjectReviewActions extends DispatchAction {
      */
     public ActionForward createAggregation(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response) throws BaseException {
-        // Check if user is authenticated (possibly based on cookie provided with request)
-        AuthorizationHelper.checkUserAuthentication(request);
 
         LoggingHelper.logAction(request);
         // Nothing needs to be done
@@ -513,8 +495,6 @@ public class ProjectReviewActions extends DispatchAction {
     public ActionForward editAggregation(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response)
         throws BaseException {
-        // Check if user is authenticated (possibly based on cookie provided with request)
-        AuthorizationHelper.checkUserAuthentication(request);
 
         LoggingHelper.logAction(request);
         // Verify that certain requirements are met before proceeding with the Action
@@ -662,8 +642,6 @@ public class ProjectReviewActions extends DispatchAction {
     public ActionForward saveAggregation(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response)
         throws BaseException {
-        // Check if user is authenticated (possibly based on cookie provided with request)
-        AuthorizationHelper.checkUserAuthentication(request);
 
         LoggingHelper.logAction(request);
         // Verify that certain requirements are met before proceeding with the Action
@@ -846,8 +824,6 @@ public class ProjectReviewActions extends DispatchAction {
     public ActionForward viewAggregation(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response)
         throws BaseException{
-        // Check if user is authenticated (possibly based on cookie provided with request)
-        AuthorizationHelper.checkUserAuthentication(request);
 
         LoggingHelper.logAction(request);
         // Verify that certain requirements are met before proceeding with the Action
@@ -987,8 +963,6 @@ public class ProjectReviewActions extends DispatchAction {
      */
     public ActionForward editAggregationReview(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response) throws BaseException {
-        // Check if user is authenticated (possibly based on cookie provided with request)
-        AuthorizationHelper.checkUserAuthentication(request);
 
         LoggingHelper.logAction(request);
 
@@ -1187,8 +1161,6 @@ public class ProjectReviewActions extends DispatchAction {
     public ActionForward saveAggregationReview(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response)
         throws BaseException {
-        // Check if user is authenticated (possibly based on cookie provided with request)
-        AuthorizationHelper.checkUserAuthentication(request);
 
         LoggingHelper.logAction(request);
         // Verify that certain requirements are met before proceeding with the Action
@@ -1408,8 +1380,6 @@ public class ProjectReviewActions extends DispatchAction {
     public ActionForward viewAggregationReview(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response)
         throws BaseException {
-        // Check if user is authenticated (possibly based on cookie provided with request)
-        AuthorizationHelper.checkUserAuthentication(request);
 
         LoggingHelper.logAction(request);
         // Verify that certain requirements are met before proceeding with the Action
@@ -1485,8 +1455,6 @@ public class ProjectReviewActions extends DispatchAction {
     public ActionForward createFinalReview(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response) throws BaseException {
         // Nothing needs to be done
-        // Check if user is authenticated (possibly based on cookie provided with request)
-        AuthorizationHelper.checkUserAuthentication(request);
 
         LoggingHelper.logAction(request);
         return null;
@@ -1519,8 +1487,6 @@ public class ProjectReviewActions extends DispatchAction {
     public ActionForward editFinalReview(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response)
         throws BaseException {
-        // Check if user is authenticated (possibly based on cookie provided with request)
-        AuthorizationHelper.checkUserAuthentication(request);
 
         LoggingHelper.logAction(request);
         // Verify that certain requirements are met before proceeding with the Action
@@ -1681,8 +1647,6 @@ public class ProjectReviewActions extends DispatchAction {
     public ActionForward saveFinalReview(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response)
         throws BaseException {
-        // Check if user is authenticated (possibly based on cookie provided with request)
-        AuthorizationHelper.checkUserAuthentication(request);
 
         LoggingHelper.logAction(request);
         // Verify that certain requirements are met before proceeding with the Action
@@ -1881,8 +1845,6 @@ public class ProjectReviewActions extends DispatchAction {
     public ActionForward viewFinalReview(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response)
         throws BaseException {
-        // Check if user is authenticated (possibly based on cookie provided with request)
-        AuthorizationHelper.checkUserAuthentication(request);
 
         LoggingHelper.logAction(request);
         // Verify that certain requirements are met before proceeding with the Action
@@ -1975,8 +1937,6 @@ public class ProjectReviewActions extends DispatchAction {
     public ActionForward createApproval(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response)
         throws BaseException{
-        // Check if user is authenticated (possibly based on cookie provided with request)
-        AuthorizationHelper.checkUserAuthentication(request);
 
         LoggingHelper.logAction(request);
         ActionForward genericForward = createGenericReview(mapping, form, request, "Approval");
@@ -2015,8 +1975,6 @@ public class ProjectReviewActions extends DispatchAction {
     public ActionForward editApproval(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response)
         throws BaseException{
-        // Check if user is authenticated (possibly based on cookie provided with request)
-        AuthorizationHelper.checkUserAuthentication(request);
 
         LoggingHelper.logAction(request);
         ActionForward genericForward = editGenericReview(mapping, form, request, "Approval");
@@ -2065,8 +2023,6 @@ public class ProjectReviewActions extends DispatchAction {
     public ActionForward saveApproval(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response)
         throws BaseException {
-        // Check if user is authenticated (possibly based on cookie provided with request)
-        AuthorizationHelper.checkUserAuthentication(request);
 
         LoggingHelper.logAction(request);
         return saveGenericReview(mapping, form, request, "Approval");
@@ -2095,8 +2051,6 @@ public class ProjectReviewActions extends DispatchAction {
     public ActionForward viewApproval(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response)
         throws BaseException {
-        // Check if user is authenticated (possibly based on cookie provided with request)
-        AuthorizationHelper.checkUserAuthentication(request);
 
         LoggingHelper.logAction(request);
         return viewGenericReview(mapping, form, request, "Approval");
@@ -2127,8 +2081,6 @@ public class ProjectReviewActions extends DispatchAction {
     public ActionForward viewCompositeScorecard(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response)
         throws BaseException {
-        // Check if user is authenticated (possibly based on cookie provided with request)
-        AuthorizationHelper.checkUserAuthentication(request);
 
         try {
         LoggingHelper.logAction(request);
@@ -5025,8 +4977,6 @@ public class ProjectReviewActions extends DispatchAction {
     public ActionForward viewScorecard(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response)
         throws BaseException {
-        // Check if user is authenticated (possibly based on cookie provided with request)
-        AuthorizationHelper.checkUserAuthentication(request);
 
 
         try {
@@ -5116,8 +5066,6 @@ public class ProjectReviewActions extends DispatchAction {
     public ActionForward createPostMortem(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response)
         throws BaseException{
-        // Check if user is authenticated (possibly based on cookie provided with request)
-        AuthorizationHelper.checkUserAuthentication(request);
 
         LoggingHelper.logAction(request);
         return createGenericReview(mapping, form, request, "Post-Mortem");
@@ -5146,8 +5094,6 @@ public class ProjectReviewActions extends DispatchAction {
     public ActionForward editPostMortem(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response)
         throws BaseException{
-        // Check if user is authenticated (possibly based on cookie provided with request)
-        AuthorizationHelper.checkUserAuthentication(request);
 
         LoggingHelper.logAction(request);
         return editGenericReview(mapping, form, request, "Post-Mortem");
@@ -5173,8 +5119,6 @@ public class ProjectReviewActions extends DispatchAction {
     public ActionForward savePostMortem(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response)
         throws BaseException {
-        // Check if user is authenticated (possibly based on cookie provided with request)
-        AuthorizationHelper.checkUserAuthentication(request);
 
         LoggingHelper.logAction(request);
         return saveGenericReview(mapping, form, request, "Post-Mortem");
@@ -5199,8 +5143,6 @@ public class ProjectReviewActions extends DispatchAction {
     public ActionForward viewPostMortem(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response)
         throws BaseException {
-        // Check if user is authenticated (possibly based on cookie provided with request)
-        AuthorizationHelper.checkUserAuthentication(request);
 
         LoggingHelper.logAction(request);
         return viewGenericReview(mapping, form, request, "Post-Mortem");

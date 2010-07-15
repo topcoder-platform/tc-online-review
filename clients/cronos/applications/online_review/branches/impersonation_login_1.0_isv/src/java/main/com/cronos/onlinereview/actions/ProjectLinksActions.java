@@ -96,8 +96,6 @@ public class ProjectLinksActions extends DispatchAction {
      */
     public ActionForward editProjectLinks(ActionMapping mapping, ActionForm form, HttpServletRequest request,
         HttpServletResponse response) throws BaseException {
-        // Check if user is authenticated (possibly based on cookie provided with request)
-        AuthorizationHelper.checkUserAuthentication(request);
 
         LoggingHelper.logAction(request);
 
@@ -183,8 +181,6 @@ public class ProjectLinksActions extends DispatchAction {
      */
     public ActionForward saveProjectLinks(ActionMapping mapping, ActionForm form, HttpServletRequest request,
         HttpServletResponse response) throws BaseException {
-        // Check if user is authenticated (possibly based on cookie provided with request)
-        AuthorizationHelper.checkUserAuthentication(request);
 
         LoggingHelper.logAction(request);
 

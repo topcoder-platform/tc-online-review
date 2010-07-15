@@ -224,8 +224,6 @@ public class ProjectManagementConsoleActions extends DispatchAction {
      */
     public ActionForward viewConsole(ActionMapping mapping, ActionForm form, HttpServletRequest request,
                                      HttpServletResponse response) throws BaseException {
-        // Check if user is authenticated (possibly based on cookie provided with request)
-        AuthorizationHelper.checkUserAuthentication(request);
 
         LoggingHelper.logAction(request);
 
@@ -266,9 +264,6 @@ public class ProjectManagementConsoleActions extends DispatchAction {
      */
     public ActionForward manageDistribution(ActionMapping mapping, ActionForm form, HttpServletRequest request,
         HttpServletResponse response) throws Exception {
-
-        // Check if user is authenticated (possibly based on cookie provided with request)
-        AuthorizationHelper.checkUserAuthentication(request);
 
         LoggingHelper.logAction(request);
 
@@ -387,8 +382,6 @@ public class ProjectManagementConsoleActions extends DispatchAction {
     public ActionForward uploadDistribution(ActionMapping mapping, ActionForm form, HttpServletRequest request,
         HttpServletResponse response) throws Exception {
 
-        // Check if user is authenticated (possibly based on cookie provided with request)
-        AuthorizationHelper.checkUserAuthentication(request);
 
         LoggingHelper.logAction(request);
 
@@ -1008,8 +1001,6 @@ public class ProjectManagementConsoleActions extends DispatchAction {
     @SuppressWarnings("unchecked")
     public ActionForward manageProject(ActionMapping mapping, ActionForm form, HttpServletRequest request,
                                        HttpServletResponse response) throws Exception {
-        // Check if user is authenticated (possibly based on cookie provided with request)
-        AuthorizationHelper.checkUserAuthentication(request);
 
         LoggingHelper.logAction(request);
 
