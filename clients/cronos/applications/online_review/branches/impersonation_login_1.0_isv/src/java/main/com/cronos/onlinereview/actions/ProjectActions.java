@@ -404,7 +404,9 @@ public class ProjectActions extends DispatchAction {
                 allowedResourceRoles.add(resourceRole);
             }
         }
-        request.setAttribute("resourceRoles", allowedResourceRoles);
+        request.setAttribute("allowedResourceRoles", allowedResourceRoles);
+        request.setAttribute("resourceRoles", resourceRoles);
+        request.setAttribute("disabledResourceRoles", disabledResourceRoles);
 
         // Obtain an instance of Phase Manager
         PhaseManager phaseManager = ActionsHelper.createPhaseManager(request, false);
@@ -2075,10 +2077,22 @@ public class ProjectActions extends DispatchAction {
                 String handle = resourceNames[i];
                 long resourceRoleId = (Long) lazyForm.get("resources_role", i);
                 if (disabledResourceRoles.contains(String.valueOf(resourceRoleId))) {
-                    ActionsHelper.addErrorToRequest(request, "resources_name[" + i + "]",
-                                                    "error.com.cronos.onlinereview.actions."
-                                                    + "editProject.Resource.RoleDisabled");
-                    allResourcesValid = false;
+                    boolean attemptingToAssignDisabledRole = false;
+                    if ("add".equalsIgnoreCase(resourceAction)) {
+                        attemptingToAssignDisabledRole = true;
+                    } else if ("update".equalsIgnoreCase(resourceAction)) {
+                        Long resourceId = (Long) lazyForm.get("resources_id", i);
+                        Resource oldResource = resourceManager.getResource(resourceId.longValue());
+                        if (oldResource.getResourceRole().getId() != resourceRoleId) {
+                            attemptingToAssignDisabledRole = true;
+                        }
+                    }
+                    if (attemptingToAssignDisabledRole) {
+                        ActionsHelper.addErrorToRequest(request, "resources_name[" + i + "]",
+                                                        "error.com.cronos.onlinereview.actions."
+                                                        + "editProject.Resource.RoleDisabled");
+                        allResourcesValid = false;
+                    }
                 }
                 if (NODUPLICATE_REVIEWER_ROLE_IDS.contains(resourceRoleId)) {
                     if (reviewerHandles.contains(handle)) {
