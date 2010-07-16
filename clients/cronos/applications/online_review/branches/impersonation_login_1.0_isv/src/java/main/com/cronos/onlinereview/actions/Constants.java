@@ -234,7 +234,8 @@ public class Constants {
      * @see #MANAGER_ROLE_NAME
      * @see #GLOBAL_MANAGER_ROLE_NAME
      */
-    public static final String[] MANAGER_ROLE_NAMES = new String[] {MANAGER_ROLE_NAME, GLOBAL_MANAGER_ROLE_NAME};
+    public static final String[] MANAGER_ROLE_NAMES = new String[] {MANAGER_ROLE_NAME, GLOBAL_MANAGER_ROLE_NAME,
+            COCKPIT_PROJECT_USER_ROLE_NAME};
 
     /**
      * <p>This member variable is a string constant that defines the name of the <code>Client Manager</code>

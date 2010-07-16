@@ -1454,7 +1454,7 @@ public class ActionsHelper {
             return messages.getMessage("ResourceRole." + Constants.MANAGER_ROLE_NAME.replaceAll(" ", ""));
         }
         if (AuthorizationHelper.hasUserRole(request, Constants.COCKPIT_PROJECT_USER_ROLE_NAME)) {
-            return messages.getMessage("ResourceRole." + Constants.COCKPIT_PROJECT_USER_ROLE_NAME.replaceAll(" ", ""));
+            return messages.getMessage("ResourceRole." + Constants.MANAGER_ROLE_NAME.replaceAll(" ", ""));
         }
 
         List<String> roleNames = new ArrayList<String>();

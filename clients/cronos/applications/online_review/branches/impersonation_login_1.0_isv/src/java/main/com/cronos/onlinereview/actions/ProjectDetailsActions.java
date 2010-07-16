@@ -291,17 +291,20 @@ public class ProjectDetailsActions extends DispatchAction {
         Resource[] myResources = (Resource[]) request.getAttribute("myResources");
         // Place an information about the amount of "my" payment into the request
         Map<ResourceRole, Double> myPayments = ActionsHelper.getMyPayments(myResources, request);
-        if (AuthorizationHelper.hasUserRole(request, Constants.COCKPIT_PROJECT_USER_ROLE_NAME)) {
-            ResourceRole cockpitProjectUserRole = new ResourceRole();
-            cockpitProjectUserRole.setName(messages.getMessage("ResourceRole."
-                    + Constants.COCKPIT_PROJECT_USER_ROLE_NAME.replaceAll(" ", "")));
-            myPayments.put(cockpitProjectUserRole, null);
-        }
-        if (AuthorizationHelper.hasUserRole(request, Constants.GLOBAL_MANAGER_ROLE_NAME)) {
-            ResourceRole globalManagerRole = new ResourceRole();
-            globalManagerRole.setName(messages.getMessage("ResourceRole."
-                    + Constants.MANAGER_ROLE_NAME.replaceAll(" ", "")));
-            myPayments.put(globalManagerRole, null);
+        ResourceRole managerResourceRole = ActionsHelper.findResourceRoleByName(
+                (ResourceRole[]) myPayments.keySet().toArray(new ResourceRole[myPayments.size()]), "Manager");
+        if (managerResourceRole == null) {
+            if (AuthorizationHelper.hasUserRole(request, Constants.GLOBAL_MANAGER_ROLE_NAME)) {
+                ResourceRole globalManagerRole = new ResourceRole();
+                globalManagerRole.setName(messages.getMessage("ResourceRole."
+                        + Constants.MANAGER_ROLE_NAME.replaceAll(" ", "")));
+                myPayments.put(globalManagerRole, null);
+            } else if (AuthorizationHelper.hasUserRole(request, Constants.COCKPIT_PROJECT_USER_ROLE_NAME)) {
+                ResourceRole cockpitProjectUserRole = new ResourceRole();
+                cockpitProjectUserRole.setName(messages.getMessage("ResourceRole."
+                        + Constants.MANAGER_ROLE_NAME.replaceAll(" ", "")));
+                myPayments.put(cockpitProjectUserRole, null);
+            }
         }
         double totalPayment = 0;
         request.setAttribute("myPayment", myPayments);
