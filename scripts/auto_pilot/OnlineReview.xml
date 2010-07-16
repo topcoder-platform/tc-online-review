@@ -4848,6 +4848,10 @@
                 <Value>Observer</Value>
                 <Value>Submitter</Value>
                 <Value>Final Reviewer</Value>
+                <Value>Reviewer</Value>		
+                <Value>Accuracy Reviewer</Value>
+                <Value>Failure Reviewer</Value>
+                <Value>Stress Reviewer</Value>			
                 <Value>Approver</Value>
                 <Value>Post-Mortem Reviewer</Value>
                 <Value>Designer</Value>
