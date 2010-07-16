@@ -38,6 +38,7 @@ package com.cronos.onlinereview.actions;
  *     <li>Renamed <code>VIEW_PROJECTS_INACTIVE_PERM_NAME</code> constant to <code>VIEW_PROJECTS_DRAFT_PERM_NAME</code>
  *     constant.</li>
  *     <li>Added {@link #COCKPIT_PROJECT_USER_ROLE_NAME} constant.</li>
+ *     <li>Added {@link #VIEW_COCKPIT_PROJECT_NAME_PERM_NAME} constant.</li>
  *   </ol>
  * </p>
  *
@@ -609,11 +610,11 @@ public class Constants {
 
     /**
      * <p>A <code>String</code> providing the name for permission for viewing the <code>Cockpit</code> project
-     * description.</p>
+     * name.</p>
      *
      * @since 1.4
      */
-    public static final String VIEW_COCKPIT_PROJECT_DESCRIPTION_PERM_NAME = "View Cockpit Project Description";
+    public static final String VIEW_COCKPIT_PROJECT_NAME_PERM_NAME = "View Cockpit Project Name";
 
     /**
      * <p>This member variable is a string constant that defines the name of the <code>Project Management</code>

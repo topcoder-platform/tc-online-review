@@ -276,12 +276,12 @@ public class ProjectDetailsActions extends DispatchAction {
             }
         }
 
-        boolean isAllowedToViewCockpitProjectDescription
-                = AuthorizationHelper.hasUserPermission(request, Constants.VIEW_COCKPIT_PROJECT_DESCRIPTION_PERM_NAME);
-        request.setAttribute("isAllowedToViewCockpitProjectDescription", isAllowedToViewCockpitProjectDescription);
-        if (isAllowedToViewCockpitProjectDescription) {
+        boolean isAllowedToViewCockpitProjectName
+                = AuthorizationHelper.hasUserPermission(request, Constants.VIEW_COCKPIT_PROJECT_NAME_PERM_NAME);
+        request.setAttribute("isAllowedToViewCockpitProjectName", isAllowedToViewCockpitProjectName);
+        if (isAllowedToViewCockpitProjectName) {
             ProjectDataAccess projectDataAccess = new ProjectDataAccess();
-            request.setAttribute("cockpitProject", projectDataAccess.getCockpitProjectDescription(projectId));
+            request.setAttribute("cockpitProject", projectDataAccess.getCockpitProjectName(projectId));
         }
 
         // Place a string that represents "my" current role(s) into the request

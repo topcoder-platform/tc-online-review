@@ -19,7 +19,7 @@ import java.util.Map;
  * <p>
  * Version 1.1 (Impersonation Login Assembly 1.0) Change notes:
  *   <ol>
- *     <li>Added {@link #getCockpitProjectDescription(long)} method.</li>
+ *     <li>Added {@link #getCockpitProjectName(long)} method.</li>
  *     <li>Added {@link #isCockpitProjectUser(long, long)} method.</li>
  *     <li>Renamed <code>searchInactiveProjects</code> method to <code>searchDraftProjects</code> method.</li>
  *   </ol>
@@ -87,19 +87,19 @@ public class ProjectDataAccess extends BaseDataAccess {
     }
 
     /**
-     * <p>Gets the description for <code>Cockpit</code> project which might have been associated with the specified
-     * project.</p>
+     * <p>Gets the name for <code>Cockpit</code> project which might have been associated with the specified project.
+     * </p>
      *
      * @param projectId a <code>long</code> providing the ID of a project.
-     * @return a <code>String</code> providing the description for <code>Cockpit</code> project associated with
-     *         specified project or <code>null</code> if there is no such <code>Cockpit</code> project.
+     * @return a <code>String</code> providing the name for <code>Cockpit</code> project associated with specified
+     *         project or <code>null</code> if there is no such <code>Cockpit</code> project.
      * @since 1.1
      */
-    public String getCockpitProjectDescription(long projectId) {
+    public String getCockpitProjectName(long projectId) {
         Map<String, ResultSetContainer> results = runQuery("cockpit_project", "pj", String.valueOf(projectId));
         ResultSetContainer result = results.get("cockpit_project");
         if (!result.isEmpty()) {
-            return result.getStringItem(0, "description");
+            return result.getStringItem(0, "name");
         } else {
             return null;
         }

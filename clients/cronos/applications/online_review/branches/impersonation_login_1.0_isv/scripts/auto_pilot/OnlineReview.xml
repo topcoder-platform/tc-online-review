@@ -4559,7 +4559,7 @@
                 <Value>Copilot</Value>
                 <Value>Client Manager</Value>
             </Property>
-            <Property name="View Cockpit Project Description">
+            <Property name="View Cockpit Project Name">
                 <Value>Global Manager</Value>
                 <Value>Manager</Value>
                 <Value>Cockpit Project User</Value>
