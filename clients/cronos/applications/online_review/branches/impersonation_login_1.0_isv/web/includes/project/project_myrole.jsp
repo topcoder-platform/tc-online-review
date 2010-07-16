@@ -31,10 +31,10 @@
 			<td class="value" width="33%" align="left">
                 <table style="cellpadding:1">
                     <tr>
-                        <th class="value" width="30%"><bean:message key="viewProjectDetails.Role"/></th>
+                        <th class="value roleHeader" width="30%"><bean:message key="viewProjectDetails.Role"/></th>
                         <c:if test="${isAllowedToViewPayment}">
-                            <th class="value" width="30%"><bean:message key="viewProjectDetails.Payment"/></th>
-                            <th class="value" width="40%"><bean:message key="viewProjectDetails.PaymentStatus"/></th>
+                            <th class="value roleHeader" width="30%"><bean:message key="viewProjectDetails.Payment"/></th>
+                            <th class="value roleHeader" width="40%"><bean:message key="viewProjectDetails.PaymentStatus"/></th>
                         </c:if>
                     </tr>
                     <c:forEach items="${requestScope.myPayment}" var="rolePayment">
