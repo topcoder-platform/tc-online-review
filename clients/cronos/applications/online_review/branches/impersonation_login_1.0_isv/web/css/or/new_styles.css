@@ -527,3 +527,9 @@ table.tabLinks .input {
     padding-left: 5px;
     text-align: left;
 }
+
+.myRoleValues {
+  font-size: 11px;
+  vertical-align: top;
+  padding: 5px;
+}

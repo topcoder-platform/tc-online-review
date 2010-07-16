@@ -16,7 +16,8 @@
 <%@ taglib prefix="bean" uri="/tags/struts-bean" %>
 <%@ taglib prefix="tc-webtag" uri="/tags/tc-webtags" %>
 <%@ taglib prefix="orfn" uri="/tags/or-functions" %>
-	<table class="stat" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;">
+	<table class="stat" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;"
+           id="myRolesTable">
 		<tr>
 			<td class="title"><bean:message key="viewProjectDetails.box.MyRoleAndPayments" /></td>
 			<c:if test="${empty myDeliverables}">
@@ -82,10 +83,10 @@
                 </table>
             </td>
 			<c:if test="${empty myDeliverables}">
-				<td class="value" width="27%" align="left" nowrap="nowrap"><!-- @ --></td>
+				<td class="myRoleValues" width="27%" align="left" nowrap="nowrap"><!-- @ --></td>
 			</c:if>
 			<c:if test="${not empty myDeliverables}">
-				<td class="value" width="27%" align="left" nowrap="nowrap">
+				<td class="myRoleValues" width="27%" align="left" nowrap="nowrap">
 					<c:forEach items="${myDeliverables}" var="deliverable" varStatus="deliverableStatus">
 						<c:set var="devrStatus" value="${myDeliverableStatuses[deliverableStatus.index]}" />
 						<c:choose>
@@ -115,10 +116,10 @@
 				</td>
 			</c:if>
 			<c:if test="${empty outstandingDeliverables}">
-				<td class="value" width="40%" align="left" nowrap="nowrap"><bean:message key="viewProjectDetails.NoOutstandingDeliverables" /></td>
+				<td class="myRoleValues" width="40%" align="left" nowrap="nowrap"><bean:message key="viewProjectDetails.NoOutstandingDeliverables" /></td>
 			</c:if>
 			<c:if test="${not empty outstandingDeliverables}">
-				<td class="value" width="40%" align="left" nowrap="nowrap">
+				<td class="myRoleValues" width="40%" align="left" nowrap="nowrap">
 					<c:forEach items="${outstandingDeliverables}" var="deliverable" varStatus="deliverableStatus">
 						<c:set var="devrStatus" value="${outstandingDeliverableStatuses[deliverableStatus.index]}" />
 						<c:choose>
