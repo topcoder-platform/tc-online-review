@@ -51,7 +51,7 @@
                     <c:if test="${orfn:isErrorsPresent(pageContext.request)}">
                         <div align="center">
                             <bean:message key="error.com.cronos.onlinereview.Errors" />
-                            <br /><span class="bigRed"><html:errors /></span>
+                            <br /><span class="bigRed"><html:errors suffix="errors.suffix.login"/></span>
                         </div>
                     </c:if>
 
