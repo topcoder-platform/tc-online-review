@@ -99,6 +99,7 @@ final class PhasesDetailsServices {
 
         // Move Post-Mortem phase to appropriate place in the list in order to prevent splitting phase group tabs into
         // separate same-named tabs
+        Phase[] originalPhases = phases;
         Phase[] phasesCopy = new Phase[phases.length];
         System.arraycopy(phases, 0, phasesCopy, 0, phases.length);
         phases = phasesCopy;
@@ -211,7 +212,12 @@ final class PhasesDetailsServices {
             phaseGroup.setSubmitters(submitters);
 
             // Determine an index of the current phase group (needed for timeline phases list)
-            phaseGroupIndexes[phaseIdx] = phaseGroups.size() - 1;
+            for (int i = 0; i < originalPhases.length; i++) {
+                Phase originalPhase = originalPhases[i];
+                if (originalPhase.getId() == phase.getId()) {
+                    phaseGroupIndexes[i] = phaseGroups.size() - 1;
+                }
+            }
 
             if (!phaseGroup.isPhaseOpen()) {
                 continue;
