@@ -1,0 +1,33 @@
+# TopCoder Software Component Development Environment
+
+# If you ever run tests (ant test), you should specify the correct value for
+# this property, which specifies the Tomcat 5.5 server installation path.
+# The example of the property's value is shown below. Change it to something
+# more appropriate for you.
+cactus.home.tomcat5x=c:/tools/tomcat/5.5.28
+
+# The location of the deployment directory for JBoss server. If you ever
+# execute ant with "deploy" target, set this property to the correct value.
+# Otherwise you may ignore it (say, if you copy the WAR file by hand).
+# The example of the property's value is shown below. Change it to something
+# more appropriate for you if you need it.
+JBOSS_HOME=C:/jboss-4.0.2
+
+# Where to place static content
+static_content-dir=${JBOSS_HOME}/server/default/deploy/dde.ear/dde.war
+#static_content-dir=/mnt/apache/tcsdocs
+
+# remote deploy information
+#scp_path=scp
+scp_path=pscp
+scp_username=tcs
+scp_password=<<password>
+scp_keyfile=<<full path fo scp key: d:\\path\\to\\key.file>>
+scp_remoteserver=174.129.113.55
+scp_remotejboss=/home/tcs/jboss-4.0.2
+
+# SVN credentials
+svn.username=xxx
+svn.password=xxx
+## uncomment the line bellow to allow update through ant
+# svn.update=yes

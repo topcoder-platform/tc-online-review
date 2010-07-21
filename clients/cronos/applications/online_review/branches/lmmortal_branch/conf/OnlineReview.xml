@@ -1,17 +1,17 @@
 <?xml version="1.0" ?>
 <!DOCTYPE CMConfig [
-       <!ENTITY localFileUploadDir "/home/tcs/downloads">
-       <!ENTITY catalogOutputDir "/home/tcs/temp_files">
-       <!ENTITY distributionToolOutputDir "/home/tcs/temp_files/tmp_dist">
-       <!ENTITY distributionScriptsBase "/home/tcs/onlinereview/distribution_scripts">
-       <!ENTITY phasesEmailTemplate "/home/tcs/onlinereview/templates/email_template.txt">
-       <!ENTITY winnersEmailTemplate "/home/tcs/onlinereview/templates/winners_email_template.txt">
-       <!ENTITY timelineTemplateDir "/home/tcs/onlinereview/templates">
-       <!ENTITY contactManagersTemplate "/home/tcs/onlinereview/templates/contact_manager_template.txt">
-       <!ENTITY managerNotificationEmailTemplatesBase "/home/tcs/onlinereview/templates">
+       <!ENTITY localFileUploadDir "@localFileUploadDir@">
+       <!ENTITY catalogOutputDir "@catalogOutputDir@">
+       <!ENTITY distributionToolOutputDir "@distributionToolOutputDir@">
+       <!ENTITY distributionScriptsBase "@distributionScriptsBase@">
+       <!ENTITY phasesEmailTemplate "@exttemplatesdir@/email_template.txt">
+       <!ENTITY winnersEmailTemplate "@exttemplatesdir@/winners_email_template.txt">
+       <!ENTITY timelineTemplateDir "@exttemplatesdir@">
+       <!ENTITY contactManagersTemplate "@exttemplatesdir@/contact_manager_template.txt">
+       <!ENTITY managerNotificationEmailTemplatesBase "@exttemplatesdir@">
        <!ENTITY notificationEmailFromAddress "service@topcodersoftware.com">
        <!ENTITY smtpServerAuthAddress "service@topcodersoftware.com">
-       <!ENTITY pactJNDIAddress "jnp://localhost:1199">
+       <!ENTITY pactJNDIAddress "@pactJNDIAddress@">
 ]>
 <CMConfig>
 <!-- [OR-584] don't need this anymore
@@ -75,9 +75,9 @@
             </Property>
         </Property>
 
-        <Property name="authenticator_name">
-            <Value>ORAuthenticator</Value>
-        </Property>
+      <Property name="authenticator_name">
+        <Value>@login.authenticator@</Value>
+      </Property>
 
         <Property name="logger_name">
             <Value>LoginActions</Value>
@@ -94,8 +94,13 @@
         </Property>
     </Config>
 
+  <Config name="com.cronos.onlinereview.mockups.MockXMLAuthenticator">
+    <Property name="xmlfile">
+      <Value>/MockXmlAuthenticator.xml</Value>
+    </Property>
+  </Config>
 
-    <!--
+  <!--
         ==========  Configuration for Authentication Factory component  ==========
     -->
     <Config name="com.topcoder.security.authenticationfactory.AuthenticationFactory">
@@ -110,7 +115,17 @@
                 </Property>
             </Property>
 
-            <Property name="ORAuthenticator">
+          <Property name="MockXMLAuthenticator">
+              <Property name="class">
+                  <Value>com.cronos.onlinereview.mockups.MockXMLAuthenticator</Value>
+              </Property>
+              <Property name="namespace">
+                  <Value>com.cronos.onlinereview.mockups.MockXMLAuthenticator</Value>
+              </Property>
+          </Property>
+
+
+          <Property name="ORAuthenticator">
                 <Property name="class">
                     <Value>com.cronos.onlinereview.login.authenticator.SecurityManagerAuthenticator</Value>
                 </Property>

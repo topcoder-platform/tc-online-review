@@ -1,8 +1,23 @@
 <?xml version="1.0"?>
 
-<project name="Online Review" default="dist" basedir=".">
+<project name="Online Review" default="build" basedir=".">
 
-    <property file="topcoder_global.properties" />
+	<!-- Load build properties -->
+    <property file="build.properties" />
+	
+	<property name="token.properties" value="token.properties" />
+    
+    <condition property="is_windows">
+        <and>
+            <os family="windows"/>
+        </and>
+    </condition>
+
+    <condition property="is_unix">
+        <and>
+            <os family="unix"/>
+        </and>
+    </condition>
 
     <!-- COMPONENT PARAMETERS -->
     <property name="component" value="online_review" />
@@ -27,17 +42,27 @@
     <property name="javadocsdir" value="${docsdir}/javadocs" />
     <property name="webdir" value="web" />
     <property name="reports" value="reports" />
-
+    <property name="jboss_files" value="jboss_files" />
+    <property name="jboss_files_conf" value="${jboss_files}/conf" />
+    <property name="jboss_files_deploy" value="${jboss_files}/deploy" />
+    <property name="jboss_files_lib" value="${jboss_files}/lib" />
+    
     <property name="javasrc" value="${srcdir}/java" />
     <property name="javamain" value="${javasrc}/main" />
     <property name="javatests" value="${javasrc}/tests" />
     <property name="sqlsrc" value="${srcdir}/sql" />
 
     <property name="builddir" value="build/ant" />
+    <property name="build_conf" value="${builddir}/conf" />
+    <property name="build_shared" value="${builddir}/shared" />
+    <property name="build_jboss_files" value="${builddir}/jboss_files" />
+    <property name="build_jboss_files_conf" value="${build_jboss_files}/conf" />
+    <property name="build_jboss_files_deploy" value="${build_jboss_files}/deploy" />
     <property name="build_classdir" value="${builddir}/classes" />
     <property name="build_testclassdir" value="${builddir}/testClasses" />
     <property name="build_targetclassdir" value="${builddir}/targetclasses" />
     <property name="build_distdir" value="${builddir}/dist" />
+    <property name="build_explodedwar" value="${build_distdir}/exploded/${distfilename}.war" />
     <property name="build_docsdir" value="${builddir}/${docsdir}" />
     <property name="build_javadocsdir" value="${builddir}/${javadocsdir}" />
     <property name="build_webdir" value="${builddir}/${webdir}" />
@@ -46,7 +71,15 @@
 
     <!-- Server installation directories -->
     <property name="cactus.home.tomcat5x" value="d:\tomcat" />
-    <property name="deploy-dir" value="d:\tomcat\webapps\${distfilename}.war" />
+    
+    <property name="deploy-dir" value="${JBOSS_HOME}/server/default/deploy/${distfilename}.war" />
+    <property name="deploy-conf-dir" value="${JBOSS_HOME}/server/default/conf"/>
+    <property name="deploy-deploy-dir" value="${JBOSS_HOME}/server/default/deploy"/>
+    <property name="deploy-lib-dir" value="${JBOSS_HOME}/server/default/lib"/>
+    
+    <property name="remotedeploy-dir" value="${scp_remotejboss}/server/default/deploy/" />
+    <property name="remotedeploy-conf-dir" value="${scp_remotejboss}/server/default/conf"/>
+    <property name="remotedeploy-lib-dir" value="${scp_remotejboss}/server/default/lib"/>
 
     <!-- EXECUTION TAGS -->
     <property name="debug" value="off" />
@@ -71,7 +104,6 @@
     <property name="dev_dist.jar" value="${component}_${component_version}_dev_dist.jar" />
     <property name="design_dist.jar" value="${component}_${component_version}_design_dist.jar" />
     <property name="component.war" value="${build_distdir}/${distfilename}.war" />
-    
 
     <!-- TCS Dependencies -->
     <property name="authentication_factory.version" value="2.0" />
@@ -119,6 +151,11 @@
     <property name="configuration_persistence.path" value="configuration_persistence/${configuration_persistence.version}" />
     <property name="configuration_persistence.jar" value="${tcs_libdir}/${configuration_persistence.path}/${configuration_persistence.jar.name}" />
 
+    <property name="contest_eligibility_validation_client.version" value="1.0.0" />
+    <property name="contest_eligibility_validation_client.jar.name" value="contest_eligibility_validation_client.jar" />
+    <property name="contest_eligibility_validation_client.path" value="contest_eligibility_validation_client/${contest_eligibility_validation_client.version}" />
+    <property name="contest_eligibility_validation_client.jar" value="${tcs_libdir}/${contest_eligibility_validation_client.path}/${contest_eligibility_validation_client.jar.name}" />
+
     <property name="data_validation.version" value="1.0"/>
     <property name="data_validation.jar.name" value="data_validation.jar"/>
     <property name="data_validation.path" value="data_validation/${data_validation.version}"/>
@@ -144,6 +181,11 @@
     <property name="deliverable_management_persistence.path" value="deliverable_management_persistence/${deliverable_management_persistence.version}" />
     <property name="deliverable_management_persistence.jar" value="${tcs_libdir}/${deliverable_management_persistence.path}/${deliverable_management_persistence.jar.name}" />
 
+    <property name="distribution_tool.version" value="1.0.1" />
+    <property name="distribution_tool.jar.name" value="distribution_tool.jar" />
+    <property name="distribution_tool.path" value="distribution_tool/${distribution_tool.version}" />
+    <property name="distribution_tool.jar" value="${tcs_libdir}/${distribution_tool.path}/${distribution_tool.jar.name}" />
+    
     <property name="document_generator.version" value="2.1"/>
     <property name="document_generator.jar.name" value="document_generator.jar"/>
     <property name="document_generator.path" value="document_generator/${document_generator.version}"/>
@@ -339,16 +381,12 @@
     <property name="workdays.path" value="workdays/${workdays.version}" />
     <property name="workdays.jar" value="${tcs_libdir}/${workdays.path}/${workdays.jar.name}" />
 
-    <property name="contest_eligibility_validation_client.version" value="1.0.0" />
-    <property name="contest_eligibility_validation_client.jar.name" value="contest_eligibility_validation_client.jar" />
-    <property name="contest_eligibility_validation_client.path" value="contest_eligibility_validation_client/${contest_eligibility_validation_client.version}" />
-    <property name="contest_eligibility_validation_client.jar" value="${tcs_libdir}/${contest_eligibility_validation_client.path}/${contest_eligibility_validation_client.jar.name}" />
-
+    <!-- TCS Dependencies - non-versioned --> 
     <property name="pactsServices.path" value="pacts_services" />
     <property name="pactsServices.jar.name" value="PactsClientServices.jar" />
     <property name="pactsServices.jar" value="${tcs_libdir}/${pactsServices.path}/${pactsServices.jar.name}" />
 
-	<property name="projectEJB.path" value="project_ejb" />
+    <property name="projectEJB.path" value="project_ejb" />
     <property name="projectEJB.jar.name" value="Project.jar" />
     <property name="projectEJB.jar" value="${tcs_libdir}/${projectEJB.path}/${projectEJB.jar.name}" />
 
@@ -360,94 +398,64 @@
     <property name="userEJB.jar.name" value="User.jar" />
     <property name="userEJB.jar" value="${tcs_libdir}/${userEJB.path}/${userEJB.jar.name}" />
 
-    <property name="distribution_tool.version" value="1.0.1" />
-    <property name="distribution_tool.jar.name" value="distribution_tool.jar" />
-    <property name="distribution_tool.path" value="distribution_tool/${distribution_tool.version}" />
-    <property name="distribution_tool.jar" value="${tcs_libdir}/${distribution_tool.path}/${distribution_tool.jar.name}" />
-
-    <property name="shared.jar.name" value="shared.jar" />
-    <property name="shared.jar" value="${shared_libdir}/${shared.jar.name}" />
-
-    <property name="tcsUtil.jar.name" value="tcsUtil.jar" />
-    <property name="tcsUtil.jar" value="${tcs_libdir}/${tcsUtil.jar.name}" />
-
-    <property name="tcwebcommon.jar.name" value="tcwebcommon.jar" />
-    <property name="tcwebcommon.jar" value="${shared_libdir}/${tcwebcommon.jar.name}" />
-
+    <!-- Shared libraries -->
     <property name="catalog.jar.name" value="catalog.jar" />
     <property name="catalog.jar" value="${shared_libdir}/${catalog.jar.name}" />
 
     <property name="forums.jar.name" value="forums.jar" />
     <property name="forums.jar" value="${shared_libdir}/${forums.jar.name}" />
 
+    <property name="shared.jar.name" value="shared.jar" />
+    <property name="shared.jar" value="${shared_libdir}/${shared.jar.name}" />
+    
+    <property name="tcsUtil.jar.name" value="tcsUtil.jar" />
+    <property name="tcsUtil.jar" value="${tcs_libdir}/${tcsUtil.jar.name}" />
 
+    <property name="tcwebcommon.jar.name" value="tcwebcommon.jar" />
+    <property name="tcwebcommon.jar" value="${shared_libdir}/${tcwebcommon.jar.name}" />
 
     <!-- 3rd Party Dependencies  -->
-    <property name="ifx-jdbc.jar" value="${ext_libdir}/ifx-jdbc.jar" />
-    <property name="jstl.jar" value="${ext_libdir}/jstl.jar" />
-    <property name="servlet.jar" value="${cactus.home.tomcat5x}/common/lib/servlet-api.jar" />
-    <property name="servlet.jsp.jar" value="${cactus.home.tomcat5x}/common/lib/jsp-api.jar" />
-    <property name="mail.jar" value="${cactus.home.tomcat5x}/common/lib/mail.jar" />
-    <property name="struts.jar" value="${ext_libdir}/struts-1.2.9.jar" />
-    <property name="axis.jar" value="${ext_libdir}/axis-dok.jar" />
-    <property name="ejb-2_0.jar" value="${ext_libdir}/ejb-2_0.jar" />
-    <property name="commons.beanutils.jar" value="${ext_libdir}/commons-beanutils.jar" />
-
-    <property name="aspectjrt.jar" value="${ext_libdir}/testing/aspectjrt-1.2.1.jar" />
-    <property name="cactus.jar" value="${ext_libdir}/testing/cactus-1.7.2.jar" />
-    <property name="cactus.ant.jar" value="${ext_libdir}/testing/cactus-ant-1.7.2.jar" />
-    <property name="cargo.jar" value="${ext_libdir}/testing/cargo-0.5.jar" />
-    <property name="commons.collections.jar" value="${ext_libdir}/testing/commons-collections-2.1.jar" />
-    <property name="commons.httpclient.jar" value="${ext_libdir}/testing/commons-httpclient-2.0.2.jar" />
-    <property name="commons.logging.jar" value="${ext_libdir}/testing/commons-logging-1.0.4.jar" />
-    <property name="httpunit.jar" value="${ext_libdir}/testing/httpunit-1.6.jar" />
-    <property name="junit.jar" value="${ext_libdir}/testing/junit-3.8.1.jar" />
-    <property name="nekohtml.jar" value="${ext_libdir}/testing/nekohtml-0.9.1.jar" />
-
-    <property name="jiveforums.jar.name" value="jiveforums.jar" />
-    <property name="jiveforums.jar" value="${ext_libdir}/${jiveforums.jar.name}" />
-
-    <property name="jivebase.jar.name" value="jivebase.jar" />
-    <property name="jivebase.jar" value="${ext_libdir}/${jivebase.jar.name}" />
-<!--
-    <property name="servlet-api.jar" value="${ext_libdir}/servlet-api.jar" />
-    <property name="javax.servlet.jsp.jar" value="${ext_libdir}/javax.servlet.jsp.jar" />
--->
-    <property name="strutstest.jar" value="${ext_libdir}/testing/strutstest-2.1.3.jar" />
-
+    <property name="ejb-2_0.jar" value="${jar_ext_libdir}/ejb-2_0.jar" />
+    <property name="jiveforums.jar" value="${jar_ext_libdir}/jiveforums.jar" />
+    <property name="jsp-api.jar" value="${jar_ext_libdir}/jsp-api.jar" />
+    <property name="mail.jar" value="${jar_ext_libdir}/mail.jar" />
+    <property name="servlet-api.jar" value="${jar_ext_libdir}/servlet-api.jar" />
+    <property name="struts.jar" value="${jar_ext_libdir}/struts-1.2.9.jar" />
+    
     <path id="buildlibs">
-        <pathelement location="${ifx-jdbc.jar}" />
-        <pathelement location="${jstl.jar}" />
-        <pathelement location="${servlet.jar}" />
-        <pathelement location="${servlet.jsp.jar}" />
-        <pathelement location="${mail.jar}" />
-        <pathelement location="${struts.jar}" />
-        <pathelement location="${axis.jar}" />
         <pathelement location="${ejb-2_0.jar}" />
-
+        <pathelement location="${jiveforums.jar}" />
+        <pathelement location="${jsp-api.jar}" />
+        <pathelement location="${mail.jar}" />
+        <pathelement location="${servlet-api.jar}" />
+        <pathelement location="${struts.jar}" />
+        
+        <pathelement location="${catalog.jar}" />
+        <pathelement location="${forums.jar}" />
+        <pathelement location="${shared.jar}" />
+        <pathelement location="${tcwebcommon.jar}" />
+    
+        <pathelement location="${pactsServices.jar}" />
+        <pathelement location="${projectEJB.jar}" />
+        <pathelement location="${termsOfUseEJB.jar}" />
+        <pathelement location="${userEJB.jar}" />
+    
         <pathelement location="${authentication_factory.jar}" />
         <pathelement location="${auto_pilot.jar}" />
         <pathelement location="${auto_screening_management.jar}" />
         <pathelement location="${base_exception.jar}" />
-        <pathelement location="${class_associations.jar}" />
-        <pathelement location="${command_line_utility.jar}" />
-        <pathelement location="${configuration_manager.jar}" />
+        <pathelement location="${configuration_manager.jar}" />        
+        <pathelement location="${contest_eligibility_validation_client.jar}" />       
         <pathelement location="${data_validation.jar}" />
-        <pathelement location="${database_abstraction.jar}" />
         <pathelement location="${db_connection_factory.jar}" />
         <pathelement location="${deliverable_management.jar}" />
         <pathelement location="${deliverable_management_persistence.jar}" />
-        <pathelement location="${document_generator.jar}" />
-        <pathelement location="${email_engine.jar}" />
-        <pathelement location="${file_system_server.jar}" />
-        <pathelement location="${file_upload.jar}" />
-        <pathelement location="${guid_generator.jar}" />
+        <pathelement location="${distribution_tool.jar}" /> 
+        <pathelement location="${document_generator.jar}" />   
+        <pathelement location="${email_engine.jar}" />   
+        <pathelement location="${file_upload.jar}" /> 
         <pathelement location="${id_generator.jar}" />
-        <pathelement location="${ip_server.jar}" />
-        <pathelement location="${JNDI_Utility.jar}" />
         <pathelement location="${logging_wrapper.jar}" />
-        <pathelement location="${object_factory.jar}" />
-    	<pathelement location="${distribution_tool.jar}" />
         <pathelement location="${online_review_ajax_support.jar}" />
         <pathelement location="${online_review_deliverables.jar}" />
         <pathelement location="${online_review_login.jar}" />
@@ -461,36 +469,22 @@
         <pathelement location="${project_phase_template.jar}" />
         <pathelement location="${resource_management.jar}" />
         <pathelement location="${resource_management_persistence.jar}" />
-        <pathelement location="${review_data_structure.jar}" />
+        <pathelement location="${review_data_structure.jar}" />        
         <pathelement location="${review_management.jar}" />
         <pathelement location="${review_management_persistence.jar}" />
+        <pathelement location="${search_builder.jar}" />
         <pathelement location="${review_score_aggregator.jar}" />
         <pathelement location="${review_score_calculator.jar}" />
         <pathelement location="${scorecard_data_structure.jar}" />
         <pathelement location="${scorecard_management.jar}" />
         <pathelement location="${scorecard_management_persistence.jar}" />
-        <pathelement location="${search_builder.jar}" />
         <pathelement location="${security_manager.jar}" />
-        <pathelement location="${simple_cache.jar}" />
-        <pathelement location="${typesafe_enum.jar}" />
         <pathelement location="${user_project_data_store.jar}" />
+        <pathelement location="${typesafe_enum.jar}" />
         <pathelement location="${weighted_calculator.jar}" />
         <pathelement location="${workdays.jar}" />
-        <pathelement location="${contest_eligibility_validation_client.jar}" />
-        <pathelement location="${pactsServices.jar}" />
-        <pathelement location="${projectEJB.jar}" />
-        <pathelement location="${userEJB.jar}" />
-        <pathelement location="${termsOfUseEJB.jar}" />
-    	<pathelement location="${tcsUtil.jar}" />
-        <pathelement location="${tcwebcommon.jar}" />
-    	<pathelement location="${catalog.jar}" />
-        <pathelement location="${shared.jar}" />
-	    <pathelement location="${forums.jar}" />
-        <pathelement location="${jiveforums.jar}" />
-        <pathelement location="${jivebase.jar}" />
-        <pathelement location="${mail.jar}" />
     </path>
-
+	
     <path id="cactus.classpath">
         <pathelement location="${junit.jar}" />
         <pathelement location="${aspectjrt.jar}" />
@@ -518,12 +512,107 @@
         <path refid="buildlibs" />
         <path refid="cactus.classpath" />
     </path>
+	
+    
+    <macrodef name="scp_windows">
+        <attribute name="id" />
+        <attribute name="file" />
+        <attribute name="remotefile" />
+        <attribute name="isdir" />
+        
+        <sequential>
+            <condition property="@{id}0" value="-r" else="">
+                <and>
+                    <istrue value="@{isdir}" />
+                </and>
+            </condition>
+            
+            <!-- if defined a key file add to command line -->
+            <condition property="@{id}1" value="${@{id}0} -i ${scp_keyfile}" else="${@{id}0}">
+                <and>
+                    <isset property="scp_keyfile" />
+                </and>
+            </condition>
+            
+            <!-- if defined user add to command line -->
+            <condition property="@{id}2" value="${@{id}1} -l ${scp_username}" else="${@{id}1}">
+                <and>
+                    <isset property="scp_username" />
+                </and>
+            </condition>
+        
+            <!-- if defined password add to command line-->
+            <condition property="@{id}3" value="${@{id}2} -pw ${scp_password}" else="${@{id}2}">
+                <and>
+                    <isset property="scp_password" />
+                </and>
+            </condition>
+            
+            <property name="scp_commandline@{id}" value="${@{id}3} @{file} ${scp_remoteserver}:@{remotefile}" />
+            
+            <echo message="scp_commandline: ${scp_commandline@{id}}" />
 
-    <path id="runtime.classpath">
-        <pathelement location="${build_classdir}" />
-        <path refid="buildlibs" />
-    </path>
+            <exec executable="${scp_path}">
+                <arg line="${scp_commandline@{id}}"/>
+            </exec>
+        </sequential>           
+    </macrodef>
+    
+    <macrodef name="scp_unix">
+        <attribute name="id" />
+        <attribute name="file" />
+        <attribute name="remotefile" />
+        <attribute name="isdir" />
+        
+        <sequential>
+            <!-- Unix has to run in 'batch mode' and you must previously setup the remote box to not need password prompt -->
+            <condition property="@{id}0" value="-B -r" else="-B">
+                <and>
+                    <istrue value="@{isdir}" />
+                </and>
+            </condition>
+            
+            <!-- if defined a key file add to command line -->
+            <condition property="@{id}1" value="${@{id}0} -i ${scp_keyfile}" else="${@{id}0}">
+                <and>
+                    <isset property="scp_keyfile" />
+                </and>
+            </condition>
+            
+            <!-- if defined user add to command line -->
+            <condition property="scp_commandline@{id}" 
+                          value="${@{id}1} @{file} ${scp_username}@${scp_remoteserver}:@{remotefile}" 
+                           else="${@{id}1} @{file} ${scp_remoteserver}:@{remotefile}">
+                <and>
+                    <isset property="scp_username" />
+                </and>
+            </condition>
+            
+            <property name="" value="${@{id}3} @{file} ${scp_remoteserver}:@{remotefile}" />
+            
+            <echo message="scp_commandline: ${scp_commandline@{id}}" />
 
+            <exec executable="${scp_path}">
+                <arg line="${scp_commandline@{id}}"/>
+            </exec>
+        </sequential>           
+    </macrodef>
+        
+    <!-- Clean output folder -->
+    <target name="clean">
+        <delete failonerror="false" dir="${builddir}" />
+    </target>
+           
+    <!-- updates Online Review files from SVN -->
+    <typedef resource="org/tigris/subversion/svnant/svnantlib.xml" classpath="svnant.jar" /> 
+    <target name="svn_update" if="svn.update">
+        <svn username="${svn.username}" password="${svn.password}">
+            <info target="${basedir}" verbose="true" />
+            <update dir="${basedir}" recurse="true" />
+        </svn>
+    </target>
+    
+    <!-- compiles the application -->
     <target name="compile">
         <mkdir dir="${build_classdir}" />
         <javac srcdir="${javamain}"
@@ -537,7 +626,267 @@
             <classpath refid="buildlibs" />
         </javac>
     </target>
+	
+    <!-- updates Online Review files from SVN and builds application -->
+    <target name="build" depends="svn_update, compile" />
 
+    <!-- replaces variables in configuration files with values for the target environment -->
+    <target name="tokenize">
+        <mkdir dir="${build_conf}" />
+        <copy todir="${build_conf}" overwrite="true">
+            <fileset dir="${configdir}">
+                <exclude if="exclude.mockxmlauthenticator.xmlfile" name="mockxmlauthenticator.xml" />
+                <include name="**"/>
+            </fileset>
+        </copy>
+    	
+        <replace dir="${build_conf}" replacefilterfile="${token.properties}">
+            <include name="**/*.properties"/>
+            <include name="**/*.xml"/>
+            <include name="**/*.xsl"/>
+            <include name="**/*.xsd"/>
+        </replace>    	
+    </target>   
+    
+    <!-- creates the application war file -->
+    <target name="war" depends="compile, tokenize" >
+        <mkdir dir="${build_distdir}" />
+
+        <war destfile="${component.war}" webxml="${build_conf}/WEB-INF/web.xml" duplicate="fail">
+            <webinf dir="${build_conf}/WEB-INF" includes="*.tld, *.xml, server-config.wsdd" excludes="web.xml" />
+            <classes dir="${build_classdir}" includes="**" />
+            <classes dir="${build_conf}" includes="**" excludes="WEB-INF/**" />
+            <classes dir="${build_conf}/WEB-INF/classes" />
+            <lib dir="${jar_tcs_libdir}/${authentication_factory.path}" includes="*.jar" />
+            <lib dir="${jar_tcs_libdir}/${auto_pilot.path}" includes="*.jar" />
+            <lib dir="${jar_tcs_libdir}/${auto_screening_management.path}" includes="*.jar" />
+            <lib dir="${jar_tcs_libdir}/${base_exception.path}" includes="*.jar" />
+            <lib dir="${jar_tcs_libdir}/${class_associations.path}" includes="*.jar" />
+            <lib dir="${jar_tcs_libdir}/${command_line_utility.path}" includes="*.jar" />
+            <lib dir="${jar_tcs_libdir}/${configuration_api.path}" includes="*.jar" />
+            <lib dir="${jar_tcs_libdir}/${configuration_manager.path}" includes="*.jar" />
+            <lib dir="${jar_tcs_libdir}/${configuration_persistence.path}" includes="*.jar" />
+            <lib dir="${jar_tcs_libdir}/${data_validation.path}" includes="*.jar" />
+            <lib dir="${jar_tcs_libdir}/${database_abstraction.path}" includes="*.jar" />
+            <lib dir="${jar_tcs_libdir}/${db_connection_factory.path}" includes="*.jar" />
+            <lib dir="${jar_tcs_libdir}/${deliverable_management.path}" includes="*.jar" />
+            <lib dir="${jar_tcs_libdir}/${deliverable_management_persistence.path}" includes="*.jar" />
+            <lib dir="${jar_tcs_libdir}/${document_generator.path}" includes="*.jar" />
+            <lib dir="${jar_tcs_libdir}/${email_engine.path}" includes="*.jar" />
+            <lib dir="${jar_tcs_libdir}/${file_system_server.path}" includes="*.jar" />
+            <lib dir="${jar_tcs_libdir}/${file_upload.path}" includes="*.jar" />
+            <lib dir="${jar_tcs_libdir}/${guid_generator.path}" includes="*.jar" />
+            <lib dir="${jar_tcs_libdir}/${id_generator.path}" includes="*.jar" />
+            <lib dir="${jar_tcs_libdir}/${ip_server.path}" includes="*.jar" />
+            <lib dir="${jar_tcs_libdir}/${JNDI_Utility.path}" includes="*.jar" />
+            <lib dir="${jar_tcs_libdir}/${logging_wrapper.path}" includes="*.jar" />
+            <lib dir="${jar_tcs_libdir}/${object_factory.path}" includes="*.jar" />
+            <lib dir="${jar_tcs_libdir}/${object_factory_configuration_api_plugin.path}" includes="*.jar" />
+            <lib dir="${jar_tcs_libdir}/${online_review_ajax_support.path}" includes="*.jar" />
+            <lib dir="${jar_tcs_libdir}/${online_review_deliverables.path}" includes="*.jar" />
+            <lib dir="${jar_tcs_libdir}/${online_review_login.path}" includes="*.jar" />
+            <lib dir="${jar_tcs_libdir}/${online_review_phases.path}" includes="*.jar" />
+            <lib dir="${jar_tcs_libdir}/${online_review_upload_services.path}" includes="*.jar" />
+            <lib dir="${jar_tcs_libdir}/${distribution_tool.path}" includes="*.jar" />
+            <lib dir="${jar_tcs_libdir}/${phase_management.path}" includes="*.jar" />
+            <lib dir="${jar_tcs_libdir}/${phase_management_persistence.path}" includes="*.jar" />
+            <lib dir="${jar_tcs_libdir}/${project_management.path}" includes="*.jar" />
+            <lib dir="${jar_tcs_libdir}/${project_management_persistence.path}" includes="*.jar" />
+            <lib dir="${jar_tcs_libdir}/${project_phases.path}" includes="*.jar" />
+            <lib dir="${jar_tcs_libdir}/${project_phase_template.path}" includes="*.jar" />
+            <lib dir="${jar_tcs_libdir}/${resource_management.path}" includes="*.jar" />
+            <lib dir="${jar_tcs_libdir}/${resource_management_persistence.path}" includes="*.jar" />
+            <lib dir="${jar_tcs_libdir}/${review_data_structure.path}" includes="*.jar" />
+            <lib dir="${jar_tcs_libdir}/${review_management.path}" includes="*.jar" />
+            <lib dir="${jar_tcs_libdir}/${review_management_persistence.path}" includes="*.jar" />
+            <lib dir="${jar_tcs_libdir}/${review_score_aggregator.path}" includes="*.jar" />
+            <lib dir="${jar_tcs_libdir}/${review_score_calculator.path}" includes="*.jar" />
+            <lib dir="${jar_tcs_libdir}/${scorecard_data_structure.path}" includes="*.jar" />
+            <lib dir="${jar_tcs_libdir}/${scorecard_management.path}" includes="*.jar" />
+            <lib dir="${jar_tcs_libdir}/${scorecard_management_persistence.path}" includes="*.jar" />
+            <lib dir="${jar_tcs_libdir}/${search_builder.path}" includes="*.jar" />
+            <lib dir="${jar_tcs_libdir}/${simple_cache.path}" includes="*.jar" />
+            <lib dir="${jar_tcs_libdir}/${typesafe_enum.path}" includes="*.jar" />
+            <lib dir="${jar_tcs_libdir}/${user_project_data_store.path}" includes="*.jar" />
+            <lib dir="${jar_tcs_libdir}/${weighted_calculator.path}" includes="*.jar" />
+            <lib dir="${jar_tcs_libdir}/${workdays.path}" includes="*.jar" />
+            <lib dir="${jar_tcs_libdir}/${pactsServices.path}" includes="*.jar" />
+            <lib dir="${jar_tcs_libdir}/${projectEJB.path}" includes="*.jar" />
+            <lib dir="${jar_tcs_libdir}/${userEJB.path}" includes="*.jar" />
+            <lib dir="${jar_tcs_libdir}/${termsOfUseEJB.path}" includes="*.jar" />
+
+            <lib dir="${jar_ext_libdir}" includes="*.jar" excludes="mail.jar, ejb-2_0.jar, servlet-api.jar, jsp-api.jar, log4j.jar" />
+
+            <!-- Added libs to support ejb3 calls -->
+            <lib dir="${jar_ext_libdir}/jboss/">
+                <include name="jboss-ejb3-client.jar"/>
+                <include name="jboss-ejb3x.jar"/>               
+                <include name="jboss-aop-jdk50-client.jar"/>
+                <include name="jboss-aspect-jdk50-client.jar"/>
+                <include name="jboss-remoting.jar"/>
+            </lib>
+            
+            <fileset dir="${webdir}" includes="**" excludes="i/**, js/**, css/**" />
+        </war>
+    </target>
+    
+    <!-- Explode the war file for future staging -->
+    <target name="explode_war" depends="war" >
+        <mkdir dir="${build_explodedwar}" />          
+        
+        <unwar src="${component.war}" dest="${build_explodedwar}" />
+    </target>
+    
+    <!-- Copy static content to exploded folder -->
+    <target name="copy_static_content">
+        <mkdir dir="${static_content-dir}" />          
+        
+        <copy todir="${static_content-dir}" overwrite="true">
+            <fileset dir="${webdir}">
+                <include name="i/**"/>
+                <include name="js/**"/>
+                <include name="css/**"/>
+            </fileset>
+        </copy>
+    </target>
+    
+    <!-- Prepares the distribution for deployment -->
+    <target name="dist" depends="explode_war" />
+    
+    <!-- replaces variables in configuration files with values for the target environment -->
+    <target name="tokenize_shared_files">
+        <mkdir dir="${build_shared}" />
+        
+        <copy todir="${build_shared}" overwrite="true">
+            <fileset dir="${shared_libdir}">
+                <include name="**/*.properties"/>
+                <include name="**/*.xml"/>
+                <include name="**/*.xsl"/>
+                <include name="**/*.xsd"/>
+            </fileset>
+        </copy>
+        	
+        <replace dir="${build_shared}" replacefilterfile="${token.properties}">
+            <include name="**/*.properties"/>
+            <include name="**/*.xml"/>
+            <include name="**/*.xsl"/>
+            <include name="**/*.xsd"/>
+        </replace>
+    </target> 
+        
+    <!-- copy jboss dependency files to jboss lib folder -->
+    <target name="copy_shared_files" depends="tokenize_shared_files">
+        <copy todir="${deploy-conf-dir}" overwrite="true">
+            <fileset dir="${build_shared}" />
+        </copy>    
+        <copy todir="${deploy-lib-dir}" overwrite="true" verbose="${verbose}" flatten="true">
+            <fileset dir="${shared_libdir}">
+                <include name="${forums.jar.name}"/>
+                <include name="${shared.jar.name}"/>
+                <include name="${tcwebcommon.jar.name}"/>
+            </fileset>
+            <fileset dir="${tcs_libdir}">
+                <include name="${tcsUtil.jar.name}"/>
+            </fileset>
+        </copy>
+    </target> 
+    
+    <target name="copy_shared_files_remote_unix" if="is_unix" depends="tokenize_shared_files">
+        <scp_unix id="aa" file="${build_shared}" remotefile="${remotedeploy-conf-dir}" isdir="true" />
+        <scp_unix id="ab" file="${shared_libdir}/${forums.jar.name}" remotefile="${remotedeploy-lib-dir}" isdir="false" />
+        <scp_unix id="ac" file="${shared_libdir}/${shared.jar.name}" remotefile="${remotedeploy-lib-dir}" isdir="false" />
+        <scp_unix id="ad" file="${shared_libdir}/${tcwebcommon.jar.name}" remotefile="${remotedeploy-lib-dir}" isdir="false" />
+        <scp_unix id="ae" file="${tcs_libdir}/${tcsUtil.jar.name}" remotefile="${remotedeploy-lib-dir}" isdir="false" />
+    </target>
+    
+    <target name="copy_shared_files_remote_windows" if="is_windows" depends="tokenize_shared_files">
+        <scp_windows id="aa" file="${build_shared}" remotefile="${remotedeploy-conf-dir}" isdir="true" />
+        <scp_windows id="ab" file="${shared_libdir}/${forums.jar.name}" remotefile="${remotedeploy-lib-dir}" isdir="false" />
+        <scp_windows id="ac" file="${shared_libdir}/${shared.jar.name}" remotefile="${remotedeploy-lib-dir}" isdir="false" />
+        <scp_windows id="ad" file="${shared_libdir}/${tcwebcommon.jar.name}" remotefile="${remotedeploy-lib-dir}" isdir="false" />
+        <scp_windows id="ae" file="${tcs_libdir}/${tcsUtil.jar.name}" remotefile="${remotedeploy-lib-dir}" isdir="false" />
+    </target>
+    
+    <target name="copy_shared_files_remote" depends="copy_shared_files_remote_unix, copy_shared_files_remote_windows" />
+    
+    <!-- replaces variables in configuration files with values for the target environment -->
+    <target name="tokenize_jboss_files">
+        <mkdir dir="${build_jboss_files_conf}" />
+        <mkdir dir="${build_jboss_files_deploy}" />
+        
+        <copy todir="${build_jboss_files_conf}" overwrite="true">
+            <fileset dir="${jboss_files_conf}">
+                <include name="**/*.properties"/>
+                <include name="**/*.xml"/>
+                <include name="**/*.xsl"/>
+                <include name="**/*.xsd"/>
+            </fileset>
+        </copy>
+        	
+        <replace dir="${build_jboss_files_conf}" replacefilterfile="${token.properties}">
+            <include name="**/*.properties"/>
+            <include name="**/*.xml"/>
+            <include name="**/*.xsl"/>
+            <include name="**/*.xsd"/>
+        </replace>      
+        
+        <copy todir="${build_jboss_files_deploy}" overwrite="true">
+            <fileset file="${jboss_files_deploy}/tcs_informix-ds.xml"/>
+        </copy> 
+
+    	<replace dir="${build_jboss_files_deploy}" replacefilterfile="${token.properties}">
+            <include name="tcs_informix-ds.xml"/>
+        </replace>      
+    </target>    
+
+    <!-- copy jboss dependency files to jboss lib folder -->
+    <!-- Use this task carefully !!! -->
+    <target name="copy_jboss_files" depends="tokenize_jboss_files">
+        <copy todir="${deploy-conf-dir}" overwrite="true">
+            <fileset dir="${build_jboss_files_conf}" />
+        </copy>    
+        <copy todir="${deploy-deploy-dir}" overwrite="true">
+            <fileset dir="${build_jboss_files_deploy}" />
+        </copy>    
+        <copy todir="${deploy-deploy-dir}" overwrite="true">
+            <fileset dir="${jboss_files_deploy}" excludes="tcs_informix-ds.xml" includes="**" />
+        </copy>    
+        <copy todir="${deploy-lib-dir}" overwrite="true" verbose="${verbose}" flatten="true">
+            <fileset dir="${jboss_files_lib}" />
+        </copy>
+    </target>
+    
+    <!-- move the built files to the target deployment location -->
+    <target name="deploy_locally" depends="dist, copy_shared_files">
+        <mkdir dir="${deploy-dir}" />
+        
+        <copy todir="${deploy-dir}" overwrite="true">
+            <fileset dir="${build_explodedwar}" includes="**" />
+        </copy>                     
+    </target>
+    
+    <target name="deploy_remote_unix" if="is_unix" depends="dist, copy_shared_files_remote">
+        <scp_unix id="ba" file="${build_explodedwar}" remotefile="${remotedeploy-dir}" isdir="true" />
+    </target>
+    
+    <target name="deploy_remote_windows" if="is_windows" depends="dist, copy_shared_files_remote">
+        <scp_windows id="ba" file="${build_explodedwar}" remotefile="${remotedeploy-dir}" isdir="true" />
+    </target>
+    
+    <!-- remove the exploded dir from jboss -->
+    <target name="undeploy">
+        <delete failonerror="false" dir="${deploy-dir}" />        
+    </target>
+   
+    <!-- builds,tokenizes and deploys the application -->
+    <target name="deploy" depends="clean, build, deploy_locally" />
+    <target name="deploy_remote" depends="clean, build, deploy_remote_unix, deploy_remote_windows" />
+    
+    <!-- builds db schema, deploys OR, deploys. -->
+    <target name="first_deploy" depends="deploy, copy_jboss_files, copy_static_content">
+    </target>
+	
+	<!-- old untouched targets -->
     <target name="compile_tests" depends="compile">
         <mkdir dir="${build_testclassdir}" />
         <javac srcdir="${javatests}"
@@ -554,9 +903,9 @@
 
     <target name="compile_ws" depends="compile">
         <mkdir dir="${build_testclassdir}" />
-    	
-    	<echo>${axis.jar}</echo>
-    	<echo>${jboss-client.jar}</echo>
+        
+        <echo>${axis.jar}</echo>
+        <echo>${jboss-client.jar}</echo>
         <javac srcdir="${javatests}"
                destdir="${build_testclassdir}"
                includes="**/UploadServiceClient.java"
@@ -565,26 +914,35 @@
                source="1.5"
                target="1.5"
                >
-        	<classpath >
-        		<fileset dir="${ext_libdir}" includes="**/*.jar"/>
-        		<fileset dir="${JBOSS_HOME}" includes="client/jbossall-client.jar"/>
-        	</classpath>
+            <classpath >
+                <fileset dir="${ext_libdir}" includes="**/*.jar"/>
+                <fileset dir="${JBOSS_HOME}" includes="client/jbossall-client.jar"/>
+            </classpath>
         </javac>
-    	
-    	<java classname="com.cronos.onlinereview.uploadservices.UploadServiceClient" 
-    			fork="true" maxmemory="512m">
-	    	<classpath >
-	    		<fileset dir="${ext_libdir}" includes="**/*.jar"/>
-	    		<fileset dir="${JBOSS_HOME}" includes="client/jbossall-client.jar"/>
-	    		<path path="${build_testclassdir}"/>
-	    	</classpath>	
-		</java>
+        
+        <java classname="com.cronos.onlinereview.uploadservices.UploadServiceClient" 
+                fork="true" maxmemory="512m">
+            <classpath >
+                <fileset dir="${ext_libdir}" includes="**/*.jar"/>
+                <fileset dir="${JBOSS_HOME}" includes="client/jbossall-client.jar"/>
+                <path path="${build_testclassdir}"/>
+            </classpath>    
+        </java>
     </target>
-	
-	
-	
-	
-    <target name="prepare_tests_war" depends="dist, compile_tests">
+    
+    <target name="dist_tests" depends="compile_tests">
+        <mkdir dir="${dist_lib}" />
+        <jar jarfile="${component.tests.jar}" basedir="${build_testclassdir}" />
+    </target>
+
+    <target name="javadoc" depends="compile">
+        <mkdir dir="${dist_javadocs}" />
+        <javadoc packagenames="${package}.*" sourcepath="${javamain}" classpath="${build_classdir}" classpathref="buildlibs" destdir="${dist_javadocs}" windowtitle="Topcoder Software" header="&lt;table border=0 cellpadding=0 cellspacing=2&gt;&lt;tr&gt;&lt;td&gt;&lt;font class=tcoder2&gt;&#091; &lt;/font&gt;&lt;font class=tcoder1&gt;TOP&lt;/font&gt;&lt;font class=tcoder2&gt;CODER &lt;/font&gt;&lt;font class=tcoder2&gt;&#093;&lt;/font&gt;&lt;/td&gt;&lt;td&gt;&lt;font class=tcoder4&gt;&#153;&lt;/font&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td class=tcoder3 align=center&gt;&lt;font class=tcoder3&gt;SOFTWARE&lt;/font&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" footer="&lt;table border=0 cellpadding=0 cellspacing=2&gt;&lt;tr&gt;&lt;td&gt;&lt;font class=tcoder2&gt;&#091; &lt;/font&gt;&lt;font class=tcoder1&gt;TOP&lt;/font&gt;&lt;font class=tcoder2&gt;CODER &lt;/font&gt;&lt;font class=tcoder2&gt;&#093;&lt;/font&gt;&lt;/td&gt;&lt;td&gt;&lt;font class=tcoder4&gt;&#153;&lt;/font&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td class=tcoder3 align=center&gt;&lt;font class=tcoder3&gt;SOFTWARE&lt;/font&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" bottom="&lt;font class=tcoder5&gt;Contact TopCoder Software at &lt;a href='http://www.topcodersoftware.com'&gt;www.topcodersoftware.com&lt;/a&gt;&lt;/font&gt;" stylesheetfile="${javadocsdir}/stylesheet.css" verbose="${verbose}">
+            <tag name="copyright" description="Copyright:" scope="types" />
+        </javadoc>
+    </target>
+
+	<target name="prepare_tests_war" depends="dist, compile_tests">
 
         <!-- Cactify the web-app archive -->
         <!-- Done manually becaue of Cactus itself being buggy with out web.xml -->
@@ -638,331 +996,4 @@
         </junitreport>
         <echo>The execution of reports is complete.  Reports are available in /${reports}</echo>
     </target>
-
-    <!-- assume the user is already logged in to cvs and the env is set up. -->
-<!--
-don't need this anymore.  OR doesn't use it.
-    <target name="update_left_nav">
-        <mkdir dir="${build_distdir}" />
-        <cvs package="web/src/main/com/topcoder/web/jsp/includes/global_left.jsp" dest="${build_distdir}"/>
-        <copy file="${build_distdir}/web/src/main/com/topcoder/web/jsp/includes/global_left.jsp"
-            tofile="${webdir}/includes/global_left.jsp" overwrite="true" />
-
-        <cvs package="web/resources/taglib/nav.tld" dest="${build_distdir}" />
-        <copy file="${build_distdir}/web/resources/taglib/nav.tld"
-            tofile="${configdir}/WEB-INF/nav.tld" overwrite="true" />
-    </target>
--->
-
-    <target name="dist" depends="clean, compile">
-        <mkdir dir="${build_distdir}" />
-        <delete file="${component.war}" failonerror="false" />
-
-        <war destfile="${component.war}" webxml="${configdir}/WEB-INF/web.xml" duplicate="fail">
-            <webinf dir="${configdir}/WEB-INF" includes="*.tld,*.xml, server-config.wsdd" excludes="web.xml" />
-            <classes dir="${build_classdir}" includes="**" />
-            <classes dir="${configdir}" includes="**" excludes="WEB-INF/**" />
-            <classes dir="${configdir}/WEB-INF/classes" />
-            <lib dir="${jar_tcs_libdir}/${authentication_factory.path}" includes="*.jar" />
-            <lib dir="${jar_tcs_libdir}/${auto_pilot.path}" includes="*.jar" />
-            <lib dir="${jar_tcs_libdir}/${auto_screening_management.path}" includes="*.jar" />
-            <lib dir="${jar_tcs_libdir}/${base_exception.path}" includes="*.jar" />
-            <lib dir="${jar_tcs_libdir}/${class_associations.path}" includes="*.jar" />
-            <lib dir="${jar_tcs_libdir}/${command_line_utility.path}" includes="*.jar" />
-            <lib dir="${jar_tcs_libdir}/${configuration_api.path}" includes="*.jar" />
-            <lib dir="${jar_tcs_libdir}/${configuration_manager.path}" includes="*.jar" />
-            <lib dir="${jar_tcs_libdir}/${configuration_persistence.path}" includes="*.jar" />
-            <lib dir="${jar_tcs_libdir}/${data_validation.path}" includes="*.jar" />
-            <lib dir="${jar_tcs_libdir}/${database_abstraction.path}" includes="*.jar" />
-            <lib dir="${jar_tcs_libdir}/${db_connection_factory.path}" includes="*.jar" />
-            <lib dir="${jar_tcs_libdir}/${deliverable_management.path}" includes="*.jar" />
-            <lib dir="${jar_tcs_libdir}/${deliverable_management_persistence.path}" includes="*.jar" />
-            <lib dir="${jar_tcs_libdir}/${document_generator.path}" includes="*.jar" />
-            <lib dir="${jar_tcs_libdir}/${email_engine.path}" includes="*.jar" />
-            <lib dir="${jar_tcs_libdir}/${file_system_server.path}" includes="*.jar" />
-            <lib dir="${jar_tcs_libdir}/${file_upload.path}" includes="*.jar" />
-            <lib dir="${jar_tcs_libdir}/${guid_generator.path}" includes="*.jar" />
-            <lib dir="${jar_tcs_libdir}/${id_generator.path}" includes="*.jar" />
-            <lib dir="${jar_tcs_libdir}/${ip_server.path}" includes="*.jar" />
-            <lib dir="${jar_tcs_libdir}/${JNDI_Utility.path}" includes="*.jar" />
-            <lib dir="${jar_tcs_libdir}/${logging_wrapper.path}" includes="*.jar" />
-            <lib dir="${jar_tcs_libdir}/${object_factory.path}" includes="*.jar" />
-            <lib dir="${jar_tcs_libdir}/${object_factory_configuration_api_plugin.path}" includes="*.jar" />
-            <lib dir="${jar_tcs_libdir}/${online_review_ajax_support.path}" includes="*.jar" />
-            <lib dir="${jar_tcs_libdir}/${online_review_deliverables.path}" includes="*.jar" />
-            <lib dir="${jar_tcs_libdir}/${online_review_login.path}" includes="*.jar" />
-            <lib dir="${jar_tcs_libdir}/${online_review_phases.path}" includes="*.jar" />
-            <lib dir="${jar_tcs_libdir}/${online_review_upload_services.path}" includes="*.jar" />
-            <lib dir="${jar_tcs_libdir}/${distribution_tool.path}" includes="*.jar" />
-            <lib dir="${jar_tcs_libdir}/${phase_management.path}" includes="*.jar" />
-            <lib dir="${jar_tcs_libdir}/${phase_management_persistence.path}" includes="*.jar" />
-            <lib dir="${jar_tcs_libdir}/${project_management.path}" includes="*.jar" />
-            <lib dir="${jar_tcs_libdir}/${project_management_persistence.path}" includes="*.jar" />
-            <lib dir="${jar_tcs_libdir}/${project_phases.path}" includes="*.jar" />
-            <lib dir="${jar_tcs_libdir}/${project_phase_template.path}" includes="*.jar" />
-            <lib dir="${jar_tcs_libdir}/${resource_management.path}" includes="*.jar" />
-            <lib dir="${jar_tcs_libdir}/${resource_management_persistence.path}" includes="*.jar" />
-            <lib dir="${jar_tcs_libdir}/${review_data_structure.path}" includes="*.jar" />
-            <lib dir="${jar_tcs_libdir}/${review_management.path}" includes="*.jar" />
-            <lib dir="${jar_tcs_libdir}/${review_management_persistence.path}" includes="*.jar" />
-            <lib dir="${jar_tcs_libdir}/${review_score_aggregator.path}" includes="*.jar" />
-            <lib dir="${jar_tcs_libdir}/${review_score_calculator.path}" includes="*.jar" />
-            <lib dir="${jar_tcs_libdir}/${scorecard_data_structure.path}" includes="*.jar" />
-            <lib dir="${jar_tcs_libdir}/${scorecard_management.path}" includes="*.jar" />
-            <lib dir="${jar_tcs_libdir}/${scorecard_management_persistence.path}" includes="*.jar" />
-            <lib dir="${jar_tcs_libdir}/${search_builder.path}" includes="*.jar" />
-<!--
-Note: The security manager that comes with the app may not be compatible with the server it's deployed on (security is already deployed, but different version),
-      so this is not being packaged. If needed, however, uncomment this.
-            <lib dir="${jar_tcs_libdir}/${security_manager.path}" includes="*.jar" />
--->
-            <lib dir="${jar_tcs_libdir}/${simple_cache.path}" includes="*.jar" />
-            <lib dir="${jar_tcs_libdir}/${typesafe_enum.path}" includes="*.jar" />
-            <lib dir="${jar_tcs_libdir}/${user_project_data_store.path}" includes="*.jar" />
-            <lib dir="${jar_tcs_libdir}/${weighted_calculator.path}" includes="*.jar" />
-            <lib dir="${jar_tcs_libdir}/${workdays.path}" includes="*.jar" />
-            <lib dir="${jar_tcs_libdir}/${pactsServices.path}" includes="*.jar" />
-            <lib dir="${jar_tcs_libdir}/${projectEJB.path}" includes="*.jar" />
-            <lib dir="${jar_tcs_libdir}/${userEJB.path}" includes="*.jar" />
-            <lib dir="${jar_tcs_libdir}/${termsOfUseEJB.path}" includes="*.jar" />
-            <lib dir="${jar_tcs_libdir}/${contest_eligibility_validation_client.path}" includes="*.jar" />
-
-            <lib dir="${jar_tcs_libdir}/">
-                <include name="${tcsUtil.jar.name}"/>
-            </lib>
-
-            <lib dir="${jar_shared_libdir}/">
-                <include name="${shared.jar.name}"/>
-                <include name="${tcwebcommon.jar.name}"/>
-            	<include name="${catalog.jar} "/>
-                <include name="${forums.jar.name}"/>
-            </lib>
-
-            <lib dir="${jar_ext_libdir}" includes="*.jar" excludes="mail.jar, ejb-2_0.jar" />
-
-            <!-- Added libs to support ejb3 calls -->
-            <lib dir="${jar_ext_libdir}/jboss/">
-                <include name="jboss-ejb3-client.jar"/>
-                <include name="jboss-ejb3x.jar"/>            	
-                <include name="jboss-aop-jdk50-client.jar"/>
-                <include name="jboss-aspect-jdk50-client.jar"/>
-                <include name="jboss-remoting.jar"/>
-            </lib>
-            <fileset dir="${webdir}" includes="**" excludes="i/**, js/**, css/**" />
-        </war>
-    </target>
-
-    <target name="dist_tests" depends="compile_tests">
-        <mkdir dir="${dist_lib}" />
-        <jar jarfile="${component.tests.jar}" basedir="${build_testclassdir}" />
-    </target>
-
-    <target name="javadoc" depends="compile">
-        <mkdir dir="${dist_javadocs}" />
-        <javadoc packagenames="${package}.*" sourcepath="${javamain}" classpath="${build_classdir}" classpathref="buildlibs" destdir="${dist_javadocs}" windowtitle="Topcoder Software" header="&lt;table border=0 cellpadding=0 cellspacing=2&gt;&lt;tr&gt;&lt;td&gt;&lt;font class=tcoder2&gt;&#091; &lt;/font&gt;&lt;font class=tcoder1&gt;TOP&lt;/font&gt;&lt;font class=tcoder2&gt;CODER &lt;/font&gt;&lt;font class=tcoder2&gt;&#093;&lt;/font&gt;&lt;/td&gt;&lt;td&gt;&lt;font class=tcoder4&gt;&#153;&lt;/font&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td class=tcoder3 align=center&gt;&lt;font class=tcoder3&gt;SOFTWARE&lt;/font&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" footer="&lt;table border=0 cellpadding=0 cellspacing=2&gt;&lt;tr&gt;&lt;td&gt;&lt;font class=tcoder2&gt;&#091; &lt;/font&gt;&lt;font class=tcoder1&gt;TOP&lt;/font&gt;&lt;font class=tcoder2&gt;CODER &lt;/font&gt;&lt;font class=tcoder2&gt;&#093;&lt;/font&gt;&lt;/td&gt;&lt;td&gt;&lt;font class=tcoder4&gt;&#153;&lt;/font&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td class=tcoder3 align=center&gt;&lt;font class=tcoder3&gt;SOFTWARE&lt;/font&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;" bottom="&lt;font class=tcoder5&gt;Contact TopCoder Software at &lt;a href='http://www.topcodersoftware.com'&gt;www.topcodersoftware.com&lt;/a&gt;&lt;/font&gt;" stylesheetfile="${javadocsdir}/stylesheet.css" verbose="${verbose}">
-            <tag name="copyright" description="Copyright:" scope="types" />
-        </javadoc>
-    </target>
-
-    <target name="clean">
-        <delete failonerror="false">
-            <fileset dir="${build_classdir}" includes="**/*.class"/>
-        </delete>
-        <delete failonerror="false">
-            <fileset dir="${build_testclassdir}" includes="**/*.class"/>
-        </delete>
-        <delete file="${component.war}" failonerror="false" />
-        <delete file="${component_test.war}" failonerror="false" />
-    </target>
-
-    <target name="deploy-common">
-        <mkdir dir="${deploy-dir}" />
-        <unwar src="${component.war}" dest="${deploy-dir}" />
-        <move todir="${deploy-dir}/../../lib" overwrite="true" verbose="true">
-            <fileset dir="${deploy-dir}/WEB-INF/lib">
-                <include name="${tcsUtil.jar.name}"/>
-                <include name="${tcwebcommon.jar.name}"/>
-            	<include name="${catalog.jar.name}"/>
-                <include name="${shared.jar.name}"/>
-                <include name="${forums.jar.name}"/>
-                <include name="${contest_eligibility_validation_client.jar.name}"/>
-            </fileset>
-        </move>
-        <delete verbose="true">
-            <fileset dir="${deploy-dir}/WEB-INF/lib">
-                <include name="log4j.jar"/>
-            </fileset>
-        </delete>
-    </target>
-
-    <target name="deploy" depends="dist, deploy-common" />
-
-    <!-- - - - - - - - - - - - - - - - - -
-      target: prod-init
-    - - - - - - - - - - - - - - - - - -->
-    <target name="prod-init">
-    	<property name="component.war" value="${distfilename}.war" />
-    </target>
-
-    <target name="deploy-prod" depends="prod-init, deploy-common" />
-
-    <target name="main" depends="deploy, test" />
-
-
-    <!-- ************************************************************************** -->
-    <!-- ************ REMOVE EVERYTHING BELOW HERE FOR THE DISTRIBUTION ************* -->
-    <!-- ************************************************************************** -->
-
-    <target name="dist_tcs" depends="clean,dist,javadoc">
-        <!-- define tcs distribution format -->
-        <!-- uncomment if configuration files exist.
-        <mkdir dir="${dist_conf}"/>
-        <copy todir="${dist_conf}">
-            <fileset dir="${configdir}" />
-        </copy>
--->
-
-        <mkdir dir="${dist_src}" />
-        <copy todir="${dist_src}">
-            <fileset dir="${srcdir}" />
-        </copy>
-
-        <copy todir="${dist_docs}">
-            <fileset dir="${docsdir}">
-                <include name="${component}_Class_Diagram*" />
-                <include name="${component}_Use_Case_Diagram*" />
-                <include name="${component}_Sequence_Diagram*" />
-                <include name="${component}_Requirements_Specification*" />
-                <include name="${component}_Component_Specification*" />
-                <include name="${component}.zargo" />
-                <include name="${component}.zuml" />
-            </fileset>
-        </copy>
-
-        <mkdir dir="${dist_javadocs}" />
-        <copy todir="${dist_javadocs}">
-            <fileset dir="${javadocsdir}" />
-        </copy>
-
-        <jar jarfile="${javadoc.jar}" basedir="${build_tcsdistdir}\docs\javadocs" />
-
-        <!-- uncomment if test files exist.
-        <mkdir dir="${dist_testfiles}"/>
-        <copy todir="${dist_testfiles}">
-            <fileset dir="${testfiles}" />
-        </copy>
--->
-        <copy file="build_dist.xml" tofile="${build_tcsdistdir}/build.xml" />
-        <copy file="README" tofile="${build_tcsdistdir}/README" />
-        <jar jarfile="${component.dist.jar}" basedir="${build_distdir}" excludes="*.jar" />
-        <antcall target="moveToTCS" />
-
-    </target>
-
-    <target name="moveToTCS">
-        <mkdir dir="${tcs_libdir}/${component_path}" />
-        <mkdir dir="${tcs_libdir}/${component_path}/dist" />
-
-        <copy file="${component.jar}" todir="${tcs_libdir}/${component_path}" />
-
-        <copy file="${component.dist.jar}" todir="${tcs_libdir}/${component_path}/dist" />
-
-
-    </target>
-
-    <target name="dev_submission">
-        <jar jarfile="${dev_submission.jar}" basedir="."
-            includes="build.xml,
-                      README.txt,
-                      topcoder_global.properties,
-                      ${configdir}/**,
-                      ${docsdir}/DeploymentGuide.Doc,
-                      ${tcs_libdir}/**/*.*,
-                      ${ext_libdir}/**/*.*,
-                      ${srcdir}/**/*.java,
-                      ${sqlsrc}/**/*.*,
-                      ${javatests}/${packagedir}/**,
-                      ${testlogdir}/**,
-                      ${testfiles}/**,
-                      ${webdir}/**/*.*"
-            excludes="${webdir}/**/*.htm*,
-                      ${webdir}/jsp2/**/*.*,
-                      ${webdir}/images/**/*.*,
-                      ${webdir}/styles/**/*.*,
-                      ${webdir}/includes/review/*.*,
-                      ${webdir}/includes/screen/*.*,
-                      ${webdir}/**/pc-*.*,
-                      ${webdir}/**/pc_*.*,
-                      ${webdir}/**/new_pc-*.*,
-                      ${webdir}/**/new_pc_*.*,
-                      ${webdir}/**/new-pc-*.*,
-                      ${webdir}/**/new-pc_*.*"
-        />
-    </target>
-
-    <target name="design_submission">
-        <jar jarfile="${design_submission.jar}" basedir="." includes="${configdir}/**,${javamain}/**,${docsdir}/**,${testfiles}/**" />
-    </target>
-
-    <target name="dev_dist">
-        <!-- copy TCS Dependencies -->
-        <mkdir dir="${jar_tcs_libdir}/${configuration_manager.path}" />
-        <copy file="${configmanager.jar}" todir="${jar_tcs_libdir}/${configmanager.path}" />
-        <mkdir dir="${jar_tcs_libdir}/${db_connection_factory.path}" />
-        <copy file="${db_connection_factory.jar}" todir="${jar_tcs_libdir}/${db_connection_factory.path}" />
-        <mkdir dir="${jar_tcs_libdir}/${authentication_factory.path}" />
-        <copy file="${authentication_factory.jar}" todir="${jar_tcs_libdir}/${authentication_factory.path}" />
-        <mkdir dir="${jar_tcs_libdir}/${authorization.path}" />
-        <copy file="${authorization.jar}" todir="${jar_tcs_libdir}/${authorization.path}" />
-        <mkdir dir="${jar_tcs_libdir}/${id_generator.path}" />
-        <copy file="${id_generator.jar}" todir="${jar_tcs_libdir}/${id_generator.path}" />
-        <mkdir dir="${jar_tcs_libdir}/${base_exception.path}"/>
-        <copy file="${base_exception.jar}" todir="${jar_tcs_libdir}/${base_exception.path}" />
-
-        <jar jarfile="${dev_dist.jar}"
-             basedir="."
-             includes="build.xml,
-                       ${configdir}/**,
-                       ${srcdir}/**,
-                       ${docsdir}/**,
-                       ${jar_tcs_libdir}/**,
-                       ${testfiles}/**"
-        />
-
-        <delete dir="${jar_tcs_libdir}"/>
-    </target>
-
-    <target name="design_dist">
-        <!-- copy TCS Dependencies -->
-        <!--
-        <mkdir dir="${jar_tcs_libdir}/${configmanager.path}"/>
-        <copy file="${configmanager.jar}" todir="${jar_tcs_libdir}/${configmanager.path}" />
-        -->
-        <jar jarfile="${design_dist.jar}"
-             basedir="."
-             includes="build.xml,
-                       ${configdir}/**,
-                       ${srcdir}/**,
-                       ${docsdir}/**,
-                       ${jar_tcs_libdir}/**,
-                       ${testfiles}/**"
-        />
-
-        <!--
-        <delete dir="${jar_tcs_libdir}"/>
-        -->
-    </target>
-
-     <target name="package-phase-handler-extend" depends="compile">
-        <jar jarfile="${build_distdir}/phase_handler_extend.jar">
-            <zipfileset dir="${build_classdir}" includes="com/cronos/onlinereview/phases/**/*.class"/>
-            <metainf dir="${javamain}/com/cronos/onlinereview/phases/" includes="*.xml"/>
-        </jar>
-    </target>
-
-    <!-- ************************************************************************** -->
-    <!-- ************************ END REMOVE EVERYTHING ***************************** -->
-    <!-- ************************************************************************** -->
-
-
 </project>

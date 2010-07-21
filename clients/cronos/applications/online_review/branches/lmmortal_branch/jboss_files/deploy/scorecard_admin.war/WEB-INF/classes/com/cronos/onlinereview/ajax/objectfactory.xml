@@ -1,0 +1,125 @@
+<Config name="com.cronos.onlinereview.ajax.factory">
+<!-- defining the "SetScorecardStatus" handler concrete implementation -->
+<Property name="SetScorecardStatus">
+<Property name="type">
+<Value>com.cronos.onlinereview.ajax.handlers.SetScorecardStatusHandler</Value>
+</Property>
+</Property>
+
+<Property name="com/topcoder/search/builder/SearchBundleManager">
+	<Property name="type">
+		<Value>com.topcoder.search.builder.SearchBundleManager</Value>
+	</Property>
+	<Property name="params">
+       <Property name="param1">
+       	  <Property name="type">
+       	  		<Value>String</Value>
+       	  </Property>
+          <Property name="value">
+          	<Value>com.topcoder.management.resource.searchbuilder</Value>
+          </Property>
+       </Property>
+    </Property>
+</Property>
+
+
+<Property name="com/topcoder/management/resource/persistence/sql/ResourcePersistence">
+	<Property name="type">
+		<Value>com.topcoder.management.resource.persistence.sql.SqlResourcePersistence</Value>
+	</Property>
+	<Property name="params">
+       <Property name="param1">
+          <Property name="name">
+          	<Value>com/topcoder/db/connectionfactory/DBConnectionFactory</Value>
+          </Property>
+       </Property>
+    </Property>
+</Property>
+
+
+<Property name="com/topcoder/db/connectionfactory/DBConnectionFactory">
+	<Property name="type">
+		<Value>com.topcoder.db.connectionfactory.DBConnectionFactoryImpl</Value>
+	</Property>
+	<Property name="params">
+       <Property name="param1">
+       	  <Property name="type">
+          	<Value>String</Value>
+          </Property>
+          <Property name="value">
+          	<Value>com.topcoder.db.connectionfactory.DBConnectionFactoryImpl</Value>
+          </Property>
+       </Property>
+    </Property>
+</Property>
+
+<!-- defining the resource manager concrete implementation -->
+<Property name="com/topcoder/management/resource/ResourceManager">
+<Property name="type">
+<Value>com.topcoder.management.resource.persistence.PersistenceResourceManager</Value>
+</Property>
+	<Property name="params">
+       <Property name="param1">
+          <Property name="name">
+          	<Value>com/topcoder/management/resource/persistence/sql/ResourcePersistence</Value>
+          </Property>
+       </Property>
+       <Property name="param2">
+          <Property name="name">
+          	<Value>com/topcoder/search/builder/SearchBundleManager</Value>
+          </Property>
+       </Property>
+    </Property>
+</Property>
+
+<!-- defining the review manager concrete implementation
+<Property name="com/topcoder/management/review/ReviewManager">
+<Property name="type">
+<Value>com.topcoder.management.review.MockReviewManager</Value>
+</Property>
+</Property>
+-->
+<!-- defining the phase templae concrete implementation
+<Property name="com/topcoder/project/phases/template/PhaseTemplate">
+<Property name="type">
+<Value>com.topcoder.project.phases.template.MockPhaseTemplate</Value>
+</Property>
+</Property>
+-->
+<!-- defining the phase templae concrete implementation
+<Property name="com/topcoder/management/deliverable/UploadManager">
+<Property name="type">
+<Value>com.topcoder.management.deliverable.MockUploadManager</Value>
+</Property>
+</Property>
+-->
+<!-- defining the phase templae concrete implementation
+<Property name="com/topcoder/management/phase/PhaseManager">
+<Property name="type">
+<Value>com.topcoder.management.phase.MockPhaseManager</Value>
+</Property>
+</Property>
+-->
+<!-- defining the phase templae concrete implementation
+<Property name="com/topcoder/management/review/scorecalculator/CalculationManager">
+<Property name="type">
+<Value>com.topcoder.management.review.scorecalculator.CalculationManager</Value>
+</Property>
+</Property>
+-->
+<!-- defining the phase templae concrete implementation -->
+<Property name="com/topcoder/management/scorecard/ScorecardManager">
+<Property name="type">
+<Value>com.topcoder.management.scorecard.ScorecardManagerImpl</Value>
+</Property>
+</Property>
+
+<!-- defining the phase templae concrete implementation -->
+<Property name="com/topcoder/management/project/ProjectManager">
+<Property name="type">
+<Value>com.topcoder.management.project.ProjectManagerImpl</Value>
+</Property>
+</Property>
+
+<!-- the rest of the manager classes must be defined here -->
+</Config>
