@@ -736,20 +736,7 @@
         
         <unwar src="${component.war}" dest="${build_explodedwar}" />
     </target>
-    
-    <!-- Copy static content to exploded folder -->
-    <target name="copy_static_content">
-        <mkdir dir="${static_content-dir}" />          
         
-        <copy todir="${static_content-dir}" overwrite="true">
-            <fileset dir="${webdir}">
-                <include name="i/**"/>
-                <include name="js/**"/>
-                <include name="css/**"/>
-            </fileset>
-        </copy>
-    </target>
-    
     <!-- Prepares the distribution for deployment -->
     <target name="dist" depends="explode_war" />
     
@@ -883,7 +870,7 @@
     <target name="deploy_remote" depends="clean, build, deploy_remote_unix, deploy_remote_windows" />
     
     <!-- builds db schema, deploys OR, deploys. -->
-    <target name="first_deploy" depends="deploy, copy_jboss_files, copy_static_content">
+    <target name="first_deploy" depends="deploy, copy_jboss_files">
     </target>
 	
 	<!-- old untouched targets -->
