@@ -2,10 +2,10 @@
         "http://java.sun.com/dtd/application_1_3.dtd">
 
 <application>
-    <display-name>DDE</display-name>
+    <display-name>Static</display-name>
     <module>
         <web>
-            <web-uri>dde.war</web-uri>
+            <web-uri>static.war</web-uri>
             <context-root>/</context-root>
         </web>
     </module>
