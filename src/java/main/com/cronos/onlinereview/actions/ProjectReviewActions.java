@@ -445,7 +445,8 @@ public class ProjectReviewActions extends DispatchAction {
      *            the http response.
      */
     public ActionForward createAggregation(ActionMapping mapping, ActionForm form,
-            HttpServletRequest request, HttpServletResponse response) {
+            HttpServletRequest request, HttpServletResponse response) throws BaseException {
+
         LoggingHelper.logAction(request);
         // Nothing needs to be done
         return null;
@@ -1429,7 +1430,7 @@ public class ProjectReviewActions extends DispatchAction {
      *            the http response.
      */
     public ActionForward createFinalReview(ActionMapping mapping, ActionForm form,
-            HttpServletRequest request, HttpServletResponse response) {
+            HttpServletRequest request, HttpServletResponse response) throws BaseException {
         // Nothing needs to be done
         LoggingHelper.logAction(request);
         return null;

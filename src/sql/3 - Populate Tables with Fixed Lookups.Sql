@@ -84,7 +84,7 @@ INSERT INTO  scorecard_question_type_lu (scorecard_question_type_id, name, descr
 INSERT INTO project_status_lu(project_status_id, name, description, create_user, create_date, modify_user, modify_date)
   VALUES(1, 'Active', 'Active', 'System', CURRENT, 'System', CURRENT);
 INSERT INTO project_status_lu(project_status_id, name, description, create_user, create_date, modify_user, modify_date)
-  VALUES(2, 'Inactive', 'Inactive', 'System', CURRENT, 'System', CURRENT);
+  VALUES(2, 'Draft', 'Draft', 'System', CURRENT, 'System', CURRENT);
 INSERT INTO project_status_lu(project_status_id, name, description, create_user, create_date, modify_user, modify_date)
   VALUES(3, 'Deleted', 'Deleted', 'System', CURRENT, 'System', CURRENT);
 INSERT INTO project_status_lu(project_status_id, name, description, create_user, create_date, modify_user, modify_date)

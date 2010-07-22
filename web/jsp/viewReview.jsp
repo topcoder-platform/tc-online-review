@@ -1,3 +1,13 @@
+<%--
+  - Author: George1, real_vg, isv
+  - Version: 1.1
+  - Copyright (C) 2005 - 2010 TopCoder Inc., All Rights Reserved.
+  -
+  - Description: This page renders the Review scorecard.
+  -
+  - Version 1.1 (Impersonation Login Release assembly) changes: Updated link for "Back" button to refer to
+  - "View Project Details" screen.
+--%>
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ page language="java" isELIgnored="false" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
@@ -352,7 +362,8 @@
                             <a href="javascript:window.close();"><html:img srcKey="btnClose.img" altKey="btnClose.alt" border="0" /></a>
                         </c:if>
                         <c:if test="${not isPreview}">
-                            <a href="javascript:history.go(-1)"><html:img srcKey="btnBack.img" altKey="btnBack.alt" border="0" /></a>
+                            <html:link page="/actions/ViewProjectDetails.do?method=viewProjectDetails&pid=${project.id}">
+                                <html:img srcKey="btnBack.img" altKey="btnBack.alt" border="0" /></html:link>
                         </c:if>
                         <br />
                     </div>

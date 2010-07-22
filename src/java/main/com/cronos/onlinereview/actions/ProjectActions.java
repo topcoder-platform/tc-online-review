@@ -33,7 +33,6 @@ import com.topcoder.management.project.link.ProjectLinkManager;
 import com.topcoder.management.review.ReviewManagementException;
 import com.topcoder.management.review.ReviewManager;
 import com.topcoder.management.review.data.Review;
-import com.topcoder.management.scorecard.data.ScorecardType;
 import com.topcoder.project.phases.Dependency;
 import com.topcoder.project.phases.Phase;
 import com.topcoder.project.phases.PhaseStatus;
@@ -198,8 +197,16 @@ import static com.cronos.onlinereview.actions.Constants.POST_MORTEM_PHASE_NAME;
  *   </ol>
  * </p>
  *
+ * <p>
+ * Version 1.9 (Impersonation Login Assembly 1.0) Change notes:
+ *   <ol>
+ *     <li>Updated {@link #loadProjectEditLookups(HttpServletRequest)} method to filter out resource roles which are
+ *     not allowed for selection on <code>Edit Project</code> screen.</li>
+ *   </ol>
+ * </p>
+ *
  * @author George1, real_vg, pulky, isv
- * @version 1.8
+ * @version 1.9
  */
 public class ProjectActions extends DispatchAction {
 
@@ -352,7 +359,7 @@ public class ProjectActions extends DispatchAction {
         }
 
         // Populate default phase duration
-        lazyForm.set("addphase_duration", new Integer(ConfigHelper.getDefaultPhaseDuration()));
+        lazyForm.set("addphase_duration", String.valueOf(ConfigHelper.getDefaultPhaseDuration()));
     }
 
     /**
@@ -382,10 +389,20 @@ public class ProjectActions extends DispatchAction {
 
         // Obtain an instance of Resource Manager
         ResourceManager resourceManager = ActionsHelper.createResourceManager(request);
-        // Get all types of resource roles
-        ResourceRole[] resourceRoles = resourceManager.getAllResourceRoles();
+        // Get all types of resource roles and filter out those which are not allowed for selection
         // Place resource roles into the request as attribute
+        ResourceRole[] resourceRoles = resourceManager.getAllResourceRoles();
+        Set<String> disabledResourceRoles = new HashSet<String>(Arrays.asList(ConfigHelper.getDisabledResourceRoles()));
+        List<ResourceRole> allowedResourceRoles = new ArrayList<ResourceRole>();
+        for (int i = 0; i < resourceRoles.length; i++) {
+            ResourceRole resourceRole = resourceRoles[i];
+            if (!disabledResourceRoles.contains(String.valueOf(resourceRole.getId()))) {
+                allowedResourceRoles.add(resourceRole);
+            }
+        }
+        request.setAttribute("allowedResourceRoles", allowedResourceRoles);
         request.setAttribute("resourceRoles", resourceRoles);
+        request.setAttribute("disabledResourceRoles", disabledResourceRoles);
 
         // Obtain an instance of Phase Manager
         PhaseManager phaseManager = ActionsHelper.createPhaseManager(request, false);
@@ -419,7 +436,8 @@ public class ProjectActions extends DispatchAction {
         // Retrieve the list of all client projects and store it in the request
         // this need to be retrieved only for admin user.
         if (AuthorizationHelper.hasUserRole(request, Constants.MANAGER_ROLE_NAME)
-                 || AuthorizationHelper.hasUserRole(request, Constants.GLOBAL_MANAGER_ROLE_NAME)) {
+                || AuthorizationHelper.hasUserRole(request, Constants.GLOBAL_MANAGER_ROLE_NAME)
+                || AuthorizationHelper.hasUserRole(request, Constants.COCKPIT_PROJECT_USER_ROLE_NAME)) {
             request.setAttribute("billingProjects", ActionsHelper.getClientProjects(request));
         }
     }
@@ -710,8 +728,9 @@ public class ProjectActions extends DispatchAction {
 
         // since Online Review Update - Add Project Dropdown v1.0
         request.setAttribute("isAdmin",
-                Boolean.valueOf(AuthorizationHelper.hasUserRole(request, Constants.MANAGER_ROLE_NAME) ||
-                                    AuthorizationHelper.hasUserRole(request, Constants.GLOBAL_MANAGER_ROLE_NAME)));
+                Boolean.valueOf(AuthorizationHelper.hasUserRole(request, Constants.MANAGER_ROLE_NAME)
+                        || AuthorizationHelper.hasUserRole(request, Constants.COCKPIT_PROJECT_USER_ROLE_NAME)
+                        || AuthorizationHelper.hasUserRole(request, Constants.GLOBAL_MANAGER_ROLE_NAME)));
     }
 
     /**
@@ -855,6 +874,7 @@ public class ProjectActions extends DispatchAction {
         Project project = null;
 
         // Check if the user has the permission to perform this action
+        CorrectnessCheckResult verification = null;
         if (newProject) {
             // Gather the roles the user has for current request
             AuthorizationHelper.gatherUserRoles(request);
@@ -869,7 +889,7 @@ public class ProjectActions extends DispatchAction {
             AuthorizationHelper.removeLoginRedirect(request);
         } else {
             // Verify that certain requirements are met before processing with the Action
-            CorrectnessCheckResult verification = ActionsHelper.checkForCorrectProjectId(
+            verification = ActionsHelper.checkForCorrectProjectId(
                     mapping, getResources(request), request, Constants.EDIT_PROJECT_DETAILS_PERM_NAME, true);
             // If any error has occurred, return action forward contained in the result bean
             if (!verification.isSuccessful()) {
@@ -1041,7 +1061,8 @@ public class ProjectActions extends DispatchAction {
 
         // since Online Review Update - Add Project Dropdown v1.0
         // Populate project notes
-        if (AuthorizationHelper.hasUserRole(request, Constants.MANAGER_ROLE_NAME)
+        if (AuthorizationHelper.hasUserRole(request, Constants.MANAGER_ROLE_NAME) 
+                || AuthorizationHelper.hasUserRole(request, Constants.COCKPIT_PROJECT_USER_ROLE_NAME)
                  || AuthorizationHelper.hasUserRole(request, Constants.GLOBAL_MANAGER_ROLE_NAME)) {
                 project.setProperty("Billing Project", lazyForm.get("billing_project"));
         }
@@ -1096,16 +1117,8 @@ public class ProjectActions extends DispatchAction {
         // Check if there are any validation errors and return appropriate forward
         if (ActionsHelper.isErrorsPresent(request)) {
             // TODO: Check if the form is really for new project
+            editProject(mapping, form, request, response);
             request.setAttribute("newProject", Boolean.valueOf(newProject));
-
-            // Load the lookup data
-            loadProjectEditLookups(request);
-            if (!newProject) {
-                // Store project statuses in the request
-                request.setAttribute("projectStatuses", projectStatuses);
-                // Store the retrieved project in the request
-                request.setAttribute("project", project);
-            }
 
             return mapping.getInputForward();
         }
@@ -1270,6 +1283,14 @@ public class ProjectActions extends DispatchAction {
         // FIRST PASS
         // 0-index phase is skipped since it is a "dummy" one
         for (int i = 1; i < phaseTypes.length; i++) {
+            if (phaseTypes[i] == null) {
+                String phaseJsId = (String) lazyForm.get("phase_js_id", i);
+                long phaseId = Long.parseLong(phaseJsId.substring("loaded_".length()));
+                Phase phase = ActionsHelper.findPhaseById(oldPhases, phaseId);
+                phasesJsMap.put(phaseJsId, phase);
+                phasesToForm.put(phase, i);
+                continue;
+            }
             Phase phase = null;
 
             // Check what is the action to be performed with the phase
@@ -1352,6 +1373,9 @@ public class ProjectActions extends DispatchAction {
 
         // SECOND PASS
         for (int i = 1; i < phaseTypes.length; i++) {
+            if (phaseTypes[i] == null) {
+                continue;
+            }
             Object phaseObj = phasesJsMap.get(lazyForm.get("phase_js_id", i));
             // If phase is not found in map, it is to be deleted
             if (phaseObj == null) {
@@ -1398,7 +1422,8 @@ public class ProjectActions extends DispatchAction {
                 }
             } else {
                 // Get the dependency phase
-                Phase dependencyPhase = (Phase) phasesJsMap.get(lazyForm.get("phase_start_phase", i));
+                String phaseJsId = (String) lazyForm.get("phase_start_phase", i);
+                Phase dependencyPhase = (Phase) phasesJsMap.get(phaseJsId);
 
                 if (dependencyPhase != null) {
                     boolean dependencyStart;
@@ -1479,6 +1504,9 @@ public class ProjectActions extends DispatchAction {
         boolean hasCircularDependencies = false;
         Set<Phase> processed = new HashSet<Phase>();
         for (int i = 1; i < phaseTypes.length; i++) {
+            if (phaseTypes[i] == null) {
+                continue;
+            }
             Object phaseObj = phasesJsMap.get(lazyForm.get("phase_js_id", i));
             // If phase is not found in map, it was deleted and should not be processed
             if (phaseObj == null) {
@@ -1521,7 +1549,9 @@ public class ProjectActions extends DispatchAction {
             while (!stack.empty()) {
                 phase = (Phase) stack.pop();
                 int paramIndex = ((Integer) phasesToForm.get(phase)).intValue();
-
+                if (phaseTypes[paramIndex] == null) {
+                    continue;
+                }
                 // If the phase is scheduled to start before some other phase start/end
                 if (Boolean.TRUE.equals(lazyForm.get("phase_start_by_phase", paramIndex)) &&
                         "minus".equals(lazyForm.get("phase_start_plusminus", paramIndex))) {
@@ -2022,7 +2052,8 @@ public class ProjectActions extends DispatchAction {
             throw new BaseException(e);
         }
 
-        // Check for duplicate reviewers
+        // Check for duplicate reviewers and disallowed resource roles
+        Set<String> disabledResourceRoles = new HashSet<String>(Arrays.asList(ConfigHelper.getDisabledResourceRoles()));
         Set<String> reviewerHandles = new HashSet<String>();
         Map<Long, String> primaryReviewerRoles = new HashMap<Long, String>();
         for (int i = 1; i < resourceNames.length; i++) {
@@ -2030,6 +2061,24 @@ public class ProjectActions extends DispatchAction {
             if (!"delete".equalsIgnoreCase(resourceAction)) {
                 String handle = resourceNames[i];
                 long resourceRoleId = (Long) lazyForm.get("resources_role", i);
+                if (disabledResourceRoles.contains(String.valueOf(resourceRoleId))) {
+                    boolean attemptingToAssignDisabledRole = false;
+                    if ("add".equalsIgnoreCase(resourceAction)) {
+                        attemptingToAssignDisabledRole = true;
+                    } else if ("update".equalsIgnoreCase(resourceAction)) {
+                        Long resourceId = (Long) lazyForm.get("resources_id", i);
+                        Resource oldResource = resourceManager.getResource(resourceId.longValue());
+                        if (oldResource.getResourceRole().getId() != resourceRoleId) {
+                            attemptingToAssignDisabledRole = true;
+                        }
+                    }
+                    if (attemptingToAssignDisabledRole) {
+                        ActionsHelper.addErrorToRequest(request, "resources_name[" + i + "]",
+                                                        "error.com.cronos.onlinereview.actions."
+                                                        + "editProject.Resource.RoleDisabled");
+                        allResourcesValid = false;
+                    }
+                }
                 if (NODUPLICATE_REVIEWER_ROLE_IDS.contains(resourceRoleId)) {
                     if (reviewerHandles.contains(handle)) {
                         ActionsHelper.addErrorToRequest(request, "resources_name[" + i + "]",
@@ -2307,6 +2356,10 @@ public class ProjectActions extends DispatchAction {
                 finalUsers.remove(existUserIds[i]);
             }
 
+            finalUsers.remove(22770213); // Applications user
+            finalUsers.remove(22719217); // Components user
+            finalUsers.remove(22873364); // LCSUPPORT user
+
             long[] userIds = new long[finalUsers.size()];
             int i = 0;
             for (Long id : finalUsers) {
@@ -2510,11 +2563,6 @@ public class ProjectActions extends DispatchAction {
             return mapping.findForward("all");
         }
 
-        if (scope.equalsIgnoreCase("inactive") &&
-                !AuthorizationHelper.hasUserPermission(request, Constants.VIEW_PROJECTS_INACTIVE_PERM_NAME)) {
-            return mapping.findForward("all");
-        }
-
         // Obtain an instance of Project Manager
         ProjectManager manager = ActionsHelper.createProjectManager(request);
         // This variable will specify the index of active tab on the JSP page
@@ -2524,7 +2572,7 @@ public class ProjectActions extends DispatchAction {
         // based on the value of the "scope" parameter
         if (scope.equalsIgnoreCase("my")) {
             activeTab = 1;
-        } else if (scope.equalsIgnoreCase("inactive")) {
+        } else if (scope.equalsIgnoreCase("draft")) {
             activeTab = 4;
         } else {
             activeTab = 2;
@@ -2570,15 +2618,15 @@ public class ProjectActions extends DispatchAction {
         String[][] myDeliverables = (myProjects) ? new String[projectCategories.length][] : null;
 
         // Fetch projects from the database. These projects will require further grouping
-        ProjectStatus inactiveStatus = ActionsHelper.findProjectStatusByName(projectStatuses, "Inactive");
+        ProjectStatus draftStatus = ActionsHelper.findProjectStatusByName(projectStatuses, "Draft");
         ProjectStatus activeStatus = ActionsHelper.findProjectStatusByName(projectStatuses, "Active");
         long userId = AuthorizationHelper.getLoggedInUserId(request);
         Project[] ungroupedProjects;
         ProjectDataAccess projectDataAccess = new ProjectDataAccess();
         if (activeTab != 1) {
             if (activeTab == 4) {
-                ungroupedProjects = projectDataAccess.searchInactiveProjects(projectStatuses, projectCategories,
-                                                                             projectInfoTypes);
+                ungroupedProjects = projectDataAccess.searchDraftProjects(projectStatuses, projectCategories,
+                                                                          projectInfoTypes);
             } else {
                 ungroupedProjects = projectDataAccess.searchActiveProjects(projectStatuses, projectCategories,
                                                                            projectInfoTypes);
@@ -2604,15 +2652,15 @@ public class ProjectActions extends DispatchAction {
                 allMyResources = ActionsHelper.searchUserResources(userId, activeStatus, resourceManager);
             } else if (activeTab == 2) { // Active projects
                 allMyResources = ActionsHelper.searchUserResources(userId, activeStatus, resourceManager);
-            } else if (activeTab == 4) { // Inactive projects
-                allMyResources = ActionsHelper.searchUserResources(userId, inactiveStatus, resourceManager);
+            } else if (activeTab == 4) { // Draft projects
+                allMyResources = ActionsHelper.searchUserResources(userId, draftStatus, resourceManager);
             }
         }
 
         // new eligibility constraints
         // if the user is not a global manager and is seeing all projects eligibility checks need to be performed
         if (!AuthorizationHelper.hasUserRole(request, Constants.GLOBAL_MANAGER_ROLE_NAME) &&
-                scope.equalsIgnoreCase("all") && projectFilters.size() > 0) {
+                (scope.equalsIgnoreCase("all") || scope.equalsIgnoreCase("draft")) && projectFilters.size() > 0) {
 
             // remove those projects that the user can't see
             ungroupedProjects = filterUsingEligibilityConstraints(
@@ -2630,7 +2678,7 @@ public class ProjectActions extends DispatchAction {
         Map<Long, com.topcoder.project.phases.Project> phProjects;
         if (activeTab != 1) {
             if (activeTab == 4) {
-                phProjects = phasesDataAccess.searchInactiveProjectPhases(phaseStatuses, phaseTypes);
+                phProjects = phasesDataAccess.searchDraftProjectPhases(phaseStatuses, phaseTypes);
             } else {
                 phProjects = phasesDataAccess.searchActiveProjectPhases(phaseStatuses, phaseTypes);
             }
@@ -3153,5 +3201,13 @@ public class ProjectActions extends DispatchAction {
             result.add(review.getAuthor());
         }
         return result;
+    }
+
+    private String toString(Phase phase) {
+        if (phase == null) {
+            return "null";
+        } else {
+            return phase.getId() + "-" + phase.getPhaseType().getName();
+        }
     }
 }

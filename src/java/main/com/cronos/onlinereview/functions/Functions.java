@@ -9,7 +9,9 @@ import java.text.DecimalFormat;
 import java.text.Format;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
+import java.util.Collection;
 import java.util.Date;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.JspException;
@@ -30,9 +32,16 @@ import com.topcoder.management.project.Project;
  * This class is thread-safe, as it contains only static methods and has no inner state.
  * </p>
  *
+ * <p>
+ * Version 1.1 (Impersonation Login Assembly 1.0) Change notes:
+ *   <ol>
+ *     <li>Added {@link #contains(Collection, Object)} method.</li>
+ *   </ol>
+ * </p>
+ *
  * @author George1
- * @author real_vg
- * @version 1.0
+ * @author real_vg, isv
+ * @version 1.1
  */
 public final class Functions {
 
@@ -572,5 +581,16 @@ public final class Functions {
 
         request.getSession().setAttribute(AuthorizationHelper.REDIRECT_BACK_URL_ATTRIBUTE, referer);
         return referer;
+    }
+
+    /**
+     * <p>Checks if specified collection contains a string presentation of specified value.</p>
+     *
+     * @param collection a <code>Collection</code> representing the collection.
+     * @param value an <code>Object</code> providing the value.
+     * @return <code>true</code> if specified collection contains specified value; <code>false</code> otherwise.
+     */
+    public static boolean contains(Collection collection, Object value) {
+        return collection.contains(String.valueOf(value));
     }
 }

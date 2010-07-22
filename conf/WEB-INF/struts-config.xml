@@ -13,6 +13,7 @@
         <form-bean name="loginForm" dynamic="true" type="org.apache.struts.validator.DynaValidatorForm">
             <form-property name="userName" type="java.lang.String" />
             <form-property name="password" type="java.lang.String" />
+            <form-property name="rememberMe" type="java.lang.String"/>
         </form-bean>
 
         <form-bean name="projectForm" dynamic="true"

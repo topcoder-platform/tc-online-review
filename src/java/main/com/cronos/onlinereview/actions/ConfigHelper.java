@@ -60,8 +60,19 @@ import com.topcoder.web.ejb.pacts.ParentReferencePayment;
  *   </ol>
  * </p>
  *
+ * <p>
+ * Version 1.6 (Impersonation Login Assembly 1.0) Change notes:
+ *   <ol>
+ *     <li>Added {@link #disabledResourceRoles} field with respective accessor method and updated static initializer to
+ *     set that field with data read from configuration file.</li>
+ *     <li>Added {@link #projectTypeScorecardLinks} field with respective
+ *     {@link #getProjectTypeScorecardLink(String, long)} accessor method and updated static initializer to set that
+ *     field with data read from configuration file.</li>
+ *   </ol>
+ * </p>
+ *
  * @author George1, real_vg, pulky, isv, romanoTC
- * @version 1.5
+ * @version 1.6
  */
 public class ConfigHelper {
 
@@ -266,6 +277,14 @@ public class ConfigHelper {
      * contains definitions of Project Type links to forum for the project.
      */
     private static final String PROJECT_TYPE_FORUM_LINKS_PROP = "ProjectTypeForumLinks";
+
+    /**
+     * <p>A <code>String</code> providing the name for configuration property listing the template for URLs for viewing
+     * scorecards per project type.</p>
+     *
+     * @since 1.6
+     */
+    private static final String PROJECT_TYPE_SCORECARD_LINKS_PROP = "ProjectTypeScorecardLinks";
 
     /**
      * This member variable is a string constant that specifies the name of the property which
@@ -579,6 +598,13 @@ public class ConfigHelper {
     private static final String DEFAULT_DISTRIBUTION_SCRIPT = "other";
 
     /**
+     * <p>A <code>String</code> providing the name for configuration property listing the disabled resource roles.</p>
+     *
+     * @since 1.6
+     */
+    private static final String DISABLED_RESOURCE_ROLES_PROP = "DisabledResourceRoles";
+
+    /**
      * This member variable holds the name of the session attribute which ID of the currently logged
      * in user will be stored in.
      */
@@ -705,6 +731,14 @@ public class ConfigHelper {
      * This member variable holds the links to forums per project type.
      */
     private static final Map<String, String> projectTypeForumLinks = new HashMap<String, String>();
+
+    /**
+     * <p>A <code>Map</code> mapping the project type to template for URL for viewing scorecards for that project type.
+     * </p>
+     *
+     * @since 1.6
+     */
+    private static final Map<String, String> projectTypeScorecardLinks = new HashMap<String, String>();
 
     /**
      * This member variable holds the amount of pixels displayed in the Gantt Chart per every hour.
@@ -889,6 +923,13 @@ public class ConfigHelper {
      * @since 1.4
      */
     private static String defaultDistributionScript = DEFAULT_DISTRIBUTION_SCRIPT;
+
+    /**
+     * <p>A <code>String</code> array listing the IDs for resource roles which are not allowed for selection.</p>
+     *
+     * @since 1.6
+     */
+    private static String[] disabledResourceRoles;
 
     static {
         // Obtaining the instance of Configuration Manager
@@ -1157,6 +1198,20 @@ public class ConfigHelper {
                 }
             }
 
+            // Retrieve property that contains definitions of Project Type scorecard links
+            Property propProjTypeScorecard = cfgMgr.getPropertyObject(ONLINE_REVIEW_CFG_NS,
+                                                                      PROJECT_TYPE_SCORECARD_LINKS_PROP);
+            // Prepare to enumerate all the nested properties
+            propsLinks = propProjTypeScorecard.propertyNames();
+
+            while (propsLinks.hasMoreElements()) {
+                String strPropName = (String) propsLinks.nextElement();
+                String strLink = propProjTypeScorecard.getValue(strPropName);
+                if (strLink != null && strLink.trim().length() != 0) {
+                    projectTypeScorecardLinks.put(strPropName, strLink);
+                }
+            }
+
             // Retrieve property that contains definitions of some default values
             Property propDefaults = cfgMgr.getPropertyObject(ONLINE_REVIEW_CFG_NS, DEFAULT_VALUES_PROP);
             // Get the amount of pixels to display for every hour
@@ -1402,7 +1457,11 @@ public class ConfigHelper {
                 
                 catalogOutputDir = DEFAULT_CATALOG_OUTPUT_DIR;
             }
-            
+
+            Property disabledResourceRolesConfig
+                = cfgMgr.getPropertyObject(ONLINE_REVIEW_CFG_NS, DISABLED_RESOURCE_ROLES_PROP);
+            disabledResourceRoles = disabledResourceRolesConfig.getValues();
+
         } catch (UnknownNamespaceException une) {
             // TODO: Add proper logging here
             System.out.println(une.getMessage());
@@ -1641,6 +1700,22 @@ public class ConfigHelper {
         String templateLink = (String) projectTypeForumLinks.get(projectTypeName);
 
         templateLink = templateLink.replaceFirst("\\<FORUM_ID\\>", (forumId > 0) ? String.valueOf(forumId) : "");
+        return templateLink;
+    }
+
+    /**
+     * <p>Constructs the URL for the link to the scorecard for project based on the type of project passed as parameter.
+     * </p>
+     *
+     * @param projectTypeName a <code>String</code> providing the project type name.
+     * @param scorecardId a <code>long</code> providing the ID of a scorecard.
+     * @return a <code>String</code> providing the URL for the link to specified scorecard of specified project type.
+     * @since 1.6
+     */
+    public static String getProjectTypeScorecardLink(String projectTypeName, long scorecardId) {
+        String templateLink = (String) projectTypeScorecardLinks.get(projectTypeName);
+        templateLink = templateLink.replaceFirst("\\<SCORECARD_ID\\>", (scorecardId > 0)
+                                                                       ? String.valueOf(scorecardId) : "");
         return templateLink;
     }
 
@@ -1985,5 +2060,15 @@ public class ConfigHelper {
      */
     public static String getDefaultDistributionScript() {
         return defaultDistributionScript;
+    }
+
+    /**
+     * <p>Gets the list of disabled resource role IDs.</p>
+     *
+     * @return a <code>String</code> array listing the IDs for resource roles which are not allowed for selection.
+     * @since 1.6
+     */
+    public static String[] getDisabledResourceRoles() {
+        return disabledResourceRoles;
     }
 }

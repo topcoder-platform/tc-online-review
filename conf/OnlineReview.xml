@@ -75,6 +75,18 @@
             </Property>
         </Property>
 
+        <Property name="auth_cookie_manager">
+            <Property name="class">
+                <Value>com.cronos.onlinereview.login.cookies.AuthCookieManagerImpl</Value>
+            </Property>
+            <Property name="namespace">
+                <Value>com.cronos.OnlineReview</Value>
+            </Property>
+            <Property name="logger_name">
+                <Value>LoginActions</Value>
+            </Property>
+        </Property>
+
         <Property name="authenticator_name">
             <Value>ORAuthenticator</Value>
         </Property>
@@ -3746,6 +3758,23 @@
         <Property name="user_identifer_key">
             <Value>userId</Value>
         </Property>
+        <Property name="user_identifier_key">
+            <Value>userId</Value>
+        </Property>
+        <Property name="cookie_name">
+            <Value>or_user</Value>
+        </Property>
+        <Property name="connection_name">
+            <Value>tcs</Value>
+        </Property>
+        <Property name="db_connection_factory">
+            <Property name="class">
+                <Value>com.topcoder.db.connectionfactory.DBConnectionFactoryImpl</Value>
+            </Property>
+            <Property name="namespace">
+                <Value>com.topcoder.db.connectionfactory.DBConnectionFactoryImpl</Value>
+            </Property>
+        </Property>
         <Property name="ProjectDetailsURL">
             <Value>http://software.topcoder.com/review/actions/ViewProjectDetails.do?method=viewProjectDetails&amp;pid=</Value>
         </Property>
@@ -4375,6 +4404,18 @@
             </Property>
         </Property>
 
+        <Property name="ProjectTypeScorecardLinks">
+            <Property name="Application">
+                <Value>https://software.topcoder.com/review/actions/ViewScorecard.do?method=viewScorecard&amp;scid=&lt;SCORECARD_ID&gt;</Value>
+            </Property>
+            <Property name="Component">
+                <Value>https://software.topcoder.com/review/actions/ViewScorecard.do?method=viewScorecard&amp;scid=&lt;SCORECARD_ID&gt;</Value>
+            </Property>
+            <Property name="Studio">
+                <Value>https://software.topcoder.com/review/actions/ViewScorecard.do?method=viewScorecard&amp;scid=&lt;SCORECARD_ID&gt;</Value>
+            </Property>
+        </Property>
+
         <Property name="Defaults">
             <Property name="PixelsPerHour">
                 <Value>5</Value>
@@ -4422,6 +4463,13 @@
             </Property>
         </Property>
 
+        <Property name="DisabledResourceRoles">
+            <Value>1002</Value><!-- Free Agent -->
+            <Value>3</Value><!-- Screener -->
+            <Value>86</Value><!-- Deactivated -->
+            <Value>1001</Value><!-- Team Captain -->
+        </Property>
+
         <!-- Definition of the Permissions Matrix.  Each property inside the main one denotes one
             certain permission, while the name attribute for that property specifies the name of
             the permission.  The values contained inside each property specify the names of the
@@ -4431,28 +4479,34 @@
             <Property name="Create Scorecard">
                 <Value>Global Manager</Value>
                 <Value>Manager</Value>
+                <Value>Cockpit Project User</Value>
             </Property>
             <Property name="Edit Scorecard">
                 <Value>Global Manager</Value>
                 <Value>Manager</Value>
+                <Value>Cockpit Project User</Value>
             </Property>
             <Property name="View Scorecard">
                 <Value>Global Manager</Value>
                 <Value>Manager</Value>
+                <Value>Cockpit Project User</Value>
             </Property>
             <Property name="Create Project">
                 <Value>Global Manager</Value>
                 <Value>Manager</Value>
+                <Value>Cockpit Project User</Value>
             </Property>
             <Property name="Edit Project Details">
                 <Value>Global Manager</Value>
                 <Value>Manager</Value>
                 <Value>Client Manager</Value>
-                <Value>Copilot</Value>		
+                <Value>Copilot</Value>
+                <Value>Cockpit Project User</Value>				
             </Property>
             <Property name="Set Timeline Notifications">
                 <Value>Global Manager</Value>
                 <Value>Manager</Value>
+                <Value>Cockpit Project User</Value>
                 <Value>Observer</Value>
                 <Value>Submitter</Value>
                 <Value>Screener</Value>
@@ -4472,10 +4526,12 @@
             <Property name="View Projects">
                 <Value>Global Manager</Value>
                 <Value>Manager</Value>
+                <Value>Cockpit Project User</Value>
             </Property>
             <Property name="View My Projects">
                 <Value>Global Manager</Value>
                 <Value>Manager</Value>
+                <Value>Cockpit Project User</Value>
                 <Value>Observer</Value>
                 <Value>Submitter</Value>
                 <Value>Screener</Value>
@@ -4492,13 +4548,18 @@
                 <Value>Copilot</Value>
                 <Value>Client Manager</Value>
             </Property>
-            <Property name="View Projects Inactive">
+            <Property name="View Cockpit Project Name">
                 <Value>Global Manager</Value>
                 <Value>Manager</Value>
+                <Value>Cockpit Project User</Value>
+                <Value>Observer</Value>
+                <Value>Copilot</Value>
+                <Value>Client Manager</Value>
             </Property>
             <Property name="View Project Detail">
                 <Value>Global Manager</Value>
                 <Value>Manager</Value>
+                <Value>Cockpit Project User</Value>
                 <Value>Observer</Value>
                 <Value>Submitter</Value>
                 <Value>Screener</Value>
@@ -4518,6 +4579,7 @@
             <Property name="View Project Resources">
                 <Value>Global Manager</Value>
                 <Value>Manager</Value>
+                <Value>Cockpit Project User</Value>
                 <Value>Observer</Value>
                 <Value>Copilot</Value>
                 <Value>Client Manager</Value>
@@ -4525,6 +4587,7 @@
             <Property name="View SVN Link">
                 <Value>Global Manager</Value>
                 <Value>Manager</Value>
+                <Value>Cockpit Project User</Value>
                 <Value>Observer</Value>
                 <Value>Final Reviewer</Value>
                 <Value>Copilot</Value>
@@ -4533,6 +4596,7 @@
             <Property name="View Autopilot Status">
                 <Value>Global Manager</Value>
                 <Value>Manager</Value>
+                <Value>Cockpit Project User</Value>
                 <Value>Observer</Value>
                 <Value>Copilot</Value>
                 <Value>Client Manager</Value>
@@ -4540,6 +4604,7 @@
             <Property name="View All Payment Information">
                 <Value>Global Manager</Value>
                 <Value>Manager</Value>
+                <Value>Cockpit Project User</Value>
                 <Value>Observer</Value>
                 <Value>Copilot</Value>
                 <Value>Client Manager</Value>
@@ -4560,6 +4625,7 @@
             <Property name="Contact Project Managers">
                 <Value>Global Manager</Value>
                 <Value>Manager</Value>
+                <Value>Cockpit Project User</Value>
                 <Value>Observer</Value>
                 <Value>Submitter</Value>
                 <Value>Screener</Value>
@@ -4579,6 +4645,7 @@
             <Property name="View Registrations">
                 <Value>Global Manager</Value>
                 <Value>Manager</Value>
+                <Value>Cockpit Project User</Value>
                 <Value>Observer</Value>
                 <Value>Copilot</Value>
                 <Value>Client Manager</Value>
@@ -4589,6 +4656,7 @@
             <Property name="View All Submissions">
                 <Value>Global Manager</Value>
                 <Value>Manager</Value>
+                <Value>Cockpit Project User</Value>
                 <Value>Approver</Value>
                 <Value>Post-Mortem Reviewer</Value>
                 <Value>Copilot</Value>
@@ -4630,6 +4698,7 @@
             <Property name="Remove Submission">
                 <Value>Global Manager</Value>
                 <Value>Manager</Value>
+                <Value>Cockpit Project User</Value>
             </Property>
             <Property name="Perform Screening">
                 <Value>Screener</Value>
@@ -4638,6 +4707,7 @@
             <Property name="View Screening">
                 <Value>Global Manager</Value>
                 <Value>Manager</Value>
+                <Value>Cockpit Project User</Value>
                 <Value>Observer</Value>
                 <Value>Submitter</Value>
                 <Value>Screener</Value>
@@ -4670,6 +4740,7 @@
             <Property name="Download Test Cases">
                 <Value>Global Manager</Value>
                 <Value>Manager</Value>
+                <Value>Cockpit Project User</Value>
                 <Value>Observer</Value>
                 <Value>Submitter</Value>
                 <Value>Reviewer</Value>
@@ -4689,6 +4760,7 @@
             <Property name="Download Test Cases during Review">
                 <Value>Global Manager</Value>
                 <Value>Manager</Value>
+                <Value>Cockpit Project User</Value>
                 <Value>Observer</Value>
                 <Value>Reviewer</Value>
                 <Value>Accuracy Reviewer</Value>
@@ -4700,6 +4772,7 @@
             <Property name="View All Reviews">
                 <Value>Global Manager</Value>
                 <Value>Manager</Value>
+                <Value>Cockpit Project User</Value>
                 <Value>Observer</Value>
                 <Value>Submitter</Value>
                 <Value>Reviewer</Value>
@@ -4723,6 +4796,7 @@
             <Property name="View Composite Scorecard">
                 <Value>Global Manager</Value>
                 <Value>Manager</Value>
+                <Value>Cockpit Project User</Value>
                 <Value>Observer</Value>
                 <Value>Submitter</Value>
                 <Value>Aggregator</Value>
@@ -4745,6 +4819,7 @@
             <Property name="View Appeals">
                 <Value>Global Manager</Value>
                 <Value>Manager</Value>
+                <Value>Cockpit Project User</Value>
                 <Value>Observer</Value>
                 <Value>Submitter</Value>
                 <Value>Reviewer</Value>
@@ -4766,6 +4841,7 @@
             <Property name="View Appeal Responses">
                 <Value>Global Manager</Value>
                 <Value>Manager</Value>
+                <Value>Cockpit Project User</Value>
                 <Value>Observer</Value>
                 <Value>Submitter</Value>
                 <Value>Reviewer</Value>
@@ -4795,6 +4871,7 @@
             <Property name="View Aggregation">
                 <Value>Global Manager</Value>
                 <Value>Manager</Value>
+                <Value>Cockpit Project User</Value>
                 <Value>Observer</Value>
                 <Value>Submitter</Value>
                 <Value>Reviewer</Value>
@@ -4821,6 +4898,7 @@
             <Property name="View Aggregation Review">
                 <Value>Global Manager</Value>
                 <Value>Manager</Value>
+                <Value>Cockpit Project User</Value>
                 <Value>Observer</Value>
                 <Value>Submitter</Value>
                 <Value>Reviewer</Value>
@@ -4839,6 +4917,7 @@
             <Property name="Download Final Fix">
                 <Value>Global Manager</Value>
                 <Value>Manager</Value>
+                <Value>Cockpit Project User</Value>
                 <Value>Observer</Value>
                 <Value>Submitter</Value>
                 <Value>Final Reviewer</Value>
@@ -4858,6 +4937,7 @@
             <Property name="View Final Review">
                 <Value>Global Manager</Value>
                 <Value>Manager</Value>
+                <Value>Cockpit Project User</Value>
                 <Value>Observer</Value>
                 <Value>Submitter</Value>
                 <Value>Final Reviewer</Value>
@@ -4880,6 +4960,7 @@
             <Property name="View Approval">
                 <Value>Global Manager</Value>
                 <Value>Manager</Value>
+                <Value>Cockpit Project User</Value>
                 <Value>Observer</Value>
                 <Value>Submitter</Value>
                 <Value>Approver</Value>
@@ -4893,6 +4974,7 @@
             <Property name="View Post-Mortem Review">
                 <Value>Global Manager</Value>
                 <Value>Manager</Value>
+                <Value>Cockpit Project User</Value>
                 <Value>Observer</Value>
                 <Value>Submitter</Value>
                 <Value>Post-Mortem Reviewer</Value>
@@ -4902,12 +4984,14 @@
             <Property name="Edit Any Scorecard">
                 <Value>Global Manager</Value>
                 <Value>Manager</Value>
+                <Value>Cockpit Project User</Value>
             </Property>
             <!-- Note: The following permission wasn't originally defined
                 in the Requirements Specification's permission matrix -->
             <Property name="Download Review Document">
                 <Value>Global Manager</Value>
                 <Value>Manager</Value>
+                <Value>Cockpit Project User</Value>
                 <Value>Observer</Value>
                 <Value>Submitter</Value>
                 <Value>Reviewer</Value>
@@ -4930,6 +5014,7 @@
             <Property name="View Project Management Console">
                 <Value>Global Manager</Value>
                 <Value>Manager</Value>
+                <Value>Cockpit Project User</Value>
                 <Value>Copilot</Value>
                 <Value>Client Manager</Value>
             </Property>
@@ -4937,6 +5022,7 @@
             <Property name="Manage Project">
                 <Value>Global Manager</Value>
                 <Value>Manager</Value>
+                <Value>Cockpit Project User</Value>
                 <Value>Copilot</Value>
                 <Value>Client Manager</Value>
             </Property>
@@ -4944,17 +5030,20 @@
             <Property name="Can Add Resource Role Client Manager">
                 <Value>Global Manager</Value>
                 <Value>Manager</Value>
+                <Value>Cockpit Project User</Value>
             </Property>
 
             <Property name="Can Add Resource Role Copilot">
                 <Value>Global Manager</Value>
                 <Value>Manager</Value>
+                <Value>Cockpit Project User</Value>
                 <Value>Client Manager</Value>
             </Property>
 
             <Property name="Can Add Resource Role Designer">
                 <Value>Global Manager</Value>
                 <Value>Manager</Value>
+                <Value>Cockpit Project User</Value>
                 <Value>Client Manager</Value>
                 <Value>Copilot</Value>
             </Property>
@@ -4962,6 +5051,7 @@
             <Property name="Can Add Resource Role Observer">
                 <Value>Global Manager</Value>
                 <Value>Manager</Value>
+                <Value>Cockpit Project User</Value>
                 <Value>Client Manager</Value>
                 <Value>Copilot</Value>
             </Property>
