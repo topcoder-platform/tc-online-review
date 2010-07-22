@@ -18,6 +18,7 @@ import java.util.TreeMap;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.cronos.onlinereview.dataaccess.ProjectDataAccess;
 import com.topcoder.search.builder.filter.*;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
@@ -125,8 +126,16 @@ import com.topcoder.util.file.fieldconfig.TemplateFields;
  *   </ol>
  * </p>
  *
+ * <p>
+ * Version 1.5 (Impersonation Login Release Assembly 1.0) Change notes:
+ *   <ol>
+ *     <li>Updated {@link #getPhaseStatusCodes(Phase[], long)} method to recognize <code>Can't Open</code> phase status.
+ *     </li>
+ *   </ol>
+ * </p>
+ *
  * @author George1, real_vg, pulky, isv
- * @version 1.4
+ * @version 1.5
  */
 public class ProjectDetailsActions extends DispatchAction {
 
@@ -240,8 +249,10 @@ public class ProjectDetailsActions extends DispatchAction {
         // Retrieve the billing project id from property.
         // And retrieve the list of all client projects, find billing project name by matching on id
         // set billing project name in request.
+        // Retrieve Cockpit project also
         if (AuthorizationHelper.hasUserRole(request, Constants.MANAGER_ROLE_NAME)
-             || AuthorizationHelper.hasUserRole(request, Constants.GLOBAL_MANAGER_ROLE_NAME)) {
+                || AuthorizationHelper.hasUserRole(request, Constants.COCKPIT_PROJECT_USER_ROLE_NAME)
+                || AuthorizationHelper.hasUserRole(request, Constants.GLOBAL_MANAGER_ROLE_NAME)) {
             long billingProjectId = 0L;
             tempStr = (String) project.getProperty("Billing Project");
             if (tempStr != null && tempStr.trim().length() != 0) {
@@ -250,26 +261,54 @@ public class ProjectDetailsActions extends DispatchAction {
 
 
             if (billingProjectId > 0) {
-                 List<ClientProject> clientProjects = ActionsHelper.getClientProjects(request);
-                 for (ClientProject cp : clientProjects) {
-                     if (cp.getId() == billingProjectId) {
+                List<ClientProject> clientProjects = ActionsHelper.getClientProjects(request);
+                for (ClientProject cp : clientProjects) {
+                    if (cp.getId() == billingProjectId) {
                         request.setAttribute("billingProject", cp.getName());
                         break;
-                     }
-                 }
-             } else {
-                        request.setAttribute("billingProject", "");
-             }
+                    }
+                }
+            } else {
+                request.setAttribute("billingProject", "");
+            }
+        }
+
+        boolean isAllowedToViewCockpitProjectName
+                = AuthorizationHelper.hasUserPermission(request, Constants.VIEW_COCKPIT_PROJECT_NAME_PERM_NAME);
+        request.setAttribute("isAllowedToViewCockpitProjectName", isAllowedToViewCockpitProjectName);
+        if (isAllowedToViewCockpitProjectName) {
+            ProjectDataAccess projectDataAccess = new ProjectDataAccess();
+            request.setAttribute("cockpitProject", projectDataAccess.getCockpitProjectName(projectId));
         }
 
         // Place a string that represents "my" current role(s) into the request
-        ActionsHelper.retrieveAndStoreMyRole(request, getResources(request));
+        MessageResources messageResources = getResources(request);
+        ActionsHelper.retrieveAndStoreMyRole(request, messageResources);
         // Obtain an array of "my" resources
         Resource[] myResources = (Resource[]) request.getAttribute("myResources");
         // Place an information about the amount of "my" payment into the request
-        request.setAttribute("myPayment", ActionsHelper.determineMyPayment(myResources));
+        Map<ResourceRole, Double> myPayments = ActionsHelper.getMyPayments(myResources, request);
+        ResourceRole managerResourceRole = ActionsHelper.findResourceRoleByName(
+                (ResourceRole[]) myPayments.keySet().toArray(new ResourceRole[myPayments.size()]), "Manager");
+        if (managerResourceRole == null) {
+            if (AuthorizationHelper.hasUserRole(request, Constants.GLOBAL_MANAGER_ROLE_NAME) ||
+			    AuthorizationHelper.hasUserRole(request, Constants.COCKPIT_PROJECT_USER_ROLE_NAME)) {
+                ResourceRole globalManagerRole = new ResourceRole();
+                globalManagerRole.setName(messages.getMessage("ResourceRole."
+                        + Constants.MANAGER_ROLE_NAME.replaceAll(" ", "")));
+                myPayments.put(globalManagerRole, null);
+            }
+        }
+        double totalPayment = 0;
+        request.setAttribute("myPayment", myPayments);
+        for (Double payment : myPayments.values()) {
+            if (payment != null) {
+                totalPayment += payment;
+            }
+        }
+        request.setAttribute("totalPayment", totalPayment);
         // Place an information about my payment status into the request
-        request.setAttribute("wasPaid", ActionsHelper.determineMyPaymentPaid(myResources));
+        request.setAttribute("wasPaid", ActionsHelper.getMyPaymentStatuses(myResources));
 
         // Obtain an instance of Resource Manager
         ResourceManager resMgr = ActionsHelper.createResourceManager(request);
@@ -398,6 +437,7 @@ public class ProjectDetailsActions extends DispatchAction {
         long[] ganttLengths = new long[phases.length];
         // List of scorecard templates used for this project
         List<Scorecard> scorecardTemplates = new ArrayList<Scorecard>();
+        List<String> scorecardLinks = new ArrayList<String>();
 
         Float minimumScreeningScore = 75f;
         // Iterate over all phases determining dates, durations and assigned scorecards
@@ -426,6 +466,8 @@ public class ProjectDetailsActions extends DispatchAction {
             // If there is a scorecard template for the phase, store it in the list
             if (scorecardTemplate != null) {
                 scorecardTemplates.add(scorecardTemplate);
+                scorecardLinks.add(ConfigHelper.getProjectTypeScorecardLink(projectTypeName, 
+                                                                            scorecardTemplate.getId()));
 
                 if (phase.getPhaseType().getName().equals(Constants.SCREENING_PHASE_NAME)) {
                     minimumScreeningScore = scorecardTemplate.getMinScore(); 
@@ -449,6 +491,7 @@ public class ProjectDetailsActions extends DispatchAction {
         request.setAttribute("ganttLengths", ganttLengths);
         // Place information about used scorecard templates
         request.setAttribute("scorecardTemplates", scorecardTemplates);
+        request.setAttribute("scorecardLinks", scorecardLinks);
 
         ExternalUser[] allProjectExtUsers = null;
 
@@ -628,8 +671,9 @@ public class ProjectDetailsActions extends DispatchAction {
 
         // since Online Review Update - Add Project Dropdown v1.0
         request.setAttribute("isAdmin",
-                Boolean.valueOf(AuthorizationHelper.hasUserRole(request, Constants.MANAGER_ROLE_NAME) || 
-                                    AuthorizationHelper.hasUserRole(request, Constants.GLOBAL_MANAGER_ROLE_NAME)));
+                Boolean.valueOf(AuthorizationHelper.hasUserRole(request, Constants.MANAGER_ROLE_NAME) 
+                        || AuthorizationHelper.hasUserRole(request, Constants.COCKPIT_PROJECT_USER_ROLE_NAME)
+                        || AuthorizationHelper.hasUserRole(request, Constants.GLOBAL_MANAGER_ROLE_NAME)));
 
         //OR Project Linking Assembly
         ProjectLinkManager linkManager = ActionsHelper.createProjectLinkManager(request);
@@ -2276,13 +2320,13 @@ public class ProjectDetailsActions extends DispatchAction {
     }
 
     /**
-     * TODO: Write docummentation for this method.
+     * <p>Analyzes the current statuses of the specified phases and returns integer codes encoding the current phase
+     * statuses. Each </p>
      *
-     * @return
-     * @param phases
-     * @param currentTime
-     * @throws IllegalArgumentException
-     *             if <code>phases</code> parameter is <code>null</code>.
+     * @param phases a <code>Phase</code> array listing the phase to get status codes for.
+     * @param currentTime a <code>long</code> specifying the current time (in milliseconds since 01/01/1970).
+     * @return an <code>int</code> array encoding the statuses for specified phases.
+     * @throws IllegalArgumentException if <code>phases</code> parameter is <code>null</code>.
      */
     private static int[] getPhaseStatusCodes(Phase[] phases, long currentTime) {
         // Validate parameters
@@ -2296,7 +2340,12 @@ public class ProjectDetailsActions extends DispatchAction {
             Phase phase = phases[i];
             String phaseStatus = phase.getPhaseStatus().getName();
             if (phaseStatus.equalsIgnoreCase("Scheduled")) {
-                statusCodes[i] = 0; // Scheduled, not yet open, nothing will be displayed
+                long phaseTime = phase.getScheduledStartDate().getTime();
+                if ((currentTime >= phaseTime) && (ActionsHelper.arePhaseDependenciesMet(phase, true))) {
+                    statusCodes[i] = 5; // Can't open, phase start time is reached and dependencies are met
+                } else {
+                    statusCodes[i] = 0; // Scheduled, not yet open, nothing will be displayed
+                }
             } else if (phaseStatus.equalsIgnoreCase("Closed")) {
                 statusCodes[i] = 1; // Closed
             } else if (phaseStatus.equalsIgnoreCase("Open")) {

@@ -9,3 +9,9 @@ This is the notification about %PHASE_OPERATION{The phase operation - start/end}
 <p>
 The Final Fix is %RESULT%!
 </p>
+
+%if:NEED_APPROVER='1'%
+<p>
+<font color\="red"><b>The project has only %N_APPROVERS% of %N_REQUIRED_APPROVERS% required approvers assigned!</b></font>
+</p>
+%endif%
