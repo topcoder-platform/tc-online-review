@@ -90,7 +90,7 @@
                           <tr class='${(phaseStatus.index % 2) == 0 ? "light" : "dark"}'>
                             <td class="ganttRow">
                             <c:set var="ganttOffset" value="${orfn:getGanttLen(ganttOffsets[phaseStatus.index])}" />
-                            <dl style="margin-left:${ganttOffset}; width: ${orfn:getGanttLen(ganttLengths[phaseStatus.index]) + 100}px;">
+                            <dl style="margin-left:${ganttOffset}; width: ${orfn:getGanttLen(ganttLengths[phaseStatus.index]) + 70}px;">
                             <dt style="width:${orfn:getGanttLen(ganttLengths[phaseStatus.index])}px;"><bean:message key='ProjectPhase.${fn:replace(phase.phaseType.name, " ", "")}' /></dt>
                             <dd>${orfn:getGanttHours(pageContext, ganttLengths[phaseStatus.index])}</dd>
                             </dl>
