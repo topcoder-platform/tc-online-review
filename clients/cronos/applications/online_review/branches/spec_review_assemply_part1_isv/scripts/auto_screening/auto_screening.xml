@@ -1,0 +1,1950 @@
+<?xml version="1.0"?>
+<CMConfig>
+    <Config name="com.cronos.onlinereview.autoscreening.tool.Screener">
+        <Property name="objectFactoryNamespace">
+            <Value>com.cronos.onlinereview.autoscreening.tool.ObjectFactory</Value>
+        </Property>
+        <Property name="screeningTaskDAO">
+            <Property name="class">
+                <Value>ScreeningTaskDAO</Value>
+            </Property>
+            <Property name="identifier">
+                <Value>default</Value>
+            </Property>
+        </Property>
+        <Property name="screeningResponseLogger">
+            <Property name="class">
+                <Value>ScreeningResponseLogger</Value>
+            </Property>
+            <Property name="identifier">
+                <Value>default</Value>
+            </Property>
+        </Property>
+        <Property name="taskChooser">
+            <Property name="class">
+                <Value>ScreeningTaskChooser</Value>
+            </Property>
+            <Property name="identifier">
+                <Value>default</Value>
+            </Property>
+        </Property>
+        <Property name="fileUpload">
+            <Property name="class">
+                <Value>FileUpload</Value>
+            </Property>
+            <Property name="identifier">
+                <Value>local</Value>
+            </Property>
+        </Property>
+        <Property name="projectRules">
+        </Property>
+        <Property name="categoryRules">
+            <Property name="Java Designer">
+                <Property name="categoryId">
+                    <Value>1</Value>
+                </Property>
+                <Property name="catalogId">
+                    <Value>5801776</Value>
+                </Property>
+                <Property name="screeningLogicList">
+                    <Value>unzip</Value>
+                    <Value>dirStructureCheck</Value>
+                    <Value>componentSpecCheck</Value>
+                    <Value>personalInfoCheck</Value>
+                    <Value>zumlFileCheck</Value>
+                    <Value>diagramsCheck</Value>
+                </Property>
+                <Property name="screeningLogic">
+                    <Property name="unzip">
+                        <Property name="ruleClass">
+                            <Value>ArchiveFileRule</Value>
+                        </Property>
+                        <Property name="ruleIdentifier">
+                            <Value>jarFile</Value>
+                        </Property>
+                        <Property name="succeedSeverity">
+                            <Value>PASS</Value>
+                        </Property>
+                        <Property name="failSeverity">
+                            <Value>WARN</Value>
+                        </Property>
+                        <Property name="errorSeverity">
+                            <Value>WARN</Value>
+                        </Property>
+                        <Property name="succeedCode">
+        <!-- Refer to the thread https://software.topcoder.com/forum/c_forum_message.jsp?f=22462209&r=22639961 for the response codes -->
+                            <Value>15</Value>
+                        </Property>
+                        <Property name="failCode">
+                            <Value>1</Value>
+                        </Property>
+                        <Property name="errorCode">
+                            <Value>1</Value>
+                        </Property>
+                    </Property>
+                    <Property name="dirStructureCheck">
+                        <Property name="ruleClass">
+                            <Value>DirectoryStructureRule</Value>
+                        </Property>
+                        <Property name="ruleIdentifier">
+                            <Value>designSubmission</Value>
+                        </Property>
+                        <Property name="succeedSeverity">
+                            <Value>PASS</Value>
+                        </Property>
+                        <Property name="failSeverity">
+                            <Value>WARN</Value>
+                        </Property>
+                        <Property name="errorSeverity">
+                            <Value>WARN</Value>
+                        </Property>
+                        <Property name="succeedCode">
+                            <Value>15</Value>
+                        </Property>
+                        <Property name="failCode">
+                            <Value>3</Value>
+                        </Property>
+                        <Property name="errorCode">
+                            <Value>3</Value>
+                        </Property>
+                    </Property>
+                    <Property name="componentSpecCheck">
+                        <Property name="ruleClass">
+                            <Value>ComponentSpecificationRule</Value>
+                        </Property>
+                        <Property name="ruleIdentifier">
+                            <Value>default</Value>
+                        </Property>
+                        <Property name="succeedSeverity">
+                            <Value>PASS</Value>
+                        </Property>
+                        <Property name="failSeverity">
+                            <Value>WARN</Value>
+                        </Property>
+                        <Property name="errorSeverity">
+                            <Value>WARN</Value>
+                        </Property>
+                        <Property name="succeedCode">
+                            <Value>15</Value>
+                        </Property>
+                        <Property name="failCode">
+                            <Value>4</Value>
+                        </Property>
+                        <Property name="errorCode">
+                            <Value>4</Value>
+                        </Property>
+                    </Property>
+                    <Property name="personalInfoCheck">
+                        <Property name="ruleClass">
+                            <Value>PersonalInfoRule</Value>
+                        </Property>
+                        <Property name="ruleIdentifier">
+                            <Value>default</Value>
+                        </Property>
+                        <Property name="succeedSeverity">
+                            <Value>PASS</Value>
+                        </Property>
+                        <Property name="failSeverity">
+                            <Value>WARN</Value>
+                        </Property>
+                        <Property name="errorSeverity">
+                            <Value>WARN</Value>
+                        </Property>
+                        <Property name="succeedCode">
+                            <Value>15</Value>
+                        </Property>
+                        <Property name="failCode">
+                            <Value>14</Value>
+                        </Property>
+                        <Property name="errorCode">
+                            <Value>14</Value>
+                        </Property>
+                    </Property>
+                    <Property name="zumlFileCheck">
+                        <Property name="ruleClass">
+                            <Value>PoseidonExtractRule</Value>
+                        </Property>
+                        <Property name="ruleIdentifier">
+                            <Value>default</Value>
+                        </Property>
+                        <Property name="succeedSeverity">
+                            <Value>PASS</Value>
+                        </Property>
+                        <Property name="failSeverity">
+                            <Value>WARN</Value>
+                        </Property>
+                        <Property name="errorSeverity">
+                            <Value>WARN</Value>
+                        </Property>
+                        <Property name="succeedCode">
+                            <Value>15</Value>
+                        </Property>
+                        <Property name="failCode">
+                            <Value>7</Value>
+                        </Property>
+                        <Property name="errorCode">
+                            <Value>7</Value>
+                        </Property>
+                    </Property>
+                    <Property name="diagramsCheck">
+                        <Property name="ruleClass">
+                            <Value>PoseidonDiagramRule</Value>
+                        </Property>
+                        <Property name="ruleIdentifier">
+                            <Value>default</Value>
+                        </Property>
+                        <Property name="succeedSeverity">
+                            <Value>PASS</Value>
+                        </Property>
+                        <Property name="failSeverity">
+                            <Value>WARN</Value>
+                        </Property>
+                        <Property name="errorSeverity">
+                            <Value>WARN</Value>
+                        </Property>
+                        <Property name="succeedCode">
+                            <Value>15</Value>
+                        </Property>
+                        <Property name="failCode">
+                            <Value>8</Value>
+                        </Property>
+                        <Property name="errorCode">
+                            <Value>8</Value>
+                        </Property>
+                    </Property>
+                </Property>
+            </Property>
+            <Property name="dotNet Designer">
+                <Property name="categoryId">
+                    <Value>1</Value>
+                </Property>
+                <Property name="catalogId">
+                    <Value>5801777</Value>
+                </Property>
+                <Property name="screeningLogicList">
+                    <Value>unzip</Value>
+                    <Value>dirStructureCheck</Value>
+                    <Value>componentSpecCheck</Value>
+                    <Value>personalInfoCheck</Value>
+                    <Value>zumlFileCheck</Value>
+                    <Value>diagramsCheck</Value>
+                </Property>
+                <Property name="screeningLogic">
+                    <Property name="unzip">
+                        <Property name="ruleClass">
+                            <Value>ArchiveFileRule</Value>
+                        </Property>
+                        <Property name="ruleIdentifier">
+                            <Value>zipFile</Value>
+                        </Property>
+                        <Property name="succeedSeverity">
+                            <Value>PASS</Value>
+                        </Property>
+                        <Property name="failSeverity">
+                            <Value>WARN</Value>
+                        </Property>
+                        <Property name="errorSeverity">
+                            <Value>WARN</Value>
+                        </Property>
+                        <Property name="succeedCode">
+                            <Value>15</Value>
+                        </Property>
+                        <Property name="failCode">
+                            <Value>2</Value>
+                        </Property>
+                        <Property name="errorCode">
+                            <Value>2</Value>
+                        </Property>
+                    </Property>
+                    <Property name="dirStructureCheck">
+                        <Property name="ruleClass">
+                            <Value>DirectoryStructureRule</Value>
+                        </Property>
+                        <Property name="ruleIdentifier">
+                            <Value>designSubmission</Value>
+                        </Property>
+                        <Property name="succeedSeverity">
+                            <Value>PASS</Value>
+                        </Property>
+                        <Property name="failSeverity">
+                            <Value>WARN</Value>
+                        </Property>
+                        <Property name="errorSeverity">
+                            <Value>WARN</Value>
+                        </Property>
+                        <Property name="succeedCode">
+                            <Value>15</Value>
+                        </Property>
+                        <Property name="failCode">
+                            <Value>3</Value>
+                        </Property>
+                        <Property name="errorCode">
+                            <Value>3</Value>
+                        </Property>
+                    </Property>
+                    <Property name="componentSpecCheck">
+                        <Property name="ruleClass">
+                            <Value>ComponentSpecificationRule</Value>
+                        </Property>
+                        <Property name="ruleIdentifier">
+                            <Value>default</Value>
+                        </Property>
+                        <Property name="succeedSeverity">
+                            <Value>PASS</Value>
+                        </Property>
+                        <Property name="failSeverity">
+                            <Value>WARN</Value>
+                        </Property>
+                        <Property name="errorSeverity">
+                            <Value>WARN</Value>
+                        </Property>
+                        <Property name="succeedCode">
+                            <Value>15</Value>
+                        </Property>
+                        <Property name="failCode">
+                            <Value>4</Value>
+                        </Property>
+                        <Property name="errorCode">
+                            <Value>4</Value>
+                        </Property>
+                    </Property>
+                    <Property name="personalInfoCheck">
+                        <Property name="ruleClass">
+                            <Value>PersonalInfoRule</Value>
+                        </Property>
+                        <Property name="ruleIdentifier">
+                            <Value>default</Value>
+                        </Property>
+                        <Property name="succeedSeverity">
+                            <Value>PASS</Value>
+                        </Property>
+                        <Property name="failSeverity">
+                            <Value>WARN</Value>
+                        </Property>
+                        <Property name="errorSeverity">
+                            <Value>WARN</Value>
+                        </Property>
+                        <Property name="succeedCode">
+                            <Value>15</Value>
+                        </Property>
+                        <Property name="failCode">
+                            <Value>14</Value>
+                        </Property>
+                        <Property name="errorCode">
+                            <Value>14</Value>
+                        </Property>
+                    </Property>
+                    <Property name="zumlFileCheck">
+                        <Property name="ruleClass">
+                            <Value>PoseidonExtractRule</Value>
+                        </Property>
+                        <Property name="ruleIdentifier">
+                            <Value>default</Value>
+                        </Property>
+                        <Property name="succeedSeverity">
+                            <Value>PASS</Value>
+                        </Property>
+                        <Property name="failSeverity">
+                            <Value>WARN</Value>
+                        </Property>
+                        <Property name="errorSeverity">
+                            <Value>WARN</Value>
+                        </Property>
+                        <Property name="succeedCode">
+                            <Value>15</Value>
+                        </Property>
+                        <Property name="failCode">
+                            <Value>7</Value>
+                        </Property>
+                        <Property name="errorCode">
+                            <Value>7</Value>
+                        </Property>
+                    </Property>
+                    <Property name="diagramsCheck">
+                        <Property name="ruleClass">
+                            <Value>PoseidonDiagramRule</Value>
+                        </Property>
+                        <Property name="ruleIdentifier">
+                            <Value>default</Value>
+                        </Property>
+                        <Property name="succeedSeverity">
+                            <Value>PASS</Value>
+                        </Property>
+                        <Property name="failSeverity">
+                            <Value>WARN</Value>
+                        </Property>
+                        <Property name="errorSeverity">
+                            <Value>WARN</Value>
+                        </Property>
+                        <Property name="succeedCode">
+                            <Value>15</Value>
+                        </Property>
+                        <Property name="failCode">
+                            <Value>8</Value>
+                        </Property>
+                        <Property name="errorCode">
+                            <Value>8</Value>
+                        </Property>
+                    </Property>
+                </Property>
+            </Property>
+            <Property name="CustomJava Designer">
+                <Property name="categoryId">
+                    <Value>1</Value>
+                </Property>
+                <Property name="catalogId">
+                    <Value>5801778</Value>
+                </Property>
+                <Property name="screeningLogicList">
+                    <Value>unzip</Value>
+                    <Value>dirStructureCheck</Value>
+                    <Value>componentSpecCheck</Value>
+                    <Value>personalInfoCheck</Value>
+                    <Value>zumlFileCheck</Value>
+                    <Value>diagramsCheck</Value>
+                </Property>
+                <Property name="screeningLogic">
+                    <Property name="unzip">
+                        <Property name="ruleClass">
+                            <Value>ArchiveFileRule</Value>
+                        </Property>
+                        <Property name="ruleIdentifier">
+                            <Value>jarFile</Value>
+                        </Property>
+                        <Property name="succeedSeverity">
+                            <Value>PASS</Value>
+                        </Property>
+                        <Property name="failSeverity">
+                            <Value>WARN</Value>
+                        </Property>
+                        <Property name="errorSeverity">
+                            <Value>WARN</Value>
+                        </Property>
+                        <Property name="succeedCode">
+        <!-- Refer to the thread https://software.topcoder.com/forum/c_forum_message.jsp?f=22462209&r=22639961 for the response codes -->
+                            <Value>15</Value>
+                        </Property>
+                        <Property name="failCode">
+                            <Value>1</Value>
+                        </Property>
+                        <Property name="errorCode">
+                            <Value>1</Value>
+                        </Property>
+                    </Property>
+                    <Property name="dirStructureCheck">
+                        <Property name="ruleClass">
+                            <Value>DirectoryStructureRule</Value>
+                        </Property>
+                        <Property name="ruleIdentifier">
+                            <Value>designSubmission</Value>
+                        </Property>
+                        <Property name="succeedSeverity">
+                            <Value>PASS</Value>
+                        </Property>
+                        <Property name="failSeverity">
+                            <Value>WARN</Value>
+                        </Property>
+                        <Property name="errorSeverity">
+                            <Value>WARN</Value>
+                        </Property>
+                        <Property name="succeedCode">
+                            <Value>15</Value>
+                        </Property>
+                        <Property name="failCode">
+                            <Value>3</Value>
+                        </Property>
+                        <Property name="errorCode">
+                            <Value>3</Value>
+                        </Property>
+                    </Property>
+                    <Property name="componentSpecCheck">
+                        <Property name="ruleClass">
+                            <Value>ComponentSpecificationRule</Value>
+                        </Property>
+                        <Property name="ruleIdentifier">
+                            <Value>default</Value>
+                        </Property>
+                        <Property name="succeedSeverity">
+                            <Value>PASS</Value>
+                        </Property>
+                        <Property name="failSeverity">
+                            <Value>WARN</Value>
+                        </Property>
+                        <Property name="errorSeverity">
+                            <Value>WARN</Value>
+                        </Property>
+                        <Property name="succeedCode">
+                            <Value>15</Value>
+                        </Property>
+                        <Property name="failCode">
+                            <Value>4</Value>
+                        </Property>
+                        <Property name="errorCode">
+                            <Value>4</Value>
+                        </Property>
+                    </Property>
+                    <Property name="personalInfoCheck">
+                        <Property name="ruleClass">
+                            <Value>PersonalInfoRule</Value>
+                        </Property>
+                        <Property name="ruleIdentifier">
+                            <Value>default</Value>
+                        </Property>
+                        <Property name="succeedSeverity">
+                            <Value>PASS</Value>
+                        </Property>
+                        <Property name="failSeverity">
+                            <Value>WARN</Value>
+                        </Property>
+                        <Property name="errorSeverity">
+                            <Value>WARN</Value>
+                        </Property>
+                        <Property name="succeedCode">
+                            <Value>15</Value>
+                        </Property>
+                        <Property name="failCode">
+                            <Value>14</Value>
+                        </Property>
+                        <Property name="errorCode">
+                            <Value>14</Value>
+                        </Property>
+                    </Property>
+                    <Property name="zumlFileCheck">
+                        <Property name="ruleClass">
+                            <Value>PoseidonExtractRule</Value>
+                        </Property>
+                        <Property name="ruleIdentifier">
+                            <Value>default</Value>
+                        </Property>
+                        <Property name="succeedSeverity">
+                            <Value>PASS</Value>
+                        </Property>
+                        <Property name="failSeverity">
+                            <Value>WARN</Value>
+                        </Property>
+                        <Property name="errorSeverity">
+                            <Value>WARN</Value>
+                        </Property>
+                        <Property name="succeedCode">
+                            <Value>15</Value>
+                        </Property>
+                        <Property name="failCode">
+                            <Value>7</Value>
+                        </Property>
+                        <Property name="errorCode">
+                            <Value>7</Value>
+                        </Property>
+                    </Property>
+                    <Property name="diagramsCheck">
+                        <Property name="ruleClass">
+                            <Value>PoseidonDiagramRule</Value>
+                        </Property>
+                        <Property name="ruleIdentifier">
+                            <Value>default</Value>
+                        </Property>
+                        <Property name="succeedSeverity">
+                            <Value>PASS</Value>
+                        </Property>
+                        <Property name="failSeverity">
+                            <Value>WARN</Value>
+                        </Property>
+                        <Property name="errorSeverity">
+                            <Value>WARN</Value>
+                        </Property>
+                        <Property name="succeedCode">
+                            <Value>15</Value>
+                        </Property>
+                        <Property name="failCode">
+                            <Value>8</Value>
+                        </Property>
+                        <Property name="errorCode">
+                            <Value>8</Value>
+                        </Property>
+                    </Property>
+                </Property>
+            </Property>
+            <Property name="CustomNET Designer">
+                <Property name="categoryId">
+                    <Value>1</Value>
+                </Property>
+                <Property name="catalogId">
+                    <Value>5801779</Value>
+                </Property>
+                <Property name="screeningLogicList">
+                    <Value>unzip</Value>
+                    <Value>dirStructureCheck</Value>
+                    <Value>componentSpecCheck</Value>
+                    <Value>personalInfoCheck</Value>
+                    <Value>zumlFileCheck</Value>
+                    <Value>diagramsCheck</Value>
+                </Property>
+                <Property name="screeningLogic">
+                    <Property name="unzip">
+                        <Property name="ruleClass">
+                            <Value>ArchiveFileRule</Value>
+                        </Property>
+                        <Property name="ruleIdentifier">
+                            <Value>zipFile</Value>
+                        </Property>
+                        <Property name="succeedSeverity">
+                            <Value>PASS</Value>
+                        </Property>
+                        <Property name="failSeverity">
+                            <Value>WARN</Value>
+                        </Property>
+                        <Property name="errorSeverity">
+                            <Value>WARN</Value>
+                        </Property>
+                        <Property name="succeedCode">
+                            <Value>15</Value>
+                        </Property>
+                        <Property name="failCode">
+                            <Value>2</Value>
+                        </Property>
+                        <Property name="errorCode">
+                            <Value>2</Value>
+                        </Property>
+                    </Property>
+                    <Property name="dirStructureCheck">
+                        <Property name="ruleClass">
+                            <Value>DirectoryStructureRule</Value>
+                        </Property>
+                        <Property name="ruleIdentifier">
+                            <Value>designSubmission</Value>
+                        </Property>
+                        <Property name="succeedSeverity">
+                            <Value>PASS</Value>
+                        </Property>
+                        <Property name="failSeverity">
+                            <Value>WARN</Value>
+                        </Property>
+                        <Property name="errorSeverity">
+                            <Value>WARN</Value>
+                        </Property>
+                        <Property name="succeedCode">
+                            <Value>15</Value>
+                        </Property>
+                        <Property name="failCode">
+                            <Value>3</Value>
+                        </Property>
+                        <Property name="errorCode">
+                            <Value>3</Value>
+                        </Property>
+                    </Property>
+                    <Property name="componentSpecCheck">
+                        <Property name="ruleClass">
+                            <Value>ComponentSpecificationRule</Value>
+                        </Property>
+                        <Property name="ruleIdentifier">
+                            <Value>default</Value>
+                        </Property>
+                        <Property name="succeedSeverity">
+                            <Value>PASS</Value>
+                        </Property>
+                        <Property name="failSeverity">
+                            <Value>WARN</Value>
+                        </Property>
+                        <Property name="errorSeverity">
+                            <Value>WARN</Value>
+                        </Property>
+                        <Property name="succeedCode">
+                            <Value>15</Value>
+                        </Property>
+                        <Property name="failCode">
+                            <Value>4</Value>
+                        </Property>
+                        <Property name="errorCode">
+                            <Value>4</Value>
+                        </Property>
+                    </Property>
+                    <Property name="personalInfoCheck">
+                        <Property name="ruleClass">
+                            <Value>PersonalInfoRule</Value>
+                        </Property>
+                        <Property name="ruleIdentifier">
+                            <Value>default</Value>
+                        </Property>
+                        <Property name="succeedSeverity">
+                            <Value>PASS</Value>
+                        </Property>
+                        <Property name="failSeverity">
+                            <Value>WARN</Value>
+                        </Property>
+                        <Property name="errorSeverity">
+                            <Value>WARN</Value>
+                        </Property>
+                        <Property name="succeedCode">
+                            <Value>15</Value>
+                        </Property>
+                        <Property name="failCode">
+                            <Value>14</Value>
+                        </Property>
+                        <Property name="errorCode">
+                            <Value>14</Value>
+                        </Property>
+                    </Property>
+                    <Property name="zumlFileCheck">
+                        <Property name="ruleClass">
+                            <Value>PoseidonExtractRule</Value>
+                        </Property>
+                        <Property name="ruleIdentifier">
+                            <Value>default</Value>
+                        </Property>
+                        <Property name="succeedSeverity">
+                            <Value>PASS</Value>
+                        </Property>
+                        <Property name="failSeverity">
+                            <Value>WARN</Value>
+                        </Property>
+                        <Property name="errorSeverity">
+                            <Value>WARN</Value>
+                        </Property>
+                        <Property name="succeedCode">
+                            <Value>15</Value>
+                        </Property>
+                        <Property name="failCode">
+                            <Value>7</Value>
+                        </Property>
+                        <Property name="errorCode">
+                            <Value>7</Value>
+                        </Property>
+                    </Property>
+                    <Property name="diagramsCheck">
+                        <Property name="ruleClass">
+                            <Value>PoseidonDiagramRule</Value>
+                        </Property>
+                        <Property name="ruleIdentifier">
+                            <Value>default</Value>
+                        </Property>
+                        <Property name="succeedSeverity">
+                            <Value>PASS</Value>
+                        </Property>
+                        <Property name="failSeverity">
+                            <Value>WARN</Value>
+                        </Property>
+                        <Property name="errorSeverity">
+                            <Value>WARN</Value>
+                        </Property>
+                        <Property name="succeedCode">
+                            <Value>15</Value>
+                        </Property>
+                        <Property name="failCode">
+                            <Value>8</Value>
+                        </Property>
+                        <Property name="errorCode">
+                            <Value>8</Value>
+                        </Property>
+                    </Property>
+                </Property>
+            </Property>
+            <Property name="Java Development">
+                <Property name="categoryId">
+                    <Value>2</Value>
+                </Property>
+                <Property name="catalogId">
+                    <Value>5801776</Value>
+                </Property>
+                <Property name="screeningLogicList">
+                    <Value>unzip</Value>
+                    <Value>dirStructureCheck</Value>
+                    <Value>javaMainSourceCheck</Value>
+                    <Value>javaTestsSourceCheck</Value>
+                    <Value>javaMainSourceStyleCheck</Value>
+                    <Value>javaTestSourceStyleCheck</Value>
+                    <Value>testLogCheck</Value>
+                    <Value>componentSpecCheck</Value>
+                    <Value>personalInfoCheck</Value>
+                    <Value>coveragePercentageCheck</Value>
+                </Property>
+                <Property name="screeningLogic">
+                    <Property name="unzip">
+                        <Property name="ruleClass">
+                            <Value>ArchiveFileRule</Value>
+                        </Property>
+                        <Property name="ruleIdentifier">
+                            <Value>jarFile</Value>
+                        </Property>
+                        <Property name="succeedSeverity">
+                            <Value>PASS</Value>
+                        </Property>
+                        <Property name="failSeverity">
+                            <Value>WARN</Value>
+                        </Property>
+                        <Property name="errorSeverity">
+                            <Value>WARN</Value>
+                        </Property>
+                        <Property name="succeedCode">
+                            <Value>15</Value>
+                        </Property>
+                        <Property name="failCode">
+                            <Value>1</Value>
+                        </Property>
+                        <Property name="errorCode">
+                            <Value>1</Value>
+                        </Property>
+                    </Property>
+                    <Property name="dirStructureCheck">
+                        <Property name="ruleClass">
+                            <Value>DirectoryStructureRule</Value>
+                        </Property>
+                        <Property name="ruleIdentifier">
+                            <Value>javaDevSubmission</Value>
+                        </Property>
+                        <Property name="succeedSeverity">
+                            <Value>PASS</Value>
+                        </Property>
+                        <Property name="failSeverity">
+                            <Value>WARN</Value>
+                        </Property>
+                        <Property name="errorSeverity">
+                            <Value>WARN</Value>
+                        </Property>
+                        <Property name="succeedCode">
+                            <Value>15</Value>
+                        </Property>
+                        <Property name="failCode">
+                            <Value>3</Value>
+                        </Property>
+                        <Property name="errorCode">
+                            <Value>3</Value>
+                        </Property>
+                    </Property>
+                    <Property name="javaMainSourceCheck">
+                        <Property name="ruleClass">
+                            <Value>FileExtensionRule</Value>
+                        </Property>
+                        <Property name="ruleIdentifier">
+                            <Value>javaMainSource</Value>
+                        </Property>
+                        <Property name="succeedSeverity">
+                            <Value>PASS</Value>
+                        </Property>
+                        <Property name="failSeverity">
+                            <Value>WARN</Value>
+                        </Property>
+                        <Property name="errorSeverity">
+                            <Value>WARN</Value>
+                        </Property>
+                        <Property name="succeedCode">
+                            <Value>15</Value>
+                        </Property>
+                        <Property name="failCode">
+                            <Value>11</Value>
+                        </Property>
+                        <Property name="errorCode">
+                            <Value>11</Value>
+                        </Property>
+                    </Property>
+                    <Property name="javaTestsSourceCheck">
+                        <Property name="ruleClass">
+                            <Value>FileExtensionRule</Value>
+                        </Property>
+                        <Property name="ruleIdentifier">
+                            <Value>javaTestsSource</Value>
+                        </Property>
+                        <Property name="succeedSeverity">
+                            <Value>PASS</Value>
+                        </Property>
+                        <Property name="failSeverity">
+                            <Value>WARN</Value>
+                        </Property>
+                        <Property name="errorSeverity">
+                            <Value>WARN</Value>
+                        </Property>
+                        <Property name="succeedCode">
+                            <Value>15</Value>
+                        </Property>
+                        <Property name="failCode">
+                            <Value>12</Value>
+                        </Property>
+                        <Property name="errorCode">
+                            <Value>12</Value>
+                        </Property>
+                    </Property>
+                    <Property name="javaMainSourceStyleCheck">
+                        <Property name="ruleClass">
+                            <Value>CheckStyleRule</Value>
+                        </Property>
+                        <Property name="ruleIdentifier">
+                            <Value>javaMainSource</Value>
+                        </Property>
+                        <Property name="succeedSeverity">
+                            <Value>PASS</Value>
+                        </Property>
+                        <Property name="failSeverity">
+                            <Value>WARN</Value>
+                        </Property>
+                        <Property name="errorSeverity">
+                            <Value>WARN</Value>
+                        </Property>
+                        <Property name="succeedCode">
+                            <Value>15</Value>
+                        </Property>
+                        <Property name="failCode">
+                            <Value>13</Value>
+                        </Property>
+                        <Property name="errorCode">
+                            <Value>13</Value>
+                        </Property>
+                    </Property>
+                    <Property name="javaTestSourceStyleCheck">
+                        <Property name="ruleClass">
+                            <Value>CheckStyleRule</Value>
+                        </Property>
+                        <Property name="ruleIdentifier">
+                            <Value>javaTestSource</Value>
+                        </Property>
+                        <Property name="succeedSeverity">
+                            <Value>PASS</Value>
+                        </Property>
+                        <Property name="failSeverity">
+                            <Value>WARN</Value>
+                        </Property>
+                        <Property name="errorSeverity">
+                            <Value>WARN</Value>
+                        </Property>
+                        <Property name="succeedCode">
+                            <Value>15</Value>
+                        </Property>
+                        <Property name="failCode">
+                            <Value>13</Value>
+                        </Property>
+                        <Property name="errorCode">
+                            <Value>13</Value>
+                        </Property>
+                    </Property>
+                    <Property name="testLogCheck">
+                        <Property name="ruleClass">
+                            <Value>FileExtensionRule</Value>
+                        </Property>
+                        <Property name="ruleIdentifier">
+                            <Value>testLog</Value>
+                        </Property>
+                        <Property name="succeedSeverity">
+                            <Value>PASS</Value>
+                        </Property>
+                        <Property name="failSeverity">
+                            <Value>WARN</Value>
+                        </Property>
+                        <Property name="errorSeverity">
+                            <Value>WARN</Value>
+                        </Property>
+                        <Property name="succeedCode">
+                            <Value>15</Value>
+                        </Property>
+                        <Property name="failCode">
+                            <Value>6</Value>
+                        </Property>
+                        <Property name="errorCode">
+                            <Value>6</Value>
+                        </Property>
+                    </Property>
+                    <Property name="componentSpecCheck">
+                        <Property name="ruleClass">
+                            <Value>ComponentSpecificationRule</Value>
+                        </Property>
+                        <Property name="ruleIdentifier">
+                            <Value>default</Value>
+                        </Property>
+                        <Property name="succeedSeverity">
+                            <Value>PASS</Value>
+                        </Property>
+                        <Property name="failSeverity">
+                            <Value>WARN</Value>
+                        </Property>
+                        <Property name="errorSeverity">
+                            <Value>WARN</Value>
+                        </Property>
+                        <Property name="succeedCode">
+                            <Value>15</Value>
+                        </Property>
+                        <Property name="failCode">
+                            <Value>4</Value>
+                        </Property>
+                        <Property name="errorCode">
+                            <Value>4</Value>
+                        </Property>
+                    </Property>
+                    <Property name="personalInfoCheck">
+                        <Property name="ruleClass">
+                            <Value>PersonalInfoRule</Value>
+                        </Property>
+                        <Property name="ruleIdentifier">
+                            <Value>default</Value>
+                        </Property>
+                        <Property name="succeedSeverity">
+                            <Value>PASS</Value>
+                        </Property>
+                        <Property name="failSeverity">
+                            <Value>WARN</Value>
+                        </Property>
+                        <Property name="errorSeverity">
+                            <Value>WARN</Value>
+                        </Property>
+                        <Property name="succeedCode">
+                            <Value>15</Value>
+                        </Property>
+                        <Property name="failCode">
+                            <Value>14</Value>
+                        </Property>
+                        <Property name="errorCode">
+                            <Value>14</Value>
+                        </Property>
+                    </Property>
+                    <Property name="coveragePercentageCheck">
+                        <Property name="ruleClass">
+                            <Value>CoveragePercentageRule</Value>
+                        </Property>
+                        <Property name="ruleIdentifier">
+                            <Value>javaCoveragePercentage</Value>
+                        </Property>
+                        <Property name="succeedSeverity">
+                            <Value>PASS</Value>
+                        </Property>
+                        <Property name="failSeverity">
+                            <Value>FAIL</Value>
+                        </Property>
+                        <Property name="errorSeverity">
+                            <Value>FAIL</Value>
+                        </Property>
+                        <Property name="succeedCode">
+                            <Value>15</Value>
+                        </Property>
+                        <Property name="failCode">
+                            <Value>17</Value>
+                        </Property>
+                        <Property name="errorCode">
+                            <Value>17</Value>
+                        </Property>
+                    </Property>
+                </Property>
+            </Property>
+            <Property name="dotNet Development">
+                <Property name="categoryId">
+                    <Value>2</Value>
+                </Property>
+                <Property name="catalogId">
+                    <Value>5801777</Value>
+                </Property>
+                <Property name="screeningLogicList">
+                    <Value>unzip</Value>
+                    <Value>dirStructureCheck</Value>
+                    <Value>csharpMainSourceCheck</Value>
+                    <Value>csharpTestsSourceCheck</Value>
+                    <Value>testLogCheck</Value>
+                    <Value>componentSpecCheck</Value>
+                    <Value>personalInfoCheck</Value>
+                    <Value>csharpCoverageCheck</Value>
+                    <Value>csharpCoverageUnitCheck</Value>
+                </Property>
+                <Property name="screeningLogic">
+                    <Property name="unzip">
+                        <Property name="ruleClass">
+                            <Value>ArchiveFileRule</Value>
+                        </Property>
+                        <Property name="ruleIdentifier">
+                            <Value>zipFile</Value>
+                        </Property>
+                        <Property name="succeedSeverity">
+                            <Value>PASS</Value>
+                        </Property>
+                        <Property name="failSeverity">
+                            <Value>WARN</Value>
+                        </Property>
+                        <Property name="errorSeverity">
+                            <Value>WARN</Value>
+                        </Property>
+                        <Property name="succeedCode">
+                            <Value>15</Value>
+                        </Property>
+                        <Property name="failCode">
+                            <Value>2</Value>
+                        </Property>
+                        <Property name="errorCode">
+                            <Value>2</Value>
+                        </Property>
+                    </Property>
+                    <Property name="dirStructureCheck">
+                        <Property name="ruleClass">
+                            <Value>DirectoryStructureRule</Value>
+                        </Property>
+                        <Property name="ruleIdentifier">
+                            <Value>csharpDevSubmission</Value>
+                        </Property>
+                        <Property name="succeedSeverity">
+                            <Value>PASS</Value>
+                        </Property>
+                        <Property name="failSeverity">
+                            <Value>WARN</Value>
+                        </Property>
+                        <Property name="errorSeverity">
+                            <Value>WARN</Value>
+                        </Property>
+                        <Property name="succeedCode">
+                            <Value>15</Value>
+                        </Property>
+                        <Property name="failCode">
+                            <Value>3</Value>
+                        </Property>
+                        <Property name="errorCode">
+                            <Value>3</Value>
+                        </Property>
+                    </Property>
+                    <Property name="csharpMainSourceCheck">
+                        <Property name="ruleClass">
+                            <Value>FileExtensionRule</Value>
+                        </Property>
+                        <Property name="ruleIdentifier">
+                            <Value>csharpMainSource</Value>
+                        </Property>
+                        <Property name="succeedSeverity">
+                            <Value>PASS</Value>
+                        </Property>
+                        <Property name="failSeverity">
+                            <Value>WARN</Value>
+                        </Property>
+                        <Property name="errorSeverity">
+                            <Value>WARN</Value>
+                        </Property>
+                        <Property name="succeedCode">
+                            <Value>15</Value>
+                        </Property>
+                        <Property name="failCode">
+                            <Value>11</Value>
+                        </Property>
+                        <Property name="errorCode">
+                            <Value>11</Value>
+                        </Property>
+                    </Property>
+                    <Property name="csharpTestsSourceCheck">
+                        <Property name="ruleClass">
+                            <Value>FileExtensionRule</Value>
+                        </Property>
+                        <Property name="ruleIdentifier">
+                            <Value>csharpTestsSource</Value>
+                        </Property>
+                        <Property name="succeedSeverity">
+                            <Value>PASS</Value>
+                        </Property>
+                        <Property name="failSeverity">
+                            <Value>WARN</Value>
+                        </Property>
+                        <Property name="errorSeverity">
+                            <Value>WARN</Value>
+                        </Property>
+                        <Property name="succeedCode">
+                            <Value>15</Value>
+                        </Property>
+                        <Property name="failCode">
+                            <Value>12</Value>
+                        </Property>
+                        <Property name="errorCode">
+                            <Value>12</Value>
+                        </Property>
+                    </Property>
+                    <Property name="testLogCheck">
+                        <Property name="ruleClass">
+                            <Value>FileExtensionRule</Value>
+                        </Property>
+                        <Property name="ruleIdentifier">
+                            <Value>testLog</Value>
+                        </Property>
+                        <Property name="succeedSeverity">
+                            <Value>PASS</Value>
+                        </Property>
+                        <Property name="failSeverity">
+                            <Value>WARN</Value>
+                        </Property>
+                        <Property name="errorSeverity">
+                            <Value>WARN</Value>
+                        </Property>
+                        <Property name="succeedCode">
+                            <Value>15</Value>
+                        </Property>
+                        <Property name="failCode">
+                            <Value>6</Value>
+                        </Property>
+                        <Property name="errorCode">
+                            <Value>6</Value>
+                        </Property>
+                    </Property>
+                    <Property name="componentSpecCheck">
+                        <Property name="ruleClass">
+                            <Value>ComponentSpecificationRule</Value>
+                        </Property>
+                        <Property name="ruleIdentifier">
+                            <Value>default</Value>
+                        </Property>
+                        <Property name="succeedSeverity">
+                            <Value>PASS</Value>
+                        </Property>
+                        <Property name="failSeverity">
+                            <Value>WARN</Value>
+                        </Property>
+                        <Property name="errorSeverity">
+                            <Value>WARN</Value>
+                        </Property>
+                        <Property name="succeedCode">
+                            <Value>15</Value>
+                        </Property>
+                        <Property name="failCode">
+                            <Value>4</Value>
+                        </Property>
+                        <Property name="errorCode">
+                            <Value>4</Value>
+                        </Property>
+                    </Property>
+                    <Property name="personalInfoCheck">
+                        <Property name="ruleClass">
+                            <Value>PersonalInfoRule</Value>
+                        </Property>
+                        <Property name="ruleIdentifier">
+                            <Value>default</Value>
+                        </Property>
+                        <Property name="succeedSeverity">
+                            <Value>PASS</Value>
+                        </Property>
+                        <Property name="failSeverity">
+                            <Value>WARN</Value>
+                        </Property>
+                        <Property name="errorSeverity">
+                            <Value>WARN</Value>
+                        </Property>
+                        <Property name="succeedCode">
+                            <Value>15</Value>
+                        </Property>
+                        <Property name="failCode">
+                            <Value>14</Value>
+                        </Property>
+                        <Property name="errorCode">
+                            <Value>14</Value>
+                        </Property>
+                    </Property>
+                    <Property name="csharpCoverageCheck">
+                        <Property name="ruleClass">
+                            <Value>FileExtensionRule</Value>
+                        </Property>
+                        <Property name="ruleIdentifier">
+                            <Value>csharpCoverage</Value>
+                        </Property>
+                        <Property name="succeedSeverity">
+                            <Value>PASS</Value>
+                        </Property>
+                        <Property name="failSeverity">
+                            <Value>FAIL</Value>
+                        </Property>
+                        <Property name="errorSeverity">
+                            <Value>FAIL</Value>
+                        </Property>
+                        <Property name="succeedCode">
+                            <Value>15</Value>
+                        </Property>
+                        <Property name="failCode">
+                            <Value>16</Value>
+                        </Property>
+                        <Property name="errorCode">
+                            <Value>16</Value>
+                        </Property>
+                    </Property>
+                    <Property name="csharpCoverageUnitCheck">
+                        <Property name="ruleClass">
+                            <Value>FileExtensionRule</Value>
+                        </Property>
+                        <Property name="ruleIdentifier">
+                            <Value>csharpCoverageUnit</Value>
+                        </Property>
+                        <Property name="succeedSeverity">
+                            <Value>PASS</Value>
+                        </Property>
+                        <Property name="failSeverity">
+                            <Value>FAIL</Value>
+                        </Property>
+                        <Property name="errorSeverity">
+                            <Value>FAIL</Value>
+                        </Property>
+                        <Property name="succeedCode">
+                            <Value>15</Value>
+                        </Property>
+                        <Property name="failCode">
+                            <Value>16</Value>
+                        </Property>
+                        <Property name="errorCode">
+                            <Value>16</Value>
+                        </Property>
+                    </Property>
+                </Property>
+            </Property>
+            <Property name="CustomJava Development">
+                <Property name="categoryId">
+                    <Value>2</Value>
+                </Property>
+                <Property name="catalogId">
+                    <Value>5801778</Value>
+                </Property>
+                <Property name="screeningLogicList">
+                    <Value>unzip</Value>
+                    <Value>dirStructureCheck</Value>
+                    <Value>javaMainSourceCheck</Value>
+                    <Value>javaTestsSourceCheck</Value>
+                    <Value>javaMainSourceStyleCheck</Value>
+                    <Value>javaTestSourceStyleCheck</Value>
+                    <Value>testLogCheck</Value>
+                    <Value>componentSpecCheck</Value>
+                    <Value>personalInfoCheck</Value>
+                    <Value>coveragePercentageCheck</Value>
+                </Property>
+                <Property name="screeningLogic">
+                    <Property name="unzip">
+                        <Property name="ruleClass">
+                            <Value>ArchiveFileRule</Value>
+                        </Property>
+                        <Property name="ruleIdentifier">
+                            <Value>jarFile</Value>
+                        </Property>
+                        <Property name="succeedSeverity">
+                            <Value>PASS</Value>
+                        </Property>
+                        <Property name="failSeverity">
+                            <Value>WARN</Value>
+                        </Property>
+                        <Property name="errorSeverity">
+                            <Value>WARN</Value>
+                        </Property>
+                        <Property name="succeedCode">
+                            <Value>15</Value>
+                        </Property>
+                        <Property name="failCode">
+                            <Value>1</Value>
+                        </Property>
+                        <Property name="errorCode">
+                            <Value>1</Value>
+                        </Property>
+                    </Property>
+                    <Property name="dirStructureCheck">
+                        <Property name="ruleClass">
+                            <Value>DirectoryStructureRule</Value>
+                        </Property>
+                        <Property name="ruleIdentifier">
+                            <Value>javaDevSubmission</Value>
+                        </Property>
+                        <Property name="succeedSeverity">
+                            <Value>PASS</Value>
+                        </Property>
+                        <Property name="failSeverity">
+                            <Value>WARN</Value>
+                        </Property>
+                        <Property name="errorSeverity">
+                            <Value>WARN</Value>
+                        </Property>
+                        <Property name="succeedCode">
+                            <Value>15</Value>
+                        </Property>
+                        <Property name="failCode">
+                            <Value>3</Value>
+                        </Property>
+                        <Property name="errorCode">
+                            <Value>3</Value>
+                        </Property>
+                    </Property>
+                    <Property name="javaMainSourceCheck">
+                        <Property name="ruleClass">
+                            <Value>FileExtensionRule</Value>
+                        </Property>
+                        <Property name="ruleIdentifier">
+                            <Value>javaMainSource</Value>
+                        </Property>
+                        <Property name="succeedSeverity">
+                            <Value>PASS</Value>
+                        </Property>
+                        <Property name="failSeverity">
+                            <Value>WARN</Value>
+                        </Property>
+                        <Property name="errorSeverity">
+                            <Value>WARN</Value>
+                        </Property>
+                        <Property name="succeedCode">
+                            <Value>15</Value>
+                        </Property>
+                        <Property name="failCode">
+                            <Value>11</Value>
+                        </Property>
+                        <Property name="errorCode">
+                            <Value>11</Value>
+                        </Property>
+                    </Property>
+                    <Property name="javaTestsSourceCheck">
+                        <Property name="ruleClass">
+                            <Value>FileExtensionRule</Value>
+                        </Property>
+                        <Property name="ruleIdentifier">
+                            <Value>javaTestsSource</Value>
+                        </Property>
+                        <Property name="succeedSeverity">
+                            <Value>PASS</Value>
+                        </Property>
+                        <Property name="failSeverity">
+                            <Value>WARN</Value>
+                        </Property>
+                        <Property name="errorSeverity">
+                            <Value>WARN</Value>
+                        </Property>
+                        <Property name="succeedCode">
+                            <Value>15</Value>
+                        </Property>
+                        <Property name="failCode">
+                            <Value>12</Value>
+                        </Property>
+                        <Property name="errorCode">
+                            <Value>12</Value>
+                        </Property>
+                    </Property>
+                    <Property name="javaMainSourceStyleCheck">
+                        <Property name="ruleClass">
+                            <Value>CheckStyleRule</Value>
+                        </Property>
+                        <Property name="ruleIdentifier">
+                            <Value>javaMainSource</Value>
+                        </Property>
+                        <Property name="succeedSeverity">
+                            <Value>PASS</Value>
+                        </Property>
+                        <Property name="failSeverity">
+                            <Value>WARN</Value>
+                        </Property>
+                        <Property name="errorSeverity">
+                            <Value>WARN</Value>
+                        </Property>
+                        <Property name="succeedCode">
+                            <Value>15</Value>
+                        </Property>
+                        <Property name="failCode">
+                            <Value>13</Value>
+                        </Property>
+                        <Property name="errorCode">
+                            <Value>13</Value>
+                        </Property>
+                    </Property>
+                    <Property name="javaTestSourceStyleCheck">
+                        <Property name="ruleClass">
+                            <Value>CheckStyleRule</Value>
+                        </Property>
+                        <Property name="ruleIdentifier">
+                            <Value>javaTestSource</Value>
+                        </Property>
+                        <Property name="succeedSeverity">
+                            <Value>PASS</Value>
+                        </Property>
+                        <Property name="failSeverity">
+                            <Value>WARN</Value>
+                        </Property>
+                        <Property name="errorSeverity">
+                            <Value>WARN</Value>
+                        </Property>
+                        <Property name="succeedCode">
+                            <Value>15</Value>
+                        </Property>
+                        <Property name="failCode">
+                            <Value>13</Value>
+                        </Property>
+                        <Property name="errorCode">
+                            <Value>13</Value>
+                        </Property>
+                    </Property>
+                    <Property name="testLogCheck">
+                        <Property name="ruleClass">
+                            <Value>FileExtensionRule</Value>
+                        </Property>
+                        <Property name="ruleIdentifier">
+                            <Value>testLog</Value>
+                        </Property>
+                        <Property name="succeedSeverity">
+                            <Value>PASS</Value>
+                        </Property>
+                        <Property name="failSeverity">
+                            <Value>WARN</Value>
+                        </Property>
+                        <Property name="errorSeverity">
+                            <Value>WARN</Value>
+                        </Property>
+                        <Property name="succeedCode">
+                            <Value>15</Value>
+                        </Property>
+                        <Property name="failCode">
+                            <Value>6</Value>
+                        </Property>
+                        <Property name="errorCode">
+                            <Value>6</Value>
+                        </Property>
+                    </Property>
+                    <Property name="componentSpecCheck">
+                        <Property name="ruleClass">
+                            <Value>ComponentSpecificationRule</Value>
+                        </Property>
+                        <Property name="ruleIdentifier">
+                            <Value>default</Value>
+                        </Property>
+                        <Property name="succeedSeverity">
+                            <Value>PASS</Value>
+                        </Property>
+                        <Property name="failSeverity">
+                            <Value>WARN</Value>
+                        </Property>
+                        <Property name="errorSeverity">
+                            <Value>WARN</Value>
+                        </Property>
+                        <Property name="succeedCode">
+                            <Value>15</Value>
+                        </Property>
+                        <Property name="failCode">
+                            <Value>4</Value>
+                        </Property>
+                        <Property name="errorCode">
+                            <Value>4</Value>
+                        </Property>
+                    </Property>
+                    <Property name="personalInfoCheck">
+                        <Property name="ruleClass">
+                            <Value>PersonalInfoRule</Value>
+                        </Property>
+                        <Property name="ruleIdentifier">
+                            <Value>default</Value>
+                        </Property>
+                        <Property name="succeedSeverity">
+                            <Value>PASS</Value>
+                        </Property>
+                        <Property name="failSeverity">
+                            <Value>WARN</Value>
+                        </Property>
+                        <Property name="errorSeverity">
+                            <Value>WARN</Value>
+                        </Property>
+                        <Property name="succeedCode">
+                            <Value>15</Value>
+                        </Property>
+                        <Property name="failCode">
+                            <Value>14</Value>
+                        </Property>
+                        <Property name="errorCode">
+                            <Value>14</Value>
+                        </Property>
+                    </Property>
+                    <Property name="coveragePercentageCheck">
+                        <Property name="ruleClass">
+                            <Value>CoveragePercentageRule</Value>
+                        </Property>
+                        <Property name="ruleIdentifier">
+                            <Value>javaCoveragePercentage</Value>
+                        </Property>
+                        <Property name="succeedSeverity">
+                            <Value>PASS</Value>
+                        </Property>
+                        <Property name="failSeverity">
+                            <Value>FAIL</Value>
+                        </Property>
+                        <Property name="errorSeverity">
+                            <Value>FAIL</Value>
+                        </Property>
+                        <Property name="succeedCode">
+                            <Value>15</Value>
+                        </Property>
+                        <Property name="failCode">
+                            <Value>17</Value>
+                        </Property>
+                        <Property name="errorCode">
+                            <Value>17</Value>
+                        </Property>
+                    </Property>
+                </Property>
+            </Property>
+            <Property name="CustomNET Development">
+                <Property name="categoryId">
+                    <Value>2</Value>
+                </Property>
+                <Property name="catalogId">
+                    <Value>5801779</Value>
+                </Property>
+                <Property name="screeningLogicList">
+                    <Value>unzip</Value>
+                    <Value>dirStructureCheck</Value>
+                    <Value>csharpMainSourceCheck</Value>
+                    <Value>csharpTestsSourceCheck</Value>
+                    <Value>testLogCheck</Value>
+                    <Value>componentSpecCheck</Value>
+                    <Value>personalInfoCheck</Value>
+                    <Value>csharpCoverageCheck</Value>
+                    <Value>csharpCoverageUnitCheck</Value>
+                </Property>
+                <Property name="screeningLogic">
+                    <Property name="unzip">
+                        <Property name="ruleClass">
+                            <Value>ArchiveFileRule</Value>
+                        </Property>
+                        <Property name="ruleIdentifier">
+                            <Value>zipFile</Value>
+                        </Property>
+                        <Property name="succeedSeverity">
+                            <Value>PASS</Value>
+                        </Property>
+                        <Property name="failSeverity">
+                            <Value>WARN</Value>
+                        </Property>
+                        <Property name="errorSeverity">
+                            <Value>WARN</Value>
+                        </Property>
+                        <Property name="succeedCode">
+                            <Value>15</Value>
+                        </Property>
+                        <Property name="failCode">
+                            <Value>2</Value>
+                        </Property>
+                        <Property name="errorCode">
+                            <Value>2</Value>
+                        </Property>
+                    </Property>
+                    <Property name="dirStructureCheck">
+                        <Property name="ruleClass">
+                            <Value>DirectoryStructureRule</Value>
+                        </Property>
+                        <Property name="ruleIdentifier">
+                            <Value>csharpDevSubmission</Value>
+                        </Property>
+                        <Property name="succeedSeverity">
+                            <Value>PASS</Value>
+                        </Property>
+                        <Property name="failSeverity">
+                            <Value>WARN</Value>
+                        </Property>
+                        <Property name="errorSeverity">
+                            <Value>WARN</Value>
+                        </Property>
+                        <Property name="succeedCode">
+                            <Value>15</Value>
+                        </Property>
+                        <Property name="failCode">
+                            <Value>3</Value>
+                        </Property>
+                        <Property name="errorCode">
+                            <Value>3</Value>
+                        </Property>
+                    </Property>
+                    <Property name="csharpMainSourceCheck">
+                        <Property name="ruleClass">
+                            <Value>FileExtensionRule</Value>
+                        </Property>
+                        <Property name="ruleIdentifier">
+                            <Value>csharpMainSource</Value>
+                        </Property>
+                        <Property name="succeedSeverity">
+                            <Value>PASS</Value>
+                        </Property>
+                        <Property name="failSeverity">
+                            <Value>WARN</Value>
+                        </Property>
+                        <Property name="errorSeverity">
+                            <Value>WARN</Value>
+                        </Property>
+                        <Property name="succeedCode">
+                            <Value>15</Value>
+                        </Property>
+                        <Property name="failCode">
+                            <Value>11</Value>
+                        </Property>
+                        <Property name="errorCode">
+                            <Value>11</Value>
+                        </Property>
+                    </Property>
+                    <Property name="csharpTestsSourceCheck">
+                        <Property name="ruleClass">
+                            <Value>FileExtensionRule</Value>
+                        </Property>
+                        <Property name="ruleIdentifier">
+                            <Value>csharpTestsSource</Value>
+                        </Property>
+                        <Property name="succeedSeverity">
+                            <Value>PASS</Value>
+                        </Property>
+                        <Property name="failSeverity">
+                            <Value>WARN</Value>
+                        </Property>
+                        <Property name="errorSeverity">
+                            <Value>WARN</Value>
+                        </Property>
+                        <Property name="succeedCode">
+                            <Value>15</Value>
+                        </Property>
+                        <Property name="failCode">
+                            <Value>12</Value>
+                        </Property>
+                        <Property name="errorCode">
+                            <Value>12</Value>
+                        </Property>
+                    </Property>
+                    <Property name="testLogCheck">
+                        <Property name="ruleClass">
+                            <Value>FileExtensionRule</Value>
+                        </Property>
+                        <Property name="ruleIdentifier">
+                            <Value>testLog</Value>
+                        </Property>
+                        <Property name="succeedSeverity">
+                            <Value>PASS</Value>
+                        </Property>
+                        <Property name="failSeverity">
+                            <Value>WARN</Value>
+                        </Property>
+                        <Property name="errorSeverity">
+                            <Value>WARN</Value>
+                        </Property>
+                        <Property name="succeedCode">
+                            <Value>15</Value>
+                        </Property>
+                        <Property name="failCode">
+                            <Value>6</Value>
+                        </Property>
+                        <Property name="errorCode">
+                            <Value>6</Value>
+                        </Property>
+                    </Property>
+                    <Property name="componentSpecCheck">
+                        <Property name="ruleClass">
+                            <Value>ComponentSpecificationRule</Value>
+                        </Property>
+                        <Property name="ruleIdentifier">
+                            <Value>default</Value>
+                        </Property>
+                        <Property name="succeedSeverity">
+                            <Value>PASS</Value>
+                        </Property>
+                        <Property name="failSeverity">
+                            <Value>WARN</Value>
+                        </Property>
+                        <Property name="errorSeverity">
+                            <Value>WARN</Value>
+                        </Property>
+                        <Property name="succeedCode">
+                            <Value>15</Value>
+                        </Property>
+                        <Property name="failCode">
+                            <Value>4</Value>
+                        </Property>
+                        <Property name="errorCode">
+                            <Value>4</Value>
+                        </Property>
+                    </Property>
+                    <Property name="personalInfoCheck">
+                        <Property name="ruleClass">
+                            <Value>PersonalInfoRule</Value>
+                        </Property>
+                        <Property name="ruleIdentifier">
+                            <Value>default</Value>
+                        </Property>
+                        <Property name="succeedSeverity">
+                            <Value>PASS</Value>
+                        </Property>
+                        <Property name="failSeverity">
+                            <Value>WARN</Value>
+                        </Property>
+                        <Property name="errorSeverity">
+                            <Value>WARN</Value>
+                        </Property>
+                        <Property name="succeedCode">
+                            <Value>15</Value>
+                        </Property>
+                        <Property name="failCode">
+                            <Value>14</Value>
+                        </Property>
+                        <Property name="errorCode">
+                            <Value>14</Value>
+                        </Property>
+                    </Property>
+                    <Property name="csharpCoverageCheck">
+                        <Property name="ruleClass">
+                            <Value>FileExtensionRule</Value>
+                        </Property>
+                        <Property name="ruleIdentifier">
+                            <Value>csharpCoverage</Value>
+                        </Property>
+                        <Property name="succeedSeverity">
+                            <Value>PASS</Value>
+                        </Property>
+                        <Property name="failSeverity">
+                            <Value>FAIL</Value>
+                        </Property>
+                        <Property name="errorSeverity">
+                            <Value>FAIL</Value>
+                        </Property>
+                        <Property name="succeedCode">
+                            <Value>15</Value>
+                        </Property>
+                        <Property name="failCode">
+                            <Value>16</Value>
+                        </Property>
+                        <Property name="errorCode">
+                            <Value>16</Value>
+                        </Property>
+                    </Property>
+                    <Property name="csharpCoverageUnitCheck">
+                        <Property name="ruleClass">
+                            <Value>FileExtensionRule</Value>
+                        </Property>
+                        <Property name="ruleIdentifier">
+                            <Value>csharpCoverageUnit</Value>
+                        </Property>
+                        <Property name="succeedSeverity">
+                            <Value>PASS</Value>
+                        </Property>
+                        <Property name="failSeverity">
+                            <Value>FAIL</Value>
+                        </Property>
+                        <Property name="errorSeverity">
+                            <Value>FAIL</Value>
+                        </Property>
+                        <Property name="succeedCode">
+                            <Value>15</Value>
+                        </Property>
+                        <Property name="failCode">
+                            <Value>16</Value>
+                        </Property>
+                        <Property name="errorCode">
+                            <Value>16</Value>
+                        </Property>
+                    </Property>
+                </Property>
+            </Property>
+        </Property>
+    </Config>
+    <Config name="com.cronos.onlinereview.autoscreening.tool.ScreeningTool">
+        <Property name="screening">
+            <Value>StartDTG:October 17, 2006 10:16:25 AM</Value>
+            <Value>EndDTG:</Value>
+            <Value>IntervalValue:30</Value>
+            <Value>IntervalUnit:SECOND</Value>
+            <Value>JobType:JOB_TYPE_JAVA_CLASS</Value>
+            <Value>JobCmd:com.cronos.onlinereview.autoscreening.tool.ScreeningTool$ScreeningJob</Value>
+        </Property>
+    </Config>
+    <Config name="com.topcoder.servlet.request.LocalFileUpload">
+        <Property name="allowed_dirs">
+            <Value>/home/onlinereview/downloads</Value>
+        </Property>
+        <Property name="default_dir">
+            <Value>/home/onlinereview/downloads</Value>
+        </Property>
+        <Property name="overwrite">
+            <Value>false</Value>
+        </Property>
+    </Config>
+    <Config name="com.topcoder.servlet.request.RemoteFileUpload">
+        <Property name="temp_dir">
+            <Value>temp</Value>
+        </Property>
+        <Property name="ip_address">
+            <Value>127.0.0.1</Value>
+        </Property>
+        <Property name="port">
+            <Value>9998</Value>
+        </Property>
+        <Property name="message_namespace">
+            <Value>com.topcoder.processor.ipserver.message</Value>
+        </Property>
+        <Property name="handler_id">
+            <Value>fss_handler</Value>
+        </Property>
+    </Config>
+    <Config name="com.topcoder.util.xmi.parser.default.handler">
+        <Property name="UseCaseDiagram">
+            <Value>com.topcoder.util.xmi.parser.handler.DefaultXMIHandler</Value>
+        </Property>
+        <Property name="UseCase">
+            <Value>com.topcoder.util.xmi.parser.handler.DefaultXMIHandler</Value>
+        </Property>
+        <Property name="Actor">
+            <Value>com.topcoder.util.xmi.parser.handler.DefaultXMIHandler</Value>
+        </Property>
+        <Property name="ClassDiagram">
+            <Value>com.topcoder.util.xmi.parser.handler.DefaultXMIHandler</Value>
+        </Property>
+        <Property name="SequenceDiagram">
+            <Value>com.topcoder.util.xmi.parser.handler.DefaultXMIHandler</Value>
+        </Property>
+        <Property name="ActivityDiagram">
+            <Value>com.topcoder.util.xmi.parser.handler.DefaultXMIHandler</Value>
+        </Property>
+        <Property name="DeploymentDiagram">
+            <Value>com.topcoder.util.xmi.parser.handler.DefaultXMIHandler</Value>
+        </Property>
+        <Property name="CollaborationDiagram">
+            <Value>com.topcoder.util.xmi.parser.handler.DefaultXMIHandler</Value>
+        </Property>
+        <Property name="StateDiagram">
+            <Value>com.topcoder.util.xmi.parser.handler.DefaultXMIHandler</Value>
+        </Property>
+        <Property name="StateMachine.top">
+            <Value>com.topcoder.util.xmi.parser.handler.DefaultXMIHandler</Value>
+        </Property>
+        <Property name="StateMachine.transitions">
+            <Value>com.topcoder.util.xmi.parser.handler.DefaultXMIHandler</Value>
+        </Property>
+        <Property name="StateMachine_top">
+            <Value>com.topcoder.util.xmi.parser.handler.DefaultXMIHandler</Value>
+        </Property>
+        <Property name="StateMachine_transitions">
+            <Value>com.topcoder.util.xmi.parser.handler.DefaultXMIHandler</Value>
+        </Property>
+    </Config>
+    <Config name="com.topcoder.processor.ipserver.message">
+        <!-- The mapping between names and message class names, required -->
+        <Property name="MessageTypes">
+        <!-- Property name is the name, property value is the class name.There must be at
+         least one of this property. -->
+            <Property name="simple">
+                <Value>com.topcoder.processor.ipserver.message.serializable.SimpleSerializableMessage</Value>
+            </Property>
+            <Property name="KeepAlive">
+                <Value>com.topcoder.processor.ipserver.message.serializable.SimpleSerializableMessage</Value>
+            </Property>
+        </Property>
+    </Config>
+    <Config name="com.topcoder.util.log">
+        <Property name="logClass">
+            <Value>com.topcoder.util.log.log4j.Log4jLog</Value>
+        </Property>
+        <Property name="config.file">
+            <Value>log4j.properties</Value>
+        </Property>
+    </Config>
+    <Config name="com.topcoder.db.connectionfactory.DBConnectionFactoryImpl">
+        <Property name="connections">
+            <Property name="default">
+                <Value>tcs</Value>
+            </Property>
+            <Property name="tcs">
+                <Property name="producer">
+                    <Value>com.topcoder.db.connectionfactory.producers.JDBCConnectionProducer</Value>
+                </Property>
+                <Property name="parameters">
+                    <Property name="jdbc_driver">
+                        <Value>com.informix.jdbc.IfxDriver</Value>
+                    </Property>
+                    <Property name="jdbc_url">
+                        <Value>jdbc:informix-sqli://63.118.154.218:1526/tcs_catalog:INFORMIXSERVER=devinformix10_shm;</Value>
+                    </Property>
+                    <Property name="user">
+                        <Value>coder</Value>
+                    </Property>
+                    <Property name="password">
+                        <Value>altec</Value>
+                    </Property>
+                </Property>
+            </Property>
+        </Property>
+    </Config>
+    <Config name="com.topcoder.util.log">
+        <Property name="logClass">
+            <Value>com.topcoder.util.log.log4j.Log4jLog</Value>
+        </Property>
+        <Property name="config.file">
+            <Value>log4j.properties</Value>
+        </Property>
+    </Config>
+</CMConfig>
