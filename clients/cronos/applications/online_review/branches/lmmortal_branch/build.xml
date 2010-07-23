@@ -768,7 +768,6 @@
         </copy>    
         <copy todir="${deploy-lib-dir}" overwrite="true" verbose="${verbose}" flatten="true">
             <fileset dir="${shared_libdir}">
-                <include name="${forums.jar.name}"/>
                 <include name="${shared.jar.name}"/>
                 <include name="${tcwebcommon.jar.name}"/>
             </fileset>
@@ -865,17 +864,12 @@
         <delete failonerror="false" dir="${deploy-dir}" />        
     </target>
    
-    <!-- temporary fix to remove forums.jar from JBOSS_HOME/server/default/lib -->
-    <target name="remove_forums">
-      <delete file="${deploy-lib-dir}/forums.jar" />
-    </target>
-  
     <!-- builds,tokenizes and deploys the application -->
-    <target name="deploy" depends="clean, build, deploy_locally, remove_forums" />
+    <target name="deploy" depends="clean, build, deploy_locally" />
     <target name="deploy_remote" depends="clean, build, deploy_remote_unix, deploy_remote_windows" />
     
     <!-- builds db schema, deploys OR, deploys. -->
-    <target name="first_deploy" depends="deploy, copy_jboss_files, remove_forums">
+    <target name="first_deploy" depends="deploy, copy_jboss_files">
     </target>
 	
 	<!-- old untouched targets -->
