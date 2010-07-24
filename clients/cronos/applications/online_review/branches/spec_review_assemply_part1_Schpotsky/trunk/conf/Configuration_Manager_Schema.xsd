@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright (c) 2010 TopCoder, Inc.  All rights reserved.
+  -->
+
+<!-- edited with XML Spy v4.4 U (http://www.xmlspy.com) by Dan McKee (Dan McKee) -->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<xs:element name="CMConfig">
+		<xs:annotation>
+			<xs:documentation>Root element for a TCS Configuration Manager XML Config file</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:choice>
+				<xs:element name="Config" type="Config" minOccurs="0" maxOccurs="unbounded">
+					<xs:unique name="unique_config_name">
+						<xs:selector xpath="Config"/>
+						<xs:field xpath="@name"/>
+					</xs:unique>
+				</xs:element>
+				<xs:sequence minOccurs="0">
+					<xs:element name="ListDelimiter" type="xs:string" minOccurs="0"/>
+					<xs:element name="Property" type="Property" minOccurs="0" maxOccurs="unbounded">
+						<xs:unique name="unique_property_name">
+							<xs:selector xpath="Property"/>
+							<xs:field xpath="@name"/>
+						</xs:unique>
+					</xs:element>
+				</xs:sequence>
+			</xs:choice>
+			<xs:attribute name="version" type="xs:string" use="optional" default="v2"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:complexType name="Property">
+		<xs:annotation>
+			<xs:documentation>One Property/Value pair (Value may occur multiple times)</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+            <xs:element name="Property" type="Property" minOccurs="0" maxOccurs="unbounded">
+                <xs:unique name="unique_nested_property_name">
+                    <xs:selector xpath="Property"/>
+                    <xs:field xpath="@name"/>
+                </xs:unique>
+            </xs:element>
+			<xs:element name="Value" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+		<xs:attribute name="name" type="xs:string" use="required"/>
+	</xs:complexType>
+	<xs:complexType name="Config">
+		<xs:annotation>
+			<xs:documentation>List of properties (key/value pairs) for one configuration namespace</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="ListDelimiter" type="xs:string" minOccurs="0"/>
+			<xs:element name="Property" type="Property" minOccurs="0" maxOccurs="unbounded">
+				<xs:unique name="unique_prop_name">
+					<xs:selector xpath="Property"/>
+					<xs:field xpath="@name"/>
+				</xs:unique>
+			</xs:element>
+		</xs:sequence>
+		<xs:attribute name="name" type="xs:string" use="required"/>
+	</xs:complexType>
+</xs:schema>
