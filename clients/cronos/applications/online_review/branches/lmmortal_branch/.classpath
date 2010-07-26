@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry kind="src" path="src/java/main"/>
+	<classpathentry excluding="**/.svn/**" kind="src" path="src/java/main"/>
 	<classpathentry kind="src" path="web"/>
 	<classpathentry kind="src" path="src/java/tests"/>
-	<classpathentry kind="con" path="org.eclipse.jst.j2ee.internal.web.container"/>
 	<classpathentry exported="true" kind="lib" path="lib/tcs/authentication_factory/2.0/authentication_factory.jar" sourcepath="/authentication_factory/src/java/main">
 		<attributes>
 			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
@@ -352,20 +351,20 @@
 	<classpathentry kind="lib" path="lib/third_party/jivebase.jar"/>
 	<classpathentry kind="lib" path="lib/third_party/jiveforums.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/jdk1.6.0_12"/>
-	<classpathentry kind="lib" path="D:/TopCoder/copilot/OR/online_review/lib/tcs/base_exception/2.0.0/base_exception.jar"/>
-	<classpathentry kind="lib" path="D:/TopCoder/copilot/OR/online_review/lib/tcs/document_generator/2.1/document_generator.jar"/>
-	<classpathentry kind="lib" path="D:/TopCoder/copilot/OR/online_review/lib/tcs/email_engine/3.1.0/email_engine.jar"/>
-	<classpathentry kind="lib" path="D:/TopCoder/copilot/OR/online_review/lib/tcs/online_review_phases/1.3/online_review_phases.jar"/>
-	<classpathentry kind="lib" path="D:/TopCoder/copilot/OR/online_review/lib/shared/shared.jar"/>
-	<classpathentry kind="lib" path="D:/TopCoder/copilot/OR/online_review/lib/shared/tcwebcommon.jar"/>
-	<classpathentry kind="lib" path="D:/TopCoder/copilot/OR/online_review/lib/third_party/mail.jar"/>
-	<classpathentry kind="lib" path="D:/TopCoder/copilot/OR/online_review/lib/third_party/jsp-api.jar"/>
-	<classpathentry kind="lib" path="D:/TopCoder/copilot/OR/online_review/lib/third_party/servlet-api.jar"/>
-	<classpathentry kind="lib" path="D:/TopCoder/copilot/OR/online_review/lib/third_party/activation.jar"/>
-	<classpathentry kind="lib" path="D:/TopCoder/copilot/OR/online_review/lib/javaee.jar"/>
-	<classpathentry kind="lib" path="D:/TopCoder/copilot/OR/online_review/lib/tcs/distribution_tool/1.0.1/distribution_tool.jar"/>
-	<classpathentry kind="lib" path="D:/TopCoder/copilot/OR/online_review/jboss_files/deploy/dde.ear/TermsOfUse.jar"/>
-	<classpathentry kind="lib" path="D:/TopCoder/copilot/OR/online_review/jboss_files/deploy/dde.ear/catalog.jar"/>
-	<classpathentry kind="lib" path="D:/TopCoder/copilot/OR/online_review/jboss_files/deploy/dde.ear/forums.jar"/>
+	<classpathentry kind="lib" path="lib/tcs/base_exception/2.0.0/base_exception.jar"/>
+	<classpathentry kind="lib" path="lib/tcs/document_generator/2.1/document_generator.jar"/>
+	<classpathentry kind="lib" path="lib/tcs/email_engine/3.1.0/email_engine.jar"/>
+	<classpathentry kind="lib" path="lib/tcs/online_review_phases/1.3/online_review_phases.jar"/>
+	<classpathentry kind="lib" path="lib/shared/tcwebcommon.jar"/>
+	<classpathentry kind="lib" path="third_party/mail.jar"/>
+	<classpathentry kind="lib" path="third_party/activation.jar"/>
+	<classpathentry kind="lib" path="lib/tcs/distribution_tool/1.0.1/distribution_tool.jar"/>
+	<classpathentry kind="lib" path="lib/shared/forums.jar"/>
+	<classpathentry kind="lib" path="D:/TopCoder/third_party/j2ee/1.4/j2ee.jar"/>
+	<classpathentry kind="lib" path="lib/third_party/jsp-api.jar"/>
+	<classpathentry kind="lib" path="lib/third_party/servlet-api.jar"/>
+	<classpathentry kind="lib" path="lib/shared/catalog.jar"/>
+	<classpathentry kind="lib" path="lib/shared/shared.jar"/>
+	<classpathentry kind="lib" path="lib/tcs/pacts_services/PactsClientServices.jar"/>
 	<classpathentry kind="output" path="build/classes"/>
 </classpath>
