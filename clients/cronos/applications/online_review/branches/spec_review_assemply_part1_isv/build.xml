@@ -119,7 +119,7 @@
     <property name="configuration_persistence.path" value="configuration_persistence/${configuration_persistence.version}" />
     <property name="configuration_persistence.jar" value="${tcs_libdir}/${configuration_persistence.path}/${configuration_persistence.jar.name}" />
 
-    <property name="data_validation.version" value="1.0"/>
+    <property name="data_validation.version" value="1.1.1"/>
     <property name="data_validation.jar.name" value="data_validation.jar"/>
     <property name="data_validation.path" value="data_validation/${data_validation.version}"/>
     <property name="data_validation.jar" value="${tcs_libdir}/${data_validation.path}/${data_validation.jar.name}"/>
@@ -134,12 +134,12 @@
     <property name="db_connection_factory.path" value="db_connection_factory/${db_connection_factory.version}" />
     <property name="db_connection_factory.jar" value="${tcs_libdir}/${db_connection_factory.path}/${db_connection_factory.jar.name}" />
 
-    <property name="deliverable_management.version" value="1.0.3" />
+    <property name="deliverable_management.version" value="1.1.0" />
     <property name="deliverable_management.jar.name" value="deliverable_management.jar" />
     <property name="deliverable_management.path" value="deliverable_management/${deliverable_management.version}" />
     <property name="deliverable_management.jar" value="${tcs_libdir}/${deliverable_management.path}/${deliverable_management.jar.name}" />
 
-    <property name="deliverable_management_persistence.version" value="1.0.3" />
+    <property name="deliverable_management_persistence.version" value="1.1.0" />
     <property name="deliverable_management_persistence.jar.name" value="deliverable_management_persistence.jar" />
     <property name="deliverable_management_persistence.path" value="deliverable_management_persistence/${deliverable_management_persistence.version}" />
     <property name="deliverable_management_persistence.jar" value="${tcs_libdir}/${deliverable_management_persistence.path}/${deliverable_management_persistence.jar.name}" />
@@ -214,7 +214,7 @@
     <property name="online_review_login.path" value="online_review_login/${online_review_login.version}" />
     <property name="online_review_login.jar" value="${tcs_libdir}/${online_review_login.path}/${online_review_login.jar.name}" />
 
-    <property name="online_review_phases.version" value="1.3" />
+    <property name="online_review_phases.version" value="1.4" />
     <property name="online_review_phases.jar.name" value="online_review_phases.jar" />
     <property name="online_review_phases.path" value="online_review_phases/${online_review_phases.version}" />
     <property name="online_review_phases.jar" value="${tcs_libdir}/${online_review_phases.path}/${online_review_phases.jar.name}" />
@@ -224,7 +224,7 @@
     <property name="online_review_upload_services.path" value="online_review_upload_services/${online_review_upload_services.version}" />
     <property name="online_review_upload_services.jar" value="${tcs_libdir}/${online_review_upload_services.path}/${online_review_upload_services.jar.name}" />
 
-    <property name="phase_management.version" value="1.0.3" />
+    <property name="phase_management.version" value="1.0.4" />
     <property name="phase_management.jar.name" value="phase_management.jar" />
     <property name="phase_management.path" value="phase_management/${phase_management.version}" />
     <property name="phase_management.jar" value="${tcs_libdir}/${phase_management.path}/${phase_management.jar.name}" />
@@ -249,7 +249,7 @@
     <property name="project_phases.path" value="project_phases/${project_phases.version}" />
     <property name="project_phases.jar" value="${tcs_libdir}/${project_phases.path}/${project_phases.jar.name}" />
 
-    <property name="project_phase_template.version" value="1.0.1" />
+    <property name="project_phase_template.version" value="1.2.0" />
     <property name="project_phase_template.jar.name" value="project_phase_template.jar" />
     <property name="project_phase_template.path" value="project_phase_template/${project_phase_template.version}" />
     <property name="project_phase_template.jar" value="${tcs_libdir}/${project_phase_template.path}/${project_phase_template.jar.name}" />
@@ -963,6 +963,66 @@ Note: The security manager that comes with the app may not be compatible with th
     <!-- ************************************************************************** -->
     <!-- ************************ END REMOVE EVERYTHING ***************************** -->
     <!-- ************************************************************************** -->
+
+    <!--
+        ++ =======================================================================
+        ++ Macro: compile_component
+        ++ Compiles specified component
+        ++ =======================================================================
+    -->
+    <macrodef name="compile_component" description="Compiles the component">
+        <attribute name="component"/>
+        <attribute name="version"/>
+        <attribute name="path"/>
+
+        <sequential>
+            <property name="component_base_dir" value="@{path}"/>
+            <property name="component_src_dir" value="${component_base_dir}/src/java/main"/>
+            <property name="component_build_dir" value="${component_base_dir}/build"/>
+            <property name="component_build_classes_dir" value="${component_build_dir}/classes"/>
+            <property name="component_jar_file" value="${component_build_dir}/@{component}.jar"/>
+            <property name="component_dist_dir" value="${tcs_libdir}/@{component}/@{version}"/>
+
+            <delete dir="${component_build_dir}"/>
+            <mkdir dir="${component_build_dir}"/>
+            <mkdir dir="${component_build_classes_dir}"/>
+
+            <echo message="Base: ${component_base_dir}"/>
+            <echo message="Build: ${component_build_dir}"/>
+            <echo message="Src: ${component_src_dir}"/>
+            <echo message="Dist: ${component_dist_dir}"/>
+            <echo message="Jar: ${component_jar_file}"/>
+
+            <javac srcdir="${component_src_dir}"
+                   destdir="${component_build_classes_dir}"
+                   deprecation="${deprecation}"
+                   debug="on"
+                   source="1.5" target="1.5" memoryMaximumSize="512M" memoryInitialSize="64M" fork="true">
+                <classpath refid="buildlibs"/>
+                <include name="**/*"/>
+            </javac>
+            <jar basedir="${component_build_classes_dir}" jarfile="${component_jar_file}" includes="**"/>
+            <mkdir dir="${component_dist_dir}"/>
+            <copy file="${component_jar_file}" todir="${component_dist_dir}"/>
+        </sequential>
+    </macrodef>
+
+    <target name="compile_component_1">
+        <compile_component component="online_review_phases" version="1.4"
+                           path="../../Components/online_review_phases"/>
+    </target>
+<!--
+    <target name="compile_component_2">
+        <compile_component component="online_review_login" version="1.1"
+                           path="../../Components/online_review_login"/>
+    </target>
+    <target name="compile_component_3">
+        <compile_component component="online_review_deliverables" version="1.0"
+                           path="../../Components/online_review_deliverables"/>
+    </target>
+-->
+
+
 
 
 </project>
