@@ -397,3 +397,6 @@ INSERT INTO screening_response_lu(screening_response_id, response_severity_id, r
   VALUES(14, 2, 'TCS-014', 'Your submission contains personal information.', 'System', CURRENT, 'System', CURRENT);
 INSERT INTO screening_response_lu(screening_response_id, response_severity_id, response_code, response_text, create_user, create_date, modify_user, modify_date)
   VALUES(15, 3, 'TCS-015', 'Your submission has passed the auto screening process.', 'System', CURRENT, 'System', CURRENT);
+
+INSERT INTO submission_type_lu VALUES (1, 'Contest Submission', 'Contest Submission', 'System', CURRENT, 'System', CURRENT);
+INSERT INTO submission_type_lu VALUES (2, 'Specification Submission', 'Specification Submission', 'System', CURRENT, 'System', CURRENT);

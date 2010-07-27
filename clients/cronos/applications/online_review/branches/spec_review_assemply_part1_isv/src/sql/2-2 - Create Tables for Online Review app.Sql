@@ -635,3 +635,22 @@ CREATE TABLE project_result
    PRIMARY KEY(user_id, project_id) CONSTRAINT PK_PROJECT_RESULT
 );
 CREATE INDEX proj_result_idx1 ON project_result(project_id);
+
+CREATE TABLE submission_type_lu (
+  submission_type_id            INTEGER                         NOT NULL,
+  name                          VARCHAR(64)                     NOT NULL,
+  description                   VARCHAR(254)                    NOT NULL,
+  create_user                   VARCHAR(64)                     NOT NULL,
+  create_date                   DATETIME YEAR TO FRACTION(3)    NOT NULL,
+  modify_user                   VARCHAR(64)                     NOT NULL,
+  modify_date                   DATETIME YEAR TO FRACTION(3)    NOT NULL,
+  PRIMARY KEY(submission_type_id)
+);
+
+ALTER TABLE submission ADD submission_type_id INTEGER;
+
+ALTER TABLE submission ADD CONSTRAINT FOREIGN KEY(submission_type_id) REFERENCES submission_type_lu(submission_type_id)
+      CONSTRAINT FK_submission_1;
+
+UPDATE submission SET submission_type_id = 1;
+ALTER TABLE submission MODIFY submission_type_id INTEGER NOT NULL;
