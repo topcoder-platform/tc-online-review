@@ -21,6 +21,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import com.cronos.onlinereview.dataaccess.ResourceDataAccess;
 import com.cronos.onlinereview.deliverables.*;
+import com.topcoder.management.deliverable.SubmissionType;
 import com.topcoder.management.resource.persistence.ResourcePersistenceException;
 import com.topcoder.management.review.ReviewManagementException;
 import com.topcoder.project.phases.Dependency;
@@ -198,6 +199,9 @@ import com.topcoder.web.ejb.forums.ForumsHome;
  * Version 1.9 (Specification Review Part 1 Assembly 1.0) Change notes:
  *   <ol>
  *     <li>Removed dependency on <code>ContestDependencyAutomation</code> class.</li>
+ *     <li>Updated {@link #createDeliverableManager(HttpServletRequest)} method to set the checkers for
+ *     <code>Specification Submission</code> and <code>Specification Review</code> deliverbales.</li>
+ *     <li>Added {@link #findSubmissionTypeByName(SubmissionType[], String)} method.</li>
  *   </ol>
  * </p>
 
@@ -907,6 +911,30 @@ public class ActionsHelper {
         for (int i = 0; i < submissionStatuses.length; ++i) {
             if (submissionStatuses[i].getName().equalsIgnoreCase(submissionStatusName)) {
                 return submissionStatuses[i];
+            }
+        }
+        return null;
+    }
+
+    /**
+     * <p>This static method searches for the submission type with the specified name in a provided array of submission
+     * types. The search is case-insensitive.</p>
+     *
+     * @param submissionTypes an array of submission types to search for wanted submission type among.
+     * @param submissionTypeName the name of the needed submission type.
+     * @return found submission type, or <code>null</code> if a type with the specified name has not been found in
+     *         the provided array of submission types.
+     * @throws IllegalArgumentException if any of the parameters are <code>null</code> or
+     *         <code>submissionTypeName</code> parameter is empty string.
+     * @since 1.9
+     */
+    public static SubmissionType findSubmissionTypeByName(SubmissionType[] submissionTypes, String submissionTypeName) {
+        validateParameterNotNull(submissionTypes, "submissionTypes");
+        validateParameterStringNotEmpty(submissionTypeName, "submissionTypeName");
+
+        for (SubmissionType submissionType :  submissionTypes) {
+            if (submissionType.getName().equalsIgnoreCase(submissionTypeName)) {
+                return submissionType;
             }
         }
         return null;
@@ -2809,6 +2837,7 @@ public class ActionsHelper {
             DeliverableChecker testCasesChecker = new TestCasesDeliverableChecker(dbconn);
 
             checkers.put(Constants.SUBMISSION_DELIVERABLE_NAME, new SubmissionDeliverableChecker(dbconn));
+            checkers.put(Constants.SPECIFICATION_SUBMISSION_DELIVERABLE_NAME, new SubmissionDeliverableChecker(dbconn));
             checkers.put(Constants.SCREENING_DELIVERABLE_NAME, new IndividualReviewDeliverableChecker(dbconn));
             checkers.put(Constants.PRIMARY_SCREENING_DELIVERABLE_NAME, committedChecker);
             checkers.put(Constants.REVIEW_DELIVERABLE_NAME, committedChecker);

@@ -76,8 +76,16 @@ import com.topcoder.util.errorhandling.BaseException;
  *   </ol>
  * </p>
  *
- * @author George1, isv
- * @version 1.3
+ * <p>
+ * Version 1.4 (Specification Review Part 1 Assembly 1.0) Change notes:
+ *   <ol>
+ *     <li>Added {@link #serviceSpecReviewAppFunc(HttpServletRequest, PhaseGroup, Project, Phase, Resource[],
+ *         FinalFixesInfo, boolean)} method.</li>
+ *   </ol>
+ * </p>
+ *
+ * @author George1, isv, TCSDEVELOPER
+ * @version 1.4
  */
 final class PhasesDetailsServices {
 
@@ -242,6 +250,9 @@ final class PhasesDetailsServices {
                         allProjectResources, isAfterAppealsResponse, finalFixes);
             } else if (phaseGroup.getAppFunc().equalsIgnoreCase(Constants.POST_MORTEM_APP_FUNC)) {
                 servicePostMortemAppFunc(request, phaseGroup, project, phase, allProjectResources);
+            } else if (phaseGroup.getAppFunc().equalsIgnoreCase(Constants.SPEC_REVIEW_APP_FUNC)) {
+                serviceSpecReviewAppFunc(request, phaseGroup, project, phase, allProjectResources, finalFixes,
+                    isAfterAppealsResponse);
             }
         }
 
@@ -821,6 +832,100 @@ final class PhasesDetailsServices {
     private static void serviceFinalFixAppFunc(HttpServletRequest request, PhaseGroup phaseGroup, Project project,
             Phase phase, Resource[] allProjectResources, FinalFixesInfo finalFixes, boolean isAfterAppealsResponse)
         throws BaseException {
+        retrieveSubmissions(request, phaseGroup, project, isAfterAppealsResponse);
+
+        String phaseName = phase.getPhaseType().getName();
+
+        if (phaseGroup.getSubmitters() != null) {
+            Resource winner = phaseGroup.getWinner();
+            if (winner == null) {
+                winner = ActionsHelper.getWinner(request, phase.getProject().getId());
+                phaseGroup.setWinner(winner);
+            }
+            if (winner == null) {
+                return;
+            }
+
+            if (finalFixes.finalFixes == null) {
+                // Obtain an instance of Upload Manager
+                UploadManager upMgr = ActionsHelper.createUploadManager(request);
+                UploadType[] allUploadTypes = upMgr.getAllUploadTypes();
+
+                Filter filterType = UploadFilterBuilder.createUploadTypeIdFilter(
+                        ActionsHelper.findUploadTypeByName(allUploadTypes, "Final Fix").getId());
+                Filter filterResource = UploadFilterBuilder.createResourceIdFilter(winner.getId());
+
+                Filter filter = new AndFilter(Arrays.asList(filterType, filterResource));
+                finalFixes.finalFixes = upMgr.searchUploads(filter);
+
+                Arrays.sort(finalFixes.finalFixes, new Comparators.UploadComparer());
+
+                finalFixes.finalFixIdx = 0;
+                finalFixes.finalFixApprovalIdx = 0;
+            }
+        }
+
+        if (phaseName.equalsIgnoreCase(Constants.FINAL_FIX_PHASE_NAME) && finalFixes.finalFixes != null) {
+            if (finalFixes.finalFixIdx < finalFixes.finalFixes.length) {
+                phaseGroup.setFinalFix(finalFixes.finalFixes[finalFixes.finalFixIdx++]);
+            }
+        }
+
+        if (phaseName.equalsIgnoreCase(Constants.FINAL_REVIEW_PHASE_NAME) &&
+                phaseGroup.getSubmitters() != null) {
+            Resource[] reviewer = ActionsHelper.getResourcesForPhase(allProjectResources, phase);
+
+            if (reviewer == null || reviewer.length == 0) {
+                return;
+            }
+
+            Filter filterResource = new EqualToFilter("reviewer", new Long(reviewer[0].getId()));
+            Filter filterProject = new EqualToFilter("project", new Long(project.getId()));
+
+            Filter filter = new AndFilter(filterResource, filterProject);
+
+            // Obtain an instance of Review Manager
+            ReviewManager revMgr = ActionsHelper.createReviewManager(request);
+            Review[] reviews = revMgr.searchReviews(filter, true);
+
+            if (reviews.length != 0) {
+                phaseGroup.setFinalReview(reviews[0]);
+                // If final fixes are accepted then set the index of accepted final fixes to be mapped to next
+                // Approval phase
+                Comment[] comments = reviews[0].getAllComments();
+                boolean rejected = false;
+                for (int i = 0; !rejected && i < comments.length; i++) {
+                    String value = (String) comments[i].getExtraInfo();
+                    if (comments[i].getCommentType().getName().equals("Final Review Comment")) {
+                        if ("Rejected".equalsIgnoreCase(value)) {
+                            rejected = true;
+                        }
+                    }
+                }
+                if (!rejected) {
+                    finalFixes.finalFixApprovalIdx = finalFixes.finalFixIdx - 1;
+                }
+            }
+        }
+    }
+
+    /**
+     * TODO: Write documentation for this method.
+     *
+     * @param request a
+     * @param phaseGroup a
+     * @param project a
+     * @param phase a
+     * @param allProjectResources a
+     * @param finalFixes a
+     * @param isAfterAppealsResponse a
+     * @throws BaseException if an unexpected error occurs.
+     * @since 1.4
+     */
+    private static void serviceSpecReviewAppFunc(HttpServletRequest request, PhaseGroup phaseGroup, Project project,
+        Phase phase, Resource[] allProjectResources, FinalFixesInfo finalFixes, boolean isAfterAppealsResponse)
+        throws BaseException {
+
         retrieveSubmissions(request, phaseGroup, project, isAfterAppealsResponse);
 
         String phaseName = phase.getPhaseType().getName();

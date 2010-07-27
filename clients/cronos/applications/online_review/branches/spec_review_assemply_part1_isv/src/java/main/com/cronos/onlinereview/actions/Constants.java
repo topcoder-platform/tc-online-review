@@ -43,15 +43,19 @@ package com.cronos.onlinereview.actions;
  * </p>
  *
  * <p>
- * Version 1.5 (Specification Review Part 1 Assembly 1.0) Change notes:
+ * Version 1.6 (Specification Review Part 1 Assembly 1.0) Change notes:
  *   <ol>
  *     <li>Added {@link #SPECIFICATION_REVIEW_PHASE_NAME} constant.</li>
  *     <li>Added {@link #SPECIFICATION_SUBMISSION_PHASE_NAME} constant.</li>
+ *     <li>Added {@link #SPECIFICATION_SUBMISSION_DELIVERABLE_NAME} constant.</li>
+ *     <li>Added {@link #PERFORM_SPECIFICATION_SUBMISSION_PERM_NAME} constant.</li>
+ *     <li>Added {@link #SPEC_REVIEW_APP_FUNC} constant.</li>
+ *     <li>Changed value of {@link #PERFORM_SUBM_PERM_NAME} constant.</li>
  *   </ol>
  * </p>
  *
  * @author George1, real_vg, pulky, isv, TCSDEVELOPER
- * @version 1.5
+ * @version 1.6
  */
 public class Constants {
 
@@ -364,10 +368,17 @@ public class Constants {
     public static final String VIEW_REGISTRATIONS_PERM_NAME = "View Registrations";
 
     /**
-     * This member variable is a string constant that defines the name of the Perform Submission
+     * This member variable is a string constant that defines the name of the Perform Contest Submission
      * permission.
      */
-    public static final String PERFORM_SUBM_PERM_NAME = "Perform Submission";
+    public static final String PERFORM_SUBM_PERM_NAME = "Perform Contest Submission";
+
+    /**
+     * <p>A <code>String</code> providing the name for <code>Perform Specification Submission</code> permission.</p>
+     *
+     * @since 1.6
+     */
+    public static final String PERFORM_SPECIFICATION_SUBMISSION_PERM_NAME = "Perform Specification Submission";
 
     /**
      * This member variable is a string constant that defines the name of the View All Submissions
@@ -702,14 +713,14 @@ public class Constants {
     /**
      * <p>A <code>String</code> providing the name for <code>Specification Submission</code> phase.</p>
      *
-     * @since 1.4
+     * @since 1.6
      */
     public static final String SPECIFICATION_SUBMISSION_PHASE_NAME = "Specification Submission";
 
     /**
      * <p>A <code>String</code> providing the name for <code>Specification Review</code> phase.</p>
      *
-     * @since 1.4
+     * @since 1.6
      */
     public static final String SPECIFICATION_REVIEW_PHASE_NAME = "Specification Review";
 
@@ -771,6 +782,12 @@ public class Constants {
      */
     public static final String POST_MORTEM_APP_FUNC = "POSTMORTEM";
 
+    /**
+     * <p>A <code>String</code> providing the logical name for phase group for <code>Specification Review</code>.</p>
+     *
+     * @since 1.6
+     */
+    public static final String SPEC_REVIEW_APP_FUNC = "SPEC_REVIEW";
 
     // -------------------------------------------------------------------- Deliverable names -----
 
@@ -779,6 +796,13 @@ public class Constants {
      * deliverable.
      */
     public static final String SUBMISSION_DELIVERABLE_NAME = "Submission";
+
+    /**
+     * <p>A <code>String</code> providing the name for <code>Specification Submission</code> deliverable.</p>
+     *
+     * @since 1.6
+     */
+    public static final String SPECIFICATION_SUBMISSION_DELIVERABLE_NAME = "Specification Submission";
 
     /**
      * This member variable is a string constant that defines the name of the Screening Scorecard

@@ -6,7 +6,7 @@ Notes on testing some actions from Project Admin & Review
      To go to the upload submission page you should enter the following into
      the Address field of your browser:
 
-       http://localhost:8080/online_review/actions/UploadSubmission.do?method=uploadSubmission&pid=<id-of-project>
+       http://localhost:8080/online_review/actions/UploadContestSubmission.do?method=uploadContestSubmission&pid=<id-of-project>
 
      where <id-of-project> part is the ID of any of the existing projects. The
      user you are logged under must have a Submitter role for that project to
@@ -28,7 +28,7 @@ Notes on testing some actions from Project Admin & Review
      upload (Managers can download even uploads that have "Deleted" status
      though). Here is the link to start download:
 
-       http://localhost:8080/online_review/actions/DownloadSubmission.do?method=downloadSubmission&uid=<id-of-upload>
+       http://localhost:8080/online_review/actions/DownloadContestSubmission.do?method=downloadContestSubmission&uid=<id-of-upload>
 
      It is advisable to first use Upload Submission action to create some
      uploads in the file store.

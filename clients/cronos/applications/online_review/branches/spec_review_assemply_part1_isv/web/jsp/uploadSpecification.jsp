@@ -9,7 +9,7 @@
 
 <head>
     <jsp:include page="/includes/project/project_title.jsp">
-        <jsp:param name="thirdLevelPageKey" value="uploadSubmission.title" />
+        <jsp:param name="thirdLevelPageKey" value="uploadSpecification.title" />
     </jsp:include>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 
@@ -27,13 +27,13 @@
 
 <body>
 <div align="center">
-    
+
     <div class="maxWidthBody" align="left">
 
         <jsp:include page="/includes/inc_header.jsp" />
-        
+
         <jsp:include page="/includes/project/project_tabs.jsp" />
-        
+
             <div id="mainMiddleContent">
                 <div style="position: relative; width: 100%;">
 
@@ -54,28 +54,47 @@
                     </div><br />
 
                     <html:errors />
-                    <html:form action="/actions/UploadContestSubmission" method="POST" enctype="multipart/form-data">
-                        <html:hidden property="method" value="uploadContestSubmission" />
+                    <html:form action="/actions/UploadSpecificationSubmission" method="POST" enctype="multipart/form-data">
+                        <html:hidden property="method" value="uploadSpecificationSubmission" />
                         <html:hidden property="postBack" value="y" />
                         <html:hidden property="pid" value="${project.id}" />
+                        <html:hidden property="specificationType" value="file" />
 
                         <table class="scorecard" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;">
                             <tr>
-                                <td class="title"><bean:message key="uploadSubmission.box.UploadSubmission" /></td>
+                                <td class="title"><bean:message key="uploadSpecification.box.UploadSubmission" /></td>
                             </tr>
                             <tr class="light">
                                 <td class="value">
-                                    <bean:message key="uploadSubmission.HelpLine1" />
-                                    <a href="http://<%=ApplicationServer.SERVER_NAME%>/tc?module=Static&d1=dev&d2=support&d3=${(project.projectCategory.id eq 1) ? 'des' : 'dev'}ScreeningSample"><bean:message key="linkHere" /></a>.<br /><br />
-                                    <bean:message key="uploadSubmission.UploadSubmission" />
+                                    <bean:message key="uploadSpecification.UploadSubmission" />
                                     <html:file property="file" size="20" styleClass="inputBox" style="width:350px;vertical-align:middle;" />
                                     <html:image srcKey="btnUpload.img" altKey="btnUpload.alt" border="0" style="vertical-align:bottom;" /><br /><br />
-                                    <bean:message key="uploadSubmission.HelpLine2" />
-                                    <bean:message key="uploadSubmission.HelpLine3" />
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="lastRowTD"><!-- @ --></td>
+                            </tr>
+                        </table><br /><br />
+                    </html:form>
 
-                                    <a href="http://<%=ApplicationServer.SERVER_NAME%>/tc?module=Static&d1=dev&d2=support&d3=${(project.projectCategory.id eq 1) ? 'des' : 'dev'}Documentation"><bean:message key="uploadSubmission.SampleSubmissionAndDocs" /></a>
+                    <html:form action="/actions/UploadSpecificationSubmission" method="POST"
+                               enctype="application/x-www-form-urlencoded">
+                        <html:hidden property="method" value="uploadSpecificationSubmission" />
+                        <html:hidden property="postBack" value="y" />
+                        <html:hidden property="pid" svalue="${project.id}" />
+                        <html:hidden property="specificationType" value="text" />
 
-                                    <bean:message key="uploadSubmission.HelpLine4" />
+                        <table class="scorecard" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;">
+                            <tr>
+                                <td class="title"><bean:message key="uploadSpecification.box.SubmitSpecText" /></td>
+                            </tr>
+                            <tr class="light">
+                                <td class="value">
+                                    <html:textarea property="specificationText" rows="5" styleClass="inputBox"/>
+                                    <br/>
+                                    <html:image srcKey="btnSubmit.img" altKey="btnSubmit.alt" border="0"
+                                                style="vertical-align:bottom;" />
+                                    <br/><br/>
                                 </td>
                             </tr>
                             <tr>
@@ -90,7 +109,7 @@
 
                 </div>
             </div>
-        
+
         <jsp:include page="/includes/inc_footer.jsp" />
 
     </div>

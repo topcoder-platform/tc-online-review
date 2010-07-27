@@ -161,7 +161,7 @@
 													<html:img srcKey="viewProjectDetails.box.Submission.icoFailed.img" alt="${placeStr}" border="0" />
 												</c:if>
 											</c:if>
-											<html:link page="/actions/DownloadSubmission.do?method=downloadSubmission&uid=${submission.upload.id}" titleKey="viewProjectDetails.box.Submission.Download">${submission.id}</html:link>
+											<html:link page="/actions/DownloadContestSubmission.do?method=downloadContestSubmission&uid=${submission.upload.id}" titleKey="viewProjectDetails.box.Submission.Download">${submission.id}</html:link>
 											<c:if test="${not empty submitter}">
 												(<tc-webtag:handle coderId='${submitter.allProperties["External Reference ID"]}' context="${orfn:getHandlerContext(pageContext.request)}" />)
 											</c:if>
@@ -268,7 +268,7 @@
 										<tr id="PrevSubm${submBoxIdx}_${submissionStatus.index}" class='${(submissionStatus.index % 2 == 0) ? "light" : "dark"}' style="display:none;">
 											<td class="value" colspan="2" nowrap="nowrap">
 												<html:img border="0" srcKey="viewProjectDetails.box.Submission.icoShowMore.img" styleClass="Outline" style="visibility:hidden;" />
-												<html:link page="/actions/DownloadSubmission.do?method=downloadSubmission&amp;uid=${pastSubmission.id}">
+												<html:link page="/actions/DownloadContestSubmission.do?method=downloadContestSubmission&amp;uid=${pastSubmission.id}">
 													<bean:message key="viewProjectDetails.box.Submission.Previous.UploadID" />
 													${pastSubmission.id}</html:link></td>
 											<td class="value" width="22%">${orfn:displayDate(pageContext.request, pastSubmission.creationTimestamp)}</td>
@@ -416,7 +416,7 @@
 														<html:img srcKey="viewProjectDetails.box.Submission.icoFailed.img" alt="${placeStr}" border="0" />
 													</c:if>
 												</c:if>
-												<html:link page="/actions/DownloadSubmission.do?method=downloadSubmission&uid=${submission.upload.id}"
+												<html:link page="/actions/DownloadContestSubmission.do?method=downloadContestSubmission&uid=${submission.upload.id}"
 													titleKey="viewProjectDetails.box.Submission.Download">${submission.id}</html:link>
 												<c:if test="${not empty submitter}">
 													(<tc-webtag:handle coderId='${submitter.allProperties["External Reference ID"]}' context="${orfn:getHandlerContext(pageContext.request)}" />)
@@ -516,7 +516,7 @@
 									<tr class="light">
 										<td class="value" nowrap="nowrap">
 											<html:img srcKey="viewProjectDetails.Submitter.icoWinner.img" altKey="viewProjectDetails.Submitter.icoWinner.alt" border="0" styleClass="Outline" />
-											<html:link page="/actions/DownloadSubmission.do?method=downloadSubmission&uid=${winningSubmission.upload.id}"
+											<html:link page="/actions/DownloadContestSubmission.do?method=downloadContestSubmission&uid=${winningSubmission.upload.id}"
 												titleKey="viewProjectDetails.box.Submission.Download">${winningSubmission.id}</html:link>
 											(<tc-webtag:handle coderId='${group.winner.allProperties["External Reference ID"]}' context="${orfn:getHandlerContext(pageContext.request)}" />)
 										</td>
@@ -603,7 +603,7 @@
 									<tr class="light">
 										<td class="value" nowrap="nowrap">
 											<html:img srcKey="viewProjectDetails.Submitter.icoWinner.img" altKey="viewProjectDetails.Submitter.icoWinner.alt" border="0" styleClass="Outline" />
-											<html:link page="/actions/DownloadSubmission.do?method=downloadSubmission&uid=${winningSubmission.upload.id}"
+											<html:link page="/actions/DownloadContestSubmission.do?method=downloadContestSubmission&uid=${winningSubmission.upload.id}"
 												titleKey="viewProjectDetails.box.Submission.Download">${winningSubmission.id}</html:link>
 											(<tc-webtag:handle coderId='${group.winner.allProperties["External Reference ID"]}' context="${orfn:getHandlerContext(pageContext.request)}" />)
 										</td>
@@ -691,7 +691,7 @@
                                                           altKey="viewProjectDetails.Submitter.icoWinner.alt" border="0"
                                                           styleClass="Outline"/>
                                                 <html:link
-                                                        page="/actions/DownloadSubmission.do?method=downloadSubmission&uid=${winningSubmission.upload.id}"
+                                                        page="/actions/DownloadContestSubmission.do?method=downloadContestSubmission&uid=${winningSubmission.upload.id}"
                                                         titleKey="viewProjectDetails.box.Submission.Download">${winningSubmission.id}</html:link>
                                                 (<tc-webtag:handle
                                                     coderId='${group.winner.allProperties["External Reference ID"]}'
@@ -846,6 +846,82 @@
                                     <td class="lastRowTD" colspan="3"><!-- @ --></td>
                                 </tr>
                             </table>
+                        </c:when>
+                        <c:when test='${group.appFunc == "SPEC_REVIEW"}'>
+<%--
+                            <table class="scorecard" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;">
+                                <tr>
+                                    <td class="title" colspan="5">${group.tableName}</td>
+                                </tr>
+                                <tr>
+                                    <td class="header" nowrap="nowrap"><bean:message key="viewProjectDetails.box.Submission.ID" /></td>
+                                    <td class="headerC" nowrap="nowrap"><bean:message key="viewProjectDetails.box.Specification.Date" arg0="${group.groupIndex}" /></td>
+                                    <td class="headerC" nowrap="nowrap"><bean:message key="viewProjectDetails.box.SpecificationReview.Date" arg0="${group.groupIndex}" /></td>
+                                    <td class="headerC" nowrap="nowrap"><bean:message key="viewProjectDetails.box.SpecificationReview.Review" arg0="${group.groupIndex}" /></td>
+                                </tr>
+                                <c:set var="winningSubmission" value="" />
+                                <c:forEach items="${group.submissions}" var="submission">
+                                    <c:if test="${(not empty group.winner) && (group.winner.id == submission.upload.owner)}">
+                                        <c:set var="winningSubmission" value="${submission}" />
+                                    </c:if>
+                                </c:forEach>
+                                <c:if test="${not empty winningSubmission}">
+                                    <tr class="light">
+                                        <td class="value" nowrap="nowrap">
+                                            <html:img srcKey="viewProjectDetails.Submitter.icoWinner.img" altKey="viewProjectDetails.Submitter.icoWinner.alt" border="0" styleClass="Outline" />
+                                            <html:link page="/actions/DownloadContestSubmission.do?method=downloadContestSubmission&uid=${winningSubmission.upload.id}"
+                                                titleKey="viewProjectDetails.box.Submission.Download">${winningSubmission.id}</html:link>
+                                            (<tc-webtag:handle coderId='${group.winner.allProperties["External Reference ID"]}' context="${orfn:getHandlerContext(pageContext.request)}" />)
+                                        </td>
+                                        <c:if test="${not empty group.finalFix}">
+                                            <td class="valueC" nowrap="nowrap">${orfn:displayDate(pageContext.request, group.finalFix.modificationTimestamp)}</td>
+                                            <td class="valueC" nowrap="nowrap">
+                                                <html:link page="/actions/DownloadFinalFix.do?method=downloadFinalFix&uid=${group.finalFix.id}"
+                                                    titleKey="viewProjectDetails.box.FinalFix.Download.alt"><bean:message
+                                                    key="viewProjectDetails.box.FinalFix.Download" /></html:link>
+                                            </td>
+                                        </c:if>
+                                        <c:if test="${empty group.finalFix}">
+                                            <td class="value"><!-- @ --></td>
+                                            <c:if test="${isAllowedToUploadFF}">
+                                                <td class="valueC" nowrap="nowrap">
+                                                    <html:link page="/actions/UploadFinalFix.do?method=uploadFinalFix&pid=${project.id}"><bean:message
+                                                        key="viewProjectDetails.box.FinalFix.Upload" /></html:link></td>
+                                            </c:if>
+                                            <c:if test="${not isAllowedToUploadFF}">
+                                                <td class="valueC"><bean:message key="Incomplete" /></td>
+                                            </c:if>
+                                        </c:if>
+                                        <c:if test="${not empty group.finalReview}">
+                                            <c:if test="${group.finalReview.committed}">
+                                                <td class="valueC" nowrap="nowrap">${orfn:displayDate(pageContext.request, group.finalReview.modificationTimestamp)}</td>
+                                                <td class="valueC" nowrap="nowrap">
+                                                    <html:link page="/actions/ViewFinalReview.do?method=viewFinalReview&rid=${group.finalReview.id}"><bean:message
+                                                        key="viewProjectDetails.box.FinalReview.ViewResults" /></html:link></td>
+                                            </c:if>
+                                            <c:if test="${not group.finalReview.committed}">
+                                                <td class="value"><!-- @ --></td>
+                                                <c:if test="${isAllowedToPerformFinalReview}">
+                                                    <td class="valueC" nowrap="nowrap"><html:link
+                                                        page="/actions/EditFinalReview.do?method=editFinalReview&rid=${group.finalReview.id}"><b><bean:message
+                                                        key="viewProjectDetails.box.FinalReview.Submit" /></b></html:link></td>
+                                                </c:if>
+                                                <c:if test="${not isAllowedToPerformFinalReview}">
+                                                    <td class="valueC" nowrap="nowrap"><bean:message key="Pending" /></td>
+                                                </c:if>
+                                            </c:if>
+                                        </c:if>
+                                        <c:if test="${empty group.finalReview}">
+                                            <td class="value"><!-- @ --></td>
+                                            <td class="valueC" nowrap="nowrap"><bean:message key="NotAvailable" /></td>
+                                        </c:if>
+                                    </tr>
+                                </c:if>
+                                <tr>
+                                    <td class="lastRowTD" colspan="5"><!-- @ --></td>
+                                </tr>
+                            </table>
+--%>
                         </c:when>
 					</c:choose>
 				</c:if>

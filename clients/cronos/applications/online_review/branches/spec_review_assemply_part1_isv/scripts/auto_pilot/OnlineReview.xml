@@ -4868,8 +4868,11 @@
                 <Value>Copilot</Value>
                 <Value>Client Manager</Value>
             </Property>
-            <Property name="Perform Submission">
+            <Property name="Perform Contest Submission">
                 <Value>Submitter</Value>
+            </Property>
+            <Property name="Perform Specification Submission">
+                <Value>Specification Submitter</Value>
             </Property>
             <Property name="View All Submissions">
                 <Value>Global Manager</Value>
@@ -5276,6 +5279,21 @@
         </Property>
 
         <Property name="PhaseGrouping">
+            <Property name="Specification_Review">
+                <Property name="NameKey">
+                    <Value>ProjectPhaseGroup.Specification_Review</Value>
+                </Property>
+                <Property name="TableNameKey">
+                    <Value>ProjectPhaseGroup.Specification_Review.table</Value>
+                </Property>
+                <Property name="Phases">
+                    <Value>Specification Submission</Value>
+                    <Value>Specification Review</Value>
+                </Property>
+                <Property name="AppFunction">
+                    <Value>SPEC_REVIEW</Value>
+                </Property>
+            </Property>
             <Property name="Registration">
                 <Property name="NameKey">
                     <Value>ProjectPhaseGroup.Registration</Value>

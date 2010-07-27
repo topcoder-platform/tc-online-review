@@ -19,6 +19,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.cronos.onlinereview.dataaccess.ProjectDataAccess;
+import com.topcoder.management.deliverable.SubmissionType;
 import com.topcoder.search.builder.filter.*;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
@@ -134,8 +135,20 @@ import com.topcoder.util.file.fieldconfig.TemplateFields;
  *   </ol>
  * </p>
  *
- * @author George1, real_vg, pulky, isv
- * @version 1.5
+ * <p>
+ * Version 1.6 (Specification Review Part 1 Assembly 1.0) Change notes:
+ *   <ol>
+ *    <li>Renamed <code>uploadSubmission</code> to <code>uploadContestSubmission</code> and
+ *        <code>downloadSubmission</code> to <code>downloadContestSubmission</code> methods.</li>
+ *    <li>Added {@link #uploadSpecificationSubmission(ActionMapping, ActionForm, HttpServletRequest,
+ *        HttpServletResponse)} method.</li>
+ *    <li>Added {@link #uploadContestSubmission(ActionMapping, ActionForm, HttpServletRequest, HttpServletResponse)}
+ *        method to set type for uploaded submission.</li>
+ *   </ol>
+ * </p>
+ *
+ * @author George1, real_vg, pulky, isv, TCSDEVELOPER
+ * @version 1.6
  */
 public class ProjectDetailsActions extends DispatchAction {
 
@@ -886,7 +899,7 @@ public class ProjectDetailsActions extends DispatchAction {
      * @throws BaseException
      *             if any error occurs.
      */
-    public ActionForward uploadSubmission(ActionMapping mapping, ActionForm form,
+    public ActionForward uploadContestSubmission(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response)
         throws BaseException {
         LoggingHelper.logAction(request);
@@ -942,6 +955,7 @@ public class ProjectDetailsActions extends DispatchAction {
         // Obtain an instance of Upload Manager
         UploadManager upMgr = ActionsHelper.createUploadManager(request);
         SubmissionStatus[] submissionStatuses = upMgr.getAllSubmissionStatuses();
+        SubmissionType[] submissionTypes = upMgr.getAllSubmissionTypes();
 
         Filter filterProject = SubmissionFilterBuilder.createProjectIdFilter(project.getId());
         Filter filterResource = SubmissionFilterBuilder.createResourceIdFilter(resource.getId());
@@ -970,6 +984,7 @@ public class ProjectDetailsActions extends DispatchAction {
 
         submission.setUpload(upload);
         submission.setSubmissionStatus(ActionsHelper.findSubmissionStatusByName(submissionStatuses, "Active"));
+        submission.setSubmissionType(ActionsHelper.findSubmissionTypeByName(submissionTypes, "Contest Submission"));
 
         // Get the name (id) of the user performing the operations
         String operator = Long.toString(AuthorizationHelper.getLoggedInUserId(request));
@@ -1005,6 +1020,126 @@ public class ProjectDetailsActions extends DispatchAction {
     }
 
     /**
+     * <p>This method is an implementation of &quot;Upload Submission&quot; Struts Action defined for
+     * this assembly, which is supposed to let the user upload his submission to the server. This
+     * action gets executed twice &#x96; once to display the page with the form, and once to process
+     * the uploaded file.</p>
+     *
+     * @return an action forward to the appropriate page. If no error has occured and this action
+     *         was called the first time, the forward will be to uploadSubmission.jsp page, which
+     *         displays the form where user can specify the file he/she wants to upload. If this
+     *         action was called during the post back (the second time), then the request should
+     *         contain the file uploaded by user. In this case, this method verifies if everything
+     *         is correct, stores the file on file server and returns a forward to the View Project
+     *         Details page.
+     * @param mapping action mapping.
+     * @param form action form.
+     * @param request the http request.
+     * @param response the http response.
+     * @throws BaseException if any error occurs.
+     */
+    public ActionForward uploadSpecificationSubmission(ActionMapping mapping, ActionForm form,
+            HttpServletRequest request, HttpServletResponse response) throws BaseException {
+        LoggingHelper.logAction(request);
+
+        // Determine if this request is a post back
+        final boolean postBack = (request.getParameter("postBack") != null);
+
+        // Verify that certain requirements are met before processing with the Action
+        CorrectnessCheckResult verification = ActionsHelper.checkForCorrectProjectId(
+            mapping, getResources(request), request, Constants.PERFORM_SPECIFICATION_SUBMISSION_PERM_NAME,
+            postBack);
+
+        // If any error has occured, return action forward contained in the result bean
+        if (!verification.isSuccessful()) {
+            return verification.getForward();
+        }
+
+        // Retrieve current project
+        Project project = verification.getProject();
+        // Get all phases for the current project
+        Phase[] phases = ActionsHelper.getPhasesForProject(ActionsHelper.createPhaseManager(request, false), project);
+
+        if (ActionsHelper.getPhase(phases, true, Constants.SPECIFICATION_SUBMISSION_PHASE_NAME) == null) {
+            return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
+                    Constants.PERFORM_SPECIFICATION_SUBMISSION_PERM_NAME, "Error.IncorrectPhase", null);
+        }
+
+        if (!postBack) {
+            // Retrieve some basic project info (such as icons' names) and place it into request
+            ActionsHelper.retrieveAndStoreBasicProjectInfo(request, verification.getProject(), getResources(request));
+            return mapping.findForward(Constants.DISPLAY_PAGE_FORWARD_NAME);
+        }
+
+        // Check if specification is already submitted
+        UploadManager upMgr = ActionsHelper.createUploadManager(request);
+        SubmissionStatus[] submissionStatuses = upMgr.getAllSubmissionStatuses();
+        SubmissionType[] submissionTypes = upMgr.getAllSubmissionTypes();
+        SubmissionType specSubmissionType
+            = ActionsHelper.findSubmissionTypeByName(submissionTypes, "Specification Submission");
+        Filter filterProject = SubmissionFilterBuilder.createProjectIdFilter(project.getId());
+        Filter filterStatus = SubmissionFilterBuilder.createSubmissionStatusIdFilter(
+                ActionsHelper.findSubmissionStatusByName(submissionStatuses, "Active").getId());
+        Filter filterType = SubmissionFilterBuilder.createSubmissionTypeIdFilter(specSubmissionType.getId());
+        Filter filter = new AndFilter(Arrays.asList(filterProject, filterType, filterStatus));
+        Submission[] oldSubmissions = upMgr.searchSubmissions(filter);
+        if ((oldSubmissions != null) && (oldSubmissions.length > 0)) {
+            // Disallow submitting more than one Specification Submission for project
+            return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
+                    Constants.PERFORM_SPECIFICATION_SUBMISSION_PERM_NAME, "Error.SpecificationAlreadyUploaded", null);
+        }
+
+        // TODO: Analyze the type of specification - text or file
+
+        DynaValidatorForm uploadSubmissionForm = (DynaValidatorForm) form;
+        FormFile file = (FormFile) uploadSubmissionForm.get("file");
+
+        // Disallow uploading of empty files
+        if (file.getFileSize() == 0) {
+            return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
+                    Constants.PERFORM_SPECIFICATION_SUBMISSION_PERM_NAME, "Error.EmptyFileUploaded", null);
+        }
+
+        StrutsRequestParser parser = new StrutsRequestParser();
+        parser.AddFile(file);
+
+        // Obtain an instance of File Upload Manager
+        FileUpload fileUpload = ActionsHelper.createFileUploadManager(request);
+
+        FileUploadResult uploadResult = fileUpload.uploadFiles(request, parser);
+        UploadedFile uploadedFile = uploadResult.getUploadedFile("file");
+
+        // Get my resource
+        Resource resource = ActionsHelper.getMyResourceForRole(request, "Specification Submitter");
+
+        // Always create a new submission/ upload
+        Submission submission = new Submission();
+        Upload upload = new Upload();
+
+        UploadStatus[] uploadStatuses = upMgr.getAllUploadStatuses();
+        UploadType[] uploadTypes = upMgr.getAllUploadTypes();
+
+        upload.setProject(project.getId());
+        upload.setOwner(resource.getId());
+        upload.setUploadStatus(ActionsHelper.findUploadStatusByName(uploadStatuses, "Active"));
+        upload.setUploadType(ActionsHelper.findUploadTypeByName(uploadTypes, "Submission"));
+        upload.setParameter(uploadedFile.getFileId());
+
+        submission.setUpload(upload);
+        submission.setSubmissionStatus(ActionsHelper.findSubmissionStatusByName(submissionStatuses, "Active"));
+        submission.setSubmissionType(specSubmissionType);
+
+        String operator = Long.toString(AuthorizationHelper.getLoggedInUserId(request));
+        upMgr.createUpload(upload, operator);
+        upMgr.createSubmission(submission, operator);
+        resource.addSubmission(submission.getId());
+        ActionsHelper.createResourceManager(request).updateResource(resource, operator);
+
+        return ActionsHelper.cloneForwardAndAppendToPath(
+                mapping.findForward(Constants.SUCCESS_FORWARD_NAME), "&pid=" + project.getId());
+    }
+
+    /**
      * This method is an implementation of &quot;Download Submission&quot; Struts Action defined for
      * this assembly, which is supposed to let the user download a submission from the server.
      *
@@ -1023,7 +1158,7 @@ public class ProjectDetailsActions extends DispatchAction {
      * @throws IOException
      *             if some error occurs during disk input/output operation.
      */
-    public ActionForward downloadSubmission(ActionMapping mapping, ActionForm form,
+    public ActionForward downloadContestSubmission(ActionMapping mapping, ActionForm form,
             HttpServletRequest request, HttpServletResponse response)
         throws BaseException, IOException {
         LoggingHelper.logAction(request);
@@ -2432,7 +2567,9 @@ public class ProjectDetailsActions extends DispatchAction {
             Deliverable deliverable = deliverables[i];
             String delivName = deliverable.getName();
             if (delivName.equalsIgnoreCase(Constants.SUBMISSION_DELIVERABLE_NAME)) {
-                links[i] = "UploadSubmission.do?method=uploadSubmission&pid=" + deliverable.getProject();
+                links[i] = "UploadContestSubmission.do?method=uploadContestSubmission&pid=" + deliverable.getProject();
+            } else if (delivName.equalsIgnoreCase(Constants.SPECIFICATION_SUBMISSION_DELIVERABLE_NAME)) {
+                links[i] = "UploadSpecificationSubmission.do?method=uploadSpecificationSubmission&pid=" + deliverable.getProject();
             } else if (delivName.equalsIgnoreCase(Constants.SCREENING_DELIVERABLE_NAME) ||
                     delivName.equalsIgnoreCase(Constants.PRIMARY_SCREENING_DELIVERABLE_NAME)) {
                 // Skip deliverables with empty Submission ID field,
