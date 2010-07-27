@@ -99,6 +99,8 @@ import static com.cronos.onlinereview.actions.Constants.FINAL_FIX_PHASE_NAME;
 import static com.cronos.onlinereview.actions.Constants.FINAL_REVIEW_PHASE_NAME;
 import static com.cronos.onlinereview.actions.Constants.APPROVAL_PHASE_NAME;
 import static com.cronos.onlinereview.actions.Constants.POST_MORTEM_PHASE_NAME;
+import static com.cronos.onlinereview.actions.Constants.SPECIFICATION_SUBMISSION_PHASE_NAME;
+import static com.cronos.onlinereview.actions.Constants.SPECIFICATION_REVIEW_PHASE_NAME;
 
 /**
  * This class contains Struts Actions that are meant to deal with Projects. There are following
@@ -1780,6 +1782,7 @@ public class ProjectActions extends DispatchAction {
 
         // Check the beginning phase, it should be either Registration or submission
         if (projectPhases.length > 0 &&
+                !projectPhases[0].getPhaseType().getName().equals(SPECIFICATION_SUBMISSION_PHASE_NAME) &&
                 !projectPhases[0].getPhaseType().getName().equals(REGISTRATION_PHASE_NAME) &&
                 !projectPhases[0].getPhaseType().getName().equals(SUBMISSION_PHASE_NAME) &&
                 !projectPhases[0].getPhaseType().getName().equals(POST_MORTEM_PHASE_NAME)) {
