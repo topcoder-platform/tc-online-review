@@ -3250,7 +3250,7 @@
                                submission.initial_score,
                                submission.final_score,
                                submission.placement,
-                               submission_type_lu.submission_status_id AS submission_type_id,
+                               submission_type_lu.submission_type_id AS submission_type_id,
                                submission_type_lu.create_user AS submission_type_create_user,
                                submission_type_lu.create_date AS submission_type_create_date,
                                submission_type_lu.modify_user AS submission_type_modify_user,
