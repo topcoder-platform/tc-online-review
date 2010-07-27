@@ -42,8 +42,16 @@ package com.cronos.onlinereview.actions;
  *   </ol>
  * </p>
  *
- * @author George1, real_vg, pulky, isv
- * @version 1.4
+ * <p>
+ * Version 1.5 (Specification Review Part 1 Assembly 1.0) Change notes:
+ *   <ol>
+ *     <li>Added {@link #SPECIFICATION_REVIEW_PHASE_NAME} constant.</li>
+ *     <li>Added {@link #SPECIFICATION_SUBMISSION_PHASE_NAME} constant.</li>
+ *   </ol>
+ * </p>
+ *
+ * @author George1, real_vg, pulky, isv, TCSDEVELOPER
+ * @version 1.5
  */
 public class Constants {
 
@@ -690,6 +698,20 @@ public class Constants {
      * @since 1.3
      */
     public static final String POST_MORTEM_PHASE_NAME = "Post-Mortem";
+
+    /**
+     * <p>A <code>String</code> providing the name for <code>Specification Submission</code> phase.</p>
+     *
+     * @since 1.4
+     */
+    public static final String SPECIFICATION_SUBMISSION_PHASE_NAME = "Specification Submission";
+
+    /**
+     * <p>A <code>String</code> providing the name for <code>Specification Review</code> phase.</p>
+     *
+     * @since 1.4
+     */
+    public static final String SPECIFICATION_REVIEW_PHASE_NAME = "Specification Review";
 
 
     // ------------------------------------------------------------------- Phase Status names -----

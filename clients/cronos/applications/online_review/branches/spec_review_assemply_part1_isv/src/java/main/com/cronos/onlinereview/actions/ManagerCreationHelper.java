@@ -22,6 +22,8 @@ import com.cronos.onlinereview.phases.PRReviewPhaseHandler;
 import com.cronos.onlinereview.phases.PRScreeningPhaseHandler;
 import com.cronos.onlinereview.phases.PRSubmissionPhaseHandler;
 import com.cronos.onlinereview.phases.PRPostMortemPhaseHandler;
+import com.cronos.onlinereview.phases.SpecificationReviewPhaseHandler;
+import com.cronos.onlinereview.phases.SpecificationSubmissionPhaseHandler;
 import com.cronos.onlinereview.services.uploads.ManagersProvider;
 import com.topcoder.db.connectionfactory.DBConnectionFactory;
 import com.topcoder.db.connectionfactory.DBConnectionFactoryImpl;
@@ -71,8 +73,18 @@ import com.topcoder.util.idgenerator.IDGeneratorFactory;
  *   </ol>
  * </p>
  *
- * @author evilisneo, BeBetter, isv
- * @version 1.2
+ * <p>
+ * Version 1.3 (Specification Review Part 1 Assembly 1.0) Change notes:
+ *   <ol>
+ *     <li>Updated {@link #getPhaseManager()} method to set handler for <code>Specification Review</code> and
+ *     <code>Specification Submission</code>  phases.</li>
+ *     <li>Updated {@link #getUploadManager()} method to use latest constructor for {@link UploadManager}
+ *     implementation.</li>
+ *   </ol>
+ * </p>
+ *
+ * @author evilisneo, BeBetter, isv, TCSDEVELOPER
+ * @version 1.3
  * @since 1.0
  */
 public class ManagerCreationHelper implements ManagersProvider {
@@ -152,6 +164,10 @@ public class ManagerCreationHelper implements ManagersProvider {
                     Constants.APPROVAL_PHASE_NAME);
             registerPhaseHandlerForOperation(phaseManager, phaseTypes, new PRPostMortemPhaseHandler(),
                     Constants.POST_MORTEM_PHASE_NAME);
+            registerPhaseHandlerForOperation(phaseManager, phaseTypes, new SpecificationSubmissionPhaseHandler(),
+                    Constants.SPECIFICATION_SUBMISSION_PHASE_NAME);
+            registerPhaseHandlerForOperation(phaseManager, phaseTypes, new SpecificationReviewPhaseHandler(),
+                    Constants.SPECIFICATION_REVIEW_PHASE_NAME);
             return phaseManager;
         } catch (Exception e) {
             throw new ManagerCreationException("Exception occurred while creating the PhaseManager.", e);
@@ -299,6 +315,8 @@ public class ManagerCreationHelper implements ManagersProvider {
                     .getIDGenerator(PersistenceUploadManager.SUBMISSION_ID_GENERATOR_NAME);
             IDGenerator submissionStatusIdGenerator = IDGeneratorFactory
                     .getIDGenerator(PersistenceUploadManager.SUBMISSION_STATUS_ID_GENERATOR_NAME);
+            IDGenerator submissionTypeIdGenerator = IDGeneratorFactory
+                    .getIDGenerator(PersistenceUploadManager.SUBMISSION_TYPE_ID_GENERATOR_NAME);
             // Get the search bundles
             SearchBundleManager searchBundleManager = new SearchBundleManager("com.topcoder.searchbuilder.common");
             SearchBundle uploadSearchBundle = searchBundleManager
@@ -308,7 +326,7 @@ public class ManagerCreationHelper implements ManagersProvider {
             // Initialize the PersistenceUploadManager
             uploadManager = new PersistenceUploadManager(persistence, uploadSearchBundle, submissionSearchBundle,
                     uploadIdGenerator, uploadTypeIdGenerator, uploadStatusIdGenerator, submissionIdGenerator,
-                    submissionStatusIdGenerator);
+                    submissionStatusIdGenerator, submissionTypeIdGenerator);
             return uploadManager;
         } catch (Exception e) {
             throw new ManagerCreationException("Exception occurred while creating the upload manager.", e);
