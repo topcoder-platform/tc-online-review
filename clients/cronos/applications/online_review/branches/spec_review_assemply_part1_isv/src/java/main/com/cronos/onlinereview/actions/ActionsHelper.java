@@ -21,7 +21,6 @@ import javax.servlet.http.HttpServletRequest;
 
 import com.cronos.onlinereview.dataaccess.ResourceDataAccess;
 import com.cronos.onlinereview.deliverables.*;
-import com.topcoder.management.phase.ContestDependencyAutomation;
 import com.topcoder.management.resource.persistence.ResourcePersistenceException;
 import com.topcoder.management.review.ReviewManagementException;
 import com.topcoder.project.phases.Dependency;
@@ -195,8 +194,15 @@ import com.topcoder.web.ejb.forums.ForumsHome;
  *   </ol>
  * </p>
  *
- * @author George1, real_vg, pulky, isv
- * @version 1.8
+ * <p>
+ * Version 1.9 (Specification Review Part 1 Assembly 1.0) Change notes:
+ *   <ol>
+ *     <li>Removed dependency on <code>ContestDependencyAutomation</code> class.</li>
+ *   </ol>
+ * </p>
+
+ * @author George1, real_vg, pulky, isv, TCSDEVELOPER
+ * @version 1.9
  * @since 1.0
  */
 public class ActionsHelper {
@@ -4402,28 +4408,6 @@ public class ActionsHelper {
         } finally {
             close(ps);
             close(conn);
-        }
-    }
-
-    /**
-     * <p>Adjusts the timelines for projects depending on specified project if necessary.</p>
-     *
-     * @param mainProject a <code>Project</code> providing the project details.
-     * @param phaseManager a <code>PhaseManager</code> to be used for managing phases.
-     * @param auto a <code>ContestDependencyAutomation</code> to be used for processing dependencies.
-     * @param operator a <code>String</code> providing the operator for audit.
-     * @throws PhaseManagementException if an unexpected error occurs.
-     * @throws com.topcoder.management.project.PersistenceException if an unexpected error occurs.
-     * @since 1.3
-     */
-    static void adjustDependentProjects(com.topcoder.project.phases.Project mainProject, PhaseManager phaseManager,
-                                        ContestDependencyAutomation auto, String operator)
-        throws PhaseManagementException, com.topcoder.management.project.PersistenceException {
-        List<Phase[]> phases = auto.adjustDependingProjectPhases(mainProject.getAllPhases());
-        for (Phase[] p : phases) {
-            if (p.length > 0) {
-                phaseManager.updatePhases(p[0].getProject(), operator);
-            }
         }
     }
 

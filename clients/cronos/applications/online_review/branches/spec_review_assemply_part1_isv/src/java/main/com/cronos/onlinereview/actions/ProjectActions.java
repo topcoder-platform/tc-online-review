@@ -22,7 +22,6 @@ import java.util.Stack;
 import com.cronos.onlinereview.dataaccess.ProjectDataAccess;
 import com.cronos.onlinereview.dataaccess.ProjectPhaseDataAccess;
 import com.topcoder.management.deliverable.UploadManager;
-import com.topcoder.management.phase.ContestDependencyAutomation;
 import com.topcoder.management.project.Project;
 import com.topcoder.management.project.ProjectCategory;
 import com.topcoder.management.project.ProjectManager;
@@ -205,8 +204,15 @@ import static com.cronos.onlinereview.actions.Constants.POST_MORTEM_PHASE_NAME;
  *   </ol>
  * </p>
  *
- * @author George1, real_vg, pulky, isv
- * @version 1.9
+ * <p>
+ * Version 1.10 (Specification Review Part 1 Assembly 1.0) Change notes:
+ *   <ol>
+ *     <li>Removed dependency on <code>ContestDependencyAutomation</code> class.</li>
+ *   </ol>
+ * </p>
+ *
+ * @author George1, real_vg, pulky, isv, TCSDEVELOPER
+ * @version 1.10
  */
 public class ProjectActions extends DispatchAction {
 
@@ -1686,13 +1692,8 @@ public class ProjectActions extends DispatchAction {
                     Long.toString(AuthorizationHelper.getLoggedInUserId(request)));
         }
 
-        // Adjust the depending projects timelines if necessary
-        String operator = Long.toString(AuthorizationHelper.getLoggedInUserId(request));
-        ContestDependencyAutomation auto
-            = new ContestDependencyAutomation(phaseManager, projectManager, projectLinkManager);
-        ActionsHelper.adjustDependentProjects(phProject, phaseManager, auto, operator);
-
         // Save the phases at the persistence level
+        String operator = Long.toString(AuthorizationHelper.getLoggedInUserId(request));
         phaseManager.updatePhases(phProject, operator);
         // TODO: The following line was added just to be safe. May be unneeded as well as another one
         projectPhases = phProject.getAllPhases();
