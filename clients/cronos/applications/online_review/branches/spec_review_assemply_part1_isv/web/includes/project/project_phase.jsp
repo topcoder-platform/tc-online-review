@@ -889,7 +889,7 @@
                                                                 <b><bean:message key="viewProjectDetails.box.SpecificationReview.Submit"/></b></html:link>
                                                             </td>
                                                         </c:when>
-                                                        <c:otherwise">
+                                                        <c:otherwise>
                                                             <td class="valueC" nowrap="nowrap"><bean:message key="Pending"/></td>
                                                         </c:otherwise>
                                                         </c:choose>
