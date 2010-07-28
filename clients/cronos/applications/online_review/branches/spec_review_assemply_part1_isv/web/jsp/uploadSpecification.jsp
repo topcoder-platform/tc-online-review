@@ -90,7 +90,7 @@
                             </tr>
                             <tr class="light">
                                 <td class="value">
-                                    <html:textarea property="specificationText" rows="5" styleClass="inputBox"/>
+                                    <html:textarea property="specificationText" rows="5" cols="20" styleClass="inputTextBox"/>
                                     <br/>
                                     <html:image srcKey="btnSubmit.img" altKey="btnSubmit.alt" border="0"
                                                 style="vertical-align:bottom;" />
