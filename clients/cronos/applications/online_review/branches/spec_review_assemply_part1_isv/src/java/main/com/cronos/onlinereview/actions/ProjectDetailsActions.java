@@ -1083,9 +1083,9 @@ public class ProjectDetailsActions extends DispatchAction {
         // Check if specification is already submitted
         ResourceManager resourceManager = ActionsHelper.createResourceManager(request);
         UploadManager upMgr = ActionsHelper.createUploadManager(request);
-        Submission[] oldSubmissions = ActionsHelper.getActiveSpecificationSubmission(project.getId(),
+        Submission oldSubmission = ActionsHelper.getActiveSpecificationSubmission(project.getId(),
             specificationPhase.getId(), upMgr, resourceManager);
-        if ((oldSubmissions != null) && (oldSubmissions.length > 0)) {
+        if (oldSubmission != null) {
             // Disallow submitting more than one Specification Submission for project
             return ActionsHelper.produceErrorReport(mapping, getResources(request), request,
                     Constants.PERFORM_SPECIFICATION_SUBMISSION_PERM_NAME, "Error.SpecificationAlreadyUploaded", null);

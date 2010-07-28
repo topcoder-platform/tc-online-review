@@ -4437,7 +4437,7 @@ public class ActionsHelper {
      * @throws SearchBuilderException if an unexpected error occurs.
      * @since 1.9
      */
-    public static Submission[] getActiveSpecificationSubmission(long projectId, long phaseId, UploadManager upMgr,
+    public static Submission getActiveSpecificationSubmission(long projectId, long phaseId, UploadManager upMgr,
                                                                 ResourceManager resMgr)
         throws UploadPersistenceException, SearchBuilderException {
         Submission[] specificationSubmissions = getSpecificationSubmissions(projectId, upMgr);
